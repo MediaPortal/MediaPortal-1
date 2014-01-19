@@ -226,7 +226,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       public byte MaxPids;                                    // Max number of PIDs supported by the PID filter (HW/FW limit, always <= MAX_PID_FILTER_PIDS).
       private ushort Padding;
       public uint ValidPidMask;                               // A bit mask specifying the current valid PIDs. If the bit is 0 then the PID is ignored. Example: if ValidPidMask = 0x00000005 then there are 2 valid PIDs at indexes 0 and 2.
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_PID_FILTER_PIDS)]
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_PID_FILTER_PID_COUNT)]
       public ushort[] FilterPids;                             // Filter PID list.
     }
 
@@ -1082,7 +1082,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
     private static readonly int DEVICE_INFO_SIZE = Marshal.SizeOf(typeof(DeviceInfo));            // 240
     private static readonly int DRIVER_INFO_SIZE = Marshal.SizeOf(typeof(DriverInfo));            // 256
     private static readonly int PID_FILTER_PARAMS_SIZE = Marshal.SizeOf(typeof(PidFilterParams)); // 72
-    private const int MAX_PID_FILTER_PIDS = 32;
+    private const int MAX_PID_FILTER_PID_COUNT = 32;
     private static readonly int LNB_PARAMS_SIZE = Marshal.SizeOf(typeof(LnbParams));              // 20
     private static readonly int DISEQC_MESSAGE_SIZE = Marshal.SizeOf(typeof(DiseqcMessage));      // 16
     private const int MAX_DISEQC_MESSAGE_LENGTH = 12;
@@ -1118,9 +1118,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
     private bool _isCamPresent = false;
     #pragma warning restore 0414
     private bool _isCamReady = false;
+
+    // PID filter variables.
     private TwinhanDeviceSpeed _connection = TwinhanDeviceSpeed.Pcie;
     private bool _isPidFilterSupported = false;
     private bool _isPidFilterBypassSupported = true;
+    private int _maxPidFilterPidCount = MAX_PID_FILTER_PID_COUNT;
+    private HashSet<ushort> _pidFilterPids = new HashSet<ushort>();
 
     // Functions that are called from both the main TV service threads
     // as well as the MMI handler thread use their own local buffer to
@@ -1135,7 +1139,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
     private string _tunerFilterName = string.Empty;
 
     private TwinhanCiSupport _ciApiVersion = TwinhanCiSupport.Unsupported;
-    private int _maxPidFilterPids = MAX_PID_FILTER_PIDS;
     private int _mmiDataSize = DEFAULT_MMI_DATA_SIZE;
 
     private Thread _mmiHandlerThread = null;
@@ -1265,7 +1268,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       PidFilterParams pidFilterInfo = (PidFilterParams)Marshal.PtrToStructure(_generalBuffer, typeof(PidFilterParams));
       this.LogDebug("  current mode                = {0}", pidFilterInfo.FilterMode);
       this.LogDebug("  maximum PIDs                = {0}", pidFilterInfo.MaxPids);
-      _maxPidFilterPids = pidFilterInfo.MaxPids;
+      _maxPidFilterPidCount = pidFilterInfo.MaxPids;
     }
 
     /// <summary>
@@ -1998,76 +2001,37 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
     #region IMpeg2PidFilter member
 
     /// <summary>
-    /// Configure the PID filter.
+    /// Should the filter be enabled for the current multiplex.
     /// </summary>
     /// <param name="tuningDetail">The current multiplex/transponder tuning parameters.</param>
-    /// <param name="pids">The PIDs to allow through the filter.</param>
-    /// <param name="forceEnable">Set this parameter to <c>true</c> to force the filter to be enabled.</param>
-    /// <returns><c>true</c> if the PID filter is configured successfully, otherwise <c>false</c></returns>
-    public bool SetFilterState(IChannel tuningDetail, ICollection<ushort> pids, bool forceEnable)
+    /// <returns><c>true</c> if the filter should be enabled, otherwise <c>false</c></returns>
+    public bool ShouldEnableFilter(IChannel tuningDetail)
     {
-      this.LogDebug("Twinhan: set PID filter state, force enable = {0}", forceEnable);
+      // As far as I'm aware, PID filtering is only supported by the VP-7021
+      // (Starbox) and VP-7041 (Magicbox) models. One or both of these are
+      // connected using USB 1.x. The filter should always be enabled for
+      // such tuners.
+      return _isPidFilterSupported && (!_isPidFilterBypassSupported || _connection == TwinhanDeviceSpeed.UsbLow || _connection == TwinhanDeviceSpeed.UsbFull);
+    }
 
+    /// <summary>
+    /// Disable the filter.
+    /// </summary>
+    /// <returns><c>true</c> if the filter is successfully disabled, otherwise <c>false</c></returns>
+    public bool DisableFilter()
+    {
+      this.LogDebug("Twinhan: disable PID filter");
       if (!_isTwinhan)
       {
         this.LogWarn("Twinhan: not initialised or interface not supported");
         return false;
       }
-      // This function is untested but as far as I'm aware, PID filtering is only supported by the VP-7021
-      // (Starbox) and VP-7041 (Magicbox) models.
-      if (!_isPidFilterSupported)
-      {
-        this.LogDebug("Twinhan: PID filtering not supported");
-        return true;    // Don't retry...
-      }
+      _pidFilterPids.Clear();
 
-      // It is not ideal to have to enable PID filtering because doing so can limit the number of channels
-      // that can be viewed/recorded simultaneously. One or both of the Starbox and Magicbox are USB 1
-      // tuners which means that they are not capable of even carrying full DVB-S transponders.
       PidFilterParams pidFilterParams = new PidFilterParams();
-      pidFilterParams.FilterPids = new ushort[MAX_PID_FILTER_PIDS];
+      pidFilterParams.FilterPids = new ushort[MAX_PID_FILTER_PID_COUNT];
       pidFilterParams.FilterMode = TwinhanPidFilterMode.Disabled;
       pidFilterParams.ValidPidMask = 0;
-      if (pids == null || pids.Count == 0 ||
-        (
-          _connection != TwinhanDeviceSpeed.UsbLow &&
-          _connection != TwinhanDeviceSpeed.UsbFull &&
-          _isPidFilterBypassSupported &&
-          !forceEnable
-        )
-      )
-      {
-        this.LogDebug("Twinhan: disabling PID filter");
-      }
-      else
-      {
-        // If we get to here then the default approach is to enable the filter, but there is one other
-        // constraint that applies: the filter PID limit.
-        pidFilterParams.FilterMode = TwinhanPidFilterMode.Whitelist;
-        if (pids.Count > _maxPidFilterPids)
-        {
-          this.LogError("Twinhan: too many PIDs, hardware limit = {0}, actual count = {1}", _maxPidFilterPids, pids.Count);
-          // When the forceEnable flag is set, we just set as many PIDs as possible.
-          if (_isPidFilterBypassSupported && !forceEnable)
-          {
-            this.LogDebug("Twinhan: disabling PID filter");
-            pidFilterParams.FilterMode = TwinhanPidFilterMode.Disabled;
-          }
-        }
-
-        if (pidFilterParams.FilterMode != TwinhanPidFilterMode.Disabled)
-        {
-          this.LogDebug("Twinhan: enabling PID filter");
-          IEnumerator<ushort> en = pids.GetEnumerator();
-          byte pidCount = 0;
-          while (en.MoveNext() && pidCount < _maxPidFilterPids)
-          {
-            pidFilterParams.FilterPids[pidCount++] = en.Current;
-            pidFilterParams.ValidPidMask = (pidFilterParams.ValidPidMask << 1) | 0x01;
-          }
-        }
-      }
-
       Marshal.StructureToPtr(pidFilterParams, _generalBuffer, true);
       Dump.DumpBinary(_generalBuffer, PID_FILTER_PARAMS_SIZE);
       TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_SET_PID_FILTER_INFO, _generalBuffer, PID_FILTER_PARAMS_SIZE, IntPtr.Zero, 0);
@@ -2079,7 +2043,74 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
         return true;
       }
 
-      this.LogError("Twinhan: failed to configure PID filter, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Twinhan: failed to disable PID filter, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      return false;
+    }
+
+    /// <summary>
+    /// Get the maximum number of streams that the filter can allow.
+    /// </summary>
+    public int MaximumPidCount
+    {
+      get
+      {
+        return _maxPidFilterPidCount;
+      }
+    }
+
+    /// <summary>
+    /// Configure the filter to allow one or more streams to pass through the filter.
+    /// </summary>
+    /// <param name="pids">A collection of stream identifiers.</param>
+    /// <returns><c>true</c> if the filter is successfully configured, otherwise <c>false</c></returns>
+    public bool AllowStreams(ICollection<ushort> pids)
+    {
+      _pidFilterPids.UnionWith(pids);
+      return true;
+    }
+
+    /// <summary>
+    /// Configure the filter to stop one or more streams from passing through the filter.
+    /// </summary>
+    /// <param name="pids">A collection of stream identifiers.</param>
+    /// <returns><c>true</c> if the filter is successfully configured, otherwise <c>false</c></returns>
+    public bool BlockStreams(ICollection<ushort> pids)
+    {
+      _pidFilterPids.ExceptWith(pids);
+      return true;
+    }
+
+    /// <summary>
+    /// Apply the current filter configuration.
+    /// </summary>
+    /// <returns><c>true</c> if the filter configuration is successfully applied, otherwise <c>false</c></returns>
+    public bool ApplyFilter()
+    {
+      this.LogDebug("Twinhan: apply PID filter");
+      if (!_isTwinhan)
+      {
+        this.LogWarn("Twinhan: not initialised or interface not supported");
+        return false;
+      }
+
+      PidFilterParams pidFilterParams = new PidFilterParams();
+      pidFilterParams.FilterPids = new ushort[MAX_PID_FILTER_PID_COUNT];
+      pidFilterParams.FilterMode = TwinhanPidFilterMode.Whitelist;
+      _pidFilterPids.CopyTo(pidFilterParams.FilterPids, 0, Math.Min(_maxPidFilterPidCount, _pidFilterPids.Count));
+      ulong mask = (ulong)(1 << _pidFilterPids.Count) - 1;
+      pidFilterParams.ValidPidMask = (uint)mask;
+      Marshal.StructureToPtr(pidFilterParams, _generalBuffer, true);
+      Dump.DumpBinary(_generalBuffer, PID_FILTER_PARAMS_SIZE);
+      TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_SET_PID_FILTER_INFO, _generalBuffer, PID_FILTER_PARAMS_SIZE, IntPtr.Zero, 0);
+      int returnedByteCount;
+      int hr = command.Execute(_propertySet, out returnedByteCount);
+      if (hr == (int)HResult.Severity.Success)
+      {
+        this.LogDebug("Twinhan: result = success");
+        return true;
+      }
+
+      this.LogError("Twinhan: failed to apply PID filter, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 

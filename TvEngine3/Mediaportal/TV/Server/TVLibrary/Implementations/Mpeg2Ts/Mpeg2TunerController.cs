@@ -20,6 +20,7 @@
 
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
+using System.Collections.Generic;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations
 {
@@ -75,10 +76,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
                 // Build a distinct super-set of PIDs used by the subchannels.
                 foreach (ushort pid in dvbChannel.Pids)
                 {
-                  if (!pidSet.Contains(pid))
+                  if (pidSet.Add(pid))
                   {
                     this.LogDebug("  {0, -2} = {1} (0x{1:x})", count++, pid);
-                    pidSet.Add(pid);
                   }
                 }
               }

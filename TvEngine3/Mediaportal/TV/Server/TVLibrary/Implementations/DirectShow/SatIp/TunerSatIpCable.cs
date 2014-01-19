@@ -19,13 +19,8 @@
 #endregion
 
 using System;
-using System.Net.Sockets;
-using System.Text;
-using System.Text.RegularExpressions;
 using DirectShowLib.BDA;
-using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
@@ -71,54 +66,54 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
         throw new TvException("Received request to tune incompatible channel.");
       }
 
-      StringBuilder url = new StringBuilder();
-      // TODO remove pids=all when PID filter support can be added
-      url.Append("rtsp://").Append(_ipAddress).Append(":554/pids=all&msys=dvbc");
-      url.Append("&freq=").Append((int)(cableChannel.Frequency / 1000));
-      url.Append("&sr=").Append(cableChannel.SymbolRate);
+      string frequency = ((int)cableChannel.Frequency / 1000).ToString();
+
+      string modulation = "256qam";
       if (cableChannel.ModulationType == ModulationType.Mod64Qam)
       {
-        url.Append("&mtype=64qam");
+        modulation = "64qam";
       }
       else if (cableChannel.ModulationType == ModulationType.Mod80Qam)
       {
-        url.Append("&mtype=80qam");
+        modulation = "80qam";
       }
       else if (cableChannel.ModulationType == ModulationType.Mod96Qam)
       {
-        url.Append("&mtype=96qam");
+        modulation = "96qam";
       }
       else if (cableChannel.ModulationType == ModulationType.Mod112Qam)
       {
-        url.Append("&mtype=112qam");
+        modulation = "112qam";
       }
       else if (cableChannel.ModulationType == ModulationType.Mod128Qam)
       {
-        url.Append("&mtype=128qam");
+        modulation = "128qam";
       }
       else if (cableChannel.ModulationType == ModulationType.Mod160Qam)
       {
-        url.Append("&mtype=160qam");
+        modulation = "160qam";
       }
       else if (cableChannel.ModulationType == ModulationType.Mod192Qam)
       {
-        url.Append("&mtype=192qam");
+        modulation = "192qam";
       }
       else if (cableChannel.ModulationType == ModulationType.Mod224Qam)
       {
-        url.Append("&mtype=224qam");
+        modulation = "224qam";
       }
       else if (cableChannel.ModulationType == ModulationType.Mod256Qam)
       {
-        url.Append("&mtype=256qam");
+        modulation = "256qam";
       }
       else
       {
         this.LogWarn("SAT>IP cable: unsupported modulation type {0}, assuming 256 QAM", cableChannel.ModulationType);
-        url.Append("&mtype=256qam");
       }
 
-      PerformTuning(url.ToString());
+      // TODO add more tuning details here to avoid any possibility of selecting an incorrect stream
+      _streamMatchString = frequency;
+
+      PerformTuning(string.Format("rtsp://{0}:554/pids=none&msys=dvbc&freq={1}&mtype={2}&sr={3}", _ipAddress, frequency, modulation, cableChannel.SymbolRate));
     }
 
     /// <summary>
@@ -132,26 +127,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
     }
 
     #endregion
-
-    /// <summary>
-    /// Actually update tuner signal status statistics.
-    /// </summary>
-    /// <param name="onlyUpdateLock"><c>True</c> to only update lock status.</param>
-    protected override void PerformSignalStatusUpdate(bool onlyUpdateLock)
-    {
-      DVBCChannel cableChannel = _currentTuningDetail as DVBCChannel;
-      if (cableChannel == null)
-      {
-        _isSignalPresent = false;
-        _isSignalLocked = false;
-        _signalLevel = 0;
-        _signalQuality = 0;
-        return;
-      }
-
-      // TODO add more tuning details here to avoid any possibility of selecting an incorrect stream
-      PerformSignalStatusUpdate(((int)(cableChannel.Frequency / 1000)).ToString());
-    }
 
     // TODO: remove this method, it should not be required and it is bad style!
     protected override DVBBaseChannel CreateChannel()

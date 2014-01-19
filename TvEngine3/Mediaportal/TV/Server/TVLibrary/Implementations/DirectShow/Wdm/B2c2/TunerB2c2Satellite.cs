@@ -95,8 +95,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       base.PerformLoading();
       _diseqcBuffer = Marshal.AllocCoTaskMem(DISEQC_BUFFER_SIZE);
       _isRawDiseqcSupported = _capabilities.AcquisitionCapabilities.HasFlag(B2c2AcquisionCapability.RawDiseqc);
-      _diseqcController = new DiseqcController(this);
-      _diseqcController.ReloadConfiguration(_cardId);
+
+      // Check if one of the supported extensions is capable of sending DiSEqC commands.
+      foreach (ICustomDevice extensionInterface in _customDeviceInterfaces)
+      {
+        IDiseqcDevice diseqcDevice = extensionInterface as IDiseqcDevice;
+        if (diseqcDevice != null)
+        {
+          this.LogDebug("B2C2 base: found DiSEqC command interface");
+          _diseqcController = new DiseqcController(diseqcDevice);
+          _diseqcController.ReloadConfiguration(_cardId);
+          break;
+        }
+      }
     }
 
     /// <summary>

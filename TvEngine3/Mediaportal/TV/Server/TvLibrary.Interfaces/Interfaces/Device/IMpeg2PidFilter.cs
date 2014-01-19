@@ -32,19 +32,47 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension
   public interface IMpeg2PidFilter : ICustomDevice
   {
     /// <summary>
-    /// Configure the PID filter.
+    /// Should the filter be enabled for the current multiplex.
+    /// </summary>
+    /// <param name="tuningDetail">The current multiplex/transponder tuning parameters.</param>
+    /// <returns><c>true</c> if the filter should be enabled, otherwise <c>false</c></returns>
+    bool ShouldEnableFilter(IChannel tuningDetail);
+
+    /// <summary>
+    /// Disable the filter.
+    /// </summary>
+    /// <returns><c>true</c> if the filter is successfully disabled, otherwise <c>false</c></returns>
+    bool DisableFilter();
+
+    /// <summary>
+    /// Get the maximum number of streams that the filter can allow.
     /// </summary>
     /// <remarks>
-    /// The implementation is expected to enable or disable the filter automatically based on the
-    /// tuning parameters, number of PIDs or other information. TV Server can also force the filter
-    /// to be disabled or enabled if necessary.
-    /// To force the filter to be disabled, call the function with an empty or null PID list.
-    /// To force the filter to be enabled, call the function with the forceEnable parameter set to <c>true</c>.
+    /// Returns a negative value if the maximum value is not known.
     /// </remarks>
-    /// <param name="tuningDetail">The current multiplex/transponder tuning parameters.</param>
-    /// <param name="pids">The PIDs to allow through the filter.</param>
-    /// <param name="forceEnable">Set this parameter to <c>true</c> to force the filter to be enabled.</param>
-    /// <returns><c>true</c> if the PID filter is configured successfully, otherwise <c>false</c></returns>
-    bool SetFilterState(IChannel tuningDetail, ICollection<ushort> pids, bool forceEnable);
+    int MaximumPidCount
+    {
+      get;
+    }
+
+    /// <summary>
+    /// Configure the filter to allow one or more streams to pass through the filter.
+    /// </summary>
+    /// <param name="pids">A collection of stream identifiers.</param>
+    /// <returns><c>true</c> if the filter is successfully configured, otherwise <c>false</c></returns>
+    bool AllowStreams(ICollection<ushort> pids);
+
+    /// <summary>
+    /// Configure the filter to stop one or more streams from passing through the filter.
+    /// </summary>
+    /// <param name="pids">A collection of stream identifiers.</param>
+    /// <returns><c>true</c> if the filter is successfully configured, otherwise <c>false</c></returns>
+    bool BlockStreams(ICollection<ushort> pids);
+
+    /// <summary>
+    /// Apply the current filter configuration.
+    /// </summary>
+    /// <returns><c>true</c> if the filter configuration is successfully applied, otherwise <c>false</c></returns>
+    bool ApplyFilter();
   }
 }

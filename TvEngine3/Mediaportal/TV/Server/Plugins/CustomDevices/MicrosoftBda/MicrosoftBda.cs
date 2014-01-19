@@ -64,7 +64,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBda
 
     // PID filter
     private IMPEG2PIDMap _pidFilterInterface = null;
-    private HashSet<ushort> _currentPids = new HashSet<ushort>();
+    private HashSet<ushort> _pidFilterPids = new HashSet<ushort>();
 
     private IntPtr _instanceBuffer = IntPtr.Zero;
     private IntPtr _paramBuffer = IntPtr.Zero;
@@ -405,105 +405,117 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBda
     #region IMpeg2PidFilter member
 
     /// <summary>
-    /// Configure the PID filter.
+    /// Should the filter be enabled for the current multiplex.
     /// </summary>
     /// <param name="tuningDetail">The current multiplex/transponder tuning parameters.</param>
-    /// <param name="pids">The PIDs to allow through the filter.</param>
-    /// <param name="forceEnable">Set this parameter to <c>true</c> to force the filter to be enabled.</param>
-    /// <returns><c>true</c> if the PID filter is configured successfully, otherwise <c>false</c></returns>
-    public bool SetFilterState(IChannel tuningDetail, ICollection<ushort> pids, bool forceEnable)
+    /// <returns><c>true</c> if the filter should be enabled, otherwise <c>false</c></returns>
+    public bool ShouldEnableFilter(IChannel tuningDetail)
     {
-      this.LogDebug("Microsoft BDA: set PID filter state, force enable = {0}", forceEnable);
+      // If a tuner supports a PID filter then assume it is desirable to enable it.
+      return true;
+    }
 
-      if (!_isMicrosoftBda || _pidFilterInterface == null)
+    /// <summary>
+    /// Disable the filter.
+    /// </summary>
+    /// <returns><c>true</c> if the filter is successfully disabled, otherwise <c>false</c></returns>
+    public bool DisableFilter()
+    {
+      this.LogDebug("Microsoft BDA: disable PID filter");
+
+      int hr = (int)HResult.Severity.Success;
+      if (_pidFilterPids.Count > 0)
       {
-        this.LogWarn("Microsoft BDA: not initialised or interface not supported");
-        return false;
+        int[] pids = new int[_pidFilterPids.Count];
+        int i = 0;
+        foreach (ushort pid in _pidFilterPids)
+        {
+          pids[i++] = pid;
+        }
+        hr = _pidFilterInterface.UnmapPID(pids.Length, pids);
       }
-
-      if (pids == null || pids.Count == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
-        this.LogDebug("Microsoft BDA: disabling PID filter");
-        // As far as I am aware, the PID filter is disabled by default after each retune. Assuming
-        // that is the case, there is nothing to do here. Even if that assumption is wrong, there
-        // is no obvious way to disable the PID filter and we have no PIDs so we can't do anything.
+        this.LogDebug("Microsoft BDA: result = success");
+        _pidFilterPids.Clear();
         return true;
       }
 
-      // If we get to here then we enable the filter by mapping the PIDs. The hardware probably has
-      // a limit to the number of PIDs that it can handle, however we have no way to get that information
-      // so we proceed as if there is no limit. Note also that attempting to call EnumPIDMap to
-      // get the current list of PIDs from the hardware will fail... so we just assume that we can
-      // add and remove PIDs on top of whatever PIDs are already mapped.
-      bool success = true;
-      this.LogDebug("Microsoft BDA: current PID details (before update)");
-      this.LogDebug("  count = {0}", _currentPids.Count);
-      IEnumerator<ushort> en = _currentPids.GetEnumerator();
-      HashSet<ushort> toRemove = new HashSet<ushort>();
-      byte i = 1;
-      while (en.MoveNext())
+      this.LogError("Microsoft BDA: failed to disable PID filter, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      return false;
+    }
+
+    /// <summary>
+    /// Get the maximum number of streams that the filter can allow.
+    /// </summary>
+    public int MaximumPidCount
+    {
+      get
       {
-        this.LogDebug("  {0, -5} = {1} (0x{1:x})", i, en.Current);
-        i++;
-        if (!pids.Contains(en.Current))
-        {
-          toRemove.Add(en.Current);
-        }
+        return -1;  // maximum not known
+      }
+    }
+
+    /// <summary>
+    /// Configure the filter to allow one or more streams to pass through the filter.
+    /// </summary>
+    /// <param name="pids">A collection of stream identifiers.</param>
+    /// <returns><c>true</c> if the filter is successfully configured, otherwise <c>false</c></returns>
+    public bool AllowStreams(ICollection<ushort> pids)
+    {
+      this.LogDebug("Microsoft BDA: allow streams through PID filter");
+      int[] pidArray = new int[pids.Count];
+      int i = 0;
+      foreach (ushort pid in pids)
+      {
+        pidArray[i++] = pid;
+      }
+      int hr = _pidFilterInterface.MapPID(pidArray.Length, pidArray, MediaSampleContent.ElementaryStream);
+      if (hr == (int)HResult.Severity.Success)
+      {
+        this.LogDebug("Microsoft BDA: result = success");
+        _pidFilterPids.UnionWith(pids);
+        return true;
       }
 
-      // Remove the PIDs that are no longer needed.
-      int hr;
-      if (toRemove.Count > 0)
+      this.LogError("Microsoft BDA: failed to allow streams through filter, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      return false;
+    }
+
+    /// <summary>
+    /// Configure the filter to stop one or more streams from passing through the filter.
+    /// </summary>
+    /// <param name="pids">A collection of stream identifiers.</param>
+    /// <returns><c>true</c> if the filter is successfully configured, otherwise <c>false</c></returns>
+    public bool BlockStreams(ICollection<ushort> pids)
+    {
+      this.LogDebug("Microsoft BDA: block streams with PID filter");
+      int[] pidArray = new int[pids.Count];
+      int i = 0;
+      foreach (ushort pid in pids)
       {
-        this.LogDebug("Microsoft BDA: removing...");
-        en = toRemove.GetEnumerator();
-        i = 1;
-        while (en.MoveNext())
-        {
-          hr = _pidFilterInterface.UnmapPID(1, new int[1] { en.Current });
-          if (hr != (int)HResult.Severity.Success)
-          {
-            this.LogError("Microsoft BDA: failed to remove PID {0} (0x{0:x}), hr = 0x{1:x} ({2})", en.Current, hr, HResult.GetDXErrorString(hr));
-            success = false;
-          }
-          else
-          {
-            this.LogDebug("  {0, -5} = {1} (0x{1:x})", i, en.Current);
-            _currentPids.Remove(en.Current);
-          }
-          i++;
-        }
+        pidArray[i++] = pid;
+      }
+      int hr = _pidFilterInterface.UnmapPID(pidArray.Length, pidArray);
+      if (hr == (int)HResult.Severity.Success)
+      {
+        this.LogDebug("Microsoft BDA: result = success");
+        _pidFilterPids.ExceptWith(pids);
+        return true;
       }
 
-      // Add the new PIDs.
-      this.LogDebug("Microsoft BDA: adding...");
-      en = pids.GetEnumerator();
-      i = 1;
-      while (en.MoveNext())
-      {
-        if (_currentPids.Contains(en.Current))
-        {
-          continue;
-        }
-        hr = _pidFilterInterface.MapPID(1, new int[1] { en.Current }, MediaSampleContent.ElementaryStream);
-        if (hr != (int)HResult.Severity.Success)
-        {
-          this.LogError("Microsoft BDA: failed to add PID {0} (0x{0:x}), hr = 0x{1:x} ({2})", en.Current, hr, HResult.GetDXErrorString(hr));
-          success = false;
-        }
-        else
-        {
-          this.LogDebug("  {0, -5} = {1} (0x{1:x})", i, en.Current);
-        }
-        i++;
-      }
+      this.LogError("Microsoft BDA: failed to block streams with filter, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      return false;
+    }
 
-      if (success)
-      {
-        this.LogDebug("Microsoft BDA: updates complete, result = success");
-      }
-
-      return success;
+    /// <summary>
+    /// Apply the current filter configuration.
+    /// </summary>
+    /// <returns><c>true</c> if the filter configuration is successfully applied, otherwise <c>false</c></returns>
+    public bool ApplyFilter()
+    {
+      // Nothing to do here.
+      return true;
     }
 
     #endregion

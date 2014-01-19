@@ -37,9 +37,10 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
 {
   /// <summary>
-  /// A base implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> for TechniSat tuners with B2C2 chipsets and WDM drivers.
+  /// A base implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> for TechniSat tuners
+  /// with B2C2 chipsets and WDM drivers.
   /// </summary>
-  public abstract class TunerB2c2Base : TunerDirectShowBase, ICustomDevice, IMpeg2PidFilter
+  public abstract class TunerB2c2Base : TunerDirectShowBase, IMpeg2PidFilter
   {
     #pragma warning disable 1591
     #region enums
@@ -1375,7 +1376,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
 
     // PID filter variables - especially important for DVB-S2 tuners.
     private int _maxPidCount = 0;
-    private HashSet<int> _filterPids = new HashSet<int>();
+    private HashSet<int> _pidFilterPids = new HashSet<int>();
+    private bool _isPidFilterDisabled = false;
 
     #endregion
 
@@ -1455,10 +1457,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       AddAndConnectTsWriterIntoGraph(lastFilter);
       CompleteGraph();
 
-      SetFilterState(null, new HashSet<ushort>(), false);
-
       ReadTunerInfo();
       ReadPidFilterInfo();
+      if (_pidFilterPids.Count != 1 || (!_pidFilterPids.Contains((int)B2c2PidFilterMode.AllExcludingNull) && !_pidFilterPids.Contains((int)B2c2PidFilterMode.AllIncludingNull)))
+      {
+        DisableFilter();
+      }
     }
 
     /// <summary>
@@ -1678,6 +1682,24 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       {
         this.LogDebug("B2C2 base: result = failure, hr = 0x{0:x}", hr);
       }
+
+      int openPidCount;
+      int runningPidCount;
+      int totalPidCount = 0;
+      int[] currentPids = new int[_maxPidCount];
+      hr = _interfaceData.GetTsState(out openPidCount, out runningPidCount, ref totalPidCount, currentPids);
+      if (hr != (int)HResult.Severity.Success)
+      {
+        this.LogDebug("B2C2 base: result = failure, hr = 0x{0:x}", hr);
+      }
+      else
+      {
+        this.LogDebug("  open count           = {0}", openPidCount);
+        this.LogDebug("  running count        = {0}", runningPidCount);
+        this.LogDebug("  returned count       = {0}", totalPidCount);
+        _pidFilterPids.Clear();
+        _pidFilterPids.UnionWith(currentPids);
+      }
     }
 
     #region ICustomDevice members
@@ -1767,17 +1789,165 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     #region IMpeg2PidFilter member
 
     /// <summary>
-    /// Configure the PID filter.
+    /// Should the filter be enabled for the current multiplex.
     /// </summary>
     /// <param name="tuningDetail">The current multiplex/transponder tuning parameters.</param>
-    /// <param name="pids">The PIDs to allow through the filter.</param>
-    /// <param name="forceEnable">Set this parameter to <c>true</c> to force the filter to be enabled.</param>
-    /// <returns><c>true</c> if the PID filter is configured successfully, otherwise <c>false</c></returns>
-    public bool SetFilterState(IChannel tuningDetail, ICollection<ushort> pids, bool forceEnable)
+    /// <returns><c>true</c> if the filter should be enabled, otherwise <c>false</c></returns>
+    public bool ShouldEnableFilter(IChannel tuningDetail)
     {
-      this.LogDebug("B2C2 base: set PID filter state, force enable = {0}", forceEnable);
-      bool fullTransponder = true;
-      bool success = true;
+      if (_deviceInfo.BusInterface == B2c2BusType.Usb1)
+      {
+        return true;
+      }
+      if (_tunerType != CardType.DvbS && _tunerType != CardType.DvbC)
+      {
+        return false;
+      }
+
+      // It is not ideal to have to enable PID filtering because doing so can limit
+      // the number of channels that can be viewed/recorded simultaneously. However,
+      // it does seem that there is a need for filtering on satellite transponders
+      // with high bit rates. Problems have been observed with transponders on Thor
+      // 5/6, Intelsat 10-02 (0.8W) if the filter is not enabled:
+      //   Symbol Rate: 27500, Modulation: 8 PSK, FEC rate: 5/6, Pilot: On, Roll-Off: 0.35
+      //   Symbol Rate: 30000, Modulation: 8 PSK, FEC rate: 3/4, Pilot: On, Roll-Off: 0.35
+      int bitRate = 0;
+      DVBSChannel satelliteTuningDetail = tuningDetail as DVBSChannel;
+      if (satelliteTuningDetail != null)
+      {
+        int bitsPerSymbol = 2;
+        if (satelliteTuningDetail.ModulationType == ModulationType.ModBpsk)
+        {
+          bitsPerSymbol = 1;
+        }
+        else if (satelliteTuningDetail.ModulationType == ModulationType.Mod8Psk ||
+          satelliteTuningDetail.ModulationType == ModulationType.ModNbc8Psk)
+        {
+          bitsPerSymbol = 3;
+        }
+        else if (satelliteTuningDetail.ModulationType == ModulationType.Mod16Apsk)
+        {
+          bitsPerSymbol = 4;
+        }
+        else if (satelliteTuningDetail.ModulationType == ModulationType.Mod32Apsk)
+        {
+          bitsPerSymbol = 5;
+        }
+        bitRate = bitsPerSymbol * satelliteTuningDetail.SymbolRate; // kb/s
+        if (satelliteTuningDetail.InnerFecRate == BinaryConvolutionCodeRate.Rate1_2)
+        {
+          bitRate /= 2;
+        }
+        else if (satelliteTuningDetail.InnerFecRate == BinaryConvolutionCodeRate.Rate1_3)
+        {
+          bitRate /= 3;
+        }
+        else if (satelliteTuningDetail.InnerFecRate == BinaryConvolutionCodeRate.Rate1_4)
+        {
+          bitRate /= 4;
+        }
+        else if (satelliteTuningDetail.InnerFecRate == BinaryConvolutionCodeRate.Rate2_3)
+        {
+          bitRate = bitRate * 2 / 3;
+        }
+        else if (satelliteTuningDetail.InnerFecRate == BinaryConvolutionCodeRate.Rate2_5)
+        {
+          bitRate = bitRate * 2 / 5;
+        }
+        else if (satelliteTuningDetail.InnerFecRate == BinaryConvolutionCodeRate.Rate3_4)
+        {
+          bitRate = bitRate * 3 / 4;
+        }
+        else if (satelliteTuningDetail.InnerFecRate == BinaryConvolutionCodeRate.Rate3_5)
+        {
+          bitRate = bitRate * 3 / 5;
+        }
+        else if (satelliteTuningDetail.InnerFecRate == BinaryConvolutionCodeRate.Rate4_5)
+        {
+          bitRate = bitRate * 4 / 5;
+        }
+        else if (satelliteTuningDetail.InnerFecRate == BinaryConvolutionCodeRate.Rate5_6)
+        {
+          bitRate = bitRate * 5 / 6;
+        }
+        else if (satelliteTuningDetail.InnerFecRate == BinaryConvolutionCodeRate.Rate5_11)
+        {
+          bitRate = bitRate * 5 / 11;
+        }
+        else if (satelliteTuningDetail.InnerFecRate == BinaryConvolutionCodeRate.Rate6_7)
+        {
+          bitRate = bitRate * 6 / 7;
+        }
+        else if (satelliteTuningDetail.InnerFecRate == BinaryConvolutionCodeRate.Rate7_8)
+        {
+          bitRate = bitRate * 7 / 8;
+        }
+        else if (satelliteTuningDetail.InnerFecRate == BinaryConvolutionCodeRate.Rate8_9)
+        {
+          bitRate = bitRate * 8 / 9;
+        }
+        else if (satelliteTuningDetail.InnerFecRate == BinaryConvolutionCodeRate.Rate9_10)
+        {
+          bitRate = bitRate * 9 / 10;
+        }
+      }
+      else
+      {
+        DVBCChannel cableTuningDetail = tuningDetail as DVBCChannel;
+        double bitsPerSymbol = 6;  // 64 QAM
+        if (cableTuningDetail.ModulationType == ModulationType.Mod80Qam)
+        {
+          bitsPerSymbol = 6.25;
+        }
+        else if (cableTuningDetail.ModulationType == ModulationType.Mod96Qam)
+        {
+          bitsPerSymbol = 6.5;
+        }
+        else if (cableTuningDetail.ModulationType == ModulationType.Mod112Qam)
+        {
+          bitsPerSymbol = 6.75;
+        }
+        else if (cableTuningDetail.ModulationType == ModulationType.Mod128Qam)
+        {
+          bitsPerSymbol = 7;
+        }
+        else if (cableTuningDetail.ModulationType == ModulationType.Mod160Qam)
+        {
+          bitsPerSymbol = 7.25;
+        }
+        else if (cableTuningDetail.ModulationType == ModulationType.Mod192Qam)
+        {
+          bitsPerSymbol = 7.5;
+        }
+        else if (cableTuningDetail.ModulationType == ModulationType.Mod224Qam)
+        {
+          bitsPerSymbol = 7.75;
+        }
+        else if (cableTuningDetail.ModulationType == ModulationType.Mod256Qam)
+        {
+          bitsPerSymbol = 8;
+        }
+        bitRate = (int)bitsPerSymbol * cableTuningDetail.SymbolRate;  // kb/s
+      }
+
+      // Rough approximation: enable PID filtering when bit rate is over 40 Mb/s.
+      this.LogDebug("B2C2 base: multiplex bit rate = {0} kb/s", bitRate);
+      return bitRate >= 60000;
+    }
+
+    /// <summary>
+    /// Disable the filter.
+    /// </summary>
+    /// <returns><c>true</c> if the filter is successfully disabled, otherwise <c>false</c></returns>
+    public bool DisableFilter()
+    {
+      this.LogDebug("B2C2 base: disable PID filter");
+
+      if (_isPidFilterDisabled)
+      {
+        this.LogDebug("B2C2 base: result = success");
+        return true;
+      }
 
       int hr = _interfaceData.SelectDevice(_deviceInfo.DeviceId);
       if (hr != (int)HResult.Severity.Success)
@@ -1786,154 +1956,138 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
         return false;
       }
 
-      DVBSChannel satelliteTuningDetail = tuningDetail as DVBSChannel;
-      if (pids == null || pids.Count == 0 ||
-        (
-          _deviceInfo.BusInterface != B2c2BusType.Usb1 &&
-          (
-            satelliteTuningDetail == null ||
-            (satelliteTuningDetail.ModulationType != ModulationType.ModQpsk && satelliteTuningDetail.ModulationType != ModulationType.Mod8Psk)
-          ) &&
-          !forceEnable
-        )
-      )
+      // Remove all current PIDs.
+      if (_pidFilterPids.Count > 0)
       {
-        this.LogDebug("B2C2 base: disabling PID filter");
-      }
-      else
-      {
-        // If we get to here then the default approach is to enable the filter, but
-        // there is one other constraint that applies: the filter PID limit.
-        fullTransponder = false;
-        if (pids.Count > _maxPidCount)
-        {
-          this.LogDebug("B2C2 base: too many PIDs, hardware limit = {0}, actual count = {1}", _maxPidCount, pids.Count);
-          // When the forceEnable flag is set, we just set as many PIDs as possible.
-          if (!forceEnable)
-          {
-            this.LogDebug("B2C2 base: disabling PID filter");
-            fullTransponder = true;
-          }
-        }
-
-        if (!fullTransponder)
-        {
-          this.LogDebug("B2C2 base: enabling PID filter");
-          fullTransponder = false;
-        }
-      }
-
-      int openPidCount;
-      int runningPidCount;
-      int totalPidCount = _maxPidCount;
-      int[] currentPids = new int[_maxPidCount];
-      int availablePidCount = 0;
-      int changingPidCount = 1;
-      hr = _interfaceData.GetTsState(out openPidCount, out runningPidCount, ref totalPidCount, currentPids);
-      if (hr != (int)HResult.Severity.Success)
-      {
-        this.LogDebug("B2C2 base: failed to retrieve current PIDs, hr = 0x{0:x}", hr);
-        fullTransponder = true;
-        success = false;
-      }
-      else
-      {
-        this.LogDebug("B2C2 base: current PID details (before update)");
-        this.LogDebug("  open count     = {0}", openPidCount);
-        this.LogDebug("  running count  = {0}", runningPidCount);
-        this.LogDebug("  returned count = {0}", totalPidCount);
-        if (currentPids != null)
-        {
-          for (int i = 0; i < totalPidCount; i++)
-          {
-            this.LogDebug("  {0, -14} = {1} (0x{1:x})", i + 1, currentPids[i]);
-          }
-        }
-        availablePidCount = _maxPidCount - totalPidCount;
-      }
-
-      if (!fullTransponder)
-      {
-        // Remove the PIDs that are no longer needed.
-        for (byte i = 0; i < totalPidCount; i++)
-        {
-          if (currentPids != null && !pids.Contains((ushort)currentPids[i]))
-          {
-            hr = _interfaceData.DeletePIDsFromPin(1, new int[1] { currentPids[i] }, 0);
-            if (hr != (int)HResult.Severity.Success)
-            {
-              this.LogDebug("B2C2 base: failed to remove PID {0} (0x{0:x}), hr = 0x{1:x}", currentPids[i], hr);
-              success = false;
-            }
-            else
-            {
-              this.LogDebug("  delete PID {0} (0x{0:x})...", currentPids[i]);
-              availablePidCount++;
-            }
-          }
-        }
-        // Add the new PIDs.
-        if (pids != null)
-        {
-          HashSet<int> currentPidsAsHash = new HashSet<int>(currentPids);
-          IEnumerator<ushort> en = pids.GetEnumerator();
-          while (en.MoveNext() && availablePidCount > 0)
-          {
-            if (currentPidsAsHash != null && !currentPidsAsHash.Contains(en.Current))
-            {
-              hr = _interfaceData.AddPIDsToPin(ref changingPidCount, new int[1] { en.Current }, 0);
-              if (hr != (int)HResult.Severity.Success)
-              {
-                this.LogDebug("B2C2 base: failed to add PID {0} (0x{0:x}), hr = 0x{1:x}", en.Current, hr);
-                success = false;
-              }
-              else
-              {
-                this.LogDebug("  add PID {0} (0x{0:x})...", en.Current);
-                availablePidCount--;
-              }
-            }
-          }
-        }
-      }
-      else
-      {
-        // Remove all current PIDs.
-        if (currentPids != null)
-        {
-          for (byte i = 0; i < totalPidCount; i++)
-          {
-            hr = _interfaceData.DeletePIDsFromPin(1, new int[1] { currentPids[i] }, 0);
-            if (hr != (int)HResult.Severity.Success)
-            {
-              this.LogDebug("B2C2 base: failed to remove PID {0} (0x{0:x}), hr = 0x{1:x}", currentPids[i], hr);
-              success = false;
-            }
-            else
-            {
-              this.LogDebug("  delete all PIDs...");
-            }
-          }
-        }
-        // Allow all PIDs.
-        hr = _interfaceData.AddPIDsToPin(ref changingPidCount, new int[1] { (int)B2c2PidFilterMode.AllExcludingNull }, 0);
+        this.LogDebug("  delete all PIDs...");
+        int[] currentPids = new int[_pidFilterPids.Count];
+        _pidFilterPids.CopyTo(currentPids, 0, _pidFilterPids.Count);
+        hr = _interfaceData.DeletePIDsFromPin(_pidFilterPids.Count, currentPids, 0);
         if (hr != (int)HResult.Severity.Success)
         {
-          this.LogDebug("B2C2 base: failed to enable all PIDs, hr = 0x{0:x}", hr);
-          success = false;
-        }
-        else
-        {
-          this.LogDebug("  allow all excluding NULL...");
+          this.LogDebug("B2C2 base: failed to delete PIDs, hr = 0x{0:x}", hr);
+          return false;
         }
       }
 
-      if (success)
+      // Allow all PIDs.
+      this.LogDebug("  allow all excluding NULL...");
+      int changingPidCount = 1;
+      hr = _interfaceData.AddPIDsToPin(ref changingPidCount, new int[1] { (int)B2c2PidFilterMode.AllExcludingNull }, 0);
+      if (hr == (int)HResult.Severity.Success)
       {
-        this.LogDebug("B2C2 base: updates complete, result = success");
+        _pidFilterPids.Clear();
+        this.LogDebug("B2C2 base: result = success");
+        return true;
       }
 
-      return success;
+      this.LogDebug("B2C2 base: failed to enable all PIDs, hr = 0x{0:x}", hr);
+      return false;
+    }
+
+    /// <summary>
+    /// Get the maximum number of streams that the filter can allow.
+    /// </summary>
+    public int MaximumPidCount
+    {
+      get
+      {
+        return _maxPidCount;
+      }
+    }
+
+    /// <summary>
+    /// Configure the filter to allow one or more streams to pass through the filter.
+    /// </summary>
+    /// <param name="pids">A collection of stream identifiers.</param>
+    /// <returns><c>true</c> if the filter is successfully configured, otherwise <c>false</c></returns>
+    public bool AllowStreams(ICollection<ushort> pids)
+    {
+      this.LogDebug("B2C2 base: allow streams through PID filter");
+      int hr = _interfaceData.SelectDevice(_deviceInfo.DeviceId);
+      if (hr != (int)HResult.Severity.Success)
+      {
+        this.LogDebug("B2C2 base: failed to select device, hr = 0x{0:x}", hr);
+        return false;
+      }
+
+      if (_isPidFilterDisabled && pids.Count > 0)
+      {
+        hr = _interfaceData.DeletePIDsFromPin(1, new int[1] { (int)B2c2PidFilterMode.AllExcludingNull }, 0);
+        if (hr != (int)HResult.Severity.Success)
+        {
+          this.LogDebug("B2C2 base: failed to disable all PIDs, hr = 0x{0:x}", hr);
+          return false;
+        }
+        _isPidFilterDisabled = false;
+      }
+
+      int[] newPids = new int[pids.Count];
+      int i = 0;
+      foreach (ushort pid in pids)
+      {
+        newPids[i++] = pid;
+      }
+      int changingPidCount = pids.Count;
+      hr = _interfaceData.AddPIDsToPin(ref changingPidCount, newPids, 0);
+      if (hr == (int)HResult.Severity.Success)
+      {
+        this.LogDebug("B2C2 base: result = success");
+        foreach (ushort pid in pids)
+        {
+          _pidFilterPids.Add(pid);
+        }
+        return true;
+      }
+
+      this.LogError("B2C2 base: failed to allow streams through filter, hr = 0x{0:x}", hr);
+      return false;
+    }
+
+    /// <summary>
+    /// Configure the filter to stop one or more streams from passing through the filter.
+    /// </summary>
+    /// <param name="pids">A collection of stream identifiers.</param>
+    /// <returns><c>true</c> if the filter is successfully configured, otherwise <c>false</c></returns>
+    public bool BlockStreams(ICollection<ushort> pids)
+    {
+      this.LogDebug("B2C2 base: block streams with PID filter");
+      int hr = _interfaceData.SelectDevice(_deviceInfo.DeviceId);
+      if (hr != (int)HResult.Severity.Success)
+      {
+        this.LogDebug("B2C2 base: failed to select device, hr = 0x{0:x}", hr);
+        return false;
+      }
+
+      int[] newPids = new int[pids.Count];
+      int i = 0;
+      foreach (ushort pid in pids)
+      {
+        newPids[i++] = pid;
+      }
+      hr = _interfaceData.DeletePIDsFromPin(pids.Count, newPids, 0);
+      if (hr == (int)HResult.Severity.Success)
+      {
+        this.LogDebug("B2C2 base: result = success");
+        foreach (ushort pid in pids)
+        {
+          _pidFilterPids.Remove(pid);
+        }
+        return true;
+      }
+
+      this.LogError("B2C2 base: failed to block streams with filter, hr = 0x{0:x}", hr);
+      return false;
+    }
+
+    /// <summary>
+    /// Apply the current filter configuration.
+    /// </summary>
+    /// <returns><c>true</c> if the filter configuration is successfully applied, otherwise <c>false</c></returns>
+    public bool ApplyFilter()
+    {
+      // Nothing to do here.
+      return true;
     }
 
     #endregion

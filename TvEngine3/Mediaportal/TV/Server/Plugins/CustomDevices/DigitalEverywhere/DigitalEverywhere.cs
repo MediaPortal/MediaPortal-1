@@ -313,7 +313,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
 
       public byte NumberOfValidPids;
       private byte Padding3;
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_PID_FILTER_PIDS)]
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_PID_FILTER_PID_COUNT)]
       public ushort[] FilterPids;
       private ushort Padding4;
     }
@@ -344,7 +344,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
 
       public byte NumberOfValidPids;
       private byte Padding1;
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_PID_FILTER_PIDS)]
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_PID_FILTER_PID_COUNT)]
       public ushort[] FilterPids;
       private ushort Padding2;
     }
@@ -502,7 +502,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
     private static readonly int DVBS_PID_FILTER_PARAMS_SIZE = Marshal.SizeOf(typeof(DvbsPidFilterParams));    // 60
     private static readonly int DVBT_MULTIPLEX_PARAMS_SIZE = Marshal.SizeOf(typeof(DvbtMultiplexParams));     // 12
     private static readonly int DVBT_PID_FILTER_PARAMS_SIZE = Marshal.SizeOf(typeof(DvbtPidFilterParams));    // 56
-    private const int MAX_PID_FILTER_PIDS = 16;
+    private const int MAX_PID_FILTER_PID_COUNT = 16;
     private static readonly int FIRMWARE_VERSION_INFO_SIZE = Marshal.SizeOf(typeof(FirmwareVersionInfo));     // 8
     private static readonly int FRONT_END_STATUS_INFO_SIZE = Marshal.SizeOf(typeof(FrontEndStatusInfo));      // 28
     private static readonly int SYSTEM_INFO_SIZE = Marshal.SizeOf(typeof(SystemInfo));            // 8
@@ -538,6 +538,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
     private bool _isCamPresent = false;
     #pragma warning restore 0414
     private bool _isCamReady = false;
+    private HashSet<ushort> _pidFilterPids = new HashSet<ushort>();
 
     private IntPtr _generalBuffer = IntPtr.Zero;
     private IntPtr _mmiBuffer = IntPtr.Zero;
@@ -1192,80 +1193,230 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
     #region IMpeg2PidFilter member
 
     /// <summary>
-    /// Configure the PID filter.
+    /// Should the filter be enabled for the current multiplex.
     /// </summary>
     /// <param name="tuningDetail">The current multiplex/transponder tuning parameters.</param>
-    /// <param name="pids">The PIDs to allow through the filter.</param>
-    /// <param name="forceEnable">Set this parameter to <c>true</c> to force the filter to be enabled.</param>
-    /// <returns><c>true</c> if the PID filter is configured successfully, otherwise <c>false</c></returns>
-    public bool SetFilterState(IChannel tuningDetail, ICollection<ushort> pids, bool forceEnable)
+    /// <returns><c>true</c> if the filter should be enabled, otherwise <c>false</c></returns>
+    public bool ShouldEnableFilter(IChannel tuningDetail)
     {
-      this.LogDebug("Digital Everywhere: set PID filter state, force enable = {0}", forceEnable);
+      if (_tunerType != CardType.DvbS && _tunerType != CardType.DvbT && _tunerType != CardType.DvbC)
+      {
+        // PID filtering not supported.
+        return false;
+      }
 
+      // It is not ideal to have to enable PID filtering because doing so can limit
+      // the number of channels that can be viewed/recorded simultaneously. However,
+      // it does seem that there is a need for filtering on satellite transponders
+      // with high bit rates. Problems have been observed with transponders on Thor
+      // 5/6, Intelsat 10-02 (0.8W) if the filter is not enabled:
+      //   Symbol Rate: 27500, Modulation: 8 PSK, FEC rate: 5/6, Pilot: On, Roll-Off: 0.35
+      //   Symbol Rate: 30000, Modulation: 8 PSK, FEC rate: 3/4, Pilot: On, Roll-Off: 0.35
+      int bitRate = 0;
+      DVBSChannel satelliteTuningDetail = tuningDetail as DVBSChannel;
+      if (satelliteTuningDetail != null)
+      {
+        int bitsPerSymbol = 2;
+        if (satelliteTuningDetail.ModulationType == ModulationType.ModBpsk)
+        {
+          bitsPerSymbol = 1;
+        }
+        else if (satelliteTuningDetail.ModulationType == ModulationType.Mod8Psk ||
+          satelliteTuningDetail.ModulationType == ModulationType.ModNbc8Psk)
+        {
+          bitsPerSymbol = 3;
+        }
+        else if (satelliteTuningDetail.ModulationType == ModulationType.Mod16Apsk)
+        {
+          bitsPerSymbol = 4;
+        }
+        else if (satelliteTuningDetail.ModulationType == ModulationType.Mod32Apsk)
+        {
+          bitsPerSymbol = 5;
+        }
+        bitRate = bitsPerSymbol * satelliteTuningDetail.SymbolRate; // kb/s
+        if (satelliteTuningDetail.InnerFecRate == BinaryConvolutionCodeRate.Rate1_2)
+        {
+          bitRate /= 2;
+        }
+        else if (satelliteTuningDetail.InnerFecRate == BinaryConvolutionCodeRate.Rate1_3)
+        {
+          bitRate /= 3;
+        }
+        else if (satelliteTuningDetail.InnerFecRate == BinaryConvolutionCodeRate.Rate1_4)
+        {
+          bitRate /= 4;
+        }
+        else if (satelliteTuningDetail.InnerFecRate == BinaryConvolutionCodeRate.Rate2_3)
+        {
+          bitRate = bitRate * 2 / 3;
+        }
+        else if (satelliteTuningDetail.InnerFecRate == BinaryConvolutionCodeRate.Rate2_5)
+        {
+          bitRate = bitRate * 2 / 5;
+        }
+        else if (satelliteTuningDetail.InnerFecRate == BinaryConvolutionCodeRate.Rate3_4)
+        {
+          bitRate = bitRate * 3 / 4;
+        }
+        else if (satelliteTuningDetail.InnerFecRate == BinaryConvolutionCodeRate.Rate3_5)
+        {
+          bitRate = bitRate * 3 / 5;
+        }
+        else if (satelliteTuningDetail.InnerFecRate == BinaryConvolutionCodeRate.Rate4_5)
+        {
+          bitRate = bitRate * 4 / 5;
+        }
+        else if (satelliteTuningDetail.InnerFecRate == BinaryConvolutionCodeRate.Rate5_6)
+        {
+          bitRate = bitRate * 5 / 6;
+        }
+        else if (satelliteTuningDetail.InnerFecRate == BinaryConvolutionCodeRate.Rate5_11)
+        {
+          bitRate = bitRate * 5 / 11;
+        }
+        else if (satelliteTuningDetail.InnerFecRate == BinaryConvolutionCodeRate.Rate6_7)
+        {
+          bitRate = bitRate * 6 / 7;
+        }
+        else if (satelliteTuningDetail.InnerFecRate == BinaryConvolutionCodeRate.Rate7_8)
+        {
+          bitRate = bitRate * 7 / 8;
+        }
+        else if (satelliteTuningDetail.InnerFecRate == BinaryConvolutionCodeRate.Rate8_9)
+        {
+          bitRate = bitRate * 8 / 9;
+        }
+        else if (satelliteTuningDetail.InnerFecRate == BinaryConvolutionCodeRate.Rate9_10)
+        {
+          bitRate = bitRate * 9 / 10;
+        }
+      }
+      else
+      {
+        DVBCChannel cableTuningDetail = tuningDetail as DVBCChannel;
+        double bitsPerSymbol = 6;  // 64 QAM
+        if (cableTuningDetail.ModulationType == ModulationType.Mod80Qam)
+        {
+          bitsPerSymbol = 6.25;
+        }
+        else if (cableTuningDetail.ModulationType == ModulationType.Mod96Qam)
+        {
+          bitsPerSymbol = 6.5;
+        }
+        else if (cableTuningDetail.ModulationType == ModulationType.Mod112Qam)
+        {
+          bitsPerSymbol = 6.75;
+        }
+        else if (cableTuningDetail.ModulationType == ModulationType.Mod128Qam)
+        {
+          bitsPerSymbol = 7;
+        }
+        else if (cableTuningDetail.ModulationType == ModulationType.Mod160Qam)
+        {
+          bitsPerSymbol = 7.25;
+        }
+        else if (cableTuningDetail.ModulationType == ModulationType.Mod192Qam)
+        {
+          bitsPerSymbol = 7.5;
+        }
+        else if (cableTuningDetail.ModulationType == ModulationType.Mod224Qam)
+        {
+          bitsPerSymbol = 7.75;
+        }
+        else if (cableTuningDetail.ModulationType == ModulationType.Mod256Qam)
+        {
+          bitsPerSymbol = 8;
+        }
+        bitRate = (int)bitsPerSymbol * cableTuningDetail.SymbolRate;  // kb/s
+      }
+
+      // Rough approximation: enable PID filtering when bit rate is over 60 Mb/s.
+      this.LogDebug("Digital Everywhere: multiplex bit rate = {0} kb/s", bitRate);
+      return bitRate >= 60000;
+    }
+
+    /// <summary>
+    /// Disable the filter.
+    /// </summary>
+    /// <returns><c>true</c> if the filter is successfully disabled, otherwise <c>false</c></returns>
+    public bool DisableFilter()
+    {
+      this.LogDebug("Digital Everywhere: disable PID filter");
       if (!_isDigitalEverywhere)
       {
         this.LogWarn("Digital Everywhere: not initialised or interface not supported");
         return false;
       }
 
-      if (_tunerType != CardType.DvbS && _tunerType != CardType.DvbT && _tunerType != CardType.DvbC)
+      _pidFilterPids.Clear();
+      int hr = ConfigurePidFilter(false);
+      if (hr == (int)HResult.Severity.Success)
       {
-        this.LogDebug("Digital Everywhere: PID filtering not supported");
-        // Don't bother retrying...
+        this.LogDebug("Digital Everywhere: result = success");
         return true;
       }
 
-      // It is not ideal to have to enable PID filtering because doing so can limit
-      // the number of channels that can be viewed/recorded simultaneously. However,
-      // it does seem that there is a need for filtering on satellite transponders
-      // with high data rates. Problems have been observed with transponders on Thor
-      // 5/6, Intelsat 10-02 (0.8W) if the filter is not enabled:
-      //   Symbol Rate: 27500, Modulation: 8 PSK, FEC rate: 5/6, Pilot: On, Roll-Off: 0.35
-      //   Symbol Rate: 30000, Modulation: 8 PSK, FEC rate: 3/4, Pilot: On, Roll-Off: 0.35
-      bool fullTransponder = true;
-      ushort[] filterPids = new ushort[MAX_PID_FILTER_PIDS];
-      byte validPidCount = 0;
-      DVBSChannel satelliteTuningDetail = tuningDetail as DVBSChannel;
-      if (pids == null || pids.Count == 0 ||
-        (
-          (
-            satelliteTuningDetail == null ||
-            satelliteTuningDetail.ModulationType != ModulationType.Mod8Psk
-          ) &&
-          !forceEnable
-        )
-      )
-      {
-        this.LogDebug("Digital Everywhere: disabling PID filter");
-      }
-      else
-      {
-        // If we get to here then the default approach is to enable the filter, but
-        // there is one other constraint that applies: the filter PID limit.
-        fullTransponder = false;
-        if (pids.Count > MAX_PID_FILTER_PIDS)
-        {
-          this.LogError("Digital Everywhere: too many PIDs, hardware limit = {0}, actual count = {1}", MAX_PID_FILTER_PIDS, pids.Count);
-          // When the forceEnable flag is set, we just set as many PIDs as possible.
-          if (!forceEnable)
-          {
-            this.LogDebug("Digital Everywhere: disabling PID filter");
-            fullTransponder = true;
-          }
-        }
+      this.LogError("Digital Everywhere: failed to diable PID filter, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      return false;
+    }
 
-        if (!fullTransponder)
-        {
-          this.LogDebug("Digital Everywhere: enabling PID filter");
-
-          fullTransponder = false;
-          IEnumerator<ushort> en = pids.GetEnumerator();
-          while (en.MoveNext() && validPidCount < MAX_PID_FILTER_PIDS)
-          {
-            filterPids[validPidCount++] = en.Current;
-          }
-        }
+    /// <summary>
+    /// Get the maximum number of streams that the filter can allow.
+    /// </summary>
+    public int MaximumPidCount
+    {
+      get
+      {
+        return MAX_PID_FILTER_PID_COUNT;
       }
+    }
+
+    /// <summary>
+    /// Configure the filter to allow one or more streams to pass through the filter.
+    /// </summary>
+    /// <param name="pids">A collection of stream identifiers.</param>
+    /// <returns><c>true</c> if the filter is successfully configured, otherwise <c>false</c></returns>
+    public bool AllowStreams(ICollection<ushort> pids)
+    {
+      _pidFilterPids.UnionWith(pids);
+      return true;
+    }
+
+    /// <summary>
+    /// Configure the filter to stop one or more streams from passing through the filter.
+    /// </summary>
+    /// <param name="pids">A collection of stream identifiers.</param>
+    /// <returns><c>true</c> if the filter is successfully configured, otherwise <c>false</c></returns>
+    public bool BlockStreams(ICollection<ushort> pids)
+    {
+      _pidFilterPids.ExceptWith(pids);
+      return true;
+    }
+
+    /// <summary>
+    /// Apply the current filter configuration.
+    /// </summary>
+    /// <returns><c>true</c> if the filter configuration is successfully applied, otherwise <c>false</c></returns>
+    public bool ApplyFilter()
+    {
+      this.LogDebug("Digital Everywhere: apply PID filter");
+
+      int hr = ConfigurePidFilter(true);
+      if (hr == (int)HResult.Severity.Success)
+      {
+        this.LogDebug("Digital Everywhere: result = success");
+        return true;
+      }
+
+      this.LogError("Digital Everywhere: failed to apply PID filter, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      return false;
+    }
+
+    private int ConfigurePidFilter(bool enable)
+    {
+      ushort[] pids = new ushort[MAX_PID_FILTER_PID_COUNT];
+      _pidFilterPids.CopyTo(pids, 0, Math.Min(_pidFilterPids.Count, MAX_PID_FILTER_PID_COUNT));
 
       BdaExtensionProperty property = BdaExtensionProperty.SelectPidsDvbS;
       int bufferSize = DVBS_PID_FILTER_PARAMS_SIZE;
@@ -1273,9 +1424,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
       {
         DvbsPidFilterParams filter = new DvbsPidFilterParams();
         filter.CurrentTransponder = true;
-        filter.FullTransponder = fullTransponder;
-        filter.NumberOfValidPids = validPidCount;
-        filter.FilterPids = filterPids;
+        filter.FullTransponder = !enable;
+        filter.NumberOfValidPids = (byte)_pidFilterPids.Count;
+        filter.FilterPids = pids;
         Marshal.StructureToPtr(filter, _generalBuffer, true);
       }
       else if (_tunerType == CardType.DvbT || _tunerType == CardType.DvbC)
@@ -1284,26 +1435,18 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
         bufferSize = DVBT_PID_FILTER_PARAMS_SIZE;
         DvbtPidFilterParams filter = new DvbtPidFilterParams();
         filter.CurrentTransponder = true;
-        filter.FullTransponder = fullTransponder;
-        filter.NumberOfValidPids = validPidCount;
-        filter.FilterPids = filterPids;
+        filter.FullTransponder = !enable;
+        filter.NumberOfValidPids = (byte)_pidFilterPids.Count;
+        filter.FilterPids = pids;
         Marshal.StructureToPtr(filter, _generalBuffer, true);
       }
 
       //Dump.DumpBinary(_generalBuffer, bufferSize);
 
-      int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)property,
+      return _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)property,
         _generalBuffer, bufferSize,
         _generalBuffer, bufferSize
       );
-      if (hr == (int)HResult.Severity.Success)
-      {
-        this.LogDebug("Digital Everywhere: result = success");
-        return true;
-      }
-
-      this.LogError("Digital Everywhere: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-      return false;
     }
 
     #endregion

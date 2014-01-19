@@ -19,7 +19,6 @@
 #endregion
 
 using System;
-using System.Text;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
@@ -84,131 +83,133 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
         throw new TvException("Received request to tune incompatible channel.");
       }
 
-      StringBuilder url = new StringBuilder();
-      // TODO remove pids=all when PID filter support can be added
-      url.Append("rtsp://").Append(_ipAddress).Append(":554/pids=all&src=").Append(_currentSource);
-      url.Append("&freq=").Append((int)(satelliteChannel.Frequency / 1000));
-      url.Append("&sr=").Append(satelliteChannel.SymbolRate);
+      _currentSource = 1;
+      _diseqcController.SwitchToChannel(satelliteChannel);
 
+      string frequency = ((int)(satelliteChannel.Frequency / 1000)).ToString();
+
+      string polarisation = "v";
       if (satelliteChannel.Polarisation == Polarisation.LinearH)
       {
-        url.Append("&pol=h");
+        polarisation = "h";
       }
       else if (satelliteChannel.Polarisation == Polarisation.LinearV)
       {
-        url.Append("&pol=v");
+        polarisation = "v";
       }
       else if (satelliteChannel.Polarisation == Polarisation.CircularL)
       {
-        url.Append("&pol=l");
+        polarisation = "l";
       }
       else if (satelliteChannel.Polarisation == Polarisation.CircularR)
       {
-        url.Append("&pol=r");
+        polarisation = "r";
       }
       else
       {
         this.LogWarn("SAT>IP satellite: unsupported polarisation {0}, assuming linear vertical", satelliteChannel.Polarisation);
-        url.Append("&pol=v");
       }
 
+      string fecRate = "34";
       if (satelliteChannel.InnerFecRate == BinaryConvolutionCodeRate.Rate1_2)
       {
-        url.Append("&fec=12");
+        fecRate = "12";
       }
       else if (satelliteChannel.InnerFecRate == BinaryConvolutionCodeRate.Rate2_3)
       {
-        url.Append("&fec=23");
+        fecRate = "23";
       }
       else if (satelliteChannel.InnerFecRate == BinaryConvolutionCodeRate.Rate3_4)
       {
-        url.Append("&fec=34");
+        fecRate = "34";
       }
       else if (satelliteChannel.InnerFecRate == BinaryConvolutionCodeRate.Rate5_6)
       {
-        url.Append("&fec=56");
+        fecRate = "56";
       }
       else if (satelliteChannel.InnerFecRate == BinaryConvolutionCodeRate.Rate7_8)
       {
-        url.Append("&fec=78");
+        fecRate = "78";
       }
       else if (satelliteChannel.InnerFecRate == BinaryConvolutionCodeRate.Rate8_9)
       {
-        url.Append("&fec=89");
+        fecRate = "89";
       }
       else if (satelliteChannel.InnerFecRate == BinaryConvolutionCodeRate.Rate3_5)
       {
-        url.Append("&fec=35");
+        fecRate = "35";
       }
       else if (satelliteChannel.InnerFecRate == BinaryConvolutionCodeRate.Rate4_5)
       {
-        url.Append("&fec=45");
+        fecRate = "45";
       }
       else if (satelliteChannel.InnerFecRate == BinaryConvolutionCodeRate.Rate9_10)
       {
-        url.Append("&fec=910");
+        fecRate = "910";
       }
       else
       {
         this.LogWarn("SAT>IP satellite: unsupported inner FEC rate {0}, assuming 3/4", satelliteChannel.InnerFecRate);
-        url.Append("&fec=34");
       }
+
+      string url = string.Format("rtsp://{0}:554/pids=none&src={1}&freq={2}&pol={3}&sr={4}&fec={5}", _ipAddress, _currentSource, frequency, polarisation, satelliteChannel.SymbolRate, fecRate);
 
       // DVB-S2 or DVB-S?
       if (satelliteChannel.ModulationType == ModulationType.ModNotSet)
       {
-        url.Append("&system=dvbs");
-        PerformTuning(url.ToString());
+        _streamMatchString = string.Format("{0},{1},dvbs,,,,{2},{3}", frequency, polarisation, satelliteChannel.SymbolRate, fecRate);
+        PerformTuning(url + "&msys=dvbs");
         return;
       }
 
-      url.Append("&system=dvbs2");
-      if (satelliteChannel.RollOff == RollOff.Twenty)
-      {
-        url.Append("&ro=0.20");
-      }
-      else if (satelliteChannel.RollOff == RollOff.TwentyFive)
-      {
-        url.Append("&ro=0.25");
-      }
-      else if (satelliteChannel.RollOff == RollOff.ThirtyFive)
-      {
-        url.Append("&ro=0.35");
-      }
-      else
-      {
-        this.LogWarn("SAT>IP satellite: unsupported roll-off {0}, assuming 0.35", satelliteChannel.RollOff);
-        url.Append("&ro=0.35");
-      }
-
+      string modulation = "8psk";
       if (satelliteChannel.ModulationType == ModulationType.ModQpsk)
       {
-        url.Append("&mtype=qpsk");
+        modulation = "qpsk";
       }
       else if (satelliteChannel.ModulationType == ModulationType.Mod8Psk)
       {
-        url.Append("&mtype=8psk");
+        modulation = "8psk";
       }
       else
       {
         this.LogWarn("SAT>IP satellite: unsupported modulation type {0}, assuming 8 PSK", satelliteChannel.ModulationType);
-        url.Append("&mtype=8psk");
       }
 
+      string pilots = "on";
       if (satelliteChannel.Pilot == Pilot.Off)
       {
-        url.Append("&plts=off");
+        pilots = "off";
       }
       else if (satelliteChannel.Pilot == Pilot.On)
       {
-        url.Append("&plts=on");
+        pilots = "on";
       }
       else
       {
         this.LogWarn("SAT>IP satellite: unsupported pilots setting {0}, assuming pilots on", satelliteChannel.Pilot);
-        url.Append("&plts=on");
       }
-      PerformTuning(url.ToString());
+
+      string rollOff = "0.35";
+      if (satelliteChannel.RollOff == RollOff.Twenty)
+      {
+        rollOff = "0.20";
+      }
+      else if (satelliteChannel.RollOff == RollOff.TwentyFive)
+      {
+        rollOff = "0.25";
+      }
+      else if (satelliteChannel.RollOff == RollOff.ThirtyFive)
+      {
+        rollOff = "0.35";
+      }
+      else
+      {
+        this.LogWarn("SAT>IP satellite: unsupported roll-off {0}, assuming 0.35", satelliteChannel.RollOff);
+      }
+
+      _streamMatchString = string.Format("{0},{1},dvbs2,{2},{3},{4},{5},{6}", frequency, polarisation, modulation, pilots, rollOff, satelliteChannel.SymbolRate, fecRate);
+      PerformTuning(url + string.Format("&msys=dvbs2&mtype={0}&plts={1}&ro={2}", modulation, pilots, rollOff));
     }
 
     /// <summary>
@@ -229,8 +230,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
     protected override void PerformLoading()
     {
       base.PerformLoading();
-      _diseqcController = new DiseqcController(this);
-      _diseqcController.ReloadConfiguration(_cardId);
+
+      // Check if one of the supported extensions is capable of sending DiSEqC commands.
+      foreach (ICustomDevice extensionInterface in _customDeviceInterfaces)
+      {
+        IDiseqcDevice diseqcDevice = extensionInterface as IDiseqcDevice;
+        if (diseqcDevice != null)
+        {
+          this.LogDebug("SAT>IP satellite: found DiSEqC command interface");
+          _diseqcController = new DiseqcController(diseqcDevice);
+          _diseqcController.ReloadConfiguration(_cardId);
+          break;
+        }
+      }
     }
 
     /// <summary>
@@ -243,55 +255,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
       {
         _diseqcController.ReloadConfiguration(_cardId);
       }
-    }
-
-    /// <summary>
-    /// Actually update tuner signal status statistics.
-    /// </summary>
-    /// <param name="onlyUpdateLock"><c>True</c> to only update lock status.</param>
-    protected override void PerformSignalStatusUpdate(bool onlyUpdateLock)
-    {
-      DVBSChannel satelliteChannel = _currentTuningDetail as DVBSChannel;
-      if (satelliteChannel == null)
-      {
-        _isSignalPresent = false;
-        _isSignalLocked = false;
-        _signalLevel = 0;
-        _signalQuality = 0;
-        return;
-      }
-
-      string matchString = ((int)(satelliteChannel.Frequency / 1000)).ToString() + ",";
-      if (satelliteChannel.Polarisation == Polarisation.LinearH)
-      {
-        matchString += "h";
-      }
-      else if (satelliteChannel.Polarisation == Polarisation.LinearV)
-      {
-        matchString += "v";
-      }
-      else if (satelliteChannel.Polarisation == Polarisation.CircularL)
-      {
-        matchString += "l";
-      }
-      else if (satelliteChannel.Polarisation == Polarisation.CircularR)
-      {
-        matchString += "r";
-      }
-      else
-      {
-        this.LogWarn("SAT>IP satellite: unsupported polarisation {0}, assuming linear vertical", satelliteChannel.Polarisation);
-        matchString += "v";
-      }
-      if (satelliteChannel.ModulationType == ModulationType.ModNotSet)
-      {
-        matchString += ",dvbs";
-      }
-      else
-      {
-        matchString += ",dvbs2";
-      }
-      PerformSignalStatusUpdate(matchString);
     }
 
     // TODO: remove this method, it should not be required and it is bad style!

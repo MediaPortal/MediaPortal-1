@@ -19,11 +19,7 @@
 #endregion
 
 using System;
-using System.Net.Sockets;
-using System.Text;
-using System.Text.RegularExpressions;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
@@ -69,14 +65,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
         throw new TvException("Received request to tune incompatible channel.");
       }
 
-      StringBuilder url = new StringBuilder();
-      // TODO remove pids=all when PID filter support can be added
-      // TODO add DVB-T2 support when we can distinguish DVB-T and DVB-T2
-      url.Append("rtsp://").Append(_ipAddress).Append(":554/pids=all&msys=dvbt");
-      url.Append("&freq=").Append((int)(terrestrialChannel.Frequency / 1000));
-      url.Append("&bw=").Append(terrestrialChannel.Bandwidth / 1000);
+      string frequency = ((int)terrestrialChannel.Frequency / 1000).ToString();
+      string bandwidth = (terrestrialChannel.Bandwidth / 1000).ToString();
 
-      PerformTuning(url.ToString());
+      _streamMatchString = string.Format("{0},{1},dvbt,", frequency, bandwidth);
+
+      // TODO add DVB-T2 support when we can distinguish DVB-T and DVB-T2
+      // The specification includes guard interval, transmission mode,
+      // modulation type and inner FEC rate. However, we don't have these
+      // details, and the Digital Devices Octopus Net - currently the only
+      // avaliable SAT>IP DVB-T/T2 tuner - doesn't require/use them.
+      PerformTuning(string.Format("rtsp://{0}:554/pids=none&msys=dvbt&freq={1}&bw={2}", _ipAddress, frequency, bandwidth));
     }
 
     /// <summary>
@@ -90,25 +89,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
     }
 
     #endregion
-
-    /// <summary>
-    /// Actually update tuner signal status statistics.
-    /// </summary>
-    /// <param name="onlyUpdateLock"><c>True</c> to only update lock status.</param>
-    protected override void PerformSignalStatusUpdate(bool onlyUpdateLock)
-    {
-      DVBTChannel terrestrialChannel = _currentTuningDetail as DVBTChannel;
-      if (terrestrialChannel == null)
-      {
-        _isSignalPresent = false;
-        _isSignalLocked = false;
-        _signalLevel = 0;
-        _signalQuality = 0;
-        return;
-      }
-
-      PerformSignalStatusUpdate(((int)(terrestrialChannel.Frequency / 1000)).ToString() + "," + (terrestrialChannel.Bandwidth / 1000).ToString());
-    }
 
     // TODO: remove this method, it should not be required and it is bad style!
     protected override DVBBaseChannel CreateChannel()

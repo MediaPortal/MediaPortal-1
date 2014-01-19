@@ -844,7 +844,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       {
         foreach (ICustomDevice deviceInterface in _customDeviceInterfaces)
         {
-          // Avoid recursive loop for ITVCard implementations that also implement ICustomDevice... like TvCardDvbSs2.
+          // Avoid recursive loop for ITVCard implementations that also implement ICustomDevice... like TunerB2c2Base.
           if (!(deviceInterface is ITVCard))
           {
             deviceInterface.Dispose();
