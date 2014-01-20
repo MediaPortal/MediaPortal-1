@@ -32,10 +32,10 @@ using MediaPortal.GUI.Library;
 using Action = MediaPortal.GUI.Library.Action;
 using Timer = System.Timers.Timer;
 
-namespace MediaPortal.GUI.NumberPlace
+namespace MediaPortal.GUI.Sudoku
 {
-  [PluginIcons("GUINumberPlace.NumberPlace.gif", "GUINumberPlace.NumberPlaceDisabled.gif")]
-  public class GUINumberPlace : GUIInternalWindow, ISetupForm, IShowPlugin
+  [PluginIcons("GUISudoku.Sudoku.gif", "GUISudoku.SudokuDisabled.gif")]
+  public class GUISudoku : GUIInternalWindow, ISetupForm, IShowPlugin
   {
     private enum SkinControlIDs
     {
@@ -227,7 +227,7 @@ namespace MediaPortal.GUI.NumberPlace
 
     private Settings _Settings = new Settings();
 
-    public GUINumberPlace()
+    public GUISudoku()
     {
       GetID = (int)Window.WINDOW_NUMBERPLACE;
     }

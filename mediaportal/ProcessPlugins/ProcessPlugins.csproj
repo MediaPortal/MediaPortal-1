@@ -204,7 +204,7 @@
     </ProjectReference>
     <ProjectReference Include="..\WindowPlugins\GUIHome\GUIHome.csproj">
       <Project>{B282C55B-A37B-4CEC-A4FC-00791069BF00}</Project>
-      <Name>WindowPlugins</Name>
+      <Name>GUIHome</Name>
     </ProjectReference>
     <ProjectReference Include="MusicShareWatcher\MusicShareWatcherHelper\MusicShareWatcherHelper.csproj">
       <Project>{C6564AA7-976B-43EF-9E35-7E607EE1DD12}</Project>

@@ -21,7 +21,7 @@
 using System;
 using System.Collections;
 
-namespace MediaPortal.GUI.NumberPlace
+namespace MediaPortal.GUI.Sudoku
 {
   /// <summary>
   /// Summary description for Grid.
