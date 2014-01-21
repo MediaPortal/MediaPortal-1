@@ -19,11 +19,13 @@
 #endregion
 
 using System;
+using System.Net;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using UPnP.Infrastructure.CP.Description;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
 {
@@ -38,15 +40,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
     /// <summary>
     /// Initialise a new instance of the <see cref="TunerSatIpCable"/> class.
     /// </summary>
-    /// <param name="name">The SAT>IP server's name.</param>
-    /// <param name="uuid">A unique identifier for the SAT>IP server.</param>
-    /// <param name="ipAddress">The SAT>IP server's current IP address.</param>
+    /// <param name="serverDescriptor">The server's UPnP device description.</param>
+    /// <param name="localIpAddress">The IP address of the local NIC which is connected to the server.</param>
+    /// <param name="serverIpAddress">The server's current IP address.</param>
     /// <param name="sequenceNumber">A unique sequence number or index for this instance.</param>
-    public TunerSatIpCable(string name, string uuid, string ipAddress, int sequenceNumber)
-      : base(name + " C Tuner " + sequenceNumber, uuid + "C" + sequenceNumber, ipAddress, sequenceNumber)
+    public TunerSatIpCable(DeviceDescriptor serverDescriptor, IPAddress localIpAddress, string serverIpAddress, int sequenceNumber)
+      : base(serverDescriptor, localIpAddress, serverIpAddress, sequenceNumber, 'C')
     {
       _tunerType = CardType.DvbC;
-      _uuid = uuid;
     }
 
     #endregion
@@ -65,8 +66,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
       {
         throw new TvException("Received request to tune incompatible channel.");
       }
-
-      string frequency = ((int)cableChannel.Frequency / 1000).ToString();
 
       string modulation = "256qam";
       if (cableChannel.ModulationType == ModulationType.Mod64Qam)
@@ -110,10 +109,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
         this.LogWarn("SAT>IP cable: unsupported modulation type {0}, assuming 256 QAM", cableChannel.ModulationType);
       }
 
-      // TODO add more tuning details here to avoid any possibility of selecting an incorrect stream
-      _streamMatchString = frequency;
-
-      PerformTuning(string.Format("rtsp://{0}:554/pids=none&msys=dvbc&freq={1}&mtype={2}&sr={3}", _ipAddress, frequency, modulation, cableChannel.SymbolRate));
+      PerformTuning(string.Format("msys=dvbc&freq={1}&mtype={2}&sr={3}", cableChannel.Frequency / 1000, modulation, cableChannel.SymbolRate));
     }
 
     /// <summary>

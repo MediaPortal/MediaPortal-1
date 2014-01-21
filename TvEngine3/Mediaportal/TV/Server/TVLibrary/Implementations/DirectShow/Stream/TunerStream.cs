@@ -182,16 +182,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
       {
         throw new TvException("Received request to tune incompatible channel.");
       }
-      PerformTuning(streamChannel.Url);
-    }
-
-    /// <summary>
-    /// Actually tune to a channel.
-    /// </summary>
-    /// <param name="url">The URL to tune to.</param>
-    protected void PerformTuning(string url)
-    {
-      int hr = (_filterStreamSource as IFileSourceFilter).Load(url, _sourceMediaType);
+      int hr = (_filterStreamSource as IFileSourceFilter).Load(streamChannel.Url, _sourceMediaType);
       HResult.ThrowException(hr, "Failed to tune channel.");
     }
 

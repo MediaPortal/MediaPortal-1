@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.Net;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
@@ -27,6 +28,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
+using UPnP.Infrastructure.CP.Description;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
 {
@@ -55,15 +57,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
     /// <summary>
     /// Initialise a new instance of the <see cref="TunerSatIpSatellite"/> class.
     /// </summary>
-    /// <param name="name">The SAT>IP server's name.</param>
-    /// <param name="uuid">A unique identifier for the SAT>IP server.</param>
-    /// <param name="ipAddress">The SAT>IP server's current IP address.</param>
+    /// <param name="serverDescriptor">The server's UPnP device description.</param>
+    /// <param name="localIpAddress">The IP address of the local NIC which is connected to the server.</param>
+    /// <param name="serverIpAddress">The server's current IP address.</param>
     /// <param name="sequenceNumber">A unique sequence number or index for this instance.</param>
-    public TunerSatIpSatellite(string name, string uuid, string ipAddress, int sequenceNumber)
-      : base(name + " S/S2 Tuner " + sequenceNumber, uuid + "S" + sequenceNumber, ipAddress, sequenceNumber)
+    public TunerSatIpSatellite(DeviceDescriptor serverDescriptor, IPAddress localIpAddress, string serverIpAddress, int sequenceNumber)
+      : base(serverDescriptor, localIpAddress, serverIpAddress, sequenceNumber, 'S')
     {
       _tunerType = CardType.DvbS;
-      _uuid = uuid;
     }
 
     #endregion
@@ -152,13 +153,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
         this.LogWarn("SAT>IP satellite: unsupported inner FEC rate {0}, assuming 3/4", satelliteChannel.InnerFecRate);
       }
 
-      string url = string.Format("rtsp://{0}:554/pids=none&src={1}&freq={2}&pol={3}&sr={4}&fec={5}", _ipAddress, _currentSource, frequency, polarisation, satelliteChannel.SymbolRate, fecRate);
+      string url = string.Format("src={1}&freq={2}&pol={3}&sr={4}&fec={5}&msys=dvbs", _currentSource, frequency, polarisation, satelliteChannel.SymbolRate, fecRate);
 
       // DVB-S2 or DVB-S?
       if (satelliteChannel.ModulationType == ModulationType.ModNotSet)
       {
-        _streamMatchString = string.Format("{0},{1},dvbs,,,,{2},{3}", frequency, polarisation, satelliteChannel.SymbolRate, fecRate);
-        PerformTuning(url + "&msys=dvbs");
+        PerformTuning(url);
         return;
       }
 
@@ -208,8 +208,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
         this.LogWarn("SAT>IP satellite: unsupported roll-off {0}, assuming 0.35", satelliteChannel.RollOff);
       }
 
-      _streamMatchString = string.Format("{0},{1},dvbs2,{2},{3},{4},{5},{6}", frequency, polarisation, modulation, pilots, rollOff, satelliteChannel.SymbolRate, fecRate);
-      PerformTuning(url + string.Format("&msys=dvbs2&mtype={0}&plts={1}&ro={2}", modulation, pilots, rollOff));
+      PerformTuning(url + string.Format("2&mtype={0}&plts={1}&ro={2}", modulation, pilots, rollOff));
     }
 
     /// <summary>

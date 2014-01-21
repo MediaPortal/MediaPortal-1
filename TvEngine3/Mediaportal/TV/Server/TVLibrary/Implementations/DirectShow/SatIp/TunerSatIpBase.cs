@@ -20,56 +20,74 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Rtsp;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
+using UPnP.Infrastructure.CP.Description;
+using RtspClient = Mediaportal.TV.Server.TVLibrary.Implementations.Rtsp.RtspClient;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
 {
   /// <summary>
   /// A base implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> for SAT>IP tuners.
   /// </summary>
-  public class TunerSatIpBase : TunerStream, IMpeg2PidFilter
+  public abstract class TunerSatIpBase : TunerStream, IMpeg2PidFilter
   {
+    #region constants
+
+    private static readonly Regex REGEX_RESPONSE_DESCRIBE_SIGNAL_INFO = new Regex(@";tuner=\d+,(\d+),(\d+),(\d+),", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+
+    #endregion
+
     #region variables
 
     /// <summary>
-    /// The SAT>IP server's UPnP UUID.
+    /// The SAT>IP server's UPnP device descriptor.
     /// </summary>
-    protected string _uuid = string.Empty;
+    protected DeviceDescriptor _serverDescriptor = null;
+
+    /// <summary>
+    /// The IP address of the local NIC which is connected to the SAT>IP server.
+    /// </summary>
+    protected IPAddress _localIpAddress = null;
 
     /// <summary>
     /// The SAT>IP server's IP address.
     /// </summary>
-    protected string _ipAddress = string.Empty;
+    protected string _serverIpAddress = string.Empty;
 
     /// <summary>
-    /// A sequence number or index.
+    /// The tuner's sequence number or index.
     /// </summary>
     /// <remarks>
     /// This number uniquely identifies this tuner instance among the SAT>IP server's tuners of the
-    /// same type.
+    /// same type. Note that this is not the SAT>IP front end identifier.
     /// </remarks>
     protected int _sequenceNumber = -1;
-
-    /// <summary>
-    /// A string containing tuning details, used to identify one of this tuner's streams in an RTSP
-    /// DESCRIBE response.
-    /// </summary>
-    protected string _streamMatchString = string.Empty;
 
     /// <summary>
     /// A string describing the pending PID filter changes.
     /// </summary>
     private string _pidFilterChangeString = string.Empty;
+
+    /// <summary>
+    /// An RTSP client, used to communicate with the SAT>IP server.
+    /// </summary>
+    private RtspClient _rtspClient = null;
+
+    private string _rtspSessionId = string.Empty;
+    private int _satIpStreamId = -1;
 
     #endregion
 
@@ -78,18 +96,38 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
     /// <summary>
     /// Initialise a new instance of the <see cref="TunerSatIpBase"/> class.
     /// </summary>
-    /// <param name="name">The tuner's name.</param>
-    /// <param name="externalIdentifier">The external identifier for the tuner.</param>
-    /// <param name="ipAddress">The SAT>IP server's current IP address.</param>
+    /// <param name="serverDescriptor">The server's UPnP device description.</param>
+    /// <param name="localIpAddress">The IP address of the local NIC which is connected to the server.</param>
+    /// <param name="serverIpAddress">The server's current IP address.</param>
     /// <param name="sequenceNumber">A unique sequence number or index for this instance.</param>
-    public TunerSatIpBase(string name, string externalIdentifier, string ipAddress, int sequenceNumber)
-      : base(name, externalIdentifier)
+    /// <param name="tunerType">A character describing the tuner type.</param>
+    public TunerSatIpBase(DeviceDescriptor serverDescriptor, IPAddress localIpAddress, string serverIpAddress, int sequenceNumber, char tunerType)
+      : base(serverDescriptor.FriendlyName + " " + tunerType + " Tuner " + sequenceNumber, serverDescriptor.DeviceUUID + tunerType + sequenceNumber)
     {
-      _ipAddress = ipAddress;
+      _serverDescriptor = serverDescriptor;
+      _localIpAddress = localIpAddress;
+      _serverIpAddress = serverIpAddress;
       _sequenceNumber = sequenceNumber;
     }
 
     #endregion
+
+    /// <summary>
+    /// Actually tune to a channel.
+    /// </summary>
+    /// <param name="channel">The channel to tune to.</param>
+    protected void PerformTuning(string url)
+    {
+      if (_currentTuningDetail == null)
+      {
+        // Need to SETUP a session.
+      }
+      else
+      {
+        new IPEndPoint(
+        new UdpClient(
+      }
+    }
 
     /// <summary>
     /// Get the tuner's channel scanning interface.
@@ -117,53 +155,95 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
     /// <param name="onlyUpdateLock"><c>True</c> to only update lock status.</param>
     protected void PerformSignalStatusUpdate(bool onlyUpdateLock)
     {
-      StringBuilder rtspDescribeResponse = new StringBuilder();
+      bool isSignalLocked = false;
+      int signalLevel = 0;
+      int signalQuality = 0;
+
       try
       {
-        StringBuilder rtspDescribeRequest = new StringBuilder();
-        rtspDescribeRequest.Append("DESCRIBE rtsp://").Append(_ipAddress).Append(":554/ RTSP/1.0\r\n");
-        rtspDescribeRequest.Append("CSeq: 1\r\n");
-        rtspDescribeRequest.Append("Accept: application/sdp\r\n");
-        rtspDescribeRequest.Append("Connection:close\r\n\r\n");
-        TcpClient client = new TcpClient(_ipAddress, 554);
-        NetworkStream stream = client.GetStream();
-        byte[] requestBytes = System.Text.Encoding.ASCII.GetBytes(rtspDescribeRequest.ToString());
-        stream.Write(requestBytes, 0, requestBytes.Length);
-        byte[] responseBytes = new byte[client.ReceiveBufferSize];
-        while (stream.DataAvailable)
+        RtspResponse response = null;
+        try
         {
-          int byteCount = stream.Read(responseBytes, 0, responseBytes.Length);
-          rtspDescribeResponse.Append(System.Text.Encoding.ASCII.GetString(responseBytes, 0, byteCount));
+          RtspRequest request = new RtspRequest(RtspMethod.Describe, string.Format("rtsp://{0}/stream={1}", _serverIpAddress, _satIpStreamId));
+          request.Headers.Add("Accept", "application/sdp");
+          request.Headers.Add("Connection", "close");
+          request.Headers.Add("Session", _rtspSessionId);
+          _rtspClient.SendRequest(request, out response);
         }
-        stream.Close();
-        client.Close();
+        catch (Exception ex)
+        {
+          this.LogError(ex, "SAT>IP base: exception updating signal status");
+          return;
+        }
+
+        if (response.StatusCode != RtspStatusCode.Ok)
+        {
+          this.LogError("SAT>IP base: failed to retrieve signal status, non-OK RTSP DESCRIBE status code {0} {1}", response.StatusCode, response.ReasonPhrase);
+          return;
+        }
+
+        // Find the first stream information. We assume that all signal statistics apply equally as
+        // we're only meant to be using one front end.
+        Match m = REGEX_RESPONSE_DESCRIBE_SIGNAL_INFO.Match(response.Body);
+        if (m.Success)
+        {
+          isSignalLocked = m.Groups[2].Captures[0].Value.Equals("1");
+          signalLevel = int.Parse(m.Groups[1].Captures[0].Value) * 100 / 255;    // level: 0..255 => 0..100
+          signalQuality = int.Parse(m.Groups[3].Captures[0].Value) * 100 / 15;   // quality: 0..15 => 0..100
+          return;
+        }
+
+        this.LogError("SAT>IP base: failed to locate signal status information in RTSP DESCRIBE response");
+      }
+      finally
+      {
+        _isSignalPresent = isSignalLocked;
+        _isSignalLocked = isSignalLocked;
+        _signalLevel = signalLevel;
+        _signalQuality = signalQuality;
+      }
+    }
+
+    private RtspStatusCode SendRtspPlayRequest(string additionalParameters, out string responseString)
+    {
+      responseString = null;
+      try
+      {
+        StringBuilder rtspPlayRequest = new StringBuilder();
+        rtspPlayRequest.AppendFormat("DESCRIBE rtsp://{0}/stream={1}", _ipAddress, _satIpStreamId);
+        if (!string.IsNullOrEmpty(additionalParameters))
+        {
+          rtspPlayRequest.AppendFormat("?{0}", additionalParameters);
+        }
+        rtspPlayRequest.Append(" RTSP/1.0\r\n");
+        rtspPlayRequest.AppendFormat("CSeq: {0}\r\n", _rtspCseqNumber);
+        rtspPlayRequest.AppendFormat("Session: {0}\r\n", _rtspSessionId);
+        rtspPlayRequest.Append("Accept: application/sdp\r\n");
+        rtspPlayRequest.Append("Connection: close\r\n\r\n");
+        NetworkStream stream = _tcpClient.GetStream();
+        try
+        {
+          byte[] requestBytes = System.Text.Encoding.ASCII.GetBytes(rtspPlayRequest.ToString());
+          stream.Write(requestBytes, 0, requestBytes.Length);
+          byte[] responseBytes = new byte[_tcpClient.ReceiveBufferSize];
+          while (stream.DataAvailable)
+          {
+            int byteCount = stream.Read(responseBytes, 0, responseBytes.Length);
+            responseString = System.Text.Encoding.ASCII.GetString(responseBytes, 0, byteCount);
+          }
+        }
+        finally
+        {
+          stream.Close();
+        }
       }
       catch (Exception ex)
       {
-        this.LogWarn(ex, "SAT>IP base: exception updating signal status");
-        _isSignalPresent = false;
-        _isSignalLocked = false;
-        _signalLevel = 0;
-        _signalQuality = 0;
-        return;
+        this.LogError(ex, "SAT>IP base: exception sending RTSP PLAY request");
+        return RtspStatusCode.Unknown;
       }
 
-      // Find the information for the current stream.
-      Match m = Regex.Match(rtspDescribeResponse.ToString(), @";tuner=\d+,(\d+),(\d+),(\d+)," + _streamMatchString, RegexOptions.Singleline | RegexOptions.IgnoreCase);
-      if (m.Success)
-      {
-        _isSignalLocked = m.Groups[2].Captures[0].Value.Equals("1");
-        _isSignalPresent = _isSignalLocked;
-        _signalLevel = int.Parse(m.Groups[1].Captures[0].Value) * 100 / 255;    // level: 0..255 => 0..100
-        _signalQuality = int.Parse(m.Groups[3].Captures[0].Value) * 100 / 15;   // quality: 0..15 => 0..100
-        return;
-      }
-
-      this.LogWarn("SAT>IP base: failed to locate stream in SAT>IP RTSP DESCRIBE response");
-      _isSignalPresent = false;
-      _isSignalLocked = false;
-      _signalLevel = 0;
-      _signalQuality = 0;
+      return ReadRtspResponseStatusCode(responseString);
     }
 
     #region ICustomDevice members
@@ -321,10 +401,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
     /// <returns><c>true</c> if the filter configuration is successfully applied, otherwise <c>false</c></returns>
     public bool ApplyFilter()
     {
-      // TODO here we need to send a PLAY request, but for that we require the RTSP session ID and
-      // SAT>IP stream ID. We might be able to get these from a DESCRIBE response... but it isn't
-      // looking good at present as the Digital Devices DESCRIBE response doesn't seem to be
-      // conformant.
+      this.LogDebug("SAT>IP base: apply PID filter");
+      string rtspPlayResponse = null;
+      RtspStatusCode code = SendRtspPlayRequest(_pidFilterChangeString, out rtspPlayResponse);
+      _pidFilterChangeString = string.Empty;
+
+      if (code == RtspStatusCode.Ok)
+      {
+        this.LogDebug("SAT>IP base: result = success");
+        return true;
+      }
+
+      if (code != RtspStatusCode.Unknown)
+      {
+        this.LogWarn("SAT>IP base: failed to apply PID filter, non-OK RTSP DESCRIBE status code {0}", code);
+      }
       return false;
     }
 

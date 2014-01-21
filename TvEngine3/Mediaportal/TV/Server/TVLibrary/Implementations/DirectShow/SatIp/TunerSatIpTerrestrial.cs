@@ -19,10 +19,12 @@
 #endregion
 
 using System;
+using System.Net;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using UPnP.Infrastructure.CP.Description;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
 {
@@ -37,15 +39,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
     /// <summary>
     /// Initialise a new instance of the <see cref="TunerSatIpTerrestrial"/> class.
     /// </summary>
-    /// <param name="name">The SAT>IP server's name.</param>
-    /// <param name="uuid">A unique identifier for the SAT>IP server.</param>
-    /// <param name="ipAddress">The SAT>IP server's current IP address.</param>
+    /// <param name="serverDescriptor">The server's UPnP device description.</param>
+    /// <param name="localIpAddress">The IP address of the local NIC which is connected to the server.</param>
+    /// <param name="serverIpAddress">The server's current IP address.</param>
     /// <param name="sequenceNumber">A unique sequence number or index for this instance.</param>
-    public TunerSatIpTerrestrial(string name, string uuid, string ipAddress, int sequenceNumber)
-      : base(name + " T/T2 Tuner " + sequenceNumber, uuid + "T" + sequenceNumber, ipAddress, sequenceNumber)
+    public TunerSatIpTerrestrial(DeviceDescriptor serverDescriptor, IPAddress localIpAddress, string serverIpAddress, int sequenceNumber)
+      : base(serverDescriptor, localIpAddress, serverIpAddress, sequenceNumber, 'T')
     {
       _tunerType = CardType.DvbT;
-      _uuid = uuid;
     }
 
     #endregion
@@ -68,14 +69,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
       string frequency = ((int)terrestrialChannel.Frequency / 1000).ToString();
       string bandwidth = (terrestrialChannel.Bandwidth / 1000).ToString();
 
-      _streamMatchString = string.Format("{0},{1},dvbt,", frequency, bandwidth);
-
       // TODO add DVB-T2 support when we can distinguish DVB-T and DVB-T2
       // The specification includes guard interval, transmission mode,
       // modulation type and inner FEC rate. However, we don't have these
       // details, and the Digital Devices Octopus Net - currently the only
       // avaliable SAT>IP DVB-T/T2 tuner - doesn't require/use them.
-      PerformTuning(string.Format("rtsp://{0}:554/pids=none&msys=dvbt&freq={1}&bw={2}", _ipAddress, frequency, bandwidth));
+      PerformTuning(string.Format("msys=dvbt&freq={1}&bw={2}", frequency, bandwidth));
     }
 
     /// <summary>

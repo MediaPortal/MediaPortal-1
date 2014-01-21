@@ -169,7 +169,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     /// <param name="state">The state to apply to the tuner.</param>
     protected override void SetTunerState(TunerState state)
     {
-      this.LogDebug("DirectShow base: set tuner state, current state = {0}, requested state = {1}", state);
+      this.LogDebug("DirectShow base: set tuner state, current state = {0}, requested state = {1}", _state, state);
 
       if (state == _state)
       {

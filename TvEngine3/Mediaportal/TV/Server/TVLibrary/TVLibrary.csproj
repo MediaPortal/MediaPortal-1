@@ -96,11 +96,16 @@
     <Compile Include="Implementations\CustomDeviceLoader.cs" />
     <Compile Include="Implementations\DiseqcController.cs" />
     <Compile Include="Implementations\DirectShow\TunerDirectShowBase.cs" />
+    <Compile Include="Implementations\Rtsp\RtspClient.cs" />
     <Compile Include="Implementations\Mpeg2Ts\ScannerDirectShowBase.cs" />
     <Compile Include="Implementations\Mpeg2Ts\ScannerStream.cs" />
     <Compile Include="Implementations\DirectShow\Stream\TunerStream.cs" />
     <Compile Include="Implementations\DirectShow\Stream\TunerStreamElecard.cs" />
     <Compile Include="Implementations\Mpeg2Ts\Mpeg2TunerController.cs" />
+    <Compile Include="Implementations\Rtsp\RtspMethod.cs" />
+    <Compile Include="Implementations\Rtsp\RtspRequest.cs" />
+    <Compile Include="Implementations\Rtsp\RtspResponse.cs" />
+    <Compile Include="Implementations\Rtsp\RtspStatusCode.cs" />
     <Compile Include="Implementations\TunerDetector.cs" />
     <Compile Include="Implementations\TvDvbChannel.cs" />
     <Compile Include="Implementations\Helper\DevicesInUse.cs" />

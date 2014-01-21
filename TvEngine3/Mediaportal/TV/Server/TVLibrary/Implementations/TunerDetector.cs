@@ -23,7 +23,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Management;
-using System.Net.Sockets;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -36,12 +36,14 @@ using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.Components;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2;
-using Mediaportal.TV.Server.TVLibrary.Implementations.Upnp;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Rtsp;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Upnp;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
@@ -50,8 +52,7 @@ using UPnP.Infrastructure;
 using UPnP.Infrastructure.CP;
 using UPnP.Infrastructure.CP.Description;
 using UPnP.Infrastructure.CP.SSDP;
-
-using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp;
+using RtspClient = Mediaportal.TV.Server.TVLibrary.Implementations.Rtsp.RtspClient;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations
 {
@@ -99,7 +100,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     private HashSet<string> _knownUpnpRootDevices = new HashSet<string>();
     private Dictionary<string, TunerInfo> _knownTunerInfo = new Dictionary<string, TunerInfo>();
 
+    // product instance ID => tuner instance ID => tuner external ID => info
     private Dictionary<string, Dictionary<string, Dictionary<string, TunerInfo>>> _detectedNaturalTunerGroups = new Dictionary<string, Dictionary<string, Dictionary<string, TunerInfo>>>();
+    // database group ID => info
     private Dictionary<int, TunerGroupInfo> _configuredTunerGroups = new Dictionary<int, TunerGroupInfo>();
 
     // The listener that we notify when tuners are detected or lost.
@@ -1392,7 +1395,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     {
       int satelliteFrontEndCount = 0;
       int terrestrialFrontEndCount = 0;
-      string host = new Uri(rootDeviceDescriptor.RootDescriptor.SSDPRootEntry.PreferredLink.DescriptionLocation).Host;
+      string remoteHost = new Uri(rootDeviceDescriptor.RootDescriptor.SSDPRootEntry.PreferredLink.DescriptionLocation).Host;
+      IPAddress localNic = rootDeviceDescriptor.RootDescriptor.SSDPRootEntry.PreferredLink.Endpoint.EndPointIPAddress
 
       // SAT>IP servers may have more than one tuner, but their descriptors
       // only ever have one device node. We have to find out how many tuners
@@ -1427,7 +1431,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           }
           else
           {
-            this.LogWarn("detector: failed to interpret SAT>IP X_SATIPCAP {0}, section {1}", it.Current.Value, section);
+            this.LogError("detector: failed to interpret SAT>IP X_SATIPCAP {0}, section {1}", it.Current.Value, section);
           }
         }
       }
@@ -1435,64 +1439,61 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       {
         // X_SATIPCAP is not available. Try an RTSP DESCRIBE.
         this.LogDebug("detector: attempt to get capabilities using RTSP DESCRIBE");
-        bool requestSucceeded = true;
-        StringBuilder rtspDescribeResponse = new StringBuilder();
+        RtspResponse response = null;
         try
         {
-          StringBuilder rtspDescribeRequest = new StringBuilder();
-          rtspDescribeRequest.Append("DESCRIBE rtsp://").Append(host).Append(":554/ RTSP/1.0\r\n");
-          rtspDescribeRequest.Append("CSeq: 1\r\n");
-          rtspDescribeRequest.Append("Accept: application/sdp\r\n");
-          rtspDescribeRequest.Append("Connection:close\r\n\r\n");
-          TcpClient client = new TcpClient(host, 554);
-          NetworkStream stream = client.GetStream();
-          byte[] requestBytes = System.Text.Encoding.ASCII.GetBytes(rtspDescribeRequest.ToString());
-          stream.Write(requestBytes, 0, requestBytes.Length);
-          byte[] responseBytes = new byte[client.ReceiveBufferSize];
-          while (stream.DataAvailable)
-          {
-            int byteCount = stream.Read(responseBytes, 0, responseBytes.Length);
-            rtspDescribeResponse.Append(System.Text.Encoding.ASCII.GetString(responseBytes, 0, byteCount));
-          }
-          stream.Close();
-          client.Close();
+          RtspRequest request = new RtspRequest(RtspMethod.Describe, string.Format("rtsp://{0}/", remoteHost));
+          request.Headers.Add("Accept", "application/sdp");
+          request.Headers.Add("Connection", "close");
+          RtspClient client = new RtspClient(remoteHost, 554);
+          client.SendRequest(request, out response);
         }
         catch (Exception ex)
         {
-          this.LogWarn(ex, "detector: SAT>IP RTSP DESCRIBE request failed");
-          requestSucceeded = false;
+          this.LogError(ex, "detector: SAT>IP RTSP DESCRIBE request and/or response failed");
         }
-        if (requestSucceeded)
+        if (response != null)
         {
-          Match m = Regex.Match(rtspDescribeResponse.ToString(), @"s=SatIPServer:1\s+([^\s]+)\s+", RegexOptions.Singleline | RegexOptions.IgnoreCase);
-          if (m.Success)
+          if (response.StatusCode == RtspStatusCode.Ok)
           {
-            string frontEndInfo = m.Groups[1].Captures[0].Value;
-            try
+            Match m = Regex.Match(response.Body, @"s=SatIPServer:1\s+([^\s]+)\s+", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            if (m.Success)
             {
-              string[] frontEndCounts = frontEndInfo.Split(',');
-              if (frontEndCounts.Length >= 2)
+              string frontEndInfo = m.Groups[1].Captures[0].Value;
+              try
               {
-                satelliteFrontEndCount = int.Parse(frontEndCounts[0]);
-                terrestrialFrontEndCount = int.Parse(frontEndCounts[1]);
-                if (frontEndCounts.Length > 2)
+                string[] frontEndCounts = frontEndInfo.Split(',');
+                if (frontEndCounts.Length >= 2)
                 {
-                  this.LogWarn("detector: SAT>IP RTSP DESCRIBE response contains more than 2 front end counts, not supported");
+                  satelliteFrontEndCount = int.Parse(frontEndCounts[0]);
+                  terrestrialFrontEndCount = int.Parse(frontEndCounts[1]);
+                  if (frontEndCounts.Length > 2)
+                  {
+                    this.LogWarn("detector: SAT>IP RTSP DESCRIBE response contains more than 2 front end counts, not supported");
+                  }
+                }
+                else
+                {
+                  satelliteFrontEndCount = int.Parse(frontEndCounts[0]);
                 }
               }
-              else
+              catch (Exception ex)
               {
-                satelliteFrontEndCount = int.Parse(frontEndCounts[0]);
+                this.LogError(ex, "detector: failed to interpret SAT>IP RTSP DESCRIBE response SatIPServer section {0}", frontEndInfo);
               }
             }
-            catch (Exception ex)
+            else
             {
-              this.LogWarn(ex, "detector: failed to interpret SAT>IP RTSP DESCRIBE response SatIPServer section {0}", frontEndInfo);
+              this.LogDebug("detector: RTSP DESCRIBE response does not contain SatIPServer section");
             }
+          }
+          else if (response.StatusCode == RtspStatusCode.NotFound)
+          {
+            this.LogDebug("detector: server does not have any active streams");
           }
           else
           {
-            this.LogWarn("detector: failed to interpret SAT>IP RTSP DESCRIBE response");
+            this.LogError("detector: SAT>IP server returned status code {0} {1}", response.StatusCode, response.ReasonPhrase);
           }
         }
       }
@@ -1509,7 +1510,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       for (int i = 1; i <= satelliteFrontEndCount; i++)
       {
         TunerInfo info = new TunerInfo();
-        info.Tuner = new TunerSatIpSatellite(rootDeviceDescriptor.FriendlyName, rootDeviceDescriptor.DeviceUUID, host, i);
+        info.Tuner = new TunerSatIpSatellite(rootDeviceDescriptor, localNic, remoteHost, i);
         info.ProductInstanceId = rootDeviceDescriptor.DeviceUUID;
         info.TunerInstanceId = null;
         OnTunerDetected(info);
@@ -1519,13 +1520,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         // Currently the Digital Devices Octopus Net is the only SAT>IP product
         // to support DVB-T/T2. The DVB-T tuners also support DVB-C.
         TunerInfo info1 = new TunerInfo();
-        info1.Tuner = new TunerSatIpTerrestrial(rootDeviceDescriptor.FriendlyName, rootDeviceDescriptor.DeviceUUID, host, i);
+        info1.Tuner = new TunerSatIpTerrestrial(rootDeviceDescriptor, localNic, remoteHost, i);
         info1.ProductInstanceId = rootDeviceDescriptor.DeviceUUID;
         info1.TunerInstanceId = i.ToString();
         OnTunerDetected(info1);
 
         TunerInfo info2 = new TunerInfo();
-        info2.Tuner = new TunerSatIpCable(rootDeviceDescriptor.FriendlyName, rootDeviceDescriptor.DeviceUUID, host, i);
+        info2.Tuner = new TunerSatIpCable(rootDeviceDescriptor, localNic, remoteHost, i);
         info2.ProductInstanceId = rootDeviceDescriptor.DeviceUUID;
         info2.TunerInstanceId = i.ToString();
         OnTunerDetected(info2);
