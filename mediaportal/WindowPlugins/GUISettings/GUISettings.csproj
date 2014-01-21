@@ -199,10 +199,6 @@
       <Project>{AF59C1DA-B02C-4E58-B6CA-3CF0DDD75C5D}</Project>
       <Name>GUIVideos</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GUIWeather\GUIWeather.csproj">
-      <Project>{E27E5C33-18F6-49C5-94DA-DF62DF240FC0}</Project>
-      <Name>GUIWeather</Name>
-    </ProjectReference>
     <Reference Include="CSScriptLibrary, Version=1.9.0.0, Culture=neutral, PublicKeyToken=70fcc3d18c749033">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\MediaPortal.Base\CSScriptLibrary.dll</HintPath>
@@ -300,7 +296,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="TV\GUISettingsTv.cs" />
-    <Compile Include="Weather\GUISettingsWeather.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>

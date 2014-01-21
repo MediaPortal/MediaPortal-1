@@ -251,19 +251,6 @@ namespace MediaPortal.Configuration
       }
     }
 
-    private void AddTabWeather()
-    {
-      //add weather section
-      if (splashScreen != null)
-      {
-        splashScreen.SetInformation("Adding weather section...");
-      }
-
-      Log.Info("add weather section");
-      Weather weather = new Weather();
-      AddSection(new ConfigPage(null, weather, false));
-    }
-
     private void AddTabFilters()
     {
       //Look for Audio Decoders, if exist assume decoders are installed & present config option
