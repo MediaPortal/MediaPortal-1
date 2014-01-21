@@ -848,6 +848,10 @@ namespace MediaPortal
         Log.Info("D3D: Restoring from tray");
         IsVisible = true;
         AppActive = true;
+
+        // Display taskbar icon
+        Show();
+
         if (_notifyIcon != null)
         {
           _notifyIcon.Visible = false;
@@ -918,6 +922,10 @@ namespace MediaPortal
         Log.Info("D3D: Minimizing to tray");
         IsVisible = false;
         AppActive = false;
+
+        // Hide taskbar icon
+        Hide();
+
         if (_notifyIcon != null)
         {
           _notifyIcon.Visible = true;
@@ -2020,19 +2028,20 @@ namespace MediaPortal
       FullRender();
       Activate();
 
-      // needed to focus on first run.
-      // First save current MP screen
-      _firstLoadedScreen = true;
-      Screen screenfocus = Screen.FromControl(this);
-
       // Start Minimize and restore to force MP focus
-      this.WindowState = FormWindowState.Minimized;
-      this.Show();
-      this.WindowState = FormWindowState.Normal;
-      _firstLoadedScreen = false;
-
-      // Restore previous saved screen
-      GUIGraphicsContext.currentScreen = screenfocus;
+      if (!MinimizeOnStartup)
+      {
+        // needed to focus on first run.
+        // First save current MP screen
+        _firstLoadedScreen = true;
+        Screen screenfocus = Screen.FromControl(this);
+        this.WindowState = FormWindowState.Minimized;
+        this.Show();
+        this.WindowState = FormWindowState.Normal;
+        _firstLoadedScreen = false;
+        // Restore previous saved screen
+        GUIGraphicsContext.currentScreen = screenfocus;
+      }
 
       _isLoaded = true;
     }
