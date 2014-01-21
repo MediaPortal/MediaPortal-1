@@ -1515,6 +1515,11 @@ public class MediaPortalApp : D3D, IRender
           }
           PluginManager.WndProc(ref msg);
           break;
+
+        // handle default commands needed for plugins
+        default:
+          PluginManager.WndProc(ref msg);
+          break;
       }
 
       // TODO: extract to method and change to correct code
