@@ -80,6 +80,13 @@ namespace MediaPortal
 
     // ReSharper disable InconsistentNaming
     private const int D3DSWAPEFFECT_FLIPEX = 5;
+    private const int numberOfRetries = 20;
+    private const int numberOfRetriesEnum = 20;
+    private const int numberOfRetriesAdaptor = 20;
+    private const int delayBetweenTries = 5000;
+    private static int retries = 0;
+    private static bool successful = false;
+    private static bool successfulInit = false;
     // ReSharper restore InconsistentNaming
 
     #endregion
@@ -139,7 +146,7 @@ namespace MediaPortal
 
     private readonly Control           _renderTarget;             // render target object
     private readonly PresentParameters _presentParams;            // D3D presentation parameters
-    internal readonly D3DEnumeration   _enumerationSettings;      //
+    internal D3DEnumeration            _enumerationSettings;      //
     private readonly bool              _useExclusiveDirectXMode;  // 
     private readonly bool              _disableMouseEvents;       //
     private readonly bool              _doNotWaitForVSync;        // debug setting
@@ -307,6 +314,41 @@ namespace MediaPortal
     /// </summary>
     protected virtual void OnExit() { }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    protected virtual void OnEnumeration()
+    {
+      _enumerationSettings = new D3DEnumeration();
+      int enumIntCount = 0;
+      bool ConfirmDeviceCheck = false;
+
+      // get display adapter info
+      while (ConfirmDeviceCheck != true && enumIntCount < numberOfRetriesEnum)
+      {
+        try
+        {
+          Log.Debug("D3D: Starting and find Enumeration Settings - retry {0}", enumIntCount);
+          _enumerationSettings.ConfirmDeviceCallback = ConfirmDevice;
+          try
+          {
+            _enumerationSettings.Enumerate();
+            ConfirmDeviceCheck = true;
+          }
+          catch (Exception ex)
+          {
+            Log.Error("D3D: failed to _enumerationSettings exception {0}", ex);
+            _enumerationSettings = new D3DEnumeration();
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Error("D3D: Starting and find _enumerationSettings exception {0}", ex);
+          _enumerationSettings = new D3DEnumeration();
+        }
+        enumIntCount++;
+      }
+    }
 
     /// <summary>
     /// Init graphics device
@@ -316,6 +358,18 @@ namespace MediaPortal
     protected bool Init()
     {
       Log.Debug("D3D: Init()");
+
+      // Reset Adapter
+      AdapterInfo = null;
+
+      // log information about available adapters
+      var enumeration = new D3DEnumeration();
+      enumeration.Enumerate();
+      foreach (GraphicsAdapterInfo ai in enumeration.AdapterInfoList)
+      {
+        Log.Debug("D3D: Init Adapter #{0}: {1} - Driver: {2} ({3}) - DeviceName: {4}",
+          ai.AdapterOrdinal, ai.AdapterDetails.Description, ai.AdapterDetails.DriverName, ai.AdapterDetails.DriverVersion, ai.AdapterDetails.DeviceName);
+      }
 
       // Set up cursor
       _renderTarget.Cursor = Cursors.Default;
@@ -329,10 +383,40 @@ namespace MediaPortal
       // Initialize the application timer
       DXUtil.Timer(DirectXTimer.Start);
 
+      int adapIntCount = 0;
+
       // get display adapter info
-      _enumerationSettings.ConfirmDeviceCallback = ConfirmDevice;
-      _enumerationSettings.Enumerate();
-      AdapterInfo = FindAdapterForScreen(GUIGraphicsContext.currentScreen);
+      OnEnumeration();
+
+      // Reset counter
+      adapIntCount = 0;
+
+      while (AdapterInfo == null && adapIntCount < numberOfRetriesAdaptor)
+      {
+        try
+        {
+          Log.Debug("D3D: Starting and find Adapter info - retry #{0}", adapIntCount);
+          adapIntCount++;
+          AdapterInfo = FindAdapterForScreen(GUIGraphicsContext.currentScreen);
+          if (AdapterInfo == null)
+          {
+            OnEnumeration();
+          }
+          if (AdapterInfo != null)
+          {
+            Log.Debug("D3D: Starting and find Adapter #{0}: {1} - retry #{2}", AdapterInfo.AdapterOrdinal, AdapterInfo, adapIntCount);
+          }
+          else
+          {
+            Log.Debug("D3D: Adapter info is not detected - retry #{0}", adapIntCount);
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Error("D3D: Starting and find AdapterInfo exception {0}", ex);
+          AdapterInfo = null;
+        }
+      }
       
       if (!Windowed)
       {
@@ -356,8 +440,11 @@ namespace MediaPortal
                  GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
       }
 
-      // Initialize D3D Device
-      InitializeDevice();
+      if (!successful)
+      {
+        // Initialize D3D Device
+        InitializeDevice();
+      }
 
       return true;
     }
@@ -1027,6 +1114,8 @@ namespace MediaPortal
         var rect = Screen.FromRectangle(info.MonitorRectangle).Bounds;
         if (rect.Equals(screen.Bounds))
         {
+          Log.Debug("D3D: FindAdapterForScreen Adapter #{0}: {1} - Driver: {2} ({3}) - DeviceName: {4}",
+          adapterInfo.AdapterOrdinal, adapterInfo.AdapterDetails.Description, adapterInfo.AdapterDetails.DriverName, adapterInfo.AdapterDetails.DriverVersion, adapterInfo.AdapterDetails.DeviceName);
           GUIGraphicsContext.currentStartScreen = GUIGraphicsContext.currentScreen;
           return adapterInfo;
         }
@@ -1097,108 +1186,115 @@ namespace MediaPortal
       // get capabilities of hardware device for current adapter
       Caps capabilities = GetCapabilities();
 
-      Log.Info("D3D: GPU '{0}' is using driver version '{1}'", AdapterInfo.AdapterDetails.Description.Trim(), AdapterInfo.AdapterDetails.DriverVersion);
-      Log.Info("D3D: Vertex shader version: {0}", capabilities.VertexShaderVersion);
-      Log.Info("D3D: Pixel shader version: {0}", capabilities.PixelShaderVersion);
-
-      // default to reference rasterizer and software vertex processing for initialization purposes
-      _deviceType  = DeviceType.Reference;
-      _createFlags = CreateFlags.SoftwareVertexProcessing;
-
-      // check if GPU supports rasterization in hardware
-      if (capabilities.DeviceCaps.SupportsHardwareRasterization)
+      if (!successfulInit)
       {
-         Log.Info("D3D: GPU supports rasterization in hardware");
-        _deviceType = DeviceType.Hardware;
-      }
-
-      //  check if GPU supports shader model 2.0
-      if (capabilities.VertexShaderVersion >= new Version(2, 0) && capabilities.PixelShaderVersion >= new Version(2, 0))
-      {
-        // check if GPU supports rasterization, transformation, lighting in hardware
-        if (capabilities.DeviceCaps.SupportsHardwareTransformAndLight)
+        if (AdapterInfo != null)
         {
-          Log.Info("D3D: GPU supports rasterization, transformation, lighting in hardware");
-          _createFlags = CreateFlags.HardwareVertexProcessing;
+          Log.Info("D3D: GPU '{0}' is using driver version '{1}'", AdapterInfo.AdapterDetails.Description.Trim(), AdapterInfo.AdapterDetails.DriverVersion);
         }
-        // check if GPU supports rasterization, transformations, lighting, and shading in hardware
-        if (capabilities.DeviceCaps.SupportsPureDevice)
+        Log.Info("D3D: Vertex shader version: {0}", capabilities.VertexShaderVersion);
+        Log.Info("D3D: Pixel shader version: {0}", capabilities.PixelShaderVersion);
+
+        // default to reference rasterizer and software vertex processing for initialization purposes
+        _deviceType = DeviceType.Reference;
+        _createFlags = CreateFlags.SoftwareVertexProcessing;
+
+        // check if GPU supports rasterization in hardware
+        if (capabilities.DeviceCaps.SupportsHardwareRasterization)
         {
-          Log.Info("D3D: GPU supports rasterization, transformations, lighting, and shading in hardware");
-          if (OSInfo.OSInfo.VistaOrLater())
+          Log.Info("D3D: GPU supports rasterization in hardware");
+          _deviceType = DeviceType.Hardware;
+        }
+
+        //  check if GPU supports shader model 2.0
+        if (capabilities.VertexShaderVersion >= new Version(2, 0) && capabilities.PixelShaderVersion >= new Version(2, 0))
+        {
+          // check if GPU supports rasterization, transformation, lighting in hardware
+          if (capabilities.DeviceCaps.SupportsHardwareTransformAndLight)
           {
-            _createFlags |= CreateFlags.PureDevice;
+            Log.Info("D3D: GPU supports rasterization, transformation, lighting in hardware");
+            _createFlags = CreateFlags.HardwareVertexProcessing;
+          }
+          // check if GPU supports rasterization, transformations, lighting, and shading in hardware
+          if (capabilities.DeviceCaps.SupportsPureDevice)
+          {
+            Log.Info("D3D: GPU supports rasterization, transformations, lighting, and shading in hardware");
+            if (OSInfo.OSInfo.VistaOrLater())
+            {
+              _createFlags |= CreateFlags.PureDevice;
+            }
           }
         }
-      }
 
-      // Log some interesting capabilities
-      if (!capabilities.TextureCaps.SupportsPower2 && !capabilities.TextureCaps.SupportsNonPower2Conditional)
-      {
-        Log.Info("D3D: GPU unconditionally supports textures with dimensions that are not powers of two");
-      }
-      else if (capabilities.TextureCaps.SupportsPower2 && capabilities.TextureCaps.SupportsNonPower2Conditional)
-      {
-        Log.Info("D3D: GPU conditionally supports textures with dimensions that are not powers of two");
-      }
-      else if (capabilities.TextureCaps.SupportsPower2 && !capabilities.TextureCaps.SupportsNonPower2Conditional)
-      {
-        Log.Info("D3D: GPU does not support textures with dimensions that are not powers of two");
-      }
+        // Log some interesting capabilities
+        if (!capabilities.TextureCaps.SupportsPower2 && !capabilities.TextureCaps.SupportsNonPower2Conditional)
+        {
+          Log.Info("D3D: GPU unconditionally supports textures with dimensions that are not powers of two");
+        }
+        else if (capabilities.TextureCaps.SupportsPower2 && capabilities.TextureCaps.SupportsNonPower2Conditional)
+        {
+          Log.Info("D3D: GPU conditionally supports textures with dimensions that are not powers of two");
+        }
+        else if (capabilities.TextureCaps.SupportsPower2 && !capabilities.TextureCaps.SupportsNonPower2Conditional)
+        {
+          Log.Info("D3D: GPU does not support textures with dimensions that are not powers of two");
+        }
 
-      // TODO: check for any capabilities that would not allow MP to run
+        // TODO: check for any capabilities that would not allow MP to run
 
-      // read skin information
-      GUIControlFactory.LoadReferences(GUIGraphicsContext.GetThemedSkinFile(@"\references.xml"));
+        // read skin information
+        GUIControlFactory.LoadReferences(GUIGraphicsContext.GetThemedSkinFile(@"\references.xml"));
 
-      // Set up the presentation parameters
-      BuildPresentParams(Windowed);
+        // Set up the presentation parameters
+        BuildPresentParams(Windowed);
 
-      // Create the device
-      if (GUIGraphicsContext.IsDirectX9ExUsed())
-      {
-        // Vista or later, use DirectX9Ex device
-        Log.Info("D3D: Creating DirectX9Ex device");
-        CreateDirectX9ExDevice();
-      }
-      else
-      {
-        Log.Info("D3D: Creating DirectX9 device");
-        GUIGraphicsContext.DX9Device = new Device(AdapterInfo.AdapterOrdinal,
-                                                  _deviceType, 
-                                                  _renderTarget,
-                                                  _createFlags | CreateFlags.MultiThreaded | CreateFlags.FpuPreserve,
-                                                  _presentParams);
-      }
+        // Create the device
+        if (GUIGraphicsContext.IsDirectX9ExUsed())
+        {
+          // Vista or later, use DirectX9Ex device
+          Log.Info("D3D: Creating DirectX9Ex device");
+          CreateDirectX9ExDevice();
+        }
+        else
+        {
+          Log.Info("D3D: Creating DirectX9 device");
+          GUIGraphicsContext.DX9Device = new Device(AdapterInfo.AdapterOrdinal,
+                                                    _deviceType,
+                                                    _renderTarget,
+                                                    _createFlags | CreateFlags.MultiThreaded | CreateFlags.FpuPreserve,
+                                                    _presentParams);
+        }
 
-      // update some magic number use for animations
-      GUIGraphicsContext.MaxFPS = Manager.Adapters[AdapterInfo.AdapterOrdinal].CurrentDisplayMode.RefreshRate;
+        // update some magic number use for animations
+        GUIGraphicsContext.MaxFPS = Manager.Adapters[AdapterInfo.AdapterOrdinal].CurrentDisplayMode.RefreshRate;
 
-      // set always on top parameter
-      TopMost = _alwaysOnTop;
+        // set always on top parameter
+        TopMost = _alwaysOnTop;
 
-      // Set up the fullscreen cursor
-      if (_showCursorWhenFullscreen && !Windowed)
-      {
-        var ourCursor = Cursor;
-        GUIGraphicsContext.DX9Device.SetCursor(ourCursor, true);
-        GUIGraphicsContext.DX9Device.ShowCursor(true);
-      }
+        // Set up the fullscreen cursor
+        if (_showCursorWhenFullscreen && !Windowed)
+        {
+          var ourCursor = Cursor;
+          GUIGraphicsContext.DX9Device.SetCursor(ourCursor, true);
+          GUIGraphicsContext.DX9Device.ShowCursor(true);
+        }
 
-      // Setup the event handlers for our device
-      GUIGraphicsContext.DX9Device.DeviceLost  += OnDeviceLost;
+        // Setup the event handlers for our device
+        GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
 
-      // Initialize the app's device-dependent objects
-      try
-      {
-        InitializeDeviceObjects();
-        AppActive = true;
-      }
-      catch (Exception ex)
-      {
-        Log.Error("D3D: InitializeDeviceObjects - Exception: {0}", ex.ToString());
-        GUIGraphicsContext.DX9Device.Dispose();
-        GUIGraphicsContext.DX9Device = null;
+        // Initialize the app's device-dependent objects
+        try
+        {
+          InitializeDeviceObjects();
+          AppActive = true;
+          successfulInit = true;
+        }
+        catch (Exception ex)
+        {
+          Log.Error("D3D: InitializeDeviceObjects - Exception: {0}", ex.ToString());
+          GUIGraphicsContext.DX9Device.Dispose();
+          GUIGraphicsContext.DX9Device = null;
+        }
       }
     }
 
@@ -1211,28 +1307,40 @@ namespace MediaPortal
     {
       Log.Debug("D3D: GetCapabilities()");
 
-      const int numberOfRetries   = 20;
-      const int delayBetweenTries = 250;
 
       Caps capabilities;
   
       // retry ever 100 ms to get the capabilities for the selected adapter for a maximum time of 100 tries
-      int retries = 0;
-      bool successful = false;
-      do
+      if (!successful)
       {
-        try
+        do
         {
-          capabilities = Manager.GetDeviceCaps(AdapterInfo.AdapterOrdinal, DeviceType.Hardware);
-          successful = true;
-        }
-        catch (Exception)
-        {
-          Log.Warn("Main: Failed to get capabilities for adapter #{0}: {1} (retry in {2}ms)", AdapterInfo.AdapterOrdinal, AdapterInfo.ToString(), delayBetweenTries);
-          retries++;
-          Thread.Sleep(delayBetweenTries);
-        }
-      } while (!successful && retries < numberOfRetries);
+          try
+          {
+            capabilities = Manager.GetDeviceCaps(AdapterInfo.AdapterOrdinal, DeviceType.Hardware);
+            successful = true;
+          }
+          catch (Exception)
+          {
+            retries++;
+            if (AdapterInfo != null)
+            {
+              Log.Warn("Main: Failed to get capabilities for adapter #{0}: {1} (retry in {2}ms) try reinit #{3}", AdapterInfo.AdapterOrdinal, AdapterInfo.ToString(), delayBetweenTries, retries);
+            }
+            else
+            {
+              Log.Warn("Main: Failed to get capabilities for adapter (retry in {0}ms) try reinit #{1}", delayBetweenTries, retries);
+            }
+            Thread.Sleep(delayBetweenTries);
+
+            // Restart Init sequence
+            if (retries < numberOfRetries)
+            {
+              Init();
+            }
+          }
+        } while (!successful && retries < numberOfRetries);
+      }
 
       // MP needs a hardware device, or it will be unusable
       if (!successful)
