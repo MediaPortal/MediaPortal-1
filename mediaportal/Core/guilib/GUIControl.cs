@@ -868,7 +868,8 @@ namespace MediaPortal.GUI.Library
 
     public virtual int NavigateUp
     {
-      get {
+      get
+      {
         int r = 0;
         if (int.TryParse(_upControl, out r))
         {
@@ -883,10 +884,13 @@ namespace MediaPortal.GUI.Library
           }
           else
           {
-            Log.Debug("GUIControl.NavigateUp: Tried to use parsed string, original {0}, parsed {1}", _upControl, parsed);
+            if (_upControl.Length > 0)
+            {
+              Log.Debug("GUIControl.NavigateUp: Tried to use parsed string, original {0}, parsed {1}", _upControl, parsed);
+            }
             return 0;
           }
-        } 
+        }
       }
       set { _upControl = string.Format("{0}",value); }
     }
@@ -909,7 +913,10 @@ namespace MediaPortal.GUI.Library
           }
           else
           {
-            Log.Debug("GUIControl.NavigateDown: Tried to use parsed string, original {0}, parsed {1}", _downControl, parsed);
+            if (_downControl.Length > 0)
+            {
+              Log.Debug("GUIControl.NavigateDown: Tried to use parsed string, original {0}, parsed {1}", _downControl, parsed);
+            }
             return 0;
           }
         }
@@ -935,7 +942,10 @@ namespace MediaPortal.GUI.Library
           }
           else
           {
-            Log.Debug("GUIControl.NavigateLeft: Tried to use parsed string, original {0}, parsed {1}", _leftControl, parsed);
+            if (_leftControl.Length > 0)
+            {
+              Log.Debug("GUIControl.NavigateLeft: Tried to use parsed string, original {0}, parsed {1}", _leftControl, parsed);
+            }
             return 0;
           }
         }
@@ -961,7 +971,10 @@ namespace MediaPortal.GUI.Library
           }
           else
           {
-            Log.Debug("GUIControl.NavigateRight: Tried to use parsed string, original {0}, parsed {1}", _rightControl, parsed);
+            if (_rightControl.Length > 0)
+            {
+              Log.Debug("GUIControl.NavigateRight: Tried to use parsed string, original {0}, parsed {1}", _rightControl, parsed);
+            }
             return 0;
           }
         }
