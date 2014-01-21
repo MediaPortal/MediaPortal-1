@@ -204,9 +204,6 @@ namespace MediaPortal.Configuration
       AddTabPictures();
       AddTabRemote();
       AddTabFilters();
-      //Mantis 3772 - Weather.com API is not free any more
-      //temporarily disable plugin
-      //AddTabWeather();
       AddTabPlugins();
       AddTabThirdPartyChecks();
 

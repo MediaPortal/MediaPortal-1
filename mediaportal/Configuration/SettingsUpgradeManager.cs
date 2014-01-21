@@ -129,11 +129,6 @@ namespace MediaPortal.Configuration
       UpdateEntryDefaultValue(settings, "skin", "name", "Blue4", "Default");
       UpdateEntryDefaultValue(settings, "skin", "name", "Blue4wide", "DefaultWide");
 
-      //Mantis 3772 - Weather.com API is not free any more
-      //temporarily disable plugin
-      UpdateEntryDefaultValue(settings, "pluginswindows", "MediaPortal.GUI.Weather.GUIWindowWeather", "yes", "no");
-      UpdateEntryDefaultValue(settings, "plugins", "weather", "yes", "no");
-
       ApplyDeploySettingUpgrade(settings);
 
       settings.Save();
