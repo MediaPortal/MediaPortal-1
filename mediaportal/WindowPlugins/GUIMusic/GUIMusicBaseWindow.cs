@@ -125,7 +125,6 @@ namespace MediaPortal.GUI.Music
     protected delegate void StartPlayingPlaylistDelegate();
 
     protected bool _strippedPrefixes;
-    protected string _artistPrefixes;
 
     #endregion
 
@@ -220,7 +219,6 @@ namespace MediaPortal.GUI.Music
         _playlistIsCurrent = xmlreader.GetValueAsBool("musicfiles", "playlistIsCurrent", true);
 
         _strippedPrefixes = xmlreader.GetValueAsBool("musicfiles", "stripartistprefixes", false);
-        _artistPrefixes = xmlreader.GetValueAsString("musicfiles", "artistprefixes", "The, Les, Die");
 
         for (int i = 0; i < _sortModes.Length; ++i)
         {
@@ -1530,8 +1528,7 @@ namespace MediaPortal.GUI.Music
         var artist = song.Artist;
         if (_strippedPrefixes)
         {
-          //Fix ME
-          //artist = AudioscrobblerBase.UndoArtistPrefix(song.Artist);
+          artist = Util.Utils.UndoArtistPrefix(song.Artist);
         }
         ShowAlbumInfo(artist, song.Album);
       }
@@ -1540,8 +1537,7 @@ namespace MediaPortal.GUI.Music
         var artist = song.Artist;
         if (_strippedPrefixes)
         {
-          //Fix ME
-          //artist = AudioscrobblerBase.UndoArtistPrefix(song.Artist);
+          artist = Util.Utils.UndoArtistPrefix(song.Artist);
         }
 
         ShowArtistInfo(artist, song.Album);
@@ -1551,8 +1547,7 @@ namespace MediaPortal.GUI.Music
         var artist = song.AlbumArtist;
         if (_strippedPrefixes)
         {
-          //Fix ME
-          //artist = AudioscrobblerBase.UndoArtistPrefix(song.AlbumArtist);
+          artist = Util.Utils.UndoArtistPrefix(song.AlbumArtist);
         }
 
         ShowArtistInfo(artist, song.Album);

@@ -201,16 +201,10 @@ namespace MediaPortal.GUI.Library
       _imageLogo = LoadAnimationControl(_parentControlId, _controlId, 0, 0, 0, 0, _logoTextureName);
       _imageLogo.ParentControl = this;
       FontName = _fontName;
-      
-      //create an image for the markers that we will move around and render as needed.
-      string strText = GUIPropertyManager.Parse(LabelMarkerStarts);
-      if (strText.Length > 0)
-      {
-        _imageFillMarker = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, 0, 0,
-                                                _markerTextureName);
-        _imageFillMarker.KeepAspectRatio = false;
-        _imageFillMarker.ParentControl = this;
-      }
+
+      _imageFillMarker = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _markerTextureName);
+      _imageFillMarker.KeepAspectRatio = false;
+      _imageFillMarker.ParentControl = this;
     }
 
     public override void ScaleToScreenResolution()
@@ -1144,7 +1138,7 @@ namespace MediaPortal.GUI.Library
       {
         return;
       }
-      
+
       float fPercentIncrement = fTotWidth;
       float fJumpWidth = 0;
       int iCurrentPosition = 0;
@@ -1154,8 +1148,8 @@ namespace MediaPortal.GUI.Library
       _markerWidths.Clear();
       _markerXPositions.Clear();
       _markerYPositions.Clear();
-      
-      for (int i=0; i < MarkerStartsPercent.Count || i < MarkerEndsPercent.Count; i++)
+
+      for (int i = 0; i < MarkerStartsPercent.Count || i < MarkerEndsPercent.Count; i++)
       {
         //set the width of the bar
         fJumpWidth = (float) MarkerEndsPercent[i] - (float) MarkerStartsPercent[i];
@@ -1167,7 +1161,7 @@ namespace MediaPortal.GUI.Library
         
         iCurrentPosition = iWidth1 + iXPos;
         iWidth1 = (int) Math.Floor(fJumpWidth);
-        
+
         if (iWidth1 > 0)
         {
           _markerWidths.Add(iWidth1);
