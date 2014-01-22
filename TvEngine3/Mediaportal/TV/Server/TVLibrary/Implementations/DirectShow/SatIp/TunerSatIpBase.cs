@@ -22,9 +22,11 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Rtsp;
@@ -46,7 +48,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
   {
     #region constants
 
-    private static readonly Regex REGEX_RESPONSE_DESCRIBE_SIGNAL_INFO = new Regex(@";tuner=\d+,(\d+),(\d+),(\d+),", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+    private static readonly Regex REGEX_DESCRIBE_RESPONSE_SIGNAL_INFO = new Regex(@";tuner=\d+,(\d+),(\d+),(\d+),", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+    private static readonly Regex REGEX_RTSP_SESSION_HEADER = new Regex(@"\s*([^\s;]+)(;timeout=(\d+))");
+    private const int DEFAULT_RTSP_SESSION_TIMEOUT = 60;    // unit = s
 
     #endregion
 
@@ -77,17 +81,43 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
     protected int _sequenceNumber = -1;
 
     /// <summary>
-    /// A string describing the pending PID filter changes.
+    /// A URI section specifying the pending PID filter changes.
     /// </summary>
-    private string _pidFilterChangeString = string.Empty;
+    private string _pidFilterChangeParameters = string.Empty;
 
     /// <summary>
     /// An RTSP client, used to communicate with the SAT>IP server.
     /// </summary>
     private RtspClient _rtspClient = null;
 
+    /// <summary>
+    /// The current RTSP session ID. Used in the header of all RTSP messages
+    /// sent to the server.
+    /// </summary>
     private string _rtspSessionId = string.Empty;
-    private int _satIpStreamId = -1;
+
+    /// <summary>
+    /// The time (in seconds) after which the SAT>IP server will stop streaming
+    /// if it does not receive some kind of interaction.
+    /// </summary>
+    private int _rtspSessionTimeout = -1;
+
+    /// <summary>
+    /// The current SAT>IP stream ID. Used as part of all URIs sent to the
+    /// SAT>IP server.
+    /// </summary>
+    private string _satIpStreamId = string.Empty;
+
+    /// <summary>
+    /// A thread, used to periodically send RTSP OPTIONS to tell the SAT>IP
+    /// server not to stop the stream.
+    /// </summary>
+    private Thread _keepAliveThread = null;
+
+    /// <summary>
+    /// An event, used to stop the stream keep-alive thread.
+    /// </summary>
+    private AutoResetEvent _keepAliveThreadStopEvent = null;
 
     #endregion
 
@@ -112,21 +142,144 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
 
     #endregion
 
+    #region tuning & scanning
+
     /// <summary>
     /// Actually tune to a channel.
     /// </summary>
-    /// <param name="channel">The channel to tune to.</param>
-    protected void PerformTuning(string url)
+    /// <param name="parameters">A URI section specifying the tuning parameters.</param>
+    protected void PerformTuning(string parameters)
     {
+      this.LogDebug("SAT>IP base: perform tuning");
+
+      RtspRequest request;
+      RtspResponse response = null;
+      string rtpUrl = null;
       if (_currentTuningDetail == null)
       {
-        // Need to SETUP a session.
+        // Find a free port for receiving the RTP stream.
+        int rtpClientPort = 0;
+        TcpConnectionInformation[] activeTcpConnections = IPGlobalProperties.GetIPGlobalProperties().GetActiveTcpConnections();
+        for (int port = 40000; port <= 650534; port += 2)
+        {
+          rtpClientPort = port;
+          foreach (TcpConnectionInformation connection in activeTcpConnections)
+          {
+            if (connection.LocalEndPoint.Port == port)
+            {
+              rtpClientPort = 0;
+              break;
+            }
+          }
+          if (rtpClientPort != 0)
+          {
+            break;
+          }
+        }
+        this.LogDebug("SAT>IP base: send RTSP SETUP, RTP client port = {0}", rtpClientPort);
+
+        // SETUP a session.
+        _rtspClient = new RtspClient(_serverIpAddress);
+        request = new RtspRequest(RtspMethod.Setup, string.Format("rtsp://{0}/?{1}", _serverIpAddress, parameters));
+        request.Headers.Add("Transport", string.Format("RTP/AVP;unicast;client_port={0}-{1}", rtpClientPort, rtpClientPort + 1));
+        request.Headers.Add("Connection", "close");
+
+        if (_rtspClient.SendRequest(request, out response) != RtspStatusCode.Ok)
+        {
+          throw new TvException("Failed to tune, non-OK RTSP SETUP status code {0} {1}", response.StatusCode, response.ReasonPhrase);
+        }
+        if (!response.Headers.TryGetValue("com.ses.streamID", out _satIpStreamId))
+        {
+          throw new TvException("Failed to tune, not able to locate stream ID header in RTSP SETUP response");
+        }
+
+        string sessionHeader;
+        if (!response.Headers.TryGetValue("Session", out sessionHeader))
+        {
+          throw new TvException("Failed to tune, not able to locate session header in RTSP SETUP response");
+        }
+        Match m = REGEX_RTSP_SESSION_HEADER.Match(sessionHeader);
+        if (!m.Success)
+        {
+          throw new TvException("Failed to tune, RTSP SETUP response session header {0} format not recognised");
+        }
+        _rtspSessionId = m.Groups[1].Captures[0].Value;
+        if (m.Groups[3].Captures.Count == 1)
+        {
+          _rtspSessionTimeout = int.Parse(m.Groups[3].Captures[0].Value);
+        }
+        else
+        {
+          _rtspSessionTimeout = DEFAULT_RTSP_SESSION_TIMEOUT;
+        }
+
+        bool foundRtpTransport = false;
+        string rtpServerPort = null;
+        string transportHeader;
+        if (!response.Headers.TryGetValue("Transport", out transportHeader))
+        {
+          throw new TvException("Failed to tune, not able to locate transport header in RTSP SETUP response");
+        }
+        string[] transports = transportHeader.Split(',');
+        foreach (string transport in transports)
+        {
+          if (transport.Trim().StartsWith("RTP/AVP"))
+          {
+            foundRtpTransport = true;
+            string[] sections = transport.Split(',');
+            foreach (string section in sections)
+            {
+              string[] parts = section.Split('=');
+              if (parts[0].Equals("server_port"))
+              {
+                string[] ports = parts[1].Split('-');
+                rtpServerPort = ports[0];
+              }
+              else if (parts[0].Equals("client_port"))
+              {
+                string[] ports = parts[1].Split('-');
+                if (!ports[0].Equals(rtpClientPort))
+                {
+                  this.LogWarn("SAT>IP base: server specified RTP client port {0} instead of {1}", ports[0], rtpClientPort);
+                }
+                rtpClientPort = int.Parse(ports[0]);
+              }
+            }
+          }
+        }
+        if (!foundRtpTransport)
+        {
+          throw new TvException("Failed to tune, not able to locate RTP transport details in RTSP SETUP response transport header");
+        }
+        rtpUrl = string.Format("rtp://{0}:{1}@{2}:{3}", _localIpAddress, rtpClientPort, _serverIpAddress, rtpServerPort);
+        this.LogDebug("SAT>IP base: RTSP SETUP response okay");
+        this.LogDebug("  session ID = {0}", _rtspSessionId);
+        this.LogDebug("  timeout    = {0}", _rtspSessionTimeout);
+        this.LogDebug("  stream ID  = {0}", _satIpStreamId);
+        this.LogDebug("  RTP URL    = {0}", rtpUrl);
+
+        parameters = string.Empty;
       }
-      else
+
+      // PLAY to change channel or start the stream
+      this.LogDebug("SAT>IP base: send RTSP PLAY");
+      request = new RtspRequest(RtspMethod.Play, string.Format("rtsp://{0}/stream={1}?{2}", _serverIpAddress, _satIpStreamId, parameters));
+      request.Headers.Add("Session", _rtspSessionId);
+      request.Headers.Add("Connection", "close");
+      if (_rtspClient.SendRequest(request, out response) != RtspStatusCode.Ok)
       {
-        new IPEndPoint(
-        new UdpClient(
+        throw new TvException("Failed to tune, non-OK RTSP PLAY status code {0} {1}", response.StatusCode, response.ReasonPhrase);
       }
+
+      if (_currentTuningDetail == null)
+      {
+        this.LogDebug("SAT>IP base: configure stream source filter");
+        DVBIPChannel streamChannel = new DVBIPChannel();
+        streamChannel.Url = rtpUrl;
+        base.PerformTuning(streamChannel);
+      }
+
+      StartKeepAliveThread();
     }
 
     /// <summary>
@@ -140,6 +293,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
       }
     }
 
+    #endregion
+
     /// <summary>
     /// Actually load the tuner.
     /// </summary>
@@ -147,6 +302,35 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
     {
       _customDeviceInterfaces.Add(this);
       base.PerformLoading();
+    }
+
+    /// <summary>
+    /// Set the state of the tuner.
+    /// </summary>
+    /// <param name="state">The state to apply to the tuner.</param>
+    protected override void SetTunerState(TunerState state)
+    {
+      this.LogDebug("SAT>IP base: set tuner state, current state = {0}, requested state = {1}", _state, state);
+
+      if (state == _state)
+      {
+        this.LogDebug("SAT>IP base: tuner already in required state");
+        return;
+      }
+
+      if (_rtspClient != null && !string.IsNullOrEmpty(_rtspSessionId) && state == TunerState.Stopped)
+      {
+        RtspRequest request = new RtspRequest(RtspMethod.Teardown, string.Format("rtsp://{0}/stream={1}", _serverIpAddress, _satIpStreamId));
+        request.Headers.Add("Session", _rtspSessionId);
+        request.Headers.Add("Connection", "close");
+        RtspResponse response;
+        if (_rtspClient.SendRequest(request, out response) != RtspStatusCode.Ok)
+        {
+          this.LogError("SAT>IP base: failed to stop tuner, non-OK RTSP TEARDOWN status code {0} {1}", response.StatusCode, response.ReasonPhrase);
+        }
+        _rtspClient = null;
+      }
+      base.SetTunerState(state);
     }
 
     /// <summary>
@@ -161,22 +345,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
 
       try
       {
+        RtspRequest request = new RtspRequest(RtspMethod.Describe, string.Format("rtsp://{0}/stream={1}", _serverIpAddress, _satIpStreamId));
+        request.Headers.Add("Accept", "application/sdp");
+        request.Headers.Add("Session", _rtspSessionId);
+        request.Headers.Add("Connection", "close");
         RtspResponse response = null;
-        try
-        {
-          RtspRequest request = new RtspRequest(RtspMethod.Describe, string.Format("rtsp://{0}/stream={1}", _serverIpAddress, _satIpStreamId));
-          request.Headers.Add("Accept", "application/sdp");
-          request.Headers.Add("Connection", "close");
-          request.Headers.Add("Session", _rtspSessionId);
-          _rtspClient.SendRequest(request, out response);
-        }
-        catch (Exception ex)
-        {
-          this.LogError(ex, "SAT>IP base: exception updating signal status");
-          return;
-        }
-
-        if (response.StatusCode != RtspStatusCode.Ok)
+        if (_rtspClient.SendRequest(request, out response) != RtspStatusCode.Ok)
         {
           this.LogError("SAT>IP base: failed to retrieve signal status, non-OK RTSP DESCRIBE status code {0} {1}", response.StatusCode, response.ReasonPhrase);
           return;
@@ -184,7 +358,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
 
         // Find the first stream information. We assume that all signal statistics apply equally as
         // we're only meant to be using one front end.
-        Match m = REGEX_RESPONSE_DESCRIBE_SIGNAL_INFO.Match(response.Body);
+        Match m = REGEX_DESCRIBE_RESPONSE_SIGNAL_INFO.Match(response.Body);
         if (m.Success)
         {
           isSignalLocked = m.Groups[2].Captures[0].Value.Equals("1");
@@ -195,6 +369,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
 
         this.LogError("SAT>IP base: failed to locate signal status information in RTSP DESCRIBE response");
       }
+      catch (Exception ex)
+      {
+        this.LogError(ex, "SAT>IP base: exception updating signal status");
+      }
       finally
       {
         _isSignalPresent = isSignalLocked;
@@ -204,47 +382,82 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
       }
     }
 
-    private RtspStatusCode SendRtspPlayRequest(string additionalParameters, out string responseString)
+    #region keep-alive thread
+
+    private void StartKeepAliveThread()
     {
-      responseString = null;
-      try
+      // Kill the existing thread if it is in "zombie" state.
+      if (_keepAliveThread != null && !_keepAliveThread.IsAlive)
       {
-        StringBuilder rtspPlayRequest = new StringBuilder();
-        rtspPlayRequest.AppendFormat("DESCRIBE rtsp://{0}/stream={1}", _ipAddress, _satIpStreamId);
-        if (!string.IsNullOrEmpty(additionalParameters))
+        StopKeepAliveThread();
+      }
+
+      if (_keepAliveThread == null)
+      {
+        this.LogDebug("SAT>IP base: starting new keep-alive thread");
+        _keepAliveThreadStopEvent = new AutoResetEvent(false);
+        _keepAliveThread = new Thread(new ThreadStart(KeepAlive));
+        _keepAliveThread.Name = string.Format("SAT>IP tuner {0} keep alive", _cardId);
+        _keepAliveThread.IsBackground = true;
+        _keepAliveThread.Priority = ThreadPriority.Lowest;
+        _keepAliveThread.Start();
+      }
+    }
+
+    private void StopKeepAliveThread()
+    {
+      if (_keepAliveThread != null)
+      {
+        if (!_keepAliveThread.IsAlive)
         {
-          rtspPlayRequest.AppendFormat("?{0}", additionalParameters);
+          this.LogWarn("SAT>IP base: aborting old keep-alive thread");
+          _keepAliveThread.Abort();
         }
-        rtspPlayRequest.Append(" RTSP/1.0\r\n");
-        rtspPlayRequest.AppendFormat("CSeq: {0}\r\n", _rtspCseqNumber);
-        rtspPlayRequest.AppendFormat("Session: {0}\r\n", _rtspSessionId);
-        rtspPlayRequest.Append("Accept: application/sdp\r\n");
-        rtspPlayRequest.Append("Connection: close\r\n\r\n");
-        NetworkStream stream = _tcpClient.GetStream();
-        try
+        else
         {
-          byte[] requestBytes = System.Text.Encoding.ASCII.GetBytes(rtspPlayRequest.ToString());
-          stream.Write(requestBytes, 0, requestBytes.Length);
-          byte[] responseBytes = new byte[_tcpClient.ReceiveBufferSize];
-          while (stream.DataAvailable)
+          _keepAliveThreadStopEvent.Set();
+          if (!_keepAliveThread.Join(_rtspSessionTimeout * 2))
           {
-            int byteCount = stream.Read(responseBytes, 0, responseBytes.Length);
-            responseString = System.Text.Encoding.ASCII.GetString(responseBytes, 0, byteCount);
+            this.LogWarn("SAT>IP base: failed to join keep-alive thread, aborting thread");
+            _keepAliveThread.Abort();
           }
         }
-        finally
+        _keepAliveThread = null;
+        if (_keepAliveThreadStopEvent != null)
         {
-          stream.Close();
+          _keepAliveThreadStopEvent.Close();
+          _keepAliveThreadStopEvent = null;
         }
+      }
+    }
+
+    private void KeepAlive()
+    {
+      try
+      {
+        while (!_keepAliveThreadStopEvent.WaitOne((_rtspSessionTimeout - 5) * 1000))  // -5 seconds to avoid timeout
+        {
+          RtspRequest request = new RtspRequest(RtspMethod.Options, string.Format("rtsp://{0}/", _serverIpAddress));
+          request.Headers.Add("Session", _rtspSessionId);
+          request.Headers.Add("Connection", "close");
+          RtspResponse response;
+          if (_rtspClient.SendRequest(request, out response) != RtspStatusCode.Ok)
+          {
+            this.LogWarn("SAT>IP base: keep-alive request/response failed, non-OK RTSP OPTIONS status code {0} {1}", response.StatusCode, response.ReasonPhrase);
+          }
+        }
+      }
+      catch (ThreadAbortException)
+      {
       }
       catch (Exception ex)
       {
-        this.LogError(ex, "SAT>IP base: exception sending RTSP PLAY request");
-        return RtspStatusCode.Unknown;
+        this.LogError(ex, "SAT>IP base: keep-alive thread exception");
+        return;
       }
-
-      return ReadRtspResponseStatusCode(responseString);
     }
+
+    #endregion
 
     #region ICustomDevice members
 
@@ -350,7 +563,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
     /// <returns><c>true</c> if the filter is successfully disabled, otherwise <c>false</c></returns>
     public bool DisableFilter()
     {
-      _pidFilterChangeString = "pids=all";
+      _pidFilterChangeParameters = "pids=all";
       return true;
     }
 
@@ -372,11 +585,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
     /// <returns><c>true</c> if the filter is successfully configured, otherwise <c>false</c></returns>
     public bool AllowStreams(ICollection<ushort> pids)
     {
-      if (!string.IsNullOrEmpty(_pidFilterChangeString))
+      if (!string.IsNullOrEmpty(_pidFilterChangeParameters))
       {
-        _pidFilterChangeString += "&";
+        _pidFilterChangeParameters += "&";
       }
-      _pidFilterChangeString += "addpids=" + string.Join(",", pids);
+      _pidFilterChangeParameters += "addpids=" + string.Join(",", pids);
       return true;
     }
 
@@ -387,11 +600,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
     /// <returns><c>true</c> if the filter is successfully configured, otherwise <c>false</c></returns>
     public bool BlockStreams(ICollection<ushort> pids)
     {
-      if (!string.IsNullOrEmpty(_pidFilterChangeString))
+      if (!string.IsNullOrEmpty(_pidFilterChangeParameters))
       {
-        _pidFilterChangeString += "&";
+        _pidFilterChangeParameters += "&";
       }
-      _pidFilterChangeString += "delpids=" + string.Join(",", pids);
+      _pidFilterChangeParameters += "delpids=" + string.Join(",", pids);
       return true;
     }
 
@@ -402,19 +615,25 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
     public bool ApplyFilter()
     {
       this.LogDebug("SAT>IP base: apply PID filter");
-      string rtspPlayResponse = null;
-      RtspStatusCode code = SendRtspPlayRequest(_pidFilterChangeString, out rtspPlayResponse);
-      _pidFilterChangeString = string.Empty;
 
-      if (code == RtspStatusCode.Ok)
+      try
       {
-        this.LogDebug("SAT>IP base: result = success");
-        return true;
+        RtspRequest request = new RtspRequest(RtspMethod.Play, string.Format("rtsp://{0}/stream={1}?{2}", _serverIpAddress, _satIpStreamId, _pidFilterChangeParameters));
+        request.Headers.Add("Accept", "application/sdp");
+        request.Headers.Add("Session", _rtspSessionId);
+        request.Headers.Add("Connection", "close");
+        RtspResponse response = null;
+        if (_rtspClient.SendRequest(request, out response) == RtspStatusCode.Ok)
+        {
+          this.LogDebug("SAT>IP base: result = success");
+          return true;
+        }
+
+        this.LogError("SAT>IP base: failed to apply PID Filter, non-OK RTSP PLAY status code {0} {1}", response.StatusCode, response.ReasonPhrase);
       }
-
-      if (code != RtspStatusCode.Unknown)
+      catch (Exception ex)
       {
-        this.LogWarn("SAT>IP base: failed to apply PID filter, non-OK RTSP DESCRIBE status code {0}", code);
+        this.LogError(ex, "SAT>IP base: exception applying PID filter");
       }
       return false;
     }

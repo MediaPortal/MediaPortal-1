@@ -829,12 +829,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     public void Unload()
     {
-      if (_state == TunerState.NotLoaded)
-      {
-        this.LogWarn("TvCardBase: the tuner is already unloaded");
-        return;
-      }
-
       this.LogDebug("TvCardBase: unload tuner");
       FreeAllSubChannels();
       PerformTunerAction(TunerAction.Stop);

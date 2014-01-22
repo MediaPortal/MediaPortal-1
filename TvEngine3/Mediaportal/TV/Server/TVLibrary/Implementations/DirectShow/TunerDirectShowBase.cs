@@ -21,6 +21,7 @@
 using System;
 using DirectShowLib;
 using MediaPortal.Common.Utils;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;

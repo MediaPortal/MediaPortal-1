@@ -153,12 +153,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
         this.LogWarn("SAT>IP satellite: unsupported inner FEC rate {0}, assuming 3/4", satelliteChannel.InnerFecRate);
       }
 
-      string url = string.Format("src={1}&freq={2}&pol={3}&sr={4}&fec={5}&msys=dvbs", _currentSource, frequency, polarisation, satelliteChannel.SymbolRate, fecRate);
+      string parameters = string.Format("src={1}&freq={2}&pol={3}&sr={4}&fec={5}&msys=dvbs", _currentSource, frequency, polarisation, satelliteChannel.SymbolRate, fecRate);
 
       // DVB-S2 or DVB-S?
       if (satelliteChannel.ModulationType == ModulationType.ModNotSet)
       {
-        PerformTuning(url);
+        PerformTuning(parameters);
         return;
       }
 
@@ -208,7 +208,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
         this.LogWarn("SAT>IP satellite: unsupported roll-off {0}, assuming 0.35", satelliteChannel.RollOff);
       }
 
-      PerformTuning(url + string.Format("2&mtype={0}&plts={1}&ro={2}", modulation, pilots, rollOff));
+      PerformTuning(parameters + string.Format("2&mtype={0}&plts={1}&ro={2}", modulation, pilots, rollOff));
     }
 
     /// <summary>

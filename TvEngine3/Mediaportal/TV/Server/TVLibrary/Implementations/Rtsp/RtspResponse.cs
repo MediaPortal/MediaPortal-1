@@ -29,7 +29,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Rtsp
   /// </summary>
   public class RtspResponse
   {
-    private static readonly Regex REGEX_STATUS_LINE = new Regex(@"RTSP/(\d+)\.(\d+)\s+(\d+)\s+([^.+?)\r\n(.*)", RegexOptions.Singleline);
+    private static readonly Regex REGEX_STATUS_LINE = new Regex(@"RTSP/(\d+)\.(\d+)\s+(\d+)\s+([^.]+?)\r\n(.*)", RegexOptions.Singleline);
 
     private int _majorVersion = 1;
     private int _minorVersion = 0;
