@@ -121,7 +121,7 @@ namespace MediaPortal.Music.Database
         if (!GetAlbumURL(strArtistUrl + "/discography/compilations", strAlbum, out strAlbumUrl))
         {
           // Singles / EPs
-          Log.Debug("AllmusicScraper.  Searching-Album: {0} - not found in compilaitions.  Checking singles & EPs", strAlbum);
+          Log.Debug("AllmusicScraper.  Searching-Album: {0} - not found in compilations.  Checking singles & EPs", strAlbum);
           if (!GetAlbumURL(strArtistUrl + "/discography/singles", strAlbum, out strAlbumUrl))
           {
             Log.Debug("AllmusicScraper.  Searching-Album: {0} - not found", strAlbum);

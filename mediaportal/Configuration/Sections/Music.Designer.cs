@@ -22,10 +22,11 @@ namespace MediaPortal.Configuration.Sections
           components.Dispose();
         }
 
-        // Close eventually open Winamp stuff
+        // Close eventually open Viz stuff
         if (_visParam != null)
         {
           BassVis_Api.BassVis.BASSVIS_Quit(_visParam);
+          _visParam = null;
         }
 
         // Make sure we shut down the viz engine

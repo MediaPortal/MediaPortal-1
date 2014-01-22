@@ -133,6 +133,7 @@ namespace MediaPortal.GUI.Library
     private static bool _vmr9Allowed = true;
     private static DateTime _lastActivity = DateTime.Now;
     private static Screen _currentScreen;
+    private static Screen _currentStartScreen;
     private static int _currentMonitorIdx = -1;
     private static readonly bool IsDX9EXused = OSInfo.OSInfo.VistaOrLater();
     private static bool _allowRememberLastFocusedItem = true;
@@ -316,6 +317,20 @@ namespace MediaPortal.GUI.Library
         return _currentScreen ?? Screen.PrimaryScreen;
       }
       set { _currentScreen = value; }
+    }
+
+    /// <summary>
+    /// Property to get and set current start screen on witch MP is displayed
+    /// </summary>
+    // ReSharper disable InconsistentNaming
+    public static Screen currentStartScreen
+    // ReSharper restore InconsistentNaming
+    {
+      get
+      {
+        return _currentStartScreen ?? Screen.PrimaryScreen;
+      }
+      set { _currentStartScreen = value; }
     }
 
     /// <summary>

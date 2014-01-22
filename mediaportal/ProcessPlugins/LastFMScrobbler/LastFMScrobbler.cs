@@ -131,7 +131,7 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
     /// <returns>true if this plugin is enabled by default, otherwise false.</returns>
     public bool DefaultEnabled()
     {
-      return true;
+      return false;
     }
 
     /// <summary>

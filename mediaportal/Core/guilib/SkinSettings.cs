@@ -53,6 +53,7 @@ namespace MediaPortal.GUI.Library
     private static Dictionary<int, SkinString> _skinStringSettings = new Dictionary<int, SkinString>();
     private static Dictionary<int, SkinBool> _skinBoolSettings = new Dictionary<int, SkinBool>();
     private static string _loadedSkinSettings = "";
+    private static bool _noTheme;
 
     public const string THEME_SECTION_NAME = "theme";
     public const string THEME_NAME_ENTRY = "name";
@@ -75,14 +76,12 @@ namespace MediaPortal.GUI.Library
     /// <returns></returns>
     public static int TranslateSkinString(string line, Kind kind)
     {
-      Log.Debug("SkinSettings: Called TranslateSkinString({0},{1})", line, kind.ToString());
       Dictionary<int, SkinString>.Enumerator enumer = _skinStringSettings.GetEnumerator();
       while (enumer.MoveNext())
       {
         SkinString skin = enumer.Current.Value;
         if (skin.Name == line)
         {
-          Log.Debug("SkinSettings: Done TranslateSkinString({0},{1}), Existing Key {2}", line, kind.ToString(), enumer.Current.Key.ToString());
           return enumer.Current.Key;
         }
       }
@@ -108,7 +107,6 @@ namespace MediaPortal.GUI.Library
         key = _skinStringSettings.Count;
         _skinStringSettings[key] = newString;
       }
-      Log.Debug("SkinSettings: Done TranslateSkinString({0},{1}), New Key {2}", line, kind.ToString(),key.ToString());
       return key;
     }
 
@@ -149,7 +147,6 @@ namespace MediaPortal.GUI.Library
     /// <param name="newValue"></param>
     public static void SetSkinString(int key, string newValue)
     {
-      Log.Debug("SkinSettings: Called SetSkinString({0},{1})", key.ToString(),newValue);
       SkinString skin = null;
       if (_skinStringSettings.TryGetValue(key, out skin))
       {
@@ -162,7 +159,6 @@ namespace MediaPortal.GUI.Library
         // Save change to disk immediately.
         Save();
       }
-      Log.Debug("SkinSettings: Done SetSkinString({0},{1})", key.ToString(), newValue);
     }
 
     /// <summary>
@@ -184,7 +180,6 @@ namespace MediaPortal.GUI.Library
     public static int TranslateSkinBool(string setting, Kind kind)
     {
       Dictionary<int, SkinBool>.Enumerator enumer = _skinBoolSettings.GetEnumerator();
-      Log.Debug("SkinSettings: Called TranslateSkinBool({0},{1})", setting, kind.ToString());
       while (enumer.MoveNext())
       {
         SkinBool skin = enumer.Current.Value;
@@ -222,7 +217,6 @@ namespace MediaPortal.GUI.Library
         key = _skinBoolSettings.Count;
         _skinBoolSettings[key] = newBool;
       }
-      Log.Debug("SkinSettings: Done TranslateSkinBool({0},{1})", setting, kind.ToString());
       return key;
     }
 
@@ -334,6 +328,15 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    /// <summary>
+    /// Set the skin to Notheme for watchdog.
+    /// </summary>
+    public static bool NoTheme
+    {
+      get { return _noTheme; }
+      set { _noTheme = value; }
+    }
+
     #region Persistence
 
     private static void LoadBooleanSettings()
@@ -412,8 +415,16 @@ namespace MediaPortal.GUI.Library
     {
       using (Settings xmlReader = new SKSettings())
       {
-        // Initialize the theme manager for the selected theme.
-        GUIThemeManager.Init(xmlReader.GetValueAsString(THEME_SECTION_NAME, THEME_NAME_ENTRY, GUIThemeManager.THEME_SKIN_DEFAULT));
+        if (!_noTheme)
+        {
+          // Initialize the theme manager for the selected theme.
+          GUIThemeManager.Init(xmlReader.GetValueAsString(THEME_SECTION_NAME, THEME_NAME_ENTRY, GUIThemeManager.THEME_SKIN_DEFAULT));
+        }
+        else
+        {
+          // Initialize the theme manager for the watchdog.
+          GUIThemeManager.Init(GUIThemeManager.THEME_SKIN_DEFAULT);
+        }
       }
     }
 
@@ -510,28 +521,23 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public static void Save()
     {
-      Log.Debug("SkinSettings: 1 - Called Save");
       IThreadPool tp = GlobalServiceProvider.Get<IThreadPool>();
       if (_delaySave == null)
       {
         _delaySave = tp.Add(LazySave, "Wait for saving SkinSettings");
-        Log.Debug("SkinSettings: 2 - Scheduled Save");
       } 
       else if (_delaySave.State != WorkState.INPROGRESS && _delaySave.State != WorkState.INQUEUE)
       {
         _delaySave = tp.Add(LazySave,"Wait for saving SkinSettings");
-        Log.Debug("SkinSettings: 2 - Scheduled Save");
       }
       
     }
 
     static void LazySave()
     {
-      Log.Debug("SkinSettings: 3 - Wait for saving");
       System.Threading.Thread.Sleep(100); // This combines quick calls to Save into one Save operation
       IThreadPool tp = GlobalServiceProvider.Get<IThreadPool>();
       tp.Add(_Save); // Add the save operation to the thread pool
-      Log.Debug("SkinSettings: 4 - Scheduled save operation");
     }
 
     /// <summary>
@@ -539,7 +545,6 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public static void _Save()
     {
-      Log.Debug("SkinSettings: 5 - Start saving settings.");
       using (Settings xmlWriter = new SKSettings())
       {
         lock (_skinBoolSettings)
@@ -553,7 +558,7 @@ namespace MediaPortal.GUI.Library
         SaveDiscreteSettings(xmlWriter);
       }
       Settings.SaveCache();
-      Log.Debug("SkinSettings: 6 - Saved all settings.");
+      Log.Debug("SkinSettings: Saved all settings.");
     }
 
     private static void SaveBooleanSettings(Settings xmlWriter)
