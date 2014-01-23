@@ -160,19 +160,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
         // Find a free port for receiving the RTP stream.
         int rtpClientPort = 0;
         TcpConnectionInformation[] activeTcpConnections = IPGlobalProperties.GetIPGlobalProperties().GetActiveTcpConnections();
-        for (int port = 40000; port <= 650534; port += 2)
+        HashSet<int> usedPorts = new HashSet<int>();
+        foreach (TcpConnectionInformation connection in activeTcpConnections)
         {
-          rtpClientPort = port;
-          foreach (TcpConnectionInformation connection in activeTcpConnections)
+          usedPorts.Add(connection.LocalEndPoint.Port);
+        }
+        for (int port = 40000; port <= 65534; port += 2)
+        {
+          // We need two adjacent ports. One for RTP; one for RTCP. By
+          // convention, the RTP port is even.
+          if (!usedPorts.Contains(port) && !usedPorts.Contains(port + 1))
           {
-            if (connection.LocalEndPoint.Port == port)
-            {
-              rtpClientPort = 0;
-              break;
-            }
-          }
-          if (rtpClientPort != 0)
-          {
+            rtpClientPort = port;
             break;
           }
         }
@@ -318,8 +317,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
         return;
       }
 
-      if (_rtspClient != null && !string.IsNullOrEmpty(_rtspSessionId) && state == TunerState.Stopped)
+      if (_rtspClient != null && !string.IsNullOrEmpty(_satIpStreamId) && !string.IsNullOrEmpty(_rtspSessionId) && state == TunerState.Stopped)
       {
+        StopKeepAliveThread();
+
         RtspRequest request = new RtspRequest(RtspMethod.Teardown, string.Format("rtsp://{0}/stream={1}", _serverIpAddress, _satIpStreamId));
         request.Headers.Add("Session", _rtspSessionId);
         request.Headers.Add("Connection", "close");
