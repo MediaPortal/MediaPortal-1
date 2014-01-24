@@ -136,7 +136,15 @@ bool CLibBlurayWrapper::Initialize()
   if (_tputenv(_T("JAVA_HOME=")) != 0)
   {
     DWORD error = GetLastError();
-    LogDebug("Failed to load remove the JAVA_HOME environment variable: %d", (int)error);
+    LogDebug("Failed to remove the JAVA_HOME environment variable: %d", (int)error);
+
+    return false;
+  }
+
+  if (_tputenv(_T("LIBBLURAY_CP=libbluray.jar")) != 0)
+  {
+    DWORD error = GetLastError();
+    LogDebug("Failed to set LIBBLURAY_CP environment variable: %d", (int)error);
 
     return false;
   }
