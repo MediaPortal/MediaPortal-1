@@ -246,6 +246,14 @@ namespace MediaPortal.MusicPlayer.BASS
             wasApiExclusiveSupported = false; // And indicate that we need a new mixer
           }
 
+          // Handle the special case of a 5.0 file being played on a 5.1 or 6.1 device
+          if (outputChannels == 5)
+          {
+            Log.Info("BASS: Found a 5 channel file. Set upmixing with LFE set to silent");
+            _mixingMatrix = CreateFiveDotZeroUpMixMatrix();
+            wasApiExclusiveSupported = true;
+          }
+
           // If Exclusive mode is used, check, if that would be supported, otherwise init in shared mode
           if (Config.WasApiExclusiveMode)
           {
@@ -460,6 +468,8 @@ namespace MediaPortal.MusicPlayer.BASS
           return CreateStereoUpMixMatrix();
         case 4:
           return CreateQuadraphonicUpMixMatrix();
+        case 5:
+          return CreateFiveDotZeroUpMixMatrix(); // Special case to handle a 5.0 Music File
         case 6:
           return CreateFiveDotOneUpMixMatrix();
         default:
@@ -658,6 +668,50 @@ namespace MediaPortal.MusicPlayer.BASS
           mixMatrix[6, 2] = 1;
           mixMatrix[7, 3] = 1;
           Log.Info("BASS: Using Quadro -> 7.1 mixing matrix");
+          break;
+      }
+      return mixMatrix;
+    }
+
+    private float[,] CreateFiveDotZeroUpMixMatrix()
+    {
+      float[,] mixMatrix = null;
+
+      // Handle the Special playback case of a 5.0 music file
+      switch (_bassPlayer.DeviceChannels)
+      {
+        case 6:
+          // Channel 1: left front out = left front in
+          // Channel 2: right front out = right front in
+          // Channel 3: centre out = left/right front in
+          // Channel 4: LFE out = silent
+          // Channel 5: left surround out = left surround in
+          // Channel 6: right surround out = right surround in
+          mixMatrix = new float[6, 5];
+          mixMatrix[0, 0] = 1;
+          mixMatrix[1, 1] = 1;
+          mixMatrix[2, 2] = 1;
+          mixMatrix[4, 4] = 1;
+          mixMatrix[5, 5] = 1;
+          Log.Info("BASS: Upmix 5.0-> 5.1 with LFE empty");
+          break;
+
+        case 7:
+          // Channel 1: left front out = left front in
+          // Channel 2: right front out = right front in
+          // Channel 3: center out = left/right front in
+          // Channel 4: LFE out = silent
+          // Channel 5: left surround out = left surround in
+          // Channel 6: right surround out = right surround in
+          // Channel 7: left back out = silent
+          // Channel 8: right back out = silent
+          mixMatrix = new float[8, 5];
+          mixMatrix[0, 0] = 1;
+          mixMatrix[1, 1] = 1;
+          mixMatrix[2, 2] = 1;
+          mixMatrix[4, 4] = 1;
+          mixMatrix[5, 5] = 1;
+          Log.Info("BASS: Upmix 5.0-> 5.1 with LFE empty");
           break;
       }
       return mixMatrix;
