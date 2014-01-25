@@ -82,6 +82,7 @@ public class MediaPortalApp : D3D, IRender
   private readonly bool         _useScreenSaver = true;
   private readonly bool         _useIdlePluginScreen;
   private bool                  _idlePluginActive = false;
+  private bool                  _changeScreen;
   private readonly bool         _useIdleblankScreen;
   private int                   _idlePluginWindowId;
   private readonly bool         _showLastActiveModule;
@@ -736,15 +737,6 @@ public class MediaPortalApp : D3D, IRender
             screen.WorkingArea.Width, screen.WorkingArea.Height, screen.WorkingArea.X, screen.WorkingArea.Y);
         }
 
-        // log information about available adapters
-        var enumeration = new D3DEnumeration();
-        enumeration.Enumerate();
-        foreach (GraphicsAdapterInfo ai in enumeration.AdapterInfoList)
-        {
-          Log.Debug("Adapter #{0}: {1} - Driver: {2} ({3}) - DeviceName: {4}",
-            ai.AdapterOrdinal, ai.AdapterDetails.Description, ai.AdapterDetails.DriverName, ai.AdapterDetails.DriverVersion, ai.AdapterDetails.DeviceName);
-        }
-
         // Localization strings for new splash screen and for MediaPortal itself
         LoadLanguageString();
 
@@ -781,7 +773,6 @@ public class MediaPortalApp : D3D, IRender
         SplashScreen.Run();
         #endif
 
-        Application.DoEvents(); // process message queue
         
         if (_waitForTvServer)
         {
@@ -859,7 +850,6 @@ public class MediaPortalApp : D3D, IRender
           }
         }
 
-        Application.DoEvents(); // process message queue
 
         if (_startupDelay > 0)
         {
@@ -868,7 +858,6 @@ public class MediaPortalApp : D3D, IRender
           {
             UpdateSplashScreenMessage(String.Format(GUILocalizeStrings.Get(61), i.ToString(CultureInfo.InvariantCulture)));
             Thread.Sleep(1000);
-            Application.DoEvents();
           }
         }
 
@@ -889,7 +878,6 @@ public class MediaPortalApp : D3D, IRender
             return;
           }
 
-          Application.DoEvents(); // process message queue
 
           #if !DEBUG
           // Check TvPlugin version
@@ -921,8 +909,6 @@ public class MediaPortalApp : D3D, IRender
         catch (Exception) {}
         // ReSharper restore EmptyGeneralCatchClause
 
-        Application.DoEvents(); // process message queue
-        
         try
         {
           UpdateSplashScreenMessage(GUILocalizeStrings.Get(62));
@@ -1515,6 +1501,11 @@ public class MediaPortalApp : D3D, IRender
           }
           PluginManager.WndProc(ref msg);
           break;
+
+        // handle default commands needed for plugins
+        default:
+          PluginManager.WndProc(ref msg);
+          break;
       }
 
       // TODO: extract to method and change to correct code
@@ -1814,6 +1805,14 @@ public class MediaPortalApp : D3D, IRender
           {
             case DBT_DEVICEREMOVECOMPLETE:
               Log.Info("Main: Audio Renderer {0} removed", deviceName);
+              if (_stopOnLostAudioRenderer)
+              {
+                g_Player.Stop();
+                while (GUIGraphicsContext.IsPlaying)
+                {
+                  Thread.Sleep(100);
+                }
+              }
               try
               {
                 VolumeHandler.Dispose();
@@ -1824,19 +1823,19 @@ public class MediaPortalApp : D3D, IRender
               catch (Exception exception)
               {
                 Log.Warn("Main: Could not initialize volume handler: ", exception.Message);
-              }
-              if (_stopOnLostAudioRenderer)
-              {
-                g_Player.Stop();
-                while (GUIGraphicsContext.IsPlaying)
-                {
-                  Thread.Sleep(100);
-                }
               }
               break;
 
             case DBT_DEVICEARRIVAL:
               Log.Info("Main: Audio Renderer {0} connected", deviceName);
+              if (_stopOnLostAudioRenderer)
+              {
+                g_Player.Stop();
+                while (GUIGraphicsContext.IsPlaying)
+                {
+                  Thread.Sleep(100);
+                }
+              }
               try
               {
                 VolumeHandler.Dispose();
@@ -1847,14 +1846,6 @@ public class MediaPortalApp : D3D, IRender
               catch (Exception exception)
               {
                 Log.Warn("Main: Could not initialize volume handler: ", exception.Message);
-              }
-              if (_stopOnLostAudioRenderer)
-              {
-                g_Player.Stop();
-                while (GUIGraphicsContext.IsPlaying)
-                {
-                  Thread.Sleep(100);
-                }
               }
               break;
           }
@@ -1877,16 +1868,48 @@ public class MediaPortalApp : D3D, IRender
       VMR9Util.g_vmr9.UpdateEVRDisplayFPS(); // Update FPS
     }
     Screen screen = Screen.FromControl(this);
-    if (Created && !Equals(screen, GUIGraphicsContext.currentScreen))
+    Rectangle currentBounds = GUIGraphicsContext.currentScreen.Bounds;
+    Rectangle newBounds = screen.Bounds;
+    if (Created && !Equals(screen, GUIGraphicsContext.currentScreen) || !Equals(currentBounds.Size, newBounds.Size))
     {
-      Log.Info("Main: Screen MP is displayed on changed from {0} to {1}", GetCleanDisplayName(GUIGraphicsContext.currentScreen), GetCleanDisplayName(screen));
+      Log.Info("Main: Screen MP OnDisplayChange is displayed on changed from {0} to {1}", GetCleanDisplayName(GUIGraphicsContext.currentScreen), GetCleanDisplayName(screen));
       if (screen.Bounds != GUIGraphicsContext.currentScreen.Bounds)
       {
-        Rectangle currentBounds = GUIGraphicsContext.currentScreen.Bounds;
-        Rectangle newBounds = screen.Bounds;
-        Log.Info("Main: Bounds of display changed from {0}x{1} to {2}x{3}", currentBounds.Width, currentBounds.Height, newBounds.Width, newBounds.Height);
+        Log.Info("Main: OnDisplayChange Bounds of display changed from {0}x{1} to {2}x{3}", currentBounds.Width, currentBounds.Height, newBounds.Width, newBounds.Height);
       }
-      GUIGraphicsContext.currentScreen = screen;
+      if (!Equals(currentBounds.Size, newBounds.Size))
+      {
+        // Check if start screen is equal to device screen and check if current screen bond differ from current detected screen bond then recreate swap chain.
+        Log.Debug("Main: Screen MP OnDisplayChange current screen detected                                {0}", GetCleanDisplayName(screen));
+        Log.Debug("Main: Screen MP OnDisplayChange current screen                                         {0}", GetCleanDisplayName(GUIGraphicsContext.currentScreen));
+        Log.Debug("Main: Screen MP OnDisplayChange start screen                                           {0}", GetCleanDisplayName(GUIGraphicsContext.currentStartScreen));
+        Log.Debug("Main: Screen MP OnDisplayChange change current screen {0} with current detected screen {1}", GetCleanDisplayName(GUIGraphicsContext.currentScreen), GetCleanDisplayName(screen));
+        GUIGraphicsContext.currentScreen = screen;
+        Log.Debug("Main: Screen MP OnDisplayChange set current screen bounds {0} to Bounds {1}",
+          GUIGraphicsContext.currentScreen.Bounds, Bounds);
+        Bounds = screen.Bounds;
+        Log.Debug("Main: Screen MP OnDisplayChange recreate swap chain");
+        RecreateSwapChain();
+        _changeScreen = true;
+      }
+      // Restore original Start Screen in case of change from RDP Session
+      if (!Equals(screen, GUIGraphicsContext.currentStartScreen))
+      {
+        foreach (GraphicsAdapterInfo adapterInfo in _enumerationSettings.AdapterInfoList)
+        {
+          var hMon = Manager.GetAdapterMonitor(adapterInfo.AdapterOrdinal);
+          var info = new MonitorInformation();
+          info.Size = (uint)Marshal.SizeOf(info);
+          GetMonitorInfo(hMon, ref info);
+          var rect = Screen.FromRectangle(info.MonitorRectangle).Bounds;
+          if (Equals(Manager.Adapters[GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal].Information.DeviceName, GetCleanDisplayName(GUIGraphicsContext.currentStartScreen)) && rect.Equals(screen.Bounds))
+          {
+            GUIGraphicsContext.currentScreen = GUIGraphicsContext.currentStartScreen;
+            break;
+          }
+          GUIGraphicsContext.currentScreen = screen;
+        }
+      }
     }
 
     if (!Windowed)
@@ -1926,17 +1949,47 @@ public class MediaPortalApp : D3D, IRender
 
     // check if display changes in case no DISPLAYCHANGE message is send by Windows
     Screen screen = Screen.FromControl(this);
-    if (!Equals(screen, GUIGraphicsContext.currentScreen) && !_firstLoadedScreen)
+    Rectangle currentBounds = GUIGraphicsContext.currentScreen.Bounds;
+    Rectangle newBounds = screen.Bounds;
+    string adapterOrdinalScreenName = Manager.Adapters[GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal].Information.DeviceName;
+
+    if ((!Equals(screen, GUIGraphicsContext.currentScreen) || (!Equals(GetCleanDisplayName(GUIGraphicsContext.currentScreen), GetCleanDisplayName(screen)))) && !_firstLoadedScreen)
     {
-      Log.Info("Main: Screen MP is displayed on changed from {0} to {1}", GetCleanDisplayName(GUIGraphicsContext.currentScreen), GetCleanDisplayName(screen));
+      Log.Info("Main: Screen MP OnGetMinMaxInfo is displayed on changed from {0} to {1}", GetCleanDisplayName(GUIGraphicsContext.currentScreen), GetCleanDisplayName(screen));
       if (screen.Bounds != GUIGraphicsContext.currentScreen.Bounds)
       {
-        Rectangle currentBounds = GUIGraphicsContext.currentScreen.Bounds;
-        Rectangle newBounds = screen.Bounds;
-        Log.Info("Main: Bounds of display changed from {0}x{1} @ {2},{3} to {4}x{5} @ {6},{7}",
+        Log.Info("Main: OnGetMinMaxInfo Bounds of display changed from {0}x{1} @ {2},{3} to {4}x{5} @ {6},{7}",
                  currentBounds.Width, currentBounds.Height, currentBounds.X, currentBounds.Y, newBounds.Width, newBounds.Height, newBounds.X, newBounds.Y);
       }
+      _changeScreen = true;
+    }
+
+    if (!Equals(currentBounds.Size, newBounds.Size) && !_firstLoadedScreen)
+    {
+      // Check if start screen is equal to device screen and check if current screen bond differ from current detected screen bond then recreate swap chain.
+      Log.Debug("Main: Screen MP OnGetMinMaxInfo Information.DeviceName Manager.Adapters                {0}", adapterOrdinalScreenName);
+      Log.Debug("Main: Screen MP OnGetMinMaxInfo current screen detected                                {0}", GetCleanDisplayName(screen));
+      Log.Debug("Main: Screen MP OnGetMinMaxInfo current screen                                         {0}", GetCleanDisplayName(GUIGraphicsContext.currentScreen));
+      Log.Debug("Main: Screen MP OnGetMinMaxInfo start screen                                           {0}", GetCleanDisplayName(GUIGraphicsContext.currentStartScreen));
+      Log.Debug("Main: Screen MP OnGetMinMaxInfo change current screen {0} with current detected screen {1}", GetCleanDisplayName(GUIGraphicsContext.currentScreen), GetCleanDisplayName(screen));
       GUIGraphicsContext.currentScreen = screen;
+      Log.Debug("Main: Screen MP OnGetMinMaxInfo set current screen bounds {0} to Bounds {1}", GUIGraphicsContext.currentScreen.Bounds, Bounds);
+      Bounds = screen.Bounds;
+      Log.Debug("Main: Screen MP OnGetMinMaxInfo recreate swap chain");
+      RecreateSwapChain();
+      _changeScreen = true;
+
+      if (!Windowed)
+      {
+        SetBounds(GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y, GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
+      }
+    }
+
+    if (_changeScreen)
+    {
+      Log.Debug("Main: Screen MP OnGetMinMaxInfo (changeScreen) change current screen {0} with current detected screen {1}", GetCleanDisplayName(GUIGraphicsContext.currentScreen), GetCleanDisplayName(screen));
+      GUIGraphicsContext.currentScreen = screen;
+      _changeScreen = false;
     }
 
     // calculate form dimension limits based on primary screen.
@@ -3371,6 +3424,9 @@ public class MediaPortalApp : D3D, IRender
         GUIGraphicsContext.ResetLastActivity();
       }
 
+      // needed to avoid cursor show when MP windows change (for ex when refesh rate is working / BassVis)
+      _moveMouseCursorPositionRefresh = D3D._lastCursorPosition;
+
       switch (action.wID)
       {
         // record current tv program
@@ -4339,6 +4395,26 @@ public class MediaPortalApp : D3D, IRender
   /// <param name="message"></param>
   private void OnMessage(GUIMessage message)
   {
+    if (!_suspended && !ExitToTray && !IsVisible)
+    {
+      switch (message.Message)
+      {
+        case GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW:
+        case GUIMessage.MessageType.GUI_MSG_GETFOCUS:
+          Log.Debug("Main: Setting focus");
+          if (Volume > 0 && (g_Player.IsVideo || g_Player.IsTV))
+          {
+            g_Player.Volume = Volume;
+            if (g_Player.Paused)
+            {
+              g_Player.Pause();
+            }
+          }
+          RestoreFromTray();
+          break;
+      }
+    }
+
     if (!_suspended && AppActive)
     {
       switch (message.Message)
