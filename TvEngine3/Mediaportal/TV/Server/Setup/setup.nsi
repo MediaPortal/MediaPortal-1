@@ -379,13 +379,13 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   #---------------------------- File Copy ----------------------
   ; Tuning Parameter Directory
   SetOutPath "${COMMON_APPDATA}\TuningParameters"
-  File /r /x .git "${TVSERVER.BASE}\TuningParameters\*"
+  File /r "${TVSERVER.BASE}\TuningParameters\*"
   ; WebEPG Grabbers Directory
   SetOutPath "${COMMON_APPDATA}\WebEPG"
-  File /r /x .git "${TVSERVER.BASE}\WebEPG\*"
+  File /r "${TVSERVER.BASE}\WebEPG\*"
   ; XMLTV Data Directory
   SetOutPath "${COMMON_APPDATA}\xmltv"
-  File /r /x .git "${TVSERVER.BASE}\xmltv\*"
+  File /r "${TVSERVER.BASE}\xmltv\*"
 
   ; Rest of Files
   SetOutPath "$INSTDIR"
@@ -443,7 +443,6 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${TVSERVER.BASE}\TbsCIapi.dll"
   File "${TVSERVER.BASE}\tevii.dll"
   File "${TVSERVER.BASE}\ttBdaDrvApi_Dll.dll"
-  File "${TVSERVER.BASE}\ttdvbacc.dll"
   
   File "${git_DirectShowFilters}\StreamingServer\bin\${BUILD_TYPE}\StreamingServer.dll"
 
@@ -628,7 +627,6 @@ ${MementoSectionEnd}
   Delete "$INSTDIR\Plugins\CustomDevices\Resources\TbsCIapi.dll"
   Delete "$INSTDIR\Plugins\CustomDevices\Resources\tevii.dll"
   Delete "$INSTDIR\Plugins\CustomDevices\Resources\ttBdaDrvApi_Dll.dll"
-  Delete "$INSTDIR\Plugins\CustomDevices\Resources\ttdvbacc.dll"
   RMDir "$INSTDIR\Plugins\CustomDevices\Resources"
 
   ; Remove Plugins
@@ -844,13 +842,13 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
   #---------------------------- File Copy ----------------------
   ; Tuning Parameter Directory
   SetOutPath "${COMMON_APPDATA}\TuningParameters"
-  File /r /x .git "${TVSERVER.BASE}\TuningParameters\*"
+  File /r "${TVSERVER.BASE}\TuningParameters\*"
   ; WebEPG Grabbers Directory
   SetOutPath "${COMMON_APPDATA}\WebEPG"
-  File /r /x .git "${TVSERVER.BASE}\WebEPG\*"
+  File /r "${TVSERVER.BASE}\WebEPG\*"
   ; XMLTV Data Directory
   SetOutPath "${COMMON_APPDATA}\xmltv"
-  File /r /x .git "${TVSERVER.BASE}\xmltv\*"
+  File /r "${TVSERVER.BASE}\xmltv\*"
 
   ; Common Files
   SetOutPath "$MPdir.Base"
@@ -971,7 +969,10 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
   File "${TVSERVER.BASE}\TbsCIapi.dll"
   File "${TVSERVER.BASE}\tevii.dll"
   File "${TVSERVER.BASE}\ttBdaDrvApi_Dll.dll"
-  File "${TVSERVER.BASE}\ttdvbacc.dll"
+
+  ; Integration plugin
+  SetOutPath "${SETUP_TV_FOLDER}\Integration"
+  File "${git_TVServer}\Server\TvLibrary.Integration.MP1\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.Integration.MP1.dll"
 
   ; Integration plugin
   SetOutPath "${SETUP_TV_FOLDER}\Integration"

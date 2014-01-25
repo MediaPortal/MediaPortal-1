@@ -5309,6 +5309,7 @@ namespace Mediaportal.TV.Server.TVLibrary
                                          this.LogError(ex, "ExecutePendingDeletions exception");
                                        }
                                      });
+<<<<<<< HEAD
     }
 
 
@@ -5806,4 +5807,504 @@ namespace Mediaportal.TV.Server.TVLibrary
       return cardPresentations;
     }  
   }
+=======
+    }
+
+
+
+    public void OnResume()
+    {
+      if (!_onResumeDone)
+      {
+        this.LogInfo("TvController.OnResume()");
+        StartHeartbeatManager();
+        StartTvServerEventDispatcher();
+
+        if (_scheduler != null)
+        {
+          _scheduler.Start();
+        }
+      }
+      _onResumeDone = true;
+    }
+
+    public void OnSuspend()
+    {
+      _onResumeDone = false;
+      this.LogInfo("TvController.OnSuspend()");
+
+      StopHeartbeatManager();
+      StopTvserverEventDispatcher();
+      if (_scheduler != null)
+      {
+        _scheduler.Stop();
+      }
+
+      IUser tmpUser = new User();
+      foreach (ITvCardHandler cardhandler in CardCollection.Values)
+      {
+        cardhandler.ParkedUserManagement.CancelAllParkedUsers();
+        cardhandler.StopCard();
+      }
+    }
+
+    /// <summary>
+    /// Fetches the stream quality information
+    /// </summary>
+    /// <param name="userName"> </param>
+    /// <param name="totalTSpackets">Amount of packets processed</param>
+    /// <param name="discontinuityCounter">Number of stream discontinuities</param>
+    /// <returns></returns>
+    public void GetStreamQualityCounters(string userName, out int totalTSpackets, out int discontinuityCounter)
+    {
+      totalTSpackets = 0;
+      discontinuityCounter = 0;
+      try
+      {
+        IUser user = GetUserFromContext(userName, TvUsage.Timeshifting);
+        if (user != null)
+        {
+          int cardId = user.CardId;
+          ITvCardHandler cardHandler = _cards[cardId];
+          cardHandler.TimeShifter.GetStreamQualityCounters(userName, out totalTSpackets, out discontinuityCounter);
+        }                
+      }
+      catch (Exception e)
+      {
+        HandleControllerException(e);
+      }      
+    }
+
+    /// <summary>
+    /// Returns the subchannels count for the selected card
+    /// stream for the selected card
+    /// </summary>
+    /// <param name="idCard">card id.</param>
+    /// <returns>
+    /// subchannels count
+    /// </returns>
+    public int GetSubChannels(int idCard)
+    {
+      int subchannels = 0;
+
+      try
+      {
+        if (idCard > 0)
+        {
+          ITvCardHandler cardHandler = _cards[idCard];
+          if (cardHandler.Card != null && cardHandler.Card.SubChannels != null)
+          {
+            subchannels = cardHandler.Card.SubChannels.Length;
+          }
+        }
+      }
+      catch (Exception e)
+      {
+        HandleControllerException(e);
+      }
+
+      return subchannels;
+    }
+
+    public void RegisterUserForHeartbeatMonitoring (string username)
+    {
+      try
+      {
+        _heartbeatManager.Register(username);
+      }
+      catch (Exception e)
+      {
+        HandleControllerException(e);
+      }      
+    }
+
+    public void UnRegisterUserForHeartbeatMonitoring(string username)
+    {
+      try
+      {
+        _heartbeatManager.UnRegister(username);
+      }
+      catch (Exception e)
+      {
+        HandleControllerException(e);
+      }      
+    }
+
+    public void RegisterUserForCiMenu(string username)
+    {
+      try
+      {
+        _ciMenuManager.Register(username);      
+      }
+      catch (Exception e)
+      {
+        HandleControllerException(e);
+      }      
+    }
+    public void UnRegisterUserForCiMenu(string username)
+    {
+      try
+      {
+        _ciMenuManager.UnRegister(username);
+      }
+      catch (Exception e)
+      {
+        HandleControllerException(e);
+      }      
+    }
+
+    public void RegisterUserForTvServerEvents(string username)
+    {
+      try
+      {
+        _tvServerEventDispatcher.Register(username);
+      }
+      catch (Exception e)
+      {
+        HandleControllerException(e);
+      }      
+    }
+    public void UnRegisterUserForTvServerEvents(string username)
+    {
+      try
+      {
+        _tvServerEventDispatcher.UnRegister(username);
+      }
+      catch (Exception e)
+      {
+        HandleControllerException(e);
+      }      
+    }
+
+    public IDictionary<string, byte[]> GetPluginBinaries()
+    {
+      var fileStreams = new Dictionary<string, byte[]>();
+      try
+      {
+        string pluginsFolder = PathManager.BuildAssemblyRelativePath("plugins");
+        var dirInfo = new DirectoryInfo(pluginsFolder);
+
+        FileInfo[] files = dirInfo.GetFiles("*.dll");
+
+        foreach (FileInfo fileInfo in files)
+        {
+          using (var filestream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read))
+          {
+            long length = filestream.Length;
+            var data = new byte[length];
+            filestream.Read(data, 0, (int)length);
+            fileStreams.Add(fileInfo.Name, data);
+          }
+        }
+      }
+      catch (Exception e)
+      {
+        HandleControllerException(e);
+      }
+      return fileStreams;
+    }
+
+    public IDictionary<string, byte[]> GetPluginBinariesCustomDevices()
+    {
+      var fileStreams = new Dictionary<string, byte[]>();
+      try
+      {
+        string customDevicesFolder = PathManager.BuildAssemblyRelativePath("plugins\\CustomDevices");
+        var dirInfoCustomDevices = new DirectoryInfo(customDevicesFolder);
+
+        FileInfo[] filesCustomDevices = dirInfoCustomDevices.GetFiles("*.dll");
+
+        foreach (FileInfo fileInfo in filesCustomDevices)
+        {
+          using (var filestream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read))
+          {
+            long length = filestream.Length;
+            var data = new byte[length];
+            filestream.Read(data, 0, (int)length);
+            fileStreams.Add(fileInfo.Name, data);
+          }
+        }      
+      }
+      catch (Exception e)
+      {
+        HandleControllerException(e);
+      }
+      return fileStreams;
+    }
+
+    public IDictionary<string, byte[]> GetPluginBinariesResources()
+    {
+      var fileStreams = new Dictionary<string, byte[]>();
+      try
+      {
+        string resourcesFolder = PathManager.BuildAssemblyRelativePath("plugins\\CustomDevices\\Resources");
+        var dirInfoResources = new DirectoryInfo(resourcesFolder);
+
+        FileInfo[] filesResources = dirInfoResources.GetFiles("*.dll");
+
+        foreach (FileInfo fileInfo in filesResources)
+        {
+          using (var filestream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read))
+          {
+            long length = filestream.Length;
+            var data = new byte[length];
+            filestream.Read(data, 0, (int)length);
+            fileStreams.Add(fileInfo.Name, data);
+          }
+        }
+      }
+      catch (Exception e)
+      {
+        HandleControllerException(e);
+      }
+      return fileStreams;
+    }
+
+    public IList<StreamPresentation> ListAllStreamingChannels()
+    {
+      IList<StreamPresentation> streams = new List<StreamPresentation>();
+      try
+      {        
+        foreach (ITvCardHandler cardHandler in _cards.Values)
+        {
+          if (!cardHandler.DataBaseCard.Enabled)
+          {
+            continue;
+          }
+          int idCard = cardHandler.DataBaseCard.IdCard;
+          if (!IsCardPresent(idCard))
+          {
+            continue;
+          }
+
+          IDictionary<string, IUser> usersCopy = cardHandler.UserManagement.UsersCopy;
+          if (usersCopy != null)
+          {
+            IList<IUser> usersCopyList = usersCopy.Values.ToList();
+            for (int i = 0; i < usersCopyList.Count; i++)
+            {
+              IUser user = usersCopyList[i];
+              IVirtualCard vcard;
+              bool isRecording = IsRecording(CurrentDbChannel(user.Name), out vcard);
+              bool isTimeShifting = IsTimeShifting(user.Name);
+              if (isTimeShifting || isRecording)
+              {
+                foreach (ISubChannel subchannel in user.SubChannels.Values)
+                {
+                  bool isParked = subchannel.TvUsage == TvUsage.Parked;
+                  double parkedDuration = 0;
+                  DateTime parkedAt = DateTime.MinValue;
+
+                  if (isParked)
+                  {
+                    //lets get duration etc.
+                    cardHandler.ParkedUserManagement.IsUserParkedOnChannel(user.Name, subchannel.IdChannel, out parkedDuration,
+                                                                      out parkedAt);
+                  }
+
+                  var streamPresentation = new StreamPresentation(ChannelManagement.GetChannel(subchannel.IdChannel), user,
+                                                                  isParked, isRecording, isTimeShifting, parkedDuration,
+                                                                  parkedAt, IsScrambled(idCard, subchannel.Id));
+                  streams.Add(streamPresentation);
+                }
+              }
+            }
+          }
+        }
+      }
+      catch (Exception e)
+      {
+        HandleControllerException(e);
+      }
+
+      
+      return streams;
+    }
+
+    public bool IsAnyCardParkedByUser(string userName)
+    {
+      bool isCardParkedByUser = false;
+      try
+      {          
+        IEnumerable<Card> cards = TVDatabase.TVBusinessLayer.CardManagement.ListAllCards(CardIncludeRelationEnum.None);
+        foreach (Card card in cards)
+        {
+          if (!card.Enabled)
+          {
+            continue;
+          }
+          if (!IsCardPresent(card.IdCard))
+          {
+            continue;
+          }
+          IDictionary<string, IUser> users = GetUsersForCard(card.IdCard);
+          if (users != null)
+          {
+            foreach (IUser user in users.Values.Where(user => card.IdCard == user.CardId))
+            {
+              int cardId = user.CardId;
+              ITvCardHandler tvcard = _cards[cardId];
+              isCardParkedByUser = tvcard.ParkedUserManagement.IsUserParkedOnAnyChannel(user.Name);
+              if (isCardParkedByUser)
+              {
+                break;
+              }
+            }
+          }
+        }
+      }
+      catch (Exception e)
+      {
+        HandleControllerException(e);
+      }
+
+      return isCardParkedByUser;
+    }
+
+    public IList<CardPresentation> ListAllCards()
+    {      
+      IList<CardPresentation> cardPresentations = new List<CardPresentation>();
+
+      try
+      {
+        IEnumerable<Card> cards = TVDatabase.TVBusinessLayer.CardManagement.ListAllCards(CardIncludeRelationEnum.None);
+
+        foreach (Card card in cards)
+        {
+          ITvCardHandler cardHandler;
+          bool isAvailable = _cards.TryGetValue(card.IdCard, out cardHandler);
+          bool isEnabled = false;
+
+          if (isAvailable)
+          {
+            isEnabled = card.Enabled;
+            isAvailable = IsCardPresent(card.IdCard);
+          }
+
+          if (!isAvailable)
+          {
+            var cardPresentation = new CardPresentation("n/a", card.IdCard, card.Name) { SubChannelsCountOk = true, SubChannels = 0, State = "n/a" };
+            cardPresentations.Add(cardPresentation);
+          }
+          else if (!isEnabled)
+          {
+            string cardType = Type(card.IdCard).ToString();
+            var cardPresentation = new CardPresentation(cardType, card.IdCard, card.Name) { SubChannelsCountOk = true, SubChannels = 0, State = "disabled" };
+            cardPresentations.Add(cardPresentation);
+          }
+
+          else
+          {
+            string cardType = Type(card.IdCard).ToString();
+            IDictionary<string, IUser> users = GetUsersForCard(card.IdCard);
+
+            int subChannels = GetSubChannels(card.IdCard);
+            if (users.Count == 0)
+            {
+              var cardPresentation = new CardPresentation(cardType, card.IdCard, card.Name) { SubChannels = subChannels, SubChannelsCountOk = (subChannels == 0), Idle = true, State = "Idle" };
+
+              bool isScanning = IsScanning(card.IdCard);
+              if (isScanning)
+              {
+                cardPresentation.State = "Scanning";
+                cardPresentation.UserName = "n/a";
+                cardPresentation.ChannelName = "n/a";
+                cardPresentation.IsScrambled = "n/a";
+                cardPresentation.IsOwner = "no";
+              }
+
+              cardPresentations.Add(cardPresentation);
+            }
+            else
+            {
+              HashSet<int> subchannelsInUse = new HashSet<int>();
+              ICollection<IUser> usersCopy = new List<IUser>(users.Values); //avoid threading issues, make a copy.
+              foreach (IUser user in usersCopy)
+              {
+                if (user.CardId == card.IdCard)
+                {
+                  bool isOwner = IsOwner(user.CardId, user.Name);
+                  foreach (ISubChannel subchannel in new List<ISubChannel>(user.SubChannels.Values)) //avoid threading issues, make a copy.
+                  {
+
+                    if (!subchannelsInUse.Contains(subchannel.Id))
+                    {
+                      subchannelsInUse.Add(subchannel.Id);
+                    }
+
+                    bool isScrambled = IsScrambled(user.CardId, subchannel.Id);
+                    var cardPresentation = new CardPresentation(cardType, card.IdCard, card.Name)
+                    {
+                      SubChannels = subChannels,
+                      SubChannelsCountOk = true,
+                      Idle = false,
+                      UserName = user.Name,
+                      ChannelName =
+                        ChannelManagement.GetChannel(subchannel.IdChannel, ChannelIncludeRelationEnum.None).DisplayName,
+                      IsScrambled = isScrambled ? "yes" : "no",
+                      IsOwner = isOwner ? "yes" : "no",
+                    };
+
+                    double parkedDuration;
+                    DateTime parkedAt;
+                    bool isParked = cardHandler.ParkedUserManagement.IsUserParkedOnChannel(user.Name, subchannel.IdChannel,
+                                                                                           out parkedDuration,
+                                                                                           out parkedAt);
+                    string state = "n/a";
+
+                    if (user.UserType == UserType.Scheduler)
+                    {
+                      state = "Recording";
+                    }
+                    else if (user.UserType == UserType.EPG)
+                    {
+                      state = "Grabbing EPG";
+                    }
+                    else if (user.UserType == UserType.Scanner)
+                    {
+                      state = "Scanning";
+                    }
+                    else if (user.UserType == UserType.Normal)
+                    {
+                      state = "Timeshifting";
+                      if (isParked)
+                      {
+                        state += " (PARK@" + parkedAt.ToShortTimeString() + ")";
+                      }
+                    }
+
+                    if (user.UserType != UserType.EPG)
+                    {
+                      bool isGrabbingEpg = IsGrabbingEpg(card.IdCard);
+                      if (isGrabbingEpg)
+                      {
+                        state += " (Grabbing EPG)";
+                      }
+                    }
+                    cardPresentation.State = state;
+                    cardPresentations.Add(cardPresentation);
+                  }
+                }
+              }
+
+              if (subChannels != subchannelsInUse.Count)
+              {
+                foreach (CardPresentation cardPresentation in cardPresentations)
+                {
+                  if (cardPresentation.CardId == card.IdCard)
+                    cardPresentation.SubChannelsCountOk = false;
+                }
+              }
+            }
+          }
+        }
+      }
+      catch (Exception e)
+      {
+        HandleControllerException(e);
+      }
+      return cardPresentations;
+    }  
+  }
+>>>>>>> remotes/origin/EXP-TVE3.5-MP1-MP2
 }

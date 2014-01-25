@@ -49,8 +49,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       _graphBuilder = (IFilterGraph2)new FilterGraph();
       _rotEntry = new DsROTEntry(_graphBuilder);
 
-      TsReader reader = new TsReader();
-      _tsReader = (IBaseFilter)reader;
+      _tsReader = FilterLoader.LoadFilterFromDll("TsReader.ax", typeof(TsReader).GUID, true);
       this.LogInfo("TSReaderPlayer:add TsReader to graph");
       _graphBuilder.AddFilter(_tsReader, "TsReader");
 

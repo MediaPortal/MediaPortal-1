@@ -1273,7 +1273,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
         this.LogDebug("MD plugin: channel is not a DVB channel");
         return true;
       }
-      if (_providers.Count != 0 && !_providers.Contains(dvbChannel.Provider))
+      string lowerProvider = dvbChannel.Provider == null ? string.Empty : dvbChannel.Provider.ToLowerInvariant();
+      if (_providers.Count != 0 && !_providers.Contains(lowerProvider))
       {
         this.LogDebug("MD plugin: plugin not configured to decrypt services for provider \"{0}\"", dvbChannel.Provider);
         return false;

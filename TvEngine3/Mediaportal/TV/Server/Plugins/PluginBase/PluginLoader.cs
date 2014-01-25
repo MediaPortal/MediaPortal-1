@@ -20,6 +20,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using MediaPortal.Common.Utils;
@@ -33,7 +35,7 @@ namespace Mediaportal.TV.Server.Plugins.Base
   {
     private List<ITvServerPlugin> _plugins = new List<ITvServerPlugin>();
     private readonly List<Type> _incompatiblePlugins = new List<Type>();
-    
+
 
     /// <summary>
     /// returns a list of all plugins loaded.
@@ -58,23 +60,19 @@ namespace Mediaportal.TV.Server.Plugins.Base
     /// </summary>
     public virtual void Load()
     {
-       /*   
-       var container = new WindsorContainer();
-       container.Register(Component.For<IService>().ImplementedBy<Service>()
-       */
-                 
       _plugins.Clear();
       _incompatiblePlugins.Clear();
-
       try
-      {        
-        var assemblyFilter = new AssemblyFilter("plugins");
+      {
+        // Load plugins from "plugins" subfolder, relative to calling assembly's location
+        string pluginFolder = Path.Combine(Path.GetDirectoryName(Assembly.GetCallingAssembly().Location), "Plugins");
+        var assemblyFilter = new AssemblyFilter(pluginFolder);
         IWindsorContainer container = Instantiator.Instance.Container();
         container.Register(
-        AllTypes.FromAssemblyInDirectory(assemblyFilter).                        
+        AllTypes.FromAssemblyInDirectory(assemblyFilter).
             BasedOn<ITvServerPlugin>().
-            If(t => IsPluginCompatible(t)).            
-            WithServiceBase().            
+            If(IsPluginCompatible).
+            WithServiceBase().
             LifestyleSingleton()
             );
 
@@ -82,9 +80,8 @@ namespace Mediaportal.TV.Server.Plugins.Base
 
         foreach (ITvServerPlugin plugin in _plugins)
         {
-          this.LogDebug("PluginManager: Loaded {0} version:{1} author:{2}", plugin.Name, plugin.Version,
-                        plugin.Author);
-        }      
+          this.LogDebug("PluginManager: Loaded {0} version:{1} author:{2}", plugin.Name, plugin.Version, plugin.Author);
+        }
       }
       catch (Exception ex)
       {
@@ -94,13 +91,13 @@ namespace Mediaportal.TV.Server.Plugins.Base
 
     private bool IsPluginCompatible(Type type)
     {
-      bool isPluginCompatible = CompatibilityManager.IsPluginCompatible(type);
+      bool isPluginCompatible = CompatibilityManager.IsPluginCompatible(type, true);
       if (!isPluginCompatible)
       {
         _incompatiblePlugins.Add(type);
         this.LogDebug("PluginManager: {0} is incompatible with the current tvserver version and won't be loaded!", type.FullName);
       }
       return isPluginCompatible;
-    }    
+    }
   }
 }

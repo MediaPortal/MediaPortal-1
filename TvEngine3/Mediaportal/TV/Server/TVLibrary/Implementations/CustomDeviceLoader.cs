@@ -17,7 +17,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     private readonly string _customDevicesFolder;
 
     public CustomDeviceLoader()
-    {      
+    {
       _customDevicesFolder = PathManager.BuildAssemblyRelativePath("plugins\\CustomDevices");
       if (!Directory.Exists(_customDevicesFolder))
       {
@@ -48,7 +48,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// Loads all plugins.
     /// </summary>
     public virtual void Load()
-    {       
+    {
       if (_plugins.Count > 0)
       {
         this.LogDebug("custom devices already loaded.");
@@ -66,19 +66,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
       try
       {
-        
+
         var assemblyFilter = new AssemblyFilter(_customDevicesFolder);
-      GlobalServiceProvider.Instance.Get<IWindsorContainer>().Register(
-      AllTypes.FromAssemblyInDirectory(assemblyFilter).
-          BasedOn<ICustomDevice>().
-          If(IsPluginCompatible).
-          WithServiceBase().
-          LifestyleTransient()
-          );
+        GlobalServiceProvider.Instance.Get<IWindsorContainer>().Register(
+        AllTypes.FromAssemblyInDirectory(assemblyFilter).
+            BasedOn<ICustomDevice>().
+            If(IsPluginCompatible).
+            WithServiceBase().
+            LifestyleTransient()
+            );
 
-        _plugins = new List<ICustomDevice>(GlobalServiceProvider.Instance.Get<IWindsorContainer>().ResolveAll<ICustomDevice>());            
+        _plugins = new List<ICustomDevice>(GlobalServiceProvider.Instance.Get<IWindsorContainer>().ResolveAll<ICustomDevice>());
 
-         // There is a well defined loading/checking order for plugins: add-ons, priority, name.
+        // There is a well defined loading/checking order for plugins: add-ons, priority, name.
         _plugins.Sort(
         delegate(ICustomDevice cd1, ICustomDevice cd2)
         {
@@ -101,18 +101,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         }
       );
 
-      // Log the name, priority and capabilities for each plugin, in priority order.
-      foreach (ICustomDevice d in _plugins)
-      {
-        Type[] interfaces = d.GetType().GetInterfaces();
-        string[] interfaceNames = new string[interfaces.Length];
-        for (int i = 0; i < interfaces.Length; i++)
+        // Log the name, priority and capabilities for each plugin, in priority order.
+        foreach (ICustomDevice d in _plugins)
         {
-          interfaceNames[i] = interfaces[i].Name;
+          Type[] interfaces = d.GetType().GetInterfaces();
+          String[] interfaceNames = new String[interfaces.Length];
+          for (int i = 0; i < interfaces.Length; i++)
+          {
+            interfaceNames[i] = interfaces[i].Name;
+          }
+          Array.Sort(interfaceNames);
+          this.LogDebug("  {0} [{1} - {2}]: {3}", d.Name, d.Priority, d.GetType().Name, String.Join(", ", interfaceNames));
         }
-        Array.Sort(interfaceNames);
-        this.LogDebug("  {0} [{1} - {2}]: {3}", d.Name, d.Priority, d.GetType().Name, string.Join(", ", interfaceNames));
-      }   
       }
       catch (Exception ex)
       {
@@ -122,13 +122,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
     private bool IsPluginCompatible(Type type)
     {
-      bool isPluginCompatible = CompatibilityManager.IsPluginCompatible(type);
+      bool isPluginCompatible = CompatibilityManager.IsPluginCompatible(type, true);
       if (!isPluginCompatible)
       {
         _incompatiblePlugins.Add(type);
         this.LogDebug("CustomDeviceLoader: skipping incompatible plugin \"{0}\" ({1})", type.Name, type.Assembly.FullName);
-      }      
+      }
       return isPluginCompatible;
-    }      
+    }
   }
 }

@@ -159,15 +159,16 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
     {
       ctx.LnbTypes.AddObject(new LnbType { IdLnbType = 1, Name = "Universal", LowBandFrequency = 9750000, HighBandFrequency = 10600000, SwitchFrequency = 11700000, IsBandStacked = false, IsToroidal = false });
       ctx.LnbTypes.AddObject(new LnbType { IdLnbType = 2, Name = "C-Band", LowBandFrequency = 5150000, HighBandFrequency = 5650000, SwitchFrequency = 18000000, IsBandStacked = false, IsToroidal = false });
-      ctx.LnbTypes.AddObject(new LnbType { IdLnbType = 3, Name = "10750 MHz", LowBandFrequency = 10750000, HighBandFrequency = 11250000, SwitchFrequency = 18000000, IsBandStacked = false, IsToroidal = false });
-      ctx.LnbTypes.AddObject(new LnbType { IdLnbType = 4, Name = "11250 MHz (NA Legacy)", LowBandFrequency = 11250000, HighBandFrequency = 11750000, SwitchFrequency = 18000000, IsBandStacked = false, IsToroidal = false });
-      ctx.LnbTypes.AddObject(new LnbType { IdLnbType = 5, Name = "11300 MHz", LowBandFrequency = 11300000, HighBandFrequency = 11800000, SwitchFrequency = 18000000, IsBandStacked = false, IsToroidal = false });
-      ctx.LnbTypes.AddObject(new LnbType { IdLnbType = 6, Name = "DishPro Band Stacked FSS", LowBandFrequency = 10750000, HighBandFrequency = 13850000, SwitchFrequency = 18000000, IsBandStacked = true, IsToroidal = false });
-      ctx.LnbTypes.AddObject(new LnbType { IdLnbType = 7, Name = "DishPro Band Stacked DBS", LowBandFrequency = 11250000, HighBandFrequency = 14350000, SwitchFrequency = 18000000, IsBandStacked = true, IsToroidal = false });
-      ctx.LnbTypes.AddObject(new LnbType { IdLnbType = 8, Name = "NA Band Stacked FSS", LowBandFrequency = 10750000, HighBandFrequency = 10175000, SwitchFrequency = 18000000, IsBandStacked = true, IsToroidal = false });
-      ctx.LnbTypes.AddObject(new LnbType { IdLnbType = 9, Name = "NA Band Stacked DBS", LowBandFrequency = 11250000, HighBandFrequency = 10675000, SwitchFrequency = 18000000, IsBandStacked = true, IsToroidal = false });
-      ctx.LnbTypes.AddObject(new LnbType { IdLnbType = 10, Name = "Sadoun Band Stacked", LowBandFrequency = 10100000, HighBandFrequency = 10750000, SwitchFrequency = 18000000, IsBandStacked = true, IsToroidal = false });
-      ctx.LnbTypes.AddObject(new LnbType { IdLnbType = 11, Name = "C-Band Band Stacked", LowBandFrequency = 5150000, HighBandFrequency = 5750000, SwitchFrequency = 18000000, IsBandStacked = true, IsToroidal = false });
+      ctx.LnbTypes.AddObject(new LnbType { IdLnbType = 3, Name = "10700 MHz", LowBandFrequency = 10700000, HighBandFrequency = 11200000, SwitchFrequency = 18000000, IsBandStacked = false, IsToroidal = false });
+      ctx.LnbTypes.AddObject(new LnbType { IdLnbType = 4, Name = "10750 MHz", LowBandFrequency = 10750000, HighBandFrequency = 11250000, SwitchFrequency = 18000000, IsBandStacked = false, IsToroidal = false });
+      ctx.LnbTypes.AddObject(new LnbType { IdLnbType = 5, Name = "11250 MHz (NA Legacy)", LowBandFrequency = 11250000, HighBandFrequency = 11750000, SwitchFrequency = 18000000, IsBandStacked = false, IsToroidal = false });
+      ctx.LnbTypes.AddObject(new LnbType { IdLnbType = 6, Name = "11300 MHz", LowBandFrequency = 11300000, HighBandFrequency = 11800000, SwitchFrequency = 18000000, IsBandStacked = false, IsToroidal = false });
+      ctx.LnbTypes.AddObject(new LnbType { IdLnbType = 7, Name = "DishPro Band Stacked FSS", LowBandFrequency = 10750000, HighBandFrequency = 13850000, SwitchFrequency = 18000000, IsBandStacked = true, IsToroidal = false });
+      ctx.LnbTypes.AddObject(new LnbType { IdLnbType = 8, Name = "DishPro Band Stacked DBS", LowBandFrequency = 11250000, HighBandFrequency = 14350000, SwitchFrequency = 18000000, IsBandStacked = true, IsToroidal = false });
+      ctx.LnbTypes.AddObject(new LnbType { IdLnbType = 9, Name = "NA Band Stacked FSS", LowBandFrequency = 10750000, HighBandFrequency = 10175000, SwitchFrequency = 18000000, IsBandStacked = true, IsToroidal = false });
+      ctx.LnbTypes.AddObject(new LnbType { IdLnbType = 10, Name = "NA Band Stacked DBS", LowBandFrequency = 11250000, HighBandFrequency = 10675000, SwitchFrequency = 18000000, IsBandStacked = true, IsToroidal = false });
+      ctx.LnbTypes.AddObject(new LnbType { IdLnbType = 11, Name = "Sadoun Band Stacked", LowBandFrequency = 10100000, HighBandFrequency = 10750000, SwitchFrequency = 18000000, IsBandStacked = true, IsToroidal = false });
+      ctx.LnbTypes.AddObject(new LnbType { IdLnbType = 12, Name = "C-Band Band Stacked", LowBandFrequency = 5150000, HighBandFrequency = 5750000, SwitchFrequency = 18000000, IsBandStacked = true, IsToroidal = false });
       ctx.SaveChanges();
     }
 

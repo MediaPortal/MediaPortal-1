@@ -1,0 +1,3 @@
+[submodule "Build/BuildReport"]
+	path = Build/BuildReport
+	url = git@github.com:MediaPortal/BuildReport.git
