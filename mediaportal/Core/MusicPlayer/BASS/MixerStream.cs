@@ -681,36 +681,28 @@ namespace MediaPortal.MusicPlayer.BASS
       switch (_bassPlayer.DeviceChannels)
       {
         case 6:
-          // Channel 1: left front out = left front in
-          // Channel 2: right front out = right front in
-          // Channel 3: centre out = left/right front in
-          // Channel 4: LFE out = silent
-          // Channel 5: left surround out = left surround in
-          // Channel 6: right surround out = right surround in
-          mixMatrix = new float[6, 5];
-          mixMatrix[0, 0] = 1;
-          mixMatrix[1, 1] = 1;
-          mixMatrix[2, 2] = 1;
-          mixMatrix[4, 4] = 1;
-          mixMatrix[5, 5] = 1;
+           mixMatrix = new float[6, 5] {
+          	{1,0,0,0,0}, // left front out = left front in
+	          {0,1,0,0,0}, // right front out = right front in
+	          {0,0,1,0,0}, // centre out = centre in
+	          {0,0,0,0,0}, // LFE out = silent
+	          {0,0,0,1,0}, // left rear out = left rear in
+	          {0,0,0,0,1}  // right rear out = right rear in
+           }; 
           Log.Info("BASS: Upmix 5.0-> 5.1 with LFE empty");
           break;
 
         case 7:
-          // Channel 1: left front out = left front in
-          // Channel 2: right front out = right front in
-          // Channel 3: center out = left/right front in
-          // Channel 4: LFE out = silent
-          // Channel 5: left surround out = left surround in
-          // Channel 6: right surround out = right surround in
-          // Channel 7: left back out = silent
-          // Channel 8: right back out = silent
-          mixMatrix = new float[8, 5];
-          mixMatrix[0, 0] = 1;
-          mixMatrix[1, 1] = 1;
-          mixMatrix[2, 2] = 1;
-          mixMatrix[4, 4] = 1;
-          mixMatrix[5, 5] = 1;
+          mixMatrix = new float[8, 5] {
+          	{1,0,0,0,0}, // left front out = left front in
+	          {0,1,0,0,0}, // right front out = right front in
+	          {0,0,1,0,0}, // centre out = centre in
+	          {0,0,0,0,0}, // LFE out = silent
+	          {0,0,0,1,0}, // left rear out = left rear in
+	          {0,0,0,0,1}, // right rear out = right rear in
+            {0,0,0,0,0}, // left back out = silent
+            {0,0,0,0,0}  // right back out = silent
+           };
           Log.Info("BASS: Upmix 5.0-> 5.1 with LFE empty");
           break;
       }
