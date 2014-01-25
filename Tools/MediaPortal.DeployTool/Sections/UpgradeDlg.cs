@@ -180,7 +180,9 @@ namespace MediaPortal.DeployTool.Sections
 
     public override DeployDialog GetNextDialog()
     {
-      if (MySQL56 && rbUpdate.Enabled)
+      if (MySQL56 && rbUpdate.Enabled &&
+          (InstallationProperties.Instance["InstallType"] == "tvserver_master" ||
+           InstallationProperties.Instance["InstallType"] == "singleseat"))
       {
         return DialogFlowHandler.Instance.GetDialogInstance(DialogType.MysqlUpgrade);
       }
@@ -191,12 +193,12 @@ namespace MediaPortal.DeployTool.Sections
       }
       // Direct to upgrade
       if (InstallationProperties.Instance.Get("InstallType") != "tvserver_master")
-      {  // install includes MP so check skin choice
+      {
+        // install includes MP so check skin choice
         return DialogFlowHandler.Instance.GetDialogInstance(DialogType.SkinChoice);
       }
       // tv server only install so no need for skin choice
       return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Installation);
-
     }
 
     public override bool SettingsValid()
