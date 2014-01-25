@@ -135,11 +135,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
       // Start with the source filter.
       if (_sourceFilterClsid == typeof(MediaPortalStreamSource).GUID)
       {
-        _filterStreamSource = FilterGraphTools.AddFilterFromFile(_graph, "MPIPTVSource.ax", _sourceFilterClsid, _name);
+        _filterStreamSource = FilterGraphTools.AddFilterFromFile(_graph, "MPIPTVSource.ax", _sourceFilterClsid, Name);
       }
       else
       {
-        _filterStreamSource = FilterGraphTools.AddFilterFromRegisteredClsid(_graph, _sourceFilterClsid, _name);
+        _filterStreamSource = FilterGraphTools.AddFilterFromRegisteredClsid(_graph, _sourceFilterClsid, Name);
       }
 
       // Check for and load extensions, adding any additional filters to the graph.

@@ -139,7 +139,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// Indicates, if the tuner is locked
     /// </summary>
-    protected bool _isSignalLocked;
+    protected volatile bool _isSignalLocked;
 
     /// <summary>
     /// Value of the signal level
@@ -179,7 +179,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// Date and time of the last signal update
     /// </summary>
-    protected DateTime _lastSignalUpdate = DateTime.MinValue;
+    protected volatile DateTime _lastSignalUpdate = DateTime.MinValue;
 
     /// <summary>
     /// Indicates, if the signal is present
@@ -277,7 +277,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// A flag used by the TV service as a signal to abort the tuning process before it is completed.
     /// </summary>
-    protected bool _cancelTune = false;
+    protected volatile bool _cancelTune = false;
 
     /// <summary>
     /// The current state of the tuner.
@@ -323,7 +323,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           // TODO preloading shouldn't be done here - it should happen in TunerDetector (in case required components can't be loaded until the super constructor is executed)
           if (d.Enabled && d.PreloadCard)
           {
-            this.LogInfo("TvCardBase: preloading device {0}", _name);
+            this.LogInfo("TvCardBase: preloading device {0}", Name);
             Load();
           }
         }
@@ -623,11 +623,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     }
 
     /// <summary>
-    /// returns true if card is currently scanning
+    /// Get or set a value indicating whether this tuner is scanning for channels.
     /// </summary>
-    public bool IsScanning
+    /// <value><c>true</c> if the tuner is currently scanning, otherwise <c>false</c></value>
+    public virtual bool IsScanning
     {
-      get { return _isScanning; }
+      get
+      {
+        return _isScanning;
+      }
       set
       {
         _isScanning = value;
@@ -956,7 +960,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       try
       {
         UpdateEpgGrabber(false);  // Stop grabbing EPG.
-        _isScanning = false;
+        IsScanning = false;
         FreeAllSubChannels();
 
         TunerAction action = TunerAction.Stop;

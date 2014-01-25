@@ -568,7 +568,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
       // polling thread as well as indirectly from the main TV service thread.
       int bufferSize = sizeof(DeCiState);   // 2 bytes
       IntPtr responsebuffer = Marshal.AllocCoTaskMem(bufferSize);
-      int hr = 1;
+      int hr = (int)HResult.Severity.Error;
       try
       {
         for (int i = 0; i < bufferSize; i++)

@@ -740,7 +740,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
             // just a formality) and check if it can be connected to our upstream filter.
             IPin tmpFilterInputPin = DsFindPin.ByDirection(tmpCiFilter, PinDirection.Input, 0);
             IPin tmpFilterOutputPin = DsFindPin.ByDirection(tmpCiFilter, PinDirection.Output, 0);
-            hr = 1;
+            hr = (int)HResult.Severity.Error;
             try
             {
               if (tmpFilterInputPin == null || tmpFilterOutputPin == null)

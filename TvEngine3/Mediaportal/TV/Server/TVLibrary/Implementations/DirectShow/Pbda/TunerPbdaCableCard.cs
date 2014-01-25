@@ -233,18 +233,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
       bool isOutOfBandTunerLocked = false;
       int hr = bdaCa.get_SmartCardStatus(out status, out association, out error, out isOutOfBandTunerLocked);
       HResult.ThrowException(hr, "Failed to read smart card status.");
-      this.LogDebug("PBDA CableCARD: smart card status");
-      this.LogDebug("  status      = {0}", status);
-      this.LogDebug("  association = {0}", association);
-      this.LogDebug("  OOB locked  = {0}", isOutOfBandTunerLocked);
-      this.LogDebug("  error       = {0}", error);
-      if (status != SmartCardStatusType.CardInserted || !isOutOfBandTunerLocked)
+      if (status != SmartCardStatusType.CardInserted || (IsScanning && !isOutOfBandTunerLocked) || !string.IsNullOrEmpty(error))
       {
+        this.LogError("PBDA CableCARD: smart card status");
+        this.LogError("  status      = {0}", status);
+        this.LogError("  association = {0}", association);
+        this.LogError("  OOB locked  = {0}", isOutOfBandTunerLocked);
+        this.LogError("  error       = {0}", error);
         throw new TvExceptionNoSignal();
       }
 
-      hr = bdaCa.TuneByChannel((short)atscChannel.MajorChannel);
-      HResult.ThrowException(hr, "Failed to tune channel.");
+      if (!IsScanning)
+      {
+        hr = bdaCa.TuneByChannel((short)atscChannel.MajorChannel);
+        HResult.ThrowException(hr, "Failed to tune channel.");
+      }
     }
 
     /// <summary>
@@ -264,6 +267,42 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
     }
 
     #endregion
+
+    /// <summary>
+    /// Actually update tuner signal status statistics.
+    /// </summary>
+    /// <param name="onlyUpdateLock"><c>True</c> to only update lock status.</param>
+    protected override void PerformSignalStatusUpdate(bool onlyUpdateLock)
+    {
+      if (IsScanning)
+      {
+        // When scanning we need the OOB tuner to be locked. We already updated
+        // the lock status when tuning, so only update again when monitoring.
+        if (!onlyUpdateLock)
+        {
+          IBDA_ConditionalAccess bdaCa = _filterMain as IBDA_ConditionalAccess;
+          if (bdaCa == null)
+          {
+            return;
+          }
+          SmartCardStatusType status;
+          SmartCardAssociationType association;
+          string error;
+          int hr = bdaCa.get_SmartCardStatus(out status, out association, out error, out _isSignalLocked);
+          if (hr != (int)HResult.Severity.Success)
+          {
+            this.LogWarn("PBDA CableCARD: potential error updating signal status, hr = 0x{0:x}", hr);
+          }
+        }
+        // We can only get lock status for the OOB tuner.
+        _isSignalPresent = _isSignalLocked;
+        _signalLevel = 0;
+        _signalQuality = 0;
+        return;
+      }
+
+      base.PerformSignalStatusUpdate(onlyUpdateLock);
+    }
 
     /// <summary>
     /// Stop the tuner. The actual result of this function depends on tuner configuration.

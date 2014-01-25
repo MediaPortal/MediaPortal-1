@@ -329,7 +329,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
         {
           this.LogError("SAT>IP base: failed to stop tuner, non-OK RTSP TEARDOWN status code {0} {1}", response.StatusCode, response.ReasonPhrase);
         }
-        _rtspClient = null;
+        else
+        {
+          _rtspClient = null;
+          _satIpStreamId = string.Empty;
+          _rtspSessionId = string.Empty;
+        }
       }
       base.SetTunerState(state);
     }
@@ -338,7 +343,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
     /// Actually update tuner signal status statistics.
     /// </summary>
     /// <param name="onlyUpdateLock"><c>True</c> to only update lock status.</param>
-    protected void PerformSignalStatusUpdate(bool onlyUpdateLock)
+    protected override void PerformSignalStatusUpdate(bool onlyUpdateLock)
     {
       bool isSignalLocked = false;
       int signalLevel = 0;

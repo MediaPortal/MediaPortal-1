@@ -265,11 +265,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
     bool IsEpgGrabbing { get; set; }
 
     /// <summary>
-    /// Gets or sets a value indicating whether this card is scanning for channels.
+    /// Get or set a value indicating whether this tuner is scanning for channels.
     /// </summary>
-    /// <value>
-    /// 	<c>true</c> if this card is scanning; otherwise, <c>false</c>.
-    /// </value>
+    /// <value><c>true</c> if the tuner is currently scanning, otherwise <c>false</c></value>
     bool IsScanning { get; set; }
 
     #endregion

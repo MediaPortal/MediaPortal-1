@@ -188,7 +188,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
       public int Execute(Guid psGuid, IKsPropertySet ps, out int returnedByteCount)
       {
         returnedByteCount = 0;
-        int hr = 1; // fail
+        int hr = (int)HResult.Severity.Error;
         if (ps == null)
         {
           return hr;

@@ -1396,7 +1396,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       int satelliteFrontEndCount = 0;
       int terrestrialFrontEndCount = 0;
       string remoteHost = new Uri(rootDeviceDescriptor.RootDescriptor.SSDPRootEntry.PreferredLink.DescriptionLocation).Host;
-      IPAddress localNic = rootDeviceDescriptor.RootDescriptor.SSDPRootEntry.PreferredLink.Endpoint.EndPointIPAddress
+      IPAddress localNic = rootDeviceDescriptor.RootDescriptor.SSDPRootEntry.PreferredLink.Endpoint.EndPointIPAddress;
 
       // SAT>IP servers may have more than one tuner, but their descriptors
       // only ever have one device node. We have to find out how many tuners

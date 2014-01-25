@@ -128,7 +128,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     /// </summary>
     protected void CompleteGraph()
     {
-      FilterGraphTools.SaveGraphFile(_graph, _name + " - " + _tunerType + " Graph.grf");
+      FilterGraphTools.SaveGraphFile(_graph, Name + " - " + _tunerType + " Graph.grf");
     }
 
     /// <summary>
@@ -191,9 +191,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       {
         hr = (_graph as IMediaControl).Pause();
       }
-      else
+      else if (state == TunerState.Started)
       {
         hr = (_graph as IMediaControl).Run();
+      }
+      else
+      {
+        hr = (int)HResult.Severity.Error;
       }
       HResult.ThrowException(hr, string.Format("Failed to change tuner state from {0} to {1}.", _state, state));
       _state = state;
