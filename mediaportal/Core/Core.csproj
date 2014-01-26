@@ -1536,6 +1536,7 @@
     <Compile Include="Util\VirtualDirectory.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Util\WakeOnLanManager.cs" />
     <Compile Include="Util\Win32API.cs">
       <SubType>Code</SubType>
     </Compile>

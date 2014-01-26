@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing.Imaging;
 using System.Globalization;
+using System.Net;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -406,6 +407,10 @@ namespace MediaPortal.GUI.Pictures
     public static string fileNameCheck = string.Empty;
     protected PictureSort.SortMethod currentSortMethod = PictureSort.SortMethod.Name;
     public static List<string> _thumbnailFolderItem = new List<string>();
+    private static string _prevServerName = string.Empty;
+    private static DateTime _prevWolTime;
+    private static int _wolTimeout;
+    private static int _wolResendTime;
 
     #endregion
 
@@ -431,6 +436,8 @@ namespace MediaPortal.GUI.Pictures
         isFileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
         fileMenuPinCode = Util.Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", string.Empty));
         //string strDefault = xmlreader.GetValueAsString("pictures", "default", string.Empty);
+        _wolTimeout = xmlreader.GetValueAsInt("WOL", "WolTimeout", 10);
+        _wolResendTime = xmlreader.GetValueAsInt("WOL", "WolResendTime", 1);
         _virtualDirectory = VirtualDirectories.Instance.Pictures;
         
         if (currentFolder == string.Empty)
@@ -632,6 +639,7 @@ namespace MediaPortal.GUI.Pictures
       }
       InitViewSelections();
       UpdateButtonStates();
+      ResetShares();
 
       GUITextureManager.CleanupThumbs();
       // LoadSettings();
@@ -1749,6 +1757,12 @@ namespace MediaPortal.GUI.Pictures
       {
         return;
       }
+
+      if (!WakeUpSrv(item.Path))
+      {
+        return;
+      }
+
       if (item.IsFolder)
       {
         selectedItemIndex = -1;
@@ -1799,6 +1813,12 @@ namespace MediaPortal.GUI.Pictures
       {
         return;
       }
+
+      if (!WakeUpSrv(item.Path))
+      {
+        return;
+      }
+
       if (item.IsFolder)
       {
         i++;
@@ -2154,6 +2174,45 @@ namespace MediaPortal.GUI.Pictures
       }
     }
 
+    private bool WakeUpSrv(string newFolderName)
+    {
+      if (!Util.Utils.IsNetwork(newFolderName))
+      {
+        return true;
+      }
+
+      string serverName = string.Empty;
+      bool wakeOnLanEnabled = _virtualDirectory.IsWakeOnLanEnabled(_virtualDirectory.GetShare(newFolderName));
+
+      if (wakeOnLanEnabled)
+      {
+        serverName = Util.Utils.GetServerNameFromUNCPath(newFolderName);
+      }
+
+      DateTime now = DateTime.Now;
+      TimeSpan ts = now - _prevWolTime;
+
+      if (serverName == _prevServerName && _wolResendTime * 60 > ts.TotalSeconds)
+      {
+        return true;
+      }
+
+      _prevWolTime = DateTime.Now;
+      _prevServerName = serverName;
+
+      try
+      {
+        Log.Debug("WakeUpSrv: FolderName = {0}, ShareName = {1}, WOL enabled = {2}", newFolderName, _virtualDirectory.GetShare(newFolderName).Name, wakeOnLanEnabled);
+      }
+      catch { };
+
+      if (!string.IsNullOrEmpty(serverName))
+      {
+        return BaseWakeupSystem.HandleWakeUpServer(serverName, _wolTimeout);
+      }
+      return true;
+    }
+
     public static void Filter(ref List<GUIListItem> itemlist)
     {
       itemlist.RemoveAll(ContainsFolderThumb);
@@ -2164,6 +2223,11 @@ namespace MediaPortal.GUI.Pictures
       List<GUIListItem> itemlist;
       string objectCount = string.Empty;
 
+      if (!WakeUpSrv(strNewDirectory))
+      {
+        return;
+      }
+      
       GUIWaitCursor.Show();
 
       GUIListItem SelectedItem = GetSelectedItem();

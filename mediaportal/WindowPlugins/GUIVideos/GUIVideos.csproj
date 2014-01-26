@@ -248,6 +248,7 @@
     <Compile Include="VideoSort.cs" />
     <Compile Include="VideoState.cs" />
     <Compile Include="VideoViewHandler.cs" />
+    <Compile Include="WakeupSystem.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
