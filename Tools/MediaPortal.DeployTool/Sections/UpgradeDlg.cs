@@ -28,7 +28,9 @@ namespace MediaPortal.DeployTool.Sections
   {
     public static bool rbFreshChecked;
     private bool rbReinstallChecked;
+    private bool rbUpdateChecked;
     public static bool MySQL56 = false;
+    public static bool MySQL51= false;
     public static bool reInstallForce = false;
     public static bool freshForce = true; // Set to true by default (needed for fresh installation)
 
@@ -40,10 +42,12 @@ namespace MediaPortal.DeployTool.Sections
       bFresh.Image = Images.Choose_button_on;
       rbFreshChecked = true;
       rbReinstallChecked = false;
+      rbUpdateChecked = false;
       // Check if MySQL need to be upgraded
       IInstallationPackage package = new MySQLChecker();
       CheckResult resultMySQL56 = package.CheckStatus();
       CheckResult resultMySQL51 = MySQLChecker.CheckStatusMySQL51();
+      MySQL51 = resultMySQL51.state == CheckState.NOT_INSTALLED;
       MySQL56 = resultMySQL56.state == CheckState.NOT_INSTALLED;
       UpdateUI();
     }
@@ -180,7 +184,7 @@ namespace MediaPortal.DeployTool.Sections
 
     public override DeployDialog GetNextDialog()
     {
-      if (MySQL56 && rbUpdate.Enabled &&
+      if (MySQL56 && !MySQL51 && rbUpdate.Enabled && rbUpdateChecked &&
           (InstallationProperties.Instance["InstallType"] == "tvserver_master" ||
            InstallationProperties.Instance["InstallType"] == "singleseat"))
       {
@@ -224,6 +228,7 @@ namespace MediaPortal.DeployTool.Sections
       bFresh.Image = Images.Choose_button_off;
       bReinstall.Image = Images.Choose_button_off;
       rbFreshChecked = false;
+      rbUpdateChecked = true;
       reInstallForce = false;
       freshForce = false;
       InstallationProperties.Instance.Set("UpdateMode", "yes");
@@ -246,6 +251,7 @@ namespace MediaPortal.DeployTool.Sections
       bFresh.Image = Images.Choose_button_off;
       bReinstall.Image = Images.Choose_button_on;
       rbFreshChecked = false;
+      rbUpdateChecked = false;
       rbReinstallChecked = true;
       reInstallForce = true;
       freshForce = false;
@@ -269,6 +275,7 @@ namespace MediaPortal.DeployTool.Sections
       bFresh.Image = Images.Choose_button_on;
       bReinstall.Image = Images.Choose_button_off;
       rbFreshChecked = true;
+      rbUpdateChecked = false;
       rbReinstallChecked = false;
       reInstallForce = false;
       freshForce = true;
