@@ -160,7 +160,6 @@ namespace MediaPortal.IR
                                   USBUIRT.JumpToActionType.JUMP_TO_MY_MUSIC,
                                   USBUIRT.JumpToActionType.JUMP_TO_MY_PICTURES,
                                   USBUIRT.JumpToActionType.JUMP_TO_MY_RADIO,
-                                  USBUIRT.JumpToActionType.JUMP_TO_MY_WEATHER,
                                   USBUIRT.JumpToActionType.JUMP_TO_TELETEXT,
                                   USBUIRT.JumpToActionType.JUMP_TO_TELETEXT_FULLSCREEN,
                                 };

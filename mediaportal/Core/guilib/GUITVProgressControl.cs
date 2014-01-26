@@ -1088,7 +1088,7 @@ namespace MediaPortal.GUI.Library
             {
               MarkerStartsPercent.Add(float.Parse(strMarkerStarts[i]));
             }
-            catch (Exception ex)
+            catch (Exception)
             {
               break;
             }
@@ -1114,7 +1114,7 @@ namespace MediaPortal.GUI.Library
             {
               MarkerEndsPercent.Add(float.Parse(strMarkerEnds[i]));
             }
-            catch (Exception ex)
+            catch (Exception)
             {
               break;
             }

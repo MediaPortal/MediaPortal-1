@@ -46,7 +46,19 @@ REM ExternalPlayers
 xcopy %1\ExternalPlayers\bin\%2\ExternalPlayers.* plugins\ExternalPlayers\ /Y /D
 
 REM WindowPlugins
-xcopy %1\WindowPlugins\bin\%2\WindowPlugins.* plugins\Windows\ /Y /D
+xcopy %1\WindowPlugins\GUIDisc\bin\%2\GUIDisc.* plugins\Windows\ /Y /D
+xcopy %1\WindowPlugins\GUIDVD\bin\%2\GUIDVD.* plugins\Windows\ /Y /D
+xcopy %1\WindowPlugins\GUIHome\bin\%2\GUIHome.* plugins\Windows\ /Y /D
+xcopy %1\WindowPlugins\GUILastFMRadio\bin\%2\GUILastFMRadio.* plugins\Windows\ /Y /D
+xcopy %1\WindowPlugins\GUIMusic\bin\%2\GUIMusic.* plugins\Windows\ /Y /D
+xcopy %1\WindowPlugins\GUISudoku\bin\%2\GUISudoku.* plugins\Windows\ /Y /D
+xcopy %1\WindowPlugins\GUIPictures\bin\%2\GUIPictures.* plugins\Windows\ /Y /D
+xcopy %1\WindowPlugins\GUIRSSFeed\bin\%2\GUIRSSFeed.* plugins\Windows\ /Y /D
+xcopy %1\WindowPlugins\GUISettings\bin\%2\GUISettings.* plugins\Windows\ /Y /D
+xcopy %1\WindowPlugins\GUITetris\bin\%2\GUITetris.* plugins\Windows\ /Y /D
+xcopy %1\WindowPlugins\GUITopbar\bin\%2\GUITopbar.* plugins\Windows\ /Y /D
+xcopy %1\WindowPlugins\GUIVideos\bin\%2\GUIVideos.* plugins\Windows\ /Y /D
+xcopy %1\WindowPlugins\GUIWikipedia\bin\%2\GUIWikipedia.* plugins\Windows\ /Y /D
 
 REM Dialogs
 xcopy %1\Dialogs\bin\%2\Dialogs.* plugins\Windows\ /Y /D

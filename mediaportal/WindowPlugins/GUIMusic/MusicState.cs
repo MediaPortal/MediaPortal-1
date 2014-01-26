@@ -19,15 +19,18 @@
 #endregion
 
 using MediaPortal.GUI.Library;
-using WindowPlugins;
 
 namespace MediaPortal.GUI.Music
 {
   /// <summary>
   /// 
   /// </summary>
-  public class MusicState : StateBase
+  public class MusicState
   {
+    protected static int m_iTempPlaylistWindow = 0;
+    protected static string m_strTempPlaylistDirectory = "";
+    protected static int m_iStartWindow = 0;
+    protected static string view;
 
     static MusicState()
     {
@@ -35,6 +38,29 @@ namespace MediaPortal.GUI.Music
     }
 
     public static bool AutoDJEnabled { get; set; }
+    
+    public static int StartWindow
+    {
+        get { return m_iStartWindow; }
+        set { m_iStartWindow = value; }
+    }
 
+    public static string View
+    {
+        get { return view; }
+        set { view = value; }
+    }
+
+    public static string TempPlaylistDirectory
+    {
+      get { return m_strTempPlaylistDirectory; }
+      set { m_strTempPlaylistDirectory = value; }
+    }
+
+    public static int TempPlaylistWindow
+    {
+      get { return m_iTempPlaylistWindow; }
+      set { m_iTempPlaylistWindow = value; }
+    }
   }
 }

@@ -478,7 +478,20 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_MP}\SubtitlePlugins\bin\${BUILD_TYPE}\SubtitlePlugins.dll"
   SetOutPath "$MPdir.Plugins\Windows"
   File "${git_MP}\Dialogs\bin\${BUILD_TYPE}\Dialogs.dll"
-  File "${git_MP}\WindowPlugins\bin\${BUILD_TYPE}\WindowPlugins.dll"
+  ; Window Plugins
+  File "${git_MP}\WindowPlugins\GUIDisc\bin\${BUILD_TYPE}\GUIDisc.dll"
+  File "${git_MP}\WindowPlugins\GUIDVD\bin\${BUILD_TYPE}\GUIDVD.dll"
+  File "${git_MP}\WindowPlugins\GUIHome\bin\${BUILD_TYPE}\GUIHome.dll"
+  File "${git_MP}\WindowPlugins\GUILastFMRadio\bin\${BUILD_TYPE}\GUILastFMRadio.dll"
+  File "${git_MP}\WindowPlugins\GUIMusic\bin\${BUILD_TYPE}\GUIMusic.dll"
+  File "${git_MP}\WindowPlugins\GUISudoku\bin\${BUILD_TYPE}\GUISudoku.dll"
+  File "${git_MP}\WindowPlugins\GUIPictures\bin\${BUILD_TYPE}\GUIPictures.dll"
+  File "${git_MP}\WindowPlugins\GUIRSSFeed\bin\${BUILD_TYPE}\GUIRSSFeed.dll"
+  File "${git_MP}\WindowPlugins\GUISettings\bin\${BUILD_TYPE}\GUISettings.dll"
+  File "${git_MP}\WindowPlugins\GUITetris\bin\${BUILD_TYPE}\GUITetris.dll"
+  File "${git_MP}\WindowPlugins\GUITopbar\bin\${BUILD_TYPE}\GUITopbar.dll"
+  File "${git_MP}\WindowPlugins\GUIVideos\bin\${BUILD_TYPE}\GUIVideos.dll"
+  File "${git_MP}\WindowPlugins\GUIWikipedia\bin\${BUILD_TYPE}\GUIWikipedia.dll"
   ; ffmpeg
   SetOutPath "$MPdir.Base\MovieThumbnailer"
   File "${git_ROOT}\Packages\ffmpeg.2.1.1\ffmpeg.exe"
@@ -639,7 +652,18 @@ SectionEnd
   Delete "$MPdir.Plugins\subtitle\SubtitlePlugins.dll"
   RMDir "$MPdir.Plugins\subtitle"
   Delete "$MPdir.Plugins\Windows\Dialogs.dll"
-  Delete "$MPdir.Plugins\Windows\WindowPlugins.dll"
+  Delete "$MPdir.Plugins\Windows\GUIDisc.dll"
+  Delete "$MPdir.Plugins\Windows\GUIDVD.dll"
+  Delete "$MPdir.Plugins\Windows\GUIHome.dll"
+  Delete "$MPdir.Plugins\Windows\GUIMusic.dll"
+  Delete "$MPdir.Plugins\Windows\GUISudoku.dll"
+  Delete "$MPdir.Plugins\Windows\GUIPictures.dll"
+  Delete "$MPdir.Plugins\Windows\GUIRSSFeed.dll"
+  Delete "$MPdir.Plugins\Windows\GUISettings.dll"
+  Delete "$MPdir.Plugins\Windows\GUITetris.dll"
+  Delete "$MPdir.Plugins\Windows\GUITopbar.dll"
+  Delete "$MPdir.Plugins\Windows\GUIVideos.dll"
+  Delete "$MPdir.Plugins\Windows\GUIWikipedia.dll"
   RMDir "$MPdir.Plugins\Windows"
   RMDir "$MPdir.Plugins"
   ; Doc
@@ -755,6 +779,10 @@ Section -Post
   ${LOG_TEXT} "INFO" "Removing obsolete BASS 2.3 files"
   Delete "$MPdir.Base\MusicPlayer\plugins\audio decoders\bass_wv.dll"
 
+  ; MP1-4315 Blow windowplugins dll to separate plugin dlls
+  ${LOG_TEXT} "INFO" "Removing obsolete WindowPlugins.dll"
+  Delete "$MPdir.Plugins\Windows\WindowPlugins.dll"
+  
   ; removing old shortcut
   ${LOG_TEXT} "INFO" "Removing obsolete startmenu shortcuts"
   Delete "${STARTMENU_GROUP}\MediaPortal Logs Collector.lnk"
