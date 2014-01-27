@@ -2721,11 +2721,12 @@ public class MediaPortalApp : D3D, IRender
     GUIWindowManager.Clear();
     GUIWaitCursor.Dispose();
     GUIFontManager.Dispose();
-    GUIFontManager.ReleaseUnmanagedResources();
     GUITextureManager.Dispose();
     GUILocalizeStrings.Dispose();
     TexturePacker.Cleanup();
     VolumeHandler.Dispose();
+
+    GUIFontManager.SetDeviceNull();
 
     if (_isWinScreenSaverInUse)
     {
