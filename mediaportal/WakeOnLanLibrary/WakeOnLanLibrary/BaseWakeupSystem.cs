@@ -29,9 +29,9 @@ using MediaPortal.Profile;
 using MediaPortal.Util;
 using WindowPlugins;
 
-namespace MediaPortal.GUI
+namespace MediaPortal.WakeOnLanLibrary
 {
-  public class BaseWakeupSystem : WindowPluginBase
+  public class BaseWakeupSystem
   {
     private static bool WakeupSystem(byte[] hwAddress, string wakeupTarget, int timeout)
     {
@@ -47,7 +47,7 @@ namespace MediaPortal.GUI
       }
 
       GUIDialogProgress progressDialog =
-       (GUIDialogProgress)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PROGRESS);
+       (GUIDialogProgress)GUIWindowManager.GetWindow(101); //(int)Window.WINDOW_DIALOG_PROGRESS
       progressDialog.Reset();
       progressDialog.SetHeading(GUILocalizeStrings.Get(1990));
       progressDialog.ShowProgressBar(true);
@@ -83,7 +83,7 @@ namespace MediaPortal.GUI
           if (waittime > 0)
           {
             GUIDialogProgress progressDialog2 =
-             (GUIDialogProgress)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PROGRESS);
+             (GUIDialogProgress)GUIWindowManager.GetWindow(101); //(int)Window.WINDOW_DIALOG_PROGRESS
             progressDialog2.Reset();
             progressDialog2.SetHeading(string.Empty);
             progressDialog2.ShowProgressBar(true);

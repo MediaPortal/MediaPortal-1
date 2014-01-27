@@ -42,6 +42,7 @@ using MediaPortal.Util;
 using MediaPortal.Video.Database;
 using MediaPortal.Player.Subtitles;
 using MediaPortal.Profile;
+using MediaPortal.WakeOnLanLibrary;
 using Action = MediaPortal.GUI.Library.Action;
 using Layout = MediaPortal.GUI.Library.GUIFacadeControl.Layout;
 
