@@ -22,7 +22,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Net;
-using System.Windows.Forms;
 using System.Xml.Serialization;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
@@ -30,7 +29,7 @@ using MediaPortal.Profile;
 using MediaPortal.Util;
 using WindowPlugins;
 
-namespace MediaPortal.GUI.Video
+namespace MediaPortal.GUI
 {
   public class BaseWakeupSystem : WindowPluginBase
   {

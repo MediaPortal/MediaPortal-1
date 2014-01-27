@@ -175,6 +175,10 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\WakeOnLanLibrary\WakeOnLanLibrary\WakeOnLanLibrary.csproj">
+      <Project>{7B4FD0FD-E0FA-49E2-A9FF-82A35C02C264}</Project>
+      <Name>WakeOnLanLibrary</Name>
+    </ProjectReference>
     <Reference Include="Microsoft.DirectX.Direct3D, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
       <SpecificVersion>True</SpecificVersion>
     </Reference>
@@ -249,7 +253,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="WakeupSystem.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
