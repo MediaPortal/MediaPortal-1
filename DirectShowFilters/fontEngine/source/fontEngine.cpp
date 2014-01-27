@@ -174,6 +174,7 @@ void Log(char* txt)
 
 void Cleanup()
 {
+    Log("Cleanup!\n");
     for (int i=0; i < MAX_TEXTURES;++i)
     {
       if (texturePlace[i] != NULL)
@@ -304,11 +305,6 @@ void FontEngineSetClipDisable()
 //*******************************************************************************************************************
 void FontEngineRemoveTexture(int textureNo)
 {
-  if(!m_pDevice)
-  {
-    return;
-  }
-
   if (textureNo < 0 || textureNo>=MAX_TEXTURES) return;
 
   // Important to set it to NULL otherwise the textures, etc. will not be freed on release
@@ -396,6 +392,7 @@ int FontEngineAddTexture(int hashCode, bool useAlphaBlend, void* texture)
     triangle++;
   }
   textureData[selected].pIndexBuffer->Unlock();
+  textureData[selected].pIndexBuffer->AddRef();
 
   return selected;
 }
@@ -460,7 +457,7 @@ int FontEngineAddSurface(int hashCode, bool useAlphaBlend,void* surface)
     triangle++;
   }
   textureData[selected].pIndexBuffer->Unlock();
-
+  textureData[selected].pIndexBuffer->AddRef();
   return selected;
 }
 
@@ -1683,6 +1680,7 @@ void FontEngineAddFont( int fontNumber,void* fontTexture, int firstChar, int end
     triangle++;
   }
   fontData[fontNumber].pIndexBuffer->Unlock();
+  fontData[fontNumber].pIndexBuffer->AddRef();
 }
 
 //*******************************************************************************************************************
