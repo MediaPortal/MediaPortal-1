@@ -174,7 +174,6 @@ void Log(char* txt)
 
 void Cleanup()
 {
-    Log("Cleanup!\n");
     for (int i=0; i < MAX_TEXTURES;++i)
     {
       if (texturePlace[i] != NULL)
