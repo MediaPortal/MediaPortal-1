@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{7B4FD0FD-E0FA-49E2-A9FF-82A35C02C264}</ProjectGuid>
+    <ProjectGuid>{03FEC69F-6D10-46FB-A0CA-4D266E4A21E2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>WakeOnLanLibrary</RootNamespace>
-    <AssemblyName>WakeOnLanLibrary</AssemblyName>
+    <RootNamespace>Common.GUIPlugins</RootNamespace>
+    <AssemblyName>Common.GUIPlugins</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -40,25 +40,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="WakeupUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="BaseWakeupSystem.cs" />
+    <Compile Include="WindowPluginBase.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Common-MP-TVE3\Common.Utils\Common.Utils.csproj">
-      <Project>{F6EDA1F3-3DCD-43F4-8A90-E32DA70C8227}</Project>
-      <Name>Common.Utils</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Configuration\MediaPortal.Configuration.csproj">
-      <Project>{68168FAA-A363-4F64-981C-32629A537900}</Project>
-      <Name>MediaPortal.Configuration</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Core\Core.csproj">
       <Project>{02FFFC1F-2555-4B99-8B01-3432D0673855}</Project>
       <Name>Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Databases\Databases.csproj">
-      <Project>{C1BCEC3E-6074-4328-B5D9-391A457C8FFB}</Project>
-      <Name>Databases</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Dialogs\Dialogs.csproj">
       <Project>{396C5208-5D46-4A11-92C1-FD0F2F42D7DD}</Project>

@@ -31,7 +31,7 @@ using WindowPlugins;
 
 namespace MediaPortal.WakeOnLanLibrary
 {
-  public class BaseWakeupSystem
+  public class WakeupUtils
   {
     private static bool WakeupSystem(byte[] hwAddress, string wakeupTarget, int timeout)
     {

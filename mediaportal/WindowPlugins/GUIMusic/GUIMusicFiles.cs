@@ -438,7 +438,7 @@ namespace MediaPortal.GUI.Music
 
       if (!string.IsNullOrEmpty(serverName))
       {
-        return BaseWakeupSystem.HandleWakeUpServer(serverName, _wolTimeout);
+        return WakeupUtils.HandleWakeUpServer(serverName, _wolTimeout);
       }
       return true;
     }

@@ -175,9 +175,9 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\WakeOnLanLibrary\WakeOnLanLibrary\WakeOnLanLibrary.csproj">
-      <Project>{7B4FD0FD-E0FA-49E2-A9FF-82A35C02C264}</Project>
-      <Name>WakeOnLanLibrary</Name>
+    <ProjectReference Include="..\Common.GUIPlugins\Common.GUIPlugins.csproj">
+      <Project>{03FEC69F-6D10-46FB-A0CA-4D266E4A21E2}</Project>
+      <Name>Common.GUIPlugins</Name>
     </ProjectReference>
     <ProjectReference Include="..\GUIPictures\GUIPictures.csproj">
       <Project>{AA96B4C9-D471-4F47-B94F-1DF0697FBFDB}</Project>
