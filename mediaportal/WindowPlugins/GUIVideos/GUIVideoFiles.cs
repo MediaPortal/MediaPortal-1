@@ -31,6 +31,7 @@ using System.Threading;
 using System.Xml;
 using System.Xml.Serialization;
 using CSScriptLibrary;
+using Common.GUIPlugins;
 using MediaPortal.Configuration;
 using MediaPortal.Database;
 using MediaPortal.Dialogs;
@@ -42,7 +43,6 @@ using MediaPortal.Util;
 using MediaPortal.Video.Database;
 using MediaPortal.Player.Subtitles;
 using MediaPortal.Profile;
-using MediaPortal.WakeOnLanLibrary;
 using Action = MediaPortal.GUI.Library.Action;
 using Layout = MediaPortal.GUI.Library.GUIFacadeControl.Layout;
 

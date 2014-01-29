@@ -25,6 +25,7 @@ using System.IO;
 using System.Net;
 using System.Threading;
 using System.Xml.Serialization;
+using Common.GUIPlugins;
 using MediaPortal.Configuration;
 using MediaPortal.Database;
 using MediaPortal.Dialogs;
@@ -37,7 +38,6 @@ using MediaPortal.Playlists;
 using MediaPortal.TagReader;
 using MediaPortal.Util;
 using MediaPortal.Profile;
-using MediaPortal.WakeOnLanLibrary;
 using Action = MediaPortal.GUI.Library.Action;
 using Layout = MediaPortal.GUI.Library.GUIFacadeControl.Layout;
 
