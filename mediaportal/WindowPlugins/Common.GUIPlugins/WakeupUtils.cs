@@ -19,20 +19,114 @@
 #endregion
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Net;
-using System.Xml.Serialization;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.Util;
-using WindowPlugins;
 
-namespace MediaPortal.WakeOnLanLibrary
+namespace Common.GUIPlugins
 {
   public class WakeupUtils
   {
+    public static bool HandleWakeUpServer(string hostName, int wolTimeout)
+    {
+      String macAddress;
+      byte[] hwAddress;
+
+      WakeOnLanManager wakeOnLanManager = new WakeOnLanManager();
+
+      IPAddress ipAddress = null;
+
+      using (Settings xmlreader = new MPSettings())
+      {
+        macAddress = xmlreader.GetValueAsString("macAddress", hostName, null);
+      }
+
+      if (wakeOnLanManager.Ping(hostName, 100) && !string.IsNullOrEmpty(macAddress))
+      {
+        Log.Debug("WakeUpServer: The {0} server already started and mac address is learnt!", hostName);
+        return true;
+      }
+
+      // Check if we already have a valid IP address stored,
+      // otherwise try to resolve the IP address
+      if (!IPAddress.TryParse(hostName, out ipAddress) && string.IsNullOrEmpty(macAddress))
+      {
+        // Get IP address of the server
+        try
+        {
+          IPAddress[] ips;
+
+          ips = Dns.GetHostAddresses(hostName);
+
+          Log.Debug("WakeUpServer: WOL - GetHostAddresses({0}) returns:", hostName);
+
+          foreach (IPAddress ip in ips)
+          {
+            Log.Debug("    {0}", ip);
+
+            ipAddress = ip;
+            // Check for valid IP address
+            if (ipAddress != null)
+            {
+              // Update the MAC address if possible
+              hwAddress = wakeOnLanManager.GetHardwareAddress(ipAddress);
+
+              if (wakeOnLanManager.IsValidEthernetAddress(hwAddress))
+              {
+                Log.Debug("WakeUpServer: WOL - Valid auto MAC address: {0:x}:{1:x}:{2:x}:{3:x}:{4:x}:{5:x}"
+                          , hwAddress[0], hwAddress[1], hwAddress[2], hwAddress[3], hwAddress[4], hwAddress[5]);
+
+                // Store MAC address
+                macAddress = BitConverter.ToString(hwAddress).Replace("-", ":");
+
+                Log.Debug("WakeUpServer: WOL - Store MAC address: {0}", macAddress);
+
+                using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.MPSettings())
+                {
+                  xmlwriter.SetValue("macAddress", hostName, macAddress);
+                }
+              }
+              else
+              {
+                Log.Debug("WakeUpServer: WOL - Not a valid IPv4 address: {0}", ipAddress);
+              }
+            }
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Error("WakeUpServer: WOL - Failed GetHostAddress - {0}", ex.Message);
+        }
+      }
+
+      Log.Debug("WakeUpServer: WOL - Use stored MAC address: {0}", macAddress);
+
+      try
+      {
+        hwAddress = wakeOnLanManager.GetHwAddrBytes(macAddress);
+
+        // Finally, start up the server
+        Log.Info("WakeUpServer: WOL - Start the {0} server", hostName);
+
+        if (WakeupSystem(hwAddress, hostName, wolTimeout))
+        {
+          Log.Info("WakeUpServer: WOL - The {0} server started successfully!", hostName);
+          return true;
+        }
+        else
+        {
+          Log.Error("WakeUpServer: WOL - Failed to start the {0} server", hostName);
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("WakeUpServer: WOL - Failed to start the server - {0}", ex.Message);
+      }
+      return false;
+    }
+
     private static bool WakeupSystem(byte[] hwAddress, string wakeupTarget, int timeout)
     {
       int waited = 0;
@@ -75,7 +169,7 @@ namespace MediaPortal.WakeOnLanLibrary
           progressDialog.Close();
 
           int waittime;
-          using (Profile.Settings xmlreader = new MPSettings())
+          using (Settings xmlreader = new MPSettings())
           {
             waittime = xmlreader.GetValueAsInt("WOL", "WaitTimeAfterWOL", 0);
           }
@@ -131,104 +225,6 @@ namespace MediaPortal.WakeOnLanLibrary
       dlgOk.SetLine(1, GUILocalizeStrings.Get(1993));
       dlgOk.DoModal(GUIWindowManager.ActiveWindow);
 
-      return false;
-    }
-
-    public static bool HandleWakeUpServer(string HostName, int WolTimeout)
-    {
-      String macAddress;
-      byte[] hwAddress;
-
-      WakeOnLanManager wakeOnLanManager = new WakeOnLanManager();
-
-      IPAddress ipAddress = null;
-
-      using (Profile.Settings xmlreader = new MPSettings())
-      {
-        macAddress = xmlreader.GetValueAsString("macAddress", HostName, null);
-      }
-
-      if (wakeOnLanManager.Ping(HostName, 100) && !string.IsNullOrEmpty(macAddress))
-      {
-        Log.Debug("WakeUpServer: The {0} server already started and mac address is learnt!", HostName);
-        return true;
-      }
-
-      // Check if we already have a valid IP address stored,
-      // otherwise try to resolve the IP address
-      if (!IPAddress.TryParse(HostName, out ipAddress) && string.IsNullOrEmpty(macAddress))
-      {
-        // Get IP address of the server
-        try
-        {
-          IPAddress[] ips;
-
-          ips = Dns.GetHostAddresses(HostName);
-
-          Log.Debug("WakeUpServer: WOL - GetHostAddresses({0}) returns:", HostName);
-
-          foreach (IPAddress ip in ips)
-          {
-            Log.Debug("    {0}", ip);
-
-            ipAddress = ip;
-            // Check for valid IP address
-            if (ipAddress != null)
-            {
-              // Update the MAC address if possible
-              hwAddress = wakeOnLanManager.GetHardwareAddress(ipAddress);
-
-              if (wakeOnLanManager.IsValidEthernetAddress(hwAddress))
-              {
-                Log.Debug("WakeUpServer: WOL - Valid auto MAC address: {0:x}:{1:x}:{2:x}:{3:x}:{4:x}:{5:x}"
-                          , hwAddress[0], hwAddress[1], hwAddress[2], hwAddress[3], hwAddress[4], hwAddress[5]);
-
-                // Store MAC address
-                macAddress = BitConverter.ToString(hwAddress).Replace("-", ":");
-
-                Log.Debug("WakeUpServer: WOL - Store MAC address: {0}", macAddress);
-
-                using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.MPSettings())
-                {
-                  xmlwriter.SetValue("macAddress", HostName, macAddress);
-                }
-              }
-              else
-              {
-                Log.Debug("WakeUpServer: WOL - Not a valid IPv4 address: {0}", ipAddress);
-              }
-            }
-          }
-        }
-        catch (Exception ex)
-        {
-          Log.Error("WakeUpServer: WOL - Failed GetHostAddress - {0}", ex.Message);
-        }
-      }
-
-      Log.Debug("WakeUpServer: WOL - Use stored MAC address: {0}", macAddress);
-
-      try
-      {
-        hwAddress = wakeOnLanManager.GetHwAddrBytes(macAddress);
-
-        // Finally, start up the server
-        Log.Info("WakeUpServer: WOL - Start the {0} server", HostName);
-
-        if (WakeupSystem(hwAddress, HostName, WolTimeout))
-        {
-          Log.Info("WakeUpServer: WOL - The {0} server started successfully!", HostName);
-          return true;
-        }
-        else
-        {
-          Log.Error("WakeUpServer: WOL - Failed to start the {0} server", HostName);
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("WakeUpServer: WOL - Failed to start the server - {0}", ex.Message);
-      }
       return false;
     }
   }
