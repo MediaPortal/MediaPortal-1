@@ -673,14 +673,18 @@ namespace MediaPortal.MusicPlayer.BASS
     /// </summary>
     /// <param name="startPos"></param>
     /// <param name="endPos"></param>
-    public void SetCueTrackEndPos(float startPos, float endPos)
+    public void SetCueTrackEndPos(float startPos, float endPos, bool endOnly)
     {
       if (_cueTrackEndEventHandler != 0)
       {
         Bass.BASS_ChannelRemoveSync(_stream, _cueTrackEndEventHandler);
       }
 
-      Bass.BASS_ChannelSetPosition(_stream, Bass.BASS_ChannelSeconds2Bytes(_stream, startPos));
+      if (!endOnly)
+      {
+        Bass.BASS_ChannelSetPosition(_stream, Bass.BASS_ChannelSeconds2Bytes(_stream, startPos));
+      }
+
       if (endPos > startPos)
       {
         _cueTrackEndEventHandler = RegisterCueTrackEndEvent(Bass.BASS_ChannelSeconds2Bytes(_stream, endPos));

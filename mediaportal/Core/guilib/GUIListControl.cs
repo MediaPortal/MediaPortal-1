@@ -1078,7 +1078,14 @@ namespace MediaPortal.GUI.Library
           break;
 
         case "#duration":
-          label = MediaPortal.Util.Utils.SecondsToHMSString(item.Duration);
+          if (item.Duration == 0)
+          {
+            label = string.Empty;
+          }
+          else
+          {
+            label = MediaPortal.Util.Utils.SecondsToHMSString(item.Duration);
+          }
           break;
 
         case "#shortduration":
