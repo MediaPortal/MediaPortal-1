@@ -584,7 +584,7 @@ namespace MediaPortal.MusicPlayer.BASS
         case Action.ActionType.ACTION_PAGE_UP:
           {
             var timeSpamVerif = DateTime.Now - _lastAction;
-            if (timeSpamVerif.TotalSeconds >= 2 && (g_Player.IsMusic && g_Player.FullScreen))
+            if (timeSpamVerif.TotalSeconds >= 2)
             {
               _validAction = true;
             }
@@ -592,9 +592,8 @@ namespace MediaPortal.MusicPlayer.BASS
             {
               _validAction = false;
             }
-            if (FullScreen && CurrentAudioStream != 0)
+            if (g_Player.IsMusic && g_Player.FullScreen)
             {
-
               if (_validAction)
               {
                 _lastAction = DateTime.Now;
@@ -608,7 +607,7 @@ namespace MediaPortal.MusicPlayer.BASS
         case Action.ActionType.ACTION_PAGE_DOWN:
           {
             var timeSpamVerif = DateTime.Now - _lastAction;
-            if (timeSpamVerif.TotalSeconds >= 2 && (g_Player.IsMusic && g_Player.FullScreen))
+            if (timeSpamVerif.TotalSeconds >= 2)
             {
               _validAction = true;
             }
@@ -616,9 +615,8 @@ namespace MediaPortal.MusicPlayer.BASS
             {
               _validAction = false;
             }
-            if (FullScreen && CurrentAudioStream != 0)
+            if (g_Player.IsMusic && g_Player.FullScreen)
             {
-
               if (_validAction)
               {
                 _lastAction = DateTime.Now;
