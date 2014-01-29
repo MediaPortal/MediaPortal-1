@@ -43,7 +43,7 @@ namespace MediaPortal.GUI.Music
   /// <summary>
   /// Class is for GUI interface to music shares view
   /// </summary>
-  [PluginIcons("WindowPlugins.GUIMusic.Music.gif", "WindowPlugins.GUIMusic.MusicDisabled.gif")]
+  [PluginIcons("GUIMusic.Music.gif", "GUIMusic.MusicDisabled.gif")]
   public class GUIMusicFiles : GUIMusicBaseWindow, ISetupForm, IShowPlugin
   {
     #region comparer

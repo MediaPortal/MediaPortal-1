@@ -419,9 +419,6 @@
     <Compile Include="Subdialogs\EditShareForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Subdialogs\EditWeatherCityForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Subdialogs\ParameterForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -429,9 +426,6 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Subdialogs\SearchCityForm.cs">
-      <SubType>Form</SubType>
     </Compile>
     <Compile Include="SectionSettings.cs">
       <SubType>UserControl</SubType>
@@ -631,9 +625,6 @@
     <Compile Include="Sections\TVPostProcessing.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\Weather.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Sections\RemoteWinLirc.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -646,9 +637,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="VideoRenderers.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="WeatherChannel.cs">
       <SubType>Code</SubType>
     </Compile>
     <Content Include="Resources\blu-ray_regions.png" />
@@ -810,10 +798,6 @@
       <SubType>Designer</SubType>
       <DependentUpon>EditShareForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Subdialogs\EditWeatherCityForm.resx">
-      <DependentUpon>EditWeatherCityForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Subdialogs\ParameterForm.resx">
       <DependentUpon>ParameterForm.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -822,10 +806,6 @@
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Subdialogs\SearchCityForm.resx">
-      <DependentUpon>SearchCityForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\FiltersDScalerAudio.resx">
       <DependentUpon>FiltersDScalerAudio.cs</DependentUpon>
@@ -989,10 +969,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\TVRadio.resx">
       <DependentUpon>TVRadio.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\Weather.resx">
-      <DependentUpon>Weather.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\RemoteWinLirc.resx">

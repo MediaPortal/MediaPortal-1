@@ -703,6 +703,64 @@ namespace MediaPortal.GUI.Music
       base.OnPageDestroy(newWindowId);
     }
 
+    protected override void SetView(int selectedViewId)
+    {
+      switch (selectedViewId)
+      {
+        case 0: // Shares
+          {
+            int nNewWindow = (int)Window.WINDOW_MUSIC_FILES;
+            MusicState.StartWindow = nNewWindow;
+            if (nNewWindow != GetID)
+            {
+              GUIWindowManager.ReplaceWindow(nNewWindow);
+            }
+          }
+          break;
+
+        case 4540: // Now playing
+          {
+            int nPlayingNowWindow = (int)Window.WINDOW_MUSIC_PLAYING_NOW;
+
+            GUIMusicPlayingNow guiPlayingNow =
+              (GUIMusicPlayingNow)GUIWindowManager.GetWindow(nPlayingNowWindow);
+
+            if (guiPlayingNow != null)
+            {
+              guiPlayingNow.MusicWindow = this;
+              GUIWindowManager.ActivateWindow(nPlayingNowWindow);
+            }
+          }
+          break;
+
+        default: // a db view
+          {
+            ViewDefinition selectedView = (ViewDefinition)handler.Views[selectedViewId - 1];
+            handler.CurrentView = selectedView.Name;
+            MusicState.View = selectedView.Name;
+            int nNewWindow = (int)Window.WINDOW_MUSIC_GENRE;
+            if (GetID != nNewWindow)
+            {
+              MusicState.StartWindow = nNewWindow;
+              if (nNewWindow != GetID)
+              {
+                GUIWindowManager.ReplaceWindow(nNewWindow);
+              }
+            }
+            else
+            {
+              LoadDirectory(string.Empty);
+              if (facadeLayout.Count <= 0)
+              {
+                GUIControl.FocusControl(GetID, btnLayouts.GetID);
+              }
+            }
+          }
+          break;
+      }
+    }
+
+
     protected void LoadPlayList(string strPlayList)
     {
       LoadPlayList(strPlayList, true);

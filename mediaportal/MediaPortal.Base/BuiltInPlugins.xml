@@ -3,7 +3,20 @@
   <plugin>ProcessPlugins.dll</plugin>
   <plugin>PowerScheduler.Interfaces.dll</plugin>
   <plugin>PowerSchedulerClientPlugin.dll</plugin>
-  <plugin>WindowPlugins.dll</plugin>
+  <plugin>GUIDisc.dll</plugin>
+  <plugin>GUIDVD.dll</plugin>
+  <plugin>GUIHome.dll</plugin>
+  <plugin>GUILastFMRadio.dll</plugin>
+  <plugin>GUIMusic.dll</plugin>
+  <plugin>GUINumberPlace.dll</plugin>
+  <plugin>GUIPictures.dll</plugin>
+  <plugin>GUIRSSFeed.dll</plugin>
+  <plugin>GUISettings.dll</plugin>
+  <plugin>GUITetris.dll</plugin>
+  <plugin>GUITopbar.dll</plugin>
+  <plugin>GUIWeather.dll</plugin>
+  <plugin>GUIVideos.dll</plugin>
+  <plugin>GUIWikipedia.dll</plugin>
   <plugin>Dialogs.dll</plugin>
   <plugin>TvPlugin.dll</plugin>
 </whitelist>

@@ -366,6 +366,7 @@
     <Compile Include="guilib\GUIThemeManager.cs" />
     <Compile Include="guilib\RepeatBehavior.cs" />
     <Compile Include="guilib\ViewHandler.cs" />
+    <Compile Include="guilib\WindowPluginBase.cs" />
     <Compile Include="guilib\XMLSkinFunctionAttribute.cs" />
     <Compile Include="MusicPlayer\BASS\MixerStream.cs" />
     <Compile Include="MusicPlayer\BASS\StreamCopy.cs" />
