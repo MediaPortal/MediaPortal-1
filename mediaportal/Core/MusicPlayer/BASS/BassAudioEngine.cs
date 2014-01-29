@@ -616,7 +616,7 @@ namespace MediaPortal.MusicPlayer.BASS
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="action"></param>
-    public void OnMusicStreamMessage(object sender, MusicStream.StreamAction action)
+    private void OnMusicStreamMessage(object sender, MusicStream.StreamAction action)
     {
       if (sender == null)
       {
@@ -1214,9 +1214,25 @@ namespace MediaPortal.MusicPlayer.BASS
           BassAsio.BASS_ASIO_Free();
         }
 
-        if (Config.MusicPlayer == AudioPlayer.WasApi)
+        if (Config.MusicPlayer == AudioPlayer.WasApi && BassWasapi.BASS_WASAPI_IsStarted())
         {
-          BassWasapi.BASS_WASAPI_Free();
+          try
+          {
+            Log.Debug("BASS: Stopping WASAPI Device");
+            if (!BassWasapi.BASS_WASAPI_Stop(true))
+            {
+              Log.Error("BASS: Error stopping WASAPI Device: {0}", Bass.BASS_ErrorGetCode());
+            }
+
+            if (!BassWasapi.BASS_WASAPI_Free())
+            {
+              Log.Error("BASS: Error freeing WASAPI: {0}", Bass.BASS_ErrorGetCode());
+            }
+          }
+          catch (Exception ex)
+          {
+            Log.Error("BASS: Exception freeing WASAPI. {0} {1}", ex.Message, ex.StackTrace);
+          }
         }
 
         if (_mixer != null)
@@ -1556,6 +1572,7 @@ namespace MediaPortal.MusicPlayer.BASS
       if (_mixer == null)
       {
         _mixer = new MixerStream(this);
+        _mixer.MusicStreamMessage += OnMusicStreamMessage;
         if (!_mixer.CreateMixer(stream))
         {
           Log.Error("BASS: Could not create Mixer. Aborting playback.");
@@ -1578,6 +1595,7 @@ namespace MediaPortal.MusicPlayer.BASS
           _mixer.Dispose();
           _mixer = null;
           _mixer = new MixerStream(this);
+          _mixer.MusicStreamMessage += OnMusicStreamMessage;
           if (!_mixer.CreateMixer(stream))
           {
             Log.Error("BASS: Could not create Mixer. Aborting playback.");
