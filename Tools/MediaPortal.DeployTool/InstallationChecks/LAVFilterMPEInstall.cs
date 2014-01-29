@@ -62,8 +62,14 @@ namespace MediaPortal.DeployTool.InstallationChecks
         OnlineVersion = GetLatestAvailableMpeVersion();
         if (OnlineVersion != null)
         {
-          if (vMpeInstalled >= OnlineVersion) result.state = CheckState.INSTALLED;
-          else result.needsDownload = !File.Exists(FileName);
+          if (vMpeInstalled >= OnlineVersion || vLavInstalled >= OnlineVersion)
+          {
+            result.state = CheckState.INSTALLED;
+          }
+          else
+          {
+            result.needsDownload = !File.Exists(FileName);
+          }
         }
         else
         {

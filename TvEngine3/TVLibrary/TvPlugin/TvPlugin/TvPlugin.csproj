@@ -100,6 +100,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\TVDatabase\references\Gentle.Provider.SQLServer.dll</HintPath>
     </Reference>
+    <Reference Include="GUIVideos">
+      <HintPath>..\..\..\..\mediaportal\WindowPlugins\GUIVideos\bin\Release\GUIVideos.dll</HintPath>
+    </Reference>
     <Reference Include="log4net, Version=1.2.9.0, Culture=neutral, PublicKeyToken=b32731d11ce58905">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\TVDatabase\references\log4net.dll</HintPath>
@@ -122,10 +125,6 @@
     <Reference Include="Utils, Version=1.0.2378.12136, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\mediaportal\Utils\bin\Release\Utils.dll</HintPath>
-    </Reference>
-    <Reference Include="WindowPlugins, Version=0.9.3.26436, Culture=neutral, processorArchitecture=x86">
-      <HintPath>..\..\..\..\mediaportal\WindowPlugins\bin\Release\WindowPlugins.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
     </Reference>
   </ItemGroup>
   <ItemGroup>

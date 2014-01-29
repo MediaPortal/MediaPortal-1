@@ -90,8 +90,8 @@ internal class SlidePicture
     }
     else
     {
-      _texture = Picture.Load(strFilePath, _rotation, iMaxWidth, iMaxHeight, true, false, true, out _width, out _height);
-    }
+    _texture = Picture.Load(strFilePath, _rotation, iMaxWidth, iMaxHeight, true, false, true, out _width, out _height);
+  }
   }
 
   ~SlidePicture()

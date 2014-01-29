@@ -631,39 +631,46 @@ namespace MediaPortal.Video.Database
 
     public int AddFile(int lMovieId, int lPathId, string strFileName)
     {
-      if (m_db == null)
+      Log.Debug("VideodatabaseSqllite AddFile:{0}", strFileName);
+
+      // GetMediaInfoThread and starting to play a file can run simultaneously and both of them use addfile method
+      lock (typeof(VideoDatabaseSqlLite))
       {
-        return -1;
-      }
-      try
-      {
-        int lFileId = -1;
-        strFileName = strFileName.Trim();
-        
-        string strSQL = String.Format("SELECT * FROM files WHERE idmovie={0} AND idpath={1} AND strFileName = '{2}'",
-                                      lMovieId, lPathId, strFileName);
-        SQLiteResultSet results = m_db.Execute(strSQL);
-        
-        if (results != null && results.Rows.Count > 0)
+        if (m_db == null)
         {
-          Int32.TryParse(DatabaseUtility.Get(results, 0, "idFile"), out lFileId);
+          return -1;
+        }
+        try
+        {
+          int lFileId = -1;
+          strFileName = strFileName.Trim();
+
+        string strSQL = String.Format("SELECT * FROM files WHERE idmovie={0} AND idpath={1} AND strFileName = '{2}'",
+                                        lMovieId, lPathId, strFileName);
+          SQLiteResultSet results = m_db.Execute(strSQL);
+
+          if (results != null && results.Rows.Count > 0)
+          {
+            Int32.TryParse(DatabaseUtility.Get(results, 0, "idFile"), out lFileId);
+            CheckMediaInfo(strFileName, string.Empty, lPathId, lFileId, false);
+            return lFileId;
+          }
+
+          strSQL = String.Format("INSERT INTO files (idFile, idMovie,idPath, strFileName) VALUES(null, {0},{1},'{2}')",
+                                 lMovieId, lPathId, strFileName);
+          results = m_db.Execute(strSQL);
+          lFileId = m_db.LastInsertID();
           CheckMediaInfo(strFileName, string.Empty, lPathId, lFileId, false);
+          Log.Debug("VideodatabaseSqllite Finished AddFile:{0}", strFileName);
           return lFileId;
         }
-
-        strSQL = String.Format("INSERT INTO files (idFile, idMovie,idPath, strFileName) VALUES(null, {0},{1},'{2}')",
-                               lMovieId, lPathId, strFileName);
-        results = m_db.Execute(strSQL);
-        lFileId = m_db.LastInsertID();
-        CheckMediaInfo(strFileName, string.Empty, lPathId, lFileId, false);
-        return lFileId;
+        catch (Exception ex)
+        {
+          Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          Open();
+        }
+        return -1;
       }
-      catch (Exception ex)
-      {
-        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
-      }
-      return -1;
     }
     
     private int MovieDuration(ArrayList files)
@@ -723,12 +730,12 @@ namespace MediaPortal.Video.Database
         
         if (results.Rows.Count > 0)
         {
-          int lFileId;
+                int lFileId;
           Int32.TryParse(DatabaseUtility.Get(results, 0, "idFile"), out lFileId);
           Int32.TryParse(DatabaseUtility.Get(results, 0, "idMovie"), out lMovieId);
-          return lFileId;
-        }
-      }
+                return lFileId;
+              }
+            }
       catch (ThreadAbortException)
       {
         // Will be logged in thread main code
@@ -856,7 +863,7 @@ namespace MediaPortal.Video.Database
         {
           return -1;
         }
-
+        
         string cdlabel = string.Empty;
         string strSQL = string.Empty;
         strPath = strPath.Trim();
@@ -874,7 +881,7 @@ namespace MediaPortal.Video.Database
         {
           strSQL = String.Format("SELECT * FROM path WHERE strPath = '{0}'", strPath);
         }
-
+        
         SQLiteResultSet results = m_db.Execute(strSQL);
         
         if (results.Rows.Count > 0)
@@ -1206,7 +1213,7 @@ namespace MediaPortal.Video.Database
         }
 
         int fileID = GetFileId(strFilenameAndPath);
-        
+
         if (fileID < 1)
         {
           return;
