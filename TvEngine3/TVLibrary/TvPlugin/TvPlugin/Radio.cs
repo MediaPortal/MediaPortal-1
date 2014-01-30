@@ -30,7 +30,7 @@ using MediaPortal.Util;
 using TvControl;
 using TvDatabase;
 using TvLibrary.Interfaces;
-using WindowPlugins;
+using Common.GUIPlugins;
 using Action = MediaPortal.GUI.Library.Action;
 using Layout = MediaPortal.GUI.Library.GUIFacadeControl.Layout;
 
