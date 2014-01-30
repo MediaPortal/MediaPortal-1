@@ -492,6 +492,8 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_MP}\WindowPlugins\GUITopbar\bin\${BUILD_TYPE}\GUITopbar.dll"
   File "${git_MP}\WindowPlugins\GUIVideos\bin\${BUILD_TYPE}\GUIVideos.dll"
   File "${git_MP}\WindowPlugins\GUIWikipedia\bin\${BUILD_TYPE}\GUIWikipedia.dll"
+  ; Common Plugins
+  File "${git_MP}\WindowPlugins\Common.GUIPlugins\bin\${BUILD_TYPE}\Common.GUIPlugins.dll"
   ; ffmpeg
   SetOutPath "$MPdir.Base\MovieThumbnailer"
   File "${git_ROOT}\Packages\ffmpeg.2.1.1\ffmpeg.exe"
@@ -664,6 +666,7 @@ SectionEnd
   Delete "$MPdir.Plugins\Windows\GUITopbar.dll"
   Delete "$MPdir.Plugins\Windows\GUIVideos.dll"
   Delete "$MPdir.Plugins\Windows\GUIWikipedia.dll"
+  Delete "$MPdir.Plugins\Windows\Common.GUIPlugins.dll"
   RMDir "$MPdir.Plugins\Windows"
   RMDir "$MPdir.Plugins"
   ; Doc
