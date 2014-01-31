@@ -488,7 +488,8 @@ namespace MediaPortal.GUI.Library
     {
 
       // add thread check to log calls not running in main thread/GUI
-      if (Thread.CurrentThread.Name != "MPMain")
+      String threadName = Thread.CurrentThread.Name;
+      if (threadName != "MPMain" && threadName != "Config Main")
       {
         Log.Error("LoadSkin: Running on wrong thread - StackTrace: '{0}'", Environment.StackTrace);
       }
