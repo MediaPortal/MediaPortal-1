@@ -1415,7 +1415,14 @@ namespace MediaPortal.Player
             if (_player != null)
             {
               _player.Stop();
+              
+              if (BassMusicPlayer.IsDefaultMusicPlayer && type != MediaType.Music)
+              {
+                // This would be better to be handled in a new Stop() parameter, but it would break the interface compatibility
+                BassMusicPlayer.Player.FreeBass();
+              }
             }
+
             CachePlayer();
             _player = null;
           }
