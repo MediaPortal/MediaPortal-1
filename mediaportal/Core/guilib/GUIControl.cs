@@ -553,10 +553,10 @@ namespace MediaPortal.GUI.Library
                   controlId = NavigateUp;
                   break;
                 case Action.ActionType.ACTION_MOVE_LEFT:
-                  controlId = NavigateRight;
+                  controlId = NavigateLeft;
                   break;
                 case Action.ActionType.ACTION_MOVE_RIGHT:
-                  controlId = NavigateLeft;
+                  controlId = NavigateRight;
                   break;
               }
 
