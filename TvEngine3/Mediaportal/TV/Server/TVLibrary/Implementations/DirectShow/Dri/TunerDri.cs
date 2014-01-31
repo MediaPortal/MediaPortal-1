@@ -41,10 +41,14 @@ using System.Net;
 using System.IO;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using DirectShowLib.BDA;
+using UPnP.Infrastructure;
+using System.Text;
+using System.Xml;
+using UPnP.Infrastructure.Utils;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
 {
-  public class TunerDri : TunerStream
+  public class TunerDri : TunerStream, IConditionalAccessMenuActions
   {
     #region constants
 
@@ -158,11 +162,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
       }
       if (_serviceAvTransport != null)
       {
-        if (_gotTunerControl && _transportState != AvTransportState.Stopped)
-        {
-          _serviceAvTransport.Stop((uint)_avTransportId);
-          _transportState = AvTransportState.Stopped;
-        }
         _serviceAvTransport.Dispose();
         _serviceAvTransport = null;
       }
@@ -178,7 +177,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
         _deviceConnection.Disconnect();
         _deviceConnection = null;
       }
-      _gotTunerControl = false;
     }
 
     #endregion
@@ -204,8 +202,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
     public bool EnterMenu()
     {
       this.LogDebug("DRI CableCARD: enter menu");
-      // TODO I don't know how to implement this yet.
-      return true;
+
+      try
+      {
+        byte[] list = (byte[])_serviceCas.QueryStateVariable("ApplicationList");
+        SmartCardApplication[] applications
+        ApplicationTypeType ap
+        return true;
+      }
+      catch (Exception ex)
+      {
+        this.LogError(ex, "DRI CableCARD: failed to retrieve application list");
+        return false;
+      }
     }
 
     /// <summary>
@@ -407,7 +416,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
         foreach (DiagParameterDri p in DiagParameterDri.Values)
         {
           _serviceDiag.GetParameter(p, out value, out isVolatile);
-          this.LogDebug("  {0}{1} = {2}", p.ToString(), isVolatile ? " [volatile]" : "", value);
+          this.LogDebug("  {0}{1} = {2}", p.ToString(), isVolatile ? " [volatile]" : string.Empty, value);
         }
         if (_isCetonDevice)
         {
@@ -415,7 +424,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
           foreach (DiagParameterCeton p in DiagParameterCeton.Values)
           {
             _serviceDiag.GetParameter(p, out value, out isVolatile);
-            this.LogDebug("  {0}{1} = {2}", p.ToString(), isVolatile ? " [volatile]" : "", value);
+            this.LogDebug("  {0}{1} = {2}", p.ToString(), isVolatile ? " [volatile]" : string.Empty, value);
           }
         }
 
@@ -547,12 +556,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
       int rcsId = -1;
       _serviceConnectionManager.PrepareForConnection(string.Empty, string.Empty, -1, ConnectionDirection.Output, out _connectionId, out _avTransportId, out rcsId);
       this.LogDebug("DRI CableCARD: PrepareForConnection, connection ID = {0}, AV transport ID = {1}", _connectionId, _avTransportId);
-
-      // Check that the device is not already in use.
-      if (IsTunerInUse())
-      {
-        throw new TvExceptionTunerLoadFailed("Tuner appears to be in use.");
-      }
 
       ReadDeviceInfo();
 
@@ -688,7 +691,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
         else if (atscChannel.NetworkId > 0)
         {
           this.LogDebug("DRI CableCARD: tuning by source ID");
-          _serviceCas.SetChannel(0, (uint)atscChannel.NetworkId, CasCaptureMode.Live, out isSignalLocked);
+          try
+          {
+            _serviceCas.SetChannel(0, (uint)atscChannel.NetworkId, CasCaptureMode.Live, out isSignalLocked);
+          }
+          catch (UPnPException ex)
+          {
+            UPnPRemoteException rex = ex.InnerException as UPnPRemoteException;
+            if (rex != null && rex.Error.ErrorDescription.Equals("Tuner In Use"))
+            {
+              this.LogInfo("DRI CableCARD: some other application or device is currently using the tuner");
+              _gotTunerControl = false;
+            }
+            throw;
+          }
         }
         else
         {

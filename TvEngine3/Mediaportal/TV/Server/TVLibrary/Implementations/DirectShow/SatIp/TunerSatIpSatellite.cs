@@ -84,7 +84,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
         throw new TvException("Received request to tune incompatible channel.");
       }
 
-      _currentSource = 1;
       _diseqcController.SwitchToChannel(satelliteChannel);
 
       string frequency = ((int)(satelliteChannel.Frequency / 1000)).ToString();
@@ -291,8 +290,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
         return true;
       }
 
-      // If we get to here then the driver/hardware doesn't support raw commands. We'll attempt to send
-      // non-raw commands if the command is a DiSEqC 1.0 switch command.
+      // The SAT>IP interface currently doesn't support raw commands. We'll
+      // attempt to send non-raw commands if the command is a DiSEqC 1.0 switch
+      // command.
       if (command.Length != 4 ||
         (command[0] != (byte)DiseqcFrame.CommandFirstTransmissionNoReply &&
         command[0] != (byte)DiseqcFrame.CommandRepeatTransmissionNoReply) ||

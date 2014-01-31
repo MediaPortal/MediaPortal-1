@@ -19,9 +19,20 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Net;
+using System.Net.Cache;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Xml;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using UPnP.Infrastructure;
 using UPnP.Infrastructure.Common;
 using UPnP.Infrastructure.CP.DeviceTree;
+using UPnP.Infrastructure.CP.Description;
+using UPnP.Infrastructure.CP.SSDP;
+using UPnP.Infrastructure.Utils;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Upnp.Service
 {
@@ -35,13 +46,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Upnp.Service
 
     public ServiceBase(CpDevice device, string serviceName, bool isOptional = false)
     {
-      Initialise(device, serviceName, isOptional);
-    }
-
-    private void Initialise(CpDevice device, string serviceName, bool isOptional)
-    {
       _device = device;
       _unqualifiedServiceName = serviceName.Substring(serviceName.LastIndexOf(":") + 1);
+      _service.IsOptional = isOptional;
       if (!device.Services.TryGetValue(serviceName, out _service) && !isOptional)
       {
         throw new NotImplementedException(string.Format("Device does not implement a {0} service.", _unqualifiedServiceName));
@@ -53,7 +60,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Upnp.Service
       UnsubscribeStateVariables();
     }
 
-    public void SubscribeStateVariables(StateVariableChangedDlgt svChangeDlg, EventSubscriptionFailedDlgt esFailDlg)
+    public void SubscribeStateVariables(StateVariableChangedDlgt svChangeDlg, EventSubscriptionFailedDlgt esFailDlg = null)
     {
       if (_service == null)
       {
@@ -68,6 +75,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Upnp.Service
       if (esFailDlg != null)
       {
         _eventSubscriptionDelegate = esFailDlg;
+        _service.EventSubscriptionFailed += _eventSubscriptionDelegate;
+      }
+      else if (svChangeDlg != null)
+      {
+        _eventSubscriptionDelegate = SubscribeFailed;
         _service.EventSubscriptionFailed += _eventSubscriptionDelegate;
       }
       _service.SubscribeStateVariables();
@@ -98,6 +110,114 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Upnp.Service
     private void SubscribeFailed(CpService service, UPnPError error)
     {
       this.LogError("UPnP: failed to subscribe to state variable events for service {0}, code = {1}, description = {2}", _unqualifiedServiceName, error.ErrorCode, error.ErrorDescription);
+    }
+
+    public object QueryStateVariable(string stateVariableName)
+    {
+      CpStateVariable stateVariable;
+      if (!_service.StateVariables.TryGetValue(stateVariableName, out stateVariable))
+      {
+        throw new Exception("Failed to locate state variable.");
+      }
+      ServiceDescriptor serviceDescriptor = null;
+      IDictionary<string, ServiceDescriptor> deviceServiceDescriptors;
+      if (_service.Connection.RootDescriptor.ServiceDescriptors.TryGetValue(_service.ParentDevice.UUID, out deviceServiceDescriptors))
+      {
+        deviceServiceDescriptors.TryGetValue(_service.ServiceTypeVersion_URN, out serviceDescriptor);
+      }
+      if (serviceDescriptor == null)
+      {
+        throw new Exception("Failed to locate service descriptor.");
+      }
+
+      StringBuilder action = new StringBuilder();
+      using (StringWriterWithEncoding stringWriter = new StringWriterWithEncoding(action, UPnPConfiguration.DEFAULT_XML_WRITER_SETTINGS.Encoding))
+      {
+        using (XmlWriter writer = XmlWriter.Create(stringWriter, UPnPConfiguration.DEFAULT_XML_WRITER_SETTINGS))
+        {
+          SoapHelper.WriteSoapEnvelopeStart(writer, true);
+          writer.WriteStartElement("u", "QueryStateVariable", "urn:schemas-upnp-org:control-1-0");
+          writer.WriteStartElement("varName");
+          stateVariable.DataType.SoapSerializeValue(stateVariable.Name, true, writer);
+          writer.WriteEndElement();
+          SoapHelper.WriteSoapEnvelopeEndAndClose(writer);
+        }
+      }
+      LinkData preferredLink = serviceDescriptor.RootDescriptor.SSDPRootEntry.PreferredLink;
+      HttpWebRequest request = (HttpWebRequest)WebRequest.Create(new Uri(
+        new Uri(preferredLink.DescriptionLocation), serviceDescriptor.ControlURL)
+      );
+      request.ServicePoint.BindIPEndPointDelegate = (servicePoint, remoteEndPoint, retryCount) =>
+      {
+        if (retryCount > 0)
+        {
+          return null;
+        }
+        return new IPEndPoint(preferredLink.Endpoint.EndPointIPAddress, 0);
+      };
+      request.Method = "POST";
+      request.KeepAlive = false;
+      request.CachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
+      request.ServicePoint.Expect100Continue = false;
+      request.AllowAutoRedirect = true;
+      OperatingSystem os = Environment.OSVersion;
+      request.UserAgent = os.Platform + "/" + os.Version + " UPnP/1.1 " + UPnPConfiguration.PRODUCT_VERSION;
+      request.ContentType = "text/xml; charset=\"utf-8\"";
+      request.Headers.Add("SOAPACTION", "\"urn:schemas-upnp-org:control-1-0#QueryStateVariable\"");
+      try
+      {
+        using (Stream requestStream = request.GetRequestStream())
+        {
+          using (StreamWriter sw = new StreamWriter(requestStream, UPnPConsts.UTF8_NO_BOM))
+          {
+            sw.Write(action.ToString());
+            sw.Close();
+          }
+        }
+      }
+      catch
+      {
+        request.Abort();
+        throw;
+      }
+
+      HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+      object value = null;
+      try
+      {
+        Encoding contentEncoding;
+        string mediaType;
+        if (!EncodingUtils.TryParseContentTypeEncoding(response.ContentType, Encoding.UTF8, out mediaType, out contentEncoding) || mediaType != "text/xml")
+        {
+          throw new Exception("Failed to parse content type header.");
+        }
+        using (Stream responseStream = response.GetResponseStream())
+        {
+          using (TextReader textReader = new StreamReader(responseStream, contentEncoding))
+          {
+            using (XmlReader xmlReader = XmlReader.Create(textReader, UPnPConfiguration.DEFAULT_XML_READER_SETTINGS))
+            {
+              if (!xmlReader.ReadToFollowing("QueryStateVariableResponse", "urn:schemas-upnp-org:control-1-0"))
+              {
+                throw new Exception("Failed to locate QueryStateVariableResponse element in QueryStateVariable response.");
+              }
+              if (!xmlReader.ReadToFollowing("return"))
+              {
+                throw new Exception("Failed to locate return element in QueryStateVariable response.");
+              }
+              value = stateVariable.DataType.SoapDeserializeValue(xmlReader, true);
+              xmlReader.Close();
+            }
+            textReader.Close();
+          }
+          responseStream.Close();
+        }
+        return value;
+      }
+      finally
+      {
+        response.Close();
+      }
     }
   }
 }

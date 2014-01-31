@@ -143,7 +143,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       base.Stop();
       // Force the DiSEqC controller to forget the previously tuned channel. This guarantees that the
       // next call to SwitchToChannel() will actually cause commands to be sent.
-      if (_diseqcController != null)
+      if (_currentTuningDetail == null && _diseqcController != null)
       {
         _diseqcController.SwitchToChannel(null);
       }

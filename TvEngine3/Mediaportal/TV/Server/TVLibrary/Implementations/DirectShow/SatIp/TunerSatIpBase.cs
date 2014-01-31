@@ -155,7 +155,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
       RtspRequest request;
       RtspResponse response = null;
       string rtpUrl = null;
-      if (_currentTuningDetail == null)
+      if (string.IsNullOrEmpty(_satIpStreamId))
       {
         // Find a free port for receiving the RTP stream.
         int rtpClientPort = 0;
@@ -270,8 +270,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
         throw new TvException("Failed to tune, non-OK RTSP PLAY status code {0} {1}", response.StatusCode, response.ReasonPhrase);
       }
 
-      if (_currentTuningDetail == null)
+      if (string.IsNullOrEmpty(parameters))
       {
+        // If we SETUP the session as part of this tune process, we also need
+        // to configure the stream source filter to receive the RTP stream from
+        // the tuner.
         this.LogDebug("SAT>IP base: configure stream source filter");
         DVBIPChannel streamChannel = new DVBIPChannel();
         streamChannel.Url = rtpUrl;

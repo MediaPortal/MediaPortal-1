@@ -19,6 +19,10 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Net;
+using System.Text.RegularExpressions;
 using DirectShowLib;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda;
@@ -27,6 +31,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
 {
@@ -34,7 +39,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
   /// An implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles North
   /// American CableCARD tuners with PBDA drivers.
   /// </summary>
-  public class TunerPbdaCableCard : TunerBdaAtsc
+  public class TunerPbdaCableCard : TunerBdaAtsc, IConditionalAccessMenuActions
   {
     #region constants
 
@@ -48,6 +53,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
     /// The PBDA PT filter.
     /// </summary>
     private IBaseFilter _filterPbdaPt = null;
+
+    /// <summary>
+    /// The PBDA conditional access interface, used for tuning and conditional
+    /// access menu interaction.
+    /// </summary>
+    private IBDA_ConditionalAccess _caInterface = null;
+
+    // CA menu variables
+    private Uri _caMenuUriBase = null;
+    private object _caMenuCallBackLock = new object();
+    private IConditionalAccessMenuCallBacks _caMenuCallBacks = null;
+    private IList<string> _caMenuLinks = new List<string>();
+    private Stack<string> _caMenuStack = new Stack<string>();
 
     #endregion
 
@@ -102,90 +120,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
       int hr = _captureGraphBuilder.RenderStream(null, null, _filterMain, null, _filterTsWriter);
       HResult.ThrowException(hr, "Failed to render out-of-band connection from the tuner filter into the TS writer/analyser filter.");
 
-      ReadCableCardInfo();
-    }
-
-    private void ReadCableCardInfo()
-    {
-      this.LogDebug("PBDA CableCARD: read CableCARD information");
-
-      IBDA_ConditionalAccess bdaCa = _filterMain as IBDA_ConditionalAccess;
-      if (bdaCa == null)
+      _caInterface = _filterMain as IBDA_ConditionalAccess;
+      if (_caInterface == null)
       {
         throw new TvException("Failed to find BDA conditional access interface on tuner filter.");
-      }
-      int hr;
-
-      string cardName;
-      string cardManufacturer;
-      bool isDaylightSavings;
-      byte ratingRegion;
-      int timeOffset;
-      string lang;
-      EALocationCodeType locationCode;
-      try
-      {
-        hr = bdaCa.get_SmartCardInfo(out cardName, out cardManufacturer, out isDaylightSavings, out ratingRegion, out timeOffset, out lang, out locationCode);
-        HResult.ThrowException(hr, "Failed to read smart card information.");
-        this.LogDebug("PBDA CableCARD: smart card information");
-        this.LogDebug("  card name         = {0}", cardName);
-        this.LogDebug("  card manufacturer = {0}", cardManufacturer);
-        this.LogDebug("  is DS time        = {0}", isDaylightSavings);
-        this.LogDebug("  rating region     = {0}", ratingRegion);
-        this.LogDebug("  time offset       = {0}", timeOffset);
-        this.LogDebug("  language          = {0}", lang);
-        this.LogDebug("  location code...");
-        this.LogDebug("    scheme          = {0}", locationCode.LocationCodeScheme);
-        this.LogDebug("    state code      = {0}", locationCode.StateCode);
-        this.LogDebug("    county sub div  = {0}", locationCode.CountySubdivision);
-        this.LogDebug("    county code     = {0}", locationCode.CountyCode);
-      }
-      catch (Exception ex)
-      {
-        this.LogError(ex, "PBDA CableCARD: failed to read smart card information");
-      }
-
-      SmartCardStatusType status;
-      SmartCardAssociationType association;
-      string error;
-      bool isOutOfBandTunerLocked;
-      try
-      {
-        hr = bdaCa.get_SmartCardStatus(out status, out association, out error, out isOutOfBandTunerLocked);
-        HResult.ThrowException(hr, "Failed to read smart card status.");
-        this.LogDebug("PBDA CableCARD: smart card status");
-        this.LogDebug("  status      = {0}", status);
-        this.LogDebug("  association = {0}", association);
-        this.LogDebug("  OOB locked  = {0}", isOutOfBandTunerLocked);
-        this.LogDebug("  error       = {0}", error);
-      }
-      catch (Exception ex)
-      {
-        this.LogError(ex, "PBDA CableCARD: failed to read smart card status");
-      }
-
-      // Smart card applications.
-      int scAppCount = 0;
-      int maxAppCount = 32;
-      SmartCardApplication[] applicationDetails = new SmartCardApplication[33];
-      try
-      {
-        hr = bdaCa.get_SmartCardApplications(out scAppCount, maxAppCount, applicationDetails);
-        HResult.ThrowException(hr, "Failed to read smart card application information.");
-        this.LogDebug("PBDA CC: got smart card application info, application count = {0}", scAppCount);
-        for (int i = 0; i < scAppCount; i++)
-        {
-          SmartCardApplication applicationDetail = applicationDetails[i];
-          this.LogDebug("  application #{0}", i + 1);
-          this.LogDebug("    type    = {0}", applicationDetail.ApplicationType);
-          this.LogDebug("    version = {0}", applicationDetail.ApplicationVersion);
-          this.LogDebug("    name    = {0}", applicationDetail.pbstrApplicationName);
-          this.LogDebug("    URL     = {0}", applicationDetail.pbstrApplicationURL);
-        }
-      }
-      catch (Exception ex)
-      {
-        this.LogError(ex, "PBDA CableCARD: failed to read smart card application information");
       }
     }
 
@@ -221,17 +159,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
         throw new TvException("Received request to tune incompatible channel.");
       }
 
-      IBDA_ConditionalAccess bdaCa = _filterMain as IBDA_ConditionalAccess;
-      if (bdaCa == null)
-      {
-        throw new TvException("Failed to find BDA conditional access interface on tuner filter.");
-      }
-
       SmartCardStatusType status;
       SmartCardAssociationType association;
       string error;
       bool isOutOfBandTunerLocked = false;
-      int hr = bdaCa.get_SmartCardStatus(out status, out association, out error, out isOutOfBandTunerLocked);
+      int hr = _caInterface.get_SmartCardStatus(out status, out association, out error, out isOutOfBandTunerLocked);
       HResult.ThrowException(hr, "Failed to read smart card status.");
       if (status != SmartCardStatusType.CardInserted || (IsScanning && !isOutOfBandTunerLocked) || !string.IsNullOrEmpty(error))
       {
@@ -245,7 +177,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
 
       if (!IsScanning)
       {
-        hr = bdaCa.TuneByChannel((short)atscChannel.MajorChannel);
+        hr = _caInterface.TuneByChannel((short)atscChannel.MajorChannel);
         HResult.ThrowException(hr, "Failed to tune channel.");
       }
     }
@@ -268,6 +200,337 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
 
     #endregion
 
+    #region IConditionalAccessMenuActions members
+
+    /// <summary>
+    /// Set the menu call back delegate.
+    /// </summary>
+    /// <param name="callBacks">The call back delegate.</param>
+    public void SetCallBacks(IConditionalAccessMenuCallBacks callBacks)
+    {
+      lock (_caMenuCallBackLock)
+      {
+        _caMenuCallBacks = callBacks;
+      }
+    }
+
+    /// <summary>
+    /// Send a request from the user to the CAM to open the menu.
+    /// </summary>
+    /// <returns><c>true</c> if the request is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
+    public bool EnterMenu()
+    {
+      this.LogDebug("PBDA CableCARD: enter menu");
+
+      if (_caInterface == null)
+      {
+        this.LogWarn("PBDA CableCARD: not initialised or interface not supported");
+        return false;
+      }
+
+      // The root menu is the CableCARD application list. Each application is a
+      // simple series of HTML pages.
+      string cardName;
+      string cardManufacturer;
+      bool isDaylightSavings;
+      byte ratingRegion;
+      int timeOffset;
+      string lang;
+      EALocationCodeType locationCode;
+      int hr = _caInterface.get_SmartCardInfo(out cardName, out cardManufacturer, out isDaylightSavings, out ratingRegion, out timeOffset, out lang, out locationCode);
+      if (hr != (int)HResult.Severity.Success)
+      {
+        this.LogError("PBDA CableCARD: failed to read smart card information, hr = 0x{0:x}");
+        return false;
+      }
+      this.LogDebug("  card name         = {0}", cardName);
+      this.LogDebug("  card manufacturer = {0}", cardManufacturer);
+      this.LogDebug("  is DS time        = {0}", isDaylightSavings);
+      this.LogDebug("  rating region     = {0}", ratingRegion);
+      this.LogDebug("  time offset       = {0}", timeOffset);
+      this.LogDebug("  language          = {0}", lang);
+      this.LogDebug("  location code...");
+      this.LogDebug("    scheme          = {0}", locationCode.LocationCodeScheme);
+      this.LogDebug("    state code      = {0}", locationCode.StateCode);
+      this.LogDebug("    county sub div  = {0}", locationCode.CountySubdivision);
+      this.LogDebug("    county code     = {0}", locationCode.CountyCode);
+
+      int appCount = 0;
+      int maxAppCount = 32;
+      SmartCardApplication[] applicationDetails = new SmartCardApplication[33];
+      hr = _caInterface.get_SmartCardApplications(out appCount, maxAppCount, applicationDetails);
+      if (hr != (int)HResult.Severity.Success)
+      {
+        this.LogError("PBDA CableCARD: failed to read smart card application list, hr = 0x{0:x}");
+        return false;
+      }
+
+      lock (_caMenuCallBackLock)
+      {
+        if (_caMenuCallBacks == null)
+        {
+          this.LogDebug("PBDA CableCARD: menu call backs are not set");
+        }
+        else
+        {
+          _caMenuStack.Clear();
+          _caMenuLinks.Clear();
+          _caMenuStack.Push("root");
+          _caMenuCallBacks.OnCiMenu(cardName, cardManufacturer, string.Empty, appCount);
+        }
+        this.LogDebug("  application count = {0}", appCount);
+        _caMenuUriBase = null;
+        for (int i = 0; i < appCount; i++)
+        {
+          SmartCardApplication app = applicationDetails[i];
+          this.LogDebug("  application #{0}", i + 1);
+          this.LogDebug("    type            = {0}", app.ApplicationType);
+          this.LogDebug("    version         = {0}", app.ApplicationVersion);
+          this.LogDebug("    name            = {0}", app.pbstrApplicationName);
+
+          string appUrl = app.pbstrApplicationURL;
+          if (_caMenuUriBase == null && appUrl.StartsWith("http"))
+          {
+            _caMenuUriBase = new Uri(appUrl);
+          }
+          else if (_caMenuUriBase != null && !appUrl.StartsWith("http"))
+          {
+            Uri uri = new Uri(_caMenuUriBase, appUrl);
+            appUrl = uri.AbsoluteUri;
+          }
+          this.LogDebug("    URL             = {0}", appUrl);
+
+          if (_caMenuCallBacks != null)
+          {
+            _caMenuCallBacks.OnCiMenuChoice(i, app.pbstrApplicationName);
+            _caMenuLinks.Add(appUrl);
+          }
+        }
+      }
+
+      this.LogDebug("PBDA CableCARD: result = success");
+      return true;
+    }
+
+    /// <summary>
+    /// Send a request from the user to the CAM to close the menu.
+    /// </summary>
+    /// <returns><c>true</c> if the request is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
+    public bool CloseMenu()
+    {
+      this.LogDebug("PBDA CableCARD: close menu");
+
+      if (_caInterface == null)
+      {
+        this.LogWarn("PBDA CableCARD: not initialised or interface not supported");
+        return false;
+      }
+
+      int hr = _caInterface.InformUIClosed(0, UICloseReasonType.UserClosed);
+      if (hr == (int)HResult.Severity.Success)
+      {
+        this.LogDebug("PBDA CableCARD: result = success");
+        return true;
+      }
+
+      this.LogError("PBDA CableCARD: failed to inform the CableCARD that the user interface has been closed, hr = 0x{0:x}");
+      return false;
+    }
+
+    /// <summary>
+    /// Send a menu entry selection from the user to the CAM.
+    /// </summary>
+    /// <param name="choice">The index of the selection as an unsigned byte value.</param>
+    /// <returns><c>true</c> if the selection is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
+    public bool SelectMenuEntry(byte choice)
+    {
+      this.LogDebug("PBDA CableCARD: select menu entry, choice = {0}", choice);
+
+      if (_caInterface == null)
+      {
+        this.LogWarn("PBDA CableCARD: not initialised or interface not supported");
+        return false;
+      }
+
+      lock (_caMenuCallBackLock)
+      {
+        if (_caMenuCallBacks == null)
+        {
+          this.LogDebug("PBDA CableCARD: menu call backs are not set");
+        }
+        string url;
+        if (choice == 0)    // Back up one level.
+        {
+          if (_caMenuStack.Count == 1)
+          {
+            this.LogDebug("PBDA CableCARD: closing root menu");
+            _caMenuStack.Clear();
+            _caMenuLinks.Clear();
+            return true;
+          }
+          if (_caMenuStack.Count == 2)
+          {
+            this.LogDebug("PBDA CableCARD: return to root menu");
+            if (_caMenuCallBacks == null)
+            {
+              _caMenuStack.Pop();
+              return EnterMenu();
+            }
+            return true;
+          }
+          url = _caMenuStack.Peek();
+        }
+        else
+        {
+          url = _caMenuLinks[choice - 1];
+        }
+
+        if (string.IsNullOrEmpty(url))
+        {
+          this.LogDebug("PBDA CableCARD: selected non-link entry, nothing to do");
+          return true;
+        }
+
+        this.LogDebug("PBDA CableCARD: retrieving menu from URI {0}", url);
+        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+        request.Timeout = 5000;
+        HttpWebResponse response = null;
+        try
+        {
+          response = (HttpWebResponse)request.GetResponse();
+        }
+        catch (Exception ex)
+        {
+          this.LogError(ex, "PBDA CableCARD: failed to send HTTP menu request to URI {0}", url);
+          request.Abort();
+          return false;
+        }
+        string content = string.Empty;
+        try
+        {
+          using (System.IO.Stream s = response.GetResponseStream())
+          {
+            using (TextReader textReader = new StreamReader(s))
+            {
+              content = textReader.ReadToEnd();
+              textReader.Close();
+            }
+            s.Close();
+          }
+        }
+        catch (Exception ex)
+        {
+          this.LogError(ex, "PBDA CableCARD: failed to receive HTTP menu response from URI {0}", url);
+          return false;
+        }
+        finally
+        {
+          if (response != null)
+          {
+            response.Close();
+          }
+        }
+
+        // Reformat from pure HTML into title and menu items. This is quite
+        // hacky, but we have no way to render HTML in MediaPortal.
+        this.LogDebug("PBDA CableCARD: retrieved raw menu HTML\r\n{0}", content);
+        try
+        {
+          content = Regex.Replace(content, "(<\\/b>|<center>)", string.Empty, RegexOptions.IgnoreCase);
+          content = Regex.Replace(content, "&nbsp;", " ", RegexOptions.IgnoreCase);
+          content = Regex.Replace(content, "\\s+", " ");
+          content = Regex.Replace(content, @".*<body( [^>]*)?>\s*(.*?)\s*</body>.*", "$2", RegexOptions.IgnoreCase | RegexOptions.Singleline);
+
+          this.LogDebug("PBDA CableCARD: pre-split menu HTML\r\n{0}", content);
+          string[] sections = content.Split(new string[] { "<b>", "<B>", "<br>", "<BR>" }, StringSplitOptions.RemoveEmptyEntries);
+
+          // The split options should remove empty entries... but it won't remove whitespace entries.
+          List<string> entries = new List<string>();
+          foreach (string s in sections)
+          {
+            string trimmed = s.Trim();
+            if (!string.IsNullOrEmpty(trimmed))
+            {
+              entries.Add(trimmed);
+            }
+          }
+
+          if (_caMenuCallBacks != null)
+          {
+            _caMenuLinks.Clear();
+            _caMenuCallBacks.OnCiMenu(entries[0], string.Empty, string.Empty, entries.Count - 1);
+          }
+          this.LogDebug("  title  = {0}", entries[0]);
+          for (int i = 1; i < entries.Count; i++)
+          {
+            string itemText = entries[i];
+            string itemUrl = string.Empty;
+            Match m = Regex.Match(itemText, @"<a href=""\s*([^""]+)\s*"">\s*(.*?)\s*</a>", RegexOptions.IgnoreCase);
+            if (m.Success)
+            {
+              itemUrl = m.Groups[1].Captures[0].Value;
+              if (_caMenuUriBase != null && !itemUrl.StartsWith("http"))
+              {
+                Uri uri = new Uri(_caMenuUriBase, itemUrl);
+                itemUrl = uri.AbsoluteUri;
+              }
+              itemText = m.Groups[2].Captures[0].Value;
+              this.LogDebug("  item {0} = {1} [{2}]", i, itemText, itemUrl);
+            }
+            else
+            {
+              this.LogDebug("  item {0} = {1}", i, itemText);
+            }
+            if (_caMenuCallBacks != null)
+            {
+              _caMenuLinks.Add(itemUrl);
+              _caMenuCallBacks.OnCiMenuChoice(i - 1, itemText);
+            }
+          }
+        }
+        catch (Exception ex)
+        {
+          this.LogError(ex, "PBDA CableCARD: failed to handle menu HTML\r\n{0}", content);
+          return false;
+        }
+
+        if (_caMenuCallBacks != null)
+        {
+          if (choice == 0)
+          {
+            _caMenuStack.Pop();
+          }
+          else
+          {
+            _caMenuStack.Push(url);
+          }
+        }
+      }
+
+      this.LogDebug("PBDA CableCARD: result = success");
+      return true;
+    }
+
+    /// <summary>
+    /// Send an answer to an enquiry from the user to the CAM.
+    /// </summary>
+    /// <param name="cancel"><c>True</c> to cancel the enquiry.</param>
+    /// <param name="answer">The user's answer to the enquiry.</param>
+    /// <returns><c>true</c> if the answer is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
+    public bool AnswerEnquiry(bool cancel, string answer)
+    {
+      if (answer == null)
+      {
+        answer = string.Empty;
+      }
+      this.LogDebug("PBDA CableCARD: answer enquiry, answer = {0}, cancel = {1}", answer, cancel);
+
+      // TODO I don't know how to implement this yet.
+      return true;
+    }
+
+    #endregion
+
     /// <summary>
     /// Actually update tuner signal status statistics.
     /// </summary>
@@ -280,19 +543,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
         // the lock status when tuning, so only update again when monitoring.
         if (!onlyUpdateLock)
         {
-          IBDA_ConditionalAccess bdaCa = _filterMain as IBDA_ConditionalAccess;
-          if (bdaCa == null)
+          if (_caInterface == null)
           {
             return;
           }
           SmartCardStatusType status;
           SmartCardAssociationType association;
           string error;
-          int hr = bdaCa.get_SmartCardStatus(out status, out association, out error, out _isSignalLocked);
+          bool isSignalLocked;
+          int hr = _caInterface.get_SmartCardStatus(out status, out association, out error, out isSignalLocked);
           if (hr != (int)HResult.Severity.Success)
           {
             this.LogWarn("PBDA CableCARD: potential error updating signal status, hr = 0x{0:x}", hr);
+            return;
           }
+          _isSignalLocked = isSignalLocked;
         }
         // We can only get lock status for the OOB tuner.
         _isSignalPresent = _isSignalLocked;
@@ -302,18 +567,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
       }
 
       base.PerformSignalStatusUpdate(onlyUpdateLock);
-    }
-
-    /// <summary>
-    /// Stop the tuner. The actual result of this function depends on tuner configuration.
-    /// </summary>
-    public override void Stop()
-    {
-      // CableCARD tuners don't forget the tuned channel after they're stopped,
-      // and they reject tune requests for the current channel.
-      IChannel savedTuningDetail = _currentTuningDetail;
-      base.Stop();
-      _currentTuningDetail = savedTuningDetail;
     }
   }
 }

@@ -179,7 +179,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// Date and time of the last signal update
     /// </summary>
-    protected volatile DateTime _lastSignalUpdate = DateTime.MinValue;
+    protected DateTime _lastSignalUpdate = DateTime.MinValue;
 
     /// <summary>
     /// Indicates, if the signal is present
@@ -957,13 +957,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     public virtual void Stop()
     {
       this.LogDebug("TvCardBase: stop, idle mode = {0}", _idleMode);
+      TunerAction action = TunerAction.Stop;
       try
       {
         UpdateEpgGrabber(false);  // Stop grabbing EPG.
         IsScanning = false;
         FreeAllSubChannels();
 
-        TunerAction action = TunerAction.Stop;
         switch (_idleMode)
         {
           case IdleMode.Pause:
@@ -1007,9 +1007,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       }
       finally
       {
-        // We always want to force a full retune on the next tune request in this situation.
-        // TODO: consider the implications for pausing the graph (advantages of pause vs. stop may be reduced). Do we really want to do this?
-        _currentTuningDetail = null;
+        if (action != TunerAction.Start && action != TunerAction.Pause)
+        {
+          // This forces a full retune. There are potential tuner compatibility
+          // considerations here. Most tuners should remember current settings
+          // when paused; some do when stopped as well, but the majority don't.
+          _currentTuningDetail = null;
+        }
       }
     }
 
