@@ -155,6 +155,8 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    private const int WM_POWERBROADCAST = 0x0218;
+
     // ReSharper disable InconsistentNaming
     private static readonly ArrayList _nonGuiPlugins = new ArrayList();
     private static readonly ArrayList _guiPlugins = new ArrayList();
@@ -920,14 +922,23 @@ namespace MediaPortal.GUI.Library
       // some ISetupForm plugins like tv plugin need the WndProc() method to determine when system has been resumed.      
       foreach (ISetupForm plugin in _setupForms)
       {
-        if (plugin is IPluginReceiver)
+        try
         {
-          var pluginRev = plugin as IPluginReceiver;
-          res = pluginRev.WndProc(ref msg);
-          if (res)
+          if (plugin is IPluginReceiver)
           {
-            break;
+            var pluginRev = plugin as IPluginReceiver;
+            res = pluginRev.WndProc(ref msg);
+            
+            // Do not allow badly behaving plugins to steal power events from other plugins
+            if (res && msg.Msg != WM_POWERBROADCAST)
+            {
+              break;
+            }
           }
+        }
+        catch (Exception ex)
+        {
+          Log.Error("PluginManager - WndProc - error with plugin {0} {1}", plugin.PluginName(), ex);
         }
       }
       return res;
