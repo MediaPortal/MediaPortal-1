@@ -81,7 +81,7 @@
       this.linkMySQL.TabIndex = 11;
       this.linkMySQL.TabStop = true;
       this.linkMySQL.Text = "More Info";
-      this.linkMySQL.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLAV_LinkClicked);
+      this.linkMySQL.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkMySQL_LinkClicked);
       // 
       // lblRecommended
       // 

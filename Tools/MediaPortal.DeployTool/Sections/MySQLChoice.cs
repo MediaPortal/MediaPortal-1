@@ -100,19 +100,9 @@ namespace MediaPortal.DeployTool.Sections
       catch (System.Exception) { }
     }
 
-    private void linkExtensions_LinkClicked_1(object sender, LinkLabelLinkClickedEventArgs e)
+    private void linkMySQL_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      OpenURL("http://www.team-mediaportal.com/extensions");
-    }
-
-    private void linkLAV_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-    {
-      OpenURL("http://wiki.team-mediaportal.com/1_MEDIAPORTAL_1/17_Extensions/3_Plugins/LAV_Filters");
-    }
-
-    private void linkTitan_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-    {
-      OpenURL("http://wiki.team-mediaportal.com/1_MEDIAPORTAL_1/17_Extensions/4_Skins/Titan_Extended");
+      OpenURL("http://wiki.team-mediaportal.com/1_MEDIAPORTAL_1/0_What's_New/1.7.x/MySQL_Upgrade_choice");
     }
 
     #endregion
