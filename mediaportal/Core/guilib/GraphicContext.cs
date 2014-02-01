@@ -83,8 +83,6 @@ namespace MediaPortal.GUI.Library
     public static event VideoGammaContrastBrightnessHandler OnGammaContrastBrightnessChanged; // triggered when contrast, brightness, gamma settings have been changed
 
     public static Device DX9Device = null; // pointer to current DX9 device
-    public static Texture Auto3DTexture = null;
-    public static Surface Auto3DSurface = null;
 
     // ReSharper disable InconsistentNaming
     public static Graphics graphics = null; // GDI+ Graphics object
@@ -403,21 +401,6 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    public static void ResetAuto3D()
-    {
-      if (Auto3DSurface != null)
-      {
-        Auto3DSurface.ReleaseGraphics();
-        Auto3DSurface = null;
-      }
-
-      if (Auto3DTexture != null)
-      {
-        Auto3DTexture.Dispose();
-        Auto3DTexture = null;
-      }
-    }
-
     /// <summary>
     /// Load calibration values for current resolution
     /// </summary>
@@ -432,8 +415,6 @@ namespace MediaPortal.GUI.Library
       OverScanHeight = Height;
       ZoomHorizontal = 1.0f;
       ZoomVertical = 1.0f;
-
-      GUIGraphicsContext.ResetAuto3D();
 
       string strFileName = Config.GetFile(Config.Dir.Config, String.Format("ScreenCalibration{0}x{1}", Width, Height));
       strFileName += Fullscreen ? ".fs.xml" : ".xml";
