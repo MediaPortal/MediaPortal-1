@@ -790,11 +790,15 @@ namespace MediaPortal.Configuration
 
     private void folderTextBox_TextChanged(object sender, EventArgs e)
     {
-      if (!Util.Utils.IsUNCNetwork(folderTextBox.Text))
+      if (Util.Utils.IsUNCNetwork(folderTextBox.Text))
+      {
+        cbEnableWakeOnLan.Enabled = true;
+      }
+      else
       {
         cbEnableWakeOnLan.Checked = false;
         cbEnableWakeOnLan.Enabled = false;
-      }      
+      }
     }
   }
 }
