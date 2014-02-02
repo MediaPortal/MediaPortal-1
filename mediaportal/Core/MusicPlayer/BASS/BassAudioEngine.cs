@@ -105,7 +105,7 @@ namespace MediaPortal.MusicPlayer.BASS
     private int VizFPS = 20;
 
     private int _DefaultCrossFadeIntervalMS = 4000;
-    private bool _initialized = false;
+    public static bool _initialized = false;
     private bool _bassFreed = false;
     private VisualizationWindow VizWindow = null;
     private VisualizationManager VizManager = null;

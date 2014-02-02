@@ -34,6 +34,7 @@ using MediaPortal.Database;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Music.Database;
+using MediaPortal.MusicPlayer.BASS;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.TagReader;
@@ -423,7 +424,10 @@ namespace MediaPortal.GUI.Music
       // Get notification, that an Internet Stream has changed
       // Moved out of the constructor, since it would cause loading of BASS in the Main thread,
       // because it is called by the Plugin Manager
-      BassMusicPlayer.Player.InternetStreamSongChanged += OnInternetStreamSongChanged;
+      if (BassAudioEngine._initialized)
+      {
+        BassMusicPlayer.Player.InternetStreamSongChanged += OnInternetStreamSongChanged;
+      }
 
       ImagePathContainer.Clear();
 
@@ -676,138 +680,141 @@ namespace MediaPortal.GUI.Music
     {
       double dbLevelL = 0.0;
       double dbLevelR = 0.0;
-      BassMusicPlayer.Player.RMS(out dbLevelL, out dbLevelR);
+      if (BassAudioEngine._initialized)
+      {
+        BassMusicPlayer.Player.RMS(out dbLevelL, out dbLevelR);
 
-      // Raise the level with factor 1.5 so that the VUMeter shows more activity
-      dbLevelL += Math.Abs(dbLevelL * 0.5);
-      dbLevelR += Math.Abs(dbLevelR * 0.5);
+        // Raise the level with factor 1.5 so that the VUMeter shows more activity
+        dbLevelL += Math.Abs(dbLevelL*0.5);
+        dbLevelR += Math.Abs(dbLevelR*0.5);
 
-      //Console.WriteLine("{0} {1}",(int)dbLevelL, (int)dbLevelR);
+        //Console.WriteLine("{0} {1}",(int)dbLevelL, (int)dbLevelR);
 
-      string file = "VU1.png";
-      if ((int)dbLevelL < -15)
-      {
-        file = "VU1.png";
-      }
-      else if ((int)dbLevelL < -10)
-      {
-        file = "VU2.png";
-      }
-      else if ((int)dbLevelL < -8)
-      {
-        file = "VU3.png";
-      }
-      else if ((int)dbLevelL < -7)
-      {
-        file = "VU4.png";
-      }
-      else if ((int)dbLevelL < -6)
-      {
-        file = "VU5.png";
-      }
-      else if ((int)dbLevelL < -5)
-      {
-        file = "VU6.png";
-      }
-      else if ((int)dbLevelL < -4)
-      {
-        file = "VU7.png";
-      }
-      else if ((int)dbLevelL < -3)
-      {
-        file = "VU8.png";
-      }
-      else if ((int)dbLevelL < -2)
-      {
-        file = "VU9.png";
-      }
-      else if ((int)dbLevelL < -1)
-      {
-        file = "VU10.png";
-      }
-      else if ((int)dbLevelL < 0)
-      {
-        file = "VU11.png";
-      }
-      else if ((int)dbLevelL < 1)
-      {
-        file = "VU12.png";
-      }
-      else if ((int)dbLevelL < 2)
-      {
-        file = "VU13.png";
-      }
-      else if ((int)dbLevelL < 3)
-      {
-        file = "VU14.png";
-      }
-      else
-      {
-        file = "VU15.png";
-      }
-      GUIPropertyManager.SetProperty("#VUMeterL", Path.Combine(VUMeterLeft.ImagePath, file));
+        string file = "VU1.png";
+        if ((int) dbLevelL < -15)
+        {
+          file = "VU1.png";
+        }
+        else if ((int) dbLevelL < -10)
+        {
+          file = "VU2.png";
+        }
+        else if ((int) dbLevelL < -8)
+        {
+          file = "VU3.png";
+        }
+        else if ((int) dbLevelL < -7)
+        {
+          file = "VU4.png";
+        }
+        else if ((int) dbLevelL < -6)
+        {
+          file = "VU5.png";
+        }
+        else if ((int) dbLevelL < -5)
+        {
+          file = "VU6.png";
+        }
+        else if ((int) dbLevelL < -4)
+        {
+          file = "VU7.png";
+        }
+        else if ((int) dbLevelL < -3)
+        {
+          file = "VU8.png";
+        }
+        else if ((int) dbLevelL < -2)
+        {
+          file = "VU9.png";
+        }
+        else if ((int) dbLevelL < -1)
+        {
+          file = "VU10.png";
+        }
+        else if ((int) dbLevelL < 0)
+        {
+          file = "VU11.png";
+        }
+        else if ((int) dbLevelL < 1)
+        {
+          file = "VU12.png";
+        }
+        else if ((int) dbLevelL < 2)
+        {
+          file = "VU13.png";
+        }
+        else if ((int) dbLevelL < 3)
+        {
+          file = "VU14.png";
+        }
+        else
+        {
+          file = "VU15.png";
+        }
+        GUIPropertyManager.SetProperty("#VUMeterL", Path.Combine(VUMeterLeft.ImagePath, file));
 
-      if ((int)dbLevelR < -15)
-      {
-        file = "VU1.png";
+        if ((int) dbLevelR < -15)
+        {
+          file = "VU1.png";
+        }
+        else if ((int) dbLevelR < -10)
+        {
+          file = "VU2.png";
+        }
+        else if ((int) dbLevelR < -8)
+        {
+          file = "VU3.png";
+        }
+        else if ((int) dbLevelR < -7)
+        {
+          file = "VU4.png";
+        }
+        else if ((int) dbLevelR < -6)
+        {
+          file = "VU5.png";
+        }
+        else if ((int) dbLevelR < -5)
+        {
+          file = "VU6.png";
+        }
+        else if ((int) dbLevelR < -4)
+        {
+          file = "VU7.png";
+        }
+        else if ((int) dbLevelR < -3)
+        {
+          file = "VU8.png";
+        }
+        else if ((int) dbLevelR < -2)
+        {
+          file = "VU9.png";
+        }
+        else if ((int) dbLevelR < -1)
+        {
+          file = "VU10.png";
+        }
+        else if ((int) dbLevelR < 0)
+        {
+          file = "VU11.png";
+        }
+        else if ((int) dbLevelR < 1)
+        {
+          file = "VU12.png";
+        }
+        else if ((int) dbLevelR < 2)
+        {
+          file = "VU13.png";
+        }
+        else if ((int) dbLevelR < 3)
+        {
+          file = "VU14.png";
+        }
+        else
+        {
+          file = "VU15.png";
+        }
+        GUIPropertyManager.SetProperty("#VUMeterR", Path.Combine(VUMeterRight.ImagePath, file));
       }
-      else if ((int)dbLevelR < -10)
-      {
-        file = "VU2.png";
-      }
-      else if ((int)dbLevelR < -8)
-      {
-        file = "VU3.png";
-      }
-      else if ((int)dbLevelR < -7)
-      {
-        file = "VU4.png";
-      }
-      else if ((int)dbLevelR < -6)
-      {
-        file = "VU5.png";
-      }
-      else if ((int)dbLevelR < -5)
-      {
-        file = "VU6.png";
-      }
-      else if ((int)dbLevelR < -4)
-      {
-        file = "VU7.png";
-      }
-      else if ((int)dbLevelR < -3)
-      {
-        file = "VU8.png";
-      }
-      else if ((int)dbLevelR < -2)
-      {
-        file = "VU9.png";
-      }
-      else if ((int)dbLevelR < -1)
-      {
-        file = "VU10.png";
-      }
-      else if ((int)dbLevelR < 0)
-      {
-        file = "VU11.png";
-      }
-      else if ((int)dbLevelR < 1)
-      {
-        file = "VU12.png";
-      }
-      else if ((int)dbLevelR < 2)
-      {
-        file = "VU13.png";
-      }
-      else if ((int)dbLevelR < 3)
-      {
-        file = "VU14.png";
-      }
-      else
-      {
-        file = "VU15.png";
-      }
-      GUIPropertyManager.SetProperty("#VUMeterR", Path.Combine(VUMeterRight.ImagePath, file));
     }
 
     private void UpdateImagePathContainer()
