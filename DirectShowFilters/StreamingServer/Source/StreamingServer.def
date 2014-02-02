@@ -10,3 +10,6 @@ StreamGetClientCount @6
 StreamGetClientDetail @7
 StreamSetupEx		@8
 StreamShutdown		@9
+RtpSetup			@10
+play				@11
+RtpStop				@12

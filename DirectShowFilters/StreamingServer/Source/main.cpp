@@ -62,6 +62,18 @@ const int	DEFAULT_RTSP_PORT = 554;
 UsageEnvironment* m_env;
 MPRTSPServer*			m_rtspServer;
 
+// RTP
+int streamsCount;
+
+RTPSink*				videoSink[20];
+FramedSource*			videoSource[20];
+UsageEnvironment*		env[20];
+Boolean const isSSM =	False;
+char const* inputFileName = "test.ts";
+#define TRANSPORT_PACKET_SIZE 188
+#define TRANSPORT_PACKETS_PER_NETWORK_PACKET 7
+// RTP END
+
 void StreamSetup(char* ipAdress);
 int  StreamSetupEx(char* ipAdress, int port);
 void StreamShutdown();
@@ -70,6 +82,11 @@ void announceStream(RTSPServer* rtspServer, ServerMediaSession* sms, char * stre
 void StreamAddTimeShiftFile(char* streamName, wchar_t* fileName,bool isProgramStream,int channelType);
 void StreamAddMpegFile(char* streamName, wchar_t* fileName, int channelType);
 void StreamRemove(char* streamName);
+
+int RtpSetup(char* destinationAddressStr, int _rtpPort, char* fileName);
+void play(int);
+void afterPlaying(void*);
+void RtpStop(int);
 
 extern netAddressBits SendingInterfaceAddr ;
 extern netAddressBits ReceivingInterfaceAddr ;
@@ -92,6 +109,7 @@ int main(int argc, char* argv[])
 
 #endif
 
+#pragma region RTSP
 
 //**************************************************************************************
 void StreamGetClientCount(int* clients)
@@ -245,3 +263,110 @@ void announceStream(RTSPServer* rtspServer, ServerMediaSession* sms, char * stre
 	char* url = rtspServer->rtspURL(sms);
 	LogDebug("Stream server: url for stream is %s", url);
 }
+
+#pragma endregion RTSP
+
+#pragma region RTP
+//**************************************************************************************
+int RtpSetup(char* destinationAddressStr, int _rtpPort, char* fileName)
+{
+	LogDebug("begin RtpSetup");
+	
+	if (!streamsCount) {
+		streamsCount = 0;
+	}
+	int localstreamsCount = streamsCount;
+	streamsCount++;
+	
+	const unsigned short rtpPortNum = _rtpPort;
+	const unsigned short rtcpPortNum = rtpPortNum+1;
+	const unsigned char ttl = 7; // low, in case routers don't admin scope
+	inputFileName = fileName;
+	LogDebug("filename: %s",inputFileName);
+
+	// Begin by setting up our usage environment:
+	TaskScheduler* scheduler = BasicTaskScheduler::createNew();
+	env[localstreamsCount] = BasicUsageEnvironment::createNew(*scheduler);
+
+	struct in_addr destinationAddress;
+	LogDebug("1");
+	destinationAddress.s_addr = our_inet_addr(destinationAddressStr);
+	LogDebug("2");
+	const Port rtpPort(rtpPortNum);
+	LogDebug("3");
+	const Port rtcpPort(rtcpPortNum);
+	LogDebug("4");
+
+	Groupsock rtpGroupsock(*env[localstreamsCount], destinationAddress, rtpPort, ttl);
+	LogDebug("5");
+	Groupsock rtcpGroupsock(*env[localstreamsCount], destinationAddress, rtcpPort, ttl);
+	LogDebug("6");
+
+	// Create an appropriate 'RTP sink' from the RTP 'groupsock':
+	videoSink[localstreamsCount] =
+		SimpleRTPSink::createNew(*env[localstreamsCount], &rtpGroupsock, 33, 90000, "video", "MP2T",
+					1, True, False /*no 'M' bit*/);
+	
+	LogDebug("7");
+	// Create (and start) a 'RTCP instance' for this RTP sink:
+	const unsigned estimatedSessionBandwidth = 5000; // in kbps; for RTCP b/w share
+	const unsigned maxCNAMElen = 100;
+	unsigned char CNAME[maxCNAMElen+1];
+	gethostname((char*)CNAME, maxCNAMElen);
+	CNAME[maxCNAMElen] = '\0'; // just in case
+
+	RTCPInstance::createNew(*env[localstreamsCount], &rtcpGroupsock,
+			    estimatedSessionBandwidth, CNAME,
+			    videoSink[localstreamsCount], NULL /* we're a server */, isSSM);
+	// Note: This starts RTCP running automatically
+
+	// Finally, start the streaming:
+	*env[localstreamsCount] << "Beginning streaming...\n";
+	play(localstreamsCount);
+
+	env[localstreamsCount]->taskScheduler().doEventLoop(); // does not return
+
+	return localstreamsCount; // returns local stream count
+}
+
+void play(int localstreamsCount) {
+  unsigned const inputDataChunkSize
+    = TRANSPORT_PACKETS_PER_NETWORK_PACKET*TRANSPORT_PACKET_SIZE;
+
+  // Open the input file as a 'byte-stream file source':
+  ByteStreamFileSource* fileSource
+    = ByteStreamFileSource::createNew(*env[localstreamsCount], inputFileName, inputDataChunkSize);
+  if (fileSource == NULL) {
+    *env[localstreamsCount] << "Unable to open file \"" << inputFileName
+	 << "\" as a byte-stream file source\n";
+    exit(1);
+  }
+
+  // Create a 'framer' for the input source (to give us proper inter-packet gaps):
+  videoSource[localstreamsCount] = MPEG2TransportStreamFramer::createNew(*env[localstreamsCount], fileSource);
+
+  // Finally, start playing:
+  *env[localstreamsCount] << "Beginning to read from file...\n";
+  videoSink[localstreamsCount]->startPlaying(*videoSource[localstreamsCount], afterPlaying, (void*)localstreamsCount);
+}
+
+void afterPlaying(void* clientData) {
+  int localstreamsCount = (int)clientData;
+	
+  *env[localstreamsCount] << "...done reading from file\n";
+
+  videoSink[localstreamsCount]->stopPlaying();
+  Medium::close(videoSource[localstreamsCount]);
+  // Note that this also closes the input file that this source read from.
+
+  play(localstreamsCount);
+}
+
+void RtpStop(int localstreamsCount) {
+  *env[localstreamsCount] << "...stop\n";
+
+  videoSink[localstreamsCount]->stopPlaying();
+  Medium::close(videoSource[localstreamsCount]);
+  // Note that this also closes the input file that this source read from.
+}
+#pragma endregion RTP
