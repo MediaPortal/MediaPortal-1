@@ -141,3 +141,7 @@ xcopy %1\Databases\bin\%2\HtmlAgilityPack.* . /Y /D
 
 REM ffmpeg 
 xcopy %1\..\Packages\ffmpeg.2.1.1\ffmpeg.exe MovieThumbnailer\ /Y /D
+
+REM iMON Display 
+xcopy %1\..\Packages\MediaPortal-iMON-Display.1.0.1\lib\iMONDisplay.dll /Y /D
+xcopy %1\..\Packages\MediaPortal-iMON-Display.1.0.1\lib\iMONDisplayWrapper.dll /Y /D
