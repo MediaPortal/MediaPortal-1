@@ -42,7 +42,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
         protected string UnsupportedDeviceErrorMessage { get; set; }
 
-        protected int DisplayType { get; set; }
+        protected DSPType DisplayType { get; set; }
 
         public string ErrorMessage
         {
@@ -63,14 +63,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 if (!Disabled.HasValue)
                 {
                     IDWINITRESULT initResult = new IDWINITRESULT();
-                    int ret = IDW_Init(initResult);
-                    if (ret != DSP_SUCCEEDED)
+                    DSPResult ret = IDW_Init(initResult);
+                    if (ret != DSPResult.DSP_SUCCEEDED)
                     {
                         ImonErrorMessage = DSPResult2String(ret);
                         Disabled = true;
                         LogError(string.Format("{0}.IsDisabled: {1}", ClassErrorName, ImonErrorMessage));
                     }
-                    else if (initResult.initResult != DSPN_SUCCEEDED)
+                    else if (initResult.initResult != DSPNInitResult.DSPN_SUCCEEDED)
                     {
                         ImonErrorMessage = DSPNResult2String(initResult.initResult);
                         Disabled = true;
@@ -163,82 +163,95 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             // iMON VFD/LCD cannot be setup
         }
 
-        protected string DSPResult2String(int result)
+        protected string DSPResult2String(DSPResult result)
         {
             switch (result)
             {
-                case DSP_SUCCEEDED:
+                case DSPResult.DSP_SUCCEEDED:
                     return "Success";
-                case DSP_E_FAIL:
+                case DSPResult.DSP_E_FAIL:
                     return "An unknown error occurred";
-                case DSP_E_OUTOFMEMORY:
+                case DSPResult.DSP_E_OUTOFMEMORY:
                     return "Out of memory";
-                case DSP_E_INVALIDARG:
+                case DSPResult.DSP_E_INVALIDARG:
                     return "One or more arguments are invalid";
-                case DSP_E_NOT_INITED:
+                case DSPResult.DSP_E_NOT_INITED:
                     return "API is not initialized";
-                case DSP_E_POINTER:
+                case DSPResult.DSP_E_POINTER:
                     return "Pointer is invalid";
                 default:
                     return "An unknown error occurred";
             }
         }
 
-        protected string DSPNResult2String(int result)
+        protected string DSPNResult2String(DSPNInitResult result)
         {
             switch (result)
             {
-                case DSPN_SUCCEEDED:
+                case DSPNInitResult.DSPN_SUCCEEDED:
                     return "Success";
-                case DSPN_ERR_IN_USING:
+                case DSPNInitResult.DSPN_ERR_IN_USE:
                     return "Display plug-in is already used by another application";
-                case DSPN_ERR_HW_DISCONNECTED:
+                case DSPNInitResult.DSPN_ERR_HW_DISCONNECTED:
                     return "iMON hardware is not connected";
-                case DSPN_ERR_NOT_SUPPORTED_HW:
+                case DSPNInitResult.DSPN_ERR_NOT_SUPPORTED_HW:
                     return "The connected hardware does not support the plug-in mode";
-                case DSPN_ERR_PLUGIN_DISABLED:
+                case DSPNInitResult.DSPN_ERR_PLUGIN_DISABLED:
                     return "The plug-in mode option is disabled";
-                case DSPN_ERR_IMON_NO_REPLY:
+                case DSPNInitResult.DSPN_ERR_IMON_NO_REPLY:
                     return "The latest iMON is not installed or iMON is not running";
                 default:
                     return "An unknown error occurred";
             }
         }
 
-        protected const int DSP_SUCCEEDED = 0;
-        protected const int DSP_E_FAIL = 1;
-        protected const int DSP_E_OUTOFMEMORY = 2;
-        protected const int DSP_E_INVALIDARG = 3;
-        protected const int DSP_E_NOT_INITED = 4;
-        protected const int DSP_E_POINTER = 5;
-        protected const int DSP_S_INITED = 0x1000;
-        protected const int DSP_S_NOT_INITED = 0x1001;
-        protected const int DSP_S_IN_PLUGIN_MODE = 0x1002;
-        protected const int DSP_S_NOT_IN_PLUGIN_MODE = 0x1003;
+        //Possible return values from iMON Display APIs
+        protected enum DSPResult : int
+        {
+            DSP_SUCCEEDED = 0,
+            DSP_E_FAIL = 1,
+            DSP_E_OUTOFMEMORY = 2,
+            DSP_E_INVALIDARG = 3,
+            DSP_E_NOT_INITED = 4,
+            DSP_E_POINTER = 5,
+            DSP_S_INITED = 0x1000,
+            DSP_S_NOT_INITED = 0x1001,
+            DSP_S_IN_PLUGIN_MODE = 0x1002,
+            DSP_S_NOT_IN_PLUGIN_MODE = 0x1003
+        }
 
-        protected const int DSPN_SUCCEEDED = 0;
-        protected const int DSPN_ERR_IN_USING = 0x0100;
-        protected const int DSPN_ERR_HW_DISCONNECTED = 0x0101;
-        protected const int DSPN_ERR_NOT_SUPPORTED_HW = 0x0102;
-        protected const int DSPN_ERR_PLUGIN_DISABLED = 0x0103;
-        protected const int DSPN_ERR_IMON_NO_REPLY = 0x0104;
-        protected const int DSPN_ERR_UNKNOWN = 0x0200;
+        //Possible results from display initialization 
+        protected enum DSPNInitResult : int
+        {
+            DSPN_SUCCEEDED = 0,
+            DSPN_ERR_IN_USE = 0x0100,
+            DSPN_ERR_HW_DISCONNECTED = 0x0101,
+            DSPN_ERR_NOT_SUPPORTED_HW = 0x0102,
+            DSPN_ERR_PLUGIN_DISABLED = 0x0103,
+            DSPN_ERR_IMON_NO_REPLY = 0x0104,
+            DSPN_ERR_UNKNOWN = 0x0200
+        }
 
-        protected const int DSPN_DSP_NONE = 0;
-        protected const int DSPN_DSP_VFD = 0x01;
-        protected const int DSPN_DSP_LCD = 0x02;
+        //Type of display
+        protected enum DSPType : int
+        {
+            DSPN_DSP_NONE = 0,
+            DSPN_DSP_VFD = 0x01,
+            DSPN_DSP_LCD = 0x02
+        };
 
+        //Not sure why we had to revert the order of our data members from the native implementation.
         [StructLayout(LayoutKind.Sequential)]
         protected class IDWINITRESULT
         {
-            public int initResult;
-            public int dspType;
+            public DSPType dspType;
+            public DSPNInitResult initResult;            
         }
 
-        [DllImport("iMONDisplayWrapper.dll")]
-        protected static extern int IDW_Init(IDWINITRESULT initResult);
+        [DllImport("iMONDisplayWrapper.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+        protected static extern DSPResult IDW_Init(IDWINITRESULT initResult);
 
-        [DllImport("iMONDisplayWrapper.dll")]
-        protected static extern int IDW_Uninit();
+        [DllImport("iMONDisplayWrapper.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+        protected static extern DSPResult IDW_Uninit();
     }
 }

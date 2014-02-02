@@ -17,7 +17,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             UnsupportedDeviceErrorMessage = "Only VFDs are supported";
             Description = "iMON VFD for iMON Manager >= 8.01.0419";
             Name = "iMONVFD";
-            DisplayType = DSPN_DSP_VFD;
+            DisplayType = DSPType.DSPN_DSP_VFD;
         }
 
         public override void SetLine(int line, string message)
@@ -33,8 +33,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             }
         }
 
-        [DllImport("iMONDisplayWrapper.dll")]
-        private static extern int IDW_SetVfdText(
+        [DllImport("iMONDisplayWrapper.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+        private static extern DSPResult IDW_SetVfdText(
           [MarshalAs(UnmanagedType.LPWStr)] string line1,
           [MarshalAs(UnmanagedType.LPWStr)] string line2);
 

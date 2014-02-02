@@ -41,7 +41,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             UnsupportedDeviceErrorMessage = "Only LCDs are supported";
             Description = "iMON LCD for iMON Manager >= 8.01.0419";
             Name = "iMONLCD";
-            DisplayType = DSPN_DSP_LCD;
+            DisplayType = DSPType.DSPN_DSP_LCD;
 
             LoadAdvancedSettings();
             AdvancedSettings.OnSettingsChanged += 
@@ -237,6 +237,19 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 }
             }
             LogDebug("(IDisplay) ImonLcd.SetDefaults() completed");
+        }
+
+        private void ThreadMain()
+        {
+            try
+            {
+                MonitorMedia();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex);
+                Log.Error("iMON LCD Display thread stopped due to an exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);               
+            }
         }
 
         private void MonitorMedia()
@@ -586,7 +599,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
             LogDebug("(IDisplay) ImonLcd.Initialize() called");
             base.Initialize();
-            _monitorMediaThread = new Thread(new ThreadStart(MonitorMedia));
+            _monitorMediaThread = new Thread(new ThreadStart(ThreadMain));
             _monitorMediaThread.Start();
             LogDebug("(IDisplay) ImonLcd.Initialize() completed");
         }
@@ -655,39 +668,39 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             Initialize();
         }
 
-        [DllImport("iMONDisplayWrapper.dll")]
-        private static extern int IDW_SetLcdText(
+        [DllImport("iMONDisplayWrapper.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+        private static extern DSPResult IDW_SetLcdText(
             [MarshalAs(UnmanagedType.LPWStr)] string line);
 
-        [DllImport("iMONDisplayWrapper.dll")]
-        private static extern int IDW_SetLcdAllIcons(
+        [DllImport("iMONDisplayWrapper.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+        private static extern DSPResult IDW_SetLcdAllIcons(
             [MarshalAs(UnmanagedType.Bool)] bool on);
 
-        [DllImport("iMONDisplayWrapper.dll")]
-        private static extern int IDW_SetLcdOrangeIcon(
+        [DllImport("iMONDisplayWrapper.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+        private static extern DSPResult IDW_SetLcdOrangeIcon(
             byte iconData1, byte iconData2);
 
-        [DllImport("iMONDisplayWrapper.dll")]
-        private static extern int IDW_SetLcdMediaTypeIcon(byte iconData);
+        [DllImport("iMONDisplayWrapper.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+        private static extern DSPResult IDW_SetLcdMediaTypeIcon(byte iconData);
 
-        [DllImport("iMONDisplayWrapper.dll")]
-        private static extern int IDW_SetLcdSpeakerIcon(
+        [DllImport("iMONDisplayWrapper.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+        private static extern DSPResult IDW_SetLcdSpeakerIcon(
             byte iconData1, byte iconData2);
 
-        [DllImport("iMONDisplayWrapper.dll")]
-        private static extern int IDW_SetLcdVideoCodecIcon(byte iconData);
+        [DllImport("iMONDisplayWrapper.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+        private static extern DSPResult IDW_SetLcdVideoCodecIcon(byte iconData);
 
-        [DllImport("iMONDisplayWrapper.dll")]
-        private static extern int IDW_SetLcdAudioCodecIcon(byte iconData);
+        [DllImport("iMONDisplayWrapper.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+        private static extern DSPResult IDW_SetLcdAudioCodecIcon(byte iconData);
 
-        [DllImport("iMONDisplayWrapper.dll")]
-        private static extern int IDW_SetLcdAspectRatioIcon(byte iconData);
+        [DllImport("iMONDisplayWrapper.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+        private static extern DSPResult IDW_SetLcdAspectRatioIcon(byte iconData);
 
-        [DllImport("iMONDisplayWrapper.dll")]
-        private static extern int IDW_SetLcdEtcIcon(byte iconData);
+        [DllImport("iMONDisplayWrapper.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+        private static extern DSPResult IDW_SetLcdEtcIcon(byte iconData);
 
-        [DllImport("iMONDisplayWrapper.dll")]
-        private static extern int IDW_SetLcdProgress(
+        [DllImport("iMONDisplayWrapper.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+        private static extern DSPResult IDW_SetLcdProgress(
             int currentPosition, int total);
 
         private class ImonMediaInfo
