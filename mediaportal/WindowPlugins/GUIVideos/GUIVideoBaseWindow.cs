@@ -417,7 +417,7 @@ namespace MediaPortal.GUI.Video
       base.OnPageDestroy(newWindowId);
     }
 
-    protected virtual void SetView(int selectedViewId)
+    protected override void SetView(int selectedViewId)
     {
       switch (selectedViewId)
       {
