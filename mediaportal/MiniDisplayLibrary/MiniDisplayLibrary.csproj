@@ -108,6 +108,15 @@
     <Compile Include="MiniDisplayPlugin\ByteArray.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="MiniDisplayPlugin\Drivers\FutabaMDM166A_AdvancedSetupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MiniDisplayPlugin\Drivers\FutabaMDM166A_AdvancedSetupForm.Designer.cs">
+      <DependentUpon>FutabaMDM166A_AdvancedSetupForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MiniDisplayPlugin\Drivers\FutabaMDM166A.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="MiniDisplayPlugin\Drivers\ShuttlePF27.cs" />
     <Compile Include="MiniDisplayPlugin\Drivers\DM140GINK.cs" />
     <Compile Include="MiniDisplayPlugin\Drivers\FicSpectra.cs" />
@@ -342,6 +351,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="MiniDisplayPlugin\Drivers\FutabaMDM166A_AdvancedSetupForm.resx">
+      <DependentUpon>FutabaMDM166A_AdvancedSetupForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MiniDisplayPlugin\Drivers\iMONLCDg_AdvancedSetupForm.resx">
       <DependentUpon>iMONLCDg_AdvancedSetupForm.cs</DependentUpon>
     </EmbeddedResource>

@@ -304,8 +304,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       list.Add(new FICSpectra());
       if (this.ExtensiveLogging)
       {
-        Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading MediaPad...");
+        Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading FutabaMDM166A...");
       }
+      list.Add(new FutabaMDM166A());
+      if (this.ExtensiveLogging)
+      {
+        Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading MediaPad...");
+      }    
       list.Add(new MediaPad());
       if (this.ExtensiveLogging)
       {
