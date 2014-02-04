@@ -3096,8 +3096,8 @@ namespace MediaPortal.GUI.Video
             {
               GUIListItem item = innerList[i];
               bool isMovieFolder = false;
- 
-              if (!string.IsNullOrEmpty(newFolderName))
+
+              if (Util.Utils.CheckServerStatus(item.Path))
               {
                 isMovieFolder = IsMovieFolder(item.Path);
 
