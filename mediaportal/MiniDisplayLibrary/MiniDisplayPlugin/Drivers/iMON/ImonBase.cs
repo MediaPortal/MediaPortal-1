@@ -244,8 +244,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         [StructLayout(LayoutKind.Sequential)]
         protected class IDWINITRESULT
         {
+            public DSPNInitResult initResult;
             public DSPType dspType;
-            public DSPNInitResult initResult;            
         }
 
         [DllImport("iMONDisplayWrapper.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
