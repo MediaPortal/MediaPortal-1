@@ -241,10 +241,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         };
 
         //Not sure why we had to revert the order of our data members from the native implementation.
-        [StructLayout(LayoutKind.Sequential)]
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 8)]
         protected class IDWINITRESULT
         {
+            [MarshalAs(UnmanagedType.U4)]
             public DSPNInitResult initResult;
+            [MarshalAs(UnmanagedType.U4)]
             public DSPType dspType;
         }
 
