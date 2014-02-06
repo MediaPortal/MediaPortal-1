@@ -25,6 +25,7 @@
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>MultiByte</CharacterSet>
+    <CLRSupport>false</CLRSupport>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -64,6 +65,7 @@
       <ProgramDataBaseFileName>.\bin\Debug/</ProgramDataBaseFileName>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <CompileAsManaged>false</CompileAsManaged>
     </ClCompile>
     <Link>
       <AdditionalDependencies>DvbCoreUtilsD.lib;strmbasd.lib;winmm.lib;livemedia555D.lib;WS2_32.Lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -122,6 +124,7 @@
     <ClCompile Include="Source\main.cpp" />
     <ClCompile Include="Source\FileReader.cpp" />
     <ClCompile Include="Source\MultiFileReader.cpp" />
+    <ClCompile Include="Source\RtpStream.cpp" />
     <ClCompile Include="Source\TsMPEG2TransportFileServerMediaSubsession.cpp" />
     <ClCompile Include="Source\TsMPEG2TransportStreamFramer.cpp" />
     <ClCompile Include="Source\TsStreamFileSource.cpp" />
@@ -135,6 +138,7 @@
     <None Include="Source\ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\RtpStream.h" />
     <ClInclude Include="Source\TSBuffer.h" />
     <ClInclude Include="Source\TSThread.h" />
     <ClInclude Include="Source\CriticalSection.h" />
