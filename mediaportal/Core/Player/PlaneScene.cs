@@ -303,7 +303,7 @@ namespace MediaPortal.Player
     {
       try
       {
-        if (!GUIGraphicsContext.IsPlayingVideo)
+        if (!GUIGraphicsContext.IsPlayingVideo && !_vmr9Util.InMenu)
         {
           return false;
         }
@@ -582,7 +582,7 @@ namespace MediaPortal.Player
         {
           return;
         }
-        if (GUIWindowManager.IsSwitchingToNewWindow)
+        if (GUIWindowManager.IsSwitchingToNewWindow && !_vmr9Util.InMenu)
         {
           return; //dont present video during window transitions
         }
@@ -602,19 +602,26 @@ namespace MediaPortal.Player
         int iMaxSteps = 12;
         if (_fadeFrameCounter < iMaxSteps)
         {
-          // fade in
-          int iStep = 0xff/iMaxSteps;
-          if (_fadingIn)
+          if (_vmr9Util.InMenu)
           {
-            _diffuseColor = iStep*_fadeFrameCounter;
-            _diffuseColor <<= 24;
-            _diffuseColor |= 0xffffff;
+            _diffuseColor = 0xFFffffff;
           }
           else
           {
-            _diffuseColor = (iMaxSteps - iStep)*_fadeFrameCounter;
-            _diffuseColor <<= 24;
-            _diffuseColor |= 0xffffff;
+            // fade in
+            int iStep = 0xff / iMaxSteps;
+            if (_fadingIn)
+            {
+              _diffuseColor = iStep * _fadeFrameCounter;
+              _diffuseColor <<= 24;
+              _diffuseColor |= 0xffffff;
+            }
+            else
+            {
+              _diffuseColor = (iMaxSteps - iStep) * _fadeFrameCounter;
+              _diffuseColor <<= 24;
+              _diffuseColor |= 0xffffff;
+            }
           }
           _fadeFrameCounter++;
         }
