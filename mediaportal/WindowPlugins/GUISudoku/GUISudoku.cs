@@ -229,7 +229,7 @@ namespace MediaPortal.GUI.Sudoku
 
     public GUISudoku()
     {
-      GetID = (int)Window.WINDOW_NUMBERPLACE;
+      GetID = (int)Window.WINDOW_SUDOKU;
     }
 
 

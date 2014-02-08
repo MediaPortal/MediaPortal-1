@@ -534,14 +534,14 @@ namespace MediaPortal.GUI.Pictures
       {
         if (g_Player.IsPicture)
         {
-          GUISlideShow._slideDirection = 0;
+          GUIPictureSlideShow._slideDirection = 0;
         }
       }
       if (action.wID == Action.ActionType.ACTION_SWITCH_HOME)
       {
         if (g_Player.IsPicture)
         {
-          GUISlideShow._slideDirection = 0;
+          GUIPictureSlideShow._slideDirection = 0;
           g_Player.Stop();
         }
       }
@@ -648,8 +648,8 @@ namespace MediaPortal.GUI.Pictures
         Log.Debug("GUIPictures: currentSlideIndex {0}", SlideShow._currentSlideIndex);
         /*if (SlideShow._currentSlideIndex != -1)
           selectedItemIndex += SlideShow._currentSlideIndex+1;*/
-        int direction = GUISlideShow.SlideDirection;
-        GUISlideShow.SlideDirection = 0;
+        int direction = GUIPictureSlideShow.SlideDirection;
+        GUIPictureSlideShow.SlideDirection = 0;
         g_Player.IsPicture = false;
 
         if (SlideShow._returnedFromVideoPlayback && !SlideShow._loadVideoPlayback)
