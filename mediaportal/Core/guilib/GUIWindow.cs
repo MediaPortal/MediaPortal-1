@@ -187,7 +187,7 @@ namespace MediaPortal.GUI.Library
       WINDOW_FULLSCREEN_TELETEXT = 7701,
       WINDOW_DIALOG_TEXT = 7900,
       WINDOW_TETRIS = 7776,
-      WINDOW_NUMBERPLACE = 7777, // rtv - sudoku clone
+      WINDOW_SUDOKU = 7777, // rtv - sudoku clone
       WINDOW_RADIO_LASTFM = 7890,
       WINDOW_MUSIC_MENU = 8888, // for harley
       WINDOW_SEARCH_RADIO = 8900 // gemx
