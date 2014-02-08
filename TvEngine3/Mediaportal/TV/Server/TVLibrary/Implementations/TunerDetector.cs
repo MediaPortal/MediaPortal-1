@@ -35,6 +35,7 @@ using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream;
@@ -106,15 +107,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     private Dictionary<int, TunerGroupInfo> _configuredTunerGroups = new Dictionary<int, TunerGroupInfo>();
 
     // The listener that we notify when tuners are detected or lost.
-    private ITunerDetectionEventListener _eventListener = null;
+    //TODO private ITunerDetectionEventListener _eventListener = null;
 
     /// <summary>
     /// Constructor.
     /// </summary>
     /// <param name="listener">A listener that wishes to be notified about tuner detection events.</param>
-    public TunerDetector(ITunerDetectionEventListener listener)
+    public TunerDetector()//ITunerDetectionEventListener listener)
     {
-      _eventListener = listener;
+      //_eventListener = listener;
 
       // Setup UPnP tuner detection.
       UPnPConfiguration.LOGGER = new Logger();

@@ -60,7 +60,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Service
       string newModulationListCsv = TunerModulation.All;
       if (newModulationList != null)
       {
-        newModulationListCsv = string.Join(",", newModulationList.Select(x => x.ToString()).ToArray());
+        newModulationListCsv = string.Join(",", newModulationList.Select(x => x.ToString()));
       }
       IList<object> outParams = _setTunerParametersAction.InvokeAction(new List<object> { newFrequency, newModulationListCsv });
       currentFrequency = (uint)outParams[0];
@@ -113,7 +113,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Service
       string newModulationListCsv = TunerModulation.All;
       if (newModulationList != null)
       {
-        newModulationListCsv = string.Join(",", newModulationList.Select(x => x.ToString()).ToArray());
+        newModulationListCsv = string.Join(",", newModulationList.Select(x => x.ToString()));
       }
       _seekSignalAction.InvokeAction(new List<object> { startFrequency, stopFrequency, newModulationListCsv, increment, seekUp, timeToBlock });
       return true;

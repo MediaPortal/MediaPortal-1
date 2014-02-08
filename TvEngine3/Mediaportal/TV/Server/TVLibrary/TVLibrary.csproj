@@ -92,8 +92,6 @@
     <Compile Include="Implementations\Dri\Enum\CasCardStatus.cs" />
     <Compile Include="Implementations\Dri\Enum\CasDescramblingStatus.cs" />
     <Compile Include="Implementations\Dri\Enum\AuxInputType.cs" />
-    <Compile Include="Implementations\Dri\Enum\CasMmiAction.cs" />
-    <Compile Include="Implementations\Dri\Enum\CasMmiDisplayType.cs" />
     <Compile Include="Implementations\Dri\Enum\EncoderInputSelection.cs" />
     <Compile Include="Implementations\Dri\Enum\EncoderVideoProgressiveSequence.cs" />
     <Compile Include="Implementations\Dri\Enum\EncoderFieldOrder.cs" />
@@ -136,7 +134,7 @@
     <Compile Include="Implementations\Rtsp\RtspResponse.cs" />
     <Compile Include="Implementations\Rtsp\RtspStatusCode.cs" />
     <Compile Include="Implementations\TunerDetector.cs" />
-    <Compile Include="Implementations\TvDvbChannel.cs" />
+    <Compile Include="Implementations\Mpeg2SubChannel.cs" />
     <Compile Include="Implementations\Helper\DevicesInUse.cs" />
     <Compile Include="Implementations\Mpeg2Ts\ScannerAnalog.cs" />
     <Compile Include="Implementations\Mpeg2Ts\ScannerDirectShowAtsc.cs" />

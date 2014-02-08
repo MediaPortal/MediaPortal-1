@@ -117,6 +117,7 @@
     <Compile Include="CiMenu\CiMenuEntry.cs" />
     <Compile Include="DvbConditionalAccess.cs" />
     <Compile Include="HResult.cs" />
+    <Compile Include="Implementations\Helper\CableCardMmiHandler.cs" />
     <Compile Include="Implementations\Helper\ComHelper.cs" />
     <Compile Include="Implementations\Helper\Dump.cs" />
     <Compile Include="Implementations\Helper\DvbMmiHandler.cs" />

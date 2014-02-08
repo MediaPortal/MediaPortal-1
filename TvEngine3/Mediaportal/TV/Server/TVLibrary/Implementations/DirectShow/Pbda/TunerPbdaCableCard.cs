@@ -20,15 +20,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Net;
-using System.Text.RegularExpressions;
 using DirectShowLib;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
@@ -61,11 +59,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
     private IBDA_ConditionalAccess _caInterface = null;
 
     // CA menu variables
-    private Uri _caMenuUriBase = null;
     private object _caMenuCallBackLock = new object();
     private IConditionalAccessMenuCallBacks _caMenuCallBacks = null;
-    private IList<string> _caMenuLinks = new List<string>();
-    private Stack<string> _caMenuStack = new Stack<string>();
+    private CableCardMmiHandler _caMenuHandler = null;
 
     #endregion
 
@@ -79,6 +75,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
       : base(device)
     {
       _tunerType = CardType.Atsc;
+      _caMenuHandler = new CableCardMmiHandler(EnterMenu, CloseDialog);
     }
 
     #endregion
@@ -265,51 +262,33 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
         return false;
       }
 
+      // Translate into standard DRI application list format.
+      int byteCount = 1 + (7 * appCount);   // + 1 for app count, (1 + 2 + 1 + 1 + 2) for app type, version, name length, name NULL termination, URL length
+      foreach (SmartCardApplication app in applicationDetails)
+      {
+        byteCount += app.pbstrApplicationName.Length + app.pbstrApplicationURL.Length;
+      }
+      byte[] applicationList = new byte[byteCount];
+      applicationList[0] = (byte)appCount;
+      int offset = 1;
+      foreach (SmartCardApplication app in applicationDetails)
+      {
+        applicationList[offset++] = (byte)app.ApplicationType;
+        applicationList[offset++] = (byte)(app.ApplicationVersion >> 8);
+        applicationList[offset++] = (byte)(app.ApplicationVersion & 0xff);
+        applicationList[offset++] = (byte)(app.pbstrApplicationName.Length + 1);    // + 1 for NULL termination
+        Buffer.BlockCopy(System.Text.Encoding.ASCII.GetBytes(app.pbstrApplicationName), 0, applicationList, offset, app.pbstrApplicationName.Length);
+        offset += app.pbstrApplicationName.Length;
+        applicationList[offset++] = 0;
+        applicationList[offset++] = (byte)(app.pbstrApplicationURL.Length >> 8);
+        applicationList[offset++] = (byte)(app.pbstrApplicationURL.Length & 0xff);
+        Buffer.BlockCopy(System.Text.Encoding.ASCII.GetBytes(app.pbstrApplicationURL), 0, applicationList, offset, app.pbstrApplicationURL.Length);
+        offset += app.pbstrApplicationURL.Length;
+      }
       lock (_caMenuCallBackLock)
       {
-        if (_caMenuCallBacks == null)
-        {
-          this.LogDebug("PBDA CableCARD: menu call backs are not set");
-        }
-        else
-        {
-          _caMenuStack.Clear();
-          _caMenuLinks.Clear();
-          _caMenuStack.Push("root");
-          _caMenuCallBacks.OnCiMenu(cardName, cardManufacturer, string.Empty, appCount);
-        }
-        this.LogDebug("  application count = {0}", appCount);
-        _caMenuUriBase = null;
-        for (int i = 0; i < appCount; i++)
-        {
-          SmartCardApplication app = applicationDetails[i];
-          this.LogDebug("  application #{0}", i + 1);
-          this.LogDebug("    type            = {0}", app.ApplicationType);
-          this.LogDebug("    version         = {0}", app.ApplicationVersion);
-          this.LogDebug("    name            = {0}", app.pbstrApplicationName);
-
-          string appUrl = app.pbstrApplicationURL;
-          if (_caMenuUriBase == null && appUrl.StartsWith("http"))
-          {
-            _caMenuUriBase = new Uri(appUrl);
-          }
-          else if (_caMenuUriBase != null && !appUrl.StartsWith("http"))
-          {
-            Uri uri = new Uri(_caMenuUriBase, appUrl);
-            appUrl = uri.AbsoluteUri;
-          }
-          this.LogDebug("    URL             = {0}", appUrl);
-
-          if (_caMenuCallBacks != null)
-          {
-            _caMenuCallBacks.OnCiMenuChoice(i, app.pbstrApplicationName);
-            _caMenuLinks.Add(appUrl);
-          }
-        }
+        return _caMenuHandler.EnterMenu(cardName, cardManufacturer, string.Empty, applicationList, _caMenuCallBacks);
       }
-
-      this.LogDebug("PBDA CableCARD: result = success");
-      return true;
     }
 
     /// <summary>
@@ -319,6 +298,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
     public bool CloseMenu()
     {
       this.LogDebug("PBDA CableCARD: close menu");
+      return CloseDialog(0);
+    }
+
+    /// <summary>
+    /// Inform the CableCARD that the user has closed a dialog.
+    /// </summary>
+    /// <param name="dialogNumber">The identifier for the dialog that has been closed.</param>
+    /// <returns><c>true</c> if the CableCARD is successfully notified, otherwise <c>false</c></returns>
+    public bool CloseDialog(byte dialogNumber)
+    {
+      this.LogDebug("PBDA CableCARD: close dialog, dialog number = {0}", dialogNumber);
 
       if (_caInterface == null)
       {
@@ -326,14 +316,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
         return false;
       }
 
-      int hr = _caInterface.InformUIClosed(0, UICloseReasonType.UserClosed);
+      int hr = _caInterface.InformUIClosed(dialogNumber, UICloseReasonType.UserClosed);
       if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("PBDA CableCARD: result = success");
         return true;
       }
 
-      this.LogError("PBDA CableCARD: failed to inform the CableCARD that the user interface has been closed, hr = 0x{0:x}");
+      this.LogError("PBDA CableCARD: failed to inform the CableCARD that the user interface has been closed, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -345,170 +335,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
     public bool SelectMenuEntry(byte choice)
     {
       this.LogDebug("PBDA CableCARD: select menu entry, choice = {0}", choice);
-
-      if (_caInterface == null)
-      {
-        this.LogWarn("PBDA CableCARD: not initialised or interface not supported");
-        return false;
-      }
-
       lock (_caMenuCallBackLock)
       {
-        if (_caMenuCallBacks == null)
-        {
-          this.LogDebug("PBDA CableCARD: menu call backs are not set");
-        }
-        string url;
-        if (choice == 0)    // Back up one level.
-        {
-          if (_caMenuStack.Count == 1)
-          {
-            this.LogDebug("PBDA CableCARD: closing root menu");
-            _caMenuStack.Clear();
-            _caMenuLinks.Clear();
-            return true;
-          }
-          if (_caMenuStack.Count == 2)
-          {
-            this.LogDebug("PBDA CableCARD: return to root menu");
-            if (_caMenuCallBacks == null)
-            {
-              _caMenuStack.Pop();
-              return EnterMenu();
-            }
-            return true;
-          }
-          url = _caMenuStack.Peek();
-        }
-        else
-        {
-          url = _caMenuLinks[choice - 1];
-        }
-
-        if (string.IsNullOrEmpty(url))
-        {
-          this.LogDebug("PBDA CableCARD: selected non-link entry, nothing to do");
-          return true;
-        }
-
-        this.LogDebug("PBDA CableCARD: retrieving menu from URI {0}", url);
-        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-        request.Timeout = 5000;
-        HttpWebResponse response = null;
-        try
-        {
-          response = (HttpWebResponse)request.GetResponse();
-        }
-        catch (Exception ex)
-        {
-          this.LogError(ex, "PBDA CableCARD: failed to send HTTP menu request to URI {0}", url);
-          request.Abort();
-          return false;
-        }
-        string content = string.Empty;
-        try
-        {
-          using (System.IO.Stream s = response.GetResponseStream())
-          {
-            using (TextReader textReader = new StreamReader(s))
-            {
-              content = textReader.ReadToEnd();
-              textReader.Close();
-            }
-            s.Close();
-          }
-        }
-        catch (Exception ex)
-        {
-          this.LogError(ex, "PBDA CableCARD: failed to receive HTTP menu response from URI {0}", url);
-          return false;
-        }
-        finally
-        {
-          if (response != null)
-          {
-            response.Close();
-          }
-        }
-
-        // Reformat from pure HTML into title and menu items. This is quite
-        // hacky, but we have no way to render HTML in MediaPortal.
-        this.LogDebug("PBDA CableCARD: retrieved raw menu HTML\r\n{0}", content);
-        try
-        {
-          content = Regex.Replace(content, "(<\\/b>|<center>)", string.Empty, RegexOptions.IgnoreCase);
-          content = Regex.Replace(content, "&nbsp;", " ", RegexOptions.IgnoreCase);
-          content = Regex.Replace(content, "\\s+", " ");
-          content = Regex.Replace(content, @".*<body( [^>]*)?>\s*(.*?)\s*</body>.*", "$2", RegexOptions.IgnoreCase | RegexOptions.Singleline);
-
-          this.LogDebug("PBDA CableCARD: pre-split menu HTML\r\n{0}", content);
-          string[] sections = content.Split(new string[] { "<b>", "<B>", "<br>", "<BR>" }, StringSplitOptions.RemoveEmptyEntries);
-
-          // The split options should remove empty entries... but it won't remove whitespace entries.
-          List<string> entries = new List<string>();
-          foreach (string s in sections)
-          {
-            string trimmed = s.Trim();
-            if (!string.IsNullOrEmpty(trimmed))
-            {
-              entries.Add(trimmed);
-            }
-          }
-
-          if (_caMenuCallBacks != null)
-          {
-            _caMenuLinks.Clear();
-            _caMenuCallBacks.OnCiMenu(entries[0], string.Empty, string.Empty, entries.Count - 1);
-          }
-          this.LogDebug("  title  = {0}", entries[0]);
-          for (int i = 1; i < entries.Count; i++)
-          {
-            string itemText = entries[i];
-            string itemUrl = string.Empty;
-            Match m = Regex.Match(itemText, @"<a href=""\s*([^""]+)\s*"">\s*(.*?)\s*</a>", RegexOptions.IgnoreCase);
-            if (m.Success)
-            {
-              itemUrl = m.Groups[1].Captures[0].Value;
-              if (_caMenuUriBase != null && !itemUrl.StartsWith("http"))
-              {
-                Uri uri = new Uri(_caMenuUriBase, itemUrl);
-                itemUrl = uri.AbsoluteUri;
-              }
-              itemText = m.Groups[2].Captures[0].Value;
-              this.LogDebug("  item {0} = {1} [{2}]", i, itemText, itemUrl);
-            }
-            else
-            {
-              this.LogDebug("  item {0} = {1}", i, itemText);
-            }
-            if (_caMenuCallBacks != null)
-            {
-              _caMenuLinks.Add(itemUrl);
-              _caMenuCallBacks.OnCiMenuChoice(i - 1, itemText);
-            }
-          }
-        }
-        catch (Exception ex)
-        {
-          this.LogError(ex, "PBDA CableCARD: failed to handle menu HTML\r\n{0}", content);
-          return false;
-        }
-
-        if (_caMenuCallBacks != null)
-        {
-          if (choice == 0)
-          {
-            _caMenuStack.Pop();
-          }
-          else
-          {
-            _caMenuStack.Push(url);
-          }
-        }
+        return _caMenuHandler.SelectEntry(choice, _caMenuCallBacks);
       }
-
-      this.LogDebug("PBDA CableCARD: result = success");
-      return true;
     }
 
     /// <summary>

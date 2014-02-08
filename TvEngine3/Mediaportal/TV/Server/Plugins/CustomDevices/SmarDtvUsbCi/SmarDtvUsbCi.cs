@@ -264,7 +264,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
       Marshal.Copy(apdu, apduBytes, 0, apduLength);
       lock (_caMenuCallBackLock)
       {
-        DvbMmiHandler.HandleMmiData(apduBytes, ref _caMenuCallBacks);
+        DvbMmiHandler.HandleMmiData(apduBytes, _caMenuCallBacks);
       }
       return 0;
     }

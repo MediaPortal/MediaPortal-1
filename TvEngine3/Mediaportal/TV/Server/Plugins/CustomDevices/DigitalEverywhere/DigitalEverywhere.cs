@@ -966,7 +966,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
             Array.Copy(data.Data, objectData, data.DataLength);
             lock (_caMenuCallBackLock)
             {
-              DvbMmiHandler.HandleMmiData(objectData, ref _caMenuCallBacks);
+              DvbMmiHandler.HandleMmiData(objectData, _caMenuCallBacks);
             }
           }
         }

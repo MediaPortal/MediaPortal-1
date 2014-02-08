@@ -103,7 +103,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     /// <returns>the new subchannel instance</returns>
     protected override ITvSubChannel CreateNewSubChannel(int id)
     {
-      return new TvDvbChannel(id, this, _filterTsWriter as ITsFilter);
+      return new Mpeg2SubChannel(id, this, _filterTsWriter as ITsFilter);
     }
 
     #endregion
