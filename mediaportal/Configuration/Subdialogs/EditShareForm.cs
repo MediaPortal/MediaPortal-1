@@ -720,6 +720,8 @@ namespace MediaPortal.Configuration
 
       if (string.IsNullOrEmpty(hostName))
       {
+        MessageBox.Show("Wrong unc path " + folderTextBox.Text,
+          "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
         Log.Debug("Wrong unc path {0}", folderTextBox.Text);
         return;
       }
@@ -731,6 +733,8 @@ namespace MediaPortal.Configuration
 
       if (wakeOnLanManager.Ping(hostName, 100) && !string.IsNullOrEmpty(macAddress))
       {
+        MessageBox.Show("WakeUpServer: The " + hostName + "server already started and mac address is learnt!",
+          "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
         Log.Debug("WakeUpServer: The {0} server already started and mac address is learnt!", hostName);
         return;
       }
@@ -762,7 +766,7 @@ namespace MediaPortal.Configuration
               if (wakeOnLanManager.IsValidEthernetAddress(hwAddress))
               {
                 Log.Debug("WakeUpServer: WOL - Valid auto MAC address: {0:x}:{1:x}:{2:x}:{3:x}:{4:x}:{5:x}"
-                          , hwAddress[0], hwAddress[1], hwAddress[2], hwAddress[3], hwAddress[4], hwAddress[5]);
+                  , hwAddress[0], hwAddress[1], hwAddress[2], hwAddress[3], hwAddress[4], hwAddress[5]);
 
                 // Store MAC address
                 macAddress = BitConverter.ToString(hwAddress).Replace("-", ":");
@@ -773,9 +777,13 @@ namespace MediaPortal.Configuration
                 {
                   xmlwriter.SetValue("macAddress", hostName, macAddress);
                 }
+                MessageBox.Show("Stored MAC address: " + macAddress, "MediaPortal Settings",
+                  MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
               }
               else
               {
+                MessageBox.Show("WakeUpServer: WOL - Not a valid IPv4 address: " + ipAddress, "MediaPortal Settings",
+                  MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 Log.Debug("WakeUpServer: WOL - Not a valid IPv4 address: {0}", ipAddress);
               }
             }
