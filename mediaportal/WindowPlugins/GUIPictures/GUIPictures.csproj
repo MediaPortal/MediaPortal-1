@@ -175,6 +175,10 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Common.GUIPlugins\Common.GUIPlugins.csproj">
+      <Project>{03FEC69F-6D10-46FB-A0CA-4D266E4A21E2}</Project>
+      <Name>Common.GUIPlugins</Name>
+    </ProjectReference>
     <Reference Include="Microsoft.DirectX.Direct3D, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Windows\Microsoft.NET\DirectX for Managed Code\1.0.2902.0\Microsoft.DirectX.Direct3D.dll</HintPath>

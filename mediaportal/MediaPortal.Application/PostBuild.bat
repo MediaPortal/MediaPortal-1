@@ -59,6 +59,7 @@ xcopy %1\WindowPlugins\GUITetris\bin\%2\GUITetris.* plugins\Windows\ /Y /D
 xcopy %1\WindowPlugins\GUITopbar\bin\%2\GUITopbar.* plugins\Windows\ /Y /D
 xcopy %1\WindowPlugins\GUIVideos\bin\%2\GUIVideos.* plugins\Windows\ /Y /D
 xcopy %1\WindowPlugins\GUIWikipedia\bin\%2\GUIWikipedia.* plugins\Windows\ /Y /D
+xcopy %1\WindowPlugins\Common.GUIPlugins\bin\%2\Common.GUIPlugins.* plugins\Windows\ /Y /D
 
 REM Dialogs
 xcopy %1\Dialogs\bin\%2\Dialogs.* plugins\Windows\ /Y /D
