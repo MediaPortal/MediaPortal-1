@@ -718,6 +718,46 @@ namespace SetupTv
       }
     }
 
+    /// <summary>
+    /// Gets the current MySQL server version
+    /// </summary>
+    /// <returns>the current MySQL server version</returns>
+    public string GetCurrentServerVersion(StartupMode ModeType)
+    {
+      string currentServerVersion = "";
+      if (ModeType != StartupMode.DeployMode)
+      {
+        LoadConnectionDetailsFromConfig(false);
+      }
+      try
+      {
+        string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text,
+                                                          tbDatabaseName.Text, false, 15);
+        switch (provider)
+        {
+          case ProviderType.MySql:
+            {
+              using (MySqlConnection connect = new MySqlConnection(connectionString))
+              {
+                connect.Open();
+                currentServerVersion = connect.ServerVersion;
+                connect.Close();
+              }
+            }
+            break;
+        }
+        return currentServerVersion;
+      }
+      catch (Exception)
+      {
+        return "";
+      }
+      finally
+      {
+        SqlConnection.ClearAllPools();
+      }
+    }
+
     private static bool ResourceExists(IEnumerable<string> names, string resource)
     {
       foreach (string name in names)
@@ -733,7 +773,7 @@ namespace SetupTv
     /// </summary>
     /// <param name="currentSchemaVersion">the current schema version, the db has</param>
     /// <returns></returns>
-    public bool UpgradeDBSchema(int currentSchemaVersion)
+    public bool UpgradeDBSchema(int currentSchemaVersion, string currentServerVersion)
     {
       Assembly assm = Assembly.GetExecutingAssembly();
       string[] names = assm.GetManifestResourceNames();
@@ -742,13 +782,34 @@ namespace SetupTv
       {
         if (ResourceExists(names, "SetupTv." + version + "_upgrade_sqlserver_database.sql"))
         {
-          if (ExecuteSQLScript(version + "_upgrade"))
-            Log.Info("- database upgraded to schema version " + version);
-          else
-            return false;
+          // 62 script is to upgrade MySQL MyISAM to InnoDB, so only execute this script on 5.6.10 MySQL Server
+          if (version == 62 && currentServerVersion == "5.6.10")
+          {
+            if (ExecuteSQLScript(version + "_upgrade"))
+            {
+              Log.Info("- database upgraded to schema version " + version);
+            }
+            else
+            {
+              return false;
+            }
+          }
+          else if (version != 62)
+          {
+            if (ExecuteSQLScript(version + "_upgrade"))
+            {
+              Log.Info("- database upgraded to schema version " + version);
+            }
+            else
+            {
+              return false;
+            }
+          }
         }
         else
+        {
           break;
+        }
       }
       return true;
     }
