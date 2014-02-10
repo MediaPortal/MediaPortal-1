@@ -22,7 +22,6 @@ using System;
 using System.Collections.Generic;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.Music;
-using MediaPortal.GUI.Pictures;
 using MediaPortal.GUI.Video;
 using MediaPortal.Profile;
 using MediaPortal.Util;
@@ -492,7 +491,7 @@ namespace MediaPortal.GUI.Settings
           GUIMusicFiles.ResetShares();
           break;
         case "pictures":
-          GUIPictures.ResetShares();
+          Pictures.GUIPictures.ResetShares();
           break;
       }
     }

@@ -56,6 +56,7 @@ namespace MediaPortal.Util
     private int remotePort = 21;
     private bool runtimeAdded;
     public Layout DefaultLayout = Layout.List;
+    private bool shareWakeOnLan = false;
 
     /// <summary>
     /// empty constructor
@@ -140,6 +141,15 @@ namespace MediaPortal.Util
     {
       get { return isRemote; }
       set { isRemote = value; }
+    }
+
+    /// <summary>
+    /// Property to get/set ShareWakeOnLan for server
+    /// </summary>
+    public bool ShareWakeOnLan
+    {
+      get { return shareWakeOnLan; }
+      set { shareWakeOnLan = value; }
     }
 
     /// <summary>

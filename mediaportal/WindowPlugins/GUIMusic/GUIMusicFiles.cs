@@ -22,8 +22,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Threading;
 using System.Xml.Serialization;
+using Common.GUIPlugins;
 using MediaPortal.Configuration;
 using MediaPortal.Database;
 using MediaPortal.Dialogs;
@@ -35,6 +37,7 @@ using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.TagReader;
 using MediaPortal.Util;
+using MediaPortal.Profile;
 using Action = MediaPortal.GUI.Library.Action;
 using Layout = MediaPortal.GUI.Library.GUIFacadeControl.Layout;
 
@@ -43,7 +46,7 @@ namespace MediaPortal.GUI.Music
   /// <summary>
   /// Class is for GUI interface to music shares view
   /// </summary>
-  [PluginIcons("WindowPlugins.GUIMusic.Music.gif", "WindowPlugins.GUIMusic.MusicDisabled.gif")]
+  [PluginIcons("GUIMusic.Music.gif", "GUIMusic.MusicDisabled.gif")]
   public class GUIMusicFiles : GUIMusicBaseWindow, ISetupForm, IShowPlugin
   {
     #region comparer
@@ -149,6 +152,10 @@ namespace MediaPortal.GUI.Music
 
     private Thread _importFolderThread = null;
     private Queue<string> _scanQueue = new Queue<string>();
+    private static string _prevServerName = string.Empty;
+    private static DateTime _prevWolTime;
+    private static int _wolTimeout;
+    private static int _wolResendTime;
 
     #endregion
 
@@ -236,7 +243,8 @@ namespace MediaPortal.GUI.Music
         MusicState.View = xmlreader.GetValueAsString("music", "startview", string.Empty);
         _useFileMenu = xmlreader.GetValueAsBool("filemenu", "enabled", true);
         _fileMenuPinCode = Util.Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", string.Empty));
-
+        _wolTimeout = xmlreader.GetValueAsInt("WOL", "WolTimeout", 10);
+        _wolResendTime = xmlreader.GetValueAsInt("WOL", "WolResendTime", 1);
         //string strDefault = xmlreader.GetValueAsString("music", "default", string.Empty);
         _virtualDirectory = VirtualDirectories.Instance.Music;
         if (currentFolder == string.Empty)
@@ -245,17 +253,17 @@ namespace MediaPortal.GUI.Music
           {
             if (_virtualDirectory.DefaultShare.IsFtpShare)
             {
-              //remote:hostname?port?login?password?folder
+                  //remote:hostname?port?login?password?folder
               currentFolder = _virtualDirectory.GetShareRemoteURL(_virtualDirectory.DefaultShare);
-              _startDirectory = currentFolder;
-            }
-            else
-            {
+                  _startDirectory = currentFolder;
+                }
+                else
+                {
               currentFolder = _virtualDirectory.DefaultShare.Path;
               _startDirectory = _virtualDirectory.DefaultShare.Path;
+                }
+              }
             }
-          }
-        }
         if (xmlreader.GetValueAsBool("music", "rememberlastfolder", false))
         {
           string lastFolder = xmlreader.GetValueAsString("music", "lastfolder", currentFolder);
@@ -371,6 +379,7 @@ namespace MediaPortal.GUI.Music
         _virtualDirectory.Reset();
       }
 
+      ResetShares();
       if (MusicState.StartWindow != GetID)
       {
         GUIWindowManager.ReplaceWindow((int)Window.WINDOW_MUSIC_GENRE);
@@ -395,9 +404,54 @@ namespace MediaPortal.GUI.Music
       base.OnPageDestroy(newWindowId);
     }
 
+    private bool WakeUpSrv(string newFolderName)
+    {
+      if (!Util.Utils.IsNetwork(newFolderName))
+      {
+        return true;
+      }
+
+      string serverName = string.Empty;
+      bool wakeOnLanEnabled = _virtualDirectory.IsWakeOnLanEnabled(_virtualDirectory.GetShare(newFolderName));
+
+      if (wakeOnLanEnabled)
+      {
+        serverName = Util.Utils.GetServerNameFromUNCPath(newFolderName);
+      }
+
+      DateTime now = DateTime.Now;
+      TimeSpan ts = now - _prevWolTime;
+
+      if (serverName == _prevServerName && _wolResendTime * 60 > ts.TotalSeconds)
+      {
+        return true;
+      }
+
+      _prevWolTime = DateTime.Now;
+      _prevServerName = serverName;
+
+      try
+      {
+        Log.Debug("WakeUpSrv: FolderName = {0}, ShareName = {1}, WOL enabled = {2}", newFolderName, _virtualDirectory.GetShare(newFolderName).Name, wakeOnLanEnabled);
+      }
+      catch { };
+
+      if (!string.IsNullOrEmpty(serverName))
+      {
+        return WakeupUtils.HandleWakeUpServer(serverName, _wolTimeout);
+      }
+      return true;
+    }
+
     protected override void LoadDirectory(string strNewDirectory)
     {
       DateTime dtStart = DateTime.Now;
+
+      if (!WakeUpSrv(strNewDirectory))
+      {
+        return;
+      }
+
       GUIWaitCursor.Show();
 
       try
@@ -781,8 +835,8 @@ namespace MediaPortal.GUI.Music
               }
               else
               {
-                Util.Utils.EjectCDROM(Path.GetPathRoot(item.Path));
-              }
+            Util.Utils.EjectCDROM(Path.GetPathRoot(item.Path));
+          }
             }
           }
           LoadDirectory(string.Empty);
@@ -887,22 +941,22 @@ namespace MediaPortal.GUI.Music
 
           if (Util.Utils.IsUsbHdd(item.Path) || Util.Utils.IsRemovableUsbDisk(item.Path))
           {
-            if (!RemovableDriveHelper.EjectDrive(item.Path, out message))
-            {
-              GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
-              pDlgOK.SetHeading(831);
-              pDlgOK.SetLine(1, GUILocalizeStrings.Get(832));
-              pDlgOK.SetLine(2, string.Empty);
-              pDlgOK.SetLine(3, message);
-              pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
-            }
-            else
-            {
-              GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
-              pDlgOK.SetHeading(831);
-              pDlgOK.SetLine(1, GUILocalizeStrings.Get(833));
-              pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
-            }
+          if (!RemovableDriveHelper.EjectDrive(item.Path, out message))
+          {
+            GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+            pDlgOK.SetHeading(831);
+            pDlgOK.SetLine(1, GUILocalizeStrings.Get(832));
+            pDlgOK.SetLine(2, string.Empty);
+            pDlgOK.SetLine(3, message);
+            pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
+          }
+          else
+          {
+            GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+            pDlgOK.SetHeading(831);
+            pDlgOK.SetLine(1, GUILocalizeStrings.Get(833));
+            pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
+          }
           }
           else if (!RemovableDriveHelper.EjectMedia(item.Path, out message))
           {
@@ -929,6 +983,11 @@ namespace MediaPortal.GUI.Music
       GUIListItem item = facadeLayout.SelectedListItem;
 
       if (item == null)
+      {
+        return;
+      }
+
+      if (!WakeUpSrv(item.Path))
       {
         return;
       }

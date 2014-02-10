@@ -2014,7 +2014,12 @@ namespace TvPlugin
             pDlgOK.Reset();
             pDlgOK.SetHeading(605); //my tv
             pDlgOK.AddLocalizedString(875); //current program
-            pDlgOK.AddLocalizedString(876); //till manual stop
+
+            bool doesManuelScheduleAlreadyExist = DoesManualScheduleAlreadyExist(channel);
+            if (!doesManuelScheduleAlreadyExist)
+            {
+              pDlgOK.AddLocalizedString(876); //till manual stop
+            }
             pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
             switch (pDlgOK.SelectedId)
             {
@@ -2025,14 +2030,9 @@ namespace TvPlugin
 
               case 876:
                 //manual
-                bool doesManuelScheduleAlreadyExist = DoesManualScheduleAlreadyExist(channel);
-                if (!doesManuelScheduleAlreadyExist)
-                {
-                  StartRecordingSchedule(channel, true);
-                  return true;
-                }
-                break;
-            }
+                StartRecordingSchedule(channel, true);
+                return true;
+             }
           }
         }
         else

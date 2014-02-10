@@ -153,6 +153,7 @@ namespace MediaPortal.Util
     private static HashSet<string> m_ImageExtensions = new HashSet<string>();
 
     private static string[] _artistNamePrefixes;
+    protected static string _artistPrefixes;
     
     private static bool m_bHideExtensions = false;
     private static bool enableGuiSounds;
@@ -213,6 +214,7 @@ namespace MediaPortal.Util
         m_bHideExtensions = xmlreader.GetValueAsBool("gui", "hideextensions", true);
         string artistNamePrefixes = xmlreader.GetValueAsString("musicfiles", "artistprefixes", "The, Les, Die");
         _artistNamePrefixes = artistNamePrefixes.Split(',');
+        _artistPrefixes = xmlreader.GetValueAsString("musicfiles", "artistprefixes", "The, Les, Die");
 
         string strTmp = xmlreader.GetValueAsString("music", "extensions", AudioExtensionsDefault);
         Tokens tok = new Tokens(strTmp, new[] {','});
@@ -352,6 +354,16 @@ namespace MediaPortal.Util
       }
       catch (Exception) {}
       return sFilePath;
+    }
+
+    public static string GetServerNameFromUNCPath(string sFilePath)
+    {
+      Uri uri = new Uri(sFilePath);
+      
+      if (!uri.IsUnc)
+        return string.Empty;
+
+      return uri.Host;
     }
 
     public static long GetDiskSize(string drive)
@@ -582,6 +594,27 @@ namespace MediaPortal.Util
       return false;
     }
 
+    public static bool CheckServerStatus(string folderName)
+    {
+      if (!Util.Utils.IsUNCNetwork(folderName))
+        return true;
+      
+      string serverName = string.Empty;
+      
+      try
+      {
+        serverName = Util.Utils.GetServerNameFromUNCPath(folderName);
+      }
+      catch { }
+      
+      if (!string.IsNullOrEmpty(serverName))
+      {
+        WakeOnLanManager wakeOnLanManager = new WakeOnLanManager();
+        return wakeOnLanManager.Ping(serverName, 100);
+      }
+      return false;
+    }
+
     public static void SetDefaultIcons(GUIListItem item)
     {
       if (item == null)
@@ -694,10 +727,10 @@ namespace MediaPortal.Util
         }
 
         string[] thumbs = {
+                            Util.Utils.GetVideosThumbPathname(item.Path),
                             Path.ChangeExtension(item.Path, ".jpg"),
                             Path.ChangeExtension(item.Path, ".tbn"),
-                            Path.ChangeExtension(item.Path, ".png"),
-                            Util.Utils.GetVideosThumbPathname(item.Path)
+                            Path.ChangeExtension(item.Path, ".png")
                           };
 
         bool foundVideoThumb = false;
@@ -796,6 +829,7 @@ namespace MediaPortal.Util
         if (FileExistsInCache(strThumb) && strThumb != item.ThumbnailImage)
         {
           item.ThumbnailImage = strThumb;
+          item.IconImageBig = strThumb;
         }
       }
     }
@@ -1229,6 +1263,14 @@ namespace MediaPortal.Util
       if (strPath.StartsWith(@"\\")) return true;
       string strDrive = strPath.Substring(0, 2);
       if (getDriveType(strDrive) == 4) return true;
+      return false;
+    }
+
+    public static bool IsUNCNetwork(string strPath)
+    {
+      if (strPath == null) return false;
+      if (strPath.Length < 2) return false;
+      if (strPath.StartsWith(@"\\")) return true;
       return false;
     }
 
@@ -3461,6 +3503,45 @@ namespace MediaPortal.Util
       {
         AddWatcher(dir4Watcher);
       }
+    }
+
+    /// <summary>
+    /// taken from audioscrobbler plugin code to reverse where prefix has been swapped 
+    /// eg. The Beatles => Beatles, The or Die Toten Hosen => Toten Hosen ,Die
+    /// and will change back to the artist name
+    /// </summary>
+    /// <param name="aStrippedArtist">Value stored in database with prefix at the end</param>
+    /// <returns>What should be actual string in tag</returns>
+    public static string UndoArtistPrefix(string aStrippedArtist)
+    {
+      try
+      {
+        string[] allPrefixes = null;
+        allPrefixes = _artistPrefixes.Split(',');
+        if (allPrefixes.Length > 0)
+        {
+          for (int i = 0; i < allPrefixes.Length; i++)
+          {
+            string cpyPrefix = allPrefixes[i];
+            if (!aStrippedArtist.ToLowerInvariant().EndsWith(cpyPrefix.ToLowerInvariant())) continue;
+            // strip the separating "," as well
+            int prefixPos = aStrippedArtist.IndexOf(',');
+            if (prefixPos <= 0) continue;
+            aStrippedArtist = aStrippedArtist.Remove(prefixPos);
+            cpyPrefix = cpyPrefix.Trim(new char[] { ' ', ',' });
+            aStrippedArtist = cpyPrefix + " " + aStrippedArtist;
+            // abort here since artists should only have one prefix stripped
+            return aStrippedArtist;
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("An error occured undoing prefix strip for artist: {0} - {1}", aStrippedArtist,
+                  ex.Message);
+      }
+
+      return aStrippedArtist;
     }
 
     private static void AddWatcher(string dir, int buffersize)
