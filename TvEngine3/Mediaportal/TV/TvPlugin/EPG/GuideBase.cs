@@ -4371,8 +4371,9 @@ if (bEndsAfter)
         case Action.ActionType.ACTION_PREVIOUS_MENU:
           if (_singleChannelView)
           {
-            OnSwitchMode();
-            return; // base.OnAction would close the EPG as well
+            // TODO is it needed to check current GETID for Radio or TV
+            GUIWindowManager.ActivateWindow((int)Window.WINDOW_TVGUIDE);
+            return;
           }
           GUIWindowManager.ShowPreviousWindow();
           return;
