@@ -33,8 +33,17 @@ namespace MediaPortal.GUI.View
     protected string sqlOperator = "";
     protected string whereValue = "";
     protected string operatorAndOr = "";
+    protected string _expertFilter;
 
     public FilterDefinitionNew() {}
+
+
+    [XmlElement("ExpertFilter")]
+    public string ExpertFilter
+    {
+      get { return _expertFilter; }
+      set { _expertFilter = value; }
+    }
 
     [XmlElement("Where")]
     public string Where

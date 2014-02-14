@@ -28,43 +28,37 @@ namespace MediaPortal.GUI.View
   /// Summary description for FilterDefinition.
   /// </summary>
   [Serializable]
-  public class FilterLevels
+  public class FilterLevel
   {
-    protected string _expertFilter;
+    protected string selection = "";
     protected bool skipLevel = false;
-    protected string tableName = "";
+    protected string sortBy = "Name";
+    protected bool sortAscending = true;
     protected string selectedValue = "";
     protected string defaultView = "List";
     protected List<FilterDefinitionNew> _listFilters = new List<FilterDefinitionNew>();
 
-    public FilterLevels() {}
-
-    [XmlElement("TableName")]
-    public string TableName
-    {
-      get { return tableName; }
-      set { tableName = value; }
-    }
-
-    [XmlElement("ExpertFilter")]
-    public string ExpertFilter
-    {
-      get { return _expertFilter; }
-      set { _expertFilter = value; }
-    }
-
-    [XmlElement("Filters")]
-    public List<FilterDefinitionNew> Filters
-    {
-      get { return _listFilters; }
-      set { _listFilters = value; }
-    }
+    public FilterLevel() {}
     
-    [XmlElement("SkipLevel")]
-    public bool SkipLevel
+    [XmlElement("Selection")]
+    public string Selection
     {
-      get { return skipLevel; }
-      set { skipLevel = value; }
+      get { return selection; }
+      set { selection = value; }
+    }
+
+    [XmlElement("SortBy")]
+    public string SortBy
+    {
+      get { return sortBy; }
+      set { sortBy = value; }
+    }
+
+    [XmlElement("SortAscending")]
+    public bool SortAscending
+    {
+      get { return sortAscending; }
+      set { sortAscending = value; }
     }
 
     [XmlElement("DefaultView")]
@@ -73,7 +67,21 @@ namespace MediaPortal.GUI.View
       get { return defaultView; }
       set { defaultView = value; }
     }
-    
+
+    [XmlElement("SkipLevel")]
+    public bool SkipLevel
+    {
+      get { return skipLevel; }
+      set { skipLevel = value; }
+    }
+   
+    [XmlElement("Filters")]
+    public List<FilterDefinitionNew> Filters
+    {
+      get { return _listFilters; }
+      set { _listFilters = value; }
+    }
+
     public string SelectedValue
     {
       get { return selectedValue; }

@@ -117,16 +117,43 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="dgSelection.UserAddedColumn" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
+  <metadata name="toolTipViewButtons.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
   </metadata>
-  <metadata name="dgSortBy.UserAddedColumn" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="dgSelection.UserAddedColumn" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
   <metadata name="dgViewAs.UserAddedColumn" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
+  <metadata name="dgSortBy.UserAddedColumn" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="dgSortAsc.UserAddedColumn" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
   <metadata name="dgSkip.UserAddedColumn" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
+  <metadata name="dgEditFilter.UserAddedColumn" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="btnAddView.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAAA8AAAAPCAYAAAA71pVKAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAAAJcEhZcwAADrwAAA68AZW8ckkAAAAadEVYdFNvZnR3YXJlAFBhaW50Lk5FVCB2My41LjEwMPRy
+        oQAAAklJREFUOE+d09tP0mEYB/Bn87aNq267K1drinQQZ4ppmmgGGAIeQFEL0WQ4p22mNU/DnOgUyzyk
+        RWqm04rSDmZpOZaIgPoLEc9mrbYu/APavpFuNpoXrIvvu/fms+fdu+9DAOh/Q+tbP2l54wctrHwjZnGL
+        HM5NyjLJoX6fuZOcd0oUjORiem6VwhOveg0i99p3ci59pTnXF5ph1mnKsULZw3L0LLXuRTushmV2xS9U
+        qPbGjNszbWGTrPNr9Mm2TB+n3azMoZQd2O1uhdHVjNRuMWzMGkuhqfLGNmaDLI5VMs8s04epRRozO1mK
+        ASmMi7fR6WxE21wdZJ2iP89mmd5MemO7c+NQxkAyFP0yyB9JIO9N8tylaJ/Xo8WuQ6O1HNJ2ARIN8Xah
+        nm8V6fm/BLWxnj8G0dtJ5qDyaQoeultw32VAB1OPFkcNmqyVqJu6Dt1kEcrH81EyehmFIwrkP5Mgrjpq
+        F7+esLDkfUno+NyAu7O1MMxUod5ShhpzMSrGNSgdVaHoZTo0JhlUg0Io+2IRUxK+iz3HAVmXCM32ajRY
+        buKW+RoqJ7QoG1Oj+JUS2ufJyB0SIesxH2k9kZB0hSJCy93DdEEXvR1fHWWNq4i0nr8RYY4p5aHgRSpy
+        n1xCdn88wvJO4UzOSYSqTiAkmwNuBvsv/rdhZwtDcGUgAem90ZA9CPOAoO39WrhfNf14ecFINvIgvsfF
+        xbYgnJYH+IxZXCUbgjYO+HeO41zTYXDEx3zHwWlsBCUeRaDAHwEJRxAo9PcZ+7xlvwGBM06fjfKXGQAA
+        AABJRU5ErkJggg==
+</value>
+  </data>
 </root>

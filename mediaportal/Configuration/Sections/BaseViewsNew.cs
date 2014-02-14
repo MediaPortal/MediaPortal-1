@@ -40,14 +40,16 @@ namespace MediaPortal.Configuration.Sections
   {
     #region Variables
 
-    private DataTable datasetFilters;
-    private ViewDefinition currentView;
-    public List<ViewDefinitionNew> views;
-    private bool updating = false;
-    public bool settingsChanged = false;
+    private DataTable _datasetLevels;
+    private List<List<FilterDefinitionNew>> _filters;
+    private ViewDefinitionNew _currentView;
+    private List<ViewDefinitionNew> _views;
+    private bool _updating = false;
+    private bool _settingsChanged = false;
 
-    private Dictionary<string, Dictionary<string, string>> _selections = new Dictionary<string, Dictionary<string, string>>();
+    private List<string> _selections = new List<string>();
     private List<string> _viewsAs = new List<string>();
+    private List<string> _sortBy = new List<string>();
 
     // Drag & Drop
     private int _dragDropCurrentIndex = -1;
@@ -61,13 +63,13 @@ namespace MediaPortal.Configuration.Sections
 
     #region Properties
 
-    public Dictionary<string, Dictionary<string, string>> Selections
+    public string[] Selections
     {
-      get { return _selections; }
+      get { return _selections.ToArray(); }
       set
       {
         _selections.Clear();
-        _selections = value;
+        _selections.AddRange(value);
       }
     }
 
@@ -78,6 +80,16 @@ namespace MediaPortal.Configuration.Sections
       {
         _viewsAs.Clear();
         _viewsAs.AddRange(value);
+      }
+    }
+
+    public string[] SortBy
+    {
+      get { return _sortBy.ToArray(); }
+      set
+      {
+        _sortBy.Clear();
+        _sortBy.AddRange(value);
       }
     }
 
@@ -114,7 +126,6 @@ namespace MediaPortal.Configuration.Sections
     /// <summary>
     /// Set up the Datagrid column and the DataTable to which the grid is bound
     /// </summary>
-
     private void SetupGrid()
     {
       // Declare and initialize local variables used
@@ -122,21 +133,34 @@ namespace MediaPortal.Configuration.Sections
       string[] arrColumnNames = null; //string array variable
 
       // Fill the Combo Values
+      foreach (string strText in Selections)
+      {
+        dgSelection.Items.Add(strText);
+      }
+
       foreach (string strText in ViewsAs)
       {
         dgViewAs.Items.Add(strText);
       }
 
+      foreach (string strText in SortBy)
+      {
+        dgSortBy.Items.Add(strText);
+      }
+
+      _filters = new List<List<FilterDefinitionNew>>();
+
       //Create the String array object, initialize the array with the column
       //names to be displayed
-      arrColumnNames = new string[4];
+      arrColumnNames = new string[3];
       arrColumnNames[0] = "Selection";
-      arrColumnNames[1] = "SortBy";
-      arrColumnNames[2] = "ViewAs";
+      arrColumnNames[1] = "ViewAs";
+      arrColumnNames[2] = "SortBy";
+      
 
       //Create the Data Table object which will then be used to hold
       //columns and rows
-      datasetFilters = new DataTable("Selection");
+      _datasetLevels = new DataTable();
 
       //Add the string array of columns to the DataColumn object       
       for (int i = 0; i < arrColumnNames.Length; i++)
@@ -145,47 +169,60 @@ namespace MediaPortal.Configuration.Sections
         dtCol = new DataColumn(str);
         dtCol.DataType = Type.GetType("System.String");
         dtCol.DefaultValue = "";
-        datasetFilters.Columns.Add(dtCol);
+        _datasetLevels.Columns.Add(dtCol);
       }
 
-      // Add a checkbox column at the end of the Datarow     
+      // Add 2 columns with checkbox at the end of the Datarow     
+      DataColumn dtcCheck = new DataColumn("SortAsc"); //create the data column object
+      dtcCheck.DataType = Type.GetType("System.Boolean"); //Set its data Type
+      dtcCheck.DefaultValue = true; //Set the default value
+      dtcCheck.AllowDBNull = false;
+      _datasetLevels.Columns.Add(dtcCheck); //Add the above column to the Data Table
+
       DataColumn skipCheck = new DataColumn("Skip"); //create the data column object
       skipCheck.DataType = Type.GetType("System.Boolean"); //Set its data Type
       skipCheck.DefaultValue = false; //Set the default value
       skipCheck.AllowDBNull = false;
-      datasetFilters.Columns.Add(skipCheck); //Add the above column to the Data Table
+      _datasetLevels.Columns.Add(skipCheck); //Add the above column to the Data Table
 
       // Set the Data Properties for the field to map to the data table
       dgSelection.DataPropertyName = "Selection";
       dgViewAs.DataPropertyName = "ViewAs";
       dgSortBy.DataPropertyName = "SortBy";
+      dgSortAsc.DataPropertyName = "SortAsc";
       dgSkip.DataPropertyName = "Skip";
 
       //Set the Data Grid Source as the Data Table created above
       dataGrid.AutoGenerateColumns = false;
-      dataGrid.DataSource = datasetFilters;
+      dataGrid.DataSource = _datasetLevels;
     }
 
     private void LoadTreeView()
     {
-      updating = true;
+      _updating = true;
 
-      foreach (ViewDefinitionNew view in views)
+      foreach (ViewDefinitionNew view in _views)
       {
         TreeNode node = new TreeNode();
         node.Text = view.LocalizedName;
         node.Tag = view;
+        SetNodeColor(node);
         foreach (ViewDefinitionNew subView in view.SubViews)
         {
           TreeNode subNode = new TreeNode(subView.LocalizedName);
+          subView.Parent = view.LocalizedName;
           subNode.Tag = subView;
+          SetNodeColor(subNode);
           node.Nodes.Add(subNode);
         }
         treeViewMenu.Nodes.Add(node);
       }
 
       treeViewMenu.ExpandAll();
-      updating = false;
+
+      dataGrid.Hide();
+      lblActionCodes.Hide();
+      _updating = false;
 
     }
 
@@ -193,7 +230,120 @@ namespace MediaPortal.Configuration.Sections
 
     #region Private Methods
 
+    /// <summary>
+    /// Fill the Grid with the selected data
+    /// </summary>
+    private void FillViewGrid()
+    {
+      _datasetLevels.Clear();
+      _filters.Clear();
+      if (_currentView == null)
+      {
+        return;
+      }
 
+      //fill in all rows...
+      foreach (FilterLevel level in _currentView.Levels)
+      {
+        _datasetLevels.Rows.Add(
+          new object[]
+            {
+              level.Selection,
+              level.DefaultView,
+              level.SortBy,
+              level.SortAscending,
+              level.SkipLevel,
+            }
+          );
+
+        _filters.Add(level.Filters);
+      }
+      dataGrid.DataSource = _datasetLevels;
+      UpdateGridColors();
+    }
+
+    /// <summary>
+    /// Store changes in the view
+    /// </summary>
+    private void StoreGridInView()
+    {
+      if (_updating)
+      {
+        return;
+      }
+      if (dataGrid.DataSource == null)
+      {
+        return;
+      }
+      if (_currentView == null)
+      {
+        return;
+      }
+
+      _currentView.Levels.Clear();
+      int i = 0;
+      foreach (DataRow row in _datasetLevels.Rows)
+      {
+        FilterLevel level = new FilterLevel();
+        level.Selection = (string)row[0];
+        level.DefaultView = (string)row[1];
+        level.SortBy = (string)row[2];
+        level.SortAscending = (bool)row[3];
+        level.SkipLevel = (bool)row[4];
+
+        if (i < _filters.Count)
+        {
+          level.Filters = _filters[i];
+        }
+        _currentView.Levels.Add(level);
+        i++;
+      }
+
+      _filters.Clear();
+    }
+
+    /// <summary>
+    /// Set the Treenode color, to indicate, if a node has filters
+    /// </summary>
+    /// <param name="node"></param>
+    private void SetNodeColor(TreeNode node)
+    {
+      ViewDefinitionNew view = (ViewDefinitionNew)node.Tag;
+      if (view == null)
+      {
+        return;
+      }
+
+      if (view.Filters.Count > 0 )
+      {
+        node.BackColor = Color.Aquamarine;
+      }
+      else
+      {
+        node.BackColor = Color.White;
+      }
+    }
+
+    /// <summary>
+    /// Change the Color of the Edit Filter Button, if a filter exists
+    /// </summary>
+    private void UpdateGridColors()
+    {
+      for (int i = 0; i < _filters.Count; i++)
+      {
+        DataGridViewButtonCell c = (DataGridViewButtonCell)dataGrid.Rows[i].Cells[5];
+        if (_filters[i].Count > 0)
+        {
+          c.FlatStyle = FlatStyle.Popup;
+          c.Style.BackColor = Color.Aquamarine;
+        }
+        else
+        {
+          c.Style.BackColor = SystemColors.Control;
+          c.FlatStyle = FlatStyle.Standard;         
+        }
+      }
+    }
 
     #endregion
 
@@ -206,14 +356,33 @@ namespace MediaPortal.Configuration.Sections
     /// <param name="e"></param>
     private void btnAdd_Click(object sender, EventArgs e)
     {
-      updating = true;
+      _settingsChanged = true;
+
+      StoreGridInView(); // Save possible pending changes in current Node
 
       ViewDefinitionNew view = new ViewDefinitionNew();
       TreeNode treeNode = new TreeNode("New View");
       treeNode.Tag = view;
       treeViewMenu.Nodes.Add(treeNode);
+      treeViewMenu.SelectedNode = treeNode;
 
-      updating = false;
+      _datasetLevels.Rows.Clear();
+      DataRow row = _datasetLevels.NewRow();
+      row[0] = "";
+      row[1] = ViewsAs[0]; // Set default Value
+      row[2] = SortBy[0];  // Set default Value
+      row[3] = true;
+      row[4] = false;
+      _datasetLevels.Rows.Add(row);
+
+      _filters.Clear();
+      _filters.Add(new List<FilterDefinitionNew>());
+
+      btnDeleteView.Enabled = false;
+      btnEditFilter.Enabled = false;
+      btnCopyView.Enabled = false;
+      btnUpView.Enabled = false;
+      btnDownView.Enabled = false;
     }
 
     /// <summary>
@@ -223,7 +392,7 @@ namespace MediaPortal.Configuration.Sections
     /// <param name="e"></param>
     private void btnDelete_Click(object sender, EventArgs e)
     {
-      updating = true;
+      _updating = true;
 
       TreeNode selectedNode = treeViewMenu.SelectedNode;
       if (selectedNode == null)
@@ -234,7 +403,7 @@ namespace MediaPortal.Configuration.Sections
       bool removeNode = true;
       if (selectedNode.Nodes.Count > 0)
       {
-        if (MessageBox.Show("The selected View has SubViews.\r\nDo you relly want to delete", "Delete View", MessageBoxButtons.YesNo,MessageBoxIcon.Warning) == DialogResult.No)
+        if (MessageBox.Show("The selected View has SubViews.\r\nDo you really want to delete?", "Delete View", MessageBoxButtons.YesNo,MessageBoxIcon.Warning) == DialogResult.No)
         {
           removeNode = false;
         }
@@ -242,11 +411,109 @@ namespace MediaPortal.Configuration.Sections
 
       if (removeNode)
       {
+        _settingsChanged = true;
         selectedNode.Remove();
         treeViewMenu.Invalidate();
+
+        btnDeleteView.Enabled = false;
+        btnEditFilter.Enabled = false;
+        btnCopyView.Enabled = false;
+        btnUpView.Enabled = false;
+        btnDownView.Enabled = false;
       }
 
-      updating = false;
+      _updating = false;
+    }
+
+    /// <summary>
+    /// Edit a new Filter
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void btEditFilter_Click(object sender, EventArgs e)
+    {
+      if (_currentView == null)
+      {
+        return;
+      }
+
+      BaseViewsFilter filterForm = new BaseViewsFilter(this);
+      filterForm.Filter = _currentView.Filters;
+      if (filterForm.ShowDialog() == DialogResult.OK)
+      {
+        _currentView.Filters = filterForm.Filter;
+        treeViewMenu.SelectedNode.Tag = _currentView;
+        SetNodeColor(treeViewMenu.SelectedNode);
+        filterForm.Dispose();
+        _settingsChanged = true;
+      }
+    }
+
+
+    private void btnUpView_Click(object sender, EventArgs e)
+    {
+      TreeNode node = treeViewMenu.SelectedNode;
+      TreeNode parent = node.Parent;
+      treeViewMenu.BeginUpdate();
+      if (parent != null)
+      {
+        int index = parent.Nodes.IndexOf(node);
+        if (index > 0)
+        {
+          parent.Nodes.RemoveAt(index);
+          parent.Nodes.Insert(index - 1, node);
+        }
+      }
+      else if (treeViewMenu.Nodes.Contains(node)) //root node
+      {
+        int index = treeViewMenu.Nodes.IndexOf(node);
+        if (index > 0)
+        {
+          treeViewMenu.Nodes.RemoveAt(index);
+          treeViewMenu.Nodes.Insert(index - 1, node);
+        }
+      }
+      _settingsChanged = true;
+      treeViewMenu.EndUpdate();
+      treeViewMenu.SelectedNode = node;
+    }
+
+    private void btnDownView_Click(object sender, EventArgs e)
+    {
+      TreeNode node = treeViewMenu.SelectedNode;
+      TreeNode parent = node.Parent;
+      treeViewMenu.BeginUpdate();
+      if (parent != null)
+      {
+        int index = parent.Nodes.IndexOf(node);
+        if (index < parent.Nodes.Count - 1)
+        {
+          parent.Nodes.RemoveAt(index);
+          parent.Nodes.Insert(index + 1, node);
+        }
+      }
+      else if (treeViewMenu.Nodes.Contains(node)) //root node
+      {
+        int index = treeViewMenu.Nodes.IndexOf(node);
+        if (index < treeViewMenu.Nodes.Count - 1)
+        {
+          treeViewMenu.Nodes.RemoveAt(index);
+          treeViewMenu.Nodes.Insert(index + 1, node);
+        }
+      }
+      _settingsChanged = true;
+      treeViewMenu.EndUpdate();
+      treeViewMenu.SelectedNode = node;
+    }
+
+    private void btnCopyView_Click(object sender, EventArgs e)
+    {
+      TreeNode clonedNode = (TreeNode)treeViewMenu.SelectedNode.Clone();
+      ViewDefinitionNew view = (ViewDefinitionNew)clonedNode.Tag;
+      clonedNode.Tag = view.Clone();
+      treeViewMenu.Nodes.Add(clonedNode);
+      treeViewMenu.SelectedNode = clonedNode;
+      _settingsChanged = true;
     }
 
     /// <summary>
@@ -259,28 +526,79 @@ namespace MediaPortal.Configuration.Sections
       string defaultViews = Path.Combine(ViewHandler.DefaultsDirectory, _section + "Views.xml");
       string customViews = Config.GetFile(Config.Dir.Config, _section + "Views.xml");
 
+      if (MessageBox.Show("This will clear your existing View settings.\r\nDo you really want to revert to default views?", "Revert to Default Views", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
+      {
+        return;
+      }
+
       if (File.Exists(defaultViews))
       {
         File.Copy(defaultViews, customViews, true);
 
-        views.Clear();
+        treeViewMenu.Nodes.Clear();
+        _views.Clear();
 
         try
         {
           using (FileStream fileStream = new FileInfo(customViews).OpenRead())
           {
             XmlSerializer serializer = new XmlSerializer(typeof(List<ViewDefinitionNew>));
-            views = (List<ViewDefinitionNew>)serializer.Deserialize(fileStream);
+            _views = (List<ViewDefinitionNew>)serializer.Deserialize(fileStream);
             fileStream.Close();
           }
         }
         catch (Exception) { }
+        _settingsChanged = true;
         LoadTreeView();
       }
     }
 
     #region TreeView
 
+    /// <summary>
+    /// Selection has changed. Save any changes to the node
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void treeViewMenu_BeforeSelect(object sender, TreeViewCancelEventArgs e)
+    {
+      if (treeViewMenu.SelectedNode == null)
+      {
+        return;
+      }
+
+      _currentView = (ViewDefinitionNew)treeViewMenu.SelectedNode.Tag;
+      StoreGridInView();
+      treeViewMenu.SelectedNode.Tag = _currentView;
+    }
+
+    /// <summary>
+    /// A new node has been selected
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void treeViewMenu_AfterSelect(object sender, TreeViewEventArgs e)
+    {
+      _currentView = (ViewDefinitionNew)treeViewMenu.SelectedNode.Tag;
+      if (treeViewMenu.SelectedNode.Nodes.Count > 0)
+      {
+        _datasetLevels.Clear();
+        dataGrid.Hide();
+        lblActionCodes.Hide();
+      }
+      else
+      {
+        FillViewGrid();
+        dataGrid.Show();
+        lblActionCodes.Show();
+      }
+
+      btnDeleteView.Enabled = true;
+      btnEditFilter.Enabled = true;
+      btnCopyView.Enabled = true;
+      btnUpView.Enabled = true;
+      btnDownView.Enabled = true;
+    }
 
     /// <summary>
     /// Set the Localised Name into the Label Text
@@ -289,11 +607,19 @@ namespace MediaPortal.Configuration.Sections
     /// <param name="e"></param>
     private void treeViewMenu_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
     {
+      // Don't allow empty labels
+      if (e.Label == null)
+      {
+        e.CancelEdit = false;
+        return;
+      }
+      
       ViewDefinitionNew view = (ViewDefinitionNew)e.Node.Tag;
       view.Name = e.Label;
       e.Node.Tag = view;
       e.Node.Text = view.LocalizedName;
       e.CancelEdit = true; // We want to have our localised version of the text
+      _settingsChanged = true;
     }
 
     #endregion
@@ -301,14 +627,33 @@ namespace MediaPortal.Configuration.Sections
     #region Filter Grid
 
     /// <summary>
-    /// Add a new Filter
+    /// Handle the click on the Button column
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void btAddFilter_Click(object sender, EventArgs e)
+    private void dataGrid_CellClick(object sender, DataGridViewCellEventArgs e)
     {
+      // Ignore clicks that are not on button cells.
+      if (e.RowIndex < 0 || e.ColumnIndex != dataGrid.Columns["dgEditFilter"].Index)
+      {
+        return;
+      }
+
+      if (e.RowIndex > _currentView.Levels.Count)
+      {
+        return;
+      }
+      
       BaseViewsFilter filterForm = new BaseViewsFilter(this);
-      filterForm.ShowDialog();
+      filterForm.Filter = _filters[e.RowIndex];
+      if (filterForm.ShowDialog() == DialogResult.OK)
+      {
+        _filters[e.RowIndex] = filterForm.Filter;
+        treeViewMenu.SelectedNode.Tag = _currentView;
+        UpdateGridColors();
+        filterForm.Dispose();
+        _settingsChanged = true;
+      }
     }
 
     /// <summary>
@@ -364,12 +709,28 @@ namespace MediaPortal.Configuration.Sections
 
       switch (e.KeyCode)
       {
+        case System.Windows.Forms.Keys.Insert:
+          DataRow row = _datasetLevels.NewRow();
+          row[0] = "";
+          row[1] = ViewsAs[0]; // Set default Value
+          row[2] = SortBy[0];  // Set default Value
+          row[3] = true;
+          row[4] = false;
+          if (rowSelected == -1)
+          {
+            rowSelected = 0;
+          }
+          _datasetLevels.Rows.InsertAt(row, rowSelected + 1);
+          e.Handled = true;
+          _settingsChanged = true;
+          break;
         case System.Windows.Forms.Keys.Delete:
           if (rowSelected > -1)
           {
-            datasetFilters.Rows.RemoveAt(rowSelected);
+            _datasetLevels.Rows.RemoveAt(rowSelected);
           }
           e.Handled = true;
+          _settingsChanged = true;
           break;
       }
     }
@@ -383,12 +744,13 @@ namespace MediaPortal.Configuration.Sections
 
     private void treeViewMenu_ItemDrag(object sender, ItemDragEventArgs e)
     {
+      StoreGridInView(); // Save possible pending changes in current Node
       DoDragDrop(e.Item, DragDropEffects.Move | DragDropEffects.Copy);
     }
 
     private void treeViewMenu_DragEnter(object sender, DragEventArgs e)
     {
-      // Ctrl-Key prssed? 
+      // Ctrl-Key pressed? 
       if ((e.KeyState & 8) == 8)
       {
         e.Effect = DragDropEffects.Copy;
@@ -403,39 +765,46 @@ namespace MediaPortal.Configuration.Sections
     {
       TreeNode sourceNode = e.Data.GetData(typeof(TreeNode)) as TreeNode;
 
-      // Knoten ermitteln dem der gedragte Knoten hinzugefügt werden 
-      // soll:
       Point p = treeViewMenu.PointToClient(new Point(e.X, e.Y));
       TreeNode targetNode = treeViewMenu.GetNodeAt(p);
 
+      // Ignore, if Target and source is the same
+      if (sourceNode == targetNode)
+      {
+        return;
+      }
+
       TreeNode newNode = (TreeNode)sourceNode.Clone();
+
       if (targetNode != null)
       {
-        // Add new Node
-        targetNode.Nodes.Add(newNode);
-        ViewDefinitionNew view = (ViewDefinitionNew)targetNode.Tag;
-        view.SubViews.Add((ViewDefinitionNew)sourceNode.Tag);
-        targetNode.Tag = view;
+        // Are we at a root node?
+
+        if (targetNode.Parent == null)
+        {
+          // Add Node to Root Node
+          targetNode.Nodes.Add(newNode);
+        }
+        else
+        {
+          // Insert node after the Node selected
+          targetNode.Parent.Nodes.Insert(targetNode.Parent.Nodes.IndexOf(targetNode) + 1, newNode);
+        }
       }
       else
       {
         // Add new Node to Root of Treeview
+        ViewDefinitionNew view = (ViewDefinitionNew)newNode.Tag;
+        view.Parent = "";
+        newNode.Tag = view;
         treeViewMenu.Nodes.Add(newNode);
-      }
-
-      // if the Node was part of a parent node, we need to remove it also from the view
-      TreeNode parentNode = sourceNode.Parent;
-      if (parentNode != null)
-      {
-        ViewDefinitionNew view = (ViewDefinitionNew)parentNode.Tag;
-        view.SubViews.Remove((ViewDefinitionNew)sourceNode.Tag);
-        parentNode.Tag = view;
       }
 
       if (e.Effect == DragDropEffects.Move)
       {
         sourceNode.Remove();
       }
+      _settingsChanged = true;
       treeViewMenu.ExpandAll();
       treeViewMenu.Invalidate();
     }
@@ -505,7 +874,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void dataGrid_OnDragDrop(object sender, DragEventArgs drgevent)
     {
-      updating = true;
+      _updating = true;
       DataGridView dgV = (DataGridView)sender;
       //runs after a drag/drop operation for column/row has completed
       if (dgV.AllowDrop)
@@ -521,18 +890,23 @@ namespace MediaPortal.Configuration.Sections
 
             if (dgV.Name == "dataGrid")
             {
-              DataRow row = datasetFilters.NewRow();
+              DataRow row = _datasetLevels.NewRow();
               // Copy the existing row elements, before removing it from table
-              for (int i = 0; i < datasetFilters.Columns.Count; i++)
+              for (int i = 0; i < _datasetLevels.Columns.Count; i++)
               {
-                row[i] = datasetFilters.Rows[_dragDropSourceIndex][i];
+                row[i] = _datasetLevels.Rows[_dragDropSourceIndex][i];
               }
-              datasetFilters.Rows.RemoveAt(_dragDropSourceIndex);
+              _datasetLevels.Rows.RemoveAt(_dragDropSourceIndex);
 
               if (_dragDropTargetIndex > _dragDropSourceIndex)
                 _dragDropTargetIndex--;
 
-              datasetFilters.Rows.InsertAt(row, _dragDropTargetIndex);
+              _datasetLevels.Rows.InsertAt(row, _dragDropTargetIndex);
+
+              // Handle also the filters, which are on this level
+              List<FilterDefinitionNew> filter = _filters[_dragDropSourceIndex];
+              _filters.RemoveAt(_dragDropSourceIndex);
+              _filters.Insert(_dragDropTargetIndex, filter);
             }
 
             dgV.ClearSelection();
@@ -541,7 +915,7 @@ namespace MediaPortal.Configuration.Sections
         }
       }
       base.OnDragDrop(drgevent);
-      updating = false;
+      _updating = false;
     }
 
     private void dataGrid_OnCellPainting(object sender, DataGridViewCellPaintingEventArgs e)
@@ -575,14 +949,16 @@ namespace MediaPortal.Configuration.Sections
     /// <param name="sortBy"></param>
     protected void LoadSettings(
       string mediaType,
-      Dictionary<string, Dictionary<string, string>> selections,
-      string[] viewsAs
+      string[] selections,
+      string[] viewsAs,
+      string[] sortBy
       )
     {
       string defaultViews = Path.Combine(ViewHandler.DefaultsDirectory, mediaType + "Views.xml");
       string customViews = Config.GetFile(Config.Dir.Config, mediaType + "ViewsNew.xml");
       Selections = selections;
       ViewsAs = viewsAs;
+      SortBy = sortBy;
 
       if (!File.Exists(customViews))
       {
@@ -621,14 +997,14 @@ namespace MediaPortal.Configuration.Sections
         }
       }
 
-      views = new List<ViewDefinitionNew>();
+      _views = new List<ViewDefinitionNew>();
 
       try
       {
         using (FileStream fileStream = new FileInfo(customViews).OpenRead())
         {
           XmlSerializer serializer = new XmlSerializer(typeof(List<ViewDefinitionNew>));
-          views = (List<ViewDefinitionNew>)serializer.Deserialize(fileStream);
+          _views = (List<ViewDefinitionNew>)serializer.Deserialize(fileStream);
           fileStream.Close();
         }
       }
@@ -645,43 +1021,35 @@ namespace MediaPortal.Configuration.Sections
     /// <param name="mediaType"></param>
     protected void SaveSettings(string mediaType)
     {
-
-
-      /*
-      XmlSerializer serializer = new XmlSerializer(typeof(List<ViewDefinitionNew>));
-
-      string customViews = Config.GetFile(Config.Dir.Config, mediaType + "ViewsNew.xml");
-      Stream fs = new FileStream(customViews, FileMode.Create);
-      XmlWriterSettings writerSettings = new XmlWriterSettings();
-      writerSettings.Indent = true;
-      writerSettings.Encoding = Encoding.Unicode;
-      XmlWriter writer = XmlWriter.Create(fs, writerSettings);
-      
-      // Serialize using the XmlTextWriter.
-      serializer.Serialize(writer, views);
-      writer.Close();
-      */
-
-      /*
       StoreGridInView(); // Save pending changes
-      string customViews = Config.GetFile(Config.Dir.Config, mediaType + "Views.xml");
-      if (settingsChanged)
+      if (_settingsChanged)
       {
-        try
+        _views.Clear();
+        foreach (TreeNode node in treeViewMenu.Nodes)
         {
-          // Don't use FileInfo.OpenWrite
-          // From msdn:
-          //  If you overwrite a longer string (such as "This is a test of the OpenWrite method") with a shorter string (like "Second run"), the file will contain a mix of the strings ("Second runtest of the OpenWrite method").
-          using (FileStream fileStream = new FileStream(customViews, FileMode.Truncate))
+          ViewDefinitionNew view = (ViewDefinitionNew)node.Tag;
+          view.SubViews.Clear();
+          foreach (TreeNode subNode in node.Nodes)
           {
-            SoapFormatter formatter = new SoapFormatter();
-            formatter.Serialize(fileStream, views);
-            fileStream.Close();
+            view.SubViews.Add((ViewDefinitionNew)subNode.Tag);
           }
+          _views.Add(view);
         }
-        catch (Exception) {}
+
+        // Now Serialize the View to the XML
+        XmlSerializer serializer = new XmlSerializer(typeof(List<ViewDefinitionNew>));
+
+        string customViews = Config.GetFile(Config.Dir.Config, mediaType + "ViewsNew.xml");
+        Stream fs = new FileStream(customViews, FileMode.Create);
+        XmlWriterSettings writerSettings = new XmlWriterSettings();
+        writerSettings.Indent = true;
+        writerSettings.Encoding = Encoding.Unicode;
+        XmlWriter writer = XmlWriter.Create(fs, writerSettings);
+
+        // Serialize using the XmlTextWriter.
+        serializer.Serialize(writer, _views);
+        writer.Close();
       }
-      */
     }
 
     #endregion
