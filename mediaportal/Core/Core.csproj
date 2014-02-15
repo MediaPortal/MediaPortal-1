@@ -350,9 +350,9 @@
     <Compile Include="ExtensionMethods\DictionaryExtMethods.cs" />
     <Compile Include="ExtensionMethods\ObjectMethods.cs" />
     <Compile Include="guilib\DXNative.cs" />
-    <Compile Include="guilib\DatabaseViews\FilterLevel.cs" />
-    <Compile Include="guilib\DatabaseViews\ViewDefinitionNew.cs" />
-    <Compile Include="guilib\DatabaseViews\FilterDefinitionNew.cs" />
+    <Compile Include="guilib\DatabaseViews\DatabaseViewFilterLevel.cs" />
+    <Compile Include="guilib\DatabaseViews\DatabaseViewDefinition.cs" />
+    <Compile Include="guilib\DatabaseViews\DatabaseFilterDefinition.cs" />
     <Compile Include="guilib\ExpressionManager.cs" />
     <Compile Include="guilib\Functions.cs" />
     <Compile Include="guilib\FontObject.cs" />

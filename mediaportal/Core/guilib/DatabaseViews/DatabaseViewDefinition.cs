@@ -23,26 +23,26 @@ using System.Collections.Generic;
 using System.Xml.Serialization;
 using MediaPortal.GUI.Library;
 
-namespace MediaPortal.GUI.View
+namespace MediaPortal.GUI.DatabaseViews
 {
   /// <summary>
   /// Summary description for ViewDefinition.
   /// </summary>
   [Serializable]
-  public class ViewDefinitionNew : ICloneable
+  public class DatabaseViewDefinition : ICloneable
   {
     #region Variables
 
-    protected List<FilterLevel> _listFilterLevels = new List<FilterLevel>();
-    protected List<ViewDefinitionNew> _listSubViews = new List<ViewDefinitionNew>();
-    protected List<FilterDefinitionNew> _listFilters = new List<FilterDefinitionNew>();
+    protected List<DatabaseFilterLevel> _listFilterLevels = new List<DatabaseFilterLevel>();
+    protected List<DatabaseViewDefinition> _listSubViews = new List<DatabaseViewDefinition>();
+    protected List<DatabaseFilterDefinition> _listFilters = new List<DatabaseFilterDefinition>();
     private string _name;
     private string _parent;
 
     #endregion
 
     #region ctor
-    public ViewDefinitionNew() {}
+    public DatabaseViewDefinition() {}
     #endregion
 
     /// <summary>
@@ -69,7 +69,7 @@ namespace MediaPortal.GUI.View
     /// List of Filters assigned to the View
     /// </summary>
     [XmlElement("Filter")]
-    public List<FilterDefinitionNew> Filters
+    public List<DatabaseFilterDefinition> Filters
     {
       get { return _listFilters; }
       set { _listFilters = value; }
@@ -79,7 +79,7 @@ namespace MediaPortal.GUI.View
     /// Level of the View
     /// </summary>
     [XmlElement("FilterLevel")]
-    public List<FilterLevel> Levels
+    public List<DatabaseFilterLevel> Levels
     {
       get { return _listFilterLevels; }
       set { _listFilterLevels = value; }
@@ -89,7 +89,7 @@ namespace MediaPortal.GUI.View
     /// SubViews, if this is a Main View entry
     /// </summary>
     [XmlElement("SubView")]
-    public List<ViewDefinitionNew> SubViews
+    public List<DatabaseViewDefinition> SubViews
     {
       get { return _listSubViews; }
       set { _listSubViews = value; }
@@ -125,7 +125,7 @@ namespace MediaPortal.GUI.View
 
     public object Clone()
     {
-      ViewDefinitionNew clonedView = new ViewDefinitionNew();
+      var clonedView = new DatabaseViewDefinition();
       clonedView.Name = Name;
       clonedView.Parent = null;
       clonedView.Filters = Filters.GetRange(0, Filters.Count);

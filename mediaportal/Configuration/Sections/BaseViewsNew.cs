@@ -19,17 +19,15 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.IO;
-using System.Runtime.Serialization.Formatters.Soap;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
-using MediaPortal.GUI.View;
+using MediaPortal.GUI.DatabaseViews;
 using MediaPortal.GUI.Library;
 
 #pragma warning disable 108
@@ -41,9 +39,9 @@ namespace MediaPortal.Configuration.Sections
     #region Variables
 
     private DataTable _datasetLevels;
-    private List<List<FilterDefinitionNew>> _filters;
-    private ViewDefinitionNew _currentView;
-    private List<ViewDefinitionNew> _views;
+    private List<List<DatabaseFilterDefinition>> _filters;
+    private DatabaseViewDefinition _currentView;
+    private List<DatabaseViewDefinition> _views;
     private bool _updating = false;
     private bool _settingsChanged = false;
 
@@ -148,7 +146,7 @@ namespace MediaPortal.Configuration.Sections
         dgSortBy.Items.Add(strText);
       }
 
-      _filters = new List<List<FilterDefinitionNew>>();
+      _filters = new List<List<DatabaseFilterDefinition>>();
 
       //Create the String array object, initialize the array with the column
       //names to be displayed
@@ -201,13 +199,13 @@ namespace MediaPortal.Configuration.Sections
     {
       _updating = true;
 
-      foreach (ViewDefinitionNew view in _views)
+      foreach (DatabaseViewDefinition view in _views)
       {
         TreeNode node = new TreeNode();
         node.Text = view.LocalizedName;
         node.Tag = view;
         SetNodeColor(node);
-        foreach (ViewDefinitionNew subView in view.SubViews)
+        foreach (DatabaseViewDefinition subView in view.SubViews)
         {
           TreeNode subNode = new TreeNode(subView.LocalizedName);
           subView.Parent = view.LocalizedName;
@@ -243,7 +241,7 @@ namespace MediaPortal.Configuration.Sections
       }
 
       //fill in all rows...
-      foreach (FilterLevel level in _currentView.Levels)
+      foreach (DatabaseFilterLevel level in _currentView.Levels)
       {
         _datasetLevels.Rows.Add(
           new object[]
@@ -284,7 +282,7 @@ namespace MediaPortal.Configuration.Sections
       int i = 0;
       foreach (DataRow row in _datasetLevels.Rows)
       {
-        FilterLevel level = new FilterLevel();
+        var level = new DatabaseFilterLevel();
         level.Selection = (string)row[0];
         level.DefaultView = (string)row[1];
         level.SortBy = (string)row[2];
@@ -308,7 +306,7 @@ namespace MediaPortal.Configuration.Sections
     /// <param name="node"></param>
     private void SetNodeColor(TreeNode node)
     {
-      ViewDefinitionNew view = (ViewDefinitionNew)node.Tag;
+      var view = (DatabaseViewDefinition)node.Tag;
       if (view == null)
       {
         return;
@@ -360,14 +358,14 @@ namespace MediaPortal.Configuration.Sections
 
       StoreGridInView(); // Save possible pending changes in current Node
 
-      ViewDefinitionNew view = new ViewDefinitionNew();
-      TreeNode treeNode = new TreeNode("New View");
+      var view = new DatabaseViewDefinition();
+      var treeNode = new TreeNode("New View");
       treeNode.Tag = view;
       treeViewMenu.Nodes.Add(treeNode);
       treeViewMenu.SelectedNode = treeNode;
 
       _datasetLevels.Rows.Clear();
-      DataRow row = _datasetLevels.NewRow();
+      var row = _datasetLevels.NewRow();
       row[0] = "";
       row[1] = ViewsAs[0]; // Set default Value
       row[2] = SortBy[0];  // Set default Value
@@ -376,7 +374,7 @@ namespace MediaPortal.Configuration.Sections
       _datasetLevels.Rows.Add(row);
 
       _filters.Clear();
-      _filters.Add(new List<FilterDefinitionNew>());
+      _filters.Add(new List<DatabaseFilterDefinition>());
 
       btnDeleteView.Enabled = false;
       btnEditFilter.Enabled = false;
@@ -509,7 +507,7 @@ namespace MediaPortal.Configuration.Sections
     private void btnCopyView_Click(object sender, EventArgs e)
     {
       TreeNode clonedNode = (TreeNode)treeViewMenu.SelectedNode.Clone();
-      ViewDefinitionNew view = (ViewDefinitionNew)clonedNode.Tag;
+      var view = (DatabaseViewDefinition)clonedNode.Tag;
       clonedNode.Tag = view.Clone();
       treeViewMenu.Nodes.Add(clonedNode);
       treeViewMenu.SelectedNode = clonedNode;
@@ -542,8 +540,8 @@ namespace MediaPortal.Configuration.Sections
         {
           using (FileStream fileStream = new FileInfo(customViews).OpenRead())
           {
-            XmlSerializer serializer = new XmlSerializer(typeof(List<ViewDefinitionNew>));
-            _views = (List<ViewDefinitionNew>)serializer.Deserialize(fileStream);
+            XmlSerializer serializer = new XmlSerializer(typeof(List<DatabaseViewDefinition>));
+            _views = (List<DatabaseViewDefinition>)serializer.Deserialize(fileStream);
             fileStream.Close();
           }
         }
@@ -567,7 +565,7 @@ namespace MediaPortal.Configuration.Sections
         return;
       }
 
-      _currentView = (ViewDefinitionNew)treeViewMenu.SelectedNode.Tag;
+      _currentView = (DatabaseViewDefinition)treeViewMenu.SelectedNode.Tag;
       StoreGridInView();
       treeViewMenu.SelectedNode.Tag = _currentView;
     }
@@ -579,7 +577,7 @@ namespace MediaPortal.Configuration.Sections
     /// <param name="e"></param>
     private void treeViewMenu_AfterSelect(object sender, TreeViewEventArgs e)
     {
-      _currentView = (ViewDefinitionNew)treeViewMenu.SelectedNode.Tag;
+      _currentView = (DatabaseViewDefinition)treeViewMenu.SelectedNode.Tag;
       if (treeViewMenu.SelectedNode.Nodes.Count > 0)
       {
         _datasetLevels.Clear();
@@ -613,8 +611,8 @@ namespace MediaPortal.Configuration.Sections
         e.CancelEdit = false;
         return;
       }
-      
-      ViewDefinitionNew view = (ViewDefinitionNew)e.Node.Tag;
+
+      var view = (DatabaseViewDefinition)e.Node.Tag;
       view.Name = e.Label;
       e.Node.Tag = view;
       e.Node.Text = view.LocalizedName;
@@ -794,7 +792,7 @@ namespace MediaPortal.Configuration.Sections
       else
       {
         // Add new Node to Root of Treeview
-        ViewDefinitionNew view = (ViewDefinitionNew)newNode.Tag;
+        var view = (DatabaseViewDefinition)newNode.Tag;
         view.Parent = "";
         newNode.Tag = view;
         treeViewMenu.Nodes.Add(newNode);
@@ -904,7 +902,7 @@ namespace MediaPortal.Configuration.Sections
               _datasetLevels.Rows.InsertAt(row, _dragDropTargetIndex);
 
               // Handle also the filters, which are on this level
-              List<FilterDefinitionNew> filter = _filters[_dragDropSourceIndex];
+              List<DatabaseFilterDefinition> filter = _filters[_dragDropSourceIndex];
               _filters.RemoveAt(_dragDropSourceIndex);
               _filters.Insert(_dragDropTargetIndex, filter);
             }
@@ -997,14 +995,14 @@ namespace MediaPortal.Configuration.Sections
         }
       }
 
-      _views = new List<ViewDefinitionNew>();
+      _views = new List<DatabaseViewDefinition>();
 
       try
       {
         using (FileStream fileStream = new FileInfo(customViews).OpenRead())
         {
-          XmlSerializer serializer = new XmlSerializer(typeof(List<ViewDefinitionNew>));
-          _views = (List<ViewDefinitionNew>)serializer.Deserialize(fileStream);
+          XmlSerializer serializer = new XmlSerializer(typeof(List<DatabaseViewDefinition>));
+          _views = (List<DatabaseViewDefinition>)serializer.Deserialize(fileStream);
           fileStream.Close();
         }
       }
@@ -1027,17 +1025,17 @@ namespace MediaPortal.Configuration.Sections
         _views.Clear();
         foreach (TreeNode node in treeViewMenu.Nodes)
         {
-          ViewDefinitionNew view = (ViewDefinitionNew)node.Tag;
+          var view = (DatabaseViewDefinition)node.Tag;
           view.SubViews.Clear();
           foreach (TreeNode subNode in node.Nodes)
           {
-            view.SubViews.Add((ViewDefinitionNew)subNode.Tag);
+            view.SubViews.Add((DatabaseViewDefinition)subNode.Tag);
           }
           _views.Add(view);
         }
 
         // Now Serialize the View to the XML
-        XmlSerializer serializer = new XmlSerializer(typeof(List<ViewDefinitionNew>));
+        XmlSerializer serializer = new XmlSerializer(typeof(List<DatabaseViewDefinition>));
 
         string customViews = Config.GetFile(Config.Dir.Config, mediaType + "ViewsNew.xml");
         Stream fs = new FileStream(customViews, FileMode.Create);

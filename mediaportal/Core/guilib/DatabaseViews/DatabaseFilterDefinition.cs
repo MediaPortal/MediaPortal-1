@@ -21,13 +21,13 @@
 using System;
 using System.Xml.Serialization;
 
-namespace MediaPortal.GUI.View
+namespace MediaPortal.GUI.DatabaseViews
 {
   /// <summary>
   /// Summary description for FilterDefinition.
   /// </summary>
   [Serializable]
-  public class FilterDefinitionNew
+  public class DatabaseFilterDefinition
   {
     protected string whereClause = "";
     protected string sqlOperator = "";
@@ -35,7 +35,7 @@ namespace MediaPortal.GUI.View
     protected string operatorAndOr = "";
     protected string _expertFilter;
 
-    public FilterDefinitionNew() {}
+    public DatabaseFilterDefinition() { }
 
 
     [XmlElement("ExpertFilter")]

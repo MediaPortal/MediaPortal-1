@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Windows.Forms;
-using MediaPortal.GUI.View;
+using MediaPortal.GUI.DatabaseViews;
 
 namespace MediaPortal.Configuration.Sections
 {
@@ -17,7 +17,7 @@ namespace MediaPortal.Configuration.Sections
 
     #region Properties
 
-    public List<FilterDefinitionNew> Filter { get; set; }
+    public List<DatabaseFilterDefinition> Filter { get; set; }
 
     #endregion
 
@@ -93,7 +93,7 @@ namespace MediaPortal.Configuration.Sections
     {
       SetupGrid();
 
-      foreach (FilterDefinitionNew filter in Filter)
+      foreach (DatabaseFilterDefinition filter in Filter)
       {
         _datasetFilters.Rows.Add(
             new object[]
@@ -118,7 +118,7 @@ namespace MediaPortal.Configuration.Sections
 
       foreach (DataRow row in _datasetFilters.Rows)
       {
-        FilterDefinitionNew filter = new FilterDefinitionNew();
+        var filter = new DatabaseFilterDefinition();
         filter.Where = (string)row[0];
         filter.SqlOperator = (string)row[1];
         filter.WhereValue = (string)row[2];

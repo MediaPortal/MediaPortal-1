@@ -22,13 +22,13 @@ using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
 
-namespace MediaPortal.GUI.View
+namespace MediaPortal.GUI.DatabaseViews
 {
   /// <summary>
   /// Summary description for FilterDefinition.
   /// </summary>
   [Serializable]
-  public class FilterLevel
+  public class DatabaseFilterLevel
   {
     protected string selection = "";
     protected bool skipLevel = false;
@@ -36,9 +36,9 @@ namespace MediaPortal.GUI.View
     protected bool sortAscending = true;
     protected string selectedValue = "";
     protected string defaultView = "List";
-    protected List<FilterDefinitionNew> _listFilters = new List<FilterDefinitionNew>();
+    protected List<DatabaseFilterDefinition> _listFilters = new List<DatabaseFilterDefinition>();
 
-    public FilterLevel() {}
+    public DatabaseFilterLevel() { }
     
     [XmlElement("Selection")]
     public string Selection
@@ -76,7 +76,7 @@ namespace MediaPortal.GUI.View
     }
    
     [XmlElement("Filters")]
-    public List<FilterDefinitionNew> Filters
+    public List<DatabaseFilterDefinition> Filters
     {
       get { return _listFilters; }
       set { _listFilters = value; }
