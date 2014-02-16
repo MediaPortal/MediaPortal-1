@@ -28,7 +28,7 @@ using System.Windows.Forms;
 using Common.GUIPlugins;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
-using MediaPortal.GUI.View;
+using MediaPortal.GUI.DatabaseViews;
 using MediaPortal.Music.Amazon;
 using MediaPortal.Music.Database;
 using MediaPortal.Player;
@@ -71,6 +71,7 @@ namespace MediaPortal.GUI.Music
     private bool _autoShuffleOnLoad = false;
 
     protected MusicDatabase m_database;
+    protected DatabaseViewHandler handler;
 
     protected List<Share> _shareList = new List<Share>();
 
@@ -524,7 +525,23 @@ namespace MediaPortal.GUI.Music
 
     protected override void UpdateButtonStates()
     {
-      base.UpdateButtonStates();
+      // Todo: use the base method again , when converted to WindowPluginBase
+
+      // skip all this if we're not active window
+      if (GUIWindowManager.ActiveWindow != GetID)
+      {
+        return;
+      }
+
+      if (handler != null)
+      {
+        GUIPropertyManager.SetProperty("#itemtype", handler.LocalizedCurrentViewLevel);
+        GUIPropertyManager.SetProperty("#view", handler.LocalizedCurrentView);
+      }
+      if (btnSortBy != null)
+      {
+        btnSortBy.IsAscending = CurrentSortAsc;
+      }
 
       if (GetID == (int)Window.WINDOW_MUSIC_GENRE)
       {
@@ -735,7 +752,7 @@ namespace MediaPortal.GUI.Music
 
         default: // a db view
           {
-            ViewDefinition selectedView = (ViewDefinition)handler.Views[selectedViewId - 1];
+            var selectedView = (DatabaseViewDefinition)handler.Views[selectedViewId - 1];
             handler.CurrentView = selectedView.Name;
             MusicState.View = selectedView.Name;
             int nNewWindow = (int)Window.WINDOW_MUSIC_GENRE;
@@ -760,6 +777,34 @@ namespace MediaPortal.GUI.Music
       }
     }
 
+    #region Methods from WindoPluginBase
+
+    // TODO: As soon as Videos is converted to Flexible Views, we should use the base methods from Window PluginBase
+    protected override void InitViewSelections()
+    {
+      btnViews.ClearMenu();
+
+      // Add the view options to the menu.
+      int index = 0;
+      btnViews.AddItem(GUILocalizeStrings.Get(134), index++); // Shares
+
+      foreach (DatabaseViewDefinition view in handler.Views)
+      {
+        btnViews.AddItem(view.LocalizedName, index++);
+      }
+
+      // Have the menu select the currently selected view.
+      if (this.GetID == (int)Window.WINDOW_VIDEOS || this.GetID == (int)Window.WINDOW_MUSIC_FILES)
+      {
+        btnViews.SetSelectedItemByValue(0);
+      }
+      else if (this.GetID == (int)Window.WINDOW_VIDEO_TITLE || this.GetID == (int)Window.WINDOW_MUSIC_GENRE)
+      {
+        btnViews.SetSelectedItemByValue(handler.CurrentViewIndex + 1);
+      }
+    }
+
+    #endregion
 
     protected void LoadPlayList(string strPlayList)
     {
@@ -1829,21 +1874,21 @@ namespace MediaPortal.GUI.Music
       UpdateButtonStates();
     }
 
-    protected virtual bool IsSortableView(ViewDefinition view, int viewLevel)
+    protected virtual bool IsSortableView(DatabaseViewDefinition view, int viewLevel)
     {
       if (view == null || viewLevel < 0 || viewLevel >= view.Filters.Count)
       {
         return false;
       }
 
-      string sWhere = ((FilterDefinition)view.Filters[viewLevel]).Where;
+      string selection = view.Levels[viewLevel].Selection;
 
-      if (sWhere.Length == 0)
+      if (selection.Length == 0)
       {
         return true;
       }
 
-      switch (sWhere.ToLowerInvariant())
+      switch (selection.ToLowerInvariant())
       {
         case "timesplayed":
           return false;

@@ -31,7 +31,7 @@ using MediaPortal.Database;
 using MediaPortal.Dialogs;
 using MediaPortal.Freedb;
 using MediaPortal.GUI.Library;
-using MediaPortal.GUI.View;
+using MediaPortal.GUI.DatabaseViews;
 using MediaPortal.Music.Database;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
@@ -902,7 +902,7 @@ namespace MediaPortal.GUI.Music
             int viewNr = -1;
             for (int x = 0; x < handler.Views.Count; ++x)
             {
-              ViewDefinition view = (ViewDefinition)handler.Views[x];
+              var view = handler.Views[x];
               if (view.Name.ToLowerInvariant().IndexOf("artist") >= 0)
               {
                 viewNr = x;
@@ -912,7 +912,7 @@ namespace MediaPortal.GUI.Music
             {
               return;
             }
-            ViewDefinition selectedView = (ViewDefinition)handler.Views[viewNr];
+            var selectedView = handler.Views[viewNr];
             handler.CurrentView = selectedView.Name;
             MusicState.View = selectedView.Name;
             GUIMusicGenres.SelectArtist(artist);

@@ -25,7 +25,7 @@ using System.IO;
 using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
-using MediaPortal.GUI.View;
+using MediaPortal.GUI.DatabaseViews;
 using MediaPortal.Music.Database;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
@@ -78,13 +78,13 @@ namespace MediaPortal.GUI.Music
     //viewDefaultLayouts stores the default layout (list, album, filmstrip etc)
     //with first dimension being view number and second dimension
     //being level within the view
-    private Layout[,] viewDefaultLayouts;
-    private bool[,] sortasc;
-    private MusicSort.SortMethod[,] sortby;
+    private Dictionary<string, Layout> viewDefaultLayouts;
+    private Dictionary<string, bool> sortasc;
+    private Dictionary<string, MusicSort.SortMethod> sortby;
     private static string _showArtist = string.Empty;
 
     private int _currentLevel;
-    private ViewDefinition _currentView;
+    private DatabaseViewDefinition _currentView;
 
     private DateTime Previous_ACTION_PLAY_Time = DateTime.Now;
     private TimeSpan AntiRepeatInterval = new TimeSpan(0, 0, 0, 0, 500);
@@ -162,28 +162,32 @@ namespace MediaPortal.GUI.Music
       {
         if (handler.View != null)
         {
-          if (viewDefaultLayouts == null)
+          try
           {
-            viewDefaultLayouts = new Layout[handler.Views.Count,50];
-
-            for (int i = 0; i < handler.Views.Count; ++i)
+            string viewName = string.Format("{0}/{1}", handler.View.LocalizedName, handler.CurrentLevel);
+            if (!string.IsNullOrEmpty(handler.View.Parent))
             {
-              for (int j = 0; j < handler.Views[i].Filters.Count; ++j)
-              {
-                FilterDefinition def = (FilterDefinition)handler.Views[i].Filters[j];
-                viewDefaultLayouts[i, j] = GetLayoutNumber(def.DefaultView);
-              }
+              viewName = string.Format("{0}/{1}", handler.View.Parent, viewName);
             }
+            return viewDefaultLayouts[viewName];
           }
+          catch (KeyNotFoundException)
+          {
+            return Layout.List;
+          }
+        }
 
-          return viewDefaultLayouts[handler.Views.IndexOf(handler.View), handler.CurrentLevel];
-        }
-        else
-        {
-          return Layout.List;
-        }
+        return Layout.List;
       }
-      set { viewDefaultLayouts[handler.Views.IndexOf(handler.View), handler.CurrentLevel] = value; }
+      set
+      {
+        string viewName = string.Format("{0}/{1}", handler.View.LocalizedName, handler.CurrentLevel);
+        if (!string.IsNullOrEmpty(handler.View.Parent))
+        {
+          viewName = string.Format("{0}/{1}", handler.View.Parent, viewName);
+        }
+        viewDefaultLayouts[viewName] = value;
+      }
     }
 
     protected override bool CurrentSortAsc
@@ -192,26 +196,31 @@ namespace MediaPortal.GUI.Music
       {
         if (handler.View != null)
         {
-          if (sortasc == null)
+          try
           {
-            sortasc = new bool[handler.Views.Count,50];
-
-            for (int i = 0; i < handler.Views.Count; ++i)
+            string viewName = string.Format("{0}/{1}", handler.View.LocalizedName, handler.CurrentLevel);
+            if (!string.IsNullOrEmpty(handler.View.Parent))
             {
-              for (int j = 0; j < handler.Views[i].Filters.Count; ++j)
-              {
-                FilterDefinition def = (FilterDefinition)handler.Views[i].Filters[j];
-                sortasc[i, j] = def.SortAscending;
-              }
+              viewName = string.Format("{0}/{1}", handler.View.Parent, viewName);
             }
+            return sortasc[viewName];
           }
-
-          return sortasc[handler.Views.IndexOf(handler.View), handler.CurrentLevel];
+          catch (KeyNotFoundException)
+          {
+            return true;
+          }
         }
-
         return true;
       }
-      set { sortasc[handler.Views.IndexOf(handler.View), handler.CurrentLevel] = value; }
+      set
+      {
+        string viewName = string.Format("{0}/{1}", handler.View.LocalizedName, handler.CurrentLevel);
+        if (!string.IsNullOrEmpty(handler.View.Parent))
+        {
+          viewName = string.Format("{0}/{1}", handler.View.Parent, viewName);
+        }
+        sortasc[viewName] = value;
+      }
     }
 
     protected override MusicSort.SortMethod CurrentSortMethod
@@ -220,55 +229,19 @@ namespace MediaPortal.GUI.Music
       {
         if (handler.View != null)
         {
-          if (sortby == null)
+          try
           {
-            sortby = new MusicSort.SortMethod[handler.Views.Count,50];
-
-            ArrayList sortStrings = new ArrayList();
-            sortStrings.Add("Name");
-            sortStrings.Add("Date");
-            sortStrings.Add("Size");
-            sortStrings.Add("Track");
-            sortStrings.Add("Duration");
-            sortStrings.Add("Title");
-            sortStrings.Add("Artist");
-            sortStrings.Add("Album");
-            sortStrings.Add("Filename");
-            sortStrings.Add("Rating");
-            sortStrings.Add("AlbumArtist");
-            sortStrings.Add("Year");
-            sortStrings.Add("Disc#");
-            sortStrings.Add("Composer");
-            sortStrings.Add("Times Played");
-
-            for (int i = 0; i < handler.Views.Count; ++i)
+            string viewName = string.Format("{0}/{1}", handler.View.LocalizedName, handler.CurrentLevel);
+            if (!string.IsNullOrEmpty(handler.View.Parent))
             {
-              for (int j = 0; j < handler.Views[i].Filters.Count; ++j)
-              {
-                FilterDefinition def = (FilterDefinition)handler.Views[i].Filters[j];
-                // Convert sort string to sort enumeration
-                int defaultSort = sortStrings.IndexOf(def.DefaultSort);
-
-                if (defaultSort != -1)
-                {
-                  if ((def.Where == "albumartist" || def.Where == "album") && def.DefaultSort == "Artist")
-                  {
-                    sortby[i, j] = MusicSort.SortMethod.AlbumArtist;
-                  }
-                  else
-                  {
-                    sortby[i, j] = (MusicSort.SortMethod)defaultSort;
-                  }
-                }
-                else
-                {
-                  sortby[i, j] = MusicSort.SortMethod.Name;
-                }
-              }
+              viewName = string.Format("{0}/{1}", handler.View.Parent, viewName);
             }
+            return sortby[viewName];
           }
-
-          return sortby[handler.Views.IndexOf(handler.View), handler.CurrentLevel];
+          catch (KeyNotFoundException)
+          {
+            return MusicSort.SortMethod.Name;
+          }
         }
         else
         {
@@ -277,15 +250,21 @@ namespace MediaPortal.GUI.Music
       }
       set
       {
-        FilterDefinition def = (FilterDefinition)handler.View.Filters[handler.CurrentLevel];
-
-        if ((def.Where == "albumartist" || def.Where == "album") && value == MusicSort.SortMethod.Artist)
+        string viewName = string.Format("{0}/{1}", handler.View.LocalizedName, handler.CurrentLevel);
+        if (!string.IsNullOrEmpty(handler.View.Parent))
         {
-          sortby[handler.Views.IndexOf(handler.View), handler.CurrentLevel] = MusicSort.SortMethod.AlbumArtist;
+          viewName = string.Format("{0}/{1}", handler.View.Parent, viewName);
+        }
+
+        var def = handler.View.Levels[handler.CurrentLevel];
+
+        if ((def.Selection == "albumartist" || def.Selection == "album") && value == MusicSort.SortMethod.Artist)
+        {
+          sortby[viewName] = MusicSort.SortMethod.AlbumArtist;
         }
         else
         {
-          sortby[handler.Views.IndexOf(handler.View), handler.CurrentLevel] = value;
+          sortby[viewName] = value;
         }
       }
     }
@@ -345,7 +324,7 @@ namespace MediaPortal.GUI.Music
       if (_loadParameter != null)
       {
         bool viewFound = false;
-        foreach (ViewDefinition v in handler.Views)
+        foreach (DatabaseViewDefinition v in handler.Views)
         {
           if (v.Name == _loadParameter)
           {
@@ -362,10 +341,12 @@ namespace MediaPortal.GUI.Music
         }
       }
 
+      InitLayoutAndSort();
+
       string view = MusicState.View;
       if (view == string.Empty)
       {
-        view = ((ViewDefinition)handler.Views[0]).Name;
+        view = handler.Views[0].Name;
       }
 
       if (_currentView != null && _currentView.Name == view)
@@ -429,7 +410,7 @@ namespace MediaPortal.GUI.Music
 
     protected override void OnPageDestroy(int newWindowId)
     {
-      _currentLevel = handler.CurrentLevel; 
+      _currentLevel = handler.CurrentLevel;
       _currentView = ((MusicViewHandler)handler).GetView();
       m_iItemSelected = facadeLayout.SelectedListItemIndex;
 
@@ -502,9 +483,14 @@ namespace MediaPortal.GUI.Music
         return;
       }
 
+      if (handler.View.Levels.Count == 0)
+      {
+        return;
+      }
+
       // Get Cover Art for Index display
-      FilterDefinition filter = (FilterDefinition)handler.View.Filters[handler.CurrentLevel];
-      if (filter.SqlOperator == "group")
+      var filter = handler.View.Levels[handler.CurrentLevel];
+      if (filter.Selection.EndsWith("index"))
       {
         strThumb = GUIGraphicsContext.GetThemedSkinFile(@"\media\alpha\" + item.Label + @".png");
         if (Util.Utils.FileExistsInCache(strThumb))
@@ -517,7 +503,7 @@ namespace MediaPortal.GUI.Music
       }
       else
       {
-        switch (filter.Where)
+        switch (filter.Selection)
         {
           case "genre":
             strThumb = Util.Utils.GetCoverArt(Thumbs.MusicGenre, item.Label);
@@ -532,8 +518,6 @@ namespace MediaPortal.GUI.Music
           case "albumartist":
           case "composer":
           case "conductor":
-            goto case "artist";
-
           case "artist":
             strThumb = Util.Utils.GetCoverArt(Thumbs.MusicArtists, item.Label);
             if (Util.Utils.FileExistsInCache(strThumb))
@@ -546,8 +530,6 @@ namespace MediaPortal.GUI.Music
 
           case "disc#":
           case "track":
-            goto case "album";
-
           case "album":
 
             bool thumbFound = false;
@@ -635,6 +617,7 @@ namespace MediaPortal.GUI.Music
         {
           // this is a level in the view above the bottom
           ((MusicViewHandler)handler).Select(item.AlbumInfoTag as Song);
+          MusicState.View = handler.CurrentView;
         }
 
         m_iItemSelected = -1;
@@ -743,7 +726,7 @@ namespace MediaPortal.GUI.Music
           AddSelectionToPlaylist();
           break;
 
-          //case 136: // show playlist
+        //case 136: // show playlist
         case 4553: // show playlist
           GUIWindowManager.ActivateWindow((int)Window.WINDOW_MUSIC_PLAYLIST);
           break;
@@ -762,10 +745,96 @@ namespace MediaPortal.GUI.Music
 
     #endregion
 
+
+    #region Private Methods
+
     private void keyboard_TextChanged(int kindOfSearch, string data)
     {
       facadeLayout.Filter(kindOfSearch, data);
     }
+
+    /// <summary>
+    /// Initialise the default Layout and Sort for the View Levels
+    /// </summary>
+    private void InitLayoutAndSort()
+    {
+      viewDefaultLayouts = new Dictionary<string, Layout>();
+      sortasc = new Dictionary<string, bool>();
+      sortby = new Dictionary<string, MusicSort.SortMethod>();
+
+      List<string> sortStrings = new List<string>();
+      sortStrings.Add("Name");
+      sortStrings.Add("Date");
+      sortStrings.Add("Size");
+      sortStrings.Add("Track");
+      sortStrings.Add("Duration");
+      sortStrings.Add("Title");
+      sortStrings.Add("Artist");
+      sortStrings.Add("Album");
+      sortStrings.Add("Filename");
+      sortStrings.Add("Rating");
+      sortStrings.Add("AlbumArtist");
+      sortStrings.Add("Year");
+      sortStrings.Add("Disc#");
+      sortStrings.Add("Composer");
+      sortStrings.Add("Times Played");
+
+
+      foreach (DatabaseViewDefinition view in handler.Views)
+      {
+        try
+        {
+          string viewName = string.Format("{0}/0", view.LocalizedName);
+          viewDefaultLayouts.Add(viewName, Layout.List);
+          sortasc.Add(viewName, true);
+          sortby.Add(viewName, MusicSort.SortMethod.Name);
+        }
+        catch (ArgumentException) { }
+
+        foreach (DatabaseViewDefinition subview in view.SubViews)
+        {
+          try
+          {
+            string viewName = string.Format("{0}/{1}/0", view.LocalizedName, subview.LocalizedName);
+            viewDefaultLayouts.Add(viewName, Layout.List);
+            sortasc.Add(viewName, true);
+            sortby.Add(viewName, MusicSort.SortMethod.Name);
+          }
+          catch (ArgumentException) { }
+
+          int levelnr = 0;
+          foreach (DatabaseFilterLevel level in subview.Levels)
+          {
+            try
+            {
+              string viewName = string.Format("{0}/{1}/{2}", view.LocalizedName, subview.LocalizedName, levelnr);
+              viewDefaultLayouts.Add(viewName, GetLayoutNumber(level.DefaultView));
+              sortasc.Add(viewName, level.SortAscending);
+              int defaultSort = sortStrings.IndexOf(level.SortBy);
+              if (defaultSort > -1)
+              {
+                if ((level.Selection.ToLower() == "albumartist" || level.Selection.ToLower() == "album") && level.SortBy.ToLower() == "Artist")
+                {
+                  sortby.Add(viewName, MusicSort.SortMethod.AlbumArtist);
+                }
+                else
+                {
+                  sortby.Add(viewName, (MusicSort.SortMethod)defaultSort);
+                }
+              }
+              else
+              {
+                sortby.Add(viewName, MusicSort.SortMethod.Name);
+              }
+            }
+            catch (ArgumentException) { }
+            levelnr++;
+          }
+        }
+      }
+    }
+
+    #endregion
 
     /// <summary>
     /// this is actually loading a database view not a directory
@@ -841,7 +910,7 @@ namespace MediaPortal.GUI.Music
                 {
                   iPincode = Int32.Parse(msg.Label);
                 }
-                catch (Exception) {}
+                catch (Exception) { }
                 if (iPincode != share.Pincode)
                 {
                   songs.Clear();
@@ -875,7 +944,12 @@ namespace MediaPortal.GUI.Music
         item.AlbumInfoTag = song;
         item.MusicTag = tag;
 
-        if (handler.CurrentLevel + 1 < handler.MaxLevels)
+        if (handler.View.SubViews.Count > 0)
+        {
+          item.IsFolder = true;
+          item.Label = song.Title;
+        }
+        else if (handler.CurrentLevel + 1 < handler.MaxLevels)
         {
           item.IsFolder = true;
           item.Label = MusicViewHandler.GetFieldValue(song, handler.CurrentLevelWhere);
@@ -1242,14 +1316,14 @@ namespace MediaPortal.GUI.Music
         m_database = MusicDatabase.Instance;
       }
 
-      FilterDefinition filter = (FilterDefinition)handler.View.Filters[handler.CurrentLevel];
+      var filter = handler.View.Levels[handler.CurrentLevel];
 
       string strArtist = s.Artist;
       string strAlbumArtist = s.AlbumArtist;
       string strGenre = s.Genre;
       string strComposer = s.Composer;
 
-      if (filter.SqlOperator == "group")
+      if (filter.Selection.EndsWith("index"))
       {
         strArtist = strArtist + "%";
         strAlbumArtist = strAlbumArtist + "%";
@@ -1257,7 +1331,7 @@ namespace MediaPortal.GUI.Music
         strComposer = strComposer + "%";
       }
 
-      switch (filter.Where)
+      switch (filter.Selection.ToLower())
       {
         case "artist":
           m_database.GetSongsByArtist(strArtist, ref songs);

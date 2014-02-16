@@ -349,6 +349,7 @@
     <Compile Include="ExtensionMethods\ListExtMethods.cs" />
     <Compile Include="ExtensionMethods\DictionaryExtMethods.cs" />
     <Compile Include="ExtensionMethods\ObjectMethods.cs" />
+    <Compile Include="guilib\DatabaseViews\DatabaseViewHandler.cs" />
     <Compile Include="guilib\DXNative.cs" />
     <Compile Include="guilib\DatabaseViews\DatabaseViewFilterLevel.cs" />
     <Compile Include="guilib\DatabaseViews\DatabaseViewDefinition.cs" />
