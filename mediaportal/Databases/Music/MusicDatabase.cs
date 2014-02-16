@@ -304,7 +304,7 @@ namespace MediaPortal.Music.Database
           "IdAlbum integer not null, " + // ID of the album. Foreign Key
           "FileName text not null, " + // FileName of song. Needs to be concatenated with ShareNAme + FolderName for Fullpath
           "Title text not null, " + // Song Title
-          "TitleSort text not null, " + // Song Title for Sorting
+          "TitleSort text, " + // Song Title for Sorting
           "Track integer, " + // Track Number
           "TrackCount integer, " + // Total  Number of Tracks on Album
           "Disc integer, " + // Disc Number
@@ -354,7 +354,7 @@ namespace MediaPortal.Music.Database
                                  "CREATE TABLE AlbumArtist (" +
                                  "IdArtist integer not null," +
                                  "IdAlbum integer not null," +
-                                 "Primary Key(IdArtist, IdAlbum" +
+                                 "Primary Key(IdArtist, IdAlbum)" +
                                  ")");
 
         // ArtistSong: Relation between Artist - Song  
@@ -362,7 +362,7 @@ namespace MediaPortal.Music.Database
                                  "CREATE TABLE ArtistSong (" +
                                  "IdArtist integer not null," +
                                  "IdSong integer not null," +
-                                 "Primary Key(IdArtist, IdSong" +
+                                 "Primary Key(IdArtist, IdSong)" +
                                  ")");
 
         // GenreSong: Relation between Genre - Song  
@@ -370,7 +370,7 @@ namespace MediaPortal.Music.Database
                                  "CREATE TABLE GenreSong (" +
                                  "IdGenre integer not null," +
                                  "IdSong integer not null," +
-                                 "Primary Key(IdGenre, IdSong" +
+                                 "Primary Key(IdGenre, IdSong)" +
                                  ")");
 
         // ComposerSong: Relation between Composer - Song  
@@ -378,7 +378,7 @@ namespace MediaPortal.Music.Database
                                  "CREATE TABLE ComposerSong (" +
                                  "IdComposer integer not null," +
                                  "IdSong integer not null," +
-                                 "Primary Key(IdComposer, IdSong" +
+                                 "Primary Key(IdComposer, IdSong)" +
                                  ")");
 
         // ConductorSong: Relation between Conductor - Song  
@@ -386,7 +386,7 @@ namespace MediaPortal.Music.Database
                                  "CREATE TABLE ConductorSong (" +
                                  "IdConductor integer not null," +
                                  "IdSong integer not null," +
-                                 "Primary Key(IdConductor, IdSong" +
+                                 "Primary Key(IdConductor, IdSong)" +
                                  ")");
 
         // Artist Info and Album Info
