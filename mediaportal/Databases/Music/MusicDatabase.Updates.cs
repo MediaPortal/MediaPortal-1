@@ -33,11 +33,6 @@ using SQLite.NET;
 
 namespace MediaPortal.Music.Database
 {
-
-  #region Usings
-
-  #endregion
-
   #region Reorg class
 
   public delegate void MusicDBReorgEventHandler(object sender, DatabaseReorgEventArgs e);
@@ -103,20 +98,22 @@ namespace MediaPortal.Music.Database
     private ArrayList _shares = new ArrayList();
     private string strSQL;
     private List<string> musicFolders;
-    private List<string> cueFiles;
-    private Hashtable allFiles;
+    private List<string> _cueFiles;
+    private Hashtable _allFiles;
     private int _processCount = 0;
     private int _songsSkipped = 0;
+    private int _allFilesCount = 0;
     private int _songsProcessed = 0;
     private int _songsAdded = 0;
     private int _songsUpdated = 0;
     private bool _updateSinceLastImport = false;
     private bool _excludeHiddenFiles = false;
     private bool _singleFolderScan = false;
+    private int _folderQueueLength = 0;
 
     private Thread _scanThread = null;
-    private AutoResetEvent _resetEvent = null;
-    //private bool _abortScan = false;
+    private ManualResetEvent _scanSharesFinishedEvent = null;
+    private ManualResetEvent _scanFoldersFinishedEvent = null;
 
     private string _previousDirectory = null;
     private string _previousNegHitDir = null;
@@ -127,6 +124,23 @@ namespace MediaPortal.Music.Database
     private readonly char[] trimChars = {' ', '\x00', '|'};
 
     private readonly string[] _multipleValueFields = new string[] {"artist", "albumartist", "genre", "composer"};
+
+    private int _songCount, _artistCount, _albumCount, _genreCount, _folderCount, _shareCount = 0; // Count for the various IDs
+
+    // The cache
+    private Dictionary<string, int> _artistCache = new Dictionary<string, int>();
+    private Dictionary<string, int> _albumCache = new Dictionary<string, int>();
+    private Dictionary<string, int> _genreCache = new Dictionary<string, int>();
+    private Dictionary<string, int> _shareCache = new Dictionary<string, int>();
+    private Dictionary<string, int> _folderCache = new Dictionary<string, int>();
+
+    // Objects to put a lock on the code during thread execution
+    private object _artistLock = new object();
+    private object _albumLock = new object();
+    private object _genreLock = new object();
+    private object _folderLock = new object();
+    private object _shareLock = new object();
+
 
     #endregion
 
@@ -582,38 +596,37 @@ namespace MediaPortal.Music.Database
         else
         {
           Log.Info("Musicdatabasereorg: Beginning music database reorganization...");
-          Log.Info("Musicdatabasereorg: Last import done at {0}", _lastImport.ToString());
+          Log.Info("Musicdatabasereorg: Last import at {0}", _lastImport.ToString());
         }
 
         BeginTransaction();
 
-        // When starting a complete rescan, we cleanup the foreign keys
-        if (_lastImport == DateTime.MinValue && !_singleFolderScan)
-        {
-          MyArgs.progress = 2;
-          MyArgs.phase = "Cleaning up Artists, AlbumArtists and Genres";
-          OnDatabaseReorgChanged(MyArgs);
-          Log.Info("Musicdatabasereorg: Cleaning up Artists, AlbumArtists and Genres");
-          CleanupForeignKeys();
-        }
+        // Before we begin with the scan we need to setup the Cache for Artist, Album, Genre, Shares and Folders
+        // It is used to speed up the proces, so that we don't need to issue a query for every single file, if we already
+        // have inserted the Artist, Folder, etc.
+        MyArgs.progress = 2;
+        MyArgs.phase = "Building Cache for Folders, Artists, Albums and Genres";
+        OnDatabaseReorgChanged(MyArgs);
+        Log.Info("Musicdatabasereorg: Building Cache for Folders, Artists, Albums and Genres");
+        SetupCache();
 
-        // Add missing files (example: You downloaded some new files)
+        // Start Shares Scan in a separate Thread
         MyArgs.progress = 3;
-        MyArgs.phase = "Scanning new files";
+        MyArgs.phase = "Scanning for music files";
         OnDatabaseReorgChanged(MyArgs);
         Log.Info("Musicdatabasereorg: Scanning for music files");
 
         // Start the Scanning and Update Thread
         musicFolders = new List<string>(4000);
-        cueFiles = new List<string>(500);
-        allFiles = new Hashtable(100000);
+        _cueFiles = new List<string>(500);
+        _allFiles = new Hashtable(100000);
 
-        _resetEvent = new AutoResetEvent(false);
-        _scanThread = new Thread(AddUpdateFiles);
+        _scanSharesFinishedEvent = new ManualResetEvent(false);
+        _scanThread = new Thread(ScanShares);
         _scanThread.Start();
 
-        // Wait for the Scan and Update Thread to finish, before continuing
-        _resetEvent.WaitOne();
+        // Wait for the Scan Thread to finish, before continuing
+        _scanSharesFinishedEvent.WaitOne();
 
         Log.Info("Musicdatabasereorg: Total Songs: {0}. {1} added / {2} updated / {3} skipped", _processCount,
                  _songsAdded, _songsUpdated, _songsSkipped);
@@ -809,7 +822,7 @@ namespace MediaPortal.Music.Database
       {
         string strFileName = DatabaseUtility.Get(results, i, "tracks.strPath");
 
-        if (!allFiles.Contains(strFileName))
+        if (!_allFiles.Contains(strFileName))
         {
           /// song doesn't exist anymore, delete it
           /// We don't care about foreign keys at this moment. We'll just change this later.
@@ -922,12 +935,12 @@ namespace MediaPortal.Music.Database
 
     #endregion
 
-    #region Scan Folders
+    #region Scan Shares
 
     /// <summary>
     /// Scan the folders in the selected shares for music files to be added to the database
     /// </summary>
-    private void AddUpdateFiles()
+    private void ScanShares()
     {
       DatabaseReorgEventArgs MyArgs = new DatabaseReorgEventArgs();
       string strSQL;
@@ -937,37 +950,28 @@ namespace MediaPortal.Music.Database
       _songsUpdated = 0;
       _songsSkipped = 0;
 
-      int allFilesCount = 0;
-
-      foreach (string Share in _shares)
+      foreach (string share in _shares)
       {
         //dummy call to stop lots of watchers being created unnecessarily
-        Util.Utils.FileExistsInCache(Path.Combine(Share, "folder.jpg"));
+        Util.Utils.FileExistsInCache(Path.Combine(share, "folder.jpg"));
         // Get all the files for the given Share / Path
         try
         {
-          foreach (FileInformation file in GetFilesRecursive(new DirectoryInfo(Share)))
+          int maxThreads = 0;
+          int maxComplThreads = 0;
+          ThreadPool.GetAvailableThreads(out maxThreads, out maxComplThreads);
+
+          ThreadPool.SetMaxThreads(Environment.ProcessorCount, maxComplThreads);
+
+          var di = new DirectoryInfo(share);
+          foreach (var folder in GetFolders(di))
           {
-            allFilesCount++;
-
-            if (allFilesCount % 1000 == 0)
-            {
-              Log.Info("MusicDBReorg: Procesing file {0}", allFilesCount);
-            }
-
-            MyArgs.progress = 4;
-            MyArgs.phase = String.Format("Processing file {0}", allFilesCount);
-            OnDatabaseReorgChanged(MyArgs);
-
-            if (!CheckFileForInclusion(file))
-            {
-              continue;
-            }
-
-            _processCount++;
-
-            AddUpdateSong(file.Name);
+            ThreadPool.QueueUserWorkItem(new WaitCallback(ProcessFolder), folder);
+            _folderQueueLength++;
           }
+
+          _scanFoldersFinishedEvent = new ManualResetEvent(false);
+          _scanFoldersFinishedEvent.WaitOne();
         }
         catch (Exception ex)
         {
@@ -976,7 +980,7 @@ namespace MediaPortal.Music.Database
       }
 
       // Now we will remove the CUE data file from the database, since we will add Fake Tracks in the next step
-      foreach (string cueFile in cueFiles)
+      foreach (string cueFile in _cueFiles)
       {
         try
         {
@@ -1003,16 +1007,15 @@ namespace MediaPortal.Music.Database
       try
       {
         // Apply CUE Filter
-        List<string> cueFileFakeTracks = new List<string>();
-        cueFileFakeTracks =
-          (List<string>)CueUtil.CUEFileListFilterList<string>(cueFiles, CueUtil.CUE_TRACK_FILE_STRING_BUILDER);
+        var cueFileFakeTracks =
+          (List<string>)CueUtil.CUEFileListFilterList<string>(_cueFiles, CueUtil.CUE_TRACK_FILE_STRING_BUILDER);
 
         // and add them also to the Hashtable, so that they don't get deleted in the next step
         foreach (string song in cueFileFakeTracks)
         {
           _processCount++;
           AddUpdateSong(song);
-          allFiles.Add(song, false);
+          _allFiles.Add(song, false);
         }
       }
       catch (Exception ex)
@@ -1020,8 +1023,51 @@ namespace MediaPortal.Music.Database
         Log.Error("Error processing CUE files: {0}", ex.Message);
       }
 
-      _resetEvent.Set();
+      _scanSharesFinishedEvent.Set();
     }
+
+    private void ProcessFolder(object dirInfo)
+    {
+      var di = (DirectoryInfo)dirInfo;
+      try
+      {
+        foreach (FileInformation file in GetFiles(di))
+        {
+          Interlocked.Increment(ref _allFilesCount);
+
+          if (_allFilesCount % 1000 == 0)
+          {
+            Log.Info("MusicDBReorg: Procesing file {0}", _allFilesCount);
+          }
+
+          /*
+          MyArgs.progress = 4;
+          MyArgs.phase = String.Format("Processing file {0}", allFilesCount);
+          OnDatabaseReorgChanged(MyArgs);
+          */
+
+          if (!CheckFileForInclusion(file))
+          {
+            continue;
+          }
+
+          _processCount++;
+
+          AddUpdateSong(file.Name);
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("MusicDBReorg: Exception accessing file or folder: {0}", ex.Message);
+      }
+
+      Interlocked.Decrement(ref _folderQueueLength);
+      if (_folderQueueLength == 0)
+      {
+        _scanFoldersFinishedEvent.Set();
+      }
+    }
+
 
     /// <summary>
     /// Check, if a file should be Added or Updated to the DB
@@ -1065,45 +1111,52 @@ namespace MediaPortal.Music.Database
       }
     }
 
-
     /// <summary>
-    /// Build an Iterator over the given Directory, returning all files recursively
-    /// </summary>
-    /// <param name="dirInfo"></param>
-    /// <returns></returns>
-    private IEnumerable<FileInformation> GetFilesRecursive(DirectoryInfo dirInfo)
-    {
-      return GetFilesRecursive(dirInfo, "*.*");
-    }
-
-    /// <summary>
-    /// Build an Iterator over the given Directory, returning all files recursively
+    /// Build an Iterator over the given Folder, returning all Foldres recursively
     /// </summary>
     /// <param name="dirInfo">DirectoryInfo for the directory we want files returned for</param>
-    /// <param name="searchPattern">This parameter is ignored in the current implementation</param>
-    /// <returns></returns>
+    /// <returns>IENumerable</returns>
     /// 
     /// A much more elegant way would be using the method below, but it is not allowed to have a yield inside a try / catch,
     /// and we need to capture Access Exceptions to Directories and Files.
     /// The method used now has the same speed.
     /// 
-    /// private IEnumerable<FileInfo> GetFilesRecursive(DirectoryInfo dirInfo, string searchPattern)
+    /// private IEnumerable<DirectoryInfo> GetFolders(DirectoryInfo dirInfo)
     /// {
     ///  foreach (DirectoryInfo di in dirInfo.GetDirectories())
     ///  {
-    ///    musicFolders.Add(di.FullName);
-    ///    foreach (FileInfo fi in GetFilesRecursive(di, searchPattern))
-    ///    {
-    ///      yield return fi;
-    ///    }
-    ///  }
-    ///
-    ///  foreach (FileInfo fi in dirInfo.GetFiles(searchPattern))
-    ///  {
-    ///    yield return fi;
+    ///    yield return di;
     ///  }
     /// }
-    private IEnumerable<FileInformation> GetFilesRecursive(DirectoryInfo dirInfo, string searchPattern)
+    private IEnumerable<DirectoryInfo> GetFolders(DirectoryInfo dirInfo)
+    {
+      Queue<DirectoryInfo> directories = new Queue<DirectoryInfo>();
+      directories.Enqueue(dirInfo);
+      while (directories.Count > 0)
+      {
+        DirectoryInfo dir = directories.Dequeue();
+        yield return dir;
+
+        try
+        {
+          foreach (DirectoryInfo di in dir.GetDirectories())
+          {
+            directories.Enqueue(di);
+          }
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+          Log.Error("Musicdatabasereorg: File / Directory Access error: {0}", ex.Message);
+        }
+      }
+    }
+
+    /// <summary>
+    ///   Read a Folder and return the files
+    /// </summary>
+    /// <param name = "folder"></param>
+    /// <param name = "foundFiles"></param>
+    private IEnumerable<FileInformation> GetFiles(DirectoryInfo dirInfo)
     {
       Queue<DirectoryInfo> directories = new Queue<DirectoryInfo>();
       directories.Enqueue(dirInfo);
@@ -1119,30 +1172,21 @@ namespace MediaPortal.Music.Database
           if (directories.Count > 0)
           {
             DirectoryInfo dir = directories.Dequeue();
-            musicFolders.Add(dir.FullName);
-
-            DirectoryInfo[] newDirectories = dir.GetDirectories();
             FileInformation[] newFiles = MediaPortal.Util.NativeFileSystemOperations.GetFileInformation(dir.FullName,
                                                                                                         !_excludeHiddenFiles);
-            // dir.GetFiles(searchPattern);
-            string[] newFiles2 = MediaPortal.Util.NativeFileSystemOperations.GetFiles(dir.FullName);
-            foreach (DirectoryInfo di in newDirectories)
+
+            foreach (FileInformation fi in newFiles)
             {
-              directories.Enqueue(di);
-            }
-            foreach (FileInformation file in newFiles)
-            {
-              files.Enqueue(file);
+              files.Enqueue(fi);
             }
           }
         }
         catch (UnauthorizedAccessException ex)
         {
-          Log.Error("MusicDBReorg: File / Directory Access error: {0}", ex.Message);
+          Log.Error("MusicdatabaseReorg: File / Directory Access error: {0}", ex.Message);
         }
       }
     }
-
 
     /// <summary>
     /// Should the file be included in the list to be added
@@ -1191,30 +1235,29 @@ namespace MediaPortal.Music.Database
         // Cue Files are being processed separately
         if (CueUtil.isCueFile(file))
         {
-          cueFiles.Add(file);
+          _cueFiles.Add(file);
           return false;
         }
 
         // Add the files to the Hastable, which is used in the Delete Non-existing songs, to prevent file system access
-        allFiles.Add(file, false);
+        _allFiles.Add(file, false);
 
         // Only Add files to the list, if they have been Created / Updated after the Last Import date
         if (_updateSinceLastImport && !_singleFolderScan)
         {
           if (fileInfo.CreationTime > _lastImport || fileInfo.ModificationTime > _lastImport)
           {
-            _songsProcessed++;
+            Interlocked.Increment(ref _songsProcessed);
             fileinCluded = true;
           }
           else
           {
-            _songsSkipped++;
-            fileinCluded = false;
+            Interlocked.Increment(ref _songsSkipped);
           }
         }
         else
         {
-          _songsProcessed++;
+          Interlocked.Increment(ref _songsUpdated);
           fileinCluded = true;
         }
       }
@@ -1479,6 +1522,73 @@ namespace MediaPortal.Music.Database
       }
       return true;
     }
+
+    private int AddFolder(string fullPath, string shareName)
+    {
+      lock (_folderLock)
+      {
+        var folder = fullPath.Replace(shareName, "").Trim('\\');
+        var shareId = AddShare(shareName);
+
+        DatabaseUtility.RemoveInvalidChars(ref folder);
+        int val = 0;
+        if (_folderCache.TryGetValue(folder, out val))
+        {
+          return val;
+        }
+
+        var folderID = Interlocked.Increment(ref _folderCount);
+        _folderCache.Add(folder, folderID);
+        var sql = string.Format("insert into folder values ({0}, '{1}', '{2}')", folderID, shareId, folder);
+        try
+        {
+          SQLiteResultSet result = DirectExecute(sql);
+          if (result != null)
+          {
+            return folderID;
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Error("MusicDatabaseReorg: DB exception on Folder insert: {0} {1}", folder, ex.Message);
+        }
+        return 0;
+      }
+    }
+
+    private int AddShare(string share)
+    {
+      lock (_shareLock)
+      {
+        DatabaseUtility.RemoveInvalidChars(ref share);
+        int val = 0;
+        if (_shareCache.TryGetValue(share, out val))
+        {
+          return val;
+        }
+
+        var shareID = Interlocked.Increment(ref _shareCount);
+        string sql = string.Format("insert into share values ({0}, '{1}')", shareID, share);
+        try
+        {
+          SQLiteResultSet result = DirectExecute(sql);
+          if (result != null)
+          {
+            return shareID;
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Error("MusicDatabaseReorg: DB exception on Share insert: {0} {1}", share, ex.Message);
+        }
+        return 0;
+      }
+    }
+
+
+    #endregion
+
+    #region Thumbs Handling
 
     private void ExtractCoverArt(MusicTag tag)
     {
@@ -1921,6 +2031,72 @@ namespace MediaPortal.Music.Database
 
     #endregion
 
+    #region Cache
+
+    /// <summary>
+    /// Loads the currently available values from Artist, Album, Genre, Share and Folder
+    /// We also set the starting values for the various Id
+    /// </summary>
+    private void SetupCache()
+    {
+      strSQL = "select ShareName, Id from Share";
+      _shareCount = Fillcache(strSQL, "Share", out _shareCache);
+
+      strSQL = "select FolderName, Id from Folder";
+      _folderCount = Fillcache(strSQL, "Folder", out _folderCache);
+
+      strSQL = "select ArtistName, Id from Artist";
+      _artistCount = Fillcache(strSQL, "Artist", out _artistCache);
+
+      strSQL = "select AlbumName, Id from Album";
+      _albumCount = Fillcache(strSQL, "Album", out _albumCache);
+
+      strSQL = "select GenreName, Id from Genre";
+      _genreCount = Fillcache(strSQL, "Genre", out _genreCache);
+    }
+
+    /// <summary>
+    /// Fills the Cache from the various SQL tables
+    /// </summary>
+    /// <param name="aSQL">SQL Statementto execute</param>
+    /// <param name="aTable">Table Name</param>
+    /// <param name="aCache">Cache to Update</param>
+    /// <returns>Max Value found for ID</returns>
+    private int Fillcache(string aSQL, string aTable, out Dictionary<string, int> aCache)
+    {
+      var max = 0;
+      var cache = new Dictionary<string, int>();
+
+      try
+      {
+        SQLiteResultSet results = DirectExecute(aSQL);
+        if (results != null && results.Rows.Count > 0)
+        {
+          foreach (var row in results.Rows)
+          {
+            cache.Add(row.fields[0], Convert.ToInt32(row.fields[1]));
+          }
+          strSQL = string.Format("select max(Id) from {0}", aTable);
+          SQLiteResultSet maxValue = DirectExecute(strSQL);
+          if (maxValue != null && maxValue.Rows.Count > 0)
+          {
+            max = Int32.Parse(maxValue.Rows[0].fields[0]);
+          }
+        }
+        Log.Debug("Musicdatabasereorg: Starting with a {0} Count of {1}", aTable, max + 1);
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Musicdatabasereorg: Error retrieving {0} Table. {1}", aTable, ex.Message);
+      }
+
+      aCache = cache;
+      return max;
+    }
+
+
+    #endregion
+    
     #region Clean Up Foreign Keys
 
     /// <summary>
