@@ -43,6 +43,7 @@ namespace MediaPortal.Database
       m_db.Execute("PRAGMA page_size=8192");
       m_db.Execute("PRAGMA synchronous='OFF'");
       m_db.Execute("PRAGMA auto_vacuum=0");
+      m_db.Execute("PRAGMA foreign_keys='ON'");
     }
 
     /// <summary>
