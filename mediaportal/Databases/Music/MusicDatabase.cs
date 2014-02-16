@@ -37,6 +37,7 @@ namespace MediaPortal.Music.Database
     #region Variables
 
     public static readonly MusicDatabase Instance = new MusicDatabase();
+    private const int DATABASE_VERSION = 1;
 
     private SQLiteClient MusicDbClient = null;
 
@@ -60,10 +61,7 @@ namespace MediaPortal.Music.Database
     /// <summary>
     /// static constructor. Opens or creates the music database
     /// </summary>
-    static MusicDatabase()
-    {
-      // Log.Debug("MusicDatabase: static database constructor");
-    }
+    static MusicDatabase() { }
 
     /// <summary>
     /// private constructor to prevent any instance of this class
@@ -87,7 +85,7 @@ namespace MediaPortal.Music.Database
       Open();
     }
 
-    ~MusicDatabase() {}
+    ~MusicDatabase() { }
 
     public static void ReOpen()
     {
@@ -108,19 +106,25 @@ namespace MediaPortal.Music.Database
 
     #region Getters & Setters
 
+    /// <summary>
+    /// Gets the current DB Connection
+    /// </summary>
     private SQLiteClient DbConnection
     {
       get
       {
         if (MusicDbClient == null)
         {
-          MusicDbClient = new SQLiteClient(Config.GetFile(Config.Dir.Database, "MusicDatabaseV13.db3"));
+          MusicDbClient = new SQLiteClient(Config.GetFile(Config.Dir.Database, "MusicDatabase.db3"));
         }
 
         return MusicDbClient;
       }
     }
 
+    /// <summary>
+    /// Gets the current Database Name
+    /// </summary>
     public string DatabaseName
     {
       get { return DbConnection.DatabaseName; }
@@ -130,11 +134,19 @@ namespace MediaPortal.Music.Database
 
     #region Functions
 
+    /// <summary>
+    /// Execute the provide SQL statement against the current database
+    /// </summary>
+    /// <param name="aSQL"></param>
+    /// <returns>Result set of rows</returns>
     public static SQLiteResultSet DirectExecute(string aSQL)
     {
       return Instance.DbConnection.Execute(aSQL);
     }
 
+    /// <summary>
+    /// Load the settings from the config files
+    /// </summary>
     private void LoadDBSettings()
     {
       using (Settings xmlreader = new MPSettings())
@@ -160,11 +172,13 @@ namespace MediaPortal.Music.Database
         catch (Exception)
         {
           _lastImport = DateTime.ParseExact("1900-01-01 00:00:00", "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
-          ;
         }
       }
     }
 
+    /// <summary>
+    /// Open the Music Database. If it doesn't exist create it.
+    /// </summary>
     private void Open()
     {
       Log.Info("MusicDatabase: Opening database");
@@ -176,38 +190,15 @@ namespace MediaPortal.Music.Database
         {
           Directory.CreateDirectory(Config.GetFolder(Config.Dir.Database));
         }
-        catch (Exception) {}
+        catch (Exception) { }
 
-        if (!File.Exists(Config.GetFile(Config.Dir.Database, "MusicDatabaseV13.db3")))
+        if (!File.Exists(Config.GetFile(Config.Dir.Database, "MusicDatabase.db3")))
         {
-          if (File.Exists(Config.GetFile(Config.Dir.Database, "MusicDatabaseV11.db3")))
+          if (File.Exists(Config.GetFile(Config.Dir.Database, "MusicDatabaseV13.db3")))
           {
-            Log.Info("MusicDatabase: Found older version of database. Upgrade to new layout.");
-            File.Copy(Config.GetFile(Config.Dir.Database, "MusicDatabaseV11.db3"),
-                      Config.GetFile(Config.Dir.Database, "MusicDatabaseV13.db3"));
-
-            // Get the DB handle or create it if necessary
-            MusicDbClient = DbConnection;
-
-            UpgradeDBV11_V13();
-
-            return;
-          }
-          if (File.Exists(Config.GetFile(Config.Dir.Database, "MusicDatabaseV12.db3")))
-          {
-            // upgrade DB (add last fm user table)
-            File.Copy(Config.GetFile(Config.Dir.Database, "MusicDatabaseV12.db3"),
-                      Config.GetFile(Config.Dir.Database, "MusicDatabaseV13.db3"));
-
-            // Get the DB handle or create it if necessary
-            MusicDbClient = DbConnection;
-
-            if (!CreateDatabase())
-            {
-              Log.Error("MusicDatabase: Error creating new database. aborting upgrade}");
-            }
-
-            return;
+            Log.Info("MusicDatabase: Found older, incompatible version of database. Backup old database and create new layout.");
+            File.Move(Config.GetFile(Config.Dir.Database, "MusicDatabaseV13.db3"),
+                      Config.GetFile(Config.Dir.Database, "MusicDatabaseV13-backup.db3"));
           }
 
           // Get the DB handle or create it if necessary
@@ -225,6 +216,14 @@ namespace MediaPortal.Music.Database
 
         // Get the DB handle or create it if necessary
         MusicDbClient = DbConnection;
+        // See, if we're running the correct Version
+        strSQL = "select Value from Configuration where Parameter = 'Version'";
+        SQLiteResultSet results = MusicDbClient.Execute(strSQL);
+        if (Int32.Parse(results.Rows[0].fields[0]) != DATABASE_VERSION)
+        {
+          // Do upgrade logic to new version here
+          // Currently not necessary, since we are starting at Version 1.
+        }
       }
 
       catch (Exception ex)
@@ -234,124 +233,161 @@ namespace MediaPortal.Music.Database
       Log.Info("MusicDatabase: Database opened");
     }
 
-    private void UpgradeDBV11_V13()
-    {
-      try
-      {
-        // First rename the tracks table
-        string strSQL = "alter table tracks rename to tracksV11";
-        MusicDbClient.Execute(strSQL);
-
-        // Now call the Create Datbase function to create the new table
-        if (!CreateDatabase())
-        {
-          Log.Error("MusicDatabase: Error creating new database. aborting upgrade}");
-          return;
-        }
-
-        // Now copy the content of the old V11 tracks table to the new V12 tracks table
-        strSQL =
-          "insert into tracks select idTrack, strPath, strArtist, strAlbumArtist, strAlbum, strGenre, strComposer, strConductor, " +
-          "strTitle, iTRack, iNumTracks, iDuration, iYear, iTimesPlayed, iRating, iFavorite, iResumeAt, iDisc, iNumDisc, " +
-          "strLyrics, '', '', '', '', 0, 0, 0, 0, dateLastPlayed, dateAdded from tracksV11";
-
-        MusicDbClient.Execute(strSQL);
-
-        strSQL = "drop table tracksV11";
-        MusicDbClient.Execute(strSQL);
-
-        Log.Info("MusicDatabase: Finished upgrading database.");
-      }
-      catch (Exception ex)
-      {
-        Log.Error("MusicDatabase: exception while renaming table:{0} stack:{1}", ex.Message, ex.StackTrace);
-      }
-    }
-
     private bool CreateDatabase()
     {
       try
       {
         DatabaseUtility.SetPragmas(MusicDbClient);
 
-        // Tracks table containing information for songs
-        DatabaseUtility.AddTable(
-          MusicDbClient, "tracks",
-          @"CREATE TABLE tracks ( " +
-          "idTrack integer primary key autoincrement, " + // Unique id Autoincremented
-          "strPath text, " + // Full  path of the file.
-          "strArtist text, " + // Artist
-          "strAlbumArtist text, " + // Album Artist
-          "strAlbum text, " + // Album
-          "strGenre text, " + // Genre  (multiple genres)
-          "strComposer text, " + // Composer (multiple composers)
-          "strConductor text, " + // Conductor
-          "strTitle text, " + // Song Title
-          "iTrack integer, " + // Track Number
-          "iNumTracks integer, " + // Total  Number of Tracks on Album
-          "iDuration integer, " + // Duration in seconds
-          "iYear integer, " + // Year
-          "iTimesPlayed integer, " + // # Times Played
-          "iRating integer, " + // Rating
-          "iFavorite integer, " + // Favorite Indicator
-          "iResumeAt integer, " + // Resume  song from position
-          "iDisc integer, " + // Disc Number
-          "iNumDisc integer, " + // Total  Number of Discs
-          "strLyrics text, " + // Lyric Text
-          "strComment text, " + // Comment
-          "strFileType text, " + // File Format (mp3, flac, etc.)           
-          "strFullCodec text, " + // Full Codec Description      
-          "strBitRateMode text, " + // Bitrate mode (CBR / VBR)           
-          "iBPM integer, " + // Beats per Minute
-          "iBitRate integer, " + // Bitrate
-          "iChannels integer, " + // Channels
-          "iSampleRate integer, " + // Sample Rate    
-          "dateLastPlayed timestamp, " + // Date, Last Time Played
-          "dateAdded timestamp" + // Date added. Either Insertion date, Creation date, LastWrite
+        // The Configuration Table holds various information about the database
+        DatabaseUtility.AddTable(MusicDbClient,
+                                 "Config", @"create table Configuration (Parameter string not null, Value string not null)");
+
+        // Insert the Database Version number into the Config Table
+        MusicDbClient.Execute(string.Format("insert into Configuration values ('Version', '{0}')", DATABASE_VERSION));
+
+        // Share Table: Holds information about the Music Shares
+        DatabaseUtility.AddTable(MusicDbClient, "Share",
+                                 "CREATE TABLE Share (" +
+                                 "Id integer primary key," +
+                                 "ShareName text not null" +
+        ")");
+
+        // Folder Table: Holds information about the different Folder
+        DatabaseUtility.AddTable(MusicDbClient, "Folder",
+                                 "CREATE TABLE Folder (" +
+                                 "Id integer primary key," +
+                                 "IdShare integer not null," +
+                                 "FolderName text not null," +
+                                 "Foreign Key(IdShare) References Share(Id)" +
+        ")");
+
+        // Artist Table
+        // Holds Information about Artist, AlbumArtist, Composer, Conductor
+        DatabaseUtility.AddTable(MusicDbClient, "Artist",
+                                 "CREATE TABLE Artist (" +
+                                 "Id integer primary key," +
+                                 "ArtistName text not null," +
+                                 "ArtistSortName text not null" +
+        ")");
+
+        DatabaseUtility.AddIndex(MusicDbClient, "IdxArtist_ArtistName",
+                                 "CREATE INDEX IdxArtist_ArtistName ON Artist(ArtistName ASC)");
+
+        // Album Table
+        DatabaseUtility.AddTable(MusicDbClient, "Album",
+                                 "CREATE TABLE Album (" +
+                                 "Id integer primary key," +
+                                 "AlbumName text not null," +
+                                 "AlbumSortName text not null," +
+                                 "Year integer" +
+        ")");
+
+        DatabaseUtility.AddIndex(MusicDbClient, "IdxAlbum_AlbumName",
+                                 "CREATE INDEX IdxAlbum_AlbumName ON Album(AlbumName ASC)");
+
+        // Genre Table
+        DatabaseUtility.AddTable(MusicDbClient, "Genre",
+                                 "CREATE TABLE Genre (" +
+                                 "Id integer primary key," +
+                                 "GenreName text not null" +
+        ")");
+
+        DatabaseUtility.AddIndex(MusicDbClient, "IdxGenre_GenreName",
+                                 "CREATE INDEX IdxGenre_GenreName ON Genre(GenreName ASC)");
+
+        // Song table containing information for songs
+        DatabaseUtility.AddTable(MusicDbClient, "Song",
+          @"CREATE TABLE Song ( " +
+          "Id integer primary key, " + // Unique Song id. Manually incremented
+          "IdFolder integer not null, " + // ID of the folder. Foreign Key
+          "IdAlbum integer not null, " + // ID of the album. Foreign Key
+          "FileName text not null, " + // FileName of song. Needs to be concatenated with ShareNAme + FolderName for Fullpath
+          "Title text not null, " + // Song Title
+          "TitleSort text not null, " + // Song Title for Sorting
+          "Track integer, " + // Track Number
+          "TrackCount integer, " + // Total  Number of Tracks on Album
+          "Disc integer, " + // Disc Number
+          "DiscCount integer, " + // Total  Number of Discs
+          "Duration integer, " + // Duration in seconds
+          "Year integer, " + // Year
+          "TimesPlayed integer, " + // # Times Played
+          "Rating integer, " + // Rating
+          "Favorite integer, " + // Favorite Indicator
+          "ResumeAt integer, " + // Resume  song from position
+          "Lyrics text, " + // Lyric Text
+          "Comment text, " + // Comment
+          "Copyright text, " + // Copyright Information
+          "AmazonId text, " + // The AmazonId
+          "Grouping text, " + // Grouping Information
+          "MusicBrainzArtistId text, " + // MusicBrainz ArtistId
+          "MusicBrainzDiscId text, " + // MusicBrainz DiscId
+          "MusicBrainzReleaseArtistId text, " + // MusicBrainz Release ArtistId
+          "MusicBrainzReleaseCountry text, " + // MusicBrainz Release Country
+          "MusicBrainzReleaseId text, " + // MusicBrainz ReleaseId
+          "MusicBrainzReleaseStatus text, " + // MusicBrainz Release Status
+          "MusicBrainzReleaseTrackId text, " + // MusicBrainz Release TrackId
+          "MusicBrainzReleaseType text, " + // MusicBrainzReleaseType
+          "MusicIpid text, " + // ID from MusicIp
+          "ReplayGainTrack text, " + // Track ReplayGain
+          "ReplayGainTrackPeak text, " + // Peak for Track
+          "ReplayGainAlbum text, " + // Album ReplayGain
+          "ReplayGainAlbumPeak text, " + // Peak for Album
+          "FileType text, " + // File Format (mp3, flac, etc.)           
+          "Codec text, " + // Full Codec Description      
+          "BitRateMode text, " + // Bitrate mode (CBR / VBR)           
+          "BPM integer, " + // Beats per Minute
+          "BitRate integer, " + // Bitrate
+          "Channels integer, " + // Channels
+          "SampleRate integer, " + // Sample Rate    
+          "DateLastPlayed timestamp, " + // Date, Last Time Played
+          "DateAdded timestamp, " + // Date added. Either Insertion date, Creation date, LastWrite
+          "Foreign Key(IdFolder) references Folder(Id), " +
+          "Foreign Key(IdAlbum) references Album(Id)" +
           ")"
           );
 
-        MusicDbClient.Execute(strSQL);
+        DatabaseUtility.AddIndex(MusicDbClient, "IdxSong_FileName", "CREATE INDEX IdxSong_FileName ON Song(FileName ASC)");
 
-        // Indices for Tracks table
-        DatabaseUtility.AddIndex(MusicDbClient, "idxpath_strPath", "CREATE INDEX idxpath_strPath ON tracks(strPath ASC)");
-        DatabaseUtility.AddIndex(MusicDbClient, "idxartist_strArtist",
-                                 "CREATE INDEX idxartist_strArtist ON tracks(strArtist ASC)");
-        //DatabaseUtility.AddIndex(MusicDbClient, "idxartist_strArtistSortName", "CREATE INDEX idxartist_strArtistSortName ON tracks(strArtistSortName ASC)");
-        DatabaseUtility.AddIndex(MusicDbClient, "idxalbum_strAlbumArtist",
-                                 "CREATE INDEX idxalbum_strAlbumArtist ON tracks(strAlbumArtist ASC)");
-        DatabaseUtility.AddIndex(MusicDbClient, "idxalbum_strAlbum",
-                                 "CREATE INDEX idxalbum_strAlbum ON tracks(strAlbum ASC)");
-        DatabaseUtility.AddIndex(MusicDbClient, "idxgenre_strGenre",
-                                 "CREATE INDEX idxgenre_strGenre ON tracks(strGenre ASC)");
-        DatabaseUtility.AddIndex(MusicDbClient, "idxcomposer_strComposer",
-                                 "CREATE INDEX idxcomposer_strComposer ON tracks(strComposer ASC)");
-        DatabaseUtility.AddIndex(MusicDbClient, "idxconductor_strConductor",
-                                 "CREATE INDEX idxconductor_strConductor ON tracks(strConductor ASC)");
+        // AlbumArtist: Relation between Artist - Album  
+        DatabaseUtility.AddTable(MusicDbClient, "AlbumArtist",
+                                 "CREATE TABLE AlbumArtist (" +
+                                 "IdArtist integer not null," +
+                                 "IdAlbum integer not null," +
+                                 "Primary Key(IdArtist, IdAlbum" +
+                                 ")");
 
-        // Artist 
-        DatabaseUtility.AddTable(MusicDbClient, "artist",
-                                 "CREATE TABLE artist ( idArtist integer primary key autoincrement, strArtist text)");
-        DatabaseUtility.AddIndex(MusicDbClient, "idxartisttable_strArtist",
-                                 "CREATE INDEX idxartisttable_strArtist ON artist(strArtist ASC)");
+        // ArtistSong: Relation between Artist - Song  
+        DatabaseUtility.AddTable(MusicDbClient, "ArtistSong",
+                                 "CREATE TABLE ArtistSong (" +
+                                 "IdArtist integer not null," +
+                                 "IdSong integer not null," +
+                                 "Primary Key(IdArtist, IdSong" +
+                                 ")");
 
-        // AlbumArtist 
-        DatabaseUtility.AddTable(MusicDbClient, "albumartist",
-                                 "CREATE TABLE albumartist ( idAlbumArtist integer primary key autoincrement, strAlbumArtist text)");
-        DatabaseUtility.AddIndex(MusicDbClient, "idxalbumartisttable_strAlbumArtist",
-                                 "CREATE INDEX idxalbumartisttable_strAlbumArtist ON albumartist(strAlbumArtist ASC)");
+        // GenreSong: Relation between Genre - Song  
+        DatabaseUtility.AddTable(MusicDbClient, "GenreSong",
+                                 "CREATE TABLE GenreSong (" +
+                                 "IdGenre integer not null," +
+                                 "IdSong integer not null," +
+                                 "Primary Key(IdGenre, IdSong" +
+                                 ")");
 
-        // Genre
-        DatabaseUtility.AddTable(MusicDbClient, "genre",
-                                 "CREATE TABLE genre ( idGenre integer primary key autoincrement, strGenre text)");
-        DatabaseUtility.AddIndex(MusicDbClient, "idxgenretable_strGenre",
-                                 "CREATE INDEX idxgenretable_strGenre ON genre(strGenre ASC)");
+        // ComposerSong: Relation between Composer - Song  
+        DatabaseUtility.AddTable(MusicDbClient, "ComposerSong",
+                                 "CREATE TABLE ComposerSong (" +
+                                 "IdComposer integer not null," +
+                                 "IdSong integer not null," +
+                                 "Primary Key(IdComposer, IdSong" +
+                                 ")");
 
-        // Composer
-        DatabaseUtility.AddTable(MusicDbClient, "composer",
-                                 "CREATE TABLE composer ( idComposer integer primary key autoincrement, strComposer text)");
-        DatabaseUtility.AddIndex(MusicDbClient, "idxcomposertable_strComposer",
-                                 "CREATE INDEX idxcomposertable_strComposer ON composer(strComposer ASC)");
+        // ConductorSong: Relation between Conductor - Song  
+        DatabaseUtility.AddTable(MusicDbClient, "ConductorSong",
+                                 "CREATE TABLE ConductorSong (" +
+                                 "IdConductor integer not null," +
+                                 "IdSong integer not null," +
+                                 "Primary Key(IdConductor, IdSong" +
+                                 ")");
 
         // Artist Info and Album Info
         DatabaseUtility.AddTable(MusicDbClient, "albuminfo",
@@ -387,6 +423,9 @@ namespace MediaPortal.Music.Database
 
     #region Transactions
 
+    /// <summary>
+    /// Begin a database transaction
+    /// </summary>
     public void BeginTransaction()
     {
       try
@@ -397,17 +436,18 @@ namespace MediaPortal.Music.Database
       {
         Log.Error("MusicDatabase: BeginTransaction: musicdatabase begin transaction failed exception err:{0} ",
                   ex.Message);
-        //Open();
       }
     }
 
+    /// <summary>
+    /// End a database transaction, commiting all changed rows
+    /// </summary>
     public void CommitTransaction()
     {
       Log.Debug("MusicDatabase: Commit will effect {0} rows", Instance.DbConnection.ChangedRows());
-      SQLiteResultSet CommitResults;
       try
       {
-        CommitResults = DirectExecute("commit");
+        DirectExecute("commit");
       }
       catch (Exception ex)
       {
@@ -416,6 +456,9 @@ namespace MediaPortal.Music.Database
       }
     }
 
+    /// <summary>
+    /// Rollback a database transactio, reverting all changes
+    /// </summary>
     public void RollbackTransaction()
     {
       Log.Debug("MusicDatabase: Rolling back transactions due to unrecoverable error. Effecting {0} rows",
