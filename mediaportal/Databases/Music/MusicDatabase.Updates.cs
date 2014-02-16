@@ -25,11 +25,12 @@ using System.Globalization;
 using System.IO;
 using System.Threading;
 using MediaPortal.Database;
+using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
-using MediaPortal.ServiceImplementations;
 using MediaPortal.TagReader;
 using MediaPortal.Util;
 using SQLite.NET;
+using Log = MediaPortal.ServiceImplementations.Log;
 
 namespace MediaPortal.Music.Database
 {
@@ -109,11 +110,9 @@ namespace MediaPortal.Music.Database
     private bool _updateSinceLastImport = false;
     private bool _excludeHiddenFiles = false;
     private bool _singleFolderScan = false;
-    private int _folderQueueLength = 0;
 
     private Thread _scanThread = null;
     private ManualResetEvent _scanSharesFinishedEvent = null;
-    private ManualResetEvent _scanFoldersFinishedEvent = null;
 
     private string _previousDirectory = null;
     private string _previousNegHitDir = null;
@@ -121,25 +120,28 @@ namespace MediaPortal.Music.Database
     private MusicTag _previousMusicTag = null;
     private bool _foundVariousArtist = false;
 
-    private readonly char[] trimChars = {' ', '\x00', '|'};
+    private readonly char[] trimChars = { ' ', '\x00', '|' };
 
-    private readonly string[] _multipleValueFields = new string[] {"artist", "albumartist", "genre", "composer"};
+    private readonly string[] _multipleValueFields = new string[] { "artist", "albumartist", "genre", "composer" };
 
     private int _songCount, _artistCount, _albumCount, _genreCount, _folderCount, _shareCount = 0; // Count for the various IDs
 
+    private string _currentShare = null;
+
     // The cache
     private Dictionary<string, int> _artistCache = new Dictionary<string, int>();
+    private Dictionary<string, int> _albumArtistCache = new Dictionary<string, int>();
     private Dictionary<string, int> _albumCache = new Dictionary<string, int>();
     private Dictionary<string, int> _genreCache = new Dictionary<string, int>();
     private Dictionary<string, int> _shareCache = new Dictionary<string, int>();
     private Dictionary<string, int> _folderCache = new Dictionary<string, int>();
 
     // Objects to put a lock on the code during thread execution
-    private object _artistLock = new object();
-    private object _albumLock = new object();
-    private object _genreLock = new object();
-    private object _folderLock = new object();
-    private object _shareLock = new object();
+    private readonly object _artistLock = new object();
+    private readonly object _albumLock = new object();
+    private readonly object _genreLock = new object();
+    private readonly object _folderLock = new object();
+    private readonly object _shareLock = new object();
 
 
     #endregion
@@ -265,7 +267,7 @@ namespace MediaPortal.Music.Database
         int idSong = DatabaseUtility.GetAsInt(results, 0, "idTrack");
         int iTimesPlayed = DatabaseUtility.GetAsInt(results, 0, "iTimesPlayed");
 
-        strSQL = String.Format("UPDATE tracks SET iTimesPlayed={0}, dateLastPlayed='{1}' where idTrack='{2}'", 
+        strSQL = String.Format("UPDATE tracks SET iTimesPlayed={0}, dateLastPlayed='{1}' where idTrack='{2}'",
           ++iTimesPlayed, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), idSong);
         if (DirectExecute(strSQL).Rows.Count > 0)
         {
@@ -955,23 +957,31 @@ namespace MediaPortal.Music.Database
         //dummy call to stop lots of watchers being created unnecessarily
         Util.Utils.FileExistsInCache(Path.Combine(share, "folder.jpg"));
         // Get all the files for the given Share / Path
+        _currentShare = share;
         try
         {
-          int maxThreads = 0;
-          int maxComplThreads = 0;
-          ThreadPool.GetAvailableThreads(out maxThreads, out maxComplThreads);
-
-          ThreadPool.SetMaxThreads(Environment.ProcessorCount, maxComplThreads);
-
-          var di = new DirectoryInfo(share);
-          foreach (var folder in GetFolders(di))
+          foreach (FileInformation file in GetFilesRecursive(new DirectoryInfo(share)))
           {
-            ThreadPool.QueueUserWorkItem(new WaitCallback(ProcessFolder), folder);
-            _folderQueueLength++;
-          }
+            _allFilesCount++;
 
-          _scanFoldersFinishedEvent = new ManualResetEvent(false);
-          _scanFoldersFinishedEvent.WaitOne();
+            if (_allFilesCount % 1000 == 0)
+            {
+              Log.Info("MusicDBReorg: Procesing file {0}", _allFilesCount);
+            }
+
+            MyArgs.progress = 4;
+            MyArgs.phase = String.Format("Processing file {0}", _allFilesCount);
+            OnDatabaseReorgChanged(MyArgs);
+
+            if (!CheckFileForInclusion(file))
+            {
+              continue;
+            }
+
+            _processCount++;
+
+            AddUpdateSong(file.Name);
+          }
         }
         catch (Exception ex)
         {
@@ -1026,49 +1036,6 @@ namespace MediaPortal.Music.Database
       _scanSharesFinishedEvent.Set();
     }
 
-    private void ProcessFolder(object dirInfo)
-    {
-      var di = (DirectoryInfo)dirInfo;
-      try
-      {
-        foreach (FileInformation file in GetFiles(di))
-        {
-          Interlocked.Increment(ref _allFilesCount);
-
-          if (_allFilesCount % 1000 == 0)
-          {
-            Log.Info("MusicDBReorg: Procesing file {0}", _allFilesCount);
-          }
-
-          /*
-          MyArgs.progress = 4;
-          MyArgs.phase = String.Format("Processing file {0}", allFilesCount);
-          OnDatabaseReorgChanged(MyArgs);
-          */
-
-          if (!CheckFileForInclusion(file))
-          {
-            continue;
-          }
-
-          _processCount++;
-
-          AddUpdateSong(file.Name);
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("MusicDBReorg: Exception accessing file or folder: {0}", ex.Message);
-      }
-
-      Interlocked.Decrement(ref _folderQueueLength);
-      if (_folderQueueLength == 0)
-      {
-        _scanFoldersFinishedEvent.Set();
-      }
-    }
-
-
     /// <summary>
     /// Check, if a file should be Added or Updated to the DB
     /// </summary>
@@ -1081,7 +1048,12 @@ namespace MediaPortal.Music.Database
       string song = file;
       string strFileName = song;
       DatabaseUtility.RemoveInvalidChars(ref strFileName);
-      strSQL = String.Format("select idTrack from tracks where strPath='{0}'", strFileName);
+
+      // Let's check, if we've got already that file in the database
+      strSQL = string.Format("select s.id from Song s " +
+        "join folder fo on fo.Id = IdFolder " +
+        "join share sh on sh.Id = fo.IDShare " +
+        "where Filename  like '{0}'", strFileName);
 
       try
       {
@@ -1112,51 +1084,43 @@ namespace MediaPortal.Music.Database
     }
 
     /// <summary>
-    /// Build an Iterator over the given Folder, returning all Foldres recursively
+    /// Build an Iterator over the given Directory, returning all files recursively
+    /// </summary>
+    /// <param name="dirInfo"></param>
+    /// <returns></returns>
+    private IEnumerable<FileInformation> GetFilesRecursive(DirectoryInfo dirInfo)
+    {
+      return GetFilesRecursive(dirInfo, "*.*");
+    }
+
+    /// <summary>
+    /// Build an Iterator over the given Directory, returning all files recursively
     /// </summary>
     /// <param name="dirInfo">DirectoryInfo for the directory we want files returned for</param>
-    /// <returns>IENumerable</returns>
+    /// <param name="searchPattern">This parameter is ignored in the current implementation</param>
+    /// <returns></returns>
     /// 
     /// A much more elegant way would be using the method below, but it is not allowed to have a yield inside a try / catch,
     /// and we need to capture Access Exceptions to Directories and Files.
     /// The method used now has the same speed.
     /// 
-    /// private IEnumerable<DirectoryInfo> GetFolders(DirectoryInfo dirInfo)
+    /// private IEnumerable<FileInfo> GetFilesRecursive(DirectoryInfo dirInfo, string searchPattern)
     /// {
     ///  foreach (DirectoryInfo di in dirInfo.GetDirectories())
     ///  {
-    ///    yield return di;
+    ///    musicFolders.Add(di.FullName);
+    ///    foreach (FileInfo fi in GetFilesRecursive(di, searchPattern))
+    ///    {
+    ///      yield return fi;
+    ///    }
+    ///  }
+    ///
+    ///  foreach (FileInfo fi in dirInfo.GetFiles(searchPattern))
+    ///  {
+    ///    yield return fi;
     ///  }
     /// }
-    private IEnumerable<DirectoryInfo> GetFolders(DirectoryInfo dirInfo)
-    {
-      Queue<DirectoryInfo> directories = new Queue<DirectoryInfo>();
-      directories.Enqueue(dirInfo);
-      while (directories.Count > 0)
-      {
-        DirectoryInfo dir = directories.Dequeue();
-        yield return dir;
-
-        try
-        {
-          foreach (DirectoryInfo di in dir.GetDirectories())
-          {
-            directories.Enqueue(di);
-          }
-        }
-        catch (UnauthorizedAccessException ex)
-        {
-          Log.Error("Musicdatabasereorg: File / Directory Access error: {0}", ex.Message);
-        }
-      }
-    }
-
-    /// <summary>
-    ///   Read a Folder and return the files
-    /// </summary>
-    /// <param name = "folder"></param>
-    /// <param name = "foundFiles"></param>
-    private IEnumerable<FileInformation> GetFiles(DirectoryInfo dirInfo)
+    private IEnumerable<FileInformation> GetFilesRecursive(DirectoryInfo dirInfo, string searchPattern)
     {
       Queue<DirectoryInfo> directories = new Queue<DirectoryInfo>();
       directories.Enqueue(dirInfo);
@@ -1172,18 +1136,26 @@ namespace MediaPortal.Music.Database
           if (directories.Count > 0)
           {
             DirectoryInfo dir = directories.Dequeue();
+            musicFolders.Add(dir.FullName);
+
+            DirectoryInfo[] newDirectories = dir.GetDirectories();
             FileInformation[] newFiles = MediaPortal.Util.NativeFileSystemOperations.GetFileInformation(dir.FullName,
                                                                                                         !_excludeHiddenFiles);
-
-            foreach (FileInformation fi in newFiles)
+            // dir.GetFiles(searchPattern);
+            string[] newFiles2 = MediaPortal.Util.NativeFileSystemOperations.GetFiles(dir.FullName);
+            foreach (DirectoryInfo di in newDirectories)
             {
-              files.Enqueue(fi);
+              directories.Enqueue(di);
+            }
+            foreach (FileInformation file in newFiles)
+            {
+              files.Enqueue(file);
             }
           }
         }
         catch (UnauthorizedAccessException ex)
         {
-          Log.Error("MusicdatabaseReorg: File / Directory Access error: {0}", ex.Message);
+          Log.Error("MusicDBReorg: File / Directory Access error: {0}", ex.Message);
         }
       }
     }
@@ -1289,54 +1261,92 @@ namespace MediaPortal.Music.Database
         // Extract the Coverart first because else the quote string escape will result in double "'" for the coverart filenames
         ExtractCoverArt(tag);
 
-        string strTmp;
-        strTmp = tag.Album;
-        DatabaseUtility.RemoveInvalidChars(ref strTmp);
-        tag.Album = strTmp == "unknown" ? "" : strTmp;
-        strTmp = tag.Genre;
-        DatabaseUtility.RemoveInvalidChars(ref strTmp);
-        tag.Genre = strTmp == "unknown" ? "" : strTmp;
-        strTmp = tag.Artist;
-        DatabaseUtility.RemoveInvalidChars(ref strTmp);
-        tag.Artist = strTmp == "unknown" ? "" : strTmp;
-        strTmp = tag.Title;
-        DatabaseUtility.RemoveInvalidChars(ref strTmp);
-        tag.Title = strTmp == "unknown" ? "" : strTmp;
-        strTmp = tag.AlbumArtist;
-        DatabaseUtility.RemoveInvalidChars(ref strTmp);
-        tag.AlbumArtist = strTmp == "unknown" ? "" : strTmp;
-        strTmp = tag.Lyrics;
-        DatabaseUtility.RemoveInvalidChars(ref strTmp);
-        tag.Lyrics = strTmp == "unknown" ? "" : strTmp;
-        strTmp = tag.Composer;
-        DatabaseUtility.RemoveInvalidChars(ref strTmp);
-        tag.Composer = strTmp == "unknown" ? "" : strTmp;
-        strTmp = tag.Conductor;
-        DatabaseUtility.RemoveInvalidChars(ref strTmp);
-        tag.Conductor = strTmp == "unknown" ? "" : strTmp;
-        strTmp = tag.Comment;
-        DatabaseUtility.RemoveInvalidChars(ref strTmp);
-        tag.Comment = strTmp == "unknown" ? "" : strTmp;
-        strTmp = tag.Codec;
-        DatabaseUtility.RemoveInvalidChars(ref strTmp);
-        tag.Codec = strTmp == "unknown" ? "" : strTmp;
+        tag.Album = DatabaseUtility.RemoveInvalidChars(tag.Album);
+        tag.Album = tag.Album == "unknown" ? "" : tag.Album;
+        tag.AlbumSort = DatabaseUtility.RemoveInvalidChars(tag.AlbumSort);
+        tag.AlbumSort = tag.AlbumSort == "unknown" ? "" : tag.AlbumSort;
+        tag.Genre = DatabaseUtility.RemoveInvalidChars(tag.Genre);
+        tag.Genre = tag.Genre == "unknown" ? "" : tag.Genre;
+        tag.Artist = DatabaseUtility.RemoveInvalidChars(tag.Artist);
+        tag.Artist = tag.Artist == "unknown" ? "" : tag.Artist;
+        tag.ArtistSort = DatabaseUtility.RemoveInvalidChars(tag.ArtistSort);
+        tag.ArtistSort = tag.ArtistSort == "unknown" ? "" : tag.ArtistSort;
+        tag.Title = DatabaseUtility.RemoveInvalidChars(tag.Title);
+        tag.Title = tag.Title == "unknown" ? "" : tag.Title;
+        tag.TitleSort = DatabaseUtility.RemoveInvalidChars(tag.TitleSort);
+        tag.TitleSort = tag.TitleSort == "unknown" ? "" : tag.TitleSort;
+        tag.AlbumArtist = DatabaseUtility.RemoveInvalidChars(tag.AlbumArtist);
+        tag.AlbumArtist = tag.AlbumArtist == "unknown" ? "" : tag.AlbumArtist;
+        tag.AlbumArtistSort = DatabaseUtility.RemoveInvalidChars(tag.AlbumArtistSort);
+        tag.AlbumArtistSort = tag.AlbumArtist == "unknown" ? "" : tag.AlbumArtistSort;
+        tag.Lyrics = DatabaseUtility.RemoveInvalidChars(tag.Lyrics);
+        tag.Lyrics = tag.Lyrics == "unknown" ? "" : tag.Lyrics;
+        tag.Composer = DatabaseUtility.RemoveInvalidChars(tag.Composer);
+        tag.Composer = tag.Composer == "unknown" ? "" : tag.Composer;
+        tag.ComposerSort = DatabaseUtility.RemoveInvalidChars(tag.ComposerSort);
+        tag.ComposerSort = tag.ComposerSort == "unknown" ? "" : tag.ComposerSort;
+        tag.Conductor = DatabaseUtility.RemoveInvalidChars(tag.Conductor);
+        tag.Conductor = tag.Conductor == "unknown" ? "" : tag.Conductor;
+        tag.Comment = DatabaseUtility.RemoveInvalidChars(tag.Comment);
+        tag.Comment = tag.Comment == "unknown" ? "" : tag.Comment;
+        tag.Codec = DatabaseUtility.RemoveInvalidChars(tag.Codec);
+        tag.Codec = tag.Codec == "unknown" ? "" : tag.Codec;
 
         if (!tag.HasAlbumArtist)
         {
           tag.AlbumArtist = tag.Artist;
         }
 
-        // When we got Multiple Entries of either Artist, Genre, Albumartist in WMP notation, separated by ";",
-        // we will store them separeted by "|"
-        tag.Artist = Util.Utils.FormatMultiItemMusicString(tag.Artist, _stripArtistPrefixes);
-        tag.AlbumArtist = Util.Utils.FormatMultiItemMusicString(tag.AlbumArtist, _stripArtistPrefixes);
-        tag.Genre = Util.Utils.FormatMultiItemMusicString(tag.Genre, false);
-        tag.Composer = Util.Utils.FormatMultiItemMusicString(tag.Composer, _stripArtistPrefixes);
+        if (_stripArtistPrefixes)
+        {
+          var strTmp = tag.Artist.Trim();
+          Util.Utils.StripArtistNamePrefix(ref strTmp, true);
+          tag.Artist = strTmp;
+
+          strTmp = tag.AlbumArtist.Trim();
+          Util.Utils.StripArtistNamePrefix(ref strTmp, true);
+          tag.AlbumArtist = strTmp;
+
+          strTmp = tag.Composer.Trim();
+          Util.Utils.StripArtistNamePrefix(ref strTmp, true);
+          tag.Composer = strTmp;
+
+          strTmp = tag.Conductor.Trim();
+          Util.Utils.StripArtistNamePrefix(ref strTmp, true);
+          tag.Conductor = strTmp;
+        }
 
         return tag;
       }
       return null;
     }
+
+    /// <summary>
+    /// Gets the Tag Value from the Tag, formatting it correctly for SQL Statements
+    /// </summary>
+    /// <param name="tag"></param>
+    /// <returns></returns>
+    private string GetTagValue(object tag)
+    {
+      if (tag is string)
+      {
+        string s = (string)tag;
+        DatabaseUtility.RemoveInvalidChars(ref s);
+        if (s == string.Empty || s == Strings.Unknown)
+        {
+          return "null";
+        }
+        return string.Format("'{0}'", s);
+      }
+
+      int i = (int)tag;
+      if (i == 0)
+      {
+        return "null";
+      }
+      return string.Format("{0}", i);
+    }
+
 
     /// <summary>
     /// Adds a Song to the Database
@@ -1367,22 +1377,43 @@ namespace MediaPortal.Music.Database
 
         DatabaseUtility.RemoveInvalidChars(ref strFileName);
 
+        // Add the Folder and Album to get the IDs for the Song insert 
+        var folderId = AddFolder(Path.GetDirectoryName(strFileName));
+        var albumId = AddAlbum(tag);
+
+        // Song Id
+        var songId = Interlocked.Increment(ref _songCount);
+        var fileName = Path.GetFileName(strFileName);
+
         strSQL =
-          String.Format(
-            @"insert into tracks (
-                               strPath, strArtist, strAlbumArtist, strAlbum, strGenre, strComposer, strConductor, strTitle, 
-                               iTrack, iNumTracks, iDuration, iYear, iTimesPlayed, iRating, iFavorite, 
-                               iResumeAt, iDisc, iNumDisc, strLyrics, strComment, strFileType, strFullCodec, strBitRateMode, 
-                               iBPM, iBitRate, iChannels, iSampleRate, dateLastPlayed, dateAdded) 
-                               values ( 
-                               '{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}',
-                               {8}, {9}, {10}, {11}, {12}, {13}, {14}, 
-                               {15}, {16}, {17}, '{18}', '{19}',  '{20}', '{21}',  '{22}',  {23}, {24}, {25}, {26}, '{27}', '{28}' )",
-            strFileName, tag.Artist, tag.AlbumArtist, tag.Album, tag.Genre, tag.Composer, tag.Conductor, tag.Title,
-            tag.Track, tag.TrackTotal, tag.Duration, tag.Year, 0, tag.Rating, 0,
-            0, tag.DiscID, tag.DiscTotal, tag.Lyrics, tag.Comment, tag.FileType, tag.Codec, tag.BitRateMode,
-            tag.BPM, tag.BitRate, tag.Channels, tag.SampleRate, DateTime.MinValue.ToString("yyyy-MM-dd HH:mm:ss"), dateadded.ToString("yyyy-MM-dd HH:mm:ss")
-            );
+          string.Format(
+            @"insert into Song ( " +
+                       "Id, IdFolder, IdAlbum, FileName, Title, TitleSort, Track, TrackCount, Disc, DiscCount," +
+                       "Duration, Year, Timesplayed, Rating, Lyrics, Comment, Copyright," +
+                       "AmazonId, Grouping, MusicBrainzArtistId, MusicBrainzDiscId, MusicBrainzReleaseArtistId," +
+                       "MusicBrainzReleaseCountry, MusicBrainzReleaseId, MusicBrainzReleaseStatus, MusicBrainzReleaseTrackid," +
+                       "MusicBrainzReleaseType, MusicIpId, ReplayGainTrack, ReplayGainTrackPeak, ReplayGainAlbum, ReplayGainAlbumPeak," +
+                       "FileType, Codec, BitRateMode, BPM, Bitrate, Channels, Samplerate, DateLastPlayed, DateAdded, Favorite, ResumeAt) " +
+                  "values ( " +
+                       "{0}, {1}, {2}, '{3}', {4}, {5}, {6}, {7}, {8}, {9}," +
+                       "{10}, {11}, {12}, {13}, {14}, {15}, {16}, {17}, {18}," +
+                       "{19}, {20}, {21}, {22}, {23}," +
+                       "{24}, {25}, {26}, {27}," +
+                       "{28}, {29}, {30}, {31}, {32}, {33}," +
+                       "{34}, {35}, {36}, {37}, {38}, '{39}', '{40}', null, null)",
+                  songId, folderId, albumId, fileName, GetTagValue(tag.Title), GetTagValue(tag.TitleSort), GetTagValue(tag.Track),
+                  GetTagValue(tag.TrackTotal), GetTagValue(tag.DiscID), GetTagValue(tag.DiscTotal), GetTagValue(tag.Duration),
+                  GetTagValue(tag.Year), GetTagValue(tag.TimesPlayed), GetTagValue(tag.Rating), GetTagValue(tag.Lyrics),
+                  GetTagValue(tag.Comment), GetTagValue(tag.Copyright), GetTagValue(tag.AmazonId), GetTagValue(tag.Grouping),
+                  GetTagValue(tag.MusicBrainzArtistId), GetTagValue(tag.MusicBrainzDiscId), GetTagValue(tag.MusicBrainzReleaseArtistId),
+                  GetTagValue(tag.MusicBrainzReleaseCountry), GetTagValue(tag.MusicBrainzReleaseId), GetTagValue(tag.MusicBrainzReleaseStatus),
+                  GetTagValue(tag.MusicBrainzReleaseTrackId), GetTagValue(tag.MusicBrainzReleaseType), GetTagValue(tag.MusicIpid),
+                  GetTagValue(tag.ReplayGainTrack), GetTagValue(tag.ReplayGainTrackPeak), GetTagValue(tag.ReplayGainAlbum),
+                  GetTagValue(tag.ReplayGainAlbumPeak), GetTagValue(tag.FileType), GetTagValue(tag.Codec), GetTagValue(tag.BitRateMode),
+                  GetTagValue(tag.BPM), GetTagValue(tag.BitRate), GetTagValue(tag.Channels), GetTagValue(tag.SampleRate),
+                  DateTime.MinValue.ToString("yyyy-MM-dd HH:mm:ss"), dateadded.ToString("yyyy-MM-dd HH:mm:ss")
+                  );
+
         try
         {
           SQLiteResultSet results = DirectExecute(strSQL);
@@ -1393,12 +1424,49 @@ namespace MediaPortal.Music.Database
           }
 
           // Now add the Multiple Value Fields to their tables
-          AddMultipleValueFields(tag);
-
-          if (_treatFolderAsAlbum)
+          string[] splittedValues = tag.Artist.Split(';');
+          foreach (var artistName in splittedValues)
           {
-            UpdateVariousArtist(tag);
+            int artistId = AddArtist(artistName);
+            strSQL = string.Format("insert into ArtistSong values ({0}, {1})", artistId, songId);
+            results = DirectExecute(strSQL);
           }
+
+          splittedValues = tag.AlbumArtist.Split(';');
+          foreach (var albumArtistName in splittedValues)
+          {
+            int artistId = AddArtist(albumArtistName);
+            string albumArtistRelation = string.Format("{0}|{1}", artistId, albumId);
+            int val = 0;
+            if (!_albumArtistCache.TryGetValue(albumArtistRelation, out val))
+            {
+              strSQL = string.Format("insert into AlbumArtist values ({0}, {1})", artistId, albumId);
+              results = DirectExecute(strSQL);
+              _albumArtistCache.Add(albumArtistRelation, 0);
+            }
+          }
+
+          splittedValues = tag.Genre.Split(';');
+          foreach (var genreName in splittedValues)
+          {
+            int genreId = AddGenre(genreName);
+            strSQL = string.Format("insert into genresong values ({0}, {1})", genreId, songId);
+            results = DirectExecute(strSQL);
+          }
+
+          splittedValues = tag.Composer.Split(';');
+          foreach (var composerName in splittedValues)
+          {
+            int artistId = AddArtist(composerName);
+            strSQL = string.Format("insert into composersong values ({0}, {1})", artistId, songId);
+            results = DirectExecute(strSQL);
+          }
+
+
+          //if (_treatFolderAsAlbum)
+          //{
+          //  UpdateVariousArtist(tag);
+          //}
         }
         catch (Exception)
         {
@@ -1410,40 +1478,6 @@ namespace MediaPortal.Music.Database
       return (int)Errors.ERROR_OK;
     }
 
-
-    private void AddMultipleValueFields(MusicTag tag)
-    {
-      try
-      {
-        string strSQL;
-        string strMultiValueFieldValue = "";
-
-        foreach (string field in _multipleValueFields)
-        {
-          // split up the multiple value field
-          strMultiValueFieldValue = GetMultipleValueFieldValue(tag, field).Trim(new char[] {'|', ' '});
-          string[] splittedFields = strMultiValueFieldValue.Split(new char[] {';', '|'});
-          foreach (string s in splittedFields)
-          {
-            // ATTENTION: We need to use the 'like' operator instead of '=' to have case insensitive searching
-            strSQL = String.Format("select {0} from {1} where {0} like '{2}'", GetMultipleValueField(field),
-                                   GetMultipleValueTable(field), s == "" ? " " : s.Trim());
-            if (DirectExecute(strSQL).Rows.Count < 1)
-            {
-              // Insert the Artist
-              strSQL = String.Format("insert into {1} ({0}) values ('{2}')", GetMultipleValueField(field),
-                                     GetMultipleValueTable(field), s == "" ? " " : s.Trim());
-              DirectExecute(strSQL);
-            }
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("Musicdatabase: Exception adding multiple field value: {0} stack: {1}", ex.Message, ex.StackTrace);
-        Open();
-      }
-    }
 
     /// <summary>
     /// Update an existing song with the Tags from the file
@@ -1498,7 +1532,7 @@ namespace MediaPortal.Music.Database
             DirectExecute(strSQL);
 
             // Now add the Artist, AlbumArtist and Genre to the Artist / Genre Tables
-            AddMultipleValueFields(tag);
+            //AddMultipleValueFields(tag);
 
             if (_treatFolderAsAlbum)
             {
@@ -1523,68 +1557,167 @@ namespace MediaPortal.Music.Database
       return true;
     }
 
-    private int AddFolder(string fullPath, string shareName)
+    /// <summary>
+    /// Adds a folder to the Cache and to the Databasem, if not found in Cache
+    /// The Share is stripped from the folder and added to the Share Cache / Database
+    /// </summary>
+    /// <param name="fullPath"></param>
+    /// <returns></returns>
+    private int AddFolder(string fullPath)
     {
-      lock (_folderLock)
+      var folder = fullPath.Replace(_currentShare, "").Trim('\\');
+      var shareId = AddShare(_currentShare);
+
+      int val = 0;
+      if (_folderCache.TryGetValue(folder, out val))
       {
-        var folder = fullPath.Replace(shareName, "").Trim('\\');
-        var shareId = AddShare(shareName);
-
-        DatabaseUtility.RemoveInvalidChars(ref folder);
-        int val = 0;
-        if (_folderCache.TryGetValue(folder, out val))
-        {
-          return val;
-        }
-
-        var folderID = Interlocked.Increment(ref _folderCount);
-        _folderCache.Add(folder, folderID);
-        var sql = string.Format("insert into folder values ({0}, '{1}', '{2}')", folderID, shareId, folder);
-        try
-        {
-          SQLiteResultSet result = DirectExecute(sql);
-          if (result != null)
-          {
-            return folderID;
-          }
-        }
-        catch (Exception ex)
-        {
-          Log.Error("MusicDatabaseReorg: DB exception on Folder insert: {0} {1}", folder, ex.Message);
-        }
-        return 0;
+        return val;
       }
+
+      var folderId = ++_folderCount;
+      _folderCache.Add(folder, folderId);
+      var sql = string.Format("insert into folder values ({0}, '{1}', '{2}')", folderId, shareId, folder);
+      try
+      {
+        SQLiteResultSet result = DirectExecute(sql);
+        if (result != null)
+        {
+          return folderId;
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("MusicDatabaseReorg: DB exception on Folder insert: {0} {1}", folder, ex.Message);
+      }
+      return 0;
     }
 
-    private int AddShare(string share)
+    /// <summary>
+    /// Adds a Share to the Cache and to the database, if it doesn't exist in Cache
+    /// </summary>
+    /// <param name="shareName"></param>
+    /// <returns></returns>
+    private int AddShare(string shareName)
     {
-      lock (_shareLock)
+      int val = 0;
+      if (_shareCache.TryGetValue(shareName, out val))
       {
-        DatabaseUtility.RemoveInvalidChars(ref share);
-        int val = 0;
-        if (_shareCache.TryGetValue(share, out val))
-        {
-          return val;
-        }
-
-        var shareID = Interlocked.Increment(ref _shareCount);
-        string sql = string.Format("insert into share values ({0}, '{1}')", shareID, share);
-        try
-        {
-          SQLiteResultSet result = DirectExecute(sql);
-          if (result != null)
-          {
-            return shareID;
-          }
-        }
-        catch (Exception ex)
-        {
-          Log.Error("MusicDatabaseReorg: DB exception on Share insert: {0} {1}", share, ex.Message);
-        }
-        return 0;
+        return val;
       }
+
+      var shareId = ++_shareCount;
+      _shareCache.Add(shareName, shareId);
+      string sql = string.Format("insert into Share values ({0}, '{1}')", shareId, shareName);
+      try
+      {
+        SQLiteResultSet result = DirectExecute(sql);
+        if (result != null)
+        {
+          return shareId;
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("MusicDatabaseReorg: DB exception on Share insert: {0} {1}", shareName, ex.Message);
+      }
+      return 0;
     }
 
+    /// <summary>
+    /// Adds an Album to the Cache and to the Database
+    /// </summary>
+    /// <param name="albumName"></param>
+    /// <returns></returns>
+    private int AddAlbum(MusicTag tag)
+    {
+      int val = 0;
+      if (_albumCache.TryGetValue(tag.Album, out val))
+      {
+        return val;
+      }
+
+      var albumId = ++_albumCount;
+      _albumCache.Add(tag.Album, albumId);
+      string sql = string.Format("insert into album values ({0}, '{1}', '{2}', {3})", albumId, tag.Album, tag.AlbumSort, GetTagValue(tag.Year));
+      try
+      {
+        SQLiteResultSet result = DirectExecute(sql);
+        if (result != null)
+        {
+          return albumId;
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("MusicDatabaseReorg: DB exception on Artist insert: {0} {1}", tag.Album, ex.Message);
+      }
+      return 0;
+    }
+
+    /// <summary>
+    /// Adds an Artist, AlbumArtist, Compoer, Conductor to the Artist Cache and to the Database
+    /// if it doesn't exist in Cache
+    /// </summary>
+    /// <param name="artistName"></param>
+    /// <returns></returns>
+    private int AddArtist(string artistName)
+    {
+      int val = 0;
+      if (_artistCache.TryGetValue(artistName, out val))
+      {
+        return val;
+      }
+
+      var artistId = ++_artistCount;
+      _artistCache.Add(artistName, artistId);
+
+      string sql = string.Format("insert into artist values ({0}, '{1}', '{2}')", artistId, artistName, "");
+      try
+      {
+        SQLiteResultSet result = DirectExecute(sql);
+        if (result != null)
+        {
+          return artistId;
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("MusicDatabaseReorg: DB exception on Artist insert: {0} {1}", artistName, ex.Message);
+      }
+      return 0;
+    }
+
+    /// <summary>
+    /// Adds a Genre to the Cache and if it doesn't exist to the Database
+    /// </summary>
+    /// <param name="genreName"></param>
+    /// <returns></returns>
+    private int AddGenre(string genreName)
+    {
+      int val = 0;
+      if (_genreCache.TryGetValue(genreName, out val))
+      {
+        return val;
+      }
+
+      var genreId = ++_genreCount;
+      _genreCache.Add(genreName, genreId);
+
+      string sql = string.Format("insert into genre values ({0}, '{1}')", genreId, genreName);
+      try
+      {
+        SQLiteResultSet result = DirectExecute(sql);
+        if (result != null)
+        {
+          return genreId;
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("MusicDatabaseReorg: DB exception on Genre insert: {0} {1}", genreName, ex.Message);
+      }
+      return 0;
+    }
 
     #endregion
 
@@ -1597,7 +1730,7 @@ namespace MediaPortal.Music.Database
       // Mantis 3078: Filename for Multiple Artists should not contain a semicolon, cause it wouldn't be found later on
       int i = 0;
       string formattedArtist = "";
-      string[] strArtistSplit = tag.Artist.Split(new char[] {';', '|'});
+      string[] strArtistSplit = tag.Artist.Split(new char[] { ';', '|' });
       foreach (string strArtist in strArtistSplit)
       {
         string s = strArtist.Trim();
@@ -1676,7 +1809,7 @@ namespace MediaPortal.Music.Database
             }
           }
         }
-        catch (Exception) {}
+        catch (Exception) { }
       }
 
       // Scan folders only one time per song
@@ -2005,7 +2138,7 @@ namespace MediaPortal.Music.Database
             // Now we need to remove the Artist of the song from the AlbumArtist table,
             // if he's not an AlbumArtist in a different album
             Song song = map.m_song as Song;
-            string[] strAlbumArtistSplit = song.AlbumArtist.Split(new char[] {'|'});
+            string[] strAlbumArtistSplit = song.AlbumArtist.Split(new char[] { '|' });
             foreach (string strTmp in strAlbumArtistSplit)
             {
               string strAlbumArtist = strTmp.Trim(trimChars);
@@ -2096,7 +2229,7 @@ namespace MediaPortal.Music.Database
 
 
     #endregion
-    
+
     #region Clean Up Foreign Keys
 
     /// <summary>
