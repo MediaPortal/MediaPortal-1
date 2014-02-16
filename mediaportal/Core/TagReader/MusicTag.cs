@@ -19,61 +19,78 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Text;
-using MediaPortal.GUI.Library;
-
 
 namespace MediaPortal.TagReader
 {
   public class MusicTag
   {
-    #region Variables
-
-    internal string m_strArtist = "";
-    internal string m_strAlbum = "";
-    internal string m_strGenre = "";
-    internal string m_strTitle = "";
-    internal string m_strComment = "";
-    internal int m_iYear = 0;
-    internal int m_iDuration = 0;
-    internal int m_iTrack = 0;
-    internal int m_iNumTrack = 0;
-    internal int m_TimesPlayed = 0;
-    internal int m_iRating = 0;
-    internal byte[] m_CoverArtImageBytes = null;
-    internal string m_AlbumArtist = string.Empty;
-    internal string m_Composer = string.Empty;
-    internal string m_Conductor = string.Empty;
-    internal string m_FileType = string.Empty;
-    internal int m_BitRate = 0;
-    internal string m_FileName = string.Empty;
-    internal string m_Lyrics = string.Empty;
-    internal int m_iDiscId = 0;
-    internal int m_iNumDisc = 0;
-    internal bool m_hasAlbumArtist = false;
-    internal DateTime m_dateTimeModified = DateTime.MinValue;
-    internal DateTime m_dateTimePlayed = DateTime.MinValue;
-    internal string m_Codec = string.Empty;
-    internal string m_BitRateMode = string.Empty;
-    internal int m_BPM = 0;
-    internal int m_Channels = 0;
-    internal int m_SampleRate = 0;
-    internal string m_ReplayGainTrack = "";
-    internal string m_ReplayGainTrackPeak = "";
-    internal string m_ReplayGainAlbum = "";
-    internal string m_ReplayGainAlbumPeak = "";
-    internal string m_imageURL = string.Empty;
-
-    #endregion
-
     #region ctor
 
     /// <summary>
     /// empty constructor
     /// </summary>
-    public MusicTag() {}
+    public MusicTag()
+    {
+      #region Tags
+
+      AlbumId = -1;
+      Album = string.Empty;
+      AlbumSort = string.Empty;
+      HasAlbumArtist = false;
+      AlbumArtist = string.Empty;
+      AlbumArtistSort = string.Empty;
+      Artist = string.Empty;
+      ArtistSort = string.Empty;
+      AmazonId = string.Empty;
+      BPM = 0;
+      Comment = string.Empty;
+      Composer = string.Empty;
+      ComposerSort = string.Empty;
+      Conductor = string.Empty;
+      Copyright = string.Empty;
+      CoverArtImageBytes = null;
+      DateTimePlayed = DateTime.MinValue;
+      DateTimeModified = DateTime.MinValue;
+      DiscTotal = 0;
+      DiscID = 0;
+      Genre = string.Empty;
+      Grouping = string.Empty;
+      Lyrics = string.Empty;
+      MusicBrainzArtistId = string.Empty;
+      MusicBrainzDiscId = string.Empty;
+      MusicBrainzReleaseArtistId = string.Empty;
+      MusicBrainzReleaseCountry = string.Empty;
+      MusicBrainzReleaseId = string.Empty;
+      MusicBrainzReleaseStatus = string.Empty;
+      MusicBrainzReleaseTrackId = string.Empty;
+      MusicBrainzReleaseType = string.Empty;
+      MusicIpid = string.Empty;
+      Rating = 0;
+      ReplayGainAlbumPeak = string.Empty;
+      ReplayGainAlbum = string.Empty;
+      ReplayGainTrackPeak = string.Empty;
+      ReplayGainTrack = string.Empty;
+      Title = string.Empty;
+      TitleSort = string.Empty;
+      TimesPlayed = 0;
+      TrackTotal = 0;
+      Track = 0;
+      Year = 0;
+      #endregion
+
+      #region File Properties
+
+      BitRate = 0;
+      BitRateMode = string.Empty;
+      Channels = 0;
+      Codec = string.Empty;
+      Duration = 0;
+      FileName = string.Empty;
+      FileType = string.Empty;
+      SampleRate = 0;
+      
+      #endregion
+    }
 
     /// <summary>
     /// copy constructor
@@ -81,30 +98,128 @@ namespace MediaPortal.TagReader
     /// <param name="tag"></param>
     public MusicTag(MusicTag tag)
     {
+      #region Init Tags
+
+      AlbumId = -1;
+      Album = string.Empty;
+      AlbumSort = string.Empty;
+      HasAlbumArtist = false;
+      AlbumArtist = string.Empty;
+      AlbumArtistSort = string.Empty;
+      Artist = string.Empty;
+      ArtistSort = string.Empty;
+      AmazonId = string.Empty;
+      BPM = 0;
+      Comment = string.Empty;
+      Composer = string.Empty;
+      ComposerSort = string.Empty;
+      Conductor = string.Empty;
+      Copyright = string.Empty;
+      CoverArtImageBytes = null;
+      DateTimePlayed = DateTime.MinValue;
+      DateTimeModified = DateTime.MinValue;
+      DiscTotal = 0;
+      DiscID = 0;
+      Genre = string.Empty;
+      Grouping = string.Empty;
+      Lyrics = string.Empty;
+      MusicBrainzArtistId = string.Empty;
+      MusicBrainzDiscId = string.Empty;
+      MusicBrainzReleaseArtistId = string.Empty;
+      MusicBrainzReleaseCountry = string.Empty;
+      MusicBrainzReleaseId = string.Empty;
+      MusicBrainzReleaseStatus = string.Empty;
+      MusicBrainzReleaseTrackId = string.Empty;
+      MusicBrainzReleaseType = string.Empty;
+      MusicIpid = string.Empty;
+      Rating = 0;
+      ReplayGainAlbumPeak = string.Empty;
+      ReplayGainAlbum = string.Empty;
+      ReplayGainTrackPeak = string.Empty;
+      ReplayGainTrack = string.Empty;
+      Title = string.Empty;
+      TitleSort = string.Empty;
+      TimesPlayed = 0;
+      TrackTotal = 0;
+      Track = 0;
+      Year = 0;
+
+      #endregion
+
+      #region Init File Properties
+
+      BitRate = 0;
+      BitRateMode = string.Empty;
+      Channels = 0;
+      Codec = string.Empty;
+      Duration = 0;
+      FileName = string.Empty;
+      FileType = string.Empty;
+      SampleRate = 0;
+
+      #endregion
+
       if (tag == null) return;
-      Artist = tag.Artist;
+
+      #region Set Tags
+
       Album = tag.Album;
-      Genre = tag.Genre;
-      Title = tag.Title;
-      Comment = tag.Comment;
-      Year = tag.Year;
-      Duration = tag.Duration;
-      Track = tag.Track;
-      TimesPlayed = tag.m_TimesPlayed;
-      Rating = tag.Rating;
-      BitRate = tag.BitRate;
-      Composer = tag.Composer;
-      CoverArtImageBytes = tag.CoverArtImageBytes;
+      AlbumSort = tag.AlbumSort;
+      HasAlbumArtist = tag.HasAlbumArtist;
       AlbumArtist = tag.AlbumArtist;
-      Lyrics = tag.Lyrics;
+      AlbumArtistSort = tag.AlbumArtistSort;
+      Artist = tag.Artist;
+      ArtistSort = tag.ArtistSort;
+      AmazonId = tag.AmazonId;
+      BPM = tag.BPM;
       Comment = tag.Comment;
-      ReplayGainTrack = tag.ReplayGainTrack;
-      ReplayGainTrackPeak = tag.ReplayGainTrackPeak;
-      ReplayGainAlbum = tag.ReplayGainAlbum;
-      ReplayGainAlbumPeak = tag.ReplayGainAlbumPeak;
-      
+      Composer = tag.Composer;
+      ComposerSort = tag.ComposerSort;
+      Conductor = tag.Conductor;
+      Copyright = tag.Copyright;
+      CoverArtImageBytes = tag.CoverArtImageBytes;
       DateTimePlayed = tag.DateTimePlayed;
       DateTimeModified = tag.DateTimeModified;
+      DiscTotal = tag.DiscTotal;
+      DiscID = tag.DiscID;
+      Genre = tag.Genre;
+      Grouping = tag.Grouping;
+      Lyrics = tag.Lyrics;
+      MusicBrainzArtistId = tag.MusicBrainzArtistId;
+      MusicBrainzDiscId = tag.MusicBrainzDiscId;
+      MusicBrainzReleaseArtistId = tag.MusicBrainzReleaseArtistId;
+      MusicBrainzReleaseCountry = tag.MusicBrainzReleaseCountry;
+      MusicBrainzReleaseId = tag.MusicBrainzReleaseId;
+      MusicBrainzReleaseStatus = tag.MusicBrainzReleaseStatus;
+      MusicBrainzReleaseTrackId = tag.MusicBrainzReleaseTrackId;
+      MusicBrainzReleaseType = tag.MusicBrainzReleaseType;
+      MusicIpid = tag.MusicIpid;
+      Rating = tag.Rating;
+      ReplayGainAlbumPeak = tag.ReplayGainAlbumPeak;
+      ReplayGainAlbum = tag.ReplayGainAlbum;
+      ReplayGainTrackPeak = tag.ReplayGainTrackPeak;
+      ReplayGainTrack = tag.ReplayGainTrack;
+      Title = tag.Title;
+      TitleSort = tag.TitleSort;
+      TimesPlayed = tag.TimesPlayed;
+      TrackTotal = tag.TrackTotal;
+      Track = tag.Track;
+      Year = tag.Year;
+
+      #endregion
+
+      #region Set File Properties
+
+      BitRate = tag.BitRate;
+      BitRateMode = tag.BitRateMode;
+      Channels = tag.Channels;
+      Codec = string.Empty;
+      Duration = tag.Duration;
+      FileName = tag.FileName;
+      FileType = tag.FileType;
+      SampleRate = tag.SampleRate;
+
+      #endregion
     }
 
     #endregion
@@ -116,38 +231,66 @@ namespace MediaPortal.TagReader
     /// </summary>
     public void Clear()
     {
-      m_strArtist = "";
-      m_strAlbum = "";
-      m_strGenre = "";
-      m_strTitle = "";
-      m_strComment = "";
-      m_FileType = "";
-      m_iYear = 0;
-      m_iDuration = 0;
-      m_iTrack = 0;
-      m_iNumTrack = 0;
-      m_TimesPlayed = 0;
-      m_iRating = 0;
-      m_BitRate = 0;
-      m_Composer = "";
-      m_Conductor = "";
-      m_AlbumArtist = "";
-      m_Lyrics = "";
-      m_iDiscId = 0;
-      m_iNumDisc = 0;
-      m_hasAlbumArtist = false;
-      m_Codec = "";
-      m_BitRateMode = "";
-      m_BPM = 0;
-      m_Channels = 0;
-      m_SampleRate = 0;
-      m_dateTimeModified = DateTime.MinValue;
-      m_dateTimePlayed = DateTime.MinValue;
-      m_ReplayGainTrack = "";
-      m_ReplayGainTrackPeak = "";
-      m_ReplayGainAlbum = "";
-      m_ReplayGainAlbumPeak = "";
-      m_imageURL = "";
+      #region Tags
+
+      AlbumId = -1;
+      Album = string.Empty;
+      AlbumSort = string.Empty;
+      HasAlbumArtist = false;
+      AlbumArtist = string.Empty;
+      AlbumArtistSort = string.Empty;
+      Artist = string.Empty;
+      ArtistSort = string.Empty;
+      AmazonId = string.Empty;
+      BPM = 0;
+      Comment = string.Empty;
+      Composer = string.Empty;
+      ComposerSort = string.Empty;
+      Conductor = string.Empty;
+      Copyright = string.Empty;
+      CoverArtImageBytes = null;
+      DateTimePlayed = DateTime.MinValue;
+      DateTimeModified = DateTime.MinValue;
+      DiscTotal = 0;
+      DiscID = 0;
+      Genre = string.Empty;
+      Grouping = string.Empty;
+      Lyrics = string.Empty;
+      MusicBrainzArtistId = string.Empty;
+      MusicBrainzDiscId = string.Empty;
+      MusicBrainzReleaseArtistId = string.Empty;
+      MusicBrainzReleaseCountry = string.Empty;
+      MusicBrainzReleaseId = string.Empty;
+      MusicBrainzReleaseStatus = string.Empty;
+      MusicBrainzReleaseTrackId = string.Empty;
+      MusicBrainzReleaseType = string.Empty;
+      MusicIpid = string.Empty;
+      Rating = 0;
+      ReplayGainAlbumPeak = string.Empty;
+      ReplayGainAlbum = string.Empty;
+      ReplayGainTrackPeak = string.Empty;
+      ReplayGainTrack = string.Empty;
+      Title = string.Empty;
+      TitleSort = string.Empty;
+      TimesPlayed = 0;
+      TrackTotal = 0;
+      Track = 0;
+      Year = 0;
+
+      #endregion
+
+      #region File Properties
+
+      BitRate = 0;
+      BitRateMode = string.Empty;
+      Channels = 0;
+      Codec = string.Empty;
+      Duration = 0;
+      FileName = string.Empty;
+      FileType = string.Empty;
+      SampleRate = 0;
+
+      #endregion
     }
 
     public bool IsMissingData
@@ -168,276 +311,281 @@ namespace MediaPortal.TagReader
 
     #region Properties
 
+    #region Tags
+
     /// <summary>
-    /// Property to get/set the comment field of the music file
+    /// Property to get/set the Album id 
     /// </summary>
-    public string Comment
+    public int AlbumId { get; set; }
+
+    /// <summary>
+    /// Property to get/set the Album name 
+    /// </summary>
+    public string Album { get; set; }
+
+    /// <summary>
+    /// Property to get/set the Album nSort ame 
+    /// </summary>
+    public string AlbumSort { get; set; }
+
+    /// <summary>
+    /// Property to indicate if an AlbumArtist is present
+    /// </summary>
+    public bool HasAlbumArtist { get; set; }
+
+    /// <summary>
+    /// Property to get/set the AlbumArtist
+    /// </summary>
+    public string AlbumArtist { get; set; }
+
+    /// <summary>
+    /// Property to get/set the AlbumArtistSort
+    /// </summary>
+    public string AlbumArtistSort { get; set; }
+
+    /// <summary>
+    /// Property to get/set the Artist 
+    /// </summary>
+    public string Artist { get; set; }
+
+    /// <summary>
+    /// Property to get/set the ArtistSort 
+    /// </summary>
+    public string ArtistSort { get; set; }
+
+    /// <summary>
+    /// Property to get/set the AmazonId 
+    /// </summary>
+    public string AmazonId { get; set; }
+
+    /// <summary>
+    /// Property to get/set the Beats per Minute
+    /// </summary>
+    public int BPM { get; set; }
+
+    /// <summary>
+    /// Property to get/set the comment field
+    /// </summary>
+    public string Comment { get; set; }
+
+    /// <summary>
+    /// Property to get/set the Composers 
+    /// </summary>
+    public string Composer { get; set; }
+
+    /// <summary>
+    /// Property to get/set the Composer Sort 
+    /// </summary>
+    public string ComposerSort { get; set; }
+
+    /// <summary>
+    /// Property to get/set the Conductor
+    /// </summary>
+    public string Conductor { get; set; }
+
+    /// <summary>
+    /// Property to get/set the Copyright
+    /// </summary>
+    public string Copyright { get; set; }
+
+    /// <summary>
+    /// Property to get/set the Cover Art Image
+    /// </summary>
+    public byte[] CoverArtImageBytes { get; set; }
+
+    /// <summary>
+    /// Returns the Cover Art
+    /// </summary>
+    public string CoverArtFile
     {
-      get { return m_strComment; }
-      set
-      {
-        if (value == null) return;
-        m_strComment = value.Trim();
-      }
+      get { return Utils.GetImageFile(CoverArtImageBytes, String.Empty); }
     }
 
     /// <summary>
-    /// Property to get/set the Title field of the music file
+    /// Last time the song was played
     /// </summary>
-    public string Title
-    {
-      get { return m_strTitle; }
-      set
-      {
-        if (value == null) return;
-        m_strTitle = value.Trim();
-      }
-    }
+    public DateTime DateTimePlayed { get; set; }
 
     /// <summary>
-    /// Property to get/set the Artist field of the music file
+    /// Last Time the song was modified
     /// </summary>
-    public string Artist
-    {
-      get { return m_strArtist; }
-      set
-      {
-        if (value == null) return;
-        m_strArtist = value.Trim();
-      }
-    }
+    public DateTime DateTimeModified { get; set; }
 
     /// <summary>
-    /// Property to get/set the comment Album name of the music file
+    /// Property to get/set the Disc Id 
     /// </summary>
-    public string Album
-    {
-      get { return m_strAlbum; }
-      set
-      {
-        if (value == null) return;
-        m_strAlbum = value.Trim();
-      }
-    }
+    public int DiscID { get; set; }
 
     /// <summary>
-    /// Property to get/set the Genre field of the music file
+    /// Property to get/set the Total Disc number
     /// </summary>
-    public string Genre
-    {
-      get { return m_strGenre; }
-      set
-      {
-        if (value == null) return;
-        m_strGenre = value.Trim();
-      }
-    }
+    public int DiscTotal { get; set; }
 
     /// <summary>
-    /// Property to get/set the Year field of the music file
+    /// Property to get/set the Genre 
     /// </summary>
-    public int Year
-    {
-      get { return m_iYear; }
-      set { m_iYear = value; }
-    }
+    public string Genre { get; set; }
 
     /// <summary>
-    /// Property to get/set the duration in seconds of the music file
+    /// Property to get/set the Grouping 
     /// </summary>
-    public int Duration
-    {
-      get { return m_iDuration; }
-      set { m_iDuration = value; }
-    }
+    public string Grouping { get; set; }
 
     /// <summary>
-    /// Property to get/set the Track number field of the music file
+    /// Property to get/set the URL of the Image
     /// </summary>
-    public int Track
-    {
-      get { return m_iTrack; }
-      set { m_iTrack = value; }
-    }
+    public string ImageURL { get; set; }
 
     /// <summary>
-    /// Property to get/set the Total Track number field of the music file
+    /// Property to get/set the Lyrics
     /// </summary>
-    public int TrackTotal
-    {
-      get { return m_iNumTrack; }
-      set { m_iNumTrack = value; }
-    }
+    public string Lyrics { get; set; }
 
     /// <summary>
-    /// Property to get/set the Disc Id field of the music file
+    /// Property to get/set the MusicBrainzArtistId
     /// </summary>
-    public int DiscID
-    {
-      get { return m_iDiscId; }
-      set { m_iDiscId = value; }
-    }
+    public string MusicBrainzArtistId { get; set; }
 
     /// <summary>
-    /// Property to get/set the Total Disc number field of the music file
+    /// Property to get/set the MusicBrainzDisctId
     /// </summary>
-    public int DiscTotal
-    {
-      get { return m_iNumDisc; }
-      set { m_iNumDisc = value; }
-    }
+    public string MusicBrainzDiscId { get; set; }
 
     /// <summary>
-    /// Property to get/set the Track number field of the music file
+    /// Property to get/set the MusicBrainzReleaseArtistId
     /// </summary>
-    public int Rating
-    {
-      get { return m_iRating; }
-      set { m_iRating = value; }
-    }
+    public string MusicBrainzReleaseArtistId { get; set; }
+
+    /// <summary>
+    /// Property to get/set the MusicBrainzReleaseCountry
+    /// </summary>
+    public string MusicBrainzReleaseCountry { get; set; }
+
+    /// <summary>
+    /// Property to get/set the MusicBrainzReleaseId
+    /// </summary>
+    public string MusicBrainzReleaseId { get; set; }
+
+    /// <summary>
+    /// Property to get/set the MusicBrainzReleaseStatus
+    /// </summary>
+    public string MusicBrainzReleaseStatus { get; set; }
+
+    /// <summary>
+    /// Property to get/set the MusicBrainzReleaseType
+    /// </summary>
+    public string MusicBrainzReleaseType { get; set; }
+
+    /// <summary>
+    /// Property to get/set the MusicBrainzReleaseTrackId
+    /// </summary>
+    public string MusicBrainzReleaseTrackId { get; set; }
+
+    /// <summary>
+    /// Property to get/set the MusicIpid
+    /// </summary>
+    public string MusicIpid { get; set; }
+
+    /// <summary>
+    /// Property to get/set the Rating
+    /// </summary>
+    public int Rating { get; set; }
+
+    /// <summary>
+    /// Property to get/set the ReplayGain of the Track
+    /// </summary>
+    public string ReplayGainTrack { get; set; }
+
+    /// <summary>
+    /// Property to get/set the Peak of the Track
+    /// </summary>
+    public string ReplayGainTrackPeak { get; set; }
+
+    /// <summary>
+    /// Property to get/set the ReplayGain of the Album
+    /// </summary>
+    public string ReplayGainAlbum { get; set; }
+
+    /// <summary>
+    /// Property to get/set the Peak of the Album
+    /// </summary>
+    public string ReplayGainAlbumPeak { get; set; }
+
+    /// <summary>
+    /// Property to get/set the Title 
+    /// </summary>
+    public string Title { get; set; }
+
+    /// <summary>
+    /// Property to get/set the TitleSort 
+    /// </summary>
+    public string TitleSort { get; set; }
 
     /// <summary>
     /// Property to get/set the number of times this file has been played
     /// </summary>
-    public int TimesPlayed
-    {
-      get { return m_TimesPlayed; }
-      set { m_TimesPlayed = value; }
-    }
-
-    public string FileType
-    {
-      get { return m_FileType; }
-      set { m_FileType = value; }
-    }
-
-    public int BitRate
-    {
-      get { return m_BitRate; }
-      set { m_BitRate = value; }
-    }
-
-    public string AlbumArtist
-    {
-      get { return m_AlbumArtist; }
-      set { m_AlbumArtist = value; }
-    }
-
-    public bool HasAlbumArtist
-    {
-      get { return m_hasAlbumArtist; }
-      set { m_hasAlbumArtist = value; }
-    }
-
-    public string Composer
-    {
-      get { return m_Composer; }
-      set { m_Composer = value; }
-    }
-
-    public string Conductor
-    {
-      get { return m_Conductor; }
-      set { m_Conductor = value; }
-    }
-
-    public string FileName
-    {
-      get { return m_FileName; }
-      set { m_FileName = value; }
-    }
-
-    public string Lyrics
-    {
-      get { return m_Lyrics; }
-      set { m_Lyrics = value; }
-    }
-
-    public string Codec
-    {
-      get { return m_Codec; }
-      set { m_Codec = value; }
-    }
-
-    public string BitRateMode
-    {
-      get { return m_BitRateMode; }
-      set { m_BitRateMode = value; }
-    }
-
-    public int BPM
-    {
-      get { return m_BPM; }
-      set { m_BPM = value; }
-    }
-
-    public int Channels
-    {
-      get { return m_Channels; }
-      set { m_Channels = value; }
-    }
-
-    public int SampleRate
-    {
-      get { return m_SampleRate; }
-      set { m_SampleRate = value; }
-    }
-
-    public byte[] CoverArtImageBytes
-    {
-      get { return m_CoverArtImageBytes; }
-      set { m_CoverArtImageBytes = value; }
-    }
-
-    public DateTime DateTimeModified
-    {
-      get { return m_dateTimeModified; }
-      set { m_dateTimeModified = value; }
-    }
+    public int TimesPlayed { get; set; }
 
     /// <summary>
-    /// Last UTC time the song was played
+    /// Property to get/set the Track number
     /// </summary>
-    public DateTime DateTimePlayed
-    {
-      get { return m_dateTimePlayed; }
-      set { m_dateTimePlayed = value; }
-    }
+    public int Track { get; set; }
 
-    public string CoverArtFile
-    {
-      get { return Utils.GetImageFile(m_CoverArtImageBytes, String.Empty); }
-    }
+    /// <summary>
+    /// Property to get/set the Total Track number
+    /// </summary>
+    public int TrackTotal { get; set; }
+    
+    /// <summary>
+    /// Property to get/set the Year
+    /// </summary>
+    public int Year { get; set; }
 
-    public string ReplayGainTrack
-    {
-      get { return m_ReplayGainTrack; }
-      set { m_ReplayGainTrack = value; }
-    }
+    #endregion
 
-    public string ReplayGainTrackPeak
-    {
-      get { return m_ReplayGainTrackPeak; }
-      set { m_ReplayGainTrackPeak = value; }
-    }
+    #region File Properties
 
-    public string ReplayGainAlbum
-    {
-      get { return m_ReplayGainAlbum; }
-      set { m_ReplayGainAlbum = value; }
-    }
+    /// <summary>
+    /// Property to get/set the Bitrate 
+    /// </summary>
+    public int BitRate { get; set; }
 
-    public string ReplayGainAlbumPeak
-    {
-      get { return m_ReplayGainAlbumPeak; }
-      set { m_ReplayGainAlbumPeak = value; }
-    }
+    /// <summary>
+    /// Property to get/set the Bitrate Mode (CBR/VBR)
+    /// </summary>
+    public string BitRateMode { get; set; }
 
-    public string ImageURL
-    {
-      get { return m_imageURL; }
-      set { m_imageURL = value; }
-    }
+    /// <summary>
+    /// Property to get/set the Channels
+    /// </summary>
+    public int Channels { get; set; }
+
+    /// <summary>
+    /// Property to get/set the Codec
+    /// </summary>
+    public string Codec { get; set; }
+
+    /// <summary>
+    /// Property to get/set the duration in seconds
+    /// </summary>
+    public int Duration { get; set; }
+
+    /// <summary>
+    /// Property to get/set the FileName
+    /// </summary>
+    public string FileName { get; set; }
+    
+    /// <summary>
+    /// Property to get/set the FileType
+    /// </summary>
+    public string FileType { get; set; }
+
+    /// <summary>
+    /// Property to get/set the SampleRate
+    /// </summary>
+    public int SampleRate { get; set; }
+
+    #endregion
 
     #endregion
   }
