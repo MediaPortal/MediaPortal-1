@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.ComponentModel;
 using System.Data;
 using System.Globalization;
 using System.IO;
@@ -197,7 +198,14 @@ namespace MediaPortal.Music.Database
               var row = new SQLiteResultSet.Row();
               for (var i = 0; i < reader.FieldCount; i++)
               {
-                var columnValue = (string)reader.GetValue(i);
+                var defaultValue = "0";
+                var type = reader.GetFieldType(i);
+                if (type == typeof (string))
+                {
+                  defaultValue = string.Empty;
+                }
+
+                var columnValue = ParseValue(reader.GetValue(i), defaultValue);
                 row.fields.Add(columnValue);
               }
               resultSet.Rows.Add(row);
@@ -211,6 +219,43 @@ namespace MediaPortal.Music.Database
         Log.Error("MusicDatabase: Exception executing: {0}\\n{1}", aSQL, ex.Message);
         return resultSet;
       }
+    }
+
+    /// <summary>
+    /// Parses a Value from the Datareader, returning the default type if it is null
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="item">The item.</param>
+    /// <param name="defaultValue">The default value.</param>
+    /// <returns></returns>
+    public static T ParseValue<T>(object item, T defaultValue)
+    {
+      if (item == DBNull.Value)
+      {
+        return defaultValue;
+      }
+
+      var originalType = item.GetType();
+      var targetType = typeof(T);
+
+      if (originalType == targetType || originalType.IsSubclassOf(targetType))
+      {
+        return (T)item;
+      }
+
+      TypeConverter typeConverter = TypeDescriptor.GetConverter(targetType);
+      if (typeConverter.CanConvertFrom(originalType))
+      {
+        return (T)typeConverter.ConvertFrom(item);
+      }
+
+      typeConverter = TypeDescriptor.GetConverter(originalType);
+      if (typeConverter.CanConvertTo(targetType))
+      {
+        return (T)typeConverter.ConvertTo(item, targetType);
+      }
+
+      return defaultValue;
     }
 
     /// <summary>

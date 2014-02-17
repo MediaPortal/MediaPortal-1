@@ -423,7 +423,7 @@ namespace MediaPortal.MusicImport
                       (trackInfo.MusicTag.Album != "Unknown Album"))
                   {
                     MusicDatabase dbs = MusicDatabase.Instance;
-                    dbs.AddSong(trackInfo.TargetFileName);
+                    dbs.AddSong(trackInfo.TargetFileName, 0);
                   }
                 }
               }

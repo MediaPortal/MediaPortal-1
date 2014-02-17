@@ -419,7 +419,7 @@ namespace MediaPortal.GUI.Music
           {
             // No Song found. Let's add it to the database and then retrieve it
             Log.Debug("GUIMusic: Song not found in database. Add to database");
-            m_database.AddSong(filename);
+            m_database.AddSong(filename, 0);
             m_database.GetSongByFileName(filename, ref song);
           }
 

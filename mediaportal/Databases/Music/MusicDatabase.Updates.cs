@@ -115,7 +115,7 @@ namespace MediaPortal.Music.Database
     private Thread _scanThread = null;
     private ManualResetEvent _scanSharesFinishedEvent = null;
     private ManualResetEvent _scanFoldersFinishedEvent = null;
-
+    private DatabaseReorgEventArgs _myArgs = null;
 
     private string _previousDirectory = null;
     private string _previousNegHitDir = null;
@@ -130,14 +130,6 @@ namespace MediaPortal.Music.Database
     private int _songCount, _artistCount, _albumCount, _genreCount, _folderCount, _shareCount = 0; // Count for the various IDs
 
     private string _currentShare = null;
-
-    // The cache
-    private Dictionary<string, int> _artistCache = new Dictionary<string, int>();
-    private Dictionary<string, int> _albumArtistCache = new Dictionary<string, int>();
-    private Dictionary<string, int> _albumCache = new Dictionary<string, int>();
-    private Dictionary<string, int> _genreCache = new Dictionary<string, int>();
-    private Dictionary<string, int> _shareCache = new Dictionary<string, int>();
-    private Dictionary<string, int> _folderCache = new Dictionary<string, int>();
 
     // Objects to put a lock on the code during thread execution
     private readonly object _artistLock = new object();
@@ -588,7 +580,7 @@ namespace MediaPortal.Music.Database
       {
         _shares = (ArrayList)shares.Clone();
       }
-      DatabaseReorgEventArgs MyArgs = new DatabaseReorgEventArgs();
+      _myArgs = new DatabaseReorgEventArgs();
 
       DateTime startTime = DateTime.UtcNow;
 
@@ -609,16 +601,16 @@ namespace MediaPortal.Music.Database
         // Before we begin with the scan we need to setup the Cache for Artist, Album, Genre, Shares and Folders
         // It is used to speed up the proces, so that we don't need to issue a query for every single file, if we already
         // have inserted the Artist, Folder, etc.
-        MyArgs.progress = 2;
-        MyArgs.phase = "Building Cache for Folders, Artists, Albums and Genres";
-        OnDatabaseReorgChanged(MyArgs);
-        Log.Info("Musicdatabasereorg: Building Cache for Folders, Artists, Albums and Genres");
-        SetupCache();
+        _myArgs.progress = 2;
+        _myArgs.phase = "Getting Max Values for Folders, Artists, Albums and Genres";
+        OnDatabaseReorgChanged(_myArgs);
+        Log.Info("Musicdatabasereorg: Getting Max Values for Folders, Artists, Albums and Genres");
+        GetMaxValues();
 
         // Start Shares Scan in a separate Thread
-        MyArgs.progress = 3;
-        MyArgs.phase = "Scanning for music files";
-        OnDatabaseReorgChanged(MyArgs);
+        _myArgs.progress = 3;
+        _myArgs.phase = "Scanning for music files";
+        OnDatabaseReorgChanged(_myArgs);
         Log.Info("Musicdatabasereorg: Scanning for music files");
 
         // Start the Scanning and Update Thread
@@ -655,9 +647,9 @@ namespace MediaPortal.Music.Database
         {
           // Delete files that don't exist anymore (example: you deleted files from the Windows Explorer)
           Log.Info("Musicdatabasereorg: Removing non existing songs from the database");
-          MyArgs.progress = 80;
-          MyArgs.phase = "Removing non existing songs";
-          OnDatabaseReorgChanged(MyArgs);
+          _myArgs.progress = 80;
+          _myArgs.phase = "Removing non existing songs";
+          OnDatabaseReorgChanged(_myArgs);
           DeleteNonExistingSongs();
         }
 
@@ -687,8 +679,8 @@ namespace MediaPortal.Music.Database
 
         if (!_singleFolderScan)
         {
-          MyArgs.progress = 95;
-          MyArgs.phase = "Cleanup non-existing Artists, AlbumArtists and Genres";
+          _myArgs.progress = 95;
+          _myArgs.phase = "Cleanup non-existing Artists, AlbumArtists and Genres";
           CleanupMultipleEntryTables();
         }
       }
@@ -703,20 +695,20 @@ namespace MediaPortal.Music.Database
       }
       finally
       {
-        MyArgs.progress = 96;
-        MyArgs.phase = "Finishing";
-        OnDatabaseReorgChanged(MyArgs);
+        _myArgs.progress = 96;
+        _myArgs.phase = "Finishing";
+        OnDatabaseReorgChanged(_myArgs);
         CommitTransaction();
 
-        MyArgs.progress = 98;
-        MyArgs.phase = "Compressing the database";
-        OnDatabaseReorgChanged(MyArgs);
+        _myArgs.progress = 98;
+        _myArgs.phase = "Compressing the database";
+        OnDatabaseReorgChanged(_myArgs);
         Compress();
 
-        MyArgs.progress = 100;
-        MyArgs.phase = string.Format("Rescan completed. Total {0} Added {1} / Updated {2} / Skipped {3}", _processCount,
+        _myArgs.progress = 100;
+        _myArgs.phase = string.Format("Rescan completed. Total {0} Added {1} / Updated {2} / Skipped {3}", _processCount,
                                      _songsAdded, _songsUpdated, _songsSkipped);
-        OnDatabaseReorgChanged(MyArgs);
+        OnDatabaseReorgChanged(_myArgs);
 
         Log.Info("Musicdatabasereorg: Finished Reorganisation of the Database");
 
@@ -1046,18 +1038,16 @@ namespace MediaPortal.Music.Database
             Log.Info("MusicDBReorg: Procesing file {0}", _allFilesCount);
           }
 
-          /*
-          MyArgs.progress = 4;
-          MyArgs.phase = String.Format("Processing file {0}", allFilesCount);
-          OnDatabaseReorgChanged(MyArgs);
-          */
+          _myArgs.progress = 4;
+          _myArgs.phase = String.Format("Processing file {0}", _allFilesCount);
+          OnDatabaseReorgChanged(_myArgs);
 
           if (!CheckFileForInclusion(file))
           {
             continue;
           }
 
-          _processCount++;
+          Interlocked.Increment(ref _processCount);
 
           AddUpdateSong(file.Name);
         }
@@ -1089,36 +1079,22 @@ namespace MediaPortal.Music.Database
       DatabaseUtility.RemoveInvalidChars(ref strFileName);
 
       // Let's check, if we've got already that file in the database
-      strSQL = string.Format("select s.id from Song s " +
+      strSQL = string.Format(@"select s.id, (sh.ShareName || fo.FolderName || s.FileName) as Path from Song s " +
         "join folder fo on fo.Id = IdFolder " +
         "join share sh on sh.Id = fo.IDShare " +
-        "where Filename  like '{0}'", strFileName);
+        "where Path  like '{0}'", strFileName);
 
-      try
-      {
-        results = ExecuteQuery(strSQL);
-        if (results == null)
-        {
-          Log.Info("Musicdatabasereorg: AddMissingFiles finished with error (results == null)");
-          return;
-        }
-      }
-      catch (Exception)
-      {
-        Log.Error("Musicdatabasereorg: AddMissingFiles finished with error (exception for select)");
-        return;
-      }
-
+      results = ExecuteQuery(strSQL);
       if (results.Rows.Count == 0)
       {
         //The song does not exist, we will add it.
-        AddSong(song);
-        _songsAdded++;
+        AddSong(song, 0);
+        Interlocked.Increment(ref _songsAdded);
       }
       else
       {
-        UpdateSong(song);
-        _songsUpdated++;
+        AddSong(song, Convert.ToInt32(results.Rows[0].fields[0]));
+        Interlocked.Increment(ref _songsUpdated);
       }
     }
 
@@ -1267,7 +1243,6 @@ namespace MediaPortal.Music.Database
         }
         else
         {
-          Interlocked.Increment(ref _songsUpdated);
           fileinCluded = true;
         }
       }
@@ -1299,36 +1274,21 @@ namespace MediaPortal.Music.Database
         // Extract the Coverart first because else the quote string escape will result in double "'" for the coverart filenames
         ExtractCoverArt(tag);
 
-        tag.Album = DatabaseUtility.RemoveInvalidChars(tag.Album);
-        tag.Album = tag.Album == "unknown" ? "" : tag.Album;
-        tag.AlbumSort = DatabaseUtility.RemoveInvalidChars(tag.AlbumSort);
-        tag.AlbumSort = tag.AlbumSort == "unknown" ? "" : tag.AlbumSort;
-        tag.Genre = DatabaseUtility.RemoveInvalidChars(tag.Genre);
-        tag.Genre = tag.Genre == "unknown" ? "" : tag.Genre;
-        tag.Artist = DatabaseUtility.RemoveInvalidChars(tag.Artist);
-        tag.Artist = tag.Artist == "unknown" ? "" : tag.Artist;
-        tag.ArtistSort = DatabaseUtility.RemoveInvalidChars(tag.ArtistSort);
-        tag.ArtistSort = tag.ArtistSort == "unknown" ? "" : tag.ArtistSort;
-        tag.Title = DatabaseUtility.RemoveInvalidChars(tag.Title);
-        tag.Title = tag.Title == "unknown" ? "" : tag.Title;
-        tag.TitleSort = DatabaseUtility.RemoveInvalidChars(tag.TitleSort);
-        tag.TitleSort = tag.TitleSort == "unknown" ? "" : tag.TitleSort;
-        tag.AlbumArtist = DatabaseUtility.RemoveInvalidChars(tag.AlbumArtist);
-        tag.AlbumArtist = tag.AlbumArtist == "unknown" ? "" : tag.AlbumArtist;
-        tag.AlbumArtistSort = DatabaseUtility.RemoveInvalidChars(tag.AlbumArtistSort);
-        tag.AlbumArtistSort = tag.AlbumArtist == "unknown" ? "" : tag.AlbumArtistSort;
-        tag.Lyrics = DatabaseUtility.RemoveInvalidChars(tag.Lyrics);
-        tag.Lyrics = tag.Lyrics == "unknown" ? "" : tag.Lyrics;
-        tag.Composer = DatabaseUtility.RemoveInvalidChars(tag.Composer);
-        tag.Composer = tag.Composer == "unknown" ? "" : tag.Composer;
-        tag.ComposerSort = DatabaseUtility.RemoveInvalidChars(tag.ComposerSort);
-        tag.ComposerSort = tag.ComposerSort == "unknown" ? "" : tag.ComposerSort;
-        tag.Conductor = DatabaseUtility.RemoveInvalidChars(tag.Conductor);
-        tag.Conductor = tag.Conductor == "unknown" ? "" : tag.Conductor;
-        tag.Comment = DatabaseUtility.RemoveInvalidChars(tag.Comment);
-        tag.Comment = tag.Comment == "unknown" ? "" : tag.Comment;
-        tag.Codec = DatabaseUtility.RemoveInvalidChars(tag.Codec);
-        tag.Codec = tag.Codec == "unknown" ? "" : tag.Codec;
+        tag.Album = string.IsNullOrEmpty(tag.Album) ? "" : DatabaseUtility.RemoveInvalidChars(tag.Album);
+        tag.AlbumSort = string.IsNullOrEmpty(tag.AlbumSort) ? "" : DatabaseUtility.RemoveInvalidChars(tag.AlbumSort);
+        tag.Genre = string.IsNullOrEmpty(tag.Genre) ? "" : DatabaseUtility.RemoveInvalidChars(tag.Genre);
+        tag.Artist = string.IsNullOrEmpty(tag.Artist) ? "" : DatabaseUtility.RemoveInvalidChars(tag.Artist);
+        tag.ArtistSort = string.IsNullOrEmpty(tag.ArtistSort) ? "" : DatabaseUtility.RemoveInvalidChars(tag.ArtistSort);
+        tag.Title = string.IsNullOrEmpty(tag.Title) ? "" : DatabaseUtility.RemoveInvalidChars(tag.Title);
+        tag.TitleSort = string.IsNullOrEmpty(tag.TitleSort) ? "" : DatabaseUtility.RemoveInvalidChars(tag.TitleSort);
+        tag.AlbumArtist = string.IsNullOrEmpty(tag.AlbumArtist) ? "" : DatabaseUtility.RemoveInvalidChars(tag.AlbumArtist);
+        tag.AlbumArtistSort = string.IsNullOrEmpty(tag.AlbumArtistSort) ? "" : DatabaseUtility.RemoveInvalidChars(tag.AlbumArtistSort);
+        tag.Lyrics = string.IsNullOrEmpty(tag.Lyrics) ? "" : DatabaseUtility.RemoveInvalidChars(tag.Lyrics);
+        tag.Composer = string.IsNullOrEmpty(tag.Composer) ? "" : DatabaseUtility.RemoveInvalidChars(tag.Composer);
+        tag.ComposerSort = string.IsNullOrEmpty(tag.ComposerSort) ? "" : DatabaseUtility.RemoveInvalidChars(tag.ComposerSort);
+        tag.Conductor = string.IsNullOrEmpty(tag.Conductor) ? "" : DatabaseUtility.RemoveInvalidChars(tag.Conductor);
+        tag.Comment = string.IsNullOrEmpty(tag.Comment) ? "" : DatabaseUtility.RemoveInvalidChars(tag.Comment);
+        tag.Codec = string.IsNullOrEmpty(tag.Codec) ? "" : DatabaseUtility.RemoveInvalidChars(tag.Codec);
 
         if (!tag.HasAlbumArtist)
         {
@@ -1389,9 +1349,10 @@ namespace MediaPortal.Music.Database
     /// <summary>
     /// Adds a Song to the Database
     /// </summary>
-    /// <param name="strFileName"></param>
+    /// <param name="strFileName">The filename to insert</param>
+    /// <param name="aSongId">The song id, if song already exists in DB</param>
     /// <returns></returns>
-    public int AddSong(string strFileName)
+    public int AddSong(string strFileName, int aSongId)
     {
       // Get the Tags from the file
       MusicTag tag = GetTag(strFileName);
@@ -1420,12 +1381,16 @@ namespace MediaPortal.Music.Database
         var albumId = AddAlbum(tag);
 
         // Song Id
-        var songId = Interlocked.Increment(ref _songCount);
+        var songId = aSongId;
+        if (songId == 0) // The song is not in the database
+        {
+          songId = Interlocked.Increment(ref _songCount);
+        }
         var fileName = Path.GetFileName(strFileName);
 
         strSQL =
           string.Format(
-            @"insert into Song ( " +
+            @"insert or replace into Song ( " +
                        "Id, IdFolder, IdAlbum, FileName, Title, TitleSort, Track, TrackCount, Disc, DiscCount," +
                        "Duration, Year, Timesplayed, Rating, Lyrics, Comment, Copyright," +
                        "AmazonId, Grouping, MusicBrainzArtistId, MusicBrainzDiscId, MusicBrainzReleaseArtistId," +
@@ -1465,7 +1430,7 @@ namespace MediaPortal.Music.Database
           foreach (var artistName in splittedValues)
           {
             int artistId = AddArtist(artistName);
-            strSQL = string.Format("insert into ArtistSong values ({0}, {1})", artistId, songId);
+            strSQL = string.Format("insert or ignore into ArtistSong values ({0}, {1})", artistId, songId);
             ExecuteNonQuery(strSQL);
           }
 
@@ -1473,21 +1438,15 @@ namespace MediaPortal.Music.Database
           foreach (var albumArtistName in splittedValues)
           {
             int artistId = AddArtist(albumArtistName);
-            string albumArtistRelation = string.Format("{0}|{1}", artistId, albumId);
-            int val = 0;
-            if (!_albumArtistCache.TryGetValue(albumArtistRelation, out val))
-            {
-              strSQL = string.Format("insert into AlbumArtist values ({0}, {1})", artistId, albumId);
-              ExecuteNonQuery(strSQL);
-              _albumArtistCache.Add(albumArtistRelation, 0);
-            }
+            strSQL = string.Format("insert or ignore into AlbumArtist values ({0}, {1})", artistId, albumId);
+            ExecuteNonQuery(strSQL);
           }
 
           splittedValues = tag.Genre.Split(';');
           foreach (var genreName in splittedValues)
           {
             int genreId = AddGenre(genreName);
-            strSQL = string.Format("insert into genresong values ({0}, {1})", genreId, songId);
+            strSQL = string.Format("insert or ignore into genresong values ({0}, {1})", genreId, songId);
             ExecuteNonQuery(strSQL);
           }
 
@@ -1495,7 +1454,7 @@ namespace MediaPortal.Music.Database
           foreach (var composerName in splittedValues)
           {
             int artistId = AddArtist(composerName);
-            strSQL = string.Format("insert into composersong values ({0}, {1})", artistId, songId);
+            strSQL = string.Format("insert or ignore into composersong values ({0}, {1})", artistId, songId);
             ExecuteNonQuery(strSQL);
           }
 
@@ -1515,85 +1474,6 @@ namespace MediaPortal.Music.Database
       return (int)Errors.ERROR_OK;
     }
 
-
-    /// <summary>
-    /// Update an existing song with the Tags from the file
-    /// </summary>
-    /// <param name="strFileName"></param>
-    /// <returns></returns>
-    public bool UpdateSong(string strFileName)
-    {
-      try
-      {
-        MusicTag tag = GetTag(strFileName);
-        if (tag != null)
-        {
-          DateTime dateadded = DateTime.Now;
-          switch (_dateAddedValue)
-          {
-            case 0:
-              // Nothing to do here. we have already set the curremt date before the switch. statement left here for completness
-              break;
-
-            case 1:
-              dateadded = File.GetCreationTime(strFileName);
-              break;
-
-            case 2:
-              dateadded = File.GetLastWriteTime(strFileName);
-              break;
-          }
-
-          DatabaseUtility.RemoveInvalidChars(ref strFileName);
-
-          strSQL =
-            String.Format(
-              @"update tracks 
-                                 set strArtist = '{0}', strAlbumArtist = '{1}', strAlbum = '{2}', 
-                                 strGenre = '{3}', strTitle = '{4}', iTrack = {5}, iNumTracks = {6}, 
-                                 iDuration = {7}, iYear = {8}, iRating = {9}, iDisc = {10}, iNumDisc = {11}, 
-                                 strLyrics = '{12}', strComposer = '{13}', strConductor = '{14}',
-                                 strComment = '{15}', strFileType = '{16}', strFullCodec = '{17}',
-                                 strBitRateMode = '{18}', iBPM = {19}, iBitRate = {20}, iChannels = {21},
-                                 iSampleRate = {22}, dateAdded = '{23}' 
-                                 where strPath = '{24}'",
-              tag.Artist, tag.AlbumArtist, tag.Album,
-              tag.Genre, tag.Title, tag.Track, tag.TrackTotal,
-              tag.Duration, tag.Year, tag.Rating, tag.DiscID, tag.DiscTotal,
-              tag.Lyrics, tag.Composer, tag.Conductor, tag.Comment, tag.FileType, tag.Codec,
-              tag.BitRateMode, tag.BPM, tag.BitRate, tag.Channels, tag.SampleRate, dateadded.ToString("yyyy-MM-dd HH:mm:ss"),
-              strFileName
-              );
-          try
-          {
-            DirectExecute(strSQL);
-
-            // Now add the Artist, AlbumArtist and Genre to the Artist / Genre Tables
-            //AddMultipleValueFields(tag);
-
-            if (_treatFolderAsAlbum)
-            {
-              UpdateVariousArtist(tag);
-            }
-          }
-          catch (Exception)
-          {
-            Log.Error("MusicDatabase: Update tags for {0} failed because of DB exception", strFileName);
-            return false;
-          }
-        }
-        else
-        {
-          Log.Info("MusicDatabase: cannot get tag for {0}", strFileName);
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("MusicDatabase: {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
-      }
-      return true;
-    }
-
     /// <summary>
     /// Adds a folder to the Cache and to the Databasem, if not found in Cache
     /// The Share is stripped from the folder and added to the Share Cache / Database
@@ -1605,27 +1485,25 @@ namespace MediaPortal.Music.Database
       lock (_folderLock)
       {
         var folder = fullPath.Replace(_currentShare, "").Trim('\\');
-        var shareId = AddShare(_currentShare);
-
-        int val = 0;
-        if (_folderCache.TryGetValue(folder, out val))
+        if (folder.Length > 0)
         {
-          return val;
+          folder = folder + "\\"; // Append backslash at the end
         }
-
-        var folderId = ++_folderCount;
-        _folderCache.Add(folder, folderId);
-        var sql = string.Format("insert into folder values ({0}, '{1}', '{2}')", folderId, shareId, folder);
-        try
+        var shareId = AddShare(_currentShare);
+        var sql = string.Format("select Id from folder where FolderName = '{0}' and IdShare = {1}", folder, shareId);
+        var result = ExecuteQuery(sql);
+        if (result.Rows.Count == 0)
         {
+          var folderId = ++_folderCount;
+          sql = string.Format("insert into folder values ({0}, '{1}', '{2}')", folderId, shareId, folder);
           if (ExecuteNonQuery(sql))
           {
             return folderId;
           }
         }
-        catch (Exception ex)
+        else
         {
-          Log.Error("MusicDatabaseReorg: DB exception on Folder insert: {0} {1}", folder, ex.Message);
+          return Convert.ToInt32(result.Rows[0].fields[0]);
         }
         return 0;
       }
@@ -1640,25 +1518,20 @@ namespace MediaPortal.Music.Database
     {
       lock (_shareLock)
       {
-        int val = 0;
-        if (_shareCache.TryGetValue(shareName, out val))
+        var sql = string.Format(@"select Id from Share where ShareName = '{0}\'", shareName);
+        var result = ExecuteQuery(sql);
+        if (result.Rows.Count == 0)
         {
-          return val;
-        }
-
-        var shareId = ++_shareCount;
-        _shareCache.Add(shareName, shareId);
-        string sql = string.Format("insert into Share values ({0}, '{1}')", shareId, shareName);
-        try
-        {
+          var shareId = ++_shareCount;
+          sql = string.Format(@"insert into Share values ({0}, '{1}\')", shareId, shareName);
           if (ExecuteNonQuery(sql))
           {
             return shareId;
           }
         }
-        catch (Exception ex)
+        else
         {
-          Log.Error("MusicDatabaseReorg: DB exception on Share insert: {0} {1}", shareName, ex.Message);
+          return Convert.ToInt32(result.Rows[0].fields[0]);
         }
         return 0;
       }
@@ -1673,26 +1546,21 @@ namespace MediaPortal.Music.Database
     {
       lock (_albumLock)
       {
-        int val = 0;
-        if (_albumCache.TryGetValue(tag.Album, out val))
+        var sql = string.Format("select Id from Album where AlbumName = '{0}'", tag.Album);
+        var result = ExecuteQuery(sql);
+        if (result.Rows.Count == 0)
         {
-          return val;
-        }
-
-        var albumId = ++_albumCount;
-        _albumCache.Add(tag.Album, albumId);
-        string sql = string.Format("insert into album values ({0}, '{1}', '{2}', {3})", albumId, tag.Album,
-                                   tag.AlbumSort, GetTagValue(tag.Year));
-        try
-        {
+          var albumId = ++_albumCount;
+          sql = string.Format("insert into album values ({0}, '{1}', '{2}', {3})", albumId, tag.Album,
+                                     tag.AlbumSort, GetTagValue(tag.Year));
           if (ExecuteNonQuery(sql))
           {
             return albumId;
           }
         }
-        catch (Exception ex)
+        else
         {
-          Log.Error("MusicDatabaseReorg: DB exception on Artist insert: {0} {1}", tag.Album, ex.Message);
+          return Convert.ToInt32(result.Rows[0].fields[0]);
         }
         return 0;
       }
@@ -1708,26 +1576,20 @@ namespace MediaPortal.Music.Database
     {
       lock (_artistLock)
       {
-        int val = 0;
-        if (_artistCache.TryGetValue(artistName, out val))
+        var sql = string.Format("select Id from Artist where ArtistName = '{0}'", artistName);
+        var result = ExecuteQuery(sql);
+        if (result.Rows.Count == 0)
         {
-          return val;
-        }
-
-        var artistId = ++_artistCount;
-        _artistCache.Add(artistName, artistId);
-
-        string sql = string.Format("insert into artist values ({0}, '{1}', '{2}')", artistId, artistName, "");
-        try
-        {
+          var artistId = ++_artistCount;
+          sql = string.Format("insert into artist values ({0}, '{1}', '{2}')", artistId, artistName, "");
           if (ExecuteNonQuery(sql))
           {
             return artistId;
           }
         }
-        catch (Exception ex)
+        else
         {
-          Log.Error("MusicDatabaseReorg: DB exception on Artist insert: {0} {1}", artistName, ex.Message);
+          return Convert.ToInt32(result.Rows[0].fields[0]);
         }
         return 0;
       }
@@ -1742,26 +1604,20 @@ namespace MediaPortal.Music.Database
     {
       lock (_genreLock)
       {
-        int val = 0;
-        if (_genreCache.TryGetValue(genreName, out val))
+        var sql = string.Format("select Id from Genre where GenreName = '{0}'", genreName);
+        var result = ExecuteQuery(sql);
+        if (result.Rows.Count == 0)
         {
-          return val;
-        }
-
-        var genreId = ++_genreCount;
-        _genreCache.Add(genreName, genreId);
-
-        string sql = string.Format("insert into genre values ({0}, '{1}')", genreId, genreName);
-        try
-        {
+          var genreId = ++_genreCount;
+          sql = string.Format("insert into genre values ({0}, '{1}')", genreId, genreName);
           if (ExecuteNonQuery(sql))
           {
             return genreId;
           }
         }
-        catch (Exception ex)
+        else
         {
-          Log.Error("MusicDatabaseReorg: DB exception on Genre insert: {0} {1}", genreName, ex.Message);
+          return Convert.ToInt32(result.Rows[0].fields[0]);
         }
         return 0;
       }
@@ -2215,66 +2071,33 @@ namespace MediaPortal.Music.Database
     #region Cache
 
     /// <summary>
-    /// Loads the currently available values from Artist, Album, Genre, Share and Folder
-    /// We also set the starting values for the various Id
+    /// Set the starting values for the various Id
     /// </summary>
-    private void SetupCache()
+    private void GetMaxValues()
     {
-      strSQL = "select ShareName, Id from Share";
-      _shareCount = Fillcache(strSQL, "Share", out _shareCache);
-
-      strSQL = "select FolderName, Id from Folder";
-      _folderCount = Fillcache(strSQL, "Folder", out _folderCache);
-
-      strSQL = "select ArtistName, Id from Artist";
-      _artistCount = Fillcache(strSQL, "Artist", out _artistCache);
-
-      strSQL = "select AlbumName, Id from Album";
-      _albumCount = Fillcache(strSQL, "Album", out _albumCache);
-
-      strSQL = "select GenreName, Id from Genre";
-      _genreCount = Fillcache(strSQL, "Genre", out _genreCache);
+      _shareCount = GetMaxValue("Share");
+      _folderCount = GetMaxValue("Folder");
+      _artistCount = GetMaxValue("Artist");
+      _albumCount = GetMaxValue("Album");
+      _genreCount = GetMaxValue("Genre");
     }
 
     /// <summary>
     /// Fills the Cache from the various SQL tables
     /// </summary>
-    /// <param name="aSQL">SQL Statementto execute</param>
     /// <param name="aTable">Table Name</param>
-    /// <param name="aCache">Cache to Update</param>
     /// <returns>Max Value found for ID</returns>
-    private int Fillcache(string aSQL, string aTable, out Dictionary<string, int> aCache)
+    private int GetMaxValue(string aTable)
     {
       var max = 0;
-      var cache = new Dictionary<string, int>();
-
-      try
+      strSQL = string.Format("select max(Id) from {0}", aTable);
+      var maxValue = ExecuteQuery(strSQL);
+      if (maxValue.Rows.Count > 0)
       {
-        SQLiteResultSet results = DirectExecute(aSQL);
-        if (results != null && results.Rows.Count > 0)
-        {
-          foreach (var row in results.Rows)
-          {
-            cache.Add(row.fields[0], Convert.ToInt32(row.fields[1]));
-          }
-          strSQL = string.Format("select max(Id) from {0}", aTable);
-          SQLiteResultSet maxValue = DirectExecute(strSQL);
-          if (maxValue != null && maxValue.Rows.Count > 0)
-          {
-            max = Int32.Parse(maxValue.Rows[0].fields[0]);
-          }
-        }
-        Log.Debug("Musicdatabasereorg: Starting with a {0} Count of {1}", aTable, max + 1);
+        max = Int32.Parse(maxValue.Rows[0].fields[0]);
       }
-      catch (Exception ex)
-      {
-        Log.Error("Musicdatabasereorg: Error retrieving {0} Table. {1}", aTable, ex.Message);
-      }
-
-      aCache = cache;
       return max;
     }
-
 
     #endregion
 

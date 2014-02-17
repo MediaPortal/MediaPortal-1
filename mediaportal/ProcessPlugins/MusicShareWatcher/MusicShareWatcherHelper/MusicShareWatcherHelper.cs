@@ -290,7 +290,7 @@ namespace MediaPortal.MusicShareWatcher
     {
       if (musicDB.SongExists(strFileName))
       {
-        musicDB.UpdateSong(strFileName);
+        //musicDB.UpdateSong(strFileName);
         return;
       }
       // For some reason the Create is fired already by windows while the file is still copied.
@@ -311,7 +311,7 @@ namespace MediaPortal.MusicShareWatcher
         return;
       }
 
-      musicDB.AddSong(strFileName);
+      musicDB.AddSong(strFileName, 0);
       // Check for Various Artists
       //musicDB.CheckVariousArtists(song.Album);
     }
