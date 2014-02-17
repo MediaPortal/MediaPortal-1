@@ -744,7 +744,7 @@ namespace MediaPortal.Music.Database
     {
       try
       {
-        DatabaseUtility.CompactDatabase(Instance.DbConnection);
+        ExecuteNonQuery("vacuum");
       }
       catch (Exception)
       {
@@ -1096,7 +1096,7 @@ namespace MediaPortal.Music.Database
 
       try
       {
-        results = MusicDbClient.Execute(strSQL);
+        results = ExecuteQuery(strSQL);
         if (results == null)
         {
           Log.Info("Musicdatabasereorg: AddMissingFiles finished with error (results == null)");
@@ -1454,8 +1454,7 @@ namespace MediaPortal.Music.Database
 
         try
         {
-          SQLiteResultSet results = DirectExecute(strSQL);
-          if (results == null)
+          if (!ExecuteNonQuery(strSQL))
           {
             Log.Info("Insert of song {0} failed", strFileName);
             return (int)Errors.ERROR_REORG_SONGS;
@@ -1467,7 +1466,7 @@ namespace MediaPortal.Music.Database
           {
             int artistId = AddArtist(artistName);
             strSQL = string.Format("insert into ArtistSong values ({0}, {1})", artistId, songId);
-            results = DirectExecute(strSQL);
+            ExecuteNonQuery(strSQL);
           }
 
           splittedValues = tag.AlbumArtist.Split(';');
@@ -1479,7 +1478,7 @@ namespace MediaPortal.Music.Database
             if (!_albumArtistCache.TryGetValue(albumArtistRelation, out val))
             {
               strSQL = string.Format("insert into AlbumArtist values ({0}, {1})", artistId, albumId);
-              results = DirectExecute(strSQL);
+              ExecuteNonQuery(strSQL);
               _albumArtistCache.Add(albumArtistRelation, 0);
             }
           }
@@ -1489,7 +1488,7 @@ namespace MediaPortal.Music.Database
           {
             int genreId = AddGenre(genreName);
             strSQL = string.Format("insert into genresong values ({0}, {1})", genreId, songId);
-            results = DirectExecute(strSQL);
+            ExecuteNonQuery(strSQL);
           }
 
           splittedValues = tag.Composer.Split(';');
@@ -1497,7 +1496,7 @@ namespace MediaPortal.Music.Database
           {
             int artistId = AddArtist(composerName);
             strSQL = string.Format("insert into composersong values ({0}, {1})", artistId, songId);
-            results = DirectExecute(strSQL);
+            ExecuteNonQuery(strSQL);
           }
 
 
@@ -1619,8 +1618,7 @@ namespace MediaPortal.Music.Database
         var sql = string.Format("insert into folder values ({0}, '{1}', '{2}')", folderId, shareId, folder);
         try
         {
-          SQLiteResultSet result = DirectExecute(sql);
-          if (result != null)
+          if (ExecuteNonQuery(sql))
           {
             return folderId;
           }
@@ -1653,8 +1651,7 @@ namespace MediaPortal.Music.Database
         string sql = string.Format("insert into Share values ({0}, '{1}')", shareId, shareName);
         try
         {
-          SQLiteResultSet result = DirectExecute(sql);
-          if (result != null)
+          if (ExecuteNonQuery(sql))
           {
             return shareId;
           }
@@ -1688,8 +1685,7 @@ namespace MediaPortal.Music.Database
                                    tag.AlbumSort, GetTagValue(tag.Year));
         try
         {
-          SQLiteResultSet result = DirectExecute(sql);
-          if (result != null)
+          if (ExecuteNonQuery(sql))
           {
             return albumId;
           }
@@ -1724,8 +1720,7 @@ namespace MediaPortal.Music.Database
         string sql = string.Format("insert into artist values ({0}, '{1}', '{2}')", artistId, artistName, "");
         try
         {
-          SQLiteResultSet result = DirectExecute(sql);
-          if (result != null)
+          if (ExecuteNonQuery(sql))
           {
             return artistId;
           }
@@ -1759,8 +1754,7 @@ namespace MediaPortal.Music.Database
         string sql = string.Format("insert into genre values ({0}, '{1}')", genreId, genreName);
         try
         {
-          SQLiteResultSet result = DirectExecute(sql);
-          if (result != null)
+          if (ExecuteNonQuery(sql))
           {
             return genreId;
           }

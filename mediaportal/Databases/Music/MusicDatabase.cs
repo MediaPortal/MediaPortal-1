@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.Data;
 using System.Globalization;
 using System.IO;
 using MediaPortal.Configuration;
@@ -26,6 +27,7 @@ using MediaPortal.Database;
 using MediaPortal.Profile;
 using MediaPortal.ServiceImplementations;
 using SQLite.NET;
+using System.Data.SQLite;
 
 namespace MediaPortal.Music.Database
 {
@@ -39,8 +41,10 @@ namespace MediaPortal.Music.Database
     public static readonly MusicDatabase Instance = new MusicDatabase();
     private const int DATABASE_VERSION = 1;
 
+    private SQLiteConnection _dbConnection = null;
     private SQLiteClient MusicDbClient = null;
 
+    private static bool _dbIsOpened = false;
     private static bool _treatFolderAsAlbum;
     private static bool _extractEmbededCoverArt;
     private static bool _useFolderThumbs;
@@ -82,7 +86,6 @@ namespace MediaPortal.Music.Database
       _dateAddedValue = 0;
 
       LoadDBSettings();
-      Open();
     }
 
     ~MusicDatabase() { }
@@ -95,6 +98,12 @@ namespace MediaPortal.Music.Database
 
     public static void Dispose()
     {
+      if (Instance._dbConnection != null)
+      {
+        Instance._dbConnection.Dispose();
+      }
+      Instance._dbConnection = null;
+
       if (Instance.MusicDbClient != null)
       {
         Instance.MusicDbClient.Dispose();
@@ -109,16 +118,26 @@ namespace MediaPortal.Music.Database
     /// <summary>
     /// Gets the current DB Connection
     /// </summary>
-    private SQLiteClient DbConnection
+    private SQLiteConnection DbConnection
     {
       get
       {
-        if (MusicDbClient == null)
+        if (Instance._dbConnection == null)
         {
-          MusicDbClient = new SQLiteClient(Config.GetFile(Config.Dir.Database, "MusicDatabase.db3"));
+          Instance._dbConnection = new SQLiteConnection(string.Format(@"Data Source={0}", Config.GetFile(Config.Dir.Database, "MusicDatabase.db3")));
         }
 
-        return MusicDbClient;
+        if (!_dbIsOpened)
+        {
+          Open();
+        }
+
+        if (Instance._dbConnection.State != ConnectionState.Open)
+        {
+          Instance._dbConnection.Open();
+        }
+
+        return Instance._dbConnection;
       }
     }
 
@@ -127,7 +146,7 @@ namespace MediaPortal.Music.Database
     /// </summary>
     public string DatabaseName
     {
-      get { return DbConnection.DatabaseName; }
+      get { return DbConnection.Database; }
     }
 
     #endregion
@@ -141,7 +160,82 @@ namespace MediaPortal.Music.Database
     /// <returns>Result set of rows</returns>
     public static SQLiteResultSet DirectExecute(string aSQL)
     {
-      return Instance.DbConnection.Execute(aSQL);
+      SQLiteResultSet result = new SQLiteResultSet();
+      return result;
+    }
+
+    /// <summary>
+    /// Execute a Query Statement against the current database
+    /// </summary>
+    /// <param name="aSQL"></param>
+    /// <returns></returns>
+    public static SQLiteResultSet ExecuteQuery(string aSQL)
+    {
+      var resultSet = new SQLiteResultSet();
+
+      try
+      {
+        using (var cmd = new SQLiteCommand())
+        {
+          cmd.Connection = Instance.DbConnection;
+          cmd.CommandText = aSQL;
+          using (SQLiteDataReader reader = cmd.ExecuteReader())
+          {
+            if (reader.HasRows)
+            {
+              resultSet.LastCommand = aSQL;
+              for (var i = 0; i < reader.FieldCount; i++)
+              {
+                var columnName = reader.GetName(i);
+                resultSet.columnNames.Add(columnName);
+                resultSet.ColumnIndices[columnName] = i;
+              }
+            }
+
+            while (reader.Read())
+            {
+              var row = new SQLiteResultSet.Row();
+              for (var i = 0; i < reader.FieldCount; i++)
+              {
+                var columnValue = (string)reader.GetValue(i);
+                row.fields.Add(columnValue);
+              }
+              resultSet.Rows.Add(row);
+            }
+          }
+          return resultSet;
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("MusicDatabase: Exception executing: {0}\\n{1}", aSQL, ex.Message);
+        return resultSet;
+      }
+    }
+
+    /// <summary>
+    /// Execute a Non-Query Statement against the current database
+    /// </summary>
+    /// <param name="aSQL"></param>
+    /// <returns></returns>
+    public static bool ExecuteNonQuery(string aSQL)
+    {
+      try
+      {
+        using (SQLiteCommand cmd = new SQLiteCommand())
+        {
+          cmd.Connection = Instance.DbConnection;
+          cmd.CommandType = CommandType.Text;
+          cmd.CommandText = aSQL;
+          cmd.ExecuteNonQuery();
+          return true;
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("MusicDatabase: Exception executing: {0}/n{1}", aSQL, ex.Message);
+        return false;
+      }
     }
 
     /// <summary>
@@ -182,6 +276,7 @@ namespace MediaPortal.Music.Database
     private void Open()
     {
       Log.Info("MusicDatabase: Opening database");
+      _dbIsOpened = true;
 
       try
       {
@@ -202,7 +297,7 @@ namespace MediaPortal.Music.Database
           }
 
           // Get the DB handle or create it if necessary
-          MusicDbClient = DbConnection;
+          _dbConnection = DbConnection;
 
           // When we have deleted the database, we need to scan from the beginning, regardsless of the last import setting
           _lastImport = DateTime.ParseExact("1900-01-01 00:00:00", "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
@@ -214,11 +309,10 @@ namespace MediaPortal.Music.Database
           }
         }
 
-        // Get the DB handle or create it if necessary
-        MusicDbClient = DbConnection;
+        _dbConnection = DbConnection;
         // See, if we're running the correct Version
         strSQL = "select Value from Configuration where Parameter = 'Version'";
-        SQLiteResultSet results = MusicDbClient.Execute(strSQL);
+        SQLiteResultSet results = ExecuteQuery(strSQL);
         if (Int32.Parse(results.Rows[0].fields[0]) != DATABASE_VERSION)
         {
           // Do upgrade logic to new version here
@@ -237,25 +331,27 @@ namespace MediaPortal.Music.Database
     {
       try
       {
-        DatabaseUtility.SetPragmas(MusicDbClient);
+        ExecuteNonQuery("PRAGMA encoding = \"UTF-8\"");
+        ExecuteNonQuery("PRAGMA cache_size=4096");
+        ExecuteNonQuery("PRAGMA page_size=8192");
+        ExecuteNonQuery("PRAGMA synchronous='OFF'");
+        ExecuteNonQuery("PRAGMA auto_vacuum=0");
+        ExecuteNonQuery("PRAGMA foreign_keys='ON'");
 
         // The Configuration Table holds various information about the database
-        DatabaseUtility.AddTable(MusicDbClient,
-                                 "Config", @"create table Configuration (Parameter string not null, Value string not null)");
+        ExecuteNonQuery(@"create table Configuration (Parameter string not null, Value string not null)");
 
         // Insert the Database Version number into the Config Table
-        MusicDbClient.Execute(string.Format("insert into Configuration values ('Version', '{0}')", DATABASE_VERSION));
+        ExecuteNonQuery(string.Format("insert into Configuration values ('Version', '{0}')", DATABASE_VERSION));
 
         // Share Table: Holds information about the Music Shares
-        DatabaseUtility.AddTable(MusicDbClient, "Share",
-                                 "CREATE TABLE Share (" +
+        ExecuteNonQuery("CREATE TABLE Share (" +
                                  "Id integer primary key," +
                                  "ShareName text not null" +
         ")");
 
         // Folder Table: Holds information about the different Folder
-        DatabaseUtility.AddTable(MusicDbClient, "Folder",
-                                 "CREATE TABLE Folder (" +
+        ExecuteNonQuery("CREATE TABLE Folder (" +
                                  "Id integer primary key," +
                                  "IdShare integer not null," +
                                  "FolderName text not null," +
@@ -264,40 +360,34 @@ namespace MediaPortal.Music.Database
 
         // Artist Table
         // Holds Information about Artist, AlbumArtist, Composer, Conductor
-        DatabaseUtility.AddTable(MusicDbClient, "Artist",
-                                 "CREATE TABLE Artist (" +
+        ExecuteNonQuery("CREATE TABLE Artist (" +
                                  "Id integer primary key," +
                                  "ArtistName text not null," +
                                  "ArtistSortName text not null" +
         ")");
 
-        DatabaseUtility.AddIndex(MusicDbClient, "IdxArtist_ArtistName",
-                                 "CREATE INDEX IdxArtist_ArtistName ON Artist(ArtistName ASC)");
+        ExecuteNonQuery("CREATE INDEX IdxArtist_ArtistName ON Artist(ArtistName ASC)");
 
         // Album Table
-        DatabaseUtility.AddTable(MusicDbClient, "Album",
-                                 "CREATE TABLE Album (" +
+        ExecuteNonQuery("CREATE TABLE Album (" +
                                  "Id integer primary key," +
                                  "AlbumName text not null," +
                                  "AlbumSortName text not null," +
                                  "Year integer" +
         ")");
 
-        DatabaseUtility.AddIndex(MusicDbClient, "IdxAlbum_AlbumName",
-                                 "CREATE INDEX IdxAlbum_AlbumName ON Album(AlbumName ASC)");
+        ExecuteNonQuery("CREATE INDEX IdxAlbum_AlbumName ON Album(AlbumName ASC)");
 
         // Genre Table
-        DatabaseUtility.AddTable(MusicDbClient, "Genre",
-                                 "CREATE TABLE Genre (" +
+        ExecuteNonQuery("CREATE TABLE Genre (" +
                                  "Id integer primary key," +
                                  "GenreName text not null" +
         ")");
 
-        DatabaseUtility.AddIndex(MusicDbClient, "IdxGenre_GenreName",
-                                 "CREATE INDEX IdxGenre_GenreName ON Genre(GenreName ASC)");
+        ExecuteNonQuery("CREATE INDEX IdxGenre_GenreName ON Genre(GenreName ASC)");
 
         // Song table containing information for songs
-        DatabaseUtility.AddTable(MusicDbClient, "Song",
+        ExecuteNonQuery(
           @"CREATE TABLE Song ( " +
           "Id integer primary key, " + // Unique Song id. Manually incremented
           "IdFolder integer not null, " + // ID of the folder. Foreign Key
@@ -347,63 +437,52 @@ namespace MediaPortal.Music.Database
           ")"
           );
 
-        DatabaseUtility.AddIndex(MusicDbClient, "IdxSong_FileName", "CREATE INDEX IdxSong_FileName ON Song(FileName ASC)");
+        ExecuteNonQuery("CREATE INDEX IdxSong_FileName ON Song(FileName ASC)");
 
         // AlbumArtist: Relation between Artist - Album  
-        DatabaseUtility.AddTable(MusicDbClient, "AlbumArtist",
-                                 "CREATE TABLE AlbumArtist (" +
+        ExecuteNonQuery("CREATE TABLE AlbumArtist (" +
                                  "IdArtist integer not null," +
                                  "IdAlbum integer not null," +
                                  "Primary Key(IdArtist, IdAlbum)" +
                                  ")");
 
         // ArtistSong: Relation between Artist - Song  
-        DatabaseUtility.AddTable(MusicDbClient, "ArtistSong",
-                                 "CREATE TABLE ArtistSong (" +
+        ExecuteNonQuery("CREATE TABLE ArtistSong (" +
                                  "IdArtist integer not null," +
                                  "IdSong integer not null," +
                                  "Primary Key(IdArtist, IdSong)" +
                                  ")");
 
         // GenreSong: Relation between Genre - Song  
-        DatabaseUtility.AddTable(MusicDbClient, "GenreSong",
-                                 "CREATE TABLE GenreSong (" +
+        ExecuteNonQuery("CREATE TABLE GenreSong (" +
                                  "IdGenre integer not null," +
                                  "IdSong integer not null," +
                                  "Primary Key(IdGenre, IdSong)" +
                                  ")");
 
         // ComposerSong: Relation between Composer - Song  
-        DatabaseUtility.AddTable(MusicDbClient, "ComposerSong",
-                                 "CREATE TABLE ComposerSong (" +
+        ExecuteNonQuery("CREATE TABLE ComposerSong (" +
                                  "IdComposer integer not null," +
                                  "IdSong integer not null," +
                                  "Primary Key(IdComposer, IdSong)" +
                                  ")");
 
         // ConductorSong: Relation between Conductor - Song  
-        DatabaseUtility.AddTable(MusicDbClient, "ConductorSong",
-                                 "CREATE TABLE ConductorSong (" +
+        ExecuteNonQuery("CREATE TABLE ConductorSong (" +
                                  "IdConductor integer not null," +
                                  "IdSong integer not null," +
                                  "Primary Key(IdConductor, IdSong)" +
                                  ")");
 
         // Artist Info and Album Info
-        DatabaseUtility.AddTable(MusicDbClient, "albuminfo",
-                                 "CREATE TABLE albuminfo ( idAlbumInfo integer primary key autoincrement, strAlbum text, strArtist text, strAlbumArtist text,iYear integer, idGenre integer, strTones text, strStyles text, strReview text, strImage text, strTracks text, iRating integer)");
-        DatabaseUtility.AddTable(MusicDbClient, "artistinfo",
-                                 "CREATE TABLE artistinfo ( idArtistInfo integer primary key autoincrement, strArtist text, strBorn text, strYearsActive text, strGenres text, strTones text, strStyles text, strInstruments text, strImage text, strAMGBio text, strAlbums text, strCompilations text, strSingles text, strMisc text)");
+        ExecuteNonQuery("CREATE TABLE albuminfo ( idAlbumInfo integer primary key autoincrement, strAlbum text, strArtist text, strAlbumArtist text,iYear integer, idGenre integer, strTones text, strStyles text, strReview text, strImage text, strTracks text, iRating integer)");
+        ExecuteNonQuery("CREATE TABLE artistinfo ( idArtistInfo integer primary key autoincrement, strArtist text, strBorn text, strYearsActive text, strGenres text, strTones text, strStyles text, strInstruments text, strImage text, strAMGBio text, strAlbums text, strCompilations text, strSingles text, strMisc text)");
 
         // Indices for Album and Artist Info
-        DatabaseUtility.AddIndex(MusicDbClient, "idxalbuminfo_strAlbum",
-                                 "CREATE INDEX idxalbuminfo_strAlbum ON albuminfo(strAlbum ASC)");
-        DatabaseUtility.AddIndex(MusicDbClient, "idxalbuminfo_strArtist",
-                                 "CREATE INDEX idxalbuminfo_strArtist ON albuminfo(strArtist ASC)");
-        DatabaseUtility.AddIndex(MusicDbClient, "idxalbuminfo_idGenre",
-                                 "CREATE INDEX idxalbuminfo_idGenre ON albuminfo(idGenre ASC)");
-        DatabaseUtility.AddIndex(MusicDbClient, "idxartistinfo_strArtist",
-                                 "CREATE INDEX idxartistinfo_strArtist ON artistinfo(strArtist ASC)");
+        ExecuteNonQuery("CREATE INDEX idxalbuminfo_strAlbum ON albuminfo(strAlbum ASC)");
+        ExecuteNonQuery("CREATE INDEX idxalbuminfo_strArtist ON albuminfo(strArtist ASC)");
+        ExecuteNonQuery("CREATE INDEX idxalbuminfo_idGenre ON albuminfo(idGenre ASC)");
+        ExecuteNonQuery("CREATE INDEX idxartistinfo_strArtist ON artistinfo(strArtist ASC)");
         
         // last.fm users
         DatabaseUtility.AddTable(MusicDbClient, "lastfmusers",
@@ -430,7 +509,7 @@ namespace MediaPortal.Music.Database
     {
       try
       {
-        DirectExecute("begin");
+        ExecuteNonQuery("begin");
       }
       catch (Exception ex)
       {
@@ -444,10 +523,10 @@ namespace MediaPortal.Music.Database
     /// </summary>
     public void CommitTransaction()
     {
-      Log.Debug("MusicDatabase: Commit will effect {0} rows", Instance.DbConnection.ChangedRows());
+      Log.Debug("MusicDatabase: Commit will effect {0} rows", _dbConnection.Changes);
       try
       {
-        DirectExecute("commit");
+        ExecuteNonQuery("commit");
       }
       catch (Exception ex)
       {
@@ -462,10 +541,10 @@ namespace MediaPortal.Music.Database
     public void RollbackTransaction()
     {
       Log.Debug("MusicDatabase: Rolling back transactions due to unrecoverable error. Effecting {0} rows",
-                Instance.DbConnection.ChangedRows());
+                _dbConnection.Changes);
       try
       {
-        DirectExecute("rollback");
+        ExecuteNonQuery("rollback");
       }
       catch (Exception ex)
       {
