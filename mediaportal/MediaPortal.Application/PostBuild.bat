@@ -142,3 +142,6 @@ xcopy %1\Databases\bin\%2\HtmlAgilityPack.* . /Y /D
 
 REM ffmpeg 
 xcopy %1\..\Packages\ffmpeg.2.1.1\ffmpeg.exe MovieThumbnailer\ /Y /D
+
+REM sqlite
+xcopy %1\..\Packages\System.Data.SQLite.x86.1.0.91.0\lib\net40\System.Data.SQLite.dll . /Y /D
