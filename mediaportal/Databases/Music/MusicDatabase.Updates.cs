@@ -1701,7 +1701,7 @@ namespace MediaPortal.Music.Database
 
                   Util.Picture.CreateThumbnail(mp3TagImage, largeThumbPath, (int) Thumbs.ThumbLargeResolution,
                                                (int) Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
-
+                  
                   Util.Utils.FileDelete(mp3TagImage); // clean up the temp file directly
                 }
               }
@@ -2068,7 +2068,7 @@ namespace MediaPortal.Music.Database
 
     #endregion
 
-    #region Cache
+    #region Max Values
 
     /// <summary>
     /// Set the starting values for the various Id
