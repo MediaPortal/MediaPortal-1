@@ -98,7 +98,6 @@ namespace MediaPortal.Music.Database
 
     private ArrayList _shares = new ArrayList();
     private string strSQL;
-    private List<string> musicFolders;
     private List<string> _cueFiles;
     private Hashtable _allFiles;
     private int _processCount = 0;
@@ -614,7 +613,6 @@ namespace MediaPortal.Music.Database
         Log.Info("Musicdatabasereorg: Scanning for music files");
 
         // Start the Scanning and Update Thread
-        musicFolders = new List<string>(4000);
         _cueFiles = new List<string>(500);
         _allFiles = new Hashtable(100000);
 
@@ -651,12 +649,6 @@ namespace MediaPortal.Music.Database
           _myArgs.phase = "Removing non existing songs";
           OnDatabaseReorgChanged(_myArgs);
           DeleteNonExistingSongs();
-        }
-
-        if (_useFolderThumbs)
-        {
-          Log.Info("Musicdatabasereorg: Create Folder Thumbs");
-          CreateFolderThumbs(85, 90, _shares);
         }
 
         if (_createArtistPreviews)
@@ -1055,6 +1047,11 @@ namespace MediaPortal.Music.Database
       catch (Exception ex)
       {
         Log.Error("MusicDBReorg: Exception accessing file or folder: {0}", ex.Message);
+      }
+
+      if (_useFolderThumbs)
+      {
+        CreateFolderThumbs(di);
       }
 
       Interlocked.Decrement(ref _folderQueueLength);
@@ -1793,71 +1790,46 @@ namespace MediaPortal.Music.Database
       }
     }
 
-    private void CreateFolderThumbs(int aProgressStart, int aProgressEnd, ArrayList aShareList)
+    private void CreateFolderThumbs(DirectoryInfo di)
     {
-      DatabaseReorgEventArgs MyFolderArgs = new DatabaseReorgEventArgs();
-      foreach (string sharePath in aShareList)
+      try
       {
-        try
+        bool foundCover = false;
+        string sharefolderThumb;
+        // We add the slash to be able to use TryEverythingToGetFolderThumbByFilename and GetLocalFolderThumb
+        string currentPath = string.Format("{0}\\", di.FullName);
+        string localFolderThumb = Util.Utils.GetLocalFolderThumb(currentPath);
+        string localFolderLThumb = Util.Utils.ConvertToLargeCoverArt(localFolderThumb);
+
+        if (_useAllImages)
         {
-          int i = 0;
-          foreach (string coverPath in musicFolders)
+          sharefolderThumb = Util.Utils.TryEverythingToGetFolderThumbByFilename(currentPath, true);
+          if (!string.IsNullOrEmpty(sharefolderThumb))
           {
-            try
-            {
-              //string displayPath = Path.GetDirectoryName(coverPath);
-              //displayPath = displayPath.Remove(0, displayPath.LastIndexOf('\\'));
-              MyFolderArgs.phase = string.Format("Caching folder thumbs: {0}/{1}", Convert.ToString(i + 1),
-                                                 Convert.ToString(musicFolders.Count));
-              // range = 80-89
-              int folderProgress = aProgressStart + (((i + 1) / musicFolders.Count) * (aProgressEnd - aProgressStart));
-              MyFolderArgs.progress = folderProgress;
-              OnDatabaseReorgChanged(MyFolderArgs);
-
-              bool foundCover = false;
-              string sharefolderThumb;
-              // We add the slash to be able to use TryEverythingToGetFolderThumbByFilename and GetLocalFolderThumb
-              string currentPath = string.Format("{0}\\", coverPath);
-              string localFolderThumb = Util.Utils.GetLocalFolderThumb(currentPath);
-              string localFolderLThumb = Util.Utils.ConvertToLargeCoverArt(localFolderThumb);
-
-              if (_useAllImages)
-              {
-                sharefolderThumb = Util.Utils.TryEverythingToGetFolderThumbByFilename(currentPath, true);
-                if (!string.IsNullOrEmpty(sharefolderThumb))
-                {
-                  foundCover = true;
-                }
-              }
-              else
-              {
-                sharefolderThumb = Util.Utils.GetFolderThumb(currentPath);
-                if (Util.Utils.FileExistsInCache(sharefolderThumb))
-                {
-                  foundCover = true;
-                }
-              }
-
-              if (foundCover)
-              {
-                Util.Picture.CreateThumbnail(sharefolderThumb, localFolderThumb, (int) Thumbs.ThumbResolution,
-                                             (int) Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall);
-
-                Util.Picture.CreateThumbnail(sharefolderThumb, localFolderLThumb, (int) Thumbs.ThumbLargeResolution,
-                                             (int) Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
-              }
-            }
-            catch (Exception ex2)
-            {
-              Log.Error("MusicDatabase: Error caching folder thumb of {0} - {1}", coverPath, ex2.Message);
-            }
-            i++;
+            foundCover = true;
           }
         }
-        catch (Exception ex)
+        else
         {
-          Log.Error("MusicDatabase: Error caching folder thumbs - {0}", ex.Message);
+          sharefolderThumb = Util.Utils.GetFolderThumb(currentPath);
+          if (Util.Utils.FileExistsInCache(sharefolderThumb))
+          {
+            foundCover = true;
+          }
         }
+
+        if (foundCover)
+        {
+          Util.Picture.CreateThumbnail(sharefolderThumb, localFolderThumb, (int)Thumbs.ThumbResolution,
+                                       (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall);
+          
+          Util.Picture.CreateThumbnail(sharefolderThumb, localFolderLThumb, (int)Thumbs.ThumbLargeResolution,
+                                       (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
+        }
+      }
+      catch (Exception ex2)
+      {
+        Log.Error("MusicDatabase: Error caching folder thumb of {0} - {1}", di.FullName, ex2.Message);
       }
     }
 
