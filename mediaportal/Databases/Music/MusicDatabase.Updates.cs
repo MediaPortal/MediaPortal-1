@@ -110,9 +110,12 @@ namespace MediaPortal.Music.Database
     private bool _updateSinceLastImport = false;
     private bool _excludeHiddenFiles = false;
     private bool _singleFolderScan = false;
+    private int _folderQueueLength = 0;
 
     private Thread _scanThread = null;
     private ManualResetEvent _scanSharesFinishedEvent = null;
+    private ManualResetEvent _scanFoldersFinishedEvent = null;
+
 
     private string _previousDirectory = null;
     private string _previousNegHitDir = null;
@@ -960,28 +963,21 @@ namespace MediaPortal.Music.Database
         _currentShare = share;
         try
         {
-          foreach (FileInformation file in GetFilesRecursive(new DirectoryInfo(share)))
+          int maxThreads = 0;
+          int maxComplThreads = 0;
+          ThreadPool.GetAvailableThreads(out maxThreads, out maxComplThreads);
+
+          ThreadPool.SetMaxThreads(Environment.ProcessorCount, maxComplThreads);
+
+          var di = new DirectoryInfo(share);
+          foreach (var folder in GetFolders(di))
           {
-            _allFilesCount++;
-
-            if (_allFilesCount % 1000 == 0)
-            {
-              Log.Info("MusicDBReorg: Procesing file {0}", _allFilesCount);
-            }
-
-            MyArgs.progress = 4;
-            MyArgs.phase = String.Format("Processing file {0}", _allFilesCount);
-            OnDatabaseReorgChanged(MyArgs);
-
-            if (!CheckFileForInclusion(file))
-            {
-              continue;
-            }
-
-            _processCount++;
-
-            AddUpdateSong(file.Name);
+            ThreadPool.QueueUserWorkItem(new WaitCallback(ProcessFolder), folder);
+            _folderQueueLength++;
           }
+
+          _scanFoldersFinishedEvent = new ManualResetEvent(false);
+          _scanFoldersFinishedEvent.WaitOne();
         }
         catch (Exception ex)
         {
@@ -1036,6 +1032,49 @@ namespace MediaPortal.Music.Database
       _scanSharesFinishedEvent.Set();
     }
 
+    private void ProcessFolder(object dirInfo)
+    {
+      var di = (DirectoryInfo)dirInfo;
+      try
+      {
+        foreach (FileInformation file in GetFiles(di))
+        {
+          Interlocked.Increment(ref _allFilesCount);
+
+          if (_allFilesCount % 1000 == 0)
+          {
+            Log.Info("MusicDBReorg: Procesing file {0}", _allFilesCount);
+          }
+
+          /*
+          MyArgs.progress = 4;
+          MyArgs.phase = String.Format("Processing file {0}", allFilesCount);
+          OnDatabaseReorgChanged(MyArgs);
+          */
+
+          if (!CheckFileForInclusion(file))
+          {
+            continue;
+          }
+
+          _processCount++;
+
+          AddUpdateSong(file.Name);
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("MusicDBReorg: Exception accessing file or folder: {0}", ex.Message);
+      }
+
+      Interlocked.Decrement(ref _folderQueueLength);
+      if (_folderQueueLength == 0)
+      {
+        _scanFoldersFinishedEvent.Set();
+      }
+    }
+
+
     /// <summary>
     /// Check, if a file should be Added or Updated to the DB
     /// </summary>
@@ -1084,43 +1123,50 @@ namespace MediaPortal.Music.Database
     }
 
     /// <summary>
-    /// Build an Iterator over the given Directory, returning all files recursively
-    /// </summary>
-    /// <param name="dirInfo"></param>
-    /// <returns></returns>
-    private IEnumerable<FileInformation> GetFilesRecursive(DirectoryInfo dirInfo)
-    {
-      return GetFilesRecursive(dirInfo, "*.*");
-    }
-
-    /// <summary>
-    /// Build an Iterator over the given Directory, returning all files recursively
+    /// Build an Iterator over the given Folder, returning all Foldres recursively
     /// </summary>
     /// <param name="dirInfo">DirectoryInfo for the directory we want files returned for</param>
-    /// <param name="searchPattern">This parameter is ignored in the current implementation</param>
-    /// <returns></returns>
+    /// <returns>IENumerable</returns>
     /// 
     /// A much more elegant way would be using the method below, but it is not allowed to have a yield inside a try / catch,
     /// and we need to capture Access Exceptions to Directories and Files.
     /// The method used now has the same speed.
     /// 
-    /// private IEnumerable<FileInfo> GetFilesRecursive(DirectoryInfo dirInfo, string searchPattern)
+    /// private IEnumerable<DirectoryInfo> GetFolders(DirectoryInfo dirInfo)
     /// {
     ///  foreach (DirectoryInfo di in dirInfo.GetDirectories())
     ///  {
-    ///    musicFolders.Add(di.FullName);
-    ///    foreach (FileInfo fi in GetFilesRecursive(di, searchPattern))
-    ///    {
-    ///      yield return fi;
-    ///    }
-    ///  }
-    ///
-    ///  foreach (FileInfo fi in dirInfo.GetFiles(searchPattern))
-    ///  {
-    ///    yield return fi;
+    ///    yield return di;
     ///  }
     /// }
-    private IEnumerable<FileInformation> GetFilesRecursive(DirectoryInfo dirInfo, string searchPattern)
+    private IEnumerable<DirectoryInfo> GetFolders(DirectoryInfo dirInfo)
+    {
+      Queue<DirectoryInfo> directories = new Queue<DirectoryInfo>();
+      directories.Enqueue(dirInfo);
+      while (directories.Count > 0)
+      {
+        DirectoryInfo dir = directories.Dequeue();
+        yield return dir;
+
+        try
+        {
+          foreach (DirectoryInfo di in dir.GetDirectories())
+          {
+            directories.Enqueue(di);
+          }
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+          Log.Error("Musicdatabasereorg: File / Directory Access error: {0}", ex.Message);
+        }
+      }
+    }
+
+    /// <summary>
+    ///   Read a Folder and return the files
+    /// </summary>
+    /// <param name = "dirInfo">DirectoryInfo of the folder to process</param>
+    private IEnumerable<FileInformation> GetFiles(DirectoryInfo dirInfo)
     {
       Queue<DirectoryInfo> directories = new Queue<DirectoryInfo>();
       directories.Enqueue(dirInfo);
@@ -1136,26 +1182,18 @@ namespace MediaPortal.Music.Database
           if (directories.Count > 0)
           {
             DirectoryInfo dir = directories.Dequeue();
-            musicFolders.Add(dir.FullName);
-
-            DirectoryInfo[] newDirectories = dir.GetDirectories();
             FileInformation[] newFiles = MediaPortal.Util.NativeFileSystemOperations.GetFileInformation(dir.FullName,
                                                                                                         !_excludeHiddenFiles);
-            // dir.GetFiles(searchPattern);
-            string[] newFiles2 = MediaPortal.Util.NativeFileSystemOperations.GetFiles(dir.FullName);
-            foreach (DirectoryInfo di in newDirectories)
+
+            foreach (FileInformation fi in newFiles)
             {
-              directories.Enqueue(di);
-            }
-            foreach (FileInformation file in newFiles)
-            {
-              files.Enqueue(file);
+              files.Enqueue(fi);
             }
           }
         }
         catch (UnauthorizedAccessException ex)
         {
-          Log.Error("MusicDBReorg: File / Directory Access error: {0}", ex.Message);
+          Log.Error("MusicdatabaseReorg: File / Directory Access error: {0}", ex.Message);
         }
       }
     }
@@ -1565,31 +1603,34 @@ namespace MediaPortal.Music.Database
     /// <returns></returns>
     private int AddFolder(string fullPath)
     {
-      var folder = fullPath.Replace(_currentShare, "").Trim('\\');
-      var shareId = AddShare(_currentShare);
-
-      int val = 0;
-      if (_folderCache.TryGetValue(folder, out val))
+      lock (_folderLock)
       {
-        return val;
-      }
+        var folder = fullPath.Replace(_currentShare, "").Trim('\\');
+        var shareId = AddShare(_currentShare);
 
-      var folderId = ++_folderCount;
-      _folderCache.Add(folder, folderId);
-      var sql = string.Format("insert into folder values ({0}, '{1}', '{2}')", folderId, shareId, folder);
-      try
-      {
-        SQLiteResultSet result = DirectExecute(sql);
-        if (result != null)
+        int val = 0;
+        if (_folderCache.TryGetValue(folder, out val))
         {
-          return folderId;
+          return val;
         }
+
+        var folderId = ++_folderCount;
+        _folderCache.Add(folder, folderId);
+        var sql = string.Format("insert into folder values ({0}, '{1}', '{2}')", folderId, shareId, folder);
+        try
+        {
+          SQLiteResultSet result = DirectExecute(sql);
+          if (result != null)
+          {
+            return folderId;
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Error("MusicDatabaseReorg: DB exception on Folder insert: {0} {1}", folder, ex.Message);
+        }
+        return 0;
       }
-      catch (Exception ex)
-      {
-        Log.Error("MusicDatabaseReorg: DB exception on Folder insert: {0} {1}", folder, ex.Message);
-      }
-      return 0;
     }
 
     /// <summary>
@@ -1599,28 +1640,31 @@ namespace MediaPortal.Music.Database
     /// <returns></returns>
     private int AddShare(string shareName)
     {
-      int val = 0;
-      if (_shareCache.TryGetValue(shareName, out val))
+      lock (_shareLock)
       {
-        return val;
-      }
-
-      var shareId = ++_shareCount;
-      _shareCache.Add(shareName, shareId);
-      string sql = string.Format("insert into Share values ({0}, '{1}')", shareId, shareName);
-      try
-      {
-        SQLiteResultSet result = DirectExecute(sql);
-        if (result != null)
+        int val = 0;
+        if (_shareCache.TryGetValue(shareName, out val))
         {
-          return shareId;
+          return val;
         }
+
+        var shareId = ++_shareCount;
+        _shareCache.Add(shareName, shareId);
+        string sql = string.Format("insert into Share values ({0}, '{1}')", shareId, shareName);
+        try
+        {
+          SQLiteResultSet result = DirectExecute(sql);
+          if (result != null)
+          {
+            return shareId;
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Error("MusicDatabaseReorg: DB exception on Share insert: {0} {1}", shareName, ex.Message);
+        }
+        return 0;
       }
-      catch (Exception ex)
-      {
-        Log.Error("MusicDatabaseReorg: DB exception on Share insert: {0} {1}", shareName, ex.Message);
-      }
-      return 0;
     }
 
     /// <summary>
@@ -1630,28 +1674,32 @@ namespace MediaPortal.Music.Database
     /// <returns></returns>
     private int AddAlbum(MusicTag tag)
     {
-      int val = 0;
-      if (_albumCache.TryGetValue(tag.Album, out val))
+      lock (_albumLock)
       {
-        return val;
-      }
-
-      var albumId = ++_albumCount;
-      _albumCache.Add(tag.Album, albumId);
-      string sql = string.Format("insert into album values ({0}, '{1}', '{2}', {3})", albumId, tag.Album, tag.AlbumSort, GetTagValue(tag.Year));
-      try
-      {
-        SQLiteResultSet result = DirectExecute(sql);
-        if (result != null)
+        int val = 0;
+        if (_albumCache.TryGetValue(tag.Album, out val))
         {
-          return albumId;
+          return val;
         }
+
+        var albumId = ++_albumCount;
+        _albumCache.Add(tag.Album, albumId);
+        string sql = string.Format("insert into album values ({0}, '{1}', '{2}', {3})", albumId, tag.Album,
+                                   tag.AlbumSort, GetTagValue(tag.Year));
+        try
+        {
+          SQLiteResultSet result = DirectExecute(sql);
+          if (result != null)
+          {
+            return albumId;
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Error("MusicDatabaseReorg: DB exception on Artist insert: {0} {1}", tag.Album, ex.Message);
+        }
+        return 0;
       }
-      catch (Exception ex)
-      {
-        Log.Error("MusicDatabaseReorg: DB exception on Artist insert: {0} {1}", tag.Album, ex.Message);
-      }
-      return 0;
     }
 
     /// <summary>
@@ -1662,29 +1710,32 @@ namespace MediaPortal.Music.Database
     /// <returns></returns>
     private int AddArtist(string artistName)
     {
-      int val = 0;
-      if (_artistCache.TryGetValue(artistName, out val))
+      lock (_artistLock)
       {
-        return val;
-      }
-
-      var artistId = ++_artistCount;
-      _artistCache.Add(artistName, artistId);
-
-      string sql = string.Format("insert into artist values ({0}, '{1}', '{2}')", artistId, artistName, "");
-      try
-      {
-        SQLiteResultSet result = DirectExecute(sql);
-        if (result != null)
+        int val = 0;
+        if (_artistCache.TryGetValue(artistName, out val))
         {
-          return artistId;
+          return val;
         }
+
+        var artistId = ++_artistCount;
+        _artistCache.Add(artistName, artistId);
+
+        string sql = string.Format("insert into artist values ({0}, '{1}', '{2}')", artistId, artistName, "");
+        try
+        {
+          SQLiteResultSet result = DirectExecute(sql);
+          if (result != null)
+          {
+            return artistId;
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Error("MusicDatabaseReorg: DB exception on Artist insert: {0} {1}", artistName, ex.Message);
+        }
+        return 0;
       }
-      catch (Exception ex)
-      {
-        Log.Error("MusicDatabaseReorg: DB exception on Artist insert: {0} {1}", artistName, ex.Message);
-      }
-      return 0;
     }
 
     /// <summary>
@@ -1694,29 +1745,32 @@ namespace MediaPortal.Music.Database
     /// <returns></returns>
     private int AddGenre(string genreName)
     {
-      int val = 0;
-      if (_genreCache.TryGetValue(genreName, out val))
+      lock (_genreLock)
       {
-        return val;
-      }
-
-      var genreId = ++_genreCount;
-      _genreCache.Add(genreName, genreId);
-
-      string sql = string.Format("insert into genre values ({0}, '{1}')", genreId, genreName);
-      try
-      {
-        SQLiteResultSet result = DirectExecute(sql);
-        if (result != null)
+        int val = 0;
+        if (_genreCache.TryGetValue(genreName, out val))
         {
-          return genreId;
+          return val;
         }
+
+        var genreId = ++_genreCount;
+        _genreCache.Add(genreName, genreId);
+
+        string sql = string.Format("insert into genre values ({0}, '{1}')", genreId, genreName);
+        try
+        {
+          SQLiteResultSet result = DirectExecute(sql);
+          if (result != null)
+          {
+            return genreId;
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Error("MusicDatabaseReorg: DB exception on Genre insert: {0} {1}", genreName, ex.Message);
+        }
+        return 0;
       }
-      catch (Exception ex)
-      {
-        Log.Error("MusicDatabaseReorg: DB exception on Genre insert: {0} {1}", genreName, ex.Message);
-      }
-      return 0;
     }
 
     #endregion
