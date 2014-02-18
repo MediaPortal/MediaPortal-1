@@ -136,55 +136,50 @@ namespace MediaPortal.Music.Database
 
     #region Resume
 
+    /// <summary>
+    /// Sets the position of a Song to resume on next Playback
+    /// </summary>
+    /// <param name="aSong"></param>
     public void SetResume(Song aSong)
     {
-      try
+      if (aSong.Id == -1)
       {
-        if (aSong.Id == -1)
-        {
-          return;
-        }
-
-        string strSQL = String.Format("UPDATE tracks SET iResumeAt={0} WHERE idTrack={1}", aSong.ResumeAt, aSong.Id);
-        DirectExecute(strSQL);
         return;
       }
-      catch (Exception ex)
-      {
-        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
-      }
+
+      string strSQL = String.Format("UPDATE Song SET ResumeAt={0} WHERE IdSong={1}", aSong.ResumeAt, aSong.Id);
+      ExecuteNonQuery(strSQL);
     }
 
     #endregion
 
     #region Favorite / Ratings
 
+    /// <summary>
+    /// Mark Song as Favorite
+    /// </summary>
+    /// <param name="aSong"></param>
     public void SetFavorite(Song aSong)
     {
-      try
+      if (aSong.Id == -1)
       {
-        if (aSong.Id == -1)
-        {
-          return;
-        }
-
-        int iFavorite = 0;
-        if (aSong.Favorite)
-        {
-          iFavorite = 1;
-        }
-        string strSQL = String.Format("UPDATE tracks SET iFavorite={0} WHERE idTrack={1}", iFavorite, aSong.Id);
-        DirectExecute(strSQL);
         return;
       }
-      catch (Exception ex)
+
+      var iFavorite = 0;
+      if (aSong.Favorite)
       {
-        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
+        iFavorite = 1;
       }
+      string strSQL = String.Format("UPDATE Song SET Favorite={0} WHERE IdSong={1}", iFavorite, aSong.Id);
+      ExecuteNonQuery(strSQL);
     }
 
+    /// <summary>
+    /// Set the Rating of a Song
+    /// </summary>
+    /// <param name="aFilename"></param>
+    /// <param name="aRating"></param>
     public void SetRating(string aFilename, int aRating)
     {
       if (string.IsNullOrEmpty(aFilename))
@@ -192,84 +187,68 @@ namespace MediaPortal.Music.Database
         return;
       }
 
-      try
+      var strFileName = DatabaseUtility.RemoveInvalidChars(aFilename);
+
+      // The underscore is treated as special symbol in a like clause, which produces wrong results
+      // we need to escape it and use the sql escape clause  escape '\x0001'
+      strFileName = strFileName.Replace("_", "\x0001_");
+      strSQL = string.Format(@"Update Song Set Rating={1} " +
+       "where IdSong = " +
+       "(select s.idsong from Song s " +
+       "join folder fo on fo.IdFolder = s.IdFolder " +
+       "join share sh on sh.IdShare = fo.IDShare " +
+       "where (sh.ShareName || fo.FolderName || s.FileName) like '{0}' escape '\x0001')", strFileName, aRating);
+
+      ExecuteNonQuery(strSQL);
+
+      // Let's fire the Ratings change event
+      if (MusicRatingChanged != null)
       {
-        Song song = new Song();
-        string strFileName = aFilename;
-        DatabaseUtility.RemoveInvalidChars(ref strFileName);
-
-        strSQL = String.Format("UPDATE tracks SET iRating={0} WHERE strPath='{1}'", aRating, strFileName);
-
-        DirectExecute(strSQL);
-
-        // Let's fire the Ratings change event
-        if (MusicRatingChanged != null)
-        {
-          MusicRatingChanged(this, strFileName, aRating);
-        }
-        return;
+        MusicRatingChanged(this, strFileName, aRating);
       }
-      catch (Exception ex)
-      {
-        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
-      }
-
-      return;
     }
 
     #endregion
 
     #region Top100
 
+    /// <summary>
+    /// Resets the Top 100 Counter
+    /// </summary>
     public void ResetTop100()
     {
-      try
-      {
-        string strSQL = String.Format("UPDATE tracks SET iTimesPlayed=0");
-        DirectExecute(strSQL);
-      }
-      catch (Exception ex)
-      {
-        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
-      }
+      strSQL = String.Format("UPDATE Song SET TimesPlayed=0");
+      ExecuteNonQuery(strSQL);
     }
 
     public bool IncrTop100CounterByFileName(string aFileName)
     {
-      try
+      var strFileName = DatabaseUtility.RemoveInvalidChars(aFileName);
+
+      strSQL = string.Format("select s.idsong from Song s " +
+       "join folder fo on fo.IdFolder = s.IdFolder " +
+       "join share sh on sh.IdShare = fo.IDShare " +
+       "where (sh.ShareName || fo.FolderName || s.FileName) like '{0}' escape '\x0001'", strFileName);
+
+      var results = ExecuteQuery(strSQL);
+      if (results.Rows.Count == 0)
       {
-        Song song = new Song();
-        string strFileName = aFileName;
-        DatabaseUtility.RemoveInvalidChars(ref strFileName);
-
-        strSQL = String.Format("SELECT * from tracks WHERE strPath = '{0}'", strFileName);
-
-        SQLiteResultSet results = MusicDbClient.Execute(strSQL);
-        if (results.Rows.Count == 0)
-        {
-          return false;
-        }
-
-        int idSong = DatabaseUtility.GetAsInt(results, 0, "idTrack");
-        int iTimesPlayed = DatabaseUtility.GetAsInt(results, 0, "iTimesPlayed");
-
-        strSQL = String.Format("UPDATE tracks SET iTimesPlayed={0}, dateLastPlayed='{1}' where idTrack='{2}'",
-          ++iTimesPlayed, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), idSong);
-        if (DirectExecute(strSQL).Rows.Count > 0)
-        {
-          Log.Debug("MusicDatabase: increased playcount for song {1} to {0}", Convert.ToString(iTimesPlayed), aFileName);
-          return true;
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
+        return false;
       }
 
-      return false;
+      var idSong = DatabaseUtility.GetAsInt(results, 0, "IdSong");
+      var iTimesPlayed = DatabaseUtility.GetAsInt(results, 0, "TimesPlayed");
+
+      // The underscore is treated as special symbol in a like clause, which produces wrong results
+      // we need to escape it and use the sql escape clause  escape '\x0001'
+      strFileName = strFileName.Replace("_", "\x0001_");
+      strSQL = string.Format(@"Update Song Set TimesPlayed={1}, DateLastPlayed='{2}' " +
+       "where IdSong = {0}", idSong, ++iTimesPlayed, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+
+      ExecuteNonQuery(strSQL);
+
+      Log.Debug("MusicDatabase: increased playcount for song {1} to {0}", Convert.ToString(iTimesPlayed), aFileName);
+      return true;
     }
 
     #endregion
@@ -319,7 +298,7 @@ namespace MediaPortal.Music.Database
 
         strSQL = String.Format("delete from albuminfo where strAlbum like '{0}' and strArtist like '{1}%'", album.Album,
                                album.Artist);
-        MusicDbClient.Execute(strSQL);
+        ExecuteNonQuery(strSQL);
 
         strSQL =
           String.Format(
@@ -334,7 +313,7 @@ namespace MediaPortal.Music.Database
             album.Year,
             album.Tracks);
 
-        MusicDbClient.Execute(strSQL);
+        ExecuteNonQuery(strSQL);
 
         return;
       }
@@ -413,8 +392,7 @@ namespace MediaPortal.Music.Database
         }
 
         strSQL = String.Format("delete from artistinfo where strArtist like '{0}%'", artist.Artist);
-        SQLiteResultSet results;
-        results = MusicDbClient.Execute(strSQL);
+        ExecuteNonQuery(strSQL);
 
         strSQL =
           String.Format(
@@ -433,7 +411,7 @@ namespace MediaPortal.Music.Database
             artist.Singles,
             artist.Misc);
 
-        MusicDbClient.Execute(strSQL);
+        ExecuteNonQuery(strSQL);
         return;
       }
       catch (Exception ex)
@@ -452,7 +430,7 @@ namespace MediaPortal.Music.Database
       string strArtist = aArtistName;
       DatabaseUtility.RemoveInvalidChars(ref strArtist);
       strSQL = String.Format("delete from albuminfo where strAlbum like '{0}' and strArtist like '{1}'", strAlbum, strArtist);
-      DirectExecute(strSQL);
+      ExecuteNonQuery(strSQL);
     }
 
     public void DeleteArtistInfo(string aArtistName)
@@ -460,7 +438,7 @@ namespace MediaPortal.Music.Database
       string strArtist = aArtistName;
       DatabaseUtility.RemoveInvalidChars(ref strArtist);
       strSQL = String.Format("delete from artistinfo where strArtist like '{0}'", strArtist);
-      DirectExecute(strSQL);
+      ExecuteNonQuery(strSQL);
     }
 
     #endregion
@@ -469,36 +447,24 @@ namespace MediaPortal.Music.Database
 
     public bool UpdateLyrics(string aFileName, string aLyrics)
     {
-      try
+      var strFileName = DatabaseUtility.RemoveInvalidChars(aFileName);
+      var strLyrics = DatabaseUtility.RemoveInvalidChars(aLyrics);
+
+      // The underscore is treated as special symbol in a like clause, which produces wrong results
+      // we need to escape it and use the sql escape clause  escape '\x0001'
+      strFileName = strFileName.Replace("_", "\x0001_");
+      strSQL = string.Format(@"Update Song Set Lyrics='{1}' " +
+       "where IdSong = " +
+       "(select s.idsong from Song s " +
+       "join folder fo on fo.IdFolder = s.IdFolder " +
+       "join share sh on sh.IdShare = fo.IDShare " +
+       "where (sh.ShareName || fo.FolderName || s.FileName) like '{0}' escape '\x0001')", strFileName, strLyrics);
+
+      if (ExecuteNonQuery(strSQL))
       {
-        string strFileName = aFileName;
-        DatabaseUtility.RemoveInvalidChars(ref strFileName);
-        string strLyrics = aLyrics;
-        DatabaseUtility.RemoveInvalidChars(ref strLyrics);
-
-        strSQL = String.Format("SELECT * from tracks WHERE strPath = '{0}'", strFileName);
-
-        SQLiteResultSet results = MusicDbClient.Execute(strSQL);
-        if (results.Rows.Count == 0)
-        {
-          return false;
-        }
-
-        int idSong = DatabaseUtility.GetAsInt(results, 0, "idTrack");
-
-        strSQL = String.Format("UPDATE tracks SET strLyrics='{0}' where idTrack='{1}'", strLyrics, idSong);
-        if (DirectExecute(strSQL).Rows.Count == 0)
-        {
-          Log.Debug("MusicDatabase: Updated Lyrics for song {0}", aFileName);
-          return true;
-        }
+        Log.Debug("MusicDatabase: Updated Lyrics for song {0}", aFileName);
+        return true;
       }
-      catch (Exception ex)
-      {
-        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
-      }
-
       return false;
     }
 
@@ -837,10 +803,13 @@ namespace MediaPortal.Music.Database
     {
       DatabaseUtility.RemoveInvalidChars(ref strFileName);
 
+      // The underscore is treated as special symbol in a like clause, which produces wrong results
+      // we need to escape it and use the sql escape clause  escape '\x0001'
+      strFileName = strFileName.Replace("_", "\x0001_");
       strSQL = string.Format(@"select s.idsong, (sh.ShareName || fo.FolderName || s.FileName) as Path from Song s " +
        "join folder fo on fo.IdFolder = s.IdFolder " +
        "join share sh on sh.IdShare = fo.IDShare " +
-       "where Path = '{0}'", strFileName);
+       "where Path like '{0}' escape '\x0001'", strFileName);
 
       var results = ExecuteQuery(strSQL);
       if (results.Rows.Count > 0)
