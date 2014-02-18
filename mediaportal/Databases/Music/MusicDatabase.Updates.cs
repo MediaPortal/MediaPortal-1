@@ -935,8 +935,8 @@ namespace MediaPortal.Music.Database
         _currentShare = share;
         try
         {
-          int maxThreads = 0;
-          int maxComplThreads = 0;
+          var maxThreads = 0;
+          var maxComplThreads = 0;
           ThreadPool.GetAvailableThreads(out maxThreads, out maxComplThreads);
 
           ThreadPool.SetMaxThreads(Environment.ProcessorCount, maxComplThreads);
@@ -958,23 +958,22 @@ namespace MediaPortal.Music.Database
       }
 
       // Now we will remove the CUE data file from the database, since we will add Fake Tracks in the next step
-      foreach (string cueFile in _cueFiles)
+      foreach (var cueFile in _cueFiles)
       {
         try
         {
-          CueSheet cueSheet = new CueSheet(cueFile);
+          var cueSheet = new CueSheet(cueFile);
           string cuePath = Path.GetDirectoryName(cueFile);
           string cueDataFile = cuePath + "\\" + cueSheet.Tracks[0].DataFile.Filename;
           DatabaseUtility.RemoveInvalidChars(ref cueDataFile);
-          strSQL = String.Format("delete from tracks where strPath='{0}'", cueDataFile);
-          try
-          {
-            DirectExecute(strSQL);
-          }
-          catch (Exception ex)
-          {
-            Log.Error("Error deleting song from Database: {0}", ex.Message);
-          }
+          strSQL = string.Format("delete from Song " +
+                                 "where IdSong =  " +
+                                    "(select s.idsong from Song s " +
+                                    "join folder fo on fo.IdFolder = s.IdFolder " +
+                                    "join share sh on sh.IdShare = fo.IDShare " +
+                                    "where (sh.ShareName || fo.FolderName || s.FileName) like '{0}')"
+                                    , cueDataFile);
+          ExecuteNonQuery(strSQL);
         }
         catch (Exception ex)
         {
