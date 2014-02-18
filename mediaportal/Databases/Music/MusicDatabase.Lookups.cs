@@ -1151,8 +1151,8 @@ namespace MediaPortal.Music.Database
       {
         aArtistArray.Clear();
 
-        string strSQL = String.Format("SELECT DISTINCT strArtist FROM artist ORDER BY strArtist");
-        SQLiteResultSet results = DirectExecute(strSQL);
+        string strSQL = String.Format("SELECT DISTINCT ArtistName FROM Artist ORDER BY ArtistName");
+        SQLiteResultSet results = ExecuteQuery(strSQL);
         if (results.Rows.Count == 0)
         {
           return false;
@@ -1160,7 +1160,7 @@ namespace MediaPortal.Music.Database
 
         for (int i = 0; i < results.Rows.Count; ++i)
         {
-          string strArtist = DatabaseUtility.Get(results, i, "strArtist");
+          string strArtist = DatabaseUtility.Get(results, i, "ArtistName");
           aArtistArray.Add(strArtist.Trim(trimChars));
         }
 
