@@ -3907,8 +3907,6 @@ namespace MediaPortal.Util
     public static bool CreateFolderPreviewThumb(List<string> aPictureList, string aThumbPath)
     {
       bool result = false;
-      Stopwatch benchClock = new Stopwatch();
-      benchClock.Start();
 
       if (aPictureList.Count > 0)
       {
@@ -3999,7 +3997,6 @@ namespace MediaPortal.Util
                 try
                 {
                   string tmpFile = Path.GetTempFileName();
-                  Log.Debug("Saving thumb!");
                   bmp.Save(tmpFile, Thumbs.ThumbCodecInfo, Thumbs.ThumbEncoderParams);
 
                   // we do not want a folderL.jpg
@@ -4043,9 +4040,6 @@ namespace MediaPortal.Util
         {
           Log.Error("Utils: An error occured creating folder preview thumbs: {0}", exm.Message);
         }
-
-        benchClock.Stop();
-        Log.Debug("Utils: CreateFolderPreviewThumb for {0} took {1} ms", aThumbPath, benchClock.ElapsedMilliseconds);
       } //if (pictureList.Count>0)
       else
       {
