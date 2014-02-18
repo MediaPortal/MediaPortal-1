@@ -1072,9 +1072,9 @@ namespace MediaPortal.Music.Database
       DatabaseUtility.RemoveInvalidChars(ref strFileName);
 
       // Let's check, if we've got already that file in the database
-      strSQL = string.Format(@"select s.id, (sh.ShareName || fo.FolderName || s.FileName) as Path from Song s " +
-        "join folder fo on fo.Id = IdFolder " +
-        "join share sh on sh.Id = fo.IDShare " +
+      strSQL = string.Format(@"select s.idsong, (sh.ShareName || fo.FolderName || s.FileName) as Path from Song s " +
+        "join folder fo on fo.IdFolder = s.IdFolder " +
+        "join share sh on sh.IdShare = fo.IDShare " +
         "where Path  like '{0}'", strFileName);
 
       results = ExecuteQuery(strSQL);
@@ -1384,7 +1384,7 @@ namespace MediaPortal.Music.Database
         strSQL =
           string.Format(
             @"insert or replace into Song ( " +
-                       "Id, IdFolder, IdAlbum, FileName, Title, TitleSort, Track, TrackCount, Disc, DiscCount," +
+                       "IdSong, IdFolder, IdAlbum, FileName, Title, TitleSort, Track, TrackCount, Disc, DiscCount," +
                        "Duration, Year, Timesplayed, Rating, Lyrics, Comment, Copyright," +
                        "AmazonId, Grouping, MusicBrainzArtistId, MusicBrainzDiscId, MusicBrainzReleaseArtistId," +
                        "MusicBrainzReleaseCountry, MusicBrainzReleaseId, MusicBrainzReleaseStatus, MusicBrainzReleaseTrackid," +
@@ -1483,7 +1483,7 @@ namespace MediaPortal.Music.Database
           folder = folder + "\\"; // Append backslash at the end
         }
         var shareId = AddShare(_currentShare);
-        var sql = string.Format("select Id from folder where FolderName = '{0}' and IdShare = {1}", folder, shareId);
+        var sql = string.Format("select IdFolder from folder where FolderName = '{0}' and IdShare = {1}", folder, shareId);
         var result = ExecuteQuery(sql);
         if (result.Rows.Count == 0)
         {
@@ -1511,7 +1511,7 @@ namespace MediaPortal.Music.Database
     {
       lock (_shareLock)
       {
-        var sql = string.Format(@"select Id from Share where ShareName = '{0}\'", shareName);
+        var sql = string.Format(@"select IdShare from Share where ShareName = '{0}\'", shareName);
         var result = ExecuteQuery(sql);
         if (result.Rows.Count == 0)
         {
@@ -1539,7 +1539,7 @@ namespace MediaPortal.Music.Database
     {
       lock (_albumLock)
       {
-        var sql = string.Format("select Id from Album where AlbumName = '{0}'", tag.Album);
+        var sql = string.Format("select IdAlbum from Album where AlbumName = '{0}'", tag.Album);
         var result = ExecuteQuery(sql);
         if (result.Rows.Count == 0)
         {
@@ -1569,7 +1569,7 @@ namespace MediaPortal.Music.Database
     {
       lock (_artistLock)
       {
-        var sql = string.Format("select Id from Artist where ArtistName = '{0}'", artistName);
+        var sql = string.Format("select IdArtist from Artist where ArtistName = '{0}'", artistName);
         var result = ExecuteQuery(sql);
         if (result.Rows.Count == 0)
         {
@@ -1597,7 +1597,7 @@ namespace MediaPortal.Music.Database
     {
       lock (_genreLock)
       {
-        var sql = string.Format("select Id from Genre where GenreName = '{0}'", genreName);
+        var sql = string.Format("select IdGenre from Genre where GenreName = '{0}'", genreName);
         var result = ExecuteQuery(sql);
         if (result.Rows.Count == 0)
         {
@@ -2019,7 +2019,7 @@ namespace MediaPortal.Music.Database
     private int GetMaxValue(string aTable)
     {
       var max = 0;
-      strSQL = string.Format("select max(Id) from {0}", aTable);
+      strSQL = string.Format("select max(Id{0}) from {0}", aTable);
       var maxValue = ExecuteQuery(strSQL);
       if (maxValue.Rows.Count > 0)
       {

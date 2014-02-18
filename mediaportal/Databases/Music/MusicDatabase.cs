@@ -180,7 +180,7 @@ namespace MediaPortal.Music.Database
         {
           cmd.Connection = Instance.DbConnection;
           cmd.CommandText = aSQL;
-          using (SQLiteDataReader reader = cmd.ExecuteReader())
+          using (var reader = cmd.ExecuteReader())
           {
             if (reader.HasRows)
             {
@@ -267,7 +267,7 @@ namespace MediaPortal.Music.Database
     {
       try
       {
-        using (SQLiteCommand cmd = new SQLiteCommand())
+        using (var cmd = new SQLiteCommand())
         {
           cmd.Connection = Instance.DbConnection;
           cmd.CommandType = CommandType.Text;
@@ -280,6 +280,30 @@ namespace MediaPortal.Music.Database
       {
         Log.Error("MusicDatabase: Exception executing: {0}/n{1}", aSQL, ex.Message);
         return false;
+      }
+    }
+
+    /// <summary>
+    /// Execute a Scalar QUery Statement against the current database
+    /// </summary>
+    /// <param name="aSQL"></param>
+    /// <returns>object</returns>
+    public static object ExecuteScalar(string aSQL)
+    {
+      try
+      {
+        using (var cmd = new SQLiteCommand())
+        {
+          cmd.Connection = Instance.DbConnection;
+          cmd.CommandType = CommandType.Text;
+          cmd.CommandText = aSQL;
+          return cmd.ExecuteScalar();
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("MusicDatabase: Exception executing: {0}/n{1}", aSQL, ex.Message);
+        return null;
       }
     }
 
@@ -391,22 +415,22 @@ namespace MediaPortal.Music.Database
 
         // Share Table: Holds information about the Music Shares
         ExecuteNonQuery("CREATE TABLE Share (" +
-                                 "Id integer primary key," +
+                                 "IdShare integer primary key," +
                                  "ShareName text not null" +
         ")");
 
         // Folder Table: Holds information about the different Folder
         ExecuteNonQuery("CREATE TABLE Folder (" +
-                                 "Id integer primary key," +
+                                 "IdFolder integer primary key," +
                                  "IdShare integer not null," +
                                  "FolderName text not null," +
-                                 "Foreign Key(IdShare) References Share(Id)" +
+                                 "Foreign Key(IdShare) References Share(IdShare)" +
         ")");
 
         // Artist Table
         // Holds Information about Artist, AlbumArtist, Composer, Conductor
         ExecuteNonQuery("CREATE TABLE Artist (" +
-                                 "Id integer primary key," +
+                                 "IdArtist integer primary key," +
                                  "ArtistName text not null," +
                                  "ArtistSortName text not null" +
         ")");
@@ -415,7 +439,7 @@ namespace MediaPortal.Music.Database
 
         // Album Table
         ExecuteNonQuery("CREATE TABLE Album (" +
-                                 "Id integer primary key," +
+                                 "IdAlbum integer primary key," +
                                  "AlbumName text not null," +
                                  "AlbumSortName text not null," +
                                  "Year integer" +
@@ -425,7 +449,7 @@ namespace MediaPortal.Music.Database
 
         // Genre Table
         ExecuteNonQuery("CREATE TABLE Genre (" +
-                                 "Id integer primary key," +
+                                 "IdGenre integer primary key," +
                                  "GenreName text not null" +
         ")");
 
@@ -434,7 +458,7 @@ namespace MediaPortal.Music.Database
         // Song table containing information for songs
         ExecuteNonQuery(
           @"CREATE TABLE Song ( " +
-          "Id integer primary key, " + // Unique Song id. Manually incremented
+          "IdSong integer primary key, " + // Unique Song id. Manually incremented
           "IdFolder integer not null, " + // ID of the folder. Foreign Key
           "IdAlbum integer not null, " + // ID of the album. Foreign Key
           "FileName text not null, " + // FileName of song. Needs to be concatenated with ShareNAme + FolderName for Fullpath
@@ -477,8 +501,8 @@ namespace MediaPortal.Music.Database
           "SampleRate integer, " + // Sample Rate    
           "DateLastPlayed timestamp, " + // Date, Last Time Played
           "DateAdded timestamp, " + // Date added. Either Insertion date, Creation date, LastWrite
-          "Foreign Key(IdFolder) references Folder(Id), " +
-          "Foreign Key(IdAlbum) references Album(Id)" +
+          "Foreign Key(IdFolder) references Folder(IdFolder), " +
+          "Foreign Key(IdAlbum) references Album(IdAlbum)" +
           ")"
           );
 
