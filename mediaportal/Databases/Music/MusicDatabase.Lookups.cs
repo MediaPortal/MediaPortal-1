@@ -29,13 +29,26 @@ using SQLite.NET;
 
 namespace MediaPortal.Music.Database
 {
-
-  #region Usings
-
-  #endregion
-
   public partial class MusicDatabase
   {
+    #region Variables
+
+    private string _strSongSelect = "select Song.*, Album.*, " +
+                                    "( select group_concat(aname, ' | ') from (select distinct(Artist.ArtistName) as aname from artist join artistsong on artistsong.idsong = song.IdSong and artistsong.idartist = artist.IdArtist)) as Artist," +
+                                    "( select Artist.ArtistName from artist join albumartist on albumartist.idalbum = Album.IdAlbum and albumartist.idartist = artist.idArtist) as AlbumArtist," +
+                                    "( select group_concat(genrename, ' | ') from (select distinct genrename from Genre join genresong on genresong.idsong = song.idSong and genresong.idgenre = genre.idGenre order by genrename)) as Genre," +
+                                    "( select group_concat(composername, ' | ') from (select distinct artist.artistname as composername from artist join composersong on composersong.idsong = song.idSong and composersong.idcomposer = artist.idArtist order by composername)) as composer," +
+                                    "(share.ShareName || folder.FolderName || song.FileName) as Path ";
+
+    private string _strSongFrom = "from Song ";
+
+    private string _strSongJoin = "join Album on Album.IdAlbum = Song.IdAlbum " +
+                            "join folder on folder.idFolder = song.idfolder " +
+                            "join share on share.IdShare = folder.IdShare ";
+
+    #endregion
+
+
     public bool AssignAllSongFieldsFromResultSet(ref Song aSong, SQLiteResultSet aResult, int aRow)
     {
       if (aSong == null || aResult == null || aResult.Rows.Count < 1)
@@ -43,38 +56,55 @@ namespace MediaPortal.Music.Database
         return false;
       }
 
-      aSong.Id = DatabaseUtility.GetAsInt(aResult, aRow, "tracks.idTrack");
-      aSong.FileName = DatabaseUtility.Get(aResult, aRow, "tracks.strPath");
-      aSong.Artist = DatabaseUtility.Get(aResult, aRow, "tracks.strArtist").Trim(trimChars);
-      aSong.AlbumArtist = DatabaseUtility.Get(aResult, aRow, "tracks.strAlbumArtist").Trim(trimChars);
-      aSong.Album = DatabaseUtility.Get(aResult, aRow, "tracks.strAlbum");
-      aSong.Genre = DatabaseUtility.Get(aResult, aRow, "tracks.strGenre").Trim(trimChars);
-      aSong.Title = DatabaseUtility.Get(aResult, aRow, "tracks.strTitle");
-      aSong.Track = DatabaseUtility.GetAsInt(aResult, aRow, "tracks.iTrack");
-      aSong.TrackTotal = DatabaseUtility.GetAsInt(aResult, aRow, "tracks.iNumTracks");
-      aSong.Duration = DatabaseUtility.GetAsInt(aResult, aRow, "tracks.iDuration");
-      aSong.Year = DatabaseUtility.GetAsInt(aResult, aRow, "tracks.iYear");
-      aSong.TimesPlayed = DatabaseUtility.GetAsInt(aResult, aRow, "tracks.iTimesPlayed");
-      aSong.Rating = DatabaseUtility.GetAsInt(aResult, aRow, "tracks.iRating");
-      aSong.Favorite = DatabaseUtility.GetAsInt(aResult, aRow, "tracks.iFavorite") != 0;
-      aSong.ResumeAt = DatabaseUtility.GetAsInt(aResult, aRow, "tracks.iResumeAt");
-      aSong.DiscId = DatabaseUtility.GetAsInt(aResult, aRow, "tracks.iDisc");
-      aSong.DiscTotal = DatabaseUtility.GetAsInt(aResult, aRow, "tracks.iNumDisc");
-      aSong.Lyrics = DatabaseUtility.Get(aResult, aRow, "tracks.strLyrics");
-      aSong.Composer = DatabaseUtility.Get(aResult, aRow, "tracks.strComposer").Trim(trimChars);
-      aSong.Conductor = DatabaseUtility.Get(aResult, aRow, "tracks.strConductor").Trim(trimChars);
-      aSong.Comment = DatabaseUtility.Get(aResult, aRow, "tracks.strComment").Trim(trimChars);
-      aSong.FileType = DatabaseUtility.Get(aResult, aRow, "tracks.strFileType").Trim(trimChars);
-      aSong.Codec = DatabaseUtility.Get(aResult, aRow, "tracks.strFullCodec").Trim(trimChars);
-      aSong.BitRateMode = DatabaseUtility.Get(aResult, aRow, "tracks.strBitRateMode").Trim(trimChars);
-      aSong.BPM = DatabaseUtility.GetAsInt(aResult, aRow, "tracks.iBPM");
-      aSong.BitRate = DatabaseUtility.GetAsInt(aResult, aRow, "tracks.iBitRate");
-      aSong.Channels = DatabaseUtility.GetAsInt(aResult, aRow, "tracks.iChannels");
-      aSong.SampleRate = DatabaseUtility.GetAsInt(aResult, aRow, "tracks.iSampleRate");
+      aSong.Id = DatabaseUtility.GetAsInt(aResult, aRow, "IdSong");
+      aSong.FileName = DatabaseUtility.Get(aResult, aRow, "Path");
+      aSong.Artist = DatabaseUtility.Get(aResult, aRow, "Artist").Trim(trimChars);
+      aSong.AlbumArtist = DatabaseUtility.Get(aResult, aRow, "AlbumArtist").Trim(trimChars);
+      aSong.Album = DatabaseUtility.Get(aResult, aRow, "AlbumName");
+      aSong.Genre = DatabaseUtility.Get(aResult, aRow, "Genre").Trim(trimChars);
+      aSong.Title = DatabaseUtility.Get(aResult, aRow, "Title");
+      aSong.TitleSort = DatabaseUtility.Get(aResult, aRow, "TitleSort");
+      aSong.Track = DatabaseUtility.GetAsInt(aResult, aRow, "Track");
+      aSong.TrackTotal = DatabaseUtility.GetAsInt(aResult, aRow, "TrackCount");
+      aSong.Duration = DatabaseUtility.GetAsInt(aResult, aRow, "Duration");
+      aSong.Year = DatabaseUtility.GetAsInt(aResult, aRow, "Year");
+      aSong.TimesPlayed = DatabaseUtility.GetAsInt(aResult, aRow, "TimesPlayed");
+      aSong.Rating = DatabaseUtility.GetAsInt(aResult, aRow, "Rating");
+      aSong.Favorite = DatabaseUtility.GetAsInt(aResult, aRow, "Favorite") != 0;
+      aSong.ResumeAt = DatabaseUtility.GetAsInt(aResult, aRow, "ResumeAt");
+      aSong.DiscId = DatabaseUtility.GetAsInt(aResult, aRow, "Disc");
+      aSong.DiscTotal = DatabaseUtility.GetAsInt(aResult, aRow, "DiscCount");
+      aSong.Lyrics = DatabaseUtility.Get(aResult, aRow, "Lyrics");
+      aSong.Composer = DatabaseUtility.Get(aResult, aRow, "Composer").Trim(trimChars);
+      aSong.Conductor = DatabaseUtility.Get(aResult, aRow, "Conductor").Trim(trimChars);
+      aSong.Comment = DatabaseUtility.Get(aResult, aRow, "Comment").Trim(trimChars);
+      aSong.Copyright = DatabaseUtility.Get(aResult, aRow, "Copyright").Trim(trimChars);
+      aSong.AmazonId = DatabaseUtility.Get(aResult, aRow, "AmazonId").Trim(trimChars);
+      aSong.Grouping = DatabaseUtility.Get(aResult, aRow, "Grouping").Trim(trimChars);
+      aSong.MusicBrainzArtistId = DatabaseUtility.Get(aResult, aRow, "MusicBrainzArtistId").Trim(trimChars);
+      aSong.MusicBrainzDiscId = DatabaseUtility.Get(aResult, aRow, "MusicBrainzDiscId").Trim(trimChars);
+      aSong.MusicBrainzReleaseArtistId = DatabaseUtility.Get(aResult, aRow, "MusicBrainzReleaseArtistId").Trim(trimChars);
+      aSong.MusicBrainzReleaseCountry = DatabaseUtility.Get(aResult, aRow, "MusicBrainzReleaseCountry").Trim(trimChars);
+      aSong.MusicBrainzReleaseId = DatabaseUtility.Get(aResult, aRow, "MusicBrainzReleaseId").Trim(trimChars);
+      aSong.MusicBrainzReleaseStatus = DatabaseUtility.Get(aResult, aRow, "MusicBrainzReleaseStatus").Trim(trimChars);
+      aSong.MusicBrainzReleaseTrackId = DatabaseUtility.Get(aResult, aRow, "MusicBrainzReleaseTrackId").Trim(trimChars);
+      aSong.MusicBrainzReleaseType = DatabaseUtility.Get(aResult, aRow, "MusicBrainzReleaseType").Trim(trimChars);
+      aSong.MusicIpid = DatabaseUtility.Get(aResult, aRow, "MusicIpid").Trim(trimChars);
+      aSong.ReplayGainAlbum = DatabaseUtility.Get(aResult, aRow, "ReplayGainAlbum").Trim(trimChars);
+      aSong.ReplayGainAlbumPeak = DatabaseUtility.Get(aResult, aRow, "ReplayGainAlbumPeak").Trim(trimChars);
+      aSong.ReplayGainTrack = DatabaseUtility.Get(aResult, aRow, "ReplayGainTrack").Trim(trimChars);
+      aSong.ReplayGainTrackPeak = DatabaseUtility.Get(aResult, aRow, "ReplayGainTrackPeak").Trim(trimChars);
+      aSong.FileType = DatabaseUtility.Get(aResult, aRow, "FileType").Trim(trimChars);
+      aSong.Codec = DatabaseUtility.Get(aResult, aRow, "Codec").Trim(trimChars);
+      aSong.BitRateMode = DatabaseUtility.Get(aResult, aRow, "BitRateMode").Trim(trimChars);
+      aSong.BPM = DatabaseUtility.GetAsInt(aResult, aRow, "BPM");
+      aSong.BitRate = DatabaseUtility.GetAsInt(aResult, aRow, "BitRate");
+      aSong.Channels = DatabaseUtility.GetAsInt(aResult, aRow, "Channels");
+      aSong.SampleRate = DatabaseUtility.GetAsInt(aResult, aRow, "SampleRate");
       try
       {
-        aSong.DateTimePlayed = DatabaseUtility.GetAsDateTime(aResult, aRow, "dateLastPlayed");
-        aSong.DateTimeModified = DatabaseUtility.GetAsDateTime(aResult, aRow, "dateAdded");
+        aSong.DateTimePlayed = DatabaseUtility.GetAsDateTime(aResult, aRow, "DateLastPlayed");
+        aSong.DateTimeModified = DatabaseUtility.GetAsDateTime(aResult, aRow, "DateAdded");
       }
       catch (Exception ex)
       {
@@ -651,41 +681,57 @@ namespace MediaPortal.Music.Database
       return false;
     }
 
+    /// <summary>
+    /// Gets Songs by Artist
+    /// </summary>
+    /// <param name="aArtist"></param>
+    /// <param name="aSongList"></param>
+    /// <returns></returns>
     public bool GetSongsByArtist(string aArtist, ref List<Song> aSongList)
     {
       return GetSongsByArtist(aArtist, ref aSongList, false);
     }
 
+    /// <summary>
+    /// Gets Songs by Artist
+    /// </summary>
+    /// <param name="aArtist"></param>
+    /// <param name="aSongList"></param>
+    /// <returns></returns>
     private bool GetSongsByArtist(string aArtist, ref List<Song> aSongList, bool aGroupAlbum)
     {
       try
       {
-        string strArtist = aArtist;
-        DatabaseUtility.RemoveInvalidChars(ref strArtist);
-
-        aSongList.Clear();
-
         string strSQL = string.Empty;
+
+        string strArtist = DatabaseUtility.RemoveInvalidChars(aArtist);
+
+        strSQL = string.Format("select idartist from artist where artistname like '{0}'", strArtist);
+        var idArtist = ExecuteScalar(strSQL);
+        if (idArtist == null)
+        {
+          return false;
+        }
+
         if (aGroupAlbum)
         {
-          strSQL =
-            String.Format(
-              "SELECT * FROM tracks WHERE strArtist LIKE '%| {0} |%' GROUP BY strAlbum ORDER BY iYear DESC", strArtist);
+          strSQL = string.Format("{0} {1},Artist {2} join artistsong on artistsong.idsong = song.IdSong and artistsong.idartist = artist.idArtist where artist.idArtist = {3} group by AlbumName Order by Year Desc", _strSongSelect, _strSongFrom, _strSongJoin, idArtist);
         }
         else
         {
-          strSQL = String.Format("SELECT * FROM tracks WHERE strArtist LIKE '%| {0} |%' ORDER BY strArtist", strArtist);
+          strSQL = string.Format("{0} {1},Artist {2} join artistsong on artistsong.idsong = song.Idsong and artistsong.idartist = artist.idartist where artist.idartist = {3}", _strSongSelect, _strSongFrom, _strSongJoin, idArtist);
         }
 
-        SQLiteResultSet results = DirectExecute(strSQL);
+        var results = ExecuteQuery(strSQL);
         if (results.Rows.Count == 0)
         {
           return false;
         }
 
+        aSongList.Clear();
         for (int i = 0; i < results.Rows.Count; ++i)
         {
-          Song song = new Song();
+          var song = new Song();
 
           if (AssignAllSongFieldsFromResultSet(ref song, results, i))
           {
@@ -864,33 +910,64 @@ namespace MediaPortal.Music.Database
       return false;
     }
 
+    /// <summary>
+    /// Retrieve Songs by Genre
+    /// </summary>
+    /// <param name="aGenre"></param>
+    /// <param name="aSongList"></param>
+    /// <returns></returns>
     public bool GetSongsByGenre(string aGenre, ref List<Song> aSongList)
     {
       return GetSongsByGenre(aGenre, ref aSongList, false);
     }
 
+    /// <summary>
+    /// Retrieve Songs by Genre
+    /// </summary>
+    /// <param name="aGenre"></param>
+    /// <param name="aSongList"></param>
+    /// <returns></returns>
     private bool GetSongsByGenre(string aGenre, ref List<Song> aSongList, bool aGroupAlbums)
     {
       try
       {
         aSongList.Clear();
 
-        string strGenre = aGenre;
-        string sql = string.Empty;
-        DatabaseUtility.RemoveInvalidChars(ref strGenre);
+        string strSQL = string.Empty;
+        var strGenre = DatabaseUtility.RemoveInvalidChars(aGenre);
+
+        strSQL = string.Format("select idgenre from genre where genrename like '{0}'", strGenre);
+        var idGenre = ExecuteScalar(strSQL);
+        if (idGenre == null)
+        {
+          return false;
+        }
 
         if (aGroupAlbums)
         {
-          sql =
-            string.Format("SELECT * FROM tracks WHERE strGenre LIKE '%| {0} |%' GROUP BY strAlbum ORDER BY iYear DESC",
-                          strGenre);
+          strSQL = string.Format("{0} {1},Genre {2} join genresong on genresong.idsong = song.idsong and genresong.idgenre = genre.idgenre where genre.idgenre = {3} group by AlbumName Order by Year Desc", _strSongSelect, _strSongFrom, _strSongJoin, idGenre);
         }
         else
         {
-          sql = string.Format("SELECT * FROM tracks WHERE strGenre like '%| {0} |%' ORDER BY strTitle ASC", strGenre);
+          strSQL = string.Format("{0} {1},Genre {2} join genresong on genresong.idsong = song.idsong and genresong.idgenre = genre.idgenre where genre.idgenre = {3}", _strSongSelect, _strSongFrom, _strSongJoin, idGenre);
         }
-        GetSongsByFilter(sql, out aSongList, "genre");
 
+        var results = ExecuteQuery(strSQL);
+        if (results.Rows.Count == 0)
+        {
+          return false;
+        }
+
+        aSongList.Clear();
+        for (int i = 0; i < results.Rows.Count; ++i)
+        {
+          var song = new Song();
+
+          if (AssignAllSongFieldsFromResultSet(ref song, results, i))
+          {
+            aSongList.Add(song);
+          }
+        }
         if (aSongList.Count > 0)
         {
           return true;
@@ -1390,14 +1467,19 @@ namespace MediaPortal.Music.Database
       return -1;
     }
 
+    /// <summary>
+    /// Retrieve the Genres from the Genre Table
+    /// </summary>
+    /// <param name="genres"></param>
+    /// <returns></returns>
     public bool GetGenres(ref ArrayList genres)
     {
       try
       {
         genres.Clear();
-        string strSQL;
-        strSQL = String.Format("SELECT * FROM genre ORDER BY strGenre");
-        SQLiteResultSet results = DirectExecute(strSQL);
+        
+        var strSQL = String.Format("SELECT GenreName FROM genre ORDER BY GenreName");
+        var results = ExecuteQuery(strSQL);
         if (results.Rows.Count == 0)
         {
           return false;
@@ -1405,14 +1487,10 @@ namespace MediaPortal.Music.Database
 
         for (int i = 0; i < results.Rows.Count; ++i)
         {
-          string strGenre = DatabaseUtility.Get(results, i, "strGenre");
+          var strGenre = DatabaseUtility.Get(results, i, "GenreName");
           genres.Add(strGenre);
         }
-
-        if (genres.Count > 0)
-        {
-          return true;
-        }
+        return true;
       }
       catch (Exception ex)
       {
@@ -1422,33 +1500,41 @@ namespace MediaPortal.Music.Database
       return false;
     }
 
+    /// <summary>
+    /// Get Genres based on specific search patterm
+    /// </summary>
+    /// <param name="searchKind"></param>
+    /// <param name="aGenre"></param>
+    /// <param name="aGenreArray"></param>
+    /// <returns></returns>
     public bool GetGenres(int searchKind, string aGenre, ref ArrayList aGenreArray)
     {
       try
       {
         aGenreArray.Clear();
-        string strGenre = aGenre;
-        DatabaseUtility.RemoveInvalidChars(ref strGenre);
+
+        var strGenre = DatabaseUtility.RemoveInvalidChars(aGenre);
 
         string strSQL = string.Empty;
         switch (searchKind)
         {
           case 0:
-            strSQL = String.Format("select * from genre where strGenre like '{0}%'", strGenre);
+            strSQL = String.Format("select GenreName from genre where GenreName like '{0}%'", strGenre);
             break;
           case 1:
-            strSQL = String.Format("select * from genre where strGenre like '%{0}%'", strGenre);
+            strSQL = String.Format("select GenreName from genre where GenreName like '%{0}%'", strGenre);
             break;
           case 2:
-            strSQL = String.Format("select * from genre where strGenre like '%{0}'", strGenre);
+            strSQL = String.Format("select GenreName from genre where GenreName like '%{0}'", strGenre);
             break;
           case 3:
-            strSQL = String.Format("select * from genre where strGenre like '{0}'", strGenre);
+            strSQL = String.Format("select GenreName from genre where GenreName like '{0}'", strGenre);
             break;
           default:
             return false;
         }
-        SQLiteResultSet results = DirectExecute(strSQL);
+
+        var results = ExecuteQuery(strSQL);
         if (results.Rows.Count == 0)
         {
           return false;
@@ -1456,16 +1542,13 @@ namespace MediaPortal.Music.Database
 
         for (int i = 0; i < results.Rows.Count; ++i)
         {
-          string tmpGenre = DatabaseUtility.Get(results, i, "strGenre");
+          string tmpGenre = DatabaseUtility.Get(results, i, "GenreName");
           if (!string.IsNullOrEmpty(tmpGenre))
           {
             aGenreArray.Add(tmpGenre);
           }
         }
-        if (aGenreArray.Count > 0)
-        {
-          return true;
-        }
+        return true;
       }
       catch (Exception ex)
       {
