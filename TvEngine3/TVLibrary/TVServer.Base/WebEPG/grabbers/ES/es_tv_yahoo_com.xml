@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Grabber>
+  <Info availableDays="7" timezone="W. Europe Standard Time" version="2.0" />
+  <Channels>
+    <Channel id="7 Región de Murcia" siteId="7-regin-de-murcia" />
+    <Channel id="Andalucía TV" siteId="andaluca-tv" />
+    <Channel id="Antena 3" siteId="antena-3" />
+    <Channel id="Aprende Inglés TV" siteId="aprende-ingls-tv" />
+    <Channel id="Aragón Televisión" siteId="aragn-televisin" />
+    <Channel id="AXN" siteId="axn" />
+    <Channel id="BBC World" siteId="bbc-world" />
+    <Channel id="Boing" siteId="boing" />
+    <Channel id="Calle 13" siteId="calle-13" />
+    <Channel id="Canal 24h" siteId="canal-24-horas" />
+    <Channel id="Canal 9 dos" siteId="canal-9-dos" />
+    <Channel id="Canal 9" siteId="nou" />
+    <Channel id="Canal Cocina" siteId="canal-cocina" />
+    <Channel id="Canal Extremadura TV" siteId="canal-extremadura-tv" />
+    <Channel id="Canal Sur 2" siteId="canal-sur-2" />
+    <Channel id="Canal Sur" siteId="canal-sur" />
+    <Channel id="Canal+ 1" siteId="canal-1" />
+    <Channel id="Cartoon Network" siteId="cartoon-network" />
+    <Channel id="Castilla La Mancha TV" siteId="castilla---la-mancha-tv" />
+    <Channel id="Clan TVE" siteId="clan-tve" />
+    <Channel id="CNN International" siteId="cnn-internacional" />
+    <Channel id="Cosmopolitan" siteId="cosmopolitan" />
+    <Channel id="Cuatro" siteId="cuatro" />
+    <Channel id="Deluxe Music" siteId="deluxe-music" />
+    <Channel id="Discovery Channel" siteId="discovery-channel" />
+    <Channel id="Disney Channel" siteId="disney-channel" />
+    <Channel id="Disney Cinemagic" siteId="disney-cinemagic" />
+    <Channel id="Disney Junior" siteId="disney-junior" />
+    <Channel id="Divinity" siteId="divinity" />
+    <Channel id="ETB 1" siteId="etb-1" />
+    <Channel id="ETB 2" siteId="etb-2" />
+    <Channel id="ETB Sat" siteId="etb-sat" />
+    <Channel id="Eurosport 2" siteId="eurosport-2" />
+    <Channel id="Eurosport" siteId="eurosport" />
+    <Channel id="FOX" siteId="fox" />
+    <Channel id="Galicia TV" siteId="galicia-tv" />
+    <Channel id="Gol TV" siteId="gol-tv" />
+    <Channel id="Historia" siteId="historia" />
+    <Channel id="IB3" siteId="ib3" />
+    <Channel id="Intereconomía" siteId="intereconoma-tv" />
+    <Channel id="La 1 Catalunya" siteId="la-1-catalunya" />
+    <Channel id="La 1" siteId="la-1" />
+    <Channel id="La 10" siteId="la-10" />
+    <Channel id="La 2 Catalunya" siteId="la-2-catalunya" />
+    <Channel id="La 2" siteId="la-2" />
+    <Channel id="La Otra" siteId="la-otra" />
+    <Channel id="La Sexta 3" siteId="lasexta3" />
+    <Channel id="La Sexta" siteId="lasexta" />
+    <Channel id="La Siete" siteId="la-siete" />
+    <Channel id="Libertad Digital" siteId="libertad-digital-tv" />
+    <Channel id="Marca TV" siteId="marca-tv" />
+    <Channel id="MGM" siteId="mgm" />
+    <Channel id="MTV España" siteId="mtv-espaa" />
+    <Channel id="National Geographic" siteId="national-geographic" />
+    <Channel id="Natura" siteId="natura" />
+    <Channel id="Neox" siteId="neox" />
+    <Channel id="Nickelodeon" siteId="nickelodeon" />
+    <Channel id="Nitro" siteId="nitro" />
+    <Channel id="Nova" siteId="nova" />
+    <Channel id="Paramount Comedy" siteId="paramount-comedy" />
+    <Channel id="SyFy" siteId="syfy" />
+    <Channel id="TCM" siteId="tcm" />
+    <Channel id="Telecinco" siteId="telecinco" />
+    <Channel id="Teledeporte" siteId="teledeporte" />
+    <Channel id="Telemadrid Sat" siteId="telemadrid-sat" />
+    <Channel id="Telemadrid" siteId="telemadrid" />
+    <Channel id="Televisión Canaria" siteId="televisincanaria" />
+    <Channel id="TL Novelas" siteId="tl-novelas" />
+    <Channel id="TNT" siteId="tnt" />
+    <Channel id="TV3" siteId="tv3" />
+    <Channel id="TV3.Cat" siteId="tv3cat" />
+    <Channel id="TVE Internacional" siteId="tve-internacional" />
+    <Channel id="Xplora" siteId="xplora" />
+  </Channels>
+  <Listing type="Html">
+    <Site url="http://es.tv.yahoo.com/programacion/[ID]/[YYYY]-[MM]-[DD]/" post="" external="false" encoding="utf-8" />
+    <Html>
+      <Template name="default" start="yeug-content" end="yeug-related">
+        <SectionTemplate tags="PSA">
+          <TemplateText>  
+&lt;span&gt;
+&lt;abbr&gt;&lt;/abbr&gt;&lt;#START&gt;
+&lt;/span&gt;
+&lt;a&gt;&lt;#TITLE&gt;&lt;/a&gt;
+&lt;span&gt;&lt;/span&gt;
+&lt;z(&gt;&lt;p&gt;&lt;#DESCRIPTION&gt;&lt;/p&gt;&lt;/z)?&gt;
+          </TemplateText>  
+        </SectionTemplate>
+      </Template>
+    </Html>
+  </Listing>
+</Grabber>
