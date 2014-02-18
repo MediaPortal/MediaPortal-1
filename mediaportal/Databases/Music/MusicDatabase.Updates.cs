@@ -662,6 +662,7 @@ namespace MediaPortal.Music.Database
           _myArgs.progress = 95;
           _myArgs.phase = "Cleanup non-existing Artists, AlbumArtists and Genres";
           CleanupMultipleEntryTables();
+          Log.Info("Musicdatabasereorg: Finished with cleaning up Mutiple Value Fields Tables.");
         }
       }
       catch (Exception ex)
@@ -777,38 +778,33 @@ namespace MediaPortal.Music.Database
     /// <returns></returns>
     private int DeleteNonExistingSongs()
     {
-      SQLiteResultSet results;
-      strSQL = String.Format("select idTrack, strPath from tracks");
-      try
+      strSQL = @"select s.idsong, (sh.ShareName || fo.FolderName || s.FileName) as Path from Song s " +
+               "join folder fo on fo.IdFolder = s.IdFolder " +
+               "join share sh on sh.IdShare = fo.IDShare ";
+
+      var results = ExecuteQuery(strSQL);
+      if (results.Rows.Count == 0)
       {
-        results = DirectExecute(strSQL);
-        if (results == null)
-        {
-          return (int)Errors.ERROR_REORG_SONGS;
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("Musicdatabasereorg: Unable to retrieve songs from database in DeleteNonExistingSongs() {0}",
-                  ex.Message);
         return (int)Errors.ERROR_REORG_SONGS;
       }
-      int removed = 0;
-      Log.Info("Musicdatabasereorg: starting song cleanup for {0} songs", (int)results.Rows.Count);
-      for (int i = 0; i < results.Rows.Count; ++i)
+
+      var removed = 0;
+      Log.Info("Musicdatabasereorg: starting song cleanup for {0} songs", results.Rows.Count);
+      for (var i = 0; i < results.Rows.Count; ++i)
       {
-        string strFileName = DatabaseUtility.Get(results, i, "tracks.strPath");
+        var strFileName = DatabaseUtility.Get(results, i, "Path");
+        var idSong = DatabaseUtility.GetAsInt(results, i, "IdSong");
 
         if (!_allFiles.Contains(strFileName))
         {
-          /// song doesn't exist anymore, delete it
-          /// We don't care about foreign keys at this moment. We'll just change this later.
+          // song doesn't exist anymore, delete it
+          // We don't care about foreign keys at this moment. We'll just change this later.
           removed++;
-          DeleteSong(strFileName, false);
+          DeleteSong(idSong, false);
         }
         if ((i % 10) == 0)
         {
-          DatabaseReorgEventArgs MyArgs = new DatabaseReorgEventArgs();
+          var MyArgs = new DatabaseReorgEventArgs();
           MyArgs.progress = 4;
           MyArgs.phase = String.Format("Removing non existing songs:{0}/{1} checked, {2} removed", i, results.Rows.Count,
                                        removed);
@@ -820,94 +816,64 @@ namespace MediaPortal.Music.Database
     }
 
     /// <summary>
-    /// Delete a song from the database
+    /// Delete a song from the database based on the Song ID
     /// </summary>
-    /// <param name="strFileName"></param>
-    /// <param name="bCheck"></param>
+    /// <param name="idSong">The Id of the Song</param>
+    /// <param name="bCheck">Check if we would have Artist, Genre, etc. without a Song</param>
+    public void DeleteSong(int idSong, bool bCheck)
+    {
+      strSQL = string.Format("delete from Song where IdSong = {0}", idSong);
+      ExecuteNonQuery(strSQL);
+
+      DeleteSongRelations(idSong, bCheck);
+    }
+
+    /// <summary>
+    /// Delete a song from the database using a file name
+    /// </summary>
+    /// <param name="strFileName">The Path of a Song</param>
+    /// <param name="bCheck">Check if we would have Artist, Genre, etc. without a Song</param>
     public void DeleteSong(string strFileName, bool bCheck)
     {
-      try
+      DatabaseUtility.RemoveInvalidChars(ref strFileName);
+
+      strSQL = string.Format(@"select s.idsong, (sh.ShareName || fo.FolderName || s.FileName) as Path from Song s " +
+       "join folder fo on fo.IdFolder = s.IdFolder " +
+       "join share sh on sh.IdShare = fo.IDShare " +
+       "where Path = '{0}'", strFileName);
+
+      var results = ExecuteQuery(strSQL);
+      if (results.Rows.Count > 0)
       {
-        DatabaseUtility.RemoveInvalidChars(ref strFileName);
+        var idSong = DatabaseUtility.GetAsInt(results, 0, "IdSong");
 
-        string strSQL =
-          String.Format("select idTrack, strArtist, strAlbumArtist, strGenre from tracks where strPath = '{0}'",
-                        strFileName);
+        strSQL = string.Format("delete from Song where IdSong = {0}", idSong);
+        ExecuteNonQuery(strSQL);
 
-        SQLiteResultSet results = DirectExecute(strSQL);
-        if (results.Rows.Count > 0)
+        DeleteSongRelations(idSong, bCheck);
+      }
+    }
+
+    /// <summary>
+    /// Deletes the Relations that a Song has to Artist, Genre, Composer, Conductor
+    /// </summary>
+    /// <param name="idSong"></param>
+    /// <param name="bCheck"></param>
+    private void DeleteSongRelations(int idSong, bool bCheck)
+    {
+      string[] tblPrefix = { "Artist", "Composer", "Conductor", "Genre" };
+
+      foreach (var prefix in tblPrefix)
+      {
+        // Delete the Song from the Relations table
+        strSQL = string.Format("delete from {0}Song where IdSong = {1}", prefix, idSong);
+        ExecuteNonQuery(strSQL);
+
+        if (bCheck)
         {
-          int idTrack = DatabaseUtility.GetAsInt(results, 0, "tracks.idTrack");
-          string strArtist = DatabaseUtility.Get(results, 0, "tracks.strArtist");
-          string strAlbumArtist = DatabaseUtility.Get(results, 0, "tracks.strAlbumArtist");
-          string strGenre = DatabaseUtility.Get(results, 0, "tracks.strGenre");
-
-          // Delete
-          strSQL = String.Format("delete from tracks where idTrack={0}", idTrack);
-          if (DirectExecute(strSQL).Rows.Count > 0)
-          {
-            Log.Info("Musicdatabase: Deleted no longer existing or moved song {0}", strFileName);
-          }
-
-          // Check if we have now Artists and Genres for which no song exists
-          if (bCheck)
-          {
-            // split up the artist, in case we've got multiple artists
-            string[] artists = strArtist.Split('|');
-            foreach (string artist in artists)
-            {
-              strSQL = String.Format("select idTrack from tracks where strArtist like '%{0}%'", artist.Trim());
-              if (DirectExecute(strSQL).Rows.Count == 0)
-              {
-                // Delete artist with no songs
-                strSQL = String.Format("delete from artist where strArtist = '{0}'", artist.Trim());
-                DirectExecute(strSQL);
-
-                // Delete artist info
-                strSQL = String.Format("delete from artistinfo where strArtist = '{0}'", artist.Trim());
-                DirectExecute(strSQL);
-              }
-            }
-
-            // split up the artist, in case we've got multiple artists
-            string[] albumartists = strAlbumArtist.Split('|');
-            foreach (string artist in albumartists)
-            {
-              strSQL = String.Format("select idTrack from tracks where strArtist like '%{0}%'", artist.Trim());
-              if (DirectExecute(strSQL).Rows.Count == 0)
-              {
-                // Delete artist with no songs
-                strSQL = String.Format("delete from albumartist where strAlbumArtist = '{0}'", artist.Trim());
-                DirectExecute(strSQL);
-
-                // Delete artist info
-                strSQL = String.Format("delete from artistinfo where strArtist = '{0}'", artist.Trim());
-                DirectExecute(strSQL);
-              }
-            }
-
-            // split up the genre, in case we've got multiple genres
-            string[] genres = strGenre.Split('|');
-            foreach (string genre in genres)
-            {
-              strSQL = String.Format("select idTrack from tracks where strGenre like '%{0}%'", genre.Trim());
-              if (DirectExecute(strSQL).Rows.Count == 0)
-              {
-                // Delete genres with no songs
-                strSQL = String.Format("delete from genre where strGenre = '{0}'", genre.Trim());
-                DirectExecute(strSQL);
-              }
-            }
-          }
+          CleanupMultipleEntryTables();
         }
-        return;
       }
-      catch (Exception ex1)
-      {
-        Log.Error("Musicdatabase: Exception err:{0} stack:{1}", ex1.Message, ex1.StackTrace);
-        Open();
-      }
-      return;
     }
 
     #endregion
@@ -1992,162 +1958,27 @@ namespace MediaPortal.Music.Database
     /// </summary>
     private void CleanupMultipleEntryTables()
     {
-      // Working with a Temporary table is much faster, than reading single rows
-      if (DatabaseUtility.TableExists(MusicDbClient, "tbltmp"))
-      {
-        MusicDbClient.Execute("drop table tbltmp");
-      }
+      string[] tblPrefix = { "Artist", "Composer", "Conductor", "Genre" };
 
-      try
+      // Clean up Multi Value Fields
+      foreach (var prefix in tblPrefix)
       {
-        string strSQL;
-
-        foreach (string field in _multipleValueFields)
+        var table = "Artist";
+        if (prefix == "Genre")
         {
-          Log.Info("Musicdatabasereorg: Cleaning up {0} with no songs.", field);
-          strSQL = "create table tbltmp (strMultiField text)";
-          MusicDbClient.Execute(strSQL);
-
-          strSQL = String.Format("select distinct rtrim(ltrim({0}, '| '), ' |') from tracks",
-                                 GetMultipleValueField(field));
-          SQLiteResultSet results = DirectExecute(strSQL);
-          for (int i = 0; i < results.Rows.Count; i++)
-          {
-            string[] splittedFields = DatabaseUtility.Get(results, i, 0).Split('|');
-            foreach (string s in splittedFields)
-            {
-              string strTmp = s;
-              DatabaseUtility.RemoveInvalidChars(ref strTmp);
-              if (strTmp == "unknown")
-              {
-                strTmp = " ";
-              }
-
-              strSQL = String.Format("insert into tbltmp values('{0}')", strTmp.Trim() == "" ? " " : strTmp.Trim());
-              MusicDbClient.Execute(strSQL);
-            }
-          }
-
-          strSQL = String.Format("delete from {0} where {1} not in (select distinct strMultiField from tbltmp)",
-                                 GetMultipleValueTable(field), GetMultipleValueField(field));
-          MusicDbClient.Execute(strSQL);
-
-          MusicDbClient.Execute("drop table tbltmp");
+          table = "Genre";
         }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("Musicdatabase: Exception adding multiple field value: {0} stack: {1}", ex.Message, ex.StackTrace);
-        Open();
-      }
-      Log.Info("Musicdatabasereorg: Finished with cleaning up Mutiple Value Fields Tables.");
-    }
-
-    /// <summary>
-    /// On a complete rescan of the shares, we will delete all the entries in the Artist, AlbumArtist and Genre table,
-    /// to get rid of "dead" entries for which no song exists
-    /// </summary>
-    /// <returns></returns>
-    private int CleanupForeignKeys()
-    {
-      try
-      {
-        string strSql = "delete from artist";
-        MusicDbClient.Execute(strSql);
-        strSql = "delete from albumartist";
-        MusicDbClient.Execute(strSql);
-        strSql = "delete from genre";
-        MusicDbClient.Execute(strSql);
-        strSql = "delete from composer";
-        MusicDbClient.Execute(strSql);
-      }
-      catch (Exception)
-      {
-        Log.Error("Musicdatabasereorg: CleanupForeignKeys failed");
-        return (int)Errors.ERROR_REORG_ARTIST;
+        strSQL = string.Format("delete from {0} where Id{0} not in (select Id{1} from {1}Song)", table, prefix);
+        ExecuteNonQuery(strSQL);
       }
 
-      Log.Info("Musicdatabasereorg: CleanupForeignKeys completed");
-      return (int)Errors.ERROR_OK;
-    }
+      // Cleanup Album Table
+      strSQL = "delete from Album where IdAlbum not in (select IdAlbum from Song)";
+      ExecuteNonQuery(strSQL);
 
-    /// <summary>
-    /// Returns the SQLITE Table name for the requested field
-    /// </summary>
-    /// <param name="field"></param>
-    /// <returns></returns>
-    private string GetMultipleValueTable(string field)
-    {
-      if (field == "artist")
-      {
-        return "artist";
-      }
-      else if (field == "albumartist")
-      {
-        return "albumartist";
-      }
-      else if (field == "genre")
-      {
-        return "genre";
-      }
-      else if (field == "composer")
-      {
-        return "composer";
-      }
-      return "";
-    }
-
-    /// <summary>
-    /// Returns the Sqlite field name for the requested field
-    /// </summary>
-    /// <param name="field"></param>
-    /// <returns></returns>
-    private string GetMultipleValueField(string field)
-    {
-      if (field == "artist")
-      {
-        return "strArtist";
-      }
-      else if (field == "albumartist")
-      {
-        return "strAlbumartist";
-      }
-      else if (field == "genre")
-      {
-        return "strGenre";
-      }
-      else if (field == "composer")
-      {
-        return "strComposer";
-      }
-      return "";
-    }
-
-    /// <summary>
-    /// Returns the field value out of the MusicTag
-    /// </summary>
-    /// <param name="tag"></param>
-    /// <param name="field"></param>
-    /// <returns></returns>
-    private string GetMultipleValueFieldValue(MusicTag tag, string field)
-    {
-      if (field == "artist")
-      {
-        return tag.Artist;
-      }
-      else if (field == "albumartist")
-      {
-        return tag.AlbumArtist;
-      }
-      else if (field == "genre")
-      {
-        return tag.Genre;
-      }
-      else if (field == "composer")
-      {
-        return tag.Composer;
-      }
-      return "";
+      // Cleanup AlbumArtist Table
+      strSQL = "delete from AlbumArtist where IdAlbum not in (select IdAlbum from Album)";
+      ExecuteNonQuery(strSQL);
     }
 
     #endregion
