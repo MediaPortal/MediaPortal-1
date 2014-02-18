@@ -60,7 +60,9 @@ namespace MediaPortal.Music.Database
       aSong.FileName = DatabaseUtility.Get(aResult, aRow, "Path");
       aSong.Artist = DatabaseUtility.Get(aResult, aRow, "Artist").Trim(trimChars);
       aSong.AlbumArtist = DatabaseUtility.Get(aResult, aRow, "AlbumArtist").Trim(trimChars);
+      aSong.AlbumId = DatabaseUtility.GetAsInt(aResult, aRow, "IdAlbum");
       aSong.Album = DatabaseUtility.Get(aResult, aRow, "AlbumName");
+      aSong.AlbumSort = DatabaseUtility.Get(aResult, aRow, "AlbumSortName");
       aSong.Genre = DatabaseUtility.Get(aResult, aRow, "Genre").Trim(trimChars);
       aSong.Title = DatabaseUtility.Get(aResult, aRow, "Title");
       aSong.TitleSort = DatabaseUtility.Get(aResult, aRow, "TitleSort");
@@ -764,18 +766,26 @@ namespace MediaPortal.Music.Database
           return false;
         }
 
-        string strPath = aPath;
-        //	musicdatabase always stores directories without a slash at the end
-        strPath = Util.Utils.RemoveTrailingSlash(strPath);
-        DatabaseUtility.RemoveInvalidChars(ref strPath);
+        string strPath = DatabaseUtility.RemoveInvalidChars(aPath);
+        if (!strPath.EndsWith(@"\"))
+        {
+          strPath += @"\";
+        }
 
         // The underscore is treated as special symbol in a like clause, which produces wrong results
-        // we need to escape it and use the sql escape clause
-        strPath = strPath.Replace("_", "\x0001_");
+        // we need to escape it and use the sql escape clause  escape '\x0001'
+        //strPath = strPath.Replace("_", "\x0001_");
+        strSQL = string.Format("select Song.*, Album.*, " +
+                               "( select group_concat(aname, ' | ') from (select distinct(Artist.ArtistName) as aname from artist join artistsong on artistsong.idsong = song.IdSong and artistsong.idartist = artist.IdArtist)) as Artist," +
+                               "( select Artist.ArtistName from artist join albumartist on albumartist.idalbum = Album.IdAlbum and albumartist.idartist = artist.idArtist) as AlbumArtist " +
+                               "from Song " +
+                               "join Album on Album.IdAlbum = Song.IdAlbum " +
+                               "where IdFolder = " +
+                               "(select IdFolder from Folder " +
+                               "join share on share.IdShare = folder.IdShare " +
+                               "where (share.Sharename || folder.foldername) like '{0}')", strPath);
 
-        strSQL = String.Format("select * from tracks where strPath like '{0}%' escape '\x0001'", strPath);
-
-        SQLiteResultSet results = DirectExecute(strSQL);
+        var results = ExecuteQuery(strSQL);
         if (results.Rows.Count == 0)
         {
           return false;
@@ -783,8 +793,8 @@ namespace MediaPortal.Music.Database
 
         for (int i = 0; i < results.Rows.Count; ++i)
         {
-          SongMap songmap = new SongMap();
-          Song song = new Song();
+          var songmap = new SongMap();
+          var song = new Song();
 
           AssignAllSongFieldsFromResultSet(ref song, results, i);
 

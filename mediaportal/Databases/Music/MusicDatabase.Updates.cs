@@ -116,10 +116,6 @@ namespace MediaPortal.Music.Database
     private ManualResetEvent _scanFoldersFinishedEvent = null;
     private DatabaseReorgEventArgs _myArgs = null;
 
-    private string _previousDirectory = null;
-    private MusicTag _previousMusicTag = null;
-    private bool _foundVariousArtist = false;
-
     private readonly char[] trimChars = { ' ', '\x00', '|' };
 
     private readonly string[] _multipleValueFields = new string[] { "artist", "albumartist", "genre", "composer" };
@@ -1045,6 +1041,13 @@ namespace MediaPortal.Music.Database
         Log.Error("MusicDBReorg: Exception accessing file or folder: {0}", ex.Message);
       }
 
+      // Check if we have different Artists and 
+      if (_treatFolderAsAlbum)
+      {
+        UpdateVariousArtist(di);
+      }
+
+      // Create Folder Thumb if necessary
       if (_useFolderThumbs)
       {
         CreateFolderThumbs(di);
@@ -1194,16 +1197,6 @@ namespace MediaPortal.Music.Database
         {
           return false;
         }
-
-
-        // Provide an easy way to exclude problematic or unwanted files from the scan
-        //if (_excludeHiddenFiles)
-        //{
-        //  if ((fileInfo.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden)
-        //  {
-        //    return false;
-        //  }
-        //}
 
         // Only get files with the required extension
         if (_supportedExtensions.IndexOf(ext) == -1)
@@ -1450,12 +1443,6 @@ namespace MediaPortal.Music.Database
             strSQL = string.Format("insert or ignore into composersong values ({0}, {1})", artistId, songId);
             ExecuteNonQuery(strSQL);
           }
-
-
-          //if (_treatFolderAsAlbum)
-          //{
-          //  UpdateVariousArtist(tag);
-          //}
         }
         catch (Exception)
         {
@@ -1616,6 +1603,47 @@ namespace MediaPortal.Music.Database
       }
     }
 
+
+    /// <summary>
+    /// If the "Treat all songs in a folder as album" has been set, we check all the Songs in the folder
+    /// if they have different artists AND NO Album artist set.
+    /// In this case we will assign them the localised version of "Various Artist" as Album Artist.
+    /// </summary>
+    /// <param name="di"></param>
+    private void UpdateVariousArtist(DirectoryInfo di)
+    {
+      var songs = new List<SongMap>();
+      GetSongsByPath(di.FullName, ref songs);
+
+      var needVariousArtist = false;
+      var previousArtist = "";
+      if (songs.Count > 0)
+      {
+        previousArtist = songs[0].m_song.AlbumArtist;
+      }
+
+      foreach (var map in songs)
+      {
+        if (previousArtist != map.m_song.AlbumArtist)
+        {
+          needVariousArtist = true;
+          break;
+        }
+        previousArtist = map.m_song.Artist;
+      }
+
+      if (needVariousArtist)
+      {
+        var variousArtistId = AddArtist(GUILocalizeStrings.Get(340));
+        foreach (var map in songs)
+        {
+          strSQL = string.Format("Delete from AlbumArtist where IdAlbum = {0}", map.m_song.AlbumId);
+          ExecuteNonQuery(strSQL);
+          strSQL = string.Format("insert or ignore into AlbumArtist values ({0}, {1})", variousArtistId, map.m_song.AlbumId);
+          ExecuteNonQuery(strSQL);
+        }
+      }
+    }
     #endregion
 
     #region Thumbs Handling
@@ -1918,80 +1946,6 @@ namespace MediaPortal.Music.Database
             }
           }
         } // for all genres
-      }
-    }
-
-    private void UpdateVariousArtist(MusicTag tag)
-    {
-      string currentDir = Path.GetDirectoryName(tag.FileName);
-      // on first cal, set the directory name
-      if (_previousDirectory == null)
-      {
-        _previousDirectory = currentDir;
-      }
-
-      if (_previousMusicTag == null)
-      {
-        _previousMusicTag = tag;
-      }
-
-      if (_previousDirectory.ToLowerInvariant() == currentDir.ToLowerInvariant())
-      {
-        // already have detected Various artists in this folder. no further checking needed
-        if (_foundVariousArtist)
-        {
-          return;
-        }
-
-        // Is the Artist different and also no different AlbumArtist set?
-        if (_previousMusicTag.Artist != tag.Artist && !tag.HasAlbumArtist)
-        {
-          _foundVariousArtist = true;
-          return;
-        }
-      }
-      else
-      {
-        if (_foundVariousArtist)
-        {
-          // Let's add the "Various Artist" to the albumArtist table
-          string varArtist = "| Various Artists | ";
-          strSQL = string.Format("insert into albumartist (strAlbumArtist) values('{0}')", varArtist);
-          DirectExecute(strSQL);
-
-          List<SongMap> songs = new List<SongMap>();
-          GetSongsByPath(_previousDirectory, ref songs);
-
-          foreach (SongMap map in songs)
-          {
-            int id = map.m_song.Id;
-            strSQL = string.Format("update tracks set strAlbumArtist = '| Various Artists | ' where idTrack={0}", id);
-            DirectExecute(strSQL);
-
-            // Now we need to remove the Artist of the song from the AlbumArtist table,
-            // if he's not an AlbumArtist in a different album
-            Song song = map.m_song as Song;
-            string[] strAlbumArtistSplit = song.AlbumArtist.Split(new char[] { '|' });
-            foreach (string strTmp in strAlbumArtistSplit)
-            {
-              string strAlbumArtist = strTmp.Trim(trimChars);
-              DatabaseUtility.RemoveInvalidChars(ref strAlbumArtist);
-
-              strSQL = string.Format("select strAlbumArtist from tracks where strAlbumArtist like '%| {0} |%'",
-                                     strAlbumArtist);
-              if (DirectExecute(strSQL).Rows.Count < 1)
-              {
-                // No AlbumArtist entry found, so let's remove this artist from albumartist
-                strSQL = String.Format("delete from albumartist where strAlbumArtist like '%{0}%'", strAlbumArtist);
-                DirectExecute(strSQL);
-              }
-            }
-          }
-        }
-
-        _previousMusicTag = tag;
-        _previousDirectory = currentDir;
-        _foundVariousArtist = false;
       }
     }
 
