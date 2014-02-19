@@ -72,6 +72,9 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Common.GUIPlugins">
+      <HintPath>..\..\..\..\mediaportal\WindowPlugins\Common.GUIPlugins\bin\Release\Common.GUIPlugins.dll</HintPath>
+    </Reference>
     <Reference Include="Core, Version=0.2.3.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\mediaportal\Core\bin\Release\Core.dll</HintPath>

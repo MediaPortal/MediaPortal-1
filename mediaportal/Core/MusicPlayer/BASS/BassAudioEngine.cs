@@ -122,6 +122,8 @@ namespace MediaPortal.MusicPlayer.BASS
     private bool NotifyPlaying = true;
 
     private bool _isCDDAFile = false;
+    private bool _validAction;
+    private DateTime _lastAction = DateTime.Now;
     private int _speed = 1;
     private DateTime _seekUpdate = DateTime.Now;
 
@@ -581,20 +583,46 @@ namespace MediaPortal.MusicPlayer.BASS
 
         case Action.ActionType.ACTION_PAGE_UP:
           {
-            if (FullScreen && CurrentAudioStream != 0)
+            var timeSpamVerif = DateTime.Now - _lastAction;
+            if (timeSpamVerif.TotalSeconds >= 2)
             {
-              Log.Debug("BASS: Switch to Previous Vis");
-              VizManager.GetPrevVis();
+              _validAction = true;
+            }
+            else
+            {
+              _validAction = false;
+            }
+            if (g_Player.IsMusic && g_Player.FullScreen)
+            {
+              if (_validAction)
+              {
+                _lastAction = DateTime.Now;
+                Log.Debug("BASS: Switch to Previous Vis");
+                VizManager.GetPrevVis();
+              }
             }
             break;
           }
 
         case Action.ActionType.ACTION_PAGE_DOWN:
           {
-            if (FullScreen && CurrentAudioStream != 0)
+            var timeSpamVerif = DateTime.Now - _lastAction;
+            if (timeSpamVerif.TotalSeconds >= 2)
             {
-              Log.Info("BASS: Switch to Next Vis");
-              VizManager.GetNextVis();
+              _validAction = true;
+            }
+            else
+            {
+              _validAction = false;
+            }
+            if (g_Player.IsMusic && g_Player.FullScreen)
+            {
+              if (_validAction)
+              {
+                _lastAction = DateTime.Now;
+                Log.Info("BASS: Switch to Next Vis");
+                VizManager.GetNextVis();
+              }
             }
             break;
           }

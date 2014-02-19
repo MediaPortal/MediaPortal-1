@@ -175,6 +175,10 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Common.GUIPlugins\Common.GUIPlugins.csproj">
+      <Project>{03FEC69F-6D10-46FB-A0CA-4D266E4A21E2}</Project>
+      <Name>Common.GUIPlugins</Name>
+    </ProjectReference>
     <Reference Include="Microsoft.DirectX.Direct3D, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
       <SpecificVersion>True</SpecificVersion>
     </Reference>
@@ -228,21 +232,11 @@
       <Link>SolutionInfo.cs</Link>
     </Compile>
     <Compile Include="GUICoverArtGrabberProgress.cs" />
-    <Compile Include="GUICoverArtGrabberResults.cs" />
-    <Compile Include="GUIMusicArtistInfo.cs" />
-    <Compile Include="GUIMusicBaseWindow.cs" />
     <Compile Include="GUIMusicFiles.cs" />
     <Compile Include="GUIMusicFullscreen.cs" />
     <Compile Include="GUIMusicGenres.cs" />
-    <Compile Include="GUIMusicInfo.cs" />
     <Compile Include="GUIMusicMenu.cs" />
     <Compile Include="GUIMusicOverlay.cs" />
-    <Compile Include="GUIMusicPlayingNow.cs" />
-    <Compile Include="GUIMusicPlaylist.cs" />
-    <Compile Include="MusicImport.cs" />
-    <Compile Include="MusicSort.cs" />
-    <Compile Include="MusicState.cs" />
-    <Compile Include="MusicViewHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

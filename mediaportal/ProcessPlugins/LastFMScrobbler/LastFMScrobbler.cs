@@ -83,6 +83,10 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
       g_Player.PlayBackEnded += OnPlayBackEnded;
       g_Player.PlayBackChanged += OnPlayBackChanged;
       g_Player.PlayBackStopped += OnPlayBackStopped;
+      var mdb = MusicDatabase.Instance;
+      var sessionKey = mdb.GetLastFMSK();
+      var currentUser = mdb.GetLastFMUser();
+      var a = new LastFMLibrary(sessionKey, currentUser); //TODO this is just making _SK get loaded.   No need to actual instansiate
     }
 
     public void Stop()

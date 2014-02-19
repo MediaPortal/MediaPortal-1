@@ -715,6 +715,7 @@ namespace MediaPortal
         TopMost = true; // important
         TopMost = false; // important
         Focus();
+        _firstTimeActivated = false;
       }
     }
 
@@ -856,6 +857,7 @@ namespace MediaPortal
         {
           _notifyIcon.Visible = false;
         }
+
         WindowState = FormWindowState.Normal;
         Activate();
 
@@ -930,8 +932,9 @@ namespace MediaPortal
         {
           _notifyIcon.Visible = true;
         }
+
         WindowState = FormWindowState.Minimized;
- 
+
         // pause player and mute audio
         if (g_Player.IsVideo || g_Player.IsTV || g_Player.IsDVD || g_Player.IsDVDMenu)
         {

@@ -22,15 +22,14 @@ using System;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.View;
 using Action = MediaPortal.GUI.Library.Action;
-using Layout = MediaPortal.GUI.Library.GUIFacadeControl.Layout;
 
-namespace WindowPlugins
+namespace Common.GUIPlugins
 {
   public abstract class WindowPluginBase : GUIInternalWindow
   {
     #region Base Variables
 
-    protected Layout currentLayout = Layout.List;
+    protected GUIFacadeControl.Layout currentLayout = GUIFacadeControl.Layout.List;
     protected bool m_bSortAscending;
     protected ViewHandler handler;
 
@@ -63,37 +62,37 @@ namespace WindowPlugins
       return iItem;
     }
 
-    protected virtual Layout GetLayoutNumber(string s)
+    protected virtual GUIFacadeControl.Layout GetLayoutNumber(string s)
     {
       switch (s.Trim().ToLowerInvariant())
       {
         case "list":
-          return Layout.List;
+          return GUIFacadeControl.Layout.List;
         case "icons":
         case "smallicons":
-          return Layout.SmallIcons;
+          return GUIFacadeControl.Layout.SmallIcons;
         case "big icons":
         case "largeicons":
-          return Layout.LargeIcons;
+          return GUIFacadeControl.Layout.LargeIcons;
         case "albums":
         case "albumview":
-          return Layout.AlbumView;
+          return GUIFacadeControl.Layout.AlbumView;
         case "filmstrip":
-          return Layout.Filmstrip;
+          return GUIFacadeControl.Layout.Filmstrip;
         case "playlist":
-          return Layout.Playlist;
+          return GUIFacadeControl.Layout.Playlist;
         case "coverflow":
         case "cover flow":
-          return Layout.CoverFlow;
+          return GUIFacadeControl.Layout.CoverFlow;
       }
       if (!string.IsNullOrEmpty(s))
       {
         Log.Error("{0}::GetLayoutNumber: Unknown String - {1}", "WindowPluginBase", s);
       }
-      return Layout.List;
+      return GUIFacadeControl.Layout.List;
     }
 
-    protected virtual bool AllowLayout(Layout layout)
+    protected virtual bool AllowLayout(GUIFacadeControl.Layout layout)
     {
       return true;
     }
@@ -109,7 +108,7 @@ namespace WindowPlugins
       // then default to list layout
       if (facadeLayout.IsNullLayout(CurrentLayout) || !AllowLayout(CurrentLayout))
       {
-        facadeLayout.CurrentLayout = Layout.List;
+        facadeLayout.CurrentLayout = GUIFacadeControl.Layout.List;
       }
       else
       {
@@ -205,7 +204,7 @@ namespace WindowPlugins
         if (message.SenderControlId == btnLayouts.GetID)
         {
           // Set the new layout and select the currently selected item in the layout.
-          SetLayout((Layout)btnLayouts.SelectedItemValue);
+          SetLayout((GUIFacadeControl.Layout)btnLayouts.SelectedItemValue);
           SelectCurrentItem();
 
           // Refocus facade so item will be selected
@@ -303,16 +302,16 @@ namespace WindowPlugins
       }
     }
 
-    protected virtual void SetLayout(Layout layout)
+    protected virtual void SetLayout(GUIFacadeControl.Layout layout)
     {
       // Set the selected layout.
       SwitchToNextAllowedLayout(layout);
     }
 
-    protected virtual void SwitchToNextAllowedLayout(Layout selectedLayout)
+    protected virtual void SwitchToNextAllowedLayout(GUIFacadeControl.Layout selectedLayout)
     {
       int iSelectedLayout = (int)selectedLayout;
-      int totalLayouts = Enum.GetValues(typeof (Layout)).Length - 1;
+      int totalLayouts = Enum.GetValues(typeof (GUIFacadeControl.Layout)).Length - 1;
 
       if (iSelectedLayout > totalLayouts)
         iSelectedLayout = 0;
@@ -332,7 +331,7 @@ namespace WindowPlugins
         }
       } while (shouldContinue);
 
-      CurrentLayout = (Layout)iSelectedLayout;
+      CurrentLayout = (GUIFacadeControl.Layout)iSelectedLayout;
       SwitchLayout();
     }
 
@@ -342,7 +341,7 @@ namespace WindowPlugins
 
     protected virtual void LoadDirectory(string path) {}
 
-    protected virtual Layout CurrentLayout
+    protected virtual GUIFacadeControl.Layout CurrentLayout
     {
       get { return currentLayout; }
       set { currentLayout = value; }

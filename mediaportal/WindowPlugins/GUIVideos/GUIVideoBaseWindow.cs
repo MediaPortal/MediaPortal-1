@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
+using Common.GUIPlugins;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.View;
@@ -33,7 +34,6 @@ using MediaPortal.Services;
 using MediaPortal.Util;
 using MediaPortal.Video.Database;
 using Action = MediaPortal.GUI.Library.Action;
-using WindowPlugins;
 using Layout = MediaPortal.GUI.Library.GUIFacadeControl.Layout;
 
 namespace MediaPortal.GUI.Video
@@ -417,7 +417,7 @@ namespace MediaPortal.GUI.Video
       base.OnPageDestroy(newWindowId);
     }
 
-    protected virtual void SetView(int selectedViewId)
+    protected override void SetView(int selectedViewId)
     {
       switch (selectedViewId)
       {
