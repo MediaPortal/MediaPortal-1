@@ -33,7 +33,7 @@ using System.IO;
 
 namespace MediaPortal.Video.Database
 {
-  internal class MatroskaTagInfo
+  public class MatroskaTagInfo
   {
     public string Title;
     public string Description;
@@ -44,7 +44,7 @@ namespace MediaPortal.Video.Database
     public DateTime EndTime;
   }
 
-  internal class MatroskaTagHandler
+  public class MatroskaTagHandler
   {
     #region Private members
 

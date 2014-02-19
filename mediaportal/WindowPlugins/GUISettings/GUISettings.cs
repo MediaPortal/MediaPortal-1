@@ -41,7 +41,7 @@ namespace MediaPortal.GUI.Settings
   /// <summary>
   /// Change and tweak settings like Video codecs, skins, etc from inside MP
   /// </summary>
-  [PluginIcons("WindowPlugins.GUISettings.Settings.gif", "WindowPlugins.GUISettings.SettingsDisabled.gif")]
+  [PluginIcons("GUISettings.Settings.gif", "GUISettings.SettingsDisabled.gif")]
   public sealed class GUISettings : GUIInternalWindow, ISetupForm, IShowPlugin
   {
     [SkinControl(11)] private readonly GUIButtonControl _btnMiniDisplay = null;
@@ -106,8 +106,8 @@ namespace MediaPortal.GUI.Settings
         {
           GUIWindowManager.CloseCurrentWindow();
         }
+        }
       }
-    }
 
     protected override void OnPageDestroy(int newWindowId)
     {
@@ -295,7 +295,7 @@ namespace MediaPortal.GUI.Settings
         {
           retry = false;
         }
-      }
+        }
       return false;
     }
 
@@ -334,7 +334,7 @@ namespace MediaPortal.GUI.Settings
       }
 
       using (Profile.Settings xmlreader = new MPSettings())
-      {
+        {
         if (xmlreader.GetValueAsBool("general", "hidetaskbar", false))
         {
           Win32API.EnableStartBar(true);
@@ -342,13 +342,13 @@ namespace MediaPortal.GUI.Settings
         }
       }
 
-      Log.Info("Settings: OnRestart - prepare for restart!");
-      File.Delete(Config.GetFile(Config.Dir.Config, "mediaportal.running"));
-      Log.Info("Settings: OnRestart - saving settings...");
-      Profile.Settings.SaveCache();
-      DisposeDBs();
-      VolumeHandler.Dispose();
-      Log.Info("Main: OnSuspend - Done");
+        Log.Info("Settings: OnRestart - prepare for restart!");
+        File.Delete(Config.GetFile(Config.Dir.Config, "mediaportal.running"));
+        Log.Info("Settings: OnRestart - saving settings...");
+        Profile.Settings.SaveCache();
+        DisposeDBs();
+        VolumeHandler.Dispose();
+        Log.Info("Main: OnSuspend - Done");
       var restartScript = new Process
       {
         EnableRaisingEvents = false,
@@ -358,21 +358,21 @@ namespace MediaPortal.GUI.Settings
           FileName = Config.GetFile(Config.Dir.Base, @"restart.vbs")
         }
       };
-      Log.Debug("Settings: OnRestart - executing script {0}", restartScript.StartInfo.FileName);
-      restartScript.Start();
-      try
-      {
-        // Maybe the scripting host is not available therefore do not wait infinitely.
-        if (!restartScript.HasExited)
+        Log.Debug("Settings: OnRestart - executing script {0}", restartScript.StartInfo.FileName);
+        restartScript.Start();
+        try
         {
-          restartScript.WaitForExit();
+          // Maybe the scripting host is not available therefore do not wait infinitely.
+          if (!restartScript.HasExited)
+          {
+            restartScript.WaitForExit();
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Error("Settings: OnRestart - WaitForExit: {0}", ex.Message);
         }
       }
-      catch (Exception ex)
-      {
-        Log.Error("Settings: OnRestart - WaitForExit: {0}", ex.Message);
-      }
-    }
 
     private static void DisposeDBs()
     {
