@@ -131,6 +131,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GUILastFMRadio", "WindowPlu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GUISudoku", "WindowPlugins\GUISudoku\GUISudoku.csproj", "{48415E6A-EBA3-4184-B6EC-009523D54B11}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.GUIPlugins", "WindowPlugins\Common.GUIPlugins\Common.GUIPlugins.csproj", "{03FEC69F-6D10-46FB-A0CA-4D266E4A21E2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -450,7 +452,8 @@ Global
 		{CD46664D-4161-47B4-B865-65CE68C12EDF}.Debug|x86.Build.0 = Debug|x86
 		{CD46664D-4161-47B4-B865-65CE68C12EDF}.Release|x86.ActiveCfg = Release|x86
 		{CD46664D-4161-47B4-B865-65CE68C12EDF}.Release|x86.Build.0 = Release|x86
-		{CD46664D-4161-47B4-B865-65CE68C12EDF}.UseCaptureCardDefinitions|x86.ActiveCfg = Release|Any CPU
+		{CD46664D-4161-47B4-B865-65CE68C12EDF}.UseCaptureCardDefinitions|x86.ActiveCfg = Release|x86
+		{CD46664D-4161-47B4-B865-65CE68C12EDF}.UseCaptureCardDefinitions|x86.Build.0 = Release|x86
 		{CD46664D-4161-47B4-B865-65CE68C12EDF}.UseCaptureDefintionsRelease|x86.ActiveCfg = Release|Any CPU
 		{48415E6A-EBA3-4184-B6EC-009523D54B11}.Debug|x86.ActiveCfg = Debug|x86
 		{48415E6A-EBA3-4184-B6EC-009523D54B11}.Debug|x86.Build.0 = Debug|x86
@@ -460,6 +463,14 @@ Global
 		{48415E6A-EBA3-4184-B6EC-009523D54B11}.UseCaptureCardDefinitions|x86.Build.0 = UseCaptureCardDefinitions|x86
 		{48415E6A-EBA3-4184-B6EC-009523D54B11}.UseCaptureDefintionsRelease|x86.ActiveCfg = UseCaptureDefintionsRelease|x86
 		{48415E6A-EBA3-4184-B6EC-009523D54B11}.UseCaptureDefintionsRelease|x86.Build.0 = UseCaptureDefintionsRelease|x86
+		{03FEC69F-6D10-46FB-A0CA-4D266E4A21E2}.Debug|x86.ActiveCfg = Debug|x86
+		{03FEC69F-6D10-46FB-A0CA-4D266E4A21E2}.Debug|x86.Build.0 = Debug|x86
+		{03FEC69F-6D10-46FB-A0CA-4D266E4A21E2}.Release|x86.ActiveCfg = Release|x86
+		{03FEC69F-6D10-46FB-A0CA-4D266E4A21E2}.Release|x86.Build.0 = Release|x86
+		{03FEC69F-6D10-46FB-A0CA-4D266E4A21E2}.UseCaptureCardDefinitions|x86.ActiveCfg = Release|x86
+		{03FEC69F-6D10-46FB-A0CA-4D266E4A21E2}.UseCaptureCardDefinitions|x86.Build.0 = Release|x86
+		{03FEC69F-6D10-46FB-A0CA-4D266E4A21E2}.UseCaptureDefintionsRelease|x86.ActiveCfg = Release|x86
+		{03FEC69F-6D10-46FB-A0CA-4D266E4A21E2}.UseCaptureDefintionsRelease|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -494,5 +505,6 @@ Global
 		{C6517107-415A-4D5B-AA3A-8928853F44A9} = {40801059-099F-44C5-9802-3A926EF0FE87}
 		{CD46664D-4161-47B4-B865-65CE68C12EDF} = {40801059-099F-44C5-9802-3A926EF0FE87}
 		{48415E6A-EBA3-4184-B6EC-009523D54B11} = {40801059-099F-44C5-9802-3A926EF0FE87}
+		{03FEC69F-6D10-46FB-A0CA-4D266E4A21E2} = {40801059-099F-44C5-9802-3A926EF0FE87}
 	EndGlobalSection
 EndGlobal

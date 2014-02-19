@@ -31,7 +31,7 @@ using MediaPortal.Video.Database;
 
 namespace MediaPortal.GUI.Video
 {
-  internal class SelectBDHandler : ISelectBDHandler
+  public class SelectBDHandler : ISelectBDHandler
   {
     public bool IsBDDirectory(string path)
     {

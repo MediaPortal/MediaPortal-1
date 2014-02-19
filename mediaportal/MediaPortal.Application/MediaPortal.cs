@@ -2771,14 +2771,15 @@ public class MediaPortalApp : D3D, IRender
     InputDevices.Stop();
     AutoPlay.StopListening();
     PluginManager.Stop();
+    GUIWindowManager.Clear();
     GUIWaitCursor.Dispose();
-    GUIFontManager.ReleaseUnmanagedResources();
     GUIFontManager.Dispose();
     GUITextureManager.Dispose();
-    GUIWindowManager.Clear();
     GUILocalizeStrings.Dispose();
     TexturePacker.Cleanup();
     VolumeHandler.Dispose();
+
+    GUIFontManager.SetDeviceNull();
 
     if (_isWinScreenSaverInUse)
     {

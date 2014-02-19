@@ -439,7 +439,7 @@ namespace MediaPortal.GUI.Video
           {
             if (g_Player.IsPicture)
             {
-              GUISlideShow._slideDirection = -1;
+              GUIPictureSlideShow._slideDirection = -1;
               g_Player.Stop();
             }
             else
@@ -455,7 +455,7 @@ namespace MediaPortal.GUI.Video
           {
             if (g_Player.IsPicture)
             {
-              GUISlideShow._slideDirection = 1;
+              GUIPictureSlideShow._slideDirection = 1;
               g_Player.Stop();
             }
             else
@@ -471,7 +471,7 @@ namespace MediaPortal.GUI.Video
             // Stop Video for MyPictures when going to home
             if (g_Player.IsPicture)
             {
-              GUISlideShow._slideDirection = 0;
+              GUIPictureSlideShow._slideDirection = 0;
               g_Player.Stop();
             }
             // switch back to the menu
@@ -882,7 +882,7 @@ namespace MediaPortal.GUI.Video
           {
             if (g_Player.IsPicture)
             {
-              GUISlideShow._slideDirection = 0;
+              GUIPictureSlideShow._slideDirection = 0;
             }
             Log.Info("GUIVideoFullscreen:stop");
             g_Player.Stop();

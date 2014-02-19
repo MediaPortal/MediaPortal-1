@@ -542,8 +542,8 @@ namespace MediaPortal.GUI.Video
                 GUISliderControl pControl = (GUISliderControl)GetControl((int)Controls.OSD_SUBTITLE_DELAY);
                 pControl.SpinType = GUISpinControl.SpinType.SPIN_CONTROL_TYPE_FLOAT;
                 pControl.FloatInterval = 1;
-                pControl.SetRange(-10, 10);
-                SetSliderValue(-10, 10, m_subtitleDelay, (int)Controls.OSD_SUBTITLE_DELAY);
+                pControl.SetRange(-50, 50);
+                SetSliderValue(-50, 50, m_subtitleDelay, (int)Controls.OSD_SUBTITLE_DELAY);
                 SetCheckmarkValue(g_Player.EnableSubtitle, (int)Controls.OSD_SUBTITLE_ONOFF);
                 SetCheckmarkValue(!g_Player.EnableForcedSubtitle, (int)Controls.OSD_SUBTITLE_FORCED_ONOFF);
                 // show the controls on this sub menu

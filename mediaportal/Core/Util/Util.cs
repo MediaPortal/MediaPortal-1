@@ -356,6 +356,16 @@ namespace MediaPortal.Util
       return sFilePath;
     }
 
+    public static string GetServerNameFromUNCPath(string sFilePath)
+    {
+      Uri uri = new Uri(sFilePath);
+      
+      if (!uri.IsUnc)
+        return string.Empty;
+
+      return uri.Host;
+    }
+
     public static long GetDiskSize(string drive)
     {
       long diskSize = 0;
@@ -581,6 +591,27 @@ namespace MediaPortal.Util
         if (extensionFile == ".lnk") return true;
       }
       catch (Exception) {}
+      return false;
+    }
+
+    public static bool CheckServerStatus(string folderName)
+    {
+      if (!Util.Utils.IsUNCNetwork(folderName))
+        return true;
+      
+      string serverName = string.Empty;
+      
+      try
+      {
+        serverName = Util.Utils.GetServerNameFromUNCPath(folderName);
+      }
+      catch { }
+      
+      if (!string.IsNullOrEmpty(serverName))
+      {
+        WakeOnLanManager wakeOnLanManager = new WakeOnLanManager();
+        return wakeOnLanManager.Ping(serverName, 100);
+      }
       return false;
     }
 
@@ -1232,6 +1263,14 @@ namespace MediaPortal.Util
       if (strPath.StartsWith(@"\\")) return true;
       string strDrive = strPath.Substring(0, 2);
       if (getDriveType(strDrive) == 4) return true;
+      return false;
+    }
+
+    public static bool IsUNCNetwork(string strPath)
+    {
+      if (strPath == null) return false;
+      if (strPath.Length < 2) return false;
+      if (strPath.StartsWith(@"\\")) return true;
       return false;
     }
 

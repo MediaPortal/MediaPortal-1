@@ -175,6 +175,10 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Common.GUIPlugins\Common.GUIPlugins.csproj">
+      <Project>{03FEC69F-6D10-46FB-A0CA-4D266E4A21E2}</Project>
+      <Name>Common.GUIPlugins</Name>
+    </ProjectReference>
     <ProjectReference Include="..\GUIPictures\GUIPictures.csproj">
       <Project>{AA96B4C9-D471-4F47-B94F-1DF0697FBFDB}</Project>
       <Name>GUIPictures</Name>
@@ -229,13 +233,9 @@
     <Compile Include="GUIVideoArtistInfo.cs" />
     <Compile Include="GUIVideoBaseWindow.cs" />
     <Compile Include="GUIVideoFiles.cs" />
-    <Compile Include="GUIVideoFullscreen.cs" />
     <Compile Include="GUIVideoInfo.cs" />
-    <Compile Include="GUIVideoOSD.cs" />
-    <Compile Include="GUIVideoOverlay.cs" />
     <Compile Include="GUIVideoPlaylist.cs" />
     <Compile Include="GUIVideoTitle.cs" />
-    <Compile Include="GUIVideoTopOverlay.cs" />
     <Compile Include="MatroskaTagLib.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -243,7 +243,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SelectBDHandler.cs" />
     <Compile Include="SelectDVDHandler.cs" />
     <Compile Include="VideoSort.cs" />
     <Compile Include="VideoState.cs" />
