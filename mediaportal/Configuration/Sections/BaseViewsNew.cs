@@ -953,7 +953,7 @@ namespace MediaPortal.Configuration.Sections
       )
     {
       string defaultViews = Path.Combine(ViewHandler.DefaultsDirectory, mediaType + "Views.xml");
-      string customViews = Config.GetFile(Config.Dir.Config, mediaType + "ViewsNew.xml");
+      string customViews = Config.GetFile(Config.Dir.Config, mediaType + "Views.xml");
       Selections = selections;
       ViewsAs = viewsAs;
       SortBy = sortBy;
@@ -1037,7 +1037,7 @@ namespace MediaPortal.Configuration.Sections
         // Now Serialize the View to the XML
         XmlSerializer serializer = new XmlSerializer(typeof(List<DatabaseViewDefinition>));
 
-        string customViews = Config.GetFile(Config.Dir.Config, mediaType + "ViewsNew.xml");
+        string customViews = Config.GetFile(Config.Dir.Config, mediaType + "Views.xml");
         Stream fs = new FileStream(customViews, FileMode.Create);
         XmlWriterSettings writerSettings = new XmlWriterSettings();
         writerSettings.Indent = true;
