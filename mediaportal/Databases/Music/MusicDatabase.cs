@@ -554,8 +554,7 @@ namespace MediaPortal.Music.Database
         ExecuteNonQuery("CREATE INDEX idxartistinfo_strArtist ON artistinfo(strArtist ASC)");
         
         // last.fm users
-        DatabaseUtility.AddTable(MusicDbClient, "lastfmusers",
-                         "CREATE TABLE lastfmusers ( idLastFMUser integer primary key, strUsername text, strSK text)");
+        ExecuteNonQuery("CREATE TABLE lastfmusers ( idLastFMUser integer primary key, strUsername text, strSK text)");
 
         Log.Info("MusicDatabase: New Database created successfully");
         return true;
