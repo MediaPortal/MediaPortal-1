@@ -21,6 +21,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Threading;
 using MediaPortal.Dialogs;
@@ -51,7 +52,7 @@ namespace MediaPortal.GUI.Settings
 
     [SkinControl(14)] protected GUIButtonControl btnUpdateDatabase = null; // Done
 
-    private MusicDatabase m_dbs = MusicDatabase.Instance;
+    private readonly MusicDatabase _dataBase = MusicDatabase.Instance;
     
     private string _updateSinceLastImport = string.Empty;
     private string _prefixes = string.Empty;
@@ -86,6 +87,7 @@ namespace MediaPortal.GUI.Settings
 
     private void LoadSettings()
     {
+      var lastImportDate = _dataBase.GetLastImportDate().ToString();
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         btnExtractthumbs.Selected = xmlreader.GetValueAsBool("musicfiles", "extractthumbs", true);
@@ -109,9 +111,7 @@ namespace MediaPortal.GUI.Settings
                                                                      btnTreatFolderAsAlbum.Selected);
         btnMonitorShares.Selected = xmlreader.GetValueAsBool("musicfiles", "monitorShares", false);
         btnUpdateSinceLastImport.Selected = xmlreader.GetValueAsBool("musicfiles", "updateSinceLastImport", true);
-        _updateSinceLastImport = String.Format(GUILocalizeStrings.Get(300232),
-                                                           xmlreader.GetValueAsString("musicfiles", "lastImport",
-                                                                                      "1900-01-01 00:00:00"));
+        _updateSinceLastImport = String.Format(GUILocalizeStrings.Get(300232), lastImportDate);
         btnStripartistprefixes.Selected = xmlreader.GetValueAsBool("musicfiles", "stripartistprefixes", false);
         _prefixes = xmlreader.GetValueAsString("musicfiles", "artistprefixes", "The, Les, Die");
         _dateAddedSelectedIndex = xmlreader.GetValueAsInt("musicfiles", "dateadded", 0);
@@ -417,7 +417,7 @@ namespace MediaPortal.GUI.Settings
 
       try
       {
-        m_dbs.MusicDatabaseReorg(shares, setting);
+        _dataBase.MusicDatabaseReorg(shares, setting);
       }
       catch (Exception ex)
       {
@@ -425,13 +425,9 @@ namespace MediaPortal.GUI.Settings
         _scanRunning = false;
       }
 
-      using (Profile.Settings xmlreader = new Profile.MPSettings())
-      {
-        _updateSinceLastImport = String.Format(GUILocalizeStrings.Get(300232),
-                                                           xmlreader.GetValueAsString("musicfiles", "lastImport",
-                                                                                      "1900-01-01 00:00:00"));
-      }
-
+      var lastImportDate = _dataBase.GetLastImportDate().ToString();
+      _updateSinceLastImport = String.Format(GUILocalizeStrings.Get(300232), lastImportDate);
+      
       _scanRunning = false;
       EnableControls(true);
       SetProperties();

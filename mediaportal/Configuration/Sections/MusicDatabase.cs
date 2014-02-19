@@ -22,6 +22,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
@@ -59,7 +60,7 @@ namespace MediaPortal.Configuration.Sections
     private MPCheckBox checkBoxCreateGenre;
     private MPCheckBox checkBoxAllImages;
 
-    private MediaPortal.Music.Database.MusicDatabase m_dbs = MediaPortal.Music.Database.MusicDatabase.Instance;
+    private readonly MediaPortal.Music.Database.MusicDatabase _dataBase = MediaPortal.Music.Database.MusicDatabase.Instance;
 
     private List<BaseShares.ShareData> sharesData = null;
     private Thread _scanThread = null;
@@ -158,6 +159,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     public override void LoadSettings()
     {
+      var lastImportDate = _dataBase.GetLastImportDate().ToString();
       using (Settings xmlreader = new MPSettings())
       {
         buildThumbsCheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "extractthumbs", true);
@@ -171,9 +173,7 @@ namespace MediaPortal.Configuration.Sections
                                                                      folderAsAlbumCheckBox.Checked);
         monitorSharesCheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "monitorShares", false);
         checkBoxUpdateSinceLastImport.Checked = xmlreader.GetValueAsBool("musicfiles", "updateSinceLastImport", true);
-        checkBoxUpdateSinceLastImport.Text = String.Format("Only update new / changed files after {0}",
-                                                           xmlreader.GetValueAsString("musicfiles", "lastImport",
-                                                                                      "1900-01-01 00:00:00"));
+        checkBoxUpdateSinceLastImport.Text = String.Format("Only update new / changed files after {0}", lastImportDate);
         checkBoxStripArtistPrefix.Checked = xmlreader.GetValueAsBool("musicfiles", "stripartistprefixes", false);
         tbPrefixes.Text = xmlreader.GetValueAsString("musicfiles", "artistprefixes", "The, Les, Die");
         comboBoxDateAdded.SelectedIndex = xmlreader.GetValueAsInt("musicfiles", "dateadded", 0);
@@ -641,7 +641,7 @@ namespace MediaPortal.Configuration.Sections
 
       try
       {
-        m_dbs.MusicDatabaseReorg(shares, setting);
+        _dataBase.MusicDatabaseReorg(shares, setting);
       }
       catch (Exception ex)
       {
@@ -649,12 +649,8 @@ namespace MediaPortal.Configuration.Sections
         _scanRunning = false;
       }
 
-      using (Settings xmlreader = new MPSettings())
-      {
-        checkBoxUpdateSinceLastImport.Text = String.Format("Only update new / changed files after {0}",
-                                                           xmlreader.GetValueAsString("musicfiles", "lastImport",
-                                                                                      "1900-01-01 00:00:00"));
-      }
+      var lastImportDate = _dataBase.GetLastImportDate().ToString();
+      checkBoxUpdateSinceLastImport.Text = String.Format("Only update new / changed files after {0}", lastImportDate);
 
       _scanRunning = false;
       groupBox1.Enabled = true;

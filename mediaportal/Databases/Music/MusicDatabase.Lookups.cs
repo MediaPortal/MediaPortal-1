@@ -115,6 +115,27 @@ namespace MediaPortal.Music.Database
       return true;
     }
 
+    /// <summary>
+    /// Returns the Last Import Date from the Database
+    /// </summary>
+    /// <returns></returns>
+    public DateTime GetLastImportDate()
+    {
+      DateTime lastImportDate;
+
+      strSQL = "select Value from Configuration where Parameter = 'LastImport'";
+      SQLiteResultSet results = ExecuteQuery(strSQL);
+      try
+      {
+        lastImportDate = DateTime.ParseExact(results.Rows[0].fields[0], "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
+      }
+      catch (Exception)
+      {
+        lastImportDate = DateTime.ParseExact("1900-01-01 00:00:00", "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
+      }
+      return lastImportDate;
+    }
+
     public int GetTotalFavorites()
     {
       try

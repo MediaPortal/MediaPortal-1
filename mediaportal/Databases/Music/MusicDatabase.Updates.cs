@@ -662,11 +662,7 @@ namespace MediaPortal.Music.Database
         // Save the time of the reorg, to be able to skip the files not updated / added the next time
         if (!_singleFolderScan)
         {
-          using (Settings xmlreader = new MPSettings())
-          {
-            xmlreader.SetValue("musicfiles", "lastImport",
-                               startTime.ToString("yyyy-M-d H:m:s", CultureInfo.InvariantCulture));
-          }
+          ExecuteNonQuery(string.Format("update Configuration set Value='{0}' where Parameter = 'LastImport'", startTime.ToString("yyyy-M-d H:m:s", CultureInfo.InvariantCulture)));
         }
 
         GC.Collect();

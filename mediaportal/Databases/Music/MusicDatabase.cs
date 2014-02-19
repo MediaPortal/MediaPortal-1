@@ -39,7 +39,9 @@ namespace MediaPortal.Music.Database
   {
     #region Variables
 
-    public static readonly MusicDatabase Instance = new MusicDatabase();
+    private static MusicDatabase _instance = null;
+    private static readonly object _padlock = new object();
+
     private const int DATABASE_VERSION = 1;
 
     private SQLiteConnection _dbConnection = null;
@@ -61,12 +63,29 @@ namespace MediaPortal.Music.Database
 
     #endregion
 
-    #region Constructors/Destructors
+    #region Properties
 
     /// <summary>
-    /// static constructor. Opens or creates the music database
+    /// Returns the Instance of the Database
     /// </summary>
-    static MusicDatabase() { }
+    public static MusicDatabase Instance
+    {
+      get
+      {
+        lock (_padlock)
+        {
+          if (_instance == null)
+          {
+            _instance = new MusicDatabase();
+          }
+          return _instance;
+        }
+      }
+    }
+
+    #endregion
+
+    #region Constructors/Destructors
 
     /// <summary>
     /// private constructor to prevent any instance of this class
@@ -326,16 +345,6 @@ namespace MediaPortal.Music.Database
         _stripArtistPrefixes = xmlreader.GetValueAsBool("musicfiles", "stripartistprefixes", false);
         _dateAddedValue = xmlreader.GetValueAsInt("musicfiles", "dateadded", 0);
         _updateSinceLastImport = xmlreader.GetValueAsBool("musicfiles", "updateSinceLastImport", false);
-
-        try
-        {
-          string lastImport = xmlreader.GetValueAsString("musicfiles", "lastImport", "1900-01-01 00:00:00");
-          _lastImport = DateTime.ParseExact(lastImport, "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
-        }
-        catch (Exception)
-        {
-          _lastImport = DateTime.ParseExact("1900-01-01 00:00:00", "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
-        }
       }
     }
 
@@ -350,11 +359,10 @@ namespace MediaPortal.Music.Database
       try
       {
         // Open database
-        try
+        if (!Directory.Exists(Config.GetFolder(Config.Dir.Database)))
         {
           Directory.CreateDirectory(Config.GetFolder(Config.Dir.Database));
         }
-        catch (Exception) { }
 
         if (!File.Exists(Config.GetFile(Config.Dir.Database, "MusicDatabase.db3")))
         {
@@ -412,6 +420,9 @@ namespace MediaPortal.Music.Database
 
         // Insert the Database Version number into the Config Table
         ExecuteNonQuery(string.Format("insert into Configuration values ('Version', '{0}')", DATABASE_VERSION));
+
+        // Store The Last Import Date. Default = lowest possible date
+        ExecuteNonQuery(string.Format("insert into Configuration values ('LastImport', '{0}')", "1900-01-01 00:00:00"));
 
         // Share Table: Holds information about the Music Shares
         ExecuteNonQuery("CREATE TABLE Share (" +
