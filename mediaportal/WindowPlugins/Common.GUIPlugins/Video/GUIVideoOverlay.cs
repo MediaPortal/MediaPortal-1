@@ -433,9 +433,9 @@ namespace MediaPortal.GUI.Video
         {
           // Set properties from the .xml file
           movieInfoFound = true;
-          movie.Title = info.title;
-          movie.Plot = info.description;
-          movie.Genre = info.genre;
+          movie.Title = info.Title;
+          movie.Plot = info.Description;
+          movie.Genre = info.Genre;
           if (thumbInfoFound)
           {
             // take previously found thumb
@@ -444,10 +444,10 @@ namespace MediaPortal.GUI.Video
           else
           {
             // take channel logo (better than nothing, but do not set thumbInfoFound)
-            movie.ThumbURL = Util.Utils.GetCoverArt(Thumbs.TVChannel, info.channelName);
+            movie.ThumbURL = Util.Utils.GetCoverArt(Thumbs.TVChannel, info.ChannelName);
           }
           movie.SetPlayProperties(true);
-          GUIPropertyManager.SetProperty("#Play.Current.Channel", info.channelName);
+          GUIPropertyManager.SetProperty("#Play.Current.Channel", info.ChannelName);
         }
       }
 

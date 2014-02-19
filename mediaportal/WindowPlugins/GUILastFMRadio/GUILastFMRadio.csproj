@@ -108,6 +108,10 @@
       <Project>{6DA0E4DF-6230-4642-98B5-E690BB6942BB}</Project>
       <Name>Utils</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Common.GUIPlugins\Common.GUIPlugins.csproj">
+      <Project>{03FEC69F-6D10-46FB-A0CA-4D266E4A21E2}</Project>
+      <Name>Common.GUIPlugins</Name>
+    </ProjectReference>
     <ProjectReference Include="..\GUIMusic\GUIMusic.csproj">
       <Project>{70F7CE2D-B69F-43D6-AB65-A42D3983E2BA}</Project>
       <Name>GUIMusic</Name>

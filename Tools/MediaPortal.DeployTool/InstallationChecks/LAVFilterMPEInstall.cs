@@ -57,7 +57,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
       // check if mpe package is installed and also check if LAV is actually installed
       Version vMpeInstalled = GetInstalledMpeVersion();
       Version vLavInstalled = GetInstalledLAVVersion();
-      if (vLavInstalled != null && vMpeInstalled != null)
+      if (vLavInstalled != null || vMpeInstalled != null)
       {
         OnlineVersion = GetLatestAvailableMpeVersion();
         if (OnlineVersion != null)

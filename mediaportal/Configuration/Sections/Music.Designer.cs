@@ -1348,7 +1348,7 @@ namespace MediaPortal.Configuration.Sections
       this.comboViewPortSizes.FormattingEnabled = true;
       this.comboViewPortSizes.Items.AddRange(new object[] {
             "512X384",
-            "600X480",
+            "640X480",
             "800X600",
             "1024x786"});
       this.comboViewPortSizes.Location = new System.Drawing.Point(89, 139);

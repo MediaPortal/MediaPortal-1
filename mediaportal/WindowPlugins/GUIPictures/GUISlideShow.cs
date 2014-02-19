@@ -72,11 +72,11 @@ namespace MediaPortal.GUI.Pictures
           {
             _slideList.Remove(_slideList[_currentSlideIndex]);
           }
-          if (_slideDirection == 1 || _slideDirection == 0)
+          if (GUIPictureSlideShow._slideDirection == 1 || GUIPictureSlideShow._slideDirection == 0)
           {
             ShowNext();
           }
-          if (_slideDirection == -1)
+          if (GUIPictureSlideShow._slideDirection == -1)
           {
             ShowPrevious();
           }
@@ -114,14 +114,14 @@ namespace MediaPortal.GUI.Pictures
           return _currentSlide;
         }*/
 
-        if (!tmpGUIpictures._playVideosInSlideshows && _isSlideShow && _slideDirection == 1)
+        if (!tmpGUIpictures._playVideosInSlideshows && _isSlideShow && GUIPictureSlideShow._slideDirection == 1)
         {
           ShowNext();
           _currentSlide = _slideCache.GetCurrentSlide(_slideList[_currentSlideIndex]);
           return _currentSlide;
         }
 
-        if (!tmpGUIpictures._playVideosInSlideshows && _isSlideShow && _slideDirection == -1)
+        if (!tmpGUIpictures._playVideosInSlideshows && _isSlideShow && GUIPictureSlideShow._slideDirection == -1)
         {
           ShowPrevious();
           _currentSlide = _slideCache.GetCurrentSlide(_slideList[_currentSlideIndex]);
@@ -147,7 +147,7 @@ namespace MediaPortal.GUI.Pictures
 
         if (_isSlideShow)
         {
-          _slideDirection = 1;
+          GUIPictureSlideShow._slideDirection = 1;
         }
 
         _loadVideoPlayback = false;
@@ -155,7 +155,7 @@ namespace MediaPortal.GUI.Pictures
       }
       else
       {
-        _slideDirection = 0;
+        GUIPictureSlideShow._slideDirection = 0;
       }
 
       // Get Name of actual played slide.
@@ -338,7 +338,6 @@ namespace MediaPortal.GUI.Pictures
     private float _defaultZoomFactor = 1.0f;
     internal bool _returnedFromVideoPlayback = false;
     internal bool _loadVideoPlayback = false;
-    public static int _slideDirection = 0; //-1=backwards, 0=nothing, 1=forward
     private double pausedMusicLastPosition;
     public bool pausedMusic;
     private bool resumeSong = false;
@@ -399,12 +398,6 @@ namespace MediaPortal.GUI.Pictures
 
     #endregion
 
-    public static int SlideDirection
-    {
-      get { return _slideDirection; }
-      set { _slideDirection = value; }
-    }
-
     #region GUIWindow overrides
 
     public GUISlideShow()
@@ -429,16 +422,16 @@ namespace MediaPortal.GUI.Pictures
 
           if (_returnedFromVideoPlayback)
           {
-            if (SlideDirection == 1)
+            if (GUIPictureSlideShow.SlideDirection == 1)
             {
               ShowNext();
             }
             //Backward
-            if (SlideDirection == -1)
+            if (GUIPictureSlideShow.SlideDirection == -1)
             {
               ShowPrevious();
             }
-            if (SlideDirection == 0)
+            if (GUIPictureSlideShow.SlideDirection == 0)
             {
               // Get folder path for recursive selectedItemIndex.
               if (_slideList.Count != 0)
@@ -549,7 +542,7 @@ namespace MediaPortal.GUI.Pictures
           {
             _returnedFromVideoPlayback = false;
           }
-          SlideDirection = 0;
+          GUIPictureSlideShow.SlideDirection = 0;
           ShowPreviousWindow();
           break;
 
@@ -562,15 +555,15 @@ namespace MediaPortal.GUI.Pictures
           if (_lastSegmentIndex != -1)
           {
             ShowPrevious(true);
-            _slideDirection = -1;
+            GUIPictureSlideShow._slideDirection = -1;
           }
           else if (_isSlideShow)
           {
-            _slideDirection = -1;
+            GUIPictureSlideShow._slideDirection = -1;
           }
           else
           {
-            _slideDirection = 0;
+            GUIPictureSlideShow._slideDirection = 0;
           }
 
           if (!_isPictureZoomed)
@@ -594,15 +587,15 @@ namespace MediaPortal.GUI.Pictures
           if (_lastSegmentIndex != -1)
           {
             ShowNext(false, true);
-            _slideDirection = 1;
+            GUIPictureSlideShow._slideDirection = 1;
           }
           else if (_isSlideShow)
           {
-            _slideDirection = 1;
+            GUIPictureSlideShow._slideDirection = 1;
           }
           else
           {
-            _slideDirection = 0;
+            GUIPictureSlideShow._slideDirection = 0;
           }
 
           if (!_isPictureZoomed)
@@ -615,7 +608,7 @@ namespace MediaPortal.GUI.Pictures
                 _folderCurrentItem = _slideList[_currentSlideIndex];
               }
               // We reach the end of slideshow
-              _slideDirection = 0;
+              GUIPictureSlideShow._slideDirection = 0;
               ShowPreviousWindow();
             }
             else
@@ -1277,7 +1270,7 @@ namespace MediaPortal.GUI.Pictures
     {
       LoadSettings();
       _isBackgroundMusicPlaying = false;
-      _slideDirection = 1;
+      GUIPictureSlideShow._slideDirection = 1;
       _isSlideShow = true;
       if (_autoShuffle && (_isSlideShow || _showRecursive))
       {
@@ -1293,7 +1286,7 @@ namespace MediaPortal.GUI.Pictures
       LoadSettings();
       _isBackgroundMusicPlaying = false;
       StartBackgroundMusic(path);
-      _slideDirection = 1;
+      GUIPictureSlideShow._slideDirection = 1;
       _isSlideShow = true;
       if (_autoShuffle && (_isSlideShow || _showRecursive))
       {

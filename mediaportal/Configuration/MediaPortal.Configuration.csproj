@@ -265,6 +265,12 @@
     <Compile Include="Sections\Radio.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Subdialogs\DlgWol.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Subdialogs\DlgWol.Designer.cs">
+      <DependentUpon>DlgWol.cs</DependentUpon>
+    </Compile>
     <Compile Include="TvServerRemote.cs" />
     <Compile Include="Sections\BD.cs">
       <SubType>UserControl</SubType>
@@ -793,6 +799,9 @@
     <EmbeddedResource Include="Subdialogs\DlgConfigModeHint.resx">
       <SubType>Designer</SubType>
       <DependentUpon>DlgConfigModeHint.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Subdialogs\DlgWol.resx">
+      <DependentUpon>DlgWol.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Subdialogs\EditShareForm.resx">
       <SubType>Designer</SubType>

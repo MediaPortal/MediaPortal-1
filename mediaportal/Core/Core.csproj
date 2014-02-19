@@ -365,8 +365,8 @@
     <Compile Include="guilib\IStandardKeyboard.cs" />
     <Compile Include="guilib\GUIThemeManager.cs" />
     <Compile Include="guilib\RepeatBehavior.cs" />
+    <Compile Include="guilib\TextureFrame.cs" />
     <Compile Include="guilib\ViewHandler.cs" />
-    <Compile Include="guilib\WindowPluginBase.cs" />
     <Compile Include="guilib\XMLSkinFunctionAttribute.cs" />
     <Compile Include="MusicPlayer\BASS\MixerStream.cs" />
     <Compile Include="MusicPlayer\BASS\StreamCopy.cs" />
@@ -1536,6 +1536,7 @@
     <Compile Include="Util\VirtualDirectory.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Util\WakeOnLanManager.cs" />
     <Compile Include="Util\Win32API.cs">
       <SubType>Code</SubType>
     </Compile>

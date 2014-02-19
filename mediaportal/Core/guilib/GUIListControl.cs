@@ -2455,7 +2455,7 @@ namespace MediaPortal.GUI.Library
         }
         if (!_upDownControl.Focus)
         {
-          if (_rightControlId != GetID)
+          if (NavigateRight != GetID)
           {
             base.OnAction(action);
           }
@@ -2536,9 +2536,9 @@ namespace MediaPortal.GUI.Library
           if ((AnimationTimer.TickCount - _lastCommandTime) > _loopDelay)
           {
             //check if _downControlId is set -> then go to the window
-            if (_upControlId > 0)
+            if (NavigateUp> 0)
             {
-              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, WindowId, GetID, _upControlId,
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, WindowId, GetID, NavigateUp,
                                               (int)action.wID, 0, null);
               GUIGraphicsContext.SendMessage(msg);
             }
@@ -2604,9 +2604,9 @@ namespace MediaPortal.GUI.Library
             if ((AnimationTimer.TickCount - _lastCommandTime) > _loopDelay)
             {
               //check if _downControlId is set -> then go to the window
-              if (_downControlId > 0)
+              if (NavigateDown > 0)
               {
-                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, WindowId, GetID, _downControlId,
+                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, WindowId, GetID, NavigateDown,
                                                 (int)action.wID, 0, null);
                 GUIGraphicsContext.SendMessage(msg);
               }
@@ -2642,9 +2642,9 @@ namespace MediaPortal.GUI.Library
             if ((AnimationTimer.TickCount - _lastCommandTime) > _loopDelay)
             {
               //check if _downControlId is set -> then go to the window
-              if (_downControlId > 0)
+              if (NavigateDown > 0)
               {
-                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, WindowId, GetID, _downControlId,
+                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, WindowId, GetID, NavigateDown,
                                                 (int)action.wID, 0, null);
                 GUIGraphicsContext.SendMessage(msg);
               }
