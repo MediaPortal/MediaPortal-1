@@ -71,13 +71,13 @@ public:
   CBuffer*   GetSubtitle();
   void       EraseAudioBuff();
   void       EraseVideoBuff();
-  void       OnTsPacket(byte* tsPacket);
+  void       OnTsPacket(byte* tsPacket, int bufferOffset, int bufferLength);
   void       OnNewChannel(CChannelInfo& info);
   void       SetFileReader(FileReader* reader);
   void       FillSubtitle(CTsHeader& header, byte* tsPacket);
   bool       CheckContinuity(int prevCC, CTsHeader& header);
-  void       FillAudio(CTsHeader& header, byte* tsPacket);
-  void       FillVideo(CTsHeader& header, byte* tsPacket);
+  void       FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffset, int bufferLength);
+  void       FillVideo(CTsHeader& header, byte* tsPacket, int bufferOffset, int bufferLength);
   void       FillVideoH264(CTsHeader& header, byte* tsPacket);
   void       FillVideoMPEG2(CTsHeader& header, byte* tsPacket);
   void       FillTeletext(CTsHeader& header, byte* tsPacket);
@@ -146,6 +146,9 @@ public:
   int  ReadAheadFromFile();
   bool CheckPrefetchState(bool isNormal, bool isForced);
 
+  void DelegatedFlush(bool forceNow);
+  void PrefetchData();
+
   bool m_DisableDiscontinuitiesFiltering;
   DWORD m_LastDataFromRtsp;
   bool m_bFlushDelegated;
@@ -158,6 +161,7 @@ public:
   //  long m_AudioDataLowCount;
   //  long m_VideoDataLowCount;
   long m_AVDataLowCount;
+  long m_AVDataLowPauseTime;
   DWORD m_targetAVready;
   bool  m_bSubtitleCompensationSet;
   bool m_bShuttingDown;
@@ -178,7 +182,7 @@ private:
 
   vector<struct stAudioStream> m_audioStreams;
   vector<struct stSubtitleStream> m_subtitleStreams;
-  int ReadFromFile(bool isAudio, bool isVideo);
+  int ReadFromFile();
   bool m_bEndOfFile;
   HRESULT RenderFilterPin(CBasePin* pin, bool isAudio, bool isVideo);
   CCritSec m_sectionFlushAudio;
@@ -301,4 +305,5 @@ private:
   
   int  m_initialAudioSamples;
   int  m_initialVideoSamples;
+  int  m_prefetchLoopDelay;
 };

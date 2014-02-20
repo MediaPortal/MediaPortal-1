@@ -65,6 +65,8 @@ public:
 	virtual int HasData(){return 0; } ;
 
 protected:
+  
+  CString randomStrGen(int length); 
 	
 	HANDLE   m_hFile; 				// Handle to file for streaming
 	HANDLE   m_hInfoFile;           // Handle to Infofile for filesize from FileWriter

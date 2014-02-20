@@ -221,7 +221,7 @@ bool CTsFileSeek::Seek(CRefTime refTime)
 //
 // This method checks if the ts packet contains a PCR timestamp
 // and ifso sets the PCR timestamp in m_pcrFound;
-void CTsFileSeek::OnTsPacket(byte* tsPacket)
+void CTsFileSeek::OnTsPacket(byte* tsPacket, int bufferOffset, int bufferLength)
 {
   if (m_pcrFound.IsValid) return ;
 

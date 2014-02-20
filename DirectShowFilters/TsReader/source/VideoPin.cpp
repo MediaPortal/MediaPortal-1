@@ -482,12 +482,12 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
           cRefTime -= m_pTsReaderFilter->m_ClockOnStart.m_time;
           
           // 'fast start' timestamp modification, during first (AddVideoComp + 1 sec) of play
-          double fsAdjLimit = (double)m_pTsReaderFilter->AddVideoComp.m_time + FS_ADDON_LIM; //vid comp + 1 second
+          double fsAdjLimit = (double)m_pTsReaderFilter->AddVideoComp.m_time + (double)FS_ADDON_LIM; //vid comp + 1 second
           if (m_pTsReaderFilter->m_EnableSlowMotionOnZapping && ((double)cRefTime.m_time < fsAdjLimit) )
           {
             //float startCref = (float)cRefTime.m_time/(1000*10000); //used in LogDebug below only
             //Assume desired timestamp span is zero to fsAdjLimit, actual span is AddVideoComp to fsAdjLimit
-            double offsetRatio = fsAdjLimit/FS_ADDON_LIM; // == fsAdjLimit/(fsAdjLimit - (double)m_pTsReaderFilter->AddVideoComp.m_time);
+            double offsetRatio = fsAdjLimit/(double)FS_ADDON_LIM; // == fsAdjLimit/(fsAdjLimit - (double)m_pTsReaderFilter->AddVideoComp.m_time);
             double currOffset = fsAdjLimit - (double)cRefTime.m_time;
             double newOffset = currOffset * offsetRatio;
             cRefTime = (fsAdjLimit > newOffset) ? (REFERENCE_TIME)(fsAdjLimit - newOffset) : 0;  //Don't allow negative cRefTime
@@ -515,11 +515,18 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
               //Samples times are getting close to presentation time
               demux.m_bVideoSampleLate = true;   
               
-              if (fTime < 0.02)
+              if (fTime < 0.05)
               {              
                 //Samples are running very late - check if this is a persistant problem by counting over a period of time 
                 //(m_AVDataLowCount is checked in CTsReaderFilter::ThreadProc())
-                _InterlockedExchangeAdd(&demux.m_AVDataLowCount, 1);   
+                _InterlockedIncrement(&demux.m_AVDataLowCount);   
+              }
+              
+              if (fTime < -2.0)
+              { 
+                LogDebug("vidPin : Video to render very late, flushing") ;
+                //Very late - request internal flush and re-sync to stream
+                demux.DelegatedFlush(false);
               }
             }
 

@@ -10,7 +10,7 @@ public:
   CTsDuration();
   virtual ~CTsDuration(void);
   void SetFileReader(FileReader* reader);
-	void OnTsPacket(byte* tsPacket);
+	void OnTsPacket(byte* tsPacket, int bufferOffset, int bufferLength);
   void UpdateDuration(bool logging);
   void SetVideoPid(int pid);
   int  GetPid();

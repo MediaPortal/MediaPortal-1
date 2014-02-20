@@ -347,6 +347,7 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
   m_regInitialBuffDelay = INITIAL_BUFF_DELAY;
   m_bEnableBufferLogging = false;
   m_bSubPinConnectAlways = false;
+  m_regAudioDelay = AUDIO_DELAY; 
   if (ERROR_SUCCESS==RegCreateKeyEx(HKEY_CURRENT_USER, _T("Software\\Team MediaPortal\\TsReader"), 0, NULL, 
                                     REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &key, NULL))
   {
@@ -402,7 +403,7 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
     keyValue = (DWORD)m_regInitialBuffDelay;
     LPCTSTR initialBuffDelay_RRK = _T("BufferingDelayInMilliSeconds");
     ReadRegistryKeyDword(key, initialBuffDelay_RRK, keyValue);
-    if ((keyValue >= 0) && (keyValue <= 2000))
+    if ((keyValue >= 0) && (keyValue <= 10000))
     {
       m_regInitialBuffDelay = (LONG)keyValue;
       LogDebug("--- Buffering delay = %d ms", m_regInitialBuffDelay);
@@ -410,7 +411,7 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
     else
     {
       m_regInitialBuffDelay = INITIAL_BUFF_DELAY;
-      LogDebug("--- Buffering delay = %d ms (default value, allowed range is %d - %d)", m_regInitialBuffDelay, 0, 2000);
+      LogDebug("--- Buffering delay = %d ms (default value, allowed range is %d - %d)", m_regInitialBuffDelay, 0, 10000);
     }
     
     keyValue = 0;
@@ -429,6 +430,20 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
     {
       LogDebug("----- SubPinConnectAlways -----");
       m_bSubPinConnectAlways = true;
+    }
+
+    keyValue = (DWORD)(m_regAudioDelay/10000);
+    LPCTSTR regAudioDelay_RRK = _T("AudioDelayInMilliSeconds");
+    ReadRegistryKeyDword(key, regAudioDelay_RRK, keyValue);
+    if ((keyValue >= 0) && (keyValue <= 500))
+    {
+      m_regAudioDelay = (REFERENCE_TIME)(keyValue*10000);
+      LogDebug("--- Audio delay = %d ms", (m_regAudioDelay/10000));
+    }
+    else
+    {
+      m_regAudioDelay = AUDIO_DELAY;
+      LogDebug("--- Audio delay = %d ms (default value, allowed range is %d - %d)", (m_regAudioDelay/10000), 0, 500);
     }
 
     RegCloseKey(key);
@@ -471,6 +486,7 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
   m_ShowBufferAudio = INIT_SHOWBUFFERAUDIO;
   m_ShowBufferVideo = INIT_SHOWBUFFERVIDEO;
   m_bMPARinGraph = false;
+  m_bEVRhasConnected = false;
   m_MPmainThreadID = GetCurrentThreadId() ;
   m_lastPause = GET_TIME_NOW();
   
@@ -703,12 +719,12 @@ STDMETHODIMP CTsReaderFilter::GetState(DWORD dwMilliSecsTimeout, FILTER_STATE *p
     }
 
     bool isAVReady =  m_bStreamCompensated
-              && (GET_TIME_NOW() > m_demultiplexer.m_targetAVready);
+              && (!m_bMPARinGraph || (GET_TIME_NOW() > m_demultiplexer.m_targetAVready) || m_audioReady);
     
     //FFWD is more responsive if we return VFW_S_CANT_CUE when rate != 1.0
     if (isAVReady || (playRate != 1.0) || m_demultiplexer.EndOfFile())
     {
-      //LogDebug("CTsReaderFilter::GetState(), VFW_S_CANT_CUE, playRate %f",(float)playRate);
+      LogDebug("CTsReaderFilter::GetState(), VFW_S_CANT_CUE, m_audioReady %d",m_audioReady);
       return VFW_S_CANT_CUE;
     }
     else
@@ -836,8 +852,7 @@ STDMETHODIMP CTsReaderFilter::Stop()
   {
     //m_demultiplexer.Flush(true) ;
     //Flushing is delegated
-    m_demultiplexer.m_bFlushDelgNow = true;
-    m_demultiplexer.WakeThread(); 
+    m_demultiplexer.DelegatedFlush(true);
     for(int i(0) ; ((i < 500) && (m_demultiplexer.m_bFlushDelgNow || m_demultiplexer.m_bFlushRunning)) ; i++)
     {
       Sleep(1);
@@ -892,6 +907,10 @@ STDMETHODIMP CTsReaderFilter::Pause()
   
     if (!m_bPauseOnClockTooFast)
     {
+      if (m_State == State_Paused)
+      {
+        CheckForMPAR();
+      }
       //are we using rtsp?
       if (m_fileDuration==NULL)
       {
@@ -910,13 +929,9 @@ STDMETHODIMP CTsReaderFilter::Pause()
             LogDebug("  -- Pause()  ->start rtsp from %f", startTime);
             m_buffer.Clear();
             
-            if (!m_demultiplexer.m_bFlushDelgNow && !m_demultiplexer.m_bFlushRunning) //Flush already pending
-            {
-              //m_demultiplexer.Flush(false);
-              //Flushing is delegated
-              m_demultiplexer.m_bFlushDelgNow = true;
-              m_demultiplexer.WakeThread(); 
-            }
+            //Flushing is delegated
+            m_demultiplexer.DelegatedFlush(true);
+            
             for(int i(0) ; ((i < 500) && (m_demultiplexer.m_bFlushDelgNow || m_demultiplexer.m_bFlushRunning)) ; i++)
             {
               Sleep(1);
@@ -1168,6 +1183,8 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
 
   //AddGraphToRot(GetFilterGraph());
   SetDuration();
+  
+  m_bEVRhasConnected = false;
 
   return S_OK;
 }
@@ -1439,12 +1456,9 @@ HRESULT CTsReaderFilter::SeekPreStart(CRefTime& rtAbsSeek)
 
   if (!m_bOnZap || !m_demultiplexer.IsNewPatReady() || m_bAnalog) // On zapping, new PAT has occured, we should not flush to avoid loosing data.
   {                                                               //             new PAT has not occured, we should flush to avoid restart with old data.							
-    if (!m_demultiplexer.m_bFlushDelgNow && !m_demultiplexer.m_bFlushRunning) //Flush already pending
-    {
-      //Flushing is delegated
-      m_demultiplexer.m_bFlushDelgNow = true;
-      m_demultiplexer.WakeThread(); 
-    }
+    //Flushing is delegated
+    m_demultiplexer.DelegatedFlush(true);
+    
     for(int i(0) ; ((i < 500) && (m_demultiplexer.m_bFlushDelgNow || m_demultiplexer.m_bFlushRunning)) ; i++)
     {
       Sleep(1);
@@ -1637,7 +1651,7 @@ void CTsReaderFilter::ThreadProc()
     else
     {
       pauseWaitTime = 3000;
-      underRunLimit = 20;
+      underRunLimit = 10;
       longPause = false;
     }
 
@@ -1646,6 +1660,7 @@ void CTsReaderFilter::ThreadProc()
     {
       lastDataLowTime = timeNow;
       _InterlockedAnd(&m_demultiplexer.m_AVDataLowCount, 0);
+      _InterlockedAnd(&m_demultiplexer.m_AVDataLowPauseTime, 0) ;
     }
     else if (m_demultiplexer.m_AVDataLowCount > underRunLimit)
     {      
@@ -1655,13 +1670,14 @@ void CTsReaderFilter::ThreadProc()
         m_bRenderingClockTooFast=true;
         if (timeNow < (lastDataLowTime + (pauseWaitTime/2))) //Reached trigger point in a short time
         {
-          BufferingPause(true); //Force longer pause      
+          BufferingPause(true, m_demultiplexer.m_AVDataLowPauseTime); //Force longer pause      
         }
         else
         {
-          BufferingPause(longPause); //Pause for a short time         
+          BufferingPause(longPause, m_demultiplexer.m_AVDataLowPauseTime); //Pause for a short time         
         }
         _InterlockedAnd(&m_demultiplexer.m_AVDataLowCount, 0);
+        _InterlockedAnd(&m_demultiplexer.m_AVDataLowPauseTime, 0) ;
         m_bRenderingClockTooFast=false ;
         m_demultiplexer.m_bVideoSampleLate=false;
         m_demultiplexer.m_bAudioSampleLate=false;
@@ -1670,6 +1686,7 @@ void CTsReaderFilter::ThreadProc()
       {
         lastDataLowTime = timeNow;
         _InterlockedAnd(&m_demultiplexer.m_AVDataLowCount, 0);
+        _InterlockedAnd(&m_demultiplexer.m_AVDataLowPauseTime, 0) ;
         m_demultiplexer.m_bVideoSampleLate=false;
         m_demultiplexer.m_bAudioSampleLate=false;
       }
@@ -2193,7 +2210,7 @@ void CTsReaderFilter::SetMediaPosition(REFERENCE_TIME MediaPos)
   //Functionality now internal to TsReader
 }
 
-void CTsReaderFilter::BufferingPause(bool longPause)
+void CTsReaderFilter::BufferingPause(bool longPause, long extraSleep)
 {
   // Must be called from CTsReaderFilter::ThreadProc() to allow TsReader to "Pause" itself without deadlock issue.
 
@@ -2206,11 +2223,10 @@ void CTsReaderFilter::BufferingPause(bool longPause)
       return ;                  
     }
 
-    DWORD sleepTime = 195; //Pause length in ms
+    DWORD sleepTime = 195 + (DWORD)(min(500, max(0, extraSleep))); //Pause length in ms
     DWORD minDelayTime = 5000; //Min time between pauses in ms
     if (longPause)
     {
-      sleepTime = 195 ;    //Longer pauses at start of play              
       minDelayTime = 500 ; //Shorter time between pauses at start of play   
     }          
     
@@ -2364,21 +2380,27 @@ void CTsReaderFilter::SetErrorAbort()
 
 void CTsReaderFilter::CheckForMPAR()
 {
-  // LogDebug("CheckForMPAR 1");
-
   CComPtr<IBaseFilter> pBaseFilter;
 
   if (GetFilterGraph() && SUCCEEDED(GetFilterGraph()->FindFilterByName(L"MediaPortal - Audio Renderer", &pBaseFilter)))
   {
     m_bMPARinGraph = true;
     LogDebug("MPAR found");
+  }  
+  else if (GetFilterGraph() && SUCCEEDED(GetFilterGraph()->FindFilterByName(L"ReClock Audio Renderer", &pBaseFilter)))
+  {
+    m_bMPARinGraph = true;
+    LogDebug("ReClock found");
   }
   else
   {
     m_bMPARinGraph = false;
-    LogDebug("MPAR not found");
+    LogDebug("MPAR/Reclock not found");
   }
 }
+
+
+
 
 ////////////////////////////////////////////////////////////////////////
 //

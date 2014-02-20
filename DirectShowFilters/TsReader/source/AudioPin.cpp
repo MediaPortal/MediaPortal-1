@@ -483,11 +483,19 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
             //Samples times are getting close to presentation time
             demux.m_bAudioSampleLate = true;  
              
-            if (fTime < 0.02)
+            if (fTime < 0.05)
             {              
+              _InterlockedExchange(&demux.m_AVDataLowPauseTime, (long)((fTime-0.02) * -1000.0));
               //Samples are running very late - check if this is a persistant problem by counting over a period of time 
               //(m_AVDataLowCount is checked in CTsReaderFilter::ThreadProc())
-              _InterlockedExchangeAdd(&demux.m_AVDataLowCount, 1);   
+              _InterlockedIncrement(&demux.m_AVDataLowCount);   
+            }
+            
+            if (fTime < -2.0)
+            { 
+              LogDebug("audPin : Audio to render very late, flushing") ;
+              //Very late - request internal flush and re-sync to stream
+              demux.DelegatedFlush(false);
             }
           }
 
@@ -545,10 +553,11 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
             //now we have the final timestamp, set timestamp in sample
             REFERENCE_TIME refTime=(REFERENCE_TIME)cRefTime;
             refTime = (REFERENCE_TIME)((double)refTime/m_dRateSeeking);
+            refTime += m_pTsReaderFilter->m_regAudioDelay; //add offset (to produce delay relative to video)
 
             pSample->SetSyncPoint(TRUE);
-
             pSample->SetTime(&refTime,&refTime);
+            
             if (m_pTsReaderFilter->m_ShowBufferAudio || fTime < 0.02 || (m_sampleCount < 3))
             {
               int cntA, cntV;
@@ -560,6 +569,11 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
               LogDebug("Aud/Ref : %03.3f, Compensated = %03.3f ( %0.3f A/V buffers=%02d/%02d), Clk : %f, SampCnt %d, Sleep %d ms, stallPt %03.3f", (float)RefTime.Millisecs()/1000.0f, (float)cRefTime.Millisecs()/1000.0f, fTime,cntA,cntV, clock, m_sampleCount, m_FillBuffSleepTime, (float)stallPoint);
             }
             if (m_pTsReaderFilter->m_ShowBufferAudio) m_pTsReaderFilter->m_ShowBufferAudio--;
+              
+            if (((float)cRefTime.Millisecs()/1000.0f) > AUDIO_READY_POINT)
+            {
+              m_pTsReaderFilter->m_audioReady = true;
+            }
           }
           else
           {
@@ -735,6 +749,7 @@ HRESULT CAudioPin::OnThreadStartPlay()
   m_sampleCount = 0;
   m_bInFillBuffer=false;
   m_bDownstreamFlush=false;
+  m_pTsReaderFilter->m_audioReady = false;
 
   m_FillBuffSleepTime = 1;
   m_LastFillBuffTime = GET_TIME_NOW();
