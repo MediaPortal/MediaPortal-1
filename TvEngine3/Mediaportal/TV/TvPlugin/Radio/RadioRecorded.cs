@@ -209,7 +209,8 @@ namespace Mediaportal.TV.TvPlugin.Radio
       TVHome.ShowTvEngineSettingsUIIfConnectionDown();
 
       base.OnPageLoad();
-      DeleteInvalidRecordings();
+      // Fix delete recording when recording are on NAS and not fully ready.
+      //DeleteInvalidRecordings();
 
       if (btnCompress != null)
       {
