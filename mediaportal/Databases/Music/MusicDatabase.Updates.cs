@@ -1923,26 +1923,27 @@ namespace MediaPortal.Music.Database
     /// </summary>
     private void CleanupMultipleEntryTables()
     {
-      string[] tblPrefix = { "Artist", "Composer", "Conductor", "Genre" };
+      // Cleanup Artist Table, which contains Artists, Composers and Conductors
+      strSQL = "delete from Artist where IdArtist not in " + 
+               "(select distinct IdArtist from ArtistSong " + 
+               " union " + 
+               "select distinct IdComposer from ComposerSong " +
+               " union " +
+               "select distinct IdConductor from ConductorSong " +
+               ")";
+      ExecuteNonQuery(strSQL);
 
-      // Clean up Multi Value Fields
-      foreach (var prefix in tblPrefix)
-      {
-        var table = "Artist";
-        if (prefix == "Genre")
-        {
-          table = "Genre";
-        }
-        strSQL = string.Format("delete from {0} where Id{0} not in (select Id{1} from {1}Song)", table, prefix);
-        ExecuteNonQuery(strSQL);
-      }
+
+      // Cleanup Genre Table
+      strSQL = "delete from Genre where IdGenre not in (select distinct IdGenre from GenreSong)";
+      ExecuteNonQuery(strSQL);
 
       // Cleanup Album Table
-      strSQL = "delete from Album where IdAlbum not in (select IdAlbum from Song)";
+      strSQL = "delete from Album where IdAlbum not in (select distinct IdAlbum from Song)";
       ExecuteNonQuery(strSQL);
 
       // Cleanup AlbumArtist Table
-      strSQL = "delete from AlbumArtist where IdAlbum not in (select IdAlbum from Album)";
+      strSQL = "delete from AlbumArtist where IdAlbum not in (select distinct IdAlbum from Album)";
       ExecuteNonQuery(strSQL);
     }
 
