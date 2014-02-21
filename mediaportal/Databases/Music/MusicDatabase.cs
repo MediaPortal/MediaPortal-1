@@ -303,7 +303,7 @@ namespace MediaPortal.Music.Database
     }
 
     /// <summary>
-    /// Execute a Scalar QUery Statement against the current database
+    /// Execute a Scalar Query Statement against the current database
     /// </summary>
     /// <param name="aSQL"></param>
     /// <returns>object</returns>

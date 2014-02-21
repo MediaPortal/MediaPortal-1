@@ -44,10 +44,10 @@ namespace MediaPortal.Music.Database
 
     private string _strSongJoin = "join Album on Album.IdAlbum = Song.IdAlbum " +
                             "join folder on folder.idFolder = song.idfolder " +
-                            "join share on share.IdShare = folder.IdShare ";
+                            "join share on share.IdShare = folder.IdShare " +
+                            "join artistsong on artistsong.idsong = song.Idsong and artistsong.idartist = artist.idartist ";
 
     #endregion
-
 
     public bool AssignAllSongFieldsFromResultSet(ref Song aSong, SQLiteResultSet aResult, int aRow)
     {
@@ -136,17 +136,22 @@ namespace MediaPortal.Music.Database
       return lastImportDate;
     }
 
+    /// <summary>
+    /// Get the amount of Songs with a Favorite indicator > 0
+    /// </summary>
+    /// <returns></returns>
     public int GetTotalFavorites()
     {
       try
       {
-        int NumOfSongs;
-        strSQL = String.Format("SELECT count(*) FROM tracks WHERE iFavorite > 0");
-        SQLiteResultSet results = DirectExecute(strSQL);
-        SQLiteResultSet.Row row = results.Rows[0];
-        NumOfSongs = Int32.Parse(results.Rows[0].fields[0]);
+        strSQL = String.Format("SELECT count(*) FROM Song WHERE Favorite > 0");
+        var numSongs = ExecuteScalar(strSQL);
+        if (numSongs == null)
+        {
+          return 0;
+        }
 
-        return NumOfSongs;
+        return (int)numSongs;
       }
       catch (Exception ex)
       {
@@ -736,13 +741,10 @@ namespace MediaPortal.Music.Database
           return false;
         }
 
+        strSQL = string.Format("{0} {1},Artist {2} where artist.idartist = {3}", _strSongSelect, _strSongFrom, _strSongJoin, idArtist);
         if (aGroupAlbum)
         {
-          strSQL = string.Format("{0} {1},Artist {2} join artistsong on artistsong.idsong = song.IdSong and artistsong.idartist = artist.idArtist where artist.idArtist = {3} group by AlbumName Order by Year Desc", _strSongSelect, _strSongFrom, _strSongJoin, idArtist);
-        }
-        else
-        {
-          strSQL = string.Format("{0} {1},Artist {2} join artistsong on artistsong.idsong = song.Idsong and artistsong.idartist = artist.idartist where artist.idartist = {3}", _strSongSelect, _strSongFrom, _strSongJoin, idArtist);
+          strSQL += " group by AlbumName Order by Year Desc";
         }
 
         var results = ExecuteQuery(strSQL);
@@ -796,15 +798,9 @@ namespace MediaPortal.Music.Database
         // The underscore is treated as special symbol in a like clause, which produces wrong results
         // we need to escape it and use the sql escape clause  escape '\x0001'
         strPath = strPath.Replace("_", "\x0001_");
-        strSQL = string.Format("select Song.*, Album.*, " +
-                               "( select group_concat(aname, ' | ') from (select distinct(Artist.ArtistName) as aname from artist join artistsong on artistsong.idsong = song.IdSong and artistsong.idartist = artist.IdArtist)) as Artist," +
-                               "( select Artist.ArtistName from artist join albumartist on albumartist.idalbum = Album.IdAlbum and albumartist.idartist = artist.idArtist) as AlbumArtist " +
-                               "from Song " +
-                               "join Album on Album.IdAlbum = Song.IdAlbum " +
-                               "where IdFolder = " +
-                               "(select IdFolder from Folder " +
-                               "join share on share.IdShare = folder.IdShare " +
-                               "where (share.Sharename || folder.foldername) like '{0}' escape '\x0001')", strPath);
+        strSQL = string.Format("{0} {1},Artist {2} " +
+                                  "where (share.Sharename || folder.foldername) like '{3}' escape '\x0001'",
+                                  _strSongSelect, _strSongFrom, _strSongJoin, strPath);
 
         var results = ExecuteQuery(strSQL);
         if (results.Rows.Count == 0)
@@ -974,13 +970,10 @@ namespace MediaPortal.Music.Database
           return false;
         }
 
+        strSQL = string.Format("{0} {1},Genre {2} where genre.idgenre = {3}", _strSongSelect, _strSongFrom, _strSongJoin, idGenre);
         if (aGroupAlbums)
         {
-          strSQL = string.Format("{0} {1},Genre {2} join genresong on genresong.idsong = song.idsong and genresong.idgenre = genre.idgenre where genre.idgenre = {3} group by AlbumName Order by Year Desc", _strSongSelect, _strSongFrom, _strSongJoin, idGenre);
-        }
-        else
-        {
-          strSQL = string.Format("{0} {1},Genre {2} join genresong on genresong.idsong = song.idsong and genresong.idgenre = genre.idgenre where genre.idgenre = {3}", _strSongSelect, _strSongFrom, _strSongJoin, idGenre);
+          strSQL += " group by AlbumName Order by Year Desc";
         }
 
         var results = ExecuteQuery(strSQL);
