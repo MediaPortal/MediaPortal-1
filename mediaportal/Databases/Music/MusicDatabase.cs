@@ -567,6 +567,21 @@ namespace MediaPortal.Music.Database
         // last.fm users
         ExecuteNonQuery("CREATE TABLE lastfmusers ( idLastFMUser integer primary key, strUsername text, strSK text)");
 
+        // Song Information View
+        ExecuteNonQuery("CREATE VIEW SongInformation as " +
+                        "select Song.*, Album.*, " +
+                        "( select group_concat(aname, ' | ') from (select distinct(Artist.ArtistName) as aname from artist join artistsong on artistsong.idsong = song.IdSong and artistsong.idartist = artist.idartist)) as Artist, " +
+                        "( select Artist.ArtistName from artist join albumartist on albumartist.idalbum = Album.IdAlbum and albumartist.IdArtist = artist.idartist) as AlbumArtist, " +
+                        "( select group_concat(genrename, ' | ') from (select distinct genrename from Genre join genresong on genresong.idsong = song.idsong and genresong.idgenre = genre.idgenre)) as Genre, " +
+                        "( select group_concat(composername, ' | ') from (select distinct artist.artistname as composername from artist join composersong on composersong.idsong = song.idsong and composersong.idcomposer = artist.idartist)) as composer, " +
+                        "(share.ShareName || folder.FolderName || song.FileName) as Path " +
+                        "from Song, Artist " +
+                        "join Album on Album.IdAlbum = Song.IdAlbum " +
+                        "join folder on folder.idfolder = song.idfolder " +
+                        "join share on share.Idshare = folder.IDShare " +
+                        "join artistsong on artistsong.idsong = song.Idsong and artistsong.idartist = artist.idartist "
+                        );
+
         Log.Info("MusicDatabase: New Database created successfully");
         return true;
       }
