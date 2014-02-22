@@ -21,6 +21,7 @@
 using System;
 using MediaPortal.GUI.Library;
 using TagLib;
+using TagLib.Ogg;
 
 namespace MediaPortal.TagReader
 {
@@ -247,26 +248,41 @@ namespace MediaPortal.TagReader
             }
           }
         }
-        else
+        else if (tag.MimeType == "taglib/ape")
         {
-          if (tag.MimeType == "taglib/ape")
+          TagLib.Ape.Tag apetag = tag.GetTag(TagTypes.Ape, false) as TagLib.Ape.Tag;
+          if (apetag != null)
           {
-            TagLib.Ape.Tag apetag = tag.GetTag(TagTypes.Ape, false) as TagLib.Ape.Tag;
-            if (apetag != null)
+            TagLib.Ape.Item apeItem = apetag.GetItem("RATING");
+            if (apeItem != null)
             {
-              TagLib.Ape.Item apeItem = apetag.GetItem("RATING");
-              if (apeItem != null)
+              string rating = apeItem.ToString();
+              try
               {
-                string rating = apeItem.ToString();
-                try
-                {
-                  musictag.Rating = Convert.ToInt32(rating);
-                }
-                catch (Exception ex)
-                {
-                  musictag.Rating = 0;
-                  Log.Warn("Tagreader: Unsupported APE rating format - {0} in {1} {2}", rating, strFile, ex.Message);
-                }
+                musictag.Rating = Convert.ToInt32(rating);
+              }
+              catch (Exception ex)
+              {
+                musictag.Rating = 0;
+                Log.Warn("Tagreader: Unsupported APE rating format - {0} in {1} {2}", rating, strFile, ex.Message);
+              }
+            }
+          }
+        }
+        else if (tag.MimeType == "taglib/ogg" || tag.MimeType == "taglib/flac")
+        {
+          var xiph = tag.GetTag(TagTypes.Xiph, false) as XiphComment;
+          if (xiph != null)
+          {
+            string[] rating = xiph.GetField("RATING");
+            if (rating.Length > 0)
+            {
+              try
+              {
+                musictag.Rating = Convert.ToInt32(rating[0]);
+              }
+              catch (Exception)
+              {
               }
             }
           }

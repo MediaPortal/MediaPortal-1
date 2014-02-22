@@ -348,13 +348,6 @@ namespace MediaPortal.Configuration.Sections
           continue;
         }
 
-        //Mantis 3772 - Weather.com API is not free any more
-        //temporarily disable plugin
-        if (tag.SetupForm.PluginName() == "Weather")
-        {
-          continue;
-        }
-
         ListViewItem item;
         if (tag.IsIncompatible)
         {

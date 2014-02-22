@@ -736,12 +736,12 @@ namespace MediaPortal.Player
           Log.Info("RefreshRateChanger.SetRefreshRateBasedOnFPS: using internal win32 method for changing refreshrate. current is {0}hz, desired is {1}", currentRR, newRR);
           Log.Info("RefreshRateChanger AdapterOrdinal value is {0}", (uint)GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal);
           Win32.CycleRefreshRate((uint)GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal, newRR);
-          NotifyRefreshRateChanged(newRRDescription, (strFile.Length > 0));
+          NotifyRefreshRateChanged(newRRDescription, false);
         }
         else if (RunExternalJob(newExtCmd, strFile, type, deviceReset) && newRR != currentRR)
         {
           Win32.FixDwm();
-          NotifyRefreshRateChanged(newRRDescription, (strFile.Length > 0));
+          NotifyRefreshRateChanged(newRRDescription, false);
         }
 
         if (GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.IsEvr)
