@@ -1314,7 +1314,7 @@ namespace MediaPortal.GUI.Pictures
       }
       if (item2.IsFolder && item2.Label == "..")
       {
-        return -1;
+        return 1;
       }
       if (item1.IsFolder && !item2.IsFolder)
       {
