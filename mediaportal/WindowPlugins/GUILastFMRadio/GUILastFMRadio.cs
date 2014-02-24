@@ -91,7 +91,7 @@ namespace MediaPortal.GUI.LastFMRadio
     // Indicates if plugin is enabled by default;
     public bool DefaultEnabled()
     {
-      return true;
+      return false;
     }
 
     // indicates if a plugin has it's own setup screen
