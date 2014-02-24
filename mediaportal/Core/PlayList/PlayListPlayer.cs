@@ -573,10 +573,6 @@ namespace MediaPortal.Playlists
         _currentItem = iSong;
         PlayListItem item = playlist[_currentItem];
 
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS, 0, 0, 0, _currentItem, 0, null);
-        msg.Label = item.FileName;
-        GUIGraphicsContext.SendMessage(msg);
-
         if (playlist.AllPlayed())
         {
           playlist.ResetStatus();
@@ -640,6 +636,10 @@ namespace MediaPortal.Playlists
         }
         else
         {
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS, 0, 0, 0, _currentItem, 0, null);
+          msg.Label = item.FileName;
+          GUIGraphicsContext.SendMessage(msg);
+
           item.Played = true;
           skipmissing = false;
           if (Util.Utils.IsVideo(item.FileName) && setFullScreenVideo)
