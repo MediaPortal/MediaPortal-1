@@ -23,6 +23,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Threading;
 using MediaPortal.Dialogs;
@@ -408,6 +409,7 @@ namespace MediaPortal.GUI.Pictures
 
     public override bool Init()
     {
+      g_Player.PlayBackStarted += OnPlayBackStarted;
       return Load(GUIGraphicsContext.GetThemedSkinFile(@"\slideshow.xml"));
     }
 
@@ -461,21 +463,6 @@ namespace MediaPortal.GUI.Pictures
             Reset();
           }
           GUIGraphicsContext.Overlay = _showOverlayFlag;
-          break;
-
-        case GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED:
-          if (g_Player.IsMusic)
-          {
-            if (mDB == null)
-            {
-              mDB = MusicDatabase.Instance;
-            }
-            if (!resumeSong)
-            {
-              ShowSong();
-            }
-            resumeSong = false;
-          }
           break;
       }
       return base.OnMessage(message);
@@ -2949,6 +2936,45 @@ namespace MediaPortal.GUI.Pictures
       dlg.TimeOut = 5;
       dlg.DoModal(GUIWindowManager.ActiveWindow);
     }
+
+    #region g_player events
+
+    /// <summary>
+    /// Handle event fired by MP player.  Something has started playing so check if it is music then
+    /// show song track on MyPictures Plugin or slideshow
+    /// </summary>
+    /// <param name="type">MediaType of item that has started</param>
+    /// <param name="filename">filename of item that has started</param>
+    private void OnPlayBackStarted(g_Player.MediaType type, string filename)
+    {
+      try
+      {
+        // Show song only when we are on MyPictures Plugin or slideshow when playing/change music track
+        string activeWindowName;
+        GUIWindow.Window activeWindow;
+        activeWindowName = GUIWindowManager.ActiveWindow.ToString(CultureInfo.InvariantCulture);
+        activeWindow = (GUIWindow.Window)Enum.Parse(typeof(GUIWindow.Window), activeWindowName);
+        if (activeWindow == GUIWindow.Window.WINDOW_SLIDESHOW || activeWindow == GUIWindow.Window.WINDOW_PICTURES)
+          if (g_Player.IsMusic)
+          {
+            if (mDB == null)
+            {
+              mDB = MusicDatabase.Instance;
+            }
+            if (!resumeSong)
+            {
+              ShowSong();
+            }
+            resumeSong = false;
+          }
+      }
+      catch (Exception)
+      {
+        // Catch exception to avoid crash.
+      }
+    }
+
+    #endregion
 
     #endregion
   }
