@@ -25,12 +25,14 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Music.Database;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
+using MediaPortal.TagReader;
 using Microsoft.DirectX.Direct3D;
 using Action = MediaPortal.GUI.Library.Action;
 
@@ -2891,9 +2893,9 @@ namespace MediaPortal.GUI.Pictures
       GUIWindowManager.ShowPreviousWindow();
     }
 
-    private void ShowSong()
+    private void ShowSong(string filename)
     {
-      GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
+      GUIDialogNotify dlg = (GUIDialogNotify) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_NOTIFY);
       if (dlg == null)
       {
         return;
@@ -2921,18 +2923,42 @@ namespace MediaPortal.GUI.Pictures
       // Accessing the Music Database instead of using the Tagreader.
       //MediaPortal.TagReader.MusicTag tag = MediaPortal.TagReader.TagReader.ReadTag(g_Player.CurrentFile);
       Song song = new Song();
+      MusicTag currentSong = new MusicTag();
 
       // If we don't have a tag in the db, we use the filename without the extension as song.title
       if (!mDB.GetSongByFileName(g_Player.CurrentFile, ref song))
-        song.Title = Path.GetFileNameWithoutExtension(g_Player.CurrentFile);
+      {
+        try
+        {
+          // try Tagreader method to parse information
+          var pl = PlayListPlayer.SingletonPlayer.GetPlaylist(PlayListPlayer.SingletonPlayer.CurrentPlaylistType);
+          var plI = pl.First(plItem => plItem.FileName == filename);
+          if (plI != null || plI.MusicTag != null)
+          {
+            currentSong = (MusicTag)plI.MusicTag;
+          }
+        }
+        catch (Exception)
+        {
+          // Catch the COM execption but continue code with Music Database instead.
+        }
+      }
 
       // Show Dialog
       dlg.Reset();
       dlg.Dispose();
       dlg.SetImage(albumart);
       dlg.SetHeading(4540);
-      //dlg.SetText(tag.Title + "\n" + tag.Artist + "\n" + tag.Album);
-      dlg.SetText(song.Title + "\n" + song.Artist + "\n" + song.Album);
+      if (currentSong == null || string.IsNullOrEmpty(currentSong.Title) ||
+          (string.IsNullOrEmpty(currentSong.Artist) && string.IsNullOrEmpty(currentSong.AlbumArtist)))
+      {
+        song.Title = Path.GetFileNameWithoutExtension(g_Player.CurrentFile);
+        dlg.SetText(song.Title + "\n" + song.Artist + "\n" + song.Album);
+      }
+      else
+      {
+        dlg.SetText(currentSong.Title + "\n" + currentSong.Artist + "\n" + currentSong.Album);
+      }
       dlg.TimeOut = 5;
       dlg.DoModal(GUIWindowManager.ActiveWindow);
     }
@@ -2963,7 +2989,7 @@ namespace MediaPortal.GUI.Pictures
             }
             if (!resumeSong)
             {
-              ShowSong();
+              ShowSong(filename);
             }
             resumeSong = false;
           }
