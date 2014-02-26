@@ -43,7 +43,7 @@ class MultiFileReader : public FileReader
 {
 public:
 
-	MultiFileReader();
+	MultiFileReader(BOOL useFileNext, BOOL isUNCfile);
 	virtual ~MultiFileReader();
 
 
@@ -74,7 +74,6 @@ public:
 protected:
 	HRESULT RefreshTSBufferFile();
 	HRESULT GetFileLength(LPWSTR pFilename, __int64 &length);
-  void RefreshFileSize();
 
 //	SharedMemory* m_pSharedMemory;
 	FileReader m_TSBufferFile;
@@ -89,11 +88,16 @@ protected:
 
 	FileReader m_TSFile;
 	long	 m_TSFileId;
+	
+	FileReader m_TSFileNext;
+	long	 m_TSFileIdNext;
+  DWORD  m_lastFileNextRead;
+	__int64 m_currPosnFileNext;
+	
 	BOOL     m_bReadOnly;
 	BOOL     m_bDelay;
 	BOOL     m_bDebugOutput;
-  __int64  m_cachedFileSize;
-
+	BOOL     m_bUseFileNext;
 };
 
 #endif

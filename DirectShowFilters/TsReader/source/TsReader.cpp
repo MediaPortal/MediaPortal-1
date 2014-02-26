@@ -826,8 +826,10 @@ STDMETHODIMP CTsReaderFilter::Stop()
   }
 
   { //Context for CAutoLock
-    CAutoLock dLock (&m_DurationThreadLock);
+    LogDebug("CTsReaderFilter::Stop()  -stop source pre-lock RAL, state %d", m_State);
     CAutoLock rLock (&m_ReadAheadLock);
+    LogDebug("CTsReaderFilter::Stop()  -stop source pre-lock DTL, state %d", m_State);
+    CAutoLock dLock (&m_DurationThreadLock);
     LogDebug("CTsReaderFilter::Stop()  -stop source, state %d", m_State);
     //stop filter
     hr = CSource::Stop();
@@ -1131,27 +1133,27 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
   }
   else
   {
+    if ((length > 2) && (strnicmp(url, "\\\\",2) == 0))
+    {
+      m_isUNCfile = true;
+    }
+
     if ((length < 9) || (_strcmpi(&url[length-9], ".tsbuffer") != 0))
     {
       //local .ts file
       m_bTimeShifting = false;
       m_bLiveTv = false ;
-      m_fileReader = new FileReader();
-      m_fileDuration = new FileReader();
+      m_fileReader = new FileReader(false);
+      m_fileDuration = new FileReader(false);
     }
     else
     {
       //local timeshift buffer file file
       m_bTimeShifting = true;
       m_bLiveTv = true;
-      m_fileReader = new MultiFileReader();
-      m_fileDuration = new MultiFileReader();
-    }
-    
-    if ((length > 2) && (strnicmp(url, "\\\\",2) == 0))
-    {
-      m_isUNCfile = true;
-    }
+      m_fileReader = new MultiFileReader(m_isUNCfile, m_isUNCfile); //enable SMB2 'data cache' and 'file exists' workarounds for UNC
+      m_fileDuration = new MultiFileReader(false, m_isUNCfile); //enable SMB2 'file exists' workaround for UNC
+    }    
 
     //open file
     m_fileReader->SetFileName(m_fileName);

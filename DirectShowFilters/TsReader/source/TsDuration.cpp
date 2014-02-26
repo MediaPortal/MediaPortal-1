@@ -74,7 +74,6 @@ void CTsDuration::UpdateDuration(bool logging)
 {
 
   byte buffer[131072]; //~130ms of data @ 8Mbit/s
-  DWORD dwBytesRead;
   int Loop=5 ;
   int searchLoopCnt;
 
@@ -83,6 +82,7 @@ void CTsDuration::UpdateDuration(bool logging)
     m_bSearchStart=true;
     m_bSearchEnd=false;
     m_startPcr.Reset();
+    m_endPcr.Reset();
     m_maxPcr.Reset();
     //m_reader->SetFilePointer(0,FILE_BEGIN);
     searchLoopCnt = 2;
@@ -97,20 +97,14 @@ void CTsDuration::UpdateDuration(bool logging)
     //find the first pcr in the file
     while (!m_startPcr.IsValid)
     {
-      DWORD dwBytesRead;
+      DWORD dwBytesRead = 0;
       m_reader->SetFilePointer(offset,FILE_BEGIN);
       if (!SUCCEEDED(m_reader->Read(buffer,sizeof(buffer),&dwBytesRead)))
       {
-        //park filepointer at end of file
-        m_reader->SetFilePointer(-1,FILE_END);
-        m_reader->Read(buffer,1,&dwBytesRead);
         return;
       }
-      if (dwBytesRead==0) 
+      if (dwBytesRead<=0) 
       {
-        //park filepointer at end of file
-        m_reader->SetFilePointer(-1,FILE_END);
-        m_reader->Read(buffer,1,&dwBytesRead);
         return;
       }
       OnRawData2(buffer,dwBytesRead);
@@ -123,9 +117,7 @@ void CTsDuration::UpdateDuration(bool logging)
       }
       else if (m_videoPid<0)
       {
-        //failed to find a first PCR - park filepointer at end of file
-        m_reader->SetFilePointer(-1,FILE_END);
-        m_reader->Read(buffer,1,&dwBytesRead);
+        //failed to find a first PCR
         return;
       }     
       else
@@ -134,6 +126,7 @@ void CTsDuration::UpdateDuration(bool logging)
         m_videoPid = -1;
         searchLoopCnt = 2;
         offset = 0;
+        Reset() ; // Reset internal "PacketSync" buffer
       }     
       
 			Sleep(1) ;
@@ -146,28 +139,38 @@ void CTsDuration::UpdateDuration(bool logging)
     //find the last pcr in the file
     m_bSearchEnd=true;
     m_bSearchStart=false;
-    m_endPcr.Reset();
     searchLoopCnt = 2;
     offset=sizeof(buffer);
     //__int64 fileSize=m_reader->GetFileSize();
   
     while (!m_endPcr.IsValid)
     {
-      DWORD dwBytesRead;
+      DWORD dwBytesRead = 0;
       m_reader->SetFilePointer(-offset,FILE_END);
       if (!SUCCEEDED(m_reader->Read(buffer,sizeof(buffer),&dwBytesRead)))
       {
-        break;
+        m_startPcr.Reset();
+        m_endPcr.Reset();
+        return;
       }
-      if (dwBytesRead==0) 
+      if (dwBytesRead<=0) 
       {
-        break;
+        m_startPcr.Reset();
+        m_endPcr.Reset();
+        return;
       }
       Reset() ; // Reset internal "PacketSync" buffer
       OnRawData2(buffer,dwBytesRead);
       if (searchLoopCnt<65)
       {
         searchLoopCnt++;
+      }
+      else
+      {
+        //failed to find an end PCR
+        m_startPcr.Reset();
+        m_endPcr.Reset();
+        return;
       }
       offset += ( (sizeof(buffer)*(searchLoopCnt/2)) - (188*16)); //step back a few packets less than a buffer so that buffers overlap
 			Sleep(1) ;
@@ -210,10 +213,6 @@ void CTsDuration::UpdateDuration(bool logging)
     m_maxPcr.PcrReferenceExtension = 0x1ffULL;
     m_maxPcr.IsValid = true;
   }
-
-  //park filepointer at end of file
-  m_reader->SetFilePointer(-1,FILE_END);
-  m_reader->Read(buffer,1,&dwBytesRead);
 }
 
 void CTsDuration::OnTsPacket(byte* tsPacket, int bufferOffset, int bufferLength)

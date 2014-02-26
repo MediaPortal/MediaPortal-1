@@ -31,6 +31,23 @@
 #include "..\..\alloctracing.h"
 
 extern void LogDebug(const char *fmt, ...) ;
+
+FileReader::FileReader(BOOL isUNCfile) :
+	m_hFile(INVALID_HANDLE_VALUE),
+	m_pFileName(0),
+	m_bReadOnly(FALSE),
+	m_fileSize(0),
+	m_infoFileSize(0),
+	m_fileStartPos(0),
+	m_hInfoFile(INVALID_HANDLE_VALUE),
+	m_bDelay(FALSE),
+	m_llBufferPointer(0),	
+	m_bDebugOutput(FALSE),
+  m_bIsUNCfile(isUNCfile)
+{
+  LogDebug("FileReader::ctor1, isUNCfile = %d", m_bIsUNCfile);
+}
+
 FileReader::FileReader() :
 	m_hFile(INVALID_HANDLE_VALUE),
 	m_pFileName(0),
@@ -41,8 +58,10 @@ FileReader::FileReader() :
 	m_hInfoFile(INVALID_HANDLE_VALUE),
 	m_bDelay(FALSE),
 	m_llBufferPointer(0),	
-	m_bDebugOutput(FALSE)
+	m_bDebugOutput(FALSE),
+  m_bIsUNCfile(FALSE)
 {
+  LogDebug("FileReader::ctor2");
 }
 
 FileReader::~FileReader()
@@ -144,36 +163,37 @@ HRESULT FileReader::OpenFile()
 			if (m_hFile != INVALID_HANDLE_VALUE) break ;
 		}
 
-
-		if ((wcsstr(pFileName, L".ts.tsbuffer") != NULL)) //timeshift file only
-		{  	  
-  	  CString tempFileName = pFileName;
-  	  
-  	  int replCount = tempFileName.Replace(L".ts.tsbuffer", randomStrGen(12));
-
-      if (replCount > 0)
-      {
-  	    //LogDebug("FileReader::OpenFile(), try to write dummy file to update SMB2 cache - %ws", tempFileName);
-    		hFileUnbuff = ::CreateFileW(tempFileName,		// The filename
-    							(DWORD) (GENERIC_READ | GENERIC_WRITE),				// File access
-    							(DWORD) (FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE), // Share access
-    							NULL,						            // Security
-    							(DWORD) CREATE_ALWAYS,		  // Open flags
-    							(DWORD) (FILE_ATTRIBUTE_NORMAL | FILE_FLAG_DELETE_ON_CLOSE), // | FILE_FLAG_WRITE_THROUGH),	// More flags
-    							NULL);						          // Template
-    
-    		if (hFileUnbuff != INVALID_HANDLE_VALUE)
-    		{
-    		  char tempData[16] = {0x0,0x1,0x2,0x3,0x4,0x5,0x6,0x7,0x8,0x9,0xA,0xB,0xC,0xD,0xE,0xF};
-    		  DWORD bytesWritten;
-          ::WriteFile(hFileUnbuff, tempData, 16, &bytesWritten, NULL);  
-        	::CloseHandle(hFileUnbuff); //File is deleted on CloseHandle since FILE_FLAG_DELETE_ON_CLOSE was used
-        	hFileUnbuff = INVALID_HANDLE_VALUE; // Invalidate the file
-  	      //LogDebug("FileReader::OpenFile(), dummy file write %d bytes to %ws", bytesWritten, tempFileName);
-    		}
-    	}
+	  if (m_bIsUNCfile)  //enable SMB2/SMB3 file existence cache workaround
+	  {
+  		if ((wcsstr(pFileName, L".ts.tsbuffer") != NULL)) //timeshift file only
+  		{  	  
+    	  CString tempFileName = pFileName;
+    	  
+    	  int replCount = tempFileName.Replace(L".ts.tsbuffer", randomStrGen(12));
+  
+        if (replCount > 0)
+        {
+    	    //LogDebug("FileReader::OpenFile(), try to write dummy file to update SMB2 cache - %ws", tempFileName);
+      		hFileUnbuff = ::CreateFileW(tempFileName,		// The filename
+      							(DWORD) (GENERIC_READ | GENERIC_WRITE),				// File access
+      							(DWORD) (FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE), // Share access
+      							NULL,						            // Security
+      							(DWORD) CREATE_ALWAYS,		  // Open flags
+      							(DWORD) (FILE_ATTRIBUTE_NORMAL | FILE_FLAG_DELETE_ON_CLOSE), // | FILE_FLAG_WRITE_THROUGH),	// More flags
+      							NULL);						          // Template
+      
+      		if (hFileUnbuff != INVALID_HANDLE_VALUE)
+      		{
+      		  char tempData[16] = {0x0,0x1,0x2,0x3,0x4,0x5,0x6,0x7,0x8,0x9,0xA,0xB,0xC,0xD,0xE,0xF};
+      		  DWORD bytesWritten;
+            ::WriteFile(hFileUnbuff, tempData, 16, &bytesWritten, NULL);  
+          	::CloseHandle(hFileUnbuff); //File is deleted on CloseHandle since FILE_FLAG_DELETE_ON_CLOSE was used
+          	hFileUnbuff = INVALID_HANDLE_VALUE; // Invalidate the file
+    	      //LogDebug("FileReader::OpenFile(), dummy file write %d bytes to %ws", bytesWritten, tempFileName);
+      		}
+      	}
+      }
     }
-
 
 		//Test incase file is being recorded to
 		m_hFile = ::CreateFileW(pFileName,		// The filename
@@ -211,31 +231,34 @@ HRESULT FileReader::OpenFile()
   		}
   	  LogDebug("FileReader::OpenFile() unbuff, %d tries to open %ws", 15-Tmo, pFileName);
   	  
-  	  CString tempFileName = pFileName;
-  	  int replCount = tempFileName.Replace(L".ts.tsbuffer", randomStrGen(12));
-
-      if (replCount > 0)
-      {
-  	    // LogDebug("FileReader::OpenFile(), try to write dummy file to update SMB2 cache - %ws", tempFileName);
-    		hFileUnbuff = ::CreateFileW(tempFileName,		// The filename
-    							(DWORD) (GENERIC_READ | GENERIC_WRITE),				// File access
-    							(DWORD) (FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE), // Share access
-    							NULL,						            // Security
-    							(DWORD) CREATE_ALWAYS,		  // Open flags
-    							(DWORD) (FILE_ATTRIBUTE_NORMAL | FILE_FLAG_DELETE_ON_CLOSE | FILE_FLAG_WRITE_THROUGH),	// More flags
-    							NULL);						          // Template
-    
-    		if (hFileUnbuff != INVALID_HANDLE_VALUE)
-    		{
-    		  char tempData[16] = {0x0,0x1,0x2,0x3,0x4,0x5,0x6,0x7,0x8,0x9,0xA,0xB,0xC,0xD,0xE,0xF};
-    		  DWORD bytesWritten;
-          ::WriteFile(hFileUnbuff, tempData, 16, &bytesWritten, NULL);  
-          Sleep(50);   		  
-        	::CloseHandle(hFileUnbuff); //File is deleted on CloseHandle since FILE_FLAG_DELETE_ON_CLOSE was used
-        	hFileUnbuff = INVALID_HANDLE_VALUE; // Invalidate the file
-  	      LogDebug("FileReader::OpenFile(), dummy file write %d bytes to %ws", bytesWritten, tempFileName);
-    		}
-    	}
+  	  if (m_bIsUNCfile)  //enable SMB2/SMB3 file existence cache workaround
+  	  {
+    	  CString tempFileName = pFileName;
+    	  int replCount = tempFileName.Replace(L".ts.tsbuffer", randomStrGen(12));
+  
+        if (replCount > 0)
+        {
+    	    // LogDebug("FileReader::OpenFile(), try to write dummy file to update SMB2 cache - %ws", tempFileName);
+      		hFileUnbuff = ::CreateFileW(tempFileName,		// The filename
+      							(DWORD) (GENERIC_READ | GENERIC_WRITE),				// File access
+      							(DWORD) (FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE), // Share access
+      							NULL,						            // Security
+      							(DWORD) CREATE_ALWAYS,		  // Open flags
+      							(DWORD) (FILE_ATTRIBUTE_NORMAL | FILE_FLAG_DELETE_ON_CLOSE | FILE_FLAG_WRITE_THROUGH),	// More flags
+      							NULL);						          // Template
+      
+      		if (hFileUnbuff != INVALID_HANDLE_VALUE)
+      		{
+      		  char tempData[16] = {0x0,0x1,0x2,0x3,0x4,0x5,0x6,0x7,0x8,0x9,0xA,0xB,0xC,0xD,0xE,0xF};
+      		  DWORD bytesWritten;
+            ::WriteFile(hFileUnbuff, tempData, 16, &bytesWritten, NULL);  
+            Sleep(50);   		  
+          	::CloseHandle(hFileUnbuff); //File is deleted on CloseHandle since FILE_FLAG_DELETE_ON_CLOSE was used
+          	hFileUnbuff = INVALID_HANDLE_VALUE; // Invalidate the file
+    	      LogDebug("FileReader::OpenFile(), dummy file write %d bytes to %ws", bytesWritten, tempFileName);
+      		}
+      	}
+      }
     }
 
 		Sleep(min((20*(15-Tmo)),250)) ; //wait longer between retries as loop iterations increase

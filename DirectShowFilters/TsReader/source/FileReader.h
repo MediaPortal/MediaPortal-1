@@ -31,9 +31,9 @@ class FileReader
 {
 public:
 
+	FileReader(BOOL isUNCfile);
 	FileReader();
 	virtual ~FileReader();
-
 
 	// Open and write to the file
 	virtual HRESULT GetFileName(LPOLESTR *lpszFileName);
@@ -79,6 +79,7 @@ protected:
 	__int64 m_llBufferPointer;	
 
 	BOOL     m_bDebugOutput;
+	BOOL     m_bIsUNCfile;
 };
 
 #endif
