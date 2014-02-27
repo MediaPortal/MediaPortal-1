@@ -2497,7 +2497,8 @@ namespace MediaPortal.MusicPlayer.BASS
       {
         NeedUpdate = true;
         SetVideoWindow();
-        VizWindow.Visible = true;
+        if (_IsFullScreen)
+          VizWindow.Visible = true;
       }
 
       if (NotifyPlaying && CurrentPosition >= 10.0)
@@ -2553,7 +2554,8 @@ namespace MediaPortal.MusicPlayer.BASS
 
       if (!GUIWindowManager.IsRouted && VizPluginInfo.VisualizationType != VisualizationInfo.PluginType.None)
       {
-        VizWindow.Visible = _state == PlayState.Playing;
+        if (_IsFullScreen)
+          VizWindow.Visible = _state == PlayState.Playing; 
       }
       else
       {
