@@ -2172,7 +2172,7 @@ namespace MediaPortal.GUI.Pictures
 
     private bool WakeUpSrv(string newFolderName)
     {
-      if (!Util.Utils.IsNetwork(newFolderName))
+      if (!Util.Utils.IsUNCNetwork(newFolderName))
       {
         return true;
       }
