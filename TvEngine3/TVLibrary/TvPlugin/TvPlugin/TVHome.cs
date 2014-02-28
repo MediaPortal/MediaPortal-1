@@ -2060,10 +2060,16 @@ namespace TvPlugin
           idChannel = card.IdChannel;
         }
 
-        if (s != null && idChannel > 0)
+        if (s != null && idChannel > 0 && s.IsManual)
+        {
+          TVUtil.StopRecAndSchedWithPrompt(s, idChannel);
+        }
+
+        if (s != null && idChannel > 0 && !s.IsManual)
         {
           TVUtil.DeleteRecAndSchedWithPrompt(s, idChannel);
         }
+        
       }
       return false;
     }
