@@ -20,11 +20,10 @@
 
 using System;
 using DirectShowLib;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
@@ -80,15 +79,24 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       : base(device.Name, device.DevicePath)
     {
       _deviceMain = device;
+      if (_deviceMain != null)
+      {
+        _productInstanceId = device.ProductInstanceIdentifier;
+        int tunerInstanceId = device.TunerInstanceIdentifier;
+        if (tunerInstanceId >= 0)
+        {
+          _tunerInstanceId = tunerInstanceId.ToString();
+        }
+      }
     }
 
     /// <summary>
     /// Initialise a new instance of the <see cref="TunerDirectShowBase"/> class.
     /// </summary>
     /// <param name="name">The tuner's name.</param>
-    /// <param name="externalIdentifier">The external identifier for the tuner.</param>
-    protected TunerDirectShowBase(string name, string externalIdentifier)
-      : base(name, externalIdentifier)
+    /// <param name="externalId">The external identifier for the tuner.</param>
+    protected TunerDirectShowBase(string name, string externalId)
+      : base(name, externalId)
     {
     }
 
@@ -182,7 +190,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
         throw new TvException("DirectShow graph is null, can't set tuner state.");
       }
 
-      int hr = 0;
+      int hr = (int)HResult.Severity.Success;
       if (state == TunerState.Stopped)
       {
         hr = (_graph as IMediaControl).Stop();
@@ -218,7 +226,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       {
         // First remove the filters that we inserted.
         _graph.RemoveFilter(_filterTsWriter);
-        _graph.RemoveFilter(_filterMain);
+        if (_filterMain != null)
+        {
+          _graph.RemoveFilter(_filterMain);
+          Release.ComObject("DirectShow tuner main component filter", ref _filterMain);
+
+          DevicesInUse.Instance.Remove(_deviceMain);
+          // Do ***NOT*** dispose or release _deviceMain here. This would cause
+          // reloading to fail. Deal with this in Dispose().
+        }
 
         // Now check if there are any filters remaining in the graph.
         // Presence of such filters indicate there are badly behaved
@@ -237,10 +253,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
             int filterCount;
             while (enumFilters.Next(filters.Length, filters, out filterCount) == (int)HResult.Severity.Success && filterCount == 1)
             {
-              string filterName = FilterGraphTools.GetFilterName(filters[0]);
-              this.LogWarn("DirectShow base: removing and releasing orphaned filter {0}", filterName);
-              _graph.RemoveFilter(filters[0]);
-              Release.ComObjectAllRefs("DirectShow tuner orphaned filter", ref filters[0]);
+              IBaseFilter filter = filters[0];
+              this.LogWarn("DirectShow base: removing and releasing orphaned filter {0}", FilterGraphTools.GetFilterName(filter));
+              _graph.RemoveFilter(filter);
+              Release.ComObjectAllRefs("DirectShow tuner orphaned filter", ref filter);
             }
           }
           finally
@@ -251,14 +267,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
         Release.ComObject("DirectShow tuner graph", ref _graph);
       }
       Release.ComObject("DirectShow tuner graph builder", ref _captureGraphBuilder);
-      Release.ComObject("DirectShow tuner main component filter", ref _filterMain);
       Release.ComObject("TS writer/analyser filter", ref _filterTsWriter);
-      if (_deviceMain != null)
-      {
-        DevicesInUse.Instance.Remove(_deviceMain);
-        // Do ***NOT*** dispose or release _deviceMain here. This would cause
-        // reloading to fail. Deal with this in Dispose().
-      }
     }
 
     #endregion

@@ -79,9 +79,25 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
     bool CardPresent { get; set; }
 
     /// <summary>
-    /// Gets/sets the card device
+    /// Get the tuner's unique external identifier.
     /// </summary>		
-    string DevicePath { get; }
+    string ExternalId { get; }
+
+    /// <summary>
+    /// Get the tuner's product instance identifier.
+    /// </summary>
+    /// <remarks>
+    /// The product instance identifier is a shared identifier for all tuner instances derived from a [multi-tuner] product.
+    /// </remarks>
+    string ProductInstanceId { get; }
+
+    /// <summary>
+    /// Get the tuner's instance identifier.
+    /// </summary>
+    /// <summary>
+    /// The tuner instance identifier is a shared identifier for all tuner instances derived from a single physical tuner.
+    /// </summary>
+    string TunerInstanceId { get; }
 
     /// <summary>
     /// Method to check if card can tune to the channel specified

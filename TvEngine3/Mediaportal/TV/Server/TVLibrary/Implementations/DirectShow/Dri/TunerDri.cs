@@ -20,18 +20,16 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
+using System.Net.NetworkInformation;
 using System.Text.RegularExpressions;
-using System.Threading;
-using System.Xml;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Dri;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Service;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Rtsp;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Upnp.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Upnp.Service;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
@@ -40,12 +38,10 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
-using UPnP.Infrastructure;
 using UPnP.Infrastructure.Common;
 using UPnP.Infrastructure.CP;
 using UPnP.Infrastructure.CP.Description;
 using UPnP.Infrastructure.CP.DeviceTree;
-using UPnP.Infrastructure.Utils;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
 {
@@ -77,16 +73,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
     private ServiceAvTransport _serviceAvTransport = null;
     private ServiceConnectionManager _serviceConnectionManager = null;
 
+    // RTSP/RTP
+    private string _rtspUri = string.Empty;
+    private Rtsp.RtspClient _rtspClient = null;
+    private string _rtspSessionId = string.Empty;
+    private IPAddress _localIpAddress = null;
+    private string _serverIpAddress = string.Empty;
+
+    // UPnP AV
     private int _connectionId = -1;
     private int _avTransportId = -1;
-    private string _streamUri = string.Empty;
 
     // These variables are used to ensure we don't interrupt another
     // application using the tuner.
     private bool _gotTunerControl = false;
     private AvTransportState _transportState = AvTransportState.Stopped;
-    private volatile bool _isTunerSignalLocked = false;
-    private int _currentFrequency = -1;
 
     // Important DRM state variables.
     private CasCardStatus _cardStatus = CasCardStatus.Removed;
@@ -98,6 +99,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
     private IConditionalAccessMenuCallBacks _caMenuCallBacks = null;
     private CableCardMmiHandler _caMenuHandler = null;
 
+    private volatile bool _isTunerSignalLocked = false;
+    private int _currentFrequency = -1;
     private readonly bool _isCetonDevice = false;
     private bool _canPause = false;
 
@@ -116,6 +119,37 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
       _controlPoint = controlPoint;
       _isCetonDevice = descriptor.FriendlyName.Contains("Ceton");
       _caMenuHandler = new CableCardMmiHandler(EnterMenu, CloseDialog);
+
+      _localIpAddress = descriptor.RootDescriptor.SSDPRootEntry.PreferredLink.Endpoint.EndPointIPAddress;
+      _serverIpAddress = new Uri(descriptor.RootDescriptor.SSDPRootEntry.PreferredLink.DescriptionLocation).Host;
+
+      // CableCARD tuners are limited to one channel per tuner, even for
+      // non-encrypted channels:
+      // The DRIT SHALL output the selected program content as a single program
+      // MPEG-TS in RTP packets according to [RTSP] and [RTP].
+      // - OpenCable DRI I04 specification, 10 September 2010
+      _supportsSubChannels = false;
+
+      if (descriptor.FriendlyName.Contains("Ceton"))
+      {
+        // Example: Ceton InfiniTV PCIe (00-80-75-05) Tuner 1 (00-00-22-00-00-80-75-05)
+        Match m = Regex.Match(descriptor.FriendlyName, @"\s+\(([^\s]+)\)\s+Tuner\s+(\d+)", RegexOptions.IgnoreCase);
+        if (m.Success)
+        {
+          _productInstanceId = m.Groups[1].Captures[0].Value;
+          _tunerInstanceId = m.Groups[2].Captures[0].Value;
+        }
+      }
+      else
+      {
+        // Examples: HDHomeRun Prime Tuner 1316890F-1, Hauppauge OpenCable Receiver 201200AA-1
+        Match m = Regex.Match(descriptor.FriendlyName, @"\s+([^\s]+)-(\d)$", RegexOptions.IgnoreCase);
+        if (m.Success)
+        {
+          _productInstanceId = m.Groups[1].Captures[0].Value;
+          _tunerInstanceId = m.Groups[2].Captures[0].Value;
+        }
+      }
     }
 
     private void ReadDeviceInfo()
@@ -163,7 +197,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
         _serviceAvTransport.GetMediaInfo((uint)_avTransportId, out trackCount, out mediaDuration, out currentUri,
           out currentUriMetaData, out nextUri, out nextUriMetaData, out playMedium, out recordMedium, out writeStatus);
         this.LogDebug("DRI CableCARD: current URI = {0}", currentUri);
-        _streamUri = currentUri;
+        _rtspUri = currentUri;
       }
       catch (Exception ex)
       {
@@ -310,21 +344,26 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
 
       if (_serviceAvTransport != null && _gotTunerControl)
       {
-        if (state == TunerState.Stopped || (state == TunerState.Paused && !_canPause))
+        if (state == TunerState.Stopped || state == TunerState.Paused)
         {
-          _serviceAvTransport.Stop((uint)_avTransportId);
-          _transportState = AvTransportState.Stopped;
-          _gotTunerControl = false;
+          if (state == TunerState.Stopped)
+          {
+            _serviceAvTransport.Stop((uint)_avTransportId);
+            _transportState = AvTransportState.Stopped;
+            _gotTunerControl = false;
+          }
+          else
+          {
+            _serviceAvTransport.Pause((uint)_avTransportId);
+            _transportState = AvTransportState.PausedPlayback;
+          }
+          StopStreaming();
         }
-        else if (state == TunerState.Paused)
-        {
-          _serviceAvTransport.Pause((uint)_avTransportId);
-          _transportState = AvTransportState.PausedPlayback;
-        }
-        else
+        else if (state == TunerState.Started)
         {
           _serviceAvTransport.Play((uint)_avTransportId, "1");
           _transportState = AvTransportState.Playing;
+          StartStreaming();
         }
       }
       base.SetTunerState(state);
@@ -472,14 +511,141 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
         _serviceTuner.SetTunerParameters((uint)atscChannel.Frequency, moduations, out currentFrequency, out currentModulation, out isSignalLocked);
       }
       _isSignalLocked = isSignalLocked;
+    }
 
-      if (_transportState != AvTransportState.Playing)
+    private void StartStreaming()
+    {
+      if (!string.IsNullOrEmpty(_rtspSessionId))
       {
-        this.LogDebug("DRI CableCARD: start streaming");
-        DVBIPChannel streamChannel = new DVBIPChannel();
-        streamChannel.Url = _streamUri;
-        base.PerformTuning(streamChannel);
+        return;
       }
+      this.LogDebug("DRI CableCARD: start streaming");
+      Uri uri = new Uri(_rtspUri);
+      if (uri.IsDefaultPort)
+      {
+        _rtspClient = new Rtsp.RtspClient(uri.Host);
+      }
+      else
+      {
+        _rtspClient = new Rtsp.RtspClient(uri.Host, uri.Port);
+      }
+
+      // Find a free port for receiving the RTP stream.
+      int rtpClientPort = 0;
+      TcpConnectionInformation[] activeTcpConnections = IPGlobalProperties.GetIPGlobalProperties().GetActiveTcpConnections();
+      HashSet<int> usedPorts = new HashSet<int>();
+      foreach (TcpConnectionInformation connection in activeTcpConnections)
+      {
+        if (connection.LocalEndPoint.Address == _localIpAddress)
+        {
+          usedPorts.Add(connection.LocalEndPoint.Port);
+        }
+        if (connection.RemoteEndPoint.Address == _localIpAddress)
+        {
+          usedPorts.Add(connection.RemoteEndPoint.Port);
+        }
+      }
+      for (int port = 40000; port <= 65534; port += 2)
+      {
+        // We need two adjacent ports. One for RTP; one for RTCP. By
+        // convention, the RTP port is even.
+        if (!usedPorts.Contains(port) && !usedPorts.Contains(port + 1))
+        {
+          rtpClientPort = port;
+          break;
+        }
+      }
+      this.LogDebug("DRI CableCARD: send RTSP SETUP, RTP client port = {0}", rtpClientPort);
+      RtspRequest request = new RtspRequest(RtspMethod.Setup, _rtspUri);
+      request.Headers.Add("Transport", string.Format("RTP/AVP;unicast;client_port={0}-{1}", rtpClientPort, rtpClientPort + 1));
+      Rtsp.RtspResponse response;
+      _rtspClient.SendRequest(request, out response);
+      if (_rtspClient.SendRequest(request, out response) != RtspStatusCode.Ok)
+      {
+        throw new TvException("Failed to start streaming, non-OK RTSP SETUP status code {0} {1}", response.StatusCode, response.ReasonPhrase);
+      }
+
+      if (!response.Headers.TryGetValue("Session", out _rtspSessionId))
+      {
+        throw new TvException("Failed to start streaming, not able to find session header in RTSP SETUP response");
+      }
+
+      bool foundRtpTransport = false;
+      string rtpServerPort = null;
+      string transportHeader;
+      if (!response.Headers.TryGetValue("Transport", out transportHeader))
+      {
+        throw new TvException("Failed to start streaming, not able to find transport header in RTSP SETUP response");
+      }
+      string[] transports = transportHeader.Split(',');
+      foreach (string transport in transports)
+      {
+        if (transport.Trim().StartsWith("RTP/AVP"))
+        {
+          foundRtpTransport = true;
+          string[] sections = transport.Split(';');
+          foreach (string section in sections)
+          {
+            string[] parts = section.Split('=');
+            if (parts[0].Equals("server_port"))
+            {
+              string[] ports = parts[1].Split('-');
+              rtpServerPort = ports[0];
+            }
+            else if (parts[0].Equals("client_port"))
+            {
+              string[] ports = parts[1].Split('-');
+              if (!ports[0].Equals(rtpClientPort))
+              {
+                this.LogWarn("DRI CableCARD: server specified RTP client port {0} instead of {1}", ports[0], rtpClientPort);
+              }
+              rtpClientPort = int.Parse(ports[0]);
+            }
+          }
+        }
+      }
+      if (!foundRtpTransport)
+      {
+        throw new TvException("Failed to start streaming, not able to find RTP transport details in RTSP SETUP response transport header");
+      }
+      DVBIPChannel streamChannel = new DVBIPChannel();
+      if (string.IsNullOrEmpty(rtpServerPort) || rtpServerPort.Equals("0"))
+      {
+        streamChannel.Url = string.Format("rtp://{0}:{1}@{2}", _localIpAddress, rtpClientPort, _serverIpAddress);
+      }
+      else
+      {
+        streamChannel.Url = string.Format("rtp://{0}:{1}@{2}:{3}", _localIpAddress, rtpClientPort, _serverIpAddress, rtpServerPort);
+      }
+      this.LogDebug("DRI CableCARD: RTSP SETUP response okay, session ID = {0}, RTP URL = {1}", _rtspSessionId, streamChannel.Url);
+
+      this.LogDebug("DRI CableCARD: send RTSP PLAY");
+      request = new RtspRequest(RtspMethod.Play, _rtspUri);
+      request.Headers.Add("Session", _rtspSessionId);
+      if (_rtspClient.SendRequest(request, out response) != RtspStatusCode.Ok)
+      {
+        throw new TvException("Failed to start streaming, non-OK RTSP PLAY status code {0} {1}", response.StatusCode, response.ReasonPhrase);
+      }
+      this.LogDebug("DRI CableCARD: RTSP PLAY response okay");
+
+      base.PerformTuning(streamChannel);
+    }
+
+    private void StopStreaming()
+    {
+      if (_rtspClient == null || string.IsNullOrEmpty(_rtspSessionId))
+      {
+        return;
+      }
+      this.LogDebug("DRI CableCARD: stop streaming");
+      RtspRequest request = new RtspRequest(RtspMethod.Teardown, _rtspUri);
+      request.Headers.Add("Session", _rtspSessionId);
+      RtspResponse response;
+      if (_rtspClient.SendRequest(request, out response) != RtspStatusCode.Ok)
+      {
+        throw new TvException("Failed to stop streaming, non-OK RTSP TEARDOWN status code {0} {1}.", response.StatusCode, response.ReasonPhrase);
+      }
+      _rtspSessionId = string.Empty;
     }
 
     private bool IsTunerInUse()
@@ -802,7 +968,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
       }
       catch (Exception ex)
       {
-        this.LogError(ex, "DRI CableCARD: failed to retrieve application list");
+        this.LogError(ex, "DRI CableCARD: failed to get application list");
         return false;
       }
 

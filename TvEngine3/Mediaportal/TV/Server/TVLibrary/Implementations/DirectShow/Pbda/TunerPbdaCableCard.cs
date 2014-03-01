@@ -19,7 +19,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using DirectShowLib;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda;
@@ -76,6 +75,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
     {
       _tunerType = CardType.Atsc;
       _caMenuHandler = new CableCardMmiHandler(EnterMenu, CloseDialog);
+
+      // CableCARD tuners are limited to one channel per tuner, even for
+      // non-encrypted channels:
+      // The DRIT SHALL output the selected program content as a single program
+      // MPEG-TS in RTP packets according to [RTSP] and [RTP].
+      // - OpenCable DRI I04 specification, 10 September 2010
+      _supportsSubChannels = false;
     }
 
     #endregion
