@@ -18,7 +18,6 @@
 
 #endregion
 
-using System;
 using System.ComponentModel;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Rtsp

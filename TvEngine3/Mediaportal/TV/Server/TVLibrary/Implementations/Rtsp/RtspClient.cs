@@ -30,6 +30,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Rtsp
   {
     #region variables
 
+    private string _serverHost = null;
+    private int _serverPort = -1;
     private TcpClient _client = null;
     private int _cseq = 1;
     private object _lockObject = new object();
@@ -43,12 +45,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Rtsp
     /// <param name="serverPort">The port on which the RTSP server is listening.</param>
     public RtspClient(string serverHost, int serverPort = 554)
     {
+      _serverHost = serverHost;
+      _serverPort = serverPort;
       _client = new TcpClient(serverHost, serverPort);
     }
 
     ~RtspClient()
     {
-      _client.Close();
+      lock (_lockObject)
+      {
+        if (_client != null)
+        {
+          _client.Close();
+          _client = null;
+        }
+      }
     }
 
     /// <summary>
@@ -61,9 +72,25 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Rtsp
     {
       lock (_lockObject)
       {
-        NetworkStream stream = _client.GetStream();
+        NetworkStream stream = null;
         try
         {
+          stream = _client.GetStream();
+          if (stream == null)
+          {
+            throw new Exception();
+          }
+        }
+        catch
+        {
+          _client.Close();
+        }
+        try
+        {
+          if (_client == null)
+          {
+            _client = new TcpClient(_serverHost, _serverPort);
+          }
           // Send the request and get the response.
           request.Headers.Add("CSeq", _cseq.ToString());
           _cseq++;

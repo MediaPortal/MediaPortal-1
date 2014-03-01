@@ -18,9 +18,7 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 using System.Text;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Rtsp
