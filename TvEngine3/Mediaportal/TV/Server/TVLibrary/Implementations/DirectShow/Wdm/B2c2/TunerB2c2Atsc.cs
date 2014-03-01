@@ -18,8 +18,6 @@
 
 #endregion
 
-using System;
-using DirectShowLib;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
@@ -71,31 +69,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       }
 
       // If the channel modulation scheme is 8 VSB then it is an over-the-air ATSC channel, otherwise
-      // it is a cable (QAM annex B) channel.
+      // it is a cable (SCTE ITU-T annex B) channel.
       int frequency;
       B2c2Modulation modulation = B2c2Modulation.Vsb8;
       if (atscChannel.ModulationType == ModulationType.Mod8Vsb)
       {
-        // We normally tune ATSC channels by physical channel number, however we have to tune them by
-        // frequency with the SkyStar tuners. This code is a conversion between channel number and
-        // frequency (in MHz), probably for the US only.
-        if (atscChannel.PhysicalChannel <= 6)
-        {
-          frequency = 45 + (atscChannel.PhysicalChannel * 6);
-        }
-        else if (atscChannel.PhysicalChannel >= 7 && atscChannel.PhysicalChannel <= 13)
-        {
-          frequency = 177 + ((atscChannel.PhysicalChannel - 7) * 6);
-        }
-        else
-        {
-          frequency = 473 + ((atscChannel.PhysicalChannel - 14) * 6);
-        }
-        this.LogDebug("B2C2 ATSC: translated ATSC physical channel number {0} to {1} MHz", atscChannel.PhysicalChannel, frequency);
+        frequency = ATSCChannel.GetTerrestrialFrequencyFromPhysicalChannel(atscChannel.PhysicalChannel);
+        this.LogDebug("B2C2 ATSC: translated ATSC physical channel number {0} to {1} kHz", atscChannel.PhysicalChannel, frequency);
       }
       else
       {
-        frequency = (int)atscChannel.Frequency / 1000;
+        frequency = (int)atscChannel.Frequency;
         modulation = B2c2Modulation.Qam256AnnexB;
         if (atscChannel.ModulationType == ModulationType.Mod64Qam)
         {
@@ -103,7 +87,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
         }
       }
 
-      int hr = _interfaceTuner.SetFrequency(frequency);
+      int hr = _interfaceTuner.SetFrequency(frequency / 1000);
       HResult.ThrowException(hr, "Failed to set frequency.");
 
       hr = _interfaceTuner.SetModulation(modulation);

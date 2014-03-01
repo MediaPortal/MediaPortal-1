@@ -180,9 +180,85 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
       {
         return true;
       }
-      return atscChannel.MajorChannel != MajorChannel ||
-             atscChannel.MinorChannel != MinorChannel ||
-             atscChannel.PhysicalChannel != PhysicalChannel;
+
+      if (_modulation != atscChannel.ModulationType)
+      {
+        return true;
+      }
+
+      // For terrestrial digital (ATSC) and digital cable (SCTE) channels,
+      // physical channel is an arbitrary number that is mapped by the network
+      // provider to the frequency that must be tuned by the hardware. It
+      // relates to frequency/channel/band plans defined by standards bodies
+      // like the FCC, SCTE and ATSC.
+      return _physicalChannel == 0 || atscChannel.PhysicalChannel != _physicalChannel;
+    }
+
+    /// <summary>
+    /// Calculate the physical channel number corresponding with a centre
+    /// frequency in one of the US FCC cable frequency plans.
+    /// </summary>
+    /// <param name="carrierFrequency">The centre frequency, in kHz.</param>
+    /// <returns>the physical channel number corresponding with <paramref name="carrierFrequency"/></returns>
+    public static int GetPhysicalChannelFromCableFrequency(int carrierFrequency)
+    {
+      if (carrierFrequency >= 648000)
+      {
+        return 100 + ((carrierFrequency - 648000) / 6000);
+      }
+      if (carrierFrequency >= 216000)
+      {
+        return 23 + ((carrierFrequency - 216000) / 6000);
+      }
+      if (carrierFrequency >= 174000)
+      {
+        return 7 + ((carrierFrequency - 174000) / 6000);
+      }
+      if (carrierFrequency >= 120000)
+      {
+        return 14 + ((carrierFrequency - 120000) / 6000);
+      }
+      if (carrierFrequency >= 90000)
+      {
+        return 95 + ((carrierFrequency - 90000) / 6000);
+      }
+      if (carrierFrequency >= 77000)
+      {
+        return 5 + ((carrierFrequency - 77000) / 6000);
+      }
+      if (carrierFrequency >= 72000)
+      {
+        return 1;
+      }
+      if (carrierFrequency >= 54000)
+      {
+        return 2 + ((carrierFrequency - 54000) / 6000);
+      }
+      return 0;
+    }
+
+    /// <summary>
+    /// Calculate the frequency corresponding with a physical channel number
+    /// in the US FCC terrestrial frequency plan.
+    /// </summary>
+    /// <param name="physicalChannel">The physical channel number.</param>
+    /// <returns>the frequency corresponding with <paramref name="physicalChannel"/>, in kHz</returns>
+    public static int GetTerrestrialFrequencyFromPhysicalChannel(int physicalChannel)
+    {
+      int carrierFrequency = -1;
+      if (physicalChannel <= 6)
+      {
+        carrierFrequency = 45000 + (physicalChannel * 6000);
+      }
+      else if (physicalChannel >= 7 && physicalChannel <= 13)
+      {
+        carrierFrequency = 177000 + ((physicalChannel - 7) * 6000);
+      }
+      else
+      {
+        carrierFrequency = 473000 + ((physicalChannel - 14) * 6000);
+      }
+      return carrierFrequency;
     }
   }
 }
