@@ -20,7 +20,7 @@
  */
 #pragma once
 #include "..\..\shared\stdafx.h"
-#include "streams.h"
+#include <streams.h>
 #include <initguid.h>
 #include <Windows.h>
 #include <map>
