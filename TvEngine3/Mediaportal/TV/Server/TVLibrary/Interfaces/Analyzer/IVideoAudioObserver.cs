@@ -22,30 +22,11 @@ using System.Runtime.InteropServices;
 
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
 {
-  /// <summary>
-  /// Enumeration of pid's for the video/audio observer
-  /// </summary>
-  public enum PidType
-  {
-    /// <summary>
-    /// Video pid
-    /// </summary>
-    Video = 0,
-    /// <summary>
-    /// Audio pid
-    /// </summary>
-    Audio,
-    /// <summary>
-    /// Other pid
-    /// </summary>
-    Other
-  }
-
   ///<summary>
   /// TsWriter video/audio observer
   ///</summary>
-  [ComVisible(false), ComImport, Guid("08177EB2-65D6-4d0a-A2A8-E7B7280A95A3"),
-   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [Guid("08177EB2-65D6-4d0a-A2A8-E7B7280A95A3"),
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IVideoAudioObserver
   {
     ///<summary>

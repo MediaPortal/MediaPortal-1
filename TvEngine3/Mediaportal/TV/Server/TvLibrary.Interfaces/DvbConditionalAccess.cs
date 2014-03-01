@@ -1797,7 +1797,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
       this.LogDebug("  current next indicator   = {0}", _currentNextIndicator);
       this.LogDebug("  section number           = {0}", _sectionNumber);
       this.LogDebug("  last section number      = {0}", _lastSectionNumber);
-      this.LogDebug("  CRC                      = 0x{0:x}{1:x}{2:x}{3:x}", _crc[0], _crc[1], _crc[2], _crc[3]);
+      this.LogDebug("  CRC                      = 0x{0:x2}{1:x2}{2:x2}{3:x2}", _crc[0], _crc[1], _crc[2], _crc[3]);
       this.LogDebug("  {0} descriptor(s)...", _descriptors.Count + _caDescriptors.Count);
       foreach (IDescriptor d in _descriptors)
       {
@@ -2132,7 +2132,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
           int endEsDescriptors = offset + es.EsInfoLength;
           if (endEsDescriptors > endEsData)
           {
-            Log.Error("PMT: elementary stream info length for PID {0} (0x{0:x}) is invalid, ES data end = {1}, ES descriptors end = {2}", es.Pid, endEsData, endEsDescriptors);
+            Log.Error("PMT: elementary stream info length for PID {0} is invalid, ES data end = {1}, ES descriptors end = {2}", es.Pid, endEsData, endEsDescriptors);
             throw new Exception();
           }
           es.Descriptors = new List<IDescriptor>();
@@ -2142,7 +2142,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
             IDescriptor d = Descriptor.Decode(data, offset);
             if (d == null)
             {
-              Log.Error("PMT: elementary stream descriptor {0} for PID {1} (0x{1:x}) is invalid", es.Descriptors.Count + es.CaDescriptors.Count + 1, es.Pid);
+              Log.Error("PMT: elementary stream descriptor {0} for PID {1} is invalid", es.Descriptors.Count + es.CaDescriptors.Count + 1, es.Pid);
               throw new Exception();
             }
 
@@ -2196,7 +2196,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
           }
           if (offset != endEsDescriptors)
           {
-            Log.Error("PMT: corruption detected at end of elementary strea descriptors for PID {0} (0x{0:x}), offset = {1}, ES descriptors end = {2}", es.Pid, offset, endEsDescriptors);
+            Log.Error("PMT: corruption detected at end of elementary strea descriptors for PID {0}, offset = {1}, ES descriptors end = {2}", es.Pid, offset, endEsDescriptors);
             throw new Exception();
           }
 
@@ -2348,14 +2348,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
       this.LogDebug("  table ID                 = {0}", _tableId);
       this.LogDebug("  section syntax indicator = {0}", _sectionSyntaxIndicator);
       this.LogDebug("  section length           = {0}", _sectionLength);
-      this.LogDebug("  program number           = {0} (0x{0:x})", _programNumber);
+      this.LogDebug("  program number           = {0}", _programNumber);
       this.LogDebug("  version                  = {0}", _version);
       this.LogDebug("  current next indicator   = {0}", _currentNextIndicator);
       this.LogDebug("  section number           = {0}", _sectionNumber);
       this.LogDebug("  last section number      = {0}", _lastSectionNumber);
-      this.LogDebug("  PCR PID                  = {0} (0x{0:x})", _pcrPid);
+      this.LogDebug("  PCR PID                  = {0}", _pcrPid);
       this.LogDebug("  program info length      = {0}", _programInfoLength);
-      this.LogDebug("  CRC                      = 0x{0:x}{1:x}{2:x}{3:x}", _crc[0], _crc[1], _crc[2], _crc[3]);
+      this.LogDebug("  CRC                      = 0x{0:x2}{1:x2}{2:x2}{3:x2}", _crc[0], _crc[1], _crc[2], _crc[3]);
       this.LogDebug("  {0} descriptor(s)...", _programDescriptors.Count + _programCaDescriptors.Count);
       foreach (IDescriptor d in _programDescriptors)
       {
@@ -2493,7 +2493,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     {
       this.LogDebug("Elementary Stream: dump...");
       this.LogDebug("  stream type         = {0}", _streamType);
-      this.LogDebug("  PID                 = {0} (0x{0:x})", _pid);
+      this.LogDebug("  PID                 = {0}", _pid);
       this.LogDebug("  length              = {0}", _esInfoLength);
       this.LogDebug("  logical stream type = {0}", _logicalStreamType);
       this.LogDebug("  {0} descriptor(s)...", _descriptors.Count + _caDescriptors.Count);
@@ -2975,16 +2975,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
       this.LogDebug("CA Descriptor: dump...");
       this.LogDebug("  tag          = {0}", _tag);
       this.LogDebug("  length       = {0}", _length);
-      this.LogDebug("  CA system ID = {0} (0x{0:x})", _caSystemId);
-      this.LogDebug("  CA PID       = {0} (0x{0:x})", _caPid);
+      this.LogDebug("  CA system ID = {0}", _caSystemId);
+      this.LogDebug("  CA PID       = {0}", _caPid);
       foreach (KeyValuePair<ushort, HashSet<uint>> pid in _pids)
       {
-        List<string> providerIds = new List<string>(pid.Value.Count);
-        foreach (uint providerId in pid.Value)
-        {
-          providerIds.Add(string.Format("{0} (0x{0:x})", providerId));
-        }
-        this.LogDebug("  PID = {0} (0x{0:x}), provider IDs = {1}", pid.Key, string.Join(", ", providerIds.ToArray()));
+        this.LogDebug("  PID = {0}, provider IDs = {1}", pid.Key, string.Join(", ", pid.Value));
       }
       Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper.Dump.DumpBinary(_data, _data.Length);
     }

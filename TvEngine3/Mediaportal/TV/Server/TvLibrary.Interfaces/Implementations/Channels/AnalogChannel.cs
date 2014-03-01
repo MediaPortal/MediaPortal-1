@@ -325,6 +325,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
       return analogChannel.MediaType != MediaType ||
            analogChannel.Country.Id != Country.Id ||
            analogChannel.VideoSource != VideoSource ||
+           analogChannel.AudioSource != AudioSource ||
            analogChannel.TunerSource != TunerSource ||
            analogChannel.ChannelNumber != ChannelNumber ||
            analogChannel.Frequency != Frequency;

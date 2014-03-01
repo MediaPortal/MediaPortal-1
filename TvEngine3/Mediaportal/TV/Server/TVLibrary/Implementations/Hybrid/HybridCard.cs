@@ -88,21 +88,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Hybrid
     {
       add
       {
-        TvCardBase tuner = _internalCard as TvCardBase;
-        if (tuner == null)
-        {
-          throw new TvException("HybridCard: failed to add new subchannel event handler for tuner type " + _internalCard.CardType);
-        }
-        tuner.OnNewSubChannelEvent += value;
+        _internalCard.OnNewSubChannelEvent += value;
       }
       remove
       {
-        TvCardBase tuner = _internalCard as TvCardBase;
-        if (tuner == null)
-        {
-          throw new TvException("HybridCard: failed to remove new subchannel event handler for tuner type " + _internalCard.CardType);
-        }
-        tuner.OnNewSubChannelEvent -= value;
+        _internalCard.OnNewSubChannelEvent -= value;
       }
     }
 
@@ -114,21 +104,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Hybrid
     {
       add
       {
-        TvCardBase tuner = _internalCard as TvCardBase;
-        if (tuner == null)
-        {
-          throw new TvException("HybridCard: failed to add after tune event handler for tuner type " + _internalCard.CardType);
-        }
-        tuner.OnAfterTuneEvent += value;
+        _internalCard.OnAfterTuneEvent += value;
       }
       remove
       {
-        TvCardBase tuner = _internalCard as TvCardBase;
-        if (tuner == null)
-        {
-          throw new TvException("HybridCard: failed to remove after tune event handler for tuner type " + _internalCard.CardType);
-        }
-        tuner.OnAfterTuneEvent -= value;
+        _internalCard.OnAfterTuneEvent -= value;
       }
     }
 
@@ -144,8 +124,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Hybrid
     {
       set
       {
-        (_internalCard as TvCardBase).OnAfterTuneEvent -= value;
-        (_internalCard as TvCardBase).OnAfterTuneEvent += value;
+        _internalCard.OnAfterTuneEvent -= value;
+        _internalCard.OnAfterTuneEvent += value;
       }
     }
 
@@ -214,11 +194,32 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Hybrid
     /// Gets/sets the card device
     /// </summary>
     /// <value></value>
-    public string DevicePath
+    public string ExternalId
     {
-      get { return _internalCard.DevicePath; }
+      get { return _internalCard.ExternalId; }
     }
 
+    /// <summary>
+    /// Get the tuner's product instance identifier.
+    /// </summary>
+    public string ProductInstanceId
+    {
+      get
+      {
+        return _internalCard.ProductInstanceId;
+      }
+    }
+
+    /// <summary>
+    /// Get the tuner's instance identifier.
+    /// </summary>
+    public string TunerInstanceId
+    {
+      get
+      {
+        return _internalCard.TunerInstanceId;
+      }
+    }
 
     /// <summary>
     /// Check if the tuner can tune to a specific channel.

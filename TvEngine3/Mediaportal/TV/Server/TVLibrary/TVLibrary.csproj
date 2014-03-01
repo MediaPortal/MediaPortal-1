@@ -87,6 +87,9 @@
     <Compile Include="Implementations\DirectShow\Wdm\Analog\Components\Crossbar.cs" />
     <Compile Include="Implementations\DirectShow\Wdm\Analog\Components\Encoder.cs" />
     <Compile Include="Implementations\DirectShow\Wdm\Analog\Components\Tuner.cs" />
+    <Compile Include="Implementations\DirectShow\Wdm\Rtl283x\CaptureRtl283xFm.cs" />
+    <Compile Include="Implementations\DirectShow\Wdm\Rtl283x\TunerRtl283xBase.cs" />
+    <Compile Include="Implementations\DirectShow\Wdm\Rtl283x\TunerRtl283xFm.cs" />
     <Compile Include="Implementations\Dri\Enum\AuxFormat.cs" />
     <Compile Include="Implementations\Dri\Enum\CasCaptureMode.cs" />
     <Compile Include="Implementations\Dri\Enum\CasCardStatus.cs" />
@@ -103,6 +106,7 @@
     <Compile Include="Implementations\Dri\Enum\EncoderVideoFrameRate.cs" />
     <Compile Include="Implementations\Dri\Enum\SecurityPairingStatus.cs" />
     <Compile Include="Implementations\Dri\Enum\TunerModulation.cs" />
+    <Compile Include="Implementations\Dri\ScannerDri.cs" />
     <Compile Include="Implementations\Dri\Service\ServiceAux.cs" />
     <Compile Include="Implementations\Dri\Service\ServiceCas.cs" />
     <Compile Include="Implementations\Dri\Service\ServiceDiag.cs" />
@@ -133,6 +137,12 @@
     <Compile Include="Implementations\Rtsp\RtspRequest.cs" />
     <Compile Include="Implementations\Rtsp\RtspResponse.cs" />
     <Compile Include="Implementations\Rtsp\RtspStatusCode.cs" />
+    <Compile Include="Implementations\Scte\Parser\ParserBase.cs" />
+    <Compile Include="Implementations\Scte\Parser\ParserLvct.cs" />
+    <Compile Include="Implementations\Scte\Parser\ParserMgt.cs" />
+    <Compile Include="Implementations\Scte\Parser\ParserNit.cs" />
+    <Compile Include="Implementations\Scte\Parser\ParserNtt.cs" />
+    <Compile Include="Implementations\Scte\Parser\ParserSvct.cs" />
     <Compile Include="Implementations\TunerDetector.cs" />
     <Compile Include="Implementations\Mpeg2SubChannel.cs" />
     <Compile Include="Implementations\Helper\DevicesInUse.cs" />
@@ -144,7 +154,6 @@
     <Compile Include="Implementations\DirectShow\Wdm\B2c2\TunerB2c2Base.cs" />
     <Compile Include="Implementations\DirectShow\Bda\TunerBdaTerrestrial.cs" />
     <Compile Include="Implementations\DirectShow\Bda\TunerBdaBase.cs" />
-    <Compile Include="Implementations\Helper\Iso6937ToUnicode.cs" />
     <Compile Include="Implementations\Helper\EncodersInUse.cs" />
     <Compile Include="Implementations\Helper\FilterGraphTools.cs" />
     <Compile Include="Implementations\Hybrid\HybridCardGroup.cs" />
