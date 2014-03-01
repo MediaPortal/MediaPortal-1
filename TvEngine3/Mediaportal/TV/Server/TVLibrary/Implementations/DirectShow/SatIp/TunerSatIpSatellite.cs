@@ -18,11 +18,8 @@
 
 #endregion
 
-using System;
-using System.Net;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
@@ -58,11 +55,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
     /// Initialise a new instance of the <see cref="TunerSatIpSatellite"/> class.
     /// </summary>
     /// <param name="serverDescriptor">The server's UPnP device description.</param>
-    /// <param name="localIpAddress">The IP address of the local NIC which is connected to the server.</param>
-    /// <param name="serverIpAddress">The server's current IP address.</param>
     /// <param name="sequenceNumber">A unique sequence number or index for this instance.</param>
-    public TunerSatIpSatellite(DeviceDescriptor serverDescriptor, IPAddress localIpAddress, string serverIpAddress, int sequenceNumber)
-      : base(serverDescriptor, localIpAddress, serverIpAddress, sequenceNumber, 'S')
+    public TunerSatIpSatellite(DeviceDescriptor serverDescriptor, int sequenceNumber)
+      : base(serverDescriptor, sequenceNumber, 'S')
     {
       _tunerType = CardType.DvbS;
     }
@@ -230,9 +225,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
       base.PerformLoading();
 
       // Check if one of the supported extensions is capable of sending DiSEqC commands.
-      foreach (ICustomDevice extensionInterface in _customDeviceInterfaces)
+      foreach (ICustomDevice extension in _extensions)
       {
-        IDiseqcDevice diseqcDevice = extensionInterface as IDiseqcDevice;
+        IDiseqcDevice diseqcDevice = extension as IDiseqcDevice;
         if (diseqcDevice != null)
         {
           this.LogDebug("SAT>IP satellite: found DiSEqC command interface");
@@ -255,12 +250,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
       }
     }
 
-    // TODO: remove this method, it should not be required and it is bad style!
-    protected override DVBBaseChannel CreateChannel()
-    {
-      return new DVBSChannel();
-    }
-
     #region IDiseqcDevice members
 
     /// <summary>
@@ -280,7 +269,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
     /// </summary>
     /// <param name="command">The command to send.</param>
     /// <returns><c>true</c> if the command is sent successfully, otherwise <c>false</c></returns>
-    public bool SendCommand(byte[] command)
+    public bool SendDiseqcCommand(byte[] command)
     {
       this.LogDebug("SAT>IP satellite: send DiSEqC command");
 
@@ -315,7 +304,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
     /// </summary>
     /// <param name="response">The response (or command).</param>
     /// <returns><c>true</c> if the response is read successfully, otherwise <c>false</c></returns>
-    public bool ReadResponse(out byte[] response)
+    public bool ReadDiseqcResponse(out byte[] response)
     {
       // Not supported.
       response = null;
