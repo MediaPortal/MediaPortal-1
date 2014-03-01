@@ -43,9 +43,8 @@ class MultiFileReader : public FileReader
 {
 public:
 
-	MultiFileReader(BOOL useFileNext, BOOL isUNCfile);
+	MultiFileReader(BOOL useFileNext, BOOL useDummyWrites);
 	virtual ~MultiFileReader();
-
 
 	virtual HRESULT GetFileName(LPOLESTR *lpszFileName);
 	virtual HRESULT SetFileName(LPCOLESTR pszFileName);

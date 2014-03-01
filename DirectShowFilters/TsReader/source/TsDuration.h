@@ -21,6 +21,7 @@ public:
   CPcr     FirstStartPcr();
   CRefTime TotalDuration();
   void     Set(CPcr& startPcr, CPcr& endPcr, CPcr& maxPcr);
+  void     SetStopping(bool stopping);
 private:
   int          m_pid;
   int          m_videoPid;
@@ -41,4 +42,6 @@ private:
   CPcr         m_firstStartPcr;
   bool         m_bSearchStart;
   bool         m_bSearchEnd;
+  
+  bool         m_bStopping;  
 };

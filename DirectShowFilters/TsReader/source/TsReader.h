@@ -64,7 +64,7 @@
 #define PF_LOOP_DELAY_MIN 12
 #define PF_LOOP_DELAY_MAX 120
 
-//File/RTSP ReadFromFile() block sizes
+////File/RTSP ReadFromFile() block sizes
 //#define READ_SIZE (65536)
 //#define MIN_READ_SIZE (READ_SIZE/8)
 //#define MIN_READ_SIZE_UNC (READ_SIZE/4)

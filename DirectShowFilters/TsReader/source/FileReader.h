@@ -31,7 +31,6 @@ class FileReader
 {
 public:
 
-	FileReader(BOOL isUNCfile);
 	FileReader();
 	virtual ~FileReader();
 
@@ -58,6 +57,7 @@ public:
 	virtual void setBufferPointer();
 
 	void SetDebugOutput(BOOL bDebugOutput);
+  void SetDummyWrites(BOOL useDummyWrites);
 
 	virtual __int64 GetFileSize();
 	virtual bool IsBuffer(){return false;};
@@ -79,7 +79,7 @@ protected:
 	__int64 m_llBufferPointer;	
 
 	BOOL     m_bDebugOutput;
-	BOOL     m_bIsUNCfile;
+	BOOL     m_bUseDummyWrites;
 };
 
 #endif

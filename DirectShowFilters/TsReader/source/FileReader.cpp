@@ -32,22 +32,6 @@
 
 extern void LogDebug(const char *fmt, ...) ;
 
-FileReader::FileReader(BOOL isUNCfile) :
-	m_hFile(INVALID_HANDLE_VALUE),
-	m_pFileName(0),
-	m_bReadOnly(FALSE),
-	m_fileSize(0),
-	m_infoFileSize(0),
-	m_fileStartPos(0),
-	m_hInfoFile(INVALID_HANDLE_VALUE),
-	m_bDelay(FALSE),
-	m_llBufferPointer(0),	
-	m_bDebugOutput(FALSE),
-  m_bIsUNCfile(isUNCfile)
-{
-  LogDebug("FileReader::ctor1, isUNCfile = %d", m_bIsUNCfile);
-}
-
 FileReader::FileReader() :
 	m_hFile(INVALID_HANDLE_VALUE),
 	m_pFileName(0),
@@ -59,9 +43,9 @@ FileReader::FileReader() :
 	m_bDelay(FALSE),
 	m_llBufferPointer(0),	
 	m_bDebugOutput(FALSE),
-  m_bIsUNCfile(FALSE)
+  m_bUseDummyWrites(FALSE)
 {
-  LogDebug("FileReader::ctor2");
+  //LogDebug("FileReader::ctor");
 }
 
 FileReader::~FileReader()
@@ -147,23 +131,7 @@ HRESULT FileReader::OpenFile()
 
 	do
 	{
-		// do not try to open a tsbuffer file without SHARE_WRITE so skip this try if we have a buffer file
-		if (wcsstr(pFileName, L".ts.tsbuffer") == NULL) 
-		{
-			// Try to open the file
-			m_hFile = ::CreateFileW(pFileName,      // The filename
-						 (DWORD) GENERIC_READ,        // File access
-						 (DWORD) FILE_SHARE_READ,     // Share access
-						 NULL,                        // Security
-						 (DWORD) OPEN_EXISTING,       // Open flags
-						 (DWORD) 0,                   // More flags
-						 NULL);                       // Template
-
-			m_bReadOnly = FALSE;
-			if (m_hFile != INVALID_HANDLE_VALUE) break ;
-		}
-
-	  if (m_bIsUNCfile)  //enable SMB2/SMB3 file existence cache workaround
+	  if (m_bUseDummyWrites)  //enable SMB2/SMB3 file existence cache workaround
 	  {
   		if ((wcsstr(pFileName, L".ts.tsbuffer") != NULL)) //timeshift file only
   		{  	  
@@ -194,6 +162,22 @@ HRESULT FileReader::OpenFile()
       	}
       }
     }
+    
+		// do not try to open a tsbuffer file without SHARE_WRITE so skip this try if we have a buffer file
+		if (wcsstr(pFileName, L".ts.tsbuffer") == NULL) 
+		{
+			// Try to open the file
+			m_hFile = ::CreateFileW(pFileName,      // The filename
+						 (DWORD) GENERIC_READ,        // File access
+						 (DWORD) FILE_SHARE_READ,     // Share access
+						 NULL,                        // Security
+						 (DWORD) OPEN_EXISTING,       // Open flags
+						 (DWORD) 0,                   // More flags
+						 NULL);                       // Template
+
+			m_bReadOnly = FALSE;
+			if (m_hFile != INVALID_HANDLE_VALUE) break ;
+		}
 
 		//Test incase file is being recorded to
 		m_hFile = ::CreateFileW(pFileName,		// The filename
@@ -214,25 +198,9 @@ HRESULT FileReader::OpenFile()
 
 		if ((wcsstr(pFileName, L".ts.tsbuffer") != NULL) && (Tmo<10)) //timeshift file only
 		{
-  		//No luck yet, so try unbuffered open and close (to flush SMB2 cache?),
-  		//then go round loop again to open it properly (hopefully....)
-  		hFileUnbuff = ::CreateFileW(pFileName,		// The filename
-  							(DWORD) GENERIC_READ,				// File access
-  							(DWORD) (FILE_SHARE_READ | FILE_SHARE_WRITE), // Share access
-  							NULL,						            // Security
-  							(DWORD) OPEN_EXISTING,		  // Open flags
-  							(DWORD) (FILE_ATTRIBUTE_NORMAL | FILE_FLAG_NO_BUFFERING),	// More flags
-  							NULL);						          // Template
-  
-  		if (hFileUnbuff != INVALID_HANDLE_VALUE)
-  		{
-      	::CloseHandle(hFileUnbuff);
-      	hFileUnbuff = INVALID_HANDLE_VALUE; // Invalidate the file
-  		}
-  	  LogDebug("FileReader::OpenFile() unbuff, %d tries to open %ws", 15-Tmo, pFileName);
-  	  
-  	  if (m_bIsUNCfile)  //enable SMB2/SMB3 file existence cache workaround
+  	  if (m_bUseDummyWrites)  //enable SMB2/SMB3 file existence cache workaround
   	  {
+  		  //Not succeeded in opening file yet, try WRITE_THROUGH dummy file write
     	  CString tempFileName = pFileName;
     	  int replCount = tempFileName.Replace(L".ts.tsbuffer", randomStrGen(12));
   
@@ -259,6 +227,23 @@ HRESULT FileReader::OpenFile()
       		}
       	}
       }
+
+  		//No luck yet, so try unbuffered open and close (to flush SMB2 cache?),
+  		//then go round loop again to open it properly (hopefully....)
+  		hFileUnbuff = ::CreateFileW(pFileName,		// The filename
+  							(DWORD) GENERIC_READ,				// File access
+  							(DWORD) (FILE_SHARE_READ | FILE_SHARE_WRITE), // Share access
+  							NULL,						            // Security
+  							(DWORD) OPEN_EXISTING,		  // Open flags
+  							(DWORD) (FILE_ATTRIBUTE_NORMAL | FILE_FLAG_NO_BUFFERING),	// More flags
+  							NULL);						          // Template
+  
+  		if (hFileUnbuff != INVALID_HANDLE_VALUE)
+  		{
+      	::CloseHandle(hFileUnbuff);
+      	hFileUnbuff = INVALID_HANDLE_VALUE; // Invalidate the file
+  		}
+  	  LogDebug("FileReader::OpenFile() unbuff, %d tries to open %ws", 15-Tmo, pFileName);  	  
     }
 
 		Sleep(min((20*(15-Tmo)),250)) ; //wait longer between retries as loop iterations increase
@@ -733,4 +718,11 @@ CString FileReader::randomStrGen(int length)
         result.SetAt(i, charset[rand() % charset.GetLength()]);
 
     return result;
+}
+
+//Enable dummy file writes to workaround SMB2/SM3 'file existance cache' problems
+void FileReader::SetDummyWrites(BOOL useDummyWrites)
+{
+	m_bUseDummyWrites = useDummyWrites;
+	//LogDebug("FileReader::SetDummyWrites, useDummyWrites = %d", useDummyWrites);
 }

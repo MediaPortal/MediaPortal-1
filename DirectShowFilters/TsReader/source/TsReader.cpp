@@ -317,7 +317,7 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
   // use the following line if you are having trouble setting breakpoints
   // #pragma comment( lib, "strmbasd" )
 
-  LogDebug("------------- v%d.%d.%d.0 -------------", TSREADER_MAJOR_VERSION, TSREADER_MID_VERSION, TSREADER_VERSION);
+  LogDebug("------------- v%d.%d.%d.%d -------------", TSREADER_MAJOR_VERSION, TSREADER_MID_VERSION, TSREADER_VERSION, TSREADER_POINT_VERSION);
   
   m_fileReader=NULL;
   m_fileDuration=NULL;
@@ -807,6 +807,8 @@ STDMETHODIMP CTsReaderFilter::Stop()
   
   //guarantees that audio/video/subtitle pins dont block in the fillbuffer() method
   m_bStopping = true;
+  //Block duration file read updates
+  m_duration.SetStopping(true);
 
   int i=0;
   //Wait for output pin data sample delivery and seeking to finish - timeout after 100 loop iterations in case pin delivery threads are stalled
@@ -847,9 +849,11 @@ STDMETHODIMP CTsReaderFilter::Stop()
     m_rtspClient.Stop();
   }
 
-  //reset vaues
+  //reset values
   m_bSeekAfterRcDone = false;
   m_bStopping = false;
+  m_duration.SetStopping(false);
+  
   if (m_bStreamCompensated)
   {
     //m_demultiplexer.Flush(true) ;
@@ -1042,6 +1046,7 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
   m_bWaitForSeek=false;
   m_bRecording=false ;
   m_isUNCfile = false;
+  m_duration.SetStopping(false);
 
   wcscpy(m_fileName, pszFileName);
   char url[MAX_PATH];
@@ -1143,8 +1148,8 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
       //local .ts file
       m_bTimeShifting = false;
       m_bLiveTv = false ;
-      m_fileReader = new FileReader(false);
-      m_fileDuration = new FileReader(false);
+      m_fileReader = new FileReader();
+      m_fileDuration = new FileReader();
     }
     else
     {

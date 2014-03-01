@@ -40,10 +40,10 @@
 #define NEXT_READ_ROLLOVER (NEXT_READ_SIZE*16)
 
 extern void LogDebug(const char *fmt, ...) ;
-MultiFileReader::MultiFileReader(BOOL useFileNext, BOOL isUNCfile):
-	m_TSBufferFile(isUNCfile),
-	m_TSFile(isUNCfile),
-	m_TSFileNext(isUNCfile)
+MultiFileReader::MultiFileReader(BOOL useFileNext, BOOL useDummyWrites):
+	m_TSBufferFile(),
+	m_TSFile(),
+	m_TSFileNext()
 {
 	m_startPosition = 0;
 	m_endPosition = 0;
@@ -58,7 +58,12 @@ MultiFileReader::MultiFileReader(BOOL useFileNext, BOOL isUNCfile):
   m_lastFileNextRead = timeGetTime();
   m_currPosnFileNext = 0;
   m_bUseFileNext = useFileNext;
-  LogDebug("MultiFileReader::ctor, useFileNext = %d, isUNCfile %d", m_bUseFileNext, isUNCfile);
+  
+  m_TSBufferFile.SetDummyWrites(useDummyWrites);
+  m_TSFile.SetDummyWrites(useDummyWrites);
+  m_TSFileNext.SetDummyWrites(false);
+  
+  LogDebug("MultiFileReader::ctor, useFileNext = %d, useDummyWrites %d", m_bUseFileNext, useDummyWrites);
 }
 
 MultiFileReader::~MultiFileReader()
@@ -190,7 +195,7 @@ HRESULT MultiFileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadByte
 		
 	__int64 oldCurrentPosn = m_currentPosition;
 
-	// Find out which file the currentPosition is in (and the next one, if it exists)
+	// Find out which file the currentPosition is in (and the next file, if it exists)
 	MultiFileReaderFile *file = NULL;
 	MultiFileReaderFile *fileNext = NULL;
 	bool fileFound = false;
@@ -199,7 +204,7 @@ HRESULT MultiFileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadByte
 	{
 	  if (fileFound)
 	  {
-	    fileNext = *it; //This is the next file after the actual one being read
+	    fileNext = *it; //This is the next file after the file we need to read
 	    break;
 	  }	 
 	  file = *it; 
@@ -211,10 +216,16 @@ HRESULT MultiFileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadByte
 
 	if(!file)
   {
-		// The current position is past the end of the last file
     LogDebug("MultiFileReader::no file");
 		*dwReadBytes = 0;
 		return E_FAIL;
+  }
+  
+  if(!fileFound)
+  {
+		// The current position is past the end of the last file
+		*dwReadBytes = 0;
+		return retval;
   }
   
 	if (m_TSFileId != file->filePositionId)
@@ -225,14 +236,7 @@ HRESULT MultiFileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadByte
   	}
 		m_TSFile.SetFileName(file->filename);
 		m_TSFile.OpenFile();
-		m_TSFileId = file->filePositionId;
-		
-    //if (m_bUseFileNext)
-    //{
-    //  char url[MAX_PATH];
-    //  WideCharToMultiByte(CP_ACP, 0 ,file->filename, -1, url, MAX_PATH, 0, 0);
-    //  LogDebug("MultiFileReader::CurrFile Changed to %s", url);
-    //}
+		m_TSFileId = file->filePositionId;		
 	}
 
   //Start of 'file next' SMB data cache workaround processing
@@ -326,10 +330,10 @@ HRESULT MultiFileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadByte
 		m_currentPosition += (__int64)bytesRead;
     //LogDebug("MultiFileReader::multi-read 1, pbData=%d, lDataLength=%d, bytesToRead=%I64d, bytesRead=%d, m_currentPosition=%I64d, fileLength=%I64d", pbData, lDataLength, bytesToRead, bytesRead, m_currentPosition, file->length);
     
-    if (bytesRead < bytesToRead)
+    if ((bytesRead < bytesToRead) || !fileNext)
     {
-      //we haven't got all of the current file segment, so we can't read the next segment
-      //It would leave a hole in the buffer, so just return what we have...
+      //We haven't got all of the current file segment (so we can't read the next segment), 
+      //or there is no 'next file' to read so just return the data we have...
       //LogDebug("MultiFileReader::multi-read 1A, pbData=%d, lDataLength=%d, bytesToRead=%I64d, bytesRead=%d, m_currentPosition=%I64d", pbData, lDataLength, bytesToRead, bytesRead, m_currentPosition);
 	    *dwReadBytes = bytesRead;
       return retval;
