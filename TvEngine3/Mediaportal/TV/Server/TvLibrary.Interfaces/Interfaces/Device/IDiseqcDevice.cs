@@ -45,7 +45,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension
     /// </summary>
     /// <param name="command">The command to send.</param>
     /// <returns><c>true</c> if the command is sent successfully, otherwise <c>false</c></returns>
-    bool SendCommand(byte[] command);
+    bool SendDiseqcCommand(byte[] command);
 
     /// <summary>
     /// Retrieve the response to a previously sent DiSEqC command (or alternatively, check for a command
@@ -53,6 +53,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension
     /// </summary>
     /// <param name="response">The response (or command).</param>
     /// <returns><c>true</c> if the response is read successfully, otherwise <c>false</c></returns>
-    bool ReadResponse(out byte[] response);
+    bool ReadDiseqcResponse(out byte[] response);
   }
 }

@@ -5,11 +5,11 @@ using MediaPortal.Common.Utils;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Genpix (Open Source)")]
+[assembly: AssemblyTitle("Genpix Open Source")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Team MediaPortal")]
-[assembly: AssemblyProduct("Genpix (Open Source)")]
+[assembly: AssemblyProduct("Genpix Open Source")]
 [assembly: AssemblyCopyright("Copyright © Team MediaPortal 2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

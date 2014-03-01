@@ -23,16 +23,18 @@ using System.Runtime.InteropServices;
 using DirectShowLib;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
 namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBda
 {
   /// <summary>
   /// A class for handling DiSEqC and DVB-S2 tuning for Hauppauge BDA tuners.
   /// </summary>
-  public class HauppaugeBda : Conexant.Conexant
+  public class HauppaugeBda : BaseCustomDevice, IDiseqcDevice
   {
     #region enums
 
@@ -50,7 +52,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBda
 
     #region constants
 
-    private static readonly Guid HCW_BDA_EXTENSION_PROPERTY_SET = new Guid(0xfaa8f3e5, 0x31d4, 0x4e41, 0x88, 0xef, 0x00, 0xa0, 0xc9, 0xf2, 0x1f, 0xc7);
+    private static readonly Guid BDA_EXTENSION_PROPERTY_SET = new Guid(0xfaa8f3e5, 0x31d4, 0x4e41, 0x88, 0xef, 0x00, 0xa0, 0xc9, 0xf2, 0x1f, 0xc7);
+
+    private const int INSTANCE_SIZE = 32;   // The size of a property instance (KSP_NODE) parameter.
     private const int PARAM_BUFFER_SIZE = 4;
 
     #endregion
@@ -58,6 +62,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBda
     #region variables
 
     private bool _isHauppaugeBda = false;
+    private Conexant.Conexant _conexantInterface = null;
+    private IKsPropertySet _propertySet = null;
+    private IntPtr _instanceBuffer = IntPtr.Zero;
     private IntPtr _paramBuffer = IntPtr.Zero;
 
     #endregion
@@ -72,7 +79,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBda
       this.LogDebug("Hauppauge BDA: set pilot = {0}", pilot);
 
       KSPropertySupport support;
-      int hr = _propertySet.QuerySupported(_propertySetGuid, (int)BdaExtensionProperty.Pilot, out support);
+      int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Pilot, out support);
       if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Set))
       {
         this.LogDebug("Hauppauge BDA: pilot property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
@@ -80,7 +87,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBda
       }
 
       Marshal.WriteInt32(_paramBuffer, (int)pilot);
-      hr = _propertySet.Set(_propertySetGuid, (int)BdaExtensionProperty.Pilot,
+      hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Pilot,
         _instanceBuffer, INSTANCE_SIZE,
         _paramBuffer, sizeof(int)
       );
@@ -104,7 +111,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBda
       this.LogDebug("Hauppauge BDA: set roll-off = {0}", rollOff);
 
       KSPropertySupport support;
-      int hr = _propertySet.QuerySupported(_propertySetGuid, (int)BdaExtensionProperty.Pilot, out support);
+      int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Pilot, out support);
       if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Set))
       {
         this.LogDebug("Hauppauge BDA: roll-off property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
@@ -112,7 +119,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBda
       }
 
       Marshal.WriteInt32(_paramBuffer, (int)rollOff);
-      hr = _propertySet.Set(_propertySetGuid, (int)BdaExtensionProperty.RollOff,
+      hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.RollOff,
         _instanceBuffer, INSTANCE_SIZE,
         _paramBuffer, sizeof(int)
       );
@@ -156,11 +163,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBda
     /// initialisation fails, the <see ref="ICustomDevice"/> instance should be disposed
     /// immediately.
     /// </summary>
-    /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
+    /// <param name="tunerExternalId">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
     /// <param name="context">Context required to initialise the interface.</param>
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
-    public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
+    public override bool Initialise(string tunerExternalId, CardType tunerType, object context)
     {
       this.LogDebug("Hauppauge BDA: initialising");
 
@@ -170,9 +177,15 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBda
         return true;
       }
 
-      _propertySetGuid = HCW_BDA_EXTENSION_PROPERTY_SET;
-      bool result = base.Initialise(tunerExternalIdentifier, tunerType, context);
-      if (!result)
+      IBaseFilter tunerFilter = context as IBaseFilter;
+      if (tunerFilter == null)
+      {
+        this.LogDebug("Hauppauge BDA: context is not a filter");
+        return false;
+      }
+
+      _conexantInterface = new Conexant.Conexant(BDA_EXTENSION_PROPERTY_SET);
+      if (!_conexantInterface.Initialise(tunerExternalId, tunerType, context))
       {
         this.LogDebug("Hauppauge BDA: base Conexant interface not supported");
         return false;
@@ -180,6 +193,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBda
 
       this.LogInfo("Hauppauge BDA: extension supported");
       _isHauppaugeBda = true;
+      _propertySet = DsFindPin.ByDirection(tunerFilter, PinDirection.Input, 0) as IKsPropertySet;
+      _instanceBuffer = Marshal.AllocCoTaskMem(INSTANCE_SIZE);
       _paramBuffer = Marshal.AllocCoTaskMem(PARAM_BUFFER_SIZE);
       return true;
     }
@@ -241,6 +256,56 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBda
 
     #endregion
 
+    #region IDiseqcDevice members
+
+    /// <summary>
+    /// Control whether tone/data burst and 22 kHz legacy tone are used.
+    /// </summary>
+    /// <param name="toneBurstState">The tone/data burst state.</param>
+    /// <param name="tone22kState">The 22 kHz legacy tone state.</param>
+    /// <returns><c>true</c> if the tone state is set successfully, otherwise <c>false</c></returns>
+    public bool SetToneState(ToneBurst toneBurstState, Tone22k tone22kState)
+    {
+      if (_conexantInterface != null)
+      {
+        return _conexantInterface.SetToneState(toneBurstState, tone22kState);
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// Send an arbitrary DiSEqC command.
+    /// </summary>
+    /// <param name="command">The command to send.</param>
+    /// <returns><c>true</c> if the command is sent successfully, otherwise <c>false</c></returns>
+    public bool SendDiseqcCommand(byte[] command)
+    {
+      if (_conexantInterface != null)
+      {
+        return _conexantInterface.SendDiseqcCommand(command);
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// Retrieve the response to a previously sent DiSEqC command (or alternatively, check for a command
+    /// intended for this tuner).
+    /// </summary>
+    /// <param name="response">The response (or command).</param>
+    /// <returns><c>true</c> if the response is read successfully, otherwise <c>false</c></returns>
+    public bool ReadDiseqcResponse(out byte[] response)
+    {
+      if (_conexantInterface != null)
+      {
+        return _conexantInterface.ReadDiseqcResponse(out response);
+      }
+      // Not implemented.
+      response = null;
+      return false;
+    }
+
+    #endregion
+
     #region IDisposable member
 
     /// <summary>
@@ -248,12 +313,21 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBda
     /// </summary>
     public override void Dispose()
     {
-      base.Dispose();
-
+      Release.ComObject("Hauppauge property set", ref _propertySet);
+      if (_instanceBuffer != IntPtr.Zero)
+      {
+        Marshal.FreeCoTaskMem(_instanceBuffer);
+        _instanceBuffer = IntPtr.Zero;
+      }
       if (_paramBuffer != IntPtr.Zero)
       {
         Marshal.FreeCoTaskMem(_paramBuffer);
         _paramBuffer = IntPtr.Zero;
+      }
+      if (_conexantInterface != null)
+      {
+        _conexantInterface.Dispose();
+        _conexantInterface = null;
       }
       _isHauppaugeBda = false;
     }

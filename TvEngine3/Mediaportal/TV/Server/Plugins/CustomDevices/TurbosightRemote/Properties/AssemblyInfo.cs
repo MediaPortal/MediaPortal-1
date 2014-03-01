@@ -5,11 +5,11 @@ using MediaPortal.Common.Utils;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Microsoft BDA")]
+[assembly: AssemblyTitle("Turbosight Remote")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Team MediaPortal")]
-[assembly: AssemblyProduct("Microsoft BDA")]
+[assembly: AssemblyProduct("Turbosight Remote")]
 [assembly: AssemblyCopyright("Copyright © Team MediaPortal 2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using MediaPortal.Common.Utils;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("bc1739ea-bcf3-44c0-96fd-60c3df01af62")]
+[assembly: Guid("a17374e3-f68f-400c-a874-e907e6ea7da4")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -39,5 +39,4 @@ using MediaPortal.Common.Utils;
 [assembly: CompatibleVersion("1.2.3.0", "1.2.3.0")]
 [assembly: UsesSubsystem("TVE.DirectShow")]
 [assembly: UsesSubsystem("TVE.Plugins.TunerExtension")]
-[assembly: UsesSubsystem("TVE.Plugins.TunerExtension.Diseqc")]
-[assembly: UsesSubsystem("TVE.Plugins.TunerExtension.Mpeg2PidFilter")]
+[assembly: UsesSubsystem("TVE.Plugins.TunerExtension.RemoteControl")]

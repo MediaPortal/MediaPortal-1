@@ -76,10 +76,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Compro
     private static readonly Guid BDA_EXTENSION_DISEQC_PROPERTY_SET = new Guid(0x0c12bf87, 0x5bc0, 0x4dda, 0x9d, 0x07, 0x21, 0xe5, 0xc2, 0xf3, 0xb9, 0xae);
     private static readonly Guid BDA_EXTENSION_PROPERTY_SET = new Guid(0xa1aa3f96, 0x2ea, 0x4ccb, 0xa7, 0x14, 0x0, 0xbc, 0xd3, 0x98, 0xad, 0xb4);
 
-    private const int KS_PROPERTY_SIZE = 24;
+    private static readonly int KS_PROPERTY_SIZE = Marshal.SizeOf(typeof(KsProperty));  // 24;
     private const int MAX_DISEQC_MESSAGE_LENGTH = 8;
     private const int MAC_ADDRESS_LENGTH = 6;
-    private const int GENERAL_BUFFER_SIZE = KS_PROPERTY_SIZE + 4;
+    private static readonly int GENERAL_BUFFER_SIZE = KS_PROPERTY_SIZE + 4;
 
     #endregion
 
@@ -127,19 +127,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Compro
     /// initialisation fails, the <see ref="ICustomDevice"/> instance should be disposed
     /// immediately.
     /// </summary>
-    /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
+    /// <param name="tunerExternalId">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
     /// <param name="context">Context required to initialise the interface.</param>
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
-    public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
+    public override bool Initialise(string tunerExternalId, CardType tunerType, object context)
     {
       this.LogDebug("Compro: initialising");
 
-      if (context == null)
-      {
-        this.LogDebug("Compro: context is null");
-        return false;
-      }
       if (_isCompro)
       {
         this.LogWarn("Compro: extension already initialised");
@@ -313,7 +308,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Compro
     /// </summary>
     /// <param name="command">The command to send.</param>
     /// <returns><c>true</c> if the command is sent successfully, otherwise <c>false</c></returns>
-    public bool SendCommand(byte[] command)
+    public bool SendDiseqcCommand(byte[] command)
     {
       this.LogDebug("Compro: send DiSEqC command");
 
@@ -361,7 +356,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Compro
     /// </summary>
     /// <param name="response">The response (or command).</param>
     /// <returns><c>true</c> if the response is read successfully, otherwise <c>false</c></returns>
-    public bool ReadResponse(out byte[] response)
+    public bool ReadDiseqcResponse(out byte[] response)
     {
       // Not implemented.
       response = null;

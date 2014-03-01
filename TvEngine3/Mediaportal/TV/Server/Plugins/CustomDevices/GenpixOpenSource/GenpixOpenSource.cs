@@ -100,24 +100,25 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.GenpixOpenSource
     /// initialisation fails, the <see ref="ICustomDevice"/> instance should be disposed
     /// immediately.
     /// </summary>
-    /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
+    /// <param name="tunerExternalId">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
     /// <param name="context">Context required to initialise the interface.</param>
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
-    public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
+    public override bool Initialise(string tunerExternalId, CardType tunerType, object context)
     {
       this.LogDebug("Genpix open source: initialising");
 
-      IBaseFilter tunerFilter = context as IBaseFilter;
-      if (tunerFilter == null)
-      {
-        this.LogDebug("Genpix open source: tuner filter is null");
-        return false;
-      }
       if (_isGenpixOpenSource)
       {
         this.LogWarn("Genpix open source: extension already initialised");
         return true;
+      }
+
+      IBaseFilter tunerFilter = context as IBaseFilter;
+      if (tunerFilter == null)
+      {
+        this.LogDebug("Genpix open source: context is not a filter");
+        return false;
       }
 
       IPin pin = DsFindPin.ByDirection(tunerFilter, PinDirection.Output, 0);
@@ -207,7 +208,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.GenpixOpenSource
     /// </summary>
     /// <param name="command">The command to send.</param>
     /// <returns><c>true</c> if the command is sent successfully, otherwise <c>false</c></returns>
-    public bool SendCommand(byte[] command)
+    public bool SendDiseqcCommand(byte[] command)
     {
       this.LogDebug("Genpix open source: send DiSEqC command");
 
@@ -253,7 +254,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.GenpixOpenSource
     /// </summary>
     /// <param name="response">The response (or command).</param>
     /// <returns><c>true</c> if the response is read successfully, otherwise <c>false</c></returns>
-    public bool ReadResponse(out byte[] response)
+    public bool ReadDiseqcResponse(out byte[] response)
     {
       // Not supported.
       response = null;

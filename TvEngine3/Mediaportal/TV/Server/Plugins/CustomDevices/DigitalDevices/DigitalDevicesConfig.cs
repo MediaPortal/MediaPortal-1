@@ -25,8 +25,6 @@ using System.Windows.Forms;
 using DirectShowLib;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
-using Mediaportal.TV.Server.TVControl.Interfaces.Services;
-using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
@@ -62,7 +60,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
       // to fill the _ciSlots list.
       _ciContexts = new List<CiContext>();
       DsDevice[] captureDevices = DsDevice.GetDevicesOfCat(FilterCategory.BDAReceiverComponentsCategory);
-      Guid baseFilterGuid = typeof(IBaseFilter).GUID;
+      Guid filterClsid = typeof(IBaseFilter).GUID;
       foreach (DsDevice device in captureDevices)
       {
         try
@@ -94,7 +92,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
           object obj = null;
           try
           {
-            device.Mon.BindToObject(null, null, ref baseFilterGuid, out obj);
+            device.Mon.BindToObject(null, null, ref filterClsid, out obj);
             IBaseFilter ciFilter = obj as IBaseFilter;
             if (ciFilter != null)
             {

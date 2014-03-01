@@ -39,7 +39,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Conexant
     /// <summary>
     /// The custom/extended properties supported by Conexant tuners.
     /// </summary>
-    protected enum BdaExtensionProperty
+    private enum BdaExtensionProperty
     {
       /// For sending and receiving DiSEqC messages.
       DiseqcMessage = 0,
@@ -93,13 +93,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Conexant
 
     #region constants
 
-    private static readonly Guid CONEXANT_BDA_EXTENSION_PROPERTY_SET = new Guid(0xfaa8f3e5, 0x31d4, 0x4e41, 0x88, 0xef, 0xd9, 0xeb, 0x71, 0x6f, 0x6e, 0xc9);
+    private static readonly Guid BDA_EXTENSION_PROPERTY_SET = new Guid(0xfaa8f3e5, 0x31d4, 0x4e41, 0x88, 0xef, 0xd9, 0xeb, 0x71, 0x6f, 0x6e, 0xc9);
 
-    /// <summary>
-    /// The size of a property instance (KSP_NODE) parameter.
-    /// </summary>
-    protected const int INSTANCE_SIZE = 32;
-
+    private const int INSTANCE_SIZE = 32;   // The size of a property instance (KSP_NODE) parameter.
     private static readonly int DISEQC_MESSAGE_PARAMS_SIZE = Marshal.SizeOf(typeof(DiseqcMessageParams));   // 188
     private const int MAX_DISEQC_TX_MESSAGE_LENGTH = 151;   // 3 bytes per message * 50 messages, plus NULL termination
     private const int MAX_DISEQC_RX_MESSAGE_LENGTH = 9;     // reply first-in-first-out buffer size (hardware limited)
@@ -109,25 +105,29 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Conexant
     #region variables
 
     private bool _isConexant = false;
-
-    /// <summary>
-    /// A buffer that can be used as the instance parameter when getting or
-    /// setting properties.
-    /// </summary>
-    protected IntPtr _instanceBuffer = IntPtr.Zero;
-
-    /// <summary>
-    /// A reference to the property set instance.
-    /// </summary>
-    protected IKsPropertySet _propertySet = null;
-
-    /// <summary>
-    /// The property set GUID.
-    /// </summary>
-    protected Guid _propertySetGuid = CONEXANT_BDA_EXTENSION_PROPERTY_SET;
-
-    // Buffer for property parameters.
+    private IKsPropertySet _propertySet = null;
+    private Guid _propertySetGuid = BDA_EXTENSION_PROPERTY_SET;
+    private IntPtr _instanceBuffer = IntPtr.Zero;
     private IntPtr _diseqcBuffer = IntPtr.Zero;
+
+    #endregion
+
+    #region constructors
+
+    /// <summary>
+    /// Constructor for <see cref="Conexant"/> instances.
+    /// </summary>
+    public Conexant()
+    {
+    }
+
+    /// <summary>
+    /// Constructor for non-inherited types (eg. <see cref="HauppaugeBda"/>).
+    /// </summary>
+    public Conexant(Guid propertySetGuid)
+    {
+      _propertySetGuid = propertySetGuid;
+    }
 
     #endregion
 
@@ -149,24 +149,25 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Conexant
     /// initialisation fails, the <see ref="ICustomDevice"/> instance should be disposed
     /// immediately.
     /// </summary>
-    /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
+    /// <param name="tunerExternalId">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
     /// <param name="context">Context required to initialise the interface.</param>
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
-    public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
+    public override bool Initialise(string tunerExternalId, CardType tunerType, object context)
     {
       this.LogDebug("Conexant: initialising");
 
-      IBaseFilter tunerFilter = context as IBaseFilter;
-      if (tunerFilter == null)
-      {
-        this.LogDebug("Conexant: tuner filter is null");
-        return false;
-      }
       if (_isConexant)
       {
         this.LogWarn("Conexant: extension already initialised");
         return true;
+      }
+
+      IBaseFilter tunerFilter = context as IBaseFilter;
+      if (tunerFilter == null)
+      {
+        this.LogDebug("Conexant: context is not a filter");
+        return false;
       }
 
       IPin pin = DsFindPin.ByDirection(tunerFilter, PinDirection.Input, 0);
@@ -261,7 +262,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Conexant
     /// </summary>
     /// <param name="command">The command to send.</param>
     /// <returns><c>true</c> if the command is sent successfully, otherwise <c>false</c></returns>
-    public bool SendCommand(byte[] command)
+    public bool SendDiseqcCommand(byte[] command)
     {
       this.LogDebug("Conexant: send DiSEqC command");
 
@@ -327,7 +328,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Conexant
     /// </summary>
     /// <param name="response">The response (or command).</param>
     /// <returns><c>true</c> if the response is read successfully, otherwise <c>false</c></returns>
-    public bool ReadResponse(out byte[] response)
+    public bool ReadDiseqcResponse(out byte[] response)
     {
       // Not implemented.
       response = null;

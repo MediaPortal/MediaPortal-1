@@ -546,7 +546,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
       int idx = 0;
       foreach (string path in devicePaths)
       {
-        if (devicePath.Equals(path))
+        if (devicePath.Contains(path))
         {
           return idx;
         }
@@ -791,29 +791,30 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
     /// initialisation fails, the <see ref="ICustomDevice"/> instance should be disposed
     /// immediately.
     /// </summary>
-    /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
+    /// <param name="tunerExternalId">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
     /// <param name="context">Context required to initialise the interface.</param>
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
-    public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
+    public override bool Initialise(string tunerExternalId, CardType tunerType, object context)
     {
       this.LogDebug("KNC: initialising");
 
-      IBaseFilter tunerFilter = context as IBaseFilter;
-      if (tunerFilter == null)
-      {
-        this.LogDebug("KNC: tuner filter is null");
-        return false;
-      }
-      if (string.IsNullOrEmpty(tunerExternalIdentifier))
-      {
-        this.LogDebug("KNC: tuner external identifier is not set");
-        return false;
-      }
       if (_isKnc)
       {
         this.LogWarn("KNC: extension already initialised");
         return true;
+      }
+
+      IBaseFilter tunerFilter = context as IBaseFilter;
+      if (tunerFilter == null)
+      {
+        this.LogDebug("KNC: context is not a filter");
+        return false;
+      }
+      if (string.IsNullOrEmpty(tunerExternalId))
+      {
+        this.LogDebug("KNC: tuner external identifier is not set");
+        return false;
       }
 
       // Stage 1: check if this tuner is supported by the KNC API.
@@ -821,7 +822,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
       int hr = tunerFilter.QueryFilterInfo(out tunerInfo);
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogError("KNC: failed to get the tuner filter name, hr = 0x{0:x} - {1}", HResult.GetDXErrorString(hr));
+        this.LogError("KNC: failed to get the tuner filter name, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
       }
       foreach (string validTunerName in VALID_TUNER_NAMES)
@@ -832,7 +833,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
           _name = validTunerName.Substring(0, validTunerName.IndexOf(' '));
 
           // Stage 2: attempt to get the KNC device index corresponding with this tuner.
-          string devicePath = tunerExternalIdentifier.ToLowerInvariant();
+          string devicePath = tunerExternalId.ToLowerInvariant();
           _deviceIndex = GetDeviceIndex(devicePath);
           if (_deviceIndex < 0)
           {
@@ -978,7 +979,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
     /// that any necessary hardware (such as a CI slot) is connected.
     /// </summary>
     /// <returns><c>true</c> if the interface is successfully opened, otherwise <c>false</c></returns>
-    public bool OpenInterface()
+    public bool OpenConditionalAccessInterface()
     {
       this.LogDebug("KNC: device {0} open conditional access interface", _deviceIndex);
 
@@ -1058,7 +1059,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
     /// Close the conditional access interface.
     /// </summary>
     /// <returns><c>true</c> if the interface is successfully closed, otherwise <c>false</c></returns>
-    public bool CloseInterface()
+    public bool CloseConditionalAccessInterface()
     {
       this.LogDebug("KNC: device {0} close conditional access interface", _deviceIndex);
 
@@ -1095,17 +1096,17 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
     /// <param name="resetTuner">This parameter will be set to <c>true</c> if the tuner must be reset
     ///   for the interface to be completely and successfully reset.</param>
     /// <returns><c>true</c> if the interface is successfully reset, otherwise <c>false</c></returns>
-    public bool ResetInterface(out bool resetTuner)
+    public bool ResetConditionalAccessInterface(out bool resetTuner)
     {
       resetTuner = false;
-      return CloseInterface() && OpenInterface();
+      return CloseConditionalAccessInterface() && OpenConditionalAccessInterface();
     }
 
     /// <summary>
     /// Determine whether the conditional access interface is ready to receive commands.
     /// </summary>
     /// <returns><c>true</c> if the interface is ready, otherwise <c>false</c></returns>
-    public bool IsInterfaceReady()
+    public bool IsConditionalAccessInterfaceReady()
     {
       this.LogDebug("KNC: is conditional access interface ready");
 
@@ -1137,7 +1138,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
     /// <param name="pmt">The program map table for the service.</param>
     /// <param name="cat">The conditional access table for the service.</param>
     /// <returns><c>true</c> if the command is successfully sent, otherwise <c>false</c></returns>
-    public bool SendCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, Pmt pmt, Cat cat)
+    public bool SendConditionalAccessCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, Pmt pmt, Cat cat)
     {
       this.LogDebug("KNC: send conditional access command, list action = {0}, command = {1}", listAction, command);
 
@@ -1306,7 +1307,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
     /// </summary>
     /// <param name="command">The command to send.</param>
     /// <returns><c>true</c> if the command is sent successfully, otherwise <c>false</c></returns>
-    public bool SendCommand(byte[] command)
+    public bool SendDiseqcCommand(byte[] command)
     {
       this.LogDebug("KNC: device {0} send DiSEqC command", _deviceIndex);
 
@@ -1342,7 +1343,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
     /// </summary>
     /// <param name="response">The response (or command).</param>
     /// <returns><c>true</c> if the response is read successfully, otherwise <c>false</c></returns>
-    public bool ReadResponse(out byte[] response)
+    public bool ReadDiseqcResponse(out byte[] response)
     {
       // Not supported.
       response = null;
@@ -1358,7 +1359,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
     /// </summary>
     public override void Dispose()
     {
-      CloseInterface();
+      if (_isKnc)
+      {
+        CloseConditionalAccessInterface();
+      }
       if (_diseqcBuffer != IntPtr.Zero)
       {
         Marshal.FreeCoTaskMem(_diseqcBuffer);

@@ -42,3 +42,4 @@ using MediaPortal.Common.Utils;
 [assembly: UsesSubsystem("TVE.Plugins.TunerExtension.ConditionalAccess")]
 [assembly: UsesSubsystem("TVE.Plugins.TunerExtension.ConditionalAccessMenu")]
 [assembly: UsesSubsystem("TVE.Plugins.TunerExtension.Diseqc")]
+[assembly: UsesSubsystem("TVE.Plugins.TunerExtension.RemoteControl")]

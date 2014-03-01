@@ -51,11 +51,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension
     /// initialisation fails, the <see ref="ICustomDevice"/> instance should be disposed
     /// immediately.
     /// </summary>
-    /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
+    /// <param name="tunerExternalId">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
     /// <param name="context">Context required to initialise the interface.</param>
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
-    bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context);
+    bool Initialise(string tunerExternalId, CardType tunerType, object context);
 
     #region device state change call backs
 
@@ -138,7 +138,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension
         // - DVBSky drivers implement a unique property set, but also implement the Hauppauge property set.
         // - Hauppauge drivers implement a unique property set.
         // - The Turbosight plugin limits support by matching the tuner name.
-        // - The Prof USB plugin extends the base Prof plugin.
+        // - The Prof SDK says to test for the USB interface before testing the PCIe/PCI interface.
         // - The Geniatech plugin checks for support of a unique property.
         //
         // The following priority hierarchy is used:
@@ -164,11 +164,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension
     /// the ICustomDevice instance should be disposed
     /// immediately.
     /// </summary>
-    /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
+    /// <param name="tunerExternalId">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
     /// <param name="context">Context required to initialise the interface.</param>
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
-    public virtual bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
+    public virtual bool Initialise(string tunerExternalId, CardType tunerType, object context)
     {
       // This base class is not intended to be instantiated.
       return false;

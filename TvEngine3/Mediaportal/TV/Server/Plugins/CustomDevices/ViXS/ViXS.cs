@@ -19,9 +19,9 @@
 #endregion
 
 using System;
-using Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBda;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
 namespace Mediaportal.TV.Server.Plugins.TunerExtension.ViXS
 {
@@ -29,7 +29,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ViXS
   /// This class provides clear QAM tuning support for ATSC/QAM tuners that use ViXS
   /// chipsets/demodulators, such as Saber (DA-1N1-E, DA-1N1-I), VistaView and Asus tuners.
   /// </summary>
-  public class ViXS : MicrosoftBda.MicrosoftBda
+  public class ViXS : BaseCustomDevice
   {
     #region constants
 
@@ -40,21 +40,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ViXS
     #region variables
 
     private bool _isVixs = false;
+    private MicrosoftAtscQam.MicrosoftAtscQam _microsoftInterface = null;
 
     #endregion
-
-    /// <summary>
-    /// The class or property set that provides access to the tuner modulation parameter.
-    /// </summary>
-    protected override Guid ModulationPropertyClass
-    {
-      get
-      {
-        // We override the Microsoft implementation of this property. This property set GUID is the only
-        // difference between the generic Microsoft clear QAM implementation and the ViXS implementation.
-        return BDA_EXTENSION_PROPERTY_SET;
-      }
-    }
 
     #region ICustomDevice members
 
@@ -86,11 +74,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ViXS
     /// initialisation fails, the <see ref="ICustomDevice"/> instance should be disposed
     /// immediately.
     /// </summary>
-    /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
+    /// <param name="tunerExternalId">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
     /// <param name="context">Context required to initialise the interface.</param>
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
-    public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
+    public override bool Initialise(string tunerExternalId, CardType tunerType, object context)
     {
       this.LogDebug("ViXS: initialising");
 
@@ -105,8 +93,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ViXS
         this.LogDebug("ViXS: tuner type {0} is not supported", tunerType);
         return false;
       }
-      bool result = base.Initialise(tunerExternalIdentifier, tunerType, context);
-      if (!result)
+      _microsoftInterface = new MicrosoftAtscQam.MicrosoftAtscQam(BDA_EXTENSION_PROPERTY_SET);
+      if (!_microsoftInterface.Initialise(tunerExternalId, tunerType, context))
       {
         this.LogDebug("ViXS: base Microsoft interface not supported");
         return false;
@@ -126,7 +114,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ViXS
     /// </summary>
     public override void Dispose()
     {
-      base.Dispose();
+      if (_microsoftInterface != null)
+      {
+        _microsoftInterface.Dispose();
+        _microsoftInterface = null;
+      }
       _isVixs = false;
     }
 

@@ -37,16 +37,15 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
     /// <summary>
     /// MediaPortal's wrapper class for the Hauppauge ECP interface.
     /// </summary>
-    [ComImport, Guid("7f4a6ccd-3f79-444a-bf65-02bd5bff80d5")]
-    private class MediaPortalHauppaugeEncoderConfigurationProperties
+    [Guid("7f4a6ccd-3f79-444a-bf65-02bd5bff80d5")]
+    private class MpHcwEcp
     {
     }
 
     /// <summary>
     /// The main interface on the Hauppauge ECP wrapper class.
     /// </summary>
-    [ComVisible(false), ComImport,
-      Guid("0530ee38-eb91-49ea-aaf5-f85402ff0ca5"),
+    [Guid("0530ee38-eb91-49ea-aaf5-f85402ff0ca5"),
       InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     private interface IMpHcwEcp
     {
@@ -149,11 +148,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
     /// initialisation fails, the <see ref="ICustomDevice"/> instance should be disposed
     /// immediately.
     /// </summary>
-    /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
+    /// <param name="tunerExternalId">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
     /// <param name="context">Context required to initialise the interface.</param>
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
-    public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
+    public override bool Initialise(string tunerExternalId, CardType tunerType, object context)
     {
       this.LogDebug("Hauppauge ECP: initialising");
 
@@ -171,7 +170,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
 
       try
       {
-        _interfaceEcp = ComHelper.LoadComObjectFromFile("HauppaugeEcp.dll", typeof(MediaPortalHauppaugeEncoderConfigurationProperties).GUID, typeof(IMpHcwEcp).GUID, true) as IMpHcwEcp;
+        _interfaceEcp = ComHelper.LoadComObjectFromFile("HauppaugeEcp.dll", typeof(MpHcwEcp).GUID, typeof(IMpHcwEcp).GUID, true) as IMpHcwEcp;
       }
       catch (Exception ex)
       {

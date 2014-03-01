@@ -20,12 +20,10 @@
 
 using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using DirectShowLib;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
@@ -74,38 +72,47 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
 
     #region structs
 
+    // NetUP and DVBSky structures don't quite match due to different
+    // strategies for 64 bit compatibility and struct alignment. Refer to the
+    // notes in NetUpCommand.Execute() for more detail. The structures below
+    // represent the original NetUP and current DVBSky structures.
+
+    // NetUP 261 vs DVBSky 262 => marshal manually.
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct ApplicationInfo    // NETUP_CAM_APPLICATION_INFO
     {
       public MmiApplicationType ApplicationType;
-      private byte Padding;
+      private byte Padding;             // New NetUP driver: not present.
       public ushort Manufacturer;
       public ushort ManufacturerCode;
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_STRING_LENGTH)]
       public byte[] RootMenuTitle;
     }
 
+    // NetUP 268 vs DVBSky 264 => marshal manually.
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct CiStateInfo    // NETUP_CAM_STATUS
     {
-      public NetUpCiState CiState;
+      public NetUpCiState CiState;      // New NetUP driver: DWORD64 instead of DWORD.
 
-      // These fields don't ever seem to be filled, but that is okay since
-      // we can query for application info directly.
+      // These fields don't ever seem to be filled by the NetUp driver. We can
+      // query for application info directly.
       public ushort Manufacturer;
       public ushort ManufacturerCode;
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_STRING_LENGTH)]
       public byte[] RootMenuTitle;
     }
 
+    // NetUP 520 vs DVBSky 516 => marshal manually.
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct CaInfo   // NETUP_CAM_INFO
     {
-      public uint NumberOfCaSystemIds;
+      public uint NumberOfCaSystemIds;  // New NetUP driver: DWORD64 instead of DWORD.
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_CA_SYSTEM_IDS)]
       public ushort[] CaSystemIds;
     }
 
+    // Okay.
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct MmiMenuEntry
     {
@@ -115,6 +122,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
       #pragma warning restore 0649
     }
 
+    // NetUP 17164 vs DVBSky 17160 => automatic marshaling okay.
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct MmiMenu    // NETUP_CAM_MENU
     {
@@ -128,21 +136,23 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
       public byte[] Footer;
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_CAM_MENU_ENTRIES)]
       public MmiMenuEntry[] Entries;
-      public uint EntryCount;
+      public uint EntryCount;           // New NetUP driver: DWORD64 instead of DWORD.
     }
 
+    // NetUP 261 vs DVBSky 264 => marshal manually.
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct MmiEnquiry   // NETUP_CAM_MMI_ENQUIRY
     {
       [MarshalAs(UnmanagedType.Bool)]
       public bool IsBlindAnswer;
       public byte ExpectedAnswerLength;
-      private byte Padding1;
-      private short Padding2;
+      private byte Padding1;            // New NetUP driver: not present.
+      private short Padding2;           // New NetUP driver: not present.
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_STRING_LENGTH)]
       public byte[] Prompt;
     }
 
+    // Okay.
     [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
     private struct MmiAnswer    // NETUP_CAM_MMI_ANSWER
     {
@@ -153,136 +163,33 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
 
     #endregion
 
-    /// <summary>
-    /// This class is used to "hide" the complexity of filling the command buffer.
-    /// </summary>
-    private class NetUpCommand
-    {
-      #region variables
-
-      private static int _operatingSystemPointerSize = 0;
-      private uint _controlCode;
-      private IntPtr _inBuffer;
-      private int _inBufferSize;
-      private IntPtr _outBuffer;
-      private int _outBufferSize;
-
-      #endregion
-
-      public NetUpCommand(NetUpIoControl controlCode, IntPtr inBuffer, int inBufferSize, IntPtr outBuffer, int outBufferSize)
-      {
-        _controlCode = (uint)controlCode;
-        _inBuffer = inBuffer;
-        _inBufferSize = inBufferSize;
-        _outBuffer = outBuffer;
-        _outBufferSize = outBufferSize;
-      }
-
-      /// <summary>
-      /// Execute a set operation on a property set.
-      /// </summary>
-      /// <param name="psGuid">The property set GUID.</param>
-      /// <param name="ps">The property set to operate on.</param>
-      /// <param name="returnedByteCount">The number of bytes returned by the operation.</param>
-      /// <returns>an HRESULT indicating whether the operation was successful</returns>
-      public int Execute(Guid psGuid, IKsPropertySet ps, out int returnedByteCount)
-      {
-        returnedByteCount = 0;
-        int hr = (int)HResult.Severity.Error;
-        if (ps == null)
-        {
-          return hr;
-        }
-
-        // Originally NetUP's drivers required 32 bit pointers on 32 bit
-        // operating systems and 64 bit pointers on 64 bit operating systems.
-        // This was somewhat inconvenient as detecting whether you're running
-        // under WOW64 can be awkward. I contacted NetUP and asked whether it
-        // would be possible to expose a consistent interface. They kindly
-        // obliged and padded the command struct pointers in their driver for
-        // 32 bit operating systems. At the same time they also changed all
-        // DWORDs in structs to DWORD64, which was unnecessary.
-        // ...then I found out DVBSky use the same API but have modified it to
-        // use 32 bit pointers even under 64 bit operating systems. <doh!!!>
-        // I really don't want to maintain two similar versions of this API.
-        // Since NetUP's driver is open source we can patch and compile it as
-        // required.
-        // https://github.com/netup/netup-dvb-s2-ci-dual/
-        // mm1352000, 2013-07-20
-        if (_operatingSystemPointerSize == 0)
-        {
-          _operatingSystemPointerSize = 4;
-          if (OSInfo.OSInfo.Is64BitOs() && psGuid == NETUP_BDA_EXTENSION_PROPERTY_SET)
-          {
-            _operatingSystemPointerSize = 8;
-          }
-        }
-
-        IntPtr instanceBuffer = Marshal.AllocCoTaskMem(INSTANCE_SIZE);
-        IntPtr commandBuffer = Marshal.AllocCoTaskMem(COMMAND_SIZE);
-        IntPtr returnedByteCountBuffer = Marshal.AllocCoTaskMem(sizeof(int));
-        try
-        {
-          // Clear buffers. This is probably not actually needed, but better
-          // to be safe than sorry!
-          for (int i = 0; i < INSTANCE_SIZE; i++)
-          {
-            Marshal.WriteByte(instanceBuffer, i, 0);
-          }
-          Marshal.WriteInt32(returnedByteCountBuffer, 0);
-
-          if (_operatingSystemPointerSize == 8)
-          {
-            Marshal.WriteInt64(commandBuffer, 0, _controlCode);
-            Marshal.WriteInt64(commandBuffer, 8, _inBuffer.ToInt64());
-            Marshal.WriteInt64(commandBuffer, 16, _inBufferSize);
-            Marshal.WriteInt64(commandBuffer, 24, _outBuffer.ToInt64());
-            Marshal.WriteInt64(commandBuffer, 32, _outBufferSize);
-            Marshal.WriteInt64(commandBuffer, 40, returnedByteCountBuffer.ToInt64());
-          }
-          else
-          {
-            Marshal.WriteInt32(commandBuffer, 0, (int)_controlCode);
-            Marshal.WriteInt32(commandBuffer, 4, _inBuffer.ToInt32());
-            Marshal.WriteInt32(commandBuffer, 8, _inBufferSize);
-            Marshal.WriteInt32(commandBuffer, 12, _outBuffer.ToInt32());
-            Marshal.WriteInt32(commandBuffer, 16, _outBufferSize);
-            Marshal.WriteInt32(commandBuffer, 20, returnedByteCountBuffer.ToInt32());
-            Marshal.WriteInt32(commandBuffer, 24, 0);
-            Marshal.WriteInt32(commandBuffer, 28, 0);
-            Marshal.WriteInt32(commandBuffer, 32, 0);
-            Marshal.WriteInt32(commandBuffer, 36, 0);
-            Marshal.WriteInt32(commandBuffer, 40, 0);
-            Marshal.WriteInt32(commandBuffer, 44, 0);
-          }
-
-          hr = ps.Set(psGuid, 0, instanceBuffer, INSTANCE_SIZE, commandBuffer, COMMAND_SIZE);
-          if (hr == (int)HResult.Severity.Success)
-          {
-            returnedByteCount = Marshal.ReadInt32(returnedByteCountBuffer);
-          }
-        }
-        finally
-        {
-          Marshal.FreeCoTaskMem(instanceBuffer);
-          Marshal.FreeCoTaskMem(commandBuffer);
-          Marshal.FreeCoTaskMem(returnedByteCountBuffer);
-        }
-        return hr;
-      }
-    }
-
     #region constants
 
     private static readonly Guid NETUP_BDA_EXTENSION_PROPERTY_SET = new Guid(0x5aa642f2, 0xbf94, 0x4199, 0xa9, 0x8c, 0xc2, 0x22, 0x20, 0x91, 0xe3, 0xc3);
 
+    // Default (DVBSky, TechnoTrend clones)
+    private static readonly int DEFAULT_APPLICATION_INFO_SIZE = Marshal.SizeOf(typeof(ApplicationInfo));  // 262
+    private static readonly int DEFAULT_CI_STATE_INFO_SIZE = Marshal.SizeOf(typeof(CiStateInfo));         // 264
+    private static readonly int DEFAULT_CA_INFO_SIZE = Marshal.SizeOf(typeof(CaInfo));                    // 516
+    private static readonly int DEFAULT_MMI_MENU_SIZE = Marshal.SizeOf(typeof(MmiMenu));                  // 17160
+    private static readonly int DEFAULT_MMI_ENQUIRY_SIZE = Marshal.SizeOf(typeof(MmiEnquiry));            // 264
+
+    // NetUP
+    private static readonly int NETUP_APPLICATION_INFO_SIZE = DEFAULT_APPLICATION_INFO_SIZE - 1;          // 261
+    private static readonly int NETUP_CI_STATE_INFO_SIZE = DEFAULT_CI_STATE_INFO_SIZE + 4;                // 268
+    private static readonly int NETUP_CA_INFO_SIZE = DEFAULT_CA_INFO_SIZE + 4;                            // 520
+    private static readonly int NETUP_MMI_MENU_SIZE = DEFAULT_MMI_MENU_SIZE + 4;                          // 17164
+    private static readonly int NETUP_MMI_ENQUIRY_SIZE = DEFAULT_MMI_ENQUIRY_SIZE - 3;                    // 261
+
+    // max
+    private static readonly int APPLICATION_INFO_SIZE = Math.Max(DEFAULT_APPLICATION_INFO_SIZE, NETUP_APPLICATION_INFO_SIZE);
+    private static readonly int CI_STATE_INFO_SIZE = Math.Max(DEFAULT_CI_STATE_INFO_SIZE, NETUP_CI_STATE_INFO_SIZE);
+    private static readonly int CA_INFO_SIZE = Math.Max(DEFAULT_CA_INFO_SIZE, NETUP_CA_INFO_SIZE);
+    private static readonly int MMI_MENU_SIZE = Math.Max(DEFAULT_MMI_MENU_SIZE, NETUP_MMI_MENU_SIZE);
+    private static readonly int MMI_ENQUIRY_SIZE = Math.Max(DEFAULT_MMI_ENQUIRY_SIZE, NETUP_MMI_ENQUIRY_SIZE);
+
     private const int INSTANCE_SIZE = 32;   // The size of a property instance (KSP_NODE) parameter.
     private const int COMMAND_SIZE = 48;
-    private static readonly int APPLICATION_INFO_SIZE = Marshal.SizeOf(typeof(ApplicationInfo));  // 262
-    private static readonly int CI_STATE_INFO_SIZE = Marshal.SizeOf(typeof(CiStateInfo));         // 264
-    private static readonly int CA_INFO_SIZE = Marshal.SizeOf(typeof(CaInfo));                    // 516
-    private static readonly int MMI_MENU_SIZE = Marshal.SizeOf(typeof(MmiMenu));                  // 17160
-    private static readonly int MMI_ENQUIRY_SIZE = Marshal.SizeOf(typeof(MmiEnquiry));            // 264
     private static readonly int MMI_ANSWER_SIZE = Marshal.SizeOf(typeof(MmiAnswer));              // 257
     private const int MAX_BUFFER_SIZE = 65536;
     private const int MAX_STRING_LENGTH = 256;
@@ -291,7 +198,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
     private const int MAX_DISEQC_MESSAGE_LENGTH = 64;         // This is to reduce the _generalBuffer size - the driver limit is MaxBufferSize.
 
     private const int GENERAL_BUFFER_SIZE = MAX_DISEQC_MESSAGE_LENGTH;
-    private static readonly int MMI_BUFFER_SIZE = new int[] { APPLICATION_INFO_SIZE, CA_INFO_SIZE, CI_STATE_INFO_SIZE, MMI_ANSWER_SIZE, MMI_ENQUIRY_SIZE, MMI_MENU_SIZE }.Max();
+    private static readonly int MMI_BUFFER_SIZE = new int[] {
+        APPLICATION_INFO_SIZE, CA_INFO_SIZE, CI_STATE_INFO_SIZE, MMI_ANSWER_SIZE, MMI_ENQUIRY_SIZE, MMI_MENU_SIZE,
+    }.Max();
     private const int MMI_HANDLER_THREAD_WAIT_TIME = 2000;    // unit = ms
 
     #endregion
@@ -310,17 +219,21 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
     private IntPtr _generalBuffer = IntPtr.Zero;
     private IntPtr _mmiBuffer = IntPtr.Zero;
 
-    /// <summary>
-    /// The property set GUID.
-    /// </summary>
-    protected Guid _propertySetGuid = NETUP_BDA_EXTENSION_PROPERTY_SET;
+    private Guid _propertySetGuid = NETUP_BDA_EXTENSION_PROPERTY_SET;
     private IKsPropertySet _propertySet = null;
+    private int _operatingSystemPointerSize = 0;
 
     private Thread _mmiHandlerThread = null;
     private AutoResetEvent _mmiHandlerThreadStopEvent = null;
     private object _mmiLock = new object();
     private IConditionalAccessMenuCallBacks _caMenuCallBacks = null;
     private object _caMenuCallBackLock = new object();
+
+    private int _applicationInfoSize = NETUP_APPLICATION_INFO_SIZE;
+    private int _ciStateInfoSize = NETUP_CI_STATE_INFO_SIZE;
+    private int _caInfoSize = NETUP_CA_INFO_SIZE;
+    private int _mmiMenuSize = NETUP_MMI_MENU_SIZE;
+    private int _mmiEnquirySize = NETUP_MMI_ENQUIRY_SIZE;
 
     #endregion
 
@@ -339,6 +252,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
     public NetUp(Guid propertySetGuid)
     {
       _propertySetGuid = propertySetGuid;
+      if (_propertySetGuid == NETUP_BDA_EXTENSION_PROPERTY_SET)
+      {
+        _applicationInfoSize = DEFAULT_APPLICATION_INFO_SIZE;
+        _ciStateInfoSize = DEFAULT_CI_STATE_INFO_SIZE;
+        _caInfoSize = DEFAULT_CA_INFO_SIZE;
+        _mmiMenuSize = DEFAULT_MMI_MENU_SIZE;
+        _mmiEnquirySize = DEFAULT_MMI_ENQUIRY_SIZE;
+      }
     }
 
     #endregion
@@ -355,21 +276,27 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
       {
         Marshal.WriteByte(_mmiBuffer, i, 0);
       }
-      NetUpCommand command = new NetUpCommand(NetUpIoControl.ApplicationInfo, IntPtr.Zero, 0, _mmiBuffer, APPLICATION_INFO_SIZE);
-      int returnedByteCount;
-      int hr = command.Execute(_propertySetGuid, _propertySet, out returnedByteCount);
 
-      if (hr == (int)HResult.Severity.Success && returnedByteCount == APPLICATION_INFO_SIZE)
+      int returnedByteCount;
+      int hr = GetIoctl(NetUpIoControl.ApplicationInfo, _mmiBuffer, APPLICATION_INFO_SIZE, out returnedByteCount);
+      if (hr == (int)HResult.Severity.Success && returnedByteCount == _applicationInfoSize)
       {
-        ApplicationInfo info = (ApplicationInfo)Marshal.PtrToStructure(_mmiBuffer, typeof(ApplicationInfo));
-        this.LogDebug("  type         = {0}", info.ApplicationType);
-        this.LogDebug("  manufacturer = 0x{0:x}", info.Manufacturer);
-        this.LogDebug("  code         = 0x{0:x}", info.ManufacturerCode);
-        this.LogDebug("  menu title   = {0}", DvbTextConverter.Convert(info.RootMenuTitle));
+        // Have to marshal manually due to mismatch between the NetUP and
+        // DVBSky structures.
+        //Dump.DumpBinary(_mmiBuffer, APPLICATION_INFO_SIZE);
+        this.LogDebug("  type         = {0}", (MmiApplicationType)Marshal.ReadByte(_mmiBuffer, 0));
+        int offset = 0;
+        if (_propertySetGuid != NETUP_BDA_EXTENSION_PROPERTY_SET)
+        {
+          offset++;
+        }
+        this.LogDebug("  manufacturer = 0x{0:x4}", Marshal.ReadInt16(_mmiBuffer, 1 + offset));
+        this.LogDebug("  code         = 0x{0:x4}", Marshal.ReadInt16(_mmiBuffer, 3 + offset));
+        this.LogDebug("  menu title   = {0}", DvbTextConverter.Convert(IntPtr.Add(_mmiBuffer, 5 + offset)));
       }
       else
       {
-        this.LogWarn("NetUP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogWarn("NetUP: result = failure, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
       }
 
       return hr;
@@ -387,21 +314,29 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
       {
         Marshal.WriteByte(_mmiBuffer, i, 0);
       }
-      NetUpCommand command = new NetUpCommand(NetUpIoControl.ConditionalAccessInfo, IntPtr.Zero, 0, _mmiBuffer, CA_INFO_SIZE);
+
       int returnedByteCount;
-      int hr = command.Execute(_propertySetGuid, _propertySet, out returnedByteCount);
-      if (hr == (int)HResult.Severity.Success && returnedByteCount == CA_INFO_SIZE)
+      int hr = GetIoctl(NetUpIoControl.ConditionalAccessInfo, _mmiBuffer, CA_INFO_SIZE, out returnedByteCount);
+      if (hr == (int)HResult.Severity.Success && returnedByteCount == _caInfoSize)
       {
-        CaInfo info = (CaInfo)Marshal.PtrToStructure(_mmiBuffer, typeof(CaInfo));
-        this.LogDebug("  # CAS IDs = {0}", info.NumberOfCaSystemIds);
-        for (int i = 0; i < info.NumberOfCaSystemIds; i++)
+        // Have to marshal manually due to mismatch between the NetUP and
+        // DVBSky structures.
+        int numberOfCaSystemIds = Marshal.ReadInt32(_mmiBuffer, 0);
+        this.LogDebug("  # CAS IDs = {0}", numberOfCaSystemIds);
+        int offset = 4;
+        if (_propertySetGuid == NETUP_BDA_EXTENSION_PROPERTY_SET)
         {
-          this.LogDebug("    {0, -7} = 0x{1:x4}", i + 1, info.CaSystemIds[i]);
+          offset += 4;
+        }
+        for (int i = 0; i < numberOfCaSystemIds; i++)
+        {
+          this.LogDebug("    {0, -7} = 0x{1:x4}", i + 1, (ushort)Marshal.ReadInt16(_mmiBuffer, offset));
+          offset += 2;  // size of Int16
         }
       }
       else
       {
-        this.LogWarn("NetUP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogWarn("NetUP: result = failure, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
       }
 
       return hr;
@@ -412,27 +347,139 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
     /// </summary>
     /// <param name="ciState">State of the CI slot.</param>
     /// <returns>an HRESULT indicating whether the CI status was successfully retrieved</returns>
-    private int GetCiStatus(out CiStateInfo ciState)
+    private int GetCiStatus(out NetUpCiState ciState)
     {
-      ciState = new CiStateInfo();
+      ciState = NetUpCiState.Empty;
 
       // Use a local buffer here because this function is called from the MMI
       // polling thread as well as indirectly from the main TV service thread.
       IntPtr buffer = Marshal.AllocCoTaskMem(CI_STATE_INFO_SIZE);
-      for (int i = 0; i < CI_STATE_INFO_SIZE; i++)
+      try
       {
-        Marshal.WriteByte(buffer, i, 0);
+        for (int i = 0; i < CI_STATE_INFO_SIZE; i++)
+        {
+          Marshal.WriteByte(buffer, i, 0);
+        }
+        int returnedByteCount;
+        int hr = GetIoctl(NetUpIoControl.CiStatus, buffer, CI_STATE_INFO_SIZE, out returnedByteCount);
+        if (hr == (int)HResult.Severity.Success && returnedByteCount == _ciStateInfoSize)
+        {
+          // Have to marshal manually due to mismatch between the NetUP and
+          // DVBSky structures.
+          ciState = (NetUpCiState)Marshal.ReadInt32(buffer, 0);
+        }
+        return hr;
       }
-      NetUpCommand command = new NetUpCommand(NetUpIoControl.CiStatus, IntPtr.Zero, 0, buffer, CI_STATE_INFO_SIZE);
+      finally
+      {
+        Marshal.FreeCoTaskMem(buffer);
+      }
+    }
+
+    #region IOCTL
+
+    private int SetIoctl(NetUpIoControl controlCode, IntPtr inBuffer, int inBufferSize)
+    {
       int returnedByteCount;
-      int hr = command.Execute(_propertySetGuid, _propertySet, out returnedByteCount);
-      if (hr == (int)HResult.Severity.Success && returnedByteCount == CI_STATE_INFO_SIZE)
+      return ExecuteIoctl(controlCode, inBuffer, inBufferSize, IntPtr.Zero, 0, out returnedByteCount);
+    }
+
+    private int GetIoctl(NetUpIoControl controlCode, IntPtr outBuffer, int outBufferSize, out int returnedByteCount)
+    {
+      return ExecuteIoctl(controlCode, IntPtr.Zero, 0, outBuffer, outBufferSize, out returnedByteCount);
+    }
+
+    private int ExecuteIoctl(NetUpIoControl controlCode, IntPtr inBuffer, int inBufferSize, IntPtr outBuffer, int outBufferSize, out int returnedByteCount)
+    {
+      returnedByteCount = 0;
+      int hr = (int)HResult.Severity.Error;
+      if (_propertySet == null)
       {
-        ciState = (CiStateInfo)Marshal.PtrToStructure(buffer, typeof(CiStateInfo));
+        this.LogError("Twinhan: attempted to execute IOCTL when property set is NULL");
+        return hr;
       }
-      Marshal.FreeCoTaskMem(buffer);
+
+      // Originally NetUP's drivers required 32 bit pointers on 32 bit
+      // operating systems and 64 bit pointers on 64 bit operating systems.
+      // This was somewhat inconvenient as detecting whether you're running
+      // under WOW64 can be awkward. I contacted NetUP and asked whether it
+      // would be possible to expose a consistent interface. They kindly
+      // obliged and padded the command struct pointers in their driver for
+      // 32 bit operating systems. At the same time they also changed all
+      // DWORDs in structs to DWORD64, which was unnecessary.
+      // ...then I found out DVBSky use the same API but have modified it to
+      // use 32 bit pointers even under 64 bit operating systems. <doh!!!>
+      // I really don't want to maintain two similar versions of this API.
+      // Since NetUP's driver is open source we can patch and compile it as
+      // required.
+      // https://github.com/netup/netup-dvb-s2-ci-dual/
+      // mm1352000, 2013-07-20
+      if (_operatingSystemPointerSize == 0)
+      {
+        if (OSInfo.OSInfo.Is64BitOs() && _propertySetGuid == NETUP_BDA_EXTENSION_PROPERTY_SET)
+        {
+          _operatingSystemPointerSize = 8;
+        }
+        else
+        {
+          _operatingSystemPointerSize = 4;
+        }
+      }
+
+      IntPtr instanceBuffer = Marshal.AllocCoTaskMem(INSTANCE_SIZE);
+      IntPtr commandBuffer = Marshal.AllocCoTaskMem(COMMAND_SIZE);
+      IntPtr returnedByteCountBuffer = Marshal.AllocCoTaskMem(sizeof(int));
+      try
+      {
+        // Clear buffers. This is probably not actually needed, but better
+        // to be safe than sorry!
+        for (int i = 0; i < INSTANCE_SIZE; i++)
+        {
+          Marshal.WriteByte(instanceBuffer, i, 0);
+        }
+        Marshal.WriteInt32(returnedByteCountBuffer, 0);
+
+        if (_operatingSystemPointerSize == 8)
+        {
+          Marshal.WriteInt64(commandBuffer, 0, (long)controlCode);
+          Marshal.WriteInt64(commandBuffer, 8, inBuffer.ToInt64());
+          Marshal.WriteInt64(commandBuffer, 16, inBufferSize);
+          Marshal.WriteInt64(commandBuffer, 24, outBuffer.ToInt64());
+          Marshal.WriteInt64(commandBuffer, 32, outBufferSize);
+          Marshal.WriteInt64(commandBuffer, 40, returnedByteCountBuffer.ToInt64());
+        }
+        else
+        {
+          Marshal.WriteInt32(commandBuffer, 0, (int)controlCode);
+          Marshal.WriteInt32(commandBuffer, 4, inBuffer.ToInt32());
+          Marshal.WriteInt32(commandBuffer, 8, inBufferSize);
+          Marshal.WriteInt32(commandBuffer, 12, outBuffer.ToInt32());
+          Marshal.WriteInt32(commandBuffer, 16, outBufferSize);
+          Marshal.WriteInt32(commandBuffer, 20, returnedByteCountBuffer.ToInt32());
+          Marshal.WriteInt32(commandBuffer, 24, 0);
+          Marshal.WriteInt32(commandBuffer, 28, 0);
+          Marshal.WriteInt32(commandBuffer, 32, 0);
+          Marshal.WriteInt32(commandBuffer, 36, 0);
+          Marshal.WriteInt32(commandBuffer, 40, 0);
+          Marshal.WriteInt32(commandBuffer, 44, 0);
+        }
+
+        hr = _propertySet.Set(_propertySetGuid, 0, instanceBuffer, INSTANCE_SIZE, commandBuffer, COMMAND_SIZE);
+        if (hr == (int)HResult.Severity.Success)
+        {
+          returnedByteCount = Marshal.ReadInt32(returnedByteCountBuffer);
+        }
+      }
+      finally
+      {
+        Marshal.FreeCoTaskMem(instanceBuffer);
+        Marshal.FreeCoTaskMem(commandBuffer);
+        Marshal.FreeCoTaskMem(returnedByteCountBuffer);
+      }
       return hr;
     }
+
+    #endregion
 
     #region MMI handler thread
 
@@ -513,8 +560,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
       {
         while (!_mmiHandlerThreadStopEvent.WaitOne(MMI_HANDLER_THREAD_WAIT_TIME))
         {
-          CiStateInfo info;
-          int hr = GetCiStatus(out info);
+          int hr = GetCiStatus(out ciState);
           if (hr != (int)HResult.Severity.Success)
           {
             this.LogError("NetUP: failed to get CI status, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
@@ -522,12 +568,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
           }
 
           // Handle CI slot state changes.
-          ciState = info.CiState;
           if (ciState != prevCiState)
           {
             this.LogInfo("NetUP: CI state change");
-            this.LogInfo("  old state    = {0}", prevCiState.ToString());
-            this.LogInfo("  new state    = {0}", ciState.ToString());
+            this.LogInfo("  old state    = {0}", prevCiState);
+            this.LogInfo("  new state    = {0}", ciState);
 
             prevCiState = ciState;
             _isCamPresent = (ciState != NetUpCiState.Empty);
@@ -551,6 +596,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
         this.LogError(ex, "NetUP: MMI handler thread exception");
         return;
       }
+      this.LogDebug("NetUP: MMI handler thread stop polling");
     }
 
     /// <summary>
@@ -569,12 +615,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
           Marshal.WriteByte(_mmiBuffer, i, 0);
         }
 
-        NetUpCommand command = new NetUpCommand(NetUpIoControl.MmiGetMenu, IntPtr.Zero, 0, _mmiBuffer, MMI_MENU_SIZE);
         int returnedByteCount;
-        int hr = command.Execute(_propertySetGuid, _propertySet, out returnedByteCount);
-        if (hr != (int)HResult.Severity.Success || returnedByteCount != MMI_MENU_SIZE)
+        int hr = GetIoctl(NetUpIoControl.MmiGetMenu, _mmiBuffer, MMI_MENU_SIZE, out returnedByteCount);
+        if (hr != (int)HResult.Severity.Success || returnedByteCount != _mmiMenuSize)
         {
-          this.LogError("NetUP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          this.LogError("NetUP: result = failure, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
           return hr;
         }
         mmi = (MmiMenu)Marshal.PtrToStructure(_mmiBuffer, typeof(MmiMenu));
@@ -610,7 +655,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
           }
         }
       }
-      return 0; // success
+      return (int)HResult.Severity.Success;
     }
 
     /// <summary>
@@ -621,7 +666,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
     {
       this.LogDebug("NetUP: read enquiry");
 
-      MmiEnquiry mmi;
+      MmiEnquiry mmi = new MmiEnquiry();
+      string prompt = string.Empty;
       lock (_mmiLock)
       {
         for (int i = 0; i < MMI_ENQUIRY_SIZE; i++)
@@ -629,16 +675,28 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
           Marshal.WriteByte(_mmiBuffer, i, 0);
         }
 
-        NetUpCommand command = new NetUpCommand(NetUpIoControl.MmiGetEnquiry, IntPtr.Zero, 0, _mmiBuffer, MMI_ENQUIRY_SIZE);
         int returnedByteCount;
-        int hr = command.Execute(_propertySetGuid, _propertySet, out returnedByteCount);
-        if (hr != (int)HResult.Severity.Success || returnedByteCount != MMI_ENQUIRY_SIZE)
+        int hr = GetIoctl(NetUpIoControl.MmiGetEnquiry, _mmiBuffer, MMI_ENQUIRY_SIZE, out returnedByteCount);
+        if (hr != (int)HResult.Severity.Success || returnedByteCount != _mmiEnquirySize)
         {
-          this.LogError("NetUP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          this.LogError("NetUP: result = failure, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
           return hr;
         }
+
+        // Have to marshal manually due to mismatch between the NetUP and
+        // DVBSky structures.
         //Dump.DumpBinary(_mmiBuffer, MMI_ENQUIRY_SIZE);
-        mmi = (MmiEnquiry)Marshal.PtrToStructure(_mmiBuffer, typeof(MmiEnquiry));
+        mmi.IsBlindAnswer = (Marshal.ReadInt32(_mmiBuffer, 0) != 0);
+        mmi.ExpectedAnswerLength = Marshal.ReadByte(_mmiBuffer, 4);
+        mmi.Prompt = new byte[MAX_STRING_LENGTH];
+        if (_propertySetGuid == NETUP_BDA_EXTENSION_PROPERTY_SET)
+        {
+          prompt = DvbTextConverter.Convert(IntPtr.Add(_mmiBuffer, 5));
+        }
+        else
+        {
+          prompt = DvbTextConverter.Convert(IntPtr.Add(_mmiBuffer, 8));
+        }
       }
 
       lock (_caMenuCallBackLock)
@@ -648,7 +706,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
           this.LogDebug("NetUP: menu call backs are not set");
         }
 
-        string prompt = DvbTextConverter.Convert(mmi.Prompt);
         this.LogDebug("  prompt = {0}", prompt);
         this.LogDebug("  length = {0}", mmi.ExpectedAnswerLength);
         this.LogDebug("  blind  = {0}", mmi.IsBlindAnswer);
@@ -657,7 +714,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
           _caMenuCallBacks.OnCiRequest(mmi.IsBlindAnswer, mmi.ExpectedAnswerLength, prompt);
         }
       }
-      return 0; // success
+      return (int)HResult.Severity.Success;
     }
 
     #endregion
@@ -681,24 +738,25 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
     /// initialisation fails, the <see ref="ICustomDevice"/> instance should be disposed
     /// immediately.
     /// </summary>
-    /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
+    /// <param name="tunerExternalId">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
     /// <param name="context">Context required to initialise the interface.</param>
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
-    public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
+    public override bool Initialise(string tunerExternalId, CardType tunerType, object context)
     {
       this.LogDebug("NetUP: initialising");
 
-      IBaseFilter tunerFilter = context as IBaseFilter;
-      if (tunerFilter == null)
-      {
-        this.LogDebug("NetUP: tuner filter is null");
-        return false;
-      }
       if (_isNetUp)
       {
         this.LogWarn("NetUP: extension already initialised");
         return true;
+      }
+
+      IBaseFilter tunerFilter = context as IBaseFilter;
+      if (tunerFilter == null)
+      {
+        this.LogDebug("NetUP: context is not a filter");
+        return false;
       }
 
       IPin pin = DsFindPin.ByDirection(tunerFilter, PinDirection.Output, 0);
@@ -710,11 +768,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
         return false;
       }
 
-      // The NetUP property set is found on the tuner filter output pin. Since current NetUP tuners are
-      // implemented as a combined filter, the filter output pin is normally going to be unconnected when this
-      // function is called. That is a problem because a pin won't correctly report whether it supports a property
-      // set unless it is connected to a filter. If this filter pin is currently unconnected, we temporarily
-      // connect an infinite tee so that we can check if the pin supports the property set.
+      // The NetUP property set is found on the tuner filter output pin. Since current NetUP tuners
+      // are implemented as a combined filter, the filter output pin is normally going to be
+      // unconnected when this function is called. That is a problem because a pin won't correctly
+      // report whether it supports a property set unless it is connected to a filter. If this
+      // filter pin is currently unconnected, we temporarily connect an infinite tee so that we can
+      // check if the pin supports the property set.
       IPin connected;
       int hr = pin.ConnectedTo(out connected);
       if (hr == (int)HResult.Severity.Success && connected != null)
@@ -835,7 +894,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
     /// that any necessary hardware (such as a CI slot) is connected.
     /// </summary>
     /// <returns><c>true</c> if the interface is successfully opened, otherwise <c>false</c></returns>
-    public bool OpenInterface()
+    public bool OpenConditionalAccessInterface()
     {
       this.LogDebug("NetUP: open conditional access interface");
 
@@ -851,7 +910,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
       }
 
       _mmiBuffer = Marshal.AllocCoTaskMem(MMI_BUFFER_SIZE);
-      _isCamPresent = IsInterfaceReady();
+      _isCamPresent = IsConditionalAccessInterfaceReady();
       _isCaInterfaceOpen = true;
       StartMmiHandlerThread();
 
@@ -863,7 +922,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
     /// Close the conditional access interface.
     /// </summary>
     /// <returns><c>true</c> if the interface is successfully closed, otherwise <c>false</c></returns>
-    public bool CloseInterface()
+    public bool CloseConditionalAccessInterface()
     {
       this.LogDebug("NetUP: close conditional access interface");
 
@@ -887,7 +946,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
     /// <param name="resetTuner">This parameter will be set to <c>true</c> if the tuner must be reset
     ///   for the interface to be completely and successfully reset.</param>
     /// <returns><c>true</c> if the interface is successfully reset, otherwise <c>false</c></returns>
-    public bool ResetInterface(out bool resetTuner)
+    public bool ResetConditionalAccessInterface(out bool resetTuner)
     {
       this.LogDebug("NetUP: reset conditional access interface");
       resetTuner = false;
@@ -898,11 +957,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
         return false;
       }
 
-      bool success = CloseInterface();
+      bool success = CloseConditionalAccessInterface();
 
-      NetUpCommand command = new NetUpCommand(NetUpIoControl.CiReset, IntPtr.Zero, 0, IntPtr.Zero, 0);
-      int returnedByteCount;
-      int hr = command.Execute(_propertySetGuid, _propertySet, out returnedByteCount);
+      int hr = SetIoctl(NetUpIoControl.CiReset, IntPtr.Zero, 0);
       if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("NetUP: result = success");
@@ -913,14 +970,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
         success = false;
       }
 
-      return success && OpenInterface();
+      return success && OpenConditionalAccessInterface();
     }
 
     /// <summary>
     /// Determine whether the conditional access interface is ready to receive commands.
     /// </summary>
     /// <returns><c>true</c> if the interface is ready, otherwise <c>false</c></returns>
-    public bool IsInterfaceReady()
+    public bool IsConditionalAccessInterfaceReady()
     {
       this.LogDebug("NetUP: is conditional access interface ready");
 
@@ -930,18 +987,18 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
         return false;
       }
 
-      CiStateInfo info;
-      int hr = GetCiStatus(out info);
+      NetUpCiState ciState;
+      int hr = GetCiStatus(out ciState);
       if (hr != (int)HResult.Severity.Success)
       {
         this.LogError("NetUP: failed to get CI status, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
       }
-      this.LogDebug("NetUP: state = {0}", info.CiState.ToString());
+      this.LogDebug("NetUP: state = {0}", ciState);
 
       // We can only tell whether a CAM is present or not.
       bool isCamPresent = false;
-      if (info.CiState != NetUpCiState.Empty)
+      if (ciState != NetUpCiState.Empty)
       {
         isCamPresent = true;
       }
@@ -960,7 +1017,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
     /// <param name="pmt">The program map table for the service.</param>
     /// <param name="cat">The conditional access table for the service.</param>
     /// <returns><c>true</c> if the command is successfully sent, otherwise <c>false</c></returns>
-    public bool SendCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, Pmt pmt, Cat cat)
+    public bool SendConditionalAccessCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, Pmt pmt, Cat cat)
     {
       this.LogDebug("NetUP: send conditional access command, list action = {0}, command = {1}", listAction, command);
 
@@ -999,9 +1056,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
         Marshal.WriteByte(buffer, i, rawPmt[i]);
       }
       //Dump.DumpBinary(buffer, rawPmt.Count);
-      NetUpCommand ncommand = new NetUpCommand(code, buffer, rawPmt.Count, IntPtr.Zero, 0);
-      int returnedByteCount;
-      int hr = ncommand.Execute(_propertySetGuid, _propertySet, out returnedByteCount);
+      int hr = SetIoctl(code, buffer, rawPmt.Count);
       Marshal.FreeCoTaskMem(buffer);
       if (hr == (int)HResult.Severity.Success)
       {
@@ -1056,9 +1111,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
         ReadApplicationInformation();
         ReadConditionalAccessInformation();
 
-        NetUpCommand command = new NetUpCommand(NetUpIoControl.MmiEnterMenu, IntPtr.Zero, 0, IntPtr.Zero, 0);
-        int returnedByteCount;
-        hr = command.Execute(_propertySetGuid, _propertySet, out returnedByteCount);
+        hr = SetIoctl(NetUpIoControl.MmiEnterMenu, IntPtr.Zero, 0);
       }
       if (hr == (int)HResult.Severity.Success)
       {
@@ -1093,9 +1146,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
       int hr;
       lock (_mmiLock)
       {
-        NetUpCommand command = new NetUpCommand(NetUpIoControl.MmiClose, IntPtr.Zero, 0, IntPtr.Zero, 0);
-        int returnedByteCount;
-        hr = command.Execute(_propertySetGuid, _propertySet, out returnedByteCount);
+        hr = SetIoctl(NetUpIoControl.MmiClose, IntPtr.Zero, 0);
       }
       if (hr == (int)HResult.Severity.Success)
       {
@@ -1132,9 +1183,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
       lock (_mmiLock)
       {
         NetUpIoControl code = (NetUpIoControl)((uint)NetUpIoControl.MmiAnswerMenu | choice << 8);
-        NetUpCommand command = new NetUpCommand(code, IntPtr.Zero, 0, IntPtr.Zero, 0);
-        int returnedByteCount;
-        hr = command.Execute(_propertySetGuid, _propertySet, out returnedByteCount);
+        hr = SetIoctl(code, IntPtr.Zero, 0);
       }
       if (hr == (int)HResult.Severity.Success)
       {
@@ -1194,9 +1243,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
         Marshal.StructureToPtr(mmi, _mmiBuffer, true);
         //Dump.DumpBinary(_mmiBuffer, MMI_ANSWER_SIZE);
         NetUpIoControl code = (NetUpIoControl)((uint)NetUpIoControl.MmiPutAnswer | ((byte)responseType << 8));
-        NetUpCommand command = new NetUpCommand(code, _mmiBuffer, MMI_ANSWER_SIZE, IntPtr.Zero, 0);
-        int returnedByteCount;
-        hr = command.Execute(_propertySetGuid, _propertySet, out returnedByteCount);
+        hr = SetIoctl(code, _mmiBuffer, MMI_ANSWER_SIZE);
       }
       if (hr == (int)HResult.Severity.Success)
       {
@@ -1234,7 +1281,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
     /// </summary>
     /// <param name="command">The command to send.</param>
     /// <returns><c>true</c> if the command is sent successfully, otherwise <c>false</c></returns>
-    public virtual bool SendCommand(byte[] command)
+    public virtual bool SendDiseqcCommand(byte[] command)
     {
       this.LogDebug("NetUP: send DiSEqC command");
 
@@ -1257,9 +1304,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
       Marshal.Copy(command, 0, _generalBuffer, command.Length);
       //Dump.DumpBinary(_generalBuffer, command.Length);
 
-      NetUpCommand ncommand = new NetUpCommand(NetUpIoControl.Diseqc, _generalBuffer, command.Length, IntPtr.Zero, 0);
-      int returnedByteCount;
-      int hr = ncommand.Execute(_propertySetGuid, _propertySet, out returnedByteCount);
+      int hr = SetIoctl(NetUpIoControl.Diseqc, _generalBuffer, command.Length);
       if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("NetUP: result = success");
@@ -1276,7 +1321,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
     /// </summary>
     /// <param name="response">The response (or command).</param>
     /// <returns><c>true</c> if the response is read successfully, otherwise <c>false</c></returns>
-    public virtual bool ReadResponse(out byte[] response)
+    public virtual bool ReadDiseqcResponse(out byte[] response)
     {
       // Not supported.
       response = null;
@@ -1292,7 +1337,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
     /// </summary>
     public override void Dispose()
     {
-      CloseInterface();
+      if (_isNetUp)
+      {
+        CloseConditionalAccessInterface();
+      }
       if (_generalBuffer != IntPtr.Zero)
       {
         Marshal.FreeCoTaskMem(_generalBuffer);

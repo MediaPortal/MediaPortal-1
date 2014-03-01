@@ -26,7 +26,6 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using DirectShowLib;
 using DirectShowLib.BDA;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
@@ -34,15 +33,17 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
 {
   /// <summary>
-  /// A class for handling conditional access and DiSEqC for Turbosight tuners. Note that some Turbosight drivers
-  /// seem to still support the original Conexant, NXP and Cyprus interfaces/structures. However, it is
-  /// simpler and definitely more future-proof to stick with the information in the published SDK.
+  /// A class for handling conditional access, DiSEqC and remote controls for Turbosight tuners.
+  /// Note that some Turbosight drivers seem to still support the original Conexant, NXP and Cyprus
+  /// interfaces/structures. However, it is simpler and definitely more future-proof to stick with
+  /// the information in the published SDK.
   /// </summary>
-  public class Turbosight : BaseCustomDevice, IPowerDevice, IConditionalAccessProvider, IConditionalAccessMenuActions, IDiseqcDevice
+  public class Turbosight : BaseCustomDevice, IPowerDevice, IConditionalAccessProvider, IConditionalAccessMenuActions, IDiseqcDevice, IRemoteControlListener
   {
     #region enums
 
@@ -57,7 +58,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
     }
 
     // USB (QBOX) only.
-    private enum UsbBdaExtensionProperty
+    private enum BdaExtensionPropertyUsb
     {
       Reserved = 0,
       Ir = 1,             // Property for retrieving IR codes from the IR receiver.
@@ -133,60 +134,66 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
       //SetDateTime = 0x12          // PC <--
     }
 
-    #region IR remote
-
-    // PCIe/PCI only.
-    private enum TbsIrProperty
-    {
-      Codes = 0,
-      ReceiverCommand
-    }
-
-    private enum TbsIrCode : byte
+    // Confirmed with the remote pictured here:
+    // http://www.tbsdtv.com/products/images/tbs6981/tbs6981_4.jpg
+    private enum TbsBigRemoteCode : byte
     {
       Recall = 0x80,
-      Up1 = 0x81,
-      Right1 = 0x82,
-      Record = 0x83,
-      Power = 0x84,
-      Three = 0x85,
-      Two = 0x86,
-      One = 0x87,
-      Down1 = 0x88,
-      Six = 0x89,
-      Five = 0x8a,
-      Four = 0x8b,
-      Left1 = 0x8c,
-      Nine = 0x8d,
-      Eight = 0x8e,
-      Seven = 0x8f,
-      Left2 = 0x90,
-      Up2 = 0x91,
-      Zero = 0x92,
-      Right2 = 0x93,
-      Mute = 0x94,
-      Tab = 0x95,
-      Down2 = 0x96,
-      Epg = 0x97,
-      Pause = 0x98,
-      Ok = 0x99,
-      Snapshot = 0x9a,
-      Info = 0x9c,
-      Play = 0x9b,
-      FullScreen = 0x9d,
-      Menu = 0x9e,
-      Exit = 0x9f
+      Up,
+      Right,
+      Record,
+      Power,
+      Three,
+      Two,
+      One,
+      Down,
+      Six,
+      Five,
+      Four,
+      VolumeDown,
+      Nine,
+      Eight,
+      Seven,
+      Left, // 0x90
+      ChannelDown,
+      Zero,
+      VolumeUp,
+      Mute,
+      Favourites,  // green
+      ChannelUp,
+      Subtitles,
+      Pause,
+      Okay,
+      Snapshot,
+      Mode,
+      Epg,
+      Zoom,        // yellow
+      Menu,        // red
+      Exit         // blue
     }
 
-    // PCIe/PCI only.
-    private enum TbsIrReceiverCommand : byte
+    // Unverified.
+    private enum TbsSmallRemoteCode : byte
     {
-      Start = 1,
-      Stop,
-      Flush
-    }
+      Mute = 0x01,
+      Left,
+      Down,
+      One,
+      Two,
+      Three,
+      Four,
+      Five,
+      Six,
+      Seven,  // 0x0a
 
-    #endregion
+      FullScreen = 0x0c,
+      Okay = 0x0e,
+      Exit = 0x12,
+      Right = 0x1a,
+      Eight = 0x1b,
+      Up = 0x1e,
+      Nine = 0x1f
+    }
 
     #endregion
 
@@ -220,14 +227,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
       public TbsDvbsStandard DvbsStandard;
       public BinaryConvolutionCodeRate InnerFecRate;
       public ModulationType ModulationType;
-    }
-
-    // PCIe/PCI only.
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    private struct IrCommand
-    {
-      public uint Address;
-      public uint Command;
     }
 
     // USB (QBOX) only.
@@ -316,17 +315,20 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
     #region constants
 
     private static readonly Guid BDA_EXTENSION_PROPERTY_SET = new Guid(0xfaa8f3e5, 0x31d4, 0x4e41, 0x88, 0xef, 0xd9, 0xeb, 0x71, 0x6f, 0x6e, 0xc9);
-    private static readonly Guid USB_BDA_EXTENSION_PROPERTY_SET = new Guid(0xc6efe5eb, 0x855a, 0x4f1b, 0xb7, 0xaa, 0x87, 0xb5, 0xe1, 0xdc, 0x41, 0x13);
-    private static readonly Guid IR_PROPERTY_SET = new Guid(0xb51c4994, 0x0054, 0x4749, 0x82, 0x43, 0x02, 0x9a, 0x66, 0x86, 0x36, 0x36);
+    private static readonly Guid BDA_EXTENSION_PROPERTY_SET_USB = new Guid(0xc6efe5eb, 0x855a, 0x4f1b, 0xb7, 0xaa, 0x87, 0xb5, 0xe1, 0xdc, 0x41, 0x13);
 
     private static readonly int TBS_ACCESS_PARAMS_SIZE = Marshal.SizeOf(typeof(TbsAccessParams));   // 536
     private static readonly int NBC_TUNING_PARAMS_SIZE = Marshal.SizeOf(typeof(NbcTuningParams));   // 20
+    private static readonly int USB_IR_COMMAND_SIZE = Marshal.SizeOf(typeof(UsbIrCommand));         // 288
     private const int MAX_DISEQC_MESSAGE_LENGTH = 128;
 
     private const int MMI_MESSAGE_BUFFER_SIZE = 512;
     private const int MMI_RESPONSE_BUFFER_SIZE = 2048;
 
     private static readonly int GENERAL_BUFFER_SIZE = Math.Max(TBS_ACCESS_PARAMS_SIZE, NBC_TUNING_PARAMS_SIZE);
+
+    private const byte MIN_BIG_REMOTE_CODE = 0x80;
+    private const int REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME = 100;     // unit = ms
     private const int MMI_HANDLER_THREAD_WAIT_TIME = 2000;    // unit = ms
 
     #endregion
@@ -340,6 +342,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
     private int _apiIndex = 0;
     private bool _dllLoaded = false;
     private IntPtr _libHandle = IntPtr.Zero;
+    private IntPtr _ciHandle = IntPtr.Zero;
 
     // Delegate instances for each API DLL function.
     private On_Start_CI _onStartCi = null;
@@ -353,10 +356,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
     private IntPtr _mmiResponseBuffer = IntPtr.Zero;
     private IntPtr _pmtBuffer = IntPtr.Zero;
 
-    /// A buffer for general use in synchronised methods.
+    // A buffer for general use in synchronised methods.
     private IntPtr _generalBuffer = IntPtr.Zero;
-
-    private IntPtr _ciHandle = IntPtr.Zero;
 
     private IBaseFilter _tunerFilter = null;
     private string _tunerFilterName = null;
@@ -379,6 +380,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
 
     // This is a first-in-first-out queue of messages that are ready to be passed to the CAM.
     private List<MmiMessage> _mmiMessageQueue = null;
+
+    private bool _isRemoteControlInterfaceOpen = false;
+    private IntPtr _remoteControlBuffer = IntPtr.Zero;
+    private Thread _remoteControlListenerThread = null;
+    private AutoResetEvent _remoteControlListenerThreadStopEvent = null;
 
     #endregion
 
@@ -409,7 +415,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
           return false;
         }
       }
-      _libHandle = NativeMethods.LoadLibrary(targetFilename);
+      _libHandle = NativeMethods.LoadLibraryA(targetFilename);
       if (_libHandle == IntPtr.Zero)
       {
         this.LogError("Turbosight: failed to load TBS CI API DLL");
@@ -768,6 +774,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
         this.LogError(ex, "Turbosight: MMI handler thread exception");
         return;
       }
+      this.LogDebug("Turbosight: MMI handler thread stop polling");
     }
 
     private bool HandleApplicationInformation(byte[] content)
@@ -781,8 +788,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
       }
       MmiApplicationType type = (MmiApplicationType)content[0];
       this.LogDebug("  type         = {0}", type);
-      this.LogDebug("  manufacturer = 0x{0:x}{1:x}", content[1], content[2]);
-      this.LogDebug("  code         = 0x{0:x}{1:x}", content[3], content[4]);
+      this.LogDebug("  manufacturer = 0x{0:x2}{1:x2}", content[1], content[2]);
+      this.LogDebug("  code         = 0x{0:x2}{1:x2}", content[3], content[4]);
       this.LogDebug("  menu title   = {0}", DvbTextConverter.Convert(content, length - 5, 5));
       return true;
     }
@@ -906,6 +913,118 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
 
     #endregion
 
+    #region remote control listener thread
+
+    /// <summary>
+    /// Start a thread to listen for remote control commands.
+    /// </summary>
+    private void StartRemoteControlListenerThread()
+    {
+      // Don't start a thread if the interface has not been opened.
+      if (!_isRemoteControlInterfaceOpen)
+      {
+        return;
+      }
+
+      // Kill the existing thread if it is in "zombie" state.
+      if (_remoteControlListenerThread != null && !_remoteControlListenerThread.IsAlive)
+      {
+        StopRemoteControlListenerThread();
+      }
+      if (_remoteControlListenerThread == null)
+      {
+        this.LogDebug("Turbosight: starting new remote control listener thread");
+        _remoteControlListenerThreadStopEvent = new AutoResetEvent(false);
+        _remoteControlListenerThread = new Thread(new ThreadStart(RemoteControlListener));
+        _remoteControlListenerThread.Name = "Turbosight remote control listener";
+        _remoteControlListenerThread.IsBackground = true;
+        _remoteControlListenerThread.Priority = ThreadPriority.Lowest;
+        _remoteControlListenerThread.Start();
+      }
+    }
+
+    /// <summary>
+    /// Stop the thread that listens for remote control commands.
+    /// </summary>
+    private void StopRemoteControlListenerThread()
+    {
+      if (_remoteControlListenerThread != null)
+      {
+        if (!_remoteControlListenerThread.IsAlive)
+        {
+          this.LogWarn("Turbosight: aborting old remote control listener thread");
+          _remoteControlListenerThread.Abort();
+        }
+        else
+        {
+          _remoteControlListenerThreadStopEvent.Set();
+          if (!_remoteControlListenerThread.Join(REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME * 2))
+          {
+            this.LogWarn("Turbosight: failed to join remote control listener thread, aborting thread");
+            _remoteControlListenerThread.Abort();
+          }
+        }
+        _remoteControlListenerThread = null;
+        if (_remoteControlListenerThreadStopEvent != null)
+        {
+          _remoteControlListenerThreadStopEvent.Close();
+          _remoteControlListenerThreadStopEvent = null;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Thread function for receiving remote control commands.
+    /// </summary>
+    private void RemoteControlListener()
+    {
+      this.LogDebug("Turbosight: remote control listener thread start polling");
+      int hr;
+      int returnedByteCount;
+      try
+      {
+        while (!_remoteControlListenerThreadStopEvent.WaitOne(REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME))
+        {
+          hr = _propertySet.Get(BDA_EXTENSION_PROPERTY_SET_USB, (int)BdaExtensionPropertyUsb.Ir,
+            _remoteControlBuffer, USB_IR_COMMAND_SIZE,
+            _remoteControlBuffer, USB_IR_COMMAND_SIZE,
+            out returnedByteCount
+          );
+          if (hr != (int)HResult.Severity.Success || returnedByteCount != USB_IR_COMMAND_SIZE)
+          {
+            this.LogError("Turbosight: failed to read remote code, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+          }
+          else
+          {
+            UsbIrCommand command = (UsbIrCommand)Marshal.PtrToStructure(_remoteControlBuffer, typeof(UsbIrCommand));
+            byte code = command.Codes[0];
+            if (code != 0xff)
+            {
+              if (code < MIN_BIG_REMOTE_CODE)
+              {
+                this.LogDebug("Turbosight: small remote control key press = {0}", (TbsSmallRemoteCode)code);
+              }
+              else
+              {
+                this.LogDebug("Turbosight: big remote control key press = {0}", (TbsBigRemoteCode)code);
+              }
+            }
+          }
+        }
+      }
+      catch (ThreadAbortException)
+      {
+      }
+      catch (Exception ex)
+      {
+        this.LogError(ex, "Turbosight: remote control listener thread exception");
+        return;
+      }
+      this.LogDebug("Turbosight: remote control listener thread stop polling");
+    }
+
+    #endregion
+
     #region ICustomDevice members
 
     /// <summary>
@@ -940,24 +1059,25 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
     /// initialisation fails, the <see ref="ICustomDevice"/> instance should be disposed
     /// immediately.
     /// </summary>
-    /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
+    /// <param name="tunerExternalId">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
     /// <param name="context">Context required to initialise the interface.</param>
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
-    public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
+    public override bool Initialise(string tunerExternalId, CardType tunerType, object context)
     {
       this.LogDebug("Turbosight: initialising");
 
-      IBaseFilter tunerFilter = context as IBaseFilter;
-      if (tunerFilter == null)
-      {
-        this.LogDebug("Turbosight: tuner filter is null");
-        return false;
-      }
       if (_isTurbosight)
       {
         this.LogWarn("Turbosight: extension already initialised");
         return true;
+      }
+
+      IBaseFilter tunerFilter = context as IBaseFilter;
+      if (tunerFilter == null)
+      {
+        this.LogDebug("Turbosight: context is not a filter");
+        return false;
       }
 
       // Check the tuner filter name first. Other manufacturers that do not support these interfaces
@@ -983,15 +1103,15 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
       _propertySet = tunerFilter as IKsPropertySet;
       if (_propertySet != null)
       {
-        hr = _propertySet.QuerySupported(USB_BDA_EXTENSION_PROPERTY_SET, (int)UsbBdaExtensionProperty.TbsAccess, out support);
+        hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET_USB, (int)BdaExtensionPropertyUsb.TbsAccess, out support);
         if (hr == (int)HResult.Severity.Success && support != 0)
         {
           // Okay, we've got a USB tuner here.
-          this.LogInfo("Turbosight: extension supported (USB interface)");
+          this.LogInfo("Turbosight: extension supported, USB interface");
           _isTurbosight = true;
           _isUsb = true;
-          _propertySetGuid = USB_BDA_EXTENSION_PROPERTY_SET;
-          _tbsAccessProperty = (int)UsbBdaExtensionProperty.TbsAccess;
+          _propertySetGuid = BDA_EXTENSION_PROPERTY_SET_USB;
+          _tbsAccessProperty = (int)BdaExtensionPropertyUsb.TbsAccess;
         }
       }
 
@@ -1006,7 +1126,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
           if (hr == (int)HResult.Severity.Success && support != 0)
           {
             // Okay, we've got a PCIe or PCI tuner here.
-            this.LogInfo("Turbosight: extension supported (PCIe/PCI interface)");
+            this.LogInfo("Turbosight: extension supported, PCIe/PCI interface");
             _isTurbosight = true;
             _isUsb = false;
             _propertySetGuid = BDA_EXTENSION_PROPERTY_SET;
@@ -1209,7 +1329,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
     /// that any necessary hardware (such as a CI slot) is connected.
     /// </summary>
     /// <returns><c>true</c> if the interface is successfully opened, otherwise <c>false</c></returns>
-    public bool OpenInterface()
+    public bool OpenConditionalAccessInterface()
     {
       this.LogDebug("Turbosight: open conditional access interface");
 
@@ -1229,7 +1349,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
       int ciAccessProperty = (int)BdaExtensionProperty.CiAccess;
       if (_isUsb)
       {
-        ciAccessProperty = (int)UsbBdaExtensionProperty.CiAccess;
+        ciAccessProperty = (int)BdaExtensionPropertyUsb.CiAccess;
       }
       KSPropertySupport support;
       int hr = _propertySet.QuerySupported(_propertySetGuid, ciAccessProperty, out support);
@@ -1272,7 +1392,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
     /// Close the conditional access interface.
     /// </summary>
     /// <returns><c>true</c> if the interface is successfully closed, otherwise <c>false</c></returns>
-    public bool CloseInterface()
+    public bool CloseConditionalAccessInterface()
     {
       this.LogDebug("Turbosight: close conditional access interface");
 
@@ -1320,21 +1440,21 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
     /// <param name="resetTuner">This parameter will be set to <c>true</c> if the tuner must be reset
     ///   for the interface to be completely and successfully reset.</param>
     /// <returns><c>true</c> if the interface is successfully reset, otherwise <c>false</c></returns>
-    public bool ResetInterface(out bool resetTuner)
+    public bool ResetConditionalAccessInterface(out bool resetTuner)
     {
       this.LogDebug("Turbosight: reset conditional access interface");
 
       // TBS have confirmed that it is not currently possible to call On_Start_CI() multiple times on a
       // filter instance ***even if On_Exit_CI() is called***. The graph must be rebuilt to reset the CI.
       resetTuner = true;
-      return CloseInterface() && OpenInterface();
+      return CloseConditionalAccessInterface() && OpenConditionalAccessInterface();
     }
 
     /// <summary>
     /// Determine whether the conditional access interface is ready to receive commands.
     /// </summary>
     /// <returns><c>true</c> if the interface is ready, otherwise <c>false</c></returns>
-    public bool IsInterfaceReady()
+    public bool IsConditionalAccessInterfaceReady()
     {
       this.LogDebug("Turbosight: is conditional access interface ready");
       if (!_isCaInterfaceOpen)
@@ -1360,7 +1480,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
     /// <param name="pmt">The program map table for the service.</param>
     /// <param name="cat">The conditional access table for the service.</param>
     /// <returns><c>true</c> if the command is successfully sent, otherwise <c>false</c></returns>
-    public bool SendCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, Pmt pmt, Cat cat)
+    public bool SendConditionalAccessCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, Pmt pmt, Cat cat)
     {
       this.LogDebug("Turbosight: send conditional access command, list action = {0}, command = {1}", listAction, command);
 
@@ -1657,7 +1777,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
     /// </summary>
     /// <param name="command">The command to send.</param>
     /// <returns><c>true</c> if the command is sent successfully, otherwise <c>false</c></returns>
-    public bool SendCommand(byte[] command)
+    public bool SendDiseqcCommand(byte[] command)
     {
       this.LogDebug("Turbosight: send DiSEqC command");
 
@@ -1706,7 +1826,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
     /// </summary>
     /// <param name="response">The response (or command).</param>
     /// <returns><c>true</c> if the response is read successfully, otherwise <c>false</c></returns>
-    public bool ReadResponse(out byte[] response)
+    public bool ReadDiseqcResponse(out byte[] response)
     {
       this.LogDebug("Turbosight: read DiSEqC response");
       response = null;
@@ -1738,12 +1858,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
 
       Dump.DumpBinary(_generalBuffer, returnedByteCount);
 
-      if (returnedByteCount != TBS_ACCESS_PARAMS_SIZE)
-      {
-        this.LogError("Turbosight: unexpected number of DiSEqC response bytes ({0}) returned", returnedByteCount);
-        return false;
-      }
-
       accessParams = (TbsAccessParams)Marshal.PtrToStructure(_generalBuffer, typeof(TbsAccessParams));
       if (accessParams.DiseqcReceiveMessageLength > MAX_DISEQC_MESSAGE_LENGTH)
       {
@@ -1758,6 +1872,66 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
 
     #endregion
 
+    #region IRemoteControlListener members
+
+    /// <summary>
+    /// Open the remote control interface and start listening for commands.
+    /// </summary>
+    /// <returns><c>true</c> if the interface is successfully opened, otherwise <c>false</c></returns>
+    public bool OpenRemoteControlInterface()
+    {
+      this.LogDebug("Turbosight: open remote control interface");
+
+      if (!_isTurbosight)
+      {
+        this.LogWarn("Turbosight: not initialised or interface not supported");
+        return false;
+      }
+      if (_isRemoteControlInterfaceOpen)
+      {
+        this.LogWarn("Turbosight: interface is already open");
+        return true;
+      }
+
+      KSPropertySupport support;
+      int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET_USB, (int)BdaExtensionPropertyUsb.Ir, out support);
+      if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Get))
+      {
+        // PCI and PCIe tuners based on Conexant or NXP chipsets won't support this property set.
+        this.LogDebug("Turbosight: property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        return false;
+      }
+
+      _remoteControlBuffer = Marshal.AllocCoTaskMem(USB_IR_COMMAND_SIZE);
+      _isRemoteControlInterfaceOpen = true;
+      StartRemoteControlListenerThread();
+
+      this.LogDebug("Turbosight: result = success");
+      return true;
+    }
+
+    /// <summary>
+    /// Close the remote control interface and stop listening for commands.
+    /// </summary>
+    /// <returns><c>true</c> if the interface is successfully closed, otherwise <c>false</c></returns>
+    public bool CloseRemoteControlInterface()
+    {
+      this.LogDebug("Turbosight: close remote control interface");
+
+      StopRemoteControlListenerThread();
+      if (_remoteControlBuffer != IntPtr.Zero)
+      {
+        Marshal.FreeCoTaskMem(_remoteControlBuffer);
+        _remoteControlBuffer = IntPtr.Zero;
+      }
+
+      _isRemoteControlInterfaceOpen = false;
+      this.LogDebug("Turbosight: result = success");
+      return true;
+    }
+
+    #endregion
+
     #region IDisposable member
 
     /// <summary>
@@ -1765,7 +1939,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
     /// </summary>
     public override void Dispose()
     {
-      CloseInterface();
+      if (_isTurbosight)
+      {
+        CloseRemoteControlInterface();
+        CloseConditionalAccessInterface();
+      }
       if (_generalBuffer != IntPtr.Zero)
       {
         Marshal.FreeCoTaskMem(_generalBuffer);

@@ -18,12 +18,9 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
-using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 
 namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
 {

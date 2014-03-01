@@ -216,8 +216,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
       this.LogDebug("  type         = {0}", appInfo.ApplicationType);
       // Note: current drivers seem to have a bug that causes only the first byte in the manufacturer and code
       // fields to be available.
-      this.LogDebug("  manufacturer = 0x{0:x}", appInfo.Manufacturer);
-      this.LogDebug("  code         = 0x{0:x}", appInfo.Code);
+      this.LogDebug("  manufacturer = 0x{0:x4}", appInfo.Manufacturer);
+      this.LogDebug("  code         = 0x{0:x4}", appInfo.Code);
       this.LogDebug("  menu title   = {0}", DvbTextConverter.Convert(appInfo.MenuTitle));
 
       // Receiving application information indicates that the CAM is ready for interaction.
@@ -278,23 +278,24 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
     /// initialisation fails, the <see ref="ICustomDevice"/> instance should be disposed
     /// immediately.
     /// </summary>
-    /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
+    /// <param name="tunerExternalId">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
     /// <param name="context">Context required to initialise the interface.</param>
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
-    public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
+    public override bool Initialise(string tunerExternalId, CardType tunerType, object context)
     {
       this.LogDebug("SmarDTV USB CI: initialising");
 
-      if (string.IsNullOrEmpty(tunerExternalIdentifier))
-      {
-        this.LogDebug("SmarDTV USB CI: tuner external identifier is not set");
-        return false;
-      }
       if (_isSmarDtvUsbCi)
       {
         this.LogWarn("SmarDTV USB CI: extension already initialised");
         return true;
+      }
+
+      if (string.IsNullOrEmpty(tunerExternalId))
+      {
+        this.LogDebug("SmarDTV USB CI: tuner external identifier is not set");
+        return false;
       }
 
       // A machine may only have one instance of each OEM product installed - this is a driver limitation. It
@@ -302,10 +303,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
       // products (we don't explicitly prevent this). The TV Server plugin allows each OEM CI product to be
       // linked to a single tuner. Here we need to know whether this tuner (ie. the one referred to by the
       // external identifier) is currently linked to any of the products.
-      Card tuner = CardManagement.GetCardByDevicePath(tunerExternalIdentifier, CardIncludeRelationEnum.None);
+      Card tuner = CardManagement.GetCardByDevicePath(tunerExternalId, CardIncludeRelationEnum.None);
       if (tuner == null)
       {
-        this.LogError("SmarDTV USB CI: tuner external identifier {0} not found in database", tunerExternalIdentifier);
+        this.LogError("SmarDTV USB CI: tuner external identifier {0} not found in database", tunerExternalId);
         return false;
       }
 
@@ -537,7 +538,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
     /// that any necessary hardware (such as a CI slot) is connected.
     /// </summary>
     /// <returns><c>true</c> if the interface is successfully opened, otherwise <c>false</c></returns>
-    public bool OpenInterface()
+    public bool OpenConditionalAccessInterface()
     {
       this.LogDebug("SmarDTV USB CI: open conditional access interface");
 
@@ -609,7 +610,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
     /// Close the conditional access interface.
     /// </summary>
     /// <returns><c>true</c> if the interface is successfully closed, otherwise <c>false</c></returns>
-    public bool CloseInterface()
+    public bool CloseConditionalAccessInterface()
     {
       this.LogDebug("SmarDTV USB CI: close conditional access interface");
 
@@ -632,7 +633,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
     /// <param name="resetTuner">This parameter will be set to <c>true</c> if the tuner must be reset
     ///   for the interface to be completely and successfully reset.</param>
     /// <returns><c>true</c> if the interface is successfully reset, otherwise <c>false</c></returns>
-    public bool ResetInterface(out bool resetTuner)
+    public bool ResetConditionalAccessInterface(out bool resetTuner)
     {
       resetTuner = true;
       return true;
@@ -642,7 +643,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
     /// Determine whether the conditional access interface is ready to receive commands.
     /// </summary>
     /// <returns><c>true</c> if the interface is ready, otherwise <c>false</c></returns>
-    public bool IsInterfaceReady()
+    public bool IsConditionalAccessInterfaceReady()
     {
       this.LogDebug("SmarDTV USB CI: is conditional access interface ready");
       if (!_isCaInterfaceOpen)
@@ -667,7 +668,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
     /// <param name="pmt">The program map table for the service.</param>
     /// <param name="cat">The conditional access table for the service.</param>
     /// <returns><c>true</c> if the command is successfully sent, otherwise <c>false</c></returns>
-    public bool SendCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, Pmt pmt, Cat cat)
+    public bool SendConditionalAccessCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, Pmt pmt, Cat cat)
     {
       this.LogDebug("SmarDTV USB CI: send conditional access command, list action = {0}, command = {1}", listAction, command);
 
@@ -873,7 +874,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
     /// </summary>
     public override void Dispose()
     {
-      CloseInterface();
+      if (_isSmarDtvUsbCi)
+      {
+        CloseConditionalAccessInterface();
+      }
       if (_graph != null)
       {
         _graph.RemoveFilter(_ciFilter);
