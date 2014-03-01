@@ -26,8 +26,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
   /// <summary>
   /// TsWriter CAT grabber call back interface.
   /// </summary>
-  [ComVisible(false), ComImport,
-    Guid("38536ab6-7a41-404f-917F-c47dd8b639c7"),
+  [Guid("38536ab6-7a41-404f-917F-c47dd8b639c7"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface ICaCallBack
   {
@@ -42,8 +41,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
   /// <summary>
   /// TsWriter CAT grabber interface.
   /// </summary>
-  [ComVisible(false), ComImport,
-    Guid("f9aa3910-7818-452a-94d1-72e039df50ef"),
+  [Guid("f9aa3910-7818-452a-94d1-72e039df50ef"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface ITsCaGrabber
   {

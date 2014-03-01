@@ -78,7 +78,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
                 {
                   if (pidSet.Add(pid))
                   {
-                    this.LogDebug("  {0, -2} = {1} (0x{1:x})", count++, pid);
+                    this.LogDebug("  {0, -2} = {1}", count++, pid);
                   }
                 }
               }
@@ -104,6 +104,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     ///   subchannel has changed, or <c>last</c> if the subchannel is being disposed.</param>
     protected void UpdateDecryptList(int subChannelId, CaPmtListManagementAction updateAction)
     {
+      if (!_useConditionalAccessInterface)
+      {
+        this.LogWarn("Mpeg2TunerController: CA disabled");
+        return;
+      }
+      if (_caProviders.Count == 0)
+      {
+        this.LogWarn("Mpeg2TunerController: no CA providers identified");
+        return;
+      }
       this.LogDebug("Mpeg2TunerController: subchannel {0} update decrypt list, mode = {1}, update action = {2}", subChannelId, _multiChannelDecryptMode, updateAction);
 
       if (_mapSubChannels == null || _mapSubChannels.Count == 0 || !_mapSubChannels.ContainsKey(subChannelId))
@@ -218,7 +228,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       // for "changes" mode.
       if (_decryptLimit > 0 && distinctServices.Count > _decryptLimit)
       {
-        this.LogDebug("Mpeg2TunerController: decrypt limit exceeded");
+        this.LogError("Mpeg2TunerController: decrypt limit exceeded");
         return;
       }
       if (distinctServices.Count == 0)
@@ -227,8 +237,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         return;
       }
 
-      // Identify the conditional access interface(s) and send the service list.
-      bool foundCaProvider = false;
+      // Send the service list or changes to the CA providers.
       for (int attempt = 1; attempt <= _decryptFailureRetryCount + 1; attempt++)
       {
         ThrowExceptionIfTuneCancelled();
@@ -237,18 +246,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           this.LogDebug("Mpeg2TunerController: attempt {0}...", attempt);
         }
 
-        foreach (ICustomDevice deviceInterface in _customDeviceInterfaces)
+        foreach (IConditionalAccessProvider caProvider in _caProviders)
         {
-          IConditionalAccessProvider caProvider = deviceInterface as IConditionalAccessProvider;
-          if (caProvider == null)
-          {
-            continue;
-          }
-
           this.LogDebug("Mpeg2TunerController: CA provider {0}...", caProvider.Name);
-          foundCaProvider = true;
 
-          if (_waitUntilCaInterfaceReady && !caProvider.IsInterfaceReady())
+          if (_waitUntilCaInterfaceReady && !caProvider.IsConditionalAccessInterfaceReady())
           {
             this.LogDebug("Mpeg2TunerController: provider is not ready, waiting for up to 15 seconds", caProvider.Name);
             DateTime startWait = DateTime.Now;
@@ -258,7 +260,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
               ThrowExceptionIfTuneCancelled();
               System.Threading.Thread.Sleep(200);
               waitTime = DateTime.Now - startWait;
-              if (caProvider.IsInterfaceReady())
+              if (caProvider.IsConditionalAccessInterfaceReady())
               {
                 this.LogDebug("Mpeg2TunerController: provider ready after {0} ms", waitTime.TotalMilliseconds);
                 break;
@@ -322,11 +324,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
             digitalService = distinctServices[i] as TvDvbChannel;
             if (digitalService == null)
             {
-              success &= caProvider.SendCommand(distinctServices[i].CurrentChannel, action, command, null, null);
+              success &= caProvider.SendConditionalAccessCommand(distinctServices[i].CurrentChannel, action, command, null, null);
             }
             else
             {
-              success &= caProvider.SendCommand(distinctServices[i].CurrentChannel, action, command, digitalService.Pmt, digitalService.Cat);
+              success &= caProvider.SendConditionalAccessCommand(distinctServices[i].CurrentChannel, action, command, digitalService.Pmt, digitalService.Cat);
             }
           }
 
@@ -335,12 +337,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           {
             return;
           }
-        }
-
-        if (!foundCaProvider)
-        {
-          this.LogDebug("Mpeg2TunerController: no CA providers identified");
-          return;
         }
       }
     }

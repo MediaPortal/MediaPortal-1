@@ -37,9 +37,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
   public class TunerStream : TunerDirectShowBase
   {
     /// <summary>
-    /// The MediaPortal IPTV/DVB-IP/URL stream source class.
+    /// The MediaPortal IPTV/DVB-IP/URL stream source filter class.
     /// </summary>
-    [ComImport, Guid("d3dd4c59-d3a7-4b82-9727-7b9203eb67c0")]
+    [Guid("d3dd4c59-d3a7-4b82-9727-7b9203eb67c0")]
     private class MediaPortalStreamSource
     {
     }
@@ -75,9 +75,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
     /// </summary>
     /// <param name="sequenceNumber">A unique sequence number or index for this instance.</param>
     public TunerStream(int sequenceNumber)
-      : base("MediaPortal Stream Source " + (sequenceNumber + 1), "MediaPortal Stream Source " + (sequenceNumber + 1))
+      : this("MediaPortal Stream Source", sequenceNumber)
     {
-      Init();
     }
 
     /// <summary>
@@ -86,23 +85,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
     /// <param name="name">A short name or description for the tuner.</param>
     /// <param name="sequenceNumber">A unique sequence number or index for this instance.</param>
     protected TunerStream(string name, int sequenceNumber)
-      : base(name + " " + (sequenceNumber + 1), name + " " + (sequenceNumber + 1))
+      : this(name + " " + sequenceNumber, name + " " + sequenceNumber)
     {
-      Init();
     }
 
     /// <summary>
     /// Initialise a new instance of the <see cref="TunerStream"/> class.
     /// </summary>
     /// <param name="name">The tuner's name.</param>
-    /// <param name="externalIdentifier">The external identifier for the tuner.</param>
-    protected TunerStream(string name, string externalIdentifier)
-      : base(name, externalIdentifier)
-    {
-      Init();
-    }
-
-    private void Init()
+    /// <param name="externalId">The external identifier for the tuner.</param>
+    protected TunerStream(string name, string externalId)
+      : base(name, externalId)
     {
       _tunerType = CardType.DvbIP;
       _defaultUrl = "udp://@0.0.0.0:1234";

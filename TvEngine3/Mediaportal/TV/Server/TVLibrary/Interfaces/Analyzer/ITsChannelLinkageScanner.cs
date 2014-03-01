@@ -27,9 +27,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
   /// <summary>
   /// Interface to the channel linkage scanner com object
   /// </summary>
-  [ComVisible(false), ComImport,
-   Guid("26DF395C-3D13-4f3e-9EC1-453FAAFFB13E"),
-   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [Guid("26DF395C-3D13-4f3e-9EC1-453FAAFFB13E"),
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface ITsChannelLinkageScanner
   {
     /// <summary>

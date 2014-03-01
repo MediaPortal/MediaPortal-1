@@ -120,35 +120,35 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       cmd[0] = (byte)DiseqcFrame.CommandFirstTransmissionNoReply;
       cmd[1] = (byte)DiseqcAddress.AnySwitch;
       cmd[2] = (byte)DiseqcCommand.ClearReset;
-      _device.SendCommand(cmd);
+      _device.SendDiseqcCommand(cmd);
       System.Threading.Thread.Sleep(_commandDelay);
 
       this.LogDebug("DiSEqC: power on");
       cmd[0] = (byte)DiseqcFrame.CommandFirstTransmissionNoReply;
       cmd[1] = (byte)DiseqcAddress.AnySwitch;
       cmd[2] = (byte)DiseqcCommand.PowerOn;
-      _device.SendCommand(cmd);
+      _device.SendDiseqcCommand(cmd);
       System.Threading.Thread.Sleep(_commandDelay);
 
       this.LogDebug("DiSEqC: reset");
       cmd[0] = (byte)DiseqcFrame.CommandFirstTransmissionNoReply;
       cmd[1] = (byte)DiseqcAddress.AnySwitch;
       cmd[2] = (byte)DiseqcCommand.Reset;
-      _device.SendCommand(cmd);
+      _device.SendDiseqcCommand(cmd);
       System.Threading.Thread.Sleep(_commandDelay);
 
       this.LogDebug("DiSEqC: clear reset");
       cmd[0] = (byte)DiseqcFrame.CommandFirstTransmissionNoReply;
       cmd[1] = (byte)DiseqcAddress.AnySwitch;
       cmd[2] = (byte)DiseqcCommand.ClearReset;
-      _device.SendCommand(cmd);
+      _device.SendDiseqcCommand(cmd);
       System.Threading.Thread.Sleep(_commandDelay);
 
       this.LogDebug("DiSEqC: power on");
       cmd[0] = (byte)DiseqcFrame.CommandFirstTransmissionNoReply;
       cmd[1] = (byte)DiseqcAddress.AnySwitch;
       cmd[2] = (byte)DiseqcCommand.PowerOn;
-      _device.SendCommand(cmd);
+      _device.SendDiseqcCommand(cmd);
     }
 
     /// <summary>
@@ -178,7 +178,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         command[0] = (byte)DiseqcFrame.CommandFirstTransmissionNoReply;
         command[1] = (byte)DiseqcAddress.Any;
         command[2] = (byte)DiseqcCommand.PowerOn;
-        _device.SendCommand(command);
+        _device.SendDiseqcCommand(command);
         // Give DiSEqC devices time to boot up.
         System.Threading.Thread.Sleep(_commandDelay);
       }
@@ -244,7 +244,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           command[2] = (byte)DiseqcCommand.WriteN1;
           command[3] |= (byte)(portNumber - 1);
         }
-        _device.SendCommand(command);
+        _device.SendDiseqcCommand(command);
         Repeat(command);
       }
 
@@ -329,7 +329,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       {
         System.Threading.Thread.Sleep(_commandDelay);
         this.LogDebug("  repeat {0}...", i + 1);
-        _device.SendCommand(command);
+        _device.SendDiseqcCommand(command);
       }
     }
 
@@ -345,7 +345,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       cmd[0] = (byte)DiseqcFrame.CommandFirstTransmissionNoReply;
       cmd[1] = (byte)DiseqcAddress.AnyPositioner;
       cmd[2] = (byte)DiseqcCommand.Halt;
-      _device.SendCommand(cmd);
+      _device.SendDiseqcCommand(cmd);
       Repeat(cmd);
     }
 
@@ -359,7 +359,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       cmd[0] = (byte)DiseqcFrame.CommandFirstTransmissionNoReply;
       cmd[1] = (byte)DiseqcAddress.AzimuthPositioner;
       cmd[2] = (byte)DiseqcCommand.LimitEast;
-      _device.SendCommand(cmd);
+      _device.SendDiseqcCommand(cmd);
       Repeat(cmd);
     }
 
@@ -373,7 +373,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       cmd[0] = (byte)DiseqcFrame.CommandFirstTransmissionNoReply;
       cmd[1] = (byte)DiseqcAddress.AzimuthPositioner;
       cmd[2] = (byte)DiseqcCommand.LimitWest;
-      _device.SendCommand(cmd);
+      _device.SendDiseqcCommand(cmd);
       Repeat(cmd);
     }
 
@@ -392,7 +392,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           cmd[1] = (byte)DiseqcAddress.AzimuthPositioner;
           cmd[2] = (byte)DiseqcCommand.StorePosition;
           cmd[3] = 0;
-          _device.SendCommand(cmd);
+          _device.SendDiseqcCommand(cmd);
           Repeat(cmd);
         }
         else
@@ -402,7 +402,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           cmd[0] = (byte)DiseqcFrame.CommandFirstTransmissionNoReply;
           cmd[1] = (byte)DiseqcAddress.AzimuthPositioner;
           cmd[2] = (byte)DiseqcCommand.LimitsOff;
-          _device.SendCommand(cmd);
+          _device.SendDiseqcCommand(cmd);
           Repeat(cmd);
         }
       }
@@ -449,7 +449,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         _currentStepsElevation += steps;
       }
       cmd[3] = (byte)(0x100 - steps);
-      _device.SendCommand(cmd);
+      _device.SendDiseqcCommand(cmd);
       Repeat(cmd);
       //System.Threading.Thread.Sleep(1000*steps);
       //StopMotor();
@@ -472,7 +472,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       cmd[1] = (byte)DiseqcAddress.AzimuthPositioner;
       cmd[2] = (byte)DiseqcCommand.StorePosition;
       cmd[3] = position;
-      _device.SendCommand(cmd);
+      _device.SendDiseqcCommand(cmd);
       Repeat(cmd);
 
       // The current position becomes our reference.
@@ -493,7 +493,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       cmd[1] = (byte)DiseqcAddress.AzimuthPositioner;
       cmd[2] = (byte)DiseqcCommand.GotoPosition;
       cmd[3] = 0;
-      _device.SendCommand(cmd);
+      _device.SendDiseqcCommand(cmd);
       Repeat(cmd);
 
       // The current position becomes our reference.
@@ -519,7 +519,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       cmd[1] = (byte)DiseqcAddress.AzimuthPositioner;
       cmd[2] = (byte)DiseqcCommand.GotoPosition;
       cmd[3] = position;
-      _device.SendCommand(cmd);
+      _device.SendDiseqcCommand(cmd);
       Repeat(cmd);
 
       // The current position becomes our reference.

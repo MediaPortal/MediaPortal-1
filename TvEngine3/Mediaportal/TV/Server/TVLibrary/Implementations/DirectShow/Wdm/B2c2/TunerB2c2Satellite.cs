@@ -20,10 +20,8 @@
 
 using System;
 using System.Runtime.InteropServices;
-using DirectShowLib;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
@@ -97,9 +95,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       _isRawDiseqcSupported = _capabilities.AcquisitionCapabilities.HasFlag(B2c2AcquisionCapability.RawDiseqc);
 
       // Check if one of the supported extensions is capable of sending DiSEqC commands.
-      foreach (ICustomDevice extensionInterface in _customDeviceInterfaces)
+      foreach (ICustomDevice extension in _extensions)
       {
-        IDiseqcDevice diseqcDevice = extensionInterface as IDiseqcDevice;
+        IDiseqcDevice diseqcDevice = extension as IDiseqcDevice;
         if (diseqcDevice != null)
         {
           this.LogDebug("B2C2 base: found DiSEqC command interface");
@@ -259,7 +257,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       }
 
       bool success = true;
-      int hr = 0;
+      int hr = (int)HResult.Severity.Success;
 
       B2c2DiseqcPort burst = B2c2DiseqcPort.None;
       if (toneBurstState == ToneBurst.ToneBurst)
@@ -308,7 +306,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     /// </summary>
     /// <param name="command">The command to send.</param>
     /// <returns><c>true</c> if the command is sent successfully, otherwise <c>false</c></returns>
-    public bool SendCommand(byte[] command)
+    public bool SendDiseqcCommand(byte[] command)
     {
       this.LogDebug("B2C2 satellite: send DiSEqC command");
 
@@ -328,7 +326,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       }
 
       Marshal.Copy(command, 0, _diseqcBuffer, command.Length);
-      int hr = 0;
+      int hr = (int)HResult.Severity.Success;
       if (_isRawDiseqcSupported)
       {
         try
@@ -386,7 +384,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     /// </summary>
     /// <param name="response">The response (or command).</param>
     /// <returns><c>true</c> if the response is read successfully, otherwise <c>false</c></returns>
-    public bool ReadResponse(out byte[] response)
+    public bool ReadDiseqcResponse(out byte[] response)
     {
       // Not supported.
       response = null;

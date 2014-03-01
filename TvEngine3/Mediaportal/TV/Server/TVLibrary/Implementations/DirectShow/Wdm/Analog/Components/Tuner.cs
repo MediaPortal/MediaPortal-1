@@ -37,7 +37,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
   {
     #region constants
 
-    private static readonly RegistryHive[] FREQUENCY_OVERRIDE_REGISTRY_HIVES = new RegistryHive[] { RegistryHive.LocalMachine, RegistryHive.CurrentUser };
+    private static readonly RegistryHive[] FREQUENCY_OVERRIDE_REGISTRY_HIVES = new RegistryHive[2] { RegistryHive.LocalMachine, RegistryHive.CurrentUser };
     private static List<RegistryView> FREQUENCY_OVERRIDE_REGISTRY_VIEWS = new List<RegistryView>();
 
     #endregion
@@ -137,9 +137,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     /// Load the component.
     /// </summary>
     /// <param name="graph">The tuner's DirectShow graph.</param>
-    /// <param name="productInstanceIdentifier">A common identifier shared by the tuner's components.</param>
+    /// <param name="productInstanceId">A common identifier shared by the tuner's components.</param>
     /// <param name="crossbar">The crossbar component.</param>
-    public void PerformLoading(IFilterGraph2 graph, string productInstanceIdentifier, Crossbar crossbar)
+    public void PerformLoading(IFilterGraph2 graph, string productInstanceId, Crossbar crossbar)
     {
       this.LogDebug("WDM analog tuner: perform loading");
       _crossbarInputPinIndexVideo = crossbar.PinIndexInputTunerVideo;
@@ -156,7 +156,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       }
 
       this.LogDebug("WDM analog tuner: add tuner filter");
-      int connectionCount = AddAndConnectFilterFromCategory(graph, FilterCategory.AMKSTVTuner, crossbar.Filter, productInstanceIdentifier, out _filterTuner, out _deviceTuner);
+      int connectionCount = AddAndConnectFilterFromCategory(graph, FilterCategory.AMKSTVTuner, crossbar.Filter, productInstanceId, out _filterTuner, out _deviceTuner);
       if (connectionCount != expectedConnectionCount)
       {
         if (connectionCount == 0 && _crossbarInputPinIndexVideo >= 0)
@@ -168,11 +168,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
           this.LogDebug("WDM analog tuner: add TV audio filter");
           if (_filterTuner != null)
           {
-            // We prefer to locate the TV audio filter by connection to the tuner
+            // We prefer to find the TV audio filter by connection to the tuner
             // filter. This is because it seems some TV audio filters don't
             // connect to the crossbar input pins for some reason.
             _useBaseConnectionMethod = true;
-            connectionCount = AddAndConnectFilterFromCategory(graph, FilterCategory.AMKSTVAudio, _filterTuner, productInstanceIdentifier, out _filterTvAudio, out _deviceTvAudio);
+            connectionCount = AddAndConnectFilterFromCategory(graph, FilterCategory.AMKSTVAudio, _filterTuner, productInstanceId, out _filterTvAudio, out _deviceTvAudio);
             if (connectionCount == 0)
             {
               this.LogWarn("WDM analog tuner: failed to connect TV audio filter to tuner, allowing crossbar to operate with tuner only");
@@ -190,7 +190,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
           }
           else
           {
-            connectionCount = AddAndConnectFilterFromCategory(graph, FilterCategory.AMKSTVAudio, crossbar.Filter, productInstanceIdentifier, out _filterTvAudio, out _deviceTvAudio);
+            connectionCount = AddAndConnectFilterFromCategory(graph, FilterCategory.AMKSTVAudio, crossbar.Filter, productInstanceId, out _filterTvAudio, out _deviceTvAudio);
             if (connectionCount == 0)
             {
               this.LogWarn("WDM analog tuner: failed to connect TV audio filter to crossbar, allowing crossbar to operate without tuner and TV audio filters");
@@ -198,7 +198,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
             else
             {
               this.LogDebug("WDM analog tuner: add audio tuner filter");
-              connectionCount = AddAndConnectFilterFromCategory(graph, FilterCategory.AMKSTVTuner, crossbar.Filter, productInstanceIdentifier, out _filterTuner, out _deviceTuner);
+              connectionCount = AddAndConnectFilterFromCategory(graph, FilterCategory.AMKSTVTuner, crossbar.Filter, productInstanceId, out _filterTuner, out _deviceTuner);
               if (connectionCount == 0)
               {
                 throw new TvException("Failed to connect audio tuner filter after connecting TV audio filter.");
@@ -358,7 +358,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       {
         int hr = tuner.GetAvailableModes(out _supportedTuningModes);
         HResult.ThrowException(hr, "Failed to read supported tuning modes.");
-        this.LogDebug("WDM analog tuner: supported tuning modes = {0}", _supportedTuningModes.ToString());
+        this.LogDebug("WDM analog tuner: supported tuning modes = {0}", _supportedTuningModes);
       }
 
       IAMTVAudio tvAudio = _filterTvAudio as IAMTVAudio;
@@ -370,7 +370,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       {
         int hr = tvAudio.GetHardwareSupportedTVAudioModes(out _supportedTvAudioModes);
         HResult.ThrowException(hr, "Failed to read supported TV audio modes.");
-        this.LogDebug("WDM analog tuner: supported TV audio modes = {0}", _supportedTvAudioModes.ToString());
+        this.LogDebug("WDM analog tuner: supported TV audio modes = {0}", _supportedTvAudioModes);
       }
       else
       {
@@ -429,7 +429,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       }
 
       // Set tuning parameters.
-      int hr = 0;
+      int hr = (int)HResult.Severity.Success;
       if (_currentChannel == null ||
         _currentChannel.MediaType != channel.MediaType ||
         _currentChannel.Country.Id != channel.Country.Id ||
@@ -524,7 +524,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
           if (hr == (int)HResult.Severity.Success)
           {
             // TODO: add TV audio mode to analog tuning details
-            this.LogDebug("WDM analog tuner: available TV audio modes = {0}", availableTvAudioModes.ToString());
+            this.LogDebug("WDM analog tuner: available TV audio modes = {0}", availableTvAudioModes);
             if (!availableTvAudioModes.HasFlag(TVAudioMode.Stereo) || !_supportedTvAudioModes.HasFlag(TVAudioMode.Stereo))
             {
               this.LogWarn("WDM analog tuner: requested TV audio mode is not supported or available");
@@ -607,22 +607,26 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       _supportedTvAudioModes = TVAudioMode.None;
       _currentChannel = null;
 
-      if (graph != null)
+      if (_filterTuner != null)
       {
-        graph.RemoveFilter(_filterTuner);
-        graph.RemoveFilter(_filterTvAudio);
-      }
-      Release.ComObject("tuner filter", ref _filterTuner);
-      Release.ComObject("tuner TV audio filter", ref _filterTvAudio);
+        if (graph != null)
+        {
+          graph.RemoveFilter(_filterTuner);
+        }
+        Release.ComObject("tuner filter", ref _filterTuner);
 
-      if (_deviceTuner != null)
-      {
         DevicesInUse.Instance.Remove(_deviceTuner);
         _deviceTuner.Dispose();
         _deviceTuner = null;
       }
-      if (_deviceTvAudio != null)
+      if (_filterTvAudio != null)
       {
+        if (graph != null)
+        {
+          graph.RemoveFilter(_filterTvAudio);
+        }
+        Release.ComObject("tuner TV audio filter", ref _filterTvAudio);
+
         DevicesInUse.Instance.Remove(_deviceTvAudio);
         _deviceTvAudio.Dispose();
         _deviceTvAudio = null;

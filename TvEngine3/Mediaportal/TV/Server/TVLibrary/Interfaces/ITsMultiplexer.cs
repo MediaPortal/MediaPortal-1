@@ -23,9 +23,9 @@ using System.Runtime.InteropServices;
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Multiplexer
 {
   /// <summary>
-  /// The MediaPortal transport stream multiplexer class.
+  /// The MediaPortal transport stream multiplexer filter class.
   /// </summary>
-  [ComImport, Guid("511d13f0-8a56-42fa-b151-b72a325cf71a")]
+  [Guid("511d13f0-8a56-42fa-b151-b72a325cf71a")]
   public class MediaPortalTsMultiplexer
   {
   }
@@ -33,8 +33,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Multiplexer
   /// <summary>
   /// The main interface on the MediaPortal transport stream multiplexer.
   /// </summary>
-  [ComVisible(false), ComImport,
-    Guid("8533d2d1-1be1-4262-b70a-432df592b903"),
+  [Guid("8533d2d1-1be1-4262-b70a-432df592b903"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface ITsMultiplexer
   {

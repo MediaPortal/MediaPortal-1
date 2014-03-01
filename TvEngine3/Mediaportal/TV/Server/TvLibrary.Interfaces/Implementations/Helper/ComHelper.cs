@@ -34,8 +34,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
   /// <summary>
   /// An interface used to create instances of a specific class.
   /// </summary>
-  [ComVisible(false), ComImport,
-    Guid("00000001-0000-0000-c000-000000000046"),
+  [Guid("00000001-0000-0000-c000-000000000046"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IClassFactory
   {
@@ -133,7 +132,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
     public static IClassFactory GetClassFactory(string fileName, Guid clsid, bool useAssemblyRelativeLocation = false)
     {
       string filePath = useAssemblyRelativeLocation ? PathManager.BuildAssemblyRelativePath(fileName) : fileName;
-      IntPtr libraryHandle = MediaPortal.Common.Utils.NativeMethods.LoadLibrary(filePath);
+      IntPtr libraryHandle = MediaPortal.Common.Utils.NativeMethods.LoadLibraryA(filePath);
       if (libraryHandle == IntPtr.Zero)
       {
         return null;

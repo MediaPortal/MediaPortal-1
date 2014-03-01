@@ -27,9 +27,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
   /// <summary>
   /// Interface to the epg grabber com object
   /// </summary>
-  [ComVisible(false), ComImport,
-   Guid("5CDAC655-D9FB-4c71-8119-DD07FE86A9CE"),
-   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [Guid("5CDAC655-D9FB-4c71-8119-DD07FE86A9CE"),
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface ITsEpgScanner
   {
     /// <summary>

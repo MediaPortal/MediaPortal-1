@@ -110,7 +110,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     /// <summary>
     /// The audio capture filter.
     /// </summary>
-    private IBaseFilter _filterAudio = null;
+    protected IBaseFilter _filterAudio = null;
 
     /// <summary>
     /// The stream configuration interface.
@@ -230,9 +230,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     /// </summary>
     /// <param name="graph">The tuner's DirectShow graph.</param>
     /// <param name="captureGraphBuilder">The capture graph builder instance associated with the graph.</param>
-    /// <param name="productInstanceIdentifier">A common identifier shared by the tuner's components.</param>
+    /// <param name="productInstanceId">A common identifier shared by the tuner's components.</param>
     /// <param name="crossbar">The crossbar component.</param>
-    public void PerformLoading(IFilterGraph2 graph, ICaptureGraphBuilder2 captureGraphBuilder, string productInstanceIdentifier, Crossbar crossbar)
+    public virtual void PerformLoading(IFilterGraph2 graph, ICaptureGraphBuilder2 captureGraphBuilder, string productInstanceId, Crossbar crossbar)
     {
       if (_deviceMain != null)
       {
@@ -244,12 +244,22 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         try
         {
           _filterVideo = FilterGraphTools.AddFilterFromDevice(graph, _deviceMain);
-          IsVideoOrAudioSource();
         }
         catch (Exception ex)
         {
           DevicesInUse.Instance.Remove(_deviceMain);
           throw new TvException("Failed to add filter for main capture component to graph.", ex);
+        }
+        bool isVideoSource;
+        bool isAudioSource;
+        IsVideoOrAudioSource(out isVideoSource, out isAudioSource);
+        if (isAudioSource)
+        {
+          _filterAudio = _filterVideo;
+        }
+        if (!isVideoSource && isAudioSource)
+        {
+          _filterVideo = null;
         }
       }
       else
@@ -259,10 +269,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         _crossbarOutputPinIndexAudio = crossbar.PinIndexOutputAudio;
         if (_crossbarOutputPinIndexVideo >= 0)
         {
-          int connectionCount = AddAndConnectFilterFromCategory(graph, FilterCategory.AMKSCapture, crossbar.Filter, productInstanceIdentifier, out _filterVideo, out _deviceVideo);
+          int connectionCount = AddAndConnectFilterFromCategory(graph, FilterCategory.AMKSCapture, crossbar.Filter, productInstanceId, out _filterVideo, out _deviceVideo);
           if (connectionCount == 0)
           {
-            connectionCount = AddAndConnectFilterFromCategory(graph, FilterCategory.VideoInputDevice, crossbar.Filter, productInstanceIdentifier, out _filterVideo, out _deviceVideo);
+            connectionCount = AddAndConnectFilterFromCategory(graph, FilterCategory.VideoInputDevice, crossbar.Filter, productInstanceId, out _filterVideo, out _deviceVideo);
           }
           if (connectionCount == 0)
           {
@@ -278,10 +288,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         }
         if (_crossbarOutputPinIndexAudio >= 0 && _filterAudio == null)
         {
-          int connectionCount = AddAndConnectFilterFromCategory(graph, FilterCategory.AMKSCapture, crossbar.Filter, productInstanceIdentifier, out _filterAudio, out _deviceAudio);
+          int connectionCount = AddAndConnectFilterFromCategory(graph, FilterCategory.AMKSCapture, crossbar.Filter, productInstanceId, out _filterAudio, out _deviceAudio);
           if (connectionCount == 0)
           {
-            connectionCount = AddAndConnectFilterFromCategory(graph, FilterCategory.AudioInputDevice, crossbar.Filter, productInstanceIdentifier, out _filterAudio, out _deviceAudio);
+            connectionCount = AddAndConnectFilterFromCategory(graph, FilterCategory.AudioInputDevice, crossbar.Filter, productInstanceId, out _filterAudio, out _deviceAudio);
           }
           if (connectionCount == 0)
           {
@@ -296,16 +306,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       ConfigureAnalogVideoDecoder(_currentVideoStandard);
       ConfigureVideoProcessingAmplifier(_currentVideoProcAmpPropertyValues);
       ConfigureStream(_currentFrameWidth, _currentFrameHeight, _currentFrameRate);
+      _setDefaultSettings = false;
     }
 
     /// <summary>
     /// Try to determine if the capture source is a video or audio source.
     /// </summary>
-    private void IsVideoOrAudioSource()
+    /// <param name="isVideoSource"><c>True</c> if the capture source is a video source.</param>
+    /// <param name="isVideoSource"><c>True</c> if the capture source is an audio source.</param>
+    private void IsVideoOrAudioSource(out bool isVideoSource, out bool isAudioSource)
     {
       this.LogDebug("WDM analog capture: is video or audio source");
-      bool isVideoSource = false;
-      bool isAudioSource = false;
+      isVideoSource = false;
+      isAudioSource = false;
 
       IEnumPins pinEnum;
       int hr = _filterVideo.EnumPins(out pinEnum);
@@ -349,15 +362,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       finally
       {
         Release.ComObject("WDM analog capture filter video/audio pin enumerator", ref pinEnum);
-      }
-
-      if (isAudioSource)
-      {
-        _filterAudio = _filterVideo;
-      }
-      if (!isVideoSource && isAudioSource)
-      {
-        _filterVideo = null;
       }
     }
 
@@ -511,7 +515,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         {
           int hr = analogVideoDecoder.get_AvailableTVFormats(out _supportedVideoStandards);
           HResult.ThrowException(hr, "Failed to get supported video standards.");
-          this.LogDebug("WCM analog capture: supported video standards = {0}", _supportedVideoStandards.ToString());
+          this.LogDebug("WDM analog capture: supported video standards = {0}", _supportedVideoStandards);
+          if (_setDefaultSettings)
+          {
+            SettingsManagement.SaveValue("tuner" + _tunerId + "SupportedVideoStandards", (int)_supportedVideoStandards);
+          }
         }
         else
         {
@@ -535,13 +543,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
           int steppingDelta = 1;
           int valueDefault = 0;
           VideoProcAmpFlags flags = VideoProcAmpFlags.None;
-          int hr = 0;
+          int hr = (int)HResult.Severity.Success;
           foreach (VideoProcAmpProperty property in Enum.GetValues(typeof(VideoProcAmpProperty)))
           {
             hr = videoProcAmp.GetRange(property, out valueMinimum, out valueMaximum, out steppingDelta, out valueDefault, out flags);
             if (hr == (int)HResult.Severity.Success)
             {
-              this.LogDebug("WDM analog capture: processing amplifier property {0} is supported, min = {1}, max = {2}, step = {3}, default = {4}, flags = {5}", property, valueMinimum, valueMaximum, steppingDelta, valueDefault, flags.ToString());
+              this.LogDebug("WDM analog capture: processing amplifier property {0} is supported, min = {1}, max = {2}, step = {3}, default = {4}, flags = {5}", property, valueMinimum, valueMaximum, steppingDelta, valueDefault, flags);
               VideoProcAmpPropertyDetail propertyLimits = new VideoProcAmpPropertyDetail(valueMinimum, valueMaximum, steppingDelta, valueDefault, flags);
               _supportedVideoProcAmpProperties.Add(property, propertyLimits);
               if (_setDefaultSettings)
@@ -549,6 +557,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
                 // The value is stored as a percentage.
                 double propertyValuePercentage = valueDefault * 100 / (valueMaximum - valueMinimum);
                 SettingsManagement.SaveValue("tuner" + _tunerId + "VideoProcAmpProperty" + property + "Value", propertyValuePercentage);
+                SettingsManagement.SaveValue("tuner" + _tunerId + "VideoProcAmpProperty" + property + "DefaultValue", propertyValuePercentage);
               }
             }
             else
@@ -556,7 +565,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
               this.LogDebug("WDM analog capture: processing amplifier property {0} is not supported", property);
             }
           }
-          _setDefaultSettings = false;
         }
         else
         {
@@ -903,15 +911,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       // Therefore we should release the reference.
       Release.ComObject("capture stream format interface", ref _interfaceStreamConfiguration);
 
+      if (_filterVideo == null && _filterAudio == null)
+      {
+        return;
+      }
+
       if (graph != null)
       {
-        if (_filterAudio != _filterVideo)
+        if (_filterAudio != null && _filterAudio != _filterVideo)
         {
           graph.RemoveFilter(_filterAudio);
         }
         graph.RemoveFilter(_filterVideo);
       }
-      if (_filterAudio != _filterVideo)
+      if (_filterAudio != null && _filterAudio != _filterVideo)
       {
         Release.ComObject("capture audio filter", ref _filterAudio);
       }
@@ -921,7 +934,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       {
         DevicesInUse.Instance.Remove(_deviceMain);
         // Do NOT Dispose() or set the capture device to NULL. We would be
-        // unable to reload.
+        // unable to reload. The tuner instance that instanciated this capture
+        // is responsible for disposing it.
       }
       else
       {

@@ -23,7 +23,7 @@ using Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Enum;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
 {
-  [StructLayout(LayoutKind.Sequential, Pack = 1), ComVisible(false)]
+  [StructLayout(LayoutKind.Sequential, Pack = 1)]
   public struct EncoderAudioProfile
   {
     public EncoderAudioAlgorithm AudioAlgorithmCode;

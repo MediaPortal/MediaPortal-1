@@ -21,7 +21,6 @@
 using System;
 using DirectShowLib;
 using DirectShowLib.BDA;
-using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
@@ -72,9 +71,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       base.PerformLoading();
 
       // Check if one of the supported extensions is capable of sending DiSEqC commands.
-      foreach (ICustomDevice extensionInterface in _customDeviceInterfaces)
+      foreach (ICustomDevice extension in _extensions)
       {
-        IDiseqcDevice diseqcDevice = extensionInterface as IDiseqcDevice;
+        IDiseqcDevice diseqcDevice = extension as IDiseqcDevice;
         if (diseqcDevice != null)
         {
           this.LogDebug("BDA satellite: found DiSEqC command interface");
@@ -149,7 +148,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// <summary>
     /// Get the class ID of the network provider for the tuner type.
     /// </summary>
-    protected abstract Guid NetworkProviderClsid
+    protected override Guid NetworkProviderClsid
     {
       get
       {
@@ -361,12 +360,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       {
         _diseqcController.SwitchToChannel(null);
       }
-    }
-
-    // TODO: remove this method, it should not be required and it is bad style!
-    protected override DVBBaseChannel CreateChannel()
-    {
-      return new DVBSChannel();
     }
   }
 }

@@ -24,13 +24,13 @@ using System.IO;
 using System.Net;
 using System.Net.Cache;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Xml;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using UPnP.Infrastructure;
 using UPnP.Infrastructure.Common;
-using UPnP.Infrastructure.CP.DeviceTree;
 using UPnP.Infrastructure.CP.Description;
+using UPnP.Infrastructure.CP.DeviceTree;
 using UPnP.Infrastructure.CP.SSDP;
 using UPnP.Infrastructure.Utils;
 
@@ -117,7 +117,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Upnp.Service
       CpStateVariable stateVariable;
       if (!_service.StateVariables.TryGetValue(stateVariableName, out stateVariable))
       {
-        throw new Exception("Failed to locate state variable.");
+        throw new TvException("Failed to find state variable {0} for service {1}.", stateVariableName, _unqualifiedServiceName);
       }
       ServiceDescriptor serviceDescriptor = null;
       IDictionary<string, ServiceDescriptor> deviceServiceDescriptors;
@@ -127,7 +127,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Upnp.Service
       }
       if (serviceDescriptor == null)
       {
-        throw new Exception("Failed to locate service descriptor.");
+        throw new TvException("Failed to find service descriptor for service {0}.", _unqualifiedServiceName);
       }
 
       StringBuilder action = new StringBuilder();
@@ -189,7 +189,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Upnp.Service
         string mediaType;
         if (!EncodingUtils.TryParseContentTypeEncoding(response.ContentType, Encoding.UTF8, out mediaType, out contentEncoding) || mediaType != "text/xml")
         {
-          throw new Exception("Failed to parse content type header.");
+          throw new TvException("Failed to parse content type header.");
         }
         using (Stream responseStream = response.GetResponseStream())
         {
@@ -199,11 +199,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Upnp.Service
             {
               if (!xmlReader.ReadToFollowing("QueryStateVariableResponse", "urn:schemas-upnp-org:control-1-0"))
               {
-                throw new Exception("Failed to locate QueryStateVariableResponse element in QueryStateVariable response.");
+                throw new TvException("Failed to find QueryStateVariableResponse element in QueryStateVariable response.");
               }
               if (!xmlReader.ReadToFollowing("return"))
               {
-                throw new Exception("Failed to locate return element in QueryStateVariable response.");
+                throw new TvException("Failed to find return element in QueryStateVariable response.");
               }
               value = stateVariable.DataType.SoapDeserializeValue(xmlReader, true);
               xmlReader.Close();

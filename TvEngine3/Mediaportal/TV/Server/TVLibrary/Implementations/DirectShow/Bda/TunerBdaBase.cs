@@ -111,9 +111,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// Initialise a new instance of the <see cref="TunerBdaBase"/> class.
     /// </summary>
     /// <param name="device">The <see cref="DsDevice"/> instance to encapsulate.</param>
-    /// <param name="externalIdentifier">The external identifier for the tuner.</param>
-    protected TunerBdaBase(DsDevice device, string externalIdentifier)
-      : base(device.Name, externalIdentifier)
+    /// <param name="externalId">The external identifier for the tuner.</param>
+    protected TunerBdaBase(DsDevice device, string externalId)
+      : base(device.Name, externalId)
     {
       _deviceMain = device;
     }
@@ -186,7 +186,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// <param name="channel">The channel to tune to.</param>
     protected override void PerformTuning(IChannel channel)
     {
-      int hr = 0;
+      int hr = (int)HResult.Severity.Success;
       if (_networkProviderClsid == typeof(MediaPortalNetworkProvider).GUID)
       {
         this.LogDebug("BDA base: perform tuning, MediaPortal network provider tuning");
@@ -244,7 +244,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       InitialiseGraph();
       AddNetworkProviderFilterToGraph();
 
-      int hr = 0;
+      int hr = (int)HResult.Severity.Success;
       if (_networkProviderClsid != typeof(MediaPortalNetworkProvider).GUID)
       {
         // Some Microsoft network providers won't connect to the tuner filter
@@ -318,7 +318,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       {
         _filterNetworkProvider = FilterGraphTools.AddFilterFromFile(_graph, "NetworkProvider.ax", _networkProviderClsid, filterName);
         IDvbNetworkProvider internalNpInterface = _filterNetworkProvider as IDvbNetworkProvider;
-        internalNpInterface.ConfigureLogging(MediaPortalNetworkProvider.GetFileName(DevicePath), MediaPortalNetworkProvider.GetHash(DevicePath), LogLevelOption.Debug);
+        internalNpInterface.ConfigureLogging(MediaPortalNetworkProvider.GetFileName(ExternalId), MediaPortalNetworkProvider.GetHash(ExternalId), LogLevelOption.Debug);
       }
       else
       {
@@ -468,9 +468,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
         return;
       }
 
-      bool matchProductInstanceIdentifier = true;
-      string tunerProductInstanceIdentifier = _deviceMain.ProductInstanceIdentifier;
-      tunerProductInstanceIdentifier = tunerProductInstanceIdentifier ?? string.Empty;
+      bool matchProductInstanceId = true;
       DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.BDAReceiverComponentsCategory);
       try
       {
@@ -486,7 +484,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
             string devicePath = device.DevicePath;
             string deviceName = device.Name;
             if (devicePath.Contains("root#system#") ||
-              (matchProductInstanceIdentifier && !tunerProductInstanceIdentifier.Equals(device.ProductInstanceIdentifier))
+              (matchProductInstanceId && _productInstanceId != null && _productInstanceId.Equals(device.ProductInstanceIdentifier))
             )
             {
               continue;
@@ -510,12 +508,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
               DevicesInUse.Instance.Remove(device);
             }
           }
-          if (!matchProductInstanceIdentifier)
+          if (!matchProductInstanceId)
           {
             this.LogWarn("BDA base: failed to add and connect capture filter, assuming extension required to complete graph");
             break;
           }
-          matchProductInstanceIdentifier = false;
+          matchProductInstanceId = false;
           this.LogDebug("BDA base: allow non-matching capture components");
         }
       }
@@ -596,7 +594,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       }
       if (statistics.Count == 0)
       {
-        throw new TvException("Failed to locate signal statistic interfaces.");
+        throw new TvException("Failed to find signal statistic interfaces.");
       }
       this.LogDebug("BDA base: found {0} interfaces", statistics.Count);
       return statistics;
@@ -611,20 +609,24 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       if (_graph != null)
       {
         _graph.RemoveFilter(_filterNetworkProvider);
-        _graph.RemoveFilter(_filterCapture);
         _graph.RemoveFilter(_filterInfiniteTee);
         _graph.RemoveFilter(_filterMpeg2Demultiplexer);
         _graph.RemoveFilter(_filterTransportInformation);
       }
       Release.ComObject("base BDA tuner network provider", ref _filterNetworkProvider);
-      Release.ComObject("base BDA tuner capture filter", ref _filterCapture);
       Release.ComObject("base BDA tuner infinite tee", ref _filterInfiniteTee);
       Release.ComObject("base BDA tuner MPEG 2 demultiplexer", ref _filterMpeg2Demultiplexer);
       Release.ComObject("base BDA tuner transport information filter", ref _filterTransportInformation);
       Release.ComObject("base BDA tuner tuning space", ref _tuningSpace);
 
-      if (_deviceCapture != null)
+      if (_filterCapture != null)
       {
+        if (_graph != null)
+        {
+          _graph.RemoveFilter(_filterCapture);
+        }
+        Release.ComObject("base BDA tuner capture filter", ref _filterCapture);
+
         DevicesInUse.Instance.Remove(_deviceCapture);
         _deviceCapture.Dispose();
         _deviceCapture = null;
@@ -669,7 +671,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       int qualityCount = 0;
       for (int i = 0; i < _signalStatisticsInterfaces.Count; i++)
       {
-        int hr = 0;
+        int hr = (int)HResult.Severity.Success;
         IBDA_SignalStatistics statisticsInterface = _signalStatisticsInterfaces[i];
         try
         {
@@ -992,7 +994,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
               if (epgChannel == null)
               {
                 // We need to use a matching channel type per card, because tuning details will be looked up with cardtype as filter.
-                DVBBaseChannel channel = CreateChannel();
+                DVBBaseChannel channel = (DVBBaseChannel)_currentTuningDetail.Clone();
                 channel.NetworkId = (int)networkid;
                 channel.TransportId = (int)transportid;
                 channel.ServiceId = (int)channelid;
@@ -1039,7 +1041,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
             {
               epgGrabber.GetEPGChannel(x, ref networkid, ref transportid, ref serviceid);
               // We need to use a matching channel type per card, because tuning details will be looked up with cardtype as filter.
-              DVBBaseChannel channel = CreateChannel();
+              DVBBaseChannel channel = (DVBBaseChannel)_currentTuningDetail.Clone();
               channel.NetworkId = networkid;
               channel.TransportId = transportid;
               channel.ServiceId = serviceid;
@@ -1170,12 +1172,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
         }
       }
     }
-
-    /// <summary>
-    /// Creates a channel that matches to the card type (DVB-C/-S-/-T...).
-    /// </summary>
-    /// <returns></returns>
-    protected abstract DVBBaseChannel CreateChannel();
 
     /// <summary>
     /// Check if the EPG data found in a scan should not be kept.

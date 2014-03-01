@@ -60,7 +60,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Service
         int expectedByteCount = (audioProfileSize * numberAudioCompressionFormat) + 1;
         if (bytes.Length != expectedByteCount)
         {
-          throw new Exception(string.Format("GetEncoderCapabilities audioProfile has {0} profile(s), but the byte count is {1} (expected {2}).", numberAudioCompressionFormat, bytes.Length, expectedByteCount));
+          throw new TvException("GetEncoderCapabilities audioProfile has {0} profile(s), but the byte count is {1} (expected {2}).", numberAudioCompressionFormat, bytes.Length, expectedByteCount);
         }
         else
         {

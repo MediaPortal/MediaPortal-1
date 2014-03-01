@@ -31,7 +31,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.NetworkProvider
   /// <summary>
   /// The MediaPortal BDA network provider class.
   /// </summary>
-  [ComImport, Guid("d7d42e5c-eb36-4aad-933b-b4c419429c")]
+  [Guid("d7d42e5c-eb36-4aad-933b-b4c419429c98")]
   public class MediaPortalNetworkProvider
   {
     /// <summary>
@@ -212,9 +212,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.NetworkProvider
   ///<summary>
   /// Channel scanning call back
   ///</summary>
-  [ComVisible(false), ComImport,
-   Guid("4564675E-C69B-4e05-853D-30870988DEB9"),
-   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [Guid("4564675E-C69B-4e05-853D-30870988DEB9"),
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDvbNetworkProvider
   {
     [PreserveSig]
