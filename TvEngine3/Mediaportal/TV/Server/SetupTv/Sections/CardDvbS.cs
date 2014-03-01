@@ -38,9 +38,9 @@ using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
 
@@ -817,7 +817,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         case ScanState.Initialized:
          SaveSettings();
           
-          Card card = ServiceAgents.Instance.CardServiceAgent.GetCardByDevicePath(ServiceAgents.Instance.ControllerServiceAgent.CardDevice(_cardNumber));
+          Card card = ServiceAgents.Instance.CardServiceAgent.GetCard(_cardNumber);
           if (card.Enabled == false)
           {
             MessageBox.Show(this, "Tuner is disabled. Please enable the tuner before scanning.");
@@ -925,7 +925,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       // get default sat position from DB
 
-      Card card = ServiceAgents.Instance.CardServiceAgent.GetCardByDevicePath(ServiceAgents.Instance.ControllerServiceAgent.CardDevice(_cardNumber));
+      Card card = ServiceAgents.Instance.CardServiceAgent.GetCard(_cardNumber);
 
       int position = -1;
       bool setting = ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbs" + _cardNumber + "motorEnabled", false);

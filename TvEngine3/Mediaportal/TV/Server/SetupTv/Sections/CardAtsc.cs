@@ -121,7 +121,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         checkBoxQAM.Enabled = false;
 
         
-        Card card = ServiceAgents.Instance.CardServiceAgent.GetCardByDevicePath(ServiceAgents.Instance.ControllerServiceAgent.CardDevice(_cardNumber));
+        Card card = ServiceAgents.Instance.CardServiceAgent.GetCard(_cardNumber);
         if (card.Enabled == false)
         {
           MessageBox.Show(this, "Tuner is disabled. Please enable the tuner before scanning.");
@@ -175,7 +175,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         mpComboBoxFrequencies.Enabled = false;
         listViewStatus.Items.Clear();
         
-        Card card = ServiceAgents.Instance.CardServiceAgent.GetCardByDevicePath(ServiceAgents.Instance.ControllerServiceAgent.CardDevice(_cardNumber));
+        Card card = ServiceAgents.Instance.CardServiceAgent.GetCard(_cardNumber);
         IUser user = new User();
         user.CardId = _cardNumber;
         int minchan = 2;
