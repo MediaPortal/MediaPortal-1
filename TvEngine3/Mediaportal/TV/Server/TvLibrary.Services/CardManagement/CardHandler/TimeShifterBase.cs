@@ -4,7 +4,7 @@ using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Implementations;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
@@ -60,14 +60,11 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         _cancelled = true;
 
         ITvSubChannel subchannel = GetSubChannel(subchannelId);
-        if (subchannel is BaseSubChannel)
-        {
-          this.LogDebug("card {2}: Cancel Timeshifting sub:{1}", subchannel, _cardHandler.Card.Name);
-          ((BaseSubChannel)subchannel).AudioVideoEvent -= AudioVideoEventHandler;
-          _eventAudio.Set();
-          _eventVideo.Set();
-          _eventTimeshift.WaitOne();
-        }
+        this.LogDebug("card {2}: Cancel Timeshifting sub:{1}", subchannel, _cardHandler.Card.Name);
+        subchannel.AudioVideoEvent -= AudioVideoEventHandler;
+        _eventAudio.Set();
+        _eventVideo.Set();
+        _eventTimeshift.WaitOne();
       }
       catch (Exception ex)
       {
@@ -264,18 +261,12 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 
     protected void AttachAudioVideoEventHandler(ITvSubChannel subchannel)
     {
-      if (subchannel is BaseSubChannel)
-      {
-        ((BaseSubChannel)subchannel).AudioVideoEvent += AudioVideoEventHandler;
-      }
+      subchannel.AudioVideoEvent += AudioVideoEventHandler;
     }
 
     protected void DetachAudioVideoEventHandler(ITvSubChannel subchannel)
     {
-      if (subchannel is BaseSubChannel)
-      {
-        ((BaseSubChannel)subchannel).AudioVideoEvent -= AudioVideoEventHandler;
-      }      
+      subchannel.AudioVideoEvent -= AudioVideoEventHandler;
     }
   }
 }
