@@ -23,12 +23,8 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using DirectShowLib;
 using DirectShowLib.BDA;
-using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
-using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
@@ -249,8 +245,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
 
     #region tuner control
 
-    [ComVisible(false), ComImport,
-      Guid("61a9051f-04c4-435e-8742-9edd2c543ce9"),
+    [Guid("61a9051f-04c4-435e-8742-9edd2c543ce9"),
       InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     protected interface IB2c2Mpeg2TunerCtrl4
     {
@@ -587,8 +582,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
 
     #region data control
 
-    [ComVisible(false), ComImport,
-      Guid("a12a4531-72d2-40fc-b17d-8f9b0004444f"),
+    [Guid("a12a4531-72d2-40fc-b17d-8f9b0004444f"),
       InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     private interface IB2c2Mpeg2DataCtrl6
     {
@@ -990,8 +984,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
 
     #region AV control
 
-    [ComVisible(false), ComImport,
-      Guid("3ca933bb-4378-4e03-8abd-02450169aa5e"),
+    [Guid("3ca933bb-4378-4e03-8abd-02450169aa5e"),
       InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     private interface IB2c2Mpeg2AVCtrl3
     {
@@ -1069,8 +1062,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
 
     #region timeshifting
 
-    [ComVisible(false), ComImport,
-      Guid("a306af1c-51d9-496d-9e7a-1cfe28f51fda"),
+    [Guid("a306af1c-51d9-496d-9e7a-1cfe28f51fda"),
       InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     private interface IB2c2Mpeg2TimeshiftCtrl
     {
@@ -1176,8 +1168,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
 
     #region multicast
 
-    [ComVisible(false), ComImport,
-      Guid("0b5a8a87-7133-4a37-846e-77f568a52155"),
+    [Guid("0b5a8a87-7133-4a37-846e-77f568a52155"),
       InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     private interface IB2c2Mpeg2MulticastCtrl
     {
@@ -1285,7 +1276,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     }
     #pragma warning restore 0649, 0169
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Unicode), ComVisible(false)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Unicode)]
     public struct DeviceInfo
     {
       public uint DeviceId;
@@ -1377,7 +1368,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     // PID filter variables - especially important for DVB-S2 tuners.
     private int _maxPidCount = 0;
     private HashSet<int> _pidFilterPids = new HashSet<int>();
-    private bool _isPidFilterDisabled = false;
+    private HashSet<ushort> _pidFilterPidsToRemove = new HashSet<ushort>();
+    private HashSet<ushort> _pidFilterPidsToAdd = new HashSet<ushort>();
+    private bool _isPidFilterDisabled = true;
 
     #endregion
 
@@ -1451,7 +1444,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       LoadPlugins(_filterB2c2Adapter, _graph, ref lastFilter);
 
       // This class implements the extension interface and should be treated as the main extension.
-      _customDeviceInterfaces.Add(this);
+      _extensions.Add(this);
 
       // Complete the graph.
       AddAndConnectTsWriterIntoGraph(lastFilter);
@@ -1459,9 +1452,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
 
       ReadTunerInfo();
       ReadPidFilterInfo();
-      if (_pidFilterPids.Count != 1 || (!_pidFilterPids.Contains((int)B2c2PidFilterMode.AllExcludingNull) && !_pidFilterPids.Contains((int)B2c2PidFilterMode.AllIncludingNull)))
+      if (_pidFilterPids.Contains((int)B2c2PidFilterMode.AllExcludingNull) || _pidFilterPids.Contains((int)B2c2PidFilterMode.AllIncludingNull))
       {
+        _isPidFilterDisabled = false;   // make sure the next call actually disables the filter
         DisableFilter();
+      }
+      else
+      {
+        _isPidFilterDisabled = true;
       }
     }
 
@@ -1488,7 +1486,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     #endregion
 
     /// <summary>
-    /// Detect the compatible tuners installed in the system.
+    /// Detect the compatible tuners connected to the system.
     /// </summary>
     /// <returns>an enumerable collection of <see cref="T:TvLibrary.Interfaces.ITVCard"/></returns>
     public static IEnumerable<ITVCard> DetectTuners()
@@ -1513,7 +1511,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
         IB2c2Mpeg2DataCtrl6 dataInterface = b2c2Source as IB2c2Mpeg2DataCtrl6;
         if (dataInterface == null)
         {
-          Log.Debug("B2C2 base: failed to find B2C2 data interface on filter");
+          Log.Error("B2C2 base: failed to find B2C2 data interface on filter");
           Release.ComObject("B2C2 source filter", ref b2c2Source);
           return tuners;
         }
@@ -1531,7 +1529,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
           int hr = dataInterface.GetDeviceList(structurePtr, ref size, ref deviceCount);
           if (hr != (int)HResult.Severity.Success)
           {
-            Log.Debug("B2C2 base: failed to get device list, hr = 0x{0:x}", hr);
+            Log.Error("B2C2 base: failed to get device list, hr = 0x{0:x}", hr);
           }
           else
           {
@@ -1613,9 +1611,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
         }
         int returnedByteCount = TUNER_CAPABILITIES_SIZE;
         hr = _interfaceTuner.GetTunerCapabilities(buffer, ref returnedByteCount);
-        if (hr != (int)HResult.Severity.Success)
+        if (hr != (int)HResult.Severity.Success || returnedByteCount != TUNER_CAPABILITIES_SIZE)
         {
-          this.LogDebug("B2C2 base: result = failure, hr = 0x{0:x}", hr);
+          this.LogDebug("B2C2 base: result = failure, hr = 0x{0:x}, byte count = {1}", hr, returnedByteCount);
         }
         else
         {
@@ -1630,10 +1628,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
           this.LogDebug("  max tuner frequency       = {0} kHz", capabilities.MaxTunerFrequency);
           this.LogDebug("  min symbol rate           = {0} baud", capabilities.MinSymbolRate);
           this.LogDebug("  max symbol rate           = {0} baud", capabilities.MaxSymbolRate);
-          this.LogDebug("  performance monitoring    = {0}", capabilities.PerformanceMonitoringCapabilities.ToString());
+          this.LogDebug("  performance monitoring    = {0}", capabilities.PerformanceMonitoringCapabilities);
           this.LogDebug("  lock time                 = {0} ms", capabilities.LockTime);
           this.LogDebug("  kernel lock time          = {0} ms", capabilities.KernelLockTime);
-          this.LogDebug("  acquisition capabilities  = {0}", capabilities.AcquisitionCapabilities.ToString());
+          this.LogDebug("  acquisition capabilities  = {0}", capabilities.AcquisitionCapabilities);
         }
       }
       finally
@@ -1720,11 +1718,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     /// initialisation fails, the <see ref="ICustomDevice"/> instance should be disposed
     /// immediately.
     /// </summary>
-    /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
+    /// <param name="tunerExternalId">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
     /// <param name="context">Context required to initialise the interface.</param>
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
-    public bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
+    public bool Initialise(string tunerExternalId, CardType tunerType, object context)
     {
       // This is a "special" implementation. We do initialisation in other functions.
       return true;
@@ -1941,47 +1939,51 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     /// <returns><c>true</c> if the filter is successfully disabled, otherwise <c>false</c></returns>
     public bool DisableFilter()
     {
-      this.LogDebug("B2C2 base: disable PID filter");
-
       if (_isPidFilterDisabled)
       {
-        this.LogDebug("B2C2 base: result = success");
+        _pidFilterPids.Clear();
+        _pidFilterPidsToRemove.Clear();
+        _pidFilterPidsToAdd.Clear();
         return true;
       }
 
+      this.LogDebug("B2C2 base: disable PID filter");
       int hr = _interfaceData.SelectDevice(_deviceInfo.DeviceId);
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogDebug("B2C2 base: failed to select device, hr = 0x{0:x}", hr);
+        this.LogError("B2C2 base: failed to select device, hr = 0x{0:x}", hr);
         return false;
       }
 
       // Remove all current PIDs.
       if (_pidFilterPids.Count > 0)
       {
-        this.LogDebug("  delete all PIDs...");
+        this.LogDebug("  delete {0} current PID(s)...", _pidFilterPids.Count);
         int[] currentPids = new int[_pidFilterPids.Count];
         _pidFilterPids.CopyTo(currentPids, 0, _pidFilterPids.Count);
         hr = _interfaceData.DeletePIDsFromPin(_pidFilterPids.Count, currentPids, 0);
         if (hr != (int)HResult.Severity.Success)
         {
-          this.LogDebug("B2C2 base: failed to delete PIDs, hr = 0x{0:x}", hr);
+          this.LogError("B2C2 base: failed to delete current PIDs, hr = 0x{0:x}", hr);
           return false;
         }
+        _pidFilterPids.Clear();
       }
 
       // Allow all PIDs.
-      this.LogDebug("  allow all excluding NULL...");
+      this.LogDebug("  add all excluding NULL...");
       int changingPidCount = 1;
       hr = _interfaceData.AddPIDsToPin(ref changingPidCount, new int[1] { (int)B2c2PidFilterMode.AllExcludingNull }, 0);
       if (hr == (int)HResult.Severity.Success)
       {
-        _pidFilterPids.Clear();
+        _isPidFilterDisabled = true;
+        _pidFilterPidsToRemove.Clear();
+        _pidFilterPidsToAdd.Clear();
         this.LogDebug("B2C2 base: result = success");
         return true;
       }
 
-      this.LogDebug("B2C2 base: failed to enable all PIDs, hr = 0x{0:x}", hr);
+      this.LogError("B2C2 base: failed to add all PIDs, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -2003,45 +2005,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     /// <returns><c>true</c> if the filter is successfully configured, otherwise <c>false</c></returns>
     public bool AllowStreams(ICollection<ushort> pids)
     {
-      this.LogDebug("B2C2 base: allow streams through PID filter");
-      int hr = _interfaceData.SelectDevice(_deviceInfo.DeviceId);
-      if (hr != (int)HResult.Severity.Success)
-      {
-        this.LogDebug("B2C2 base: failed to select device, hr = 0x{0:x}", hr);
-        return false;
-      }
-
-      if (_isPidFilterDisabled && pids.Count > 0)
-      {
-        hr = _interfaceData.DeletePIDsFromPin(1, new int[1] { (int)B2c2PidFilterMode.AllExcludingNull }, 0);
-        if (hr != (int)HResult.Severity.Success)
-        {
-          this.LogDebug("B2C2 base: failed to disable all PIDs, hr = 0x{0:x}", hr);
-          return false;
-        }
-        _isPidFilterDisabled = false;
-      }
-
-      int[] newPids = new int[pids.Count];
-      int i = 0;
-      foreach (ushort pid in pids)
-      {
-        newPids[i++] = pid;
-      }
-      int changingPidCount = pids.Count;
-      hr = _interfaceData.AddPIDsToPin(ref changingPidCount, newPids, 0);
-      if (hr == (int)HResult.Severity.Success)
-      {
-        this.LogDebug("B2C2 base: result = success");
-        foreach (ushort pid in pids)
-        {
-          _pidFilterPids.Add(pid);
-        }
-        return true;
-      }
-
-      this.LogError("B2C2 base: failed to allow streams through filter, hr = 0x{0:x}", hr);
-      return false;
+      _pidFilterPidsToAdd.UnionWith(pids);
+      _pidFilterPidsToRemove.ExceptWith(pids);
+      return true;
     }
 
     /// <summary>
@@ -2051,33 +2017,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     /// <returns><c>true</c> if the filter is successfully configured, otherwise <c>false</c></returns>
     public bool BlockStreams(ICollection<ushort> pids)
     {
-      this.LogDebug("B2C2 base: block streams with PID filter");
-      int hr = _interfaceData.SelectDevice(_deviceInfo.DeviceId);
-      if (hr != (int)HResult.Severity.Success)
-      {
-        this.LogDebug("B2C2 base: failed to select device, hr = 0x{0:x}", hr);
-        return false;
-      }
-
-      int[] newPids = new int[pids.Count];
-      int i = 0;
-      foreach (ushort pid in pids)
-      {
-        newPids[i++] = pid;
-      }
-      hr = _interfaceData.DeletePIDsFromPin(pids.Count, newPids, 0);
-      if (hr == (int)HResult.Severity.Success)
-      {
-        this.LogDebug("B2C2 base: result = success");
-        foreach (ushort pid in pids)
-        {
-          _pidFilterPids.Remove(pid);
-        }
-        return true;
-      }
-
-      this.LogError("B2C2 base: failed to block streams with filter, hr = 0x{0:x}", hr);
-      return false;
+      _pidFilterPidsToAdd.ExceptWith(pids);
+      _pidFilterPidsToRemove.UnionWith(pids);
+      return true;
     }
 
     /// <summary>
@@ -2086,7 +2028,79 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     /// <returns><c>true</c> if the filter configuration is successfully applied, otherwise <c>false</c></returns>
     public bool ApplyFilter()
     {
-      // Nothing to do here.
+      if (_pidFilterPidsToAdd.Count == 0 && _pidFilterPidsToRemove.Count == 0)
+      {
+        return true;
+      }
+
+      this.LogDebug("B2C2 base: apply PID filter");
+      int hr = _interfaceData.SelectDevice(_deviceInfo.DeviceId);
+      if (hr != (int)HResult.Severity.Success)
+      {
+        this.LogError("B2C2 base: failed to select device, hr = 0x{0:x}", hr);
+        return false;
+      }
+
+      if (_isPidFilterDisabled)
+      {
+        this.LogDebug("  delete all excluding NULL...");
+        hr = _interfaceData.DeletePIDsFromPin(1, new int[1] { (int)B2c2PidFilterMode.AllExcludingNull }, 0);
+        if (hr != (int)HResult.Severity.Success)
+        {
+          this.LogError("B2C2 base: failed to delete all PIDs, hr = 0x{0:x}", hr);
+          return false;
+        }
+        _isPidFilterDisabled = false;
+      }
+
+      int changingPidCount = 0;
+      if (_pidFilterPidsToRemove.Count > 0)
+      {
+        changingPidCount = _pidFilterPidsToRemove.Count;
+        this.LogDebug("  delete {0} current PID(s)...", changingPidCount);
+        int[] newPids = new int[changingPidCount];
+        int i = 0;
+        foreach (ushort pid in _pidFilterPidsToRemove)
+        {
+          newPids[i++] = pid;
+        }
+        hr = _interfaceData.DeletePIDsFromPin(changingPidCount, newPids, 0);
+        if (hr != (int)HResult.Severity.Success)
+        {
+          this.LogError("B2C2 base: failed to delete current PID(s), hr = 0x{0:x}", hr);
+          return false;
+        }
+        foreach (ushort pid in _pidFilterPidsToRemove)
+        {
+          _pidFilterPids.Remove(pid);
+        }
+        _pidFilterPidsToRemove.Clear();
+      }
+
+      if (_pidFilterPidsToAdd.Count > 0)
+      {
+        changingPidCount = _pidFilterPidsToAdd.Count;
+        this.LogDebug("  add {0} new PID(s)...", changingPidCount);
+        int[] newPids = new int[changingPidCount];
+        int i = 0;
+        foreach (ushort pid in _pidFilterPidsToAdd)
+        {
+          newPids[i++] = pid;
+        }
+        hr = _interfaceData.AddPIDsToPin(ref changingPidCount, newPids, 0);
+        if (hr != (int)HResult.Severity.Success)
+        {
+          this.LogError("B2C2 base: failed to add new PID(s), hr = 0x{0:x}", hr);
+          return false;
+        }
+        foreach (ushort pid in _pidFilterPidsToAdd)
+        {
+          _pidFilterPids.Add(pid);
+        }
+        _pidFilterPidsToAdd.Clear();
+      }
+
+      this.LogDebug("B2C2 base: result = success");
       return true;
     }
 
