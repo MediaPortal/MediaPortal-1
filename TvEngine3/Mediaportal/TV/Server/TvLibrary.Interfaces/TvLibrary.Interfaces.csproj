@@ -161,7 +161,6 @@
     <Compile Include="Epg\EpgProgram.cs" />
     <Compile Include="Interfaces\IChannel.cs" />
     <Compile Include="Interfaces\IQuality.cs" />
-    <Compile Include="Interfaces\ITeletext.cs" />
     <Compile Include="Interfaces\ITVCard.cs" />
     <Compile Include="Interfaces\ITVEPG.cs" />
     <Compile Include="Interfaces\ITVScanning.cs" />
