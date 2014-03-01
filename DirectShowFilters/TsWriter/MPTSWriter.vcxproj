@@ -169,7 +169,6 @@
     <ClCompile Include="source\EncryptionAnalyser.cpp" />
     <ClCompile Include="source\EpgScanner.cpp" />
     <ClCompile Include="source\PmtGrabber.cpp" />
-    <ClCompile Include="source\TeletextGrabber.cpp" />
     <ClCompile Include="source\TsChannel.cpp" />
     <ClCompile Include="source\TsWriter.cpp" />
     <ClCompile Include="source\ChannelLinkageParser.cpp" />
@@ -201,7 +200,6 @@
     <ClInclude Include="source\EncryptionAnalyser.h" />
     <ClInclude Include="source\EpgScanner.h" />
     <ClInclude Include="source\PmtGrabber.h" />
-    <ClInclude Include="source\TeletextGrabber.h" />
     <ClInclude Include="source\TsChannel.h" />
     <ClInclude Include="source\TsWriter.h" />
     <ClInclude Include="source\videoaudioobserver.h" />

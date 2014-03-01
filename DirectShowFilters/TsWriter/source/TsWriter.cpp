@@ -833,34 +833,6 @@ STDMETHODIMP CMpTs::RecordSetVideoAudioObserver(int handle, IVideoAudioObserver*
 	return S_OK;
 }
 
-STDMETHODIMP CMpTs::TTxStart( int handle)
-{
-  CTsChannel* pChannel=GetTsChannel(handle);
-  if (pChannel==NULL) return S_OK;
-	return pChannel->m_pTeletextGrabber->Start( );
-}
-
-STDMETHODIMP CMpTs::TTxStop( int handle )
-{
-  CTsChannel* pChannel=GetTsChannel(handle);
-  if (pChannel==NULL) return S_OK;
-	return pChannel->m_pTeletextGrabber->Stop( );
-}
-
-STDMETHODIMP CMpTs::TTxSetTeletextPid( int handle,int teletextPid)
-{
-  CTsChannel* pChannel=GetTsChannel(handle);
-  if (pChannel==NULL) return S_OK;
-	return pChannel->m_pTeletextGrabber->SetTeletextPid(teletextPid );
-}
-
-STDMETHODIMP CMpTs::TTxSetCallBack( int handle,ITeletextCallBack* callback)
-{
-  CTsChannel* pChannel=GetTsChannel(handle);
-  if (pChannel==NULL) return S_OK;
-	return pChannel->m_pTeletextGrabber->SetCallBack(callback );
-}
-
 
 STDMETHODIMP CMpTs::CaReset(int handle)
 {

@@ -37,7 +37,6 @@ CTsChannel::CTsChannel(LPUNKNOWN pUnk, HRESULT *phr,int id)
 	m_pPmtGrabber = new CPmtGrabber(pUnk,phr);
 	m_pRecorder = new CDiskRecorder(RecordingMode::Recording);
 	m_pTimeShifting= new CDiskRecorder(RecordingMode::TimeShift);
-	m_pTeletextGrabber= new CTeletextGrabber(pUnk,phr);
   m_pCaGrabber= new CCaGrabber(pUnk,phr);
 }
 
@@ -67,12 +66,6 @@ CTsChannel::~CTsChannel(void)
 		delete m_pTimeShifting;
 		m_pTimeShifting=NULL;
 	}
-	if (m_pTeletextGrabber!=NULL)
-	{
-		LogDebug("del m_pTeletextGrabber");
-		delete m_pTeletextGrabber;
-		m_pTeletextGrabber=NULL;
-	}
 	if (m_pCaGrabber!=NULL)
 	{
 		LogDebug("del m_pCaGrabber");
@@ -90,7 +83,6 @@ void CTsChannel::OnTsPacket(byte* tsPacket)
 		m_pPmtGrabber->OnTsPacket(tsPacket);
 		m_pRecorder->OnTsPacket(tsPacket);
 		m_pTimeShifting->OnTsPacket(tsPacket);
-		m_pTeletextGrabber->OnTsPacket(tsPacket);
     m_pCaGrabber->OnTsPacket(tsPacket);
 	}
 	catch(...)

@@ -24,7 +24,6 @@
 #include "EncryptionAnalyser.h"
 #include "PmtGrabber.h"
 #include "DiskRecorder.h"
-#include "TeletextGrabber.h"
 #include "CaGrabber.h"
 
 // {C564CEB9-FC77-4776-8CB8-96DD87624161}
@@ -41,7 +40,6 @@ public:
 	CPmtGrabber*		m_pPmtGrabber;
 	CDiskRecorder*	m_pRecorder;
 	CDiskRecorder*	m_pTimeShifting;
-	CTeletextGrabber*	m_pTeletextGrabber;
   CCaGrabber*     m_pCaGrabber;
 	int m_id;
 };

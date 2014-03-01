@@ -30,7 +30,6 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.CardHandler
     IParkedUserManagement ParkedUserManagement { get; }
     IUserManagement UserManagement { get; }
     IDisEqcManagement DisEqC { get; }
-    ITeletextManagement Teletext { get; }
     IChannelScanning Scanner { get; }
     IEpgGrabbing Epg { get; }
     

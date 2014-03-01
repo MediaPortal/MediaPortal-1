@@ -26,7 +26,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
   /// <summary>
   /// The MediaPortal TS writer/analyser filter class.
   /// </summary>
-  [ComImport, Guid("fc50bed6-fe38-42d3-b831-771690091a6e")]
+  [Guid("fc50bed6-fe38-42d3-b831-771690091a6e")]
   public class MediaPortalTsWriter
   {
   }
@@ -34,8 +34,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
   /// <summary>
   /// The main TsWriter interface
   /// </summary>
-  [ComVisible(false), ComImport,
-   Guid("5EB9F392-E7FD-4071-8E44-3590E5E767BA"),
+  [Guid("5EB9F392-E7FD-4071-8E44-3590E5E767BA"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface ITsFilter
   {
@@ -292,40 +291,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <returns></returns>
     [PreserveSig]
     int SetVideoAudioObserver(int handle, IVideoAudioObserver observer);
-
-    /// <summary>
-    /// Start collecting teletext data for the given sub channel
-    /// </summary>
-    /// <param name="handle">Handle of the sub channel</param>
-    /// <returns></returns>
-    [PreserveSig]
-    int TTxStart(int handle);
-
-    /// <summary>
-    /// Stops collecting teletext data for the given sub channel
-    /// </summary>
-    /// <param name="handle">Handle of the sub channel</param>
-    /// <returns></returns>
-    [PreserveSig]
-    int TTxStop(int handle);
-
-    /// <summary>
-    /// Sets the teletext pid on the given sub channel
-    /// </summary>
-    /// <param name="handle">Handle of the sub channel</param>
-    /// <param name="teletextPid">Teletext pid</param>
-    /// <returns></returns>
-    [PreserveSig]
-    int TTxSetTeletextPid(int handle, int teletextPid);
-
-    /// <summary>
-    /// Sets the teletext call back on the given sub channel
-    /// </summary>
-    /// <param name="handle">Handle of the sub channel</param>
-    /// <param name="callBack">The call back</param>
-    /// <returns></returns>
-    [PreserveSig]
-    int TTxSetCallBack(int handle, ITeletextCallBack callBack);
 
     #region CAT grabber
 

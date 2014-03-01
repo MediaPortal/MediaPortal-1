@@ -24,7 +24,6 @@
 #include "epgscanner.h"
 #include "PmtGrabber.h"
 #include "DiskRecorder.h"
-#include "teletextgrabber.h"
 #include "cagrabber.h"
 #include "channellinkagescanner.h"
 #include "TsChannel.h"
@@ -76,11 +75,6 @@ DECLARE_INTERFACE_(ITSFilter, IUnknown)
 	STDMETHOD(TimeShiftGetCurrentFilePosition) (THIS_ int handle,__int64 * position, long * bufferId) PURE;
 	STDMETHOD(SetVideoAudioObserver)(THIS_ int handle, IVideoAudioObserver* callback)PURE;
 
-	STDMETHOD(TTxStart)(THIS_ int handle)PURE;
-	STDMETHOD(TTxStop)(THIS_ int handle )PURE;
-	STDMETHOD(TTxSetTeletextPid)(THIS_ int handle,int teletextPid)PURE;
-	STDMETHOD(TTxSetCallBack)(THIS_ int handle,ITeletextCallBack* callback)PURE;
-
 	STDMETHOD(CaReset)(THIS_ int handle)PURE;
   STDMETHOD(CaSetCallBack)(THIS_ int handle, ICaCallBack* callBack)PURE;
 	STDMETHOD(CaGetCaData)(THIS_ int handle, BYTE* caData)PURE;
@@ -88,7 +82,7 @@ DECLARE_INTERFACE_(ITSFilter, IUnknown)
   STDMETHOD(GetStreamQualityCounters)(THIS_ int handle, int* totalTsBytes, int* totalRecordingBytes, 
       int* TsDiscontinuity, int* recordingDiscontinuity)PURE;
   
-    STDMETHOD(TimeShiftSetChannelType)(THIS_ int handle, int channelType)PURE;
+  STDMETHOD(TimeShiftSetChannelType)(THIS_ int handle, int channelType)PURE;
 };
 
 // Main filter object
@@ -194,11 +188,6 @@ public:
 		STDMETHODIMP TimeShiftSetParams(int handle, int minFiles, int maxFiles, ULONG chunkSize) ;
 		STDMETHODIMP TimeShiftGetCurrentFilePosition(int handle,__int64 * position,long * bufferId);
 		STDMETHODIMP SetVideoAudioObserver(int handle, IVideoAudioObserver* callback);
-
-		STDMETHODIMP TTxStart( int handle);
-		STDMETHODIMP TTxStop( int handle );
-		STDMETHODIMP TTxSetTeletextPid( int handle,int teletextPid);
-		STDMETHODIMP TTxSetCallBack( int handle,ITeletextCallBack* callback);
 
 		STDMETHODIMP CaReset(int handle);
 		STDMETHODIMP CaSetCallBack(int handle, ICaCallBack* callBack);
