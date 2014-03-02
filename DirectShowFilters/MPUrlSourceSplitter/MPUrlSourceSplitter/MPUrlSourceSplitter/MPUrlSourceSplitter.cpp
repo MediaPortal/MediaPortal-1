@@ -442,15 +442,51 @@ CMPUrlSourceSplitter::~CMPUrlSourceSplitter()
 CUnknown * WINAPI CMPUrlSourceSplitter::CreateInstanceIptvSource(LPUNKNOWN lpunk, HRESULT *phr)
 {
   *phr = S_OK;
-  CMPUrlSourceSplitter *punk = new CMPUrlSourceSplitter("MediaPortal IPTV Source Filter", lpunk, GUID_MP_IPTV_SOURCE, phr);
-  CHECK_POINTER_HRESULT(*phr, punk, *phr, E_OUTOFMEMORY);
+  CMPUrlSourceSplitter *instance = new CMPUrlSourceSplitter("MediaPortal IPTV Source Filter", lpunk, GUID_MP_IPTV_SOURCE, phr);
+  CHECK_POINTER_HRESULT(*phr, instance, *phr, E_OUTOFMEMORY);
 
   if (SUCCEEDED(*phr))
   {
-    punk->flags |= FLAG_MP_URL_SOURCE_SPLITTER_AS_IPTV;
+    instance->flags |= FLAG_MP_URL_SOURCE_SPLITTER_AS_IPTV;
+
+    // if in output pin collection isn't any pin, then add new output pin with MPEG2 TS media type
+    // in another case filter assume that there is only one output pin with MPEG2 TS media type
+    if (instance->outputPins->Count() == 0)
+    {
+      // create valid MPEG2 TS media type, add it to media types and create output pin
+      CMediaTypeCollection *mediaTypes = new CMediaTypeCollection();
+      CHECK_POINTER_HRESULT(*phr, mediaTypes, *phr, E_OUTOFMEMORY);
+
+      if (SUCCEEDED(*phr))
+      {
+        CMediaType *mediaType = new CMediaType();
+        CHECK_POINTER_HRESULT(*phr, mediaType, *phr, E_OUTOFMEMORY);
+
+        if (SUCCEEDED(*phr))
+        {
+          mediaType->SetType(&MEDIATYPE_Stream);
+          mediaType->SetSubtype(&MEDIASUBTYPE_MPEG2_TRANSPORT);
+
+          *phr = (mediaTypes->Add(mediaType)) ? (*phr) : E_OUTOFMEMORY;
+        }
+
+        CHECK_CONDITION_EXECUTE(FAILED(*phr), FREE_MEM_CLASS(mediaType));
+      }
+
+      if (SUCCEEDED(*phr))
+      {
+        CMPUrlSourceSplitterOutputPin *outputPin = new CMPUrlSourceSplitterOutputPin(mediaTypes, L"Output", instance, instance, phr, L"mpegts");
+        CHECK_POINTER_HRESULT(*phr, outputPin, *phr, E_OUTOFMEMORY);
+
+        CHECK_CONDITION_HRESULT(*phr, instance->outputPins->Add(outputPin), *phr, E_OUTOFMEMORY);
+        CHECK_CONDITION_EXECUTE(FAILED(*phr), FREE_MEM_CLASS(outputPin));
+      }
+
+      FREE_MEM_CLASS(mediaTypes);
+    }
   }
 
-  return punk;
+  return instance;
 }
 
 CUnknown * WINAPI CMPUrlSourceSplitter::CreateInstanceUrlSourceSplitter(LPUNKNOWN lpunk, HRESULT* phr)
@@ -718,7 +754,7 @@ STDMETHODIMP CMPUrlSourceSplitter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TY
         CMPUrlSourceSplitterOutputPin *outputPin = new CMPUrlSourceSplitterOutputPin(mediaTypes, L"Output", this, this, &result, L"mpegts");
         CHECK_POINTER_HRESULT(result, outputPin, result, E_OUTOFMEMORY);
 
-        CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = (this->outputPins->Add(outputPin)) ? result : E_OUTOFMEMORY);
+        CHECK_CONDITION_HRESULT(result, this->outputPins->Add(outputPin), result, E_OUTOFMEMORY);
         CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(outputPin));
       }
 
