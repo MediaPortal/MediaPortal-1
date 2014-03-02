@@ -2994,9 +2994,9 @@ namespace MediaPortal.GUI.Pictures
             resumeSong = false;
           }
       }
-      catch (Exception)
+      catch (Exception e)
       {
-        // Catch exception to avoid crash.
+        Log.Debug("GUISlideShow.OnPlayBackStarted", e.Message);
       }
     }
 
