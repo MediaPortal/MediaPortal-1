@@ -2447,6 +2447,18 @@ namespace MediaPortal.Player
         Log.Info("g_Player.Process() player stopped...");
         if (_player.Ended)
         {
+          // No unmount for other ISO (avi-mkv ISO-crash in playlist after)
+          string currentFile = g_Player.currentFileName;
+          Util.Utils.IsDVDImage(currentFile, ref currentFile);
+          if (Util.Utils.IsISOImage(currentFile))
+          {
+            if (!String.IsNullOrEmpty(DaemonTools.GetVirtualDrive()) &&
+                (IsBDDirectory(DaemonTools.GetVirtualDrive()) ||
+                IsDvdDirectory(DaemonTools.GetVirtualDrive())))
+            {
+              DaemonTools.UnMount();
+            }
+          }
           OnEnded();
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_ENDED, 0, 0, 0, 0, 0, null);
           GUIWindowManager.SendThreadMessage(msg);
