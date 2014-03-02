@@ -47,6 +47,7 @@ using namespace std;
 #define STREAM_TYPE_AUDIO_E_AC3       0x84  // this is the ISO standard stream type; ATSC uses 0x87 and DVB has a descriptor
 #define STREAM_TYPE_AUDIO_E_AC3_ATSC  0x87
 
+#define STREAM_TYPE_PES_PRIVATE_DATA  0x6
 #define STREAM_TYPE_SUBTITLES         0x6   // arbitrary
 #define STREAM_TYPE_SUBTITLES_SCTE    0x82  // SCTE standard stream type defined in SCTE 27
 #define STREAM_TYPE_TELETEXT          0x56  // matches the DVB descriptor tag, but is otherwise arbitrary

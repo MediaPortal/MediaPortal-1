@@ -386,6 +386,8 @@ STDMETHODIMP CTsMuxerFilter::Stop()
 {
   LogDebug(L"CTsMuxerFilter: stop");
   CAutoLock filterLock(m_pLock);
+  LogDebug(L"CTsMuxerFilter: stop receiving...");
+  CAutoLock receiveLock(m_receiveLock);
 
   LogDebug(L"CTsMuxerFilter: stopping stream monitor thread...");
   SetEvent(m_streamingMonitorThreadStopEvent);
@@ -460,6 +462,7 @@ CTsMuxer::CTsMuxer(LPUNKNOWN unk, HRESULT* hr)
   : CUnknown(NAME("TS Muxer"), unk)
 {
   LogDebug(L"CTsMuxer: constructor");
+
   m_filter = new CTsMuxerFilter(this, GetOwner(), &m_filterLock, &m_receiveLock, hr);
   if (m_filter == NULL)
   {
@@ -730,13 +733,13 @@ HRESULT CTsMuxer::Receive(IMuxInputPin* pin, PBYTE data, long dataLength, REFERE
     m_streamInfo[pinId] = info;
 
     // Log interesting info.
-    if (streamType == SERVICE_TYPE_AUDIO_MPEG1 || streamType == SERVICE_TYPE_AUDIO_MPEG2)
+    if (streamType == STREAM_TYPE_AUDIO_MPEG1 || streamType == STREAM_TYPE_AUDIO_MPEG2)
     {
       info->isIgnored = !m_isAudioActive;
       info->streamId = m_nextAudioStreamId++;
       hr = ReadAudioStreamInfo(data, dataLength, info);
     }
-    else if (streamType == SERVICE_TYPE_VIDEO_MPEG1 || streamType == SERVICE_TYPE_VIDEO_MPEG2)
+    else if (streamType == STREAM_TYPE_VIDEO_MPEG1 || streamType == STREAM_TYPE_VIDEO_MPEG2)
     {
       info->isIgnored = !m_isVideoActive;
       info->streamId = m_nextVideoStreamId++;
@@ -754,7 +757,7 @@ HRESULT CTsMuxer::Receive(IMuxInputPin* pin, PBYTE data, long dataLength, REFERE
       {
         return E_OUTOFMEMORY;
       }
-      info->pmtDescriptorBytes[0] = DESCRIPTOR_DVB_TELETEXT; // tag
+      info->pmtDescriptorBytes[0] = DESCRIPTOR_TELETEXT_DVB; // tag
       info->pmtDescriptorBytes[1] = 0;    // length (no page info)
     }
     else
@@ -897,13 +900,13 @@ STDMETHODIMP CTsMuxer::SetActiveComponents(bool video, bool audio, bool teletext
   map<unsigned int, StreamInfo*>::iterator sIt = m_streamInfo.begin();
   while (sIt != m_streamInfo.end())
   {
-    if (sIt->second->streamType == SERVICE_TYPE_VIDEO_MPEG1 || sIt->second->streamType == SERVICE_TYPE_VIDEO_MPEG2)
+    if (sIt->second->streamType == STREAM_TYPE_VIDEO_MPEG1 || sIt->second->streamType == STREAM_TYPE_VIDEO_MPEG2)
     {
       changedActiveStream = (sIt->second->isIgnored == m_isVideoActive && sIt->second->isCompatible);
       sIt->second->isIgnored = !m_isVideoActive;
       m_serviceType = m_isVideoActive ? SERVICE_TYPE_TELEVISION : SERVICE_TYPE_RADIO;
     }
-    else if (sIt->second->streamType == SERVICE_TYPE_AUDIO_MPEG1 || sIt->second->streamType == SERVICE_TYPE_AUDIO_MPEG2)
+    else if (sIt->second->streamType == STREAM_TYPE_AUDIO_MPEG1 || sIt->second->streamType == STREAM_TYPE_AUDIO_MPEG2)
     {
       changedActiveStream = (sIt->second->isIgnored == m_isAudioActive && sIt->second->isCompatible);
       sIt->second->isIgnored = !m_isAudioActive;
@@ -1564,11 +1567,11 @@ HRESULT CTsMuxer::ReadProgramMapTable(PBYTE data, long dataLength, TransportStre
     streamInfo->streamId = 0;   // unset marker
     streamInfo->streamType = streamType;
 
-    if (streamType == SERVICE_TYPE_VIDEO_MPEG1 || streamType == SERVICE_TYPE_VIDEO_MPEG2 || streamType == SERVICE_TYPE_VIDEO_H264)
+    if (streamType == STREAM_TYPE_VIDEO_MPEG1 || streamType == STREAM_TYPE_VIDEO_MPEG2 || streamType == STREAM_TYPE_VIDEO_H264)
     {
       streamInfo->isIgnored = !m_isVideoActive;
     }
-    else if (streamType == SERVICE_TYPE_AUDIO_MPEG1 || streamType == SERVICE_TYPE_AUDIO_MPEG2 || streamType == SERVICE_TYPE_AUDIO_AAC || streamType == SERVICE_TYPE_AUDIO_LATM_AAC || streamType == SERVICE_TYPE_AUDIO_AC3 || streamType == SERVICE_TYPE_AUDIO_E_AC3)
+    else if (streamType == STREAM_TYPE_AUDIO_MPEG1 || streamType == STREAM_TYPE_AUDIO_MPEG2 || streamType == STREAM_TYPE_AUDIO_AAC || streamType == STREAM_TYPE_AUDIO_LATM_AAC || streamType == STREAM_TYPE_AUDIO_AC3 || streamType == STREAM_TYPE_AUDIO_E_AC3)
     {
       streamInfo->isIgnored = !m_isAudioActive;
     }
@@ -1829,7 +1832,7 @@ HRESULT CTsMuxer::ReadVideoStreamInfo(PBYTE data, long dataLength, StreamInfo* i
     LogDebug(L"  profile      = %s", profile == 5 ? L"simple" : (profile == 4 ? L"main" : (profile == 3 ? L"SNR scalable" : (profile == 2 ? L"spacially scalable" : L"high"))));
     LogDebug(L"  level        = %s", level == 0x1010 ? L"low" : (level == 0x1000 ? L"main" : (level == 0x0110 ? L"high 1440" : L"high")));
 
-    info->streamType = isMpeg2 ? SERVICE_TYPE_VIDEO_MPEG2 : SERVICE_TYPE_VIDEO_MPEG1;
+    info->streamType = isMpeg2 ? STREAM_TYPE_VIDEO_MPEG2 : STREAM_TYPE_VIDEO_MPEG1;
   }
   else
   {
@@ -1859,7 +1862,7 @@ HRESULT CTsMuxer::ReadAudioStreamInfo(PBYTE data, long dataLength, StreamInfo* i
   LogDebug(L"  sampling frequency = %d Hz", samplingFrequency);
   LogDebug(L"  mode               = %s", mode == 0 ? L"stereo" : (mode == 1 ? L"joint" : (mode == 2 ? L"dual channel" : L"mono")));
 
-  info->streamType = isMpeg2 ? SERVICE_TYPE_AUDIO_MPEG2 : SERVICE_TYPE_AUDIO_MPEG1;
+  info->streamType = isMpeg2 ? STREAM_TYPE_AUDIO_MPEG2 : STREAM_TYPE_AUDIO_MPEG1;
   return S_OK;
 }
 
@@ -1903,7 +1906,14 @@ HRESULT CTsMuxer::UpdatePmt()
     }
     activeStreamCount++;
 
-    *pointer++ = info->streamType;
+    if (info->streamType == STREAM_TYPE_TELETEXT)
+    {
+      *pointer++ = STREAM_TYPE_PES_PRIVATE_DATA;
+    }
+    else
+    {
+      *pointer++ = info->streamType;
+    }
     *pointer++ = 0xe0 | (info->pid >> 8);
     *pointer++ = (info->pid & 0xff);
     if (info->pmtDescriptorLength > 0 && info->pmtDescriptorBytes != NULL)
@@ -1924,11 +1934,11 @@ HRESULT CTsMuxer::UpdatePmt()
     // Update the PCR PID. We select the first non-teletext stream by default
     // but we prefer a video stream.
     if ((m_pcrPid == PID_NOT_SET && info->streamType != STREAM_TYPE_TELETEXT) ||
-      (!pcrPidIsVideo && (info->streamType == SERVICE_TYPE_VIDEO_MPEG1 || info->streamType == SERVICE_TYPE_VIDEO_MPEG2))
+      (!pcrPidIsVideo && (info->streamType == STREAM_TYPE_VIDEO_MPEG1 || info->streamType == STREAM_TYPE_VIDEO_MPEG2))
     )
     {
       m_pcrPid = info->pid;
-      pcrPidIsVideo = (info->streamType == SERVICE_TYPE_VIDEO_MPEG1 || info->streamType == SERVICE_TYPE_VIDEO_MPEG2);
+      pcrPidIsVideo = (info->streamType == STREAM_TYPE_VIDEO_MPEG1 || info->streamType == STREAM_TYPE_VIDEO_MPEG2);
     }
 
     it++;
@@ -2135,7 +2145,7 @@ HRESULT CTsMuxer::WrapElementaryStreamData(StreamInfo* info, PBYTE inputData, lo
   }
   if (packetLength >= 0x10000)
   {
-    if (info->streamType == SERVICE_TYPE_VIDEO_MPEG1 || info->streamType == SERVICE_TYPE_VIDEO_MPEG2)
+    if (info->streamType == STREAM_TYPE_VIDEO_MPEG1 || info->streamType == STREAM_TYPE_VIDEO_MPEG2)
     {
       packetLength = 0;   // length not specified, only allowed for video PES packets carried in a TS
     }
