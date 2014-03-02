@@ -1,6 +1,6 @@
 /* 
- *	Copyright (C) 2006-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
+ *  Copyright (C) 2006-2008 Team MediaPortal
+ *  http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -38,9 +38,9 @@ namespace Mediaportal
   public:
     // Constructor
     // Initializes the critical section struct
-	  CCriticalSection();
+    CCriticalSection();
     // Destructor
-	  virtual ~CCriticalSection();
+    virtual ~CCriticalSection();
 
     // Conversion operator
     operator LPCRITICAL_SECTION();

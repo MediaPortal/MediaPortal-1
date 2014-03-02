@@ -1,6 +1,6 @@
 /* 
- *	Copyright (C) 2006-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
+ *  Copyright (C) 2006-2008 Team MediaPortal
+ *  http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -27,5 +27,5 @@ DEFINE_GUID(IID_IVideoAudioObserver,0x8177eb2, 0x65d6, 0x4d0a, 0xa2, 0xa8, 0xe7,
 
 DECLARE_INTERFACE_(IVideoAudioObserver, IUnknown)
 {
-	STDMETHOD(OnNotify)(int pidType)PURE;
+  STDMETHOD(OnNotify)(int pidType)PURE;
 };

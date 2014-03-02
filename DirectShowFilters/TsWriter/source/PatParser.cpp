@@ -1,6 +1,6 @@
 /* 
- *	Copyright (C) 2006-2010 Team MediaPortal
- *	http://www.team-mediaportal.com
+ *  Copyright (C) 2006-2010 Team MediaPortal
+ *  http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -94,7 +94,7 @@ int CPatParser::GetPmtPid(int serviceId, int* pmtPid)
 
 void CPatParser::OnNewSection(CSection& sections)
 {
-	if (sections.table_id != 0)
+  if (sections.table_id != 0)
   {
     return;
   }

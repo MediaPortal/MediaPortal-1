@@ -31,70 +31,70 @@
 
 typedef struct 
 {
-	long 	minFiles;
-	long 	maxFiles;
-	__int64	maxSize;
-	__int64	chunkSize;
+  long   minFiles;
+  long   maxFiles;
+  __int64  maxSize;
+  __int64  chunkSize;
 } MultiFileWriterParam;
 
 class MultiFileWriter
 {
 public:
-	MultiFileWriter(MultiFileWriterParam *pWriterParams);
-	virtual ~MultiFileWriter();
+  MultiFileWriter(MultiFileWriterParam *pWriterParams);
+  virtual ~MultiFileWriter();
 
-	HRESULT GetFileName(LPWSTR *lpszFileName);
-	HRESULT OpenFile(LPCWSTR pszFileName);
-	HRESULT CloseFile();
-	HRESULT GetFileSize(__int64 *lpllsize);
-	
-	HRESULT Write(PBYTE pbData, ULONG lDataLength);
-	HRESULT GetAvailableDiskSpace(__int64* llAvailableDiskSpace);
+  HRESULT GetFileName(LPWSTR *lpszFileName);
+  HRESULT OpenFile(LPCWSTR pszFileName);
+  HRESULT CloseFile();
+  HRESULT GetFileSize(__int64 *lpllsize);
+  
+  HRESULT Write(PBYTE pbData, ULONG lDataLength);
+  HRESULT GetAvailableDiskSpace(__int64* llAvailableDiskSpace);
 
-	LPTSTR getRegFileName(void);
-	void setRegFileName(LPTSTR fileName);
-	LPWSTR getBufferFileName(void);
-	void setBufferFileName(LPWSTR fileName);
-	FileWriter* getCurrentTSFile(void);
-	long getNumbFilesAdded(void);
-	long getNumbFilesRemoved(void);
-	long getCurrentFileId(void);
-	long getMinTSFiles(void);
-	void setMinTSFiles(long minFiles);
-	long getMaxTSFiles(void);
-	void setMaxTSFiles(long maxFiles);
-	__int64 getMaxTSFileSize(void);
-	void setMaxTSFileSize(__int64 maxSize);
-	__int64 getChunkReserve(void);
-	void setChunkReserve(__int64 chunkSize);
-	void GetPosition(__int64 * position);
+  LPTSTR getRegFileName(void);
+  void setRegFileName(LPTSTR fileName);
+  LPWSTR getBufferFileName(void);
+  void setBufferFileName(LPWSTR fileName);
+  FileWriter* getCurrentTSFile(void);
+  long getNumbFilesAdded(void);
+  long getNumbFilesRemoved(void);
+  long getCurrentFileId(void);
+  long getMinTSFiles(void);
+  void setMinTSFiles(long minFiles);
+  long getMaxTSFiles(void);
+  void setMaxTSFiles(long maxFiles);
+  __int64 getMaxTSFileSize(void);
+  void setMaxTSFileSize(__int64 maxSize);
+  __int64 getChunkReserve(void);
+  void setChunkReserve(__int64 chunkSize);
+  void GetPosition(__int64 * position);
 
 protected:
-	HRESULT PrepareTSFile();
-	HRESULT CreateNewTSFile();
-	HRESULT ReuseTSFile();
+  HRESULT PrepareTSFile();
+  HRESULT CreateNewTSFile();
+  HRESULT ReuseTSFile();
 
-	HRESULT WriteTSBufferFile();
-	HRESULT CleanupFiles();
-	BOOL IsFileLocked(LPWSTR pFilename);
+  HRESULT WriteTSBufferFile();
+  HRESULT CleanupFiles();
+  BOOL IsFileLocked(LPWSTR pFilename);
 
-	HANDLE m_hTSBufferFile;
-	LPWSTR m_pTSBufferFileName;
-	LPTSTR m_pTSRegFileName;
+  HANDLE m_hTSBufferFile;
+  LPWSTR m_pTSBufferFileName;
+  LPTSTR m_pTSRegFileName;
 
-	CCritSec m_Lock;
+  CCritSec m_Lock;
 
-	FileWriter *m_pCurrentTSFile;
-	std::vector<LPWSTR> m_tsFileNames;
-	long m_filesAdded;
-	long m_filesRemoved;
-	long m_currentFilenameId;
-	long m_currentFileId;
+  FileWriter *m_pCurrentTSFile;
+  std::vector<LPWSTR> m_tsFileNames;
+  long m_filesAdded;
+  long m_filesRemoved;
+  long m_currentFilenameId;
+  long m_currentFileId;
 
-	long m_minTSFiles;
-	long m_maxTSFiles;
-	__int64 m_maxTSFileSize;
-	__int64 m_chunkReserve;
+  long m_minTSFiles;
+  long m_maxTSFiles;
+  __int64 m_maxTSFileSize;
+  __int64 m_chunkReserve;
 };
 
 #endif

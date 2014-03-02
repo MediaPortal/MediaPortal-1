@@ -1,6 +1,6 @@
 /* 
- *	Copyright (C) 2006-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
+ *  Copyright (C) 2006-2008 Team MediaPortal
+ *  http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -52,7 +52,7 @@ namespace Mediaportal
   public:
     // Constructor
     // Obtain ownership of the cricital section
-	  CEnterCriticalSection(CCriticalSection& cs);
+    CEnterCriticalSection(CCriticalSection& cs);
     // Constructor
     // Obtain ownership of the cricital section
     // The const attribute will be removed with the const_cast operator
@@ -60,7 +60,7 @@ namespace Mediaportal
     CEnterCriticalSection(const CCriticalSection& cs);
     // Destructor
     // Leaves the critical section
-	  virtual ~CEnterCriticalSection();
+    virtual ~CEnterCriticalSection();
 
     // Test critical section ownership
     // Returns true if ownership was granted

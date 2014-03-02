@@ -1,6 +1,6 @@
 /* 
- *	Copyright (C) 2006-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
+ *  Copyright (C) 2006-2008 Team MediaPortal
+ *  http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -25,22 +25,22 @@
 class CPcrDecoder
 {
 public:
-	CPcrDecoder(void);
-	virtual ~CPcrDecoder(void);
-	void	SetPcrPid(int pid);
-	int		GetPcrPid();
-	void	Reset();
-	void	OnTsPacket(byte* tsPacket);
+  CPcrDecoder(void);
+  virtual ~CPcrDecoder(void);
+  void  SetPcrPid(int pid);
+  int    GetPcrPid();
+  void  Reset();
+  void  OnTsPacket(byte* tsPacket);
 
-	UINT64 PcrHigh();
-	UINT64     PcrLow();
-	UINT64 Pcr();
-	bool    GetPtsDts(byte* pesHeader, UINT64& pts, UINT64& dts);
+  UINT64 PcrHigh();
+  UINT64     PcrLow();
+  UINT64 Pcr();
+  bool    GetPtsDts(byte* pesHeader, UINT64& pts, UINT64& dts);
   void    ChangePtsDts(byte* header, UINT64 startPcr);
 
 private:
-	int    m_pcrPid;
-	UINT64 m_pcrHigh;
-	UINT64 m_pcrLow;
+  int    m_pcrPid;
+  UINT64 m_pcrHigh;
+  UINT64 m_pcrLow;
   CTsHeader m_tsHeader;
 };

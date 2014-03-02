@@ -1,6 +1,6 @@
 /* 
- *	Copyright (C) 2006-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
+ *  Copyright (C) 2006-2008 Team MediaPortal
+ *  http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -33,29 +33,29 @@ using namespace std;
 class CMhwParser:public ISectionCallback
 {
 public:
-	CMhwParser(void);
-	virtual ~CMhwParser(void);
+  CMhwParser(void);
+  virtual ~CMhwParser(void);
   void  Reset();
-	void  GrabEPG();
-	bool  isGrabbing();
-	bool  IsEPGReady();
-	void GetTitleCount(UINT* count);
-	void GetTitle(UINT program, UINT* id, UINT* transportId, UINT* networkId, UINT* channelId, ULONG* programId, UINT* themeId, UINT* PPV, BYTE* Summaries, UINT* duration, ULONG* dateStart, ULONG* timeStart,char** title,char** programName);
-	void GetChannel(UINT channelNr, UINT* channelId, UINT* networkId, UINT* transportId, char** channelName);
-	void GetSummary(ULONG programId, char** summary);
-	void GetTheme(UINT themeId, char** theme);
-	void AbortGrabbing();
+  void  GrabEPG();
+  bool  isGrabbing();
+  bool  IsEPGReady();
+  void GetTitleCount(UINT* count);
+  void GetTitle(UINT program, UINT* id, UINT* transportId, UINT* networkId, UINT* channelId, ULONG* programId, UINT* themeId, UINT* PPV, BYTE* Summaries, UINT* duration, ULONG* dateStart, ULONG* timeStart,char** title,char** programName);
+  void GetChannel(UINT channelNr, UINT* channelId, UINT* networkId, UINT* transportId, char** channelName);
+  void GetSummary(ULONG programId, char** summary);
+  void GetTheme(UINT themeId, char** theme);
+  void AbortGrabbing();
 
-	void	OnTsPacket(CTsHeader& header,byte* tsPacket);
-	void  OnNewSection(int pid, int tableId, CSection& section);
+  void  OnTsPacket(CTsHeader& header,byte* tsPacket);
+  void  OnNewSection(int pid, int tableId, CSection& section);
 private:
-	bool IsSectionWanted(int pid, int table_id);
+  bool IsSectionWanted(int pid, int table_id);
   vector<CSectionDecoder*> m_vecDecoders;
-	CMhwDecoder m_mhwDecoder;
-	time_t      m_TimeOutTimer;
-	bool				m_bGrabbing;
-	bool				m_bDone;
-	CCriticalSection m_section;
+  CMhwDecoder m_mhwDecoder;
+  time_t      m_TimeOutTimer;
+  bool        m_bGrabbing;
+  bool        m_bDone;
+  CCriticalSection m_section;
   CTsHeader             m_tsHeader;
 };
 

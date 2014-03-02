@@ -1,6 +1,6 @@
 /* 
-*	Copyright (C) 2006-2008 Team MediaPortal
-*	http://www.team-mediaportal.com
+*  Copyright (C) 2006-2008 Team MediaPortal
+*  http://www.team-mediaportal.com
 *
 *  This Program is free software; you can redistribute it and/or modify
 *  it under the terms of the GNU General Public License as published by
@@ -32,61 +32,61 @@ extern void LogDebug(const char *fmt, ...) ;
 
 CTsChannel::CTsChannel(LPUNKNOWN pUnk, HRESULT *phr,int id) 
 {
-	m_id=id;
-	m_pEncryptionAnalyser = new CEncryptionAnalyser(pUnk,phr);
-	m_pPmtGrabber = new CPmtGrabber(pUnk,phr);
-	m_pRecorder = new CDiskRecorder(RecordingMode::Recording);
-	m_pTimeShifting= new CDiskRecorder(RecordingMode::TimeShift);
+  m_id=id;
+  m_pEncryptionAnalyser = new CEncryptionAnalyser(pUnk,phr);
+  m_pPmtGrabber = new CPmtGrabber(pUnk,phr);
+  m_pRecorder = new CDiskRecorder(RecordingMode::Recording);
+  m_pTimeShifting= new CDiskRecorder(RecordingMode::TimeShift);
   m_pCaGrabber= new CCaGrabber(pUnk,phr);
 }
 
 CTsChannel::~CTsChannel(void)
 {
-	if (m_pEncryptionAnalyser!=NULL)
-	{
-		LogDebug("del m_pEncryptionAnalyser");
-		delete m_pEncryptionAnalyser;
-		m_pEncryptionAnalyser=NULL;
-	}
-	if (m_pPmtGrabber!=NULL)
-	{
-		LogDebug("del m_pPmtGrabber");
-		delete m_pPmtGrabber;
-		m_pPmtGrabber=NULL;
-	}
-	if (m_pRecorder!=NULL)
-	{
-		LogDebug("del m_pRecorder");
-		delete m_pRecorder;
-		m_pRecorder=NULL;
-	}
-	if (m_pTimeShifting!=NULL)
-	{
-		LogDebug("del m_pTimeShifting");
-		delete m_pTimeShifting;
-		m_pTimeShifting=NULL;
-	}
-	if (m_pCaGrabber!=NULL)
-	{
-		LogDebug("del m_pCaGrabber");
-		delete m_pCaGrabber;
-		m_pCaGrabber=NULL;
-	}
-	LogDebug("del done...");
+  if (m_pEncryptionAnalyser!=NULL)
+  {
+    LogDebug("del m_pEncryptionAnalyser");
+    delete m_pEncryptionAnalyser;
+    m_pEncryptionAnalyser=NULL;
+  }
+  if (m_pPmtGrabber!=NULL)
+  {
+    LogDebug("del m_pPmtGrabber");
+    delete m_pPmtGrabber;
+    m_pPmtGrabber=NULL;
+  }
+  if (m_pRecorder!=NULL)
+  {
+    LogDebug("del m_pRecorder");
+    delete m_pRecorder;
+    m_pRecorder=NULL;
+  }
+  if (m_pTimeShifting!=NULL)
+  {
+    LogDebug("del m_pTimeShifting");
+    delete m_pTimeShifting;
+    m_pTimeShifting=NULL;
+  }
+  if (m_pCaGrabber!=NULL)
+  {
+    LogDebug("del m_pCaGrabber");
+    delete m_pCaGrabber;
+    m_pCaGrabber=NULL;
+  }
+  LogDebug("del done...");
 }
 
 void CTsChannel::OnTsPacket(byte* tsPacket)
 {
-	try
-	{
-		m_pEncryptionAnalyser->OnTsPacket(tsPacket);
-		m_pPmtGrabber->OnTsPacket(tsPacket);
-		m_pRecorder->OnTsPacket(tsPacket);
-		m_pTimeShifting->OnTsPacket(tsPacket);
+  try
+  {
+    m_pEncryptionAnalyser->OnTsPacket(tsPacket);
+    m_pPmtGrabber->OnTsPacket(tsPacket);
+    m_pRecorder->OnTsPacket(tsPacket);
+    m_pTimeShifting->OnTsPacket(tsPacket);
     m_pCaGrabber->OnTsPacket(tsPacket);
-	}
-	catch(...)
-	{
-		LogDebug("exception in AnalyzeTsPacket");
-	}
+  }
+  catch(...)
+  {
+    LogDebug("exception in AnalyzeTsPacket");
+  }
 }

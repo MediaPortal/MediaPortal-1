@@ -1,6 +1,6 @@
 /* 
- *	Copyright (C) 2006-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
+ *  Copyright (C) 2006-2008 Team MediaPortal
+ *  http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -43,41 +43,41 @@ DEFINE_GUID(IID_TSFilter, 0x5eb9f392, 0xe7fd, 0x4071, 0x8e, 0x44, 0x35, 0x90, 0x
 
 DECLARE_INTERFACE_(ITSFilter, IUnknown)
 {
-	STDMETHOD(AddChannel)(THIS_ int* handle)PURE;
+  STDMETHOD(AddChannel)(THIS_ int* handle)PURE;
   STDMETHOD(DeleteChannel)(THIS_ int handle)PURE;
   STDMETHOD(DeleteAllChannels)()PURE;
 
-	STDMETHOD(AnalyserAddPid)(THIS_ int handle, int pid)PURE;
-	STDMETHOD(AnalyserRemovePid)(THIS_ int handle, int pid)PURE;
-	STDMETHOD(AnalyserGetPidCount)(THIS_ int handle, int* pidCount)PURE;
-	STDMETHOD(AnalyserGetPid)(THIS_ int handle, int pidIdx, int* pid, EncryptionState* encryptionState)PURE;
-	STDMETHOD(AnalyserSetCallBack)(THIS_ int handle, IEncryptionStateChangeCallBack* callBack)PURE;
-	STDMETHOD(AnalyserReset)(THIS_ int handle)PURE;
+  STDMETHOD(AnalyserAddPid)(THIS_ int handle, int pid)PURE;
+  STDMETHOD(AnalyserRemovePid)(THIS_ int handle, int pid)PURE;
+  STDMETHOD(AnalyserGetPidCount)(THIS_ int handle, int* pidCount)PURE;
+  STDMETHOD(AnalyserGetPid)(THIS_ int handle, int pidIdx, int* pid, EncryptionState* encryptionState)PURE;
+  STDMETHOD(AnalyserSetCallBack)(THIS_ int handle, IEncryptionStateChangeCallBack* callBack)PURE;
+  STDMETHOD(AnalyserReset)(THIS_ int handle)PURE;
 
-	STDMETHOD(PmtSetPmtPid)(THIS_ int handle, int pmtPid, int serviceId);
-	STDMETHOD(PmtSetCallBack)(THIS_ int handle, IPmtCallBack* callBack);
-	STDMETHOD(PmtGetPmtData)(THIS_ int handle, BYTE* pmtData);
-	
+  STDMETHOD(PmtSetPmtPid)(THIS_ int handle, int pmtPid, int serviceId);
+  STDMETHOD(PmtSetCallBack)(THIS_ int handle, IPmtCallBack* callBack);
+  STDMETHOD(PmtGetPmtData)(THIS_ int handle, BYTE* pmtData);
+  
   STDMETHOD(RecordSetRecordingFileNameW)(THIS_ int handle,wchar_t* pwszFileName)PURE;
   STDMETHOD(RecordStartRecord)(THIS_ int handle)PURE;
   STDMETHOD(RecordStopRecord)(THIS_ int handle)PURE;
-	STDMETHOD(RecordSetPmtPid)(THIS_ int handle,int mtPid,int serviceId,byte* pmtData,int pmtLength)PURE;
-	STDMETHOD(RecordSetVideoAudioObserver)(THIS_ int handle, IVideoAudioObserver* callback)PURE;
+  STDMETHOD(RecordSetPmtPid)(THIS_ int handle,int mtPid,int serviceId,byte* pmtData,int pmtLength)PURE;
+  STDMETHOD(RecordSetVideoAudioObserver)(THIS_ int handle, IVideoAudioObserver* callback)PURE;
 
-	STDMETHOD(TimeShiftSetTimeShiftingFileNameW)(THIS_ int handle, wchar_t* pwszFileName)PURE;
-	STDMETHOD(TimeShiftStart)(THIS_ int handle )PURE;
-	STDMETHOD(TimeShiftStop)(THIS_ int handle )PURE;
-	STDMETHOD(TimeShiftReset)(THIS_ int handle )PURE;
-	STDMETHOD(TimeShiftGetBufferSize) (THIS_ int handle, long * size) PURE;
-	STDMETHOD(TimeShiftSetPmtPid) (THIS_ int handle, int pmtPid,int serviceId,byte* pmtData,int pmtLength) PURE;
-	STDMETHOD(TimeShiftPause) (THIS_ int handle, BYTE onOff) PURE;
-	STDMETHOD(TimeShiftSetParams) (THIS_ int handle, int minFiles, int maxFiles, ULONG chunkSize) PURE;
-	STDMETHOD(TimeShiftGetCurrentFilePosition) (THIS_ int handle,__int64 * position, long * bufferId) PURE;
-	STDMETHOD(SetVideoAudioObserver)(THIS_ int handle, IVideoAudioObserver* callback)PURE;
+  STDMETHOD(TimeShiftSetTimeShiftingFileNameW)(THIS_ int handle, wchar_t* pwszFileName)PURE;
+  STDMETHOD(TimeShiftStart)(THIS_ int handle )PURE;
+  STDMETHOD(TimeShiftStop)(THIS_ int handle )PURE;
+  STDMETHOD(TimeShiftReset)(THIS_ int handle )PURE;
+  STDMETHOD(TimeShiftGetBufferSize) (THIS_ int handle, long * size) PURE;
+  STDMETHOD(TimeShiftSetPmtPid) (THIS_ int handle, int pmtPid,int serviceId,byte* pmtData,int pmtLength) PURE;
+  STDMETHOD(TimeShiftPause) (THIS_ int handle, BYTE onOff) PURE;
+  STDMETHOD(TimeShiftSetParams) (THIS_ int handle, int minFiles, int maxFiles, ULONG chunkSize) PURE;
+  STDMETHOD(TimeShiftGetCurrentFilePosition) (THIS_ int handle,__int64 * position, long * bufferId) PURE;
+  STDMETHOD(SetVideoAudioObserver)(THIS_ int handle, IVideoAudioObserver* callback)PURE;
 
-	STDMETHOD(CaReset)(THIS_ int handle)PURE;
+  STDMETHOD(CaReset)(THIS_ int handle)PURE;
   STDMETHOD(CaSetCallBack)(THIS_ int handle, ICaCallBack* callBack)PURE;
-	STDMETHOD(CaGetCaData)(THIS_ int handle, BYTE* caData)PURE;
+  STDMETHOD(CaGetCaData)(THIS_ int handle, BYTE* caData)PURE;
 
   STDMETHOD(GetStreamQualityCounters)(THIS_ int handle, int* totalTsBytes, int* totalRecordingBytes, 
       int* TsDiscontinuity, int* recordingDiscontinuity)PURE;
@@ -111,8 +111,8 @@ public:
 
 class CMpTsFilterPin : public CRenderedInputPin,public CPacketSync
 {
-    CMpTs*	const	m_pWriterFilter;   // Main renderer object
-    CCritSec*		const	m_pReceiveLock;    // Sample critical section
+    CMpTs*  const  m_pWriterFilter;   // Main renderer object
+    CCritSec*    const  m_pReceiveLock;    // Sample critical section
 public:
 
     CMpTsFilterPin(CMpTs *pDump,LPUNKNOWN pUnk,CBaseFilter *pFilter,CCritSec *pLock,CCritSec *pReceiveLock,HRESULT *phr);
@@ -126,20 +126,20 @@ public:
 //    HRESULT WriteStringInfo(IMediaSample *pSample);
 
     // Check if the pin can support this specific proposed type and format
-    HRESULT		CheckMediaType(const CMediaType *);
+    HRESULT    CheckMediaType(const CMediaType *);
     // Break connection
-    HRESULT		BreakConnect();
-		BOOL			IsReceiving();
-		void			Reset();
+    HRESULT    BreakConnect();
+    BOOL      IsReceiving();
+    void      Reset();
     // Track NewSegment
     STDMETHODIMP NewSegment(REFERENCE_TIME tStart,REFERENCE_TIME tStop,double dRate);
 
-		//CPacketSync overrides
-		void OnTsPacket(byte* tsPacket);
-		void AssignRawPaketWriter(FileWriter *rawPaketWriter);
+    //CPacketSync overrides
+    void OnTsPacket(byte* tsPacket);
+    void AssignRawPaketWriter(FileWriter *rawPaketWriter);
 private:
-	CCritSec		m_section;
-	FileWriter *m_rawPaketWriter;
+  CCritSec    m_section;
+  FileWriter *m_rawPaketWriter;
 };
 
 
@@ -150,69 +150,69 @@ class CMpTs : public CUnknown, public ITSFilter
 
     friend class CMpTsFilter;
     friend class CMpTsFilterPin;
-    CMpTsFilter*	m_pFilter;       // Methods for filter interfaces
-    CMpTsFilterPin*	m_pPin;          // A simple rendered input pin
-    CCritSec 		m_Lock;                // Main renderer critical section
-    CCritSec 		m_ReceiveLock;         // Sublock for received samples
+    CMpTsFilter*  m_pFilter;       // Methods for filter interfaces
+    CMpTsFilterPin*  m_pPin;          // A simple rendered input pin
+    CCritSec     m_Lock;                // Main renderer critical section
+    CCritSec     m_ReceiveLock;         // Sublock for received samples
 public:
     DECLARE_IUNKNOWN
 
-		STDMETHODIMP AddChannel( int* handle);
+    STDMETHODIMP AddChannel( int* handle);
     STDMETHODIMP DeleteChannel( int handle);
     STDMETHODIMP DeleteAllChannels();
 
-		STDMETHODIMP AnalyserAddPid(int handle, int pid);
-		STDMETHODIMP AnalyserRemovePid(int handle, int pid);
-		STDMETHODIMP AnalyserGetPidCount(int handle, int* pidCount);
-		STDMETHODIMP AnalyserGetPid(int handle, int pidIdx, int* pid, EncryptionState* encryptionState);
-		STDMETHODIMP AnalyserSetCallBack(int handle, IEncryptionStateChangeCallBack* callBack);
-		STDMETHODIMP AnalyserReset(int handle);
+    STDMETHODIMP AnalyserAddPid(int handle, int pid);
+    STDMETHODIMP AnalyserRemovePid(int handle, int pid);
+    STDMETHODIMP AnalyserGetPidCount(int handle, int* pidCount);
+    STDMETHODIMP AnalyserGetPid(int handle, int pidIdx, int* pid, EncryptionState* encryptionState);
+    STDMETHODIMP AnalyserSetCallBack(int handle, IEncryptionStateChangeCallBack* callBack);
+    STDMETHODIMP AnalyserReset(int handle);
 
-		STDMETHODIMP PmtSetPmtPid(int handle, int pmtPid, int serviceId);
-		STDMETHODIMP PmtSetCallBack(int handle, IPmtCallBack* callBack);
-		STDMETHODIMP PmtGetPmtData(int handle, BYTE* pmtData);
+    STDMETHODIMP PmtSetPmtPid(int handle, int pmtPid, int serviceId);
+    STDMETHODIMP PmtSetCallBack(int handle, IPmtCallBack* callBack);
+    STDMETHODIMP PmtGetPmtData(int handle, BYTE* pmtData);
 
-		STDMETHODIMP RecordSetRecordingFileNameW( int handle,wchar_t* pszFileName);
-		STDMETHODIMP RecordStartRecord( int handle);
-		STDMETHODIMP RecordStopRecord( int handle);
-		STDMETHODIMP RecordSetPmtPid(int handle,int mtPid,int serviceId,byte* pmtData,int pmtLength );
-		STDMETHODIMP RecordSetVideoAudioObserver(int handle, IVideoAudioObserver* callback);
+    STDMETHODIMP RecordSetRecordingFileNameW( int handle,wchar_t* pszFileName);
+    STDMETHODIMP RecordStartRecord( int handle);
+    STDMETHODIMP RecordStopRecord( int handle);
+    STDMETHODIMP RecordSetPmtPid(int handle,int mtPid,int serviceId,byte* pmtData,int pmtLength );
+    STDMETHODIMP RecordSetVideoAudioObserver(int handle, IVideoAudioObserver* callback);
 
-		STDMETHODIMP TimeShiftSetTimeShiftingFileNameW( int handle, wchar_t* pwszFileName);
-		STDMETHODIMP TimeShiftStart( int handle );
-		STDMETHODIMP TimeShiftStop( int handle );
-		STDMETHODIMP TimeShiftReset( int handle );
-		STDMETHODIMP TimeShiftGetBufferSize( int handle, long * size) ;
-		STDMETHODIMP TimeShiftSetPmtPid( int handle, int pmtPid, int serviceId,byte* pmtData,int pmtLength) ;
-		STDMETHODIMP TimeShiftPause( int handle, BYTE onOff) ;
-		STDMETHODIMP TimeShiftSetParams(int handle, int minFiles, int maxFiles, ULONG chunkSize) ;
-		STDMETHODIMP TimeShiftGetCurrentFilePosition(int handle,__int64 * position,long * bufferId);
-		STDMETHODIMP SetVideoAudioObserver(int handle, IVideoAudioObserver* callback);
+    STDMETHODIMP TimeShiftSetTimeShiftingFileNameW( int handle, wchar_t* pwszFileName);
+    STDMETHODIMP TimeShiftStart( int handle );
+    STDMETHODIMP TimeShiftStop( int handle );
+    STDMETHODIMP TimeShiftReset( int handle );
+    STDMETHODIMP TimeShiftGetBufferSize( int handle, long * size) ;
+    STDMETHODIMP TimeShiftSetPmtPid( int handle, int pmtPid, int serviceId,byte* pmtData,int pmtLength) ;
+    STDMETHODIMP TimeShiftPause( int handle, BYTE onOff) ;
+    STDMETHODIMP TimeShiftSetParams(int handle, int minFiles, int maxFiles, ULONG chunkSize) ;
+    STDMETHODIMP TimeShiftGetCurrentFilePosition(int handle,__int64 * position,long * bufferId);
+    STDMETHODIMP SetVideoAudioObserver(int handle, IVideoAudioObserver* callback);
 
-		STDMETHODIMP CaReset(int handle);
-		STDMETHODIMP CaSetCallBack(int handle, ICaCallBack* callBack);
-		STDMETHODIMP CaGetCaData(int handle, BYTE* caData);
+    STDMETHODIMP CaReset(int handle);
+    STDMETHODIMP CaSetCallBack(int handle, ICaCallBack* callBack);
+    STDMETHODIMP CaGetCaData(int handle, BYTE* caData);
 
     STDMETHODIMP GetStreamQualityCounters(int handle, int* totalTsBytes, int* totalRecordingBytes, 
       int* TsDiscontinuity, int* recordingDiscontinuity);
 
-		STDMETHODIMP TimeShiftSetChannelType(int handle, int channelType);
+    STDMETHODIMP TimeShiftSetChannelType(int handle, int channelType);
 
     CMpTs(LPUNKNOWN pUnk, HRESULT *phr);
     ~CMpTs();
     static CUnknown * WINAPI CreateInstance(LPUNKNOWN punk, HRESULT *phr);
-		void AnalyzeTsPacket(byte* tsPacket);
+    void AnalyzeTsPacket(byte* tsPacket);
 
 private:
     // Overriden to say what interfaces we support where
-		CTsChannel* GetTsChannel(int handle);	
+    CTsChannel* GetTsChannel(int handle);  
     STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void ** ppv);
-		CChannelScan*   m_pChannelScanner;
-		CEpgScanner*		m_pEpgScanner;
-		FileWriter* m_rawPaketWriter;
-		bool b_dumpRawPakets;
-		CChannelLinkageScanner* m_pChannelLinkageScanner;
-		vector<CTsChannel*> m_vecChannels;
+    CChannelScan*   m_pChannelScanner;
+    CEpgScanner*    m_pEpgScanner;
+    FileWriter* m_rawPaketWriter;
+    bool b_dumpRawPakets;
+    CChannelLinkageScanner* m_pChannelLinkageScanner;
+    vector<CTsChannel*> m_vecChannels;
     typedef vector<CTsChannel*>::iterator ivecChannels;
-		int m_id;
+    int m_id;
 };

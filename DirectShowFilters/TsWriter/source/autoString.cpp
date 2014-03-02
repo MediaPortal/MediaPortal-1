@@ -1,6 +1,6 @@
 /* 
- *	Copyright (C) 2006-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
+ *  Copyright (C) 2006-2008 Team MediaPortal
+ *  http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -23,16 +23,16 @@
 #include "autostring.h"
 CAutoString::CAutoString(int len)
 {
-	m_pBuffer = new char[len];
+  m_pBuffer = new char[len];
   memset(m_pBuffer,0,len);
 }
 CAutoString::~CAutoString()
 {
-	delete [] m_pBuffer;
-	m_pBuffer=NULL;
+  delete [] m_pBuffer;
+  m_pBuffer=NULL;
 }
 
 char* CAutoString::GetBuffer() 
 {
-	return m_pBuffer;
+  return m_pBuffer;
 }
