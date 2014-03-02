@@ -1055,7 +1055,7 @@ LineEnding GetEndOfLineA(const char *buffer, unsigned int length, unsigned int s
   result.position = -1;
   result.size = 0;
 
-  for (unsigned int i = start; (start < length); i++)
+  for (unsigned int i = start; (i < length); i++)
   {
     if ((buffer[i] == '\r') || (buffer[i] == '\n'))
     {
@@ -1088,7 +1088,7 @@ LineEnding GetEndOfLineW(const wchar_t *buffer, unsigned int length, unsigned in
   result.position = -1;
   result.size = 0;
 
-  for (unsigned int i = start; (start < length); i++)
+  for (unsigned int i = start; (i < length); i++)
   {
     if ((buffer[i] == L'\r') || (buffer[i] == L'\n'))
     {

@@ -324,13 +324,21 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
         {
           // check DESCRIBE response, it have to be valid SDP
 
-          unsigned int bufferSize = response->GetContentLength() + 1;
+          unsigned int bufferSize = response->GetContentLength() + 2; // one place for null character, one place for new line character
           ALLOC_MEM_DEFINE_SET(buffer, char, bufferSize, 0);
-          errorCode = (buffer != NULL) ? errorCode : CURLE_OUT_OF_MEMORY;
+          errorCode = ((buffer != NULL) && (bufferSize > 2)) ? errorCode : CURLE_OUT_OF_MEMORY;
 
           if (errorCode == CURLE_OK)
           {
-            memcpy(buffer, response->GetContent(), bufferSize - 1);
+            memcpy(buffer, response->GetContent(), bufferSize - 2);
+
+            // check if we have new line character as last character in response
+            // if not, then add new line character
+
+            if ((buffer[bufferSize - 3] != '\r') && (buffer[bufferSize - 3] != '\n'))
+            {
+              buffer[bufferSize - 2] = '\n';
+            }
 
             // try to log response
             wchar_t *responseW = ConvertToUnicodeA(buffer);
@@ -437,9 +445,22 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
               control = dynamic_cast<CControlAttribute *>(attribute);
             }
           }
-          error = (control != NULL) ? error : CURLE_FAILED_INIT;
 
-          if (error == CURLE_OK)
+          wchar_t *streamUrl = NULL;
+          if (control == NULL)
+          {
+            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: no control attribute", this->protocolName, METHOD_INITIALIZE_NAME);
+
+            const wchar_t *controlUrl = this->GetBaseUrl();
+
+            if (IsAbsoluteUrl(controlUrl))
+            {
+              streamUrl = Duplicate(controlUrl);
+            }
+
+            error = (streamUrl != NULL) ? error : CURLE_FAILED_INIT;
+          }
+          else
           {
             // control attribute exists
             // it can be asterisk ('*') - this means stream URI
@@ -458,41 +479,41 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
             }
 
             error = (streamUrl != NULL) ? error : CURLE_OUT_OF_MEMORY;
+          }
 
-            if (error == CURLE_OK)
+          if (error == CURLE_OK)
+          {
+            CRtspSetupRequest *setup = new CRtspSetupRequest();
+            CHECK_CONDITION_EXECUTE(error == CURLE_OK, error = (setup != NULL) ? error : CURLE_OUT_OF_MEMORY);
+            CHECK_CONDITION_EXECUTE(error == CURLE_OK, error = (setup->GetTransportRequestHeader() != NULL) ? error : CURLE_OUT_OF_MEMORY);
+            CHECK_CONDITION_EXECUTE(error == CURLE_OK, error = (setup->SetUri(streamUrl)) ? error : CURLE_OUT_OF_MEMORY);
+            CHECK_CONDITION_EXECUTE(error == CURLE_OK, setup->SetTimeout(endTicks - GetTickCount()));
+            CHECK_CONDITION_EXECUTE(error == CURLE_OK, setup->SetSequenceNumber(this->lastSequenceNumber++));
+            CHECK_CONDITION_EXECUTE(error == CURLE_OK, error = setup->SetSessionId(this->sessionId) ? error : CURLE_OUT_OF_MEMORY);
+
+            if (errorCode == CURLE_OK)
             {
-              CRtspSetupRequest *setup = new CRtspSetupRequest();
-              CHECK_CONDITION_EXECUTE(error == CURLE_OK, error = (setup != NULL) ? error : CURLE_OUT_OF_MEMORY);
-              CHECK_CONDITION_EXECUTE(error == CURLE_OK, error = (setup->GetTransportRequestHeader() != NULL) ? error : CURLE_OUT_OF_MEMORY);
-              CHECK_CONDITION_EXECUTE(error == CURLE_OK, error = (setup->SetUri(streamUrl)) ? error : CURLE_OUT_OF_MEMORY);
-              CHECK_CONDITION_EXECUTE(error == CURLE_OK, setup->SetTimeout(endTicks - GetTickCount()));
-              CHECK_CONDITION_EXECUTE(error == CURLE_OK, setup->SetSequenceNumber(this->lastSequenceNumber++));
-              CHECK_CONDITION_EXECUTE(error == CURLE_OK, error = setup->SetSessionId(this->sessionId) ? error : CURLE_OUT_OF_MEMORY);
+              // setup transort header
+              CRtspTransportRequestHeader *header = setup->GetTransportRequestHeader();
 
-              if (errorCode == CURLE_OK)
-              {
-                // setup transort header
-                CRtspTransportRequestHeader *header = setup->GetTransportRequestHeader();
-
-                header->SetTransportProtocol(RTSP_TRANSPORT_REQUEST_HEADER_PROTOCOL_RTP);
-                header->SetProfile(RTSP_TRANSPORT_REQUEST_HEADER_PROFILE_AVP);
-                header->SetLowerTransport(RTSP_TRANSPORT_REQUEST_HEADER_LOWER_TRANSPORT_TCP);
-                header->SetMinInterleavedChannel(interleavedChannel);
-                header->SetMaxInterleavedChannel(interleavedChannel + 1);
-                header->SetFlags(FLAG_RTSP_TRANSPORT_REQUEST_HEADER_LOWER_TRANSPORT_TCP | FLAG_RTSP_TRANSPORT_REQUEST_HEADER_INTERLEAVED | FLAG_RTSP_TRANSPORT_REQUEST_HEADER_TRANSPORT_PROTOCOL_RTP | FLAG_RTSP_TRANSPORT_REQUEST_HEADER_PROFILE_AVP);
-              }
-
-              CHECK_CONDITION_EXECUTE(error == CURLE_OK, error = this->SendAndReceive(setup, error, L"SETUP", METHOD_INITIALIZE_NAME));
-              // if no error in SETUP request, we must call TEARDOWN to free resources
-              {
-                CLockMutex lock(this->mutex, INFINITE);
-
-                // RTSP response can be NULL in case of error (e.g. timeout or wrong parameters)
-                CHECK_CONDITION_EXECUTE((this->rtspDownloadResponse->GetRtspResponse() != NULL) && (this->rtspDownloadResponse->GetRtspResponse()->IsSuccess()), this->lastCommand = CURL_RTSPREQ_SETUP);
-              }
-
-              FREE_MEM_CLASS(setup);
+              header->SetTransportProtocol(RTSP_TRANSPORT_REQUEST_HEADER_PROTOCOL_RTP);
+              header->SetProfile(RTSP_TRANSPORT_REQUEST_HEADER_PROFILE_AVP);
+              header->SetLowerTransport(RTSP_TRANSPORT_REQUEST_HEADER_LOWER_TRANSPORT_TCP);
+              header->SetMinInterleavedChannel(interleavedChannel);
+              header->SetMaxInterleavedChannel(interleavedChannel + 1);
+              header->SetFlags(FLAG_RTSP_TRANSPORT_REQUEST_HEADER_LOWER_TRANSPORT_TCP | FLAG_RTSP_TRANSPORT_REQUEST_HEADER_INTERLEAVED | FLAG_RTSP_TRANSPORT_REQUEST_HEADER_TRANSPORT_PROTOCOL_RTP | FLAG_RTSP_TRANSPORT_REQUEST_HEADER_PROFILE_AVP);
             }
+
+            CHECK_CONDITION_EXECUTE(error == CURLE_OK, error = this->SendAndReceive(setup, error, L"SETUP", METHOD_INITIALIZE_NAME));
+            // if no error in SETUP request, we must call TEARDOWN to free resources
+            {
+              CLockMutex lock(this->mutex, INFINITE);
+
+              // RTSP response can be NULL in case of error (e.g. timeout or wrong parameters)
+              CHECK_CONDITION_EXECUTE((this->rtspDownloadResponse->GetRtspResponse() != NULL) && (this->rtspDownloadResponse->GetRtspResponse()->IsSuccess()), this->lastCommand = CURL_RTSPREQ_SETUP);
+            }
+
+            FREE_MEM_CLASS(setup);
 
             CHECK_CONDITION_EXECUTE(error != CURLE_OK, this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_INITIALIZE_NAME, L"error while sending same connection TCP RTSP SETUP", error));
 
@@ -594,9 +615,9 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
             }
 
             FREE_MEM_CLASS(response);
-            FREE_MEM(streamUrl);
           }
 
+          FREE_MEM(streamUrl);
           interleavedChannel += 2;
         }
 
@@ -668,9 +689,22 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
               control = dynamic_cast<CControlAttribute *>(attribute);
             }
           }
-          error = (control != NULL) ? error : CURLE_FAILED_INIT;
+          
+          wchar_t *streamUrl = NULL;
+          if (control == NULL)
+          {
+            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: no control attribute", this->protocolName, METHOD_INITIALIZE_NAME);
 
-          if (error == CURLE_OK)
+            const wchar_t *controlUrl = this->GetBaseUrl();
+
+            if (IsAbsoluteUrl(controlUrl))
+            {
+              streamUrl = Duplicate(controlUrl);
+            }
+
+            error = (streamUrl != NULL) ? error : CURLE_FAILED_INIT;
+          }
+          else
           {
             // control attribute exists
             // it can be asterisk ('*') - this means stream URI
@@ -689,7 +723,10 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
             }
 
             error = (streamUrl != NULL) ? error : CURLE_OUT_OF_MEMORY;
+          }
 
+          if (error == CURLE_OK)
+          {
             CSimpleServer *dataServer = NULL;
             CSimpleServer *controlServer = NULL;
 
@@ -892,8 +929,9 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
             }
 
             FREE_MEM_CLASS(response);
-            FREE_MEM(streamUrl);
           }
+
+          FREE_MEM(streamUrl);
         }
 
         CHECK_CONDITION_EXECUTE(error == CURLE_OK, error = (this->rtspDownloadResponse->GetRtspTracks()->Count() != 0) ? error : CURLE_FAILED_INIT);
