@@ -484,6 +484,9 @@ CTsReaderFilter::~CTsReaderFilter()
   LogDebug("CTsReaderFilter::dtor");
   //stop duration thread
   StopThread(5000);
+  //stop demux flush/read ahead thread
+  m_demultiplexer.m_bShuttingDown = true;
+  m_demultiplexer.StopThread(5000);
   
   HRESULT hr = m_pAudioPin->Disconnect();
   delete m_pAudioPin;
