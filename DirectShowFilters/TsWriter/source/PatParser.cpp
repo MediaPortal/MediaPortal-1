@@ -19,6 +19,7 @@
  *
  */
 #pragma warning(disable : 4995)
+#include <algorithm>
 #include <windows.h>
 #include "PatParser.h"
 
@@ -29,51 +30,68 @@ CPatParser::CPatParser(void)
 {
   SetPid(PID_PAT);
   Reset();
-  m_pCallBack = NULL;
+  m_callBack = NULL;
 }
 
 CPatParser::~CPatParser(void)
 {
+  CleanUp();
+}
+
+void CPatParser::CleanUp()
+{
+  map<int, ProgramDetail*>::iterator it = m_programs.begin();
+  while (it != m_programs.end())
+  {
+    if (it->second != NULL)
+    {
+      delete it->second;
+      it->second = NULL;
+    }
+    it++;
+  }
+  m_programs.clear();
 }
 
 void CPatParser::Reset()
 {
-  LogDebug("PatParser: reset");
+  LogDebug("PAT: reset");
   CSectionDecoder::Reset();
-  m_mSeenSections.clear();
-  m_mServices.clear();
-  m_bIsReady = false;
-  LogDebug("PatParser: reset done");
+  m_currentVersionNumber = -1;
+  m_unseenSections.clear();
+  CleanUp();
+  m_isReady = false;
+  LogDebug("PAT: reset done");
 }
 
 void CPatParser::SetCallBack(IPatCallBack* callBack)
 {
-  m_pCallBack = callBack;
+  m_callBack = callBack;
 }
 
 bool CPatParser::IsReady()
 {
-  return m_bIsReady;
+  return m_isReady;
 }
 
-int CPatParser::GetServiceCount()
+int CPatParser::GetProgramCount()
 {
-  return (int)m_mServices.size();
+  return (int)m_programs.size();
 }
 
-int CPatParser::GetService(int idx, int* serviceId, int* pmtPid)
+int CPatParser::GetProgram(int idx, int* programNumber, int* pmtPid)
 {
   if (idx < 0)
   {
     return S_FALSE;
   }
   int i = 0;
-  for (map<int, int>::iterator it = m_mServices.begin(); it != m_mServices.end(); it++)
+  for (map<int, ProgramDetail*>::iterator it = m_programs.begin(); it != m_programs.end(); it++)
   {
     if (i == idx)
     {
-      *serviceId = it->first;
-      *pmtPid = it->second;
+      *programNumber = it->first;
+      *pmtPid = it->second->Pid;
       return S_OK;
     }
     i++;
@@ -81,24 +99,25 @@ int CPatParser::GetService(int idx, int* serviceId, int* pmtPid)
   return S_FALSE;
 }
 
-int CPatParser::GetPmtPid(int serviceId, int* pmtPid)
+int CPatParser::GetPmtPid(int programNumber, int* pmtPid)
 {
-  map<int, int>::iterator it = m_mServices.find(serviceId);
-  if (it == m_mServices.end())
+  map<int, ProgramDetail*>::iterator it = m_programs.find(programNumber);
+  if (it == m_programs.end())
   {
     return S_FALSE;
   }
-  *pmtPid = it->second;
+  *pmtPid = it->second->Pid;
   return S_OK;
 }
 
 void CPatParser::OnNewSection(CSection& sections)
 {
+  // 0x00 = standard PAT table ID
   if (sections.table_id != 0)
   {
     return;
   }
-  if (m_pCallBack == NULL)
+  if (m_callBack == NULL)
   {
     return;
   }
@@ -106,110 +125,138 @@ void CPatParser::OnNewSection(CSection& sections)
 
   try
   {
-    int section_syntax_indicator = section[1] & 0x80;
-    int section_length = ((section[1] & 0xf) << 8) + section[2];
-    if (section_length > 1021 || section_length < 12)
+    int sectionSyntaxIndicator = section[1] & 0x80;
+    int sectionLength = ((section[1] & 0xf) << 8) + section[2];
+    if (sectionLength > 1021 || sectionLength < 9)
     {
-      LogDebug("PatParser: invalid section length = %d", section_length);
+      LogDebug("PAT: invalid section length = %d", sectionLength);
       return;
     }
-    int transport_stream_id = (section[3] << 8) + section[4];
-    int version_number = (section[5] >> 1) & 0x1f;
-    int current_next_indicator = section[5] & 1;
-    if (current_next_indicator == 0)
+    int transportStreamId = (section[3] << 8) + section[4];
+    int versionNumber = (section[5] >> 1) & 0x1f;
+    int currentNextIndicator = section[5] & 1;
+    if (currentNextIndicator == 0)
     {
       // Details do not apply yet...
       return;
     }
-    int section_number = section[6];
-    int last_section_number = section[7];
+    int sectionNumber = section[6];
+    int lastSectionNumber = section[7];
 
-    int endOfSection = section_length - 1;
-    //LogDebug("PatParser: section number = %d, version number = %d, last section number = %d, section length = %d, end of section = %d",
-    //          section_number, version_number, last_section_number, section_length, endOfSection);
+    int endOfSection = sectionLength - 1;
+    //LogDebug("PAT: section number = %d, version number = %d, last section number = %d, section length = %d, end of section = %d",
+    //          sectionNumber, versionNumber, lastSectionNumber, sectionLength, endOfSection);
 
-    int key = section_number;
-    map<int, bool>::iterator it = m_mSeenSections.find(key);
-    if (it != m_mSeenSections.end())
+    if (versionNumber > m_currentVersionNumber || (versionNumber == MAX_TABLE_VERSION_NUMBER && versionNumber < m_currentVersionNumber))
     {
-      // We know about this key. Have we seen it before?
-      if (it->second)
+      LogDebug("PAT: new table version, version = %d, section number = %d, last section number = %d", sections.table_id, versionNumber, sectionNumber, lastSectionNumber);
+      m_isReady = false;
+      if (m_currentVersionNumber != -1)
       {
-        // We've seen this section before. Have we seen all the sections that we're expecting to see?
-        //LogDebug("PatParser: previously seen section %x", key);
-        if (!m_bIsReady)
+        for (map<int, ProgramDetail*>::iterator it = m_programs.begin(); it != m_programs.end(); it++)
         {
-          bool ready = true;
-          for (it = m_mSeenSections.begin(); it != m_mSeenSections.end(); it++)
-          {
-            if (!it->second)
-            {
-              //LogDebug("PatParser: not yet seen %x", it->first);
-              ready = false;
-              break;
-            }
-          }
-          m_bIsReady = ready;
-          if (ready)
-          {
-            LogDebug("PatParser: ready, sections parsed = %d", m_mSeenSections.size());
-          }
+          it->second->IsCurrent = false;
         }
-        return;
       }
+      m_currentVersionNumber = versionNumber;
+      m_unseenSections.clear();
+      for (int s = 0; s <= lastSectionNumber; s++)
+      {
+        m_unseenSections.push_back(s);
+      }
+    }
+    vector<int>::iterator sectionIt = find(m_unseenSections.begin(), m_unseenSections.end(), sectionNumber);
+    if (sectionIt == m_unseenSections.end())
+    {
+      //LogDebug("PAT: previously seen section %d", sectionNumber);
+      return;
     }
     else
     {
-      //LogDebug("PatParser: new section %x", key);
-      m_bIsReady = false;
-      int k = 0;
-      while (k <= last_section_number)
-      {
-        if (m_mSeenSections.find(k) == m_mSeenSections.end())
-        {
-          //LogDebug("PatParser: add section %x", k);
-          m_mSeenSections[k] = false;
-        }
-        k++;
-      }
+      //LogDebug("PAT: new section %d", sectionNumber);
     }
 
-    int pointer = 8;  // points to the first byte in the service loop
+    int pointer = 8;  // points to the first byte in the program loop
     while (pointer + 3 < endOfSection)
     {
-      int service_id = (section[pointer] << 8) + section[pointer + 1];
+      int programNumber = (section[pointer] << 8) + section[pointer + 1];
       pointer += 2;
-      int pmt_pid = ((section[pointer] & 0x1f) << 8) + section[pointer + 1];
+      int pmtPid = ((section[pointer] & 0x1f) << 8) + section[pointer + 1];
       pointer += 2;
-      //LogDebug("PatParser: service ID = 0x%x, PMT PID = 0x%x", service_id, pmt_pid);
+      //LogDebug("PAT: program number = %d, PMT PID = %d", programNumber, pmtPid);
 
       // There used to be more extensive checks here. Since we *always* have the CRC
       // checking enabled for this parser, we should be able to trust that the PIDs
       // are correct. Adding checks as were here before (eg. pmtPid > 0x12) can cause
       // problems for non-DVB streams. For the given example, there would be a problem
       // for ATSC streams which sometimes use PMT PID 0x10 for the first program.
-      if (service_id > 0)  // Ignore the network information table PID entry...
+      if (programNumber > 0)  // Ignore the network information table PID entry...
       {
-        map<int, int>::iterator it = m_mServices.find(service_id);
-        if ((it == m_mServices.end() || it->second != pmt_pid) && m_pCallBack != NULL)
+        ProgramDetail* detail;
+        map<int, ProgramDetail*>::iterator it = m_programs.find(programNumber);
+        if (it == m_programs.end())
         {
-          m_mServices[service_id] = pmt_pid;
-          m_pCallBack->OnPatReceived(service_id, pmt_pid);
+          detail = new ProgramDetail();
+          detail->ProgramNumber = programNumber;
+          m_programs[programNumber] = detail;
+          LogDebug("PAT: PMT PID for program number %d is %d", programNumber, pmtPid);
+          if (m_callBack != NULL)
+          {
+            m_callBack->OnPatReceived(programNumber, pmtPid);
+          }
         }
+        else
+        {
+          detail = it->second;
+          if (detail->Pid != pmtPid)
+          {
+            LogDebug("PAT: PMT PID for program number %d changed from %d to %d", programNumber, detail->Pid, pmtPid);
+            if (m_callBack != NULL)
+            {
+              m_callBack->OnPatChanged(programNumber, detail->Pid, pmtPid);
+            }
+          }
+        }
+        detail->Pid = pmtPid;
+        detail->IsCurrent = true;
       }
     }
 
     if (pointer != endOfSection)
     {
-      LogDebug("PatParser: section parsing error");
+      LogDebug("PAT: section parsing error");
+      return;
     }
-    else
+
+    m_unseenSections.erase(sectionIt);
+    if (m_unseenSections.size() == 0)
     {
-      m_mSeenSections[key] = true;
+      map<int, ProgramDetail*>::iterator it = m_programs.begin();
+      while (it != m_programs.end())
+      {
+        ProgramDetail* detail = it->second;
+        if (!detail->IsCurrent)
+        {
+          LogDebug("PAT: program number %d has been removed", detail->ProgramNumber);
+          if (m_callBack != NULL)
+          {
+            m_callBack->OnPatRemoved(detail->ProgramNumber, detail->Pid);
+          }
+          delete it->second;
+          it->second = NULL;
+          m_programs.erase(it++);
+        }
+        else
+        {
+          it++;
+        }
+      }
+      LogDebug("PAT: ready");
+      m_isReady = true;
     }
   }
   catch (...)
   {
-    LogDebug("PatParser: unhandled exception in OnNewSection()");
+    LogDebug("PAT: unhandled exception in OnNewSection()");
   }
 }
