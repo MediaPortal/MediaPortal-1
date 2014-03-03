@@ -73,11 +73,11 @@ STDMETHODIMP CEncryptionAnalyser::AddPid(int pid)
 {
   try
   {
-    LogDebug("EncryptionAnalyser: add PID %d", pid);
+    LogDebug("encryption: add PID %d", pid);
     map<int, PidState*>::iterator it = m_pids.find(pid);
     if (it != m_pids.end())
     {
-      LogDebug("EncryptionAnalyser: PID already being monitored, current state = %d", it->second->State);
+      LogDebug("encryption: PID already being monitored, current state = %d", it->second->State);
     }
     else
     {
@@ -91,7 +91,7 @@ STDMETHODIMP CEncryptionAnalyser::AddPid(int pid)
   }
   catch (...)
   {
-    LogDebug("EncryptionAnalyser: unhandled exception in AddPid()");
+    LogDebug("encryption: unhandled exception in AddPid()");
   }
   return S_FALSE;
 }
@@ -100,11 +100,11 @@ STDMETHODIMP CEncryptionAnalyser::RemovePid(int pid)
 {
   try
   {
-    LogDebug("EncryptionAnalyser: remove PID %d", pid);
+    LogDebug("encryption: remove PID %d", pid);
     map<int, PidState*>::iterator it = m_pids.find(pid);
     if (it == m_pids.end())
     {
-      LogDebug("EncryptionAnalyser: PID not being monitored");
+      LogDebug("encryption: PID not being monitored");
     }
     else
     {
@@ -119,7 +119,7 @@ STDMETHODIMP CEncryptionAnalyser::RemovePid(int pid)
   }
   catch (...)
   {
-    LogDebug("EncryptionAnalyser: unhandled exception in RemovePid()");
+    LogDebug("encryption: unhandled exception in RemovePid()");
   }
   return S_FALSE;
 }
@@ -129,12 +129,12 @@ STDMETHODIMP CEncryptionAnalyser::GetPidCount(int* pidCount)
   try
   {
     *pidCount = m_pids.size();
-    LogDebug("EncryptionAnalyser: get PID count, count = %d", pidCount);
+    LogDebug("encryption: get PID count, count = %d", pidCount);
     return S_OK;
   }
   catch (...)
   {
-    LogDebug("EncryptionAnalyser: unhandled exception in GetPidCount()");
+    LogDebug("encryption: unhandled exception in GetPidCount()");
   }
   return S_FALSE;
 }
@@ -143,7 +143,7 @@ STDMETHODIMP CEncryptionAnalyser::GetPidByIndex(int pidIdx, int* pid, Encryption
 {
   try
   {
-    LogDebug("EncryptionAnalyser: get PID by index %d", pidIdx);
+    LogDebug("encryption: get PID by index %d", pidIdx);
     *pid = -1;
     *encryptionState = EncryptionStateNotSet;
     if (pidIdx >= 0 && pidIdx < (int)m_pids.size())
@@ -160,13 +160,13 @@ STDMETHODIMP CEncryptionAnalyser::GetPidByIndex(int pidIdx, int* pid, Encryption
     }
     else
     {
-      LogDebug("EncryptionAnalyser: index out of bounds, count = %d", m_pids.size());
+      LogDebug("encryption: index out of bounds, count = %d", m_pids.size());
     }
     return S_OK;
   }
   catch (...)
   {
-    LogDebug("EncryptionAnalyser: unhandled exception in GetPidByIndex()");
+    LogDebug("encryption: unhandled exception in GetPidByIndex()");
   }
   return S_FALSE;
 }
@@ -175,12 +175,12 @@ STDMETHODIMP CEncryptionAnalyser::GetPid(int pid, EncryptionState* encryptionSta
 {
   try
   {
-    LogDebug("EncryptionAnalyser: get PID %d", pid);
+    LogDebug("encryption: get PID %d", pid);
     *encryptionState = EncryptionStateNotSet;
     map<int, PidState*>::iterator it = m_pids.find(pid);
     if (it == m_pids.end())
     {
-      LogDebug("EncryptionAnalyser: PID not being monitored");
+      LogDebug("encryption: PID not being monitored");
     }
     else
     {
@@ -190,7 +190,7 @@ STDMETHODIMP CEncryptionAnalyser::GetPid(int pid, EncryptionState* encryptionSta
   }
   catch (...)
   {
-    LogDebug("EncryptionAnalyser: unhandled exception in GetPidByIndex()");
+    LogDebug("encryption: unhandled exception in GetPidByIndex()");
   }
   return S_FALSE;
 }
@@ -199,13 +199,13 @@ STDMETHODIMP CEncryptionAnalyser::SetCallBack(IEncryptionStateChangeCallBack* ca
 {
   try
   {
-    LogDebug("EncryptionAnalyser: set call back 0x%x", callBack);
+    LogDebug("encryption: set call back 0x%x", callBack);
     m_callBack = callBack;
     return S_OK;
   }
   catch (...)
   {
-    LogDebug("EncryptionAnalyser: unhandled exception in SetCallBack()");
+    LogDebug("encryption: unhandled exception in SetCallBack()");
   }
   return S_FALSE;
 }
@@ -214,13 +214,13 @@ STDMETHODIMP CEncryptionAnalyser::Reset()
 {
   try
   {
-    LogDebug("EncryptionAnalyser: reset");
+    LogDebug("encryption: reset");
     CleanUp();
     return S_OK;
   }
   catch (...)
   {
-    LogDebug("EncryptionAnalyser: unhandled exception in Reset()");
+    LogDebug("encryption: unhandled exception in Reset()");
   }
   return S_FALSE;
 }
@@ -263,7 +263,7 @@ bool CEncryptionAnalyser::OnTsPacket(byte* tsPacket)
       state->PacketCount++;
       if (state->PacketCount >= STATE_CHANGE_THRESHOLD)
       {
-        LogDebug("EncryptionAnalyser: PID %d state change %d -> %d (TS header)", state->Pid, state->State, tsPacketScrambled);
+        LogDebug("encryption: PID %d state change %d -> %d (TS header)", state->Pid, state->State, tsPacketScrambled);
         state->State = Encrypted;
         state->PacketCount = 0;
         if (m_callBack != NULL)
@@ -320,7 +320,7 @@ bool CEncryptionAnalyser::OnTsPacket(byte* tsPacket)
       state->PacketCount++;
       if (state->PacketCount >= STATE_CHANGE_THRESHOLD)
       {
-        LogDebug("EncryptionAnalyser: PID %d state change %d -> %d (PES header)", state->Pid, it->second, pesPacketScrambled);
+        LogDebug("encryption: PID %d state change %d -> %d (PES header)", state->Pid, it->second, pesPacketScrambled);
         state->State = pesPacketScrambled ? Encrypted : Clear;
         state->PacketCount = 0;
         if (m_callBack != NULL)
@@ -333,7 +333,7 @@ bool CEncryptionAnalyser::OnTsPacket(byte* tsPacket)
   }
   catch (...)
   {
-    LogDebug("EncryptionAnalyser: unhandled exception in OnTsPacket()");
+    LogDebug("encryption: unhandled exception in OnTsPacket()");
   }
   return false;
 }
