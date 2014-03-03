@@ -41,14 +41,6 @@ namespace MediaPortal.Core.Transcoding
     [ComImport, Guid("b9559486-E1BB-45D3-A2A2-9A7AFE49B23F")]
     protected class TsReader {}
 
-    #region imports
-
-    [DllImport("dvblib.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern int SetWmvProfile(DirectShowLib.IBaseFilter filter, int bitrate, int fps, int screenX,
-                                            int screenY);
-
-    #endregion
-
     #region constants
 
     private const WMVersion DefaultWMversion = WMVersion.V8_0;
