@@ -1129,9 +1129,12 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CReceiveData *receiveDat
 
       if (FAILED(result))
       {
-        // ignore error and try again
-        result = S_OK;
+        // clear connected state to call StartReceiveData() method in parser hoster, after first fail we need to reopen connection until timeout (GetReceiveDataTimeout()) comes
+        // free RTSP curl instance
+        // in next run we try to open connection
         this->isConnected = false;
+        FREE_MEM_CLASS(this->mainCurlInstance);
+        result = S_OK;
       }
     }
 

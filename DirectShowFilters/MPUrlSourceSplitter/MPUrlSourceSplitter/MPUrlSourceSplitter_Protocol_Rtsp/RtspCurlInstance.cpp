@@ -69,7 +69,7 @@ CRtspCurlInstance::CRtspCurlInstance(CLogger *logger, HANDLE mutex, const wchar_
   this->rtspDownloadRequest = dynamic_cast<CRtspDownloadRequest *>(this->downloadRequest);
   this->rtspDownloadResponse = dynamic_cast<CRtspDownloadResponse *>(this->downloadResponse);
 
-  this->lastCommand = UINT_MAX;
+  this->lastCommand = RTSP_CURL_INSTANCE_COMMAND_NONE;
   this->requestCommand = UINT_MAX;
   this->lastSequenceNumber = 1;
   this->sameConnectionTcpPreference = RTSP_SAME_CONNECTION_TCP_PREFERENCE_DEFAULT;
@@ -269,7 +269,7 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
       }
       CHECK_CONDITION_EXECUTE(errorCode != CURLE_OK, this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_INITIALIZE_NAME, L"error while sending RTSP OPTIONS", errorCode));
     }
-    CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, this->lastCommand = CURL_RTSPREQ_OPTIONS);
+    CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, this->lastCommand = RTSP_CURL_INSTANCE_COMMAND_OPTIONS);
 
     if (errorCode == CURLE_OK)
     {
@@ -371,7 +371,7 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
       }
       CHECK_CONDITION_EXECUTE(errorCode != CURLE_OK, this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_INITIALIZE_NAME, L"error while sending RTSP DESCRIBE", errorCode));
     }
-    CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, this->lastCommand = CURL_RTSPREQ_DESCRIBE);
+    CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, this->lastCommand = RTSP_CURL_INSTANCE_COMMAND_DESCRIBE);
 
     // clear buffer
     this->rtspDownloadResponse->GetReceivedData()->ClearBuffer();
@@ -467,7 +467,6 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
             // it can be relative or absolute URL
 
             const wchar_t *controlUrl = control->IsAsterisk() ? this->GetBaseUrl() : control->GetControlUrl();
-            wchar_t *streamUrl = NULL;
             // this controlUrl can be relative or absolute
             if (IsAbsoluteUrl(controlUrl))
             {
@@ -510,7 +509,7 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
               CLockMutex lock(this->mutex, INFINITE);
 
               // RTSP response can be NULL in case of error (e.g. timeout or wrong parameters)
-              CHECK_CONDITION_EXECUTE((this->rtspDownloadResponse->GetRtspResponse() != NULL) && (this->rtspDownloadResponse->GetRtspResponse()->IsSuccess()), this->lastCommand = CURL_RTSPREQ_SETUP);
+              CHECK_CONDITION_EXECUTE((this->rtspDownloadResponse->GetRtspResponse() != NULL) && (this->rtspDownloadResponse->GetRtspResponse()->IsSuccess()), this->lastCommand = RTSP_CURL_INSTANCE_COMMAND_SETUP_RESPONSE_NOT_VALID);
             }
 
             FREE_MEM_CLASS(setup);
@@ -546,6 +545,8 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
 
                 if (error == CURLE_OK)
                 {
+                  this->lastCommand = RTSP_CURL_INSTANCE_COMMAND_SETUP_RESPONSE_VALID;
+
                   if (!transport->IsInterleaved())
                   {
                     // client and server ports are specified, not interleaved transport
@@ -711,7 +712,6 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
             // it can be relative or absolute URL
 
             const wchar_t *controlUrl = control->IsAsterisk() ? this->GetBaseUrl() : control->GetControlUrl();
-            wchar_t *streamUrl = NULL;
             // this controlUrl can be relative or absolute
             if (IsAbsoluteUrl(controlUrl))
             {
@@ -794,7 +794,7 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
                 CLockMutex lock(this->mutex, INFINITE);
 
                 // RTSP response can be NULL in case of error (e.g. timeout or wrong parameters)
-                CHECK_CONDITION_EXECUTE((this->rtspDownloadResponse->GetRtspResponse() != NULL) && (this->rtspDownloadResponse->GetRtspResponse()->IsSuccess()), this->lastCommand = CURL_RTSPREQ_SETUP);
+                CHECK_CONDITION_EXECUTE((this->rtspDownloadResponse->GetRtspResponse() != NULL) && (this->rtspDownloadResponse->GetRtspResponse()->IsSuccess()), this->lastCommand = RTSP_CURL_INSTANCE_COMMAND_SETUP_RESPONSE_NOT_VALID);
               }
 
               FREE_MEM_CLASS(setup);
@@ -831,6 +831,8 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
 
                 if (error == CURLE_OK)
                 {
+                  this->lastCommand = RTSP_CURL_INSTANCE_COMMAND_PLAY_RESPONSE_VALID;
+
                   CRtspTrack *track = new CRtspTrack();
                   error = (track != NULL) ? error : CURLE_OUT_OF_MEMORY;
 
@@ -961,7 +963,7 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
         }
       }
 
-      if ((!negotiatedTransport) && (this->lastCommand == CURL_RTSPREQ_SETUP))
+      if ((!negotiatedTransport) && ((this->lastCommand == RTSP_CURL_INSTANCE_COMMAND_SETUP_RESPONSE_NOT_VALID) || (this->lastCommand == RTSP_CURL_INSTANCE_COMMAND_SETUP_RESPONSE_VALID)))
       {
         // we don't have negotiated transport and SETUP request was sent and received correctly
         // we need to call TEARDOWN request to free resources and try something else
@@ -982,10 +984,6 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
           wchar_t *sessionId = Duplicate(this->sessionId);
           errorCode = TEST_STRING_WITH_NULL(sessionId, this->sessionId) ? errorCode : CURLE_OUT_OF_MEMORY;
 
-          // session ID is no longer required
-          // clear it to avoid error in processing response
-          FREE_MEM(this->sessionId);
-
           CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = this->SendAndReceive(teardown, errorCode, L"TEARDOWN", METHOD_INITIALIZE_NAME));
           FREE_MEM_CLASS(teardown);
 
@@ -999,13 +997,16 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
             // error occured while sending and receiving TEARDOWN request, try it later, but we can't continue now
             this->sessionId = Duplicate(sessionId);
           }
+          else
+          {
+            this->lastCommand = RTSP_CURL_INSTANCE_COMMAND_DESCRIBE;
+          }
 
           FREE_MEM(sessionId);
         }
       }
     }
     CHECK_CONDITION_EXECUTE((errorCode == CURLE_OK) && (endTicks <= GetTickCount()), errorCode = CURLE_OPERATION_TIMEDOUT);
-    CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, this->lastCommand = CURL_RTSPREQ_SETUP);
     
     if (errorCode == CURLE_OK)
     {
@@ -1015,35 +1016,38 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
 
     if (errorCode == CURLE_OK)
     {
-      if (errorCode == CURLE_OK)
+      CRtspPlayRequest *play = new CRtspPlayRequest();
+      CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = (play != NULL) ? errorCode : CURLE_OUT_OF_MEMORY);
+      CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = (play->SetUri(this->rtspDownloadRequest->GetUrl())) ? errorCode : CURLE_OUT_OF_MEMORY);
+      CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, play->SetTimeout(endTicks - GetTickCount()));
+      CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, play->SetSequenceNumber(this->lastSequenceNumber++));
+      CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = play->SetSessionId(this->sessionId) ? errorCode : CURLE_OUT_OF_MEMORY);
+      CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = play->SetStartTime(this->rtspDownloadRequest->GetStartTime()) ? errorCode : CURLE_FAILED_INIT);
+
+      CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = this->SendAndReceive(play, errorCode, L"PLAY", METHOD_INITIALIZE_NAME));
+
+      // if no error in PLAY request, we must call TEARDOWN to free resources
       {
-        CRtspPlayRequest *play = new CRtspPlayRequest();
-        CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = (play != NULL) ? errorCode : CURLE_OUT_OF_MEMORY);
-        CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = (play->SetUri(this->rtspDownloadRequest->GetUrl())) ? errorCode : CURLE_OUT_OF_MEMORY);
-        CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, play->SetTimeout(endTicks - GetTickCount()));
-        CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, play->SetSequenceNumber(this->lastSequenceNumber++));
-        CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = play->SetSessionId(this->sessionId) ? errorCode : CURLE_OUT_OF_MEMORY);
-        CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = play->SetStartTime(this->rtspDownloadRequest->GetStartTime()) ? errorCode : CURLE_FAILED_INIT);
+        CLockMutex lock(this->mutex, INFINITE);
 
-        CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = this->SendAndReceive(play, errorCode, L"PLAY", METHOD_INITIALIZE_NAME));
+        // RTSP response can be NULL in case of error (e.g. timeout or wrong parameters)
+        CHECK_CONDITION_EXECUTE((this->rtspDownloadResponse->GetRtspResponse() != NULL) && (this->rtspDownloadResponse->GetRtspResponse()->IsSuccess()), this->lastCommand = RTSP_CURL_INSTANCE_COMMAND_PLAY_RESPONSE_NOT_VALID);
 
-        // if no error in PLAY request, we must call TEARDOWN to free resources
+        if ((errorCode == CURLE_OK) && (this->lastCommand == RTSP_CURL_INSTANCE_COMMAND_PLAY_RESPONSE_NOT_VALID))
         {
-          CLockMutex lock(this->mutex, INFINITE);
-
-          // RTSP response can be NULL in case of error (e.g. timeout or wrong parameters)
-          CHECK_CONDITION_EXECUTE((this->rtspDownloadResponse->GetRtspResponse() != NULL) && (this->rtspDownloadResponse->GetRtspResponse()->IsSuccess()), this->lastCommand = CURL_RTSPREQ_PLAY);
-
-          if ((errorCode == CURLE_OK) && (this->lastCommand = CURL_RTSPREQ_PLAY))
-          {
-            CRtspSessionResponseHeader *sessionHeader = (CRtspSessionResponseHeader *)this->rtspDownloadResponse->GetRtspResponse()->GetResponseHeaders()->GetRtspHeader(RTSP_SESSION_RESPONSE_HEADER_TYPE);
-
-            this->rtspDownloadResponse->SetSessionTimeout(sessionHeader->GetTimeout() * 1000);
-          }
+          this->lastCommand = RTSP_CURL_INSTANCE_COMMAND_PLAY_RESPONSE_VALID;
         }
 
-        FREE_MEM_CLASS(play);
+        if (this->lastCommand == RTSP_CURL_INSTANCE_COMMAND_PLAY_RESPONSE_VALID)
+        {
+          CRtspSessionResponseHeader *sessionHeader = (CRtspSessionResponseHeader *)this->rtspDownloadResponse->GetRtspResponse()->GetResponseHeaders()->GetRtspHeader(RTSP_SESSION_RESPONSE_HEADER_TYPE);
+
+          this->rtspDownloadResponse->SetSessionTimeout(((sessionHeader != NULL) ? sessionHeader->GetTimeout() : RTSP_SESSION_RESPONSE_TIMEOUT_DEFAULT) * 1000);
+        }
       }
+
+      FREE_MEM_CLASS(play);
+      
       CHECK_CONDITION_EXECUTE(errorCode != CURLE_OK, this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_INITIALIZE_NAME, L"error while sending RTSP PLAY", errorCode));
     }
 
@@ -1056,7 +1060,8 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
 
 bool CRtspCurlInstance::StopReceivingData(void)
 {
-  if ((this->lastCommand == CURL_RTSPREQ_SETUP) || (this->lastCommand == CURL_RTSPREQ_PLAY))
+  if ((this->lastCommand == RTSP_CURL_INSTANCE_COMMAND_SETUP_RESPONSE_NOT_VALID) || (this->lastCommand == RTSP_CURL_INSTANCE_COMMAND_SETUP_RESPONSE_VALID) ||
+    (this->lastCommand == RTSP_CURL_INSTANCE_COMMAND_PLAY_RESPONSE_NOT_VALID) || (this->lastCommand == RTSP_CURL_INSTANCE_COMMAND_PLAY_RESPONSE_VALID))
   {
     // create and send TEARDOWN request for stream
     CURLcode errorCode = CURLE_OK;
@@ -1068,14 +1073,10 @@ bool CRtspCurlInstance::StopReceivingData(void)
     CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, teardown->SetSequenceNumber(this->lastSequenceNumber++));
     CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = teardown->SetSessionId(this->sessionId) ? errorCode : CURLE_OUT_OF_MEMORY);
 
-    // session ID is no longer required
-    // clear it to avoid error in processing response
-    FREE_MEM(this->sessionId);
-
     CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = this->SendAndReceive(teardown, errorCode, L"TEARDOWN", L"StopReceivingData()"));
     FREE_MEM_CLASS(teardown);
 
-    this->lastCommand = CURL_RTSPREQ_TEARDOWN;
+    this->lastCommand = RTSP_CURL_INSTANCE_COMMAND_TEARDOWN;
 
     // session ID is no longer required
     // some RTSP servers send us back session ID, which is no longer valid
@@ -1492,7 +1493,7 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
       FREE_MEM_CLASS(rtspResponse);
     }
 
-    if ((errorCode == CURLE_OK) && (this->lastCommand == CURL_RTSPREQ_PLAY) && (rtspRequest == NULL) && (GetTickCount() > nextMaintainConnectionRequest))
+    if ((errorCode == CURLE_OK) && (this->lastCommand == RTSP_CURL_INSTANCE_COMMAND_PLAY_RESPONSE_VALID) && (rtspRequest == NULL) && (GetTickCount() > nextMaintainConnectionRequest))
     {
       // create GET PARAMETER request to maintain connection alive
       CRtspGetParameterRequest *getParameter = new CRtspGetParameterRequest();
@@ -2073,10 +2074,14 @@ CURLcode CRtspCurlInstance::SendAndReceive(CRtspRequest *request, CURLcode error
 
         if (this->sessionId != NULL)
         {
-          // check session ID if same
-          errorCode = (CompareWithNull(this->sessionId, this->rtspDownloadResponse->GetRtspResponse()->GetSessionId()) == 0) ? errorCode : CURLE_RECV_ERROR;
+          // valid RTSP response can have session ID, but it is not mandatory
+          if (this->rtspDownloadResponse->GetRtspResponse()->GetSessionId() != NULL)
+          {
+            // check session ID if same
+            errorCode = (CompareWithNull(this->sessionId, this->rtspDownloadResponse->GetRtspResponse()->GetSessionId()) == 0) ? errorCode : CURLE_RECV_ERROR;
 
-          CHECK_CONDITION_EXECUTE(errorCode != CURLE_OK, this->logger->Log(LOGGER_ERROR, L"%s: %s: no session ID or bad session ID for RTSP %s request", this->protocolName, functionName, rtspMethodName));
+            CHECK_CONDITION_EXECUTE(errorCode != CURLE_OK, this->logger->Log(LOGGER_ERROR, L"%s: %s: bad session ID for RTSP %s request", this->protocolName, functionName, rtspMethodName));
+          }
         }
         else if (this->rtspDownloadResponse->GetRtspResponse()->GetSessionId() != NULL)
         {
