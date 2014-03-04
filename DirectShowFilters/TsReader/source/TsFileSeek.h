@@ -19,4 +19,5 @@ private:
   CTsDuration&  m_duration;
   CPcr          m_pcrFound;
   int           m_seekPid;
+  byte*         m_pFileReadBuffer;
 };

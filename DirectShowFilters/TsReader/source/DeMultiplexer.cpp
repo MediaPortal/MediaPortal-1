@@ -135,7 +135,7 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
 
   m_mpegPesParser = new CMpegPesParser();
 
-  //byte *m_readFileBuffer = new byte[READ_SIZE]; //~130ms of data @ 8Mbit/s
+  m_pFileReadBuffer = new (std::nothrow) byte[READ_SIZE]; //~130ms of data @ 8Mbit/s
   
   LogDebug(" ");
   LogDebug("=================== New filter instance ===========================");
@@ -156,10 +156,18 @@ CDeMultiplexer::~CDeMultiplexer()
   delete m_pCurrentAudioBuffer;
   delete m_pCurrentSubtitleBuffer;
   delete m_mpegPesParser;
-  //delete [] m_readFileBuffer;
 
   m_subtitleStreams.clear();
   m_audioStreams.clear();
+  if (m_pFileReadBuffer)
+  {
+    delete [] m_pFileReadBuffer;
+    m_pFileReadBuffer = NULL;
+  }
+  else
+  {
+    LogDebug("CDeMultiplexer::dtor - ERROR m_pFileReadBuffer is NULL !!");
+  }
   LogDebug("CDeMultiplexer::dtor - finished");
   StopLogger();
 }
@@ -961,6 +969,7 @@ void CDeMultiplexer::Start()
   m_vidDTScount = 0;
   m_bUsingGOPtimestamp = false;
   int dwBytesProcessed=0;
+  CAutoLock lock (&m_filter.m_ReadAheadLock);
   DWORD m_Time = GET_TIME_NOW();
   while((GET_TIME_NOW() - m_Time) < 10000)
   {
@@ -1014,17 +1023,17 @@ bool CDeMultiplexer::EndOfFile()
 }
 
 int CDeMultiplexer::ReadAheadFromFile()
-{
-  CAutoLock lock (&m_filter.m_ReadAheadLock);
-  
+{  
   //if filter is stopped or
   //end of file has been reached or
   //demuxer should stop getting video packets
   //then return an error
-  if ((m_filter.State() == State_Stopped) || !m_filter.IsFilterRunning() || m_filter.m_bStopping || m_bEndOfFile) 
+  if ((m_filter.State() == State_Stopped) || !m_filter.IsFilterRunning() || m_filter.m_bStopping || m_bEndOfFile || m_bStarting) 
   {
     return -1;
   }
+
+  CAutoLock lock (&m_filter.m_ReadAheadLock);
   
 	//LogDebug("demux:ReadAheadFromFile");
   int SizeRead = ReadFromFile() ;
@@ -1067,10 +1076,14 @@ int CDeMultiplexer::ReadFromFile()
   {
     return -1;
   }
+
+  if (!m_pFileReadBuffer)
+  {
+    LogDebug("CDeMultiplexer::ReadFromFile() - ERROR no buffer !!");
+    return -1;
+  }
     
   CAutoLock lock (&m_sectionRead);
-  //byte buffer[READ_SIZE];
-  byte *readFileBuffer = new byte[READ_SIZE]; //~130ms of data @ 8Mbit/s
   int dwReadBytes=0;
   //if we are playing a RTSP stream
   if (m_reader->IsBuffer())
@@ -1078,11 +1091,10 @@ int CDeMultiplexer::ReadFromFile()
     if (m_reader->HasData() < 0)
     {
       //Buffer not running
-      delete [] readFileBuffer;
       return -1;
     }      
     //Read raw data from the buffer
-    m_reader->Read(readFileBuffer, READ_SIZE, (DWORD*)&dwReadBytes);
+    m_reader->Read(m_pFileReadBuffer, READ_SIZE, (DWORD*)&dwReadBytes);
     if (dwReadBytes < READ_SIZE)
     {
       m_bAudioAtEof = true;
@@ -1091,7 +1103,7 @@ int CDeMultiplexer::ReadFromFile()
     if (dwReadBytes > 0)
     {
       //yes, then process the raw data
-      OnRawData2(readFileBuffer,(int)dwReadBytes);
+      OnRawData2(m_pFileReadBuffer,(int)dwReadBytes);
       m_LastDataFromRtsp = GET_TIME_NOW();
     }
     else
@@ -1104,19 +1116,17 @@ int CDeMultiplexer::ReadFromFile()
         {
           LogDebug("demux:endoffile");
           m_bEndOfFile=true;
-          delete [] readFileBuffer;
           return -1;
         }
       }
     }
-    delete [] readFileBuffer;
     return dwReadBytes;
   }
   else
   {
     //playing a local file or using UNC path
     //read raw data from the file
-    if (SUCCEEDED(m_reader->Read(readFileBuffer,READ_SIZE, (DWORD*)&dwReadBytes)))
+    if (SUCCEEDED(m_reader->Read(m_pFileReadBuffer,READ_SIZE, (DWORD*)&dwReadBytes)))
     {
       if ((m_filter.IsTimeShifting()) && (dwReadBytes < READ_SIZE))
       {
@@ -1127,7 +1137,7 @@ int CDeMultiplexer::ReadFromFile()
       if (dwReadBytes > 0)
       {
         //succeeded, process data
-        OnRawData2(readFileBuffer,(int)dwReadBytes);
+        OnRawData2(m_pFileReadBuffer,(int)dwReadBytes);
       }
       else
       {
@@ -1136,19 +1146,16 @@ int CDeMultiplexer::ReadFromFile()
           //set EOF flag and return
           LogDebug("demux:endoffile");
           m_bEndOfFile=true;
-          delete [] readFileBuffer;
           return -1;
         }
       }
 
       //and return
-      delete [] readFileBuffer;
       return dwReadBytes;
     }
   }
   //Read failure/error
   LogDebug("Read failed...");
-  delete [] readFileBuffer;
   return -2;
   // return 0;
 }

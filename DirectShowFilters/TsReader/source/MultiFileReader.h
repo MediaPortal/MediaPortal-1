@@ -97,6 +97,8 @@ protected:
 	BOOL     m_bDelay;
 	BOOL     m_bDebugOutput;
 	BOOL     m_bUseFileNext;
+
+  byte*    m_pFileReadNextBuffer;
 };
 
 #endif

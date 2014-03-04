@@ -293,6 +293,8 @@ public:
   CLSID           m_subtitleCLSID;
   void            ReleaseSubtitleFilter();
   CCritSec        m_ReadAheadLock;
+
+  CTsDuration     m_duration;
   
 
 protected:
@@ -318,7 +320,7 @@ private:
   CCritSec        m_DurationThreadLock;
   FileReader*     m_fileReader;
   FileReader*     m_fileDuration;
-  CTsDuration     m_duration;
+  CTsDuration     m_updateThreadDuration;
   CBaseReferenceClock* m_referenceClock;
   CDeMultiplexer  m_demultiplexer;
   DWORD           m_dwGraphRegister;

@@ -28,6 +28,7 @@
 #include "..\..\shared\AdaptionField.h"
 extern void LogDebug(const char *fmt, ...) ;
 
+//~130ms of data @ 8Mbit/s
 #define DUR_READ_SIZE 131072
 
 CTsDuration::CTsDuration()
@@ -35,22 +36,34 @@ CTsDuration::CTsDuration()
   m_videoPid=-1;
   m_pid = -1;
   m_bStopping = false;
-  //byte *buffer = new byte[DUR_READ_SIZE]; //~130ms of data @ 8Mbit/s
+  m_pFileReadBuffer = new (std::nothrow) byte[DUR_READ_SIZE];
+  LogDebug("CTsDuration - ctor");
 }
 
 CTsDuration::~CTsDuration(void)
 {
-  //delete [] buffer;
+  if (m_pFileReadBuffer)
+  {
+    delete [] m_pFileReadBuffer;
+    m_pFileReadBuffer = NULL;
+  }
+  else
+  {
+    LogDebug("CTsDuration::dtor - ERROR m_pFileReadBuffer is NULL !!");
+  }
+  LogDebug("CTsDuration - dtor");
 }
 
 
 void CTsDuration::SetFileReader(FileReader* reader)
 {
+  CAutoLock rLock (&m_accessLock);
   m_reader=reader;
 }
 
 void CTsDuration::Set(CPcr& startPcr, CPcr& endPcr, CPcr& maxPcr)
 {
+  CAutoLock rLock (&m_accessLock);
   m_startPcr=startPcr;
   m_endPcr=endPcr;
   m_maxPcr=maxPcr;
@@ -62,19 +75,21 @@ void CTsDuration::Set(CPcr& startPcr, CPcr& endPcr, CPcr& maxPcr)
   
 void CTsDuration::SetVideoPid(int pid)
 {
+  CAutoLock rLock (&m_accessLock);
   m_videoPid=pid;
 }
 
 int CTsDuration::GetPid()
 {
+  CAutoLock rLock (&m_accessLock);
   if (m_videoPid>0) return m_videoPid;
   return m_pid;
 }
 
-void CTsDuration::SetStopping(bool stopping)
+void CTsDuration::StopUpdate(bool stopping)
 {
   m_bStopping = stopping;
-  LogDebug("TsDuration::SetStopping(%d)", m_bStopping);
+  LogDebug("TsDuration::StopUpdate(%d)", m_bStopping);
 }
 
 
@@ -84,9 +99,14 @@ void CTsDuration::SetStopping(bool stopping)
 // 
 void CTsDuration::UpdateDuration(bool logging)
 {
+  if (!m_pFileReadBuffer)
+  {
+    m_startPcr.Reset();
+    m_endPcr.Reset();
+    LogDebug("CTsDuration::UpdateDuration() - ERROR no buffer !!");
+    return;
+  }
 
-  //byte buffer[65536]; //~65ms of data @ 8Mbit/s
-  byte *buffer = new byte[DUR_READ_SIZE]; //~130ms of data @ 8Mbit/s
   int Loop=5 ;
   int searchLoopCnt;
 
@@ -114,22 +134,19 @@ void CTsDuration::UpdateDuration(bool logging)
       {
         m_startPcr.Reset();
         m_endPcr.Reset();
-        delete [] buffer;
         return;
       }
       DWORD dwBytesRead = 0;
       m_reader->SetFilePointer(offset,FILE_BEGIN);
-      if (!SUCCEEDED(m_reader->Read(buffer,DUR_READ_SIZE,&dwBytesRead)))
+      if (!SUCCEEDED(m_reader->Read(m_pFileReadBuffer,DUR_READ_SIZE,&dwBytesRead)))
       {
-        delete [] buffer;
         return;
       }
       if (dwBytesRead<=0) 
       {
-        delete [] buffer;
         return;
       }
-      OnRawData2(buffer,dwBytesRead);
+      OnRawData2(m_pFileReadBuffer,dwBytesRead);
       
       offset += (DUR_READ_SIZE*(searchLoopCnt/2)); //Move file pointer
       
@@ -140,7 +157,6 @@ void CTsDuration::UpdateDuration(bool logging)
       else if (m_videoPid<0)
       {
         //failed to find a first PCR
-        delete [] buffer;
         return;
       }     
       else
@@ -172,27 +188,24 @@ void CTsDuration::UpdateDuration(bool logging)
       {
         m_startPcr.Reset();
         m_endPcr.Reset();
-        delete [] buffer;
         return;
       }
       DWORD dwBytesRead = 0;
       m_reader->SetFilePointer(-offset,FILE_END);
-      if (!SUCCEEDED(m_reader->Read(buffer,DUR_READ_SIZE,&dwBytesRead)))
+      if (!SUCCEEDED(m_reader->Read(m_pFileReadBuffer,DUR_READ_SIZE,&dwBytesRead)))
       {
         m_startPcr.Reset();
         m_endPcr.Reset();
-        delete [] buffer;
         return;
       }
       if (dwBytesRead<=0) 
       {
         m_startPcr.Reset();
         m_endPcr.Reset();
-        delete [] buffer;
         return;
       }
       Reset() ; // Reset internal "PacketSync" buffer
-      OnRawData2(buffer,dwBytesRead);
+      OnRawData2(m_pFileReadBuffer,dwBytesRead);
       if (searchLoopCnt<65)
       {
         searchLoopCnt++;
@@ -202,7 +215,6 @@ void CTsDuration::UpdateDuration(bool logging)
         //failed to find an end PCR
         m_startPcr.Reset();
         m_endPcr.Reset();
-        delete [] buffer;
         return;
       }
       offset += ( (DUR_READ_SIZE*(searchLoopCnt/2)) - (188*16)); //step back a few packets less than a buffer so that buffers overlap
@@ -247,7 +259,6 @@ void CTsDuration::UpdateDuration(bool logging)
     m_maxPcr.IsValid = true;
   }
   
-  delete [] buffer;
 }
 
 void CTsDuration::OnTsPacket(byte* tsPacket, int bufferOffset, int bufferLength)
@@ -283,7 +294,12 @@ void CTsDuration::OnTsPacket(byte* tsPacket, int bufferOffset, int bufferLength)
 // of the file (or timeshifting files)
 CRefTime CTsDuration::Duration()
 {
-  if (m_maxPcr.IsValid)
+  CAutoLock rLock (&m_accessLock);
+  if (!m_startPcr.IsValid || !m_endPcr.IsValid)
+  {
+    return 0L;
+  }
+  else if (m_maxPcr.IsValid)
   {
     double duration= m_endPcr.ToClock() + (m_maxPcr.ToClock()- m_startPcr.ToClock());
     CPcr pcr;
@@ -310,7 +326,12 @@ CRefTime CTsDuration::Duration()
 // wrapped and reused.
 CRefTime CTsDuration::TotalDuration()
 {
-  if (m_maxPcr.IsValid)
+  CAutoLock rLock (&m_accessLock);
+  if (!m_firstStartPcr.IsValid || !m_endPcr.IsValid)
+  {
+    return 0L;
+  }
+  else if (m_maxPcr.IsValid)
   {
     double duration= m_endPcr.ToClock() + (m_maxPcr.ToClock()- m_firstStartPcr.ToClock());
     CPcr pcr;
@@ -336,6 +357,7 @@ CRefTime CTsDuration::TotalDuration()
 ///timeshifting files are wrapped and being re-used, we 'loose' the first pcr
 CPcr CTsDuration::FirstStartPcr()
 {
+  CAutoLock rLock (&m_accessLock);
   return m_firstStartPcr;
 }
 
@@ -343,6 +365,7 @@ CPcr CTsDuration::FirstStartPcr()
 ///returns the earliest pcr currently available in the file/timeshifting files
 CPcr CTsDuration::StartPcr()
 {
+  CAutoLock rLock (&m_accessLock);
   return m_startPcr;
 }
 
@@ -350,11 +373,13 @@ CPcr CTsDuration::StartPcr()
 ///returns the latest pcr 
 CPcr CTsDuration::EndPcr()
 {
+  CAutoLock rLock (&m_accessLock);
   return m_endPcr;
 }
 ///*********************************************************
 ///returns the pcr after which the pcr roll over happened
 CPcr CTsDuration::MaxPcr()
 {
+  CAutoLock rLock (&m_accessLock);
   return m_maxPcr;
 }

@@ -863,11 +863,10 @@ STDMETHODIMP CVideoPin::GetAvailable( LONGLONG * pEarliest, LONGLONG * pLatest )
 //  LogDebug("vidPin:GetAvailable");
   if (m_pTsReaderFilter->IsTimeShifting())
   {
-    CTsDuration duration=m_pTsReaderFilter->GetDuration();
     if (pEarliest)
     {
       //return the startpcr, which is the earliest pcr timestamp available in the timeshifting file
-      double d2=duration.StartPcr().ToClock();
+      double d2=m_pTsReaderFilter->m_duration.StartPcr().ToClock();
       d2*=1000.0f;
       CRefTime mediaTime((LONG)d2);
       *pEarliest= mediaTime;
@@ -875,7 +874,7 @@ STDMETHODIMP CVideoPin::GetAvailable( LONGLONG * pEarliest, LONGLONG * pLatest )
     if (pLatest)
     {
       //return the endpcr, which is the latest pcr timestamp available in the timeshifting file
-      double d2=duration.EndPcr().ToClock();
+      double d2=m_pTsReaderFilter->m_duration.EndPcr().ToClock();
       d2*=1000.0f;
       CRefTime mediaTime((LONG)d2);
       *pLatest= mediaTime;
@@ -898,8 +897,7 @@ STDMETHODIMP CVideoPin::GetDuration(LONGLONG *pDuration)
 {
   if (m_pTsReaderFilter->IsTimeShifting())
   {
-    CTsDuration duration=m_pTsReaderFilter->GetDuration();
-    CRefTime totalDuration=duration.TotalDuration();
+    CRefTime totalDuration=m_pTsReaderFilter->m_duration.TotalDuration();
     m_rtDuration=totalDuration;
   }
   else

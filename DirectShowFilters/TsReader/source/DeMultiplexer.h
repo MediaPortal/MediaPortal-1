@@ -307,4 +307,6 @@ private:
   int  m_initialVideoSamples;
   int  m_prefetchLoopDelay;
   
+  byte* m_pFileReadBuffer;
+  
 };

@@ -37,7 +37,7 @@
 
 //block read sizes for SMB2 data cache workaround
 #define NEXT_READ_SIZE	8192
-#define NEXT_READ_ROLLOVER (NEXT_READ_SIZE*16)
+#define NEXT_READ_ROLLOVER (NEXT_READ_SIZE*64)
 
 extern void LogDebug(const char *fmt, ...) ;
 MultiFileReader::MultiFileReader(BOOL useFileNext, BOOL useDummyWrites):
@@ -62,12 +62,23 @@ MultiFileReader::MultiFileReader(BOOL useFileNext, BOOL useDummyWrites):
   m_TSBufferFile.SetDummyWrites(useDummyWrites);
   m_TSFile.SetDummyWrites(useDummyWrites);
   m_TSFileNext.SetDummyWrites(false);
+
+  m_pFileReadNextBuffer = new (std::nothrow) byte[NEXT_READ_SIZE];
   
   LogDebug("MultiFileReader::ctor, useFileNext = %d, useDummyWrites %d", m_bUseFileNext, useDummyWrites);
 }
 
 MultiFileReader::~MultiFileReader()
 {
+  if (m_pFileReadNextBuffer)
+  {
+    delete [] m_pFileReadNextBuffer;
+    m_pFileReadNextBuffer = NULL;
+  }
+  else
+  {
+    LogDebug("MultiFileReader::dtor - ERROR m_pFileReadBuffer is NULL !!");
+  }
   LogDebug("MultiFileReader::dtor");
 	//CloseFile called by ~FileReader
 }
@@ -245,7 +256,7 @@ HRESULT MultiFileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadByte
   	m_TSFileNext.CloseFile();
   }
   
-  if (fileNext && m_bUseFileNext)
+  if (fileNext && m_bUseFileNext && m_pFileReadNextBuffer)
   {
   	if (m_TSFileIdNext != fileNext->filePositionId)
   	{
@@ -266,9 +277,8 @@ HRESULT MultiFileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadByte
       {
         //Do a dummy read to try and refresh the SMB cache
         ULONG bytesNextRead = 0;
-        byte buffer[NEXT_READ_SIZE];
     		m_TSFileNext.SetFilePointer(m_currPosnFileNext, FILE_BEGIN);
-    		m_TSFileNext.Read(buffer, NEXT_READ_SIZE, &bytesNextRead);
+    		m_TSFileNext.Read(m_pFileReadNextBuffer, NEXT_READ_SIZE, &bytesNextRead);
         m_lastFileNextRead = timeGetTime();
         if (bytesNextRead != NEXT_READ_SIZE)
         {
@@ -284,9 +294,8 @@ HRESULT MultiFileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadByte
     {
       //Do a dummy read to try and refresh the SMB data cache
       ULONG bytesNextRead = 0;
-      byte buffer[NEXT_READ_SIZE];
   		m_TSFileNext.SetFilePointer(m_currPosnFileNext, FILE_BEGIN);
-  		m_TSFileNext.Read(buffer, NEXT_READ_SIZE, &bytesNextRead);
+  		m_TSFileNext.Read(m_pFileReadNextBuffer, NEXT_READ_SIZE, &bytesNextRead);
       m_lastFileNextRead = timeGetTime();
       if (bytesNextRead != NEXT_READ_SIZE)
       {

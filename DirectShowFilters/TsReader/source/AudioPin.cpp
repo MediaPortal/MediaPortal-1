@@ -813,11 +813,10 @@ STDMETHODIMP CAudioPin::GetAvailable( LONGLONG * pEarliest, LONGLONG * pLatest )
   //if we are timeshifting, the earliest/latest timestamp can change
   if (m_pTsReaderFilter->IsTimeShifting())
   {
-    CTsDuration duration=m_pTsReaderFilter->GetDuration();
     if (pEarliest)
     {
       //return the startpcr, which is the earliest pcr timestamp available in the timeshifting file
-      double d2=duration.StartPcr().ToClock();
+      double d2=m_pTsReaderFilter->m_duration.StartPcr().ToClock();
       d2*=1000.0f;
       CRefTime mediaTime((LONG)d2);
       *pEarliest= mediaTime;
@@ -825,11 +824,12 @@ STDMETHODIMP CAudioPin::GetAvailable( LONGLONG * pEarliest, LONGLONG * pLatest )
     if (pLatest)
     {
       //return the endpcr, which is the latest pcr timestamp available in the timeshifting file
-      double d2=duration.EndPcr().ToClock();
+      double d2=m_pTsReaderFilter->m_duration.EndPcr().ToClock();
       d2*=1000.0f;
       CRefTime mediaTime((LONG)d2);
       *pLatest= mediaTime;
     }
+    //LogDebug("audPin:GetAvailable duration = %.3f ms", (float)m_pTsReaderFilter->m_duration.Duration().Millisecs());
     return S_OK;
   }
 
@@ -849,8 +849,7 @@ STDMETHODIMP CAudioPin::GetDuration(LONGLONG *pDuration)
   //LogDebug("audPin:GetDuration");
   if (m_pTsReaderFilter->IsTimeShifting())
   {
-    CTsDuration duration=m_pTsReaderFilter->GetDuration();
-    CRefTime totalDuration=duration.TotalDuration();
+    CRefTime totalDuration=m_pTsReaderFilter->m_duration.TotalDuration();
     m_rtDuration=totalDuration;
   }
   else
@@ -863,6 +862,7 @@ STDMETHODIMP CAudioPin::GetDuration(LONGLONG *pDuration)
   {
     return CSourceSeeking::GetDuration(pDuration);
   }
+  //LogDebug("audPin:GetDuration duration = %.3f ms, TotDuration = %.3f ms", (float)m_pTsReaderFilter->m_duration.Duration().Millisecs(), (float)m_pTsReaderFilter->m_duration.TotalDuration().Millisecs());
   return S_OK;
 }
 
