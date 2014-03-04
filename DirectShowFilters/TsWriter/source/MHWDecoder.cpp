@@ -25,7 +25,7 @@
 #include ".\mhwparser.h"
 #include "entercriticalSection.h"  
 
-extern void LogDebug(const char *fmt, ...) ;
+extern void LogDebug(const char* fmt, ...);
 
 CMhwDecoder::CMhwDecoder(void)
 {
@@ -286,7 +286,7 @@ void CMhwDecoder::GetTitle(int program, UINT* id, UINT* transportId, UINT* netwo
   {
     int x=1;
   }
-  if (prog.ChannelID>=m_vecChannels.size()) 
+  if (prog.ChannelID>=(long)m_vecChannels.size()) 
   {
     int x=1;
   }
@@ -307,7 +307,7 @@ void CMhwDecoder::GetChannel(UINT channelNr, UINT* channelId, UINT* networkId, U
   }
 
   imapChannels it=m_vecChannels.begin();
-  int count=0;
+  UINT count=0;
   while (count < channelNr) { ++it; ++count;}
   *networkId=it->NetworkID;
   *transportId=it->TransponderID;
