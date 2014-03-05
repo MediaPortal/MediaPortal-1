@@ -831,7 +831,7 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
 
                 if (error == CURLE_OK)
                 {
-                  this->lastCommand = RTSP_CURL_INSTANCE_COMMAND_PLAY_RESPONSE_VALID;
+                  this->lastCommand = RTSP_CURL_INSTANCE_COMMAND_SETUP_RESPONSE_VALID;
 
                   CRtspTrack *track = new CRtspTrack();
                   error = (track != NULL) ? error : CURLE_OUT_OF_MEMORY;
@@ -1035,14 +1035,14 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
 
         if ((errorCode == CURLE_OK) && (this->lastCommand == RTSP_CURL_INSTANCE_COMMAND_PLAY_RESPONSE_NOT_VALID))
         {
-          this->lastCommand = RTSP_CURL_INSTANCE_COMMAND_PLAY_RESPONSE_VALID;
-        }
-
-        if (this->lastCommand == RTSP_CURL_INSTANCE_COMMAND_PLAY_RESPONSE_VALID)
-        {
           CRtspSessionResponseHeader *sessionHeader = (CRtspSessionResponseHeader *)this->rtspDownloadResponse->GetRtspResponse()->GetResponseHeaders()->GetRtspHeader(RTSP_SESSION_RESPONSE_HEADER_TYPE);
 
           this->rtspDownloadResponse->SetSessionTimeout(((sessionHeader != NULL) ? sessionHeader->GetTimeout() : RTSP_SESSION_RESPONSE_TIMEOUT_DEFAULT) * 1000);
+        }
+
+        if ((errorCode == CURLE_OK) && (this->lastCommand == RTSP_CURL_INSTANCE_COMMAND_PLAY_RESPONSE_NOT_VALID))
+        {
+          this->lastCommand = RTSP_CURL_INSTANCE_COMMAND_PLAY_RESPONSE_VALID;
         }
       }
 
