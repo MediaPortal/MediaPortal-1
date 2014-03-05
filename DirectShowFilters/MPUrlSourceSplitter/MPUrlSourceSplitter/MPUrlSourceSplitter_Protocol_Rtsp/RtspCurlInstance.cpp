@@ -260,6 +260,9 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
                 this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, this->protocolName, METHOD_INITIALIZE_NAME, L"not all required methods (DESCRIBE, SETUP, PLAY and TEARDOWN) defined in PUBLIC RTSP OPTIONS response header");
                 errorCode = CURLE_FAILED_INIT;
               }
+
+              // test for GET_PARAMETER method, we can use it to maintain connection
+              this->flags |= publicHeader->IsSetFlag(FLAG_RTSP_PUBLIC_RESPONSE_HEADER_METHOD_GET_PARAMETER) ? RTSP_CURL_INSTANCE_FLAG_METHOD_GET_PARAMETER_SUPPORTED : RTSP_CURL_INSTANCE_FLAG_NONE;
             }
           }
         }
@@ -1493,9 +1496,9 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
       FREE_MEM_CLASS(rtspResponse);
     }
 
-    if ((errorCode == CURLE_OK) && (this->lastCommand == RTSP_CURL_INSTANCE_COMMAND_PLAY_RESPONSE_VALID) && (rtspRequest == NULL) && (GetTickCount() > nextMaintainConnectionRequest))
+    if ((errorCode == CURLE_OK) && (this->IsFlags(RTSP_CURL_INSTANCE_FLAG_METHOD_GET_PARAMETER_SUPPORTED)) && (this->lastCommand == RTSP_CURL_INSTANCE_COMMAND_PLAY_RESPONSE_VALID) && (rtspRequest == NULL) && (GetTickCount() > nextMaintainConnectionRequest))
     {
-      // create GET PARAMETER request to maintain connection alive
+      // create GET_PARAMETER request to maintain connection alive
       CRtspGetParameterRequest *getParameter = new CRtspGetParameterRequest();
       CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = (getParameter != NULL) ? errorCode : CURLE_OUT_OF_MEMORY);
       CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = (getParameter->SetUri(this->rtspDownloadRequest->GetUrl())) ? errorCode : CURLE_OUT_OF_MEMORY);
