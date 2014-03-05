@@ -1,6 +1,6 @@
 /* 
- *	Copyright (C) 2006-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
+ *  Copyright (C) 2006-2008 Team MediaPortal
+ *  http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -25,10 +25,10 @@
 class CAdaptionField
 {
 public:
-	CAdaptionField();
-	CAdaptionField(CTsHeader& header, byte* tsPacket);
-	virtual ~CAdaptionField(void);
-	void Decode(CTsHeader& header, byte *tsPacket);
+  CAdaptionField();
+  CAdaptionField(CTsHeader& header, byte* tsPacket);
+  virtual ~CAdaptionField(void);
+  void Decode(CTsHeader& header, byte *tsPacket);
 
   bool DiscontinuityIndicator;
   bool RandomAccessInidicator;

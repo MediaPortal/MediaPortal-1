@@ -38,11 +38,43 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Multiplexer
   public interface ITsMultiplexer
   {
     /// <summary>
+    /// Configure the logging subsystem for the multiplexer.
+    /// </summary>
+    /// <remarks>
+    /// This function must be called immediately after the multiplexer is instanciated.
+    /// </remarks>
+    /// <param name="path">The path to the log and debug files.</param>
+    /// <returns>an HRESULT indicating whether the function succeeded</returns>
+    [PreserveSig]
+    int ConfigureLogging([MarshalAs(UnmanagedType.LPWStr)] string path);
+
+    /// <summary>
+    /// Enable or disable input stream dumping for one or more input pins.
+    /// </summary>
+    /// <remarks>
+    /// The multiplexer will copy the raw input stream received from enabled input pins to file.
+    /// One file per enabled pin. The files will be overwritten/recreated each time streaming is
+    /// started.
+    /// </remarks>
+    /// <param name="pinMask">A bit mask specifying the pins to enable/disable.</param>
+    /// <returns>an HRESULT indicating whether the function succeeded</returns>
+    [PreserveSig]
+    int DumpInput(int pinMask);
+
+    /// <summary>
+    /// Enable or disable output stream dumping.
+    /// </summary>
+    /// <param name="enable"><c>True</c> to enable dumping.</param>
+    /// <returns>an HRESULT indicating whether the function succeeded</returns>
+    [PreserveSig]
+    int DumpOutput([MarshalAs(UnmanagedType.I1)] bool enable);
+
+    /// <summary>
     /// Set the components for the multiplexer to operate on.
     /// </summary>
-    /// <param name="video">Should video streams be multiplexed into the output transport stream.</param>
-    /// <param name="audio">Should audio streams be multiplexed into the output transport stream.</param>
-    /// <param name="teletext">Should teletext streams be multiplexed into the output transport stream.</param>
+    /// <param name="video"><c>True</c> if video streams should be multiplexed into the output transport stream.</param>
+    /// <param name="audio"><c>True</c> if audio streams should be multiplexed into the output transport stream.</param>
+    /// <param name="teletext"><c>True</c> if teletext streams should be multiplexed into the output transport stream.</param>
     /// <returns>an HRESULT indicating whether the function succeeded</returns>
     [PreserveSig]
     int SetActiveComponents([MarshalAs(UnmanagedType.I1)] bool video, [MarshalAs(UnmanagedType.I1)] bool audio, [MarshalAs(UnmanagedType.I1)] bool teletext);

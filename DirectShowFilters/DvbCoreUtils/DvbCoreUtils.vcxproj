@@ -88,12 +88,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AdaptionField.cpp" />
-    <ClCompile Include="..\shared\BasePmtParser.cpp" />
-    <ClCompile Include="..\shared\ChannelInfo.cpp" />
+    <ClCompile Include="BasePmtParser.cpp" />
+    <ClCompile Include="ChannelInfo.cpp" />
     <ClCompile Include="DvbUtil.cpp" />
+    <ClCompile Include="FileWriter.cpp" />
     <ClCompile Include="PacketSync.cpp" />
     <ClCompile Include="Pcr.cpp" />
-    <ClCompile Include="..\shared\PidTable.cpp" />
+    <ClCompile Include="PidTable.cpp" />
     <ClCompile Include="Section.cpp" />
     <ClCompile Include="SectionDecoder.cpp" />
     <ClCompile Include="TsHeader.cpp" />
@@ -102,7 +103,9 @@
     <ClInclude Include="..\shared\AdaptionField.h" />
     <ClInclude Include="..\shared\BasePmtParser.h" />
     <ClInclude Include="..\shared\ChannelInfo.h" />
+    <ClInclude Include="..\shared\DebugSettings.h" />
     <ClInclude Include="..\shared\DvbUtil.h" />
+    <ClInclude Include="..\shared\FileWriter.h" />
     <ClInclude Include="..\shared\ISectionCallback.h" />
     <ClInclude Include="..\shared\PacketSync.h" />
     <ClInclude Include="..\shared\Pcr.h" />
@@ -110,7 +113,6 @@
     <ClInclude Include="..\shared\Section.h" />
     <ClInclude Include="..\shared\SectionDecoder.h" />
     <ClInclude Include="..\shared\stdafx.h" />
-    <ClInclude Include="..\shared\TeletextServiceInfo.h" />
     <ClInclude Include="..\shared\TsHeader.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

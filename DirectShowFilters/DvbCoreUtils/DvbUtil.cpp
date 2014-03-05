@@ -18,7 +18,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-#include <windows.h>
+#include <Windows.h>
 #include "..\shared\DvbUtil.h"
 
 /* CRC table for PSI sections */

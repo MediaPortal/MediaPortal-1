@@ -18,10 +18,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-#include "StdAfx.h"
-#include "ChannelInfo.h"
-// For more details for memory leak detection see the alloctracing.h header
-#include "..\alloctracing.h"
+#include "..\shared\ChannelInfo.h"
+
 
 void LogDebug(const char* fmt, ...);
 
@@ -43,7 +41,7 @@ CChannelInfo::~CChannelInfo(void)
   ClearStrings();
 }
 
-CChannelInfo& CChannelInfo::operator = (const CChannelInfo &info)
+CChannelInfo& CChannelInfo::operator = (const CChannelInfo& info)
 {
   if (&info == this)
   {

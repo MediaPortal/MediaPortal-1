@@ -18,9 +18,9 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-#include <windows.h>
+#include <Windows.h>
 #include "..\shared\Section.h"
-#pragma warning(disable : 4995)
+
 
 void LogDebug(const char *fmt, ...) ;
 
@@ -36,11 +36,13 @@ CSection::~CSection(void)
 void CSection::Reset()
 {
 	table_id = -1;
-  table_id_extension = -1;
-  section_length = -1;
-  section_number = -1;
-  version_number = -1;
   section_syntax_indicator = -1;
+  section_length = -1;
+  table_id_extension = -1;
+  version_number = -1;
+  current_next_indicator = -1;
+  section_number = -1;
+  last_section_number = -1;
   BufferPos = 0;
 }
 
@@ -63,6 +65,15 @@ void CSection::Copy(const CSection &section)
   section_number = section.section_number;
   version_number = section.version_number;
   section_syntax_indicator = section.section_syntax_indicator;
+
+	table_id = section.table_id;
+  section_syntax_indicator = section.section_syntax_indicator;
+  section_length = section.section_length;
+  table_id_extension = section.table_id_extension;
+  version_number = section.version_number;
+  current_next_indicator = section.current_next_indicator;
+  section_number = section.section_number;
+  last_section_number = section.last_section_number;
   memcpy(Data, section.Data, sizeof(Data));
   BufferPos = 0;
 }
@@ -98,11 +109,15 @@ bool CSection::DecodeHeader()
 	if (BufferPos<8) return false;
   table_id = Data[0];
   section_syntax_indicator = ((Data[1] >> 7) & 1);
-  if (section_length==-1)
-		section_length=(((Data[1] & 0xF) << 8) + Data[2]);
-  table_id_extension=((Data[3] << 8) +Data[4]);
+  if (section_length == -1)
+  {
+		section_length = (((Data[1] & 0xF) << 8) + Data[2]);
+  }
+  table_id_extension = ((Data[3] << 8) + Data[4]);
   version_number = ((Data[5] >> 1) & 0x1F);
+  current_next_indicator = (Data[5] & 1);
   section_number = Data[6];
+  last_section_number = Data[7];
   section_syntax_indicator = ((Data[1] >> 7) & 1);
 	return true;
 }

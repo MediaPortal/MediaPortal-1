@@ -21,10 +21,13 @@
 #pragma once
 #include <Windows.h>
 
+
 class IMuxInputPin
 {
   public:
     virtual byte GetId() = 0;
     virtual int GetStreamType() = 0;
     virtual DWORD GetReceiveTickCount() = 0;
+    virtual HRESULT StartDumping(wchar_t* fileName) = 0;
+    virtual HRESULT StopDumping() = 0;
 };

@@ -20,7 +20,8 @@
  */
 #pragma once
 #include <streams.h>
-#include <fstream>
+#include "..\..\shared\FileWriter.h"
+
 
 const AMOVIESETUP_MEDIATYPE OUTPUT_MEDIA_TYPES[] =
 {
@@ -32,6 +33,7 @@ class CTsOutputPin : public CBaseOutputPin
 {
   public:    
     CTsOutputPin(CBaseFilter* filter, CCritSec* filterLock, HRESULT* hr);
+    virtual ~CTsOutputPin(void);
 
     HRESULT BreakConnect();
     HRESULT CheckConnect(IPin* receivePin);
@@ -43,10 +45,12 @@ class CTsOutputPin : public CBaseOutputPin
     HRESULT GetMediaType(int position, CMediaType* mediaType);
 
     bool IsConnected();
+    HRESULT StartDumping(wchar_t* fileName);
+    HRESULT StopDumping();
 
   private:
     bool m_isConnected;
-
-    std::ofstream m_debugOutFile;
+    bool m_isDumpEnabled;
+    FileWriter m_dumpFileWriter;
+    CCritSec m_dumpLock;
 };
-

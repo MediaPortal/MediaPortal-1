@@ -1,6 +1,6 @@
 /* 
- *	Copyright (C) 2006-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
+ *  Copyright (C) 2006-2008 Team MediaPortal
+ *  http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -25,9 +25,9 @@
 class CPcr
 {
 public:
-	CPcr();
+  CPcr();
   CPcr(const CPcr& pcr);
-	virtual ~CPcr(void);
+  virtual ~CPcr(void);
   void   Reset();
   void   Decode(byte* data);
   static bool DecodeFromPesHeader(byte* pesHeader,int payloadStart,CPcr& pts, CPcr& dts);
@@ -47,7 +47,7 @@ public:
 
   UINT64 PcrReferenceBase;
   UINT64 PcrReferenceExtension;
-	bool   IsValid;
+  bool   IsValid;
 private:
   char m_buffer[100];
 };

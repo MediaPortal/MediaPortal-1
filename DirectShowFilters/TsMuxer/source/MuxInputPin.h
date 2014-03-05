@@ -21,18 +21,25 @@
 #pragma once
 #include <streams.h>
 #include <Windows.h>
-#include "..\..\shared\BasePmtParser.h"
+#include "..\..\shared\FileWriter.h"
+#include "..\..\shared\PacketSync.h"
+#include "..\..\shared\PidTable.h"
 #include "IMuxInputPin.h"
 #include "IStreamMultiplexer.h"
 
 using namespace std;
 
+
 #define NOT_RECEIVING -1
 
-#define STREAM_TYPE_UNKNOWN -1
 #define STREAM_TYPE_MPEG1_SYSTEM_STREAM -2
 #define STREAM_TYPE_MPEG2_PROGRAM_STREAM -3
 #define STREAM_TYPE_MPEG2_TRANSPORT_STREAM -4
+#define STREAM_TYPE_TELETEXT -5
+
+#define RECEIVE_BUFFER_TS_PACKET_COUNT 5
+#define RECEIVE_BUFFER_SIZE TS_PACKET_LEN * RECEIVE_BUFFER_TS_PACKET_COUNT
+
 
 // Note: order is important! Some Mainconcept audio encoders seem to accept the
 // first proposed media type. If that first type is a video type, it tricks us
@@ -102,10 +109,12 @@ const int INPUT_MEDIA_TYPE_COUNT = (MPEG1_VIDEO_INPUT_MEDIA_TYPE_COUNT + MPEG1_A
                                     PROGRAM_STREAM_INPUT_MEDIA_TYPE_COUNT +
                                     TRANSPORT_STREAM_INPUT_MEDIA_TYPE_COUNT;
 
-class CMuxInputPin : public CRenderedInputPin, public IMuxInputPin
+
+class CMuxInputPin : public CRenderedInputPin, CPacketSync, public IMuxInputPin
 {
   public:
     CMuxInputPin(byte id, IStreamMultiplexer* multiplexer, CBaseFilter* filter, CCritSec* filterLock, CCritSec* receiveLock, HRESULT* hr);
+    virtual ~CMuxInputPin(void);
 
     HRESULT BreakConnect();
     HRESULT CheckMediaType(const CMediaType* mediaType);
@@ -120,12 +129,23 @@ class CMuxInputPin : public CRenderedInputPin, public IMuxInputPin
     byte GetId();
     int GetStreamType();
     DWORD GetReceiveTickCount();
+    HRESULT StartDumping(wchar_t* fileName);
+    HRESULT StopDumping();
 
   private:
+    void OnTsPacket(byte* tsPacket);
+
     byte m_pinId;
     int m_streamType;
     DWORD m_receiveTickCount;
     CCritSec* m_receiveLock;
 
     IStreamMultiplexer* m_multiplexer;
+
+    int m_tsReceiveBufferOffset;
+    byte m_tsReceiveBuffer[RECEIVE_BUFFER_SIZE];
+
+    bool m_isDumpEnabled;
+    FileWriter m_dumpFileWriter;
+    CCritSec m_dumpLock;
 };

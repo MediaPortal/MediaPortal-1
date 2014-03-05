@@ -18,8 +18,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-#pragma warning(disable : 4995)
-#include <windows.h>
+#include <Windows.h>
 #include "..\shared\PacketSync.h"
 
 

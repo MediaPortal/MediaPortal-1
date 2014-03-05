@@ -19,35 +19,36 @@
  *
  */
 #pragma once
-#include "..\..\shared\stdafx.h"
 #include <streams.h>
-#include <initguid.h>
+#include <InitGuid.h>
 #include <Windows.h>
 #include <map>
-#include <vector>
+#include "..\..\shared\DebugSettings.h"
+#include "..\..\shared\PacketSync.h"
 #include "IMuxInputPin.h"
 #include "IStreamMultiplexer.h"
-#include "MuxInputPin.h"
-#include "TsOutputPin.h"
+#include "TsMuxerFilter.h"
 
 using namespace std;
 
-class CTsMuxer;
-class CTsMuxerFilter;
 
-// {511d13f0-8a56-42fa-b151-b72a325cf71a}
-DEFINE_GUID(CLSID_TS_MUXER, 0x511d13f0, 0x8a56, 0x42fa, 0xb1, 0x51, 0xb7, 0x2a, 0x32, 0x5c, 0xf7, 0x1a);
+#define SERVICE_NAME_LENGTH 20
+
+
+DEFINE_TVE_DEBUG_SETTING(MuxerDumpInput)
+DEFINE_TVE_DEBUG_SETTING(MuxerDumpOutput)
+
 
 // {8533d2d1-1be1-4262-b70a-432df592b903}
 DEFINE_GUID(IID_ITS_MUXER, 0x8533d2d1, 0x1be1, 0x4262, 0xb7, 0xa, 0x43, 0x2d, 0xf5, 0x92, 0xb9, 0x3);
 
 DECLARE_INTERFACE_(ITsMuxer, IUnknown)
 {
+  STDMETHOD(ConfigureLogging)(THIS_ wchar_t* fileName)PURE;
+  STDMETHOD(DumpInput)(THIS_ int mask)PURE;
+  STDMETHOD(DumpOutput)(THIS_ bool enable)PURE;
   STDMETHOD(SetActiveComponents)(THIS_ bool video, bool audio, bool teletext)PURE;
 };
-
-#define TS_PACKET_LENGTH 188
-#define SERVICE_NAME_LENGTH 20
 
 
 struct StreamInfo
@@ -88,47 +89,12 @@ struct TransportStreamInfo
   unsigned short pcrPid;
   byte streamCount;
   byte patVersion;
-  byte patContinuityCounter;
   byte pmtVersion;
-  byte pmtContinuityCounter;
 };
 
 
-// Filter class.
-class CTsMuxerFilter : public CBaseFilter
-{
-  public:
-    CTsMuxerFilter(CTsMuxer* tsMuxer, LPUNKNOWN unk, CCritSec* filterLock, CCritSec* receiveLock, HRESULT* hr);
-    ~CTsMuxerFilter();
-
-    CBasePin* GetPin(int n);
-    HRESULT AddPin();
-    int GetPinCount();
-    HRESULT Deliver(PBYTE data, long dataLength);
-
-    STDMETHODIMP Pause();
-    STDMETHODIMP Run(REFERENCE_TIME startTime);
-    STDMETHODIMP Stop();
-
-    static void __cdecl StreamingMonitorThreadFunction(void* arg);
-
-  private:
-    IStreamMultiplexer* const m_tsMuxer;
-    CTsOutputPin* m_outputPin;          // MPEG 2 transport stream output pin
-    vector<CMuxInputPin*> m_inputPins;  // input pins
-    CCritSec* m_receiveLock;            // sample receive lock
-
-    HANDLE m_streamingMonitorThread;
-    HANDLE m_streamingMonitorThreadStopEvent;
-};
-
-
-// Muxer class.
 class CTsMuxer : public CUnknown, public IStreamMultiplexer, public ITsMuxer
 {
-  friend class CTsMuxerFilter;
-  friend class CTsOutputPin;
-
   public:
     DECLARE_IUNKNOWN
 
@@ -143,6 +109,10 @@ class CTsMuxer : public CUnknown, public IStreamMultiplexer, public ITsMuxer
     HRESULT Receive(IMuxInputPin* pin, PBYTE data, long dataLength, REFERENCE_TIME dataStartTime);
     HRESULT Reset();
     HRESULT StreamTypeChange(IMuxInputPin* pin, int oldStreamType, int newStreamType);
+
+    STDMETHODIMP ConfigureLogging(wchar_t* path);
+    STDMETHODIMP DumpInput(int mask);
+    STDMETHODIMP DumpOutput(bool enable);
     STDMETHODIMP SetActiveComponents(bool video, bool audio, bool teletext);
 
   private:
@@ -174,15 +144,15 @@ class CTsMuxer : public CUnknown, public IStreamMultiplexer, public ITsMuxer
     bool m_isAudioActive;
     bool m_isTeletextActive;
 
-    byte m_patPacket[TS_PACKET_LENGTH];
+    byte m_patPacket[TS_PACKET_LEN];
     byte m_patContinuityCounter;
 
-    byte m_pmtPacket[TS_PACKET_LENGTH];
+    byte m_pmtPacket[TS_PACKET_LEN];
     byte m_pmtContinuityCounter;
     unsigned short m_pmtPid;
     byte m_pmtVersion;
 
-    byte m_sdtPacket[TS_PACKET_LENGTH];
+    byte m_sdtPacket[TS_PACKET_LEN];
     byte m_sdtContinuityCounter;
     byte m_sdtVersion;
     char m_serviceName[SERVICE_NAME_LENGTH + 1];

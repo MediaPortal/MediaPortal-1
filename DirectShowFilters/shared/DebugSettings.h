@@ -1,6 +1,6 @@
 /* 
- *	Copyright (C) 2006-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
+ *  Copyright (C) 2006-2008 Team MediaPortal
+ *  http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -19,6 +19,8 @@
  *
  */
 #pragma once
+#include <shlobj.h>
+#include <tchar.h>
 
 // Available debug/advanced settings
 //   TsWriter:
@@ -37,12 +39,12 @@
     TCHAR folder[MAX_PATH]; \
     TCHAR fileName[MAX_PATH]; \
     ::SHGetSpecialFolderPath(NULL, folder, CSIDL_COMMON_APPDATA, FALSE); \
-    _stprintf(fileName, _T("%s\\Team MediaPortal\\" package _T("\\debug\\") _T(#setting) _T(".txt")), folder); \
+    swprintf_s(fileName, _T("%s\\Team MediaPortal\\" package _T("\\debug\\") _T(#setting) _T(".txt")), folder); \
     HANDLE hTest=CreateFile(fileName,(DWORD) GENERIC_READ,0,0,(DWORD) OPEN_EXISTING,0,NULL); \
     if (hTest==INVALID_HANDLE_VALUE) \
-		  return false; \
+      return false; \
     CloseHandle(hTest); \
-	  return TRUE; \
+    return TRUE; \
   } \
 
 #define DEFINE_MP_DEBUG_SETTING(setting)    DEFINE_DEBUG_SETTING(setting, _T("MediaPortal"))

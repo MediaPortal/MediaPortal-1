@@ -1,6 +1,6 @@
 /* 
- *	Copyright (C) 2006-2010 Team MediaPortal
- *	http://www.team-mediaportal.com
+ *  Copyright (C) 2006-2010 Team MediaPortal
+ *  http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -28,8 +28,10 @@ class CChannelInfo
     CChannelInfo(void);
     CChannelInfo(const CChannelInfo& info);
     virtual ~CChannelInfo(void);
+
     CChannelInfo& operator = (const CChannelInfo &info);
-    void Copy(const CChannelInfo &info);
+    void Copy(const CChannelInfo& info);
+
     void Reset();
     void ClearStrings();
     void ReplaceServiceName(char* name);

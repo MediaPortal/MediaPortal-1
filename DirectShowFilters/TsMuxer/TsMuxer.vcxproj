@@ -155,6 +155,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="source\TsMuxer.cpp" />
+    <ClCompile Include="source\TsMuxerFilter.cpp" />
     <ClCompile Include="source\TsOutputPin.cpp" />
     <ClCompile Include="source\MuxInputPin.cpp" />
   </ItemGroup>
@@ -166,6 +167,7 @@
     <ClInclude Include="source\IMuxInputPin.h" />
     <ClInclude Include="source\IStreamMultiplexer.h" />
     <ClInclude Include="source\TsMuxer.h" />
+    <ClInclude Include="source\TsMuxerFilter.h" />
     <ClInclude Include="source\TsOutputPin.h" />
     <ClInclude Include="source\MuxInputPin.h" />
   </ItemGroup>

@@ -20,9 +20,11 @@
  */
 #include "TsMuxer.h"
 #include <shlobj.h>
-#include <process.h>
+#include "..\..\shared\BasePmtParser.h"
 #include "..\..\shared\DvbUtil.h"
+#include "..\..\shared\TsHeader.h"
 #include "Hamming.h"
+
 
 #define STREAM_ID_END_OF_STREAM 0xb9
 #define STREAM_ID_PACK 0xba
@@ -53,11 +55,9 @@
 #define TRANSPORT_STREAM_ID 1
 #define ORIGINAL_NETWORK_ID 1
 
-#define STREAM_IDLE_TIMEOUT 1000
 #define TELETEXT_SERVICE_NAME_TIMEOUT 5000
 
 #define TS_HEADER_LENGTH 4
-#define TS_SYNC_BYTE 0x47
 #define PTS_LENGTH 5
 #define PCR_LENGTH 6
 
@@ -68,6 +68,7 @@
 #define TELETEXT_DATA_UNIT_ID 0x02        // EBU teletext non-subtitle data
 #define VBI_LINE_LENGTH 43
 #define TELETEXT_PES_STUFFING_LENGTH 31
+
 
 // Table for inverting/reversing bit ordering of teletext/VBI bytes.
 const byte REVERSE_BITS[256] =
@@ -89,6 +90,7 @@ const byte REVERSE_BITS[256] =
   0x07, 0x87, 0x47, 0xc7, 0x27, 0xa7, 0x67, 0xe7, 0x17, 0x97, 0x57, 0xd7, 0x37, 0xb7, 0x77, 0xf7,
   0x0f, 0x8f, 0x4f, 0xcf, 0x2f, 0xaf, 0x6f, 0xef, 0x1f, 0x9f, 0x5f, 0xdf, 0x3f, 0xbf, 0x7f, 0xff
 };
+
 
 const int AUDIO_BIT_RATES[2][3][15] =
 {
@@ -122,6 +124,7 @@ const int AUDIO_SAMPLE_RATES[2][3] =
 
 const double VIDEO_ASPECT_RATIOS[5] = { 0, 1, 4.3, 16.9, 2.21 };
 const double VIDEO_FRAME_RATES[9] = { 0, 23.976, 24, 25, 29.97, 30, 50, 59.94, 60 };
+
 
 //-----------------------------------------------------------------------------
 // DIRECTSHOW CONFIGURATION
@@ -189,270 +192,41 @@ BOOL APIENTRY DllMain(HANDLE module, DWORD reason, LPVOID reserved)
 //-----------------------------------------------------------------------------
 // LOGGING
 //-----------------------------------------------------------------------------
-static wchar_t currentLogFileName[MAX_PATH];
-static WORD currentDay = -1;
-static wchar_t logBuffer[2000];
-
-void GetLogFileName(wchar_t* fileName)
-{
-  SYSTEMTIME systemTime;
-  GetLocalTime(&systemTime);
-  if (currentDay != systemTime.wDay)
-  {
-    wchar_t folderName[MAX_PATH];
-    ::SHGetSpecialFolderPathW(NULL, folderName, CSIDL_COMMON_APPDATA, FALSE);
-    swprintf_s(currentLogFileName, L"%s\\Team MediaPortal\\MediaPortal TV Server\\log\\TsMuxer-%04.4d-%02.2d-%02.2d.Log", folderName, systemTime.wYear, systemTime.wMonth, systemTime.wDay);
-    currentDay = systemTime.wDay;
-  }
-  wcscpy(fileName, &currentLogFileName[0]);
-}
+static CCritSec s_logLock;
+static CCritSec s_logFilePathLock;
+static wchar_t s_logFilePath[MAX_PATH];
+static wchar_t s_logFileName[MAX_PATH];
+static WORD s_currentDay = -1;
+static wchar_t s_logBuffer[2000];
 
 void LogDebug(const wchar_t* fmt, ...)
 {
-  va_list ap;
-  va_start(ap, fmt);
-  vswprintf_s(logBuffer, fmt, ap);
-  va_end(ap);
-
-  wchar_t fileName[MAX_PATH];
-  GetLogFileName(fileName);
-  FILE* file = _wfopen(fileName, L"a+, ccs=UTF-8");
+  CAutoLock lock(&s_logLock);
+  SYSTEMTIME systemTime;
+  GetLocalTime(&systemTime);
+  if (s_currentDay != systemTime.wDay)
+  {
+    CAutoLock lock(&s_logFilePathLock);
+    swprintf_s(s_logFileName, L"%s\\TsMuxer-%04.4d-%02.2d-%02.2d.Log", s_logFilePath, systemTime.wYear, systemTime.wMonth, systemTime.wDay);
+    s_currentDay = systemTime.wDay;
+  }
+  FILE* file = _wfopen(s_logFileName, L"a+, ccs=UTF-8");
   if (file != NULL)
   {
-    SYSTEMTIME systemTime;
-    GetLocalTime(&systemTime);
+    va_list ap;
+    va_start(ap, fmt);
+    vswprintf_s(s_logBuffer, fmt, ap);
+    va_end(ap);
     fwprintf(file, L"%04.4d-%02.2d-%02.2d %02.2d:%02.2d:%02.2d.%03.3d %s\n",
       systemTime.wYear, systemTime.wDay, systemTime.wMonth,
       systemTime.wHour,systemTime.wMinute, systemTime.wSecond, systemTime.wMilliseconds,
-      logBuffer);
+      s_logBuffer);
     fclose(file);
-
-    //::OutputDebugStringW(logBuffer);
-    //::OutputDebugStringW(L"\n");
   }
+
+  //::OutputDebugStringW(s_logBuffer);
+  //::OutputDebugStringW(L"\n");
 };
-
-
-//-----------------------------------------------------------------------------
-// FILTER CLASS
-//-----------------------------------------------------------------------------
-CTsMuxerFilter::CTsMuxerFilter(CTsMuxer* tsMuxer, LPUNKNOWN unk, CCritSec* filterLock, CCritSec* receiveLock, HRESULT* hr)
-  : CBaseFilter(NAME("MediaPortal TS Muxer"), unk, filterLock, CLSID_TS_MUXER), m_tsMuxer(tsMuxer)
-{
-  LogDebug(L"CTsMuxerFilter: constructor");
-  m_receiveLock = receiveLock;
-  m_outputPin = new CTsOutputPin(this, filterLock, hr);
-  if (m_outputPin == NULL)
-  {
-    *hr = E_OUTOFMEMORY;
-    return;
-  }
-  m_streamingMonitorThread = INVALID_HANDLE_VALUE;
-  m_streamingMonitorThreadStopEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
-  if (m_streamingMonitorThreadStopEvent == NULL)
-  {
-    *hr = GetLastError();
-  }
-
-  *hr = AddPin();
-  LogDebug(L"CTsMuxerFilter: completed, hr = 0x%x", *hr);
-}
-
-CTsMuxerFilter::~CTsMuxerFilter()
-{
-  LogDebug(L"CTsMuxerFilter: destructor");
-  CAutoLock filterLock(m_pLock);
-  vector<CMuxInputPin*>::iterator it = m_inputPins.begin();
-  while (it != m_inputPins.end())
-  {
-    delete *it;
-    it++;
-  }
-  m_inputPins.clear();
-
-  if (m_outputPin != NULL)
-  {
-    delete m_outputPin;
-    m_outputPin = NULL;
-  }
-
-  if (m_streamingMonitorThreadStopEvent != NULL)
-  {
-    CloseHandle(m_streamingMonitorThreadStopEvent);
-  }
-  LogDebug(L"CTsMuxerFilter: completed");
-}
-
-CBasePin* CTsMuxerFilter::GetPin(int n)
-{
-  if (n == 0)
-  {
-    return m_outputPin;
-  }
-  n--;
-
-  CAutoLock filterLock(m_pLock);
-  if (n < 0 || n >= (int)m_inputPins.size())
-  {
-    return NULL;
-  }
-  return m_inputPins[n];
-}
-
-HRESULT CTsMuxerFilter::AddPin()
-{
-  LogDebug(L"CTsMuxerFilter: add pin, current pin count = %d", m_inputPins.size());
-
-  // If any pin is unconnected or the filter is running then don't add a new pin.
-  CAutoLock filterLock(m_pLock);
-  if (!IsStopped())
-  {
-    LogDebug(L"CTsMuxerFilter: can't add pin unless filter is stopped");
-    return VFW_E_NOT_STOPPED;
-  }
-  int pinIndex = 0;
-  vector<CMuxInputPin*>::iterator it = m_inputPins.begin();
-  while (it != m_inputPins.end())
-  {
-    CMuxInputPin* pin = *it;
-    if (!pin->IsConnected())
-    {
-      LogDebug(L"CTsMuxerFilter: pin %d is available", pinIndex);
-      return S_FALSE;
-    }
-    pinIndex++;
-    it++;
-  }
-
-  LogDebug(L"CTsMuxerFilter: adding pin %d", pinIndex + 1);
-  HRESULT hr = S_OK;
-  CMuxInputPin* inputPin = new CMuxInputPin(pinIndex, m_tsMuxer, this, m_pLock, m_receiveLock, &hr);
-  if (inputPin == NULL || !SUCCEEDED(hr))
-  {
-    if (SUCCEEDED(hr))
-    {
-      hr = E_OUTOFMEMORY;
-    }
-    LogDebug(L"CTsMuxerFilter: failed to add pin, hr = 0x%x", hr);
-    return hr;
-  }
-  m_inputPins.push_back(inputPin);
-  return S_OK;
-}
-
-int CTsMuxerFilter::GetPinCount()
-{
-  CAutoLock filterLock(m_pLock);
-  return 1 + m_inputPins.size();
-}
-
-HRESULT CTsMuxerFilter::Deliver(PBYTE data, long dataLength)
-{
-  return m_outputPin->Deliver(data, dataLength);
-}
-
-STDMETHODIMP CTsMuxerFilter::Pause()
-{
-  LogDebug(L"CTsMuxerFilter: pause");
-  CAutoLock filterLock(m_pLock);
-  LogDebug(L"CTsMuxerFilter: pausing filter...");
-  HRESULT hr = CBaseFilter::Pause();
-  LogDebug(L"CTsMuxerFilter: completed, hr = 0x%x", hr);
-  return hr;
-}
-
-STDMETHODIMP CTsMuxerFilter::Run(REFERENCE_TIME startTime)
-{
-  LogDebug(L"CTsMuxerFilter: run");
-  CAutoLock filterLock(m_pLock);
-
-  LogDebug(L"CTsMuxerFilter: starting stream monitor thread...");
-  ResetEvent(m_streamingMonitorThreadStopEvent);
-  m_streamingMonitorThread = (HANDLE)_beginthread(&CTsMuxerFilter::StreamingMonitorThreadFunction, 0, (void*)this);
-  if (m_streamingMonitorThread == INVALID_HANDLE_VALUE)
-  {
-    return E_POINTER;
-  }
-
-  HRESULT hr = m_tsMuxer->Reset();
-
-  LogDebug(L"CTsMuxerFilter: starting filter...");
-  hr |= CBaseFilter::Run(startTime);
-  LogDebug(L"CTsMuxerFilter: completed, hr = 0x%x", hr);
-  return hr;
-}
-
-STDMETHODIMP CTsMuxerFilter::Stop()
-{
-  LogDebug(L"CTsMuxerFilter: stop");
-  CAutoLock filterLock(m_pLock);
-  LogDebug(L"CTsMuxerFilter: stop receiving...");
-  CAutoLock receiveLock(m_receiveLock);
-
-  LogDebug(L"CTsMuxerFilter: stopping stream monitor thread...");
-  SetEvent(m_streamingMonitorThreadStopEvent);
-  m_streamingMonitorThread = INVALID_HANDLE_VALUE;
-
-  LogDebug(L"CTsMuxerFilter: stopping filter...");
-  HRESULT hr = CBaseFilter::Stop();
-  LogDebug(L"CTsMuxerFilter: completed, hr = 0x%x", hr);
-  return hr;
-}
-
-void __cdecl CTsMuxerFilter::StreamingMonitorThreadFunction(void* arg)
-{
-  LogDebug(L"CTsMuxerFilter: monitor thread started");
-  CTsMuxerFilter* filter = (CTsMuxerFilter*)arg;
-  IStreamMultiplexer* muxer = filter->m_tsMuxer;
-  map<byte, bool> pinStates;
-  bool isFirst = true;
-  while (true)
-  {
-    DWORD result = WaitForSingleObject(filter->m_streamingMonitorThreadStopEvent, STREAM_IDLE_TIMEOUT);
-    if (result != WAIT_TIMEOUT)
-    {
-      // event was set
-      break;
-    }
-
-    if (muxer != NULL && muxer->IsStarted())
-    {
-      CAutoLock filterLock(filter->m_pLock);
-      vector<CMuxInputPin*>::iterator it = filter->m_inputPins.begin();
-      if (isFirst)
-      {
-        while (it != filter->m_inputPins.end())
-        {
-          CMuxInputPin* pin = *it;
-          pinStates[pin->GetId()] = true;
-          it++;
-        }
-        isFirst = false;
-      }
-      else
-      {
-        while (it != filter->m_inputPins.end())
-        {
-          CMuxInputPin* pin = *it;
-          byte pinId = pin->GetId();
-          bool wasReceiving = pinStates[pinId];
-          bool isReceiving = true;
-          if (pin->GetReceiveTickCount() == NOT_RECEIVING || GetTickCount() - pin->GetReceiveTickCount() >= STREAM_IDLE_TIMEOUT)
-          {
-            isReceiving = false;
-          }
-          if (wasReceiving != isReceiving)
-          {
-            LogDebug(L"CTsMuxerFilter: pin %d changed receiving state, %d => %d", pinId, wasReceiving, isReceiving);
-          }
-          pinStates[pinId] = isReceiving;
-          it++;
-        }
-      }
-    }
-  }
-  LogDebug(L"CTsMuxerFilter: monitor thread stopped");
-}
 
 
 //-----------------------------------------------------------------------------
@@ -461,9 +235,13 @@ void __cdecl CTsMuxerFilter::StreamingMonitorThreadFunction(void* arg)
 CTsMuxer::CTsMuxer(LPUNKNOWN unk, HRESULT* hr)
   : CUnknown(NAME("TS Muxer"), unk)
 {
-  LogDebug(L"CTsMuxer: constructor");
+  wchar_t temp[MAX_PATH];
+  ::SHGetSpecialFolderPathW(NULL, temp, CSIDL_COMMON_APPDATA, FALSE);
+  swprintf_s(s_logFilePath, L"%s\\Team MediaPortal\\MediaPortal TV Server\\log", temp);
 
-  m_filter = new CTsMuxerFilter(this, GetOwner(), &m_filterLock, &m_receiveLock, hr);
+  LogDebug(L"muxer: constructor");
+
+  m_filter = new CTsMuxerFilter(this, s_logFilePath, GetOwner(), &m_filterLock, &m_receiveLock, hr);
   if (m_filter == NULL)
   {
     *hr = E_OUTOFMEMORY;
@@ -478,7 +256,7 @@ CTsMuxer::CTsMuxer(LPUNKNOWN unk, HRESULT* hr)
   byte payloadStartFlag = 0x40;
 
   byte* pointer = &m_patPacket[0];
-  *pointer++ = TS_SYNC_BYTE;
+  *pointer++ = TS_PACKET_SYNC;
   *pointer++ = payloadStartFlag | (PID_PAT >> 8);
   *pointer++ = (PID_PAT & 0xff);
   *pointer++ = 0x10;
@@ -503,7 +281,7 @@ CTsMuxer::CTsMuxer(LPUNKNOWN unk, HRESULT* hr)
   memset(pointer, 0xff, 171);
 
   pointer = &m_pmtPacket[0];
-  *pointer++ = TS_SYNC_BYTE;
+  *pointer++ = TS_PACKET_SYNC;
   *pointer++ = payloadStartFlag | (PID_PMT_FIRST >> 8);
   *pointer++ = (PID_PMT_FIRST & 0xff);
   *pointer++ = 0x10;
@@ -522,7 +300,7 @@ CTsMuxer::CTsMuxer(LPUNKNOWN unk, HRESULT* hr)
   *pointer++ = 0;     // program info length
 
   pointer = &m_sdtPacket[0];
-  *pointer++ = TS_SYNC_BYTE;
+  *pointer++ = TS_PACKET_SYNC;
   *pointer++ = payloadStartFlag | (PID_SDT >> 8);
   *pointer++ = (PID_SDT & 0xff);
   *pointer++ = 0x10;
@@ -562,12 +340,12 @@ CTsMuxer::CTsMuxer(LPUNKNOWN unk, HRESULT* hr)
   m_nextVideoStreamId = STREAM_ID_VIDEO_FIRST;
   m_nextAudioStreamId = STREAM_ID_AUDIO_FIRST;
 
-  LogDebug(L"CTsMuxer: completed");
+  LogDebug(L"muxer: completed");
 }
 
 CTsMuxer::~CTsMuxer()
 {
-  LogDebug(L"CTsMuxer: destructor");
+  LogDebug(L"muxer: destructor");
   map<unsigned int, StreamInfo*>::iterator sIt = m_streamInfo.begin();
   while (sIt != m_streamInfo.end())
   {
@@ -604,7 +382,7 @@ CTsMuxer::~CTsMuxer()
     delete m_filter;
     m_filter = NULL;
   }
-  LogDebug(L"CTsMuxer: completed");
+  LogDebug(L"muxer: completed");
 }
 
 CUnknown* WINAPI CTsMuxer::CreateInstance(LPUNKNOWN unk, HRESULT* hr)
@@ -691,7 +469,7 @@ HRESULT CTsMuxer::Receive(IMuxInputPin* pin, PBYTE data, long dataLength, REFERE
   int streamType = pin->GetStreamType();
   if (streamType == STREAM_TYPE_UNKNOWN)
   {
-    LogDebug(L"CTsMuxer: pin %d stream type is not known", pinId);
+    LogDebug(L"muxer: pin %d stream type is not known", pinId);
     return VFW_E_INVALIDMEDIATYPE;
   }
 
@@ -747,7 +525,7 @@ HRESULT CTsMuxer::Receive(IMuxInputPin* pin, PBYTE data, long dataLength, REFERE
     }
     else if (streamType == STREAM_TYPE_TELETEXT)
     {
-      LogDebug(L"CTsMuxer: pin %d teletext stream", pinId);
+      LogDebug(L"muxer: pin %d teletext stream", pinId);
       LogDebug(L"  sample size  = %d bytes", dataLength);
       info->isIgnored = !m_isTeletextActive;
       info->streamId = STREAM_ID_TELETEXT;
@@ -762,7 +540,7 @@ HRESULT CTsMuxer::Receive(IMuxInputPin* pin, PBYTE data, long dataLength, REFERE
     }
     else
     {
-      LogDebug(L"CTsMuxer: pin %d elementary stream with type 0x%x is not supported", pinId, streamType);
+      LogDebug(L"muxer: pin %d elementary stream with type 0x%x is not supported", pinId, streamType);
       info->isIgnored = false;
       info->isCompatible = false;
       info->streamType = STREAM_TYPE_UNKNOWN;
@@ -777,7 +555,7 @@ HRESULT CTsMuxer::Receive(IMuxInputPin* pin, PBYTE data, long dataLength, REFERE
 
     if (info->isIgnored && info->isCompatible)
     {
-      LogDebug(L"CTsMuxer: pin %d ignoring stream due to active stream type settings", pinId);
+      LogDebug(L"muxer: pin %d ignoring stream due to active stream type settings", pinId);
     }
 
     updatePmt = !info->isIgnored;
@@ -867,7 +645,7 @@ HRESULT CTsMuxer::Receive(IMuxInputPin* pin, PBYTE data, long dataLength, REFERE
 HRESULT CTsMuxer::Reset()
 {
   CAutoLock lock(&m_receiveLock);
-  LogDebug(L"CTsMuxer: reset");
+  LogDebug(L"muxer: reset");
   m_isStarted = false;
   m_sdtVersion = VERSION_NOT_SET;
   map<unsigned int, StreamInfo*>::iterator sIt = m_streamInfo.begin();
@@ -888,10 +666,32 @@ HRESULT CTsMuxer::StreamTypeChange(IMuxInputPin* pin, int oldStreamType, int new
   return BreakConnect(pin);
 }
 
+STDMETHODIMP CTsMuxer::ConfigureLogging(wchar_t* path)
+{
+  if (path == NULL)
+  {
+    return E_POINTER;
+  }
+  HRESULT hr = m_filter->SetDumpFilePath(path);
+  CAutoLock lock(&s_logFilePathLock);
+  wcscpy(s_logFilePath, path);
+  return hr;
+}
+
+STDMETHODIMP CTsMuxer::DumpInput(int mask)
+{
+  return m_filter->DumpInput(mask);
+}
+
+STDMETHODIMP CTsMuxer::DumpOutput(bool enable)
+{
+  return m_filter->DumpOutput(enable);
+}
+
 STDMETHODIMP CTsMuxer::SetActiveComponents(bool video, bool audio, bool teletext)
 {
   CAutoLock lock(&m_receiveLock);
-  LogDebug(L"CTsMuxer: set active components, video = %d, audio = %d, teletext = %d", video, audio, teletext);
+  LogDebug(L"muxer: set active components, video = %d, audio = %d, teletext = %d", video, audio, teletext);
   m_isVideoActive = video;
   m_isAudioActive = audio;
   m_isTeletextActive = teletext;
@@ -900,13 +700,15 @@ STDMETHODIMP CTsMuxer::SetActiveComponents(bool video, bool audio, bool teletext
   map<unsigned int, StreamInfo*>::iterator sIt = m_streamInfo.begin();
   while (sIt != m_streamInfo.end())
   {
-    if (sIt->second->streamType == STREAM_TYPE_VIDEO_MPEG1 || sIt->second->streamType == STREAM_TYPE_VIDEO_MPEG2)
+    if (sIt->second->streamType == STREAM_TYPE_VIDEO_MPEG1 || sIt->second->streamType == STREAM_TYPE_VIDEO_MPEG2 || sIt->second->streamType == STREAM_TYPE_VIDEO_H264)
     {
       changedActiveStream = (sIt->second->isIgnored == m_isVideoActive && sIt->second->isCompatible);
       sIt->second->isIgnored = !m_isVideoActive;
       m_serviceType = m_isVideoActive ? SERVICE_TYPE_TELEVISION : SERVICE_TYPE_RADIO;
     }
-    else if (sIt->second->streamType == STREAM_TYPE_AUDIO_MPEG1 || sIt->second->streamType == STREAM_TYPE_AUDIO_MPEG2)
+    else if (sIt->second->streamType == STREAM_TYPE_AUDIO_MPEG1 || sIt->second->streamType == STREAM_TYPE_AUDIO_MPEG2 ||
+      sIt->second->streamType == STREAM_TYPE_AUDIO_AAC || sIt->second->streamType == STREAM_TYPE_AUDIO_LATM_AAC ||
+      sIt->second->streamType == STREAM_TYPE_AUDIO_AC3 || sIt->second->streamType == STREAM_TYPE_AUDIO_E_AC3)
     {
       changedActiveStream = (sIt->second->isIgnored == m_isAudioActive && sIt->second->isCompatible);
       sIt->second->isIgnored = !m_isAudioActive;
@@ -1063,7 +865,7 @@ bool CTsMuxer::CanDeliver()
     }
   }
 
-  LogDebug(L"CTsMuxer: starting to deliver...");
+  LogDebug(L"muxer: starting to deliver...");
   m_isStarted = true;
 
   // Waiting for SDT?
@@ -1102,11 +904,11 @@ HRESULT CTsMuxer::ReceiveTransportStream(IMuxInputPin* pin, PBYTE data, long dat
 
   // Skip all processing if we previously determined that this transport stream
   // is incompatible.
-  if (isFirstReceive && data[0] != TS_SYNC_BYTE)
+  if (isFirstReceive && data[0] != TS_PACKET_SYNC)
   {
     tsInfo->isCompatible = false;
   }
-  if (dataLength % TS_PACKET_LENGTH != 0)
+  if (dataLength % TS_PACKET_LEN != 0)
   {
     tsInfo->isCompatible = false;
   }
@@ -1125,12 +927,12 @@ HRESULT CTsMuxer::ReceiveTransportStream(IMuxInputPin* pin, PBYTE data, long dat
   StreamInfo* info = NULL;
   unsigned short previousPid = PID_NOT_SET;
   long inputOffset = 0;
+  CTsHeader header;
   HRESULT hr = S_OK;
-  while (dataLength >= TS_PACKET_LENGTH)
+  while (dataLength >= TS_PACKET_LEN)
   {
-    unsigned short pid = ((data[inputOffset + 1] << 8) & 0x1f) + data[inputOffset + 2];
-
-    if (pid == PID_PAT || (tsInfo->pmtPid != PID_NOT_SET && tsInfo->pmtPid == pid))
+    header.Decode(&data[inputOffset]);
+    if (header.Pid == PID_PAT || (tsInfo->pmtPid != PID_NOT_SET && tsInfo->pmtPid == header.Pid))
     {
       // Flush our buffer in case the PMT changes.
       if (CanDeliver() && outputOffset != 0)
@@ -1144,13 +946,13 @@ HRESULT CTsMuxer::ReceiveTransportStream(IMuxInputPin* pin, PBYTE data, long dat
       }
       outputOffset = 0;
 
-      if (pid == PID_PAT)
+      if (header.Pid == PID_PAT)
       {
-        hr = ReadProgramAssociationTable(&data[inputOffset + 5], TS_PACKET_LENGTH - 5, tsInfo);
+        hr = ReadProgramAssociationTable(&data[inputOffset + 5], TS_PACKET_LEN - 5, tsInfo);
       }
       else
       {
-        hr = ReadProgramMapTable(&data[inputOffset + 5], TS_PACKET_LENGTH - 5, tsInfo);
+        hr = ReadProgramMapTable(&data[inputOffset + 5], TS_PACKET_LEN - 5, tsInfo);
         // Change of PMT could have changed the details for any PID, so unset
         // our cached PID details.
         info = NULL;
@@ -1165,9 +967,9 @@ HRESULT CTsMuxer::ReceiveTransportStream(IMuxInputPin* pin, PBYTE data, long dat
     }
     else
     {
-      if (pid != previousPid)
+      if (header.Pid != previousPid)
       {
-        unsigned int streamKey = (pid << 8) + pin->GetId();
+        unsigned int streamKey = (header.Pid << 8) + pin->GetId();
         map<unsigned int, StreamInfo*>::iterator sIt = m_streamInfo.find(streamKey);
         if (sIt != m_streamInfo.end())
         {
@@ -1179,7 +981,7 @@ HRESULT CTsMuxer::ReceiveTransportStream(IMuxInputPin* pin, PBYTE data, long dat
         }
       }
 
-      if (info != NULL && info->isCompatible && (!info->isIgnored || tsInfo->pcrPid == pid))
+      if (info != NULL && info->isCompatible && (!info->isIgnored || tsInfo->pcrPid == header.Pid))
       {
         // If we're ignoring the stream that contains PCR then overwrite the
         // content of the packet with padding and inject the packet into our
@@ -1190,7 +992,7 @@ HRESULT CTsMuxer::ReceiveTransportStream(IMuxInputPin* pin, PBYTE data, long dat
           byte adaptationFieldLength = data[inputOffset + TS_HEADER_LENGTH];
           if ((adaptationFieldControl & 0x2) != 0 && adaptationFieldLength > 0 && (data[inputOffset + 5] & 0x10) != 0)
           {
-            memcpy(&outputBuffer[outputOffset], &data[inputOffset], TS_PACKET_LENGTH);
+            memcpy(&outputBuffer[outputOffset], &data[inputOffset], TS_PACKET_LEN);
 
             // Fix the PID, adaptation field control and continuity counter.
             outputBuffer[outputOffset + 1] = (m_pcrPid >> 8);
@@ -1206,7 +1008,7 @@ HRESULT CTsMuxer::ReceiveTransportStream(IMuxInputPin* pin, PBYTE data, long dat
             }
 
             // Overwrite the content with padding.
-            byte fullAdaptationByteCount = TS_PACKET_LENGTH - TS_HEADER_LENGTH - 1;   // - 1 for adaptation field length
+            byte fullAdaptationByteCount = TS_PACKET_LEN - TS_HEADER_LENGTH - 1;   // - 1 for adaptation field length
             byte additionalPaddingByteCount = fullAdaptationByteCount - adaptationFieldLength;
             outputBuffer[outputOffset + TS_HEADER_LENGTH] = fullAdaptationByteCount;
             if (additionalPaddingByteCount > 0)
@@ -1217,17 +1019,17 @@ HRESULT CTsMuxer::ReceiveTransportStream(IMuxInputPin* pin, PBYTE data, long dat
         }
         else
         {
-          memcpy(&outputBuffer[outputOffset], &data[inputOffset], TS_PACKET_LENGTH);
+          memcpy(&outputBuffer[outputOffset], &data[inputOffset], TS_PACKET_LEN);
         }
 
-        outputOffset += TS_PACKET_LENGTH;
+        outputOffset += TS_PACKET_LEN;
       }
 
-      previousPid = pid;
+      previousPid = header.Pid;
     }
 
-    dataLength -= TS_PACKET_LENGTH;
-    inputOffset += TS_PACKET_LENGTH;
+    dataLength -= TS_PACKET_LEN;
+    inputOffset += TS_PACKET_LEN;
   }
 
   if (outputOffset != 0)
@@ -1287,7 +1089,7 @@ HRESULT CTsMuxer::ReceiveProgramOrSystemStream(IMuxInputPin* pin, PBYTE data, lo
     // All samples must be aligned to frame boundaries.
     if (data[offset] != 0 || data[offset + 1] != 0 || data[offset + 2] != 1)
     {
-      LogDebug(L"CTsMuxer: pin %d program/system stream sample not frame-aligned", pinId);
+      LogDebug(L"muxer: pin %d program/system stream sample not frame-aligned", pinId);
       psInfo->isCompatible = false;
       return VFW_E_BADALIGN;
     }
@@ -1297,7 +1099,7 @@ HRESULT CTsMuxer::ReceiveProgramOrSystemStream(IMuxInputPin* pin, PBYTE data, lo
     // What type of frame is this and how do we handle it?
     if (streamId == STREAM_ID_END_OF_STREAM)
     {
-      LogDebug(L"CTsMuxer: pin %d received program/system stream end code", pinId);
+      LogDebug(L"muxer: pin %d received program/system stream end code", pinId);
       offset += 4;
       remainingDataLength -= 4;
     }
@@ -1312,7 +1114,7 @@ HRESULT CTsMuxer::ReceiveProgramOrSystemStream(IMuxInputPin* pin, PBYTE data, lo
     {
       if (remainingDataLength < 6)
       {
-        LogDebug(L"CTsMuxer: pin %d program/system stream packet with length %d is too small to contain a system header, program stream map, padding or data", pinId, remainingDataLength);
+        LogDebug(L"muxer: pin %d program/system stream packet with length %d is too small to contain a system header, program stream map, padding or data", pinId, remainingDataLength);
         psInfo->isCompatible = false;
         return E_NOT_SUFFICIENT_BUFFER;
       }
@@ -1320,7 +1122,7 @@ HRESULT CTsMuxer::ReceiveProgramOrSystemStream(IMuxInputPin* pin, PBYTE data, lo
       unsigned short packetLength = (data[offset + 4] << 8) + data[offset + 5];
       if (remainingDataLength < packetLength + 6)
       {
-        LogDebug(L"CTsMuxer: pin %d program/system stream appears to spread packets across samples, not compatible", pinId);
+        LogDebug(L"muxer: pin %d program/system stream appears to spread packets across samples, not compatible", pinId);
         psInfo->isCompatible = false;
         return VFW_E_UNSUPPORTED_STREAM;
       }
@@ -1376,7 +1178,7 @@ HRESULT CTsMuxer::ReceiveProgramOrSystemStream(IMuxInputPin* pin, PBYTE data, lo
           else
           {
             // other unsupported stream types - private, ECM, EMM, DCMCC, MHEG etc.
-            LogDebug(L"CTsMuxer: pin %d program/system stream PES packet with stream ID 0x%x is not supported", pinId, streamId);
+            LogDebug(L"muxer: pin %d program/system stream PES packet with stream ID 0x%x is not supported", pinId, streamId);
             info->isIgnored = false;
             info->isCompatible = false;
           }
@@ -1390,7 +1192,7 @@ HRESULT CTsMuxer::ReceiveProgramOrSystemStream(IMuxInputPin* pin, PBYTE data, lo
 
           if (info->isIgnored && info->isCompatible)
           {
-            LogDebug(L"CTsMuxer: pin %d ignoring substream %d due to active stream type settings", pinId, streamId);
+            LogDebug(L"muxer: pin %d ignoring substream %d due to active stream type settings", pinId, streamId);
           }
 
           updatePmt = !info->isIgnored;
@@ -1467,26 +1269,26 @@ HRESULT CTsMuxer::ReadProgramAssociationTable(PBYTE data, long dataLength, Trans
   info->patVersion = version;
 
   unsigned short transportStreamId = (data[3] << 8) + data[4];
-  LogDebug(L"TsMuxer: pin %d new program association table, version = %d, transport stream ID = 0x%x", info->pinId, version, transportStreamId);
+  LogDebug(L"muxer: pin %d new program association table, version = %d, transport stream ID = %d", info->pinId, version, transportStreamId);
   info->transportStreamId = transportStreamId;
 
   unsigned short sectionLength = ((data[1] & 0x0f) << 8) + data[2];
   unsigned short offset = 8;
-  unsigned short endOfServices = offset + (sectionLength - 4 - 5);  // - 4 for CRC, - 5 for other fixed length fields
-  byte serviceCount = 0;
-  while (offset + 3 < endOfServices)
+  unsigned short endOfPrograms = offset + (sectionLength - 4 - 5);  // - 4 for CRC, - 5 for other fixed length fields
+  byte programCount = 0;
+  while (offset + 3 < endOfPrograms)
   {
-    unsigned short serviceId = (data[offset] << 8) + data[offset + 1];
+    unsigned short programNumber = (data[offset] << 8) + data[offset + 1];
     unsigned short pmtPid = ((data[offset + 2] & 0x1f) << 8) + data[offset + 3];
-    LogDebug(L"  service, service ID = 0x%x, PMT PID = 0x%x", serviceId, pmtPid);
-    if (serviceId != 0)
+    LogDebug(L"  program, program number = %d, PMT PID = %d", programNumber, pmtPid);
+    if (programNumber != 0)
     {
-      serviceCount++;
-      // We can only handle transport streams containing one service. Take the
-      // first real service (service ID 0 points to the DVB NIT PID).
-      if (serviceCount == 1)
+      programCount++;
+      // We can only handle transport streams containing one program. Take the
+      // first real program (program number 0 points to the network PID).
+      if (programCount == 1)
       {
-        info->serviceId = serviceId;
+        info->serviceId = programNumber;
         info->pmtPid = pmtPid;
       }
     }
@@ -1497,16 +1299,23 @@ HRESULT CTsMuxer::ReadProgramAssociationTable(PBYTE data, long dataLength, Trans
 
 HRESULT CTsMuxer::ReadProgramMapTable(PBYTE data, long dataLength, TransportStreamInfo* info)
 {
+  unsigned short sectionLength = ((data[1] & 0xf) << 8) + data[2];
+  if (sectionLength > 181)
+  {
+    // Section doesn't fit in one packet.
+    info->isCompatible = false;
+    return S_FALSE;
+  }
+  unsigned short programNumber = (data[3] << 8) + data[4];
   byte version = ((data[5] >> 1) & 0x1f);
-  unsigned short serviceId = (data[3] << 8) + data[4];
-  if (info->pmtVersion == version || info->serviceId != serviceId)
+  if (info->pmtVersion == version || info->serviceId != programNumber)
   {
     return S_OK;
   }
   info->pmtVersion = version;
 
   unsigned short pcrPid = ((data[8] & 0x1f) << 8) + data[9];
-  LogDebug(L"TsMuxer: pin %d new program map table, version = %d, service ID = 0x%x, PCR PID = 0x%x", info->pinId, version, serviceId, pcrPid);
+  LogDebug(L"muxer: pin %d new program map table, version = %d, program number = %d, PCR PID = %d", info->pinId, version, programNumber, pcrPid);
   info->pcrPid = pcrPid;
 
   // Set a "marker" on all substreams for this pin so we can remove inactive
@@ -1522,8 +1331,7 @@ HRESULT CTsMuxer::ReadProgramMapTable(PBYTE data, long dataLength, TransportStre
     sIt++;
   }
 
-  unsigned short sectionLength = ((data[1] & 0x0f) << 8) + data[2];
-  unsigned short programInfoLength = ((data[1] & 0x0f) << 8) + data[2];
+  unsigned short programInfoLength = ((data[10] & 0x0f) << 8) + data[11];
   long offset = 12;
   long endOfDescriptors = offset + programInfoLength;
   while (offset + 1 < endOfDescriptors)
@@ -1571,16 +1379,18 @@ HRESULT CTsMuxer::ReadProgramMapTable(PBYTE data, long dataLength, TransportStre
     {
       streamInfo->isIgnored = !m_isVideoActive;
     }
-    else if (streamType == STREAM_TYPE_AUDIO_MPEG1 || streamType == STREAM_TYPE_AUDIO_MPEG2 || streamType == STREAM_TYPE_AUDIO_AAC || streamType == STREAM_TYPE_AUDIO_LATM_AAC || streamType == STREAM_TYPE_AUDIO_AC3 || streamType == STREAM_TYPE_AUDIO_E_AC3)
+    else if (streamType == STREAM_TYPE_AUDIO_MPEG1 || streamType == STREAM_TYPE_AUDIO_MPEG2 ||
+      streamType == STREAM_TYPE_AUDIO_AAC || streamType == STREAM_TYPE_AUDIO_LATM_AAC ||
+      streamType == STREAM_TYPE_AUDIO_AC3_ATSC || streamType == STREAM_TYPE_AUDIO_E_AC3_ATSC)
     {
       streamInfo->isIgnored = !m_isAudioActive;
     }
     else
     {
-      // assume other streams - subtitles, teletext etc. - should be active
+      // For now assume other streams - subtitles, teletext etc. - should be
+      // active. We might ammend this below.
       streamInfo->isIgnored = false;
     }
-    LogDebug(L"  elementary stream, PID = 0x%x, type = 0x%x, active = %d", elementaryStreamPid, streamType, !streamInfo->isIgnored);
 
     unsigned short elementaryStreamInfoLength = (data[offset] << 8) + data[offset + 1];
     offset += 2;
@@ -1606,7 +1416,16 @@ HRESULT CTsMuxer::ReadProgramMapTable(PBYTE data, long dataLength, TransportStre
       byte length = data[offset++];
       offset += length;
       LogDebug(L"    elementary stream descriptor, tag = 0x%x, length = %d", tag, length);
+      if (tag == DESCRIPTOR_AC3_DVB || tag == DESCRIPTOR_E_AC3_DVB)
+      {
+        streamInfo->isIgnored = !m_isAudioActive;
+      }
+      else if (tag == DESCRIPTOR_TELETEXT_DVB)
+      {
+        streamInfo->isIgnored = !m_isTeletextActive;
+      }
     }
+    LogDebug(L"  elementary stream, PID = %d, type = 0x%x, active = %d", elementaryStreamPid, streamType, !streamInfo->isIgnored);
   }
 
   // Remove streams that are no longer part of the program.
@@ -1636,7 +1455,7 @@ HRESULT CTsMuxer::ReadProgramOrSystemPack(PBYTE data, long dataLength, ProgramSt
 {
   if (isFirstReceive)
   {
-    LogDebug(L"CTsMuxer: pin %d program/system stream", info->pinId);
+    LogDebug(L"muxer: pin %d program/system stream", info->pinId);
     LogDebug(L"  sample size      = %d bytes", dataLength);
   }
 
@@ -1648,7 +1467,7 @@ HRESULT CTsMuxer::ReadProgramOrSystemPack(PBYTE data, long dataLength, ProgramSt
     // MPEG 2 PS
     if (dataLength < 14)
     {
-      LogDebug(L"CTsMuxer: pin %d program stream packet with length %d is too small to contain a pack", info->pinId, dataLength);
+      LogDebug(L"muxer: pin %d program stream packet with length %d is too small to contain a pack", info->pinId, dataLength);
       return E_NOT_SUFFICIENT_BUFFER;
     }
     isMpeg2 = true;
@@ -1678,7 +1497,7 @@ HRESULT CTsMuxer::ReadProgramOrSystemPack(PBYTE data, long dataLength, ProgramSt
     // MPEG 1 PS
     if (dataLength < 12)
     {
-      LogDebug(L"CTsMuxer: pin %d system stream packet with length %d is too small to contain a pack", info->pinId, dataLength);
+      LogDebug(L"muxer: pin %d system stream packet with length %d is too small to contain a pack", info->pinId, dataLength);
       return E_NOT_SUFFICIENT_BUFFER;
     }
     isMpeg2 = false;
@@ -1698,7 +1517,7 @@ HRESULT CTsMuxer::ReadProgramOrSystemPack(PBYTE data, long dataLength, ProgramSt
   }
   else
   {
-    LogDebug(L"CTsMuxer: pin %d program/system stream pack format 0x%x is not supported", info->pinId, data[4]);
+    LogDebug(L"muxer: pin %d program/system stream pack format 0x%x is not supported", info->pinId, data[4]);
     return VFW_E_UNSUPPORTED_STREAM;
   }
 
@@ -1739,12 +1558,12 @@ HRESULT CTsMuxer::ReadProgramOrSystemHeader(PBYTE data, long dataLength, Program
   {
     if (videoBound != info->videoBound)
     {
-      LogDebug(L"CTsMuxer: pin %d program/system video bound changed, %d => %d", info->pinId, info->videoBound, videoBound);
+      LogDebug(L"muxer: pin %d program/system video bound changed, %d => %d", info->pinId, info->videoBound, videoBound);
       info->videoBound = videoBound;
     }
     if (audioBound != info->audioBound)
     {
-      LogDebug(L"CTsMuxer: pin %d program/system audio bound changed, %d => %d", info->pinId, info->videoBound, videoBound);
+      LogDebug(L"muxer: pin %d program/system audio bound changed, %d => %d", info->pinId, info->videoBound, videoBound);
       info->audioBound = audioBound;
     }
   }
@@ -1759,7 +1578,7 @@ HRESULT CTsMuxer::ReadProgramStreamMap(PBYTE data, long dataLength, ProgramStrea
   {
     return S_OK;
   }
-  LogDebug(L"CTsMuxer: pin %d program stream map version changed, %d => %d", info->pinId, info->currentMapVersion, programStreamMapVersion);
+  LogDebug(L"muxer: pin %d program stream map version changed, %d => %d", info->pinId, info->currentMapVersion, programStreamMapVersion);
   info->currentMapVersion = programStreamMapVersion;
 
   unsigned short programStreamInfoLength = (data[8] << 8) + data[9];
@@ -1797,11 +1616,11 @@ HRESULT CTsMuxer::ReadProgramStreamMap(PBYTE data, long dataLength, ProgramStrea
 
 HRESULT CTsMuxer::ReadVideoStreamInfo(PBYTE data, long dataLength, StreamInfo* info)
 {
-  LogDebug(L"CTsMuxer: pin %d video stream", info->pinId);
+  LogDebug(L"muxer: pin %d video stream", info->pinId);
   LogDebug(L"  sample size  = %d bytes", dataLength);
   if (dataLength < 20 || data[0] != 0 || data[1] != 0 || data[2] != 1)
   {
-    LogDebug(L"CTsMuxer: pin %d video stream first sample not frame-aligned or unexpected format", info->pinId);
+    LogDebug(L"muxer: pin %d video stream first sample not frame-aligned or unexpected format", info->pinId);
     return VFW_E_BADALIGN;
   }
 
@@ -1843,11 +1662,11 @@ HRESULT CTsMuxer::ReadVideoStreamInfo(PBYTE data, long dataLength, StreamInfo* i
 
 HRESULT CTsMuxer::ReadAudioStreamInfo(PBYTE data, long dataLength, StreamInfo* info)
 {
-  LogDebug(L"CTsMuxer: pin %d audio stream", info->pinId);
+  LogDebug(L"muxer: pin %d audio stream", info->pinId);
   LogDebug(L"  sample size        = %d bytes", dataLength);
   if (dataLength < 4 || data[0] != 0xff || (data[1] & 0xf0) != 0xf0)
   {
-    LogDebug(L"CTsMuxer: pin %d audio stream first sample not frame-aligned or unexpected format", info->pinId);
+    LogDebug(L"muxer: pin %d audio stream first sample not frame-aligned or unexpected format", info->pinId);
     return VFW_E_BADALIGN;
   }
 
@@ -1868,7 +1687,7 @@ HRESULT CTsMuxer::ReadAudioStreamInfo(PBYTE data, long dataLength, StreamInfo* i
 
 HRESULT CTsMuxer::UpdatePat()
 {
-  // Update the PMT PID for our service.
+  // Update the PMT PID for our program.
   byte* pointer = &m_patPacket[15];
   *pointer++ = 0xe0 | (m_pmtPid >> 8);
   *pointer++ = (m_pmtPid & 0xff);
@@ -1961,10 +1780,10 @@ HRESULT CTsMuxer::UpdatePmt()
   *pointer++ = ((crc >> 16) & 0xff);
   *pointer++ = ((crc >> 8) & 0xff);
   *pointer++ = (crc & 0xff);
-  int stuffingLength = TS_PACKET_LENGTH - TS_HEADER_LENGTH - 1 - 3 - sectionLength; // - 1 for pointer byte - 3 for table ID and section length
+  int stuffingLength = TS_PACKET_LEN - TS_HEADER_LENGTH - 1 - 3 - sectionLength;  // - 1 for pointer byte - 3 for table ID and section length
   if (stuffingLength < 0)
   {
-    LogDebug(L"CTsMuxer: PMT requires more than one packet, not supported");
+    LogDebug(L"muxer: PMT requires more than one packet, not supported");
     return E_FAIL;
   }
   memset(pointer, 0xff, stuffingLength);
@@ -1976,7 +1795,7 @@ HRESULT CTsMuxer::UpdatePmt()
     UpdateSdt();
   }
 
-  LogDebug(L"CTsMuxer: updated PMT, PID = 0x%x, active stream count = %d, version = %d, service type = %d", m_pmtPid, activeStreamCount, m_pmtVersion, m_serviceType);
+  LogDebug(L"muxer: updated PMT, PID = %d, active stream count = %d, version = %d, service type = %d", m_pmtPid, activeStreamCount, m_pmtVersion, m_serviceType);
   m_packetCounter = 0;  // trigger PMT to be delivered before the next content
   return S_OK;
 }
@@ -2009,10 +1828,10 @@ HRESULT CTsMuxer::UpdateSdt()
   *pointer++ = ((crc >> 8) & 0xff);
   *pointer++ = (crc & 0xff);
 
-  int stuffingLength = TS_PACKET_LENGTH - TS_HEADER_LENGTH - 1 - 3 - sectionLength; // - 1 for pointer byte - 3 for table ID and section length
+  int stuffingLength = TS_PACKET_LEN - TS_HEADER_LENGTH - 1 - 3 - sectionLength;  // - 1 for pointer byte - 3 for table ID and section length
   if (stuffingLength < 0)
   {
-    LogDebug(L"CTsMuxer: SDT requires more than one packet, not supported");
+    LogDebug(L"muxer: SDT requires more than one packet, not supported");
     return E_FAIL;
   }
   memset(pointer, 0xff, stuffingLength);
@@ -2034,7 +1853,7 @@ HRESULT CTsMuxer::WrapVbiTeletextData(StreamInfo* info, PBYTE inputData, long in
   }
   if (inputDataLength % VBI_LINE_LENGTH != 0)
   {
-    LogDebug(L"CTsMuxer: pin %d teletext stream input with size %d contains partial lines", info->pinId, inputDataLength);
+    LogDebug(L"muxer: pin %d teletext stream input with size %d contains partial lines", info->pinId, inputDataLength);
     return E_UNEXPECTED;
   }
 
@@ -2086,7 +1905,7 @@ HRESULT CTsMuxer::WrapVbiTeletextData(StreamInfo* info, PBYTE inputData, long in
         tempName[SERVICE_NAME_LENGTH] = '\0';
         if (strcmp(tempName, m_serviceName) != 0)
         {
-          LogDebug(L"CTsMuxer: found channel name '%s' in teletext", tempName);
+          LogDebug(L"muxer: found channel name '%s' in teletext", tempName);
           strcpy(m_serviceName, tempName);
           UpdateSdt();
         }
@@ -2151,7 +1970,7 @@ HRESULT CTsMuxer::WrapElementaryStreamData(StreamInfo* info, PBYTE inputData, lo
     }
     else
     {
-      LogDebug(L"CTsMuxer: pin %d extended length %d cannot be used for stream type %d", info->pinId, packetLength, info->streamType);
+      LogDebug(L"muxer: pin %d extended length %d cannot be used for stream type %d", info->pinId, packetLength, info->streamType);
       return E_UNEXPECTED;
     }
   }
@@ -2209,8 +2028,8 @@ HRESULT CTsMuxer::WrapPacketisedElementaryStreamData(StreamInfo* info, PBYTE inp
 
   // Calculate a rough output buffer size. This must be large enough to hold
   // the largest number of packets that we would generate from the input.
-  long packetCount = (outputBufferSize / (TS_PACKET_LENGTH - TS_HEADER_LENGTH)) + 1;  // + 1 for safety
-  outputBufferSize = packetCount * TS_PACKET_LENGTH;
+  long packetCount = (outputBufferSize / (TS_PACKET_LEN - TS_HEADER_LENGTH)) + 1;   // + 1 for safety
+  outputBufferSize = packetCount * TS_PACKET_LEN;
   *outputData = new byte[outputBufferSize];
   if (*outputData == NULL)
   {
@@ -2225,20 +2044,20 @@ HRESULT CTsMuxer::WrapPacketisedElementaryStreamData(StreamInfo* info, PBYTE inp
   // PCR; the last packet may be padded.
   while (inputDataLength > 0)
   {
-    *outputPointer++ = TS_SYNC_BYTE;
+    *outputPointer++ = TS_PACKET_SYNC;
     *outputPointer++ = firstPacketFlags | (info->pid >> 8);
     firstPacketFlags = 0;
     *outputPointer++ = (info->pid & 0xff);
 
-    byte dataByteCount = TS_PACKET_LENGTH - TS_HEADER_LENGTH;
+    byte dataByteCount = TS_PACKET_LEN - TS_HEADER_LENGTH;
     byte stuffingByteCount = 0;
 
-    if (writePcr || inputDataLength < (TS_PACKET_LENGTH - TS_HEADER_LENGTH))
+    if (writePcr || inputDataLength < (TS_PACKET_LEN - TS_HEADER_LENGTH))
     {
       *outputPointer++ = (0x30 | info->continuityCounter);
       if (writePcr)
       {
-        byte maxDataByteCount = TS_PACKET_LENGTH - TS_HEADER_LENGTH - PCR_LENGTH - 2;   // - 2 for adaptation field length and flags
+        byte maxDataByteCount = TS_PACKET_LEN - TS_HEADER_LENGTH - PCR_LENGTH - 2;    // - 2 for adaptation field length and flags
         stuffingByteCount = (byte)max(maxDataByteCount - inputDataLength, 0);
         dataByteCount = maxDataByteCount - stuffingByteCount;
         *outputPointer++ = 1 + PCR_LENGTH + stuffingByteCount;  // adaptation field length, + 1 for flags
@@ -2257,13 +2076,13 @@ HRESULT CTsMuxer::WrapPacketisedElementaryStreamData(StreamInfo* info, PBYTE inp
       }
       else
       {
-        if (inputDataLength == TS_PACKET_LENGTH - TS_HEADER_LENGTH - 1)   // - 1 for adaptation field length
+        if (inputDataLength == TS_PACKET_LEN - TS_HEADER_LENGTH - 1)    // - 1 for adaptation field length
         {
           *outputPointer++ = 0;                                 // adaptation field length
         }
         else
         {
-          stuffingByteCount = (byte)(TS_PACKET_LENGTH - TS_HEADER_LENGTH - 2 - inputDataLength);  // - 2 for adaptation field length and flags
+          stuffingByteCount = (byte)(TS_PACKET_LEN - TS_HEADER_LENGTH - 2 - inputDataLength);   // - 2 for adaptation field length and flags
           *outputPointer++ = 1 + stuffingByteCount;             // adaptation field length, + 1 for flags
           *outputPointer++ = 0;                                 // flags: (none)
         }
@@ -2287,7 +2106,7 @@ HRESULT CTsMuxer::WrapPacketisedElementaryStreamData(StreamInfo* info, PBYTE inp
     inputDataLength -= dataByteCount;
 
     info->continuityCounter = ((info->continuityCounter + 1) & 0xf);
-    *outputDataLength += TS_PACKET_LENGTH;
+    *outputDataLength += TS_PACKET_LEN;
   }
 
   return S_OK;
@@ -2313,7 +2132,7 @@ HRESULT CTsMuxer::DeliverTransportStreamData(PBYTE inputData, long inputDataLeng
       m_patContinuityCounter = ((m_patContinuityCounter + 1) & 0xf);
       m_patPacket[3] &= 0xf0;
       m_patPacket[3] |= m_patContinuityCounter;
-      hr = m_filter->Deliver(&m_patPacket[0], TS_PACKET_LENGTH);
+      hr = m_filter->Deliver(&m_patPacket[0], TS_PACKET_LEN);
       if (!SUCCEEDED(hr))
       {
         return hr;
@@ -2322,7 +2141,7 @@ HRESULT CTsMuxer::DeliverTransportStreamData(PBYTE inputData, long inputDataLeng
       m_pmtContinuityCounter = ((m_pmtContinuityCounter + 1) & 0xf);
       m_pmtPacket[3] &= 0xf0;
       m_pmtPacket[3] |= m_pmtContinuityCounter;
-      hr = m_filter->Deliver(&m_pmtPacket[0], TS_PACKET_LENGTH);
+      hr = m_filter->Deliver(&m_pmtPacket[0], TS_PACKET_LEN);
       if (!SUCCEEDED(hr))
       {
         break;
@@ -2334,7 +2153,7 @@ HRESULT CTsMuxer::DeliverTransportStreamData(PBYTE inputData, long inputDataLeng
         m_sdtContinuityCounter = ((m_sdtContinuityCounter + 1) & 0xf);
         m_sdtPacket[3] &= 0xf0;
         m_sdtPacket[3] |= m_sdtContinuityCounter;
-        hr = m_filter->Deliver(&m_sdtPacket[0], TS_PACKET_LENGTH);
+        hr = m_filter->Deliver(&m_sdtPacket[0], TS_PACKET_LEN);
         if (!SUCCEEDED(hr))
         {
           break;
@@ -2344,9 +2163,9 @@ HRESULT CTsMuxer::DeliverTransportStreamData(PBYTE inputData, long inputDataLeng
     }
 
     // At most we deliver 100 packets per sample.
-    int bytesToDeliver = m_packetCounter * TS_PACKET_LENGTH;      // bytes that should be delivered before another PAT and PMT
+    int bytesToDeliver = m_packetCounter * TS_PACKET_LEN;         // bytes that should be delivered before another PAT and PMT
     int bytesCanDeliver = min(inputDataLength, bytesToDeliver);   // bytes that we have available
-    int packetsToDeliver = bytesCanDeliver / TS_PACKET_LENGTH;
+    int packetsToDeliver = bytesCanDeliver / TS_PACKET_LEN;
     hr = m_filter->Deliver(inputData, bytesCanDeliver);
     if (!SUCCEEDED(hr))
     {

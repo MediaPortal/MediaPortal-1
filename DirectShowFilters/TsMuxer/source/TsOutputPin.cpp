@@ -18,23 +18,21 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-#include <shlobj.h>
-#include <iostream>
 #include "TsOutPutPin.h"
 
-extern void LogDebug(const wchar_t* fmt, ...) ;
+
+extern void LogDebug(const wchar_t* fmt, ...);
 
 CTsOutputPin::CTsOutputPin(CBaseFilter* filter, CCritSec* filterLock, HRESULT* hr)
   : CBaseOutputPin(NAME("TS Output"), filter, filterLock, hr, L"TS Output")
 {
   m_isConnected = false;
+  m_isDumpEnabled = false;
+}
 
-  // TODO debug
-  /*wchar_t appDataFolderName[MAX_PATH];
-  ::SHGetSpecialFolderPathW(NULL, appDataFolderName, CSIDL_COMMON_APPDATA, FALSE);
-  wchar_t tsFileName[MAX_PATH];
-  swprintf_s(tsFileName, L"%s\\Team MediaPortal\\MediaPortal TV Server\\timeshiftbuffer\\test.ts", appDataFolderName);
-  m_debugOutFile.open(tsFileName, std::ios::out | std::ios::binary);*/
+CTsOutputPin::~CTsOutputPin(void)
+{
+  StopDumping();
 }
 
 HRESULT CTsOutputPin::BreakConnect()
@@ -84,7 +82,7 @@ HRESULT CTsOutputPin::DecideBufferSize(IMemAllocator* allocator, ALLOCATOR_PROPE
   HRESULT hr = allocator->SetProperties(properties, &actualProperties);
   if (FAILED(hr))
   {
-    LogDebug(L"CTsOutputPin: failed to set allocator properties, hr = 0x%x", hr);
+    LogDebug(L"TS output: failed to set allocator properties, hr = 0x%x", hr);
     return hr;
   }
 
@@ -97,16 +95,15 @@ HRESULT CTsOutputPin::DecideBufferSize(IMemAllocator* allocator, ALLOCATOR_PROPE
 
 HRESULT CTsOutputPin::Deliver(PBYTE data, long dataLength)
 {
-  // TODO debug
-  /*if (m_debugBytes > 0 && m_debugOutFile.is_open())
+  if (m_isDumpEnabled)
   {
-    m_debugOutFile.write((char*)data, dataLength);
-    //m_debugBytes -= m_debugBytes;
-    if (m_debugBytes <= 0)
+    CAutoLock lock(&m_dumpLock);
+    if (!m_dumpFileWriter.IsFileInvalid())
     {
-      m_debugOutFile.close();
+      LogDebug(L"TS output: dumping %d bytes", dataLength);
+      m_dumpFileWriter.Write(data, dataLength);
     }
-  }*/
+  }
 
   IMediaSample* sample;
   HRESULT hr = GetDeliveryBuffer(&sample, NULL, NULL, 0);
@@ -119,7 +116,7 @@ HRESULT CTsOutputPin::Deliver(PBYTE data, long dataLength)
   hr |= CBaseOutputPin::Deliver(sample);
   if (hr != 0)
   {
-    LogDebug(L"CTsOutputPin: failed to deliver, hr = 0x%x", hr);
+    LogDebug(L"TS output: failed to deliver, hr = 0x%x", hr);
   }
   return hr;
 }
@@ -151,4 +148,44 @@ HRESULT CTsOutputPin::GetMediaType(int position, CMediaType* mediaType)
 bool CTsOutputPin::IsConnected()
 {
   return m_isConnected;
+}
+
+HRESULT CTsOutputPin::StartDumping(wchar_t* fileName)
+{
+  if (!m_isDumpEnabled)
+  {
+    LogDebug(L"TS output: start dumping");
+    CAutoLock lock(&m_dumpLock);
+    HRESULT hr = m_dumpFileWriter.SetFileName(fileName);
+    if (!SUCCEEDED(hr))
+    {
+      LogDebug(L"TS output: failed to set dump file name, path/name = %s, hr = 0x%x", fileName, hr);
+      return hr;
+    }
+    hr = m_dumpFileWriter.OpenFile();
+    if (!SUCCEEDED(hr))
+    {
+      LogDebug(L"TS output: failed to open dump file, hr = 0x%x", hr);
+      return hr;
+    }
+    m_isDumpEnabled = true;
+  }
+  return S_OK;
+}
+
+HRESULT CTsOutputPin::StopDumping()
+{
+  if (m_isDumpEnabled)
+  {
+    LogDebug(L"TS output: stop dumping");
+    CAutoLock lock(&m_dumpLock);
+    HRESULT hr = m_dumpFileWriter.CloseFile();
+    if (!SUCCEEDED(hr))
+    {
+      LogDebug(L"TS output: failed to close dump file, hr = 0x%x", hr);
+      return hr;
+    }
+    m_isDumpEnabled = false;
+  }
+  return S_OK;
 }
