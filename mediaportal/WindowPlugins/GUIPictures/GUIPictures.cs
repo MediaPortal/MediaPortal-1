@@ -135,9 +135,6 @@ namespace MediaPortal.GUI.Pictures
                     {
                       Thread.Sleep(5);
 
-                      iRotate = Util.Picture.GetRotateByExif(item.Path);
-                      Log.Debug("Picture.GetRotateByExif = {0} for {1}", iRotate, item.Path);
-
                       if (autocreateLargeThumbs && !File.Exists(thumbnailImageL))
                       {
                         thumbRet = Util.Picture.CreateThumbnail(item.Path, thumbnailImageL,
@@ -273,11 +270,6 @@ namespace MediaPortal.GUI.Pictures
           if (recreateThumbs || !File.Exists(thumbnailImage) || !Util.Utils.FileExistsInCache(thumbnailImage) ||
               !File.Exists(thumbnailImageL) || !Util.Utils.FileExistsInCache(thumbnailImageL))
           {
-
-            iRotate = Util.Picture.GetRotateByExif(item);
-            Log.Debug("Picture.GetRotateByExif = {0} for {1}", iRotate, item);
-            Thread.Sleep(5);
-
             if (autocreateLargeThumbs && !File.Exists(thumbnailImageL))
             {
               thumbRet = Util.Picture.CreateThumbnail(item, thumbnailImageL, (int) Thumbs.ThumbLargeResolution,
