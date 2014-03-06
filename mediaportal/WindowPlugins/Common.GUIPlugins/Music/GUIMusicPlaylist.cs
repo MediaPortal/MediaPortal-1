@@ -544,6 +544,7 @@ namespace MediaPortal.GUI.Music
             if (item != null)
             {
               item.Selected = true;
+              GUIControl.FocusControl(GetID, facadeLayout.GetID);
             }
           }
         }
