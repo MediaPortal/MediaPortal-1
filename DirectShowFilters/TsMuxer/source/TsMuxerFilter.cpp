@@ -272,7 +272,7 @@ void __cdecl CTsMuxerFilter::StreamingMonitorThreadFunction(void* arg)
         while (it != filter->m_inputPins.end())
         {
           CMuxInputPin* pin = *it;
-          pinStates[pin->GetId()] = true;
+          pinStates[pin->GetId()] = pin->IsConnected();
           it++;
         }
         isFirst = false;
@@ -285,7 +285,7 @@ void __cdecl CTsMuxerFilter::StreamingMonitorThreadFunction(void* arg)
           byte pinId = pin->GetId();
           bool wasReceiving = pinStates[pinId];
           bool isReceiving = true;
-          if (pin->GetReceiveTickCount() == NOT_RECEIVING || GetTickCount() - pin->GetReceiveTickCount() >= STREAM_IDLE_TIMEOUT)
+          if (!pin->IsConnected() || pin->GetReceiveTickCount() == NOT_RECEIVING || GetTickCount() - pin->GetReceiveTickCount() >= STREAM_IDLE_TIMEOUT)
           {
             isReceiving = false;
           }
