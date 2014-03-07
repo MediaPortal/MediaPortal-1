@@ -580,28 +580,9 @@ HRESULT CTsMuxer::Receive(IMuxInputPin* pin, PBYTE data, long dataLength, REFERE
     UpdatePmt();
   }
 
-  if (info->isIgnored)
-  {
-    return S_OK;
-  }
-  else if (!info->isCompatible)
-  {
-    // TODO debug
-    /*LogDebug(L"debug: pin %d incompatible stream type %d frame", pinId, info->streamType);
-    long offset = 0;
-    while (offset + 16 < dataLength)
-    {
-      LogDebug(L"debug: %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x",
-        data[offset], data[offset + 1], data[offset + 2], data[offset + 3], data[offset + 4], data[offset + 5], data[offset + 6], data[offset + 7],
-        data[offset + 8], data[offset + 9], data[offset + 10], data[offset + 11], data[offset + 12], data[offset + 13], data[offset + 14], data[offset + 15]);
-      offset += 16;
-    }*/
-    return S_OK;
-  }
-
   // Can we start delivering samples? This requires that all pins are receiving
   // and we've seen all the substreams in program, system or transport streams.
-  if (!CanDeliver())
+  if (!CanDeliver() || info->isIgnored || !info->isCompatible)
   {
     return S_OK;
   }
@@ -1218,19 +1199,7 @@ HRESULT CTsMuxer::ReceiveProgramOrSystemStream(IMuxInputPin* pin, PBYTE data, lo
         }
 
         // Wrap the PES packet into transport stream packets and deliver them.
-        if (!info->isCompatible)
-        {
-          /*LogDebug(L"debug: pin %d incompatible program/system substream %d frame", pinId, streamId);
-          long offset = 0;
-          while (offset + 16 < dataLength)
-          {
-            LogDebug(L"debug: %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x",
-              data[offset], data[offset + 1], data[offset + 2], data[offset + 3], data[offset + 4], data[offset + 5], data[offset + 6], data[offset + 7],
-              data[offset + 8], data[offset + 9], data[offset + 10], data[offset + 11], data[offset + 12], data[offset + 13], data[offset + 14], data[offset + 15]);
-            offset += 16;
-          }*/
-        }
-        else if (!info->isIgnored && CanDeliver())
+        if (info->isCompatible && !info->isIgnored && CanDeliver())
         {
           PBYTE tsData = NULL;
           long tsDataLength = 0;
