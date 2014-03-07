@@ -222,7 +222,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Omicom
       message.MessageLength = (byte)command.Length;
       message.RepeatCount = 0;
 
-      Marshal.StructureToPtr(message, _diseqcBuffer, true);
+      Marshal.StructureToPtr(message, _diseqcBuffer, false);
       //Dump.DumpBinary(_diseqcBuffer, DISEQC_MESSAGE_SIZE);
 
       int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.DiseqcWrite,

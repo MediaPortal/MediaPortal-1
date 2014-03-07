@@ -565,7 +565,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
       _ciCallBacks.OnCiState = new OnSmarDtvUsbCiState(OnCiState);
       _ciCallBacks.OnCloseMmi = new OnSmarDtvUsbCiCloseMmi(OnCloseMmi);
       _ciCallBackBuffer = Marshal.AllocCoTaskMem(CI_CALLBACKS_SIZE);
-      Marshal.StructureToPtr(_ciCallBacks, _ciCallBackBuffer, true);
+      Marshal.StructureToPtr(_ciCallBacks, _ciCallBackBuffer, false);
       int hr = (int)_ciType.GetMethod("USB2CI_Init").Invoke(_ciFilter, new object[] { _ciCallBackBuffer });
       if (hr == (int)HResult.Severity.Success)
       {

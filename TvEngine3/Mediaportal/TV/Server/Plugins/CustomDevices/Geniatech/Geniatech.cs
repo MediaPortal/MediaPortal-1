@@ -231,7 +231,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Geniatech
       }
       this.LogDebug("  roll-off   = {0}", nbcParams.RollOff);
 
-      Marshal.StructureToPtr(nbcParams, _paramBuffer, true);
+      Marshal.StructureToPtr(nbcParams, _paramBuffer, false);
       int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.NbcParams,
         _instanceBuffer, INSTANCE_SIZE,
         _paramBuffer, NBC_PARAMS_SIZE

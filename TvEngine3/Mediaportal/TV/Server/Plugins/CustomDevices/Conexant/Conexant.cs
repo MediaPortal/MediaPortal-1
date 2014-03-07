@@ -239,7 +239,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Conexant
       message.DiseqcReceiveMode = CxDiseqcReceiveMode.NoReply;
       message.IsLastMessage = true;
 
-      Marshal.StructureToPtr(message, _diseqcBuffer, true);
+      Marshal.StructureToPtr(message, _diseqcBuffer, false);
       //Dump.DumpBinary(_diseqcBuffer, DISEQC_MESSAGE_PARAMS_SIZE);
 
       int hr = _propertySet.Set(_propertySetGuid, (int)BdaExtensionProperty.DiseqcMessage,
@@ -305,7 +305,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Conexant
       message.DiseqcReceiveMode = CxDiseqcReceiveMode.NoReply;
       message.IsLastMessage = true;
 
-      Marshal.StructureToPtr(message, _diseqcBuffer, true);
+      Marshal.StructureToPtr(message, _diseqcBuffer, false);
       //Dump.DumpBinary(_diseqcBuffer, DISEQC_MESSAGE_PARAMS_SIZE);
 
       int hr = _propertySet.Set(_propertySetGuid, (int)BdaExtensionProperty.DiseqcMessage,

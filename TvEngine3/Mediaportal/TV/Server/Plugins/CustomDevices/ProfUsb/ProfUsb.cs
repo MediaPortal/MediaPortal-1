@@ -530,7 +530,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
         command.LnbPower = ProfUsbLnbPower.Off;
       }
 
-      Marshal.StructureToPtr(command, _generalBuffer, true);
+      Marshal.StructureToPtr(command, _generalBuffer, false);
       //Dump.DumpBinary(_generalBuffer, BDA_EXTENSION_PARAMS_SIZE);
 
       hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.LnbPower,
@@ -627,7 +627,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
       tuningParams.InnerFecRate = (byte)dvbsChannel.InnerFecRate;
       tuningParams.Modulation = (byte)dvbsChannel.ModulationType;
 
-      Marshal.StructureToPtr(tuningParams, _generalBuffer, true);
+      Marshal.StructureToPtr(tuningParams, _generalBuffer, false);
       //Dump.DumpBinary(_generalBuffer, BDA_EXTENSION_PARAMS_SIZE);
 
       int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Tuner,
@@ -689,7 +689,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
         command.Tone22k = ProfUsb22k.On;
       }
 
-      Marshal.StructureToPtr(command, _generalBuffer, true);
+      Marshal.StructureToPtr(command, _generalBuffer, false);
       //Dump.DumpBinary(_generalBuffer, BDA_EXTENSION_PARAMS_SIZE);
 
       hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Tone,
@@ -735,7 +735,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
       propertyParams.DiseqcRawCommand = new byte[MAX_DISEQC_MESSAGE_LENGTH];
       Buffer.BlockCopy(command, 0, propertyParams.DiseqcRawCommand, 0, command.Length);
 
-      Marshal.StructureToPtr(propertyParams, _generalBuffer, true);
+      Marshal.StructureToPtr(propertyParams, _generalBuffer, false);
       //Dump.DumpBinary(_generalBuffer, BDA_EXTENSION_PARAMS_SIZE);
 
       int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Motor,

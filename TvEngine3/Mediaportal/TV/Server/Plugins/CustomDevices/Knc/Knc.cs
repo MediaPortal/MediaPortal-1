@@ -1003,7 +1003,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
       _ciCallBacks.OnOpenDisplay = OnCiOpenDisplay;
       _ciCallBacks.OnRequest = OnCiRequest;
       _callBackBuffer = Marshal.AllocCoTaskMem(CALLBACK_SET_SIZE);
-      Marshal.StructureToPtr(_ciCallBacks, _callBackBuffer, true);
+      Marshal.StructureToPtr(_ciCallBacks, _callBackBuffer, false);
 
       // Open the conditional access interface.
       bool result = false;

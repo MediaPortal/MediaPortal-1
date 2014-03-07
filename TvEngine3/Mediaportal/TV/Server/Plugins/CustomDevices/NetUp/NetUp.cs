@@ -1240,7 +1240,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
       int hr;
       lock (_mmiLock)
       {
-        Marshal.StructureToPtr(mmi, _mmiBuffer, true);
+        Marshal.StructureToPtr(mmi, _mmiBuffer, false);
         //Dump.DumpBinary(_mmiBuffer, MMI_ANSWER_SIZE);
         NetUpIoControl code = (NetUpIoControl)((uint)NetUpIoControl.MmiPutAnswer | ((byte)responseType << 8));
         hr = SetIoctl(code, _mmiBuffer, MMI_ANSWER_SIZE);

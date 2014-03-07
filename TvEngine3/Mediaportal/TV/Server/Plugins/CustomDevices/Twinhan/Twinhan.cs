@@ -399,7 +399,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
           mmiData.ChoiceIndex = ChoiceIndex;
           mmiData.Answer = Answer;
           mmiData.Type = Type;
-          Marshal.StructureToPtr(mmiData, buffer, true);
+          Marshal.StructureToPtr(mmiData, buffer, false);
         }
         else
         {
@@ -408,7 +408,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
           mmiData.ChoiceIndex = ChoiceIndex;
           mmiData.Answer = Answer;
           mmiData.Type = Type;
-          Marshal.StructureToPtr(mmiData, buffer, true);
+          Marshal.StructureToPtr(mmiData, buffer, false);
         }
       }
 
@@ -1727,7 +1727,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       }
       tuningParams.LockWaitForResult = true;
 
-      Marshal.StructureToPtr(tuningParams, _generalBuffer, true);
+      Marshal.StructureToPtr(tuningParams, _generalBuffer, false);
       Dump.DumpBinary(_generalBuffer, TUNING_PARAMS_SIZE);
 
       hr = SetIoctl(TwinhanIoControlCode.LockTuner, _generalBuffer, TUNING_PARAMS_SIZE);
@@ -1777,7 +1777,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       pidFilterParams.FilterPids = new ushort[MAX_PID_FILTER_PID_COUNT];
       pidFilterParams.FilterMode = TwinhanPidFilterMode.Disabled;
       pidFilterParams.ValidPidMask = 0;
-      Marshal.StructureToPtr(pidFilterParams, _generalBuffer, true);
+      Marshal.StructureToPtr(pidFilterParams, _generalBuffer, false);
       Dump.DumpBinary(_generalBuffer, PID_FILTER_PARAMS_SIZE);
       int hr = SetIoctl(TwinhanIoControlCode.SetPidFilterInfo, _generalBuffer, PID_FILTER_PARAMS_SIZE);
       if (hr == (int)HResult.Severity.Success)
@@ -1842,7 +1842,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       _pidFilterPids.CopyTo(pidFilterParams.FilterPids, 0, Math.Min(_maxPidFilterPidCount, _pidFilterPids.Count));
       ulong mask = (ulong)(1 << _pidFilterPids.Count) - 1;
       pidFilterParams.ValidPidMask = (uint)mask;
-      Marshal.StructureToPtr(pidFilterParams, _generalBuffer, true);
+      Marshal.StructureToPtr(pidFilterParams, _generalBuffer, false);
       Dump.DumpBinary(_generalBuffer, PID_FILTER_PARAMS_SIZE);
       int hr = SetIoctl(TwinhanIoControlCode.SetPidFilterInfo, _generalBuffer, PID_FILTER_PARAMS_SIZE);
       if (hr == (int)HResult.Severity.Success)
@@ -2276,7 +2276,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       lnbParams.DiseqcPort = _diseqcPort;
       _diseqcPort = TwinhanDiseqcPort.Null; // reset - don't resend commands in subsequent tune requests
 
-      Marshal.StructureToPtr(lnbParams, _generalBuffer, true);
+      Marshal.StructureToPtr(lnbParams, _generalBuffer, false);
       //Dump.DumpBinary(_generalBuffer, LNB_PARAMS_SIZE);
 
       int hr = SetIoctl(TwinhanIoControlCode.SetLnbData, _generalBuffer, LNB_PARAMS_SIZE);
@@ -2346,7 +2346,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       message.Message = new byte[MAX_DISEQC_MESSAGE_LENGTH];
       Buffer.BlockCopy(command, 0, message.Message, 0, command.Length);
 
-      Marshal.StructureToPtr(message, _generalBuffer, true);
+      Marshal.StructureToPtr(message, _generalBuffer, false);
       //Dump.DumpBinary(_generalBuffer, DISEQC_MESSAGE_SIZE);
 
       // This command seems to return HRESULT 0x8007001f (ERROR_GEN_FAILURE)

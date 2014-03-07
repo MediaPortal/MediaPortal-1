@@ -1242,7 +1242,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
         return;
       }
 
-      Marshal.StructureToPtr(command, _generalBuffer, true);
+      Marshal.StructureToPtr(command, _generalBuffer, false);
       //Dump.DumpBinary(_generalBuffer, NBC_TUNING_PARAMS_SIZE);
 
       hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.NbcParams,
@@ -1303,7 +1303,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
         accessParams.LnbPower = TbsLnbPower.Off;
       }
 
-      Marshal.StructureToPtr(accessParams, _generalBuffer, true);
+      Marshal.StructureToPtr(accessParams, _generalBuffer, false);
       //Dump.DumpBinary(_generalBuffer, TBS_ACCESS_PARAMS_SIZE);
 
       int hr = _propertySet.Set(_propertySetGuid, _tbsAccessProperty,
@@ -1727,7 +1727,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
           accessParams.Tone = TbsTone.BurstModulated;
         }
 
-        Marshal.StructureToPtr(accessParams, _generalBuffer, true);
+        Marshal.StructureToPtr(accessParams, _generalBuffer, false);
         //Dump.DumpBinary(_generalBuffer, TBS_ACCESS_PARAMS_SIZE);
 
         hr = _propertySet.Set(_propertySetGuid, _tbsAccessProperty,
@@ -1752,7 +1752,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
         accessParams.Tone = TbsTone.On;
       }
 
-      Marshal.StructureToPtr(accessParams, _generalBuffer, true);
+      Marshal.StructureToPtr(accessParams, _generalBuffer, false);
       //Dump.DumpBinary(_generalBuffer, TBS_ACCESS_PARAMS_SIZE);
 
       hr = _propertySet.Set(_propertySetGuid, _tbsAccessProperty,
@@ -1803,7 +1803,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
       accessParams.DiseqcTransmitMessage = new byte[MAX_DISEQC_MESSAGE_LENGTH];
       Buffer.BlockCopy(command, 0, accessParams.DiseqcTransmitMessage, 0, command.Length);
 
-      Marshal.StructureToPtr(accessParams, _generalBuffer, true);
+      Marshal.StructureToPtr(accessParams, _generalBuffer, false);
       //Dump.DumpBinary(_generalBuffer, TBS_ACCESS_PARAMS_SIZE);
 
       int hr = _propertySet.Set(_propertySetGuid, _tbsAccessProperty,

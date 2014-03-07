@@ -354,7 +354,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBdaDiseqc
           message.PacketLength = (uint)command.Length;
           message.PacketData = new byte[MAX_DISEQC_MESSAGE_LENGTH];
           Buffer.BlockCopy(command, 0, message.PacketData, 0, command.Length);
-          Marshal.StructureToPtr(message, _paramBuffer, true);
+          Marshal.StructureToPtr(message, _paramBuffer, false);
           //Dump.DumpBinary(_paramBuffer, BDA_DISEQC_MESSAGE_SIZE);
           hr = _propertySet.Set(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.Send, _instanceBuffer, INSTANCE_SIZE, _paramBuffer, BDA_DISEQC_MESSAGE_SIZE);
           if (hr != (int)HResult.Severity.Success)

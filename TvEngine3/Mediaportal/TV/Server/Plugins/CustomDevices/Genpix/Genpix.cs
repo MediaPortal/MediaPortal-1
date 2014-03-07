@@ -362,7 +362,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Genpix
       command.SwitchPort = GenpixSwitchPort.None;
       command.DiseqcRepeats = 0;
 
-      Marshal.StructureToPtr(command, _generalBuffer, true);
+      Marshal.StructureToPtr(command, _generalBuffer, false);
       //Dump.DumpBinary(_generalBuffer, BDA_EXTENSION_PARAMS_SIZE);
 
       int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Tune,
@@ -425,7 +425,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Genpix
         command.DiseqcMessage[0] = (byte)GenpixToneBurst.DataBurst;
       }
 
-      Marshal.StructureToPtr(command, _generalBuffer, true);
+      Marshal.StructureToPtr(command, _generalBuffer, false);
       int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Diseqc,
         _instanceBuffer, INSTANCE_SIZE,
         _generalBuffer, BDA_EXTENSION_PARAMS_SIZE
@@ -472,7 +472,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Genpix
       message.DiseqcMessage = new byte[MAX_DISEQC_MESSAGE_LENGTH];
       Buffer.BlockCopy(command, 0, message.DiseqcMessage, 0, command.Length);
 
-      Marshal.StructureToPtr(message, _generalBuffer, true);
+      Marshal.StructureToPtr(message, _generalBuffer, false);
       int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Diseqc,
         _instanceBuffer, INSTANCE_SIZE,
         _generalBuffer, BDA_EXTENSION_PARAMS_SIZE

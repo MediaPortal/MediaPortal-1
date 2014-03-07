@@ -720,7 +720,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
         Marshal.WriteByte(averPmt.PmtPtr, i, rawPmt[i]);
       }
       IntPtr structPtr = Marshal.AllocCoTaskMem(AVERMEDIA_PMT_SIZE);
-      Marshal.StructureToPtr(averPmt, structPtr, true);
+      Marshal.StructureToPtr(averPmt, structPtr, false);
 
       //Dump.DumpBinary(structPtr, AVERMEDIA_PMT_SIZE);
       //Dump.DumpBinary(averPmt.PmtPtr, caPmt.Length);
@@ -739,6 +739,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
       }
       finally
       {
+        Marshal.DestroyStructure(structPtr, typeof(AVerMediaPmt));
         Marshal.FreeCoTaskMem(averPmt.PmtPtr);
         Marshal.FreeCoTaskMem(structPtr);
       }

@@ -615,7 +615,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
       int hr;
       lock (_mmiLock)
       {
-        Marshal.StructureToPtr(data, _mmiBuffer, true);
+        Marshal.StructureToPtr(data, _mmiBuffer, false);
         hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.MmiHostToCam,
           _mmiBuffer, CA_DATA_SIZE,
           _mmiBuffer, CA_DATA_SIZE
@@ -763,7 +763,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
     {
       this.LogDebug("Digital Everywhere: request application information");
       CaData data = new CaData(DeCiMessageTag.ApplicationInfo);
-      Marshal.StructureToPtr(data, _generalBuffer, true);
+      Marshal.StructureToPtr(data, _generalBuffer, false);
       int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.MmiCamToHost,
         _generalBuffer, CA_DATA_SIZE,
         _generalBuffer, CA_DATA_SIZE
@@ -928,7 +928,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
             CaData data = new CaData(DeCiMessageTag.Mmi);
             lock (_mmiLock)
             {
-              Marshal.StructureToPtr(data, _mmiBuffer, true);
+              Marshal.StructureToPtr(data, _mmiBuffer, false);
               hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.MmiCamToHost,
                 _mmiBuffer, CA_DATA_SIZE,
                 _mmiBuffer, CA_DATA_SIZE
@@ -1423,7 +1423,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
         filter.FullTransponder = !enable;
         filter.NumberOfValidPids = (byte)_pidFilterPids.Count;
         filter.FilterPids = pids;
-        Marshal.StructureToPtr(filter, _generalBuffer, true);
+        Marshal.StructureToPtr(filter, _generalBuffer, false);
       }
       else if (_tunerType == CardType.DvbT || _tunerType == CardType.DvbC)
       {
@@ -1434,7 +1434,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
         filter.FullTransponder = !enable;
         filter.NumberOfValidPids = (byte)_pidFilterPids.Count;
         filter.FilterPids = pids;
-        Marshal.StructureToPtr(filter, _generalBuffer, true);
+        Marshal.StructureToPtr(filter, _generalBuffer, false);
       }
 
       //Dump.DumpBinary(_generalBuffer, bufferSize);
@@ -1501,7 +1501,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
         lnbParams.LnbParams[0].SwitchFrequency = (ushort)(dvbsChannel.LnbType.SwitchFrequency / 1000);
         lnbParams.LnbParams[0].HighBandLof = (ushort)(dvbsChannel.LnbType.HighBandFrequency / 1000);
 
-        Marshal.StructureToPtr(lnbParams, _generalBuffer, true);
+        Marshal.StructureToPtr(lnbParams, _generalBuffer, false);
         //Dump.DumpBinary(_generalBuffer, LNB_PARAM_INFO_SIZE);
 
         hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.SetLnbParams,
@@ -1553,7 +1553,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
           tuneRequest.Polarisation = DePolarisation.Horizontal;
         }
 
-        Marshal.StructureToPtr(tuneRequest, _generalBuffer, true);
+        Marshal.StructureToPtr(tuneRequest, _generalBuffer, false);
         //Dump.DumpBinary(_generalBuffer, DVBS_MULTIPLEX_PARAMS_SIZE);
 
         hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.SelectMultiplexDvbS,
@@ -1584,7 +1584,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
           tuneRequest.TransmissionMode = DeOfdmTransmissionMode.Auto;
           tuneRequest.Hierarchy = DeOfdmHierarchy.Auto;
 
-          Marshal.StructureToPtr(tuneRequest, _generalBuffer, true);
+          Marshal.StructureToPtr(tuneRequest, _generalBuffer, false);
           Dump.DumpBinary(_generalBuffer, DVBT_MULTIPLEX_PARAMS_SIZE);
           hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.SelectMultiplexDvbT,
             _generalBuffer, DVBT_MULTIPLEX_PARAMS_SIZE,
@@ -1701,7 +1701,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
       data.DataLength = 1;
       data.Data[0] = (byte)DeResetType.ForcedHardwareReset;
 
-      Marshal.StructureToPtr(data, _generalBuffer, true);
+      Marshal.StructureToPtr(data, _generalBuffer, false);
       //Dump.DumpBinary(_generalBuffer, CA_DATA_SIZE);
 
       int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.MmiHostToCam,
@@ -1798,7 +1798,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
 
       rawPmt.CopyTo(data.Data, 2);
 
-      Marshal.StructureToPtr(data, _pmtBuffer, true);
+      Marshal.StructureToPtr(data, _pmtBuffer, false);
       //Dump.DumpBinary(_pmtBuffer, CA_DATA_SIZE);
 
       int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.MmiHostToCam,
@@ -1940,7 +1940,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
       }
       lnbCommand.NumberOfMessages = 0;
 
-      Marshal.StructureToPtr(lnbCommand, _generalBuffer, true);
+      Marshal.StructureToPtr(lnbCommand, _generalBuffer, false);
       //Dump.DumpBinary(_generalBuffer, LNB_COMMAND_SIZE);
 
       int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.LnbControl,
@@ -1992,7 +1992,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
       lnbCommand.DiseqcMessages[0].Message = new byte[MAX_DISEQC_MESSAGE_LENGTH];
       Buffer.BlockCopy(command, 0, lnbCommand.DiseqcMessages[0].Message, 0, command.Length);
 
-      Marshal.StructureToPtr(lnbCommand, _generalBuffer, true);
+      Marshal.StructureToPtr(lnbCommand, _generalBuffer, false);
       //Dump.DumpBinary(_generalBuffer, LNB_COMMAND_SIZE);
 
       int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.LnbControl,

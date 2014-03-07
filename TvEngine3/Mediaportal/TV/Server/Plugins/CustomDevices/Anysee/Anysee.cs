@@ -2000,7 +2000,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       pmtData.EsCount = esCount;
 
       // Pass the PMT structure to the API.
-      Marshal.StructureToPtr(pmtData, _pmtBuffer, true);
+      Marshal.StructureToPtr(pmtData, _pmtBuffer, false);
       //Dump.DumpBinary(_pmtBuffer, PMT_DATA_SIZE);
       if (_ciApi.ExecuteCommand(AnyseeCiCommand.SetPmt, _pmtBuffer, IntPtr.Zero))
       {
@@ -2140,7 +2140,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
         message.ToneBurst = AnyseeToneBurst.DataBurst;
       }
 
-      Marshal.StructureToPtr(message, _generalBuffer, true);
+      Marshal.StructureToPtr(message, _generalBuffer, false);
       //Dump.DumpBinary(_generalBuffer, DISEQC_MESSAGE_SIZE);
 
       int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Diseqc,
@@ -2188,7 +2188,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       message.MessageLength = command.Length;
       message.ToneBurst = AnyseeToneBurst.Off;
 
-      Marshal.StructureToPtr(message, _generalBuffer, true);
+      Marshal.StructureToPtr(message, _generalBuffer, false);
       //Dump.DumpBinary(_generalBuffer, DISEQC_MESSAGE_SIZE);
 
       int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Diseqc,
@@ -2244,7 +2244,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       _remoteControlBuffer = Marshal.AllocCoTaskMem(IR_DATA_SIZE);
       IrData command = new IrData();
       command.Enable = true;
-      Marshal.StructureToPtr(command, _remoteControlBuffer, true);
+      Marshal.StructureToPtr(command, _remoteControlBuffer, false);
       int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Ir,
         _remoteControlBuffer, IR_DATA_SIZE,
         _remoteControlBuffer, IR_DATA_SIZE
@@ -2275,7 +2275,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       {
         IrData command = new IrData();
         command.Enable = false;
-        Marshal.StructureToPtr(command, _remoteControlBuffer, true);
+        Marshal.StructureToPtr(command, _remoteControlBuffer, false);
         int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Ir,
           _remoteControlBuffer, IR_DATA_SIZE,
           _remoteControlBuffer, IR_DATA_SIZE

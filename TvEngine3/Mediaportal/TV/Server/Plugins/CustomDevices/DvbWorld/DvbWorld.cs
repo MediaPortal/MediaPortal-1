@@ -570,8 +570,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbWorld
         tuningParams.LnbLof = (uint)dvbsChannel.LnbType.LowBandFrequency;
         tuningParams.Tone22kEnabled = false;
       }
-    
-      Marshal.StructureToPtr(tuningParams, _generalBuffer, true);
+
+      Marshal.StructureToPtr(tuningParams, _generalBuffer, false);
       //Dump.DumpBinary(_generalBuffer, TUNING_PARAMS_SIZE);
 
       int hr = SetIoctl(_generalBuffer, TUNING_PARAMS_SIZE);
@@ -660,7 +660,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbWorld
       dcommand.Command = new byte[MAX_DISEQC_MESSAGE_LENGTH];
       Buffer.BlockCopy(command, 0, dcommand.Command, 0, command.Length);
 
-      Marshal.StructureToPtr(dcommand, _generalBuffer, true);
+      Marshal.StructureToPtr(dcommand, _generalBuffer, false);
       //Dump.DumpBinary(_generalBuffer, DISEQC_COMMAND_SIZE);
 
       int hr = SetIoctl(_generalBuffer, DISEQC_COMMAND_SIZE);

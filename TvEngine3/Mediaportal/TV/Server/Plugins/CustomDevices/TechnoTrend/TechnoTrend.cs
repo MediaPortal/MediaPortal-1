@@ -1805,7 +1805,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
         tuneRequest.SymbolRate = (uint)dvbcChannel.SymbolRate;
         tuneRequest.SpectralInversion = SpectralInversion.Automatic;
 
-        Marshal.StructureToPtr(tuneRequest, _generalBuffer, true);
+        Marshal.StructureToPtr(tuneRequest, _generalBuffer, false);
       }
       else
       {
@@ -1828,7 +1828,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
           tuneRequest.LnbHighBandLof = (uint)dvbsChannel.LnbType.HighBandFrequency;
           tuneRequest.LnbSwitchFrequency = (uint)dvbsChannel.LnbType.SwitchFrequency;
 
-          Marshal.StructureToPtr(tuneRequest, _generalBuffer, true);
+          Marshal.StructureToPtr(tuneRequest, _generalBuffer, false);
         }
         else
         {
@@ -1845,7 +1845,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
             tuneRequest.Modulation = ModulationType.ModNotSet;
             tuneRequest.SpectralInversion = SpectralInversion.Automatic;
 
-            Marshal.StructureToPtr(tuneRequest, _generalBuffer, true);
+            Marshal.StructureToPtr(tuneRequest, _generalBuffer, false);
           }
           else
           {
