@@ -64,6 +64,8 @@ CMPIPTV_RTSP::CMPIPTV_RTSP()
   this->rtspSchedulerThreadId = 0;
   this->rtspThreadShouldExit = 0;
   this->rtspSource = NULL;
+  this->rtspRtpClientPortRangeStart = RTSP_RTP_CLIENT_PORT_RANGE_START_DEFAULT;
+  this->rtspRtpClientPortRangeEnd = RTSP_RTP_CLIENT_PORT_RANGE_END_DEFAULT;
   this->rtspUdpSink = NULL;
   this->rtspUdpGroupsock = NULL;
   this->rtspUdpSinkMaxPayloadSize = RTSP_UDP_SINK_MAX_PAYLOAD_SIZE_DEFAULT;
@@ -115,6 +117,8 @@ int CMPIPTV_RTSP::Initialize(HANDLE lockMutex, CParameterCollection *configurati
   int result = this->CMPIPTV_UDP::Initialize(lockMutex, configuration);
 
   this->receiveDataTimeout = this->configurationParameters->GetValueLong(CONFIGURATION_RTSP_RECEIVE_DATA_TIMEOUT, true, RTSP_RECEIVE_DATA_TIMEOUT_DEFAULT);
+  this->rtspRtpClientPortRangeStart = this->configurationParameters->GetValueLong(CONFIGURATION_RTSP_RTP_CLIENT_PORT_RANGE_START, true, RTSP_RTP_CLIENT_PORT_RANGE_START_DEFAULT);
+  this->rtspRtpClientPortRangeEnd = this->configurationParameters->GetValueLong(CONFIGURATION_RTSP_RTP_CLIENT_PORT_RANGE_END, true, RTSP_RTP_CLIENT_PORT_RANGE_END_DEFAULT);
   this->rtspUdpSinkMaxPayloadSize = this->configurationParameters->GetValueUnsignedInt(CONFIGURATION_RTSP_UDP_SINK_MAX_PAYLOAD_SIZE, true, RTSP_UDP_SINK_MAX_PAYLOAD_SIZE_DEFAULT);
   this->rtspUdpPortRangeStart = this->configurationParameters->GetValueLong(CONFIGURATION_RTSP_UDP_PORT_RANGE_START, true, RTSP_UDP_PORT_RANGE_START_DEFAULT);
   this->rtspUdpPortRangeEnd = this->configurationParameters->GetValueLong(CONFIGURATION_RTSP_UDP_PORT_RANGE_END, true, RTSP_UDP_PORT_RANGE_END_DEFAULT);
@@ -123,6 +127,8 @@ int CMPIPTV_RTSP::Initialize(HANDLE lockMutex, CParameterCollection *configurati
   this->openConnetionMaximumAttempts = this->configurationParameters->GetValueLong(CONFIGURATION_RTSP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS, true, RTSP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT);
 
   this->receiveDataTimeout = (this->receiveDataTimeout < 0) ? RTSP_RECEIVE_DATA_TIMEOUT_DEFAULT : this->receiveDataTimeout;
+  this->rtspRtpClientPortRangeStart = (this->rtspRtpClientPortRangeStart < 0) ? RTSP_RTP_CLIENT_PORT_RANGE_START_DEFAULT : this->rtspRtpClientPortRangeStart & ~1;
+  this->rtspRtpClientPortRangeEnd = (this->rtspRtpClientPortRangeEnd < this->rtspRtpClientPortRangeStart) ? min(65535, this->rtspRtpClientPortRangeStart + 1000) : min(65535, this->rtspRtpClientPortRangeEnd);
   this->rtspUdpSinkMaxPayloadSize = (this->rtspUdpSinkMaxPayloadSize < 0) ? RTSP_UDP_SINK_MAX_PAYLOAD_SIZE_DEFAULT : this->rtspUdpSinkMaxPayloadSize;
   this->rtspUdpPortRangeStart = (this->rtspUdpPortRangeStart <= 1024) ? RTSP_UDP_PORT_RANGE_START_DEFAULT : this->rtspUdpPortRangeStart;
   this->rtspUdpPortRangeEnd = (this->rtspUdpPortRangeEnd < this->rtspUdpPortRangeStart) ? min(65535, this->rtspUdpPortRangeStart + 1000) : min(65535, this->rtspUdpPortRangeEnd);
@@ -316,6 +322,45 @@ int CMPIPTV_RTSP::OpenConnection(void)
                 TCHAR *subSessionName = ConvertToUnicodeA(tempSubSessionName);
                 TCHAR *subSessionCodecName = ConvertToUnicodeA(tempSubSessionCodecName);
 #endif
+
+                // If a client port is configured, find a free pair of ports in the range.
+                // The first port is used for RTP; the second port is used for RTCP. Once
+                // we find one free port, we assume the next one is also free.
+                if (this->rtspRtpClientPortRangeStart > 0)
+                {
+                  struct in_addr destinationAddress;
+                  destinationAddress.s_addr = our_inet_addr("127.0.0.1");
+                  unsigned int port = this->rtspRtpClientPortRangeStart;
+                  Groupsock* groupsock = NULL;
+                  do
+                  {
+                    this->logger.Log(LOGGER_VERBOSE, _T("%s: %s: RTP client port %u"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, port);
+
+                    // special construction force not reuse same UDP port
+                    {
+                      NoReuse noReuse;
+                      groupsock = new Groupsock(*this->rtspEnvironment, destinationAddress, port, 1);
+                    }
+
+                    if (this->rtspUdpGroupsock->socketNum() == (-1))
+                    {
+                      this->logger.Log(LOGGER_ERROR, _T("%s: %s: RTP client port %u occupied, trying next even port"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, port);
+                      port += 2;
+                      delete groupsock;
+                      groupsock = NULL;
+                    }
+                  }
+                  while ((groupsock == NULL) && (port <= this->rtspRtpClientPortRangeEnd));
+                  // Did we find a free port? If not, we fall back to a random port
+                  // chosen by live555.
+                  if (groupsock != NULL)
+                  {
+                    delete groupsock;
+                    groupsock = NULL;
+                    subsession->setClientPortNum(port);
+                  }
+                }
+
                 if (!subsession->initiate())
                 {
                   result = STATUS_ERROR;

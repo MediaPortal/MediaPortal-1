@@ -36,6 +36,8 @@
 // we should get data in ten seconds
 #define RTSP_RECEIVE_DATA_TIMEOUT_DEFAULT                   10000
 #define RTSP_PORT_DEFAULT                                   554
+#define RTSP_RTP_CLIENT_PORT_RANGE_START_DEFAULT            0
+#define RTSP_RTP_CLIENT_PORT_RANGE_END_DEFAULT              0
 #define RTSP_UDP_SINK_MAX_PAYLOAD_SIZE_DEFAULT              12288
 #define RTSP_UDP_PORT_RANGE_START_DEFAULT                   45000
 #define RTSP_UDP_PORT_RANGE_END_DEFAULT                     46000
@@ -46,6 +48,8 @@
 #define CONFIGURATION_SECTION_RTSP                          _T("RTSP")
 
 #define CONFIGURATION_RTSP_RECEIVE_DATA_TIMEOUT             _T("RtspReceiveDataTimeout")
+#define CONFIGURATION_RTSP_RTP_CLIENT_PORT_RANGE_START      _T("RtspRtpClientPortRangeStart")
+#define CONFIGURATION_RTSP_RTP_CLIENT_PORT_RANGE_END        _T("RtspRtpClientPortRangeEnd")
 #define CONFIGURATION_RTSP_UDP_SINK_MAX_PAYLOAD_SIZE        _T("RtspUdpSinkMaxPayloadSize")
 #define CONFIGURATION_RTSP_UDP_PORT_RANGE_START             _T("RtspUdpPortRangeStart")
 #define CONFIGURATION_RTSP_UDP_PORT_RANGE_END               _T("RtspUdpPortRangeEnd")
@@ -94,6 +98,8 @@ protected:
   RTSPClient* rtspClient;
   MediaSession* rtspSession;
   FramedSource *rtspSource;
+  unsigned int rtspRtpClientPortRangeStart;
+  unsigned int rtspRtpClientPortRangeEnd;
   Groupsock *rtspUdpGroupsock;
   MediaSink *rtspUdpSink;
   unsigned int rtspUdpSinkMaxPayloadSize;
