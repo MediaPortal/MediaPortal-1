@@ -1274,7 +1274,9 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
             {
               // send data
               unsigned int receivedData = 0;
-              CURLcode error = curl_easy_send(this->curl, requestA, requestLength, &receivedData);
+              CURLcode error = curl_easy_perform(this->curl);
+              CHECK_CONDITION_EXECUTE_RESULT(error == CURLE_OK, curl_easy_send(this->curl, requestA, requestLength, &receivedData), error);
+
               rtspRequestErrorCode = (error == CURLE_OK) ? CURLE_AGAIN : error;
               FREE_MEM(requestA);
             }

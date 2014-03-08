@@ -1224,9 +1224,17 @@ curl_socket_t Curl_getconnectinfo(struct SessionHandle *data,
     else {
       /* use the socket */
       char buf;
-      if(recv((RECV_TYPE_ARG1)c->sock[FIRSTSOCKET], (RECV_TYPE_ARG2)&buf,
-              (RECV_TYPE_ARG3)1, (RECV_TYPE_ARG4)MSG_PEEK) == 0) {
-        return CURL_SOCKET_BAD;   /* FIN received */
+      int ret = recv((RECV_TYPE_ARG1)c->sock[FIRSTSOCKET], (RECV_TYPE_ARG2)&buf, (RECV_TYPE_ARG3)1, (RECV_TYPE_ARG4)MSG_PEEK);
+
+      if ((ret == SOCKET_ERROR) && (SOCKERRNO == EWOULDBLOCK))
+      {
+        // correct, socket is not blocking
+      }
+      else if ((ret == SOCKET_ERROR) || (ret == 0))
+      {
+        // in case of SOCKET_ERROR, there is some error
+        // in case of zero, socket is gracefully closed /* FIN received */
+        return CURL_SOCKET_BAD;   
       }
     }
 #endif

@@ -229,6 +229,23 @@ case WSAEISCONN:
   break;
 
 --------------------------------------------
+Comment: in Curl_getconnectinfo() method replace block of code starting with 'if(recv((RECV_TYPE_ARG1)c->sock[FIRSTSOCKET], (RECV_TYPE_ARG2)&buf,' (to end of condition block)
+Code:
+
+int ret = recv((RECV_TYPE_ARG1)c->sock[FIRSTSOCKET], (RECV_TYPE_ARG2)&buf, (RECV_TYPE_ARG3)1, (RECV_TYPE_ARG4)MSG_PEEK);
+
+if ((ret == SOCKET_ERROR) && (SOCKERRNO == EWOULDBLOCK))
+{
+  // correct, socket is not blocking
+}
+else if ((ret == SOCKET_ERROR) || (ret == 0))
+{
+  // in case of SOCKET_ERROR, there is some error
+  // in case of zero, socket is gracefully closed /* FIN received */
+  return CURL_SOCKET_BAD;   
+}
+
+--------------------------------------------
 File: \src\if2ip.c
 Comment: in conditional section between '#else' and '#endif' replace all with
 Code:
