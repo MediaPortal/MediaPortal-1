@@ -144,10 +144,6 @@ namespace MediaPortal.GUI.Library
     public const int PLAYER_MUTED = 33;
     public const int PLAYER_HASDURATION = 34;
 
-    public const int WEATHER_CONDITIONS = 100;
-    public const int WEATHER_TEMPERATURE = 101;
-    public const int WEATHER_LOCATION = 102;
-    public const int WEATHER_IS_FETCHED = 103;
 
     public const int SYSTEM_TIME = 110;
     public const int SYSTEM_TIME_IS_BETWEEN = 1100;
@@ -624,25 +620,6 @@ namespace MediaPortal.GUI.Library
         else if (strTest == "player.hasduration")
         {
           ret = PLAYER_HASDURATION;
-        }
-      }
-      else if (strCategory == "weather")
-      {
-        if (strTest == "weather.conditions")
-        {
-          ret = WEATHER_CONDITIONS;
-        }
-        else if (strTest == "weather.temperature")
-        {
-          ret = WEATHER_TEMPERATURE;
-        }
-        else if (strTest == "weather.location")
-        {
-          ret = WEATHER_LOCATION;
-        }
-        else if (strTest == "weather.isfetched")
-        {
-          ret = WEATHER_IS_FETCHED;
         }
       }
       else if (strCategory == "system")
@@ -1847,8 +1824,6 @@ namespace MediaPortal.GUI.Library
       {
         wWindowID = (int)GUIWindow.Window.WINDOW_SETTINGS_PICTURES;
       }
-        //else if (strWindow.Equals("myprogramssettings")) wWindowID = (int)GUIWindow.Window.WINDOW_SETTINGS_MYPROGRAMS;
-        //else if (strWindow.Equals("myweathersettings")) wWindowID = (int)GUIWindow.Window.WINDOW_SETTINGS_MYWEATHER;
       else if (strWindow.Equals("mymusicsettings"))
       {
         wWindowID = (int)GUIWindow.Window.WINDOW_SETTINGS_MUSIC;
@@ -1954,11 +1929,6 @@ namespace MediaPortal.GUI.Library
       {
         wWindowID = (int)GUIWindow.Window.WINDOW_DIALOG_FILESTACKING;
       }
-      else if (strWindow.Equals("weather"))
-      {
-        wWindowID = (int)GUIWindow.Window.WINDOW_WEATHER;
-      }
-        //else if (strWindow.Equals("xlinkkai")) wWindowID = (int)GUIWindow.Window.WINDOW_BUDDIES;
       else if (strWindow.Equals("screensaver"))
       {
         wWindowID = (int)GUIWindow.Window.WINDOW_SCREENSAVER;
@@ -2125,10 +2095,6 @@ namespace MediaPortal.GUI.Library
       else if (condition == SYSTEM_HAS_LOGINSCREEN)
       {
         bReturn = false; //bReturn = g_settings.bUseLoginScreen;
-      }
-      else if (condition == WEATHER_IS_FETCHED)
-      {
-        bReturn = false; //bReturn = g_weatherManager.IsFetched();
       }
       else if (condition == SYSTEM_INTERNET_STATE)
       {

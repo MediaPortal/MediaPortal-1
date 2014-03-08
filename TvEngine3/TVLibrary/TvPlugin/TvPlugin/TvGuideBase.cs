@@ -25,7 +25,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
-using System.IO;
 using System.Windows.Media.Animation;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
@@ -333,14 +332,11 @@ namespace TvPlugin
         case Action.ActionType.ACTION_PREVIOUS_MENU:
           if (_singleChannelView)
           {
-            OnSwitchMode();
-            return; // base.OnAction would close the EPG as well
-          }
-          else
-          {
-            GUIWindowManager.ShowPreviousWindow();
+            GUIWindowManager.ActivateWindow((int)Window.WINDOW_TVGUIDE);
             return;
           }
+          GUIWindowManager.ShowPreviousWindow();
+          return;
 
         case Action.ActionType.ACTION_KEY_PRESSED:
           if (action.m_key != null)

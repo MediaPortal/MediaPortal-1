@@ -83,8 +83,6 @@ namespace MediaPortal.GUI.Library
     public static event VideoGammaContrastBrightnessHandler OnGammaContrastBrightnessChanged; // triggered when contrast, brightness, gamma settings have been changed
 
     public static Device DX9Device = null; // pointer to current DX9 device
-    public static Texture Auto3DTexture = null;
-    public static Surface Auto3DSurface = null;
 
     // ReSharper disable InconsistentNaming
     public static Graphics graphics = null; // GDI+ Graphics object
@@ -133,6 +131,7 @@ namespace MediaPortal.GUI.Library
     private static bool _vmr9Allowed = true;
     private static DateTime _lastActivity = DateTime.Now;
     private static Screen _currentScreen;
+    private static Screen _currentStartScreen;
     private static int _currentMonitorIdx = -1;
     private static readonly bool IsDX9EXused = OSInfo.OSInfo.VistaOrLater();
     private static bool _allowRememberLastFocusedItem = true;
@@ -319,6 +318,20 @@ namespace MediaPortal.GUI.Library
     }
 
     /// <summary>
+    /// Property to get and set current start screen on witch MP is displayed
+    /// </summary>
+    // ReSharper disable InconsistentNaming
+    public static Screen currentStartScreen
+    // ReSharper restore InconsistentNaming
+    {
+      get
+      {
+        return _currentStartScreen ?? Screen.PrimaryScreen;
+      }
+      set { _currentStartScreen = value; }
+    }
+
+    /// <summary>
     /// Property to get and set current monitor index for refreshrate setting
     /// </summary>
     // ReSharper disable InconsistentNaming
@@ -388,21 +401,6 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    public static void ResetAuto3D()
-    {
-      if (Auto3DSurface != null)
-      {
-        Auto3DSurface.ReleaseGraphics();
-        Auto3DSurface = null;
-      }
-
-      if (Auto3DTexture != null)
-      {
-        Auto3DTexture.Dispose();
-        Auto3DTexture = null;
-      }
-    }
-
     /// <summary>
     /// Load calibration values for current resolution
     /// </summary>
@@ -417,8 +415,6 @@ namespace MediaPortal.GUI.Library
       OverScanHeight = Height;
       ZoomHorizontal = 1.0f;
       ZoomVertical = 1.0f;
-
-      GUIGraphicsContext.ResetAuto3D();
 
       string strFileName = Config.GetFile(Config.Dir.Config, String.Format("ScreenCalibration{0}x{1}", Width, Height));
       strFileName += Fullscreen ? ".fs.xml" : ".xml";
