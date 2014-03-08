@@ -20,8 +20,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <CLRSupport>true</CLRSupport>
+    <CLRSupport>false</CLRSupport>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v100</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -42,10 +43,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(IncludePath)</IncludePath>
-    <LibraryPath>M:\Programmieren\C#\MediaPortal_Git\DirectShowFilters\shared;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\shared;$(LibraryPath)</LibraryPath>
+    <OutDir>.\bin\$(Configuration)\</OutDir>
+    <IntDir>.\obj\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <OutDir>.\bin\$(Configuration)\</OutDir>
+    <IntDir>.\obj\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -53,13 +58,14 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <AdditionalIncludeDirectories>M:\Programmieren\C#\MediaPortal_Git\DirectShowFilters\LiveMedia555\MediaPortal;M:\Programmieren\C#\MediaPortal_Git\DirectShowFilters\LiveMedia555\UsageEnvironment\include;M:\Programmieren\C#\MediaPortal_Git\DirectShowFilters\LiveMedia555\liveMedia\include;M:\Programmieren\C#\MediaPortal_Git\DirectShowFilters\LiveMedia555\groupsock\include;M:\Programmieren\C#\MediaPortal_Git\DirectShowFilters\LiveMedia555\BasicUsageEnvironment\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\LiveMedia555\MediaPortal;..\LiveMedia555\UsageEnvironment\include;..\LiveMedia555\liveMedia\include;..\LiveMedia555\groupsock\include;..\LiveMedia555\BasicUsageEnvironment\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>DvbCoreUtilsD.lib;winmm.lib;livemedia555D.lib;WS2_32.Lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>M:\Programmieren\C#\MediaPortal_Git\DirectShowFilters\shared;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\shared;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <ModuleDefinitionFile>.\source\RtpStreamer.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -80,26 +86,28 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="resource.h" />
-    <ClInclude Include="RtpStream.h" />
-    <ClInclude Include="RtpStreamer.h" />
-    <ClInclude Include="Stdafx.h" />
+    <ClInclude Include="source\config.h" />
+    <ClInclude Include="source\resource.h" />
+    <ClInclude Include="source\RtpStream.h" />
+    <ClInclude Include="source\RtpStreamInterface.h" />
+    <ClInclude Include="source\Stdafx.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AssemblyInfo.cpp" />
-    <ClCompile Include="RtpStream.cpp" />
-    <ClCompile Include="RtpStreamer.cpp" />
-    <ClCompile Include="Stdafx.cpp">
+    <ClCompile Include="source\ByteStreamMemoryBufferSource.cpp" />
+    <ClCompile Include="source\RtpStream.cpp" />
+    <ClCompile Include="source\Stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.ico" />
-    <None Include="ReadMe.txt" />
+    <None Include="source\app.ico" />
+    <None Include="source\ByteStreamMemoryBufferSource.hh" />
+    <None Include="source\ReadMe.txt" />
+    <None Include="source\RtpStreamer.def" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="app.rc" />
+    <ResourceCompile Include="source\app.rc" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LiveMedia555\LiveMedia555.vcxproj">

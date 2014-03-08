@@ -7,6 +7,9 @@
 #include "MPTaskScheduler.h"
 #include "GroupsockHelper.hh"
 #include <shlobj.h>
+#include "RtpStreamInterface.h"
+#include "ByteStreamMemoryBufferSource.hh"
+#include "config.h"
 
 static char logbuffer[2000]; 
 static wchar_t logbufferw[2000];
@@ -14,13 +17,14 @@ void LogDebugRtp(const wchar_t *);
 
 void LogDebugRtp(const char , ...);
 
-class __declspec(dllexport) MPrtpStream {
+void* CreateClassInstance();
+
+class __declspec(dllexport) MPrtpStream : public IMPrtpStream {
 	UsageEnvironment*		env;
+	ByteStreamMemoryBufferSource* fileSource;
 	Boolean static const isSSM =	False;
 
 	char const* inputFileName;
-	#define TRANSPORT_PACKET_SIZE 188
-	#define TRANSPORT_PACKETS_PER_NETWORK_PACKET 7
 
   public:
     RTPSink*				videoSink;
@@ -31,4 +35,5 @@ class __declspec(dllexport) MPrtpStream {
 	void MPrtpStreamCreate (/*char*, */char*, int, char*);
 	void RtpStop();
 	void play();
+	void write(unsigned char *dataPtr, int numBytes);
 };

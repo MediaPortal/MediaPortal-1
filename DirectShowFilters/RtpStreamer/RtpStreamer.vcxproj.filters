@@ -15,41 +15,47 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="RtpStreamer.h">
+    <ClInclude Include="source\Stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Stdafx.h">
+    <ClInclude Include="source\resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
+    <ClInclude Include="source\RtpStream.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RtpStream.h">
+    <ClInclude Include="source\RtpStreamInterface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="RtpStreamer.cpp">
+    <ClCompile Include="source\Stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AssemblyInfo.cpp">
+    <ClCompile Include="source\RtpStream.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RtpStream.cpp">
+    <ClCompile Include="source\ByteStreamMemoryBufferSource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ReadMe.txt" />
-    <None Include="app.ico">
+    <None Include="source\ReadMe.txt" />
+    <None Include="source\app.ico">
       <Filter>Resource Files</Filter>
+    </None>
+    <None Include="source\ByteStreamMemoryBufferSource.hh">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="source\RtpStreamer.def">
+      <Filter>Source Files</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="app.rc">
+    <ResourceCompile Include="source\app.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>

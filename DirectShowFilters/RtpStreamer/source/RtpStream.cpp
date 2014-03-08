@@ -57,11 +57,21 @@ void afterPlaying(void* clientData) {
   streamState->play();
 }
 
-MPrtpStream::MPrtpStream() {}
+MPrtpStream::MPrtpStream() {
+	// Begin by setting up our usage environment:
+	TaskScheduler* scheduler = BasicTaskScheduler::createNew();
+	env = BasicUsageEnvironment::createNew(*scheduler);
+
+	unsigned const inputDataChunkSize
+		= TRANSPORT_PACKETS_PER_NETWORK_PACKET*TRANSPORT_PACKET_SIZE;
+
+	fileSource = ByteStreamMemoryBufferSource::createNew(*env, MEMORY_BUFFER_SIZE, true, inputDataChunkSize);
+}
 
 void MPrtpStream::MPrtpStreamCreate(/*char* stopLoop, */char* destinationAddressStr, int _rtpPort, char* fileName)
 {
 	LogDebugRtp("begin RtpSetup");
+
 	
 	const unsigned short rtpPortNum = _rtpPort;
 	const unsigned short rtcpPortNum = rtpPortNum+1;
@@ -75,8 +85,8 @@ void MPrtpStream::MPrtpStreamCreate(/*char* stopLoop, */char* destinationAddress
 	LogDebugRtp(buffer);
 	
 	// Begin by setting up our usage environment:
-	TaskScheduler* scheduler = BasicTaskScheduler::createNew();
-	env = BasicUsageEnvironment::createNew(*scheduler);
+	//TaskScheduler* scheduler = BasicTaskScheduler::createNew();
+	//env = BasicUsageEnvironment::createNew(*scheduler);
 
 	struct in_addr destinationAddress;
 	destinationAddress.s_addr = our_inet_addr(destinationAddressStr);
@@ -113,8 +123,18 @@ void MPrtpStream::MPrtpStreamCreate(/*char* stopLoop, */char* destinationAddress
 	//return 0; // ok
 }
 
+// simple warpper
+void MPrtpStream::write(unsigned char *dataPtr, int numBytes) {
+	if (fileSource != 0) {
+		fileSource->Write(dataPtr, numBytes);
+	}
+	else {
+		LogDebugRtp("FileSource is Null");
+	}
+}
+
 void MPrtpStream::play() {
-  unsigned const inputDataChunkSize
+  /*unsigned const inputDataChunkSize
     = TRANSPORT_PACKETS_PER_NETWORK_PACKET*TRANSPORT_PACKET_SIZE;
 
   // Open the input file as a 'byte-stream file source':
@@ -123,7 +143,10 @@ void MPrtpStream::play() {
   if (fileSource == NULL) {
     LogDebugRtp("Unable to open file \"%s\" as a byte-stream file source", inputFileName);
     exit(1);
-  }
+  }*/
+
+  // open memory stream
+  //ByteStreamMemoryBufferSource* fileSource = ByteStreamMemoryBufferSource::createNew(*env, 18800);
 
   // Create a 'framer' for the input source (to give us proper inter-packet gaps):
   videoSource = MPEG2TransportStreamFramer::createNew(*env, fileSource);
@@ -140,4 +163,9 @@ void MPrtpStream::RtpStop() {
   Medium::close(videoSource);
   stop = 's';
   // Note that this also closes the input file that this source read from.
+}
+
+void* CreateClassInstance()
+{
+	return static_cast< void* > (new MPrtpStream);
 }

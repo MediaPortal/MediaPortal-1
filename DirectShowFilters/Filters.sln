@@ -1,5 +1,7 @@
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DvbCoreUtils", "DvbCoreUtils\DvbCoreUtils.vcxproj", "{4B134B4C-4EF6-4647-9CEA-A59FF0013357}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TsWriter", "TsWriter\MPTSWriter.vcxproj", "{FCF30D16-2C9E-4429-B605-4ACA43023E71}"
@@ -35,6 +37,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BDReader", "BDReader\BDReader.vcxproj", "{C0BE4419-A495-4933-9425-A79AF4FB30F6}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MP_DVB_Subtitle_3", "DVBSubtitle3\DVBSubtitle3.vcxproj", "{FEA1D3DB-F7BC-46F4-B1AE-F582548939CA}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SatIpFilter", "SatIpFilter\SatIpFilter.vcxproj", "{95C1ADBC-D0CE-4476-AD38-1CA56E4B8B64}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RtpStreamer", "RtpStreamer\RtpStreamer.vcxproj", "{B3F557D5-1CD7-4F67-9B5C-AE0BAD8DDB23}"
 EndProject
@@ -146,6 +150,12 @@ Global
 		{FEA1D3DB-F7BC-46F4-B1AE-F582548939CA}.Debug|x64.ActiveCfg = Debug|Win32
 		{FEA1D3DB-F7BC-46F4-B1AE-F582548939CA}.Release|Win32.ActiveCfg = Release|Win32
 		{FEA1D3DB-F7BC-46F4-B1AE-F582548939CA}.Release|x64.ActiveCfg = Release|Win32
+		{95C1ADBC-D0CE-4476-AD38-1CA56E4B8B64}.Debug|Win32.ActiveCfg = Debug|Win32
+		{95C1ADBC-D0CE-4476-AD38-1CA56E4B8B64}.Debug|Win32.Build.0 = Debug|Win32
+		{95C1ADBC-D0CE-4476-AD38-1CA56E4B8B64}.Debug|x64.ActiveCfg = Debug|Win32
+		{95C1ADBC-D0CE-4476-AD38-1CA56E4B8B64}.Release|Win32.ActiveCfg = Release|Win32
+		{95C1ADBC-D0CE-4476-AD38-1CA56E4B8B64}.Release|Win32.Build.0 = Release|Win32
+		{95C1ADBC-D0CE-4476-AD38-1CA56E4B8B64}.Release|x64.ActiveCfg = Release|Win32
 		{B3F557D5-1CD7-4F67-9B5C-AE0BAD8DDB23}.Debug|Win32.ActiveCfg = Debug|Win32
 		{B3F557D5-1CD7-4F67-9B5C-AE0BAD8DDB23}.Debug|Win32.Build.0 = Debug|Win32
 		{B3F557D5-1CD7-4F67-9B5C-AE0BAD8DDB23}.Debug|x64.ActiveCfg = Debug|Win32

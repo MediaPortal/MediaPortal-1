@@ -1,0 +1,4 @@
+LIBRARY     RtpStreamer
+
+EXPORTS
+CreateClassInstance		@1
