@@ -43,15 +43,15 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\Common-MP-TVE3\Common.Utils\Common.Utils.csproj">
+    <ProjectReference Include="..\..\..\..\..\..\..\Common-MP-TVE3\Common.Utils\Common.Utils.csproj">
       <Project>{f6eda1f3-3dcd-43f4-8a90-e32da70c8227}</Project>
       <Name>Common.Utils</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\..\Common-MP-TVE3\DirectShowLib\DirectShowLib.csproj">
+    <ProjectReference Include="..\..\..\..\..\..\..\Common-MP-TVE3\DirectShowLib\DirectShowLib.csproj">
       <Project>{ce009bfa-5ef6-4153-b2a1-2fa79698a9ae}</Project>
       <Name>DirectShowLib</Name>
     </ProjectReference>
-    <ProjectReference Include="..\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj">
+    <ProjectReference Include="..\..\..\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj">
       <Project>{ae752fb4-7450-4150-9bad-19efa9d2ac37}</Project>
       <Name>TvLibrary.Interfaces</Name>
     </ProjectReference>

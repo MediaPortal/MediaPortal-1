@@ -54,8 +54,12 @@
     <Reference Include="System.Management" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="UPnP">
+      <HintPath>..\TVServer.Base\UPnP.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CardManagement\CardAllocation\AdvancedCardAllocation.cs" />
@@ -105,7 +109,16 @@
       <Link>OSPrerequisites.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SatIp\rtpStream.cs" />
+    <Compile Include="SatIp\Rtsp\RtspClients.cs" />
+    <Compile Include="SatIp\Rtsp\RtspRequestHeader.cs" />
+    <Compile Include="SatIp\Rtsp\RtspServer.cs" />
     <Compile Include="SatIp\SatIp.cs" />
+    <Compile Include="SatIp\Server\LightServerDevice.cs" />
+    <Compile Include="SatIp\Server\LightServerDeviceInformation.cs" />
+    <Compile Include="SatIp\Server\LocalizedUPnPDeviceInformation.cs" />
+    <Compile Include="SatIp\Server\UPnPLightServer.cs" />
+    <Compile Include="SatIp\Server\UPnPMediaServerDevice.cs" />
     <Compile Include="Scheduler\CardDetail.cs" />
     <Compile Include="Scheduler\RecordingDetail.cs" />
     <Compile Include="Scheduler\Scheduler.cs" />

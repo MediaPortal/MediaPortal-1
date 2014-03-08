@@ -173,7 +173,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MicrosoftEncoder", "Plugins
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HauppaugeEncoder", "Plugins\CustomDevices\HauppaugeEncoder\HauppaugeEncoder.csproj", "{ECE91693-ED04-4011-A000-BDDBEED9C4C8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SAT_IP", "SAT_IP\SAT_IP.csproj", "{657F5454-C33A-4199-B0FF-3725FA75014B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SAT_IP", "Plugins\CustomDevices\SAT_IP\SAT_IP.csproj", "{657F5454-C33A-4199-B0FF-3725FA75014B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
