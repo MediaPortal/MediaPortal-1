@@ -98,7 +98,7 @@
     <Channel id="espnclassic.co.uk" siteId="196" />
     <Channel id="sport2@viasatsport.se" siteId="197" />
     <Channel id="sport3@viasatsport.se" siteId="198" />
-    <Channel id="tv11@elva.tv" siteId="199" />
+    <Channel id="kanal11@elva.tv" siteId="199" />
     <Channel id="action@tv1000.se" siteId="207" />
     <Channel id="classic@tv1000.se" siteId="208" />
     <Channel id="nordic@tv1000.se" siteId="209" />
@@ -130,7 +130,7 @@
     <Channel id="hits@cmore.se" siteId="257" />
     <Channel id="tennis@cmore.se" siteId="258" />
     <Channel id="fmen.tv" siteId="259" />
-    <Channel id="bloomberg.co.uk" siteId="260" />
+    <!--<Channel id="bloomberg.co.uk" siteId="260" /> Empty channel -->
     <Channel id="hitssportweekend@canalplus.se" siteId="261" />
     <Channel id="aljazeera.tv" siteId="262" />
     <Channel id="hd@discoverychannel.co.uk" siteId="263" />
@@ -184,10 +184,10 @@
     <Channel id="wildtv.ca" siteId="401" />
     <Channel id="wildhd@natgeotv.com" siteId="403" />
     <Channel id="kids@cmore.se" siteId="405" />
+    <Channel id="news@tv4.se" siteId="410" />
     <Channel id="sportxtra@tv4.se" siteId="500" />
     <Channel id="hitshd@cmore.se" siteId="501" />
     <Channel id="firsthd@cmore.se" siteId="502" />
-    <Channel id="news@tv4.se" siteId="410" />
     <Channel id="tv2charlie@tv2.dk" siteId="906" />
     <Channel id="dk4.dk" siteId="908" />
     <!--<Channel id="nick.co.uk" siteId="909" /> Conflicting name -->

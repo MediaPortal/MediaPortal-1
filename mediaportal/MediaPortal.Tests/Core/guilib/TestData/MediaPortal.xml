@@ -1095,333 +1095,6 @@
     <entry name="DirectInputCloseCombo">
     </entry>
   </section>
-  <section name="weather">
-    <entry name="speed">S</entry>
-    <entry name="temperature">C</entry>
-    <entry name="refresh">30</entry>
-    <entry name="city0">
-    </entry>
-    <entry name="code0">
-    </entry>
-    <entry name="sat0">
-    </entry>
-    <entry name="temp0">
-    </entry>
-    <entry name="uv0">
-    </entry>
-    <entry name="winds0">
-    </entry>
-    <entry name="humid0">
-    </entry>
-    <entry name="precip0">
-    </entry>
-    <entry name="city1">
-    </entry>
-    <entry name="code1">
-    </entry>
-    <entry name="sat1">
-    </entry>
-    <entry name="temp1">
-    </entry>
-    <entry name="uv1">
-    </entry>
-    <entry name="winds1">
-    </entry>
-    <entry name="humid1">
-    </entry>
-    <entry name="precip1">
-    </entry>
-    <entry name="city2">
-    </entry>
-    <entry name="code2">
-    </entry>
-    <entry name="sat2">
-    </entry>
-    <entry name="temp2">
-    </entry>
-    <entry name="uv2">
-    </entry>
-    <entry name="winds2">
-    </entry>
-    <entry name="humid2">
-    </entry>
-    <entry name="precip2">
-    </entry>
-    <entry name="city3">
-    </entry>
-    <entry name="code3">
-    </entry>
-    <entry name="sat3">
-    </entry>
-    <entry name="temp3">
-    </entry>
-    <entry name="uv3">
-    </entry>
-    <entry name="winds3">
-    </entry>
-    <entry name="humid3">
-    </entry>
-    <entry name="precip3">
-    </entry>
-    <entry name="city4">
-    </entry>
-    <entry name="code4">
-    </entry>
-    <entry name="sat4">
-    </entry>
-    <entry name="temp4">
-    </entry>
-    <entry name="uv4">
-    </entry>
-    <entry name="winds4">
-    </entry>
-    <entry name="humid4">
-    </entry>
-    <entry name="precip4">
-    </entry>
-    <entry name="city5">
-    </entry>
-    <entry name="code5">
-    </entry>
-    <entry name="sat5">
-    </entry>
-    <entry name="temp5">
-    </entry>
-    <entry name="uv5">
-    </entry>
-    <entry name="winds5">
-    </entry>
-    <entry name="humid5">
-    </entry>
-    <entry name="precip5">
-    </entry>
-    <entry name="city6">
-    </entry>
-    <entry name="code6">
-    </entry>
-    <entry name="sat6">
-    </entry>
-    <entry name="temp6">
-    </entry>
-    <entry name="uv6">
-    </entry>
-    <entry name="winds6">
-    </entry>
-    <entry name="humid6">
-    </entry>
-    <entry name="precip6">
-    </entry>
-    <entry name="city7">
-    </entry>
-    <entry name="code7">
-    </entry>
-    <entry name="sat7">
-    </entry>
-    <entry name="temp7">
-    </entry>
-    <entry name="uv7">
-    </entry>
-    <entry name="winds7">
-    </entry>
-    <entry name="humid7">
-    </entry>
-    <entry name="precip7">
-    </entry>
-    <entry name="city8">
-    </entry>
-    <entry name="code8">
-    </entry>
-    <entry name="sat8">
-    </entry>
-    <entry name="temp8">
-    </entry>
-    <entry name="uv8">
-    </entry>
-    <entry name="winds8">
-    </entry>
-    <entry name="humid8">
-    </entry>
-    <entry name="precip8">
-    </entry>
-    <entry name="city9">
-    </entry>
-    <entry name="code9">
-    </entry>
-    <entry name="sat9">
-    </entry>
-    <entry name="temp9">
-    </entry>
-    <entry name="uv9">
-    </entry>
-    <entry name="winds9">
-    </entry>
-    <entry name="humid9">
-    </entry>
-    <entry name="precip9">
-    </entry>
-    <entry name="city10">
-    </entry>
-    <entry name="code10">
-    </entry>
-    <entry name="sat10">
-    </entry>
-    <entry name="temp10">
-    </entry>
-    <entry name="uv10">
-    </entry>
-    <entry name="winds10">
-    </entry>
-    <entry name="humid10">
-    </entry>
-    <entry name="precip10">
-    </entry>
-    <entry name="city11">
-    </entry>
-    <entry name="code11">
-    </entry>
-    <entry name="sat11">
-    </entry>
-    <entry name="temp11">
-    </entry>
-    <entry name="uv11">
-    </entry>
-    <entry name="winds11">
-    </entry>
-    <entry name="humid11">
-    </entry>
-    <entry name="precip11">
-    </entry>
-    <entry name="city12">
-    </entry>
-    <entry name="code12">
-    </entry>
-    <entry name="sat12">
-    </entry>
-    <entry name="temp12">
-    </entry>
-    <entry name="uv12">
-    </entry>
-    <entry name="winds12">
-    </entry>
-    <entry name="humid12">
-    </entry>
-    <entry name="precip12">
-    </entry>
-    <entry name="city13">
-    </entry>
-    <entry name="code13">
-    </entry>
-    <entry name="sat13">
-    </entry>
-    <entry name="temp13">
-    </entry>
-    <entry name="uv13">
-    </entry>
-    <entry name="winds13">
-    </entry>
-    <entry name="humid13">
-    </entry>
-    <entry name="precip13">
-    </entry>
-    <entry name="city14">
-    </entry>
-    <entry name="code14">
-    </entry>
-    <entry name="sat14">
-    </entry>
-    <entry name="temp14">
-    </entry>
-    <entry name="uv14">
-    </entry>
-    <entry name="winds14">
-    </entry>
-    <entry name="humid14">
-    </entry>
-    <entry name="precip14">
-    </entry>
-    <entry name="city15">
-    </entry>
-    <entry name="code15">
-    </entry>
-    <entry name="sat15">
-    </entry>
-    <entry name="temp15">
-    </entry>
-    <entry name="uv15">
-    </entry>
-    <entry name="winds15">
-    </entry>
-    <entry name="humid15">
-    </entry>
-    <entry name="precip15">
-    </entry>
-    <entry name="city16">
-    </entry>
-    <entry name="code16">
-    </entry>
-    <entry name="sat16">
-    </entry>
-    <entry name="temp16">
-    </entry>
-    <entry name="uv16">
-    </entry>
-    <entry name="winds16">
-    </entry>
-    <entry name="humid16">
-    </entry>
-    <entry name="precip16">
-    </entry>
-    <entry name="city17">
-    </entry>
-    <entry name="code17">
-    </entry>
-    <entry name="sat17">
-    </entry>
-    <entry name="temp17">
-    </entry>
-    <entry name="uv17">
-    </entry>
-    <entry name="winds17">
-    </entry>
-    <entry name="humid17">
-    </entry>
-    <entry name="precip17">
-    </entry>
-    <entry name="city18">
-    </entry>
-    <entry name="code18">
-    </entry>
-    <entry name="sat18">
-    </entry>
-    <entry name="temp18">
-    </entry>
-    <entry name="uv18">
-    </entry>
-    <entry name="winds18">
-    </entry>
-    <entry name="humid18">
-    </entry>
-    <entry name="precip18">
-    </entry>
-    <entry name="city19">
-    </entry>
-    <entry name="code19">
-    </entry>
-    <entry name="sat19">
-    </entry>
-    <entry name="temp19">
-    </entry>
-    <entry name="uv19">
-    </entry>
-    <entry name="winds19">
-    </entry>
-    <entry name="humid19">
-    </entry>
-    <entry name="precip19">
-    </entry>
-    <entry name="location">
-    </entry>
-  </section>
   <section name="dvdplayer">
     <entry name="audiolanguage">Swedish</entry>
     <entry name="subtitlelanguage">Swedish</entry>
@@ -1752,7 +1425,6 @@
     <entry name="TV.com Parser">yes</entry>
     <entry name="My Music">yes</entry>
     <entry name="My Explorer">no</entry>
-    <entry name="My Weather">yes</entry>
     <entry name="My Radio">yes</entry>
     <entry name="My Pictures">yes</entry>
     <entry name="Settings">yes</entry>
@@ -1789,7 +1461,6 @@
     <entry name="TV.com Parser">no</entry>
     <entry name="My Music">yes</entry>
     <entry name="My Explorer">yes</entry>
-    <entry name="My Weather">yes</entry>
     <entry name="My Radio">yes</entry>
     <entry name="My Pictures">yes</entry>
     <entry name="Settings">yes</entry>
@@ -1838,7 +1509,6 @@
     <entry name="TV.com Parser">no</entry>
     <entry name="My Music">no</entry>
     <entry name="My Explorer">no</entry>
-    <entry name="My Weather">no</entry>
     <entry name="My Radio">no</entry>
     <entry name="My Pictures">no</entry>
     <entry name="Settings">no</entry>
@@ -1857,7 +1527,6 @@
     <entry name="External Control Plugin II">no</entry>
   </section>
   <section name="pluginsdlls">
-    <entry name="WindowPlugins.dll">no</entry>
     <entry name="ExternalPlayers.dll">no</entry>
     <entry name="ProcessPlugins.dll">no</entry>
     <entry name="ECP2Plugin.dll">yes</entry>
@@ -1880,7 +1549,6 @@
     <entry name="MediaPortal.GUI.GUIStatus.GUIStatus">no</entry>
     <entry name="MediaPortal.GUI.Music.GUIMusicFiles">yes</entry>
     <entry name="MediaPortal.GUI.GUIExplorer.GUIExplorer">no</entry>
-    <entry name="MediaPortal.GUI.Weather.GUIWindowWeather">yes</entry>
     <entry name="MediaPortal.GUI.Radio.GUIRadio">yes</entry>
     <entry name="MediaPortal.GUI.Pictures.GUIPictures">yes</entry>
     <entry name="MediaPortal.GUI.Settings.GUISettings">yes</entry>

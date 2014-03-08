@@ -20,6 +20,7 @@
 
 using System;
 using System.Windows.Forms;
+using MediaPortal.DeployTool.InstallationChecks;
 
 namespace MediaPortal.DeployTool.Sections
 {
@@ -29,6 +30,7 @@ namespace MediaPortal.DeployTool.Sections
     public ExtensionChoice()
     {
       InitializeComponent();
+      ExtensionInstalledCheck();
       type = DialogType.ExtensionChoice;
       labelSectionHeader.Text = "";
 
@@ -45,6 +47,22 @@ namespace MediaPortal.DeployTool.Sections
       linkLAV.Text = Localizer.GetBestTranslation("ExtensionChoice_MoreInfo");
       linkTitan.Text = Localizer.GetBestTranslation("ExtensionChoice_MoreInfo");
       lblRecommended.Text = Localizer.GetBestTranslation("ExtensionChoice_Title");
+    }
+
+    public void ExtensionInstalledCheck()
+    {
+      IInstallationPackage package = new LAVFilterMPEInstall();
+      CheckResult result = package.CheckStatus();
+      if (result.state == CheckState.INSTALLED)
+      {
+        this.chkLAV.Checked = false;
+      }
+      package = new TitanExtensionInstall();
+      result = package.CheckStatus();
+      if (result.state == CheckState.INSTALLED)
+      {
+        this.chkTitan.Checked = false;
+      }
     }
 
     public override DeployDialog GetNextDialog()

@@ -20,7 +20,7 @@ using Layout = MediaPortal.GUI.Library.GUIFacadeControl.Layout;
 namespace MediaPortal.GUI.LastFMRadio
 {
 
-  [PluginIcons("WindowPlugins.GUILastFMRadio.BallonRadio.gif", "WindowPlugins.GUILastFMRadio.BallonRadioDisabled.gif")]
+  [PluginIcons("GUILastFMRadio.BallonRadio.gif", "GUILastFMRadio.BallonRadioDisabled.gif")]
   public class GUILastFMRadio : GUIWindow, ISetupForm
   {
 
@@ -91,7 +91,7 @@ namespace MediaPortal.GUI.LastFMRadio
     // Indicates if plugin is enabled by default;
     public bool DefaultEnabled()
     {
-      return true;
+      return false;
     }
 
     // indicates if a plugin has it's own setup screen

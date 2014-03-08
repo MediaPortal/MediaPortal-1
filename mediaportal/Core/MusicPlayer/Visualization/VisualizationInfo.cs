@@ -193,7 +193,7 @@ namespace MediaPortal.Visualization
             return 512;
 
           case 1:
-            return 600;
+            return 640;
 
           case 2:
             return 800;

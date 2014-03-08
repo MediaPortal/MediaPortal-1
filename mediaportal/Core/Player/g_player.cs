@@ -3406,6 +3406,16 @@ namespace MediaPortal.Player
                        : string.Format("Audio codec: {0}", _mediaInfo.AudioCodec);
         GUIGraphicsContext.SendMessage(msg);
         _mediaInfo = null;
+        PlayListType currentList = PlayListPlayer.SingletonPlayer.CurrentPlaylistType;
+        if (type == MediaType.Music)
+        {
+          // Clear music playlists when failed to play.
+          if (currentList == PlayListType.PLAYLIST_MUSIC)
+          {
+            PlayListPlayer.SingletonPlayer.GetPlaylist(currentList).Clear();
+            PlayListPlayer.SingletonPlayer.Reset();
+          }
+        }
       }
       catch (Exception ex)
       {

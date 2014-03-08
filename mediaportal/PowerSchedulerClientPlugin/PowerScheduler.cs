@@ -497,20 +497,44 @@ namespace MediaPortal.Plugins.Process
         Log.Debug("PS: Check if user interface is idle");
         if (!UserInterfaceIdle)
         {
-          // Prevent system from being suspended
           Log.Debug("PS: User interface not idle: StandbyPrevented");
           _currentStandbyMode = StandbyMode.StandbyPrevented;
           return StandbyMode.StandbyPrevented;
         }
 
-        // Then check whether the next event is almost due (within pre-no-standby time)
-        Log.Debug("PS: Check whether the next event is almost due");
-        if (DateTime.Now >= _currentNextWakeupTime.AddSeconds(-_settings.PreNoShutdownTime))
+        if (!_singleSeat)
         {
-          Log.Debug("PS: Event is almost due ({0}): StandbyPrevented", _currentNextWakeupHandler);
-          _currentStandbyHandler = "Event due";
-          _currentStandbyMode = StandbyMode.StandbyPrevented;
-          return StandbyMode.StandbyPrevented;
+          // Then check whether the next event is almost due (within pre-no-standby time)
+          Log.Debug("PS: Check whether the next event is almost due");
+          if (DateTime.Now >= _currentNextWakeupTime.AddSeconds(-_settings.PreNoShutdownTime))
+          {
+            Log.Debug("PS: Event is almost due ({0}): StandbyPrevented", _currentNextWakeupHandler);
+            _currentStandbyHandler = "Event due";
+            _currentStandbyMode = StandbyMode.StandbyPrevented;
+            return StandbyMode.StandbyPrevented;
+          }
+
+          // Then check if standby is allowed at this moment
+          Log.Debug("PS: Check if standby is allowed at this moment");
+          int Current24hHour = Convert.ToInt32(DateTime.Now.ToString("HH"));
+          if ( // Stop time one day after start time (23:00 -> 07:00)
+            ((_settings.AllowedSleepStartTime > _settings.AllowedSleepStopTime)
+             && (Current24hHour < _settings.AllowedSleepStartTime)
+             && (Current24hHour >= _settings.AllowedSleepStopTime))
+            ||
+            // Start time and stop time on the same day (01:00 -> 17:00)
+            ((_settings.AllowedSleepStartTime < _settings.AllowedSleepStopTime)
+             &&
+            // 2 possibilities for the same day: before or after the timespan
+             ((Current24hHour < _settings.AllowedSleepStartTime) ||
+              (Current24hHour >= _settings.AllowedSleepStopTime))
+            ))
+          {
+            Log.Debug("PS: Standby is not allowed at this hour: StandbyPrevented");
+            _currentStandbyHandler = "NOT-ALLOWED-TIME";
+            _currentStandbyMode = StandbyMode.StandbyPrevented;
+            return StandbyMode.StandbyPrevented;
+          }
         }
 
         // Nothing prevents standby
@@ -1112,15 +1136,25 @@ namespace MediaPortal.Plugins.Process
               Log.Debug("PS: Standby after: {0} minutes", intSetting);
             }
 
-            // Check configured pre-wakeup time (can only be configured by editing MediaPortal.xml)
+            // Check configured pre-wakeup time
             intSetting = reader.GetValueAsInt("psclientplugin", "PreWakeupTime", 60);
             _settings.PreWakeupTime = intSetting;
             Log.Debug("PS: Pre-wakeup time: {0} seconds", intSetting);
 
-            // Check configured pre-no-standby time (can only be configured by editing MediaPortal.xml)
+            // Check configured pre-no-standby time
             intSetting = reader.GetValueAsInt("psclientplugin", "PreNoStandbyTime", 300);
             _settings.PreNoShutdownTime = intSetting;
             Log.Debug("PS: Pre-no-standby time: {0} seconds", intSetting);
+
+            // Check allowed start time
+            intSetting = reader.GetValueAsInt("psclientplugin", "StandbyHoursFrom", 0);
+            _settings.AllowedSleepStartTime = intSetting;
+            Log.Debug("PS: Standby allowed from {0} o' clock", _settings.AllowedSleepStartTime);
+
+            // Check allowed stop time
+            intSetting = reader.GetValueAsInt("psclientplugin", "StandbyHoursTo", 24);
+            _settings.AllowedSleepStopTime = intSetting;
+            Log.Debug("PS: Standby allowed until {0} o' clock", _settings.AllowedSleepStopTime);
 
             // Check if PowerScheduler should wakeup the system automatically
             intSetting = reader.GetValueAsInt("psclientplugin", "Profile", 0);

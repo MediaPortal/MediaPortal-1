@@ -102,10 +102,10 @@ namespace MediaPortal.GUI.Library
   public abstract class GUIControl : GUIBaseControl, IDisposable // Control, IDisposable
   {
     [XMLSkinElement("subtype")] protected string _subType = "";
-    [XMLSkinElement("onleft")] protected int _leftControlId = 0;
-    [XMLSkinElement("onright")] protected int _rightControlId = 0;
-    [XMLSkinElement("onup")] protected int _upControlId = 0;
-    [XMLSkinElement("ondown")] protected int _downControlId = 0;
+    [XMLSkinElement("onleft")] protected string _leftControl = ""; //Changed to string type for properties
+    [XMLSkinElement("onright")] protected string _rightControl = "";
+    [XMLSkinElement("onup")] protected string _upControl = "";
+    [XMLSkinElement("ondown")] protected string _downControl = "";
     // keepLook provides for the implementing control to maintain it's focused render look, if desired, based on where focus is moving.
     [XMLSkin("onleft", "keepLook")] protected bool _keepLookOnLeft = false;
     [XMLSkin("onright", "keepLook")] protected bool _keepLookOnRight = false;
@@ -352,16 +352,16 @@ namespace MediaPortal.GUI.Library
             switch (action.wID)
             {
               case Action.ActionType.ACTION_MOVE_DOWN:
-                controlId = _downControlId;
+                controlId = NavigateDown;
                 break;
               case Action.ActionType.ACTION_MOVE_UP:
-                controlId = _upControlId;
+                controlId = NavigateUp;
                 break;
               case Action.ActionType.ACTION_MOVE_LEFT:
-                controlId = _leftControlId;
+                controlId = NavigateLeft;
                 break;
               case Action.ActionType.ACTION_MOVE_RIGHT:
-                controlId = _rightControlId;
+                controlId = NavigateRight;
                 break;
             }
 
@@ -547,16 +547,16 @@ namespace MediaPortal.GUI.Library
               switch ((Action.ActionType)message.Param1)
               {
                 case Action.ActionType.ACTION_MOVE_DOWN:
-                  controlId = _downControlId;
+                  controlId = NavigateDown;
                   break;
                 case Action.ActionType.ACTION_MOVE_UP:
-                  controlId = _upControlId;
+                  controlId = NavigateUp;
                   break;
                 case Action.ActionType.ACTION_MOVE_LEFT:
-                  controlId = _leftControlId;
+                  controlId = NavigateLeft;
                   break;
                 case Action.ActionType.ACTION_MOVE_RIGHT:
-                  controlId = _rightControlId;
+                  controlId = NavigateRight;
                   break;
               }
 
@@ -861,34 +861,126 @@ namespace MediaPortal.GUI.Library
     /// <param name="dwRight">The control right to this control.</param>
     public virtual void SetNavigation(int dwUp, int dwDown, int dwLeft, int dwRight)
     {
-      _leftControlId = dwLeft;
-      _rightControlId = dwRight;
-      _upControlId = dwUp;
-      _downControlId = dwDown;
+      _leftControl = string.Format("{0}",dwLeft);
+      _rightControl = string.Format("{0}",dwRight);
+      _upControl = string.Format("{0}",dwUp);
+      _downControl = string.Format("{0}",dwDown);
     }
 
     public virtual int NavigateUp
     {
-      get { return _upControlId; }
-      set { _upControlId = value; }
+      get
+      {
+        int r = 0;
+        if (int.TryParse(_upControl, out r))
+        {
+          return r;
+        }
+        else
+        {
+          string parsed = GUIPropertyManager.Parse(_upControl);
+          if (int.TryParse(parsed, out r))
+          {
+            return r;
+          }
+          else
+          {
+            if (_upControl.Length > 0)
+            {
+              Log.Debug("GUIControl.NavigateUp: Tried to use parsed string, original {0}, parsed {1}", _upControl, parsed);
+            }
+            return 0;
+          }
+        }
+      }
+      set { _upControl = string.Format("{0}",value); }
     }
 
     public virtual int NavigateDown
     {
-      get { return _downControlId; }
-      set { _downControlId = value; }
+      get
+      {
+        int r = 0;
+        if (int.TryParse(_downControl, out r))
+        {
+          return r;
+        }
+        else
+        {
+          string parsed = GUIPropertyManager.Parse(_downControl);
+          if (int.TryParse(parsed, out r))
+          {
+            return r;
+          }
+          else
+          {
+            if (_downControl.Length > 0)
+            {
+              Log.Debug("GUIControl.NavigateDown: Tried to use parsed string, original {0}, parsed {1}", _downControl, parsed);
+            }
+            return 0;
+          }
+        }
+      }
+      set { _downControl = string.Format("{0}", value); }
     }
 
     public virtual int NavigateLeft
     {
-      get { return _leftControlId; }
-      set { _leftControlId = value; }
+      get
+      {
+        int r = 0;
+        if (int.TryParse(_leftControl, out r))
+        {
+          return r;
+        }
+        else
+        {
+          string parsed = GUIPropertyManager.Parse(_leftControl);
+          if (int.TryParse(parsed, out r))
+          {
+            return r;
+          }
+          else
+          {
+            if (_leftControl.Length > 0)
+            {
+              Log.Debug("GUIControl.NavigateLeft: Tried to use parsed string, original {0}, parsed {1}", _leftControl, parsed);
+            }
+            return 0;
+          }
+        }
+      }
+      set { _leftControl = string.Format("{0}", value); }
     }
 
     public virtual int NavigateRight
     {
-      get { return _rightControlId; }
-      set { _rightControlId = value; }
+      get
+      {
+        int r = 0;
+        if (int.TryParse(_rightControl, out r))
+        {
+          return r;
+        }
+        else
+        {
+          string parsed = GUIPropertyManager.Parse(_rightControl);
+          if (int.TryParse(parsed, out r))
+          {
+            return r;
+          }
+          else
+          {
+            if (_rightControl.Length > 0)
+            {
+              Log.Debug("GUIControl.NavigateRight: Tried to use parsed string, original {0}, parsed {1}", _rightControl, parsed);
+            }
+            return 0;
+          }
+        }
+      }
+      set { _rightControl = string.Format("{0}", value); }
     }
 
     /// <summary>
