@@ -122,21 +122,23 @@ void CLibBlurayWrapper::StaticOverlayProc(void *this_gen, const BD_OVERLAY * con
 
 bool CLibBlurayWrapper::Initialize()
 {
-  TCHAR szDirectory[MAX_PATH] = "";
-  TCHAR szPath[MAX_PATH] = "";
+  USES_CONVERSION;
+
+  TCHAR szDirectory[MAX_PATH] = _T("");
+  TCHAR szPath[MAX_PATH] = _T("");
   GetModuleFileName(NULL, szPath, sizeof(szPath) - 1);
 
-  strncpy(szDirectory, szPath, strrchr(szPath, '\\') - szPath);
-  szDirectory[strlen(szDirectory)] = '\0';
+  _tcsncpy(szDirectory, szPath, _tcsrchr(szPath, '\\') - szPath);
+  szDirectory[_tcslen(szDirectory)] = '\0';
 
-  wsprintf(szDirectory,"%s\\bluray.dll", szDirectory);	
+  _stprintf_s(szDirectory, _T("%s\\bluray.dll"), szDirectory);
   LogDebug("CLibBlurayWrapper - Load bluray: %s", szDirectory);
   m_hDLL = LoadLibrary(szDirectory);
 
   if (!m_hDLL)
   {
     LogDebug("Failed to load the DLL from application exe path, trying c:\\");
-    m_hDLL = LoadLibrary("c:\\bluray.dll");
+    m_hDLL = LoadLibrary(_T("c:\\bluray.dll"));
   }
 
   if (!m_hDLL)

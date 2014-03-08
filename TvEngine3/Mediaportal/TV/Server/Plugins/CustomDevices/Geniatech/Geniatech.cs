@@ -23,6 +23,7 @@ using System.Runtime.InteropServices;
 using DirectShowLib;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
@@ -33,7 +34,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Geniatech
   /// <summary>
   /// A class for handling DiSEqC and DVB-S2 tuning for Geniatech tuners.
   /// </summary>
-  public class Geniatech : Conexant.Conexant, IPowerDevice
+  public class Geniatech : BaseCustomDevice, IDiseqcDevice, IPowerDevice
   {
     #region enums
 
@@ -95,6 +96,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Geniatech
 
     #region constants
 
+    private static readonly Guid BDA_EXTENSION_PROPERTY_SET = new Guid(0xfaa8f3e5, 0x31d4, 0x4e41, 0x88, 0xef, 0xd9, 0xeb, 0x71, 0x6f, 0x6e, 0xc9);
+
+    private const int INSTANCE_SIZE = 32;   // The size of a property instance (KSP_NODE) parameter.
     private static readonly int NBC_PARAMS_SIZE = Marshal.SizeOf(typeof(NbcParams));    // 8
     private static readonly int PARAM_BUFFER_SIZE = NBC_PARAMS_SIZE;
 
@@ -103,6 +107,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Geniatech
     #region variables
 
     private bool _isGeniatech = false;
+    private Conexant.Conexant _conexantInterface = null;
+    private IKsPropertySet _propertySet = null;
+    private IntPtr _instanceBuffer = IntPtr.Zero;
     private IntPtr _paramBuffer = IntPtr.Zero;
 
     #endregion
@@ -110,26 +117,15 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Geniatech
     #region ICustomDevice members
 
     /// <summary>
-    /// The loading priority for this extension.
-    /// </summary>
-    public override byte Priority
-    {
-      get
-      {
-        return 50;
-      }
-    }
-
-    /// <summary>
     /// Attempt to initialise the extension-specific interfaces used by the class. If
     /// initialisation fails, the <see ref="ICustomDevice"/> instance should be disposed
     /// immediately.
     /// </summary>
-    /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
+    /// <param name="tunerExternalId">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
     /// <param name="context">Context required to initialise the interface.</param>
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
-    public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
+    public override bool Initialise(string tunerExternalId, CardType tunerType, object context)
     {
       this.LogDebug("Geniatech: initialising");
 
@@ -139,15 +135,23 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Geniatech
         return true;
       }
 
-      bool result = base.Initialise(tunerExternalIdentifier, tunerType, context);
-      if (!result)
+      IBaseFilter tunerFilter = context as IBaseFilter;
+      if (tunerFilter == null)
+      {
+        this.LogDebug("Geniatech: context is not a filter");
+        return false;
+      }
+
+      _conexantInterface = new Conexant.Conexant();
+      if (!_conexantInterface.Initialise(tunerExternalId, tunerType, context))
       {
         this.LogDebug("Geniatech: base Conexant interface not supported");
         return false;
       }
+      _propertySet = DsFindPin.ByDirection(tunerFilter, PinDirection.Input, 0) as IKsPropertySet;
 
       KSPropertySupport support;
-      int hr = _propertySet.QuerySupported(_propertySetGuid, (int)BdaExtensionProperty.NbcParams, out support);
+      int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.NbcParams, out support);
       if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Set))
       {
         this.LogDebug("Geniatech: NBC parameter property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
@@ -156,6 +160,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Geniatech
 
       this.LogInfo("Geniatech: extension supported");
       _isGeniatech = true;
+      _instanceBuffer = Marshal.AllocCoTaskMem(INSTANCE_SIZE);
       _paramBuffer = Marshal.AllocCoTaskMem(PARAM_BUFFER_SIZE);
       return true;
     }
@@ -227,7 +232,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Geniatech
       this.LogDebug("  roll-off   = {0}", nbcParams.RollOff);
 
       Marshal.StructureToPtr(nbcParams, _paramBuffer, true);
-      int hr = _propertySet.Set(_propertySetGuid, (int)BdaExtensionProperty.NbcParams,
+      int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.NbcParams,
         _instanceBuffer, INSTANCE_SIZE,
         _paramBuffer, NBC_PARAMS_SIZE
       );
@@ -259,7 +264,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Geniatech
       }
 
       KSPropertySupport support;
-      int hr = _propertySet.QuerySupported(_propertySetGuid, (int)BdaExtensionProperty.LnbPower, out support);
+      int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.LnbPower, out support);
       if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Set))
       {
         this.LogDebug("Geniatech: LNB power property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
@@ -273,7 +278,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Geniatech
       {
         Marshal.WriteInt32(_paramBuffer, 0, 0);
       }
-      hr = _propertySet.Set(_propertySetGuid, (int)BdaExtensionProperty.LnbPower,
+      hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.LnbPower,
         _instanceBuffer, INSTANCE_SIZE,
         _paramBuffer, sizeof(int)
       );
@@ -289,6 +294,56 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Geniatech
 
     #endregion
 
+    #region IDiseqcDevice members
+
+    /// <summary>
+    /// Control whether tone/data burst and 22 kHz legacy tone are used.
+    /// </summary>
+    /// <param name="toneBurstState">The tone/data burst state.</param>
+    /// <param name="tone22kState">The 22 kHz legacy tone state.</param>
+    /// <returns><c>true</c> if the tone state is set successfully, otherwise <c>false</c></returns>
+    public bool SetToneState(ToneBurst toneBurstState, Tone22k tone22kState)
+    {
+      if (_conexantInterface != null)
+      {
+        return _conexantInterface.SetToneState(toneBurstState, tone22kState);
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// Send an arbitrary DiSEqC command.
+    /// </summary>
+    /// <param name="command">The command to send.</param>
+    /// <returns><c>true</c> if the command is sent successfully, otherwise <c>false</c></returns>
+    public bool SendDiseqcCommand(byte[] command)
+    {
+      if (_conexantInterface != null)
+      {
+        return _conexantInterface.SendDiseqcCommand(command);
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// Retrieve the response to a previously sent DiSEqC command (or alternatively, check for a command
+    /// intended for this tuner).
+    /// </summary>
+    /// <param name="response">The response (or command).</param>
+    /// <returns><c>true</c> if the response is read successfully, otherwise <c>false</c></returns>
+    public bool ReadDiseqcResponse(out byte[] response)
+    {
+      if (_conexantInterface != null)
+      {
+        return _conexantInterface.ReadDiseqcResponse(out response);
+      }
+      // Not implemented.
+      response = null;
+      return false;
+    }
+
+    #endregion
+
     #region IDisposable member
 
     /// <summary>
@@ -296,12 +351,21 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Geniatech
     /// </summary>
     public override void Dispose()
     {
-      base.Dispose();
-
+      Release.ComObject("Geniatech property set", ref _propertySet);
+      if (_instanceBuffer != IntPtr.Zero)
+      {
+        Marshal.FreeCoTaskMem(_instanceBuffer);
+        _instanceBuffer = IntPtr.Zero;
+      }
       if (_paramBuffer != IntPtr.Zero)
       {
         Marshal.FreeCoTaskMem(_paramBuffer);
         _paramBuffer = IntPtr.Zero;
+      }
+      if (_conexantInterface != null)
+      {
+        _conexantInterface.Dispose();
+        _conexantInterface = null;
       }
       _isGeniatech = false;
     }

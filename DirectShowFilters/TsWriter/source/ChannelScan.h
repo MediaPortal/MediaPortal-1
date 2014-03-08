@@ -38,7 +38,7 @@ using namespace Mediaportal;
 // Enum specifying possible broadcast standards or transport stream types.
 enum BroadcastStandard
 {
-	BroadcastStandardNotSet = -1,
+  BroadcastStandardNotSet = -1,
   Dvb = 0,
   Atsc = 1,
   Scte = 2,   // North American cable

@@ -26,8 +26,8 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
 {
   /// <summary>
-  /// A class which implements TV and radio service scanning for ATSC and annex-B (North American cable)
-  /// tuners with BDA drivers.
+  /// A class which implements TV and radio service scanning for ATSC and SCTE (ITU-T annex B North
+  /// American cable) tuners with BDA drivers.
   /// </summary>
   public class ScannerMpeg2TsAtsc : ScannerMpeg2TsBase
   {

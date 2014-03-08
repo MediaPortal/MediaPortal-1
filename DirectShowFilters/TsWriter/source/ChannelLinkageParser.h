@@ -1,6 +1,6 @@
 /* 
- *	Copyright (C) 2006-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
+ *  Copyright (C) 2006-2008 Team MediaPortal
+ *  http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -36,26 +36,26 @@ using namespace Mediaportal;
 
 typedef struct stLinkedChannel
 {
-	int     network_id;
-	int     transport_id;
-	int     service_id;
-	string name;
+  int     network_id;
+  int     transport_id;
+  int     service_id;
+  string name;
 }LinkedChannel;
 
 typedef struct stPortalChannel
 {
-	bool    allSectionsReceived;
-	int     last_section_number;
-	int     original_network_id;
-	int     transport_id;
-	int     service_id;
+  bool    allSectionsReceived;
+  int     last_section_number;
+  int     original_network_id;
+  int     transport_id;
+  int     service_id;
 
-	vector<LinkedChannel> m_linkedChannels;
+  vector<LinkedChannel> m_linkedChannels;
 
-	typedef vector<LinkedChannel>::iterator ilinkedChannels;
+  typedef vector<LinkedChannel>::iterator ilinkedChannels;
 
-	map<int,bool> mapSectionsReceived;
-	typedef map<int,bool>::iterator imapSectionsReceived;
+  map<int,bool> mapSectionsReceived;
+  typedef map<int,bool>::iterator imapSectionsReceived;
 }PortalChannel;
 
 class CChannelLinkageParser :  public ISectionCallback, public CDvbUtil
@@ -78,20 +78,20 @@ public:
 
 
 private:
-		bool GetChannelByindex(ULONG channel, PortalChannel& portalChannel);
-		void DecodeLinkage(byte* buf, int len);
+    bool GetChannelByindex(ULONG channel, PortalChannel& portalChannel);
+    void DecodeLinkage(byte* buf, int len);
 
-		CCriticalSection m_section;
+    CCriticalSection m_section;
     CTsHeader             m_tsHeader;
 
-		CSectionDecoder* sectionDecoder;
-		bool	m_bScanning;
-		bool	m_bScanningDone;
-		time_t  m_scanTimeout;
-		map<unsigned __int64,PortalChannel> m_mapChannels;
-		typedef map<unsigned __int64,PortalChannel>::iterator imapChannels;
-		long	   m_prevChannelIndex;
-		long	   m_prevLinkIndex;
-		PortalChannel m_prevChannel;
-		LinkedChannel   m_prevLink;
+    CSectionDecoder* sectionDecoder;
+    bool  m_bScanning;
+    bool  m_bScanningDone;
+    time_t  m_scanTimeout;
+    map<unsigned __int64,PortalChannel> m_mapChannels;
+    typedef map<unsigned __int64,PortalChannel>::iterator imapChannels;
+    long     m_prevChannelIndex;
+    long     m_prevLinkIndex;
+    PortalChannel m_prevChannel;
+    LinkedChannel   m_prevLink;
 };

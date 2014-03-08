@@ -1,6 +1,6 @@
 /* 
- *	Copyright (C) 2006-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
+ *  Copyright (C) 2006-2008 Team MediaPortal
+ *  http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -24,7 +24,6 @@
 #include "EncryptionAnalyser.h"
 #include "PmtGrabber.h"
 #include "DiskRecorder.h"
-#include "TeletextGrabber.h"
 #include "CaGrabber.h"
 
 // {C564CEB9-FC77-4776-8CB8-96DD87624161}
@@ -32,16 +31,15 @@
 class CTsChannel
 {
 public:
-	CTsChannel(LPUNKNOWN pUnk, HRESULT *phr, int id);
-	virtual ~CTsChannel(void);
+  CTsChannel(LPUNKNOWN pUnk, HRESULT *phr, int id);
+  virtual ~CTsChannel(void);
   void OnTsPacket(byte* tsPacket);
-	int Handle() { return m_id;}
+  int Handle() { return m_id;}
 
-	CEncryptionAnalyser* m_pEncryptionAnalyser;
-	CPmtGrabber*		m_pPmtGrabber;
-	CDiskRecorder*	m_pRecorder;
-	CDiskRecorder*	m_pTimeShifting;
-	CTeletextGrabber*	m_pTeletextGrabber;
+  CEncryptionAnalyser* m_pEncryptionAnalyser;
+  CPmtGrabber*    m_pPmtGrabber;
+  CDiskRecorder*  m_pRecorder;
+  CDiskRecorder*  m_pTimeShifting;
   CCaGrabber*     m_pCaGrabber;
-	int m_id;
+  int m_id;
 };

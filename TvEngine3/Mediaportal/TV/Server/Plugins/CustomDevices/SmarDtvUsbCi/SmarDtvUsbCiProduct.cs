@@ -36,8 +36,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
     // if property sets were used, however the properties are not documented and don't appear to be a one-to-one
     // mapping to functions.
 
-    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-      Guid("a934e61e-2e24-4145-b45b-3e71830048f7"),
+    [Guid("a934e61e-2e24-4145-b45b-3e71830048f7"),
       InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     private interface ITerraTecCinergyCiUsb
     {
@@ -89,8 +88,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
       Int32 USB2CI_GetVersion([In] IntPtr versionInfo);
     }
 
-    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-      Guid("dd5a9b44-348a-4607-bf72-cfd8239e4432"),
+    [Guid("dd5a9b44-348a-4607-bf72-cfd8239e4432"),
       InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     private interface IHauppaugeWinTvCi
     {

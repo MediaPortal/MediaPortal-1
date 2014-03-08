@@ -44,10 +44,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
     #region COM interface imports
 
     [ComImport, Guid("72e6dB8f-9f33-4d1c-a37c-de8148c0be74")]
-    private class MDAPIFilter { };
+    private class MDAPIFilter
+    {
+    }
 
-    [ComVisible(true), ComImport,
-      Guid("c3f5aa0d-c475-401b-8fc9-e33fb749cd85"),
+    [Guid("c3f5aa0d-c475-401b-8fc9-e33fb749cd85"),
       InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     private interface IChangeChannel
     {
@@ -68,8 +69,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
       int SetPluginsDirectory([MarshalAs(UnmanagedType.LPWStr)] string directory);
     }
 
-    [ComVisible(true), ComImport,
-      Guid("e98b70ee-f5a1-4f46-b8b8-a1324ba92f5f"),
+    [Guid("e98b70ee-f5a1-4f46-b8b8-a1324ba92f5f"),
       InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     private interface IChangeChannel_Ex
     {
@@ -80,8 +80,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
       int ChangeChannelTP82_Ex(IntPtr program82, IntPtr pidsToDecode);
     }
 
-    [ComVisible(true), ComImport,
-      Guid("D0EACAB1-3211-414B-B58B-E1157AC4D93A"),
+    [Guid("D0EACAB1-3211-414B-B58B-E1157AC4D93A"),
       InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     private interface IChangeChannel_Clear
     {
@@ -839,29 +838,30 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
     /// initialisation fails, the <see ref="ICustomDevice"/> instance should be disposed
     /// immediately.
     /// </summary>
-    /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
+    /// <param name="tunerExternalId">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
     /// <param name="context">Context required to initialise the interface.</param>
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
-    public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
+    public override bool Initialise(string tunerExternalId, CardType tunerType, object context)
     {
       this.LogDebug("MD plugin: initialising");
 
-      IBaseFilter tunerFilter = context as IBaseFilter;
-      if (tunerFilter == null)
-      {
-        this.LogDebug("MD plugin: tuner filter is null");
-        return false;
-      }
-      if (string.IsNullOrEmpty(tunerExternalIdentifier))
-      {
-        this.LogDebug("MD plugin: tuner external identifier is not set");
-        return false;
-      }
       if (_isMdPlugin)
       {
         this.LogWarn("MD plugin: extension already initialised");
         return true;
+      }
+
+      IBaseFilter tunerFilter = context as IBaseFilter;
+      if (tunerFilter == null)
+      {
+        this.LogDebug("MD plugin: context is not a filter");
+        return false;
+      }
+      if (string.IsNullOrEmpty(tunerExternalId))
+      {
+        this.LogDebug("MD plugin: tuner external identifier is not set");
+        return false;
       }
 
       // If there is no MD configuration folder then there is no softCAM plugin.
@@ -893,7 +893,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
         XmlNode tunerNode = null;
         if (File.Exists(configFile))
         {
-          this.LogDebug("MD plugin: searching for configuration, external identifier = {0}", tunerExternalIdentifier);
+          this.LogDebug("MD plugin: searching for configuration, external identifier = {0}", tunerExternalId);
           doc.Load(configFile);
           rootNode = doc.SelectSingleNode("/cards");
           if (rootNode != null)
@@ -904,7 +904,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
               this.LogDebug("MD plugin: found {0} configuration(s)", tunerList.Count);
               foreach (XmlNode node in tunerList)
               {
-                if (node.Attributes["DevicePath"].Value.Equals(tunerExternalIdentifier))
+                if (node.Attributes["DevicePath"].Value.Equals(tunerExternalId))
                 {
                   // We found the configuration for the tuner.
                   this.LogDebug("MD plugin: found matching configuration");
@@ -931,7 +931,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
 
           // Used to identify the tuner.
           attr = doc.CreateAttribute("DevicePath");
-          attr.InnerText = tunerExternalIdentifier;
+          attr.InnerText = tunerExternalId;
           tunerNode.Attributes.Append(attr);
 
           // Default: enable one instance of the plugin.
@@ -1146,7 +1146,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
     /// that any necessary hardware (such as a CI slot) is connected.
     /// </summary>
     /// <returns><c>true</c> if the interface is successfully opened, otherwise <c>false</c></returns>
-    public bool OpenInterface()
+    public bool OpenConditionalAccessInterface()
     {
       this.LogDebug("MD plugin: open conditional access interface");
 
@@ -1178,7 +1178,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
     /// Close the conditional access interface.
     /// </summary>
     /// <returns><c>true</c> if the interface is successfully closed, otherwise <c>false</c></returns>
-    public bool CloseInterface()
+    public bool CloseConditionalAccessInterface()
     {
       this.LogDebug("MD plugin: close conditional access interface");
 
@@ -1204,7 +1204,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
     /// <param name="resetTuner">This parameter will be set to <c>true</c> if the tuner must be reset
     ///   for the interface to be completely and successfully reset.</param>
     /// <returns><c>true</c> if the interface is successfully reset, otherwise <c>false</c></returns>
-    public bool ResetInterface(out bool resetTuner)
+    public bool ResetConditionalAccessInterface(out bool resetTuner)
     {
       this.LogDebug("MD plugin: reset conditional access interface");
 
@@ -1217,7 +1217,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
     /// Determine whether the conditional access interface is ready to receive commands.
     /// </summary>
     /// <returns><c>true</c> if the interface is ready, otherwise <c>false</c></returns>
-    public bool IsInterfaceReady()
+    public bool IsConditionalAccessInterfaceReady()
     {
       this.LogDebug("MD plugin: is conditional access interface ready");
 
@@ -1243,7 +1243,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
     /// <param name="pmt">The program map table for the service.</param>
     /// <param name="cat">The conditional access table for the service.</param>
     /// <returns><c>true</c> if the command is successfully sent, otherwise <c>false</c></returns>
-    public bool SendCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, Pmt pmt, Cat cat)
+    public bool SendConditionalAccessCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, Pmt pmt, Cat cat)
     {
       this.LogDebug("MD plugin: send conditional access command, list action = {0}, command = {1}", listAction, command);
 
@@ -1382,8 +1382,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
       //programToDecode.ServiceType = (byte)(dvbChannel.IsTv ? DvbServiceType.DigitalTelevision : DvbServiceType.DigitalRadio); //TODO look if needed
       programToDecode.ServiceType = (byte)DvbServiceType.DigitalTelevision;
 
-      this.LogDebug("MD plugin: TSID = {0} (0x{0:x}), SID = {1} (0x{1:x}), PMT PID = {2} (0x{2:x}), PCR PID = {3} (0x{3:x}), service type = {4}, " +
-                        "video PID = {5} (0x{5:x}), audio PID = {6} (0x{6:x}), AC3 PID = {7} (0x{7:x}), teletext PID = {8} (0x{8:x})",
+      this.LogDebug("MD plugin: TSID = {0}, service ID = {1}, PMT PID = {2}, PCR PID = {3}, service type = {4}, " +
+                        "video PID = {5}, audio PID = {6}, AC3 PID = {7}, teletext PID = {8}",
           programToDecode.TransportStreamId, programToDecode.ServiceId, programToDecode.PmtPid, programToDecode.PcrPid,
           programToDecode.ServiceType, programToDecode.VideoPid, programToDecode.AudioPid, programToDecode.Ac3AudioPid, programToDecode.TeletextPid
       );
@@ -1391,13 +1391,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
       programToDecode.CaSystemCount = RegisterEcmAndEmmPids(pmt, cat, ref programToDecode);
       SetPreferredCaSystemIndex(ref programToDecode);
 
-      this.LogDebug("MD plugin: ECM PID = {0} (0x{0:x}), CA system count = {1}, CA index = {2}",
+      this.LogDebug("MD plugin: ECM PID = {0}, CA system count = {1}, CA index = {2}",
                     programToDecode.EcmPid, programToDecode.CaSystemCount, programToDecode.CaId
       );
       for (byte i = 0; i < programToDecode.CaSystemCount; i++)
       {
         CaSystem82 caSystem = programToDecode.CaSystems[i];
-        this.LogDebug("MD plugin: #{0} CA type = {1} (0x{1:x}), ECM PID = {2} (0x{2:x}), EMM PID = {3} (0x{3:x}), provider = {4} (0x{4:x})",
+        this.LogDebug("MD plugin: #{0} CA type = 0x{1:x4}, ECM PID = {2}, EMM PID = {3}, provider = 0x{4:x4}",
                       i + 1, caSystem.CaType, caSystem.EcmPid, caSystem.EmmPid, caSystem.ProviderId
         );
       }
@@ -1446,7 +1446,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
     /// </summary>
     public override void Dispose()
     {
-      CloseInterface();
+      if (_isMdPlugin)
+      {
+        CloseConditionalAccessInterface();
+      }
 
       if (_graph != null)
       {

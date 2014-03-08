@@ -39,7 +39,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
     /// </summary>
     /// <param name="mmi">The MMI data.</param>
     /// <param name="callBacks">The call back delegate.</param>
-    public static void HandleMmiData(byte[] mmi, ref IConditionalAccessMenuCallBacks callBacks)
+    public static void HandleMmiData(byte[] mmi, IConditionalAccessMenuCallBacks callBacks)
     {
       Log.Debug("DVB MMI: handle MMI data");
       if (mmi == null || mmi.Length < 4)
@@ -65,18 +65,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
       if (tag == MmiTag.CloseMmi)
       {
         // The CAM is requesting that we close the menu.
-        HandleClose(mmi, offset, apduLength, ref callBacks);
+        HandleClose(mmi, offset, apduLength, callBacks);
       }
       else if (tag == MmiTag.Enquiry)
       {
         // The CAM wants input from the user.
-        HandleEnquiry(mmi, offset, apduLength, ref callBacks);
+        HandleEnquiry(mmi, offset, apduLength, callBacks);
       }
       else if (tag == MmiTag.ListLast || tag == MmiTag.MenuLast ||
           tag == MmiTag.MenuMore || tag == MmiTag.ListMore)
       {
         // The CAM is providing a menu or list to present to the user.
-        HandleMenu(mmi, offset, apduLength, ref callBacks);
+        HandleMenu(mmi, offset, apduLength, callBacks);
       }
       else
       {
@@ -85,7 +85,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
       }
     }
 
-    private static void HandleClose(byte[] apdu, int offset, int apduLength, ref IConditionalAccessMenuCallBacks callBacks)
+    private static void HandleClose(byte[] apdu, int offset, int apduLength, IConditionalAccessMenuCallBacks callBacks)
     {
       Log.Debug("DVB MMI: handle close");
 
@@ -120,7 +120,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
       }
     }
 
-    private static void HandleEnquiry(byte[] apdu, int offset, int apduLength, ref IConditionalAccessMenuCallBacks callBacks)
+    private static void HandleEnquiry(byte[] apdu, int offset, int apduLength, IConditionalAccessMenuCallBacks callBacks)
     {
       Log.Debug("DVB MMI: handle enquiry");
 
@@ -148,7 +148,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
       }
     }
 
-    private static void HandleMenu(byte[] apdu, int offset, int apduLength, ref IConditionalAccessMenuCallBacks callBacks)
+    private static void HandleMenu(byte[] apdu, int offset, int apduLength, IConditionalAccessMenuCallBacks callBacks)
     {
       Log.Debug("DVB MMI: handle menu");
 

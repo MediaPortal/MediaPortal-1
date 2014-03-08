@@ -317,7 +317,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         case ScanState.Initialized:
           // common checks
           
-          Card card = ServiceAgents.Instance.CardServiceAgent.GetCardByDevicePath(ServiceAgents.Instance.ControllerServiceAgent.CardDevice(_cardNumber));
+          Card card = ServiceAgents.Instance.CardServiceAgent.GetCard(_cardNumber);
           if (card.Enabled == false)
           {
             MessageBox.Show(this, "Tuner is disabled. Please enable the tuner before scanning.");
@@ -452,7 +452,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
         SetButtonState();
         
-        Card card = ServiceAgents.Instance.CardServiceAgent.GetCardByDevicePath(ServiceAgents.Instance.ControllerServiceAgent.CardDevice(_cardNumber));
+        Card card = ServiceAgents.Instance.CardServiceAgent.GetCard(_cardNumber);
 
         for (int index = 0; index < _dvbcChannels.Count; ++index)
         {

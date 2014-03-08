@@ -19,294 +19,310 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using DirectShowLib;
-using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
-using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
-namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
+namespace Mediaportal.TV.Server.TVLibrary.Implementations
 {
-  /// <summary>
-  /// Base classes for the ICodecAPI, IEncoderAPI and IVideoEncoder interfaces
-  /// </summary>
-  public abstract class BaseControl : IQuality
+  public class EncoderController : IQuality
   {
-
-
     #region variables
 
-    /// <summary>
-    /// Current Quality type
-    /// </summary>
-    protected QualityType _qualityType;
-
-    /// <summary>
-    /// Indicates if the encoder supports to set a bit rate mode
-    /// </summary>
-    protected bool _supported_BitRateMode;
-
-    /// <summary>
-    /// Indicates if the encoder supports to set a bit rate
-    /// </summary>
-    protected bool _supported_BitRate;
-
-    /// <summary>
-    /// Indicates if the encoder supports to set the peak bit rate mode
-    /// </summary>
-    protected bool _supported_PeakBitRate;
-
-    /// <summary>
-    /// The current bit rate mode
-    /// </summary>
-    protected VIDEOENCODER_BITRATE_MODE _bitRateMode;
+    private IList<IEncoder> _encoders = new List<IEncoder>();
+    private QualityType _bitRateProfile = QualityType.Custom;
+    private VIDEOENCODER_BITRATE_MODE _bitRateMode = VIDEOENCODER_BITRATE_MODE.ConstantBitRate;
 
     #endregion
+
+    public EncoderController(IList<ICustomDevice> tunerExtensions)
+    {
+      foreach (ICustomDevice extension in tunerExtensions)
+      {
+        IEncoder encoder = extension as IEncoder;
+        if (encoder != null)
+        {
+          _encoders.Add(encoder);
+        }
+      }
+    }
 
     #region IQuality Members
 
-    /// <summary>
-    /// use this method to set the quality of a recording
-    /// </summary>
-    public QualityType QualityType
-    {
-      get { return _qualityType; }
-      set
-      {
-        if (_supported_BitRate)
-        {
-          _qualityType = value;
-          ApplyQualityBitRate();
-        }
-      }
-    }
-
-    /// <summary>
-    /// Indicates if bit rate modes are supported
-    /// </summary>
-    /// <returns>true/false</returns>
     public bool SupportsBitRateModes()
     {
-      return _supported_BitRateMode;
+      // TODO the IQuality interface is annoying. It needs a complete redo... but that would be a
+      // lot of work due to the user interfaces in TV Server configuration and the TV plugin. We'll
+      // come back to this later.
+      return true;
     }
 
-    /// <summary>
-    /// Indicates if peak bit rate mode is supported
-    /// </summary>
-    /// <returns>true/false</returns>
     public bool SupportsPeakBitRateMode()
     {
-      return _supported_PeakBitRate;
+      // TODO
+      return true;
     }
 
-    /// <summary>
-    /// Indicates if bit rate control is supported
-    /// </summary>
-    /// <returns>true/false</returns>
     public bool SupportsBitRate()
     {
-      return _supported_BitRate;
+      // TODO
+      return true;
     }
 
-    /// <summary>
-    /// Gets/Sets the bit rate mode. Works only if this is supported
-    /// </summary>
-    public VIDEOENCODER_BITRATE_MODE BitRateMode
+    public QualityType QualityType
     {
-      get { return _bitRateMode; }
+      get
+      {
+        return _bitRateProfile;
+      }
       set
       {
-        if (_supported_BitRateMode)
+        bool success = false;
+        switch (value)
+        {
+          case QualityType.Custom:
+            // TODO read from database
+            //customValue.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("tuner" + _tunerId + "CustomBitRate", 50);
+            success = SetParameterByRange(PropSetID.ENCAPIPARAM_BitRate, 50);
+            break;
+          case QualityType.Portable:
+            success = SetParameterByRange(PropSetID.ENCAPIPARAM_BitRate, 20);
+            break;
+          case QualityType.Low:
+            success = SetParameterByRange(PropSetID.ENCAPIPARAM_BitRate, 33);
+            break;
+          case QualityType.Medium:
+            success = SetParameterByRange(PropSetID.ENCAPIPARAM_BitRate, 66);
+            break;
+          case QualityType.High:
+            success = SetParameterByRange(PropSetID.ENCAPIPARAM_BitRate, 100);
+            break;
+          default:
+            success = SetParameterByDefault(PropSetID.ENCAPIPARAM_BitRate);
+            break;
+        }
+        if (_bitRateMode == VIDEOENCODER_BITRATE_MODE.VariableBitRatePeak)
+        {
+          switch (value)
+          {
+            case QualityType.Custom:
+              // TODO read from database
+              //customValuePeak.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("tuner" + _tunerId + "CustomPeakBitRate", 75);
+              success |= SetParameterByRange(PropSetID.ENCAPIPARAM_PeakBitRate, 75);
+              break;
+            case QualityType.Portable:
+              success |= SetParameterByRange(PropSetID.ENCAPIPARAM_PeakBitRate, 45);
+              break;
+            case QualityType.Low:
+              success |= SetParameterByRange(PropSetID.ENCAPIPARAM_PeakBitRate, 55);
+              break;
+            case QualityType.Medium:
+              success |= SetParameterByRange(PropSetID.ENCAPIPARAM_PeakBitRate, 88);
+              break;
+            case QualityType.High:
+              success |= SetParameterByRange(PropSetID.ENCAPIPARAM_PeakBitRate, 100);
+              break;
+            default:
+              success |= SetParameterByDefault(PropSetID.ENCAPIPARAM_PeakBitRate);
+              break;
+          }
+        }
+        if (success)
+        {
+          _bitRateProfile = value;
+        }
+      }
+    }
+
+    public VIDEOENCODER_BITRATE_MODE BitRateMode
+    {
+      get
+      {
+        return _bitRateMode;
+      }
+      set
+      {
+        int newMode = (int)value;
+        object newModeObj = newMode;
+        Marshal.WriteInt32(newModeObj, 0, newMode);
+        if (SetParameterByValues(PropSetID.ENCAPIPARAM_BitRateMode, newModeObj))
         {
           _bitRateMode = value;
-          ApplyQualityBitRateMode();
         }
       }
     }
 
     #endregion
 
-    #region private methods
-
-    /// <summary>
-    /// Calculate the bitrate for the specified quality percentage
-    /// </summary>
-    private static int CalcQualityBitrate(double quality, int valMin, int valMax, int valStepDelta)
+    private bool SetParameterByValues(Guid parameter, object value)
     {
-      if (quality > 100)
-        quality = 100;
-      if (quality < 0)
-        quality = 0;
-
-      if (quality == 100)
-        return valMax;
-      if (quality == 0)
-        return valMin;
-      int delta = valMax - valMin;
-      int targetquality = valMin + (int)(delta * quality / 100);
-
-      int newQuality = valMin;
-      while (newQuality < targetquality)
-        newQuality += valStepDelta;
-      return newQuality;
-    }
-
-    /// <summary>
-    /// Set the quality
-    /// </summary>
-    public void ApplyQuality()
-    {
-      ApplyQualityBitRateMode();
-      ApplyQualityBitRate();
-    }
-
-    /// <summary>
-    /// Set the quality (bit rate mode)
-    /// </summary>
-    private void ApplyQualityBitRateMode()
-    {
-      try
+      this.LogDebug("encoder: set parameter {0} to {1}", parameter, value);
+      bool success = false;
+      foreach (IEncoder encoder in _encoders)
       {
-        // Set new bit rate mode
-        if (_supported_BitRateMode)
+        this.LogDebug("  try encoder {0}", encoder.Name);
+        if (!encoder.IsParameterSupported(parameter))
         {
-          this.LogInfo("analog: Encoder mode setting to {0}", _bitRateMode);
-          int newMode = (int)_bitRateMode;
-          object newBitRateModeO = newMode;
-          Marshal.WriteInt32(newBitRateModeO, 0, newMode);
-          if (SetValue(PropSetID.ENCAPIPARAM_BitRateMode, ref newBitRateModeO))
+          this.LogDebug("    parameter not supported");
+          continue;
+        }
+
+        bool isValueSupported = false;
+        object[] supportedValues;
+        if (encoder.GetParameterValues(parameter, out supportedValues))
+        {
+          foreach (object val in supportedValues)
           {
-            this.LogInfo("analog: Encoder mode set to {0}", _bitRateMode);
+            if (val == value)
+            {
+              this.LogDebug("    value supported");
+              isValueSupported = true;
+              break;
+            }
+          }
+        }
+        else
+        {
+          this.LogDebug("    assume value supported");
+          isValueSupported = true;  // assume => force try
+        }
+
+        if (isValueSupported)
+        {
+          if (encoder.SetParameterValue(parameter, value))
+          {
+            this.LogDebug("    success!");
+            success = true;
           }
           else
           {
-            this.LogDebug("analog: Encoder mode setTo FAILresult");
+            this.LogWarn("encoder: failed to set parameter {0} to {1} for encoder {2}", parameter, value, encoder.Name);
           }
         }
+        else
+        {
+          this.LogDebug("    value not supported");
+        }
       }
-      catch (Exception ex)
-      {
-        this.LogError(ex, "analog: BitRate Mode ERROR");
-      }
+      return success;
     }
 
-    /// <summary>
-    /// Set the quality (bit rte)
-    /// </summary>
-    private void ApplyQualityBitRate()
+    private bool SetParameterByRange(Guid parameter, int valuePercent)
     {
-      try
+      this.LogDebug("encoder: set parameter {0} to {1}%", parameter, valuePercent);
+      bool success = false;
+      foreach (IEncoder encoder in _encoders)
       {
-        if (_supported_BitRate)
+        this.LogDebug("  try encoder {0}", encoder.Name);
+        if (!encoder.IsParameterSupported(parameter))
         {
-          this.LogInfo("analog: Encoder BitRate setting to {0}", _qualityType);
-          object valueMin, valueMax, steppingDelta;
-          if (GetValueRange(PropSetID.ENCAPIPARAM_BitRate, out valueMin, out valueMax, out steppingDelta))
+          this.LogDebug("    parameter not supported");
+          continue;
+        }
+
+        object minimum;
+        object maximum;
+        object resolution;
+        if (!encoder.GetParameterRange(parameter, out minimum, out maximum, out resolution))
+        {
+          this.LogWarn("encoder: failed to get parameter {0} range for encoder {1}", parameter, encoder.Name);
+          continue;
+        }
+
+        // TODO non-int type parameters not supported, is this a problem?
+        int minimumValue = Marshal.ReadInt32(minimum, 0);
+        int maximumValue = Marshal.ReadInt32(maximum, 0);
+        int resolutionValue = Marshal.ReadInt32(resolution, 0);
+        this.LogDebug("    range, minimum = {0}, maximum = {1}, resolution = {2}", minimumValue, maximumValue, resolutionValue);
+
+        int value = minimumValue;
+        int rawValue = minimumValue;
+        if (valuePercent <= 0)
+        {
+          value = minimumValue;
+          rawValue = minimumValue;
+        }
+        else if (valuePercent >= 100)
+        {
+          value = maximumValue;
+          rawValue = maximumValue;
+        }
+        else
+        {
+          rawValue = minimumValue + (value * (maximumValue - minimumValue) / 100);
+          int currentQuanta = minimumValue;
+          while (rawValue > currentQuanta)
           {
-            int valMin = Marshal.ReadInt32(valueMin, 0);
-            int valMax = Marshal.ReadInt32(valueMax, 0);
-            int valStepDelta = Marshal.ReadInt32(steppingDelta, 0);
-
-            this.LogInfo("analog: Encoder BitRate Min {0:D} Max {1:D} Delta {2:D}", valMin, valMax, valStepDelta);
-
-            int newBitrate;
-
-            int qualityToSet = SettingsManagement.GetValue("tuner" + _cardId + "QualityCustomValue", 50);
-            this.LogInfo("analog: Encoder custom quality:{0}", qualityToSet);
-            newBitrate = CalcQualityBitrate(qualityToSet, valMin, valMax, valStepDelta);
-
-            object newQualityO = valueMin;
-            Marshal.WriteInt32(newQualityO, 0, newBitrate);
-            if (SetValue(PropSetID.ENCAPIPARAM_BitRate, ref newQualityO))
-            {
-              this.LogInfo("analog: Encoder BitRate set to {0:D}", newQualityO);
-            }
-            else
-            {
-              this.LogDebug("analog: Range SetEncoder(BitRate) FAILresult");
-            }
+            currentQuanta += resolutionValue;
+          }
+          int lowerQuanta = currentQuanta - resolutionValue;
+          if ((rawValue - lowerQuanta) < (currentQuanta - lowerQuanta))
+          {
+            value = lowerQuanta;
           }
           else
           {
-            this.LogDebug("analog: Range GetParameterRange(BitRate) FAILresult");
-          }
-
-          if (_bitRateMode == VIDEOENCODER_BITRATE_MODE.VariableBitRatePeak && _supported_PeakBitRate)
-          {
-            if (GetValueRange(PropSetID.ENCAPIPARAM_PeakBitRate, out valueMin, out valueMax, out steppingDelta))
+            if (currentQuanta > maximumValue)
             {
-              int valMin = Marshal.ReadInt32(valueMin, 0);
-              int valMax = Marshal.ReadInt32(valueMax, 0);
-              int valStepDelta = Marshal.ReadInt32(steppingDelta, 0);
-
-              this.LogInfo("analog: Encoder BitRatePeak Min {0:D} Max {1:D} Delta {2:D}", valMin, valMax, valStepDelta);
-
-              int newBitrate;
-
-              int qualityToSet = SettingsManagement.GetValue("tuner" + _cardId + "QualityCustomPeakValue", 75);
-              this.LogInfo("analog: Encoder custom quality:{0}", qualityToSet);
-              newBitrate = CalcQualityBitrate(qualityToSet, valMin, valMax, valStepDelta);
-
-              object newQualityO = valueMin;
-              Marshal.WriteInt32(newQualityO, 0, newBitrate);
-              if (SetValue(PropSetID.ENCAPIPARAM_PeakBitRate, ref newQualityO))
-              {
-                this.LogInfo("analog: Encoder BitRatePeak setTo {0:D}", newQualityO);
-              }
-              else
-              {
-                this.LogDebug("analog: Range SetEncoder(BitRatePeak) FAILresult");
-              }
+              value = maximumValue;
             }
             else
             {
-              this.LogDebug("analog: Range GetParameterRange(BitRatePeak) FAILresult");
+              value = currentQuanta;
             }
           }
         }
+        this.LogDebug("    raw value = {0}, quantised value = {1}", rawValue, value);
+        object valueObj = value;
+        Marshal.WriteInt32(valueObj, 0, value);
+        if (encoder.SetParameterValue(parameter, valueObj))
+        {
+          this.LogDebug("    success!");
+          success = true;
+        }
+        else
+        {
+          this.LogWarn("encoder: failed to set parameter {0} to {1} for encoder {2}", parameter, value, encoder.Name);
+        }
       }
-      catch (Exception ex)
-      {
-        this.LogError(ex, "analog: BitRate ERROR");
-      }
+      return success;
     }
 
-    #endregion
-
-    #region protected methods
-
-    /// <summary>
-    /// Checks the capabilities of the given encoder
-    /// </summary>
-    protected void CheckCapabilities()
+    private bool SetParameterByDefault(Guid parameter)
     {
-      try
+      this.LogDebug("encoder: set parameter {0} to default", parameter);
+      bool success = false;
+      foreach (IEncoder encoder in _encoders)
       {
-        // Can we set the encoding mode?
-        //ENCAPIPARAM_BITRATE_MODE 	Specifies the bit-rate mode, as a VIDEOENCODER_BITRATE_MODE enumeration value (32-bit signed long).
-        _supported_BitRateMode = IsSupported(PropSetID.ENCAPIPARAM_BitRateMode);
-        if (_supported_BitRateMode)
-          this.LogDebug("analog: Encoder supports ENCAPIPARAM_BitRateMode");
+        this.LogDebug("  try encoder {0}", encoder.Name);
+        if (!encoder.IsParameterSupported(parameter))
+        {
+          this.LogDebug("    parameter not supported");
+          continue;
+        }
 
-        // Can we specify the bitrate?
-        //ENCAPIPARAM_BITRATE 	Specifies the bit rate, in bits per second. In constant bit rate (CBR) mode, the value gives the constant bitrate. In either variable bit rate mode, it gives the average bit rate. The value is a 32-bit unsigned long.
-        _supported_BitRate = IsSupported(PropSetID.ENCAPIPARAM_BitRate);
-        if (_supported_BitRate)
-          this.LogDebug("analog: Encoder supports ENCAPIPARAM_BitRate");
+        object defaultValue;
+        if (!encoder.GetParameterDefaultValue(parameter, out defaultValue))
+        {
+          this.LogWarn("encoder: failed to get parameter {0} default value for encoder {1}", parameter, encoder.Name);
+          continue;
+        }
 
-        // Can we specify the peak bitrate for variable bit rate peak
-        //ENCAPIPARAM_PEAK_BITRATE 	Secifies the peak bit rate. This parameter is relevant only when ENCAPIPARAM_BITRATE_MODE has been set to VariableBitRatePeak.
-        _supported_PeakBitRate = IsSupported(PropSetID.ENCAPIPARAM_PeakBitRate);
-        if (_supported_PeakBitRate)
-          this.LogDebug("analog: Encoder supports ENCAPIPARAM_PeakBitRate");
+        this.LogDebug("    default value = {0}", defaultValue);
+        if (encoder.SetParameterValue(parameter, defaultValue))
+        {
+          this.LogDebug("    success!");
+          success = true;
+        }
+        else
+        {
+          this.LogWarn("encoder: failed to set parameter {0} to default ({1}) for encoder {2}", parameter, defaultValue, encoder.Name);
+        }
       }
-      catch (Exception e)
-      {
-        this.LogError(e, "analog: Encoder CheckCapabilities");
-      }
+      return success;
     }
-
-    #endregion
   }
 }

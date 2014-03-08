@@ -18,11 +18,10 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-#pragma warning(disable : 4995)
-#include <windows.h>
+#include <Windows.h>
 #include "..\shared\TsHeader.h" 
 
-extern void LogDebug(const char *fmt, ...) ;
+extern void LogDebug(const wchar_t* fmt, ...);
 
 #define PAYLOADONLY             1
 #define ADAPTIONFIELDONLY       2
@@ -107,19 +106,19 @@ void CTsHeader::Decode(byte *data)
 
 void CTsHeader::LogHeader()
 {
-	LogDebug("tsheader:%02.2x%02.2x%02.2x%02.2x%02.2x%02.2x%02.2x%02.2x%02.2x%02.2x",
+	LogDebug(L"tsheader:%02.2x%02.2x%02.2x%02.2x%02.2x%02.2x%02.2x%02.2x%02.2x%02.2x",
 					m_packet[0],m_packet[1],m_packet[2],m_packet[3],m_packet[4],m_packet[5],m_packet[6],m_packet[7],m_packet[8],m_packet[9]);
-	LogDebug("  SyncByte           :%x", SyncByte);
-	LogDebug("  TransportError     :%x", TransportError);
-	LogDebug("  PayloadUnitStart   :%d", PayloadUnitStart);
-	LogDebug("  TransportPriority  :%x", TransportPriority);
-	LogDebug("  Pid                :%x", Pid);
-	LogDebug("  TScrambling        :%x", TScrambling);
-	LogDebug("  AdaptionControl    :%x", AdaptionControl);
-	LogDebug("  ContinuityCounter  :%x", ContinuityCounter);
-	LogDebug("  AdaptionFieldLength:%d", AdaptionFieldLength);
-	LogDebug("  PayLoadStart       :%d", PayLoadStart);
-	LogDebug("  PayLoadOnly            :%d", PayLoadOnly());
-	LogDebug("  AdaptionFieldOnly      :%d", AdaptionFieldOnly());
-	LogDebug("  AdaptionFieldAndPayLoad:%d", AdaptionFieldAndPayLoad());
+	LogDebug(L"  SyncByte           :%x", SyncByte);
+	LogDebug(L"  TransportError     :%x", TransportError);
+	LogDebug(L"  PayloadUnitStart   :%d", PayloadUnitStart);
+	LogDebug(L"  TransportPriority  :%x", TransportPriority);
+	LogDebug(L"  Pid                :%x", Pid);
+	LogDebug(L"  TScrambling        :%x", TScrambling);
+	LogDebug(L"  AdaptionControl    :%x", AdaptionControl);
+	LogDebug(L"  ContinuityCounter  :%x", ContinuityCounter);
+	LogDebug(L"  AdaptionFieldLength:%d", AdaptionFieldLength);
+	LogDebug(L"  PayLoadStart       :%d", PayLoadStart);
+	LogDebug(L"  PayLoadOnly            :%d", PayLoadOnly());
+	LogDebug(L"  AdaptionFieldOnly      :%d", AdaptionFieldOnly());
+	LogDebug(L"  AdaptionFieldAndPayLoad:%d", AdaptionFieldAndPayLoad());
 }

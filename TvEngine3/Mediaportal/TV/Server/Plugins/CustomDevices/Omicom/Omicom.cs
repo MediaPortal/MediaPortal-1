@@ -84,19 +84,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Omicom
     /// initialisation fails, the <see ref="ICustomDevice"/> instance should be disposed
     /// immediately.
     /// </summary>
-    /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
+    /// <param name="tunerExternalId">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
     /// <param name="context">Context required to initialise the interface.</param>
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
-    public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
+    public override bool Initialise(string tunerExternalId, CardType tunerType, object context)
     {
       this.LogDebug("Omicom: initialising");
 
-      if (context == null)
-      {
-        this.LogDebug("Omicom: context is null");
-        return false;
-      }
       if (_isOmicom)
       {
         this.LogWarn("Omicom: extension already initialised");
@@ -201,7 +196,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Omicom
     /// </summary>
     /// <param name="command">The command to send.</param>
     /// <returns><c>true</c> if the command is sent successfully, otherwise <c>false</c></returns>
-    public bool SendCommand(byte[] command)
+    public bool SendDiseqcCommand(byte[] command)
     {
       this.LogDebug("Omicom: send DiSEqC command");
 
@@ -250,7 +245,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Omicom
     /// </summary>
     /// <param name="response">The response (or command).</param>
     /// <returns><c>true</c> if the response is read successfully, otherwise <c>false</c></returns>
-    public bool ReadResponse(out byte[] response)
+    public bool ReadDiseqcResponse(out byte[] response)
     {
       this.LogDebug("Omicom: read DiSEqC response");
       response = null;
@@ -311,4 +306,3 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Omicom
     #endregion
   }
 }
-

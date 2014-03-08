@@ -41,10 +41,10 @@
 ///
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Last changed  : $Date: 2009-05-19 07:57:30 +0300 (Tue, 19 May 2009) $
+// Last changed  : $Date: 2012-06-13 22:29:53 +0300 (Wed, 13 Jun 2012) $
 // File revision : $Revision: 4 $
 //
-// $Id: SoundTouch.cpp 73 2009-05-19 04:57:30Z oparviai $
+// $Id: SoundTouch.cpp 143 2012-06-13 19:29:53Z oparviai $
 //
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -73,7 +73,6 @@
 #include <stdlib.h>
 #include <memory.h>
 #include <math.h>
-#include <stdexcept>
 #include <stdio.h>
 
 #include "SoundTouch.h"
@@ -146,7 +145,7 @@ void SoundTouch::setChannels(uint numChannels)
 {
     if (numChannels != 1 && numChannels != 2) 
     {
-        throw std::runtime_error("Illegal number of channels");
+        ST_THROW_RT_ERROR("Illegal number of channels");
     }
     channels = numChannels;
     pRateTransposer->setChannels((int)numChannels);
@@ -243,7 +242,7 @@ void SoundTouch::calcEffectiveRateAndTempo()
     if (!TEST_FLOAT_EQUAL(rate,oldRate)) pRateTransposer->setRate(rate);
     if (!TEST_FLOAT_EQUAL(tempo, oldTempo)) pTDStretch->setTempo(tempo);
 
-#ifndef PREVENT_CLICK_AT_RATE_CROSSOVER
+#ifndef SOUNDTOUCH_PREVENT_CLICK_AT_RATE_CROSSOVER
     if (rate <= 1.0f) 
     {
         if (output != pTDStretch) 
@@ -295,11 +294,11 @@ void SoundTouch::putSamples(const SAMPLETYPE *samples, uint nSamples)
 {
     if (bSrateSet == FALSE) 
     {
-        throw std::runtime_error("SoundTouch : Sample rate not defined");
+        ST_THROW_RT_ERROR("SoundTouch : Sample rate not defined");
     } 
     else if (channels == 0) 
     {
-        throw std::runtime_error("SoundTouch : Number of channels not defined");
+        ST_THROW_RT_ERROR("SoundTouch : Number of channels not defined");
     }
 
     // Transpose the rate of the new samples if necessary
@@ -317,7 +316,7 @@ void SoundTouch::putSamples(const SAMPLETYPE *samples, uint nSamples)
         pTDStretch->putSamples(samples, nSamples);
     } 
     */
-#ifndef PREVENT_CLICK_AT_RATE_CROSSOVER
+#ifndef SOUNDTOUCH_PREVENT_CLICK_AT_RATE_CROSSOVER
     else if (rate <= 1.0f) 
     {
         // transpose the rate down, output the transposed sound to tempo changer buffer
@@ -346,12 +345,19 @@ void SoundTouch::putSamples(const SAMPLETYPE *samples, uint nSamples)
 void SoundTouch::flush()
 {
     int i;
-    uint nOut;
-    SAMPLETYPE buff[128];
+    int nUnprocessed;
+    int nOut;
+    SAMPLETYPE buff[64*2];   // note: allocate 2*64 to cater 64 sample frames of stereo sound
 
-    nOut = numSamples();
+    // check how many samples still await processing, and scale
+    // that by tempo & rate to get expected output sample count
+    nUnprocessed = numUnprocessedSamples();
+    nUnprocessed = (int)((double)nUnprocessed / (tempo * rate) + 0.5);
 
-    memset(buff, 0, 128 * sizeof(SAMPLETYPE));
+    nOut = numSamples();        // ready samples currently in buffer ...
+    nOut += nUnprocessed;       // ... and how many we expect there to be in the end
+    
+    memset(buff, 0, 64 * channels * sizeof(SAMPLETYPE));
     // "Push" the last active samples out from the processing pipeline by
     // feeding blank samples into the processing pipeline until new, 
     // processed samples appear in the output (not however, more than 
@@ -359,7 +365,16 @@ void SoundTouch::flush()
     for (i = 0; i < 128; i ++) 
     {
         putSamples(buff, 64);
-        if (numSamples() != nOut) break;  // new samples have appeared in the output!
+        if ((int)numSamples() >= nOut) 
+        {
+            // Enough new samples have appeared into the output!
+            // As samples come from processing with bigger chunks, now truncate it
+            // back to maximum "nOut" samples to improve duration accuracy 
+            adjustAmountOfSamples(nOut);
+
+            // finish
+            break;  
+        }
     }
 
     // Clear working buffers
@@ -473,7 +488,13 @@ int SoundTouch::getSetting(int settingId) const
             pTDStretch->getParameters(NULL, NULL, NULL, &temp);
             return temp;
 
-        default :
+		case SETTING_NOMINAL_INPUT_SEQUENCE :
+			return pTDStretch->getInputSampleReq();
+
+		case SETTING_NOMINAL_OUTPUT_SEQUENCE :
+			return pTDStretch->getOutputBatchSize();
+
+		default :
             return 0;
     }
 }

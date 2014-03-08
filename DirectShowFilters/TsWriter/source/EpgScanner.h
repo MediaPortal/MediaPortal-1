@@ -1,6 +1,6 @@
 /* 
- *	Copyright (C) 2006-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
+ *  Copyright (C) 2006-2008 Team MediaPortal
+ *  http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -35,75 +35,75 @@ DEFINE_GUID(IID_IEpgCallback,0xffab5d98, 0x2309, 0x4d90,  0x9c, 0x71, 0xe4, 0xb2
 
 DECLARE_INTERFACE_(IEpgCallback, IUnknown)
 {
-	STDMETHOD(OnEpgReceived)()PURE;
+  STDMETHOD(OnEpgReceived)()PURE;
 };
 
 
 // video anayzer interface
 DECLARE_INTERFACE_(ITsEpgScanner, IUnknown)
 {
-	//epg
-	STDMETHOD(GrabEPG)(THIS_)PURE;
-	STDMETHOD(IsEPGReady) (THIS_ BOOL* yesNo)PURE;
-	STDMETHOD(GetEPGChannelCount) (THIS_ ULONG* channelCount)PURE;
-	STDMETHOD(GetEPGEventCount) (THIS_ ULONG channel, ULONG* eventCount)PURE;
-	STDMETHOD(GetEPGChannel) (THIS_ ULONG channel, WORD* networkId, WORD* transportid,WORD* service_id  )PURE;
-	STDMETHOD(GetEPGEvent) (THIS_ ULONG channel, ULONG eventid,ULONG* language,ULONG* dateMJD,ULONG* timeUTC,ULONG* duration,char** genre,int* starRating,char** classification    )PURE;
-	STDMETHOD(GetEPGLanguage) (THIS_ ULONG channel, ULONG eventid,ULONG languageIndex,ULONG* language,char** eventText, char** eventDescription, unsigned int* parentalRating  )PURE;
+  //epg
+  STDMETHOD(GrabEPG)(THIS_)PURE;
+  STDMETHOD(IsEPGReady) (THIS_ BOOL* yesNo)PURE;
+  STDMETHOD(GetEPGChannelCount) (THIS_ ULONG* channelCount)PURE;
+  STDMETHOD(GetEPGEventCount) (THIS_ ULONG channel, ULONG* eventCount)PURE;
+  STDMETHOD(GetEPGChannel) (THIS_ ULONG channel, WORD* networkId, WORD* transportid,WORD* service_id  )PURE;
+  STDMETHOD(GetEPGEvent) (THIS_ ULONG channel, ULONG eventid,ULONG* language,ULONG* dateMJD,ULONG* timeUTC,ULONG* duration,char** genre,int* starRating,char** classification    )PURE;
+  STDMETHOD(GetEPGLanguage) (THIS_ ULONG channel, ULONG eventid,ULONG languageIndex,ULONG* language,char** eventText, char** eventDescription, unsigned int* parentalRating  )PURE;
 
-	//mhw
-	STDMETHOD(GrabMHW)()PURE;
-	STDMETHOD(IsMHWReady) (THIS_ BOOL* yesNo)PURE;
-	STDMETHOD(GetMHWTitleCount)(THIS_ UINT* count)PURE;
-	STDMETHOD(GetMHWTitle)(THIS_ UINT program, UINT* id, UINT* transportId, UINT* networkId, UINT* channelId, ULONG* programId, UINT* themeId, UINT* PPV, BYTE* Summaries, UINT* duration, ULONG* dateStart, ULONG* timeStart,char** title,char** programName)PURE;
-	STDMETHOD(GetMHWChannel)(THIS_ UINT channelNr, UINT* channelId, UINT* networkId, UINT* transportId, char** channelName)PURE;
-	STDMETHOD(GetMHWSummary)(THIS_ ULONG programId, char** summary)PURE;
-	STDMETHOD(GetMHWTheme)(THIS_ UINT themeId, char** theme)PURE;
-	STDMETHOD(Reset)(THIS_)PURE;
-	STDMETHOD(AbortGrabbing)(THIS_)PURE;
+  //mhw
+  STDMETHOD(GrabMHW)()PURE;
+  STDMETHOD(IsMHWReady) (THIS_ BOOL* yesNo)PURE;
+  STDMETHOD(GetMHWTitleCount)(THIS_ UINT* count)PURE;
+  STDMETHOD(GetMHWTitle)(THIS_ UINT program, UINT* id, UINT* transportId, UINT* networkId, UINT* channelId, ULONG* programId, UINT* themeId, UINT* PPV, BYTE* Summaries, UINT* duration, ULONG* dateStart, ULONG* timeStart,char** title,char** programName)PURE;
+  STDMETHOD(GetMHWChannel)(THIS_ UINT channelNr, UINT* channelId, UINT* networkId, UINT* transportId, char** channelName)PURE;
+  STDMETHOD(GetMHWSummary)(THIS_ ULONG programId, char** summary)PURE;
+  STDMETHOD(GetMHWTheme)(THIS_ UINT themeId, char** theme)PURE;
+  STDMETHOD(Reset)(THIS_)PURE;
+  STDMETHOD(AbortGrabbing)(THIS_)PURE;
   
-	STDMETHOD(SetCallBack)(THIS_ IEpgCallback* callback)PURE;
+  STDMETHOD(SetCallBack)(THIS_ IEpgCallback* callback)PURE;
 };
 
 class CEpgScanner: public CUnknown, public ITsEpgScanner
 {
 public:
-	CEpgScanner(LPUNKNOWN pUnk, HRESULT *phr);
-	~CEpgScanner(void);
+  CEpgScanner(LPUNKNOWN pUnk, HRESULT *phr);
+  ~CEpgScanner(void);
 
   DECLARE_IUNKNOWN
 //EPG
-	STDMETHODIMP GrabEPG();
-	STDMETHODIMP IsEPGReady(BOOL* yesNo);
-	STDMETHODIMP GetEPGChannelCount( ULONG* channelCount);
-	STDMETHODIMP GetEPGEventCount( ULONG channel,  ULONG* eventCount);
-	STDMETHODIMP GetEPGChannel( ULONG channel,  WORD* networkId,  WORD* transportid, WORD* service_id  );
-	STDMETHODIMP GetEPGEvent( ULONG channel,  ULONG eventid,ULONG* language, ULONG* dateMJD, ULONG* timeUTC, ULONG* duration, char** genre,int* starRating,char** classification    );
-	STDMETHODIMP GetEPGLanguage(THIS_ ULONG channel, ULONG eventid,ULONG languageIndex,ULONG* language,char** eventText, char** eventDescription,unsigned int* parentalRating    );
-	//MHW
-	STDMETHODIMP GrabMHW();
-	STDMETHODIMP IsMHWReady(BOOL* yesNo);
+  STDMETHODIMP GrabEPG();
+  STDMETHODIMP IsEPGReady(BOOL* yesNo);
+  STDMETHODIMP GetEPGChannelCount( ULONG* channelCount);
+  STDMETHODIMP GetEPGEventCount( ULONG channel,  ULONG* eventCount);
+  STDMETHODIMP GetEPGChannel( ULONG channel,  WORD* networkId,  WORD* transportid, WORD* service_id  );
+  STDMETHODIMP GetEPGEvent( ULONG channel,  ULONG eventid,ULONG* language, ULONG* dateMJD, ULONG* timeUTC, ULONG* duration, char** genre,int* starRating,char** classification    );
+  STDMETHODIMP GetEPGLanguage(THIS_ ULONG channel, ULONG eventid,ULONG languageIndex,ULONG* language,char** eventText, char** eventDescription,unsigned int* parentalRating    );
+  //MHW
+  STDMETHODIMP GrabMHW();
+  STDMETHODIMP IsMHWReady(BOOL* yesNo);
 
-	STDMETHODIMP GetMHWTitleCount(UINT* count);
-	STDMETHODIMP GetMHWTitle(UINT program, UINT* id, UINT* transportId, UINT* networkId, UINT* channelId, ULONG* programId, UINT* themeId, UINT* PPV, BYTE* Summaries, UINT* duration, ULONG* dateStart, ULONG* timeStart,char** title,char** programName);
-	STDMETHODIMP GetMHWChannel(UINT channelNr, UINT* channelId, UINT* networkId, UINT* transportId, char** channelName);
-	STDMETHODIMP GetMHWSummary(ULONG programId, char** summary);
-	STDMETHODIMP GetMHWTheme(UINT themeId, char** theme);
-	STDMETHODIMP Reset();
-	STDMETHODIMP AbortGrabbing();
-	STDMETHODIMP SetCallBack(IEpgCallback* callback);
+  STDMETHODIMP GetMHWTitleCount(UINT* count);
+  STDMETHODIMP GetMHWTitle(UINT program, UINT* id, UINT* transportId, UINT* networkId, UINT* channelId, ULONG* programId, UINT* themeId, UINT* PPV, BYTE* Summaries, UINT* duration, ULONG* dateStart, ULONG* timeStart,char** title,char** programName);
+  STDMETHODIMP GetMHWChannel(UINT channelNr, UINT* channelId, UINT* networkId, UINT* transportId, char** channelName);
+  STDMETHODIMP GetMHWSummary(ULONG programId, char** summary);
+  STDMETHODIMP GetMHWTheme(UINT themeId, char** theme);
+  STDMETHODIMP Reset();
+  STDMETHODIMP AbortGrabbing();
+  STDMETHODIMP SetCallBack(IEpgCallback* callback);
 
-	void OnTsPacket(byte* tsPacket);
+  void OnTsPacket(byte* tsPacket);
 protected:
-	CEpgParser m_epgParser;
-	CMhwParser m_mhwParser;
+  CEpgParser m_epgParser;
+  CMhwParser m_mhwParser;
   IEpgCallback* m_pCallBack;
 
-  	bool IsEPG_PID(int pid);
-	bool IsMHW_PID(int pid);
-	bool IsEIT_PID(int pid);
+    bool IsEPG_PID(int pid);
+  bool IsMHW_PID(int pid);
+  bool IsEIT_PID(int pid);
 private:
-	bool m_bGrabbing;
-	CCriticalSection m_section;
+  bool m_bGrabbing;
+  CCriticalSection m_section;
   CTsHeader m_header;
 };

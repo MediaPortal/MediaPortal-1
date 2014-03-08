@@ -27,9 +27,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
   /// <summary>
   /// call back interface for the EPG
   /// </summary>
-  [ComVisible(true), ComImport,
-   Guid("FFAB5D98-2309-4d90-9C71-E4B2F490CF5A"),
-   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [Guid("FFAB5D98-2309-4d90-9C71-E4B2F490CF5A"),
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IEpgCallBack
   {
     /// <summary>
@@ -38,7 +37,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
     /// <returns></returns>
     [PreserveSig]
     int OnEpgReceived();
-  } ;
+  }
 
   /// <summary>
   /// Base class used for dvb epg-grabbing

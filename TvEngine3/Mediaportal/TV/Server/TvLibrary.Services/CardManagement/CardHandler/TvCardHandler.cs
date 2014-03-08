@@ -23,10 +23,9 @@ using System.Threading;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
 
 namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
@@ -43,7 +42,6 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     private readonly IParkedUserManagement _parkedUserManagement;
 
     private readonly DisEqcManagement _disEqcManagement;
-    private readonly TeletextManagement _teletext;
     private readonly ChannelScanning _scanner;
     private readonly EpgGrabbing _epgGrabbing;    
     private readonly Recorder _recorder;
@@ -69,7 +67,6 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       _parkedUserManagement = new ParkedUserManagement(this);
 
       _disEqcManagement = new DisEqcManagement(this);
-      _teletext = new TeletextManagement(this);
       _scanner = new ChannelScanning(this);
       _epgGrabbing = new EpgGrabbing(this);
       _tuner = new CardTuner(this);
@@ -130,11 +127,6 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     public IDisEqcManagement DisEqC
     {
       get { return _disEqcManagement; }
-    }
-
-    public ITeletextManagement Teletext
-    {
-      get { return _teletext; }
     }
 
     public IChannelScanning Scanner

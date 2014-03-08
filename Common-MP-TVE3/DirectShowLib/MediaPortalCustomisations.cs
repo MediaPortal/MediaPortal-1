@@ -89,9 +89,9 @@ namespace DirectShowLib
     [Description("PAL N Combo")]
     PAL_N_COMBO = 0x00100000,
 
-    NTSCMask = 0x00000007,
+    /*NTSCMask = 0x00000007,
     PALMask = 0x00100FF0,
-    SECAMMask = 0x000FF000
+    SECAMMask = 0x000FF000*/
   }
 
   /// <summary>
@@ -750,6 +750,37 @@ namespace DirectShowLib
       }
     }
 
+    /// <summary>
+    /// Set the value of a property bag property.
+    /// </summary>
+    /// <param name="propertyName">The name of the property.</param>
+    /// <param name="value">The value to set.</param>
+    public void SetPropBagValue(string propertyName, object value)
+    {
+      IPropertyBag bag = null;
+      object bagObj = null;
+
+      try
+      {
+        Guid bagId = typeof(IPropertyBag).GUID;
+        m_Mon.BindToStorage(null, null, ref bagId, out bagObj);
+
+        bag = (IPropertyBag)bagObj;
+
+        int hr = bag.Write(propertyName, ref value);
+        DsError.ThrowExceptionForHR(hr);
+      }
+      finally
+      {
+        bag = null;
+        if (bagObj != null)
+        {
+          Marshal.ReleaseComObject(bagObj);
+          bagObj = null;
+        }
+      }
+    }
+
     // *** END added. ***
 
     /// <summary>
@@ -1301,7 +1332,7 @@ namespace DirectShowLib
   {
     [PreserveSig]
     int KsProperty(
-      [In] ref KsMethod Property,
+      [In] ref KsProperty Property,
       [In] Int32 PropertyLength,
       [In, Out] IntPtr PropertyData,
       [In] Int32 DataLength,
@@ -1319,7 +1350,7 @@ namespace DirectShowLib
 
     [PreserveSig]
     int KsEvent(
-      [In, Optional] ref KsMethod Event,
+      [In, Optional] ref KsEvent Event,
       [In] Int32 EventLength,
       [In, Out] IntPtr EventData,
       [In] Int32 DataLength,
@@ -1327,13 +1358,45 @@ namespace DirectShowLib
     );
   }
 
+  public struct KsProperty
+  {
+    public Guid Set;
+    public Int32 Id;
+    public KsPropertyFlag Flags;
+
+    public KsProperty(Guid set, Int32 id, KsPropertyFlag flags)
+    {
+      Set = set;
+      Id = id;
+      Flags = flags;
+    }
+  }
+
+  [Flags]
+  public enum KsPropertyFlag
+  {
+    None = 0,
+    Get = 1,
+    Set = 2,
+    SetSupport = 0x0100,
+    BasicSupport = 0x0200,
+    Relations = 0x0400,
+    SerialiseSet = 0x0800,
+    UnserialiseSet = 0x1000,
+    SerialiseRaw = 0x2000,
+    UnserialiseRaw = 0x4000,
+    SerialiseSize = 0x8000,
+    DefaultValues = 0x10000,
+    Topology = 0x10000000
+  }
+
   public struct KsMethod
   {
     public Guid Set;
     public Int32 Id;
-    public Int32 Flags;
+    public KsMethodFlag Flags;
 
-    public KsMethod(Guid set, Int32 id, Int32 flags)
+    public KsMethod(Guid set, Int32 id, KsMethodFlag flags)
     {
       Set = set;
       Id = id;
@@ -1344,10 +1407,55 @@ namespace DirectShowLib
   [Flags]
   public enum KsMethodFlag
   {
-    Send = 1,
-    SetSupport = 256,
-    BasicSupport = 512,
+    None = 0,
+    Send = 0x1,
+    Read = Send,
+    Write = 0x2,
+    Modify = Read | Write,
+    Source = 0x4,
+    SetSupport = 0x100,
+    BasicSupport = 0x200,
     Topology = 0x10000000
+  }
+
+  public struct KsEvent
+  {
+    public Guid Set;
+    public Int32 Id;
+    public KsEventFlag Flags;
+
+    public KsEvent(Guid set, Int32 id, KsEventFlag flags)
+    {
+      Set = set;
+      Id = id;
+      Flags = flags;
+    }
+  }
+
+  [Flags]
+  public enum KsEventFlag
+  {
+    None = 0,
+    Enable = 1,
+    OneShot = 2,
+    EnableBuffered = 4,
+    SetSupport = 0x100,
+    BasicSupport = 0x200,
+    QueryBuffer = 0x400,
+    Topology = 0x10000000
+  }
+
+  #endregion
+
+  #region IKsObject
+
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("423c13a2-2070-11d0-9ef7-00aa00a216a1"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  public interface IKsObject
+  {
+    [PreserveSig]
+    IntPtr KsGetObjectHandle();
   }
 
   #endregion
@@ -1446,14 +1554,6 @@ namespace DirectShowLib
       }*/
     }
   }
-
-  /// <summary>
-  /// A collection of utility methods for dealing with <see cref="IMoniker"/> device paths.
-  /// </summary>
-  public class DevicePathUtils
-  {
-
-  }
 }
 
 namespace DirectShowLib.BDA
@@ -1502,6 +1602,6 @@ namespace DirectShowLib.BDA
     RollOff,
     Pilot,
     SignalTimeouts,
-    PlpNumber               // physical layer pipe - for DVB-S2 and DVB-T2
+    PlpNumber               // physical layer pipe - for DVB-*2
   }
 }

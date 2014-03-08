@@ -19,11 +19,11 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using DirectShowLib;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using System.Collections.Generic;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.Components
 {
@@ -49,7 +49,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     ///   filter.</param>
     /// <param name="upstreamFilter">The upstream filter to connect the new filter to. This filter
     ///   should already be present in the graph.</param>
-    /// <param name="productInstanceIdentifier">A <see cref="DsDevice"/> device path (<see
+    /// <param name="productInstanceId">A <see cref="DsDevice"/> device path (<see
     ///   cref="IMoniker"/> display name) section. Related filters share common sections. This
     ///   parameter is used to prioritise filter candidates. <c>Null</c> is permitted.</param>
     /// <param name="filter">The filter that was added to the graph. If a filter was not
@@ -58,23 +58,22 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     ///   was added to the graph. If a filter was not successfully added this parameter will be
     ///   <c>null</c>.</param>
     /// <returns>the number of pin connections between the upstream and new filter</returns>
-    protected int AddAndConnectFilterFromCategory(IFilterGraph2 graph, Guid category, IBaseFilter upstreamFilter, string productInstanceIdentifier, out IBaseFilter filter, out DsDevice device)
+    protected int AddAndConnectFilterFromCategory(IFilterGraph2 graph, Guid category, IBaseFilter upstreamFilter, string productInstanceId, out IBaseFilter filter, out DsDevice device)
     {
       filter = null;
       device = null;
       int connectedPinCount = 0;
-      int hr = 0;
 
       // Sort the devices in the category of interest based on whether the
       // device path contains all or part of the hardware identifier.
       DsDevice[] devices = DsDevice.GetDevicesOfCat(category);
       this.LogDebug("WDM analog component: add and connect filter from category {0}, device count = {1}", category, devices.Length);
-      if (!string.IsNullOrEmpty(productInstanceIdentifier))
+      if (!string.IsNullOrEmpty(productInstanceId))
       {
         Array.Sort(devices, delegate(DsDevice d1, DsDevice d2)
         {
-          bool d1Result = productInstanceIdentifier.Equals(d1.ProductInstanceIdentifier);
-          bool d2Result = productInstanceIdentifier.Equals(d2.ProductInstanceIdentifier);
+          bool d1Result = productInstanceId.Equals(d1.ProductInstanceIdentifier);
+          bool d2Result = productInstanceId.Equals(d2.ProductInstanceIdentifier);
           if (d1Result && !d2Result)
           {
             return -1;
@@ -157,7 +156,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     {
       this.LogDebug("WDM analog component: connect filters by pin name");
       int connectedPinCount = 0;
-      int hr = 0;
+      int hr = (int)HResult.Severity.Success;
       int pinCount = 0;
       int pinIndex = 0;
 

@@ -18,8 +18,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-#pragma warning(disable : 4995)
-#include <windows.h>
+#include <Windows.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "..\shared\SectionDecoder.h"
@@ -201,10 +200,10 @@ void CSectionDecoder::OnTsPacket(CTsHeader& header,byte* tsPacket)
         
         // Only long syntax (section_syntax_indicator == 1) has a CRC
         // Short syntax may have CRC e.g. TOT, but that is part of the specific section
-        if (m_section.section_syntax_indicator == 1)
+        if (m_section.section_syntax_indicator == 1 && m_bCrcCheck)
           crc=crc32((char*)m_section.Data,m_section.section_length+3);
 
-				if (crc==0 || (m_bCrcCheck==false))
+				if (crc==0)
 				{
 					OnNewSection(m_section);
 					if (m_pCallback!=NULL)

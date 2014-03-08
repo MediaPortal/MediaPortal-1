@@ -44,3 +44,5 @@ using MediaPortal.Common.Utils;
 [assembly: UsesSubsystem("TVE.Plugins.TunerExtension.Diseqc")]
 [assembly: UsesSubsystem("TVE.Plugins.TunerExtension.Mpeg2PidFilter")]
 [assembly: UsesSubsystem("TVE.Plugins.TunerExtension.Power")]
+[assembly: UsesSubsystem("TVE.Plugins.TunerExtension.RemoteControl")]
+[assembly: UsesSubsystem("TVE.Plugins.TunerExtension.Tuner")]

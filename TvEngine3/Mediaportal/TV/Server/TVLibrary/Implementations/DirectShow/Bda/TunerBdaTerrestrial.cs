@@ -111,7 +111,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// <summary>
     /// Get the class ID of the network provider for the tuner type.
     /// </summary>
-    protected abstract Guid NetworkProviderClsid
+    protected override Guid NetworkProviderClsid
     {
       get
       {
@@ -231,11 +231,5 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     }
 
     #endregion
-
-    // TODO: remove this method, it should not be required and it is bad style!
-    protected override DVBBaseChannel CreateChannel()
-    {
-      return new DVBTChannel();
-    }
   }
 }

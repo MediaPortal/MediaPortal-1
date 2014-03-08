@@ -32,16 +32,104 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
 {
   /// <summary>
-  /// A class for handling conditional access and DiSEqC for Twinhan tuners, including clones from
-  /// TerraTec, TechniSat and Digital Rise.
+  /// A class for handling conditional access, DiSEqC, PID filtering and remote controls for
+  /// Twinhan tuners, including clones from TerraTec, TechniSat and Digital Rise.
   /// </summary>
-  public class Twinhan : BaseCustomDevice, /*ICustomTuner,*/ IPowerDevice, IMpeg2PidFilter, IConditionalAccessProvider, IConditionalAccessMenuActions, IDiseqcDevice
+  public class Twinhan : BaseCustomDevice, ICustomTuner, IPowerDevice, IMpeg2PidFilter, IConditionalAccessProvider, IConditionalAccessMenuActions, IDiseqcDevice, IRemoteControlListener
   {
     #region enums
+
+    private enum TwinhanIoControlCode
+    {
+      SetTunerPower = 100,
+      GetTunerPower = 101,
+
+      // Obsolete, replaced with SetLnbData/GetLnbData.
+      //SetLnb = 102,
+      //GetLnb = 103,
+
+      SetDiseqc = 104,
+      GetDiseqc = 105,
+
+      LockTuner = 106,
+      GetTunerValues = 107,
+      GetSignalQualityStrength = 108,
+
+      StartCapture = 109,
+      StopCapture = 110,
+      GetRingBufferStatus = 111,
+      GetCaptureData = 112,
+
+      SetPidFilterInfo = 113,
+      GetPidFilterInfo = 114,
+
+      StartRemoteControl = 115,
+      StopRemoteControl = 116,
+      AddRemoteControlEvent = 117,
+      RemoveRemoteControlEvent = 118,
+      GetRemoteControlValue = 119,
+
+      ResetDevice = 120,
+      CheckInterface = 121,
+      SetRegistryParams = 122,
+      GetRegistryParams = 123,
+      GetDeviceInfo = 124,
+      GetDriverInfo = 125,
+
+      SetEepromValue = 126,
+      GetEepromValue = 127,
+
+      SetLnbData = 128,
+      GetLnbData = 129,
+
+      GetNumberTunerRfInputs = 130,
+      SetTunerRfInput = 131,
+      GetTunerRfInput = 132,
+
+      HidRemoteControlEnable = 152,
+      SetHidRemoteConfig = 153,
+      GetHidRemoteConfig = 154,
+
+      CiGetState = 200,
+      CiGetApplicationInfo = 201,
+      CiInitialiseMmi = 202,
+      CiGetMmi = 203,
+      CiAnswer = 204,
+      CiCloseMmi = 205,
+      CiSendPmt = 206,
+      CiParserPmt = 207,
+      CiEventCreate = 208,
+      CiEventClose = 209,
+
+      CiGetPmtReply = 210,
+
+      CiSendRawCommand = 211,
+      CiGetRawCommandData = 212,
+
+      EnableVirtualDvbt = 300,
+      ResetT2sMapping = 301,
+      SetT2sMapping = 302,
+      GetT2sMapping = 303,
+      EnableMceDvbt = 304,
+      GetFrequencyChangeStatus = 305,
+      SetT2sMappingS2 = 306,
+      GetT2sMappingS2 = 307,
+
+      RegisterBdaInterface = 400,
+      SimulatorTsStart = 401,
+      SimulatorTsStop = 402,
+      SimulatorSetProperty = 403,
+      SimulatorGetProperty = 404,
+
+      DownloadTunerFirmware = 410,
+      DownloadTunerFirmwareStatus = 411,
+      GetTunerFirmwareType = 412
+    }
 
     [Flags]
     private enum TwinhanDeviceType : uint
@@ -51,7 +139,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       DvbT = 0x0002,
       DvbC = 0x0004,
       Atsc = 0x0008,
-      AnnexC = 0x0010,        // US OpenCable (clear QAM)
+      AnnexB = 0x0010,        // North American cable ITU-T annex B (AKA SCTE, OpenCable, clear QAM)
       IsdbT = 0x0020,
       IsdbS = 0x0040,
 
@@ -91,15 +179,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       VirtualDvbC = 4,
       VirtualAtsc = 8,
       MceVirtualDvbT = 16
-    }
-
-    private enum TwinhanCamType   // CAM_TYPE_ENUM
-    {
-      Unknown = 0,
-      Default = 1,            // Viaccess
-      Astoncrypt,
-      Conax,
-      Cryptoworks
     }
 
     private enum TwinhanCiState : uint    // CIMessage
@@ -169,6 +248,24 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       PortB,
       PortC,
       PortD
+    }
+
+    private enum TwinhanIrStandard : uint
+    {
+      Rc5 = 0,
+      Nec
+    }
+
+    private enum TwinhanRemoteControlMapping : uint
+    {
+      DtvDvb = 0,
+      Cyberlink,
+      InterVideo,
+      Mce,
+      DtvDvbWmInput,
+      Custom,
+      Dntv,   // DigitalNow
+      Disabled = 0xffff
     }
 
     #endregion
@@ -478,594 +575,38 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       private ushort Padding2;
     }
 
-    #endregion
-
-    #region Twinhan IO controls
-
-    // Initialise a buffer with a new command, ready to pass to the tuner filter.
-    private class TwinhanCommand
+    // Many of these parameters appear to be obsolete.
+    [StructLayout(LayoutKind.Sequential)]
+    private struct RegistryParams   // THBDAREGPARAMS
     {
-      private uint _controlCode;
-      private IntPtr _inBuffer;
-      private int _inBufferSize;
-      private IntPtr _outBuffer;
-      private int _outBufferSize;
-
-      public TwinhanCommand(uint controlCode, IntPtr inBuffer, int inBufferSize, IntPtr outBuffer, int outBufferSize)
-      {
-        _controlCode = controlCode;
-        _inBuffer = inBuffer;
-        _inBufferSize = inBufferSize;
-        _outBuffer = outBuffer;
-        _outBufferSize = outBufferSize;
-      }
-
-      public int Execute(IKsPropertySet ps, out int returnedByteCount)
-      {
-        returnedByteCount = 0;
-        int hr = (int)HResult.Severity.Error;
-        if (ps == null)
-        {
-          return hr;
-        }
-
-        IntPtr instanceBuffer = Marshal.AllocCoTaskMem(INSTANCE_SIZE);
-        IntPtr commandBuffer = Marshal.AllocCoTaskMem(COMMAND_SIZE);
-        IntPtr returnedByteCountBuffer = Marshal.AllocCoTaskMem(sizeof(int));
-        try
-        {
-          // Clear buffers. This is probably not actually needed, but better
-          // to be safe than sorry!
-          for (int i = 0; i < INSTANCE_SIZE; i++)
-          {
-            Marshal.WriteByte(instanceBuffer, i, 0);
-          }
-          Marshal.WriteInt32(returnedByteCountBuffer, 0);
-
-          // Fill the command buffer.
-          byte[] guidAsBytes = COMMAND_GUID.ToByteArray();
-          Marshal.Copy(guidAsBytes, 0, commandBuffer, guidAsBytes.Length);
-          Marshal.WriteInt32(commandBuffer, 16, (int)_controlCode);
-          Marshal.WriteInt32(commandBuffer, 20, _inBuffer.ToInt32());
-          Marshal.WriteInt32(commandBuffer, 24, _inBufferSize);
-          Marshal.WriteInt32(commandBuffer, 28, _outBuffer.ToInt32());
-          Marshal.WriteInt32(commandBuffer, 32, _outBufferSize);
-          Marshal.WriteInt32(commandBuffer, 36, returnedByteCountBuffer.ToInt32());
-
-          hr = ps.Set(BDA_EXTENSION_PROPERTY_SET, 0, instanceBuffer, INSTANCE_SIZE, commandBuffer, COMMAND_SIZE);
-          if (hr == (int)HResult.Severity.Success)
-          {
-            returnedByteCount = Marshal.ReadInt32(returnedByteCountBuffer);
-          }
-        }
-        finally
-        {
-          Marshal.FreeCoTaskMem(instanceBuffer);
-          Marshal.FreeCoTaskMem(commandBuffer);
-          Marshal.FreeCoTaskMem(returnedByteCountBuffer);
-        }
-        return hr;
-      }
+      public uint MceFrequencyTranslate;
+      public uint FixedBandwidth;
+      [MarshalAs(UnmanagedType.Bool)]
+      public bool EnableOffFrequencyScan;
+      [MarshalAs(UnmanagedType.Bool)]
+      public bool EnableRelockMonitor;
+      public uint LnbLof;
+      public uint LnbLowLof;
+      public uint LnbHighLof;
+      public TwinhanDiseqcPort Diseqc;
+      private byte Padding1;
+      private ushort Padding2;
+      [MarshalAs(UnmanagedType.Bool)]
+      public bool LnbPower;
+      public Twinhan22k Tone22k;
+      private byte Padding3;
+      private ushort Padding4;
+      public uint AtscFrequencyShift;
     }
 
-    private const uint THBDA_IO_INDEX = 0xaa00;
-    private const uint METHOD_BUFFERED = 0x0000;
-    private const uint FILE_ANY_ACCESS = 0x0000;
-
-    // Assemble a control code.
-    private static uint CTL_CODE(uint deviceType, uint function, uint method, uint access)
+    [StructLayout(LayoutKind.Sequential)]
+    private struct HidRemoteControlConfig   // RC_CONFIG
     {
-      return ((deviceType) << 16) | ((access) << 14) | ((function) << 2) | (method);
+      public TwinhanIrStandard IrStandard;
+      public uint IrSysCodeCheck1;
+      public uint IrSysCodeCheck2;
+      public TwinhanRemoteControlMapping Mapping;
     }
-
-    //*******************************************************************************************************
-    //Functionality : Check BDA driver if support IOCTL interface
-    //InBuffer      : NULL
-    //InBufferSize  : 0 bytes
-    //OutBuffer     : NULL
-    //OutBufferSize : 0 bytes
-    //*******************************************************************************************************
-    private readonly uint THBDA_IOCTL_CHECK_INTERFACE = CTL_CODE(THBDA_IO_INDEX, 121, METHOD_BUFFERED, FILE_ANY_ACCESS);
-
-    //*******************************************************************************************************
-    //Functionality : Get device info
-    //InBuffer      : NULL
-    //InBufferSize  : 0 bytes
-    //OutBuffer     : struct DEVICE_INFO
-    //OutBufferSize : sizeof(DEVICE_INFO) bytes
-    //*******************************************************************************************************
-    private readonly uint THBDA_IOCTL_GET_DEVICE_INFO = CTL_CODE(THBDA_IO_INDEX, 124, METHOD_BUFFERED, FILE_ANY_ACCESS);
-
-    //*******************************************************************************************************
-    //Functionality : Get driver info
-    //InBuffer      : NULL
-    //InBufferSize  : 0 bytes
-    //OutBuffer     : struct DriverInfo
-    //OutBufferSize : sizeof(DriverInfo) bytes
-    //*******************************************************************************************************
-    private readonly uint THBDA_IOCTL_GET_DRIVER_INFO = CTL_CODE(THBDA_IO_INDEX, 125, METHOD_BUFFERED, FILE_ANY_ACCESS);
-
-    //*******************************************************************************************************
-    //Functionality : Reset USB or PCI controller
-    //InBuffer      : NULL
-    //InBufferSize  : 0 bytes
-    //OutBuffer     : NULL
-    //OutBufferSize : 0 bytes
-    //*******************************************************************************************************
-    private readonly uint THBDA_IOCTL_RESET_DEVICE = CTL_CODE(THBDA_IO_INDEX, 120, METHOD_BUFFERED, FILE_ANY_ACCESS);
-
-    #region tuner power
-
-    //*******************************************************************************************************
-    //Functionality : Set turner power
-    //InBuffer      : Tuner_Power_ON | Tuner_Power_OFF
-    //InBufferSize  : 1 bytes
-    //OutBuffer     : NULL
-    //OutBufferSize : 0 bytes
-    //*******************************************************************************************************
-    private readonly uint THBDA_IOCTL_SET_TUNER_POWER = CTL_CODE(THBDA_IO_INDEX, 100, METHOD_BUFFERED, FILE_ANY_ACCESS);
-
-    //*******************************************************************************************************
-    //Functionality : Get turner power status
-    //InBuffer      : NULL
-    //InBufferSize  : 0 bytes
-    //OutBuffer     : Tuner_Power_ON | Tuner_Power_OFF
-    //OutBufferSize : 1 bytes
-    //*******************************************************************************************************
-    private readonly uint THBDA_IOCTL_GET_TUNER_POWER = CTL_CODE(THBDA_IO_INDEX, 101, METHOD_BUFFERED, FILE_ANY_ACCESS);
-
-    #endregion
-
-    #region tuning
-
-    //*******************************************************************************************************
-    //Functionality : Set turner frequency and symbol rate
-    //InBuffer      : struct TURNER_VALUE
-    //InBufferSize  : sizeof(TURNER_VALUE) bytes
-    //OutBuffer     : NULL
-    //OutBufferSize : 0 bytes
-    //*******************************************************************************************************
-    private readonly uint THBDA_IOCTL_LOCK_TUNER = CTL_CODE(THBDA_IO_INDEX, 106, METHOD_BUFFERED, FILE_ANY_ACCESS);
-
-    //*******************************************************************************************************
-    //Functionality : Get turner frequency and symbol rate
-    //InBuffer      : NULL
-    //InBufferSize  : 0 bytes
-    //OutBuffer     : struct TURNER_VALUE
-    //OutBufferSize : sizeof(TURNER_VALUE) bytes
-    //*******************************************************************************************************
-    private readonly uint THBDA_IOCTL_GET_TUNER_VALUE = CTL_CODE(THBDA_IO_INDEX, 107, METHOD_BUFFERED, FILE_ANY_ACCESS);
-
-    //*******************************************************************************************************
-    //Functionality : Get signal quality & strength
-    //InBuffer      : NULL
-    //InBufferSize  : 0 bytes
-    //OutBuffer     : struct SIGNAL_DATA
-    //OutBufferSize : sizeof(SIGNAL_DATA) bytes
-    //*******************************************************************************************************
-    private readonly uint THBDA_IOCTL_GET_SIGNAL_Q_S = CTL_CODE(THBDA_IO_INDEX, 108, METHOD_BUFFERED, FILE_ANY_ACCESS);
-
-    #endregion
-
-    #region DiSEqC and LNB parameters
-
-    //*******************************************************************************************************
-    //Functionality : Send DiSEqC command
-    //InBuffer      : struct DiSEqC_DATA
-    //InBufferSize  : sizeof(DiSEqC_DATA) bytes
-    //OutBuffer     : NULL
-    //OutBufferSize : 0 bytes
-    //*******************************************************************************************************
-    private readonly uint THBDA_IOCTL_SET_DiSEqC = CTL_CODE(THBDA_IO_INDEX, 104, METHOD_BUFFERED, FILE_ANY_ACCESS);
-
-    //*******************************************************************************************************
-    //Functionality : Get DiSEqC command
-    //InBuffer      : NULL
-    //InBufferSize  : 0 bytes
-    //OutBuffer     : struct DiSEqC_DATA
-    //OutBufferSize : sizeof(DiSEqC_DATA) bytes
-    //*******************************************************************************************************
-    private readonly uint THBDA_IOCTL_GET_DiSEqC = CTL_CODE(THBDA_IO_INDEX, 105, METHOD_BUFFERED, FILE_ANY_ACCESS);
-
-    //*******************************************************************************************************
-    //Functionality : Set LNB parameters
-    //InBuffer      : struct LNB_DATA
-    //InBufferSize  : sizeof(LNB_DATA) bytes
-    //OutBuffer     : 0
-    //OutBufferSize : 0
-    //*******************************************************************************************************
-    private readonly uint THBDA_IOCTL_SET_LNB_DATA = CTL_CODE(THBDA_IO_INDEX, 128, METHOD_BUFFERED, FILE_ANY_ACCESS);
-
-    //*******************************************************************************************************
-    //Functionality : GET LNB parameters
-    //InBuffer      : NULL
-    //InBufferSize  : 0
-    //OutBuffer     : struct LNB_DATA
-    //OutBufferSize : sizeof(LNB_DATA) bytes
-    //*******************************************************************************************************
-    private readonly uint THBDA_IOCTL_GET_LNB_DATA = CTL_CODE(THBDA_IO_INDEX, 129, METHOD_BUFFERED, FILE_ANY_ACCESS);
-
-    #endregion
-
-    #region PID filter
-
-    //*******************************************************************************************************
-    //Functionality : Set PID filter mode and Pids to PID filter
-    //InBuffer      : struct PID_FILTER_INFO
-    //InBufferSize  : sizeof(PID_FILTER_INFO) bytes
-    //OutBuffer     : NULL
-    //OutBufferSize : 0 bytes
-    //*******************************************************************************************************
-    private readonly uint THBDA_IOCTL_SET_PID_FILTER_INFO = CTL_CODE(THBDA_IO_INDEX, 113, METHOD_BUFFERED, FILE_ANY_ACCESS);
-
-    //*******************************************************************************************************
-    //Functionality : Get Pids, PLD mode and available max number Pids
-    //InBuffer      : NULL
-    //InBufferSize  : 0 bytes
-    //OutBuffer     : struct PID_FILTER_INFO
-    //OutBufferSize : sizeof(PID_FILTER_INFO) bytes
-    //*******************************************************************************************************
-    private readonly uint THBDA_IOCTL_GET_PID_FILTER_INFO = CTL_CODE(THBDA_IO_INDEX, 114, METHOD_BUFFERED, FILE_ANY_ACCESS);
-
-    #endregion
-
-    #region CI handling
-
-    #region MMI
-
-    //*******************************************************************************************************
-    //Functionality : Get CI state
-    //InBuffer      : NULL
-    //InBufferSize  : 0 bytes
-    //OutBuffer     : struct THCIState
-    //OutBufferSize : sizeof(THCIState) bytes
-    //*******************************************************************************************************
-    private readonly uint THBDA_IOCTL_CI_GET_STATE = CTL_CODE(THBDA_IO_INDEX, 200, METHOD_BUFFERED, FILE_ANY_ACCESS);
-
-    //*******************************************************************************************************
-    //Functionality : Get APP info.
-    //InBuffer      : NULL
-    //InBufferSize  : 0 bytes
-    //OutBuffer     : struct THAppInfo
-    //OutBufferSize : sizeof(THAppInfo) bytes
-    //*******************************************************************************************************
-    private readonly uint THBDA_IOCTL_CI_GET_APP_INFO = CTL_CODE(THBDA_IO_INDEX, 201, METHOD_BUFFERED, FILE_ANY_ACCESS);
-
-    //*******************************************************************************************************
-    //Functionality : Init MMI
-    //InBuffer      : NULL
-    //InBufferSize  : 0 bytes
-    //OutBuffer     : NULL
-    //OutBufferSize : 0 bytes
-    //*******************************************************************************************************
-    private readonly uint THBDA_IOCTL_CI_INIT_MMI = CTL_CODE(THBDA_IO_INDEX, 202, METHOD_BUFFERED, FILE_ANY_ACCESS);
-
-    //*******************************************************************************************************
-    //Functionality : Get MMI
-    //InBuffer      : NULL
-    //InBufferSize  : 0 bytes
-    //OutBuffer     : struct THMMIInfo
-    //OutBufferSize : sizeof(THMMIInfo) bytes
-    //*******************************************************************************************************
-    private readonly uint THBDA_IOCTL_CI_GET_MMI = CTL_CODE(THBDA_IO_INDEX, 203, METHOD_BUFFERED, FILE_ANY_ACCESS);
-
-    //*******************************************************************************************************
-    //Functionality : Answer
-    //InBuffer      : NULL
-    //InBufferSize  : 0 bytes
-    //OutBuffer     : struct THMMIInfo
-    //OutBufferSize : sizeof(THMMIInfo) bytes
-    //*******************************************************************************************************
-    private readonly uint THBDA_IOCTL_CI_ANSWER = CTL_CODE(THBDA_IO_INDEX, 204, METHOD_BUFFERED, FILE_ANY_ACCESS);
-
-    //*******************************************************************************************************
-    //Functionality : Close MMI
-    //InBuffer      : NULL
-    //InBufferSize  : 0 bytes
-    //OutBuffer     : NULL
-    //OutBufferSize : 0 bytes
-    //*******************************************************************************************************
-    private readonly uint THBDA_IOCTL_CI_CLOSE_MMI = CTL_CODE(THBDA_IO_INDEX, 205, METHOD_BUFFERED, FILE_ANY_ACCESS);
-
-    #endregion
-
-    #region PMT
-
-    //*******************************************************************************************************
-    //Functionality : Send PMT
-    //InBuffer      : PMT data buffer
-    //InBufferSize  : PMT data buffer size bytes
-    //OutBuffer     : NULL
-    //OutBufferSize : 0 bytes
-    //Comment       : CA_PMT data format
-    //1: ca pmt list management;(8 bit);
-    //2: program number (16 bit);
-    //3: reserved (2 bit);
-    //4: version number (5 bit);
-    //5: current next indicator (I bit);
-    //6: reserved (4 bit);
-    //7: program information length (12 bit);
-    //8: if (7!=0)
-    //	    ca pmt command id (program level); (8 bit);
-    //	    ca descriptor at program level; (n * 8bit);
-    //9:  stream type (8 bit);
-    //10: reserved (3 bit);
-    //11: elementary stream PID (bit 13);
-    //12: reserved (4 bit);
-    //13: ES information length (12 bit);
-    //14: if (ES information length ! =0)
-    //       ca pmt command id ( elementary stream level) (8 bit);
-    //	     ca descriptor at elementary stream level; ( n * 8bit)
-    //* more detail, please refer to EN 50221 (8,4,3,4 CA_PMT); 
-    //*******************************************************************************************************
-    private readonly uint THBDA_IOCTL_CI_SEND_PMT = CTL_CODE(THBDA_IO_INDEX, 206, METHOD_BUFFERED, FILE_ANY_ACCESS);
-
-    //*******************************************************************************************************
-    //Functionality : Get PMT Reply
-    //InBuffer      : NULL
-    //InBufferSize  : 0 bytes
-    //OutBuffer     : PMT Reply Buffer
-    //OutBufferSize : sizeof(PMT Reply Buffer) bytes
-    //*******************************************************************************************************
-    private readonly uint THBDA_IOCTL_CI_GET_PMT_REPLY = CTL_CODE(THBDA_IO_INDEX, 210, METHOD_BUFFERED, FILE_ANY_ACCESS);
-
-    #endregion
-
-    #endregion
-
-    #region not used/implemented
-
-    #region ring buffer TS data capture
-
-    //*******************************************************************************************************
-    //Functionality : START TS capture (from Tuner to driver Ring buffer)
-    //InBuffer      : NULL
-    //InBufferSize  : 0 bytes
-    //OutBuffer     : NULL
-    //OutBufferSize : 0 bytes
-    //*******************************************************************************************************
-    private readonly uint THBDA_IOCTL_START_CAPTURE = CTL_CODE(THBDA_IO_INDEX, 109, METHOD_BUFFERED, FILE_ANY_ACCESS);
-
-    //*******************************************************************************************************
-    //Functionality : Stop TS capture
-    //InBuffer      : NULL
-    //InBufferSize  : 0 bytes
-    //OutBuffer     : NULL
-    //OutBufferSize : 0 bytes
-    //*******************************************************************************************************
-    private readonly uint THBDA_IOCTL_STOP_CAPTURE = CTL_CODE(THBDA_IO_INDEX, 110, METHOD_BUFFERED, FILE_ANY_ACCESS);
-
-    //*******************************************************************************************************
-    //Functionality : Get Driver ring buffer status
-    //InBuffer      : NULL
-    //InBufferSize  : 0 bytes
-    //OutBuffer     : struct RING_BUF_STATUS 
-    //OutBufferSize : sizeof(RING_BUF_STATUS) bytes
-    //*******************************************************************************************************
-    private readonly uint THBDA_IOCTL_GET_RINGBUFFER_STATUS = CTL_CODE(THBDA_IO_INDEX, 111, METHOD_BUFFERED, FILE_ANY_ACCESS);
-
-    //*******************************************************************************************************
-    //Functionality : Get TS from driver's ring buffer to local  buffer 
-    //InBuffer      : NULL
-    //InBufferSize  : 0 bytes
-    //OutBuffer     : struct CAPTURE_DATA
-    //OutBufferSize : sizeof(CAPTURE_DATA) bytes
-    //*******************************************************************************************************
-    private readonly uint THBDA_IOCTL_GET_CAPTURE_DATA = CTL_CODE(THBDA_IO_INDEX, 112, METHOD_BUFFERED, FILE_ANY_ACCESS);
-
-    #endregion
-
-    #region remote control
-
-    //*******************************************************************************************************
-    //Functionality : Start RC(Remote Controller receiving) thread
-    //InBuffer      : NULL
-    //InBufferSize  : 0 bytes
-    //OutBuffer     : NULL
-    //OutBufferSize : 0 bytes
-    //*******************************************************************************************************
-    private readonly uint THBDA_IOCTL_START_REMOTE_CONTROL = CTL_CODE(THBDA_IO_INDEX, 115, METHOD_BUFFERED, FILE_ANY_ACCESS);
-
-    //*******************************************************************************************************
-    //Functionality : Stop RC thread, and remove all RC event
-    //InBuffer      : NULL
-    //InBufferSize  : 0 bytes
-    //OutBuffer     : NULL
-    //OutBufferSize : 0 bytes
-    //*******************************************************************************************************
-    private readonly uint THBDA_IOCTL_STOP_REMOTE_CONTROL = CTL_CODE(THBDA_IO_INDEX, 116, METHOD_BUFFERED, FILE_ANY_ACCESS);
-
-
-    //*******************************************************************************************************
-    //Functionality : Add RC_Event to driver
-    //InBuffer      : REMOTE_EVENT
-    //InBufferSize  : sizeof(REMOTE_EVENT) bytes
-    //OutBuffer     : NULL
-    //OutBufferSize : 0 bytes
-    //*******************************************************************************************************
-    private readonly uint THBDA_IOCTL_ADD_RC_EVENT = CTL_CODE(THBDA_IO_INDEX, 117, METHOD_BUFFERED, FILE_ANY_ACCESS);
-
-    //*******************************************************************************************************
-    //Functionality : Remove RC_Event 
-    //InBuffer      : REMOTE_EVENT
-    //InBufferSize  : sizeof(REMOTE_EVENT) bytes
-    //OutBuffer     : NULL
-    //OutBufferSize : 0 bytes
-    //*******************************************************************************************************
-    private readonly uint THBDA_IOCTL_REMOVE_RC_EVENT = CTL_CODE(THBDA_IO_INDEX, 118, METHOD_BUFFERED, FILE_ANY_ACCESS);
-
-
-    //*******************************************************************************************************
-    //Functionality : Get Remote Controller key
-    //InBuffer      : NULL
-    //InBufferSize  : 0 bytes
-    //OutBuffer     : BYTE
-    //OutBufferSize : 1 bytes
-    //*******************************************************************************************************
-    private readonly uint THBDA_IOCTL_GET_REMOTE_CONTROL_VALUE = CTL_CODE(THBDA_IO_INDEX, 119, METHOD_BUFFERED, FILE_ANY_ACCESS);
-
-    //*******************************************************************************************************
-    //Functionality : Set Remote control,HID function enable or disable
-    //InBuffer      : 1 0 for OFF,others for ON.
-    //InBufferSize  : 1 bytes
-    //OutBuffer     : 0 registers value
-    //OutBufferSize : 0 bytes
-    //*******************************************************************************************************
-    private readonly uint THBDA_IOCTL_HID_RC_ENABLE = CTL_CODE(THBDA_IO_INDEX, 152, METHOD_BUFFERED, FILE_ANY_ACCESS);
-
-    #endregion
-
-    #region registry parameters
-
-    //*******************************************************************************************************
-    //Functionality : Set Twinhan BDA driver configuration
-    //InBuffer      : struct THBDAREGPARAMS
-    //InBufferSize  : sizeof(THBDAREGPARAMS) bytes
-    //OutBuffer     : NULL
-    //OutBufferSize : 0 bytes
-    //*******************************************************************************************************
-    private readonly uint THBDA_IOCTL_SET_REG_PARAMS = CTL_CODE(THBDA_IO_INDEX, 122, METHOD_BUFFERED, FILE_ANY_ACCESS);
-
-    //*******************************************************************************************************
-    //Functionality : Get Twinhan BDA driver configuration
-    //InBuffer      : NULL
-    //InBufferSize  : 0 bytes
-    //OutBuffer     : struct THBDAREGPARAMS
-    //OutBufferSize : struct THBDAREGPARAMS
-    //*******************************************************************************************************
-    private readonly uint THBDA_IOCTL_GET_REG_PARAMS = CTL_CODE(THBDA_IO_INDEX, 123, METHOD_BUFFERED, FILE_ANY_ACCESS);
-
-    #endregion
-
-    #region EEPROM access
-
-    //*******************************************************************************************************
-    //Functionality : Write EEPROM value
-    //InBuffer      : struct EE_IO_DATA
-    //InBufferSize  : sizeof(EE_IO_DATA) bytes
-    //OutBuffer     : NULL
-    //OutBufferSize : 0 bytes
-    //*******************************************************************************************************
-    private readonly uint THBDA_IOCTL_SET_EE_VAL = CTL_CODE(THBDA_IO_INDEX, 126, METHOD_BUFFERED, FILE_ANY_ACCESS);
-
-    //*******************************************************************************************************
-    //Functionality : Read EEPROM value      
-    //InBuffer      : struct EE_IO_DATA
-    //InBufferSize  : sizeof(EE_IO_DATA) bytes
-    //OutBuffer     : struct EE_IO_DATA
-    //OutBufferSize : sizeof(EE_IO_DATA) bytes
-    //*******************************************************************************************************
-    private readonly uint THBDA_IOCTL_GET_EE_VAL = CTL_CODE(THBDA_IO_INDEX, 127, METHOD_BUFFERED, FILE_ANY_ACCESS);
-
-    #endregion
-
-    #region virtual DVB-T tuner control
-
-    //*******************************************************************************************************
-    //Functionality : Enable virtual DVBT interface for DVB-S card
-    //InBuffer      : 1 0 for OFF,others for ON.
-    //InBufferSize  : 1 bytes
-    //OutBuffer     : NULL
-    //OutBufferSize : 0 bytes
-    //*******************************************************************************************************
-    private readonly uint THBDA_IOCTL_ENABLE_VIRTUAL_DVBT = CTL_CODE(THBDA_IO_INDEX, 300, METHOD_BUFFERED, FILE_ANY_ACCESS);
-
-    //*******************************************************************************************************
-    //Functionality : Reset (Clear) DVB-S Transponder mapping table entry for virtual DVB-T interface
-    //InBuffer      : NULL
-    //InBufferSize  : 0
-    //OutBuffer     : NULL
-    //OutBufferSize : 0
-    //*******************************************************************************************************
-    private readonly uint THBDA_IOCTL_RESET_T2S_MAPPING = CTL_CODE(THBDA_IO_INDEX, 301, METHOD_BUFFERED, FILE_ANY_ACCESS);
-
-    //*******************************************************************************************************
-    //Functionality : Set DVB-S Transponder mapping table entry for virtual DVB-T interface
-    //InBuffer      : struct DVB-T2S_MAPPING_ENTRY
-    //InBufferSize  : sizeof(struct DVB-T2S_MAPPING_ENTRY) bytes
-    //OutBuffer     : NULL
-    //OutBufferSize : 0
-    //*******************************************************************************************************
-    private readonly uint THBDA_IOCTL_SET_T2S_MAPPING = CTL_CODE(THBDA_IO_INDEX, 302, METHOD_BUFFERED, FILE_ANY_ACCESS);
-
-    //*******************************************************************************************************
-    //Functionality : GET DVB-S Transponder mapping table entry
-    //InBuffer      : &(Table_Index)
-    //InBufferSize  : sizeof(ULONG)
-    //OutBuffer     : struct DVB-T2S_MAPPING_ENTRY
-    //OutBufferSize : sizeof(struct DVB-T2S_MAPPING_ENTRY) bytes
-    //*******************************************************************************************************
-    private readonly uint THBDA_IOCTL_GET_T2S_MAPPING = CTL_CODE(THBDA_IO_INDEX, 303, METHOD_BUFFERED, FILE_ANY_ACCESS);
-
-    #endregion
-
-    #region tuner firmware download
-
-    //*******************************************************************************************************
-    //Functionality : Download tuner firmware, 704C
-    //InBuffer      : 1 byte buffer,  0:Downlaod analog TV firmware, 1:download DVB-T firmware
-    //InBufferSize  : 1:byte
-    //OutBuffer     :1 byte buffer,  0-99: download percentage, 100:download complete, 255:Fail 
-    //OutBufferSize : 1 bytes
-    //*******************************************************************************************************
-    private readonly uint THBDA_IOCTL_DOWNLOAD_TUNER_FIRMWARE = CTL_CODE(THBDA_IO_INDEX, 400, METHOD_BUFFERED, FILE_ANY_ACCESS);
-
-    //*******************************************************************************************************
-    //Functionality : Get tuner firmware download progress
-    //InBuffer      : NULL
-    //InBufferSize  : 0:byte
-    //OutBuffer     :1 byte buffer,  0-99: download percentage, 100:download complete, 255:Fail 
-    //OutBufferSize : 1 bytes
-    //*******************************************************************************************************
-    private readonly uint THBDA_IOCTL_DOWNLOAD_TUNER_FIRMWARE_STAUS = CTL_CODE(THBDA_IO_INDEX, 401, METHOD_BUFFERED, FILE_ANY_ACCESS);
-
-    #endregion
-
-    #region CI event handling
-
-    //*******************************************************************************************************
-    //Functionality : Create CI event
-    //InBuffer      : hEventHandle (The event handle that is created by AP)
-    //InBufferSize  : sizeof(HANDLE)
-    //OutBuffer     : NULL
-    //OutBufferSize : 0 bytes
-    //*******************************************************************************************************
-    private readonly uint THBDA_IOCTL_CI_EVENT_CREATE = CTL_CODE(THBDA_IO_INDEX, 208, METHOD_BUFFERED, FILE_ANY_ACCESS);
-
-    //*******************************************************************************************************
-    //Functionality : Close CI event
-    //InBuffer      : hEventHandle (The event handle that is sended by create CI event)
-    //InBufferSize  : sizeof(HANDLE)
-    //OutBuffer     : NULL
-    //OutBufferSize : 0 bytes
-    //*******************************************************************************************************
-    private readonly uint THBDA_IOCTL_CI_EVENT_CLOSE = CTL_CODE(THBDA_IO_INDEX, 209, METHOD_BUFFERED, FILE_ANY_ACCESS);
-
-    #endregion
-
-    #region CI raw command messaging
-
-    //*******************************************************************************************************
-    //Functionality : Send CI raw command
-    //InBuffer      : RAW_CMD_INFO
-    //InBufferSize  : sizeof(RAW_CMD_INFO) bytes
-    //OutBuffer     : NULL
-    //OutBufferSize : 0
-    //*******************************************************************************************************
-    private readonly uint THBDA_IOCTL_CI_SEND_RAW_CMD = CTL_CODE(THBDA_IO_INDEX, 211, METHOD_BUFFERED, FILE_ANY_ACCESS);
-
-    //*******************************************************************************************************
-    //Functionality : Get CI raw command data
-    //InBuffer      : NULL
-    //InBufferSize  : 0
-    //OutBuffer     : Raw command data buffer
-    //OutBufferSize : Max 1024 bytes
-    //*******************************************************************************************************
-    private readonly uint THBDA_IOCTL_CI_GET_RAW_CMD_DATA = CTL_CODE(THBDA_IO_INDEX, 212, METHOD_BUFFERED, FILE_ANY_ACCESS);
-
-    #endregion
-
-    #endregion
 
     #endregion
 
@@ -1090,13 +631,17 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
     private static readonly int OLD_CI_STATE_INFO_SIZE = Marshal.SizeOf(typeof(CiStateInfoOld));  // 8
     private static readonly int APPLICATION_INFO_SIZE = Marshal.SizeOf(typeof(ApplicationInfo));  // 76
     private static readonly int TUNING_PARAMS_SIZE = Marshal.SizeOf(typeof(TuningParams));        // 16
+    private static readonly int REGISTRY_PARAMS_SIZE = Marshal.SizeOf(typeof(RegistryParams));    // 44
+    private static readonly int HID_REMOTE_CONTROL_CONFIG_SIZE = Marshal.SizeOf(typeof(HidRemoteControlConfig));  // 16
 
     private static readonly int GENERAL_BUFFER_SIZE = new int[]
       {
         DEVICE_INFO_SIZE, DISEQC_MESSAGE_SIZE, DRIVER_INFO_SIZE, LNB_PARAMS_SIZE,
-        PID_FILTER_PARAMS_SIZE, TUNING_PARAMS_SIZE
+        PID_FILTER_PARAMS_SIZE, TUNING_PARAMS_SIZE, REGISTRY_PARAMS_SIZE
       }.Max();
-    private const int MMI_HANDLER_THREAD_WAIT_TIME = 500;     // unit = ms
+
+    private const int MMI_HANDLER_THREAD_WAIT_TIME = 500;             // unit = ms
+    private const int REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME = 100; // unit = ms
 
     // TerraTec have entended the length and number of
     // possible CAM menu entries in the MMI data struct
@@ -1119,6 +664,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
     #pragma warning restore 0414
     private bool _isCamReady = false;
 
+    // Satellite tuner LNB data parameter cache.
+    private bool _isPowerOn = false;
+    private int _lnbLowBandLof = -1;
+    private int _lnbHighBandLof = -1;
+    private int _lnbSwitchFrequency = -1;
+    private TwinhanDiseqcPort _diseqcPort = TwinhanDiseqcPort.Null;
+
     // PID filter variables.
     private TwinhanDeviceSpeed _connection = TwinhanDeviceSpeed.Pcie;
     private bool _isPidFilterSupported = false;
@@ -1126,13 +678,16 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
     private int _maxPidFilterPidCount = MAX_PID_FILTER_PID_COUNT;
     private HashSet<ushort> _pidFilterPids = new HashSet<ushort>();
 
-    // Functions that are called from both the main TV service threads
-    // as well as the MMI handler thread use their own local buffer to
-    // avoid buffer data corruption. Otherwise functions called exclusively
-    // by the MMI handler thread use the MMI buffer and other functions
-    // use the general buffer.
+    // Functions that are called from both the main TV service threads as well
+    // as the MMI handler or remote control listener threads use their own
+    // local buffer to avoid buffer data corruption. Otherwise functions called
+    // exclusively by:
+    // - the MMI handler thread => MMI buffer
+    // - the remote control listener thread => remote control buffer
+    // - other => general buffer.
     private IntPtr _generalBuffer = IntPtr.Zero;
     private IntPtr _mmiBuffer = IntPtr.Zero;
+    private IntPtr _remoteControlBuffer = IntPtr.Zero;
 
     private IKsPropertySet _propertySet = null;
     private CardType _tunerType = CardType.Unknown;
@@ -1146,6 +701,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
     private object _mmiLock = new object();
     private IConditionalAccessMenuCallBacks _caMenuCallBacks = null;
     private object _caMenuCallBackLock = new object();
+
+    private bool _isRemoteControlInterfaceOpen = false;
+    private Thread _remoteControlListenerThread = null;
+    private AutoResetEvent _remoteControlListenerThreadStopEvent = null;
+    private bool _isHidRemote = false;
 
     #endregion
 
@@ -1179,10 +739,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       }
       try
       {
-        TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_CI_GET_STATE, IntPtr.Zero, 0, responseBuffer, bufferSize);
         int returnedByteCount;
-        int hr = command.Execute(_propertySet, out returnedByteCount);
-        if (hr == (int)HResult.Severity.Success)
+        int hr = GetIoctl(TwinhanIoControlCode.CiGetState, responseBuffer, bufferSize, out returnedByteCount);
+        if (hr == (int)HResult.Severity.Success && (returnedByteCount == OLD_CI_STATE_INFO_SIZE || returnedByteCount == CI_STATE_INFO_SIZE))
         {
           ciState = (TwinhanCiState)Marshal.ReadInt32(responseBuffer, 0);
           mmiState = (TwinhanMmiState)Marshal.ReadInt32(responseBuffer, 4);
@@ -1209,12 +768,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       {
         Marshal.WriteByte(_generalBuffer, 0);
       }
-      TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_GET_DEVICE_INFO, IntPtr.Zero, 0, _generalBuffer, DEVICE_INFO_SIZE);
       int returnedByteCount;
-      int hr = command.Execute(_propertySet, out returnedByteCount);
-      if (hr != (int)HResult.Severity.Success)
+      int hr = GetIoctl(TwinhanIoControlCode.GetDeviceInfo, _generalBuffer, DEVICE_INFO_SIZE, out returnedByteCount);
+      if (hr != (int)HResult.Severity.Success || returnedByteCount != DEVICE_INFO_SIZE)
       {
-        this.LogWarn("Twinhan: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogWarn("Twinhan: result = failure, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
         return;
       }
 
@@ -1222,9 +780,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       //Dump.DumpBinary(_generalBuffer, returnedByteCount);
       DeviceInfo deviceInfo = (DeviceInfo)Marshal.PtrToStructure(_generalBuffer, typeof(DeviceInfo));
       this.LogDebug("  name                        = {0}", deviceInfo.Name);
-      this.LogDebug("  supported modes             = {0}", deviceInfo.Type.ToString());
+      this.LogDebug("  supported modes             = {0}", deviceInfo.Type);
       this.LogDebug("  speed/interface             = {0}", deviceInfo.Speed);
-      this.LogDebug("  MAC address                 = {0}", BitConverter.ToString(deviceInfo.MacAddress));
+      this.LogDebug("  MAC address                 = {0}", BitConverter.ToString(deviceInfo.MacAddress).ToLowerInvariant());
       this.LogDebug("  CI support                  = {0}", deviceInfo.CiSupport);
       this.LogDebug("  TS packet length            = {0}", deviceInfo.TsPacketLength);
       // Handle the PID filter paramter bytes carefully - not all drivers actually return
@@ -1254,12 +812,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       {
         Marshal.WriteByte(_generalBuffer, 0);
       }
-      TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_GET_PID_FILTER_INFO, IntPtr.Zero, 0, _generalBuffer, PID_FILTER_PARAMS_SIZE);
       int returnedByteCount;
-      int hr = command.Execute(_propertySet, out returnedByteCount);
-      if (hr != (int)HResult.Severity.Success)
+      int hr = GetIoctl(TwinhanIoControlCode.GetPidFilterInfo, _generalBuffer, PID_FILTER_PARAMS_SIZE, out returnedByteCount);
+      if (hr != (int)HResult.Severity.Success || returnedByteCount != PID_FILTER_PARAMS_SIZE)
       {
-        this.LogWarn("Twinhan: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogWarn("Twinhan: result = failure, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
         return;
       }
 
@@ -1281,12 +838,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       {
         Marshal.WriteByte(_generalBuffer, 0);
       }
-      TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_GET_DRIVER_INFO, IntPtr.Zero, 0, _generalBuffer, DRIVER_INFO_SIZE);
       int returnedByteCount;
-      int hr = command.Execute(_propertySet, out returnedByteCount);
-      if (hr != (int)HResult.Severity.Success)
+      int hr = GetIoctl(TwinhanIoControlCode.GetDriverInfo, _generalBuffer, DRIVER_INFO_SIZE, out returnedByteCount);
+      if (hr != (int)HResult.Severity.Success || returnedByteCount != DRIVER_INFO_SIZE)
       {
-        this.LogWarn("Twinhan: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogWarn("Twinhan: result = failure, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
         return;
       }
 
@@ -1304,6 +860,64 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       this.LogDebug("  hardware info               = {0}", driverInfo.HardwareInfo);
       this.LogDebug("  CI event mode supported     = {0}", (driverInfo.CiMmiFlags & 0x01) != 0);
       this.LogDebug("  simulator mode              = {0}", driverInfo.SimType);
+    }
+
+    /// <summary>
+    /// Attempt to read the device registry parameters.
+    /// </summary>
+    private void ReadRegistryParams()
+    {
+      this.LogDebug("Twinhan: read registry parameters");
+      for (int i = 0; i < REGISTRY_PARAMS_SIZE; i++)
+      {
+        Marshal.WriteByte(_generalBuffer, 0);
+      }
+      RegistryParams registryParams = new RegistryParams();
+      int returnedByteCount;
+      int hr = GetIoctl(TwinhanIoControlCode.GetRegistryParams, _generalBuffer, REGISTRY_PARAMS_SIZE, out returnedByteCount);
+      if (hr == (int)HResult.Severity.Success)
+      {
+        //Dump.DumpBinary(_generalBuffer, returnedByteCount);
+        registryParams = (RegistryParams)Marshal.PtrToStructure(_generalBuffer, typeof(RegistryParams));
+        //this.LogDebug("  MCE frequency translation   = {0}", registryParams.MceFrequencyTranslate);
+        //this.LogDebug("  fixed bandwidth             = {0}", registryParams.FixedBandwidth);
+        this.LogDebug("  enable off frequency scan   = {0}", registryParams.EnableOffFrequencyScan);
+        this.LogDebug("  enable relock monitor       = {0}", registryParams.EnableRelockMonitor);
+        //this.LogDebug("  LNB LO frequency            = {0}", registryParams.LnbLof);
+        //this.LogDebug("  LNB low band LO frequency   = {0}", registryParams.LnbLowLof);
+        //this.LogDebug("  LNB high band LO frequency  = {0}", registryParams.LnbHighLof);
+        //this.LogDebug("  DiSEqC                      = {0}", registryParams.Diseqc);
+        //this.LogDebug("  LNB power                   = {0}", registryParams.LnbPower);
+        //this.LogDebug("  22 kHz tone                 = {0}", registryParams.Tone22k);
+        this.LogDebug("  ATSC frequency shift        = {0} kHz", registryParams.AtscFrequencyShift);
+      }
+      else
+      {
+        this.LogWarn("Twinhan: result = failure, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+      }
+
+      if (registryParams.EnableOffFrequencyScan || !registryParams.EnableRelockMonitor || registryParams.AtscFrequencyShift != 1750)
+      {
+        // Note that the drivers that I tested with only updated EnableRelockMonitor and AtscFrequencyShift.
+        this.LogDebug("Twinhan: updating registry parameters");
+        registryParams.MceFrequencyTranslate = 0;
+        registryParams.FixedBandwidth = 0;
+        registryParams.EnableOffFrequencyScan = false;  // for faster DVB-T tuning
+        registryParams.EnableRelockMonitor = true;      // for more robust tuner behaviour
+        registryParams.LnbPower = true;
+        registryParams.Tone22k = Twinhan22k.Auto;
+        registryParams.Diseqc = TwinhanDiseqcPort.Null;
+        registryParams.AtscFrequencyShift = 1750;       // required for BDA ATSC tuning
+        Marshal.StructureToPtr(registryParams, _generalBuffer, false);
+        hr = SetIoctl(TwinhanIoControlCode.SetRegistryParams, _generalBuffer, REGISTRY_PARAMS_SIZE);
+        if (hr != (int)HResult.Severity.Success)
+        {
+          this.LogWarn("Twinhan: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          return;
+        }
+
+        this.LogDebug("Twinhan: result = success");
+      }
     }
 
     #endregion
@@ -1530,7 +1144,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       catch (Exception ex)
       {
         this.LogError(ex, "Twinhan: MMI handler thread exception");
+        return;
       }
+      this.LogDebug("Twinhan: MMI handler thread stop polling");
     }
 
     /// <summary>
@@ -1559,9 +1175,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       {
         mmi.WriteToBuffer(_mmiBuffer, _isTerraTec);
         //Dump.DumpBinary(_mmiBuffer, _mmiDataSize);
-        TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_CI_ANSWER, IntPtr.Zero, 0, _mmiBuffer, _mmiDataSize);
         int returnedByteCount;
-        hr = command.Execute(_propertySet, out returnedByteCount);
+        hr = GetIoctl(TwinhanIoControlCode.CiAnswer, _mmiBuffer, _mmiDataSize, out returnedByteCount);
       }
       if (hr == (int)HResult.Severity.Success)
       {
@@ -1589,9 +1204,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
         {
           Marshal.WriteByte(_mmiBuffer, i, 0);
         }
-        TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_CI_GET_MMI, IntPtr.Zero, 0, _mmiBuffer, _mmiDataSize);
         int returnedByteCount;
-        hr = command.Execute(_propertySet, out returnedByteCount);
+        hr = GetIoctl(TwinhanIoControlCode.CiGetMmi, _mmiBuffer, _mmiDataSize, out returnedByteCount);
         if (hr == (int)HResult.Severity.Success && returnedByteCount == _mmiDataSize)
         {
           this.LogDebug("Twinhan: result = success");
@@ -1603,6 +1217,169 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
 
       this.LogError("Twinhan: failed to read MMI response, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
+    }
+
+    #endregion
+
+    #region remote control listener thread
+
+    /// <summary>
+    /// Start a thread to listen for remote control commands.
+    /// </summary>
+    private void StartRemoteControlListenerThread()
+    {
+      // Don't start a thread if the interface has not been opened.
+      if (!_isRemoteControlInterfaceOpen || _isHidRemote)
+      {
+        return;
+      }
+
+      // Kill the existing thread if it is in "zombie" state.
+      if (_remoteControlListenerThread != null && !_remoteControlListenerThread.IsAlive)
+      {
+        StopRemoteControlListenerThread();
+      }
+      if (_remoteControlListenerThread == null)
+      {
+        this.LogDebug("Twinhan: starting new remote control listener thread");
+        _remoteControlListenerThreadStopEvent = new AutoResetEvent(false);
+        _remoteControlListenerThread = new Thread(new ThreadStart(RemoteControlListener));
+        _remoteControlListenerThread.Name = "Twinhan remote control listener";
+        _remoteControlListenerThread.IsBackground = true;
+        _remoteControlListenerThread.Priority = ThreadPriority.Lowest;
+        _remoteControlListenerThread.Start();
+      }
+    }
+
+    /// <summary>
+    /// Stop the thread that listens for remote control commands.
+    /// </summary>
+    private void StopRemoteControlListenerThread()
+    {
+      if (_remoteControlListenerThread != null)
+      {
+        if (!_remoteControlListenerThread.IsAlive)
+        {
+          this.LogWarn("Twinhan: aborting old remote control listener thread");
+          _remoteControlListenerThread.Abort();
+        }
+        else
+        {
+          _remoteControlListenerThreadStopEvent.Set();
+          if (!_remoteControlListenerThread.Join(REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME * 2))
+          {
+            this.LogWarn("Twinhan: failed to join remote control listener thread, aborting thread");
+            _remoteControlListenerThread.Abort();
+          }
+        }
+        _remoteControlListenerThread = null;
+        if (_remoteControlListenerThreadStopEvent != null)
+        {
+          _remoteControlListenerThreadStopEvent.Close();
+          _remoteControlListenerThreadStopEvent = null;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Thread function for receiving remote control commands.
+    /// </summary>
+    private void RemoteControlListener()
+    {
+      this.LogDebug("Twinhan: remote control listener thread start polling");
+      int hr;
+      int returnedByteCount;
+      byte previousCode = 0;
+      try
+      {
+        while (!_remoteControlListenerThreadStopEvent.WaitOne(REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME))
+        {
+          hr = GetIoctl(TwinhanIoControlCode.GetRemoteControlValue, _remoteControlBuffer, 1, out returnedByteCount);
+          if (hr != (int)HResult.Severity.Success)
+          {
+            this.LogDebug("Twinhan: failed to read remote code, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          }
+          else
+          {
+            byte remoteCode = Marshal.ReadByte(_remoteControlBuffer, 0);
+            if (remoteCode != previousCode)
+            {
+              this.LogDebug("Twinhan: remote control key press = {0}", remoteCode);
+            }
+          }
+        }
+      }
+      catch (ThreadAbortException)
+      {
+      }
+      catch (Exception ex)
+      {
+        this.LogError(ex, "Twinhan: remote control listener thread exception");
+        return;
+      }
+      this.LogDebug("Twinhan: remote control listener thread stop polling");
+    }
+
+    #endregion
+
+    #region IOCTL
+
+    private int SetIoctl(TwinhanIoControlCode controlCode, IntPtr inBuffer, int inBufferSize)
+    {
+      int returnedByteCount;
+      return ExecuteIoctl(controlCode, inBuffer, inBufferSize, IntPtr.Zero, 0, out returnedByteCount);
+    }
+
+    private int GetIoctl(TwinhanIoControlCode controlCode, IntPtr outBuffer, int outBufferSize, out int returnedByteCount)
+    {
+      return ExecuteIoctl(controlCode, IntPtr.Zero, 0, outBuffer, outBufferSize, out returnedByteCount);
+    }
+
+    private int ExecuteIoctl(TwinhanIoControlCode controlCode, IntPtr inBuffer, int inBufferSize, IntPtr outBuffer, int outBufferSize, out int returnedByteCount)
+    {
+      returnedByteCount = 0;
+      int hr = (int)HResult.Severity.Error;
+      if (_propertySet == null)
+      {
+        this.LogError("Twinhan: attempted to execute IOCTL when property set is NULL");
+        return hr;
+      }
+
+      IntPtr instanceBuffer = Marshal.AllocCoTaskMem(INSTANCE_SIZE);
+      IntPtr commandBuffer = Marshal.AllocCoTaskMem(COMMAND_SIZE);
+      IntPtr returnedByteCountBuffer = Marshal.AllocCoTaskMem(sizeof(int));
+      try
+      {
+        // Clear buffers. This is probably not actually needed, but better
+        // to be safe than sorry!
+        for (int i = 0; i < INSTANCE_SIZE; i++)
+        {
+          Marshal.WriteByte(instanceBuffer, i, 0);
+        }
+        Marshal.WriteInt32(returnedByteCountBuffer, 0);
+
+        // Fill the command buffer.
+        Marshal.Copy(COMMAND_GUID.ToByteArray(), 0, commandBuffer, 16);
+        Marshal.WriteInt32(commandBuffer, 16, (int)NativeMethods.CtlCode((NativeMethods.FileDevice)0xaa00, (uint)controlCode, NativeMethods.Method.Buffered, NativeMethods.FileAccess.Any));
+        Marshal.WriteInt32(commandBuffer, 20, inBuffer.ToInt32());
+        Marshal.WriteInt32(commandBuffer, 24, inBufferSize);
+        Marshal.WriteInt32(commandBuffer, 28, outBuffer.ToInt32());
+        Marshal.WriteInt32(commandBuffer, 32, outBufferSize);
+        Marshal.WriteInt32(commandBuffer, 36, returnedByteCountBuffer.ToInt32());
+
+        hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, 0, instanceBuffer, INSTANCE_SIZE, commandBuffer, COMMAND_SIZE);
+        if (hr == (int)HResult.Severity.Success)
+        {
+          returnedByteCount = Marshal.ReadInt32(returnedByteCountBuffer);
+        }
+      }
+      finally
+      {
+        Marshal.FreeCoTaskMem(instanceBuffer);
+        Marshal.FreeCoTaskMem(commandBuffer);
+        Marshal.FreeCoTaskMem(returnedByteCountBuffer);
+      }
+      return hr;
     }
 
     #endregion
@@ -1630,24 +1407,25 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
     /// initialisation fails, the <see ref="ICustomDevice"/> instance should be disposed
     /// immediately.
     /// </summary>
-    /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
+    /// <param name="tunerExternalId">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
     /// <param name="context">Context required to initialise the interface.</param>
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
-    public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
+    public override bool Initialise(string tunerExternalId, CardType tunerType, object context)
     {
       this.LogDebug("Twinhan: initialising");
 
-      IBaseFilter tunerFilter = context as IBaseFilter;
-      if (tunerFilter == null)
-      {
-        this.LogDebug("Twinhan: tuner filter is null");
-        return false;
-      }
       if (_isTwinhan)
       {
         this.LogWarn("Twinhan: extension already initialised");
         return true;
+      }
+
+      IBaseFilter tunerFilter = context as IBaseFilter;
+      if (tunerFilter == null)
+      {
+        this.LogDebug("Twinhan: context is not a filter");
+        return false;
       }
 
       IPin pin = DsFindPin.ByDirection(tunerFilter, PinDirection.Input, 0);
@@ -1659,9 +1437,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
         return false;
       }
 
-      TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_CHECK_INTERFACE, IntPtr.Zero, 0, IntPtr.Zero, 0);
-      int returnedByteCount;
-      int hr = command.Execute(_propertySet, out returnedByteCount);
+      int hr = SetIoctl(TwinhanIoControlCode.CheckInterface, IntPtr.Zero, 0);
       if (hr != (int)HResult.Severity.Success)
       {
         this.LogDebug("Twinhan: property set not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
@@ -1698,6 +1474,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
         ReadPidFilterInfo();
       }
       ReadDriverInfo();
+      ReadRegistryParams();
       return true;
     }
 
@@ -1743,9 +1520,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
         return;
       }
 
-      // Modulation for DVB-S2 QPSK should be ModQpsk... which is what we already use to indicate DVB-S2 QPSK
-      // in our tuning parameter files.
-      if (ch.ModulationType == ModulationType.Mod8Psk)
+      // Modulation for DVB-S2 QPSK and 8 PSK should be Mod8Vsb. As far as I
+      // know, none of the tuners supported by this extension support 16 or 32
+      // APSK.
+      if (ch.ModulationType == ModulationType.ModQpsk || ch.ModulationType == ModulationType.Mod8Psk)
       {
         ch.ModulationType = ModulationType.Mod8Vsb;
       }
@@ -1758,6 +1536,15 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
         ch.ModulationType = ModulationType.ModOqpsk;
       }
       this.LogDebug("  modulation = {0}", ch.ModulationType);
+
+      // Record the LNB parameters for later.
+      _lnbLowBandLof = ch.LnbType.LowBandFrequency;
+      _lnbHighBandLof = ch.LnbType.HighBandFrequency;
+      _lnbSwitchFrequency = ch.LnbType.SwitchFrequency;
+
+      // Reset DiSEqC port. We don't send a command unless we are asked to
+      // during the tune request.
+      _diseqcPort = TwinhanDiseqcPort.Null;
     }
 
     /// <summary>
@@ -1830,14 +1617,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       if (state == PowerState.On)
       {
         Marshal.WriteByte(_generalBuffer, 0, 0x01);
+        _isPowerOn = true;
       }
       else
       {
         Marshal.WriteByte(_generalBuffer, 0, 0x00);
+        _isPowerOn = false;
       }
-      TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_SET_TUNER_POWER, _generalBuffer, 1, IntPtr.Zero, 0);
-      int returnedByteCount;
-      int hr = command.Execute(_propertySet, out returnedByteCount);
+      int hr = SetIoctl(TwinhanIoControlCode.SetTunerPower, _generalBuffer, 1);
       if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("Twinhan: result = success");
@@ -1859,10 +1646,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
     /// <returns><c>true</c> if the extension supports specialised tuning for the channel, otherwise <c>false</c></returns>
     public bool CanTuneChannel(IChannel channel)
     {
-      // Tuning of DVB-C, DVB-S/2 and DVB-T/2 channels is supported with an appropriate tuner. The interface
-      // probably supports ATSC as well, however I'm not sure how to implement that since we tune ATSC by
-      // channel number rather than frequency.
-      if ((channel is DVBCChannel && _tunerType == CardType.DvbC) ||
+      if ((channel is ATSCChannel && _tunerType == CardType.Atsc) ||
+        (channel is DVBCChannel && _tunerType == CardType.DvbC) ||
         (channel is DVBSChannel && _tunerType == CardType.DvbS) ||
         (channel is DVBTChannel && _tunerType == CardType.DvbT))
       {
@@ -1876,8 +1661,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
     /// </summary>
     /// <remarks>
     /// This interface has been tested unsuccessfully for satellite and terrestrial tuning with a
-    /// DigitalNow Quattro S-T (OEM 6090 2xDVB-S + 2xDVB-T/analog). It returned HRESULT 0x8007001f for the
-    /// THBDA_IOCTL_LOCK_TUNER call, probably indicating that the driver does not support does not support
+    /// DigitalNow Quattro S-T (OEM 6090 2xDVB-S + 2xDVB-T/analog). It returned HRESULT 0x8007001f
+    /// for the THBDA_IOCTL_LOCK_TUNER call, probably indicating that the driver does not support
     /// this IOCTL. It is possible that the IOCTLs are only implemented for certain models.
     /// </remarks>
     /// <param name="channel">The channel to tune.</param>
@@ -1893,10 +1678,21 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
         return false;
       }
 
-      int returnedByteCount;
       int hr;
       TuningParams tuningParams = new TuningParams();
-      if (channel is DVBCChannel)
+      if (channel is ATSCChannel)
+      {
+        ATSCChannel ch = channel as ATSCChannel;
+        if (ch.ModulationType == ModulationType.Mod8Vsb || ch.ModulationType == ModulationType.Mod16Vsb)
+        {
+          tuningParams.Frequency = (uint)ATSCChannel.GetTerrestrialFrequencyFromPhysicalChannel(ch.PhysicalChannel);
+        }
+        else
+        {
+          tuningParams.Frequency = (uint)ch.Frequency;
+        }
+      }
+      else if (channel is DVBCChannel)
       {
         DVBCChannel ch = channel as DVBCChannel;
         tuningParams.Frequency = (uint)ch.Frequency;
@@ -1906,41 +1702,23 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       else if (channel is DVBSChannel)
       {
         DVBSChannel dvbsChannel = channel as DVBSChannel;
-        LnbParams lnbParams = new LnbParams();
-        lnbParams.PowerOn = true;
-        lnbParams.ToneBurst = TwinhanToneBurst.Off;
-        lnbParams.LowBandLof = (uint)dvbsChannel.LnbType.LowBandFrequency;
-        lnbParams.HighBandLof = (uint)dvbsChannel.LnbType.HighBandFrequency;
-        lnbParams.SwitchFrequency = (uint)dvbsChannel.LnbType.SwitchFrequency;
-        lnbParams.Tone22k = Twinhan22k.Off;
-        if (dvbsChannel.Frequency > dvbsChannel.LnbType.SwitchFrequency)
+        tuningParams.Frequency = (uint)dvbsChannel.Frequency;
+        tuningParams.SymbolRate = (uint)dvbsChannel.SymbolRate;
+        if (dvbsChannel.Polarisation == Polarisation.LinearH || dvbsChannel.Polarisation == Polarisation.CircularL)
         {
-          lnbParams.Tone22k = Twinhan22k.On;
-        }
-        lnbParams.DiseqcPort = TwinhanDiseqcPort.PortA;
-
-        Marshal.StructureToPtr(lnbParams, _generalBuffer, true);
-        TwinhanCommand lcommand = new TwinhanCommand(THBDA_IOCTL_SET_LNB_DATA, _generalBuffer, LNB_PARAMS_SIZE, IntPtr.Zero, 0);
-        hr = lcommand.Execute(_propertySet, out returnedByteCount);
-        if (hr == (int)HResult.Severity.Success)
-        {
-          this.LogDebug("Twinhan: result = success");
+          tuningParams.Modulation = (ModulationType)2;
         }
         else
         {
-          this.LogError("Twinhan: failed to set LNB configuration, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          tuningParams.Modulation = (ModulationType)1;
         }
-
-        tuningParams.Frequency = (uint)dvbsChannel.Frequency;
-        tuningParams.SymbolRate = (uint)dvbsChannel.SymbolRate;
-        tuningParams.Modulation = (ModulationType)1;
       }
       else if (channel is DVBTChannel)
       {
         DVBTChannel ch = channel as DVBTChannel;
         tuningParams.Frequency = (uint)ch.Frequency;
-        tuningParams.Bandwidth = (uint)ch.Bandwidth;
-        tuningParams.Modulation = 0;  // ???
+        tuningParams.Bandwidth = (uint)ch.Bandwidth / 1000;
+        tuningParams.Modulation = 0;
       }
       else
       {
@@ -1952,48 +1730,15 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       Marshal.StructureToPtr(tuningParams, _generalBuffer, true);
       Dump.DumpBinary(_generalBuffer, TUNING_PARAMS_SIZE);
 
-      TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_LOCK_TUNER, _generalBuffer, TUNING_PARAMS_SIZE, IntPtr.Zero, 0);
-      hr = command.Execute(_propertySet, out returnedByteCount);
+      hr = SetIoctl(TwinhanIoControlCode.LockTuner, _generalBuffer, TUNING_PARAMS_SIZE);
       if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("Twinhan: result = success");
-      }
-      else
-      {
-        this.LogError("Twinhan: failed to tune, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        return true;
       }
 
-      for (int i = 0; i < LNB_PARAMS_SIZE; i++)
-      {
-        Marshal.WriteByte(_generalBuffer, i, 0);
-      }
-      command = new TwinhanCommand(THBDA_IOCTL_GET_LNB_DATA, IntPtr.Zero, 0, _generalBuffer, LNB_PARAMS_SIZE);
-      hr = command.Execute(_propertySet, out returnedByteCount);
-      if (hr == (int)HResult.Severity.Success)
-      {
-        this.LogDebug("Twinhan: result = success");
-      }
-      else
-      {
-        this.LogError("Twinhan: failed to get LNB configuration, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-      }
-      Dump.DumpBinary(_generalBuffer, LNB_PARAMS_SIZE);
-
-
-      Marshal.WriteInt32(_generalBuffer, 0);
-      command = new TwinhanCommand(THBDA_IOCTL_GET_SIGNAL_Q_S, IntPtr.Zero, 0, _generalBuffer, sizeof(int));
-      hr = command.Execute(_propertySet, out returnedByteCount);
-      if (hr == (int)HResult.Severity.Success)
-      {
-        this.LogDebug("Twinhan: result = success");
-        Dump.DumpBinary(_generalBuffer, 4);
-      }
-      else
-      {
-        this.LogError("Twinhan: failed to read signal quality/strength information, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-      }
-
-      return true;
+      this.LogError("Twinhan: failed to tune, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      return false;
     }
 
     #endregion
@@ -2034,9 +1779,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       pidFilterParams.ValidPidMask = 0;
       Marshal.StructureToPtr(pidFilterParams, _generalBuffer, true);
       Dump.DumpBinary(_generalBuffer, PID_FILTER_PARAMS_SIZE);
-      TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_SET_PID_FILTER_INFO, _generalBuffer, PID_FILTER_PARAMS_SIZE, IntPtr.Zero, 0);
-      int returnedByteCount;
-      int hr = command.Execute(_propertySet, out returnedByteCount);
+      int hr = SetIoctl(TwinhanIoControlCode.SetPidFilterInfo, _generalBuffer, PID_FILTER_PARAMS_SIZE);
       if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("Twinhan: result = success");
@@ -2101,9 +1844,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       pidFilterParams.ValidPidMask = (uint)mask;
       Marshal.StructureToPtr(pidFilterParams, _generalBuffer, true);
       Dump.DumpBinary(_generalBuffer, PID_FILTER_PARAMS_SIZE);
-      TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_SET_PID_FILTER_INFO, _generalBuffer, PID_FILTER_PARAMS_SIZE, IntPtr.Zero, 0);
-      int returnedByteCount;
-      int hr = command.Execute(_propertySet, out returnedByteCount);
+      int hr = SetIoctl(TwinhanIoControlCode.SetPidFilterInfo, _generalBuffer, PID_FILTER_PARAMS_SIZE);
       if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("Twinhan: result = success");
@@ -2123,7 +1864,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
     /// that any necessary hardware (such as a CI slot) is connected.
     /// </summary>
     /// <returns><c>true</c> if the interface is successfully opened, otherwise <c>false</c></returns>
-    public bool OpenInterface()
+    public bool OpenConditionalAccessInterface()
     {
       this.LogDebug("Twinhan: open conditional access interface");
 
@@ -2194,7 +1935,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
     /// Close the conditional access interface.
     /// </summary>
     /// <returns><c>true</c> if the interface is successfully closed, otherwise <c>false</c></returns>
-    public bool CloseInterface()
+    public bool CloseConditionalAccessInterface()
     {
       this.LogDebug("Twinhan: close conditional access interface");
 
@@ -2220,7 +1961,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
     /// <param name="resetTuner">This parameter will be set to <c>true</c> if the tuner must be reset
     ///   for the interface to be completely and successfully reset.</param>
     /// <returns><c>true</c> if the interface is successfully reset, otherwise <c>false</c></returns>
-    public bool ResetInterface(out bool resetTuner)
+    public bool ResetConditionalAccessInterface(out bool resetTuner)
     {
       this.LogDebug("Twinhan: reset conditional access interface");
       resetTuner = false;
@@ -2231,15 +1972,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
         return false;
       }
 
-      CloseInterface();
+      CloseConditionalAccessInterface();
 
       // This IOCTL does not seem to be implemented at least for the VP-1041 - the HRESULT returned seems
       // to always be 0x8007001f (ERROR_GEN_FAILURE). Either that or special conditions (graph stopped etc.)
       // are required for the reset to work. Our strategy here is to attempt the reset, and if it fails
       // request a graph rebuild.
-      TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_RESET_DEVICE, IntPtr.Zero, 0, IntPtr.Zero, 0);
-      int returnedByteCount;
-      int hr = command.Execute(_propertySet, out returnedByteCount);
+      int hr = SetIoctl(TwinhanIoControlCode.ResetDevice, IntPtr.Zero, 0);
       if (hr != (int)HResult.Severity.Success)
       {
         this.LogError("Twinhan: failed to reset device, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
@@ -2247,7 +1986,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
         return true;
       }
 
-      bool result = OpenInterface();
+      bool result = OpenConditionalAccessInterface();
       this.LogDebug("Twinhan: result = {0}", result);
       return result;
     }
@@ -2256,7 +1995,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
     /// Determine whether the conditional access interface is ready to receive commands.
     /// </summary>
     /// <returns><c>true</c> if the interface is ready, otherwise <c>false</c></returns>
-    public bool IsInterfaceReady()
+    public bool IsConditionalAccessInterfaceReady()
     {
       this.LogDebug("Twinhan: is conditional access interface ready");
       if (!_isCaInterfaceOpen)
@@ -2296,7 +2035,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
     /// <param name="pmt">The program map table for the service.</param>
     /// <param name="cat">The conditional access table for the service.</param>
     /// <returns><c>true</c> if the command is successfully sent, otherwise <c>false</c></returns>
-    public bool SendCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, Pmt pmt, Cat cat)
+    public bool SendConditionalAccessCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, Pmt pmt, Cat cat)
     {
       this.LogDebug("Twinhan: send conditional access command, list action = {0}, command = {1}", listAction, command);
 
@@ -2325,9 +2064,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       {
         Marshal.Copy(caPmt, 0, pmtBuffer, caPmt.Length);
         //Dump.DumpBinary(pmtBuffer, caPmt.Length);
-        TwinhanCommand tcommand = new TwinhanCommand(THBDA_IOCTL_CI_SEND_PMT, pmtBuffer, caPmt.Length, IntPtr.Zero, 0);
-        int returnedByteCount;
-        int hr = tcommand.Execute(_propertySet, out returnedByteCount);
+        int hr = SetIoctl(TwinhanIoControlCode.CiSendPmt, pmtBuffer, caPmt.Length);
         if (hr == (int)HResult.Severity.Success)
         {
           this.LogDebug("Twinhan: result = success");
@@ -2389,23 +2126,21 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
         {
           Marshal.WriteByte(_mmiBuffer, i, 0);
         }
-        TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_CI_GET_APP_INFO, IntPtr.Zero, 0, _mmiBuffer, APPLICATION_INFO_SIZE);
         int returnedByteCount;
-        hr = command.Execute(_propertySet, out returnedByteCount);
-        if (hr != (int)HResult.Severity.Success)
+        hr = GetIoctl(TwinhanIoControlCode.CiGetApplicationInfo, _mmiBuffer, APPLICATION_INFO_SIZE, out returnedByteCount);
+        if (hr != (int)HResult.Severity.Success || returnedByteCount != APPLICATION_INFO_SIZE)
         {
-          this.LogError("Twinhan: failed to read application information, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          this.LogError("Twinhan: failed to read application information, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
           return false;
         }
 
         ApplicationInfo info = (ApplicationInfo)Marshal.PtrToStructure(_mmiBuffer, typeof(ApplicationInfo));
         this.LogDebug("  type         = {0}", (MmiApplicationType)info.ApplicationType);
-        this.LogDebug("  manufacturer = 0x{0:x}", info.Manufacturer);
-        this.LogDebug("  code         = 0x{0:x}", info.ManufacturerCode);
+        this.LogDebug("  manufacturer = 0x{0:x4}", info.Manufacturer);
+        this.LogDebug("  code         = 0x{0:x4}", info.ManufacturerCode);
         this.LogDebug("  menu title   = {0}", DvbTextConverter.Convert(info.RootMenuTitle));
 
-        command = new TwinhanCommand(THBDA_IOCTL_CI_INIT_MMI, IntPtr.Zero, 0, IntPtr.Zero, 0);
-        hr = command.Execute(_propertySet, out returnedByteCount);
+        hr = SetIoctl(TwinhanIoControlCode.CiInitialiseMmi, IntPtr.Zero, 0);
       }
       if (hr == (int)HResult.Severity.Success)
       {
@@ -2440,9 +2175,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       int hr;
       lock (_mmiLock)
       {
-        TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_CI_CLOSE_MMI, IntPtr.Zero, 0, IntPtr.Zero, 0);
-        int returnedByteCount;
-        hr = command.Execute(_propertySet, out returnedByteCount);
+        hr = SetIoctl(TwinhanIoControlCode.CiCloseMmi, IntPtr.Zero, 0);
       }
       if (hr == (int)HResult.Severity.Success)
       {
@@ -2506,12 +2239,55 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
     /// <returns><c>true</c> if the tone state is set successfully, otherwise <c>false</c></returns>
     public bool SetToneState(ToneBurst toneBurstState, Tone22k tone22kState)
     {
-      // Not implemented.
-      // Note: as tempting as it may be, do *not* implement this function using the THBDA_IOCTL_SET_LNB_DATA
-      // IOCTL. There is some kind of interaction between the THBDA_IOCTL_SET_LNB_DATA and THBDA_IOCTL_SET_DiSEqC
-      // IOCTLs that I was not able to work out fully. The driver seems to get confused about DiSEqC, 22k or LNB
-      // settings when both IOCTLs are used.
-      return true;
+      this.LogDebug("Twinhan: set tone state, burst = {0}, 22 kHz = {1}", toneBurstState, tone22kState);
+
+      if (!_isTwinhan)
+      {
+        this.LogWarn("Twinhan: not initialised or interface not supported");
+        return false;
+      }
+
+      LnbParams lnbParams = new LnbParams();
+      lnbParams.PowerOn = _isPowerOn;
+      if (toneBurstState == ToneBurst.DataBurst)
+      {
+        lnbParams.ToneBurst = TwinhanToneBurst.DataBurst;
+      }
+      else if (toneBurstState == ToneBurst.ToneBurst)
+      {
+        lnbParams.ToneBurst = TwinhanToneBurst.ToneBurst;
+      }
+      else
+      {
+        lnbParams.ToneBurst = TwinhanToneBurst.Off;
+      }
+      if (tone22kState == Tone22k.On)
+      {
+        lnbParams.Tone22k = Twinhan22k.On;
+      }
+      else
+      {
+        lnbParams.Tone22k = Twinhan22k.Off;
+      }
+
+      lnbParams.LowBandLof = (uint)_lnbLowBandLof / 1000;
+      lnbParams.HighBandLof = (uint)_lnbHighBandLof / 1000;
+      lnbParams.SwitchFrequency = (uint)_lnbSwitchFrequency / 1000;
+      lnbParams.DiseqcPort = _diseqcPort;
+      _diseqcPort = TwinhanDiseqcPort.Null; // reset - don't resend commands in subsequent tune requests
+
+      Marshal.StructureToPtr(lnbParams, _generalBuffer, true);
+      //Dump.DumpBinary(_generalBuffer, LNB_PARAMS_SIZE);
+
+      int hr = SetIoctl(TwinhanIoControlCode.SetLnbData, _generalBuffer, LNB_PARAMS_SIZE);
+      if (hr == (int)HResult.Severity.Success)
+      {
+        this.LogDebug("Twinhan: result = success");
+        return true;
+      }
+
+      this.LogError("Twinhan: failed to set tone state, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      return false;
     }
 
     /// <summary>
@@ -2519,7 +2295,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
     /// </summary>
     /// <param name="command">The command to send.</param>
     /// <returns><c>true</c> if the command is sent successfully, otherwise <c>false</c></returns>
-    public bool SendCommand(byte[] command)
+    public bool SendDiseqcCommand(byte[] command)
     {
       this.LogDebug("Twinhan: send DiSEqC command");
 
@@ -2539,6 +2315,32 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
         return false;
       }
 
+      // There is interaction between the THBDA_IOCTL_SET_LNB_DATA
+      // and THBDA_IOCTL_SET_DiSEqC IOCTLs.
+      // THBDA_IOCTL_SET_LNB_DATA sets variables which are used when the next
+      // tune request is applied. It doesn't actually cause anything to happen
+      // immediately.
+      // It looks like THBDA_IOCTL_SET_DiSEqC may do the same. If a tuner only
+      // supports DiSEqC 1.0 commands, THBDA_IOCTL_SET_DiSEqC will set the LNB
+      // power variable, set the DiSEqC port variable, and set the 22 kHz tone
+      // state according to the command bytes.
+      // This interaction means it is important to have consistency between
+      // SendCommand() and SetToneState(). If you don't, strange things will
+      // happen.
+      // Note we must invoke THBDA_IOCTL_SET_LNB_DATA. The TerraTec S7 will
+      // not seem to switch between low and high band if you don't.
+
+      // If this is a DiSEqC 1.0 command, figure out which port is being
+      // selected and cache for SetToneState().
+      if (_diseqcPort == TwinhanDiseqcPort.Null && command.Length == 4 &&
+        (command[0] == (byte)DiseqcFrame.CommandFirstTransmissionNoReply ||
+        command[0] == (byte)DiseqcFrame.CommandRepeatTransmissionNoReply) &&
+        command[1] == (byte)DiseqcAddress.AnySwitch &&
+        command[2] == (byte)DiseqcCommand.WriteN0)
+      {
+        _diseqcPort = (TwinhanDiseqcPort)(((command[3] & 0xc) >> 2) + 1);
+      }
+
       DiseqcMessage message = new DiseqcMessage();
       message.MessageLength = command.Length;
       message.Message = new byte[MAX_DISEQC_MESSAGE_LENGTH];
@@ -2547,20 +2349,20 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       Marshal.StructureToPtr(message, _generalBuffer, true);
       //Dump.DumpBinary(_generalBuffer, DISEQC_MESSAGE_SIZE);
 
-      TwinhanCommand tcommand = new TwinhanCommand(THBDA_IOCTL_SET_DiSEqC, _generalBuffer, DISEQC_MESSAGE_SIZE, IntPtr.Zero, 0);
-      int returnedByteCount;
-      int hr = tcommand.Execute(_propertySet, out returnedByteCount);
-      /*if (hr != (int)HResult.Severity.Success)
-      {
-        this.LogDebug("Twinhan: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-      }*/
-
-      // The above command seems to return HRESULT 0x8007001f (ERROR_GEN_FAILURE)
+      // This command seems to return HRESULT 0x8007001f (ERROR_GEN_FAILURE)
       // regardless of whether or not it was actually successful. I tested using
       // a TechniSat SkyStar HD2 (AKA Mantis, VP-1041, Cinergy S2 PCI HD) with
       // driver versions 1.1.1.502 (July 2009) and 1.1.2.700 (July 2010).
-      // --mm1352000, 16-12-2011
-      this.LogDebug("Twinhan: result = success");
+      // --mm1352000, 2011-12-16
+      int hr = SetIoctl(TwinhanIoControlCode.SetDiseqc, _generalBuffer, DISEQC_MESSAGE_SIZE);
+      if (hr != (int)HResult.Severity.Success)
+      {
+        this.LogWarn("Twinhan: send DiSEqC command might have failed, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      }
+      else
+      {
+        this.LogDebug("Twinhan: result = success");
+      }
       return true;
     }
 
@@ -2570,7 +2372,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
     /// </summary>
     /// <param name="response">The response (or command).</param>
     /// <returns><c>true</c> if the response is read successfully, otherwise <c>false</c></returns>
-    public bool ReadResponse(out byte[] response)
+    public bool ReadDiseqcResponse(out byte[] response)
     {
       this.LogDebug("Twinhan: read DiSEqC response");
       response = null;
@@ -2586,10 +2388,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
         Marshal.WriteByte(_generalBuffer, i, 0);
       }
 
-      TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_GET_DiSEqC, IntPtr.Zero, 0, _generalBuffer, DISEQC_MESSAGE_SIZE);
       int returnedByteCount;
-      int hr = command.Execute(_propertySet, out returnedByteCount);
-      if (hr == (int)HResult.Severity.Success)
+      int hr = GetIoctl(TwinhanIoControlCode.GetDiseqc, _generalBuffer, DISEQC_MESSAGE_SIZE, out returnedByteCount);
+      if (hr == (int)HResult.Severity.Success && returnedByteCount == DISEQC_MESSAGE_SIZE)
       {
         this.LogDebug("Twinhan: result = success");
         DiseqcMessage message = (DiseqcMessage)Marshal.PtrToStructure(_generalBuffer, typeof(DiseqcMessage));
@@ -2600,8 +2401,145 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
         return true;
       }
 
-      this.LogError("Twinhan: failed to read DiSEqC response, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Twinhan: failed to read DiSEqC response, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
       return false;
+    }
+
+    #endregion
+
+    #region IRemoteControlListener members
+
+    /// <summary>
+    /// Open the remote control interface and start listening for commands.
+    /// </summary>
+    /// <returns><c>true</c> if the interface is successfully opened, otherwise <c>false</c></returns>
+    public bool OpenRemoteControlInterface()
+    {
+      this.LogDebug("Twinhan: open remote control interface");
+
+      if (!_isTwinhan)
+      {
+        this.LogWarn("Twinhan: not initialised or interface not supported");
+        return false;
+      }
+      if (_isRemoteControlInterfaceOpen)
+      {
+        this.LogWarn("Twinhan: interface is already open");
+        return true;
+      }
+
+      _isHidRemote = false;
+      _remoteControlBuffer = Marshal.AllocCoTaskMem(HID_REMOTE_CONTROL_CONFIG_SIZE);
+
+      // Some tuners like the TechniSat SkyStar HD2 have an HID input driver.
+      // The driver passes key presses straight to Windows. This command
+      // enables the HID input.
+      this.LogDebug("Twinhan: try enable HID remote control");
+      Marshal.WriteByte(_remoteControlBuffer, 0, 1);
+      int hr = SetIoctl(TwinhanIoControlCode.HidRemoteControlEnable, _remoteControlBuffer, 1);
+      if (hr == (int)HResult.Severity.Success)
+      {
+        // Log the configuration.
+        _isHidRemote = true;
+        this.LogDebug("Twinhan: HID configuration");
+        for (int i = 0; i < HID_REMOTE_CONTROL_CONFIG_SIZE; i++)
+        {
+          Marshal.WriteByte(_remoteControlBuffer, i, 0);
+        }
+        int returnedByteCount;
+        hr = GetIoctl(TwinhanIoControlCode.GetHidRemoteConfig, _remoteControlBuffer, HID_REMOTE_CONTROL_CONFIG_SIZE, out returnedByteCount);
+        if (hr != (int)HResult.Severity.Success || returnedByteCount != HID_REMOTE_CONTROL_CONFIG_SIZE)
+        {
+          this.LogWarn("Twinhan: failed to check HID config, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+          return true;
+        }
+
+        HidRemoteControlConfig config = (HidRemoteControlConfig)Marshal.PtrToStructure(_remoteControlBuffer, typeof(HidRemoteControlConfig));
+        this.LogDebug("  IR standard         = {0}", config.IrStandard);
+        this.LogDebug("  IR sys code check 1 = 0x{0:x}", config.IrSysCodeCheck1);
+        this.LogDebug("  IR sys code check 2 = 0x{0:x}", config.IrSysCodeCheck2);
+        this.LogDebug("  mapping             = {0}", config.Mapping);
+
+        // Select the custom mapping.
+        if (config.Mapping == TwinhanRemoteControlMapping.Disabled)
+        {
+          this.LogDebug("Twinhan: selecting custom mapping");
+          config.Mapping = TwinhanRemoteControlMapping.Custom;
+          Marshal.StructureToPtr(config, _remoteControlBuffer, false);
+          hr = SetIoctl(TwinhanIoControlCode.SetHidRemoteConfig, _remoteControlBuffer, HID_REMOTE_CONTROL_CONFIG_SIZE);
+          if (hr != (int)HResult.Severity.Success)
+          {
+            this.LogWarn("Twinhan: failed to select custom HID mapping, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+            return true;
+          }
+        }
+        this.LogDebug("Twinhan: result = success");
+        return true;
+      }
+      this.LogWarn("Twinhan: failed to enable HID remote control, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+
+      // Try the other interface. I think this is for older/specific tuners only.
+      this.LogDebug("Twinhan: try enable alternative remote control");
+      hr = SetIoctl(TwinhanIoControlCode.StartRemoteControl, IntPtr.Zero, 0);
+      if (hr != (int)HResult.Severity.Success)
+      {
+        this.LogError("Twinhan: failed to start remote control, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        return false;
+      }
+      StartRemoteControlListenerThread();
+
+      this.LogDebug("Twinhan: result = success");
+      return true;
+    }
+
+    /// <summary>
+    /// Close the remote control interface and stop listening for commands.
+    /// </summary>
+    /// <returns><c>true</c> if the interface is successfully closed, otherwise <c>false</c></returns>
+    public bool CloseRemoteControlInterface()
+    {
+      this.LogDebug("Twinhan: close remote control interface");
+
+      bool success = true;
+      if (_isRemoteControlInterfaceOpen)
+      {
+        if (!_isHidRemote)
+        {
+          this.LogDebug("Twinhan: stop alternative remote control");
+          StopRemoteControlListenerThread();
+
+          int hr = SetIoctl(TwinhanIoControlCode.StopRemoteControl, IntPtr.Zero, 0);
+          if (hr != (int)HResult.Severity.Success)
+          {
+            this.LogWarn("Twinhan: failed to stop remote control, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+            success = false;
+          }
+        }
+        else
+        {
+          this.LogDebug("Twinhan: disable HID remote control");
+          Marshal.WriteByte(_remoteControlBuffer, 0, 0);
+          int hr = SetIoctl(TwinhanIoControlCode.HidRemoteControlEnable, _remoteControlBuffer, 1);
+          if (hr != (int)HResult.Severity.Success)
+          {
+            this.LogWarn("Twinhan: failed to disable HID remote control, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+            success = false;
+          }
+        }
+      }
+
+      if (_remoteControlBuffer != IntPtr.Zero)
+      {
+        Marshal.FreeCoTaskMem(_remoteControlBuffer);
+        _remoteControlBuffer = IntPtr.Zero;
+      }
+
+      _isRemoteControlInterfaceOpen = false;
+      if (success)
+      {
+        this.LogDebug("Twinhan: result = success");
+      }
+      return true;
     }
 
     #endregion
@@ -2613,7 +2551,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
     /// </summary>
     public override void Dispose()
     {
-      CloseInterface();
+      if (_isTwinhan)
+      {
+        CloseRemoteControlInterface();
+        CloseConditionalAccessInterface();
+      }
       if (_generalBuffer != IntPtr.Zero)
       {
         Marshal.FreeCoTaskMem(_generalBuffer);

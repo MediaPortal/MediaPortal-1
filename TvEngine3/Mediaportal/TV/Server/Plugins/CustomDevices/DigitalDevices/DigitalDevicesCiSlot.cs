@@ -67,9 +67,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
       /// </summary>
       Unknown,
       /// <summary>
-      /// A menu (where choices can be made) or list (where entries are read-only).
+      /// A menu (where choices can be made).
       /// </summary>
-      MenuOrList,
+      Menu,
+      /// <summary>
+      /// A list (where entries are read-only).
+      /// </summary>
+      List,
       /// <summary>
       /// An enquiry (a request from the CAM).
       /// </summary>
@@ -298,7 +302,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
     {
       lock (_lock)
       {
-        KsMethod method = new KsMethod(CAM_CONTROL_METHOD_SET, (int)CamControlMethod.Reset, (int)KsMethodFlag.Send);
+        KsMethod method = new KsMethod(CAM_CONTROL_METHOD_SET, (int)CamControlMethod.Reset, KsMethodFlag.Send);
         int returnedByteCount = 0;
         return _control.KsMethod(ref method, KS_METHOD_SIZE, IntPtr.Zero, 0, ref returnedByteCount);
       }
@@ -312,7 +316,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
     {
       lock (_lock)
       {
-        KsMethod method = new KsMethod(CAM_CONTROL_METHOD_SET, (int)CamControlMethod.EnterMenu, (int)KsMethodFlag.Send);
+        KsMethod method = new KsMethod(CAM_CONTROL_METHOD_SET, (int)CamControlMethod.EnterMenu, KsMethodFlag.Send);
         int returnedByteCount = 0;
         return _control.KsMethod(ref method, KS_METHOD_SIZE, IntPtr.Zero, 0, ref returnedByteCount);
       }
@@ -326,7 +330,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
     {
       lock (_lock)
       {
-        KsMethod method = new KsMethod(CAM_CONTROL_METHOD_SET, (int)CamControlMethod.CloseMenu, (int)KsMethodFlag.Send);
+        KsMethod method = new KsMethod(CAM_CONTROL_METHOD_SET, (int)CamControlMethod.CloseMenu, KsMethodFlag.Send);
         int returnedByteCount = 0;
         return _control.KsMethod(ref method, KS_METHOD_SIZE, IntPtr.Zero, 0, ref returnedByteCount);
       }
@@ -354,7 +358,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
           Marshal.WriteByte(_buffer, i, 0);
         }
 
-        KsMethod method = new KsMethod(CAM_CONTROL_METHOD_SET, (int)CamControlMethod.GetMenu, (int)KsMethodFlag.Send);
+        KsMethod method = new KsMethod(CAM_CONTROL_METHOD_SET, (int)CamControlMethod.GetMenu, KsMethodFlag.Send);
         int returnedByteCount = 0;
         int hr = _control.KsMethod(ref method, KS_METHOD_SIZE, _buffer, BUFFER_SIZE, ref returnedByteCount);
         if (hr != (int)HResult.Severity.Success)
@@ -368,7 +372,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
         int menuType = Marshal.ReadInt32(_buffer, 4);
         if (menuType == 1 || menuType == 2)
         {
-          type = MenuType.MenuOrList;
+          type = MenuType.Menu;
+          if (menuType == 2)
+          {
+            type = MenuType.List;
+          }
           int entryCount = Marshal.ReadInt32(_buffer, 8) + 3;   // + 3 for title, sub-title and footer
           int byteCount = Marshal.ReadInt32(_buffer, 12);
 
@@ -423,7 +431,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
       {
         Marshal.WriteInt32(_buffer, 0, id);
         Marshal.WriteInt32(_buffer, 4, choice);
-        KsMethod method = new KsMethod(CAM_CONTROL_METHOD_SET, (int)CamControlMethod.MenuReply, (int)KsMethodFlag.Send);
+        KsMethod method = new KsMethod(CAM_CONTROL_METHOD_SET, (int)CamControlMethod.MenuReply, KsMethodFlag.Send);
         int returnedByteCount = 0;
         return _control.KsMethod(ref method, KS_METHOD_SIZE, _buffer, 8, ref returnedByteCount);
       }
@@ -457,7 +465,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
           Marshal.WriteInt32(_buffer, 8, 0);
         }
 
-        KsMethod method = new KsMethod(CAM_CONTROL_METHOD_SET, (int)CamControlMethod.CamAnswer, (int)KsMethodFlag.Send);
+        KsMethod method = new KsMethod(CAM_CONTROL_METHOD_SET, (int)CamControlMethod.CamAnswer, KsMethodFlag.Send);
         int returnedByteCount = 0;
         return _control.KsMethod(ref method, KS_METHOD_SIZE, _buffer, bufferSize, ref returnedByteCount);
       }
@@ -475,7 +483,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
         Marshal.WriteInt32(_buffer, 0, caPmt.Length);
         Marshal.Copy(caPmt, 0, IntPtr.Add(_buffer, 4), caPmt.Length);
 
-        KsMethod method = new KsMethod(CAM_CONTROL_METHOD_SET, (int)CamControlMethod.SendCaPmt, (int)KsMethodFlag.Send);
+        KsMethod method = new KsMethod(CAM_CONTROL_METHOD_SET, (int)CamControlMethod.SendCaPmt, KsMethodFlag.Send);
         int returnedByteCount = 0;
         return _control.KsMethod(ref method, KS_METHOD_SIZE, _buffer, 4 + caPmt.Length, ref returnedByteCount);
       }

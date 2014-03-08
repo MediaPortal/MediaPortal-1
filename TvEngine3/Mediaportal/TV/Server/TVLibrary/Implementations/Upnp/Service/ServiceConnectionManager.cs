@@ -18,14 +18,11 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Upnp.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using UPnP.Infrastructure.CP.Description;
 using UPnP.Infrastructure.CP.DeviceTree;
-using UPnP.Infrastructure.CP.SSDP;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Upnp.Service
 {

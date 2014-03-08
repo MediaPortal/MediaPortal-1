@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using DirectShowLib;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
@@ -61,6 +62,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     private IDictionary<CaptureSourceAudio, int> _pinMapAudio = new Dictionary<CaptureSourceAudio, int>();
 
     /// <summary>
+    /// A list of channels, one per source.
+    /// </summary>
+    private IList<AnalogChannel> _sourceChannels = new List<AnalogChannel>();
+
+    /// <summary>
     /// The video output pin index.
     /// </summary>
     private int _pinIndexOutputVideo = -1;
@@ -92,6 +98,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       get
       {
         return _filter;
+      }
+    }
+
+    /// <summary>
+    /// Get the source channel list.
+    /// </summary>
+    public IList<AnalogChannel> SourceChannels
+    {
+      get
+      {
+        return _sourceChannels;
       }
     }
 
@@ -439,6 +456,37 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
             break;
         }
       }
+
+      // Build a list of channels - one per source.
+      _sourceChannels.Clear();
+      if (_pinMapVideo.Count > 0)
+      {
+        foreach (CaptureSourceVideo source in _pinMapVideo.Keys)
+        {
+          if (source != CaptureSourceVideo.Tuner)
+          {
+            AnalogChannel channel = new AnalogChannel();
+            channel.AudioSource = CaptureSourceAudio.Automatic;
+            channel.MediaType = MediaTypeEnum.TV;
+            channel.VideoSource = source;
+            _sourceChannels.Add(channel);
+          }
+        }
+      }
+      else if (_pinMapAudio.Count > 0)
+      {
+        foreach (CaptureSourceAudio source in _pinMapAudio.Keys)
+        {
+          if (source != CaptureSourceAudio.Tuner)
+          {
+            AnalogChannel channel = new AnalogChannel();
+            channel.AudioSource = source;
+            channel.MediaType = MediaTypeEnum.Radio;
+            channel.VideoSource = CaptureSourceVideo.None;
+            _sourceChannels.Add(channel);
+          }
+        }
+      }
     }
 
     /// <summary>
@@ -529,17 +577,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       _pinMapVideoDefaultAudio.Clear();
       _pinMapAudio.Clear();
 
-      if (graph != null)
+      if (_filter != null)
       {
-        graph.RemoveFilter(_filter);
-      }
-      Release.ComObject("crossbar filter", ref _filter);
+        if (graph != null)
+        {
+          graph.RemoveFilter(_filter);
+        }
+        Release.ComObject("crossbar filter", ref _filter);
 
-      if (_device != null)
-      {
         DevicesInUse.Instance.Remove(_device);
         // Do NOT Dispose() or set the crossbar device to NULL. We would be
-        // unable to reload.
+        // unable to reload. The tuner instance that instanciated this crossbar
+        // is responsible for disposing it.
       }
     }
   }

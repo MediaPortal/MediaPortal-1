@@ -22,6 +22,16 @@ using System;
 
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
 {
+  #region event delegates
+
+  /// <summary>
+  /// Delegate for the audio/video observer event.
+  /// </summary>
+  /// <param name="pidType">The type of stream that has been observed.</param>
+  public delegate void AudioVideoObserverEvent(PidType pidType);
+
+  #endregion
+
   /// <summary>
   /// Sub Channel interface in TsWriter
   /// </summary>
@@ -80,26 +90,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
 
     #endregion
 
-    #region teletext
-
-    /// <summary>
-    /// Turn on/off teletext grabbing
-    /// </summary>
-    bool GrabTeletext { get; set; }
-
-    /// <summary>
-    /// returns the ITeletext interface used for retrieving the teletext pages
-    /// </summary>
-    ITeletext TeletextDecoder { get; }
-
-    /// <summary>
-    /// Property which returns true when the current channel contains teletext
-    /// </summary>
-    bool HasTeletext { get; }
-
     ScanParameters Parameters { get; set; }
-
-    #endregion
 
     #region timeshifting and recording
 
@@ -143,14 +134,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
 
     #endregion
 
-    /// <summary>
-    /// 
-    /// </summary>
-    void OnBeforeTune();
-
     event OnAfterTuneDelegate AfterTuneEvent;
+    event AudioVideoObserverEvent AudioVideoEvent;
+    void OnBeforeTune();
     void OnGraphRunning();
-    void Decompose();
     void OnAfterTune();
+    void Decompose();
   }
 }

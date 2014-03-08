@@ -63,37 +63,16 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Prof
       Diseqc
     }
 
-    /// <summary>
-    /// Enum listing all possible 22 kHz oscillator states.
-    /// </summary>
-    protected enum Prof22k : byte
+    private enum Prof22k : byte
     {
-      /// <summary>
-      /// Oscillator off.
-      /// </summary>
       Off = 0,
-      /// <summary>
-      /// Oscillator on.
-      /// </summary>
       On
     }
 
-    /// <summary>
-    /// Enum listing all possible tone burst (simple DiSEqC) messages.
-    /// </summary>
-    protected enum ProfToneBurst : byte
+    private enum ProfToneBurst : byte
     {
-      /// <summary>
-      /// Tone burst (simple A).
-      /// </summary>
-      ToneBurst = 0,
-      /// <summary>
-      /// Data burst (simple B).
-      /// </summary>
-      DataBurst,
-      /// <summary>
-      /// Off (no message).
-      /// </summary>
+      ToneBurst = 0,        // simple A
+      DataBurst,            // simple B
       Off
     }
 
@@ -137,12 +116,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Prof
     {
       Off = 0,
       On
-    }
-
-    private enum ProfIrProperty
-    {
-      Keystrokes = 0,
-      Command
     }
 
     #endregion
@@ -227,24 +200,25 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Prof
     /// initialisation fails, the <see ref="ICustomDevice"/> instance should be disposed
     /// immediately.
     /// </summary>
-    /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
+    /// <param name="tunerExternalId">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
     /// <param name="context">Context required to initialise the interface.</param>
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
-    public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
+    public override bool Initialise(string tunerExternalId, CardType tunerType, object context)
     {
       this.LogDebug("Prof: initialising");
 
-      IBaseFilter tunerFilter = context as IBaseFilter;
-      if (tunerFilter == null)
-      {
-        this.LogDebug("Prof: tuner filter is null");
-        return false;
-      }
       if (_isProf)
       {
         this.LogWarn("Prof: extension already initialised");
         return true;
+      }
+
+      IBaseFilter tunerFilter = context as IBaseFilter;
+      if (tunerFilter == null)
+      {
+        this.LogDebug("Prof: context is not a filter");
+        return false;
       }
 
       IPin pin = DsFindPin.ByDirection(tunerFilter, PinDirection.Input, 0);
@@ -293,6 +267,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Prof
       DVBSChannel ch = channel as DVBSChannel;
       if (ch == null)
       {
+        return;
+      }
+
+      KSPropertySupport support;
+      int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.NbcParams, out support);
+      if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Set))
+      {
+        this.LogDebug("Prof: NBC tuning parameter property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return;
       }
 
@@ -349,14 +331,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Prof
         command.RollOff = ProfRollOff.Undefined;
       }
       this.LogDebug("  roll-off       = {0}", command.RollOff);
-
-      KSPropertySupport support;
-      int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.NbcParams, out support);
-      if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Set))
-      {
-        this.LogDebug("Prof: NBC tuning parameter property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        return;
-      }
 
       Marshal.StructureToPtr(command, _generalBuffer, true);
       //Dump.DumpBinary(_generalBuffer, NBC_TUNING_PARAMS_SIZE);
@@ -487,7 +461,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Prof
     /// </summary>
     /// <param name="command">The command to send.</param>
     /// <returns><c>true</c> if the command is sent successfully, otherwise <c>false</c></returns>
-    public virtual bool SendCommand(byte[] command)
+    public virtual bool SendDiseqcCommand(byte[] command)
     {
       this.LogDebug("Prof: send DiSEqC command");
 
@@ -541,7 +515,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Prof
     /// </summary>
     /// <param name="response">The response (or command).</param>
     /// <returns><c>true</c> if the response is read successfully, otherwise <c>false</c></returns>
-    public bool ReadResponse(out byte[] response)
+    public bool ReadDiseqcResponse(out byte[] response)
     {
       // Not implemented.
       response = null;

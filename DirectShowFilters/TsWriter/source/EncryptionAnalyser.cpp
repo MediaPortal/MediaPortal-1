@@ -26,39 +26,72 @@
 #include "EncryptionAnalyser.h"
 #include "..\..\shared\packetsync.h"
 
-extern void LogDebug(const char *fmt, ...) ;
 
-CEncryptionAnalyser::CEncryptionAnalyser(LPUNKNOWN pUnk, HRESULT *phr) 
-  : CUnknown(NAME("MpTsEncryptionAnalyser"), pUnk)
+// We have a threshold to avoid call back jitter.
+#define STATE_CHANGE_THRESHOLD 3
+
+// Refer to ISO/IEC 13818 part 1 table 2-22.
+#define STREAM_ID_PROGRAM_STREAM_MAP 0xbc
+#define STREAM_ID_PADDING 0xbe
+#define STREAM_ID_PRIVATE_2 0xbf
+#define STREAM_ID_ECM 0xf0
+#define STREAM_ID_EMM 0xf1
+#define STREAM_ID_DSMCC 0xf2
+#define STREAM_ID_H222_TYPE_E 0xf8
+#define STREAM_ID_PROGRAM_STREAM_DIRECTORY 0xff
+
+extern void LogDebug(const char* fmt, ...);
+
+CEncryptionAnalyser::CEncryptionAnalyser(LPUNKNOWN unk, HRESULT* hr) 
+  : CUnknown(NAME("TsEncryptionAnalyser"), unk)
 {
-  m_mPids.clear();
-  m_pCallBack = NULL;
+  Reset();
+  m_callBack = NULL;
 }
 
 CEncryptionAnalyser::~CEncryptionAnalyser(void)
 {
-  m_mPids.clear();
+  CleanUp();
+}
+
+void CEncryptionAnalyser::CleanUp()
+{
+  map<int, PidState*>::iterator it = m_pids.begin();
+  while (it != m_pids.end())
+  {
+    if (it->second != NULL)
+    {
+      delete it->second;
+      it->second = NULL;
+    }
+    it++;
+  }
+  m_pids.clear();
 }
   
 STDMETHODIMP CEncryptionAnalyser::AddPid(int pid)
 {
   try
   {
-    LogDebug("EncryptionAnalyser: add PID 0x%x", pid);
-    map<int, EncryptionState>::iterator it = m_mPids.find(pid);
-    if (it != m_mPids.end())
+    LogDebug("encryption: add PID %d", pid);
+    map<int, PidState*>::iterator it = m_pids.find(pid);
+    if (it != m_pids.end())
     {
-      LogDebug("EncryptionAnalyser: PID already being monitored, current state = %d", it->second);
+      LogDebug("encryption: PID already being monitored, current state = %d", it->second->State);
     }
     else
     {
-      m_mPids[pid] = EncryptionStateNotSet;
+      PidState* state = new PidState();
+      state->Pid = pid;
+      state->State = EncryptionStateNotSet;
+      state->PacketCount = 0;
+      m_pids[pid] = state;
     }
     return S_OK;
   }
   catch (...)
   {
-    LogDebug("EncryptionAnalyser: unhandled exception in AddPid()");
+    LogDebug("encryption: unhandled exception in AddPid()");
   }
   return S_FALSE;
 }
@@ -67,21 +100,26 @@ STDMETHODIMP CEncryptionAnalyser::RemovePid(int pid)
 {
   try
   {
-    LogDebug("EncryptionAnalyser: remove PID 0x%x", pid);
-    map<int, EncryptionState>::iterator it = m_mPids.find(pid);
-    if (it == m_mPids.end())
+    LogDebug("encryption: remove PID %d", pid);
+    map<int, PidState*>::iterator it = m_pids.find(pid);
+    if (it == m_pids.end())
     {
-      LogDebug("EncryptionAnalyser: PID not being monitored");
+      LogDebug("encryption: PID not being monitored");
     }
     else
     {
-      m_mPids.erase(it);
+      if (it->second != NULL)
+      {
+        delete it->second;
+        it->second = NULL;
+      }
+      m_pids.erase(it);
     }
     return S_OK;
   }
   catch (...)
   {
-    LogDebug("EncryptionAnalyser: unhandled exception in RemovePid()");
+    LogDebug("encryption: unhandled exception in RemovePid()");
   }
   return S_FALSE;
 }
@@ -90,41 +128,69 @@ STDMETHODIMP CEncryptionAnalyser::GetPidCount(int* pidCount)
 {
   try
   {
-    *pidCount = m_mPids.size();
-    LogDebug("EncryptionAnalyser: get PID count, count = %d", pidCount);
+    *pidCount = m_pids.size();
+    LogDebug("encryption: get PID count, count = %d", pidCount);
     return S_OK;
   }
   catch (...)
   {
-    LogDebug("EncryptionAnalyser: unhandled exception in GetPidCount()");
+    LogDebug("encryption: unhandled exception in GetPidCount()");
   }
   return S_FALSE;
 }
 
-STDMETHODIMP CEncryptionAnalyser::GetPid(int pidIdx, int* pid, EncryptionState* encryptionState)
+STDMETHODIMP CEncryptionAnalyser::GetPidByIndex(int pidIdx, int* pid, EncryptionState* encryptionState)
 {
   try
   {
-    LogDebug("EncryptionAnalyser: get PID %d", pidIdx);
+    LogDebug("encryption: get PID by index %d", pidIdx);
     *pid = -1;
     *encryptionState = EncryptionStateNotSet;
-    if (pidIdx >= 0 && pidIdx < (int)m_mPids.size())
+    if (pidIdx >= 0 && pidIdx < (int)m_pids.size())
     {
       int count = 0;
-      map<int, EncryptionState>::iterator it = m_mPids.begin();
+      map<int, PidState*>::iterator it = m_pids.begin();
       while (count < pidIdx)
       {
         it++;
         count++;
       }
       *pid = it->first;
-      *encryptionState = it->second;
+      *encryptionState = it->second->State;
+    }
+    else
+    {
+      LogDebug("encryption: index out of bounds, count = %d", m_pids.size());
     }
     return S_OK;
   }
   catch (...)
   {
-    LogDebug("EncryptionAnalyser: unhandled exception in GetPid()");
+    LogDebug("encryption: unhandled exception in GetPidByIndex()");
+  }
+  return S_FALSE;
+}
+
+STDMETHODIMP CEncryptionAnalyser::GetPid(int pid, EncryptionState* encryptionState)
+{
+  try
+  {
+    LogDebug("encryption: get PID %d", pid);
+    *encryptionState = EncryptionStateNotSet;
+    map<int, PidState*>::iterator it = m_pids.find(pid);
+    if (it == m_pids.end())
+    {
+      LogDebug("encryption: PID not being monitored");
+    }
+    else
+    {
+      *encryptionState = it->second->State;
+    }
+    return S_OK;
+  }
+  catch (...)
+  {
+    LogDebug("encryption: unhandled exception in GetPidByIndex()");
   }
   return S_FALSE;
 }
@@ -133,13 +199,13 @@ STDMETHODIMP CEncryptionAnalyser::SetCallBack(IEncryptionStateChangeCallBack* ca
 {
   try
   {
-    LogDebug("EncryptionAnalyser: set callback 0x%x", callBack);
-    m_pCallBack = callBack;
+    LogDebug("encryption: set call back 0x%x", callBack);
+    m_callBack = callBack;
     return S_OK;
   }
   catch (...)
   {
-    LogDebug("EncryptionAnalyser: unhandled exception in SetCallBack()");
+    LogDebug("encryption: unhandled exception in SetCallBack()");
   }
   return S_FALSE;
 }
@@ -148,87 +214,126 @@ STDMETHODIMP CEncryptionAnalyser::Reset()
 {
   try
   {
-    LogDebug("EncryptionAnalyser: reset");
-    m_mPids.clear();
+    LogDebug("encryption: reset");
+    CleanUp();
     return S_OK;
   }
   catch (...)
   {
-    LogDebug("EncryptionAnalyser: unhandled exception in Reset()");
+    LogDebug("encryption: unhandled exception in Reset()");
   }
   return S_FALSE;
 }
 
-void CEncryptionAnalyser::OnTsPacket(byte* tsPacket)
+// Return true if the packet is scrambled, otherwise false.
+bool CEncryptionAnalyser::OnTsPacket(byte* tsPacket)
 {
   try
   {
-    if (m_pCallBack == NULL)
+    if (m_callBack == NULL)
     {
-      return;
+      return false;
     }
 
-    // Does the packet look okay, and does it contain payload?
+    // Does the TS packet look okay, and does it contain payload?
+    // Note packets that don't carry any payload are considered to never be
+    // scrambled.
     m_tsHeader.Decode(tsPacket);
     if (m_tsHeader.SyncByte != TS_PACKET_SYNC || m_tsHeader.TransportError || m_tsHeader.AdaptionFieldOnly())
     {
-      return;
+      // No. Assume not scrambled.
+      return false;
     }
 
     // Is this a packet from elementary stream that we've been asked to monitor?
-    int pid = ((tsPacket[1] & 0x1f) << 8) + tsPacket[2];
-    map<int, EncryptionState>::iterator it = m_mPids.find(pid);
-    if (it == m_mPids.end())
+    map<int, PidState*>::iterator it = m_pids.find(m_tsHeader.Pid);
+    if (it == m_pids.end())
     {
-      return;
+      // No. Assume not scrambled.
+      return false;
     }
+    PidState* state = it->second;
 
-    // Check the transport scrambling control field in the packet header.
-    bool packetScrambled = (m_tsHeader.TScrambling != 0);
-    if (packetScrambled && it->second != Encrypted)
+    // Check the transport scrambling control field in the packet header. Note
+    // this is only enough to determine that the packet is scrambled, not that
+    // it is not scrambled.
+    bool tsPacketScrambled = (m_tsHeader.TScrambling != 0);
+    if (tsPacketScrambled && state->State != Encrypted)
     {
-      LogDebug("EncryptionAnalyser: PID 0x%x state change %d -> %d (TS header)", it->first, it->second, m_tsHeader.TScrambling);
-      it->second = Encrypted;
-      if (m_pCallBack != NULL)
+      state->PacketCount++;
+      if (state->PacketCount >= STATE_CHANGE_THRESHOLD)
       {
-        m_pCallBack->OnEncryptionStateChange(it->first, it->second);
+        LogDebug("encryption: PID %d state change %d -> %d (TS header)", state->Pid, state->State, tsPacketScrambled);
+        state->State = Encrypted;
+        state->PacketCount = 0;
+        if (m_callBack != NULL)
+        {
+          m_callBack->OnEncryptionStateChange(state->Pid, state->State);
+        }
       }
       // No need to bother checking the PES header.
-      return;
+      return true;
     }
 
-    // Does this packet contain the start of a PES packet?
+    // Does this TS packet contain the start of a PES packet?
     if (!m_tsHeader.PayloadUnitStart)
     {
-      return;
-    }
-    // Does the packet include the PES scrambling control field.
-    if (m_tsHeader.HasAdaptionField && (m_tsHeader.PayLoadStart == 4 || m_tsHeader.PayLoadStart > 181))
-    {
-      return;
-    }
-    // Does the PES packet look okay?
-    int offset = m_tsHeader.PayLoadStart;
-    if (tsPacket[offset] != 0 || tsPacket[offset + 1] != 0 || tsPacket[offset + 2] != 1 || (tsPacket[offset + 6] & 0xc0) != 0x80)
-    {
-      return;
+      // No. Assume status quo.
+      return (state->State == Encrypted);
     }
 
-    // Check the scrambling control bits.
-    int pes_scrambling_control = (tsPacket[offset + 6] & 0x30) >> 4;
-    bool pesScrambled = (pes_scrambling_control != 0);
-    if ((pesScrambled && it->second != Encrypted) || (!pesScrambled && it->second != Clear))
+    // Does the packet include the PES scrambling control field? Note according
+    // to ETR 289 the header of a scrambled PES packet must not span multiple
+    // TS packets.
+    bool pesPacketScrambled = false;
+    if (!m_tsHeader.HasAdaptionField || (m_tsHeader.PayLoadStart != 4 && m_tsHeader.PayLoadStart <= 181))
     {
-      LogDebug("EncryptionAnalyser: PID 0x%x state change %d -> %d (PES header)", it->first, it->second, pes_scrambling_control);
-      it->second = pesScrambled ? Encrypted : Clear;
-      if (m_pCallBack != NULL)
+      // Yes. Does it look okay?
+      int offset = m_tsHeader.PayLoadStart;
+      if (tsPacket[offset] != 0 || tsPacket[offset + 1] != 0 || tsPacket[offset + 2] != 1)
       {
-        m_pCallBack->OnEncryptionStateChange(it->first, it->second);
+        // No. Assume status quo.
+        pesPacketScrambled = (state->State == Encrypted);
+      }
+      else
+      {
+        // Yes. Does the stream have scrambling control bits?
+        byte streamId = tsPacket[offset + 3];
+        if (streamId != STREAM_ID_PROGRAM_STREAM_MAP &&
+          streamId != STREAM_ID_PADDING &&
+          streamId != STREAM_ID_PRIVATE_2 &&
+          streamId != STREAM_ID_ECM &&
+          streamId != STREAM_ID_EMM &&
+          streamId != STREAM_ID_DSMCC &&
+          streamId != STREAM_ID_H222_TYPE_E &&
+          streamId != STREAM_ID_PROGRAM_STREAM_DIRECTORY)
+        {
+          // Yes. The packet might be scrambled.
+          int pesScramblingControl = (tsPacket[offset + 6] & 0x30) >> 4;
+          pesPacketScrambled = (pesScramblingControl != 0);
+        }
       }
     }
+
+    if ((pesPacketScrambled && state->State != Encrypted) || (!pesPacketScrambled && state->State != Clear))
+    {
+      state->PacketCount++;
+      if (state->PacketCount >= STATE_CHANGE_THRESHOLD)
+      {
+        LogDebug("encryption: PID %d state change %d -> %d (PES header)", state->Pid, it->second, pesPacketScrambled);
+        state->State = pesPacketScrambled ? Encrypted : Clear;
+        state->PacketCount = 0;
+        if (m_callBack != NULL)
+        {
+          m_callBack->OnEncryptionStateChange(state->Pid, state->State);
+        }
+      }
+    }
+    return (state->State == Encrypted);
   }
   catch (...)
   {
-    LogDebug("EncryptionAnalyser: unhandled exception in OnTsPacket()");
+    LogDebug("encryption: unhandled exception in OnTsPacket()");
   }
+  return false;
 }

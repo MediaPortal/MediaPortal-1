@@ -20,6 +20,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.Threading;
 using DirectShowLib;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
@@ -32,11 +33,11 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
 {
   /// <summary>
-  /// This API was originally used by Turbosight for their QBOX series devices. Turbosight moved to a unified
-  /// API for their PCIe/PCI and USB devices. This class stays to support the QBOX clones from Prof and
-  /// Omicom which will not receive updated drivers.
+  /// This API was originally used by Turbosight for their QBOX series tuners. Turbosight moved to
+  /// a more unified API for their tuners in 2011. This class stays to support the OEM clones from
+  /// Prof, Satrade and Omicom which will not receive updated drivers.
   /// </summary>
-  public class ProfUsb : Prof.Prof, ICustomTuner
+  public class ProfUsb : BaseCustomDevice, IPowerDevice, IDiseqcDevice, ICustomTuner, IRemoteControlListener
   {
     #region enums
 
@@ -52,13 +53,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
       DeviceId              // For retrieving a device's ID (device path section).
     }
 
-    private enum ProfPolarisation : byte
+    private enum ProfUsbPolarisation : byte
     {
       Horizontal = 0,
       Vertical
     }
 
-    private enum ProfDiseqcPort : byte
+    private enum ProfUsbDiseqcPort : byte
     {
       Null = 0,
       PortA,
@@ -67,46 +68,85 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
       PortD
     }
 
-    private enum ProfLnbPower : byte
+    private enum ProfUsb22k : byte
     {
       Off = 0,
       On
     }
 
-    private enum ProfIrCode : byte
+    private enum ProfUsbToneBurst : byte
+    {
+      ToneBurst = 0,  // simple A
+      DataBurst,      // simple B
+      Off
+    }
+
+    private enum ProfUsbLnbPower : byte
+    {
+      Off = 0,
+      On
+    }
+
+    // My understanding is that Prof tuners are or were OEM TBS tuners. The
+    // codes for this remote should work:
+    // http://www.tbsdtv.com/products/images/tbs6981/tbs6981_4.jpg
+    private enum ProfUsbBigRemoteCode : byte
     {
       Recall = 0x80,
-      Up1 = 0x81,
-      Right1 = 0x82,
-      Record = 0x83,
-      Power = 0x84,
-      Three = 0x85,
-      Two = 0x86,
-      One = 0x87,
-      Down1 = 0x88,
-      Six = 0x89,
-      Five = 0x8a,
-      Four = 0x8b,
-      Left1 = 0x8c,
-      Nine = 0x8d,
-      Eight = 0x8e,
-      Seven = 0x8f,
-      Left2 = 0x90,
-      Up2 = 0x91,
-      Zero = 0x92,
-      Right2 = 0x93,
-      Mute = 0x94,
-      Tab = 0x95,
-      Down2 = 0x96,
-      Epg = 0x97,
-      Pause = 0x98,
-      Ok = 0x99,
-      Snapshot = 0x9a,
-      Info = 0x9c,
-      Play = 0x9b,
-      FullScreen = 0x9d,
-      Menu = 0x9e,
-      Exit = 0x9f
+      Up,
+      Right,
+      Record,
+      Power,
+      Three,
+      Two,
+      One,
+      Down,
+      Six,
+      Five,
+      Four,
+      VolumeDown,
+      Nine,
+      Eight,
+      Seven,
+      Left, // 0x90
+      ChannelDown,
+      Zero,
+      VolumeUp,
+      Mute,
+      Favourites,  // green
+      ChannelUp,
+      Subtitles,
+      Pause,
+      Okay,
+      Snapshot,
+      Mode,
+      Epg,
+      Zoom,        // yellow
+      Menu,        // red
+      Exit         // blue
+    }
+
+    // Unverified.
+    private enum ProfUsbSmallRemoteCode : byte
+    {
+      Mute = 0x01,
+      Left,
+      Down,
+      One,
+      Two,
+      Three,
+      Four,
+      Five,
+      Six,
+      Seven,  // 0x0a
+
+      FullScreen = 0x0c,
+      Okay = 0x0e,
+      Exit = 0x12,
+      Right = 0x1a,
+      Eight = 0x1b,
+      Up = 0x1e,
+      Nine = 0x1f
     }
 
     #endregion
@@ -116,21 +156,21 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct BdaExtensionParams
     {
-      public uint Frequency;                // unit = MHz
+      public uint Frequency;                  // unit = MHz
       // Note that the driver does not automatically enable and disable the 22 kHz tone. Further, it is not
       // clear how the driver interprets these parameters. I recommend that the same frequency should be
       // passed in both parameters.
-      public uint LnbLowBandLof;            // unit = MHz
-      public uint LnbHighBandLof;           // unit = MHz
-      public uint SymbolRate;               // unit = ks/s
-      public ProfPolarisation Polarisation;
-      public ProfLnbPower LnbPower;           // BdaExtensionProperty.LnbPower
-      public Prof22k Tone22k;                 // BdaExtensionProperty.Tone
-      public ProfToneBurst ToneBurst;         // BdaExtensionProperty.Tone
-      public ProfDiseqcPort DiseqcPort;
+      public uint LnbLowBandLof;              // unit = MHz
+      public uint LnbHighBandLof;             // unit = MHz
+      public uint SymbolRate;                 // unit = ks/s
+      public ProfUsbPolarisation Polarisation;
+      public ProfUsbLnbPower LnbPower;        // BdaExtensionProperty.LnbPower
+      public ProfUsb22k Tone22k;              // BdaExtensionProperty.Tone
+      public ProfUsbToneBurst ToneBurst;      // BdaExtensionProperty.Tone
+      public ProfUsbDiseqcPort DiseqcPort;
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_DISEQC_MESSAGE_LENGTH)]
       public byte[] DiseqcRawCommand;         // BdaExtensionProperty.Motor
-      public ProfIrCode IrCode;               // BdaExtensionProperty.Ir
+      public byte IrCode;                     // BdaExtensionProperty.Ir
       public byte LockState;                  // BdaExtensionProperty.TunerLock
       public byte SignalStrength;             // BdaExtensionProperty.TunerLock
       public byte SignalQuality;              // BdaExtensionProperty.TunerLock
@@ -153,14 +193,22 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
 
     private static readonly int GENERAL_BUFFER_SIZE = BDA_EXTENSION_PARAMS_SIZE;
 
+    private const byte MIN_BIG_REMOTE_CODE = 0x80;
+    private const int REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME = 100;     // unit = ms
+
     #endregion
 
     #region variables
 
     private bool _isProfUsb = false;
     private IKsPropertySet _propertySet = null;
-    private IntPtr _generalBuffer = IntPtr.Zero;  // We have our
+    private IntPtr _generalBuffer = IntPtr.Zero;
     private bool _isCustomTuningSupported = false;
+
+    private bool _isRemoteControlInterfaceOpen = false;
+    private IntPtr _remoteControlBuffer = IntPtr.Zero;
+    private Thread _remoteControlListenerThread = null;
+    private AutoResetEvent _remoteControlListenerThreadStopEvent = null;
 
     #endregion
 
@@ -189,8 +237,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
       else
       {
         // I'm unsure of the meaning of the first, fifth, sixth, seventh and eighth bytes.
-        this.LogDebug("  vendor ID   = {0:x4}", Marshal.ReadInt16(_generalBuffer, 1));
-        this.LogDebug("  device ID   = {0:x4}", Marshal.ReadInt16(_generalBuffer, 3));
+        this.LogDebug("  vendor ID   = 0x{0:x4}", Marshal.ReadInt16(_generalBuffer, 1));
+        this.LogDebug("  device ID   = 0x{0:x4}", Marshal.ReadInt16(_generalBuffer, 3));
       }
 
       // MAC address.
@@ -228,6 +276,117 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
       }
     }
 
+    #region remote control listener thread
+
+    /// <summary>
+    /// Start a thread to listen for remote control commands.
+    /// </summary>
+    private void StartRemoteControlListenerThread()
+    {
+      // Don't start a thread if the interface has not been opened.
+      if (!_isRemoteControlInterfaceOpen)
+      {
+        return;
+      }
+
+      // Kill the existing thread if it is in "zombie" state.
+      if (_remoteControlListenerThread != null && !_remoteControlListenerThread.IsAlive)
+      {
+        StopRemoteControlListenerThread();
+      }
+      if (_remoteControlListenerThread == null)
+      {
+        this.LogDebug("Prof USB: starting new remote control listener thread");
+        _remoteControlListenerThreadStopEvent = new AutoResetEvent(false);
+        _remoteControlListenerThread = new Thread(new ThreadStart(RemoteControlListener));
+        _remoteControlListenerThread.Name = "Prof USB remote control listener";
+        _remoteControlListenerThread.IsBackground = true;
+        _remoteControlListenerThread.Priority = ThreadPriority.Lowest;
+        _remoteControlListenerThread.Start();
+      }
+    }
+
+    /// <summary>
+    /// Stop the thread that listens for remote control commands.
+    /// </summary>
+    private void StopRemoteControlListenerThread()
+    {
+      if (_remoteControlListenerThread != null)
+      {
+        if (!_remoteControlListenerThread.IsAlive)
+        {
+          this.LogWarn("Prof USB: aborting old remote control listener thread");
+          _remoteControlListenerThread.Abort();
+        }
+        else
+        {
+          _remoteControlListenerThreadStopEvent.Set();
+          if (!_remoteControlListenerThread.Join(REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME * 2))
+          {
+            this.LogWarn("Prof USB: failed to join remote control listener thread, aborting thread");
+            _remoteControlListenerThread.Abort();
+          }
+        }
+        _remoteControlListenerThread = null;
+        if (_remoteControlListenerThreadStopEvent != null)
+        {
+          _remoteControlListenerThreadStopEvent.Close();
+          _remoteControlListenerThreadStopEvent = null;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Thread function for receiving remote control commands.
+    /// </summary>
+    private void RemoteControlListener()
+    {
+      this.LogDebug("Prof USB: remote control listener thread start polling");
+      int hr = (int)HResult.Severity.Success;
+      int returnedByteCount;
+      try
+      {
+        while (!_remoteControlListenerThreadStopEvent.WaitOne(REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME))
+        {
+          hr = _propertySet.Get(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Ir,
+            _remoteControlBuffer, BDA_EXTENSION_PARAMS_SIZE,
+            _remoteControlBuffer, BDA_EXTENSION_PARAMS_SIZE,
+            out returnedByteCount
+          );
+          if (hr != (int)HResult.Severity.Success || returnedByteCount != BDA_EXTENSION_PARAMS_SIZE)
+          {
+            this.LogError("Prof USB: failed to read remote code, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+          }
+          else
+          {
+            BdaExtensionParams data = (BdaExtensionParams)Marshal.PtrToStructure(_remoteControlBuffer, typeof(BdaExtensionParams));
+            if (data.IrCode != 0xff)
+            {
+              if (data.IrCode < MIN_BIG_REMOTE_CODE)
+              {
+                this.LogDebug("Prof USB: small remote control key press = {0}", (ProfUsbSmallRemoteCode)data.IrCode);
+              }
+              else
+              {
+                this.LogDebug("Prof USB: big remote control key press = {0}", (ProfUsbBigRemoteCode)data.IrCode);
+              }
+            }
+          }
+        }
+      }
+      catch (ThreadAbortException)
+      {
+      }
+      catch (Exception ex)
+      {
+        this.LogError(ex, "Prof USB: remote control listener thread exception");
+        return;
+      }
+      this.LogDebug("Prof USB: remote control listener thread stop polling");
+    }
+
+    #endregion
+
     #region ICustomDevice members
 
     /// <summary>
@@ -258,11 +417,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
     /// initialisation fails, the <see ref="ICustomDevice"/> instance should be disposed
     /// immediately.
     /// </summary>
-    /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
+    /// <param name="tunerExternalId">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
     /// <param name="context">Context required to initialise the interface.</param>
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
-    public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
+    public override bool Initialise(string tunerExternalId, CardType tunerType, object context)
     {
       this.LogDebug("Prof USB: initialising");
 
@@ -270,12 +429,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
       {
         this.LogWarn("Prof USB: extension already initialised");
         return true;
-      }
-
-      if (!base.Initialise(tunerExternalIdentifier, tunerType, context))
-      {
-        this.LogDebug("Prof USB: base Prof interface not supported");
-        return false;
       }
 
       _propertySet = context as IKsPropertySet;
@@ -336,8 +489,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
         ch.LnbType.HighBandFrequency = ch.LnbType.LowBandFrequency;
       }
       this.LogDebug("  LNB LOF    = {0}", ch.LnbType.LowBandFrequency);
-
-      base.OnBeforeTune(tuner, currentChannel, ref channel, out action);
     }
 
     #endregion
@@ -351,7 +502,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
     /// </summary>
     /// <param name="state">The power state to apply.</param>
     /// <returns><c>true</c> if the power state is set successfully, otherwise <c>false</c></returns>
-    public override bool SetPowerState(PowerState state)
+    public bool SetPowerState(PowerState state)
     {
       this.LogDebug("Prof USB: set power state, state = {0}", state);
 
@@ -372,11 +523,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
       BdaExtensionParams command = new BdaExtensionParams();
       if (state == PowerState.On)
       {
-        command.LnbPower = ProfLnbPower.On;
+        command.LnbPower = ProfUsbLnbPower.On;
       }
       else
       {
-        command.LnbPower = ProfLnbPower.Off;
+        command.LnbPower = ProfUsbLnbPower.Off;
       }
 
       Marshal.StructureToPtr(command, _generalBuffer, true);
@@ -428,34 +579,34 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
         this.LogWarn("Prof USB: not initialised or interface not supported");
         return false;
       }
-      if (!CanTuneChannel(channel))
+
+      DVBSChannel dvbsChannel = channel as DVBSChannel;
+      if (dvbsChannel == null || !_isCustomTuningSupported)
       {
         this.LogError("Prof USB: tuning is not supported for this channel");
         return false;
       }
 
-      DVBSChannel dvbsChannel = channel as DVBSChannel;
-
-      ProfPolarisation profPolarisation = ProfPolarisation.Horizontal;
+      ProfUsbPolarisation profPolarisation = ProfUsbPolarisation.Horizontal;
       if (dvbsChannel.Polarisation == Polarisation.LinearV || dvbsChannel.Polarisation == Polarisation.CircularR)
       {
-        profPolarisation = ProfPolarisation.Vertical;
+        profPolarisation = ProfUsbPolarisation.Vertical;
       }
 
-      Prof22k tone22k = Prof22k.Off;
+      ProfUsb22k tone22k = ProfUsb22k.Off;
       if (dvbsChannel.Frequency > dvbsChannel.LnbType.SwitchFrequency)
       {
-        tone22k = Prof22k.On;
+        tone22k = ProfUsb22k.On;
       }
 
-      ProfToneBurst toneBurst = ProfToneBurst.Off;
+      ProfUsbToneBurst toneBurst = ProfUsbToneBurst.Off;
       if (dvbsChannel.Diseqc == DiseqcPort.SimpleA)
       {
-        toneBurst = ProfToneBurst.ToneBurst;
+        toneBurst = ProfUsbToneBurst.ToneBurst;
       }
       else if (dvbsChannel.Diseqc == DiseqcPort.SimpleB)
       {
-        toneBurst = ProfToneBurst.DataBurst;
+        toneBurst = ProfUsbToneBurst.DataBurst;
       }
 
       BdaExtensionParams tuningParams = new BdaExtensionParams();
@@ -467,12 +618,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
       tuningParams.LnbHighBandLof = lnbLof;
       tuningParams.SymbolRate = (uint)dvbsChannel.SymbolRate;
       tuningParams.Polarisation = profPolarisation;
-      tuningParams.LnbPower = ProfLnbPower.On;
+      tuningParams.LnbPower = ProfUsbLnbPower.On;
       tuningParams.Tone22k = tone22k;
       tuningParams.ToneBurst = toneBurst;
       // DiSEqC commands are already sent using the raw command interface. No need to resend them and
       // unnecessarily slow down the tune request.
-      tuningParams.DiseqcPort = ProfDiseqcPort.Null;
+      tuningParams.DiseqcPort = ProfUsbDiseqcPort.Null;
       tuningParams.InnerFecRate = (byte)dvbsChannel.InnerFecRate;
       tuningParams.Modulation = (byte)dvbsChannel.ModulationType;
 
@@ -503,7 +654,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
     /// <param name="toneBurstState">The tone/data burst state.</param>
     /// <param name="tone22k">The 22 kHz legacy tone state.</param>
     /// <returns><c>true</c> if the tone state is set successfully, otherwise <c>false</c></returns>
-    public override bool SetToneState(ToneBurst toneBurstState, Tone22k tone22kState)
+    public bool SetToneState(ToneBurst toneBurstState, Tone22k tone22kState)
     {
       this.LogDebug("Prof USB: set tone state, burst = {0}, 22 kHz = {1}", toneBurstState, tone22kState);
 
@@ -523,19 +674,19 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
       }
 
       BdaExtensionParams command = new BdaExtensionParams();
-      command.ToneBurst = ProfToneBurst.Off;
+      command.ToneBurst = ProfUsbToneBurst.Off;
       if (toneBurstState == ToneBurst.ToneBurst)
       {
-        command.ToneBurst = ProfToneBurst.ToneBurst;
+        command.ToneBurst = ProfUsbToneBurst.ToneBurst;
       }
       else if (toneBurstState == ToneBurst.DataBurst)
       {
-        command.ToneBurst = ProfToneBurst.DataBurst;
+        command.ToneBurst = ProfUsbToneBurst.DataBurst;
       }
-      command.Tone22k = Prof22k.Off;
+      command.Tone22k = ProfUsb22k.Off;
       if (tone22kState == Tone22k.On)
       {
-        command.Tone22k = Prof22k.On;
+        command.Tone22k = ProfUsb22k.On;
       }
 
       Marshal.StructureToPtr(command, _generalBuffer, true);
@@ -560,7 +711,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
     /// </summary>
     /// <param name="command">The command to send.</param>
     /// <returns><c>true</c> if the command is sent successfully, otherwise <c>false</c></returns>
-    public override bool SendCommand(byte[] command)
+    public bool SendDiseqcCommand(byte[] command)
     {
       this.LogDebug("Prof USB: send DiSEqC command");
 
@@ -601,6 +752,78 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
       return false;
     }
 
+    /// <summary>
+    /// Retrieve the response to a previously sent DiSEqC command (or alternatively, check for a command
+    /// intended for this tuner).
+    /// </summary>
+    /// <param name="response">The response (or command).</param>
+    /// <returns><c>true</c> if the response is read successfully, otherwise <c>false</c></returns>
+    public bool ReadDiseqcResponse(out byte[] response)
+    {
+      // Not implemented.
+      response = null;
+      return false;
+    }
+
+    #endregion
+
+    #region IRemoteControlListener members
+
+    /// <summary>
+    /// Open the remote control interface and start listening for commands.
+    /// </summary>
+    /// <returns><c>true</c> if the interface is successfully opened, otherwise <c>false</c></returns>
+    public bool OpenRemoteControlInterface()
+    {
+      this.LogDebug("Prof USB: open remote control interface");
+
+      if (!_isProfUsb)
+      {
+        this.LogWarn("Prof USB: not initialised or interface not supported");
+        return false;
+      }
+      if (_isRemoteControlInterfaceOpen)
+      {
+        this.LogWarn("Prof USB: interface is already open");
+        return true;
+      }
+
+      KSPropertySupport support;
+      int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Ir, out support);
+      if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Get))
+      {
+        this.LogDebug("Prof USB: property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        return false;
+      }
+
+      _remoteControlBuffer = Marshal.AllocCoTaskMem(BDA_EXTENSION_PARAMS_SIZE);
+      _isRemoteControlInterfaceOpen = true;
+      StartRemoteControlListenerThread();
+
+      this.LogDebug("Prof USB: result = success");
+      return true;
+    }
+
+    /// <summary>
+    /// Close the remote control interface and stop listening for commands.
+    /// </summary>
+    /// <returns><c>true</c> if the interface is successfully closed, otherwise <c>false</c></returns>
+    public bool CloseRemoteControlInterface()
+    {
+      this.LogDebug("Prof USB: close remote control interface");
+
+      StopRemoteControlListenerThread();
+      if (_remoteControlBuffer != IntPtr.Zero)
+      {
+        Marshal.FreeCoTaskMem(_remoteControlBuffer);
+        _remoteControlBuffer = IntPtr.Zero;
+      }
+
+      _isRemoteControlInterfaceOpen = false;
+      this.LogDebug("Prof USB: result = success");
+      return true;
+    }
+
     #endregion
 
     #region IDisposable member
@@ -610,8 +833,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
     /// </summary>
     public override void Dispose()
     {
-      base.Dispose();
-
+      if (_isProfUsb)
+      {
+        CloseRemoteControlInterface();
+      }
       _propertySet = null;
       if (_generalBuffer != IntPtr.Zero)
       {

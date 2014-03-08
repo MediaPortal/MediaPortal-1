@@ -23,7 +23,6 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using Mediaportal.TV.Server.TVLibrary.Teletext.Implementations;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations
 {
@@ -33,12 +32,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
   public abstract class BaseSubChannel : ITvSubChannel
   {
     #region events
-
-    /// <summary>
-    /// Delegate for the audio/video oberserver events.
-    /// </summary>
-    /// <param name="pidType">Type of the pid</param>
-    public delegate void AudioVideoObserverEvent(PidType pidType);
 
     /// <summary>
     /// Audio/video observer event.
@@ -78,20 +71,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
     #region variables
 
-    /// <summary>
-    /// Indicates, if the channel has teletext
-    /// </summary>
-    protected bool _hasTeletext;
-
-    /// <summary>
-    /// Indicates, if teletext grabbing is activated
-    /// </summary>
-    protected bool _grabTeletext;
-
-    /// <summary>
-    /// Instance of the teletext decoder
-    /// </summary>
-    protected DVBTeletext _teletextDecoder;
 
     /// <summary>
     /// Instance of the current channel
@@ -131,7 +110,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// A flag used by the TV service as a signal to abort the tuning process before it is completed.
     /// </summary>
-    protected bool _cancelTune;
+    protected volatile bool _cancelTune;
 
     protected ITVCard _tuner;
 
@@ -146,7 +125,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     {
       _cancelTune = false;
       _subChannelId = subChannelId;
-      _teletextDecoder = new DVBTeletext();
       _timeshiftFileName = string.Empty;
       _recordingFileName = string.Empty;
       _dateRecordingStarted = DateTime.MinValue;
@@ -233,44 +211,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     {
       get { return _parameters; }
       set { _parameters = value; }
-    }
-
-    #endregion
-
-    #region teletext
-
-    /// <summary>
-    /// Property which returns true when the current channel contains teletext
-    /// </summary>
-    /// <value></value>
-    public bool HasTeletext
-    {
-      get { return _hasTeletext; }
-    }
-
-    /// <summary>
-    /// Turn on/off teletext grabbing
-    /// </summary>
-    public bool GrabTeletext
-    {
-      get { return _grabTeletext; }
-      set
-      {
-        _grabTeletext = value;
-        OnGrabTeletext();
-      }
-    }
-
-    /// <summary>
-    /// returns the ITeletext interface used for retrieving the teletext pages
-    /// </summary>
-    public ITeletext TeletextDecoder
-    {
-      get
-      {
-        if (!_hasTeletext) return null;
-        return _teletextDecoder;
-      }
     }
 
     #endregion
@@ -383,38 +323,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
     #endregion
 
-    #region ITeletextCallBack members
-
-    /// <summary>
-    /// call back from the TsWriter filter when it received a new teletext packets
-    /// </summary>
-    /// <param name="data">teletext data</param>
-    /// <param name="packetCount">number of packets in data</param>
-    /// <returns></returns>
-    public int OnTeletextReceived(IntPtr data, short packetCount)
-    {
-      if (_teletextDecoder == null)
-      {
-        return 0;
-      }
-      try
-      {
-        IntPtr packetPtr = data;
-        for (int i = 0; i < packetCount; ++i)
-        {
-          _teletextDecoder.SaveData(packetPtr);
-          packetPtr = IntPtr.Add(packetPtr, 188);
-        }
-      }
-      catch (Exception ex)
-      {
-        this.LogError(ex, "BaseSubChannel: failed to process teletext data");
-      }
-      return 0;
-    }
-
-    #endregion
-
     #region IAnalogVideoAudioObserver
 
     /// <summary>
@@ -454,10 +362,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       {
         StopTimeShifting();
       }
-      if (_teletextDecoder != null)
-      {
-        _teletextDecoder.ClearBuffer();
-      }
       OnDecompose();
     }
 
@@ -469,13 +373,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// Should be called before tuning to a new channel
     /// resets the state
     /// </summary>
-    public virtual void OnBeforeTune()
-    {
-      if (_teletextDecoder != null)
-      {
-        _teletextDecoder.ClearBuffer();
-      }
-    }
+    public abstract void OnBeforeTune();
 
     /// <summary>
     /// Should be called when the graph is tuned to the new channel
@@ -524,11 +422,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <param name="position">The position in the current timeshift buffer file</param>
     /// <param name="bufferId">The id of the current timeshift buffer file</param>
     protected abstract void OnGetTimeShiftFilePosition(ref long position, ref long bufferId);
-
-    /// <summary>
-    /// A derrived class should activate or deactivate the teletext grabbing on the tv card.
-    /// </summary>
-    protected abstract void OnGrabTeletext();
 
     #endregion
 

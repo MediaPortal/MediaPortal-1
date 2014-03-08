@@ -25,21 +25,21 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using DirectShowLib;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
 {
   /// <summary>
-  /// A class for handling conditional access and DiSEqC for Anysee tuners. Smart card slots are not
-  /// supported.
+  /// A class for handling conditional access, DiSEqC and remote controls for Anysee tuners. Smart
+  /// card slots are not supported.
   /// </summary>
-  public class Anysee : BaseCustomDevice, IConditionalAccessProvider, IConditionalAccessMenuActions, IDiseqcDevice 
+  public class Anysee : BaseCustomDevice, IConditionalAccessProvider, IConditionalAccessMenuActions, IDiseqcDevice, IRemoteControlListener
   {
     #region enums
 
@@ -541,15 +541,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    private struct CiStateInfo    // tagCIStatus
-    {
-      public int Size;
-      public int DeviceIndex;
-
-      public ApiString Message;
-    }
-
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct MmiMenu  // MMIStrsBlock
     {
       public int StringCount;
@@ -579,15 +570,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       public byte[] RootMenuTitle;
 
       public IntPtr Menu;
-    }
-
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    private struct ApiCallBacks
-    {
-      [MarshalAs(UnmanagedType.FunctionPtr)]
-      public OnAnyseeCiState OnCiState;
-      [MarshalAs(UnmanagedType.FunctionPtr)]
-      public OnAnyseeMmiMessage OnMmiMessage;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -758,7 +740,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
             return;
           }
         }
-        _libHandle = NativeMethods.LoadLibrary(targetFilename);
+        _libHandle = NativeMethods.LoadLibraryA(targetFilename);
         if (_libHandle == IntPtr.Zero)
         {
           this.LogError("Anysee: failed to load the DLL");
@@ -1119,7 +1101,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
 
     private static readonly Guid BDA_EXTENSION_PROPERTY_SET = new Guid(0xb8e78938, 0x899d, 0x41bd, 0xb5, 0xb4, 0x62, 0x69, 0xf2, 0x80, 0x18, 0x99);
 
-    private const int KS_PROPERTY_SIZE = 24;
+    private const int KS_PROPERTY_SIZE = 24;                                                  // Marshal.SizeOf(typeof(KsProperty))
     private const int RSSI_SIZE = KS_PROPERTY_SIZE + 8;
     private const int CNR_SIZE = KS_PROPERTY_SIZE + 8;
     private static readonly int IR_DATA_SIZE = Marshal.SizeOf(typeof(IrData));                // 32
@@ -1137,16 +1119,16 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
 
     private const int MAX_API_STRING_LENGTH = 256;
     private const int MAX_CAM_MENU_ENTRIES = 32;
-    private static readonly int CI_STATE_INFO_SIZE = Marshal.SizeOf(typeof(CiStateInfo));     // 264
     private static readonly int MMI_MENU_SIZE = Marshal.SizeOf(typeof(MmiMenu));              // 8
     private static readonly int MMI_MESSAGE_SIZE = Marshal.SizeOf(typeof(MmiMessage));        // 32
-    private static readonly int API_CALLBACK_SIZE = Marshal.SizeOf(typeof(ApiCallBacks));     // 8
     private const int MAX_DESCRIPTOR_DATA_LENGTH = 256;
     private const int MAX_PMT_ELEMENTARY_STREAMS = 50;
     private static readonly int ES_PMT_DATA_SIZE = Marshal.SizeOf(typeof(EsPmtData));         // 260
     private static readonly int PMT_DATA_SIZE = Marshal.SizeOf(typeof(PmtData));              // 13268
 
     private static readonly int GENERAL_BUFFER_SIZE = new int[] { BOARD_INFO_SIZE, CAPABILITIES_SIZE, DISEQC_MESSAGE_SIZE, DRIVER_VERSION_SIZE, NIM_CONFIG_SIZE, PLATFORM_INFO_SIZE }.Max();
+
+    private const int REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME = 100;     // unit = ms
 
     #endregion
 
@@ -1160,18 +1142,25 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
     #pragma warning restore 0414
     private bool _isCamReady = false;
     private AnyseeCiState _ciState = AnyseeCiState.Empty;
+    private string _tunerDevicePath = string.Empty;
 
     private IKsPropertySet _propertySet = null;
     private AnyseeCiApi _ciApi = null;
 
     private IntPtr _generalBuffer = IntPtr.Zero;
-    private IntPtr _callBackBuffer = IntPtr.Zero;
     private IntPtr _pmtBuffer = IntPtr.Zero;
+    private IntPtr _remoteControlBuffer = IntPtr.Zero;
 
-    private string _tunerDevicePath = string.Empty;
-    private ApiCallBacks _apiCallBacks;
+    private OnAnyseeCiState _ciStateChangeDelegate = null;
+    private IntPtr _ciStateChangeCallBackPtr = IntPtr.Zero;
+    private OnAnyseeMmiMessage _mmiMessageDelegate = null;
+    private IntPtr _mmiMessageCallBackPtr = IntPtr.Zero;
     private IConditionalAccessMenuCallBacks _caMenuCallBacks = null;
     private object _caMenuCallBackLock = new object();
+
+    private bool _isRemoteControlInterfaceOpen = false;
+    private Thread _remoteControlListenerThread = null;
+    private AutoResetEvent _remoteControlListenerThreadStopEvent = null;
 
     #endregion
 
@@ -1309,7 +1298,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       BoardInfo info = (BoardInfo)Marshal.PtrToStructure(_generalBuffer, typeof(BoardInfo));
       this.LogDebug("  bus type         = {0}", info.BusType);
       this.LogDebug("  board type       = {0}", info.BoardType);
-      this.LogDebug("  board properties = {0}", info.BoardProperties.ToString());
+      this.LogDebug("  board properties = {0}", info.BoardProperties);
       this.LogDebug("  board mode       = {0}", info.BoardMode);
     }
 
@@ -1344,7 +1333,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       this.LogDebug("  max symbol rate  = {0} s/s", capabilities.MaxSymbolRate);
       this.LogDebug("  min search step  = {0} Hz", capabilities.MinSearchStep);
       this.LogDebug("  max search step  = {0} Hz", capabilities.MaxSearchStep);
-      this.LogDebug("  capabilities     = {0}", capabilities.NimCapabilities.ToString());
+      this.LogDebug("  capabilities     = {0}", capabilities.NimCapabilities);
       this.LogDebug("  broadcast system = {0}", capabilities.PrimaryBroadcastSystem);
     }
 
@@ -1435,7 +1424,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       {
         message = "(no message)";
       }
-      this.LogInfo("  message   = {0}", message);
+      this.LogInfo("  message   = {0}", message.Trim());
 
       return 0;
     }
@@ -1537,6 +1526,116 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
 
     #endregion
 
+    #region remote control listener thread
+
+    /// <summary>
+    /// Start a thread to listen for remote control commands.
+    /// </summary>
+    private void StartRemoteControlListenerThread()
+    {
+      // Don't start a thread if the interface has not been opened.
+      if (!_isRemoteControlInterfaceOpen)
+      {
+        return;
+      }
+
+      // Kill the existing thread if it is in "zombie" state.
+      if (_remoteControlListenerThread != null && !_remoteControlListenerThread.IsAlive)
+      {
+        StopRemoteControlListenerThread();
+      }
+      if (_remoteControlListenerThread == null)
+      {
+        this.LogDebug("Anysee: starting new remote control listener thread");
+        _remoteControlListenerThreadStopEvent = new AutoResetEvent(false);
+        _remoteControlListenerThread = new Thread(new ThreadStart(RemoteControlListener));
+        _remoteControlListenerThread.Name = "Anysee remote control listener";
+        _remoteControlListenerThread.IsBackground = true;
+        _remoteControlListenerThread.Priority = ThreadPriority.Lowest;
+        _remoteControlListenerThread.Start();
+      }
+    }
+
+    /// <summary>
+    /// Stop the thread that listens for remote control commands.
+    /// </summary>
+    private void StopRemoteControlListenerThread()
+    {
+      if (_remoteControlListenerThread != null)
+      {
+        if (!_remoteControlListenerThread.IsAlive)
+        {
+          this.LogWarn("Anysee: aborting old remote control listener thread");
+          _remoteControlListenerThread.Abort();
+        }
+        else
+        {
+          _remoteControlListenerThreadStopEvent.Set();
+          if (!_remoteControlListenerThread.Join(REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME * 2))
+          {
+            this.LogWarn("Anysee: failed to join remote control listener thread, aborting thread");
+            _remoteControlListenerThread.Abort();
+          }
+        }
+        _remoteControlListenerThread = null;
+        if (_remoteControlListenerThreadStopEvent != null)
+        {
+          _remoteControlListenerThreadStopEvent.Close();
+          _remoteControlListenerThreadStopEvent = null;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Thread function for receiving remote control commands.
+    /// </summary>
+    private void RemoteControlListener()
+    {
+      this.LogDebug("Anysee: remote control listener thread start polling");
+      int hr;
+      int returnedByteCount;
+      int previousCode = 0;
+      try
+      {
+        while (!_remoteControlListenerThreadStopEvent.WaitOne(REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME))
+        {
+          for (int i = 0; i < IR_DATA_SIZE; i++)
+          {
+            Marshal.WriteByte(_remoteControlBuffer, i, 0);
+          }
+          hr = _propertySet.Get(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Ir,
+            _remoteControlBuffer, IR_DATA_SIZE,
+            _remoteControlBuffer, IR_DATA_SIZE,
+            out returnedByteCount
+          );
+          if (hr != (int)HResult.Severity.Success || returnedByteCount != IR_DATA_SIZE)
+          {
+            this.LogError("Anysee: failed to read IR data, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+          }
+          else
+          {
+            IrData data = (IrData)Marshal.PtrToStructure(_remoteControlBuffer, typeof(IrData));
+            if (data.Key != previousCode)
+            {
+              this.LogDebug("Anysee: remote control key press = {0}", data.Key);
+              previousCode = data.Key;
+            }
+          }
+        }
+      }
+      catch (ThreadAbortException)
+      {
+      }
+      catch (Exception ex)
+      {
+        this.LogError(ex, "Anysee: remote control listener thread exception");
+        return;
+      }
+      this.LogDebug("Anysee: remote control listener thread stop polling");
+    }
+
+    #endregion
+
     #region ICustomDevice members
 
     /// <summary>
@@ -1544,29 +1643,30 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
     /// initialisation fails, the <see ref="ICustomDevice"/> instance should be disposed
     /// immediately.
     /// </summary>
-    /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
+    /// <param name="tunerExternalId">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
     /// <param name="context">Context required to initialise the interface.</param>
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
-    public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
+    public override bool Initialise(string tunerExternalId, CardType tunerType, object context)
     {
       this.LogDebug("Anysee: initialising");
 
-      IBaseFilter tunerFilter = context as IBaseFilter;
-      if (tunerFilter == null)
-      {
-        this.LogDebug("Anysee: tuner filter is null");
-        return false;
-      }
-      if (string.IsNullOrEmpty(tunerExternalIdentifier))
-      {
-        this.LogDebug("Anysee: tuner external identifier is not set");
-        return false;
-      }
       if (_isAnysee)
       {
         this.LogWarn("Anysee: extension already initialised");
         return true;
+      }
+
+      IBaseFilter tunerFilter = context as IBaseFilter;
+      if (tunerFilter == null)
+      {
+        this.LogDebug("Anysee: context is not a filter");
+        return false;
+      }
+      if (string.IsNullOrEmpty(tunerExternalId))
+      {
+        this.LogDebug("Anysee: tuner external identifier is not set");
+        return false;
       }
 
       // We need a reference to the capture filter because that is the filter which
@@ -1616,7 +1716,20 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
 
       this.LogInfo("Anysee: extension supported");
       _isAnysee = true;
-      _tunerDevicePath = tunerExternalIdentifier;
+      _tunerDevicePath = tunerExternalId;
+      DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.BDASourceFiltersCategory);
+      foreach (DsDevice device in devices)
+      {
+        if (!string.IsNullOrEmpty(device.DevicePath) && tunerExternalId.Contains(device.DevicePath))
+        {
+          _tunerDevicePath = device.DevicePath;
+          break;
+        }
+      }
+      foreach (DsDevice device in devices)
+      {
+        device.Dispose();
+      }
       _generalBuffer = Marshal.AllocCoTaskMem(NIM_CONFIG_SIZE);
 
       ReadNimConfig();
@@ -1636,7 +1749,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
     /// that any necessary hardware (such as a CI slot) is connected.
     /// </summary>
     /// <returns><c>true</c> if the interface is successfully opened, otherwise <c>false</c></returns>
-    public bool OpenInterface()
+    public bool OpenConditionalAccessInterface()
     {
       this.LogDebug("Anysee: open conditional access interface");
 
@@ -1671,16 +1784,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       _pmtBuffer = Marshal.AllocCoTaskMem(PMT_DATA_SIZE);
 
       this.LogDebug("Anysee: setting call backs");
-      // We need to pass the addresses of our call back functions to
-      // the API but C# makes that awkward. The workaround is to set
-      // up a call back structure instance, marshal the instance into
-      // a block of memory, and then read the addresses from the memory.
-      _apiCallBacks = new ApiCallBacks();
-      _apiCallBacks.OnCiState = OnCiState;
-      _apiCallBacks.OnMmiMessage = OnMmiMessage;
-      _callBackBuffer = Marshal.AllocCoTaskMem(API_CALLBACK_SIZE);
-      Marshal.StructureToPtr(_apiCallBacks, _callBackBuffer, true);
-      if (_ciApi.ExecuteCommand(AnyseeCiCommand.IsOpenSetCallBacks, Marshal.ReadIntPtr(_callBackBuffer, 0), Marshal.ReadIntPtr(_callBackBuffer, IntPtr.Size)))
+      _ciStateChangeDelegate = OnCiState;
+      _ciStateChangeCallBackPtr = Marshal.GetFunctionPointerForDelegate(_ciStateChangeDelegate);
+      _mmiMessageDelegate = OnMmiMessage;
+      _mmiMessageCallBackPtr = Marshal.GetFunctionPointerForDelegate(_mmiMessageDelegate);
+      if (_ciApi.ExecuteCommand(AnyseeCiCommand.IsOpenSetCallBacks, _ciStateChangeCallBackPtr, _mmiMessageCallBackPtr))
       {
         this.LogDebug("Anysee: result = success");
         _isCaInterfaceOpen = true;
@@ -1695,7 +1803,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
     /// Close the conditional access interface.
     /// </summary>
     /// <returns><c>true</c> if the interface is successfully closed, otherwise <c>false</c></returns>
-    public bool CloseInterface()
+    public bool CloseConditionalAccessInterface()
     {
       this.LogDebug("Anysee: close conditional access interface");
 
@@ -1714,11 +1822,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
         Marshal.FreeCoTaskMem(_pmtBuffer);
         _pmtBuffer = IntPtr.Zero;
       }
-      if (_callBackBuffer != IntPtr.Zero)
-      {
-        Marshal.FreeCoTaskMem(_callBackBuffer);
-        _callBackBuffer = IntPtr.Zero;
-      }
+      _ciStateChangeCallBackPtr = IntPtr.Zero;
+      _mmiMessageCallBackPtr = IntPtr.Zero;
 
       if (result)
       {
@@ -1737,17 +1842,17 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
     /// <param name="resetTuner">This parameter will be set to <c>true</c> if the tuner must be reset
     ///   for the interface to be completely and successfully reset.</param>
     /// <returns><c>true</c> if the interface is successfully reset, otherwise <c>false</c></returns>
-    public bool ResetInterface(out bool resetTuner)
+    public bool ResetConditionalAccessInterface(out bool resetTuner)
     {
       resetTuner = false;
-      return CloseInterface() && OpenInterface();
+      return CloseConditionalAccessInterface() && OpenConditionalAccessInterface();
     }
 
     /// <summary>
     /// Determine whether the conditional access interface is ready to receive commands.
     /// </summary>
     /// <returns><c>true</c> if the interface is ready, otherwise <c>false</c></returns>
-    public bool IsInterfaceReady()
+    public bool IsConditionalAccessInterfaceReady()
     {
       this.LogDebug("Anysee: is conditional access interface ready");
       if (!_isCaInterfaceOpen)
@@ -1773,7 +1878,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
     /// <param name="cat">The conditional access table for the service.</param>
     /// <returns><c>true</c> if the command is successfully sent, otherwise <c>false</c></returns>
     //public bool SendCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, Pmt pmt, Cat cat)
-    public bool SendCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, Pmt pmt, Cat cat)
+    public bool SendConditionalAccessCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, Pmt pmt, Cat cat)
     {
       this.LogDebug("Anysee: send conditional access command, list action = {0}, command = {1}", listAction, command);
 
@@ -1855,12 +1960,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
         if (esType == AnyseeEsType.Unknown)
         {
           // Nope.
-          this.LogDebug("  excluding PID {0} (0x{0:x}), stream type = {1})", es.Pid, es.StreamType);
+          this.LogDebug("  excluding PID {0}, stream type = {1})", es.Pid, es.StreamType);
           continue;
         }
 
         // Yes!!!
-        this.LogDebug("  including PID {0} (0x{0:x}), stream type = {1}, category = {2}", es.Pid, es.StreamType, esType);
+        this.LogDebug("  including PID {0}, stream type = {1}, category = {2}", es.Pid, es.StreamType, esType);
         EsPmtData esToKeep = new EsPmtData();
         esToKeep.Pid = es.Pid;
         esToKeep.EsType = esType;
@@ -1874,7 +1979,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
           ReadOnlyCollection<byte> descriptorData = d.GetRawData();
           if (offset + descriptorData.Count >= MAX_DESCRIPTOR_DATA_LENGTH)
           {
-            this.LogError("Anysee: PMT elementary stream {0} (0x{0:x}) CA data is too long", es.Pid);
+            this.LogError("Anysee: PMT elementary stream {0} CA data is too long", es.Pid);
             return false;
           }
           descriptorData.CopyTo(esToKeep.DescriptorData, offset);
@@ -2057,7 +2162,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
     /// </summary>
     /// <param name="command">The command to send.</param>
     /// <returns><c>true</c> if the command is sent successfully, otherwise <c>false</c></returns>
-    public bool SendCommand(byte[] command)
+    public bool SendDiseqcCommand(byte[] command)
     {
       this.LogDebug("Anysee: send DiSEqC command");
 
@@ -2106,11 +2211,92 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
     /// </summary>
     /// <param name="response">The response (or command).</param>
     /// <returns><c>true</c> if the response is read successfully, otherwise <c>false</c></returns>
-    public bool ReadResponse(out byte[] response)
+    public bool ReadDiseqcResponse(out byte[] response)
     {
       // Not supported.
       response = null;
       return false;
+    }
+
+    #endregion
+
+    #region IRemoteControlListener members
+
+    /// <summary>
+    /// Open the remote control interface and start listening for commands.
+    /// </summary>
+    /// <returns><c>true</c> if the interface is successfully opened, otherwise <c>false</c></returns>
+    public bool OpenRemoteControlInterface()
+    {
+      this.LogDebug("Anysee: open remote control interface");
+
+      if (!_isAnysee)
+      {
+        this.LogWarn("Anysee: not initialised or interface not supported");
+        return false;
+      }
+      if (_isRemoteControlInterfaceOpen)
+      {
+        this.LogWarn("Anysee: interface is already open");
+        return true;
+      }
+
+      _remoteControlBuffer = Marshal.AllocCoTaskMem(IR_DATA_SIZE);
+      IrData command = new IrData();
+      command.Enable = true;
+      Marshal.StructureToPtr(command, _remoteControlBuffer, true);
+      int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Ir,
+        _remoteControlBuffer, IR_DATA_SIZE,
+        _remoteControlBuffer, IR_DATA_SIZE
+      );
+      if (hr != (int)HResult.Severity.Success)
+      {
+        this.LogError("Anysee: failed to enable IR commands, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        return false;
+      }
+
+      _isRemoteControlInterfaceOpen = true;
+      StartRemoteControlListenerThread();
+
+      this.LogDebug("Anysee: result = success");
+      return true;
+    }
+
+    /// <summary>
+    /// Close the remote control interface and stop listening for commands.
+    /// </summary>
+    /// <returns><c>true</c> if the interface is successfully closed, otherwise <c>false</c></returns>
+    public bool CloseRemoteControlInterface()
+    {
+      this.LogDebug("Anysee: close remote control interface");
+
+      StopRemoteControlListenerThread();
+      if (_isRemoteControlInterfaceOpen && _propertySet != null)
+      {
+        IrData command = new IrData();
+        command.Enable = false;
+        Marshal.StructureToPtr(command, _remoteControlBuffer, true);
+        int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Ir,
+          _remoteControlBuffer, IR_DATA_SIZE,
+          _remoteControlBuffer, IR_DATA_SIZE
+        );
+
+        if (hr != (int)HResult.Severity.Success)
+        {
+          this.LogError("Anysee: failed to disable IR commands, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          return false;
+        }
+      }
+
+      if (_remoteControlBuffer != IntPtr.Zero)
+      {
+        Marshal.FreeCoTaskMem(_remoteControlBuffer);
+        _remoteControlBuffer = IntPtr.Zero;
+      }
+
+      _isRemoteControlInterfaceOpen = false;
+      this.LogDebug("Anysee: result = success");
+      return true;
     }
 
     #endregion
@@ -2122,7 +2308,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
     /// </summary>
     public override void Dispose()
     {
-      CloseInterface();
+      if (_isAnysee)
+      {
+        CloseConditionalAccessInterface();
+        CloseRemoteControlInterface();
+      }
       Release.ComObject("Anysee property set", ref _propertySet);
       if (_generalBuffer != IntPtr.Zero)
       {
@@ -2133,6 +2323,5 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
     }
 
     #endregion
-
   }
 }

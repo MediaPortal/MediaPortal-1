@@ -1,0 +1,5 @@
+LIBRARY     mpiptv_udp.dll
+
+EXPORTS
+			CreateProtocolInstance		PRIVATE
+			DestroyProtocolInstance		PRIVATE

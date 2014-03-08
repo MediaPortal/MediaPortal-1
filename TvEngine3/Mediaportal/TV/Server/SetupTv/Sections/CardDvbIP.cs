@@ -110,7 +110,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (_isScanning == false)
       {
         
-        Card card = ServiceAgents.Instance.CardServiceAgent.GetCardByDevicePath(ServiceAgents.Instance.ControllerServiceAgent.CardDevice(_cardNumber));
+        Card card = ServiceAgents.Instance.CardServiceAgent.GetCard(_cardNumber);
         if (card.Enabled == false)
         {
           MessageBox.Show(this, "Tuner is disabled. Please enable the tuner before scanning.");
@@ -178,7 +178,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         checkBoxCreateGroups.Enabled = false;
         checkBoxEnableChannelMoveDetection.Enabled = false;
         
-        Card card = ServiceAgents.Instance.CardServiceAgent.GetCardByDevicePath(ServiceAgents.Instance.ControllerServiceAgent.CardDevice(_cardNumber));
+        Card card = ServiceAgents.Instance.CardServiceAgent.GetCard(_cardNumber);
 
         int index = -1;
         IEnumerator<PlayListItem> enumerator = playlist.GetEnumerator();

@@ -33,7 +33,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
   /// <summary>
   /// A class for handling DiSEqC and tuning for TeVii tuners.
   /// </summary>
-  public class TeVii : BaseCustomDevice, ICustomTuner, IDiseqcDevice
+  public class TeVii : BaseCustomDevice, ICustomTuner, IDiseqcDevice, IRemoteControlListener
   {
     #region enums
 
@@ -81,6 +81,65 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
       Rate7_8,
       Rate8_9,
       Rate9_10
+    }
+
+    // Tested with a TeVii S480. Note that TeVii seem to have quite a few
+    // remote control variants. This is the one that I tested with:
+    // http://img607.imageshack.us/img607/951/s1057417.jpg
+    private enum TeViiIrCode
+    {
+      Up = 0,
+      Down,
+      Right,
+      Left,
+      Record,
+      LiveMode,
+      ChannelDown,
+      PlayMode,
+      ChannelUp,
+      VolumeUp,
+      Power,
+      SkipBack,           // timer
+      Mute, // 0x0c
+
+      SkipForward = 0x0e, // open
+      VolumeDown,
+      Zero,
+      One,
+      Two,
+      Three,
+      Four,
+      Five,
+      Six,
+      Seven,
+      Eight,
+      Nine,
+      Recall,             // event info
+      Favourites,         // current/next
+      Menu,
+      Back,
+      Rewind,
+      Okay,   // 0x1f
+
+      PlayPause = 0x40,
+      SwitchAb,
+
+      Audio = 0x43,
+      Epg ,
+      Subtitles,
+      Tv,                 // satellite
+      Music,              // provider
+
+      List = 0x4a,
+      Info = 0x4c,        // more
+      FastForward = 0x4d,
+
+      Enter = 0x52,       // all
+      Monitor = 0x56,
+      FullScreen = 0x58,
+      Home = 0x5a,
+      Snapshot = 0x5c,    // favourites
+      Radio = 0x5e,       // transponder
     }
 
     #endregion
@@ -216,12 +275,51 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
 
     #endregion
 
+    #region call back definitions
+
+    /// <summary>
+    /// Called by the tuner driver when raw packet data is received.
+    /// </summary>
+    /// <param name="context">The optional context passed to the interface when the call back was registered.</param>
+    /// <param name="data">The raw data.</param>
+    /// <param name="dataLength">The number of bytes of available data.</param>
+    [UnmanagedFunctionPointerAttribute(CallingConvention.StdCall)]
+    private delegate void OnTeViiCaptureData(IntPtr context, IntPtr data, Int32 dataLength);
+
+    /// <summary>
+    /// Called by the tuner driver when an IR remote key press is detected.
+    /// </summary>
+    /// <param name="context">The optional context passed to the interface when the call back was registered.</param>
+    /// <param name="code">The key code.</param>
+    [UnmanagedFunctionPointerAttribute(CallingConvention.StdCall)]
+    private delegate void OnTeViiIrRemoteKeyPress(IntPtr context, TeViiIrCode code);
+
+    #endregion
+
     #region variables
 
     private int _deviceIndex = -1;
     private bool _isTeVii = false;
     private CardType _tunerType = CardType.Unknown;
     private Tone22k _toneState = Tone22k.Auto;
+
+    private bool _isRemoteControlInterfaceOpen = false;
+    private OnTeViiIrRemoteKeyPress _remoteControlKeyPressDelegate = null;
+    private IntPtr _remoteControlKeyPressCallBackPtr = IntPtr.Zero;
+
+    #endregion
+
+    #region callback handlers
+
+    /// <summary>
+    /// Called by the tuner driver when an IR remote key press is detected.
+    /// </summary>
+    /// <param name="context">The optional context passed to the interface when the call back was registered.</param>
+    /// <param name="code">The key code.</param>
+    private void OnRemoteControlKeyPress(IntPtr context, TeViiIrCode code)
+    {
+      this.LogDebug("TeVii: remote control key press, code = {0}", code);
+    }
 
     #endregion
 
@@ -363,27 +461,28 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
     /// initialisation fails, the <see ref="ICustomDevice"/> instance should be disposed
     /// immediately.
     /// </summary>
-    /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
+    /// <param name="tunerExternalId">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
     /// <param name="context">Context required to initialise the interface.</param>
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
-    public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
+    public override bool Initialise(string tunerExternalId, CardType tunerType, object context)
     {
       this.LogDebug("TeVii: initialising");
 
-      if (string.IsNullOrEmpty(tunerExternalIdentifier))
-      {
-        this.LogDebug("TeVii: tuner external identifier is not set");
-        return false;
-      }
       if (_isTeVii)
       {
         this.LogWarn("TeVii: extension already initialised");
         return true;
       }
 
+      if (string.IsNullOrEmpty(tunerExternalId))
+      {
+        this.LogDebug("TeVii: tuner external identifier is not set");
+        return false;
+      }
+
       int deviceCount = FindDevices();
-      this.LogDebug("TeVii: number of devices = {0}, tuner external identifier = {1}", deviceCount, tunerExternalIdentifier);
+      this.LogDebug("TeVii: number of devices = {0}, tuner external identifier = {1}", deviceCount, tunerExternalId);
       if (deviceCount == 0)
       {
         this.LogDebug("TeVii: TeVii devices not present");
@@ -398,7 +497,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
         devicePath = Marshal.PtrToStringAnsi(GetDevicePath(deviceIndex));
 
         //this.LogDebug("TeVii: compare to {0} {1}", deviceName, devicePath);
-        if (devicePath.Equals(tunerExternalIdentifier))
+        if (tunerExternalId.Contains(devicePath))
         {
           this.LogDebug("TeVii: device recognised, index = {0}, name = {1}, API version = {2}", deviceIndex, deviceName, GetAPIVersion());
           _deviceIndex = deviceIndex;
@@ -531,7 +630,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
     /// </summary>
     /// <param name="command">The command to send.</param>
     /// <returns><c>true</c> if the command is sent successfully, otherwise <c>false</c></returns>
-    public bool SendCommand(byte[] command)
+    public bool SendDiseqcCommand(byte[] command)
     {
       this.LogDebug("TeVii: send DiSEqC command");
 
@@ -563,11 +662,68 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
     /// </summary>
     /// <param name="response">The response (or command).</param>
     /// <returns><c>true</c> if the response is read successfully, otherwise <c>false</c></returns>
-    public bool ReadResponse(out byte[] response)
+    public bool ReadDiseqcResponse(out byte[] response)
     {
       // Not supported.
       response = null;
       return false;
+    }
+
+    #endregion
+
+    #region IRemoteControlListener members
+
+    /// <summary>
+    /// Open the remote control interface and start listening for commands.
+    /// </summary>
+    /// <returns><c>true</c> if the interface is successfully opened, otherwise <c>false</c></returns>
+    public bool OpenRemoteControlInterface()
+    {
+      this.LogDebug("TeVii: open remote control interface");
+
+      if (!_isTeVii)
+      {
+        this.LogWarn("TeVii: not initialised or interface not supported");
+        return false;
+      }
+      if (_isRemoteControlInterfaceOpen)
+      {
+        this.LogWarn("TeVii: interface is already open");
+        return true;
+      }
+
+      _remoteControlKeyPressDelegate = OnRemoteControlKeyPress;
+      _remoteControlKeyPressCallBackPtr = Marshal.GetFunctionPointerForDelegate(_remoteControlKeyPressDelegate);
+      if (!SetRemoteControl(_deviceIndex, _remoteControlKeyPressCallBackPtr, IntPtr.Zero))
+      {
+        this.LogError("TeVii: failed to set remote control event/delegate");
+        return false;
+      }
+
+      _isRemoteControlInterfaceOpen = true;
+      this.LogDebug("TeVii: result = success");
+      return true;
+    }
+
+    /// <summary>
+    /// Close the remote control interface and stop listening for commands.
+    /// </summary>
+    /// <returns><c>true</c> if the interface is successfully closed, otherwise <c>false</c></returns>
+    public bool CloseRemoteControlInterface()
+    {
+      this.LogDebug("TeVii: close remote control interface");
+
+      bool success = SetRemoteControl(_deviceIndex, IntPtr.Zero, IntPtr.Zero);
+      if (!success)
+      {
+        this.LogError("TeVii: failed to unset remote control event/delegate");
+        return false;
+      }
+
+      _remoteControlKeyPressCallBackPtr = IntPtr.Zero;
+      _isRemoteControlInterfaceOpen = false;
+      this.LogDebug("TeVii: result = success");
+      return true;
     }
 
     #endregion
@@ -581,6 +737,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
     {
       if (_isTeVii && _deviceIndex >= 0)
       {
+        CloseRemoteControlInterface();
         CloseDevice(_deviceIndex);
       }
       _deviceIndex = -1;

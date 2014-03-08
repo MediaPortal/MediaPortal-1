@@ -18,7 +18,9 @@
 
 #endregion
 
+using System.Collections.Generic;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
@@ -38,6 +40,27 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
     public ScannerAnalog(ITVCard tuner, ITsChannelScan analyser)
       : base(tuner, analyser)
     {
+    }
+
+    /// <summary>
+    /// Scans the specified transponder.
+    /// </summary>
+    /// <param name="channel">The channel.</param>
+    /// <param name="settings">The settings.</param>
+    /// <returns></returns>
+    public List<IChannel> Scan(IChannel channel, ScanParameters settings)
+    {
+      AnalogChannel analogChannel = channel as AnalogChannel;
+      if (analogChannel != null && analogChannel.VideoSource != CaptureSourceVideo.Tuner)
+      {
+        TunerAnalog analogTuner = _tuner as TunerAnalog;
+        if (analogTuner != null)
+        {
+          return (List<IChannel>)analogTuner.GetSourceChannels();
+        }
+        return null;
+      }
+      return base.Scan(channel, settings);
     }
 
     /// <summary>

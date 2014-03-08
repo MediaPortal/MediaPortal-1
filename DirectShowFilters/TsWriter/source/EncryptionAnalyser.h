@@ -33,6 +33,13 @@ enum EncryptionState
   Encrypted = 1
 };
 
+typedef struct PidState
+{
+  int Pid;
+  EncryptionState State;
+  int PacketCount;        // The number of consecutive packets which do not match the current state.
+}PidState;
+
 DEFINE_GUID(ITsEncryptionAnalyser, 0x59f8d617, 0x92fd, 0x48d5, 0x8f, 0x6d, 0xa9, 0x7b, 0xfd, 0x95, 0xc4, 0x48);
 
 DECLARE_INTERFACE_(IEncryptionStateChangeCallBack, IUnknown)
@@ -46,7 +53,8 @@ DECLARE_INTERFACE_(ITsEncryptionAnalyser, IUnknown)
   STDMETHOD(AddPid)(THIS_ int pid)PURE;
   STDMETHOD(RemovePid)(THIS_ int pid)PURE;
   STDMETHOD(GetPidCount)(THIS_ int* pidCount)PURE;
-  STDMETHOD(GetPid)(THIS_ int pidIdx, int* pid, EncryptionState* encryptionState)PURE;
+  STDMETHOD(GetPidByIndex)(THIS_ int pidIdx, int* pid, EncryptionState* encryptionState)PURE;
+  STDMETHOD(GetPid)(THIS_ int pid, EncryptionState* encryptionState)PURE;
   STDMETHOD(SetCallBack)(THIS_ IEncryptionStateChangeCallBack* callBack)PURE;
   STDMETHOD(Reset)(THIS_)PURE;
 };
@@ -54,20 +62,24 @@ DECLARE_INTERFACE_(ITsEncryptionAnalyser, IUnknown)
 class CEncryptionAnalyser: public CUnknown, public ITsEncryptionAnalyser
 {
   public:
-    CEncryptionAnalyser(LPUNKNOWN pUnk, HRESULT *phr);
+    CEncryptionAnalyser(LPUNKNOWN unk, HRESULT* hr);
     ~CEncryptionAnalyser(void);
 
     DECLARE_IUNKNOWN
     STDMETHODIMP AddPid(int pid);
     STDMETHODIMP RemovePid(int pid);
     STDMETHODIMP GetPidCount(int* pidCount);
-    STDMETHODIMP GetPid(int pidIdx, int* pid, EncryptionState* encryptionState);
+    STDMETHODIMP GetPidByIndex(int pidIdx, int* pid, EncryptionState* encryptionState);
+    STDMETHODIMP GetPid(int pid, EncryptionState* encryptionState);
     STDMETHODIMP SetCallBack(IEncryptionStateChangeCallBack* callBack);
     STDMETHODIMP Reset();
 
-    void OnTsPacket(byte* tsPacket);
+    bool OnTsPacket(byte* tsPacket);
+
   private:
-    map<int, EncryptionState> m_mPids;
+    void CleanUp();
+
+    map<int, PidState*> m_pids;
     CTsHeader m_tsHeader;
-    IEncryptionStateChangeCallBack* m_pCallBack;
+    IEncryptionStateChangeCallBack* m_callBack;
 };

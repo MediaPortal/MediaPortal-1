@@ -37,7 +37,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension
     /// when the interface is opened, and initialising the hardware may take in the order of ten seconds.
     /// </remarks>
     /// <returns><c>true</c> if the interface is successfully opened, otherwise <c>false</c></returns>
-    bool OpenInterface();
+    bool OpenConditionalAccessInterface();
 
     /// <summary>
     /// Close the conditional access interface.
@@ -49,7 +49,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension
     /// close the interface.
     /// </remarks>
     /// <returns><c>true</c> if the interface is successfully closed, otherwise <c>false</c></returns>
-    bool CloseInterface();
+    bool CloseConditionalAccessInterface();
 
     /// <summary>
     /// Reset the conditional access interface.
@@ -60,7 +60,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension
     /// <param name="resetTuner">This parameter will be set to <c>true</c> if the tuner must be reset
     ///   for the interface to be completely and successfully reset.</param>
     /// <returns><c>true</c> if the interface is successfully reset, otherwise <c>false</c></returns>
-    bool ResetInterface(out bool resetTuner);
+    bool ResetConditionalAccessInterface(out bool resetTuner);
 
     /// <summary>
     /// Determine whether the conditional access interface is ready to receive commands.
@@ -70,7 +70,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension
     /// and initialised, and necessary software interfaces have been opened/initialised.
     /// </remarks>
     /// <returns><c>true</c> if the interface is ready, otherwise <c>false</c></returns>
-    bool IsInterfaceReady();
+    bool IsConditionalAccessInterfaceReady();
 
     /// <summary>
     /// Send a command to to the conditional access interface.
@@ -89,6 +89,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension
     /// <param name="pmt">The program map table for the service.</param>
     /// <param name="cat">The conditional access table for the service.</param>
     /// <returns><c>true</c> if the command is successfully sent, otherwise <c>false</c></returns>
-    bool SendCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, Pmt pmt, Cat cat);
+    bool SendConditionalAccessCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, Pmt pmt, Cat cat);
   }
 }

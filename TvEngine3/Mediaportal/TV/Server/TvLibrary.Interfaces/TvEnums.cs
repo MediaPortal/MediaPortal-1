@@ -45,7 +45,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// </summary>
     DvbC,
     /// <summary>
-    /// ATSC and/or annex-C North American cable tuner.
+    /// ATSC and/or SCTE (ITU-T annex B) North American cable tuner.
     /// </summary>
     Atsc,
     /// <summary>
@@ -60,6 +60,25 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// Unknown device.
     /// </summary>
     Unknown
+  }
+
+  /// <summary>
+  /// Observable stream types.
+  /// </summary>
+  public enum PidType
+  {
+    /// <summary>
+    /// Video stream.
+    /// </summary>
+    Video = 0,
+    /// <summary>
+    /// Audio stream.
+    /// </summary>
+    Audio,
+    /// <summary>
+    /// Other stream.
+    /// </summary>
+    Other
   }
 
   /// <summary>

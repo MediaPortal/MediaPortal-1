@@ -78,7 +78,6 @@
     <Compile Include="CardManagement\CardHandler\ParkedUser.cs" />
     <Compile Include="CardManagement\CardHandler\ParkedUserManagement.cs" />
     <Compile Include="CardManagement\CardHandler\Recorder.cs" />
-    <Compile Include="CardManagement\CardHandler\TeletextManagement.cs" />
     <Compile Include="CardManagement\CardHandler\TimeShifter.cs" />
     <Compile Include="CardManagement\CardHandler\TimeShifterBase.cs" />
     <Compile Include="CardManagement\CardHandler\TvCardHandler.cs" />

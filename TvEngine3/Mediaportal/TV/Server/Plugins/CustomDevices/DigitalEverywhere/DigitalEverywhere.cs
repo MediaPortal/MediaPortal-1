@@ -749,8 +749,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
       this.LogDebug("  is locked        = {0}", status.IsLocked);
       this.LogDebug("  CNR              = {0}", status.CarrierToNoiseRatio);
       this.LogDebug("  auto gain ctrl   = {0}", status.AutomaticGainControl);
-      this.LogDebug("  front end state  = {0}", status.FrontEndState.ToString());
-      this.LogDebug("  CI state         = {0}", status.CiState.ToString());
+      this.LogDebug("  front end state  = {0}", status.FrontEndState);
+      this.LogDebug("  CI state         = {0}", status.CiState);
       this.LogDebug("  supply voltage   = {0}", status.SupplyVoltage);
       this.LogDebug("  antenna voltage  = {0}", status.AntennaVoltage);
       this.LogDebug("  bus voltage      = {0}", status.BusVoltage);
@@ -792,8 +792,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
       }
 
       data = (CaData)Marshal.PtrToStructure(_generalBuffer, typeof(CaData));
-      this.LogDebug("  manufacturer = 0x{0:x}{1:x}", data.Data[0], data.Data[1]);
-      this.LogDebug("  code         = 0x{0:x}{1:x}", data.Data[2], data.Data[3]);
+      this.LogDebug("  manufacturer = 0x{0:x2}{1:x2}", data.Data[0], data.Data[1]);
+      this.LogDebug("  code         = 0x{0:x2}{1:x2}", data.Data[2], data.Data[3]);
       this.LogDebug("  menu title   = {0}", DvbTextConverter.Convert(data.Data, data.Data[4], 5));
     }
 
@@ -890,8 +890,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
           if (ciState != prevCiState)
           {
             this.LogInfo("Digital Everywhere: CI state change");
-            this.LogInfo("  old state = {0}", prevCiState.ToString());
-            this.LogInfo("  new state = {0}", ciState.ToString());
+            this.LogInfo("  old state = {0}", prevCiState);
+            this.LogInfo("  new state = {0}", ciState);
             prevCiState = ciState;
 
             if (ciState.HasFlag(DeCiState.CamPresent | DeCiState.CamIsDvb))
@@ -966,7 +966,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
             Array.Copy(data.Data, objectData, data.DataLength);
             lock (_caMenuCallBackLock)
             {
-              DvbMmiHandler.HandleMmiData(objectData, ref _caMenuCallBacks);
+              DvbMmiHandler.HandleMmiData(objectData, _caMenuCallBacks);
             }
           }
         }
@@ -979,6 +979,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
         this.LogError(ex, "Digital Everywhere: MMI handler thread exception");
         return;
       }
+      this.LogDebug("Digital Everywhere: MMI handler thread stop polling");
     }
 
     #endregion
@@ -1002,19 +1003,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
     /// initialisation fails, the <see ref="ICustomDevice"/> instance should be disposed
     /// immediately.
     /// </summary>
-    /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
+    /// <param name="tunerExternalId">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
     /// <param name="context">Context required to initialise the interface.</param>
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
-    public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
+    public override bool Initialise(string tunerExternalId, CardType tunerType, object context)
     {
       this.LogDebug("Digital Everywhere: initialising");
 
-      if (context == null)
-      {
-        this.LogDebug("Digital Everywhere: context is null");
-        return false;
-      }
       if (_isDigitalEverywhere)
       {
         this.LogWarn("Digital Everywhere: extension already initialised");
@@ -1460,9 +1456,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
     /// <returns><c>true</c> if the extension supports specialised tuning for the channel, otherwise <c>false</c></returns>
     public bool CanTuneChannel(IChannel channel)
     {
-      // Tuning of DVB-S/2 and DVB-T/2 channels is supported with an appropriate tuner. DVB-C tuning may also be
-      // supported but documentation is missing.
-      if ((channel is DVBSChannel && _tunerType == CardType.DvbS) || (channel is DVBTChannel && _tunerType == CardType.DvbT))
+      // Tuning of DVB-S and DVB-T channels is supported with an appropriate tuner. DVB-C tuning
+      // may also be supported but documentation is missing. DVB-S2 tuning appears not to work.
+      if (channel is DVBTChannel && _tunerType == CardType.DvbT)
+      {
+        return true;
+      }
+      DVBSChannel dvbsChannel = channel as DVBSChannel;
+      if (dvbsChannel != null && _tunerType == CardType.DvbS && dvbsChannel.ModulationType == ModulationType.ModQpsk)
       {
         return true;
       }
@@ -1487,7 +1488,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
       int hr;
 
       DVBSChannel dvbsChannel = channel as DVBSChannel;
-      if (dvbsChannel != null && _tunerType == CardType.DvbS)
+      if (dvbsChannel != null && _tunerType == CardType.DvbS && dvbsChannel.ModulationType == ModulationType.ModQpsk)
       {
         // LNB settings must be applied.
         LnbParamInfo lnbParams = new LnbParamInfo();
@@ -1518,7 +1519,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
         tuneRequest.Lnb = 0;    // To match the AntennaNumber value above.
 
         // OnBeforeTune() mixed pilot and roll-off settings into the top four bits of the least significant
-        // inner FEC rate byte. It seemms that this custom tuning method doesn't support setting pilot and
+        // inner FEC rate byte. It seems that this custom tuning method doesn't support setting pilot and
         // roll-off in this way, so we throw the bits away.
         BinaryConvolutionCodeRate rate = (BinaryConvolutionCodeRate)((int)dvbsChannel.InnerFecRate & 0xf);
         if (rate == BinaryConvolutionCodeRate.Rate1_2)
@@ -1616,7 +1617,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
     /// that any necessary hardware (such as a CI slot) is connected.
     /// </summary>
     /// <returns><c>true</c> if the interface is successfully opened, otherwise <c>false</c></returns>
-    public bool OpenInterface()
+    public bool OpenConditionalAccessInterface()
     {
       this.LogDebug("Digital Everywhere: open conditional access interface");
 
@@ -1633,7 +1634,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
 
       _mmiBuffer = Marshal.AllocCoTaskMem(CA_DATA_SIZE);
       _pmtBuffer = Marshal.AllocCoTaskMem(CA_DATA_SIZE);
-      _isCamReady = IsInterfaceReady();
+      _isCamReady = IsConditionalAccessInterfaceReady();
       _isCamPresent = _isCamReady;
       if (_isCamReady)
       {
@@ -1651,7 +1652,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
     /// Close the conditional access interface.
     /// </summary>
     /// <returns><c>true</c> if the interface is successfully closed, otherwise <c>false</c></returns>
-    public bool CloseInterface()
+    public bool CloseConditionalAccessInterface()
     {
       this.LogDebug("Digital Everywhere: close conditional access interface");
 
@@ -1682,7 +1683,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
     /// <param name="resetTuner">This parameter will be set to <c>true</c> if the tuner must be reset
     ///   for the interface to be completely and successfully reset.</param>
     /// <returns><c>true</c> if the interface is successfully reset, otherwise <c>false</c></returns>
-    public bool ResetInterface(out bool resetTuner)
+    public bool ResetConditionalAccessInterface(out bool resetTuner)
     {
       this.LogDebug("Digital Everywhere: reset conditional access interface");
 
@@ -1694,7 +1695,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
         return false;
       }
 
-      bool success = CloseInterface();
+      bool success = CloseConditionalAccessInterface();
 
       CaData data = new CaData(DeCiMessageTag.Reset);
       data.DataLength = 1;
@@ -1716,14 +1717,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
         this.LogError("Digital Everywhere: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         success = false;
       }
-      return success && OpenInterface();
+      return success && OpenConditionalAccessInterface();
     }
 
     /// <summary>
     /// Determine whether the conditional access interface is ready to receive commands.
     /// </summary>
     /// <returns><c>true</c> if the interface is ready, otherwise <c>false</c></returns>
-    public bool IsInterfaceReady()
+    public bool IsConditionalAccessInterfaceReady()
     {
       this.LogDebug("Digital Everywhere: is conditional access interface ready");
 
@@ -1741,7 +1742,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
         return false;
       }
 
-      this.LogDebug("Digital Everywhere: CI state = {0}", ciState.ToString());
+      this.LogDebug("Digital Everywhere: CI state = {0}", ciState);
       bool isCamReady = false;
       if (ciState.HasFlag(DeCiState.CamPresent | DeCiState.CamIsDvb | DeCiState.CamReady | DeCiState.ApplicationInfoAvailable) &&
         !ciState.HasFlag(DeCiState.CamError))
@@ -1763,7 +1764,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
     /// <param name="pmt">The program map table for the service.</param>
     /// <param name="cat">The conditional access table for the service.</param>
     /// <returns><c>true</c> if the command is successfully sent, otherwise <c>false</c></returns>
-    public bool SendCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, Pmt pmt, Cat cat)
+    public bool SendConditionalAccessCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, Pmt pmt, Cat cat)
     {
       this.LogDebug("Digital Everywhere: send conditional access command, list action = {0}, command = {1}", listAction, command);
 
@@ -1961,7 +1962,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
     /// </summary>
     /// <param name="command">The command to send.</param>
     /// <returns><c>true</c> if the command is sent successfully, otherwise <c>false</c></returns>
-    public bool SendCommand(byte[] command)
+    public bool SendDiseqcCommand(byte[] command)
     {
       this.LogDebug("Digital Everywhere: send DiSEqC command");
 
@@ -2014,7 +2015,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
     /// </summary>
     /// <param name="response">The response (or command).</param>
     /// <returns><c>true</c> if the response is read successfully, otherwise <c>false</c></returns>
-    public bool ReadResponse(out byte[] response)
+    public bool ReadDiseqcResponse(out byte[] response)
     {
       // Not supported.
       response = null;
@@ -2030,7 +2031,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
     /// </summary>
     public override void Dispose()
     {
-      CloseInterface();
+      if (_isDigitalEverywhere)
+      {
+        CloseConditionalAccessInterface();
+      }
       _propertySet = null;
       if (_generalBuffer != IntPtr.Zero)
       {

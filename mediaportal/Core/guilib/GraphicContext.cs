@@ -53,12 +53,6 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public class GUIGraphicsContext
   {
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe void FontEngineSetClipEnable();
-
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe void FontEngineSetClipDisable();
-
     public static event BlackImageRenderedHandler OnBlackImageRendered;
     public static event VideoReceivedHandler OnVideoReceived;
 
@@ -186,8 +180,42 @@ namespace MediaPortal.GUI.Library
     private static bool _isDX9EXused = OSInfo.OSInfo.VistaOrLater();
     private static bool _DX9ExRealDeviceLost = false;
 
-    private static Point _screenCenterPos = new Point();
-    private static bool m_bAllowRememberLastFocusedItem = true;
+    private static string _skin = "";
+    private static string _theme = "";
+    private static bool _isFullScreenVideo; // are we in GUI or fullscreen video/tv mode
+    private static Rectangle _rectVideo; // video preview window
+    private static Geometry.Type _geometryType = Geometry.Type.Normal; // video transformation type (see geometry.cs)
+    private static bool _overlay = true; // indicating if the overlay window is allowed to be shown
+    private static float _zoomHorizontal = 1.0f; // x zoom of GUI calibration
+    private static float _zoomVertical = 1.0f; // y zoom of GUI calibration
+    private static DateTime _topBarTimeOut = DateTime.Now;
+    private static int _subtitles = 550; // Y position for subtitles
+    private static bool _playing; // are playing any media or not
+    private static int _brightness = -1;
+    private static int _gamma = -1;
+    private static int _contrast = -1;
+    private static int _saturation = -1;
+    private static int _sharpness = -1;
+    private static bool _mouseSupport = true;
+    private static Size _skinSize = new Size(720, 576);
+    private static bool _showBackGround = true; // show the GUI or live tv in the background
+    private static int _scrollSpeedVertical = 4;
+    private static int _scrollSpeedHorizontal = 3;
+    private static int _charsInCharacterSet = 255;
+    private static volatile bool _vmr9Active;
+    private static int _maxFPS = 60;
+    private static long _desiredFrameTime = 100;
+    private static float _currentFPS;
+    private static long _lasttime;
+    private static bool _blankScreen;
+    private static bool _idleTimePowerSaving;
+    private static bool _turnOffMonitor;
+    private static bool _vmr9Allowed = true;
+    private static DateTime _lastActivity = DateTime.Now;
+    private static Screen _currentScreen;
+    private static int _currentMonitorIdx = -1;
+    private static readonly bool IsDX9EXused = OSInfo.OSInfo.VistaOrLater();
+    private static bool _allowRememberLastFocusedItem = true;
 
     private const float DEGREE_TO_RADIAN = 0.01745329f;
 
@@ -380,6 +408,20 @@ namespace MediaPortal.GUI.Library
         }
       }
       set { _currentScreen = value; }
+    }
+
+    /// <summary>
+    /// Property to get and set current monitor index for refreshrate setting
+    /// </summary>
+    // ReSharper disable InconsistentNaming
+    public static int currentMonitorIdx
+    // ReSharper restore InconsistentNaming
+    {
+      get
+      {
+        return _currentMonitorIdx;
+      }
+      set { _currentMonitorIdx = value; }
     }
 
     /// <summary>
@@ -590,13 +632,16 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-        int borderWidth = (form.Size.Width - form.ClientRectangle.Width) / 2;
-        // we can only assume that the title bar occupies this space
-        int borderHeight = (form.Size.Height - form.ClientRectangle.Height) + (2 * borderWidth);
-        _screenCenterPos = new Point((form.ClientRectangle.Width / 2) + borderWidth + form.Location.X,
-                                     (form.ClientRectangle.Height / 2) + borderHeight + form.Location.Y);
+        var clientCenter = new Point(form.ClientSize.Width / 2, form.ClientSize.Height / 2);
+        try
+        {
+          return form.PointToScreen(clientCenter);
+        }
+        catch (Exception)
+        {
+          return new Point(0, 0);
+        }
 
-        return _screenCenterPos;
       }
     }
 
@@ -1348,8 +1393,8 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public static bool AllowRememberLastFocusedItem
     {
-      get { return m_bAllowRememberLastFocusedItem; }
-      set { m_bAllowRememberLastFocusedItem = value; }
+      get { return _allowRememberLastFocusedItem; }
+      set { _allowRememberLastFocusedItem = value; }
     }
 
     /// <summary>
@@ -2057,7 +2102,7 @@ namespace MediaPortal.GUI.Library
       // Place the clip rectangle on the top of the stack and set it as the current clip rectangle.
       _clipRectangleStack.Push(r3);
       DX9Device.ScissorRectangle = _clipRectangleStack.Peek();
-      FontEngineSetClipEnable();
+      DXNative.FontEngineSetClipEnable();
     }
 
     /// <summary>
@@ -2071,7 +2116,7 @@ namespace MediaPortal.GUI.Library
       // If the clip stack is empty then tell the font engine to stop clipping otherwise restore the current clip rectangle.
       if (_clipRectangleStack.Count == 0)
       {
-        FontEngineSetClipDisable();
+        DXNative.FontEngineSetClipDisable();
       }
       else
       {

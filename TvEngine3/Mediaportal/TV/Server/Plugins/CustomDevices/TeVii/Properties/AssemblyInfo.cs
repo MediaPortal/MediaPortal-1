@@ -40,4 +40,5 @@ using MediaPortal.Common.Utils;
 [assembly: UsesSubsystem("TVE.DirectShow")]
 [assembly: UsesSubsystem("TVE.Plugins.TunerExtension")]
 [assembly: UsesSubsystem("TVE.Plugins.TunerExtension.Diseqc")]
+[assembly: UsesSubsystem("TVE.Plugins.TunerExtension.RemoteControl")]
 [assembly: UsesSubsystem("TVE.Plugins.TunerExtension.Tuner")]

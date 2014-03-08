@@ -18,8 +18,6 @@
 
 #endregion
 
-using System;
-using System.Net;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
@@ -41,11 +39,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
     /// Initialise a new instance of the <see cref="TunerSatIpCable"/> class.
     /// </summary>
     /// <param name="serverDescriptor">The server's UPnP device description.</param>
-    /// <param name="localIpAddress">The IP address of the local NIC which is connected to the server.</param>
-    /// <param name="serverIpAddress">The server's current IP address.</param>
     /// <param name="sequenceNumber">A unique sequence number or index for this instance.</param>
-    public TunerSatIpCable(DeviceDescriptor serverDescriptor, IPAddress localIpAddress, string serverIpAddress, int sequenceNumber)
-      : base(serverDescriptor, localIpAddress, serverIpAddress, sequenceNumber, 'C')
+    public TunerSatIpCable(DeviceDescriptor serverDescriptor, int sequenceNumber)
+      : base(serverDescriptor, sequenceNumber, 'C')
     {
       _tunerType = CardType.DvbC;
     }
@@ -123,11 +119,5 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
     }
 
     #endregion
-
-    // TODO: remove this method, it should not be required and it is bad style!
-    protected override DVBBaseChannel CreateChannel()
-    {
-      return new DVBCChannel();
-    }
   }
 }

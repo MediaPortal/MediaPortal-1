@@ -1,6 +1,6 @@
 /* 
- *	Copyright (C) 2006-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
+ *  Copyright (C) 2006-2008 Team MediaPortal
+ *  http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -23,27 +23,27 @@
 class CTsHeader
 {
 public:
-	CTsHeader();
-	CTsHeader(byte* tsPacket);
-	virtual ~CTsHeader(void);
-	void Decode(byte *data);
-	void LogHeader();
-	bool PayLoadOnly();
-	bool AdaptionFieldOnly();
-	bool AdaptionFieldAndPayLoad();
+  CTsHeader();
+  CTsHeader(byte* tsPacket);
+  virtual ~CTsHeader(void);
+  void Decode(byte *data);
+  void LogHeader();
+  bool PayLoadOnly();
+  bool AdaptionFieldOnly();
+  bool AdaptionFieldAndPayLoad();
 
-	BYTE SyncByte			;
-	bool TransportError		;
-	bool PayloadUnitStart	;
-	bool TransportPriority	;
-	unsigned short Pid		;
-	BYTE TScrambling		;
-	BYTE AdaptionControl	;
-	BYTE ContinuityCounter	;
-	BYTE AdaptionFieldLength;
-	BYTE PayLoadStart;
-	bool HasAdaptionField;
-	bool HasPayload;
+  BYTE SyncByte      ;
+  bool TransportError    ;
+  bool PayloadUnitStart  ;
+  bool TransportPriority  ;
+  unsigned short Pid    ;
+  BYTE TScrambling    ;
+  BYTE AdaptionControl  ;
+  BYTE ContinuityCounter  ;
+  BYTE AdaptionFieldLength;
+  BYTE PayLoadStart;
+  bool HasAdaptionField;
+  bool HasPayload;
 private:
-	byte* m_packet;
+  byte* m_packet;
 };

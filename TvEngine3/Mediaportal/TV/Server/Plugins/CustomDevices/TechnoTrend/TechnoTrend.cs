@@ -37,10 +37,10 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
 {
   /// <summary>
-  /// A class for handling conditional access and DiSEqC for TechnoTrend Budget and Connect series
-  /// tuners.
+  /// A class for handling conditional access, DiSEqC and remote controls for TechnoTrend Budget
+  /// and Connect series tuners.
   /// </summary>
-  public class TechnoTrend : BaseCustomDevice, ICustomTuner, IPowerDevice, IConditionalAccessProvider, IConditionalAccessMenuActions, IDiseqcDevice
+  public class TechnoTrend : BaseCustomDevice, ICustomTuner, IPowerDevice, IConditionalAccessProvider, IConditionalAccessMenuActions, IDiseqcDevice, IRemoteControlListener
   {
     #region enums
 
@@ -496,10 +496,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <summary>
     /// Close access to a specific device and relinquish control over it.
     /// </summary>
-    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="handle">The handle allocated to a device when it was opened.</param>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern void bdaapiClose(IntPtr device);
+    private static extern void bdaapiClose(IntPtr handle);
 
     #endregion
 
@@ -508,29 +508,53 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <summary>
     /// Turn automatic 125/166 kHz offset scanning on or off.
     /// </summary>
-    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="handle">The handle allocated to a device when it was opened.</param>
     /// <param name="autoOffsetModeOn"><c>True</c> to turn offset scanning on.</param>
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiSetDVBTAutoOffsetMode(IntPtr device, [MarshalAs(UnmanagedType.Bool)] bool autoOffsetModeOn);
+    private static extern TtApiResult bdaapiSetDVBTAutoOffsetMode(IntPtr handle, [MarshalAs(UnmanagedType.Bool)] bool autoOffsetModeOn);
 
     /// <summary>
     /// Determine whether automatic 125/166 kHz offset scanning is on or off.
     /// </summary>
-    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="handle">The handle allocated to a device when it was opened.</param>
     /// <param name="autoOffsetModeOn"><c>True</c> if automatic offset scanning is on, otherwise <c>false</c>.</param>
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiGetDVBTAutoOffsetMode(IntPtr device, [MarshalAs(UnmanagedType.Bool)] ref bool autoOffsetModeOn);
+    private static extern TtApiResult bdaapiGetDVBTAutoOffsetMode(IntPtr handle, [MarshalAs(UnmanagedType.Bool)] ref bool autoOffsetModeOn);
+
+    #endregion
+
+    #region IR remote
+
+    /// <summary>
+    /// Initialise the infra red remote control interface.
+    /// </summary>
+    /// <param name="handle">The handle allocated to a device when it was opened.</param>
+    /// <param name="callBack">A delegate for the DLL to invoke when remote control key presses are detected.</param>
+    /// <param name="context">Optional context that the DLL will pass as a parameter to the call back.</param>
+    /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
+    [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
+    [SuppressUnmanagedCodeSecurity]
+    private static extern TtApiResult bdaapiOpenIR(IntPtr handle, OnTtIrCode callBack, IntPtr context);
+
+    /// <summary>
+    /// Close the infra red remote control interface.
+    /// </summary>
+    /// <param name="handle">The handle allocated to a device when it was opened.</param>
+    /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
+    [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
+    [SuppressUnmanagedCodeSecurity]
+    private static extern TtApiResult bdaapiCloseIR(IntPtr handle);
 
     #endregion
 
     /// <summary>
     /// Send a DiSEqC command.
     /// </summary>
-    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="handle">The handle allocated to a device when it was opened.</param>
     /// <param name="command">The command.</param>
     /// <param name="length">The length of the command.</param>
     /// <param name="repeats">The number of times to repeat the command.</param>
@@ -539,41 +563,41 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiSetDiSEqCMsg(IntPtr device, IntPtr command, byte length, byte repeats,
+    private static extern TtApiResult bdaapiSetDiSEqCMsg(IntPtr handle, IntPtr command, byte length, byte repeats,
                                                         TtToneBurst toneBurst, Polarisation polarisation);
 
     /// <summary>
     /// Switch the videoport between CI and FTA mode for devices that support a conditional access interface.
     /// </summary>
-    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="handle">The handle allocated to a device when it was opened.</param>
     /// <param name="useCiVideoPort"><c>True</c> to use the CI videoport.</param>
     /// <param name="effectiveCiVideoPort"><c>True</c> if the CI videoport is *actually* being used.</param>
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiSetVideoport(IntPtr device, [MarshalAs(UnmanagedType.Bool)] bool useCiVideoPort, [MarshalAs(UnmanagedType.Bool)] ref bool effectiveCiVideoPort);
+    private static extern TtApiResult bdaapiSetVideoport(IntPtr handle, [MarshalAs(UnmanagedType.Bool)] bool useCiVideoPort, [MarshalAs(UnmanagedType.Bool)] ref bool effectiveCiVideoPort);
 
     #region antenna power
 
     /// <summary>
     /// Turn the DVB-T antenna 5 volt power supply on or off for USB devices.
     /// </summary>
-    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="handle">The handle allocated to a device when it was opened.</param>
     /// <param name="antennaPowerOn"><c>True</c> to turn the antenna power supply on.</param>
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiSetDVBTAntPwr(IntPtr device, [MarshalAs(UnmanagedType.Bool)] bool antennaPowerOn);
+    private static extern TtApiResult bdaapiSetDVBTAntPwr(IntPtr handle, [MarshalAs(UnmanagedType.Bool)] bool antennaPowerOn);
 
     /// <summary>
     /// Determine whether the DVB-T antenna 5 volt power supply is on or off.
     /// </summary>
-    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="handle">The handle allocated to a device when it was opened.</param>
     /// <param name="antennaPowerOn"><c>True</c> if the antenna power supply is on, otherwise <c>false</c>.</param>
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiGetDVBTAntPwr(IntPtr device, [MarshalAs(UnmanagedType.Bool)] ref bool antennaPowerOn);
+    private static extern TtApiResult bdaapiGetDVBTAntPwr(IntPtr handle, [MarshalAs(UnmanagedType.Bool)] ref bool antennaPowerOn);
 
     #endregion
 
@@ -582,7 +606,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <summary>
     /// Get the driver version details.
     /// </summary>
-    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="handle">The handle allocated to a device when it was opened.</param>
     /// <param name="v1">Part 1 of the driver version number.</param>
     /// <param name="v2">Part 2 of the driver version number.</param>
     /// <param name="v3">Part 3 of the driver version number.</param>
@@ -590,23 +614,23 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiGetDrvVersion(IntPtr device, ref byte v1, ref byte v2, ref byte v3, ref byte v4);
+    private static extern TtApiResult bdaapiGetDrvVersion(IntPtr handle, ref byte v1, ref byte v2, ref byte v3, ref byte v4);
 
     /// <summary>
     /// Get the hardware MAC address.
     /// </summary>
-    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="handle">The handle allocated to a device when it was opened.</param>
     /// <param name="highPart">The high part of the address.</param>
     /// <param name="lowPart">The low part of the address.</param>
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiGetMAC(IntPtr device, ref uint highPart, ref uint lowPart);
+    private static extern TtApiResult bdaapiGetMAC(IntPtr handle, ref uint highPart, ref uint lowPart);
 
     /// <summary>
     /// Get the PCI/USB device IDs. The sub identifiers are only valid for PCI/PCIe devices.
     /// </summary>
-    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="handle">The handle allocated to a device when it was opened.</param>
     /// <param name="vendorId">The vendor identifier.</param>
     /// <param name="subVendorId">The sub-vendor identifier.</param>
     /// <param name="deviceId">The device identifier.</param>
@@ -614,58 +638,58 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiGetDeviceIDs(IntPtr device, ref ushort vendorId, ref ushort subVendorId, ref ushort deviceId, ref ushort subDeviceId);
+    private static extern TtApiResult bdaapiGetDeviceIDs(IntPtr handle, ref ushort vendorId, ref ushort subVendorId, ref ushort deviceId, ref ushort subDeviceId);
 
     /// <summary>
     /// Determine whether the device really supports USB 2 "high speed" mode.
     /// </summary>
-    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="handle">The handle allocated to a device when it was opened.</param>
     /// <param name="usbHighSpeedSupported"><c>True</c> if USB 2 speeds are supported, otherwise <c>false</c>.</param>
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiGetUSBHighspeedMode(IntPtr device, [MarshalAs(UnmanagedType.Bool)] ref bool usbHighSpeedSupported);
+    private static extern TtApiResult bdaapiGetUSBHighspeedMode(IntPtr handle, [MarshalAs(UnmanagedType.Bool)] ref bool usbHighSpeedSupported);
 
     /// <summary>
     /// Retrieve details about the device filters and front end.
     /// </summary>
-    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="handle">The handle allocated to a device when it was opened.</param>
     /// <param name="filterNames">A pointer to a FilterNames struct.</param>
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiGetDevNameAndFEType(IntPtr device, IntPtr filterNames);
+    private static extern TtApiResult bdaapiGetDevNameAndFEType(IntPtr handle, IntPtr filterNames);
 
     /// <summary>
     /// Get the device's hardware index.
     /// </summary>
-    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="handle">The handle allocated to a device when it was opened.</param>
     /// <param name="index">The hardware index.</param>
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiGetHwIdx(IntPtr device, ref int index);
+    private static extern TtApiResult bdaapiGetHwIdx(IntPtr handle, ref int index);
 
     /// <summary>
     /// Get the Windows device path.
     /// </summary>
-    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="handle">The handle allocated to a device when it was opened.</param>
     /// <param name="devicePath">A buffer containing the device path string.</param>
     /// <param name="devicePathLength">The length of the device path in bytes.</param>
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiGetDevicePath(IntPtr device, [MarshalAs(UnmanagedType.LPStr)] StringBuilder devicePath, ref int devicePathLength);
+    private static extern TtApiResult bdaapiGetDevicePath(IntPtr handle, [MarshalAs(UnmanagedType.LPStr)] StringBuilder devicePath, ref int devicePathLength);
 
     /// <summary>
     /// Get the product seller identifier.
     /// </summary>
-    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="handle">The handle allocated to a device when it was opened.</param>
     /// <param name="sellerId">The seller identifier.</param>
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiGetProductSellerID(IntPtr device, ref TtProductSeller sellerId);
+    private static extern TtApiResult bdaapiGetProductSellerID(IntPtr handle, ref TtProductSeller sellerId);
 
     #endregion
 
@@ -676,140 +700,140 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <summary>
     /// Initialise the conditional access interface. In this case the full set of call back delegates are specified.
     /// </summary>
-    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="handle">The handle allocated to a device when it was opened.</param>
     /// <param name="callBacks">Full call back structure pointer.</param>
     /// <returns><c>TtApiResult.Success</c> if a CI slot is present/connected, otherwise <c>TtApiResult.Error</c></returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiOpenCI(IntPtr device, TtFullCiCallBacks callBacks);
+    private static extern TtApiResult bdaapiOpenCI(IntPtr handle, TtFullCiCallBacks callBacks);
 
     /// <summary>
     /// Initialise the conditional access interface. In this case the full set of call back delegates are specified.
     /// </summary>
-    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="handle">The handle allocated to a device when it was opened.</param>
     /// <param name="callBacks">Full call back structure pointer.</param>
     /// <param name="ciMessageHandler">A delegate for handling raw messages from the interface.</param>
     /// <returns><c>TtApiResult.Success</c> if a CI slot is present/connected, otherwise <c>TtApiResult.Error</c></returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiOpenCIext(IntPtr device, TtFullCiCallBacks callBacks, OnTtCiMessage ciMessageHandler);
+    private static extern TtApiResult bdaapiOpenCIext(IntPtr handle, TtFullCiCallBacks callBacks, OnTtCiMessage ciMessageHandler);
 
     /// <summary>
     /// Initialise the conditional access interface. In this case a minimal set of call back delegates are specified.
     /// </summary>
-    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="handle">The handle allocated to a device when it was opened.</param>
     /// <param name="callBacks">Minimal call back structure pointer.</param>
     /// <returns><c>TtApiResult.Success</c> if a CI slot is present/connected, otherwise <c>TtApiResult.Error</c></returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiOpenCISlim(IntPtr device, TtSlimCiCallBacks callBacks);
+    private static extern TtApiResult bdaapiOpenCISlim(IntPtr handle, TtSlimCiCallBacks callBacks);
 
     /// <summary>
     /// Initialise the conditional access interface. In this case call back delegates are not specified.
     /// </summary>
-    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="handle">The handle allocated to a device when it was opened.</param>
     /// <returns><c>TtApiResult.Success</c> if a CI slot is present/connected, otherwise <c>TtApiResult.Error</c></returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiOpenCIWithoutPointer(IntPtr device);
+    private static extern TtApiResult bdaapiOpenCIWithoutPointer(IntPtr handle);
 
     /// <summary>
     /// Close the conditional access interface.
     /// </summary>
-    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="handle">The handle allocated to a device when it was opened.</param>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern void bdaapiCloseCI(IntPtr device);
+    private static extern void bdaapiCloseCI(IntPtr handle);
 
     #endregion
 
     /// <summary>
     /// Send a message to the CAM to request that a service be descrambled.
     /// </summary>
-    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="handle">The handle allocated to a device when it was opened.</param>
     /// <param name="pmt">The PMT for the service that should be descrambled.</param>
     /// <param name="pmtLength">The length of the PMT in bytes.</param>
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiCIReadPSIFastWithPMT(IntPtr device, IntPtr pmt, ushort pmtLength);
+    private static extern TtApiResult bdaapiCIReadPSIFastWithPMT(IntPtr handle, IntPtr pmt, ushort pmtLength);
 
     /// <summary>
     /// Send a message to the CAM to request that a service be descrambled.
     /// </summary>
-    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="handle">The handle allocated to a device when it was opened.</param>
     /// <param name="serviceId">The service ID of the service that should be descrambled.</param>
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiCIReadPSIFastDrvDemux(IntPtr device, ushort serviceId);
+    private static extern TtApiResult bdaapiCIReadPSIFastDrvDemux(IntPtr handle, ushort serviceId);
 
     /// <summary>
     /// Send a message to the CAM to request that one or more services be descrambled.
     /// </summary>
-    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="handle">The handle allocated to a device when it was opened.</param>
     /// <param name="sidList">A list of service IDs, one for each service that should be descrambled.</param>
     /// <param name="serviceCount">The number of services for the CAM to descramble.</param>
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiCIMultiDecode(IntPtr device, IntPtr sidList, int serviceCount);
+    private static extern TtApiResult bdaapiCIMultiDecode(IntPtr handle, IntPtr sidList, int serviceCount);
 
     /// <summary>
     /// Enter the CAM menu.
     /// </summary>
-    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="handle">The handle allocated to a device when it was opened.</param>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiCIEnterModuleMenu(IntPtr device, byte slotIndex);
+    private static extern TtApiResult bdaapiCIEnterModuleMenu(IntPtr handle, byte slotIndex);
 
     /// <summary>
     /// Request a CI status update. This request will be answered via the OnCiStatus() call back.
     /// </summary>
-    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="handle">The handle allocated to a device when it was opened.</param>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiCIGetSlotStatus(IntPtr device, byte slotIndex);
+    private static extern TtApiResult bdaapiCIGetSlotStatus(IntPtr handle, byte slotIndex);
 
     /// <summary>
     /// Send an answer to an enquiry from the user to the CAM.
     /// </summary>
-    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="handle">The handle allocated to a device when it was opened.</param>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     /// <param name="menuAnswer">The user's response.</param>
     /// <param name="answerLength">The length of the user's response in bytes.</param>
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiCIAnswer(IntPtr device, byte slotIndex,
+    private static extern TtApiResult bdaapiCIAnswer(IntPtr handle, byte slotIndex,
                                                     [MarshalAs(UnmanagedType.LPStr)] string menuAnswer, byte answerLength);
 
     /// <summary>
     /// Select an entry in the CAM menu.
     /// </summary>
-    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="handle">The handle allocated to a device when it was opened.</param>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     /// <param name="choice">The index (0..n) of the menu choice selected by the user.</param>
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiCIMenuAnswer(IntPtr device, byte slotIndex, byte choice);
+    private static extern TtApiResult bdaapiCIMenuAnswer(IntPtr handle, byte slotIndex, byte choice);
 
     #endregion
 
     /// <summary>
     /// Tune to a transponder/multiplex.
     /// </summary>
-    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="handle">The handle allocated to a device when it was opened.</param>
     /// <param name="tuneRequest">A buffer containing the tune request.</param>
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiTune(IntPtr device, IntPtr tuneRequest);
+    private static extern TtApiResult bdaapiTune(IntPtr handle, IntPtr tuneRequest);
 
     #endregion
 
@@ -1014,6 +1038,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     #region variables
 
     private bool _isTechnoTrend = false;
+    private bool _isRemoteControlInterfaceOpen = false;
     private bool _isCaInterfaceOpen = false;
     private bool _isCiSlotPresent = false;
     #pragma warning disable 0414
@@ -1027,7 +1052,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     private TtDeviceCategory _deviceCategory = TtDeviceCategory.Unknown;
     private string _name = "TechnoTrend";
 
-    private IntPtr _deviceHandle = IntPtr.Zero;
+    private IntPtr _tunerHandle = IntPtr.Zero;
     private IntPtr _serviceBuffer = IntPtr.Zero;
     private IntPtr _pmtBuffer = IntPtr.Zero;
     private IntPtr _generalBuffer = IntPtr.Zero;
@@ -1167,7 +1192,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       {
         Marshal.WriteByte(info, i, 0);
       }
-      TtApiResult result = bdaapiGetDevNameAndFEType(_deviceHandle, info);
+      TtApiResult result = bdaapiGetDevNameAndFEType(_tunerHandle, info);
       if (result == TtApiResult.Success)
       {
         FilterNames names = (FilterNames)Marshal.PtrToStructure(info, typeof(FilterNames));
@@ -1189,7 +1214,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
 
       // Product seller.
       TtProductSeller seller = TtProductSeller.Unknown;
-      result = bdaapiGetProductSellerID(_deviceHandle, ref seller);
+      result = bdaapiGetProductSellerID(_tunerHandle, ref seller);
       if (result == TtApiResult.Success)
       {
         this.LogDebug("  product (re)seller  = {0}", seller);
@@ -1204,7 +1229,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       byte v2 = 0;
       byte v3 = 0;
       byte v4 = 0;
-      result = bdaapiGetDrvVersion(_deviceHandle, ref v1, ref v2, ref v3, ref v4);
+      result = bdaapiGetDrvVersion(_tunerHandle, ref v1, ref v2, ref v3, ref v4);
       if (result == TtApiResult.Success)
       {
         this.LogDebug("  driver version      = {0}.{1}.{2}.{3}", v1, v2, v3, v4);
@@ -1217,7 +1242,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       // MAC address.
       uint lowPart = 0;
       uint highPart = 0;
-      result = bdaapiGetMAC(_deviceHandle, ref highPart, ref lowPart);
+      result = bdaapiGetMAC(_tunerHandle, ref highPart, ref lowPart);
       if (result == TtApiResult.Success)
       {
         Array lowBytes = BitConverter.GetBytes(lowPart);
@@ -1236,7 +1261,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       if (_deviceCategory == TtDeviceCategory.Usb2 || _deviceCategory == TtDeviceCategory.Usb2Pinnacle || _deviceCategory == TtDeviceCategory.Usb2Dss)
       {
         bool highSpeed = false;
-        result = bdaapiGetUSBHighspeedMode(_deviceHandle, ref highSpeed);
+        result = bdaapiGetUSBHighspeedMode(_tunerHandle, ref highSpeed);
         if (result == TtApiResult.Success)
         {
           this.LogDebug("  USB 2 speed support = {0}", highSpeed);
@@ -1254,7 +1279,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// </summary>
     private void GetCiSlotStatus()
     {
-      TtApiResult result = bdaapiCIGetSlotStatus(_deviceHandle, _slotIndex);
+      TtApiResult result = bdaapiCIGetSlotStatus(_tunerHandle, _slotIndex);
       if (result != TtApiResult.Success)
       {
         this.LogError("TechnoTrend: bdaapiCIGetSlotStatus failed, result = {0}", result);
@@ -1262,6 +1287,16 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     }
 
     #region call back handlers
+
+    /// <summary>
+    /// Called when a signal from the remote is detected by the IR receiver.
+    /// </summary>
+    /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
+    /// <param name="code">A buffer containing the remote code. If the code is an RC5 code then it can be found in the lower 2 bytes. RC6 codes use 4 bytes.</param>
+    private void OnIrCode(IntPtr context, IntPtr code)
+    {
+      this.LogDebug("TechnoTrend: remote control key press = 0x{0:x4}", Marshal.ReadInt32(code, 0));
+    }
 
     /// <summary>
     /// Called by the tuner driver when the state of the CI slot changes.
@@ -1351,7 +1386,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
         if (error == TtCiError.NoCaResource)
         {
           bool resetTuner;
-          ResetInterface(out resetTuner);
+          ResetConditionalAccessInterface(out resetTuner);
         }
       }
       catch (Exception ex)
@@ -1479,7 +1514,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       this.LogInfo("TechnoTrend: input request call back, slot = {0}", slotIndex);
       this.LogDebug("  length   = {0}", answerLength);
       this.LogDebug("  blind    = {0}", blind);
-      this.LogDebug("  key mask = {0:x4}", keyMask);
+      this.LogDebug("  key mask = 0x{0:x4}", keyMask);
       lock (_caMenuCallBackLock)
       {
         if (_caMenuCallBacks != null)
@@ -1596,24 +1631,25 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// initialisation fails, the <see ref="ICustomDevice"/> instance should be disposed
     /// immediately.
     /// </summary>
-    /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
+    /// <param name="tunerExternalId">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
     /// <param name="context">Context required to initialise the interface.</param>
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
-    public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
+    public override bool Initialise(string tunerExternalId, CardType tunerType, object context)
     {
       this.LogDebug("TechnoTrend: initialising");
 
-      IBaseFilter tunerFilter = context as IBaseFilter;
-      if (tunerFilter == null)
-      {
-        this.LogDebug("TechnoTrend: tuner filter is null");
-        return false;
-      }
       if (_isTechnoTrend)
       {
         this.LogWarn("TechnoTrend: extension already initialised");
         return true;
+      }
+
+      IBaseFilter tunerFilter = context as IBaseFilter;
+      if (tunerFilter == null)
+      {
+        this.LogDebug("TechnoTrend: context is not a filter");
+        return false;
       }
 
       _deviceCategory = GetDeviceCategory(tunerFilter);
@@ -1630,11 +1666,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
         return false;
       }
 
-      _deviceHandle = bdaapiOpenHWIdx(_deviceCategory, (uint)deviceId);
-      if (_deviceHandle == IntPtr.Zero || _deviceHandle.ToInt64() == -1)
+      _tunerHandle = bdaapiOpenHWIdx(_deviceCategory, (uint)deviceId);
+      if (_tunerHandle == IntPtr.Zero || _tunerHandle.ToInt64() == -1)
       {
         this.LogError("TechnoTrend: hardware interface could not be opened");
-        _deviceHandle = IntPtr.Zero;
+        _tunerHandle = IntPtr.Zero;
         return false;
       }
 
@@ -1645,7 +1681,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       ReadDeviceInfo();
       if (_tunerType == CardType.DvbT)
       {
-        TtApiResult result = bdaapiSetDVBTAutoOffsetMode(_deviceHandle, false);
+        TtApiResult result = bdaapiSetDVBTAutoOffsetMode(_tunerHandle, false);
         if (result != TtApiResult.Success)
         {
           this.LogWarn("TechnoTrend: failed to turn off auto offset mode, result = {0}", result);
@@ -1668,7 +1704,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       this.LogDebug("TechnoTrend: on before tune call back");
       action = TunerAction.Default;
 
-      if (!_isTechnoTrend || _deviceHandle == IntPtr.Zero)
+      if (!_isTechnoTrend || _tunerHandle == IntPtr.Zero)
       {
         this.LogWarn("TechnoTrend: not initialised or interface not supported");
         return;
@@ -1718,7 +1754,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
         return false;
       }
 
-      TtApiResult result = bdaapiSetDVBTAntPwr(_deviceHandle, state == PowerState.On);
+      TtApiResult result = bdaapiSetDVBTAntPwr(_tunerHandle, state == PowerState.On);
       this.LogDebug("TechnoTrend: result = {0}", result);
       return (result == TtApiResult.Success);
     }
@@ -1820,7 +1856,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       }
 
       //Dump.DumpBinary(_generalBuffer, TUNE_REQUEST_SIZE);
-      TtApiResult result = bdaapiTune(_deviceHandle, _generalBuffer);
+      TtApiResult result = bdaapiTune(_tunerHandle, _generalBuffer);
       this.LogDebug("TechnoTrend: result = {0}", result);
       return (result == TtApiResult.Success);
     }
@@ -1834,7 +1870,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// that any necessary hardware (such as a CI slot) is connected.
     /// </summary>
     /// <returns><c>true</c> if the interface is successfully opened, otherwise <c>false</c></returns>
-    public bool OpenInterface()
+    public bool OpenConditionalAccessInterface()
     {
       this.LogDebug("TechnoTrend: open conditional access interface");
 
@@ -1850,20 +1886,20 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       }
 
       // Call back contexts.
-      _ciCallBacks.OnSlotStatusContext = _deviceHandle;
-      _ciCallBacks.OnCaStatusContext = _deviceHandle;
-      _ciCallBacks.OnDisplayStringContext = _deviceHandle;
-      _ciCallBacks.OnDisplayMenuContext = _deviceHandle;
-      _ciCallBacks.OnDisplayListContext = _deviceHandle;
-      _ciCallBacks.OnSwitchOsdOffContext = _deviceHandle;
-      _ciCallBacks.OnInputRequestContext = _deviceHandle;
-      _ciCallBacks.OnLscSetDescriptorContext = _deviceHandle;
-      _ciCallBacks.OnLscConnectContext = _deviceHandle;
-      _ciCallBacks.OnLscDisconnectContext = _deviceHandle;
-      _ciCallBacks.OnLscSetParamsContext = _deviceHandle;
-      _ciCallBacks.OnLscEnquireStatusContext = _deviceHandle;
-      _ciCallBacks.OnLscGetNextBufferContext = _deviceHandle;
-      _ciCallBacks.OnLscTransmitBufferContext = _deviceHandle;
+      _ciCallBacks.OnSlotStatusContext = _tunerHandle;
+      _ciCallBacks.OnCaStatusContext = _tunerHandle;
+      _ciCallBacks.OnDisplayStringContext = _tunerHandle;
+      _ciCallBacks.OnDisplayMenuContext = _tunerHandle;
+      _ciCallBacks.OnDisplayListContext = _tunerHandle;
+      _ciCallBacks.OnSwitchOsdOffContext = _tunerHandle;
+      _ciCallBacks.OnInputRequestContext = _tunerHandle;
+      _ciCallBacks.OnLscSetDescriptorContext = _tunerHandle;
+      _ciCallBacks.OnLscConnectContext = _tunerHandle;
+      _ciCallBacks.OnLscDisconnectContext = _tunerHandle;
+      _ciCallBacks.OnLscSetParamsContext = _tunerHandle;
+      _ciCallBacks.OnLscEnquireStatusContext = _tunerHandle;
+      _ciCallBacks.OnLscGetNextBufferContext = _tunerHandle;
+      _ciCallBacks.OnLscTransmitBufferContext = _tunerHandle;
 
       // Call back functions.
       _ciCallBacks.OnSlotStatus = OnSlotStatus;
@@ -1881,7 +1917,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       _ciCallBacks.OnLscGetNextBuffer = OnLscGetNextBuffer;
       _ciCallBacks.OnLscTransmitBuffer = OnLscTransmitBuffer;
 
-      TtApiResult result = bdaapiOpenCI(_deviceHandle, _ciCallBacks);
+      TtApiResult result = bdaapiOpenCI(_tunerHandle, _ciCallBacks);
       if (result == TtApiResult.Success)
       {
         this.LogDebug("TechnoTrend: result = {0}", result);
@@ -1904,13 +1940,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// Close the conditional access interface.
     /// </summary>
     /// <returns><c>true</c> if the interface is successfully closed, otherwise <c>false</c></returns>
-    public bool CloseInterface()
+    public bool CloseConditionalAccessInterface()
     {
       this.LogDebug("TechnoTrend: close conditional access interface");
 
-      if (_isCiSlotPresent)
+      if (_isCiSlotPresent && _tunerHandle != IntPtr.Zero)
       {
-        bdaapiCloseCI(_deviceHandle);
+        bdaapiCloseCI(_tunerHandle);
       }
       if (_serviceBuffer != IntPtr.Zero)
       {
@@ -1938,17 +1974,17 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <param name="resetTuner">This parameter will be set to <c>true</c> if the tuner must be reset
     ///   for the interface to be completely and successfully reset.</param>
     /// <returns><c>true</c> if the interface is successfully reset, otherwise <c>false</c></returns>
-    public bool ResetInterface(out bool resetTuner)
+    public bool ResetConditionalAccessInterface(out bool resetTuner)
     {
       resetTuner = false;
-      return CloseInterface() && OpenInterface();
+      return CloseConditionalAccessInterface() && OpenConditionalAccessInterface();
     }
 
     /// <summary>
     /// Determine whether the conditional access interface is ready to receive commands.
     /// </summary>
     /// <returns><c>true</c> if the interface is ready, otherwise <c>false</c></returns>
-    public bool IsInterfaceReady()
+    public bool IsConditionalAccessInterfaceReady()
     {
       this.LogDebug("TechnoTrend: is conditional access interface ready");
 
@@ -1970,7 +2006,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <param name="pmt">The program map table for the service.</param>
     /// <param name="cat">The conditional access table for the service.</param>
     /// <returns><c>true</c> if the command is successfully sent, otherwise <c>false</c></returns>
-    public bool SendCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, Pmt pmt, Cat cat)
+    public bool SendConditionalAccessCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, Pmt pmt, Cat cat)
     {
       this.LogDebug("TechnoTrend: send conditional access command, list action = {0}, command = {1}", listAction, command);
 
@@ -1995,7 +2031,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
         return true;
       }
 
-      this.LogDebug("TechnoTrend: service ID is {0} (0x{0:x})", pmt.ProgramNumber);
+      this.LogDebug("TechnoTrend: service ID is {0}", pmt.ProgramNumber);
       if (pmt.ProgramNumber == 0)
       {
         this.LogError("TechnoTrend: service 0 cannot be descrambled");
@@ -2041,7 +2077,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
         {
           Marshal.WriteByte(_pmtBuffer, i, rawPmt[i]);
         }
-        result = bdaapiCIReadPSIFastWithPMT(_deviceHandle, _pmtBuffer, (ushort)rawPmt.Count);
+        result = bdaapiCIReadPSIFastWithPMT(_tunerHandle, _pmtBuffer, (ushort)rawPmt.Count);
       }
       else
       {
@@ -2057,11 +2093,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
         HashSet<ushort>.Enumerator en = _descrambledServices.GetEnumerator();
         while (en.MoveNext())
         {
-          this.LogDebug("  {0} = {1} (0x{1:x4})", i + 1, en.Current);
+          this.LogDebug("  {0} = {1}", i + 1, en.Current);
           Marshal.WriteInt16(_serviceBuffer, 2 * i, (short)en.Current);
           i++;
         }
-        result = bdaapiCIMultiDecode(_deviceHandle, _serviceBuffer, i);
+        result = bdaapiCIMultiDecode(_tunerHandle, _serviceBuffer, i);
       }
 
       this.LogDebug("TechnoTrend: result = {0}", result);
@@ -2103,7 +2139,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
         return false;
       }
 
-      TtApiResult result = bdaapiCIEnterModuleMenu(_deviceHandle, _slotIndex);
+      TtApiResult result = bdaapiCIEnterModuleMenu(_tunerHandle, _slotIndex);
       this.LogDebug("TechnoTrend: result = {0}", result);
       return (result == TtApiResult.Success);
     }
@@ -2138,7 +2174,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
         return false;
       }
 
-      TtApiResult result = bdaapiCIMenuAnswer(_deviceHandle, _slotIndex, choice);
+      TtApiResult result = bdaapiCIMenuAnswer(_tunerHandle, _slotIndex, choice);
       this.LogDebug("TechnoTrend: result = {0}", result);
       return (result == TtApiResult.Success);
     }
@@ -2173,7 +2209,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
         return false;
       }
 
-      TtApiResult result = bdaapiCIAnswer(_deviceHandle, _slotIndex, answer, (byte)answer.Length);
+      TtApiResult result = bdaapiCIAnswer(_tunerHandle, _slotIndex, answer, (byte)answer.Length);
       this.LogDebug("TechnoTrend: result = {0}", result);
       return (result == TtApiResult.Success);
     }
@@ -2212,7 +2248,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       {
         tone = TtToneBurst.DataBurst;
       }
-      TtApiResult result = bdaapiSetDiSEqCMsg(_deviceHandle, IntPtr.Zero, 0, 0, tone, Polarisation.LinearH);
+      TtApiResult result = bdaapiSetDiSEqCMsg(_tunerHandle, IntPtr.Zero, 0, 0, tone, Polarisation.LinearH);
 
       this.LogDebug("TechnoTrend: result = {0}", result);
       return (result == TtApiResult.Success);
@@ -2223,7 +2259,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// </summary>
     /// <param name="command">The command to send.</param>
     /// <returns><c>true</c> if the command is sent successfully, otherwise <c>false</c></returns>
-    public bool SendCommand(byte[] command)
+    public bool SendDiseqcCommand(byte[] command)
     {
       this.LogDebug("TechnoTrend: send DiSEqC command");
 
@@ -2249,7 +2285,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
 
       // It is okay to use any polarisation. We chose one that will supply 18 Volts to the LNB because it
       // moves dish motors faster.
-      TtApiResult result = bdaapiSetDiSEqCMsg(_deviceHandle, _generalBuffer, (byte)length, 0, TtToneBurst.Off, Polarisation.LinearH);
+      TtApiResult result = bdaapiSetDiSEqCMsg(_tunerHandle, _generalBuffer, (byte)length, 0, TtToneBurst.Off, Polarisation.LinearH);
       this.LogDebug("TechnoTrend: result = {0}", result);
       return (result == TtApiResult.Success);
     }
@@ -2260,11 +2296,69 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// </summary>
     /// <param name="response">The response (or command).</param>
     /// <returns><c>true</c> if the response is read successfully, otherwise <c>false</c></returns>
-    public bool ReadResponse(out byte[] response)
+    public bool ReadDiseqcResponse(out byte[] response)
     {
       // Not supported.
       response = null;
       return false;
+    }
+
+    #endregion
+
+    #region IRemoteControlListener members
+
+    /// <summary>
+    /// Open the remote control interface and start listening for commands.
+    /// </summary>
+    /// <returns><c>true</c> if the interface is successfully opened, otherwise <c>false</c></returns>
+    public bool OpenRemoteControlInterface()
+    {
+      this.LogDebug("TechnoTrend: open remote control interface");
+
+      if (!_isTechnoTrend)
+      {
+        this.LogWarn("TechnoTrend: not initialised or interface not supported");
+        return false;
+      }
+      if (_isRemoteControlInterfaceOpen)
+      {
+        this.LogWarn("TechnoTrend: interface is already open");
+        return true;
+      }
+
+      TtApiResult result = bdaapiOpenIR(_tunerHandle, OnIrCode, IntPtr.Zero);
+      if (result != TtApiResult.Success)
+      {
+        this.LogError("TechnoTrend: failed to open remote control interface, result = {0}", result);
+        return false;
+      }
+
+      _isRemoteControlInterfaceOpen = true;
+      this.LogDebug("TechnoTrend: result = success");
+      return true;
+    }
+
+    /// <summary>
+    /// Close the remote control interface and stop listening for commands.
+    /// </summary>
+    /// <returns><c>true</c> if the interface is successfully closed, otherwise <c>false</c></returns>
+    public bool CloseRemoteControlInterface()
+    {
+      this.LogDebug("TechnoTrend: close remote control interface");
+
+      if (_isRemoteControlInterfaceOpen)
+      {
+        TtApiResult result = bdaapiCloseIR(_tunerHandle);
+        if (result != TtApiResult.Success)
+        {
+          this.LogError("TechnoTrend: failed to close remote control interface, result = {0}", result);
+          return false;
+        }
+      }
+
+      _isRemoteControlInterfaceOpen = false;
+      this.LogDebug("TechnoTrend: result = success");
+      return true;
     }
 
     #endregion
@@ -2276,13 +2370,17 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// </summary>
     public override void Dispose()
     {
-      CloseInterface();
+      if (_isTechnoTrend)
+      {
+        CloseRemoteControlInterface();
+        CloseConditionalAccessInterface();
+      }
       if (_generalBuffer != IntPtr.Zero)
       {
         Marshal.FreeCoTaskMem(_generalBuffer);
         _generalBuffer = IntPtr.Zero;
       }
-      _deviceHandle = IntPtr.Zero;
+      _tunerHandle = IntPtr.Zero;
       _isTechnoTrend = false;
     }
 

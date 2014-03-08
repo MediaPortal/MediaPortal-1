@@ -33,8 +33,6 @@ using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Countries;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Analog;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Analog.GraphComponents;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
@@ -45,14 +43,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class CardAnalog : SectionSettings
   {
-
-
-    private readonly int _cardNumber;
+    private readonly int _cardId;
     private bool _isScanning;
     private bool _stopScanning;
-    private string _cardName;
-    private string _devicePath;
-    private Configuration _configuration;
+    private Dictionary<VideoProcAmpProperty, HScrollBar> _videoProcAmpControls = new Dictionary<VideoProcAmpProperty, HScrollBar>();
+    private Dictionary<VideoProcAmpProperty, Label> _videoProcAmpLabels = new Dictionary<VideoProcAmpProperty, Label>();
 
     public CardAnalog()
       : this("Analog") {}
@@ -63,7 +58,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     public CardAnalog(string name, int cardNumber)
       : base(name)
     {
-      _cardNumber = cardNumber;
+      _cardId = cardNumber;
       InitializeComponent();
       base.Text = name;
       Init();
@@ -80,12 +75,31 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       mpComboBoxSource.Items.Add(TunerInputType.Antenna);
       mpComboBoxSource.Items.Add(TunerInputType.Cable);
       mpComboBoxSource.SelectedIndex = 0;
+
+      _videoProcAmpControls.Add(VideoProcAmpProperty.Brightness, brightnessScrollbar);
+      _videoProcAmpLabels.Add(VideoProcAmpProperty.Brightness, brightnessValue);
+      _videoProcAmpControls.Add(VideoProcAmpProperty.Contrast, contrastScrollbar);
+      _videoProcAmpLabels.Add(VideoProcAmpProperty.Contrast, contrastValue);
+      _videoProcAmpControls.Add(VideoProcAmpProperty.Hue, hueScrollbar);
+      _videoProcAmpLabels.Add(VideoProcAmpProperty.Hue, hueValue);
+      _videoProcAmpControls.Add(VideoProcAmpProperty.Saturation, saturationScrollbar);
+      _videoProcAmpLabels.Add(VideoProcAmpProperty.Saturation, saturationValue);
+      _videoProcAmpControls.Add(VideoProcAmpProperty.Sharpness, sharpnessScrollbar);
+      _videoProcAmpLabels.Add(VideoProcAmpProperty.Sharpness, sharpnessValue);
+      _videoProcAmpControls.Add(VideoProcAmpProperty.Gamma, gammaScrollbar);
+      _videoProcAmpLabels.Add(VideoProcAmpProperty.Gamma, gammaValue);
+      _videoProcAmpControls.Add(VideoProcAmpProperty.ColorEnable, colorEnableScrollbar);
+      _videoProcAmpLabels.Add(VideoProcAmpProperty.ColorEnable, colorEnableValue);
+      _videoProcAmpControls.Add(VideoProcAmpProperty.WhiteBalance, whiteBalanceScrollbar);
+      _videoProcAmpLabels.Add(VideoProcAmpProperty.WhiteBalance, whiteBalanceValue);
+      _videoProcAmpControls.Add(VideoProcAmpProperty.BacklightCompensation, backlightCompensationScrollbar);
+      _videoProcAmpLabels.Add(VideoProcAmpProperty.BacklightCompensation, backlightCompensationValue);
     }
 
     private void UpdateStatus()
     {
-      progressBarLevel.Value = Math.Min(100, ServiceAgents.Instance.ControllerServiceAgent.SignalLevel(_cardNumber));
-      progressBarQuality.Value = Math.Min(100, ServiceAgents.Instance.ControllerServiceAgent.SignalQuality(_cardNumber));
+      progressBarLevel.Value = Math.Min(100, ServiceAgents.Instance.ControllerServiceAgent.SignalLevel(_cardId));
+      progressBarQuality.Value = Math.Min(100, ServiceAgents.Instance.ControllerServiceAgent.SignalQuality(_cardId));
     }
 
     public override void OnSectionActivated()
@@ -94,38 +108,21 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       mpComboBoxSensitivity.SelectedIndex = 1;
       UpdateStatus();
       
-      
-        
-      mpComboBoxCountry.SelectedIndex = ServiceAgents.Instance.SettingServiceAgent.GetValue("analog" + _cardNumber + "Country", 0);
-      mpComboBoxSource.SelectedIndex = ServiceAgents.Instance.SettingServiceAgent.GetValue("analog" + _cardNumber + "Source", 0);
-      checkBoxCreateSignalGroup.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("analog" + _cardNumber + "createsignalgroup", false);
+      mpComboBoxCountry.SelectedIndex = ServiceAgents.Instance.SettingServiceAgent.GetValue("analog" + _cardId + "Country", 0);
+      mpComboBoxSource.SelectedIndex = ServiceAgents.Instance.SettingServiceAgent.GetValue("analog" + _cardId + "Source", 0);
+      checkBoxCreateSignalGroup.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("analog" + _cardId + "createsignalgroup", false);
       checkBoxCreateSignalGroup.Text = "Create \"" + TvConstants.TvGroupNames.Analog + "\" group";
 
-      _cardName = ServiceAgents.Instance.ControllerServiceAgent.CardName(_cardNumber);
-      _devicePath = ServiceAgents.Instance.ControllerServiceAgent.CardDevice(_cardNumber);
-      if (!String.IsNullOrEmpty(_cardName) && !String.IsNullOrEmpty(_devicePath))
-      {
-        _configuration = Configuration.readConfiguration(_cardNumber, _cardName, _devicePath);
-        customValue.Value = _configuration.CustomQualityValue;
-        customValuePeak.Value = _configuration.CustomPeakQualityValue;
-        SetBitRateModes();
-        SetBitRate();
-        SetVideoProcAmp(_configuration.Graph.Capture.VideoProcAmpValues);
-        SetVideoDecoder();
-        SetStreamConfig();
-      }
-      else
-      {
-        SetVideoProcAmp(new Dictionary<VideoProcAmpProperty, int>());
-        videoStandardComboBox.Enabled = false;
-        resolutionComboBox.Enabled = false;
-        frameRateComboBox.Enabled = false;
-      }
+      SetBitRateMode();
+      SetBitRate();
+      SetVideoProcAmp();
+      SetVideoDecoder();
+      SetStreamConfig();
     }
 
     private void SetStreamConfig()
     {
-      double frameRate = _configuration.Graph.Capture.FrameRate;
+      double frameRate = ServiceAgents.Instance.SettingServiceAgent.GetValue("tuner" + _cardId + "FrameRate", (double)-1);
       if (frameRate < 0)
       {
         frameRateComboBox.Enabled = false;
@@ -143,16 +140,17 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           }
         }
       }
-      int imageWidth = _configuration.Graph.Capture.ImageWidth;
-      int imageHeight = _configuration.Graph.Capture.ImageHeight;
-      if (imageWidth < 0)
+
+      int frameWidth = ServiceAgents.Instance.SettingServiceAgent.GetValue("tuner" + _cardId + "FrameWidth", -1);
+      int frameHeight = ServiceAgents.Instance.SettingServiceAgent.GetValue("tuner" + _cardId + "FrameHeight", -1);
+      if (frameWidth < 0)
       {
         resolutionComboBox.Enabled = false;
       }
       else
       {
         resolutionComboBox.Enabled = true;
-        string resolution = imageWidth + "x" + imageHeight;
+        string resolution = frameWidth + "x" + frameHeight;
         foreach (string item in resolutionComboBox.Items)
         {
           if (item.StartsWith(resolution))
@@ -167,91 +165,18 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private void SetVideoDecoder()
     {
       videoStandardComboBox.Items.Clear();
-      AnalogVideoStandard availableVideoStandard = _configuration.Graph.Capture.AvailableVideoStandard;
+      AnalogVideoStandard availableVideoStandard = (AnalogVideoStandard)ServiceAgents.Instance.SettingServiceAgent.GetValue("tuner" + _cardId + "SupportedVideoStandards", (int)AnalogVideoStandard.None);
       if (availableVideoStandard != AnalogVideoStandard.None)
       {
         videoStandardComboBox.Enabled = true;
-        if ((availableVideoStandard & AnalogVideoStandard.NTSC_433) != 0)
+        foreach (AnalogVideoStandard standard in Enum.GetValues(typeof(AnalogVideoStandard)))
         {
-          videoStandardComboBox.Items.Add(AnalogVideoStandard.NTSC_433);
+          if (availableVideoStandard.HasFlag(standard))
+          {
+            videoStandardComboBox.Items.Add(standard);
+          }
         }
-        if ((availableVideoStandard & AnalogVideoStandard.NTSC_M) != 0)
-        {
-          videoStandardComboBox.Items.Add(AnalogVideoStandard.NTSC_M);
-        }
-        if ((availableVideoStandard & AnalogVideoStandard.NTSC_M_J) != 0)
-        {
-          videoStandardComboBox.Items.Add(AnalogVideoStandard.NTSC_M_J);
-        }
-        if ((availableVideoStandard & AnalogVideoStandard.PAL_60) != 0)
-        {
-          videoStandardComboBox.Items.Add(AnalogVideoStandard.PAL_60);
-        }
-        if ((availableVideoStandard & AnalogVideoStandard.PAL_B) != 0)
-        {
-          videoStandardComboBox.Items.Add(AnalogVideoStandard.PAL_B);
-        }
-        if ((availableVideoStandard & AnalogVideoStandard.PAL_D) != 0)
-        {
-          videoStandardComboBox.Items.Add(AnalogVideoStandard.PAL_D);
-        }
-        if ((availableVideoStandard & AnalogVideoStandard.PAL_G) != 0)
-        {
-          videoStandardComboBox.Items.Add(AnalogVideoStandard.PAL_G);
-        }
-        if ((availableVideoStandard & AnalogVideoStandard.PAL_H) != 0)
-        {
-          videoStandardComboBox.Items.Add(AnalogVideoStandard.PAL_H);
-        }
-        if ((availableVideoStandard & AnalogVideoStandard.PAL_I) != 0)
-        {
-          videoStandardComboBox.Items.Add(AnalogVideoStandard.PAL_I);
-        }
-        if ((availableVideoStandard & AnalogVideoStandard.PAL_M) != 0)
-        {
-          videoStandardComboBox.Items.Add(AnalogVideoStandard.PAL_M);
-        }
-        if ((availableVideoStandard & AnalogVideoStandard.PAL_N) != 0)
-        {
-          videoStandardComboBox.Items.Add(AnalogVideoStandard.PAL_N);
-        }
-        if ((availableVideoStandard & AnalogVideoStandard.PAL_N_COMBO) != 0)
-        {
-          videoStandardComboBox.Items.Add(AnalogVideoStandard.PAL_N_COMBO);
-        }
-        if ((availableVideoStandard & AnalogVideoStandard.SECAM_B) != 0)
-        {
-          videoStandardComboBox.Items.Add(AnalogVideoStandard.SECAM_B);
-        }
-        if ((availableVideoStandard & AnalogVideoStandard.SECAM_D) != 0)
-        {
-          videoStandardComboBox.Items.Add(AnalogVideoStandard.SECAM_D);
-        }
-        if ((availableVideoStandard & AnalogVideoStandard.SECAM_G) != 0)
-        {
-          videoStandardComboBox.Items.Add(AnalogVideoStandard.SECAM_G);
-        }
-        if ((availableVideoStandard & AnalogVideoStandard.SECAM_H) != 0)
-        {
-          videoStandardComboBox.Items.Add(AnalogVideoStandard.SECAM_H);
-        }
-        if ((availableVideoStandard & AnalogVideoStandard.SECAM_K) != 0)
-        {
-          videoStandardComboBox.Items.Add(AnalogVideoStandard.SECAM_K);
-        }
-        if ((availableVideoStandard & AnalogVideoStandard.SECAM_K1) != 0)
-        {
-          videoStandardComboBox.Items.Add(AnalogVideoStandard.SECAM_K1);
-        }
-        if ((availableVideoStandard & AnalogVideoStandard.SECAM_L) != 0)
-        {
-          videoStandardComboBox.Items.Add(AnalogVideoStandard.SECAM_L);
-        }
-        if ((availableVideoStandard & AnalogVideoStandard.SECAM_L1) != 0)
-        {
-          videoStandardComboBox.Items.Add(AnalogVideoStandard.SECAM_L1);
-        }
-        AnalogVideoStandard currentStandard = _configuration.Graph.Capture.CurrentVideoStandard;
+        AnalogVideoStandard currentStandard = (AnalogVideoStandard)ServiceAgents.Instance.SettingServiceAgent.GetValue("tuner" + _cardId + "VideoStandard", (int)AnalogVideoStandard.None);
         if (currentStandard != AnalogVideoStandard.None)
         {
           videoStandardComboBox.SelectedItem = currentStandard;
@@ -263,293 +188,46 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
     }
 
-    private void SetVideoProcAmp(IDictionary<VideoProcAmpProperty, int> map)
+    private void SetVideoProcAmp()
     {
-      int quality;
-      if (map.ContainsKey(VideoProcAmpProperty.Brightness))
+      foreach (KeyValuePair<VideoProcAmpProperty, HScrollBar> property in _videoProcAmpControls)
       {
-        quality = map[VideoProcAmpProperty.Brightness];
-        brightnessScrollbar.Maximum = 100;
-        brightnessScrollbar.Minimum = 0;
-        brightnessScrollbar.SmallChange = 1;
-        brightnessScrollbar.LargeChange = 1;
-        if (quality > 100)
+        int value = ServiceAgents.Instance.SettingServiceAgent.GetValue("tuner" + _cardId + "VideoProcAmpProperty" + property.Key + "Value", -1);
+        if (value != -1)
         {
-          brightnessScrollbar.Value = 100;
-        }
-        else if (quality < 0)
-        {
-          brightnessScrollbar.Value = 0;
+          property.Value.Maximum = 100;
+          property.Value.Minimum = 0;
+          property.Value.SmallChange = 1;
+          property.Value.LargeChange = 1;
+          if (value > 100)
+          {
+            property.Value.Value = 100;
+          }
+          else if (value < 0)
+          {
+            property.Value.Value = 0;
+          }
+          else
+          {
+            property.Value.Value = value;
+          }
+          property.Value.Enabled = true;
+          _videoProcAmpLabels[property.Key].Text = value.ToString();
+          _videoProcAmpLabels[property.Key].Enabled = true;
         }
         else
         {
-          brightnessScrollbar.Value = quality;
+          property.Value.Enabled = false;
+          _videoProcAmpLabels[property.Key].Text = string.Empty;
+          _videoProcAmpLabels[property.Key].Enabled = false;
         }
-        brightnessValue.Text = quality.ToString();
-        brightnessScrollbar.Enabled = true;
-        brightnessValue.Enabled = true;
-        label5.Enabled = true;
-      }
-      else
-      {
-        brightnessScrollbar.Enabled = false;
-        brightnessValue.Text = string.Empty;
-        brightnessValue.Enabled = false;
-        label5.Enabled = false;
-      }
-      if (map.ContainsKey(VideoProcAmpProperty.Contrast))
-      {
-        quality = map[VideoProcAmpProperty.Contrast];
-        contrastScrollbar.Maximum = 100;
-        contrastScrollbar.Minimum = 0;
-        contrastScrollbar.SmallChange = 1;
-        contrastScrollbar.LargeChange = 1;
-        if (quality > 100)
-        {
-          contrastScrollbar.Value = 100;
-        }
-        else if (quality < 0)
-        {
-          contrastScrollbar.Value = 0;
-        }
-        else
-        {
-          contrastScrollbar.Value = quality;
-        }
-        contrastValue.Text = quality.ToString();
-        contrastScrollbar.Enabled = true;
-        contrastValue.Enabled = true;
-        label6.Enabled = true;
-      }
-      else
-      {
-        contrastScrollbar.Enabled = false;
-        contrastValue.Text = string.Empty;
-        contrastValue.Enabled = false;
-        label6.Enabled = false;
-      }
-      if (map.ContainsKey(VideoProcAmpProperty.Hue))
-      {
-        quality = map[VideoProcAmpProperty.Hue];
-        hueScrollbar.Maximum = 100;
-        hueScrollbar.Minimum = 0;
-        hueScrollbar.SmallChange = 1;
-        hueScrollbar.LargeChange = 1;
-        if (quality > 100)
-        {
-          hueScrollbar.Value = 100;
-        }
-        else if (quality < 0)
-        {
-          hueScrollbar.Value = 0;
-        }
-        else
-        {
-          hueScrollbar.Value = quality;
-        }
-        hueValue.Text = quality.ToString();
-        hueScrollbar.Enabled = true;
-        hueValue.Enabled = true;
-        label7.Enabled = true;
-      }
-      else
-      {
-        hueScrollbar.Enabled = false;
-        hueValue.Text = string.Empty;
-        hueValue.Enabled = false;
-        label7.Enabled = false;
-      }
-      if (map.ContainsKey(VideoProcAmpProperty.Saturation))
-      {
-        quality = map[VideoProcAmpProperty.Saturation];
-        saturationScrollbar.Maximum = 100;
-        saturationScrollbar.Minimum = 0;
-        saturationScrollbar.SmallChange = 1;
-        saturationScrollbar.LargeChange = 1;
-        if (quality > 100)
-        {
-          saturationScrollbar.Value = 100;
-        }
-        else if (quality < 0)
-        {
-          saturationScrollbar.Value = 0;
-        }
-        else
-        {
-          saturationScrollbar.Value = quality;
-        }
-        saturationValue.Text = quality.ToString();
-        saturationScrollbar.Enabled = true;
-        saturationValue.Enabled = true;
-        label8.Enabled = true;
-      }
-      else
-      {
-        saturationScrollbar.Enabled = false;
-        saturationValue.Text = string.Empty;
-        saturationValue.Enabled = false;
-        label8.Enabled = false;
-      }
-      if (map.ContainsKey(VideoProcAmpProperty.Sharpness))
-      {
-        quality = map[VideoProcAmpProperty.Sharpness];
-        sharpnessScrollbar.Maximum = 100;
-        sharpnessScrollbar.Minimum = 0;
-        sharpnessScrollbar.SmallChange = 1;
-        sharpnessScrollbar.LargeChange = 1;
-        if (quality > 100)
-        {
-          sharpnessScrollbar.Value = 100;
-        }
-        else if (quality < 0)
-        {
-          sharpnessScrollbar.Value = 0;
-        }
-        else
-        {
-          sharpnessScrollbar.Value = quality;
-        }
-        sharpnessValue.Text = quality.ToString();
-        sharpnessScrollbar.Enabled = true;
-        sharpnessValue.Enabled = true;
-        label9.Enabled = true;
-      }
-      else
-      {
-        sharpnessScrollbar.Enabled = false;
-        sharpnessValue.Text = string.Empty;
-        sharpnessValue.Enabled = false;
-        label9.Enabled = false;
-      }
-      if (map.ContainsKey(VideoProcAmpProperty.Gamma))
-      {
-        quality = map[VideoProcAmpProperty.Gamma];
-        gammaScrollbar.Maximum = 100;
-        gammaScrollbar.Minimum = 0;
-        gammaScrollbar.SmallChange = 1;
-        gammaScrollbar.LargeChange = 1;
-        if (quality > 100)
-        {
-          gammaScrollbar.Value = 100;
-        }
-        else if (quality < 0)
-        {
-          gammaScrollbar.Value = 0;
-        }
-        else
-        {
-          gammaScrollbar.Value = quality;
-        }
-        gammaValue.Text = quality.ToString();
-        gammaScrollbar.Enabled = true;
-        gammaValue.Enabled = true;
-        label10.Enabled = true;
-      }
-      else
-      {
-        gammaScrollbar.Enabled = false;
-        gammaValue.Text = string.Empty;
-        gammaValue.Enabled = false;
-        label10.Enabled = false;
-      }
-      if (map.ContainsKey(VideoProcAmpProperty.ColorEnable))
-      {
-        quality = map[VideoProcAmpProperty.ColorEnable];
-        colorEnableScrollbar.Maximum = 100;
-        colorEnableScrollbar.Minimum = 0;
-        colorEnableScrollbar.SmallChange = 1;
-        colorEnableScrollbar.LargeChange = 1;
-        if (quality > 100)
-        {
-          colorEnableScrollbar.Value = 100;
-        }
-        else if (quality < 0)
-        {
-          colorEnableScrollbar.Value = 0;
-        }
-        else
-        {
-          colorEnableScrollbar.Value = quality;
-        }
-        colorEnableValue.Text = quality.ToString();
-        colorEnableScrollbar.Enabled = true;
-        colorEnableValue.Enabled = true;
-        label11.Enabled = true;
-      }
-      else
-      {
-        colorEnableScrollbar.Enabled = false;
-        colorEnableValue.Text = string.Empty;
-        colorEnableValue.Enabled = false;
-        label11.Enabled = false;
-      }
-      if (map.ContainsKey(VideoProcAmpProperty.WhiteBalance))
-      {
-        quality = map[VideoProcAmpProperty.WhiteBalance];
-        whiteBalanceScrollbar.Maximum = 100;
-        whiteBalanceScrollbar.Minimum = 0;
-        whiteBalanceScrollbar.SmallChange = 1;
-        whiteBalanceScrollbar.LargeChange = 1;
-        if (quality > 100)
-        {
-          whiteBalanceScrollbar.Value = 100;
-        }
-        else if (quality < 0)
-        {
-          whiteBalanceScrollbar.Value = 0;
-        }
-        else
-        {
-          whiteBalanceScrollbar.Value = quality;
-        }
-        whiteBalanceValue.Text = quality.ToString();
-        whiteBalanceScrollbar.Enabled = true;
-        whiteBalanceValue.Enabled = true;
-        label12.Enabled = true;
-      }
-      else
-      {
-        whiteBalanceScrollbar.Enabled = false;
-        whiteBalanceValue.Text = string.Empty;
-        whiteBalanceValue.Enabled = false;
-        label12.Enabled = false;
-      }
-      if (map.ContainsKey(VideoProcAmpProperty.BacklightCompensation))
-      {
-        quality = map[VideoProcAmpProperty.BacklightCompensation];
-        backlightCompensationScrollbar.Maximum = 100;
-        backlightCompensationScrollbar.Minimum = 0;
-        backlightCompensationScrollbar.SmallChange = 1;
-        backlightCompensationScrollbar.LargeChange = 1;
-        if (quality > 100)
-        {
-          backlightCompensationScrollbar.Value = 100;
-        }
-        else if (quality < 0)
-        {
-          backlightCompensationScrollbar.Value = 0;
-        }
-        else
-        {
-          backlightCompensationScrollbar.Value = quality;
-        }
-        backlightCompensationValue.Text = quality.ToString();
-        backlightCompensationScrollbar.Enabled = true;
-        backlightCompensationValue.Enabled = true;
-        label13.Enabled = true;
-      }
-      else
-      {
-        backlightCompensationScrollbar.Enabled = false;
-        backlightCompensationValue.Text = string.Empty;
-        backlightCompensationValue.Enabled = false;
-        label13.Enabled = false;
       }
     }
 
-    private void SetBitRateModes()
+    private void SetBitRateMode()
     {
-      switch (_configuration.PlaybackQualityMode)
+      VIDEOENCODER_BITRATE_MODE bitRateMode = (VIDEOENCODER_BITRATE_MODE)ServiceAgents.Instance.SettingServiceAgent.GetValue("tuner" + _cardId + "BitRateMode", (int)VIDEOENCODER_BITRATE_MODE.ConstantBitRate);
+      switch (bitRateMode)
       {
         case VIDEOENCODER_BITRATE_MODE.ConstantBitRate:
           cbrPlayback.Select();
@@ -561,23 +239,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           vbrPeakPlayback.Select();
           break;
       }
-      switch (_configuration.RecordQualityMode)
-      {
-        case VIDEOENCODER_BITRATE_MODE.ConstantBitRate:
-          cbrRecord.Select();
-          break;
-        case VIDEOENCODER_BITRATE_MODE.VariableBitRateAverage:
-          vbrRecord.Select();
-          break;
-        case VIDEOENCODER_BITRATE_MODE.VariableBitRatePeak:
-          vbrPeakRecord.Select();
-          break;
-    }
     }
 
     private void SetBitRate()
     {
-      switch (_configuration.PlaybackQualityType)
+      customValue.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("tuner" + _cardId + "CustomBitRate", 50);
+      customValuePeak.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("tuner" + _cardId + "CustomPeakBitRate", 75);
+
+      QualityType bitRateProfile = (QualityType)ServiceAgents.Instance.SettingServiceAgent.GetValue("tuner" + _cardId + "BitRateProfile", (int)QualityType.Default);
+      switch (bitRateProfile)
       {
         case QualityType.Default:
           defaultPlayback.Select();
@@ -598,47 +268,23 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           highPlayback.Select();
           break;
       }
-      switch (_configuration.RecordQualityType)
-      {
-        case QualityType.Default:
-          defaultRecord.Select();
-          break;
-        case QualityType.Custom:
-          customRecord.Select();
-          break;
-        case QualityType.Portable:
-          portableRecord.Select();
-          break;
-        case QualityType.Low:
-          lowRecord.Select();
-          break;
-        case QualityType.Medium:
-          mediumRecord.Select();
-          break;
-        case QualityType.High:
-          highRecord.Select();
-          break;
-      }
     }
 
     public override void OnSectionDeActivated()
     {
       base.OnSectionDeActivated();
       
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("analog" + _cardNumber + "Country", mpComboBoxCountry.SelectedIndex);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("analog" + _cardNumber + "Source", mpComboBoxSource.SelectedIndex);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("analog" + _cardNumber + "createsignalgroup", checkBoxCreateSignalGroup.Checked);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("analog" + _cardId + "Country", mpComboBoxCountry.SelectedIndex);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("analog" + _cardId + "Source", mpComboBoxSource.SelectedIndex);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("analog" + _cardId + "createsignalgroup", checkBoxCreateSignalGroup.Checked);
       
-      
-
-      UpdateConfiguration();
-      Configuration.writeConfiguration(_configuration);      
-      Card card = ServiceAgents.Instance.CardServiceAgent.GetCardByDevicePath(ServiceAgents.Instance.ControllerServiceAgent.CardDevice(_cardNumber));
+      SaveConfiguration();
+      Card card = ServiceAgents.Instance.CardServiceAgent.GetCard(_cardId);
       if (card.Enabled)
       {
         try
         {
-          ServiceAgents.Instance.ControllerServiceAgent.ReloadCardConfiguration(_cardNumber);
+          ServiceAgents.Instance.ControllerServiceAgent.ReloadCardConfiguration(_cardId);
         }
         catch
         {
@@ -648,150 +294,97 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
     }
 
-    private void UpdateConfiguration()
+    private void SaveConfiguration()
     {
-      _configuration.CustomQualityValue = (int)customValue.Value;
-      _configuration.CustomPeakQualityValue = (int)customValuePeak.Value;
-      if (cbrPlayback.Checked)
+      if (customValue.Enabled)
       {
-        _configuration.PlaybackQualityMode = VIDEOENCODER_BITRATE_MODE.ConstantBitRate;
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue("tuner" + _cardId + "CustomBitRate", (int)customValue.Value);
       }
-      else if (vbrPlayback.Checked)
+      if (customValuePeak.Enabled)
       {
-        _configuration.PlaybackQualityMode = VIDEOENCODER_BITRATE_MODE.VariableBitRateAverage;
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue("tuner" + _cardId + "CustomPeakBitRate", (int)customValuePeak.Value);
       }
-      else if (vbrPeakPlayback.Checked)
+
+      if (bitRateModeGroup.Enabled)
       {
-        _configuration.PlaybackQualityMode = VIDEOENCODER_BITRATE_MODE.VariableBitRatePeak;
-      }
-      if (cbrRecord.Checked)
-      {
-        _configuration.RecordQualityMode = VIDEOENCODER_BITRATE_MODE.ConstantBitRate;
-      }
-      else if (vbrRecord.Checked)
-      {
-        _configuration.RecordQualityMode = VIDEOENCODER_BITRATE_MODE.VariableBitRateAverage;
-      }
-      else if (vbrPeakRecord.Checked)
-      {
-        _configuration.RecordQualityMode = VIDEOENCODER_BITRATE_MODE.VariableBitRatePeak;
-      }
-      if (defaultPlayback.Checked)
-      {
-        _configuration.PlaybackQualityType = QualityType.Default;
-      }
-      else if (customPlayback.Checked)
-      {
-        _configuration.PlaybackQualityType = QualityType.Custom;
-      }
-      else if (portablePlayback.Checked)
-      {
-        _configuration.PlaybackQualityType = QualityType.Portable;
-      }
-      else if (lowPlayback.Checked)
-      {
-        _configuration.PlaybackQualityType = QualityType.Low;
-      }
-      else if (mediumPlayback.Checked)
-      {
-        _configuration.PlaybackQualityType = QualityType.Medium;
-      }
-      else if (highPlayback.Checked)
-      {
-        _configuration.PlaybackQualityType = QualityType.High;
-      }
-      if (defaultRecord.Checked)
-      {
-        _configuration.RecordQualityType = QualityType.Default;
-      }
-      else if (customRecord.Checked)
-      {
-        _configuration.RecordQualityType = QualityType.Custom;
-      }
-      else if (portableRecord.Checked)
-      {
-        _configuration.RecordQualityType = QualityType.Portable;
-      }
-      else if (lowRecord.Checked)
-      {
-        _configuration.RecordQualityType = QualityType.Low;
-      }
-      else if (mediumRecord.Checked)
-      {
-        _configuration.RecordQualityType = QualityType.Medium;
-      }
-      else if (highRecord.Checked)
-      {
-        _configuration.RecordQualityType = QualityType.High;
-      }
-      if (_configuration.Graph != null && _configuration.Graph.Capture != null)
-      {
-        UpdateVideoProcAmp(_configuration.Graph.Capture.VideoProcAmpValues);
-        if (videoStandardComboBox.Enabled)
+        VIDEOENCODER_BITRATE_MODE bitRateMode = VIDEOENCODER_BITRATE_MODE.ConstantBitRate;
+        if (cbrPlayback.Checked)
         {
-          if (videoStandardComboBox.SelectedIndex != -1 &&
-              !videoStandardComboBox.SelectedItem.Equals(AnalogVideoStandard.None))
-          {
-            _configuration.Graph.Capture.CurrentVideoStandard = (AnalogVideoStandard)videoStandardComboBox.SelectedItem;
-          }
-          else
-          {
-            _configuration.Graph.Capture.CurrentVideoStandard = AnalogVideoStandard.None;
-          }
+          bitRateMode = VIDEOENCODER_BITRATE_MODE.ConstantBitRate;
         }
-        if (frameRateComboBox.Enabled)
+        else if (vbrPlayback.Checked)
+        {
+          bitRateMode = VIDEOENCODER_BITRATE_MODE.VariableBitRateAverage;
+        }
+        else if (vbrPeakPlayback.Checked)
+        {
+          bitRateMode = VIDEOENCODER_BITRATE_MODE.VariableBitRatePeak;
+        }
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue("tuner" + _cardId + "BitRateMode", (int)bitRateMode);
+      }
+
+      if (bitRate.Enabled)
+      {
+        QualityType bitRateProfile = QualityType.Default;
+        if (defaultPlayback.Checked)
+        {
+          bitRateProfile = QualityType.Default;
+        }
+        else if (customPlayback.Checked)
+        {
+          bitRateProfile = QualityType.Custom;
+        }
+        else if (portablePlayback.Checked)
+        {
+          bitRateProfile = QualityType.Portable;
+        }
+        else if (lowPlayback.Checked)
+        {
+          bitRateProfile = QualityType.Low;
+        }
+        else if (mediumPlayback.Checked)
+        {
+          bitRateProfile = QualityType.Medium;
+        }
+        else if (highPlayback.Checked)
+        {
+          bitRateProfile = QualityType.High;
+        }
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue("tuner" + _cardId + "BitRateProfile", (int)bitRateProfile);
+      }
+
+      foreach (KeyValuePair<VideoProcAmpProperty, HScrollBar> property in _videoProcAmpControls)
+      {
+        if (property.Value.Enabled)
+        {
+          ServiceAgents.Instance.SettingServiceAgent.SaveValue("tuner" + _cardId + "VideoProcAmpProperty" + property.Key + "Value", property.Value.Value);
+        }
+      }
+
+      if (videoStandardComboBox.Enabled)
+      {
+        if (videoStandardComboBox.SelectedIndex != -1)
+        {
+          ServiceAgents.Instance.SettingServiceAgent.SaveValue("tuner" + _cardId + "VideoStandard", (int)(AnalogVideoStandard)videoStandardComboBox.SelectedItem);
+        }
+      }
+      if (frameRateComboBox.Enabled)
+      {
+        if (frameRateComboBox.SelectedIndex != -1)
         {
           string item = frameRateComboBox.SelectedItem.ToString();
           string frameRate = item.Substring(0, item.IndexOf(" fps"));
-          _configuration.Graph.Capture.FrameRate = Double.Parse(frameRate,
-                                                                CultureInfo.GetCultureInfo("en-GB").NumberFormat);
+          ServiceAgents.Instance.SettingServiceAgent.SaveValue("tuner" + _cardId + "FrameRate", Double.Parse(frameRate, CultureInfo.GetCultureInfo("en-GB").NumberFormat));
         }
-        if (resolutionComboBox.Enabled)
+      }
+      if (resolutionComboBox.Enabled)
+      {
+        if (resolutionComboBox.SelectedIndex != -1)
         {
           string item = resolutionComboBox.SelectedItem.ToString();
-          _configuration.Graph.Capture.ImageWidth = Int32.Parse(item.Substring(0, 3));
-          _configuration.Graph.Capture.ImageHeight = Int32.Parse(item.Substring(4, 3));
+          ServiceAgents.Instance.SettingServiceAgent.SaveValue("tuner" + _cardId + "FrameWidth", Int32.Parse(item.Substring(0, 3)));
+          ServiceAgents.Instance.SettingServiceAgent.SaveValue("tuner" + _cardId + "FrameHeight", Int32.Parse(item.Substring(4, 3)));
         }
-      }
-    }
-
-    private void UpdateVideoProcAmp(IDictionary<VideoProcAmpProperty, VideoQuality> map)
-    {
-      if (brightnessScrollbar.Enabled)
-      {
-        map[VideoProcAmpProperty.Brightness].Value = brightnessScrollbar.Value;
-      }
-      if (contrastScrollbar.Enabled)
-      {
-        map[VideoProcAmpProperty.Contrast].Value = contrastScrollbar.Value;
-      }
-      if (hueScrollbar.Enabled)
-      {
-        map[VideoProcAmpProperty.Hue].Value = hueScrollbar.Value;
-      }
-      if (saturationScrollbar.Enabled)
-      {
-        map[VideoProcAmpProperty.Saturation].Value = saturationScrollbar.Value;
-      }
-      if (sharpnessScrollbar.Enabled)
-      {
-        map[VideoProcAmpProperty.Sharpness].Value = sharpnessScrollbar.Value;
-      }
-      if (gammaScrollbar.Enabled)
-      {
-        map[VideoProcAmpProperty.Gamma].Value = gammaScrollbar.Value;
-      }
-      if (colorEnableScrollbar.Enabled)
-      {
-        map[VideoProcAmpProperty.ColorEnable].Value = colorEnableScrollbar.Value;
-      }
-      if (whiteBalanceScrollbar.Enabled)
-      {
-        map[VideoProcAmpProperty.WhiteBalance].Value = whiteBalanceScrollbar.Value;
-      }
-      if (backlightCompensationScrollbar.Enabled)
-      {
-        map[VideoProcAmpProperty.BacklightCompensation].Value = backlightCompensationScrollbar.Value;
       }
     }
 
@@ -800,7 +393,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (_isScanning == false)
       {
         
-        Card card = ServiceAgents.Instance.CardServiceAgent.GetCardByDevicePath(ServiceAgents.Instance.ControllerServiceAgent.CardDevice(_cardNumber));
+        Card card = ServiceAgents.Instance.CardServiceAgent.GetCard(_cardId);
         if (card.Enabled == false)
         {
           MessageBox.Show(this, "Tuner is disabled. Please enable the tuner before scanning.");
@@ -813,10 +406,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         }
         // Check if the card is locked for scanning.
         IUser user;
-        if (ServiceAgents.Instance.ControllerServiceAgent.IsCardInUse(_cardNumber, out user))
+        if (ServiceAgents.Instance.ControllerServiceAgent.IsCardInUse(_cardId, out user))
         {
-          MessageBox.Show(this,
-                          "Tuner is locked. Scanning is not possible at the moment. Perhaps you are using another part of a hybrid card?");
+          MessageBox.Show(this, "Tuner is locked. Scanning is not possible at the moment. Perhaps you are using another part of a hybrid tuner?");
           return;
         }
         Thread scanThread = new Thread(DoTvScan);
@@ -843,18 +435,17 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         mpButtonScanTv.Text = "Cancel...";
         ServiceAgents.Instance.ControllerServiceAgent.EpgGrabberEnabled = false;
         
-        Card card = ServiceAgents.Instance.CardServiceAgent.GetCardByDevicePath(ServiceAgents.Instance.ControllerServiceAgent.CardDevice(_cardNumber));
+        Card card = ServiceAgents.Instance.CardServiceAgent.GetCard(_cardId);
         mpComboBoxCountry.Enabled = false;
         mpComboBoxSource.Enabled = false;
         mpComboBoxSensitivity.Enabled = false;
         checkBoxCreateSignalGroup.Enabled = false;
         checkBoxNoMerge.Enabled = false;
         mpButtonScanRadio.Enabled = false;
-        mpButtonAddSvideoChannels.Enabled = false;
         mpListView1.Items.Clear();
         CountryCollection countries = new CountryCollection();
         IUser user = new User();
-        user.CardId = _cardNumber;
+        user.CardId = _cardId;
         AnalogChannel temp = new AnalogChannel();
         temp.TunerSource = mpComboBoxSource.SelectedIndex == 0 ? TunerInputType.Antenna : TunerInputType.Cable;
         temp.VideoSource = CaptureSourceVideo.Tuner;
@@ -865,23 +456,39 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         TvResult tuneResult = ServiceAgents.Instance.ControllerServiceAgent.Tune(user.Name, user.CardId, out user, temp, -1);
         if (tuneResult == TvResult.SWEncoderMissing)
         {
-          this.LogError("analog: DoTvScan error (missing software encoder)");
-          MessageBox.Show("Please install a supported audio/video encoder for your software analog card",
-                          "Unable to scan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+          this.LogError("analog: failed to scan, missing software encoder");
+          MessageBox.Show("Please install supported software encoders for your tuner.", "Unable to scan", MessageBoxButtons.OK, MessageBoxIcon.Error);
           return;
         }
         if (tuneResult == TvResult.GraphBuildingFailed)
         {
-          this.LogError("analog: DoTvScan error (missing software encoder)");
-          MessageBox.Show(
-            "The graph building. Mostly your card is not supported by TvServer. Please create a report in our forum",
+          this.LogError("analog: failed to scan, tuner loading failed");
+          MessageBox.Show("Failed to load the tuner. Your tuner is probably not supported. Please create a report in our forum.",
             "Unable to scan", MessageBoxButtons.OK, MessageBoxIcon.Error);
           return;
         }
-        if (string.IsNullOrEmpty(_configuration.Graph.Capture.Name))
+
+        // Successful tuning means we're guaranteed to have found the tuner capabilities.
+        // Now we can load the other settings.
+        ReCheckSettings();
+
+        // Add the external inputs.
+        this.LogInfo("analog: adding external inputs");
+        AnalogChannel channel = new AnalogChannel();
+        channel.TunerSource = mpComboBoxSource.SelectedIndex == 0 ? TunerInputType.Antenna : TunerInputType.Cable;
+        channel.Country = countries.Countries[mpComboBoxCountry.SelectedIndex];
+        channel.ChannelNumber = 0;
+        channel.MediaType = MediaTypeEnum.TV;
+        channel.VideoSource = CaptureSourceVideo.Composite1;
+        channel.AudioSource = CaptureSourceAudio.Automatic;
+        IChannel[] channels = ServiceAgents.Instance.ControllerServiceAgent.Scan(_cardId, channel);
+        if (channels != null && channels.Length > 0)
         {
-          _configuration = Configuration.readConfiguration(_cardNumber, _cardName, _devicePath);
-          ReCheckSettings();
+          this.LogInfo("analog: input count = {0}", channels.Length);
+          foreach (IChannel ch in channels)
+          {
+            UpdateDatabase(card, ch);
+          }
         }
 
         // TODO these are meant to be the channel range associated with each country.
@@ -905,23 +512,24 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           if (percent < 0)
             percent = 0f;
           progressBar1.Value = (int)percent;
-          AnalogChannel channel = new AnalogChannel();
+
+          channel = new AnalogChannel();
           channel.TunerSource = mpComboBoxSource.SelectedIndex == 0 ? TunerInputType.Antenna : TunerInputType.Cable;
           channel.Country = countries.Countries[mpComboBoxCountry.SelectedIndex];
           channel.ChannelNumber = channelNr;
           channel.MediaType = MediaTypeEnum.TV;
-          
           channel.VideoSource = CaptureSourceVideo.Tuner;
           channel.AudioSource = CaptureSourceAudio.Automatic;
+
           string line = String.Format("channel:{0} source:{1} ", channel.ChannelNumber, mpComboBoxSource.SelectedItem);
           ListViewItem item = mpListView1.Items.Add(new ListViewItem(line));
           item.EnsureVisible();
 
-          IChannel[] channels = ServiceAgents.Instance.ControllerServiceAgent.Scan(_cardNumber, channel);
+          channels = ServiceAgents.Instance.ControllerServiceAgent.Scan(_cardId, channel);
           UpdateStatus();
           if (channels == null || channels.Length == 0)
           {
-            if (ServiceAgents.Instance.ControllerServiceAgent.TunerLocked(_cardNumber) == false)
+            if (ServiceAgents.Instance.ControllerServiceAgent.TunerLocked(_cardId) == false)
             {
               line = String.Format("channel:{0} source:{1} : No Signal", channel.ChannelNumber,
                                    mpComboBoxSource.SelectedItem);
@@ -935,62 +543,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             item.ForeColor = Color.Red;
             continue;
           }
-          bool exists = false;
+
           channel = (AnalogChannel)channels[0];
           if (channel.Name == "")
             channel.Name = String.Format(channel.ChannelNumber.ToString());
-          Channel dbChannel = null;
-          if (checkBoxNoMerge.Checked)
-          {
-            dbChannel = ChannelFactory.CreateChannel(channel.Name);
-            ChannelFactory.CreateChannel(channel.Name);
-          }
-          else
-          {
-            IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channel.Name, 0);
-            if (tuningDetails != null && tuningDetails.Count > 0)
-            {
-              dbChannel = tuningDetails[0].Channel;
-            }
-
-            if (dbChannel != null)
-            {
-              exists = true;
-            }
-            else
-            {
-              dbChannel = ChannelFactory.CreateChannel(channel.Name);
-            }
-          }
-          dbChannel.MediaType = (int) channel.MediaType;
-          ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);          
-          ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, channel);
-          MappingHelper.AddChannelToCard(dbChannel, card, false);                    
-
-
-          if (dbChannel.MediaType == (decimal) MediaTypeEnum.TV)
-          {
-            ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.RadioGroupNames.AllChannels, MediaTypeEnum.TV);
-            MappingHelper.AddChannelToGroup(ref dbChannel, @group);            
-            if (checkBoxCreateSignalGroup.Checked)
-            {
-              group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.Analog, MediaTypeEnum.TV);
-              MappingHelper.AddChannelToGroup(ref dbChannel, @group);                          
-            }
-          }
-          else if (dbChannel.MediaType == (decimal) MediaTypeEnum.Radio)
-          {
-            ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.RadioGroupNames.AllChannels, MediaTypeEnum.Radio);
-            MappingHelper.AddChannelToGroup(ref dbChannel, @group);
-            if (checkBoxCreateSignalGroup.Checked)
-            {
-              group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.RadioGroupNames.Analog, MediaTypeEnum.Radio);
-              MappingHelper.AddChannelToGroup(ref dbChannel, @group);              
-            }
-          }
-                   
-
-          if (exists)
+          if (UpdateDatabase(card, channel))
           {
             line = String.Format("channel:{0} source:{1} : Channel update found - {2}", channel.ChannelNumber,
                                  mpComboBoxSource.SelectedItem, channel.Name);
@@ -1007,27 +564,24 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
       catch (TvExceptionSWEncoderMissing)
       {
-        this.LogError("analog: DoTvScan error (missing software encoder)");
-        MessageBox.Show("Please install a supported audio/video encoder for your software analog card", "Unable to scan",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+        this.LogError("analog: failed to scan, missing software encoder");
+        MessageBox.Show("Please install supported software encoders for your tuner.", "Unable to scan", MessageBoxButtons.OK, MessageBoxIcon.Error);
       }
-      catch (TvExceptionTunerLoadFailed)
+      catch (TvExceptionTunerLoadFailed ex)
       {
-        this.LogError("analog: DoTvScan error (missing software encoder)");
-        MessageBox.Show(
-          "The graph building. Mostly your card is not supported by TvServer. Please create a report in our forum",
+        this.LogError(ex, "analog: failed to scan, tuner loading failed");
+        MessageBox.Show("Failed to load the tuner. Your tuner is probably not supported. Please create a report in our forum.",
           "Unable to scan", MessageBoxButtons.OK, MessageBoxIcon.Error);
       }
       catch (Exception ex)
       {
-        this.LogError("analog: DoTvScan error ({0})", ex.StackTrace);
-        MessageBox.Show(string.Format("Generic error: {0}", ex.Message), "Unable to scan", MessageBoxButtons.OK,
-                        MessageBoxIcon.Error);
+        this.LogError(ex, "analog: failed to scan, generic error");
+        MessageBox.Show("Failed to scan. Please create a report in our forum.", "Unable to scan", MessageBoxButtons.OK, MessageBoxIcon.Error);
       }
       finally
       {
         IUser user = new User();
-        user.CardId = _cardNumber;
+        user.CardId = _cardId;
         ServiceAgents.Instance.ControllerServiceAgent.StopCard(user.CardId);
         ServiceAgents.Instance.ControllerServiceAgent.EpgGrabberEnabled = true;
         mpButtonScanTv.Text = buttonText;
@@ -1039,7 +593,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         checkBoxNoMerge.Enabled = true;
         mpButtonScanTv.Enabled = true;
         mpButtonScanRadio.Enabled = true;
-        mpButtonAddSvideoChannels.Enabled = true;
         _isScanning = false;
         checkButton.Enabled = true;
       }
@@ -1049,30 +602,81 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       lastItem.EnsureVisible();
     }
 
-    
+    private bool UpdateDatabase(Card card, IChannel channel)
+    {
+      bool exists = false;
+      Channel dbChannel = null;
+      if (checkBoxNoMerge.Checked)
+      {
+        dbChannel = ChannelFactory.CreateChannel(channel.Name);
+        ChannelFactory.CreateChannel(channel.Name);
+      }
+      else
+      {
+        IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channel.Name, 0);
+        if (tuningDetails != null && tuningDetails.Count > 0)
+        {
+          dbChannel = tuningDetails[0].Channel;
+        }
+
+        if (dbChannel != null)
+        {
+          exists = true;
+        }
+        else
+        {
+          dbChannel = ChannelFactory.CreateChannel(channel.Name);
+        }
+      }
+      dbChannel.MediaType = (int)channel.MediaType;
+      ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
+      ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, channel);
+      MappingHelper.AddChannelToCard(dbChannel, card, false);
+
+      if (dbChannel.MediaType == (decimal)MediaTypeEnum.TV)
+      {
+        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
+        MappingHelper.AddChannelToGroup(ref dbChannel, @group);
+        if (checkBoxCreateSignalGroup.Checked)
+        {
+          group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.Analog, MediaTypeEnum.TV);
+          MappingHelper.AddChannelToGroup(ref dbChannel, @group);
+        }
+      }
+      else if (dbChannel.MediaType == (decimal)MediaTypeEnum.Radio)
+      {
+        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.RadioGroupNames.AllChannels, MediaTypeEnum.Radio);
+        MappingHelper.AddChannelToGroup(ref dbChannel, @group);
+        if (checkBoxCreateSignalGroup.Checked)
+        {
+          group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.RadioGroupNames.Analog, MediaTypeEnum.Radio);
+          MappingHelper.AddChannelToGroup(ref dbChannel, @group);
+        }
+      }
+      return exists;
+    }
 
     private void mpButtonScanRadio_Click(object sender, EventArgs e)
     {
       if (_isScanning == false)
       {
         
-        Card card = ServiceAgents.Instance.CardServiceAgent.GetCardByDevicePath(ServiceAgents.Instance.ControllerServiceAgent.CardDevice(_cardNumber));
+        Card card = ServiceAgents.Instance.CardServiceAgent.GetCard(_cardId);
         if (card.Enabled == false)
         {
-          MessageBox.Show(this, "Card is disabled, please enable the card before scanning");
+          MessageBox.Show(this, "Tuner is disabled. Please enable the tuner before scanning.");
           return;
         }
         if (!ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(card.IdCard))
         {
-          MessageBox.Show(this, "Card is not found, please make sure card is present before scanning");
+          MessageBox.Show(this, "Tuner is not found. Please make sure the tuner is present before scanning.");
           return;
         }
         // Check if the card is locked for scanning.
         IUser user;
-        if (ServiceAgents.Instance.ControllerServiceAgent.IsCardInUse(_cardNumber, out user))
+        if (ServiceAgents.Instance.ControllerServiceAgent.IsCardInUse(_cardId, out user))
         {
-          MessageBox.Show(this,
-                          "Card is locked. Scanning not possible at the moment ! Perhaps you are scanning an other part of a hybrid card.");
+          MessageBox.Show(this, "Tuner is locked. Scanning is not possible at the moment. Perhaps you are using another part of a hybrid tuner?");
           return;
         }
         AnalogChannel radioChannel = new AnalogChannel();
@@ -1080,16 +684,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         radioChannel.MediaType = MediaTypeEnum.Radio;
         radioChannel.VideoSource = CaptureSourceVideo.Tuner;
         radioChannel.AudioSource = CaptureSourceAudio.Automatic;
-        if (!ServiceAgents.Instance.ControllerServiceAgent.CanTune(_cardNumber, radioChannel))
+        // TODO this check won't work
+        if (!ServiceAgents.Instance.ControllerServiceAgent.CanTune(_cardId, radioChannel))
         {
-          MessageBox.Show(this, "The Tv Card does not support radio");
+          MessageBox.Show(this, "This tuner does not support radio.");
           return;
         }
-        if (string.IsNullOrEmpty(_configuration.Graph.Capture.Name))
-        {
-          _configuration = Configuration.readConfiguration(_cardNumber, _cardName, _devicePath);
-          ReCheckSettings();
-        }
+
         Thread scanThread = new Thread(DoRadioScan);
         scanThread.Name = "Analog Radio scan thread";
         scanThread.Start();
@@ -1105,7 +706,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       int i;
       for (i = 0; i < sensitivity * 2; i++)
       {
-        if (!ServiceAgents.Instance.ControllerServiceAgent.TunerLocked(_cardNumber))
+        if (!ServiceAgents.Instance.ControllerServiceAgent.TunerLocked(_cardId))
         {
           break;
         }
@@ -1141,14 +742,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         mpButtonScanRadio.Text = "Cancel...";
         ServiceAgents.Instance.ControllerServiceAgent.EpgGrabberEnabled = false;
         
-        Card card = ServiceAgents.Instance.CardServiceAgent.GetCardByDevicePath(ServiceAgents.Instance.ControllerServiceAgent.CardDevice(_cardNumber));
+        Card card = ServiceAgents.Instance.CardServiceAgent.GetCard(_cardId);
         mpComboBoxCountry.Enabled = false;
         mpComboBoxSource.Enabled = false;
         mpComboBoxSensitivity.Enabled = false;
         checkBoxCreateSignalGroup.Enabled = false;
         checkBoxNoMerge.Enabled = false;
         mpButtonScanTv.Enabled = false;
-        mpButtonAddSvideoChannels.Enabled = false;
         UpdateStatus();
         mpListView1.Items.Clear();
         CountryCollection countries = new CountryCollection();
@@ -1176,60 +776,42 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           ListViewItem item = mpListView1.Items.Add(new ListViewItem(line));
           item.EnsureVisible();
           IUser user = new User();
-          user.CardId = _cardNumber;
+          user.CardId = _cardId;
           TvResult tuneResult = ServiceAgents.Instance.ControllerServiceAgent.Tune(user.Name, user.CardId, out user, channel, -1);
           if (tuneResult == TvResult.SWEncoderMissing)
           {
-            this.LogError("analog: DoTvScan error (missing software encoder)");
-            MessageBox.Show("Please install a supported audio/video encoder for your software analog card",
-                            "Unable to scan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            this.LogError("analog: failed to scan, missing software encoder");
+            MessageBox.Show("Please install supported software encoders for your tuner.", "Unable to scan", MessageBoxButtons.OK, MessageBoxIcon.Error);
             break;
           }
           if (tuneResult == TvResult.GraphBuildingFailed)
           {
-            this.LogError("analog: DoTvScan error (missing software encoder)");
-            MessageBox.Show(
-              "The graph building. Mostly your card is not supported by TvServer. Please create a report in our forum",
+            this.LogError("analog: failed to scan, tuner loading failed");
+            MessageBox.Show("Failed to load the tuner. Your tuner is probably not supported. Please create a report in our forum.",
               "Unable to scan", MessageBoxButtons.OK, MessageBoxIcon.Error);
             break;
           }
           UpdateStatus();
+
+          // Successful tuning means we're guaranteed to have found the tuner capabilities.
+          // Now we can load the other settings.
+          ReCheckSettings();
+
           Thread.Sleep(2000);
           if (SignalStrength(sensitivity) == 100)
           {
             channel.Name = String.Format("{0}", freq);
-            Channel dbChannel = null;
-            IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channel.Name, 0);
-            if (tuningDetails != null && tuningDetails.Count > 0)
+            if (UpdateDatabase(card, channel))
             {
-              dbChannel = tuningDetails[0].Channel;
-            }
-            if (dbChannel != null)
-            {
-              line = String.Format("frequence:{0} MHz : Channel update found - {1}", freqMHz.ToString("f2"),
-                                   channel.Name);
+              line = String.Format("frequence:{0} MHz : Channel update found - {1}", freqMHz.ToString("f2"), channel.Name);
               channelsUpdated++;
             }
             else
             {
-              dbChannel = ChannelFactory.CreateChannel(channel.Name);
               line = String.Format("frequence:{0} MHz : New channel found - {1}", freqMHz.ToString("f2"), channel.Name);
               channelsNew++;
             }
             item.Text = line;
-            dbChannel.MediaType = (int) channel.MediaType;
-            ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
-            ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.RadioGroupNames.AllChannels, MediaTypeEnum.Radio);
-            MappingHelper.AddChannelToGroup(ref dbChannel, @group);            
-              
-            if (checkBoxCreateSignalGroup.Checked)
-            {
-              group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.RadioGroupNames.Analog, MediaTypeEnum.Radio);
-              MappingHelper.AddChannelToGroup(ref dbChannel, @group);                          
-            }
-
-            ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, channel);            
-            MappingHelper.AddChannelToCard(dbChannel, card, false);
             freq += 300000;
           }
           else
@@ -1248,7 +830,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       {
         checkButton.Enabled = true;
         IUser user = new User();
-        user.CardId = _cardNumber;
+        user.CardId = _cardId;
         ServiceAgents.Instance.ControllerServiceAgent.StopCard(user.CardId);
         ServiceAgents.Instance.ControllerServiceAgent.EpgGrabberEnabled = true;
         mpButtonScanRadio.Text = buttonText;
@@ -1260,398 +842,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         checkBoxNoMerge.Enabled = true;
         mpButtonScanTv.Enabled = true;
         mpButtonScanRadio.Enabled = true;
-        mpButtonAddSvideoChannels.Enabled = true;
         _isScanning = false;
       }
       ListViewItem lastItem =
         mpListView1.Items.Add(
           new ListViewItem(String.Format("Total radio channels new:{0} updated:{1}", channelsNew, channelsUpdated)));
       lastItem.EnsureVisible();
-    }
-
-    private void mpButton1_Click(object sender, EventArgs e)
-    {
-      if (string.IsNullOrEmpty(_configuration.Graph.Crossbar.Name))
-      {
-        IUser user = new User();
-        user.CardId = _cardNumber;
-        AnalogChannel temp = new AnalogChannel();
-        temp.TunerSource = TunerInputType.Antenna;
-        temp.VideoSource = CaptureSourceVideo.Tuner;
-        temp.AudioSource = CaptureSourceAudio.Tuner;
-        
-        temp.MediaType = MediaTypeEnum.TV;
-        ServiceAgents.Instance.ControllerServiceAgent.Tune(user.Name, user.CardId, out user, temp, -1);
-        _configuration = Configuration.readConfiguration(_cardNumber, _cardName, _devicePath);
-        if (string.IsNullOrEmpty(_configuration.Graph.Crossbar.Name))
-        {
-          MessageBox.Show(this, "The S-Video channels could not be detected.");
-          return;
-        }
-        ReCheckSettings();
-      }
-
-      // TODO this information is no longer available - need another way to add one channel per input
-      Dictionary<CaptureSourceVideo, int> videoPinMap = new Dictionary<CaptureSourceVideo, int>();
-      AnalogChannel tuningDetail;
-      Card card = ServiceAgents.Instance.CardServiceAgent.GetCardByDevicePath(ServiceAgents.Instance.ControllerServiceAgent.CardDevice(_cardNumber));
-      Channel dbChannel;
-      if (videoPinMap.ContainsKey(CaptureSourceVideo.Composite1))
-      {
-        string channelName = "CVBS#1 on " + card.IdCard;
-        IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
-        if (tuningDetails != null && tuningDetails.Count > 0)
-        {
-          dbChannel = tuningDetails[0].Channel;
-        }
-        else
-        {
-          dbChannel = ChannelFactory.CreateChannel(channelName);
-        }
-        dbChannel.MediaType = (int)MediaTypeEnum.TV;
-        ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
-        tuningDetail = new AnalogChannel();
-        tuningDetail.MediaType = MediaTypeEnum.TV;
-        tuningDetail.Name = dbChannel.DisplayName;
-        tuningDetail.VideoSource = CaptureSourceVideo.Composite1;
-        ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
-        MappingHelper.AddChannelToCard(dbChannel, card, false);
-
-        MappingHelper.AddChannelToGroup(ref dbChannel, TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);        
-      }
-      if (videoPinMap.ContainsKey(CaptureSourceVideo.Composite2))
-      {
-        string channelName = "CVBS#2 on " + card.IdCard;
-        IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
-        if (tuningDetails != null && tuningDetails.Count > 0)
-        {
-          dbChannel = tuningDetails[0].Channel;
-        }
-        else
-        {
-          dbChannel = ChannelFactory.CreateChannel(channelName);
-        }
-        dbChannel.MediaType = (int)MediaTypeEnum.TV;
-        ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
-        tuningDetail = new AnalogChannel();
-        tuningDetail.MediaType = MediaTypeEnum.TV;
-        tuningDetail.Name = dbChannel.DisplayName;
-        tuningDetail.VideoSource = CaptureSourceVideo.Composite2;
-        ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
-        MappingHelper.AddChannelToCard(dbChannel, card, false);
-
-        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
-        MappingHelper.AddChannelToGroup(ref dbChannel, @group);        
-
-      }
-      if (videoPinMap.ContainsKey(CaptureSourceVideo.Composite3))
-      {
-        string channelName = "CVBS#3 on " + card.IdCard;
-        IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
-
-        if (tuningDetails != null && tuningDetails.Count > 0)
-        {
-          dbChannel = tuningDetails[0].Channel;
-        }
-        else
-        {
-          dbChannel = ChannelFactory.CreateChannel(channelName);
-        }
-        dbChannel.MediaType = (int)MediaTypeEnum.TV;
-        ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
-        tuningDetail = new AnalogChannel();
-        tuningDetail.MediaType = MediaTypeEnum.TV;
-        tuningDetail.Name = dbChannel.DisplayName;
-        tuningDetail.VideoSource = CaptureSourceVideo.Composite3;
-        ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
-        MappingHelper.AddChannelToCard(dbChannel, card, false);
-
-        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
-        MappingHelper.AddChannelToGroup(ref dbChannel, @group);        
-        
-      }
-      if (videoPinMap.ContainsKey(CaptureSourceVideo.Svideo1))
-      {
-        string channelName = "S-Video#1 on " + card.IdCard;
-        IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
-        if (tuningDetails != null && tuningDetails.Count > 0)
-        {
-          dbChannel = tuningDetails[0].Channel;
-        }
-        else
-        {
-          dbChannel = ChannelFactory.CreateChannel(channelName);
-        }
-        dbChannel.MediaType = (int)MediaTypeEnum.TV;
-        ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
-        tuningDetail = new AnalogChannel();
-        tuningDetail.MediaType = MediaTypeEnum.TV;
-        tuningDetail.Name = dbChannel.DisplayName;
-        tuningDetail.VideoSource = CaptureSourceVideo.Svideo1;
-        ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
-        MappingHelper.AddChannelToCard(dbChannel, card, false);
-
-        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
-        MappingHelper.AddChannelToGroup(ref dbChannel, @group);
-      }
-      if (videoPinMap.ContainsKey(CaptureSourceVideo.Svideo2))
-      {
-        string channelName = "S-Video#2 on " + card.IdCard;
-        IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
-        if (tuningDetails != null && tuningDetails.Count > 0)
-        {
-          dbChannel = tuningDetails[0].Channel;
-        }
-        else
-        {
-          dbChannel = ChannelFactory.CreateChannel(channelName);
-        }
-        dbChannel.MediaType = (int)MediaTypeEnum.TV;
-        ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
-        tuningDetail = new AnalogChannel();
-        tuningDetail.MediaType = MediaTypeEnum.TV;
-        tuningDetail.Name = dbChannel.DisplayName;
-        tuningDetail.VideoSource = CaptureSourceVideo.Svideo2;
-        ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
-        MappingHelper.AddChannelToCard(dbChannel, card, false);
-
-        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
-        MappingHelper.AddChannelToGroup(ref dbChannel, @group);
-      }
-      if (videoPinMap.ContainsKey(CaptureSourceVideo.Svideo3))
-      {
-        string channelName = "S-Video#3 on " + card.IdCard;
-        IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
-        if (tuningDetails != null && tuningDetails.Count > 0)
-        {
-          dbChannel = tuningDetails[0].Channel;
-        }
-        else
-        {
-          dbChannel = ChannelFactory.CreateChannel(channelName);
-        }
-        dbChannel.MediaType = (int)MediaTypeEnum.TV;
-        ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
-        tuningDetail = new AnalogChannel();
-        tuningDetail.MediaType = MediaTypeEnum.TV;
-        tuningDetail.Name = dbChannel.DisplayName;
-        tuningDetail.VideoSource = CaptureSourceVideo.Svideo3;
-        ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
-        MappingHelper.AddChannelToCard(dbChannel, card, false);
-        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
-        MappingHelper.AddChannelToGroup(ref dbChannel, @group);
-      }
-      if (videoPinMap.ContainsKey(CaptureSourceVideo.Rgb1))
-      {
-        string channelName = "RGB#1 on " + card.IdCard;
-        IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
-        if (tuningDetails != null && tuningDetails.Count > 0)
-        {
-          dbChannel = tuningDetails[0].Channel;
-        }
-        else
-        {
-          dbChannel = ChannelFactory.CreateChannel(channelName);
-        }
-        dbChannel.MediaType = (int)MediaTypeEnum.TV;
-        ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
-        tuningDetail = new AnalogChannel();
-        tuningDetail.MediaType = MediaTypeEnum.TV;
-        tuningDetail.Name = dbChannel.DisplayName;
-        tuningDetail.VideoSource = CaptureSourceVideo.Rgb1;
-        ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
-        MappingHelper.AddChannelToCard(dbChannel, card, false);
-        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
-        MappingHelper.AddChannelToGroup(ref dbChannel, @group);
-      }
-      if (videoPinMap.ContainsKey(CaptureSourceVideo.Rgb2))
-      {
-        string channelName = "RGB#2 on " + card.IdCard;
-        IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
-        if (tuningDetails != null && tuningDetails.Count > 0)
-        {
-          dbChannel = tuningDetails[0].Channel;
-        }
-        else
-        {
-          dbChannel = ChannelFactory.CreateChannel(channelName);
-        }
-        dbChannel.MediaType = (int)MediaTypeEnum.TV;
-        ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
-        tuningDetail = new AnalogChannel();
-        tuningDetail.MediaType = MediaTypeEnum.TV;
-        tuningDetail.Name = dbChannel.DisplayName;
-        tuningDetail.VideoSource = CaptureSourceVideo.Rgb2;
-        ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
-        MappingHelper.AddChannelToCard(dbChannel, card, false);
-        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
-        MappingHelper.AddChannelToGroup(ref dbChannel, @group);
-      }
-      if (videoPinMap.ContainsKey(CaptureSourceVideo.Rgb3))
-      {
-        string channelName = "RGB#3 on " + card.IdCard;
-        IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
-        if (tuningDetails != null && tuningDetails.Count > 0)
-        {
-          dbChannel = tuningDetails[0].Channel;
-        }
-        else
-        {
-          dbChannel = ChannelFactory.CreateChannel(channelName);
-        }
-        dbChannel.MediaType = (int)MediaTypeEnum.TV;
-        ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
-        tuningDetail = new AnalogChannel();
-        tuningDetail.MediaType = MediaTypeEnum.TV;
-        tuningDetail.Name = dbChannel.DisplayName;
-        tuningDetail.VideoSource = CaptureSourceVideo.Rgb3;
-        ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
-        MappingHelper.AddChannelToCard(dbChannel, card, false);
-        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
-        MappingHelper.AddChannelToGroup(ref dbChannel, @group);
-      }
-      if (videoPinMap.ContainsKey(CaptureSourceVideo.Yryby1))
-      {
-        string channelName = "YRYBY#1 on " + card.IdCard;
-        IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
-        if (tuningDetails != null && tuningDetails.Count > 0)
-        {
-          dbChannel = tuningDetails[0].Channel;
-        }
-        else
-        {
-          dbChannel = ChannelFactory.CreateChannel(channelName);
-        }
-        dbChannel.MediaType = (int)MediaTypeEnum.TV;
-        ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
-        tuningDetail = new AnalogChannel();
-        tuningDetail.MediaType = MediaTypeEnum.TV;
-        tuningDetail.Name = dbChannel.DisplayName;
-        tuningDetail.VideoSource = CaptureSourceVideo.Yryby1;
-        ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
-        MappingHelper.AddChannelToCard(dbChannel, card, false);
-        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
-        MappingHelper.AddChannelToGroup(ref dbChannel, @group);
-      }
-      if (videoPinMap.ContainsKey(CaptureSourceVideo.Yryby2))
-      {
-        string channelName = "YRYBY#2 on " + card.IdCard;
-        IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
-        if (tuningDetails != null && tuningDetails.Count > 0)
-        {
-          dbChannel = tuningDetails[0].Channel;
-        }
-        else
-        {
-          dbChannel = ChannelFactory.CreateChannel(channelName);
-        }
-        dbChannel.MediaType = (int)MediaTypeEnum.TV;
-        ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
-        tuningDetail = new AnalogChannel();
-        tuningDetail.MediaType = MediaTypeEnum.TV;
-        tuningDetail.Name = dbChannel.DisplayName;
-        tuningDetail.VideoSource = CaptureSourceVideo.Yryby2;
-
-        ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);
-
-        ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);  //todo gibman ?? why called 2 times ?      
-        MappingHelper.AddChannelToCard(dbChannel, card, false);
-        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
-        MappingHelper.AddChannelToGroup(ref dbChannel, @group);        
-      }
-      if (videoPinMap.ContainsKey(CaptureSourceVideo.Yryby3))
-      {
-        string channelName = "YRYBY#3 on " + card.IdCard;
-        IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
-        if (tuningDetails != null && tuningDetails.Count > 0)
-        {
-          dbChannel = tuningDetails[0].Channel;
-        }
-        else
-        {
-          dbChannel = ChannelFactory.CreateChannel(channelName);
-        }
-        dbChannel.MediaType = (int)MediaTypeEnum.TV;
-        ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
-        tuningDetail = new AnalogChannel();
-        tuningDetail.MediaType = MediaTypeEnum.TV;
-        tuningDetail.Name = dbChannel.DisplayName;
-        tuningDetail.VideoSource = CaptureSourceVideo.Yryby3;
-        ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
-        MappingHelper.AddChannelToCard(dbChannel, card, false);
-        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
-        MappingHelper.AddChannelToGroup(ref dbChannel, @group);
-      }
-      if (videoPinMap.ContainsKey(CaptureSourceVideo.Hdmi1))
-      {
-        string channelName = "HDMI#1 on " + card.IdCard;
-        IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
-        if (tuningDetails != null && tuningDetails.Count > 0)
-        {
-          dbChannel = tuningDetails[0].Channel;
-        }
-        else
-        {
-          dbChannel = ChannelFactory.CreateChannel(channelName);
-        }
-        dbChannel.MediaType = (int)MediaTypeEnum.TV;
-        ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
-        tuningDetail = new AnalogChannel();
-        tuningDetail.MediaType = MediaTypeEnum.TV;
-        tuningDetail.Name = dbChannel.DisplayName;
-        tuningDetail.VideoSource = CaptureSourceVideo.Hdmi1;
-        ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
-        MappingHelper.AddChannelToCard(dbChannel, card, false);
-        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
-        MappingHelper.AddChannelToGroup(ref dbChannel, @group);
-      }
-      if (videoPinMap.ContainsKey(CaptureSourceVideo.Hdmi2))
-      {
-        string channelName = "HDMI#2 on " + card.IdCard;
-        IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
-        if (tuningDetails != null && tuningDetails.Count > 0)
-        {
-          dbChannel = tuningDetails[0].Channel;
-        }
-        else
-        {
-          dbChannel = ChannelFactory.CreateChannel(channelName);
-        }
-        dbChannel.MediaType = (int)MediaTypeEnum.TV;
-        ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
-        tuningDetail = new AnalogChannel();
-        tuningDetail.MediaType = MediaTypeEnum.TV;
-        tuningDetail.Name = dbChannel.DisplayName;
-        tuningDetail.VideoSource = CaptureSourceVideo.Hdmi2;
-        ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
-        MappingHelper.AddChannelToCard(dbChannel, card, false);
-        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
-        MappingHelper.AddChannelToGroup(ref dbChannel, @group);
-      }
-      if (videoPinMap.ContainsKey(CaptureSourceVideo.Hdmi3))
-      {
-        string channelName = "HDMI#3 on " + card.IdCard;
-        IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
-        if (tuningDetails != null && tuningDetails.Count > 0)
-        {
-          dbChannel = tuningDetails[0].Channel;
-        }
-        else
-        {
-          dbChannel = ChannelFactory.CreateChannel(channelName);
-        }
-        dbChannel.MediaType = (int)MediaTypeEnum.TV;
-        ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
-        tuningDetail = new AnalogChannel();
-        tuningDetail.MediaType = MediaTypeEnum.TV;
-        tuningDetail.Name = dbChannel.DisplayName;
-        tuningDetail.VideoSource = CaptureSourceVideo.Hdmi3;
-        ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
-        MappingHelper.AddChannelToCard(dbChannel, card, false);
-        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
-        MappingHelper.AddChannelToGroup(ref dbChannel, @group);        
-      }
-      MessageBox.Show(this, "Channels added.");
     }
 
     private void ReCheckSettings()
@@ -1669,155 +865,96 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           !colorEnableScrollbar.Enabled && !whiteBalanceScrollbar.Enabled &&
           !backlightCompensationValue.Enabled)
       {
-        SetVideoProcAmp(_configuration.Graph.Capture.VideoProcAmpValues);
+        SetVideoProcAmp();
       }
     }
 
     private void checkButton_Click(object sender, EventArgs e)
     {
-      IUser user;
-      try
+      Card card = ServiceAgents.Instance.CardServiceAgent.GetCard(_cardId);
+      if (card.Enabled == false)
       {
-        
-        Card card = ServiceAgents.Instance.CardServiceAgent.GetCardByDevicePath(ServiceAgents.Instance.ControllerServiceAgent.CardDevice(_cardNumber));
-        if (card.Enabled == false)
-        {
-          MessageBox.Show(this, "Card is disabled, please enable the card before checking quality control");
-          return;
-        }
-        else if (!ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(card.IdCard))
-        {
-          MessageBox.Show(this, "Card is not found, please make sure card is present before checking quality control");
-          return;
-        }
-        // Check if the card is locked for scanning.
-        if (ServiceAgents.Instance.ControllerServiceAgent.IsCardInUse(_cardNumber, out user))
-        {
-          MessageBox.Show(this,
-                          "Card is locked. Checking quality control not possible at the moment ! Perhaps you are scanning an other part of a hybrid card.");
-          return;
-        }
+        MessageBox.Show(this, "Tuner is disabled. Please enable the tuner before checking for quality control support.");
+        return;
+      }
+      if (!ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(card.IdCard))
+      {
+        MessageBox.Show(this, "Tuner is not found. Please make sure the tuner is present before checking for quality control support.");
+        return;
+      }
+
+      IUser user;
+      if (!ServiceAgents.Instance.ControllerServiceAgent.IsCardInUse(_cardId, out user))
+      {
         user = new User();
-        user.CardId = _cardNumber;
+        user.CardId = _cardId;
         AnalogChannel temp = new AnalogChannel();
         temp.VideoSource = CaptureSourceVideo.Tuner;
         temp.AudioSource = CaptureSourceAudio.Tuner;
-        
         temp.MediaType = MediaTypeEnum.TV;
-        ServiceAgents.Instance.ControllerServiceAgent.Tune(user.Name, user.CardId, out user, temp, -1);
-        if (ServiceAgents.Instance.ControllerServiceAgent.SupportsQualityControl(_cardNumber))
+
+        TvResult tuneResult = ServiceAgents.Instance.ControllerServiceAgent.Tune(user.Name, user.CardId, out user, temp, -1);
+        if (tuneResult == TvResult.SWEncoderMissing)
         {
-          _cardName = ServiceAgents.Instance.ControllerServiceAgent.CardName(_cardNumber);
-          _devicePath = ServiceAgents.Instance.ControllerServiceAgent.CardDevice(_cardNumber);
-          bitRateModeGroup.Enabled = ServiceAgents.Instance.ControllerServiceAgent.SupportsBitRateModes(_cardNumber);
-          if (ServiceAgents.Instance.ControllerServiceAgent.SupportsPeakBitRateMode(_cardNumber))
-          {
-            vbrPeakPlayback.Enabled = true;
-            vbrPeakRecord.Enabled = true;
-          }
-          else
-          {
-            vbrPeakPlayback.Enabled = false;
-            vbrPeakRecord.Enabled = false;
-          }
-          if (ServiceAgents.Instance.ControllerServiceAgent.SupportsBitRate(_cardNumber))
-          {
-            bitRate.Enabled = true;
-            customSettingsGroup.Enabled = true;
-            customValue.Enabled = true;
-            customValuePeak.Enabled = true;
-          }
-          else
-          {
-            bitRate.Enabled = false;
-            customSettingsGroup.Enabled = false;
-            customValue.Enabled = false;
-            customValuePeak.Enabled = false;
-          }
-          _configuration = Configuration.readConfiguration(_cardNumber, _cardName, _devicePath);
-          customValue.Value = _configuration.CustomQualityValue;
-          customValuePeak.Value = _configuration.CustomPeakQualityValue;
-          SetBitRateModes();
-          SetBitRate();
-          ReCheckSettings();
+          this.LogError("analog: failed to check quality control support, missing software encoder");
+          MessageBox.Show("Please install supported software encoders for your tuner.", "Unable to check quality control support", MessageBoxButtons.OK, MessageBoxIcon.Error);
+          return;
+        }
+        if (tuneResult == TvResult.GraphBuildingFailed)
+        {
+          this.LogError("analog: failed to check quality control support, tuner loading failed");
+          MessageBox.Show("Failed to load the tuner. Your tuner is probably not supported. Please create a report in our forum.",
+            "Unable to check quality control support", MessageBoxButtons.OK, MessageBoxIcon.Error);
+          return;
+        }
+        ServiceAgents.Instance.ControllerServiceAgent.StopCard(user.CardId);
+      }
+
+      if (ServiceAgents.Instance.ControllerServiceAgent.SupportsQualityControl(_cardId))
+      {
+        bitRateModeGroup.Enabled = ServiceAgents.Instance.ControllerServiceAgent.SupportsBitRateModes(_cardId);
+        vbrPeakPlayback.Enabled = ServiceAgents.Instance.ControllerServiceAgent.SupportsPeakBitRateMode(_cardId);
+
+        if (ServiceAgents.Instance.ControllerServiceAgent.SupportsBitRate(_cardId))
+        {
+          bitRate.Enabled = true;
+          customSettingsGroup.Enabled = true;
+          customValue.Enabled = true;
+          customValuePeak.Enabled = true;
         }
         else
         {
-          this.LogDebug("Card doesn't support quality control");
-          MessageBox.Show("The used encoder doesn't support quality control.",
-                          "MediaPortal - TV Server management console", MessageBoxButtons.OK, MessageBoxIcon.Information);
-          if (string.IsNullOrEmpty(_configuration.Graph.Capture.Name))
-          {
-            _configuration = Configuration.readConfiguration(_cardNumber, _cardName, _devicePath);
-            ReCheckSettings();
-          }
+          bitRate.Enabled = false;
+          customSettingsGroup.Enabled = false;
+          customValue.Enabled = false;
+          customValuePeak.Enabled = false;
         }
+
+        SetBitRateMode();
+        SetBitRate();
       }
-      finally
+      else
       {
-        user = new User();
-        user.CardId = _cardNumber;
-        ServiceAgents.Instance.ControllerServiceAgent.StopCard(user.CardId);
+        this.LogDebug("analog: quality control not supported");
+        MessageBox.Show("The tuner's current encoder doesn't support quality control.",
+                        "Quality control check result", MessageBoxButtons.OK, MessageBoxIcon.Information);
       }
+      ReCheckSettings();
     }
 
     private void defaultValuesButton_Click(object sender, EventArgs e)
     {
-      Dictionary<VideoProcAmpProperty, VideoQuality> map = _configuration.Graph.Capture.VideoProcAmpValues;
-      VideoQuality quality;
-      if (map.ContainsKey(VideoProcAmpProperty.Brightness))
+      foreach (VideoProcAmpProperty property in _videoProcAmpControls.Keys)
       {
-        quality = map[VideoProcAmpProperty.Brightness];
-        brightnessScrollbar.Value = quality.DefaultValue;
-        brightnessValue.Text = quality.DefaultValue.ToString();
-      }
-      if (map.ContainsKey(VideoProcAmpProperty.Contrast))
-      {
-        quality = map[VideoProcAmpProperty.Contrast];
-        contrastScrollbar.Value = quality.DefaultValue;
-        contrastValue.Text = quality.DefaultValue.ToString();
-      }
-      if (map.ContainsKey(VideoProcAmpProperty.Hue))
-      {
-        quality = map[VideoProcAmpProperty.Hue];
-        hueScrollbar.Value = quality.DefaultValue;
-        hueValue.Text = quality.DefaultValue.ToString();
-      }
-      if (map.ContainsKey(VideoProcAmpProperty.Saturation))
-      {
-        quality = map[VideoProcAmpProperty.Saturation];
-        saturationScrollbar.Value = quality.DefaultValue;
-        saturationValue.Text = quality.DefaultValue.ToString();
-      }
-      if (map.ContainsKey(VideoProcAmpProperty.Sharpness))
-      {
-        quality = map[VideoProcAmpProperty.Sharpness];
-        sharpnessScrollbar.Value = quality.DefaultValue;
-        sharpnessValue.Text = quality.DefaultValue.ToString();
-      }
-      if (map.ContainsKey(VideoProcAmpProperty.Gamma))
-      {
-        quality = map[VideoProcAmpProperty.Gamma];
-        gammaScrollbar.Value = quality.DefaultValue;
-        gammaValue.Text = quality.DefaultValue.ToString();
-      }
-      if (map.ContainsKey(VideoProcAmpProperty.ColorEnable))
-      {
-        quality = map[VideoProcAmpProperty.ColorEnable];
-        colorEnableScrollbar.Value = quality.DefaultValue;
-        colorEnableValue.Text = quality.DefaultValue.ToString();
-      }
-      if (map.ContainsKey(VideoProcAmpProperty.WhiteBalance))
-      {
-        quality = map[VideoProcAmpProperty.WhiteBalance];
-        whiteBalanceScrollbar.Value = quality.DefaultValue;
-        whiteBalanceValue.Text = quality.DefaultValue.ToString();
-      }
-      if (map.ContainsKey(VideoProcAmpProperty.BacklightCompensation))
-      {
-        quality = map[VideoProcAmpProperty.BacklightCompensation];
-        backlightCompensationScrollbar.Value = quality.DefaultValue;
-        backlightCompensationValue.Text = quality.DefaultValue.ToString();
+        if (_videoProcAmpControls[property].Enabled)
+        {
+          int defaultValue = ServiceAgents.Instance.SettingServiceAgent.GetValue("tuner" + _cardId + "VideoProcAmpProperty" + property + "DefaultValue", -1);
+          if (defaultValue != -1)
+          {
+            _videoProcAmpControls[property].Value = defaultValue;
+            _videoProcAmpLabels[property].Text = defaultValue.ToString();
+          }
+        }
       }
     }
 

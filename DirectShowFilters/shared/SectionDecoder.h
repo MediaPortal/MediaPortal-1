@@ -1,6 +1,6 @@
 /* 
- *	Copyright (C) 2006-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
+ *  Copyright (C) 2006-2008 Team MediaPortal
+ *  http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -31,27 +31,27 @@ class CSectionDecoder : public CDvbUtil
 public:
   CSectionDecoder(void);
   ~CSectionDecoder(void);
-	void SetCallBack(ISectionCallback* callback);
-	void OnTsPacket(byte* tsPacket);
-	void OnTsPacket(CTsHeader& header,byte* tsPacket);
+  void SetCallBack(ISectionCallback* callback);
+  void OnTsPacket(byte* tsPacket);
+  void OnTsPacket(CTsHeader& header,byte* tsPacket);
   void SetPid(int pid);
   int  GetPid();
-	void Reset();
+  void Reset();
   void EnableLogging(bool onOff);
   void EnableCrcCheck(bool onOff);
   virtual void OnNewSection(CSection& section);
 protected:
 private:
-	int StartNewSection(byte* tsPacket,int index,int sectionLen);
-	int AppendSection(byte* tsPacket, int index, int sectionLen);
-	int SnapshotSectionLength(byte* tsPacket,int start);
+  int StartNewSection(byte* tsPacket,int index,int sectionLen);
+  int AppendSection(byte* tsPacket, int index, int sectionLen);
+  int SnapshotSectionLength(byte* tsPacket,int start);
 
   bool        m_bLog;
   bool        m_bCrcCheck;
-  int			    m_pid;
-  CSection		m_section;
-	int         m_iContinuityCounter;
-	ISectionCallback* m_pCallback;
+  int          m_pid;
+  CSection    m_section;
+  int         m_iContinuityCounter;
+  ISectionCallback* m_pCallback;
   CTsHeader m_header;
   CTsHeader m_headerSection;
 };

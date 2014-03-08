@@ -1,6 +1,6 @@
 /* 
- *	Copyright (C) 2006-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
+ *  Copyright (C) 2006-2008 Team MediaPortal
+ *  http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -51,8 +51,8 @@ void GetLogFile(wchar_t *pLog)
 // Setup data
 const AMOVIESETUP_MEDIATYPE sudPinTypes =
 {
-	&MEDIATYPE_Stream,							// Major type
-	&MEDIASUBTYPE_MPEG2_TRANSPORT   // Minor type
+  &MEDIATYPE_Stream,              // Major type
+  &MEDIASUBTYPE_MPEG2_TRANSPORT   // Minor type
 };
 
 const AMOVIESETUP_PIN sudPins =
@@ -74,14 +74,15 @@ const AMOVIESETUP_FILTER sudDump =
     L"MediaPortal Ts Writer",   // String name
     MERIT_DO_NOT_USE,           // Filter merit
     1,                          // Number pins
-    &sudPins                    // Pin details
+    &sudPins,                   // Pin details
+    CLSID_LegacyAmFilterCategory
 };
 
 void DumpTs(byte* tspacket)
 {
-	FILE* fp=fopen("dump.ts", "ab+");
-	fwrite(tspacket,1,188,fp);
-	fclose(fp);
+  FILE* fp=fopen("dump.ts", "ab+");
+  fwrite(tspacket,1,188,fp);
+  fclose(fp);
 }
 
 DEFINE_TVE_DEBUG_SETTING(DisableCRCCheck)
@@ -92,41 +93,41 @@ static wchar_t logbufferw[2000];
 void LogDebug(const wchar_t *fmt, ...)
 {
 //#ifdef DEBUG
-	va_list ap;
-	va_start(ap,fmt);
+  va_list ap;
+  va_start(ap,fmt);
 
-	va_start(ap,fmt);
-	vswprintf_s(logbufferw, fmt, ap);
-	va_end(ap); 
+  va_start(ap,fmt);
+  vswprintf_s(logbufferw, fmt, ap);
+  va_end(ap); 
 
-	wchar_t fileName[MAX_PATH];
-	GetLogFile(fileName);
-	FILE* fp = _wfopen(fileName,L"a+, ccs=UTF-8");
-	if (fp!=NULL)
-	{
-	SYSTEMTIME systemTime;
-	GetLocalTime(&systemTime);
-		fwprintf(fp,L"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%02.2d %s\n",
-			systemTime.wDay, systemTime.wMonth, systemTime.wYear,
-			systemTime.wHour,systemTime.wMinute,systemTime.wSecond,systemTime.wMilliseconds,
-			logbufferw);
-		fclose(fp);
-		//::OutputDebugStringW(logbufferw);::OutputDebugStringW(L"\n");
-	}
+  wchar_t fileName[MAX_PATH];
+  GetLogFile(fileName);
+  FILE* fp = _wfopen(fileName,L"a+, ccs=UTF-8");
+  if (fp!=NULL)
+  {
+  SYSTEMTIME systemTime;
+  GetLocalTime(&systemTime);
+    fwprintf(fp,L"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%02.2d %s\n",
+      systemTime.wDay, systemTime.wMonth, systemTime.wYear,
+      systemTime.wHour,systemTime.wMinute,systemTime.wSecond,systemTime.wMilliseconds,
+      logbufferw);
+    fclose(fp);
+    //::OutputDebugStringW(logbufferw);::OutputDebugStringW(L"\n");
+  }
 //#endif
 };
 
 void LogDebug(const char *fmt, ...)
 {
-	va_list ap;
-	va_start(ap,fmt);
+  va_list ap;
+  va_start(ap,fmt);
 
-	va_start(ap,fmt);
-	vsprintf(logbuffer, fmt, ap);
-	va_end(ap); 
+  va_start(ap,fmt);
+  vsprintf(logbuffer, fmt, ap);
+  va_end(ap); 
 
-	MultiByteToWideChar(CP_ACP, 0, logbuffer, -1,logbufferw, sizeof(logbuffer)/sizeof(wchar_t));
-	LogDebug(L"%s", logbufferw);
+  MultiByteToWideChar(CP_ACP, 0, logbuffer, -1,logbufferw, sizeof(logbuffer)/sizeof(wchar_t));
+  LogDebug(L"%s", logbufferw);
 };
 
 //
@@ -153,11 +154,11 @@ CMpTsFilter::CMpTsFilter(CMpTs *pDump,LPUNKNOWN pUnk,CCritSec *pLock,HRESULT *ph
 CBasePin * CMpTsFilter::GetPin(int n)
 {
   if (n == 0) 
-	{
+  {
     return m_pWriterFilter->m_pPin;
   } 
-	else 
-	{
+  else 
+  {
     return NULL;
   }
 }
@@ -180,7 +181,7 @@ int CMpTsFilter::GetPinCount()
 STDMETHODIMP CMpTsFilter::Stop()
 {
   CAutoLock cObjectLock(m_pLock);
-	LogDebug("CMpTsFilter::Stop()");
+  LogDebug("CMpTsFilter::Stop()");
   return CBaseFilter::Stop();
 }
 
@@ -192,7 +193,7 @@ STDMETHODIMP CMpTsFilter::Stop()
 //
 STDMETHODIMP CMpTsFilter::Pause()
 {
-	LogDebug("CMpTsFilter::Pause()");
+  LogDebug("CMpTsFilter::Pause()");
   CAutoLock cObjectLock(m_pLock);
 
   if (m_pWriterFilter)
@@ -219,7 +220,7 @@ STDMETHODIMP CMpTsFilter::Pause()
 //
 STDMETHODIMP CMpTsFilter::Run(REFERENCE_TIME tStart)
 {
-	LogDebug("CMpTsFilter::Run()");
+  LogDebug("CMpTsFilter::Run()");
   CAutoLock cObjectLock(m_pLock);
 
   return CBaseFilter::Run(tStart);
@@ -238,8 +239,8 @@ CMpTsFilterPin::CMpTsFilterPin(CMpTs *pDump,LPUNKNOWN pUnk,CBaseFilter *pFilter,
     m_pReceiveLock(pReceiveLock),
     m_pWriterFilter(pDump)
 {
-	LogDebug("CMpTsFilterPin:ctor");
-	m_rawPaketWriter=NULL;
+  LogDebug("CMpTsFilterPin:ctor");
+  m_rawPaketWriter=NULL;
 }
 
 
@@ -283,46 +284,46 @@ STDMETHODIMP CMpTsFilterPin::ReceiveCanBlock()
 //
 STDMETHODIMP CMpTsFilterPin::Receive(IMediaSample *pSample)
 {
-	try
-	{
-		if (pSample==NULL) 
-		{
-			LogDebug("pin:receive sample=null");
-			return S_OK;
-		}
-		
-//		CheckPointer(pSample,E_POINTER);
-//		CAutoLock lock(m_pReceiveLock);
-		PBYTE pbData=NULL;
+  try
+  {
+    if (pSample==NULL) 
+    {
+      LogDebug("pin:receive sample=null");
+      return S_OK;
+    }
+    
+//    CheckPointer(pSample,E_POINTER);
+//    CAutoLock lock(m_pReceiveLock);
+    PBYTE pbData=NULL;
 
-		long sampleLen=pSample->GetActualDataLength();
-		if (sampleLen<=0)
-		{
-			//LogDebug("pin:receive samplelen:%d",sampleLen);
-			return S_OK;
-		}
-		
-		HRESULT hr = pSample->GetPointer(&pbData);
-		if (FAILED(hr)) 
-		{
-			LogDebug("pin:receive cannot get samplepointer");
-			return S_OK;
-		}
-		if (m_rawPaketWriter!=NULL)
-			if (!m_rawPaketWriter->IsFileInvalid())
-				m_rawPaketWriter->Write(pbData,sampleLen);
-		OnRawData(pbData, sampleLen);
-	}
-	catch(...)
-	{
-		LogDebug("pin:receive exception");
-	}
+    long sampleLen=pSample->GetActualDataLength();
+    if (sampleLen<=0)
+    {
+      //LogDebug("pin:receive samplelen:%d",sampleLen);
+      return S_OK;
+    }
+    
+    HRESULT hr = pSample->GetPointer(&pbData);
+    if (FAILED(hr)) 
+    {
+      LogDebug("pin:receive cannot get samplepointer");
+      return S_OK;
+    }
+    if (m_rawPaketWriter!=NULL)
+      if (!m_rawPaketWriter->IsFileInvalid())
+        m_rawPaketWriter->Write(pbData,sampleLen);
+    OnRawData(pbData, sampleLen);
+  }
+  catch(...)
+  {
+    LogDebug("pin:receive exception");
+  }
   return S_OK;
 }
 
 void CMpTsFilterPin::OnTsPacket(byte* tsPacket)
 {
-	m_pWriterFilter->AnalyzeTsPacket(tsPacket);
+  m_pWriterFilter->AnalyzeTsPacket(tsPacket);
 }
 
 STDMETHODIMP CMpTsFilterPin::EndOfStream(void)
@@ -334,7 +335,7 @@ STDMETHODIMP CMpTsFilterPin::EndOfStream(void)
 
 void CMpTsFilterPin::Reset()
 {
-		LogDebug("CMpTsFilter::Reset()...");
+    LogDebug("CMpTsFilter::Reset()...");
 }
 
 //
@@ -349,7 +350,7 @@ STDMETHODIMP CMpTsFilterPin::NewSegment(REFERENCE_TIME tStart,REFERENCE_TIME tSt
 
 void CMpTsFilterPin::AssignRawPaketWriter(FileWriter *rawPaketWriter)
 {
-	m_rawPaketWriter=rawPaketWriter;
+  m_rawPaketWriter=rawPaketWriter;
 }
 
 //
@@ -362,8 +363,8 @@ CMpTs::CMpTs(LPUNKNOWN pUnk, HRESULT *phr)
 
   LogDebug("CMpTs::ctor()");
   LogDebug("--------------- BUG-3782 fix v2 -------------------");
-		
-	b_dumpRawPakets=false;
+    
+  b_dumpRawPakets=false;
   m_pFilter = new CMpTsFilter(this, GetOwner(), &m_Lock, phr);
   if (m_pFilter == NULL) 
   {
@@ -392,10 +393,10 @@ CMpTs::~CMpTs()
 {
   delete m_pPin;
   delete m_pFilter;
-	delete m_pChannelScanner;
-	delete m_pEpgScanner;
-	delete m_pChannelLinkageScanner;
-	delete m_rawPaketWriter;
+  delete m_pChannelScanner;
+  delete m_pEpgScanner;
+  delete m_pChannelLinkageScanner;
+  delete m_rawPaketWriter;
   CAutoLock lock(&m_Lock);
   for (int i=0; i < (int)m_vecChannels.size();++i)
   {
@@ -435,29 +436,29 @@ STDMETHODIMP CMpTs::NonDelegatingQueryInterface(REFIID riid, void ** ppv)
   CAutoLock lock(&m_Lock);
 
   // Do we have this interface
-	if (riid == IID_ITsChannelScan)
-	{
-		//LogDebug("CMpTs:NonDelegatingQueryInterface IID_ITsChannelScan");
-		return GetInterface((ITsChannelScan*)m_pChannelScanner, ppv);
-	}
-	else if (riid == IID_ITsEpgScanner)
-	{
-		//LogDebug("CMpTs:NonDelegatingQueryInterface IID_ITsEpgScanner");
-		return GetInterface((ITsEpgScanner*)m_pEpgScanner, ppv);
-	}
-	else if (riid == IID_TSFilter)
-	{
-		//LogDebug("CMpTs:NonDelegatingQueryInterface IID_TSFilter");
-		return GetInterface((ITSFilter*)this, ppv);
-	}
-	else if (riid == IID_ITsChannelLinkageScanner)
-	{
-		//LogDebug("CMpTs:NonDelegatingQueryInterface IID_ITsChannelLinkageScanner");
-		return GetInterface((ITsChannelLinkageScanner*)m_pChannelLinkageScanner, ppv);
-	}
+  if (riid == IID_ITsChannelScan)
+  {
+    //LogDebug("CMpTs:NonDelegatingQueryInterface IID_ITsChannelScan");
+    return GetInterface((ITsChannelScan*)m_pChannelScanner, ppv);
+  }
+  else if (riid == IID_ITsEpgScanner)
+  {
+    //LogDebug("CMpTs:NonDelegatingQueryInterface IID_ITsEpgScanner");
+    return GetInterface((ITsEpgScanner*)m_pEpgScanner, ppv);
+  }
+  else if (riid == IID_TSFilter)
+  {
+    //LogDebug("CMpTs:NonDelegatingQueryInterface IID_TSFilter");
+    return GetInterface((ITSFilter*)this, ppv);
+  }
+  else if (riid == IID_ITsChannelLinkageScanner)
+  {
+    //LogDebug("CMpTs:NonDelegatingQueryInterface IID_ITsChannelLinkageScanner");
+    return GetInterface((ITsChannelLinkageScanner*)m_pChannelLinkageScanner, ppv);
+  }
   else if (riid == IID_IBaseFilter || riid == IID_IMediaFilter || riid == IID_IPersist) 
-	{
-		//LogDebug("CMpTs:NonDelegatingQueryInterface other");
+  {
+    //LogDebug("CMpTs:NonDelegatingQueryInterface other");
     return m_pFilter->NonDelegatingQueryInterface(riid, ppv);
   } 
  
@@ -496,36 +497,36 @@ extern "C" BOOL WINAPI DllEntryPoint(HINSTANCE, ULONG, LPVOID);
 
 BOOL APIENTRY DllMain(HANDLE hModule, DWORD  dwReason, LPVOID lpReserved)
 {
-	return DllEntryPoint((HINSTANCE)(hModule), dwReason, lpReserved);
+  return DllEntryPoint((HINSTANCE)(hModule), dwReason, lpReserved);
 }
 
 void CMpTs::AnalyzeTsPacket(byte* tsPacket)
 {
-	try
-	{
+  try
+  {
     CAutoLock lock(&m_Lock);
     for (int i=0; i < (int)m_vecChannels.size();++i)
     {
       m_vecChannels[i]->OnTsPacket(tsPacket);
     }
-		m_pChannelScanner->OnTsPacket(tsPacket);
-		m_pEpgScanner->OnTsPacket(tsPacket);
-		m_pChannelLinkageScanner->OnTsPacket(tsPacket);
-	}
-	catch(...)
-	{
-		LogDebug("exception in AnalyzeTsPacket");
-	}
+    m_pChannelScanner->OnTsPacket(tsPacket);
+    m_pEpgScanner->OnTsPacket(tsPacket);
+    m_pChannelLinkageScanner->OnTsPacket(tsPacket);
+  }
+  catch(...)
+  {
+    LogDebug("exception in AnalyzeTsPacket");
+  }
 }
 
 
 STDMETHODIMP CMpTs::AddChannel( int* handle)
 {
   CAutoLock lock(&m_Lock);
-	HRESULT hr;
+  HRESULT hr;
   CTsChannel* channel = new CTsChannel(GetOwner(), &hr,m_id); 
-	*handle=m_id;
-	m_id++;
+  *handle=m_id;
+  m_id++;
   m_vecChannels.push_back(channel);
   return S_OK;
 }
@@ -533,44 +534,44 @@ STDMETHODIMP CMpTs::AddChannel( int* handle)
 STDMETHODIMP CMpTs::DeleteChannel( int handle)
 {
   CAutoLock lock(&m_Lock);
-	try
-	{
-		ivecChannels it = m_vecChannels.begin();
-		while (it != m_vecChannels.end())
-		{
-			if ((*it)->Handle()==handle)
-			{
-				delete *it;
-				m_vecChannels.erase(it);
+  try
+  {
+    ivecChannels it = m_vecChannels.begin();
+    while (it != m_vecChannels.end())
+    {
+      if ((*it)->Handle()==handle)
+      {
+        delete *it;
+        m_vecChannels.erase(it);
         if (m_vecChannels.size()==0)
         {
           m_id=0;
         }
-				return S_OK;
-			}
-			++it;
-		}
-	}
-	catch(...)
-	{
-	  LogDebug("exception in delete channel");
-	}
+        return S_OK;
+      }
+      ++it;
+    }
+  }
+  catch(...)
+  {
+    LogDebug("exception in delete channel");
+  }
   return S_OK;
 }
 
 CTsChannel* CMpTs::GetTsChannel(int handle)
 {
   CAutoLock lock(&m_Lock);
-	ivecChannels it = m_vecChannels.begin();
-	while (it != m_vecChannels.end())
-	{
-		if ((*it)->Handle()==handle)
-		{
-			return *it;
-		}
-		++it;
-	}
-	return NULL;
+  ivecChannels it = m_vecChannels.begin();
+  while (it != m_vecChannels.end())
+  {
+    if ((*it)->Handle()==handle)
+    {
+      return *it;
+    }
+    ++it;
+  }
+  return NULL;
 }
 
 STDMETHODIMP CMpTs::DeleteAllChannels()
@@ -582,7 +583,7 @@ STDMETHODIMP CMpTs::DeleteAllChannels()
     delete m_vecChannels[i];
   }
   m_vecChannels.clear();
-	m_id=0;
+  m_id=0;
   return S_OK;
 }
 
@@ -691,26 +692,26 @@ STDMETHODIMP CMpTs::RecordStartRecord( int handle)
 {
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
-	if (pChannel->m_pRecorder->Start())
-		return S_OK;
-	else
-		return S_FALSE;
+  if (pChannel->m_pRecorder->Start())
+    return S_OK;
+  else
+    return S_FALSE;
 }
 
 STDMETHODIMP CMpTs::RecordStopRecord( int handle)
 {
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
-	pChannel->m_pRecorder->Stop(  );
-	return S_OK;
+  pChannel->m_pRecorder->Stop(  );
+  return S_OK;
 }
 
 STDMETHODIMP CMpTs::RecordSetPmtPid(int handle,int mtPid, int serviceId,byte* pmtData,int pmtLength )
 {
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
-	pChannel->m_pRecorder->SetPmtPid( mtPid, serviceId,pmtData,pmtLength );
-	return S_OK;
+  pChannel->m_pRecorder->SetPmtPid( mtPid, serviceId,pmtData,pmtLength );
+  return S_OK;
 }
 
 STDMETHODIMP CMpTs::TimeShiftSetTimeShiftingFileNameW( int handle, wchar_t* pwszFileName)
@@ -738,13 +739,13 @@ STDMETHODIMP CMpTs::TimeShiftStart( int handle )
   if (pChannel==NULL) return S_OK;
   if (b_dumpRawPakets)
   {
-	  m_rawPaketWriter->OpenFile();
+    m_rawPaketWriter->OpenFile();
     LogDebug("Raw packet dump file created. Now dumping raw packets to dump file");
   }
   if (pChannel->m_pTimeShifting->Start())
-		return S_OK;
-	else
-		return S_FALSE;
+    return S_OK;
+  else
+    return S_FALSE;
 }
 
 STDMETHODIMP CMpTs::TimeShiftStop( int handle )
@@ -753,11 +754,11 @@ STDMETHODIMP CMpTs::TimeShiftStop( int handle )
   if (pChannel==NULL) return S_OK;
   if (b_dumpRawPakets)
   {
-	  m_rawPaketWriter->CloseFile();
+    m_rawPaketWriter->CloseFile();
     LogDebug("Raw packet dump file closed");
   }
-	pChannel->m_pTimeShifting->Stop( );
-	return S_OK;
+  pChannel->m_pTimeShifting->Stop( );
+  return S_OK;
 }
 
 STDMETHODIMP CMpTs:: TimeShiftReset( int handle )
@@ -766,36 +767,36 @@ STDMETHODIMP CMpTs:: TimeShiftReset( int handle )
   if (pChannel==NULL) return S_OK;
   if (b_dumpRawPakets)
   {
-	  m_rawPaketWriter->CloseFile();
-	  m_rawPaketWriter->OpenFile();
+    m_rawPaketWriter->CloseFile();
+    m_rawPaketWriter->OpenFile();
     LogDebug("Raw packet dump file reset");
   }
-	pChannel->m_pTimeShifting->Reset( );
-	return S_OK;
+  pChannel->m_pTimeShifting->Reset( );
+  return S_OK;
 }
 
 STDMETHODIMP CMpTs:: TimeShiftGetBufferSize( int handle, long * size) 
 {
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
-	pChannel->m_pTimeShifting->GetBufferSize( size);
-	return S_OK;
+  pChannel->m_pTimeShifting->GetBufferSize( size);
+  return S_OK;
 }
 
 STDMETHODIMP CMpTs:: TimeShiftSetPmtPid( int handle, int pmtPid, int serviceId,byte* pmtData,int pmtLength) 
 {
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
-	pChannel->m_pTimeShifting->SetPmtPid( pmtPid,serviceId,pmtData,pmtLength);
-	return S_OK;
+  pChannel->m_pTimeShifting->SetPmtPid( pmtPid,serviceId,pmtData,pmtLength);
+  return S_OK;
 }
 
 STDMETHODIMP CMpTs:: TimeShiftPause( int handle, BYTE onOff) 
 {
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
-	pChannel->m_pTimeShifting->Pause( onOff);
-	return S_OK;
+  pChannel->m_pTimeShifting->Pause( onOff);
+  return S_OK;
 }
 
 STDMETHODIMP CMpTs::TimeShiftSetParams(int handle, int minFiles, int maxFiles, ULONG chunkSize) 
@@ -813,7 +814,7 @@ STDMETHODIMP CMpTs::TimeShiftGetCurrentFilePosition(int handle,__int64 * positio
 {
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
-	pChannel->m_pTimeShifting->GetTimeShiftPosition(position,bufferId);
+  pChannel->m_pTimeShifting->GetTimeShiftPosition(position,bufferId);
   return S_OK;
 }
 
@@ -822,7 +823,7 @@ STDMETHODIMP CMpTs::SetVideoAudioObserver(int handle, IVideoAudioObserver* callb
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_FALSE;
   pChannel->m_pTimeShifting->SetVideoAudioObserver(callback);
-	return S_OK;
+  return S_OK;
 }
 
 STDMETHODIMP CMpTs::RecordSetVideoAudioObserver(int handle, IVideoAudioObserver* callback)
@@ -830,35 +831,7 @@ STDMETHODIMP CMpTs::RecordSetVideoAudioObserver(int handle, IVideoAudioObserver*
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_FALSE;
   pChannel->m_pRecorder->SetVideoAudioObserver(callback);
-	return S_OK;
-}
-
-STDMETHODIMP CMpTs::TTxStart( int handle)
-{
-  CTsChannel* pChannel=GetTsChannel(handle);
-  if (pChannel==NULL) return S_OK;
-	return pChannel->m_pTeletextGrabber->Start( );
-}
-
-STDMETHODIMP CMpTs::TTxStop( int handle )
-{
-  CTsChannel* pChannel=GetTsChannel(handle);
-  if (pChannel==NULL) return S_OK;
-	return pChannel->m_pTeletextGrabber->Stop( );
-}
-
-STDMETHODIMP CMpTs::TTxSetTeletextPid( int handle,int teletextPid)
-{
-  CTsChannel* pChannel=GetTsChannel(handle);
-  if (pChannel==NULL) return S_OK;
-	return pChannel->m_pTeletextGrabber->SetTeletextPid(teletextPid );
-}
-
-STDMETHODIMP CMpTs::TTxSetCallBack( int handle,ITeletextCallBack* callback)
-{
-  CTsChannel* pChannel=GetTsChannel(handle);
-  if (pChannel==NULL) return S_OK;
-	return pChannel->m_pTeletextGrabber->SetCallBack(callback );
+  return S_OK;
 }
 
 
@@ -922,7 +895,7 @@ STDMETHODIMP CMpTs::TimeShiftSetChannelType(int handle, int channelType)
 {
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
-	pChannel->m_pRecorder->SetChannelType(channelType);
-	pChannel->m_pTimeShifting->SetChannelType(channelType);
-	return S_OK;
+  pChannel->m_pRecorder->SetChannelType(channelType);
+  pChannel->m_pTimeShifting->SetChannelType(channelType);
+  return S_OK;
 }

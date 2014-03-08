@@ -52,7 +52,6 @@
     <Compile Include="CardHandler\IEpgGrabbing.cs" />
     <Compile Include="CardHandler\IParkedUserManagement.cs" />
     <Compile Include="CardHandler\IRecorder.cs" />
-    <Compile Include="CardHandler\ITeletextManagement.cs" />
     <Compile Include="CardHandler\ITimeShifter.cs" />
     <Compile Include="CardHandler\ITvCardHandler.cs" />
     <Compile Include="CardHandler\IUserManagement.cs" />

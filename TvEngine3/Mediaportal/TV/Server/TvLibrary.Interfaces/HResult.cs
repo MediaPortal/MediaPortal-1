@@ -468,7 +468,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
       // If a string is returned, build a COM error from it.
       if (errorString != null)
       {
-        errorString = string.Format("0x{0:X} ({1})", hr, errorString);
+        errorString = string.Format("0x{0:x} ({1})", hr, errorString);
         if (errorDescription != null)
         {
           errorString += " - " + errorDescription;
@@ -481,7 +481,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
       }
       else if (description != null)
       {
-        throw new TvException("0x{0:X} - {1}", hr, errorString);
+        throw new TvException("0x{0:x} - {1}", hr, errorString);
       }
       else
       {

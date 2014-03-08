@@ -485,7 +485,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
                     this.LogDebug("Digital Devices: menu call backs are not set");
                   }
 
-                  if (type == DigitalDevicesCiSlot.MenuType.MenuOrList)
+                  if (type == DigitalDevicesCiSlot.MenuType.Menu || type == DigitalDevicesCiSlot.MenuType.List)
                   {
                     this.LogDebug("  title     = {0}", entries[0]);
                     this.LogDebug("  sub-title = {0}", entries[1]);
@@ -539,6 +539,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
         this.LogError(ex, "Digital Devices: MMI handler thread exception");
         return;
       }
+      this.LogDebug("Digital Devices: MMI handler thread stop polling");
     }
 
     #endregion
@@ -562,11 +563,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
     /// initialisation fails, the <see ref="ICustomDevice"/> instance should be disposed
     /// immediately.
     /// </summary>
-    /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
+    /// <param name="tunerExternalId">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
     /// <param name="context">Context required to initialise the interface.</param>
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
-    public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
+    public override bool Initialise(string tunerExternalId, CardType tunerType, object context)
     {
       this.LogDebug("Digital Devices: initialising");
 
@@ -579,17 +580,17 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
       IBaseFilter tunerFilter = context as IBaseFilter;
       if (tunerFilter == null)
       {
-        this.LogDebug("Digital Devices: tuner filter is null");
+        this.LogDebug("Digital Devices: context is not a filter");
         return false;
       }
 
       // Digital Devices components have a common section in their device path.
-      if (string.IsNullOrEmpty(tunerExternalIdentifier))
+      if (string.IsNullOrEmpty(tunerExternalId))
       {
         this.LogDebug("Digital Devices: tuner external identifier is not set");
         return false;
       }
-      if (!tunerExternalIdentifier.ToLowerInvariant().Contains(DigitalDevicesCiSlot.COMMON_DEVICE_PATH_SECTION))
+      if (!tunerExternalId.ToLowerInvariant().Contains(DigitalDevicesCiSlot.COMMON_DEVICE_PATH_SECTION))
       {
         this.LogDebug("Digital Devices: external identifier does not contain the Digital Devices common section");
         return false;
@@ -597,7 +598,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
 
       this.LogInfo("Digital Devices: extension supported");
       _isDigitalDevices = true;
-      _tunerDevicePath = tunerExternalIdentifier;
+      _tunerDevicePath = tunerExternalId;
 
       // Check if DiSEqC is supported (only relevant for satellite tuners).
       if (tunerType == CardType.DvbS)
@@ -873,7 +874,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
     /// that any necessary hardware (such as a CI slot) is connected.
     /// </summary>
     /// <returns><c>true</c> if the interface is successfully opened, otherwise <c>false</c></returns>
-    public bool OpenInterface()
+    public bool OpenConditionalAccessInterface()
     {
       this.LogDebug("Digital Devices: open conditional access interface");
 
@@ -959,7 +960,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
     /// Close the conditional access interface.
     /// </summary>
     /// <returns><c>true</c> if the interface is successfully closed, otherwise <c>false</c></returns>
-    public bool CloseInterface()
+    public bool CloseConditionalAccessInterface()
     {
       this.LogDebug("Digital Devices: close conditional access interface");
 
@@ -995,7 +996,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
     /// <param name="resetTuner">This parameter will be set to <c>true</c> if the tuner must be reset
     ///   for the interface to be completely and successfully reset.</param>
     /// <returns><c>true</c> if the interface is successfully reset, otherwise <c>false</c></returns>
-    public bool ResetInterface(out bool resetTuner)
+    public bool ResetConditionalAccessInterface(out bool resetTuner)
     {
       this.LogDebug("Digital Devices: reset conditional access interface");
 
@@ -1012,7 +1013,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
         return false;
       }
 
-      bool success = CloseInterface();
+      bool success = CloseConditionalAccessInterface();
 
       // Reset the slot selection for menu browsing.
       _menuContext = null;
@@ -1034,14 +1035,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
           success = false;
         }
       }
-      return success && OpenInterface();
+      return success && OpenConditionalAccessInterface();
     }
 
     /// <summary>
     /// Determine whether the conditional access interface is ready to receive commands.
     /// </summary>
     /// <returns><c>true</c> if the interface is ready, otherwise <c>false</c></returns>
-    public bool IsInterfaceReady()
+    public bool IsConditionalAccessInterfaceReady()
     {
       this.LogDebug("Digital Devices: is conditional access interface ready");
 
@@ -1083,7 +1084,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
     /// <param name="pmt">The program map table for the service.</param>
     /// <param name="cat">The conditional access table for the service.</param>
     /// <returns><c>true</c> if the command is successfully sent, otherwise <c>false</c></returns>
-    public bool SendCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, Pmt pmt, Cat cat)
+    public bool SendConditionalAccessCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, Pmt pmt, Cat cat)
     {
       this.LogDebug("Digital Devices: send conditional access command, list action = {0}, command = {1}", listAction, command);
 
@@ -1145,7 +1146,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
         provider = dvbChannel.Provider;
       }
       int hr = (int)HResult.Severity.Success;
-      this.LogDebug("Digital Devices: service ID = {0} (0x{0:x}), provider = {1}", pmt.ProgramNumber, provider);
+      this.LogDebug("Digital Devices: service ID = {0}, provider = {1}", pmt.ProgramNumber, provider);
 
       lock (_sharedCiContextsLock)
       {
@@ -1284,7 +1285,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
 
                 int hr2 = selectedCiSlot.Slot.SendCaPmt(ciPmt.GetCaPmt(action, CaPmtCommand.OkDescrambling));
                 hr |= hr2;
-                this.LogDebug("    service ID {0} (0x{0:x}), action {1}, hr = 0x{2:x}", ciPmt.ProgramNumber, action, hr2);
+                this.LogDebug("    service ID {0}, action {1}, hr = 0x{2:x}", ciPmt.ProgramNumber, action, hr2);
                 i++;
               }
             }
@@ -1623,7 +1624,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
     /// </remarks>
     /// <param name="command">The command to send.</param>
     /// <returns><c>true</c> if the command is sent successfully, otherwise <c>false</c></returns>
-    public bool SendCommand(byte[] command)
+    public bool SendDiseqcCommand(byte[] command)
     {
       this.LogDebug("Digital Devices: send DiSEqC command");
 
@@ -1700,7 +1701,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
     /// </summary>
     /// <param name="response">The response (or command).</param>
     /// <returns><c>true</c> if the response is read successfully, otherwise <c>false</c></returns>
-    public bool ReadResponse(out byte[] response)
+    public bool ReadDiseqcResponse(out byte[] response)
     {
       this.LogDebug("Digital Devices: read DiSEqC response");
       response = null;
@@ -1745,7 +1746,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
     /// </summary>
     public override void Dispose()
     {
-      CloseInterface();
+      if (_isDigitalDevices)
+      {
+        CloseConditionalAccessInterface();
+      }
       if (_privateCiContexts != null)
       {
         foreach (PrivateCiContext context in _privateCiContexts.Values)

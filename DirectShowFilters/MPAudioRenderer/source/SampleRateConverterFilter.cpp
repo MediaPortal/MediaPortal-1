@@ -42,10 +42,6 @@ CSampleRateConverter::~CSampleRateConverter(void)
 
 HRESULT CSampleRateConverter::Init()
 {
-  HRESULT hr = InitAllocator();
-  if (FAILED(hr))
-    return hr;
-
   return CBaseAudioSink::Init();
 }
 
@@ -86,9 +82,12 @@ HRESULT CSampleRateConverter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, 
       SetOutputFormat(pwfx);
     }
 
+    m_bNextFormatPassthru = true;
     m_chOrder = *pChOrder;
     return hr;
   }
+  
+  m_bNextFormatPassthru = false;
 
   if (pwfx->SubFormat != KSDATAFORMAT_SUBTYPE_IEEE_FLOAT)
     return VFW_E_TYPE_NOT_ACCEPTED;
@@ -149,6 +148,8 @@ HRESULT CSampleRateConverter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, 
   if (bApplyChanges)
   {
     LogWaveFormat(pwfx, "SRC  - applying ");
+
+    m_pNextSink->NegotiateBuffer(pOutWfx, &m_nOutBufferSize, &m_nOutBufferCount, true);
 
     m_bPassThrough = false;
     SetInputFormat(pwfx);

@@ -48,9 +48,9 @@
       <Project>{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}</Project>
       <Name>TvLibrary.Interfaces</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MicrosoftBda\MicrosoftBda.csproj">
-      <Project>{4345B8A4-5656-4C50-8457-EDCF761E72E6}</Project>
-      <Name>MicrosoftBda</Name>
+    <ProjectReference Include="..\MicrosoftAtscQam\MicrosoftAtscQam.csproj">
+      <Project>{E0A9028F-2ECF-4740-AD9B-337B8460E283}</Project>
+      <Name>MicrosoftAtscQam</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

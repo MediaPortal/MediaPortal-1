@@ -78,7 +78,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Service
     ///     physical channel, then NewChannelNumber shall prevail.
     /// 3.  Set the ProgramNumber (Mux service) state variable.
     /// 4.  Reset the ACCI status message (see section 8.3) to 0.
-    /// 5.  Setthe DescramblingStatus state variable to “Unknown”.
+    /// 5.  Set the DescramblingStatus state variable to “Unknown”.
     /// 6.  Set the DescramblingMessage state variable to Null.
     /// 7.  Send a ca_pmt(Query) APDU to the Card.
     /// </summary>
@@ -122,7 +122,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Service
     ///     physical channel, then NewChannelNumber prevails.
     /// 3.  Set the ProgramNumber (Mux service) state variable.
     /// 4.  Reset the ACCI status message (see section 8.3) to 0.
-    /// 5.  Setthe DescramblingStatus (CAS service) state variable to “Unknown”.
+    /// 5.  Set the DescramblingStatus (CAS service) state variable to “Unknown”.
     /// 6.  Set the DescramblingMessage (CAS service) state variable to Null.
     /// 7.  Send a ca_pmt(Ok_descrambling) APDU to the Card.
     /// </summary>

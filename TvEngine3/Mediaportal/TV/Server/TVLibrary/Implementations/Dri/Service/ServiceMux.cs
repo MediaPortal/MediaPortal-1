@@ -63,7 +63,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Service
       string addPidListHexCsv = string.Empty;
       if (addPidList != null)
       {
-        addPidListHexCsv = string.Join(",", addPidList.Select(x => string.Format("{0:X}", x)).ToArray());
+        addPidListHexCsv = string.Join(",", addPidList.Select(x => string.Format("{0:X}", x)));
       }
       _addPidAction.InvokeAction(new List<object> { addPidListHexCsv });
     }
@@ -78,7 +78,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Service
       string removePidListHexCsv = string.Empty;
       if (removePidList != null)
       {
-        removePidListHexCsv = string.Join(",", removePidList.Select(x => string.Format("{0:X}", x)).ToArray());
+        removePidListHexCsv = string.Join(",", removePidList.Select(x => string.Format("{0:X}", x)));
       }
       _removePidAction.InvokeAction(new List<object> { removePidListHexCsv });
     }

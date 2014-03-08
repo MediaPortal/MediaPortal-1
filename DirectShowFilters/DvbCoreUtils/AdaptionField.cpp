@@ -19,7 +19,7 @@
  *
  */
 #pragma warning(disable : 4995)
-#include <windows.h>
+#include <Windows.h>
 #include "..\shared\adaptionField.h" 
 
 

@@ -1,6 +1,6 @@
 /* 
- *	Copyright (C) 2006-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
+ *  Copyright (C) 2006-2008 Team MediaPortal
+ *  http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -34,48 +34,48 @@ DEFINE_GUID(IID_IChannelLinkageCallback, 0xf8a86679, 0xc80a, 0x42fd, 0xa1, 0x48,
 
 DECLARE_INTERFACE_(IChannelLinkageCallback, IUnknown)
 {
-	STDMETHOD(OnLinkageReceived)()PURE;
+  STDMETHOD(OnLinkageReceived)()PURE;
 };
 
 
 // video anayzer interface
 DECLARE_INTERFACE_(ITsChannelLinkageScanner, IUnknown)
 {
-	STDMETHOD(Start)(THIS_) PURE;
-	STDMETHOD(Reset)(THIS_)PURE;
+  STDMETHOD(Start)(THIS_) PURE;
+  STDMETHOD(Reset)(THIS_)PURE;
 
-	STDMETHOD(GetChannelCount) (THIS_ ULONG* channelCount)PURE;
-	STDMETHOD(GetChannel) (THIS_ ULONG channelIndex, WORD* network_id, WORD* transport_id,WORD* service_id  )PURE;
-	STDMETHOD(GetLinkedChannelsCount) (THIS_ ULONG channelIndex, ULONG* linkedChannelsCount)PURE;
-	STDMETHOD(GetLinkedChannel) (THIS_ ULONG channelIndex,ULONG linkIndex, WORD* network_id, WORD* transport_id,WORD* service_id, char** channelName  )PURE;
+  STDMETHOD(GetChannelCount) (THIS_ ULONG* channelCount)PURE;
+  STDMETHOD(GetChannel) (THIS_ ULONG channelIndex, WORD* network_id, WORD* transport_id,WORD* service_id  )PURE;
+  STDMETHOD(GetLinkedChannelsCount) (THIS_ ULONG channelIndex, ULONG* linkedChannelsCount)PURE;
+  STDMETHOD(GetLinkedChannel) (THIS_ ULONG channelIndex,ULONG linkIndex, WORD* network_id, WORD* transport_id,WORD* service_id, char** channelName  )PURE;
   
-	STDMETHOD(SetCallBack)(THIS_ IChannelLinkageCallback* callback)PURE;
+  STDMETHOD(SetCallBack)(THIS_ IChannelLinkageCallback* callback)PURE;
 };
 
 class CChannelLinkageScanner: public CUnknown, public ITsChannelLinkageScanner
 {
 public:
-	CChannelLinkageScanner(LPUNKNOWN pUnk, HRESULT *phr);
-	~CChannelLinkageScanner(void);
+  CChannelLinkageScanner(LPUNKNOWN pUnk, HRESULT *phr);
+  ~CChannelLinkageScanner(void);
 
   DECLARE_IUNKNOWN
 
-	STDMETHODIMP Start();
-	STDMETHODIMP Reset();
+  STDMETHODIMP Start();
+  STDMETHODIMP Reset();
 
-	STDMETHODIMP GetChannelCount (THIS_ ULONG* channelCount);
-	STDMETHODIMP GetChannel (THIS_ ULONG channelIndex, WORD* network_id, WORD* transport_id,WORD* service_id  );
-	STDMETHODIMP GetLinkedChannelsCount (THIS_ ULONG channelIndex, ULONG* linkedChannelsCount);
-	STDMETHODIMP GetLinkedChannel (THIS_ ULONG channel,ULONG linkIndex, WORD* network_id, WORD* transport_id,WORD* service_id, char** channelName  );
+  STDMETHODIMP GetChannelCount (THIS_ ULONG* channelCount);
+  STDMETHODIMP GetChannel (THIS_ ULONG channelIndex, WORD* network_id, WORD* transport_id,WORD* service_id  );
+  STDMETHODIMP GetLinkedChannelsCount (THIS_ ULONG channelIndex, ULONG* linkedChannelsCount);
+  STDMETHODIMP GetLinkedChannel (THIS_ ULONG channel,ULONG linkIndex, WORD* network_id, WORD* transport_id,WORD* service_id, char** channelName  );
 
-	STDMETHODIMP SetCallBack(IChannelLinkageCallback* callback);
+  STDMETHODIMP SetCallBack(IChannelLinkageCallback* callback);
 
-	void OnTsPacket(byte* tsPacket);
+  void OnTsPacket(byte* tsPacket);
 protected:
-	IChannelLinkageCallback* m_pCallBack;
-	CChannelLinkageParser m_ChannelLinkageParser;
+  IChannelLinkageCallback* m_pCallBack;
+  CChannelLinkageParser m_ChannelLinkageParser;
 private:
-	bool m_bScanning;
-	CCriticalSection m_section;
-	CTsHeader m_header;
+  bool m_bScanning;
+  CCriticalSection m_section;
+  CTsHeader m_header;
 };

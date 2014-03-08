@@ -22,13 +22,23 @@
 
 #include "..\..\shared\sectiondecoder.h"
 #include <map>
+#include <vector>
 using namespace std;
 
 class IPatCallBack
 {
   public:
-    virtual void OnPatReceived(int serviceId, int pmtPid) = 0;
+    virtual void OnPatReceived(int programNumber, int pmtPid) = 0;
+    virtual void OnPatChanged(int programNumber, int oldPmtPid, int newPmtPid) = 0;
+    virtual void OnPatRemoved(int programNumber, int pmtPid) = 0;
 };
+
+typedef struct ProgramDetail
+{
+  int ProgramNumber;
+  int Pid;
+  bool IsCurrent;
+}ProgramDetail;
 
 #define PID_PAT 0x0
 
@@ -41,13 +51,16 @@ class CPatParser : public CSectionDecoder
     void SetCallBack(IPatCallBack* callBack);
     void OnNewSection(CSection& sections);
     bool IsReady();
-    int GetServiceCount();
-    int GetService(int idx, int* serviceId, int* pmtPid);
-    int GetPmtPid(int serviceId, int* pmtPid);
+    int GetProgramCount();
+    int GetProgram(int idx, int* programNumber, int* pmtPid);
+    int GetPmtPid(int programNumber, int* pmtPid);
 
   private:
-    IPatCallBack* m_pCallBack;
-    map<int, bool> m_mSeenSections;
-    bool m_bIsReady;
-    map<int, int> m_mServices;
+    void CleanUp();
+
+    IPatCallBack* m_callBack;
+    int m_currentVersionNumber;
+    vector<int> m_unseenSections;
+    bool m_isReady;
+    map<int, ProgramDetail*> m_programs;
 };

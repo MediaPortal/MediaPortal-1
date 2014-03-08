@@ -18,33 +18,34 @@
 
 #endregion
 
-using System.Text.RegularExpressions;
-using System.Threading;
-using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream;
-using UPnP.Infrastructure.CP.Description;
-using UPnP.Infrastructure.CP;
-using UPnP.Infrastructure.CP.DeviceTree;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
-using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Service;
-using Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Enum;
-using Mediaportal.TV.Server.TVLibrary.Implementations.Dri;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.NetworkInformation;
+using System.Text.RegularExpressions;
+using DirectShowLib.BDA;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Dri;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Enum;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Service;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Rtsp;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Upnp.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Upnp.Service;
-using System;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 using UPnP.Infrastructure.Common;
-using System.Net;
-using System.IO;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using DirectShowLib.BDA;
+using UPnP.Infrastructure.CP;
+using UPnP.Infrastructure.CP.Description;
+using UPnP.Infrastructure.CP.DeviceTree;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
 {
-  public class TunerDri : TunerStream
+  public class TunerDri : TunerStream, IConditionalAccessMenuActions
   {
     #region constants
 
@@ -72,25 +73,34 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
     private ServiceAvTransport _serviceAvTransport = null;
     private ServiceConnectionManager _serviceConnectionManager = null;
 
+    // RTSP/RTP
+    private string _rtspUri = string.Empty;
+    private Rtsp.RtspClient _rtspClient = null;
+    private string _rtspSessionId = string.Empty;
+    private IPAddress _localIpAddress = null;
+    private string _serverIpAddress = string.Empty;
+
+    // UPnP AV
     private int _connectionId = -1;
     private int _avTransportId = -1;
-    private string _streamUrl = string.Empty;
 
     // These variables are used to ensure we don't interrupt another
     // application using the tuner.
     private bool _gotTunerControl = false;
     private AvTransportState _transportState = AvTransportState.Stopped;
-    private volatile bool _isTunerSignalLocked = false;
 
     // Important DRM state variables.
     private CasCardStatus _cardStatus = CasCardStatus.Removed;
     private CasDescramblingStatus _descramblingStatus = CasDescramblingStatus.Unknown;
     private SecurityPairingStatus _pairingStatus = SecurityPairingStatus.Red;
 
+    // CA menu variables
+    private object _caMenuCallBackLock = new object();
     private IConditionalAccessMenuCallBacks _caMenuCallBacks = null;
-    private byte _mmiDialogNumber = 0;
-    private IDictionary<int, string> _mmiMenuLinks = new Dictionary<int, string>();
+    private CableCardMmiHandler _caMenuHandler = null;
 
+    private volatile bool _isTunerSignalLocked = false;
+    private int _currentFrequency = -1;
     private readonly bool _isCetonDevice = false;
     private bool _canPause = false;
 
@@ -108,306 +118,51 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
       _descriptor = descriptor;
       _controlPoint = controlPoint;
       _isCetonDevice = descriptor.FriendlyName.Contains("Ceton");
-    }
+      _caMenuHandler = new CableCardMmiHandler(EnterMenu, CloseDialog);
 
-    #region IDisposable member
+      _localIpAddress = descriptor.RootDescriptor.SSDPRootEntry.PreferredLink.Endpoint.EndPointIPAddress;
+      _serverIpAddress = new Uri(descriptor.RootDescriptor.SSDPRootEntry.PreferredLink.DescriptionLocation).Host;
 
-    public override void Dispose()
-    {
-      base.Dispose();
+      // CableCARD tuners are limited to one channel per tuner, even for
+      // non-encrypted channels:
+      // The DRIT SHALL output the selected program content as a single program
+      // MPEG-TS in RTP packets according to [RTSP] and [RTP].
+      // - OpenCable DRI I04 specification, 10 September 2010
+      _supportsSubChannels = false;
 
-      if (_serviceTuner != null)
+      if (descriptor.FriendlyName.Contains("Ceton"))
       {
-        _serviceTuner.Dispose();
-        _serviceTuner = null;
-      }
-      if (_serviceFdc != null)
-      {
-        _serviceFdc.Dispose();
-        _serviceFdc = null;
-      }
-      if (_serviceAux != null)
-      {
-        _serviceAux.Dispose();
-        _serviceAux = null;
-      }
-      if (_serviceEncoder != null)
-      {
-        _serviceEncoder.Dispose();
-        _serviceEncoder = null;
-      }
-      if (_serviceCas != null)
-      {
-        _serviceCas.Dispose();
-        _serviceCas = null;
-      }
-      if (_serviceMux != null)
-      {
-        _serviceMux.Dispose();
-        _serviceMux = null;
-      }
-      if (_serviceSecurity != null)
-      {
-        _serviceSecurity.Dispose();
-        _serviceSecurity = null;
-      }
-      if (_serviceDiag != null)
-      {
-        _serviceDiag.Dispose();
-        _serviceDiag = null;
-      }
-      if (_serviceAvTransport != null)
-      {
-        if (_gotTunerControl && _transportState != AvTransportState.Stopped)
+        // Example: Ceton InfiniTV PCIe (00-80-75-05) Tuner 1 (00-00-22-00-00-80-75-05)
+        Match m = Regex.Match(descriptor.FriendlyName, @"\s+\(([^\s]+)\)\s+Tuner\s+(\d+)", RegexOptions.IgnoreCase);
+        if (m.Success)
         {
-          _serviceAvTransport.Stop((uint)_avTransportId);
-          _transportState = AvTransportState.Stopped;
+          _productInstanceId = m.Groups[1].Captures[0].Value;
+          _tunerInstanceId = m.Groups[2].Captures[0].Value;
         }
-        _serviceAvTransport.Dispose();
-        _serviceAvTransport = null;
       }
-      if (_serviceConnectionManager != null)
+      else
       {
-        _serviceConnectionManager.ConnectionComplete(_connectionId);
-        _serviceConnectionManager.Dispose();
-        _serviceConnectionManager = null;
+        // Examples: HDHomeRun Prime Tuner 1316890F-1, Hauppauge OpenCable Receiver 201200AA-1
+        Match m = Regex.Match(descriptor.FriendlyName, @"\s+([^\s]+)-(\d)$", RegexOptions.IgnoreCase);
+        if (m.Success)
+        {
+          _productInstanceId = m.Groups[1].Captures[0].Value;
+          _tunerInstanceId = m.Groups[2].Captures[0].Value;
+        }
       }
-
-      if (_deviceConnection != null)
-      {
-        _deviceConnection.Disconnect();
-        _deviceConnection = null;
-      }
-      _gotTunerControl = false;
-    }
-
-    #endregion
-
-    #region IConditionalAccessMenuActions members
-
-    /// <summary>
-    /// Set the menu call back delegate.
-    /// </summary>
-    /// <param name="callBacks">The call back delegate.</param>
-    public void SetCallBacks(IConditionalAccessMenuCallBacks callBacks)
-    {
-      lock (_caMenuCallBackLock)
-      {
-        _caMenuCallBacks = callBacks;
-      }
-    }
-
-    /// <summary>
-    /// Send a request from the user to the CAM to open the menu.
-    /// </summary>
-    /// <returns><c>true</c> if the request is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
-    public bool EnterMenu()
-    {
-      this.LogDebug("DRI CableCARD: enter menu");
-      // TODO I don't know how to implement this yet.
-      return true;
-    }
-
-    /// <summary>
-    /// Send a request from the user to the CAM to close the menu.
-    /// </summary>
-    /// <returns><c>true</c> if the request is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
-    public bool CloseMenu()
-    {
-      this.LogDebug("DRI CableCARD: close menu");
-      _serviceCas.NotifyMmiClose(_mmiDialogNumber);
-      return true;
-    }
-
-    /// <summary>
-    /// Send a menu entry selection from the user to the CAM.
-    /// </summary>
-    /// <param name="choice">The index of the selection as an unsigned byte value.</param>
-    /// <returns><c>true</c> if the selection is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
-    public bool SelectMenuEntry(byte choice)
-    {
-      this.LogDebug("DRI CableCARD: select menu entry, choice = {0}", choice);
-      string url;
-      if (_mmiMenuLinks.TryGetValue(choice, out url))
-      {
-        HandleMmiUrl(url);
-      }
-      return true;
-    }
-
-    /// <summary>
-    /// Send an answer to an enquiry from the user to the CAM.
-    /// </summary>
-    /// <param name="cancel"><c>True</c> to cancel the enquiry.</param>
-    /// <param name="answer">The user's answer to the enquiry.</param>
-    /// <returns><c>true</c> if the answer is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
-    public bool AnswerEnquiry(bool cancel, string answer)
-    {
-      if (answer == null)
-      {
-        answer = string.Empty;
-      }
-      this.LogDebug("DRI CableCARD: answer enquiry, answer = {0}, cancel = {1}", answer, cancel);
-
-      // TODO I don't know how to implement this yet.
-      return true;
-    }
-
-    #endregion
-
-    private bool IsTunerInUse()
-    {
-      if (_gotTunerControl)
-      {
-        return false;
-      }
-      AvTransportStatus transportStatus = AvTransportStatus.Ok;
-      string speed = string.Empty;
-      _serviceAvTransport.GetTransportInfo((uint)_avTransportId, out _transportState, out transportStatus, out speed);
-      if (_transportState == AvTransportState.Stopped)
-      {
-        return false;
-      }
-      return true;
     }
 
     private void ReadDeviceInfo()
     {
       try
       {
-        this.LogDebug("DRI CableCARD: current tuner status...");
-        bool isCarrierLocked = false;
-        uint frequency = 0;
-        TunerModulation modulation = TunerModulation.All;
-        bool isPcrLocked = false;
-        int signalLevel = 0;
-        uint snr = 0;
-        _serviceTuner.GetTunerParameters(out isCarrierLocked, out frequency, out modulation, out isPcrLocked, out signalLevel, out snr);
-        this.LogDebug("  carrier lock = {0}", isCarrierLocked);
-        this.LogDebug("  frequency    = {0} kHz", frequency);
-        this.LogDebug("  modulation   = {0}", modulation.ToString());
-        this.LogDebug("  PCR lock     = {0}", isPcrLocked);
-        this.LogDebug("  signal level = {0} dBmV", signalLevel);
-        this.LogDebug("  SNR          = {0} dB", snr);
-
-        this.LogDebug("DRI CableCARD: current forward data channel status...");
-        uint bitrate = 0;
-        bool spectrumInversion = false;
-        IList<ushort> pids;
-        _serviceFdc.GetFdcStatus(out bitrate, out isCarrierLocked, out frequency, out spectrumInversion, out pids);
-        this.LogDebug("  bitrate           = {0} kbps", bitrate);
-        this.LogDebug("  carrier lock      = {0}", isCarrierLocked);
-        this.LogDebug("  frequency         = {0} kHz", frequency);
-        this.LogDebug("  spectrum inverted = {0}", spectrumInversion);
-        this.LogDebug("  PIDs              = {0}", string.Join(", ", pids.Select(x => x.ToString()).ToArray()));
-
-        IList<AuxFormat> formats;
-        byte svideoInputCount = 0;
-        byte compositeInputCount = 0;
-        if (_serviceAux.GetAuxCapabilities(out formats, out svideoInputCount, out compositeInputCount))
-        {
-          this.LogDebug("DRI CableCARD: auxiliary input info...");
-          this.LogDebug("  supported formats     = {0}", string.Join(", ", formats.Select(x => x.ToString()).ToArray()));
-          this.LogDebug("  S-video input count   = {0}", svideoInputCount);
-          this.LogDebug("  composite input count = {0}", compositeInputCount);
-        }
-        else
-        {
-          this.LogDebug("DRI CableCARD: auxiliary inputs not present/supported");
-        }
-
-        IList<EncoderAudioProfile> audioProfiles;
-        IList<EncoderVideoProfile> videoProfiles;
-        _serviceEncoder.GetEncoderCapabilities(out audioProfiles, out videoProfiles);
-        if (audioProfiles.Count > 0)
-        {
-          this.LogDebug("DRI CableCARD: encoder audio profiles...");
-          foreach (EncoderAudioProfile ap in audioProfiles)
-          {
-            this.LogDebug("  codec = {0}, bit depth = {1}, channel count = {2}, sample rate = {3} Hz", Enum.GetName(typeof(EncoderAudioAlgorithm), ap.AudioAlgorithmCode), ap.BitDepth, ap.NumberChannel, ap.SamplingRate);
-          }
-        }
-        if (videoProfiles.Count > 0)
-        {
-          this.LogDebug("DRI CableCARD: encoder video profiles...");
-          foreach (EncoderVideoProfile vp in videoProfiles)
-          {
-            this.LogDebug("  hor. pixels = {0}, vert. pixels = {1}, aspect ratio = {2}, frame rate = {3}, {4}", vp.HorizontalSize, vp.VerticalSize, Enum.GetName(typeof(EncoderVideoAspectRatio), vp.AspectRatioInformation), Enum.GetName(typeof(EncoderVideoFrameRate), vp.FrameRateCode));
-          }
-        }
-
-        uint maxAudioBitrate = 0;
-        uint minAudioBitrate = 0;
-        EncoderMode audioBitrateMode = EncoderMode.ConstantBitRate;
-        uint audioBitrateStepping = 0;
-        uint audioBitrate = 0;
-        byte audioProfileIndex = 0;
-        bool isMuted = false;
-        bool sapDetected = false; // second audio program (additional audio stream)
-        bool sapActive = false;
-        EncoderFieldOrder fieldOrder = EncoderFieldOrder.Higher;
-        EncoderInputSelection source = EncoderInputSelection.Aux;
-        bool noiseFilterActive = false;
-        bool pulldownDetected = false;
-        bool pulldownActive = false;
-        uint maxVideoBitrate = 0;
-        uint minVideoBitrate = 0;
-        EncoderMode videoBitrateMode = EncoderMode.ConstantBitRate;
-        uint videoBitrate = 0;
-        uint videoBitrateStepping = 0;
-        byte videoProfileIndex = 0;
-        _serviceEncoder.GetEncoderParameters(out maxAudioBitrate, out minAudioBitrate, out audioBitrateMode,
-          out audioBitrateStepping, out audioBitrate, out audioProfileIndex, out isMuted,
-          out fieldOrder, out source, out noiseFilterActive, out pulldownDetected,
-          out pulldownActive, out sapDetected, out sapActive, out maxVideoBitrate, out minVideoBitrate,
-          out videoBitrateMode, out videoBitrate, out videoBitrateStepping, out videoProfileIndex);
-        this.LogDebug("DRI CableCARD: current encoder audio parameters...");
-        this.LogDebug("  max bitrate  = {0} kbps", maxAudioBitrate / 1000);
-        this.LogDebug("  min bitrate  = {0} kbps", minAudioBitrate / 1000);
-        this.LogDebug("  bitrate mode = {0}", audioBitrateMode);
-        this.LogDebug("  bitrate step = {0} kbps", audioBitrateStepping / 1000);
-        this.LogDebug("  bitrate      = {0} kbps", audioBitrate / 1000);
-        this.LogDebug("  profile      = {0}", audioProfileIndex);
-        this.LogDebug("  is muted     = {0}", isMuted);
-        this.LogDebug("  SAP detected = {0}", sapDetected);
-        this.LogDebug("  SAP active   = {0}", sapActive);
-        this.LogDebug("DRI CableCARD: current encoder video parameters...");
-        this.LogDebug("  max bitrate  = {0} kbps", maxVideoBitrate / 1000);
-        this.LogDebug("  min bitrate  = {0} kbps", minVideoBitrate / 1000);
-        this.LogDebug("  bitrate mode = {0}", videoBitrateMode);
-        this.LogDebug("  bitrate step = {0} kbps", videoBitrateStepping / 1000);
-        this.LogDebug("  bitrate      = {0} kbps", videoBitrate / 1000);
-        this.LogDebug("  profile      = {0}", videoProfileIndex);
-        this.LogDebug("  field order  = {0}", fieldOrder.ToString());
-        this.LogDebug("  source       = {0}", source.ToString());
-        this.LogDebug("  noise filter = {0}", noiseFilterActive);
-        this.LogDebug("  3:2 detected = {0}", pulldownDetected);
-        this.LogDebug("  3:2 active   = {0}", pulldownActive);
-
-        this.LogDebug("DRI CableCARD: card status...");
-        CasCardStatus status = CasCardStatus.Removed;
-        string manufacturer = string.Empty;
-        string version = string.Empty;
-        bool isDst = false;
-        uint eaLocationCode = 0;
-        byte ratingRegion = 0;
-        int timeZone = 0;
-        _serviceCas.GetCardStatus(out status, out manufacturer, out version, out isDst, out eaLocationCode, out ratingRegion, out timeZone);
-        this.LogDebug("  status        = {0}", status.ToString());
-        this.LogDebug("  manufacturer  = {0}", manufacturer);
-        this.LogDebug("  version       = {0}", version);
-        this.LogDebug("  time zone     = {0}", timeZone);
-        this.LogDebug("  DST           = {0}", isDst);
-        this.LogDebug("  EA loc. code  = {0}", eaLocationCode);  // EA = emergency alert
-        this.LogDebug("  rating region = {0}", ratingRegion);
-
         this.LogDebug("DRI CableCARD: diagnostic parameters...");
         string value = string.Empty;
         bool isVolatile = false;
         foreach (DiagParameterDri p in DiagParameterDri.Values)
         {
           _serviceDiag.GetParameter(p, out value, out isVolatile);
-          this.LogDebug("  {0}{1} = {2}", p.ToString(), isVolatile ? " [volatile]" : "", value);
+          this.LogDebug("  {0}{1} = {2}", p.ToString(), isVolatile ? " [volatile]" : string.Empty, value);
         }
         if (_isCetonDevice)
         {
@@ -415,7 +170,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
           foreach (DiagParameterCeton p in DiagParameterCeton.Values)
           {
             _serviceDiag.GetParameter(p, out value, out isVolatile);
-            this.LogDebug("  {0}{1} = {2}", p.ToString(), isVolatile ? " [volatile]" : "", value);
+            this.LogDebug("  {0}{1} = {2}", p.ToString(), isVolatile ? " [volatile]" : string.Empty, value);
           }
         }
 
@@ -423,21 +178,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
         IList<AvTransportAction> actions;
         if (_serviceAvTransport.GetCurrentTransportActions((uint)_avTransportId, out actions))
         {
-          this.LogDebug("DRI CableCARD: supported AV transport actions = {0}", string.Join(", ", actions.Select(x => x.ToString()).ToArray()));
+          this.LogDebug("DRI CableCARD: supported AV transport actions = {0}", string.Join(", ", actions.Select(x => x.ToString())));
           if (actions.Contains(AvTransportAction.Pause))
           {
             _canPause = true;
           }
         }
-        IList<AvTransportStorageMedium> playMedia;
-        IList<AvTransportStorageMedium> recordMedia;
-        IList<AvTransportRecordQualityMode> recordQualityModes;
-        _serviceAvTransport.GetDeviceCapabilities((uint)_avTransportId, out playMedia, out recordMedia, out recordQualityModes);
-        this.LogDebug("DRI CableCARD: supported play media = {0}", string.Join(", ", playMedia.Select(x => x.ToString()).ToArray()));
-        this.LogDebug("DRI CableCARD: supported record media = {0}", string.Join(", ", recordMedia.Select(x => x.ToString()).ToArray()));
-        this.LogDebug("DRI CableCARD: supported record quality modes = {0}", string.Join(", ", recordQualityModes.Select(x => x.ToString()).ToArray()));
 
-        this.LogDebug("DRI CableCARD: media info...");
         uint trackCount = 0;
         string mediaDuration = string.Empty;
         string currentUri = string.Empty;
@@ -449,56 +196,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
         AvTransportRecordMediumWriteStatus writeStatus = AvTransportRecordMediumWriteStatus.NotImplemented;
         _serviceAvTransport.GetMediaInfo((uint)_avTransportId, out trackCount, out mediaDuration, out currentUri,
           out currentUriMetaData, out nextUri, out nextUriMetaData, out playMedium, out recordMedium, out writeStatus);
-        this.LogDebug("  track count        = {0}", trackCount);
-        this.LogDebug("  duration           = {0}", mediaDuration);
-        this.LogDebug("  cur. URI           = {0}", currentUri);
-        this.LogDebug("  cur. URI meta data = {0}", currentUriMetaData);
-        this.LogDebug("  next URI           = {0}", nextUri);
-        this.LogDebug("  next URI meta data = {0}", nextUriMetaData);
-        this.LogDebug("  play medium        = {0}", playMedium);
-        this.LogDebug("  record medium      = {0}", recordMedium);
-        this.LogDebug("  write status       = {0}", writeStatus);
-        _streamUrl = currentUri;
-
-        /*
-         * Ceton tuners set relCount and absCount to NOT_IMPLEMENTED. Those
-         * parameters are meant to be type i4 (32 bit integers), so those
-         * values are invalid. This is confirmed in the UPnP specs which state
-         * such parameters should be set to the max value for i4.
-        this.LogDebug("DRI CableCARD: position info...");
-        uint track = 0;
-        string duration = string.Empty;
-        string metaData = string.Empty;
-        string uri = string.Empty;
-        string relTime = string.Empty;
-        string absTime = string.Empty;
-        int relCount = 0;
-        int absCount = 0;
-        _avTransportService.GetPositionInfo((uint)_avTransportId, out track, out duration, out metaData, out uri,
-          out relTime, out absTime, out relCount, out absCount);
-        this.LogDebug("  track          = {0}", track);
-        this.LogDebug("  duration       = {0}", duration);
-        this.LogDebug("  meta data      = {0}", metaData);
-        this.LogDebug("  URI            = {0}", uri);
-        this.LogDebug("  relative time  = {0}", relTime);
-        this.LogDebug("  absolute time  = {0}", absTime);
-        this.LogDebug("  relative count = {0}", relCount);
-        this.LogDebug("  absolute count = {0}", absCount);*/
-
-        this.LogDebug("DRI CableCARD: transport info...");
-        AvTransportState transportState = AvTransportState.NoMediaPresent;
-        AvTransportStatus transportStatus = AvTransportStatus.Ok;
-        string speed = string.Empty;
-        _serviceAvTransport.GetTransportInfo((uint)_avTransportId, out transportState, out transportStatus, out speed);
-        this.LogDebug("  state       = {0}", transportState);
-        this.LogDebug("  status      = {0}", transportStatus);
-        this.LogDebug("  speed       = {0}", speed);
-
-        AvTransportCurrentPlayMode playMode;
-        AvTransportRecordQualityMode recordQualityMode;
-        _serviceAvTransport.GetTransportSettings((uint)_avTransportId, out playMode, out recordQualityMode);
-        this.LogDebug("  play mode   = {0}", playMode);
-        this.LogDebug("  record mode = {0}", recordQualityMode);
+        this.LogDebug("DRI CableCARD: current URI = {0}", currentUri);
+        _rtspUri = currentUri;
       }
       catch (Exception ex)
       {
@@ -548,15 +247,77 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
       _serviceConnectionManager.PrepareForConnection(string.Empty, string.Empty, -1, ConnectionDirection.Output, out _connectionId, out _avTransportId, out rcsId);
       this.LogDebug("DRI CableCARD: PrepareForConnection, connection ID = {0}, AV transport ID = {1}", _connectionId, _avTransportId);
 
-      // Check that the device is not already in use.
-      if (IsTunerInUse())
-      {
-        throw new TvExceptionTunerLoadFailed("Tuner appears to be in use.");
-      }
-
       ReadDeviceInfo();
 
       base.PerformLoading();
+    }
+
+    /// <summary>
+    /// Actually unload the tuner.
+    /// </summary>
+    protected override void PerformUnloading()
+    {
+      this.LogDebug("DRI CableCARD: perform unloading");
+
+      if (_serviceTuner != null)
+      {
+        _serviceTuner.Dispose();
+        _serviceTuner = null;
+      }
+      if (_serviceFdc != null)
+      {
+        _serviceFdc.Dispose();
+        _serviceFdc = null;
+      }
+      if (_serviceAux != null)
+      {
+        _serviceAux.Dispose();
+        _serviceAux = null;
+      }
+      if (_serviceEncoder != null)
+      {
+        _serviceEncoder.Dispose();
+        _serviceEncoder = null;
+      }
+      if (_serviceCas != null)
+      {
+        _serviceCas.Dispose();
+        _serviceCas = null;
+      }
+      if (_serviceMux != null)
+      {
+        _serviceMux.Dispose();
+        _serviceMux = null;
+      }
+      if (_serviceSecurity != null)
+      {
+        _serviceSecurity.Dispose();
+        _serviceSecurity = null;
+      }
+      if (_serviceDiag != null)
+      {
+        _serviceDiag.Dispose();
+        _serviceDiag = null;
+      }
+      if (_serviceAvTransport != null)
+      {
+        _serviceAvTransport.Dispose();
+        _serviceAvTransport = null;
+      }
+      if (_serviceConnectionManager != null)
+      {
+        _serviceConnectionManager.ConnectionComplete(_connectionId);
+        _serviceConnectionManager.Dispose();
+        _serviceConnectionManager = null;
+      }
+
+      if (_deviceConnection != null)
+      {
+        _deviceConnection.Disconnect();
+        _deviceConnection = null;
+      }
+
+      base.PerformUnloading();
     }
 
     /// <summary>
@@ -583,21 +344,26 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
 
       if (_serviceAvTransport != null && _gotTunerControl)
       {
-        if (state == TunerState.Stopped || (state == TunerState.Paused && !_canPause))
+        if (state == TunerState.Stopped || state == TunerState.Paused)
         {
-          _serviceAvTransport.Stop((uint)_avTransportId);
-          _transportState = AvTransportState.Stopped;
-          _gotTunerControl = false;
+          if (state == TunerState.Stopped)
+          {
+            _serviceAvTransport.Stop((uint)_avTransportId);
+            _transportState = AvTransportState.Stopped;
+            _gotTunerControl = false;
+          }
+          else
+          {
+            _serviceAvTransport.Pause((uint)_avTransportId);
+            _transportState = AvTransportState.PausedPlayback;
+          }
+          StopStreaming();
         }
-        else if (state == TunerState.Paused)
-        {
-          _serviceAvTransport.Pause((uint)_avTransportId);
-          _transportState = AvTransportState.PausedPlayback;
-        }
-        else
+        else if (state == TunerState.Started)
         {
           _serviceAvTransport.Play((uint)_avTransportId, "1");
           _transportState = AvTransportState.Playing;
+          StartStreaming();
         }
       }
       base.SetTunerState(state);
@@ -667,6 +433,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
           {
             throw new TvExceptionNoSignal("Out-of-band tuner not locked.");
           }
+          this.LogDebug("  frequency = {0} kHz", frequency);
+          this.LogDebug("  bitrate   = {0} kbps", bitrate);
+          this.LogDebug("  PIDs      = {0}", string.Join(", ", pids.Select(x => x.ToString())));
           return;
         }
       }
@@ -680,6 +449,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
       // CableCARD tuning
       if (!atscChannel.FreeToAir)
       {
+        _currentFrequency = -1;
         if (atscChannel.MajorChannel > 0)
         {
           this.LogDebug("DRI CableCARD: tuning by channel number");
@@ -688,7 +458,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
         else if (atscChannel.NetworkId > 0)
         {
           this.LogDebug("DRI CableCARD: tuning by source ID");
-          _serviceCas.SetChannel(0, (uint)atscChannel.NetworkId, CasCaptureMode.Live, out isSignalLocked);
+          try
+          {
+            _serviceCas.SetChannel(0, (uint)atscChannel.NetworkId, CasCaptureMode.Live, out isSignalLocked);
+          }
+          catch (UPnPException ex)
+          {
+            UPnPRemoteException rex = ex.InnerException as UPnPRemoteException;
+            if (rex != null && rex.Error.ErrorDescription.Equals("Tuner In Use"))
+            {
+              this.LogInfo("DRI CableCARD: some other application or device is currently using the tuner");
+              _gotTunerControl = false;
+            }
+            throw;
+          }
         }
         else
         {
@@ -722,18 +505,198 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
           moduations.Add(TunerModulation.All);
         }
 
+        _currentFrequency = -1;
         uint currentFrequency;
         TunerModulation currentModulation;
         _serviceTuner.SetTunerParameters((uint)atscChannel.Frequency, moduations, out currentFrequency, out currentModulation, out isSignalLocked);
       }
       _isSignalLocked = isSignalLocked;
+    }
 
-      if (_transportState != AvTransportState.Playing)
+    private void StartStreaming()
+    {
+      if (!string.IsNullOrEmpty(_rtspSessionId))
       {
-        this.LogDebug("DRI CableCARD: start streaming");
-        DVBIPChannel streamChannel = new DVBIPChannel();
-        streamChannel.Url = _streamUrl;
-        base.PerformTuning(streamChannel);
+        return;
+      }
+      this.LogDebug("DRI CableCARD: start streaming");
+      Uri uri = new Uri(_rtspUri);
+      if (uri.IsDefaultPort)
+      {
+        _rtspClient = new Rtsp.RtspClient(uri.Host);
+      }
+      else
+      {
+        _rtspClient = new Rtsp.RtspClient(uri.Host, uri.Port);
+      }
+
+      // Find a free port for receiving the RTP stream.
+      int rtpClientPort = 0;
+      TcpConnectionInformation[] activeTcpConnections = IPGlobalProperties.GetIPGlobalProperties().GetActiveTcpConnections();
+      HashSet<int> usedPorts = new HashSet<int>();
+      foreach (TcpConnectionInformation connection in activeTcpConnections)
+      {
+        if (connection.LocalEndPoint.Address == _localIpAddress)
+        {
+          usedPorts.Add(connection.LocalEndPoint.Port);
+        }
+        if (connection.RemoteEndPoint.Address == _localIpAddress)
+        {
+          usedPorts.Add(connection.RemoteEndPoint.Port);
+        }
+      }
+      for (int port = 40000; port <= 65534; port += 2)
+      {
+        // We need two adjacent ports. One for RTP; one for RTCP. By
+        // convention, the RTP port is even.
+        if (!usedPorts.Contains(port) && !usedPorts.Contains(port + 1))
+        {
+          rtpClientPort = port;
+          break;
+        }
+      }
+      this.LogDebug("DRI CableCARD: send RTSP SETUP, RTP client port = {0}", rtpClientPort);
+      RtspRequest request = new RtspRequest(RtspMethod.Setup, _rtspUri);
+      request.Headers.Add("Transport", string.Format("RTP/AVP;unicast;client_port={0}-{1}", rtpClientPort, rtpClientPort + 1));
+      Rtsp.RtspResponse response;
+      _rtspClient.SendRequest(request, out response);
+      if (_rtspClient.SendRequest(request, out response) != RtspStatusCode.Ok)
+      {
+        throw new TvException("Failed to start streaming, non-OK RTSP SETUP status code {0} {1}", response.StatusCode, response.ReasonPhrase);
+      }
+
+      if (!response.Headers.TryGetValue("Session", out _rtspSessionId))
+      {
+        throw new TvException("Failed to start streaming, not able to find session header in RTSP SETUP response");
+      }
+
+      bool foundRtpTransport = false;
+      string rtpServerPort = null;
+      string transportHeader;
+      if (!response.Headers.TryGetValue("Transport", out transportHeader))
+      {
+        throw new TvException("Failed to start streaming, not able to find transport header in RTSP SETUP response");
+      }
+      string[] transports = transportHeader.Split(',');
+      foreach (string transport in transports)
+      {
+        if (transport.Trim().StartsWith("RTP/AVP"))
+        {
+          foundRtpTransport = true;
+          string[] sections = transport.Split(';');
+          foreach (string section in sections)
+          {
+            string[] parts = section.Split('=');
+            if (parts[0].Equals("server_port"))
+            {
+              string[] ports = parts[1].Split('-');
+              rtpServerPort = ports[0];
+            }
+            else if (parts[0].Equals("client_port"))
+            {
+              string[] ports = parts[1].Split('-');
+              if (!ports[0].Equals(rtpClientPort))
+              {
+                this.LogWarn("DRI CableCARD: server specified RTP client port {0} instead of {1}", ports[0], rtpClientPort);
+              }
+              rtpClientPort = int.Parse(ports[0]);
+            }
+          }
+        }
+      }
+      if (!foundRtpTransport)
+      {
+        throw new TvException("Failed to start streaming, not able to find RTP transport details in RTSP SETUP response transport header");
+      }
+      DVBIPChannel streamChannel = new DVBIPChannel();
+      if (string.IsNullOrEmpty(rtpServerPort) || rtpServerPort.Equals("0"))
+      {
+        streamChannel.Url = string.Format("rtp://{0}:{1}@{2}", _localIpAddress, rtpClientPort, _serverIpAddress);
+      }
+      else
+      {
+        streamChannel.Url = string.Format("rtp://{0}:{1}@{2}:{3}", _localIpAddress, rtpClientPort, _serverIpAddress, rtpServerPort);
+      }
+      this.LogDebug("DRI CableCARD: RTSP SETUP response okay, session ID = {0}, RTP URL = {1}", _rtspSessionId, streamChannel.Url);
+
+      this.LogDebug("DRI CableCARD: send RTSP PLAY");
+      request = new RtspRequest(RtspMethod.Play, _rtspUri);
+      request.Headers.Add("Session", _rtspSessionId);
+      if (_rtspClient.SendRequest(request, out response) != RtspStatusCode.Ok)
+      {
+        throw new TvException("Failed to start streaming, non-OK RTSP PLAY status code {0} {1}", response.StatusCode, response.ReasonPhrase);
+      }
+      this.LogDebug("DRI CableCARD: RTSP PLAY response okay");
+
+      base.PerformTuning(streamChannel);
+    }
+
+    private void StopStreaming()
+    {
+      if (_rtspClient == null || string.IsNullOrEmpty(_rtspSessionId))
+      {
+        return;
+      }
+      this.LogDebug("DRI CableCARD: stop streaming");
+      RtspRequest request = new RtspRequest(RtspMethod.Teardown, _rtspUri);
+      request.Headers.Add("Session", _rtspSessionId);
+      RtspResponse response;
+      if (_rtspClient.SendRequest(request, out response) != RtspStatusCode.Ok)
+      {
+        throw new TvException("Failed to stop streaming, non-OK RTSP TEARDOWN status code {0} {1}.", response.StatusCode, response.ReasonPhrase);
+      }
+      _rtspSessionId = string.Empty;
+    }
+
+    private bool IsTunerInUse()
+    {
+      if (_gotTunerControl)
+      {
+        return false;
+      }
+      AvTransportStatus transportStatus = AvTransportStatus.Ok;
+      string speed = string.Empty;
+      _serviceAvTransport.GetTransportInfo((uint)_avTransportId, out _transportState, out transportStatus, out speed);
+      if (transportStatus != AvTransportStatus.Ok)
+      {
+        this.LogWarn("DRI CableCARD: unexpected transport status {0}", transportStatus);
+      }
+      if (_transportState == AvTransportState.Stopped)
+      {
+        return false;
+      }
+      return true;
+    }
+
+    #endregion
+
+    #region scanning
+
+    /// <summary>
+    /// Get or set a value indicating whether this tuner is scanning for channels.
+    /// </summary>
+    /// <value><c>true</c> if the tuner is currently scanning, otherwise <c>false</c></value>
+    public override bool IsScanning
+    {
+      get
+      {
+        return _isScanning;
+      }
+      set
+      {
+        _isScanning = value;
+        if (!value)
+        {
+          _isSignalLocked = _isTunerSignalLocked;
+        }
+      }
+    }
+
+    public override ITVScanning ScanningInterface
+    {
+      get
+      {
+        return new ScannerDri(this, _serviceFdc);
       }
     }
 
@@ -823,6 +786,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
         _serviceTuner.GetTunerParameters(out _isSignalPresent, out frequency, out modulation, out _isSignalLocked, out _signalLevel, out snr);
         _signalLevel = (_signalLevel * 2) + 50;
         _signalQuality = (int)snr;
+        if (_currentFrequency == -1)
+        {
+          this.LogDebug("DRI CableCARD: current tuning details, frequency = {0} kHz, modulation = {1}", frequency, modulation);
+          _currentFrequency = (int)frequency;
+        }
       }
       catch (Exception ex)
       {
@@ -832,37 +800,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
 
     #endregion
 
-    #region scanning
-
-    /// <summary>
-    /// Get or set a value indicating whether this tuner is scanning for channels.
-    /// </summary>
-    /// <value><c>true</c> if the tuner is currently scanning, otherwise <c>false</c></value>
-    public override bool IsScanning
-    {
-      get
-      {
-        return _isScanning;
-      }
-      set
-      {
-        _isScanning = value;
-        if (!value)
-        {
-          _isSignalLocked = _isTunerSignalLocked;
-        }
-      }
-    }
-
-    public override ITVScanning ScanningInterface
-    {
-      get
-      {
-        return new ScannerDri(this, _serviceFdc);
-      }
-    }
-
-    #endregion
+    #region UPnP
 
     /// <summary>
     /// Handle UPnP evented state variable changes.
@@ -903,53 +841,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
         }
         else if (stateVariable.Name.Equals("MMIMessage"))
         {
-          byte[] message = (byte[])newValue;
-          if (message == null || message.Length < 3)
+          lock (_caMenuCallBackLock)
           {
-            return;
+            _caMenuHandler.HandleDialog((byte[])newValue, _caMenuCallBacks);
           }
-
-          // DRI specification, page 32 table 6.2-30.
-          //Dump.DumpBinary(message, message.Length);
-          _mmiDialogNumber = message[0];
-          CasMmiDisplayType displayType = (CasMmiDisplayType)message[1];
-          CasMmiAction action = (CasMmiAction)message[2];
-          this.LogInfo("DRI CableCARD: tuner {0} received MMI message", _cardId);
-          this.LogDebug("  dialog number = {0}", _mmiDialogNumber);
-          this.LogDebug("  display type  = {0}", displayType);
-          this.LogDebug("  action        = {0}", action);
-          if (action == CasMmiAction.Close)
-          {
-            if (_caMenuCallBacks != null)
-            {
-              try
-              {
-                _caMenuCallBacks.OnCiCloseDisplay(0);
-              }
-              catch (Exception ex)
-              {
-                Log.Log.Error("DRI CC: MMI OnCloseDisplay() exception\r\n{0}", ex);
-              }
-            }
-            return;
-          }
-          else if (action != CasMmiAction.Open)
-          {
-            this.LogInfo("DRI CableCARD: unrecognised action {0}, ignoring", action);
-            return;
-          }
-
-          if (message.Length < 5)
-          {
-            Log.Log.Error("DRI CC: invalid message, open action with message length {0}", message.Length);
-            Dump.DumpBinary(message, message.Length);
-            return;
-          }
-
-          int urlLength = (message[3] << 8) + message[4] - 1; // URL seems to be NULL terminated
-          string url = System.Text.Encoding.ASCII.GetString(message, 5, urlLength);
-          this.LogDebug("  URL           = {0}", url);
-          HandleMmiUrl(url);
         }
         else if (stateVariable.Name.Equals("DescramblingStatus"))
         {
@@ -977,7 +872,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
       }
       catch (Exception ex)
       {
-        Log.Log.Error("DRI CC: tuner {0} failed to handle state variable change\r\n{1}", _cardId, ex);
+        this.LogError(ex, "DRI CableCARD: tuner {0} failed to handle state variable change", _cardId);
       }
     }
 
@@ -989,97 +884,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
     private void OnEventSubscriptionFailed(CpService service, UPnPError error)
     {
       string unqualifiedServiceName = service.ServiceId.Substring(service.ServiceId.LastIndexOf(":") + 1);
-      Log.Log.Error("DRI CC: device {0} failed to subscribe to state variable events for service {1}, code = {2}, description = {3}", _cardId, unqualifiedServiceName, error.ErrorCode, error.ErrorDescription);
-    }
-
-    private void HandleMmiUrl(string url)
-    {
-      // CableCARD tuners construct an HTML page containing the messages that
-      // we'd expect to receive directly from a DVB CAM via MMI. We retrieve
-      // the HTML page contents and try to convert it into a menu as best as
-      // possible. Although the DRI specification states the URL will be
-      // relative, in practice that is not always the case. Typical!
-      Uri uri;
-      if (url.StartsWith("http"))
-      {
-        uri = new Uri(url);
-      }
-      else
-      {
-        uri = new Uri(
-          new Uri(_deviceConnection.RootDescriptor.SSDPRootEntry.PreferredLink.DescriptionLocation),
-          "/get_cc_url?" + url
-        );
-      }
-
-      HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
-      request.Timeout = 5000;
-      HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-      string content = string.Empty;
-      try
-      {
-        using (Stream s = response.GetResponseStream())
-        {
-          using (TextReader textReader = new StreamReader(s))
-          {
-            content = textReader.ReadToEnd();
-            textReader.Close();
-          }
-          s.Close();
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Log.Error("DRI CC: device {0} failed to retrieve MMI HTML content from {1}\r\n{2}", _cardId, uri, ex);
-        return;
-      }
-      finally
-      {
-        response.Close();
-      }
-
-      // Reformat from pure HTML into title and menu items. This is quite
-      // hacky, but we have no way to render HTML in MediaPortal.
-      this.LogDebug("DRI CableCARD: device {0} retrieved raw MMI HTML {1}", _cardId, content);
-      try
-      {
-        content = Regex.Replace(content, "(<\\/?b>|<center>)", string.Empty, RegexOptions.IgnoreCase);
-        content = Regex.Replace(content, "&nbsp;", " ", RegexOptions.IgnoreCase);
-        content = Regex.Replace(content, @".*<body( [^>]*)?>\s*(.*?)\s*</body>.*", "$2", RegexOptions.IgnoreCase);
-        this.LogDebug("DRI CableCARD: pre-split MMI HTML = {0}", content);
-        _mmiMenuLinks.Clear();
-        string[] sections = content.Split(new string[] { "<br>", "<BR>" }, StringSplitOptions.RemoveEmptyEntries);
-        if (_caMenuCallBacks != null)
-        {
-          _caMenuCallBacks.OnCiMenu(sections[0].Trim(), string.Empty, string.Empty, sections.Length - 1);
-        }
-        this.LogDebug("  title = {0}", sections[0].Trim());
-        for (int i = 1; i < sections.Length; i++)
-        {
-          string item = sections[i].Trim();
-          Match m = Regex.Match(sections[i], "<a href=\"([^\"]+)\">\\s*(.*?)\\s*</a>", RegexOptions.IgnoreCase);
-          if (m.Success)
-          {
-            string itemUrl = m.Groups[1].Captures[0].Value;
-            item = m.Groups[2].Captures[0].Value;
-            _mmiMenuLinks.Add(i - 1, itemUrl);
-            this.LogDebug("  item {0} = {1} [{2}]", i, item, itemUrl);
-          }
-          else
-          {
-            item = item.Trim();
-            this.LogDebug("  item {0} = {1}", i, item);
-          }
-          if (_caMenuCallBacks != null)
-          {
-            _caMenuCallBacks.OnCiMenuChoice(i - 1, item);
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Log.Error("DRI CC: device {0} MMI HTML handling failed\r\n{1}\r\n{2}", _cardId, content, ex);
-      }
+      this.LogError("DRI CableCARD: tuner {0} failed to subscribe to state variable events for service {1}, code = {2}, description = {3}", _cardId, unqualifiedServiceName, error.ErrorCode, error.ErrorDescription);
     }
 
     /// <summary>
@@ -1095,5 +900,154 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
       dataType = null;
       return true;
     }
+
+    #endregion
+
+    #region IConditionalAccessMenuActions members
+
+    /// <summary>
+    /// Set the menu call back delegate.
+    /// </summary>
+    /// <param name="callBacks">The call back delegate.</param>
+    public void SetCallBacks(IConditionalAccessMenuCallBacks callBacks)
+    {
+      lock (_caMenuCallBackLock)
+      {
+        _caMenuCallBacks = callBacks;
+      }
+    }
+
+    /// <summary>
+    /// Send a request from the user to the CAM to open the menu.
+    /// </summary>
+    /// <returns><c>true</c> if the request is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
+    public bool EnterMenu()
+    {
+      this.LogDebug("DRI CableCARD: enter menu");
+
+      if (_serviceCas == null)
+      {
+        this.LogWarn("DRI CableCARD: not initialised or interface not supported");
+        return false;
+      }
+
+      if (_cardStatus == CasCardStatus.Removed)
+      {
+        this.LogError("DRI CableCARD: CableCARD not present");
+        return false;
+      }
+
+      string manufacturer = string.Empty;
+      try
+      {
+        CasCardStatus status = CasCardStatus.Removed;
+        string version = string.Empty;
+        bool isDst = false;
+        uint eaLocationCode = 0;
+        byte ratingRegion = 0;
+        int timeZone = 0;
+        _serviceCas.GetCardStatus(out status, out manufacturer, out version, out isDst, out eaLocationCode, out ratingRegion, out timeZone);
+        this.LogDebug("  status        = {0}", status.ToString());
+        this.LogDebug("  manufacturer  = {0}", manufacturer);
+        this.LogDebug("  version       = {0}", version);
+        this.LogDebug("  time zone     = {0}", timeZone);
+        this.LogDebug("  DST           = {0}", isDst);
+        this.LogDebug("  EA loc. code  = {0}", eaLocationCode);  // EA = emergency alert
+        this.LogDebug("  rating region = {0}", ratingRegion);
+      }
+      catch (Exception ex)
+      {
+        this.LogError(ex, "DRI CableCARD: failed to read CableCARD status");
+        return false;
+      }
+
+      byte[] list = null;
+      try
+      {
+        list = (byte[])_serviceCas.QueryStateVariable("ApplicationList");
+      }
+      catch (Exception ex)
+      {
+        this.LogError(ex, "DRI CableCARD: failed to get application list");
+        return false;
+      }
+
+      lock (_caMenuCallBackLock)
+      {
+        return _caMenuHandler.EnterMenu(manufacturer, string.Empty, string.Empty, list, _caMenuCallBacks);
+      }
+    }
+
+    /// <summary>
+    /// Send a request from the user to the CAM to close the menu.
+    /// </summary>
+    /// <returns><c>true</c> if the request is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
+    public bool CloseMenu()
+    {
+      this.LogDebug("DRI CableCARD: close menu");
+      CloseDialog(0);
+      return true;
+    }
+
+    /// <summary>
+    /// Inform the CableCARD that the user has closed a dialog.
+    /// </summary>
+    /// <param name="dialogNumber">The identifier for the dialog that has been closed.</param>
+    /// <returns><c>true</c> if the CableCARD is successfully notified, otherwise <c>false</c></returns>
+    public bool CloseDialog(byte dialogNumber)
+    {
+      this.LogDebug("DRI CableCARD: close dialog, dialog number = {0}", dialogNumber);
+
+      if (_serviceCas == null)
+      {
+        this.LogWarn("DRI CableCARD: not initialised or interface not supported");
+        return false;
+      }
+
+      try
+      {
+        _serviceCas.NotifyMmiClose(dialogNumber);
+      }
+      catch (Exception ex)
+      {
+        this.LogError(ex, "DRI CableCARD: failed to notify the CableCARD that the MMI dialog has been closed");
+        return false;
+      }
+      return true;
+    }
+
+    /// <summary>
+    /// Send a menu entry selection from the user to the CAM.
+    /// </summary>
+    /// <param name="choice">The index of the selection as an unsigned byte value.</param>
+    /// <returns><c>true</c> if the selection is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
+    public bool SelectMenuEntry(byte choice)
+    {
+      this.LogDebug("DRI CableCARD: select menu entry, choice = {0}", choice);
+      lock (_caMenuCallBackLock)
+      {
+        return _caMenuHandler.SelectEntry(choice, _caMenuCallBacks);
+      }
+    }
+
+    /// <summary>
+    /// Send an answer to an enquiry from the user to the CAM.
+    /// </summary>
+    /// <param name="cancel"><c>True</c> to cancel the enquiry.</param>
+    /// <param name="answer">The user's answer to the enquiry.</param>
+    /// <returns><c>true</c> if the answer is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
+    public bool AnswerEnquiry(bool cancel, string answer)
+    {
+      if (answer == null)
+      {
+        answer = string.Empty;
+      }
+      this.LogDebug("DRI CableCARD: answer enquiry, answer = {0}, cancel = {1}", answer, cancel);
+
+      // TODO I don't know how to implement this yet.
+      return true;
+    }
+
+    #endregion
   }
 }

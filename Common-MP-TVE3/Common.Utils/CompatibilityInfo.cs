@@ -103,4 +103,5 @@ using MediaPortal.Common.Utils;
 [assembly: SubsystemVersion("TVE.Plugins.TunerExtension.Encoder", "1.2.3.0")]                 // IEncoder
 [assembly: SubsystemVersion("TVE.Plugins.TunerExtension.Mpeg2PidFilter", "1.2.3.0")]          // IMpeg2PidFilter
 [assembly: SubsystemVersion("TVE.Plugins.TunerExtension.Power", "1.2.3.0")]                   // IPowerDevice
+[assembly: SubsystemVersion("TVE.Plugins.TunerExtension.RemoteControl", "1.2.3.0")]           // IRemoteControlListener
 [assembly: SubsystemVersion("TVE.Plugins.TunerExtension.Tuner", "1.2.3.0")]                   // ICustomTuner

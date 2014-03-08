@@ -1,6 +1,6 @@
 /* 
- *	Copyright (C) 2006-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
+ *  Copyright (C) 2006-2008 Team MediaPortal
+ *  http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -19,28 +19,31 @@
  *
  */
 #pragma once
+#include <Windows.h>
 
 #define MAX_SECTION_LENGTH 4300
+#define MAX_TABLE_VERSION_NUMBER 31
 class CSection
 {
 public:
   CSection(void);
   virtual ~CSection(void);
-  void   Reset();
-  bool	 DecodeHeader();
-	int		 CalcSectionLength(byte* tsPacket, int start);
-  bool   SectionComplete();
+  void Reset();
+  bool DecodeHeader();
+  int CalcSectionLength(byte* tsPacket, int start);
+  bool SectionComplete();
   CSection& operator = (const CSection& section);
   void Copy(const CSection &section);
 
-	int table_id;
-	int table_id_extension;
-	int section_length;
-	int section_number;
-	int version_number;
-	int section_syntax_indicator;
-	int last_section_number;
+  int table_id;
+  int section_syntax_indicator;
+  int section_length;
+  int table_id_extension;
+  int version_number;
+  int current_next_indicator;
+  int section_number;
+  int last_section_number;
 
-	int BufferPos;
+  int BufferPos;
   byte Data[MAX_SECTION_LENGTH*5];
 };

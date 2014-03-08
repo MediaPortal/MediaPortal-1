@@ -26,8 +26,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
   ///<summary>
   /// TsWriter channel scanner call back interface.
   ///</summary>
-  [ComVisible(false), ComImport,
-    Guid("ce141670-1840-4188-8a40-618ba3a5a1c3"),
+  [Guid("ce141670-1840-4188-8a40-618ba3a5a1c3"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IChannelScanCallBack
   {
@@ -66,8 +65,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
   /// <summary>
   /// TsWriter channel scanner interface.
   /// </summary>
-  [ComVisible(false), ComImport,
-    Guid("1663dc42-d169-41da-bce2-eeec482cb9fb"),
+  [Guid("1663dc42-d169-41da-bce2-eeec482cb9fb"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface ITsChannelScan
   {

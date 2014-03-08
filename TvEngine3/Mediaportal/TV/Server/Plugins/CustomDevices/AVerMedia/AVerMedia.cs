@@ -23,7 +23,6 @@ using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using DirectShowLib;
-using Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBda;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
@@ -35,7 +34,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
   /// <summary>
   /// A class for handling conditional access with the AVerMedia SatGate (A706C).
   /// </summary>
-  public class AVerMedia : MicrosoftBda.MicrosoftBda, IConditionalAccessProvider, IConditionalAccessMenuActions
+  public class AVerMedia : BaseCustomDevice, IConditionalAccessProvider, IConditionalAccessMenuActions
   {
     #region enums
 
@@ -81,8 +80,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
 
     #region COM imports
 
-    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-      Guid("7e57c354-7b47-4ec4-8a88-d50fb19cc688"),
+    [Guid("7e57c354-7b47-4ec4-8a88-d50fb19cc688"),
       InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     private interface CiInterface
     {
@@ -132,8 +130,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
       int SendPmt(IntPtr pmtBuffer, int isNotCaPmt);
     }
 
-    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-      Guid("c5bd61cc-f79a-4a5e-99d0-2e763ee372b6"),
+    [Guid("c5bd61cc-f79a-4a5e-99d0-2e763ee372b6"),
       InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     private interface MmiInterface
     {
@@ -184,8 +181,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
       int SelectMenuEntry(byte deviceIndex, byte entry);
     }
 
-    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-      Guid("94ba71a1-3325-4eac-9df8-685921bbfa2a"),
+    [Guid("94ba71a1-3325-4eac-9df8-685921bbfa2a"),
       InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     private interface PmtInterface
     {
@@ -455,34 +451,33 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
     /// initialisation fails, the <see ref="ICustomDevice"/> instance should be disposed
     /// immediately.
     /// </summary>
-    /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
+    /// <param name="tunerExternalId">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
     /// <param name="context">Context required to initialise the interface.</param>
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
-    public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
+    public override bool Initialise(string tunerExternalId, CardType tunerType, object context)
     {
       this.LogDebug("AVerMedia: initialising");
 
-      if (string.IsNullOrEmpty(tunerExternalIdentifier))
-      {
-        this.LogDebug("AVerMedia: tuner external identifier is not set");
-        return false;
-      }
       if (_isAVerMedia)
       {
         this.LogDebug("AVerMedia: extension already initialised");
         return true;
       }
 
+      if (string.IsNullOrEmpty(tunerExternalId))
+      {
+        this.LogDebug("AVerMedia: tuner external identifier is not set");
+        return false;
+      }
+
       foreach (string validDevicePath in VALID_DEVICE_PATHS)
       {
-        if (tunerExternalIdentifier.ToLowerInvariant().Contains(validDevicePath))
+        if (tunerExternalId.ToLowerInvariant().Contains(validDevicePath))
         {
-          base.Initialise(tunerExternalIdentifier, tunerType, context);
-
           this.LogInfo("AVerMedia: extension supported");
           _isAVerMedia = true;
-          _tunerDevicePath = tunerExternalIdentifier;
+          _tunerDevicePath = tunerExternalId;
           return true;
         }
       }
@@ -500,7 +495,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
     /// that any necessary hardware (such as a CI slot) is connected.
     /// </summary>
     /// <returns><c>true</c> if the interface is successfully opened, otherwise <c>false</c></returns>
-    public bool OpenInterface()
+    public bool OpenConditionalAccessInterface()
     {
       this.LogDebug("AVerMedia: open conditional access interface");
 
@@ -515,11 +510,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
         return true;
       }
 
-      Type t = Type.GetTypeFromCLSID(CI_API_CLSID);
       _ciApi = null;
       try
       {
-        _ciApi = Activator.CreateInstance(t);
+        _ciApi = Activator.CreateInstance(Type.GetTypeFromCLSID(CI_API_CLSID));
         if (_ciApi == null)
         {
           throw new NullReferenceException();
@@ -594,7 +588,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
     /// Close the conditional access interface.
     /// </summary>
     /// <returns><c>true</c> if the interface is successfully closed, otherwise <c>false</c></returns>
-    public bool CloseInterface()
+    public bool CloseConditionalAccessInterface()
     {
       this.LogDebug("AVerMedia: close conditional access interface");
 
@@ -653,17 +647,17 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
     /// <param name="resetTuner">This parameter will be set to <c>true</c> if the tuner must be reset
     ///   for the interface to be completely and successfully reset.</param>
     /// <returns><c>true</c> if the interface is successfully reset, otherwise <c>false</c></returns>
-    public bool ResetInterface(out bool resetTuner)
+    public bool ResetConditionalAccessInterface(out bool resetTuner)
     {
       resetTuner = false;
-      return CloseInterface() && OpenInterface();
+      return CloseConditionalAccessInterface() && OpenConditionalAccessInterface();
     }
 
     /// <summary>
     /// Determine whether the conditional access interface is ready to receive commands.
     /// </summary>
     /// <returns><c>true</c> if the interface is ready, otherwise <c>false</c></returns>
-    public bool IsInterfaceReady()
+    public bool IsConditionalAccessInterfaceReady()
     {
       this.LogDebug("AVerMedia: is conditional access interface ready");
       if (!_isCaInterfaceOpen)
@@ -688,7 +682,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
     /// <param name="pmt">The program map table for the service.</param>
     /// <param name="cat">The conditional access table for the service.</param>
     /// <returns><c>true</c> if the command is successfully sent, otherwise <c>false</c></returns>
-    public bool SendCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, Pmt pmt, Cat cat)
+    public bool SendConditionalAccessCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, Pmt pmt, Cat cat)
     {
       this.LogDebug("AVerMedia: send conditional access command, list action = {0}, command = {1}", listAction, command);
 
@@ -912,9 +906,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
     /// </summary>
     public override void Dispose()
     {
-      base.Dispose();
-      CloseInterface();
-      _isAVerMedia = false;
+      if (_isAVerMedia)
+      {
+        CloseConditionalAccessInterface();
+        _isAVerMedia = false;
+      }
     }
 
     #endregion
