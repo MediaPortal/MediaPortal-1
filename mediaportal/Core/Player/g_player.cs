@@ -1458,7 +1458,7 @@ namespace MediaPortal.Player
                 // Make a double check on .ts because it can be recorded TV or Radio
                 if (extension == ".ts")
                 {
-                  if (MediaInfo.hasVideo)
+                  if (MediaInfo != null && MediaInfo.hasVideo)
                   {
                     RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)(int)type);
                   }
@@ -1555,6 +1555,10 @@ namespace MediaPortal.Player
 
                 if (Util.Utils.PlayMovie(strFile))
                 {
+                  if (MediaInfo != null && MediaInfo.hasVideo)
+                  {
+                    RefreshRateChanger.AdaptRefreshRate();
+                  }
                   return true;
                 }
                 else // external player error
