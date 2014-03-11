@@ -29,6 +29,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         byte _currentVideoCodecs = 0;
         byte _currentAudioCodecs = 0;
         byte _currentAspectRatioIcons = 0;
+        EtcIcons _currentEtcIcons = 0;
         ImonMediaInfo _videoMediaInfo = new ImonMediaInfo();
         ImonMediaInfo _audioMediaInfo = new ImonMediaInfo();
         ActiveWindowInfo _activeWindowInfo = new ActiveWindowInfo();
@@ -68,6 +69,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             _currentVideoCodecs = 0;
             _currentAudioCodecs = 0;
             _currentAspectRatioIcons = 0;
+            _currentEtcIcons = 0;
             LogDebug("(IDisplay) ImonLcd.SetDefaults() completed");
         }
 
@@ -269,11 +271,33 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 SetMediaProgress();
                 SetSpeakerConfig();
                 SetAspectRatio();
+                SetEtcIcons();
 
                 Thread.Sleep(300);
                 LogDebug("(IDisplay) ImonLcd.MonitorMedia() thread loop end");
             }
             LogDebug("(IDisplay) ImonLcd.MonitorMedia() complete");
+        }
+
+        private void SetEtcIcons()
+        {
+            LogDebug("(IDisplay) ImonLcd.SetEtcIcons() called");
+            EtcIcons newEtcIcons = EtcIcons.None;
+            
+            if (MiniDisplayHelper.MPStatus.Media_IsRecording)
+            {
+                newEtcIcons |= EtcIcons.Recording;
+            }
+
+            LogDebug("(IDisplay) ImonLcd.SetEtcIcons(): determined media type: " + newEtcIcons);
+
+            if (_currentEtcIcons != newEtcIcons)
+            {
+                Log.Info("(IDisplay) ImonLcd.SetEtcIcons(): new settings found, call API");
+                IDW_SetLcdEtcIcon((byte)newEtcIcons);
+                _currentEtcIcons = newEtcIcons;
+            }
+            LogDebug("(IDisplay) ImonLcd.SetEtcIcons() completed");
         }
 
         private void SetAspectRatio()
