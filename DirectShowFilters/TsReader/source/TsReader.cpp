@@ -828,16 +828,16 @@ STDMETHODIMP CTsReaderFilter::Stop()
   }
 
   { //Context for CAutoLock
-    LogDebug("CTsReaderFilter::Stop()  -stop source pre-lock RAL, state %d", m_State);
+    //LogDebug("CTsReaderFilter::Stop()  -stop source pre-lock RAL, state %d", m_State);
     CAutoLock rLock (&m_ReadAheadLock);
-    LogDebug("CTsReaderFilter::Stop()  -stop source pre-lock DTL, state %d", m_State);
+    //LogDebug("CTsReaderFilter::Stop()  -stop source pre-lock DTL, state %d", m_State);
     CAutoLock dLock (&m_DurationThreadLock);
-    LogDebug("CTsReaderFilter::Stop()  -stop source, state %d", m_State);
+    //LogDebug("CTsReaderFilter::Stop()  -stop source, state %d", m_State);
     //stop filter
     hr = CSource::Stop();
     WakeThread(); //Encourage duration thread to see 'stopped' state
   }
-  LogDebug("CTsReaderFilter::Stop()  -stop source done, state %d", m_State);
+  //LogDebug("CTsReaderFilter::Stop()  -stop source done, state %d", m_State);
 
 
   //are we using rtsp?
@@ -848,24 +848,19 @@ STDMETHODIMP CTsReaderFilter::Stop()
     m_buffer.Run(false);
     m_rtspClient.Stop();
   }
-
-  //reset values
-  m_bSeekAfterRcDone = false;
-  m_bStopping = false;
-  m_updateThreadDuration.StopUpdate(false);
   
   if (m_bStreamCompensated)
   {
     //m_demultiplexer.Flush(true) ;
     //Flushing is delegated
-    m_demultiplexer.DelegatedFlush(true);
-    for(int i(0) ; ((i < 500) && (m_demultiplexer.m_bFlushDelgNow || m_demultiplexer.m_bFlushRunning)) ; i++)
-    {
-      Sleep(1);
-    }
+    m_demultiplexer.DelegatedFlush(true, true);
   }
     
   LogDebug("CTsReaderFilter::Stop() done, state %d", m_State);
+  //reset values
+  m_bSeekAfterRcDone = false;
+  m_bStopping = false;
+  m_updateThreadDuration.StopUpdate(false);
   m_bStoppedForUnexpectedSeek=true ;
   return hr;
 }
@@ -936,13 +931,8 @@ STDMETHODIMP CTsReaderFilter::Pause()
             m_buffer.Clear();
             
             //Flushing is delegated
-            m_demultiplexer.DelegatedFlush(true);
-            
-            for(int i(0) ; ((i < 500) && (m_demultiplexer.m_bFlushDelgNow || m_demultiplexer.m_bFlushRunning)) ; i++)
-            {
-              Sleep(1);
-            }
-    
+            m_demultiplexer.DelegatedFlush(true, true);
+                
             //start streaming
             m_buffer.Run(true);
             m_rtspClient.Play(startTime,0.0);
@@ -1262,7 +1252,9 @@ bool CTsReaderFilter::Seek(CRefTime& seekTime)
     //  seekTime = m_duration.Duration();
     CTsFileSeek seek(m_duration);
     seek.SetFileReader(m_fileReader);
+    BOOL useFileNext = m_fileReader->GetFileNext();
     bool eof = seek.Seek(seekTime);
+    m_fileReader->SetFileNext(useFileNext);
     m_bRecording = true; // force a duration update soon..
     return eof;
   }
@@ -1469,12 +1461,7 @@ HRESULT CTsReaderFilter::SeekPreStart(CRefTime& rtAbsSeek)
   if (!m_bOnZap || !m_demultiplexer.IsNewPatReady() || m_bAnalog) // On zapping, new PAT has occured, we should not flush to avoid loosing data.
   {                                                               //             new PAT has not occured, we should flush to avoid restart with old data.							
     //Flushing is delegated
-    m_demultiplexer.DelegatedFlush(true);
-    
-    for(int i(0) ; ((i < 500) && (m_demultiplexer.m_bFlushDelgNow || m_demultiplexer.m_bFlushRunning)) ; i++)
-    {
-      Sleep(1);
-    }
+    m_demultiplexer.DelegatedFlush(true, true);
   }
   else
   {
@@ -1728,7 +1715,7 @@ void CTsReaderFilter::ThreadProc()
     }
      
     //Execute this loop approx every second
-    if (IsFilterRunning() && (State() != State_Stopped) && ((timeNow - 1000) > lastDurTime) )
+    if (IsFilterRunning() && (State() != State_Stopped) && !m_bStopping && ((timeNow - 1000) > lastDurTime) )
     {
       lastDurTime = timeNow;
       //are we playing an RTSP stream?
@@ -1945,6 +1932,7 @@ void CTsReaderFilter::ThreadProc()
       }
                         
     }
+
     
     Sleep(1);
   }

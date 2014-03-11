@@ -228,7 +228,7 @@ bool CDeMultiplexer::SetAudioStream(int stream)
       {
         LogDebug("SetAudioStream : OnMediaTypeChanged(AUDIO_CHANGE)");
         //Flushing is delegated to CDeMultiplexer::ThreadProc()
-        DelegatedFlush(true);
+        DelegatedFlush(true, false);
         m_filter.OnMediaTypeChanged(AUDIO_CHANGE);
         SetMediaChanging(true);
         m_filter.m_bForceSeekOnStop=true;     // Force stream to be resumed after
@@ -998,7 +998,7 @@ void CDeMultiplexer::Start()
       m_reader->SetFilePointer(0,FILE_BEGIN);
       //Flush(true);
       //Flushing is delegated to CDeMultiplexer::ThreadProc()
-      DelegatedFlush(true);
+      DelegatedFlush(true, false);
       m_streamPcr.Reset();
       m_bStarting=false;
 	    LogDebug("demux:Start() end1 BytesProcessed:%d, DTS/PTS count = %d/%d, GOPts = %d", dwBytesProcessed, m_vidDTScount, m_vidPTScount, m_bUsingGOPtimestamp);
@@ -1308,7 +1308,7 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
       m_bSetAudioDiscontinuity=true;
       LogDebug("PES audio 0-0-1 fail");
       //Flushing is delegated to CDeMultiplexer::ThreadProc()
-      DelegatedFlush(false);
+      DelegatedFlush(false, false);
       return;
     }
     
@@ -1349,7 +1349,7 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
             m_lastVideoDTS.IsValid=false;
             m_bSetAudioDiscontinuity=true;
             //Flushing is delegated to CDeMultiplexer::ThreadProc()
-            DelegatedFlush(false);
+            DelegatedFlush(false, false);
           }
           else
           {
@@ -1373,7 +1373,7 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
                 m_MinAudioDelta+=1.0;
                 m_MinVideoDelta+=1.0;                
                 //Flushing is delegated to CDeMultiplexer::ThreadProc()
-                DelegatedFlush(false);
+                DelegatedFlush(false, false);
               }
               else if (Delta < 0.1)
               {
@@ -1609,7 +1609,7 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
       m_WaitHeaderPES = -1;
       m_bSetVideoDiscontinuity=true;
       //Flushing is delegated to CDeMultiplexer::ThreadProc()
-      DelegatedFlush(false);
+      DelegatedFlush(false, false);
       return;
     }
     else
@@ -1664,7 +1664,7 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
             m_lastVideoPTS.IsValid=false;
             m_lastVideoDTS.IsValid=false;
             //Flushing is delegated to CDeMultiplexer::ThreadProc()
-            DelegatedFlush(false);
+            DelegatedFlush(false, false);
           }
           else
           {
@@ -1944,7 +1944,7 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
                   m_MinAudioDelta+=1.0;
                   m_MinVideoDelta+=1.0;                
                   //Flushing is delegated to CDeMultiplexer::ThreadProc()
-                  DelegatedFlush(false);
+                  DelegatedFlush(false, false);
                 }
                 else if (Delta < 0.2)
                 {
@@ -2169,7 +2169,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
       m_WaitHeaderPES = -1;
       m_bSetVideoDiscontinuity=true;
       //Flushing is delegated to CDeMultiplexer::ThreadProc()
-      DelegatedFlush(false);
+      DelegatedFlush(false, false);
       return;        
     }
     else
@@ -2223,7 +2223,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
             m_lastVideoPTS.IsValid=false;
             m_lastVideoDTS.IsValid=false;
             //Flushing is delegated to CDeMultiplexer::ThreadProc()
-            DelegatedFlush(false);
+            DelegatedFlush(false, false);
           }
           else
           {
@@ -2417,7 +2417,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
                     m_MinAudioDelta+=1.0;
                     m_MinVideoDelta+=1.0;                
                     //Flushing is delegated to CDeMultiplexer::ThreadProc()
-                    DelegatedFlush(false);
+                    DelegatedFlush(false, false);
                   }
                   else if (Delta < 0.2)
                   {
@@ -2780,7 +2780,7 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
     m_bSetAudioDiscontinuity=true;
     m_bSetVideoDiscontinuity=true;
     //Flushing is delegated to CDeMultiplexer::ThreadProc()
-    DelegatedFlush(true);
+    DelegatedFlush(true, false);
   }
   else
   {
@@ -3048,7 +3048,7 @@ void CDeMultiplexer::RequestNewPat(void)
   if (m_filter.State() == State_Paused)
   {
     //Flush buffers to speed up zapping
-    DelegatedFlush(true);
+    DelegatedFlush(true, false);
   }
 }
 
@@ -3110,7 +3110,7 @@ void CDeMultiplexer::CallTeletextEventCallback(int eventCode,unsigned long int e
   }
 }
 
-void CDeMultiplexer::DelegatedFlush(bool forceNow)
+void CDeMultiplexer::DelegatedFlush(bool forceNow, bool waitForFlush)
 {
   if (m_bFlushDelgNow || m_bFlushRunning) //Flush already pending or in progress
   {
@@ -3127,6 +3127,14 @@ void CDeMultiplexer::DelegatedFlush(bool forceNow)
   }
   
   WakeThread();        
+
+  if (waitForFlush && forceNow)
+  {
+    for(int i(0) ; ((i < 500) && (m_bFlushDelgNow || m_bFlushRunning)) ; i++)
+    {
+      Sleep(1);
+    }
+  }
 }    
 
 void CDeMultiplexer::PrefetchData()
@@ -3189,14 +3197,14 @@ void CDeMultiplexer::ThreadProc()
             (retryRead && ((timeNow > (lastRetryLoopTime + MAX_PREFETCH_LOOP_TIME)) || !CheckPrefetchState(true, false)))  //Looping retry mode exit
           )
       {
-        sizeRead = 0;
         m_bReadAheadFromFile = false;
         if (retryRead && m_filter.m_bEnableBufferLogging)
         {
           int ACnt, VCnt;
           GetBufferCounts(&ACnt, &VCnt);
-          LogDebug("CDeMultiplexer::ThreadProc - Retry read end, A/V/time = %d/%d/%d", ACnt, VCnt, timeNow-lastRetryLoopTime) ; 
+          LogDebug("CDeMultiplexer::ThreadProc - Retry read end, A/V/time = %d/%d/%d, sizeReadTemp=%d, sizeRead=%d", ACnt, VCnt, timeNow-lastRetryLoopTime, sizeReadTemp, sizeRead) ; 
         }
+        sizeRead = 0;
         retryRead = false;
       }
       else //Looping retry mode

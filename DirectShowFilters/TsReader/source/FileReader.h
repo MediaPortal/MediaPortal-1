@@ -27,6 +27,8 @@
 #ifndef FILEREADER
 #define FILEREADER
 
+#include <Streams.h>
+
 class FileReader
 {
 public:
@@ -41,45 +43,33 @@ public:
 	virtual HRESULT CloseFile();
 	virtual HRESULT Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes);
 	virtual HRESULT Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes, __int64 llDistanceToMove, DWORD dwMoveMethod);
-	virtual HRESULT get_ReadOnly(WORD *ReadOnly);
-	virtual HRESULT get_DelayMode(WORD *DelayMode);
-	virtual HRESULT set_DelayMode(WORD DelayMode);
-	virtual HRESULT get_ReaderMode(WORD *ReaderMode);
 	virtual HRESULT GetFileSize(__int64 *pStartPosition, __int64 *pLength);
-	HRESULT GetInfoFileSize(__int64 *lpllsize);
-	HRESULT GetStartPosition(__int64 *lpllpos);
 	virtual BOOL IsFileInvalid();
 	virtual DWORD SetFilePointer(__int64 llDistanceToMove, DWORD dwMoveMethod);
 	virtual __int64 GetFilePointer();
-	virtual DWORD setFilePointer(__int64 llDistanceToMove, DWORD dwMoveMethod);
-	virtual __int64 getFilePointer();
-	virtual __int64 getBufferPointer();
-	virtual void setBufferPointer();
 
-	void SetDebugOutput(BOOL bDebugOutput);
-  void SetDummyWrites(BOOL useDummyWrites);
+	virtual void SetDummyWrites(BOOL useDummyWrites);
 
 	virtual __int64 GetFileSize();
+	
+	//The three methods below are for MemoryBuffer() reader compatibility
 	virtual bool IsBuffer(){return false;};
 	virtual bool HasMoreData(){return false;};
 	virtual int HasData(){return 0; } ;
+
+	//The two methods below are for MultiFileReader() compatibility
+	virtual BOOL GetFileNext(){return false;};
+	virtual void SetFileNext(BOOL useFileNext);
 
 protected:
   
   CString randomStrGen(int length); 
 	
 	HANDLE   m_hFile; 				// Handle to file for streaming
-	HANDLE   m_hInfoFile;           // Handle to Infofile for filesize from FileWriter
 	LPOLESTR m_pFileName;           // The filename where we stream
-	BOOL     m_bReadOnly;
-	BOOL     m_bDelay;
-	__int64 m_fileSize;
-	__int64 m_infoFileSize;
-	__int64 m_fileStartPos;
-	__int64 m_llBufferPointer;	
 
-	BOOL     m_bDebugOutput;
 	BOOL     m_bUseDummyWrites;
+  CCritSec     m_accessLock;
 };
 
 #endif

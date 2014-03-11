@@ -89,7 +89,7 @@ int CTsDuration::GetPid()
 void CTsDuration::StopUpdate(bool stopping)
 {
   m_bStopping = stopping;
-  LogDebug("TsDuration::StopUpdate(%d)", m_bStopping);
+  //LogDebug("TsDuration::StopUpdate(%d)", m_bStopping);
 }
 
 
@@ -117,7 +117,6 @@ void CTsDuration::UpdateDuration(bool logging)
     m_startPcr.Reset();
     m_endPcr.Reset();
     m_maxPcr.Reset();
-    //m_reader->SetFilePointer(0,FILE_BEGIN);
     searchLoopCnt = 2;
     __int64 offset=0;
 
@@ -180,7 +179,6 @@ void CTsDuration::UpdateDuration(bool logging)
     m_bSearchStart=false;
     searchLoopCnt = 2;
     offset=DUR_READ_SIZE;
-    //__int64 fileSize=m_reader->GetFileSize();
   
     while (!m_endPcr.IsValid)
     {

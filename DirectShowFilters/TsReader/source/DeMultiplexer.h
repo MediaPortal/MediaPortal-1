@@ -146,7 +146,7 @@ public:
   int  ReadAheadFromFile();
   bool CheckPrefetchState(bool isNormal, bool isForced);
 
-  void DelegatedFlush(bool forceNow);
+  void DelegatedFlush(bool forceNow, bool waitForFlush);
   void PrefetchData();
 
   bool m_DisableDiscontinuitiesFiltering;

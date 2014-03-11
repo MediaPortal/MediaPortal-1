@@ -522,11 +522,11 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
                 _InterlockedIncrement(&demux.m_AVDataLowCount);   
               }
               
-              if (fTime < -2.0)
+              if ((fTime < -2.0) && !demux.m_bFlushDelegated)
               { 
-                LogDebug("vidPin : Video to render very late, flushing") ;
                 //Very late - request internal flush and re-sync to stream
-                demux.DelegatedFlush(false);
+                demux.DelegatedFlush(false, false);
+                LogDebug("vidPin : Video to render very late, flushing") ;
               }
             }
 
