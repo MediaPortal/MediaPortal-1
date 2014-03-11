@@ -117,6 +117,10 @@
     <Compile Include="MiniDisplayPlugin\Drivers\iMON\ImonVfd.cs" />
     <Compile Include="MiniDisplayPlugin\Drivers\iMON\ImonBase.cs" />
     <Compile Include="MiniDisplayPlugin\Drivers\iMON\ImonLcd.cs" />
+    <Compile Include="MiniDisplayPlugin\Drivers\iMON\ISoundGraphImonDisplay.cs" />
+    <Compile Include="MiniDisplayPlugin\Drivers\iMON\SoundGraphDisplay.cs" />
+    <Compile Include="MiniDisplayPlugin\Drivers\iMON\SoundGraphImonLcd.cs" />
+    <Compile Include="MiniDisplayPlugin\Drivers\iMON\SoundGraphImonVfd.cs" />
     <Compile Include="MiniDisplayPlugin\Drivers\ShuttlePF27.cs" />
     <Compile Include="MiniDisplayPlugin\Drivers\DM140GINK.cs" />
     <Compile Include="MiniDisplayPlugin\Drivers\FicSpectra.cs" />
