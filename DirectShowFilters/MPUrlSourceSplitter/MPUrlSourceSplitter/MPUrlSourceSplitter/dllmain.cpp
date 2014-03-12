@@ -261,7 +261,10 @@ LONG WINAPI ExceptionHandler(struct _EXCEPTION_POINTERS *exceptionInfo)
           minidumpException.ExceptionPointers = exceptionInfo;
           minidumpException.ClientPointers = TRUE;
 
-          if (MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), dumpFile, MiniDumpWithDataSegs, &minidumpException, NULL, NULL) == TRUE)
+          MINIDUMP_TYPE miniDumpType = (MINIDUMP_TYPE)
+            (MiniDumpWithFullMemory | MiniDumpWithDataSegs | MiniDumpIgnoreInaccessibleMemory); 
+
+          if (MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), dumpFile, miniDumpType, &minidumpException, NULL, NULL) == TRUE)
           {
             wchar_t *guid = ConvertGuidToString(GUID_NULL);
 

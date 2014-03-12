@@ -107,7 +107,7 @@ bool CStaticLoggerContext::Initialize(DWORD maxLogSize, unsigned int allowedLogV
     if (result)
     {
       // create mutex, can return NULL
-      this->mutex = CreateMutex(NULL, false, this->globalMutexName);
+      this->mutex = CreateMutex(NULL, FALSE, this->globalMutexName);
     }
 
     result &= (this->mutex != NULL);

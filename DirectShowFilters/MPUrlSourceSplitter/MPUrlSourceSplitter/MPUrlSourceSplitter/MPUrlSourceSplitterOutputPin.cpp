@@ -73,6 +73,7 @@ CMPUrlSourceSplitterOutputPin::CMPUrlSourceSplitterOutputPin(CMediaTypeCollectio
   this->mediaTypeSubType = GUID_NULL;
   this->h264Buffer = new COutputPinPacket();
   this->h264PacketCollection = new COutputPinPacketCollection();
+  this->outputPinDataLength = 0;
 
   if (phr != NULL)
   {
@@ -340,6 +341,20 @@ HRESULT CMPUrlSourceSplitterOutputPin::DeliverBeginFlush()
   this->flushing = true;
   result = this->IsConnected() ? this->GetConnected()->BeginFlush() : S_OK;
   CAMThread::CallWorker(CMD_BEGIN_FLUSH);
+
+  uint64_t flushedDataLength = 0;
+  for (unsigned int i = 0; i < this->mediaPackets->Count(); i++)
+  {
+    if (this->mediaPackets->GetItem(i)->GetBuffer() != NULL)
+    {
+      flushedDataLength += (uint64_t)this->mediaPackets->GetItem(i)->GetBuffer()->GetBufferOccupiedSpace();
+    }
+  }
+
+  this->filter->GetLogger()->Log(LOGGER_INFO, L"%s: %s: pin '%s', sent data length: %llu", MODULE_NAME, METHOD_THREAD_PROC_NAME, this->m_pName, this->outputPinDataLength);
+  this->filter->GetLogger()->Log(LOGGER_INFO, L"%s: %s: pin '%s', flushed data length: %llu", MODULE_NAME, METHOD_THREAD_PROC_NAME, this->m_pName, flushedDataLength);
+
+  this->outputPinDataLength = 0;
 
   // clear all media packets
   this->mediaPackets->Clear();
@@ -638,6 +653,8 @@ DWORD CMPUrlSourceSplitterOutputPin::ThreadProc()
                   CHECK_HRESULT_EXECUTE(result, outputPinMediaSample->SetPacket(packet));
 
                   COM_SAFE_RELEASE(outputPinMediaSample);
+
+                  CHECK_CONDITION_EXECUTE(SUCCEEDED(result), this->outputPinDataLength += (uint64_t)packet->GetBuffer()->GetBufferOccupiedSpace());
                 }
                 else if (result == E_NOINTERFACE)
                 {
@@ -646,6 +663,8 @@ DWORD CMPUrlSourceSplitterOutputPin::ThreadProc()
 
                   if (SUCCEEDED(result))
                   {
+                    this->outputPinDataLength += (uint64_t)result;
+
                     if (packet->GetBuffer()->GetBufferOccupiedSpace() != result)
                     {
                       packet->GetBuffer()->RemoveFromBuffer(result);
@@ -690,6 +709,8 @@ DWORD CMPUrlSourceSplitterOutputPin::ThreadProc()
       CHECK_CONDITION_EXECUTE(sleepAllowed, Sleep(1));
     }
   }
+
+  this->filter->GetLogger()->Log(LOGGER_INFO, L"%s: %s: pin '%s', sent data length: %llu", MODULE_NAME, METHOD_THREAD_PROC_NAME, this->m_pName, this->outputPinDataLength);
 
   return S_OK;
 }

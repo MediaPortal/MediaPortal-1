@@ -47,6 +47,9 @@ CParserHoster::CParserHoster(CLogger *logger, CParameterCollection *configuratio
   this->parseMediaPackets = true;
   this->setTotalLengthCalled = false;
   this->endOfStreamReachedCalled = false;
+  this->streamPosition = 0;
+  this->total = 0;
+  this->estimate = true;
 
   this->hReceiveDataWorkerThread = NULL;
   this->status = STATUS_NONE;

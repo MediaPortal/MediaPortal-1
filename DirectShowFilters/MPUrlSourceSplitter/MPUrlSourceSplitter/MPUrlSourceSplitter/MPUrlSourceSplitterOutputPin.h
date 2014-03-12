@@ -244,6 +244,10 @@ protected:
   COutputPinPacket *h264Buffer;
   COutputPinPacketCollection *h264PacketCollection;
 
+  /* statistical data */
+
+  uint64_t outputPinDataLength;
+
   /* methods */
 
   DWORD ThreadProc();

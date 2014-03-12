@@ -25,6 +25,7 @@
 
 #include <process.h>
 #include <stdio.h>
+#include <assert.h>
 
 CStaticLogger::CStaticLogger(void)
 {
@@ -231,7 +232,12 @@ void CStaticLogger::Remove(void)
 
 void CStaticLogger::Flush(void)
 {
+  assert(this->mutex != NULL);
   CLockMutex lock(this->mutex, INFINITE);
+  assert(!lock.IsAbandoned());
+  assert(!lock.IsFailed());
+  assert(!lock.IsTimeout());
+  assert(lock.IsLocked());
 
   unsigned int contextCount = this->loggerContexts->Count();
   for (unsigned int i = 0; i < contextCount; i++)
