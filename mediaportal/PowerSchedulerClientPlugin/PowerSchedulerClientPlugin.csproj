@@ -84,7 +84,6 @@
     <Compile Include="Handlers\RebootWakeupHandler.cs" />
     <Compile Include="Handlers\WakeableStandbyHandler.cs" />
     <Compile Include="Handlers\WakeableWakeupHandler.cs" />
-    <Compile Include="MasterVolume.cs" />
     <Compile Include="PowerScheduler.cs" />
     <Compile Include="PowerSchedulerClientPlugin.cs" />
     <Compile Include="PowerSchedulerFactory.cs" />
