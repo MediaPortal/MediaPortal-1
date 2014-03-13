@@ -168,7 +168,14 @@ namespace MediaPortal.Player
           strFile = GetLargestFileInDirectory(path, "*.m2ts");
         }
 
-        _mI.Open(strFile);
+        if (strFile != null)
+        {
+          _mI.Open(strFile);
+        }
+        else
+        {
+          return;
+        }
 
         NumberFormatInfo providerNumber = new NumberFormatInfo();
         providerNumber.NumberDecimalSeparator = ".";
@@ -178,7 +185,17 @@ namespace MediaPortal.Player
                         out _framerate);
         int.TryParse(_mI.Get(StreamKind.Video, 0, "Width"), out _width);
         int.TryParse(_mI.Get(StreamKind.Video, 0, "Height"), out _height);
-        _aspectRatio = _mI.Get(StreamKind.Video, 0, "Display AspectRatio") == "4:3" ? "fullscreen" : "widescreen";
+        _aspectRatio = _mI.Get(StreamKind.Video, 0, "DisplayAspectRatio");
+
+        if ((_aspectRatio == "4:3") || (_aspectRatio == "1.333"))
+        {
+          _aspectRatio = "fullscreen";
+        }
+        else
+        {
+          _aspectRatio = "widescreen";
+        }
+
         _videoCodec = GetFullCodecName(StreamKind.Video);
         _scanType = _mI.Get(StreamKind.Video, 0, "ScanType").ToLowerInvariant();
         _isInterlaced = _scanType.Contains("interlaced");
@@ -257,32 +274,32 @@ namespace MediaPortal.Player
           _hasSubtitles = _numsubtitles > 0;
         }
 
-        Log.Info("MediaInfoWrapper.MediaInfoWrapper: DLL Version      : {0}", _mI.Option("Info_Version"));
+        Log.Debug("MediaInfoWrapper.MediaInfoWrapper: DLL Version      : {0}", _mI.Option("Info_Version"));
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: Inspecting media : {0}", strFile);
-        Log.Info("MediaInfoWrapper.MediaInfoWrapper: Parse speed      : {0}", _ParseSpeed);
+        Log.Debug("MediaInfoWrapper.MediaInfoWrapper: Parse speed      : {0}", _ParseSpeed);
         //Video
-        Log.Info("MediaInfoWrapper.MediaInfoWrapper: FrameRate        : {0}", _framerate);
-        Log.Info("MediaInfoWrapper.MediaInfoWrapper: Width            : {0}", _width);
-        Log.Info("MediaInfoWrapper.MediaInfoWrapper: Height           : {0}", _height);
-        Log.Info("MediaInfoWrapper.MediaInfoWrapper: AspectRatio      : {0}", _aspectRatio);
-        Log.Info("MediaInfoWrapper.MediaInfoWrapper: VideoCodec       : {0} [ \"{1}.png\" ]", _videoCodec,
+        Log.Debug("MediaInfoWrapper.MediaInfoWrapper: FrameRate        : {0}", _framerate);
+        Log.Debug("MediaInfoWrapper.MediaInfoWrapper: Width            : {0}", _width);
+        Log.Debug("MediaInfoWrapper.MediaInfoWrapper: Height           : {0}", _height);
+        Log.Debug("MediaInfoWrapper.MediaInfoWrapper: AspectRatio      : {0}", _aspectRatio);
+        Log.Debug("MediaInfoWrapper.MediaInfoWrapper: VideoCodec       : {0} [ \"{1}.png\" ]", _videoCodec,
                  Util.Utils.MakeFileName(_videoCodec).ToLowerInvariant());
-        Log.Info("MediaInfoWrapper.MediaInfoWrapper: Scan type        : {0}", _scanType);
-        Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsInterlaced     : {0}", _isInterlaced);
-        Log.Info("MediaInfoWrapper.MediaInfoWrapper: VideoResolution  : {0}", _videoResolution);
-        Log.Info("MediaInfoWrapper.MediaInfoWrapper: VideoDuration    : {0}", _videoDuration);
+        Log.Debug("MediaInfoWrapper.MediaInfoWrapper: Scan type        : {0}", _scanType);
+        Log.Debug("MediaInfoWrapper.MediaInfoWrapper: IsInterlaced     : {0}", _isInterlaced);
+        Log.Debug("MediaInfoWrapper.MediaInfoWrapper: VideoResolution  : {0}", _videoResolution);
+        Log.Debug("MediaInfoWrapper.MediaInfoWrapper: VideoDuration    : {0}", _videoDuration);
         //Audio
-        Log.Info("MediaInfoWrapper.MediaInfoWrapper: AudioRate        : {0}", _audioRate);
-        Log.Info("MediaInfoWrapper.MediaInfoWrapper: AudioChannels    : {0} [ \"{1}.png\" ]", _audioChannels,
+        Log.Debug("MediaInfoWrapper.MediaInfoWrapper: AudioRate        : {0}", _audioRate);
+        Log.Debug("MediaInfoWrapper.MediaInfoWrapper: AudioChannels    : {0} [ \"{1}.png\" ]", _audioChannels,
                  _audioChannelsFriendly);
-        Log.Info("MediaInfoWrapper.MediaInfoWrapper: AudioCodec       : {0} [ \"{1}.png\" ]", _audioCodec,
+        Log.Debug("MediaInfoWrapper.MediaInfoWrapper: AudioCodec       : {0} [ \"{1}.png\" ]", _audioCodec,
                  Util.Utils.MakeFileName(_audioCodec).ToLowerInvariant());
         //Detection
-        Log.Info("MediaInfoWrapper.MediaInfoWrapper: HasAudio         : {0}", _hasAudio);
-        Log.Info("MediaInfoWrapper.MediaInfoWrapper: HasVideo         : {0}", _hasVideo);
+        Log.Debug("MediaInfoWrapper.MediaInfoWrapper: HasAudio         : {0}", _hasAudio);
+        Log.Debug("MediaInfoWrapper.MediaInfoWrapper: HasVideo         : {0}", _hasVideo);
         //Subtitles
-        Log.Info("MediaInfoWrapper.MediaInfoWrapper: HasSubtitles     : {0}", _hasSubtitles);
-        Log.Info("MediaInfoWrapper.MediaInfoWrapper: NumSubtitles     : {0}", _numsubtitles);
+        Log.Debug("MediaInfoWrapper.MediaInfoWrapper: HasSubtitles     : {0}", _hasSubtitles);
+        Log.Debug("MediaInfoWrapper.MediaInfoWrapper: NumSubtitles     : {0}", _numsubtitles);
       }
       catch (Exception)
       {

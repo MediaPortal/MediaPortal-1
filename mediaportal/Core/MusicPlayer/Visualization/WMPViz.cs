@@ -49,15 +49,15 @@ namespace MediaPortal.Visualization
       public Int64 TimeStamp;
     }
 
-    [DllImport("mpviz.dll", CharSet = CharSet.Auto)]
+    [DllImport("mpviz.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Auto)]
     internal static extern bool InitWMPEngine([MarshalAs(UnmanagedType.LPWStr)] string strVizCLSID, int presetIndex,
                                               VisualizationBase.OutputContextType outputContextType, IntPtr callBack,
                                               IntPtr hOutput, ref VisualizationBase.RECT rect);
 
-    [DllImport("mpviz.dll", CharSet = CharSet.Auto)]
+    [DllImport("mpviz.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Auto)]
     internal static extern int RenderWMP(IntPtr pData, ref VisualizationBase.RECT rect);
 
-    [DllImport("mpviz.dll", CharSet = CharSet.Auto)]
+    [DllImport("mpviz.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Auto)]
     internal static extern bool SetOutputWMP(VisualizationBase.OutputContextType outputContextType, IntPtr hOutput);
   }
 
@@ -156,7 +156,15 @@ namespace MediaPortal.Visualization
       Marshal.StructureToPtr(TimedLvl, pTimedLevel, false);
 
       int result = 0;
-      result = WMPInterop.RenderWMP(pTimedLevel, ref rect);
+
+      try
+      {
+        result = WMPInterop.RenderWMP(pTimedLevel, ref rect);
+      }
+      catch (AccessViolationException)
+      {
+        return result; // We could get an Access Violation when changing Vis
+      }
 
       Marshal.FreeHGlobal(pTimedLevel);
       return result;

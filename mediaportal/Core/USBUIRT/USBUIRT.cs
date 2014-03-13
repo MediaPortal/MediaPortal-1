@@ -231,7 +231,6 @@ namespace MediaPortal.IR
       JUMP_TO_MY_RADIO, //	WINDOW_RADIO
       JUMP_TO_TELETEXT, //	WINDOW_TELETEXT
       JUMP_TO_TELETEXT_FULLSCREEN, //	WINDOW_FULLSCREEN_TELETEXT
-      JUMP_TO_MY_WEATHER, //	WINDOW_WEATHER
       JUMP_TO_LASTINVALID,
       // ReSharper restore InconsistentNaming
     }
@@ -1538,7 +1537,6 @@ namespace MediaPortal.IR
       _jumpToCommands[(int)JumpToActionType.JUMP_TO_MY_RADIO] = GUIWindow.Window.WINDOW_RADIO;
       _jumpToCommands[(int)JumpToActionType.JUMP_TO_TELETEXT] = GUIWindow.Window.WINDOW_TELETEXT;
       _jumpToCommands[(int)JumpToActionType.JUMP_TO_TELETEXT_FULLSCREEN] = GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT;
-      _jumpToCommands[(int)JumpToActionType.JUMP_TO_MY_WEATHER] = GUIWindow.Window.WINDOW_WEATHER;
     }
 
     /// <summary>

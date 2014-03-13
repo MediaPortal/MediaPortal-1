@@ -30,7 +30,7 @@ using MediaPortal.Util;
 using TvControl;
 using TvDatabase;
 using TvLibrary.Interfaces;
-using WindowPlugins;
+using Common.GUIPlugins;
 using Action = MediaPortal.GUI.Library.Action;
 using Layout = MediaPortal.GUI.Library.GUIFacadeControl.Layout;
 
@@ -685,7 +685,7 @@ namespace TvPlugin
       }
       if (item2.IsFolder && item2.Label == "..")
       {
-        return -1;
+        return 1;
       }
       if (item1.IsFolder && !item2.IsFolder)
       {

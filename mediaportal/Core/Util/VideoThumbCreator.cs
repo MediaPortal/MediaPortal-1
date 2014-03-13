@@ -135,6 +135,8 @@ namespace MediaPortal.Util
 
       int TimeToSeek = 3;
 
+      int Duration = 0;
+
       // intRnd is used if user refresh the thumbnail from context menu
       int intRnd = 0;
       if (aOmitCredits)
@@ -149,8 +151,11 @@ namespace MediaPortal.Util
 
       MediaInfo = new MediaPortal.Player.MediaInfoWrapper(aVideoPath);
 
-      int Duration = MediaInfo.VideoDuration / 1000;
-     
+      if (MediaInfo != null)
+      {
+        Duration = MediaInfo.VideoDuration/1000;
+      }
+
       if (preGapSec > Duration)
       {
         preGapSec = ( Duration / 100 ) * 20; // 20% of the duration

@@ -48,6 +48,7 @@ namespace MediaPortal.MusicPlayer.BASS
     private SYNCPROC _cueTrackEndProcDelegate = null;
     private SYNCPROC _metaTagSyncProcDelegate = null;
     private SYNCPROC _playBackSlideEndDelegate = null;
+    private SYNCPROC _streamFreedDelegate = null;
 
     public delegate void MusicStreamMessageHandler(object sender, StreamAction action);
     public event MusicStreamMessageHandler MusicStreamMessage;
@@ -62,6 +63,7 @@ namespace MediaPortal.MusicPlayer.BASS
       InternetStreamChanged,
       Disposed,
       Crossfading,
+      Freed,
     }
 
     #endregion
@@ -87,7 +89,7 @@ namespace MediaPortal.MusicPlayer.BASS
     #region Variables
 
     private int _stream = 0;
-    private FileType _fileType;
+    internal static FileType _fileType;
     private BASS_CHANNELINFO _channelInfo;
     private string _filePath;
 
@@ -109,7 +111,8 @@ namespace MediaPortal.MusicPlayer.BASS
 
     private Dictionary<string, int> _waDspPlugins = new Dictionary<string, int>();
 
-    private bool _disposed = false;
+    private bool _disposedMusicStream = false;
+    private bool _temporaryStream = false;
 
     #endregion
 
@@ -144,7 +147,7 @@ namespace MediaPortal.MusicPlayer.BASS
     /// </summary>
     public bool IsDisposed
     {
-      get { return _disposed; }
+      get { return _disposedMusicStream; }
     }
 
     /// <summary>
@@ -228,8 +231,22 @@ namespace MediaPortal.MusicPlayer.BASS
 
     #region Constructor
 
-    public MusicStream(string filePath)
+    /// <summary>
+    /// Creates a MusicStream object
+    /// </summary>
+    /// <param name="filePath">The Path of the song</param>
+    public MusicStream(string filePath) : this(filePath, false)
     {
+    }
+
+    /// <summary>
+    /// Creates a Musicstream object
+    /// </summary>
+    /// <param name="filePath">The Path of the song</param>
+    /// <param name="temporaryStream">Indicates that the stream is just temporary</param>
+    public MusicStream(string filePath, bool temporaryStream)
+    {
+      _temporaryStream = temporaryStream;
       _fileType.FileMainType = FileMainType.Unknown;
       _channelInfo = new BASS_CHANNELINFO();
       _filePath = filePath;
@@ -237,6 +254,7 @@ namespace MediaPortal.MusicPlayer.BASS
       _playbackCrossFadeProcDelegate = new SYNCPROC(PlaybackCrossFadeProc);
       _cueTrackEndProcDelegate = new SYNCPROC(CueTrackEndProc);
       _metaTagSyncProcDelegate = new SYNCPROC(MetaTagSyncProc);
+      _streamFreedDelegate = new SYNCPROC(StreamFreedProc);
 
       CreateStream();
     }
@@ -250,8 +268,11 @@ namespace MediaPortal.MusicPlayer.BASS
     /// </summary>
     private void CreateStream()
     {
-      Log.Info("BASS: ---------------------------------------------");
-      Log.Info("BASS: Creating BASS audio stream");
+      if (!_temporaryStream)
+      {
+        Log.Info("BASS: ---------------------------------------------");
+        Log.Info("BASS: Creating BASS audio stream");
+      }
 
       BASSFlag streamFlags = BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_DECODE;
 
@@ -265,8 +286,12 @@ namespace MediaPortal.MusicPlayer.BASS
         case FileMainType.AudioFile:
         case FileMainType.MidiFile:
           _stream = Bass.BASS_StreamCreateFile(_filePath, 0, 0, streamFlags);
-          // Read the Tag
-          _musicTag = TagReader.TagReader.ReadTag(_filePath);
+
+          if (!_temporaryStream)
+          {
+            // Read the Tag
+            _musicTag = TagReader.TagReader.ReadTag(_filePath);
+          }
           break;
 
         case FileMainType.CDTrack:
@@ -287,7 +312,7 @@ namespace MediaPortal.MusicPlayer.BASS
           // Turn on parsing of ASX files
           Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_NET_PLAYLIST, 2);
           _stream = Bass.BASS_StreamCreateURL(_filePath, 0, streamFlags, null, IntPtr.Zero);
-          if (_stream != 0)
+          if (_stream != 0 && !_temporaryStream)
           {
             // Get the Tags and set the Meta Tag SyncProc
             _tagInfo = new TAG_INFO(_filePath);
@@ -297,8 +322,8 @@ namespace MediaPortal.MusicPlayer.BASS
               GetMetaTags();
             }
             Bass.BASS_ChannelSetSync(_stream, BASSSync.BASS_SYNC_META, 0, _metaTagSyncProcDelegate, IntPtr.Zero);
+            Log.Debug("BASS: Webstream found - fetching stream {0}", Convert.ToString(_stream));
           }
-          Log.Debug("BASS: Webstream found - fetching stream {0}", Convert.ToString(_stream));
           break;
       }
 
@@ -320,6 +345,13 @@ namespace MediaPortal.MusicPlayer.BASS
       {
         Log.Error("BASS: Unable to get information for stream {0}.  Reason: {1}.", _filePath,
                       Enum.GetName(typeof(BASSError), Bass.BASS_ErrorGetCode()));
+        return;
+      }
+
+      // This stream has just been created to check upfront, the sample rate
+      // We don't need further processing of this stream
+      if (_temporaryStream)
+      {
         return;
       }
 
@@ -622,6 +654,10 @@ namespace MediaPortal.MusicPlayer.BASS
                            Thread.Sleep(20);
                          }
                        }
+                       else
+                       {
+                         Bass.BASS_ChannelStop(_stream);
+                       }
                      }
                      else
                      {
@@ -637,14 +673,18 @@ namespace MediaPortal.MusicPlayer.BASS
     /// </summary>
     /// <param name="startPos"></param>
     /// <param name="endPos"></param>
-    public void SetCueTrackEndPos(float startPos, float endPos)
+    public void SetCueTrackEndPos(float startPos, float endPos, bool endOnly)
     {
       if (_cueTrackEndEventHandler != 0)
       {
         Bass.BASS_ChannelRemoveSync(_stream, _cueTrackEndEventHandler);
       }
 
-      Bass.BASS_ChannelSetPosition(_stream, Bass.BASS_ChannelSeconds2Bytes(_stream, startPos));
+      if (!endOnly)
+      {
+        Bass.BASS_ChannelSetPosition(_stream, Bass.BASS_ChannelSeconds2Bytes(_stream, startPos));
+      }
+
       if (endPos > startPos)
       {
         _cueTrackEndEventHandler = RegisterCueTrackEndEvent(Bass.BASS_ChannelSeconds2Bytes(_stream, endPos));
@@ -682,13 +722,13 @@ namespace MediaPortal.MusicPlayer.BASS
       {
         _streamEventSyncHandles.Add(RegisterCrossFadeEvent(_stream));
       }
+      _streamEventSyncHandles.Add(RegisterStreamFreedEvent(_stream));
     }
 
     /// <summary>
     /// Register the Fade out Event
     /// </summary>
     /// <param name="stream"></param>
-    /// <param name="fadeOutMS"></param>
     /// <returns></returns>
     private int RegisterCrossFadeEvent(int stream)
     {
@@ -713,7 +753,6 @@ namespace MediaPortal.MusicPlayer.BASS
     /// <summary>
     /// Register the CUE file Track End Event
     /// </summary>
-    /// <param name="stream"></param>
     /// <param name="endPos"></param>
     /// <returns></returns>
     private int RegisterCueTrackEndEvent(long endPos)
@@ -729,6 +768,27 @@ namespace MediaPortal.MusicPlayer.BASS
                   Enum.GetName(typeof(BASSError), Bass.BASS_ErrorGetCode()));
       }
 
+      return syncHandle;
+    }
+
+    /// <summary>
+    /// Register the Stream Freed Event
+    /// </summary>
+    /// <param name="stream"></param>
+    /// <returns></returns>
+    private int RegisterStreamFreedEvent(int stream)
+    {
+      int syncHandle = 0;
+      syncHandle = Bass.BASS_ChannelSetSync(stream,
+                                            BASSSync.BASS_SYNC_FREE | BASSSync.BASS_SYNC_MIXTIME,
+                                            0, _streamFreedDelegate,
+                                            IntPtr.Zero);
+
+      if (syncHandle == 0)
+      {
+        Log.Debug("BASS: RegisterStreamFreedEvent of stream {0} failed with error {1}", stream,
+                  Enum.GetName(typeof(BASSError), Bass.BASS_ErrorGetCode()));
+      }
       return syncHandle;
     }
 
@@ -899,36 +959,50 @@ namespace MediaPortal.MusicPlayer.BASS
       }
     }
 
+    /// <summary>
+    /// This Callback Procedure is called by BASS when a stream is freed.
+    /// </summary>
+    /// <param name="handle"></param>
+    /// <param name="channel"></param>
+    /// <param name="data"></param>
+    /// <param name="user"></param>
+    private void StreamFreedProc(int handle, int channel, int data, IntPtr user)
+    {
+      {
+        if (MusicStreamMessage != null)
+        {
+          MusicStreamMessage(this, StreamAction.Freed);
+        }
+      }
+    }
+
     #endregion
 
     #region IDisposable Members
 
     public void Dispose()
     {
-      if (_disposed)
+      if (_disposedMusicStream)
       {
         return;
       }
 
-      _disposed = true;
-
-      Log.Debug("BASS: Disposing Music Stream {0}", _filePath);
-      Bass.BASS_StreamFree(_stream);
-
-      // Free Winamp resources)
-      try
+      lock (this)
       {
-        // Some Winamp dsps might raise an exception when closing
-        foreach (int waDspPlugin in _waDspPlugins.Values)
+        _disposedMusicStream = true;
+
+        Log.Debug("BASS: Disposing Music Stream {0}", _filePath);
+
+        // Free Winamp resources)
+        try
         {
-          BassWaDsp.BASS_WADSP_Stop(waDspPlugin);
+          // Some Winamp dsps might raise an exception when closing
+          foreach (int waDspPlugin in _waDspPlugins.Values)
+          {
+            BassWaDsp.BASS_WADSP_Stop(waDspPlugin);
+          }
         }
-      }
-      catch (Exception) { }
-
-      if (MusicStreamMessage != null)
-      {
-        MusicStreamMessage(this, StreamAction.Disposed);
+        catch (Exception) { }
       }
     }
 

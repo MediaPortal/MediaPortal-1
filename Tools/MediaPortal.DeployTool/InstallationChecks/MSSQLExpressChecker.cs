@@ -57,8 +57,21 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     private static void FixTcpPort()
     {
-      RegistryKey keySql =
-        Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Microsoft SQL Server\\Instance Names\\SQL");
+      RegistryKey keySql = null;
+      keySql = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Microsoft SQL Server\\Instance Names\\SQL");
+      if (keySql == null)
+      {
+        try
+        {
+          keySql = Utils.OpenSubKey(Registry.LocalMachine, "SOFTWARE\\Microsoft\\Microsoft SQL Server\\Instance Names\\SQL", false,
+              Utils.eRegWow64Options.KEY_WOW64_32KEY);
+        }
+        catch
+        {
+          // Parent key not open, exception found at opening (probably related to
+          // security permissions requested)
+        }
+      }
       if (keySql == null)
       {
         return;
@@ -70,6 +83,19 @@ namespace MediaPortal.DeployTool.InstallationChecks
         Registry.LocalMachine.OpenSubKey(
           "SOFTWARE\\Microsoft\\Microsoft SQL Server\\" + instanceSQL + "\\MSSQLServer\\SuperSocketNetLib\\Tcp\\IPAll",
           true);
+      if (keySql == null)
+      {
+        try
+        {
+          keySql = Utils.OpenSubKey(Registry.LocalMachine, "SOFTWARE\\Microsoft\\Microsoft SQL Server\\" + instanceSQL + "\\MSSQLServer\\SuperSocketNetLib\\Tcp\\IPAll", true,
+              Utils.eRegWow64Options.KEY_WOW64_32KEY);
+        }
+        catch
+        {
+          // Parent key not open, exception found at opening (probably related to
+          // security permissions requested)
+        }
+      }
       if (keySql == null)
       {
         return;
@@ -174,6 +200,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     public CheckResult CheckStatus()
     {
+      RegistryKey key = null;
       CheckResult result;
       result.needsDownload = true;
       FileInfo msSqlFile = new FileInfo(_fileName);
@@ -186,10 +213,24 @@ namespace MediaPortal.DeployTool.InstallationChecks
         result.state = result.needsDownload == false ? CheckState.DOWNLOADED : CheckState.NOT_DOWNLOADED;
         return result;
       }
-      using (
-        RegistryKey key =
-          Registry.LocalMachine.OpenSubKey(
-            "SOFTWARE\\Microsoft\\Microsoft SQL Server\\SQLEXPRESS\\MSSQLServer\\CurrentVersion"))
+      key =
+        Registry.LocalMachine.OpenSubKey(
+          "SOFTWARE\\Microsoft\\Microsoft SQL Server\\SQLEXPRESS\\MSSQLServer\\CurrentVersion");
+      if (key == null)
+      {
+        try
+        {
+          key = Utils.OpenSubKey(Registry.LocalMachine, "SOFTWARE\\Microsoft\\Microsoft SQL Server\\SQLEXPRESS\\MSSQLServer\\CurrentVersion", false,
+              Utils.eRegWow64Options.KEY_WOW64_32KEY);
+        }
+        catch
+        {
+          // Parent key not open, exception found at opening (probably related to
+          // security permissions requested)
+        }
+      }
+
+      using (key)
       {
         if (key == null)
           result.state = CheckState.NOT_INSTALLED;

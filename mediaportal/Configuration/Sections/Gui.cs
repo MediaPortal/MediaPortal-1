@@ -120,9 +120,9 @@ namespace MediaPortal.Configuration.Sections
                                             new string[] {"gui", "enableguisounds", "true"},
                                             // 5 Show special mouse controls (scrollbars, etc)      
                                             new string[] {"gui", "mousesupport", "false"},
-                                            // 5 Reduce frame rate when not in focus     
+                                            // 6 Reduce frame rate when not in focus     
                                             new string[] {"gui", "reduceframerate", "false"},
-
+                                            new string[] {"gui", "addVideoFilesToDb", "false"},
                                           };
 
     /// <summary> 
