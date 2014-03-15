@@ -220,3 +220,8 @@ bool CParameterCollection::Remove(unsigned int index)
 {
   return __super::Remove(index);
 }
+
+bool CParameterCollection::Remove(unsigned int index, unsigned int count)
+{
+  return __super::Remove(index, count);
+}

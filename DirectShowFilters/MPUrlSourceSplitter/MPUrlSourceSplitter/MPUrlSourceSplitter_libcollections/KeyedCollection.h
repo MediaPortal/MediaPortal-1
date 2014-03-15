@@ -55,6 +55,12 @@ public:
   // @return : true if removed, false otherwise
   virtual bool Remove(unsigned int index);
 
+  // removes count of items from collection from specified index
+  // @param index : the index of item to start removing
+  // @param count : the count of items to remove
+  // @return : true if removed, false otherwise
+  virtual bool Remove(unsigned int index, unsigned int count);
+
   // remove item with specified key from collection
   // @param key : key of item to remove
   // @param context : the reference to user defined context
@@ -163,6 +169,11 @@ template <class TItem, class TItemKey> unsigned int CKeyedCollection<TItem, TIte
 template <class TItem, class TItemKey> bool CKeyedCollection<TItem, TItemKey>::Remove(unsigned int index)
 {
   return __super::Remove(index);
+}
+
+template <class TItem, class TItemKey> bool CKeyedCollection<TItem, TItemKey>::Remove(unsigned int index, unsigned int count)
+{
+  return __super::Remove(index, count);
 }
 
 template <class TItem, class TItemKey> bool CKeyedCollection<TItem, TItemKey>::Remove(TItemKey key, void *context)

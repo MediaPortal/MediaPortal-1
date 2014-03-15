@@ -64,6 +64,12 @@ public:
   // @return : true if removed, false otherwise
   virtual bool Remove(unsigned int index);
 
+  // removes count of items from collection from specified index
+  // @param index : the index of item to start removing
+  // @param count : the count of items to remove
+  // @return : true if removed, false otherwise
+  virtual bool Remove(unsigned int index, unsigned int count);
+
   // ensures that in internal buffer is enough space
   // if in internal buffer is not enough space, method tries to allocate enough space
   // @param requestedCount : the requested count of items
@@ -177,15 +183,21 @@ template <class TItem> bool CCollection<TItem>::Insert(unsigned int position, TI
 
 template <class TItem> bool CCollection<TItem>::Append(CCollection<TItem> *collection)
 {
-  bool result = true;
-  if (collection != NULL)
+  bool result = (collection != NULL);
+
+  if (result)
   {
     unsigned int count = collection->Count();
-    for (unsigned int i = 0; i < count; i++)
+
+    // ensure that enough space is in collection
+    result = this->EnsureEnoughSpace(this->itemCount + count);
+    
+    for (unsigned int i = 0; (result && (i < count)); i++)
     {
       result &= this->Add(this->Clone(collection->GetItem(i)));
     }
   }
+
   return result;
 }
 
@@ -206,19 +218,29 @@ template <class TItem> TItem *CCollection<TItem>::GetItem(unsigned int index)
 
 template <class TItem> bool CCollection<TItem>::Remove(unsigned int index)
 {
+  return this->Remove(index, 1);
+}
+
+template <class TItem> bool CCollection<TItem>::Remove(unsigned int index, unsigned int count)
+{
   bool result = false;
 
-  if ((index >= 0) && (index < this->itemCount))
+  if ((count > 0) && ((index + count) <= this->itemCount))
   {
-    // delete item on specified index
-    FREE_MEM_CLASS((*(this->items + index)));
-    // move rest of items
-    for (unsigned int i = (index + 1); i < this->itemCount; i++)
+    for (unsigned int i = index; i < (index + count); i++)
     {
-      *(this->items + i - 1) = *(this->items + i);
+      // delete item on specified index
+      FREE_MEM_CLASS((*(this->items + i)));
     }
 
-    this->itemCount--;
+    // move rest of items
+    for (unsigned int i = (index + count); i < this->itemCount; i++)
+    {
+      *(this->items + i - count) = *(this->items + i);
+      *(this->items + i) = NULL;
+    }
+
+    this->itemCount -= count;
     result = true;
   }
 

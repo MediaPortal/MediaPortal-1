@@ -133,6 +133,12 @@ public:
   // @return : true if removed, false otherwise
   virtual bool Remove(unsigned int index);
 
+  // removes count of items from collection from specified index
+  // @param index : the index of item to start removing
+  // @param count : the count of items to remove
+  // @return : true if removed, false otherwise
+  virtual bool Remove(unsigned int index, unsigned int count);
+
 protected:
   // compare two item keys
   // @param firstKey : the first item key to compare
