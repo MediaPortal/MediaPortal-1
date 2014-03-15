@@ -91,10 +91,10 @@ namespace MediaPortal.Configuration
         return Path.Combine(Get(directory), fileName);
       }
       MessageBox.Show(
-        "The passed file name : " + filemanPath +
+        "The passed file : " + filemanPath +
         " is not valid, application will shutdown, you need to replace/correct the file.", "MediaPortal Information",
         MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-      Log.Error("The passed file name : " + filemanPath + " is not valid, application will shutdown, you need to replace/correct the file.");
+      Log.Error("The passed file : " + filemanPath + " is not valid, application will shutdown, you need to replace/correct the file.");
       Environment.Exit(0);
       return null;
     }
