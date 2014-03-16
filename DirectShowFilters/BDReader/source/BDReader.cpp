@@ -181,6 +181,8 @@ CBDReaderFilter::~CBDReaderFilter()
     CloseHandle(m_hCommandEvent);
 
   lib.RemoveEventObserver(this);
+  lib.CloseBluray();
+
   if (m_pAudioPin)
   {
     m_pAudioPin->Disconnect();
