@@ -64,6 +64,7 @@ namespace MediaPortal.TagReader
     internal string m_ReplayGainTrackPeak = "";
     internal string m_ReplayGainAlbum = "";
     internal string m_ReplayGainAlbumPeak = "";
+    internal string m_imageURL = string.Empty;
 
     #endregion
 
@@ -101,7 +102,7 @@ namespace MediaPortal.TagReader
       ReplayGainTrackPeak = tag.ReplayGainTrackPeak;
       ReplayGainAlbum = tag.ReplayGainAlbum;
       ReplayGainAlbumPeak = tag.ReplayGainAlbumPeak;
-
+      
       DateTimePlayed = tag.DateTimePlayed;
       DateTimeModified = tag.DateTimeModified;
     }
@@ -146,6 +147,7 @@ namespace MediaPortal.TagReader
       m_ReplayGainTrackPeak = "";
       m_ReplayGainAlbum = "";
       m_ReplayGainAlbumPeak = "";
+      m_imageURL = "";
     }
 
     public bool IsMissingData
@@ -429,6 +431,12 @@ namespace MediaPortal.TagReader
     {
       get { return m_ReplayGainAlbumPeak; }
       set { m_ReplayGainAlbumPeak = value; }
+    }
+
+    public string ImageURL
+    {
+      get { return m_imageURL; }
+      set { m_imageURL = value; }
     }
 
     #endregion

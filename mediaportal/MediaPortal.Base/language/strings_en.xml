@@ -1184,6 +1184,11 @@
     <String id="1977">File system</String>
     <String id="1978">Virtual Memory</String>
     <String id="1984">Refresh video thumb</String>
+    <String id="1990">Wake Up Server</String>
+    <String id="1991">Please wait until the server is waking up</String>
+    <String id="1992">The server is not available.</String>
+    <String id="1993">Check the network connection or increase the timeout value.</String>
+    <String id="1994">Wait until the share comes online.</String> 
     <String id="2005">Delete</String>
     <String id="2006">Title</String>
     <String id="2007">Yield</String>
@@ -1830,6 +1835,7 @@
     <String id="34061">Enter username...</String>
     <String id="34062">Enter artist...</String>
     <String id="34063">No artist has been chosen yet</String>
+	<String id="34064">An Internet connection is required\nFor Last.FM Radio</String>
     <String id="40001">Waiting for Standby</String>
     <String id="40002">MediaPortal is unattended but still busy.</String>
     <String id="40003">When all current tasks are finished MediaPortal will go to standby mode.</String>

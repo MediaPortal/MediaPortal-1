@@ -365,6 +365,7 @@
     <Compile Include="guilib\IStandardKeyboard.cs" />
     <Compile Include="guilib\GUIThemeManager.cs" />
     <Compile Include="guilib\RepeatBehavior.cs" />
+    <Compile Include="guilib\TextureFrame.cs" />
     <Compile Include="guilib\ViewHandler.cs" />
     <Compile Include="guilib\XMLSkinFunctionAttribute.cs" />
     <Compile Include="MusicPlayer\BASS\MixerStream.cs" />
@@ -596,6 +597,7 @@
     <Compile Include="Util\ProcessLock.cs" />
     <Compile Include="Util\RegistryTools.cs" />
     <Compile Include="Util\RemovableDriveHelper.cs" />
+    <Compile Include="Util\ShellNotification.cs" />
     <Compile Include="Util\StopWatch.cs" />
     <Compile Include="Util\ThumbExtractor.cs" />
     <Compile Include="Util\TMDBCoversSearch.cs" />
@@ -1534,12 +1536,14 @@
     <Compile Include="Util\VirtualDirectory.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Util\WakeOnLanManager.cs" />
     <Compile Include="Util\Win32API.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Util\WindowsController.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Util\WmiExtensions.cs" />
     <Compile Include="Vista Toolbelt\NativeInterop.cs" />
     <Compile Include="Vista Toolbelt\ThumbnailGenerator.cs" />
     <Compile Include="wmfsdk\BufferTypes.cs">
@@ -1664,6 +1668,9 @@
     <Content Include="UserInterfaceControls\Resources\mp.ico" />
   </ItemGroup>
   <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

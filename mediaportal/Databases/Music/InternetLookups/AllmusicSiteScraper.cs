@@ -20,18 +20,17 @@
 
 using System;
 using System.Globalization;
-using System.IO;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using HtmlAgilityPack;
 using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Music.Database
 {
   /// <summary>
-  /// Summary description for ArtistInfoScraper.
+  /// Embedded logic to scrape artist and album details from alllmusic.com
   /// </summary>
   public class AllmusicSiteScraper
   {
@@ -39,10 +38,6 @@ namespace MediaPortal.Music.Database
     #region variables
 
     private const string BaseURL = "http://www.allmusic.com/search/artists/";
-    private const string AlbumRegExpPattern = @"<td class=""title primary_link"".*?<a href=""(?<albumURL>.*?)"" class=""title.*?"" data-tooltip="".*?"">(?<albumName>.*?)</a>";
-    private static readonly Regex AlbumURLRegEx = new Regex(AlbumRegExpPattern, RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.Compiled);
-    private const string ArtistRegExpPattern = @"<tr class=""search-result artist"">.*?<div class=""name"">\s*<a href=""(?<artistURL>.*?)"".*?>(?<artist>.*?)</a>\s*</div>\s*<div class=""info"">\s*(?<genres>.*?)\s*<br/>\s*(?<years>.*?)\s*</div>";
-    private static readonly Regex ArtistURLRegEx = new Regex(ArtistRegExpPattern, RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.Compiled);
     private static readonly Regex BracketRegEx = new Regex(@"\s*[\(\[\{].*?[\]\)\}]\s*", RegexOptions.Compiled);
     private static readonly Regex PunctuationRegex = new Regex(@"[^\w\s]|_", RegexOptions.Compiled);
 
@@ -50,85 +45,84 @@ namespace MediaPortal.Music.Database
 
     #region public method
 
-    public bool GetArtists(string strArtist, out List<AllMusicArtistMatch> artists)
+    /// <summary>
+    /// Searches for an artist on allmusic.com
+    /// </summary>
+    /// <param name="strArtist">Artist to search for</param>
+    /// <param name="possibleMatches">List of possible matches</param>
+    /// <returns>True if matches are found</returns>
+    public bool GetArtists(string strArtist, out List<AllMusicArtistMatch> possibleMatches)
     {
       Log.Debug("AllmusicScraper.  Searching-Artist: {0}", strArtist);
-      artists = new List<AllMusicArtistMatch>();
       var strEncodedArtist = EncodeString(strArtist);
       var strURL = BaseURL + strEncodedArtist;
+      var strCleanArtist = CleanString(strArtist);
 
-      string artistSearchHtml;
-      if (!GetHTML(strURL, out artistSearchHtml))
+      var searchPage = new HtmlWeb().Load(strURL);
+      var artistMatches = searchPage.DocumentNode.SelectNodes(@"//ul[@class=""search-results""]/li[@class=""artist""]");
+      if (artistMatches == null)
       {
+        possibleMatches = new List<AllMusicArtistMatch>();
         return false;
       }
 
-      var matches = ArtistURLRegEx.Matches(artistSearchHtml);
-      var strCleanArtist = CleanString(strArtist);
+      var allMusicArtistMatches = artistMatches.Select(artist => new AllMusicArtistMatch
+        {
+          Artist = CleanString(CleanInnerText(artist.SelectSingleNode(@"div[@class=""info""]/div[@class=""name""]"))),
+          ArtistUrl = CleanAttribute(artist.SelectSingleNode(@"div[@class=""info""]/div[@class=""name""]/a"), "href"),
+          Genre = CleanInnerText(artist.SelectSingleNode(@"div[@class=""info""]/div[@class=""genres""]")),
+          ImageUrl = CleanAttribute(artist.SelectSingleNode(@"div[@class=""photo""]/a/img"), "src"),
+          YearsActive = CleanInnerText(artist.SelectSingleNode(@"div[@class=""info""]/div[@class=""decades""]"))
+        }).ToList();
 
-      //TODO needs image url in regexp
-      artists.AddRange(from Match m in matches
-                       let strCleanMatch = CleanString(m.Groups["artist"].ToString())
-                       let strYearsActive = m.Groups["years"].ToString().Trim()
-                       let strArtistUrl = m.Groups["artistURL"].ToString()
-                       let strGenre = m.Groups["genres"].ToString()
-                       where strCleanArtist == strCleanMatch
-                       where !string.IsNullOrEmpty(strYearsActive)
-                       select
-                         new AllMusicArtistMatch
-                           {
-                             Artist = strArtist,
-                             YearsActive = strYearsActive,
-                             ArtistUrl = strArtistUrl,
-                             Genre = strGenre
-                           });
 
-      if (artists.Count == 0)
+      possibleMatches = (from a in allMusicArtistMatches
+                         where strCleanArtist == a.Artist
+                         where !string.IsNullOrEmpty(a.YearsActive)
+                         select a).ToList();
+      if (possibleMatches.Count == 0)
       {
         // still possible that search returned values but none match our artist
         // try again but this time do not include years active
-        artists.AddRange(from Match m in matches
-                         let strCleanMatch = CleanString(m.Groups["artist"].ToString())
-                         let strYearsActive = m.Groups["years"].ToString().Trim()
-                         let strArtistUrl = m.Groups["artistURL"].ToString()
-                         let strGenre = m.Groups["genres"].ToString()
-                         where strCleanArtist == strCleanMatch
-                         select
-                           new AllMusicArtistMatch
-                             {
-                               Artist = strArtist,
-                               YearsActive = strYearsActive,
-                               ArtistUrl = strArtistUrl,
-                               Genre = strGenre
-                             });
+        possibleMatches = (from a in allMusicArtistMatches
+                           where strCleanArtist == a.Artist
+                           select a).ToList();
       }
 
       Log.Debug("AllmusicScraper.  Searched-Artist: {0} Found: {1} matches", strArtist,
-                artists.Count.ToString(CultureInfo.InvariantCulture));
+                possibleMatches.Count.ToString(CultureInfo.InvariantCulture));
 
-      return artists.Count != 0;
+      return possibleMatches.Count != 0;
     }
 
-    public bool GetArtistHtml(AllMusicArtistMatch allMusicArtistMatch, out string strHTML)
+    /// <summary>
+    /// Searches for an album on allmusic.com
+    /// </summary>
+    /// <param name="strAlbum">Album name to search for</param>
+    /// <param name="strArtistUrl">URL of artist page <see cref="GetArtists"/></param>
+    /// <param name="strAlbumUrl">URL of album details page</param>
+    /// <returns>True if an album was found</returns>
+    public bool GetAlbumUrl(string strAlbum, string strArtistUrl, out string strAlbumUrl)
     {
-      return GetHTML(allMusicArtistMatch.ArtistUrl, out strHTML); 
-    }
-
-    public bool GetAlbumHtml(string strAlbum, string strArtistUrl, out string strHtml)
-    {
-      Log.Debug("AllmusicScraper.  Searching-Album: {0}", strAlbum);
-      strHtml = string.Empty;
-      string strAlbumURL;
-      var strURL = strArtistUrl + "/overview/main#discography";
-      if(!GetAlbumURL(strURL, strAlbum, out strAlbumURL))
+      var artistPage = new HtmlWeb().Load(strArtistUrl);
+      var albumPageURL = "http://www.allmusic.com/" + CleanAttribute(artistPage.DocumentNode.SelectSingleNode(@"//ul[@class=""tabs overview""]/li[@class=""tab discography""]/a"), "href");
+      if (string.IsNullOrEmpty(albumPageURL))
       {
+        Log.Debug("No discography page found");
+        strAlbumUrl = string.Empty;
+        return false;
+      }
+
+      // standard albums
+      if (!GetAlbumURL(strArtistUrl + "/discography", strAlbum, out strAlbumUrl))
+      {
+        // compilations
         Log.Debug("AllmusicScraper.  Searching-Album: {0} - not found in main albums.  Checking compilations", strAlbum);
-        strURL = strArtistUrl + "/overview/compilations#discography";
-        if (!GetAlbumURL(strURL, strAlbum, out strAlbumURL))
+        if (!GetAlbumURL(strArtistUrl + "/discography/compilations", strAlbum, out strAlbumUrl))
         {
-          Log.Debug("AllmusicScraper.  Searching-Album: {0} - not found in compilaitions.  Checking singles & EPs", strAlbum);
-          strURL = strArtistUrl + "/overview/singles#discography";
-          if (!GetAlbumURL(strURL, strAlbum, out strAlbumURL))
+          // Singles / EPs
+          Log.Debug("AllmusicScraper.  Searching-Album: {0} - not found in compilations.  Checking singles & EPs", strAlbum);
+          if (!GetAlbumURL(strArtistUrl + "/discography/singles", strAlbum, out strAlbumUrl))
           {
             Log.Debug("AllmusicScraper.  Searching-Album: {0} - not found", strAlbum);
             return false;
@@ -136,35 +130,48 @@ namespace MediaPortal.Music.Database
         }
       }
 
-      return GetHTML(strAlbumURL, out strHtml);
+      return true;
     }
 
     #endregion
 
     #region private methods
 
-    private static bool GetAlbumURL(string strArtistURL, string strAlbum, out string strAlbumURL)
+    /// <summary>
+    /// Encapsulates logic to search for the album URL.   Is called for different types
+    /// (eg. main albums, compilations, EPs) <see cref="GetAlbumUrl"/>
+    /// </summary>
+    /// <param name="strURL">The URL of an artist details page to search</param>
+    /// <param name="strAlbum">Album name to search for</param>
+    /// <param name="strAlbumURL">URL of album details page</param>
+    /// <returns></returns>
+    private static bool GetAlbumURL(string strURL, string strAlbum, out string strAlbumURL)
     {
+      //TODO should return list of album matches
       strAlbumURL = string.Empty;
-      string discHTML;
-      if (!GetHTML(strArtistURL, out discHTML))
+      var strCleanAlbum = CleanString(strAlbum);
+
+      var discographyPage = new HtmlWeb().Load(strURL);
+      var albums = discographyPage.DocumentNode.SelectNodes(@"//section[@class=""discography""]/table/tbody/tr");
+      if (albums == null)
       {
         return false;
       }
-
-      var strCleanAlbum = CleanString(strAlbum);
-
-      for (var m = AlbumURLRegEx.Match(discHTML); m.Success; m = m.NextMatch())
-      {
-        var strFoundValue = CleanString(m.Groups["albumName"].ToString());
-
-        if (strFoundValue != strCleanAlbum)
+      var albumlist = albums.Select(album => new AllMusicAlbumMatch
         {
-          continue;
-        }
-        
-        strAlbumURL = m.Groups["albumURL"].ToString();
-        break;
+          Album = CleanInnerText(album.SelectSingleNode(@"td[@class=""title""]/a")),
+          AlbumURL = CleanAttribute(album.SelectSingleNode(@"td[@class=""title""]/a"), "href"),
+          Year = CleanInnerText(album.SelectSingleNode(@"td[@class=""year""]")),
+          Label = CleanInnerText(album.SelectSingleNode(@"td[@class=""label""]"))
+        }).ToList();
+
+      var matchedAlbum = (from a in albumlist
+                          where CleanString(a.Album) == strCleanAlbum
+                          select a).ToList();
+
+      if (matchedAlbum.Count() == 1)
+      {
+        strAlbumURL = matchedAlbum[0].AlbumURL;
       }
 
       // return true if we have picked up a URL
@@ -224,50 +231,36 @@ namespace MediaPortal.Music.Database
 
     #endregion
 
-    #region HTTP
+    #region helper methods
 
-    private static bool GetHTML(string strURL, out string strHTML)
+    /// <summary>
+    /// Take a HTML node, validate and forma the inner text
+    /// </summary>
+    /// <param name="node">HTML Node to validate and format</param>
+    /// <returns>Formatted innertext</returns>
+    protected internal static string CleanInnerText(HtmlNode node)
     {
-      strHTML = string.Empty;
-      try 
+      if (node == null)
       {
-        var x = (HttpWebRequest)WebRequest.Create(strURL);
-
-        x.ProtocolVersion = HttpVersion.Version10;
-        x.UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0) Gecko/20100101 Firefox/6.0";
-        x.ContentType = "text/html";
-        x.Timeout = 30000;
-        x.AllowAutoRedirect = false;
-
-        using (var y = (HttpWebResponse)x.GetResponse())
-        {
-          using (var z = y.GetResponseStream())
-          {
-            if (z == null)
-            {
-              x.Abort();
-              y.Close();
-              return false;
-            }
-            using (var sr = new StreamReader(z, Encoding.UTF8))
-            {
-              strHTML = sr.ReadToEnd();
-            }
-
-            z.Close();
-            x.Abort();
-            y.Close();
-          }
-        }
-      }
-      catch(Exception ex)
-      {
-        Log.Error("AMG Scraper: Error retrieving html for: {0}", strURL);
-        Log.Error(ex);
-        return false;
+        return string.Empty;
       }
 
-      return true;
+      var retval = node.InnerText.Trim();
+      retval = Regex.Replace(retval, @"  +", @" "); // replace multiple spaces with a single one
+      retval = Regex.Replace(retval, @"(?m)(^\s+$)+", ""); // sort out indentation
+
+      return retval;
+    }
+
+    /// <summary>
+    /// Take a HTML node and validate and attribute
+    /// </summary>
+    /// <param name="node">HTML node to validate</param>
+    /// <param name="attributeName">The attribute name to check</param>
+    /// <returns>The value of attribute else if it exists else an empty string</returns>
+    protected internal static string CleanAttribute(HtmlNode node, string attributeName)
+    {
+      return node == null ? string.Empty : node.GetAttributeValue(attributeName, string.Empty);
     }
 
     #endregion

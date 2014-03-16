@@ -381,7 +381,11 @@ namespace MediaPortal.Configuration.Sections
             GetNfoFiles(availablePath, ref _nfoFiles);
           }
 
-          ImportNfo(true);
+          if (_nfoFiles.Count > 0)
+          {
+            ImportNfo(true);
+          }
+
           // Then video files (only not added with nfo)
           // Close progress dialog from nfo import if exist
           if (_progressDialog != null)
@@ -5262,6 +5266,9 @@ namespace MediaPortal.Configuration.Sections
         // open dialog
         if (dlg.ShowDialog(this) == DialogResult.OK)
         {
+          Util.Utils.FileDelete(smallThumb);
+          Util.Utils.FileDelete(largeThumb);
+          
           if (Util.Picture.CreateThumbnail(dlg.FileName, smallThumb, (int)Thumbs.ThumbResolution,
                                            (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
           {

@@ -77,7 +77,7 @@ namespace MediaPortal.Util
           string sharePort = String.Format("shareport{0}", i);
           string remoteFolder = String.Format("shareremotepath{0}", i);
           string shareViewPath = String.Format("shareview{0}", i);
-
+          string sharewakeonlan = String.Format("sharewakeonlan{0}", i);
           Share share = new Share();
           share.Name = xmlreader.GetValueAsString(section, strShareName, string.Empty);
           share.Path = xmlreader.GetValueAsString(section, strSharePath, string.Empty);
@@ -94,6 +94,7 @@ namespace MediaPortal.Util
           share.FtpPort = xmlreader.GetValueAsInt(section, sharePort, 21);
           share.FtpFolder = xmlreader.GetValueAsString(section, remoteFolder, "/");
           share.DefaultLayout = (Layout)xmlreader.GetValueAsInt(section, shareViewPath, (int)Layout.List);
+          share.ShareWakeOnLan = xmlreader.GetValueAsBool(section, sharewakeonlan, false);
 
           if (share.Name.Length > 0)
           {
@@ -108,6 +109,42 @@ namespace MediaPortal.Util
             Add(share);
           }
           else break;
+        }
+
+        List<string> usbHdd = Utils.GetAvailableUsbHardDisks();
+
+        if (usbHdd.Count > 0)
+        {
+          foreach (string drive in usbHdd)
+          {
+            bool driveFound = false;
+            string driveName = Utils.GetDriveName(drive);
+
+            if (driveName.Length == 0)
+            {
+              driveName = String.Format("({0}:) Removable", drive.Substring(0, 1).ToUpper());
+            }
+            else
+            {
+              driveName = String.Format("({0}:) {1}", drive.Substring(0, 1).ToUpper(), driveName);
+            }
+
+            foreach (var share in m_shares)
+            {
+              if (share.Path == drive)
+              {
+                driveFound = true;
+                break;
+              }
+            }
+
+            if (driveFound == false)
+            {
+              Share removableShare = new Share(driveName, drive);
+              removableShare.RuntimeAdded = true;
+              Add(removableShare);
+            }
+          }
         }
       }
     }
@@ -573,6 +610,14 @@ namespace MediaPortal.Util
       if (folder == null) return false;
       if (folder.IndexOf("remote:") == 0) return true;
       return false;
+    }
+
+    public bool IsWakeOnLanEnabled(Share shareName)
+    {
+      if (shareName == null) 
+        return false;
+      
+      return shareName.ShareWakeOnLan;
     }
 
     public string GetShareRemoteURL(Share shareName)
@@ -1436,7 +1481,18 @@ namespace MediaPortal.Util
           item.IsRemote = true;
         }
         Utils.SetDefaultIcons(item);
-        if (share.Pincode < 0)// && !Utils.IsNetwork(share.Path))
+
+        bool pathOnline = Util.Utils.CheckServerStatus(item.Path);
+
+        if (Util.Utils.IsUNCNetwork(item.Path) && !pathOnline && Util.Utils.FileExistsInCache(GUIGraphicsContext.GetThemedSkinFile("\\Media\\defaultNetworkOffline.png")))
+        {
+          item.IconImage = "defaultNetworkOffline.png";
+          item.IconImageBig = "defaultNetworkBigOffline.png";
+          item.ThumbnailImage = "defaultNetworkBigOffline.png";
+          Log.Debug("GetRootExt(): Path = {0}, IconImage = {1}", item.Path, item.IconImage);
+        }
+
+        if (share.Pincode < 0 && pathOnline)
         {
           string coverArt = Utils.GetCoverArtName(item.Path, "folder");
           string largeCoverArt = Utils.GetLargeCoverArtName(item.Path, "folder");
@@ -1458,6 +1514,7 @@ namespace MediaPortal.Util
             item.ThumbnailImage = coverArt;
           }
         }
+
         items.Add(item);
       }
 

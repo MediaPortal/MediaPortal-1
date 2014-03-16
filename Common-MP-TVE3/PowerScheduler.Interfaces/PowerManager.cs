@@ -38,11 +38,6 @@ namespace TvEngine.PowerScheduler.Interfaces
   {
     #region Variables
 
-    /// <summary>
-    /// Handle to unregister for power setting change notification
-    /// </summary>
-    private static IntPtr _hAwayMode = (IntPtr)null;
-
     #endregion
 
     #region System power structures and enumerations
@@ -496,26 +491,6 @@ namespace TvEngine.PowerScheduler.Interfaces
     }
 
     /// <summary>
-    /// Register for away mode notifications
-    /// </summary>
-    /// <param name="hRecipient">Window handle (e.g. GUIGraphicsContext.ActiveForm)</param>
-    public static void RegisterAwayModeNotification(IntPtr hRecipient)
-    {
-      if (Environment.OSVersion.Version.Major >= 6 && _hAwayMode == (IntPtr)null)
-        _hAwayMode = RegisterPowerSettingNotification(hRecipient, ref GUID_SYSTEM_AWAYMODE, DEVICE_NOTIFY_WINDOW_HANDLE);
-    }
-
-    /// <summary>
-    /// Unregister for away mode notifications
-    /// </summary>
-    public static void UnregisterAwayModeNotification()
-    {
-      if (Environment.OSVersion.Version.Major >= 6 && _hAwayMode != (IntPtr)null)
-        UnregisterPowerSettingNotification(_hAwayMode);
-      _hAwayMode = (IntPtr)null;
-    }
-
-    /// <summary>
     /// Get power setting value for active power status (OS independent)
     /// </summary>
     /// <param name="settingType"></param>
@@ -759,24 +734,6 @@ namespace TvEngine.PowerScheduler.Interfaces
     /// </returns>
     [DllImport("kernel32.dll", SetLastError = true, EntryPoint = "SetThreadExecutionState")]
     private static extern ExecutionState SetThreadExecutionState(ExecutionState esFlags);
-
-    /// <summary>
-    /// Registers the application to receive power setting notifications for the specific power setting event
-    /// </summary>
-    /// <param name="hRecipient"></param>
-    /// <param name="PowerSettingGuid"></param>
-    /// <param name="Flags"></param>
-    /// <returns></returns>
-    [DllImport(@"User32", SetLastError = true, EntryPoint = "RegisterPowerSettingNotification", CallingConvention = CallingConvention.StdCall)]
-    private static extern IntPtr RegisterPowerSettingNotification(IntPtr hRecipient, ref Guid PowerSettingGuid, Int32 Flags);
-
-    /// <summary>
-    /// Unregisters the power setting notification
-    /// </summary>
-    /// <param name="handle"></param>
-    /// <returns></returns>
-    [DllImport(@"User32", SetLastError = true, EntryPoint = "UnregisterPowerSettingNotification", CallingConvention = CallingConvention.StdCall)]
-    private static extern bool UnregisterPowerSettingNotification(IntPtr handle);
 
     /// <summary>
     /// Retrieves the power status of the system.
