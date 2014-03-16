@@ -133,14 +133,6 @@ bool CLibBlurayWrapper::Initialize()
 {
   USES_CONVERSION;
 
-  if (_tputenv(_T("JAVA_HOME=")) != 0)
-  {
-    DWORD error = GetLastError();
-    LogDebug("Failed to remove the JAVA_HOME environment variable: %d", (int)error);
-
-    return false;
-  }
-
   if (_tputenv(_T("LIBBLURAY_CP=libbluray.jar")) != 0)
   {
     DWORD error = GetLastError();
@@ -1099,3 +1091,4 @@ void CLibBlurayWrapper::HandleOSDUpdate(OSDTexture& texture)
     ++it;
   }
 }
+
