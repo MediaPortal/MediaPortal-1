@@ -677,26 +677,6 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
       break;
     }
 
-    case BD_EVENT_CHAPTER:
-    {
-      BLURAY_TITLE_INFO* title = m_filter.lib.GetTitleInfo(m_nTitle);
-      
-      if (title)
-      {
-        UINT64 start = 0;
-        if (title->chapter_count > 0 && title->chapter_count >= pEv.param)
-          start = title->chapters[pEv.param - 1].start;
-
-        LogDebug("demux: New chapter %d - start: %6.3f", pEv.param, CONVERT_90KHz_DS(start) / 10000000.0);
-        
-        m_filter.lib.FreeTitleInfo(title);
-      }
-      else
-        LogDebug("demux: New chapter %d - title info N/A", pEv.param); 
-
-      break;
-    }
-
     case BD_EVENT_PLAYITEM:
       LogDebug("demux: New playitem %d", pEv.param);
       
