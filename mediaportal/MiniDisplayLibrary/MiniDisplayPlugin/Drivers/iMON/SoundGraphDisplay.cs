@@ -58,8 +58,20 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
         protected string Line2 { get; set; }
 
-        public string Description { get; protected set; }
+        //From IDisplay
+        public string Description { get { return "SoundGraph display for iMON Manager >= 8.01.0419"; } }
 
+        //From IDisplay
+        public string Name { get { return "SoundGraph display"; } }
+
+        //From IDisplay
+        public bool SupportsGraphics { get { return false; } }
+
+        //From IDisplay
+        public bool SupportsText { get { return true; } }
+
+
+        //
         protected string ClassErrorName { get; set; }
 
         protected string UnsupportedDeviceErrorMessage { get; set; }
@@ -82,7 +94,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
             get
             {
-                if (!Disabled.HasValue)
+                //if (!Disabled.HasValue)
                 {
                     IDWINITRESULT initResult = new IDWINITRESULT();
                     DSPResult ret = IDW_Init(initResult);
@@ -92,14 +104,15 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                         Disabled = true;
                         LogError(string.Format("{0}.IsDisabled: {1}", ClassErrorName, ImonErrorMessage));
                     }
-                    else if (initResult.initResult != DSPNInitResult.DSPN_SUCCEEDED)
+                    else if (initResult.iInitResult != DSPNInitResult.DSPN_SUCCEEDED)
                     {
-                        ImonErrorMessage = DSPNResult2String(initResult.initResult);
+                        ImonErrorMessage = DSPNResult2String(initResult.iInitResult);
                         Disabled = true;
                         LogError(string.Format("{0}.IsDisabled: {1}", ClassErrorName, ImonErrorMessage));
                     }
-                    else if (initResult.dspType != DisplayType)
+                    else if (initResult.iDspType == DSPType.DSPN_DSP_NONE)
                     {
+                        DisplayType = initResult.iDspType;
                         ImonErrorMessage = UnsupportedDeviceErrorMessage;
                         Disabled = true;
                         IDW_Uninit();
@@ -115,12 +128,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 return Disabled.Value;
             }
         }
-
-        public string Name { get; protected set; }
-
-        public bool SupportsGraphics { get { return false; } }
-
-        public bool SupportsText { get { return true; } }
 
         //From IDisplay
         public virtual void Dispose()
@@ -274,14 +281,29 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             DSPN_DSP_LCD = 0x02
         };
 
+        //Notification code
+        protected enum DSPNotifyCode : int
+        {
+            DSPNM_PLUGIN_SUCCEED = 0,
+            DSPNM_PLUGIN_FAILED,
+            DSPNM_IMON_RESTARTED,
+            DSPNM_IMON_CLOSED,
+            DSPNM_HW_CONNECTED,
+            DSPNM_HW_DISCONNECTED,
+            DSPNM_LCD_TEXT_SCROLL_DONE = 0x1000
+        };
+
         //Not sure why we had to revert the order of our data members from the native implementation.
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 8)]
         protected class IDWINITRESULT
         {
             [MarshalAs(UnmanagedType.U4)]
-            public DSPNInitResult initResult;
+            public DSPNotifyCode iNotification;
             [MarshalAs(UnmanagedType.U4)]
-            public DSPType dspType;
+            public DSPNInitResult iInitResult;
+            [MarshalAs(UnmanagedType.U4)]
+            public DSPType iDspType;
+
         }
 
         [DllImport("iMONDisplayWrapper.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]

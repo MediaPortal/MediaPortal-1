@@ -317,19 +317,35 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading ShuttlePF27...");
       }
       list.Add(new ShuttlePF27());
+
+    /*
+      //Deprecated
       if (this.ExtensiveLogging)
       {
         Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading iMON VFD...");
-      }
+      }     
       list.Add(new ImonVfd());
+
+      //Deprecated
       if (this.ExtensiveLogging)
       {
         Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading iMON LCD...");
-      }
+      }      
       list.Add(new ImonLcd());
+
+     */
+
+      //New sound graph display
       if (this.ExtensiveLogging)
       {
-        Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading Debug Display...");
+          Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading SoundGraph display...");
+      }
+      list.Add(new SoundGraphDisplay());
+
+      //Add Debug Form
+      if (this.ExtensiveLogging)
+      {
+          Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading Debug Display...");
       }
       list.Add(new DebugForm());
       if (this.m_EnableLCDHype)

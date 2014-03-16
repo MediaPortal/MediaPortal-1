@@ -1003,7 +1003,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         this.gbTextMode.Visible = this.lcd.SupportsText;
         Settings.Instance.LCDType = this.lcd;
       }
-      catch {}
+      catch (Exception ex)
+      {
+        Log.Error(ex);
+        Log.Error("MiniDisplay.SetupForm.VerifyLCDType exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);               
+      }
+
       Log.Info("MiniDisplay.SetupForm.Load(): completed");
     }
 
