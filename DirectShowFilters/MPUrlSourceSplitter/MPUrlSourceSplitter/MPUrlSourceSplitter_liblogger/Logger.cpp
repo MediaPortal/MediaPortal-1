@@ -144,7 +144,7 @@ void CLogger::LogMessage(unsigned int logLevel, const wchar_t *message)
   {
     if ((message != NULL) && (this->mutex != NULL))
     {
-      this->staticLogger->LogMessage(this->mutex, logLevel, message);
+      this->staticLogger->LogMessage(this, logLevel, message);
     }
   }
 }
@@ -181,4 +181,14 @@ wchar_t *CLogger::GetLogMessage(unsigned int level, const wchar_t *format, va_li
 GUID CLogger::GetLoggerInstanceId(void)
 {
   return this->loggerInstance;
+}
+
+HANDLE CLogger::GetMutex(void)
+{
+  return this->mutex;
+}
+
+CStaticLoggerContext *CLogger::GetStaticLoggerContext(void)
+{
+  return this->staticLogger->GetLoggerContext(this);
 }

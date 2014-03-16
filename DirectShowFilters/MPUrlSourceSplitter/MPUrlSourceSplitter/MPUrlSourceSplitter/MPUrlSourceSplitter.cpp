@@ -1800,6 +1800,13 @@ void CMPUrlSourceSplitter::SetSupressData(bool supressData)
   }
 }
 
+// IOutputPinFilter
+
+CParameterCollection *CMPUrlSourceSplitter::GetConfiguration(void)
+{
+  return this->configuration;
+}
+
 // IFilter
 
 CLogger *CMPUrlSourceSplitter::GetLogger(void)

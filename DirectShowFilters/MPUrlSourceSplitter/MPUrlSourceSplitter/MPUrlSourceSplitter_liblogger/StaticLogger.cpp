@@ -57,6 +57,27 @@ CStaticLoggerContextCollection *CStaticLogger::GetLoggerContexts(void)
   return this->loggerContexts;
 }
 
+CStaticLoggerContext *CStaticLogger::GetLoggerContext(CLogger *logger)
+{
+  CStaticLoggerContext *context = NULL;
+
+  if (logger != NULL)
+  {
+    for (unsigned int i = 0; i < this->loggerContexts->Count(); i++)
+    {
+      CStaticLoggerContext *temp = this->loggerContexts->GetItem(i);
+
+      if (temp->GetMutex() == logger->GetMutex())
+      {
+        context = temp;
+        break;
+      }
+    }
+  }
+
+  return context;
+}
+
 /* set methods */
 
 /* other methods */
@@ -100,21 +121,13 @@ HANDLE CStaticLogger::Initialize(DWORD maxLogSize, unsigned int allowedLogVerbos
   return result;
 }
 
-void CStaticLogger::LogMessage(HANDLE mutex, unsigned int logLevel, const wchar_t *message)
+void CStaticLogger::LogMessage(CLogger *logger, unsigned int logLevel, const wchar_t *message)
 {
-  CStaticLoggerContext *context = NULL;
+  this->LogMessage(this->GetLoggerContext(logger), logLevel, message);
+}
 
-  for (unsigned int i = 0; i < this->loggerContexts->Count(); i++)
-  {
-    CStaticLoggerContext *temp = this->loggerContexts->GetItem(i);
-
-    if (temp->GetMutex() == mutex)
-    {
-      context = temp;
-      break;
-    }
-  }
-
+void CStaticLogger::LogMessage(CStaticLoggerContext *context, unsigned int logLevel, const wchar_t *message)
+{
   if (context != NULL)
   {
     if (logLevel <= context->GetAllowedLogVerbosity())

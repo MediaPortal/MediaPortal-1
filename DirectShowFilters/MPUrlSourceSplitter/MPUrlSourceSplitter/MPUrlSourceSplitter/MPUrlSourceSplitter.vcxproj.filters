@@ -93,6 +93,9 @@
     <ClInclude Include="Demuxer.h">
       <Filter>Demuxers\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="IOutputPinFilter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

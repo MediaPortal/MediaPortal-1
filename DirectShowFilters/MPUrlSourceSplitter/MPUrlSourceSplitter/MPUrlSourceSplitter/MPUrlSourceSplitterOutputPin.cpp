@@ -23,9 +23,13 @@
 #include "OutputPinAllocator.h"
 #include "LockMutex.h"
 #include "OutputPinMediaSample.h"
+#include "StaticLogger.h"
+#include "Parameters.h"
 
 #include "moreuuids.h"
 #include "H264Nalu.h"
+
+#include <Shlwapi.h>
 
 #pragma warning( push )
 #pragma warning( disable : 4018 )
@@ -75,12 +79,22 @@ CMPUrlSourceSplitterOutputPin::CMPUrlSourceSplitterOutputPin(CMediaTypeCollectio
   this->h264PacketCollection = new COutputPinPacketCollection();
   this->outputPinDataLength = 0;
 
+  this->dumpData = NULL;
+  this->dumpDataBufferOccupied = 0;
+  this->dumpDataBufferSize = 0;
+
+  this->dumpDataSizes = NULL;
+  this->dumpDataSizesBufferOccupied = 0;
+  this->dumpDataSizesBufferSize = 0;
+
+  this->dumpDataCounter = 0;
+
   if (phr != NULL)
   {
     if (SUCCEEDED(*phr))
     {
       this->mediaPackets = new COutputPinPacketCollection();
-      this->filter = dynamic_cast<IFilter *>(pFilter);
+      this->filter = dynamic_cast<IOutputPinFilter *>(pFilter);
       this->mediaPacketsLock = CreateMutex(NULL, FALSE, NULL);
       this->mediaTypes = new CMediaTypeCollection();
 
@@ -127,6 +141,9 @@ CMPUrlSourceSplitterOutputPin::~CMPUrlSourceSplitterOutputPin()
   FREE_MEM_CLASS(this->mediaTypeToSend);
   FREE_MEM_CLASS(this->h264Buffer);
   FREE_MEM_CLASS(this->h264PacketCollection);
+
+  FREE_MEM(this->dumpData);
+  FREE_MEM(this->dumpDataSizes);
 
   CHECK_CONDITION_NOT_NULL_EXECUTE(this->m_pAllocator, this->m_pAllocator->Release());
 
@@ -353,6 +370,9 @@ HRESULT CMPUrlSourceSplitterOutputPin::DeliverBeginFlush()
 
   this->filter->GetLogger()->Log(LOGGER_INFO, L"%s: %s: pin '%s', sent data length: %llu", MODULE_NAME, METHOD_THREAD_PROC_NAME, this->m_pName, this->outputPinDataLength);
   this->filter->GetLogger()->Log(LOGGER_INFO, L"%s: %s: pin '%s', flushed data length: %llu", MODULE_NAME, METHOD_THREAD_PROC_NAME, this->m_pName, flushedDataLength);
+
+  this->DumpDataAndDumpDataSizes();
+  this->dumpDataCounter++;
 
   this->outputPinDataLength = 0;
 
@@ -581,6 +601,46 @@ DWORD CMPUrlSourceSplitterOutputPin::ThreadProc()
       break;
     }
 
+    if (cmd == CMD_PLAY)
+    {
+      // we receive CMD_PLAY command
+      // just check dumping data flag in filter configuration
+
+      this->flags &= ~OUTPUT_PIN_FLAG_DUMPING_DATA_AND_SIZES;
+      this->flags |= (this->filter->GetConfiguration()->GetValueBool(PARAMETER_NAME_DUMP_OUTPUT_PIN_RAW_DATA, true, PARAMETER_NAME_DUMP_OUTPUT_PIN_RAW_DATA_DEFAULT)) ? OUTPUT_PIN_FLAG_DUMPING_DATA_AND_SIZES : OUTPUT_PIN_FLAG_NONE;
+
+      if (this->IsFlags(OUTPUT_PIN_FLAG_DUMPING_DATA_AND_SIZES))
+      {
+        if (this->dumpData == NULL)
+        {
+          this->dumpData = ALLOC_MEM_SET(this->dumpData, uint8_t, OUTPUT_PIN_DUMP_DATA_LENGTH, 0);
+          this->dumpDataBufferOccupied = 0;
+          this->dumpDataBufferSize = OUTPUT_PIN_DUMP_DATA_LENGTH;
+        }
+
+        if (this->dumpDataSizes == NULL)
+        {
+          this->dumpDataSizes = ALLOC_MEM_SET(this->dumpDataSizes, unsigned int, OUTPUT_PIN_DUMP_DATA_LENGTH, 0);
+          this->dumpDataSizesBufferOccupied = 0;
+          this->dumpDataSizesBufferSize = OUTPUT_PIN_DUMP_DATA_LENGTH;
+        }
+
+        if ((this->dumpData == NULL) || (this->dumpDataSizes == NULL))
+        {
+          // error while allocating memory
+          // do not dump data, but continue in work
+          this->flags &= ~OUTPUT_PIN_FLAG_DUMPING_DATA_AND_SIZES;
+          FREE_MEM(this->dumpData);
+          FREE_MEM(this->dumpDataSizes);
+
+          this->dumpDataBufferOccupied = 0;
+          this->dumpDataBufferSize = 0;
+          this->dumpDataSizesBufferOccupied = 0;
+          this->dumpDataSizesBufferSize = 0;
+        }
+      }
+    }
+
     if (cmd == CMD_EXIT)
     {
       Reply(S_OK);
@@ -653,28 +713,51 @@ DWORD CMPUrlSourceSplitterOutputPin::ThreadProc()
                   CHECK_HRESULT_EXECUTE(result, outputPinMediaSample->SetPacket(packet));
 
                   COM_SAFE_RELEASE(outputPinMediaSample);
-
-                  CHECK_CONDITION_EXECUTE(SUCCEEDED(result), this->outputPinDataLength += (uint64_t)packet->GetBuffer()->GetBufferOccupiedSpace());
                 }
                 else if (result == E_NOINTERFACE)
                 {
                   // doesn't using our allocator
                   result = COutputPinMediaSample::SetPacket(sample, packet);
 
-                  if (SUCCEEDED(result))
-                  {
-                    this->outputPinDataLength += (uint64_t)result;
-
-                    if (packet->GetBuffer()->GetBufferOccupiedSpace() != result)
-                    {
-                      packet->GetBuffer()->RemoveFromBuffer(result);
-                      notDeletePacket = true;
-                    }
-                  }
+                  CHECK_CONDITION_EXECUTE(SUCCEEDED(result), notDeletePacket = (packet->GetBuffer()->GetBufferOccupiedSpace() != result));
                 }
               }
 
               CHECK_HRESULT_EXECUTE(result, this->Deliver(sample));
+
+              if (SUCCEEDED(result))
+              {
+                unsigned int sampleSize = sample->GetSize();
+
+                // count send data to output pin
+                this->outputPinDataLength += (uint64_t)sampleSize;
+
+                if (this->IsFlags(OUTPUT_PIN_FLAG_DUMPING_DATA_AND_SIZES))
+                {
+                  // we are dumping data, we must copy output data to temporary buffer
+
+                  if (((this->dumpDataBufferOccupied + sampleSize) >= this->dumpDataBufferSize) ||
+                      ((this->dumpDataSizesBufferOccupied + 1) >= this->dumpDataSizesBufferSize))
+                  {
+                    // we need more memory in dump data buffer or in dump data sizes buffer
+                    // flush all dump data and its sizes to dump files
+                    this->DumpDataAndDumpDataSizes();
+                  }
+
+                  packet->GetBuffer()->CopyFromBuffer(this->dumpData + this->dumpDataBufferOccupied, sampleSize);
+                  this->dumpDataBufferOccupied += sampleSize;
+
+                  *(this->dumpDataSizes + this->dumpDataSizesBufferOccupied) = sampleSize;
+                  this->dumpDataSizesBufferOccupied++;
+                }
+
+                if (!notDeletePacket)
+                {
+                  // this flag is set only in case of partially send data (e.g. buffer is smaller than data, so we must remove send data, but media packet is preserved to send remaining data)
+                  packet->GetBuffer()->RemoveFromBuffer(sampleSize);
+                }
+              }
+
               CHECK_CONDITION_NOT_NULL_EXECUTE(sample, COM_SAFE_RELEASE(sample));
 
               if (SUCCEEDED(result) && (!notDeletePacket))
@@ -711,6 +794,7 @@ DWORD CMPUrlSourceSplitterOutputPin::ThreadProc()
   }
 
   this->filter->GetLogger()->Log(LOGGER_INFO, L"%s: %s: pin '%s', sent data length: %llu", MODULE_NAME, METHOD_THREAD_PROC_NAME, this->m_pName, this->outputPinDataLength);
+  this->DumpDataAndDumpDataSizes();
 
   return S_OK;
 }
@@ -1224,4 +1308,60 @@ void CMPUrlSourceSplitterOutputPin::SetPGSDropState(bool pgsDropState)
 {
   this->flags &= ~OUTPUT_PIN_FLAG_PGS_DROP_STATE;
   this->flags |= (pgsDropState) ? OUTPUT_PIN_FLAG_PGS_DROP_STATE : OUTPUT_PIN_FLAG_NONE;
+}
+
+void CMPUrlSourceSplitterOutputPin::DumpDataAndDumpDataSizes(void)
+{
+  if (this->IsFlags(OUTPUT_PIN_FLAG_DUMPING_DATA_AND_SIZES))
+  {
+    CStaticLoggerContext *context = this->filter->GetLogger()->GetStaticLoggerContext();
+
+    if (context != NULL)
+    {
+      wchar_t *contextLogFile = Duplicate(context->GetLogFile());
+      PathRemoveFileSpec(contextLogFile);
+
+      if (contextLogFile != NULL)
+      {
+        wchar_t *guid = ConvertGuidToString(this->filter->GetLogger()->GetLoggerInstanceId());
+        wchar_t *dumpDataFileName = FormatString(L"%s\\MPUrlSourceSplitter-%s-%s-%08u.dump", contextLogFile, guid, this->m_pName, this->dumpDataCounter);
+        wchar_t *dumpDataSizesFileName = FormatString(L"%s\\MPUrlSourceSplitter-%s-%s-%08u.sizes", contextLogFile, guid, this->m_pName, this->dumpDataCounter);
+
+        HANDLE hDumpData = CreateFile(dumpDataFileName, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_FLAG_WRITE_THROUGH, NULL);
+        HANDLE hDumpDataSizes = CreateFile(dumpDataSizesFileName, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_FLAG_WRITE_THROUGH, NULL);
+
+        if ((hDumpData != INVALID_HANDLE_VALUE) && (hDumpDataSizes != INVALID_HANDLE_VALUE))
+        {
+          // move to end of files
+          LARGE_INTEGER distanceToMove;
+          distanceToMove.QuadPart = 0;
+
+          SetFilePointerEx(hDumpData, distanceToMove, NULL, FILE_END);
+          SetFilePointerEx(hDumpDataSizes, distanceToMove, NULL, FILE_END);
+
+          // write data to file
+          DWORD written = 0;
+          WriteFile(hDumpData, this->dumpData, this->dumpDataBufferOccupied, &written, NULL);
+
+          written = 0;
+          WriteFile(hDumpDataSizes, this->dumpDataSizes, this->dumpDataSizesBufferOccupied * sizeof(unsigned int), &written, NULL);
+        }
+
+        CHECK_CONDITION_EXECUTE(hDumpData != INVALID_HANDLE_VALUE, CloseHandle(hDumpData));
+        hDumpData = INVALID_HANDLE_VALUE;
+
+        CHECK_CONDITION_EXECUTE(hDumpDataSizes != INVALID_HANDLE_VALUE, CloseHandle(hDumpDataSizes));
+        hDumpDataSizes = INVALID_HANDLE_VALUE;
+
+        FREE_MEM(guid);
+        FREE_MEM(dumpDataFileName);
+        FREE_MEM(dumpDataSizesFileName);
+      }
+
+      FREE_MEM(contextLogFile);
+    }
+  }
+
+  this->dumpDataBufferOccupied = 0;
+  this->dumpDataSizesBufferOccupied = 0;
 }

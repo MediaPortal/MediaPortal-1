@@ -23,7 +23,7 @@
 #ifndef __MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_DEFINED
 #define __MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_DEFINED
 
-#include "IFilter.h"
+#include "IOutputPinFilter.h"
 #include "OutputPinPacketCollection.h"
 #include "MediaTypeCollection.h"
 
@@ -31,6 +31,8 @@
 
 #define OUTPUT_PIN_BUFFERS_RECOMMENDED                                32
 #define OUTPUT_PIN_BUFFERS_LENGTH_RECOMMENDED                         524288
+
+#define OUTPUT_PIN_DUMP_DATA_LENGTH                                   1048576
 
 #define OUTPUT_PIN_FLAG_NONE                                          0x00000000
 #define OUTPUT_PIN_FLAG_CONTAINER_MPEG_TS                             0x00000001
@@ -43,6 +45,7 @@
 #define OUTPUT_PIN_FLAG_CONTAINER_MP4                                 0x00000080
 #define OUTPUT_PIN_FLAG_HAS_ACCESS_UNIT_DELIMITERS                    0x00000100
 #define OUTPUT_PIN_FLAG_PGS_DROP_STATE                                0x00000200
+#define OUTPUT_PIN_FLAG_DUMPING_DATA_AND_SIZES                        0x00000400
 
 class CMPUrlSourceSplitterOutputPin
   : public CBaseOutputPin
@@ -223,7 +226,7 @@ protected:
   CMediaTypeCollection *mediaTypes;
 
   // holds filter reference
-  IFilter *filter;
+  IOutputPinFilter *filter;
 
   // holds stream PID
   // it is specified for splitter, which needs to identify output pin for specific output packet
@@ -248,6 +251,18 @@ protected:
 
   uint64_t outputPinDataLength;
 
+  /* variables for dumping data */
+
+  uint8_t *dumpData;
+  unsigned int dumpDataBufferOccupied;
+  unsigned int dumpDataBufferSize;
+
+  unsigned int *dumpDataSizes;
+  unsigned int dumpDataSizesBufferOccupied;
+  unsigned int dumpDataSizesBufferSize;
+
+  unsigned int dumpDataCounter;
+
   /* methods */
 
   DWORD ThreadProc();
@@ -263,6 +278,9 @@ protected:
   // sets PGS drop state
   // @param pgsDropState : true if PGS drop state, false otherwise
   void SetPGSDropState(bool pgsDropState);
+
+  // dumps outgoing data and its sizes to dump file
+  void DumpDataAndDumpDataSizes(void);
 };
 
 #endif

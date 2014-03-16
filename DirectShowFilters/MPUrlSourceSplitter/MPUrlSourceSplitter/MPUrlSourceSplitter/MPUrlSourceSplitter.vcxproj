@@ -175,6 +175,7 @@ echo #endif &gt;&gt; VersionInfo.h</Command>
     <ClInclude Include="DemuxerVideoHelper.h" />
     <ClInclude Include="ExtraDataParser.h" />
     <ClInclude Include="H264Nalu.h" />
+    <ClInclude Include="IOutputPinFilter.h" />
     <ClInclude Include="MPUrlSourceSplitter.h" />
     <ClInclude Include="MPUrlSourceSplitterOutputPin.h" />
     <ClInclude Include="MPUrlSourceSplitterOutputPinCollection.h" />

@@ -29,6 +29,7 @@
 #define PARAMETER_NAME_DOWNLOAD_FILE_NAME                                     L"DownloadFileName"
 #define PARAMETER_NAME_CACHE_FOLDER                                           L"CacheFolder"
 #define PARAMETER_NAME_LIVE_STREAM                                            L"LiveStream"
+#define PARAMETER_NAME_DUMP_OUTPUT_PIN_RAW_DATA                               L"DumpOutputPinRawData"
 
 #define PARAMETER_NAME_LOG_GLOBAL_MUTEX_NAME                                  L"LogGlobalMutexName"
 #define PARAMETER_NAME_LOG_BACKUP_FILE_NAME                                   L"LogBackupFileName"
@@ -39,6 +40,7 @@
 #define PARAMETER_NAME_FINISH_TIME                                            L"FinishTime"
 
 #define PARAMETER_NAME_LIVE_STREAM_DEFAULT                                    false
+#define PARAMETER_NAME_DUMP_OUTPUT_PIN_RAW_DATA_DEFAULT                       false
 
 #define LOG_MAX_SIZE_DEFAULT                                                  10485760
 #define LOG_VERBOSITY_DEFAULT                                                 LOGGER_VERBOSE

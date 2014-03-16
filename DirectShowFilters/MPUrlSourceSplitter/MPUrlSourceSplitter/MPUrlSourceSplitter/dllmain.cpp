@@ -277,7 +277,7 @@ LONG WINAPI ExceptionHandler(struct _EXCEPTION_POINTERS *exceptionInfo)
               L"[Error]  ",
               dumpFileName);
 
-            staticLogger->LogMessage(context->GetMutex(), LOGGER_ERROR, message);
+            staticLogger->LogMessage(context, LOGGER_ERROR, message);
 
             FREE_MEM(guid);
             FREE_MEM(message);

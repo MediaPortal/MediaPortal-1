@@ -49,6 +49,7 @@
 
 class CParameterCollection;
 class CStaticLogger;
+class CStaticLoggerContext;
 
 class CLogger
 {
@@ -75,6 +76,14 @@ public:
   // gets logger instance ID
   // @return : logger instance ID
   GUID GetLoggerInstanceId(void);
+
+  // gets logger mutex
+  // @return : logger mutex
+  HANDLE GetMutex(void);
+
+  // gets static logger context
+  // @return : static logger context
+  CStaticLoggerContext *GetStaticLoggerContext(void);
 
 protected:
   // mutex for accessing log file

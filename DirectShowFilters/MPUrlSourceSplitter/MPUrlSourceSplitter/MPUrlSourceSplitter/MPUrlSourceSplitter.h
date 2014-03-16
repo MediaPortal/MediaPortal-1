@@ -24,7 +24,7 @@
 #define __MP_URL_SOURCE_SPLITTER_DEFINED
 
 #include "IDownload.h"
-#include "IFilter.h"
+#include "IOutputPinFilter.h"
 #include "IFilterState.h"
 #include "MPUrlSourceSplitterOutputPinCollection.h"
 #include "ParserHoster.h"
@@ -88,7 +88,7 @@ class CMPUrlSourceSplitter
   //, public IBufferInfo
   , public IDownload
   , public IDownloadCallback
-  , public IFilter
+  , public IOutputPinFilter
   , public IFilterState
 {
 public:
@@ -220,6 +220,12 @@ public:
 
   // IDownloadCallback interface
   void STDMETHODCALLTYPE OnDownloadCallback(HRESULT downloadResult);
+
+  // IOutputPinFilter interface
+
+  // gets filter parameters
+  // @return : filter parameters or NULL if error
+  CParameterCollection *GetConfiguration(void);
 
   // IFilter interface
 

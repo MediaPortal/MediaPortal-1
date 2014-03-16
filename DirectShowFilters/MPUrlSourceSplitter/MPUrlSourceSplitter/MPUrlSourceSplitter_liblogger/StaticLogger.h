@@ -37,6 +37,10 @@ public:
   // @return : static logger context collection
   CStaticLoggerContextCollection *GetLoggerContexts(void);
 
+  // gets static logger context for specified logger
+  // @return : static logger context or NULL if not found
+  CStaticLoggerContext *GetLoggerContext(CLogger *logger);
+
   /* set methods */
 
   /* other methods */
@@ -52,10 +56,16 @@ public:
   HANDLE Initialize(DWORD maxLogSize, unsigned int allowedLogVerbosity, const wchar_t *logFile, const wchar_t *logBackupFile, const wchar_t *globalMutexName);
 
   // logs message to log file
-  // @param mutex : the mutex to identify logger
+  // @param logger : the logger
   // @param logLevel : the level of message
   // @param message : the message to log to file
-  void LogMessage(HANDLE mutex, unsigned int logLevel, const wchar_t *message);
+  void LogMessage(CLogger *logger, unsigned int logLevel, const wchar_t *message);
+
+  // logs message to specified logger context
+  // @param context : the context to log message
+  // @param logLevel : the level of message
+  // @param message : the message to log to file
+  void LogMessage(CStaticLoggerContext *context, unsigned int logLevel, const wchar_t *message);
 
   void Add(void);
   void Remove(void);
