@@ -99,19 +99,20 @@ CLibBlurayWrapper::CLibBlurayWrapper() :
 
 CLibBlurayWrapper::~CLibBlurayWrapper()
 {
-  CAutoLock cRenderLock(&m_csRenderLock);
   CAutoLock cLibLock(&m_csLibLock);
 
   if (m_pBd)
   {
     _bd_register_overlay_proc(m_pBd, NULL, NULL);
+    _bd_register_argb_overlay_proc(m_pBd, NULL, NULL, NULL);
     _bd_close(m_pBd);
   }
 
-  if (m_pTitleInfo)
-    _bd_free_title_info(m_pTitleInfo);
+  CAutoLock cRenderLock(&m_csRenderLock);
 
-  m_pOverlayRenderer->SetD3DDevice(NULL);
+  if (m_pOverlayRenderer)
+    m_pOverlayRenderer->SetD3DDevice(NULL);
+
   delete m_pOverlayRenderer;
 
   FreeLibrary(m_hDLL);
@@ -119,14 +120,18 @@ CLibBlurayWrapper::~CLibBlurayWrapper()
 
 void CLibBlurayWrapper::StaticOverlayProc(void* this_gen, const BD_OVERLAY* const ov)
 {
-  //CAutoLock cRendertLock(&(((CLibBlurayWrapper *)this_gen)->m_csRenderLock));
-  ((CLibBlurayWrapper *)this_gen)->m_pOverlayRenderer->OverlayProc(ov);
+  CAutoLock cRendertLock(&(((CLibBlurayWrapper *)this_gen)->m_csRenderLock));
+  COverlayRenderer* pRenderer = ((CLibBlurayWrapper *)this_gen)->m_pOverlayRenderer;
+  if (pRenderer)
+    pRenderer->OverlayProc(ov);
 }
 
 void CLibBlurayWrapper::StaticARGBOverlayProc(void* this_gen, const BD_ARGB_OVERLAY* const ov)
 {
-  //CAutoLock cRendertLock(&(((CLibBlurayWrapper *)this_gen)->m_csRenderLock));
-  ((CLibBlurayWrapper *)this_gen)->m_pOverlayRenderer->ARGBOverlayProc(ov);
+  CAutoLock cRendertLock(&(((CLibBlurayWrapper *)this_gen)->m_csRenderLock));
+  COverlayRenderer* pRenderer = ((CLibBlurayWrapper *)this_gen)->m_pOverlayRenderer;
+  if (pRenderer)
+    pRenderer->ARGBOverlayProc(ov);
 }
 
 bool CLibBlurayWrapper::Initialize()
@@ -363,6 +368,9 @@ bool CLibBlurayWrapper::CloseBluray()
     LogDebug("CLibBlurayWrapper - No disk has been opened!");
     return false;
   }
+
+  _bd_register_overlay_proc(m_pBd, NULL, NULL);
+  _bd_register_argb_overlay_proc(m_pBd, NULL, NULL, NULL);
 
   _bd_close(m_pBd);
   m_pBd = NULL;
