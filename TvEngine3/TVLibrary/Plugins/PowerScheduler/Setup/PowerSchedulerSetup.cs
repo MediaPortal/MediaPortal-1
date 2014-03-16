@@ -508,6 +508,7 @@ namespace PowerScheduler.Setup
       _setupTvThread = Thread.CurrentThread;
       _refreshStatusThread = new Thread(RefreshStatusThread);
       _refreshStatusThread.Name = "RefreshStatusThread";
+      _refreshStatusThread.IsBackground = true;
       _refreshStatusThread.Start();
 #endif
     }
