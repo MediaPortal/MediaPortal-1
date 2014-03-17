@@ -284,8 +284,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 }
                 else if (g_Player.IsMusic)
                 {
-                    // music playback
-                    string currentFile = GUIPropertyManager.GetProperty("#Play.Current.File");
+                    // music playback                    
+                    string currentFile = g_Player.currentFileName;
                     SoundGraphDisplay.LogDebug("(IDisplay) ImonLcd.SetCodecs(): determined current music file: " + currentFile);
                     if (currentFile != null && currentFile.Length > 0)
                     {

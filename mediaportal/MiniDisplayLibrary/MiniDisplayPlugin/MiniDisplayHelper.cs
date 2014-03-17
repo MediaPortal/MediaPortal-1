@@ -871,7 +871,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       {
         MPStatus.Media_IsMusic = true;
         num |= (ulong)0x80L;
-        property = GUIPropertyManager.GetProperty("#Play.Current.File");
+        property = g_Player.currentFileName;
         if (property.Length > 0)
         {
           string str2;
