@@ -18,11 +18,26 @@
 
 #endregion
 
+using System;
+using System.Text;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {
-    public interface ISoundGraphImonDisplay : IDisplay
+    public abstract class ISoundGraphImonDisplay //: IDisplay
     {
+        public ISoundGraphImonDisplay()
+        {
+            Line1 = string.Empty;
+            Line2 = string.Empty;
+        }
+
+
+        protected string Line1 { get; set; }
+        protected string Line2 { get; set; }
+        
+        public abstract void SetLine(int line, string message);
+        public abstract string Name();
+
 
     }
 

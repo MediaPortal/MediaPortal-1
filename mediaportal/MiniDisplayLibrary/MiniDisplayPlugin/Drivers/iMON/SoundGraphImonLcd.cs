@@ -17,3 +17,25 @@
 // along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
 #endregion
+
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Runtime.InteropServices;
+using System.Text;
+
+namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
+{
+    /// <summary>
+    /// SoundGraph iMON LCD.
+    /// </summary>
+    public class SoundGraphImonLcd : ISoundGraphImonDisplay
+    {
+        public override void SetLine(int line, string message){}
+        public override string Name() { return "iMON LCD"; }
+    }
+
+    
+
+}
+

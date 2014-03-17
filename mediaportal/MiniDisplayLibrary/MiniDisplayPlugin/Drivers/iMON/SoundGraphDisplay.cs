@@ -33,15 +33,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     /// </summary>
     public class SoundGraphDisplay : IDisplay
     {
-        ISoundGraphImonDisplay display;
+        ISoundGraphImonDisplay iDisplay;
 
         public SoundGraphDisplay()
         {
+            iDisplay = null;
             Disabled = null;
             ImonErrorMessage = string.Empty;
-            Initialized = false;
-            Line1 = string.Empty;
-            Line2 = string.Empty;          
+            Initialized = false;      
         }
 
         protected static void LogDebug(string msg) { Log.Debug(msg); }
@@ -54,15 +53,26 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
         protected bool Initialized { get; set; }
 
-        protected string Line1 { get; set; }
-
-        protected string Line2 { get; set; }
-
         //From IDisplay
         public string Description { get { return "SoundGraph display for iMON Manager >= 8.01.0419"; } }
 
         //From IDisplay
-        public string Name { get { return "SoundGraph display"; } }
+        //Notably used when testing to put on the screen
+        public string Name 
+        {
+            get
+            {
+                if (iDisplay != null)
+                {
+                    return iDisplay.Name();
+                }
+                else
+                {
+                    return "SoundGraph iMON";
+                }
+                
+            }
+        }
 
         //From IDisplay
         public bool SupportsGraphics { get { return false; } }
@@ -90,42 +100,15 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             }
         }
 
+        //From IDisplay
         public bool IsDisabled
         {
             get
             {
-                //if (!Disabled.HasValue)
-                {
-                    IDWINITRESULT initResult = new IDWINITRESULT();
-                    DSPResult ret = IDW_Init(initResult);
-                    if (ret != DSPResult.DSP_SUCCEEDED)
-                    {
-                        ImonErrorMessage = DSPResult2String(ret);
-                        Disabled = true;
-                        LogError(string.Format("{0}.IsDisabled: {1}", ClassErrorName, ImonErrorMessage));
-                    }
-                    else if (initResult.iInitResult != DSPNInitResult.DSPN_SUCCEEDED)
-                    {
-                        ImonErrorMessage = DSPNResult2String(initResult.iInitResult);
-                        Disabled = true;
-                        LogError(string.Format("{0}.IsDisabled: {1}", ClassErrorName, ImonErrorMessage));
-                    }
-                    else if (initResult.iDspType == DSPType.DSPN_DSP_NONE)
-                    {
-                        DisplayType = initResult.iDspType;
-                        ImonErrorMessage = UnsupportedDeviceErrorMessage;
-                        Disabled = true;
-                        IDW_Uninit();
-                        LogError(string.Format("{0}.IsDisabled: {1}", ClassErrorName, ImonErrorMessage));
-                    }
-                    else
-                    {
-                        Disabled = false;
-                        IDW_Uninit();
-                    }
-
-                }
-                return Disabled.Value;
+                //To check if our display is enabled we need to initialize it.
+                bool success = DoInit();
+                DoUninit();
+                return !success;
             }
         }
 
@@ -138,41 +121,45 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         //From IDisplay
         public virtual void Initialize()
         {
-            LogDebug("(IDisplay) ImonBase.Initialize(): called");
-            if (Initialized)
+            LogDebug("SoundGraphDisplay.Initialize(): called");
+            //Init if not already initialized
+            if (IDW_IsInitialized() != DSPResult.DSP_SUCCEEDED)
             {
-                LogDebug("(IDisplay) ImonBase.Initialize(): already initialized, skipping");
-                return;
+                bool success=DoInit();
+                if (!success)
+                {
+                    return;
+                }
+                //Instantiate LCD or VFD accordingly
+                if (DisplayType == DSPType.DSPN_DSP_LCD)
+                {
+                    LogDebug("SoundGraphDisplay.Initialize(): LCD");
+                    iDisplay = new SoundGraphImonLcd();
+                }
+                else if (DisplayType == DSPType.DSPN_DSP_VFD)
+                {
+                    LogDebug("SoundGraphDisplay.Initialize(): VFD");
+                    iDisplay = new SoundGraphImonVfd();
+                }
+
             }
-            if (IsDisabled)
-            {
-                LogDebug("(IDisplay) ImonBase.Initialize(): driver disabled, cannot initialize");
-                return;
-            }
-            IDWINITRESULT initResult = new IDWINITRESULT();
-            IDW_Init(initResult);
-            Initialized = true;
-            LogDebug("(IDisplay) ImonBase.Initialize(): completed");
+            Log.Debug("SoundGraphDisplay.Initialize(): completed");
         }
 
         //From IDisplay
         public virtual void CleanUp()
         {
-            LogDebug("(IDisplay) ImonBase.CleanUp(): called");
-            if (!Initialized)
-            {
-                return;
-            }
-            IDW_Uninit();
-            Initialized = false;
-            Log.Debug("(IDisplay) ImonBase.CleanUp(): completed");
+            LogDebug("SoundGraphDisplay.CleanUp(): called");
+            iDisplay = null; //hopefully that should destroy it
+            DoUninit();
+            Log.Debug("SoundGraphDisplay.CleanUp(): completed");
         }
 
         //From IDisplay
         public virtual void SetLine(int line, string message)
         {
             //Pass on that call to our actual display
-            display.SetLine(line,message);
+            iDisplay.SetLine(line,message);
         }
 
         //From IDisplay
@@ -204,6 +191,54 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             // iMON VFD/LCD cannot be setup
         }
 
+        /// <summary>
+        /// Do display initialization.
+        /// Returns true on success
+        /// </summary>
+        private bool DoInit()
+        {
+            IDW_INITRESULT initResult = new IDW_INITRESULT();
+            DSPResult ret = IDW_Init(initResult);
+            //Check the API call worked
+            if (ret != DSPResult.DSP_SUCCEEDED)
+            {
+                ImonErrorMessage = DSPResult2String(ret);
+                LogError(string.Format("{0}.IsDisabled: {1}", ClassErrorName, ImonErrorMessage));
+                return false;
+            }
+            //Check that the initialization was carried out properly
+            else if (initResult.iInitResult != DSPNInitResult.DSPN_SUCCEEDED)
+            {
+                ImonErrorMessage = DSPNResult2String(initResult.iInitResult);
+                LogError(string.Format("{0}.IsDisabled: {1}", ClassErrorName, ImonErrorMessage));
+                return false;
+            }
+            //Check we that we have a display
+            else if (initResult.iDspType == DSPType.DSPN_DSP_NONE)
+            {                
+                ImonErrorMessage = UnsupportedDeviceErrorMessage;
+                LogError(string.Format("{0}.IsDisabled: {1}", ClassErrorName, ImonErrorMessage));
+                return false;
+            }
+
+            DisplayType = initResult.iDspType;
+            return true;
+        }
+
+        /// <summary>
+        /// Do display de-initialization.
+        /// Returns true on success
+        /// </summary>
+        private void DoUninit()
+        {
+            DisplayType = DSPType.DSPN_DSP_NONE;
+            IDW_Uninit();
+        }
+
+
+        /// <summary>
+        /// Provide a string corresponding to the given DSPResult.
+        /// </summary>
         protected string DSPResult2String(DSPResult result)
         {
             switch (result)
@@ -225,6 +260,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             }
         }
 
+        /// <summary>
+        /// Provide a string corresponding to the given DSPNInitResult.
+        /// </summary>
         protected string DSPNResult2String(DSPNInitResult result)
         {
             switch (result)
@@ -247,7 +285,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
 
         //Possible return values from iMON Display APIs
-        protected enum DSPResult : int
+        public enum DSPResult : int
         {
             DSP_SUCCEEDED = 0,
             DSP_E_FAIL = 1,
@@ -262,7 +300,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
 
         //Possible results from display initialization 
-        protected enum DSPNInitResult : int
+        public enum DSPNInitResult : int
         {
             DSPN_SUCCEEDED = 0,
             DSPN_ERR_IN_USE = 0x0100,
@@ -274,7 +312,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
 
         //Type of display
-        protected enum DSPType : int
+        public enum DSPType : int
         {
             DSPN_DSP_NONE = 0,
             DSPN_DSP_VFD = 0x01,
@@ -282,7 +320,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         };
 
         //Notification code
-        protected enum DSPNotifyCode : int
+        public enum DSPNotifyCode : int
         {
             DSPNM_PLUGIN_SUCCEED = 0,
             DSPNM_PLUGIN_FAILED,
@@ -293,9 +331,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             DSPNM_LCD_TEXT_SCROLL_DONE = 0x1000
         };
 
-        //Not sure why we had to revert the order of our data members from the native implementation.
+        //Provide results from our iMON Display initialization
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 8)]
-        protected class IDWINITRESULT
+        protected class IDW_INITRESULT
         {
             [MarshalAs(UnmanagedType.U4)]
             public DSPNotifyCode iNotification;
@@ -303,13 +341,32 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             public DSPNInitResult iInitResult;
             [MarshalAs(UnmanagedType.U4)]
             public DSPType iDspType;
+        }
 
+        //Provide result for our status query
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 8)]
+        protected class IDW_STATUS
+        {
+            [MarshalAs(UnmanagedType.U4)]
+            public DSPNotifyCode iNotification;
         }
 
         [DllImport("iMONDisplayWrapper.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-        protected static extern DSPResult IDW_Init(IDWINITRESULT initResult);
+        protected static extern DSPResult IDW_Init(IDW_INITRESULT initResult);
 
         [DllImport("iMONDisplayWrapper.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
         protected static extern DSPResult IDW_Uninit();
+
+        [DllImport("iMONDisplayWrapper.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+        protected static extern DSPResult IDW_IsInitialized();
+
+        [DllImport("iMONDisplayWrapper.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+        protected static extern DSPResult IDW_GetStatus(IDW_STATUS status);
+
+        [DllImport("iMONDisplayWrapper.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+        public static extern DSPResult IDW_SetVfdText(
+          [MarshalAs(UnmanagedType.LPWStr)] string line1,
+          [MarshalAs(UnmanagedType.LPWStr)] string line2);
+
     }
 }

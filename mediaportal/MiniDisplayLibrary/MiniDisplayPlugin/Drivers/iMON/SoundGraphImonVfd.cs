@@ -17,3 +17,38 @@
 // along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
 #endregion
+
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Runtime.InteropServices;
+using System.Text;
+//using MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers;
+
+namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
+{
+    /// <summary>
+    /// SoundGraph iMON VFD.
+    /// </summary>
+    public class SoundGraphImonVfd : ISoundGraphImonDisplay
+    {
+
+        public override void SetLine(int line, string message)
+        {
+            if (line == 0)
+            {
+                Line1 = message;
+            }
+            else if (line == 1)
+            {
+                Line2 = message;
+                SoundGraphDisplay.IDW_SetVfdText(Line1, Line2);
+            }
+        }
+
+        public override string Name() { return "iMON VFD"; }
+
+    }
+
+}
+
