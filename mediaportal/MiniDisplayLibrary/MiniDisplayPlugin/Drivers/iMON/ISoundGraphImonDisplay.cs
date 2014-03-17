@@ -31,14 +31,15 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             Line2 = string.Empty;
         }
 
-
         protected string Line1 { get; set; }
         protected string Line2 { get; set; }
         
+        //Set text for give line index
         public abstract void SetLine(int line, string message);
+        //Display name is notably used during configuration for testing
         public abstract string Name();
-
-
+        //Launch advanced settings dialog
+        public abstract void Configure();
     }
 
 }

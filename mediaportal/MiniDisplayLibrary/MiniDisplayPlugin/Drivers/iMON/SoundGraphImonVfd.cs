@@ -32,7 +32,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     /// </summary>
     public class SoundGraphImonVfd : ISoundGraphImonDisplay
     {
-
         public override void SetLine(int line, string message)
         {
             if (line == 0)
@@ -47,6 +46,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
 
         public override string Name() { return "iMON VFD"; }
+
+        public override void Configure()
+        {
+            //No advanced settings for now
+        }
 
     }
 

@@ -43,9 +43,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             Initialized = false;      
         }
 
-        protected static void LogDebug(string msg) { Log.Debug(msg); }
-        protected static void LogInfo(string msg) { Log.Info(msg); }
-        protected static void LogError(string msg) { Log.Error(msg); }
+        public static void LogDebug(string msg) { Log.Debug(msg); }
+        public static void LogInfo(string msg) { Log.Info(msg); }
+        public static void LogError(string msg) { Log.Error(msg); }
 
         protected bool? Disabled { get; set; }
 
@@ -164,8 +164,15 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
         //From IDisplay
         public virtual void Configure()
-        {
-            //Launch advanced settings dialog from here
+        {   
+            //We need to have an initialized display to be able to configure it
+            Initialize();
+            if (iDisplay != null)
+            {
+                //Launch advanced settings dialog from here
+                iDisplay.Configure();
+            }
+            CleanUp();
         }
 
         //From IDisplay
@@ -332,7 +339,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         };
 
         [Flags]
-        enum OrangeDiskPieces : byte
+        public enum OrangeDiskPieces : byte
         {
             Piece1 = 0x80, // top piece
             Piece2 = 0x40, // next piece counter-clockwise
@@ -345,14 +352,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             None = 0x0
         }
 
-        enum OrangeDiskIcon : byte
+        public enum OrangeDiskIcon : byte
         {
             On = 0x80,
             Off = 0x0
         }
 
         [Flags]
-        enum MediaTypes : byte
+        public enum MediaTypes : byte
         {
             Music = 0x80,
             Movie = 0x40,
@@ -365,7 +372,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
 
         [Flags]
-        enum Speakers : byte
+        public enum Speakers : byte
         {
             L = 0x80,
             C = 0x40,
@@ -378,14 +385,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             None = 0x0
         }
 
-        enum SpeakersRR : byte
+        public enum SpeakersRR : byte
         {
             RR = 0x80,
             Off = 0x0
         }
 
         [Flags]
-        enum VideoCodecs : byte
+        public enum VideoCodecs : byte
         {
             MPG = 0x80,
             DIVX = 0x40,
@@ -399,7 +406,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
 
         [Flags]
-        enum AudioCodecs : byte
+        public enum AudioCodecs : byte
         {
             MP3 = 0x80,
             OGG = 0x40,
@@ -409,7 +416,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
 
         [Flags]
-        enum AspectRatios : byte
+        public enum AspectRatios : byte
         {
             SRC = 0x80,
             FIT = 0x40,
@@ -421,7 +428,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
 
         [Flags]
-        enum EtcIcons : byte
+        public enum EtcIcons : byte
         {
             Repeat = 0x80,
             Shuffle = 0x40,
@@ -468,34 +475,34 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         public static extern DSPResult IDW_SetVfdText([MarshalAs(UnmanagedType.LPWStr)] string line1, [MarshalAs(UnmanagedType.LPWStr)] string line2);
 
         [DllImport("iMONDisplayWrapper.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-        private static extern DSPResult IDW_SetLcdText([MarshalAs(UnmanagedType.LPWStr)] string line);
+        public static extern DSPResult IDW_SetLcdText([MarshalAs(UnmanagedType.LPWStr)] string line);
 
         [DllImport("iMONDisplayWrapper.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-        private static extern DSPResult IDW_SetLcdAllIcons([MarshalAs(UnmanagedType.Bool)] bool on);
+        public static extern DSPResult IDW_SetLcdAllIcons([MarshalAs(UnmanagedType.Bool)] bool on);
 
         [DllImport("iMONDisplayWrapper.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-        private static extern DSPResult IDW_SetLcdOrangeIcon(byte iconData1, byte iconData2);
+        public static extern DSPResult IDW_SetLcdOrangeIcon(byte iconData1, byte iconData2);
 
         [DllImport("iMONDisplayWrapper.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-        private static extern DSPResult IDW_SetLcdMediaTypeIcon(byte iconData);
+        public static extern DSPResult IDW_SetLcdMediaTypeIcon(byte iconData);
 
         [DllImport("iMONDisplayWrapper.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-        private static extern DSPResult IDW_SetLcdSpeakerIcon(byte iconData1, byte iconData2);
+        public static extern DSPResult IDW_SetLcdSpeakerIcon(byte iconData1, byte iconData2);
 
         [DllImport("iMONDisplayWrapper.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-        private static extern DSPResult IDW_SetLcdVideoCodecIcon(byte iconData);
+        public static extern DSPResult IDW_SetLcdVideoCodecIcon(byte iconData);
 
         [DllImport("iMONDisplayWrapper.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-        private static extern DSPResult IDW_SetLcdAudioCodecIcon(byte iconData);
+        public static extern DSPResult IDW_SetLcdAudioCodecIcon(byte iconData);
 
         [DllImport("iMONDisplayWrapper.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-        private static extern DSPResult IDW_SetLcdAspectRatioIcon(byte iconData);
+        public static extern DSPResult IDW_SetLcdAspectRatioIcon(byte iconData);
 
         [DllImport("iMONDisplayWrapper.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-        private static extern DSPResult IDW_SetLcdEtcIcon(byte iconData);
+        public static extern DSPResult IDW_SetLcdEtcIcon(byte iconData);
 
         [DllImport("iMONDisplayWrapper.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-        private static extern DSPResult IDW_SetLcdProgress(int currentPosition, int total);
+        public static extern DSPResult IDW_SetLcdProgress(int currentPosition, int total);
 
     }
 }
