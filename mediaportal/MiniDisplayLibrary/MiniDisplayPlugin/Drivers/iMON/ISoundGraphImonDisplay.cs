@@ -24,7 +24,7 @@ using System.Text;
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {
     public abstract class ISoundGraphImonDisplay //: IDisplay
-    {
+    {       
         public ISoundGraphImonDisplay()
         {
             Line1 = string.Empty;

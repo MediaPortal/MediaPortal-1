@@ -459,6 +459,19 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             public DSPNotifyCode iNotification;
         }
 
+        //Declare a struct to pass our EqData
+        [StructLayout(LayoutKind.Sequential)]
+        public class DSPEQDATA
+        {
+            public DSPEQDATA()
+            {
+                BandData = new int[16];
+            }
+
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public readonly int[] BandData;
+        }
+
         [DllImport("iMONDisplayWrapper.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
         protected static extern DSPResult IDW_Init(IDW_INITRESULT initResult);
 
@@ -473,6 +486,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
         [DllImport("iMONDisplayWrapper.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
         public static extern DSPResult IDW_SetVfdText([MarshalAs(UnmanagedType.LPWStr)] string line1, [MarshalAs(UnmanagedType.LPWStr)] string line2);
+
+        //Import function to set VFD EQDATA
+        [DllImport("iMONDisplayWrapper.dll")]
+        public static extern int IDW_SetVfdEqData(DSPEQDATA EqData);
 
         [DllImport("iMONDisplayWrapper.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
         public static extern DSPResult IDW_SetLcdText([MarshalAs(UnmanagedType.LPWStr)] string line);
