@@ -379,7 +379,6 @@ namespace MediaPortal.GUI.Music
         _virtualDirectory.Reset();
       }
 
-      ResetShares();
       if (MusicState.StartWindow != GetID)
       {
         GUIWindowManager.ReplaceWindow((int)Window.WINDOW_MUSIC_GENRE);
