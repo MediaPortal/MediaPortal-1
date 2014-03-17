@@ -988,14 +988,15 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     private void VerifyLCDType()
     {
       Log.Info("MiniDisplay.SetupForm.VerifyLCDType(): called");
+      //Disable OK button and other stuff until the display driver tells us otherwise
+      this.btnOK.Enabled = false;
+      this.gbGraphMode.Visible = false;
+      this.gbTextMode.Visible = false;
+      //Try check if our driver is up and running and get its capabilities
       try
       {
         this.lcd = this.cmbType.SelectedItem as IDisplay;
-        if (this.lcd.IsDisabled)
-        {
-          this.btnOK.Enabled = false;
-        }
-        else
+        if (!this.lcd.IsDisabled)
         {
           this.btnOK.Enabled = true;
         }
