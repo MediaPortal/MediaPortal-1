@@ -29,7 +29,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 {
   public class MiniDisplayHelper
   {
-    private static int _IdleTimeout = 5;
     public static bool _PropertyBrowserAvailable = false;
     public static SystemStatus MPStatus;
     public static object PropertyBrowserMutex = new object();
@@ -775,23 +774,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       {
         Log.Info("MiniDisplay.ProcessEqData(): called");
       }
-    }
-
-    public static void SetIdleTimeout(int TimeOutSeconds)
-    {
-      if (TimeOutSeconds == -1)
-      {
-        _IdleTimeout = 5;
-      }
-      else
-      {
-        _IdleTimeout = TimeOutSeconds;
-      }
-    }
-
-    public static int GetIdleTimeout()
-    {
-      return _IdleTimeout;
     }
 
     public static ulong SetPluginIcons()

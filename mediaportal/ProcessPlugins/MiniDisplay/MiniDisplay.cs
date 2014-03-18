@@ -309,7 +309,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             this.status = Status.PlayingTV;
           }
         }
-        if ((DateTime.Now - this.lastAction) < new TimeSpan(0, 0, MiniDisplayHelper.GetIdleTimeout()))
+        if ((DateTime.Now - this.lastAction) < new TimeSpan(0, 0, Settings.Instance.IdleTimeout))
         {
           this.status = Status.Action;
         }

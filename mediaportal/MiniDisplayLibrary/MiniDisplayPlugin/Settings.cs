@@ -57,6 +57,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     private int m_GraphicHeight = 0x10;
     private int m_GraphicWidth = 0x60;
     private string m_IdleMessage = string.Empty;
+    private int m_IdleTimeoutInSeconds = 5;
     private static Settings m_Instance;
     private int m_PixelsToScroll = 10;
     private string m_Port = "378";
@@ -497,6 +498,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         new Font(this.Font, (float)value).Dispose();
         this.m_FontSize = value;
       }
+    }
+
+    [XmlAttribute]
+    public int IdleTimeout
+    {
+        get { return this.m_IdleTimeoutInSeconds; }
+        set { this.m_IdleTimeoutInSeconds = value;}
     }
 
     [XmlAttribute]
