@@ -33,6 +33,9 @@ using MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 {
+
+
+
   [Serializable]
   public class Settings
   {
@@ -69,6 +72,31 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     private string[] m_TranslateTo;
     [XmlElement("Message", typeof (Message))] public List<Message> Messages = new List<Message>();
     [XmlAttribute] public string Type;
+
+    public void LogInfo(string format, params object[] arg)
+    {
+        if (this.ExtensiveLogging)
+        {
+            Log.Info(format,arg);
+        }
+    }
+
+    public void LogDebug(string format, params object[] arg)
+    {
+        if (this.ExtensiveLogging)
+        {
+            Log.Debug(format, arg);
+        }
+    }
+
+    public void LogError(string format, params object[] arg)
+    {
+        if (this.ExtensiveLogging)
+        {
+            Log.Error(format, arg);
+        }
+    }
+
 
     private static void Default(Settings _settings)
     {
@@ -240,113 +268,68 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
     private void LoadDrivers()
     {
-      Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading drivers...");
+      LogInfo("MiniDisplay.Settings.LoadDrivers(): Loading drivers...");
       List<IDisplay> list = new List<IDisplay>();
-      if (this.ExtensiveLogging)
-      {
-        Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading xPL_Connector...");
-      }
+
+      LogInfo("MiniDisplay.Settings.LoadDrivers(): Loading xPL_Connector...");
       list.Add(new xPL_Connector());
-      if (this.ExtensiveLogging)
-      {
-        Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading IOWarrior...");
-      }
+
+      LogInfo("MiniDisplay.Settings.LoadDrivers(): Loading IOWarrior...");
       list.Add(new IOWarrior());
-      if (this.ExtensiveLogging)
-      {
-        Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading GenericSerial...");
-      }
+
+      LogInfo("MiniDisplay.Settings.LoadDrivers(): Loading GenericSerial...");
       list.Add(new GenericSerial());
-      if (this.ExtensiveLogging)
-      {
-        Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading MCEDisplay...");
-      }
+
+      LogInfo("MiniDisplay.Settings.LoadDrivers(): Loading MCEDisplay...");
       list.Add(new MCEDisplay());
-      if (this.ExtensiveLogging)
-      {
-        Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading CFontz...");
-      }
+
+      LogInfo("MiniDisplay.Settings.LoadDrivers(): Loading CFontz...");
       list.Add(new CFontz());
-      if (this.ExtensiveLogging)
-      {
-        Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading iMONLCD Graphics...");
-      }
+
+      LogInfo("MiniDisplay.Settings.LoadDrivers(): Loading iMONLCD Graphics...");
       list.Add(new iMONLCDg());
-      if (this.ExtensiveLogging)
-      {
-        Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading MatrixMX...");
-      }
+
+      LogInfo("MiniDisplay.Settings.LoadDrivers(): Loading MatrixMX...");
       list.Add(new MatrixMX());
-      if (this.ExtensiveLogging)
-      {
-        Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading MatrixGX...");
-      }
+
+      LogInfo("MiniDisplay.Settings.LoadDrivers(): Loading MatrixGX...");
       list.Add(new MatrixGX());
-      if (this.ExtensiveLogging)
-      {
-        Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading MD8800...");
-      }
+
+      LogInfo("MiniDisplay.Settings.LoadDrivers(): Loading MD8800...");
       list.Add(new MD8800());
-      if (this.ExtensiveLogging)
-      {
-        Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading VLSYS_Mplay...");
-      }
+
+      LogInfo("MiniDisplay.Settings.LoadDrivers(): Loading VLSYS_Mplay...");
       list.Add(new VLSYS_Mplay());
-      if (this.ExtensiveLogging)
-      {
-        Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading DM140GINK...");
-      }
+
+      LogInfo("MiniDisplay.Settings.LoadDrivers(): Loading DM140GINK...");
       list.Add(new DM140GINK());
-      if (this.ExtensiveLogging)
-      {
-        Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading FICSpectra...");
-      }
+
+      LogInfo("MiniDisplay.Settings.LoadDrivers(): Loading FICSpectra...");
       list.Add(new FICSpectra());
-      if (this.ExtensiveLogging)
-      {
-        Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading MediaPad...");
-      }
+
+      LogInfo("MiniDisplay.Settings.LoadDrivers(): Loading MediaPad...");
       list.Add(new MediaPad());
-      if (this.ExtensiveLogging)
-      {
-        Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading ScaleoEV...");
-      }
+
+      LogInfo("MiniDisplay.Settings.LoadDrivers(): Loading ScaleoEV...");
       list.Add(new ScaleoEV());
-      if (this.ExtensiveLogging)
-      {
-        Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading ShuttlePF27...");
-      }
+
+      LogInfo("MiniDisplay.Settings.LoadDrivers(): Loading ShuttlePF27...");
       list.Add(new ShuttlePF27());
-
-    /*
+    
       //Deprecated
-      if (this.ExtensiveLogging)
-      {
-        Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading iMON VFD...");
-      }     
-      list.Add(new ImonVfd());
+      //Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading iMON VFD...");
+      //list.Add(new ImonVfd());
 
       //Deprecated
-      if (this.ExtensiveLogging)
-      {
-        Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading iMON LCD...");
-      }      
-      list.Add(new ImonLcd());
-
-     */
+      //LogInfo("MiniDisplay.Settings.LoadDrivers(): Loading iMON LCD...");   
+      //list.Add(new ImonLcd());
 
       //New sound graph display
-      if (this.ExtensiveLogging)
-      {
-          Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading SoundGraph display...");
-      }
+      LogInfo("MiniDisplay.Settings.LoadDrivers(): Loading SoundGraph display...");
       list.Add(new SoundGraphDisplay());
 
       //Add Debug Form
-      if (this.ExtensiveLogging)
-      {
-          Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading Debug Display...");
-      }
+      LogInfo("MiniDisplay.Settings.LoadDrivers(): Loading Debug Display...");
       list.Add(new DebugForm());
       if (this.m_EnableLCDHype)
       {
@@ -357,18 +340,21 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         }
         foreach (FileInfo info2 in info.GetFiles("*.dll"))
         {
-          if (this.ExtensiveLogging)
-          {
-            Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading LCDHype Driver {0}...", new object[] {info2.FullName});
-          }
+          LogInfo("MiniDisplay.Settings.LoadDrivers(): Loading LCDHype Driver {0}...", new object[] {info2.FullName});
           list.Add(new LCDHypeWrapper(info2.FullName));
         }
       }
       this.m_Drivers = list;
-      if (this.ExtensiveLogging)
+
+      //Log all our drivers
+      LogInfo("===MiniDisplay drivers===");      
+      foreach (IDisplay display in m_Drivers)
       {
-        Log.Info("MiniDisplay.Settings.LoadDrivers(): Driver loading complete...");
+        LogInfo(display.Description);
       }
+      LogInfo("=========================");
+      LogInfo("MiniDisplay.Settings.LoadDrivers(): Driver loading complete...");
+
     }
 
     public void ReloadDrivers()
@@ -624,39 +610,25 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     {
       get
       {
-        if (this.ExtensiveLogging)
-        {
-          Log.Debug("MiniDisplay.Settings.LCDType: Determining configured display type...");
-        }
+        LogDebug("MiniDisplay.Settings.LCDType: Determining configured display type...");
+
         if (this.Type == null)
         {
-          if (this.ExtensiveLogging)
-          {
-            Log.Debug(
-              "MiniDisplay.Settings.LCDType: Completed - Requested type was NULL.  Returning first type found...",
-              new object[0]);
-          }
+          LogDebug("MiniDisplay.Settings.LCDType: Completed - Requested type was NULL.  Returning first type found...",new object[0]);
           return this.Drivers[0];
         }
-        if (this.ExtensiveLogging)
-        {
-          Log.Info("MiniDisplay.Settings.LCDType: Configured for display type: {0}", new object[] {this.Type});
-        }
+
+        LogInfo("MiniDisplay.Settings.LCDType: Configured for display type: {0}", new object[] {this.Type});
+
         foreach (IDisplay display in this.Drivers)
         {
           if (string.Compare(display.Name, this.Type, true, CultureInfo.InvariantCulture) == 0)
           {
-            if (this.ExtensiveLogging)
-            {
-              Log.Debug("MiniDisplay.Settings.LCDType: Completed - Requested type was found.");
-            }
+            LogDebug("MiniDisplay.Settings.LCDType: Completed - Requested type was found.");
             return display;
           }
         }
-        if (this.ExtensiveLogging)
-        {
-          Log.Error("MiniDisplay.Settings.LCDType: Confleted - Requested type {0} NOT FOUND.", new object[] {this.Type});
-        }
+        LogError("MiniDisplay.Settings.LCDType: Confleted - Requested type {0} NOT FOUND.", new object[] {this.Type});
         return this.Drivers[0];
       }
       set { this.Type = value.Name; }
