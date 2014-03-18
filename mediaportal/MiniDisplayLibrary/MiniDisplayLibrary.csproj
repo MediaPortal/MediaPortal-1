@@ -121,6 +121,12 @@
     <Compile Include="MiniDisplayPlugin\Drivers\iMON\SoundGraphDisplay.cs" />
     <Compile Include="MiniDisplayPlugin\Drivers\iMON\SoundGraphImonLcd.cs" />
     <Compile Include="MiniDisplayPlugin\Drivers\iMON\SoundGraphImonVfd.cs" />
+    <Compile Include="MiniDisplayPlugin\Drivers\iMON\SoundGraphImonVfdAdvancedSetupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MiniDisplayPlugin\Drivers\iMON\SoundGraphImonVfdAdvancedSetupForm.designer.cs">
+      <DependentUpon>SoundGraphImonVfdAdvancedSetupForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="MiniDisplayPlugin\Drivers\ShuttlePF27.cs" />
     <Compile Include="MiniDisplayPlugin\Drivers\DM140GINK.cs" />
     <Compile Include="MiniDisplayPlugin\Drivers\FicSpectra.cs" />

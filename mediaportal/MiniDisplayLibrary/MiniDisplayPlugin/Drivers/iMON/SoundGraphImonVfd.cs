@@ -23,6 +23,11 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.IO;
+using System.Windows.Forms;
+using System.Xml;
+using System.Xml.Serialization;
+using MediaPortal.Configuration;
 //using MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
@@ -33,10 +38,15 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     public class SoundGraphImonVfd : ISoundGraphImonDisplay
     {
         SoundGraphDisplay.DSPEQDATA iEqData;
+        private AdvancedSettings AdvSettings;
 
         //Constructor
         public SoundGraphImonVfd()
         {
+            //Settings
+            LoadAdvancedSettings();
+            AdvancedSettings.OnSettingsChanged += AdvancedSettings_OnSettingsChanged;
+
             //Init EqData
             iEqData = new SoundGraphDisplay.DSPEQDATA();
             iEqData.BandData[0] = 100;
@@ -76,8 +86,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         public override void Configure()
         {
             //No advanced settings for now
+            SoundGraphDisplay.LogDebug("SoundGraphImonVfd.Configure() called");
+            Form form = new SoundGraphImonVfdAdvancedSetupForm();
+            form.ShowDialog();
+            form.Dispose();
+            SoundGraphDisplay.LogDebug("(IDisplay) SoundGraphImonVfd.Configure() completed");
         }
 
+        //Testing
         void SetAndRollEqData()
         {
             //SL: The following demonstrates how to pass EqData to our C++ DLL
@@ -110,6 +126,113 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             }
         }
 
+        //Settings stuff
+        private void LoadAdvancedSettings()
+        {
+            AdvSettings = AdvancedSettings.Load();
+            //_preferLine1General = AdvSettings.PreferFirstLineGeneral;
+            //_preferLine1Playback = AdvSettings.PreferFirstLinePlayback;
+        }
+
+        private void AdvancedSettings_OnSettingsChanged()
+        {
+            SoundGraphDisplay.LogDebug("SoundGraphImonVfd.AdvancedSettings_OnSettingsChanged(): RELOADING SETTINGS");
+
+            //CleanUp();
+            //Thread.Sleep(100);
+            LoadAdvancedSettings();
+            //Initialize();
+        }
+
+        [Serializable]
+        public class AdvancedSettings
+        {
+            #region Delegates
+
+            public delegate void OnSettingsChangedHandler();
+
+            #endregion
+
+            private static AdvancedSettings m_Instance;
+            public const string m_Filename = "MiniDisplay_SoundGraphImonVfd.xml";
+
+            public static AdvancedSettings Instance
+            {
+                get
+                {
+                    if (m_Instance == null)
+                    {
+                        m_Instance = Load();
+                    }
+                    return m_Instance;
+                }
+                set { m_Instance = value; }
+            }
+
+            [XmlAttribute]
+            public bool PreferFirstLineGeneral { get; set; }
+
+            [XmlAttribute]
+            public bool PreferFirstLinePlayback { get; set; }
+
+            public static event OnSettingsChangedHandler OnSettingsChanged;
+
+            private static void Default(AdvancedSettings _settings)
+            {
+                _settings.PreferFirstLineGeneral = true;
+                _settings.PreferFirstLinePlayback = true;
+            }
+
+            public static AdvancedSettings Load()
+            {
+                AdvancedSettings settings;
+                SoundGraphDisplay.LogDebug("SoundGraphImonVfd.AdvancedSettings.Load(): started");
+                if (File.Exists(Config.GetFile(Config.Dir.Config, m_Filename)))
+                {
+                    SoundGraphDisplay.LogDebug("SoundGraphImonVfd.AdvancedSettings.Load(): Loading settings from XML file");
+                    var serializer = new XmlSerializer(typeof(AdvancedSettings));
+                    var xmlReader = new XmlTextReader(Config.GetFile(Config.Dir.Config, m_Filename));
+                    settings = (AdvancedSettings)serializer.Deserialize(xmlReader);
+                    xmlReader.Close();
+                }
+                else
+                {
+                    SoundGraphDisplay.LogDebug("SoundGraphImonVfd.AdvancedSettings.Load(): Loading settings from defaults");
+                    settings = new AdvancedSettings();
+                    Default(settings);
+                    SoundGraphDisplay.LogDebug("SoundGraphImonVfd.AdvancedSettings.Load(): Loaded settings from defaults");
+                }
+                SoundGraphDisplay.LogDebug("SoundGraphImonVfd.AdvancedSettings.Load(): completed");
+                return settings;
+            }
+
+            public static void NotifyDriver()
+            {
+                if (OnSettingsChanged != null)
+                {
+                    OnSettingsChanged();
+                }
+            }
+
+            public static void Save()
+            {
+                Save(Instance);
+            }
+
+            public static void Save(AdvancedSettings ToSave)
+            {
+                var serializer = new XmlSerializer(typeof(AdvancedSettings));
+                var writer = new XmlTextWriter(Config.GetFile(Config.Dir.Config, m_Filename),
+                                               Encoding.UTF8) { Formatting = Formatting.Indented, Indentation = 2 };
+                serializer.Serialize(writer, ToSave);
+                writer.Close();
+            }
+
+            public static void SetDefaults()
+            {
+                Default(Instance);
+            }
+        }
 
     }
 
