@@ -169,6 +169,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             Initialize();
             if (iDisplay != null)
             {
+                //Display something for fun
+                SetLine(0,"Adv. Settings");
+                SetLine(1, Name);
                 //Launch advanced settings dialog from here
                 iDisplay.Configure();
             }
