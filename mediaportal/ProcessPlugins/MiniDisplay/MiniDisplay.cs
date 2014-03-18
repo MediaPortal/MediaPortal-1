@@ -144,11 +144,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
     public void Stop()
     {
-      Log.Info("MiniDisplay.Stop(): called");
-      if (Settings.Instance.ExtensiveLogging)
-      {
-        Log.Debug("MiniDisplay: Plugin is being stopped.");
-      }
+      Settings.Instance.LogInfo("MiniDisplay.Stop(): called");
+      Settings.Instance.LogDebug("MiniDisplay: Plugin is being stopped.");
+
       MiniDisplayHelper._PropertyBrowserAvailable = false;
       SystemEvents.PowerModeChanged -= new PowerModeChangedEventHandler(this.SystemEvents_PowerModeChanged);
       this.DoStop();
@@ -225,23 +223,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           DateTime time = DateTime.Now.AddSeconds(5.0);
           while (this.t.IsAlive && (DateTime.Now.Ticks < time.Ticks))
           {
-            if (Settings.Instance.ExtensiveLogging)
-            {
-              Log.Info("MiniDisplay.DoStop: Background thread still alive, waiting 100ms...");
-            }
+            Settings.Instance.LogInfo("MiniDisplay.DoStop: Background thread still alive, waiting 100ms...");
             Thread.Sleep(100);
           }
           if (DateTime.Now.Ticks > time.Ticks)
           {
             this.t.Abort();
             Thread.Sleep(100);
-            Log.Info("MiniDisplay.DoStop(): Forcing display thread shutdown. t.IsAlive = {0}",
-                     this.t.IsAlive);
+            Settings.Instance.LogInfo("MiniDisplay.DoStop(): Forcing display thread shutdown. t.IsAlive = {0}", this.t.IsAlive);
           }
-          if (Settings.Instance.ExtensiveLogging)
-          {
-            Log.Info("MiniDisplay.DoStop(): Background thread has stopped.");
-          }
+          Settings.Instance.LogInfo("MiniDisplay.DoStop(): Background thread has stopped.");
           this.t = null;
         }
       }
@@ -255,22 +246,17 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     {
       try
       {
-        if (Settings.Instance.ExtensiveLogging)
-        {
-          Log.Debug("MiniDisplay Processing status.");
-        }
+        Settings.Instance.LogDebug("MiniDisplay Processing status.");
+
         GUIWindow.Window activeWindow = (GUIWindow.Window)GUIWindowManager.ActiveWindow;
-        if (Settings.Instance.ExtensiveLogging)
-        {
-          Log.Debug("Active window is {0}", activeWindow.ToString());
-        }
+
+        Settings.Instance.LogDebug("Active window is {0}", activeWindow.ToString());
+
         this.status = Status.Idle;
         if (g_Player.Player != null)
         {
-          if (Settings.Instance.ExtensiveLogging)
-          {
-            Log.Debug("Active player detected");
-          }
+          Settings.Instance.LogDebug("Active player detected");
+          
           GUIPropertyManager.SetProperty("#paused", g_Player.Paused ? "true" : string.Empty);
           if (g_Player.IsDVD)
           {
@@ -324,17 +310,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             GUIPropertyManager.GetProperty("#currentmodule");
             GUIPropertyManager.SetProperty("#DialogLabel", dialogTitle);
             GUIPropertyManager.SetProperty("#DialogItem", dialogHighlightedItem);
-            if (Settings.Instance.ExtensiveLogging)
-            {
-              Log.Debug("DIALOG window is {0}: \"{1}\", \"{2}\"", activeWindowEx.ToString(), dialogTitle,
-                        dialogHighlightedItem);
-            }
+
+            Settings.Instance.LogDebug("DIALOG window is {0}: \"{1}\", \"{2}\"", activeWindowEx.ToString(), dialogTitle, dialogHighlightedItem);            
           }
         }
-        if (Settings.Instance.ExtensiveLogging)
-        {
-          Log.Debug("Detected status is {0}", status.ToString());
-        }
+        
+        Settings.Instance.LogDebug("Detected status is {0}", status.ToString());
+
         lock (MiniDisplayHelper.StatusMutex)
         {
           MiniDisplayHelper.MPStatus.CurrentPluginStatus = this.status;
@@ -378,10 +360,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         {
           if (((this.browser != null) && !this.browser.IsDisposed) && MiniDisplayHelper._PropertyBrowserAvailable)
           {
-            if (Settings.Instance.ExtensiveLogging)
-            {
-              Log.Info("MiniDisplayPlugin.DoWork(): Updating PropertyBrowser.");
-            }
+            Settings.Instance.LogInfo("MiniDisplayPlugin.DoWork(): Updating PropertyBrowser.");         
             this.browser.SetStatus(this.status);
             this.browser.SetActiveWindow(activeWindow);
           }
@@ -405,23 +384,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     public void Run()
     {
       SystemEvents.PowerModeChanged += new PowerModeChangedEventHandler(this.SystemEvents_PowerModeChanged);
-      bool extensiveLogging = Settings.Instance.ExtensiveLogging;
       bool flag2 = false;
-      if (extensiveLogging)
-      {
-        Log.Info("MiniDisplay.Run(): Entering MiniDisplay run loop.");
-      }
+      Settings.Instance.LogInfo("MiniDisplay.Run(): Entering MiniDisplay run loop.");
       try
       {
-        if (extensiveLogging)
-        {
-          Log.Info("MiniDisplay.Run(): Creating MiniDisplay displayhandler.");
-        }
+        Settings.Instance.LogInfo("MiniDisplay.Run(): Creating MiniDisplay displayhandler.");
         this.handler = new DisplayHandler(this.display);
-        if (extensiveLogging)
-        {
-          Log.Info("MiniDisplay.Run(): Starting MiniDisplay displayhandler.");
-        }
+        Settings.Instance.LogInfo("MiniDisplay.Run(): Starting MiniDisplay displayhandler.");
         this.handler.Start();
         while (!this.stopRequested)
         {
@@ -461,25 +430,17 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
                 this.stopRequested = true;
               }
             }
-            if (extensiveLogging)
-            {
-              Log.Debug("MiniDisplay.Run(): MiniDisplay Sleeping...");
-            }
+            Settings.Instance.LogDebug("MiniDisplay.Run(): MiniDisplay Sleeping...");
             Thread.Sleep(Settings.Instance.ScrollDelay);
-            if (extensiveLogging)
-            {
-              Log.Debug("MiniDisplay.Run(): MiniDisplay Sleeping... DONE");
-            }
+            Settings.Instance.LogDebug("MiniDisplay.Run(): MiniDisplay Sleeping... DONE");         
           }
           else
           {
             Thread.Sleep(100);
           }
         }
-        if (extensiveLogging)
-        {
-          Log.Info("MiniDisplay.Run(): Stopping MiniDisplay displayhandler.");
-        }
+
+        Settings.Instance.LogInfo("MiniDisplay.Run(): Stopping MiniDisplay displayhandler.");
         flag2 = true;
         this.handler.Stop();
       }
@@ -496,10 +457,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       {
         Log.Error("MiniDisplay.Run(): CAUGHT EXCEPTION: {0}", exception3);
       }
-      if (extensiveLogging)
-      {
-        Log.Info("MiniDisplay.Run(): Exiting MiniDisplay run loop.");
-      }
+      Settings.Instance.LogInfo("MiniDisplay.Run(): Exiting MiniDisplay run loop.");
     }
 
     #endregion
@@ -634,12 +592,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
                 if (control4.Focus)
                 {
                   DialogHighlightedItem = control4.Description;
-                  if (Settings.Instance.ExtensiveLogging)
-                  {
-                    Log.Info(
+                  Settings.Instance.LogInfo(
                       "MiniDisplay.GetDialogInfo(): found WINDOW_DIALOG_OK buttoncontrol ID = {0} Label = \"{1}\" Desc = \"{2}\"",
                       control4.GetID, control4.Label, control4.Description);
-                  }
                 }
               }
               if (obj5.GetType() == typeof (GUIFadeLabel))
@@ -925,10 +880,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
     private void SystemEvents_PowerModeChanged(object sender, PowerModeChangedEventArgs e)
     {
-      if (Settings.Instance.ExtensiveLogging)
-      {
-        Log.Debug("MiniDisplay: SystemPowerModeChanged event was raised.");
-      }
+      Settings.Instance.LogDebug("MiniDisplay: SystemPowerModeChanged event was raised.");
+ 
       switch (e.Mode)
       {
         case PowerModes.Resume:
@@ -952,10 +905,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
     private void browser_Closing(object sender, FormClosingEventArgs e)
     {
-      if (Settings.Instance.ExtensiveLogging)
-      {
-        Log.Info("MiniDisplay.browser_Closing(): PropertyBrowser is closing.");
-      }
+      Settings.Instance.LogInfo("MiniDisplay.browser_Closing(): PropertyBrowser is closing.");
       this.browser = null;
     }
 
