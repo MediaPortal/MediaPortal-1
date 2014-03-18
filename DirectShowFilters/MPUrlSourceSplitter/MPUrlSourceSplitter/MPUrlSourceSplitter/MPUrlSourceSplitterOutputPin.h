@@ -33,6 +33,7 @@
 #define OUTPUT_PIN_BUFFERS_LENGTH_RECOMMENDED                         524288
 
 #define OUTPUT_PIN_DUMP_DATA_LENGTH                                   1048576
+#define OUTPUT_PIN_DUMP_METADATA_COUNT                                1024
 
 #define OUTPUT_PIN_FLAG_NONE                                          0x00000000
 #define OUTPUT_PIN_FLAG_CONTAINER_MPEG_TS                             0x00000001
@@ -46,6 +47,12 @@
 #define OUTPUT_PIN_FLAG_HAS_ACCESS_UNIT_DELIMITERS                    0x00000100
 #define OUTPUT_PIN_FLAG_PGS_DROP_STATE                                0x00000200
 #define OUTPUT_PIN_FLAG_DUMPING_DATA_AND_SIZES                        0x00000400
+
+struct DumpMetadata
+{
+  unsigned int size;
+  SYSTEMTIME time;
+};
 
 class CMPUrlSourceSplitterOutputPin
   : public CBaseOutputPin
@@ -257,9 +264,9 @@ protected:
   unsigned int dumpDataBufferOccupied;
   unsigned int dumpDataBufferSize;
 
-  unsigned int *dumpDataSizes;
-  unsigned int dumpDataSizesBufferOccupied;
-  unsigned int dumpDataSizesBufferSize;
+  DumpMetadata *dumpMetadata;
+  unsigned int dumpMetadataBufferOccupied;
+  unsigned int dumpMetadataBufferCount;
 
   unsigned int dumpDataCounter;
 

@@ -83,9 +83,9 @@ CMPUrlSourceSplitterOutputPin::CMPUrlSourceSplitterOutputPin(CMediaTypeCollectio
   this->dumpDataBufferOccupied = 0;
   this->dumpDataBufferSize = 0;
 
-  this->dumpDataSizes = NULL;
-  this->dumpDataSizesBufferOccupied = 0;
-  this->dumpDataSizesBufferSize = 0;
+  this->dumpMetadata = NULL;
+  this->dumpMetadataBufferOccupied = 0;
+  this->dumpMetadataBufferCount = 0;
 
   this->dumpDataCounter = 0;
 
@@ -143,7 +143,7 @@ CMPUrlSourceSplitterOutputPin::~CMPUrlSourceSplitterOutputPin()
   FREE_MEM_CLASS(this->h264PacketCollection);
 
   FREE_MEM(this->dumpData);
-  FREE_MEM(this->dumpDataSizes);
+  FREE_MEM(this->dumpMetadata);
 
   CHECK_CONDITION_NOT_NULL_EXECUTE(this->m_pAllocator, this->m_pAllocator->Release());
 
@@ -618,25 +618,25 @@ DWORD CMPUrlSourceSplitterOutputPin::ThreadProc()
           this->dumpDataBufferSize = OUTPUT_PIN_DUMP_DATA_LENGTH;
         }
 
-        if (this->dumpDataSizes == NULL)
+        if (this->dumpMetadata == NULL)
         {
-          this->dumpDataSizes = ALLOC_MEM_SET(this->dumpDataSizes, unsigned int, OUTPUT_PIN_DUMP_DATA_LENGTH, 0);
-          this->dumpDataSizesBufferOccupied = 0;
-          this->dumpDataSizesBufferSize = OUTPUT_PIN_DUMP_DATA_LENGTH;
+          this->dumpMetadata = ALLOC_MEM_SET(this->dumpMetadata, DumpMetadata, OUTPUT_PIN_DUMP_METADATA_COUNT, 0);
+          this->dumpMetadataBufferOccupied = 0;
+          this->dumpMetadataBufferCount = OUTPUT_PIN_DUMP_METADATA_COUNT;
         }
 
-        if ((this->dumpData == NULL) || (this->dumpDataSizes == NULL))
+        if ((this->dumpData == NULL) || (this->dumpMetadata == NULL))
         {
           // error while allocating memory
           // do not dump data, but continue in work
           this->flags &= ~OUTPUT_PIN_FLAG_DUMPING_DATA_AND_SIZES;
           FREE_MEM(this->dumpData);
-          FREE_MEM(this->dumpDataSizes);
+          FREE_MEM(this->dumpMetadata);
 
           this->dumpDataBufferOccupied = 0;
           this->dumpDataBufferSize = 0;
-          this->dumpDataSizesBufferOccupied = 0;
-          this->dumpDataSizesBufferSize = 0;
+          this->dumpMetadataBufferOccupied = 0;
+          this->dumpMetadataBufferCount = 0;
         }
       }
     }
@@ -737,7 +737,7 @@ DWORD CMPUrlSourceSplitterOutputPin::ThreadProc()
                   // we are dumping data, we must copy output data to temporary buffer
 
                   if (((this->dumpDataBufferOccupied + sampleSize) >= this->dumpDataBufferSize) ||
-                      ((this->dumpDataSizesBufferOccupied + 1) >= this->dumpDataSizesBufferSize))
+                    ((this->dumpMetadataBufferOccupied + 1) >= this->dumpMetadataBufferCount))
                   {
                     // we need more memory in dump data buffer or in dump data sizes buffer
                     // flush all dump data and its sizes to dump files
@@ -747,8 +747,13 @@ DWORD CMPUrlSourceSplitterOutputPin::ThreadProc()
                   packet->GetBuffer()->CopyFromBuffer(this->dumpData + this->dumpDataBufferOccupied, sampleSize);
                   this->dumpDataBufferOccupied += sampleSize;
 
-                  *(this->dumpDataSizes + this->dumpDataSizesBufferOccupied) = sampleSize;
-                  this->dumpDataSizesBufferOccupied++;
+                  // fill metadata
+                  DumpMetadata *metadata = (this->dumpMetadata + this->dumpMetadataBufferOccupied);
+
+                  metadata->size = sampleSize;
+                  GetLocalTime(&metadata->time);
+
+                  this->dumpMetadataBufferOccupied++;
                 }
 
                 if (!notDeletePacket)
@@ -1325,37 +1330,37 @@ void CMPUrlSourceSplitterOutputPin::DumpDataAndDumpDataSizes(void)
       {
         wchar_t *guid = ConvertGuidToString(this->filter->GetLogger()->GetLoggerInstanceId());
         wchar_t *dumpDataFileName = FormatString(L"%s\\MPUrlSourceSplitter-%s-%s-%08u.dump", contextLogFile, guid, this->m_pName, this->dumpDataCounter);
-        wchar_t *dumpDataSizesFileName = FormatString(L"%s\\MPUrlSourceSplitter-%s-%s-%08u.sizes", contextLogFile, guid, this->m_pName, this->dumpDataCounter);
+        wchar_t *dumpMetadataFileName = FormatString(L"%s\\MPUrlSourceSplitter-%s-%s-%08u.metadata", contextLogFile, guid, this->m_pName, this->dumpDataCounter);
 
         HANDLE hDumpData = CreateFile(dumpDataFileName, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_FLAG_WRITE_THROUGH, NULL);
-        HANDLE hDumpDataSizes = CreateFile(dumpDataSizesFileName, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_FLAG_WRITE_THROUGH, NULL);
+        HANDLE hDumpMetadata = CreateFile(dumpMetadataFileName, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_FLAG_WRITE_THROUGH, NULL);
 
-        if ((hDumpData != INVALID_HANDLE_VALUE) && (hDumpDataSizes != INVALID_HANDLE_VALUE))
+        if ((hDumpData != INVALID_HANDLE_VALUE) && (hDumpMetadata != INVALID_HANDLE_VALUE))
         {
           // move to end of files
           LARGE_INTEGER distanceToMove;
           distanceToMove.QuadPart = 0;
 
           SetFilePointerEx(hDumpData, distanceToMove, NULL, FILE_END);
-          SetFilePointerEx(hDumpDataSizes, distanceToMove, NULL, FILE_END);
+          SetFilePointerEx(hDumpMetadata, distanceToMove, NULL, FILE_END);
 
           // write data to file
           DWORD written = 0;
           WriteFile(hDumpData, this->dumpData, this->dumpDataBufferOccupied, &written, NULL);
 
           written = 0;
-          WriteFile(hDumpDataSizes, this->dumpDataSizes, this->dumpDataSizesBufferOccupied * sizeof(unsigned int), &written, NULL);
+          WriteFile(hDumpMetadata, this->dumpMetadata, this->dumpMetadataBufferOccupied * sizeof(DumpMetadata), &written, NULL);
         }
 
         CHECK_CONDITION_EXECUTE(hDumpData != INVALID_HANDLE_VALUE, CloseHandle(hDumpData));
         hDumpData = INVALID_HANDLE_VALUE;
 
-        CHECK_CONDITION_EXECUTE(hDumpDataSizes != INVALID_HANDLE_VALUE, CloseHandle(hDumpDataSizes));
-        hDumpDataSizes = INVALID_HANDLE_VALUE;
+        CHECK_CONDITION_EXECUTE(hDumpMetadata != INVALID_HANDLE_VALUE, CloseHandle(hDumpMetadata));
+        hDumpMetadata = INVALID_HANDLE_VALUE;
 
         FREE_MEM(guid);
         FREE_MEM(dumpDataFileName);
-        FREE_MEM(dumpDataSizesFileName);
+        FREE_MEM(dumpMetadataFileName);
       }
 
       FREE_MEM(contextLogFile);
@@ -1363,5 +1368,5 @@ void CMPUrlSourceSplitterOutputPin::DumpDataAndDumpDataSizes(void)
   }
 
   this->dumpDataBufferOccupied = 0;
-  this->dumpDataSizesBufferOccupied = 0;
+  this->dumpMetadataBufferOccupied = 0;
 }
