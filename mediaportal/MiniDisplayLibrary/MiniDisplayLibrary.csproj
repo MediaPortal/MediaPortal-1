@@ -119,6 +119,12 @@
     <Compile Include="MiniDisplayPlugin\Drivers\iMON\ImonLcd.cs" />
     <Compile Include="MiniDisplayPlugin\Drivers\iMON\ISoundGraphImonDisplay.cs" />
     <Compile Include="MiniDisplayPlugin\Drivers\iMON\SoundGraphDisplay.cs" />
+    <Compile Include="MiniDisplayPlugin\Drivers\iMON\SoundGraphImonChooseDisplayTypeForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MiniDisplayPlugin\Drivers\iMON\SoundGraphImonChooseDisplayTypeForm.Designer.cs">
+      <DependentUpon>SoundGraphImonChooseDisplayTypeForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="MiniDisplayPlugin\Drivers\iMON\SoundGraphImonLcd.cs" />
     <Compile Include="MiniDisplayPlugin\Drivers\iMON\SoundGraphImonVfd.cs" />
     <Compile Include="MiniDisplayPlugin\Drivers\iMON\SoundGraphImonVfdAdvancedSetupForm.cs">
@@ -366,6 +372,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MiniDisplayPlugin\Drivers\iMON\ImonLcd_AdvancedSetupForm.resx">
       <DependentUpon>ImonLcd_AdvancedSetupForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MiniDisplayPlugin\Drivers\iMON\SoundGraphImonChooseDisplayTypeForm.resx">
+      <DependentUpon>SoundGraphImonChooseDisplayTypeForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MiniDisplayPlugin\Drivers\iMON\SoundGraphImonVfdAdvancedSetupForm.resx">
+      <DependentUpon>SoundGraphImonVfdAdvancedSetupForm.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

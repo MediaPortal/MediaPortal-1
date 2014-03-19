@@ -926,7 +926,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         this.Controls.Add(this.btnOK);
         this.Controls.Add(this.cbPropertyBrowser);
         this.Controls.Add(this.groupBox1);
+        this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+        this.MaximizeBox = false;
+        this.MinimizeBox = false;
         this.Name = "SetupForm";
+        this.ShowInTaskbar = false;
         this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
         this.Text = "MiniDisplay - Setup";
         this.Load += new System.EventHandler(this.SetupForm_Load);
@@ -991,13 +995,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       try
       {
         this.lcd = this.cmbType.SelectedItem as IDisplay;
-        if (!this.lcd.IsDisabled)
-        {
-          this.btnOK.Enabled = true;
-        }
         this.gbGraphMode.Visible = this.lcd.SupportsGraphics;
         this.gbTextMode.Visible = this.lcd.SupportsText;
         Settings.Instance.LCDType = this.lcd;
+        if (!this.lcd.IsDisabled)
+        {
+            this.btnOK.Enabled = true;
+        }
       }
       catch (Exception ex)
       {

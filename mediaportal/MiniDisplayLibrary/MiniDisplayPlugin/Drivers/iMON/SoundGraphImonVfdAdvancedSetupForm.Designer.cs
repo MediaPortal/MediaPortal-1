@@ -136,7 +136,11 @@
             this.ClientSize = new System.Drawing.Size(334, 176);
             this.Controls.Add(this.gbxLineOptions);
             this.Controls.Add(this.btnOK);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "SoundGraphImonVfdAdvancedSetupForm";
+            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "MiniDisplay - Setup - Advanced Settings";
             this.gbxLineOptions.ResumeLayout(false);

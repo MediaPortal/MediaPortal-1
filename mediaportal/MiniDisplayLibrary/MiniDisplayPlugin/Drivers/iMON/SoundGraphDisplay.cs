@@ -24,7 +24,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
 using MediaPortal.GUI.Library;
-
+using System.Windows.Forms;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {
@@ -172,9 +172,28 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 //Display something for fun
                 SetLine(0,"Adv. Settings");
                 SetLine(1, Name);
-                //Launch advanced settings dialog from here
-                iDisplay.Configure();
             }
+            else
+            {
+                //No display currently connected/initialized
+                //Ask the user which display she wants to configure.
+                Form form = new SoundGraphImonChooseDisplayTypeForm();
+                DialogResult res=form.ShowDialog();
+                form.Dispose();
+                if (res == DialogResult.Yes)
+                {
+                    //LCD
+                    iDisplay = new SoundGraphImonLcd();
+
+                }
+                else if (res == DialogResult.No)
+                {
+                    //VFD
+                    iDisplay = new SoundGraphImonVfd();
+                }
+            }
+            //Launch advanced settings dialog for our display
+            iDisplay.Configure();
             CleanUp();
         }
 
