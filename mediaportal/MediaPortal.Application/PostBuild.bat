@@ -173,5 +173,5 @@ xcopy %1\..\Packages\bass.wma.2.4.4\basswma.dll "MusicPlayer\plugins\audio decod
 xcopy %1\..\Packages\bass.wv.2.4.4\basswv.dll "MusicPlayer\plugins\audio decoders\" /Y /D
 
 REM iMON Display 
-xcopy %1\..\Packages\MediaPortal-iMON-Display.1.0.1\lib\iMONDisplay.dll . /Y /D
-xcopy %1\..\Packages\MediaPortal-iMON-Display.1.0.1\lib\iMONDisplayWrapper.dll . /Y /D
+xcopy %1\..\Packages\MediaPortal-iMON-Display.1.1.0\lib\iMONDisplay.dll . /Y /D
+xcopy %1\..\Packages\MediaPortal-iMON-Display.1.1.0\lib\iMONDisplayWrapper.dll . /Y /D

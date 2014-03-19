@@ -447,8 +447,8 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_DirectShowFilters}\DXErr9\bin\${BUILD_TYPE}\Dxerr9.dll"
   File "${git_MP}\MiniDisplayLibrary\bin\${BUILD_TYPE}\MiniDisplayLibrary.dll"
   ; iMON VFD/LCD
-  File "${git_ROOT}\Packages\MediaPortal-iMON-Display.1.0.1\lib\iMONDisplay.dll"
-  File "${git_ROOT}\Packages\MediaPortal-iMON-Display.1.0.1\lib\iMONDisplayWrapper.dll"
+  File "${git_ROOT}\Packages\MediaPortal-iMON-Display.1.1.0\lib\iMONDisplay.dll"
+  File "${git_ROOT}\Packages\MediaPortal-iMON-Display.1.1.0\lib\iMONDisplayWrapper.dll"
   ; Utils
   File "${git_MP}\Utils\bin\${BUILD_TYPE}\Utils.dll"
   ; Common Utils
