@@ -221,7 +221,7 @@ namespace TvPlugin
         {
           btnLetter.AddSubItem(k.ToString());
         }
-        //btnLetter.AddSubItem("#");  // => will be everything beside a-z
+        btnLetter.AddSubItem("#");  // => will be everything beside a-z
       }
       Update();
 
