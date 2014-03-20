@@ -2062,7 +2062,7 @@ namespace TvPlugin
 
         if (s != null && idChannel > 0)
         {
-          TVUtil.DeleteRecAndSchedWithPrompt(s, idChannel);
+          TVUtil.StopRecAndSchedWithPrompt(s, idChannel);
         }
       }
       return false;

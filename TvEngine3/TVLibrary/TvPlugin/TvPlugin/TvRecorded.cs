@@ -1624,7 +1624,7 @@ namespace TvPlugin
         }
         if (item2.IsFolder && item2.Label == "..")
         {
-          return -1;
+          return 1;
         }
 
         Recording rec1 = (Recording)item1.TVTag;

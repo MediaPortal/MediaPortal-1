@@ -93,6 +93,7 @@ namespace MediaPortal.InputDevices
         {
           _enabled = ((xmlreader.GetValueAsBool("remote", "FireDTV", false)));
           _name = xmlreader.GetValueAsString("remote", "FireDTVDeviceName", string.Empty);
+          _logVerbose = xmlreader.GetValueAsBool("remote", "FireDTVVerboseLog", false);
           if (!_enabled)
           {
             return;

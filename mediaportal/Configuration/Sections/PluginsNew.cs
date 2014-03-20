@@ -215,6 +215,7 @@ namespace MediaPortal.Configuration.Sections
         LoadSettings();
         PopulateListView();
         pluginsLoadedOnPage = true;
+        listViewPlugins.Sorting = SortOrder.Ascending;
       }
     }
 

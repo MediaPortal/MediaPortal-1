@@ -30,6 +30,7 @@ namespace MediaPortal.Playlists
     public interface IPlayer
     {
       bool Playing { get; }
+      bool Paused { get; }
       void Release();
       bool Play(string strFile);
       bool Play(string strFile, MediaPortal.Player.g_Player.MediaType type);
@@ -50,6 +51,11 @@ namespace MediaPortal.Playlists
       public bool Playing
       {
         get { return Player.g_Player.Playing; }
+      }
+
+      public bool Paused
+      {
+        get { return Player.g_Player.Paused; }
       }
 
       public void Release()
@@ -573,10 +579,6 @@ namespace MediaPortal.Playlists
         _currentItem = iSong;
         PlayListItem item = playlist[_currentItem];
 
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS, 0, 0, 0, _currentItem, 0, null);
-        msg.Label = item.FileName;
-        GUIGraphicsContext.SendMessage(msg);
-
         if (playlist.AllPlayed())
         {
           playlist.ResetStatus();
@@ -599,7 +601,17 @@ namespace MediaPortal.Playlists
             case PlayListType.PLAYLIST_MUSIC:
             case PlayListType.PLAYLIST_MUSIC_TEMP:
             case PlayListType.PLAYLIST_LAST_FM:
-              playResult = g_Player.Play(item.FileName, MediaPortal.Player.g_Player.MediaType.Music);
+              if (!g_Player.Paused)
+              {
+                playResult = g_Player.Play(item.FileName, MediaPortal.Player.g_Player.MediaType.Music);
+              }
+              else
+              {
+                // if we need to toggle Pause
+                MediaPortal.Player.g_Player.Pause();
+                // return without checking playResult 
+                return Play(iSong, true);
+              }
               break;
             case PlayListType.PLAYLIST_VIDEO:
             case PlayListType.PLAYLIST_VIDEO_TEMP:
@@ -640,6 +652,10 @@ namespace MediaPortal.Playlists
         }
         else
         {
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS, 0, 0, 0, _currentItem, 0, null);
+          msg.Label = item.FileName;
+          GUIGraphicsContext.SendMessage(msg);
+
           item.Played = true;
           skipmissing = false;
           if (Util.Utils.IsVideo(item.FileName) && setFullScreenVideo)
