@@ -809,6 +809,7 @@ STDMETHODIMP CTsReaderFilter::Stop()
   m_bStopping = true;
   //Block duration file read updates
   m_updateThreadDuration.StopUpdate(true);
+  m_fileReader->SetStopping(true);
 
   int i=0;
   //Wait for output pin data sample delivery and seeking to finish - timeout after 100 loop iterations in case pin delivery threads are stalled
@@ -828,6 +829,12 @@ STDMETHODIMP CTsReaderFilter::Stop()
   }
 
   { //Context for CAutoLock
+    //Cancel all pending IO operations first, to avoid possible hangs if network connection is lost
+    m_fileReader->CancelPendingIO();
+    if (m_fileDuration != NULL)
+    {
+      m_fileDuration->CancelPendingIO();
+    }
     //LogDebug("CTsReaderFilter::Stop()  -stop source pre-lock RAL, state %d", m_State);
     CAutoLock rLock (&m_ReadAheadLock);
     //LogDebug("CTsReaderFilter::Stop()  -stop source pre-lock DTL, state %d", m_State);
@@ -861,6 +868,7 @@ STDMETHODIMP CTsReaderFilter::Stop()
   m_bSeekAfterRcDone = false;
   m_bStopping = false;
   m_updateThreadDuration.StopUpdate(false);
+  m_fileReader->SetStopping(false);
   m_bStoppedForUnexpectedSeek=true ;
   return hr;
 }

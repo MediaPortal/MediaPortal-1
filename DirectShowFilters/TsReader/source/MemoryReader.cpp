@@ -41,3 +41,11 @@ int CMemoryReader::HasData()
 {
   return (int)(m_buffer.Size());
 }
+
+void CMemoryReader::SetStopping(BOOL isStopping)
+{
+}
+
+void CMemoryReader::CancelPendingIO()
+{
+}

@@ -36,7 +36,8 @@ CTsDuration::CTsDuration()
   m_videoPid=-1;
   m_pid = -1;
   m_bStopping = false;
-  m_pFileReadBuffer = new (std::nothrow) byte[DUR_READ_SIZE];
+  m_pFileReadBuffer = NULL;
+  m_pFileReadBuffer = new byte[DUR_READ_SIZE];
   LogDebug("CTsDuration - ctor");
 }
 

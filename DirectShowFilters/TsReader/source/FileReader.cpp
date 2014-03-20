@@ -26,6 +26,7 @@
 #include "StdAfx.h"
 #include "FileReader.h"
 #include <Mmsystem.h>
+#include <comdef.h>
 
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
@@ -35,14 +36,21 @@ extern void LogDebug(const char *fmt, ...) ;
 FileReader::FileReader() :
 	m_hFile(INVALID_HANDLE_VALUE),
 	m_pFileName(0),
-  m_bUseDummyWrites(FALSE)
+  m_bUseDummyWrites(FALSE),
+  m_bIsStopping(FALSE)
 {
   //LogDebug("FileReader::ctor");
 }
 
 FileReader::~FileReader()
 {
-  CloseFile();
+  m_bIsStopping = true;
+	if (m_hFile != INVALID_HANDLE_VALUE) 
+  {
+	  CancelIoEx(m_hFile, NULL); //Cancel all pending IO operations
+    CloseFile();
+  }
+  
   if (m_pFileName)
     delete m_pFileName;
 }
@@ -124,6 +132,9 @@ HRESULT FileReader::OpenFile()
 
 	do
 	{
+	  if (m_bIsStopping)
+	    return E_FAIL;
+	    
 	  if (m_bUseDummyWrites)  //enable SMB2/SMB3 file existence cache workaround
 	  {
   		if ((wcsstr(pFileName, L".ts.tsbuffer") != NULL)) //timeshift file only
@@ -248,9 +259,9 @@ HRESULT FileReader::OpenFile()
 	}
 	else
 	{
-		DWORD dwErr = GetLastError();
-		LogDebug("FileReader::OpenFile(), open file %ws failed. Error code %d", pFileName, dwErr);
-		return HRESULT_FROM_WIN32(dwErr);
+	  HRESULT lastErr = HRESULT_FROM_WIN32(GetLastError());	  
+		LogDebug("FileReader::OpenFile(), open file failed. Error 0x%x, %ws, filename = %ws", lastErr, HresultToCString(lastErr), pFileName);    
+		return E_FAIL;
 	}
 
   //LogDebug("FileReader::OpenFile() handle %i %ws", m_hFile, pFileName );
@@ -266,8 +277,6 @@ HRESULT FileReader::OpenFile()
 //
 // CloseFile
 //
-// Closes any dump file we have opened
-//
 HRESULT FileReader::CloseFile()
 {
   CAutoLock rLock (&m_accessLock);
@@ -281,12 +290,11 @@ HRESULT FileReader::CloseFile()
 	}
 
   //LogDebug("FileReader::CloseFile() handle %i %ws", m_hFile, m_pFileName);
-
+  
 	::CloseHandle(m_hFile);
 	m_hFile = INVALID_HANDLE_VALUE; // Invalidate the file
 
 	return NOERROR;
-
 } // CloseFile
 
 BOOL FileReader::IsFileInvalid()
@@ -347,6 +355,7 @@ HRESULT FileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes)
 	if (m_hFile == INVALID_HANDLE_VALUE)
   {
     LogDebug("FileReader::Read() no open file");
+    *dwReadBytes = 0;
 		return E_FAIL;
   }
 
@@ -354,7 +363,9 @@ HRESULT FileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes)
 
 	if (!hr)
 	{
-    LogDebug("FileReader::Read() read failed - error = %d",  HRESULT_FROM_WIN32(GetLastError()));
+	  HRESULT lastErr = HRESULT_FROM_WIN32(GetLastError());	  
+    LogDebug("FileReader::Read() read failed, Error = 0x%x, %ws, filename = %ws", lastErr, HresultToCString(lastErr), m_pFileName);
+    *dwReadBytes = 0;
 		return E_FAIL;
 	}
 
@@ -412,3 +423,23 @@ void FileReader::SetFileNext(BOOL useFileNext)
 {
 }
 
+void FileReader::SetStopping(BOOL isStopping)
+{
+	m_bIsStopping = isStopping;
+}
+
+CString FileReader::HresultToCString(HRESULT errToConvert)
+{
+  _com_error error(errToConvert);
+  CString errorText = error.ErrorMessage();
+  return errorText;
+}
+
+void FileReader::CancelPendingIO()
+{
+	if (m_hFile != INVALID_HANDLE_VALUE) 
+  {
+    //LogDebug("FileReader::CancelPendingIO()");
+	  CancelIoEx(m_hFile, NULL); //Cancel all pending IO operations
+	}
+}

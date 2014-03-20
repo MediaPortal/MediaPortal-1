@@ -135,7 +135,8 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
 
   m_mpegPesParser = new CMpegPesParser();
 
-  m_pFileReadBuffer = new (std::nothrow) byte[READ_SIZE]; //~130ms of data @ 8Mbit/s
+  m_pFileReadBuffer = NULL;
+  m_pFileReadBuffer = new byte[READ_SIZE]; //~130ms of data @ 8Mbit/s
   
   LogDebug(" ");
   LogDebug("=================== New filter instance ===========================");
@@ -1024,6 +1025,8 @@ bool CDeMultiplexer::EndOfFile()
 
 int CDeMultiplexer::ReadAheadFromFile()
 {  
+  CAutoLock lock (&m_filter.m_ReadAheadLock);
+
   //if filter is stopped or
   //end of file has been reached or
   //demuxer should stop getting video packets
@@ -1032,8 +1035,6 @@ int CDeMultiplexer::ReadAheadFromFile()
   {
     return -1;
   }
-
-  CAutoLock lock (&m_filter.m_ReadAheadLock);
   
 	//LogDebug("demux:ReadAheadFromFile");
   int SizeRead = ReadFromFile() ;
@@ -1126,7 +1127,8 @@ int CDeMultiplexer::ReadFromFile()
   {
     //playing a local file or using UNC path
     //read raw data from the file
-    if (SUCCEEDED(m_reader->Read(m_pFileReadBuffer,READ_SIZE, (DWORD*)&dwReadBytes)))
+    HRESULT readResult = m_reader->Read(m_pFileReadBuffer,READ_SIZE, (DWORD*)&dwReadBytes);
+    if (SUCCEEDED(readResult))
     {
       if ((m_filter.IsTimeShifting()) && (dwReadBytes < READ_SIZE))
       {
@@ -1153,9 +1155,14 @@ int CDeMultiplexer::ReadFromFile()
       //and return
       return dwReadBytes;
     }
+    else
+    {
+      LogDebug("CDeMultiplexer::ReadFromFile() - Read failed, HRESULT = 0x%x", readResult);
+      return -2;      
+    }
   }
   //Read failure/error
-  LogDebug("Read failed...");
+  LogDebug("CDeMultiplexer::ReadFromFile() - Read failed...");
   return -2;
   // return 0;
 }

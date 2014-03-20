@@ -42,7 +42,8 @@ extern void LogDebug(const char *fmt, ...) ;
 CTsFileSeek::CTsFileSeek( CTsDuration& duration)
 :m_duration(duration)
 {
-  m_pFileReadBuffer = new (std::nothrow) byte[SEEK_READ_SIZE];
+  m_pFileReadBuffer = NULL;
+  m_pFileReadBuffer = new byte[SEEK_READ_SIZE];
 }
 
 CTsFileSeek::~CTsFileSeek(void)

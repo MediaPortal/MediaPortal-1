@@ -60,15 +60,20 @@ public:
 	//The two methods below are for MultiFileReader() compatibility
 	virtual BOOL GetFileNext(){return false;};
 	virtual void SetFileNext(BOOL useFileNext);
-
+	
+	virtual void SetStopping(BOOL isStopping);
+	virtual void CancelPendingIO();
+  
 protected:
   
   CString randomStrGen(int length); 
+  CString HresultToCString(HRESULT errToConvert);
 	
 	HANDLE   m_hFile; 				// Handle to file for streaming
 	LPOLESTR m_pFileName;           // The filename where we stream
 
 	BOOL     m_bUseDummyWrites;
+	BOOL     m_bIsStopping;
   CCritSec     m_accessLock;
 };
 

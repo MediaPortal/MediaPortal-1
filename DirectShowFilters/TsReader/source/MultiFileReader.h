@@ -61,6 +61,8 @@ public:
 	
 	virtual void SetFileNext(BOOL useFileNext);
 	virtual BOOL GetFileNext();
+	virtual void SetStopping(BOOL isStopping);
+	virtual void CancelPendingIO();
 
 protected:
 	HRESULT RefreshTSBufferFile();
@@ -89,6 +91,7 @@ protected:
 	
 	BOOL     m_bDebugOutput;
 	BOOL     m_bUseFileNext;
+	BOOL     m_bIsStopped;
 
   byte*    m_pFileReadNextBuffer;
   byte*    m_pInfoFileBuffer1;
