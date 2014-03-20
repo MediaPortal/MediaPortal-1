@@ -1768,10 +1768,22 @@ namespace TvDatabase
       SqlSelectCommand.Append("select p.* from Program p inner join Channel c on c.idChannel = p.idChannel ");
       SqlSelectCommand.AppendFormat("where endTime > '{0}' ", DateTime.Now.ToString(GetDateTimeString(), mmddFormat));
 
-      if (searchCriteria.Length > 0)
+      string provider = ProviderFactory.GetDefaultProvider().Name.ToLowerInvariant();
+      if (provider == "mysql")
       {
-        SqlSelectCommand.AppendFormat("and title like '{0}%' ", EscapeSQLString(searchCriteria));
+        if (searchCriteria.Length > 0)
+        {
+          SqlSelectCommand.AppendFormat("and title REGEXP '^{0}.' ", EscapeSQLString(searchCriteria));
+        }
       }
+      else
+      {
+        if (searchCriteria.Length > 0)
+        {
+          SqlSelectCommand.AppendFormat("and title like '{0}%' ", EscapeSQLString(searchCriteria));
+        }
+      }
+
       switch (channelType)
       {
         case ChannelType.Radio:
@@ -1785,6 +1797,8 @@ namespace TvDatabase
       SqlStatement stmt = new SqlBuilder(StatementType.Select, typeof (Program)).GetStatement(true);
       SqlStatement ManualJoinSQL = new SqlStatement(StatementType.Select, stmt.Command, SqlSelectCommand.ToString(),
                                                     typeof (Program));
+      //Log.Debug("SearchPrograms: ", ManualJoinSQL.Sql);
+
       return ObjectFactory.GetCollection<Program>(ManualJoinSQL.Execute());
     }
 

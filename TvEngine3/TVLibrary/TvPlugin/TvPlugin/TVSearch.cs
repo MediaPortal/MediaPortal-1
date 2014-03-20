@@ -214,7 +214,7 @@ namespace TvPlugin
         {
           btnLetter.AddSubItem(k.ToString());
         }
-        //btnLetter.AddSubItem("#");  // => will be everything beside a-z
+        btnLetter.AddSubItem("#");  // => will be everything beside a-z
       }
       Update();
 
@@ -708,7 +708,7 @@ namespace TvPlugin
             {
               if (filterShow == String.Empty)
               {
-                titles = layer.SearchPrograms("%[^a-z]", ChannelType.Tv);
+                titles = layer.SearchPrograms("[0-9]", ChannelType.Tv);
                 //titles = layer.SearchPrograms("");
               }
               else
