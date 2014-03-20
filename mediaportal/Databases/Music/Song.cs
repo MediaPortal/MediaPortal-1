@@ -40,6 +40,7 @@ namespace MediaPortal.Music.Database
 
     public Song()
     {
+      SelectedId = -1;
       AuthToken = string.Empty;
       WebImage = string.Empty;
       URL = string.Empty;
@@ -156,6 +157,7 @@ namespace MediaPortal.Music.Database
 
     public void Clear()
     {
+      SelectedId = -1;
       AuthToken = string.Empty;
       WebImage = string.Empty;
       URL = string.Empty;
@@ -213,6 +215,11 @@ namespace MediaPortal.Music.Database
     }
 
     #region Getters & Setters
+
+    /// <summary>
+    /// The Selected Id in Database View Mode
+    /// </summary>
+    public int SelectedId { get; set; }
 
     public int Id { get; set; }
 

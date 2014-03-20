@@ -35,6 +35,7 @@ namespace MediaPortal.GUI.DatabaseViews
     protected string sortBy = "Name";
     protected bool sortAscending = true;
     protected string selectedValue = "";
+    protected int selectedId = -1;
     protected string defaultView = "List";
     protected List<DatabaseFilterDefinition> _listFilters = new List<DatabaseFilterDefinition>();
 
@@ -86,6 +87,12 @@ namespace MediaPortal.GUI.DatabaseViews
     {
       get { return selectedValue; }
       set { selectedValue = value; }
+    }
+
+    public int SelectedId
+    {
+      get { return selectedId; }
+      set { selectedId = value; }
     }
   }
 }

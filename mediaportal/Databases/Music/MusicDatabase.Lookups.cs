@@ -302,13 +302,13 @@ namespace MediaPortal.Music.Database
       //  return;
       try
       {
-        SQLiteResultSet results = DirectExecute(aSQL);
-        Song song = null;
+        aSongs.Clear();
 
+        var results = ExecuteQuery(aSQL);
         for (int i = 0; i < results.Rows.Count; i++)
         {
-          song = new Song();
-          SQLiteResultSet.Row fields = results.Rows[i];
+          var song = new Song();
+          var fields = results.Rows[i];
           int columnIndex = 0;
           if (filter == "artist")
           {
@@ -317,8 +317,8 @@ namespace MediaPortal.Music.Database
           }
           if (filter == "albumartist")
           {
-            columnIndex = (int)results.ColumnIndices["strAlbumArtist"];
-            song.AlbumArtist = fields.fields[columnIndex].Trim(trimChars);
+            song.SelectedId = Convert.ToInt32(results.Rows[i].fields[0]);
+            song.AlbumArtist = results.Rows[i].fields[1].Trim(trimChars);
           }
           if (filter == "album")
           {
