@@ -709,7 +709,6 @@ namespace TvPlugin
               if (filterShow == String.Empty)
               {
                 titles = layer.SearchPrograms("[0-9]", ChannelType.Tv);
-                //titles = layer.SearchPrograms("");
               }
               else
               {

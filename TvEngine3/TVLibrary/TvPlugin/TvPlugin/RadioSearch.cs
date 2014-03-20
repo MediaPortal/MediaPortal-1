@@ -715,8 +715,7 @@ namespace TvPlugin
             {
               if (filterShow == String.Empty)
               {
-                titles = layer.SearchPrograms("%[^a-z]",ChannelType.Radio);
-                //titles = layer.SearchPrograms("");
+                titles = layer.SearchPrograms("[0-9]", ChannelType.Radio);
               }
               else
               {
