@@ -476,66 +476,52 @@ namespace TvPlugin
       }
       else
       {
-        if (filterLetter != "0")
+        listView.IsVisible = false;
+        titleView.IsVisible = true;
+        GUIControl.FocusControl(GetID, titleView.GetID);
+
+        if (filterShow == String.Empty)
         {
-          listView.IsVisible = false;
-          titleView.IsVisible = true;
-          GUIControl.FocusControl(GetID, titleView.GetID);
-
-          if (filterShow == String.Empty)
-          {
-            if (imgChannelLogo != null)
-            {
-              imgChannelLogo.IsVisible = false;
-            }
-            if (titleView.SubItemCount == 2)
-            {
-              string subItem = (string)titleView.GetSubItem(1);
-              int h = Int32.Parse(subItem.Substring(1));
-              GUIGraphicsContext.ScaleVertical(ref h);
-              titleView.Height = h;
-              h = Int32.Parse(subItem.Substring(1));
-              h -= 55;
-              GUIGraphicsContext.ScaleVertical(ref h);
-              titleView.SpinY = titleView.YPosition + h;
-              titleView.Dispose();
-              titleView.AllocResources();
-            }
-          }
-          else
-          {
-            if (imgChannelLogo != null)
-            {
-              imgChannelLogo.IsVisible = true;
-            }
-            if (titleView.SubItemCount == 2)
-            {
-              string subItem = (string)titleView.GetSubItem(0);
-              int h = Int32.Parse(subItem.Substring(1));
-              GUIGraphicsContext.ScaleVertical(ref h);
-              titleView.Height = h;
-
-              h = Int32.Parse(subItem.Substring(1));
-              h -= 50;
-              GUIGraphicsContext.ScaleVertical(ref h);
-              titleView.SpinY = titleView.YPosition + h;
-
-              titleView.Dispose();
-              titleView.AllocResources();
-            }
-            lblNumberOfItems.YPosition = titleView.SpinY;
-          }
-        }
-        else
-        {
-          listView.IsVisible = true;
-          titleView.IsVisible = false;
-          GUIControl.FocusControl(GetID, listView.GetID);
-
           if (imgChannelLogo != null)
           {
             imgChannelLogo.IsVisible = false;
           }
+          if (titleView.SubItemCount == 2)
+          {
+            string subItem = (string)titleView.GetSubItem(1);
+            int h = Int32.Parse(subItem.Substring(1));
+            GUIGraphicsContext.ScaleVertical(ref h);
+            titleView.Height = h;
+            h = Int32.Parse(subItem.Substring(1));
+            h -= 55;
+            GUIGraphicsContext.ScaleVertical(ref h);
+            titleView.SpinY = titleView.YPosition + h;
+            titleView.Dispose();
+            titleView.AllocResources();
+          }
+        }
+        else
+        {
+          if (imgChannelLogo != null)
+          {
+            imgChannelLogo.IsVisible = true;
+          }
+          if (titleView.SubItemCount == 2)
+          {
+            string subItem = (string)titleView.GetSubItem(0);
+            int h = Int32.Parse(subItem.Substring(1));
+            GUIGraphicsContext.ScaleVertical(ref h);
+            titleView.Height = h;
+
+            h = Int32.Parse(subItem.Substring(1));
+            h -= 50;
+            GUIGraphicsContext.ScaleVertical(ref h);
+            titleView.SpinY = titleView.YPosition + h;
+
+            titleView.Dispose();
+            titleView.AllocResources();
+          }
+          lblNumberOfItems.YPosition = titleView.SpinY;
         }
 
         if (currentSearchMode != SearchMode.Genre)
