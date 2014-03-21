@@ -1769,19 +1769,16 @@ namespace TvDatabase
       SqlSelectCommand.AppendFormat("where endTime > '{0}' ", DateTime.Now.ToString(GetDateTimeString(), mmddFormat));
 
       string provider = ProviderFactory.GetDefaultProvider().Name.ToLowerInvariant();
-      if (provider == "mysql")
+      if (provider == "mysql" && searchCriteria == "[0-9]")
       {
         if (searchCriteria.Length > 0)
         {
           SqlSelectCommand.AppendFormat("and title REGEXP '^{0}.' ", EscapeSQLString(searchCriteria));
         }
       }
-      else
+      else if (searchCriteria.Length > 0)
       {
-        if (searchCriteria.Length > 0)
-        {
-          SqlSelectCommand.AppendFormat("and title like '{0}%' ", EscapeSQLString(searchCriteria));
-        }
+        SqlSelectCommand.AppendFormat("and title like '{0}%' ", EscapeSQLString(searchCriteria));
       }
 
       switch (channelType)
@@ -1797,7 +1794,7 @@ namespace TvDatabase
       SqlStatement stmt = new SqlBuilder(StatementType.Select, typeof (Program)).GetStatement(true);
       SqlStatement ManualJoinSQL = new SqlStatement(StatementType.Select, stmt.Command, SqlSelectCommand.ToString(),
                                                     typeof (Program));
-      //Log.Debug("SearchPrograms: ", ManualJoinSQL.Sql);
+      //Log.Debug("SearchPrograms: {0}", SqlSelectCommand.ToString());
 
       return ObjectFactory.GetCollection<Program>(ManualJoinSQL.Execute());
     }

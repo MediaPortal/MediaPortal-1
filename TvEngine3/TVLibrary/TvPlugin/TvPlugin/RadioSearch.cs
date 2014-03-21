@@ -221,7 +221,7 @@ namespace TvPlugin
         {
           btnLetter.AddSubItem(k.ToString());
         }
-        btnLetter.AddSubItem("#");  // => will be everything beside a-z
+        btnLetter.AddSubItem("#");
       }
       Update();
 
@@ -476,7 +476,7 @@ namespace TvPlugin
       }
       else
       {
-        if (filterLetter != "#")
+        if (filterLetter != "0")
         {
           listView.IsVisible = false;
           titleView.IsVisible = true;
@@ -735,7 +735,7 @@ namespace TvPlugin
             }
             foreach (Program program in titles)
             {
-              if (filterLetter != "#")
+              if (filterLetter != "0")
               {
                 bool add = true;
                 foreach (Program prog in programs)
@@ -761,7 +761,7 @@ namespace TvPlugin
                     episodes.Add(program);
                   }
                 }
-              } //if (filterLetter!="#")
+              }
               else
               {
                 bool add = true;
@@ -853,7 +853,7 @@ namespace TvPlugin
             long end = Utils.datetolong(DateTime.Now.AddMonths(1));
             TvBusinessLayer layer = new TvBusinessLayer();
 
-            if (filterLetter == "#")
+            if (filterLetter == "0")
             {
               if (filterShow == String.Empty)
               {
@@ -881,7 +881,7 @@ namespace TvPlugin
               {
                 continue;
               }
-              if (filterLetter != "#")
+              if (filterLetter != "0")
               {
                 programs.Add(program);
                 
@@ -1109,7 +1109,7 @@ namespace TvPlugin
         case SearchMode.Genre:
           if (currentLevel == 0)
           {
-            filterLetter = "#";
+            filterLetter = "0";
             filterShow = String.Empty;
             filterEpisode = String.Empty;
             currentGenre = item.Label;
