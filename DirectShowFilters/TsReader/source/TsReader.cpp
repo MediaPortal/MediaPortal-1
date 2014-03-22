@@ -1191,7 +1191,6 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
   }
 
   //AddGraphToRot(GetFilterGraph());
-  SetDuration();
   
   m_bEVRhasConnected = false;
 
@@ -1668,7 +1667,8 @@ void CTsReaderFilter::ThreadProc()
     {
       lastDataLowTime = timeNow;
       _InterlockedAnd(&m_demultiplexer.m_AVDataLowCount, 0);
-      _InterlockedAnd(&m_demultiplexer.m_AVDataLowPauseTime, 0) ;
+      _InterlockedAnd(&m_demultiplexer.m_AudioDataLowPauseTime, 0) ;
+      _InterlockedAnd(&m_demultiplexer.m_VideoDataLowPauseTime, 0) ;
     }
     else if (m_demultiplexer.m_AVDataLowCount > underRunLimit)
     {      
@@ -1678,14 +1678,15 @@ void CTsReaderFilter::ThreadProc()
         m_bRenderingClockTooFast=true;
         if (timeNow < (lastDataLowTime + (pauseWaitTime/2))) //Reached trigger point in a short time
         {
-          BufferingPause(true, m_demultiplexer.m_AVDataLowPauseTime); //Force longer pause      
+          BufferingPause(true, max(m_demultiplexer.m_AudioDataLowPauseTime, m_demultiplexer.m_VideoDataLowPauseTime)); //Force longer pause      
         }
         else
         {
-          BufferingPause(longPause, m_demultiplexer.m_AVDataLowPauseTime); //Pause for a short time         
+          BufferingPause(longPause, max(m_demultiplexer.m_AudioDataLowPauseTime, m_demultiplexer.m_VideoDataLowPauseTime)); //Pause for a short time         
         }
         _InterlockedAnd(&m_demultiplexer.m_AVDataLowCount, 0);
-        _InterlockedAnd(&m_demultiplexer.m_AVDataLowPauseTime, 0) ;
+        _InterlockedAnd(&m_demultiplexer.m_AudioDataLowPauseTime, 0) ;
+        _InterlockedAnd(&m_demultiplexer.m_VideoDataLowPauseTime, 0) ;
         m_bRenderingClockTooFast=false ;
         m_demultiplexer.m_bVideoSampleLate=false;
         m_demultiplexer.m_bAudioSampleLate=false;
@@ -1694,7 +1695,8 @@ void CTsReaderFilter::ThreadProc()
       {
         lastDataLowTime = timeNow;
         _InterlockedAnd(&m_demultiplexer.m_AVDataLowCount, 0);
-        _InterlockedAnd(&m_demultiplexer.m_AVDataLowPauseTime, 0) ;
+        _InterlockedAnd(&m_demultiplexer.m_AudioDataLowPauseTime, 0) ;
+        _InterlockedAnd(&m_demultiplexer.m_VideoDataLowPauseTime, 0) ;
         m_demultiplexer.m_bVideoSampleLate=false;
         m_demultiplexer.m_bAudioSampleLate=false;
       }
@@ -1773,7 +1775,6 @@ void CTsReaderFilter::ThreadProc()
                   //LogDebug("CTsReaderFilter:: UpdThread EC_LENGTH_CHANGED 1");
                   //yes, then send a EC_LENGTH_CHANGED event to the graph
                   NotifyEvent(EC_LENGTH_CHANGED, NULL, NULL);
-                  SetDuration();
                   //LogDebug("CTsReaderFilter:: UpdThread EC_LENGTH_CHANGED = %.3f s", (float)m_updateThreadDuration.Duration().Millisecs()/1000.0f);
                 }
               }
@@ -1798,7 +1799,6 @@ void CTsReaderFilter::ThreadProc()
                   {
                     //yes, then send a EC_LENGTH_CHANGED event to the graph
                     NotifyEvent(EC_LENGTH_CHANGED, NULL, NULL);
-                    SetDuration();
                   }
                 }
               }
@@ -1838,7 +1838,6 @@ void CTsReaderFilter::ThreadProc()
             {
               //yes, then send a EC_LENGTH_CHANGED event to the graph
               NotifyEvent(EC_LENGTH_CHANGED, NULL, NULL);
-              SetDuration();
               // LogDebug("CTsReaderFilter::Duration, predicted end = %f", (float)end);
             }
           }
@@ -1918,7 +1917,6 @@ void CTsReaderFilter::ThreadProc()
           {
             //yes, then send a EC_LENGTH_CHANGED event to the graph
             NotifyEvent(EC_LENGTH_CHANGED, NULL, NULL);
-            SetDuration();
           }
         }
       }
@@ -1948,19 +1946,8 @@ void CTsReaderFilter::ThreadProc()
   LogDebug("CTsReaderFilter::ThreadProc stopped()");
 }
 
-void CTsReaderFilter::SetDuration()
-{
-  return;
-  
-  //  DWORD secs=m_duration.Duration().Millisecs();
-  //  HKEY key;
-  //  if (ERROR_SUCCESS==RegOpenKey(HKEY_CURRENT_USER, "Software\\Team MediaPortal\\TsReader",&key))
-  //  {
-  //    RegSetValueEx(key, "duration",0,REG_DWORD,(const BYTE*)&secs,sizeof(DWORD));
-  //    RegCloseKey(key);
-  //  }
-}
 
+// Adds a filter graph to the Running Object Table
 HRESULT CTsReaderFilter::AddGraphToRot(IUnknown *pUnkGraph)
 {
   CComPtr <IMoniker>              pMoniker;
@@ -2239,7 +2226,7 @@ void CTsReaderFilter::BufferingPause(bool longPause, long extraSleep)
       return ;                  
     }
 
-    DWORD sleepTime = 195 + (DWORD)(min(500, max(0, extraSleep))); //Pause length in ms
+    DWORD sleepTime = 195 + (DWORD)(min(2000, max(0, extraSleep))); //Pause length in ms
     DWORD minDelayTime = 5000; //Min time between pauses in ms
     if (longPause)
     {

@@ -301,7 +301,6 @@ protected:
   void ThreadProc();
 
 private:
-  void    SetDuration();
   HRESULT AddGraphToRot(IUnknown *pUnkGraph);
   void    RemoveGraphFromRot();
   void    SetMediaPosnUpdate(REFERENCE_TIME MediaPos);

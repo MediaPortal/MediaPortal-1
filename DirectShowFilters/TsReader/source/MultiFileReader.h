@@ -91,7 +91,7 @@ protected:
 	
 	BOOL     m_bDebugOutput;
 	BOOL     m_bUseFileNext;
-	BOOL     m_bIsStopped;
+	BOOL     m_bIsStopping;
 
   byte*    m_pFileReadNextBuffer;
   byte*    m_pInfoFileBuffer1;

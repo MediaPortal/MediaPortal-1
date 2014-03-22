@@ -161,7 +161,8 @@ public:
   //  long m_AudioDataLowCount;
   //  long m_VideoDataLowCount;
   long m_AVDataLowCount;
-  long m_AVDataLowPauseTime;
+  long m_AudioDataLowPauseTime;
+  long m_VideoDataLowPauseTime;
   DWORD m_targetAVready;
   bool  m_bSubtitleCompensationSet;
   bool m_bShuttingDown;

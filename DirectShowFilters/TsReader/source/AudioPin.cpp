@@ -434,10 +434,6 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
       {
         m_FillBuffSleepTime = 5;
         buffer=NULL; //Continue looping
-        if (!m_pTsReaderFilter->m_bStreamCompensated && (m_nNextASD != 0))
-        {
-          ClearAverageSampleDur();
-        }
         
         if (!m_pTsReaderFilter->m_bStreamCompensated)
         {
@@ -485,7 +481,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
              
             if (fTime < 0.05)
             {              
-              _InterlockedExchange(&demux.m_AVDataLowPauseTime, (long)((fTime-0.02) * -1000.0));
+              _InterlockedExchange(&demux.m_AudioDataLowPauseTime, (long)((fTime-0.02) * -1000.0));
               //Samples are running very late - check if this is a persistant problem by counting over a period of time 
               //(m_AVDataLowCount is checked in CTsReaderFilter::ThreadProc())
               _InterlockedIncrement(&demux.m_AVDataLowCount);   
@@ -624,60 +620,6 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
   return NOERROR;
 }
 
-void CAudioPin::ClearAverageSampleDur()
-{
-  m_FillBuffSleepTime = 1;
-  m_sampleDuration = 10000; //1 ms
-
-  m_llLastComp = 0;
-  m_llLastASDts = 0;
-  m_nNextASD = 0;
-	m_fASDMean = 0;
-	m_llASDSumAvg = 0;
-  ZeroMemory((void*)&m_pllASD, sizeof(LONGLONG) * NB_ASDSIZE);
-}
-
-// Calculate rolling average audio sample duration
-LONGLONG CAudioPin::GetAverageSampleDur(LONGLONG timeStamp)
-{
-  LONGLONG stsDiff;
-  if (m_nNextASD > 0)
-  {
-    stsDiff = timeStamp - m_llLastASDts;
-  }
-  else
-  {
-    stsDiff = 10000;
-  }
-  
-  m_llLastASDts = timeStamp;
-        
-    // Calculate the mean timestamp difference
-  if (m_nNextASD >= NB_ASDSIZE)
-  {
-    m_fASDMean = m_llASDSumAvg / (LONGLONG)NB_ASDSIZE;
-  }
-  else if (m_nNextASD > 1)
-  {
-    m_fASDMean = m_llASDSumAvg / (LONGLONG)m_nNextASD;
-  }
-  else
-  {
-    m_fASDMean = stsDiff;
-  }
-
-    // Update the rolling timestamp difference sum
-    // (these values are initialised in OnThreadStartPlay())
-  int tempNextASD = (m_nNextASD % NB_ASDSIZE);
-  m_llASDSumAvg -= m_pllASD[tempNextASD];
-  m_pllASD[tempNextASD] = stsDiff;
-  m_llASDSumAvg += stsDiff;
-  m_nNextASD++;
-  
-  //LogDebug("audPin:GetAverageSampleTime, nextASD %d, TsMeanDiff %0.3f, stsDiff %0.3f", m_nNextASD, (float)m_fASDMean/10000.0f, (float)stsDiff/10000.0f);
-  
-  return m_fASDMean;
-}
 
 bool CAudioPin::IsInFillBuffer()
 {
@@ -754,8 +696,6 @@ HRESULT CAudioPin::OnThreadStartPlay()
   m_FillBuffSleepTime = 1;
   m_LastFillBuffTime = GET_TIME_NOW();
   
-  ClearAverageSampleDur();
-
   //get file-duration and set m_rtDuration
   GetDuration(NULL);
 

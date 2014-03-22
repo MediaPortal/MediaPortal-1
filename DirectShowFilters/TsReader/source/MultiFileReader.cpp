@@ -166,15 +166,16 @@ HRESULT MultiFileReader::OpenFile()
 //
 HRESULT MultiFileReader::CloseFile()
 {
-  CAutoLock rLock (&m_accessLock);
+  BOOL tempStop = m_bIsStopping;
   SetStopping(true);
+  CAutoLock rLock (&m_accessLock);
 	HRESULT hr;
 	hr = m_TSBufferFile.CloseFile();
 	hr = m_TSFile.CloseFile();
 	m_TSFileId = -1;
 	hr = m_TSFileNext.CloseFile();
 	m_TSFileIdNext = -1;
-  SetStopping(false);
+  SetStopping(tempStop);
 	return hr;
 }
 
@@ -460,8 +461,11 @@ HRESULT MultiFileReader::RefreshTSBufferFile()
       
    	if (Error) //Handle errors from a previous loop iteration
    	{
-  	  LogDebug("MultiFileReader has error 0x%x in Loop %d. Try to clear SMB Cache.", Error, 10-Loop);  	  
-      LogDebug("MultiFileReader m_filesAdded : %d, m_filesRemoved : %d, m_startPosition : %I64d, m_endPosition : %I64d, currentPosition = %I64d", m_filesAdded, m_filesRemoved, m_startPosition, m_endPosition, currentPosition) ;
+   	  if (Loop < 9) //An error on the first loop iteration is quasi-normal, so don't log it
+   	  {
+    	  LogDebug("MultiFileReader has error 0x%x in Loop %d. Try to clear SMB Cache.", Error, 10-Loop);  	  
+        LogDebug("MultiFileReader m_filesAdded : %d, m_filesRemoved : %d, m_startPosition : %I64d, m_endPosition : %I64d, currentPosition = %I64d", m_filesAdded, m_filesRemoved, m_startPosition, m_endPosition, currentPosition) ;
+  	  }
   	  // try to clear local / remote SMB file cache. This should happen when we close the filehandle
       m_TSBufferFile.CloseFile();
   	  m_TSBufferFile.OpenFile();
@@ -757,6 +761,12 @@ HRESULT MultiFileReader::GetFileLength(LPWSTR pFilename, __int64 &length, bool d
   	
   do
   {
+    if (m_bIsStopping)
+    {
+      length = 0;
+      return E_FAIL ;
+    }
+    
    	if (Error) //Handle errors from a previous loop iteration
    	{
    	  if (Loop < 3)

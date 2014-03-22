@@ -517,6 +517,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
               
               if (fTime < 0.05)
               {              
+                _InterlockedExchange(&demux.m_VideoDataLowPauseTime, (long)((fTime-0.02) * -1000.0));
                 //Samples are running very late - check if this is a persistant problem by counting over a period of time 
                 //(m_AVDataLowCount is checked in CTsReaderFilter::ThreadProc())
                 _InterlockedIncrement(&demux.m_AVDataLowCount);   

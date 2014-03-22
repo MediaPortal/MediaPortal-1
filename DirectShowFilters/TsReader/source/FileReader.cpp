@@ -114,19 +114,9 @@ HRESULT FileReader::OpenFile()
 		return ERROR_INVALID_NAME;
 	}
 
-	// Convert the UNICODE filename if necessary
-
-//#if defined(WIN32) && !defined(UNICODE)
-//	char convert[MAX_PATH];
-//
-//	if(!WideCharToMultiByte(CP_ACP,0,m_pFileName,-1,convert,MAX_PATH,0,0))
-//		return ERROR_INVALID_NAME;
-//
-//	pFileName = convert;
-//#else
+  m_bIsStopping = false;
 
 	pFileName = m_pFileName;
-//#endif
 
   //LogDebug("FileReader::OpenFile(), Filename: %ws.", pFileName);
 
@@ -279,9 +269,12 @@ HRESULT FileReader::OpenFile()
 //
 HRESULT FileReader::CloseFile()
 {
-  CAutoLock rLock (&m_accessLock);
 	// Must lock this section to prevent problems related to
 	// closing the file while still receiving data in Receive()
+  BOOL tempStop = m_bIsStopping;
+  m_bIsStopping = true;
+  CAutoLock rLock (&m_accessLock);
+  m_bIsStopping = tempStop;
 
 	if (m_hFile == INVALID_HANDLE_VALUE) 
   {

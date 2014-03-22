@@ -560,7 +560,8 @@ void CDeMultiplexer::FlushVideo()
   m_bVideoAtEof=false;
   m_MinVideoDelta = 10.0 ;
   _InterlockedAnd(&m_AVDataLowCount, 0) ;
-  _InterlockedAnd(&m_AVDataLowPauseTime, 0) ;
+  _InterlockedAnd(&m_AudioDataLowPauseTime, 0) ;
+  _InterlockedAnd(&m_VideoDataLowPauseTime, 0) ;
   if (!m_bShuttingDown)
   {
     m_filter.m_bRenderingClockTooFast=false;
@@ -602,7 +603,8 @@ void CDeMultiplexer::FlushAudio()
   m_bAudioAtEof = false;
   m_MinAudioDelta = 10.0;
   _InterlockedAnd(&m_AVDataLowCount, 0);
-  _InterlockedAnd(&m_AVDataLowPauseTime, 0) ;
+  _InterlockedAnd(&m_AudioDataLowPauseTime, 0) ;
+  _InterlockedAnd(&m_VideoDataLowPauseTime, 0) ;
   if (!m_bShuttingDown)
   {
     m_filter.m_bRenderingClockTooFast=false;
@@ -1042,7 +1044,8 @@ int CDeMultiplexer::ReadAheadFromFile()
   if (m_filter.State() != State_Running)
   {
     _InterlockedAnd(&m_AVDataLowCount, 0);
-    _InterlockedAnd(&m_AVDataLowPauseTime, 0) ;
+    _InterlockedAnd(&m_AudioDataLowPauseTime, 0) ;
+    _InterlockedAnd(&m_VideoDataLowPauseTime, 0) ;
     m_bVideoSampleLate=false;
     m_bAudioSampleLate=false;
   }
