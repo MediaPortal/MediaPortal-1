@@ -681,6 +681,8 @@ STDMETHODIMP CMPUrlSourceSplitter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TY
         this->parserHoster->StopReceivingData();
       }
 
+      this->ClearSession();
+
       wchar_t *url = ConvertToUnicodeW(pszFileName);
       CHECK_POINTER_HRESULT(result, url, result, E_CONVERT_STRING_ERROR);
 
@@ -787,6 +789,8 @@ STDMETHODIMP CMPUrlSourceSplitter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TY
         // stop receiving data
         this->parserHoster->StopReceivingData();
       }
+
+      this->ClearSession();
 
       wchar_t *url = ConvertToUnicodeW(pszFileName);
       CHECK_POINTER_HRESULT(result, url, result, E_CONVERT_STRING_ERROR);
@@ -3806,4 +3810,52 @@ wchar_t *CMPUrlSourceSplitter::GetStoreFile(void)
   }
 
   return result;
+}
+
+void CMPUrlSourceSplitter::ClearSession(void)
+{
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_CLEAR_SESSION_NAME);
+
+  this->lastCommand = -1;
+  this->pauseSeekStopRequest = false;
+
+  // clear all flags instead of filter type (IPTV or splitter)
+  this->flags &= (FLAG_MP_URL_SOURCE_SPLITTER_AS_IPTV | FLAG_MP_URL_SOURCE_SPLITTER_AS_SPLITTER);
+
+  this->DestroyCreateDemuxerWorker();
+  this->DestroyDemuxerReadRequestWorker();
+  this->demuxerReadRequestId = 0;
+
+  FREE_MEM_CLASS(this->demuxer);
+
+  // release AVIOContext for demuxer
+  if (this->demuxerContext != NULL)
+  {
+    av_free(this->demuxerContext->buffer);
+    av_free(this->demuxerContext);
+    this->demuxerContext = NULL;
+  }
+  this->demuxerContextBufferPosition = 0;
+
+  FREE_MEM(this->storeFilePath);
+
+  this->demuxStart = 0;
+  this->demuxStop = 0;
+  this->demuxRate = 1.0;
+  this->demuxCurrent = 0;
+  this->demuxNewStart = 0;
+  this->demuxNewStop = 0;
+  this->seekingLastStart = _I64_MIN;
+  this->seekingLastStop = _I64_MIN;
+
+  this->asyncDownloadResult = S_OK;
+  this->asyncDownloadCallback = NULL;
+
+  this->mediaPacketCollection->Clear();
+  this->totalLength = 0;
+  this->flags |= FLAG_MP_URL_SOURCE_SPLITTER_ESTIMATE_TOTAL_LENGTH;
+  this->lastReceivedMediaPacketTime = GetTickCount();
+  this->parserHoster->ClearSession();
+
+  this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_CLEAR_SESSION_NAME);
 }

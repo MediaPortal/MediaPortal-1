@@ -536,6 +536,10 @@ protected:
   // creates folder structure if not created
   // @return : store file or NULL if error
   wchar_t *GetStoreFile(void);
+
+  // clears current session, initializes filter to state after creating instance
+  // @return : S_OK if successfull
+  void ClearSession(void);
 };
 
 #endif
