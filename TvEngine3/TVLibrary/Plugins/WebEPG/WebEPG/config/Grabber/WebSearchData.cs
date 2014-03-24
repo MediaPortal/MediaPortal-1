@@ -32,6 +32,7 @@ namespace MediaPortal.WebEPG.Config.Grabber
     [XmlAttribute("match")] public string Match;
     [XmlAttribute("field")] public string Field;
     [XmlAttribute("remove")] public bool Remove;
+    [XmlAttribute("useCaptureGroup")] public bool UseCaptureGroup;
 
     #endregion
   }

@@ -581,10 +581,6 @@ namespace MediaPortal.GUI.Library
         dwWidth = iwidth;
 
         // Create a button control template.
-        if (button != null)
-        {
-          button.Dispose();
-        }
         button = new GUIButtonControl(kb.GetID, -1, 0, 0, 0, 0, kb._keyTextureFocus, kb._keyTextureNoFocus,
                                       kb._keyTextShadowAngle, kb._keyTextShadowDistance, kb._keyTextShadowColor);
 
