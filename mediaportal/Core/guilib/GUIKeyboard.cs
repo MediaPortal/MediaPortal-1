@@ -717,16 +717,17 @@ namespace MediaPortal.GUI.Library
         inputText.Dispose();
         inputTextCaret.Dispose();
 
-        ArrayList keyBoard = null;
         for (int kb = 0; kb < _keyboardList.Count; kb++)
-          keyBoard = (ArrayList)_keyboardList[kb];
-        for (int row = 0; row < _maxRows; ++row)
         {
-          ArrayList keyRow = (ArrayList)keyBoard[row];
-          for (int i = 0; i < keyRow.Count; i++)
+          ArrayList keyBoard = (ArrayList)_keyboardList[kb];
+          for (int row = 0; row < _maxRows; ++row)
           {
-            Key key = (Key)keyRow[i];
-            key.button.Dispose();
+            ArrayList keyRow = (ArrayList)keyBoard[row];
+            for (int i = 0; i < keyRow.Count; i++)
+            {
+              Key key = (Key)keyRow[i];
+              key.button.Dispose();
+            }
           }
         }
 
