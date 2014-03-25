@@ -1,6 +1,6 @@
 ﻿namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {
-    partial class SoundGraphImonVfdAdvancedSetupForm
+    partial class SoundGraphImonSettingsForm
     {
         /// <summary>
         /// Required designer variable.
@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.btnOK = new MediaPortal.UserInterface.Controls.MPButton();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabControl = new System.Windows.Forms.TabControl();
             this.tabImon = new System.Windows.Forms.TabPage();
             this.label2 = new System.Windows.Forms.Label();
             this.textReenableAfterDelayInSeconds = new System.Windows.Forms.MaskedTextBox();
@@ -58,10 +58,22 @@
             this.mpRestrictEQ = new MediaPortal.UserInterface.Controls.MPCheckBox();
             this.cmbEqRate = new MediaPortal.UserInterface.Controls.MPComboBox();
             this.mpDelayEQ = new MediaPortal.UserInterface.Controls.MPCheckBox();
-            this.tabControl1.SuspendLayout();
+            this.tabLcd = new System.Windows.Forms.TabPage();
+            this.gbxLineOptions = new System.Windows.Forms.GroupBox();
+            this.gbxPlayback = new System.Windows.Forms.GroupBox();
+            this.rbtnPlaybackSecondLine = new System.Windows.Forms.RadioButton();
+            this.rbtnPlaybackFirstLine = new System.Windows.Forms.RadioButton();
+            this.gbxGeneral = new System.Windows.Forms.GroupBox();
+            this.rbtnGeneralSecondLine = new System.Windows.Forms.RadioButton();
+            this.rbtnGeneralFirstLine = new System.Windows.Forms.RadioButton();
+            this.tabControl.SuspendLayout();
             this.tabImon.SuspendLayout();
             this.tabEqualizer.SuspendLayout();
             this.groupEQstyle.SuspendLayout();
+            this.tabLcd.SuspendLayout();
+            this.gbxLineOptions.SuspendLayout();
+            this.gbxPlayback.SuspendLayout();
+            this.gbxGeneral.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnOK
@@ -75,18 +87,19 @@
             this.btnOK.UseVisualStyleBackColor = true;
             this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
             // 
-            // tabControl1
+            // tabControl
             // 
-            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.tabControl1.Controls.Add(this.tabImon);
-            this.tabControl1.Controls.Add(this.tabEqualizer);
-            this.tabControl1.Location = new System.Drawing.Point(12, 12);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(315, 279);
-            this.tabControl1.TabIndex = 125;
+            this.tabControl.Controls.Add(this.tabImon);
+            this.tabControl.Controls.Add(this.tabEqualizer);
+            this.tabControl.Controls.Add(this.tabLcd);
+            this.tabControl.Location = new System.Drawing.Point(12, 12);
+            this.tabControl.Name = "tabControl";
+            this.tabControl.SelectedIndex = 0;
+            this.tabControl.Size = new System.Drawing.Size(315, 279);
+            this.tabControl.TabIndex = 125;
             // 
             // tabImon
             // 
@@ -558,27 +571,127 @@
             this.mpDelayEQ.Text = "Delay Equalizer Start by                       Seconds";
             this.mpDelayEQ.UseVisualStyleBackColor = true;
             // 
-            // SoundGraphImonVfdAdvancedSetupForm
+            // tabLcd
+            // 
+            this.tabLcd.Controls.Add(this.gbxLineOptions);
+            this.tabLcd.Location = new System.Drawing.Point(4, 22);
+            this.tabLcd.Name = "tabLcd";
+            this.tabLcd.Padding = new System.Windows.Forms.Padding(3);
+            this.tabLcd.Size = new System.Drawing.Size(307, 253);
+            this.tabLcd.TabIndex = 2;
+            this.tabLcd.Text = "LCD";
+            this.tabLcd.UseVisualStyleBackColor = true;
+            // 
+            // gbxLineOptions
+            // 
+            this.gbxLineOptions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbxLineOptions.Controls.Add(this.gbxPlayback);
+            this.gbxLineOptions.Controls.Add(this.gbxGeneral);
+            this.gbxLineOptions.Location = new System.Drawing.Point(6, 6);
+            this.gbxLineOptions.Name = "gbxLineOptions";
+            this.gbxLineOptions.Size = new System.Drawing.Size(295, 118);
+            this.gbxLineOptions.TabIndex = 9;
+            this.gbxLineOptions.TabStop = false;
+            this.gbxLineOptions.Text = "Line Options";
+            // 
+            // gbxPlayback
+            // 
+            this.gbxPlayback.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbxPlayback.Controls.Add(this.rbtnPlaybackSecondLine);
+            this.gbxPlayback.Controls.Add(this.rbtnPlaybackFirstLine);
+            this.gbxPlayback.Location = new System.Drawing.Point(7, 69);
+            this.gbxPlayback.Name = "gbxPlayback";
+            this.gbxPlayback.Size = new System.Drawing.Size(282, 43);
+            this.gbxPlayback.TabIndex = 1;
+            this.gbxPlayback.TabStop = false;
+            this.gbxPlayback.Text = "During Playback";
+            // 
+            // rbtnPlaybackSecondLine
+            // 
+            this.rbtnPlaybackSecondLine.AutoSize = true;
+            this.rbtnPlaybackSecondLine.Location = new System.Drawing.Point(145, 18);
+            this.rbtnPlaybackSecondLine.Name = "rbtnPlaybackSecondLine";
+            this.rbtnPlaybackSecondLine.Size = new System.Drawing.Size(116, 17);
+            this.rbtnPlaybackSecondLine.TabIndex = 3;
+            this.rbtnPlaybackSecondLine.TabStop = true;
+            this.rbtnPlaybackSecondLine.Text = "Prefer Second Line";
+            this.rbtnPlaybackSecondLine.UseVisualStyleBackColor = true;
+            // 
+            // rbtnPlaybackFirstLine
+            // 
+            this.rbtnPlaybackFirstLine.AutoSize = true;
+            this.rbtnPlaybackFirstLine.Location = new System.Drawing.Point(7, 19);
+            this.rbtnPlaybackFirstLine.Name = "rbtnPlaybackFirstLine";
+            this.rbtnPlaybackFirstLine.Size = new System.Drawing.Size(98, 17);
+            this.rbtnPlaybackFirstLine.TabIndex = 2;
+            this.rbtnPlaybackFirstLine.TabStop = true;
+            this.rbtnPlaybackFirstLine.Text = "Prefer First Line";
+            this.rbtnPlaybackFirstLine.UseVisualStyleBackColor = true;
+            // 
+            // gbxGeneral
+            // 
+            this.gbxGeneral.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbxGeneral.Controls.Add(this.rbtnGeneralSecondLine);
+            this.gbxGeneral.Controls.Add(this.rbtnGeneralFirstLine);
+            this.gbxGeneral.Location = new System.Drawing.Point(7, 20);
+            this.gbxGeneral.Name = "gbxGeneral";
+            this.gbxGeneral.Size = new System.Drawing.Size(282, 43);
+            this.gbxGeneral.TabIndex = 0;
+            this.gbxGeneral.TabStop = false;
+            this.gbxGeneral.Text = "General";
+            // 
+            // rbtnGeneralSecondLine
+            // 
+            this.rbtnGeneralSecondLine.AutoSize = true;
+            this.rbtnGeneralSecondLine.Location = new System.Drawing.Point(145, 19);
+            this.rbtnGeneralSecondLine.Name = "rbtnGeneralSecondLine";
+            this.rbtnGeneralSecondLine.Size = new System.Drawing.Size(116, 17);
+            this.rbtnGeneralSecondLine.TabIndex = 1;
+            this.rbtnGeneralSecondLine.TabStop = true;
+            this.rbtnGeneralSecondLine.Text = "Prefer Second Line";
+            this.rbtnGeneralSecondLine.UseVisualStyleBackColor = true;
+            // 
+            // rbtnGeneralFirstLine
+            // 
+            this.rbtnGeneralFirstLine.AutoSize = true;
+            this.rbtnGeneralFirstLine.Location = new System.Drawing.Point(7, 20);
+            this.rbtnGeneralFirstLine.Name = "rbtnGeneralFirstLine";
+            this.rbtnGeneralFirstLine.Size = new System.Drawing.Size(98, 17);
+            this.rbtnGeneralFirstLine.TabIndex = 0;
+            this.rbtnGeneralFirstLine.TabStop = true;
+            this.rbtnGeneralFirstLine.Text = "Prefer First Line";
+            this.rbtnGeneralFirstLine.UseVisualStyleBackColor = true;
+            // 
+            // SoundGraphImonSettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(339, 332);
-            this.Controls.Add(this.tabControl1);
+            this.Controls.Add(this.tabControl);
             this.Controls.Add(this.btnOK);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "SoundGraphImonVfdAdvancedSetupForm";
+            this.Name = "SoundGraphImonSettingsForm";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "MiniDisplay - Setup - Advanced Settings";
-            this.tabControl1.ResumeLayout(false);
+            this.tabControl.ResumeLayout(false);
             this.tabImon.ResumeLayout(false);
             this.tabImon.PerformLayout();
             this.tabEqualizer.ResumeLayout(false);
             this.tabEqualizer.PerformLayout();
             this.groupEQstyle.ResumeLayout(false);
             this.groupEQstyle.PerformLayout();
+            this.tabLcd.ResumeLayout(false);
+            this.gbxLineOptions.ResumeLayout(false);
+            this.gbxPlayback.ResumeLayout(false);
+            this.gbxPlayback.PerformLayout();
+            this.gbxGeneral.ResumeLayout(false);
+            this.gbxGeneral.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -586,7 +699,7 @@
         #endregion
 
         private UserInterface.Controls.MPButton btnOK;
-        private System.Windows.Forms.TabControl tabControl1;
+        public System.Windows.Forms.TabControl tabControl;
         private System.Windows.Forms.TabPage tabImon;
         private System.Windows.Forms.CheckBox checkDisableWhenIdle;
         private System.Windows.Forms.TabPage tabEqualizer;
@@ -615,5 +728,13 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.MaskedTextBox textReenableAfterDelayInSeconds;
         private System.Windows.Forms.CheckBox checkReenableAfter;
+        public System.Windows.Forms.TabPage tabLcd;
+        private System.Windows.Forms.GroupBox gbxLineOptions;
+        private System.Windows.Forms.GroupBox gbxPlayback;
+        private System.Windows.Forms.RadioButton rbtnPlaybackSecondLine;
+        private System.Windows.Forms.RadioButton rbtnPlaybackFirstLine;
+        private System.Windows.Forms.GroupBox gbxGeneral;
+        private System.Windows.Forms.RadioButton rbtnGeneralSecondLine;
+        private System.Windows.Forms.RadioButton rbtnGeneralFirstLine;
     }
 }

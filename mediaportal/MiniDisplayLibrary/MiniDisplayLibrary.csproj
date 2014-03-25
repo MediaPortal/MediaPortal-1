@@ -126,18 +126,12 @@
       <DependentUpon>SoundGraphImonChooseDisplayTypeForm.cs</DependentUpon>
     </Compile>
     <Compile Include="MiniDisplayPlugin\Drivers\iMON\SoundGraphImonLcd.cs" />
-    <Compile Include="MiniDisplayPlugin\Drivers\iMON\SoundGraphImonLcdAdvancedSetupForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MiniDisplayPlugin\Drivers\iMON\SoundGraphImonLcdAdvancedSetupForm.designer.cs">
-      <DependentUpon>SoundGraphImonLcdAdvancedSetupForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="MiniDisplayPlugin\Drivers\iMON\SoundGraphImonVfd.cs" />
-    <Compile Include="MiniDisplayPlugin\Drivers\iMON\SoundGraphImonVfdAdvancedSetupForm.cs">
+    <Compile Include="MiniDisplayPlugin\Drivers\iMON\SoundGraphImonSettingsForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MiniDisplayPlugin\Drivers\iMON\SoundGraphImonVfdAdvancedSetupForm.designer.cs">
-      <DependentUpon>SoundGraphImonVfdAdvancedSetupForm.cs</DependentUpon>
+    <Compile Include="MiniDisplayPlugin\Drivers\iMON\SoundGraphImonSettingsForm.designer.cs">
+      <DependentUpon>SoundGraphImonSettingsForm.cs</DependentUpon>
     </Compile>
     <Compile Include="MiniDisplayPlugin\Drivers\ShuttlePF27.cs" />
     <Compile Include="MiniDisplayPlugin\Drivers\DM140GINK.cs" />
@@ -382,11 +376,8 @@
     <EmbeddedResource Include="MiniDisplayPlugin\Drivers\iMON\SoundGraphImonChooseDisplayTypeForm.resx">
       <DependentUpon>SoundGraphImonChooseDisplayTypeForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MiniDisplayPlugin\Drivers\iMON\SoundGraphImonLcdAdvancedSetupForm.resx">
-      <DependentUpon>SoundGraphImonLcdAdvancedSetupForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MiniDisplayPlugin\Drivers\iMON\SoundGraphImonVfdAdvancedSetupForm.resx">
-      <DependentUpon>SoundGraphImonVfdAdvancedSetupForm.cs</DependentUpon>
+    <EmbeddedResource Include="MiniDisplayPlugin\Drivers\iMON\SoundGraphImonSettingsForm.resx">
+      <DependentUpon>SoundGraphImonSettingsForm.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

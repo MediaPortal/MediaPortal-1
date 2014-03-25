@@ -23,11 +23,11 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.IO;
+//using System.IO;
 using System.Windows.Forms;
-using System.Xml;
-using System.Xml.Serialization;
-using MediaPortal.Configuration;
+//using System.Xml;
+//using System.Xml.Serialization;
+//using MediaPortal.Configuration;
 //using MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
@@ -38,16 +38,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     public class SoundGraphImonVfd : SoundGraphImon
     {
         SoundGraphDisplay.DSPEQDATA iEqData;
-        private AdvancedSettings AdvSettings;
+        //private AdvancedSettings AdvSettings;
         private EQControl EQSettings;
 
         //Constructor
         public SoundGraphImonVfd()
         {
-            //Settings
-            LoadAdvancedSettings();
-            AdvancedSettings.OnSettingsChanged += AdvancedSettings_OnSettingsChanged;
-
             //Init EqData
             MiniDisplayHelper.InitEQ(ref EQSettings);
             EQSettings.UseEqDisplay = true;
@@ -99,7 +95,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
             //Our display is initialized, now open the advanced setting dialog
             SoundGraphDisplay.LogDebug("SoundGraphImonVfd.Configure() called");
-            Form form = new SoundGraphImonVfdAdvancedSetupForm();
+            SoundGraphImonSettingsForm form = new SoundGraphImonSettingsForm();
+            //Hide our LCD tab since we configure an LCD display
+            //TODO: make this a method of SoundGraphImonSettingsForm
+            form.tabControl.TabPages.Remove(form.tabLcd);
             form.ShowDialog();
             form.Dispose();
             SoundGraphDisplay.LogDebug("(IDisplay) SoundGraphImonVfd.Configure() completed");
@@ -305,155 +304,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             {
                 //Going up
                 iEqData.BandData[15] = iEqData.BandData[14] + 10;
-            }
-        }
-
-        //Settings stuff
-        private void LoadAdvancedSettings()
-        {
-            AdvSettings = AdvancedSettings.Load();
-        }
-
-        private void AdvancedSettings_OnSettingsChanged()
-        {
-            SoundGraphDisplay.LogDebug("SoundGraphImonVfd.AdvancedSettings_OnSettingsChanged(): RELOADING SETTINGS");
-
-            //CleanUp();
-            //Thread.Sleep(100);
-            LoadAdvancedSettings();
-            //Initialize();
-        }
-
-        [Serializable]
-        public class AdvancedSettings : SoundGraphImon.Settings
-        {
-            #region Delegates
-
-            public delegate void OnSettingsChangedHandler();
-
-            #endregion
-
-            private static AdvancedSettings m_Instance;
-            public const string m_Filename = "MiniDisplay_SoundGraphImonVfd.xml";
-
-            public static AdvancedSettings Instance
-            {
-                get
-                {
-                    if (m_Instance == null)
-                    {
-                        m_Instance = Load();
-                    }
-                    return m_Instance;
-                }
-                set { m_Instance = value; }
-            }
-
-            [XmlAttribute]
-            public bool DelayEQ { get; set; }
-
-            [XmlAttribute]
-            public int DelayEqTime { get; set; }
- 
-
-            [XmlAttribute]
-            public int EqMode { get; set; }
-
-            [XmlAttribute]
-            public int EqRate { get; set; }
-
-            [XmlAttribute]
-            public bool EqDisplay { get; set; }
-
-            [XmlAttribute]
-            public bool NormalEQ { get; set; }
-
-            [XmlAttribute]
-            public bool StereoEQ { get; set; }
-
-            [XmlAttribute]
-            public bool VUmeter { get; set; }
-
-            [XmlAttribute]
-            public bool VUmeter2 { get; set; }
-
-            [XmlAttribute]
-            public bool VUindicators { get; set; }
-
-            [XmlAttribute]
-            public bool RestrictEQ { get; set; }
-
-            [XmlAttribute]
-            public bool SmoothEQ { get; set; }
-
-
-            public static event OnSettingsChangedHandler OnSettingsChanged;
-
-            private static void Default(AdvancedSettings _settings)
-            {
-                _settings.EqDisplay = false;
-                _settings.NormalEQ = true;
-                _settings.StereoEQ = false;
-                _settings.VUmeter = false;
-                _settings.VUmeter2 = false;
-                _settings.VUindicators = false;
-                _settings.EqMode = 0;
-                _settings.RestrictEQ = false;
-                _settings.EqRate = 10;
-                _settings.DelayEQ = false;
-                _settings.DelayEqTime = 10;
-                _settings.SmoothEQ = false;
- 
-            }
-
-            public static AdvancedSettings Load()
-            {
-                AdvancedSettings settings;
-                SoundGraphDisplay.LogDebug("SoundGraphImonVfd.AdvancedSettings.Load(): started");
-                if (File.Exists(Config.GetFile(Config.Dir.Config, m_Filename)))
-                {
-                    SoundGraphDisplay.LogDebug("SoundGraphImonVfd.AdvancedSettings.Load(): Loading settings from XML file");
-                    var serializer = new XmlSerializer(typeof(AdvancedSettings));
-                    var xmlReader = new XmlTextReader(Config.GetFile(Config.Dir.Config, m_Filename));
-                    settings = (AdvancedSettings)serializer.Deserialize(xmlReader);
-                    xmlReader.Close();
-                }
-                else
-                {
-                    SoundGraphDisplay.LogDebug("SoundGraphImonVfd.AdvancedSettings.Load(): Loading settings from defaults");
-                    settings = new AdvancedSettings();
-                    Default(settings);
-                    SoundGraphDisplay.LogDebug("SoundGraphImonVfd.AdvancedSettings.Load(): Loaded settings from defaults");
-                }
-                SoundGraphDisplay.LogDebug("SoundGraphImonVfd.AdvancedSettings.Load(): completed");
-                return settings;
-            }
-
-            public static void NotifyDriver()
-            {
-                if (OnSettingsChanged != null)
-                {
-                    OnSettingsChanged();
-                }
-            }
-
-            public static void Save()
-            {
-                Save(Instance);
-            }
-
-            public static void Save(AdvancedSettings ToSave)
-            {
-                var serializer = new XmlSerializer(typeof(AdvancedSettings));
-                var writer = new XmlTextWriter(Config.GetFile(Config.Dir.Config, m_Filename),
-                                               Encoding.UTF8) { Formatting = Formatting.Indented, Indentation = 2 };
-                serializer.Serialize(writer, ToSave);
-                writer.Close();
-            }
-
-            public static void SetDefaults()
-            {
-                Default(Instance);
             }
         }
 
