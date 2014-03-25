@@ -312,8 +312,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         private void LoadAdvancedSettings()
         {
             AdvSettings = AdvancedSettings.Load();
-            //_preferLine1General = AdvSettings.PreferFirstLineGeneral;
-            //_preferLine1Playback = AdvSettings.PreferFirstLinePlayback;
         }
 
         private void AdvancedSettings_OnSettingsChanged()
@@ -351,18 +349,74 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 set { m_Instance = value; }
             }
 
-            [XmlAttribute]
-            public bool PreferFirstLineGeneral { get; set; }
+            //Generic iMON settings
+            //TODO: Find a way not to duplicate this code for LCD/VFD
 
             [XmlAttribute]
-            public bool PreferFirstLinePlayback { get; set; }
+            public bool DisableWhenIdle { get; set; }
+
+            [XmlAttribute]
+            public int DisableWhenIdleDelayInSeconds { get; set; }
+
+            [XmlAttribute]
+            public bool DisableWhenInBackground { get; set; }
+
+
+            [XmlAttribute]
+            public bool DelayEQ { get; set; }
+
+            [XmlAttribute]
+            public int DelayEqTime { get; set; }
+ 
+
+            [XmlAttribute]
+            public int EqMode { get; set; }
+
+            [XmlAttribute]
+            public int EqRate { get; set; }
+
+            [XmlAttribute]
+            public bool EqDisplay { get; set; }
+
+            [XmlAttribute]
+            public bool NormalEQ { get; set; }
+
+            [XmlAttribute]
+            public bool StereoEQ { get; set; }
+
+            [XmlAttribute]
+            public bool VUmeter { get; set; }
+
+            [XmlAttribute]
+            public bool VUmeter2 { get; set; }
+
+            [XmlAttribute]
+            public bool VUindicators { get; set; }
+
+            [XmlAttribute]
+            public bool RestrictEQ { get; set; }
+
+            [XmlAttribute]
+            public bool SmoothEQ { get; set; }
+
 
             public static event OnSettingsChangedHandler OnSettingsChanged;
 
             private static void Default(AdvancedSettings _settings)
             {
-                _settings.PreferFirstLineGeneral = true;
-                _settings.PreferFirstLinePlayback = true;
+                _settings.EqDisplay = false;
+                _settings.NormalEQ = true;
+                _settings.StereoEQ = false;
+                _settings.VUmeter = false;
+                _settings.VUmeter2 = false;
+                _settings.VUindicators = false;
+                _settings.EqMode = 0;
+                _settings.RestrictEQ = false;
+                _settings.EqRate = 10;
+                _settings.DelayEQ = false;
+                _settings.DelayEqTime = 10;
+                _settings.SmoothEQ = false;
+ 
             }
 
             public static AdvancedSettings Load()

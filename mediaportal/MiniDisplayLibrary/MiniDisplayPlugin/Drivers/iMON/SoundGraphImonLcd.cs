@@ -25,6 +25,12 @@ using System.Runtime.InteropServices;
 using System.Text;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
+using System.IO;
+using System.Windows.Forms;
+using System.Xml;
+using System.Xml.Serialization;
+using MediaPortal.Configuration;
+
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {
@@ -33,6 +39,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     /// </summary>
     public class SoundGraphImonLcd : ISoundGraphImonDisplay
     {
+
         SoundGraphDisplay.MediaTypes _currentMediaTypes;
         const int MediaTotalTime = 100;
         int _currentMediaCurrentPosition = 0;
@@ -45,6 +52,15 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         ImonMediaInfo _videoMediaInfo = new ImonMediaInfo();
         ImonMediaInfo _audioMediaInfo = new ImonMediaInfo();
         ActiveWindowInfo _activeWindowInfo = new ActiveWindowInfo();
+        private AdvancedSettings AdvSettings;
+
+        //Constructor
+        public SoundGraphImonLcd()
+        {
+            //Settings
+            LoadAdvancedSettings();
+            AdvancedSettings.OnSettingsChanged += AdvancedSettings_OnSettingsChanged;
+        }
 
         public override string Name() { return "iMON LCD"; }
 
@@ -74,7 +90,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
         public override void Configure()
         {
-            //No advanced settings for now
+            //Open our advanced setting dialog
+            SoundGraphDisplay.LogDebug("SoundGraphImonLcd.Configure() called");
+            Form form = new SoundGraphImonLcdAdvancedSetupForm();
+            form.ShowDialog();
+            form.Dispose();
+            SoundGraphDisplay.LogDebug("SoundGraphImonVfd.Configure() completed");
+
         }
 
         //Here comes icon management methods
@@ -419,6 +441,114 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             SoundGraphDisplay.LogDebug("(IDisplay) ImonLcd.SetMediaTypeIcons() completed");
         }
 
+        //Settings stuff
+        private void LoadAdvancedSettings()
+        {
+            AdvSettings = AdvancedSettings.Load();
+            //_preferLine1General = AdvSettings.PreferFirstLineGeneral;
+            //_preferLine1Playback = AdvSettings.PreferFirstLinePlayback;
+        }
+
+        private void AdvancedSettings_OnSettingsChanged()
+        {
+            SoundGraphDisplay.LogDebug("SoundGraphImonLcd.AdvancedSettings_OnSettingsChanged(): RELOADING SETTINGS");
+
+            //CleanUp();
+            //Thread.Sleep(100);
+            LoadAdvancedSettings();
+            //Initialize();
+        }
+
+        [Serializable]
+        public class AdvancedSettings
+        {
+            #region Delegates
+
+            public delegate void OnSettingsChangedHandler();
+
+            #endregion
+
+            private static AdvancedSettings m_Instance;
+            public const string m_Filename = "MiniDisplay_SoundGraphImonLcd.xml";
+
+            public static AdvancedSettings Instance
+            {
+                get
+                {
+                    if (m_Instance == null)
+                    {
+                        m_Instance = Load();
+                    }
+                    return m_Instance;
+                }
+                set { m_Instance = value; }
+            }
+
+            [XmlAttribute]
+            public bool PreferFirstLineGeneral { get; set; }
+
+            [XmlAttribute]
+            public bool PreferFirstLinePlayback { get; set; }
+
+            public static event OnSettingsChangedHandler OnSettingsChanged;
+
+            private static void Default(AdvancedSettings _settings)
+            {
+                _settings.PreferFirstLineGeneral = true;
+                _settings.PreferFirstLinePlayback = true;
+            }
+
+            public static AdvancedSettings Load()
+            {
+                AdvancedSettings settings;
+                SoundGraphDisplay.LogDebug("SoundGraphImonLcd.AdvancedSettings.Load(): started");
+                if (File.Exists(Config.GetFile(Config.Dir.Config, m_Filename)))
+                {
+                    SoundGraphDisplay.LogDebug("SoundGraphImonLcd.AdvancedSettings.Load(): Loading settings from XML file");
+                    var serializer = new XmlSerializer(typeof(AdvancedSettings));
+                    var xmlReader = new XmlTextReader(Config.GetFile(Config.Dir.Config, m_Filename));
+                    settings = (AdvancedSettings)serializer.Deserialize(xmlReader);
+                    xmlReader.Close();
+                }
+                else
+                {
+                    SoundGraphDisplay.LogDebug("SoundGraphImonLcd.AdvancedSettings.Load(): Loading settings from defaults");
+                    settings = new AdvancedSettings();
+                    Default(settings);
+                    SoundGraphDisplay.LogDebug("SoundGraphImonLcd.AdvancedSettings.Load(): Loaded settings from defaults");
+                }
+                SoundGraphDisplay.LogDebug("SoundGraphImonLcd.AdvancedSettings.Load(): completed");
+                return settings;
+            }
+
+            public static void NotifyDriver()
+            {
+                if (OnSettingsChanged != null)
+                {
+                    OnSettingsChanged();
+                }
+            }
+
+            public static void Save()
+            {
+                Save(Instance);
+            }
+
+            public static void Save(AdvancedSettings ToSave)
+            {
+                var serializer = new XmlSerializer(typeof(AdvancedSettings));
+                var writer = new XmlTextWriter(Config.GetFile(Config.Dir.Config, m_Filename),
+                                               Encoding.UTF8) { Formatting = Formatting.Indented, Indentation = 2 };
+                serializer.Serialize(writer, ToSave);
+                writer.Close();
+            }
+
+            public static void SetDefaults()
+            {
+                Default(Instance);
+            }
+        }
+
     }
 
     /// <summary>
@@ -564,9 +694,5 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             OnlineStreamingPluginWindows.AddRange(MyTrailers);
         }
     }
-
-
-    
-
 }
 
