@@ -23,7 +23,7 @@ using System.Text;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {
-    public abstract class ISoundGraphImonDisplay //: IDisplay
+    public abstract class ISoundGraphImonDisplay
     {       
         public ISoundGraphImonDisplay()
         {

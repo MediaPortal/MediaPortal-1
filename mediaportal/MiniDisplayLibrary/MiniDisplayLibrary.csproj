@@ -117,7 +117,7 @@
     <Compile Include="MiniDisplayPlugin\Drivers\iMON\ImonVfd.cs" />
     <Compile Include="MiniDisplayPlugin\Drivers\iMON\ImonBase.cs" />
     <Compile Include="MiniDisplayPlugin\Drivers\iMON\ImonLcd.cs" />
-    <Compile Include="MiniDisplayPlugin\Drivers\iMON\ISoundGraphImonDisplay.cs" />
+    <Compile Include="MiniDisplayPlugin\Drivers\iMON\SoundGraphImon.cs" />
     <Compile Include="MiniDisplayPlugin\Drivers\iMON\SoundGraphDisplay.cs" />
     <Compile Include="MiniDisplayPlugin\Drivers\iMON\SoundGraphImonChooseDisplayTypeForm.cs">
       <SubType>Form</SubType>
