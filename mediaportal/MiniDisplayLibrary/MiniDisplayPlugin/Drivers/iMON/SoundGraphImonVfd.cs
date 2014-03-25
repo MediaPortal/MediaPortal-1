@@ -325,7 +325,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
 
         [Serializable]
-        public class AdvancedSettings
+        public class AdvancedSettings : SoundGraphImon.Settings
         {
             #region Delegates
 
@@ -348,24 +348,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 }
                 set { m_Instance = value; }
             }
-
-            //Generic iMON settings
-            //TODO: Find a way not to duplicate this code for LCD/VFD
-
-            [XmlAttribute]
-            public bool DisableWhenInBackground { get; set; }
-
-            [XmlAttribute]
-            public bool DisableWhenIdle { get; set; }
-
-            [XmlAttribute]
-            public int DisableWhenIdleDelayInSeconds { get; set; }
-
-            [XmlAttribute]
-            public bool ReenableAfter { get; set; }
-
-            [XmlAttribute]
-            public int ReenableAfterDelayInSeconds { get; set; }
 
             [XmlAttribute]
             public bool DelayEQ { get; set; }

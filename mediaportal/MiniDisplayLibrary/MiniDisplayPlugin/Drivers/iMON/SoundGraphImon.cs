@@ -20,6 +20,9 @@
 
 using System;
 using System.Text;
+using System.Xml;
+using System.Xml.Serialization;
+
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {
@@ -45,9 +48,27 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         //Launch advanced settings dialog
         public abstract void Configure();
 
+        //Here comes settings related stuff
+
+
         [Serializable]
         public abstract class Settings
         {
+            //Generic iMON settings
+            [XmlAttribute]
+            public bool DisableWhenInBackground { get; set; }
+
+            [XmlAttribute]
+            public bool DisableWhenIdle { get; set; }
+
+            [XmlAttribute]
+            public int DisableWhenIdleDelayInSeconds { get; set; }
+
+            [XmlAttribute]
+            public bool ReenableAfter { get; set; }
+
+            [XmlAttribute]
+            public int ReenableAfterDelayInSeconds { get; set; }
         }
     }
 
