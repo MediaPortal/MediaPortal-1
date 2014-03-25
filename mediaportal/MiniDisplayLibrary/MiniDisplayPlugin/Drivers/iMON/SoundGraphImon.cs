@@ -23,9 +23,13 @@ using System.Text;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {
-    public abstract class ISoundGraphImonDisplay
+    /// <summary>
+    /// Abstract base class for SoundGraph iMON display.
+    /// SoundGraph iMON VFD and LCD are implementing this abstractiong.
+    /// </summary>
+    public abstract class SoundGraphImon
     {       
-        public ISoundGraphImonDisplay()
+        public SoundGraphImon()
         {
             Line1 = string.Empty;
             Line2 = string.Empty;
@@ -40,6 +44,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         public abstract string Name();
         //Launch advanced settings dialog
         public abstract void Configure();
+
+        [Serializable]
+        public abstract class Settings
+        {
+        }
     }
 
 }

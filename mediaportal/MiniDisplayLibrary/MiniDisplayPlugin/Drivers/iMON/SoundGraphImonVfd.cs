@@ -35,7 +35,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     /// <summary>
     /// SoundGraph iMON VFD.
     /// </summary>
-    public class SoundGraphImonVfd : ISoundGraphImonDisplay
+    public class SoundGraphImonVfd : SoundGraphImon
     {
         SoundGraphDisplay.DSPEQDATA iEqData;
         private AdvancedSettings AdvSettings;

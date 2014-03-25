@@ -33,7 +33,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     /// </summary>
     public class SoundGraphDisplay : IDisplay
     {
-        ISoundGraphImonDisplay iDisplay;
+        SoundGraphImon iDisplay;
 
         public SoundGraphDisplay()
         {

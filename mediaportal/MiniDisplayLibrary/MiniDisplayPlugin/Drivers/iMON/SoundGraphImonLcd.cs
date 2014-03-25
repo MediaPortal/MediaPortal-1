@@ -37,7 +37,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     /// <summary>
     /// SoundGraph iMON LCD.
     /// </summary>
-    public class SoundGraphImonLcd : ISoundGraphImonDisplay
+    public class SoundGraphImonLcd : SoundGraphImon
     {
 
         SoundGraphDisplay.MediaTypes _currentMediaTypes;
