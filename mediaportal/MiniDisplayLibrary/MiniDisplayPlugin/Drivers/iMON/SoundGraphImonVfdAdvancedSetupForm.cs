@@ -13,6 +13,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             checkDisableWhenInBackground.DataBindings.Add("Checked", SoundGraphImonVfd.AdvancedSettings.Instance, "DisableWhenInBackground");
             checkDisableWhenIdle.DataBindings.Add("Checked", SoundGraphImonVfd.AdvancedSettings.Instance, "DisableWhenIdle");
             textDisableWhenIdleDelayInSeconds.DataBindings.Add("Text", SoundGraphImonVfd.AdvancedSettings.Instance, "DisableWhenIdleDelayInSeconds");
+            checkReenableAfter.DataBindings.Add("Checked", SoundGraphImonVfd.AdvancedSettings.Instance, "ReenableAfter");
+            textReenableAfterDelayInSeconds.DataBindings.Add("Text", SoundGraphImonVfd.AdvancedSettings.Instance, "ReenableAfterDelayInSeconds");
             //
 
             mpEqDisplay.DataBindings.Add("Checked", SoundGraphImonVfd.AdvancedSettings.Instance, "EqDisplay");

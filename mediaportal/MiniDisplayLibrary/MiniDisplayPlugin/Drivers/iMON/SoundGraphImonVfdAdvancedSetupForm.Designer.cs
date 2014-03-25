@@ -31,6 +31,9 @@
             this.btnOK = new MediaPortal.UserInterface.Controls.MPButton();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabImon = new System.Windows.Forms.TabPage();
+            this.label2 = new System.Windows.Forms.Label();
+            this.textReenableAfterDelayInSeconds = new System.Windows.Forms.MaskedTextBox();
+            this.checkReenableAfter = new System.Windows.Forms.CheckBox();
             this.checkDisableWhenInBackground = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
             this.textDisableWhenIdleDelayInSeconds = new System.Windows.Forms.MaskedTextBox();
@@ -87,6 +90,9 @@
             // 
             // tabImon
             // 
+            this.tabImon.Controls.Add(this.label2);
+            this.tabImon.Controls.Add(this.textReenableAfterDelayInSeconds);
+            this.tabImon.Controls.Add(this.checkReenableAfter);
             this.tabImon.Controls.Add(this.checkDisableWhenInBackground);
             this.tabImon.Controls.Add(this.label1);
             this.tabImon.Controls.Add(this.textDisableWhenIdleDelayInSeconds);
@@ -94,10 +100,41 @@
             this.tabImon.Location = new System.Drawing.Point(4, 22);
             this.tabImon.Name = "tabImon";
             this.tabImon.Padding = new System.Windows.Forms.Padding(3);
-            this.tabImon.Size = new System.Drawing.Size(535, 253);
+            this.tabImon.Size = new System.Drawing.Size(307, 253);
             this.tabImon.TabIndex = 0;
             this.tabImon.Text = "iMON";
             this.tabImon.UseVisualStyleBackColor = true;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(190, 53);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(53, 13);
+            this.label2.TabIndex = 7;
+            this.label2.Text = "second(s)";
+            // 
+            // textReenableAfterDelayInSeconds
+            // 
+            this.textReenableAfterDelayInSeconds.Location = new System.Drawing.Point(145, 50);
+            this.textReenableAfterDelayInSeconds.Mask = "00000";
+            this.textReenableAfterDelayInSeconds.Name = "textReenableAfterDelayInSeconds";
+            this.textReenableAfterDelayInSeconds.PromptChar = ' ';
+            this.textReenableAfterDelayInSeconds.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.textReenableAfterDelayInSeconds.Size = new System.Drawing.Size(39, 20);
+            this.textReenableAfterDelayInSeconds.TabIndex = 6;
+            this.textReenableAfterDelayInSeconds.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.textReenableAfterDelayInSeconds.ValidatingType = typeof(int);
+            // 
+            // checkReenableAfter
+            // 
+            this.checkReenableAfter.AutoSize = true;
+            this.checkReenableAfter.Location = new System.Drawing.Point(6, 52);
+            this.checkReenableAfter.Name = "checkReenableAfter";
+            this.checkReenableAfter.Size = new System.Drawing.Size(96, 17);
+            this.checkReenableAfter.TabIndex = 5;
+            this.checkReenableAfter.Text = "Reenable after";
+            this.checkReenableAfter.UseVisualStyleBackColor = true;
             // 
             // checkDisableWhenInBackground
             // 
@@ -123,6 +160,8 @@
             this.textDisableWhenIdleDelayInSeconds.Location = new System.Drawing.Point(145, 27);
             this.textDisableWhenIdleDelayInSeconds.Mask = "00000";
             this.textDisableWhenIdleDelayInSeconds.Name = "textDisableWhenIdleDelayInSeconds";
+            this.textDisableWhenIdleDelayInSeconds.PromptChar = ' ';
+            this.textDisableWhenIdleDelayInSeconds.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.textDisableWhenIdleDelayInSeconds.Size = new System.Drawing.Size(39, 20);
             this.textDisableWhenIdleDelayInSeconds.TabIndex = 2;
             this.textDisableWhenIdleDelayInSeconds.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -573,5 +612,8 @@
         private System.Windows.Forms.MaskedTextBox textDisableWhenIdleDelayInSeconds;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.CheckBox checkDisableWhenInBackground;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.MaskedTextBox textReenableAfterDelayInSeconds;
+        private System.Windows.Forms.CheckBox checkReenableAfter;
     }
 }

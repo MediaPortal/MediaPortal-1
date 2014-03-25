@@ -353,14 +353,19 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             //TODO: Find a way not to duplicate this code for LCD/VFD
 
             [XmlAttribute]
+            public bool DisableWhenInBackground { get; set; }
+
+            [XmlAttribute]
             public bool DisableWhenIdle { get; set; }
 
             [XmlAttribute]
             public int DisableWhenIdleDelayInSeconds { get; set; }
 
             [XmlAttribute]
-            public bool DisableWhenInBackground { get; set; }
+            public bool ReenableAfter { get; set; }
 
+            [XmlAttribute]
+            public int ReenableAfterDelayInSeconds { get; set; }
 
             [XmlAttribute]
             public bool DelayEQ { get; set; }
