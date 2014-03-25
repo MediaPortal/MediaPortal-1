@@ -72,7 +72,7 @@ namespace MediaPortal.WebEPG.Parser
 
 
       // create new Html Parser using default template
-      _listingParser = new HtmlParser(listingTemplate, typeof(ProgramData), monthsDict);
+      _listingParser = new HtmlParser(listingTemplate, typeof (ProgramData), monthsDict);
 
       // setup sublink parser if template and config exists
       _sublinkParser = null;
@@ -87,7 +87,7 @@ namespace MediaPortal.WebEPG.Parser
         if (sublinkTemplate != null)
         {
           // create sublink parser using template
-          _sublinkParser = new HtmlParser(sublinkTemplate, typeof(ProgramData));
+          _sublinkParser = new HtmlParser(sublinkTemplate, typeof (ProgramData));
           _sublinkMatch = sublink.search;
           _sublinkRequest = sublink.url;
         }
@@ -164,7 +164,7 @@ namespace MediaPortal.WebEPG.Parser
         for (int i = 0; i < _template.searchList.Count; i++)
         {
           WebSearchData search = _template.searchList[i];
-          string result = _listingParser.SearchRegex(index, search.Match, search.Remove, search.UseCaptureGroup);
+          string result = _listingParser.SearchRegex(index, search.Match, search.Remove);
           if (result != null)
           {
             searchData.SetElement(search.Field, result);
@@ -191,13 +191,13 @@ namespace MediaPortal.WebEPG.Parser
         if (_sublinkParser != null)
         {
           HTTPRequest sublinkRequest = new HTTPRequest(_sublinkRequest);
-          // Minimum delay disabled because of a bug it wasn't being used anyway (always 0) and
-          // possibly not needed to start using now.
-          // Enabling has serious impact on grabspeed.
-          //          if (sublinkRequest.Delay < 500)
-          //          {
-          //            sublinkRequest.Delay = 500;
-          //          }
+// Minimum delay disabled because of a bug it wasn't being used anyway (always 0) and
+// possibly not needed to start using now.
+// Enabling has serious impact on grabspeed.
+//          if (sublinkRequest.Delay < 500)
+//          {
+//            sublinkRequest.Delay = 500;
+//          }
           if (_listingParser.GetHyperLink(index, _sublinkMatch, ref sublinkRequest))
           {
             data.SublinkRequest = sublinkRequest;

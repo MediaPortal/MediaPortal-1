@@ -225,7 +225,7 @@ namespace MediaPortal.Utils.Web
         _response = (HttpWebResponse)request.GetResponse();
 
         // Check for redirection
-        if ((_response.StatusCode == HttpStatusCode.Found) || 
+        if ((_response.StatusCode == HttpStatusCode.Found) ||
             (_response.StatusCode == HttpStatusCode.Redirect) ||
             (_response.StatusCode == HttpStatusCode.Moved) ||
             (_response.StatusCode == HttpStatusCode.MovedPermanently))
@@ -244,8 +244,18 @@ namespace MediaPortal.Utils.Web
           redirect.Referer = _response.ResponseUri.ToString();
 
           redirect.CookieContainer = new CookieContainer();
-          foreach (Cookie cookie in _response.Cookies)
-                redirect.CookieContainer.Add(cookie);
+          if (_response.Headers["Set-Cookie"] != null)
+          {
+            string cookieStr = _response.Headers["Set-Cookie"];
+            Regex cookieParser = new Regex("(?<name>[^=]+)=(?<value>[^;]+)(;)");
+            Match result = cookieParser.Match(cookieStr);
+            if (result.Success)
+            {
+              Cookie reply = new Cookie(result.Groups["name"].ToString(), result.Groups["value"].ToString());
+              reply.Domain = uri.Host;
+              redirect.CookieContainer.Add(reply);
+            }
+          }
           //redirect.ContentType = "text/html"; 
           _response = (HttpWebResponse)redirect.GetResponse();
         }

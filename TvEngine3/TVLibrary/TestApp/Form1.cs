@@ -49,7 +49,7 @@ namespace TestApp
 
     #endregion
 
-   // private readonly TvCardCollection _tvcards = new TvCardCollection();
+    private readonly TvCardCollection _tvcards = new TvCardCollection();
     private ITVCard _currentCard;
     private bool _stopStreaming;
     private bool _streamingRunning;
@@ -64,7 +64,7 @@ namespace TestApp
 
     private void Form1_Load(object sender, EventArgs e)
     {
-      /*foreach (ITVCard card in _tvcards.Cards)
+      foreach (ITVCard card in _tvcards.Cards)
       {
         comboBoxCards.Items.Add(card);
       }
@@ -74,7 +74,7 @@ namespace TestApp
         _currentCard = _tvcards.Cards[0];
       }
       timer1.Tick += timer1_Tick;
-      timer1.Enabled = true;*/
+      timer1.Enabled = true;
     }
 
     private void timer1_Tick(object sender, EventArgs e)
@@ -314,17 +314,17 @@ namespace TestApp
     private void comboBoxCards_SelectedIndexChanged(object sender, EventArgs e)
     {
       if (comboBoxCards.SelectedIndex < 0) return;
-      //_currentCard = _tvcards.Cards[comboBoxCards.SelectedIndex];
+      _currentCard = _tvcards.Cards[comboBoxCards.SelectedIndex];
       listViewChannels.Items.Clear();
     }
 
     protected override void OnClosed(EventArgs e)
     {
       _stopStreaming = true;
-      /*foreach (ITVCard card in _tvcards.Cards)
+      foreach (ITVCard card in _tvcards.Cards)
       {
         card.Dispose();
-      }*/
+      }
       base.OnClosed(e);
     }
 
