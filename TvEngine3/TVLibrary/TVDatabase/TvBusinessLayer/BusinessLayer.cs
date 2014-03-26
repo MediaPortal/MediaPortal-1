@@ -1773,7 +1773,7 @@ namespace TvDatabase
       {
         if (searchCriteria.Length > 0)
         {
-          SqlSelectCommand.AppendFormat("and title REGEXP '^{0}.' ", EscapeSQLString(searchCriteria));
+          SqlSelectCommand.AppendFormat("and title REGEXP '^{0}' ", EscapeSQLString(searchCriteria));
         }
       }
       else if (searchCriteria.Length > 0)
