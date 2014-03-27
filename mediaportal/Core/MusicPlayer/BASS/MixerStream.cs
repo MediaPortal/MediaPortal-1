@@ -1,9 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
-using System.Windows.Forms;
 using MediaPortal.GUI.Library;
-using MediaPortal.Player;
 using Un4seen.Bass;
 using Un4seen.Bass.AddOn.Mix;
 using Un4seen.BassAsio;
@@ -42,6 +41,8 @@ namespace MediaPortal.MusicPlayer.BASS
     private SYNCPROC _playbackEndProcDelegate = null;
     private int _syncProc = 0;
 
+    private Dictionary<int, GCHandle> _pinnedObjects = new Dictionary<int, GCHandle>();
+    
     #endregion
 
     #region Properties
@@ -402,12 +403,18 @@ namespace MediaPortal.MusicPlayer.BASS
         Bass.BASS_ChannelRemoveSync(_mixer, _syncProc);
       }
 
-      GCHandle pFilePath = GCHandle.Alloc(stream);
+      // We might have stored the pinned object already, because we are skipping 
+      // Only store object it, when it doesn't exist
+      if (!_pinnedObjects.ContainsKey(stream.BassStream))
+      {
+        // Add the pinned object to the global dictionary, so that we can free it later in the Sync End Proc
+        _pinnedObjects.Add(stream.BassStream, GCHandle.Alloc(stream));
+      }
 
       _syncProc = Bass.BASS_ChannelSetSync(_mixer,
         BASSSync.BASS_SYNC_ONETIME | BASSSync.BASS_SYNC_POS | BASSSync.BASS_SYNC_MIXTIME,
         syncPos, _playbackEndProcDelegate,
-        GCHandle.ToIntPtr(pFilePath));
+        GCHandle.ToIntPtr(_pinnedObjects[stream.BassStream]));
     }
 
     #endregion
@@ -819,6 +826,14 @@ namespace MediaPortal.MusicPlayer.BASS
             MusicStreamMessage(musicstream, MusicStream.StreamAction.Crossfading);
           }
         }
+
+        // Free pinned objects
+        if (_pinnedObjects.ContainsKey(musicstream.BassStream))
+        {
+          _pinnedObjects[musicstream.BassStream].Free();
+          _pinnedObjects.Remove(musicstream.BassStream);
+        }
+        gch.Free();
       }
       catch (AccessViolationException)
       {
