@@ -295,7 +295,7 @@ public:
   CCritSec        m_ReadAheadLock;
 
   CTsDuration     m_duration;
-  
+    
 
 protected:
   void ThreadProc();
@@ -307,7 +307,7 @@ private:
   void    BufferingPause(bool longPause, long extraSleep);
   void    ReadRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data);
   void    WriteRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data);
-    
+     
   CAudioPin*	    m_pAudioPin;
   CVideoPin*	    m_pVideoPin;
   CSubtitlePin*	  m_pSubtitlePin;

@@ -45,7 +45,3 @@ int CMemoryReader::HasData()
 void CMemoryReader::SetStopping(BOOL isStopping)
 {
 }
-
-void CMemoryReader::CancelPendingIO()
-{
-}

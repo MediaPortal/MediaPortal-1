@@ -39,15 +39,15 @@ FileReader::FileReader() :
   m_bUseDummyWrites(FALSE),
   m_bIsStopping(FALSE)
 {
-  //LogDebug("FileReader::ctor");
+  IsVistaOrLater();
+  //LogDebug("FileReader::ctor, IsVistaOrLater: %d", m_bIsVistaOrLater);
 }
 
 FileReader::~FileReader()
 {
-  m_bIsStopping = true;
+  SetStopping(true);
 	if (m_hFile != INVALID_HANDLE_VALUE) 
   {
-	  CancelIoEx(m_hFile, NULL); //Cancel all pending IO operations
     CloseFile();
   }
   
@@ -58,14 +58,14 @@ FileReader::~FileReader()
 
 HRESULT FileReader::GetFileName(LPOLESTR *lpszFileName)
 {
-  CAutoLock rLock (&m_accessLock);
+  CAutoLockFR rLock (&m_accessLock);
   *lpszFileName = m_pFileName;
   return S_OK;
 }
 
 HRESULT FileReader::SetFileName(LPCOLESTR pszFileName)
 {
-  CAutoLock rLock (&m_accessLock);
+  CAutoLockFR rLock (&m_accessLock);
   // Is this a valid filename supplied
   //CheckPointer(pszFileName,E_POINTER);
 
@@ -95,7 +95,7 @@ HRESULT FileReader::SetFileName(LPCOLESTR pszFileName)
 //
 HRESULT FileReader::OpenFile()
 {
-  CAutoLock rLock (&m_accessLock);
+  CAutoLockFR rLock (&m_accessLock);
 	WCHAR *pFileName = NULL;
 	DWORD Tmo=14 ;
   HANDLE hFileUnbuff = INVALID_HANDLE_VALUE;
@@ -113,7 +113,7 @@ HRESULT FileReader::OpenFile()
     LogDebug("FileReader::OpenFile() no filename");
 		return ERROR_INVALID_NAME;
 	}
-
+	
   m_bIsStopping = false;
 
 	pFileName = m_pFileName;
@@ -271,10 +271,8 @@ HRESULT FileReader::CloseFile()
 {
 	// Must lock this section to prevent problems related to
 	// closing the file while still receiving data in Receive()
-  BOOL tempStop = m_bIsStopping;
-  m_bIsStopping = true;
-  CAutoLock rLock (&m_accessLock);
-  m_bIsStopping = tempStop;
+  SetStopping(true);
+  CAutoLockFR rLock (&m_accessLock);
 
 	if (m_hFile == INVALID_HANDLE_VALUE) 
   {
@@ -286,13 +284,13 @@ HRESULT FileReader::CloseFile()
   
 	::CloseHandle(m_hFile);
 	m_hFile = INVALID_HANDLE_VALUE; // Invalidate the file
-
+	
 	return NOERROR;
 } // CloseFile
 
 BOOL FileReader::IsFileInvalid()
 {
-  CAutoLock rLock (&m_accessLock);
+  CAutoLockFR rLock (&m_accessLock);
 	return (m_hFile == INVALID_HANDLE_VALUE);
 }
 
@@ -319,7 +317,7 @@ HRESULT FileReader::GetFileSize(__int64 *pStartPosition, __int64 *pLength)
 
 DWORD FileReader::SetFilePointer(__int64 llDistanceToMove, DWORD dwMoveMethod)
 {
-  CAutoLock rLock (&m_accessLock);
+  CAutoLockFR rLock (&m_accessLock);
 
 	LARGE_INTEGER li;
 
@@ -330,7 +328,7 @@ DWORD FileReader::SetFilePointer(__int64 llDistanceToMove, DWORD dwMoveMethod)
 
 __int64 FileReader::GetFilePointer()
 {
-  CAutoLock rLock (&m_accessLock);
+  CAutoLockFR rLock (&m_accessLock);
 
 	LARGE_INTEGER li;
 	li.QuadPart = 0;
@@ -341,8 +339,14 @@ __int64 FileReader::GetFilePointer()
 
 HRESULT FileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes)
 {
-  CAutoLock rLock (&m_accessLock);
+  CAutoLockFR rLock (&m_accessLock);
 	HRESULT hr;
+	
+	if (m_bIsStopping)
+  {
+    *dwReadBytes = 0;
+		return E_FAIL;
+  }
 
 	// If the file has already been closed, don't continue
 	if (m_hFile == INVALID_HANDLE_VALUE)
@@ -351,13 +355,16 @@ HRESULT FileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes)
     *dwReadBytes = 0;
 		return E_FAIL;
   }
-
+  
   hr = ::ReadFile(m_hFile, (PVOID)pbData, (DWORD)lDataLength, dwReadBytes, NULL);//Read file data into buffer
 
 	if (!hr)
 	{
-	  HRESULT lastErr = HRESULT_FROM_WIN32(GetLastError());	  
-    LogDebug("FileReader::Read() read failed, Error = 0x%x, %ws, filename = %ws", lastErr, HresultToCString(lastErr), m_pFileName);
+  	if (!m_bIsStopping)
+    {
+  	  HRESULT lastErr = HRESULT_FROM_WIN32(GetLastError());	  
+      LogDebug("FileReader::Read() read failed, Error = 0x%x, %ws, filename = %ws", lastErr, HresultToCString(lastErr), m_pFileName);
+    }
     *dwReadBytes = 0;
 		return E_FAIL;
 	}
@@ -384,7 +391,7 @@ HRESULT FileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes, __
 
 __int64 FileReader::GetFileSize()
 {
-  CAutoLock rLock (&m_accessLock);
+  CAutoLockFR rLock (&m_accessLock);
   __int64 pStartPosition =0;
   __int64 pLength=0;
   GetFileSize(&pStartPosition, &pLength);
@@ -406,7 +413,7 @@ CString FileReader::randomStrGen(int length)
 //Enable dummy file writes to workaround SMB2/SM3 'file existance cache' problems
 void FileReader::SetDummyWrites(BOOL useDummyWrites)
 {
-  CAutoLock rLock (&m_accessLock);
+  CAutoLockFR rLock (&m_accessLock);
 	m_bUseDummyWrites = useDummyWrites;
 	//LogDebug("FileReader::SetDummyWrites, useDummyWrites = %d", useDummyWrites);
 }
@@ -418,7 +425,11 @@ void FileReader::SetFileNext(BOOL useFileNext)
 
 void FileReader::SetStopping(BOOL isStopping)
 {
-	m_bIsStopping = isStopping;
+	m_bIsStopping = isStopping;				
+  if (isStopping)
+	{
+	  CancelPendingIO();
+	}
 }
 
 CString FileReader::HresultToCString(HRESULT errToConvert)
@@ -430,9 +441,61 @@ CString FileReader::HresultToCString(HRESULT errToConvert)
 
 void FileReader::CancelPendingIO()
 {
-	if (m_hFile != INVALID_HANDLE_VALUE) 
+  if(m_bIsVistaOrLater)
   {
-    //LogDebug("FileReader::CancelPendingIO()");
-	  CancelIoEx(m_hFile, NULL); //Cancel all pending IO operations
-	}
+    if (m_accessLock.TryLock()==FALSE) 
+    {
+      //Something else is holding the lock, so may have outstanding IO requests
+    	if (m_accessLock.GetThreadID() != 0) //Valid thread ID
+    	{    	
+      	HANDLE threadHandle = ::OpenThread(THREAD_ALL_ACCESS, FALSE, m_accessLock.GetThreadID());    
+      	
+      	if (threadHandle != NULL)
+      	{
+          LogDebug("FileReader::CancelPendingIO() - start, threadID: %x", m_accessLock.GetThreadID());
+      	  ::CancelSynchronousIo(threadHandle);
+      	  ::CloseHandle(threadHandle);
+          LogDebug("FileReader::CancelPendingIO() - end");
+      	}        	
+      }
+    }
+    else
+    {
+      //We got the lock, so release it
+      m_accessLock.Unlock();
+    }
+  }
+}
+
+BOOL FileReader::IsVistaOrLater() 
+{
+   OSVERSIONINFOEX osvi;
+   DWORDLONG dwlConditionMask = 0;
+   int op=VER_GREATER_EQUAL;
+
+   // Initialize the OSVERSIONINFOEX structure.
+
+   ZeroMemory(&osvi, sizeof(OSVERSIONINFOEX));
+   osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+   osvi.dwMajorVersion = 6;
+   osvi.dwMinorVersion = 0;
+   osvi.wServicePackMajor = 0;
+   osvi.wServicePackMinor = 0;
+
+   // Initialize the condition mask.
+
+   VER_SET_CONDITION( dwlConditionMask, VER_MAJORVERSION, op );
+   VER_SET_CONDITION( dwlConditionMask, VER_MINORVERSION, op );
+   VER_SET_CONDITION( dwlConditionMask, VER_SERVICEPACKMAJOR, op );
+   VER_SET_CONDITION( dwlConditionMask, VER_SERVICEPACKMINOR, op );
+
+   // Perform the test.
+
+   m_bIsVistaOrLater = VerifyVersionInfo(
+      &osvi, 
+      VER_MAJORVERSION | VER_MINORVERSION | 
+      VER_SERVICEPACKMAJOR | VER_SERVICEPACKMINOR,
+      dwlConditionMask);
+      
+   return m_bIsVistaOrLater;
 }

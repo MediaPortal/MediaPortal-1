@@ -13,7 +13,6 @@ public:
   bool IsBuffer(){return true;};
   int HasData();
 	void SetStopping(BOOL isStopping);
-	void CancelPendingIO();
 private:
   CMemoryBuffer& m_buffer;
 };

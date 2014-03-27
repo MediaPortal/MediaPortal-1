@@ -79,7 +79,6 @@ MultiFileReader::MultiFileReader(BOOL useFileNext, BOOL useDummyWrites):
 MultiFileReader::~MultiFileReader()
 {
   SetStopping(true);
-  CancelPendingIO();
 	m_TSBufferFile.CloseFile();
 	m_TSFile.CloseFile();
 	m_TSFileNext.CloseFile();
@@ -166,7 +165,6 @@ HRESULT MultiFileReader::OpenFile()
 //
 HRESULT MultiFileReader::CloseFile()
 {
-  BOOL tempStop = m_bIsStopping;
   SetStopping(true);
   CAutoLock rLock (&m_accessLock);
 	HRESULT hr;
@@ -175,7 +173,6 @@ HRESULT MultiFileReader::CloseFile()
 	m_TSFileId = -1;
 	hr = m_TSFileNext.CloseFile();
 	m_TSFileIdNext = -1;
-  SetStopping(tempStop);
 	return hr;
 }
 
@@ -380,7 +377,10 @@ HRESULT MultiFileReader::ReadNoLock(PBYTE pbData, ULONG lDataLength, ULONG *dwRe
 		hr = m_TSFile.Read(pbData, (ULONG)bytesToRead, &bytesRead);
     if (!SUCCEEDED(hr))
     {
-      LogDebug("MultiFileReader::READ FAILED1");
+      if (!m_bIsStopping)
+      {
+        LogDebug("MultiFileReader::READ FAILED1");
+      }
 	    *dwReadBytes = 0;
 		  m_currentPosition = oldCurrentPosn;
       return E_FAIL;
@@ -400,7 +400,10 @@ HRESULT MultiFileReader::ReadNoLock(PBYTE pbData, ULONG lDataLength, ULONG *dwRe
 		hr = this->ReadNoLock(pbData + (ULONG)bytesToRead, lDataLength - (ULONG)bytesToRead, dwReadBytes);
     if (!SUCCEEDED(hr))
     {
-      LogDebug("MultiFileReader::READ FAILED2");
+      if (!m_bIsStopping)
+      {
+        LogDebug("MultiFileReader::READ FAILED2");
+      }
 	    *dwReadBytes = 0;
 		  m_currentPosition = oldCurrentPosn;
       return E_FAIL;
@@ -413,7 +416,10 @@ HRESULT MultiFileReader::ReadNoLock(PBYTE pbData, ULONG lDataLength, ULONG *dwRe
 		hr = m_TSFile.Read(pbData, lDataLength, dwReadBytes);
     if (!SUCCEEDED(hr))
     {
-      LogDebug("MultiFileReader::READ FAILED3");
+      if (!m_bIsStopping)
+      {
+        LogDebug("MultiFileReader::READ FAILED3");
+      }
 	    *dwReadBytes = 0;
 		  m_currentPosition = oldCurrentPosn;
       return E_FAIL;
@@ -834,13 +840,5 @@ void MultiFileReader::SetStopping(BOOL isStopping)
 	m_TSBufferFile.SetStopping(isStopping);
 	m_TSFile.SetStopping(isStopping);
 	m_TSFileGetLength.SetStopping(isStopping);
-	m_TSFileNext.SetStopping(isStopping);
-}
-
-void MultiFileReader::CancelPendingIO()
-{
-	m_TSBufferFile.CancelPendingIO();
-	m_TSFile.CancelPendingIO();
-	m_TSFileGetLength.CancelPendingIO();
-	m_TSFileNext.CancelPendingIO();
+	m_TSFileNext.SetStopping(isStopping);	
 }

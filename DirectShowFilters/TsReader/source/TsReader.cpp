@@ -322,7 +322,7 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
   m_fileReader=NULL;
   m_fileDuration=NULL;
   Compensation=CRefTime(0L);
-
+  
   LogDebug("CTsReaderFilter::ctor");
   m_pAudioPin = new CAudioPin(GetOwner(), this, phr,&m_section);
   m_pVideoPin = new CVideoPin(GetOwner(), this, phr,&m_section);
@@ -809,7 +809,13 @@ STDMETHODIMP CTsReaderFilter::Stop()
   m_bStopping = true;
   //Block duration file read updates
   m_updateThreadDuration.StopUpdate(true);
+  
+  //Cancel all pending IO operations, to avoid possible hangs if network connection is lost and to speed up the 'stop'
   m_fileReader->SetStopping(true);
+  if (m_fileDuration != NULL)
+  {
+    m_fileDuration->SetStopping(true);
+  }
 
   int i=0;
   //Wait for output pin data sample delivery and seeking to finish - timeout after 100 loop iterations in case pin delivery threads are stalled
@@ -829,12 +835,6 @@ STDMETHODIMP CTsReaderFilter::Stop()
   }
 
   { //Context for CAutoLock
-    //Cancel all pending IO operations first, to avoid possible hangs if network connection is lost
-    m_fileReader->CancelPendingIO();
-    if (m_fileDuration != NULL)
-    {
-      m_fileDuration->CancelPendingIO();
-    }
     //LogDebug("CTsReaderFilter::Stop()  -stop source pre-lock RAL, state %d", m_State);
     CAutoLock rLock (&m_ReadAheadLock);
     //LogDebug("CTsReaderFilter::Stop()  -stop source pre-lock DTL, state %d", m_State);
@@ -869,6 +869,10 @@ STDMETHODIMP CTsReaderFilter::Stop()
   m_bStopping = false;
   m_updateThreadDuration.StopUpdate(false);
   m_fileReader->SetStopping(false);
+  if (m_fileDuration != NULL)
+  {
+    m_fileDuration->SetStopping(false);
+  }
   m_bStoppedForUnexpectedSeek=true ;
   return hr;
 }
@@ -1260,6 +1264,8 @@ bool CTsReaderFilter::Seek(CRefTime& seekTime)
     CTsFileSeek seek(m_duration);
     seek.SetFileReader(m_fileReader);
     BOOL useFileNext = m_fileReader->GetFileNext();
+    m_fileReader->SetStopping(true); //Stop outstanding IO etc 
+    m_fileReader->SetStopping(false);    
     bool eof = seek.Seek(seekTime);
     m_fileReader->SetFileNext(useFileNext);
     m_bRecording = true; // force a duration update soon..
@@ -2401,8 +2407,6 @@ void CTsReaderFilter::CheckForMPAR()
     LogDebug("MPAR/Reclock not found");
   }
 }
-
-
 
 
 ////////////////////////////////////////////////////////////////////////

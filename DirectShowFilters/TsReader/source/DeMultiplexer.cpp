@@ -143,7 +143,7 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   LogDebug("  Logging format: [Date Time] [InstanceID] [ThreadID] Message....  ");
   LogDebug("===================================================================");
   LogDebug("demux: Start file read thread");
-  
+    
   StartThread();
 }
 
@@ -972,6 +972,8 @@ void CDeMultiplexer::Start()
   m_vidDTScount = 0;
   m_bUsingGOPtimestamp = false;
   int dwBytesProcessed=0;
+  m_reader->SetStopping(true); //Stop outstanding IO etc 
+  m_reader->SetStopping(false);    
   CAutoLock lock (&m_filter.m_ReadAheadLock);
   DWORD m_Time = GET_TIME_NOW();
   while((GET_TIME_NOW() - m_Time) < 10000)
@@ -1033,7 +1035,8 @@ int CDeMultiplexer::ReadAheadFromFile()
   //end of file has been reached or
   //demuxer should stop getting video packets
   //then return an error
-  if ((m_filter.State() == State_Stopped) || !m_filter.IsFilterRunning() || m_filter.m_bStopping || m_bEndOfFile || m_bStarting) 
+  if ((m_filter.State() == State_Stopped) || !m_filter.IsFilterRunning() || 
+       m_filter.IsStopping() || m_filter.IsSeeking() || m_bEndOfFile || m_bStarting) 
   {
     return -1;
   }
@@ -1160,7 +1163,7 @@ int CDeMultiplexer::ReadFromFile()
     }
     else
     {
-      LogDebug("CDeMultiplexer::ReadFromFile() - Read failed, HRESULT = 0x%x", readResult);
+      //LogDebug("CDeMultiplexer::ReadFromFile() - Read failed, HRESULT = 0x%x", readResult);
       return -2;      
     }
   }

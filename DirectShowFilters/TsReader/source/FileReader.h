@@ -29,6 +29,69 @@
 
 #include <Streams.h>
 
+
+// Modified version of Microsoft CCritSec and CAutoLock methods from wxutil.h
+class CCritSecFR {
+    // make copy constructor and assignment operator inaccessible
+    CCritSecFR(const CCritSecFR &refCritSec);
+    CCritSecFR &operator=(const CCritSecFR &refCritSec);
+    
+    CRITICAL_SECTION m_CritSecFR;
+
+public:
+    DWORD   m_ownerThreadID; //stores current 'lock owner' thread ID
+
+public:
+    CCritSecFR() {
+        InitializeCriticalSection(&m_CritSecFR);
+	      m_ownerThreadID = 0;
+    };
+
+    ~CCritSecFR() {
+        DeleteCriticalSection(&m_CritSecFR);
+    };
+
+    void Lock() {
+        EnterCriticalSection(&m_CritSecFR);
+	      m_ownerThreadID = GetCurrentThreadId();
+    };
+
+    BOOL TryLock() {
+        return TryEnterCriticalSection(&m_CritSecFR);
+    };
+
+    void Unlock() {
+        LeaveCriticalSection(&m_CritSecFR);
+	      m_ownerThreadID = 0;
+    };
+    
+    DWORD GetThreadID() {
+	      return m_ownerThreadID;
+    };
+};
+
+// locks a critical section, and unlocks it automatically
+// when the lock goes out of scope
+class CAutoLockFR {
+    // make copy constructor and assignment operator inaccessible
+    CAutoLockFR(const CAutoLockFR &refAutoLock);
+    CAutoLockFR &operator=(const CAutoLockFR &refAutoLock);
+
+protected:
+    CCritSecFR * m_pLockFR;
+
+public:
+    CAutoLockFR(CCritSecFR * plockFR)
+    {
+        m_pLockFR = plockFR;
+        m_pLockFR->Lock();
+    };
+
+    ~CAutoLockFR() {
+        m_pLockFR->Unlock();
+    };
+};
+
 class FileReader
 {
 public:
@@ -42,8 +105,6 @@ public:
 	virtual HRESULT OpenFile();
 	virtual HRESULT CloseFile();
 	virtual HRESULT Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes);
-	virtual HRESULT Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes, __int64 llDistanceToMove, DWORD dwMoveMethod);
-	virtual HRESULT GetFileSize(__int64 *pStartPosition, __int64 *pLength);
 	virtual BOOL IsFileInvalid();
 	virtual DWORD SetFilePointer(__int64 llDistanceToMove, DWORD dwMoveMethod);
 	virtual __int64 GetFilePointer();
@@ -62,19 +123,25 @@ public:
 	virtual void SetFileNext(BOOL useFileNext);
 	
 	virtual void SetStopping(BOOL isStopping);
-	virtual void CancelPendingIO();
   
 protected:
   
+	HRESULT GetFileSize(__int64 *pStartPosition, __int64 *pLength);
+	HRESULT Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes, __int64 llDistanceToMove, DWORD dwMoveMethod);
+  
   CString randomStrGen(int length); 
   CString HresultToCString(HRESULT errToConvert);
+  BOOL    IsVistaOrLater();
+	void    CancelPendingIO();
 	
 	HANDLE   m_hFile; 				// Handle to file for streaming
 	LPOLESTR m_pFileName;           // The filename where we stream
 
 	BOOL     m_bUseDummyWrites;
 	BOOL     m_bIsStopping;
-  CCritSec     m_accessLock;
+	BOOL     m_bIsVistaOrLater;
+	DWORD    m_dwLastThreadID;
+  CCritSecFR     m_accessLock;
 };
 
 #endif
