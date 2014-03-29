@@ -50,7 +50,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBdaDiseqc
     private bool _isMicrosoftBdaDiseqc = false;
 
     private IKsPropertySet _propertySet = null;
-    private uint _requestId = 1;                          // Unique request ID for raw DiSEqC commands.
+    private int _requestId = 1;                           // Unique request ID for raw DiSEqC commands.
     private IBDA_DeviceControl _deviceControl = null;
 
     private IntPtr _instanceBuffer = IntPtr.Zero;
@@ -351,7 +351,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBdaDiseqc
         {
           BdaDiseqcMessage message = new BdaDiseqcMessage();
           message.RequestId = _requestId++;
-          message.PacketLength = (uint)command.Length;
+          message.PacketLength = command.Length;
           message.PacketData = new byte[MAX_DISEQC_MESSAGE_LENGTH];
           Buffer.BlockCopy(command, 0, message.PacketData, 0, command.Length);
           Marshal.StructureToPtr(message, _paramBuffer, false);
@@ -423,7 +423,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBdaDiseqc
         }
         this.LogDebug("Microsoft BDA DiSEqC: result = success");
         response = new byte[message.PacketLength];
-        Buffer.BlockCopy(message.PacketData, 0, response, 0, (int)message.PacketLength);
+        Buffer.BlockCopy(message.PacketData, 0, response, 0, message.PacketLength);
         return true;
       }
 

@@ -28,7 +28,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
   public delegate void NttSourceNameDelegate(AtscTransmissionMedium transmissionMedium, bool applicationType, int sourceId, string name);
 
   /// <summary>
-  /// ATSC/SCTE network text table parser. Refer to ATSC A-56 and SCTE 65.
+  /// ATSC/SCTE network text table parser. Refer to ATSC A/56 and SCTE 65.
   /// </summary>
   public class ParserNtt : ParserBase
   {
@@ -43,7 +43,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
       MapName
     }
 
-    private object _lock = new object();
     private TableCompleteDelegate _tableCompleteEventDelegate = null;
     private NttSourceNameDelegate _sourceNameEventDelegate = null;
 

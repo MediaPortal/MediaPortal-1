@@ -56,9 +56,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Upnp.Enum
       return false;
     }
 
+    public override int GetHashCode()
+    {
+      return _name.GetHashCode();
+    }
+
     public static ICollection<AvTransportRecordQualityMode> Values
     {
-      get { return _values.Values; }
+      get
+      {
+        return _values.Values;
+      }
     }
 
     public static explicit operator AvTransportRecordQualityMode(string name)

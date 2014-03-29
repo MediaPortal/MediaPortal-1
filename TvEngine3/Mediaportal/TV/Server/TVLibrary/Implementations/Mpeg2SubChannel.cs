@@ -551,7 +551,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
             _pids.Add(es.Pid);
             _tsFilterInterface.AnalyserAddPid(_subChannelIndex, es.Pid);
           }
-          else if (es.LogicalStreamType == LogicalStreamType.SubTitles ||
+          else if (es.LogicalStreamType == LogicalStreamType.Subtitles ||
             es.LogicalStreamType == LogicalStreamType.Teletext)
           {
             _pids.Add(es.Pid);

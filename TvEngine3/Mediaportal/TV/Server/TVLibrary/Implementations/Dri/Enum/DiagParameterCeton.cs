@@ -87,9 +87,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Enum
       return false;
     }
 
+    public override int GetHashCode()
+    {
+      return _name.GetHashCode();
+    }
+
     public static ICollection<DiagParameterCeton> Values
     {
-      get { return _values.Values; }
+      get
+      {
+        return _values.Values;
+      }
     }
 
     public static explicit operator DiagParameterCeton(string name)

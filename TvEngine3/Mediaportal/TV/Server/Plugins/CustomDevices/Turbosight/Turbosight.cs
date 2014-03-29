@@ -1385,7 +1385,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
       StartMmiHandlerThread();
 
       this.LogDebug("Turbosight: result = success");
-      return true;
+      return _isCiSlotPresent;
     }
 
     /// <summary>

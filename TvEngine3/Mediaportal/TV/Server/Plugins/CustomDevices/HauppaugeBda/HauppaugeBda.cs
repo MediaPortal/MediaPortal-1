@@ -38,7 +38,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBda
   {
     #region enums
 
-    private new enum BdaExtensionProperty
+    private enum BdaExtensionProperty
     {
       /// For sending and receiving DiSEqC messages.
       DiseqcMessage = 0,

@@ -27,6 +27,10 @@ using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
 {
+  /// <summary>
+  /// An override of the analog capture component class. This enables us to
+  /// easily buid an RTL283x FM radio capture graph.
+  /// </summary>
   public class CaptureRtl283xFm : Capture
   {
     [ComImport, Guid("6b368f8c-f383-44d3-b8c2-3a150b70b1c9")]
@@ -41,7 +45,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
     /// <param name="captureGraphBuilder">The capture graph builder instance associated with the graph.</param>
     /// <param name="productInstanceId">A common identifier shared by the tuner's components.</param>
     /// <param name="crossbar">The crossbar component.</param>
-    public virtual void PerformLoading(IFilterGraph2 graph, ICaptureGraphBuilder2 captureGraphBuilder, string productInstanceId, Crossbar crossbar)
+    public override void PerformLoading(IFilterGraph2 graph, ICaptureGraphBuilder2 captureGraphBuilder, string productInstanceId, Crossbar crossbar)
     {
       this.LogDebug("RTL283x FM capture: perform loading");
       _filterAudio = FilterGraphTools.AddFilterFromRegisteredClsid(graph, typeof(Rtl283xFmSource).GUID, "RTL283x FM Source");

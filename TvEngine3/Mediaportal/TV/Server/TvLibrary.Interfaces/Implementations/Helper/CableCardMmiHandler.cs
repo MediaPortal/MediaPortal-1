@@ -31,7 +31,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
 {
   #region events
 
+  /// <summary>
+  /// A delegate for the enter menu action.
+  /// </summary>
+  /// <returns><c>true</c> if the menu is entered successfully, otherwise <c>false</c></returns>
   public delegate bool EnterMenuDelegate();
+
+  /// <summary>
+  /// A delegate for the close dialog action.
+  /// </summary>
+  /// <returns><c>true</c> if the dialog is closed successfully, otherwise <c>false</c></returns>
   public delegate bool CloseDialogDelegate(byte dialogNumber);
 
   #endregion

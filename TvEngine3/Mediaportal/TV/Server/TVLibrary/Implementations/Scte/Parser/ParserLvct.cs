@@ -46,7 +46,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
       bool accessControlled, bool hidden, int pathSelect, bool outOfBand, bool hideGuide, AtscServiceType serviceType, int sourceId);
 
   /// <summary>
-  /// ATSC/SCTE long form virtual channel table parser. Refer to ATSC A-65 and SCTE 65.
+  /// ATSC/SCTE long form virtual channel table parser. Refer to ATSC A/65 and SCTE 65.
   /// </summary>
   public class ParserLvct
   {
@@ -116,8 +116,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
         }
 
         byte tableId = section[2];
-        // 0xc8 = ATSC terrestrial, A-65
-        // 0xc9 = SCTE cable, SCTE-65
+        // 0xc8 = ATSC terrestrial, A/65
+        // 0xc9 = SCTE cable, SCTE 65
         // The cable and terrestrial L-VCT formats are almost identical. The few
         // differences are noted below.
         if (tableId != 0xc8 && tableId != 0xc9)

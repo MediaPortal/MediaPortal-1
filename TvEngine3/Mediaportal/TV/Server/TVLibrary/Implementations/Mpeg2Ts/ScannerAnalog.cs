@@ -48,7 +48,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
     /// <param name="channel">The channel.</param>
     /// <param name="settings">The settings.</param>
     /// <returns></returns>
-    public List<IChannel> Scan(IChannel channel, ScanParameters settings)
+    public override List<IChannel> Scan(IChannel channel, ScanParameters settings)
     {
       AnalogChannel analogChannel = channel as AnalogChannel;
       if (analogChannel != null && analogChannel.VideoSource != CaptureSourceVideo.Tuner)

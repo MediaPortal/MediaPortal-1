@@ -380,7 +380,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       Audio,
       Video,
       Teletext,
-      SubTitle,
+      Subtitle,
       Private
     }
 
@@ -1947,9 +1947,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
         {
           esType = AnyseeEsType.Audio;
         }
-        else if (es.LogicalStreamType == LogicalStreamType.SubTitles)
+        else if (es.LogicalStreamType == LogicalStreamType.Subtitles)
         {
-          esType = AnyseeEsType.SubTitle;
+          esType = AnyseeEsType.Subtitle;
         }
         else if (es.LogicalStreamType == LogicalStreamType.Teletext)
         {

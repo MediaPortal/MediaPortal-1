@@ -241,48 +241,6 @@ namespace DirectShowLib.BDA
   }
 
   [ComImport, SuppressUnmanagedCodeSecurity,
-   Guid("71985F47-1CA1-11d3-9CC8-00C04F7971E0"),
-   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  public interface IBDA_FrequencyFilter
-  {
-    [PreserveSig]
-    int put_Autotune([In] int ulTransponder);
-
-    [PreserveSig]
-    int get_Autotune([Out] out int pulTransponder);
-
-    [PreserveSig]
-    int put_Frequency([In] int ulFrequency);
-
-    [PreserveSig]
-    int get_Frequency([Out] out int pulFrequency);
-
-    [PreserveSig]
-    int put_Polarity([In] Polarisation Polarity);
-
-    [PreserveSig]
-    int get_Polarity([Out] out Polarisation pPolarity);
-
-    [PreserveSig]
-    int put_Range([In] ulong ulRange);        // *** Changed from int to ulong. ***
-
-    [PreserveSig]
-    int get_Range([Out] out ulong pulRange);  // *** Changed from int to ulong. ***
-
-    [PreserveSig]
-    int put_Bandwidth([In] int ulBandwidth);
-
-    [PreserveSig]
-    int get_Bandwidth([Out] out int pulBandwidth);
-
-    [PreserveSig]
-    int put_FrequencyMultiplier([In] int ulMultiplier);
-
-    [PreserveSig]
-    int get_FrequencyMultiplier([Out] out int pulMultiplier);
-  }
-
-  [ComImport, SuppressUnmanagedCodeSecurity,
    Guid("CD51F1E0-7BE9-4123-8482-A2A796C0A6B0"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IBDA_ConditionalAccess
@@ -1578,8 +1536,8 @@ namespace DirectShowLib.BDA
   /// </summary>
   public struct BdaDiseqcMessage
   {
-    public UInt32 RequestId;
-    public UInt32 PacketLength;
+    public int RequestId;
+    public int PacketLength;
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
     public byte[] PacketData;
   }

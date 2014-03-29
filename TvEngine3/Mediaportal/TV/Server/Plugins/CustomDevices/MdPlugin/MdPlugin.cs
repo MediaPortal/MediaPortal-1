@@ -261,7 +261,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
         }
         else
         {
-          if (es.LogicalStreamType == LogicalStreamType.Ac3 || es.LogicalStreamType == LogicalStreamType.EnhancedAc3)
+          if (es.LogicalStreamType == LogicalStreamType.AudioAc3 || es.LogicalStreamType == LogicalStreamType.AudioEnhancedAc3)
           {
             if (programToDecode.Ac3AudioPid == 0)
             {

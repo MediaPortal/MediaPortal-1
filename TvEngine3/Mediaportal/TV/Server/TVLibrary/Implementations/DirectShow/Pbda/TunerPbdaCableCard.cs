@@ -92,7 +92,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
     /// Add and connect the appropriate BDA capture/receiver filter into the graph.
     /// </summary>
     /// <param name="lastFilter">The upstream filter to connect the capture filter to.</param>
-    protected virtual void AddAndConnectCaptureFilterIntoGraph(ref IBaseFilter lastFilter)
+    protected override void AddAndConnectCaptureFilterIntoGraph(ref IBaseFilter lastFilter)
     {
       // PBDA graphs don't require a capture filter. Expect problems if you try to connect anything
       // other than the PBDA PT filter to the tuner filter output.

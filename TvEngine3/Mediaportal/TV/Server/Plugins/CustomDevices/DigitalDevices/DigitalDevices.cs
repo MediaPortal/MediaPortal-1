@@ -277,7 +277,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
     // For DiSEqC support only.
     private IKsPropertySet _propertySet = null;
     private IBDA_DeviceControl _deviceControl = null;
-    private uint _requestId = 1;
+    private int _requestId = 1;
     private IntPtr _instanceBuffer = IntPtr.Zero;
     private IntPtr _diseqcBuffer = IntPtr.Zero;
 
@@ -1665,7 +1665,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
 
       BdaDiseqcMessage message = new BdaDiseqcMessage();
       message.RequestId = _requestId++;
-      message.PacketLength = (uint)command.Length;
+      message.PacketLength = command.Length;
       message.PacketData = new byte[MAX_DISEQC_MESSAGE_LENGTH];
       Buffer.BlockCopy(command, 0, message.PacketData, 0, command.Length);
       Marshal.StructureToPtr(message, _diseqcBuffer, false);
@@ -1729,7 +1729,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
         }
         this.LogDebug("Digital Devices: result = success");
         response = new byte[message.PacketLength];
-        Buffer.BlockCopy(message.PacketData, 0, response, 0, (int)message.PacketLength);
+        Buffer.BlockCopy(message.PacketData, 0, response, 0, message.PacketLength);
         return true;
       }
 

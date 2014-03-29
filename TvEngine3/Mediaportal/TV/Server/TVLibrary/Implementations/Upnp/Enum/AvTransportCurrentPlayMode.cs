@@ -56,6 +56,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Upnp.Enum
       return false;
     }
 
+    public override int GetHashCode()
+    {
+      return _name.GetHashCode();
+    }
+
     public static explicit operator AvTransportCurrentPlayMode(string name)
     {
       AvTransportCurrentPlayMode value = null;

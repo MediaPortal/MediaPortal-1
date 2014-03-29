@@ -355,7 +355,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Realtek
       if (_pidFilterPidsToRemove.Count > 0)
       {
         this.LogDebug("  disable {0} current PID(s)...", _pidFilterPidsToRemove.Count);
-        int i = 0;
         foreach (ushort pid in _pidFilterPidsToRemove)
         {
           Marshal.WriteInt32(_generalBuffer, 0, pid);
@@ -376,7 +375,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Realtek
       if (_pidFilterPidsToAdd.Count > 0)
       {
         this.LogDebug("  enable {0} new PID(s)...", _pidFilterPidsToAdd.Count);
-        int i = 0;
         foreach (ushort pid in _pidFilterPidsToAdd)
         {
           Marshal.WriteInt32(_generalBuffer, 0, pid);

@@ -87,7 +87,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     /// <param name="channel">The channel.</param>
     /// <param name="settings">The settings.</param>
     /// <returns></returns>
-    public List<IChannel> Scan(IChannel channel, ScanParameters settings)
+    public virtual List<IChannel> Scan(IChannel channel, ScanParameters settings)
     {
       try
       {
@@ -721,6 +721,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
         serviceType == (int)DvbServiceType.Mpeg2HdDigitalTelevision ||
         serviceType == (int)DvbServiceType.AdvancedCodecSdDigitalTelevision ||
         serviceType == (int)DvbServiceType.AdvancedCodecHdDigitalTelevision ||
+        serviceType == (int)DvbServiceType.AdvancedCodecFrameCompatiblePlanoStereoscopicHdDigitalTelevision ||
         serviceType == (int)DvbServiceType.SkyGermanyOptionChannel)
       {
         return true;

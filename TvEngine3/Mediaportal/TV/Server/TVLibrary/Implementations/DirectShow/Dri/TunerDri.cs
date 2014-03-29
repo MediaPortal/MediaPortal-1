@@ -782,8 +782,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
         }
 
         TunerModulation modulation = TunerModulation.All;
+        bool isSignalLocked;
         uint snr;
-        _serviceTuner.GetTunerParameters(out _isSignalPresent, out frequency, out modulation, out _isSignalLocked, out _signalLevel, out snr);
+        _serviceTuner.GetTunerParameters(out _isSignalPresent, out frequency, out modulation, out isSignalLocked, out _signalLevel, out snr);
+        _isSignalLocked = isSignalLocked;
         _signalLevel = (_signalLevel * 2) + 50;
         _signalQuality = (int)snr;
         if (_currentFrequency == -1)

@@ -28,7 +28,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
   {
     Mgt = -1,
 
-    // ATSC A-65
+    // ATSC A/65
     TvctCurrentNext1 = 0x0000,
     TvctCurrentNext0 = 0x0001,
     CvctCurrentNext1 = 0x0002,
@@ -44,7 +44,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
     NitMms = 0x0021,
     NttSns = 0x0030
 
-    // ATSC A-65
+    // ATSC A/65
     // 0x0100..0x017f EIT-0..EIT-127
     // 0x0200..0x027f ETT-0..ETT-127
     // 0x0301..0x03ff RRT, rating_region 0x01..0xff

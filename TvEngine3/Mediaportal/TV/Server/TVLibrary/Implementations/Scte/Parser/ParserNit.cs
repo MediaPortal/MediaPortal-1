@@ -25,7 +25,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
 {
-  // See ATSC A-56 table 5.1.
+  // See ATSC A/56 or SCTE 57 table 5.1.
   public enum AtscTransmissionMedium
   {
     Cable = 0,
@@ -72,7 +72,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
     BinaryConvolutionCodeRate innerCodingMode, bool isSplitBitstreamMode, ModulationType modulationFormat, int symbolRate);
 
   /// <summary>
-  /// ATSC/SCTE network information table parser. Refer to ATSC A-56 and SCTE 65.
+  /// ATSC/SCTE network information table parser. Refer to ATSC A/56 and SCTE 65.
   /// </summary>
   public class ParserNit : ParserBase
   {
@@ -394,6 +394,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
       }
       pointer++;
 
+      // Comes from SCTE 65. Don't be confused by ATSC A/56 or SCTE 57.
       bool isSplitBitstreamMode = ((section[pointer] & 0x80) != 0);
       ModulationType modulationFormat = ModulationType.ModNotSet;
       switch (section[pointer] & 0x1f)

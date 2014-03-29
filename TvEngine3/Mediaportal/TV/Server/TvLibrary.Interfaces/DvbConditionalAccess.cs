@@ -267,13 +267,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// </summary>
     ListMore,
     /// <summary>
-    /// Sub-title segment - last.
+    /// Subtitle segment - last.
     /// </summary>
-    SubTitleSegmentLast,
+    SubtitleSegmentLast,
     /// <summary>
-    /// Sub-title segment - more.
+    /// Subtitle segment - more.
     /// </summary>
-    SubTitleSegmentMore,
+    SubtitleSegmentMore,
     /// <summary>
     /// Display message.
     /// </summary>
@@ -291,13 +291,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// </summary>
     SceneControl,
     /// <summary>
-    /// Sub-title download - last.
+    /// Subtitle download - last.
     /// </summary>
-    SubTitleDownloadLast,
+    SubtitleDownloadLast,
     /// <summary>
-    /// Sub-title download - more.
+    /// Subtitle download - more.
     /// </summary>
-    SubTitleDownloadMore,
+    SubtitleDownloadMore,
     /// <summary>
     /// Flush download.
     /// </summary>
@@ -411,7 +411,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// <summary>
     /// MPEG ISO/IEC 14496-3 audio with the LATM transport syntax (LATM-AAC audio)
     /// </summary>
-    Mpeg4Part3Audio = 0x11,
+    Mpeg4Part3AudioTransportLatm = 0x11,
     /// <summary>
     /// MPEG ISO/IEC 14496-1 SL-packetized stream or FlexMux stream carried in PES packets
     /// </summary>
@@ -447,13 +447,54 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// <summary>
     /// MPEG IPMP stream defined in ISO/IEC 13818-11
     /// </summary>
-    Mpeg4Part11Ipmp = 0x1a,
+    Mpeg2Part11Ipmp = 0x1a,
     /// <summary>
     /// MPEG AVC video stream as defined in ITU-T Rec. H.264 | ISO/IEC 14496-10 video
     /// </summary>
     Mpeg4Part10Video = 0x1b,
+    /// <summary>
+    /// MPEG ISO/IEC 14496-3 audio, without using any additional transport syntax, such as DST, ALS and SLS
+    /// </summary>
+    Mpeg4Part3AudioTransportNone = 0x1c,
+    /// <summary>
+    /// MPEG ISO/IEC 14496-17 text
+    /// </summary>
+    Mpeg4Part17Subtitles = 0x1d,
+    /// <summary>
+    /// MPEG auxiliary video stream as defined in ISO/IEC 23002-3
+    /// </summary>
+    MpegCAuxiliaryVideo = 0x1e,
+    /// <summary>
+    /// MPEG SVC video sub-bitstream of an AVC video stream conforming to one or more profiles defined in Annex G of ITU-T Rec. H.264 | ISO/IEC 14496-10
+    /// </summary>
+    Mpeg4Part10AnnexGVideoSvc = 0x1f,
+    /// <summary>
+    /// MPEG MVC video sub-bitstream of an AVC video stream conforming to one or more profiles defined in Annex H of ITU-T Rec. H.264 | ISO/IEC 14496-10
+    /// </summary>
+    Mpeg4Part10AnnexHVideoMvc = 0x20,
+    /// <summary>
+    /// MPEG video stream conforming to one or more profiles as defined in ITU-T Rec T.800 | ISO/IEC 15444-1
+    /// </summary>
+    JpegVideo = 0x21,
+    /// <summary>
+    /// MPEG ITU-T Rec. H.262 | ISO/IEC 13818-2 video with stereoscopic content coded using frame packing arrangement information
+    /// </summary>
+    Mpeg2Part2VideoStereoscopicFramePacked = 0x22,
+    /// <summary>
+    /// MPEG ITU-T Rec. H.262 | ISO/IEC 13818-2 video with additional video stream for service-compatible stereoscopic services
+    /// </summary>
+    Mpeg2Part2VideoStereoscopicAdditionalStream = 0x23,
+    /// <summary>
+    /// MPEG ITU-T Rec. H.264 | ISO/IEC 14496-10 video with additional video stream for service-compatible stereoscopic services
+    /// </summary>
+    Mpeg4Part10VideoStereoscopicAdditionalStream = 0x24,
 
-    // 0x1c - 0x7e  ITU-T Rec. H.222.0 | ISO/IEC 13818-1 reserved
+    // 0x25 - 0x7e  ITU-T Rec. H.222.0 | ISO/IEC 13818-1 reserved
+
+    /// <summary>
+    /// MPEG IPMP stream
+    /// </summary>
+    Ipmp = 0x7f,
 
     #endregion
 
@@ -467,6 +508,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// ATSC E-AC3 audio
     /// </summary>
     EnhancedAc3Audio = 0x87,
+    /// <summary>
+    /// ATSC DTS HD audio
+    /// </summary>
+    DtsHdAudio = 0x88,
 
     #endregion
 
@@ -481,9 +526,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// </remarks>
     DigiCipher2Video = 0x80,
     /// <summary>
-    /// SCTE sub-titles (SCTE 27)
+    /// SCTE subtitles (SCTE 27)
     /// </summary>
-    SubTitles = 0x82
+    Subtitles = 0x82
 
     #endregion
   }
@@ -508,22 +553,57 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// MPEG ISO/IEC 11172-2 video (MPEG 1 video)
     /// </summary>
     [Description("MPEG 1 Video")]
-    Mpeg1Video = 0x01,
+    VideoMpeg1 = 0x01,
     /// <summary>
     /// MPEG ITU-T Rec. H.262 | ISO/IEC 13818-2 Video or ISO/IEC 11172-2 constrained parameter video stream (MPEG 2 video)
     /// </summary>
     [Description("MPEG 2 Video")]
-    Mpeg2Video = 0x02,
+    VideoMpeg2 = 0x02,
     /// <summary>
     /// MPEG ISO/IEC 14496-2 visual (MPEG 4)
     /// </summary>
-    [Description("MPEG 4 Video")]
-    Mpeg4Video = 0x10,
+    [Description("MPEG 4 Part 2 Video")]
+    VideoMpeg4Part2 = 0x10,
     /// <summary>
     /// MPEG AVC video stream as defined in ITU-T Rec. H.264 | ISO/IEC 14496-10 video
     /// </summary>
-    [Description("H.264/AVC Video")]
-    AvcVideo = 0x1b,
+    [Description("MPEG 4 Part 10 (H.264/AVC) Video")]
+    VideoMpeg4Part10 = 0x1b,
+    /// <summary>
+    /// MPEG auxiliary video stream as defined in ISO/IEC 23002-3
+    /// </summary>
+    [Description("MPEG C Video")]
+    VideoMpegC = 0x1e,
+    /// <summary>
+    /// MPEG SVC video sub-bitstream of an AVC video stream conforming to one or more profiles defined in Annex G of ITU-T Rec. H.264 | ISO/IEC 14496-10
+    /// </summary>
+    [Description("MPEG 4 Part 10 (H.264/AVC) Annex G Video")]
+    VideoMpeg4Part10AnnexG = 0x1f,
+    /// <summary>
+    /// MPEG MVC video sub-bitstream of an AVC video stream conforming to one or more profiles defined in Annex H of ITU-T Rec. H.264 | ISO/IEC 14496-10
+    /// </summary>
+    [Description("MPEG 4 Part 10 (H.264/AVC) Annex H Video")]
+    VideoMpeg4Part10AnnexH = 0x20,
+    /// <summary>
+    /// MPEG video stream conforming to one or more profiles as defined in ITU-T Rec T.800 | ISO/IEC 15444-1
+    /// </summary>
+    [Description("JPEG Video")]
+    VideoJpeg = 0x21,
+    /// <summary>
+    /// MPEG ITU-T Rec. H.262 | ISO/IEC 13818-2 video with stereoscopic content coded using frame packing arrangement information
+    /// </summary>
+    [Description("MPEG 2 3D Frame-Packed Video")]
+    VideoMpeg2StereoscopicFramePacked = 0x22,
+    /// <summary>
+    /// MPEG ITU-T Rec. H.262 | ISO/IEC 13818-2 video with additional video stream for service-compatible stereoscopic services
+    /// </summary>
+    [Description("MPEG 2 3D Video")]
+    VideoMpeg2StereoscopicAdditionalStream = 0x23,
+    /// <summary>
+    /// MPEG ITU-T Rec. H.264 | ISO/IEC 14496-10 video with additional video stream for service-compatible stereoscopic services
+    /// </summary>
+    [Description("MPEG 4 Part 10 (H.264/AVC) 3D Video")]
+    VideoMpeg4Part10StereoscopicAdditionalStream = 0x24,
 
     #endregion
 
@@ -533,50 +613,88 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// MPEG ISO/IEC 11172-3 audio (MPEG 1 audio)
     /// </summary>
     [Description("MPEG 1 Audio")]
-    Mpeg1Audio = 0x03,
+    AudioMpeg1 = 0x03,
     /// <summary>
     /// MPEG ISO/IEC 13818-3 audio (MPEG 2 audio)
     /// </summary>
-    [Description("MPEG 2 Audio")]
-    Mpeg2Audio = 0x04,
+    [Description("MPEG 2 Part 3 Audio")]
+    AudioMpeg2 = 0x04,
     /// <summary>
     /// MPEG ISO/IEC 13818-7 audio with ADTS transport syntax (AAC audio)
     /// </summary>
-    [Description("ADTS-AAC Audio")]
-    AdtsAac = 0x0f,
+    [Description("MPEG 2 Part 7 (ADTS-AAC) Audio")]
+    AudioMpeg2Part7 = 0x0f,
     /// <summary>
     /// MPEG ISO/IEC 14496-3 audio with the LATM transport syntax (LATM-AAC audio)
     /// </summary>
-    [Description("LATM-AAC Audio")]
-    LatmAac = 0x11,
+    [Description("MPEG 4 Part 3 (LATM-AAC) Audio")]
+    AudioMpeg4Part3Latm = 0x11,
     /// <summary>
-    /// AC-3/Dolby Digital audio
+    /// MPEG ISO/IEC 14496-3 audio, without using any additional transport syntax, such as DST, ALS and SLS
     /// </summary>
-    [Description("AC-3/Dolby Digital Audio")]
-    Ac3 = 0x81,
-    /// <summary>
-    /// Enhanced AC-3/Dolby Digital Plus audio
-    /// </summary>
-    [Description("Enhanced AC-3/Dolby Digital Plus Audio")]
-    EnhancedAc3 = 0x87,
-    /// <summary>
-    /// DTS audio
-    /// </summary>
-    [Description("DTS Audio")]
-    Dts = 1000,       // non standard stream type
+    [Description("MPEG 4 Part 3 (AAC) Audio")]
+    AudioMpeg4Part3 = 0x1c,
 
     #endregion
 
+    #region non-standard
+
+    /// <summary>
+    /// VC-1 video
+    /// </summary>
+    /// <remarks>
+    /// Matches the SCTE stream type. DVB use a registration descriptor to identify VC-1. Use in ATSC is a work in progress (A/73).
+    /// </remarks>
+    [Description("VC-1 Video")]
+    VideoVc1 = 0xea,
+    /// <summary>
+    /// AC-3/Dolby Digital audio
+    /// </summary>
+    /// <remarks>
+    /// Matches the ATSC and SCTE stream type. DVB has the AC-3 descriptor (tag 0x6a).
+    /// </remarks>
+    [Description("AC-3 (Dolby Digital) Audio")]
+    AudioAc3 = 0x81,
+    /// <summary>
+    /// Enhanced AC-3/Dolby Digital Plus audio
+    /// </summary>
+    /// <remarks>
+    /// Matches the ATSC and SCTE stream type. DVB has the enhanced AC-3 descriptor (tag 0x7a).
+    /// </remarks>
+    [Description("Enhanced AC-3 (Dolby Digital Plus) Audio")]
+    AudioEnhancedAc3 = 0x87,
+    /// <summary>
+    /// DTS audio
+    /// </summary>
+    /// <remarks>
+    /// DVB has the DTS descriptor (tag 0x7b). ATSC and SCTE don't support DTS.
+    /// </remarks>
+    [Description("DTS Audio")]
+    AudioDts = 1000,
+    /// <summary>
+    /// DTS HD audio
+    /// </summary>
+    /// <remarks>
+    /// Matches the ATSC 2.0 stream type. DVB has the DTS-HD descriptor (extended descriptor, tag 0x0e). SCTE has the DTS-HD descriptor (tag 0x7b).
+    /// </remarks>
+    [Description("DTS-HD Audio")]
+    AudioDtsHd = 0x88,
     /// <summary>
     /// Teletext
     /// </summary>
-    [Description("Teletext")]
-    Teletext = 1001,  // non standard stream type
+    /// <remarks>
+    /// DVB has the teletext descriptor (tag 0x56). ATSC and SCTE don't support teletext.
+    /// </remarks>
+    Teletext = 1001,
     /// <summary>
-    /// Sub-titles
+    /// Subtitles
     /// </summary>
-    [Description("Sub-titles")]
-    SubTitles = 0x82
+    /// <remarks>
+    /// Matches the SCTE stream type (format probably not supported). DVB has the subtitling descriptor (tag 0x59).
+    /// </remarks>
+    Subtitles = 0x82
+
+    #endregion
   }
 
   /// <summary>
@@ -730,8 +848,48 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// MPEG FlexMux timing descriptor
     /// </summary>
     FlexMuxTiming,
+    /// <summary>
+    /// MPEG 4 text descriptor
+    /// </summary>
+    Mpeg4Text,
+    /// <summary>
+    /// MPEG 4 audio extension descriptor
+    /// </summary>
+    Mpeg4AudioExtension,
+    /// <summary>
+    /// MPEG auxiliary video stream descriptor
+    /// </summary>
+    AuxiliaryVideoStream,
+    /// <summary>
+    /// MPEG SVC extension descriptor
+    /// </summary>
+    SvcExtension,
+    /// <summary>
+    /// MPEG MVC extension descriptor
+    /// </summary>
+    MvcExtension,
+    /// <summary>
+    /// MPEG J2K video descriptor
+    /// </summary>
+    J2kVideo,
+    /// <summary>
+    /// MPEG MVC operation point descriptor
+    /// </summary>
+    MvcOperationPoint,
+    /// <summary>
+    /// MPEG 2 stereoscopic video format descriptor
+    /// </summary>
+    Mpeg2StereoscopicVideoFormat,
+    /// <summary>
+    /// MPEG stereoscopic program info descriptor
+    /// </summary>
+    StereoscopicProgramInfo,
+    /// <summary>
+    /// MPEG stereoscopic video info descriptor
+    /// </summary>
+    StereoscopicVideoInfo,
 
-    // 45 - 63 ITU-T Rec. H.222.0 | ISO/IEC 13818-1 reserved
+    // 55 - 63 ITU-T Rec. H.222.0 | ISO/IEC 13818-1 reserved
 
     #endregion
 
@@ -754,7 +912,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// </summary>
     SatelliteDeliverySystem,
     /// <summary>
-    /// DVB cable deliver system descriptor
+    /// DVB cable delivery system descriptor
     /// </summary>
     CableDeliverySystem,
     /// <summary>
@@ -1066,9 +1224,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// ATSC timestamp descriptor
     /// </summary>
     TimeStamp = 0x8c,
-
-    // 0x8d - 0x8f reserved
-
+    /// <summary>
+    /// ATSC parameterised service descriptor
+    /// </summary>
+    ParameterisedService,
+    /// <summary>
+    /// ATSC interactive services filtering criteria descriptor
+    /// </summary>
+    InteractiveServicesFilteringCriteria,
+    /// <summary>
+    /// ATSC interactive services near real time services summary descriptor
+    /// </summary>
+    InteractiveServicesNrtServicesSummary,
     /// <summary>
     /// SCTE frequency spec descriptor
     /// </summary>
@@ -1100,7 +1267,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// SCTE daylight savings time descriptor
     /// </summary>
     DaylightSavingsTime = 0x96,
-
     /// <summary>
     /// SCTE adaption field data descriptor
     /// </summary>
@@ -1317,9 +1483,122 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// <summary>
     /// ATSC enhanced AC-3 descriptor
     /// </summary>
-    Eac3 = 0xcc
+    Eac3 = 0xcc,
+    /// <summary>
+    /// ATSC 2D 3D corresponding content descriptor
+    /// </summary>
+    CorrespondingContent = 0xcd,
+    /// <summary>
+    /// ATSC multimedia EPG linkage descriptor
+    /// </summary>
+    MultimediaEpgLinkage = 0xce,
+
+    // 0xe0 - 0xe9 CableLabs
+
+    /// <summary>
+    /// SCTE MPEG AAC descriptor
+    /// </summary>
+    MpegAac = 0xea,
+    /// <summary>
+    /// ATSC IC3D event info descriptor
+    /// </summary>
+    Ic3dEventInfo = 0xeb,
+    /// <summary>
+    /// ATSC MDTV hybrid stereoscopic service descriptor
+    /// </summary>
+    MdtvHybridStereoscopicService = 0xec
 
     #endregion
+  }
+
+  /// <summary>
+  /// DVB extension descriptor tags.
+  /// </summary>
+  public enum DvbExtensionDescriptorTag
+  {
+    /// <summary>
+    /// image icon descriptor
+    /// </summary>
+    ImageIcon = 0x00,
+    /// <summary>
+    /// content protection copy management delivery signalling descriptor
+    /// </summary>
+    CpcmDeliverySignalling = 0x01,
+    /// <summary>
+    /// content protection descriptor
+    /// </summary>
+    Cp = 0x02,
+    /// <summary>
+    /// content protection identifier descriptor
+    /// </summary>
+    CpIdentifier = 0x03,
+    /// <summary>
+    /// T2 delivery system descriptor
+    /// </summary>
+    T2DeliverySystem = 0x04,
+    /// <summary>
+    /// SH delivery system descriptor
+    /// </summary>
+    ShDeliverySystem = 0x05,
+    /// <summary>
+    /// supplementary audio descriptor
+    /// </summary>
+    SupplementaryAudio = 0x06,
+    /// <summary>
+    /// network change notify descriptor
+    /// </summary>
+    NetworkChangeNotify = 0x07,
+    /// <summary>
+    /// message descriptor
+    /// </summary>
+    Message = 0x08,
+    /// <summary>
+    /// target region descriptor
+    /// </summary>
+    TargetRegion = 0x09,
+    /// <summary>
+    /// target region name descriptor
+    /// </summary>
+    TargetRegionName = 0x0a,
+    /// <summary>
+    /// service relocated descriptor
+    /// </summary>
+    ServiceRelocated = 0x0b,
+    /// <summary>
+    /// XAIT PID descriptor
+    /// </summary>
+    XaitPid = 0x0c,
+    /// <summary>
+    /// C2 delivery system descriptor
+    /// </summary>
+    C2DeliverySystem = 0x0d,
+    /// <summary>
+    /// DTS HD audio stream descriptor
+    /// </summary>
+    DtsHdAudioStream = 0x0e,
+    /// <summary>
+    /// DTS neural descriptor
+    /// </summary>
+    DtsNeural = 0x0f,
+    /// <summary>
+    /// video depth range descriptor
+    /// </summary>
+    VideoDepthRange = 0x10,
+    /// <summary>
+    /// T2 modulator interface descriptor
+    /// </summary>
+    T2mi = 0x11,
+
+    // 0x12 reserved
+
+    /// <summary>
+    /// URI linkage descriptor
+    /// </summary>
+    UriLinkage = 0x13,
+    /// <summary>
+    /// broadcast identifier ancillary data descriptor
+    /// </summary>
+    BciAncillaryData = 0x14
   }
 
   /// <summary>
@@ -1335,10 +1614,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// <returns><c>true</c> if the elementary stream is a video stream, otherwise <c>false</c></returns>
     public static bool IsVideoStream(LogicalStreamType streamType)
     {
-      if (streamType == LogicalStreamType.Mpeg1Video ||
-        streamType == LogicalStreamType.Mpeg2Video ||
-        streamType == LogicalStreamType.Mpeg4Video ||
-        streamType == LogicalStreamType.AvcVideo)
+      if (streamType == LogicalStreamType.VideoMpeg1 ||
+        streamType == LogicalStreamType.VideoMpeg2 ||
+        streamType == LogicalStreamType.VideoMpeg4Part2 ||
+        streamType == LogicalStreamType.VideoMpeg4Part10 ||
+        streamType == LogicalStreamType.VideoMpegC ||
+        streamType == LogicalStreamType.VideoMpeg4Part10AnnexG ||
+        streamType == LogicalStreamType.VideoMpeg4Part10AnnexH ||
+        streamType == LogicalStreamType.VideoJpeg ||
+        streamType == LogicalStreamType.VideoMpeg2StereoscopicFramePacked ||
+        streamType == LogicalStreamType.VideoMpeg2StereoscopicAdditionalStream ||
+        streamType == LogicalStreamType.VideoMpeg4Part10StereoscopicAdditionalStream ||
+        streamType == LogicalStreamType.VideoVc1)
       {
         return true;
       }
@@ -1352,13 +1639,32 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// <returns><c>true</c> if the elementary stream is an audio stream, otherwise <c>false</c></returns>
     public static bool IsAudioStream(LogicalStreamType streamType)
     {
-      if (streamType == LogicalStreamType.Mpeg1Audio ||
-        streamType == LogicalStreamType.Mpeg2Audio ||
-        streamType == LogicalStreamType.AdtsAac ||
-        streamType == LogicalStreamType.LatmAac ||
-        streamType == LogicalStreamType.Ac3 ||
-        streamType == LogicalStreamType.EnhancedAc3 ||
-        streamType == LogicalStreamType.Dts)
+      if (streamType == LogicalStreamType.AudioMpeg1 ||
+        streamType == LogicalStreamType.AudioMpeg2 ||
+        streamType == LogicalStreamType.AudioMpeg2Part7 ||
+        streamType == LogicalStreamType.AudioMpeg4Part3Latm ||
+        streamType == LogicalStreamType.AudioMpeg4Part3 ||
+        streamType == LogicalStreamType.AudioAc3 ||
+        streamType == LogicalStreamType.AudioEnhancedAc3 ||
+        streamType == LogicalStreamType.AudioDts ||
+        streamType == LogicalStreamType.AudioDtsHd)
+      {
+        return true;
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// Determine whether an elementary stream is a valid DigiCipher II stream.
+    /// </summary>
+    /// <param name="streamType">The raw stream type of the elementary stream.</param>
+    /// <returns><c>true</c> if the elementary stream is a valid DigiCipher II stream, otherwise <c>false</c></returns>
+    public static bool IsValidDigiCipher2Stream(StreamType streamType)
+    {
+      if (streamType == StreamType.DigiCipher2Video ||
+        streamType == StreamType.Ac3Audio ||
+        streamType == StreamType.EnhancedAc3Audio ||
+        streamType == StreamType.Subtitles)
       {
         return true;
       }
@@ -1386,11 +1692,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// </summary>
     Teletext = 0x03,
     /// <summary>
-    /// Near Video On Demand reference service
+    /// near video on demand reference service
     /// </summary>
     NvodReference = 0x04,
     /// <summary>
-    /// Near Video On Demand time-shifted service
+    /// near video on demand time-shifted service
     /// </summary>
     NvodTimeShifted = 0x05,
     /// <summary>
@@ -1398,11 +1704,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// </summary>
     Mosaic = 0x06,
     /// <summary>
-    /// FM radio service
+    /// frequency modulated radio service
     /// </summary>
     FmRadio = 0x07,
     /// <summary>
-    /// DVB System Renewability Messages service
+    /// DVB system renewability messages service
     /// </summary>
     DvbSrm = 0x08,
 
@@ -1424,49 +1730,61 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     // (0x0d reserved for common interface use)
 
     /// <summary>
-    /// Return Channel via Satellite map
+    /// return channel via satellite map
     /// </summary>
     RcsMap = 0x0e,
 
     /// <summary>
-    /// Return Channel via Satellite Forward Link Signalling
+    /// return channel via satellite forward link signalling
     /// </summary>
     RcsFls = 0x0f,
     /// <summary>
-    /// DVB Multimedia Home Platform service
+    /// DVB multimedia home platform service
     /// </summary>
     DvbMhp = 0x10,
     /// <summary>
-    /// MPEG 2 HD digital television service
+    /// MPEG 2 high definition digital television service
     /// </summary>
     Mpeg2HdDigitalTelevision = 0x11,
 
     // (0x12 to 0x15 reserved)
 
     /// <summary>
-    /// advanced codec SD digital television service
+    /// advanced codec standard definition digital television service
     /// </summary>
     AdvancedCodecSdDigitalTelevision = 0x16,
     /// <summary>
-    /// advanced codec SD Near Video On Demand time-shifted service
+    /// advanced codec standard definition near video on demand time-shifted service
     /// </summary>
     AdvancedCodecSdNvodTimeShifted = 0x17,
     /// <summary>
-    /// advanced codec SD Near Video On Demand reference service
+    /// advanced codec standard definition near video on demand reference service
     /// </summary>
     AdvancedCodecSdNvodReference = 0x18,
     /// <summary>
-    /// advanced codec HD digital television
+    /// advanced codec high definition digital television
     /// </summary>
     AdvancedCodecHdDigitalTelevision = 0x19,
     /// <summary>
-    /// advanced codec HD Near Video On Demand time-shifted service
+    /// advanced codec high definition near video on demand time-shifted service
     /// </summary>
     AdvancedCodecHdNvodTimeShifted = 0x1a,
     /// <summary>
-    /// advanced codec HD Near Video On Demand reference service
+    /// advanced codec high definition near video on demand reference service
     /// </summary>
     AdvancedCodecHdNvodReference = 0x1b,
+    /// <summary>
+    /// advanced codec frame compatible plano-stereoscopic high definition digital television service
+    /// </summary>
+    AdvancedCodecFrameCompatiblePlanoStereoscopicHdDigitalTelevision = 0x1c,
+    /// <summary>
+    /// advanced codec frame compatible plano-stereoscopic high definition near video on demand time-shifted service
+    /// </summary>
+    AdvancedCodecFrameCompatiblePlanoStereoscopicHdNvodTimeShifted = 0x1d,
+    /// <summary>
+    /// advanced codec frame compatible plano-stereoscopic high definition near video on demand reference service
+    /// </summary>
+    AdvancedCodecFrameCompatiblePlanoStereoscopicHdNvodReference = 0x1e,
 
     // (0x1c to 0x7f reserved)
     // (0x80 to 0xfe user defined)
@@ -1489,19 +1807,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// </summary>
     AnalogTelevision = 0x01,
     /// <summary>
-    /// ATSC digital television service (A/53 part 3)
+    /// digital television service (A/53 part 3)
     /// </summary>
     DigitalTelevision = 0x02,
     /// <summary>
-    /// ATSC audio service (A/53 part 3)
+    /// audio service (A/53 part 3)
     /// </summary>
     Audio = 0x03,
     /// <summary>
-    /// ATSC data only service (A/90)
+    /// data only service (A/90)
     /// </summary>
     DataOnly = 0x04,
     /// <summary>
-    /// ATSC software download service (A/97)
+    /// software download service (A/97)
     /// </summary>
     SoftwareDownload = 0x05,
     /// <summary>
@@ -1513,7 +1831,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// </summary>
     Parameterised = 0x07,
     /// <summary>
-    /// Non Real Time service (A/103)
+    /// non real time service (A/103)
     /// </summary>
     Nrt = 0x08,
     /// <summary>
@@ -2080,6 +2398,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
         }
 
         // Program descriptors.
+        bool isScteTs = false;
         int offset = 12;
         int endProgramDescriptors = offset + pmt._programInfoLength;
         pmt._programDescriptors = new List<IDescriptor>();
@@ -2100,6 +2419,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
           else
           {
             pmt._programDescriptors.Add(d);
+            if (d.Tag == DescriptorTag.Registration && d.Length >= 4)
+            {
+              if (d.Data[0] == 'S' && d.Data[1] == 'C' && d.Data[2] == 'T' && d.Data[3] == 'E')
+              {
+                isScteTs = true;
+              }
+            }
           }
         }
         if (offset != endProgramDescriptors)
@@ -2109,6 +2435,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
         }
 
         // Elementary streams.
+        bool isNotDc2Ts = false;
+        bool foundDc2VideoStream = false;
         pmt._elementaryStreams = new List<PmtElementaryStream>();
         int endEsData = data.Length - 4;
         while (offset + 4 < endEsData)
@@ -2118,6 +2446,30 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
           if (Enum.IsDefined(typeof(LogicalStreamType), (int)es.StreamType))
           {
             es.LogicalStreamType = (LogicalStreamType)(int)es.StreamType;
+            // Could this still be a DC II transport stream?
+            if (!isNotDc2Ts && !StreamTypeHelper.IsValidDigiCipher2Stream(es.StreamType))
+            {
+              isNotDc2Ts = true;
+              if (foundDc2VideoStream)
+              {
+                // Fix false positive DC II video detections.
+                for (int i = 0; i < pmt._elementaryStreams.Count; i++)
+                {
+                  if (pmt._elementaryStreams[i].StreamType == StreamType.DigiCipher2Video)
+                  {
+                    pmt._elementaryStreams[i].LogicalStreamType = LogicalStreamType.Unknown;
+                  }
+                }
+                foundDc2VideoStream = false;
+              }
+            }
+          }
+          // We'll allow DC II video stream detection until we see clear
+          // indication that this is not a DC II transport stream.
+          else if (!isNotDc2Ts && es.StreamType == StreamType.DigiCipher2Video)
+          {
+            foundDc2VideoStream = true;
+            es.LogicalStreamType = LogicalStreamType.VideoMpeg2;
           }
           else
           {
@@ -2145,7 +2497,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
               Log.Error("PMT: elementary stream descriptor {0} for PID {1} is invalid", es.Descriptors.Count + es.CaDescriptors.Count + 1, es.Pid);
               throw new Exception();
             }
-
+            //TODO DigiCipher2Video
             if (d.Tag == DescriptorTag.ConditionalAccess)
             {
               es.CaDescriptors.Add(d);
@@ -2158,32 +2510,45 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
                 switch (d.Tag)
                 {
                   case DescriptorTag.Mpeg4Video:
-                    es.LogicalStreamType = LogicalStreamType.Mpeg4Video;
+                    es.LogicalStreamType = LogicalStreamType.VideoMpeg4Part2;
                     break;
                   case DescriptorTag.AvcVideo:
-                    es.LogicalStreamType = LogicalStreamType.AvcVideo;
+                    es.LogicalStreamType = LogicalStreamType.VideoMpeg4Part10;
+                    break;
+                  case DescriptorTag.Registration:
+                    if (d.Data[0] == 'V' && d.Data[1] == 'C' && d.Data[2] == '-' && d.Data[3] == '1')
+                    {
+                      es.LogicalStreamType = LogicalStreamType.VideoVc1;
+                    }
                     break;
                   case DescriptorTag.Mpeg2AacAudio:
-                    es.LogicalStreamType = LogicalStreamType.AdtsAac;
+                    es.LogicalStreamType = LogicalStreamType.AudioMpeg2Part7;
                     break;
-                  case DescriptorTag.Mpeg4Audio:
-                  case DescriptorTag.Aac:
-                    es.LogicalStreamType = LogicalStreamType.LatmAac;
-                    es.LogicalStreamType = LogicalStreamType.LatmAac;
+                  case DescriptorTag.Mpeg4Audio:    // MPEG
+                  case DescriptorTag.Aac:           // DVB
+                  case DescriptorTag.MpegAac:       // SCTE
+                    es.LogicalStreamType = LogicalStreamType.AudioMpeg4Part3Latm;
                     break;
-                  case DescriptorTag.Ac3:         // DVB
-                  case DescriptorTag.Ac3Audio:    // ATSC
-                    es.LogicalStreamType = LogicalStreamType.Ac3;
+                  case DescriptorTag.Ac3:           // DVB
+                  case DescriptorTag.Ac3Audio:      // ATSC
+                    es.LogicalStreamType = LogicalStreamType.AudioAc3;
                     break;
-                  case DescriptorTag.EnhancedAc3: // DVB
-                  case DescriptorTag.Eac3:        // ATSC
-                    es.LogicalStreamType = LogicalStreamType.EnhancedAc3;
+                  case DescriptorTag.EnhancedAc3:   // DVB
+                  case DescriptorTag.Eac3:          // ATSC
+                    es.LogicalStreamType = LogicalStreamType.AudioEnhancedAc3;
                     break;
                   case DescriptorTag.Dts:
-                    es.LogicalStreamType = LogicalStreamType.Dts;
+                    if (isScteTs)
+                    {
+                      es.LogicalStreamType = LogicalStreamType.AudioDtsHd;
+                    }
+                    else
+                    {
+                      es.LogicalStreamType = LogicalStreamType.AudioDts;
+                    }
                     break;
                   case DescriptorTag.Subtitling:
-                    es.LogicalStreamType = LogicalStreamType.SubTitles;
+                    es.LogicalStreamType = LogicalStreamType.Subtitles;
                     break;
                   case DescriptorTag.Teletext:
                   case DescriptorTag.VbiTeletext:
@@ -2223,7 +2588,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
           offset = 12 + pmt._programInfoLength;
           foreach (PmtElementaryStream es in pmt._elementaryStreams)
           {
-            if (es.StreamType == StreamType.Mpeg2Part1PrivateData && es.LogicalStreamType == LogicalStreamType.Ac3)
+            if (es.StreamType == StreamType.Mpeg2Part1PrivateData && es.LogicalStreamType == LogicalStreamType.AudioAc3)
             {
               es.StreamType = StreamType.Ac3Audio;
               pmt._rawPmt[offset] = (byte)StreamType.Ac3Audio;
@@ -2296,7 +2661,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
         // descriptors to the CA PMT.
         if (StreamTypeHelper.IsVideoStream(es.LogicalStreamType) ||
           StreamTypeHelper.IsAudioStream(es.LogicalStreamType) ||
-          es.LogicalStreamType == LogicalStreamType.SubTitles ||
+          es.LogicalStreamType == LogicalStreamType.Subtitles ||
           es.LogicalStreamType == LogicalStreamType.Teletext)
         {
           tempCaPmt[offset++] = (byte)es.StreamType;
@@ -2657,7 +3022,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
       }
       DescriptorTag tag = (DescriptorTag)data[offset];
       byte length = data[offset + 1];
-      if (offset + 2 + length >= data.Length)
+      if (offset + 2 + length > data.Length)
       {
         return null;
       }

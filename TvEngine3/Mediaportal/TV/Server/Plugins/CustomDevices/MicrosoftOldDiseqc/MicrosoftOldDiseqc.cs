@@ -204,7 +204,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftOldDiseqc
           portNumber |= 0x100;
         }
         this.LogDebug("Microsoft old DiSEqC: range = 0x{0:x4}", portNumber);
-        hr = _interface.put_Range((ulong)portNumber);
+        hr = _interface.put_Range(portNumber);
         if (hr != (int)HResult.Severity.Success)
         {
           this.LogError("Microsoft old DiSEqC: failed to put range, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));

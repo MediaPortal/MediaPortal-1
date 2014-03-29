@@ -46,7 +46,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
     /// <param name="streamName">Name of the stream.</param>
     /// <param name="fileName">Name of the file.</param>
     /// <param name="card">The card.</param>
-    /// <param name="bool">True if the stream originates from a tv channel, false for a radio channel</param>
+    /// <param name="mediaType">The type of the stream (eg. video + audio, audio only).</param>
     public RtspStream(string streamName, string fileName, ITVCard card, MediaTypeEnum mediaType)
     {
       _streamName = streamName;

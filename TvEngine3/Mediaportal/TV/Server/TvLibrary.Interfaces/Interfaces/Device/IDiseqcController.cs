@@ -20,6 +20,7 @@
 
 using System;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc
 {
