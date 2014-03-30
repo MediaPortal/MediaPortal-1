@@ -25,6 +25,7 @@
 #include <map>
 #include "..\..\shared\DebugSettings.h"
 #include "..\..\shared\PacketSync.h"
+#include "..\..\shared\PidTable.h"
 #include "IMuxInputPin.h"
 #include "IStreamMultiplexer.h"
 #include "TsMuxerFilter.h"
@@ -35,8 +36,8 @@ using namespace std;
 #define SERVICE_NAME_LENGTH 20
 
 
-DEFINE_TVE_DEBUG_SETTING(MuxerDumpInput)
-DEFINE_TVE_DEBUG_SETTING(MuxerDumpOutput)
+DEFINE_TVE_DEBUG_SETTING(TsMuxerDumpInput)
+DEFINE_TVE_DEBUG_SETTING(TsMuxerDumpOutput)
 
 
 // {8533d2d1-1be1-4262-b70a-432df592b903}
@@ -45,7 +46,7 @@ DEFINE_GUID(IID_ITS_MUXER, 0x8533d2d1, 0x1be1, 0x4262, 0xb7, 0xa, 0x43, 0x2d, 0x
 DECLARE_INTERFACE_(ITsMuxer, IUnknown)
 {
   STDMETHOD(ConfigureLogging)(THIS_ wchar_t* fileName)PURE;
-  STDMETHOD(DumpInput)(THIS_ int mask)PURE;
+  STDMETHOD(DumpInput)(THIS_ long mask)PURE;
   STDMETHOD(DumpOutput)(THIS_ bool enable)PURE;
   STDMETHOD(SetActiveComponents)(THIS_ bool video, bool audio, bool teletext)PURE;
 };
@@ -96,22 +97,22 @@ struct TransportStreamInfo
 class CTsMuxer : public CUnknown, public IStreamMultiplexer, public ITsMuxer
 {
   public:
-    DECLARE_IUNKNOWN
-
     CTsMuxer(LPUNKNOWN unk, HRESULT* hr);
-    ~CTsMuxer();
+    virtual ~CTsMuxer(void);
 
     static CUnknown* WINAPI CreateInstance(LPUNKNOWN unk, HRESULT* hr);
+
+    DECLARE_IUNKNOWN
 
     HRESULT BreakConnect(IMuxInputPin* pin);
     HRESULT CompleteConnect(IMuxInputPin* pin);
     bool IsStarted();
     HRESULT Receive(IMuxInputPin* pin, PBYTE data, long dataLength, REFERENCE_TIME dataStartTime);
     HRESULT Reset();
-    HRESULT StreamTypeChange(IMuxInputPin* pin, int oldStreamType, int newStreamType);
+    HRESULT StreamTypeChange(IMuxInputPin* pin, byte oldStreamType, byte newStreamType);
 
     STDMETHODIMP ConfigureLogging(wchar_t* path);
-    STDMETHODIMP DumpInput(int mask);
+    STDMETHODIMP DumpInput(long mask);
     STDMETHODIMP DumpOutput(bool enable);
     STDMETHODIMP SetActiveComponents(bool video, bool audio, bool teletext);
 
@@ -122,7 +123,8 @@ class CTsMuxer : public CUnknown, public IStreamMultiplexer, public ITsMuxer
     HRESULT ReceiveProgramOrSystemStream(IMuxInputPin* pin, PBYTE data, long dataLength, REFERENCE_TIME dataStartTime);
     HRESULT ReadProgramAssociationTable(PBYTE data, long dataLength, TransportStreamInfo* info);
     HRESULT ReadProgramMapTable(PBYTE data, long dataLength, TransportStreamInfo* info);
-    HRESULT ReadProgramOrSystemPack(PBYTE data, long dataLength, ProgramStreamInfo* info, bool isFirstReceive, int* length, REFERENCE_TIME* systemClockReference);
+    HRESULT CreateOrUpdateTsPmtEs(TransportStreamInfo* info, BasePid* pid, bool isIgnored);
+    HRESULT ReadProgramOrSystemPack(PBYTE data, long dataLength, ProgramStreamInfo* info, bool isFirstReceive, unsigned short* length, REFERENCE_TIME* systemClockReference);
     HRESULT ReadProgramOrSystemHeader(PBYTE data, long dataLength, ProgramStreamInfo* info, bool isFirstReceive);
     HRESULT ReadProgramStreamMap(PBYTE data, long dataLength, ProgramStreamInfo* info);
     HRESULT ReadVideoStreamInfo(PBYTE data, long dataLength, StreamInfo* info);
@@ -160,12 +162,12 @@ class CTsMuxer : public CUnknown, public IStreamMultiplexer, public ITsMuxer
     DWORD m_sdtResetTime;
 
     int m_packetCounter;
-    int m_pcrPid;
+    unsigned short m_pcrPid;
     unsigned short m_nextStreamPid;
     byte m_nextVideoStreamId;
     byte m_nextAudioStreamId;
 
-    map<unsigned int, StreamInfo*> m_streamInfo;            // key = (original PID << 16) | (original stream ID << 8) | pin ID
+    map<unsigned long, StreamInfo*> m_streamInfo;           // key = (original PID << 16) | (original stream ID << 8) | pin ID
     map<byte, ProgramStreamInfo*> m_programStreamInfo;      // key = pin ID
     map<byte, TransportStreamInfo*> m_transportStreamInfo;  // key = pin ID
 };

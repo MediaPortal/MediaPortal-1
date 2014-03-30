@@ -26,7 +26,7 @@
 
 #define MAX_SECTIONS 256
 
-class CSectionDecoder : public CDvbUtil
+class CSectionDecoder
 {
 public:
   CSectionDecoder(void);

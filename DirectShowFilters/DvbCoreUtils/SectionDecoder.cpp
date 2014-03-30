@@ -24,7 +24,7 @@
 #include "..\shared\SectionDecoder.h"
 #include "..\shared\Tsheader.h"
 
-void LogDebug(const char *fmt, ...) ;
+extern void LogDebug(const wchar_t* fmt, ...);
 
 CSectionDecoder::CSectionDecoder(void)
 {
@@ -178,7 +178,7 @@ void CSectionDecoder::OnTsPacket(CTsHeader& header,byte* tsPacket)
 				if (m_section.section_length==0)
 				{
 					if (m_bLog)
-						LogDebug("!!! CSectionDecoder::OnTsPacket got a section with section length: 0 on pid: 0x%X tableid: 0x%X bufferpos: %d start: %d - Discarding whole packet.",header.Pid,m_section.Data[0],m_section.BufferPos,start);
+						LogDebug(L"!!! CSectionDecoder::OnTsPacket got a section with section length: 0 on pid: 0x%X tableid: 0x%X bufferpos: %d start: %d - Discarding whole packet.",header.Pid,m_section.Data[0],m_section.BufferPos,start);
 					m_section.Reset();
 					return;
 				}
@@ -221,7 +221,7 @@ void CSectionDecoder::OnTsPacket(CTsHeader& header,byte* tsPacket)
       pointer_field=0;
 			if (numloops>100)
 			{
-				LogDebug("!!! CSectionDecoder::OnTsPacket Entered infinite loop. pid: %X start: %d BufferPos: %d SectionLength: %d - Discarding section and moving to next packet",header.Pid,start,m_section.BufferPos,m_section.section_length);
+				LogDebug(L"!!! CSectionDecoder::OnTsPacket Entered infinite loop. pid: %X start: %d BufferPos: %d SectionLength: %d - Discarding section and moving to next packet",header.Pid,start,m_section.BufferPos,m_section.section_length);
 				m_section.Reset();
 				return;
 			}
@@ -229,7 +229,7 @@ void CSectionDecoder::OnTsPacket(CTsHeader& header,byte* tsPacket)
 	}
 	catch(...)
 	{
-		LogDebug("exception in CSectionDecoder::OnTsPacket");
+		LogDebug(L"exception in CSectionDecoder::OnTsPacket");
 	}
 }
 

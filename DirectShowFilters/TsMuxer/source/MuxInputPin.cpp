@@ -207,7 +207,7 @@ HRESULT CMuxInputPin::SetMediaType(const CMediaType* mediaType)
       mediaType->subtype.Data4[0], mediaType->subtype.Data4[1], mediaType->subtype.Data4[2],
       mediaType->subtype.Data4[3], mediaType->subtype.Data4[4], mediaType->subtype.Data4[5],
       mediaType->subtype.Data4[6], mediaType->subtype.Data4[7]);*/
-  int oldStreamType = m_streamType;
+  byte oldStreamType = m_streamType;
   for (int i = 0; i < INPUT_MEDIA_TYPE_COUNT; i++)
   {
     if (*INPUT_MEDIA_TYPES[i].clsMajorType == mediaType->majortype &&
@@ -233,7 +233,7 @@ byte CMuxInputPin::GetId()
   return m_pinId;
 }
 
-int CMuxInputPin::GetStreamType()
+byte CMuxInputPin::GetStreamType()
 {
   return m_streamType;
 }

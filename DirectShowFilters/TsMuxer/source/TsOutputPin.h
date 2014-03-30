@@ -35,21 +35,16 @@ class CTsOutputPin : public CBaseOutputPin
     CTsOutputPin(CBaseFilter* filter, CCritSec* filterLock, HRESULT* hr);
     virtual ~CTsOutputPin(void);
 
-    HRESULT BreakConnect();
-    HRESULT CheckConnect(IPin* receivePin);
     HRESULT CheckMediaType(const CMediaType* mediaType);
-    HRESULT CompleteConnect(IPin* receivePin);
     HRESULT DecideBufferSize(IMemAllocator* allocator, ALLOCATOR_PROPERTIES* properties);
     HRESULT Deliver(PBYTE data, long dataLength);
     HRESULT DeliverEndOfStream();
     HRESULT GetMediaType(int position, CMediaType* mediaType);
 
-    bool IsConnected();
     HRESULT StartDumping(wchar_t* fileName);
     HRESULT StopDumping();
 
   private:
-    bool m_isConnected;
     bool m_isDumpEnabled;
     FileWriter m_dumpFileWriter;
     CCritSec m_dumpLock;

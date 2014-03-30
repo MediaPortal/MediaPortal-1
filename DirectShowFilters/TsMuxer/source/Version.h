@@ -18,18 +18,11 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-#pragma once
-#include <Windows.h>
-#include "IMuxInputPin.h"
 
+#define TSMUXER_MAJOR_VERSION 1
+#define TSMUXER_MID_VERSION 0
+#define TSMUXER_VERSION 0
+#define TSMUXER_VERSION_STR "1.0.0.0\0"
 
-class IStreamMultiplexer
-{
-  public:
-    virtual HRESULT BreakConnect(IMuxInputPin* pin) = 0;
-    virtual HRESULT CompleteConnect(IMuxInputPin* pin) = 0;
-    virtual bool IsStarted() = 0;
-    virtual HRESULT Receive(IMuxInputPin* pin, PBYTE data, long dataLength, REFERENCE_TIME dataStartTime) = 0;
-    virtual HRESULT Reset() = 0;
-    virtual HRESULT StreamTypeChange(IMuxInputPin* pin, byte oldStreamType, byte newStreamType) = 0;
-};
+#define MP_VERSION 1,6,000,0
+#define MP_VERSION_STR "1.6.000.0\0"

@@ -19,8 +19,10 @@
  *
  */
 #pragma once
+#include <Windows.h>
 #include <vector>
 using namespace std;
+
 
 class CChannelInfo
 {
@@ -38,32 +40,34 @@ class CChannelInfo
     void ReplaceProviderName(char* name);
     void ReplaceLogicalChannelNumber(char* lcn);
 
-    int OriginalNetworkId;
-    int TransportStreamId;
-    int ServiceId;
+    unsigned short OriginalNetworkId;
+    unsigned short TransportStreamId;
+    unsigned short ProgramNumber;
     char* ServiceName;
     char* ProviderName;
     char* LogicalChannelNumber;
-    int ServiceType;
-    int VideoStreamCount;
-    int AudioStreamCount;
+    byte ServiceType;
+    unsigned short VideoStreamCount;
+    unsigned short AudioStreamCount;
     bool IsHighDefinition;
+    bool IsThreeDimensional;
     bool IsEncrypted;
     bool IsRunning;
-    bool IsOtherMux;
-    int PmtPid;
-    int PreviousOriginalNetworkId;
-    int PreviousTransportStreamId;
-    int PreviousServiceId;
+    bool IsOtherTransportStream;
+    unsigned short PmtPid;
+    unsigned short PreviousOriginalNetworkId;
+    unsigned short PreviousTransportStreamId;
+    unsigned short PreviousServiceId;
 
-    vector<int> NetworkIds;
-    vector<int> BouquetIds;
-    vector<unsigned int> Languages;                 // 3 x 1 byte characters with a NULL byte on the end
-    vector<int> AvailableInCells;
-    vector<int> UnavailableInCells;
+    // TODO use maps to keep these lists distinct?
+    vector<unsigned short> NetworkIds;
+    vector<unsigned short> BouquetIds;
+    vector<unsigned long> Languages;                 // 3 x 1 byte characters with a NULL byte on the end
+    vector<unsigned long> AvailableInCells;
+    vector<unsigned long> UnavailableInCells;
     vector<__int64> TargetRegions;
-    vector<unsigned int> AvailableInCountries;      // 3 x 1 byte characters with a NULL byte on the end
-    vector<unsigned int> UnavailableInCountries;    // 3 x 1 byte characters with a NULL byte on the end
+    vector<unsigned long> AvailableInCountries;      // 3 x 1 byte characters with a NULL byte on the end
+    vector<unsigned long> UnavailableInCountries;    // 3 x 1 byte characters with a NULL byte on the end
 
     bool IsPmtReceived;
     bool IsServiceInfoReceived;

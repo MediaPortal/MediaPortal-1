@@ -20,7 +20,8 @@
  */
 #pragma once
 
-#define MAX_PCR (UINT64)0x1FFFFFFFF 
+#define MAX_PCR_BASE 0x1FFFFFFFF
+#define MAX_PCR_EXTENSION 0x1ff
 
 class CPcr
 {

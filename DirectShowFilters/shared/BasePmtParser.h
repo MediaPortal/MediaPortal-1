@@ -25,40 +25,45 @@
 #include "PidTable.h"
 
 
-#define STREAM_TYPE_VIDEO_MPEG2_DCII  0x80  // DigiCipher II, used for some US cable and satellite streams
-#define STREAM_TYPE_AUDIO_AC3_ATSC    0x81  // this is the ISO and ATSC ATSC standard stream type; DVB has a descriptor
+#define STREAM_TYPE_VIDEO_MPEG2_DCII  0x80  // DigiCipher II video (compatible with MPEG 2 part 2), used for some US cable and satellite streams
 #define STREAM_TYPE_SUBTITLES_SCTE    0x82  // SCTE standard stream type defined in SCTE 27
-#define STREAM_TYPE_AUDIO_E_AC3_ATSC  0x87
 
 #define DESCRIPTOR_REGISTRATION       0x05
 #define DESCRIPTOR_CONDITIONAL_ACCESS 0x09
 #define DESCRIPTOR_ISO_639_LANG       0x0a
-#define DESCRIPTOR_VBI_TELETEXT_DVB   0x46
-#define DESCRIPTOR_TELETEXT_DVB       0x56
-#define DESCRIPTOR_SUBTITLING_DVB     0x59
-#define DESCRIPTOR_AC3_DVB            0x6a
-#define DESCRIPTOR_E_AC3_DVB          0x7a
+
+#define DESCRIPTOR_DVB_VBI_TELETEXT   0x46
+#define DESCRIPTOR_DVB_TELETEXT       0x56
+#define DESCRIPTOR_DVB_SUBTITLING     0x59
+#define DESCRIPTOR_DVB_AC3            0x6a
+#define DESCRIPTOR_DVB_E_AC3          0x7a
+#define DESCRIPTOR_DVB_DTS            0x7b
+#define DESCRIPTOR_DVB_EXTENSION      0x7f
+#define DESCRIPTOR_DVB_X_DTS_HD       0x0e
+
+#define DESCRIPTOR_SCTE_DTS_HD        0x7b
 
 
 /*-------------------------------------------------------------------------
-CBasePmtParser is the base PMT parser class for both TsReader and TsWriter.
+CBasePmtParser is the base PMT parser class for TsMuxer and TsWriter.
 ---------------------------------------------------------------------------*/
 class CBasePmtParser : public CSectionDecoder
 {
   public:
     CBasePmtParser(void);
     virtual ~CBasePmtParser(void);
+
     void Reset();
-    void SetFilter(int pid, int programNumber);
-    void GetFilter(int& pid, int& programNumber);
+    void SetFilter(unsigned short pid, unsigned short programNumber);
+    void GetFilter(unsigned short& pid, unsigned short& programNumber);
     void OnTsPacket(byte* tsPacket);
-    void OnNewSection(CSection& sections);
+    virtual void OnNewSection(CSection& section);
     bool DecodePmtSection(CSection& section);
     bool IsReady();
     CPidTable& GetPidInfo();
 
   protected:
-    int m_programNumber;
+    unsigned short m_programNumber;
     bool m_isFound;
     CPidTable m_pidInfo;
 };
