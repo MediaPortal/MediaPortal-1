@@ -566,6 +566,22 @@ int CLibBlurayWrapper::Read(unsigned char* pData, int pSize, bool& pPause, bool 
   return readBytes;
 }
 
+bool CLibBlurayWrapper::ProcessEvents()
+{
+  CAutoLock cLibLock(&m_csLibLock);
+
+  BD_EVENT ev = {0};
+  ev.event = BD_EVENT_ERROR;
+
+  while (ev.event != BD_EVENT_NONE && ev.event != BD_EVENT_END_OF_TITLE && !m_bStopping && !m_bStopReading)
+  {
+    _bd_get_event(m_pBd, &ev); 
+    HandleBDEvent(ev, false);
+  }
+
+  return true;
+}
+
 bool CLibBlurayWrapper::SkipStillTime()
 {
   CAutoLock cLibLock(&m_csLibLock);
