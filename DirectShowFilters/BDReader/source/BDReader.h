@@ -100,7 +100,9 @@ public:
 enum DS_CMD_ID
 {
   REBUILD,
-  SEEK
+  SEEK,
+  PAUSE,
+  RESUME
 };
 
 class CBDReaderFilter : public CSource, 
@@ -243,6 +245,7 @@ private:
   DWORD           m_MPmainThreadID;
 
   IMediaSeeking*  m_pMediaSeeking;
+  IMediaControl*  m_pMediaControl;
 
   char            m_pathToBD[MAX_PATH];
 
@@ -294,4 +297,6 @@ private:
 
   bool m_bRebuildOngoing;
   CAMEvent m_eRebuild;
+
+  bool m_pLibPaused;
 };

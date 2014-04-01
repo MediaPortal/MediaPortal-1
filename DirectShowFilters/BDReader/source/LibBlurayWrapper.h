@@ -116,6 +116,7 @@ public:
   bool GetChapter(UINT32* pChapter);
   bool Play();
   int Read(unsigned char* pData, int pSize, bool& pPause, bool pIgnorePauseEvents);
+  bool ProcessEvents();
   bool SkipStillTime();
   void SetState(FILTER_STATE newState);
   void SetEventObserver(BDEventObserver* pObserver);
