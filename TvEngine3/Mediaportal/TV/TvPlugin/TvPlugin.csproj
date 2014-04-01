@@ -134,33 +134,11 @@
     <Compile Include="Teletext\TvTeletext.cs" />
     <Compile Include="TvRecordingSettings.cs" />
     <Compile Include="TvSetup.cs" />
-    <Compile Include="PluginSetup\TvSetupAudioLanguageForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="PluginSetup\TvSetupAudioLanguageForm.Designer.cs">
-      <DependentUpon>TvSetupAudioLanguageForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="PluginSetup\TvSetupForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="PluginSetup\TvSetupForm.Designer.cs">
-      <DependentUpon>TvSetupForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="TvTimeShiftPositionWatcher.cs" />
     <Compile Include="TVTuningDetails.cs" />
     <Compile Include="Helper\TVUtil.cs" />
     <Compile Include="TVZapOSD.cs" />
     <Compile Include="WakeOnLanManager.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="PluginSetup\TvSetupAudioLanguageForm.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>TvSetupAudioLanguageForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="PluginSetup\TvSetupForm.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>TvSetupForm.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Radio\RadioSetupForm.resx">
