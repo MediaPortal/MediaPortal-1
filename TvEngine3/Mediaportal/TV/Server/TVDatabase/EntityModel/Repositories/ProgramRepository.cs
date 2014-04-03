@@ -4,6 +4,7 @@ using System.Linq;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces;
+using Log = Mediaportal.TV.Server.TVLibrary.Interfaces.Logging.Log;
 
 namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 {
@@ -101,7 +102,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     {
       DateTime now = DateTime.Now;
       query = query.Where(p => p.Channel.VisibleInGuide && p.EndTime > now);
-
+      
       if (!string.IsNullOrEmpty(searchCriteria))
       {
         bool startsWith = (stringComparison.HasFlag(StringComparisonEnum.StartsWith));
@@ -117,7 +118,16 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
         }
         else if (startsWith)
         {
-          query = query.Where(p => p.Title.StartsWith(searchCriteria));
+          if (searchCriteria == "[0-9]")
+          {
+            query = query.Where(p => p.Title.StartsWith("0") || p.Title.StartsWith("1") || p.Title.StartsWith("2") || p.Title.StartsWith("3") || p.Title.StartsWith("4")
+             || p.Title.StartsWith("5") || p.Title.StartsWith("6") || p.Title.StartsWith("7") || p.Title.StartsWith("8") || p.Title.StartsWith("9"));
+          }
+          else
+          {
+            query = query.Where(p => p.Title.StartsWith(searchCriteria));
+          }
+
         }
         else
         {

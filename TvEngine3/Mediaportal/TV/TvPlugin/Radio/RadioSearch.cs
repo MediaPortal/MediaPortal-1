@@ -200,7 +200,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
         {
           btnLetter.AddSubItem(k.ToString());
         }
-        //btnLetter.AddSubItem("#");  // => will be everything beside a-z
+        btnLetter.AddSubItem("#");  // => will be everything beside a-z
       }
       Update();
 
@@ -465,66 +465,52 @@ namespace Mediaportal.TV.TvPlugin.Radio
       }
       else
       {
-        if (filterLetter != "#")
+        listView.IsVisible = false;
+        titleView.IsVisible = true;
+        GUIControl.FocusControl(GetID, titleView.GetID);
+
+        if (filterShow == String.Empty)
         {
-          listView.IsVisible = false;
-          titleView.IsVisible = true;
-          GUIControl.FocusControl(GetID, titleView.GetID);
-
-          if (filterShow == String.Empty)
-          {
-            if (imgChannelLogo != null)
-            {
-              imgChannelLogo.IsVisible = false;
-            }
-            if (titleView.SubItemCount == 2)
-            {
-              string subItem = (string)titleView.GetSubItem(1);
-              int h = Int32.Parse(subItem.Substring(1));
-              GUIGraphicsContext.ScaleVertical(ref h);
-              titleView.Height = h;
-              h = Int32.Parse(subItem.Substring(1));
-              h -= 55;
-              GUIGraphicsContext.ScaleVertical(ref h);
-              titleView.SpinY = titleView.YPosition + h;
-              titleView.Dispose();
-              titleView.AllocResources();
-            }
-          }
-          else
-          {
-            if (imgChannelLogo != null)
-            {
-              imgChannelLogo.IsVisible = true;
-            }
-            if (titleView.SubItemCount == 2)
-            {
-              string subItem = (string)titleView.GetSubItem(0);
-              int h = Int32.Parse(subItem.Substring(1));
-              GUIGraphicsContext.ScaleVertical(ref h);
-              titleView.Height = h;
-
-              h = Int32.Parse(subItem.Substring(1));
-              h -= 50;
-              GUIGraphicsContext.ScaleVertical(ref h);
-              titleView.SpinY = titleView.YPosition + h;
-
-              titleView.Dispose();
-              titleView.AllocResources();
-            }
-            lblNumberOfItems.YPosition = titleView.SpinY;
-          }
-        }
-        else
-        {
-          listView.IsVisible = true;
-          titleView.IsVisible = false;
-          GUIControl.FocusControl(GetID, listView.GetID);
-
           if (imgChannelLogo != null)
           {
             imgChannelLogo.IsVisible = false;
           }
+          if (titleView.SubItemCount == 2)
+          {
+            string subItem = (string)titleView.GetSubItem(1);
+            int h = Int32.Parse(subItem.Substring(1));
+            GUIGraphicsContext.ScaleVertical(ref h);
+            titleView.Height = h;
+            h = Int32.Parse(subItem.Substring(1));
+            h -= 55;
+            GUIGraphicsContext.ScaleVertical(ref h);
+            titleView.SpinY = titleView.YPosition + h;
+            titleView.Dispose();
+            titleView.AllocResources();
+          }
+        }
+        else
+        {
+          if (imgChannelLogo != null)
+          {
+            imgChannelLogo.IsVisible = true;
+          }
+          if (titleView.SubItemCount == 2)
+          {
+            string subItem = (string)titleView.GetSubItem(0);
+            int h = Int32.Parse(subItem.Substring(1));
+            GUIGraphicsContext.ScaleVertical(ref h);
+            titleView.Height = h;
+
+            h = Int32.Parse(subItem.Substring(1));
+            h -= 50;
+            GUIGraphicsContext.ScaleVertical(ref h);
+            titleView.SpinY = titleView.YPosition + h;
+
+            titleView.Dispose();
+            titleView.AllocResources();
+          }
+          lblNumberOfItems.YPosition = titleView.SpinY;
         }
 
         if (currentSearchMode != SearchMode.Genre)
@@ -706,8 +692,8 @@ namespace Mediaportal.TV.TvPlugin.Radio
             {              
               if (filterShow == String.Empty)
               {                       
-                titles = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByTitleAndMediaType("[^a-z]", MediaTypeEnum.Radio,
-                                                                                       stringComparison);                                                                                                       
+                titles = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByTitleAndMediaType("[0-9]", MediaTypeEnum.Radio,
+                                                                                       StringComparisonEnum.StartsWith);                                                                                                       
               }
               else
               {
@@ -730,60 +716,31 @@ namespace Mediaportal.TV.TvPlugin.Radio
             }
             foreach (Program program in titles)
             {
-              if (filterLetter != "#")
+              bool add = true;
+              foreach (Program prog in programs)
               {
-                bool add = true;
-                foreach (Program prog in programs)
+                if (prog.Title == program.Title)
                 {
-                  if (prog.Title == program.Title)
-                  {
-                    add = false;
-                  }
-                }
-                if (!add && filterShow == String.Empty)
-                {
-                  continue;
-                }
-                if (add)
-                {
-                  programs.Add(program);
-                }
-
-                if (filterShow != String.Empty)
-                {
-                  if (program.Title == filterShow)
-                  {
-                    episodes.Add(program);
-                  }
-                }
-              } //if (filterLetter!="#")
-              else
-              {
-                bool add = true;
-                foreach (Program prog in programs)
-                {
-                  if (prog.Title == program.Title)
-                  {
-                    add = false;
-                  }
-                }
-                if (!add && filterShow == String.Empty)
-                {
-                  continue;
-                }
-                if (add)
-                {
-                  programs.Add(program);
-                }
-
-                if (filterShow != String.Empty)
-                {
-                  if (program.Title == filterShow)
-                  {
-                    episodes.Add(program);
-                  }
+                  add = false;
                 }
               }
+              if (!add && filterShow == String.Empty)
+              {
+                continue;
+              }
+              if (add)
+              {
+                programs.Add(program);
+              }
+
+              if (filterShow != String.Empty)
+              {
+                if (program.Title == filterShow)
+                {
+                  episodes.Add(program);
+                }
+              }
+
               if (filterShow != String.Empty && program.Title != filterShow)
               {
                 continue;
@@ -872,16 +829,14 @@ namespace Mediaportal.TV.TvPlugin.Radio
               {
                 continue;
               }
-              if (filterLetter != "#")
-              {
-                programs.Add(program);
+
+              programs.Add(program);
                 
-                if (filterShow != String.Empty)
+              if (filterShow != String.Empty)
+              {
+                if (program.Title == filterShow)
                 {
-                  if (program.Title == filterShow)
-                  {
-                    episodes.Add(program);
-                  }
+                  episodes.Add(program);
                 }
               }
 
