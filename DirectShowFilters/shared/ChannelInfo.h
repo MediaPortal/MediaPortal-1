@@ -42,7 +42,7 @@ class CChannelInfo
 
     unsigned short OriginalNetworkId;
     unsigned short TransportStreamId;
-    unsigned short ProgramNumber;
+    unsigned short ServiceId;
     char* ServiceName;
     char* ProviderName;
     char* LogicalChannelNumber;
