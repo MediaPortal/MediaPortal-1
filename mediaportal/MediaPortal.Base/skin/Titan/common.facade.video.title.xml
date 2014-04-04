@@ -194,7 +194,7 @@
 				  <unfocusedAlpha>FF</unfocusedAlpha>
 				  <folderPrefix></folderPrefix>
 				  <folderSuffix></folderSuffix>
-				  <font1>font13</font1>
+				  <font1>font12</font1>
 				  <font2>font11</font2>
 				  <label1>#title</label1>
 				  <label2>#genre</label2>
@@ -209,15 +209,15 @@
 				  <label1YOff>1430</label1YOff>
 				  <label2YOff>1390</label2YOff>
 				  <pageSize>5</pageSize>
-                  <scrollbarBackground>scrollbar_bg.png</scrollbarBackground>
-                  <scrollbarLeft>scrollbar_left_hor.png</scrollbarLeft>
-                  <scrollbarRight>scrollbar_right_hor.png</scrollbarRight>
-                  <scrollbarWidth>689</scrollbarWidth>
-			  	  <scrollbarHeight>4</scrollbarHeight>
-                  <scrollbarYOff>538</scrollbarYOff>
+          <scrollbarBackground>scrollbar_bg.png</scrollbarBackground>
+          <scrollbarLeft>scrollbar_left_hor.png</scrollbarLeft>
+          <scrollbarRight>scrollbar_right_hor.png</scrollbarRight>
+          <scrollbarWidth>689</scrollbarWidth>
+			  	<scrollbarHeight>4</scrollbarHeight>
+          <scrollbarYOff>538</scrollbarYOff>
 				  <keepaspectratio>no</keepaspectratio>
-                  <spinPosX>-2000</spinPosX>
-                  <spinPosY>730</spinPosY>
+          <spinPosX>-2000</spinPosX>
+          <spinPosY>730</spinPosY>
 				  <cards flipY="true" diffuse="Thumb_Mask.png" mask="video_filmstrip_fanart_mask.png"></cards>
 				</control>
 
@@ -255,7 +255,7 @@
 				  <unfocusedAlpha>FF</unfocusedAlpha>
 				  <folderPrefix></folderPrefix>
 				  <folderSuffix></folderSuffix>
-				  <font1>font13</font1>
+				  <font1>font12</font1>
 				  <font2>font11</font2>
 				  <label1>#title</label1>
 				  <label2>#genre</label2>

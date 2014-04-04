@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections;
+using System.Linq;
 using System.Drawing;
 using Microsoft.DirectX.Direct3D;
 using System.Collections.Generic;
@@ -34,6 +35,7 @@ namespace MediaPortal.GUI.Library
     #region XML properties
 
     [XMLSkinElement("scrollStartDelaySec")] protected int _scrollStartDelay = 3;
+    [XMLSkinElement("scrollYOffset")] protected int _yOffset = 2;
     [XMLSkinElement("spaceBetweenItems")] protected int _spaceBetweenItems = 2;
     [XMLSkinElement("font")] protected string _fontName = "";
     [XMLSkinElement("textcolor")] protected long _textColor = 0xFFFFFFFF;
@@ -60,7 +62,7 @@ namespace MediaPortal.GUI.Library
     private bool _containsProperty = false;
     private int _frameLimiter = 1;
     private double _scrollOffset = 0.0f;
-    private int _yPositionScroll = 0;
+    private double _yPositionScroll = 0.0f;
     private double _timeElapsed = 0.0f;
 
     #endregion
@@ -153,18 +155,23 @@ namespace MediaPortal.GUI.Library
             // apply user scroll speed setting. 1 = slowest / 10 = fastest
             //int userSpeed = 11 - GUIGraphicsContext.ScrollSpeedVertical;           //  10 - 1
 
-            if (_frameLimiter % (6 - GUIGraphicsContext.ScrollSpeedVertical) == 0)
-              _yPositionScroll++;
+            //if (_frameLimiter % (6 - GUIGraphicsContext.ScrollSpeedVertical) == 0)
+            //  _yPositionScroll++;
             //_yPositionScroll = _yPositionScroll + GUIGraphicsContext.ScrollSpeedVertical;
 
-            dwPosY -= (int)((_yPositionScroll - _scrollOffset) * _lineSpacing);
-            // Log.Debug("*** _frameLimiter: {0}, dwPosY: {1}, _scrollOffset: {2}", _frameLimiter, dwPosY, _scrollOffset);
+            int vScrollSpeed = (6 - GUIGraphicsContext.ScrollSpeedVertical);
+            if (vScrollSpeed == 0) vScrollSpeed = 1;
 
-            if (_positionY - dwPosY >= _itemHeight)
+            _yPositionScroll += (1.0 / vScrollSpeed) * _lineSpacing; // faster scrolling, if there is bigger linespacing
+
+            dwPosY -= (int)((_yPositionScroll - _scrollOffset));
+            // Log.Debug("*** _frameLimiter: {0}, dwPosY: {1}, _scrollOffset: {2}, _yPositionScroll: {3}", _frameLimiter, dwPosY, _scrollOffset, _yPositionScroll);
+
+            if (_positionY - dwPosY >= _itemHeight * _lineSpacing)
             {
               // one line has been scrolled away entirely
               dwPosY += (int)(_itemHeight * _lineSpacing);
-              _scrollOffset += _itemHeight;
+              _scrollOffset += (_itemHeight * _lineSpacing);
               _offset++;
               if (_offset >= _listItems.Count)
               {
@@ -199,27 +206,17 @@ namespace MediaPortal.GUI.Library
 
         if (GUIGraphicsContext.graphics != null)
         {
-          GUIGraphicsContext.graphics.SetClip(new Rectangle(_positionX, _positionY,
-                                                            _width, (int)(_itemsPerPage * _itemHeight * _lineSpacing)));
+          GUIGraphicsContext.graphics.SetClip(new Rectangle(_positionX, _positionY, _width, _height));
         }
         else
         {
-          if (_width < 1)
-          {
-            base.Render(timePassed);
-            return;
-          }
-          if (_height < 1)
+          if (_width < 1 || _height < 1)
           {
             base.Render(timePassed);
             return;
           }
 
-          Rectangle clipRect = new Rectangle();
-          clipRect.X = _positionX;
-          clipRect.Y = _positionY;
-          clipRect.Width = _width;
-          clipRect.Height = (int)(_height * _lineSpacing);
+          Rectangle clipRect = new Rectangle(_positionX, _positionY, _width, _height);
           GUIGraphicsContext.BeginClip(clipRect);
         }
         long color = _textColor;
@@ -227,8 +224,11 @@ namespace MediaPortal.GUI.Library
         {
           color &= DimColor;
         }
-        for (int i = 0; i < 1 + _itemsPerPage; i++)
+        for (int i = 0; i < 2 + _itemsPerPage; i++) // add one as the itemsPerPage might be almost one less than actual height plus one for the "incoming" item
         {
+          // skip half lines - enable, if only full lines should be visible on initial view (before scrolling starts)
+          // if (!_invalidate && i >= _itemsPerPage) continue;
+
           // render each line
           int dwPosX = _positionX;
           int iItem = i + _offset;
@@ -266,7 +266,7 @@ namespace MediaPortal.GUI.Library
             }
 
             int ixoff = _xOffset;
-            int ioffy = 2;
+            int ioffy = _yOffset;
             GUIGraphicsContext.ScaleVertical(ref ioffy);
             GUIGraphicsContext.ScaleHorizontal(ref ixoff);
             string wszText1 = String.Format("{0}", strLabel1);
@@ -334,8 +334,7 @@ namespace MediaPortal.GUI.Library
                                     wszText1.Trim(), (float)dMaxWidth, _textAlignment);
               }
 
-              //            Log.Info("dw _positionY, dwPosY, _yPositionScroll, _scrollOffset: {0} {1} {2} {3}", _positionY, dwPosY, _yPositionScroll, _scrollOffset);
-              //            Log.Info("dw wszText1.Trim() {0}", wszText1.Trim());
+              // Log.Info("dw _positionY, dwPosY, _yPositionScroll, _scrollOffset: {0} {1} {2} {3} - wszText1.Trim() {4}", _positionY, dwPosY, _yPositionScroll, _scrollOffset, wszText1.Trim());
 
               dwPosY += (int)(_itemHeight * _lineSpacing);
             }
@@ -408,12 +407,12 @@ namespace MediaPortal.GUI.Library
       {
         return;
       }
-      _font.GetTextExtent("abcdef", ref fWidth, ref fHeight);
+      _font.GetTextExtent("afy", ref fWidth, ref fHeight);
       try
       {
-        _itemHeight = (int)fHeight;
+        _itemHeight = (int)(fHeight);
         float fTotalHeight = (float)_height;
-        _itemsPerPage = (int)Math.Floor(fTotalHeight / fHeight);
+        _itemsPerPage = (int)Math.Floor(fTotalHeight / (fHeight  * _lineSpacing));
         if (_itemsPerPage == 0)
         {
           _itemsPerPage = 1;
@@ -437,21 +436,12 @@ namespace MediaPortal.GUI.Library
 
       try
       {
-        float fHeight = (float)_itemHeight; // + (float)_spaceBetweenItems;
+        float fHeight = (float)_itemHeight;
         float fTotalHeight = (float)(_height);
-        _itemsPerPage = (int)Math.Floor(fTotalHeight / fHeight);
+        _itemsPerPage = (int)Math.Floor(fTotalHeight / (fHeight * _lineSpacing));
         if (_itemsPerPage == 0)
         {
           _itemsPerPage = 1;
-        }
-        int iPages = 1;
-        if (_listItems.Count > 0)
-        {
-          iPages = _listItems.Count / _itemsPerPage;
-          if ((_listItems.Count % _itemsPerPage) != 0)
-          {
-            iPages++;
-          }
         }
       }
       catch (Exception)
@@ -683,7 +673,7 @@ namespace MediaPortal.GUI.Library
       _offset = 0;
       _listItems.DisposeAndClearList();
 
-      _yPositionScroll = 0;
+      _yPositionScroll = 0.0f;
       _scrollOffset = 0.0f;
       _frameLimiter = 1;
       _timeElapsed = 0.0f;

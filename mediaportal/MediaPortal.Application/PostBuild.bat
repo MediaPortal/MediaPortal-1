@@ -22,7 +22,6 @@ REM Configuration
 xcopy %1\Configuration\Wizards\*.* Wizards\ /Y /D
 xcopy %1\Configuration\bin\%2\Configuration.* . /Y /D
 xcopy %1\Configuration\WinCustomControls\bin\%2\WinCustomControls.* . /Y /D
-xcopy %1\..\TvEngine3\TVLibrary\TvLibrary.Interfaces\bin\%2\TvLibrary.Interfaces.* . /Y /D
 xcopy %1\..\TvEngine3\Mediaportal\TV\Server\TvLibrary.IntegrationProvider.Interfaces\bin\%2\Mediaportal.TV.Server.TVLibrary.IntegrationProvider.Interfaces.* . /Y /D
 xcopy %1\..\TvEngine3\Mediaportal\TV\ExternalBinaries\*.* . /Y /D
 xcopy %1\..\TvEngine3\Mediaportal\TV\Server\TvService.Interfaces\bin\%2\Mediaportal.TV.Server.TVService.Interfaces.* . /Y /D
@@ -48,6 +47,9 @@ REM Plugins
 
 REM SubtitlePlugin
 xcopy %1\SubtitlePlugins\bin\%2\SubtitlePlugins.* plugins\subtitle\ /Y /D
+
+REM LastFMLibrary
+xcopy %1\LastFMLibrary\bin\%2\LastFMLibrary.* . /Y /D
 
 REM ExternalPlayers
 xcopy %1\ExternalPlayers\bin\%2\ExternalPlayers.* plugins\ExternalPlayers\ /Y /D
@@ -113,6 +115,9 @@ ren libbluray.dll bluray.dll
 REM Copy one dll from DirectShowFilters folder
 xcopy %1\..\DirectShowFilters\DXErr9\bin\%2\dxerr9.dll . /Y /D
 
+REM Copy bluray dll from DirectShowFilters folder
+xcopy %1\..\DirectShowFilters\BDReader\libbluray\bluray.dll . /Y /D
+
 REM mpWatchDog
 xcopy %1\WatchDog\bin\%2\WatchDog.exe . /Y /D
 xcopy %1\WatchDog\bin\%2\DaggerLib.dll . /Y /D
@@ -127,3 +132,9 @@ REM MPE
 xcopy %1\MPE\MpeCore\bin\%2\MpeCore.* . /Y /D
 xcopy %1\MPE\MpeInstaller\bin\%2\MpeInstaller.* . /Y /D
 xcopy %1\MPE\MpeMaker\bin\%2\MpeMaker.* . /Y /D
+
+REM Nuget 
+xcopy %1\Databases\bin\%2\HtmlAgilityPack.* . /Y /D
+
+REM ffmpeg 
+xcopy %1\..\Packages\ffmpeg.2.1.1\ffmpeg.exe MovieThumbnailer\ /Y /D

@@ -49,9 +49,17 @@ namespace ProcessPlugins.ViewModeSwitcher
       cbShowSwitchMsg.Checked = currentSettings.ShowSwitchMsg;
       cbUseFallbackRule.Checked = currentSettings.UseFallbackRule;
       cbDisableLBGlobaly.Checked = currentSettings.DisableLBGlobaly;
-      numBlackLevel.Value = currentSettings.LBBlackLevel;
+      numBlackLevel.Value = currentSettings.LBMaxBlackLevel;
+      numBlackLevAve.Value = currentSettings.LBMinBlackLevel;
       fbosUpDown.Value = currentSettings.fboverScan;
-
+      numBBdetWidth.Value = currentSettings.DetectWidthPercent;
+      numBBdetHeight.Value = currentSettings.DetectHeightPercent;      
+      cbDisableForVideo.Checked   = currentSettings.disableForVideo; 
+      cbDisableLBForVideo.Checked = currentSettings.disableLBForVideo;     
+      numMaxCropLimit.Value = currentSettings.LBMaxCropLimitPercent;
+      numSymLimit.Value = currentSettings.LBSymLimitPercent;
+      numDetectInterval.Value = currentSettings.LBdetectInterval;
+      
       ReBuildDataGrid();
     }
 
@@ -68,8 +76,19 @@ namespace ProcessPlugins.ViewModeSwitcher
       currentSettings.UseFallbackRule = cbUseFallbackRule.Checked;
       currentSettings.FallBackViewMode = ViewModeswitcherSettings.StringToViewMode(cmbFBViewMode.Text);
       currentSettings.DisableLBGlobaly = cbDisableLBGlobaly.Checked;
-      currentSettings.LBBlackLevel = numBlackLevel.Value;
+      currentSettings.LBMaxBlackLevel = numBlackLevel.Value;
+      currentSettings.LBMinBlackLevel = numBlackLevAve.Value;
+
       currentSettings.fboverScan = (int)fbosUpDown.Value;
+      currentSettings.DetectWidthPercent = numBBdetWidth.Value;
+      currentSettings.DetectHeightPercent = numBBdetHeight.Value;
+      currentSettings.LBMaxCropLimitPercent = numMaxCropLimit.Value;
+      currentSettings.LBSymLimitPercent = numSymLimit.Value;
+      currentSettings.LBdetectInterval = (int)numDetectInterval.Value;
+
+      currentSettings.disableForVideo = cbDisableForVideo.Checked;
+      currentSettings.disableLBForVideo = cbDisableLBForVideo.Checked;
+
       currentSettings.SaveSettings();
     }
 
@@ -89,13 +108,21 @@ namespace ProcessPlugins.ViewModeSwitcher
       dg_RuleSets.Rows.Clear();
       foreach (Rule tmpRule in currentSettings.ViewModeRules)
       {
-        dg_RuleSets.Rows.Add(tmpRule.Enabled, tmpRule.Name, tmpRule.ARFrom.ToString(), tmpRule.ARTo.ToString(),
-                             tmpRule.MinWidth.ToString(), tmpRule.MaxWidth.ToString(), tmpRule.MinHeight.ToString(),
-                             tmpRule.MaxHeight.ToString(), tmpRule.ChangeAR, tmpRule.ViewMode.ToString(),
-                             tmpRule.ChangeOs, tmpRule.OverScan.ToString(), tmpRule.EnableLBDetection);
+        dg_RuleSets.Rows.Add(tmpRule.Enabled, 
+                             tmpRule.Name, 
+                             tmpRule.ARFrom.ToString(), 
+                             tmpRule.ARTo.ToString(),
+                             tmpRule.MinWidth.ToString(), 
+                             tmpRule.MaxWidth.ToString(), 
+                             tmpRule.MinHeight.ToString(),
+                             tmpRule.MaxHeight.ToString(), 
+                             tmpRule.ViewMode.ToString(),
+                             tmpRule.OverScan.ToString(), 
+                             tmpRule.EnableLBDetection,
+                             tmpRule.AutoCrop, 
+                             tmpRule.MaxCrop); 
       }
     }
-
 
     private void bOK_Click(object sender, EventArgs e)
     {
@@ -108,16 +135,16 @@ namespace ProcessPlugins.ViewModeSwitcher
       Rule tmpRule = new Rule();
       tmpRule.Enabled = true;
       tmpRule.Name = "New rule";
-      tmpRule.ARFrom = 1.33f;
-      tmpRule.ARTo = 1.334f;
-      tmpRule.MinWidth = 700;
-      tmpRule.MaxWidth = 800;
-      tmpRule.MinHeight = 400;
-      tmpRule.MaxHeight = 600;
-      tmpRule.ChangeAR = true;
+      tmpRule.ARFrom = 1.2;
+      tmpRule.ARTo = 1.46;
+      tmpRule.MinWidth = 200;
+      tmpRule.MaxWidth = 2000;
+      tmpRule.MinHeight = 200;
+      tmpRule.MaxHeight = 2000;
+      tmpRule.AutoCrop = false;
       tmpRule.ViewMode = Geometry.Type.Normal;
-      tmpRule.ChangeOs = false;
-      tmpRule.OverScan = 0;
+      tmpRule.MaxCrop = true;
+      tmpRule.OverScan = 8;
       tmpRule.EnableLBDetection = false;
 
       currentSettings.ViewModeRules.Add(tmpRule);
@@ -127,12 +154,20 @@ namespace ProcessPlugins.ViewModeSwitcher
 
     private void bDelete_Click(object sender, EventArgs e)
     {
+      if (currentSettings.ViewModeRules.Count <= 0)
+      {
+        return;
+      }
       currentSettings.ViewModeRules.RemoveAt(dg_RuleSets.CurrentRow.Index);
       ReBuildDataGrid();
     }
 
     private void bModify_Click(object sender, EventArgs e)
     {
+      if (currentSettings.ViewModeRules.Count <= 0)
+      {
+        return;
+      }
       ViewModeSwitcherRuleDetail frmRuleDetail = new ViewModeSwitcherRuleDetail();
       frmRuleDetail.MainForm = this;
       if (frmRuleDetail.ShowDialog() == DialogResult.OK)
@@ -150,7 +185,7 @@ namespace ProcessPlugins.ViewModeSwitcher
     {
       try
       {
-        Process.Start("http://forum.team-mediaportal.com/viewmodeswitcher_plugin-t21365.html", "");
+        Process.Start("http://wiki.team-mediaportal.com/1_MEDIAPORTAL_1/141_Configuration/MediaPortal_Configuration/95_Plugins/ViewModeSwitcher", "");
       }
       catch (Exception ex)
       {
@@ -161,8 +196,41 @@ namespace ProcessPlugins.ViewModeSwitcher
     private void cbUseFallbackRule_CheckedChanged(object sender, EventArgs e)
     {
       cmbFBViewMode.Enabled = cbUseFallbackRule.Checked;
+      fbosUpDown.Enabled = cbUseFallbackRule.Checked;
     }
 
+    private void cbDisableForVideo_CheckedChanged(object sender, EventArgs e)
+    {
+      cbDisableLBForVideo.Checked = cbDisableForVideo.Checked;
+    }
+
+    private void cbEnableAdvanced_CheckedChanged(object sender, EventArgs e)
+    {
+      cbDisableLBForVideo.Visible = cbEnableAdvanced.Checked;
+      cbDisableForVideo.Visible   = cbEnableAdvanced.Checked;
+      cbVerboseLog.Visible        = cbEnableAdvanced.Checked;
+      label12.Visible             = cbEnableAdvanced.Checked;
+      numMaxCropLimit.Visible     = cbEnableAdvanced.Checked;
+      label11.Visible             = cbEnableAdvanced.Checked;
+      label10.Visible             = cbEnableAdvanced.Checked;
+      label9.Visible              = cbEnableAdvanced.Checked;
+      numBlackLevAve.Visible      = cbEnableAdvanced.Checked;
+      label8.Visible              = cbEnableAdvanced.Checked;
+      label7.Visible              = cbEnableAdvanced.Checked;
+      numBBdetHeight.Visible      = cbEnableAdvanced.Checked;
+      numBBdetWidth.Visible       = cbEnableAdvanced.Checked;
+      label1.Visible              = cbEnableAdvanced.Checked;
+      numBlackLevel.Visible       = cbEnableAdvanced.Checked;
+      label18.Visible             = cbEnableAdvanced.Checked;
+      label13.Visible             = cbEnableAdvanced.Checked;
+      numSymLimit.Visible         = cbEnableAdvanced.Checked;
+      label14.Visible             = cbEnableAdvanced.Checked;
+      label15.Visible             = cbEnableAdvanced.Checked;
+      label16.Visible             = cbEnableAdvanced.Checked;
+      numDetectInterval.Visible   = cbEnableAdvanced.Checked;
+    }
+
+    
     private void bExport_Click(object sender, EventArgs e)
     {
       saveFileDialog.AddExtension = true;
@@ -195,5 +263,28 @@ namespace ProcessPlugins.ViewModeSwitcher
         }
       }
     }
+
+    private void bLoadDefaults_Click(object sender, EventArgs e)
+    {
+      if (!currentSettings.LoadDefaultSettings())
+      {
+        MessageBox.Show("Import Error!");
+      }
+      else
+      {
+        RefreshFormComponents(); // refresh the form
+      }
+    }
+
+    private void dg_RuleSets_CellContentClick(object sender, DataGridViewCellEventArgs e)
+    {
+      if (e.ColumnIndex == 0 && e.RowIndex >= 0) //the 'Enabled' column cells
+      {
+        bool isChecked = currentSettings.ViewModeRules[e.RowIndex].Enabled;         
+        currentSettings.ViewModeRules[e.RowIndex].Enabled = !isChecked; //flip the state
+        dg_RuleSets[0, e.RowIndex].Value = !isChecked; //refresh the cell
+      }
+    }   
+    
   }
 }

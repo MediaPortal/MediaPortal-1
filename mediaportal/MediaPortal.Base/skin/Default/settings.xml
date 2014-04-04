@@ -102,7 +102,7 @@
       </control>
       <control>
         <description>Settings locked</description>
-        <type>togglebutton</type>
+        <type>checkbutton</type>
         <id>20</id>
         <width>262</width>
         <label>300065</label>

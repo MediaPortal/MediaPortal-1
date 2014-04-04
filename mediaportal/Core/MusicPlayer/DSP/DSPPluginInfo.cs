@@ -96,11 +96,11 @@ namespace MediaPortal.Player.DSP
         return false;
       }
 
-      string pluginName = name.ToLower();
+      string pluginName = name.ToLowerInvariant();
 
       for (int i = 0; i < BlackList.Length; i++)
       {
-        string curName = BlackList[i].ToLower();
+        string curName = BlackList[i].ToLowerInvariant();
 
         if (pluginName == curName)
         {

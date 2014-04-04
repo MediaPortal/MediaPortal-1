@@ -4,6 +4,18 @@
 <defaultcontrol>4</defaultcontrol>
 <allowoverlay>yes</allowoverlay>
 <disabletopbar>no</disabletopbar>
+<define>#useRandomGamesUserFanart:Yes</define>
+<define>#useRandomMoviesUserFanart:Yes</define>
+<define>#useRandomMoviesScraperFanart:Yes</define>
+<define>#useRandomMovingPicturesFanart:Yes</define>
+<define>#useRandomMusicUserFanart:Yes</define>
+<define>#useRandomMusicScraperFanart:Yes</define>
+<define>#useRandomPicturesUserFanart:Yes</define>
+<define>#useRandomPluginsUserFanart:Yes</define>
+<define>#useRandomScoreCenterUserFanart:Yes</define> 
+<define>#useRandomTVUserFanart:Yes</define>
+<define>#useRandomTVSeriesFanart:Yes</define>
+
 <define>#header.label:Home</define>
 <rememberLastFocusedControl>yes</rememberLastFocusedControl>
 
@@ -22,7 +34,8 @@
       </control>
 
     
-    <import>BasicHome.BackgroundSelected.xml</import> 
+		<include condition="#(eq(#skin.basichome.background,'default'))">BasicHome.BackgroundSelected.xml</include>	
+		<include condition="#(eq(#skin.basichome.background,'FanartHandler'))">BasicHome.FanartSelected.xml</include>	
 		<include condition="#skin.enable.latest.myVideo">BasicHome.LatestVideo.xml</include>
 		<include condition="#skin.enable.latest.MovingPictures">BasicHome.LatestMovingPictures.xml</include>
 		<include condition="#skin.enable.latest.Series">BasicHome.LatestTVSeries.xml</include>
@@ -81,7 +94,7 @@
 		    <texture>basichome_button_radio.png</texture>
 	      <animation effect="zoom" start="100,100" end="102,102" time="200" condition="control.hasfocus(3)">conditional</animation>
  				<animation effect="fade" time="250" reversible="false">visiblechange</animation>
-				<visible>![Control.IsVisible(3000)|Control.IsVisible(2000)|control.HasFocus(200) | control.HasFocus(300) | control.HasFocus(400) | control.HasFocus(500) | control.HasFocus(600) | control.HasFocus(700)]</visible> 
+				<visible>![Control.IsVisible(3000)|control.HasFocus(200) | control.HasFocus(300) | control.HasFocus(400) | control.HasFocus(500) | control.HasFocus(600) | control.HasFocus(700)]</visible>  
 		  </control>
 		  
  	  	<control>

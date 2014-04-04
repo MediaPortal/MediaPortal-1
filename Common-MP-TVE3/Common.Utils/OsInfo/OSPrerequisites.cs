@@ -88,7 +88,6 @@ namespace OSPrerequisites
                             MessageBoxIcon.Error);
           }
           throw new OperationSystemException(MSG_NOT_INSTALLABLE, -100);
-          break;
         case OSInfo.OSInfo.OsSupport.NotSupported:
           //Used .Info as .Warning is missing
           //Log.Info("*******************************************");

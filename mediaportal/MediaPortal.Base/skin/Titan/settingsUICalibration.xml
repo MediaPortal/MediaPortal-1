@@ -31,7 +31,7 @@
 		<posX>340</posX>
 		<posY>194</posY>
 		<label>5</label>
-		<font>font13</font>
+		<font>font12</font>
 		<animation effect="fade" time="150">WindowOpen</animation>
 		<animation effect="fade" time="150">WindowClose</animation>
 	</control>

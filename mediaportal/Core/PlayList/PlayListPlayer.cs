@@ -33,6 +33,7 @@ namespace MediaPortal.Playlists
       void Release();
       bool Play(string strFile);
       bool Play(string strFile, MediaPortal.Player.g_Player.MediaType type);
+      bool Play(string strFile, MediaPortal.Player.g_Player.MediaType type, int title, bool forcePlay);
       bool PlayVideoStream(string strURL, string streamName);
       bool PlayAudioStream(string strURL);
       void Stop();
@@ -64,6 +65,11 @@ namespace MediaPortal.Playlists
       bool IPlayer.Play(string strFile, MediaPortal.Player.g_Player.MediaType type)
       {
         return Player.g_Player.Play(strFile, type);
+      }
+
+      bool IPlayer.Play(string strFile, MediaPortal.Player.g_Player.MediaType type, int title, bool forcePlay)
+      {
+        return Player.g_Player.Play(strFile, type, title, forcePlay);
       }
 
       bool IPlayer.PlayVideoStream(string strURL, string streamName)
@@ -126,6 +132,7 @@ namespace MediaPortal.Playlists
     private PlayList _emptyPlayList = new PlayList();
     private PlayList _musicVideoPlayList = new PlayList();
     private PlayList _radioStreamPlayList = new PlayList();
+    private PlayList _lastFMPlaylist = new PlayList();
     private bool _repeatPlayList = true;
     private string _currentPlaylistName = string.Empty;
 
@@ -140,6 +147,12 @@ namespace MediaPortal.Playlists
     public static PlayListPlayer SingletonPlayer
     {
       get { return singletonPlayer; }
+    }
+
+    // Returns current Playlist Position
+    public int CurrentPlaylistPos
+    {
+      get { return _currentItem; }
     }
 
     public void InitTest()
@@ -158,6 +171,7 @@ namespace MediaPortal.Playlists
       _musicVideoPlayList.OnChanged += new PlayList.OnChangedDelegate(NotifyChange);
       _radioStreamPlayList.OnChanged += new PlayList.OnChangedDelegate(NotifyChange);
       _emptyPlayList.OnChanged += new PlayList.OnChangedDelegate(NotifyChange);
+      _lastFMPlaylist.OnChanged += new PlayList.OnChangedDelegate(NotifyChange);
     }
 
     private void NotifyChange(PlayList playlist)
@@ -176,6 +190,8 @@ namespace MediaPortal.Playlists
           nPlaylist = PlayListType.PLAYLIST_MUSIC_VIDEO;
         else if (_radioStreamPlayList == playlist)
           nPlaylist = PlayListType.PLAYLIST_RADIO_STREAMS;
+        else if (_lastFMPlaylist == playlist)
+          nPlaylist = PlayListType.PLAYLIST_LAST_FM;
         else
           nPlaylist = PlayListType.PLAYLIST_NONE;
 
@@ -210,10 +226,11 @@ namespace MediaPortal.Playlists
           }
           break;
 
-          // SV Allows BassMusicPlayer to continuously play
+          // Allows a Musicplayer to continuously play
+          // Note: BASS Player uses a different technique now, because of Gapless Playback
+          // The handling of the message is left for backward compatibility with 3rd party plugins
         case GUIMessage.MessageType.GUI_MSG_PLAYBACK_CROSSFADING:
           {
-            // This message is only sent by BASS in gapless/crossfading mode
             PlayNext();
           }
           break;
@@ -371,6 +388,23 @@ namespace MediaPortal.Playlists
       return item;
     }
 
+    public string GetNextSong()
+    {
+      PlayListItem item = GetNextItem();
+      if (item == null)
+      {
+        return string.Empty;
+      }
+
+      _currentItem++; 
+
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS, 0, 0, 0, _currentItem, 0, null);
+      msg.Label = item.FileName;
+      GUIGraphicsContext.SendMessage(msg);
+
+      return item.FileName;
+    }
+
     public string GetNext()
     {
       PlayListItem resultingItem = GetNextItem();
@@ -419,7 +453,8 @@ namespace MediaPortal.Playlists
           // Switch back to standard playback mode
           if (Player.BassMusicPlayer.IsDefaultMusicPlayer)
           {
-            Player.BassMusicPlayer._Player.SwitchToDefaultPlaybackMode();
+            Player.BassMusicPlayer.Player.SwitchToDefaultPlaybackMode();
+            return;
           }
 
           _currentPlayList = PlayListType.PLAYLIST_NONE;
@@ -563,11 +598,21 @@ namespace MediaPortal.Playlists
           {
             case PlayListType.PLAYLIST_MUSIC:
             case PlayListType.PLAYLIST_MUSIC_TEMP:
+            case PlayListType.PLAYLIST_LAST_FM:
               playResult = g_Player.Play(item.FileName, MediaPortal.Player.g_Player.MediaType.Music);
-              break;            
+              break;
             case PlayListType.PLAYLIST_VIDEO:
             case PlayListType.PLAYLIST_VIDEO_TEMP:
-              playResult = g_Player.Play(item.FileName, MediaPortal.Player.g_Player.MediaType.Video);
+              {
+                if (!MediaPortal.Player.g_Player.ForcePlay)
+                {
+                  playResult = g_Player.Play(item.FileName, MediaPortal.Player.g_Player.MediaType.Video);
+                }
+                else
+                {
+                  playResult = g_Player.Play(item.FileName, MediaPortal.Player.g_Player.MediaType.Video, MediaPortal.Player.g_Player.SetResumeBDTitleState, true);
+                }
+              }
               break;
             default:
               playResult = g_Player.Play(item.FileName);
@@ -682,6 +727,9 @@ namespace MediaPortal.Playlists
         case PlayListType.PLAYLIST_RADIO_STREAMS:
           _radioStreamPlayList = playlist;
           break;
+        case PlayListType.PLAYLIST_LAST_FM:
+          _lastFMPlaylist = playlist;
+          break;
         default:
           _emptyPlayList = playlist;
           break;
@@ -706,6 +754,8 @@ namespace MediaPortal.Playlists
           return _musicVideoPlayList;
         case PlayListType.PLAYLIST_RADIO_STREAMS:
           return _radioStreamPlayList;
+        case PlayListType.PLAYLIST_LAST_FM:
+          return _lastFMPlaylist;
         default:
           _emptyPlayList.Clear();
           return _emptyPlayList;

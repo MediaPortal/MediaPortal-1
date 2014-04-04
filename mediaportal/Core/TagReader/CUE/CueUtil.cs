@@ -66,7 +66,7 @@ namespace MediaPortal.TagReader
     /// <returns>Returns true if file is Cue file</returns>
     public static Boolean isWavCueFile(string fileName)
     {
-      return fileName.ToLower().EndsWith("." + WAV_CUE_FILE_EXT);
+      return fileName.ToLowerInvariant().EndsWith("." + WAV_CUE_FILE_EXT);
     }
 
     /// <summary>
@@ -76,7 +76,7 @@ namespace MediaPortal.TagReader
     /// <returns>Returns true if file is Cue file</returns>
     public static Boolean isCueFile(string fileName)
     {
-      if (!isWavCueFile(fileName) && fileName.ToLower().EndsWith("." + CUE_FILE_EXT) && !isCueFakeTrackFile(fileName))
+      if (!isWavCueFile(fileName) && fileName.ToLowerInvariant().EndsWith("." + CUE_FILE_EXT) && !isCueFakeTrackFile(fileName))
       {
         // Do the File Exists check only here, otherwise we will recheck the existence of all non-cue files as well.
         // This causes an unnecessary check of ALL files when scanning the shares
@@ -95,7 +95,7 @@ namespace MediaPortal.TagReader
     /// <returns>Returns true if file is Cue fake track file</returns>
     public static Boolean isCueFakeTrackFile(string fileName)
     {
-      return fileName.ToLower().Contains("." + CUE_FAKE_TRACK_FILE_EXT);
+      return fileName.ToLowerInvariant().Contains("." + CUE_FAKE_TRACK_FILE_EXT);
     }
 
     /// <summary>
@@ -111,7 +111,7 @@ namespace MediaPortal.TagReader
 
       if (System.IO.Path.HasExtension(track.DataFile.Filename))
       {
-        res += System.IO.Path.GetExtension(track.DataFile.Filename).ToLower();
+        res += System.IO.Path.GetExtension(track.DataFile.Filename).ToLowerInvariant();
       }
 
       return res;

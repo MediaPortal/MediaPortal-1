@@ -163,7 +163,7 @@ namespace MediaPortal.GUI.Home
 
     public string GetFocusTextureFileName(string FileName)
     {
-      if (!FileName.ToLower().Contains("button_"))
+      if (!FileName.ToLowerInvariant().Contains("button_"))
       {
         FileName = "button_" + FileName;
       }
@@ -172,7 +172,7 @@ namespace MediaPortal.GUI.Home
 
     public string GetNonFocusTextureFileName(string FileName)
     {
-      if (!FileName.ToLower().Contains("buttonnf_"))
+      if (!FileName.ToLowerInvariant().Contains("buttonnf_"))
       {
         FileName = "buttonnf_" + FileName;
       }
@@ -187,7 +187,7 @@ namespace MediaPortal.GUI.Home
       {
         dir = dir + "\\";
       }
-      if (!name.ToLower().Contains("hover_"))
+      if (!name.ToLowerInvariant().Contains("hover_"))
       {
         FileName = dir + "hover_" + name;
       }
@@ -202,7 +202,7 @@ namespace MediaPortal.GUI.Home
       {
         dir = dir + "\\";
       }
-      if (!name.ToLower().Contains("nonfocushover_"))
+      if (!name.ToLowerInvariant().Contains("nonfocushover_"))
       {
         FileName = dir + "nonfocushover_" + name;
       }

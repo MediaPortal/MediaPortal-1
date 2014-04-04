@@ -43,9 +43,9 @@
       // 
       // groupBoxStartupResumeSettings
       // 
-      this.groupBoxStartupResumeSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxStartupResumeSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxStartupResumeSettings.Controls.Add(this.groupBoxDelays);
       this.groupBoxStartupResumeSettings.Controls.Add(this.groupBox1);
       this.groupBoxStartupResumeSettings.Controls.Add(this.lbScreen);
@@ -66,7 +66,7 @@
       this.groupBoxDelays.Controls.Add(this.label2);
       this.groupBoxDelays.Controls.Add(this.nudDelay);
       this.groupBoxDelays.Controls.Add(this.label1);
-      this.groupBoxDelays.Location = new System.Drawing.Point(11, 325);
+      this.groupBoxDelays.Location = new System.Drawing.Point(11, 280);
       this.groupBoxDelays.Name = "groupBoxDelays";
       this.groupBoxDelays.Size = new System.Drawing.Size(445, 61);
       this.groupBoxDelays.TabIndex = 11;
@@ -123,7 +123,7 @@
       // groupBox1
       // 
       this.groupBox1.Controls.Add(this.cbWaitForTvService);
-      this.groupBox1.Location = new System.Drawing.Point(11, 278);
+      this.groupBox1.Location = new System.Drawing.Point(11, 230);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(445, 44);
       this.groupBox1.TabIndex = 10;
@@ -145,51 +145,50 @@
       // lbScreen
       // 
       this.lbScreen.AutoSize = true;
-      this.lbScreen.Location = new System.Drawing.Point(6, 249);
+      this.lbScreen.Location = new System.Drawing.Point(6, 197);
       this.lbScreen.Name = "lbScreen";
       this.lbScreen.Size = new System.Drawing.Size(67, 13);
       this.lbScreen.TabIndex = 5;
       this.lbScreen.Text = "Start screen:";
+      this.lbScreen.Click += new System.EventHandler(this.lbScreen_Click);
       // 
       // cbScreen
       // 
-      this.cbScreen.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.cbScreen.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.cbScreen.BorderColor = System.Drawing.Color.Empty;
       this.cbScreen.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cbScreen.Enabled = false;
       this.cbScreen.FormattingEnabled = true;
-      this.cbScreen.Location = new System.Drawing.Point(85, 246);
+      this.cbScreen.Location = new System.Drawing.Point(85, 194);
       this.cbScreen.MinimumSize = new System.Drawing.Size(100, 0);
       this.cbScreen.Name = "cbScreen";
       this.cbScreen.Size = new System.Drawing.Size(371, 21);
       this.cbScreen.TabIndex = 6;
+      this.cbScreen.SelectedIndexChanged += new System.EventHandler(this.cbScreen_SelectedIndexChanged);
       // 
       // settingsCheckedListBox
       // 
-      this.settingsCheckedListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.settingsCheckedListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.settingsCheckedListBox.CheckOnClick = true;
       this.settingsCheckedListBox.Items.AddRange(new object[] {
             "Start MediaPortal in fullscreen mode",
-            "Use alternative fullscreen Splashscreen (only if started in fullscreen mode)",
+            "Use alternative fullscreen Splashscreen (fullscreen only)",
             "Keep MediaPortal always on top",
             "Hide taskbar in fullscreen mode",
             "Autostart MediaPortal on Windows startup",
             "Minimize to tray on start up",
             "Minimize to tray on GUI exit",
+            "Minimize to tray on focus loss (fullscreen only)",
             "Turn off monitor when blanking screen",
-            "Turn monitor / tv on when resuming from standby",
-            "Allow S3 standby although wake up devices are present",
-            "Apply workaround to fix MediaPortal freezing on resume on some systems",
-            "Restart MediaPortal on resume (avoids stuttering playback with nvidia)",
             "Show last active module when starting / resuming from standby",
-            "Use screen selector to choose on which screen MP should start"});
-      this.settingsCheckedListBox.Location = new System.Drawing.Point(6, 20);
+            "Stop playback on removal of an audio renderer"});
+      this.settingsCheckedListBox.Location = new System.Drawing.Point(6, 19);
       this.settingsCheckedListBox.Name = "settingsCheckedListBox";
-      this.settingsCheckedListBox.Size = new System.Drawing.Size(450, 214);
+      this.settingsCheckedListBox.Size = new System.Drawing.Size(450, 169);
       this.settingsCheckedListBox.TabIndex = 0;
       this.settingsCheckedListBox.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.settingsCheckedListBox_ItemCheck);
+      this.settingsCheckedListBox.SelectedIndexChanged += new System.EventHandler(this.settingsCheckedListBox_SelectedIndexChanged);
       // 
       // GeneralStartupResume
       // 

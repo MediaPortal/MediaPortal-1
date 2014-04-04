@@ -44,7 +44,7 @@ namespace MediaPortal.Common.Utils
     private static readonly HashSet<Assembly> AppAssemblies = new HashSet<Assembly>();
     private static readonly Dictionary<string, Version> SubSystemVersions = new Dictionary<string, Version>();
     private static readonly Version AppVersion;
-    public static readonly Version SkinVersion = new Version(1, 3, 0, 1);
+    public static readonly Version SkinVersion = new Version(1, 4, 0, 0);
     private static readonly string MinRequiredVersionDefault = "1.1.8.0"; // 1.2.0 RC1
 
     static CompatibilityManager()
@@ -379,7 +379,10 @@ namespace MediaPortal.Common.Utils
     static readonly Dictionary<Version, string> MpReleaseApi = new Dictionary<Version, string>()
     {
       { new Version("1.1.6.27644"), "1.2.0 Beta" },
-      { new Version("1.2.100.0"), "1.3.0 Alpha" }
+      { new Version("1.2.100.0"), "1.3.0 Alpha" },
+      { new Version("1.3.100.0"), "1.4.0 Pre Release" },
+      { new Version("1.4.100.0"), "1.5.0 Pre Release" },
+      { new Version("1.5.100.0"), "1.6.0 Pre Release" }
     };
 
     public static string MediaPortalReleaseForApiVersion(Version apiVersion)

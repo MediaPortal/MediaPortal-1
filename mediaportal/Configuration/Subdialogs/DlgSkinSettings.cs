@@ -22,20 +22,17 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using System.Reflection;
 using System.Xml;
+using Mediaportal.TV.Server.TVControl.ServiceAgents;
+using Mediaportal.TV.Server.TVDatabase.Entities;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
-using MediaPortal.Util;
 using MediaPortal.WinCustomControls;
-using Mediaportal.TV.Server.TVControl.ServiceAgents;
-using Mediaportal.TV.Server.TVDatabase.Entities;
 
 namespace MediaPortal.Configuration.Sections
 {
@@ -824,6 +821,7 @@ namespace MediaPortal.Configuration.Sections
       this.gbGenreSettings.PerformLayout();
       this.tabPageTvGuideColors.ResumeLayout(false);
       this.groupGenreColors.ResumeLayout(false);
+      this.groupGenreColors.PerformLayout();
       this.groupGroupColor.ResumeLayout(false);
       this.groupGroupColor.PerformLayout();
       this.groupChannelColors.ResumeLayout(false);
@@ -979,14 +977,11 @@ namespace MediaPortal.Configuration.Sections
       // We must specify the hostname of the TV server since MP is not running and their is no active communication with the TV server.
       using (Settings xmlreader = new MPSettings())
       {
-        TvServerRemote.HostName = xmlreader.GetValueAsString("tvservice", "hostname", "");
         ServiceAgents.Instance.Hostname = xmlreader.GetValueAsString("tvservice", "hostname", ""); ;
       }
 
       // Get the MediaPortal genres from the TV server.
-      _mpGenres =
-        Mediaportal.TV.Server.TVControl.ServiceAgents.ServiceAgents.Instance.ProgramCategoryServiceAgent.
-          ListAllTvGuideCategories().ToList();
+      _mpGenres = ServiceAgents.Instance.ProgramCategoryServiceAgent.ListAllTvGuideCategories().ToList();
 
       // Load tv guide colors.
       using (Settings xmlreader = new SKSettings())
@@ -1294,7 +1289,8 @@ namespace MediaPortal.Configuration.Sections
       }
 
       // Enforce border highighting when genres are colored.
-      if (cbGenreColoring.Checked)
+      // #MP1-2433 Keep code but seems we don't need it anymore
+      /*if (cbGenreColoring.Checked)
       {
         cbBorderHighlight.Checked = true;
         cbBorderHighlight.Enabled = false;
@@ -1302,7 +1298,7 @@ namespace MediaPortal.Configuration.Sections
       else
       {
         cbBorderHighlight.Enabled = true;
-      }
+      }*/
     }
 
     private void cbColoredGuide_CheckedChanged(object sender, EventArgs e)

@@ -22,6 +22,7 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
@@ -740,7 +741,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void keyTextBox_KeyPress(object sender, KeyPressEventArgs e)
     {
-      keyTextBox.Text = e.KeyChar.ToString().ToUpper(); // keyMappings.GetName(e.KeyValue);
+      keyTextBox.Text = e.KeyChar.ToString().ToUpper(CultureInfo.CurrentCulture); // keyMappings.GetName(e.KeyValue);
 
       if (currentlySelectedNode != null)
       {

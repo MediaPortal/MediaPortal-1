@@ -35,6 +35,7 @@ namespace MediaPortal.Visualization
   public class WMPVisualizationPlugin : IWMPEffects, IDisposable
   {
     private IWMPEffects iWmpEffects = null;
+    private IWMPEffects2 iWmpEffects2 = null;
 
     internal WMPVisualizationPlugin(string sClsid)
     {
@@ -49,10 +50,21 @@ namespace MediaPortal.Visualization
         Type comObjType = Type.GetTypeFromCLSID(g);
         oCom = Activator.CreateInstance(comObjType);
 
-        if (oCom != null)
+        // Cast of IWMPEffects
+        iWmpEffects = oCom as IWMPEffects;
+
+        if (iWmpEffects != null)
         {
-          iWmpEffects = (IWMPEffects)oCom;
-          isValidVizObject = true;
+          // supports the interface IWMPEffects > IWmpEffects2 ?
+          iWmpEffects2 = oCom as IWMPEffects2;
+
+          if (iWmpEffects2 != null)
+          {              
+            // the interface IWmpEffects2 is supported, need
+            // we the interface IWmpEffects no longer.  
+            iWmpEffects = null;
+            isValidVizObject = true;
+          }
         }
       }
 
@@ -78,7 +90,8 @@ namespace MediaPortal.Visualization
           DirectShowUtil.ReleaseComObject(oCom);
         }
         iWmpEffects = null;
-        throw new Exception("Object is not a IWMPEffects interface!");
+        iWmpEffects2 = null;
+        throw new Exception("Object is not a IWMPEffects or IWMPEffects2 interface!");
       }
     }
 
@@ -94,6 +107,12 @@ namespace MediaPortal.Visualization
         DirectShowUtil.ReleaseComObject(iWmpEffects);
         iWmpEffects = null;
       }
+
+      if (iWmpEffects2 != null)
+      {
+        DirectShowUtil.ReleaseComObject(iWmpEffects2);
+        iWmpEffects2 = null;
+      }
     }
 
     #region IWMPEffects Members
@@ -105,121 +124,203 @@ namespace MediaPortal.Visualization
 
     public int MediaInfo(int channelCount, int sampleRate, string title)
     {
-      if (iWmpEffects != null)
+      if (iWmpEffects2 != null)
       {
-        return iWmpEffects.MediaInfo(channelCount, sampleRate, title);
+        return iWmpEffects2.MediaInfo(channelCount, sampleRate, title);
       }
-
       else
       {
-        return -1;
+        if (iWmpEffects != null)
+        {
+          return iWmpEffects.MediaInfo(channelCount, sampleRate, title);
+        }
+        else
+        {
+          return -1;
+        }
       }
     }
 
     public int GetCapabilities(ref int caps)
     {
-      if (iWmpEffects != null)
+      int val = 0;
+
+      if (iWmpEffects2 != null)
       {
-        int val = 0;
-        int result = iWmpEffects.GetCapabilities(ref val);
+        int result = iWmpEffects2.GetCapabilities(ref val);
         caps = val;
         return result;
       }
-
-      return -1;
+      else
+      {
+        if (iWmpEffects != null)
+        {
+          int result = iWmpEffects.GetCapabilities(ref val);
+          caps = val;
+          return result;
+        }
+        else
+        {
+          return -1;
+        }
+      }           
     }
 
     public int GetTitle(out string title)
     {
       title = string.Empty;
 
-      if (iWmpEffects != null)
+      if (iWmpEffects2 != null)
       {
         string val = string.Empty;
-        int result = iWmpEffects.GetTitle(out val);
+        int result = iWmpEffects2.GetTitle(out val);
         title = val;
         return result;
       }
-
-      return -1;
+      else
+      {
+        if (iWmpEffects != null)
+        {
+          string val = string.Empty;
+          int result = iWmpEffects.GetTitle(out val);
+          title = val;
+          return result;
+        }
+        else
+        {
+          return -1;
+        }
+      }
+           
     }
 
     public int GetPresetTitle(int preset, out string title)
     {
       title = string.Empty;
 
-      if (iWmpEffects != null)
+      if (iWmpEffects2 != null)
       {
         string val = string.Empty;
-        int result = iWmpEffects.GetPresetTitle(preset, out val);
+        int result = iWmpEffects2.GetPresetTitle(preset, out val);
         title = val;
         return result;
       }
-
-      return -1;
+      else
+      {
+        if (iWmpEffects != null)
+        {
+          string val = string.Empty;
+          int result = iWmpEffects.GetPresetTitle(preset, out val);
+          title = val;
+          return result;
+        }
+        else
+        {
+          return -1;
+        }
+      }      
     }
 
     public int GetPresetCount(ref int count)
     {
-      if (iWmpEffects != null)
+      int val = 0;
+      if (iWmpEffects2 != null)
       {
-        int val = 0;
-        int result = iWmpEffects.GetPresetCount(ref val);
+        int result = iWmpEffects2.GetPresetCount(ref val);
         count = val;
         return result;
       }
-
       else
       {
-        return -1;
+        if (iWmpEffects != null)
+        {
+          int result = iWmpEffects.GetPresetCount(ref val);
+          count = val;
+          return result;
+        }
+        else
+        {
+          return -1;
+        }
       }
     }
 
     public int SetCurrentPreset(int preset)
     {
-      if (iWmpEffects != null)
+      if (iWmpEffects2 != null)
       {
-        return iWmpEffects.SetCurrentPreset(preset);
+        return iWmpEffects2.SetCurrentPreset(preset);
       }
-
       else
       {
-        return -1;
+        if (iWmpEffects != null)
+        {
+          return iWmpEffects.SetCurrentPreset(preset);
+        }
+        else
+        {
+          return -1;
+        }
       }
     }
 
     public int GetCurrentPreset(ref int preset)
     {
-      if (iWmpEffects != null)
+      int val = 0;
+
+      if (iWmpEffects2 != null)
       {
-        int val = 0;
-        int result = iWmpEffects.GetCurrentPreset(ref val);
+        int result = iWmpEffects2.GetCurrentPreset(ref val);
         preset = val;
         return result;
       }
-
       else
       {
-        return -1;
+        if (iWmpEffects != null)
+        {
+          int result = iWmpEffects.GetCurrentPreset(ref val);
+          preset = val;
+          return result;
+        }
+        else
+        {
+          return -1;
+        }
       }
     }
 
     public int DisplayPropertyPage(IntPtr hwndOwner)
     {
-      if (iWmpEffects != null)
+
+      if (iWmpEffects2 != null)
       {
         int val = 0;
         int caps = 0;
 
-        iWmpEffects.GetCapabilities(ref val);
+        iWmpEffects2.GetCapabilities(ref val);
         caps = val;
 
         if ((val & 2) > 0)
         {
-          return iWmpEffects.DisplayPropertyPage(hwndOwner);
+          return iWmpEffects2.DisplayPropertyPage(hwndOwner);
         }
       }
+      else
+      {
+        if (iWmpEffects != null)
+        {
+          int val = 0;
+          int caps = 0;
 
+          iWmpEffects.GetCapabilities(ref val);
+          caps = val;
+
+          if ((val & 2) > 0)
+          {
+            return iWmpEffects.DisplayPropertyPage(hwndOwner);
+          }
+        }
+      }
       return -1;
     }
 

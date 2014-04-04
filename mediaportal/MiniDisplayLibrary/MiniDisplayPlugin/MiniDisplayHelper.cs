@@ -941,7 +941,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       }
       num |= (ulong)0x80L;
       strArray = property.Split(new char[] {'.'});
-      if ((strArray.Length <= 1) || ((str3 = strArray[1].ToLower()) == null))
+      if ((strArray.Length <= 1) || ((str3 = strArray[1].ToLowerInvariant()) == null))
       {
         return num;
       }

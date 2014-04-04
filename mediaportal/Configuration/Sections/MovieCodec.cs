@@ -35,6 +35,7 @@ namespace MediaPortal.Configuration.Sections
   public partial class MovieCodec : SectionSettings
   {
     private bool _init = false;
+    private bool settingLAVSlitter;
 
     /// <summary>
     /// 
@@ -174,6 +175,15 @@ namespace MediaPortal.Configuration.Sections
       aacAudioCodecComboBox.Enabled = !autoDecoderSettings.Checked;
       SplitterComboBox.Enabled = !autoDecoderSettings.Checked && ForceSourceSplitter.Checked;
       SplitterFileComboBox.Enabled = !autoDecoderSettings.Checked && ForceSourceSplitter.Checked;
+      if (autoDecoderSettings.Checked)
+      {
+        ForceSourceSplitter.Enabled = false;
+        ForceSourceSplitter.Checked = false;
+      }
+      else if (!ForceSourceSplitter.Checked)
+      {
+        ForceSourceSplitter.Enabled = true;
+      }
     }
 
     /// <summary>
@@ -189,6 +199,7 @@ namespace MediaPortal.Configuration.Sections
       {
         autoDecoderSettings.Checked = xmlreader.GetValueAsBool("movieplayer", "autodecodersettings", false);
         ForceSourceSplitter.Checked = xmlreader.GetValueAsBool("movieplayer", "forcesourcesplitter", false);
+        mpCheckBoxTS.Checked = xmlreader.GetValueAsBool("movieplayer", "usemoviecodects", false);
         UpdateDecoderSettings();
         audioRendererComboBox.SelectedItem = xmlreader.GetValueAsString("movieplayer", "audiorenderer",
                                                                         "Default DirectSound Device");
@@ -205,6 +216,7 @@ namespace MediaPortal.Configuration.Sections
         string aacaudioCodec = xmlreader.GetValueAsString("movieplayer", "aacaudiocodec", "");
         string splitterFilter = xmlreader.GetValueAsString("movieplayer", "splitterfilter", "");
         string splitterFileFilter = xmlreader.GetValueAsString("movieplayer", "splitterfilefilter", "");
+        settingLAVSlitter = xmlreader.GetValueAsBool("movieplayer", "settinglavplitter", false);
 
         if (videoCodec == string.Empty)
         {
@@ -255,6 +267,15 @@ namespace MediaPortal.Configuration.Sections
         if (CheckSourceSplitter == string.Empty && (splitterFilter == "LAV Splitter Source" || splitterFileFilter == "LAV Splitter"))
         {
           ForceSourceSplitter.Checked = true;
+        }
+
+        // Enable WMV WMA codec for LAV suite (setting will be change only on first run and if lav is set as default splitter)
+        if (!settingLAVSlitter && (splitterFilter == "LAV Splitter Source" || splitterFileFilter == "LAV Splitter"))
+        {
+          EnableWmvWmaLAVSettings(@"Software\\LAV\\Splitter\\Formats", "asf");
+          EnableWmvWmaLAVSettings(@"Software\\LAV\\Audio\\Formats", "wma");
+          EnableWmvWmaLAVSettings(@"Software\\LAV\\Audio\\Formats", "wmalossless");
+          settingLAVSlitter = true;
         }
 
         audioCodecComboBox.Text = audioCodec;
@@ -344,6 +365,7 @@ namespace MediaPortal.Configuration.Sections
       {
         xmlwriter.SetValueAsBool("movieplayer", "autodecodersettings", autoDecoderSettings.Checked);
         xmlwriter.SetValueAsBool("movieplayer", "forcesourcesplitter", ForceSourceSplitter.Checked);
+        xmlwriter.SetValueAsBool("movieplayer", "usemoviecodects", mpCheckBoxTS.Checked);
         xmlwriter.SetValue("movieplayer", "audiorenderer", audioRendererComboBox.Text);
         // Set codecs
         xmlwriter.SetValue("movieplayer", "mpeg2audiocodec", audioCodecComboBox.Text);
@@ -355,6 +377,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("movieplayer", "aacaudiocodec", aacAudioCodecComboBox.Text);
         xmlwriter.SetValue("movieplayer", "splitterfilter", SplitterComboBox.Text);
         xmlwriter.SetValue("movieplayer", "splitterfilefilter", SplitterFileComboBox.Text);
+        xmlwriter.SetValueAsBool("movieplayer", "settinglavplitter", settingLAVSlitter);
       }
     }
 
@@ -365,6 +388,10 @@ namespace MediaPortal.Configuration.Sections
     {
       UpdateDecoderSettings();
       Startup._automaticMovieCodec = autoDecoderSettings.Checked;
+      if (!ForceSourceSplitter.Checked)
+      {
+        ForceSourceSplitter.Checked = true;
+      }
     }
 
     /// <summary>
@@ -374,6 +401,14 @@ namespace MediaPortal.Configuration.Sections
     {
       UpdateDecoderSettings();
       Startup._automaticMovieFilter = ForceSourceSplitter.Checked;
+      if ((SplitterComboBox.Text == "File Source (Async.)" || SplitterComboBox.Text == "File Source (URL)") && ForceSourceSplitter.Checked)
+      {
+        SplitterFileComboBox.Enabled = true;
+      }
+      else
+      {
+        SplitterFileComboBox.Enabled = false;
+      }
     }
 
     private void RegMPtoConfig(string subkeysource)
@@ -398,6 +433,27 @@ namespace MediaPortal.Configuration.Sections
                                          @"MediaPortal");
         }
       }
+    }
+
+    private bool EnableWmvWmaLAVSettings(string subkeysource, string valueKey)
+    {
+      using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(subkeysource))
+      {
+        if (subkey != null)
+        {
+          try
+          {
+            subkey.SetValue(valueKey, unchecked((int)0x000000001),
+                            RegistryValueKind.DWord);
+            return true;
+          }
+          catch (Exception)
+          {
+            return false;
+          }
+        }
+      }
+      return false;
     }
 
     private void ConfigCodecSection(object sender, EventArgs e, string selection)
@@ -514,7 +570,22 @@ namespace MediaPortal.Configuration.Sections
 
     private void configSplitterSync_Click(object sender, EventArgs e)
     {
-      ConfigCodecSection(sender, e, SplitterFileComboBox.Text);
+      if (SplitterFileComboBox.Enabled)
+      {
+        ConfigCodecSection(sender, e, SplitterFileComboBox.Text);
+      }
+    }
+
+    private void SplitterComboBox_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      if ((SplitterComboBox.Text == "File Source (Async.)" || SplitterComboBox.Text == "File Source (URL)") && ForceSourceSplitter.Checked)
+      {
+        SplitterFileComboBox.Enabled = true;
+      }
+      else
+      {
+        SplitterFileComboBox.Enabled = false;
+      }
     }
   }
 }

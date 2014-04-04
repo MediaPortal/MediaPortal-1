@@ -3,7 +3,7 @@
   <skin>
     <width>1920</width>
     <height>1080</height>
-    <version>1.3.0.1</version>
+    <version>1.4.0.0</version>
   </skin>
   <style Name="InfoLabel">
     <width>230</width>
@@ -99,6 +99,7 @@
     <textYOff>11</textYOff>
     <textureFocus>settings_button_focus.png</textureFocus>
     <textureNoFocus>settings_button_nofocus.png</textureNoFocus>
+    <scrollStartDelaySec>0</scrollStartDelaySec>
     <textcolor>ff000000</textcolor>
     <textcolorNoFocus>ffffffff</textcolorNoFocus>
   </style>
@@ -110,6 +111,7 @@
 		<textalign>center</textalign>
     <textureFocus>settings_button_small_focus.png</textureFocus>
     <textureNoFocus>settings_button_small_nofocus.png</textureNoFocus>
+    <scrollStartDelaySec>0</scrollStartDelaySec>
     <textcolor>ff000000</textcolor>
     <textcolorNoFocus>ffffffff</textcolorNoFocus>
   </style>
@@ -120,6 +122,7 @@
     <textYOff>11</textYOff>
     <textureFocus>settings_button_medium_focus.png</textureFocus>
     <textureNoFocus>settings_button_medium_nofocus.png</textureNoFocus>
+    <scrollStartDelaySec>0</scrollStartDelaySec>
     <textcolor>ff000000</textcolor>
     <textcolorNoFocus>ffffffff</textcolorNoFocus>
   </style>
@@ -130,18 +133,7 @@
     <textYOff>11</textYOff>
     <textureFocus>settings_button_large_focus.png</textureFocus>
     <textureNoFocus>settings_button_large_nofocus.png</textureNoFocus>
-    <textcolor>ff000000</textcolor>
-    <textcolorNoFocus>ffffffff</textcolorNoFocus>
-  </style>
-  <style Name="SettingsToggleButton">
-    <width>385</width>
-    <height>58</height>
-    <textXOff>33</textXOff>
-    <textYOff>11</textYOff>
-    <textureFocus>settings_button_focus_toggleon.png</textureFocus>
-    <textureNoFocus>settings_button_nofocus_toggleon.png</textureNoFocus>
-    <AltTextureFocus>settings_button_focus_toggleoff.png</AltTextureFocus>
-    <AltTextureNoFocus>settings_button_nofocus_toggleoff.png</AltTextureNoFocus>
+    <scrollStartDelaySec>0</scrollStartDelaySec>
     <textcolor>ff000000</textcolor>
     <textcolorNoFocus>ffffffff</textcolorNoFocus>
   </style>
@@ -150,8 +142,10 @@
     <height>58</height>
     <textXOff>33</textXOff>
     <textYOff>11</textYOff>
+    <textpadding>46</textpadding>
     <textureFocus>settings_button_focus.png</textureFocus>
     <textureNoFocus>settings_button_nofocus.png</textureNoFocus>
+    <scrollStartDelaySec>0</scrollStartDelaySec>
     <textcolor>ff000000</textcolor>
     <textcolorNoFocus>ffffffff</textcolorNoFocus>
     <markXOff>23</markXOff>
@@ -162,8 +156,10 @@
     <height>58</height>
     <textXOff>33</textXOff>
     <textYOff>11</textYOff>
+    <textpadding>43</textpadding>
     <textureFocus>settings_button_medium_focus.png</textureFocus>
     <textureNoFocus>settings_button_medium_nofocus.png</textureNoFocus>
+    <scrollStartDelaySec>0</scrollStartDelaySec>
     <textcolor>ff000000</textcolor>
     <textcolorNoFocus>ffffffff</textcolorNoFocus>
     <markXOff>23</markXOff>
@@ -172,10 +168,12 @@
   <style Name="SettingsCheckButtonLarge">
     <width>1137</width>
     <height>58</height>
-		<textXOff>33</textXOff>
+    <textXOff>33</textXOff>
     <textYOff>11</textYOff>
+    <textpadding>50</textpadding>
     <textureFocus>settings_button_large_focus.png</textureFocus>
     <textureNoFocus>settings_button_large_nofocus.png</textureNoFocus>
+    <scrollStartDelaySec>0</scrollStartDelaySec>
     <textcolor>ff000000</textcolor>
     <textcolorNoFocus>ffffffff</textcolorNoFocus>
   </style>
@@ -289,27 +287,6 @@
     <animation effect="zoom" start="105,105" end="100,100" time="300">unfocus</animation>
   </control>
   <control>
-    <description>default togglebutton</description>
-    <type>togglebutton</type>
-    <id>4</id>
-    <posX>533</posX>
-    <posY>250</posY>
-    <width>385</width>
-    <height>58</height>
-    <textXOff>32</textXOff>
-    <textYOff>12</textYOff>
-    <textureFocus>settings_button_focus_toggleon.png</textureFocus>
-    <textureNoFocus>settings_button_nofocus_toggleon.png</textureNoFocus>
-    <AltTextureFocus>settings_button_focus_toggleoff.png</AltTextureFocus>
-    <AltTextureNoFocus>settings_button_nofocus_toggleoff.png</AltTextureNoFocus>
-    <label>-</label>
-    <font>font12</font>
-    <textcolor>FF000000</textcolor>
-    <textcolorNoFocus>ffffffff</textcolorNoFocus>
-    <colordiffuse>white</colordiffuse>
-    <disabledcolor>60ffffff</disabledcolor>
-  </control>
-  <control>
     <description>sort button</description>
     <type>sortbutton</type>
     <id>3</id>
@@ -348,13 +325,13 @@
     <font2>font2</font2>
     <shadedColor>ffffffff</shadedColor>
     <selectedColor>ffffffff</selectedColor>
-    <textcolor>FF85CFFF</textcolor>
-    <textcolor2>FF85CFFF</textcolor2>
-    <textcolor3>FF85CFFF</textcolor3>
+    <textcolor>FFFFFFFF</textcolor>
+    <textcolor2>FFFFFFFF</textcolor2>
+    <textcolor3>FFFFFFFF</textcolor3>
     <colordiffuse>ffffffff</colordiffuse>
     <remoteColor>FFFC7B19</remoteColor>
     <downloadColor>fffc7b19</downloadColor>
-    <playedColor>FFFFFFFF</playedColor>
+    <playedColor>FF00B7FF</playedColor>
     <spaceBetweenItems>2</spaceBetweenItems>
 		<unfocusedAlpha applyToAll="true">130</unfocusedAlpha>
     <scrollOffset>1</scrollOffset>
@@ -481,10 +458,10 @@
     <image>-</image>
     <font>font12</font>
     <shadedColor>ffffffff</shadedColor>
-    <selectedColor>ffffffff</selectedColor>
-    <textcolor>FF85CFFF</textcolor>
-    <textcolor2>FF85CFFF</textcolor2>
-    <textcolor3>FF85CFFF</textcolor3>
+    <selectedColor>FF00B7FF</selectedColor>
+    <textcolor>ffffffff</textcolor>
+    <textcolor2>ffffffff</textcolor2>
+    <textcolor3>ffffffff</textcolor3>
     <colordiffuse>ffffffff</colordiffuse>
     <remoteColor>FFFC7B19</remoteColor>
     <downloadColor>fffc7b19</downloadColor>
@@ -643,6 +620,7 @@
     <font>font12</font>
     <scrollStartDelaySec>5</scrollStartDelaySec>
     <textcolor>white</textcolor>
+		<allowFadeIn>no</allowFadeIn>
     <wrapString> | </wrapString>
   </control>
   <control>
@@ -779,8 +757,8 @@
     <id>0</id>
     <width>385</width>
     <height>58</height>
-    <textXOff>25</textXOff>
-    <textYOff>14</textYOff>
+    <textXOff>32</textXOff>
+    <textYOff>12</textYOff>
     <textureFocus>button-focus.png</textureFocus>
     <textureNoFocus>button-nofocus.png</textureNoFocus>
     <font>font12</font>

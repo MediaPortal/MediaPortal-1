@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -181,13 +182,13 @@ namespace Wikipedia
       }
       else
       {
-        if (this.title == this.title.ToLower())
+        if (this.title == this.title.ToLower(CultureInfo.CurrentCulture))
         {
           this.unparsedArticle = string.Empty;
         }
         else
         {
-          this.title = this.title.ToLower();
+          this.title = this.title.ToLower(CultureInfo.CurrentCulture);
           GetWikipediaXML();
         }
       }

@@ -36,7 +36,7 @@
     <posX>144</posX>
     <posY>38</posY>
     <width>855</width>
-    <font>fontB22</font>
+    <font>TitanLight22</font>
     <textcolor>ffffff</textcolor>
     <label>#header.label</label>
 		<align>left</align>
@@ -50,7 +50,7 @@
     <posX>1848</posX>
     <posY>36</posY>
     <width>555</width>
-    <font>fontB22</font>
+    <font>TitanLight22</font>
     <textcolor>ffffff</textcolor>
     <label>#time</label>
 		<align>right</align>
@@ -103,7 +103,7 @@
 		<visible>no</visible>
 		<id>26</id>
 		<label>-</label>
-		<font>font13</font>
+		<font>font12</font>
 		<textcolor>FFFFFFFF</textcolor>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
@@ -117,7 +117,7 @@
 		<posY>250</posY>
 		<id>27</id>
 		<label>-</label>
-		<font>font13</font>
+		<font>font12</font>
 		<textcolor>FFFFFFFF</textcolor>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
@@ -167,7 +167,7 @@
 
 		<control Style="SettingsButton">
 			<description>hidden mode</description>
-			<type>togglebutton</type>
+			<type>checkbutton</type>
 			<id>505</id>
 			<label>593</label>
 			<onup>504</onup>

@@ -18,19 +18,18 @@
     </control>
 
 	<!--            :: Top Album tracks/tags ::            -->
-	
-	
+		
     <control>
       <id>0</id>
-      <description>list of top album tracks label</description>
+      <description>list of tagged tracks label</description>
       <type>fadelabel</type>
-      <visible>string.equals(#skin.mymusic.info,TopTags) | Control.HasFocus(166) | Control.HasFocus(155)</visible>
+      <visible>string.equals(#skin.mymusic.info,TopTags) | Control.HasFocus(155) | Control.HasFocus(166)</visible>
       <posX>150</posX>
       <posY>432</posY>
       <width>627</width>
       <font>fontB16</font>
       <textcolor>ff00b7ff</textcolor>
-      <label>33030</label>
+      <label>33011</label>
 			<animation effect="fade" start="100" end="0" time="250" reversible="false">Hidden</animation>
 			<animation effect="fade" start="0" end="100" time="250" reversible="false">Visible</animation>
     	<animation effect="fade" time="250">WindowOpen</animation>
@@ -38,11 +37,11 @@
     </control>
 		
     <control>
-      <id>166</id>
-      <description>list of top album tracks</description>
+      <id>155</id>
+      <description>list of tagged tracks</description>
       <type>listcontrol</type>
-      <onleft>6103</onleft>
-      <onright>155</onright>
+      <onleft>155</onleft>
+      <onright>6103</onright>
       <onup>6103</onup>
       <ondown>6103</ondown>
       <posX>115</posX>
@@ -64,59 +63,7 @@
       <textureHeight>38</textureHeight>
       <textureNoFocus>-</textureNoFocus>
       <spaceBetweenItems>0</spaceBetweenItems>
-      <visible>string.equals(#skin.mymusic.info,TopTags) | Control.HasFocus(166) | Control.HasFocus(155)</visible>
-			<dimColor>ffffffff</dimColor>
-			<animation effect="fade" start="100" end="0" time="250" reversible="false">Hidden</animation>
-			<animation effect="fade" start="0" end="100" time="250" reversible="false">Visible</animation>
-    	<animation effect="fade" time="250">WindowOpen</animation>
-    	<animation effect="fade" time="250">WindowClose</animation>
-    </control>
-		
-    <control>
-      <id>0</id>
-      <description>list of tagged tracks label</description>
-      <type>fadelabel</type>
-      <visible>string.equals(#skin.mymusic.info,TopTags) | Control.HasFocus(155) | Control.HasFocus(166)</visible>
-      <posX>1045</posX>
-      <posY>432</posY>
-      <width>627</width>
-      <font>fontB16</font>
-      <textcolor>ff00b7ff</textcolor>
-      <label>33011</label>
-			<animation effect="fade" start="100" end="0" time="250" reversible="false">Hidden</animation>
-			<animation effect="fade" start="0" end="100" time="250" reversible="false">Visible</animation>
-    	<animation effect="fade" time="250">WindowOpen</animation>
-    	<animation effect="fade" time="250">WindowClose</animation>
-    </control>
-		
-    <control>
-      <id>155</id>
-      <description>list of tagged tracks</description>
-      <type>listcontrol</type>
-      <onleft>166</onleft>
-      <onright>6103</onright>
-      <onup>6103</onup>
-      <ondown>6103</ondown>
-      <posX>1007</posX>
-      <posY>499</posY>
-      <width>640</width>
-      <height>210</height>
-      <textXOff>30</textXOff>
-			<textYOff>0</textYOff>
-      <IconXOff>0</IconXOff>
-      <spinColor>-</spinColor>
-      <image>-</image>
-      <textcolor>FFFFFFFF</textcolor>
-      <unfocusedAlpha>255</unfocusedAlpha>
-      <textureUp>-</textureUp>
-      <textureDown>-</textureDown>
-      <textureUpFocus>-</textureUpFocus>
-      <textureDownFocus>-</textureDownFocus>
-      <textureFocus>list_sub_focus_arrow_small.png</textureFocus>
-      <textureHeight>38</textureHeight>
-      <textureNoFocus>-</textureNoFocus>
-      <spaceBetweenItems>0</spaceBetweenItems>
-      <visible>string.equals(#skin.mymusic.info,TopTags) | Control.HasFocus(155) | Control.HasFocus(166)</visible>
+      <visible>string.equals(#skin.mymusic.info,TopTags) | Control.HasFocus(155)</visible>
 			<dimColor>ffffffff</dimColor>
 			<animation effect="fade" start="100" end="0" time="250" reversible="false">Hidden</animation>
 			<animation effect="fade" start="0" end="100" time="250" reversible="false">Visible</animation>

@@ -30,6 +30,8 @@
     <OldToolsVersion>3.5</OldToolsVersion>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile />
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>bin\Debug\</OutputPath>
@@ -182,6 +184,9 @@
       <HintPath>..\MediaPortal.Base\CSScriptLibrary.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="HtmlAgilityPack">
+      <HintPath>..\..\Packages\HtmlAgilityPack.1.4.6\lib\Net40-client\HtmlAgilityPack.dll</HintPath>
+    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -219,6 +224,7 @@
     </Compile>
     <Compile Include="Folders\IFolderSettings.cs" />
     <Compile Include="Folders\ADO\FolderSettingAdo.cs" />
+    <Compile Include="Music\InternetLookups\AllMusicAlbumMatch.cs" />
     <Compile Include="Music\InternetLookups\AllMusicArtistMatch.cs" />
     <Compile Include="Music\MusicDatabaseSettings.cs" />
     <Compile Include="Music\InternetLookups\AlbumInfo.cs">
@@ -232,8 +238,6 @@
     <Compile Include="Music\InternetLookups\ArtistInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Music\Audioscrobbler\AudioscrobblerBase.cs" />
-    <Compile Include="Music\Audioscrobbler\AudioscrobblerUtils.cs" />
     <Compile Include="Music\MusicDatabase.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -248,8 +252,6 @@
     <Compile Include="Music\MusicSong.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Music\Audioscrobbler\AudioscrobblerQueue.cs" />
-    <Compile Include="Music\Audioscrobbler\ScrobblerUtilsRequest.cs" />
     <Compile Include="Music\Song.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -295,11 +297,9 @@
   <ItemGroup>
     <Folder Include="Video\Ado\" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
-    <PostBuildEvent>
-    </PostBuildEvent>
-  </PropertyGroup>
+  <!--Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" /-->
 </Project>

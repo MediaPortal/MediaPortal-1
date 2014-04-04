@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>9000</id>
@@ -90,7 +90,7 @@
       </control>
       <control>
         <description>Monitor Power States</description>
-        <type>togglebutton</type>
+        <type>checkbutton</type>
         <id>11</id>
         <width>225</width>
         <label>9109</label>

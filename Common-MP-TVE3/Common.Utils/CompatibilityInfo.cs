@@ -25,9 +25,9 @@ using MediaPortal.Common.Utils;
 // MediaPortal subsystems' breaking versions
 [assembly: SubsystemVersion("MP", "1.1.6.27644")]
 
-[assembly: SubsystemVersion("MP.SkinEngine", "1.2.100.0")] // MP 1.3.0 Alpha 1
+[assembly: SubsystemVersion("MP.SkinEngine", "1.3.100.0")] // MP 1.4.0 Pre Release
 [assembly: SubsystemVersion("MP.SkinEngine.Core", "1.1.6.27644")]
-[assembly: SubsystemVersion("MP.SkinEngine.Controls", "1.1.6.27644")]
+[assembly: SubsystemVersion("MP.SkinEngine.Controls", "1.3.100.0")]
 [assembly: SubsystemVersion("MP.SkinEngine.Dialogs", "1.1.6.27644")]
 
 [assembly: SubsystemVersion("MP.Input", "1.1.6.27644")]
@@ -39,10 +39,10 @@ using MediaPortal.Common.Utils;
 [assembly: SubsystemVersion("MP.Players.DVD", "1.1.6.27644")]
 [assembly: SubsystemVersion("MP.Players.Video", "1.1.6.27644")]
 [assembly: SubsystemVersion("MP.Players.TV", "1.1.6.27644")]
-[assembly: SubsystemVersion("MP.Players.Music", "1.1.6.27644")]
+[assembly: SubsystemVersion("MP.Players.Music", "1.3.100.0")]
 
 [assembly: SubsystemVersion("MP.DB", "1.1.6.27644")]
-[assembly: SubsystemVersion("MP.DB.Music", "1.1.6.27644")]
+[assembly: SubsystemVersion("MP.DB.Music", "1.5.100.0")]
 [assembly: SubsystemVersion("MP.DB.Videos", "1.2.100.0")] // MP 1.3.0 Alpha 1
 [assembly: SubsystemVersion("MP.DB.Pictures", "1.1.6.27644")]
 
@@ -57,13 +57,15 @@ using MediaPortal.Common.Utils;
 [assembly: SubsystemVersion("MP.Externals", "1.1.6.27644")]
 [assembly: SubsystemVersion("MP.Externals.MediaInfo", "1.1.6.27644")]
 [assembly: SubsystemVersion("MP.Externals.SQLite", "1.1.6.27644")]
-[assembly: SubsystemVersion("MP.Externals.Gentle", "1.1.6.27644")]
+[assembly: SubsystemVersion("MP.Externals.Log4Net", "1.3.100.0")] // MP 1.4.0 Pre Release
+[assembly: SubsystemVersion("MP.Externals.BASS", "1.3.100.0")]
+[assembly: SubsystemVersion("MP.Externals.HTMLAgilityPack", "1.5.100.0")] // Added after 1.5 pre-release
 
 [assembly: SubsystemVersion("MP.Config", "1.1.6.27644")]
 [assembly: SubsystemVersion("MP.Config.DefaultSections", "1.1.6.27644")]
 
 [assembly: SubsystemVersion("MP.Plugins", "1.1.6.27644")]             // reserved for plugin defined subsystems
-[assembly: SubsystemVersion("MP.Plugins.Music", "1.1.6.27644")]
+[assembly: SubsystemVersion("MP.Plugins.Music", "1.5.100.0")]
 [assembly: SubsystemVersion("MP.Plugins.Videos", "1.2.100.0")] // MP 1.3.0 Alpha 1
 [assembly: SubsystemVersion("MP.Plugins.Pictures", "1.1.6.27644")]
 [assembly: SubsystemVersion("MP.Plugins.Weather", "1.1.6.27644")]

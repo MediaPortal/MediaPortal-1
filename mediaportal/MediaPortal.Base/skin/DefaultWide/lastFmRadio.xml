@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>5678</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#useSelectedFanart:Yes</define>  
+  <controls>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>BH Music.jpg</texture>
+      <width>1280</width>
+      <height>720</height>
+    </control>
+    <import>common.music.fanart.xml</import>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
+
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>30</posY>
+      <width>1280</width>
+      <height>720</height>
+      <texture>general_overlay.png</texture>
+    </control>
+    <control>
+      <type>actiongroup</type>
+      <description>action menu</description>
+      <defaultcontrol>2</defaultcontrol>
+      <onexit>0</onexit>
+      <buttonX>0</buttonX>
+      <buttonY>-60</buttonY>
+      <buttonwidth>106</buttonwidth>
+      <buttonheight>720</buttonheight>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>Action_nofocus.png</textureNoFocus>
+      <width>275</width>
+      <height>720</height>
+      <dimColor>00ffffff</dimColor>
+      <control>
+        <type>image</type>
+        <id>0</id>
+        <width>1280</width>
+        <height>720</height>
+        <texture>white.png</texture>
+        <colordiffuse>201e90ff</colordiffuse>
+      </control>
+      <control>
+        <type>image</type>
+        <posX>26</posX>
+        <posY>78</posY>
+        <width>320</width>
+        <height>591</height>
+        <texture>Backslide.png</texture>
+        <colorDiffuse>fffffffff</colorDiffuse>
+        <visible>!Control.HasFocus(50)</visible>
+        <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+      </control>
+      <control>
+        <description>group element</description>
+        <type>group</type>
+        <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+        <layout>StackLayout(0, Vertical, true)</layout>
+        <posX>50</posX>
+        <posY>121</posY>
+        <visible>!Control.HasFocus(50)</visible>	
+      <control>
+        <description>Recomended</description>
+        <type>button</type>
+        <id>2</id>
+        <posX>106</posX>
+        <posY>137</posY>
+        <label>Recomended</label>
+        <onleft>2</onleft>
+        <onright>50</onright>
+		<onup>2</onup>
+        <ondown>11</ondown>
+      </control>
+      <control>
+        <description>Mix</description>
+        <type>button</type>
+        <id>11</id>
+        <label>Mix</label>
+        <onleft>11</onleft>
+        <onright>50</onright>
+        <onup>2</onup>
+        <ondown>12</ondown>
+      </control>
+      <control>
+        <description>Library</description>
+        <type>button</type>
+        <id>12</id>
+        <label>Library</label>
+        <onleft>12</onleft>
+        <onright>50</onright>
+        <onup>11</onup>
+        <ondown>13</ondown>
+      </control>
+      <control>
+        <description>Artist</description>
+        <type>button</type>
+        <id>13</id>
+        <label>Artist</label>
+        <onleft>13</onleft>
+        <onright>50</onright>
+        <onup>12</onup>
+        <ondown>14</ondown>
+      </control>
+      <control>
+        <description>Tag</description>
+        <type>button</type>
+        <id>14</id>
+        <label>Tag</label>
+        <onleft>14</onleft>
+        <onright>50</onright>
+        <onup>13</onup>
+        <ondown>14</ondown>
+      </control>
+      </control>
+    </control>	
+	
+	
+	<!-- MIKE
+    <control>
+      <description>group element</description>
+      <type>group</type>
+      <layout>StackLayout</layout>
+      <posX>71</posX>
+      <posY>137</posY>
+
+     </control>
+	 -->
+	      <import>common.facade.music.xml</import>	 
+  </controls>
+</window>

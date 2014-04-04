@@ -245,7 +245,6 @@ namespace MediaPortal.Player
     protected IBaseFilter _AudioSourceFilter = null;
     protected IBaseFilter _AudioExtFilter = null;
     protected IBaseFilter _AudioExtSplitterFilter = null;
-    protected static MediaInfoWrapper _mediaInfo = null;
     protected IBaseFilter _interfaceSourceFilter = null;
     protected IBaseFilter Splitter = null;
     protected bool FileSync = false;
@@ -436,7 +435,8 @@ namespace MediaPortal.Player
             ci.EnglishName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
             ci.TwoLetterISOLanguageName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
             ci.ThreeLetterISOLanguageName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
-            ci.ThreeLetterWindowsLanguageName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase))
+            ci.ThreeLetterWindowsLanguageName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
+            subtitleLanguage.ToUpperInvariant().Contains(ci.ThreeLetterWindowsLanguageName))
         {
           CurrentSubtitleStream = i;
           Log.Info("VideoPlayerVMR7: CultureInfo Selected active subtitle track language: {0} ({1})", ci.EnglishName, i);
@@ -1483,12 +1483,12 @@ namespace MediaPortal.Player
       if (streamName.EndsWith(".mp3") || streamName.EndsWith(".ac3") || streamName.EndsWith(".mka") ||
           streamName.EndsWith(".dts"))
       {
-        return Path.GetExtension(streamName).ToUpper().Replace(".", "EXTERNAL ");
+        return Path.GetExtension(streamName).ToUpperInvariant().Replace(".", "EXTERNAL ");
       }
 
       // No stream info from splitter
       if (streamName.Contains(Path.GetFileName(m_strCurrentFile)))
-        return Path.GetExtension(m_strCurrentFile).ToUpper().Replace(".", "");
+        return Path.GetExtension(m_strCurrentFile).ToUpperInvariant().Replace(".", "");
 
       // remove prefix, which is added by Haali Media Splitter
       streamName = Regex.Replace(streamName, @"^A: ", "");
@@ -2155,7 +2155,7 @@ namespace MediaPortal.Player
 
       // No stream info from splitter
       if (streamName.Contains(Path.GetFileName(m_strCurrentFile)))
-        return Path.GetExtension(m_strCurrentFile).ToUpper().Replace(".", "");
+        return Path.GetExtension(m_strCurrentFile).ToUpperInvariant().Replace(".", "");
 
       // remove prefix, which is added by Haali Media Splitter
       streamName = Regex.Replace(streamName, @"^V: ", "");

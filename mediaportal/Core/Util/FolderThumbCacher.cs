@@ -73,11 +73,15 @@ namespace MediaPortal.Util
           string localFolderLThumb = Util.Utils.ConvertToLargeCoverArt(strFolderThumb);
 
           if (!File.Exists(strFolderThumb) || replace)
-            Util.Picture.CreateThumbnail(strRemoteFolderThumb, strFolderThumb, (int)Thumbs.ThumbResolution,
-                                         (int)Thumbs.ThumbResolution, 0, true);
-          if (!File.Exists(localFolderLThumb) || replace)
-            Util.Picture.CreateThumbnail(strRemoteFolderThumb, localFolderLThumb, (int)Thumbs.ThumbLargeResolution,
-                                         (int)Thumbs.ThumbLargeResolution, 0, false);
+          {
+            Picture.CreateThumbnail(strRemoteFolderThumb, strFolderThumb, (int)Thumbs.ThumbResolution,
+                                       (int)Thumbs.ThumbResolution, 0, true, false, false);
+            {
+              // Generate Large Thumb
+              Picture.CreateThumbnail(strRemoteFolderThumb, localFolderLThumb, (int)Thumbs.ThumbLargeResolution,
+                                         (int)Thumbs.ThumbLargeResolution, 0, true, true, false);
+            }
+          }
         }
         catch (Exception ex)
         {

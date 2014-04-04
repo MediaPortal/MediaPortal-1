@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>2011</id>
   <defaultcontrol>5</defaultcontrol>
@@ -10,7 +9,7 @@
     <control>
       <description>background image</description>
       <type>image</type>
-      <id>1</id>
+      <id>0</id>
       <width>960</width>
       <height>720</height>
       <texture>BH Music.jpg</texture>
@@ -41,20 +40,20 @@
     </control>
     <control Style="NoShadow">
       <description>Artist value</description>
-      <type>label</type>
+      <type>fadelabel</type>
       <id>20</id>
       <posX>0</posX>
       <posY>93</posY>
       <width>960</width>
       <align>center</align>
-      <label>-</label>
+      <label>#ArtistInfo.Artist</label>
       <font>font16</font>
       <textcolor>ff6FAFE1</textcolor>
     </control>
     <control Style="NoShadow">
       <description>Born</description>
       <type>label</type>
-      <id>1</id>
+      <id>0</id>
       <posX>213</posX>
       <posY>180</posY>
       <label>686</label>
@@ -65,7 +64,7 @@
     <control Style="NoShadow">
       <description>Years Active</description>
       <type>label</type>
-      <id>1</id>
+      <id>0</id>
       <posX>213</posX>
       <posY>205</posY>
       <label>687</label>
@@ -76,7 +75,7 @@
     <control Style="NoShadow">
       <description>Genres</description>
       <type>label</type>
-      <id>1</id>
+      <id>0</id>
       <posX>213</posX>
       <posY>230</posY>
       <label>135</label>
@@ -87,7 +86,7 @@
     <control Style="NoShadow">
       <description>Tones</description>
       <type>label</type>
-      <id>1</id>
+      <id>0</id>
       <posX>213</posX>
       <posY>255</posY>
       <label>175</label>
@@ -98,7 +97,7 @@
     <control Style="NoShadow">
       <description>Styles</description>
       <type>label</type>
-      <id>1</id>
+      <id>0</id>
       <posX>213</posX>
       <posY>280</posY>
       <label>176</label>
@@ -109,7 +108,7 @@
     <control Style="NoShadow">
       <description>Instruments</description>
       <type>label</type>
-      <id>1</id>
+      <id>0</id>
       <posX>213</posX>
       <posY>305</posY>
       <label>688</label>
@@ -119,33 +118,33 @@
     </control>
     <control Style="NoShadow">
       <description>Born value</description>
-      <type>label</type>
-      <id>22</id>
+      <type>fadelabel</type>
+      <id>0</id>
       <posX>363</posX>
       <posY>180</posY>
-      <label>-</label>
+      <label>#ArtistInfo.Born</label>
       <font>font13</font>
       <width>360</width>
       <textcolor>ivory</textcolor>
     </control>
     <control Style="NoShadow">
       <description>Years Active value</description>
-      <type>label</type>
-      <id>23</id>
+      <type>fadelabel</type>
+      <id>0</id>
       <posX>363</posX>
       <posY>205</posY>
-      <label>-</label>
+      <label>#ArtistInfo.YearsActive</label>
       <font>font13</font>
       <width>360</width>
       <textcolor>ivory</textcolor>
     </control>
     <control Style="NoShadow">
       <description>Genres value</description>
-      <type>label</type>
-      <id>24</id>
+      <type>fadelabel</type>
+      <id>0</id>
       <posX>363</posX>
       <posY>230</posY>
-      <label>-</label>
+      <label>#ArtistInfo.Genres</label>
       <width>360</width>
       <font>font13</font>
       <textcolor>ivory</textcolor>
@@ -153,54 +152,38 @@
     <control Style="NoShadow">
       <description>Tones value</description>
       <type>fadelabel</type>
-      <id>25</id>
+      <id>0</id>
       <posX>363</posX>
       <posY>255</posY>
       <width>360</width>
-      <label>-</label>
+      <label>#ArtistInfo.Tones</label>
       <font>font13</font>
       <textcolor>ivory</textcolor>
     </control>
     <control Style="NoShadow">
       <description>Styles value</description>
       <type>fadelabel</type>
-      <id>26</id>
+      <id>0</id>
       <posX>363</posX>
       <posY>280</posY>
       <width>360</width>
-      <label>-</label>
+      <label>#ArtistInfo.Styles</label>
       <font>font13</font>
       <textcolor>ivory</textcolor>
     </control>
     <control Style="NoShadow">
       <description>Instruments value</description>
-      <type>label</type>
-      <id>27</id>
+      <type>fadelabel</type>
+      <id>0</id>
       <posX>363</posX>
       <posY>305</posY>
-      <label>-</label>
+      <label>#ArtistInfo.Instruments</label>
       <width>360</width>
       <font>font13</font>
       <textcolor>ivory</textcolor>
     </control>
-    <control Style="NoShadow">
-      <description>textarea</description>
-      <type>textbox</type>
-      <id>4</id>
-      <posX>213</posX>
-      <posY>350</posY>
-      <width>510</width>
-      <height>250</height>
-      <onleft>5</onleft>
-      <onright>5</onright>
-      <onup>5</onup>
-      <ondown>5</ondown>
-      <font>font12</font>
-      <spinPosX>660</spinPosX>
-      <spinPosY>590</spinPosY>
-    </control>
     <control>
-      <id>1</id>
+      <id>0</id>
       <type>image</type>
       <posX>750</posX>
       <posY>180</posY>
@@ -214,25 +197,61 @@
     <control>
       <description>artist image (Thumb)</description>
       <type>image</type>
-      <id>1</id>
+      <id>0</id>
       <posX>750</posX>
       <posY>180</posY>
       <width>180</width>
       <height>180</height>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
-      <texture mask="cdthumbmask.png">#selectedthumb</texture>
+      <texture mask="picturethumbmask.png">#ArtistInfo.Thumb</texture>
       <zoom>yes</zoom>
       <colorkey>FFFFFFFF</colorkey>
     </control>
     <control>
-      <id>1</id>
+      <id>0</id>
       <type>image</type>
       <posX>750</posX>
       <posY>180</posY>
       <width>180</width>
       <height>180</height>
       <texture>cdthumbframe.png</texture>
+    </control>
+    <control Style="NoShadow">
+      <description>textarea</description>
+      <type>textboxscrollup</type>
+      <id>0</id>
+      <posX>213</posX>
+      <posY>350</posY>
+      <height>250</height>
+      <width>510</width>
+      <onleft>5</onleft>
+      <onright>5</onright>
+      <onup>5</onup>
+      <ondown>5</ondown>
+      <font>font13</font>
+      <spinPosX>660</spinPosX>
+      <spinPosY>590</spinPosY>
+	  <label>#ArtistInfo.Bio</label>
+	  <visible>skin.hassetting(#ArtistInfo.ShowAlbums)</visible>  
+    </control>
+	<control Style="NoShadow">
+      <description>textarea</description>
+      <type>textboxscrollup</type>
+      <id>0</id>
+      <posX>213</posX>
+      <posY>350</posY>
+      <height>250</height>
+      <width>510</width>
+      <onleft>5</onleft>
+      <onright>5</onright>
+      <onup>5</onup>
+      <ondown>5</ondown>
+      <font>font13</font>
+      <spinPosX>660</spinPosX>
+      <spinPosY>590</spinPosY>
+	  <label>#ArtistInfo.Albums</label>
+	  <visible>!skin.hassetting(#ArtistInfo.ShowAlbums)</visible>
     </control>
     <control Style="NoShadow">
       <description>Bio/Albums</description>
@@ -246,6 +265,8 @@
       <onright>4</onright>
       <onup>6</onup>
       <ondown>6</ondown>
+	  <onclick>#(skin.togglesetting('#ArtistInfo.ShowAlbums'))</onclick>
+	  <label>#(L(689)) / #(L(132))</label>
     </control>
     <control Style="NoShadow">
       <description>Refresh</description>
@@ -260,50 +281,6 @@
       <onright>4</onright>
       <onup>5</onup>
       <ondown>5</ondown>
-    </control>
-    <!-- NOT USED -->
-    <control Style="NoShadow">
-      <description>Artist</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>1725</posX>
-      <posY>133</posY>
-      <label>171</label>
-      <font>font13</font>
-      <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
-    </control>
-    <control Style="NoShadow">
-      <description>Artist value</description>
-      <type>label</type>
-      <id>20</id>
-      <posX>1725</posX>
-      <posY>66</posY>
-      <label>-</label>
-      <font>font16</font>
-      <align>left</align>
-      <textcolor>ivory</textcolor>
-    </control>
-    <control Style="NoShadow">
-      <description>Artist value</description>
-      <type>label</type>
-      <id>21</id>
-      <posX>1749</posX>
-      <posY>133</posY>
-      <label>-</label>
-      <font>font13</font>
-      <width>360</width>
-      <textcolor>ivory</textcolor>
-    </control>
-    <control>
-      <description>ArtistImage (Not Use)</description>
-      <type>image</type>
-      <id>3</id>
-      <posX>1537</posX>
-      <posY>10</posY>
-      <width>7</width>
-      <height>10</height>
-      <visible>no</visible>
     </control>
   </controls>
 </window>

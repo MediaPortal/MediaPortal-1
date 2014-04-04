@@ -69,7 +69,7 @@ namespace WindowPlugins
 
     protected virtual Layout GetLayoutNumber(string s)
     {
-      switch (s.Trim().ToLower())
+      switch (s.Trim().ToLowerInvariant())
       {
         case "list":
           return Layout.List;
@@ -206,31 +206,24 @@ namespace WindowPlugins
           message.Message == GUIMessage.MessageType.GUI_MSG_CLICKED)
       {
         // Respond to the correct control.  The value is retrived directly from the control by the called handler.
-        if (message.TargetControlId == btnLayouts.GetID)
+        if (message.SenderControlId == btnLayouts.GetID)
         {
           // Set the new layout and select the currently selected item in the layout.
           SetLayout((Layout)btnLayouts.SelectedItemValue);
           SelectCurrentItem();
 
-          // Refocus on the layout button control.
-          GUIControl.FocusControl(GetID, message.TargetControlId);
+          // Refocus facade so item will be selected
+          GUIControl.FocusControl(GetID, facadeLayout.GetID);
 
           msgHandled = true;
         }
-        else if (btnViews != null && message.TargetControlId == btnViews.GetID)
+        else if (btnViews != null && message.SenderControlId == btnViews.GetID)
         {
           // Set the new view.
           SetView(btnViews.SelectedItemValue);
-          
-          // View can switch screen (ie. in my vids from shares to dbviews) so we need to check that 
-          // because selectitem will be done on old screen and that can cause a trouble
-          if (GUIWindowManager.ActiveWindow == GetID)
-          {
-            SelectCurrentItem();  
-          }
-          
-          // Refocus on the view button control.
-          GUIControl.FocusControl(GetID, message.TargetControlId);
+
+          // Refocus facade so item will be selected
+          GUIControl.FocusControl(GetID, facadeLayout.GetID);
 
           msgHandled = true;
         }
@@ -262,6 +255,11 @@ namespace WindowPlugins
         if (actionType == Action.ActionType.ACTION_QUEUE_ITEM)
         {
           OnQueueItem(SelectedFacadeItem());
+        }
+        if (actionType == Action.ActionType.ACTION_MOVE_SELECTED_ITEM_DOWN || actionType == Action.ActionType.ACTION_MOVE_SELECTED_ITEM_UP)
+        {
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, controlId, 0, 0, null);
+          OnMessage(msg);
         }
       }
 

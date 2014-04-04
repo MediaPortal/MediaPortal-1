@@ -173,10 +173,6 @@
       <Project>{4C2D9698-AF44-4157-99B6-48F5269F20CC}</Project>
       <Name>Entities</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\TvEngine3\Mediaportal\TV\Server\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj">
-      <Project>{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}</Project>
-      <Name>TvLibrary.Interfaces</Name>
-    </ProjectReference>
     <ProjectReference Include="WinCustomControls\WinCustomControls.csproj">
       <Project>{49DFF256-09FD-4598-A3E8-855753E2A1FC}</Project>
       <Name>WinCustomControls</Name>
@@ -269,7 +265,10 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="TvServerRemote.cs" />
+    <Compile Include="Plugins.cs" />
+    <Compile Include="Sections\Radio.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Sections\BD.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -292,6 +291,18 @@
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\Music.Designer.cs">
+      <DependentUpon>Music.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\BDPostProcessing.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\BDZoom.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\BDZoom.Designer.cs">
+      <DependentUpon>BDZoom.cs</DependentUpon>
     </Compile>
     <Compile Include="SettingsUpgradeManager.cs" />
     <Compile Include="HelpSystem.cs" />
@@ -517,7 +528,7 @@
     <Compile Include="Sections\RemoteUSBUIRT.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\TVClient.cs">
+    <Compile Include="Sections\TV.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\TVTeletext.cs">
@@ -528,12 +539,6 @@
     </Compile>
     <Compile Include="Sections\General.Designer.cs">
       <DependentUpon>General.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Sections\MusicASIO.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\MusicASIO.Designer.cs">
-      <DependentUpon>MusicASIO.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\MusicDSP.cs">
       <SubType>UserControl</SubType>
@@ -628,7 +633,7 @@
     <Compile Include="Sections\Remote.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\TV.cs">
+    <Compile Include="Sections\TVRadio.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\TVPostProcessing.cs">
@@ -707,6 +712,9 @@
     <EmbeddedResource Include="Sections\FiltersPowerDVDDecoder10.resx">
       <DependentUpon>FiltersPowerDVDDecoder10.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Sections\BDZoom.resx">
+      <DependentUpon>BDZoom.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Sections\GeneralStartupResume.resx">
       <DependentUpon>GeneralStartupResume.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -729,6 +737,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\DVDZoom.resx">
       <DependentUpon>DVDZoom.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\Radio.resx">
+      <DependentUpon>Radio.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\MusicShares.resx">
@@ -899,9 +911,9 @@
       <DependentUpon>RemoteUSBUIRT.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\TVClient.resx">
+    <EmbeddedResource Include="Sections\TV.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>TVClient.cs</DependentUpon>
+      <DependentUpon>TV.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\TVTeletext.resx">
       <DependentUpon>TVTeletext.cs</DependentUpon>
@@ -910,10 +922,6 @@
     <EmbeddedResource Include="Sections\General.resx">
       <SubType>Designer</SubType>
       <DependentUpon>General.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\MusicASIO.resx">
-      <DependentUpon>MusicASIO.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\MusicDSP.resx">
       <DependentUpon>MusicDSP.cs</DependentUpon>
@@ -987,8 +995,8 @@
       <SubType>Designer</SubType>
       <DependentUpon>PluginsNew.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\TV.resx">
-      <DependentUpon>TV.cs</DependentUpon>
+    <EmbeddedResource Include="Sections\TVRadio.resx">
+      <DependentUpon>TVRadio.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\Weather.resx">

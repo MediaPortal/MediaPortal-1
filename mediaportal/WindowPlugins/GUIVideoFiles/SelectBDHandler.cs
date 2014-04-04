@@ -19,10 +19,12 @@
 #endregion
 
 using System;
+using System.Globalization;
 using System.IO;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
+using MediaPortal.Profile;
 using MediaPortal.Services;
 using MediaPortal.Util;
 using MediaPortal.Video.Database;
@@ -141,13 +143,13 @@ namespace MediaPortal.GUI.Video
           int idFileImg = VideoDatabase.GetFileId(fileName);
           int idMovieImg = VideoDatabase.GetMovieId(fileName);
 
-          /*
+          ///*
           int timeMovieStopped = 0;
           byte[] resumeData = null;
 
           if ((idMovieImg >= 0) && (idFileImg >= 0))
           {
-            timeMovieStopped = VideoDatabase.GetMovieStopTimeAndResumeData(idFileImg, out resumeData);
+            timeMovieStopped = VideoDatabase.GetMovieStopTimeAndResumeData(idFileImg, out resumeData, g_Player.SetResumeBDTitleState);
 
             if (timeMovieStopped > 0)
             {
@@ -170,7 +172,7 @@ namespace MediaPortal.GUI.Video
                 timeMovieStopped = 0;
             }
           }
-          */
+          //*/
 
           if (g_Player.Playing)
           {
@@ -180,12 +182,12 @@ namespace MediaPortal.GUI.Video
           g_Player.PlayBD(drive + @"\BDMV\index.bdmv");
           g_Player.ShowFullScreenWindow();
 
-          /*
+          ///*
           if (g_Player.Playing && timeMovieStopped > 0)
           {
             g_Player.SeekAbsolute(timeMovieStopped);
           }
-           */
+           //*/
 
           return true;
         }
@@ -198,7 +200,81 @@ namespace MediaPortal.GUI.Video
       dlgOk.DoModal(parentId);
       return true;
     }
-    
+
+    public string GetDiscTitle(string fileName)
+    {
+      string discTitle = string.Empty;
+
+      string language = string.Empty;
+
+      using (Profile.Settings xmlreader = new MPSettings())
+      {
+        language = xmlreader.GetValueAsString("bdplayer", "audiolanguage", "English");
+      }
+
+      foreach (CultureInfo cultureInformation in CultureInfo.GetCultures(CultureTypes.NeutralCultures))
+      {
+        if (String.Compare(cultureInformation.EnglishName, language, true) == 0)
+        {
+          language = cultureInformation.ThreeLetterISOLanguageName;
+        }
+      }
+
+      if (fileName.ToLowerInvariant().Contains(@"\bdmv\") && fileName.ToLowerInvariant().Contains(".mpls"))
+      {
+        int index = fileName.ToLowerInvariant().LastIndexOf(@"\playlist");
+        string name = fileName.Remove(index);
+        name = name + @"\index.bdmv";
+        if (File.Exists(name))
+        {
+          fileName = name;
+        }
+      }
+
+      if (Directory.Exists(fileName.Replace("index.bdmv", @"META\DL")))
+      {
+        string[] xmls = Directory.GetFiles(fileName.Replace("index.bdmv", @"META\DL"), "bdmt*.xml", SearchOption.TopDirectoryOnly);
+
+        foreach (string xml in xmls)
+        {
+          if (xml.Contains(language) || xml.Contains("eng"))
+          {
+            System.Xml.XmlTextReader reader = new System.Xml.XmlTextReader(xml);
+            reader.WhitespaceHandling = System.Xml.WhitespaceHandling.Significant;
+
+            while (reader.Read())
+            {
+              if (reader.Name == "di:name")
+              {
+                reader.Read();
+                if (xml.Contains(language))
+                  return reader.Value;
+                else
+                  discTitle = reader.Value;
+                break;
+              }
+            }
+            break;
+          }
+        }
+
+        if (!String.IsNullOrEmpty(discTitle))
+          return discTitle;
+      }
+
+      if (Util.Utils.IsDVD(fileName))
+        Util.Utils.GetDVDLabel(fileName, out discTitle);
+
+      if (String.IsNullOrEmpty(discTitle))
+      {
+        discTitle = fileName.Remove(fileName.IndexOf(@"\BDMV"));
+        discTitle = discTitle.Substring(discTitle.LastIndexOf(@"\") + 1);
+      }
+      discTitle = discTitle.Replace("_", " ");
+
+      return String.IsNullOrEmpty(discTitle) ? fileName : discTitle;
+    }
+
     public string GetBDFolderName(string fileName)
     {
       if (string.IsNullOrEmpty(fileName))

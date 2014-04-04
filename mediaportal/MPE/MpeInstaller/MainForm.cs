@@ -287,7 +287,7 @@ Do you want to continue ?",packageClass.GeneralInfo.Name, pak.GeneralInfo.Versio
         return;
       try
       {
-        if (Path.GetExtension(conf_str).ToUpper() == ".DLL")
+        if (Path.GetExtension(conf_str).ToUpperInvariant() == ".DLL")
         {
           string assemblyFileName = conf_str;
           AppDomainSetup setup = new AppDomainSetup();
@@ -555,7 +555,7 @@ Do you want to continue ?",packageClass.GeneralInfo.Name, pak.GeneralInfo.Versio
           }
           else
           {
-            MpeCore.MpeInstaller.InstalledExtensions.Remove(pak);
+			  MpeCore.MpeInstaller.InstalledExtensions.Remove(installedPak);
           }
         }
         if (gui)

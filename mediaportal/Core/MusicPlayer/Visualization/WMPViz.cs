@@ -22,6 +22,7 @@ using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using MediaPortal.GUI.Library;
+using MediaPortal.MusicPlayer.BASS;
 using Un4seen.Bass;
 
 namespace MediaPortal.Visualization
@@ -48,15 +49,15 @@ namespace MediaPortal.Visualization
       public Int64 TimeStamp;
     }
 
-    [DllImport("mpviz.dll", CharSet = CharSet.Auto)]
+    [DllImport("mpviz.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Auto)]
     internal static extern bool InitWMPEngine([MarshalAs(UnmanagedType.LPWStr)] string strVizCLSID, int presetIndex,
                                               VisualizationBase.OutputContextType outputContextType, IntPtr callBack,
                                               IntPtr hOutput, ref VisualizationBase.RECT rect);
 
-    [DllImport("mpviz.dll", CharSet = CharSet.Auto)]
+    [DllImport("mpviz.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Auto)]
     internal static extern int RenderWMP(IntPtr pData, ref VisualizationBase.RECT rect);
 
-    [DllImport("mpviz.dll", CharSet = CharSet.Auto)]
+    [DllImport("mpviz.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Auto)]
     internal static extern bool SetOutputWMP(VisualizationBase.OutputContextType outputContextType, IntPtr hOutput);
   }
 
@@ -155,7 +156,15 @@ namespace MediaPortal.Visualization
       Marshal.StructureToPtr(TimedLvl, pTimedLevel, false);
 
       int result = 0;
-      result = WMPInterop.RenderWMP(pTimedLevel, ref rect);
+
+      try
+      {
+        result = WMPInterop.RenderWMP(pTimedLevel, ref rect);
+      }
+      catch (AccessViolationException)
+      {
+        return result; // We could get an Access Violation when changing Vis
+      }
 
       Marshal.FreeHGlobal(pTimedLevel);
       return result;
@@ -214,6 +223,9 @@ namespace MediaPortal.Visualization
         return false;
       }
 
+      VisualizationWindow.Width = GUIGraphicsContext.form.ClientRectangle.Width;
+      VisualizationWindow.Height = GUIGraphicsContext.form.ClientRectangle.Height;
+      
       bool result = WMPInterop.SetOutputWMP(outputType, VisualizationWindow.Handle);
       return result;
     }
@@ -234,8 +246,16 @@ namespace MediaPortal.Visualization
         {
           return false;
         }
-
-        int len = Un4seen.Bass.Bass.BASS_ChannelGetData(stream, buf, buf.Length);
+        // check use Wasapi or not
+        if (MusicPlayer.BASS.Config.MusicPlayer == AudioPlayer.WasApi)
+        {
+          // Wasapi Device do nothing with stream also use BASS_WASAPI_GetData instead of BASS_ChannelGetData
+          int len = Un4seen.BassWasapi.BassWasapi.BASS_WASAPI_GetData(buf, buf.Length);
+        }
+        else
+        {
+          int len = Un4seen.Bass.Bass.BASS_ChannelGetData(stream, buf, buf.Length);
+        }
         int x = 0;
 
         // The pcm buffer contains interleaved left, right, left, ... channel info
@@ -319,7 +339,16 @@ namespace MediaPortal.Visualization
         }
 
         fft = new float[1024];
-        Un4seen.Bass.Bass.BASS_ChannelGetData(stream, fft, (int)BASSData.BASS_DATA_FFT2048);
+        // check use Wasapi or not
+        if (MusicPlayer.BASS.Config.MusicPlayer == AudioPlayer.WasApi)
+        {
+          // Wasapi Device do nothing with stream also use BASS_WASAPI_GetData instead of BASS_ChannelGetData
+          Un4seen.BassWasapi.BassWasapi.BASS_WASAPI_GetData(fft, (int)BASSData.BASS_DATA_FFT2048);
+        }
+        else
+        {
+          Un4seen.Bass.Bass.BASS_ChannelGetData(stream, fft, (int)BASSData.BASS_DATA_FFT2048);
+        }
       }
 
       else

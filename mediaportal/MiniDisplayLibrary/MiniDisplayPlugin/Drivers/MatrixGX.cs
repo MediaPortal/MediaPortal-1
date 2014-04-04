@@ -1256,7 +1256,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 string str3;
                 num5 |= 0x10;
                 strArray = property.Split(new char[] {'.'});
-                if ((strArray.Length > 1) && ((str3 = strArray[1].ToLower()) != null))
+                if ((strArray.Length > 1) && ((str3 = strArray[1].ToLowerInvariant()) != null))
                 {
                   if ((!(str3 == "ifo") && !(str3 == "vob")) && !(str3 == "mpg"))
                   {
