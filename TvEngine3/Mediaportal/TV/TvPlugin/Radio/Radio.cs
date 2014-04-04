@@ -463,16 +463,8 @@ namespace Mediaportal.TV.TvPlugin.Radio
               item.Label = channel.DisplayName;
               item.IsFolder = false;
               item.MusicTag = channel;
-              if (channel.IsWebstream())
-              {
-                item.IconImageBig = "DefaultMyradioStreamBig.png";
-                item.IconImage = "DefaultMyradioStream.png";
-              }
-              else
-              {
-                item.IconImageBig = "DefaultMyradioBig.png";
-                item.IconImage = "DefaultMyradio.png";
-              }
+              item.IconImageBig = "DefaultMyradioBig.png";
+              item.IconImage = "DefaultMyradio.png";
               string thumbnail = Utils.GetCoverArt(Thumbs.Radio, channel.DisplayName);
               if (!string.IsNullOrEmpty(thumbnail))              
               {
@@ -515,16 +507,8 @@ namespace Mediaportal.TV.TvPlugin.Radio
               item.IsFolder = false;
               item.MusicTag = channel;
               item.AlbumInfoTag = map;
-              if (channel.IsWebstream())
-              {
-                item.IconImageBig = "DefaultMyradioStreamBig.png";
-                item.IconImage = "DefaultMyradioStream.png";
-              }
-              else
-              {
-                item.IconImageBig = "DefaultMyradioBig.png";
-                item.IconImage = "DefaultMyradio.png";
-              }
+              item.IconImageBig = "DefaultMyradioBig.png";
+              item.IconImage = "DefaultMyradio.png";
               string thumbnail = Utils.GetCoverArt(Thumbs.Radio, channel.DisplayName);
               if (!string.IsNullOrEmpty(thumbnail))
               {
@@ -783,16 +767,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
 
     private static string GetPlayPath(Channel channel)
     {
-      IList<TuningDetail> details = channel.TuningDetails;
-      TuningDetail detail = details[0];
-      if (channel.IsWebstream())
-      {
-        return detail.Url;
-      }
-      {
-        string fileName = String.Format("{0}.radio", detail.Frequency);
-        return fileName;
-      }
+      return string.Format("{0}.radio", channel.TuningDetails[0].Frequency);
     }
 
     private static void Play(GUIListItem item)
@@ -827,31 +802,20 @@ namespace Mediaportal.TV.TvPlugin.Radio
       
       GUIPropertyManager.SetProperty("#Play.Current.Thumb", strLogo);
 
-      if (g_Player.Playing)
+      if (g_Player.Playing && !g_Player.IsTimeShifting)
       {
-        if (!g_Player.IsTimeShifting || (g_Player.IsTimeShifting && _currentChannel.IsWebstream()))
-        {
-          g_Player.Stop();
-        }
+        g_Player.Stop();
       }
 
-      if (_currentChannel.IsWebstream())
+      if (g_Player.IsRadio && g_Player.Playing)
       {
-        g_Player.PlayAudioStream(GetPlayPath(_currentChannel));
-        GUIPropertyManager.SetProperty("#Play.Current.Title", _currentChannel.DisplayName);
-      }
-      else
-      {
-        if (g_Player.IsRadio && g_Player.Playing)
+        Channel currentlyPlaying = TVHome.Navigator.Channel.Entity;
+        if (currentlyPlaying != null && currentlyPlaying.IdChannel == _currentChannel.IdChannel)
         {
-          Channel currentlyPlaying = TVHome.Navigator.Channel.Entity;
-          if (currentlyPlaying != null && currentlyPlaying.IdChannel == _currentChannel.IdChannel)
-          {
-            return;
-          }
+          return;
         }
-        TVHome.ViewChannelAndCheck(_currentChannel, 0);
       }
+      TVHome.ViewChannelAndCheck(_currentChannel, 0);
     }
 
     private void SortChanged(object sender, SortEventArgs e)
