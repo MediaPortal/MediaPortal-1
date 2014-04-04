@@ -878,7 +878,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
 
     public bool HasSetup()
     {
-      return true;
+      return false;
     }
 
     public bool DefaultEnabled()
@@ -913,8 +913,6 @@ namespace Mediaportal.TV.TvPlugin.Radio
 
     public void ShowPlugin()
     {
-      RadioSetupForm setup = new RadioSetupForm();
-      setup.ShowDialog();
     }
 
     #endregion
