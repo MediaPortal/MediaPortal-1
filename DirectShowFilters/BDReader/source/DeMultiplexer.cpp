@@ -662,9 +662,11 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
       break;
 
     case BD_EVENT_AUDIO_STREAM:
-      if(m_filter.lib.ForceTitleBasedPlayback() == false && pEv.param != 0xff)
-      {         
-        m_iAudioIdx = pEv.param - 1;			
+      if (!m_filter.lib.ForceTitleBasedPlayback() && pEv.param < 0xff)
+      {
+        m_iAudioIdx = pEv.param - 1;
+        ParseAudioStreams(m_filter.lib.CurrentClipInfo());
+        m_bAudioFormatParsed = false;
       }
       break;
 
