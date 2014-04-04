@@ -24,7 +24,6 @@ using System.Windows.Forms;
 using DirectShowLib;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
-using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 
 namespace Mediaportal.TV.Server.SetupTV.Dialogs
@@ -116,9 +115,15 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         // Add available network providers based on tuner type and operating system.
         // The generic network provider is available only on XP MCE 2005 + Update Rollup 2 and
         // newer.
-        if (FilterGraphTools.IsThisComObjectInstalled(typeof(NetworkProvider).GUID))
+        try
         {
+          Type type = Type.GetTypeFromCLSID(typeof(NetworkProvider).GUID);
+          object o = Activator.CreateInstance(type);
+          Release.ComObject("edit tuner settings generic network provider", ref o);
           comboBoxNetworkProvider.Items.Add(DbNetworkProvider.Generic);
+        }
+        catch
+        {
         }
         comboBoxNetworkProvider.Items.Add(DbNetworkProvider.Specific);
         comboBoxNetworkProvider.Items.Add(DbNetworkProvider.MediaPortal);

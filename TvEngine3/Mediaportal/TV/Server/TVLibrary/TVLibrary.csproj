@@ -75,7 +75,6 @@
     <Compile Include="..\..\..\..\..\Common-MP-TVE3\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
-    <Compile Include="DebugSettings.cs" />
     <Compile Include="Implementations\DirectShow\Dri\TunerDri.cs" />
     <Compile Include="Implementations\DirectShow\Pbda\TunerPbdaCableCard.cs" />
     <Compile Include="Implementations\DirectShow\SatIp\TunerSatIpCable.cs" />

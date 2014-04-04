@@ -127,6 +127,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     {
       base.ReloadConfiguration();
 
+      this.LogDebug("BDA base: reload configuration");
       bool save = false;
       Card tuner = CardManagement.GetCard(_cardId, CardIncludeRelationEnum.None);
       _networkProviderClsid = Guid.Empty; // specific network provider

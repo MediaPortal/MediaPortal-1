@@ -336,7 +336,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
         retval = true;
         Release.ComObject("filter graph tools is-this-com-object-installed instance", ref o);
       }
-      catch { }
+      catch
+      {
+      }
       return retval;
     }
 

@@ -147,7 +147,6 @@
     <Compile Include="PathManager.cs" />
     <Compile Include="RtspClient.cs" />
     <Compile Include="ScanParameters.cs" />
-    <Compile Include="Epg\Languages.cs" />
     <Compile Include="Implementations\Channels\AnalogChannel.cs" />
     <Compile Include="Implementations\Channels\ATSCChannel.cs" />
     <Compile Include="Implementations\Channels\DVBBaseChannel.cs" />

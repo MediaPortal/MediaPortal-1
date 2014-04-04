@@ -21,6 +21,7 @@
 using Mediaportal.TV.Server.TVLibrary.Interfaces.CiMenu;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections.CIMenu
 {
@@ -57,8 +58,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.CIMenu
       }
       catch
       {
-        menu = new CiMenu("Remoting Exception", "Communication with server failed", null,
-                          CiMenuState.Error);
+        menu = new CiMenu("Remoting Exception", "Communication with server failed", null, CiMenuState.Error);
         // pass menu to calling dialog
         if (_refDlg != null)
           _refDlg.CiMenuCallback(menu);

@@ -20,7 +20,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Windows.Forms;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
@@ -28,7 +27,7 @@ using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
+using MediaPortal.Common.Utils.Localisation;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections
 {
@@ -36,7 +35,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
   {
     private bool _loaded;
     private readonly MPListViewStringColumnSorter lvwColumnSorter;
-    private bool ignoreCheckChanges;
     private readonly string languagesSettingsKey;
     private readonly string storeOnlySelectedSettingsKey;    
 
@@ -50,7 +48,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       lvwColumnSorter.Order = SortOrder.None;
       mpListView1.ListViewItemSorter = lvwColumnSorter;
       mpListView2.ListViewItemSorter = lvwColumnSorter;
-      ignoreCheckChanges = true;
       this.languagesSettingsKey = languagesSettingsKey;
       this.storeOnlySelectedSettingsKey = storeOnlySelectedSettingsKey;
       _mediaTypeEnum = mediaTypeEnum;
@@ -70,21 +67,20 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       try
       {
         mpListView2.Items.Clear();
-        Languages languages = new Languages();
-        List<String> codes = languages.GetLanguageCodes();
-        List<String> list = languages.GetLanguages();
-
-        Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSetting(languagesSettingsKey);        
-
-        for (int j = 0; j < list.Count; j++)
+        string epgLanguages = ServiceAgents.Instance.SettingServiceAgent.GetValue(languagesSettingsKey, string.Empty);
+        foreach (Iso639Language lang in Iso639LanguageCollection.Instance.Languages)
         {
-          ListViewItem item = new ListViewItem(new string[] { list[j], codes[j] });
+          string code = lang.TerminologicCode;
+          if (!lang.TerminologicCode.Equals(lang.BibliographicCode))
+          {
+            code += "," + lang.BibliographicCode;
+          }
+          ListViewItem item = new ListViewItem(new string[] { lang.Name, code });
           mpListView2.Items.Add(item);
-          item.Tag = codes[j];
-          item.Checked = setting.Value.IndexOf((string)item.Tag) >= 0;
+          item.Tag = code;
+          item.Checked = epgLanguages.IndexOf(code) >= 0;
         }
         mpListView2.Sort();
-
       }
       finally
       {
@@ -109,9 +105,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       {
         _ignoreItemCheckedEvent = true;
         LoadLanguages();
-        Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSetting(storeOnlySelectedSettingsKey);
-
-        mpCheckBoxStoreOnlySelected.Checked = (setting.Value == "yes");
+        mpCheckBoxStoreOnlySelected.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetValue(storeOnlySelectedSettingsKey, "no") == "yes");
 
         Dictionary<int, CardType> cards = new Dictionary<int, CardType>();
         IList<Card> dbsCards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
@@ -256,18 +250,16 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (false == _loaded)
         return;
 
-      string value = ",";
-      for (int i = 0; i < mpListView2.Items.Count; ++i)
+      List<string> checkedCodes = new List<string>();
+      foreach (ListViewItem i in mpListView2.Items)
       {
-        if (mpListView2.Items[i].Checked)
+        if (i.Checked)
         {
-          string code = (string)mpListView2.Items[i].Tag;
-          value += code;
-          value += ",";
+          checkedCodes.Add((string)i.Tag);
         }
       }
 
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue(languagesSettingsKey, value);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue(languagesSettingsKey, string.Join(",", checkedCodes));
       base.SaveSettings();
     }
 
@@ -307,9 +299,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       mpListView1.BeginUpdate();
       try
       {
-        for (int i = 0; i < mpListView1.Items.Count; ++i)
+        foreach (ListViewItem i in mpListView1.Items)
         {
-          mpListView1.Items[i].Checked = true;
+          i.Checked = true;
         }
       }
       finally
@@ -325,10 +317,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       {
         _ignoreItemCheckedEvent = true;
         ICollection<Channel> channels = new List<Channel>();
-        for (int i = 0; i < mpListView1.Items.Count; ++i)
+        foreach (ListViewItem i in mpListView1.Items)
         {
-          Channel ch = (Channel)mpListView1.Items[i].Tag;
-          mpListView1.Items[i].Checked = (ch.GroupMaps.Count > 1);
+          Channel ch = (Channel)i.Tag;
+          i.Checked = (ch.GroupMaps.Count > 1);
           channels.Add(ch);
           // if count > 1 we assume that the channel has one or more custom group(s) associated with it.
         }
@@ -351,10 +343,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       {
         _ignoreItemCheckedEvent = true;
         ICollection<Channel> channels = new List<Channel>();
-        for (int i = 0; i < mpListView1.Items.Count; ++i)
+        foreach (ListViewItem i in mpListView1.Items)
         {
-          Channel ch = (Channel)mpListView1.Items[i].Tag;
-          mpListView1.Items[i].Checked = (ch.GroupMaps.Count > 1 && ch.VisibleInGuide);
+          Channel ch = (Channel)i.Tag;
+          i.Checked = (ch.GroupMaps.Count > 1 && ch.VisibleInGuide);
           channels.Add(ch);
           // if count > 1 we assume that the channel has one or more custom group(s) associated with it.
         }
@@ -377,10 +369,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       {
         _ignoreItemCheckedEvent = true;
         ICollection<Channel> channels = new List<Channel>();
-        for (int i = 0; i < mpListView1.Items.Count; ++i)
+        foreach (ListViewItem i in mpListView1.Items)
         {
-          mpListView1.Items[i].Checked = false;
-          channels.Add(mpListView1.Items[i].Tag as Channel);
+          i.Checked = false;
+          channels.Add(i.Tag as Channel);
         }
         if (channels.Count > 0)
         {
@@ -397,7 +389,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private void CheckAll(bool aChecked)
     {
       mpListView2.BeginUpdate();
-      ignoreCheckChanges = true;
       try
       {
         foreach (ListViewItem lv in mpListView2.Items)
@@ -408,7 +399,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       finally
       {
         mpListView2.EndUpdate();
-        ignoreCheckChanges = false;
       }
     }
 
@@ -420,39 +410,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private void linkLabelLanguageNone_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
       CheckAll(false);
-    }
-
-    private void mpListView2_ItemChecked(object sender, ItemCheckedEventArgs e)
-    {
-      if (!ignoreCheckChanges)
-      {
-        ignoreCheckChanges = true;
-        try
-        {
-          foreach (ListViewItem item in mpListView2.Items)
-          {
-            if (item != e.Item)
-            {
-              if (item.SubItems[1].Text == e.Item.SubItems[1].Text)
-                item.Checked = e.Item.Checked;
-            }
-          }
-        }
-        finally 
-        {
-          ignoreCheckChanges = false;
-        }                
-      }
-    }
-
-    private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
-    {
-
-    }
-
-    private void EpgGrabber_Load(object sender, EventArgs e)
-    {
-      ignoreCheckChanges = false;
     }
   }
 }

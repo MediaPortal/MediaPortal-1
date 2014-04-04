@@ -86,6 +86,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <param name="tunerId">The identifier for the associated tuner.</param>
     public void ReloadConfiguration(int tunerId)
     {
+      this.LogDebug("DiSEqC analog: reload configuration");
       Card tuner = CardManagement.GetCard(tunerId, CardIncludeRelationEnum.None);
       if (tuner != null)
       {

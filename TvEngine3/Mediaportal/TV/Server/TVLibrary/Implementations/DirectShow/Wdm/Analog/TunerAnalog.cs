@@ -137,6 +137,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
     {
       base.ReloadConfiguration();
 
+      this.LogDebug("WDM analog: reload configuration");
       _externalTunerChannel = new AnalogChannel();
       _externalTunerChannel.TunerSource = (TunerInputType)SettingsManagement.GetValue("tuner" + _cardId + "ExternalTunerTunerSource", (int)TunerInputType.Cable);
       int countryId = SettingsManagement.GetValue("tuner" + _cardId + "ExternalTunerCountry", 1);
@@ -163,6 +164,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
       if (_capture != null)
       {
         _capture.ReloadConfiguration(_cardId);
+      }
+      if (_encoder != null)
+      {
+        _encoder.ReloadConfiguration(_cardId);
       }
     }
 

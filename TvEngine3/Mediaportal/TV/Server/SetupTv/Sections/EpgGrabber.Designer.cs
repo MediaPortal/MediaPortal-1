@@ -94,7 +94,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpListView2.UseCompatibleStateImageBehavior = false;
       this.mpListView2.View = System.Windows.Forms.View.Details;
       this.mpListView2.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.mpListView_ColumnClick);
-      this.mpListView2.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.mpListView2_ItemChecked);
       // 
       // mpLabel1
       // 
@@ -269,7 +268,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabControl1.SelectedIndex = 0;
       this.tabControl1.Size = new System.Drawing.Size(485, 431);
       this.tabControl1.TabIndex = 12;
-      this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
       // 
       // EpgGrabber
       // 
@@ -278,12 +276,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.Controls.Add(this.tabControl1);
       this.Name = "EpgGrabber";
       this.Size = new System.Drawing.Size(491, 437);
-      this.Load += new System.EventHandler(this.EpgGrabber_Load);
       this.tabPage1.ResumeLayout(false);
       this.tabPage1.PerformLayout();
       this.tabControl1.ResumeLayout(false);
       this.ResumeLayout(false);
-
     }
 
     #endregion

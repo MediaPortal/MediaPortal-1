@@ -20,7 +20,7 @@
 
 using System.Windows.Forms;
 using Mediaportal.TV.Server.SetupControls;
-using Mediaportal.TV.Server.TVLibrary;
+using Mediaportal.TV.Server.TVControl.ServiceAgents;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections
 {
@@ -48,27 +48,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     public override void LoadSettings()
     {
       base.LoadSettings();
-      ReadSetting(mpResetGraphCheckBox, "ResetGraph");
-      ReadSetting(mpUsePatLookupCheckBox, "UsePATLookup");
-      ReadSetting(mpDumpRawTSCheckBox, "DumpRawTS");
+      mpCheckBoxTsWriterDumpInputs.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("tsWriterDumpInputs", false);
+      mpCheckBoxTsMuxerDumpInputs.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("tsMuxerDumpInputs", false);
     }
 
     public override void SaveSettings()
     {
       base.SaveSettings();
-      WriteSetting(mpResetGraphCheckBox, "ResetGraph");
-      WriteSetting(mpUsePatLookupCheckBox, "UsePATLookup");
-      WriteSetting(mpDumpRawTSCheckBox, "DumpRawTS");
-    }
-
-    private void ReadSetting(CheckBox control, string setting)
-    {
-      control.Checked = DebugSettings.GetSetting(setting);
-    }
-
-    private void WriteSetting(CheckBox control, string setting)
-    {
-      DebugSettings.SetSetting(setting, control.Checked);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("tsWriterDumpInputs", mpCheckBoxTsWriterDumpInputs.Checked);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("tsMuxerDumpInputs", mpCheckBoxTsMuxerDumpInputs.Checked);
     }
   }
 }

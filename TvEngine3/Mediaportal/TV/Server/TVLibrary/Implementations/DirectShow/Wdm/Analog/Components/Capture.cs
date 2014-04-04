@@ -609,6 +609,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     /// <param name="tunerId">The identifier for the associated tuner.</param>
     public void ReloadConfiguration(int tunerId)
     {
+      this.LogDebug("WDM analog capture: reload configuration");
       _tunerId = tunerId;
 
       // Do we have existing settings? If not, try to set sensible defaults.

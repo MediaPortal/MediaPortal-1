@@ -700,6 +700,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
     }
 
     /// <summary>
+    /// Reload the tuner's configuration.
+    /// </summary>
+    public override void ReloadConfiguration()
+    {
+      base.ReloadConfiguration();
+
+      if (_encoder != null)
+      {
+        _encoder.ReloadConfiguration(_cardId);
+      }
+    }
+
+    /// <summary>
     /// Allocate a new subchannel instance.
     /// </summary>
     /// <param name="id">The identifier for the subchannel.</param>

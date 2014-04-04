@@ -20,6 +20,7 @@
 
 using System;
 using DirectShowLib;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
@@ -101,6 +102,25 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     }
 
     #endregion
+
+    /// <summary>
+    /// Reload the tuner's configuration.
+    /// </summary>
+    public override void ReloadConfiguration()
+    {
+      base.ReloadConfiguration();
+
+      this.LogDebug("DirectShow base: reload configuration");
+      // TODO apply these settings to TsWriter here
+      if (SettingsManagement.GetValue("tsWriterDisableCrcCheck", false))
+      {
+        this.LogDebug("DirectShow base: disable TsWriter CRC checking");
+      }
+      if (SettingsManagement.GetValue("tsWriterDumpInputs", false))
+      {
+        this.LogDebug("DirectShow base: enable TsWriter input dumping");
+      }
+    }
 
     #region subchannel management
 

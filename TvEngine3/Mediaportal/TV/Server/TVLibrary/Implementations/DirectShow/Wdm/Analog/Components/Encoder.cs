@@ -197,6 +197,33 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
 
     #endregion
 
+    #region configure
+
+    /// <summary>
+    /// Reload the component's configuration.
+    /// </summary>
+    /// <param name="tunerId">The identifier for the associated tuner.</param>
+    public void ReloadConfiguration(int tunerId)
+    {
+      this.LogDebug("WDM analog encoder: reload configuration");
+      ITsMultiplexer multiplexer = _filterTsMultiplexer as ITsMultiplexer;
+      if (multiplexer != null)
+      {
+        int mask = 0;
+        if (SettingsManagement.GetValue("tsMuxerDumpInputs", false))
+        {
+          this.LogDebug("WDM analog encoder: enable TsMuxer input dumping");
+          unchecked
+          {
+            mask = (int)0xffffffff;
+          }
+        }
+        multiplexer.DumpInput(mask);
+      }
+    }
+
+    #endregion
+
     /// <summary>
     /// Load the encoder component.
     /// </summary>
@@ -740,7 +767,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
           }
           catch (Exception ex)
           {
-            this.LogError(ex, "Unexpected error in Encoder.FindPinByMediaType()");
+            this.LogError(ex, "WDM analog encoder: unexpected error in FindPinByMediaType()");
           }
           finally
           {

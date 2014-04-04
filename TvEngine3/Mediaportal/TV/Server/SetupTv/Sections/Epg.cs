@@ -22,14 +22,11 @@ using System;
 using System.Collections.Specialized;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
-using Mediaportal.TV.Server.TVLibrary;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class Epg : SectionSettings
   {
-    private string crcSettingsFile = DebugSettings.SettingPath("DisableCRCCheck");
-
     public Epg()
       : this("DVB EPG") {}
 
@@ -49,7 +46,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       checkboxSameTransponder.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("generalGrapOnlyForSameTransponder", false);
 
       checkBoxEnableEPGWhileIdle.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("idleEPGGrabberEnabled", true);
-      checkBoxEnableCRCCheck.Checked = !DebugSettings.DisableCRCCheck;
+      // TODO move this CRC setting to a more general location, because it affects all section decoders in TsWriter (ie. not just the EPG)
+      checkBoxEnableCRCCheck.Checked = !ServiceAgents.Instance.SettingServiceAgent.GetValue("tsWriterDisableCrcCheck", false);
       numericUpDownEpgTimeOut.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeoutEPG", 10);
       numericUpDownEpgRefresh.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeoutEPGRefresh", 240);
       checkBoxEnableEpgWhileTimeshifting.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeshiftingEpgGrabberEnabled", false);
@@ -65,7 +63,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("generalEPGAlwaysFillHoles", checkBoxAlwaysFillHoles.Checked);
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("generalEPGAlwaysReplace", checkBoxAlwaysUpdate.Checked);      
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("generalGrapOnlyForSameTransponder", checkboxSameTransponder.Checked);
-      DebugSettings.DisableCRCCheck = !checkBoxEnableCRCCheck.Checked;
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("tsWriterDisableCrcCheck", !checkBoxEnableCRCCheck.Checked);
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("idleEPGGrabberEnabled", checkBoxEnableEPGWhileIdle.Checked);
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeoutEPG", (int)numericUpDownEpgTimeOut.Value);
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeoutEPGRefresh", (int)numericUpDownEpgRefresh.Value);

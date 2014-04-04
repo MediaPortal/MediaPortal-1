@@ -64,9 +64,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     /// </summary>
     private int _subChannelIndex = -1;
 
-    /// set to true to enable PAT lookup of PMT
-    private bool _alwaysLookupPmtPidInPat = DebugSettings.UsePATLookup;
-
     private Pmt _pmt;
     private Cat _cat;
     private List<ushort> _pids;
@@ -239,7 +236,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       }
 
       int pmtPidToSearchFor;
-      if (_alwaysLookupPmtPidInPat || pmtPid < 0)
+      if (pmtPid < 0)
       {
         pmtPidToSearchFor = 0;
       }
@@ -276,11 +273,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
         waitLength = DateTime.Now - dtStartWait;
         if (!pmtFound)
         {
-          this.LogDebug("MPEG 2 sub-channel: timed out waiting for PMT after {0} seconds", waitLength.TotalSeconds);
+          this.LogWarn("MPEG 2 sub-channel: timed out waiting for PMT after {0} seconds", waitLength.TotalSeconds);
           // One retry allowed...
           if (pmtPidToSearchFor == 0)
           {
-            this.LogDebug("MPEG 2 sub-channel: giving up waiting for PMT - you might need to increase the PMT timeout");
+            this.LogError("MPEG 2 sub-channel: giving up waiting for PMT - you might need to increase the PMT timeout");
             return false;
           }
           else
@@ -382,7 +379,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       }
       else
       {
-        this.LogDebug("tvdvbchannel.OnStopRecording - not recording");
+        this.LogWarn("tvdvbchannel.OnStopRecording - not recording");
       }
     }
 
@@ -518,7 +515,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
         this.LogDebug("MPEG 2 sub-channel: subchannel {0} build PID list", _subChannelId);
         if (_pmt == null)
         {
-          this.LogDebug("MPEG 2 sub-channel: PMT not available");
+          this.LogError("MPEG 2 sub-channel: PMT not available");
           return;
         }
 
@@ -656,7 +653,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
         Pmt pmt = Pmt.Decode(pmtData, _tuner.CamType);
         if (pmt == null)
         {
-          this.LogDebug("MPEG 2 sub-channel: invalid PMT detected");
+          this.LogError("MPEG 2 sub-channel: invalid PMT detected");
           return false;
         }
 
@@ -869,7 +866,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
         }
         else
         {
-          this.LogDebug("MPEG 2 sub-channel: unable to persist new PMT PID for service {0}", dvbService.ServiceId);
+          this.LogWarn("MPEG 2 sub-channel: unable to persist new PMT PID for service {0}", dvbService.ServiceId);
         }
       }
     }
