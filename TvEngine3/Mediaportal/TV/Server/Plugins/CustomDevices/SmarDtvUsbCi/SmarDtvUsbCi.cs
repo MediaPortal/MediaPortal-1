@@ -386,12 +386,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
       }
       if (graph == null)
       {
-        this.LogError("SmarDTV USB CI: graph is null");
+        this.LogError("SmarDTV USB CI: failed to add the filter to the graph, graph is null");
         return false;
       }
       if (lastFilter == null)
       {
-        this.LogError("SmarDTV USB CI: last filter is null");
+        this.LogError("SmarDTV USB CI: failed to add the filter to the graph, last filter is null");
         return false;
       }
       if (_ciFilter != null)
@@ -554,7 +554,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
       }
       if (_isCaInterfaceOpen)
       {
-        this.LogWarn("SmarDTV USB CI: interface is already open");
+        this.LogWarn("SmarDTV USB CI: conditional access interface is already open");
         return true;
       }
 
@@ -602,7 +602,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
         return true;
       }
 
-      this.LogError("SmarDTV USB CI: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("SmarDTV USB CI: failed to open conditional access interface, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -679,12 +679,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
       }
       if (command == CaPmtCommand.OkMmi || command == CaPmtCommand.Query)
       {
-        this.LogError("SmarDTV USB CI: command type {0} is not supported", command);
+        this.LogError("SmarDTV USB CI: conditional access command type {0} is not supported", command);
         return true;
       }
       if (pmt == null)
       {
-        this.LogError("SmarDTV USB CI: PMT not supplied");
+        this.LogError("SmarDTV USB CI: failed to send conditional access command, PMT not supplied");
         return true;
       }
 
@@ -710,7 +710,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
         return true;
       }
 
-      this.LogError("SmarDTV USB CI: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("SmarDTV USB CI: failed to send conditional access command, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -745,7 +745,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
       }
       if (!_isCamReady)
       {
-        this.LogError("SmarDTV USB CI: the CAM is not ready");
+        this.LogError("SmarDTV USB CI: failed to open menu, the CAM is not ready");
         return false;
       }
 
@@ -756,7 +756,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
         return true;
       }
 
-      this.LogError("SmarDTV USB CI: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("SmarDTV USB CI: failed to open menu, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -775,7 +775,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
       }
       if (!_isCamReady)
       {
-        this.LogError("SmarDTV USB CI: the CAM is not ready");
+        this.LogError("SmarDTV USB CI: failed to close menu, the CAM is not ready");
         return false;
       }
 
@@ -787,7 +787,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
         return true;
       }
 
-      this.LogError("SmarDTV USB CI: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("SmarDTV USB CI: failed to close menu, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -807,7 +807,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
       }
       if (!_isCamReady)
       {
-        this.LogError("SmarDTV USB CI: the CAM is not ready");
+        this.LogError("SmarDTV USB CI: failed to select menu entry, the CAM is not ready");
         return false;
       }
 
@@ -819,7 +819,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
         return true;
       }
 
-      this.LogError("SmarDTV USB CI: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("SmarDTV USB CI: failed to select menu entry, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -844,7 +844,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
       }
       if (!_isCamReady)
       {
-        this.LogError("SmarDTV USB CI: the CAM is not ready");
+        this.LogError("SmarDTV USB CI: failed to answer enquiry, the CAM is not ready");
         return false;
       }
 
@@ -861,7 +861,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
         return true;
       }
 
-      this.LogError("SmarDTV USB CI: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("SmarDTV USB CI: failed to answer enquiry, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 

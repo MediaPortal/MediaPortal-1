@@ -22,6 +22,7 @@ using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
@@ -275,7 +276,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
 
       if (command == null || command.Length == 0)
       {
-        this.LogDebug("SAT>IP satellite: command not supplied");
+        this.LogWarn("SAT>IP satellite: DiSEqC command not supplied");
         return true;
       }
 
@@ -288,7 +289,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
         command[1] != (byte)DiseqcAddress.AnySwitch ||
         command[2] != (byte)DiseqcCommand.WriteN0)
       {
-        this.LogDebug("SAT>IP satellite: command not supported");
+        this.LogError("SAT>IP satellite: DiSEqC command not supported");
+        Dump.DumpBinary(command);
         return false;
       }
 

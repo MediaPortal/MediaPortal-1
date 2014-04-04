@@ -472,12 +472,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Prof
       }
       if (command == null || command.Length == 0)
       {
-        this.LogError("Prof: command not supplied");
+        this.LogWarn("Prof: DiSEqC command not supplied");
         return true;
       }
       if (command.Length > MAX_DISEQC_TX_MESSAGE_LENGTH)
       {
-        this.LogError("Prof: command too long, length = {0}", command.Length);
+        this.LogError("Prof: DiSEqC command too long, length = {0}", command.Length);
         return false;
       }
 

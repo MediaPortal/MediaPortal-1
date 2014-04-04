@@ -997,7 +997,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       int hr = topology.GetNodeDescriptors(out descriptorCount, 20, descriptors);
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogDebug("  failed to get node descriptors, hr = 0x{0:x}", hr);
+        this.LogError("  failed to get node descriptors from topology, hr = 0x{0:x}", hr);
         return;
       }
       this.LogDebug("  descriptor count = {0}", descriptorCount);
@@ -1256,13 +1256,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       }
       lock (_knownTuners)
       {
-        if (_knownUpnpRootDevices.Contains(rootDescriptor.SSDPRootEntry.RootDeviceUUID))
+        if (!_knownUpnpRootDevices.Add(rootDescriptor.SSDPRootEntry.RootDeviceUUID))
         {
           this.LogWarn("detector: re-detecting known root device {0}", rootDescriptor.SSDPRootEntry.RootDeviceUUID);
-        }
-        else
-        {
-          _knownUpnpRootDevices.Add(rootDescriptor.SSDPRootEntry.RootDeviceUUID);
         }
 
         DeviceDescriptor rootDeviceDescriptor = DeviceDescriptor.CreateRootDeviceDescriptor(rootDescriptor);
@@ -1490,7 +1486,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           }
           else
           {
-            this.LogError("detector: SAT>IP server returned status code {0} {1}", response.StatusCode, response.ReasonPhrase);
+            this.LogError("detector: SAT>IP server RTSP DESCRIBE response status code {0} {1}", response.StatusCode, response.ReasonPhrase);
           }
         }
       }

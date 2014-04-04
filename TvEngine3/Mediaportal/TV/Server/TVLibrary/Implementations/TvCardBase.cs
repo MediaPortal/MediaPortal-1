@@ -718,7 +718,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
       if (mainFilter == null)
       {
-        this.LogDebug("TvCardBase: the main filter is null");
+        this.LogWarn("TvCardBase: the main filter is null");
         return;
       }
 
@@ -746,7 +746,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
             this.LogDebug("TvCardBase: DirectShow add-on plugin found");
             if (!addOn.AddToGraph(graph, ref lastFilter))
             {
-              this.LogDebug("TvCardBase: failed to add filters to graph");
+              this.LogDebug("TvCardBase: failed to add filter(s) to graph");
               addOn.Dispose();
               continue;
             }
@@ -1105,7 +1105,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         }
         else
         {
-          this.LogDebug("TvCardBase: unhandled action");
+          this.LogWarn("TvCardBase: unhandled action {0}", action);
           return;
         }
 
@@ -1113,7 +1113,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       }
       catch (Exception ex)
       {
-        this.LogError(ex, "TvCardBase: action failed");
+        this.LogError(ex, "TvCardBase: action {0} failed", action);
       }
     }
 
@@ -1541,12 +1541,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       {
         if (subChannel.IsTimeShifting)
         {
-          this.LogError("TvCardBase: subchannel is still timeshifting!");
+          this.LogError("TvCardBase: asked to free subchannel that is still timeshifting!");
           return;
         }
         if (subChannel.IsRecording)
         {
-          this.LogError("TvCardBase: subchannel is still recording!");
+          this.LogError("TvCardBase: asked to free subchannel that is still recording!");
           return;
         }
 

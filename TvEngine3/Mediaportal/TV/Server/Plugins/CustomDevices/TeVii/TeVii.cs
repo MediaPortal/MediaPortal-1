@@ -557,7 +557,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
       }
       if (!CanTuneChannel(channel))
       {
-        this.LogError("TeVii: tuning is not supported for this channel");
+        this.LogError("TeVii: tuning is not supported for channel");
         return false;
       }
 
@@ -641,7 +641,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
       }
       if (command == null || command.Length == 0)
       {
-        this.LogError("TeVii: command not supplied");
+        this.LogWarn("TeVii: DiSEqC command not supplied");
         return true;
       }
 
@@ -688,7 +688,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
       }
       if (_isRemoteControlInterfaceOpen)
       {
-        this.LogWarn("TeVii: interface is already open");
+        this.LogWarn("TeVii: remote control interface is already open");
         return true;
       }
 

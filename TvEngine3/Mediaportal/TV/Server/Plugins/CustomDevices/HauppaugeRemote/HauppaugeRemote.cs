@@ -346,7 +346,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeRemote
       }
       if (_isRemoteControlInterfaceOpen)
       {
-        this.LogWarn("Hauppauge remote: interface is already open");
+        this.LogWarn("Hauppauge remote: remote control interface is already open");
         return true;
       }
 
@@ -368,7 +368,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeRemote
         processCount = Process.GetProcessesByName(IR32_PROCESS_NAME).Length;
         if (processCount != 0)
         {
-          this.LogWarn("Hauppauge remote: still {0} process(es), attempt terminate", processCount);
+          this.LogWarn("Hauppauge remote: still {0} IR32 process(es), attempt terminate", processCount);
           foreach (Process proc in Process.GetProcessesByName(IR32_PROCESS_NAME))
           {
             proc.Kill();

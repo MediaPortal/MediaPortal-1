@@ -94,7 +94,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
         // Encoder not yet in DB -> assume reusable.
         if (dbEncoder == null)
         {
-          this.LogDebug("encoders-in-use: unrecognised, assuming usable");
+          this.LogWarn("encoders-in-use: {0} unrecognised, assuming usable", device.Name);
           _encodersInUse[key]++;
           return true;
         }

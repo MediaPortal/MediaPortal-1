@@ -743,7 +743,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
         _libHandle = NativeMethods.LoadLibraryA(targetFilename);
         if (_libHandle == IntPtr.Zero)
         {
-          this.LogError("Anysee: failed to load the DLL");
+          this.LogError("Anysee: failed to load the CI API DLL");
           return;
         }
 
@@ -900,7 +900,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
           this.LogDebug("Anysee: API access thread running");
           return true;
         }
-        this.LogError("Anysee: API access thread self-terminated");
+        this.LogError("Anysee: CI API access thread self-terminated");
         return false;
       }
 
@@ -915,7 +915,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
         int result = _createApi(_ciApiInstance);
         if (result != 1)
         {
-          this.LogError("Anysee: failed to create instance, result = {0}", result);
+          this.LogError("Anysee: failed to create CI API instance, result = {0}", result);
           return;
         }
         this.LogDebug("Anysee: created instance successfully");
@@ -971,7 +971,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
           }
           else
           {
-            this.LogError("Anysee: result = failure, hr = 0x{0:x} ({1})", result, HResult.GetDXErrorString(result));
+            this.LogError("Anysee: failed to open CI API, hr = 0x{0:x} ({1})", result, HResult.GetDXErrorString(result));
           }
         }
 
@@ -991,14 +991,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
 
         if (!_dllLoaded)
         {
-          this.LogWarn("Anysee: the CIAPI.dll functions have not been loaded");
+          this.LogWarn("Anysee: the CI API DLL has not been successfully loaded");
           return true;
         }
 
         // Stop the API access thread.
         if (_apiAccessThread == null)
         {
-          this.LogWarn("Anysee: API access thread is null");
+          this.LogWarn("Anysee: CI API access thread is null, earlier failure?");
         }
         else
         {
@@ -1006,7 +1006,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
           _apiAccessThreadStopEvent.Set();
           if (!_apiAccessThread.Join(API_ACCESS_THREAD_WAIT_TIME * 2))
           {
-            this.LogWarn("Anysee: failed to join API access thread, aborting thread");
+            this.LogWarn("Anysee: failed to join CI API access thread, aborting thread");
             _apiAccessThread.Abort();
           }
           _apiAccessThread = null;
@@ -1049,12 +1049,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
 
         if (_apiAccessThread == null)
         {
-          this.LogError("Anysee: API access thread is null");
+          this.LogError("Anysee: failed to execute CI control command, API access thread is null");
           return false;
         }
         if (!_apiAccessThread.IsAlive)
         {
-          this.LogError("Anysee: the API is not open");
+          this.LogError("Anysee: failed to execute CI control command, the API is not open");
           return false;
         }
 
@@ -1069,7 +1069,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
           return true;
         }
 
-        this.LogError("Anysee: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("Anysee: failed to execute CI control command {0}, hr = 0x{1:x} ({2})", command, hr, HResult.GetDXErrorString(hr));
         return false;
       }
     }
@@ -1186,7 +1186,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       );
       if (hr != (int)HResult.Severity.Success || returnedByteCount != NIM_CONFIG_SIZE)
       {
-        this.LogWarn("Anysee: result = failure, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+        this.LogWarn("Anysee: failed to read NIM configuration, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
       }
 
       // Most of the info here is not very relevant.
@@ -1223,7 +1223,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       );
       if (hr != (int)HResult.Severity.Success || returnedByteCount != DRIVER_VERSION_SIZE)
       {
-        this.LogWarn("Anysee: result = failure, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+        this.LogWarn("Anysee: failed to read driver version, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
         return;
       }
 
@@ -1251,7 +1251,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       );
       if (hr != (int)HResult.Severity.Success || returnedByteCount != PLATFORM_INFO_SIZE)
       {
-        this.LogWarn("Anysee: result = failure, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+        this.LogWarn("Anysee: failed to read platform information, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
         return;
       }
 
@@ -1290,7 +1290,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       );
       if (hr != (int)HResult.Severity.Success || returnedByteCount != BOARD_INFO_SIZE)
       {
-        this.LogWarn("Anysee: result = failure, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+        this.LogWarn("Anysee: failed to read board information, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
         return;
       }
 
@@ -1322,7 +1322,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       );
       if (hr != (int)HResult.Severity.Success || returnedByteCount != CAPABILITIES_SIZE)
       {
-        this.LogWarn("Anysee: result = failure, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+        this.LogWarn("Anysee: failed to read capabilities, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
         return;
       }
 
@@ -1350,12 +1350,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       this.LogDebug("Anysee: send key, key = {0}", key);
       if (!_isCaInterfaceOpen)
       {
-        this.LogError("Anysee: not initialised or interface not supported");
+        this.LogWarn("Anysee: not initialised or interface not supported");
         return false;
       }
       if (_isCamReady == false)
       {
-        this.LogError("Anysee: the CAM is not ready");
+        this.LogError("Anysee: failed to send key press to CAM, the CAM is not ready");
         return false;
       }
 
@@ -1369,7 +1369,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
           return true;
         }
 
-        this.LogError("Anysee: result = failure");
+        this.LogError("Anysee: failed to send key press {0} to CAM", key);
         return false;
       }
       finally
@@ -1455,7 +1455,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
         this.LogDebug("Anysee: enquiry");
         if (msg.HeaderCount != 1)
         {
-          this.LogError("Anysee: unexpected header count, count = {0}", msg.HeaderCount);
+          this.LogError("Anysee: unexpected MMI input request header count, count = {0}", msg.HeaderCount);
+          Dump.DumpBinary(message, MMI_MESSAGE_SIZE);
           return 1;
         }
         lock (_caMenuCallBackLock)
@@ -1481,7 +1482,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       this.LogDebug("Anysee: menu");
       if (msg.HeaderCount != 3)
       {
-        this.LogError("Anysee: unexpected header count, count = {0}", msg.HeaderCount);
+        this.LogError("Anysee: unexpected MMI menu or list header count, count = {0}", msg.HeaderCount);
+        Dump.DumpBinary(message, MMI_MESSAGE_SIZE);
         return 1;
       }
       lock (_caMenuCallBackLock)
@@ -1500,7 +1502,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
         this.LogDebug("  # entries = {0}", msg.EntryCount);
         if (msg.EntryCount > MAX_CAM_MENU_ENTRIES - 3)
         {
-          this.LogError("Anysee: entry count {0} exceeds the maximum supported entry count {1}");
+          this.LogError("Anysee: MMI menu or list entry count {0} exceeds the maximum supported entry count {1}", msg.EntryCount, MAX_CAM_MENU_ENTRIES - 3);
+          Dump.DumpBinary(message, MMI_MESSAGE_SIZE);
           return 1;
         }
         if (_caMenuCallBacks != null)
@@ -1760,7 +1763,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       }
       if (_isCaInterfaceOpen)
       {
-        this.LogWarn("Anysee: interface is already open");
+        this.LogWarn("Anysee: conditional access interface is already open");
         return true;
       }
 
@@ -1775,7 +1778,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       _ciApi = new AnyseeCiApi();
       if (!_ciApi.OpenApi(_tunerDevicePath))
       {
-        this.LogError("Anysee: open API failed");
+        this.LogError("Anysee: failed to open CI API");
         _ciApi.CloseApi();
         _ciApi = null;
         return false;
@@ -1795,7 +1798,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
         return true;
       }
 
-      this.LogError("Anysee: result = failure");
+      this.LogError("Anysee: failed to open conditional access interface");
       return false;
     }
 
@@ -1832,7 +1835,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
         return true;
       }
 
-      this.LogError("Anysee: result = failure");
+      this.LogError("Anysee: failed to close conditional access interface");
       return false;
     }
 
@@ -1889,12 +1892,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       }
       if (command == CaPmtCommand.OkMmi || command == CaPmtCommand.Query)
       {
-        this.LogError("Anysee: command type {0} is not supported", command);
+        this.LogError("Anysee: conditional access command type {0} is not supported", command);
         return true;
       }
       if (pmt == null)
       {
-        this.LogError("Anysee: PMT not supplied");
+        this.LogError("Anysee: failed to send conditional access command, PMT not supplied");
         return true;
       }
 
@@ -2008,7 +2011,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
         return true;
       }
 
-      this.LogError("Anysee: result = failure");
+      this.LogError("Anysee: failed to send conditional access command");
       return false;
     }
 
@@ -2153,7 +2156,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
         return true;
       }
 
-      this.LogError("Anysee: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Anysee: failed to set tone state, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -2173,12 +2176,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       }
       if (command == null || command.Length == 0)
       {
-        this.LogError("Anysee: command not supplied");
+        this.LogWarn("Anysee: DiSEqC command not supplied");
         return true;
       }
       if (command.Length > MAX_DISEQC_MESSAGE_LENGTH)
       {
-        this.LogError("Anysee: command too long, length = {0}", command.Length);
+        this.LogError("Anysee: DiSEqC command too long, length = {0}", command.Length);
         return false;
       }
 
@@ -2201,7 +2204,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
         return true;
       }
 
-      this.LogError("Anysee: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Anysee: failed to send DiSEqC command, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -2237,7 +2240,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       }
       if (_isRemoteControlInterfaceOpen)
       {
-        this.LogWarn("Anysee: interface is already open");
+        this.LogWarn("Anysee: remote control interface is already open");
         return true;
       }
 

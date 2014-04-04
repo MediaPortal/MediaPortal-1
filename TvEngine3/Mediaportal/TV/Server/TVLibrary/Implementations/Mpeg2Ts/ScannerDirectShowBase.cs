@@ -100,7 +100,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
 
         if (_analyser == null)
         {
-          this.LogDebug("Scan: no analyzer interface available");
+          this.LogError("Scan: analyser interface not available, not possible to scan");
           return new List<IChannel>();
         }
 
@@ -315,7 +315,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
 
         if (_analyser == null)
         {
-          this.LogDebug("Scan: no analyzer interface available");
+          this.LogError("Scan: analyser interface not available, not possible to scan");
           return new List<IChannel>();
         }
 
@@ -584,7 +584,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
             uint key = (uint)((uint)originalNetworkId << 16) + (uint)transportStreamId;
             if (!multiplexesFound.ContainsKey(key))
             {
-              this.LogDebug("Discarding service, no multiplex details available.");
+              this.LogWarn("Discarding service, no multiplex details available.");
               continue;
             }
             found++;

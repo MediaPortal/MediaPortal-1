@@ -22,6 +22,7 @@ using DirectShowLib;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
@@ -165,7 +166,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftOldDiseqc
       }
       if (command == null || command.Length == 0)
       {
-        this.LogError("Microsoft old DiSEqC: command not supplied");
+        this.LogWarn("Microsoft old DiSEqC: DiSEqC command not supplied");
         return true;
       }
 
@@ -183,7 +184,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftOldDiseqc
       }
       else
       {
-        this.LogError("Microsoft old DiSEqC: command not supported");
+        this.LogError("Microsoft old DiSEqC: DiSEqC command not supported");
+        Dump.DumpBinary(command);
         return false;
       }
 

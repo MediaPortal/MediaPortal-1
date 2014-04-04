@@ -415,7 +415,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Realtek
       }
       if (_isRemoteControlInterfaceOpen)
       {
-        this.LogWarn("Realtek: interface is already open");
+        this.LogWarn("Realtek: remote control interface is already open");
         return true;
       }
 

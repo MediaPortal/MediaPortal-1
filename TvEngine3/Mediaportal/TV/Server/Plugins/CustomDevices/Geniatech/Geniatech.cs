@@ -268,6 +268,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Geniatech
       if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Set))
       {
         this.LogDebug("Geniatech: LNB power property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        return false;
       }
 
       if (state == PowerState.On)
@@ -288,7 +289,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Geniatech
         return true;
       }
 
-      this.LogError("Geniatech: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Geniatech: failed to set power state, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 

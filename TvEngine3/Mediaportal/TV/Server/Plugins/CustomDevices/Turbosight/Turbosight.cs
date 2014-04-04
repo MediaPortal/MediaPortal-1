@@ -1340,7 +1340,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
       }
       if (_isCaInterfaceOpen)
       {
-        this.LogWarn("Turbosight: interface is already open");
+        this.LogWarn("Turbosight: conditional access interface is already open");
         return true;
       }
 
@@ -1491,12 +1491,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
       }
       if (!_isCamPresent)
       {
-        this.LogError("Turbosight: the CAM is not present");
+        this.LogError("Turbosight: failed to send conditional access command, the CAM is not present");
         return false;
       }
       if (pmt == null)
       {
-        this.LogError("Turbosight: PMT not supplied");
+        this.LogError("Turbosight: failed to send conditional access command, PMT not supplied");
         return true;
       }
 
@@ -1551,7 +1551,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
       StartMmiHandlerThread();
       if (!_isCamPresent)
       {
-        this.LogError("Turbosight: the CAM is not present");
+        this.LogError("Turbosight: failed to enter menu, the CAM is not present");
         return false;
       }
 
@@ -1588,7 +1588,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
       StartMmiHandlerThread();
       if (!_isCamPresent)
       {
-        this.LogError("Turbosight: the CAM is not present");
+        this.LogError("Turbosight: failed to close menu, the CAM is not present");
         return false;
       }
 
@@ -1616,7 +1616,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
       StartMmiHandlerThread();
       if (!_isCamPresent)
       {
-        this.LogError("Turbosight: the CAM is not present");
+        this.LogError("Turbosight: failed to select menu entry, the CAM is not present");
         return false;
       }
 
@@ -1660,7 +1660,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
       StartMmiHandlerThread();
       if (!_isCamPresent)
       {
-        this.LogError("Turbosight: the CAM is not present");
+        this.LogError("Turbosight: failed to answer enquiry, the CAM is not present");
         return false;
       }
 
@@ -1788,12 +1788,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
       }
       if (command == null || command.Length == 0)
       {
-        this.LogError("Turbosight: command not supplied");
+        this.LogWarn("Turbosight: DiSEqC command not supplied");
         return true;
       }
       if (command.Length > MAX_DISEQC_MESSAGE_LENGTH)
       {
-        this.LogError("Turbosight: command too long, length = {0}", command.Length);
+        this.LogError("Turbosight: DiSEqC command too long, length = {0}", command.Length);
         return false;
       }
 
@@ -1889,7 +1889,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
       }
       if (_isRemoteControlInterfaceOpen)
       {
-        this.LogWarn("Turbosight: interface is already open");
+        this.LogWarn("Turbosight: remote control interface is already open");
         return true;
       }
 

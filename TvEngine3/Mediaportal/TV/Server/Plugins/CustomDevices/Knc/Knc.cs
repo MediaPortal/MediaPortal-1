@@ -621,7 +621,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     private void OnCiState(byte slotIndex, KncCiState state, string menuTitle, IntPtr context)
     {
-      this.LogInfo("KNC: device {0} CI state change call back, slot = {1}", _deviceIndex, slotIndex);
+      this.LogInfo("KNC: device {0} slot {1} CI state change call back", _deviceIndex, slotIndex);
       if (state == KncCiState.Ready)
       {
         _isCamPresent = true;
@@ -650,7 +650,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     private void OnCiOpenDisplay(byte slotIndex, IntPtr context)
     {
-      this.LogInfo("KNC: device {0} open menu call back, slot = {1}", _deviceIndex, slotIndex);
+      this.LogInfo("KNC: device {0} slot {1} open menu call back", _deviceIndex, slotIndex);
     }
 
     /// <summary>
@@ -664,7 +664,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     private void OnCiMenu(byte slotIndex, string title, string subTitle, string footer, uint entryCount, IntPtr context)
     {
-      this.LogInfo("KNC: device {0} menu call back, slot = {1}", _deviceIndex, slotIndex);
+      this.LogInfo("KNC: device {0} slot {1} menu call back", _deviceIndex, slotIndex);
       this.LogDebug("  title     = {0}", title);
       this.LogDebug("  sub-title = {0}", subTitle);
       this.LogDebug("  footer    = {0}", footer);
@@ -691,7 +691,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     private void OnCiMenuEntry(byte slotIndex, uint entryIndex, string text, IntPtr context)
     {
-      this.LogDebug("KNC: device {0} menu entry call back, slot = {1}", _deviceIndex, slotIndex);
+      this.LogDebug("KNC: device {0} slot {1} menu entry call back", _deviceIndex, slotIndex);
       this.LogDebug("  entry {0, -2} = {1}", entryIndex, text);
       lock (_caMenuCallBackLock)
       {
@@ -716,7 +716,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     private void OnCiRequest(byte slotIndex, bool blind, uint answerLength, string prompt, IntPtr context)
     {
-      this.LogInfo("KNC: device {0} request call back, slot = {1}", _deviceIndex, slotIndex);
+      this.LogInfo("KNC: device {0} slot {1} request call back", _deviceIndex, slotIndex);
       this.LogDebug("  prompt = {0}", prompt);
       this.LogDebug("  length = {0}", answerLength);
       this.LogDebug("  blind  = {0}", blind);
@@ -741,7 +741,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     private void OnCiCloseDisplay(byte slotIndex, uint delay, IntPtr context)
     {
-      this.LogInfo("KNC: device {0} close menu call back, slot = {1}, delay = {2}", _deviceIndex, slotIndex, delay);
+      this.LogInfo("KNC: device {0} slot {1} close menu call back, delay = {2}", _deviceIndex, slotIndex, delay);
       lock (_caMenuCallBackLock)
       {
         if (_caMenuCallBacks != null)
@@ -837,7 +837,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
           _deviceIndex = GetDeviceIndex(devicePath);
           if (_deviceIndex < 0)
           {
-            this.LogError("KNC: failed to calculate the device index");
+            this.LogError("KNC: failed to determine the device index");
             break;
           }
 
@@ -981,7 +981,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
     /// <returns><c>true</c> if the interface is successfully opened, otherwise <c>false</c></returns>
     public bool OpenConditionalAccessInterface()
     {
-      this.LogDebug("KNC: device {0} open conditional access interface", _deviceIndex);
+      this.LogDebug("KNC: open conditional access interface");
 
       if (!_isKnc)
       {
@@ -990,7 +990,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
       }
       if (_isCaInterfaceOpen)
       {
-        this.LogWarn("KNC: interface is already open");
+        this.LogWarn("KNC: conditional access interface is already open");
         return true;
       }
 
@@ -1061,7 +1061,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
     /// <returns><c>true</c> if the interface is successfully closed, otherwise <c>false</c></returns>
     public bool CloseConditionalAccessInterface()
     {
-      this.LogDebug("KNC: device {0} close conditional access interface", _deviceIndex);
+      this.LogDebug("KNC: close conditional access interface");
 
       bool result = true;
       if (_callBackBuffer != IntPtr.Zero)
@@ -1086,7 +1086,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
         return true;
       }
 
-      this.LogDebug("KNC: result = failure");
+      this.LogDebug("KNC: failed to close conditional access interface");
       return false;
     }
 
@@ -1149,12 +1149,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
       }
       if (!_isCamReady)
       {
-        this.LogError("KNC: the CAM is not ready");
+        this.LogError("KNC: failed to send conditional access command, the CAM is not ready");
         return false;
       }
       if (pmt == null)
       {
-        this.LogError("KNC: PMT not supplied");
+        this.LogError("KNC: failed to send conditional access command, PMT not supplied");
         return true;
       }
 
@@ -1168,8 +1168,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
         Marshal.Copy(caPmt, 0, pmtBuffer, caPmt.Length);
         //Dump.DumpBinary(pmtBuffer, caPmtLength);
         bool result = KNCBDA_CI_SendPMTCommand(_deviceIndex, pmtBuffer, (uint)caPmt.Length);
-        this.LogDebug("KNC: result = {0}", result);
-        return result;
+        if (result)
+        {
+          this.LogDebug("KNC: result = success");
+          return true;
+        }
+
+        this.LogError("KNC: failed to send conditional access command");
+        return false;
       }
       finally
       {
@@ -1200,7 +1206,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
     /// <returns><c>true</c> if the request is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
     public bool EnterMenu()
     {
-      this.LogDebug("KNC: device {0} slot {1} enter menu", _deviceIndex, _slotIndex);
+      this.LogDebug("KNC: enter menu");
       if (!_isCaInterfaceOpen)
       {
         this.LogWarn("KNC: not initialised or interface not supported");
@@ -1208,10 +1214,18 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
       }
       if (!_isCamReady)
       {
-        this.LogError("KNC: the CAM is not ready");
+        this.LogError("KNC: failed to enter menu, the CAM is not ready");
         return false;
       }
-      return KNCBDA_CI_EnterMenu(_deviceIndex, _slotIndex);
+      bool result = KNCBDA_CI_EnterMenu(_deviceIndex, _slotIndex);
+      if (result)
+      {
+        this.LogDebug("KNC: result = success");
+        return true;
+      }
+
+      this.LogError("KNC: failed to enter menu");
+      return false;
     }
 
     /// <summary>
@@ -1220,7 +1234,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
     /// <returns><c>true</c> if the request is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
     public bool CloseMenu()
     {
-      this.LogDebug("KNC: device {0} slot {1} close menu", _deviceIndex, _slotIndex);
+      this.LogDebug("KNC: close menu");
       if (!_isCaInterfaceOpen)
       {
         this.LogWarn("KNC: not initialised or interface not supported");
@@ -1228,10 +1242,18 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
       }
       if (!_isCamReady)
       {
-        this.LogError("KNC: the CAM is not ready");
+        this.LogError("KNC: failed to close menu, the CAM is not ready");
         return false;
       }
-      return KNCBDA_CI_CloseMenu(_deviceIndex, _slotIndex);
+      bool result = KNCBDA_CI_CloseMenu(_deviceIndex, _slotIndex);
+      if (result)
+      {
+        this.LogDebug("KNC: result = success");
+        return true;
+      }
+
+      this.LogError("KNC: failed to close menu");
+      return false;
     }
 
     /// <summary>
@@ -1241,7 +1263,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
     /// <returns><c>true</c> if the selection is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
     public bool SelectMenuEntry(byte choice)
     {
-      this.LogDebug("KNC: device {0} slot {1} select menu entry, choice = {2}", _deviceIndex, _slotIndex, choice);
+      this.LogDebug("KNC: select menu entry, choice = {0}", choice);
       if (!_isCaInterfaceOpen)
       {
         this.LogWarn("KNC: not initialised or interface not supported");
@@ -1249,10 +1271,18 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
       }
       if (!_isCamReady)
       {
-        this.LogError("KNC: the CAM is not ready");
+        this.LogError("KNC: failed to select menu entry, the CAM is not ready");
         return false;
       }
-      return KNCBDA_CI_SelectMenu(_deviceIndex, _slotIndex, choice);
+      bool result = KNCBDA_CI_SelectMenu(_deviceIndex, _slotIndex, choice);
+      if (result)
+      {
+        this.LogDebug("KNC: result = success");
+        return true;
+      }
+
+      this.LogError("KNC: failed to select menu entry");
+      return false;
     }
 
     /// <summary>
@@ -1267,7 +1297,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
       {
         answer = string.Empty;
       }
-      this.LogDebug("KNC: device {0} slot {1} answer enquiry, answer = {2}, cancel = {3}", _deviceIndex, _slotIndex, answer, cancel);
+      this.LogDebug("KNC: answer enquiry, answer = {0}, cancel = {1}", answer, cancel);
       if (!_isCaInterfaceOpen)
       {
         this.LogWarn("KNC: not initialised or interface not supported");
@@ -1275,10 +1305,18 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
       }
       if (!_isCamReady)
       {
-        this.LogError("KNC: the CAM is not ready");
+        this.LogError("KNC: failed to answer enquiry, the CAM is not ready");
         return false;
       }
-      return KNCBDA_CI_SendMenuAnswer(_deviceIndex, _slotIndex, cancel, answer);
+      bool result = KNCBDA_CI_SendMenuAnswer(_deviceIndex, _slotIndex, cancel, answer);
+      if (result)
+      {
+        this.LogDebug("KNC: result = success");
+        return true;
+      }
+
+      this.LogError("KNC: failed to answer enqury");
+      return false;
     }
 
     #endregion
@@ -1309,7 +1347,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
     /// <returns><c>true</c> if the command is sent successfully, otherwise <c>false</c></returns>
     public bool SendDiseqcCommand(byte[] command)
     {
-      this.LogDebug("KNC: device {0} send DiSEqC command", _deviceIndex);
+      this.LogDebug("KNC: send DiSEqC command");
 
       if (!_isKnc)
       {
@@ -1318,14 +1356,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
       }
       if (command == null || command.Length == 0)
       {
-        this.LogError("KNC: command not supplied");
+        this.LogWarn("KNC: DiSEqC command not supplied");
         return true;
       }
 
       int length = command.Length;
       if (length > MAX_DISEQC_COMMAND_LENGTH)
       {
-        this.LogError("KNC: command too long, length = {0}", command.Length);
+        this.LogError("KNC: DiSEqC command too long, length = {0}", command.Length);
         return false;
       }
 
@@ -1333,7 +1371,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
       //Dump.DumpBinary(_diseqcBuffer, length);
 
       bool success = KNCBDA_HW_DiSEqCWrite(_deviceIndex, _diseqcBuffer, (uint)length, 0);
-      this.LogDebug("KNC: result = {0}", success);
+      if (success)
+      {
+        this.LogDebug("KNC: result = success");
+        return true;
+      }
+
+      this.LogError("KNC: failed to send DiSEqC command");
       return success;
     }
 

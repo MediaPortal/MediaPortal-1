@@ -792,6 +792,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <summary>
     /// Request a CI status update. This request will be answered via the OnCiStatus() call back.
     /// </summary>
+    /// <remarks>
+    /// Using this function is not recommended. It seems to mess up the driver state.
+    /// </remarks>
     /// <param name="handle">The handle allocated to a device when it was opened.</param>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
@@ -991,12 +994,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     #region constants
 
     private const int MAX_WINDOWS_PATH_LENGTH = 260;
-    private const int MAX_SERVICE_COUNT = 100;          // This is arbitrary.
+    private const int MAX_PROGRAM_COUNT = 100;          // This is arbitrary.
     private const int MAX_DISEQC_COMMAND_LENGTH = 64;   // This is arbitrary - the hardware/interface limit is not known.
     private static readonly int FILTER_NAMES_SIZE = Marshal.SizeOf(typeof(FilterNames));        // 1824
     private static readonly int TUNE_REQUEST_SIZE = Marshal.SizeOf(typeof(TtDvbsTuneRequest));  // 100 (the size is the same for all tune request structs)
 
-    private const int SERVICE_BUFFER_SIZE = MAX_SERVICE_COUNT * sizeof(ushort);
+    private const int SERVICE_BUFFER_SIZE = MAX_PROGRAM_COUNT * sizeof(ushort);
     private static readonly int GENERAL_BUFFER_SIZE = Math.Max(MAX_DISEQC_COMMAND_LENGTH, TUNE_REQUEST_SIZE);
 
     private static readonly string[] VALID_BUDGET2_DEVICE_NAMES = new string[]
@@ -1053,7 +1056,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     private string _name = "TechnoTrend";
 
     private IntPtr _tunerHandle = IntPtr.Zero;
-    private IntPtr _serviceBuffer = IntPtr.Zero;
+    private IntPtr _programNumberBuffer = IntPtr.Zero;
     private IntPtr _pmtBuffer = IntPtr.Zero;
     private IntPtr _generalBuffer = IntPtr.Zero;
 
@@ -1065,7 +1068,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     // by a separate call back. We use this variable to cache it.
     private string _camInputRequestPrompt = string.Empty;
 
-    private HashSet<ushort> _descrambledServices = null;
+    private HashSet<ushort> _descrambledPrograms = null;
 
     #endregion
 
@@ -1221,7 +1224,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       }
       else
       {
-        this.LogWarn("TechnoTrend: failed to determine the product (re)seller, result = {0}", result);
+        this.LogWarn("TechnoTrend: failed to read the product (re)seller, result = {0}", result);
       }
 
       // Driver version.
@@ -1270,19 +1273,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
         {
           this.LogWarn("TechnoTrend: failed to determine whether USB high speed is supported, result = {0}", result);
         }
-      }
-    }
-
-    /// <summary>
-    /// Trigger the driver to send a conditional access interface status update (call OnCiStatus()). Note
-    /// that I don't recommend using this function as it seems to mess up the driver state.
-    /// </summary>
-    private void GetCiSlotStatus()
-    {
-      TtApiResult result = bdaapiCIGetSlotStatus(_tunerHandle, _slotIndex);
-      if (result != TtApiResult.Success)
-      {
-        this.LogError("TechnoTrend: bdaapiCIGetSlotStatus failed, result = {0}", result);
       }
     }
 
@@ -1755,8 +1745,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       }
 
       TtApiResult result = bdaapiSetDVBTAntPwr(_tunerHandle, state == PowerState.On);
-      this.LogDebug("TechnoTrend: result = {0}", result);
-      return (result == TtApiResult.Success);
+      if (result == TtApiResult.Success)
+      {
+        this.LogDebug("TechnoTrend: result = success");
+        return true;
+      }
+
+      this.LogError("TechnoTrend: failed to set power state, result = {0}", result);
+      return false;
     }
 
     #endregion
@@ -1849,7 +1845,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
           }
           else
           {
-            this.LogError("TechnoTrend: tuning is not supported for this channel");
+            this.LogError("TechnoTrend: tuning is not supported for channel");
             return false;
           }
         }
@@ -1857,8 +1853,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
 
       //Dump.DumpBinary(_generalBuffer, TUNE_REQUEST_SIZE);
       TtApiResult result = bdaapiTune(_tunerHandle, _generalBuffer);
-      this.LogDebug("TechnoTrend: result = {0}", result);
-      return (result == TtApiResult.Success);
+      if (result == TtApiResult.Success)
+      {
+        this.LogDebug("TechnoTrend: result = success");
+        return true;
+      }
+
+      this.LogError("TechnoTrend: failed to tune, result = {0}", result);
+      return false;
     }
 
     #endregion
@@ -1881,7 +1883,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       }
       if (_isCaInterfaceOpen)
       {
-        this.LogWarn("TechnoTrend: interface is already open");
+        this.LogWarn("TechnoTrend: conditional access interface is already open");
         return true;
       }
 
@@ -1920,11 +1922,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       TtApiResult result = bdaapiOpenCI(_tunerHandle, _ciCallBacks);
       if (result == TtApiResult.Success)
       {
-        this.LogDebug("TechnoTrend: result = {0}", result);
+        this.LogDebug("TechnoTrend: result = success");
         _isCiSlotPresent = true;
-        _serviceBuffer = Marshal.AllocCoTaskMem(SERVICE_BUFFER_SIZE);
+        _programNumberBuffer = Marshal.AllocCoTaskMem(SERVICE_BUFFER_SIZE);
         _pmtBuffer = Marshal.AllocCoTaskMem(Pmt.MAX_SIZE);
-        _descrambledServices = new HashSet<ushort>();
+        _descrambledPrograms = new HashSet<ushort>();
         _isCaInterfaceOpen = true;
       }
       else
@@ -1948,17 +1950,17 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       {
         bdaapiCloseCI(_tunerHandle);
       }
-      if (_serviceBuffer != IntPtr.Zero)
+      if (_programNumberBuffer != IntPtr.Zero)
       {
-        Marshal.FreeCoTaskMem(_serviceBuffer);
-        _serviceBuffer = IntPtr.Zero;
+        Marshal.FreeCoTaskMem(_programNumberBuffer);
+        _programNumberBuffer = IntPtr.Zero;
       }
       if (_pmtBuffer != IntPtr.Zero)
       {
         Marshal.FreeCoTaskMem(_pmtBuffer);
         _pmtBuffer = IntPtr.Zero;
       }
-      _descrambledServices = null;
+      _descrambledPrograms = null;
       _camInputRequestPrompt = string.Empty;
       _isCiSlotPresent = false;
       _isCamPresent = false;
@@ -2022,7 +2024,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       }
       if (command == CaPmtCommand.OkMmi || command == CaPmtCommand.Query)
       {
-        this.LogError("TechnoTrend: command type {0} is not supported", command);
+        this.LogError("TechnoTrend: conditional access command type {0} is not supported", command);
         return true;
       }
       if (pmt == null)
@@ -2031,10 +2033,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
         return true;
       }
 
-      this.LogDebug("TechnoTrend: service ID is {0}", pmt.ProgramNumber);
+      this.LogDebug("TechnoTrend: program number is {0}", pmt.ProgramNumber);
       if (pmt.ProgramNumber == 0)
       {
-        this.LogError("TechnoTrend: service 0 cannot be descrambled");
+        this.LogError("TechnoTrend: program number 0 cannot be descrambled");
         return false;
       }
 
@@ -2042,7 +2044,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       // the number of interactions with the CAM as they can cause glitches in recordings etc.
       if (command == CaPmtCommand.NotSelected)
       {
-        _descrambledServices.Remove(pmt.ProgramNumber);
+        _descrambledPrograms.Remove(pmt.ProgramNumber);
         return true;
       }
 
@@ -2053,14 +2055,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
         listAction == CaPmtListManagementAction.More ||
         listAction == CaPmtListManagementAction.Last)
       {
-        _descrambledServices.Add(pmt.ProgramNumber);
+        _descrambledPrograms.Add(pmt.ProgramNumber);
       }
       else if (listAction == CaPmtListManagementAction.Only ||
         listAction == CaPmtListManagementAction.First)
       {
         // "Only" and "first" actions mean start a new list.
-        _descrambledServices = new HashSet<ushort>();
-        _descrambledServices.Add(pmt.ProgramNumber);
+        _descrambledPrograms = new HashSet<ushort>();
+        _descrambledPrograms.Add(pmt.ProgramNumber);
       }
 
       // Wait until we have the full list before we send any commands to the CAM.
@@ -2070,7 +2072,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       }
 
       TtApiResult result = TtApiResult.Success;
-      if (_descrambledServices.Count == 1)
+      if (_descrambledPrograms.Count == 1)
       {
         ReadOnlyCollection<byte> rawPmt = pmt.GetRawPmt();
         for (int i = 0; i < rawPmt.Count; i++)
@@ -2081,27 +2083,33 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       }
       else
       {
-        if (_descrambledServices.Count > MAX_SERVICE_COUNT)
+        if (_descrambledPrograms.Count > MAX_PROGRAM_COUNT)
         {
-          this.LogError("TechnoTrend: not able to descramble {0} services, limit is {1}", _descrambledServices.Count, MAX_SERVICE_COUNT);
+          this.LogError("TechnoTrend: not able to descramble {0} programs, limit is {1}", _descrambledPrograms.Count, MAX_PROGRAM_COUNT);
           return false;
         }
 
         // Send the updated list to the CAM.
-        this.LogDebug("TechnoTrend: service list");
+        this.LogDebug("TechnoTrend: program list");
         int i = 0;
-        HashSet<ushort>.Enumerator en = _descrambledServices.GetEnumerator();
+        HashSet<ushort>.Enumerator en = _descrambledPrograms.GetEnumerator();
         while (en.MoveNext())
         {
           this.LogDebug("  {0} = {1}", i + 1, en.Current);
-          Marshal.WriteInt16(_serviceBuffer, 2 * i, (short)en.Current);
+          Marshal.WriteInt16(_programNumberBuffer, 2 * i, (short)en.Current);
           i++;
         }
-        result = bdaapiCIMultiDecode(_tunerHandle, _serviceBuffer, i);
+        result = bdaapiCIMultiDecode(_tunerHandle, _programNumberBuffer, i);
       }
 
-      this.LogDebug("TechnoTrend: result = {0}", result);
-      return (result == TtApiResult.Success);
+      if (result == TtApiResult.Success)
+      {
+        this.LogDebug("TechnoTrend: result = success");
+        return true;
+      }
+
+      this.LogError("TechnoTrend: failed to send conditional access command, result = {0}", result);
+      return false;
     }
 
     #endregion
@@ -2135,13 +2143,19 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       }
       if (!_isCamReady)
       {
-        this.LogError("TechnoTrend: the CAM is not ready");
+        this.LogError("TechnoTrend: failed to enter menu, the CAM is not ready");
         return false;
       }
 
       TtApiResult result = bdaapiCIEnterModuleMenu(_tunerHandle, _slotIndex);
-      this.LogDebug("TechnoTrend: result = {0}", result);
-      return (result == TtApiResult.Success);
+      if (result == TtApiResult.Success)
+      {
+        this.LogDebug("TechnoTrend: result = success");
+        return true;
+      }
+
+      this.LogError("TechnoTrend: failed to enter menu, result = {0}", result);
+      return false;
     }
 
     /// <summary>
@@ -2170,13 +2184,19 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       }
       if (!_isCamReady)
       {
-        this.LogError("TechnoTrend: the CAM is not ready");
+        this.LogError("TechnoTrend: failed to select menu entry, the CAM is not ready");
         return false;
       }
 
       TtApiResult result = bdaapiCIMenuAnswer(_tunerHandle, _slotIndex, choice);
-      this.LogDebug("TechnoTrend: result = {0}", result);
-      return (result == TtApiResult.Success);
+      if (result == TtApiResult.Success)
+      {
+        this.LogDebug("TechnoTrend: result = success");
+        return true;
+      }
+
+      this.LogError("TechnoTrend: failed to select menu entry, result = {0}", result);
+      return false;
     }
 
     /// <summary>
@@ -2200,7 +2220,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       }
       if (!_isCamReady)
       {
-        this.LogError("TechnoTrend: the CAM is not ready");
+        this.LogError("TechnoTrend: failed to answer enquiry, the CAM is not ready");
         return false;
       }
       if (answer.Length > 255)
@@ -2210,8 +2230,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       }
 
       TtApiResult result = bdaapiCIAnswer(_tunerHandle, _slotIndex, answer, (byte)answer.Length);
-      this.LogDebug("TechnoTrend: result = {0}", result);
-      return (result == TtApiResult.Success);
+      if (result == TtApiResult.Success)
+      {
+        this.LogDebug("TechnoTrend: result = success");
+        return true;
+      }
+
+      this.LogError("TechnoTrend: failed to answer enquiry, result = {0}", result);
+      return false;
     }
 
     #endregion
@@ -2249,9 +2275,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
         tone = TtToneBurst.DataBurst;
       }
       TtApiResult result = bdaapiSetDiSEqCMsg(_tunerHandle, IntPtr.Zero, 0, 0, tone, Polarisation.LinearH);
+      if (result == TtApiResult.Success)
+      {
+        this.LogDebug("TechnoTrend: result = success");
+        return true;
+      }
 
-      this.LogDebug("TechnoTrend: result = {0}", result);
-      return (result == TtApiResult.Success);
+      this.LogError("TechnoTrend: failed to set tone state, result = {0}", result);
+      return false;
     }
 
     /// <summary>
@@ -2270,14 +2301,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       }
       if (command == null || command.Length == 0)
       {
-        this.LogError("TechnoTrend: command not supplied");
+        this.LogWarn("TechnoTrend: DiSEqC command not supplied");
         return true;
       }
 
       int length = command.Length;
       if (length > MAX_DISEQC_COMMAND_LENGTH)
       {
-        this.LogError("TechnoTrend: command too long, length = {0}", command.Length);
+        this.LogError("TechnoTrend: DiSEqC command too long, length = {0}", command.Length);
         return false;
       }
       Marshal.Copy(command, 0, _generalBuffer, length);
@@ -2286,8 +2317,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       // It is okay to use any polarisation. We chose one that will supply 18 Volts to the LNB because it
       // moves dish motors faster.
       TtApiResult result = bdaapiSetDiSEqCMsg(_tunerHandle, _generalBuffer, (byte)length, 0, TtToneBurst.Off, Polarisation.LinearH);
-      this.LogDebug("TechnoTrend: result = {0}", result);
-      return (result == TtApiResult.Success);
+      if (result == TtApiResult.Success)
+      {
+        this.LogDebug("TechnoTrend: result = success");
+        return true;
+      }
+
+      this.LogError("TechnoTrend: failed to send DiSEqC command, result = {0}", result);
+      return false;
     }
 
     /// <summary>
@@ -2322,7 +2359,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       }
       if (_isRemoteControlInterfaceOpen)
       {
-        this.LogWarn("TechnoTrend: interface is already open");
+        this.LogWarn("TechnoTrend: remote control interface is already open");
         return true;
       }
 

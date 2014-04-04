@@ -264,12 +264,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBdaDiseqc
       }
       if (command == null || command.Length == 0)
       {
-        this.LogError("Microsoft BDA DiSEqC: command not supplied");
+        this.LogWarn("Microsoft BDA DiSEqC: DiSEqC command not supplied");
         return true;
       }
       if (command.Length > MAX_DISEQC_MESSAGE_LENGTH)
       {
-        this.LogError("Microsoft BDA DiSEqC: command too long, length = {0}", command.Length);
+        this.LogError("Microsoft BDA DiSEqC: DiSEqC command too long, length = {0}", command.Length);
         return false;
       }
 

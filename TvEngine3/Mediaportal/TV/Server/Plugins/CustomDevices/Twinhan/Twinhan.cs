@@ -772,7 +772,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       int hr = GetIoctl(TwinhanIoControlCode.GetDeviceInfo, _generalBuffer, DEVICE_INFO_SIZE, out returnedByteCount);
       if (hr != (int)HResult.Severity.Success || returnedByteCount != DEVICE_INFO_SIZE)
       {
-        this.LogWarn("Twinhan: result = failure, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+        this.LogWarn("Twinhan: failed to read device information, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
         return;
       }
 
@@ -816,7 +816,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       int hr = GetIoctl(TwinhanIoControlCode.GetPidFilterInfo, _generalBuffer, PID_FILTER_PARAMS_SIZE, out returnedByteCount);
       if (hr != (int)HResult.Severity.Success || returnedByteCount != PID_FILTER_PARAMS_SIZE)
       {
-        this.LogWarn("Twinhan: result = failure, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+        this.LogWarn("Twinhan: failed to read PID filter information, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
         return;
       }
 
@@ -842,7 +842,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       int hr = GetIoctl(TwinhanIoControlCode.GetDriverInfo, _generalBuffer, DRIVER_INFO_SIZE, out returnedByteCount);
       if (hr != (int)HResult.Severity.Success || returnedByteCount != DRIVER_INFO_SIZE)
       {
-        this.LogWarn("Twinhan: result = failure, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+        this.LogWarn("Twinhan: failed to read driver information, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
         return;
       }
 
@@ -893,7 +893,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       }
       else
       {
-        this.LogWarn("Twinhan: result = failure, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+        this.LogWarn("Twinhan: failed to read registry parameters, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
       }
 
       if (registryParams.EnableOffFrequencyScan || !registryParams.EnableRelockMonitor || registryParams.AtscFrequencyShift != 1750)
@@ -912,7 +912,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
         hr = SetIoctl(TwinhanIoControlCode.SetRegistryParams, _generalBuffer, REGISTRY_PARAMS_SIZE);
         if (hr != (int)HResult.Severity.Success)
         {
-          this.LogWarn("Twinhan: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          this.LogWarn("Twinhan: failed to update registry parameters, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
           return;
         }
 
@@ -1166,7 +1166,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       StartMmiHandlerThread();
       if (!_isCamReady)
       {
-        this.LogError("Twinhan: the CAM is not ready");
+        this.LogError("Twinhan: failed to send MMI message, the CAM is not ready");
         return false;
       }
 
@@ -1722,7 +1722,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       }
       else
       {
-        this.LogError("Twinhan: tuning not supported");
+        this.LogError("Twinhan: tuning is not supported for channel");
         return false;
       }
       tuningParams.LockWaitForResult = true;
@@ -1875,7 +1875,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       }
       if (_isCaInterfaceOpen)
       {
-        this.LogWarn("Twinhan: interface is already open");
+        this.LogWarn("Twinhan: conditional access interface is already open");
         return true;
       }
 
@@ -2046,12 +2046,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       }
       if (!_isCamReady)
       {
-        this.LogError("Twinhan: the CAM is not ready");
+        this.LogError("Twinhan: failed to send conditional access command, the CAM is not ready");
         return false;
       }
       if (pmt == null)
       {
-        this.LogError("Twinhan: PMT not supplied");
+        this.LogError("Twinhan: failed to send conditional access command, PMT not supplied");
         return true;
       }
 
@@ -2114,7 +2114,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       StartMmiHandlerThread();
       if (!_isCamReady)
       {
-        this.LogError("Twinhan: the CAM is not ready");
+        this.LogError("Twinhan: failed to enter menu, the CAM is not ready");
         return false;
       }
 
@@ -2168,7 +2168,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       StartMmiHandlerThread();
       if (!_isCamReady)
       {
-        this.LogError("Twinhan: the CAM is not ready");
+        this.LogError("Twinhan: failed to close menu, the CAM is not ready");
         return false;
       }
 
@@ -2306,12 +2306,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       }
       if (command == null || command.Length == 0)
       {
-        this.LogError("Twinhan: command not supplied");
+        this.LogWarn("Twinhan: DiSEqC command not supplied");
         return true;
       }
       if (command.Length > MAX_DISEQC_MESSAGE_LENGTH)
       {
-        this.LogError("Twinhan: command too long, length = {0}", command.Length);
+        this.LogError("Twinhan: DiSEqC command too long, length = {0}", command.Length);
         return false;
       }
 
@@ -2424,7 +2424,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       }
       if (_isRemoteControlInterfaceOpen)
       {
-        this.LogWarn("Twinhan: interface is already open");
+        this.LogWarn("Twinhan: remote control interface is already open");
         return true;
       }
 

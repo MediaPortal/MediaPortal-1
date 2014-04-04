@@ -53,19 +53,21 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
     private interface IChangeChannel
     {
       /// <summary>
-      /// Instruct the softCAM plugin filter to decode a different service using specific parameters.
+      /// Instruct the softCAM plugin filter to decode a different program using specific parameters.
       /// </summary>
       [PreserveSig]
       int ChangeChannel(int frequency, int bandwidth, int polarity, int videoPid, int audioPid, int ecmPid, int caId, int providerId);
 
       /// <summary>
-      /// Instruct the softCAM plugin filter to decode a different service using a Program82 structure.
+      /// Instruct the softCAM plugin filter to decode a different program using a Program82 structure.
       /// </summary>
+      [PreserveSig]
       int ChangeChannelTP82(IntPtr program82);
 
       ///<summary>
       /// Set the plugin directory.
       ///</summary>
+      [PreserveSig]
       int SetPluginsDirectory([MarshalAs(UnmanagedType.LPWStr)] string directory);
     }
 
@@ -74,7 +76,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
     private interface IChangeChannel_Ex
     {
       /// <summary>
-      /// Instruct the softCAM plugin filter to decode a different service using Program82 and PidsToDecode structures.
+      /// Instruct the softCAM plugin filter to decode a different program using Program82 and PidsToDecode structures.
       /// </summary>
       [PreserveSig]
       int ChangeChannelTP82_Ex(IntPtr program82, IntPtr pidsToDecode);
@@ -85,7 +87,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
     private interface IChangeChannel_Clear
     {
       /// <summary>
-      /// Inform the softCAM plugin that it no longer needs to decrypt a service.
+      /// Inform the softCAM plugin that it no longer needs to decrypt a program.
       /// </summary>
       [PreserveSig]
       int ClearChannel();
@@ -939,7 +941,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
           attr.InnerText = slotCount.ToString();
           tunerNode.Attributes.Append(attr);
 
-          // Default: the plugin can decrypt any service from any provider.
+          // Default: the plugin can decrypt any program from any provider.
           attr = doc.CreateAttribute("Provider");
           attr.InnerText = "all";
           tunerNode.Attributes.Append(attr);
@@ -975,7 +977,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
           }
           catch (Exception)
           {
-            // Assume that the plugin can decrypt any service.
+            // Assume that the plugin can decrypt any program.
             XmlAttribute providerListNode = tunerNode.Attributes["Provider"];
             if (providerListNode == null)
             {
@@ -994,11 +996,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
           _slots = new List<DecodeSlot>(slotCount);
           if (_providers.Count == 0)
           {
-            this.LogDebug("MD plugin: plugin can decrypt services from any provider");
+            this.LogDebug("MD plugin: plugin can decrypt programs from any provider");
           }
           else
           {
-            this.LogDebug("MD plugin: plugin can decrypt services from provider(s) \"{0}\"", providerList);
+            this.LogDebug("MD plugin: plugin can decrypt programs from provider(s) \"{0}\"", providerList);
           }
           return true;
         }
@@ -1035,12 +1037,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
       }
       if (graph == null)
       {
-        this.LogError("MD plugin: graph is null");
+        this.LogError("MD plugin: failed to add the filter(s) to the graph, graph is null");
         return false;
       }
       if (lastFilter == null)
       {
-        this.LogError("MD plugin: last filter is null");
+        this.LogError("MD plugin: failed to add the filter(s) to the graph, last filter is null");
         return false;
       }
       if (_slots != null && _slots.Count > 0 && _slots[0].Filter != null)
@@ -1056,7 +1058,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
       int hr = _graph.AddFilter(_infTee, "MD Plugin Infinite Tee");
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogError("MD plugin: failed to add the inf tee to the graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("MD plugin: failed to add the infinite tee to the graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
       }
       IPin outputPin = DsFindPin.ByDirection(lastFilter, PinDirection.Output, 0);
@@ -1066,7 +1068,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
       Release.ComObject("MD plugin infinite tee input pin", ref inputPin);
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogError("MD plugin: failed to connect the inf tee into the graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("MD plugin: failed to connect the infinite tee into the graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
       }
       lastFilter = _infTee;
@@ -1162,7 +1164,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
       }
       if (_isCaInterfaceOpen)
       {
-        this.LogWarn("MD plugin: interface is already open");
+        this.LogWarn("MD plugin: conditional access interface is already open");
         return true;
       }
 
@@ -1254,17 +1256,17 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
       }
       if (command == CaPmtCommand.OkMmi || command == CaPmtCommand.Query)
       {
-        this.LogError("MD plugin: command type {0} is not supported", command);
+        this.LogError("MD plugin: conditional access command type {0} is not supported", command);
         return true;
       }
       if (pmt == null)
       {
-        this.LogError("MD plugin: PMT not supplied");
+        this.LogError("MD plugin: failed to send conditional access command, PMT not supplied");
         return true;
       }
       if (cat == null)
       {
-        this.LogError("MD plugin: CAT not supplied");
+        this.LogError("MD plugin: failed to send conditional access command, CAT not supplied");
         return true;
       }
       DVBBaseChannel dvbChannel = channel as DVBBaseChannel;
@@ -1276,11 +1278,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
       string lowerProvider = dvbChannel.Provider == null ? string.Empty : dvbChannel.Provider.ToLowerInvariant();
       if (_providers.Count != 0 && !_providers.Contains(lowerProvider))
       {
-        this.LogDebug("MD plugin: plugin not configured to decrypt services for provider \"{0}\"", dvbChannel.Provider);
+        this.LogDebug("MD plugin: plugin not configured to decrypt programs for provider \"{0}\"", dvbChannel.Provider);
         return false;
       }
 
-      // Find a free slot to decode this service. If this is the first or only service in the list then we
+      // Find a free slot to decode this program. If this is the first or only program in the list then we
       // can reset our slots. This could be optimised to cache the new list until "last"/"only" action and
       // reuse slots where possible.
       DecodeSlot freeSlot = null;
@@ -1302,13 +1304,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
       {
         foreach (DecodeSlot slot in _slots)
         {
-          DVBBaseChannel currentService = slot.CurrentChannel as DVBBaseChannel;
-          if (currentService != null && currentService.ServiceId == dvbChannel.ServiceId)
+          DVBBaseChannel currentProgram = slot.CurrentChannel as DVBBaseChannel;
+          if (currentProgram != null && currentProgram.ServiceId == dvbChannel.ServiceId)
           {
-            // "Not selected" means stop decrypting the service.
+            // "Not selected" means stop decrypting the program.
             if (command == CaPmtCommand.NotSelected)
             {
-              this.LogDebug("MD plugin: found existing slot decrypting channel \"{0}\", freeing", currentService.Name);
+              this.LogDebug("MD plugin: found existing slot decrypting channel \"{0}\", freeing", currentProgram.Name);
               slot.CurrentChannel = null;
               IChangeChannel_Clear clear = slot.Filter as IChangeChannel_Clear;
               if (clear != null)
@@ -1317,17 +1319,17 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
               }
               return true;
             }
-            // "Ok descrambling" means start or continue decrypting the service. If we're already decrypting
-            // the service that is fine - this is an update.
+            // "Ok descrambling" means start or continue decrypting the program. If we're already decrypting
+            // the program that is fine - this is an update.
             else if (command == CaPmtCommand.OkDescrambling)
             {
-              this.LogDebug("MD plugin: found existing slot decrypting channel \"{0}\", sending update", currentService.Name);
+              this.LogDebug("MD plugin: found existing slot decrypting channel \"{0}\", sending update", currentProgram.Name);
               freeSlot = slot;
               // No need to continue looping - this is the optimal situation where we reuse the existing slot.
               break;
             }
           }
-          else if (currentService == null)
+          else if (currentProgram == null)
           {
             this.LogDebug("  <free slot>...");
             if (freeSlot == null)
@@ -1335,9 +1337,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
               freeSlot = slot;
             }
           }
-          else if (currentService != null)
+          else if (currentProgram != null)
           {
-            this.LogDebug("  \"{0}\"...", currentService.Name);
+            this.LogDebug("  \"{0}\"...", currentProgram.Name);
           }
         }
       }
@@ -1345,20 +1347,20 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
       if (command == CaPmtCommand.NotSelected)
       {
         // If we get to here then we were asked to stop decrypting
-        // a service that we were not decrypting. Strange...
-        this.LogWarn("MD plugin: received \"not selected\" request for channel that is not being decrypted");
+        // a program that we were not decrypting. Strange...
+        this.LogWarn("MD plugin: received \"not selected\" command for program that is not being decrypted");
         return true;
       }
 
       if (freeSlot == null)
       {
         // If we get to here then we were asked to start decrypting
-        // a service, but we don't have any free slots to do it with.
-        this.LogError("MD plugin: no free decrypt slots");
+        // a program, but we don't have any free slots to do it with.
+        this.LogError("MD plugin: failed to send conditional access command, no free decrypt slots");
         return false;
       }
 
-      // If we get to here then we need to try to start decrypting the service.
+      // If we get to here then we need to try to start decrypting the program.
       Program82 programToDecode;
       PidsToDecode pidsToDecode;
       RegisterVideoAndAudioPids(pmt, out programToDecode, out pidsToDecode);
@@ -1402,7 +1404,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
         );
       }
 
-      // Instruct the MD filter to decrypt the service.
+      // Instruct the MD filter to decrypt the program.
       Marshal.StructureToPtr(programToDecode, _programBuffer, false);
       //Dump.DumpBinary(_programmeBuffer, PROGRAM82_SIZE);
       Marshal.StructureToPtr(pidsToDecode, _pidBuffer, false);

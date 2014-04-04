@@ -76,11 +76,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
 
       public DigitalDevicesCiSlot Slot = null;
 
-      // Services decrypted using MTD. Tuner device path => service ID.
-      public IDictionary<string, uint> MtdServices = new Dictionary<string, uint>();
+      // Programs decrypted using MTD. Tuner device path => program number.
+      public IDictionary<string, uint> MtdPrograms = new Dictionary<string, uint>();
 
-      // Services decrypted using traditional CA PMT. Service ID => PMT.
-      public IDictionary<uint, Pmt> McdServices = new Dictionary<uint, Pmt>();
+      // Programs decrypted using traditional CA PMT. Program number => PMT.
+      public IDictionary<uint, Pmt> McdPrograms = new Dictionary<uint, Pmt>();
 
       #endregion
 
@@ -449,8 +449,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
 
               if (!sharedContext.IsCamReady)
               {
-                sharedContext.McdServices.Clear();
-                sharedContext.MtdServices.Clear();
+                sharedContext.McdPrograms.Clear();
+                sharedContext.MtdPrograms.Clear();
                 continue;
               }
 
@@ -524,7 +524,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
                 // opened seems to fail (HRESULT 0x8007001f). Don't flood the logs...
                 if (_menuContext != null)
                 {
-                  this.LogError("Digital Devices: get menu failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+                  this.LogError("Digital Devices: failed to read MMI, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
                 }
               }
             }
@@ -654,12 +654,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
       }
       if (graph == null)
       {
-        this.LogError("Digital Devices: graph is null");
+        this.LogError("Digital Devices: failed to add filter(s) to graph, graph is null");
         return false;
       }
       if (lastFilter == null)
       {
-        this.LogError("Digital Devices: last filter is null");
+        this.LogError("Digital Devices: failed to add filter(s) to graph, last filter is null");
         return false;
       }
       if (_privateCiContexts != null && _privateCiContexts.Count > 0)
@@ -684,7 +684,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
         demuxInputPin = DsFindPin.ByDirection(tmpDemux, PinDirection.Input, 0);
         if (demuxInputPin == null)
         {
-          this.LogError("Digital Devices: failed to find the demux input pin");
+          this.LogError("Digital Devices: failed to add filter(s) to graph, failed to find the demux input pin");
           return false;
         }
 
@@ -693,7 +693,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
         IPin lastFilterOutputPin = DsFindPin.ByDirection(lastFilter, PinDirection.Output, 0);
         if (lastFilterOutputPin == null)
         {
-          this.LogError("Digital Devices: upstream filter doesn't have an output pin");
+          this.LogError("Digital Devices: failed to add filter(s) to graph, upstream filter doesn't have an output pin");
           return false;
         }
 
@@ -890,7 +890,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
       }
       if (_isCaInterfaceOpen)
       {
-        this.LogWarn("Digital Devices: interface is already open");
+        this.LogWarn("Digital Devices: conditional access interface is already open");
         return true;
       }
 
@@ -938,8 +938,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
             }
             else
             {
-              sharedContext.McdServices.Clear();
-              sharedContext.MtdServices.Clear();
+              sharedContext.McdPrograms.Clear();
+              sharedContext.MtdPrograms.Clear();
             }
             this.LogDebug("  CI bit rate     = {0}", sharedContext.CiBitRate);
             this.LogDebug("  CI max bit rate = {0}", sharedContext.CiMaxBitRate);
@@ -973,10 +973,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
           SharedCiContext sharedContext = _sharedCiContexts[ciDevicePath];
           sharedContext.Owner = null;
           sharedContext.Slot = null;
-          sharedContext.MtdServices.Remove(_tunerDevicePath);
+          sharedContext.MtdPrograms.Remove(_tunerDevicePath);
           if (sharedContext.CiTunerCount == 1)
           {
-            sharedContext.McdServices.Clear();
+            sharedContext.McdPrograms.Clear();
           }
         }
       }
@@ -1031,7 +1031,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
         }
         else
         {
-          this.LogError("Digital Devices: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          this.LogError("Digital Devices: failed to reset CI slot {0}, hr = 0x{1:x} ({2})", context.Device.DevicePath, hr, HResult.GetDXErrorString(hr));
           success = false;
         }
       }
@@ -1095,16 +1095,16 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
       }
       if (command == CaPmtCommand.OkMmi || command == CaPmtCommand.Query)
       {
-        this.LogError("Digital Devices: command type {0} is not supported", command);
+        this.LogError("Digital Devices: conditional access command type {0} is not supported", command);
         return true;
       }
       if (pmt == null)
       {
-        this.LogError("Digital Devices: PMT not supplied");
+        this.LogError("Digital Devices: failed to send conditional access command, PMT not supplied");
         return true;
       }
 
-      uint mtdServiceId = (uint)pmt.ProgramNumber | (uint)DecryptChainingRestriction.NoForwardChaining | (uint)DecryptChainingRestriction.NoBackwardChaining;
+      uint mtdProgramNumber = (uint)pmt.ProgramNumber | (uint)DecryptChainingRestriction.NoForwardChaining | (uint)DecryptChainingRestriction.NoBackwardChaining;
 
       // "Not selected" commands means stop decrypting. We don't actually stop
       // decryption as it may disrupt other streams, but we record the change.
@@ -1116,16 +1116,16 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
           {
             SharedCiContext sharedContext = _sharedCiContexts[ciDevicePath];
             // MTD.
-            uint currentMtdServiceId;
-            if (sharedContext.MtdServices.TryGetValue(_tunerDevicePath, out currentMtdServiceId) && currentMtdServiceId == mtdServiceId)
+            uint currentMtdProgramNumber;
+            if (sharedContext.MtdPrograms.TryGetValue(_tunerDevicePath, out currentMtdProgramNumber) && currentMtdProgramNumber == mtdProgramNumber)
             {
-              sharedContext.MtdServices.Remove(_tunerDevicePath);
+              sharedContext.MtdPrograms.Remove(_tunerDevicePath);
             }
 
             // MCD
             if (sharedContext.CiTunerCount == 1)
             {
-              sharedContext.McdServices.Remove(pmt.ProgramNumber);
+              sharedContext.McdPrograms.Remove(pmt.ProgramNumber);
             }
           }
         }
@@ -1146,7 +1146,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
         provider = dvbChannel.Provider;
       }
       int hr = (int)HResult.Severity.Success;
-      this.LogDebug("Digital Devices: service ID = {0}, provider = {1}", pmt.ProgramNumber, provider);
+      this.LogDebug("Digital Devices: program number = {0}, provider = {1}", pmt.ProgramNumber, provider);
 
       lock (_sharedCiContextsLock)
       {
@@ -1161,8 +1161,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
           if (!sharedContext.IsCamReady)
           {
             this.LogDebug("    CAM not ready");
-            sharedContext.McdServices.Clear();
-            sharedContext.MtdServices.Clear();
+            sharedContext.McdPrograms.Clear();
+            sharedContext.MtdPrograms.Clear();
             continue;
           }
           if (!string.IsNullOrEmpty(provider) && sharedContext.Providers.Count > 0 && !sharedContext.Providers.Contains(provider))
@@ -1176,19 +1176,19 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
           {
             if (sharedContext.CiTunerCount == 1)
             {
-              if (sharedContext.McdServices.ContainsKey(pmt.ProgramNumber))
+              if (sharedContext.McdPrograms.ContainsKey(pmt.ProgramNumber))
               {
-                this.LogDebug("    provider supported, found service in MCD list");
+                this.LogDebug("    provider supported, found program in MCD list");
                 selectedCiSlot = sharedContext;
                 break;
               }
             }
             else
             {
-              uint currentMtdServiceId;
-              if (sharedContext.MtdServices.TryGetValue(_tunerDevicePath, out currentMtdServiceId) && currentMtdServiceId == mtdServiceId)
+              uint currentMtdProgramNumber;
+              if (sharedContext.MtdPrograms.TryGetValue(_tunerDevicePath, out currentMtdProgramNumber) && currentMtdProgramNumber == mtdProgramNumber)
               {
-                this.LogDebug("    provider supported, found service in MTD list");
+                this.LogDebug("    provider supported, found program in MTD list");
                 selectedCiSlot = sharedContext;
                 break;
               }
@@ -1199,16 +1199,16 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
           int currentDecryptCount = 0;
           if (sharedContext.CiTunerCount == 1)
           {
-            currentDecryptCount = sharedContext.McdServices.Count;
+            currentDecryptCount = sharedContext.McdPrograms.Count;
           }
           else
           {
-            if (sharedContext.MtdServices.ContainsKey(_tunerDevicePath))
+            if (sharedContext.MtdPrograms.ContainsKey(_tunerDevicePath))
             {
               this.LogDebug("    provider supported, MTD already active");
               continue;
             }
-            currentDecryptCount = sharedContext.MtdServices.Count;
+            currentDecryptCount = sharedContext.MtdPrograms.Count;
           }
 
           if (sharedContext.DecryptLimit > 0 && currentDecryptCount >= sharedContext.DecryptLimit)
@@ -1230,7 +1230,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
 
         if (selectedCiSlot == null)
         {
-          this.LogError("Digital Devices: no slots available");
+          this.LogError("Digital Devices: failed to send conditional access command, no slots available");
           return false;
         }
 
@@ -1246,7 +1246,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
         // MTD or MCD?
         if (selectedCiSlot.CiTunerCount == 1)
         {
-          selectedCiSlot.McdServices[pmt.ProgramNumber] = pmt;
+          selectedCiSlot.McdPrograms[pmt.ProgramNumber] = pmt;
           if (listAction == CaPmtListManagementAction.Add || listAction == CaPmtListManagementAction.Update)
           {
             this.LogDebug("Digital Devices: sending MCD add/update decrypt request");
@@ -1264,12 +1264,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
               SharedCiContext sharedContext = _sharedCiContexts[ciSlotDevicePath];
               this.LogDebug("  {0} {1}...", sharedContext.CamMenuTitle, sharedContext.DevicePath);
               int i = 1;
-              foreach (Pmt ciPmt in sharedContext.McdServices.Values)
+              foreach (Pmt ciPmt in sharedContext.McdPrograms.Values)
               {
                 CaPmtListManagementAction action = CaPmtListManagementAction.More;
                 if (i == 1)
                 {
-                  if (sharedContext.McdServices.Count == 1)
+                  if (sharedContext.McdPrograms.Count == 1)
                   {
                     action = CaPmtListManagementAction.Only;
                   }
@@ -1278,14 +1278,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
                     action = CaPmtListManagementAction.First;
                   }
                 }
-                else if (sharedContext.McdServices.Count == i)
+                else if (sharedContext.McdPrograms.Count == i)
                 {
                   action = CaPmtListManagementAction.Last;
                 }
 
                 int hr2 = selectedCiSlot.Slot.SendCaPmt(ciPmt.GetCaPmt(action, CaPmtCommand.OkDescrambling));
                 hr |= hr2;
-                this.LogDebug("    service ID {0}, action {1}, hr = 0x{2:x}", ciPmt.ProgramNumber, action, hr2);
+                this.LogDebug("    program number {0}, action {1}, hr = 0x{2:x}", ciPmt.ProgramNumber, action, hr2);
                 i++;
               }
             }
@@ -1294,8 +1294,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
         else
         {
           this.LogDebug("Digital Devices: sending MTD decrypt request");
-          selectedCiSlot.MtdServices[_tunerDevicePath] = mtdServiceId;
-          hr = selectedCiSlot.Slot.DecryptService(mtdServiceId);
+          selectedCiSlot.MtdPrograms[_tunerDevicePath] = mtdProgramNumber;
+          hr = selectedCiSlot.Slot.DecryptService(mtdProgramNumber);
         }
       }
 
@@ -1305,7 +1305,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
         return true;
       }
 
-      this.LogError("Digital Devices: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Digital Devices: failed to send conditional access command, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -1408,7 +1408,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
         SharedCiContext context;
         if (!_sharedCiContexts.TryGetValue(ciSlotDevicePath, out context))
         {
-          this.LogError("Digital Devices: failed to locate slot for context {0}", ciSlotDevicePath);
+          this.LogError("Digital Devices: failed to enter menu, no slot for context {0}", ciSlotDevicePath);
           return false;
         }
         if (!_tunerDevicePath.Equals(context.Owner))
@@ -1428,7 +1428,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
           return true;
         }
 
-        this.LogError("Digital Devices: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("Digital Devices: failed to enter menu, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
       }
     }
@@ -1453,7 +1453,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
         SharedCiContext context;
         if (!_sharedCiContexts.TryGetValue(_menuContext, out context))
         {
-          this.LogError("Digital Devices: failed to locate slot for context {0}", _menuContext);
+          this.LogError("Digital Devices: failed to close menu, no slot for context {0}", _menuContext);
           return false;
         }
         // We're closing the menu. No need to force ownership.
@@ -1468,7 +1468,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
           return true;
         }
 
-        this.LogError("Digital Devices: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("Digital Devices: failed to close menu, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
       }
     }
@@ -1513,7 +1513,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
         {
           if (choice > _rootMenuChoices.Count)
           {
-            this.LogError("Digital Devices: selected root menu entry {0} is out of bounds", choice);
+            this.LogError("Digital Devices: selected root menu entry {0} is invalid", choice);
             return false;
           }
           return EnterMenu(_rootMenuChoices[choice - 1]);
@@ -1525,7 +1525,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
         SharedCiContext context;
         if (!_sharedCiContexts.TryGetValue(_menuContext, out context))
         {
-          this.LogError("Digital Devices: failed to locate slot for context {0}", _menuContext);
+          this.LogError("Digital Devices: failed to select menu entry, no slot for context {0}", _menuContext);
           return false;
         }
         if (!string.IsNullOrEmpty(context.Owner) && !_tunerDevicePath.Equals(context.Owner))
@@ -1541,7 +1541,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
           return true;
         }
 
-        this.LogError("Digital Devices: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("Digital Devices: failed to select menu entry, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
       }
     }
@@ -1572,7 +1572,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
         SharedCiContext context;
         if (!_sharedCiContexts.TryGetValue(_menuContext, out context))
         {
-          this.LogError("Digital Devices: failed to locate slot for context {0}", _menuContext);
+          this.LogError("Digital Devices: failed to answer enquiry, no slot for context {0}", _menuContext);
           return false;
         }
         if (!string.IsNullOrEmpty(context.Owner) && !_tunerDevicePath.Equals(context.Owner))
@@ -1587,7 +1587,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
           this.LogDebug("Digital Devices: result = success");
           return true;
         }
-        this.LogError("Digital Devices: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("Digital Devices: failed to answer enquiry, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
       }
     }
@@ -1635,12 +1635,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
       }
       if (command == null || command.Length == 0)
       {
-        this.LogError("Digital Devices: command not supplied");
+        this.LogWarn("Digital Devices: DiSEqC command not supplied");
         return true;
       }
       if (command.Length > MAX_DISEQC_MESSAGE_LENGTH)
       {
-        this.LogError("Digital Devices: command too long, length = {0}", command.Length);
+        this.LogError("Digital Devices: DiSEqC command too long, length = {0}", command.Length);
         return false;
       }
 
@@ -1673,7 +1673,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
       hr = _propertySet.Set(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.Send, _instanceBuffer, INSTANCE_SIZE, _diseqcBuffer, BDA_DISEQC_MESSAGE_SIZE);
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogError("Digital Devices: failed to send command, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("Digital Devices: failed to send DiSEqC command, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         success = false;
       }
 
@@ -1724,7 +1724,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
         BdaDiseqcMessage message = (BdaDiseqcMessage)Marshal.PtrToStructure(_diseqcBuffer, typeof(BdaDiseqcMessage));
         if (message.PacketLength > MAX_DISEQC_MESSAGE_LENGTH)
         {
-          this.LogError("Digital Devices: response length is out of bounds, response length = {0}", message.PacketLength);
+          this.LogError("Digital Devices: DiSEqC reply too long, response length = {0}", message.PacketLength);
           return false;
         }
         this.LogDebug("Digital Devices: result = success");
@@ -1733,7 +1733,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
         return true;
       }
 
-      this.LogError("Digital Devices: result = failure, response length = {0}, hr = 0x{1:x} ({2})", returnedByteCount, hr, HResult.GetDXErrorString(hr));
+      this.LogError("Digital Devices: failed to read DiSEqC response, response length = {0}, hr = 0x{1:x} ({2})", returnedByteCount, hr, HResult.GetDXErrorString(hr));
       return false;
     }
 

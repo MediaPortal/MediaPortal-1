@@ -524,7 +524,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbWorld
       DVBSChannel dvbsChannel = channel as DVBSChannel;
       if (dvbsChannel == null)
       {
-        this.LogError("DVB World: tuning is not supported for this channel");
+        this.LogError("DVB World: tuning is not supported for channel");
         return false;
       }
 
@@ -625,7 +625,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbWorld
         return true;
       }
 
-      this.LogError("DVB World: failed to set tone burst, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("DVB World: failed to set tone state, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -645,12 +645,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbWorld
       }
       if (command == null || command.Length == 0)
       {
-        this.LogError("DVB World: command not supplied");
+        this.LogWarn("DVB World: DiSEqC command not supplied");
         return true;
       }
       if (command.Length > MAX_DISEQC_MESSAGE_LENGTH)
       {
-        this.LogError("DVB World: command too long, length = {0}", command.Length);
+        this.LogError("DVB World: DiSEqC command too long, length = {0}", command.Length);
         return false;
       }
 
@@ -706,7 +706,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbWorld
       }
       if (_isRemoteControlInterfaceOpen)
       {
-        this.LogWarn("DVB World: interface is already open");
+        this.LogWarn("DVB World: remote control interface is already open");
         return true;
       }
 

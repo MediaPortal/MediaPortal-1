@@ -232,7 +232,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
       );
       if (hr != (int)HResult.Severity.Success || returnedByteCount != DEVICE_ID_LENGTH)
       {
-        this.LogWarn("Prof USB: result = failure, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+        this.LogWarn("Prof USB: failed to read device ID, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
       }
       else
       {
@@ -253,7 +253,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
       );
       if (hr != (int)HResult.Severity.Success || returnedByteCount != MAC_ADDRESS_LENGTH)
       {
-        this.LogWarn("Prof USB: result = failure, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+        this.LogWarn("Prof USB: failed to read MAC address, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
       }
       else
       {
@@ -583,7 +583,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
       DVBSChannel dvbsChannel = channel as DVBSChannel;
       if (dvbsChannel == null || !_isCustomTuningSupported)
       {
-        this.LogError("Prof USB: tuning is not supported for this channel");
+        this.LogError("Prof USB: tuning is not supported for channel");
         return false;
       }
 
@@ -722,12 +722,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
       }
       if (command == null || command.Length == 0)
       {
-        this.LogError("Prof USB: command not supplied");
+        this.LogWarn("Prof USB: DiSEqC command not supplied");
         return true;
       }
       if (command.Length > MAX_DISEQC_MESSAGE_LENGTH)
       {
-        this.LogError("Prof USB: command too long, length = {0}", command.Length);
+        this.LogError("Prof USB: DiSEqC command too long, length = {0}", command.Length);
         return false;
       }
 
@@ -784,7 +784,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
       }
       if (_isRemoteControlInterfaceOpen)
       {
-        this.LogWarn("Prof USB: interface is already open");
+        this.LogWarn("Prof USB: remote control interface is already open");
         return true;
       }
 

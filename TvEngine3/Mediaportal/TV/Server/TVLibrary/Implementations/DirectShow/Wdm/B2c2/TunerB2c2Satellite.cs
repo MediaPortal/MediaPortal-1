@@ -24,6 +24,7 @@ using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
@@ -253,7 +254,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       this.LogDebug("B2C2 satellite: set tone state, burst = {0}, 22 kHz = {1}", toneBurstState, tone22kState);
       if (_interfaceTuner == null)
       {
-        this.LogDebug("B2C2 satellite: not initialised or interface not supported");
+        this.LogError("B2C2 satellite: not initialised or interface not supported");
+        return false;
       }
 
       bool success = true;
@@ -277,7 +279,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
         }
         else
         {
-          this.LogDebug("B2C2 satellite: burst result = failure, hr = 0x{0:x}", hr);
+          this.LogDebug("B2C2 satellite: failed to send tone burst command, hr = 0x{0:x}", hr);
           success = false;
         }
       }
@@ -294,7 +296,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       }
       else
       {
-        this.LogDebug("B2C2 satellite: 22 kHz result = failure, hr = 0x{0:x}", hr);
+        this.LogDebug("B2C2 satellite: failed to set 22 kHz state, hr = 0x{0:x}", hr);
         success = false;
       }
 
@@ -312,16 +314,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
 
       if (_interfaceTuner == null)
       {
-        this.LogDebug("B2C2 satellite: not initialised or interface not supported");
+        this.LogError("B2C2 satellite: not initialised or interface not supported");
+        return false;
       }
       if (command == null || command.Length == 0)
       {
-        this.LogDebug("B2C2 satellite: command not supplied");
+        this.LogWarn("B2C2 satellite: DiSEqC command not supplied");
         return true;
       }
       if (command.Length > DISEQC_BUFFER_SIZE)
       {
-        this.LogDebug("B2C2 satellite: buffer capacity too small");
+        this.LogDebug("B2C2 satellite: DiSEqC command too long, length = {0}", command.Length);
         return true;
       }
 
@@ -344,7 +347,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
           {
             // DiSEqC 1.2 commands not supported. This is a little unexpected given that the
             // driver previously reported that it supports them.
-            this.LogDebug("B2C2 satellite: raw DiSEqC commands not supported");
+            this.LogWarn("B2C2 satellite: raw DiSEqC commands not supported");
           }
           else
           {
@@ -361,7 +364,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
         command[1] != (byte)DiseqcAddress.AnySwitch ||
         command[2] != (byte)DiseqcCommand.WriteN0)
       {
-        this.LogDebug("B2C2 satellite: command not supported");
+        this.LogError("B2C2 satellite: DiSEqC command not supported");
+        Dump.DumpBinary(command);
         return false;
       }
 
@@ -374,7 +378,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
         return true;
       }
 
-      this.LogDebug("B2C2 satellite: result = failure, hr = 0x{0:x}", hr);
+      this.LogDebug("B2C2 satellite: failed to send DiSEqC command, hr = 0x{0:x}", hr);
       return false;
     }
 

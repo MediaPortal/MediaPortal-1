@@ -110,7 +110,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Compro
       );
       if (hr != (int)HResult.Severity.Success || returnedByteCount != MAC_ADDRESS_LENGTH)
       {
-        this.LogWarn("Compro: result = failure, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+        this.LogWarn("Compro: failed to read MAC address, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
       }
       else
       {
@@ -210,7 +210,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Compro
         return true;
       }
 
-      this.LogError("Compro: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Compro: failed to set power state, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -319,12 +319,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Compro
       }
       if (command == null || command.Length == 0)
       {
-        this.LogError("Compro: command not supplied");
+        this.LogWarn("Compro: DiSEqC command not supplied");
         return true;
       }
       if (command.Length > MAX_DISEQC_MESSAGE_LENGTH)
       {
-        this.LogError("Compro: command too long, length = {0}", command.Length);
+        this.LogError("Compro: DiSEqC command too long, length = {0}", command.Length);
         return false;
       }
 
@@ -346,7 +346,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Compro
         return true;
       }
 
-      this.LogError("Compro: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Compro: failed to send DiSEqC command, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 

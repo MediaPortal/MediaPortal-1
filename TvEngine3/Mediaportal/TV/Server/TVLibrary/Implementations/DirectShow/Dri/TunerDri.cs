@@ -179,10 +179,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
         if (_serviceAvTransport.GetCurrentTransportActions((uint)_avTransportId, out actions))
         {
           this.LogDebug("DRI CableCARD: supported AV transport actions = {0}", string.Join(", ", actions.Select(x => x.ToString())));
-          if (actions.Contains(AvTransportAction.Pause))
-          {
-            _canPause = true;
-          }
+          _canPause = actions.Contains(AvTransportAction.Pause);
         }
 
         uint trackCount = 0;

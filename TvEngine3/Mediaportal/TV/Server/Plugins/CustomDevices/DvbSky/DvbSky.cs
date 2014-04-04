@@ -170,7 +170,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbSky
             hr = _propertySet.Get(BDA_EXTENSION_PROPERTY_SET_GENERAL, (int)properties[i], instanceBuffer, INSTANCE_SIZE, dataBuffer, MAC_ADDRESS_LENGTH, out returnedByteCount);
             if (hr != (int)HResult.Severity.Success || returnedByteCount != MAC_ADDRESS_LENGTH)
             {
-              this.LogWarn("DVBSky: result = failure, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+              this.LogWarn("DVBSky: failed to read {0}, hr = 0x{1:x} ({2}), byte count = {3}", propertyNames[i], hr, HResult.GetDXErrorString(hr), returnedByteCount);
             }
             else
             {
@@ -592,7 +592,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbSky
       }
       if (_isRemoteControlInterfaceOpen)
       {
-        this.LogWarn("DVBSky: interface is already open");
+        this.LogWarn("DVBSky: conditional access interface is already open");
         return true;
       }
 

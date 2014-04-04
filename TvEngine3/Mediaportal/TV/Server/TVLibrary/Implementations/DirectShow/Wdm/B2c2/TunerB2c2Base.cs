@@ -1498,7 +1498,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       IBaseFilter b2c2Source = null;
       try
       {
-        b2c2Source = (IBaseFilter)Activator.CreateInstance(Type.GetTypeFromCLSID(B2C2_ADAPTER_CLSID));
+        b2c2Source = Activator.CreateInstance(Type.GetTypeFromCLSID(B2C2_ADAPTER_CLSID)) as IBaseFilter;
       }
       catch (Exception ex)
       {
@@ -1566,7 +1566,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
                   break;
                 default:
                   // The tuner may not be redetected properly after standby in some cases.
-                  Log.Warn("B2C2 base: unknown tuner type, cannot use this tuner");
+                  Log.Warn("B2C2 base: unknown tuner type {0}, cannot use this tuner", d.TunerType);
                   break;
               }
 
@@ -1598,7 +1598,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       int hr = _interfaceData.SelectDevice(_deviceInfo.DeviceId);
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogDebug("B2C2 base: failed to select device, hr = 0x{0:x}", hr);
+        this.LogError("B2C2 base: failed to select device, hr = 0x{0:x}", hr);
         return;
       }
 
@@ -1613,7 +1613,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
         hr = _interfaceTuner.GetTunerCapabilities(buffer, ref returnedByteCount);
         if (hr != (int)HResult.Severity.Success || returnedByteCount != TUNER_CAPABILITIES_SIZE)
         {
-          this.LogDebug("B2C2 base: result = failure, hr = 0x{0:x}, byte count = {1}", hr, returnedByteCount);
+          this.LogWarn("B2C2 base: failed to get tuner capabilities, hr = 0x{0:x}, byte count = {1}", hr, returnedByteCount);
         }
         else
         {
@@ -1647,7 +1647,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       int hr = _interfaceData.SelectDevice(_deviceInfo.DeviceId);
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogDebug("B2C2 base: failed to select device, hr = 0x{0:x}", hr);
+        this.LogError("B2C2 base: failed to select device, hr = 0x{0:x}", hr);
         return;
       }
 
@@ -1659,7 +1659,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       }
       else
       {
-        this.LogDebug("B2C2 base: result = failure, hr = 0x{0:x}", hr);
+        this.LogWarn("B2C2 base: failed to get max global PID count, hr = 0x{0:x}", hr);
       }
       hr = _interfaceData.GetMaxIpPIDCount(out count);
       if (hr == (int)HResult.Severity.Success)
@@ -1668,7 +1668,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       }
       else
       {
-        this.LogDebug("B2C2 base: result = failure, hr = 0x{0:x}", hr);
+        this.LogWarn("B2C2 base: failed to get max IP PID count, hr = 0x{0:x}", hr);
       }
       hr = _interfaceData.GetMaxPIDCount(out count);
       if (hr == (int)HResult.Severity.Success)
@@ -1678,7 +1678,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       }
       else
       {
-        this.LogDebug("B2C2 base: result = failure, hr = 0x{0:x}", hr);
+        this.LogWarn("B2C2 base: failed to get max PID count, hr = 0x{0:x}", hr);
       }
 
       int openPidCount;
@@ -1688,7 +1688,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       hr = _interfaceData.GetTsState(out openPidCount, out runningPidCount, ref totalPidCount, currentPids);
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogDebug("B2C2 base: result = failure, hr = 0x{0:x}", hr);
+        this.LogWarn("B2C2 base: failed to get transport stream state, hr = 0x{0:x}", hr);
       }
       else
       {

@@ -89,7 +89,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
       }
       else
       {
-        this.LogWarn("Hauppauge ECP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogWarn("Hauppauge ECP: failed to read model number, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       }
 
       uint versionMajor = 0;
@@ -103,7 +103,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
       }
       else
       {
-        this.LogWarn("Hauppauge ECP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogWarn("Hauppauge ECP: failed to read driver version, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       }
 
       string generalInfo;
@@ -114,7 +114,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
       }
       else
       {
-        this.LogWarn("Hauppauge ECP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogWarn("Hauppauge ECP: failed to read general information, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       }
     }
 
@@ -314,7 +314,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
           this.LogDebug("Hauppauge ECP: result = success, minimum = {0}, maximum = {1}, resolution = {2}", minimum, maximum, resolution);
           return true;
         }
-        this.LogError("Hauppauge ECP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("Hauppauge ECP: failed to get range for parameter {0}, hr = 0x{1:x} ({2})", parameterId, hr, HResult.GetDXErrorString(hr));
       }
       else
       {
@@ -351,7 +351,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
           this.LogDebug("Hauppauge ECP: result = success, values = {0}", string.Join(", ", values));
           return true;
         }
-        this.LogError("Hauppauge ECP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("Hauppauge ECP: failed to get values for parameter {0}, hr = 0x{1:x} ({2})", parameterId, hr, HResult.GetDXErrorString(hr));
       }
       else
       {
@@ -385,7 +385,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
           this.LogDebug("Hauppauge ECP: result = success, value = {0}", value);
           return true;
         }
-        this.LogError("Hauppauge ECP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("Hauppauge ECP: failed to get default value for parameter {0}, hr = 0x{1:x} ({2})", parameterId, hr, HResult.GetDXErrorString(hr));
       }
       else
       {
@@ -419,7 +419,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
           this.LogDebug("Hauppauge ECP: result = success, value = {0}", value);
           return true;
         }
-        this.LogError("Hauppauge ECP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("Hauppauge ECP: failed to get value for parameter {0}, hr = 0x{1:x} ({2})", parameterId, hr, HResult.GetDXErrorString(hr));
       }
       else
       {
@@ -452,7 +452,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
           this.LogDebug("Hauppauge ECP: result = success");
           return true;
         }
-        this.LogError("Hauppauge ECP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("Hauppauge ECP: failed to set parameter {0} value, hr = 0x{1:x} ({2})", parameterId, hr, HResult.GetDXErrorString(hr));
       }
       else
       {

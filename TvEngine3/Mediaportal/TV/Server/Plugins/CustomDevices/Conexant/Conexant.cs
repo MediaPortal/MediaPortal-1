@@ -253,7 +253,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Conexant
         return true;
       }
 
-      this.LogError("Conexant: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Conexant: failed to set tone state, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -273,14 +273,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Conexant
       }
       if (command == null || command.Length == 0)
       {
-        this.LogError("Conexant: command not supplied");
+        this.LogWarn("Conexant: DiSEqC command not supplied");
         return true;
       }
 
       int length = command.Length;
       if (length > MAX_DISEQC_TX_MESSAGE_LENGTH)
       {
-        this.LogError("Conexant: command too long, length = {0}", command.Length);
+        this.LogError("Conexant: DiSEqC command too long, length = {0}", command.Length);
         return false;
       }
 
@@ -318,7 +318,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Conexant
         return true;
       }
 
-      this.LogError("Conexant: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Conexant: failed to send DiSEqC command, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 

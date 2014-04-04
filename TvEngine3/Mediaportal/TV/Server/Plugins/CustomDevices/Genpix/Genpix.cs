@@ -375,7 +375,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Genpix
         return true;
       }
 
-      this.LogError("Genpix: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Genpix: failed to tune, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -436,7 +436,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Genpix
         return true;
       }
 
-      this.LogError("Genpix: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Genpix: failed to set tone state, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -456,12 +456,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Genpix
       }
       if (command == null || command.Length == 0)
       {
-        this.LogError("Genpix: command not supplied");
+        this.LogWarn("Genpix: DiSEqC command not supplied");
         return true;
       }
       if (command.Length > MAX_DISEQC_MESSAGE_LENGTH)
       {
-        this.LogError("Genpix: command too long, length = {0}", command.Length);
+        this.LogError("Genpix: DiSEqC command too long, length = {0}", command.Length);
         return false;
       }
 
@@ -483,7 +483,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Genpix
         return true;
       }
 
-      this.LogError("Genpix: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Genpix: failed to send DiSEqC command, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 

@@ -412,7 +412,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
         }
         else
         {
-          this.LogWarn("AVerMedia: message type {0} not supported", data.MessageType);
+          this.LogWarn("AVerMedia: MMI message type {0} not supported", data.MessageType);
         }
       }
 
@@ -506,7 +506,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
       }
       if (_isCaInterfaceOpen)
       {
-        this.LogWarn("AVerMedia: interface is already open");
+        this.LogWarn("AVerMedia: conditional access interface is already open");
         return true;
       }
 
@@ -521,7 +521,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
       }
       catch
       {
-        this.LogError("AVerMedia: failed to create CI API instance");
+        this.LogError("AVerMedia: failed to create CI API instance, is the AVerMedia software installed?");
         return false;
       }
 
@@ -541,6 +541,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
       if (_pmtInterface == null)
       {
         this.LogError("AVerMedia: failed to obtain PMT interface");
+        return false;
       }
 
       _ciState = AVerMediaCiState.Empty;
@@ -580,7 +581,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
         return true;
       }
 
-      this.LogError("AVerMedia: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("AVerMedia: failed to open conditional access interface, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -693,12 +694,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
       }
       if (!_isCamReady)
       {
-        this.LogError("AVerMedia: the CAM is not ready");
+        this.LogError("AVerMedia: failed to send conditional access command, the CAM is not ready");
         return false;
       }
       if (pmt == null)
       {
-        this.LogError("AVerMedia: PMT not supplied");
+        this.LogError("AVerMedia: failed to send conditional access command, PMT not supplied");
         return true;
       }
 
@@ -734,7 +735,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
           this.LogDebug("AVerMedia: result = success");
           return true;
         }
-        this.LogError("AVerMedia: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("AVerMedia: failed to send conditional access command, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
       }
       finally
@@ -776,7 +777,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
       }
       if (!_isCamReady)
       {
-        this.LogError("AVerMedia: the CAM is not ready");
+        this.LogError("AVerMedia: failed to enter menu, the CAM is not ready");
         return false;
       }
 
@@ -787,7 +788,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
         return true;
       }
 
-      this.LogError("AVerMedia: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("AVerMedia: failed to enter menu, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -806,7 +807,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
       }
       if (!_isCamReady)
       {
-        this.LogError("AVerMedia: the CAM is not ready");
+        this.LogError("AVerMedia: failed to close menu, the CAM is not ready");
         return false;
       }
 
@@ -817,7 +818,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
         return true;
       }
 
-      this.LogError("AVerMedia: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("AVerMedia: failed to close menu, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -837,7 +838,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
       }
       if (!_isCamReady)
       {
-        this.LogError("AVerMedia: the CAM is not ready");
+        this.LogError("AVerMedia: failed to select menu entry, the CAM is not ready");
         return false;
       }
 
@@ -848,7 +849,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
         return true;
       }
 
-      this.LogError("AVerMedia: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("AVerMedia: failed to select menu entry, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -873,7 +874,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
       }
       if (!_isCamReady)
       {
-        this.LogError("AVerMedia: the CAM is not ready");
+        this.LogError("AVerMedia: failed to answer enquiry, the CAM is not ready");
         return false;
       }
 
@@ -894,7 +895,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
         return true;
       }
 
-      this.LogError("AVerMedia: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("AVerMedia: failed to answer enquiry, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
