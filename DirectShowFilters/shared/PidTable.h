@@ -121,7 +121,7 @@ class AudioPid : public BasePid
     {
       Lang[0] = 'U';
       Lang[1] = 'N';
-      Lang[2] = 'K';
+      Lang[2] = 'D';
       Lang[3] = 0;
       Lang[4] = 0;
       Lang[5] = 0;
@@ -147,7 +147,7 @@ class SubtitlePid : public BasePid
     {
       Lang[0] = 'U';
       Lang[1] = 'N';
-      Lang[2] = 'K';
+      Lang[2] = 'D';
       Lang[3] = 0;
     }
 
@@ -170,7 +170,7 @@ class TeletextServiceInfo
     {
       Lang[0] = 'U';
       Lang[1] = 'N';
-      Lang[2] = 'K';
+      Lang[2] = 'D';
       Lang[3] = 0;
       Type = -1;
       Page = -1;
