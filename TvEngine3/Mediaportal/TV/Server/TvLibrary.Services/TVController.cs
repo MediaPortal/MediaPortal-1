@@ -3924,31 +3924,6 @@ namespace Mediaportal.TV.Server.TVLibrary
     }
 
     /// <summary>
-    /// Returns the SQl connection string to the database
-    /// </summary>
-    public void GetDatabaseConnectionString(out string connectionString, out string provider)
-    {
-      connectionString = "";
-      provider = "";
-      try
-      {
-        XmlDocument doc = new XmlDocument();
-        doc.Load(String.Format(@"{0}\gentle.config", PathManager.GetDataPath));
-        XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
-        XmlNode nodeConnection = nodeKey.Attributes.GetNamedItem("connectionString");
-        XmlNode nodeProvider = nodeKey.Attributes.GetNamedItem("name");
-        connectionString = nodeConnection.InnerText;
-        provider = nodeProvider.InnerText;
-      }
-      catch (Exception ex)
-      {
-        this.LogError(ex);
-      }
-    }
-
-
-
-    /// <summary>
     /// Gets a value indicating whether all cards are idle.
     /// </summary>
     /// <value><c>true</c> if [all cards idle]; otherwise, <c>false</c>.</value>
