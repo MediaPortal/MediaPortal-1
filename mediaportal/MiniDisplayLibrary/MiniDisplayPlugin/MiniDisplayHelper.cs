@@ -43,6 +43,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       }
     }
 
+    //Check our EQ settings and MP states to determine if it appropriate to show our EQ
     public static bool GetEQ(ref EQControl EQSETTINGS)
     {
       bool extensiveLogging = Settings.Instance.ExtensiveLogging;

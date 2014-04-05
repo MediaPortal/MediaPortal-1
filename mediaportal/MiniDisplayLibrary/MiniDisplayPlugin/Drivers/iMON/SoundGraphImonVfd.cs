@@ -37,16 +37,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     /// </summary>
     public class SoundGraphImonVfd : SoundGraphImon
     {
-        SoundGraphDisplay.DSPEQDATA iEqData;
         //private AdvancedSettings AdvSettings;
-        private EQControl EQSettings;
+        
 
         //Constructor
         public SoundGraphImonVfd()
         {
-            //Init EqData
-            MiniDisplayHelper.InitEQ(ref EQSettings);
-            EQSettings.UseEqDisplay = true;
             //
             iEqData = new SoundGraphDisplay.DSPEQDATA();
             iEqData.BandData[0] = 100;
@@ -76,16 +72,19 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             else if (line == 1)
             {
                 Line2 = message;
-                EQSettings._EqDataAvailable = MiniDisplayHelper.GetEQ(ref EQSettings);
-                if (!EQSettings._EqDataAvailable)
-                {
-                    SoundGraphDisplay.IDW_SetVfdText(Line1, Line2);
+
+                //Check if we need to show EQ this is also taking into account our various settings.
+                iSettings.iEq._EqDataAvailable = MiniDisplayHelper.GetEQ(ref iSettings.iEq);
+                if (iSettings.iEq._EqDataAvailable)
+                {                    
+                    //SetAndRollEqData();
+                    UpdateEq();
                 }
                 else
                 {
-                    //SetAndRollEqData();
-                    UpdateEq();
-                }                
+                    //Not show EQ then display our lines
+                    SoundGraphDisplay.IDW_SetVfdText(Line1, Line2);
+                }
             }
         }
 
@@ -96,7 +95,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             //Our display is initialized, now open the advanced setting dialog
             SoundGraphDisplay.LogDebug("SoundGraphImonVfd.Configure() called");
             SoundGraphImonSettingsForm form = new SoundGraphImonSettingsForm();
-            //Hide our LCD tab since we configure an LCD display
+            //Hide our LCD tab since we configure a VFD display
             //TODO: make this a method of SoundGraphImonSettingsForm
             form.tabControl.TabPages.Remove(form.tabLcd);
             form.ShowDialog();
@@ -107,12 +106,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         void UpdateEq()
         {
 
-            if (!(EQSettings.UseEqDisplay & EQSettings._EqDataAvailable))
+            if (!(iSettings.iEq.UseEqDisplay & iSettings.iEq._EqDataAvailable))
             {
                 return;
             }
-            if (EQSettings.RestrictEQ &
-                ((DateTime.Now.Ticks - EQSettings._LastEQupdate.Ticks) < EQSettings._EqUpdateDelay))
+            if (iSettings.iEq.RestrictEQ &
+                ((DateTime.Now.Ticks - iSettings.iEq._LastEQupdate.Ticks) < iSettings.iEq._EqUpdateDelay))
             {
                 return;
             }
@@ -120,13 +119,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             {
                 //SoundGraphDisplay.LogInfo("\niMONLCDg.DisplayEQ(): Retrieved {0} samples of Equalizer data.", EQSettings.EqFftData.Length / 2);
             }
-            if ((EQSettings.UseStereoEq || EQSettings.UseVUmeter) || EQSettings.UseVUmeter2)
+            if ((iSettings.iEq.UseStereoEq || iSettings.iEq.UseVUmeter) || iSettings.iEq.UseVUmeter2)
             {
-                if (EQSettings.UseStereoEq)
+                if (iSettings.iEq.UseStereoEq)
                 {
-                    EQSettings.Render_MaxValue = 100;
-                    EQSettings.Render_BANDS = 8;
-                    EQSettings.EqArray[0] = 0x63;
+                    iSettings.iEq.Render_MaxValue = 100;
+                    iSettings.iEq.Render_BANDS = 8;
+                    iSettings.iEq.EqArray[0] = 0x63;
                     /*
                     if ((_DisplayType == DisplayType.LCD) || (_DisplayType == DisplayType.LCD2))
                     {
@@ -139,52 +138,52 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                         EQSettings.EqArray[0] = 0;
                     }
                      */
-                    MiniDisplayHelper.ProcessEqData(ref EQSettings);
-                    for (int i = 0; i < EQSettings.Render_BANDS; i++)
+                    MiniDisplayHelper.ProcessEqData(ref iSettings.iEq);
+                    for (int i = 0; i < iSettings.iEq.Render_BANDS; i++)
                     {
-                        switch (EQSettings.EqArray[0])
+                        switch (iSettings.iEq.EqArray[0])
                         {
                             case 2:
                                 {
-                                    var num2 = (byte)(EQSettings.EqArray[1 + i] & 15);
-                                    EQSettings.EqArray[1 + i] = (byte)((num2 << 4) | num2);
-                                    var num3 = (byte)(EQSettings.EqArray[9 + i] & 15);
-                                    EQSettings.EqArray[9 + i] = (byte)((num3 << 4) | num3);
+                                    var num2 = (byte)(iSettings.iEq.EqArray[1 + i] & 15);
+                                    iSettings.iEq.EqArray[1 + i] = (byte)((num2 << 4) | num2);
+                                    var num3 = (byte)(iSettings.iEq.EqArray[9 + i] & 15);
+                                    iSettings.iEq.EqArray[9 + i] = (byte)((num3 << 4) | num3);
                                     break;
                                 }
                         }
                     }
                     for (int j = 15; j > 7; j--)
                     {
-                        EQSettings.EqArray[j + 1] = EQSettings.EqArray[j];
+                        iSettings.iEq.EqArray[j + 1] = iSettings.iEq.EqArray[j];
                     }
-                    EQSettings.EqArray[8] = 0;
-                    EQSettings.EqArray[9] = 0;
+                    iSettings.iEq.EqArray[8] = 0;
+                    iSettings.iEq.EqArray[9] = 0;
                 }
                 else
                 {
-                    EQSettings.Render_MaxValue = 80;
-                    EQSettings.Render_BANDS = 1;
+                    iSettings.iEq.Render_MaxValue = 80;
+                    iSettings.iEq.Render_BANDS = 1;
                     if (/*(_DisplayType == DisplayType.LCD) || (_DisplayType == DisplayType.LCD2)*/ false)
                     {
-                        EQSettings.Render_MaxValue = 0x60;
-                        if (EQSettings._useVUindicators)
+                        iSettings.iEq.Render_MaxValue = 0x60;
+                        if (iSettings.iEq._useVUindicators)
                         {
-                            EQSettings.Render_MaxValue = 0x60;
+                            iSettings.iEq.Render_MaxValue = 0x60;
                         }
                     }
-                    else if (EQSettings._useVUindicators)
+                    else if (iSettings.iEq._useVUindicators)
                     {
-                        EQSettings.Render_MaxValue = 0x4b;
+                        iSettings.iEq.Render_MaxValue = 0x4b;
                     }
-                    MiniDisplayHelper.ProcessEqData(ref EQSettings);
+                    MiniDisplayHelper.ProcessEqData(ref iSettings.iEq);
                 }
             }
             else
             {
-                EQSettings.Render_MaxValue = 100;
-                EQSettings.Render_BANDS = 0x10;
-                EQSettings.EqArray[0] = 0x63;
+                iSettings.iEq.Render_MaxValue = 100;
+                iSettings.iEq.Render_BANDS = 0x10;
+                iSettings.iEq.EqArray[0] = 0x63;
                 /*
                 if ((_DisplayType == DisplayType.LCD) || (_DisplayType == DisplayType.LCD2))
                 {
@@ -196,15 +195,15 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                     EQSettings.Render_MaxValue = 6;
                     EQSettings.EqArray[0] = 0;
                 }*/
-                MiniDisplayHelper.ProcessEqData(ref EQSettings);
-                for (int k = 0; k < EQSettings.Render_BANDS; k++)
+                MiniDisplayHelper.ProcessEqData(ref iSettings.iEq);
+                for (int k = 0; k < iSettings.iEq.Render_BANDS; k++)
                 {
-                    switch (EQSettings.EqArray[0])
+                    switch (iSettings.iEq.EqArray[0])
                     {
                         case 2:
                             {
-                                var num6 = (byte)(EQSettings.EqArray[1 + k] & 15);
-                                EQSettings.EqArray[1 + k] = (byte)((num6 << 4) | num6);
+                                var num6 = (byte)(iSettings.iEq.EqArray[1 + k] & 15);
+                                iSettings.iEq.EqArray[1 + k] = (byte)((num6 << 4) | num6);
                                 break;
                             }
                     }
@@ -249,10 +248,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             */
             
             {
-                if (!EQSettings.UseVUmeter && !EQSettings.UseVUmeter2)
+                if (!iSettings.iEq.UseVUmeter && !iSettings.iEq.UseVUmeter2)
                 {
                     //var destinationArray = new int[0x10];
-                    Array.Copy(EQSettings.EqArray, 1, iEqData.BandData, 0, 0x10);
+                    Array.Copy(iSettings.iEq.EqArray, 1, iEqData.BandData, 0, 0x10);
                     SoundGraphDisplay.IDW_SetVfdEqData(iEqData);
                     goto Label_0613;
 
@@ -260,16 +259,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 //DrawVU(EQSettings.EqArray);
             }
         Label_0613:
-            EQSettings._LastEQupdate = DateTime.Now;
-            if ((DateTime.Now.Ticks - EQSettings._EQ_FPS_time.Ticks) < 0x989680L)
+            iSettings.iEq._LastEQupdate = DateTime.Now;
+        if ((DateTime.Now.Ticks - iSettings.iEq._EQ_FPS_time.Ticks) < 0x989680L)
             {
-                EQSettings._EQ_Framecount++;
+                iSettings.iEq._EQ_Framecount++;
             }
             else
             {
-                EQSettings._Max_EQ_FPS = Math.Max(EQSettings._Max_EQ_FPS, EQSettings._EQ_Framecount);
-                EQSettings._EQ_Framecount = 0;
-                EQSettings._EQ_FPS_time = DateTime.Now;
+                iSettings.iEq._Max_EQ_FPS = Math.Max(iSettings.iEq._Max_EQ_FPS, iSettings.iEq._EQ_Framecount);
+                iSettings.iEq._EQ_Framecount = 0;
+                iSettings.iEq._EQ_FPS_time = DateTime.Now;
             }
 
         }

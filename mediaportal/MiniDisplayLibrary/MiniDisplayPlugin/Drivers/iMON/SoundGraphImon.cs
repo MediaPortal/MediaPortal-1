@@ -30,14 +30,18 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {
     /// <summary>
     /// Abstract base class for SoundGraph iMON display.
-    /// SoundGraph iMON VFD and LCD are implementing this abstractiong.
+    /// SoundGraph iMON VFD and LCD are implementing this abstraction.
+    /// This provides common functionality such as setting persistence.
     /// </summary>
     public abstract class SoundGraphImon
     {
-        public Settings iSettings;
+        protected Settings iSettings;
+        protected SoundGraphDisplay.DSPEQDATA iEqData;        
+
 
         public SoundGraphImon()
         {
+            //
             LoadAdvancedSettings();
             Settings.OnSettingsChanged += AdvancedSettings_OnSettingsChanged;
             Line1 = string.Empty;
@@ -76,6 +80,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         [Serializable]
         public class Settings
         {
+            public Settings()
+            {
+                //Init EqData
+                MiniDisplayHelper.InitEQ(ref iEq);
+            }
+
+            public EQControl iEq;
+
             //Generic iMON settings
             [XmlAttribute]
             public bool DisableWhenInBackground { get; set; }
@@ -99,6 +111,57 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             [XmlAttribute]
             public bool PreferFirstLinePlayback { get; set; }
 
+            //EQ Properties
+            [XmlAttribute]
+            public bool EqStartDelay { get; set; }
+
+            [XmlAttribute]
+            public int DelayEqTime { get; set; }
+
+            [XmlAttribute]
+            public int EqMode { get; set; }
+
+            [XmlAttribute]
+            public int EqRate { get; set; }
+
+            [XmlAttribute]
+            public bool EqDisplay { get; set; }
+
+            //Tells whether we periodically disable our EQ during play
+            [XmlAttribute]
+            public bool EqPeriodic { get; set; }
+
+            //The time our EQ is disabled for
+            [XmlAttribute]
+            public int EqDisabledTimeInSeconds { get; set; }
+
+            //The time our EQ is enabled for
+            [XmlAttribute]
+            public int EqEnabledTimeInSeconds { get; set; }
+
+            [XmlAttribute]
+            public bool NormalEQ { get; set; }
+
+            [XmlAttribute]
+            public bool StereoEQ { get; set; }
+
+            [XmlAttribute]
+            public bool VUmeter { get; set; }
+
+            [XmlAttribute]
+            public bool VUmeter2 { get; set; }
+
+            [XmlAttribute]
+            public bool VUindicators { get; set; }
+
+            [XmlAttribute]
+            public bool RestrictEQ { get; set; }
+
+            [XmlAttribute]
+            public bool SmoothEQ { get; set; }
+            //
+
+
             #region Delegates
 
             public delegate void OnSettingsChangedHandler();
@@ -121,46 +184,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 set { m_Instance = value; }
             }
 
-            [XmlAttribute]
-            public bool DelayEQ { get; set; }
-
-            [XmlAttribute]
-            public int DelayEqTime { get; set; }
- 
-
-            [XmlAttribute]
-            public int EqMode { get; set; }
-
-            [XmlAttribute]
-            public int EqRate { get; set; }
-
-            [XmlAttribute]
-            public bool EqDisplay { get; set; }
-
-            [XmlAttribute]
-            public bool NormalEQ { get; set; }
-
-            [XmlAttribute]
-            public bool StereoEQ { get; set; }
-
-            [XmlAttribute]
-            public bool VUmeter { get; set; }
-
-            [XmlAttribute]
-            public bool VUmeter2 { get; set; }
-
-            [XmlAttribute]
-            public bool VUindicators { get; set; }
-
-            [XmlAttribute]
-            public bool RestrictEQ { get; set; }
-
-            [XmlAttribute]
-            public bool SmoothEQ { get; set; }
 
 
             public static event OnSettingsChangedHandler OnSettingsChanged;
 
+            //Load default settings in the given instance
             private static void Default(Settings _settings)
             {
                 _settings.EqDisplay = false;
@@ -172,7 +200,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 _settings.EqMode = 0;
                 _settings.RestrictEQ = false;
                 _settings.EqRate = 10;
-                _settings.DelayEQ = false;
+                _settings.EqStartDelay = false;
                 _settings.DelayEqTime = 10;
                 _settings.SmoothEQ = false;
 
@@ -201,6 +229,15 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                     Default(settings);
                     SoundGraphDisplay.LogDebug("SoundGraphImon.Settings.Load(): Loaded settings from defaults");
                 }
+
+                //Sync our EQ settings
+                settings.iEq.UseEqDisplay = settings.EqDisplay;
+                settings.iEq.DelayEQ = settings.EqStartDelay;
+                settings.iEq._DelayEQTime = settings.DelayEqTime;
+                settings.iEq.EQTitleDisplay = settings.EqPeriodic;
+                settings.iEq._EQTitleShowTime = settings.EqDisabledTimeInSeconds;
+                settings.iEq._EQTitleDisplayTime = settings.EqEnabledTimeInSeconds;
+
                 SoundGraphDisplay.LogDebug("SoundGraphImon.Settings.Load(): completed");
                 return settings;
             }

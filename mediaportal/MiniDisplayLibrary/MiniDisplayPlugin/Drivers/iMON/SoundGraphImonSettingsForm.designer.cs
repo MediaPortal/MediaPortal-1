@@ -39,7 +39,9 @@
             this.textDisableWhenIdleDelayInSeconds = new System.Windows.Forms.MaskedTextBox();
             this.checkDisableWhenIdle = new System.Windows.Forms.CheckBox();
             this.tabEqualizer = new System.Windows.Forms.TabPage();
-            this.cmbDelayEqTime = new MediaPortal.UserInterface.Controls.MPComboBox();
+            this.textEqEnabledTimeInSeconds = new System.Windows.Forms.MaskedTextBox();
+            this.textEqDisabledTimeInSeconds = new System.Windows.Forms.MaskedTextBox();
+            this.textEqStartDelayInSeconds = new System.Windows.Forms.MaskedTextBox();
             this.groupEQstyle = new System.Windows.Forms.GroupBox();
             this.mpUseVUmeter2 = new System.Windows.Forms.RadioButton();
             this.cbVUindicators = new System.Windows.Forms.CheckBox();
@@ -49,9 +51,7 @@
             this.cmbEqMode = new MediaPortal.UserInterface.Controls.MPComboBox();
             this.mpLabelEQmode = new MediaPortal.UserInterface.Controls.MPLabel();
             this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
-            this.cmbEQTitleDisplayTime = new MediaPortal.UserInterface.Controls.MPComboBox();
             this.mpLabelEQTitleDisplay = new MediaPortal.UserInterface.Controls.MPLabel();
-            this.cmbEQTitleShowTime = new MediaPortal.UserInterface.Controls.MPComboBox();
             this.mpEQTitleDisplay = new MediaPortal.UserInterface.Controls.MPCheckBox();
             this.mpSmoothEQ = new MediaPortal.UserInterface.Controls.MPCheckBox();
             this.mpEqDisplay = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -89,9 +89,9 @@
             // 
             // tabControl
             // 
-            this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl.Controls.Add(this.tabImon);
             this.tabControl.Controls.Add(this.tabEqualizer);
             this.tabControl.Controls.Add(this.tabLcd);
@@ -192,14 +192,14 @@
             // 
             // tabEqualizer
             // 
-            this.tabEqualizer.Controls.Add(this.cmbDelayEqTime);
+            this.tabEqualizer.Controls.Add(this.textEqEnabledTimeInSeconds);
+            this.tabEqualizer.Controls.Add(this.textEqDisabledTimeInSeconds);
+            this.tabEqualizer.Controls.Add(this.textEqStartDelayInSeconds);
             this.tabEqualizer.Controls.Add(this.groupEQstyle);
             this.tabEqualizer.Controls.Add(this.cmbEqMode);
             this.tabEqualizer.Controls.Add(this.mpLabelEQmode);
             this.tabEqualizer.Controls.Add(this.mpLabel2);
-            this.tabEqualizer.Controls.Add(this.cmbEQTitleDisplayTime);
             this.tabEqualizer.Controls.Add(this.mpLabelEQTitleDisplay);
-            this.tabEqualizer.Controls.Add(this.cmbEQTitleShowTime);
             this.tabEqualizer.Controls.Add(this.mpEQTitleDisplay);
             this.tabEqualizer.Controls.Add(this.mpSmoothEQ);
             this.tabEqualizer.Controls.Add(this.mpEqDisplay);
@@ -214,51 +214,46 @@
             this.tabEqualizer.Text = "Equalizer";
             this.tabEqualizer.UseVisualStyleBackColor = true;
             // 
-            // cmbDelayEqTime
+            // textEqEnabledTimeInSeconds
             // 
-            this.cmbDelayEqTime.BorderColor = System.Drawing.Color.Empty;
-            this.cmbDelayEqTime.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbDelayEqTime.Items.AddRange(new object[] {
-            "0",
-            "1",
-            "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7",
-            "8",
-            "9",
-            "10",
-            "11",
-            "12",
-            "13",
-            "14",
-            "15",
-            "16",
-            "17",
-            "18",
-            "19",
-            "20",
-            "21",
-            "22",
-            "23",
-            "24",
-            "25",
-            "26",
-            "27",
-            "28",
-            "29",
-            "30"});
-            this.cmbDelayEqTime.Location = new System.Drawing.Point(173, 153);
-            this.cmbDelayEqTime.Name = "cmbDelayEqTime";
-            this.cmbDelayEqTime.Size = new System.Drawing.Size(53, 21);
-            this.cmbDelayEqTime.TabIndex = 143;
+            this.textEqEnabledTimeInSeconds.Location = new System.Drawing.Point(182, 215);
+            this.textEqEnabledTimeInSeconds.Mask = "00000";
+            this.textEqEnabledTimeInSeconds.Name = "textEqEnabledTimeInSeconds";
+            this.textEqEnabledTimeInSeconds.PromptChar = ' ';
+            this.textEqEnabledTimeInSeconds.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.textEqEnabledTimeInSeconds.Size = new System.Drawing.Size(42, 20);
+            this.textEqEnabledTimeInSeconds.TabIndex = 157;
+            this.textEqEnabledTimeInSeconds.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.textEqEnabledTimeInSeconds.ValidatingType = typeof(int);
+            // 
+            // textEqDisabledTimeInSeconds
+            // 
+            this.textEqDisabledTimeInSeconds.Location = new System.Drawing.Point(54, 215);
+            this.textEqDisabledTimeInSeconds.Mask = "00000";
+            this.textEqDisabledTimeInSeconds.Name = "textEqDisabledTimeInSeconds";
+            this.textEqDisabledTimeInSeconds.PromptChar = ' ';
+            this.textEqDisabledTimeInSeconds.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.textEqDisabledTimeInSeconds.Size = new System.Drawing.Size(39, 20);
+            this.textEqDisabledTimeInSeconds.TabIndex = 156;
+            this.textEqDisabledTimeInSeconds.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.textEqDisabledTimeInSeconds.ValidatingType = typeof(int);
+            // 
+            // textEqStartDelayInSeconds
+            // 
+            this.textEqStartDelayInSeconds.Location = new System.Drawing.Point(175, 152);
+            this.textEqStartDelayInSeconds.Mask = "00000";
+            this.textEqStartDelayInSeconds.Name = "textEqStartDelayInSeconds";
+            this.textEqStartDelayInSeconds.PromptChar = ' ';
+            this.textEqStartDelayInSeconds.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.textEqStartDelayInSeconds.Size = new System.Drawing.Size(42, 20);
+            this.textEqStartDelayInSeconds.TabIndex = 155;
+            this.textEqStartDelayInSeconds.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.textEqStartDelayInSeconds.ValidatingType = typeof(int);
             // 
             // groupEQstyle
             // 
-            this.groupEQstyle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupEQstyle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.groupEQstyle.Controls.Add(this.mpUseVUmeter2);
             this.groupEQstyle.Controls.Add(this.cbVUindicators);
             this.groupEQstyle.Controls.Add(this.mpUseVUmeter);
@@ -354,47 +349,6 @@
             this.mpLabel2.Text = "updates per Seconds";
             this.mpLabel2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // cmbEQTitleDisplayTime
-            // 
-            this.cmbEQTitleDisplayTime.BorderColor = System.Drawing.Color.Empty;
-            this.cmbEQTitleDisplayTime.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbEQTitleDisplayTime.Items.AddRange(new object[] {
-            "0",
-            "1",
-            "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7",
-            "8",
-            "9",
-            "10",
-            "11",
-            "12",
-            "13",
-            "14",
-            "15",
-            "16",
-            "17",
-            "18",
-            "19",
-            "20",
-            "21",
-            "22",
-            "23",
-            "24",
-            "25",
-            "26",
-            "27",
-            "28",
-            "29",
-            "30"});
-            this.cmbEQTitleDisplayTime.Location = new System.Drawing.Point(177, 216);
-            this.cmbEQTitleDisplayTime.Name = "cmbEQTitleDisplayTime";
-            this.cmbEQTitleDisplayTime.Size = new System.Drawing.Size(49, 21);
-            this.cmbEQTitleDisplayTime.TabIndex = 148;
-            // 
             // mpLabelEQTitleDisplay
             // 
             this.mpLabelEQTitleDisplay.Location = new System.Drawing.Point(99, 218);
@@ -403,47 +357,6 @@
             this.mpLabelEQTitleDisplay.TabIndex = 151;
             this.mpLabelEQTitleDisplay.Text = "Seconds every                    Seconds";
             this.mpLabelEQTitleDisplay.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // cmbEQTitleShowTime
-            // 
-            this.cmbEQTitleShowTime.BorderColor = System.Drawing.Color.Empty;
-            this.cmbEQTitleShowTime.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbEQTitleShowTime.Items.AddRange(new object[] {
-            "0",
-            "1",
-            "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7",
-            "8",
-            "9",
-            "10",
-            "11",
-            "12",
-            "13",
-            "14",
-            "15",
-            "16",
-            "17",
-            "18",
-            "19",
-            "20",
-            "21",
-            "22",
-            "23",
-            "24",
-            "25",
-            "26",
-            "27",
-            "28",
-            "29",
-            "30"});
-            this.cmbEQTitleShowTime.Location = new System.Drawing.Point(50, 216);
-            this.cmbEQTitleShowTime.Name = "cmbEQTitleShowTime";
-            this.cmbEQTitleShowTime.Size = new System.Drawing.Size(49, 21);
-            this.cmbEQTitleShowTime.TabIndex = 150;
             // 
             // mpEQTitleDisplay
             // 
@@ -584,8 +497,8 @@
             // 
             // gbxLineOptions
             // 
-            this.gbxLineOptions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbxLineOptions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.gbxLineOptions.Controls.Add(this.gbxPlayback);
             this.gbxLineOptions.Controls.Add(this.gbxGeneral);
             this.gbxLineOptions.Location = new System.Drawing.Point(6, 6);
@@ -597,8 +510,8 @@
             // 
             // gbxPlayback
             // 
-            this.gbxPlayback.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbxPlayback.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.gbxPlayback.Controls.Add(this.rbtnPlaybackSecondLine);
             this.gbxPlayback.Controls.Add(this.rbtnPlaybackFirstLine);
             this.gbxPlayback.Location = new System.Drawing.Point(7, 69);
@@ -632,8 +545,8 @@
             // 
             // gbxGeneral
             // 
-            this.gbxGeneral.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbxGeneral.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.gbxGeneral.Controls.Add(this.rbtnGeneralSecondLine);
             this.gbxGeneral.Controls.Add(this.rbtnGeneralFirstLine);
             this.gbxGeneral.Location = new System.Drawing.Point(7, 20);
@@ -703,7 +616,6 @@
         private System.Windows.Forms.TabPage tabImon;
         private System.Windows.Forms.CheckBox checkDisableWhenIdle;
         private System.Windows.Forms.TabPage tabEqualizer;
-        private UserInterface.Controls.MPComboBox cmbDelayEqTime;
         private System.Windows.Forms.GroupBox groupEQstyle;
         private System.Windows.Forms.RadioButton mpUseVUmeter2;
         private System.Windows.Forms.CheckBox cbVUindicators;
@@ -713,9 +625,7 @@
         private UserInterface.Controls.MPComboBox cmbEqMode;
         private UserInterface.Controls.MPLabel mpLabelEQmode;
         private UserInterface.Controls.MPLabel mpLabel2;
-        private UserInterface.Controls.MPComboBox cmbEQTitleDisplayTime;
         private UserInterface.Controls.MPLabel mpLabelEQTitleDisplay;
-        private UserInterface.Controls.MPComboBox cmbEQTitleShowTime;
         private UserInterface.Controls.MPCheckBox mpEQTitleDisplay;
         private UserInterface.Controls.MPCheckBox mpSmoothEQ;
         private UserInterface.Controls.MPCheckBox mpEqDisplay;
@@ -736,5 +646,8 @@
         private System.Windows.Forms.GroupBox gbxGeneral;
         private System.Windows.Forms.RadioButton rbtnGeneralSecondLine;
         private System.Windows.Forms.RadioButton rbtnGeneralFirstLine;
+        private System.Windows.Forms.MaskedTextBox textEqEnabledTimeInSeconds;
+        private System.Windows.Forms.MaskedTextBox textEqDisabledTimeInSeconds;
+        private System.Windows.Forms.MaskedTextBox textEqStartDelayInSeconds;
     }
 }

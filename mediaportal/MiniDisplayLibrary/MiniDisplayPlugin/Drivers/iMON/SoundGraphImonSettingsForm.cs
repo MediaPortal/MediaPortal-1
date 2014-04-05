@@ -15,17 +15,24 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             textDisableWhenIdleDelayInSeconds.DataBindings.Add("Text", SoundGraphImon.Settings.Instance, "DisableWhenIdleDelayInSeconds");
             checkReenableAfter.DataBindings.Add("Checked", SoundGraphImon.Settings.Instance, "ReenableAfter");
             textReenableAfterDelayInSeconds.DataBindings.Add("Text", SoundGraphImon.Settings.Instance, "ReenableAfterDelayInSeconds");
-            //
-
+            
+            //EQ Settings
             mpEqDisplay.DataBindings.Add("Checked", SoundGraphImonVfd.Settings.Instance, "EqDisplay");
             cmbEqMode.SelectedIndex = 0;
             cmbEqMode.DataBindings.Add("SelectedIndex", SoundGraphImon.Settings.Instance, "EqMode");
             mpRestrictEQ.DataBindings.Add("Checked", SoundGraphImon.Settings.Instance, "RestrictEQ");
             cmbEqRate.SelectedIndex = 0;
             cmbEqRate.DataBindings.Add("SelectedIndex", SoundGraphImon.Settings.Instance, "EqRate");
-            mpDelayEQ.DataBindings.Add("Checked", SoundGraphImon.Settings.Instance, "DelayEQ");
-            cmbDelayEqTime.SelectedIndex = 0;
-            cmbDelayEqTime.DataBindings.Add("SelectedIndex", SoundGraphImon.Settings.Instance, "DelayEqTime");
+
+            //EQ Start delay management
+            mpDelayEQ.DataBindings.Add("Checked", SoundGraphImon.Settings.Instance, "EqStartDelay");
+            textEqStartDelayInSeconds.DataBindings.Add("Text", SoundGraphImon.Settings.Instance, "DelayEqTime");
+            
+            //EQ Period management
+            mpEQTitleDisplay.DataBindings.Add("Checked", SoundGraphImon.Settings.Instance, "EqPeriodic");
+            textEqDisabledTimeInSeconds.DataBindings.Add("Text", SoundGraphImon.Settings.Instance, "EqDisabledTimeInSeconds");
+            textEqEnabledTimeInSeconds.DataBindings.Add("Text", SoundGraphImon.Settings.Instance, "EqEnabledTimeInSeconds");
+
             if (SoundGraphImon.Settings.Instance.NormalEQ)
             {
                 mpNormalEQ.Checked = true;
