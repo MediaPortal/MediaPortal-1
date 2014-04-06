@@ -202,6 +202,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           Thread.Sleep(1000);
           this.lcd.SetLine(0, "MiniDisplay");
           this.lcd.SetLine(1, this.lcd.Name);
+          this.lcd.Update();
           Thread.Sleep(5000);
           this.lcd.CleanUp();
         }

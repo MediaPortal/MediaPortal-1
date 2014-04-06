@@ -66,21 +66,25 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             if (line == 0)
             {
                 Line1 = message;
-                //Update our icons here
-                //TODO: Maybe we should do that no more than once a second
-                SetMediaTypeIcons();
-                SetCodecs();
-                SetMediaProgress();
-                SetSpeakerConfig();
-                SetAspectRatio();
-                SetEtcIcons();
             }
             else if (line == 1)
             {
                 Line2 = message;
-                //Only show the second line for now
-                SoundGraphDisplay.IDW_SetLcdText(Line2);
             }            
+        }
+
+        public override void Update()
+        {
+            //Only show the second line for now
+            SoundGraphDisplay.IDW_SetLcdText(Line2);
+            //Update our icons here
+            //TODO: Maybe we should do that no more than once a second
+            SetMediaTypeIcons();
+            SetCodecs();
+            SetMediaProgress();
+            SetSpeakerConfig();
+            SetAspectRatio();
+            SetEtcIcons();
         }
         
 

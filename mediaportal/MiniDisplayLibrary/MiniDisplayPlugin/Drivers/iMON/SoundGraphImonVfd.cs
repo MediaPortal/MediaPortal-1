@@ -72,19 +72,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             else if (line == 1)
             {
                 Line2 = message;
-
-                //Check if we need to show EQ this is also taking into account our various settings.
-                iSettings.iEq._EqDataAvailable = MiniDisplayHelper.GetEQ(ref iSettings.iEq);
-                if (iSettings.iEq._EqDataAvailable)
-                {                    
-                    //SetAndRollEqData();
-                    UpdateEq();
-                }
-                else
-                {
-                    //Not show EQ then display our lines
-                    SoundGraphDisplay.IDW_SetVfdText(Line1, Line2);
-                }
             }
         }
 
@@ -101,6 +88,23 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             form.ShowDialog();
             form.Dispose();
             SoundGraphDisplay.LogDebug("(IDisplay) SoundGraphImonVfd.Configure() completed");
+        }
+
+        public override void Update()
+        {
+            //Check if we need to show EQ this is also taking into account our various settings.
+            iSettings.iEq._EqDataAvailable = MiniDisplayHelper.GetEQ(ref iSettings.iEq);
+            if (iSettings.iEq._EqDataAvailable)
+            {
+                //SetAndRollEqData();
+                UpdateEq();
+            }
+            else
+            {
+                //Not show EQ then display our lines
+                SoundGraphDisplay.IDW_SetVfdText(Line1, Line2);
+            }
+
         }
 
         void UpdateEq()

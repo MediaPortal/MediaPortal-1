@@ -31,14 +31,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     /// <summary>
     /// SoundGraph iMON MiniDisplay implementation.
     /// </summary>
-    public class SoundGraphDisplay : IDisplay
+    public class SoundGraphDisplay : BaseDisplay
     {
         SoundGraphImon iDisplay;
 
         public SoundGraphDisplay()
         {
             iDisplay = null;
-            Disabled = null;
             ImonErrorMessage = string.Empty;
             Initialized = false;      
         }
@@ -47,18 +46,17 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         public static void LogInfo(string msg) { Log.Info(msg); }
         public static void LogError(string msg) { Log.Error(msg); }
 
-        protected bool? Disabled { get; set; }
 
         protected string ImonErrorMessage { get; set; }
 
         protected bool Initialized { get; set; }
 
         //From IDisplay
-        public string Description { get { return "SoundGraph display for iMON Manager >= 8.01.0419"; } }
+        public override string Description { get { return "SoundGraph display for iMON Manager >= 8.01.0419"; } }
 
         //From IDisplay
         //Notably used when testing to put on the screen
-        public string Name 
+        public override string Name 
         {
             get
             {
@@ -75,10 +73,17 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
 
         //From IDisplay
-        public bool SupportsGraphics { get { return false; } }
+        public override void Update()
+        {
+            //We must already have a display when updating
+            iDisplay.Update();
+        }
 
         //From IDisplay
-        public bool SupportsText { get { return true; } }
+        public override bool SupportsGraphics { get { return false; } }
+
+        //From IDisplay
+        public override bool SupportsText { get { return true; } }
 
 
         //
@@ -88,7 +93,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
         protected DSPType DisplayType { get; set; }
 
-        public string ErrorMessage
+        public override string ErrorMessage
         {
             get
             {
@@ -101,7 +106,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
 
         //From IDisplay
-        public bool IsDisabled
+        public override bool IsDisabled
         {
             get
             {
@@ -113,13 +118,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
 
         //From IDisplay
-        public virtual void Dispose()
+        public override void Dispose()
         {
             CleanUp();
         }
 
         //From IDisplay
-        public virtual void Initialize()
+        public override void Initialize()
         {
             LogDebug("SoundGraphDisplay.Initialize(): called");
             //Init if not already initialized
@@ -147,7 +152,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
 
         //From IDisplay
-        public virtual void CleanUp()
+        public override void CleanUp()
         {
             LogDebug("SoundGraphDisplay.CleanUp(): called");
             iDisplay = null; //hopefully that should destroy it
@@ -156,14 +161,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
 
         //From IDisplay
-        public virtual void SetLine(int line, string message)
+        public override void SetLine(int line, string message)
         {
             //Pass on that call to our actual display
             iDisplay.SetLine(line,message);
         }
 
         //From IDisplay
-        public virtual void Configure()
+        public override void Configure()
         {   
             //We need to have an initialized display to be able to configure it
             Initialize();
@@ -172,6 +177,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 //Display something for fun
                 SetLine(0,"Adv. Settings");
                 SetLine(1, Name);
+                Update();
             }
             else
             {
@@ -198,19 +204,19 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
 
         //From IDisplay
-        public virtual void DrawImage(Bitmap bitmap)
+        public override void DrawImage(Bitmap bitmap)
         {
             // Not supported
         }
 
         //From IDisplay
-        public void SetCustomCharacters(int[][] customCharacters)
+        public override void SetCustomCharacters(int[][] customCharacters)
         {
             // Not supported
         }
 
         //From IDisplay
-        public void Setup(string port,
+        public override void Setup(string port,
           int lines, int cols, int delay,
           int linesG, int colsG, int timeG,
           bool backLight, int backLightLevel,

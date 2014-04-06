@@ -43,7 +43,7 @@ using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {
-  public class iMONLCDg : BaseDisplay, IDisplay
+  public class iMONLCDg : BaseDisplay
   {
     public static readonly string[,] _BrandTable = {
                                                      {"SOUNDGRAPH", "iMON"},
@@ -361,7 +361,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     #region IDisplay Members
 
-    public void CleanUp()
+    public override void CleanUp()
     {
       if (!_isDisabled)
       {
@@ -373,14 +373,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public void Configure()
+    public override void Configure()
     {
       Form form = new iMONLCDg_AdvancedSetupForm();
       form.ShowDialog();
       form.Dispose();
     }
 
-    public void Dispose()
+    public override void Dispose()
     {
       Log.Debug("iMONLCDg.Dispose(): called");
       RestartIrss();
@@ -485,7 +485,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       Log.Debug("iMONLCDg.RestartIrss(): completed");
     }
 
-    public void DrawImage(Bitmap bitmap)
+    public override void DrawImage(Bitmap bitmap)
     {
       if (!_isDisabled)
       {
@@ -571,7 +571,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public void Initialize()
+    public override void Initialize()
     {
       Log.Info("(IDisplay) iMONLCDg.Initialize(): called");
       if (_isDisabled)
@@ -590,9 +590,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public void SetCustomCharacters(int[][] customCharacters) {}
+    public override void SetCustomCharacters(int[][] customCharacters) { }
 
-    public void SetLine(int line, string message)
+    public override void SetLine(int line, string message)
     {
       if (!_isDisabled)
       {
@@ -620,7 +620,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public void Setup(string port, int lines, int cols, int delay, int linesG, int colsG, int timeG, bool backLight,
+    public override void Setup(string port, int lines, int cols, int delay, int linesG, int colsG, int timeG, bool backLight,
                       int backlightLevel, bool contrast, int contrastLevel, bool blankOnExit)
     {
       Log.Info("(IDisplay) iMONLCDg.Setup(): called");
@@ -904,17 +904,17 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       Log.Info("(IDisplay) iMONLCDg.Setup(): Completed");
     }
 
-    public string Description
+    public override string Description
     {
       get { return "SoundGraph iMON USB VFD/LCD Plugin v29_11_2009"; }
     }
 
-    public string ErrorMessage
+    public override string ErrorMessage
     {
       get { return _errorMessage; }
     }
 
-    public bool IsDisabled
+    public override bool IsDisabled
     {
       get
       {
@@ -923,12 +923,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public string Name
+    public override string Name
     {
       get { return "iMONLCDg"; }
     }
 
-    public bool SupportsGraphics
+    public override bool SupportsGraphics
     {
       get
       {
@@ -968,7 +968,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public bool SupportsText
+    public override bool SupportsText
     {
       get { return true; }
     }

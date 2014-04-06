@@ -11,7 +11,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     /// <summary>
     /// Base Class for iMON Display API in iMON Manager >= 8.01.0419
     /// </summary>
-    public abstract class ImonBase : IDisplay
+    public abstract class ImonBase : BaseDisplay
     {
         public ImonBase()
         {
@@ -22,29 +22,18 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             Line2 = string.Empty;
         }
 
+
         protected static void LogDebug(string msg) {Log.Debug(msg);}
         protected static void LogInfo(string msg) {Log.Info(msg);}
         protected static void LogError(string msg) {Log.Error(msg);}
 
-        protected bool? Disabled { get; set; }
+        //From IDisplay
+        public override bool SupportsGraphics { get { return false; } }
+        public override bool SupportsText { get { return true; } }
+        //public abstract override string Name { get; }
+        //public abstract override string Description { get; }
 
-        protected string ImonErrorMessage { get; set;}
-
-        protected bool Initialized { get; set; }
-
-        protected string Line1 { get; set; }
-
-        protected string Line2 { get; set; }
-
-        public string Description { get; protected set; }
-
-        protected string ClassErrorName { get; set; }
-
-        protected string UnsupportedDeviceErrorMessage { get; set; }
-
-        protected DSPType DisplayType { get; set; }
-
-        public string ErrorMessage
+        public override string ErrorMessage
         {
             get
             {
@@ -56,7 +45,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             }
         }
 
-        public bool IsDisabled
+        public override bool IsDisabled
         {
             get
             {
@@ -94,18 +83,33 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             }
         }
 
-        public string Name { get; protected set; }
 
-        public bool SupportsGraphics { get { return false; } }
 
-        public bool SupportsText { get { return true; } }
+        protected bool? Disabled { get; set; }
 
-        public virtual void Dispose()
+        protected string ImonErrorMessage { get; set;}
+
+        protected bool Initialized { get; set; }
+
+        protected string Line1 { get; set; }
+
+        protected string Line2 { get; set; }
+
+        
+
+        protected string ClassErrorName { get; set; }
+
+        protected string UnsupportedDeviceErrorMessage { get; set; }
+
+        protected DSPType DisplayType { get; set; }
+
+
+        public override void Dispose()
         {
             CleanUp();
         }
 
-        public virtual void Initialize()
+        public override void Initialize()
         {
             LogDebug("(IDisplay) ImonBase.Initialize(): called");
             if (Initialized)
@@ -124,7 +128,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             LogDebug("(IDisplay) ImonBase.Initialize(): completed");
         }
 
-        public virtual void CleanUp()
+        public override void CleanUp()
         {
             LogDebug("(IDisplay) ImonBase.CleanUp(): called");
             if (!Initialized)
@@ -136,24 +140,24 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             Log.Debug("(IDisplay) ImonBase.CleanUp(): completed");
         }
 
-        public abstract void SetLine(int line, string message);
+        //public abstract void SetLine(int line, string message);
 
-        public virtual void Configure()
+        public override void Configure()
         {
             // No configuration possible/necessary
         }
 
-        public void DrawImage(Bitmap bitmap)
+        public override void DrawImage(Bitmap bitmap)
         {
             // Not supported
         }
 
-        public void SetCustomCharacters(int[][] customCharacters)
+        public override void SetCustomCharacters(int[][] customCharacters)
         {
             // Not supported
         }
 
-        public void Setup(string port,
+        public override void Setup(string port,
           int lines, int cols, int delay,
           int linesG, int colsG, int timeG,
           bool backLight, int backLightLevel,

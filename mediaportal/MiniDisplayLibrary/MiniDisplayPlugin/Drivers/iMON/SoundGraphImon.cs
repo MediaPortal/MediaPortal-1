@@ -57,6 +57,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         public abstract string Name();
         //Launch advanced settings dialog
         public abstract void Configure();
+        //Update tick
+        public abstract void Update();
 
         //Here comes settings related stuff
         //Settings stuff

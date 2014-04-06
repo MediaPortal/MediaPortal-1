@@ -15,10 +15,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         public ImonVfd()
         {
             UnsupportedDeviceErrorMessage = "Only VFDs are supported";
-            Description = "iMON VFD for iMON Manager >= 8.01.0419";
-            Name = "iMONVFD";
             DisplayType = DSPType.DSPN_DSP_VFD;
         }
+
+        //From IDisplay
+        public override string Name { get { return "iMONVFD"; } }
+        public override string Description { get { return "iMON VFD for iMON Manager >= 8.01.0419"; } }
+
 
         public override void SetLine(int line, string message)
         {

@@ -40,8 +40,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         public ImonLcd()
         {
             UnsupportedDeviceErrorMessage = "Only LCDs are supported";
-            Description = "iMON LCD for iMON Manager >= 8.01.0419";
-            Name = "iMONLCD";
             DisplayType = DSPType.DSPN_DSP_LCD;
 
             LoadAdvancedSettings();
@@ -51,6 +49,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             SystemEvents.PowerModeChanged += 
                 SystemEvents_PowerModeChanged;
         }
+
+        //From IDisplay
+        public override string Name { get { return "iMONLCD"; } }
+        public override string Description { get { return "iMON LCD for iMON Manager >= 8.01.0419"; } }
+
 
         private void SystemEvents_PowerModeChanged(object sender, PowerModeChangedEventArgs e)
         {

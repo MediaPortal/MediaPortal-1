@@ -83,6 +83,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       }
     }
 
+    //Our graphics and text are ready push through to the driver
     public void DisplayLines()
     {
       if (Settings.Instance.ExtensiveLogging)
@@ -99,6 +100,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         {
           this.SendText();
         }
+
+        //Now the driver has both texts and graphics.
+        //Just signal the driver to update. This is basically our tick.
+        this.display.Update();
       }
       catch (Exception exception)
       {
