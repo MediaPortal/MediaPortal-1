@@ -63,6 +63,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     private string m_Port = "378";
     private string m_PrefixChar = string.Empty;
     private int m_ScrollDelay = 300;
+    private int m_UpdateDelay = 300;
     private bool m_ShowPropertyBrowser;
     private string m_Shutdown1 = string.Empty;
     private string m_Shutdown2 = string.Empty;
@@ -669,6 +670,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       get { return this.m_ScrollDelay; }
       set { this.m_ScrollDelay = value; }
     }
+
+    [XmlAttribute]
+    public int UpdateDelay
+    {
+        get { return this.m_UpdateDelay; }
+        set { this.m_UpdateDelay = value; }
+    }
+
 
     [XmlAttribute]
     public bool ShowPropertyBrowser

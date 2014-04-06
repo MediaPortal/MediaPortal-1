@@ -30,6 +30,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {
     /// <summary>
     /// SoundGraph iMON MiniDisplay implementation.
+    /// Provides access to iMON Display API.
     /// </summary>
     public class SoundGraphDisplay : BaseDisplay
     {
@@ -146,7 +147,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                     LogDebug("SoundGraphDisplay.Initialize(): VFD");
                     iDisplay = new SoundGraphImonVfd();
                 }
-
             }
             Log.Debug("SoundGraphDisplay.Initialize(): completed");
         }

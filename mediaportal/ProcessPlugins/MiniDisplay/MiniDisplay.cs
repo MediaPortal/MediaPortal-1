@@ -42,6 +42,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     private IDisplay display;
     private DisplayHandler handler;
     private DateTime lastAction = DateTime.MinValue;
+    //Time at which we last scrolled our text
+    private DateTime lastScroll = DateTime.MinValue;
     private Status status;
     private bool stopRequested;
     private Thread t;
@@ -365,14 +367,15 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             this.browser.SetActiveWindow(activeWindow);
           }
         }
+
         foreach (Message message in Settings.Instance.Messages)
         {
-          if (((message.Status == Status.Any) || (message.Status == this.status)) &&
-              ((message.Windows.Count == 0) || message.Windows.Contains((int)activeWindow)))
-          {
-            if (!message.Process(this.handler)) {}
-            return;
-          }
+            if (((message.Status == Status.Any) || (message.Status == this.status)) &&
+                ((message.Windows.Count == 0) || message.Windows.Contains((int)activeWindow)))
+            {
+                if (!message.Process(this.handler)) { }
+                return;
+            }
         }
       }
       catch (Exception exception)
@@ -415,12 +418,21 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             }
             try
             {
-              // It's not safe to call this method in other states than running, since
-              // it calls the window manager. It might cause a dead lock in other states
-              if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
-              {
-                handler.DisplayLines();
-              }
+                // It's not safe to call this method in other states than running, since
+                // it calls the window manager. It might cause a dead lock in other states
+                if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
+                {
+                    //Is it time for us to scroll our texts?                    
+                    if ((DateTime.Now - this.lastScroll).TotalMilliseconds >= Settings.Instance.ScrollDelay)
+                    {
+                        this.lastScroll = DateTime.Now; //Mark the time
+                        //Take care of scrolling our texts
+                        handler.DisplayLines();
+                    }
+
+                    //Do update regardless of whether or not we scrolled our texts
+                    handler.Update();
+                }
             }
             catch (Exception exception2)
             {
@@ -431,7 +443,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
               }
             }
             Settings.Instance.LogDebug("MiniDisplay.Run(): MiniDisplay Sleeping...");
-            Thread.Sleep(Settings.Instance.ScrollDelay);
+            Thread.Sleep(Settings.Instance.UpdateDelay);
             Settings.Instance.LogDebug("MiniDisplay.Run(): MiniDisplay Sleeping... DONE");         
           }
           else
