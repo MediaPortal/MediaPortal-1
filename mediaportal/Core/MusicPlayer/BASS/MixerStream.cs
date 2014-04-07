@@ -414,7 +414,22 @@ namespace MediaPortal.MusicPlayer.BASS
       _syncProc = Bass.BASS_ChannelSetSync(_mixer,
         BASSSync.BASS_SYNC_ONETIME | BASSSync.BASS_SYNC_POS | BASSSync.BASS_SYNC_MIXTIME,
         syncPos, _playbackEndProcDelegate,
-        GCHandle.ToIntPtr(_pinnedObjects[stream.BassStream]));
+        new IntPtr(stream.BassStream));
+    }
+
+    /// <summary>
+    /// Free the pinned Object
+    /// </summary>
+    /// <param name="stream"></param>
+    public void FreeGcHandle(int stream)
+    {
+      // Free pinned objects
+      if (_pinnedObjects.ContainsKey(stream))
+      {
+        Log.Debug("BASS: Free GCHandle for stream {0}", stream);
+        _pinnedObjects[stream].Free();
+        _pinnedObjects.Remove(stream);
+      }
     }
 
     #endregion
@@ -764,8 +779,17 @@ namespace MediaPortal.MusicPlayer.BASS
     {
       try
       {
-        GCHandle gch = GCHandle.FromIntPtr(userData);
-        MusicStream musicstream = (MusicStream)gch.Target;
+        MusicStream musicstream;
+        // Get the GC handle of the pinned object
+        try
+        {
+          musicstream = (MusicStream)_pinnedObjects[userData.ToInt32()].Target;
+        }
+        catch (KeyNotFoundException)
+        {
+          Log.Error("BASS: GCHandle of Musicstream not found in Dictionary");
+          return;
+        }
 
         Log.Debug("BASS: End of Song {0}", musicstream.FilePath);
 
@@ -826,14 +850,6 @@ namespace MediaPortal.MusicPlayer.BASS
             MusicStreamMessage(musicstream, MusicStream.StreamAction.Crossfading);
           }
         }
-
-        // Free pinned objects
-        if (_pinnedObjects.ContainsKey(musicstream.BassStream))
-        {
-          _pinnedObjects[musicstream.BassStream].Free();
-          _pinnedObjects.Remove(musicstream.BassStream);
-        }
-        gch.Free();
       }
       catch (AccessViolationException)
       {
