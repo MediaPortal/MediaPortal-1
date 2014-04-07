@@ -379,7 +379,6 @@ namespace MediaPortal.Visualization
                                                               string.Empty, null);
             _VisualizationPluginsInfo.Add(vizInfo);
           }
-          BassVis.BASSVIS_Quit(_visParam);
         }
       }
       catch (Exception ex)
