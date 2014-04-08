@@ -84,6 +84,9 @@ namespace MediaPortal.Player
     private int _debugStep = 0;
     private GUIImage _blackImage;
 
+    private const int _full3DTABMinHeight = 720 * 2;
+    private const int _full3DSBSMinWidth  = 1280 * 2;
+
     private FrameGrabber grabber = FrameGrabber.GetInstance();
 
     //Additions for Non-Linear Stretch
@@ -312,11 +315,11 @@ namespace MediaPortal.Player
 
         GUIGraphicsContext.IsFullHD3DFormat = false;
 
-        if (((double)videoSize.Width / videoSize.Height >= 2.5) && (videoSize.Width >= 2560)) // we have Full HD SBS 
+        if (((double)videoSize.Width / videoSize.Height >= 2.5) && (videoSize.Width >= _full3DSBSMinWidth)) // we have Full HD SBS 
         {
           GUIGraphicsContext.IsFullHD3DFormat = true;
         }
-        else if (((double)videoSize.Width / videoSize.Height <= 1.5) && (videoSize.Height >= 1440)) // we have Full HD TAB
+        else if (((double)videoSize.Width / videoSize.Height <= 1.5) && (videoSize.Height >= _full3DTABMinHeight)) // we have Full HD TAB
         {
           GUIGraphicsContext.IsFullHD3DFormat = true;
         }
@@ -388,11 +391,11 @@ namespace MediaPortal.Player
         // to provide only the size of one half to the GetWindow call of the
         // Geometry class
 
-        if (((double)videoSize.Width / videoSize.Height >= 2.5) && (videoSize.Width >= 2560)) // we have Full HD SBS 
+        if (((double)videoSize.Width / videoSize.Height >= 2.5) && (videoSize.Width >= _full3DSBSMinWidth)) // we have Full HD SBS 
         {
           fVideoWidth /= 2;
         }
-        else if (((double)videoSize.Width / videoSize.Height <= 1.5) && (videoSize.Height >= 1440)) // we have Full HD TAB
+        else if (((double)videoSize.Width / videoSize.Height <= 1.5) && (videoSize.Height >= _full3DTABMinHeight)) // we have Full HD TAB
         {
           fVideoHeight /= 2;
         }
