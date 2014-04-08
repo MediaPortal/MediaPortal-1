@@ -138,9 +138,9 @@ namespace MediaPortal.Utils.Web
     /// <param name="regex">The regex.</param>
     /// <param name="remove">if set to <c>true</c> [remove].</param>
     /// <returns>string found</returns>
-    public string SearchRegex(int index, string regex, bool remove)
+    public string SearchRegex(int index, string regex, bool remove, bool useCaptureGroup)
     {
-      return SearchRegex(index, regex, false, remove);
+      return SearchRegex(index, regex, false, remove, useCaptureGroup);
     }
 
     /// <summary>
@@ -151,7 +151,7 @@ namespace MediaPortal.Utils.Web
     /// <param name="caseinsensitive">if set to <c>true</c> [caseinsensitive].</param>
     /// <param name="remove">if set to <c>true</c> [remove].</param>
     /// <returns>string found</returns>
-    public string SearchRegex(int index, string regex, bool caseinsensitive, bool remove)
+    public string SearchRegex(int index, string regex, bool caseinsensitive, bool remove, bool useCaptureGroup)
     {
       string sectionSource;
       if (_sectionSource != string.Empty)
@@ -187,7 +187,10 @@ namespace MediaPortal.Utils.Web
       string found = null;
       if (result.Success)
       {
-        found = sectionSource.Substring(result.Index, result.Length);
+        if (useCaptureGroup)
+          found = result.Groups[1].Value;
+        else
+          found = sectionSource.Substring(result.Index, result.Length);
         if (remove)
         {
           _sectionSource = sectionSource.Substring(0, result.Index);
@@ -322,7 +325,7 @@ namespace MediaPortal.Utils.Web
       if ((start = link.IndexOf("(")) != -1)
       {
         args = 0;
-        param = new int[link.Length - start,2];
+        param = new int[link.Length - start, 2];
         param[0, 0] = start + 1;
         for (int i = 0; i < link.Length - start; i++)
         {
