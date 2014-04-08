@@ -153,7 +153,7 @@ namespace MediaPortal.Utils.Time
     /// </summary>
     /// <param name="dateTimeGmt">The date time GMT.</param>
     public WorldDateTime(string dateTimeGmt)
-      : this(dateTimeGmt, true) {}
+      : this(dateTimeGmt, true) { }
 
     #endregion
 
@@ -379,7 +379,13 @@ namespace MediaPortal.Utils.Time
       return dt;
     }
 
+    [Obsolete("fix typo and use ToUniversalTime")]
     public DateTime ToUniveralTime()
+    {
+      return ToUniversalTime();
+    }
+
+    public DateTime ToUniversalTime()
     {
       DateTime dt = this.DateTime;
       if (_timeZone != null)
@@ -506,7 +512,7 @@ namespace MediaPortal.Utils.Time
             ts = tsOff;
           }
         }
-        catch (Exception) {}
+        catch (Exception) { }
       }
       return ts;
     }
