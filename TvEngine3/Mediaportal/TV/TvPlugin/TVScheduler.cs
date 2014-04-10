@@ -46,8 +46,6 @@ namespace Mediaportal.TV.TvPlugin
   /// </summary>
   public class TvScheduler : GUIInternalWindow, IComparer<GUIListItem>
   {
- 
-
     #region variables, ctor/dtor
 
     private enum SortMethod
@@ -63,7 +61,7 @@ namespace Mediaportal.TV.TvPlugin
     [SkinControl(8)] protected GUIButtonControl btnPriorities = null;
     [SkinControl(9)] protected GUIButtonControl btnConflicts = null;
     [SkinControl(10)] protected GUIListControl listSchedules = null;
-    [SkinControl(11)] protected GUIToggleButtonControl btnSeries = null;
+    [SkinControl(11)] protected GUICheckButton btnSeries = null;
 
     private SortMethod currentSortMethod = SortMethod.Date;
     private bool m_bSortAscending = true;
@@ -144,7 +142,7 @@ namespace Mediaportal.TV.TvPlugin
 
     public override bool Init()
     {
-      bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvschedulerserver.xml");
+      bool bResult = Load(GUIGraphicsContext.GetThemedSkinFile(@"\mytvschedulerserver.xml"));
       LoadSettings();
       return bResult;
     }
@@ -186,19 +184,6 @@ namespace Mediaportal.TV.TvPlugin
       base.OnPageDestroy(newWindowId);
       m_iSelectedItem = GetSelectedItemNo();
       SaveSettings();
-
-      if (!GUIGraphicsContext.IsTvWindow(newWindowId))
-      {
-        if (TVHome.Card.IsTimeShifting && !(TVHome.Card.IsTimeShifting || TVHome.Card.IsRecording))
-        {
-          if (GUIGraphicsContext.ShowBackground)
-          {
-            // stop timeshifting & viewing...
-
-            TVHome.Card.StopTimeShifting();
-          }
-        }
-      }
     }
 
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
@@ -536,7 +521,7 @@ namespace Mediaportal.TV.TvPlugin
       btnConflicts.Visible = conflictsList.Count > 0;
       GUIControl.ClearControl(GetID, listSchedules.GetID);
       IList<ScheduleBLL> schedulesList = new List<ScheduleBLL>();
-                  
+
       foreach (var schedule in ServiceAgents.Instance.ScheduleServiceAgent.ListAllSchedules())
       {
         var scheduleBll = new ScheduleBLL(schedule);
@@ -1089,7 +1074,7 @@ namespace Mediaportal.TV.TvPlugin
             rec.ScheduleType = (int)ScheduleRecordingType.WeeklyEveryTimeOnThisChannel;
             rec.Canceled = ScheduleFactory.MinSchedule;
             break;
-        }        
+        }
         ServiceAgents.Instance.ScheduleServiceAgent.SaveSchedule(rec);
         
         ServiceAgents.Instance.ControllerServiceAgent.OnNewSchedule();
@@ -1146,7 +1131,7 @@ namespace Mediaportal.TV.TvPlugin
       else
       {
         string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.Channel.DisplayName);
-        if (string.IsNullOrEmpty(strLogo))                              
+        if (string.IsNullOrEmpty(strLogo))
         {
           GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb", "defaultVideoBig.png");          
         }
@@ -1159,7 +1144,7 @@ namespace Mediaportal.TV.TvPlugin
 
     public void SetProperties(Schedule schedule, Program prog)
     {
-      GUIPropertyManager.SetProperty("#TV.Scheduled.Ritle", String.Empty);
+      GUIPropertyManager.SetProperty("#TV.Scheduled.Title", String.Empty);
       GUIPropertyManager.SetProperty("#TV.Scheduled.Genre", String.Empty);
       GUIPropertyManager.SetProperty("#TV.Scheduled.Time", String.Empty);
       GUIPropertyManager.SetProperty("#TV.Scheduled.Description", String.Empty);
@@ -1169,7 +1154,7 @@ namespace Mediaportal.TV.TvPlugin
       if (prog != null)
       {
         GUIPropertyManager.SetProperty("#TV.Scheduled.Title", TVUtil.GetDisplayTitle(prog));
-        GUIPropertyManager.SetProperty("#TV.Scheduled.Gescription", prog.Description);
+        GUIPropertyManager.SetProperty("#TV.Scheduled.Description", prog.Description);
         GUIPropertyManager.SetProperty("#TV.Scheduled.Genre", TVUtil.GetCategory(prog.ProgramCategory));
       }
 
@@ -1205,8 +1190,8 @@ namespace Mediaportal.TV.TvPlugin
     private void UpdateDescription()
     {
       Schedule rec = ScheduleFactory.CreateSchedule(-1, "", ScheduleFactory.MinSchedule, ScheduleFactory.MinSchedule);      
-      rec.PreRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("preRecordInterval", "5").Value);
-      rec.PostRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("postRecordInterval", "5").Value);
+      rec.PreRecordInterval = ServiceAgents.Instance.SettingServiceAgent.GetValue("preRecordInterval", 5);
+      rec.PostRecordInterval = ServiceAgents.Instance.SettingServiceAgent.GetValue("postRecordInterval", 5);
       SetProperties(rec);
       GUIListItem pItem = GetItem(GetSelectedItemNo());
       if (pItem == null)

@@ -20,23 +20,21 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Text;
-using MediaPortal.Configuration;
-using MediaPortal.Dialogs;
-using MediaPortal.GUI.Library;
-using MediaPortal.Player;
-using MediaPortal.Profile;
-using MediaPortal.Util;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
 using Mediaportal.TV.Server.TVService.Interfaces;
+using Mediaportal.TV.TvPlugin.Recorded;
+using MediaPortal.Dialogs;
+using MediaPortal.GUI.Library;
+using MediaPortal.Player;
+using MediaPortal.Profile;
+using MediaPortal.Util;
 using Log = Mediaportal.TV.Server.TVLibrary.Interfaces.Logging.Log;
 
 namespace Mediaportal.TV.TvPlugin.Helper
@@ -47,8 +45,6 @@ namespace Mediaportal.TV.TvPlugin.Helper
   /// </summary>
   public class TVUtil
   {
-
-
     #region vars
 
     private int _days;
@@ -85,20 +81,6 @@ namespace Mediaportal.TV.TvPlugin.Helper
 
     #endregion
 
-    public static void SetGentleConfigFile()
-    {
-      try
-      {
-        NameValueCollection appSettings = ConfigurationManager.AppSettings;
-        appSettings.Set("GentleConfigFile", Config.GetFile(Config.Dir.Config, "gentle.config"));
-      }
-      catch (Exception ex)
-      {
-        Log.Error("TVUtil.SetGentleConfigFile: Error occured while setting the gentle configuration store: {0}", ex);
-        throw;
-      }
-    }
-    
     public IList<Schedule> GetRecordingTimes(ScheduleBLL rec)
     {
       IList<Program> programs = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsForSchedule(rec.Entity).ToList();
@@ -113,7 +95,7 @@ namespace Mediaportal.TV.TvPlugin.Helper
       {
         foreach (Program prg in programs)
         {
-          Schedule recNew = ScheduleFactory.Clone(rec.Entity);          
+          Schedule recNew = ScheduleFactory.Clone(rec.Entity);
           recNew.ScheduleType = (int)ScheduleRecordingType.Once;
           recNew.StartTime = prg.StartTime;
           recNew.EndTime = prg.EndTime;
@@ -131,7 +113,7 @@ namespace Mediaportal.TV.TvPlugin.Helper
         }
       }
       return recordings;
-    }    
+    }
 
     public static string GetDisplayTitle(Schedule schedule)
     {
@@ -348,18 +330,7 @@ namespace Mediaportal.TV.TvPlugin.Helper
       return fileName;
     }
 
-    
-    public static bool PlayRecording(Recording rec)
-    {
-      return PlayRecording(rec, 0);
-    }
-
-    public static bool PlayRecording(Recording rec, double startOffset)
-    {
-      return PlayRecording(rec, startOffset, g_Player.MediaType.Recording);
-    }
-    
-    public static bool PlayRecording(Recording rec, double startOffset, g_Player.MediaType mediaType)
+    public static bool PlayRecording(Recording rec, double startOffset = 0, g_Player.MediaType mediaType = g_Player.MediaType.Recording)
     {
       string fileName = GetFileNameForRecording(rec);
 
@@ -367,7 +338,7 @@ namespace Mediaportal.TV.TvPlugin.Helper
       string chapters = useRTSP ? ServiceAgents.Instance.ControllerServiceAgent.GetRecordingChapters(rec.IdRecording) : null;
 
       Log.Info("PlayRecording:{0} - using rtsp mode:{1}", fileName, useRTSP);
-      if (g_Player.Play(fileName, mediaType, chapters))
+      if (g_Player.Play(fileName, mediaType, chapters, false))
       {
         if (Utils.IsVideo(fileName) && !g_Player.IsRadio)
         {
@@ -392,7 +363,7 @@ namespace Mediaportal.TV.TvPlugin.Helper
         g_Player.currentDescription = rec.Description;
 
         rec.TimesWatched++;
-        ServiceAgents.Instance.RecordingServiceAgent.SaveRecording(rec);        
+        ServiceAgents.Instance.RecordingServiceAgent.SaveRecording(rec);
         return true;
       }
       return false;
@@ -401,13 +372,16 @@ namespace Mediaportal.TV.TvPlugin.Helper
     public static string GetChannelLogo (Channel channel)
     {
       string logo = String.Empty;
-      if (null != channel && channel.MediaType == (int)MediaTypeEnum.TV)
+      if (channel != null)
       {
-        logo = Utils.GetCoverArt(Thumbs.TVChannel, channel.DisplayName);
-      }
-      else if (null != channel && channel.MediaType == (int)MediaTypeEnum.Radio)
-      {
-        logo = Utils.GetCoverArt(Thumbs.Radio, channel.DisplayName);
+        if (channel.MediaType == (int)MediaTypeEnum.TV)
+        {
+          logo = Utils.GetCoverArt(Thumbs.TVChannel, channel.DisplayName);
+        }
+        else if (channel.MediaType == (int)MediaTypeEnum.Radio)
+        {
+          logo = Utils.GetCoverArt(Thumbs.Radio, channel.DisplayName);
+        }
       }
       return logo;
     }
@@ -541,7 +515,7 @@ namespace Mediaportal.TV.TvPlugin.Helper
         if (confirmed)
         {
           if (prg != null)
-          {                        
+          {
             DateTime canceledStartTime = new ScheduleBLL(schedule).GetSchedStartTimeForProg(prg);
             int idChannel = prg.IdChannel;
             wasDeleted = StopRecAndDeleteSchedule(schedule, parentSchedule, idChannel, canceledStartTime);             
@@ -630,19 +604,18 @@ namespace Mediaportal.TV.TvPlugin.Helper
           wasDeleted = DeleteSchedule(schedule.IdSchedule);
         }        
       }
-            
-      
+
       ServiceAgents.Instance.ControllerServiceAgent.OnNewSchedule();
       return wasDeleted || wasCanceled;
     }
 
     private static bool StopRecAndDeleteEntireSchedule(Schedule schedule, Schedule parentSchedule, DateTime canceledStartTime)
     {
-      int idChannel = schedule.IdChannel;      
+      int idChannel = schedule.IdChannel;
       
-      bool wasRecStopped = StopRecording(schedule);            
-      bool wasDeleted = DeleteEntireOrOnceSchedule(schedule, parentSchedule);              
-                        
+      bool wasRecStopped = StopRecording(schedule);
+      bool wasDeleted = DeleteEntireOrOnceSchedule(schedule, parentSchedule);
+
       ServiceAgents.Instance.ControllerServiceAgent.OnNewSchedule();
       return wasRecStopped || wasDeleted;
     }
@@ -659,21 +632,21 @@ namespace Mediaportal.TV.TvPlugin.Helper
       //is the schedule recording, then stop it now.
       bool wasDeleted = false;
       try
-      {                
+      {
         if (parentSchedule != null)
         {
-          wasDeleted = DeleteSchedule(parentSchedule.IdSchedule);          
+          wasDeleted = DeleteSchedule(parentSchedule.IdSchedule);
         }
 
         if (schedule != null)
         {
-          wasDeleted = DeleteSchedule(schedule.IdSchedule);          
-        } 
+          wasDeleted = DeleteSchedule(schedule.IdSchedule);
+        }
       }
       catch (Exception)
       {
         //consume ex
-      }            
+      }
       return wasDeleted;
     }
 
@@ -684,7 +657,7 @@ namespace Mediaportal.TV.TvPlugin.Helper
       {
         Schedule sched2del = ServiceAgents.Instance.ScheduleServiceAgent.GetSchedule(idSchedule);
         if (sched2del != null)
-        {          
+        {
           ServiceAgents.Instance.ScheduleServiceAgent.DeleteSchedule(sched2del.IdSchedule);
         }
         scheduleDeleted = true;
@@ -734,7 +707,7 @@ namespace Mediaportal.TV.TvPlugin.Helper
         else
         {
           dlgYesNo.SetHeading(1449); // stop recording
-          dlgYesNo.SetLine(1, 1450); // are you sure to stop recording?          
+          dlgYesNo.SetLine(1, 1450); // are you sure to stop recording?
 
           string recordingTitle = GetRecordingTitle(IdSchedule);
           dlgYesNo.SetLine(2, recordingTitle); 
@@ -751,7 +724,7 @@ namespace Mediaportal.TV.TvPlugin.Helper
     }
 
     private static string GetRecordingTitle(int IdSchedule) {
-      string recordingTitle = "";          
+      string recordingTitle = "";
 
       Schedule schedule = ServiceAgents.Instance.ScheduleServiceAgent.GetSchedule(IdSchedule);
       if (schedule != null)
@@ -818,11 +791,11 @@ namespace Mediaportal.TV.TvPlugin.Helper
       {
         IVirtualCard vCard;
         isRec = ServiceAgents.Instance.ControllerServiceAgent.IsRecordingSchedule(idSchedule, out vCard);
-      }      
+      }
 
       if (isRec)
       {
-        confirmed = SetupConfirmDelRecDialogue();        
+        confirmed = SetupConfirmDelRecDialogue();
       }
       else
       {
@@ -862,7 +835,7 @@ namespace Mediaportal.TV.TvPlugin.Helper
 
     private static bool StopRecording(Schedule schedule)
     {
-      bool stoppedRec = false;      
+      bool stoppedRec = false;
       bool isRec = ServiceAgents.Instance.ScheduleServiceAgent.IsScheduleRecording(schedule.IdSchedule);
       if (isRec)
       {
@@ -877,8 +850,8 @@ namespace Mediaportal.TV.TvPlugin.Helper
 
     public static string GetCategory(ProgramCategory programCategory)
     {
-      string category = "";
-      if (programCategory != null)
+      string category = GUILocalizeStrings.Get(2014); // unknown;
+      if (programCategory != null && !string.IsNullOrEmpty(programCategory.Category))
       {
         category = programCategory.Category;
       }

@@ -46,8 +46,6 @@ namespace Mediaportal.TV.TvPlugin.EPG
   /// </summary>
   public class TvGuideBase : GuideBase, IMDB.IProgress
   {
-
-
     #region constants
 
     private const string SKIN_PROPERTY_PREFIX = "#TV";
@@ -263,14 +261,11 @@ namespace Mediaportal.TV.TvPlugin.EPG
       }
     }
 
-    
-
-
     public override void Process()
     {
       TVHome.UpdateProgressPercentageBar();
 
-      OnKeyTimeout();      
+      OnKeyTimeout();
 
       if (_needUpdate)
       {
@@ -573,7 +568,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
             lock (_recordingsExpectedLock)
             {
               _recordingsExpected.Add(_currentProgram.Entity.Channel);
-            }            
+            }
           }
         }
       }
@@ -734,11 +729,6 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
     #region private methods
 
-    
-
-   
-
-
     private void OnGetIMDBInfo()
     {
       var movieDetails = new IMDBMovie { SearchString = _currentProgram.Entity.Title };
@@ -755,14 +745,27 @@ namespace Mediaportal.TV.TvPlugin.EPG
           //todo gibman: handle new genre here.. simply add it.
           prog.ProgramCategory.Category = movieDetails.Genre;
 
-
           prog.StarRating = (int)movieDetails.Rating;
           ServiceAgents.Instance.ProgramServiceAgent.SaveProgram(prog);
         }
         var videoInfo = (GUIVideoInfo)GUIWindowManager.GetWindow((int)Window.WINDOW_VIDEO_INFO);
+        videoInfo.AllocResources();
         videoInfo.Movie = movieDetails;
         var btnPlay = (GUIButtonControl)videoInfo.GetControl(2);
-        btnPlay.Visible = false;
+        if (btnPlay != null)
+        {
+          btnPlay.Visible = false;
+        }
+        GUICheckButton btnCast = (GUICheckButton)videoInfo.GetControl(4);
+        if (btnCast != null)
+        {
+          btnCast.Visible = false;
+        }
+        GUICheckButton btnWatched = (GUICheckButton)videoInfo.GetControl(6);
+        if (btnWatched != null)
+        {
+          btnWatched.Visible = false;
+        }
         GUIWindowManager.ActivateWindow((int)Window.WINDOW_VIDEO_INFO);
       }
       else

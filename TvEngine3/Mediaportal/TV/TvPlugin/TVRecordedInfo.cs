@@ -56,7 +56,7 @@ namespace Mediaportal.TV.TvPlugin
 
     public override bool Init()
     {
-      bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvRecordedInfo.xml");
+      bool bResult = Load(GUIGraphicsContext.GetThemedSkinFile(@"\mytvRecordedInfo.xml"));
       return bResult;
     }
 

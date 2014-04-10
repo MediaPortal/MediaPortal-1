@@ -26,14 +26,6 @@ using System.Drawing;
 using System.Globalization;
 using System.Timers;
 using System.Windows.Forms;
-using MediaPortal.Dialogs;
-using MediaPortal.GUI.Library;
-using MediaPortal.GUI.Video;
-using MediaPortal.Player;
-using MediaPortal.Player.PostProcessing;
-using MediaPortal.Profile;
-using MediaPortal.Util;
-using MediaPortal.Video.Database;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
@@ -43,6 +35,15 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVService.Interfaces;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
 using Mediaportal.TV.TvPlugin.Helper;
+using Mediaportal.TV.TvPlugin.Recorded;
+using MediaPortal.Dialogs;
+using MediaPortal.GUI.Library;
+using MediaPortal.GUI.Video;
+using MediaPortal.Player;
+using MediaPortal.Player.PostProcessing;
+using MediaPortal.Profile;
+using MediaPortal.Util;
+using MediaPortal.Video.Database;
 using Action = MediaPortal.GUI.Library.Action;
 using Timer = System.Timers.Timer;
 
@@ -55,7 +56,6 @@ namespace Mediaportal.TV.TvPlugin
   /// </summary>
   public class TvFullScreen : GUIInternalWindow, IRenderLayer, IMDB.IProgress
   {
-  
     #region FullScreenState class
 
     private class FullScreenState
@@ -64,7 +64,6 @@ namespace Mediaportal.TV.TvPlugin
       public int Speed = 1;
       public bool OsdVisible = false;
       public bool Paused = false;
-      //public bool MsnVisible = false;       // msn related can be removed
       public bool ContextMenuVisible = false;
       public bool ShowStatusLine = false;
       public bool ShowTime = false;
@@ -93,19 +92,16 @@ namespace Mediaportal.TV.TvPlugin
     private TvZapOsd _zapWindow = null;
 
     private TvOsd _osdWindow = null;
-
-    ///GUITVMSNOSD _msnWindow = null;       // msn related can be removed
     private DateTime _osdTimeoutTimer;
 
     private DateTime _zapTimeOutTimer;
     private DateTime _groupTimeOutTimer;
     private DateTime _vmr7UpdateTimer = DateTime.Now;
-    //		string			m_sZapChannel;
-    //		long				m_iZapDelay;
+    //    string      m_sZapChannel;
+    //    long        m_iZapDelay;
     private volatile bool _isOsdVisible = false;
     private volatile bool _isPauseOsdVisible = false;
     private volatile bool _zapOsdVisible = false;
-    //bool _msnWindowVisible = false;       // msn related can be removed
     private bool _channelInputVisible = false;
 
     private long _timeOsdOnscreen;
@@ -118,7 +114,6 @@ namespace Mediaportal.TV.TvPlugin
     private string _channelName = "";
     private bool _isDialogVisible = false;
     private bool _IsClosingDialog = false;
-    //bool _isMsnChatPopup = false;       // msn related can be removed
     private GUIDialogMenu dlg;
     private GUIDialogMenuBottomRight _dialogBottomMenu = null;
     private GUIDialogYesNo _dlgYesNo = null;
@@ -134,6 +129,7 @@ namespace Mediaportal.TV.TvPlugin
     private bool _immediateSeekIsRelative = true;
     private int _immediateSeekValue = 10;
     private int _channelNumberMaxLength = 3;
+    private bool _confirmTimeshiftStop = true;
 
     // Tv error handling
     private TvPlugin.TVHome.ChannelErrorInfo _gotTvErrorMessage = null;
@@ -223,7 +219,7 @@ namespace Mediaportal.TV.TvPlugin
         _immediateSeekIsRelative = xmlreader.GetValueAsBool("movieplayer", "immediateskipstepsisrelative", true);
         _immediateSeekValue = xmlreader.GetValueAsInt("movieplayer", "immediateskipstepsize", 10);
       }
-      Load(GUIGraphicsContext.Skin + @"\mytvFullScreen.xml");
+      Load(GUIGraphicsContext.GetThemedSkinFile(@"\mytvFullScreen.xml"));
       GetID = (int)Window.WINDOW_TVFULLSCREEN;
 
       SettingsLoaded = false;
@@ -242,9 +238,8 @@ namespace Mediaportal.TV.TvPlugin
     {
       using (Settings xmlreader = new MPSettings())
       {
-        //_isMsnChatPopup = (xmlreader.GetValueAsInt("MSNmessenger", "popupwindow", 0) == 1);       // msn related can be removed
         _timeOsdOnscreen = 1000 * xmlreader.GetValueAsInt("movieplayer", "osdtimeout", 5);
-        //				m_iZapDelay = 1000*xmlreader.GetValueAsInt("movieplayer","zapdelay",2);
+        //        m_iZapDelay = 1000*xmlreader.GetValueAsInt("movieplayer","zapdelay",2);
         _zapTimeOutValue = 1000 * xmlreader.GetValueAsInt("movieplayer", "zaptimeout", 5);
         _byIndex = xmlreader.GetValueAsBool("mytv", "byindex", true);
         _channelNumberMaxLength = xmlreader.GetValueAsInt("mytv", "channelnumbermaxlength", 3);
@@ -276,77 +271,62 @@ namespace Mediaportal.TV.TvPlugin
         {
           _allowedArModes.Add(Geometry.Type.Zoom14to9);
         }
-        if (!TVHome.settingsLoaded)
-        {
-          string strValue = xmlreader.GetValueAsString("mytv", "defaultar", "Normal");
-          GUIGraphicsContext.ARType = Utils.GetAspectRatio(strValue);
-        }
+        string strValue = xmlreader.GetValueAsString("mytv", "defaultar", "Normal");
+        GUIGraphicsContext.ARType = Utils.GetAspectRatio(strValue);
       }
 
       SettingsLoaded = true;
     }
 
-    //		public string ZapChannel
-    //		{
-    //			set
-    //			{
-    //				m_sZapChannel = value;
-    //			}
-    //			get
-    //			{
-    //				return m_sZapChannel;
-    //			}
-    //		}
-
     #endregion
 
-		public override void ResetAllControls()
-		{
-			//reset all
+    public override void ResetAllControls()
+    {
+      //reset all
 
-			bool bOffScreen = false;
-			int iCalibrationY = GUIGraphicsContext.OSDOffset;
-			int iTop = GUIGraphicsContext.OverScanTop;
-			int iMin = 0;
+      bool bOffScreen = false;
+      int iCalibrationY = GUIGraphicsContext.OSDOffset;
+      int iTop = GUIGraphicsContext.OverScanTop;
+      int iMin = 0;
 
-			foreach (CPosition pos in _listPositions)
-			{
-				pos.control.SetPosition((int)pos.XPos, (int)pos.YPos + iCalibrationY);
-			}
-			foreach (CPosition pos in _listPositions)
-			{
-				GUIControl pControl = pos.control;
+      foreach (CPosition pos in _listPositions)
+      {
+        pos.control.SetPosition((int)pos.XPos, (int)pos.YPos + iCalibrationY);
+      }
+      foreach (CPosition pos in _listPositions)
+      {
+        GUIControl pControl = pos.control;
 
-				int dwPosY = pControl.YPosition;
-				if (pControl.IsVisible)
-				{
-					if (dwPosY < iTop)
-					{
-						int iSize = iTop - dwPosY;
-						if (iSize > iMin)
-						{
-							iMin = iSize;
-						}
-						bOffScreen = true;
-					}
-				}
-			}
-			if (bOffScreen)
-			{
-				foreach (CPosition pos in _listPositions)
-				{
-					GUIControl pControl = pos.control;
-					int dwPosX = pControl.XPosition;
-					int dwPosY = pControl.YPosition;
-					if (dwPosY < (int)100)
-					{
-						dwPosY += Math.Abs(iMin);
-						pControl.SetPosition(dwPosX, dwPosY);
-					}
-				}
-			}
-			base.ResetAllControls();
-		}
+        int dwPosY = pControl.YPosition;
+        if (pControl.IsVisible)
+        {
+          if (dwPosY < iTop)
+          {
+            int iSize = iTop - dwPosY;
+            if (iSize > iMin)
+            {
+              iMin = iSize;
+            }
+            bOffScreen = true;
+          }
+        }
+      }
+      if (bOffScreen)
+      {
+        foreach (CPosition pos in _listPositions)
+        {
+          GUIControl pControl = pos.control;
+          int dwPosX = pControl.XPosition;
+          int dwPosY = pControl.YPosition;
+          if (dwPosY < (int)100)
+          {
+            dwPosY += Math.Abs(iMin);
+            pControl.SetPosition(dwPosX, dwPosY);
+          }
+        }
+      }
+      base.ResetAllControls();
+    }
 
     public override void OnAction(Action action)
     {
@@ -357,21 +337,12 @@ namespace Mediaportal.TV.TvPlugin
         _volumeTimer = DateTime.Now;
         _isVolumeVisible = true;
         RenderVolume(_isVolumeVisible);
-        //				if(_vmr9OSD!=null)
-        //					_vmr9OSD.RenderVolumeOSD();
-      }
-      //ACTION_SHOW_CURRENT_TV_INFO
-      if (action.wID == Action.ActionType.ACTION_SHOW_CURRENT_TV_INFO)
-      {
-        //if(_vmr9OSD!=null)
-        //	_vmr9OSD.RenderCurrentShowInfo();
       }
 
       if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK && action.MouseButton == MouseButtons.Right)
       {
         // switch back to the menu
         _isOsdVisible = false;
-        //_msnWindowVisible = false;       // msn related can be removed
         GUIWindowManager.IsOsdVisible = false;
         GUIGraphicsContext.IsFullScreenVideo = false;
         GUIWindowManager.ShowPreviousWindow();
@@ -432,29 +403,6 @@ namespace Mediaportal.TV.TvPlugin
         }
         return;
       }
-        //@
-        /*
-       * else if (_msnWindowVisible)       // msn related can be removed
-      {
-        if (((action.wID == Action.ActionType.ACTION_SHOW_OSD) || (action.wID == Action.ActionType.ACTION_SHOW_GUI))) // hide the OSD
-        {
-          lock (this)
-          {
-            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _msnWindow.GetID, 0, 0, GetID, 0, null);
-            _msnWindow.OnMessage(msg);	// Send a de-init msg to the OSD
-            _msnWindowVisible = false;
-            GUIWindowManager.IsOsdVisible = false;
-          }
-          return;
-        }
-        if (action.wID == Action.ActionType.ACTION_KEY_PRESSED)
-        {
-          _msnWindow.OnAction(action);
-
-          return;
-        }
-      }*/
-
       else if (action.wID == Action.ActionType.ACTION_MOUSE_MOVE && GUIGraphicsContext.MouseSupport)
       {
         int y = (int)action.fAmount2;
@@ -471,7 +419,7 @@ namespace Mediaportal.TV.TvPlugin
           HideZapOSD();
         }
       }
-      //Log.DebugFormatFile(Log.LogType.Error, "action:{0}",action.wID);
+      //this.LogDebug("action:{0}",action.wID);
       switch (action.wID)
       {
         case Action.ActionType.ACTION_MOUSE_DOUBLECLICK:
@@ -528,22 +476,6 @@ namespace Mediaportal.TV.TvPlugin
             }
           }
           break;
-
-          // msn related can be removed
-          //case Action.ActionType.ACTION_SHOW_MSN_OSD:
-          //  if (_isMsnChatPopup)
-          //  {
-          //    this.LogDebug("MSN CHAT:ON");
-
-          //    _msnWindowVisible = true;
-          //    GUIWindowManager.VisibleOsd = GUIWindow.Window.WINDOW_TVMSNOSD;
-          //    ///@
-          //    ///_msnWindow.DoModal(GetID, null);
-          //    _msnWindowVisible = false;
-          //    GUIWindowManager.IsOsdVisible = false;
-          //  }
-          //  break;
-
         case Action.ActionType.ACTION_AUTOCROP:
           {
             this.LogDebug("ACTION_AUTOCROP");
@@ -634,7 +566,7 @@ namespace Mediaportal.TV.TvPlugin
             {
               if (g_Player.CurrentSubtitleStream == -1 && g_Player.SupportsCC)
               {
-                msg.Label = "CC1";
+                msg.Label = "CC1 Analog or Digital";
               }
               else
               {
@@ -665,8 +597,6 @@ namespace Mediaportal.TV.TvPlugin
 
         case Action.ActionType.ACTION_KEY_PRESSED:
           {
-            // msn related can be removed
-            //if ((action.m_key != null) && (!_msnWindowVisible))
             if (action.m_key != null)
             {
               OnKeyCode((char)action.m_key.KeyChar);
@@ -704,7 +634,7 @@ namespace Mediaportal.TV.TvPlugin
         case Action.ActionType.ACTION_SHOW_GUI:
           this.LogDebug("fullscreentv:show gui");
           //if(_vmr9OSD!=null)
-          //	_vmr9OSD.HideBitmap();
+          //  _vmr9OSD.HideBitmap();
           GUIWindowManager.ShowPreviousWindow();
           return;
 
@@ -910,7 +840,7 @@ namespace Mediaportal.TV.TvPlugin
           {
             this.LogDebug("TVFullscreen: user request to stop");
 
-
+            // TODO gibman to clean up/complete???
             //bool canUserParkTimeShifting = ServiceAgents.Instance.ControllerServiceAgent.CanUserParkTimeshifting(TVHome.Card.User);
             //if (canUserParkTimeShifting)
             {
@@ -929,7 +859,7 @@ namespace Mediaportal.TV.TvPlugin
                   this.LogDebug("TVFullscreen: IsParkConfirmed");
                   var userCopy = TVHome.Card.User.Clone() as IUser;
                   ServiceAgents.Instance.ControllerServiceAgent.ParkTimeShifting(userCopy.Name, g_Player.CurrentPosition, TVHome.Card.IdChannel, out userCopy);                 
-                  g_Player.Stop();                              
+                  g_Player.Stop();
                 }
                 else if (dlgPlayStopPark.IsStopConfirmed)
                 {
@@ -938,29 +868,47 @@ namespace Mediaportal.TV.TvPlugin
                 }
               } 
             }
-            /*else
+            /*else if (CanStopTimeshifting())
             {
-              GUIDialogPlayStop dlgPlayStop =
-               (GUIDialogPlayStop)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PLAY_STOP);
-              if (dlgPlayStop != null)
-              {
-                dlgPlayStop.SetHeading(GUILocalizeStrings.Get(605));
-                dlgPlayStop.SetLine(1, GUILocalizeStrings.Get(2550));
-                dlgPlayStop.SetLine(2, GUILocalizeStrings.Get(2551));
-                dlgPlayStop.SetDefaultToStop(false);
-                dlgPlayStop.DoModal(GetID);
-                if (dlgPlayStop.IsStopConfirmed)
-                {
-                  this.LogDebug("TVFullscreen: stop confirmed");
-                  g_Player.Stop();
-                }
-              } 
-            } */           
+              g_Player.Stop();
+            } */
           }
           break;
       }
 
       base.OnAction(action);
+    }
+
+    private bool CanStopTimeshifting()
+    {
+      if (!_confirmTimeshiftStop)
+      {
+        // Can always stop timeshift when confirmation is not required
+        return true;
+      }
+
+      // Get dialog to ask the user for confirmation
+      this.LogDebug("TVFullscreen: user request to stop");
+      GUIDialogPlayStop dlgPlayStop =
+        (GUIDialogPlayStop)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PLAY_STOP);
+      if (dlgPlayStop == null)
+      {
+        // Return true to avoid dead end on missing dialog
+        return true;
+      }
+
+      dlgPlayStop.SetHeading(GUILocalizeStrings.Get(605));
+      dlgPlayStop.SetLine(1, GUILocalizeStrings.Get(2550));
+      dlgPlayStop.SetLine(2, GUILocalizeStrings.Get(2551));
+      dlgPlayStop.SetDefaultToStop(false);
+      dlgPlayStop.DoModal(GetID);
+      if (dlgPlayStop.IsStopConfirmed)
+      {
+        this.LogDebug("TVFullscreen: stop confirmed");
+        return true;
+      }
+
+      return false;
     }
 
     private void ShowMiniEpg() 
@@ -971,17 +919,6 @@ namespace Mediaportal.TV.TvPlugin
       miniGuide.AutoZap = true;
       miniGuide.DoModal(GetID);
       _isDialogVisible = false;
-    }
-
-    public override void SetObject(object obj)
-    {
-      base.SetObject(obj);
-      ///@
-      /// if (obj.GetType() == typeof(VMR9OSD))
-      ///{
-      ///  _vmr9OSD = (VMR9OSD)obj;
-
-      ///}
     }
 
     public override bool OnMessage(GUIMessage message)
@@ -1025,7 +962,7 @@ namespace Mediaportal.TV.TvPlugin
           }
 
           Schedule s = ServiceAgents.Instance.ScheduleServiceAgent.GetSchedule(card.RecordingScheduleId);
-          TVUtil.DeleteRecAndSchedQuietly(s, card.IdChannel);          
+          TVUtil.DeleteRecAndSchedQuietly(s, card.IdChannel);
 
           GUIDialogNotify dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
           if (dlgNotify == null)
@@ -1065,7 +1002,6 @@ namespace Mediaportal.TV.TvPlugin
             {
               _dialogBottomMenu.Reset();
               _dialogBottomMenu.SetHeading(605); //my tv
-              //_dialogBottomMenu.SetHeadingRow2(prog.title);              
 
               _dialogBottomMenu.AddLocalizedString(875); //current program
               _dialogBottomMenu.AddLocalizedString(876); //till manual stop
@@ -1144,68 +1080,6 @@ namespace Mediaportal.TV.TvPlugin
 
       if (message.Message == GUIMessage.MessageType.GUI_MSG_RECORDER_ABOUT_TO_START_RECORDING)
       {
-        /*
-                TVRecording rec = message.Object as TVRecording;
-                if (rec == null) return true;
-                if (rec.Channel == Recorder.TVChannelName) return true;
-                if (!Recorder.NeedChannelSwitchForRecording(rec)) return true;
-
-                _messageBoxVisible = false;
-                _msnWindowVisible = false;     // msn related can be removed
-                GUIWindowManager.IsOsdVisible = false;
-                if (_zapOsdVisible)
-                {
-                  GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _zapWindow.GetID, 0, 0, GetID, 0, null);
-                  _zapWindow.OnMessage(msg);
-                  _zapOsdVisible = false;
-                  GUIWindowManager.IsOsdVisible = false;
-                }
-                if (_isOsdVisible)
-                {
-                  GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _osdWindow.GetID, 0, 0, GetID, 0, null);
-                  _osdWindow.OnMessage(msg);
-                  _isOsdVisible = false;
-                  GUIWindowManager.IsOsdVisible = false;
-                }
-                if (_msnWindowVisible)     // msn related can be removed
-                {
-                  GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _msnWindow.GetID, 0, 0, GetID, 0, null);
-                  _msnWindow.OnMessage(msg);	// Send a de-init msg to the OSD
-                  _msnWindowVisible = false;
-                  GUIWindowManager.IsOsdVisible = false;
-                }
-                if (_isDialogVisible && dlg != null)
-                {
-                  GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, dlg.GetID, 0, 0, GetID, 0, null);
-                  dlg.OnMessage(msg);	// Send a de-init msg to the OSD
-                }
-
-                _bottomDialogMenuVisible = true;
-                _dialogBottomMenu = (GUIDialogMenuBottomRight)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU_BOTTOM_RIGHT);
-                _dialogBottomMenu.TimeOut = 10;
-                _dialogBottomMenu.SetHeading(1004);//About to start recording
-                _dialogBottomMenu.SetHeadingRow2(String.Format("{0} {1}", GUILocalizeStrings.Get(1005), rec.Channel));
-                _dialogBottomMenu.SetHeadingRow3(rec.title);
-                _dialogBottomMenu.AddLocalizedString(1006); //Allow recording to begin
-                _dialogBottomMenu.AddLocalizedString(1007); //Cancel recording and maintain watching tv
-                _dialogBottomMenu.DoModal(GetID);
-                if (_dialogBottomMenu.SelectedId == 1007) //cancel recording
-                {
-                  if (rec.RecType == TVRecording.RecordingType.Once)
-                  {
-                    rec.canceled = Utils.datetolong(DateTime.Now);
-                  }
-                  else
-                  {
-                    Program prog = message.Object2 as Program;
-                    if (prog != null)
-                      rec.CanceledSeries.Add(prog.Start);
-                    else
-                      rec.CanceledSeries.Add(Utils.datetolong(DateTime.Now));
-                  }
-                  TVDatabase.UpdateRecording(rec, TVDatabase.RecordingChange.canceled);
-                }
-         */
         _bottomDialogMenuVisible = false;
       }
 
@@ -1315,55 +1189,6 @@ namespace Mediaportal.TV.TvPlugin
 
           #endregion
 
-          // msn related can be removed
-          //#region case GUI_MSG_MSN_CLOSECONVERSATION
-
-          //case GUIMessage.MessageType.GUI_MSG_MSN_CLOSECONVERSATION:
-          //  if (_msnWindowVisible)
-          //  {
-          //    ///@
-          //    /// GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _msnWindow.GetID, 0, 0, GetID, 0, null);
-          //    ///_msnWindow.OnMessage(msg);	// Send a de-init msg to the OSD
-          //  }
-          //  _msnWindowVisible = false;
-          //  GUIWindowManager.IsOsdVisible = false;
-          //  break;
-
-          //#endregion
-
-          // msn related can be removed
-          //#region case GUI_MSG_MSN_STATUS_MESSAGE
-
-          //case GUIMessage.MessageType.GUI_MSG_MSN_STATUS_MESSAGE:
-
-          //#endregion
-
-          // msn related can be removed
-          //#region case GUI_MSG_MSN_MESSAGE
-          //case GUIMessage.MessageType.GUI_MSG_MSN_MESSAGE:
-          //  if (_isOsdVisible && _isMsnChatPopup)
-          //  {
-          //    GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _osdWindow.GetID, 0, 0, GetID, 0, null);
-          //    _osdWindow.OnMessage(msg);	// Send a de-init msg to the OSD
-          //    _isOsdVisible = false;
-          //    GUIWindowManager.IsOsdVisible = false;
-
-          //  }
-
-          //  if (!_msnWindowVisible && _isMsnChatPopup)
-          //  {
-          //    this.LogDebug("MSN CHAT:ON");
-          //    _msnWindowVisible = true;
-          //    GUIWindowManager.VisibleOsd = GUIWindow.Window.WINDOW_TVMSNOSD;
-          //    ///@
-          //    ///_msnWindow.DoModal(GetID, message);
-          //    _msnWindowVisible = false;
-          //    GUIWindowManager.IsOsdVisible = false;
-
-          //  }
-          //  break;
-          //#endregion
-
           #region case GUI_MSG_WINDOW_DEINIT
 
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
@@ -1390,7 +1215,6 @@ namespace Mediaportal.TV.TvPlugin
 
               _screenState.ContextMenuVisible = false;
               _screenState.MsgBoxVisible = false;
-              //_screenState.MsnVisible = false;      // msn related can be removed
               _screenState.OsdVisible = false;
               _screenState.Paused = false;
               _screenState.ShowGroup = false;
@@ -1422,7 +1246,6 @@ namespace Mediaportal.TV.TvPlugin
 
             _osdWindow = (TvOsd)GUIWindowManager.GetWindow((int)Window.WINDOW_TVOSD);
             _zapWindow = (TvZapOsd)GUIWindowManager.GetWindow((int)Window.WINDOW_TVZAPOSD);
-            //_msnWindow = (GUITVMSNOSD)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVMSNOSD);     // msn related can be removed
 
             _lastPause = g_Player.Paused;
             _lastSpeed = g_Player.Speed;
@@ -1481,7 +1304,6 @@ namespace Mediaportal.TV.TvPlugin
           {
             return true;
           }
-          //if (_msnWindowVisible) return true;     // msn related can be removed
           if (message.SenderControlId != (int)Window.WINDOW_TVFULLSCREEN)
           {
             return true;
@@ -1491,12 +1313,6 @@ namespace Mediaportal.TV.TvPlugin
           #endregion
       }
 
-      // msn related can be removed
-      //if (_msnWindowVisible)
-      //{
-      //  ///@
-      //  ///_msnWindow.OnMessage(message);	// route messages to MSNChat window
-      //}
       return base.OnMessage(message);
     }
 
@@ -1526,7 +1342,7 @@ namespace Mediaportal.TV.TvPlugin
 
       IList<ChannelLinkageMap> linkages;
       if (!g_Player.IsTVRecording)
-      {        
+      {
         linkages = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(TVHome.Navigator.Channel.Entity.IdChannel).ChannelLinkMaps;        
         if (linkages != null)
         {
@@ -1544,13 +1360,6 @@ namespace Mediaportal.TV.TvPlugin
         dlg.AddLocalizedString(1441); // Fullscreen teletext
       }
       dlg.AddLocalizedString(941); // Change aspect ratio
-
-      // msn related can be removed
-      //if (PluginManager.IsPluginNameEnabled("MSN Messenger"))
-      //{
-      //  dlg.AddLocalizedString(12902); // MSN Messenger
-      //  dlg.AddLocalizedString(902); // MSN Online contacts
-      //}
 
       //IAudioStream[] streams = TVHome.Card.AvailableAudioStreams;
       //if (streams != null && streams.Length > 0)
@@ -1585,7 +1394,7 @@ namespace Mediaportal.TV.TvPlugin
         dlg.AddLocalizedString(100748); // Program Information
       }
 
-      if (!g_Player.IsTVRecording && Utils.FileExistsInCache(GUIGraphicsContext.Skin + @"\mytvtuningdetails.xml"))
+      if (!g_Player.IsTVRecording && Utils.FileExistsInCache(GUIGraphicsContext.GetThemedSkinFile(@"\mytvtuningdetails.xml")))
       {
         dlg.AddLocalizedString(200041); // tuning details
       }
@@ -1691,12 +1500,12 @@ namespace Mediaportal.TV.TvPlugin
           ShowProgramInfo();
           break;
 
-        case 601: // RecordNow          
-        case 265: // StopRec.          
+        case 601: // RecordNow
+        case 265: // StopRec.
           TVHome.ManualRecord(TVHome.Navigator.Channel, GetID);
           break;
 
-        case 200042: // Linked channels          
+        case 200042: // Linked channels
           linkages = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(TVHome.Navigator.Channel.Entity.IdChannel).ChannelLinkMaps;                  
           ShowLinkedChannelsMenu(linkages);
           break;
@@ -1814,9 +1623,24 @@ namespace Mediaportal.TV.TvPlugin
       if (IMDBFetcher.GetInfoFromIMDB(this, ref movieDetails, true, false))
       {
         GUIVideoInfo videoInfo = (GUIVideoInfo)GUIWindowManager.GetWindow((int)Window.WINDOW_VIDEO_INFO);
+        videoInfo.AllocResources();
         videoInfo.Movie = movieDetails;
         GUIButtonControl btnPlay = (GUIButtonControl)videoInfo.GetControl(2);
-        btnPlay.Visible = false;
+        if (btnPlay != null)
+        {
+          btnPlay.Visible = false;
+        }
+        GUICheckButton btnCast = (GUICheckButton)videoInfo.GetControl(4);
+        if (btnCast != null)
+        {
+          btnCast.Visible = false;
+        }
+        GUICheckButton btnWatched = (GUICheckButton)videoInfo.GetControl(6);
+        if (btnWatched != null)
+        {
+          btnWatched.Visible = false;
+        }
+
         GUIWindowManager.ActivateWindow((int)Window.WINDOW_VIDEO_INFO);
       }
       else
@@ -2099,7 +1923,7 @@ namespace Mediaportal.TV.TvPlugin
         return;
       }
 
-      // Set new language			
+      // Set new language      
       if ((dlg.SelectedLabel >= 0) && (dlg.SelectedLabel < nrOfstreams))
       {
         g_Player.CurrentAudioStream = dlg.SelectedLabel;
@@ -2176,7 +2000,7 @@ namespace Mediaportal.TV.TvPlugin
 
       if (g_Player.SupportsCC)
       {
-        dlg.Add("CC1");
+        dlg.Add("CC1 Analog or Digital");
       }
 
       // get the number of subtitles in the current movie
@@ -2196,7 +2020,7 @@ namespace Mediaportal.TV.TvPlugin
 
       // select/focus the subtitle, which is active atm.
       // There may be no subtitle streams selected at all (-1), which happens when a subtitle file is used instead
-      if (g_Player.EnableSubtitle && nbSubStreams > 0)
+      if (g_Player.EnableSubtitle && nbSubStreams >= 0)
       {
         if (g_Player.SupportsCC)
         {
@@ -2472,14 +2296,17 @@ namespace Mediaportal.TV.TvPlugin
     {
       // Set recorder status
       IVirtualCard card;
-      
-      if (ServiceAgents.Instance.ControllerServiceAgent.IsRecording(TVHome.Navigator.Channel.Entity.IdChannel, out card))
+
+      if (TVHome.Navigator.Channel != null)
       {
-        ShowControl(GetID, (int)Control.REC_LOGO);
-      }
-      else
-      {
-        HideControl(GetID, (int)Control.REC_LOGO);
+        if (ServiceAgents.Instance.ControllerServiceAgent.IsRecording(TVHome.Navigator.Channel.Entity.IdChannel, out card))
+        {
+          ShowControl(GetID, (int)Control.REC_LOGO);
+        }
+        else
+        {
+          HideControl(GetID, (int)Control.REC_LOGO);
+        }
       }
 
       int speed = g_Player.Speed;
@@ -2605,11 +2432,11 @@ namespace Mediaportal.TV.TvPlugin
         if (ts.TotalMilliseconds > _zapTimeOutValue)
         {
           //if(_vmr9OSD!=null)
-          //	_vmr9OSD.HideBitmap();
+          //  _vmr9OSD.HideBitmap();
         }
       }
       //if(_vmr9OSD!=null)
-      //	_vmr9OSD.CheckTimeOuts();
+      //  _vmr9OSD.CheckTimeOuts();
 
 
       // OSD Timeout?
@@ -2675,53 +2502,6 @@ namespace Mediaportal.TV.TvPlugin
       {
         return;
       }
-      /*
-      if (VMR7Util.g_vmr7 != null)
-      {
-        if (!GUIWindowManager.IsRouted)
-        {
-          if (_screenState.ContextMenuVisible ||
-            _screenState.MsgBoxVisible ||
-            //_screenState.MsnVisible ||     // msn related can be removed
-            _screenState.OsdVisible ||
-            _screenState.Paused ||
-            _screenState.ShowGroup ||
-            _screenState.ShowInput ||
-            _screenState.ShowStatusLine ||
-            _screenState.ShowTime ||
-            _screenState.ZapOsdVisible ||
-            g_Player.Speed != 1 ||
-            _needToClearScreen)
-          {
-            TimeSpan ts = DateTime.Now - _vmr7UpdateTimer;
-            if ((ts.TotalMilliseconds >= 5000) || _needToClearScreen)
-            {
-              _needToClearScreen = false;
-              using (Bitmap bmp = new Bitmap(GUIGraphicsContext.Width, GUIGraphicsContext.Height))
-              {
-                using (Graphics g = Graphics.FromImage(bmp))
-                {
-                  GUIGraphicsContext.graphics = g;
-                  base.Render(timePassed);
-                  RenderForm(timePassed);
-                  GUIGraphicsContext.graphics = null;
-                  _screenState.wasVMRBitmapVisible = true;
-                  VMR7Util.g_vmr7.SaveBitmap(bmp, true, true, 0.8f);
-                }
-              }
-              _vmr7UpdateTimer = DateTime.Now;
-            }
-          }
-          else
-          {
-            if (_screenState.wasVMRBitmapVisible)
-            {
-              _screenState.wasVMRBitmapVisible = false;
-              VMR7Util.g_vmr7.SaveBitmap(null, false, false, 0.8f);
-            }
-          }
-        }
-      }*/
 
       if (GUIGraphicsContext.Vmr9Active)
       {
@@ -2746,24 +2526,9 @@ namespace Mediaportal.TV.TvPlugin
       }
 
       //close window
-      //GUIMessage msg2 = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _osdWindow.GetID, 0, 0, GetID, 0,
-      //                                 null);
-      //_osdWindow.OnMessage(msg2); // Send a de-init msg to the OSD
-      //msg2 = null;
       this.LogDebug("timeout->OSD:Off");
-      //_isOsdVisible = false;
-      //GUIWindowManager.IsOsdVisible = false;
       HideMainOSD();
       HideZapOSD();
-
-      //close window
-      ///@
-      /// msg2 = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _msnWindow.GetID, 0, 0, GetID, 0, null);
-      ///_msnWindow.OnMessage(msg2);	// Send a de-init msg to the OSD
-      /// msg2 = null;
-
-      //_msnWindowVisible = false;     // msn related can be removed
-
       GUIWindowManager.IsOsdVisible = false;
     }
 
@@ -2898,13 +2663,9 @@ namespace Mediaportal.TV.TvPlugin
         {
           dlg.Render(timePassed);
         }
-
-        // msn related can be removed
-        ///if (_msnWindowVisible)
-        ///_msnWindow.Render(timePassed);
       }
-      // do we need 2 render the OSD?
 
+      // do we need 2 render the OSD?
       if (_zapOsdVisible)
       {
         _zapWindow.Render(timePassed);
@@ -3167,13 +2928,6 @@ namespace Mediaportal.TV.TvPlugin
         return _osdWindow.GetFocusControlId();
       }
 
-      // msn related can be removed
-      //if (_msnWindowVisible)
-      //{
-      //  ///@
-      //  ///return _msnWindow.GetFocusControlId();
-      //}
-
       return base.GetFocusControlId();
     }
 
@@ -3184,13 +2938,6 @@ namespace Mediaportal.TV.TvPlugin
         return _osdWindow.GetControl(iControlId);
       }
 
-      // msn related can be removed
-      //if (_msnWindowVisible)
-      //{
-      //  ///@
-      //  ///return _msnWindow.GetControl(iControlId);
-      //}
-
       return base.GetControl(iControlId);
     }
 
@@ -3198,21 +2945,6 @@ namespace Mediaportal.TV.TvPlugin
     {
       _autoZapMode = false;
       _autoZapTimer.Dispose();
-
-      ///@
-      /*
-      if (!GUIGraphicsContext.IsTvWindow(newWindowId))
-      {
-        if (Recorder.IsViewing() && !(Recorder.IsTimeShifting() || Recorder.isRecording()))
-        {
-          if (GUIGraphicsContext.ShowBackground)
-          {
-            // stop timeshifting & viewing... 
-
-            Recorder.StopViewing();
-          }
-        }
-      }*/
 
       base.OnPageDestroy(newWindowId);
     }

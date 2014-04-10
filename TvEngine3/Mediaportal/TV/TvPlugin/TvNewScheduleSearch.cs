@@ -36,8 +36,6 @@ namespace Mediaportal.TV.TvPlugin
 {
   public class TvNewScheduleSearch : GUIInternalWindow
   {
- 
-
     #region enums
 
     public enum SearchType : int
@@ -80,7 +78,7 @@ namespace Mediaportal.TV.TvPlugin
     public override bool Init()
     {
       this.LogInfo("newsearch init");
-      bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvschedulerserverSearch.xml");
+      bool bResult = Load(GUIGraphicsContext.GetThemedSkinFile(@"\mytvschedulerserverSearch.xml"));
 
       this.LogInfo("newsearch init result:{0}", bResult);
       return bResult;
@@ -242,13 +240,13 @@ namespace Mediaportal.TV.TvPlugin
             listPrograms = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByTitleAndCategoryAndMediaType(_searchKeyword, "",
                                                                                       MediaTypeEnum.TV,
                                                                                       stringComparisonCategory,
-                                                                                      StringComparisonEnum.StartsWith).ToList();          
+                                                                                      StringComparisonEnum.StartsWith).ToList();
           break;
         case SearchType.KeyWord:
           listPrograms = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByDescription("%" + _searchKeyword, stringComparison).ToList();
           break;
         case SearchType.Title:
-          listPrograms = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByTitle(_searchKeyword, stringComparison).ToList();          
+          listPrograms = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByTitle(_searchKeyword, stringComparison).ToList();
           break;
       }
       if (listPrograms == null)
@@ -265,7 +263,7 @@ namespace Mediaportal.TV.TvPlugin
         GUIListItem item = new GUIListItem();
         item.Label = TVUtil.GetDisplayTitle(program);
         string logo = Utils.GetCoverArt(Thumbs.TVChannel, program.Channel.DisplayName);
-        if (string.IsNullOrEmpty(logo))                            
+        if (string.IsNullOrEmpty(logo))
         {
           logo = "defaultVideoBig.png";
         }

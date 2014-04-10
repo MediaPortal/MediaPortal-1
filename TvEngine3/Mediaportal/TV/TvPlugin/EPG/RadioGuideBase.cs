@@ -44,7 +44,6 @@ namespace Mediaportal.TV.TvPlugin.EPG
   /// </summary>
   public class RadioGuideBase : GuideBase
   {
- 
     #region constants
 
     private const string SKIN_PROPERTY_PREFIX = "#Radio";
@@ -784,7 +783,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
     protected override IList<Channel> GetGuideChannelsForGroup()
     {      
-      return ServiceAgents.Instance.ChannelServiceAgent.GetAllChannelsByGroupIdAndMediaType(Radio.Radio.SelectedGroup.IdGroup, MediaTypeEnum.Radio).ToList();      
+      return ServiceAgents.Instance.ChannelServiceAgent.GetAllChannelsByGroupIdAndMediaType(Radio.Radio.SelectedGroup.IdGroup, MediaTypeEnum.Radio).ToList();
     }
 
     protected override bool HasSelectedGroup()

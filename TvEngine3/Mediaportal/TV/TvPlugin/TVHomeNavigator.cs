@@ -46,38 +46,6 @@ namespace Mediaportal.TV.TvPlugin
   /// </summary>
   public class ChannelNavigator
   {
-
-    #region config xml file
-
-    private const string ConfigFileXml =
-      @"<?xml version=|1.0| encoding=|utf-8|?> 
-<ideaBlade xmlns:xsi=|http://www.w3.org/2001/XMLSchema-instance| xmlns:xsd=|http://www.w3.org/2001/XMLSchema| useDeclarativeTransactions=|false| version=|1.03|> 
-  <useDTC>false</useDTC>
-  <copyLocal>false</copyLocal>
-  <logging>
-    <archiveLogs>false</archiveLogs>
-    <logFile>DebugLog.xml</logFile>
-    <usesSeparateAppDomain>false</usesSeparateAppDomain>
-    <port>0</port>
-  </logging>
-  <rdbKey name=|default| databaseProduct=|Unknown|>
-    <connection>[CONNECTION]</connection>
-    <probeAssemblyName>TVDatabase</probeAssemblyName>
-  </rdbKey>
-  <remoting>
-    <remotePersistenceEnabled>false</remotePersistenceEnabled>
-    <remoteBaseURL>http://localhost</remoteBaseURL>
-    <serverPort>9009</serverPort>
-    <serviceName>PersistenceServer</serviceName>
-    <serverDetectTimeoutMilliseconds>-1</serverDetectTimeoutMilliseconds>
-    <proxyPort>0</proxyPort>
-  </remoting>
-  <appUpdater/>
-</ideaBlade>
-";
-
-    #endregion
-
     #region Private members
 
     private List<ChannelGroup> _groups = new List<ChannelGroup>();
@@ -92,7 +60,7 @@ namespace Mediaportal.TV.TvPlugin
     private Channel _lastViewedChannel = null; // saves the last viewed Channel  // mPod    
     private ChannelBLL m_currentChannel = null;
     private IDictionary<int, Channel> _channels = new Dictionary<int, Channel>();
-    private bool reentrant = false;    
+    private bool reentrant = false;
 
     #endregion
 
@@ -108,66 +76,23 @@ namespace Mediaportal.TV.TvPlugin
     public ChannelNavigator()
     {
       // Load all groups
-      //ServiceProvider services = GlobalServiceProvider.Instance;
       this.LogDebug("ChannelNavigator: ctor()");
-
-      ReLoad();
     }
 
-    public void SetupDatabaseConnection()
-    {
-      try
-      {
-        using (Settings xmlreader = new MPSettings())
-        {
-          ServiceAgents.Instance.Hostname = xmlreader.GetValueAsString("tvservice", "hostname", "-");
-        }
-      }
-      catch (Exception ex)
-      {
-        //this.LogError("Unable to DatabaseConnection {0},{1}", ex.Message, ex.StackTrace);
-      }
-
-      /*string connectionString, provider;
-      if (!TVHome.Connected)
-      {
-        return;
-      }
-
-      ServiceAgents.Instance.ControllerService.GetDatabaseConnectionString(out connectionString, out provider);
-
-      try
-      {
-        XmlDocument doc = new XmlDocument();
-        doc.Load(Config.GetFile(Config.Dir.Config, "gentle.config"));
-        XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
-        XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString");
-        XmlNode nodeProvider = nodeKey.Attributes.GetNamedItem("name");
-        node.InnerText = connectionString;
-        nodeProvider.InnerText = provider;
-        doc.Save(Config.GetFile(Config.Dir.Config, "gentle.config"));
-      }
-      catch (Exception ex)
-      {
-        this.LogError("Unable to create/modify gentle.config {0},{1}", ex.Message, ex.StackTrace);
-      }
-      this.LogInfo("ChannelNavigator::Reload()");*/
-    }   
-    
     public void ReLoad()
     {
       //System.Diagnostics.Debugger.Launch();
       try
       {
         _groups.Clear();
-        SetupDatabaseConnection();
         Task taskGetAllChannels = Task.Factory.StartNew(GetAllChannels);
         Task taskGetOrCreateGroup = Task.Factory.StartNew(delegate
         {
           ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
+          ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.RadioGroupNames.AllChannels, MediaTypeEnum.Radio);
         });
         
-        Task taskGetAllGroups = Task.Factory.StartNew(GetAllGroups);                
+        Task taskGetAllGroups = Task.Factory.StartNew(GetAllGroups);
         taskGetOrCreateGroup.WaitAndHandleExceptions();
         taskGetAllChannels.WaitAndHandleExceptions();
         taskGetAllGroups.WaitAndHandleExceptions();
@@ -367,10 +292,11 @@ namespace Mediaportal.TV.TvPlugin
       }      
       try
       {
-        reentrant = true;        
+        reentrant = true;
         // Zapping to another group or channel?
         if (m_zapgroup != -1 || m_zapchannel != null)
         {
+          UpdateCurrentChannel();
           // Time to zap?
           if (DateTime.Now >= m_zaptime)
           {
@@ -417,8 +343,8 @@ namespace Mediaportal.TV.TvPlugin
       }
       finally
       {
-        reentrant = false;        
-      }      
+        reentrant = false;
+      }
       return false;
     }
 

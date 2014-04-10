@@ -50,8 +50,7 @@ namespace Mediaportal.TV.TvPlugin
   /// 
   public class TvMiniGuide : GUIDialogWindow
   {
- 
-    // Member variables                                  
+    // Member variables
     [SkinControl(34)]
     protected GUIButtonControl cmdExit = null;
 
@@ -72,8 +71,7 @@ namespace Mediaportal.TV.TvPlugin
     private int _parentWindowID = 0;
     private GUIWindow _parentWindow = null;
     */
-    private Dictionary<int, List<Channel>> _tvGroupChannelListCache = null;    
-
+    private Dictionary<int, List<Channel>> _tvGroupChannelListCache = null;
 
     private List<ChannelGroup> _channelGroupList = null;
     private Channel _selectedChannel;
@@ -88,9 +86,9 @@ namespace Mediaportal.TV.TvPlugin
     private Dictionary<int, DateTime> _nextEPGupdate = new Dictionary<int, DateTime>();
     private IDictionary<int, IDictionary<int, NowAndNext>> _listNowNext = new Dictionary<int, IDictionary<int, NowAndNext>>();
 
-    private readonly string PathIconNoTune = GUIGraphicsContext.Skin + @"\Media\remote_blue.png";
-    private readonly string PathIconTimeshift = GUIGraphicsContext.Skin + @"\Media\remote_yellow.png";
-    private readonly string PathIconRecord = GUIGraphicsContext.Skin + @"\Media\remote_red.png";
+    private readonly string PathIconNoTune = GUIGraphicsContext.GetThemedSkinFile(@"\Media\remote_blue.png");
+    private readonly string PathIconTimeshift = GUIGraphicsContext.GetThemedSkinFile(@"\Media\remote_yellow.png");
+    private readonly string PathIconRecord = GUIGraphicsContext.GetThemedSkinFile(@"\Media\remote_red.png");
     // fetch localized ID's only once from XML file
     private readonly string local736 = GUILocalizeStrings.Get(736); // No data available
     private readonly string local789 = GUILocalizeStrings.Get(789); // Now:
@@ -173,7 +171,7 @@ namespace Mediaportal.TV.TvPlugin
     /// <returns></returns>
     public override bool Init()
     {
-      bool bResult = Load(GUIGraphicsContext.Skin + @"\TVMiniGuide.xml");
+      bool bResult = Load(GUIGraphicsContext.GetThemedSkinFile(@"\TVMiniGuide.xml"));
 
       GetID = (int)Window.WINDOW_MINI_GUIDE;
       //GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.MiniEPG);
@@ -181,18 +179,6 @@ namespace Mediaportal.TV.TvPlugin
       LoadSettings();
       return bResult;
     }
-
-    /*
-    /// <summary>
-    /// Renderer
-    /// </summary>
-    /// <param name="timePassed"></param>
-    public override void Render(float timePassed)
-    {
-      base.Render(timePassed); // render our controls to the screen
-    }
-    */
-
 
     /// <summary>
     /// On Message
@@ -452,7 +438,7 @@ namespace Mediaportal.TV.TvPlugin
         benchClock.Reset();
         benchClock.Start();
 
-        tvChannelStatesList = TVHome.TvChannelStatesList;        
+        tvChannelStatesList = TVHome.TvChannelStatesList;
 
         benchClock.Stop();
         if (tvChannelStatesList != null)
@@ -589,7 +575,7 @@ namespace Mediaportal.TV.TvPlugin
           {
             sb.Append(" - ");
             if (!_byIndex)
-            {              
+            {
               foreach (TuningDetail detail in tvChannelList[i].TuningDetails)
               {
                 sb.Append(detail.ChannelNumber);

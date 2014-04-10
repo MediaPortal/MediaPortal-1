@@ -47,7 +47,7 @@ namespace Mediaportal.TV.TvPlugin
        * <type>updownlistcontrol</type> 
        * <!-- type>playlistcontrol</type-->
        */
-      return Load(GUIGraphicsContext.Skin + @"\settings_tvSort.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\settings_tvSort.xml"));
     }
 
     protected override void OnPageLoad()
@@ -65,7 +65,7 @@ namespace Mediaportal.TV.TvPlugin
     private void UpdateList()
     {
       listChannels.Clear();
-      int count = 0;      
+      int count = 0;
       IList<GroupMap> maps = TVHome.Navigator.CurrentGroup.GroupMaps;
       foreach (GroupMap map in maps)
       {
@@ -142,7 +142,7 @@ namespace Mediaportal.TV.TvPlugin
       if (_currentGroup == null)
       {
         ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(chan1);
-        ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(chan2);        
+        ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(chan2);
       }
       else
       {
@@ -151,7 +151,7 @@ namespace Mediaportal.TV.TvPlugin
         foreach (GroupMap map in maps)
         {
           Channel chan = map.Channel;
-          channelsInGroup.Add(map.Channel);          
+          channelsInGroup.Add(map.Channel);
           ServiceAgents.Instance.ChannelGroupServiceAgent.DeleteChannelGroupMap(map.IdMap);
         }
         SaveGroup(channelsInGroup);
@@ -178,7 +178,7 @@ namespace Mediaportal.TV.TvPlugin
       if (_currentGroup == null)
       {
         ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(chan1);
-        ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(chan2);        
+        ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(chan2);
       }
       else
       {
@@ -186,7 +186,7 @@ namespace Mediaportal.TV.TvPlugin
         IList<GroupMap> maps = TVHome.Navigator.CurrentGroup.GroupMaps;
         foreach (GroupMap map in maps)
         {
-          channelsInGroup.Add(map.Channel);          
+          channelsInGroup.Add(map.Channel);
           ServiceAgents.Instance.ChannelGroupServiceAgent.DeleteChannelGroupMap(map.IdMap);
         }
         SaveGroup(channelsInGroup);
@@ -202,7 +202,7 @@ namespace Mediaportal.TV.TvPlugin
         return;
       }
       channelsInGroup.Sort(this);
-      MappingHelper.AddChannelsToGroup(channelsInGroup, _currentGroup);      
+      MappingHelper.AddChannelsToGroup(channelsInGroup, _currentGroup);
     }
 
     #region IComparer Members

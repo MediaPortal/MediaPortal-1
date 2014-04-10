@@ -37,7 +37,6 @@ namespace Mediaportal.TV.TvPlugin
 {
   public class TvSetup : GUIInternalWindow
   {
-
     #region Variables
 
     private string _hostName;
@@ -141,13 +140,9 @@ namespace Mediaportal.TV.TvPlugin
         try
         {
           int cards = ServiceAgents.Instance.ControllerServiceAgent.Cards;
-          // Need to setup the database connection string here
-          // before checking for database connectivity,
-          // otherwhise we will check for the wrong database provider
-          TVHome.Navigator.SetupDatabaseConnection();
         }
         catch (Exception)
-        {          
+        {
           succeeded = false;
         }
       }
@@ -212,7 +207,6 @@ namespace Mediaportal.TV.TvPlugin
       {
         succeeded = false;
       }
-
       return succeeded;
     }
 
@@ -271,7 +265,7 @@ namespace Mediaportal.TV.TvPlugin
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\TvServerSetup.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\TvServerSetup.xml"));
     }
 
     public override void OnAction(Action action)
@@ -292,7 +286,7 @@ namespace Mediaportal.TV.TvPlugin
       if (control == btnChange)
       {
         if (GetKeyboard(ref _hostName))
-        {                    
+        {
           ServiceAgents.Instance.Hostname = _hostName;
           if (lblHostName != null)
           {
@@ -312,11 +306,11 @@ namespace Mediaportal.TV.TvPlugin
           if (tvServerOk && databaseOk && streamingOk)
           {
             //TVHome.OnPageLoadDone = false;
-            RemoteControl.UseIncreasedTimeoutForInitialConnection = true;
-
             TVHome.Navigator.ReLoad();
-            Settings xmlreader = new MPSettings();
-            TVHome.Navigator.LoadSettings(xmlreader);
+            using (Settings xmlreader = new MPSettings())
+            {
+              TVHome.Navigator.LoadSettings(xmlreader);
+            }
             if (pDlgOK != null)
             {
               pDlgOK.SetHeading(GUILocalizeStrings.Get(605));
@@ -401,7 +395,7 @@ namespace Mediaportal.TV.TvPlugin
 
     protected override void OnPageDestroy(int new_windowId)
     {
-      SaveSettings();      
+      SaveSettings();
       ServiceAgents.Instance.Hostname = _hostName;
       base.OnPageDestroy(new_windowId);
     }

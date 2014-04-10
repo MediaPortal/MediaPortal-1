@@ -43,19 +43,11 @@ namespace Mediaportal.TV.TvPlugin.Radio
   [PluginIcons("Resources\\TvPlugin.Radio.gif", "Resources\\TvPlugin.Radio_disabled.gif")]
   public class Radio : WindowPluginBase, IComparer<GUIListItem>, ISetupForm, IShowPlugin
   {
-
-    #region constants    
-
-    #endregion
-
     #region enums
 
     private enum SortMethod
     {
       Name = 0,
-      Type = 1,
-      Genre = 2,
-      Bitrate = 3,
       Number = 4
     }
 
@@ -65,29 +57,38 @@ namespace Mediaportal.TV.TvPlugin.Radio
 
     private static Channel _currentChannel = null;
     private static bool _autoTurnOnRadio = false;
-    private SortMethod currentSortMethod = SortMethod.Number;    
-    private readonly DirectoryHistory directoryHistory = new DirectoryHistory();
-    private string currentFolder = null;
-    private string lastFolder = "..";
-    private int selectedItemIndex = -1;
-    private static bool hideAllChannelsGroup = false;
-    private string rootGroup = "(none)";
-    private static ChannelGroup selectedGroup;
+    private SortMethod _currentSortMethod = SortMethod.Number;    
+    private readonly DirectoryHistory _directoryHistory = new DirectoryHistory();
+    private string _currentFolder = null;
+    private string _lastFolder = "..";
+    private int _selectedItemIndex = -1;
+    private static bool _hideAllChannelsGroup = false;
+    private string _rootGroup = "(none)";
+    private static ChannelGroup _selectedGroup;
     public static List<ChannelGroup> AllRadioGroups = new List<ChannelGroup>();
+    private static bool _settingsRadioLoaded = false;
 
     #endregion
     
     #region properties
     
-    public static Channel CurrentChannel {
-      get { return _currentChannel; }
-      set { _currentChannel = value; }
+    public static Channel CurrentChannel
+    {
+      get
+      {
+        return _currentChannel;
+      }
+      set
+      {
+        _currentChannel = value;
+      }
     }
     
     public static ChannelGroup SelectedGroup 
     {
-      get { 
-        if(selectedGroup == null)
+      get
+      { 
+        if (_selectedGroup == null)
         { // if user is at the root level then no group is selected
           // this then causes issues in guide as it does not know what
           // group to show so return the first available one
@@ -95,10 +96,13 @@ namespace Mediaportal.TV.TvPlugin.Radio
         }
         else
         {
-          return selectedGroup;
+          return _selectedGroup;
         }
       }
-      set { selectedGroup = value; }
+      set
+      {
+        _selectedGroup = value;
+      }
     }
     
     #endregion
@@ -113,19 +117,23 @@ namespace Mediaportal.TV.TvPlugin.Radio
     public Radio()
     {
       IntegrationProviderHelper.Register();
-      TVUtil.SetGentleConfigFile();
       GetID = (int)Window.WINDOW_RADIO;
     }
 
     public override bool Init()
-    {      
-      return Load(GUIGraphicsContext.Skin + @"\MyRadio.xml");
+    {
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\MyRadio.xml"));
     }
 
     #region Serialisation
 
     protected override void LoadSettings()
     {
+      if (_settingsRadioLoaded)
+      {
+        return;
+      }
+
       base.LoadSettings();
       using (Settings xmlreader = new MPSettings())
       {
@@ -137,35 +145,24 @@ namespace Mediaportal.TV.TvPlugin.Radio
         {
           if (tmpLine == "name")
           {
-            currentSortMethod = SortMethod.Name;
-          }
-          else if (tmpLine == "type")
-          {
-            currentSortMethod = SortMethod.Type;
-          }
-          else if (tmpLine == "genre")
-          {
-            currentSortMethod = SortMethod.Genre;
-          }
-          else if (tmpLine == "bitrate")
-          {
-            currentSortMethod = SortMethod.Bitrate;
+            _currentSortMethod = SortMethod.Name;
           }
           else if (tmpLine == "number")
           {
-            currentSortMethod = SortMethod.Number;
+            _currentSortMethod = SortMethod.Number;
           }
         }
 
         if (xmlreader.GetValueAsBool("myradio", "rememberlastgroup", true))
         {
-          currentFolder = xmlreader.GetValueAsString("myradio", "lastgroup", null);
+          _currentFolder = xmlreader.GetValueAsString("myradio", "lastgroup", null);
         }
-        hideAllChannelsGroup = xmlreader.GetValueAsBool("myradio", "hideAllChannelsGroup", false);
-        rootGroup = xmlreader.GetValueAsString("myradio", "rootgroup", "(none)");
+        _hideAllChannelsGroup = xmlreader.GetValueAsBool("myradio", "hideAllChannelsGroup", false);
+        _rootGroup = xmlreader.GetValueAsString("myradio", "rootgroup", "(none)");
 
         _autoTurnOnRadio = xmlreader.GetValueAsBool("myradio", "autoturnonradio", false);
       }
+      _settingsRadioLoaded = true;
     }
 
     protected override void SaveSettings()
@@ -176,31 +173,21 @@ namespace Mediaportal.TV.TvPlugin.Radio
         xmlwriter.SetValue(SerializeName, "layout", (int)currentLayout);
         xmlwriter.SetValueAsBool(SerializeName, "sortasc", m_bSortAscending);
         
-        switch (currentSortMethod)
+        switch (_currentSortMethod)
         {
           case SortMethod.Name:
             xmlwriter.SetValue("myradio", "sort", "name");
-            break;
-          case SortMethod.Type:
-            xmlwriter.SetValue("myradio", "sort", "type");
-            break;
-          case SortMethod.Genre:
-            xmlwriter.SetValue("myradio", "sort", "genre");
-            break;
-          case SortMethod.Bitrate:
-            xmlwriter.SetValue("myradio", "sort", "bitrate");
             break;
           case SortMethod.Number:
             xmlwriter.SetValue("myradio", "sort", "number");
             break;
         }
 
-        xmlwriter.SetValue("myradio", "lastgroup", lastFolder);
+        xmlwriter.SetValue("myradio", "lastgroup", _lastFolder);
         if (_currentChannel != null)
         {
-            xmlwriter.SetValue("myradio", "channel", _currentChannel.DisplayName);
+          xmlwriter.SetValue("myradio", "channel", _currentChannel.DisplayName);
         }
-        
       }
     }
 
@@ -256,27 +243,25 @@ namespace Mediaportal.TV.TvPlugin.Radio
 
       LoadSettings();
       LoadChannelGroups();
-    }    
+    }
 
     protected override void OnPageLoad()
     {
       this.LogInfo("RadioHome:OnPageLoad");
+
+      TVHome.ShowTvEngineSettingsUIIfConnectionDown();
+
+      // Reload ChannelGroups
+      Radio radioLoad = (Radio)GUIWindowManager.GetWindow((int)Window.WINDOW_RADIO);
+      radioLoad.OnAdded();
+
       base.OnPageLoad();
       GUIMessage msgStopRecorder = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP, 0, 0, 0, 0, 0, null);
-      GUIWindowManager.SendMessage(msgStopRecorder);      
-      switch (currentSortMethod)
+      GUIWindowManager.SendMessage(msgStopRecorder);
+      switch (_currentSortMethod)
       {
         case SortMethod.Name:
           btnSortBy.SelectedItem = 0;
-          break;
-        case SortMethod.Type:
-          btnSortBy.SelectedItem = 1;
-          break;
-        case SortMethod.Genre:
-          btnSortBy.SelectedItem = 2;
-          break;
-        case SortMethod.Bitrate:
-          btnSortBy.SelectedItem = 3;
           break;
         case SortMethod.Number:
           btnSortBy.SelectedItem = 4;
@@ -284,20 +269,28 @@ namespace Mediaportal.TV.TvPlugin.Radio
       }      
 
       SelectCurrentItem();
-      LoadDirectory(currentFolder);
+      LoadDirectory(_currentFolder);
 
       SetLastChannel();
 
       if ((_autoTurnOnRadio) && !(g_Player.Playing && g_Player.IsRadio))
       {
-        Play(facadeLayout.SelectedListItem);
+        GUIListItem item = facadeLayout.SelectedListItem;
+        if (item != null && item.Label != ".." && !item.IsFolder)
+        {
+          Play(facadeLayout.SelectedListItem);
+        }
       }
 
-      btnSortBy.SortChanged += SortChanged;       
+      btnSortBy.SortChanged += SortChanged;
     }    
 
     private static void LoadChannelGroups()
     {
+      if (!TVHome.Connected)
+      {
+        return;
+      }
       Settings xmlreader = new MPSettings();
       string currentchannelName = xmlreader.GetValueAsString("myradio", "channel", String.Empty);      
       IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.GetChannelsByName(currentchannelName); 
@@ -319,14 +312,14 @@ namespace Mediaportal.TV.TvPlugin.Radio
     {
       if (_currentChannel != null)
       {
-        GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItemIndex);      
+        GUIControl.SelectItemControl(GetID, facadeLayout.GetID, _selectedItemIndex);      
         UpdateButtonStates();        
       }
     }
 
     protected override void OnPageDestroy(int newWindowId)
     {
-      selectedItemIndex = facadeLayout.SelectedListItemIndex;
+      _selectedItemIndex = facadeLayout.SelectedListItemIndex;
       SaveSettings();
       base.OnPageDestroy(newWindowId);
     }
@@ -337,12 +330,12 @@ namespace Mediaportal.TV.TvPlugin.Radio
       GUIListItem item = facadeLayout[iItem];
       if (item.MusicTag == null)
       {
-        selectedItemIndex = -1;
+        _selectedItemIndex = -1;
         LoadDirectory(null);
       }
       if (item.IsFolder)
       {
-        selectedItemIndex = -1;
+        _selectedItemIndex = -1;
         LoadDirectory(item.Label);
       }
       else
@@ -356,19 +349,10 @@ namespace Mediaportal.TV.TvPlugin.Radio
       base.UpdateButtonStates();
       
       string strLine = string.Empty;
-      switch (currentSortMethod)
+      switch (_currentSortMethod)
       {
         case SortMethod.Name:
           strLine = GUILocalizeStrings.Get(103);
-          break;
-        case SortMethod.Type:
-          strLine = GUILocalizeStrings.Get(668);
-          break;
-        case SortMethod.Genre:
-          strLine = GUILocalizeStrings.Get(669);
-          break;
-        case SortMethod.Bitrate:
-          strLine = GUILocalizeStrings.Get(670);
           break;
         case SortMethod.Number:
           strLine = GUILocalizeStrings.Get(620);
@@ -380,7 +364,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
       }
 
       if (null != facadeLayout)
-        facadeLayout.EnableScrollLabel = currentSortMethod == SortMethod.Name;
+        facadeLayout.EnableScrollLabel = _currentSortMethod == SortMethod.Name;
     }
 
     protected override bool AllowLayout(GUIFacadeControl.Layout layout)
@@ -397,31 +381,34 @@ namespace Mediaportal.TV.TvPlugin.Radio
 
     protected override void LoadDirectory(string strNewDirectory)
     {
+      if (!TVHome.Connected)
+      {
+        return;
+      }
       GUIListItem SelectedItem = facadeLayout.SelectedListItem;
       if (SelectedItem != null)
       {
         if (SelectedItem.IsFolder && SelectedItem.Label != "..")
         {
-          directoryHistory.Set(SelectedItem.Label, currentFolder);
+          _directoryHistory.Set(SelectedItem.Label, _currentFolder);
         }
       }
-      currentFolder = strNewDirectory;
+      _currentFolder = strNewDirectory;
       GUIControl.ClearControl(GetID, facadeLayout.GetID);
 
       int totalItems = 0;
-      if (currentFolder == null || currentFolder == "..")
+      if (_currentFolder == null || _currentFolder == "..")
       {
- 
         IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(MediaTypeEnum.Radio).ToList();
         foreach (ChannelGroup group in groups)
         {
-          if (hideAllChannelsGroup && group.GroupName.Equals(TvConstants.RadioGroupNames.AllChannels) &&
+          if (_hideAllChannelsGroup && group.GroupName.Equals(TvConstants.RadioGroupNames.AllChannels) &&
               groups.Count > 1)
           {
             continue;
           }
 
-          if (group.GroupName == rootGroup)
+          if (group.GroupName == _rootGroup)
           {
             continue;
           }
@@ -432,7 +419,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
           item.ThumbnailImage = String.Empty;
           Utils.SetDefaultIcons(item);
           string thumbnail = Utils.GetCoverArt(Thumbs.Radio, "folder_" + group.GroupName);
-          if (!string.IsNullOrEmpty(thumbnail))                            
+          if (!string.IsNullOrEmpty(thumbnail))
           {
             item.IconImageBig = thumbnail;
             item.IconImage = thumbnail;
@@ -441,12 +428,12 @@ namespace Mediaportal.TV.TvPlugin.Radio
           facadeLayout.Add(item);
           totalItems++;
         }
-        if (rootGroup != "(none)")
+        if (_rootGroup != "(none)")
         {
-          ChannelGroup root = ServiceAgents.Instance.ChannelGroupServiceAgent.GetChannelGroupByNameAndMediaType(rootGroup, MediaTypeEnum.Radio);
+          ChannelGroup root = ServiceAgents.Instance.ChannelGroupServiceAgent.GetChannelGroupByNameAndMediaType(_rootGroup, MediaTypeEnum.Radio);
           if (root != null)
           {
-            IList<GroupMap> maps = root.GroupMaps;            
+            IList<GroupMap> maps = root.GroupMaps;
             foreach (GroupMap map in maps)
             {
               Channel channel = map.Channel;
@@ -456,7 +443,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
               {
                 if (channel.IdChannel == _currentChannel.IdChannel)
                 {
-                  selectedItemIndex = totalItems-1;
+                  _selectedItemIndex = totalItems-1;
                 }
               }
 
@@ -477,17 +464,17 @@ namespace Mediaportal.TV.TvPlugin.Radio
             }
           }
         }
-        selectedGroup = null;
+        _selectedGroup = null;
       }
       else
       {
-        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetChannelGroupByNameAndMediaType(currentFolder, MediaTypeEnum.Radio);
+        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetChannelGroupByNameAndMediaType(_currentFolder, MediaTypeEnum.Radio);
         if (group == null)
         {
           return;
         }
-        selectedGroup = group;
-        lastFolder = currentFolder;
+        _selectedGroup = group;
+        _lastFolder = _currentFolder;
         GUIListItem item = new GUIListItem();
         item.Label = "..";
         item.IsFolder = true;
@@ -498,27 +485,27 @@ namespace Mediaportal.TV.TvPlugin.Radio
         IList<GroupMap> maps = group.GroupMaps;
         foreach (GroupMap map in maps)
         {
-            Channel channel = map.Channel;
+          Channel channel = map.Channel;
 
-            if (channel != null)
+          if (channel != null)
+          {
+            item = new GUIListItem();
+            item.Label = channel.DisplayName;
+            item.IsFolder = false;
+            item.MusicTag = channel;
+            item.AlbumInfoTag = map;
+            item.IconImageBig = "DefaultMyradioBig.png";
+            item.IconImage = "DefaultMyradio.png";
+            string thumbnail = Utils.GetCoverArt(Thumbs.Radio, channel.DisplayName);
+            if (!string.IsNullOrEmpty(thumbnail))
             {
-              item = new GUIListItem();
-              item.Label = channel.DisplayName;
-              item.IsFolder = false;
-              item.MusicTag = channel;
-              item.AlbumInfoTag = map;
-              item.IconImageBig = "DefaultMyradioBig.png";
-              item.IconImage = "DefaultMyradio.png";
-              string thumbnail = Utils.GetCoverArt(Thumbs.Radio, channel.DisplayName);
-              if (!string.IsNullOrEmpty(thumbnail))
-              {
-                item.IconImageBig = thumbnail;
-                item.IconImage = thumbnail;
-                item.ThumbnailImage = thumbnail;
-              }
-              facadeLayout.Add(item);
-              totalItems++;
+              item.IconImageBig = thumbnail;
+              item.IconImage = thumbnail;
+              item.ThumbnailImage = thumbnail;
             }
+            facadeLayout.Add(item);
+            totalItems++;
+          }
         }
       }
 
@@ -542,20 +529,18 @@ namespace Mediaportal.TV.TvPlugin.Radio
           {
             if (channel.IdChannel == _currentChannel.IdChannel)
             {
-              selectedItemIndex = i++;
+              _selectedItemIndex = i++;
               break;
             }
           }
         }
 
         //set selected item
-        if (selectedItemIndex >= 0)
+        if (_selectedItemIndex >= 0)
         {
-          GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItemIndex);
+          GUIControl.SelectItemControl(GetID, facadeLayout.GetID, _selectedItemIndex);
         }
-        
-      }      
-
+      }
     }
 
     #endregion
@@ -606,7 +591,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
       }
 
 
-      SortMethod method = currentSortMethod;
+      SortMethod method = _currentSortMethod;
       bool bAscending = m_bSortAscending;
       Channel channel1 = item1.MusicTag as Channel;
       Channel channel2 = item2.MusicTag as Channel;
@@ -618,41 +603,6 @@ namespace Mediaportal.TV.TvPlugin.Radio
             return String.Compare(item1.Label, item2.Label, true);
           }
           return String.Compare(item2.Label, item1.Label, true);
-
-        case SortMethod.Type:
-          string strURL1 = "0";
-          string strURL2 = "0";
-          if (item1.IconImage.ToLower().Equals("defaultmyradiostream.png"))
-          {
-            strURL1 = "1";
-          }
-          if (item2.IconImage.ToLower().Equals("defaultmyradiostream.png"))
-          {
-            strURL2 = "1";
-          }
-          if (strURL1.Equals(strURL2))
-          {
-            if (bAscending)
-            {
-              return String.Compare(item1.Label, item2.Label, true);
-            }
-            return String.Compare(item2.Label, item1.Label, true);
-          }
-          if (bAscending)
-          {
-            if (strURL1.Length > 0)
-            {
-              return 1;
-            }
-            return -1;
-          }
-          if (strURL1.Length > 0)
-          {
-            return -1;
-          }
-          return 1;
-          //break;
-
         case SortMethod.Number:
           if (channel1 != null && channel2 != null)
           {
@@ -681,35 +631,11 @@ namespace Mediaportal.TV.TvPlugin.Radio
           }
           return channel2 != null ? 1 : 0;
           //break;
-        case SortMethod.Bitrate:
-          IList<TuningDetail> details1 = channel1.TuningDetails;
-          TuningDetail detail1 = details1[0];
-          IList<TuningDetail> details2 = channel2.TuningDetails;
-          TuningDetail detail2 = details2[0];
-          if (detail1 != null && detail2 != null)
-          {
-            if (bAscending)
-            {
-              if (detail1.Bitrate > detail2.Bitrate)
-              {
-                return 1;
-              }
-              return -1;
-            }
-            if (detail2.Bitrate > detail1.Bitrate)
-            {
-              return 1;
-            }
-            return -1;
-          }
-          return 0;
       }
       return 0;
     }
 
     #endregion
-
-    
 
     protected override void OnShowSort()
     {
@@ -727,7 +653,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
       dlg.AddLocalizedString(670); // bitrate
       dlg.AddLocalizedString(620); // number
 
-      dlg.SelectedLabel = (int)currentSortMethod;
+      dlg.SelectedLabel = (int)_currentSortMethod;
 
       // show dialog and wait for result
       dlg.DoModal(GetID);
@@ -739,22 +665,13 @@ namespace Mediaportal.TV.TvPlugin.Radio
       switch (dlg.SelectedId)
       {
         case 103:
-          currentSortMethod = SortMethod.Name;
-          break;
-        case 668:
-          currentSortMethod = SortMethod.Type;
-          break;
-        case 669:
-          currentSortMethod = SortMethod.Genre;
-          break;
-        case 670:
-          currentSortMethod = SortMethod.Bitrate;
+          _currentSortMethod = SortMethod.Name;
           break;
         case 620:
-          currentSortMethod = SortMethod.Number;
+          _currentSortMethod = SortMethod.Number;
           break;
         default:
-          currentSortMethod = SortMethod.Name;
+          _currentSortMethod = SortMethod.Name;
           break;
       }
 
@@ -797,24 +714,11 @@ namespace Mediaportal.TV.TvPlugin.Radio
       string strLogo = Utils.GetCoverArt(Thumbs.Radio, _currentChannel.DisplayName);
       if (string.IsNullOrEmpty(strLogo))
       {
-          strLogo = "defaultMyRadioBig.png";
+        strLogo = "defaultMyRadioBig.png";
       }
       
       GUIPropertyManager.SetProperty("#Play.Current.Thumb", strLogo);
 
-      if (g_Player.Playing && !g_Player.IsTimeShifting)
-      {
-        g_Player.Stop();
-      }
-
-      if (g_Player.IsRadio && g_Player.Playing)
-      {
-        Channel currentlyPlaying = TVHome.Navigator.Channel.Entity;
-        if (currentlyPlaying != null && currentlyPlaying.IdChannel == _currentChannel.IdChannel)
-        {
-          return;
-        }
-      }
       TVHome.ViewChannelAndCheck(_currentChannel, 0);
     }
 
@@ -826,7 +730,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
       UpdateButtonStates();
 
       GUIControl.FocusControl(GetID, ((GUIControl)sender).GetID);
-    }    
+    }
     
     #region ISetupForm Members
 
@@ -872,7 +776,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
 
     public string Description()
     {
-      return "Connect to TV service to listen to analog, DVB and internet radio";
+      return "Connect to TV service to listen to radio";
     }
 
     public void ShowPlugin()

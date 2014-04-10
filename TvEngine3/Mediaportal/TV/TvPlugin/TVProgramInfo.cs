@@ -41,7 +41,6 @@ using Log = Mediaportal.TV.Server.TVLibrary.Interfaces.Logging.Log;
 
 namespace Mediaportal.TV.TvPlugin
 {
-
   #region ScheduleInfo class
 
   public class ScheduleInfo
@@ -108,7 +107,6 @@ namespace Mediaportal.TV.TvPlugin
   /// </summary>
   public class TVProgramInfo : GUIInternalWindow
   {
-  
     #region Invoke delegates
 
     protected delegate void UpdateCurrentItem(ScheduleInfo aInfo);
@@ -175,7 +173,7 @@ namespace Mediaportal.TV.TvPlugin
 
     public override bool Init()
     {
-      bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvprogram.xml");
+      bool bResult = Load(GUIGraphicsContext.GetThemedSkinFile(@"\mytvprogram.xml"));
       return bResult;
     }
 
@@ -201,11 +199,8 @@ namespace Mediaportal.TV.TvPlugin
         RecordingIntervalValues.Add(60);
         RecordingIntervalValues.Add(90);
 
-        _preRec = 0;
-        _postRec = 0;
-
-        int.TryParse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("preRecordInterval", "7").Value, out _preRec);
-        int.TryParse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("postRecordInterval", "10").Value, out _postRec);
+        _preRec = ServiceAgents.Instance.SettingServiceAgent.GetValue("preRecordInterval", 7);
+        _postRec = ServiceAgents.Instance.SettingServiceAgent.GetValue("postRecordInterval", 10);
 
         if (!RecordingIntervalValues.Contains(_preRec))
         {
@@ -389,7 +384,7 @@ namespace Mediaportal.TV.TvPlugin
       lock (updateLock)
       {
         if (item != null && item.MusicTag != null)
-        {          
+        {
           Program lstProg = item.MusicTag as Program;
           if (lstProg != null)
           {
@@ -533,7 +528,7 @@ namespace Mediaportal.TV.TvPlugin
 
             bool contains = episodes.Any(e => e.Entity == ep);
             if (!contains)
-            {              
+            {
               episodes.Add(new ProgramBLL(ep));
             }
           }
@@ -558,7 +553,7 @@ namespace Mediaportal.TV.TvPlugin
         }
 
         bool isActualUpcomingEps = actualUpcomingEps.Contains(episode.Entity) ;
-        bool isRecPrg = isActualUpcomingEps;        
+        bool isRecPrg = isActualUpcomingEps;
         // appears a little odd but seems to work
         // if episode is not in second (time based) list then override isRecPrg by actually
         // checking if episode is due to be recorded (if it is in second (time based) list then
@@ -668,9 +663,9 @@ namespace Mediaportal.TV.TvPlugin
       }
       else
       {
-      	// Mantis 2927 
-      	// Removed loop over all schedules as this was not actually 
-      	// needed and was causing performance issues
+        // Mantis 2927 
+        // Removed loop over all schedules as this was not actually 
+        // needed and was causing performance issues
         Schedule recSched;
         isRecording = IsRecordingProgram(CurrentProgram, out recSched, true);
 
@@ -771,7 +766,7 @@ namespace Mediaportal.TV.TvPlugin
         }
 
         rec.PreRecordInterval = RecordingIntervalValues[dlg.SelectedLabel];
-        ServiceAgents.Instance.ScheduleServiceAgent.SaveSchedule(rec);        
+        ServiceAgents.Instance.ScheduleServiceAgent.SaveSchedule(rec);
         currentSchedule = rec;
 
         Schedule assocSchedule = ServiceAgents.Instance.ScheduleServiceAgent.RetrieveSpawnedSchedule(rec.IdSchedule, rec.StartTime);
@@ -851,7 +846,7 @@ namespace Mediaportal.TV.TvPlugin
           return;
         }
 
-        rec.PostRecordInterval = RecordingIntervalValues[dlg.SelectedLabel];        
+        rec.PostRecordInterval = RecordingIntervalValues[dlg.SelectedLabel];
         ServiceAgents.Instance.ScheduleServiceAgent.SaveSchedule(rec);
         currentSchedule = rec;
 
@@ -859,7 +854,7 @@ namespace Mediaportal.TV.TvPlugin
         
         if (assocSchedule != null)
         {
-          assocSchedule.PostRecordInterval = rec.PostRecordInterval;          
+          assocSchedule.PostRecordInterval = rec.PostRecordInterval;
           ServiceAgents.Instance.ScheduleServiceAgent.SaveSchedule(assocSchedule);
         }
       }
@@ -930,7 +925,7 @@ namespace Mediaportal.TV.TvPlugin
             break;
         }
 
-        rec.BitRateMode = _newBitRate;        
+        rec.BitRateMode = _newBitRate;
         ServiceAgents.Instance.ScheduleServiceAgent.SaveSchedule(rec.Entity);
         currentSchedule = rec.Entity;
 
@@ -1004,7 +999,7 @@ namespace Mediaportal.TV.TvPlugin
             break;
         }
 
-        rec.QualityType = _newQuality;        
+        rec.QualityType = _newQuality;
         ServiceAgents.Instance.ScheduleServiceAgent.SaveSchedule(rec.Entity);
         currentSchedule = rec.Entity;
       }
@@ -1075,7 +1070,7 @@ namespace Mediaportal.TV.TvPlugin
 
       if (schedule.ScheduleType == (int)ScheduleRecordingType.Once)
       {
-        TVUtil.DeleteRecAndSchedWithPrompt(schedule);        
+        TVUtil.DeleteRecAndSchedWithPrompt(schedule);
         ResetCurrentScheduleAndProgram(schedule);
         return;
       }
@@ -1117,7 +1112,7 @@ namespace Mediaportal.TV.TvPlugin
             deleteEntireSched = true;
             break;
         }
-                
+
         if (deleteEntireSched)
         {
           TVUtil.DeleteRecAndEntireSchedWithPrompt(schedule, program.StartTime);
@@ -1126,7 +1121,7 @@ namespace Mediaportal.TV.TvPlugin
         else
         {
           TVUtil.DeleteRecAndSchedWithPrompt(schedule, program);
-        }                
+        }
       }
     }
 
@@ -1141,9 +1136,10 @@ namespace Mediaportal.TV.TvPlugin
       if (
         currentSchedule == null ||
         (
-        currentSchedule != null &&
-        (currentSchedule.ScheduleType == 0 || (currentSchedule.ScheduleType > 0 && schedule.ScheduleType > 0))
-        ))
+          currentSchedule != null &&
+          (currentSchedule.ScheduleType == 0 || (currentSchedule.ScheduleType > 0 && schedule.ScheduleType > 0))
+        )
+      )
       {
         ResetCurrentScheduleAndProgram();
       }
@@ -1152,8 +1148,7 @@ namespace Mediaportal.TV.TvPlugin
     public static void CreateProgram(Program program, int scheduleType, int dialogId)
     {
       Log.Debug("TVProgramInfo.CreateProgram: program = {0}", program.ToString());
-      Schedule saveSchedule = null;      
-
+      Schedule saveSchedule = null;
       Schedule scheduleOut;
       var isRecordingProgram = IsRecordingProgram(program, out scheduleOut, false);
       var schedule = new ScheduleBLL(scheduleOut);
@@ -1180,17 +1175,16 @@ namespace Mediaportal.TV.TvPlugin
         Log.Debug("TVProgramInfo.CreateProgram - no series schedule");
         // no series schedule => create it
         schedule.Entity = ScheduleFactory.CreateSchedule(program.IdChannel, program.Title, program.StartTime, program.EndTime);
-        schedule.Entity.PreRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("preRecordInterval", "5").Value);
-        schedule.Entity.PostRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("postRecordInterval", "5").Value);
+        schedule.Entity.PreRecordInterval = ServiceAgents.Instance.SettingServiceAgent.GetValue("preRecordInterval", 5);
+        schedule.Entity.PostRecordInterval = ServiceAgents.Instance.SettingServiceAgent.GetValue("postRecordInterval", 5);
         schedule.Entity.ScheduleType = scheduleType;
       }
 
       // check if this program is conflicting with any other already scheduled recording or not viewable cause isn't assigned to a card
       List<Schedule> notViewables;
-      // check if this program is conflicting with any other already scheduled recording
-      IList<Schedule> conflicts = ServiceAgents.Instance.ScheduleServiceAgent.GetConflictingSchedules(schedule.Entity, out notViewables).ToList();            
-      
-      Log.Debug("TVProgramInfo.CreateProgram - conflicts.Count = {0} - notViewable.Count = {1}", conflicts.Count, notViewables.Count);            
+      IList<Schedule> conflicts = ServiceAgents.Instance.ScheduleServiceAgent.GetConflictingSchedules(schedule.Entity, out notViewables).ToList();
+
+      Log.Debug("TVProgramInfo.CreateProgram - conflicts.Count = {0} - notViewable.Count = {1}", conflicts.Count, notViewables.Count);
 
       //conflicts management
       bool skipConflictingEpisodes = false;
@@ -1325,7 +1319,7 @@ namespace Mediaportal.TV.TvPlugin
       if (saveSchedule != null)
       {
         Log.Debug("TVProgramInfo.CreateProgram - UnCancleSerie at {0}", program.StartTime);
-        ServiceAgents.Instance.ScheduleServiceAgent.UnCancelSerie(saveSchedule, program.StartTime, program.IdChannel);              
+        ServiceAgents.Instance.ScheduleServiceAgent.UnCancelSerie(saveSchedule, program.StartTime, program.IdChannel);
         ServiceAgents.Instance.ScheduleServiceAgent.SaveSchedule(saveSchedule);
         currentSchedule = saveSchedule;
       }
@@ -1341,7 +1335,6 @@ namespace Mediaportal.TV.TvPlugin
       }
       if (skipConflictingEpisodes)
       {
-        
         IEnumerable<Schedule> episodes = ServiceAgents.Instance.ScheduleServiceAgent.GetRecordingTimes(schedule.Entity, 10);
         List<ScheduleBLL> episodesBLL = episodes.Select(s => new ScheduleBLL(s)).ToList();
 
@@ -1373,7 +1366,7 @@ namespace Mediaportal.TV.TvPlugin
         {
           if (DateTime.Now > notViewable.EndTime)
           {
-            continue;          
+            continue;
           }
 
           var notViewableBLL = new ScheduleBLL(notViewable);
@@ -1456,7 +1449,7 @@ namespace Mediaportal.TV.TvPlugin
           //check if this program is interrupted (for example by a news bulletin)
           //ifso ask the user if he wants to record the 2nd part also
           DateTime dtStart = CurrentProgram.EndTime.AddMinutes(1);
-          DateTime dtEnd = dtStart.AddHours(3);          
+          DateTime dtEnd = dtStart.AddHours(3);
           IList<Program> programs = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByChannelAndStartEndTimes(CurrentProgram.IdChannel, dtStart, dtEnd).ToList();
           if (programs.Count >= 2)
           {
@@ -1561,7 +1554,7 @@ namespace Mediaportal.TV.TvPlugin
         case 1046:
           rec.KeepMethod = (int)KeepMethodType.Always;
           break;
-      }      
+      }
       ServiceAgents.Instance.ScheduleServiceAgent.SaveSchedule(rec);
       currentSchedule = rec;
       

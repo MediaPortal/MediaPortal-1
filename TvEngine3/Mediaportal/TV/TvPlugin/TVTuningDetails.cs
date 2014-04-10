@@ -21,19 +21,17 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using MediaPortal.GUI.Library;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using Mediaportal.TV.Server.TVService.Interfaces.Services;
+using MediaPortal.GUI.Library;
+using MediaPortal.Player;
 
 namespace Mediaportal.TV.TvPlugin
 {
   public class TVTuningDetails : GUIInternalWindow
   {
-
-
     public TVTuningDetails()
     {
       GetID = (int)Window.WINDOW_TV_TUNING_DETAILS;
@@ -43,7 +41,7 @@ namespace Mediaportal.TV.TvPlugin
 
     public override bool Init()
     {
-      bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvtuningdetails.xml");
+      bool bResult = Load(GUIGraphicsContext.GetThemedSkinFile(@"\mytvtuningdetails.xml"));
       return bResult;
     }
 
@@ -130,24 +128,28 @@ namespace Mediaportal.TV.TvPlugin
               break;
           }
 
-          IUser user = TVHome.Card.User;
-
-          //IVideoStream videoStream = TVHome.Card.GetCurrentVideoStream((User)user);
-          //IEnumerable<IAudioStream> audioStreams = TVHome.Card.AvailableAudioStreams;
-
-          String audioPids = String.Empty;
-          String videoPid = String.Empty;
-
-          /*if (audioStreams != null)
+          string videoStreams = "";
+          int videoStreamCount = g_Player.VideoStreams;
+          for (int i = 0; i < videoStreamCount; i++)
           {
-            foreach (IAudioStream stream in audioStreams)
+            if (i != 0)
             {
-              audioPids += stream.Pid + " (" + stream.StreamType + ") ";
-            } 
-          }          
-		  
-          videoPid = videoStream.Pid.ToString() + " (" + videoStream.StreamType + ")";
-          */
+              videoStreams += ", ";
+            }
+            videoStreams += g_Player.VideoType(i);
+          }
+
+          string audioStreams = "";
+          int audioStreamCount = g_Player.AudioStreams;
+          for (int i = 0; i < audioStreamCount; i++)
+          {
+            if (i != 0)
+            {
+              audioStreams += ", ";
+            }
+            audioStreams += g_Player.AudioLanguage(i) + "(" + g_Player.AudioType(i) + ")";
+          }
+
           GUIPropertyManager.SetProperty("#TV.TuningDetails.CountryId", detail.CountryId.ToString());
           GUIPropertyManager.SetProperty("#TV.TuningDetails.FreeToAir", detail.FreeToAir.ToString());
           GUIPropertyManager.SetProperty("#TV.TuningDetails.Frequency", detail.Frequency.ToString());
@@ -160,9 +162,8 @@ namespace Mediaportal.TV.TvPlugin
           GUIPropertyManager.SetProperty("#TV.TuningDetails.ServiceId", detail.ServiceId.ToString());
           GUIPropertyManager.SetProperty("#TV.TuningDetails.SymbolRate", detail.Symbolrate.ToString());
           GUIPropertyManager.SetProperty("#TV.TuningDetails.TransportId", detail.TransportId.ToString());
-          //GUIPropertyManager.SetProperty("#TV.TuningDetails.PcrPid", videoStream.PcrPid.ToString());
-          GUIPropertyManager.SetProperty("#TV.TuningDetails.VideoPid", videoPid);
-          GUIPropertyManager.SetProperty("#TV.TuningDetails.AudioPid", audioPids);
+          GUIPropertyManager.SetProperty("#TV.TuningDetails.VideoPid", videoStreams);
+          GUIPropertyManager.SetProperty("#TV.TuningDetails.AudioPid", audioStreams);
         }
       }
     }
