@@ -124,7 +124,7 @@
     <Frequency>178000</Frequency>
     <ModulationType>Mod128Qam</ModulationType>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
+  </DVBCTuning>  
   <DVBCTuning>
     <Frequency>394000</Frequency>
     <ModulationType>Mod128Qam</ModulationType>
