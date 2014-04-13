@@ -101,11 +101,24 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             public int DisableWhenIdleDelayInSeconds { get; set; }
 
             [XmlAttribute]
-            public bool ReenableAfter { get; set; }
+            public bool ReenableWhenIdleAfter { get; set; }
 
             [XmlAttribute]
-            public int ReenableAfterDelayInSeconds { get; set; }
+            public int ReenableWhenIdleAfterDelayInSeconds { get; set; }
 
+            [XmlAttribute]
+            public bool DisableWhenPlaying { get; set; }
+
+            [XmlAttribute]
+            public int DisableWhenPlayingDelayInSeconds { get; set; }
+
+            [XmlAttribute]
+            public bool ReenableWhenPlayingAfter { get; set; }
+
+            [XmlAttribute]
+            public int ReenableWhenPlayingAfterDelayInSeconds { get; set; }
+
+            
             //LCD properties
             [XmlAttribute]
             public bool PreferFirstLineGeneral { get; set; }

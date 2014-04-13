@@ -381,7 +381,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.groupBox1.Location = new System.Drawing.Point(8, 8);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(373, 466);
+            this.groupBox1.Size = new System.Drawing.Size(373, 458);
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Configuration";
@@ -409,7 +409,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             // btnTest
             // 
             this.btnTest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnTest.Location = new System.Drawing.Point(271, 412);
+            this.btnTest.Location = new System.Drawing.Point(271, 404);
             this.btnTest.Name = "btnTest";
             this.btnTest.Size = new System.Drawing.Size(92, 48);
             this.btnTest.TabIndex = 83;
@@ -424,7 +424,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             this.groupShutdown.Controls.Add(this.label6);
             this.groupShutdown.Controls.Add(this.mpShutdown2);
             this.groupShutdown.Controls.Add(this.mpShutdown1);
-            this.groupShutdown.Location = new System.Drawing.Point(8, 395);
+            this.groupShutdown.Location = new System.Drawing.Point(8, 387);
             this.groupShutdown.Name = "groupShutdown";
             this.groupShutdown.Size = new System.Drawing.Size(191, 65);
             this.groupShutdown.TabIndex = 76;
@@ -469,7 +469,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             this.cbContrast.Checked = true;
             this.cbContrast.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbContrast.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.cbContrast.Location = new System.Drawing.Point(190, 331);
+            this.cbContrast.Location = new System.Drawing.Point(190, 324);
             this.cbContrast.Name = "cbContrast";
             this.cbContrast.Size = new System.Drawing.Size(98, 17);
             this.cbContrast.TabIndex = 81;
@@ -481,7 +481,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             // 
             this.cbDisplayOff.AutoSize = true;
             this.cbDisplayOff.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.cbDisplayOff.Location = new System.Drawing.Point(8, 306);
+            this.cbDisplayOff.Location = new System.Drawing.Point(8, 299);
             this.cbDisplayOff.Name = "cbDisplayOff";
             this.cbDisplayOff.Size = new System.Drawing.Size(138, 17);
             this.cbDisplayOff.TabIndex = 80;
@@ -491,7 +491,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             // 
             // lblBrightness
             // 
-            this.lblBrightness.Location = new System.Drawing.Point(16, 349);
+            this.lblBrightness.Location = new System.Drawing.Point(16, 342);
             this.lblBrightness.Name = "lblBrightness";
             this.lblBrightness.Size = new System.Drawing.Size(96, 16);
             this.lblBrightness.TabIndex = 79;
@@ -499,7 +499,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             // 
             // tbBrightness
             // 
-            this.tbBrightness.Location = new System.Drawing.Point(15, 365);
+            this.tbBrightness.Location = new System.Drawing.Point(15, 358);
             this.tbBrightness.Maximum = 255;
             this.tbBrightness.Name = "tbBrightness";
             this.tbBrightness.Size = new System.Drawing.Size(160, 45);
@@ -522,7 +522,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             // 
             // lblContrast
             // 
-            this.lblContrast.Location = new System.Drawing.Point(187, 349);
+            this.lblContrast.Location = new System.Drawing.Point(187, 342);
             this.lblContrast.Name = "lblContrast";
             this.lblContrast.Size = new System.Drawing.Size(96, 16);
             this.lblContrast.TabIndex = 74;
@@ -530,7 +530,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             // 
             // tbContrast
             // 
-            this.tbContrast.Location = new System.Drawing.Point(186, 365);
+            this.tbContrast.Location = new System.Drawing.Point(186, 358);
             this.tbContrast.Maximum = 255;
             this.tbContrast.Name = "tbContrast";
             this.tbContrast.Size = new System.Drawing.Size(160, 45);
@@ -855,7 +855,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             this.cbLight.Checked = true;
             this.cbLight.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbLight.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.cbLight.Location = new System.Drawing.Point(19, 331);
+            this.cbLight.Location = new System.Drawing.Point(19, 324);
             this.cbLight.Name = "cbLight";
             this.cbLight.Size = new System.Drawing.Size(108, 17);
             this.cbLight.TabIndex = 60;
@@ -868,7 +868,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             this.cbPropertyBrowser.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.cbPropertyBrowser.AutoSize = true;
             this.cbPropertyBrowser.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.cbPropertyBrowser.Location = new System.Drawing.Point(8, 511);
+            this.cbPropertyBrowser.Location = new System.Drawing.Point(8, 503);
             this.cbPropertyBrowser.Name = "cbPropertyBrowser";
             this.cbPropertyBrowser.Size = new System.Drawing.Size(132, 17);
             this.cbPropertyBrowser.TabIndex = 4;
@@ -878,7 +878,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             // btnOK
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOK.Location = new System.Drawing.Point(213, 499);
+            this.btnOK.Location = new System.Drawing.Point(213, 491);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(78, 23);
             this.btnOK.TabIndex = 5;
@@ -891,7 +891,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             this.cbExtensiveLogging.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.cbExtensiveLogging.AutoSize = true;
             this.cbExtensiveLogging.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.cbExtensiveLogging.Location = new System.Drawing.Point(8, 494);
+            this.cbExtensiveLogging.Location = new System.Drawing.Point(8, 486);
             this.cbExtensiveLogging.Name = "cbExtensiveLogging";
             this.cbExtensiveLogging.Size = new System.Drawing.Size(107, 17);
             this.cbExtensiveLogging.TabIndex = 6;
@@ -903,7 +903,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             this.mpDisableGUISetup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.mpDisableGUISetup.AutoSize = true;
             this.mpDisableGUISetup.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.mpDisableGUISetup.Location = new System.Drawing.Point(8, 477);
+            this.mpDisableGUISetup.Location = new System.Drawing.Point(8, 469);
             this.mpDisableGUISetup.Name = "mpDisableGUISetup";
             this.mpDisableGUISetup.Size = new System.Drawing.Size(112, 17);
             this.mpDisableGUISetup.TabIndex = 77;
@@ -914,7 +914,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(297, 499);
+            this.btnCancel.Location = new System.Drawing.Point(297, 491);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(78, 23);
             this.btnCancel.TabIndex = 78;
@@ -946,7 +946,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             this.AcceptButton = this.btnOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(389, 528);
+            this.ClientSize = new System.Drawing.Size(389, 520);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.mpDisableGUISetup);
             this.Controls.Add(this.cbExtensiveLogging);

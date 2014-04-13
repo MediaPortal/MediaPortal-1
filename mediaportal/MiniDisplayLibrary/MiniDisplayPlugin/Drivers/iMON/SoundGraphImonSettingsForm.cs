@@ -13,8 +13,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             checkDisableWhenInBackground.DataBindings.Add("Checked", SoundGraphImon.Settings.Instance, "DisableWhenInBackground");
             checkDisableWhenIdle.DataBindings.Add("Checked", SoundGraphImon.Settings.Instance, "DisableWhenIdle");
             textDisableWhenIdleDelayInSeconds.DataBindings.Add("Text", SoundGraphImon.Settings.Instance, "DisableWhenIdleDelayInSeconds");
-            checkReenableAfter.DataBindings.Add("Checked", SoundGraphImon.Settings.Instance, "ReenableAfter");
-            textReenableAfterDelayInSeconds.DataBindings.Add("Text", SoundGraphImon.Settings.Instance, "ReenableAfterDelayInSeconds");
+            checkReenableWhenIdleAfter.DataBindings.Add("Checked", SoundGraphImon.Settings.Instance, "ReenableWhenIdleAfter");
+            textReenableWhenIdleAfterDelayInSeconds.DataBindings.Add("Text", SoundGraphImon.Settings.Instance, "ReenableWhenIdleAfterDelayInSeconds");
+            checkDisableWhenPlaying.DataBindings.Add("Checked", SoundGraphImon.Settings.Instance, "DisableWhenPlaying");
+            textDisableWhenPlayingDelayInSeconds.DataBindings.Add("Text", SoundGraphImon.Settings.Instance, "DisableWhenPlayingDelayInSeconds");
+            checkReenableWhenPlayingAfter.DataBindings.Add("Checked", SoundGraphImon.Settings.Instance, "ReenableWhenPlayingAfter");
+            textReenableWhenPlayingAfterDelayInSeconds.DataBindings.Add("Text", SoundGraphImon.Settings.Instance, "ReenableWhenPlayingAfterDelayInSeconds");
             
             //EQ Settings
             mpEqDisplay.DataBindings.Add("Checked", SoundGraphImonVfd.Settings.Instance, "EqDisplay");
