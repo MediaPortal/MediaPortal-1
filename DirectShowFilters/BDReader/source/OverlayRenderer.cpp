@@ -1001,14 +1001,14 @@ char* COverlayRenderer::ARGBCommandAsString(int cmd)
   switch (cmd)
   {
     case BD_ARGB_OVERLAY_INIT:
-      return "BD_OVERLAY_INIT ";
+      return "BD_ARGB_OVERLAY_INIT ";
     case BD_ARGB_OVERLAY_CLOSE:
-      return "BD_OVERLAY_CLOSE";
+      return "BD_ARGB_OVERLAY_CLOSE";
     case BD_ARGB_OVERLAY_DRAW:
-      return "BD_OVERLAY_DRAW ";
+      return "BD_ARGB_OVERLAY_DRAW ";
     case BD_ARGB_OVERLAY_FLUSH:
-      return "BD_OVERLAY_FLUSH";
+      return "BD_ARGB_OVERLAY_FLUSH";
     default:
-      return "UNKNOWN         ";
+      return "UNKNOWN              ";
   }
 }
