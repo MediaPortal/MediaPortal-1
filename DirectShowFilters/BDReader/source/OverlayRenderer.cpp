@@ -49,6 +49,9 @@ COverlayRenderer::COverlayRenderer(CLibBlurayWrapper* pLib) :
   m_pARGBTextures[BD_OVERLAY_PG] = NULL;
   m_pARGBTextures[BD_OVERLAY_IG] = NULL;
 
+  m_overlayType[BD_OVERLAY_PG] = NONE;
+  m_overlayType[BD_OVERLAY_IG] = NONE;
+
   ZeroMemory((void*)&m_ARGBBuffer, sizeof(BD_ARGB_BUFFER_EX));
 
   m_hStopThreadEvent = CreateEvent(0, TRUE, FALSE, 0);
@@ -464,11 +467,16 @@ void COverlayRenderer::ProcessOverlay(const BD_OVERLAY* pOv)
   switch (pOv->cmd)
   {
     case BD_OVERLAY_INIT:
+      ASSERT(m_overlayType[pOv->plane] == NONE);
       OpenOverlay(pOv);
+      m_overlayType[pOv->plane] = NORMAL_OVERLAY;
       return;
+
     case BD_OVERLAY_CLOSE:
+      ASSERT(m_overlayType[pOv->plane] == NORMAL_OVERLAY);
       CloseOverlay(pOv->plane);
       FreeOverlayQueue(pOv->plane);
+      m_overlayType[pOv->plane] = NONE;
       return;
   }
 
@@ -530,10 +538,15 @@ void COverlayRenderer::ARGBOverlayProc(const BD_ARGB_OVERLAY* ov)
   switch (ov->cmd)
   {
     case BD_ARGB_OVERLAY_INIT:
+      ASSERT(m_overlayType[ov->plane] == NONE);
       OpenOverlay(ov);
+      m_overlayType[ov->plane] = ARGB_OVERLAY;
       return;
+
     case BD_ARGB_OVERLAY_CLOSE:
+      ASSERT(m_overlayType[ov->plane] == ARGB_OVERLAY);
       CloseOverlay(ov->plane);
+      m_overlayType[ov->plane] = NONE;
       return;
   }
 
