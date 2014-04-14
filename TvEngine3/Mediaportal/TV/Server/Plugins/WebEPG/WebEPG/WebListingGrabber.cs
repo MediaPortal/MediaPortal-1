@@ -156,6 +156,10 @@ namespace WebEPG
           _parser = new XmlParser(_grabber.Listing.XmlTemplate);
           break;
 
+        case ListingInfo.Type.Json:
+          _parser = new JsonParser(_grabber.Listing.JsonTemplate);
+          break;
+
         case ListingInfo.Type.Data:
 
           if (_grabber.Listing.DataTemplate.Template == null)

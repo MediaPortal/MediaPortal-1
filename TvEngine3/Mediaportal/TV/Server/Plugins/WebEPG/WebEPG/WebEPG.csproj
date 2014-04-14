@@ -62,6 +62,7 @@
     <Reference Include="System.Data">
       <Name>System.Data</Name>
     </Reference>
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
@@ -84,6 +85,9 @@
     <Compile Include="config\EPGConfigData.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="config\Grabber\JsonField.cs" />
+    <Compile Include="config\Grabber\JsonNode.cs" />
+    <Compile Include="config\Grabber\JsonParserTemplate.cs" />
     <Compile Include="config\Grabber\SublinkInfo.cs" />
     <Compile Include="config\Grabber\DataParserTemplate.cs" />
     <Compile Include="config\Grabber\GrabberConfigFile.cs" />
@@ -104,6 +108,7 @@
     <Compile Include="config\Grabber\WebParserTemplate.cs" />
     <Compile Include="config\Grabber\WebSearchData.cs" />
     <Compile Include="config\Grabber\DataPreference.cs" />
+    <Compile Include="Parser\JsonParser.cs" />
     <Compile Include="Parser\WebParser.cs" />
     <Compile Include="Parser\IParser.cs" />
     <Compile Include="config\Grabber\XmlField.cs" />

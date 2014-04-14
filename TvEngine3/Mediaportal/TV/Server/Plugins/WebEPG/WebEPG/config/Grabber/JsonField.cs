@@ -19,36 +19,18 @@
 #endregion
 
 using System.Xml.Serialization;
-using Mediaportal.TV.Server.TvLibrary.Utils.Web.http;
 
 namespace WebEPG.config.Grabber
 {
   /// <summary>
-  /// Information about the listing
+  ///  JSON Parser field
   /// </summary>
-  public class ListingInfo
+  public class JsonField
   {
-    #region Enums
-
-    public enum Type
-    {
-      Html,
-      Data,
-      Xml,
-      Json
-    }
-
-    #endregion
-
     #region Variables
 
-    [XmlAttribute("type")] public Type listingType;
-    [XmlElement("Site")] public HTTPRequest Request;
-    [XmlElement("Search")] public RequestData SearchParameters;
-    [XmlElement("Html")] public WebParserTemplate HtmlTemplate;
-    [XmlElement("Xml")] public XmlParserTemplate XmlTemplate;
-    [XmlElement("Data")] public DataParserTemplate DataTemplate;
-    [XmlElement("JSON")] public JsonParserTemplate JsonTemplate;
+    [XmlAttribute("name")] public string FieldName;
+    [XmlAttribute("jsonname")] public string JsonName;
 
     #endregion
   }

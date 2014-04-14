@@ -209,12 +209,12 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       }
 
       XmlSerializer s = new XmlSerializer(typeof (WebepgConfigFile));
-      TextWriter w = new StreamWriter(confFile);
-      s.Serialize(w, _configFile);
-      w.Close();
+      using (TextWriter w = new StreamWriter(confFile))
+      {
+        s.Serialize(w, _configFile);
+      }
 
-
-      string value = "";      
+      string value = "";
       switch (DestinationComboBox.SelectedIndex)
       {
         case 0:
@@ -396,19 +396,15 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
         this.LogInfo("WebEPG Config: Loading Existing WebEPG.xml");
 
         XmlSerializer s = new XmlSerializer(typeof (WebepgConfigFile));
-        TextReader r = null;
         try
         {
-          r = new StreamReader(_configFileDir + "\\WebEPG.xml");
-          _configFile = (WebepgConfigFile)s.Deserialize(r);
-          r.Close();
+          using (TextReader r = new StreamReader(_configFileDir + "\\WebEPG.xml"))
+          {
+            _configFile = (WebepgConfigFile)s.Deserialize(r);
+          }
         }
         catch (InvalidOperationException ex)
         {
-          if (r != null)
-          {
-            r.Close();
-          }
           this.LogError(ex, "WebEPG: Error loading config {0}", _configFileDir + "\\WebEPG.xml");
           LoadOldConfigFile();
         }
@@ -546,12 +542,14 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
           this.LogDebug("WebEPG Config: File: {0}", file.Name);
 
           XmlSerializer s = new XmlSerializer(typeof (GrabberConfigFile));
-          TextReader r = new StreamReader(file.FullName);
-          grabberXml = (GrabberConfigFile)s.Deserialize(r);
+          using (TextReader r = new StreamReader(file.FullName))
+          {
+            grabberXml = (GrabberConfigFile)s.Deserialize(r);
+          }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-          this.LogInfo("WebEPG Config: File open failed - XML error");
+          this.LogError(ex, "WebEPG Config: File open failed - XML error");
           return;
         }
 
