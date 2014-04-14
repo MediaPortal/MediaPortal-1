@@ -56,15 +56,17 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Castle.Core">
+      <HintPath>..\..\..\..\..\Packages\Castle.Core.3.1.0\lib\net40-client\Castle.Core.dll</HintPath>
+    </Reference>
     <Reference Include="Castle.Windsor">
-      <HintPath>..\..\ExternalBinaries\Castle.Windsor.dll</HintPath>
+      <HintPath>..\..\..\..\..\Packages\Castle.Windsor.3.1.0\lib\net40\Castle.Windsor.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
     <Reference Include="System.Xml" />
     <Reference Include="UPnP">
@@ -196,10 +198,6 @@
       <Project>{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}</Project>
       <Name>DirectShowLib</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Plugins\WebEPG\WebEPG\WebEPG.csproj">
-      <Project>{F7CB2A9F-004E-4667-BEAF-782F1C28E2D3}</Project>
-      <Name>WebEPG %28Plugins\WebEPG\WebEPG%29</Name>
-    </ProjectReference>
     <ProjectReference Include="..\TVDatabase\Entities\Entities.csproj">
       <Project>{4C2D9698-AF44-4157-99B6-48F5269F20CC}</Project>
       <Name>Entities</Name>
@@ -217,7 +215,9 @@
       <Name>TvLibrary.Utils</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
       <Visible>False</Visible>
