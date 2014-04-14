@@ -570,7 +570,7 @@ namespace TvEngine.PowerScheduler.Interfaces
 
       // Disable WOW64 redirection for this thread on 64-bit systems to call the 64-bit powercfg
       IntPtr oldValue = IntPtr.Zero;
-      if (IsOS64Bit())
+      if (OSInfo.OSInfo.Is64BitOs())
       {
         Wow64DisableWow64FsRedirection(ref oldValue);
       }
@@ -593,7 +593,7 @@ namespace TvEngine.PowerScheduler.Interfaces
       }
 
       // Re-enable WOW64 redirection
-      if (IsOS64Bit())
+      if (OSInfo.OSInfo.Is64BitOs())
       {
         Wow64RevertWow64FsRedirection(oldValue);
       }
@@ -1334,49 +1334,6 @@ namespace TvEngine.PowerScheduler.Interfaces
       catch (Exception) { }
     }
 
-    private delegate bool IsWow64ProcessDelegate([In] IntPtr handle, [Out] out bool isWow64Process);
-
-    /// <summary>
-    /// Checks if OS is 64 bit
-    /// </summary>
-    /// <returns>Returns true if 64-bit OS</returns>
-    private static bool IsOS64Bit()
-    {
-      return (IntPtr.Size == 8 || (IntPtr.Size == 4 && Is32BitProcessOn64BitProcessor()));
-    }
-
-    private static IsWow64ProcessDelegate GetIsWow64ProcessDelegate()
-    {
-      IntPtr handle = LoadLibrary("kernel32");
-
-      if (handle != IntPtr.Zero)
-      {
-        IntPtr fnPtr = GetProcAddress(handle, "IsWow64Process");
-        if (fnPtr != IntPtr.Zero)
-        {
-          return (IsWow64ProcessDelegate)Marshal.GetDelegateForFunctionPointer((IntPtr)fnPtr, typeof(IsWow64ProcessDelegate));
-        }
-      }
-      return null;
-    }
-
-    private static bool Is32BitProcessOn64BitProcessor()
-    {
-      IsWow64ProcessDelegate fnDelegate = GetIsWow64ProcessDelegate();
-
-      if (fnDelegate == null)
-        return false;
-
-      bool isWow64;
-      bool retVal = fnDelegate.Invoke(Process.GetCurrentProcess().Handle, out isWow64);
-
-      if (retVal == false)
-        return false;
-      else
-        return isWow64;
-    }
-
     #endregion
-
   }
 }
