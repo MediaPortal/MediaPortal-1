@@ -55,6 +55,13 @@ struct BD_ARGB_BUFFER_EX : BD_ARGB_BUFFER
   COverlayRenderer* render;
 };
 
+enum OVERLAY_TYPE
+{
+  NONE = 0,
+  NORMAL_OVERLAY = 1,
+  ARGB_OVERLAY = 2
+};
+
 class COverlayRenderer
 {
 public:
@@ -137,4 +144,6 @@ private:
   REFERENCE_TIME m_rtOffset;
 
   CCritSec m_csRenderLock;
+
+  OVERLAY_TYPE m_overlayType[NUM_OF_PLANES];
 };
