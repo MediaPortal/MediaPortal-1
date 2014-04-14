@@ -578,7 +578,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       public byte PmtByte6;                     // Byte 6 from the PMT section (PMT version, current next indicator). 
       private byte Padding1;
       public ushort PcrPid;
-      public ushort ServiceId;
+      public ushort ProgramNumber;
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_DESCRIPTOR_DATA_LENGTH)]
       public byte[] ProgramCaDescriptorData;    // The first two bytes should specify the length of the descriptor data.
       private ushort Padding2;
@@ -1913,7 +1913,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       PmtData pmtData = new PmtData();
       pmtData.PmtByte6 = (byte)((pmt.Version << 1) | pmt.CurrentNextIndicator);
       pmtData.PcrPid = pmt.PcrPid;
-      pmtData.ServiceId = pmt.ProgramNumber;
+      pmtData.ProgramNumber = pmt.ProgramNumber;
 
       // Program CA descriptor data.
       int offset = 2;   // 2 bytes reserved for the data length
