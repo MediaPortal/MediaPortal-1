@@ -22,7 +22,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Castle.Core;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.Plugins.Base.Interfaces;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.TVControl.Events;
@@ -34,14 +33,13 @@ using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.Plugins.ConflictsManager
 {
   [Interceptor("PluginExceptionInterceptor")]
   public class ConflictsManager : ITvServerPlugin
   {
-
-
     #region variables
 
     private IList<Schedule> _schedules = null;
@@ -299,6 +297,10 @@ namespace Mediaportal.TV.Server.Plugins.ConflictsManager
 
         foreach (Card card in cardsList)
         {
+          if (!card.Enabled)
+          {
+            continue;
+          }
           if (CardManagement.CanViewTvChannel(card, schedule.IdSchedule))
           {
             // checks if any schedule assigned to this cards overlaps current parsed schedule
@@ -363,7 +365,7 @@ namespace Mediaportal.TV.Server.Plugins.ConflictsManager
     /// <returns>int: number of cards</returns>
     private int howManyCardsCanView(Schedule _shedule)
     {
-      return _cards.Count(_card => CardManagement.CanViewTvChannel(_card, _shedule.IdChannel));
+      return _cards.Count(_card => _card.Enabled && CardManagement.CanViewTvChannel(_card, _shedule.IdChannel));
     }
 
     /// <summary>
