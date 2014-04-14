@@ -46,13 +46,13 @@ namespace Mediaportal.TV.Server.Plugins.PersonalTVGuide
     public override void OnSectionActivated()
     {
 
-      debug.Checked = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("PTVGDebugMode", "false").Value == "true";
+      debug.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("PTVGDebugMode", false);
       base.OnSectionActivated();
     }
 
     public override void OnSectionDeActivated()
     {
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("PTVGDebugMode", debug.Checked ? "true" : "false");
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("PTVGDebugMode", debug.Checked);
       base.OnSectionDeActivated();
     }
 

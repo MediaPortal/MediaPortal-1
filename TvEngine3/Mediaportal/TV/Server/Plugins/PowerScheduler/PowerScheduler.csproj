@@ -81,8 +81,11 @@
     <Compile Include="WindowsController.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Castle.Core">
+      <HintPath>..\..\..\..\..\..\Packages\Castle.Core.3.1.0\lib\net40-client\Castle.Core.dll</HintPath>
+    </Reference>
     <Reference Include="Castle.Windsor">
-      <HintPath>..\..\..\ExternalBinaries\Castle.Windsor.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Packages\Castle.Windsor.3.1.0\lib\net40\Castle.Windsor.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -149,5 +152,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="TheAlgorithm.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

@@ -725,7 +725,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
         _apiCount++;
         _apiIndex = _apiCount;
         this.LogDebug("Anysee: loading API, API index = {0}", _apiIndex);
-        string resourcesFolder = PathManager.BuildAssemblyRelativePath("Resources"); // It's called already inside plugins\CustomDevices !
+        string resourcesFolder = PathManager.BuildAssemblyRelativePath("Resources");
         string sourceFilename = Path.Combine(resourcesFolder, "CIAPI.dll");
         string targetFilename = Path.Combine(resourcesFolder, "CIAPI" + _apiIndex + ".dll");
         if (!File.Exists(targetFilename))
