@@ -116,17 +116,17 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
 
     private void SaveDbSettings()
     {
-      TvMovie.DatabasePath = tbDbPath.Text;      
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("TvMovieEnabled", checkBoxEnableImport.Checked ? "true" : "false");
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("TvMovieShortProgramDesc", checkBoxUseShortDesc.Checked ? "true" : "false");
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("TvMovieExtendDescription", checkBoxAdditionalInfo.Checked ? "true" : "false");
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("TvMovieShowAudioFormat", checkBoxShowAudioFormat.Checked ? "true" : "false");
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("TvMovieSlowImport", checkBoxSlowImport.Checked ? "true" : "false");
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("TvMovieShowRatings", checkBoxShowRatings.Checked ? "true" : "false");
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("TvMovieLimitActors", checkBoxLimitActors.Checked ? numericUpDownActorCount.Value.ToString() : "0");
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("TvMovieShowLive", checkBoxShowLive.Checked ? "true" : "false");
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("TvMovieShowRepeating", checkBoxShowRepeat.Checked ? "true" : "false");
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("TvMovieRestPeriod", GetRestPeriod());      
+      TvMovie.DatabasePath = tbDbPath.Text;
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("TvMovieEnabled", checkBoxEnableImport.Checked);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("TvMovieShortProgramDesc", checkBoxUseShortDesc.Checked);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("TvMovieExtendDescription", checkBoxAdditionalInfo.Checked);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("TvMovieShowAudioFormat", checkBoxShowAudioFormat.Checked);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("TvMovieSlowImport", checkBoxSlowImport.Checked);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("TvMovieShowRatings", checkBoxShowRatings.Checked);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("TvMovieLimitActors", checkBoxLimitActors.Checked ? (int)numericUpDownActorCount.Value : 0);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("TvMovieShowLive", checkBoxShowLive.Checked);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("TvMovieShowRepeating", checkBoxShowRepeat.Checked);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("TvMovieRestPeriod", GetRestPeriod());      
     }
 
     public override void OnSectionActivated()
@@ -138,14 +138,14 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
 
     private void LoadDbSettings()
     {
-      checkBoxEnableImport.Checked = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("TvMovieEnabled", "false").Value == "true";
-      checkBoxUseShortDesc.Checked = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("TvMovieShortProgramDesc", "false").Value == "true";
-      checkBoxAdditionalInfo.Checked = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("TvMovieExtendDescription", "true").Value == "true";
-      checkBoxShowRatings.Checked = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("TvMovieShowRatings", "true").Value == "true";
-      checkBoxShowAudioFormat.Checked = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("TvMovieShowAudioFormat", "false").Value == "true";
-      checkBoxSlowImport.Checked = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("TvMovieSlowImport", "true").Value == "true";
+      checkBoxEnableImport.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("TvMovieEnabled", false);
+      checkBoxUseShortDesc.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("TvMovieShortProgramDesc", false);
+      checkBoxAdditionalInfo.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("TvMovieExtendDescription", true);
+      checkBoxShowRatings.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("TvMovieShowRatings", true);
+      checkBoxShowAudioFormat.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("TvMovieShowAudioFormat", false);
+      checkBoxSlowImport.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("TvMovieSlowImport", true);
 
-      var tvMovieLimitActors = Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("TvMovieLimitActors", "5").Value);
+      var tvMovieLimitActors = ServiceAgents.Instance.SettingServiceAgent.GetValue("TvMovieLimitActors", 5);
       if (tvMovieLimitActors < numericUpDownActorCount.Minimum || tvMovieLimitActors > numericUpDownActorCount.Maximum)
       {
         checkBoxLimitActors.Checked = false;
@@ -157,9 +157,9 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
         numericUpDownActorCount.Value = tvMovieLimitActors;
       }
 
-      checkBoxShowLive.Checked = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("TvMovieShowLive", "true").Value == "true";
-      checkBoxShowRepeat.Checked = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("TvMovieShowRepeating", "false").Value == "true";
-      SetRestPeriod(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("TvMovieRestPeriod", "24").Value);
+      checkBoxShowLive.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("TvMovieShowLive", true);
+      checkBoxShowRepeat.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("TvMovieShowRepeating", false);
+      SetRestPeriod(ServiceAgents.Instance.SettingServiceAgent.GetValue("TvMovieRestPeriod", 24));
     }
 
     #endregion
@@ -554,39 +554,39 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
         checkBoxUseShortDesc.Checked = false;
     }
 
-    private string GetRestPeriod()
+    private int GetRestPeriod()
     {
       if (radioButton6h.Checked)
-        return "6";
+        return 6;
       else if (radioButton12h.Checked)
-        return "12";
+        return 12;
       else if (radioButton24h.Checked)
-        return "24";
+        return 24;
       else if (radioButton2d.Checked)
-        return "48";
+        return 48;
       else if (radioButton7d.Checked)
-        return "168";
+        return 168;
 
-      return "24";
+      return 24;
     }
 
-    private void SetRestPeriod(string RadioButtonSetting)
+    private void SetRestPeriod(int RadioButtonSetting)
     {
       switch (RadioButtonSetting)
       {
-        case "6":
+        case 6:
           radioButton6h.Checked = true;
           break;
-        case "12":
+        case 12:
           radioButton12h.Checked = true;
           break;
-        case "24":
+        case 24:
           radioButton24h.Checked = true;
           break;
-        case "48":
+        case 48:
           radioButton2d.Checked = true;
           break;
-        case "168":
+        case 168:
           radioButton7d.Checked = true;
           break;
         default:

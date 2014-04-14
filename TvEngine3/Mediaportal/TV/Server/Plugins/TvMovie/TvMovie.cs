@@ -71,7 +71,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
         //Otherwise try to get it from VirtualStore
         if (string.IsNullOrEmpty(value))
         {
-          string virtualStoreSubKey = Check64bit() ? _virtualStoreRegSubKey64b : _virtualStoreRegSubKey32b;
+          string virtualStoreSubKey = OSInfo.OSInfo.Is64BitOs() ? _virtualStoreRegSubKey64b : _virtualStoreRegSubKey32b;
 
           foreach (String userKeyName in Registry.Users.GetSubKeyNames())
           {
@@ -139,36 +139,6 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
         }
         SettingsManagement.SaveSetting("TvMoviedatabasepath", path);
       }
-    }
-
-    #endregion
-
-    #region IsWow64 check
-
-    [DllImport("kernel32.dll", SetLastError = true, CallingConvention = CallingConvention.Winapi)]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    public static extern bool IsWow64Process(
-      [In] IntPtr hProcess,
-      [Out] out bool lpSystemInfo
-      );
-
-    public static bool Check64bit()
-    {
-      //IsWow64Process is not supported under Windows2000
-      if (!OSInfo.OSInfo.XpOrLater())
-      {
-        return false;
-      }
-
-      Process p = Process.GetCurrentProcess();
-      IntPtr handle = p.Handle;
-      bool isWow64;
-      bool success = IsWow64Process(handle, out isWow64);
-      if (!success)
-      {
-        throw new System.ComponentModel.Win32Exception();
-      }
-      return isWow64;
     }
 
     #endregion
