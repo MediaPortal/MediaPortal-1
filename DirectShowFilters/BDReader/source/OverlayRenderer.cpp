@@ -356,6 +356,9 @@ void ARBGLock(BD_ARGB_BUFFER* buffer)
 
 void COverlayRenderer::LockARGBSurface(BD_ARGB_BUFFER_EX* buffer)
 {
+  if (!m_pPlanes[BD_OVERLAY_IG])
+    return;
+
   RECT area = {};
   area.left = buffer->dirty[BD_OVERLAY_IG].x0;
   area.top = buffer->dirty[BD_OVERLAY_IG].y0;
@@ -409,7 +412,8 @@ void COverlayRenderer::UnlockARGBSurface(BD_ARGB_BUFFER_EX* buffer)
   CopyToFrontBuffer(BD_OVERLAY_IG, true);
 
   OSDTexture* plane = m_pPlanes[BD_OVERLAY_IG];
-  m_pLib->HandleOSDUpdate(*plane);
+  if (plane)
+    m_pLib->HandleOSDUpdate(*plane);
 }
 
 void COverlayRenderer::OverlayProc(const BD_OVERLAY* ov)
