@@ -38,10 +38,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
     private MPComboBox[] _tunerSelections = null;
     private MPLabel[] _installStateLabels = null;
 
-    private readonly ISettingService _settingServiceAgent = ServiceAgents.Instance.SettingServiceAgent;
-    private readonly ICardService _cardServiceAgent = ServiceAgents.Instance.CardServiceAgent;
-    private readonly IControllerService _controllerServiceAgent = ServiceAgents.Instance.ControllerServiceAgent;
-
     public SmarDtvUsbCiConfig()
       : this("SmarDTV USB CI")
     {
@@ -67,7 +63,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
         if (_tunerSelections[i].Enabled && selectedTuner != null)
         {
           this.LogDebug("  {0} linked to tuner {1} {2}", _products[i].ProductName, selectedTuner.Name, selectedTuner.DevicePath);
-          _settingServiceAgent.SaveValue(_products[i].DbSettingName, selectedTuner.DevicePath);
+          ServiceAgents.Instance.SettingServiceAgent.SaveValue(_products[i].DbSettingName, selectedTuner.DevicePath);
         }
       }
       base.SaveSettings();
@@ -76,7 +72,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
     public override void OnSectionActivated()
     {
       this.LogDebug("SmarDTV USB CI config: activated");
-      IList<Card> allTuners = _cardServiceAgent.ListAllCards();
+      IList<Card> allTuners = ServiceAgents.Instance.CardServiceAgent.ListAllCards();
       DsDevice[] captureDevices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSCapture);
 
       try
@@ -86,13 +82,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
           this.LogDebug("SmarDTV USB CI config: product {0}...", _products[i].ProductName);
 
           // Populate the tuner selection fields and set current values.
-          string tunerDevicePath = _settingServiceAgent.GetValue(_products[i].DbSettingName, string.Empty);
+          string tunerDevicePath = ServiceAgents.Instance.SettingServiceAgent.GetValue(_products[i].DbSettingName, string.Empty);
           _tunerSelections[i].Items.Clear();
           _tunerSelections[i].SelectedIndex = -1;
 
           foreach (Card tuner in allTuners)
           {
-            CardType tunerType = _controllerServiceAgent.Type(tuner.IdCard);
+            CardType tunerType = ServiceAgents.Instance.ControllerServiceAgent.Type(tuner.IdCard);
             if (tunerType == CardType.Analog || tunerType == CardType.RadioWebStream || tunerType == CardType.Unknown)
             {
               continue;
