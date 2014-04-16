@@ -222,9 +222,11 @@ namespace MediaPortal.Visualization
       {
         return false;
       }
-
-      VisualizationWindow.Width = GUIGraphicsContext.form.ClientRectangle.Width;
-      VisualizationWindow.Height = GUIGraphicsContext.form.ClientRectangle.Height;
+      if (GUIGraphicsContext.IsFullScreenVideo)
+      {
+        VisualizationWindow.Width = GUIGraphicsContext.form.ClientRectangle.Width;
+        VisualizationWindow.Height = GUIGraphicsContext.form.ClientRectangle.Height;
+      }
       
       bool result = WMPInterop.SetOutputWMP(outputType, VisualizationWindow.Handle);
       return result;
