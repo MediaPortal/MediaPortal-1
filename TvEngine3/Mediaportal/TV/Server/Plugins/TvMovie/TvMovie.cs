@@ -19,19 +19,17 @@
 #endregion
 
 using System;
-using System.Diagnostics;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Timers;
 using Castle.Core;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.Plugins.Base.Interfaces;
 using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
-using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 using Microsoft.Win32;
 
 namespace Mediaportal.TV.Server.Plugins.TvMovie
@@ -87,7 +85,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
       }
       catch (Exception ex)
       {
-        this.LogError(ex, "TVMovie: Registry lookup for {0} failed", valueName);
+        Log.Error(ex, "TVMovie: Registry lookup for {0} failed", valueName);
       }
 
       if (string.IsNullOrEmpty(value))
@@ -102,13 +100,10 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
     {
       get
       {
-        var setting = SettingsManagement.GetSetting("TvMovieInstallPath", string.Empty);
-        string path = setting.Value;
-
+        string path = ServiceAgents.Instance.SettingServiceAgent.GetValue("TvMovieInstallPath", string.Empty);
         if (!File.Exists(path))
         {
           path = GetRegistryValueFromValueName("ProgrammPath");
-          setting.Value = path;
         }
         return path;
       }
@@ -121,11 +116,11 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
     {
       get
       {
-        string path = SettingsManagement.GetSetting("TvMoviedatabasepath", string.Empty).Value;
-
+        string path = ServiceAgents.Instance.SettingServiceAgent.GetValue("TvMoviedatabasepath", string.Empty);
         if (!File.Exists(path))
+        {
           path = GetRegistryValueFromValueName("DBDatei");
-
+        }
         return path;
       }
       set
@@ -137,7 +132,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
         {
           path = DatabasePath;
         }
-        SettingsManagement.SaveSetting("TvMoviedatabasepath", path);
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue("TvMoviedatabasepath", path);
       }
     }
 
@@ -220,8 +215,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
         }
         catch (Exception ex)
         {
-          this.LogInfo("TvMovie plugin error:");
-          this.LogError(ex);
+          this.LogError(ex, "TvMovie plugin error");
         }
       }
       finally
@@ -241,8 +235,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
     {
       try
       {
-        
-        if (SettingsManagement.GetSetting("TvMovieEnabled", "false").Value != "true")
+        if (ServiceAgents.Instance.SettingServiceAgent.GetValue("TvMovieEnabled", false))
         {
           return;
         }
@@ -264,7 +257,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
         }
         catch (Exception ex2)
         {
-          this.LogError("TVMovie: Error spawing import thread - {0},{1}", ex2.Message, ex2.StackTrace);
+          this.LogError(ex2, "TVMovie: Error spawing import thread");
         }
       }
     }

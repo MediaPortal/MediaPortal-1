@@ -111,7 +111,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
     private bool _canceled = false;
     private List<TVMChannel> _tvmEpgChannels;
     private List<Program> _tvmEpgProgs = new List<Program>(500);
-    private List<Channel> _channelList = null;
+    private IList<Channel> _channelList = null;
     private int _programsCounter = 0;
     private bool _useShortProgramDesc = false;
     private bool _extendDescription = true;
@@ -232,23 +232,16 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
 
     #region Public functions
 
-    public List<Channel> GetChannels()
+    public IList<Channel> GetChannels()
     {
-      List<Channel> tvChannels = new List<Channel>();
+      IList<Channel> tvChannels = new List<Channel>();
       try
       {
-        IList<Channel> allChannels = ChannelManagement.ListAllChannelsByMediaType(MediaTypeEnum.TV);
-        foreach (Channel channel in allChannels)
-        {
-          if (channel.VisibleInGuide)
-          {
-            tvChannels.Add(channel);
-          }
-        }
+        tvChannels = ChannelManagement.ListAllVisibleChannelsByMediaType(MediaTypeEnum.TV);
       }
       catch (Exception ex)
       {
-        this.LogInfo("TVMovie: Exception in GetChannels: {0}\n{1}", ex.Message, ex.StackTrace);
+        this.LogError(ex, "TVMovie: Exception in GetChannels");
       }
       return tvChannels;
     }
@@ -293,7 +286,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
               }
               catch (Exception dsex)
               {
-                this.LogInfo("TVMovie: Exception filling Sender DataSet - {0}\n{1}", dsex.Message, dsex.StackTrace);
+                this.LogError(dsex, "TVMovie: Exception filling Sender DataSet");
                 return false;
               }
             }
@@ -357,7 +350,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
         }
         catch (Exception ex)
         {
-          this.LogInfo("TVMovie: Exception: {0}, {1}", ex.Message, ex.StackTrace);
+          this.LogError(ex, "TVMovie: Exception");
         }
       }
 
@@ -477,7 +470,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
           }
           catch (Exception ex)
           {
-            this.LogInfo("TVMovie: Error inserting programs - {0}", ex.StackTrace);
+            this.LogError(ex, "TVMovie: Error inserting programs");
           }
         }
       }
@@ -501,9 +494,9 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
           this.LogDebug("TVMovie: Imported {0} database entries for {1} stations in {2} seconds", _programsCounter, counter,
                     Convert.ToString(ImportDuration.TotalSeconds));
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-          this.LogInfo("TVMovie: Error updating the database with last import date");
+          this.LogError(ex, "TVMovie: Error updating the database with last import date");
         }
       }
       GC.Collect();
@@ -580,8 +573,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
         catch (OleDbException ex)
         {
           databaseTransaction.Rollback();
-          this.LogInfo("TVMovie: Error accessing TV Movie Clickfinder database - import of current station canceled");
-          this.LogError("TVMovie: Exception: {0}", ex);
+          this.LogError(ex, "TVMovie: Error accessing TV Movie Clickfinder database - import of current station canceled");
           return 0;
         }
         catch (Exception ex1)
@@ -591,7 +583,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
             databaseTransaction.Rollback();
           }
           catch (Exception) {}
-          this.LogInfo("TVMovie: Exception: {0}", ex1);
+          this.LogError(ex1, "TVMovie: Exception");
           return 0;
         }
         finally
@@ -641,7 +633,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
       }
       catch (Exception ex2)
       {
-        this.LogInfo("TVMovie: Error parsing EPG time data - {0}", ex2.ToString());
+        this.LogError(ex2, "TVMovie: Error parsing EPG time data");
       }
 
       string title = Sendung;
@@ -864,14 +856,14 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
           }
           catch (Exception)
           {
-            this.LogInfo("TVMovie: Error loading mappings - make sure tv channel: {0} (ID: {1}) still exists!",
+            this.LogError("TVMovie: Error loading mappings - make sure tv channel: {0} (ID: {1}) still exists!",
                      mapping.StationName, mapping.IdChannel);
           }
         }
       }
       catch (Exception ex)
       {
-        this.LogInfo("TVMovie: Error in GetMappingList - {0}\n{1}", ex.Message, ex.StackTrace);
+        this.LogError(ex, "TVMovie: Error in GetMappingList");
       }
       return mappingList;
     }
