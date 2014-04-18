@@ -22,23 +22,21 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using Castle.Core;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.Plugins.Base.Interfaces;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.TVControl.Events;
 using Mediaportal.TV.Server.TVControl.Interfaces.Events;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
+using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.Plugins.ComSkipLauncher
 {
   [Interceptor("PluginExceptionInterceptor")]
   public class ComSkipLauncher : ITvServerPlugin
   {
-
-
     #region Constants
 
     private const bool DefaultRunAtStrart = true;
@@ -147,13 +145,13 @@ namespace Mediaportal.TV.Server.Plugins.ComSkipLauncher
       try
       {
         TvServerEventArgs tvEvent = (TvServerEventArgs)eventArgs;
-        
-        var recording = RecordingManagement.GetRecording(tvEvent.Recording);
+
+        var recording = ServiceAgents.Instance.RecordingServiceAgent.GetRecording(tvEvent.Recording);
         if (tvEvent.EventType == TvServerEventType.RecordingStarted && _runAtStart)
         {
           if (recording.IdChannel.HasValue)
           {
-            Channel channel = ChannelManagement.GetChannel(recording.IdChannel.GetValueOrDefault());
+            Channel channel = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(recording.IdChannel.GetValueOrDefault());
 
             string parameters = ProcessParameters(_parameters, recording.FileName, channel.DisplayName);
 
@@ -167,7 +165,7 @@ namespace Mediaportal.TV.Server.Plugins.ComSkipLauncher
         {
           if (recording.IdChannel.HasValue)
           {
-            Channel channel = ChannelManagement.GetChannel(recording.IdChannel.GetValueOrDefault());
+            Channel channel = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(recording.IdChannel.GetValueOrDefault());
             string parameters = ProcessParameters(_parameters, recording.FileName, channel.DisplayName);
 
             Log.Info("ComSkipLauncher: Recording ended ({0} on {1}), launching program ({2} {3}) ...",
@@ -187,10 +185,9 @@ namespace Mediaportal.TV.Server.Plugins.ComSkipLauncher
     {
       try
       {
-
-        _runAtStart = SettingsManagement.GetValue("ComSkipLauncher_RunAtStart", DefaultRunAtStrart);
-        _program = SettingsManagement.GetValue("ComSkipLauncher_Program", DefaultProgram);
-        _parameters = SettingsManagement.GetValue("ComSkipLauncher_Parameters", DefaultParameters);
+        _runAtStart = ServiceAgents.Instance.SettingServiceAgent.GetValue("ComSkipLauncher_RunAtStart", DefaultRunAtStrart);
+        _program = ServiceAgents.Instance.SettingServiceAgent.GetValue("ComSkipLauncher_Program", DefaultProgram);
+        _parameters = ServiceAgents.Instance.SettingServiceAgent.GetValue("ComSkipLauncher_Parameters", DefaultParameters);
       }
       catch (Exception ex)
       {
@@ -206,9 +203,9 @@ namespace Mediaportal.TV.Server.Plugins.ComSkipLauncher
     {
       try
       {
-        SettingsManagement.SaveValue("ComSkipLauncher_RunAtStart", _runAtStart);
-        SettingsManagement.SaveValue("ComSkipLauncher_Program", _program);
-        SettingsManagement.SaveValue("ComSkipLauncher_Parameters", _parameters);        
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue("ComSkipLauncher_RunAtStart", _runAtStart);
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue("ComSkipLauncher_Program", _program);
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue("ComSkipLauncher_Parameters", _parameters);        
       }
       catch (Exception ex)
       {
