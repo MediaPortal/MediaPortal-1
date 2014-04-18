@@ -301,7 +301,7 @@ namespace Mediaportal.TV.Server.Plugins.ConflictsManager
           {
             continue;
           }
-          if (CardManagement.CanViewTvChannel(card, schedule.IdSchedule))
+          if (CardManagement.CanViewTvChannel(card, schedule.IdChannel))
           {
             // checks if any schedule assigned to this cards overlaps current parsed schedule
             bool free = true;
