@@ -146,7 +146,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
+    <PreBuildEvent>xcopy "$(ProjectDir)..\..\TvEngine3\Mediaportal\TV\Server\Plugins\PowerScheduler\Setup\*" "$(ProjectDir)Setup" /D /Y
+xcopy "$(ProjectDir)Setup\*" "$(ProjectDir)..\..\TvEngine3\Mediaportal\TV\Server\Plugins\PowerScheduler\Setup" /D /Y</PreBuildEvent>
   </PropertyGroup>
 </Project>
