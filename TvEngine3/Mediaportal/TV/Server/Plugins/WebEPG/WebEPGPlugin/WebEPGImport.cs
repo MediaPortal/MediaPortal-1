@@ -192,6 +192,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
 
         string destination = SettingsManagement.GetValue("webepgDestination", "db");
         string webepgDirectory = PathManager.GetDataPath;
+        // TODO use of config files should be eliminated, this is not multi-seat compatible
         string configFile = webepgDirectory + @"\WebEPG\WebEPG.xml";
 
         //int numChannels = 0, numPrograms = 0;

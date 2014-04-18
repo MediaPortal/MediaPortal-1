@@ -64,6 +64,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
 
     private string _webepgFilesDir;
     private string _configFileDir;
+    // TODO use of config files should be eliminated, this is not multi-seat compatible
     private WebepgConfigFile _configFile;
     private fSelection selection;
     private TreeNode tGrabbers;
@@ -753,6 +754,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
 
     private void buttonManualImport_Click(object sender, EventArgs e)
     {
+      // TODO this is not multi-seat compatible
       WebEPGImport importer = new WebEPGImport();
 
       importer.ForceImport(ShowImportProgress);
