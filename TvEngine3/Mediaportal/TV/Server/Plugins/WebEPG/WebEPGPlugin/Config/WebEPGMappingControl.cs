@@ -239,7 +239,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       }
       if (chGroup != null && chGroup.idGroup != -1)
       {
-        ServiceAgents.Instance.ChannelServiceAgent.GetAllChannelsByGroupIdAndMediaType(chGroup.idGroup, mediaType);          
+        channels = ServiceAgents.Instance.ChannelServiceAgent.GetAllChannelsByGroupIdAndMediaType(chGroup.idGroup, mediaType);          
       }
       else
       {
