@@ -8,11 +8,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
 {  
   public class ConflictService : IConflictService
   {    
-
     public IList<Conflict> ListAllConflicts()
     {
-      var listAllConflicts = ConflictManagement.ListAllConflicts().ToList();
-      return listAllConflicts;
+      return ConflictManagement.ListAllConflicts().ToList();
     }
 
     public Conflict SaveConflict(Conflict conflict)
@@ -22,10 +20,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
 
     public Conflict GetConflict(int idConflict)
     {
-      var conflict = ConflictManagement.GetConflict(idConflict);
-      return conflict;
+      return ConflictManagement.GetConflict(idConflict);
     }
   }
-
-  
 }
