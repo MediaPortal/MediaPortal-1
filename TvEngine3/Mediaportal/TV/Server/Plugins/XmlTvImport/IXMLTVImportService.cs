@@ -7,5 +7,8 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
   {
     [OperationContract]
     void ImportNow();
+
+    [OperationContract]
+    void RetrieveRemoteFileNow();
   }
 }

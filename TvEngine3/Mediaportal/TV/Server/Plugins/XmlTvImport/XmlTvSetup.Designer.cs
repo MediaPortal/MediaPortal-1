@@ -175,7 +175,6 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       this.panel1.Name = "panel1";
       this.panel1.Size = new System.Drawing.Size(472, 418);
       this.panel1.TabIndex = 0;
-      this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
       // 
       // label1
       // 
@@ -920,7 +919,6 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       this.Controls.Add(this.tabControl1);
       this.Name = "XmlTvSetup";
       this.Size = new System.Drawing.Size(483, 450);
-      this.Load += new System.EventHandler(this.XmlSetup_Load);
       this.tabControl1.ResumeLayout(false);
       this.tabSettings.ResumeLayout(false);
       this.tabSettings.PerformLayout();
