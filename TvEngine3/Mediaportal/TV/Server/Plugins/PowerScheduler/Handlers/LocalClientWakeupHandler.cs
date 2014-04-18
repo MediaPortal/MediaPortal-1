@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2013 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2013 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -22,42 +22,55 @@
 
 using System;
 using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 #endregion
 
 namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
 {
-  internal class RemoteWakeupHandler : IWakeupHandler
+  /// <summary>
+  /// Handles wakeup of the system for the local (single-seat) client
+  /// </summary>
+  internal class LocalClientWakeupHandler : IWakeupHandler
   {
-    private IWakeupHandler remote;
-    private int tag;
-    public readonly string Url;
+    private IWakeupHandler _remote;
+    private int _tag;
+    public readonly string _url;
 
-    public RemoteWakeupHandler(String URL, int tag)
+    public LocalClientWakeupHandler(String url, int tag)
     {
-      remote = (IWakeupHandler)Activator.GetObject(typeof (IWakeupHandler), URL);
-      this.tag = tag;
-      Url = URL;
+      try
+      {
+        _remote = (IWakeupHandler)Activator.GetObject(typeof(IWakeupHandler), url);
+        _tag = tag;
+        _url = url;
+      }
+      catch (Exception ex)
+      {
+        this.LogDebug(ex, "LocalClientWakeupHandler");
+      }
     }
 
     public void Close()
     {
-      remote = null;
+      _remote = null;
     }
 
     #region IWakeupHandler Members
 
     public DateTime GetNextWakeupTime(DateTime earliestWakeupTime)
     {
-      if (remote == null) return DateTime.MaxValue;
       try
       {
-        return remote.GetNextWakeupTime(earliestWakeupTime);
+        if (_remote == null)
+          return DateTime.MaxValue;
+        return _remote.GetNextWakeupTime(earliestWakeupTime);
       }
-      catch (Exception)
+      catch (Exception ex)
       {
         // broken remote handler, nullify this one (dead)
-        remote = null;
+        this.LogDebug(ex, "LocalClientWakeupHandler");
+        _remote = null;
         return DateTime.MaxValue;
       }
     }
@@ -67,16 +80,18 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
     {
       get
       {
-        if (remote == null) return "<dead#" + tag + ">";
         try
         {
-          return remote.HandlerName;
+          if (_remote == null)
+            return "<dead#" + _tag + ">";
+          return _remote.HandlerName;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
           // broken remote handler, nullify this one (dead)
-          remote = null;
-          return "<dead>";
+          this.LogDebug(ex, "LocalClientWakeupHandler");
+          _remote = null;
+          return "<dead#" + _tag + ">";
         }
       }
     }

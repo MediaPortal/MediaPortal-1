@@ -25,6 +25,7 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.Plugins.PowerScheduler
 {
@@ -115,8 +116,6 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
   /// </summary>
   public class WindowsController
   {
-
-
     public delegate void AfterExitWindowsHandler(RestartOptions how, bool force, bool result);
 
     public delegate void ExitWindowsHandler(RestartOptions how, bool force, AfterExitWindowsHandler after);
@@ -219,31 +218,6 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
 
     /// <summary>Forces processes to terminate. When this flag is set, the system does not send the WM_QUERYENDSESSION and WM_ENDSESSION messages. This can cause the applications to lose data. Therefore, you should only use this flag in an emergency.</summary>
     private const int EWX_FORCE = 4;
-
-    /// <summary>
-    /// The LoadLibrary function maps the specified executable module into the address space of the calling process.
-    /// </summary>
-    /// <param name="lpLibFileName">Pointer to a null-terminated string that names the executable module (either a .dll or .exe file). The name specified is the file name of the module and is not related to the name stored in the library module itself, as specified by the LIBRARY keyword in the module-definition (.def) file.</param>
-    /// <returns>If the function succeeds, the return value is a handle to the module.<br></br><br>If the function fails, the return value is NULL. To get extended error information, call Marshal.GetLastWin32Error.</br></returns>
-    [DllImport("kernel32.dll", EntryPoint = "LoadLibraryA", CharSet = CharSet.Ansi)]
-    private static extern IntPtr LoadLibrary(string lpLibFileName);
-
-    /// <summary>
-    /// The FreeLibrary function decrements the reference count of the loaded dynamic-link library (DLL). When the reference count reaches zero, the module is unmapped from the address space of the calling process and the handle is no longer valid.
-    /// </summary>
-    /// <param name="hLibModule">Handle to the loaded DLL module. The LoadLibrary or GetModuleHandle function returns this handle.</param>
-    /// <returns>If the function succeeds, the return value is nonzero.<br></br><br>If the function fails, the return value is zero. To get extended error information, call Marshal.GetLastWin32Error.</br></returns>
-    [DllImport("kernel32.dll", EntryPoint = "FreeLibrary", CharSet = CharSet.Ansi)]
-    private static extern int FreeLibrary(IntPtr hLibModule);
-
-    /// <summary>
-    /// The GetProcAddress function retrieves the address of an exported function or variable from the specified dynamic-link library (DLL).
-    /// </summary>
-    /// <param name="hModule">Handle to the DLL module that contains the function or variable. The LoadLibrary or GetModuleHandle function returns this handle.</param>
-    /// <param name="lpProcName">Pointer to a null-terminated string containing the function or variable name, or the function's ordinal value. If this parameter is an ordinal value, it must be in the low-order word; the high-order word must be zero.</param>
-    /// <returns>If the function succeeds, the return value is the address of the exported function or variable.<br></br><br>If the function fails, the return value is NULL. To get extended error information, call Marshal.GetLastWin32Error.</br></returns>
-    [DllImport("kernel32.dll", EntryPoint = "GetProcAddress", CharSet = CharSet.Ansi)]
-    private static extern IntPtr GetProcAddress(IntPtr hModule, string lpProcName);
 
     /// <summary>
     /// The SetSuspendState function suspends the system by shutting power down. Depending on the Hibernate parameter, the system either enters a suspend (sleep) state or hibernation (S4). If the ForceFlag parameter is TRUE, the system suspends operation immediately; if it is FALSE, the system requests permission from all applications and device drivers before doing so.
@@ -370,15 +344,15 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
     /// <returns>True if the specified method is present, false otherwise.</returns>
     protected static bool CheckEntryPoint(string library, string method)
     {
-      IntPtr libPtr = LoadLibrary(library);
+      IntPtr libPtr = NativeMethods.LoadLibraryA(library);
       if (!libPtr.Equals(IntPtr.Zero))
       {
-        if (!GetProcAddress(libPtr, method).Equals(IntPtr.Zero))
+        if (!NativeMethods.GetProcAddress(libPtr, method).Equals(IntPtr.Zero))
         {
-          FreeLibrary(libPtr);
+          NativeMethods.FreeLibrary(libPtr);
           return true;
         }
-        FreeLibrary(libPtr);
+        NativeMethods.FreeLibrary(libPtr);
       }
       return false;
     }
@@ -411,8 +385,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
     /// <summary>
     /// Initializes a new instance of the PrivilegeException class.
     /// </summary>
-    public PrivilegeException()
-    {}
+    public PrivilegeException() : base() {}
 
     /// <summary>
     /// Initializes a new instance of the PrivilegeException class with a specified error message.

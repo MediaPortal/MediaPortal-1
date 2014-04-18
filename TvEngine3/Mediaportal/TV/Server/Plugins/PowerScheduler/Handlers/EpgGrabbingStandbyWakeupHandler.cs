@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2013 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2013 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -25,12 +25,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Threading;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces;
 using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 using TvEngine.PowerScheduler.Interfaces;
 
 #endregion
@@ -40,10 +40,8 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
   /// <summary>
   /// Handles standby/wakeup for EPG grabbing
   /// </summary>
-  public class EpgGrabbingHandler : IStandbyHandler, IWakeupHandler, IEpgHandler
+  public class EpgGrabbingStandbyWakeupHandler : IStandbyHandler, IStandbyHandlerEx, IWakeupHandler, IEpgHandler
   {
-
-
     #region Structs
 
     private class GrabberSource // don't use struct! they are value types and mess when used in a dictionary!
@@ -102,11 +100,16 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
     private readonly IInternalControllerService _controllerService;
     private Dictionary<object, GrabberSource> _extGrabbers;
 
+    /// <summary>
+    /// Use away mode setting
+    /// </summary>
+    private bool _useAwayMode = false;
+
     #endregion
 
     #region Constructor
 
-    public EpgGrabbingHandler(IInternalControllerService controllerService)
+    public EpgGrabbingStandbyWakeupHandler(IInternalControllerService controllerService)
     {
       _controllerService = controllerService;
       _extGrabbers = new Dictionary<object, GrabberSource>();
@@ -119,307 +122,13 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
 
     #endregion
 
-    #region Private methods
-
-    [MethodImpl(MethodImplOptions.Synchronized)]
-    private void EpgGrabbingHandler_OnPowerSchedulerEvent(PowerSchedulerEventArgs args)
-    {
-      switch (args.EventType)
-      {
-        case PowerSchedulerEventType.Started:
-        case PowerSchedulerEventType.Elapsed:
-
-          IPowerScheduler ps = GlobalServiceProvider.Instance.Get<IPowerScheduler>();
-
-          // Check if standby should be prevented when grabbing EPG
-          PowerSetting setting = ps.Settings.GetSetting("PreventStandbyWhenGrabbingEPG");
-          bool enabled = SettingsManagement.GetValue("PreventStandbyWhenGrabbingEPG", false);
-          if (setting.Get<bool>() != enabled)
-          {
-            setting.Set<bool>(enabled);
-            if (enabled)
-            {
-              if (ps.IsRegistered(this as IStandbyHandler))
-                ps.Unregister(this as IStandbyHandler);
-              ps.Register(this as IStandbyHandler);
-            }
-            else
-            {
-              ps.Unregister(this as IStandbyHandler);
-            }
-            this.LogDebug("PowerScheduler: preventing standby when grabbing EPG: {0}", enabled);
-          }
-
-          // Check if system should wakeup for EPG grabs
-          setting = ps.Settings.GetSetting("WakeupSystemForEPGGrabbing");
-          enabled = SettingsManagement.GetValue("WakeupSystemForEPGGrabbing", false);
-          if (setting.Get<bool>() != enabled)
-          {
-            setting.Set<bool>(enabled);
-            if (enabled)
-            {
-              if (ps.IsRegistered(this as IWakeupHandler))
-                ps.Unregister(this as IWakeupHandler);
-              ps.Register(this as IWakeupHandler);
-            }
-            else
-            {
-              ps.Unregister(this as IWakeupHandler);
-            }
-            this.LogDebug("PowerScheduler: wakeup system for EPG grabbing: {0}", enabled);
-          }
-
-          // Check if a wakeup time is set
-          setting = ps.Settings.GetSetting("EPGWakeupConfig");
-          EPGWakeupConfig config = new EPGWakeupConfig(SettingsManagement.GetValue("EPGWakeupConfig", String.Empty));
-
-          if (!config.Equals(setting.Get<EPGWakeupConfig>()))
-          {
-            setting.Set<EPGWakeupConfig>(config);
-            this.LogDebug("PowerScheduler: wakeup system for EPG at time: {0}:{1}", config.Hour, config.Minutes);
-            if (config.Days != null)
-            {
-              foreach (EPGGrabDays day in config.Days)
-                this.LogDebug("PowerScheduler: EPG wakeup on day {0}", day);
-            }
-            this.LogDebug("PowerScheduler: EPG last run: {0}", config.LastRun);
-          }
-
-          // check if schedule is due
-          // check if we've already run today
-          if (ShouldRunNow() && !_epgThreadRunning)
-          {
-            // kick off EPG thread
-            _epgThreadRunning = true;
-            Thread workerThread = new Thread(new ThreadStart(EPGThreadFunction));
-            workerThread.Name = "EPG Grabbing Handler";
-            workerThread.IsBackground = true;
-            workerThread.Priority = ThreadPriority.Lowest;
-            workerThread.Start();
-          }
-
-          // Cleanup of expired grabber sources
-          // A grabber is said to be expired, when its timeout has passed and there is no valid wakeup time
-          // However, when the timeout has passed, the alow-standby flag is set true
-          List<object> expired = new List<object>();
-          foreach (object o in _extGrabbers.Keys)
-          {
-            GrabberSource s = _extGrabbers[o];
-            if (s.Timeout < DateTime.Now)
-            {
-              this.LogDebug("PowerScheduler: EPG source '{0}' timed out, setting allow-standby = true for this source.",
-                        s.Name);
-              // timeout passed, standby is allowed
-              s.SetStandbyAllowed(true, 0);
-
-              // no valid wakeup-time -> expired
-              if (s.NextWakeupTime == DateTime.MaxValue)
-                expired.Add(o);
-            }
-          }
-          foreach (object o in expired)
-            _extGrabbers.Remove(o);
-          expired = null;
-
-          break;
-      }
-    }
-
-    /// <summary>
-    /// action: standby, wakeup, epg
-    /// </summary>
-    /// <param name="action"></param>
-    public void RunExternalCommand(String action)
-    {
-      
-      String cmd = SettingsManagement.GetValue("PowerSchedulerEpgCommand", String.Empty);
-      if (string.IsNullOrEmpty(cmd))
-        return;
-      using (Process p = new Process())
-      {
-        ProcessStartInfo psi = new ProcessStartInfo();
-        psi.FileName = cmd;
-        psi.UseShellExecute = true;
-        psi.WindowStyle = ProcessWindowStyle.Minimized;
-        psi.Arguments = action;
-        psi.ErrorDialog = false;
-        if (OSInfo.OSInfo.VistaOrLater())
-        {
-          psi.Verb = "runas";
-        }
-
-        p.StartInfo = psi;
-        this.LogDebug("EpgGrabbingHandler: Starting external command: {0} {1}", p.StartInfo.FileName, p.StartInfo.Arguments);
-        try
-        {
-          p.Start();
-          p.WaitForExit();
-        }
-        catch (Exception e)
-        {
-          Log.Error(e);
-        }
-        this.LogDebug("EpgGrabbingHandler: External command finished");
-      }
-    }
-
-
-    private bool _epgThreadRunning;
-
-    private void EPGThreadFunction()
-    {
-      // ShouldRun still returns true until LastRun is updated, 
-      // shutdown is disallowed until then
-
-      
-      EPGWakeupConfig config = new EPGWakeupConfig((SettingsManagement.GetValue("EPGWakeupConfig", String.Empty)));
-
-      this.LogInfo("PowerScheduler: EPG schedule {0}:{1} is due: {2}:{3}",
-               config.Hour, config.Minutes, DateTime.Now.Hour, DateTime.Now.Minute);
-
-      // start external command
-      RunExternalCommand("epg");
-
-      // try a forced start of EPG grabber if not already started 
-      if (!_controllerService.EpgGrabberEnabled)
-        _controllerService.EpgGrabberEnabled = true;
-
-      // Fire the EPGScheduleDue event for EPG grabber plugins
-      if (_epgScheduleDue != null)
-      {
-        lock (_epgScheduleDue)
-        {
-          if (_epgScheduleDue != null)
-            _epgScheduleDue();
-        }
-      }
-
-      // sleep 10 Seconds to give the grabbers time to kick off their threads,
-      // so that they disallow shutdown
-      // without this sleep the PS could be tempted to standby (wakeup/standby race condition)
-      Thread.Sleep(10000);
-
-      // Update last schedule run status
-      config.LastRun = DateTime.Now;
-      SettingsManagement.SaveValue("EPGWakeupConfig", config.SerializeAsString());      
-      _epgThreadRunning = false;
-    }
-
-    /// <summary>
-    /// Returns whether a schedule is due, and the EPG should run now.
-    /// </summary>
-    /// <returns></returns>
-    private bool ShouldRunNow()
-    {
-      
-      EPGWakeupConfig config = new EPGWakeupConfig((SettingsManagement.GetValue("EPGWakeupConfig", String.Empty)));
-
-      // check if schedule is due
-      // check if we've already run today
-      if (config.LastRun.Day != DateTime.Now.Day)
-      {
-        // check if we should run today
-        if (ShouldRun(config.Days, DateTime.Now.DayOfWeek))
-        {
-          // check if schedule is due
-          if (DateTime.Now.Hour >= config.Hour)
-          {
-            if (DateTime.Now.Minute >= config.Minutes)
-            {
-              return true;
-            }
-          }
-        }
-      }
-      return false;
-    }
-
-    private bool ShouldRun(List<EPGGrabDays> days, DayOfWeek dow)
-    {
-      switch (dow)
-      {
-        case DayOfWeek.Monday:
-          return (days.Contains(EPGGrabDays.Monday));
-        case DayOfWeek.Tuesday:
-          return (days.Contains(EPGGrabDays.Tuesday));
-        case DayOfWeek.Wednesday:
-          return (days.Contains(EPGGrabDays.Wednesday));
-        case DayOfWeek.Thursday:
-          return (days.Contains(EPGGrabDays.Thursday));
-        case DayOfWeek.Friday:
-          return (days.Contains(EPGGrabDays.Friday));
-        case DayOfWeek.Saturday:
-          return (days.Contains(EPGGrabDays.Saturday));
-        case DayOfWeek.Sunday:
-          return (days.Contains(EPGGrabDays.Sunday));
-        default:
-          return false;
-      }
-    }
-
-    private DateTime GetNextWakeupSchedule(DateTime earliestWakeupTime)
-    {
-      IPowerScheduler ps = GlobalServiceProvider.Instance.Get<IPowerScheduler>();
-      EPGWakeupConfig cfg = ps.Settings.GetSetting("EPGWakeupConfig").Get<EPGWakeupConfig>();
-      // Start by thinking we should run today
-      DateTime nextRun = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, cfg.Hour, cfg.Minutes, 0);
-      // check if we should run today or some other day in the future
-      if (cfg.LastRun.Day == DateTime.Now.Day || nextRun < earliestWakeupTime)
-      {
-        // determine first next day to run EPG grabber
-        for (int i = 1; i < 8; i++)
-        {
-          if (ShouldRun(cfg.Days, nextRun.AddDays(i).DayOfWeek))
-          {
-            nextRun = nextRun.AddDays(i);
-            break;
-          }
-        }
-        if (DateTime.Now.Day == nextRun.Day)
-        {
-          this.LogError("PowerScheduler: no valid next wakeup date for EPG grabbing found!");
-          nextRun = DateTime.MaxValue;
-        }
-      }
-      return nextRun;
-    }
-
-    #endregion
-
-    #region IStandbyHandler/IWakeupHandler implementation
+    #region IStandbyHandler(Ex)/IWakeupHandler implementation
 
     public bool DisAllowShutdown
     {
-      [MethodImpl(MethodImplOptions.Synchronized)]
       get
       {
-        // check for "should run, but not running"
-        if (ShouldRunNow())
-        {
-          this.LogDebug("EpgGrabbingHandler: standby not allowed since EPG is due");
-          return true;
-        }
-
-        // check if any card is grabbing EPG
-        for (int i = 0; i < _controllerService.Cards; i++)
-        {
-          int cardId = _controllerService.CardId(i);
-          if (_controllerService.IsGrabbingEpg(cardId))
-          {
-            this.LogDebug("EpgGrabbingHandler: card {0} does not allow standby", _controllerService.CardName(cardId));
-            return true;
-          }
-        }
-
-        // check if any external EPG source wants to prevent standby
-        foreach (GrabberSource source in _extGrabbers.Values)
-          if (!source.StandbyAllowed)
-          {
-            this.LogDebug("EpgGrabbingHandler: {0} does not allow standby", source.Name);
-            return true;
-          }
-
-        return false;
+        return (StandbyMode != StandbyMode.StandbyAllowed);
       }
     }
 
@@ -429,10 +138,12 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
       bool isExternal = false;
       string externalName = String.Empty;
       DateTime nextRun = GetNextWakeupSchedule(earliestWakeupTime);
+
       // check if any external EPG source wants to wakeup the system
       foreach (GrabberSource source in _extGrabbers.Values)
       {
         DateTime sourceNext = source.NextWakeupTime;
+
         // check if source has set a valid preferred wakeup time
         if (sourceNext != DateTime.MaxValue)
         {
@@ -450,15 +161,48 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
         }
       }
       if (isExternal)
-        this.LogDebug("PowerScheduler: next EPG wakeup set by external EPG source {0}", externalName);
+        this.LogDebug("EpgGrabbingHandler: Next EPG wakeup set by external EPG source {0}", externalName);
       return nextRun;
     }
 
-    public void UserShutdownNow() {}
+    public void UserShutdownNow() { }
 
     public string HandlerName
     {
-      get { return "EpgGrabbingHandler"; }
+      get { return "EPG Grabbing"; }
+    }
+
+    public StandbyMode StandbyMode
+    {
+      [MethodImpl(MethodImplOptions.Synchronized)]
+      get
+      {
+        // Check for "should run, but not running"
+        if (ShouldRunNow())
+        {
+          return _useAwayMode ? StandbyMode.AwayModeRequested : StandbyMode.StandbyPrevented;
+        }
+
+        // check if any card is grabbing EPG
+        for (int i = 0; i < _controllerService.Cards; i++)
+        {
+          int cardId = _controllerService.CardId(i);
+          if (_controllerService.IsGrabbingEpg(cardId))
+          {
+            return _useAwayMode ? StandbyMode.AwayModeRequested : StandbyMode.StandbyPrevented;
+          }
+        }
+
+        // check if any external EPG source wants to prevent standby
+        foreach (GrabberSource source in _extGrabbers.Values)
+          if (!source.StandbyAllowed)
+          {
+            this.LogDebug("EpgGrabbingHandler: {0} does not allow standby", source.Name);
+            return _useAwayMode ? StandbyMode.AwayModeRequested : StandbyMode.StandbyPrevented;
+          }
+
+        return StandbyMode.StandbyAllowed;
+      }
     }
 
     #endregion
@@ -521,7 +265,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
                 _epgScheduleDue -= del as EPGScheduleHandler;
             }
           }
-          catch (Exception) {}
+          catch (Exception) { }
           _epgScheduleDue += handler;
         }
       }
@@ -535,6 +279,278 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
     }
 
     #endregion
+
+    #endregion
+
+    #region Private methods
+
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    private void EpgGrabbingHandler_OnPowerSchedulerEvent(PowerSchedulerEventArgs args)
+    {
+      switch (args.EventType)
+      {
+        case PowerSchedulerEventType.Started:
+        case PowerSchedulerEventType.Elapsed:
+
+          IPowerScheduler ps = GlobalServiceProvider.Instance.Get<IPowerScheduler>();
+
+          // Check if standby should be prevented when grabbing EPG
+          PowerSetting setting = ps.Settings.GetSetting("EPGPreventStandby");
+          bool enabled = SettingsManagement.GetValue("PowerSchedulerEPGPreventStandby", false);
+          if (setting.Get<bool>() != enabled)
+          {
+            setting.Set<bool>(enabled);
+            if (enabled)
+            {
+              if (ps.IsRegistered(this as IStandbyHandler))
+                ps.Unregister(this as IStandbyHandler);
+              ps.Register(this as IStandbyHandler);
+            }
+            else
+            {
+              ps.Unregister(this as IStandbyHandler);
+            }
+            this.LogDebug("EpgGrabbingHandler: Preventing standby when grabbing EPG: {0}", enabled);
+          }
+
+          // Check if away mode should be used
+          setting = ps.Settings.GetSetting("EPGAwayMode");
+          _useAwayMode = SettingsManagement.GetValue("PowerSchedulerEPGAwayMode", false);
+          if (setting.Get<bool>() != _useAwayMode)
+          {
+            setting.Set<bool>(_useAwayMode);
+            this.LogDebug("EpgGrabbingHandler: Use away mode: {0}", _useAwayMode);
+          }
+
+          // Check if system should wakeup for EPG grabs
+          setting = ps.Settings.GetSetting("EPGWakeup");
+          enabled = SettingsManagement.GetValue("PowerSchedulerEPGWakeup", false);
+          if (setting.Get<bool>() != enabled)
+          {
+            setting.Set<bool>(enabled);
+            if (enabled)
+            {
+              if (ps.IsRegistered(this as IWakeupHandler))
+                ps.Unregister(this as IWakeupHandler);
+              ps.Register(this as IWakeupHandler);
+            }
+            else
+            {
+              ps.Unregister(this as IWakeupHandler);
+            }
+            this.LogDebug("EpgGrabbingHandler: Wakeup system for EPG grabbing: {0}", enabled ? "enabled" : "disabled");
+          }
+
+          // Check if a wakeup time is set
+          setting = ps.Settings.GetSetting("EPGWakeupConfig");
+          EPGWakeupConfig config = new EPGWakeupConfig(SettingsManagement.GetValue("PowerSchedulerEPGWakeupConfig", string.Empty));
+          if (!config.Equals(setting.Get<EPGWakeupConfig>()))
+          {
+            setting.Set<EPGWakeupConfig>(config);
+            this.LogDebug("EpgGrabbingHandler: EPG grabbing at {0:00}:{1:00}", config.Hour, config.Minutes);
+            if (config.Days != null)
+            {
+              String days = "";
+              foreach (EPGGrabDays day in config.Days)
+              {
+                if (days == "")
+                  days = day.ToString();
+                else
+                  days = days + ", " + day.ToString();
+              }
+              this.LogDebug("EpgGrabbingHandler: EPG grabbing on: {0}", days);
+            }
+            this.LogDebug("EpgGrabbingHandler: EPG last run was at {0}", config.LastRun);
+          }
+
+          // check if schedule is due
+          // check if we've already run today
+          if (ShouldRunNow() && !_epgThreadRunning)
+          {
+            // kick off EPG thread
+            _epgThreadRunning = true;
+            Thread workerThread = new Thread(new ThreadStart(EPGThreadFunction));
+            workerThread.Name = "EPG Grabbing Handler";
+            workerThread.IsBackground = true;
+            workerThread.Priority = ThreadPriority.Lowest;
+            workerThread.Start();
+          }
+
+          // Cleanup of expired grabber sources
+          // A grabber is said to be expired, when its timeout has passed and there is no valid wakeup time
+          // However, when the timeout has passed, the alow-standby flag is set true
+          List<object> expired = new List<object>();
+          foreach (object o in _extGrabbers.Keys)
+          {
+            GrabberSource s = _extGrabbers[o];
+            if (s.Timeout < DateTime.Now)
+            {
+              this.LogDebug("EpgGrabbingHandler: EPG source '{0}' timed out, setting allow-standby = true for this source.",
+                        s.Name);
+              // timeout passed, standby is allowed
+              s.SetStandbyAllowed(true, 0);
+
+              // no valid wakeup-time -> expired
+              if (s.NextWakeupTime == DateTime.MaxValue)
+                expired.Add(o);
+            }
+          }
+          foreach (object o in expired)
+            _extGrabbers.Remove(o);
+          expired = null;
+
+          break;
+      }
+    }
+
+    /// <summary>
+    /// action: standby, wakeup, epg
+    /// </summary>
+    /// <param name="action"></param>
+    public void RunExternalCommand(String action)
+    {
+      String cmd = SettingsManagement.GetValue("PowerSchedulerEPGCommand", String.Empty);
+      if (cmd.Equals(String.Empty))
+        return;
+      using (Process p = new Process())
+      {
+        ProcessStartInfo psi = new ProcessStartInfo();
+        psi.FileName = cmd;
+        psi.UseShellExecute = true;
+        psi.WindowStyle = ProcessWindowStyle.Minimized;
+        psi.Arguments = action;
+        psi.ErrorDialog = false;
+        if (Environment.OSVersion.Version.Major >= 6)
+        {
+          psi.Verb = "runas";
+        }
+
+        p.StartInfo = psi;
+        this.LogDebug("EpgGrabbingHandler: Starting external command: {0} {1}", p.StartInfo.FileName, p.StartInfo.Arguments);
+        try
+        {
+          p.Start();
+          p.WaitForExit();
+        }
+        catch (Exception ex)
+        {
+          this.LogError(ex, "EpgGrabbingHandler: Exception in RunExternalCommand");
+        }
+        this.LogDebug("EpgGrabbingHandler: External command finished");
+      }
+    }
+
+    private bool _epgThreadRunning;
+
+    private void EPGThreadFunction()
+    {
+      // ShouldRun still returns true until LastRun is updated, 
+      // shutdown is disallowed until then
+      EPGWakeupConfig config = new EPGWakeupConfig(SettingsManagement.GetValue("PowerSchedulerEPGWakeupConfig", String.Empty));
+
+      this.LogDebug("EpgGrabbingHandler: EPG schedule {0:00}:{1:00} is due", config.Hour, config.Minutes);
+
+      // start external command
+      RunExternalCommand("epg");
+
+      // try a forced start of EPG grabber if not already started 
+      if (!_controllerService.EpgGrabberEnabled)
+        _controllerService.EpgGrabberEnabled = true;
+
+      // Fire the EPGScheduleDue event for EPG grabber plugins
+      if (_epgScheduleDue != null)
+      {
+        lock (_epgScheduleDue)
+        {
+          if (_epgScheduleDue != null)
+            _epgScheduleDue();
+        }
+      }
+
+      // sleep 10 Seconds to give the grabbers time to kick off their threads,
+      // so that they disallow shutdown
+      // without this sleep the PS could be tempted to standby (wakeup/standby race condition)
+      Thread.Sleep(10000);
+
+      // Update last schedule run status
+      config.LastRun = DateTime.Now;
+      SettingsManagement.SaveValue("PowerSchedulerEPGWakeupConfig", config.SerializeAsString());
+
+      _epgThreadRunning = false;
+    }
+
+    /// <summary>
+    /// Returns whether a schedule is due, and the EPG should run now.
+    /// </summary>
+    /// <returns></returns>
+    private bool ShouldRunNow()
+    {
+      EPGWakeupConfig config = new EPGWakeupConfig(SettingsManagement.GetValue("PowerSchedulerEPGWakeupConfig", String.Empty));
+
+      // Check if this day is configured for EPG and there was no EPG grabbing yet
+      DateTime now = DateTime.Now;
+      if (ShouldRun(config.Days, now.DayOfWeek) && config.LastRun.Date < now.Date)
+      {
+        // Check if schedule is due
+        if (now >= new DateTime(now.Year, now.Month, now.Day, config.Hour, config.Minutes, 0))
+          return true;
+      }
+      return false;
+    }
+
+    private bool ShouldRun(List<EPGGrabDays> days, DayOfWeek dow)
+    {
+      switch (dow)
+      {
+        case DayOfWeek.Monday:
+          return (days.Contains(EPGGrabDays.Monday));
+        case DayOfWeek.Tuesday:
+          return (days.Contains(EPGGrabDays.Tuesday));
+        case DayOfWeek.Wednesday:
+          return (days.Contains(EPGGrabDays.Wednesday));
+        case DayOfWeek.Thursday:
+          return (days.Contains(EPGGrabDays.Thursday));
+        case DayOfWeek.Friday:
+          return (days.Contains(EPGGrabDays.Friday));
+        case DayOfWeek.Saturday:
+          return (days.Contains(EPGGrabDays.Saturday));
+        case DayOfWeek.Sunday:
+          return (days.Contains(EPGGrabDays.Sunday));
+        default:
+          return false;
+      }
+    }
+
+    private DateTime GetNextWakeupSchedule(DateTime earliestWakeupTime)
+    {
+      IPowerScheduler ps = GlobalServiceProvider.Instance.Get<IPowerScheduler>();
+      EPGWakeupConfig cfg = ps.Settings.GetSetting("EPGWakeupConfig").Get<EPGWakeupConfig>();
+      DateTime now = DateTime.Now;
+
+      // The earliest wakeup time cannot be in the past
+      if (earliestWakeupTime < now)
+        earliestWakeupTime = now;
+
+      // Start with the earliest possible day
+      DateTime nextRun = new DateTime(earliestWakeupTime.Year, earliestWakeupTime.Month, earliestWakeupTime.Day, cfg.Hour, cfg.Minutes, 0);
+
+      // If the wakeup time is before the earliest wakeup time or if there already was EPG grabbing on this day then take the next day
+      if (nextRun < earliestWakeupTime || cfg.LastRun.Date >= nextRun.Date)
+        nextRun = nextRun.AddDays(1);
+
+      // Try the next 7 days
+      for (int i = 0; i < 7; i++)
+      {
+        // Check if this day is configured for EPG
+        if (ShouldRun(cfg.Days, nextRun.DayOfWeek))
+          return nextRun;
+
+        nextRun = nextRun.AddDays(1);
+      }
+
+      // Found no day configured for EPG grabbing
+      return DateTime.MaxValue;
+    }
 
     #endregion
   }

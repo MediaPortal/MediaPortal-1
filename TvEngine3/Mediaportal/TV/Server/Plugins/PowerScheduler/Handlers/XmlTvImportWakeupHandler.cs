@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2013 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2013 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -35,29 +35,9 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
   /// </summary>
   public class XmlTvImportWakeupHandler : IWakeupHandler
   {
+    #region Variables
 
-
-    #region Variables    
-
-    private string _handlerName = "XmlTvImportWakeupHandler";
-
-    #endregion
-
-    #region Events   
-
-    #endregion
-
-    #region Constructor
-
-    public XmlTvImportWakeupHandler() {}
-
-    #endregion
-
-    #region Private methods
-
-    #endregion
-
-    #region Public methods
+    private string _handlerName = "XmlTvImport";
 
     #endregion
 
@@ -66,7 +46,6 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
     [MethodImpl(MethodImplOptions.Synchronized)]
     public DateTime GetNextWakeupTime(DateTime earliestWakeupTime)
     {
-      
       bool remoteSchedulerEnabled = SettingsManagement.GetValue("xmlTvRemoteSchedulerEnabled", false);
       if (!remoteSchedulerEnabled)
       {
@@ -75,8 +54,13 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
 
       DateTime now = DateTime.Now;
       DateTime defaultRemoteScheduleTime = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0);
+      string remoteScheduleTimeStr =
+        SettingsManagement.GetValue("xmlTvRemoteScheduleTime", defaultRemoteScheduleTime.ToString());
 
-      DateTime remoteScheduleTime = SettingsManagement.GetValue("xmlTvRemoteScheduleTime", defaultRemoteScheduleTime);
+      DateTime remoteScheduleTime =
+        (DateTime)
+        (System.ComponentModel.TypeDescriptor.GetConverter(new DateTime(now.Year, now.Month, now.Day)).ConvertFrom(
+          remoteScheduleTimeStr));
 
       if (remoteScheduleTime == DateTime.MinValue)
       {

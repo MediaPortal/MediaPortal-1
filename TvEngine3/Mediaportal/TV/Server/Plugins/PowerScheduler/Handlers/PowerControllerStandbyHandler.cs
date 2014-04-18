@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2013 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2013 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -21,8 +21,8 @@
 #region Usings
 
 using System;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
+using MediaPortal.Common.Utils;
 using TvEngine.PowerScheduler.Interfaces;
 
 #endregion
@@ -30,29 +30,29 @@ using TvEngine.PowerScheduler.Interfaces;
 namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
 {
   /// <summary>
-  /// Generic IStandbyHandler implementation, can be reused or inherited
+  /// Standby handler for the IPowerController interface
   /// </summary>
-  public class GenericStandbyHandler : IStandbyHandler
+  public class PowerControllerStandbyHandler : IStandbyHandler
   {
     #region Variables
 
     private int _timeout = 5;
     private bool _disAllowShutdown = false;
     private DateTime _lastUpdate = DateTime.MinValue;
-    private string _handlerName = "GenericStandbyHandler";
+    private string _handlerName = "PowerController";
 
     #endregion
 
     #region Constructor
 
     /// <summary>
-    /// Create a new instance of a generic standby handler
+    /// Create a new instance of a PowerController standby handler
     /// </summary>
-    public GenericStandbyHandler()
+    public PowerControllerStandbyHandler()
     {
       if (GlobalServiceProvider.Instance.IsRegistered<IPowerScheduler>())
         GlobalServiceProvider.Instance.Get<IPowerScheduler>().OnPowerSchedulerEvent +=
-          new PowerSchedulerEventHandler(GenericStandbyHandler_OnPowerSchedulerEvent);
+          new PowerSchedulerEventHandler(PowerControllerStandbyHandler_OnPowerSchedulerEvent);
     }
 
     /// <summary>
@@ -60,7 +60,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
     /// Used to keep track of changes to the idle timeout
     /// </summary>
     /// <param name="args">PowerSchedulerEventArgs for a specific message</param>
-    private void GenericStandbyHandler_OnPowerSchedulerEvent(PowerSchedulerEventArgs args)
+    private void PowerControllerStandbyHandler_OnPowerSchedulerEvent(PowerSchedulerEventArgs args)
     {
       switch (args.EventType)
       {

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2013 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2013 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -22,27 +22,38 @@
 
 using System;
 using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 #endregion
 
 namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
 {
-  internal class RemoteStandbyHandler : IStandbyHandler
+  /// <summary>
+  /// Prevent standby if the local (single-seat) client is active (used by PowerScheduler client plugin)
+  /// </summary>
+  internal class LocalClientStandbyHandler : IStandbyHandler
   {
-    private IStandbyHandler remote;
-    private int tag;
-    public readonly string Url;
+    private IStandbyHandler _remote;
+    private int _tag;
+    public readonly string _url;
 
-    public RemoteStandbyHandler(String URL, int tag)
+    public LocalClientStandbyHandler(String url, int tag)
     {
-      remote = (IStandbyHandler)Activator.GetObject(typeof (IStandbyHandler), URL);
-      this.tag = tag;
-      Url = URL;
+      try
+      {
+        _remote = (IStandbyHandler)Activator.GetObject(typeof(IStandbyHandler), url);
+        _tag = tag;
+        _url = url;
+      }
+      catch (Exception ex)
+      {
+        this.LogDebug(ex, "LocalClientStandbyHandler");
+      }
     }
 
     public void Close()
     {
-      remote = null;
+      _remote = null;
     }
 
     #region IStandbyHandler Members
@@ -51,15 +62,17 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
     {
       get
       {
-        if (remote == null) return false;
         try
         {
-          return remote.DisAllowShutdown;
+          if (_remote == null)
+            return false;
+          return _remote.DisAllowShutdown;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
           // broken remote handler, nullify this one (dead)
-          remote = null;
+          this.LogDebug(ex, "LocalClientStandbyHandler");
+          _remote = null;
           return false;
         }
       }
@@ -67,15 +80,17 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
 
     public void UserShutdownNow()
     {
-      if (remote == null) return;
       try
       {
-        remote.UserShutdownNow();
+        if (_remote == null)
+          return;
+        _remote.UserShutdownNow();
       }
-      catch (Exception)
+      catch (Exception ex)
       {
         // broken remote handler, nullify this one (dead)
-        remote = null;
+        this.LogDebug(ex, "LocalClientStandbyHandler");
+        _remote = null;
       }
     }
 
@@ -83,16 +98,18 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
     {
       get
       {
-        if (remote == null) return "<dead#" + tag + ">";
         try
         {
-          return remote.HandlerName;
+          if (_remote == null)
+            return "<dead#" + _tag + ">";
+          return _remote.HandlerName;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
           // broken remote handler, nullify this one (dead)
-          remote = null;
-          return "<dead>";
+          this.LogDebug(ex, "LocalClientStandbyHandler");
+          _remote = null;
+          return "<dead#" + _tag + ">";
         }
       }
     }
