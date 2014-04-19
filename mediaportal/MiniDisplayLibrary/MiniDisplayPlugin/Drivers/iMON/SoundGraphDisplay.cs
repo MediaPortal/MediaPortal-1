@@ -583,6 +583,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         [DllImport("iMONDisplayWrapper.dll")]
         public static extern int IDW_SetVfdEqData(DSPEQDATA EqData);
 
+        //Import function to set LCD EQDATA
+        [DllImport("iMONDisplayWrapper.dll")]
+        public static extern int IDW_SetLcdEqData(DSPEQDATA EqDataLeft, DSPEQDATA EqDataRight);
+
         [DllImport("iMONDisplayWrapper.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
         public static extern DSPResult IDW_SetLcdText([MarshalAs(UnmanagedType.LPWStr)] string line);
 

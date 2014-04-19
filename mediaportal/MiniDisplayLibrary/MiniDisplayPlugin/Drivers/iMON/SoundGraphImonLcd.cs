@@ -59,16 +59,27 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
         }
 
+        public override bool IsLcd(){ return true; }
+        public override bool IsVfd() { return false; }
         public override string Name() { return "iMON LCD"; }
 
 
         public override void Update()
         {
-            //Only show the second line for now
-            if (NeedTextUpdate)
+            //Check if we need to show EQ this is also taking into account our various settings.
+            iSettings.iEq._EqDataAvailable = MiniDisplayHelper.GetEQ(ref iSettings.iEq);
+            if (iSettings.iEq._EqDataAvailable)
             {
+                //SetAndRollEqData();
+                UpdateEq();
+            }
+            else if (NeedTextUpdate)
+            {
+                //Not show EQ then display our lines
+                //Only show the second line for now
                 SoundGraphDisplay.IDW_SetLcdText(TextBottomLine);
             }
+
             //Update our icons here, only very N seconds
             if (SoundGraphDisplay.IsElapsed(LastIconUpdateTime, 2))
             {
