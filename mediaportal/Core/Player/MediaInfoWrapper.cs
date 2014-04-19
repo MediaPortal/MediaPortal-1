@@ -170,6 +170,7 @@ namespace MediaPortal.Player
 
         if (strFile != null)
         {
+          Log.Debug("MediaInfoWrapper.MediaInfoWrapper: Opening file : {0}", strFile);
           _mI.Open(strFile);
         }
         else
@@ -312,6 +313,7 @@ namespace MediaPortal.Player
         if (_mI != null)
         {
           _mI.Close();
+          Log.Debug("MediaInfoWrapper.MediaInfoWrapper: Closing file : {0}", strFile);
         }
       }
     }

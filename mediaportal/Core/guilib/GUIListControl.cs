@@ -1730,7 +1730,6 @@ namespace MediaPortal.GUI.Library
         if ((WindowId != (int)GUIWindow.Window.WINDOW_DIALOG_MENU) ||
             (action.wID == Action.ActionType.ACTION_SELECT_ITEM))
         {
-          _searchString = "";
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID,
                                           (int)action.wID, 0, null);
           GUIGraphicsContext.SendMessage(msg);
@@ -2022,7 +2021,7 @@ namespace MediaPortal.GUI.Library
 
       if (bItemFound)
       {
-        SelectItem(iItem);
+          SelectItem(iItem);
       }
 
       _lastSearchItem = _cursorX + _offset;

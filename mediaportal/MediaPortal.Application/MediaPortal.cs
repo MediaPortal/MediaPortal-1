@@ -1630,6 +1630,7 @@ public class MediaPortalApp : D3D, IRender
     {
       case PBT_APMSUSPEND:
         Log.Info("Main: Suspending operation");
+        PrepareSuspend();
         PluginManager.WndProc(ref msg);
         OnSuspend();
         break;
@@ -2307,13 +2308,20 @@ public class MediaPortalApp : D3D, IRender
   }
 
   /// <summary>
+  /// Prepare application for suspend, this is done before power events get passed to plugins
+  /// </summary>
+  private void PrepareSuspend()
+  {
+    // Make sure that plugins cannot open dialog when system is entering standby
+    _ignoreContextMenuAction = true;
+    GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
+  }
+
+  /// <summary>
   /// 
-  /// </summary>  
+  /// </summary>
   private void OnSuspend()
   {
-    _ignoreContextMenuAction = true;
-    GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING; // this will close all open dialogs      
-
     // stop playback
     Log.Debug("Main: OnSuspend - stopping playback");
     if (GUIGraphicsContext.IsPlaying)
@@ -2322,6 +2330,8 @@ public class MediaPortalApp : D3D, IRender
       g_Player.Stop();
       while (GUIGraphicsContext.IsPlaying)
       {
+        // This could lead into OS putting system into sleep before MP completes OnSuspend().
+        // OS gives only 2 seconds time to application to react power events (>= Vista)
         Thread.Sleep(100);
       }
     }

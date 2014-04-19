@@ -1183,6 +1183,11 @@
     <String id="1977">Filsystem</String>
     <String id="1978">Virtuellt minne</String>
     <String id="1984">Uppdatera tumnagelbild för video</String>
+    <String id="1990">Sätt igång servern</String>
+    <String id="1991">Vänligen vänta tills servern är igång</String>
+    <String id="1992">Servern är inte tillgänglig.</String>
+    <String id="1993">Kontrollera nätverksanslutningen eller öka timeout-gränsen.</String>
+    <String id="1994">Vänta tills den delade enheten är online.</String>
     <String id="2005">Ta bort</String>
     <String id="2006">Titel</String>
     <String id="2007">Vinst</String>
@@ -1829,6 +1834,7 @@
     <String id="34061">Ange användarnamn...</String>
     <String id="34062">Ange artist...</String>
     <String id="34063">Ingen artist har valts ännu</String>
+    <String id="34064">En internetuppkoppling krävs\nför Last.FM Radio</String>
     <String id="40001">Väntar på Standby</String>
     <String id="40002">MediaPortal används inte, men är ändå upptaget.</String>
     <String id="40003">MediaPortal kommer att gå till standby när alla nuvarande uppgifter har slutförts.</String>
@@ -2331,5 +2337,6 @@
     <String id="300229">Minimera till verktygsfältet när MediaPortal tappar fokus</String>
     <String id="300230">Stoppa uppspelning när ljuduppspelaren tas bort</String>
     <String id="300231">Minska bildfrekvensen när MediaPortal inte är fokuserat</String>
+    <String id="300232">Uppdatera endast filer nyare än {0}</String>
   </Section>
 </Language>

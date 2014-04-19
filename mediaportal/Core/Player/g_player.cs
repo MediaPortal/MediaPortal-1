@@ -1452,7 +1452,14 @@ namespace MediaPortal.Player
             if (_player != null)
             {
               _player.Stop();
+              
+              if (BassMusicPlayer.IsDefaultMusicPlayer && type != MediaType.Music)
+              {
+                // This would be better to be handled in a new Stop() parameter, but it would break the interface compatibility
+                BassMusicPlayer.Player.FreeBass();
+              }
             }
+
             CachePlayer();
             _player = null;
           }
@@ -1495,7 +1502,7 @@ namespace MediaPortal.Player
                 // Make a double check on .ts because it can be recorded TV or Radio
                 if (extension == ".ts")
                 {
-                  if (MediaInfo.hasVideo)
+                  if (MediaInfo != null && MediaInfo.hasVideo)
                   {
                     RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)(int)type);
                   }
@@ -1592,6 +1599,10 @@ namespace MediaPortal.Player
 
                 if (Util.Utils.PlayMovie(strFile))
                 {
+                  if (MediaInfo != null && MediaInfo.hasVideo)
+                  {
+                    RefreshRateChanger.AdaptRefreshRate();
+                  }
                   return true;
                 }
                 else // external player error
@@ -2484,6 +2495,18 @@ namespace MediaPortal.Player
         Log.Info("g_Player.Process() player stopped...");
         if (_player.Ended)
         {
+          // No unmount for other ISO (avi-mkv ISO-crash in playlist after)
+          string currentFile = g_Player.currentFileName;
+          Util.Utils.IsDVDImage(currentFile, ref currentFile);
+          if (Util.Utils.IsISOImage(currentFile))
+          {
+            if (!String.IsNullOrEmpty(DaemonTools.GetVirtualDrive()) &&
+                (IsBDDirectory(DaemonTools.GetVirtualDrive()) ||
+                IsDvdDirectory(DaemonTools.GetVirtualDrive())))
+            {
+              DaemonTools.UnMount();
+            }
+          }
           OnEnded();
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_ENDED, 0, 0, 0, 0, 0, null);
           GUIWindowManager.SendThreadMessage(msg);
