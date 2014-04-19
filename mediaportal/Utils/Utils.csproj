@@ -208,7 +208,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Web\Parser\HtmlSectionParser.cs" />
-    <Compile Include="Xml\XMLValidator.cs" />
     <Compile Include="Xml\XmlNoNamespaceWriter.cs" />
   </ItemGroup>
   <ItemGroup>
