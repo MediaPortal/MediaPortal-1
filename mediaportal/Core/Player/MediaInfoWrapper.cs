@@ -170,6 +170,7 @@ namespace MediaPortal.Player
 
         if (strFile != null)
         {
+          Log.Debug("MediaInfoWrapper.MediaInfoWrapper: Opening file : {0}", strFile);
           _mI.Open(strFile);
         }
         else
@@ -185,7 +186,17 @@ namespace MediaPortal.Player
                         out _framerate);
         int.TryParse(_mI.Get(StreamKind.Video, 0, "Width"), out _width);
         int.TryParse(_mI.Get(StreamKind.Video, 0, "Height"), out _height);
-        _aspectRatio = _mI.Get(StreamKind.Video, 0, "Display AspectRatio") == "4:3" ? "fullscreen" : "widescreen";
+        _aspectRatio = _mI.Get(StreamKind.Video, 0, "DisplayAspectRatio");
+
+        if ((_aspectRatio == "4:3") || (_aspectRatio == "1.333"))
+        {
+          _aspectRatio = "fullscreen";
+        }
+        else
+        {
+          _aspectRatio = "widescreen";
+        }
+
         _videoCodec = GetFullCodecName(StreamKind.Video);
         _scanType = _mI.Get(StreamKind.Video, 0, "ScanType").ToLowerInvariant();
         _isInterlaced = _scanType.Contains("interlaced");
@@ -302,6 +313,7 @@ namespace MediaPortal.Player
         if (_mI != null)
         {
           _mI.Close();
+          Log.Debug("MediaInfoWrapper.MediaInfoWrapper: Closing file : {0}", strFile);
         }
       }
     }

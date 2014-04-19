@@ -135,6 +135,7 @@ namespace MediaPortal.GUI.Library
     private static int _currentMonitorIdx = -1;
     private static readonly bool IsDX9EXused = OSInfo.OSInfo.VistaOrLater();
     private static bool _allowRememberLastFocusedItem = true;
+    private static bool _fullHD3DFormat = false;
 
     // Stacks for matrix transformations.
     private static readonly Stack<Matrix> ProjectionMatrixStack = new Stack<Matrix>();
@@ -292,6 +293,8 @@ namespace MediaPortal.GUI.Library
     public static bool Render3DSubtitle { get; set; }
 
     public static int Render3DSubtitleDistance { get; set; }
+
+    public enum eFullHD3DFormat { None, SBS, TAB };
 
     /// <summary>
     /// Property to enable/disable animations
@@ -743,6 +746,12 @@ namespace MediaPortal.GUI.Library
           OnVideoWindowChanged();
         }
       }
+    }
+
+    public static bool IsFullHD3DFormat
+    {
+      get { return _fullHD3DFormat; }
+      set { _fullHD3DFormat = value; }
     }
 
     /// <summary>

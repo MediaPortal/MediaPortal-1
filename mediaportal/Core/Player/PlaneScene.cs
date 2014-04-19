@@ -84,6 +84,9 @@ namespace MediaPortal.Player
     private int _debugStep = 0;
     private GUIImage _blackImage;
 
+    private const int _full3DTABMinHeight = 720 * 2;
+    private const int _full3DSBSMinWidth  = 1280 * 2;
+
     private FrameGrabber grabber = FrameGrabber.GetInstance();
 
     //Additions for Non-Linear Stretch
@@ -303,9 +306,22 @@ namespace MediaPortal.Player
     {
       try
       {
-        if (!GUIGraphicsContext.IsPlayingVideo)
+        if (!GUIGraphicsContext.IsPlayingVideo && !_vmr9Util.InMenu)
         {
           return false;
+        }
+
+        // check if the aspect ratio belongs to a Full-HD 3D format
+
+        GUIGraphicsContext.IsFullHD3DFormat = false;
+
+        if (((double)videoSize.Width / videoSize.Height >= 2.5) && (videoSize.Width >= _full3DSBSMinWidth)) // we have Full HD SBS 
+        {
+          GUIGraphicsContext.IsFullHD3DFormat = true;
+        }
+        else if (((double)videoSize.Width / videoSize.Height <= 1.5) && (videoSize.Height >= _full3DTABMinHeight)) // we have Full HD TAB
+        {
+          GUIGraphicsContext.IsFullHD3DFormat = true;
         }
 
         GUIGraphicsContext.VideoSize = videoSize;
@@ -370,6 +386,20 @@ namespace MediaPortal.Player
         //calculate the video window according to the current aspect ratio settings
         float fVideoWidth = (float)videoSize.Width;
         float fVideoHeight = (float)videoSize.Height;
+
+        // if we have a Full-HD 3D video we half the width or height in order
+        // to provide only the size of one half to the GetWindow call of the
+        // Geometry class
+
+        if (((double)videoSize.Width / videoSize.Height >= 2.5) && (videoSize.Width >= _full3DSBSMinWidth)) // we have Full HD SBS 
+        {
+          fVideoWidth /= 2;
+        }
+        else if (((double)videoSize.Width / videoSize.Height <= 1.5) && (videoSize.Height >= _full3DTABMinHeight)) // we have Full HD TAB
+        {
+          fVideoHeight /= 2;
+        }
+
         _geometry.ImageWidth = (int)fVideoWidth;
         _geometry.ImageHeight = (int)fVideoHeight;
         _geometry.ScreenWidth = (int)nw;
@@ -377,8 +407,17 @@ namespace MediaPortal.Player
         _geometry.ARType = GUIGraphicsContext.ARType;
         _geometry.PixelRatio = GUIGraphicsContext.PixelRatio;
 
+        // if the width or height was altered because of a Full-HD 3D format we recalculate
+        // the width to allow the GetWindowCall to operate with the correct aspect ratio       
+
+        if (GUIGraphicsContext.IsFullHD3DFormat)
+        {
+          _arVideoWidth = (int) ((float) _geometry.ImageWidth/_geometry.ImageHeight*_arVideoHeight);
+        }
+
         _geometry.GetWindow(_arVideoWidth, _arVideoHeight, out _sourceRect, out _destinationRect,
                             out _useNonLinearStretch, _cropSettings);
+
         updateCrop = false;
         _destinationRect.X += (int)x;
         _destinationRect.Y += (int)y;
@@ -582,7 +621,7 @@ namespace MediaPortal.Player
         {
           return;
         }
-        if (GUIWindowManager.IsSwitchingToNewWindow)
+        if (GUIWindowManager.IsSwitchingToNewWindow && !_vmr9Util.InMenu)
         {
           return; //dont present video during window transitions
         }
@@ -602,19 +641,26 @@ namespace MediaPortal.Player
         int iMaxSteps = 12;
         if (_fadeFrameCounter < iMaxSteps)
         {
-          // fade in
-          int iStep = 0xff/iMaxSteps;
-          if (_fadingIn)
+          if (_vmr9Util.InMenu)
           {
-            _diffuseColor = iStep*_fadeFrameCounter;
-            _diffuseColor <<= 24;
-            _diffuseColor |= 0xffffff;
+            _diffuseColor = 0xFFffffff;
           }
           else
           {
-            _diffuseColor = (iMaxSteps - iStep)*_fadeFrameCounter;
-            _diffuseColor <<= 24;
-            _diffuseColor |= 0xffffff;
+            // fade in
+            int iStep = 0xff / iMaxSteps;
+            if (_fadingIn)
+            {
+              _diffuseColor = iStep * _fadeFrameCounter;
+              _diffuseColor <<= 24;
+              _diffuseColor |= 0xffffff;
+            }
+            else
+            {
+              _diffuseColor = (iMaxSteps - iStep) * _fadeFrameCounter;
+              _diffuseColor <<= 24;
+              _diffuseColor |= 0xffffff;
+            }
           }
           _fadeFrameCounter++;
         }
@@ -988,26 +1034,46 @@ namespace MediaPortal.Player
               {
                 case GUIGraphicsContext.eRender3DModeHalf.SBSLeft:
 
-                  _sourceRect.X = originalSource.X / 2;
-                  _sourceRect.Width = originalSource.Width/2;
+                  if (!GUIGraphicsContext.IsFullHD3DFormat)
+                  {
+                    _sourceRect.X = originalSource.X / 2;
+                    _sourceRect.Width = originalSource.Width / 2;
+                  }
                   break;
 
                 case GUIGraphicsContext.eRender3DModeHalf.SBSRight:
 
-                  _sourceRect.X = originalDestination.Width/2 + originalSource.X / 2;
-                  _sourceRect.Width = originalSource.Width / 2;
+                  if (GUIGraphicsContext.IsFullHD3DFormat)
+                  {
+                    _sourceRect.X += _geometry.ImageWidth;
+                  }
+                  else
+                  {
+                    _sourceRect.X = _geometry.ImageWidth / 2 + originalSource.X / 2;
+                    _sourceRect.Width = originalSource.Width / 2;
+                  }
                   break;
 
                 case GUIGraphicsContext.eRender3DModeHalf.TABTop:
 
-                  _sourceRect.Y = originalSource.Y;
-                  _sourceRect.Height = originalSource.Height / 2;
+                  if (!GUIGraphicsContext.IsFullHD3DFormat)
+                  {
+                    _sourceRect.Y = originalSource.Y;
+                    _sourceRect.Height = originalSource.Height / 2;
+                  }
                   break;
 
                 case GUIGraphicsContext.eRender3DModeHalf.TABBottom:
 
-                  _sourceRect.Y = originalSource.Height / 2 + originalSource.Y * 2;
-                  _sourceRect.Height = originalSource.Height / 2;
+                  if (GUIGraphicsContext.IsFullHD3DFormat)
+                  {
+                    _sourceRect.Y += _geometry.ImageHeight;
+                  }
+                  else
+                  {
+                    _sourceRect.Y = _geometry.ImageHeight / 2 + originalSource.Y * 2;
+                    _sourceRect.Height = originalSource.Height / 2;
+                  }
                   break;
               }
             }
@@ -1017,25 +1083,55 @@ namespace MediaPortal.Player
               {
                 case GUIGraphicsContext.eRender3DModeHalf.SBSLeft:
 
-                  _sourceRect.Width = originalSource.Width/2;
+                  if (!GUIGraphicsContext.IsFullHD3DFormat)
+                    _sourceRect.Width = originalSource.Width/2;
                   break;
 
                 case GUIGraphicsContext.eRender3DModeHalf.SBSRight:
 
-                  _sourceRect.Width = originalSource.Width/2;
-                  _sourceRect.X = originalSource.Width/2 + _sourceRect.X*2;
+                  if (!GUIGraphicsContext.IsFullHD3DFormat)
+                  {
+                    _sourceRect.Width = originalSource.Width / 2;
+                    _sourceRect.X = originalSource.Width / 2 + _sourceRect.X * 2;
+                  }
+                  else
+                  {
+                    _sourceRect.X += _geometry.ImageWidth;
+                  }
                   break;
 
                 case GUIGraphicsContext.eRender3DModeHalf.TABTop:
 
-                  _sourceRect.Height = originalSource.Height/2;
+                  if (!GUIGraphicsContext.IsFullHD3DFormat)
+                    _sourceRect.Height = originalSource.Height/2;
                   break;
 
                 case GUIGraphicsContext.eRender3DModeHalf.TABBottom:
 
-                  _sourceRect.Height = originalSource.Height/2;
-                  _sourceRect.Y = originalSource.Height/2 + _sourceRect.Y*2;
+                  if (!GUIGraphicsContext.IsFullHD3DFormat)
+                  {
+                    _sourceRect.Height = originalSource.Height / 2;
+                    _sourceRect.Y = originalSource.Height / 2 + _sourceRect.Y * 2;
+                  }
+                  else
+                  {
+                    _sourceRect.Y += _geometry.ImageHeight;
+                  }
                   break;
+              }
+            }
+          }
+          else
+          {
+            if (GUIGraphicsContext.IsFullHD3DFormat)
+            {
+              if ((double) _prevVideoWidth/_prevVideoHeight >= 2.5) // we have Full HD SBS 
+              {
+                _sourceRect.Width *= 2;
+              }
+              else if ((double) _prevVideoWidth/_prevVideoHeight <= 1.5) // we have Full HD TAB
+              {
+                _sourceRect.Height *= 2;
               }
             }
           }

@@ -379,7 +379,6 @@ namespace MediaPortal.GUI.Music
         _virtualDirectory.Reset();
       }
 
-      ResetShares();
       if (MusicState.StartWindow != GetID)
       {
         GUIWindowManager.ReplaceWindow((int)Window.WINDOW_MUSIC_GENRE);
@@ -406,7 +405,7 @@ namespace MediaPortal.GUI.Music
 
     private bool WakeUpSrv(string newFolderName)
     {
-      if (!Util.Utils.IsNetwork(newFolderName))
+      if (!Util.Utils.IsUNCNetwork(newFolderName))
       {
         return true;
       }

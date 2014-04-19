@@ -82,7 +82,7 @@ namespace MediaPortal.Playlists
                     break;
                 }
               }
-              else
+              else if (!trimmedLine.StartsWith("#"))
               {
                 if (!AddItem("", 0, trimmedLine))
                   break;
