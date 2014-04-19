@@ -297,9 +297,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             this.status = Status.PlayingTV;
           }
         }
+        bool userIsIdle = true;
         if ((DateTime.Now - this.lastAction) < new TimeSpan(0, 0, Settings.Instance.IdleTimeout))
         {
           this.status = Status.Action;
+          userIsIdle = false;
         }
         if (GUIWindowManager.IsRouted)
         {
@@ -321,6 +323,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
         lock (MiniDisplayHelper.StatusMutex)
         {
+          MiniDisplayHelper.MPStatus.UserIsIdle = userIsIdle; 
           MiniDisplayHelper.MPStatus.CurrentPluginStatus = this.status;          
           if (this.status.Equals(Status.Idle) && !MiniDisplayHelper.MPStatus.MP_Is_Idle)
           {
@@ -334,6 +337,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
               MiniDisplayHelper.MPStatus.MP_Is_Idle = false;
               MiniDisplayHelper.MPStatus.TimeIdleStateChanged = DateTime.Now;
           }
+        
           MiniDisplayHelper.MPStatus.CurrentIconMask = MiniDisplayHelper.SetPluginIcons();
           if (this.status.Equals(Status.PlayingDVD))
           {

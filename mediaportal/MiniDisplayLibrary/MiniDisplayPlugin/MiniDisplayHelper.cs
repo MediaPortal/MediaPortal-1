@@ -43,12 +43,18 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       }
     }
 
-    //Check our EQ settings and MP states to determine if it appropriate to show our EQ
+    /// <summary>
+    /// Check our EQ settings and MP states to determine if it is appropriate to show our EQ.
+    /// </summary>
+    /// <param name="EQSETTINGS"></param>
+    /// <returns>True if it is appropriate to show our EQ, false otherwise.</returns>
     public static bool GetEQ(ref EQControl EQSETTINGS)
     {
+      SystemStatus MPStatus=new SystemStatus();
+      GetSystemStatus(ref MPStatus);
       bool extensiveLogging = Settings.Instance.ExtensiveLogging;
       bool flag2 = (EQSETTINGS.UseStereoEq | EQSETTINGS.UseVUmeter) | EQSETTINGS.UseVUmeter2;
-      if (g_Player.Player == null || !g_Player.IsMusic || !BassMusicPlayer.IsDefaultMusicPlayer)
+      if (!MPStatus.UserIsIdle || g_Player.Player == null || !g_Player.IsMusic || !BassMusicPlayer.IsDefaultMusicPlayer)
       {
         return false;
       }
@@ -160,6 +166,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       {
         CurrentStatus.CurrentPluginStatus = MPStatus.CurrentPluginStatus;
         CurrentStatus.CurrentIconMask = MPStatus.CurrentIconMask;
+        CurrentStatus.UserIsIdle = MPStatus.UserIsIdle;
         CurrentStatus.MP_Is_Idle = MPStatus.MP_Is_Idle;
         CurrentStatus.TimeIdleStateChanged = MPStatus.TimeIdleStateChanged;   
 
@@ -168,6 +175,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
         CurrentStatus.MediaPlayer_Active = MPStatus.MediaPlayer_Active;
         CurrentStatus.MediaPlayer_Playing = MPStatus.MediaPlayer_Playing;
+        CurrentStatus.TimePlayingStateChanged = MPStatus.TimePlayingStateChanged;
         CurrentStatus.MediaPlayer_Paused = MPStatus.MediaPlayer_Paused;
         CurrentStatus.Media_IsRecording = MPStatus.Media_IsRecording;
         CurrentStatus.Media_IsTV = MPStatus.Media_IsTV;
@@ -268,12 +276,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           CurrentStatus._AudioUseWaveVolume = flag;
         }
         CurrentStatus.CurrentIconMask = 0L;
+        CurrentStatus.UserIsIdle = false;
         CurrentStatus.MP_Is_Idle = false;
         CurrentStatus.TimeIdleStateChanged = DateTime.MinValue;
         CurrentStatus.SystemVolumeLevel = 0;
         CurrentStatus.IsMuted = false;
         CurrentStatus.MediaPlayer_Active = false;
         CurrentStatus.MediaPlayer_Playing = false;
+        CurrentStatus.TimePlayingStateChanged = DateTime.MinValue;
         CurrentStatus.MediaPlayer_Paused = false;
         CurrentStatus.Media_IsRecording = false;
         CurrentStatus.Media_IsTV = false;
@@ -803,7 +813,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       }
 
       MPStatus.MediaPlayer_Active = false;
-      MPStatus.MediaPlayer_Playing = false;
       MPStatus.MediaPlayer_Paused = false;
       MPStatus.Media_IsCD = false;
       MPStatus.Media_IsRadio = false;
@@ -833,12 +842,22 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         num |= (ulong)0x40000000000L;
         MPStatus.MediaPlayer_Active = false;
         MPStatus.MediaPlayer_Paused = false;
-        MPStatus.MediaPlayer_Playing = false;
+        if (MPStatus.MediaPlayer_Playing)
+        {
+            //Update our playing state and mark the time
+            MPStatus.MediaPlayer_Playing = false;
+            MPStatus.TimePlayingStateChanged = DateTime.Now;
+        }
         return num;
       }
-      if (g_Player.Playing & !g_Player.Paused)
+      if (g_Player.Playing && !g_Player.Paused)
       {
-        MPStatus.MediaPlayer_Playing = true;
+        if (!MPStatus.MediaPlayer_Playing)
+        {
+            //Update our playing state and mark the time
+            MPStatus.MediaPlayer_Playing = true;
+            MPStatus.TimePlayingStateChanged = DateTime.Now;
+        }
         if (g_Player.Speed > 1)
         {
           num |= (ulong)0x20000000000L;

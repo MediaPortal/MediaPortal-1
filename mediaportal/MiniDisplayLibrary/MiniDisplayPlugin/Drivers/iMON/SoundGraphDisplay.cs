@@ -86,26 +86,48 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         public override void Update()
         {
             MiniDisplayHelper.GetSystemStatus(ref iDisplay.MPStatus);
-            //Check if our display needs to be disabled when MP is idle
-            if (Initialized && iDisplay.MPStatus.MP_Is_Idle && iDisplay.iSettings.DisableWhenIdle 
-            //Check if our disable when idle delay has passed
-                && IsElapsed((iInitToggleTime > iDisplay.MPStatus.TimeIdleStateChanged ? iInitToggleTime : iDisplay.MPStatus.TimeIdleStateChanged), iDisplay.iSettings.DisableWhenIdleDelayInSeconds))
+            //Only try to disable/re-enable our display when our user is idle
+            if (iDisplay.MPStatus.UserIsIdle)
             {
-                //Blank our display before uninit to workaround switch back to iMON Manager not blanking screen if screen off while running MP (VFD)
-                iDisplay.SetLine(0, "");
-                iDisplay.SetLine(1, "");
-                iDisplay.Update();
-                //
-                DoUninit();
+                //Check if our display needs to be disabled when MP is idle
+                if (Initialized && iDisplay.MPStatus.MP_Is_Idle && iDisplay.iSettings.DisableWhenIdle
+                    //Check if our disable when idle delay has passed
+                    && IsElapsed((iInitToggleTime > iDisplay.MPStatus.TimeIdleStateChanged ? iInitToggleTime : iDisplay.MPStatus.TimeIdleStateChanged), iDisplay.iSettings.DisableWhenIdleDelayInSeconds))
+                {
+                    //Blank our display before uninit to workaround switch back to iMON Manager not blanking screen if screen off while running MP (VFD)
+                    iDisplay.SetLine(0, "");
+                    iDisplay.SetLine(1, "");
+                    iDisplay.Update();
+                    //
+                    DoUninit();
+                }
+                //Check if it's time to re-enable our display while we are still idle
+                else if (!Initialized && iDisplay.MPStatus.MP_Is_Idle && iDisplay.iSettings.ReenableWhenIdleAfter
+                    && IsElapsed(iInitToggleTime, iDisplay.iSettings.ReenableWhenIdleAfterDelayInSeconds))
+                {
+                    DoInit();
+                }
+                //Check if our display needs to be disabled when MP is playing
+                else if (Initialized && iDisplay.MPStatus.MediaPlayer_Playing && iDisplay.iSettings.DisableWhenPlaying
+                    //Check if our disable when playing delay has passed
+                        && IsElapsed((iInitToggleTime > iDisplay.MPStatus.TimePlayingStateChanged ? iInitToggleTime : iDisplay.MPStatus.TimePlayingStateChanged), iDisplay.iSettings.DisableWhenPlayingDelayInSeconds))
+                {
+                    //Blank our display before uninit to workaround switch back to iMON Manager not blanking screen if screen off while running MP (VFD)
+                    iDisplay.SetLine(0, "");
+                    iDisplay.SetLine(1, "");
+                    iDisplay.Update();
+                    //
+                    DoUninit();
+                }
+                //Check if it's time to re-enable our display while we are still playing
+                else if (!Initialized && iDisplay.MPStatus.MediaPlayer_Playing && iDisplay.iSettings.ReenableWhenPlayingAfter
+                        && IsElapsed(iInitToggleTime, iDisplay.iSettings.ReenableWhenPlayingAfterDelayInSeconds))
+                {
+                    DoInit();
+                }
             }
-            //Check if it's time to re-enable our display while we are still idle
-            else if (!Initialized && iDisplay.MPStatus.MP_Is_Idle && iDisplay.iSettings.ReenableWhenIdleAfter
-                && IsElapsed(iInitToggleTime, iDisplay.iSettings.ReenableWhenIdleAfterDelayInSeconds)) 
-            {
-                DoInit();
-            }
-            //Reinitialize our display if we are not idle anymore
-            else if (!Initialized && !iDisplay.MPStatus.MP_Is_Idle)
+            //Reinitialize our display if our user is not idle anymore
+            else if (!Initialized)
             {
                 DoInit();
             }

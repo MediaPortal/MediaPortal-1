@@ -119,7 +119,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       this.txtFont.DataBindings.Add("Text", Settings.Instance, "Font");
       this.txtFontSize.DataBindings.Add("Text", Settings.Instance, "FontSize");
       this.txtScrollDelay.DataBindings.Add("Text", Settings.Instance, "ScrollDelay");
+      this.txtScrollDelay.Validating += new CancelEventHandler(txtUpdateDelay_Validating);
       this.txtUpdateDelay.DataBindings.Add("Text", Settings.Instance, "UpdateDelay");
+      this.txtUpdateDelay.Validating += new CancelEventHandler(txtUpdateDelay_Validating);
       this.txtIdleTimeout.DataBindings.Add("Text", Settings.Instance, "IdleTimeout");
       this.ckForceGraphicText.DataBindings.Add("Checked", Settings.Instance, "ForceGraphicText");
       this.txtPixelsToScroll.DataBindings.Add("Text", Settings.Instance, "PixelsToScroll");
@@ -148,6 +150,31 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       }
       Log.Info("MiniDisplay.SetupForm(): constructor completed");
     }
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    void txtUpdateDelay_Validating(object sender, CancelEventArgs e)
+    {
+        int updateDelay;
+        int scrollDelay;
+
+        if (!int.TryParse(txtUpdateDelay.Text, out updateDelay) || !int.TryParse(txtScrollDelay.Text, out scrollDelay))
+        {
+            MessageBox.Show("You need to enter an integer", "ERROR: Check update and scroll delay", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return;
+        }
+
+        if (updateDelay>scrollDelay)
+        {
+            MessageBox.Show("Update delay must be shorter than scroll delay", "ERROR: Check update and scroll delay", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            txtUpdateDelay.Text = txtScrollDelay.Text;
+        }
+    }
+
 
     private void btnAdvanced_Click(object sender, EventArgs e)
     {
