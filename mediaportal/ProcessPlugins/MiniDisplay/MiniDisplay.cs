@@ -321,11 +321,18 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
         lock (MiniDisplayHelper.StatusMutex)
         {
-          MiniDisplayHelper.MPStatus.CurrentPluginStatus = this.status;
-          MiniDisplayHelper.MPStatus.MP_Is_Idle = false;
-          if (this.status.Equals(Status.Idle))
+          MiniDisplayHelper.MPStatus.CurrentPluginStatus = this.status;          
+          if (this.status.Equals(Status.Idle) && !MiniDisplayHelper.MPStatus.MP_Is_Idle)
           {
-            MiniDisplayHelper.MPStatus.MP_Is_Idle = true;
+              //Set our idle status to true and mark the time
+              MiniDisplayHelper.MPStatus.MP_Is_Idle = true;
+              MiniDisplayHelper.MPStatus.TimeIdleStateChanged = DateTime.Now;
+          }
+          else if (!this.status.Equals(Status.Idle) && MiniDisplayHelper.MPStatus.MP_Is_Idle)
+          {
+              //Set our idle status to false and mark the time
+              MiniDisplayHelper.MPStatus.MP_Is_Idle = false;
+              MiniDisplayHelper.MPStatus.TimeIdleStateChanged = DateTime.Now;
           }
           MiniDisplayHelper.MPStatus.CurrentIconMask = MiniDisplayHelper.SetPluginIcons();
           if (this.status.Equals(Status.PlayingDVD))

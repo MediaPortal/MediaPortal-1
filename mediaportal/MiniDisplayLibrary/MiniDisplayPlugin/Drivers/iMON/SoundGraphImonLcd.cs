@@ -52,6 +52,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         ImonMediaInfo _videoMediaInfo = new ImonMediaInfo();
         ImonMediaInfo _audioMediaInfo = new ImonMediaInfo();
         ActiveWindowInfo _activeWindowInfo = new ActiveWindowInfo();
+        DateTime LastIconUpdateTime = DateTime.MinValue;
  
         //Constructor
         public SoundGraphImonLcd()
@@ -60,31 +61,25 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
         public override string Name() { return "iMON LCD"; }
 
-        public override void SetLine(int line, string message)
-        {   
-            //Per our framework each line is updated only once per frame/tick
-            if (line == 0)
-            {
-                Line1 = message;
-            }
-            else if (line == 1)
-            {
-                Line2 = message;
-            }            
-        }
 
         public override void Update()
         {
             //Only show the second line for now
-            SoundGraphDisplay.IDW_SetLcdText(Line2);
-            //Update our icons here
-            //TODO: Maybe we should do that no more than once a second
-            SetMediaTypeIcons();
-            SetCodecs();
-            SetMediaProgress();
-            SetSpeakerConfig();
-            SetAspectRatio();
-            SetEtcIcons();
+            if (NeedTextUpdate)
+            {
+                SoundGraphDisplay.IDW_SetLcdText(TextBottomLine);
+            }
+            //Update our icons here, only very N seconds
+            if (SoundGraphDisplay.IsElapsed(LastIconUpdateTime, 2))
+            {
+                SetMediaTypeIcons();
+                SetCodecs();
+                SetMediaProgress();
+                SetSpeakerConfig();
+                SetAspectRatio();
+                SetEtcIcons();
+                LastIconUpdateTime = DateTime.Now;
+            }
         }
         
 

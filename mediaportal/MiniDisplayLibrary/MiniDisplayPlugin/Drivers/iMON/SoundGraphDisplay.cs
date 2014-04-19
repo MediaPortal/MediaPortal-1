@@ -35,21 +35,30 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     public class SoundGraphDisplay : BaseDisplay
     {
         SoundGraphImon iDisplay;
+        DateTime iInitToggleTime = DateTime.MinValue;
+        
 
         public SoundGraphDisplay()
         {
             iDisplay = null;
             ImonErrorMessage = string.Empty;
-            Initialized = false;      
+            Initialized = false;
         }
 
         public static void LogDebug(string msg) { Log.Debug(msg); }
         public static void LogInfo(string msg) { Log.Info(msg); }
         public static void LogError(string msg) { Log.Error(msg); }
 
+        public static bool IsElapsed(DateTime aStartTime, int aDelayInSeconds)
+        {
+            return ((DateTime.Now - aStartTime) > new TimeSpan(0, 0, aDelayInSeconds));
+        }
 
         protected string ImonErrorMessage { get; set; }
 
+        /// <summary>
+        /// Tell whether or not our SoundGraph Display plug-in is initialized
+        /// </summary>
         protected bool Initialized { get; set; }
 
         //From IDisplay
@@ -76,8 +85,37 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         //From IDisplay
         public override void Update()
         {
-            //We must already have a display when updating
-            iDisplay.Update();
+            MiniDisplayHelper.GetSystemStatus(ref iDisplay.MPStatus);
+            //Check if our display needs to be disabled when MP is idle
+            if (Initialized && iDisplay.MPStatus.MP_Is_Idle && iDisplay.iSettings.DisableWhenIdle 
+            //Check if our disable when idle delay has passed
+                && IsElapsed((iInitToggleTime > iDisplay.MPStatus.TimeIdleStateChanged ? iInitToggleTime : iDisplay.MPStatus.TimeIdleStateChanged), iDisplay.iSettings.DisableWhenIdleDelayInSeconds))
+            {
+                //Blank our display before uninit to workaround switch back to iMON Manager not blanking screen if screen off while running MP (VFD)
+                iDisplay.SetLine(0, "");
+                iDisplay.SetLine(1, "");
+                iDisplay.Update();
+                //
+                DoUninit();
+            }
+            //Check if it's time to re-enable our display while we are still idle
+            else if (!Initialized && iDisplay.MPStatus.MP_Is_Idle && iDisplay.iSettings.ReenableWhenIdleAfter
+                && IsElapsed(iInitToggleTime, iDisplay.iSettings.ReenableWhenIdleAfterDelayInSeconds)) 
+            {
+                DoInit();
+            }
+            //Reinitialize our display if we are not idle anymore
+            else if (!Initialized && !iDisplay.MPStatus.MP_Is_Idle)
+            {
+                DoInit();
+            }
+            
+            if (Initialized)
+            {
+                //We must already have a display when updating
+                iDisplay.Update();
+            }
+
         }
 
         //From IDisplay
@@ -257,6 +295,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             }
 
             DisplayType = initResult.iDspType;
+            Initialized = true;
+            iInitToggleTime = DateTime.Now;
             return true;
         }
 
@@ -267,7 +307,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         private void DoUninit()
         {
             DisplayType = DSPType.DSPN_DSP_NONE;
-            IDW_Uninit();
+            Initialized = false;
+            iInitToggleTime = DateTime.Now;
+            IDW_Uninit();            
         }
 
 

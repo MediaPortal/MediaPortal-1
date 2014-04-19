@@ -63,6 +63,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       }
       try
       {
+        if (g_Player.Paused)
+        {
+            return false;
+        }
+
         if (EQSETTINGS.DelayEQ & (g_Player.CurrentPosition < EQSETTINGS._DelayEQTime))
         {
           EQSETTINGS._EQDisplayTitle = false;
@@ -156,6 +161,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         CurrentStatus.CurrentPluginStatus = MPStatus.CurrentPluginStatus;
         CurrentStatus.CurrentIconMask = MPStatus.CurrentIconMask;
         CurrentStatus.MP_Is_Idle = MPStatus.MP_Is_Idle;
+        CurrentStatus.TimeIdleStateChanged = MPStatus.TimeIdleStateChanged;   
 
         CurrentStatus.SystemVolumeLevel = MPStatus.SystemVolumeLevel;
         CurrentStatus.IsMuted = MPStatus.IsMuted;
@@ -263,6 +269,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         }
         CurrentStatus.CurrentIconMask = 0L;
         CurrentStatus.MP_Is_Idle = false;
+        CurrentStatus.TimeIdleStateChanged = DateTime.MinValue;
         CurrentStatus.SystemVolumeLevel = 0;
         CurrentStatus.IsMuted = false;
         CurrentStatus.MediaPlayer_Active = false;

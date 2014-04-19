@@ -63,18 +63,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             iEqData.BandData[15] = 50;
         }
 
-        public override void SetLine(int line, string message)
-        {
-            if (line == 0)
-            {
-                Line1 = message;
-            }
-            else if (line == 1)
-            {
-                Line2 = message;
-            }
-        }
-
         public override string Name() { return "iMON VFD"; }
 
         public override void Configure()
@@ -99,10 +87,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 //SetAndRollEqData();
                 UpdateEq();
             }
-            else
+            else if (NeedTextUpdate)
             {
                 //Not show EQ then display our lines
-                SoundGraphDisplay.IDW_SetVfdText(Line1, Line2);
+                SoundGraphDisplay.IDW_SetVfdText(TextTopLine, TextBottomLine);
             }
 
         }

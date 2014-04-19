@@ -206,6 +206,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     public Status CurrentPluginStatus;
     public ulong CurrentIconMask;
     public bool MP_Is_Idle;
+    public DateTime TimeIdleStateChanged;
     public int SystemVolumeLevel;
     public bool IsMuted;
     public bool MediaPlayer_Active;

@@ -35,30 +35,52 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     /// </summary>
     public abstract class SoundGraphImon
     {
-        protected Settings iSettings;
-        protected SoundGraphDisplay.DSPEQDATA iEqData;        
-
+        public SystemStatus MPStatus;
+        public Settings iSettings;
+        protected SoundGraphDisplay.DSPEQDATA iEqData;
+        
 
         public SoundGraphImon()
         {
             //
             LoadAdvancedSettings();
             Settings.OnSettingsChanged += AdvancedSettings_OnSettingsChanged;
-            Line1 = string.Empty;
-            Line2 = string.Empty;
+            TextTopLine = string.Empty;
+            TextBottomLine = string.Empty;
+            NeedTextUpdate = true;
         }
 
-        protected string Line1 { get; set; }
-        protected string Line2 { get; set; }
-        
-        //Set text for give line index
-        public abstract void SetLine(int line, string message);
+        protected string TextTopLine { get; set; }
+        protected string TextBottomLine { get; set; }
+        /// <summary>
+        /// Specify whether or not our text content was changed
+        /// </summary>
+        protected bool NeedTextUpdate { get; set; }
+
         //Display name is notably used during configuration for testing
         public abstract string Name();
         //Launch advanced settings dialog
         public abstract void Configure();
         //Update tick
         public abstract void Update();
+
+        //Set text for give line index
+        public void SetLine(int line, string message)
+        {
+            //Per our framework each line is updated only once per frame/tick
+            if (line == 0 && TextTopLine != message)
+            {
+                TextTopLine = message;
+                NeedTextUpdate = true;
+            }
+            else if (line == 1 && TextBottomLine != message)
+            {
+                TextBottomLine = message;
+                NeedTextUpdate = true;
+            }
+        }
+
+
 
         //Here comes settings related stuff
         //Settings stuff
