@@ -40,7 +40,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
   /// A base implementation of <see cref="T:TvLibrary.Interfaces.ITVScanning"/> for MPEG 2
   /// transport streams.
   /// </summary>
-  public class ScannerMpeg2TsBase : ITVScanning, IChannelScanCallBack
+  internal class ScannerMpeg2TsBase : ITVScanning, IChannelScanCallBack
   {
     #region variables
 

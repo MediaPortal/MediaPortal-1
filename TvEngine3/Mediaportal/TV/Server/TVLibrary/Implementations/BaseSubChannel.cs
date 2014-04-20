@@ -29,7 +29,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
   /// <summary>
   /// Base class for a sub channel of a tv card
   /// </summary>
-  public abstract class BaseSubChannel : ITvSubChannel
+  internal abstract class BaseSubChannel : ITvSubChannel
   {
     #region events
 

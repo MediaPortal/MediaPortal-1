@@ -33,7 +33,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
   /// An implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles DVB-C and
   /// ISDB-C tuners with BDA drivers.
   /// </summary>
-  public class TunerBdaCable : TunerBdaBase
+  internal class TunerBdaCable : TunerBdaBase
   {
     #region constructor
 

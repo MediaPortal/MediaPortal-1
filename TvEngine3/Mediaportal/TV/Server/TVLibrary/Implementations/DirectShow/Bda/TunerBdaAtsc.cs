@@ -34,7 +34,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
   /// An implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles ATSC
   /// terrestrial and SCTE cable tuners with BDA drivers.
   /// </summary>
-  public class TunerBdaAtsc : TunerBdaBase
+  internal class TunerBdaAtsc : TunerBdaBase
   {
     #region constructor
 

@@ -28,7 +28,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations
 {
-  public class EncoderController : IQuality
+  internal class EncoderController : IQuality
   {
     #region variables
 

@@ -40,7 +40,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
   /// <summary>
   /// A base implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> for SAT>IP tuners.
   /// </summary>
-  public abstract class TunerSatIpBase : TunerStream, IMpeg2PidFilter
+  internal abstract class TunerSatIpBase : TunerStream, IMpeg2PidFilter
   {
     #region constants
 

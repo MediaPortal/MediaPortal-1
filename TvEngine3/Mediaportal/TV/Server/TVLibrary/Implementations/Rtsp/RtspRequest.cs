@@ -26,7 +26,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Rtsp
   /// <summary>
   /// A simple class that can be used to serialise RTSP requests.
   /// </summary>
-  public class RtspRequest
+  internal class RtspRequest
   {
     private RtspMethod _method = null;
     private string _uri = null;

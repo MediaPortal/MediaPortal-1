@@ -26,7 +26,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Multiplexer
   /// The MediaPortal transport stream multiplexer filter class.
   /// </summary>
   [Guid("511d13f0-8a56-42fa-b151-b72a325cf71a")]
-  public class MediaPortalTsMultiplexer
+  internal class MediaPortalTsMultiplexer
   {
   }
 

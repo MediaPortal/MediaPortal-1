@@ -34,7 +34,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
   /// <summary>
   /// class which handles all RTSP related tasks
   /// </summary>
-  public class RtspStreaming
+  internal class RtspStreaming
   {
 
 

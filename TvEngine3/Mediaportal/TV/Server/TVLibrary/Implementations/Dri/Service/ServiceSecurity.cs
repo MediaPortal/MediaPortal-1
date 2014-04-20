@@ -25,7 +25,7 @@ using UPnP.Infrastructure.CP.DeviceTree;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Service
 {
-  public class ServiceSecurity : ServiceBase
+  internal class ServiceSecurity : ServiceBase
   {
     private CpAction _setDrmAction = null;
 

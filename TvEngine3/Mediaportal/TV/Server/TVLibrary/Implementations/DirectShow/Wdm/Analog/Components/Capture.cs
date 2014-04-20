@@ -35,7 +35,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
   /// <summary>
   /// A WDM analog DirectShow capture graph component.
   /// </summary>
-  public class Capture : ComponentBase
+  internal class Capture : ComponentBase
   {
     #region structs
 

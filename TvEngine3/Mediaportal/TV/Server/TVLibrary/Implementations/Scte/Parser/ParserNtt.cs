@@ -30,7 +30,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
   /// <summary>
   /// ATSC/SCTE network text table parser. Refer to ATSC A/56 and SCTE 65.
   /// </summary>
-  public class ParserNtt : ParserBase
+  internal class ParserNtt : ParserBase
   {
     private enum TableSubtype
     {

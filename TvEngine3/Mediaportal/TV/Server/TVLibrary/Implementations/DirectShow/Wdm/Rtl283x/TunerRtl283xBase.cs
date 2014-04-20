@@ -29,7 +29,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
 {
-  public class TunerRtl283xBase
+  internal class TunerRtl283xBase
   {
     #region enums
 

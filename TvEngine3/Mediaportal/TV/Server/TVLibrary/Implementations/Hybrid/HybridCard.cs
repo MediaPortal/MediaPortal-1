@@ -31,7 +31,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Hybrid
   /// <summary>
   /// This class is a wrapper for all cards that are part of a hybrid card group
   /// </summary>
-  public class HybridCard : ITVCard
+  internal class HybridCard : ITVCard
   {
     #region variables
 

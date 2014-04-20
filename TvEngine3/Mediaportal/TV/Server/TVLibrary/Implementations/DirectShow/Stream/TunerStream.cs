@@ -34,7 +34,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
   /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which supports the MediaPortal
   /// stream source filter.
   /// </summary>
-  public class TunerStream : TunerDirectShowBase
+  internal class TunerStream : TunerDirectShowBase
   {
     /// <summary>
     /// The MediaPortal IPTV/DVB-IP/URL stream source filter class.

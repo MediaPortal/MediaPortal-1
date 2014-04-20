@@ -26,7 +26,7 @@ using UPnP.Infrastructure.CP.DeviceTree;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Service
 {
-  public class ServiceFdc : ServiceBase
+  internal class ServiceFdc : ServiceBase
   {
     private CpAction _getFdcStatusAction = null;
     private CpAction _requestTablesAction = null;

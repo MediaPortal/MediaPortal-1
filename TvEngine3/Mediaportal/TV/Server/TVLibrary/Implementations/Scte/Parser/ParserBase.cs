@@ -57,7 +57,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
 
   public delegate void TableCompleteDelegate(MgtTableType table);
 
-  public class ParserBase
+  internal class ParserBase
   {
     protected object _lock = new object();
     protected Dictionary<int, int> _currentVersions = new Dictionary<int, int>();

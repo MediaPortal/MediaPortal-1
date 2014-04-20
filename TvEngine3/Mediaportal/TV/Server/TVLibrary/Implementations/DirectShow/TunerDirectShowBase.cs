@@ -34,7 +34,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
   /// A base implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> for tuners that expose
   /// DirectShow filters.
   /// </summary>
-  public abstract class TunerDirectShowBase : TvCardBase
+  internal abstract class TunerDirectShowBase : TvCardBase
   {
     #region variables
 

@@ -29,7 +29,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Hybrid
   /// <summary>
   /// Hybrid card group wrapper
   /// </summary>
-  public class HybridCardGroup
+  internal class HybridCardGroup
   {
     #region variables
 

@@ -27,7 +27,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
   /// <summary>
   /// This class is used to keep track of the <see cref="DsDevice"/> instances which are in use.
   /// </summary>
-  public class DevicesInUse
+  internal class DevicesInUse
   {
     private static DevicesInUse _instance = new DevicesInUse();
     private readonly List<DsDevice> _devicesInUse = new List<DsDevice>();

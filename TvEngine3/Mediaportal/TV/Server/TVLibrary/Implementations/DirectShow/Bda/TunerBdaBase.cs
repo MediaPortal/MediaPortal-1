@@ -44,7 +44,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
   /// A base implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> for tuners with BDA
   /// drivers.
   /// </summary>
-  public abstract class TunerBdaBase : TunerDirectShowBase
+  internal abstract class TunerBdaBase : TunerDirectShowBase
   {
     #region variables
 

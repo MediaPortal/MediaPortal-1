@@ -33,7 +33,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
   /// <summary>
   /// A WDM analog DirectShow tuner and TV audio graph component.
   /// </summary>
-  public class Tuner : ComponentBase
+  internal class Tuner : ComponentBase
   {
     #region constants
 

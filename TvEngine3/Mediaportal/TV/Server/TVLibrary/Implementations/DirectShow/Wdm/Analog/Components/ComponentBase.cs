@@ -31,7 +31,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
   /// A base class for WDM analog DirectShow graph components. Intended to be used for sharing
   /// semi-generic DirectShow graph functions.
   /// </summary>
-  public abstract class ComponentBase
+  internal abstract class ComponentBase
   {
     /// <summary>
     /// Add and connect a filter into a DirectShow graph.

@@ -37,14 +37,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
   ///<summary>
   /// A base class for digital services ("subchannels").
   ///</summary>
-  public class Mpeg2SubChannel : BaseSubChannel, IPmtCallBack, ICaCallBack, IVideoAudioObserver
+  internal class Mpeg2SubChannel : BaseSubChannel, IPmtCallBack, ICaCallBack, IVideoAudioObserver
   {
     #region variables
 
     #region local variables
 
     /// <summary>
-    /// The current PMT PID for the service that this subchannel represents.
+    /// The current PMT PID for the program that this sub-channel represents.
     /// </summary>
     private int _pmtPid = -1;
 
@@ -60,7 +60,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     private ITsFilter _tsFilterInterface;
 
     /// <summary>
-    /// The handle that links this subchannel with a corresponding subchannel instance in TsWriter.
+    /// The handle that links this sub-channel with a corresponding sub-channel instance in TsWriter.
     /// </summary>
     private int _subChannelIndex = -1;
 

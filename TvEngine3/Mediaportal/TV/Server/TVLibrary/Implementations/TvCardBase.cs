@@ -36,9 +36,9 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 namespace Mediaportal.TV.Server.TVLibrary.Implementations
 {
   /// <summary>
-  /// Base class for all devices.
+  /// Base class for all tuners.
   /// </summary>
-  public abstract class TvCardBase : ITVCard, IDisposable
+  internal abstract class TvCardBase : ITVCard, IDisposable
   {
     #region events
 

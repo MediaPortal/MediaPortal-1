@@ -27,7 +27,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
   /// <summary>
   /// An implementation of <see cref="T:TvLibrary.Interfaces.ITVScanning"/> for stream tuners.
   /// </summary>
-  public class ScannerStream : ScannerMpeg2TsBase
+  internal class ScannerStream : ScannerMpeg2TsBase
   {
     /// <summary>
     /// Initialise a new instance of the <see cref="ScannerStream"/> class.

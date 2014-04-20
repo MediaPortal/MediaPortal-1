@@ -29,7 +29,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
   /// A class which implements TV and radio service scanning for ATSC and SCTE (ITU-T annex B North
   /// American cable) tuners with BDA drivers.
   /// </summary>
-  public class ScannerMpeg2TsAtsc : ScannerMpeg2TsBase
+  internal class ScannerMpeg2TsAtsc : ScannerMpeg2TsBase
   {
     /// <summary>
     /// Initialise a new instance of the <see cref="ScannerMpeg2TsAtsc"/> class.

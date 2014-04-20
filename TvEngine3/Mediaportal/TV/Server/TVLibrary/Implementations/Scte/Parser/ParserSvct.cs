@@ -36,7 +36,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
   public delegate void SvctChannelDetailDelegate(AtscTransmissionMedium transmissionMedium, int vctId, int virtualChannelNumber, bool applicationVirtualChannel,
     int bitstreamSelect, int pathSelect, ChannelType channelType, int sourceId, byte cdsReference, int programNumber, byte mmsReference);
 
-  public class ParserSvct : ParserBase
+  internal class ParserSvct : ParserBase
   {
     private enum TableSubtype
     {

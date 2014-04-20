@@ -36,7 +36,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
   /// A base implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> for TechniSat tuners
   /// with B2C2 chipsets and WDM drivers.
   /// </summary>
-  public abstract class TunerB2c2Base : TunerDirectShowBase, IMpeg2PidFilter
+  internal abstract class TunerB2c2Base : TunerDirectShowBase, IMpeg2PidFilter
   {
     #pragma warning disable 1591
     #region enums

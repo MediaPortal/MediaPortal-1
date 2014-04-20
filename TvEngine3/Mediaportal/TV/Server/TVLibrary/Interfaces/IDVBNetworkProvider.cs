@@ -32,7 +32,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.NetworkProvider
   /// The MediaPortal BDA network provider class.
   /// </summary>
   [Guid("d7d42e5c-eb36-4aad-933b-b4c419429c98")]
-  public class MediaPortalNetworkProvider
+  internal class MediaPortalNetworkProvider
   {
     /// <summary>
     /// Generates the file and pathname of the log file

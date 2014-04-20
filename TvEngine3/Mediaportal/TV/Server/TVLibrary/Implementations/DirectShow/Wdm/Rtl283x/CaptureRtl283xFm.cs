@@ -31,7 +31,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
   /// An override of the analog capture component class. This enables us to
   /// easily buid an RTL283x FM radio capture graph.
   /// </summary>
-  public class CaptureRtl283xFm : Capture
+  internal class CaptureRtl283xFm : Capture
   {
     [ComImport, Guid("6b368f8c-f383-44d3-b8c2-3a150b70b1c9")]
     private class Rtl283xFmSource

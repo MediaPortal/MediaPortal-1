@@ -30,7 +30,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
   /// <summary>
   /// An implementation of <see cref="T:TvLibrary.Interfaces.ITVScanning"/> for WDM analog tuners.
   /// </summary>
-  public class ScannerAnalog : ScannerMpeg2TsBase
+  internal class ScannerAnalog : ScannerMpeg2TsBase
   {
     /// <summary>
     /// Initialise a new instance of the <see cref="ScannerAnalog"/> class.

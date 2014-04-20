@@ -35,7 +35,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
   /// <summary>
   /// A WDM analog DirectShow encoder graph component.
   /// </summary>
-  public class Encoder : ComponentBase
+  internal class Encoder : ComponentBase
   {
     #region constants
 

@@ -30,7 +30,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
   /// An implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles SAT>IP DVB-T
   /// and DVB-T2 tuners.
   /// </summary>
-  public class TunerSatIpTerrestrial : TunerSatIpBase
+  internal class TunerSatIpTerrestrial : TunerSatIpBase
   {
     #region constructor
 

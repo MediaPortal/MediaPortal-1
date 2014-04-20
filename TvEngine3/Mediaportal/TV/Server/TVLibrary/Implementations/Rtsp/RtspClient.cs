@@ -26,7 +26,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Rtsp
   /// <summary>
   /// A simple implementation of an RTSP client.
   /// </summary>
-  public class RtspClient
+  internal class RtspClient
   {
     #region variables
 

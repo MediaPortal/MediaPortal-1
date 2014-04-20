@@ -34,7 +34,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
   /// <summary>
   /// An implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> for TechniSat satellite tuners with B2C2 chipsets and WDM drivers.
   /// </summary>
-  public class TunerB2c2Satellite : TunerB2c2Base, IDiseqcDevice
+  internal class TunerB2c2Satellite : TunerB2c2Base, IDiseqcDevice
   {
     #region constants
 

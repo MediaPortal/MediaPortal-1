@@ -48,7 +48,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
   /// <summary>
   /// ATSC/SCTE long form virtual channel table parser. Refer to ATSC A/65 and SCTE 65.
   /// </summary>
-  public class ParserLvct
+  internal class ParserLvct
   {
     private object _lock = new object();
     private int _currentVersion = -1;

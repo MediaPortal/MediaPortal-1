@@ -25,7 +25,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
 {
   public delegate void MgtTableDetailDelegate(MgtTableType tableType, int pid, int versionNumber, uint byteCount);
 
-  public class ParserMgt
+  internal class ParserMgt
   {
     private object _lock = new object();
     private int _currentVersion = -1;

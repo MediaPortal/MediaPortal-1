@@ -45,7 +45,7 @@ using UPnP.Infrastructure.CP.DeviceTree;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
 {
-  public class TunerDri : TunerStream, IConditionalAccessMenuActions
+  internal class TunerDri : TunerStream, IConditionalAccessMenuActions
   {
     #region constants
 

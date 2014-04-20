@@ -36,7 +36,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
   /// An implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles North
   /// American CableCARD tuners with PBDA drivers.
   /// </summary>
-  public class TunerPbdaCableCard : TunerBdaAtsc, IConditionalAccessMenuActions
+  internal class TunerPbdaCableCard : TunerBdaAtsc, IConditionalAccessMenuActions
   {
     #region constants
 

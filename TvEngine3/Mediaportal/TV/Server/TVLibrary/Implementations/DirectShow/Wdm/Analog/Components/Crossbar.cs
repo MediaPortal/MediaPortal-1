@@ -32,7 +32,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
   /// <summary>
   /// A WDM analog DirectShow crossbar graph component.
   /// </summary>
-  public class Crossbar : ComponentBase
+  internal class Crossbar : ComponentBase
   {
     #region variables
 

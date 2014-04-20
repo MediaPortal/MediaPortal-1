@@ -36,7 +36,7 @@ using Encoder = Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.A
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
 {
-  public class TunerRtl283xFm : TunerDirectShowBase
+  internal class TunerRtl283xFm : TunerDirectShowBase
   {
     #region enums
 

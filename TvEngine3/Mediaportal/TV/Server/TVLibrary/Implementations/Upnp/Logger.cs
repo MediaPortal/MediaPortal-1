@@ -24,7 +24,7 @@ using UPnP.Infrastructure;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Upnp
 {
-  public class Logger : ILogger
+  internal class Logger : ILogger
   {
     public void Debug(string format, params object[] args)
     {

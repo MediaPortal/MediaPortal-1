@@ -34,7 +34,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
   /// A controller class for DiSEqC devices. This controller is able to control positioners and
   /// switches.
   /// </summary>
-  public class DiseqcController : IDiseqcController
+  internal class DiseqcController : IDiseqcController
   {
     #region variables
 

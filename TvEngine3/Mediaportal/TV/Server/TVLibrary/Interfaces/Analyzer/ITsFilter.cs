@@ -27,7 +27,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
   /// The MediaPortal TS writer/analyser filter class.
   /// </summary>
   [Guid("fc50bed6-fe38-42d3-b831-771690091a6e")]
-  public class MediaPortalTsWriter
+  internal class MediaPortalTsWriter
   {
   }
 

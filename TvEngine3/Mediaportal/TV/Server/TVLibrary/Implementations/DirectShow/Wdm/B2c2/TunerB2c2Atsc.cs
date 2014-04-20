@@ -31,7 +31,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
   /// An implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> for TechniSat ATSC tuners
   /// with B2C2 chipsets and WDM drivers.
   /// </summary>
-  public class TunerB2c2Atsc : TunerB2c2Base
+  internal class TunerB2c2Atsc : TunerB2c2Base
   {
     /// <summary>
     /// Initialise a new instance of the <see cref="TunerB2c2Atsc"/> class.

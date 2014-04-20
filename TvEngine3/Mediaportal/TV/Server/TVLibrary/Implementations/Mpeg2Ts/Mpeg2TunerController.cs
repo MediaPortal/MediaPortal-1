@@ -24,7 +24,7 @@ using System.Collections.Generic;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations
 {
-  public class Mpeg2TunerController
+  internal class Mpeg2TunerController
   {
     /// <summary>
     /// The mode to use for controlling tuner PID filter(s).

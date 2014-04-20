@@ -39,7 +39,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
   /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles analog tuners
   /// and capture devices with WDM/DirectShow drivers.
   /// </summary>
-  public class TunerAnalog : TunerDirectShowBase
+  internal class TunerAnalog : TunerDirectShowBase
   {
     #region constants
 

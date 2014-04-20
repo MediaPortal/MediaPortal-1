@@ -36,7 +36,7 @@ using UPnP.Infrastructure.CP.DeviceTree;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
 {
-  public class ScannerDri : ITVScanning
+  internal class ScannerDri : ITVScanning
   {
     private enum ScanStage
     {
