@@ -2657,8 +2657,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
       // Elementary streams.
       foreach (PmtElementaryStream es in _elementaryStreams)
       {
-        // We add each video, audio, sub-title and teletext stream with their corresponding conditional access
-        // descriptors to the CA PMT.
+        // We add each video, audio, subtitle and teletext stream with their
+        // corresponding conditional access descriptors to the CA PMT.
         if (StreamTypeHelper.IsVideoStream(es.LogicalStreamType) ||
           StreamTypeHelper.IsAudioStream(es.LogicalStreamType) ||
           es.LogicalStreamType == LogicalStreamType.Subtitles ||
