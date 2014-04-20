@@ -76,7 +76,7 @@ namespace Mediaportal.TV.Server.TVLibrary
     private void _epgTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
     {
       TimeSpan ts = DateTime.Now - _grabStartTime;
-      this.LogInfo("TimeshiftingEpgGrabber: timeout after {1} mins", ts.TotalMinutes);
+      this.LogInfo("TimeshiftingEpgGrabber: timeout after {0} mins", ts.TotalMinutes);
       _epgTimer.Enabled = false;
       _card.AbortGrabbing();
     }
