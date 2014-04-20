@@ -18,13 +18,9 @@
 
 #endregion
 
-using System.Reflection;
 using System.Text;
-using System.Threading;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using SHDocVw;
-using mshtml;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.TvLibrary.Utils.Web.http
 {
@@ -33,7 +29,6 @@ namespace Mediaportal.TV.Server.TvLibrary.Utils.Web.http
   /// </summary>
   public class HTMLPage
   {
- 
     #region Variables
 
     private string _strPageHead = string.Empty;
@@ -43,7 +38,6 @@ namespace Mediaportal.TV.Server.TvLibrary.Utils.Web.http
     private string _encoding = string.Empty;
     private string _error;
     private IHtmlCache _cache;
-    private InternetExplorer _IE;
 
     #endregion
 
@@ -173,46 +167,7 @@ namespace Mediaportal.TV.Server.TvLibrary.Utils.Web.http
     /// <returns>true if successful</returns>
     private bool GetExternal(HTTPRequest page)
     {
-      // Delay before getting page
-      // Bugfix: Moved over from LoadPage because it affected GetInternal as well.
-      // GetInternal already get's delayed when calling HTTPTransaction.HTTPGet/Transaction
-      if (page.Delay > 0)
-        Thread.Sleep(page.Delay);
-
-      // Use External Browser (IE) to get HTML page
-      // IE downloads all linked graphics ads, etc
-      // IE will run Javascript source if required to renderthe page
-      if (_IE == null)
-      {
-        _IE = new InternetExplorer();
-      }
-
-      IWebBrowser2 webBrowser = (IWebBrowser2)_IE;
-
-      object empty = Missing.Value;
-
-      // check if request is POST or GET
-      if (page.PostQuery != null)
-      {
-        ASCIIEncoding encoding = new ASCIIEncoding();
-        object postData = (object)encoding.GetBytes(page.PostQuery);
-        object header = (object)"Content-Type: application/x-www-form-urlencoded\n\r";
-        webBrowser.Navigate(page.Url, ref empty, ref empty, ref postData, ref header);
-      }
-      else
-      {
-        webBrowser.Navigate(page.Url, ref empty, ref empty, ref empty, ref empty);
-      }
-
-      while (webBrowser.Busy == true)
-      {
-        Thread.Sleep(500);
-      }
-      HTMLDocumentClass doc = (HTMLDocumentClass)webBrowser.Document;
-
-      _strPageSource = doc.body.innerHTML;
-
-      return true;
+      return GetInternal(page);
     }
 
     /// <summary>
