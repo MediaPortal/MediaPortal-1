@@ -580,11 +580,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         public static extern DSPResult IDW_SetVfdText([MarshalAs(UnmanagedType.LPWStr)] string line1, [MarshalAs(UnmanagedType.LPWStr)] string line2);
 
         //Import function to set VFD EQDATA
-        [DllImport("iMONDisplayWrapper.dll")]
+        [DllImport("iMONDisplayWrapper.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
         public static extern int IDW_SetVfdEqData(DSPEQDATA EqData);
 
         //Import function to set LCD EQDATA
-        [DllImport("iMONDisplayWrapper.dll")]
+        [DllImport("iMONDisplayWrapper.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
         public static extern int IDW_SetLcdEqData(DSPEQDATA EqDataLeft, DSPEQDATA EqDataRight);
 
         [DllImport("iMONDisplayWrapper.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]

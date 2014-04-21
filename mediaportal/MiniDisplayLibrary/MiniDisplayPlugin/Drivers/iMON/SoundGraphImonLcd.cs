@@ -78,6 +78,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 //Not show EQ then display our lines
                 //Only show the second line for now
                 SoundGraphDisplay.IDW_SetLcdText(TextBottomLine);
+                NeedTextUpdate = false;
             }
 
             //Update our icons here, only very N seconds

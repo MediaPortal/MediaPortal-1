@@ -95,6 +95,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             {
                 //Not show EQ then display our lines
                 SoundGraphDisplay.IDW_SetVfdText(TextTopLine, TextBottomLine);
+                NeedTextUpdate = false;
             }
 
         }
