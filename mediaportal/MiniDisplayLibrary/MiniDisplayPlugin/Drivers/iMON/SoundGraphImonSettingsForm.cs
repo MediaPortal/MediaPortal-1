@@ -37,53 +37,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             textEqDisabledTimeInSeconds.DataBindings.Add("Text", SoundGraphImon.Settings.Instance, "EqDisabledTimeInSeconds");
             textEqEnabledTimeInSeconds.DataBindings.Add("Text", SoundGraphImon.Settings.Instance, "EqEnabledTimeInSeconds");
 
-            if (SoundGraphImon.Settings.Instance.NormalEQ)
-            {
-                mpNormalEQ.Checked = true;
-            }
-            else if (SoundGraphImon.Settings.Instance.StereoEQ)
-            {
-                mpUseStereoEQ.Checked = true;
-            }
-            else if (SoundGraphImon.Settings.Instance.VUmeter)
-            {
-                mpUseVUmeter.Checked = true;
-            }
-            else
-            {
-                mpUseVUmeter2.Checked = true;
-            }
-            cbVUindicators.DataBindings.Add("Checked", SoundGraphImon.Settings.Instance, "VUindicators");
-            //mpDelayStartup.DataBindings.Add("Checked", SoundGraphImon.Settings.Instance, "DelayStartup");
-            if (mpNormalEQ.Checked)
-            {
-                SoundGraphImon.Settings.Instance.NormalEQ = true;
-                SoundGraphImon.Settings.Instance.StereoEQ = false;
-                SoundGraphImon.Settings.Instance.VUmeter = false;
-                SoundGraphImon.Settings.Instance.VUmeter2 = false;
-            }
-            else if (mpUseStereoEQ.Checked)
-            {
-                SoundGraphImon.Settings.Instance.NormalEQ = false;
-                SoundGraphImon.Settings.Instance.StereoEQ = true;
-                SoundGraphImon.Settings.Instance.VUmeter = false;
-                SoundGraphImon.Settings.Instance.VUmeter2 = false;
-            }
-            else if (mpUseVUmeter.Checked)
-            {
-                SoundGraphImon.Settings.Instance.NormalEQ = false;
-                SoundGraphImon.Settings.Instance.StereoEQ = false;
-                SoundGraphImon.Settings.Instance.VUmeter = true;
-                SoundGraphImon.Settings.Instance.VUmeter2 = false;
-            }
-            else
-            {
-                SoundGraphImon.Settings.Instance.NormalEQ = false;
-                SoundGraphImon.Settings.Instance.StereoEQ = false;
-                SoundGraphImon.Settings.Instance.VUmeter = false;
-                SoundGraphImon.Settings.Instance.VUmeter2 = true;
-            }
-
             //LCD
             if (SoundGraphImon.Settings.Instance.PreferFirstLineGeneral)
             {

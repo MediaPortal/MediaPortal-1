@@ -31,17 +31,25 @@
             this.btnOK = new MediaPortal.UserInterface.Controls.MPButton();
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabImon = new System.Windows.Forms.TabPage();
+            this.groupBoxWhenPlaying = new System.Windows.Forms.GroupBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.textReenableWhenPlayingAfterDelayInSeconds = new System.Windows.Forms.MaskedTextBox();
+            this.checkReenableWhenPlayingAfter = new System.Windows.Forms.CheckBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.textDisableWhenPlayingDelayInSeconds = new System.Windows.Forms.MaskedTextBox();
+            this.checkDisableWhenPlaying = new System.Windows.Forms.CheckBox();
+            this.groupBoxWhenIdle = new System.Windows.Forms.GroupBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.textReenableWhenIdleAfterDelayInSeconds = new System.Windows.Forms.MaskedTextBox();
+            this.checkReenableWhenIdleAfter = new System.Windows.Forms.CheckBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.textDisableWhenIdleDelayInSeconds = new System.Windows.Forms.MaskedTextBox();
+            this.checkDisableWhenIdle = new System.Windows.Forms.CheckBox();
             this.checkDisableWhenInBackground = new System.Windows.Forms.CheckBox();
             this.tabEqualizer = new System.Windows.Forms.TabPage();
             this.textEqEnabledTimeInSeconds = new System.Windows.Forms.MaskedTextBox();
             this.textEqDisabledTimeInSeconds = new System.Windows.Forms.MaskedTextBox();
             this.textEqStartDelayInSeconds = new System.Windows.Forms.MaskedTextBox();
-            this.groupEQstyle = new System.Windows.Forms.GroupBox();
-            this.mpUseVUmeter2 = new System.Windows.Forms.RadioButton();
-            this.cbVUindicators = new System.Windows.Forms.CheckBox();
-            this.mpUseVUmeter = new System.Windows.Forms.RadioButton();
-            this.mpUseStereoEQ = new System.Windows.Forms.RadioButton();
-            this.mpNormalEQ = new System.Windows.Forms.RadioButton();
             this.cmbEqMode = new MediaPortal.UserInterface.Controls.MPComboBox();
             this.mpLabelEQmode = new MediaPortal.UserInterface.Controls.MPLabel();
             this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -60,30 +68,15 @@
             this.gbxGeneral = new System.Windows.Forms.GroupBox();
             this.rbtnGeneralSecondLine = new System.Windows.Forms.RadioButton();
             this.rbtnGeneralFirstLine = new System.Windows.Forms.RadioButton();
-            this.groupBoxWhenIdle = new System.Windows.Forms.GroupBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.textReenableWhenIdleAfterDelayInSeconds = new System.Windows.Forms.MaskedTextBox();
-            this.checkReenableWhenIdleAfter = new System.Windows.Forms.CheckBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.textDisableWhenIdleDelayInSeconds = new System.Windows.Forms.MaskedTextBox();
-            this.checkDisableWhenIdle = new System.Windows.Forms.CheckBox();
-            this.groupBoxWhenPlaying = new System.Windows.Forms.GroupBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.textReenableWhenPlayingAfterDelayInSeconds = new System.Windows.Forms.MaskedTextBox();
-            this.checkReenableWhenPlayingAfter = new System.Windows.Forms.CheckBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.textDisableWhenPlayingDelayInSeconds = new System.Windows.Forms.MaskedTextBox();
-            this.checkDisableWhenPlaying = new System.Windows.Forms.CheckBox();
             this.tabControl.SuspendLayout();
             this.tabImon.SuspendLayout();
+            this.groupBoxWhenPlaying.SuspendLayout();
+            this.groupBoxWhenIdle.SuspendLayout();
             this.tabEqualizer.SuspendLayout();
-            this.groupEQstyle.SuspendLayout();
             this.tabLcd.SuspendLayout();
             this.gbxLineOptions.SuspendLayout();
             this.gbxPlayback.SuspendLayout();
             this.gbxGeneral.SuspendLayout();
-            this.groupBoxWhenIdle.SuspendLayout();
-            this.groupBoxWhenPlaying.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnOK
@@ -124,6 +117,160 @@
             this.tabImon.Text = "iMON";
             this.tabImon.UseVisualStyleBackColor = true;
             // 
+            // groupBoxWhenPlaying
+            // 
+            this.groupBoxWhenPlaying.Controls.Add(this.label3);
+            this.groupBoxWhenPlaying.Controls.Add(this.textReenableWhenPlayingAfterDelayInSeconds);
+            this.groupBoxWhenPlaying.Controls.Add(this.checkReenableWhenPlayingAfter);
+            this.groupBoxWhenPlaying.Controls.Add(this.label4);
+            this.groupBoxWhenPlaying.Controls.Add(this.textDisableWhenPlayingDelayInSeconds);
+            this.groupBoxWhenPlaying.Controls.Add(this.checkDisableWhenPlaying);
+            this.groupBoxWhenPlaying.Location = new System.Drawing.Point(6, 97);
+            this.groupBoxWhenPlaying.Name = "groupBoxWhenPlaying";
+            this.groupBoxWhenPlaying.Size = new System.Drawing.Size(295, 66);
+            this.groupBoxWhenPlaying.TabIndex = 9;
+            this.groupBoxWhenPlaying.TabStop = false;
+            this.groupBoxWhenPlaying.Text = "When playing";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(173, 43);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(53, 13);
+            this.label3.TabIndex = 13;
+            this.label3.Text = "second(s)";
+            // 
+            // textReenableWhenPlayingAfterDelayInSeconds
+            // 
+            this.textReenableWhenPlayingAfterDelayInSeconds.Location = new System.Drawing.Point(128, 40);
+            this.textReenableWhenPlayingAfterDelayInSeconds.Mask = "00000";
+            this.textReenableWhenPlayingAfterDelayInSeconds.Name = "textReenableWhenPlayingAfterDelayInSeconds";
+            this.textReenableWhenPlayingAfterDelayInSeconds.PromptChar = ' ';
+            this.textReenableWhenPlayingAfterDelayInSeconds.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.textReenableWhenPlayingAfterDelayInSeconds.Size = new System.Drawing.Size(39, 20);
+            this.textReenableWhenPlayingAfterDelayInSeconds.TabIndex = 12;
+            this.textReenableWhenPlayingAfterDelayInSeconds.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.textReenableWhenPlayingAfterDelayInSeconds.ValidatingType = typeof(int);
+            // 
+            // checkReenableWhenPlayingAfter
+            // 
+            this.checkReenableWhenPlayingAfter.AutoSize = true;
+            this.checkReenableWhenPlayingAfter.Location = new System.Drawing.Point(28, 42);
+            this.checkReenableWhenPlayingAfter.Name = "checkReenableWhenPlayingAfter";
+            this.checkReenableWhenPlayingAfter.Size = new System.Drawing.Size(96, 17);
+            this.checkReenableWhenPlayingAfter.TabIndex = 11;
+            this.checkReenableWhenPlayingAfter.Text = "Reenable after";
+            this.checkReenableWhenPlayingAfter.UseVisualStyleBackColor = true;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(173, 20);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(53, 13);
+            this.label4.TabIndex = 10;
+            this.label4.Text = "second(s)";
+            // 
+            // textDisableWhenPlayingDelayInSeconds
+            // 
+            this.textDisableWhenPlayingDelayInSeconds.Location = new System.Drawing.Point(128, 17);
+            this.textDisableWhenPlayingDelayInSeconds.Mask = "00000";
+            this.textDisableWhenPlayingDelayInSeconds.Name = "textDisableWhenPlayingDelayInSeconds";
+            this.textDisableWhenPlayingDelayInSeconds.PromptChar = ' ';
+            this.textDisableWhenPlayingDelayInSeconds.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.textDisableWhenPlayingDelayInSeconds.Size = new System.Drawing.Size(39, 20);
+            this.textDisableWhenPlayingDelayInSeconds.TabIndex = 9;
+            this.textDisableWhenPlayingDelayInSeconds.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.textDisableWhenPlayingDelayInSeconds.ValidatingType = typeof(int);
+            // 
+            // checkDisableWhenPlaying
+            // 
+            this.checkDisableWhenPlaying.AutoSize = true;
+            this.checkDisableWhenPlaying.Location = new System.Drawing.Point(28, 19);
+            this.checkDisableWhenPlaying.Name = "checkDisableWhenPlaying";
+            this.checkDisableWhenPlaying.Size = new System.Drawing.Size(85, 17);
+            this.checkDisableWhenPlaying.TabIndex = 8;
+            this.checkDisableWhenPlaying.Text = "Disable after";
+            this.checkDisableWhenPlaying.UseVisualStyleBackColor = true;
+            // 
+            // groupBoxWhenIdle
+            // 
+            this.groupBoxWhenIdle.Controls.Add(this.label2);
+            this.groupBoxWhenIdle.Controls.Add(this.textReenableWhenIdleAfterDelayInSeconds);
+            this.groupBoxWhenIdle.Controls.Add(this.checkReenableWhenIdleAfter);
+            this.groupBoxWhenIdle.Controls.Add(this.label1);
+            this.groupBoxWhenIdle.Controls.Add(this.textDisableWhenIdleDelayInSeconds);
+            this.groupBoxWhenIdle.Controls.Add(this.checkDisableWhenIdle);
+            this.groupBoxWhenIdle.Location = new System.Drawing.Point(6, 29);
+            this.groupBoxWhenIdle.Name = "groupBoxWhenIdle";
+            this.groupBoxWhenIdle.Size = new System.Drawing.Size(295, 66);
+            this.groupBoxWhenIdle.TabIndex = 8;
+            this.groupBoxWhenIdle.TabStop = false;
+            this.groupBoxWhenIdle.Text = "When Idle";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(173, 43);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(53, 13);
+            this.label2.TabIndex = 13;
+            this.label2.Text = "second(s)";
+            // 
+            // textReenableWhenIdleAfterDelayInSeconds
+            // 
+            this.textReenableWhenIdleAfterDelayInSeconds.Location = new System.Drawing.Point(128, 40);
+            this.textReenableWhenIdleAfterDelayInSeconds.Mask = "00000";
+            this.textReenableWhenIdleAfterDelayInSeconds.Name = "textReenableWhenIdleAfterDelayInSeconds";
+            this.textReenableWhenIdleAfterDelayInSeconds.PromptChar = ' ';
+            this.textReenableWhenIdleAfterDelayInSeconds.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.textReenableWhenIdleAfterDelayInSeconds.Size = new System.Drawing.Size(39, 20);
+            this.textReenableWhenIdleAfterDelayInSeconds.TabIndex = 12;
+            this.textReenableWhenIdleAfterDelayInSeconds.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.textReenableWhenIdleAfterDelayInSeconds.ValidatingType = typeof(int);
+            // 
+            // checkReenableWhenIdleAfter
+            // 
+            this.checkReenableWhenIdleAfter.AutoSize = true;
+            this.checkReenableWhenIdleAfter.Location = new System.Drawing.Point(28, 42);
+            this.checkReenableWhenIdleAfter.Name = "checkReenableWhenIdleAfter";
+            this.checkReenableWhenIdleAfter.Size = new System.Drawing.Size(96, 17);
+            this.checkReenableWhenIdleAfter.TabIndex = 11;
+            this.checkReenableWhenIdleAfter.Text = "Reenable after";
+            this.checkReenableWhenIdleAfter.UseVisualStyleBackColor = true;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(173, 20);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(53, 13);
+            this.label1.TabIndex = 10;
+            this.label1.Text = "second(s)";
+            // 
+            // textDisableWhenIdleDelayInSeconds
+            // 
+            this.textDisableWhenIdleDelayInSeconds.Location = new System.Drawing.Point(128, 17);
+            this.textDisableWhenIdleDelayInSeconds.Mask = "00000";
+            this.textDisableWhenIdleDelayInSeconds.Name = "textDisableWhenIdleDelayInSeconds";
+            this.textDisableWhenIdleDelayInSeconds.PromptChar = ' ';
+            this.textDisableWhenIdleDelayInSeconds.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.textDisableWhenIdleDelayInSeconds.Size = new System.Drawing.Size(39, 20);
+            this.textDisableWhenIdleDelayInSeconds.TabIndex = 9;
+            this.textDisableWhenIdleDelayInSeconds.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.textDisableWhenIdleDelayInSeconds.ValidatingType = typeof(int);
+            // 
+            // checkDisableWhenIdle
+            // 
+            this.checkDisableWhenIdle.AutoSize = true;
+            this.checkDisableWhenIdle.Location = new System.Drawing.Point(28, 19);
+            this.checkDisableWhenIdle.Name = "checkDisableWhenIdle";
+            this.checkDisableWhenIdle.Size = new System.Drawing.Size(85, 17);
+            this.checkDisableWhenIdle.TabIndex = 8;
+            this.checkDisableWhenIdle.Text = "Disable after";
+            this.checkDisableWhenIdle.UseVisualStyleBackColor = true;
+            // 
             // checkDisableWhenInBackground
             // 
             this.checkDisableWhenInBackground.AutoSize = true;
@@ -139,7 +286,6 @@
             this.tabEqualizer.Controls.Add(this.textEqEnabledTimeInSeconds);
             this.tabEqualizer.Controls.Add(this.textEqDisabledTimeInSeconds);
             this.tabEqualizer.Controls.Add(this.textEqStartDelayInSeconds);
-            this.tabEqualizer.Controls.Add(this.groupEQstyle);
             this.tabEqualizer.Controls.Add(this.cmbEqMode);
             this.tabEqualizer.Controls.Add(this.mpLabelEQmode);
             this.tabEqualizer.Controls.Add(this.mpLabel2);
@@ -160,7 +306,7 @@
             // 
             // textEqEnabledTimeInSeconds
             // 
-            this.textEqEnabledTimeInSeconds.Location = new System.Drawing.Point(182, 215);
+            this.textEqEnabledTimeInSeconds.Location = new System.Drawing.Point(166, 156);
             this.textEqEnabledTimeInSeconds.Mask = "00000";
             this.textEqEnabledTimeInSeconds.Name = "textEqEnabledTimeInSeconds";
             this.textEqEnabledTimeInSeconds.PromptChar = ' ';
@@ -172,7 +318,7 @@
             // 
             // textEqDisabledTimeInSeconds
             // 
-            this.textEqDisabledTimeInSeconds.Location = new System.Drawing.Point(54, 215);
+            this.textEqDisabledTimeInSeconds.Location = new System.Drawing.Point(38, 156);
             this.textEqDisabledTimeInSeconds.Mask = "00000";
             this.textEqDisabledTimeInSeconds.Name = "textEqDisabledTimeInSeconds";
             this.textEqDisabledTimeInSeconds.PromptChar = ' ';
@@ -184,7 +330,7 @@
             // 
             // textEqStartDelayInSeconds
             // 
-            this.textEqStartDelayInSeconds.Location = new System.Drawing.Point(175, 152);
+            this.textEqStartDelayInSeconds.Location = new System.Drawing.Point(159, 93);
             this.textEqStartDelayInSeconds.Mask = "00000";
             this.textEqStartDelayInSeconds.Name = "textEqStartDelayInSeconds";
             this.textEqStartDelayInSeconds.PromptChar = ' ';
@@ -193,74 +339,6 @@
             this.textEqStartDelayInSeconds.TabIndex = 155;
             this.textEqStartDelayInSeconds.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.textEqStartDelayInSeconds.ValidatingType = typeof(int);
-            // 
-            // groupEQstyle
-            // 
-            this.groupEQstyle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupEQstyle.Controls.Add(this.mpUseVUmeter2);
-            this.groupEQstyle.Controls.Add(this.cbVUindicators);
-            this.groupEQstyle.Controls.Add(this.mpUseVUmeter);
-            this.groupEQstyle.Controls.Add(this.mpUseStereoEQ);
-            this.groupEQstyle.Controls.Add(this.mpNormalEQ);
-            this.groupEQstyle.Location = new System.Drawing.Point(13, 49);
-            this.groupEQstyle.Name = "groupEQstyle";
-            this.groupEQstyle.Size = new System.Drawing.Size(288, 60);
-            this.groupEQstyle.TabIndex = 154;
-            this.groupEQstyle.TabStop = false;
-            this.groupEQstyle.Text = " Equalizer Style ";
-            // 
-            // mpUseVUmeter2
-            // 
-            this.mpUseVUmeter2.AutoSize = true;
-            this.mpUseVUmeter2.Location = new System.Drawing.Point(204, 17);
-            this.mpUseVUmeter2.Name = "mpUseVUmeter2";
-            this.mpUseVUmeter2.Size = new System.Drawing.Size(79, 17);
-            this.mpUseVUmeter2.TabIndex = 121;
-            this.mpUseVUmeter2.Text = "VU Meter 2";
-            this.mpUseVUmeter2.UseVisualStyleBackColor = true;
-            // 
-            // cbVUindicators
-            // 
-            this.cbVUindicators.AutoSize = true;
-            this.cbVUindicators.Location = new System.Drawing.Point(8, 40);
-            this.cbVUindicators.Name = "cbVUindicators";
-            this.cbVUindicators.Size = new System.Drawing.Size(213, 17);
-            this.cbVUindicators.TabIndex = 120;
-            this.cbVUindicators.Text = "Show Channel indicators for VU Display";
-            this.cbVUindicators.UseVisualStyleBackColor = true;
-            // 
-            // mpUseVUmeter
-            // 
-            this.mpUseVUmeter.AutoSize = true;
-            this.mpUseVUmeter.Location = new System.Drawing.Point(131, 17);
-            this.mpUseVUmeter.Name = "mpUseVUmeter";
-            this.mpUseVUmeter.Size = new System.Drawing.Size(70, 17);
-            this.mpUseVUmeter.TabIndex = 2;
-            this.mpUseVUmeter.Text = "VU Meter";
-            this.mpUseVUmeter.UseVisualStyleBackColor = true;
-            // 
-            // mpUseStereoEQ
-            // 
-            this.mpUseStereoEQ.AutoSize = true;
-            this.mpUseStereoEQ.Location = new System.Drawing.Point(69, 17);
-            this.mpUseStereoEQ.Name = "mpUseStereoEQ";
-            this.mpUseStereoEQ.Size = new System.Drawing.Size(56, 17);
-            this.mpUseStereoEQ.TabIndex = 1;
-            this.mpUseStereoEQ.Text = "Stereo";
-            this.mpUseStereoEQ.UseVisualStyleBackColor = true;
-            // 
-            // mpNormalEQ
-            // 
-            this.mpNormalEQ.AutoSize = true;
-            this.mpNormalEQ.Checked = true;
-            this.mpNormalEQ.Location = new System.Drawing.Point(13, 17);
-            this.mpNormalEQ.Name = "mpNormalEQ";
-            this.mpNormalEQ.Size = new System.Drawing.Size(58, 17);
-            this.mpNormalEQ.TabIndex = 0;
-            this.mpNormalEQ.TabStop = true;
-            this.mpNormalEQ.Text = "Normal";
-            this.mpNormalEQ.UseVisualStyleBackColor = true;
             // 
             // cmbEqMode
             // 
@@ -286,7 +364,7 @@
             // 
             // mpLabel2
             // 
-            this.mpLabel2.Location = new System.Drawing.Point(113, 134);
+            this.mpLabel2.Location = new System.Drawing.Point(97, 75);
             this.mpLabel2.Name = "mpLabel2";
             this.mpLabel2.Size = new System.Drawing.Size(116, 17);
             this.mpLabel2.TabIndex = 152;
@@ -295,7 +373,7 @@
             // 
             // mpLabelEQTitleDisplay
             // 
-            this.mpLabelEQTitleDisplay.Location = new System.Drawing.Point(99, 218);
+            this.mpLabelEQTitleDisplay.Location = new System.Drawing.Point(83, 159);
             this.mpLabelEQTitleDisplay.Name = "mpLabelEQTitleDisplay";
             this.mpLabelEQTitleDisplay.Size = new System.Drawing.Size(197, 17);
             this.mpLabelEQTitleDisplay.TabIndex = 151;
@@ -306,7 +384,7 @@
             // 
             this.mpEQTitleDisplay.AutoSize = true;
             this.mpEQTitleDisplay.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.mpEQTitleDisplay.Location = new System.Drawing.Point(34, 197);
+            this.mpEQTitleDisplay.Location = new System.Drawing.Point(18, 138);
             this.mpEQTitleDisplay.Name = "mpEQTitleDisplay";
             this.mpEQTitleDisplay.Size = new System.Drawing.Size(118, 17);
             this.mpEQTitleDisplay.TabIndex = 149;
@@ -317,7 +395,7 @@
             // 
             this.mpSmoothEQ.AutoSize = true;
             this.mpSmoothEQ.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.mpSmoothEQ.Location = new System.Drawing.Point(34, 176);
+            this.mpSmoothEQ.Location = new System.Drawing.Point(18, 117);
             this.mpSmoothEQ.Name = "mpSmoothEQ";
             this.mpSmoothEQ.Size = new System.Drawing.Size(222, 17);
             this.mpSmoothEQ.TabIndex = 147;
@@ -339,7 +417,7 @@
             // 
             this.mpRestrictEQ.AutoSize = true;
             this.mpRestrictEQ.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.mpRestrictEQ.Location = new System.Drawing.Point(34, 113);
+            this.mpRestrictEQ.Location = new System.Drawing.Point(18, 54);
             this.mpRestrictEQ.Name = "mpRestrictEQ";
             this.mpRestrictEQ.Size = new System.Drawing.Size(183, 17);
             this.mpRestrictEQ.TabIndex = 145;
@@ -412,7 +490,7 @@
             "58",
             "59",
             "60"});
-            this.cmbEqRate.Location = new System.Drawing.Point(50, 132);
+            this.cmbEqRate.Location = new System.Drawing.Point(34, 73);
             this.cmbEqRate.Name = "cmbEqRate";
             this.cmbEqRate.Size = new System.Drawing.Size(57, 21);
             this.cmbEqRate.TabIndex = 142;
@@ -421,7 +499,7 @@
             // 
             this.mpDelayEQ.AutoSize = true;
             this.mpDelayEQ.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.mpDelayEQ.Location = new System.Drawing.Point(34, 155);
+            this.mpDelayEQ.Location = new System.Drawing.Point(18, 96);
             this.mpDelayEQ.Name = "mpDelayEQ";
             this.mpDelayEQ.Size = new System.Drawing.Size(247, 17);
             this.mpDelayEQ.TabIndex = 146;
@@ -522,160 +600,6 @@
             this.rbtnGeneralFirstLine.Text = "Prefer First Line";
             this.rbtnGeneralFirstLine.UseVisualStyleBackColor = true;
             // 
-            // groupBoxWhenIdle
-            // 
-            this.groupBoxWhenIdle.Controls.Add(this.label2);
-            this.groupBoxWhenIdle.Controls.Add(this.textReenableWhenIdleAfterDelayInSeconds);
-            this.groupBoxWhenIdle.Controls.Add(this.checkReenableWhenIdleAfter);
-            this.groupBoxWhenIdle.Controls.Add(this.label1);
-            this.groupBoxWhenIdle.Controls.Add(this.textDisableWhenIdleDelayInSeconds);
-            this.groupBoxWhenIdle.Controls.Add(this.checkDisableWhenIdle);
-            this.groupBoxWhenIdle.Location = new System.Drawing.Point(6, 29);
-            this.groupBoxWhenIdle.Name = "groupBoxWhenIdle";
-            this.groupBoxWhenIdle.Size = new System.Drawing.Size(295, 66);
-            this.groupBoxWhenIdle.TabIndex = 8;
-            this.groupBoxWhenIdle.TabStop = false;
-            this.groupBoxWhenIdle.Text = "When Idle";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(173, 43);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(53, 13);
-            this.label2.TabIndex = 13;
-            this.label2.Text = "second(s)";
-            // 
-            // textReenableWhenIdleAfterDelayInSeconds
-            // 
-            this.textReenableWhenIdleAfterDelayInSeconds.Location = new System.Drawing.Point(128, 40);
-            this.textReenableWhenIdleAfterDelayInSeconds.Mask = "00000";
-            this.textReenableWhenIdleAfterDelayInSeconds.Name = "textReenableWhenIdleAfterDelayInSeconds";
-            this.textReenableWhenIdleAfterDelayInSeconds.PromptChar = ' ';
-            this.textReenableWhenIdleAfterDelayInSeconds.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.textReenableWhenIdleAfterDelayInSeconds.Size = new System.Drawing.Size(39, 20);
-            this.textReenableWhenIdleAfterDelayInSeconds.TabIndex = 12;
-            this.textReenableWhenIdleAfterDelayInSeconds.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.textReenableWhenIdleAfterDelayInSeconds.ValidatingType = typeof(int);
-            // 
-            // checkReenableWhenIdleAfter
-            // 
-            this.checkReenableWhenIdleAfter.AutoSize = true;
-            this.checkReenableWhenIdleAfter.Location = new System.Drawing.Point(28, 42);
-            this.checkReenableWhenIdleAfter.Name = "checkReenableWhenIdleAfter";
-            this.checkReenableWhenIdleAfter.Size = new System.Drawing.Size(96, 17);
-            this.checkReenableWhenIdleAfter.TabIndex = 11;
-            this.checkReenableWhenIdleAfter.Text = "Reenable after";
-            this.checkReenableWhenIdleAfter.UseVisualStyleBackColor = true;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(173, 20);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(53, 13);
-            this.label1.TabIndex = 10;
-            this.label1.Text = "second(s)";
-            // 
-            // textDisableWhenIdleDelayInSeconds
-            // 
-            this.textDisableWhenIdleDelayInSeconds.Location = new System.Drawing.Point(128, 17);
-            this.textDisableWhenIdleDelayInSeconds.Mask = "00000";
-            this.textDisableWhenIdleDelayInSeconds.Name = "textDisableWhenIdleDelayInSeconds";
-            this.textDisableWhenIdleDelayInSeconds.PromptChar = ' ';
-            this.textDisableWhenIdleDelayInSeconds.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.textDisableWhenIdleDelayInSeconds.Size = new System.Drawing.Size(39, 20);
-            this.textDisableWhenIdleDelayInSeconds.TabIndex = 9;
-            this.textDisableWhenIdleDelayInSeconds.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.textDisableWhenIdleDelayInSeconds.ValidatingType = typeof(int);
-            // 
-            // checkDisableWhenIdle
-            // 
-            this.checkDisableWhenIdle.AutoSize = true;
-            this.checkDisableWhenIdle.Location = new System.Drawing.Point(28, 19);
-            this.checkDisableWhenIdle.Name = "checkDisableWhenIdle";
-            this.checkDisableWhenIdle.Size = new System.Drawing.Size(85, 17);
-            this.checkDisableWhenIdle.TabIndex = 8;
-            this.checkDisableWhenIdle.Text = "Disable after";
-            this.checkDisableWhenIdle.UseVisualStyleBackColor = true;
-            // 
-            // groupBoxWhenPlaying
-            // 
-            this.groupBoxWhenPlaying.Controls.Add(this.label3);
-            this.groupBoxWhenPlaying.Controls.Add(this.textReenableWhenPlayingAfterDelayInSeconds);
-            this.groupBoxWhenPlaying.Controls.Add(this.checkReenableWhenPlayingAfter);
-            this.groupBoxWhenPlaying.Controls.Add(this.label4);
-            this.groupBoxWhenPlaying.Controls.Add(this.textDisableWhenPlayingDelayInSeconds);
-            this.groupBoxWhenPlaying.Controls.Add(this.checkDisableWhenPlaying);
-            this.groupBoxWhenPlaying.Location = new System.Drawing.Point(6, 97);
-            this.groupBoxWhenPlaying.Name = "groupBoxWhenPlaying";
-            this.groupBoxWhenPlaying.Size = new System.Drawing.Size(295, 66);
-            this.groupBoxWhenPlaying.TabIndex = 9;
-            this.groupBoxWhenPlaying.TabStop = false;
-            this.groupBoxWhenPlaying.Text = "When playing";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(173, 43);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(53, 13);
-            this.label3.TabIndex = 13;
-            this.label3.Text = "second(s)";
-            // 
-            // textReenableWhenPlayingAfterDelayInSeconds
-            // 
-            this.textReenableWhenPlayingAfterDelayInSeconds.Location = new System.Drawing.Point(128, 40);
-            this.textReenableWhenPlayingAfterDelayInSeconds.Mask = "00000";
-            this.textReenableWhenPlayingAfterDelayInSeconds.Name = "textReenableWhenPlayingAfterDelayInSeconds";
-            this.textReenableWhenPlayingAfterDelayInSeconds.PromptChar = ' ';
-            this.textReenableWhenPlayingAfterDelayInSeconds.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.textReenableWhenPlayingAfterDelayInSeconds.Size = new System.Drawing.Size(39, 20);
-            this.textReenableWhenPlayingAfterDelayInSeconds.TabIndex = 12;
-            this.textReenableWhenPlayingAfterDelayInSeconds.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.textReenableWhenPlayingAfterDelayInSeconds.ValidatingType = typeof(int);
-            // 
-            // checkReenableWhenPlayingAfter
-            // 
-            this.checkReenableWhenPlayingAfter.AutoSize = true;
-            this.checkReenableWhenPlayingAfter.Location = new System.Drawing.Point(28, 42);
-            this.checkReenableWhenPlayingAfter.Name = "checkReenableWhenPlayingAfter";
-            this.checkReenableWhenPlayingAfter.Size = new System.Drawing.Size(96, 17);
-            this.checkReenableWhenPlayingAfter.TabIndex = 11;
-            this.checkReenableWhenPlayingAfter.Text = "Reenable after";
-            this.checkReenableWhenPlayingAfter.UseVisualStyleBackColor = true;
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(173, 20);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(53, 13);
-            this.label4.TabIndex = 10;
-            this.label4.Text = "second(s)";
-            // 
-            // textDisableWhenPlayingDelayInSeconds
-            // 
-            this.textDisableWhenPlayingDelayInSeconds.Location = new System.Drawing.Point(128, 17);
-            this.textDisableWhenPlayingDelayInSeconds.Mask = "00000";
-            this.textDisableWhenPlayingDelayInSeconds.Name = "textDisableWhenPlayingDelayInSeconds";
-            this.textDisableWhenPlayingDelayInSeconds.PromptChar = ' ';
-            this.textDisableWhenPlayingDelayInSeconds.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.textDisableWhenPlayingDelayInSeconds.Size = new System.Drawing.Size(39, 20);
-            this.textDisableWhenPlayingDelayInSeconds.TabIndex = 9;
-            this.textDisableWhenPlayingDelayInSeconds.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.textDisableWhenPlayingDelayInSeconds.ValidatingType = typeof(int);
-            // 
-            // checkDisableWhenPlaying
-            // 
-            this.checkDisableWhenPlaying.AutoSize = true;
-            this.checkDisableWhenPlaying.Location = new System.Drawing.Point(28, 19);
-            this.checkDisableWhenPlaying.Name = "checkDisableWhenPlaying";
-            this.checkDisableWhenPlaying.Size = new System.Drawing.Size(85, 17);
-            this.checkDisableWhenPlaying.TabIndex = 8;
-            this.checkDisableWhenPlaying.Text = "Disable after";
-            this.checkDisableWhenPlaying.UseVisualStyleBackColor = true;
-            // 
             // SoundGraphImonSettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -693,20 +617,18 @@
             this.tabControl.ResumeLayout(false);
             this.tabImon.ResumeLayout(false);
             this.tabImon.PerformLayout();
+            this.groupBoxWhenPlaying.ResumeLayout(false);
+            this.groupBoxWhenPlaying.PerformLayout();
+            this.groupBoxWhenIdle.ResumeLayout(false);
+            this.groupBoxWhenIdle.PerformLayout();
             this.tabEqualizer.ResumeLayout(false);
             this.tabEqualizer.PerformLayout();
-            this.groupEQstyle.ResumeLayout(false);
-            this.groupEQstyle.PerformLayout();
             this.tabLcd.ResumeLayout(false);
             this.gbxLineOptions.ResumeLayout(false);
             this.gbxPlayback.ResumeLayout(false);
             this.gbxPlayback.PerformLayout();
             this.gbxGeneral.ResumeLayout(false);
             this.gbxGeneral.PerformLayout();
-            this.groupBoxWhenIdle.ResumeLayout(false);
-            this.groupBoxWhenIdle.PerformLayout();
-            this.groupBoxWhenPlaying.ResumeLayout(false);
-            this.groupBoxWhenPlaying.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -717,12 +639,6 @@
         public System.Windows.Forms.TabControl tabControl;
         private System.Windows.Forms.TabPage tabImon;
         private System.Windows.Forms.TabPage tabEqualizer;
-        private System.Windows.Forms.GroupBox groupEQstyle;
-        private System.Windows.Forms.RadioButton mpUseVUmeter2;
-        private System.Windows.Forms.CheckBox cbVUindicators;
-        private System.Windows.Forms.RadioButton mpUseVUmeter;
-        private System.Windows.Forms.RadioButton mpUseStereoEQ;
-        private System.Windows.Forms.RadioButton mpNormalEQ;
         private UserInterface.Controls.MPComboBox cmbEqMode;
         private UserInterface.Controls.MPLabel mpLabelEQmode;
         private UserInterface.Controls.MPLabel mpLabel2;

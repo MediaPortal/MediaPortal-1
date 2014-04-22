@@ -109,10 +109,18 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             {
                 //SoundGraphDisplay.LogInfo("\niMONLCDg.DisplayEQ(): Retrieved {0} samples of Equalizer data.", EQSettings.EqFftData.Length / 2);
             }
+
+            if (IsLcd())
+            {
+                //Force stereo mode for LCD
+                iSettings.iEq.UseStereoEq = true;
+            }
+
             if ((iSettings.iEq.UseStereoEq || iSettings.iEq.UseVUmeter) || iSettings.iEq.UseVUmeter2)
             {
                 if (iSettings.iEq.UseStereoEq)
                 {
+                    //Stereo mode
                     iSettings.iEq.Render_MaxValue = 100;
                     iSettings.iEq.Render_BANDS = 8;
                     iSettings.iEq.EqArray[0] = 0x63;
@@ -152,6 +160,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 }
                 else
                 {
+                    //UV Meter or UV Meter: unused
                     iSettings.iEq.Render_MaxValue = 80;
                     iSettings.iEq.Render_BANDS = 1;
                     if (/*(_DisplayType == DisplayType.LCD) || (_DisplayType == DisplayType.LCD2)*/ false)
@@ -209,8 +218,15 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 {
                     //SetEQ(EQSettings.EqArray);
                     //We take the last 16 entries cause the first one is static
-                    Array.Copy(iSettings.iEq.EqArray, 1, iEqDataLeft.BandData, 0, 0x10);
-                    Array.Copy(iSettings.iEq.EqArray, 1, iEqDataRight.BandData, 0, 0x10);
+
+                    for (int i = 1; i < 17; i++)
+                    {
+                        iEqDataLeft.BandData[i-1] = iSettings.iEq.EqArray[i];
+                        iEqDataRight.BandData[i-1] = iSettings.iEq.EqArray[i];
+                    }
+
+                    //Array.Copy(iSettings.iEq.EqArray, 1, iEqDataLeft.BandData, 0, 0x10);
+                    //Array.Copy(iSettings.iEq.EqArray, 1, iEqDataRight.BandData, 0, 0x10);
                     SoundGraphDisplay.IDW_SetLcdEqData(iEqDataLeft, iEqDataRight);
                 }
                 else
@@ -250,7 +266,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 {
                     //var destinationArray = new int[0x10];
                     //We take the last 16 entries cause the first one is static
-                    Array.Copy(iSettings.iEq.EqArray, 1, iEqData.BandData, 0, 0x10);
+                    //Array.Copy(iSettings.iEq.EqArray, 1, iEqData.BandData, 0, 0x10);
+
+                    for (int i = 1; i < 17; i++)
+                    {
+                        iEqData.BandData[i - 1] = iSettings.iEq.EqArray[i];
+                    }
+
                     SoundGraphDisplay.IDW_SetVfdEqData(iEqData);
                     goto Label_0613;
 
@@ -369,21 +391,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             public int EqEnabledTimeInSeconds { get; set; }
 
             [XmlAttribute]
-            public bool NormalEQ { get; set; }
-
-            [XmlAttribute]
-            public bool StereoEQ { get; set; }
-
-            [XmlAttribute]
-            public bool VUmeter { get; set; }
-
-            [XmlAttribute]
-            public bool VUmeter2 { get; set; }
-
-            [XmlAttribute]
-            public bool VUindicators { get; set; }
-
-            [XmlAttribute]
             public bool RestrictEQ { get; set; }
 
             [XmlAttribute]
@@ -421,11 +428,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             private static void Default(Settings _settings)
             {
                 _settings.EqDisplay = false;
-                _settings.NormalEQ = true;
-                _settings.StereoEQ = false;
-                _settings.VUmeter = false;
-                _settings.VUmeter2 = false;
-                _settings.VUindicators = false;
                 _settings.EqMode = 0;
                 _settings.RestrictEQ = false;
                 _settings.EqRate = 10;
@@ -466,6 +468,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 settings.iEq.EQTitleDisplay = settings.EqPeriodic;
                 settings.iEq._EQTitleShowTime = settings.EqDisabledTimeInSeconds;
                 settings.iEq._EQTitleDisplayTime = settings.EqEnabledTimeInSeconds;
+
 
                 SoundGraphDisplay.LogDebug("SoundGraphImon.Settings.Load(): completed");
                 return settings;
