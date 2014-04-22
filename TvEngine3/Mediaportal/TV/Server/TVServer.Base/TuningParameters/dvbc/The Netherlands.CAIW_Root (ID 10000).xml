@@ -2,7 +2,7 @@
 <ArrayOfDVBCTuning xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <!-- Created on 2013-08-19 15:50 -->
   <!-- Transponder ID 101 -->
-  <!-- TV: [1] Nederland 1 [2] Nederland 2 [3] Nederland 3 [11] TV West [72] TV West -->
+  <!-- TV: [0] TV West [1] Nederland 1 [2] Nederland 2 [3] Nederland 3 [72] TV West -->
   <!-- Radio: [801] Radio 1 [802] Radio 2 [803] Radio 3 [804] Radio 4 [805] Radio 5 [806] Radio 6 [808] Fun X [851] Radio West -->
   <DVBCTuning>
     <Frequency>538000</Frequency>
@@ -10,7 +10,7 @@
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <!-- Transponder ID 102 -->
-  <!-- TV: [17] Één [18] Canvas [22] Nickelodeon [43] BravaNL [73] TV Rijnmond [76] Omroep Brabant -->
+  <!-- TV: [0] TV Rijnmond [0] Omroep Brabant [17] Één [18] Canvas [22] Nickelodeon [43] BravaNL [73] TV Rijnmond [76] Omroep Brabant -->
   <!-- Radio: [831] Studio Brussel [832] MNM [833] VRT Radio1 [834] VRT Radio2 [835] Klara [837] FIP [852] Radio Rijnmond -->
   <DVBCTuning>
     <Frequency>554000</Frequency>
@@ -50,7 +50,7 @@
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <!-- Transponder ID 107 -->
-  <!-- TV: [15] Discovery Channel [28] TLC [32] 192TV [41] TV5 Monde [68] Gemeente Westland TV [74] TV Noord-Holland [75] TV Utrecht [231] TV Polonia -->
+  <!-- TV: [0] TV Utrecht [0] TV Noord-Holland [15] Discovery Channel [28] TLC [32] 192TV [41] TV5 Monde [68] Gemeente Westland TV [74] TV Noord-Holland [75] TV Utrecht [231] TV Polonia -->
   <!-- Radio: -->
   <DVBCTuning>
     <Frequency>682000</Frequency>
@@ -114,7 +114,7 @@
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <!-- Transponder ID 115 -->
-  <!-- TV: [12] WOS [66] Regio TV InfoThuis [761] HOS [763] RTV9 [765] LOOK TV -->
+  <!-- TV: [0] HOS [0] RTV9 [0] LOOK TV [12] WOS [66] Regio TV InfoThuis -->
   <!-- Radio: [869] Radio Schiedam [870] ZOS Radio [872] Radio 90 FM [874] Gouwe Stad Radio [876] WOS Radio [877] HOS Radio [878] ZAP!FM -->
   <DVBCTuning>
     <Frequency>546000</Frequency>
@@ -170,7 +170,7 @@
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <!-- Transponder ID 122 -->
-  <!-- TV: [81] TV Gelderland [108] Syfy [134] Out TV [205] MTV Rocks [206] VH1 [208] FOX News Channel [225] France 3 [230] RAI Uno [238] CCTV9 [249] Dorcel TV -->
+  <!-- TV: [81] TV Gelderland [108] Syfy [134] Out TV [205] MTV Rocks [208] FOX News Channel [209] VH1 [225] France 3 [230] RAI Uno [238] CCTV9 [249] Dorcel TV -->
   <!-- Radio: [856] Radio Gelderland -->
   <DVBCTuning>
     <Frequency>626000</Frequency>
@@ -178,7 +178,7 @@
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <!-- Transponder ID 123 -->
-  <!-- TV: [119] ducktv [132] RTL Lounge [216] NDR [218] Sat1 [219] ProSieben [226] La Une [235] RTM5 Al Maghribiya [236] MBC -->
+  <!-- TV: [119] ducktv [132] RTL Lounge [216] NDR [218] Sat1 [219] ProSieben [226] La Une [235] MBC [236] RTM5 Al Maghribiya -->
   <!-- Radio: -->
   <DVBCTuning>
     <Frequency>690000</Frequency>
@@ -197,7 +197,7 @@
   <!-- TV: [306] Film1 Premiere HD [310] Sport1 Select HD -->
   <!-- Radio: -->
   <DVBCTuning>
-    <Frequency>314000</Frequency>
+    <Frequency>222000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
@@ -242,7 +242,7 @@
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <!-- Transponder ID 131 -->
-  <!-- TV: [20] FOX [105] FOXLife [220] RTL Television [240] NHK World [422] MTV Live HD -->
+  <!-- TV: [20] FOX [105] FOXLife [214] SWR Fernsehen [220] RTL Television [240] NHK World [422] MTV Live HD -->
   <!-- Radio: -->
   <DVBCTuning>
     <Frequency>810000</Frequency>
@@ -266,7 +266,7 @@
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <!-- Transponder ID 134 -->
-  <!-- TV: [504] RTL4 HD [505] RTL5 HD [519] Caiway Informatie HD -->
+  <!-- TV: [404] RTL4 HD [405] RTL5 HD [519] Caiway Informatie HD -->
   <!-- Radio: -->
   <DVBCTuning>
     <Frequency>586000</Frequency>
@@ -285,7 +285,7 @@
   <!-- TV: [13] Eurosport [16] NGC [507] RTL7 HD [510] RTL8 HD -->
   <!-- Radio: -->
   <DVBCTuning>
-    <Frequency>362000</Frequency>
+    <Frequency>826000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
@@ -322,7 +322,7 @@
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <!-- Transponder ID 141 -->
-  <!-- TV: [317] Test 317 [318] Test 318 [319] Test 319 [524] 24Kitchen HD -->
+  <!-- TV: [317] Test 317 [318] Test 318 [319] Test 319 [519] 24Kitchen HD -->
   <!-- Radio: -->
   <DVBCTuning>
     <Frequency>370000</Frequency>
@@ -334,7 +334,7 @@
   <!-- Radio: -->
   <DVBCTuning>
     <Frequency>378000</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationType>Mod256Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <!-- Transponder ID 143 -->
@@ -384,6 +384,14 @@
     <Frequency>298000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+  <!-- Transponder ID 161 -->
+  <!-- TV: -->
+  <!-- Radio: -->
+  <DVBCTuning>
+    <Frequency>165000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <!-- Transponder ID 199 -->
   <!-- TV: [60] XLnt iRadio Hits [61] XLnt iRadio NL [62] XLnt iRadio Easy Listening [63] XLnt iRadio Rock [64] XLnt iRadio Oldies [65] Xlnt iRadio Klassiek [996] CAIW Melding [997] CAIW Testbeeld -->

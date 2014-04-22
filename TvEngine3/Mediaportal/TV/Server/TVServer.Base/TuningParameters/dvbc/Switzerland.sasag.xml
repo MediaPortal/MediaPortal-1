@@ -1,9 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 
-	Based on digitaltv_frequnzliste_29.02.2012.pdf
-	Last updated 2012-02-24 by surfaczer
--->
-
 <ArrayOfDVBCTuning xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <DVBCTuning>
     <Frequency>306000</Frequency>
