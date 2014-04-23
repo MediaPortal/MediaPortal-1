@@ -1293,7 +1293,15 @@ namespace MediaPortal.GUI.Music
           }
           CurrentSortAsc = _mapSettings.SortAscending;
           CurrentSortMethod = (MusicSort.SortMethod)_mapSettings.SortBy;
-          CurrentLayout = (Layout)share.DefaultLayout;
+          // Don't use AlbumView in Share view (set a default Layout i.e List)
+          if ((Layout)share.DefaultLayout == Layout.AlbumView)
+          {
+            CurrentLayout = Layout.List;
+          }
+          else
+          {
+            CurrentLayout = (Layout)share.DefaultLayout;
+          }
         }
       }
       using (Profile.Settings xmlreader = new Profile.MPSettings())
