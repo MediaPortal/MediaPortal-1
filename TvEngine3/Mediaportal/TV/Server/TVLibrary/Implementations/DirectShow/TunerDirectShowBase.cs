@@ -312,7 +312,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     /// <summary>
     /// Release and dispose all resources.
     /// </summary>
-    public void Dispose()
+    public override void Dispose()
     {
       base.Dispose();
       if (_deviceMain != null)

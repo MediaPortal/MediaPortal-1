@@ -358,6 +358,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     public virtual void Dispose()
     {
+      Unload();
     }
 
     #endregion
