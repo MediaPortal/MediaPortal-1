@@ -303,7 +303,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
       }
       if (_serviceConnectionManager != null)
       {
-        _serviceConnectionManager.ConnectionComplete(_connectionId);
+        // This call can fail if the connection to the tuner is down. We must
+        // not allow failure to cause further problems.
+        try
+        {
+          _serviceConnectionManager.ConnectionComplete(_connectionId);
+        }
+        catch
+        {
+          this.LogWarn("DRI CableCARD: failed to complete connection manager connection");
+        }
         _serviceConnectionManager.Dispose();
         _serviceConnectionManager = null;
       }
