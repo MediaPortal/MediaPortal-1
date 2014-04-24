@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ArrayOfDVBTTuning xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <DVBTTuning>
-    <Frequency>570000</Frequency>
-    <Bandwidth>8000</Bandwidth>
-    <Offset>125</Offset>
-    <CellId>0</CellId>
-    <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
     <Frequency>770000</Frequency>
     <Bandwidth>8000</Bandwidth>
     <Offset>125</Offset>

@@ -1,6 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ArrayOfDVBTTuning xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <DVBTTuning>
+    <Frequency>482000</Frequency>
+    <Bandwidth>8000</Bandwidth>
+    <Offset>125</Offset>
+    <CellId>0</CellId>
+    <CellIdExtension>0</CellIdExtension>
+    <IsDvbT2>False</IsDvbT2>
+  </DVBTTuning>
+  <DVBTTuning>
+    <Frequency>490000</Frequency>
+    <Bandwidth>8000</Bandwidth>
+    <Offset>125</Offset>
+    <CellId>0</CellId>
+    <CellIdExtension>0</CellIdExtension>
+    <IsDvbT2>False</IsDvbT2>
+  </DVBTTuning>
+  <DVBTTuning>
+    <Frequency>514000</Frequency>
+    <Bandwidth>8000</Bandwidth>
+    <Offset>125</Offset>
+    <CellId>0</CellId>
+    <CellIdExtension>0</CellIdExtension>
+    <IsDvbT2>False</IsDvbT2>
+  </DVBTTuning>
+  <DVBTTuning>
+    <Frequency>530000</Frequency>
+    <Bandwidth>8000</Bandwidth>
+    <Offset>125</Offset>
+    <CellId>0</CellId>
+    <CellIdExtension>0</CellIdExtension>
+    <IsDvbT2>False</IsDvbT2>
+  </DVBTTuning>
+  <DVBTTuning>
     <Frequency>570000</Frequency>
     <Bandwidth>8000</Bandwidth>
     <Offset>125</Offset>
@@ -9,7 +41,23 @@
     <IsDvbT2>False</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
+    <Frequency>578000</Frequency>
+    <Bandwidth>8000</Bandwidth>
+    <Offset>125</Offset>
+    <CellId>0</CellId>
+    <CellIdExtension>0</CellIdExtension>
+    <IsDvbT2>False</IsDvbT2>
+  </DVBTTuning>
+  <DVBTTuning>
     <Frequency>610000</Frequency>
+    <Bandwidth>8000</Bandwidth>
+    <Offset>125</Offset>
+    <CellId>0</CellId>
+    <CellIdExtension>0</CellIdExtension>
+    <IsDvbT2>False</IsDvbT2>
+  </DVBTTuning>
+  <DVBTTuning>
+    <Frequency>618000</Frequency>
     <Bandwidth>8000</Bandwidth>
     <Offset>125</Offset>
     <CellId>0</CellId>
@@ -33,7 +81,7 @@
     <IsDvbT2>False</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>690000</Frequency>
+    <Frequency>722000</Frequency>
     <Bandwidth>8000</Bandwidth>
     <Offset>125</Offset>
     <CellId>0</CellId>
@@ -41,7 +89,7 @@
     <IsDvbT2>False</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>722000</Frequency>
+    <Frequency>762000</Frequency>
     <Bandwidth>8000</Bandwidth>
     <Offset>125</Offset>
     <CellId>0</CellId>
@@ -58,14 +106,6 @@
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>754000</Frequency>
-    <Bandwidth>8000</Bandwidth>
-    <Offset>125</Offset>
-    <CellId>0</CellId>
-    <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
-  </DVBTTuning>
-  <DVBTTuning>
-    <Frequency>762000</Frequency>
     <Bandwidth>8000</Bandwidth>
     <Offset>125</Offset>
     <CellId>0</CellId>
@@ -90,54 +130,6 @@
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>786000</Frequency>
-    <Bandwidth>8000</Bandwidth>
-    <Offset>125</Offset>
-    <CellId>0</CellId>
-    <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
-  </DVBTTuning>
-  <DVBTTuning>
-    <Frequency>794000</Frequency>
-    <Bandwidth>8000</Bandwidth>
-    <Offset>125</Offset>
-    <CellId>0</CellId>
-    <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
-  </DVBTTuning>
-  <DVBTTuning>
-    <Frequency>802000</Frequency>
-    <Bandwidth>8000</Bandwidth>
-    <Offset>125</Offset>
-    <CellId>0</CellId>
-    <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
-  </DVBTTuning>
-  <DVBTTuning>
-    <Frequency>810000</Frequency>
-    <Bandwidth>8000</Bandwidth>
-    <Offset>125</Offset>
-    <CellId>0</CellId>
-    <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
-  </DVBTTuning>
-  <DVBTTuning>
-    <Frequency>818000</Frequency>
-    <Bandwidth>8000</Bandwidth>
-    <Offset>125</Offset>
-    <CellId>0</CellId>
-    <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
-  </DVBTTuning>
-  <DVBTTuning>
-    <Frequency>842000</Frequency>
-    <Bandwidth>8000</Bandwidth>
-    <Offset>125</Offset>
-    <CellId>0</CellId>
-    <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
-  </DVBTTuning>
-  <DVBTTuning>
-    <Frequency>858000</Frequency>
     <Bandwidth>8000</Bandwidth>
     <Offset>125</Offset>
     <CellId>0</CellId>
