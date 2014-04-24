@@ -30,23 +30,22 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     /// </summary>
     private void InitializeComponent()
     {
-      this.mpButtonCancel = new MPButton();
-      this.mpButtonOk = new MPButton();
-      this.mpGroupBox1 = new MPGroupBox();
-      this.mpRadioButton7 = new MPRadioButton();
-      this.mpRadioButton6 = new MPRadioButton();
-      this.mpRadioButton5 = new MPRadioButton();
-      this.mpRadioButton4 = new MPRadioButton();
-      this.mpRadioButton3 = new MPRadioButton();
-      this.mpRadioButton2 = new MPRadioButton();
-      this.mpRadioButton1 = new MPRadioButton();
+      this.mpButtonCancel = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.mpButtonOk = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.mpGroupBox1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.mpRadioButton7 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPRadioButton();
+      this.mpRadioButton6 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPRadioButton();
+      this.mpRadioButton5 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPRadioButton();
+      this.mpRadioButton4 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPRadioButton();
+      this.mpRadioButton3 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPRadioButton();
+      this.mpRadioButton2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPRadioButton();
       this.mpGroupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
       // mpButtonCancel
       // 
       this.mpButtonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.mpButtonCancel.Location = new System.Drawing.Point(197, 227);
+      this.mpButtonCancel.Location = new System.Drawing.Point(197, 194);
       this.mpButtonCancel.Name = "mpButtonCancel";
       this.mpButtonCancel.Size = new System.Drawing.Size(75, 23);
       this.mpButtonCancel.TabIndex = 52;
@@ -56,7 +55,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // mpButtonOk
       // 
-      this.mpButtonOk.Location = new System.Drawing.Point(116, 227);
+      this.mpButtonOk.Location = new System.Drawing.Point(116, 194);
       this.mpButtonOk.Name = "mpButtonOk";
       this.mpButtonOk.Size = new System.Drawing.Size(75, 23);
       this.mpButtonOk.TabIndex = 51;
@@ -72,11 +71,10 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.mpGroupBox1.Controls.Add(this.mpRadioButton4);
       this.mpGroupBox1.Controls.Add(this.mpRadioButton3);
       this.mpGroupBox1.Controls.Add(this.mpRadioButton2);
-      this.mpGroupBox1.Controls.Add(this.mpRadioButton1);
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox1.Location = new System.Drawing.Point(13, 13);
       this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new System.Drawing.Size(259, 186);
+      this.mpGroupBox1.Size = new System.Drawing.Size(259, 164);
       this.mpGroupBox1.TabIndex = 53;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Types";
@@ -149,22 +147,11 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.mpRadioButton2.Text = "ATSC";
       this.mpRadioButton2.UseVisualStyleBackColor = true;
       // 
-      // mpRadioButton1
-      // 
-      this.mpRadioButton1.AutoSize = true;
-      this.mpRadioButton1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpRadioButton1.Location = new System.Drawing.Point(8, 158);
-      this.mpRadioButton1.Name = "mpRadioButton1";
-      this.mpRadioButton1.Size = new System.Drawing.Size(83, 17);
-      this.mpRadioButton1.TabIndex = 0;
-      this.mpRadioButton1.Text = "Web-Stream";
-      this.mpRadioButton1.UseVisualStyleBackColor = true;
-      // 
       // FormChooseTuningDetailType
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(284, 262);
+      this.ClientSize = new System.Drawing.Size(284, 229);
       this.Controls.Add(this.mpGroupBox1);
       this.Controls.Add(this.mpButtonCancel);
       this.Controls.Add(this.mpButtonOk);
@@ -191,7 +178,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     private MPRadioButton mpRadioButton4;
     private MPRadioButton mpRadioButton3;
     private MPRadioButton mpRadioButton2;
-    private MPRadioButton mpRadioButton1;
     private MPRadioButton mpRadioButton7;
   }
 }

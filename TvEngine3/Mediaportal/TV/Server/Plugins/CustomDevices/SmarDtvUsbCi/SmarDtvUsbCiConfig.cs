@@ -89,7 +89,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
           foreach (Card tuner in allTuners)
           {
             CardType tunerType = ServiceAgents.Instance.ControllerServiceAgent.Type(tuner.IdCard);
-            if (tunerType == CardType.Analog || tunerType == CardType.RadioWebStream || tunerType == CardType.Unknown)
+            if (tunerType == CardType.Analog || tunerType == CardType.Unknown)
             {
               continue;
             }

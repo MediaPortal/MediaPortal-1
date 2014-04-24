@@ -265,8 +265,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
           return new FormDVBSTuningDetail();
         case 4:
           return new FormDVBTTuningDetail();
-        case 5:
-          return new FormWebStreamTuningDetail();
         case 7:
           return new FormDVBIPTuningDetail();
       }

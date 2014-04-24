@@ -362,10 +362,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             if (tDetail.ChannelType == 7)
               result.Add(tDetail);
             break;
-          case CardType.RadioWebStream:
-            if (tDetail.ChannelType == 5)
-              result.Add(tDetail);
-            break;
           default:
             break;
         }

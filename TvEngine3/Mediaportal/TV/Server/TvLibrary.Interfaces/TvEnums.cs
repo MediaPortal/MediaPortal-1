@@ -49,10 +49,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// </summary>
     Atsc,
     /// <summary>
-    /// Internet radio stream tuner.
-    /// </summary>
-    RadioWebStream,
-    /// <summary>
     /// DVB-IP tuner.
     /// </summary>
     DvbIP,
