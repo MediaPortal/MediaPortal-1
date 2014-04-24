@@ -738,9 +738,9 @@ namespace SetupTv
       Assembly assm = Assembly.GetExecutingAssembly();
       string[] names = assm.GetManifestResourceNames();
       //Stream stream = null;
-      for (int version = currentSchemaVersion + 1; version < 100; version++)
+      for (int version = currentSchemaVersion + 1; version < 200; version++)
       {
-        if (ResourceExists(names, "SetupTv." + version + "_upgrade_sqlserver_database.sql"))
+        if (ResourceExists(names, "SetupTv." + version + "_upgrade_sqlserver_database.sql") && ResourceExists(names, "SetupTv." + version + "_upgrade_mysql_database.sql"))
         {
           if (ExecuteSQLScript(version + "_upgrade"))
             Log.Info("- database upgraded to schema version " + version);
