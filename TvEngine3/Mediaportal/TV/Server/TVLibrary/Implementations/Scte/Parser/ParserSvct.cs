@@ -25,7 +25,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
 {
-  public enum ChannelType
+  internal enum ChannelType
   {
     Normal,
     Hidden,
@@ -33,7 +33,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
     NvodAccess
   }
 
-  public delegate void SvctChannelDetailDelegate(AtscTransmissionMedium transmissionMedium, int vctId, int virtualChannelNumber, bool applicationVirtualChannel,
+  internal delegate void SvctChannelDetailDelegate(AtscTransmissionMedium transmissionMedium, int vctId, int virtualChannelNumber, bool applicationVirtualChannel,
     int bitstreamSelect, int pathSelect, ChannelType channelType, int sourceId, byte cdsReference, int programNumber, byte mmsReference);
 
   internal class ParserSvct : ParserBase

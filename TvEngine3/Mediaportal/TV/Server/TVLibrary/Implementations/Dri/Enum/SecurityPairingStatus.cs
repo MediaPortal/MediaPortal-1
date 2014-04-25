@@ -22,7 +22,7 @@ using System.Collections.Generic;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Enum
 {
-  public sealed class SecurityPairingStatus
+  internal sealed class SecurityPairingStatus
   {
     private readonly string _name;
     private static readonly IDictionary<string, SecurityPairingStatus> _values = new Dictionary<string, SecurityPairingStatus>();

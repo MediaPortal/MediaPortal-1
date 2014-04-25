@@ -24,7 +24,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
 {
-  public enum MgtTableType
+  internal enum MgtTableType
   {
     Mgt = -1,
 
@@ -55,7 +55,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
     // 0x1100..0x11ff AETT, mgt_tag 0x00..0xff
   }
 
-  public delegate void TableCompleteDelegate(MgtTableType table);
+  internal delegate void TableCompleteDelegate(MgtTableType table);
 
   internal class ParserBase
   {

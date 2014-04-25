@@ -25,7 +25,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
   /// <summary>
   /// Possible elementary stream or service encryption states.
   /// </summary>
-  public enum EncryptionState
+  internal enum EncryptionState
   {
     /// <summary>
     /// Encryption state not yet determined.
@@ -46,7 +46,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
   /// </summary>
   [Guid("7b42a7b1-0f93-44f4-9f0f-57b3a424d882"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  public interface IEncryptionStateChangeCallBack
+  internal interface IEncryptionStateChangeCallBack
   {
     /// <summary>
     /// Called by an ITsEncryptionAnalyser instance when the encryption state of any of the elementary streams it is monitoring changes.
@@ -63,7 +63,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
   /// </summary>
   [Guid("59f8d617-92fd-48d5-8f6d-a97bfd95c448"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  public interface ITsEncryptionAnalyser
+  internal interface ITsEncryptionAnalyser
   {
     /// <summary>
     /// Add an elementary stream to the set of streams that the analyser should monitor.

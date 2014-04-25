@@ -25,7 +25,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
 {
   // See SCTE 43 section 5.1.2 for valid combinations.
   [StructLayout(LayoutKind.Sequential, Pack = 1)]
-  public struct EncoderVideoProfile
+  internal struct EncoderVideoProfile
   {
     public ushort VerticalSize;   // unit = pixels
     public ushort HorizontalSize; // unit = pixels

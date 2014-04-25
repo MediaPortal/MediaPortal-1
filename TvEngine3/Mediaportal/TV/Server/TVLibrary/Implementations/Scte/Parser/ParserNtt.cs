@@ -25,7 +25,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
 {
-  public delegate void NttSourceNameDelegate(AtscTransmissionMedium transmissionMedium, bool applicationType, int sourceId, string name);
+  internal delegate void NttSourceNameDelegate(AtscTransmissionMedium transmissionMedium, bool applicationType, int sourceId, string name);
 
   /// <summary>
   /// ATSC/SCTE network text table parser. Refer to ATSC A/56 and SCTE 65.

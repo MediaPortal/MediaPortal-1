@@ -22,7 +22,7 @@ using System.Collections.Generic;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Upnp.Enum
 {
-  public sealed class AvTransportSeekMode
+  internal sealed class AvTransportSeekMode
   {
     private readonly string _name;
     private static readonly IDictionary<string, AvTransportSeekMode> _values = new Dictionary<string, AvTransportSeekMode>();

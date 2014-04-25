@@ -23,7 +23,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
 {
-  public delegate void MgtTableDetailDelegate(MgtTableType tableType, int pid, int versionNumber, uint byteCount);
+  internal delegate void MgtTableDetailDelegate(MgtTableType tableType, int pid, int versionNumber, uint byteCount);
 
   internal class ParserMgt
   {

@@ -24,7 +24,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
 {
-  public enum ModulationMode : byte
+  internal enum ModulationMode : byte
   {
     Analog = 0x01,
     ScteMode1 = 0x02, // 64 QAM
@@ -34,14 +34,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
     PrivateDescriptor = 0x80
   }
 
-  public enum EtmLocation : byte
+  internal enum EtmLocation : byte
   {
     None,
     PhysicalChannelThis,
     PhysicalChannelTsid
   }
 
-  public delegate void LvctChannelDetailDelegate(MgtTableType tableType, string shortName, int majorChannelNumber, int minorChannelNumber,
+  internal delegate void LvctChannelDetailDelegate(MgtTableType tableType, string shortName, int majorChannelNumber, int minorChannelNumber,
       ModulationMode modulationMode, uint carrierFrequency, int channelTsid, int programNumber, EtmLocation etmLocation,
       bool accessControlled, bool hidden, int pathSelect, bool outOfBand, bool hideGuide, AtscServiceType serviceType, int sourceId);
 

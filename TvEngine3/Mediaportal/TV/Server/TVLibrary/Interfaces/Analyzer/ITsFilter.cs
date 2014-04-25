@@ -36,7 +36,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
   /// </summary>
   [Guid("5EB9F392-E7FD-4071-8E44-3590E5E767BA"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  public interface ITsFilter
+  internal interface ITsFilter
   {
     /// <summary>
     /// Adds a new sub channel

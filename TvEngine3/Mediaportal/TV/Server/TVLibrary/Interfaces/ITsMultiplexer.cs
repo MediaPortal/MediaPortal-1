@@ -35,7 +35,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Multiplexer
   /// </summary>
   [Guid("8533d2d1-1be1-4262-b70a-432df592b903"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  public interface ITsMultiplexer
+  internal interface ITsMultiplexer
   {
     /// <summary>
     /// Configure the logging subsystem for the multiplexer.

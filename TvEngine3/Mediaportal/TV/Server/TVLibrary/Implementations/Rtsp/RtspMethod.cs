@@ -25,7 +25,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Rtsp
   /// <summary>
   /// Standard RTSP request methods.
   /// </summary>
-  public sealed class RtspMethod
+  internal sealed class RtspMethod
   {
     private readonly string _name;
     private static readonly IDictionary<string, RtspMethod> _values = new Dictionary<string, RtspMethod>();

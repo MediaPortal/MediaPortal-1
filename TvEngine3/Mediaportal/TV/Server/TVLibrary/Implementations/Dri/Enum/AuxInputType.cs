@@ -22,7 +22,7 @@ using System.Collections.Generic;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Enum
 {
-  public sealed class AuxInputType
+  internal sealed class AuxInputType
   {
     private readonly string _name;
     private static readonly IDictionary<string, AuxInputType> _values = new Dictionary<string, AuxInputType>();

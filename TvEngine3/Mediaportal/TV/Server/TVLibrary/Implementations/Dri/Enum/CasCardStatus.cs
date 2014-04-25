@@ -22,7 +22,7 @@ using System.Collections.Generic;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Enum
 {
-  public sealed class CasCardStatus
+  internal sealed class CasCardStatus
   {
     private readonly string _name;
     private static readonly IDictionary<string, CasCardStatus> _values = new Dictionary<string, CasCardStatus>();

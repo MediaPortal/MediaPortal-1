@@ -20,7 +20,7 @@
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Enum
 {
-  public enum EncoderVideoAspectRatio : byte
+  internal enum EncoderVideoAspectRatio : byte
   {
     SquareSamples = 1,
     Ar4_3 = 2,

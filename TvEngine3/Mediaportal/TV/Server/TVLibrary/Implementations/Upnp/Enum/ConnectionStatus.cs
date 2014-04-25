@@ -22,7 +22,7 @@ using System.Collections.Generic;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Upnp.Enum
 {
-  public sealed class ConnectionStatus
+  internal sealed class ConnectionStatus
   {
     private readonly string _name;
     private static readonly IDictionary<string, ConnectionStatus> _values = new Dictionary<string, ConnectionStatus>();

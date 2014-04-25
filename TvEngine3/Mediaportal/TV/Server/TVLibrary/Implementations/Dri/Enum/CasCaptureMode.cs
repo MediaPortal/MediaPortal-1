@@ -22,7 +22,7 @@ using System.Collections.Generic;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Enum
 {
-  public sealed class CasCaptureMode
+  internal sealed class CasCaptureMode
   {
     private readonly string _name;
     private static readonly IDictionary<string, CasCaptureMode> _values = new Dictionary<string, CasCaptureMode>();

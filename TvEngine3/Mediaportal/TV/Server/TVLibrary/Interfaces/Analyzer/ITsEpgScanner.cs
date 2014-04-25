@@ -29,7 +29,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
   /// </summary>
   [Guid("5CDAC655-D9FB-4c71-8119-DD07FE86A9CE"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  public interface ITsEpgScanner
+  internal interface ITsEpgScanner
   {
     /// <summary>
     /// Start grabbing the EPG.

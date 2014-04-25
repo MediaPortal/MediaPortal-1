@@ -22,7 +22,7 @@ using System.Collections.Generic;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Enum
 {
-  public sealed class DiagParameterDri
+  internal sealed class DiagParameterDri
   {
     private readonly string _name;
     private static readonly IDictionary<string, DiagParameterDri> _values = new Dictionary<string, DiagParameterDri>();

@@ -22,7 +22,7 @@ using System.Collections.Generic;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Enum
 {
-  public sealed class EncoderFieldOrder
+  internal sealed class EncoderFieldOrder
   {
     private readonly string _name;
     private static readonly IDictionary<string, EncoderFieldOrder> _values = new Dictionary<string, EncoderFieldOrder>();

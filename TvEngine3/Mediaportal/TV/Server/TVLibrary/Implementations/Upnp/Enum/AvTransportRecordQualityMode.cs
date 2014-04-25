@@ -22,7 +22,7 @@ using System.Collections.Generic;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Upnp.Enum
 {
-  public sealed class AvTransportRecordQualityMode
+  internal sealed class AvTransportRecordQualityMode
   {
     private readonly string _name;
     private static readonly IDictionary<string, AvTransportRecordQualityMode> _values = new Dictionary<string, AvTransportRecordQualityMode>();

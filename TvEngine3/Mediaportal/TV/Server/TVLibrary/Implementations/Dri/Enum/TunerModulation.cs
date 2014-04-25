@@ -22,7 +22,7 @@ using System.Collections.Generic;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Enum
 {
-  public sealed class TunerModulation
+  internal sealed class TunerModulation
   {
     private readonly string _name;
     private static readonly IDictionary<string, TunerModulation> _values = new Dictionary<string, TunerModulation>();

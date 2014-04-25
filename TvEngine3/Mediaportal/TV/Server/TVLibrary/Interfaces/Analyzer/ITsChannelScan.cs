@@ -28,7 +28,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
   ///</summary>
   [Guid("ce141670-1840-4188-8a40-618ba3a5a1c3"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  public interface IChannelScanCallBack
+  internal interface IChannelScanCallBack
   {
     /// <summary>
     /// Called by an ITsChannelScan instance when scanning is complete and all available service
@@ -42,7 +42,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
   /// <summary>
   /// Broadcast standards supported by the TsWriter scanner.
   /// </summary>
-  public enum BroadcastStandard
+  internal enum BroadcastStandard
   {
     /// <summary>
     /// DVB - EN 300 468.
@@ -67,7 +67,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
   /// </summary>
   [Guid("1663dc42-d169-41da-bce2-eeec482cb9fb"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  public interface ITsChannelScan
+  internal interface ITsChannelScan
   {
     /// <summary>
     /// Set the delegate for the scanner to notify when scanning is complete.
