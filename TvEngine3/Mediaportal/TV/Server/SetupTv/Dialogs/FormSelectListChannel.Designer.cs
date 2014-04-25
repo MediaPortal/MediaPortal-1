@@ -31,7 +31,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     private void InitializeComponent()
     {
       this.listViewChannels = new System.Windows.Forms.ListView();
-      this.checkBoxGuideChannels = new System.Windows.Forms.CheckBox();
+      this.checkBoxGuideChannels = new MPCheckBox();
       this.mpButtonCancel = new MPButton();
       this.mpButtonOk = new MPButton();
       this.SuspendLayout();
@@ -113,6 +113,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     private MPButton mpButtonCancel;
     private MPButton mpButtonOk;
     private System.Windows.Forms.ListView listViewChannels;
-    private System.Windows.Forms.CheckBox checkBoxGuideChannels;
+    private MPCheckBox checkBoxGuideChannels;
   }
 }

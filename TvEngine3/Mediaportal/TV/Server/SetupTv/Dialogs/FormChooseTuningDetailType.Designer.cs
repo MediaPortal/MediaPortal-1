@@ -30,15 +30,15 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     /// </summary>
     private void InitializeComponent()
     {
-      this.mpButtonCancel = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
-      this.mpButtonOk = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
-      this.mpGroupBox1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
-      this.mpRadioButton7 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPRadioButton();
-      this.mpRadioButton6 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPRadioButton();
-      this.mpRadioButton5 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPRadioButton();
-      this.mpRadioButton4 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPRadioButton();
-      this.mpRadioButton3 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPRadioButton();
-      this.mpRadioButton2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPRadioButton();
+      this.mpButtonCancel = new MPButton();
+      this.mpButtonOk = new MPButton();
+      this.mpGroupBox1 = new MPGroupBox();
+      this.mpRadioButton7 = new MPRadioButton();
+      this.mpRadioButton6 = new MPRadioButton();
+      this.mpRadioButton5 = new MPRadioButton();
+      this.mpRadioButton4 = new MPRadioButton();
+      this.mpRadioButton3 = new MPRadioButton();
+      this.mpRadioButton2 = new MPRadioButton();
       this.mpGroupBox1.SuspendLayout();
       this.SuspendLayout();
       // 

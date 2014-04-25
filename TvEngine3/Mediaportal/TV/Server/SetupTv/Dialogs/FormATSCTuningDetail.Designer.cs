@@ -1,3 +1,4 @@
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
 namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
   partial class FormATSCTuningDetail
@@ -28,28 +29,28 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     /// </summary>
     private void InitializeComponent()
     {
-      this.checkBoxQamfta = new System.Windows.Forms.CheckBox();
-      this.label49 = new System.Windows.Forms.Label();
-      this.textBoxQamProvider = new System.Windows.Forms.TextBox();
-      this.textBoxQamPmt = new System.Windows.Forms.TextBox();
-      this.textBoxQamSID = new System.Windows.Forms.TextBox();
-      this.textBoxQamTSID = new System.Windows.Forms.TextBox();
-      this.textBoxQamONID = new System.Windows.Forms.TextBox();
-      this.textBoxFrequency = new System.Windows.Forms.TextBox();
-      this.textBoxMinor = new System.Windows.Forms.TextBox();
-      this.textBoxMajor = new System.Windows.Forms.TextBox();
-      this.textBoxProgram = new System.Windows.Forms.TextBox();
-      this.label26 = new System.Windows.Forms.Label();
-      this.label39 = new System.Windows.Forms.Label();
-      this.label40 = new System.Windows.Forms.Label();
-      this.label41 = new System.Windows.Forms.Label();
-      this.label38 = new System.Windows.Forms.Label();
-      this.comboBoxQAMModulation = new System.Windows.Forms.ComboBox();
-      this.label37 = new System.Windows.Forms.Label();
-      this.label22 = new System.Windows.Forms.Label();
-      this.label23 = new System.Windows.Forms.Label();
-      this.label24 = new System.Windows.Forms.Label();
-      this.label1 = new System.Windows.Forms.Label();
+      this.checkBoxQamfta = new MPCheckBox();
+      this.label49 = new MPLabel();
+      this.textBoxQamProvider = new MPTextBox();
+      this.textBoxQamPmt = new MPTextBox();
+      this.textBoxQamSID = new MPTextBox();
+      this.textBoxQamTSID = new MPTextBox();
+      this.textBoxQamONID = new MPTextBox();
+      this.textBoxFrequency = new MPTextBox();
+      this.textBoxMinor = new MPTextBox();
+      this.textBoxMajor = new MPTextBox();
+      this.textBoxProgram = new MPTextBox();
+      this.label26 = new MPLabel();
+      this.label39 = new MPLabel();
+      this.label40 = new MPLabel();
+      this.label41 = new MPLabel();
+      this.label38 = new MPLabel();
+      this.comboBoxQAMModulation = new MPComboBox();
+      this.label37 = new MPLabel();
+      this.label22 = new MPLabel();
+      this.label23 = new MPLabel();
+      this.label24 = new MPLabel();
+      this.label1 = new MPLabel();
       this.SuspendLayout();
       // 
       // mpButtonCancel
@@ -318,28 +319,28 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
     #endregion
 
-    private System.Windows.Forms.CheckBox checkBoxQamfta;
-    private System.Windows.Forms.Label label49;
-    private System.Windows.Forms.TextBox textBoxQamProvider;
-    private System.Windows.Forms.TextBox textBoxQamPmt;
-    private System.Windows.Forms.TextBox textBoxQamSID;
-    private System.Windows.Forms.TextBox textBoxQamTSID;
-    private System.Windows.Forms.TextBox textBoxQamONID;
-    private System.Windows.Forms.TextBox textBoxFrequency;
-    private System.Windows.Forms.TextBox textBoxMinor;
-    private System.Windows.Forms.TextBox textBoxMajor;
-    private System.Windows.Forms.TextBox textBoxProgram;
-    private System.Windows.Forms.Label label26;
-    private System.Windows.Forms.Label label39;
-    private System.Windows.Forms.Label label40;
-    private System.Windows.Forms.Label label41;
-    private System.Windows.Forms.Label label38;
-    private System.Windows.Forms.ComboBox comboBoxQAMModulation;
-    private System.Windows.Forms.Label label37;
-    private System.Windows.Forms.Label label22;
-    private System.Windows.Forms.Label label23;
-    private System.Windows.Forms.Label label24;
-    private System.Windows.Forms.Label label1;
+    private MPCheckBox checkBoxQamfta;
+    private MPLabel label49;
+    private MPTextBox textBoxQamProvider;
+    private MPTextBox textBoxQamPmt;
+    private MPTextBox textBoxQamSID;
+    private MPTextBox textBoxQamTSID;
+    private MPTextBox textBoxQamONID;
+    private MPTextBox textBoxFrequency;
+    private MPTextBox textBoxMinor;
+    private MPTextBox textBoxMajor;
+    private MPTextBox textBoxProgram;
+    private MPLabel label26;
+    private MPLabel label39;
+    private MPLabel label40;
+    private MPLabel label41;
+    private MPLabel label38;
+    private MPComboBox comboBoxQAMModulation;
+    private MPLabel label37;
+    private MPLabel label22;
+    private MPLabel label23;
+    private MPLabel label24;
+    private MPLabel label1;
 
   }
 }

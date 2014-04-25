@@ -33,25 +33,25 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.components = new System.ComponentModel.Container();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEditChannel));
       this.mpButtonOk = new MPButton();
-      this.checkBoxVisibleInTvGuide = new System.Windows.Forms.CheckBox();
-      this.textBoxName = new System.Windows.Forms.TextBox();
-      this.label25 = new System.Windows.Forms.Label();
+      this.checkBoxVisibleInTvGuide = new MPCheckBox();
+      this.textBoxName = new MPTextBox();
+      this.label25 = new MPLabel();
       this.mpButtonCancel = new MPButton();
       this.mpListView1 = new MPListView();
-      this.id = new System.Windows.Forms.ColumnHeader();
-      this.name = new System.Windows.Forms.ColumnHeader();
-      this.provider = new System.Windows.Forms.ColumnHeader();
-      this.type = new System.Windows.Forms.ColumnHeader();
-      this.details = new System.Windows.Forms.ColumnHeader();
+      this.id = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.name = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.provider = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.type = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.details = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.tuningDetailContextMenu = new MPContextMenuStrip();
       this.menuButtonAdd = new System.Windows.Forms.ToolStripMenuItem();
       this.menuButtonEdit = new System.Windows.Forms.ToolStripMenuItem();
       this.menuButtonRemove = new System.Windows.Forms.ToolStripMenuItem();
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-      this.gbTuningdetails = new System.Windows.Forms.GroupBox();
-      this.btnAddTuningDetail = new System.Windows.Forms.Button();
-      this.btnEditTuningDetail = new System.Windows.Forms.Button();
-      this.btnRemoveTuningDetail = new System.Windows.Forms.Button();
+      this.gbTuningdetails = new MPGroupBox();
+      this.btnRemoveTuningDetail = new MPButton();
+      this.btnEditTuningDetail = new MPButton();
+      this.btnAddTuningDetail = new MPButton();
       this.tuningDetailContextMenu.SuspendLayout();
       this.gbTuningdetails.SuspendLayout();
       this.SuspendLayout();
@@ -69,9 +69,10 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // checkBoxVisibleInTvGuide
       // 
       this.checkBoxVisibleInTvGuide.AutoSize = true;
+      this.checkBoxVisibleInTvGuide.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxVisibleInTvGuide.Location = new System.Drawing.Point(31, 38);
       this.checkBoxVisibleInTvGuide.Name = "checkBoxVisibleInTvGuide";
-      this.checkBoxVisibleInTvGuide.Size = new System.Drawing.Size(108, 17);
+      this.checkBoxVisibleInTvGuide.Size = new System.Drawing.Size(106, 17);
       this.checkBoxVisibleInTvGuide.TabIndex = 1;
       this.checkBoxVisibleInTvGuide.Text = "Visible in tv guide";
       this.checkBoxVisibleInTvGuide.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -126,8 +127,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.mpListView1.TabIndex = 51;
       this.mpListView1.UseCompatibleStateImageBehavior = false;
       this.mpListView1.View = System.Windows.Forms.View.Details;
-      this.mpListView1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.mpListView1_MouseDoubleClick);
       this.mpListView1.SelectedIndexChanged += new System.EventHandler(this.mpListView1_SelectedIndexChanged);
+      this.mpListView1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.mpListView1_MouseDoubleClick);
       // 
       // id
       // 
@@ -159,7 +160,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
             this.menuButtonEdit,
             this.menuButtonRemove});
       this.tuningDetailContextMenu.Name = "tuningDetailContextMenu";
-      this.tuningDetailContextMenu.Size = new System.Drawing.Size(118, 70);
+      this.tuningDetailContextMenu.Size = new System.Drawing.Size(153, 92);
       // 
       // menuButtonAdd
       // 
@@ -197,6 +198,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.gbTuningdetails.Controls.Add(this.btnEditTuningDetail);
       this.gbTuningdetails.Controls.Add(this.btnAddTuningDetail);
       this.gbTuningdetails.Controls.Add(this.mpListView1);
+      this.gbTuningdetails.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.gbTuningdetails.Location = new System.Drawing.Point(12, 78);
       this.gbTuningdetails.Name = "gbTuningdetails";
       this.gbTuningdetails.Size = new System.Drawing.Size(440, 267);
@@ -204,15 +206,16 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.gbTuningdetails.TabStop = false;
       this.gbTuningdetails.Text = "Tuningdetails";
       // 
-      // btnAddTuningDetail
+      // btnRemoveTuningDetail
       // 
-      this.btnAddTuningDetail.Location = new System.Drawing.Point(6, 231);
-      this.btnAddTuningDetail.Name = "btnAddTuningDetail";
-      this.btnAddTuningDetail.Size = new System.Drawing.Size(75, 23);
-      this.btnAddTuningDetail.TabIndex = 52;
-      this.btnAddTuningDetail.Text = "Add";
-      this.btnAddTuningDetail.UseVisualStyleBackColor = true;
-      this.btnAddTuningDetail.Click += new System.EventHandler(this.menuButtonAdd_Click);
+      this.btnRemoveTuningDetail.Enabled = false;
+      this.btnRemoveTuningDetail.Location = new System.Drawing.Point(168, 231);
+      this.btnRemoveTuningDetail.Name = "btnRemoveTuningDetail";
+      this.btnRemoveTuningDetail.Size = new System.Drawing.Size(75, 23);
+      this.btnRemoveTuningDetail.TabIndex = 54;
+      this.btnRemoveTuningDetail.Text = "Remove";
+      this.btnRemoveTuningDetail.UseVisualStyleBackColor = true;
+      this.btnRemoveTuningDetail.Click += new System.EventHandler(this.menuButtonRemove_Click);
       // 
       // btnEditTuningDetail
       // 
@@ -225,16 +228,15 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.btnEditTuningDetail.UseVisualStyleBackColor = true;
       this.btnEditTuningDetail.Click += new System.EventHandler(this.menuButtonEdit_Click);
       // 
-      // btnRemoveTuningDetail
+      // btnAddTuningDetail
       // 
-      this.btnRemoveTuningDetail.Enabled = false;
-      this.btnRemoveTuningDetail.Location = new System.Drawing.Point(168, 231);
-      this.btnRemoveTuningDetail.Name = "btnRemoveTuningDetail";
-      this.btnRemoveTuningDetail.Size = new System.Drawing.Size(75, 23);
-      this.btnRemoveTuningDetail.TabIndex = 54;
-      this.btnRemoveTuningDetail.Text = "Remove";
-      this.btnRemoveTuningDetail.UseVisualStyleBackColor = true;
-      this.btnRemoveTuningDetail.Click += new System.EventHandler(this.menuButtonRemove_Click);
+      this.btnAddTuningDetail.Location = new System.Drawing.Point(6, 231);
+      this.btnAddTuningDetail.Name = "btnAddTuningDetail";
+      this.btnAddTuningDetail.Size = new System.Drawing.Size(75, 23);
+      this.btnAddTuningDetail.TabIndex = 52;
+      this.btnAddTuningDetail.Text = "Add";
+      this.btnAddTuningDetail.UseVisualStyleBackColor = true;
+      this.btnAddTuningDetail.Click += new System.EventHandler(this.menuButtonAdd_Click);
       // 
       // FormEditChannel
       // 
@@ -266,9 +268,9 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     #endregion
 
     private MPButton mpButtonOk;
-    private System.Windows.Forms.TextBox textBoxName;
-    private System.Windows.Forms.Label label25;
-    private System.Windows.Forms.CheckBox checkBoxVisibleInTvGuide;
+    private MPTextBox textBoxName;
+    private MPLabel label25;
+    private MPCheckBox checkBoxVisibleInTvGuide;
     private MPButton mpButtonCancel;
     private MPListView mpListView1;
     private System.Windows.Forms.ColumnHeader id;
@@ -281,10 +283,10 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     private System.Windows.Forms.ToolStripMenuItem menuButtonRemove;
     private System.Windows.Forms.ToolStripMenuItem menuButtonEdit;
     private System.Windows.Forms.ColumnHeader details;
-    private System.Windows.Forms.GroupBox gbTuningdetails;
-    private System.Windows.Forms.Button btnRemoveTuningDetail;
-    private System.Windows.Forms.Button btnEditTuningDetail;
-    private System.Windows.Forms.Button btnAddTuningDetail;
+    private MPGroupBox gbTuningdetails;
+    private MPButton btnRemoveTuningDetail;
+    private MPButton btnEditTuningDetail;
+    private MPButton btnAddTuningDetail;
 
   }
 }

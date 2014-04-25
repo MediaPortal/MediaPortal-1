@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
 
 namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
@@ -33,39 +33,39 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     /// </summary>
     private void InitializeComponent()
     {
-      this.checkBoxDVBSfta = new System.Windows.Forms.CheckBox();
-      this.label27 = new System.Windows.Forms.Label();
-      this.textBoxDVBSProvider = new System.Windows.Forms.TextBox();
-      this.textBoxDVBSPmt = new System.Windows.Forms.TextBox();
-      this.textBoxDVBSChannel = new System.Windows.Forms.TextBox();
-      this.textBoxSymbolRate = new System.Windows.Forms.TextBox();
-      this.textBoxServiceId = new System.Windows.Forms.TextBox();
-      this.textBoxTransportId = new System.Windows.Forms.TextBox();
-      this.textBoxNetworkId = new System.Windows.Forms.TextBox();
-      this.textBoxFrequency = new System.Windows.Forms.TextBox();
-      this.label34 = new System.Windows.Forms.Label();
-      this.label47 = new System.Windows.Forms.Label();
-      this.comboBoxRollOff = new System.Windows.Forms.ComboBox();
-      this.label36 = new System.Windows.Forms.Label();
-      this.comboBoxPilot = new System.Windows.Forms.ComboBox();
-      this.label35 = new System.Windows.Forms.Label();
-      this.comboBoxInnerFecRate = new System.Windows.Forms.ComboBox();
-      this.label33 = new System.Windows.Forms.Label();
-      this.comboBoxModulation = new System.Windows.Forms.ComboBox();
-      this.label32 = new System.Windows.Forms.Label();
-      this.comboBoxDiseqc = new System.Windows.Forms.ComboBox();
-      this.label10 = new System.Windows.Forms.Label();
-      this.comboBoxPol = new System.Windows.Forms.ComboBox();
-      this.label11 = new System.Windows.Forms.Label();
-      this.label12 = new System.Windows.Forms.Label();
-      this.label13 = new System.Windows.Forms.Label();
-      this.label14 = new System.Windows.Forms.Label();
-      this.label15 = new System.Windows.Forms.Label();
-      this.label16 = new System.Windows.Forms.Label();
-      this.label1 = new System.Windows.Forms.Label();
-      this.label2 = new System.Windows.Forms.Label();
-      this.comboBoxLnbType = new System.Windows.Forms.ComboBox();
-      this.label3 = new System.Windows.Forms.Label();
+      this.checkBoxDVBSfta = new MPCheckBox();
+      this.label27 = new MPLabel();
+      this.textBoxDVBSProvider = new MPTextBox();
+      this.textBoxDVBSPmt = new MPTextBox();
+      this.textBoxDVBSChannel = new MPTextBox();
+      this.textBoxSymbolRate = new MPTextBox();
+      this.textBoxServiceId = new MPTextBox();
+      this.textBoxTransportId = new MPTextBox();
+      this.textBoxNetworkId = new MPTextBox();
+      this.textBoxFrequency = new MPTextBox();
+      this.label34 = new MPLabel();
+      this.label47 = new MPLabel();
+      this.comboBoxRollOff = new MPComboBox();
+      this.label36 = new MPLabel();
+      this.comboBoxPilot = new MPComboBox();
+      this.label35 = new MPLabel();
+      this.comboBoxInnerFecRate = new MPComboBox();
+      this.label33 = new MPLabel();
+      this.comboBoxModulation = new MPComboBox();
+      this.label32 = new MPLabel();
+      this.comboBoxDiseqc = new MPComboBox();
+      this.label10 = new MPLabel();
+      this.comboBoxPol = new MPComboBox();
+      this.label11 = new MPLabel();
+      this.label12 = new MPLabel();
+      this.label13 = new MPLabel();
+      this.label14 = new MPLabel();
+      this.label15 = new MPLabel();
+      this.label16 = new MPLabel();
+      this.label1 = new MPLabel();
+      this.label2 = new MPLabel();
+      this.comboBoxLnbType = new MPComboBox();
+      this.label3 = new MPLabel();
       this.SuspendLayout();
       // 
       // mpButtonCancel
@@ -550,38 +550,38 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
     #endregion
 
-    private System.Windows.Forms.CheckBox checkBoxDVBSfta;
-    private System.Windows.Forms.Label label27;
-    private System.Windows.Forms.TextBox textBoxDVBSProvider;
-    private System.Windows.Forms.TextBox textBoxDVBSPmt;
-    private System.Windows.Forms.TextBox textBoxDVBSChannel;
-    private System.Windows.Forms.TextBox textBoxSymbolRate;
-    private System.Windows.Forms.TextBox textBoxServiceId;
-    private System.Windows.Forms.TextBox textBoxTransportId;
-    private System.Windows.Forms.TextBox textBoxNetworkId;
-    private System.Windows.Forms.TextBox textBoxFrequency;
-    private System.Windows.Forms.Label label34;
-    private System.Windows.Forms.Label label47;
-    private System.Windows.Forms.ComboBox comboBoxRollOff;
-    private System.Windows.Forms.Label label36;
-    private System.Windows.Forms.ComboBox comboBoxPilot;
-    private System.Windows.Forms.Label label35;
-    private System.Windows.Forms.ComboBox comboBoxInnerFecRate;
-    private System.Windows.Forms.Label label33;
-    private System.Windows.Forms.ComboBox comboBoxModulation;
-    private System.Windows.Forms.Label label32;
-    private System.Windows.Forms.ComboBox comboBoxDiseqc;
-    private System.Windows.Forms.Label label10;
-    private System.Windows.Forms.ComboBox comboBoxPol;
-    private System.Windows.Forms.Label label11;
-    private System.Windows.Forms.Label label12;
-    private System.Windows.Forms.Label label13;
-    private System.Windows.Forms.Label label14;
-    private System.Windows.Forms.Label label15;
-    private System.Windows.Forms.Label label16;
-    private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.Label label2;
-    private System.Windows.Forms.ComboBox comboBoxLnbType;
-    private System.Windows.Forms.Label label3;
+    private MPCheckBox checkBoxDVBSfta;
+    private MPLabel label27;
+    private MPTextBox textBoxDVBSProvider;
+    private MPTextBox textBoxDVBSPmt;
+    private MPTextBox textBoxDVBSChannel;
+    private MPTextBox textBoxSymbolRate;
+    private MPTextBox textBoxServiceId;
+    private MPTextBox textBoxTransportId;
+    private MPTextBox textBoxNetworkId;
+    private MPTextBox textBoxFrequency;
+    private MPLabel label34;
+    private MPLabel label47;
+    private MPComboBox comboBoxRollOff;
+    private MPLabel label36;
+    private MPComboBox comboBoxPilot;
+    private MPLabel label35;
+    private MPComboBox comboBoxInnerFecRate;
+    private MPLabel label33;
+    private MPComboBox comboBoxModulation;
+    private MPLabel label32;
+    private MPComboBox comboBoxDiseqc;
+    private MPLabel label10;
+    private MPComboBox comboBoxPol;
+    private MPLabel label11;
+    private MPLabel label12;
+    private MPLabel label13;
+    private MPLabel label14;
+    private MPLabel label15;
+    private MPLabel label16;
+    private MPLabel label1;
+    private MPLabel label2;
+    private MPComboBox comboBoxLnbType;
+    private MPLabel label3;
   }
 }
