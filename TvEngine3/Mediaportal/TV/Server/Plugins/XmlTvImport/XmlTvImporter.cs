@@ -383,8 +383,6 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
 
       _remoteURL = URL;
       
-      Setting setting;
-
       string errMsg = "";
       if (URL.Length == 0)
       {
