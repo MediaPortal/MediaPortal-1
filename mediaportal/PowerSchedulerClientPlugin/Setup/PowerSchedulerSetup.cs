@@ -23,22 +23,22 @@
 using System;
 using System.Drawing;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Windows.Forms;
+using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces;
 using TvEngine.PowerScheduler.Interfaces;
 #if SERVER
 using System.Diagnostics;
-using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
-using TvDatabase;
+using Mediaportal.TV.Server.SetupControls;
+using Mediaportal.TV.Server.TVControl.ServiceAgents;
 #endif
 #if CLIENT
-using System.IO;
 using MediaPortal.Configuration;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
-using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces;
 #endif
 
 #endregion
@@ -49,7 +49,7 @@ namespace PowerScheduler.Setup
   /// Setup for the PowerScheduler plugin (common code for client and server)
   /// </summary>
 #if SERVER
-  public partial class PowerSchedulerSetup : SetupTv.SectionSettings
+  public partial class PowerSchedulerSetup : SectionSettings
 #else
   public partial class PowerSchedulerSetup : MPConfigForm
 #endif
@@ -57,7 +57,6 @@ namespace PowerScheduler.Setup
     #region Variables
 
 #if SERVER
-    private TvBusinessLayer _layer;
     private Thread _refreshStatusThread;
     private Thread _setupTvThread;
 
@@ -137,9 +136,6 @@ namespace PowerScheduler.Setup
     {
       InitializeComponent();
 #if SERVER
-
-      _layer = new TvBusinessLayer();
-
       // Add server profile, no Client tab
       textBoxProfile.Text +=
         Environment.NewLine + "Server:	    Dedicated server without GUI provides TV and recording services";
@@ -250,9 +246,9 @@ namespace PowerScheduler.Setup
           tabControl.Controls.Remove(tabPageShares);
           tabControl.Controls.Remove(tabPageAdvanced);
 
-          checkBoxHomeOnly.Checked = Convert.ToBoolean(GetSetting("HomeOnly", "false"));
+          checkBoxHomeOnly.Checked = GetSetting("HomeOnly", false);
           textBoxCommand.Text = GetSetting("Command", string.Empty);
-          checkBoxUmuteMasterVolume.Checked = Convert.ToBoolean(GetSetting("UnmuteMasterVolume", "true"));
+          checkBoxUmuteMasterVolume.Checked = GetSetting("UnmuteMasterVolume", true);
 
           return;
         }
@@ -264,7 +260,7 @@ namespace PowerScheduler.Setup
         bool buttonApplyEnabled = false;
 
         // General
-        int profile = Convert.ToInt32(GetSetting("Profile", "-1"));
+        int profile = GetSetting("Profile", -1);
 #if SERVER
         if (profile < 0 || profile > 3)
 #else
@@ -276,7 +272,7 @@ namespace PowerScheduler.Setup
         }
         comboBoxProfile.SelectedIndex = profile;
 
-        int idleTimeout = Convert.ToInt32(GetSetting("IdleTimeout", "-1"));
+        int idleTimeout = GetSetting("IdleTimeout", -1);
         if (idleTimeout == -1)
         {
           idleTimeout = (int)(PowerManager.RunningOnAC ? _defaultSettingsDesktopAC.idleTimeout : _defaultSettingsDesktopDC.idleTimeout);
@@ -284,7 +280,7 @@ namespace PowerScheduler.Setup
         }
         numericUpDownIdleTimeout.Value = idleTimeout;
 
-        labelExpertMode.Text = Convert.ToBoolean(GetSetting("ExpertMode", "false")) ? "Expert Mode" : "Plug&&Play Mode";
+        labelExpertMode.Text = GetSetting("ExpertMode", false) ? "Expert Mode" : "Plug&&Play Mode";
         if (labelExpertMode.Text == "Expert Mode")
         {
           comboBoxProfile.ForeColor = SystemColors.GrayText;
@@ -315,11 +311,11 @@ namespace PowerScheduler.Setup
 
 #if CLIENT
         // Client
-        checkBoxHomeOnly.Checked = Convert.ToBoolean(GetSetting("HomeOnly", "false"));
+        checkBoxHomeOnly.Checked = GetSetting("HomeOnly", false);
 
         textBoxCommand.Text = GetSetting("Command", string.Empty);
 
-        checkBoxUmuteMasterVolume.Checked = Convert.ToBoolean(GetSetting("UnmuteMasterVolume", "true"));
+        checkBoxUmuteMasterVolume.Checked = GetSetting("UnmuteMasterVolume", true);
 
 #endif
 #if SERVER
@@ -364,13 +360,13 @@ namespace PowerScheduler.Setup
             mFormat = "{0}";
           textBoxEPG.Text = String.Format(hFormat, config.Hour) + ":" + String.Format(mFormat, config.Minutes);
 
-          checkBoxEPGPreventStandby.Checked = Convert.ToBoolean(GetSetting("EPGPreventStandby", "false"));
+          checkBoxEPGPreventStandby.Checked = GetSetting("EPGPreventStandby", false);
           if (!checkBoxEPGPreventStandby.Checked)
             checkBoxEPGAwayMode.Enabled = false;
 
-          checkBoxEPGAwayMode.Checked = Convert.ToBoolean(GetSetting("EPGAwayMode", "false"));
+          checkBoxEPGAwayMode.Checked = GetSetting("EPGAwayMode", false);
 
-          checkBoxEPGWakeup.Checked = Convert.ToBoolean(GetSetting("EPGWakeup", "false"));
+          checkBoxEPGWakeup.Checked = GetSetting("EPGWakeup", false);
 
           textBoxEPGCommand.Text = GetSetting("EPGCommand", String.Empty);
         }
@@ -418,7 +414,7 @@ namespace PowerScheduler.Setup
             mFormat = "{0}";
           textBoxReboot.Text = String.Format(hFormat, config.Hour) + ":" + String.Format(mFormat, config.Minutes);
 
-          checkBoxRebootWakeup.Checked = Convert.ToBoolean(GetSetting("RebootWakeup", "false"));
+          checkBoxRebootWakeup.Checked = GetSetting("RebootWakeup", false);
 
           textBoxRebootCommand.Text = GetSetting("RebootCommand", String.Empty);
         }
@@ -427,15 +423,15 @@ namespace PowerScheduler.Setup
         textBoxProcesses.Text = GetSetting("Processes", String.Empty);
 #if SERVER
 
-        checkBoxMPClientRunning.Checked = Convert.ToBoolean(GetSetting("CheckForMPClientRunning", "false"));
+        checkBoxMPClientRunning.Checked = GetSetting("CheckForMPClientRunning", false);
 #endif
         if (!checkBoxMPClientRunning.Checked && textBoxProcesses.Text == String.Empty)
           checkBoxProcessesAwayMode.Enabled = false;
 
-        checkBoxProcessesAwayMode.Checked = Convert.ToBoolean(GetSetting("ProcessesAwayMode", "false"));
+        checkBoxProcessesAwayMode.Checked = GetSetting("ProcessesAwayMode", false);
 
         // Active Shares
-        checkBoxSharesEnabled.Checked = Convert.ToBoolean(GetSetting("ActiveSharesEnabled", "false"));
+        checkBoxSharesEnabled.Checked = GetSetting("ActiveSharesEnabled", false);
         if (!checkBoxSharesEnabled.Checked)
         {
           checkBoxSharesAwayMode.Enabled = false;
@@ -447,7 +443,7 @@ namespace PowerScheduler.Setup
           buttonSelectShare.Enabled = false;
         }
 
-        checkBoxSharesAwayMode.Checked = Convert.ToBoolean(GetSetting("ActiveSharesAwayMode", "false"));
+        checkBoxSharesAwayMode.Checked = GetSetting("ActiveSharesAwayMode", false);
 
         dataGridShares.Rows.Clear();
         string[] shares = GetSetting("ActiveShares", String.Empty).Split(';');
@@ -469,24 +465,24 @@ namespace PowerScheduler.Setup
         }
 
         // Network Monitor
-        checkBoxNetworkEnabled.Checked = Convert.ToBoolean(GetSetting("NetworkMonitorEnabled", "false"));
+        checkBoxNetworkEnabled.Checked = GetSetting("NetworkMonitorEnabled", false);
         if (!checkBoxNetworkEnabled.Checked)
           checkBoxNetworkAwayMode.Enabled = false;
 
-        numericUpDownNetworkIdleLimit.Value = Convert.ToDecimal(GetSetting("NetworkMonitorIdleLimit", "0"));
+        numericUpDownNetworkIdleLimit.Value = GetSetting("NetworkMonitorIdleLimit", 0);
 
-        checkBoxNetworkAwayMode.Checked = Convert.ToBoolean(GetSetting("NetworkMonitorAwayMode", "false"));
+        checkBoxNetworkAwayMode.Checked = GetSetting("NetworkMonitorAwayMode", false);
 
         // Advanced
 #if SERVER
-        checkBoxReinitializeController.Checked = Convert.ToBoolean(GetSetting("ReinitializeController", "false"));
+        checkBoxReinitializeController.Checked = GetSetting("ReinitializeController", false);
 
         textBoxCommand.Text = GetSetting("Command", string.Empty);
 
 #endif
-        checkBoxAutoPowerSettings.Checked = Convert.ToBoolean(GetSetting("AutoPowerSettings", "true"));
+        checkBoxAutoPowerSettings.Checked = GetSetting("AutoPowerSettings", true);
 
-        checkBoxShutdownEnabled.Checked = Convert.ToBoolean(GetSetting("ShutdownEnabled", "false"));
+        checkBoxShutdownEnabled.Checked = GetSetting("ShutdownEnabled", false);
         if (!checkBoxShutdownEnabled.Checked)
         {
           labelShutdownMode.ForeColor = SystemColors.GrayText;
@@ -494,18 +490,18 @@ namespace PowerScheduler.Setup
           numericUpDownIdleTimeout.Enabled = checkBoxAutoPowerSettings.Checked;
         }
 
-        int shutdownMode = Convert.ToInt32(GetSetting("ShutdownMode", "0"));
+        int shutdownMode = GetSetting("ShutdownMode", 0);
         if (shutdownMode < 0 || shutdownMode > 3)
           shutdownMode = 0;
         comboBoxShutdownMode.SelectedIndex = shutdownMode;
 
         // Legacy
-        numericUpDownPreWakeupTime.Value = Convert.ToInt32(GetSetting("PreWakeupTime", "60"));
+        numericUpDownPreWakeupTime.Value = GetSetting("PreWakeupTime", 60);
 
-        numericUpDownPreNoStandbyTime.Value = Convert.ToInt32(GetSetting("PreNoStandbyTime", "300"));
+        numericUpDownPreNoStandbyTime.Value = GetSetting("PreNoStandbyTime", 300);
 
-        numericUpDownStandbyHoursFrom.Value = Convert.ToInt32(GetSetting("StandbyHoursFrom", "0"));
-        numericUpDownStandbyHoursTo.Value = Convert.ToInt32(GetSetting("StandbyHoursTo", "24"));
+        numericUpDownStandbyHoursFrom.Value = GetSetting("StandbyHoursFrom", 0);
+        numericUpDownStandbyHoursTo.Value = GetSetting("StandbyHoursTo", 24);
 
 
         buttonApply.Enabled = buttonApplyEnabled;
@@ -520,10 +516,11 @@ namespace PowerScheduler.Setup
     {
 #if SERVER
       // Check if update is necessary
-      Setting setting = _layer.GetSetting("PowerSchedulerExpertMode");
-      if (setting.Value != "")
+      string value = ServiceAgents.Instance.SettingServiceAgent.GetValue("PowerSchedulerExpertMode", string.Empty);
+      if (string.IsNullOrEmpty(value))
         return;
-      setting.Remove();
+      // TODO how to remove a setting?
+      //setting.Remove();
 
       // Initialise list of old and new settings to update
       List<String[]> settingNames = new List<String[]>();
@@ -543,15 +540,15 @@ namespace PowerScheduler.Setup
       // Update settings names
       foreach (String[] settingName in settingNames)
       {
-        setting = _layer.GetSetting(settingName[0], "---");
-        if (setting.Value != "---")
+        value = ServiceAgents.Instance.SettingServiceAgent.GetValue(settingName[0], "---");
+        if (value != "---")
         {
-          setting.Tag = settingName[1];
-          setting.Persist();
+          ServiceAgents.Instance.SettingServiceAgent.SaveValue(settingName[1], value);
         }
         else
         {
-          setting.Remove();
+          // TODO how to remove a setting?
+          //setting.Remove();
         }
       }  
 #endif
@@ -590,26 +587,26 @@ namespace PowerScheduler.Setup
       {
         if (_singleSeat)
         {
-          SetSetting("HomeOnly", checkBoxHomeOnly.Checked.ToString());
+          SetSetting("HomeOnly", checkBoxHomeOnly.Checked);
           SetSetting("Command", textBoxCommand.Text);
-          SetSetting("UnmuteMasterVolume", checkBoxUmuteMasterVolume.Checked.ToString());
+          SetSetting("UnmuteMasterVolume", checkBoxUmuteMasterVolume.Checked);
           return;
         }
 #endif
         // General
-        SetSetting("Profile", comboBoxProfile.SelectedIndex.ToString());
+        SetSetting("Profile", comboBoxProfile.SelectedIndex);
       
-        SetSetting("IdleTimeout", numericUpDownIdleTimeout.Value.ToString());
+        SetSetting("IdleTimeout", (int)numericUpDownIdleTimeout.Value);
 
-        SetSetting("ExpertMode", (labelExpertMode.Text == "Expert Mode").ToString());
+        SetSetting("ExpertMode", labelExpertMode.Text == "Expert Mode");
 
 #if CLIENT
         // Client
-        SetSetting("HomeOnly", checkBoxHomeOnly.Checked.ToString());
+        SetSetting("HomeOnly", checkBoxHomeOnly.Checked);
 
         SetSetting("Command", textBoxCommand.Text);
 
-        SetSetting("UnmuteMasterVolume", checkBoxUmuteMasterVolume.Checked.ToString());
+        SetSetting("UnmuteMasterVolume", checkBoxUmuteMasterVolume.Checked);
 
 #endif
 #if SERVER
@@ -638,11 +635,11 @@ namespace PowerScheduler.Setup
           }
         }
 
-        SetSetting("EPGPreventStandby", checkBoxEPGPreventStandby.Checked.ToString());
+        SetSetting("EPGPreventStandby", checkBoxEPGPreventStandby.Checked);
 
-        SetSetting("EPGAwayMode", checkBoxEPGAwayMode.Checked.ToString());
+        SetSetting("EPGAwayMode", checkBoxEPGAwayMode.Checked);
 
-        SetSetting("EPGWakeup", checkBoxEPGWakeup.Checked.ToString());
+        SetSetting("EPGWakeup", checkBoxEPGWakeup.Checked);
 
         SetSetting("EPGCommand", textBoxEPGCommand.Text);
 
@@ -672,23 +669,23 @@ namespace PowerScheduler.Setup
           }
         }
 
-        SetSetting("RebootWakeup", checkBoxRebootWakeup.Checked.ToString());
+        SetSetting("RebootWakeup", checkBoxRebootWakeup.Checked);
 
         SetSetting("RebootCommand", textBoxRebootCommand.Text);
 
         // Processes
         SetSetting("Processes", textBoxProcesses.Text);
 
-        SetSetting("ProcessesAwayMode", checkBoxProcessesAwayMode.Checked.ToString());
+        SetSetting("ProcessesAwayMode", checkBoxProcessesAwayMode.Checked);
 
 #if SERVER
-        SetSetting("CheckForMPClientRunning", checkBoxMPClientRunning.Checked.ToString());
+        SetSetting("CheckForMPClientRunning", checkBoxMPClientRunning.Checked);
 
 #endif
         // Active Shares
-        SetSetting("ActiveSharesEnabled", checkBoxSharesEnabled.Checked.ToString());
+        SetSetting("ActiveSharesEnabled", checkBoxSharesEnabled.Checked);
 
-        SetSetting("ActiveSharesAwayMode", checkBoxSharesAwayMode.Checked.ToString());
+        SetSetting("ActiveSharesAwayMode", checkBoxSharesAwayMode.Checked);
 
         StringBuilder shares = new StringBuilder();
         foreach (DataGridViewRow row in dataGridShares.Rows)
@@ -698,32 +695,32 @@ namespace PowerScheduler.Setup
         SetSetting("ActiveShares", shares.ToString());
 
         // Network Monitor
-        SetSetting("NetworkMonitorEnabled", checkBoxNetworkEnabled.Checked.ToString());
+        SetSetting("NetworkMonitorEnabled", checkBoxNetworkEnabled.Checked);
 
-        SetSetting("NetworkMonitorIdleLimit", numericUpDownNetworkIdleLimit.Value.ToString());
+        SetSetting("NetworkMonitorIdleLimit", (int)numericUpDownNetworkIdleLimit.Value);
 
-        SetSetting("NetworkMonitorAwayMode", checkBoxNetworkAwayMode.Checked.ToString());
+        SetSetting("NetworkMonitorAwayMode", checkBoxNetworkAwayMode.Checked);
 
         // Advanced
 #if SERVER
-        SetSetting("ReinitializeController", checkBoxReinitializeController.Checked.ToString());
+        SetSetting("ReinitializeController", checkBoxReinitializeController.Checked);
 
         SetSetting("Command", textBoxCommand.Text);
 
 #endif
-        SetSetting("AutoPowerSettings", checkBoxAutoPowerSettings.Checked.ToString());
+        SetSetting("AutoPowerSettings", checkBoxAutoPowerSettings.Checked);
 
-        SetSetting("ShutdownEnabled", checkBoxShutdownEnabled.Checked.ToString());
+        SetSetting("ShutdownEnabled", checkBoxShutdownEnabled.Checked);
 
-        SetSetting("ShutdownMode", comboBoxShutdownMode.SelectedIndex.ToString());
+        SetSetting("ShutdownMode", comboBoxShutdownMode.SelectedIndex);
 
         // Legacy
-        SetSetting("PreWakeupTime", numericUpDownPreWakeupTime.Value.ToString());
+        SetSetting("PreWakeupTime", (int)numericUpDownPreWakeupTime.Value);
 
-        SetSetting("PreNoStandbyTime", numericUpDownPreNoStandbyTime.Value.ToString());
+        SetSetting("PreNoStandbyTime", (int)numericUpDownPreNoStandbyTime.Value);
 
-        SetSetting("StandbyHoursFrom", numericUpDownStandbyHoursFrom.Value.ToString());
-        SetSetting("StandbyHoursTo", numericUpDownStandbyHoursTo.Value.ToString());
+        SetSetting("StandbyHoursFrom", (int)numericUpDownStandbyHoursFrom.Value);
+        SetSetting("StandbyHoursTo", (int)numericUpDownStandbyHoursTo.Value);
 
         // Power settings
         if (checkBoxAutoPowerSettings.Checked)
@@ -767,37 +764,60 @@ namespace PowerScheduler.Setup
     private string GetSetting(string settingName, string settingDefault)
     {
 #if SERVER
-      return _layer.GetSetting("PowerScheduler" + settingName, settingDefault).Value;
+      return ServiceAgents.Instance.SettingServiceAgent.GetValue("PowerScheduler" + settingName, settingDefault);
 #endif
 #if CLIENT
-      string settingValue = _settings.GetValueAsString("psclientplugin", settingName, settingDefault);
-      if (settingValue == "yes")
-        return "True";
-      if (settingValue == "no")
-        return "False";
-      return settingValue;
+      return _settings.GetValueAsString("psclientplugin", settingName, settingDefault);
+#endif
+    }
+
+    private int GetSetting(string settingName, int settingDefault)
+    {
+#if SERVER
+      return ServiceAgents.Instance.SettingServiceAgent.GetValue("PowerScheduler" + settingName, settingDefault);
+#endif
+#if CLIENT
+      return _settings.GetValueAsInt("psclientplugin", settingName, settingDefault);
+#endif
+    }
+
+    private bool GetSetting(string settingName, bool settingDefault)
+    {
+#if SERVER
+      return ServiceAgents.Instance.SettingServiceAgent.GetValue("PowerScheduler" + settingName, settingDefault);
+#endif
+#if CLIENT
+      return _settings.GetValueAsBool("psclientplugin", settingName, settingDefault);
 #endif
     }
 
     private void SetSetting(string settingName, string settingValue)
     {
 #if SERVER
-      Setting setting = _layer.GetSetting("PowerScheduler" + settingName, String.Empty);
-      setting.Value = settingValue;
-      setting.Persist();
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("PowerScheduler" + settingName, settingValue);
 #endif
 #if CLIENT
-      if (settingValue == "True")
-      {
-        _settings.SetValueAsBool("psclientplugin", settingName, true);
-        return;
-      }
-      if (settingValue == "False")
-      {
-        _settings.SetValueAsBool("psclientplugin", settingName, false);
-        return;
-      }
       _settings.SetValue("psclientplugin", settingName, settingValue);
+#endif
+    }
+
+    private void SetSetting(string settingName, int settingValue)
+    {
+#if SERVER
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("PowerScheduler" + settingName, settingValue);
+#endif
+#if CLIENT
+      SetSetting(settingName, settingValue.ToString());
+#endif
+    }
+
+    private void SetSetting(string settingName, bool settingValue)
+    {
+#if SERVER
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("PowerScheduler" + settingName, settingValue);
+#endif
+#if CLIENT
+      _settings.SetValueAsBool("psclientplugin", settingName, settingValue);
 #endif
     }
 
@@ -855,7 +875,7 @@ namespace PowerScheduler.Setup
       lock (this)
       {
         // Connect to the local TVserver's IPowerController instance
-        if (RemotePowerControl.Instance != null && RemotePowerControl.Isconnected)
+        if (RemotePowerControl.Instance != null && RemotePowerControl.Instance.IsConnected())
           RemotePowerControl.Instance.GetCurrentState(true, out unattended, out disAllowShutdown, out disAllowShutdownHandler, out nextWakeupTime, out nextWakeupHandler);
       }
 
@@ -865,7 +885,7 @@ namespace PowerScheduler.Setup
       else
         labelWakeupTimeValue.Text = "";
 
-      if (Convert.ToBoolean(GetSetting("ShutdownEnabled", "false")))
+      if (GetSetting("ShutdownEnabled", false))
       {
         labelStandbyStatus.Text = "Standby is handled by PowerScheduler";
         textBoxStandbyHandler.Text = disAllowShutdownHandler;
