@@ -31,10 +31,11 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbSky
 {
   /// <summary>
-  /// A class for handling conditional access, DiSEqC and remote controls for DVBSky tuners.
-  /// Actually with the exception of the GUIDs, the DVBSky conditional access interface is
-  /// identical to the NetUP conditional access interface, and their DiSEqC interface is identical
-  /// to the Conexant interface.
+  /// A class for handling conditional access, DiSEqC and remote controls for DVBSky tuners and
+  /// clones (eg. certain newer TechnoTrend and Mystique models). Actually with the exception of
+  /// the property set GUIDs, the DVBSky conditional access interface is [almost] identical to the
+  /// NetUP conditional access interface, and their DiSEqC interface is identical to the Conexant
+  /// interface.
   /// </summary>
   public class DvbSky : BaseCustomDevice, IConditionalAccessProvider, IConditionalAccessMenuActions, IDiseqcDevice
   {

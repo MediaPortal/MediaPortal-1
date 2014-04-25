@@ -759,42 +759,39 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
         return false;
       }
 
-      IPin pin = DsFindPin.ByDirection(tunerFilter, PinDirection.Output, 0);
-      _propertySet = pin as IKsPropertySet;
-      if (_propertySet == null)
-      {
-        this.LogDebug("NetUP: pin is not a property set");
-        Release.ComObject("NetUP tuner filter output pin", ref pin);
-        return false;
-      }
-
-      // The NetUP property set is found on the tuner filter output pin. Since current NetUP tuners
-      // are implemented as a combined filter, the filter output pin is normally going to be
-      // unconnected when this function is called. That is a problem because a pin won't correctly
-      // report whether it supports a property set unless it is connected to a filter. If this
-      // filter pin is currently unconnected, we temporarily connect an infinite tee so that we can
-      // check if the pin supports the property set.
-      IPin connected;
-      int hr = pin.ConnectedTo(out connected);
-      if (hr == (int)HResult.Severity.Success && connected != null)
-      {
-        // We don't need to connect the infinite tee in this case.
-        Release.ComObject("NetUP tuner filter connected pin", ref connected);
-        KSPropertySupport support;
-        hr = _propertySet.QuerySupported(_propertySetGuid, 0, out support);
-        if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Set))
-        {
-          this.LogDebug("NetUP: property set not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-          return false;
-        }
-        this.LogInfo("NetUP: extension supported");
-        _isNetUp = true;
-        _generalBuffer = Marshal.AllocCoTaskMem(GENERAL_BUFFER_SIZE);
-        return true;
-      }
-
+      IPin pin = null;
       try
       {
+        // Find the property set if it exists.
+        // The DVBSky and TechnoTrend clones expose the property set on the
+        // tuner filter input pin. Try this first because it is easier.
+        pin = DsFindPin.ByDirection(tunerFilter, PinDirection.Input, 0);
+        _propertySet = CheckPropertySet(pin, "input");
+        if (_propertySet != null)
+        {
+          return true;
+        }
+        Release.ComObject("NetUP tuner filter input pin", ref pin);
+
+        // NetUP exposes the property set on the tuner filter output pin. Since
+        // current NetUP tuners are implemented as a combined filter, the
+        // filter output pin is normally going to be unconnected when this
+        // function is called. That is a problem because a pin won't correctly
+        // report whether it supports a property set unless it is connected to
+        // a filter. If this filter pin is currently unconnected, we
+        // temporarily connect an infinite tee so that we can check if the pin
+        // supports the property set.
+        pin = DsFindPin.ByDirection(tunerFilter, PinDirection.Output, 0);
+        IPin connected;
+        int hr = pin.ConnectedTo(out connected);
+        if (hr == (int)HResult.Severity.Success && connected == null)
+        {
+          // We don't need to connect the infinite tee in this case.
+          Release.ComObject("NetUP tuner filter connected pin", ref connected);
+          _propertySet = CheckPropertySet(pin, "output");
+          return _propertySet != null;
+        }
+
         // Get a reference to the filter graph.
         FilterInfo filterInfo;
         hr = tunerFilter.QueryFilterInfo(out filterInfo);
@@ -836,19 +833,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
             return false;
           }
 
-          // Check if the NetUP property set is supported.
-          KSPropertySupport support;
-          hr = _propertySet.QuerySupported(_propertySetGuid, 0, out support);
-          if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Set))
-          {
-            this.LogDebug("NetUP: property set not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-            return false;
-          }
-
-          this.LogInfo("NetUP: extension supported");
-          _isNetUp = true;
-          _generalBuffer = Marshal.AllocCoTaskMem(GENERAL_BUFFER_SIZE);
-          return true;
+          _propertySet = CheckPropertySet(pin, "output");
+          return _propertySet != null;
         }
         finally
         {
@@ -862,11 +848,37 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
       }
       finally
       {
-        if (!_isNetUp)
+        if (_propertySet != null)
+        {
+          this.LogInfo("NetUP: extension supported");
+          _isNetUp = true;
+          _generalBuffer = Marshal.AllocCoTaskMem(GENERAL_BUFFER_SIZE);
+        }
+        else
         {
           Release.ComObject("NetUP tuner filter output pin", ref pin);
         }
       }
+    }
+
+    private IKsPropertySet CheckPropertySet(IPin pin, string pinLogName)
+    {
+      IKsPropertySet propertySet = pin as IKsPropertySet;
+      if (propertySet == null)
+      {
+        this.LogDebug("NetUP: {0} pin is not a property set", pinLogName);
+      }
+      else
+      {
+        KSPropertySupport support;
+        int hr = propertySet.QuerySupported(_propertySetGuid, 0, out support);
+        if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Set))
+        {
+          this.LogDebug("NetUP: property set not supported on {0} pin, hr = 0x{1:x} ({2})", pinLogName, hr, HResult.GetDXErrorString(hr));
+          propertySet = null;
+        }
+      }
+      return propertySet;
     }
 
     #region device state change call backs
