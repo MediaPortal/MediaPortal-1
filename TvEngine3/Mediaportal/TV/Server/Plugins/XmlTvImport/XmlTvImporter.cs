@@ -339,7 +339,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
                   string newLoc = SettingsManagement.GetValue("xmlTv", "") + @"\";
                   this.LogInfo("extracting zip file {0} to location {1}", path, newLoc);
                   ZipFile zip = new ZipFile(path);
-                  zip.ExtractAll(newLoc, true);
+                  zip.ExtractAll(newLoc, ExtractExistingFileAction.OverwriteSilently);
                 }
                 catch (Exception ex2)
                 {
