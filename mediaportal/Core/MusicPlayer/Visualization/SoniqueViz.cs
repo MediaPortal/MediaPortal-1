@@ -339,7 +339,6 @@ namespace MediaPortal.Visualization
         // Create the Visualisation
         visExec = new BASSVIS_EXEC(vizPath);
         visExec.SON_ConfigFile = configFile;
-        visExec.SON_Flags = BASSVISFlags.BASSVIS_DEFAULT;
         visExec.SON_ParentHandle = VisualizationWindow.Handle;
         visExec.Width = VisualizationWindow.Width;
         visExec.Height = VisualizationWindow.Height;
