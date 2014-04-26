@@ -113,7 +113,7 @@ public:
   bool IsMediaChanging();
 
   // From BDEventObserver
-  void HandleBDEvent(BD_EVENT& pEv, UINT64 pPos);
+  void HandleBDEvent(BD_EVENT& pEv);
   void HandleOSDUpdate(OSDTexture& pTexture);
 
   CAMEvent* m_eAudioClipSeen;
