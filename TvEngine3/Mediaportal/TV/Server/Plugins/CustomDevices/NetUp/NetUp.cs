@@ -252,7 +252,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
     public NetUp(Guid propertySetGuid)
     {
       _propertySetGuid = propertySetGuid;
-      if (_propertySetGuid == NETUP_BDA_EXTENSION_PROPERTY_SET)
+      if (_propertySetGuid != NETUP_BDA_EXTENSION_PROPERTY_SET)
       {
         _applicationInfoSize = DEFAULT_APPLICATION_INFO_SIZE;
         _ciStateInfoSize = DEFAULT_CI_STATE_INFO_SIZE;
@@ -921,9 +921,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
         return true;
       }
 
+      _isCaInterfaceOpen = true;
       _mmiBuffer = Marshal.AllocCoTaskMem(MMI_BUFFER_SIZE);
       _isCamPresent = IsConditionalAccessInterfaceReady();
-      _isCaInterfaceOpen = true;
       StartMmiHandlerThread();
 
       this.LogDebug("NetUP: result = success");

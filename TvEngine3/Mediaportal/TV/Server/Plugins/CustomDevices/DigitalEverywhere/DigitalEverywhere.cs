@@ -1637,6 +1637,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
         return true;
       }
 
+      _isCaInterfaceOpen = true;
       _mmiBuffer = Marshal.AllocCoTaskMem(CA_DATA_SIZE);
       _pmtBuffer = Marshal.AllocCoTaskMem(CA_DATA_SIZE);
       _isCamReady = IsConditionalAccessInterfaceReady();
@@ -1646,7 +1647,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
         ReadApplicationInformation();
       }
 
-      _isCaInterfaceOpen = true;
       StartMmiHandlerThread();
 
       this.LogDebug("Digital Everywhere: result = success");
