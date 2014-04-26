@@ -1678,4 +1678,5 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
+  <Import Project="..\..\Packages\MediaInfo.0.7.69\build\MediaInfo.targets" Condition="Exists('..\..\Packages\MediaInfo.0.7.69\build\MediaInfo.targets')" />
 </Project>

@@ -497,6 +497,9 @@ Section "MediaPortal core files (required)" SecCore
   ; ffmpeg
   SetOutPath "$MPdir.Base\MovieThumbnailer"
   File "${git_ROOT}\Packages\ffmpeg.2.1.1\ffmpeg.exe"
+  ; NuGet
+  SetOutPath "$MPdir.Base\"
+  File "${git_ROOT}\Packages\MediaInfo.0.7.69\MediaInfo.dll"
   ; Doc
   SetOutPath "$MPdir.Base\Docs"
   File "${git_MP}\Docs\BASS License.txt"
