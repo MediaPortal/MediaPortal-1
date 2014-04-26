@@ -30,7 +30,7 @@
     <OldToolsVersion>3.5</OldToolsVersion>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile />
-    <NuGetPackageImportStamp>b39e7cb4</NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>1f245f90</NuGetPackageImportStamp>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -1679,7 +1679,6 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
-  <Import Project="..\..\Packages\BASS.2.4.10\build\bass.targets" Condition="Exists('..\..\Packages\BASS.2.4.10\build\bass.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
@@ -1705,8 +1704,8 @@
     <Error Condition="!Exists('..\..\Packages\bass.wasapi.2.4.0.2\build\bass.wasapi.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.wasapi.2.4.0.2\build\bass.wasapi.targets'))" />
     <Error Condition="!Exists('..\..\Packages\bass.wma.2.4.4\build\bass.wma.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.wma.2.4.4\build\bass.wma.targets'))" />
     <Error Condition="!Exists('..\..\Packages\bass.wv.2.4.4\build\bass.wv.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.wv.2.4.4\build\bass.wv.targets'))" />
-    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
   </Target>
+  <Import Project="..\..\Packages\BASS.2.4.10\build\bass.targets" Condition="Exists('..\..\Packages\BASS.2.4.10\build\bass.targets')" />
   <Import Project="..\..\Packages\bass.aac.2.4.4.4\build\bass.aac.targets" Condition="Exists('..\..\Packages\bass.aac.2.4.4.4\build\bass.aac.targets')" />
   <Import Project="..\..\Packages\bass.ac3.2.4.0.3\build\bass.ac3.targets" Condition="Exists('..\..\Packages\bass.ac3.2.4.0.3\build\bass.ac3.targets')" />
   <Import Project="..\..\Packages\bass.alac.2.4.3\build\bass.alac.targets" Condition="Exists('..\..\Packages\bass.alac.2.4.3\build\bass.alac.targets')" />
@@ -1727,5 +1726,4 @@
   <Import Project="..\..\Packages\bass.wasapi.2.4.0.2\build\bass.wasapi.targets" Condition="Exists('..\..\Packages\bass.wasapi.2.4.0.2\build\bass.wasapi.targets')" />
   <Import Project="..\..\Packages\bass.wma.2.4.4\build\bass.wma.targets" Condition="Exists('..\..\Packages\bass.wma.2.4.4\build\bass.wma.targets')" />
   <Import Project="..\..\Packages\bass.wv.2.4.4\build\bass.wv.targets" Condition="Exists('..\..\Packages\bass.wv.2.4.4\build\bass.wv.targets')" />
-  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
 </Project>
