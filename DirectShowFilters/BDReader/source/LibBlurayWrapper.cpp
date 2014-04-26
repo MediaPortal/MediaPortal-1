@@ -710,12 +710,10 @@ void CLibBlurayWrapper::HandleBDEvent(BD_EVENT& ev, bool pIgnorePauseEvents)
       break;
   }
 
-  UINT64 pos = _bd_tell_time(m_pBd);
-
   ivecObservers it = m_eventObservers.begin();
   while (it != m_eventObservers.end())
   {
-    (*it)->HandleBDEvent(ev, pos);
+    (*it)->HandleBDEvent(ev);
     ++it;
   }
 }
