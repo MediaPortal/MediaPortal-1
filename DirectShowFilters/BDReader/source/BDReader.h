@@ -178,7 +178,7 @@ public:
   void STDMETHODCALLTYPE SetBDPlayerSettings(bd_player_settings settings);
 
   // BDEventObserver
-  void HandleBDEvent(BD_EVENT& pEv, UINT64 pPos);
+  void HandleBDEvent(BD_EVENT& pEv);
   void HandleOSDUpdate(OSDTexture& pTexture);
 
   // IFileSourceFilter

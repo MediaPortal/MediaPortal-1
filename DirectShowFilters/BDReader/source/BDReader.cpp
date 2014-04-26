@@ -896,7 +896,7 @@ IDVBSubtitle* CBDReaderFilter::GetSubtitleFilter()
   return m_pDVBSubtitle;
 }
 
-void CBDReaderFilter::HandleBDEvent(BD_EVENT& pEv, UINT64 pPos)
+void CBDReaderFilter::HandleBDEvent(BD_EVENT& pEv)
 {
   switch (pEv.event)
   {

@@ -634,7 +634,7 @@ int CDeMultiplexer::ReadFromFile()
   return 0;
 }
 
-void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
+void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv)
 {
   switch (pEv.event)
   {
