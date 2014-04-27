@@ -479,7 +479,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           DevicePath = tuner.ExternalId,
           Name = tuner.Name,
           Priority = 1,
-          GrabEPG = true,
+          GrabEPG = (tuner.CardType != CardType.Analog && tuner.CardType != CardType.Atsc),   // analog signals don't carry EPG, ATSC EPG not supported
           Enabled = true,
           PreloadCard = false,
           AlwaysSendDiseqcCommands = false,
