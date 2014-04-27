@@ -74,15 +74,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
 
     // NetUP and DVBSky structures don't quite match due to different
     // strategies for 64 bit compatibility and struct alignment. Refer to the
-    // notes in NetUpCommand.Execute() for more detail. The structures below
-    // represent the original NetUP and current DVBSky structures.
+    // notes in ExecuteIoctl() for more detail. The structures below represent
+    // the original NetUP and current DVBSky structures.
 
-    // NetUP 261 vs DVBSky 262 => marshal manually.
+    // Okay.
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct ApplicationInfo    // NETUP_CAM_APPLICATION_INFO
     {
       public MmiApplicationType ApplicationType;
-      private byte Padding;             // New NetUP driver: not present.
       public ushort Manufacturer;
       public ushort ManufacturerCode;
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_STRING_LENGTH)]
@@ -95,7 +94,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
     {
       public NetUpCiState CiState;      // New NetUP driver: DWORD64 instead of DWORD.
 
-      // These fields don't ever seem to be filled by the NetUp driver. We can
+      // These fields don't ever seem to be filled by the NetUP driver. We can
       // query for application info directly.
       public ushort Manufacturer;
       public ushort ManufacturerCode;
@@ -139,15 +138,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
       public uint EntryCount;           // New NetUP driver: DWORD64 instead of DWORD.
     }
 
-    // NetUP 261 vs DVBSky 264 => marshal manually.
+    // Okay.
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct MmiEnquiry   // NETUP_CAM_MMI_ENQUIRY
     {
       [MarshalAs(UnmanagedType.Bool)]
       public bool IsBlindAnswer;
       public byte ExpectedAnswerLength;
-      private byte Padding1;            // New NetUP driver: not present.
-      private short Padding2;           // New NetUP driver: not present.
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_STRING_LENGTH)]
       public byte[] Prompt;
     }
@@ -168,28 +165,24 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
     private static readonly Guid NETUP_BDA_EXTENSION_PROPERTY_SET = new Guid(0x5aa642f2, 0xbf94, 0x4199, 0xa9, 0x8c, 0xc2, 0x22, 0x20, 0x91, 0xe3, 0xc3);
 
     // Default (DVBSky, TechnoTrend clones)
-    private static readonly int DEFAULT_APPLICATION_INFO_SIZE = Marshal.SizeOf(typeof(ApplicationInfo));  // 262
     private static readonly int DEFAULT_CI_STATE_INFO_SIZE = Marshal.SizeOf(typeof(CiStateInfo));         // 264
     private static readonly int DEFAULT_CA_INFO_SIZE = Marshal.SizeOf(typeof(CaInfo));                    // 516
     private static readonly int DEFAULT_MMI_MENU_SIZE = Marshal.SizeOf(typeof(MmiMenu));                  // 17160
-    private static readonly int DEFAULT_MMI_ENQUIRY_SIZE = Marshal.SizeOf(typeof(MmiEnquiry));            // 264
 
     // NetUP
-    private static readonly int NETUP_APPLICATION_INFO_SIZE = DEFAULT_APPLICATION_INFO_SIZE - 1;          // 261
     private static readonly int NETUP_CI_STATE_INFO_SIZE = DEFAULT_CI_STATE_INFO_SIZE + 4;                // 268
     private static readonly int NETUP_CA_INFO_SIZE = DEFAULT_CA_INFO_SIZE + 4;                            // 520
     private static readonly int NETUP_MMI_MENU_SIZE = DEFAULT_MMI_MENU_SIZE + 4;                          // 17164
-    private static readonly int NETUP_MMI_ENQUIRY_SIZE = DEFAULT_MMI_ENQUIRY_SIZE - 3;                    // 261
 
     // max
-    private static readonly int APPLICATION_INFO_SIZE = Math.Max(DEFAULT_APPLICATION_INFO_SIZE, NETUP_APPLICATION_INFO_SIZE);
     private static readonly int CI_STATE_INFO_SIZE = Math.Max(DEFAULT_CI_STATE_INFO_SIZE, NETUP_CI_STATE_INFO_SIZE);
     private static readonly int CA_INFO_SIZE = Math.Max(DEFAULT_CA_INFO_SIZE, NETUP_CA_INFO_SIZE);
     private static readonly int MMI_MENU_SIZE = Math.Max(DEFAULT_MMI_MENU_SIZE, NETUP_MMI_MENU_SIZE);
-    private static readonly int MMI_ENQUIRY_SIZE = Math.Max(DEFAULT_MMI_ENQUIRY_SIZE, NETUP_MMI_ENQUIRY_SIZE);
 
     private const int INSTANCE_SIZE = 32;   // The size of a property instance (KSP_NODE) parameter.
     private const int COMMAND_SIZE = 48;
+    private static readonly int APPLICATION_INFO_SIZE = Marshal.SizeOf(typeof(ApplicationInfo));  // 261
+    private static readonly int MMI_ENQUIRY_SIZE = Marshal.SizeOf(typeof(MmiEnquiry));            // 261
     private static readonly int MMI_ANSWER_SIZE = Marshal.SizeOf(typeof(MmiAnswer));              // 257
     private const int MAX_BUFFER_SIZE = 65536;
     private const int MAX_STRING_LENGTH = 256;
@@ -229,11 +222,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
     private IConditionalAccessMenuCallBacks _caMenuCallBacks = null;
     private object _caMenuCallBackLock = new object();
 
-    private int _applicationInfoSize = NETUP_APPLICATION_INFO_SIZE;
     private int _ciStateInfoSize = NETUP_CI_STATE_INFO_SIZE;
     private int _caInfoSize = NETUP_CA_INFO_SIZE;
     private int _mmiMenuSize = NETUP_MMI_MENU_SIZE;
-    private int _mmiEnquirySize = NETUP_MMI_ENQUIRY_SIZE;
 
     #endregion
 
@@ -254,11 +245,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
       _propertySetGuid = propertySetGuid;
       if (_propertySetGuid != NETUP_BDA_EXTENSION_PROPERTY_SET)
       {
-        _applicationInfoSize = DEFAULT_APPLICATION_INFO_SIZE;
         _ciStateInfoSize = DEFAULT_CI_STATE_INFO_SIZE;
         _caInfoSize = DEFAULT_CA_INFO_SIZE;
         _mmiMenuSize = DEFAULT_MMI_MENU_SIZE;
-        _mmiEnquirySize = DEFAULT_MMI_ENQUIRY_SIZE;
       }
     }
 
@@ -279,20 +268,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
 
       int returnedByteCount;
       int hr = GetIoctl(NetUpIoControl.ApplicationInfo, _mmiBuffer, APPLICATION_INFO_SIZE, out returnedByteCount);
-      if (hr == (int)HResult.Severity.Success && returnedByteCount == _applicationInfoSize)
+      if (hr == (int)HResult.Severity.Success && returnedByteCount == APPLICATION_INFO_SIZE)
       {
-        // Have to marshal manually due to mismatch between the NetUP and
-        // DVBSky structures.
         //Dump.DumpBinary(_mmiBuffer, APPLICATION_INFO_SIZE);
-        this.LogDebug("  type         = {0}", (MmiApplicationType)Marshal.ReadByte(_mmiBuffer, 0));
-        int offset = 0;
-        if (_propertySetGuid != NETUP_BDA_EXTENSION_PROPERTY_SET)
-        {
-          offset++;
-        }
-        this.LogDebug("  manufacturer = 0x{0:x4}", Marshal.ReadInt16(_mmiBuffer, 1 + offset));
-        this.LogDebug("  code         = 0x{0:x4}", Marshal.ReadInt16(_mmiBuffer, 3 + offset));
-        this.LogDebug("  menu title   = {0}", DvbTextConverter.Convert(IntPtr.Add(_mmiBuffer, 5 + offset)));
+        ApplicationInfo info = (ApplicationInfo)Marshal.PtrToStructure(_mmiBuffer, typeof(ApplicationInfo));
+        this.LogDebug("  type         = {0}", info.ApplicationType);
+        this.LogDebug("  manufacturer = 0x{0:x4}", info.Manufacturer);
+        this.LogDebug("  code         = 0x{0:x4}", info.ManufacturerCode);
+        this.LogDebug("  menu title   = {0}", DvbTextConverter.Convert(info.RootMenuTitle));
       }
       else
       {
@@ -404,15 +387,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
       // This was somewhat inconvenient as detecting whether you're running
       // under WOW64 can be awkward. I contacted NetUP and asked whether it
       // would be possible to expose a consistent interface. They kindly
-      // obliged and padded the command struct pointers in their driver for
-      // 32 bit operating systems. At the same time they also changed all
-      // DWORDs in structs to DWORD64, which was unnecessary.
+      // obliged and padded the command struct pointers in their driver for 32
+      // bit operating systems. At the same time they also changed all DWORDs
+      // in structs to DWORD64 (which was unnecessary).
       // ...then I found out DVBSky use the same API but have modified it to
-      // use 32 bit pointers even under 64 bit operating systems. <doh!!!>
-      // I really don't want to maintain two similar versions of this API.
-      // Since NetUP's driver is open source we can patch and compile it as
-      // required.
-      // https://github.com/netup/netup-dvb-s2-ci-dual/
+      // use 32 bit pointers even under 64 bit operating systems. <DOH!!!>
+      // This class supports both variants of the API.
       // mm1352000, 2013-07-20
       if (_operatingSystemPointerSize == 0)
       {
@@ -677,26 +657,15 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
 
         int returnedByteCount;
         int hr = GetIoctl(NetUpIoControl.MmiGetEnquiry, _mmiBuffer, MMI_ENQUIRY_SIZE, out returnedByteCount);
-        if (hr != (int)HResult.Severity.Success || returnedByteCount != _mmiEnquirySize)
+        if (hr != (int)HResult.Severity.Success || returnedByteCount != MMI_ENQUIRY_SIZE)
         {
           this.LogError("NetUP: failed to get enquiry detail, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
           return hr;
         }
 
-        // Have to marshal manually due to mismatch between the NetUP and
-        // DVBSky structures.
         //Dump.DumpBinary(_mmiBuffer, MMI_ENQUIRY_SIZE);
-        mmi.IsBlindAnswer = (Marshal.ReadInt32(_mmiBuffer, 0) != 0);
-        mmi.ExpectedAnswerLength = Marshal.ReadByte(_mmiBuffer, 4);
-        mmi.Prompt = new byte[MAX_STRING_LENGTH];
-        if (_propertySetGuid == NETUP_BDA_EXTENSION_PROPERTY_SET)
-        {
-          prompt = DvbTextConverter.Convert(IntPtr.Add(_mmiBuffer, 5));
-        }
-        else
-        {
-          prompt = DvbTextConverter.Convert(IntPtr.Add(_mmiBuffer, 8));
-        }
+        mmi = (MmiEnquiry)Marshal.PtrToStructure(_mmiBuffer, typeof(MmiEnquiry));
+        prompt = DvbTextConverter.Convert(mmi.Prompt);
       }
 
       lock (_caMenuCallBackLock)
