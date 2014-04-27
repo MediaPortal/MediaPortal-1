@@ -295,6 +295,8 @@ namespace MediaPortal.GUI.Pictures
     private const float KENBURNS_MAXZOOM = 1.30f;
     private const int KENBURNS_XFADE_FRAMES = 60;
 
+    private static SynchronizationContext _mainThreadContext = SynchronizationContext.Current;
+
     #endregion
 
     #region variables
@@ -2973,31 +2975,34 @@ namespace MediaPortal.GUI.Pictures
     /// <param name="filename">filename of item that has started</param>
     private void OnPlayBackStarted(g_Player.MediaType type, string filename)
     {
-      try
+      _mainThreadContext.Send(delegate
       {
-        // Show song only when we are on MyPictures Plugin or slideshow when playing/change music track
-        string activeWindowName;
-        GUIWindow.Window activeWindow;
-        activeWindowName = GUIWindowManager.ActiveWindow.ToString(CultureInfo.InvariantCulture);
-        activeWindow = (GUIWindow.Window)Enum.Parse(typeof(GUIWindow.Window), activeWindowName);
-        if (activeWindow == GUIWindow.Window.WINDOW_SLIDESHOW || activeWindow == GUIWindow.Window.WINDOW_PICTURES)
-          if (g_Player.IsMusic)
-          {
-            if (mDB == null)
+        try
+        {
+          // Show song only when we are on MyPictures Plugin or slideshow when playing/change music track
+          string activeWindowName;
+          GUIWindow.Window activeWindow;
+          activeWindowName = GUIWindowManager.ActiveWindow.ToString(CultureInfo.InvariantCulture);
+          activeWindow = (GUIWindow.Window)Enum.Parse(typeof(GUIWindow.Window), activeWindowName);
+          if (activeWindow == GUIWindow.Window.WINDOW_SLIDESHOW || activeWindow == GUIWindow.Window.WINDOW_PICTURES)
+            if (g_Player.IsMusic)
             {
-              mDB = MusicDatabase.Instance;
+              if (mDB == null)
+              {
+                mDB = MusicDatabase.Instance;
+              }
+              if (!resumeSong)
+              {
+                ShowSong(filename);
+              }
+              resumeSong = false;
             }
-            if (!resumeSong)
-            {
-              ShowSong(filename);
-            }
-            resumeSong = false;
-          }
-      }
-      catch (Exception e)
-      {
-        Log.Debug("GUISlideShow.OnPlayBackStarted", e.Message);
-      }
+        }
+        catch (Exception e)
+        {
+          Log.Debug("GUISlideShow.OnPlayBackStarted", e.Message);
+        }
+      }, null);
     }
 
     #endregion
