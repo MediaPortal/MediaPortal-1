@@ -1406,7 +1406,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
 
       // Instruct the MD filter to decrypt the program.
       Marshal.StructureToPtr(programToDecode, _programBuffer, false);
-      //Dump.DumpBinary(_programmeBuffer, PROGRAM82_SIZE);
+      //Dump.DumpBinary(_programBuffer, PROGRAM82_SIZE);
       Marshal.StructureToPtr(pidsToDecode, _pidBuffer, false);
       //Dump.DumpBinary(_pidBuffer, PIDS_TO_DECODE_SIZE);
       try
