@@ -789,15 +789,6 @@ STDMETHODIMP CBDReaderFilter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE *p
   for (unsigned int i = 0; i < titleCount; i++)
     lib.LogTitleInfo(i, true);
 
-  // Debugging aid - allow GraphEdit to be used
-  if (0)
-  {
-    // Aviator
-    lib.ForceTitleBasedPlayback(true);
-    lib.SetTitle(5);
-    Start();
-  }
-
   lib.Play();
   return m_demultiplexer.Start();
 }
