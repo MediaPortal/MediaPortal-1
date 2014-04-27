@@ -186,7 +186,7 @@ namespace MediaPortal.Configuration.Sections
         if (currentSkin == "NoSkin")
         {
           //Change default skin based on screen aspect ratio
-          currentSkin = screenRatio > 1.5 ? "DefaultWide" : "Default";
+          currentSkin = screenRatio > 1.5 ? "Titan" : "Default";
         }
 
         //
