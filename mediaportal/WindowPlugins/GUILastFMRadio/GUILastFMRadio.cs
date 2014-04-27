@@ -265,15 +265,22 @@ namespace MediaPortal.GUI.LastFMRadio
 
       Log.Debug("Attempting to Tune to last.fm station: {0}", strStation);
 
-      // Clear playlist and start playback
-      var pl = _playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_LAST_FM);
-      pl.Clear();
-      _playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_LAST_FM;
-      _playlistPlayer.Reset();
-
       try
       {
-        LastFMLibrary.TuneRadio(strStation);
+        bool checkTuneRadio = LastFMLibrary.TuneRadio(strStation);
+        if (!checkTuneRadio)
+        {
+          Log.Debug("Can't Tune to last.fm station: {0}", strStation);
+          var dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
+          if (null != dlgNotify)
+          {
+            dlgNotify.SetHeading(GUILocalizeStrings.Get(107890));
+            dlgNotify.SetText(GUILocalizeStrings.Get(161));
+            dlgNotify.DoModal(GetID);
+          }
+
+          return;
+        }
       }
       catch (LastFMException ex)
       {
@@ -289,6 +296,12 @@ namespace MediaPortal.GUI.LastFMRadio
       }
 
       Log.Debug("Tuned to last.fm station: {0}", strStation);
+
+      // Clear playlist and start playback
+      var pl = _playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_LAST_FM);
+      pl.Clear();
+      _playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_LAST_FM;
+      _playlistPlayer.Reset();
 
       try
       {
