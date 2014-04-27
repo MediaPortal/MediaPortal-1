@@ -710,7 +710,14 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
         var pli = dbTracks[trackNo].ToPlayListItem();
         pli.Source = PlayListItem.PlayListItemSource.Recommendation;
         pli.SourceDescription = "LastFM:AutoDJ";
-        pl.Add(pli);
+        if (i != (numTracksToAdd - 1))
+        {
+          pl.Add(pli, false);
+        }
+        else
+        {
+          pl.Add(pli, true);
+        }
         Log.Info("Auto DJ: Added to playlist: {0} - {1}", dbTracks[trackNo].Artist, dbTracks[trackNo].Title);
         dbTracks.RemoveAt(trackNo);  // remove song after adding to playlist to prevent the same sone being added twice
       }
