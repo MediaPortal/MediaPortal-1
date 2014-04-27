@@ -109,10 +109,6 @@
       <Project>{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}</Project>
       <Name>TvLibrary.Interfaces</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\TvService.Interfaces\TvService.Interfaces.csproj">
-      <Project>{A2BFFBDD-3BEA-4B68-94F1-C34D2BE10AEB}</Project>
-      <Name>TvService.Interfaces</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Entities\Entities.csproj">
       <Project>{4C2D9698-AF44-4157-99B6-48F5269F20CC}</Project>
       <Name>Entities</Name>
@@ -120,10 +116,6 @@
     <ProjectReference Include="..\EntityModel\EntityModel.csproj">
       <Project>{4D0F06A3-DE88-4395-823F-67B27DE30E81}</Project>
       <Name>EntityModel</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Presentation\Presentation.csproj">
-      <Project>{FB53D159-8115-4155-921D-F64E0072A633}</Project>
-      <Name>Presentation</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
