@@ -612,7 +612,7 @@ namespace MediaPortal.Player
     protected IMediaSeeking _mediaSeeking = null;
     protected double _currentPos;
     protected double _duration = -1d;
-    protected DsLong _currentPosDS;
+    protected DsLong _currentPosDS = 0;
     protected DsLong _durationDS = -1;
 
     protected DsROTEntry _rotEntry = null;
