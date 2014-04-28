@@ -21,7 +21,7 @@
 using System;
 using System.Collections;
 using System.Configuration.Install;
-using System.IO;
+using System.Reflection;
 using System.ServiceProcess;
 using System.Threading;
 using System.Windows.Forms;
@@ -35,11 +35,25 @@ namespace Mediaportal.TV.Server.TVService
     //private Thread _tvServiceThread = null;
     private static Thread _unhandledExceptionInThread = null;
 
+    const int SERVICE_ACCEPT_PRESHUTDOWN = 0x100;   // not supported on Windows XP
+    const int SERVICE_CONTROL_PRESHUTDOWN = 0xf;    // not supported on Windows XP
+
     /// <summary>
     /// Initializes a new instance of the <see cref="Service1"/> class.
     /// </summary>
     public Service1()
     {
+      if (OSInfo.OSInfo.VistaOrLater())
+      {
+        // Enable pre-shutdown notification by accessing the ServiceBase class's internals through .NET reflection (code by Siva Chandran P)
+        FieldInfo acceptedCommandsFieldInfo = typeof(ServiceBase).GetField("acceptedCommands", BindingFlags.Instance | BindingFlags.NonPublic);
+        if (acceptedCommandsFieldInfo != null)
+        {
+          int value = (int)acceptedCommandsFieldInfo.GetValue(this);
+          acceptedCommandsFieldInfo.SetValue(this, value | SERVICE_ACCEPT_PRESHUTDOWN);
+        }
+      }
+
       AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
       InitializeComponent();
     }
@@ -176,6 +190,7 @@ namespace Mediaportal.TV.Server.TVService
       else
       {
         ServiceBase[] ServicesToRun = new ServiceBase[] { new Service1() };
+        ServicesToRun[0].CanShutdown = true;    // Allow OnShutdown()
         ServiceBase.Run(ServicesToRun);
       }
     }
@@ -338,6 +353,31 @@ namespace Mediaportal.TV.Server.TVService
       }
       base.OnStop();
       ExitCode = 0;
+    }
+
+    /// <summary>
+    /// When implemented in a derived class, executes when the system is shutting down. Specifies what should occur immediately prior to the system shutting down.
+    /// </summary>
+    protected override void OnShutdown()
+    {
+      OnStop();
+    }
+
+    /// <summary>
+    /// When implemented in a derived class, executes when the Service Control Manager (SCM) passes a custom command to the service. Specifies actions to take when a command with the specified parameter value occurs.
+    /// </summary>
+    /// <param name="command"></param>
+    protected override void OnCustomCommand(int command)
+    {
+      // Check for pre-shutdown notification (code by Siva Chandran P)
+      if (command == SERVICE_CONTROL_PRESHUTDOWN)
+      {
+        OnStop();
+      }
+      else
+      {
+        base.OnCustomCommand(command);
+      }
     }
   }
 }
