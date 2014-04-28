@@ -40,7 +40,7 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.CardHandler
     bool IsConditionalAccessSupported { get; }
     bool CiMenuSupported { get; }
 
-    ITVCard Card { get; set; }    
+    ITVCard Card { get; }    
     bool IsIdle { get; }
     Card DataBaseCard { get; set; }
     CardType Type { get; }

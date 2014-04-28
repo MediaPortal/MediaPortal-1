@@ -62,7 +62,12 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     public TvCardHandler(Card dbsCard, ITVCard card)
     {      
       _dbsCard = dbsCard;
-      Card = card;
+      _card = card;
+      if (_card != null)
+      {
+        _card.Context = new TvCardContext();
+        _card.Parameters = Settings;
+      }
       _userManagement = new UserManagement(this);
       _parkedUserManagement = new ParkedUserManagement(this);
 
@@ -161,15 +166,6 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     public ITVCard Card
     {
       get { return _card; }
-      set
-      {
-        _card = value;
-        if (_card.Context == null)
-        {
-          _card.Context = new TvCardContext();
-        }
-        SetParameters();
-      }
     }
 
     /// <summary>
@@ -438,15 +434,6 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       _card.Dispose();
     }
     
-    private void SetParameters()
-    {
-      if (_card == null)
-      {
-        return;
-      }      
-      _card.Parameters = Settings;
-    }
-
     /// <summary>
     /// Gets the current channel.
     /// </summary>
