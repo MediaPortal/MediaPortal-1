@@ -161,11 +161,9 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.ShowInTaskbar = false;
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
       this.Text = "Select tuningdetail type";
-      this.Load += new System.EventHandler(this.FormChooseTuningDetailType_Load);
       this.mpGroupBox1.ResumeLayout(false);
       this.mpGroupBox1.PerformLayout();
       this.ResumeLayout(false);
-
     }
 
     #endregion
