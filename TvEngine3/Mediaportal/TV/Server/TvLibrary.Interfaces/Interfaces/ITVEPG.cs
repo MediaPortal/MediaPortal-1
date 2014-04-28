@@ -62,24 +62,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
   }
 
   /// <summary>
-  /// interface for dvb epg grabbing
-  /// </summary>
-  public interface ITVEPG
-  {
-    /// <summary>
-    /// Starts the EPG grabber.
-    /// When the epg has been received the OnEpgReceived event will be fired
-    /// </summary>
-    void GrabEpg(BaseEpgGrabber callBack);
-
-    /// <summary>
-    /// returns a list of all epg data for each channel found.
-    /// </summary>
-    /// <value>The epg.</value>
-    List<EpgChannel> Epg { get; }
-  }
-
-  /// <summary>
   /// interface for EPG events
   /// </summary>
   public interface IEpgEvents
