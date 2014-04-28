@@ -1052,44 +1052,6 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
       // Load initial settings only once
       if (_settings == null)
       {
-        // Check if update of old PS settings is necessary
-        Setting setting = SettingsManagement.GetSetting("PowerSchedulerExpertMode");
-        if (setting.Value == "")
-        {
-          // TODO how to delete a setting?
-          //setting.Remove();
-
-          // Initialise list of old and new settings to update
-          List<String[]> settingNames = new List<String[]>();
-          settingNames.Add(new String[] { "PreventStandybyWhenSpecificSharesInUse", "PowerSchedulerActiveShares" });
-          settingNames.Add(new String[] { "PreventStandybyWhenSharesInUse", "PowerSchedulerActiveSharesEnabled" });
-          settingNames.Add(new String[] { "PowerSchedulerEpgCommand", "PowerSchedulerEPGCommand" });
-          settingNames.Add(new String[] { "PreventStandbyWhenGrabbingEPG", "PowerSchedulerEPGPreventStandby" });
-          settingNames.Add(new String[] { "WakeupSystemForEPGGrabbing", "PowerSchedulerEPGWakeup" });
-          settingNames.Add(new String[] { "EPGWakeupConfig", "PowerSchedulerEPGWakeupConfig" });
-          settingNames.Add(new String[] { "NetworkMonitorEnabled", "PowerSchedulerNetworkMonitorEnabled" });
-          settingNames.Add(new String[] { "NetworkMonitorIdleLimit", "PowerSchedulerNetworkMonitorIdleLimit" });
-          settingNames.Add(new String[] { "PowerSchedulerPreNoShutdownTime", "PowerSchedulerPreNoStandbyTime" });
-          settingNames.Add(new String[] { "PowerSchedulerShutdownActive", "PowerSchedulerShutdownEnabled" });
-          settingNames.Add(new String[] { "PowerSchedulerStandbyAllowedStart", "PowerSchedulerStandbyHoursFrom" });
-          settingNames.Add(new String[] { "PowerSchedulerStandbyAllowedEnd", "PowerSchedulerStandbyHoursTo" });
-
-          // Update settings names
-          foreach (String[] settingName in settingNames)
-          {
-            string value = SettingsManagement.GetValue(settingName[0], "---");
-            if (value != "---")
-            {
-              SettingsManagement.SaveValue(settingName[1], value);
-            }
-            else
-            {
-              // TODO how to delete a setting?
-              //setting.Remove();
-            }
-          }
-        }
-
         _settings = new PowerSettings();
         changed = true;
 
