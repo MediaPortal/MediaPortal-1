@@ -575,10 +575,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
       TimeSpan tsExistingRec = endExisting - startExisting;
 
       bool isOverlap = startNew < endExisting && endNew > startExisting;
-      bool hasIncompleteDuration = (tsNewRec.Minutes != tsExistingRec.Minutes);
-      bool isIncompleteRecording = hasIncompleteDuration && isOverlap;
+      bool hasIncompleteDuration = ((int)tsNewRec.TotalMinutes != (int)tsExistingRec.TotalMinutes);
+      bool isSameChannel = rec.IdChannel == newRec.Channel.IdChannel;   // avoids triggering incorrectly on +1 channels
 
-      return isIncompleteRecording;
+      return hasIncompleteDuration && isOverlap && isSameChannel;
     }
 
 
