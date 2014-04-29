@@ -68,7 +68,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       base.OnSectionDeActivated();
     }
 
-    private void SaveSettings()
+    private override void SaveSettings()
     {
       _settingServiceAgent.SaveValue("xmlTv", textBoxFolder.Text);
       _settingServiceAgent.SaveValue("xmlTvUseTimeZone", checkBox1.Checked);
