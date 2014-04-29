@@ -457,12 +457,5 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
         }
       }
     }
-
-    public IQueryable<ProgramCategory> IncludeAllRelations(IQueryable<ProgramCategory> query)
-    {
-      var includeRelations = query.Include(p => p.IdTvGuideCategory);
-
-      return includeRelations;
-    }
   }
 }
