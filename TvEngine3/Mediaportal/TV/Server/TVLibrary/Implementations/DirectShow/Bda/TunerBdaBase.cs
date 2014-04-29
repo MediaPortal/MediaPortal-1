@@ -69,7 +69,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// Enable or disable use of the MPEG 2 demultiplexer and BDA TIF. Compatibility with some tuners
     /// requires these filters to be connected into the graph.
     /// </summary>
-    private bool _addCompatibilityFilters = false;
+    private bool _addCompatibilityFilters = true;
 
     /// <summary>
     /// An infinite tee filter, used to fork the stream to the demultiplexer and TS writer/analyser.
