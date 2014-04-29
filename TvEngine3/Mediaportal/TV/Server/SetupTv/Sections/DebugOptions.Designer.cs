@@ -31,11 +31,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private void InitializeComponent()
     {
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DebugOptions));
-      this.mpLabelGeneralWarning = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.mpCheckBoxTsWriterDumpInputs = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
-      this.mpCheckBoxTsMuxerDumpInputs = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
-      this.mpLabelTsWriterDumpInputsWarning = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.mpLabelTsMuxerDumpInputsWarning = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpLabelGeneralWarning = new MPLabel();
+      this.mpCheckBoxTsWriterDumpInputs = new MPCheckBox();
+      this.mpCheckBoxTsMuxerDumpInputs = new MPCheckBox();
+      this.mpLabelTsWriterDumpInputsWarning = new MPLabel();
+      this.mpLabelTsMuxerDumpInputsWarning = new MPLabel();
       this.SuspendLayout();
       // 
       // mpLabelGeneralWarning

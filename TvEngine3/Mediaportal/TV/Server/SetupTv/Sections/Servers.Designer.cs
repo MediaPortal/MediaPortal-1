@@ -39,7 +39,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
       this.chooseIPForStreamingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-      this.buttonChooseIp = new System.Windows.Forms.Button();
+      this.buttonChooseIp = new MPButton();
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
       this.contextMenuStrip1.SuspendLayout();
@@ -166,7 +166,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private MPListView mpListView1;
     private System.Windows.Forms.ColumnHeader columnHeader1;    
     private System.Windows.Forms.ColumnHeader columnHeader2;    
-    private System.Windows.Forms.Button buttonChooseIp;
+    private MPButton buttonChooseIp;
     private System.Windows.Forms.ImageList imageList1;
 		private System.Windows.Forms.TabControl tabControl1;
     private System.Windows.Forms.TabPage tabPage1;

@@ -38,7 +38,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage2 = new System.Windows.Forms.TabPage();
       this.pictureBox1 = new System.Windows.Forms.PictureBox();
-      this.btnCombine = new System.Windows.Forms.Button();
+      this.btnCombine = new MPButton();
       this.mpLabel3 = new MPLabel();
       this.mpListViewMapped = new MPListView();
       this.columnHeader8 = new System.Windows.Forms.ColumnHeader();
@@ -261,7 +261,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private MPComboBox mpComboBoxCard;
     private MPLabel mpLabel1;
     private System.Windows.Forms.ColumnHeader columnHeader8;
-    private System.Windows.Forms.Button btnCombine;
+    private MPButton btnCombine;
     private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
     private System.Windows.Forms.ToolStripMenuItem addToFavoritesToolStripMenuItem;
     private System.Windows.Forms.ImageList imageList1;

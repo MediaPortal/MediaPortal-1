@@ -37,7 +37,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.CIMenu
           this.Choices = new System.Windows.Forms.ListBox();
           this.btnCloseMenu = new MPButton();
           this.btnSendAnswer = new MPButton();
-          this.grpCIMenu = new System.Windows.Forms.GroupBox();
+          this.grpCIMenu = new MPGroupBox();
           this.CiAnswer = new MPTextBox();
           this.CiRequest = new MPLabel();
           this.lblComment = new MPLabel();
@@ -181,7 +181,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.CIMenu
         private System.Windows.Forms.ListBox Choices;
         private MPButton btnCloseMenu;
         private MPButton btnSendAnswer;
-        private System.Windows.Forms.GroupBox grpCIMenu;
+        private MPGroupBox grpCIMenu;
         private MPTextBox CiAnswer;
         private MPLabel CiRequest;
         private MPLabel lblComment;

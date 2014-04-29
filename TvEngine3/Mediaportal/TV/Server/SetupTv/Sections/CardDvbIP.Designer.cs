@@ -30,18 +30,18 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      this.checkBoxCreateGroups = new System.Windows.Forms.CheckBox();
+      this.checkBoxCreateGroups = new MPCheckBox();
       this.listViewStatus = new System.Windows.Forms.ListView();
       this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.progressBarQuality = new System.Windows.Forms.ProgressBar();
       this.progressBarLevel = new System.Windows.Forms.ProgressBar();
-      this.label2 = new System.Windows.Forms.Label();
-      this.label1 = new System.Windows.Forms.Label();
+      this.label2 = new MPLabel();
+      this.label1 = new MPLabel();
       this.progressBar1 = new System.Windows.Forms.ProgressBar();
       this.mpButtonScanTv = new MPButton();
       this.mpLabel1 = new MPLabel();
       this.mpComboBoxService = new MPComboBox();
-      this.checkBoxEnableChannelMoveDetection = new System.Windows.Forms.CheckBox();
+      this.checkBoxEnableChannelMoveDetection = new MPCheckBox();
       this.SuspendLayout();
       // 
       // checkBoxCreateGroups
@@ -181,18 +181,18 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     #endregion
 
-    private System.Windows.Forms.CheckBox checkBoxCreateGroups;
+    private MPCheckBox checkBoxCreateGroups;
     private System.Windows.Forms.ListView listViewStatus;
     private System.Windows.Forms.ColumnHeader columnHeader1;
     private System.Windows.Forms.ProgressBar progressBarQuality;
     private System.Windows.Forms.ProgressBar progressBarLevel;
-    private System.Windows.Forms.Label label2;
-    private System.Windows.Forms.Label label1;
+    private MPLabel label2;
+    private MPLabel label1;
     private System.Windows.Forms.ProgressBar progressBar1;
     private MPButton mpButtonScanTv;
     private MPLabel mpLabel1;
     private MPComboBox mpComboBoxService;
-    private System.Windows.Forms.CheckBox checkBoxEnableChannelMoveDetection;
+    private MPCheckBox checkBoxEnableChannelMoveDetection;
 
   }
 }
