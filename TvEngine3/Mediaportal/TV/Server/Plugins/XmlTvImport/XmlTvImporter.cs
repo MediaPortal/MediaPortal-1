@@ -529,7 +529,6 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
         {
           //timed out;
           _remoteFileDownloadInProgress = false;          
-          Setting setting;
           SettingsManagement.SaveValue("xmlTvRemoteScheduleTransferStatus", "File transfer timed out.");
           SettingsManagement.SaveValue("xmlTvRemoteScheduleLastTransfer", now);
 
