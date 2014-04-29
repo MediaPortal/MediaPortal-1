@@ -28,9 +28,6 @@ namespace Mediaportal.TV.TvPlugin.EPG
 {
   public sealed class TVGuide : TvGuideBase
   {
-    [SkinControl(98)] private GUIImage _videoBackground;
-    [SkinControl(99)] private GUIVideoControl _videoWindow;
-
     #region Ctor
 
     public TVGuide()
