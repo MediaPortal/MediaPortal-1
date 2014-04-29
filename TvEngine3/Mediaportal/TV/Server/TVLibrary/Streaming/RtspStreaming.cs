@@ -112,10 +112,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
       try
       {
         IList<IPAddress> preferedAddresses = GetDefGatewayNetAddresses();
-        IPHostEntry local = Dns.GetHostByName(hostName);
         IPAddress selectedAddress = null;
 
-        foreach (IPAddress ipaddress in local.AddressList)
+        foreach (IPAddress ipaddress in Dns.GetHostAddresses(hostName))
         {
           if (ipaddress.AddressFamily == AddressFamily.InterNetwork)
           {
