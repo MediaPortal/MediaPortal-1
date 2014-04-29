@@ -105,7 +105,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       {
         _ignoreItemCheckedEvent = true;
         LoadLanguages();
-        mpCheckBoxStoreOnlySelected.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetValue(storeOnlySelectedSettingsKey, "no") == "yes");
+        mpCheckBoxStoreOnlySelected.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue(storeOnlySelectedSettingsKey, false);
 
         Dictionary<int, CardType> cards = new Dictionary<int, CardType>();
         IList<Card> dbsCards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
