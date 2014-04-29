@@ -47,7 +47,6 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities.Cache
       T type;
       lock (_cacheLock)
       {
-        T typeValue;
         _cache.TryGetValue(key, out type);
       }
       return type;
@@ -59,7 +58,6 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities.Cache
       bool hasValue;      
       lock (_cacheLock)
       {
-        T typeValue;
         hasValue = _cache.TryGetValue(key, out type);
       }
 
