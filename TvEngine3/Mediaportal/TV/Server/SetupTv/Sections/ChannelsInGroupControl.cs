@@ -311,6 +311,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           dlg.Channel = channel;
           dlg.ShowDialog();
           map.Channel = dlg.Channel;
+          listView1.Items[indexes[0]].Text = channel.DisplayName;
           return;
         }
       }
