@@ -117,8 +117,8 @@ namespace Mediaportal.TV.Server.TVControl.Events
     /// <param name="eventType">Type of the event.</param>
     /// <param name="card">The card.</param>
     /// <param name="user">The user.</param>
-    /// <param name="schedule">The schedule.</param>
-    /// <param name="recording">The recording.</param>
+    /// <param name="scheduleId">The schedule identifier.</param>
+    /// <param name="recordingId">The recording identifier.</param>
     public TvServerEventArgs(TvServerEventType eventType, VirtualCard card, User user, int scheduleId,
                              int recordingId)
     {
@@ -136,7 +136,7 @@ namespace Mediaportal.TV.Server.TVControl.Events
     /// <param name="eventType">Type of the event.</param>
     /// <param name="card">The card.</param>
     /// <param name="user">The user.</param>
-    /// <param name="conflict">The conflict.</param>
+    /// <param name="conflictId">The conflict identifier.</param>
     public TvServerEventArgs(TvServerEventType eventType, VirtualCard card, User user, int conflictId)
     {
       _eventType = eventType;
