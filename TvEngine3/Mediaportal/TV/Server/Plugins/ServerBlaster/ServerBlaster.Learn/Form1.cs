@@ -814,11 +814,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn
                 {
                   hashTable[objectKey] = new BlasterCommand(objectKey as string, objectValue as byte[]);
                 }
-                else if (objectValue is Hashtable)
-                {
-                  bool b = true;
-                }
-                else
+                else if (!(objectValue is Hashtable))
                 {
                   this.LogDebug("Form1.LoadConfig: Unexpected value type '{0}'", objectValue.GetType());
                 }
