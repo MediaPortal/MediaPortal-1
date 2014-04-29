@@ -27,6 +27,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Action = MediaPortal.GUI.Library.Action;
+using MediaPortal.Drawing;
 
 namespace Mediaportal.TV.TvPlugin.Teletext
 {
@@ -515,13 +516,13 @@ namespace Mediaportal.TV.TvPlugin.Teletext
     /// </summary>
     protected void UpdatePage()
     {
-      imgTeletextForeground.Centered = false;
+      imgTeletextBackground.VerticalAlignment = VerticalAlignment.Center;
       imgTeletextForeground.KeepAspectRatio = false;
       imgTeletextForeground.ColorKey = Color.HotPink.ToArgb();
       imgTeletextForeground.SetMemoryImageSize(_renderer.Width, _renderer.Height);
       imgTeletextForeground.FileName = "[teletextpage]";
 
-      imgTeletextBackground.Centered = false;
+      imgTeletextBackground.VerticalAlignment = VerticalAlignment.Center;
       imgTeletextBackground.KeepAspectRatio = false;
       imgTeletextBackground.ColorKey = Color.HotPink.ToArgb();
       imgTeletextBackground.SetMemoryImageSize(_renderer.Width, _renderer.Height);
