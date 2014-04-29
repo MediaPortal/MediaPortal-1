@@ -45,12 +45,27 @@ namespace Mediaportal.TV.Server.TVService
     {
       if (OSInfo.OSInfo.VistaOrLater())
       {
-        // Enable pre-shutdown notification by accessing the ServiceBase class's internals through .NET reflection (code by Siva Chandran P)
-        FieldInfo acceptedCommandsFieldInfo = typeof(ServiceBase).GetField("acceptedCommands", BindingFlags.Instance | BindingFlags.NonPublic);
-        if (acceptedCommandsFieldInfo != null)
+        try
         {
-          int value = (int)acceptedCommandsFieldInfo.GetValue(this);
-          acceptedCommandsFieldInfo.SetValue(this, value | SERVICE_ACCEPT_PRESHUTDOWN);
+          // Call base Creator
+          MethodInfo init = typeof(ServiceBase).GetMethod("Initialize", BindingFlags.Instance | BindingFlags.NonPublic);
+          init.Invoke(this, new object[] { false });
+
+          // Register the "TvServiceCallbackEx" handler
+          Type targetDelegate = typeof(ServiceBase).Assembly.GetType("System.ServiceProcess.NativeMethods+ServiceControlCallbackEx");
+          FieldInfo commandCallbackEx = typeof(ServiceBase).GetField("commandCallbackEx", BindingFlags.Instance | BindingFlags.NonPublic);
+          commandCallbackEx.SetValue(this, Delegate.CreateDelegate(targetDelegate, this, "TvServiceCallbackEx"));
+
+          // Accept SERVICE_CONTROL_PRESHUTDOWN
+          var acceptedCommands = typeof(ServiceBase).GetField("acceptedCommands", BindingFlags.Instance | BindingFlags.NonPublic);
+          int accCom = (int)acceptedCommands.GetValue(this);
+          acceptedCommands.SetValue(this, accCom | SERVICE_ACCEPT_PRESHUTDOWN);
+
+        }
+        catch (Exception ex)
+        {
+          this.LogError(ex, "Exception on Starting TV Service");
+          throw;
         }
       }
 
@@ -364,19 +379,25 @@ namespace Mediaportal.TV.Server.TVService
     }
 
     /// <summary>
-    /// When implemented in a derived class, executes when the Service Control Manager (SCM) passes a custom command to the service. Specifies actions to take when a command with the specified parameter value occurs.
+    /// Handle service events
     /// </summary>
-    /// <param name="command"></param>
-    protected override void OnCustomCommand(int command)
+    /// <param name="control"></param>
+    /// <param name="eventType"></param>
+    /// <param name="eventData"></param>
+    /// <param name="eventContext"></param>
+    /// <returns></returns>
+    internal virtual int TvServiceCallbackEx(int control, int eventType, IntPtr eventData, IntPtr eventContext)
     {
-      // Check for pre-shutdown notification (code by Siva Chandran P)
-      if (command == SERVICE_CONTROL_PRESHUTDOWN)
+      var baseCallback = typeof(ServiceBase).GetMethod("ServiceCommandCallbackEx", BindingFlags.Instance | BindingFlags.NonPublic);
+      switch (control)
       {
-        OnStop();
-      }
-      else
-      {
-        base.OnCustomCommand(command);
+        case SERVICE_CONTROL_PRESHUTDOWN:
+          this.LogDebug("TV Service got PRESHUTDOWN event");
+          // Pretend shutdown was called
+          return (int)baseCallback.Invoke(this, new object[] { 0x00000005, eventType, eventData, eventContext });
+        default:
+          // Call base
+          return (int)baseCallback.Invoke(this, new object[] { control, eventType, eventData, eventContext });
       }
     }
   }
