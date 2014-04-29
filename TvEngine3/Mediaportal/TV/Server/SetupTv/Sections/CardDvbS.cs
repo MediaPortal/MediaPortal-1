@@ -532,10 +532,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
               name += ts.SatelliteName[i];
           }
           
-
           ts.Satellite = new Satellite { SatelliteName = name, TransponderFileName = ts.FileName };
-          ts.FileName = ts.FileName;
-
           ServiceAgents.Instance.CardServiceAgent.SaveSatellite(ts.Satellite);
         }
       }
