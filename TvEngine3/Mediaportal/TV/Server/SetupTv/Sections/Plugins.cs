@@ -60,11 +60,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         item.SubItems.Add(plugin.Name);
         item.SubItems.Add(plugin.Author);
         item.SubItems.Add(plugin.Version);
-        Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue(String.Format("plugin{0}", plugin.Name), "false");
-        bool settingValue;
-        if (bool.TryParse(setting.Value, out settingValue))
-          item.Checked = settingValue;
-        item.Tag = setting;
+        item.Tag = string.Format("plugin{0}", plugin.Name);
+        item.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue((string)item.Tag, false);
       }
       listGroup = listView1.Groups["listViewGroupIncompatible"];
       foreach (Type plugin in _loader.IncompatiblePlugins)
@@ -84,7 +81,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       if (_needRestart)
       {
-        // ServiceAgents.Instance.ControllerService.Restart();
+        MessageBox.Show(this, "The activated plugins will be started after you restart the TVService manually",
+          "Plugin activation", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
       }
       base.OnSectionDeActivated();
     }
@@ -93,17 +91,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       if (_ignoreEvents)
         return;
-      Setting setting = e.Item.Tag as Setting;
-      if (setting == null)
-      {
-        e.Item.Checked = false;
-        return;
-      }
-      
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue(setting.Tag, e.Item.Checked);
+
+      string settingName = (string)e.Item.Tag;
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue(settingName, e.Item.Checked);
       _needRestart = true;
 
-      OnChanged(setting, EventArgs.Empty);
+      OnChanged(settingName, EventArgs.Empty);
     }
 
     //Pass on the information for the plugin that was changed
