@@ -1,16 +1,14 @@
 using System;
 using System.Collections.Generic;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.CiMenu;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 using Mediaportal.TV.Server.TVLibrary.Services;
 
 namespace Mediaportal.TV.Server.TVLibrary.EventDispatchers
 {
   public class CiMenuManager : EventDispatcher, IConditionalAccessMenuCallBacks
   {
-
-
     #region CI Menu Event handling
 
     /// <summary>
@@ -101,10 +99,10 @@ namespace Mediaportal.TV.Server.TVLibrary.EventDispatchers
     /// <returns></returns>
     public int OnCiMenu(string lpszTitle, string lpszSubTitle, string lpszBottom, int nNumChoices)
     {
-      var curMenu = new CiMenu(lpszTitle, lpszSubTitle, lpszBottom, CiMenuState.Opened) { NumChoices = nNumChoices };
+      _curMenu = new CiMenu(lpszTitle, lpszSubTitle, lpszBottom, CiMenuState.Opened) { NumChoices = nNumChoices };
       if (nNumChoices == 0)
       {
-        curMenu.State = CiMenuState.NoChoices;
+        _curMenu.State = CiMenuState.NoChoices;
       }
 
       CheckForCallback();
