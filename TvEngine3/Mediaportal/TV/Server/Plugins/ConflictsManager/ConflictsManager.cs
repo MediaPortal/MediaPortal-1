@@ -293,7 +293,6 @@ namespace Mediaportal.TV.Server.Plugins.ConflictsManager
         bool assigned = false;
         Schedule lastOverlappingSchedule = null;
         int lastBusyCard = 0;
-        bool overlap = false;
 
         foreach (Card card in cardsList)
         {
