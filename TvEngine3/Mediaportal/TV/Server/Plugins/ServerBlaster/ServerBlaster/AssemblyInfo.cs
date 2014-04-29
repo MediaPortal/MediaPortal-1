@@ -37,7 +37,6 @@ using MediaPortal.Common.Utils;
 // COM, set the ComVisible attribute to true on that type.
 
 [assembly: ComVisible(false)]
-[assembly: CLSCompliant(true)]
 
 [assembly: CompatibleVersion("Own")]
 [assembly: UsesSubsystem("TVE")]
