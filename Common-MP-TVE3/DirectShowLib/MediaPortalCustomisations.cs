@@ -162,6 +162,9 @@ namespace DirectShowLib
       );
   }
 
+  // Disable obsolete interface warning. Some implementations of IEncoderAPI
+  // that we want to support do not implement ICodecAPI.
+  #pragma warning disable 618
   [ComImport, SuppressUnmanagedCodeSecurity,
    Guid("02997C3B-8E1B-460e-9270-545E0DE9563E"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -210,6 +213,7 @@ namespace DirectShowLib
 
     #endregion
   }
+  #pragma warning restore 618
 }
 
   #endregion

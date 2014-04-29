@@ -94,7 +94,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftEncoder
     private bool _isMicrosoftEncoder = false;
     private List<ICodecAPI> _interfacesCodecApi = new List<ICodecAPI>();
     private List<IVideoEncoder> _interfacesVideoEncoder = new List<IVideoEncoder>();
+    // Disable obsolete interface warning. Some implementations of
+    // IEncoderAPI that we want to support do not implement ICodecAPI.
+    #pragma warning disable 618
     private List<IEncoderAPI> _interfacesEncoderApi = new List<IEncoderAPI>();
+    #pragma warning restore 618
 
     private List<IsParameterSupportedDelegate> _delegatesIsSupported = new List<IsParameterSupportedDelegate>();
     private List<GetParameterRangeDelegate> _delegatesGetRange = new List<GetParameterRangeDelegate>();
@@ -136,7 +140,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftEncoder
         return true;
       }
 
+      // Disable obsolete interface warning. Some implementations of
+      // IEncoderAPI that we want to support do not implement ICodecAPI.
+      #pragma warning disable 618
       IEncoderAPI encoderApi = obj as IEncoderAPI;
+      #pragma warning restore 618
       if (encoderApi != null)
       {
         this.LogDebug("Microsoft encoder:     found IEncoderAPI interface");
@@ -598,7 +606,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftEncoder
 
       for (int i = 0; i < _interfacesEncoderApi.Count; i++)
       {
+        // Disable obsolete interface warning. Some implementations of
+        // IEncoderAPI that we want to support do not implement ICodecAPI.
+        #pragma warning disable 618
         IEncoderAPI encoderApi = _interfacesEncoderApi[i];
+        #pragma warning restore 618
         Release.ComObject(string.Format("Microsoft encoder encoder API interface {0}", i), ref encoderApi);
       }
       _interfacesEncoderApi.Clear();
