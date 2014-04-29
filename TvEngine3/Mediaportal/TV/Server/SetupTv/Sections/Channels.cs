@@ -239,7 +239,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         ListViewItem item = mpListView1.Items[indexes[i]];
 
         Channel channel = (Channel)item.Tag;
-        MappingHelper.AddChannelToGroup(ref channel, @group);        
+        MappingHelper.AddChannelToGroup(ref channel, @group);
 
         string groupString = item.SubItems[1].Text;
         if (groupString == string.Empty)
@@ -423,19 +423,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       {
         channel = dlg.Channel;
         mpListView1.Items[indexes[0]].Tag = channel;
-        IList<Card> dbsCards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
-        Dictionary<int, CardType> cards = new Dictionary<int, CardType>();
-        foreach (Card card in dbsCards)
-        {
-          cards[card.IdCard] = ServiceAgents.Instance.ControllerServiceAgent.Type(card.IdCard);
-        }
         mpListView1.BeginUpdate();
         try
         {
           _ignoreItemCheckedEvent = true;
-          mpListView1.Items[indexes[0]] = _lvChannelHandler.CreateListViewItemForChannel(channel, cards);
+          mpListView1.Items[indexes[0]].Text = channel.DisplayName;
+          mpListView1.Items[indexes[0]].SubItems[5].Text = channel.TuningDetails.Count.ToString();
           mpListView1.Sort();
           ReOrder();
+          txtFilterString_TextChanged(null, null);
         }
         finally
         {          
@@ -585,71 +581,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       ReOrder();
       ServiceAgents.Instance.ControllerServiceAgent.OnNewSchedule();
       mpListView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
-    }
-
-    private void renameMarkedChannelsBySIDToolStripMenuItem_Click(object sender, EventArgs e)
-    {
-      NotifyForm dlg = new NotifyForm("Renaming selected tv channels by SID ...",
-                                      "This can take some time\n\nPlease be patient...");
-      dlg.Show(this);
-      dlg.WaitForDisplay();
-      foreach (ListViewItem item in mpListView1.SelectedItems)
-      {
-        Channel channel = (Channel)item.Tag;
-        IList<TuningDetail> details = channel.TuningDetails;
-        if (details.Count > 0)
-        {
-          channel.DisplayName = (details[0]).ServiceId.ToString();
-          channel = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(channel);
-          channel.AcceptChanges();
-          item.Tag = channel;
-        }
-      }
-      dlg.Close();
-      OnSectionActivated();
-    }
-
-    private void addSIDInFrontOfNameToolStripMenuItem_Click(object sender, EventArgs e)
-    {
-      NotifyForm dlg = new NotifyForm("Adding SID in front of name...",
-                                      "This can take some time\n\nPlease be patient...");
-      dlg.Show(this);
-      dlg.WaitForDisplay();
-
-      foreach (ListViewItem item in mpListView1.SelectedItems)
-      {
-        Channel channel = (Channel)item.Tag;
-        IList<TuningDetail> details = channel.TuningDetails;
-        if (details.Count > 0)
-        {
-          channel.DisplayName = (details[0]).ServiceId + " " + channel.DisplayName;
-          channel = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(channel);
-          channel.AcceptChanges();
-          item.Tag = channel;
-        }
-      }
-      dlg.Close();
-      OnSectionActivated();
-    }
-
-    private void renumberChannelsBySIDToolStripMenuItem_Click(object sender, EventArgs e)
-    {
-      NotifyForm dlg = new NotifyForm("Renumbering tv channels...", "This can take some time\n\nPlease be patient...");
-      dlg.Show(this);
-      dlg.WaitForDisplay();
-
-      foreach (ListViewItem item in mpListView1.SelectedItems)
-      {
-        Channel channel = (Channel)item.Tag;
-        IList<TuningDetail> details = channel.TuningDetails;
-        foreach (TuningDetail detail in details)
-        {
-          detail.ChannelNumber = detail.ServiceId;
-          ServiceAgents.Instance.ChannelServiceAgent.SaveTuningDetail(detail);
-          detail.AcceptChanges();
-        }
-      }
-      dlg.Close();
     }
 
     private void StartScanThread()
