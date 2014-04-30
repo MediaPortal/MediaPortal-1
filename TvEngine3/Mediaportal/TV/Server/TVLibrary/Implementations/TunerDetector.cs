@@ -433,39 +433,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
       // Detect the naturally related tuners. These are tuners with the same product and tuner
       // instance ID.
-      HashSet<string> relatedTuners = null;
-      if (tuner.ProductInstanceId != null && tuner.TunerInstanceId != null)
-      {
-        Dictionary<string, HashSet<string>> productTuners;
-        if (!_detectedNaturalTunerGroups.TryGetValue(tuner.ProductInstanceId, out productTuners))
-        {
-          productTuners = new Dictionary<string, HashSet<string>>();
-          relatedTuners = new HashSet<string>();
-          relatedTuners.Add(tuner.ExternalId);
-          productTuners.Add(tuner.TunerInstanceId, relatedTuners);
-          _detectedNaturalTunerGroups.Add(tuner.ProductInstanceId, productTuners);
-        }
-        else
-        {
-          if (!productTuners.TryGetValue(tuner.TunerInstanceId, out relatedTuners))
-          {
-            relatedTuners = new HashSet<string>();
-            productTuners.Add(tuner.TunerInstanceId, relatedTuners);
-          }
-          else if (relatedTuners.Count > 0)
-          {
-            this.LogInfo("    detected naturally related tuners...");
-            foreach (string id in relatedTuners)
-            {
-              ITVCard t = _knownTuners[id];
-              this.LogInfo("      name = {0}, type = {1}, external ID = {2}", t.Name, t.CardType, id);
-            }
-          }
-          relatedTuners.Add(tuner.ExternalId);
-        }
-      }
+      HashSet<string> relatedTuners = FindRelatedTuners(tuner);
 
       // Find or create a group for the tuner if appropriate.
+      TunerGroupInfo? groupInfo = null;
       Card tunerDbSettings = CardManagement.GetCardByDevicePath(tuner.ExternalId, CardIncludeRelationEnum.None);
       if (tunerDbSettings == null)
       {
@@ -500,117 +471,22 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         {
           // Automatically add the tuner to an existing tuner group if the group product and tuner
           // instance information matches.
-          bool foundGroup = false;
-          foreach (TunerGroupInfo groupInfo in _configuredTunerGroups.Values)
-          {
-            if (groupInfo.ProductInstanceIdentifier == tuner.ProductInstanceId && groupInfo.TunerInstanceIdentifier == tuner.TunerInstanceId)
-            {
-              this.LogInfo("    detected existing tuner group with matching information, name = {0}...", groupInfo.Group.Name);
-              groupInfo.Tuners.Add(tuner.ExternalId);
-              CardGroupMap map = new CardGroupMap();
-              map.IdCard = tunerDbSettings.IdCard;
-              map.IdCardGroup = groupInfo.Group.IdCardGroup;
-              CardManagement.SaveCardGroupMap(map);
-              foundGroup = true;
-              break;
-            }
-          }
+          groupInfo = AddNewTunerToExistingNaturalGroup(tuner, tunerDbSettings);
 
           // ...or if that doesn't apply, automatically add the tuner to an existing tuner group if
           // the group contains *all* the naturally related tuners. The assumption in this case is
           // that our group detection failed to automatically detect all the tuners in the group.
           bool foundAnyRelatedTunerInAnyGroup = false;
-          if (!foundGroup)
+          if (groupInfo == null)
           {
-            foreach (TunerGroupInfo groupInfo in _configuredTunerGroups.Values)
-            {
-              // Only look at mixed product/tuner instance groups. We already checked and failed to
-              // find a "pure" group above.
-              if (groupInfo.ProductInstanceIdentifier == null && groupInfo.TunerInstanceIdentifier == null)
-              {
-                // For each naturally related tuner that is not this tuner...
-                foreach (string t1 in relatedTuners)
-                {
-                  if (!t1.Equals(tuner.ExternalId))
-                  {
-                    if (groupInfo.Tuners.Contains(t1))
-                    {
-                      // Okay, we found a group containing one of the related tuners. If all of the
-                      // related tuners are in this group then we'll add the tuner to this group.
-                      // Otherwise this tuner won't get a group.
-                      foundAnyRelatedTunerInAnyGroup = true;
-                      foundGroup = true;
-                      foreach (string t2 in relatedTuners)
-                      {
-                        if (!t2.Equals(tuner.ExternalId) && !t2.Equals(t1))
-                        {
-                          if (!groupInfo.Tuners.Contains(t1))
-                          {
-                            // One of the related tuners is not in this group => its all over.
-                            foundGroup = false;
-                            break;
-                          }
-                        }
-                      }
-                    }
-                  }
-                  if (foundAnyRelatedTunerInAnyGroup)
-                  {
-                    break;
-                  }
-                }
-                if (foundGroup)
-                {
-                  this.LogInfo("    detected existing tuner group containing all related tuners, name = {0}...", groupInfo.Group.Name);
-                  groupInfo.Tuners.Add(tuner.ExternalId);
-                  CardGroupMap map = new CardGroupMap();
-                  map.IdCard = tunerDbSettings.IdCard;
-                  map.IdCardGroup = groupInfo.Group.IdCardGroup;
-                  CardManagement.SaveCardGroupMap(map);
-                  break;
-                }
-                if (foundAnyRelatedTunerInAnyGroup)
-                {
-                  break;
-                }
-              }
-            }
+            groupInfo = AddNewTunerToExistingExtendedNaturalGroup(tuner, tunerDbSettings, relatedTuners, out foundAnyRelatedTunerInAnyGroup);
           }
 
           // Finally, if all of the tuners in the natural group are new and not in any other group
           // then create a new group.
-          if (!foundGroup && !foundAnyRelatedTunerInAnyGroup)
+          if (groupInfo == null && !foundAnyRelatedTunerInAnyGroup)
           {
-            bool createNewGroup = true;
-            foreach (string t in relatedTuners)
-            {
-              if (!_firstDetectionTuners.Contains(t))
-              {
-                createNewGroup = false;
-                break;
-              }
-            }
-            if (createNewGroup)
-            {
-              CardGroup group = new CardGroup();
-              group.Name = string.Format("Product Instance {0} Tuner {1}", tuner.ProductInstanceId, tuner.TunerInstanceId);
-              CardManagement.SaveCardGroup(group);
-              TunerGroupInfo groupInfo = new TunerGroupInfo();
-              groupInfo.Group = group;
-              groupInfo.ProductInstanceIdentifier = tuner.ProductInstanceId;
-              groupInfo.TunerInstanceIdentifier = tuner.TunerInstanceId;
-              groupInfo.Tuners = new HashSet<string>();
-              _configuredTunerGroups.Add(group.IdCardGroup, groupInfo);
-              foreach (string t in relatedTuners)
-              {
-                CardGroupMap map = new CardGroupMap();
-                map.IdCard = CardManagement.GetCardByDevicePath(t, CardIncludeRelationEnum.None).IdCard;
-                map.IdCardGroup = group.IdCardGroup;
-                CardManagement.SaveCardGroupMap(map);
-                groupInfo.Tuners.Add(t);
-              }
-              this.LogInfo("    creating new tuner group, name = {0}...", group.Name);
-            }
+            groupInfo = CreateNewGroupOnFirstDetection(tuner, tunerDbSettings, relatedTuners);
           }
         }
       }
@@ -619,63 +495,199 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         // This tuner has been detected previously. Check if it is a member of an existing tuner
         // group.
         this.LogInfo("    existing tuner...");
-        IList<CardGroup> groups = CardManagement.ListAllCardGroups();
-        foreach (CardGroup group in groups)
-        {
-          TrackableCollection<CardGroupMap> groupMaps = group.CardGroupMaps;
-          bool found = false;
-          foreach (CardGroupMap map in groupMaps)
-          {
-            // Does the tuner belong to this group?
-            if (map.IdCard == tunerDbSettings.IdCard)
-            {
-              // Find and update our local group info.
-              TunerGroupInfo groupInfo;
-              if (!_configuredTunerGroups.TryGetValue(group.IdCardGroup, out groupInfo))
-              {
-                groupInfo = new TunerGroupInfo();
-                groupInfo.Group = group;
-                groupInfo.ProductInstanceIdentifier = tuner.ProductInstanceId;
-                groupInfo.TunerInstanceIdentifier = tuner.TunerInstanceId;
-                groupInfo.Tuners = new HashSet<string>();
-                _configuredTunerGroups.Add(group.IdCardGroup, groupInfo);
-                this.LogInfo("    detected existing tuner group, name = {0}, product instance ID = {1}, tuner instance ID = {2}...", group.Name, groupInfo.ProductInstanceIdentifier ?? "[null]", groupInfo.TunerInstanceIdentifier ?? "[null]");
-              }
-              else
-              {
-                this.LogInfo("    detected existing tuner group, name = {0}, product instance ID = {1}, tuner instance ID = {2}...", group.Name, groupInfo.ProductInstanceIdentifier ?? "[null]", groupInfo.TunerInstanceIdentifier ?? "[null]");
-                // Does the product/tuner instance info indicate that this is a natural group?
-                if (groupInfo.ProductInstanceIdentifier != null && groupInfo.TunerInstanceIdentifier != null &&
-                  tuner.ProductInstanceId != null && tuner.TunerInstanceId != null &&
-                  (groupInfo.ProductInstanceIdentifier != tuner.ProductInstanceId || groupInfo.TunerInstanceIdentifier != tuner.TunerInstanceId))
-                {
-                  groupInfo.ProductInstanceIdentifier = null;
-                  groupInfo.TunerInstanceIdentifier = null;
-                }
-              }
-              if (groupInfo.Tuners.Count > 0)
-              {
-                foreach (string id in groupInfo.Tuners)
-                {
-                  ITVCard t = _knownTuners[id];
-                  this.LogInfo("      name = {0}, type = {1}, external ID = {2}", t.Name, t.CardType, id);
-                }
-              }
-              groupInfo.Tuners.Add(tuner.ExternalId);
-              found = true;
-              break;
-            }
-          }
-
-          // Tuners can't be a member of more than one group.
-          if (found)
-          {
-            break;
-          }
-        }
+        groupInfo = AddExistingTunerToConfiguredGroup(tuner, tunerDbSettings);
       }
 
       _eventListener.OnTunerAdded(tuner);
+    }
+
+    private HashSet<string> FindRelatedTuners(ITVCard tuner)
+    {
+      HashSet<string> relatedTuners = null;
+      if (tuner.ProductInstanceId != null && tuner.TunerInstanceId != null)
+      {
+        Dictionary<string, HashSet<string>> productTuners;
+        if (!_detectedNaturalTunerGroups.TryGetValue(tuner.ProductInstanceId, out productTuners))
+        {
+          productTuners = new Dictionary<string, HashSet<string>>();
+          relatedTuners = new HashSet<string>();
+          relatedTuners.Add(tuner.ExternalId);
+          productTuners.Add(tuner.TunerInstanceId, relatedTuners);
+          _detectedNaturalTunerGroups.Add(tuner.ProductInstanceId, productTuners);
+        }
+        else
+        {
+          if (!productTuners.TryGetValue(tuner.TunerInstanceId, out relatedTuners))
+          {
+            relatedTuners = new HashSet<string>();
+            productTuners.Add(tuner.TunerInstanceId, relatedTuners);
+          }
+          else if (relatedTuners.Count > 0)
+          {
+            this.LogInfo("    detected naturally related tuners...");
+            foreach (string id in relatedTuners)
+            {
+              ITVCard t = _knownTuners[id];
+              this.LogInfo("      name = {0}, type = {1}, external ID = {2}", t.Name, t.CardType, id);
+            }
+          }
+          relatedTuners.Add(tuner.ExternalId);
+        }
+      }
+      return relatedTuners;
+    }
+
+    private TunerGroupInfo? AddNewTunerToExistingNaturalGroup(ITVCard tuner, Card tunerDbSettings)
+    {
+      foreach (TunerGroupInfo groupInfo in _configuredTunerGroups.Values)
+      {
+        if (groupInfo.ProductInstanceIdentifier == tuner.ProductInstanceId && groupInfo.TunerInstanceIdentifier == tuner.TunerInstanceId)
+        {
+          this.LogInfo("    detected existing tuner group with matching information, name = {0}...", groupInfo.Group.Name);
+          groupInfo.Tuners.Add(tuner.ExternalId);
+          CardGroupMap map = new CardGroupMap();
+          map.IdCard = tunerDbSettings.IdCard;
+          map.IdCardGroup = groupInfo.Group.IdCardGroup;
+          CardManagement.SaveCardGroupMap(map);
+          return groupInfo;
+        }
+      }
+      return null;
+    }
+
+    private TunerGroupInfo? AddNewTunerToExistingExtendedNaturalGroup(ITVCard tuner, Card tunerDbSettings, HashSet<string> relatedTuners, out bool foundAnyRelatedTunerInAnyGroup)
+    {
+      foundAnyRelatedTunerInAnyGroup = false;
+      foreach (TunerGroupInfo groupInfo in _configuredTunerGroups.Values)
+      {
+        // Only look at mixed product/tuner instance groups. AddNewTunerToExistingNaturalGroup() already
+        // checked and failed to find a non-extended/pure group.
+        if (groupInfo.ProductInstanceIdentifier == null && groupInfo.TunerInstanceIdentifier == null)
+        {
+          // For each naturally related tuner that is not this tuner...
+          foreach (string t1 in relatedTuners)
+          {
+            if (!t1.Equals(tuner.ExternalId))
+            {
+              if (groupInfo.Tuners.Contains(t1))
+              {
+                // Okay, we found a group containing one of the related tuners. If all of the
+                // related tuners are in this group then we'll add the tuner to this group.
+                // Otherwise this tuner won't get a group.
+                foundAnyRelatedTunerInAnyGroup = true;
+                foreach (string t2 in relatedTuners)
+                {
+                  if (!t2.Equals(tuner.ExternalId) && !t2.Equals(t1))
+                  {
+                    if (!groupInfo.Tuners.Contains(t1))
+                    {
+                      // One of the related tuners is not in this group => its all over.
+                      return null;
+                    }
+                  }
+                }
+                // All tuners are in the group!
+                this.LogInfo("    detected existing tuner group containing all related tuners, name = {0}...", groupInfo.Group.Name);
+                groupInfo.Tuners.Add(tuner.ExternalId);
+                CardGroupMap map = new CardGroupMap();
+                map.IdCard = tunerDbSettings.IdCard;
+                map.IdCardGroup = groupInfo.Group.IdCardGroup;
+                CardManagement.SaveCardGroupMap(map);
+                return groupInfo;
+              }
+            }
+          }
+        }
+      }
+      return null;
+    }
+
+    private TunerGroupInfo? CreateNewGroupOnFirstDetection(ITVCard tuner, Card tunerDbSettings, HashSet<string> relatedTuners)
+    {
+      bool createNewGroup = true;
+      foreach (string t in relatedTuners)
+      {
+        if (!_firstDetectionTuners.Contains(t))
+        {
+          createNewGroup = false;
+          break;
+        }
+      }
+      if (createNewGroup)
+      {
+        CardGroup group = new CardGroup();
+        group.Name = string.Format("Product Instance {0} Tuner {1}", tuner.ProductInstanceId, tuner.TunerInstanceId);
+        CardManagement.SaveCardGroup(group);
+        TunerGroupInfo groupInfo = new TunerGroupInfo();
+        groupInfo.Group = group;
+        groupInfo.ProductInstanceIdentifier = tuner.ProductInstanceId;
+        groupInfo.TunerInstanceIdentifier = tuner.TunerInstanceId;
+        groupInfo.Tuners = new HashSet<string>();
+        _configuredTunerGroups.Add(group.IdCardGroup, groupInfo);
+        foreach (string t in relatedTuners)
+        {
+          CardGroupMap map = new CardGroupMap();
+          map.IdCard = CardManagement.GetCardByDevicePath(t, CardIncludeRelationEnum.None).IdCard;
+          map.IdCardGroup = group.IdCardGroup;
+          CardManagement.SaveCardGroupMap(map);
+          groupInfo.Tuners.Add(t);
+        }
+        this.LogInfo("    creating new tuner group, name = {0}...", group.Name);
+        return groupInfo;
+      }
+      return null;
+    }
+
+    private TunerGroupInfo? AddExistingTunerToConfiguredGroup(ITVCard tuner, Card tunerDbSettings)
+    {
+      IList<CardGroup> groups = CardManagement.ListAllCardGroups();
+      foreach (CardGroup group in groups)
+      {
+        TrackableCollection<CardGroupMap> groupMaps = group.CardGroupMaps;
+        foreach (CardGroupMap map in groupMaps)
+        {
+          // Does the tuner belong to this group?
+          if (map.IdCard == tunerDbSettings.IdCard)
+          {
+            // Find and update our local group info.
+            TunerGroupInfo groupInfo;
+            if (!_configuredTunerGroups.TryGetValue(group.IdCardGroup, out groupInfo))
+            {
+              groupInfo = new TunerGroupInfo();
+              groupInfo.Group = group;
+              groupInfo.ProductInstanceIdentifier = tuner.ProductInstanceId;
+              groupInfo.TunerInstanceIdentifier = tuner.TunerInstanceId;
+              groupInfo.Tuners = new HashSet<string>();
+              _configuredTunerGroups.Add(group.IdCardGroup, groupInfo);
+              this.LogInfo("    detected existing tuner group, name = {0}, product instance ID = {1}, tuner instance ID = {2}...", group.Name, groupInfo.ProductInstanceIdentifier ?? "[null]", groupInfo.TunerInstanceIdentifier ?? "[null]");
+            }
+            else
+            {
+              this.LogInfo("    detected existing tuner group, name = {0}, product instance ID = {1}, tuner instance ID = {2}...", group.Name, groupInfo.ProductInstanceIdentifier ?? "[null]", groupInfo.TunerInstanceIdentifier ?? "[null]");
+              // Does the product/tuner instance info indicate that this is a natural group?
+              if (groupInfo.ProductInstanceIdentifier != null && groupInfo.TunerInstanceIdentifier != null &&
+                tuner.ProductInstanceId != null && tuner.TunerInstanceId != null &&
+                (groupInfo.ProductInstanceIdentifier != tuner.ProductInstanceId || groupInfo.TunerInstanceIdentifier != tuner.TunerInstanceId))
+              {
+                groupInfo.ProductInstanceIdentifier = null;
+                groupInfo.TunerInstanceIdentifier = null;
+              }
+            }
+            if (groupInfo.Tuners.Count > 0)
+            {
+              foreach (string id in groupInfo.Tuners)
+              {
+                ITVCard t = _knownTuners[id];
+                this.LogInfo("      name = {0}, type = {1}, external ID = {2}", t.Name, t.CardType, id);
+              }
+            }
+            groupInfo.Tuners.Add(tuner.ExternalId);
+            // Tuners can't be a member of more than one group.
+            return groupInfo;
+          }
+        }
+      }
+      return null;
     }
 
     private void OnTunerRemoved(ITVCard tuner)
