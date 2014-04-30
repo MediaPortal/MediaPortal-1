@@ -2497,7 +2497,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
               Log.Error("PMT: elementary stream descriptor {0} for PID {1} is invalid", es.Descriptors.Count + es.CaDescriptors.Count + 1, es.Pid);
               throw new Exception();
             }
-            //TODO DigiCipher2Video
+
             if (d.Tag == DescriptorTag.ConditionalAccess)
             {
               es.CaDescriptors.Add(d);
