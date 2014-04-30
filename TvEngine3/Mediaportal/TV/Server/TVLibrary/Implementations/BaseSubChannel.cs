@@ -112,8 +112,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     protected volatile bool _cancelTune;
 
-    protected ITVCard _tuner;
-
     #endregion
 
     #region constructor

@@ -719,7 +719,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
     /// <returns>the new subchannel instance</returns>
     protected override ITvSubChannel CreateNewSubChannel(int id)
     {
-      return new Mpeg2SubChannel(id, this, _staTsWriter);
+      return new Mpeg2SubChannel(id, _staTsWriter);
     }
 
     /// <summary>

@@ -2160,6 +2160,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     private byte[] _crc;
 
     private byte[] _rawPmt;
+    private CamType _camType = CamType.Default;
 
     #endregion
 
@@ -2335,11 +2336,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// Decode and check the validity of raw program map section data.
     /// </summary>
     /// <param name="data">The raw program map section data.</param>
-    /// <param name="camType">The type of CAM that the program map will be passed to.</param>
     /// <returns>a fully populated Pmt instance if the section is valid, otherwise <c>null</c></returns>
-    public static Pmt Decode(byte[] data, CamType camType)
+    public static Pmt Decode(byte[] data)
     {
-      Log.Debug("PMT: decode, CAM type = {0}", camType);
+      Log.Debug("PMT: decode");
       if (data == null || data.Length < 16)
       {
         Log.Error("PMT: data not supplied or too short");
@@ -2581,22 +2581,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
         pmt._rawPmt = new byte[data.Length];
         Buffer.BlockCopy(data, 0, pmt._rawPmt, 0, data.Length);
 
-        // One last thing: for Astoncrypt 2 CAMs, we patch the stream type on AC3 streams...
-        if (camType == CamType.Astoncrypt2)
-        {
-          // Move to the first ES stream type.
-          offset = 12 + pmt._programInfoLength;
-          foreach (PmtElementaryStream es in pmt._elementaryStreams)
-          {
-            if (es.StreamType == StreamType.Mpeg2Part1PrivateData && es.LogicalStreamType == LogicalStreamType.AudioAc3)
-            {
-              es.StreamType = StreamType.Ac3Audio;
-              pmt._rawPmt[offset] = (byte)StreamType.Ac3Audio;
-            }
-            offset += 5 + es.EsInfoLength;
-          }
-        }
-
         //pmt.Dump();
 
         return pmt;
@@ -2605,6 +2589,40 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
       {
         Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper.Dump.DumpBinary(data, data.Length);
         return null;
+      }
+    }
+
+    /// <summary>
+    /// Patch the PMT to make it compatible with a specific CAM type.
+    /// </summary>
+    /// <param name="camType">The target CAM type.</param>
+    public void PatchPmtForCam(CamType camType)
+    {
+      if (_camType == camType)
+      {
+        return;
+      }
+
+      this.LogDebug("PMT: patch for CAM type {0}", camType);
+      if (_camType != CamType.Default)
+      {
+        throw new TvException("Not possible to patch PMT that is already patched.");
+      }
+
+      if (camType == CamType.Astoncrypt2)
+      {
+        // For Astoncrypt 2 CAMs, we patch the stream type on AC3 streams.
+        // Move to the first ES stream type.
+        int offset = 12 + _programInfoLength;
+        foreach (PmtElementaryStream es in _elementaryStreams)
+        {
+          if (es.StreamType == StreamType.Mpeg2Part1PrivateData && es.LogicalStreamType == LogicalStreamType.AudioAc3)
+          {
+            es.StreamType = StreamType.Ac3Audio;
+            _rawPmt[offset] = (byte)StreamType.Ac3Audio;
+          }
+          offset += 5 + es.EsInfoLength;
+        }
       }
     }
 

@@ -92,15 +92,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     /// Initialise a new instance of the <see cref="Mpeg2SubChannel"/> class.
     /// </summary>
     /// <param name="subChannelId">The subchannel ID to associate with this instance.</param>
-    /// <param name="tuner">The tuner that this instance is associated with.</param>
     /// <param name="tsWriter">The TsWriter filter instance used to perform/implement timeshifting and recording.</param>
-    public Mpeg2SubChannel(int subChannelId, ITVCard tuner, ITsFilter tsWriter)
+    public Mpeg2SubChannel(int subChannelId, ITsFilter tsWriter)
       : base(subChannelId)
     {
       _eventPmt = new ManualResetEvent(false);
       _eventCat = new ManualResetEvent(false);
 
-      _tuner = tuner;
       _subChannelIndex = -1;
       _tsFilterInterface = tsWriter;
       _tsFilterInterface.AddChannel(ref _subChannelIndex);
@@ -650,7 +648,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
         int pmtLength = _tsFilterInterface.PmtGetPmtData(_subChannelIndex, pmtBuffer);
         byte[] pmtData = new byte[pmtLength];
         Marshal.Copy(pmtBuffer, pmtData, 0, pmtLength);
-        Pmt pmt = Pmt.Decode(pmtData, _tuner.CamType);
+        Pmt pmt = Pmt.Decode(pmtData);
         if (pmt == null)
         {
           this.LogError("MPEG 2 sub-channel: invalid PMT detected");

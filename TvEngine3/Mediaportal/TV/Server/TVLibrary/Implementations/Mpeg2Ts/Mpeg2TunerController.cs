@@ -328,6 +328,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
             }
             else
             {
+              // TODO need to PatchPmtForCam() sometime before now, and in such a way that the patched PMT is not propagated to TsWriter etc.
               success &= caProvider.SendConditionalAccessCommand(distinctServices[i].CurrentChannel, action, command, digitalService.Pmt, digitalService.Cat);
             }
           }
