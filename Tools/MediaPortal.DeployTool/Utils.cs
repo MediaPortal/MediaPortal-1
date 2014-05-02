@@ -686,8 +686,8 @@ namespace MediaPortal.DeployTool
           break;
         case "max":
           major = 1;
-          minor = 6;
-          revision = 100;
+          minor = 7;
+          revision = 0;
           break;
       }
       Version ver = new Version(major, minor, revision);
@@ -708,7 +708,7 @@ namespace MediaPortal.DeployTool
     {
       int major = 1;
       int minor = 7;
-      int revision = 0;
+      int revision = 1;
 
       Version ver = new Version(major, minor, revision);
       return ver;
@@ -781,7 +781,7 @@ namespace MediaPortal.DeployTool
 
     public static string GetDisplayVersion()
     {
-      return "1.7.0";
+      return "1.7.1 HotFix";
     }
 
     /// <summary>

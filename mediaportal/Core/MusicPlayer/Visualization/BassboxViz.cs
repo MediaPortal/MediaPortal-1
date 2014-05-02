@@ -331,7 +331,6 @@ namespace MediaPortal.Visualization
 
         visExec = new BASSVIS_EXEC(vizPath);
         visExec.PluginFile = vizPath;
-        visExec.BB_Flags = BASSVISFlags.BASSVIS_DEFAULT;
         visExec.BB_ParentHandle = VisualizationWindow.Handle;
         visExec.BB_ShowFPS = true;
         // can not check IsRadio on first start

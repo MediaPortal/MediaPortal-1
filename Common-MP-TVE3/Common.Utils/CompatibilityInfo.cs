@@ -62,8 +62,8 @@ using MediaPortal.Common.Utils;
 [assembly: SubsystemVersion("MP.Externals.SQLite", "1.1.6.27644")]
 [assembly: SubsystemVersion("MP.Externals.Gentle", "1.3.100.0")]  // MP 1.4.0 Pre Release
 [assembly: SubsystemVersion("MP.Externals.Log4Net", "1.3.100.0")] // MP 1.4.0 Pre Release
-[assembly: SubsystemVersion("MP.Externals.BASS", "1.3.100.0")]
-[assembly: SubsystemVersion("MP.Externals.HTMLAgilityPack", "1.5.100.0")] // Added after 1.5 pre-release
+[assembly: SubsystemVersion("MP.Externals.BASS", "1.7.0.0")]
+[assembly: SubsystemVersion("MP.Externals.HTMLAgilityPack", "1.5.100.0")] // Added after 1.6 pre-release
 
 [assembly: SubsystemVersion("MP.Config", "1.1.6.27644")]
 [assembly: SubsystemVersion("MP.Config.DefaultSections", "1.1.6.27644")]
