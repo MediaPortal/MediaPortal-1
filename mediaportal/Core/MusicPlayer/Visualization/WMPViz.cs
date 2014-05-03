@@ -133,10 +133,9 @@ namespace MediaPortal.Visualization
 
     public override int RenderVisualization()
     {
-      if (VisualizationWindow.InvokeRequired)
+      if (VisualizationWindow == null || !VisualizationWindow.Visible)
       {
-        ThreadSafeRenderDelegate d = new ThreadSafeRenderDelegate(RenderVisualization);
-        return (int)VisualizationWindow.Invoke(d);
+        return 0;
       }
 
       RECT rect = new RECT();
