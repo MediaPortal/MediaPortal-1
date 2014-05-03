@@ -501,6 +501,9 @@ namespace MediaPortal.GUI.Music
     {
       if (message.Message == GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS)
       {
+        // Send SelectedListItemIndex to match message label in case of double name in playlist
+        int iSelectedItem = facadeLayout.SelectedListItemIndex;
+        message.Param4 = iSelectedItem;
         _currentPlaying = message.Label;
         facadeLayout.OnMessage(message);
       }
@@ -768,15 +771,15 @@ namespace MediaPortal.GUI.Music
 
     protected void LoadPlayList(string strPlayList, bool startPlayback)
     {
-      LoadPlayList(strPlayList, startPlayback, false, false);
+      LoadPlayList(strPlayList, startPlayback, false, false, true);
     }
 
     protected void LoadPlayList(string strPlayList, bool startPlayback, bool isAsynch)
     {
-      LoadPlayList(strPlayList, startPlayback, isAsynch, false);
+      LoadPlayList(strPlayList, startPlayback, isAsynch, false, true);
     }
 
-    protected void LoadPlayList(string strPlayList, bool startPlayback, bool isAsynch, bool defaultLoad)
+    protected void LoadPlayList(string strPlayList, bool startPlayback, bool isAsynch, bool defaultLoad, bool replacePlaylist)
     {
       IPlayListIO loader = PlayListFactory.CreateIO(strPlayList);
       if (loader == null)
@@ -837,6 +840,12 @@ namespace MediaPortal.GUI.Music
           tag = song.ToMusicTag();
           playListItem.MusicTag = tag;
         }
+        else
+        {
+          MusicTag tag = new MusicTag();
+          tag = TagReader.TagReader.ReadTag(playListItem.FileName);
+          playListItem.MusicTag = tag;
+        }
         if (Util.Utils.FileExistsInCache(playListItem.FileName) ||
             playListItem.Type == PlayListItem.PlayListItemType.AudioStream)
         {
@@ -851,7 +860,30 @@ namespace MediaPortal.GUI.Music
       if (null != bw && isAsynch && bw.CancellationPending)
         return;
 
-      ReplacePlaylist(newPlaylist);
+      PlayList pl = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
+
+      if (pl.Count > 0)
+      {
+        // add each item of the playlist to the playlistplayer
+        for (int i = 0; i < newPlaylist.Count; ++i)
+        {
+          PlayListItem playListItem = pl[i];
+          if (Util.Utils.FileExistsInCache(playListItem.FileName) ||
+              playListItem.Type == PlayListItem.PlayListItemType.AudioStream)
+          {
+            pl.Add(playListItem, false);
+          }
+          else
+          {
+            Log.Info("Playlist: File {0} no longer exists. Skipping item.", playListItem.FileName);
+          }
+        }
+      }
+
+      if (replacePlaylist)
+      {
+        ReplacePlaylist(newPlaylist);
+      }
 
       if (startPlayback)
         StartPlayingPlaylist();
@@ -2191,8 +2223,24 @@ namespace MediaPortal.GUI.Music
 
       foreach (PlayListItem pItem in pItems)
       {
-        // actually add items to the playlist
-        pl.Add(pItem);
+        if (PlayListFactory.IsPlayList(pItem.FileName))
+        {
+          pl.Remove(pItem.FileName, false);
+          if (pl.Count > 0)
+          {
+            // Playlist already filled, just add song
+            LoadPlayList(pItem.FileName, false, false, false, false);
+          }
+          else
+          {
+            LoadPlayList(pItem.FileName, false, false, false, true);
+          }
+        }
+        else
+        {
+          // actually add items to the playlist
+          pl.Add(pItem);
+        }
       }
 
       // If Resume has been enabled we need to check te first item for resume information
