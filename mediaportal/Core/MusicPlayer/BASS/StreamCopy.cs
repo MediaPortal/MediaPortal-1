@@ -20,6 +20,7 @@
 
 using System;
 using MediaPortal.GUI.Library;
+using MediaPortal.MusicPlayer.BASS;
 using Un4seen.Bass;
 using Un4seen.Bass.Misc;
 
@@ -30,9 +31,13 @@ namespace MediaPortal.Player
     private int _stream;
     private BASSBuffer _streamBuffer;
     private BASSFlag _streamFlags;
+    protected static BassAudioEngine _Bass = null;
 
-    public StreamCopy()
-      : base() { }
+    public StreamCopy(BassAudioEngine bass)
+      : base()
+    {
+      Bass = bass;
+    }
 
     public StreamCopy(int channel, int priority)
       : base(channel, priority, IntPtr.Zero) { }
@@ -46,45 +51,57 @@ namespace MediaPortal.Player
       }
     }
 
+    public static BassAudioEngine Bass
+    {
+      get { return _Bass; }
+      set { _Bass = value; }
+    }
+
     public override void OnStarted()
     {
-      int channelBitwidth = base.ChannelBitwidth;
-      switch (channelBitwidth)
+      if (Bass != null)
       {
-        case 0x20:
-          this._streamFlags &= ~BASSFlag.BASS_SAMPLE_8BITS;
-          this._streamFlags |= BASSFlag.BASS_SAMPLE_FLOAT;
-          channelBitwidth = 4;
-          break;
+        int channelBitwidth = base.ChannelBitwidth;
+        switch (channelBitwidth)
+        {
+          case 0x20:
+            this._streamFlags &= ~BASSFlag.BASS_SAMPLE_8BITS;
+            this._streamFlags |= BASSFlag.BASS_SAMPLE_FLOAT;
+            channelBitwidth = 4;
+            break;
 
-        case 8:
-          this._streamFlags &= ~BASSFlag.BASS_SAMPLE_FLOAT;
-          this._streamFlags |= BASSFlag.BASS_SAMPLE_8BITS;
-          channelBitwidth = 1;
-          break;
+          case 8:
+            this._streamFlags &= ~BASSFlag.BASS_SAMPLE_FLOAT;
+            this._streamFlags |= BASSFlag.BASS_SAMPLE_8BITS;
+            channelBitwidth = 1;
+            break;
 
-        default:
-          this._streamFlags &= ~BASSFlag.BASS_SAMPLE_FLOAT;
-          this._streamFlags &= ~BASSFlag.BASS_SAMPLE_8BITS;
-          channelBitwidth = 2;
-          break;
-      }
-      this._streamBuffer = new BASSBuffer(2f, base.ChannelSampleRate, base.ChannelNumChans, channelBitwidth);
-      this._stream = Un4seen.Bass.Bass.BASS_StreamCreate(base.ChannelSampleRate, base.ChannelNumChans, this._streamFlags,
-                                                         null, IntPtr.Zero);
-      Un4seen.Bass.Bass.BASS_ChannelSetLink(base.ChannelHandle, this._stream);
-      if (Un4seen.Bass.Bass.BASS_ChannelIsActive(base.ChannelHandle) == BASSActive.BASS_ACTIVE_PLAYING)
-      {
-        Bass.BASS_ChannelPlay(this._stream, false);
+          default:
+            this._streamFlags &= ~BASSFlag.BASS_SAMPLE_FLOAT;
+            this._streamFlags &= ~BASSFlag.BASS_SAMPLE_8BITS;
+            channelBitwidth = 2;
+            break;
+        }
+        this._streamBuffer = new BASSBuffer(2f, base.ChannelSampleRate, base.ChannelNumChans, channelBitwidth);
+        this._stream = Bass.StreamCreate(base.ChannelSampleRate, base.ChannelNumChans, this._streamFlags,
+          null, IntPtr.Zero);
+        Bass.ChannelSetLink(base.ChannelHandle, this._stream);
+        if (Bass.ChannelIsActive(base.ChannelHandle) == BASSActive.BASS_ACTIVE_PLAYING)
+        {
+          Bass.ChannelPlay(this._stream, false);
+        }
       }
     }
 
     public override void OnStopped()
     {
-      Bass.BASS_ChannelRemoveLink(base.ChannelHandle, this._stream);
-      Bass.BASS_StreamFree(this._stream);
-      this._stream = 0;
-      this.ClearBuffer();
+      if (Bass != null)
+      {
+        Bass.ChannelRemoveLink(base.ChannelHandle, this._stream);
+        Bass.StreamFree(this._stream);
+        this._stream = 0;
+        this.ClearBuffer();
+      }
     }
 
     public void ClearBuffer()

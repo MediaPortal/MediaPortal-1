@@ -20,10 +20,10 @@
 
 using System;
 using System.IO;
-using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
+using MediaPortal.MusicPlayer.BASS;
 using MediaPortal.Player;
-using Un4seen.Bass;
+using Config = MediaPortal.Configuration.Config;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 {
@@ -35,6 +35,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     public static object PropertyBrowserMutex = new object();
     public static object StatusMutex = new object();
     public static bool UseTVServer = false;
+    protected static BassAudioEngine _Bass = null;
 
     public static void DisablePropertyBrowser()
     {
@@ -44,6 +45,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       }
     }
 
+    public MiniDisplayHelper(BassAudioEngine bass) : base()
+    {
+      Bass = bass;
+    }
+
+    public static BassAudioEngine Bass
+    {
+      get { return _Bass; }
+      set { _Bass = value; }
+    }
     public static bool GetEQ(ref EQControl EQSETTINGS)
     {
       bool extensiveLogging = Settings.Instance.ExtensiveLogging;
@@ -122,7 +133,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           {
             num3 = -2147483646;
           }
-          num2 = Bass.BASS_ChannelGetData(handle, EQSETTINGS.EqFftData, num3);
+          num2 = Bass.GetChannelData(handle, EQSETTINGS.EqFftData, num3);
         }
         catch
         {

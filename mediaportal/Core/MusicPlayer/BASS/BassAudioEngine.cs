@@ -157,7 +157,7 @@ namespace MediaPortal.MusicPlayer.BASS
     private int _speed = 1;
     private DateTime _seekUpdate = DateTime.Now;
 
-    private StreamCopy _streamcopy; // To Clone the Strem for Visualisation
+    private StreamCopy _streamcopy; // To Clone the Stream for Visualisation
 
     // CUE Support
     private string _currentCueFileName = null;
@@ -745,7 +745,7 @@ namespace MediaPortal.MusicPlayer.BASS
       _commandThread.Start();
     }
 
-    private  void CommandThread()
+    private void CommandThread()
     {
       try
       {
@@ -763,29 +763,26 @@ namespace MediaPortal.MusicPlayer.BASS
               // No commands in queue, wait for queue to receive events
               continue;
             }
-            else // Process the 1st command in the queue
+            QueueItem item = _commandQueue[0];
+            _commandQueue.RemoveAt(0);
+            switch ((int) item.cmd)
             {
-              QueueItem item = _commandQueue[0];
-              _commandQueue.RemoveAt(0);
-              switch ((int)item.cmd)
-              {
-                case (int)PlaybackCommand.Stop:
-                  StopCommand();
-                  break;
+              case (int) PlaybackCommand.Stop:
+                StopCommand();
+                break;
 
-                case (int)PlaybackCommand.ExitThread:
-                  exitThread = true;
-                  break;
+              case (int) PlaybackCommand.ExitThread:
+                exitThread = true;
+                break;
 
-                default:
-                  Log.Error("BASS: CommandThread unknown command {0}", (int)item.cmd);
-                  continue;
-              }
+              default:
+                Log.Error("BASS: CommandThread unknown command {0}", (int) item.cmd);
+                continue;
             }
           }
         }
       }
-      catch(Exception ex)
+      catch (Exception ex)
       {
         Log.Error("BASS: CommandThread exception {0}", ex);
       }
@@ -976,7 +973,7 @@ namespace MediaPortal.MusicPlayer.BASS
         if (HasViz)
         {
           Log.Debug("BASS: Create Stream copy for Visualisation");
-          _streamcopy = new StreamCopy();
+          _streamcopy = new StreamCopy(this);
           _streamcopy.StreamCopyFlags = BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_DECODE;
         }
 
@@ -2072,7 +2069,6 @@ namespace MediaPortal.MusicPlayer.BASS
     {
       MusicStream stream = GetCurrentStream();
 
-      Log.Debug("BASS: Pause of stream {0}", stream.FilePath);
       try
       {
         PlayState oldPlayState = _state;
@@ -2084,6 +2080,7 @@ namespace MediaPortal.MusicPlayer.BASS
 
         if (oldPlayState == PlayState.Paused)
         {
+          Log.Debug("BASS: Resuming stream {0}", stream.FilePath);
           _state = PlayState.Playing;
 
           if (Config.SoftStop)
@@ -2111,6 +2108,7 @@ namespace MediaPortal.MusicPlayer.BASS
 
         else
         {
+          Log.Debug("BASS: Pausing stream {0}", stream.FilePath);
           _state = PlayState.Paused;
 
           if (Config.SoftStop)
@@ -2720,6 +2718,76 @@ namespace MediaPortal.MusicPlayer.BASS
 
       dbLevelL = dbLeft;
       dbLevelR = dbRight;
+    }
+
+    public int GetDataFFT(float[] buffer, int lenght)
+    {
+      lock (_syncRoot)
+      {
+        // Return the clone of the stream, because for a decoding channel, we can't get data from the original stream
+        return BassWasapi.BASS_WASAPI_GetData(buffer, lenght);
+      }
+    }
+
+    public int GetChannelData(int handle, float[] buffer, int lenght)
+    {
+      lock (_syncRoot)
+      {
+        // Return the clone of the stream, because for a decoding channel, we can't get data from the original stream
+        return Bass.BASS_ChannelGetData(handle, buffer, lenght);
+      }
+    }
+
+    #endregion
+
+    #region  Internals Methods
+
+    internal int StreamCreate(int freq, int chans, BASSFlag Flags, STREAMPROC proc, IntPtr user)
+    {
+      lock (_syncRoot)
+      {
+        return Bass.BASS_StreamCreate(freq, chans, Flags, proc, user);
+      }
+    }
+
+    internal bool ChannelSetLink(int handle, int chan)
+    {
+      lock (_syncRoot)
+      {
+        return Bass.BASS_ChannelSetLink(handle, chan);
+      }
+    }
+
+    internal bool ChannelPlay(int handle, bool restart)
+    {
+      lock (_syncRoot)
+      {
+        return Bass.BASS_ChannelPlay(handle, restart);
+      }
+    }
+
+    internal bool ChannelRemoveLink(int handle, int chan)
+    {
+      lock (_syncRoot)
+      {
+        return Bass.BASS_ChannelRemoveLink(handle, chan);
+      }
+    }
+
+    internal BASSActive ChannelIsActive(int handle)
+    {
+      lock (_syncRoot)
+      {
+        return Bass.BASS_ChannelIsActive(handle);
+      }
+    }
+
+    internal bool StreamFree(int handle)
+    {
+      lock (_syncRoot)
+      {
+        return Bass.BASS_StreamFree(handle);
+      }
     }
 
     #endregion
