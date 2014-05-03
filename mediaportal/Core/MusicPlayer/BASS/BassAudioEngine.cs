@@ -697,6 +697,7 @@ namespace MediaPortal.MusicPlayer.BASS
             g_Player.currentMedia = g_Player.MediaType.Music;
             g_Player.currentFilePlaying = nextSong;
             g_Player.OnStarted();
+            NotifyPlaying = true;
           }
           else
           {
