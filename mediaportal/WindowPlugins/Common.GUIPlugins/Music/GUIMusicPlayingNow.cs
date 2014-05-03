@@ -241,7 +241,6 @@ namespace MediaPortal.GUI.Music
       }
 
       GUIGraphicsContext.form.Invoke(new PlaybackChangedDelegate(DoOnStarted), new object[] {type, filename});
-      UpdateSimilarTracks(filename);
     }
 
     private void DoOnStarted(g_Player.MediaType type, string filename)
@@ -302,6 +301,8 @@ namespace MediaPortal.GUI.Music
     public override bool Init()
     {
       bool success = false;
+
+      GUIWindowManager.Receivers += new SendMessageHandler(this.OnThreadMessage);
 
       // Load the various Music NowPlaying files
       // we might have:
@@ -1202,6 +1203,20 @@ namespace MediaPortal.GUI.Music
     #endregion
 
     #region last.fm integration
+
+    private void OnThreadMessage(GUIMessage message)
+    {
+      switch (message.Message)
+      {
+        case GUIMessage.MessageType.GUI_MSG_PLAYING_10SEC:
+          if (PlaylistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC && _lookupSimilarTracks)
+          {
+            string strFile = message.Label;
+            UpdateSimilarTracks(strFile);
+          }
+          break;
+      }
+    }
 
     private void DoLastFMLove()
     {
