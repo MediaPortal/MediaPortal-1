@@ -534,6 +534,9 @@ HRESULT CDeMultiplexer::Start()
   const DWORD readTimeout = 5000;
 #endif
 
+  if (m_playlistManager)
+    m_playlistManager->ClearAllButCurrentClip();
+
   while ((GetTickCount() - m_Time) < readTimeout && !m_bReadFailed)
   {
     int BytesRead = ReadFromFile();
