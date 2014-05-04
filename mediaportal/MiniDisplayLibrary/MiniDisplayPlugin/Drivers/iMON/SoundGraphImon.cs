@@ -436,8 +436,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 _settings.SmoothEQ = false;
 
                 //LCD properties
-                _settings.PreferFirstLineGeneral = true;
-                _settings.PreferFirstLinePlayback = true;
+                _settings.PreferFirstLineGeneral = false;
+                _settings.PreferFirstLinePlayback = false;
 
             }
 

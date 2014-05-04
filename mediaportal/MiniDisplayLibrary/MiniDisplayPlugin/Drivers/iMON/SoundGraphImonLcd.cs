@@ -75,9 +75,24 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             }
             else if (NeedTextUpdate)
             {
-                //Not show EQ then display our lines
+                //Not showing EQ then display our lines
                 //Only show the second line for now
-                SoundGraphDisplay.IDW_SetLcdText(TextBottomLine);
+
+                bool isPlaying = g_Player.Player != null && g_Player.Player.Playing;
+
+                if (isPlaying && iSettings.PreferFirstLinePlayback)
+                {
+                    SoundGraphDisplay.IDW_SetLcdText(TextTopLine);
+                }
+                else if (!isPlaying && iSettings.PreferFirstLineGeneral)
+                {
+                    SoundGraphDisplay.IDW_SetLcdText(TextTopLine);
+                }
+                else
+                {
+                    SoundGraphDisplay.IDW_SetLcdText(TextBottomLine);
+                }
+
                 NeedTextUpdate = false;
             }
 
