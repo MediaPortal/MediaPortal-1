@@ -1,4 +1,4 @@
-LIBRARY     TsMuxer.ax
+LIBRARY     SatIP.ax
 
 EXPORTS
             DllMain                 PRIVATE

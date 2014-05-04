@@ -32,22 +32,22 @@
 
 using namespace std;
 
-class CTsMuxerTsOutputPin;
-class CTsMuxer;
-class CTsMuxerFilter;
+class CSatIPTsOutputPin;
+class CSatIP;
+class CSatIPFilter;
 
 #pragma region Interfaces
 
 // {9D9FBAFE-3E8C-4104-A279-D9EEEC072BA2}
-DEFINE_GUID(CLSID_TsMuxer, 0x9d9fbafe, 0x3e8c, 0x4104, 0xa2, 0x79, 0xd9, 0xee, 0xec, 0x7, 0x2b, 0xa2);
+DEFINE_GUID(CLSID_SatIP, 0x9d9fbafe, 0x3e8c, 0x4104, 0xa2, 0x79, 0xd9, 0xee, 0xec, 0x7, 0x2b, 0xa2);
 
 
 
 // {22D98D0E-6956-4EA0-9D18-4F55DEA8F5EC}
-DEFINE_GUID(IID_ITsMuxer, 0x22d98d0e, 0x6956, 0x4ea0, 0x9d, 0x18, 0x4f, 0x55, 0xde, 0xa8, 0xf5, 0xec);
+DEFINE_GUID(IID_ISatIP, 0x22d98d0e, 0x6956, 0x4ea0, 0x9d, 0x18, 0x4f, 0x55, 0xde, 0xa8, 0xf5, 0xec);
 
 
-DECLARE_INTERFACE_(ITsMuxer, IUnknown)
+DECLARE_INTERFACE_(ISatIP, IUnknown)
 {
 	STDMETHOD(FilterCreateNamedPipe)(THIS_ char* devicePath)PURE;
 };
@@ -58,21 +58,21 @@ DECLARE_INTERFACE_(ITsMuxer, IUnknown)
 
 struct namedPipeReadThreadStruct{
 	HANDLE handler;
-	CTsMuxer* TsMuxer;
+	CSatIP* SatIP;
 };
 
 #pragma endregion
 
 // Main filter object
 
-class CTsMuxerFilter : public CBaseFilter
+class CSatIPFilter : public CBaseFilter
 {
-	CTsMuxer * const m_pTsMuxer;
+	CSatIP * const m_pSatIP;
 
 public:
 
 	// Constructor
-	CTsMuxerFilter(CTsMuxer *m_pTsMuxer,
+	CSatIPFilter(CSatIP *m_pSatIP,
 		LPUNKNOWN pUnk,
 		CCritSec *pLock,
 		HRESULT *phr);
@@ -88,15 +88,15 @@ public:
 };
 
 
-//  CTsMuxer object which has filter and pin members
+//  CSatIP object which has filter and pin members
 
-class CTsMuxer : public CUnknown, public ITsMuxer, public IPacketReceiver
+class CSatIP : public CUnknown, public ISatIP, public IPacketReceiver
 {
 	typedef void*(*pvFunctv)();
 	
-	friend class CTsMuxerFilter;
-	CTsMuxerFilter*	m_pFilter;							// Methods for filter interfaces
-	CTsMuxerTsInputPin*	m_pTsInputPin;					// A TS rendered input pin
+	friend class CSatIPFilter;
+	CSatIPFilter*	m_pFilter;							// Methods for filter interfaces
+	CSatIPTsInputPin*	m_pTsInputPin;					// A TS rendered input pin
 	CCritSec 		m_Lock;								// Main renderer critical section
 	CCritSec 		m_ReceiveLock;						// Sublock for received samples
 
@@ -111,8 +111,8 @@ class CTsMuxer : public CUnknown, public ITsMuxer, public IPacketReceiver
 public:
 	DECLARE_IUNKNOWN
 
-	CTsMuxer(LPUNKNOWN pUnk, HRESULT *phr);
-	~CTsMuxer();
+	CSatIP(LPUNKNOWN pUnk, HRESULT *phr);
+	~CSatIP();
 
 	static CUnknown * WINAPI CreateInstance(LPUNKNOWN punk, HRESULT *phr);
 
@@ -138,10 +138,11 @@ private:
 
 	// Streaming instance thread
 	//thread streamingThread;
-	char* test1;
+	char* clientIp;
 	char* test2;
 	thread streamingThread;
 	bool streamRunning;
+	bool streamConfigured;
 	int bytesWritten;
 
 	void			FindSync();

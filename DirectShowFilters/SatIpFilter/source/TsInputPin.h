@@ -27,13 +27,13 @@
 
 //  Pin object
 
-class CTsMuxerTsInputPin : public CRenderedInputPin
+class CSatIPTsInputPin : public CRenderedInputPin
 {
-	IPacketReceiver*  const m_pTsMuxer;	// Main renderer object
+	IPacketReceiver*  const m_pSatIP;	// Main renderer object
 	CCritSec* const	m_pReceiveLock;		    // Sample critical section
 public:
 
-	CTsMuxerTsInputPin(IPacketReceiver *m_pTsMuxer,
+	CSatIPTsInputPin(IPacketReceiver *m_pSatIP,
 		LPUNKNOWN pUnk,
 		CBaseFilter *pFilter,
 		CCritSec *pLock,

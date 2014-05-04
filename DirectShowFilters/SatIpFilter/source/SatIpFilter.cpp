@@ -39,7 +39,7 @@ const AMOVIESETUP_MEDIATYPE tsPinType =
 	&MEDIASUBTYPE_MPEG2_TRANSPORT	// Minor type
 };
 
-const AMOVIESETUP_PIN tsMuxerPins[] =
+const AMOVIESETUP_PIN SatIPPins[] =
 {
 	{
 		L"TS Input",				// Pin string name
@@ -54,13 +54,13 @@ const AMOVIESETUP_PIN tsMuxerPins[] =
 	}
 };
 
-const AMOVIESETUP_FILTER tsMuxer =
+const AMOVIESETUP_FILTER SatIP =
 {
-	&CLSID_TsMuxer,					// Filter CLSID
+	&CLSID_SatIP,					// Filter CLSID
 	L"MediaPortal Sat>IP Filter",	// String name
 	MERIT_DO_NOT_USE,				// Filter merit
 	1,								// Number pins
-	tsMuxerPins						// Pin details
+	SatIPPins						// Pin details
 };
 
 static char logbuffer[2000]; 
@@ -78,7 +78,7 @@ void LogDebug(const char *fmt, ...)
 	TCHAR folder[MAX_PATH];
 	TCHAR fileName[MAX_PATH];
 	::SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
-	sprintf(fileName,"%s\\Team MediaPortal\\MediaPortal TV Server\\log\\TsMuxer.Log",folder);
+	sprintf(fileName,"%s\\Team MediaPortal\\MediaPortal TV Server\\log\\SatIP.Log",folder);
 
 	FILE* fp = fopen(fileName,"a+");
 	if (fp!=NULL)
@@ -97,20 +97,20 @@ void LogDebug(const char *fmt, ...)
 //  Object creation stuff
 //
 CFactoryTemplate g_Templates[]= {
-	L"MediaPortal Sat>IP Filter", &CLSID_TsMuxer, CTsMuxer::CreateInstance, NULL, &tsMuxer
+	L"MediaPortal Sat>IP Filter", &CLSID_SatIP, CSatIP::CreateInstance, NULL, &SatIP
 };
 int g_cTemplates = 1;
 
-#pragma region TsMuxerFilter
+#pragma region SatIPFilter
 
 // Constructor
 
-CTsMuxerFilter::CTsMuxerFilter(CTsMuxer *pTsMuxer,
+CSatIPFilter::CSatIPFilter(CSatIP *pSatIP,
 							   LPUNKNOWN pUnk,
 							   CCritSec *pLock,
 							   HRESULT *phr) :
-CBaseFilter(NAME("Ts Muxer"), pUnk, pLock, CLSID_TsMuxer),
-m_pTsMuxer(pTsMuxer)
+CBaseFilter(NAME("Ts Muxer"), pUnk, pLock, CLSID_SatIP),
+m_pSatIP(pSatIP)
 {
 }
 
@@ -118,10 +118,10 @@ m_pTsMuxer(pTsMuxer)
 //
 // GetPin
 //
-CBasePin * CTsMuxerFilter::GetPin(int n)
+CBasePin * CSatIPFilter::GetPin(int n)
 {
 	if (n == 0) {
-		return m_pTsMuxer->m_pTsInputPin;
+		return m_pSatIP->m_pTsInputPin;
 	}else {
 		return NULL;
 	}
@@ -131,7 +131,7 @@ CBasePin * CTsMuxerFilter::GetPin(int n)
 //
 // GetPinCount
 //
-int CTsMuxerFilter::GetPinCount()
+int CSatIPFilter::GetPinCount()
 {
 	return 1;
 }
@@ -142,14 +142,14 @@ int CTsMuxerFilter::GetPinCount()
 //
 // Overriden to close the dump file
 //
-STDMETHODIMP CTsMuxerFilter::Stop()
+STDMETHODIMP CSatIPFilter::Stop()
 {
 	CAutoLock cObjectLock(m_pLock);
 
-	LogDebug("CTsMuxerFilter::Stop()");
+	LogDebug("CSatIPFilter::Stop()");
 
 	HRESULT result =  CBaseFilter::Stop();
-	LogDebug("CTsMuxerFilter::Stop() completed");
+	LogDebug("CSatIPFilter::Stop() completed");
 	return result;
 }
 
@@ -159,12 +159,12 @@ STDMETHODIMP CTsMuxerFilter::Stop()
 //
 // Overriden to open the dump file
 //
-STDMETHODIMP CTsMuxerFilter::Pause()
+STDMETHODIMP CSatIPFilter::Pause()
 {
-	LogDebug("CTsMuxerFilter::Pause()");
+	LogDebug("CSatIPFilter::Pause()");
 	CAutoLock cObjectLock(m_pLock);
 
-	if (m_pTsMuxer != NULL)
+	if (m_pSatIP != NULL)
 	{
 		// GraphEdit calls Pause() before calling Stop() for this filter.
 		// If we have encountered a write error (such as disk full),
@@ -175,10 +175,10 @@ STDMETHODIMP CTsMuxerFilter::Pause()
 		// if we have previously encountered an error.  The write error
 		// flag gets cleared when setting a new log file name or
 		// when restarting the graph with Run().
-		//m_pTsMuxer->m_pProgramTsWriter->Close();
-		//m_pTsMuxer->m_pElementaryTsWriter->Close();
+		//m_pSatIP->m_pProgramTsWriter->Close();
+		//m_pSatIP->m_pElementaryTsWriter->Close();
 	}
-	LogDebug("CTsMuxerFilter::Pause() finished");
+	LogDebug("CSatIPFilter::Pause() finished");
 	return CBaseFilter::Pause();
 }
 
@@ -188,9 +188,9 @@ STDMETHODIMP CTsMuxerFilter::Pause()
 //
 // Overriden to open the dump file
 //
-STDMETHODIMP CTsMuxerFilter::Run(REFERENCE_TIME tStart)
+STDMETHODIMP CSatIPFilter::Run(REFERENCE_TIME tStart)
 {
-	LogDebug("CTsMuxerFilter::Run()");
+	LogDebug("CSatIPFilter::Run()");
 	CAutoLock cObjectLock(m_pLock);
 
 	return CBaseFilter::Run(tStart);
@@ -199,14 +199,14 @@ STDMETHODIMP CTsMuxerFilter::Run(REFERENCE_TIME tStart)
 #pragma endregion
 
 //
-//  CTsMuxer class
+//  CSatIP class
 //
-CTsMuxer::CTsMuxer(LPUNKNOWN pUnk, HRESULT *phr) :
-CUnknown(NAME("CTsMuxer"), pUnk),
+CSatIP::CSatIP(LPUNKNOWN pUnk, HRESULT *phr) :
+CUnknown(NAME("CSatIP"), pUnk),
 m_pFilter(NULL),
 m_pTsInputPin(NULL)
 {
-	LogDebug("CTsMuxer::ctor()");
+	LogDebug("CSatIP::ctor()");
 
 	TCHAR folder[MAX_PATH];
 	TCHAR fileName[MAX_PATH];
@@ -215,8 +215,8 @@ m_pTsInputPin(NULL)
 
 	stream = fopen(fileName, "ab");
 
-	DeleteFile("TsMuxer.log");
-	m_pFilter = new CTsMuxerFilter(this, GetOwner(), &m_Lock, phr);
+	DeleteFile("SatIP.log");
+	m_pFilter = new CSatIPFilter(this, GetOwner(), &m_Lock, phr);
 	if (m_pFilter == NULL) 
 	{
 		if (phr)
@@ -225,7 +225,7 @@ m_pTsInputPin(NULL)
 	}
 
 
-	m_pTsInputPin = new CTsMuxerTsInputPin(this,GetOwner(),
+	m_pTsInputPin = new CSatIPTsInputPin(this,GetOwner(),
 		m_pFilter,
 		&m_Lock,
 		&m_ReceiveLock,
@@ -264,9 +264,11 @@ m_pTsInputPin(NULL)
 	MPrtpStream = (IMPrtpStream*)(MPrtpStreamEntryPoint());
 	streamRunning = false;
 	
-	test1 = "192.168.178.26";
+	clientIp = "192.168.178.26";
 	test2 = "test.ts";
 	bytesWritten = 0;
+	// TODO remove this later if we can configure the stream
+	streamConfigured = true;
 	//thread th(&IMPrtpStream::MPrtpStreamCreate, this->MPrtpStream, test1, 8888, test2);
 	//streamingThread = thread(&IMPrtpStream::MPrtpStreamCreate, this->MPrtpStream, test1, 8888, test2);
 	//streamingThread.detach(); // fire & forget, maybe not the best option so have a look here later: http://stackoverflow.com/questions/16296284/workaround-for-blocking-async
@@ -279,7 +281,7 @@ m_pTsInputPin(NULL)
 	
 	//pipeHandle = createPipe();
 	//parameters.handler = pipeHandle;
-	//parameters.TsMuxer = this;
+	//parameters.SatIP = this;
 	//::CloseHandle((HANDLE)::_beginthreadex(0, 0, &namedPipeReadThread, /*(void*)*//*(LPVOID)pipeHandle*/&parameters, 0, &id));
 	FilterCreateNamedPipe(PIPE_NAME);
 }
@@ -289,7 +291,7 @@ m_pTsInputPin(NULL)
 
 // Destructor
 
-CTsMuxer::~CTsMuxer()
+CSatIP::~CSatIP()
 {
 	LogDebug("CMPFilerWriter::dtor()");
 
@@ -297,7 +299,7 @@ CTsMuxer::~CTsMuxer()
 	delete m_pTsInputPin;
 	m_pTsInputPin = NULL;
 
-	LogDebug("CTsMuxerTsInputPin::dtor() completed");
+	LogDebug("CSatIPTsInputPin::dtor() completed");
 
 
 	delete m_pFilter;
@@ -305,7 +307,7 @@ CTsMuxer::~CTsMuxer()
 
 	fclose(stream);
 
-	LogDebug("CTsMuxerFilter::dtor() completed");
+	LogDebug("CSatIPFilter::dtor() completed");
 }
 
 
@@ -314,11 +316,11 @@ CTsMuxer::~CTsMuxer()
 //
 // Provide the way for COM to create a dump filter
 //
-CUnknown * WINAPI CTsMuxer::CreateInstance(LPUNKNOWN punk, HRESULT *phr)
+CUnknown * WINAPI CSatIP::CreateInstance(LPUNKNOWN punk, HRESULT *phr)
 {
 	ASSERT(phr);
 
-	CTsMuxer *pNewObject = new CTsMuxer(punk, phr);
+	CSatIP *pNewObject = new CSatIP(punk, phr);
 	if (pNewObject == NULL) {
 		if (phr)
 			*phr = E_OUTOFMEMORY;
@@ -334,15 +336,15 @@ CUnknown * WINAPI CTsMuxer::CreateInstance(LPUNKNOWN punk, HRESULT *phr)
 //
 // Override this to say what interfaces we support where
 //
-STDMETHODIMP CTsMuxer::NonDelegatingQueryInterface(REFIID riid, void ** ppv)
+STDMETHODIMP CSatIP::NonDelegatingQueryInterface(REFIID riid, void ** ppv)
 {
 	CheckPointer(ppv,E_POINTER);
 	CAutoLock lock(&m_Lock);
 
 	// Do we have this interface
-	if (riid == IID_ITsMuxer)
+	if (riid == IID_ISatIP)
 	{
-		return GetInterface((ITsMuxer*)this, ppv);
+		return GetInterface((ISatIP*)this, ppv);
 	}else if (riid == IID_IBaseFilter || riid == IID_IMediaFilter || riid == IID_IPersist) {
 		return m_pFilter->NonDelegatingQueryInterface(riid, ppv);
 	} 
@@ -392,33 +394,33 @@ BOOL APIENTRY DllMain(HANDLE hModule,
 	return DllEntryPoint((HINSTANCE)(hModule), dwReason, lpReserved);
 }
 
-STDMETHODIMP CTsMuxer::GetPMTPid(int pmtPid)
+STDMETHODIMP CSatIP::GetPMTPid(int pmtPid)
 {
 	pmtPid = 0x20;
 	return S_OK;
 }
 
-STDMETHODIMP CTsMuxer::GetServiceId(int serviceId)
+STDMETHODIMP CSatIP::GetServiceId(int serviceId)
 {
 	serviceId = 1;
 	return S_OK;
 }
 
 
-STDMETHODIMP CTsMuxer::FilterCreateNamedPipe(char* devicePath)
+STDMETHODIMP CSatIP::FilterCreateNamedPipe(char* devicePath)
 {
 	unsigned int id = 0;
 
 	pipeHandle = createPipe(devicePath);
 	parameters.handler = pipeHandle;
-	parameters.TsMuxer = this;
+	parameters.SatIP = this;
 	::CloseHandle((HANDLE)::_beginthreadex(0, 0, &namedPipeReadThread, /*(void*)*//*(LPVOID)pipeHandle*/&parameters, 0, &id));
 
 	return S_OK;
 }
 
 
-HRESULT CTsMuxer::Write(PBYTE pbData, LONG lDataLength)
+HRESULT CSatIP::Write(PBYTE pbData, LONG lDataLength)
 {
 	CAutoLock lock(&m_Lock);
 
@@ -429,7 +431,7 @@ HRESULT CTsMuxer::Write(PBYTE pbData, LONG lDataLength)
 	return S_OK;
 }
 
-void CTsMuxer::processPackages()
+void CSatIP::processPackages()
 {
 	FindSync();
 
@@ -452,7 +454,8 @@ void CTsMuxer::processPackages()
 			unsigned short Pid;
 			Pid = ((out[1] & 0x1F) << 8) + out[2];
 			//LogDebug("Pid 0x%04x", Pid);
-			if (pidfilter->PidRequested(Pid)) {
+			// the Stream must be configured before we write packages to the buffer
+			if (pidfilter->PidRequested(Pid) && streamConfigured) {
 				//fwrite(out, 1, TS_PACKET_LEN, stream);
 				MPrtpStream->write(out, TS_PACKET_LEN);
 				if (!streamRunning)
@@ -463,13 +466,13 @@ void CTsMuxer::processPackages()
 		if (!streamRunning && hasSync && bytesWritten > (TS_PACKET_LEN * 900)) {
 			streamRunning = true;
 			LogDebug("startStreaming");
-			streamingThread = thread(&IMPrtpStream::MPrtpStreamCreate, this->MPrtpStream, test1, 8888, test2);
+			streamingThread = thread(&IMPrtpStream::MPrtpStreamCreate, this->MPrtpStream, clientIp, 8888, test2);
 			streamingThread.detach(); // fire & forget, maybe not the best option so have a look here later: http://stackoverflow.com/questions/16296284/workaround-for-blocking-async
 		}
 	}
 }
 
-void CTsMuxer::FindSync()
+void CSatIP::FindSync()
 {
 	bool run = true;
 	if (ringbuffer->GetReadAvail() >= 940 && !hasSync) {
@@ -489,7 +492,7 @@ void CTsMuxer::FindSync()
 	}
 }
 
-HANDLE CTsMuxer::createPipe(const char* pipeName) {
+HANDLE CSatIP::createPipe(const char* pipeName) {
 	LogDebug("Named pipe: create pipe - %s", pipeName);
 
 
@@ -576,11 +579,11 @@ unsigned int __stdcall namedPipeReadThread(/*HANDLE&*//*LPVOID hPipe_tmp*/void* 
 					if (subStr != command) {
 						if (strcmp(command, "AddPids") == 0) {
 							LogDebug("Neamed pipe: add pid %d", atoi(subStr));
-							parameters.TsMuxer->pidfilter->Add(atoi(subStr));
+							parameters.SatIP->pidfilter->Add(atoi(subStr));
 						}
 						else if (strcmp(command, "DelPids") == 0) {
 							LogDebug("Neamed pipe: del pid %d", atoi(subStr));
-							parameters.TsMuxer->pidfilter->Del(atoi(subStr));
+							parameters.SatIP->pidfilter->Del(atoi(subStr));
 						}
 					}
 
@@ -590,7 +593,7 @@ unsigned int __stdcall namedPipeReadThread(/*HANDLE&*//*LPVOID hPipe_tmp*/void* 
 				//delete command, subStr;
 				//delete[] tokens;
 
-				//parameters.TsMuxer->pidfilter->Add();
+				//parameters.SatIP->pidfilter->Add();
 				// Reply to client
 				strcpy(szBuffer, ACK_MESG_RECV);
 
@@ -613,17 +616,17 @@ unsigned int __stdcall namedPipeReadThread(/*HANDLE&*//*LPVOID hPipe_tmp*/void* 
 }
 
 
-STDMETHODIMP  CTsMuxer::IsReceiving(BOOL* yesNo)
+STDMETHODIMP  CSatIP::IsReceiving(BOOL* yesNo)
 {
 	return S_OK;
 }
 
-STDMETHODIMP  CTsMuxer::Reset()
+STDMETHODIMP  CSatIP::Reset()
 {
 	return S_OK;
 }
 
-void CALLBACK CTsMuxer::checkConfigFile(
+void CALLBACK CSatIP::checkConfigFile(
 	HWND hwnd,        // handle to window for timer messages
 	UINT message,     // WM_TIMER message
 	UINT idTimer,     // timer identifier

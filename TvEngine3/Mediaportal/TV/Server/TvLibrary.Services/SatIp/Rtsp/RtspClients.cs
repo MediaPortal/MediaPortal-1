@@ -1,8 +1,32 @@
-﻿using System;
+﻿#region Copyright (C) 2005-2011 Team MediaPortal
+
+// Copyright (C) 2005-2011 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
+
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Collections;
+
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVService.Interfaces;
+using Mediaportal.TV.Server.TVService.Interfaces.Services;
 
 namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
 {
@@ -16,10 +40,13 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
     private int _rtpServerPort;
     private int _rtcpServerPort;
     private int _streamId;
+    private TuningDetail _tuningDetail;
+    private IVirtualCard _card;
+    private IUser _user;
 
     //?src=1&fe=1&freq=12402&pol=v&msys=dvbs&sr=27500&fec=34&pids=0,16
     private int _src;
-    private double _freq;
+    private int _freq;
     private string _pol;
     private string _msys;
     private int _sr;
@@ -65,6 +92,51 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
     }
 
     /// <summary>
+    /// Get/Set the tuningDetail.
+    /// </summary>
+    public TuningDetail tuningDetail
+    {
+        get
+        {
+          return _tuningDetail;
+        }
+        set
+        {
+          _tuningDetail = value;
+        }
+    }
+
+    /// <summary>
+    /// Get/Set the card.
+    /// </summary>
+    public IVirtualCard card
+    {
+        get
+        {
+            return _card;
+        }
+        set
+        {
+            _card = value;
+        }
+    }
+
+    /// <summary>
+    /// Get/Set the user.
+    /// </summary>
+    public IUser user
+    {
+        get
+        {
+            return _user;
+        }
+        set
+        {
+            _user = value;
+        }
+    }
+
+    /// <summary>
     /// Get the client id.
     /// </summary>
     public int src
@@ -80,9 +152,9 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
     }
 
     /// <summary>
-    /// Get the client id.
+    /// Get the client frequency.
     /// </summary>
-    public double freq
+    public int freq
     {
       get
       {

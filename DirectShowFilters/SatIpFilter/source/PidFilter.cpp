@@ -20,7 +20,7 @@ void LogDebug2(const char *fmt, ...)
 	TCHAR folder[MAX_PATH];
 	TCHAR fileName[MAX_PATH];
 	::SHGetSpecialFolderPath(NULL, folder, CSIDL_COMMON_APPDATA, FALSE);
-	sprintf(fileName, "%s\\Team MediaPortal\\MediaPortal TV Server\\log\\TsMuxer.Log", folder);
+	sprintf(fileName, "%s\\Team MediaPortal\\MediaPortal TV Server\\log\\SatIP.Log", folder);
 
 	FILE* fp = fopen(fileName, "a+");
 	if (fp != NULL)

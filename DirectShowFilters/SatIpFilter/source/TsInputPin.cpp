@@ -27,9 +27,9 @@
 extern void LogDebug(const char *fmt, ...) ;
 
 //
-//  Definition of CTsMuxerTsInputPin
+//  Definition of CSatIPTsInputPin
 //
-CTsMuxerTsInputPin::CTsMuxerTsInputPin(IPacketReceiver *pTsMuxer,
+CSatIPTsInputPin::CSatIPTsInputPin(IPacketReceiver *pSatIP,
 													   LPUNKNOWN pUnk,
 													   CBaseFilter *pFilter,
 													   CCritSec *pLock,
@@ -42,9 +42,9 @@ CRenderedInputPin(NAME("CSAT>IPTsInputPin"),
 				  phr,                       // Return code
 				  L"TS Input"),           // Pin name
 				  m_pReceiveLock(pReceiveLock),
-				  m_pTsMuxer(pTsMuxer)
+				  m_pSatIP(pSatIP)
 {
-	LogDebug("CTsMuxerTsInputPin:ctor");
+	LogDebug("CSatIPTsInputPin:ctor");
 
 	m_bIsReceiving=FALSE;
 
@@ -56,7 +56,7 @@ CRenderedInputPin(NAME("CSAT>IPTsInputPin"),
 //
 // Check if the pin can support this specific proposed type and format
 //
-HRESULT CTsMuxerTsInputPin::CheckMediaType(const CMediaType *pType)
+HRESULT CSatIPTsInputPin::CheckMediaType(const CMediaType *pType)
 {
 	if(MEDIATYPE_Stream == pType->majortype && MEDIASUBTYPE_MPEG2_TRANSPORT == pType->subtype){
 		return S_OK;
@@ -70,7 +70,7 @@ HRESULT CTsMuxerTsInputPin::CheckMediaType(const CMediaType *pType)
 //
 // Break a connection
 //
-HRESULT CTsMuxerTsInputPin::BreakConnect()
+HRESULT CSatIPTsInputPin::BreakConnect()
 {
 
 	return CRenderedInputPin::BreakConnect();
@@ -82,7 +82,7 @@ HRESULT CTsMuxerTsInputPin::BreakConnect()
 //
 // We don't hold up source threads on Receive
 //
-STDMETHODIMP CTsMuxerTsInputPin::ReceiveCanBlock()
+STDMETHODIMP CSatIPTsInputPin::ReceiveCanBlock()
 {
 	return S_FALSE;
 }
@@ -93,7 +93,7 @@ STDMETHODIMP CTsMuxerTsInputPin::ReceiveCanBlock()
 //
 // Do something with this media sample
 //
-STDMETHODIMP CTsMuxerTsInputPin::Receive(IMediaSample *pSample)
+STDMETHODIMP CSatIPTsInputPin::Receive(IMediaSample *pSample)
 {
 	try
 	{
@@ -132,7 +132,7 @@ STDMETHODIMP CTsMuxerTsInputPin::Receive(IMediaSample *pSample)
 		}
 		//LogDebug("TS: receive samplelen:%d", sampleLen); // added
 		
-		m_pTsMuxer->Write(pbData,sampleLen);
+		m_pSatIP->Write(pbData,sampleLen);
 	}
 	catch(...)
 	{
@@ -144,20 +144,20 @@ STDMETHODIMP CTsMuxerTsInputPin::Receive(IMediaSample *pSample)
 //
 // EndOfStream
 //
-STDMETHODIMP CTsMuxerTsInputPin::EndOfStream(void)
+STDMETHODIMP CSatIPTsInputPin::EndOfStream(void)
 {
 	CAutoLock lock(m_pReceiveLock);
 	return CRenderedInputPin::EndOfStream();
 
 } // EndOfStream
 
-void CTsMuxerTsInputPin::Reset()
+void CSatIPTsInputPin::Reset()
 {
 	LogDebug("TS: Reset()...");
 	m_bIsReceiving=FALSE;
 	m_lTickCount=0;
 }
-BOOL CTsMuxerTsInputPin::IsReceiving()
+BOOL CSatIPTsInputPin::IsReceiving()
 {
 	DWORD msecs=GetTickCount()-m_lTickCount;
 	if (msecs>=1000)
@@ -175,7 +175,7 @@ BOOL CTsMuxerTsInputPin::IsReceiving()
 //
 // Called when we are seeked
 //
-STDMETHODIMP CTsMuxerTsInputPin::NewSegment(REFERENCE_TIME tStart,
+STDMETHODIMP CSatIPTsInputPin::NewSegment(REFERENCE_TIME tStart,
 													REFERENCE_TIME tStop,
 													double dRate)
 {
@@ -183,7 +183,7 @@ STDMETHODIMP CTsMuxerTsInputPin::NewSegment(REFERENCE_TIME tStart,
 
 } // NewSegment
 
-HRESULT CTsMuxerTsInputPin::GetMediaType(int iPosition,CMediaType *pmt)
+HRESULT CSatIPTsInputPin::GetMediaType(int iPosition,CMediaType *pmt)
 {
 	CAutoLock cAutoLock(m_pLock);
 	if(iPosition < 0) return E_INVALIDARG;

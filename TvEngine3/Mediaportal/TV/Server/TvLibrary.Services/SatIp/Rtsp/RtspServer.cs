@@ -1,4 +1,24 @@
-﻿using System;
+﻿#region Copyright (C) 2005-2011 Team MediaPortal
+
+// Copyright (C) 2005-2011 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
+
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
@@ -12,6 +32,18 @@ using System.Web;
 using System.Runtime.InteropServices;
 using System.Reflection;
 using System.Net.NetworkInformation;
+using System.Globalization;
+
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVControl.ServiceAgents;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVService.Interfaces;
+using Mediaportal.TV.Server.TVService.Interfaces.Enums;
+using Mediaportal.TV.Server.TVService.Interfaces.Services;
+
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 
 //using RtpStreamer;
 
@@ -207,8 +239,8 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
                 if (int.TryParse(query.Get(key), out value)) client.src = value;
                 break;
               case "freq":
-                double freq;
-                if (double.TryParse(query.Get(key), out freq)) client.freq = freq;
+                int freq;
+                if (int.TryParse(query.Get(key), out freq)) client.freq = freq;
                 break;
               case "sr":
                 if (int.TryParse(query.Get(key), out value)) client.sr = value;
@@ -307,7 +339,7 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
           // starting the stream
           //if (clients[int.Parse(requestHeader.sessionId)].pids.Count != 1 && (int)clients[int.Parse(requestHeader.sessionId)].pids[0] != 0)
           //{
-          if (query.Get("addpids") == "18") // for debuging only...
+          /*if (query.Get("addpids") == "18") // for debuging only...
           {
             // TODO: lock?!
             System.Diagnostics.Debug.WriteLine("Start Stream!");
@@ -315,7 +347,24 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
             rtpStreams.Add(streams, new rtpStream(StartStreamThread(streams, clients[int.Parse(requestHeader.sessionId)].ip, clients[int.Parse(requestHeader.sessionId)].rtpClientPort, "test3.ts")));
             clients[int.Parse(requestHeader.sessionId)].streamId = streams;
             streams++;
-          }
+          }*/
+          
+          // TODO: Add proper error handling if no tuning Detail is found
+          TuningDetail _tuningDetail = ChannelManagement.GetTuningDetail(getChannelTypeAsInt(clients[int.Parse(requestHeader.sessionId)].msys), (clients[int.Parse(requestHeader.sessionId)].freq * 1000));
+
+          if (_tuningDetail == null)
+            Log.Debug("SAT>IP: no such channel found!");
+
+          IUser _user = UserFactory.CreateBasicUser("SAT>IP - " + clients[int.Parse(requestHeader.sessionId)].ip);
+          IVirtualCard _card;
+          TvResult result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(_user.Name, _tuningDetail.IdChannel, out _card, out _user);
+          
+          clients[int.Parse(requestHeader.sessionId)].card = _card;
+          clients[int.Parse(requestHeader.sessionId)].user = _user;
+          clients[int.Parse(requestHeader.sessionId)].tuningDetail = _tuningDetail;
+
+          // TODO: open the named pipe and set the pids
+          ServiceAgents.Instance.ControllerServiceAgent.CardDevice(_card.Id); // device path
 
           // creating the response
 
@@ -487,6 +536,33 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
         }
       }
       return localIP;
+    }
+
+    private int getChannelTypeAsInt(string channelType)
+    {
+      int _channelType;
+
+      if (channelType.ToUpper() == "DVBT" || channelType == "DVBT2")
+      {
+        _channelType = 4;
+      }
+      else if (channelType.ToUpper() == "DVBS" || channelType == "DVBS2")
+      {
+        _channelType = 3;
+      }
+      else if (channelType.ToUpper() == "DVBC" || channelType == "DVBC2")
+      {
+        _channelType = 2;
+      }
+      /*else if (channel is DVBIPChannel)
+      {
+        channelType = 7;
+      }*/
+      else // must be ATSCChannel
+      {
+        _channelType = 1;
+      }
+      return _channelType;
     }
 
     #endregion

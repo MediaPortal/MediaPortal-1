@@ -24,12 +24,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
-<<<<<<< HEAD
-    <CharacterSet>MultiByte</CharacterSet>
-    <CLRSupport>false</CLRSupport>
-=======
     <CharacterSet>Unicode</CharacterSet>
->>>>>>> remotes/origin/EXP-TVE3.5-MP1-MP2_mm_working
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -69,11 +64,7 @@
       <ProgramDataBaseFileName>.\bin\Debug/</ProgramDataBaseFileName>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-<<<<<<< HEAD
-      <CompileAsManaged>false</CompileAsManaged>
-=======
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
->>>>>>> remotes/origin/EXP-TVE3.5-MP1-MP2_mm_working
     </ClCompile>
     <Link>
       <AdditionalDependencies>DvbCoreUtilsD.lib;strmbasd.lib;winmm.lib;livemedia555D.lib;WS2_32.Lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -133,7 +124,6 @@
     <ClCompile Include="Source\main.cpp" />
     <ClCompile Include="Source\FileReader.cpp" />
     <ClCompile Include="Source\MultiFileReader.cpp" />
-    <ClCompile Include="Source\RtpStream.cpp" />
     <ClCompile Include="Source\TsMPEG2TransportFileServerMediaSubsession.cpp" />
     <ClCompile Include="Source\TsMPEG2TransportStreamFramer.cpp" />
     <ClCompile Include="Source\TsStreamFileSource.cpp" />
@@ -147,7 +137,6 @@
     <None Include="Source\ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\RtpStream.h" />
     <ClInclude Include="Source\TSBuffer.h" />
     <ClInclude Include="Source\TSThread.h" />
     <ClInclude Include="Source\CriticalSection.h" />
