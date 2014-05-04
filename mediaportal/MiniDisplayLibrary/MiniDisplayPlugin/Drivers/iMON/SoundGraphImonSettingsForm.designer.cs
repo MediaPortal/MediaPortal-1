@@ -280,6 +280,7 @@
             this.checkDisableWhenInBackground.TabIndex = 4;
             this.checkDisableWhenInBackground.Text = "Disable when in background";
             this.checkDisableWhenInBackground.UseVisualStyleBackColor = true;
+            this.checkDisableWhenInBackground.Visible = false;
             // 
             // tabEqualizer
             // 
