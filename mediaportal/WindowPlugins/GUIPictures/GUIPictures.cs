@@ -714,7 +714,34 @@ namespace MediaPortal.GUI.Pictures
         }
         else
         {
+          bool foundSelectedItem = false;
+          int totalItemCount = facadeLayout.Count;
+          string strSelectedItem = Util.Utils.GetFilename(SlideShow._folderCurrentItem, true);
           GUIControl.SelectItemControl(GetID, facadeLayout.GetID, 0);
+          for (int i = 0; i < totalItemCount; i++)
+          {
+            string strSelectedItemcheck = LoadDateViewSelect(facadeLayout[i].Path, SlideShow._folderCurrentItem);
+            if (strSelectedItemcheck == SlideShow._folderCurrentItem)
+            {
+              foundSelectedItem = true;
+              break;
+            }
+          }
+          if (foundSelectedItem)
+          {
+            for (int i = 0; i < facadeLayout.Count; i++)
+            {
+              if (facadeLayout[i].Label == strSelectedItem)
+              {
+                GUIControl.SelectItemControl(GetID, facadeLayout.GetID, i);
+                break;
+              }
+            }
+          }
+          else
+          {
+            GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItemIndex);
+          }
         }
       }
       btnSortBy.SortChanged += new SortEventHandler(SortChanged);
@@ -2470,6 +2497,186 @@ namespace MediaPortal.GUI.Pictures
       {
         Log.Error("GUIPictures: Error loading date view - {0}", ex.ToString());
       }
+    }
+
+    private string LoadDateViewSelect(string strNewDirectory, string selectedItem)
+    {
+      try
+      {
+        if (strNewDirectory.Length == 4 && !_useDayGrouping)
+        {
+          // Months
+          string year = strNewDirectory.Substring(0, 4);
+          List<string> Months = new List<string>();
+          int CountMonths = PictureDatabase.ListMonths(year, ref Months);
+          foreach (string month in Months)
+          {
+            List<string> pics = new List<string>();
+            int CountPics = PictureDatabase.ListPicsByDate(year + "-" + month, ref pics);
+            foreach (string pic in pics)
+            {
+              try
+              {
+                if (pic == selectedItem)
+                {
+                  // Set root directory
+                  //folderHistory.Set(strNewDirectory, "");
+                  string strFreshNewDirectory = strNewDirectory + "\\" + month;
+                  // Reset facadeLayout
+                  facadeLayout.Clear();
+                  // Reload fresh view
+                  LoadDateView(strFreshNewDirectory);
+                  return selectedItem;
+                }
+              }
+              catch (Exception)
+              {
+                Log.Warn("GUIPictures: can't match item in date view");
+              }
+            }
+          }
+        }
+
+        // check if day grouping is enabled
+        if (_useDayGrouping)
+        {
+          if (strNewDirectory.Length == 4)
+          {
+            // Months
+            string year = strNewDirectory.Substring(0, 4);
+            List<string> Months = new List<string>();
+            int CountMonths = PictureDatabase.ListMonths(year, ref Months);
+            foreach (string month in Months)
+            {
+              List<string> Days = new List<string>();
+              int CountDays = PictureDatabase.ListDays(month, year, ref Days);
+              foreach (string day in Days)
+              {
+                List<string> pics = new List<string>();
+                int CountPics = PictureDatabase.ListPicsByDate(year + "-" + month + "-" + day, ref pics);
+                foreach (string pic in pics)
+                {
+                  try
+                  {
+                    if (pic == selectedItem)
+                    {
+                      // Set root directory
+                      string strFreshNewDirectory = strNewDirectory + "\\" + month + "\\" + day;
+                      //folderHistory.Set(day, strFreshNewDirectory);
+                      //folderHistory.Set(day, strFreshNewDirectory.Substring(0, 7));
+                      //folderHistory.Set(year, strFreshNewDirectory.Substring(0, 7));
+                      //folderHistory.Set(year, "");
+                      // Reset facadeLayout
+                      facadeLayout.Clear();
+                      // Reload fresh view
+                      LoadDateView(strFreshNewDirectory);
+                      return selectedItem;
+                    }
+                  }
+                  catch (Exception)
+                  {
+                    Log.Warn("GUIPictures: can't match item in date view");
+                  }
+                }
+              }
+            }
+          }
+          else if (strNewDirectory.Length == 7)
+          {
+            // Days
+            string year = strNewDirectory.Substring(0, 4);
+            string month = strNewDirectory.Substring(5, 2);
+
+            List<string> Days = new List<string>();
+            int CountDays = PictureDatabase.ListDays(month, year, ref Days);
+            foreach (string day in Days)
+            {
+              List<string> pics = new List<string>();
+              int CountPics = PictureDatabase.ListPicsByDate(year + "-" + month + "-" + day, ref pics);
+              foreach (string pic in pics)
+              {
+                try
+                {
+                  if (pic == selectedItem)
+                  {
+                    // Set root directory
+                    //folderHistory.Set(day, strNewDirectory.Substring(0, 7));
+                    string strFreshNewDirectory = strNewDirectory + "\\" + day;
+                    // Reset facadeLayout
+                    facadeLayout.Clear();
+                    // Reload fresh view
+                    LoadDateView(strFreshNewDirectory);
+                    return selectedItem;
+                  }
+                }
+                catch (Exception)
+                {
+                  Log.Warn("GUIPictures: can't match item in date view");
+                }
+              }
+            }
+          }
+          else if (strNewDirectory.Length == 10)
+          {
+            // Pics from one day
+            string year = strNewDirectory.Substring(0, 4);
+            string month = strNewDirectory.Substring(5, 2);
+            string day = strNewDirectory.Substring(8, 2);
+
+            List<string> pics = new List<string>();
+            int CountPics = PictureDatabase.ListPicsByDate(year + "-" + month + "-" + day, ref pics);
+            foreach (string pic in pics)
+            {
+              if (pic == selectedItem)
+              {
+                // Set root directory
+                //folderHistory.Set(day, strNewDirectory.Substring(0, 7));
+                //folderHistory.Set(year, strNewDirectory.Substring(0, 7));
+                // Reset facadeLayout
+                facadeLayout.Clear();
+                // Reload fresh view
+                LoadDateView(strNewDirectory);
+                return selectedItem;
+              }
+            }
+          }
+        }
+        else
+        {
+          if (strNewDirectory.Length == 7)
+          {
+            // Pics from one month
+            string year = strNewDirectory.Substring(0, 4);
+            string month = strNewDirectory.Substring(5, 2);
+
+            List<string> pics = new List<string>();
+            int CountPics = PictureDatabase.ListPicsByDate(year + "-" + month, ref pics);
+            foreach (string pic in pics)
+            {
+              try
+              {
+                if (pic == selectedItem)
+                {
+                  // Reset facadeLayout
+                  facadeLayout.Clear();
+                  // Reload fresh view
+                  LoadDateView(strNewDirectory);
+                  return selectedItem;
+                }
+              }
+              catch (Exception)
+              {
+                Log.Warn("GUIPictures: can't match item in date view");
+              }
+            }
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("GUIPictures: Error loading date view - {0}", ex.ToString());
+      }
+      return String.Empty;
     }
 
     public static string GetThumbnail(string fileName)
