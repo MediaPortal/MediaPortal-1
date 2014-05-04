@@ -369,8 +369,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             [XmlAttribute]
             public int DelayEqTime { get; set; }
 
-            [XmlAttribute]
-            public int EqMode { get; set; }
 
             [XmlAttribute]
             public int EqRate { get; set; }
@@ -428,7 +426,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             private static void Default(Settings _settings)
             {
                 _settings.EqDisplay = false;
-                _settings.EqMode = 0;
                 _settings.RestrictEQ = false;
                 _settings.EqRate = 10;
                 _settings.EqStartDelay = false;

@@ -50,8 +50,6 @@
             this.textEqEnabledTimeInSeconds = new System.Windows.Forms.MaskedTextBox();
             this.textEqDisabledTimeInSeconds = new System.Windows.Forms.MaskedTextBox();
             this.textEqStartDelayInSeconds = new System.Windows.Forms.MaskedTextBox();
-            this.cmbEqMode = new MediaPortal.UserInterface.Controls.MPComboBox();
-            this.mpLabelEQmode = new MediaPortal.UserInterface.Controls.MPLabel();
             this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
             this.mpLabelEQTitleDisplay = new MediaPortal.UserInterface.Controls.MPLabel();
             this.mpEQTitleDisplay = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -287,8 +285,6 @@
             this.tabEqualizer.Controls.Add(this.textEqEnabledTimeInSeconds);
             this.tabEqualizer.Controls.Add(this.textEqDisabledTimeInSeconds);
             this.tabEqualizer.Controls.Add(this.textEqStartDelayInSeconds);
-            this.tabEqualizer.Controls.Add(this.cmbEqMode);
-            this.tabEqualizer.Controls.Add(this.mpLabelEQmode);
             this.tabEqualizer.Controls.Add(this.mpLabel2);
             this.tabEqualizer.Controls.Add(this.mpLabelEQTitleDisplay);
             this.tabEqualizer.Controls.Add(this.mpEQTitleDisplay);
@@ -307,7 +303,7 @@
             // 
             // textEqEnabledTimeInSeconds
             // 
-            this.textEqEnabledTimeInSeconds.Location = new System.Drawing.Point(166, 156);
+            this.textEqEnabledTimeInSeconds.Location = new System.Drawing.Point(166, 131);
             this.textEqEnabledTimeInSeconds.Mask = "00000";
             this.textEqEnabledTimeInSeconds.Name = "textEqEnabledTimeInSeconds";
             this.textEqEnabledTimeInSeconds.PromptChar = ' ';
@@ -319,7 +315,7 @@
             // 
             // textEqDisabledTimeInSeconds
             // 
-            this.textEqDisabledTimeInSeconds.Location = new System.Drawing.Point(38, 156);
+            this.textEqDisabledTimeInSeconds.Location = new System.Drawing.Point(38, 131);
             this.textEqDisabledTimeInSeconds.Mask = "00000";
             this.textEqDisabledTimeInSeconds.Name = "textEqDisabledTimeInSeconds";
             this.textEqDisabledTimeInSeconds.PromptChar = ' ';
@@ -331,7 +327,7 @@
             // 
             // textEqStartDelayInSeconds
             // 
-            this.textEqStartDelayInSeconds.Location = new System.Drawing.Point(159, 93);
+            this.textEqStartDelayInSeconds.Location = new System.Drawing.Point(159, 68);
             this.textEqStartDelayInSeconds.Mask = "00000";
             this.textEqStartDelayInSeconds.Name = "textEqStartDelayInSeconds";
             this.textEqStartDelayInSeconds.PromptChar = ' ';
@@ -341,31 +337,9 @@
             this.textEqStartDelayInSeconds.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.textEqStartDelayInSeconds.ValidatingType = typeof(int);
             // 
-            // cmbEqMode
-            // 
-            this.cmbEqMode.BorderColor = System.Drawing.Color.Empty;
-            this.cmbEqMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbEqMode.Items.AddRange(new object[] {
-            "Up from bottom",
-            "Down from top",
-            "Expand from middle"});
-            this.cmbEqMode.Location = new System.Drawing.Point(139, 27);
-            this.cmbEqMode.Name = "cmbEqMode";
-            this.cmbEqMode.Size = new System.Drawing.Size(104, 21);
-            this.cmbEqMode.TabIndex = 141;
-            // 
-            // mpLabelEQmode
-            // 
-            this.mpLabelEQmode.Location = new System.Drawing.Point(47, 29);
-            this.mpLabelEQmode.Name = "mpLabelEQmode";
-            this.mpLabelEQmode.Size = new System.Drawing.Size(95, 17);
-            this.mpLabelEQmode.TabIndex = 153;
-            this.mpLabelEQmode.Text = "EQ Display Mode:";
-            this.mpLabelEQmode.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
             // mpLabel2
             // 
-            this.mpLabel2.Location = new System.Drawing.Point(97, 75);
+            this.mpLabel2.Location = new System.Drawing.Point(97, 50);
             this.mpLabel2.Name = "mpLabel2";
             this.mpLabel2.Size = new System.Drawing.Size(116, 17);
             this.mpLabel2.TabIndex = 152;
@@ -374,7 +348,7 @@
             // 
             // mpLabelEQTitleDisplay
             // 
-            this.mpLabelEQTitleDisplay.Location = new System.Drawing.Point(83, 159);
+            this.mpLabelEQTitleDisplay.Location = new System.Drawing.Point(83, 134);
             this.mpLabelEQTitleDisplay.Name = "mpLabelEQTitleDisplay";
             this.mpLabelEQTitleDisplay.Size = new System.Drawing.Size(197, 17);
             this.mpLabelEQTitleDisplay.TabIndex = 151;
@@ -385,7 +359,7 @@
             // 
             this.mpEQTitleDisplay.AutoSize = true;
             this.mpEQTitleDisplay.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.mpEQTitleDisplay.Location = new System.Drawing.Point(18, 138);
+            this.mpEQTitleDisplay.Location = new System.Drawing.Point(18, 113);
             this.mpEQTitleDisplay.Name = "mpEQTitleDisplay";
             this.mpEQTitleDisplay.Size = new System.Drawing.Size(118, 17);
             this.mpEQTitleDisplay.TabIndex = 149;
@@ -396,7 +370,7 @@
             // 
             this.mpSmoothEQ.AutoSize = true;
             this.mpSmoothEQ.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.mpSmoothEQ.Location = new System.Drawing.Point(18, 117);
+            this.mpSmoothEQ.Location = new System.Drawing.Point(18, 92);
             this.mpSmoothEQ.Name = "mpSmoothEQ";
             this.mpSmoothEQ.Size = new System.Drawing.Size(222, 17);
             this.mpSmoothEQ.TabIndex = 147;
@@ -418,7 +392,7 @@
             // 
             this.mpRestrictEQ.AutoSize = true;
             this.mpRestrictEQ.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.mpRestrictEQ.Location = new System.Drawing.Point(18, 54);
+            this.mpRestrictEQ.Location = new System.Drawing.Point(18, 29);
             this.mpRestrictEQ.Name = "mpRestrictEQ";
             this.mpRestrictEQ.Size = new System.Drawing.Size(183, 17);
             this.mpRestrictEQ.TabIndex = 145;
@@ -491,7 +465,7 @@
             "58",
             "59",
             "60"});
-            this.cmbEqRate.Location = new System.Drawing.Point(34, 73);
+            this.cmbEqRate.Location = new System.Drawing.Point(34, 48);
             this.cmbEqRate.Name = "cmbEqRate";
             this.cmbEqRate.Size = new System.Drawing.Size(57, 21);
             this.cmbEqRate.TabIndex = 142;
@@ -500,7 +474,7 @@
             // 
             this.mpDelayEQ.AutoSize = true;
             this.mpDelayEQ.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.mpDelayEQ.Location = new System.Drawing.Point(18, 96);
+            this.mpDelayEQ.Location = new System.Drawing.Point(18, 71);
             this.mpDelayEQ.Name = "mpDelayEQ";
             this.mpDelayEQ.Size = new System.Drawing.Size(247, 17);
             this.mpDelayEQ.TabIndex = 146;
@@ -640,8 +614,6 @@
         public System.Windows.Forms.TabControl tabControl;
         private System.Windows.Forms.TabPage tabImon;
         private System.Windows.Forms.TabPage tabEqualizer;
-        private UserInterface.Controls.MPComboBox cmbEqMode;
-        private UserInterface.Controls.MPLabel mpLabelEQmode;
         private UserInterface.Controls.MPLabel mpLabel2;
         private UserInterface.Controls.MPLabel mpLabelEQTitleDisplay;
         private UserInterface.Controls.MPCheckBox mpEQTitleDisplay;

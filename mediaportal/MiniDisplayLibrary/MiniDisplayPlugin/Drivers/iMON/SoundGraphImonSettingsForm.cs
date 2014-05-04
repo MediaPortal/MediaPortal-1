@@ -22,8 +22,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             
             //EQ Settings
             mpEqDisplay.DataBindings.Add("Checked", SoundGraphImonVfd.Settings.Instance, "EqDisplay");
-            cmbEqMode.SelectedIndex = 0;
-            cmbEqMode.DataBindings.Add("SelectedIndex", SoundGraphImon.Settings.Instance, "EqMode");
             mpRestrictEQ.DataBindings.Add("Checked", SoundGraphImon.Settings.Instance, "RestrictEQ");
             cmbEqRate.SelectedIndex = 0;
             cmbEqRate.DataBindings.Add("SelectedIndex", SoundGraphImon.Settings.Instance, "EqRate");
