@@ -35,7 +35,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     public static object PropertyBrowserMutex = new object();
     public static object StatusMutex = new object();
     public static bool UseTVServer = false;
-    protected static BassAudioEngine _Bass = null;
+    protected static BassAudioEngine _bass = null;
 
     public static void DisablePropertyBrowser()
     {
@@ -45,15 +45,15 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       }
     }
 
-    public MiniDisplayHelper(BassAudioEngine bass) : base()
+    internal MiniDisplayHelper(BassAudioEngine bass) : base()
     {
       Bass = bass;
     }
 
-    public static BassAudioEngine Bass
+    internal static BassAudioEngine Bass
     {
-      get { return _Bass; }
-      set { _Bass = value; }
+      get { return _bass; }
+      set { _bass = value; }
     }
     public static bool GetEQ(ref EQControl EQSETTINGS)
     {

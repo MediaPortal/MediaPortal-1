@@ -31,9 +31,9 @@ namespace MediaPortal.Player
     private int _stream;
     private BASSBuffer _streamBuffer;
     private BASSFlag _streamFlags;
-    protected static BassAudioEngine _Bass = null;
+    protected static BassAudioEngine _bass = null;
 
-    public StreamCopy(BassAudioEngine bass)
+    internal StreamCopy(BassAudioEngine bass)
       : base()
     {
       Bass = bass;
@@ -51,10 +51,10 @@ namespace MediaPortal.Player
       }
     }
 
-    public static BassAudioEngine Bass
+    private static BassAudioEngine Bass
     {
-      get { return _Bass; }
-      set { _Bass = value; }
+      get { return _bass; }
+      set { _bass = value; }
     }
 
     public override void OnStarted()
