@@ -1589,7 +1589,6 @@ namespace Mediaportal.TV.TvPlugin.Recorded
 
         SortMethod cSortMethod = _currentSortMethod;
         int iComp = 0;
-        TimeSpan ts;
         Recording rec1 = (Recording)item1.TVTag;
         Recording rec2 = (Recording)item2.TVTag;
 
