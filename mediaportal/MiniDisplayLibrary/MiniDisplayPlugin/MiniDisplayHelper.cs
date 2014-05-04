@@ -24,6 +24,7 @@ using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using Un4seen.Bass;
+using Un4seen.BassWasapi;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 {
@@ -133,7 +134,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           {
             num3 = -2147483646;
           }
-          num2 = Bass.BASS_ChannelGetData(handle, EQSETTINGS.EqFftData, num3);
+
+          if (BassWasapi.BASS_WASAPI_IsStarted())
+          {
+              num2 = BassWasapi.BASS_WASAPI_GetData(EQSETTINGS.EqFftData, num3);
+          }
+          else
+          {
+              num2 = Bass.BASS_ChannelGetData(handle, EQSETTINGS.EqFftData, num3);
+          }
+
         }
         catch
         {
