@@ -70,10 +70,19 @@ namespace MediaPortal.GUI.Pictures
           {
             tmpGUIpictures.AddDir(SlideShow, _currentSlide._filePath);
             _slideRecursive.Add(_currentSlide._filePath);
-          }
-          if (_slideRecursive.Contains(_currentSlide._filePath))
-          {
-            _slideList.Remove(_slideList[_currentSlideIndex]);
+            while (IsPathDirectory(_currentSlide._filePath))
+            {
+              _slideList.Remove(_slideList[_currentSlideIndex]);
+              _currentSlide = _slideCache.GetCurrentSlide(_slideList[_currentSlideIndex]);
+              tmpGUIpictures.AddDir(SlideShow, _currentSlide._filePath);
+              if (IsPathDirectory(_currentSlide._filePath))
+              {
+                _slideRecursive.Add(_currentSlide._filePath);
+              }
+            }
+            GUIPictures.fileNameCheck = _slideList[_currentSlideIndex];
+            _autoShuffleFolder = true;
+            break;
           }
           if (GUIPictureSlideShow._slideDirection == 1 || GUIPictureSlideShow._slideDirection == 0)
           {
@@ -83,8 +92,15 @@ namespace MediaPortal.GUI.Pictures
           {
             ShowPrevious();
           }
-
-          _currentSlide = _slideCache.GetCurrentSlide(_slideList[--_currentSlideIndex]);
+          try
+          {
+            _currentSlide = _slideCache.GetCurrentSlide(_slideList[_currentSlideIndex]);
+          }
+          catch (Exception ex)
+          {
+            _currentSlideIndex = 0;
+            _currentSlide = _slideCache.GetCurrentSlide(_slideList[_currentSlideIndex]);
+          }
           GUIPictures.fileNameCheck = _slideList[_currentSlideIndex];
           _autoShuffleFolder = true;
         }
@@ -184,6 +200,27 @@ namespace MediaPortal.GUI.Pictures
       iSong = playlistPlayer.CurrentSong;
       pausedMusicLastPosition = g_Player.CurrentPosition;
       g_Player.IsPicturePlaylist = false;
+    }
+
+    public bool IsPathDirectory(string path)
+    {
+      if (path == null) throw new ArgumentNullException("path");
+      path = path.Trim();
+
+      if (Directory.Exists(path))
+        return true;
+
+      if (File.Exists(path))
+        return false;
+
+      // neither file nor directory exists. guess intention
+
+      // if has trailing slash then it's a directory
+      if (new[] { "\\", "/" }.Any(x => path.EndsWith(x)))
+        return true; // ends with slash
+
+      // has if extension then its a file; directory otherwise
+      return string.IsNullOrWhiteSpace(Path.GetExtension(path));
     }
 
     public void resumePausedMusic()
@@ -1282,7 +1319,10 @@ namespace MediaPortal.GUI.Pictures
         Shuffle(false, false);
         // Reset currentSlideIndex when slideshow start from context menu
         _currentSlideIndex = 0;
-        _currentSlide = _slideCache.GetCurrentSlide(_slideList[_currentSlideIndex]);
+        if (_slideList.Count > 0)
+        {
+          _currentSlide = _slideCache.GetCurrentSlide(_slideList[_currentSlideIndex]);
+        }
       }
     }
 

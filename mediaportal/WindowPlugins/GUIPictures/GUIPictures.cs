@@ -399,6 +399,7 @@ namespace MediaPortal.GUI.Pictures
     private static DateTime _prevWolTime;
     private static int _wolTimeout;
     private static int _wolResendTime;
+    private static bool returnFromSlideshow = false;
 
     #endregion
 
@@ -546,11 +547,8 @@ namespace MediaPortal.GUI.Pictures
           {
             if (item.IsFolder && item.Label == "..")
             {
-              if (currentFolder != m_strDirectoryStart)
-              {
-                LoadDirectory(item.Path);
-                return;
-              }
+              LoadDirectory(item.Path);
+              return;
             }
           }
         }
@@ -686,16 +684,48 @@ namespace MediaPortal.GUI.Pictures
           SlideShow._showRecursive = false;
         }
 
+        returnFromSlideshow = true;
+
         // Select latest item played from slideshow/slideshow recursive (random or not)
         if (disp == Display.Files)
         {
           string strSelectedItemExt = Util.Utils.GetFileNameWithExtension(SlideShow._folderCurrentItem);
           string strSelectedItem = Util.Utils.GetFilename(SlideShow._folderCurrentItem, true);
-          SlideShow._folderCurrentItem = Path.GetDirectoryName(SlideShow._folderCurrentItem);
-          if (selectedItemIndex >= 0 && !String.IsNullOrEmpty(SlideShow._folderCurrentItem))
+          string directoryName = Path.GetDirectoryName(SlideShow._folderCurrentItem);
+          string directoryNameCheck = Path.GetDirectoryName(SlideShow._folderCurrentItem);
+          if (selectedItemIndex >= 0 && !String.IsNullOrEmpty(directoryName))
           {
-            LoadFolderSettings(SlideShow._folderCurrentItem);
-            LoadDirectory(SlideShow._folderCurrentItem);
+            // Set root directory
+            string rootFolder = _virtualDirectory.GetShare(directoryName).Name;
+            string rootFolderPath = _virtualDirectory.GetShare(directoryName).Path;
+            currentFolder = directoryName;
+
+            while (true)
+            {
+              if (rootFolderPath == directoryNameCheck)
+              {
+                folderHistory.Set(strSelectedItem, directoryName);
+                break;
+              }
+              string sourceFolder = directoryNameCheck;
+              if ( rootFolderPath != directoryNameCheck)
+              {
+                string sourceCurrentFolder = Path.GetDirectoryName(sourceFolder);
+                string destinationItem = Path.GetFileName(sourceFolder);
+                folderHistory.Set(destinationItem, sourceCurrentFolder);
+              }
+              else
+              {
+                string destinationItem = Path.GetFileName(sourceFolder);
+                folderHistory.Set(destinationItem, sourceFolder);
+              }
+              directoryNameCheck = Path.GetDirectoryName(sourceFolder);
+            }
+
+            folderHistory.Set(rootFolder, "");
+
+            LoadFolderSettings(directoryName);
+            LoadDirectory(directoryName);
             int totalItemCount = facadeLayout.Count;
             for (int i = 0; i < totalItemCount; i++)
             {
@@ -711,6 +741,7 @@ namespace MediaPortal.GUI.Pictures
           {
             GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItemIndex);
           }
+          returnFromSlideshow = false;
         }
         else
         {
@@ -1961,7 +1992,7 @@ namespace MediaPortal.GUI.Pictures
           SlideShow.Add(pic);
         }
       }
-      if (SlideShow.Count > 0 || SlideShow._slideFolder.Count > 0)
+      if (SlideShow.Count > 0 || SlideShow._slideFolder.Count > 0 && SlideShow._slideList.Count > 0)
       {
         GUIWindowManager.ActivateWindow((int)Window.WINDOW_SLIDESHOW);
         SlideShow.StartSlideShow(currentFolder);
@@ -2244,12 +2275,15 @@ namespace MediaPortal.GUI.Pictures
 
       GUIWaitCursor.Show();
 
-      GUIListItem SelectedItem = GetSelectedItem();
-      if (SelectedItem != null)
+      if (!returnFromSlideshow)
       {
-        if (SelectedItem.IsFolder && SelectedItem.Label != "..")
+        GUIListItem SelectedItem = GetSelectedItem();
+        if (SelectedItem != null)
         {
-          folderHistory.Set(SelectedItem.Label, currentFolder);
+          if (SelectedItem.IsFolder && SelectedItem.Label != "..")
+          {
+            folderHistory.Set(SelectedItem.Label, currentFolder);
+          }
         }
       }
 
@@ -2297,7 +2331,7 @@ namespace MediaPortal.GUI.Pictures
       GUIControl.SelectItemControl(GetID, facadeLayout.GetID, 0);
       for (int i = 0; i < totalItemCount; i++)
       {
-        if (facadeLayout[i].Label == strSelectedItem)
+        if (facadeLayout[i].Label == strSelectedItem || facadeLayout[i].Path == strSelectedItem)
         {
           GUIControl.SelectItemControl(GetID, facadeLayout.GetID, i);
           break;
@@ -2503,6 +2537,8 @@ namespace MediaPortal.GUI.Pictures
     {
       try
       {
+        returnFromSlideshow = true;
+        string strSelectedItem = Util.Utils.GetFilename(selectedItem, true);
         if (strNewDirectory.Length == 4 && !_useDayGrouping)
         {
           // Months
@@ -2519,13 +2555,16 @@ namespace MediaPortal.GUI.Pictures
               {
                 if (pic == selectedItem)
                 {
-                  // Set root directory
-                  //folderHistory.Set(strNewDirectory, "");
                   string strFreshNewDirectory = strNewDirectory + "\\" + month;
+                  // Set root directory
+                  folderHistory.Set(year, "");
+                  folderHistory.Set(strFreshNewDirectory, year);
+                  folderHistory.Set(strSelectedItem, strFreshNewDirectory);
                   // Reset facadeLayout
                   facadeLayout.Clear();
                   // Reload fresh view
                   LoadDateView(strFreshNewDirectory);
+                  returnFromSlideshow = false;
                   return selectedItem;
                 }
               }
@@ -2562,20 +2601,23 @@ namespace MediaPortal.GUI.Pictures
                     {
                       // Set root directory
                       string strFreshNewDirectory = strNewDirectory + "\\" + month + "\\" + day;
-                      //folderHistory.Set(day, strFreshNewDirectory);
-                      //folderHistory.Set(day, strFreshNewDirectory.Substring(0, 7));
-                      //folderHistory.Set(year, strFreshNewDirectory.Substring(0, 7));
-                      //folderHistory.Set(year, "");
+                      // Set root directory
+                      folderHistory.Set(year, "");
+                      folderHistory.Set(strFreshNewDirectory.Substring(0, 7), year);
+                      folderHistory.Set(strFreshNewDirectory, strFreshNewDirectory.Substring(0, 7));
+                      folderHistory.Set(strSelectedItem, strFreshNewDirectory);
                       // Reset facadeLayout
                       facadeLayout.Clear();
                       // Reload fresh view
                       LoadDateView(strFreshNewDirectory);
+                      returnFromSlideshow = false;
                       return selectedItem;
                     }
                   }
                   catch (Exception)
                   {
                     Log.Warn("GUIPictures: can't match item in date view");
+                    returnFromSlideshow = false;
                   }
                 }
               }
@@ -2599,19 +2641,24 @@ namespace MediaPortal.GUI.Pictures
                 {
                   if (pic == selectedItem)
                   {
-                    // Set root directory
-                    //folderHistory.Set(day, strNewDirectory.Substring(0, 7));
                     string strFreshNewDirectory = strNewDirectory + "\\" + day;
+                    // Set root directory
+                    folderHistory.Set(year, "");
+                    folderHistory.Set(strFreshNewDirectory.Substring(0, 7), year);
+                    folderHistory.Set(strFreshNewDirectory, strFreshNewDirectory.Substring(0, 7));
+                    folderHistory.Set(strSelectedItem, strFreshNewDirectory);
                     // Reset facadeLayout
                     facadeLayout.Clear();
                     // Reload fresh view
                     LoadDateView(strFreshNewDirectory);
+                    returnFromSlideshow = false;
                     return selectedItem;
                   }
                 }
                 catch (Exception)
                 {
                   Log.Warn("GUIPictures: can't match item in date view");
+                  returnFromSlideshow = false;
                 }
               }
             }
@@ -2630,12 +2677,20 @@ namespace MediaPortal.GUI.Pictures
               if (pic == selectedItem)
               {
                 // Set root directory
-                //folderHistory.Set(day, strNewDirectory.Substring(0, 7));
-                //folderHistory.Set(year, strNewDirectory.Substring(0, 7));
+                folderHistory.Set(year, "");
+                folderHistory.Set(strNewDirectory, year);
+                folderHistory.Set(day, strNewDirectory);
+                folderHistory.Set(strSelectedItem, strNewDirectory);
+
+                //folderHistory.Set(strFreshNewDirectory.Substring(0, 7), year);
+                //folderHistory.Set(strFreshNewDirectory, strFreshNewDirectory.Substring(0, 7));
+                //folderHistory.Set(strSelectedItem, strFreshNewDirectory);
+
                 // Reset facadeLayout
                 facadeLayout.Clear();
                 // Reload fresh view
                 LoadDateView(strNewDirectory);
+                returnFromSlideshow = false;
                 return selectedItem;
               }
             }
@@ -2657,16 +2712,22 @@ namespace MediaPortal.GUI.Pictures
               {
                 if (pic == selectedItem)
                 {
+                  // Set root directory
+                  folderHistory.Set(year, "");
+                  folderHistory.Set(strNewDirectory, year);
+                  folderHistory.Set(strSelectedItem, strNewDirectory);
                   // Reset facadeLayout
                   facadeLayout.Clear();
                   // Reload fresh view
                   LoadDateView(strNewDirectory);
+                  returnFromSlideshow = false;
                   return selectedItem;
                 }
               }
               catch (Exception)
               {
                 Log.Warn("GUIPictures: can't match item in date view");
+                returnFromSlideshow = false;
               }
             }
           }
@@ -2675,7 +2736,9 @@ namespace MediaPortal.GUI.Pictures
       catch (Exception ex)
       {
         Log.Error("GUIPictures: Error loading date view - {0}", ex.ToString());
+        returnFromSlideshow = false;
       }
+      returnFromSlideshow = false;
       return String.Empty;
     }
 
