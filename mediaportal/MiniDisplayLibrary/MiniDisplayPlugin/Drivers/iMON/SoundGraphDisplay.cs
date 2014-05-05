@@ -82,9 +82,23 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             }
         }
 
+        //
+        private void CheckDisplay()
+        {
+            if (iDisplay == null)
+            {
+                //Attempt to recover
+                LogDebug("SoundGraphDisplay.CheckDisplay(): Trying to recover");
+                CleanUp();
+                Initialize();
+            }
+        }
+
         //From IDisplay
         public override void Update()
         {
+            CheckDisplay();
+
             MiniDisplayHelper.GetSystemStatus(ref iDisplay.MPStatus);
             //Only try to disable/re-enable our display when our user is idle
             if (iDisplay.MPStatus.UserIsIdle)
@@ -194,6 +208,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 bool success=DoInit();
                 if (!success)
                 {
+                    LogDebug("SoundGraphDisplay.Initialize(): failed");
                     return;
                 }
                 //Instantiate LCD or VFD accordingly
@@ -223,6 +238,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         //From IDisplay
         public override void SetLine(int line, string message)
         {
+            CheckDisplay();
             //Pass on that call to our actual display
             iDisplay.SetLine(line,message);
         }

@@ -111,7 +111,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       catch (Exception exception)
       {
         Log.Error(
-          "MiniDisplayPlugin.DisplayHandler.DisplayLines(): CAUGHT EXCEPTION {0}\n\n{1}\n\n" + exception.Message,
+          "MiniDisplayPlugin.DisplayHandler.DisplayLines(): CAUGHT EXCEPTION {0}\n\n{1}\n\n", exception.Message,
           new object[] {exception.StackTrace});
       }
     }
