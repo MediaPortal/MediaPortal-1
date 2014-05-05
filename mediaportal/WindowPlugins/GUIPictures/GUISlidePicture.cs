@@ -18,6 +18,7 @@
 
 #endregion
 
+using System;
 using MediaPortal.GUI.Library;
 using MediaPortal.Picture.Database;
 using MediaPortal.Util;
@@ -37,6 +38,8 @@ internal class SlidePicture
 
   public string _filePath;
   private bool _useActualSizeTexture;
+
+  private object _syncRoot = new Object();
 
   public Texture Texture
   {
@@ -70,25 +73,28 @@ internal class SlidePicture
 
   public SlidePicture(string strFilePath, bool useActualSizeTexture)
   {
-    _filePath = strFilePath;
-
-    _rotation = PictureDatabase.GetRotation(_filePath);
-
-    int iMaxWidth = GUIGraphicsContext.OverScanWidth;
-    int iMaxHeight = GUIGraphicsContext.OverScanHeight;
-
-    _useActualSizeTexture = useActualSizeTexture;
-    if (_useActualSizeTexture)
+    lock (_syncRoot)
     {
-      iMaxWidth = MAX_PICTURE_WIDTH;
-      iMaxHeight = MAX_PICTURE_HEIGHT;
-    }
+      _filePath = strFilePath;
 
-    if (!Utils.IsPicture(strFilePath))
-    {
-      return;
+      _rotation = PictureDatabase.GetRotation(_filePath);
+
+      int iMaxWidth = GUIGraphicsContext.OverScanWidth;
+      int iMaxHeight = GUIGraphicsContext.OverScanHeight;
+
+      _useActualSizeTexture = useActualSizeTexture;
+      if (_useActualSizeTexture)
+      {
+        iMaxWidth = MAX_PICTURE_WIDTH;
+        iMaxHeight = MAX_PICTURE_HEIGHT;
+      }
+
+      if (!Utils.IsPicture(strFilePath))
+      {
+        return;
+      }
+      _texture = Picture.Load(strFilePath, _rotation, iMaxWidth, iMaxHeight, true, false, true, out _width, out _height);
     }
-    _texture = Picture.Load(strFilePath, _rotation, iMaxWidth, iMaxHeight, true, false, true, out _width, out _height);
   }
 
   ~SlidePicture()

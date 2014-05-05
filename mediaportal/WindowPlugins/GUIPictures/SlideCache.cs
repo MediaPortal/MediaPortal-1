@@ -107,20 +107,17 @@ internal class SlideCache
       {
         return NextSlide;
       }
-      else if (PrevSlide != null && PrevSlide.FilePath == slideFilePath)
+      if (PrevSlide != null && PrevSlide.FilePath == slideFilePath)
       {
         return PrevSlide;
       }
-      else if (CurrentSlide != null && CurrentSlide.FilePath == slideFilePath)
+      if (CurrentSlide != null && CurrentSlide.FilePath == slideFilePath)
       {
         return CurrentSlide;
       }
-      else
-      {
-        // slide is not in cache, so get it now
-        CurrentSlide = new SlidePicture(slideFilePath, false);
-        return CurrentSlide;
-      }
+      // slide is not in cache, so get it now
+      CurrentSlide = new SlidePicture(slideFilePath, false);
+      return CurrentSlide;
     }
   }
 

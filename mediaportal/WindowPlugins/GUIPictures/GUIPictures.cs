@@ -2004,26 +2004,6 @@ namespace MediaPortal.GUI.Pictures
       OnClickSlideShow(0);
     }
 
-    private void OnSlideShowRecursive(string strFile)
-    {
-      GUISlideShow SlideShow = (GUISlideShow)GUIWindowManager.GetWindow((int)Window.WINDOW_SLIDESHOW);
-      if (SlideShow == null)
-      {
-        return;
-      }
-      if (SlideShow._returnedFromVideoPlayback)
-      {
-        SlideShow._returnedFromVideoPlayback = false;
-      }
-
-      if (SlideShow.Count > 0)
-      {
-        GUIWindowManager.ActivateWindow((int)Window.WINDOW_SLIDESHOW);
-        SlideShow.SelectShowRecursive(strFile);
-        SlideShow.StartSlideShow(currentFolder);
-      }
-    }
-
     private void OnSlideShow (string strFile)
     {
       GUISlideShow SlideShow = (GUISlideShow)GUIWindowManager.GetWindow((int)Window.WINDOW_SLIDESHOW);
