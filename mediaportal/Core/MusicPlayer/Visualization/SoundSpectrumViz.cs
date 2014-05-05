@@ -76,34 +76,34 @@ namespace MediaPortal.Visualization
 
     public const int SS_GetSoundData = 1197831251;
 
-    [DllImport("mpviz.dll", CharSet = CharSet.Auto)]
+    [DllImport("mpviz.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Auto)]
     internal static extern bool IsVisualizationInstalled(string vizName);
 
-    [DllImport("mpviz.dll", CharSet = CharSet.Auto)]
+    [DllImport("mpviz.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Auto)]
     internal static extern bool InitEngine([MarshalAs(UnmanagedType.LPWStr)] string vizName,
                                            VisualizationBase.OutputContextType outputContextType,
                                            SSCallbackDelegate ssCallback, IntPtr hOutput,
                                            ref VisualizationBase.RECT rect);
 
-    [DllImport("mpviz.dll", CharSet = CharSet.Auto)]
+    [DllImport("mpviz.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Auto)]
     internal static extern bool IsInitialized();
 
-    [DllImport("mpviz.dll", CharSet = CharSet.Auto)]
+    [DllImport("mpviz.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Auto)]
     internal static extern int Render();
 
-    [DllImport("mpviz.dll", CharSet = CharSet.Auto)]
+    [DllImport("mpviz.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Auto)]
     internal static extern bool SetOutput(string vizName, VisualizationBase.OutputContextType outputContextType,
                                           IntPtr hOutput, ref VisualizationBase.RECT rect);
 
-    [DllImport("mpviz.dll", CharSet = CharSet.Auto)]
+    [DllImport("mpviz.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Auto)]
     internal static extern bool Resize(IntPtr hVizWndOrBuffer, ref VisualizationBase.RECT rect, bool isFullscreen);
 
     // This method MUST be called before the visualization window handle is destroyed!
-    [DllImport("mpviz.dll", CharSet = CharSet.Auto)]
+    [DllImport("mpviz.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Auto)]
     internal static extern bool Quit();
 
     // This method MUST be called before the visualization window handle is destroyed!
-    [DllImport("mpviz.dll", CharSet = CharSet.Auto)]
+    [DllImport("mpviz.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Auto)]
     internal static extern void ShutDown();
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]

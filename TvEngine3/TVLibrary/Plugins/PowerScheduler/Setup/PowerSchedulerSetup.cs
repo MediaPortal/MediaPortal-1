@@ -181,14 +181,6 @@ namespace PowerScheduler.Setup
         checkBoxNetworkAwayMode.Text = "Prevent the user from putting the computer to sleep";
         checkBoxSharesAwayMode.Text = "Prevent the user from putting the computer to sleep";
       }
-#if SERVER
-
-      // Start the RefeshStatusThread responsible for refreshing status information
-      _setupTvThread = Thread.CurrentThread;
-      _refreshStatusThread = new Thread(RefreshStatusThread);
-      _refreshStatusThread.Name = "RefreshStatusThread";
-      _refreshStatusThread.Start();
-#endif
 #if CLIENT
       
       LoadSettings();
@@ -252,7 +244,6 @@ namespace PowerScheduler.Setup
 
           checkBoxHomeOnly.Checked = Convert.ToBoolean(GetSetting("HomeOnly", "false"));
           textBoxCommand.Text = GetSetting("Command", string.Empty);
-          checkBoxUmuteMasterVolume.Checked = Convert.ToBoolean(GetSetting("UnmuteMasterVolume", "true"));
 
           return;
         }
@@ -318,8 +309,6 @@ namespace PowerScheduler.Setup
         checkBoxHomeOnly.Checked = Convert.ToBoolean(GetSetting("HomeOnly", "false"));
 
         textBoxCommand.Text = GetSetting("Command", string.Empty);
-
-        checkBoxUmuteMasterVolume.Checked = Convert.ToBoolean(GetSetting("UnmuteMasterVolume", "true"));
 
 #endif
 #if SERVER
@@ -547,8 +536,13 @@ namespace PowerScheduler.Setup
 
       }
 #if SERVER
-      
-      RefreshStatus();
+
+      // Start the RefeshStatusThread responsible for refreshing status information
+      _setupTvThread = Thread.CurrentThread;
+      _refreshStatusThread = new Thread(RefreshStatusThread);
+      _refreshStatusThread.Name = "RefreshStatusThread";
+      _refreshStatusThread.IsBackground = true;
+      _refreshStatusThread.Start();
 #endif
     }
 
@@ -628,7 +622,6 @@ namespace PowerScheduler.Setup
         {
           SetSetting("HomeOnly", checkBoxHomeOnly.Checked.ToString());
           SetSetting("Command", textBoxCommand.Text);
-          SetSetting("UnmuteMasterVolume", checkBoxUmuteMasterVolume.Checked.ToString());
           return;
         }
 #endif
@@ -644,8 +637,6 @@ namespace PowerScheduler.Setup
         SetSetting("HomeOnly", checkBoxHomeOnly.Checked.ToString());
 
         SetSetting("Command", textBoxCommand.Text);
-
-        SetSetting("UnmuteMasterVolume", checkBoxUmuteMasterVolume.Checked.ToString());
 
 #endif
 #if SERVER
@@ -890,8 +881,8 @@ namespace PowerScheduler.Setup
     {
       while (_setupTvThread.IsAlive)
       {
-        Thread.Sleep(5000);
         RefreshStatus();
+        Thread.Sleep(5000);
       }
     }
 

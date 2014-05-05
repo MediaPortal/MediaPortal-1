@@ -23,7 +23,7 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
   public bool GetPlotImdb(ref IMDBMovie movie)
   {
     string strUrl = String.Format("http://m.imdb.com/title/{0}", movie.IMDBNumber);
-    string regex = @"<h1>Plot\sSummary</h1>\s+<p>(?<moviePlot>.+?)</p>";
+    string regex = @"<p itemprop=""description"">(?<moviePlot>.+?)</p>";
 
     _strBody = string.Empty;
     string shortPlot = GetPlot(strUrl, regex, ref _strBody);
@@ -63,9 +63,9 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
     string uri;
     string strUrl = String.Format("http://m.imdb.com/title/{0}", imdbId);
     _strBody = GetPage(strUrl, "utf-8", out uri);
-    string regex = @"<div\sclass=""poster"">\s+<a\shref=""[^<]*<span\sclass=""retina-capable""><img\ssrc=""(?<poster>.*?_V1)";
+    string regex = @"Poster"".src=""(?<poster>.*?_V1)";
     thumb = Regex.Match(_strBody, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["poster"].Value;
-    
+
     if (!string.IsNullOrEmpty(thumb))
     {
       int thumbSize = 400; // pixels size of picture -> horizontal
@@ -80,11 +80,16 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
   {
     //Update title/Year
     string rxTitleBlock = "<title>.*?</title>";
-    string titleBlock = Regex.Match(_strBody, rxTitleBlock, RegexOptions.Singleline | RegexOptions.IgnoreCase).Value.Trim();
-    string regex = @"<title>(?<movieTitle>.*?)[(].*?(?<movieYear>\d{4})|<title>(?<movieTitle>.*?)[(].*?(?<movieYear>\?{4})";
-    string title = Regex.Match(titleBlock, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["movieTitle"].Value;
+    string titleBlock =
+      Regex.Match(_strBody, rxTitleBlock, RegexOptions.Singleline | RegexOptions.IgnoreCase).Value.Trim();
+    string regex =
+      @"<title>(?<movieTitle>.*?)[(].*?(?<movieYear>\d{4})|<title>(?<movieTitle>.*?)[(].*?(?<movieYear>\?{4})";
+    string title =
+      Regex.Match(titleBlock, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["movieTitle"].Value;
     int year = 0;
-    int.TryParse(Regex.Match(titleBlock, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["movieYear"].Value.Trim(), out year);
+    int.TryParse(
+      Regex.Match(titleBlock, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["movieYear"].Value.Trim
+        (), out year);
 
     if (title != string.Empty)
     {
@@ -99,19 +104,13 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
     movie.Year = year;
 
     // Director
-    string rxDirectorsBlock = @"<div>\s(<h1>Director</h1>|<h1>Directors</h1>).*?</div>";
-    string directorsBlock = Regex.Match(_strBody, rxDirectorsBlock, RegexOptions.Singleline | RegexOptions.IgnoreCase).Value;
-    regex = @"<a\shref=""/name/nm\d{7}/"">(?<director>.*?)</a>";
-    MatchCollection mc = Regex.Matches(directorsBlock, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase);
-    string director = string.Empty;
+    string rxDirectorsBlock = @"<h3\sclass=""inline-block"">Director[s]?:</h3>(?<director>.*?)</span>";
+    string directorsBlock =
+      Regex.Match(_strBody, rxDirectorsBlock, RegexOptions.Singleline | RegexOptions.IgnoreCase).Value;
+    regex = @"<span\sitemprop=""name"">(?<director>.*?)</span>";
+    string director =
+      Regex.Match(directorsBlock, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["director"].Value;
 
-    foreach (Match m in mc)
-    {
-      if (!string.IsNullOrEmpty(m.Groups["director"].Value))
-      {
-        director += m.Groups["director"].Value + " / ";
-      }
-    }
 
     if (director == string.Empty)
     {
@@ -119,32 +118,30 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
     }
     else
     {
-      int iDirector = director.LastIndexOf(" /");
-
-      if (iDirector > 0)
-      {
-        director = director.Remove(iDirector);
-      }
-
-      movie.WritingCredits = director;
+      movie.WritingCredits = HttpUtility.HtmlDecode(director.Replace("\n", string.Empty));
+      if (movie.WritingCredits != null) movie.WritingCredits = movie.WritingCredits.Replace(",", ", ");
     }
 
-
     // Genre
-    regex = @"<h1>Genre</h1>\s+<p>(?<genre>.+?)</p>";
-    string genre = Regex.Match(_strBody, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["genre"].Value.Trim();
-    genre = genre.Replace(", ", " / ");
-
-    if (genre == string.Empty)
+    regex = @"<h3>Genres</h3>(?<genre>.+?)</section>";
+    string genre =
+      Regex.Match(_strBody, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["genre"].Value.Trim();
+    genre = HttpUtility.HtmlDecode(Utils.stripHTMLtags(genre.Replace("\n", "")));
+    if (string.IsNullOrEmpty(genre))
     {
       genre = Strings.Unknown;
     }
-
+    else
+    {
+      genre = genre.Replace(" ", "");
+      genre = genre.Replace("|", ", ");
+    }
     movie.SingleGenre = genre;
 
     // Rating
-    regex = @"<h1>Rated</h1>\s+<p>(?<rating>.+?)</p>";
-    string mpaaRating = Regex.Match(_strBody, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["rating"].Value.Trim();
+    regex = @"itemprop=""contentRating""\scontent=""(?<rating>.+?)""";
+    string mpaaRating =
+      Regex.Match(_strBody, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["rating"].Value.Trim();
     if (mpaaRating == string.Empty)
     {
       mpaaRating = Strings.Unknown;
@@ -153,18 +150,20 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
     movie.MPARating = mpaaRating;
 
     // Actors
-    regex = @"<div\sclass=""label"">\s+<div\sclass=""title"">\s+<a\shref=""/name/.*?>(?<actor>.*?)<";
+    regex = @"itemprop='url'>\s<strong>(?<actor>.*?)</strong>";
     MatchCollection actors = Regex.Matches(_strBody, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase);
     string strActor = string.Empty;
+    int actorNo = 0;
 
     foreach (Match actor in actors)
     {
       string tmpActor = actor.Groups["actor"].Value;
       tmpActor = HttpUtility.HtmlDecode(tmpActor);
 
-      if (tmpActor != string.Empty)
+      if (tmpActor != string.Empty && actorNo < 4)
       {
         strActor += tmpActor + " / ";
+        actorNo++;
       }
     }
 
@@ -374,17 +373,22 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
       HTMLParser parser = new HTMLParser(html);
       string strThumb = string.Empty;
       string value = string.Empty;
+      parser.extractTo("<footer class=\"", ref value);
+      parser.Content = value;
+      value = string.Empty;
 
       #region Actor name
 
       // Actor name
-      if (parser.skipToEndOf("<section class=\"overview\">") &&
-          parser.skipToEndOf("<div class=\"title\"><h1>") &&
+      if (parser.skipToEndOf("<section id=\"name-overview\">") &&
+          parser.skipToEndOf("<h1>") &&
           parser.extractTo("</h1>", ref value))
       {
         value = new HTMLUtil().ConvertHTMLToAnsi(value);
         value = Utils.RemoveParenthesis(value).Trim();
-        actor.Name = HttpUtility.HtmlDecode(value.Trim());
+        value = HttpUtility.HtmlDecode(value.Trim());
+        value = Utils.stripHTMLtags(value);
+        actor.Name = value.Replace("\n", "");
       }
 
       if (actor.Name == string.Empty)
@@ -401,17 +405,17 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
 
       #region Actor photo
 
-      if (parser.skipToStartOf("<section class=\"overview\">") &&
-          parser.skipToEndOf("<div class=\"poster\">") &&
-          parser.extractTo("</div>", ref photoBlock))
+      if (parser.skipToStartOf("<img id=\"name-poster\"") &&
+          parser.skipToEndOf("class=\"media-object\"") &&
+          parser.extractTo("itemprop=\"image\"", ref photoBlock))
       {
         parser.Content = photoBlock;
 
-        if (parser.skipToEndOf("<span") &&
+        if (//parser.skipToEndOf("<span") &&
             parser.skipToEndOf("src=\"") &&
             parser.extractTo("_V1", ref strThumb))
         {
-          actor.ThumbnailUrl = strThumb + "_V1_SX400.jpg";
+          actor.ThumbnailUrl = strThumb + "_V1_SX250.jpg";
         }
         parser.Content = parserTxt;
       }
@@ -421,18 +425,22 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
       #region Actor birth date/place
 
       // Birth date/Place
-      if (parser.skipToEndOf("<h1>Born</h1>"))
+      if (parser.skipToEndOf("<h3>Born</h3>"))
       {
-        if (parser.skipToEndOf("</div>") &&
-            parser.skipToEndOf("<div>") &&
-            parser.extractTo("</div>", ref value))
+        if (parser.skipToEndOf("<time datetime=") &&
+            parser.skipToEndOf("itemprop=\"birthDate\">") &&
+            parser.extractTo("</time>", ref value))
         {
+          value = value.Replace("\n", "").Trim();
+          value = value.Replace("  ", "");
+          value = value.Replace(",", ", ");
           actor.DateOfBirth = value;
         }
 
         // Birth place
-        if (parser.skipToEndOf("<div>") &&
-            parser.extractTo("</div>", ref value))
+        if (parser.skipToEndOf("</span><br />") &&
+            parser.skipToEndOf("<span>") &&
+            parser.extractTo("</span>", ref value))
         {
           actor.PlaceOfBirth = HttpUtility.HtmlDecode(value);
         }
@@ -443,17 +451,22 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
       #region Actor death date/place
 
       // Death date
-      if (parser.skipToEndOf("<h1>Death</h1>"))
+      if (parser.skipToEndOf("<h3>Died</h3>"))
       {
-        if (parser.skipToEndOf("<div>") &&
-            parser.extractTo("</div>", ref value))
+        if (parser.skipToEndOf("<time datetime=") &&
+            parser.skipToEndOf("itemprop=\"deathDate\">") &&
+            parser.extractTo("</time>", ref value))
         {
+          value = value.Replace("\n", "").Trim();
+          value = value.Replace("  ", "");
+          value = value.Replace(",", ", ");
           actor.DateOfDeath = value;
         }
 
         // Death place
-        if (parser.skipToEndOf("<div>") &&
-            parser.extractTo("</div>", ref value))
+        if (parser.skipToEndOf("</span><br />") &&
+            parser.skipToEndOf("<span>") &&
+            parser.extractTo("</span>", ref value))
         {
           actor.PlaceOfDeath = HttpUtility.HtmlDecode(value);
         }
@@ -465,12 +478,29 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
 
       #region Actor biography
 
-      if (parser.skipToEndOf("<h1>Mini Biography</h1>") &&
-        parser.extractTo("</section>", ref value))
+      parser.resetPosition();
+
+      if (parser.skipToEndOf("<a href=\"bio?ref_=m_mn_ov_bio\" class=\"btn-full\" > <p>") &&
+        parser.extractTo("</p>", ref value))
       {
         value = new HTMLUtil().ConvertHTMLToAnsi(value);
-        actor.Biography = Utils.stripHTMLtags(value).Trim();
-        actor.Biography = HttpUtility.HtmlDecode(actor.Biography);
+        value = Utils.stripHTMLtags(value).Trim();
+        value = HttpUtility.HtmlDecode(value);
+        actor.MiniBiography = value;
+
+        string fullBioUrl = string.Format("http://m.imdb.com/name/{0}/bio?ref_=m_mn_ov_bio", actor.IMDBActorID);
+        html = GetPage(fullBioUrl, "utf-8", out absoluteUri);
+        parser.Content = html;
+
+        if (parser.skipToEndOf(" <section id=\"name-bio\">") &&
+            parser.skipToEndOf("<p>") &&
+            parser.extractTo("</p>", ref value))
+        {
+          value = new HTMLUtil().ConvertHTMLToAnsi(value);
+          value = Utils.stripHTMLtags(value).Trim();
+          value = HttpUtility.HtmlDecode(value);
+          actor.Biography = value;
+        }
       }
 
       #endregion
@@ -574,28 +604,26 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
     if (writer) actorUrl = string.Format("http://m.imdb.com/name/{0}/filmotype/writer", imdbActor.IMDBActorID);
 
     actorHtml = GetPage(actorUrl, "utf-8", out uri);
-    
     if (string.IsNullOrEmpty(actorHtml)) return;
-    
     HTMLParser parser = new HTMLParser();
     parser.Content = actorHtml;
-    
     // Get films and roles block
-    if (!parser.skipToEndOf(">Filmography</a>"))
+    if (!parser.skipToEndOf("<section id=\"name-filmo-content\">"))
     {
       MediaPortal.GUI.Library.Log.Error("GetActorMovies(): HTMLparser content is empty.");
     }
     else
     {
-      parser.skipToEndOf(">Filmography</a>");
+      parser.skipToEndOf("<section id=\"name-filmo-content\">");
       parser.extractTo("</section>", ref movies);
       parser.Content = movies;
 
       // Parse block for evey film and get year, title and it's imdbID and role
-      while (parser.skipToStartOf("<div class=\"title\"> "))
+      while (parser.skipToStartOf("<div class=\"col-xs-12"))
       {
         if (parser.skipToEndOf("<a href=\""))
         {
+          //HTMLParser movieParser = new HTMLParser(movie);
           string title = string.Empty;
           string strYear = string.Empty;
           string role = string.Empty;
@@ -606,11 +634,12 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
           parser.extractTo("/", ref imdbID);
 
           // Title
-          parser.skipToEndOf("\">");
-          parser.extractTo("</a>", ref title);
+          //movieParser.resetPosition();
+          parser.skipToEndOf("<span class=\"h3\">");
+          parser.extractTo("</span>", ref title);
+
           title = CleanCrlf(title);
 
-          // Extract film type, year and role (they are together in one string in parenthesis)
           parser.extractTo("</div>", ref strYear);
 
           // Skip if it's no movie (year part contain film type)
@@ -627,9 +656,9 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
             // Roles actor
             if (!director && !writer)
             {
-              if (parser.skipToEndOf("<div class=\"detail\">"))
+              if (parser.skipToEndOf("<p class=\"h4 unbold\">"))
               {
-                parser.extractTo("</div>", ref role);
+                parser.extractTo("</p>", ref role);
                 role = CleanCrlf(role);
               }
             }
@@ -641,9 +670,9 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
             {
               string wRole = string.Empty;
 
-              if (parser.skipToEndOf("<div class=\"detail\">"))
+              if (parser.skipToEndOf("<p class=\"h4 unbold\">"))
               {
-                parser.extractTo("</div>", ref wRole);
+                parser.extractTo("</p>", ref wRole);
                 wRole = CleanCrlf(wRole);
               }
 
@@ -954,6 +983,7 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
         req.Headers.Add("Accept-Language", "en-US,en;q=0.5");
         req.Proxy.Credentials = CredentialCache.DefaultCredentials;
         req.Timeout = 20000;
+        req.ReadWriteTimeout = 20000;
       }
       catch (Exception) { }
       result = req.GetResponse();

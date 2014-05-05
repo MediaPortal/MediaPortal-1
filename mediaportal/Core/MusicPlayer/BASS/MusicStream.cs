@@ -89,7 +89,7 @@ namespace MediaPortal.MusicPlayer.BASS
     #region Variables
 
     private int _stream = 0;
-    private FileType _fileType;
+    internal static FileType _fileType;
     private BASS_CHANNELINFO _channelInfo;
     private string _filePath;
 
@@ -111,7 +111,7 @@ namespace MediaPortal.MusicPlayer.BASS
 
     private Dictionary<string, int> _waDspPlugins = new Dictionary<string, int>();
 
-    private bool _disposed = false;
+    private bool _disposedMusicStream = false;
     private bool _temporaryStream = false;
 
     #endregion
@@ -147,7 +147,7 @@ namespace MediaPortal.MusicPlayer.BASS
     /// </summary>
     public bool IsDisposed
     {
-      get { return _disposed; }
+      get { return _disposedMusicStream; }
     }
 
     /// <summary>
@@ -654,6 +654,10 @@ namespace MediaPortal.MusicPlayer.BASS
                            Thread.Sleep(20);
                          }
                        }
+                       else
+                       {
+                         Bass.BASS_ChannelStop(_stream);
+                       }
                      }
                      else
                      {
@@ -669,14 +673,18 @@ namespace MediaPortal.MusicPlayer.BASS
     /// </summary>
     /// <param name="startPos"></param>
     /// <param name="endPos"></param>
-    public void SetCueTrackEndPos(float startPos, float endPos)
+    public void SetCueTrackEndPos(float startPos, float endPos, bool endOnly)
     {
       if (_cueTrackEndEventHandler != 0)
       {
         Bass.BASS_ChannelRemoveSync(_stream, _cueTrackEndEventHandler);
       }
 
-      Bass.BASS_ChannelSetPosition(_stream, Bass.BASS_ChannelSeconds2Bytes(_stream, startPos));
+      if (!endOnly)
+      {
+        Bass.BASS_ChannelSetPosition(_stream, Bass.BASS_ChannelSeconds2Bytes(_stream, startPos));
+      }
+
       if (endPos > startPos)
       {
         _cueTrackEndEventHandler = RegisterCueTrackEndEvent(Bass.BASS_ChannelSeconds2Bytes(_stream, endPos));
@@ -960,14 +968,12 @@ namespace MediaPortal.MusicPlayer.BASS
     /// <param name="user"></param>
     private void StreamFreedProc(int handle, int channel, int data, IntPtr user)
     {
-      new Thread(() =>
       {
         if (MusicStreamMessage != null)
         {
           MusicStreamMessage(this, StreamAction.Freed);
         }
       }
-      ) { Name = "BASS Free" }.Start();
     }
 
     #endregion
@@ -976,25 +982,28 @@ namespace MediaPortal.MusicPlayer.BASS
 
     public void Dispose()
     {
-      if (_disposed)
+      if (_disposedMusicStream)
       {
         return;
       }
 
-      _disposed = true;
-
-      Log.Debug("BASS: Disposing Music Stream {0}", _filePath);
-
-      // Free Winamp resources)
-      try
+      lock (this)
       {
-        // Some Winamp dsps might raise an exception when closing
-        foreach (int waDspPlugin in _waDspPlugins.Values)
+        _disposedMusicStream = true;
+
+        Log.Debug("BASS: Disposing Music Stream {0}", _filePath);
+
+        // Free Winamp resources)
+        try
         {
-          BassWaDsp.BASS_WADSP_Stop(waDspPlugin);
+          // Some Winamp dsps might raise an exception when closing
+          foreach (int waDspPlugin in _waDspPlugins.Values)
+          {
+            BassWaDsp.BASS_WADSP_Stop(waDspPlugin);
+          }
         }
+        catch (Exception) { }
       }
-      catch (Exception) { }
     }
 
     #endregion

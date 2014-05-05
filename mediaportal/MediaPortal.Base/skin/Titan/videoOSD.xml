@@ -59,23 +59,6 @@
     </control>
 
 		<control>
-			<description>Series thumb</description>
-			<type>image</type>
-			<id>0</id>
-    	<posX>275</posX>
-    	<posY>765</posY>
-    	<width>166</width>
-    	<height>242</height>
-			<texture>#TVSeries.SeriesPoster</texture>
-			<keepaspectratio>yes</keepaspectratio>
-			<centered>yes</centered>
-      <align>center</align>
-			<zoom>no</zoom>
-			<valign>top</valign>
-			<visible>!string.equals(#TVSeries.Episode.SeriesName,)</visible>
-		</control>
-
-		<control>
 			<description>Movie thumb</description>
 			<type>image</type>
 			<id>102</id>

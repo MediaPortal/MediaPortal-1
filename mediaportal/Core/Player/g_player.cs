@@ -67,7 +67,7 @@ namespace MediaPortal.Player
 
     #region variables
 
-    private static MediaInfoWrapper _mediaInfo = null;
+    public static MediaInfoWrapper _mediaInfo = null;
     private static int _currentStep = 0;
     private static int _currentStepIndex = -1;
     private static DateTime _seekTimer = DateTime.MinValue;
@@ -76,7 +76,9 @@ namespace MediaPortal.Player
     private static SubTitles _subs = null;
     private static bool _isInitialized = false;
     private static string _currentFilePlaying = "";
+    private static string _currentMediaInfoFilePlaying = "";
     private static MediaType _currentMedia;
+    public static MediaType _currentMediaForBassEngine;
     private static IPlayerFactory _factory;
     public static bool Starting = false;
     private static ArrayList _seekStepList = new ArrayList();
@@ -200,6 +202,13 @@ namespace MediaPortal.Player
       get { return _currentFilePlaying; }
       set { _currentFilePlaying = value; }
     }
+
+    public static string currentMediaInfoFilePlaying
+    {
+      get { return _currentMediaInfoFilePlaying; }
+      set { _currentMediaInfoFilePlaying = value; }
+    }
+
     #endregion
 
     #region Serialisation
@@ -1355,7 +1364,11 @@ namespace MediaPortal.Player
 
         if (!playingRemoteUrl) // MediaInfo can only be used on files (local or SMB)
         {
+          if (currentMediaInfoFilePlaying != strFile)
+          {
           _mediaInfo = new MediaInfoWrapper(strFile);
+            currentMediaInfoFilePlaying = strFile;
+        }
         }
 
         // back to previous Windows if we are only in video fullscreen to do a proper release when next item is music only
@@ -1393,12 +1406,23 @@ namespace MediaPortal.Player
               doStop = !BassMusicPlayer.Player.CrossFadingEnabled;
             }
           }
+
+          // Set currentMedia needed for correct detection when BASS Engine is doing a Stop
+          _currentMediaForBassEngine = type;
+
           if (doStop)
           {
             if (_player != null)
             {
               _player.Stop();
+              
+              if (BassMusicPlayer.IsDefaultMusicPlayer && type != MediaType.Music)
+              {
+                // This would be better to be handled in a new Stop() parameter, but it would break the interface compatibility
+                BassMusicPlayer.Player.FreeBass();
+              }
             }
+
             CachePlayer();
             _player = null;
           }
@@ -1441,7 +1465,7 @@ namespace MediaPortal.Player
                 // Make a double check on .ts because it can be recorded TV or Radio
                 if (extension == ".ts")
                 {
-                  if (MediaInfo.hasVideo)
+                  if (MediaInfo != null && MediaInfo.hasVideo)
                   {
                     RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)(int)type);
                   }
@@ -1475,6 +1499,9 @@ namespace MediaPortal.Player
           }
         }
 
+        // Set currentMedia needed for correct detection when BASS Engine is doing a Stop
+        _currentMediaForBassEngine = type;
+
         Log.Info("g_Player.Play({0} {1})", strFile, type);
         if (!playingRemoteUrl && Util.Utils.IsVideo(strFile) && type != MediaType.Music)
         {
@@ -1484,17 +1511,6 @@ namespace MediaPortal.Player
             {
               bool bInternal = xmlreader.GetValueAsBool("movieplayer", "internal", true);
               bool bInternalDVD = xmlreader.GetValueAsBool("dvdplayer", "internal", true);
-
-              // check if we are running from Images / Discs
-              string pathRoot = Path.GetPathRoot(strFile);
-              if (Util.Utils.getDriveType(pathRoot) == 5 && !bInternalDVD)
-              {
-                bInternalDVD = false;
-              }
-              else
-              {
-                bInternalDVD = true;
-              }
 
               // External player extension filter
               _externalPlayerExtensions = xmlreader.GetValueAsString("movieplayer", "extensions", "");
@@ -1535,6 +1551,10 @@ namespace MediaPortal.Player
 
                 if (Util.Utils.PlayMovie(strFile))
                 {
+                  if (MediaInfo != null && MediaInfo.hasVideo)
+                  {
+                    RefreshRateChanger.AdaptRefreshRate();
+                  }
                   return true;
                 }
                 else // external player error
@@ -1607,6 +1627,8 @@ namespace MediaPortal.Player
       }
       finally
       {
+        _currentMediaForBassEngine = _currentMedia;
+        currentMediaInfoFilePlaying = "";
         Starting = false;
       }
       UnableToPlay(strFile, type);
@@ -2425,6 +2447,18 @@ namespace MediaPortal.Player
         Log.Info("g_Player.Process() player stopped...");
         if (_player.Ended)
         {
+          // No unmount for other ISO (avi-mkv ISO-crash in playlist after)
+          string currentFile = g_Player.currentFileName;
+          Util.Utils.IsDVDImage(currentFile, ref currentFile);
+          if (Util.Utils.IsISOImage(currentFile))
+          {
+            if (!String.IsNullOrEmpty(DaemonTools.GetVirtualDrive()) &&
+                (IsBDDirectory(DaemonTools.GetVirtualDrive()) ||
+                IsDvdDirectory(DaemonTools.GetVirtualDrive())))
+            {
+              DaemonTools.UnMount();
+            }
+          }
           OnEnded();
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_ENDED, 0, 0, 0, 0, 0, null);
           GUIWindowManager.SendThreadMessage(msg);
@@ -3370,7 +3404,9 @@ namespace MediaPortal.Player
       {
         bool playingRemoteUrl = Util.Utils.IsRemoteUrl(FileName);
         if (_mediaInfo == null && !playingRemoteUrl)
+        {
           _mediaInfo = new MediaInfoWrapper(FileName);
+        }
 
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CODEC_MISSING, 0, 0, 0, 0, 0, null);
         msg.Label = string.Format("{0}: {1}", GUILocalizeStrings.Get(1451), Util.Utils.GetFilename(FileName));
@@ -3382,6 +3418,16 @@ namespace MediaPortal.Player
                        : string.Format("Audio codec: {0}", _mediaInfo.AudioCodec);
         GUIGraphicsContext.SendMessage(msg);
         _mediaInfo = null;
+        PlayListType currentList = PlayListPlayer.SingletonPlayer.CurrentPlaylistType;
+        if (type == MediaType.Music)
+        {
+          // Clear music playlists when failed to play.
+          if (currentList == PlayListType.PLAYLIST_MUSIC)
+          {
+            PlayListPlayer.SingletonPlayer.GetPlaylist(currentList).Clear();
+            PlayListPlayer.SingletonPlayer.Reset();
+          }
+        }
       }
       catch (Exception ex)
       {
@@ -3494,7 +3540,7 @@ namespace MediaPortal.Player
         return false;
       }
       // are we playing music and got the fancy BassMusicPlayer?
-      if (IsMusic && BassMusicPlayer.IsDefaultMusicPlayer)
+      if ((IsMusic || IsRadio) && BassMusicPlayer.IsDefaultMusicPlayer)
       {
         if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_FULLSCREEN_MUSIC)
         {

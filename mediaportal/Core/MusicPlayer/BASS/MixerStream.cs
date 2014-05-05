@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Windows.Forms;
 using MediaPortal.GUI.Library;
+using MediaPortal.Player;
 using Un4seen.Bass;
 using Un4seen.Bass.AddOn.Mix;
 using Un4seen.BassAsio;
@@ -14,6 +16,13 @@ namespace MediaPortal.MusicPlayer.BASS
   /// </summary>
   public class MixerStream : IDisposable
   {
+    #region Delegates
+
+    public delegate void MusicStreamMessageHandler(object sender, MusicStream.StreamAction action);
+    public event MusicStreamMessageHandler MusicStreamMessage;
+
+    #endregion
+
     #region Variables
 
     private BassAudioEngine _bassPlayer;
@@ -28,7 +37,7 @@ namespace MediaPortal.MusicPlayer.BASS
     private int _wasapiMixedChans = 0;
     private int _wasapiMixedFreq = 0;
 
-    private bool _disposed = false;
+    private bool _disposedMixerStream = false;
 
     private SYNCPROC _playbackEndProcDelegate = null;
     private int _syncProc = 0;
@@ -220,17 +229,14 @@ namespace MediaPortal.MusicPlayer.BASS
 
           Log.Info("BASS: Initialising WASAPI device");
 
-          if (BassWasapi.BASS_WASAPI_IsStarted())
+          try
           {
-            try
-            {
-              BassWasapi.BASS_WASAPI_Free();
-              Log.Debug("BASS: Freed WASAPI device");
-            }
-            catch (Exception ex)
-            {
-              Log.Error("BASS: Exception freeing WASAPI. {0} {1}", ex.Message, ex.StackTrace);
-            }
+            BassWasapi.BASS_WASAPI_Free();
+            Log.Debug("BASS: Freed WASAPI device");
+          }
+          catch (Exception ex)
+          {
+            Log.Error("BASS: Exception freeing WASAPI. {0} {1}", ex.Message, ex.StackTrace);
           }
 
           BASSWASAPIInit initFlags = BASSWASAPIInit.BASS_WASAPI_AUTOFORMAT;
@@ -246,6 +252,14 @@ namespace MediaPortal.MusicPlayer.BASS
             Log.Warn("BASS: Found uneven number of channels {0}. increase output channels.", outputChannels);
             outputChannels++; // increase the number of output channels
             wasApiExclusiveSupported = false; // And indicate that we need a new mixer
+          }
+
+          // Handle the special case of a 5.0 file being played on a 5.1 or 6.1 device
+          if (outputChannels == 5)
+          {
+            Log.Info("BASS: Found a 5 channel file. Set upmixing with LFE set to silent");
+            _mixingMatrix = CreateFiveDotZeroUpMixMatrix();
+            wasApiExclusiveSupported = true;
           }
 
           // If Exclusive mode is used, check, if that would be supported, otherwise init in shared mode
@@ -429,7 +443,7 @@ namespace MediaPortal.MusicPlayer.BASS
     /// <returns></returns>
     private int WasApiCallback(IntPtr buffer, int length, IntPtr user)
     {
-      if (_mixer == 0)
+      if (_mixer == null || _mixer == 0)
       {
         return 0;
       }
@@ -462,6 +476,8 @@ namespace MediaPortal.MusicPlayer.BASS
           return CreateStereoUpMixMatrix();
         case 4:
           return CreateQuadraphonicUpMixMatrix();
+        case 5:
+          return CreateFiveDotZeroUpMixMatrix(); // Special case to handle a 5.0 Music File
         case 6:
           return CreateFiveDotOneUpMixMatrix();
         default:
@@ -665,6 +681,42 @@ namespace MediaPortal.MusicPlayer.BASS
       return mixMatrix;
     }
 
+    private float[,] CreateFiveDotZeroUpMixMatrix()
+    {
+      float[,] mixMatrix = null;
+
+      // Handle the Special playback case of a 5.0 music file
+      switch (_bassPlayer.DeviceChannels)
+      {
+        case 6:
+           mixMatrix = new float[6, 5] {
+          	{1,0,0,0,0}, // left front out = left front in
+	          {0,1,0,0,0}, // right front out = right front in
+	          {0,0,1,0,0}, // centre out = centre in
+	          {0,0,0,0,0}, // LFE out = silent
+	          {0,0,0,1,0}, // left rear out = left rear in
+	          {0,0,0,0,1}  // right rear out = right rear in
+           }; 
+          Log.Info("BASS: Upmix 5.0-> 5.1 with LFE empty");
+          break;
+
+        case 7:
+          mixMatrix = new float[8, 5] {
+          	{1,0,0,0,0}, // left front out = left front in
+	          {0,1,0,0,0}, // right front out = right front in
+	          {0,0,1,0,0}, // centre out = centre in
+	          {0,0,0,0,0}, // LFE out = silent
+	          {0,0,0,1,0}, // left rear out = left rear in
+	          {0,0,0,0,1}, // right rear out = right rear in
+            {0,0,0,0,0}, // left back out = silent
+            {0,0,0,0,0}  // right back out = silent
+           };
+          Log.Info("BASS: Upmix 5.0-> 5.1 with LFE empty");
+          break;
+      }
+      return mixMatrix;
+    }
+
     private float[,] CreateFiveDotOneUpMixMatrix()
     {
       float[,] mixMatrix = null;
@@ -715,9 +767,17 @@ namespace MediaPortal.MusicPlayer.BASS
         // In order to have gapless playback, it needs to be invoked in sync.
         MusicStream nextStream = null;
         Playlists.PlayListItem nextSong = Playlists.PlayListPlayer.SingletonPlayer.GetNextItem();
-        if (nextSong != null)
+        MusicStream._fileType = Utils.GetFileType(musicstream.FilePath);
+        if (nextSong != null && MusicStream._fileType.FileMainType != FileMainType.WebStream)
         {
           nextStream = new MusicStream(nextSong.FileName, true);
+        }
+        else if (MusicStream._fileType.FileMainType == FileMainType.WebStream)
+        {
+          if (MusicStreamMessage != null)
+          {
+            MusicStreamMessage(musicstream, MusicStream.StreamAction.InternetStreamChanged);
+          }
         }
 
         bool newMixerNeeded = false;
@@ -732,17 +792,32 @@ namespace MediaPortal.MusicPlayer.BASS
 
         if (newMixerNeeded)
         {
+          if (Config.MusicPlayer == AudioPlayer.WasApi && BassWasapi.BASS_WASAPI_IsStarted())
+          {
+            BassWasapi.BASS_WASAPI_Stop(true);
+          }
+
           // Unplug the Source channel from the mixer
           Log.Debug("BASS: Unplugging source channel from Mixer.");
           BassMix.BASS_Mixer_ChannelRemove(musicstream.BassStream);
 
           // invoke a thread because we need a new mixer
-          Log.Debug("BASS: Next song needs a new mixer. Invoke a thread.");
-          new Thread(() => _bassPlayer.OnMusicStreamMessage(musicstream, MusicStream.StreamAction.Crossfading)) { Name = "BASS" }.Start();
+          Log.Debug("BASS: Next song needs a new mixer.");
+          
+          new Thread(() =>
+            {
+              if (MusicStreamMessage != null)
+              {
+                MusicStreamMessage(musicstream, MusicStream.StreamAction.Crossfading);
+              }
+            }) { Name = "BASS" }.Start();
         }
         else
         {
-          _bassPlayer.OnMusicStreamMessage(musicstream, MusicStream.StreamAction.Crossfading);
+          if (MusicStreamMessage != null)
+          {
+            MusicStreamMessage(musicstream, MusicStream.StreamAction.Crossfading);
+          }
         }
       }
       catch (AccessViolationException)
@@ -751,33 +826,35 @@ namespace MediaPortal.MusicPlayer.BASS
       }
     }
 
-
     #endregion
 
     #region IDisposable Members
 
     public void Dispose()
     {
-      if (_disposed)
+      if (_disposedMixerStream)
       {
         return;
       }
 
-      _disposed = true;
-
-      Log.Debug("BASS: Disposing Mixer Stream");
-
-      try
+      lock (this)
       {
-        if (!Bass.BASS_StreamFree(_mixer))
+        _disposedMixerStream = true;
+
+        Log.Debug("BASS: Disposing Mixer Stream");
+
+        try
         {
-          Log.Error("BASS: Error freeing mixer: {0}", Bass.BASS_ErrorGetCode());
+          if (!Bass.BASS_StreamFree(_mixer))
+          {
+            Log.Error("BASS: Error freeing mixer: {0}", Bass.BASS_ErrorGetCode());
+          }
+          _mixer = 0;
         }
-        _mixer = 0;
-      }
-      catch (Exception ex)
-      {
-        Log.Error("BASS: Exception disposing mixer - {0}. {1}", ex.Message, ex.StackTrace);
+        catch (Exception ex)
+        {
+          Log.Error("BASS: Exception disposing mixer - {0}. {1}", ex.Message, ex.StackTrace);
+        }
       }
     }
 

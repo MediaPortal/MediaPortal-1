@@ -29,9 +29,10 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
     if (Regex.Match(strSearch, @"tt\d{7}").Success)
     {
       string ttNumber = Regex.Match(strSearch, @"(?<imdbID>tt\d{7})").Groups["imdbID"].Value;
-      string imdbUrl = string.Format("http://www.imdb.com/title/{0}",ttNumber);
+      string imdbUrl = string.Format("http://www.imdb.com/title/{0}", ttNumber);
       IMDB.IMDBUrl url = new IMDB.IMDBUrl(imdbUrl, ttNumber, _dbVersion);
       elements.Add(url);
+      MediaPortal.GUI.Library.Log.Info("IMDB Script: direct tt link [{0}] added from search string: [{1}]", imdbUrl, strSearch);
       return;
     }
 
@@ -102,18 +103,20 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
           htmlUtil.ConvertHTMLToAnsi(strTitle, out strTitle);
           IMDB.IMDBUrl url = new IMDB.IMDBUrl(absoluteUri.Replace("m.imdb", "www.imdb"), strTitle, _dbVersion);
           elements.Add(url);
+          MediaPortal.GUI.Library.Log.Info("IMDB Script: direct hit for search string [{0}]", strSearch);
         }
         return;
       }
 
       regexPattern = @"<a\shref=""/title/(?<ttnumber>.*?)/.*?>(?<title>.*?)</a>(?<option>.*?)</div>";
       MatchCollection mc = Regex.Matches(strBody, regexPattern,
-                           RegexOptions.Singleline | 
-                           RegexOptions.IgnoreCase | 
+                           RegexOptions.Singleline |
+                           RegexOptions.IgnoreCase |
                            RegexOptions.Compiled);
 
       if (mc.Count != 0)
       {
+        MediaPortal.GUI.Library.Log.Info("IMDB Script: Found {0} matching movies for {1}. Filtering results.", mc.Count, strSearch);
         foreach (Match m in mc)
         {
           string ttnumber = string.Empty;
@@ -143,7 +146,7 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
             {
               rx = new Regex(@"^(.*)?[\[\(](19\d{2}|20\d{2})[\]\)]");
               match = rx.Match(option);
-              
+
               if (match.Success)
               {
                 yearIMDB = int.Parse(match.Groups[2].Value);
@@ -167,6 +170,11 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
             elements.Add(url);
           }
         }
+        MediaPortal.GUI.Library.Log.Info("IMDB Script: Total returned movie count {0}", elements.Count);
+      }
+      else
+      {
+        MediaPortal.GUI.Library.Log.Info("IMDB Script: Movies not found for {0}", strSearch);
       }
     }
     catch (Exception ex)
@@ -183,7 +191,7 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
     {
       movieDetails.Reset();
       movieDetails.Database = _dbVersion;
-
+      MediaPortal.GUI.Library.Log.Info("IMDB Script GetDetails for: {0}", url.URL);
       string strAbsUrl;
       string strBody = GetPage(url.URL, "utf-8", out strAbsUrl);
 
@@ -274,8 +282,9 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
           movieDetails.WritingCredits = strWriter.Replace("...", "").Replace("\n", "").Replace("  ", "").Trim();
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        MediaPortal.GUI.Library.Log.Error("IMDB Script GetWritersDetails error: {0}", ex.Message);
       }
 
       // Actors
@@ -347,8 +356,9 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
           movieDetails.Genre = HttpUtility.HtmlDecode(genre.Remove(genre.LastIndexOf(" / ")));
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        MediaPortal.GUI.Library.Log.Error("IMDB Script GetGenresDetails error: {0}", ex.Message);
       }
 
       // Studios
@@ -370,8 +380,9 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
           movieDetails.Studios = HttpUtility.HtmlDecode(studio.Remove(studio.LastIndexOf(" / ")));
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        MediaPortal.GUI.Library.Log.Error("IMDB Script GetStudiosDetails error: {0}", ex.Message);
       }
 
       // Country
@@ -476,7 +487,7 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
       }
 
       // Runtime
-      regexPattern = "<h5>Runtime:</h5>.*?(?<movieRuntime>\\d+)\\smin\\s+|(?<movieRuntime>\\d+)\\smin";
+      regexPattern = "<time\\sitemprop=\"duration\".*?(?<movieRuntime>\\d+)\\smin";
       int runtime;
 
       if (int.TryParse(Regex.Match(strBody, regexPattern).Groups["movieRuntime"].Value, out runtime))
@@ -555,8 +566,9 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
           movieDetails.PlotOutline = movieDetails.Plot;
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        MediaPortal.GUI.Library.Log.Error("IMDB Script GetPlotDetails error: {0}", ex.Message);
       }
 
       //User review
@@ -574,8 +586,9 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
       }
       return true;
     }
-    catch (Exception)
+    catch (Exception ex)
     {
+      MediaPortal.GUI.Library.Log.Error("IMDB Script GetDetails error: {0}", ex.Message);
     }
     return false;
   }
@@ -625,21 +638,22 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
     {
       // Make the Webrequest
       //Log.Info("IMDB: get page:{0}", strURL);
-      WebRequest req = WebRequest.Create(strUrl);
+      HttpWebRequest req = (HttpWebRequest)WebRequest.Create(strUrl);
       string uu = "BCYmcFe4PTBQ8nEoIcCgT5AJwPk7BAOCg5XsQrvqKyvxEUpEB6KqjE0Uv_pqnPChVCCnD8vgTK3UtK7FGCdw39E2j-Fb5MWegRLgbNA2rFWeYUJbbXhRyUaxqGuuW3AZb1grBhmGMxhDJyH5ntFDj1X1Ejh_jqR6BaQUk6P16AN1EMPstTSBIqxVW08QEqMKQgsK75y8_s1Ss9tyDfZpLZzCWhO5qftGUn3_bbw_DBF6sTZDo6xK-zy88VZ8cws-D30P";
       string id = "BCYobsJMWRwG55i2yGvVuZe7v5twryi7KSxLglDHw2wVcI1rMq0OjHVT7duPo5NNHKDDVFBTVjJM4PoMonlTB_q9NvMCs-wB78Y1hGjdgCLX0SEEC2Y6BD4E3Z6cIoMwlhTDFSprYlxMqjEsFGYwWzVp1oIUYkZQ0kgpX_MvBrEh-fU";
       string cookieHeader = string.Format("uu={0}; id={1}", uu, id);
       req.Headers.Add("Cookie", cookieHeader);
       req.Headers.Add("Accept-Language", "en-US,en;q=0.5");
       req.Timeout = 20000;
+			req.ReadWriteTimeout = 20000;
 
       result = req.GetResponse();
       receiveStream = result.GetResponseStream();
 
       // Encoding: depends on selected page
       Encoding encode = System.Text.Encoding.GetEncoding(strEncode);
-			
-			using (sr = new StreamReader(receiveStream, encode))
+
+      using (sr = new StreamReader(receiveStream, encode))
       {
         strBody = sr.ReadToEnd();
       }

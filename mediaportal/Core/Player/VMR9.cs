@@ -72,44 +72,44 @@ namespace MediaPortal.Player
   {
     #region imports
 
-    [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe bool Vmr9Init(IVMR9PresentCallback callback, uint dwD3DDevice, IBaseFilter vmr9Filter,
                                                uint monitor);
 
-    [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void Vmr9Deinit();
 
-    [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void Vmr9SetDeinterlaceMode(Int16 mode);
 
-    [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void Vmr9SetDeinterlacePrefs(uint dwMethod);
 
-    [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe bool EvrInit(IVMR9PresentCallback callback, uint dwD3DDevice, 
                                               ref IBaseFilter vmr9Filter, uint monitor, int monitorIdx,
                                               bool disVsyncCorr, bool disMparCorr);
 
     //, uint dwWindow);
-    [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void EvrDeinit();
 
-    [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void EVRDrawStats(bool enable);
 
-    [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void EVRResetStatCounters();
 
-    [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void EVRNotifyRateChange(double pRate);
 
-    [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void EVRNotifyDVDMenuState(bool pIsInMenu);
 
-    [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe double EVRGetVideoFPS(int fpsSource);
 
-    [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void EVRUpdateDisplayFPS();
 
     #endregion
@@ -135,6 +135,7 @@ namespace MediaPortal.Player
 
     private PlaneScene _scene = null;
     private bool _useVmr9 = false;
+    private bool _inMenu = false;
     private IRender _renderFrame;
     private IBaseFilter _vmr9Filter = null;
     private int _videoHeight, _videoWidth;
@@ -208,6 +209,10 @@ namespace MediaPortal.Player
       set { _freeframeCounter = value; }
     }
 
+    public bool InMenu
+    {
+      get { return _inMenu; }
+    }
 
     /// <summary>
     /// returns the width of the video
@@ -591,6 +596,7 @@ namespace MediaPortal.Player
     public void EVRSetDVDMenuState(bool isInDVDMenu)
     {
       EVRNotifyDVDMenuState(isInDVDMenu);
+      _inMenu = isInDVDMenu;
     }
 
     /// <summary>

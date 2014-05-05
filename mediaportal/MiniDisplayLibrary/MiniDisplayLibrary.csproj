@@ -21,6 +21,7 @@
     <OldToolsVersion>3.5</OldToolsVersion>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile />
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>bin\Debug\</OutputPath>
@@ -65,8 +66,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Bass.Net">
-      <Name>Bass.Net</Name>
-      <HintPath>..\MediaPortal.Base\Bass.Net.dll</HintPath>
+      <HintPath>..\..\Packages\BASS.NET.2.4.10.3\lib\net40\Bass.Net.dll</HintPath>
     </Reference>
     <Reference Include="LibDriverCoreClient">
       <Name>LibDriverCoreClient</Name>
@@ -345,6 +345,9 @@
     <EmbeddedResource Include="MiniDisplayPlugin\Drivers\iMONLCDg_AdvancedSetupForm.resx">
       <DependentUpon>iMONLCDg_AdvancedSetupForm.cs</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

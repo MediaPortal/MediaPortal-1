@@ -21,6 +21,10 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
+using System.Net;
+using MediaPortal.Util;
+using MediaPortal.Profile;
+using MediaPortal.GUI.Library;
 using MediaPortal.UserInterface.Controls;
 
 namespace MediaPortal.Configuration
@@ -59,6 +63,8 @@ namespace MediaPortal.Configuration
     public MPLabel labelCreateThumbs;
     public MPCheckBox cbEachFolderIsMovie;
     private ToolTip toolTipEditShare;
+    private MPCheckBox cbEnableWakeOnLan;
+    private MPButton mpButtonLearnMacNow;
     private IContainer components;
 
     public EditShareForm()
@@ -100,6 +106,8 @@ namespace MediaPortal.Configuration
       this.components = new System.ComponentModel.Container();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditShareForm));
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.mpButtonLearnMacNow = new MediaPortal.UserInterface.Controls.MPButton();
+      this.cbEnableWakeOnLan = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.cbEachFolderIsMovie = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.cbCreateThumbs = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.labelCreateThumbs = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -136,6 +144,8 @@ namespace MediaPortal.Configuration
       this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.mpButtonLearnMacNow);
+      this.groupBox1.Controls.Add(this.cbEnableWakeOnLan);
       this.groupBox1.Controls.Add(this.cbEachFolderIsMovie);
       this.groupBox1.Controls.Add(this.cbCreateThumbs);
       this.groupBox1.Controls.Add(this.labelCreateThumbs);
@@ -168,6 +178,27 @@ namespace MediaPortal.Configuration
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Folder settings";
       this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
+      // 
+      // mpButtonLearnMacNow
+      // 
+      this.mpButtonLearnMacNow.Location = new System.Drawing.Point(251, 172);
+      this.mpButtonLearnMacNow.Name = "mpButtonLearnMacNow";
+      this.mpButtonLearnMacNow.Size = new System.Drawing.Size(141, 23);
+      this.mpButtonLearnMacNow.TabIndex = 32;
+      this.mpButtonLearnMacNow.Text = "Learn MAC address now";
+      this.mpButtonLearnMacNow.UseVisualStyleBackColor = true;
+      this.mpButtonLearnMacNow.Click += new System.EventHandler(this.mpButton1_Click);
+      // 
+      // cbEnableWakeOnLan
+      // 
+      this.cbEnableWakeOnLan.AutoSize = true;
+      this.cbEnableWakeOnLan.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.cbEnableWakeOnLan.Location = new System.Drawing.Point(16, 172);
+      this.cbEnableWakeOnLan.Name = "cbEnableWakeOnLan";
+      this.cbEnableWakeOnLan.Size = new System.Drawing.Size(127, 17);
+      this.cbEnableWakeOnLan.TabIndex = 31;
+      this.cbEnableWakeOnLan.Text = "Enable Wake On Lan";
+      this.cbEnableWakeOnLan.UseVisualStyleBackColor = true;
       // 
       // cbEachFolderIsMovie
       // 
@@ -382,6 +413,7 @@ namespace MediaPortal.Configuration
       this.folderTextBox.Name = "folderTextBox";
       this.folderTextBox.Size = new System.Drawing.Size(344, 20);
       this.folderTextBox.TabIndex = 2;
+      this.folderTextBox.TextChanged += new System.EventHandler(this.folderTextBox_TextChanged);
       // 
       // label2
       // 
@@ -565,7 +597,7 @@ namespace MediaPortal.Configuration
       }
     }
 
-    private void groupBox1_Enter(object sender, EventArgs e) {}
+    private void groupBox1_Enter(object sender, EventArgs e) { }
 
     private void EditShareForm_Load(object sender, EventArgs e)
     {
@@ -611,7 +643,7 @@ namespace MediaPortal.Configuration
         {
           port = Int32.Parse(textBoxPort.Text);
         }
-        catch (Exception) {}
+        catch (Exception) { }
         return port;
       }
       set { textBoxPort.Text = value.ToString(); }
@@ -663,6 +695,118 @@ namespace MediaPortal.Configuration
     {
       get { return cbEachFolderIsMovie.Checked; }
       set { cbEachFolderIsMovie.Checked = value; }
+    }
+
+    public bool EnableWakeOnLan
+    {
+      get { return cbEnableWakeOnLan.Checked; }
+      set { cbEnableWakeOnLan.Checked = value; }
+    }
+
+    private void checkBox1_CheckedChanged(object sender, EventArgs e)
+    {
+
+    }
+
+    private void mpButton1_Click(object sender, EventArgs e)
+    {
+      String macAddress;
+      byte[] hwAddress;
+
+      WakeOnLanManager wakeOnLanManager = new WakeOnLanManager();
+
+      IPAddress ipAddress = null;
+      string hostName = Util.Utils.GetServerNameFromUNCPath(folderTextBox.Text);
+
+      if (string.IsNullOrEmpty(hostName))
+      {
+        MessageBox.Show("Wrong unc path " + folderTextBox.Text,
+          "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        Log.Debug("Wrong unc path {0}", folderTextBox.Text);
+        return;
+      }
+
+      using (Profile.Settings xmlreader = new MPSettings())
+      {
+        macAddress = xmlreader.GetValueAsString("macAddress", hostName, null);
+      }
+
+      if (wakeOnLanManager.Ping(hostName, 100) && !string.IsNullOrEmpty(macAddress))
+      {
+        MessageBox.Show("WakeUpServer: The " + hostName + "server already started and mac address is learnt!",
+          "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        Log.Debug("WakeUpServer: The {0} server already started and mac address is learnt!", hostName);
+        return;
+      }
+
+      // Check if we already have a valid IP address stored,
+      // otherwise try to resolve the IP address
+      if (!IPAddress.TryParse(hostName, out ipAddress))
+      {
+        // Get IP address of the server
+        try
+        {
+          IPAddress[] ips;
+
+          ips = Dns.GetHostAddresses(hostName);
+
+          Log.Debug("WakeUpServer: WOL - GetHostAddresses({0}) returns:", hostName);
+
+          foreach (IPAddress ip in ips)
+          {
+            Log.Debug("    {0}", ip);
+
+            ipAddress = ip;
+            // Check for valid IP address
+            if (ipAddress != null)
+            {
+              // Update the MAC address if possible
+              hwAddress = wakeOnLanManager.GetHardwareAddress(ipAddress);
+
+              if (wakeOnLanManager.IsValidEthernetAddress(hwAddress))
+              {
+                Log.Debug("WakeUpServer: WOL - Valid auto MAC address: {0:x}:{1:x}:{2:x}:{3:x}:{4:x}:{5:x}"
+                  , hwAddress[0], hwAddress[1], hwAddress[2], hwAddress[3], hwAddress[4], hwAddress[5]);
+
+                // Store MAC address
+                macAddress = BitConverter.ToString(hwAddress).Replace("-", ":");
+
+                Log.Debug("WakeUpServer: WOL - Store MAC address: {0}", macAddress);
+
+                using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.MPSettings())
+                {
+                  xmlwriter.SetValue("macAddress", hostName, macAddress);
+                }
+                MessageBox.Show("Stored MAC address: " + macAddress, "MediaPortal Settings",
+                  MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+              }
+              else
+              {
+                MessageBox.Show("WakeUpServer: WOL - Not a valid IPv4 address: " + ipAddress, "MediaPortal Settings",
+                  MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                Log.Debug("WakeUpServer: WOL - Not a valid IPv4 address: {0}", ipAddress);
+              }
+            }
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Error("WakeUpServer: WOL - Failed GetHostAddress - {0}", ex.Message);
+        }
+      }
+    }
+
+    private void folderTextBox_TextChanged(object sender, EventArgs e)
+    {
+      if (Util.Utils.IsUNCNetwork(folderTextBox.Text))
+      {
+        cbEnableWakeOnLan.Enabled = true;
+      }
+      else
+      {
+        cbEnableWakeOnLan.Checked = false;
+        cbEnableWakeOnLan.Enabled = false;
+      }
     }
   }
 }

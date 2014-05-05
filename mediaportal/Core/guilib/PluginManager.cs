@@ -155,6 +155,8 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    private const int WM_POWERBROADCAST = 0x0218;
+
     // ReSharper disable InconsistentNaming
     private static readonly ArrayList _nonGuiPlugins = new ArrayList();
     private static readonly ArrayList _guiPlugins = new ArrayList();
@@ -311,20 +313,7 @@ namespace MediaPortal.GUI.Library
       catch (Exception) { }
       // ReSharper restore EmptyGeneralCatchClause
 
-      // need to load windowPlugins.dll first
-      string windowPluginsDLL = Config.GetFile(Config.Dir.Plugins, @"windows\WindowPlugins.dll");
-      DateTime startTimeNonThreaded = DateTime.Now;
-      Log.Debug("PluginManager: Begin loading '\\windows\\WindowPlugins.dll' (non threaded)");
-      LoadWindowPlugin(windowPluginsDLL);
-      DateTime endTimeNonThreaded = DateTime.Now;
-      TimeSpan runningTimeNonThreaded = endTimeNonThreaded - startTimeNonThreaded;
-      Log.Debug("PluginManager: End loading '\\windows\\WindowPlugins.dll' ({0} ms running time)", runningTimeNonThreaded.TotalMilliseconds);
-
       string[] strFiles = MediaPortal.Util.Utils.GetFiles(Config.GetSubFolder(Config.Dir.Plugins, "windows"), "dll");
-
-      // remove windowplugins.dll from list of window plugins to be loaded
-      int pluginIndex = Array.IndexOf(strFiles, windowPluginsDLL);
-      strFiles = strFiles.Where((val, idx) => idx != pluginIndex).ToArray();
 
       // load all window plugins in the main thread
       foreach (string file in strFiles)
@@ -368,20 +357,7 @@ namespace MediaPortal.GUI.Library
       catch (Exception) { }
       // ReSharper restore EmptyGeneralCatchClause
 
-      // need to load windowPlugins.dll first
-      string windowPluginsDLL = Config.GetFile(Config.Dir.Plugins, @"windows\WindowPlugins.dll");
-      DateTime startTimeNonThreaded = DateTime.Now;
-      Log.Debug("PluginManager: Begin loading '\\windows\\WindowPlugins.dll' (non threaded)");
-      LoadWindowPlugin(windowPluginsDLL);
-      DateTime endTimeNonThreaded = DateTime.Now;
-      TimeSpan runningTimeNonThreaded = endTimeNonThreaded - startTimeNonThreaded;
-      Log.Debug("PluginManager: End loading '\\windows\\WindowPlugins.dll' ({0} ms running time)", runningTimeNonThreaded.TotalMilliseconds);
-
       string[] strFiles = MediaPortal.Util.Utils.GetFiles(Config.GetSubFolder(Config.Dir.Plugins, "windows"), "dll");
-
-      // remove windowplugins.dll from list of window plugins to be loaded
-      int pluginIndex = Array.IndexOf(strFiles, windowPluginsDLL);
-      strFiles = strFiles.Where((val, idx) => idx != pluginIndex).ToArray();
 
       int pluginsToLoad = strFiles.Length;
       using (var resetEvent = new ManualResetEvent(false))
@@ -557,10 +533,10 @@ namespace MediaPortal.GUI.Library
       }
       catch (Exception ex)
       {
-        Log.Info(
+        Log.Error(
           "PluginManager: Plugin file {0} is broken or incompatible with the current MediaPortal version and won't be loaded!",
           strFile.Substring(strFile.LastIndexOf(@"\", StringComparison.Ordinal) + 1));
-        Log.Info("PluginManager: Exception: {0}", ex);
+        Log.Error("PluginManager: Exception: {0}", ex);
       }
     }
 
@@ -872,10 +848,6 @@ namespace MediaPortal.GUI.Library
 
     public static bool IsPlugInEnabled(string strDllname)
     {
-      if (strDllname.IndexOf("WindowPlugins.dll", StringComparison.Ordinal) >= 0)
-      {
-        return true;
-      }
       if (strDllname.IndexOf("ProcessPlugins.dll", StringComparison.Ordinal) >= 0)
       {
         return true;
@@ -950,14 +922,23 @@ namespace MediaPortal.GUI.Library
       // some ISetupForm plugins like tv plugin need the WndProc() method to determine when system has been resumed.      
       foreach (ISetupForm plugin in _setupForms)
       {
-        if (plugin is IPluginReceiver)
+        try
         {
-          var pluginRev = plugin as IPluginReceiver;
-          res = pluginRev.WndProc(ref msg);
-          if (res)
+          if (plugin is IPluginReceiver)
           {
-            break;
+            var pluginRev = plugin as IPluginReceiver;
+            res = pluginRev.WndProc(ref msg);
+            
+            // Do not allow badly behaving plugins to steal power events from other plugins
+            if (res && msg.Msg != WM_POWERBROADCAST)
+            {
+              break;
+            }
           }
+        }
+        catch (Exception ex)
+        {
+          Log.Error("PluginManager - WndProc - error with plugin {0} {1}", plugin.PluginName(), ex);
         }
       }
       return res;

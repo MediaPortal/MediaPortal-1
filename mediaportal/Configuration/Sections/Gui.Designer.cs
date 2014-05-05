@@ -157,14 +157,14 @@
             "Classic and Basic, prefer Basic",
             "only Classic Home",
             "only Basic Home"});
-      this.homeComboBox.Location = new System.Drawing.Point(108, 122);
+      this.homeComboBox.Location = new System.Drawing.Point(108, 142);
       this.homeComboBox.Name = "homeComboBox";
       this.homeComboBox.Size = new System.Drawing.Size(315, 21);
       this.homeComboBox.TabIndex = 11;
       // 
       // mpLabel1
       // 
-      this.mpLabel1.Location = new System.Drawing.Point(6, 125);
+      this.mpLabel1.Location = new System.Drawing.Point(6, 142);
       this.mpLabel1.Name = "mpLabel1";
       this.mpLabel1.Size = new System.Drawing.Size(96, 16);
       this.mpLabel1.TabIndex = 10;
@@ -181,10 +181,11 @@
             "Enable file existence cache (improves performance on some systems)",
             "Enable skin sound effects",
             "Show special mouse controls (scrollbars, etc)",
-            "Reduce frame rate when MediaPortal is not in focus"});
+            "Reduce frame rate when MediaPortal is not in focus",
+            "Add media info to the video database for use in share view"});
       this.settingsCheckedListBox.Location = new System.Drawing.Point(6, 19);
       this.settingsCheckedListBox.Name = "settingsCheckedListBox";
-      this.settingsCheckedListBox.Size = new System.Drawing.Size(450, 94);
+      this.settingsCheckedListBox.Size = new System.Drawing.Size(450, 109);
       this.settingsCheckedListBox.TabIndex = 0;
       // 
       // Gui

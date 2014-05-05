@@ -83,6 +83,11 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
       g_Player.PlayBackEnded += OnPlayBackEnded;
       g_Player.PlayBackChanged += OnPlayBackChanged;
       g_Player.PlayBackStopped += OnPlayBackStopped;
+      var mdb = MusicDatabase.Instance;
+      var sessionKey = mdb.GetLastFMSK();
+      var currentUser = mdb.GetLastFMUser();
+      var a = new LastFMLibrary(sessionKey, currentUser); //TODO this is just making _SK get loaded.   No need to actual instansiate
+      GUIWindowManager.Receivers += new SendMessageHandler(this.OnThreadMessage);
     }
 
     public void Stop()
@@ -131,7 +136,7 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
     /// <returns>true if this plugin is enabled by default, otherwise false.</returns>
     public bool DefaultEnabled()
     {
-      return true;
+      return false;
     }
 
     /// <summary>
@@ -198,56 +203,7 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
     /// <param name="filename">filename of item that has started</param>
     private static void OnPlayBackStarted(g_Player.MediaType type, string filename)
     {
-      try
-      {
-        if (type != g_Player.MediaType.Music || !(_announceTracks || MusicState.AutoDJEnabled)) return;
-
-        try
-        {
-          using (var client = new WebClient())
-          using (var stream = client.OpenRead("http://www.google.com"))
-          {
-            Log.Debug("internet connection detected. Can process last.fm announce or Auto DJ");
-          }
-        }
-        catch
-        {
-          Log.Info("No internet connection detected. Can not process last.fm announce or Auto DJ");
-          return;
-        }
-
-        var pl = PlayListPlayer.SingletonPlayer.GetPlaylist(PlayListPlayer.SingletonPlayer.CurrentPlaylistType);
-        var plI = pl.First(plItem => plItem.FileName == filename);
-        if (plI == null || plI.MusicTag == null)
-        {
-          Log.Info("LastFMScrobbler: Unable to process song: {0}  as it does not exist in the playlist", filename);
-          return;
-        }
-
-        var currentSong = (MusicTag) plI.MusicTag;
-
-        if (currentSong == null || string.IsNullOrEmpty(currentSong.Title) ||
-            (string.IsNullOrEmpty(currentSong.Artist) && string.IsNullOrEmpty(currentSong.AlbumArtist)))
-        {
-          Log.Warn("LastFMScrobbler: No track & artist tags found - Unable to process: {0}", filename);
-          return;
-        }
-
-        if (_announceTracks)
-        {
-          new Thread(() => AnnounceTrack(currentSong.Artist ?? currentSong.AlbumArtist, currentSong.Title, currentSong.Album,
-                          currentSong.Duration.ToString(CultureInfo.InvariantCulture))) { Name = "Last.FM Announcer" }.Start();
-        }
-
-        if (MusicState.AutoDJEnabled)
-        {
-          new Thread(() => AutoDJ(currentSong)) {Name = "AutoDJ"}.Start();
-        }
-      }
-      catch (Exception)
-      {
-        // Catch exception to avoid crash.
-      }
+      // Move the logic into a OnThreadmessage (GUIMessage.MessageType.GUI_MSG_PLAYING_10SEC) to avoid to charge CPU Usage on fast skipping song
     }
 
     /// <summary>
@@ -305,6 +261,69 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
     #endregion
 
     #region Background Threads
+
+    private void OnThreadMessage(GUIMessage message)
+    {
+      switch (message.Message)
+      {
+        case GUIMessage.MessageType.GUI_MSG_PLAYING_10SEC:
+          try
+          {
+            string filename = message.Label;
+            g_Player.MediaType type = g_Player.currentMedia;
+
+            if (type != g_Player.MediaType.Music || !(_announceTracks || MusicState.AutoDJEnabled)) return;
+
+            try
+            {
+              using (var client = new WebClient())
+              using (var stream = client.OpenRead("http://www.google.com"))
+              {
+                Log.Debug("internet connection detected. Can process last.fm announce or Auto DJ");
+              }
+            }
+            catch
+            {
+              Log.Info("No internet connection detected. Can not process last.fm announce or Auto DJ");
+              return;
+            }
+
+            var pl = PlayListPlayer.SingletonPlayer.GetPlaylist(PlayListPlayer.SingletonPlayer.CurrentPlaylistType);
+            var plI = pl.First(plItem => plItem.FileName == filename);
+            if (plI == null || plI.MusicTag == null)
+            {
+              Log.Info("LastFMScrobbler: Unable to process song: {0}  as it does not exist in the playlist", filename);
+              return;
+            }
+
+            var currentSong = (MusicTag) plI.MusicTag;
+
+            if (currentSong == null || string.IsNullOrEmpty(currentSong.Title) ||
+                (string.IsNullOrEmpty(currentSong.Artist) && string.IsNullOrEmpty(currentSong.AlbumArtist)))
+            {
+              Log.Warn("LastFMScrobbler: No track & artist tags found - Unable to process: {0}", filename);
+              return;
+            }
+
+            if (_announceTracks)
+            {
+              new Thread(
+                () => AnnounceTrack(currentSong.Artist ?? currentSong.AlbumArtist, currentSong.Title, currentSong.Album,
+                  currentSong.Duration.ToString(CultureInfo.InvariantCulture))) {Name = "Last.FM Announcer"}.Start();
+            }
+
+            if (MusicState.AutoDJEnabled)
+            {
+              new Thread(() => AutoDJ(currentSong)) {Name = "AutoDJ"}.Start();
+            }
+          }
+          catch (Exception)
+          {
+            // Catch exception to avoid crash.
+          }
+          break;
+      }
+    }
 
     /// <summary>
     /// Announce now playing details on last.fm website
@@ -410,8 +429,8 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
       { // last.fm say not to scrobble songs that last less than 30 seconds
         return;
       }
-      if (stoptime < 240 && stoptime < (tag.Duration / 2))
-      { // last.fm say only to scrobble is more than 4 minutes has been listned to or 
+      if (stoptime < 120 && stoptime < (tag.Duration / 2))
+      { // last.fm say only to scrobble is more than 2 minutes has been listned to or 
         // at least hald the duration of the song
         return;
       }

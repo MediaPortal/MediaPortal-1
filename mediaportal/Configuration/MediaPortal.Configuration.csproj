@@ -30,6 +30,7 @@
     <ApplicationManifest>Configuration.exe.manifest</ApplicationManifest>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile />
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>bin\Debug\</OutputPath>
@@ -173,9 +174,8 @@
       <Project>{49DFF256-09FD-4598-A3E8-855753E2A1FC}</Project>
       <Name>WinCustomControls</Name>
     </ProjectReference>
-    <Reference Include="Bass.Net, Version=2.3.1.1, Culture=neutral, PublicKeyToken=b7566c273e6ef480, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\MediaPortal.Base\Bass.Net.dll</HintPath>
+    <Reference Include="Bass.Net">
+      <HintPath>..\..\Packages\BASS.NET.2.4.10.3\lib\net40\Bass.Net.dll</HintPath>
     </Reference>
     <Reference Include="BassRegistration, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -264,6 +264,12 @@
     <Compile Include="Plugins.cs" />
     <Compile Include="Sections\Radio.cs">
       <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Subdialogs\DlgWol.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Subdialogs\DlgWol.Designer.cs">
+      <DependentUpon>DlgWol.cs</DependentUpon>
     </Compile>
     <Compile Include="TvServerRemote.cs" />
     <Compile Include="Sections\BD.cs">
@@ -419,9 +425,6 @@
     <Compile Include="Subdialogs\EditShareForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Subdialogs\EditWeatherCityForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Subdialogs\ParameterForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -429,9 +432,6 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Subdialogs\SearchCityForm.cs">
-      <SubType>Form</SubType>
     </Compile>
     <Compile Include="SectionSettings.cs">
       <SubType>UserControl</SubType>
@@ -631,9 +631,6 @@
     <Compile Include="Sections\TVPostProcessing.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\Weather.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Sections\RemoteWinLirc.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -646,9 +643,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="VideoRenderers.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="WeatherChannel.cs">
       <SubType>Code</SubType>
     </Compile>
     <Content Include="Resources\blu-ray_regions.png" />
@@ -806,13 +800,12 @@
       <SubType>Designer</SubType>
       <DependentUpon>DlgConfigModeHint.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Subdialogs\DlgWol.resx">
+      <DependentUpon>DlgWol.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Subdialogs\EditShareForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>EditShareForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Subdialogs\EditWeatherCityForm.resx">
-      <DependentUpon>EditWeatherCityForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Subdialogs\ParameterForm.resx">
       <DependentUpon>ParameterForm.cs</DependentUpon>
@@ -822,10 +815,6 @@
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Subdialogs\SearchCityForm.resx">
-      <DependentUpon>SearchCityForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\FiltersDScalerAudio.resx">
       <DependentUpon>FiltersDScalerAudio.cs</DependentUpon>
@@ -991,14 +980,11 @@
       <DependentUpon>TVRadio.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\Weather.resx">
-      <DependentUpon>Weather.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Sections\RemoteWinLirc.resx">
       <DependentUpon>RemoteWinLirc.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Resources\config.ico" />
     <None Include="Resources\wizard_background.png" />
     <None Include="Resources\remote.HidKeys.png" />
