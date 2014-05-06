@@ -377,6 +377,11 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
           //atscChannel.SymbolRate = detail.Symbolrate;
           atscChannel.TransportId = detail.TransportId;
           atscChannel.ModulationType = (ModulationType)detail.Modulation;
+          atscChannel.LogicalChannelNumber = detail.MajorChannel;
+          if (detail.MinorChannel >= 0)
+          {
+            atscChannel.LogicalChannelNumber = detail.MajorChannel * 1000 + detail.MinorChannel;
+          }
           return atscChannel;
         case 2: //DVBCChannel
           DVBCChannel dvbcChannel = new DVBCChannel();
