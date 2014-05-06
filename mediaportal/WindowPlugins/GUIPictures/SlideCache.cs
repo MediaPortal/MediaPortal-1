@@ -86,12 +86,6 @@ internal class SlideCache
         {
           _prefetchingThread.Priority = ThreadPriority.AboveNormal;
         }
-        else
-        {
-          // uneeded, abort
-          _prefetchingThread.Abort();
-          _prefetchingThread = null;
-        }
       }
     }
 
