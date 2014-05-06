@@ -34,7 +34,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
   /// <summary>
   /// class which handles all RTSP related tasks
   /// </summary>
-  internal class RtspStreaming
+  public class RtspStreaming
   {
 
 
@@ -98,15 +98,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
     /// Initializes a new instance of the <see cref="RtspStreaming"/> class.
     /// </summary>
     /// <param name="hostName">ipadress to use for streaming.</param>
-    public RtspStreaming(string hostName)
-      : this(hostName, DefaultPort) {}
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="RtspStreaming"/> class.
-    /// </summary>
-    /// <param name="hostName">ipadress to use for streaming.</param>
     /// <param name="port">port no to use for streaming</param>
-    public RtspStreaming(string hostName, int port)
+    public RtspStreaming(string hostName, int port = DefaultPort)
     {
       int result;
       try

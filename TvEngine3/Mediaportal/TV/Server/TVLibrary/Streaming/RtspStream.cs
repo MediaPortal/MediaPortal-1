@@ -26,7 +26,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
   /// <summary>
   /// Class describing a single rtsp stream
   /// </summary>
-  internal class RtspStream
+  public class RtspStream
   {
     #region variables
 
