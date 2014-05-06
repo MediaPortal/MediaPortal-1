@@ -18,8 +18,6 @@
 
 #endregion
 
-using System;
-
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
 {
   /// <summary>
