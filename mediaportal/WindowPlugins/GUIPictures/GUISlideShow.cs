@@ -47,61 +47,64 @@ namespace MediaPortal.GUI.Pictures
   {
     private SlidePicture LoadCurrentSlide()
     {
-      if (_slideList.Count == 0)
-      {
-        return null;
-      }
-
       bool _autoShuffleFolder = false;
-      GUIPictures GUIpictures = (GUIPictures) GUIWindowManager.GetWindow((int) Window.WINDOW_PICTURES);
+      GUIPictures GUIpictures = (GUIPictures)GUIWindowManager.GetWindow((int)Window.WINDOW_PICTURES);
       GUISlideShow SlideShow = (GUISlideShow)GUIWindowManager.GetWindow((int)Window.WINDOW_SLIDESHOW);
 
-      if (_isSlideShow && _showRecursive)
+      try
       {
-        // Analyse only folder and not picture/video items
-        while (IsPathDirectory(_slideList[_currentSlideIndex]))
+        if (_slideList.Count == 0)
         {
-          GUIpictures.AddDir(SlideShow, _slideList[_currentSlideIndex]);
-          _slideList.Remove(_slideList[_currentSlideIndex]);
-          _autoShuffleFolder = true;
+          return null;
         }
-      }
 
-      if (_autoShuffleFolder)
-      {
-        // Need a new shuffle after new files added and select first entry (so use _currentSlideIndex "0") and check if new selected entry is a folder
-        Shuffle(true, false);
-        _currentSlideIndex = 0;
-        // It's a folder then need to load the content
-        while (IsPathDirectory(_slideList[_currentSlideIndex]))
+        if (_isSlideShow && _showRecursive)
         {
-          GUIpictures.AddDir(SlideShow, _slideList[_currentSlideIndex]);
-          _slideList.Remove(_slideList[_currentSlideIndex]);
+          // Analyse for folder and add picture/video items to the list and then remove the folder item
+          while (IsPathDirectory(_slideList[_currentSlideIndex]))
+          {
+            GUIpictures.AddDir(SlideShow, _slideList[_currentSlideIndex]);
+            _slideList.Remove(_slideList[_currentSlideIndex]);
+            _autoShuffleFolder = true;
+          }
         }
-        _currentSlide = _slideCache.GetCurrentSlide(_slideList[_currentSlideIndex]);
-        GUIPictures.fileNameCheck = _slideList[_currentSlideIndex];
-      }
-      else
-      {
-        _currentSlide = _slideCache.GetCurrentSlide(_slideList[_currentSlideIndex]);
-        GUIPictures.fileNameCheck = _slideList[_currentSlideIndex];
-      }
 
-      GUIPropertyManager.SetProperty("#selecteditem", Util.Utils.GetFilename(GUIPictures.fileNameCheck));
+        // Item list has changed, if we use autoshuffle then do a new shuffle and check if new selected entry is a folder
+        if (_autoShuffleFolder && _autoShuffle)
+        {
+          Shuffle(true, false);
+          // Analyse for folder and add picture/video items to the list and then remove the folder item
+          // like shuffle is done, continue slideshow on first entry
+          _currentSlideIndex = 0;
+          while (IsPathDirectory(_slideList[_currentSlideIndex]))
+          {
+            GUIpictures.AddDir(SlideShow, _slideList[_currentSlideIndex]);
+            _slideList.Remove(_slideList[_currentSlideIndex]);
+          }
+          _currentSlide = _slideCache.GetCurrentSlide(_slideList[_currentSlideIndex]);
+          GUIPictures.fileNameCheck = _slideList[_currentSlideIndex];
+        }
+        else
+        {
+          _currentSlide = _slideCache.GetCurrentSlide(_slideList[_currentSlideIndex]);
+          GUIPictures.fileNameCheck = _slideList[_currentSlideIndex];
+        }
 
-      ResetCurrentZoom(_currentSlide);
+        GUIPropertyManager.SetProperty("#selecteditem", Util.Utils.GetFilename(GUIPictures.fileNameCheck));
 
-      PrefetchNextSlide();
+        ResetCurrentZoom(_currentSlide);
 
-      Log.Debug("GUISlideShow: LoadSlide - currentSlideIndex {0}", _currentSlideIndex);
-      GUIpictures.SetSelectedItemIndex(_currentSlideIndex);
+        PrefetchNextSlide();
 
-      #region Video in slideshow
+        Log.Debug("GUISlideShow: LoadSlide - currentSlideIndex {0}", _currentSlideIndex);
+        GUIpictures.SetSelectedItemIndex(_currentSlideIndex);
 
-      if (Util.Utils.IsVideo(GUIPictures.fileNameCheck))
-      {
-        // TODO Handle when it's Radio Stream
-        /*if (g_Player.Playing && (!g_Player.IsMusic || !g_Player.IsCDA || (g_Player.IsRadio && !g_Player.IsTimeShifting)))
+        #region Video in slideshow
+
+        if (Util.Utils.IsVideo(GUIPictures.fileNameCheck))
+        {
+          // TODO Handle when it's Radio Stream
+          /*if (g_Player.Playing && (!g_Player.IsMusic || !g_Player.IsCDA || (g_Player.IsRadio && !g_Player.IsTimeShifting)))
         {
           //we skip the video in the picture slide show
           _currentSlide = _slideCache.GetCurrentSlide(_slideList[++_currentSlideIndex]);
@@ -109,59 +112,71 @@ namespace MediaPortal.GUI.Pictures
           return _currentSlide;
         }*/
 
-        if (!GUIpictures._playVideosInSlideshows && _isSlideShow && GUIPictureSlideShow._slideDirection == 1)
-        {
-          ShowNext();
-          _currentSlide = _slideCache.GetCurrentSlide(_slideList[_currentSlideIndex]);
-          return _currentSlide;
+          if (!GUIpictures._playVideosInSlideshows && _isSlideShow && GUIPictureSlideShow._slideDirection == 1)
+          {
+            ShowNext();
+            _currentSlide = _slideCache.GetCurrentSlide(_slideList[_currentSlideIndex]);
+            return _currentSlide;
+          }
+
+          if (!GUIpictures._playVideosInSlideshows && _isSlideShow && GUIPictureSlideShow._slideDirection == -1)
+          {
+            ShowPrevious();
+            _currentSlide = _slideCache.GetCurrentSlide(_slideList[_currentSlideIndex]);
+            return _currentSlide;
+          }
+
+          if (g_Player.IsMusic || g_Player.IsCDA || (g_Player.IsRadio && !g_Player.IsTimeShifting))
+          {
+            pauseMusic();
+          }
+
+          _loadVideoPlayback = true;
+
+          g_Player.Stop();
+          g_Player.Play(GUIPictures.fileNameCheck, g_Player.MediaType.Video, null, true, 0, false, true);
+          GUIDialogNotify dlg = (GUIDialogNotify) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_NOTIFY);
+          if (dlg != null)
+          {
+            dlg.Reset();
+            dlg.Dispose();
+          }
+          g_Player.ShowFullScreenWindow();
+
+          if (_isSlideShow)
+          {
+            GUIPictureSlideShow._slideDirection = 1;
+          }
+
+          _loadVideoPlayback = false;
+          _returnedFromVideoPlayback = true;
         }
 
-        if (!GUIpictures._playVideosInSlideshows && _isSlideShow && GUIPictureSlideShow._slideDirection == -1)
+        #endregion Video in slideshow
+
+        // Get Name of actual played slide.
+        GUIPictures.fileNameCheck = Util.Utils.GetFileNameWithExtension(_currentSlide._filePath);
+
+        if (_showRecursive)
         {
-          ShowPrevious();
-          _currentSlide = _slideCache.GetCurrentSlide(_slideList[_currentSlideIndex]);
-          return _currentSlide;
+          if (!_slideRecursiveItem.Contains(_currentSlide._filePath))
+          {
+            _slideRecursiveItem.Add(_currentSlide._filePath);
+          }
         }
-
-        if (g_Player.IsMusic || g_Player.IsCDA || (g_Player.IsRadio && !g_Player.IsTimeShifting))
-        {
-          pauseMusic();
-        }
-
-        _loadVideoPlayback = true;
-
-        g_Player.Stop();
-        g_Player.Play(GUIPictures.fileNameCheck, g_Player.MediaType.Video, null, true, 0, false, true);
-        GUIDialogNotify dlg = (GUIDialogNotify) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_NOTIFY);
-        if (dlg != null)
-        {
-          dlg.Reset();
-          dlg.Dispose();
-        }
-        g_Player.ShowFullScreenWindow();
-
-        if (_isSlideShow)
-        {
-          GUIPictureSlideShow._slideDirection = 1;
-        }
-
-        _loadVideoPlayback = false;
-        _returnedFromVideoPlayback = true;
       }
-
-      #endregion Video in slideshow
-
-      // Get Name of actual played slide.
-      GUIPictures.fileNameCheck = Util.Utils.GetFileNameWithExtension(_currentSlide._filePath);
-
-      if (_showRecursive)
+      catch (Exception ex)
       {
-        if (!_slideRecursiveItem.Contains(_currentSlide._filePath))
+        Log.Error("GUISlideShow: Exception in LoadCurrentSlide() : {0}", ex);
+        // If exception occurs, select first entry to avoid render loop
+        _currentSlideIndex = 0;
+        while (IsPathDirectory(_slideList[_currentSlideIndex]))
         {
-          _slideRecursiveItem.Add(_currentSlide._filePath);
+          GUIpictures.AddDir(SlideShow, _slideList[_currentSlideIndex]);
+          _slideList.Remove(_slideList[_currentSlideIndex]);
         }
+        _currentSlide = _slideCache.GetCurrentSlide(_slideList[_currentSlideIndex]);
       }
-
       return _currentSlide;
     }
 
