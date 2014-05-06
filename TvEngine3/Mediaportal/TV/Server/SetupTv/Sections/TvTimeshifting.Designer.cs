@@ -33,122 +33,119 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TvTimeshifting));
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tpTimeshifing = new System.Windows.Forms.TabPage();
-      this.grpBoxTimeshiftingInfo = new MPGroupBox();
-      this.lblMinFileSizeNeeded = new MPLabel();
-      this.lblFileSizeNeeded = new MPLabel();
-      this.lblTimeSD = new MPLabel();
-      this.lblTimeHD = new MPLabel();
-      this.lblOverhead = new MPLabel();
-      this.groupBox10 = new MPGroupBox();
-      this.label48 = new MPLabel();
+      this.grpBoxTimeshiftingInfo = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.lblMinFileSizeNeeded = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.lblFileSizeNeeded = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.lblTimeSD = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.lblTimeHD = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.lblOverhead = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.groupBox10 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.label49 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.numericParkedStreamTimeout = new System.Windows.Forms.NumericUpDown();
+      this.label50 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label48 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.numericUpDownMaxFreeCardsToTry = new System.Windows.Forms.NumericUpDown();
-      this.label47 = new MPLabel();
+      this.label47 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.numericUpDownWaitTimeshifting = new System.Windows.Forms.NumericUpDown();
-      this.numericUpDownWaitUnscrambled = new System.Windows.Forms.NumericUpDown();
       this.numericUpDownMaxFileSize = new System.Windows.Forms.NumericUpDown();
       this.numericUpDownMaxFiles = new System.Windows.Forms.NumericUpDown();
       this.numericUpDownMinFiles = new System.Windows.Forms.NumericUpDown();
-      this.label26 = new MPLabel();
-      this.label31 = new MPLabel();
-      this.label32 = new MPLabel();
-      this.label33 = new MPLabel();
-      this.label34 = new MPLabel();
-      this.label35 = new MPLabel();
-      this.label36 = new MPLabel();
-      this.label37 = new MPLabel();
-      this.label39 = new MPLabel();
-      this.label46 = new MPLabel();
+      this.label26 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label32 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label34 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label35 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label36 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label37 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label39 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label46 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.tpTimeshifingFolders = new System.Windows.Forms.TabPage();
-      this.groupBoxTimeshiftSettings = new MPGroupBox();
-      this.buttonSameTimeshiftFolder = new MPButton();
+      this.groupBoxTimeshiftSettings = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.buttonSameTimeshiftFolder = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.pictureBox1 = new System.Windows.Forms.PictureBox();
-      this.labelTSFolder = new MPLabel();
-      this.comboBoxCards = new MPComboBox();
-      this.buttonTimeShiftBrowse = new MPButton();
-      this.label22 = new MPLabel();
-      this.textBoxTimeShiftFolder = new MPTextBox();
+      this.labelTSFolder = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.comboBoxCards = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
+      this.buttonTimeShiftBrowse = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.label22 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.textBoxTimeShiftFolder = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
       this.tabPageApplication = new System.Windows.Forms.TabPage();
-      this.groupBox8 = new MPGroupBox();
-      this.lblPriority = new MPLabel();
-      this.mpComboBoxPrio = new MPComboBox();
-      this.groupBox6 = new MPGroupBox();
-      this.label45 = new MPLabel();
-      this.label44 = new MPLabel();
+      this.groupBox8 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.lblPriority = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpComboBoxPrio = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
+      this.groupBox6 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.label45 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label44 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.delayDetectUpDown = new System.Windows.Forms.NumericUpDown();
       this.tabPageScan = new System.Windows.Forms.TabPage();
       this.numericUpDownAnalog = new System.Windows.Forms.NumericUpDown();
-      this.label21 = new MPLabel();
-      this.groupBox4 = new MPGroupBox();
-      this.checkBoxEnableLinkageScanner = new MPCheckBox();
-      this.label24 = new MPLabel();
-      this.groupBox1 = new MPGroupBox();
+      this.label21 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.groupBox4 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.checkBoxEnableLinkageScanner = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.label24 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.groupBox1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
       this.numericUpDownSDT = new System.Windows.Forms.NumericUpDown();
       this.numericUpDownPMT = new System.Windows.Forms.NumericUpDown();
       this.numericUpDownCAT = new System.Windows.Forms.NumericUpDown();
       this.numericUpDownPAT = new System.Windows.Forms.NumericUpDown();
       this.numericUpDownTune = new System.Windows.Forms.NumericUpDown();
-      this.label13 = new MPLabel();
-      this.label12 = new MPLabel();
-      this.label11 = new MPLabel();
-      this.label10 = new MPLabel();
-      this.label9 = new MPLabel();
-      this.label1 = new MPLabel();
-      this.label3 = new MPLabel();
-      this.label4 = new MPLabel();
-      this.label5 = new MPLabel();
-      this.label6 = new MPLabel();
+      this.label13 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label12 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label11 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label10 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label9 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label3 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label4 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label5 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label6 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.tabPageEPG = new System.Windows.Forms.TabPage();
-      this.groupBox9 = new MPGroupBox();
-      this.textBox1 = new MPTextBox();
-      this.edTitleTemplate = new MPTextBox();
-      this.label27 = new MPLabel();
-      this.label28 = new MPLabel();
-      this.label38 = new MPLabel();
-      this.edDescriptionTemplate = new MPTextBox();
-      this.label30 = new MPLabel();
-      this.edTitleTest = new MPTextBox();
-      this.label29 = new MPLabel();
-      this.edDescriptionTest = new MPTextBox();
-      this.btnTest = new MPButton();
-      this.groupBox7 = new MPGroupBox();
-      this.checkBoxAlwaysUpdate = new MPCheckBox();
-      this.checkBoxAlwaysFillHoles = new MPCheckBox();
-      this.groupBox5 = new MPGroupBox();
+      this.groupBox9 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.textBox1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
+      this.edTitleTemplate = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
+      this.label27 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label28 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label38 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.edDescriptionTemplate = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
+      this.label30 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.edTitleTest = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
+      this.label29 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.edDescriptionTest = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
+      this.btnTest = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.groupBox7 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.checkBoxAlwaysUpdate = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.checkBoxAlwaysFillHoles = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.groupBox5 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
       this.numericUpDownTSEpgTimeout = new System.Windows.Forms.NumericUpDown();
-      this.checkBoxEnableEpgWhileTimeshifting = new MPCheckBox();
-      this.label2 = new MPLabel();
-      this.label23 = new MPLabel();
-      this.groupBox2 = new MPGroupBox();
+      this.checkBoxEnableEpgWhileTimeshifting = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.label2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label23 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.groupBox2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
       this.numericUpDownEpgRefresh = new System.Windows.Forms.NumericUpDown();
       this.numericUpDownEpgTimeOut = new System.Windows.Forms.NumericUpDown();
-      this.checkBoxEnableEPGWhileIdle = new MPCheckBox();
-      this.label15 = new MPLabel();
-      this.label14 = new MPLabel();
-      this.label8 = new MPLabel();
-      this.label7 = new MPLabel();
+      this.checkBoxEnableEPGWhileIdle = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.label15 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label14 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label8 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label7 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.tabPageTS = new System.Windows.Forms.TabPage();
-      this.groupBox3 = new MPGroupBox();
-      this.label43 = new MPLabel();
-      this.label42 = new MPLabel();
-      this.label41 = new MPLabel();
-      this.label40 = new MPLabel();
-      this.label16 = new MPLabel();
-      this.label17 = new MPLabel();
-      this.label20 = new MPLabel();
-      this.label18 = new MPLabel();
-      this.label19 = new MPLabel();
-      this.label25 = new MPLabel();
-      this.label49 = new MPLabel();
-      this.numericParkedStreamTimeout = new System.Windows.Forms.NumericUpDown();
-      this.label50 = new MPLabel();
+      this.groupBox3 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.label43 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label42 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label41 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label40 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label16 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label17 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label20 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label18 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label19 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label25 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.tabControl1.SuspendLayout();
       this.tpTimeshifing.SuspendLayout();
       this.grpBoxTimeshiftingInfo.SuspendLayout();
       this.groupBox10.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericParkedStreamTimeout)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxFreeCardsToTry)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWaitTimeshifting)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWaitUnscrambled)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxFileSize)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxFiles)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMinFiles)).BeginInit();
@@ -178,14 +175,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownEpgTimeOut)).BeginInit();
       this.tabPageTS.SuspendLayout();
       this.groupBox3.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.numericParkedStreamTimeout)).BeginInit();
       this.SuspendLayout();
       // 
       // tabControl1
       // 
-      this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+      this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControl1.Controls.Add(this.tpTimeshifing);
       this.tabControl1.Controls.Add(this.tpTimeshifingFolders);
       this.tabControl1.Location = new System.Drawing.Point(3, 3);
@@ -215,7 +211,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.grpBoxTimeshiftingInfo.Controls.Add(this.lblTimeHD);
       this.grpBoxTimeshiftingInfo.Controls.Add(this.lblOverhead);
       this.grpBoxTimeshiftingInfo.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.grpBoxTimeshiftingInfo.Location = new System.Drawing.Point(6, 223);
+      this.grpBoxTimeshiftingInfo.Location = new System.Drawing.Point(6, 196);
       this.grpBoxTimeshiftingInfo.Name = "grpBoxTimeshiftingInfo";
       this.grpBoxTimeshiftingInfo.Size = new System.Drawing.Size(304, 105);
       this.grpBoxTimeshiftingInfo.TabIndex = 20;
@@ -277,31 +273,55 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBox10.Controls.Add(this.numericUpDownMaxFreeCardsToTry);
       this.groupBox10.Controls.Add(this.label47);
       this.groupBox10.Controls.Add(this.numericUpDownWaitTimeshifting);
-      this.groupBox10.Controls.Add(this.numericUpDownWaitUnscrambled);
       this.groupBox10.Controls.Add(this.numericUpDownMaxFileSize);
       this.groupBox10.Controls.Add(this.numericUpDownMaxFiles);
       this.groupBox10.Controls.Add(this.numericUpDownMinFiles);
       this.groupBox10.Controls.Add(this.label26);
-      this.groupBox10.Controls.Add(this.label31);
       this.groupBox10.Controls.Add(this.label32);
-      this.groupBox10.Controls.Add(this.label33);
       this.groupBox10.Controls.Add(this.label34);
       this.groupBox10.Controls.Add(this.label35);
       this.groupBox10.Controls.Add(this.label36);
       this.groupBox10.Controls.Add(this.label37);
       this.groupBox10.Controls.Add(this.label39);
       this.groupBox10.Controls.Add(this.label46);
+      this.groupBox10.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox10.Location = new System.Drawing.Point(6, 6);
       this.groupBox10.Name = "groupBox10";
-      this.groupBox10.Size = new System.Drawing.Size(304, 211);
+      this.groupBox10.Size = new System.Drawing.Size(304, 184);
       this.groupBox10.TabIndex = 17;
       this.groupBox10.TabStop = false;
       this.groupBox10.Text = "Timeshifting";
       // 
+      // label49
+      // 
+      this.label49.AutoSize = true;
+      this.label49.Location = new System.Drawing.Point(246, 152);
+      this.label49.Name = "label49";
+      this.label49.Size = new System.Drawing.Size(23, 13);
+      this.label49.TabIndex = 40;
+      this.label49.Text = "min";
+      // 
+      // numericParkedStreamTimeout
+      // 
+      this.numericParkedStreamTimeout.Location = new System.Drawing.Point(153, 149);
+      this.numericParkedStreamTimeout.Name = "numericParkedStreamTimeout";
+      this.numericParkedStreamTimeout.Size = new System.Drawing.Size(87, 20);
+      this.numericParkedStreamTimeout.TabIndex = 39;
+      this.numericParkedStreamTimeout.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      // 
+      // label50
+      // 
+      this.label50.AutoSize = true;
+      this.label50.Location = new System.Drawing.Point(6, 151);
+      this.label50.Name = "label50";
+      this.label50.Size = new System.Drawing.Size(112, 13);
+      this.label50.TabIndex = 38;
+      this.label50.Text = "Parked stream timeout";
+      // 
       // label48
       // 
       this.label48.AutoSize = true;
-      this.label48.Location = new System.Drawing.Point(246, 152);
+      this.label48.Location = new System.Drawing.Point(246, 126);
       this.label48.Name = "label48";
       this.label48.Size = new System.Drawing.Size(29, 13);
       this.label48.TabIndex = 37;
@@ -309,7 +329,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // numericUpDownMaxFreeCardsToTry
       // 
-      this.numericUpDownMaxFreeCardsToTry.Location = new System.Drawing.Point(153, 149);
+      this.numericUpDownMaxFreeCardsToTry.Location = new System.Drawing.Point(153, 123);
       this.numericUpDownMaxFreeCardsToTry.Name = "numericUpDownMaxFreeCardsToTry";
       this.numericUpDownMaxFreeCardsToTry.Size = new System.Drawing.Size(87, 20);
       this.numericUpDownMaxFreeCardsToTry.TabIndex = 36;
@@ -318,7 +338,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // label47
       // 
       this.label47.AutoSize = true;
-      this.label47.Location = new System.Drawing.Point(6, 151);
+      this.label47.Location = new System.Drawing.Point(6, 125);
       this.label47.Name = "label47";
       this.label47.Size = new System.Drawing.Size(127, 13);
       this.label47.TabIndex = 35;
@@ -326,7 +346,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // numericUpDownWaitTimeshifting
       // 
-      this.numericUpDownWaitTimeshifting.Location = new System.Drawing.Point(153, 123);
+      this.numericUpDownWaitTimeshifting.Location = new System.Drawing.Point(153, 97);
       this.numericUpDownWaitTimeshifting.Maximum = new decimal(new int[] {
             30,
             0,
@@ -343,29 +363,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownWaitTimeshifting.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownWaitTimeshifting.Value = new decimal(new int[] {
             5,
-            0,
-            0,
-            0});
-      // 
-      // numericUpDownWaitUnscrambled
-      // 
-      this.numericUpDownWaitUnscrambled.Location = new System.Drawing.Point(153, 97);
-      this.numericUpDownWaitUnscrambled.Maximum = new decimal(new int[] {
-            30,
-            0,
-            0,
-            0});
-      this.numericUpDownWaitUnscrambled.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-      this.numericUpDownWaitUnscrambled.Name = "numericUpDownWaitUnscrambled";
-      this.numericUpDownWaitUnscrambled.Size = new System.Drawing.Size(87, 20);
-      this.numericUpDownWaitUnscrambled.TabIndex = 33;
-      this.numericUpDownWaitUnscrambled.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-      this.numericUpDownWaitUnscrambled.Value = new decimal(new int[] {
-            15,
             0,
             0,
             0});
@@ -434,38 +431,20 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // label26
       // 
       this.label26.AutoSize = true;
-      this.label26.Location = new System.Drawing.Point(246, 125);
+      this.label26.Location = new System.Drawing.Point(246, 99);
       this.label26.Name = "label26";
       this.label26.Size = new System.Drawing.Size(24, 13);
       this.label26.TabIndex = 29;
       this.label26.Text = "sec";
       // 
-      // label31
-      // 
-      this.label31.AutoSize = true;
-      this.label31.Location = new System.Drawing.Point(246, 99);
-      this.label31.Name = "label31";
-      this.label31.Size = new System.Drawing.Size(24, 13);
-      this.label31.TabIndex = 28;
-      this.label31.Text = "sec";
-      // 
       // label32
       // 
       this.label32.AutoSize = true;
-      this.label32.Location = new System.Drawing.Point(6, 125);
+      this.label32.Location = new System.Drawing.Point(6, 99);
       this.label32.Name = "label32";
       this.label32.Size = new System.Drawing.Size(115, 13);
       this.label32.TabIndex = 26;
       this.label32.Text = "Wait for timeshifting file";
-      // 
-      // label33
-      // 
-      this.label33.AutoSize = true;
-      this.label33.Location = new System.Drawing.Point(6, 99);
-      this.label33.Name = "label33";
-      this.label33.Size = new System.Drawing.Size(137, 13);
-      this.label33.TabIndex = 24;
-      this.label33.Text = "Wait for unscrambled signal";
       // 
       // label34
       // 
@@ -533,9 +512,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // groupBoxTimeshiftSettings
       // 
-      this.groupBoxTimeshiftSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxTimeshiftSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxTimeshiftSettings.Controls.Add(this.buttonSameTimeshiftFolder);
       this.groupBoxTimeshiftSettings.Controls.Add(this.pictureBox1);
       this.groupBoxTimeshiftSettings.Controls.Add(this.labelTSFolder);
@@ -543,6 +522,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxTimeshiftSettings.Controls.Add(this.buttonTimeShiftBrowse);
       this.groupBoxTimeshiftSettings.Controls.Add(this.label22);
       this.groupBoxTimeshiftSettings.Controls.Add(this.textBoxTimeShiftFolder);
+      this.groupBoxTimeshiftSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxTimeshiftSettings.Location = new System.Drawing.Point(6, 3);
       this.groupBoxTimeshiftSettings.Name = "groupBoxTimeshiftSettings";
       this.groupBoxTimeshiftSettings.Size = new System.Drawing.Size(445, 365);
@@ -574,20 +554,20 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // labelTSFolder
       // 
-      this.labelTSFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+      this.labelTSFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.labelTSFolder.AutoSize = true;
       this.labelTSFolder.Location = new System.Drawing.Point(20, 170);
       this.labelTSFolder.Name = "labelTSFolder";
       this.labelTSFolder.Size = new System.Drawing.Size(362, 26);
       this.labelTSFolder.TabIndex = 25;
       this.labelTSFolder.Text = "Placing a timeshift folder on a dedicated disk will improve your performance \r\n(e" +
-    ".g. with many simultaneous clients / recordings)";
+          ".g. with many simultaneous clients / recordings)";
       // 
       // comboBoxCards
       // 
-      this.comboBoxCards.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxCards.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxCards.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxCards.FormattingEnabled = true;
       this.comboBoxCards.Location = new System.Drawing.Point(74, 43);
@@ -618,8 +598,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // textBoxTimeShiftFolder
       // 
-      this.textBoxTimeShiftFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxTimeShiftFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxTimeShiftFolder.Location = new System.Drawing.Point(23, 120);
       this.textBoxTimeShiftFolder.Name = "textBoxTimeShiftFolder";
       this.textBoxTimeShiftFolder.ReadOnly = true;
@@ -645,10 +625,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // groupBox8
       // 
-      this.groupBox8.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox8.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox8.Controls.Add(this.lblPriority);
       this.groupBox8.Controls.Add(this.mpComboBoxPrio);
+      this.groupBox8.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox8.Location = new System.Drawing.Point(6, 6);
       this.groupBox8.Name = "groupBox8";
       this.groupBox8.Size = new System.Drawing.Size(464, 50);
@@ -711,11 +692,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // groupBox6
       // 
-      this.groupBox6.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox6.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox6.Controls.Add(this.label45);
       this.groupBox6.Controls.Add(this.label44);
       this.groupBox6.Controls.Add(this.delayDetectUpDown);
+      this.groupBox6.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox6.Location = new System.Drawing.Point(6, 62);
       this.groupBox6.Name = "groupBox6";
       this.groupBox6.Size = new System.Drawing.Size(464, 107);
@@ -725,14 +707,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // label45
       // 
-      this.label45.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+      this.label45.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.label45.Location = new System.Drawing.Point(6, 27);
       this.label45.Name = "label45";
       this.label45.Size = new System.Drawing.Size(452, 35);
       this.label45.TabIndex = 80;
       this.label45.Text = "Some cards (i.e. Hauppauge Nova-T 500) take a long time to initialize after stand" +
-    "by. Therefore use this option below to force a delay should it be required.";
+          "by. Therefore use this option below to force a delay should it be required.";
       // 
       // label44
       // 
@@ -800,6 +782,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // groupBox4
       // 
       this.groupBox4.Controls.Add(this.checkBoxEnableLinkageScanner);
+      this.groupBox4.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox4.Location = new System.Drawing.Point(6, 195);
       this.groupBox4.Name = "groupBox4";
       this.groupBox4.Size = new System.Drawing.Size(221, 46);
@@ -845,6 +828,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBox1.Controls.Add(this.label4);
       this.groupBox1.Controls.Add(this.label5);
       this.groupBox1.Controls.Add(this.label6);
+      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox1.Location = new System.Drawing.Point(6, 6);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(221, 183);
@@ -1048,8 +1032,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // groupBox9
       // 
-      this.groupBox9.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox9.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox9.Controls.Add(this.textBox1);
       this.groupBox9.Controls.Add(this.edTitleTemplate);
       this.groupBox9.Controls.Add(this.label27);
@@ -1061,6 +1045,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBox9.Controls.Add(this.label29);
       this.groupBox9.Controls.Add(this.edDescriptionTest);
       this.groupBox9.Controls.Add(this.btnTest);
+      this.groupBox9.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox9.Location = new System.Drawing.Point(6, 164);
       this.groupBox9.Name = "groupBox9";
       this.groupBox9.Size = new System.Drawing.Size(464, 234);
@@ -1070,8 +1055,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // textBox1
       // 
-      this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
       this.textBox1.Location = new System.Drawing.Point(333, 80);
       this.textBox1.Multiline = true;
@@ -1080,13 +1065,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.textBox1.Size = new System.Drawing.Size(125, 148);
       this.textBox1.TabIndex = 37;
       this.textBox1.Text = "%TITLE%\r\n%DESCRIPTION%\r\n%GENRE%\r\n%STARRATING%\r\n%STARRATING_STR%\r\n%CLASSIFICATION%" +
-    "\r\n%PARENTALRATING%\r\n%NEWLINE%";
+          "\r\n%PARENTALRATING%\r\n%NEWLINE%";
       this.textBox1.WordWrap = false;
       // 
       // edTitleTemplate
       // 
-      this.edTitleTemplate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+      this.edTitleTemplate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.edTitleTemplate.Location = new System.Drawing.Point(75, 19);
       this.edTitleTemplate.Name = "edTitleTemplate";
       this.edTitleTemplate.Size = new System.Drawing.Size(252, 20);
@@ -1122,8 +1107,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // edDescriptionTemplate
       // 
-      this.edDescriptionTemplate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+      this.edDescriptionTemplate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.edDescriptionTemplate.Location = new System.Drawing.Point(75, 45);
       this.edDescriptionTemplate.Name = "edDescriptionTemplate";
       this.edDescriptionTemplate.Size = new System.Drawing.Size(252, 20);
@@ -1140,8 +1125,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // edTitleTest
       // 
-      this.edTitleTest.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+      this.edTitleTest.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.edTitleTest.Location = new System.Drawing.Point(75, 100);
       this.edTitleTest.Name = "edTitleTest";
       this.edTitleTest.ReadOnly = true;
@@ -1159,9 +1144,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // edDescriptionTest
       // 
-      this.edDescriptionTest.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+      this.edDescriptionTest.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.edDescriptionTest.Location = new System.Drawing.Point(75, 126);
       this.edDescriptionTest.Multiline = true;
       this.edDescriptionTest.Name = "edDescriptionTest";
@@ -1181,10 +1166,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // groupBox7
       // 
-      this.groupBox7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox7.Controls.Add(this.checkBoxAlwaysUpdate);
       this.groupBox7.Controls.Add(this.checkBoxAlwaysFillHoles);
+      this.groupBox7.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox7.Location = new System.Drawing.Point(6, 6);
       this.groupBox7.Name = "groupBox7";
       this.groupBox7.Size = new System.Drawing.Size(464, 48);
@@ -1220,6 +1206,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBox5.Controls.Add(this.checkBoxEnableEpgWhileTimeshifting);
       this.groupBox5.Controls.Add(this.label2);
       this.groupBox5.Controls.Add(this.label23);
+      this.groupBox5.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox5.Location = new System.Drawing.Point(6, 60);
       this.groupBox5.Name = "groupBox5";
       this.groupBox5.Size = new System.Drawing.Size(228, 98);
@@ -1229,8 +1216,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // numericUpDownTSEpgTimeout
       // 
-      this.numericUpDownTSEpgTimeout.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+      this.numericUpDownTSEpgTimeout.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.numericUpDownTSEpgTimeout.Location = new System.Drawing.Point(70, 42);
       this.numericUpDownTSEpgTimeout.Maximum = new decimal(new int[] {
             3600,
@@ -1286,6 +1273,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBox2.Controls.Add(this.label14);
       this.groupBox2.Controls.Add(this.label8);
       this.groupBox2.Controls.Add(this.label7);
+      this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox2.Location = new System.Drawing.Point(240, 60);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(230, 98);
@@ -1399,6 +1387,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBox3.Controls.Add(this.label18);
       this.groupBox3.Controls.Add(this.label19);
       this.groupBox3.Controls.Add(this.label25);
+      this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox3.Location = new System.Drawing.Point(6, 6);
       this.groupBox3.Name = "groupBox3";
       this.groupBox3.Size = new System.Drawing.Size(304, 152);
@@ -1496,32 +1485,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.label25.TabIndex = 15;
       this.label25.Text = "Minimum";
       // 
-      // label49
-      // 
-      this.label49.AutoSize = true;
-      this.label49.Location = new System.Drawing.Point(246, 178);
-      this.label49.Name = "label49";
-      this.label49.Size = new System.Drawing.Size(23, 13);
-      this.label49.TabIndex = 40;
-      this.label49.Text = "min";
-      // 
-      // numericParkedStreamTimeout
-      // 
-      this.numericParkedStreamTimeout.Location = new System.Drawing.Point(153, 175);
-      this.numericParkedStreamTimeout.Name = "numericParkedStreamTimeout";
-      this.numericParkedStreamTimeout.Size = new System.Drawing.Size(87, 20);
-      this.numericParkedStreamTimeout.TabIndex = 39;
-      this.numericParkedStreamTimeout.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-      // 
-      // label50
-      // 
-      this.label50.AutoSize = true;
-      this.label50.Location = new System.Drawing.Point(6, 177);
-      this.label50.Name = "label50";
-      this.label50.Size = new System.Drawing.Size(112, 13);
-      this.label50.TabIndex = 38;
-      this.label50.Text = "Parked stream timeout";
-      // 
       // TvTimeshifting
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1535,9 +1498,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.grpBoxTimeshiftingInfo.PerformLayout();
       this.groupBox10.ResumeLayout(false);
       this.groupBox10.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericParkedStreamTimeout)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxFreeCardsToTry)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWaitTimeshifting)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWaitUnscrambled)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxFileSize)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxFiles)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMinFiles)).EndInit();
@@ -1578,7 +1541,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabPageTS.ResumeLayout(false);
       this.groupBox3.ResumeLayout(false);
       this.groupBox3.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.numericParkedStreamTimeout)).EndInit();
       this.ResumeLayout(false);
 
     }
@@ -1670,14 +1632,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private System.Windows.Forms.TabPage tpTimeshifing;
     private MPGroupBox groupBox10;
     private System.Windows.Forms.NumericUpDown numericUpDownWaitTimeshifting;
-    private System.Windows.Forms.NumericUpDown numericUpDownWaitUnscrambled;
     private System.Windows.Forms.NumericUpDown numericUpDownMaxFileSize;
     private System.Windows.Forms.NumericUpDown numericUpDownMaxFiles;
     private System.Windows.Forms.NumericUpDown numericUpDownMinFiles;
     private MPLabel label26;
-    private MPLabel label31;
     private MPLabel label32;
-    private MPLabel label33;
     private MPLabel label34;
     private MPLabel label35;
     private MPLabel label36;
