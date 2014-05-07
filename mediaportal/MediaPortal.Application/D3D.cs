@@ -119,7 +119,8 @@ namespace MediaPortal
     protected bool                 MinimizeOnFocusLoss;      // minimize to tray when focus in full screen mode is lost?
     protected bool                 ShuttingDown;             // set to true if MP is shutting down
     protected bool                 AutoHideMouse;            // Should the mouse cursor be hidden automatically?
-    protected bool                 AppActive;                // set to true while MP is active     
+    protected bool                 AppActive;                // set to true while MP is active
+    protected bool                 NeedRecreateSwapChain;    // set to true if recreate swap chain is needed
     protected bool                 MouseCursor;              // holds the current mouse cursor state
     protected bool                 Windowed;                 // are we in windowed mode?
     protected bool                 AutoHideTaskbar;          // Should the Task Bar be hidden?
@@ -560,7 +561,7 @@ namespace MediaPortal
     /// </summary>
     internal void RecreateSwapChain()
     {
-      if (AppActive)
+      if (AppActive || NeedRecreateSwapChain)
       {
         Log.Debug("Main: RecreateSwapChain()");
 
@@ -628,6 +629,7 @@ namespace MediaPortal
 
         // continue rendering
         AppActive = true;
+        NeedRecreateSwapChain = false;
       }
     }
 
