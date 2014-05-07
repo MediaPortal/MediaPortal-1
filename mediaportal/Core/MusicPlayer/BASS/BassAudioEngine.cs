@@ -838,10 +838,10 @@ namespace MediaPortal.MusicPlayer.BASS
             stream.Dispose();
           }
 
-          if (Config.MusicPlayer == AudioPlayer.Asio && BassAsio.BASS_ASIO_IsStarted())
+          if (Config.MusicPlayer == AudioPlayer.Asio)
           {
             Log.Debug("BASS: Stopping ASIO Device");
-            if (!BassAsio.BASS_ASIO_Stop())
+            if (BassAsio.BASS_ASIO_IsStarted() && !BassAsio.BASS_ASIO_Stop())
             {
               Log.Error("BASS: Error freeing ASIO: {0}", BassAsio.BASS_ASIO_ErrorGetCode());
             }
