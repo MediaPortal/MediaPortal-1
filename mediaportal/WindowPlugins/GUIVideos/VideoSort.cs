@@ -85,7 +85,7 @@ namespace MediaPortal.GUI.Video
       }
       if (item2 == null)
       {
-        return -1;
+        return 1;
       }
       if (item1.IsFolder && item1.Label == "..")
       {
@@ -93,7 +93,7 @@ namespace MediaPortal.GUI.Video
       }
       if (item2.IsFolder && item2.Label == "..")
       {
-        return -1;
+        return 1;
       }
       if (item1.IsFolder && !item2.IsFolder && CurrentSortMethod != SortMethod.NameAll)
       {

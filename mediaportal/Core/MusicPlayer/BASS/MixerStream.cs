@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using Un4seen.Bass;
@@ -15,6 +16,13 @@ namespace MediaPortal.MusicPlayer.BASS
   /// </summary>
   public class MixerStream : IDisposable
   {
+    #region Delegates
+
+    public delegate void MusicStreamMessageHandler(object sender, MusicStream.StreamAction action);
+    public event MusicStreamMessageHandler MusicStreamMessage;
+
+    #endregion
+
     #region Variables
 
     private BassAudioEngine _bassPlayer;
@@ -766,7 +774,10 @@ namespace MediaPortal.MusicPlayer.BASS
         }
         else if (MusicStream._fileType.FileMainType == FileMainType.WebStream)
         {
-          _bassPlayer.OnMusicStreamMessage(musicstream, MusicStream.StreamAction.InternetStreamChanged);
+          if (MusicStreamMessage != null)
+          {
+            MusicStreamMessage(musicstream, MusicStream.StreamAction.InternetStreamChanged);
+          }
         }
 
         bool newMixerNeeded = false;
@@ -791,12 +802,22 @@ namespace MediaPortal.MusicPlayer.BASS
           BassMix.BASS_Mixer_ChannelRemove(musicstream.BassStream);
 
           // invoke a thread because we need a new mixer
-          Log.Debug("BASS: Next song needs a new mixer. Invoke a thread.");
-          new Thread(() => _bassPlayer.OnMusicStreamMessage(musicstream, MusicStream.StreamAction.Crossfading)) { Name = "BASS" }.Start();
+          Log.Debug("BASS: Next song needs a new mixer.");
+          
+          new Thread(() =>
+            {
+              if (MusicStreamMessage != null)
+              {
+                MusicStreamMessage(musicstream, MusicStream.StreamAction.Crossfading);
+              }
+            }) { Name = "BASS" }.Start();
         }
         else
         {
-          _bassPlayer.OnMusicStreamMessage(musicstream, MusicStream.StreamAction.Crossfading);
+          if (MusicStreamMessage != null)
+          {
+            MusicStreamMessage(musicstream, MusicStream.StreamAction.Crossfading);
+          }
         }
       }
       catch (AccessViolationException)
@@ -804,7 +825,6 @@ namespace MediaPortal.MusicPlayer.BASS
         Log.Error("BASS: Caught AccessViolationException in Playback End Proc");
       }
     }
-
 
     #endregion
 

@@ -20,6 +20,7 @@
 
 using System;
 using System.Threading;
+using MediaPortal.GUI.Library;
 using MediaPortal.MusicPlayer.BASS;
 using Un4seen.Bass.AddOn.Cd;
 
@@ -36,6 +37,7 @@ namespace MediaPortal.Player
     private static Thread _bassAsyncLoadThread = null;
     private static bool _isDefaultMusicPlayer = false;
     private static bool _settingsLoaded = false;
+    private static object _syncRoot = new Object();
 
     #endregion
 
@@ -57,7 +59,13 @@ namespace MediaPortal.Player
       {
         if (_player == null)
         {
-          _player = new BassAudioEngine();
+          lock (_syncRoot)
+          {
+            if (_player == null)
+            {
+              _player = new BassAudioEngine();
+            }
+          }
         }
 
         return _player;
@@ -145,12 +153,15 @@ namespace MediaPortal.Player
     /// </summary>
     public static void FreeBass()
     {
-      if (_player == null)
+      lock (_syncRoot)
       {
-        return;
-      }
+        if (_player == null)
+        {
+          return;
+        }
 
-      _player.FreeBass();
+        _player.FreeBass();
+      }
     }
 
     public static void ReleaseCDDrives()
@@ -173,7 +184,14 @@ namespace MediaPortal.Player
     {
       if (_player == null)
       {
-        _player = new BassAudioEngine();
+        try
+        {
+          _player = new BassAudioEngine();
+        }
+        catch (Exception ex)
+        {
+          Log.Error("BASS: InternalCreatePlayerAsync failed {0}", ex);
+        }
       }
     }
 

@@ -67,10 +67,17 @@ namespace MediaPortal.Player
         _showVolumeOSD = reader.GetValueAsBool("volume", "defaultVolumeOSD", true);
       }
 
-      _mixer = new Mixer.Mixer();
-      _mixer.Open(0, isDigital);
-      _volumeTable = volumeTable;
-      _mixer.ControlChanged += mixer_ControlChanged;
+      try
+      {
+        _mixer = new Mixer.Mixer();
+        _mixer.Open(0, isDigital);
+        _volumeTable = volumeTable;
+        _mixer.ControlChanged += mixer_ControlChanged;
+      }
+      catch (Exception ex)
+      {
+        Log.Error("VolumeHandler: Mixer exception when init {0}", ex);
+      }
     }
 
     #endregion Constructors

@@ -135,9 +135,6 @@ namespace MediaPortal.GUI.Pictures
                     {
                       Thread.Sleep(5);
 
-                      iRotate = Util.Picture.GetRotateByExif(item.Path);
-                      Log.Debug("Picture.GetRotateByExif = {0} for {1}", iRotate, item.Path);
-
                       if (autocreateLargeThumbs && !File.Exists(thumbnailImageL))
                       {
                         thumbRet = Util.Picture.CreateThumbnail(item.Path, thumbnailImageL,
@@ -273,11 +270,6 @@ namespace MediaPortal.GUI.Pictures
           if (recreateThumbs || !File.Exists(thumbnailImage) || !Util.Utils.FileExistsInCache(thumbnailImage) ||
               !File.Exists(thumbnailImageL) || !Util.Utils.FileExistsInCache(thumbnailImageL))
           {
-
-            iRotate = Util.Picture.GetRotateByExif(item);
-            Log.Debug("Picture.GetRotateByExif = {0} for {1}", iRotate, item);
-            Thread.Sleep(5);
-
             if (autocreateLargeThumbs && !File.Exists(thumbnailImageL))
             {
               thumbRet = Util.Picture.CreateThumbnail(item, thumbnailImageL, (int) Thumbs.ThumbLargeResolution,
@@ -635,7 +627,6 @@ namespace MediaPortal.GUI.Pictures
       }
       InitViewSelections();
       UpdateButtonStates();
-      ResetShares();
 
       GUITextureManager.CleanupThumbs();
       // LoadSettings();
@@ -1314,7 +1305,7 @@ namespace MediaPortal.GUI.Pictures
       }
       if (item2.IsFolder && item2.Label == "..")
       {
-        return -1;
+        return 1;
       }
       if (item1.IsFolder && !item2.IsFolder)
       {
@@ -2172,7 +2163,7 @@ namespace MediaPortal.GUI.Pictures
 
     private bool WakeUpSrv(string newFolderName)
     {
-      if (!Util.Utils.IsNetwork(newFolderName))
+      if (!Util.Utils.IsUNCNetwork(newFolderName))
       {
         return true;
       }
@@ -2411,6 +2402,12 @@ namespace MediaPortal.GUI.Pictures
               Util.Utils.SetDefaultIcons(item);
               item.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
               item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
+
+              if (!WakeUpSrv(pic))
+              {
+                return;
+              }
+
               item.FileInfo = new FileInformation(pic, false);
               facadeLayout.Add(item);
             }
@@ -2445,6 +2442,12 @@ namespace MediaPortal.GUI.Pictures
                 Util.Utils.SetDefaultIcons(item);
                 item.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
                 item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
+
+                if (!WakeUpSrv(pic))
+                {
+                  return;
+                }
+
                 item.FileInfo = new FileInformation(pic, false);
                 facadeLayout.Add(item);
               }

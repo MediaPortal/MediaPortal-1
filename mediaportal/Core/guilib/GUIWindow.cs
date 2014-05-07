@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Reflection;
+using System.Threading;
 using System.Windows.Media.Animation;
 using System.Windows.Serialization;
 using System.Xml;
@@ -487,13 +488,11 @@ namespace MediaPortal.GUI.Library
     {
 
       // add thread check to log calls not running in main thread/GUI
-      #if DEBUG
-      int iCurrentThread = System.Threading.Thread.CurrentThread.ManagedThreadId;
-      if (iCurrentThread != 1)
+      String threadName = Thread.CurrentThread.Name;
+      if (threadName != "MPMain" && threadName != "Config Main")
       {
-        Log.Error("LoadSkin: Running on thread <{0}> instead of main thread - StackTrace: '{1}'", iCurrentThread, Environment.StackTrace);
+        Log.Error("LoadSkin: Running on wrong thread - StackTrace: '{0}'", Environment.StackTrace);
       }
-      #endif
 
       _lastSkin = GUIGraphicsContext.Skin;
       // no filename is configured

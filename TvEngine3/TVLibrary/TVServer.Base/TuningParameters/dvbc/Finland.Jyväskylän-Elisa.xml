@@ -1,155 +1,186 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ArrayOfDVBCTuning xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <DVBCTuning>
-    <Frequency>146000</Frequency>
-    <ModulationType>Mod256Qam</ModulationType>
-    <SymbolRate>6900</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
-    <Frequency>154000</Frequency>
-    <ModulationType>Mod128Qam</ModulationType>
-    <SymbolRate>6900</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
-    <Frequency>162000</Frequency>
-    <ModulationType>Mod128Qam</ModulationType>
-    <SymbolRate>6900</SymbolRate>
-  </DVBCTuning>
+  <!-- Mux 1: Animal Planet, Barnkanalen / SVT24, BBC Entertainment, CNN International, Discovery Channel, SVT1, SVT2, SVT World, TV4 -->
   <DVBCTuning>
     <Frequency>306000</Frequency>
     <ModulationType>Mod256Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
+  <!-- Mux 2: AVA, FOX, JIM, Liv, MTV3, Nelonen, Nelonen Pro 1, Nelonen Pro 2, Sub, TV5 -->
   <DVBCTuning>
-    <Frequency>314000</Frequency>
-    <ModulationType>Mod256Qam</ModulationType>
+    <Frequency>426000</Frequency>
+    <ModulationType>Mod128Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
+  <!-- Mux 3: Julkkis Big Brother 24/7, Yle Fem, Yle TV1, Yle TV2, Yle Teema, Yle radiot -->
   <DVBCTuning>
-    <Frequency>322000</Frequency>
-    <ModulationType>Mod256Qam</ModulationType>
+    <Frequency>162000</Frequency>
+    <ModulationType>Mod128Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
-  <DVBCTuning>
-    <Frequency>338000</Frequency>
-    <ModulationType>Mod256Qam</ModulationType>
-    <SymbolRate>6900</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
-    <Frequency>346000</Frequency>
-    <ModulationType>Mod256Qam</ModulationType>
-    <SymbolRate>6900</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
-    <Frequency>354000</Frequency>
-    <ModulationType>Mod256Qam</ModulationType>
-    <SymbolRate>6900</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
-    <Frequency>370000</Frequency>
-    <ModulationType>Mod256Qam</ModulationType>
-    <SymbolRate>6900</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
-    <Frequency>378000</Frequency>
-    <ModulationType>Mod256Qam</ModulationType>
-    <SymbolRate>6900</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
-    <Frequency>386000</Frequency>
-    <ModulationType>Mod256Qam</ModulationType>
-    <SymbolRate>6900</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
-    <Frequency>442000</Frequency>
-    <ModulationType>Mod256Qam</ModulationType>
-    <SymbolRate>6900</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
-    <Frequency>330000</Frequency>
-    <ModulationType>Mod256Qam</ModulationType>
-    <SymbolRate>6900</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
-    <Frequency>402000</Frequency>
-    <ModulationType>Mod256Qam</ModulationType>
-    <SymbolRate>6900</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
-    <Frequency>170000</Frequency>
-    <ModulationType>Mod256Qam</ModulationType>
-    <SymbolRate>6900</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
-    <Frequency>130000</Frequency>
-    <ModulationType>Mod256Qam</ModulationType>
-    <SymbolRate>6900</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
-    <Frequency>138000</Frequency>
-    <ModulationType>Mod256Qam</ModulationType>
-    <SymbolRate>6900</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
-    <Frequency>122000</Frequency>
-    <ModulationType>Mod256Qam</ModulationType>
-    <SymbolRate>6900</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
-    <Frequency>178000</Frequency>
-    <ModulationType>Mod256Qam</ModulationType>
-    <SymbolRate>6900</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
-    <Frequency>266000</Frequency>
-    <ModulationType>Mod256Qam</ModulationType>
-    <SymbolRate>6900</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
-    <Frequency>274000</Frequency>
-    <ModulationType>Mod256Qam</ModulationType>
-    <SymbolRate>6900</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
-    <Frequency>282000</Frequency>
-    <ModulationType>Mod256Qam</ModulationType>
-    <SymbolRate>6900</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
-    <Frequency>290000</Frequency>
-    <ModulationType>Mod256Qam</ModulationType>
-    <SymbolRate>6900</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
-    <Frequency>298000</Frequency>
-    <ModulationType>Mod256Qam</ModulationType>
-    <SymbolRate>6900</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
-    <Frequency>258000</Frequency>
-    <ModulationType>Mod256Qam</ModulationType>
-    <SymbolRate>6900</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
-    <Frequency>394000</Frequency>
-    <ModulationType>Mod256Qam</ModulationType>
-    <SymbolRate>6900</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
-    <Frequency>410000</Frequency>
-    <ModulationType>Mod256Qam</ModulationType>
-    <SymbolRate>6900</SymbolRate>
-  </DVBCTuning>
+  <!-- Mux 4: Kunskapskanalen, Nelonen Pro 3, Nelonen Pro 4, Viasat Explorer, Viasat Film, Viasat Film Action, Viasat Film Classic, Viasat Film Family, Viasat Film Nordic -->
   <DVBCTuning>
     <Frequency>418000</Frequency>
     <ModulationType>Mod256Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
+  <!-- Mux 5: 3sat, Disney Channel, Disney XD, National Geographic Wild, Rai Uno, RTL, Showtime, Star! -->
   <DVBCTuning>
-    <Frequency>426000</Frequency>
+    <Frequency>314000</Frequency>
     <ModulationType>Mod256Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
+  <!-- Mux 6: Channel One Russia, C More Emotion, C More Extreme, C More First, C More Series, Disney Junior, EuroNews, France 2, MTV Sport 1, NTV Mir, SF Kanalen -->
+  <DVBCTuning>
+    <Frequency>346000</Frequency>
+    <ModulationType>Mod256Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <!-- Mux 7: CBS Reality, DW (Deutsche Welle), Extreme Sports Channel, MTV DANCE, MTV ROCKS, Nelonen Pro 5, Nelonen Pro 6, Sky News, TotoTV, Viasat Hockey Finland -->
+  <DVBCTuning>
+    <Frequency>402000</Frequency>
+    <ModulationType>Mod256Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <!-- Mux 8: Arte, BBC Lifestyle, ETV, MTV Finland, TV5MONDE, TV7 -->
+  <DVBCTuning>
+    <Frequency>410000</Frequency>
+    <ModulationType>Mod256Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <!-- Mux 9: C More Action, C More Tennis, CNBC Nordic, Discovery Science, Discovery World, Nelonen Pro 7, Nelonen Pro 8, Silver SD, TLC, TV3 -->
+  <DVBCTuning>
+    <Frequency>394000</Frequency>
+    <ModulationType>Mod256Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <!-- Mux 10: Boomerang, Cartoon Network, History, Travel Channel, Turner Classic Movies (TCM), TVE, Vh1, Viasat Sport Xtra -->
+  <DVBCTuning>
+    <Frequency>386000</Frequency>
+    <ModulationType>Mod256Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <!-- Mux 11: Bonuskanava, Investigation Discovery, Nick Jr., Viasat Film Drama, Viasat History, Viasat Hockey, Viasat Nature / Viasat Crime / Playboy TV, Viasat Sport -->
+  <DVBCTuning>
+    <Frequency>378000</Frequency>
+    <ModulationType>Mod256Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <!-- Mux 12: Al Jazeera, Brazzers TV Europe, C More Kids, Infokanava, Kutonen, URHOtv, Wave 100 (Tampere) -->
+  <DVBCTuning>
+    <Frequency>370000</Frequency>
+    <ModulationType>Mod256Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <!-- Mux 13: Eurosport 2 HD, Silver HD -->
+  <DVBCTuning>
+    <Frequency>322000</Frequency>
+    <ModulationType>Mod256Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <!-- Mux 14: BBC World News, C More Hits, Eurosport, Eurosport 2, MTV Sport 2, National Geographic Channel, Nelonen Prime, Viasat Golf -->
+  <DVBCTuning>
+    <Frequency>330000</Frequency>
+    <ModulationType>Mod256Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <!-- Mux 15: MTV Fakta, MTV Juniori, MTV Leffa, MTV Max -->
+  <DVBCTuning>
+    <Frequency>338000</Frequency>
+    <ModulationType>Mod256Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <!-- Mux 16: Al Jazeera English, BBC Knowledge, Bloomberg TV, Mezzo, MTV HITS, MTV MUSIC 24, NHK World, Russia Today, VH1 Classic -->
+  <DVBCTuning>
+    <Frequency>170000</Frequency>
+    <ModulationType>Mod256Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <!-- Mux 17: BBC HD, Eurosport HD, MTV LIVE&nbsp;HD, MTV3 HD -->
+  <DVBCTuning>
+    <Frequency>130000</Frequency>
+    <ModulationType>Mod256Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <!-- Mux 18: C More First HD, Discovery HD Showcase -->
+  <DVBCTuning>
+    <Frequency>138000</Frequency>
+    <ModulationType>Mod256Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <!-- Mux 19: iConcerts HD, MTV Sport 1 HD -->
+  <DVBCTuning>
+    <Frequency>122000</Frequency>
+    <ModulationType>Mod256Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <!-- Mux 20: Animal Planet HD, History HD, MTV Max HD -->
+  <DVBCTuning>
+    <Frequency>178000</Frequency>
+    <ModulationType>Mod256Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <!-- Mux 21: SVT1 HD, Viasat Film HD -->
+  <DVBCTuning>
+    <Frequency>266000</Frequency>
+    <ModulationType>Mod256Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <!-- Mux 22: Nelonen Maailma HD, Nelonen Nappula HD, Nelonen Prime HD, Nelonen Pro 1 HD, Nelonen Pro 2 HD -->
+  <DVBCTuning>
+    <Frequency>274000</Frequency>
+    <ModulationType>Mod256Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <!-- Mux 23: Blue Hustler, Canal 24 Horas, Daring!TV, France 24, Hustler TV, TV6 -->
+  <DVBCTuning>
+    <Frequency>282000</Frequency>
+    <ModulationType>Mod256Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <!-- Mux 24: Nelonen Maailma, Nelonen Nappula -->
+  <DVBCTuning>
+    <Frequency>290000</Frequency>
+    <ModulationType>Mod256Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <!-- Mux 25: MTV Sport 2 HD, National Geographic Channel HD, National Geographic Wild HD -->
+  <DVBCTuning>
+    <Frequency>298000</Frequency>
+    <ModulationType>Mod256Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <!-- Mux 26: Food Network HD, Sky News HD, Viasat Film Action HD, Viasat Film Nordic HD -->
+  <DVBCTuning>
+    <Frequency>258000</Frequency>
+    <ModulationType>Mod256Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <!-- Mux 27: France 2 HD, Hustler HD, Viasat Film Family HD, Viasat Nature HD / Viasat Crime HD -->
+  <DVBCTuning>
+    <Frequency>354000</Frequency>
+    <ModulationType>Mod256Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <!-- Mux 28: Outdoor Channel HD, Viasat Golf HD, Viasat History HD, Viasat Sport HD -->
+  <DVBCTuning>
+    <Frequency>458000</Frequency>
+    <ModulationType>Mod256Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <!-- Mux 29: Mezzo Live HD, Viasat Film Drama HD, Viasat Explorer HD, Viasat Hockey HD -->
+  <DVBCTuning>
+    <Frequency>442000</Frequency>
+    <ModulationType>Mod256Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <!-- Mux 30: Nelonen Pro 3 HD, Nelonen Pro 4 HD, Nelonen Pro 5 HD, Nelonen Pro 6 HD, Nelonen Pro 7 HD, Nelonen Pro 8 HD -->
+  <DVBCTuning>
+    <Frequency>450000</Frequency>
+    <ModulationType>Mod256Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <!-- Mux 31: Nelonen HD, Yle Fem HD, Yle Teema HD, Yle TV1 HD, Yle TV2 HD -->
   <DVBCTuning>
     <Frequency>362000</Frequency>
     <ModulationType>Mod256Qam</ModulationType>

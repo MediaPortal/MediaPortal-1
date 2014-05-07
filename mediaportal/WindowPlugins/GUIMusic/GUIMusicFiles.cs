@@ -379,7 +379,6 @@ namespace MediaPortal.GUI.Music
         _virtualDirectory.Reset();
       }
 
-      ResetShares();
       if (MusicState.StartWindow != GetID)
       {
         GUIWindowManager.ReplaceWindow((int)Window.WINDOW_MUSIC_GENRE);
@@ -406,7 +405,7 @@ namespace MediaPortal.GUI.Music
 
     private bool WakeUpSrv(string newFolderName)
     {
-      if (!Util.Utils.IsNetwork(newFolderName))
+      if (!Util.Utils.IsUNCNetwork(newFolderName))
       {
         return true;
       }
@@ -1294,7 +1293,15 @@ namespace MediaPortal.GUI.Music
           }
           CurrentSortAsc = _mapSettings.SortAscending;
           CurrentSortMethod = (MusicSort.SortMethod)_mapSettings.SortBy;
-          CurrentLayout = (Layout)share.DefaultLayout;
+          // Don't use AlbumView in Share view (set a default Layout i.e List)
+          if ((Layout)share.DefaultLayout == Layout.AlbumView)
+          {
+            CurrentLayout = Layout.List;
+          }
+          else
+          {
+            CurrentLayout = (Layout)share.DefaultLayout;
+          }
         }
       }
       using (Profile.Settings xmlreader = new Profile.MPSettings())
