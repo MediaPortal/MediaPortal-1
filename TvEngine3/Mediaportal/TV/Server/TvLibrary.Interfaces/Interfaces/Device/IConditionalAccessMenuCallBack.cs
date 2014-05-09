@@ -44,7 +44,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension
   /// <summary>
   /// Interface for all DVB cards to support CI menu
   /// </summary>
-  public interface IConditionalAccessMenuCallBacks
+  public interface IConditionalAccessMenuCallBack
   {
     /// <summary>
     /// Call back on opening menu

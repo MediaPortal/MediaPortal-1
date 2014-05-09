@@ -84,7 +84,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
     /// </summary>
     /// <param name="name">A short name or description for the tuner.</param>
     /// <param name="sequenceNumber">A unique sequence number or index for this instance.</param>
-    protected TunerStream(string name, int sequenceNumber)
+    public TunerStream(string name, int sequenceNumber)
       : this(name + " " + sequenceNumber, name + " " + sequenceNumber)
     {
     }
@@ -120,7 +120,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
     /// <summary>
     /// Actually load the tuner.
     /// </summary>
-    protected override void PerformLoading()
+    public override void PerformLoading()
     {
       this.LogDebug("DirectShow stream: perform loading");
       InitialiseGraph();
@@ -137,17 +137,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
 
       // Check for and load extensions, adding any additional filters to the graph.
       IBaseFilter lastFilter = _filterStreamSource;
-      LoadPlugins(_filterStreamSource, _graph, ref lastFilter);
+      LoadExtensions(_filterStreamSource, ref lastFilter);
 
       // Complete the graph.
       AddAndConnectTsWriterIntoGraph(lastFilter);
       CompleteGraph();
+
+      _channelScanner = new ScannerStream(this, _filterTsWriter as ITsChannelScan);
     }
 
     /// <summary>
     /// Actually unload the tuner.
     /// </summary>
-    protected override void PerformUnloading()
+    public override void PerformUnloading()
     {
       this.LogDebug("DirectShow stream: perform unloading");
       if (_graph != null)
@@ -168,7 +170,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
     /// Actually tune to a channel.
     /// </summary>
     /// <param name="channel">The channel to tune to.</param>
-    protected override void PerformTuning(IChannel channel)
+    public override void PerformTuning(IChannel channel)
     {
       DVBIPChannel streamChannel = channel as DVBIPChannel;
       if (streamChannel == null)
@@ -189,24 +191,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
       return channel is DVBIPChannel;
     }
 
-    /// <summary>
-    /// Get the tuner's channel scanning interface.
-    /// </summary>
-    public override ITVScanning ScanningInterface
-    {
-      get
-      {
-        return new ScannerStream(this, _filterTsWriter as ITsChannelScan);
-      }
-    }
-
     #endregion
 
     /// <summary>
     /// Actually update tuner signal status statistics.
     /// </summary>
     /// <param name="onlyUpdateLock"><c>True</c> to only update lock status.</param>
-    protected override void PerformSignalStatusUpdate(bool onlyUpdateLock)
+    public override void PerformSignalStatusUpdate(bool onlyUpdateLock)
     {
       _isSignalPresent = true;
       _isSignalLocked = true;

@@ -43,11 +43,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// <summary>
     /// Initializes a new instance of the <see cref="RtspClient"/> class.
     /// </summary>
-    public RtspClient() {}
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="RtspClient"/> class.
-    /// </summary>
     /// <param name="isActive">if set to <c>true</c> [is active].</param>
     /// <param name="ipadress">The ipadress.</param>
     /// <param name="streamName">Name of the stream.</param>

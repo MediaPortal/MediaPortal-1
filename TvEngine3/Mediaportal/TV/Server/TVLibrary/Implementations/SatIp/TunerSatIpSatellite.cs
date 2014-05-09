@@ -28,7 +28,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 using UPnP.Infrastructure.CP.Description;
 
-namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
 {
   /// <summary>
   /// An implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles SAT>IP
@@ -43,11 +43,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
     /// </summary>
     private int _currentSource = 1;
 
-    /// <summary>
-    /// The DiSEqC control interface for this tuner.
-    /// </summary>
-    private IDiseqcController _diseqcController = null;
-
     #endregion
 
     #region constructor
@@ -57,8 +52,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
     /// </summary>
     /// <param name="serverDescriptor">The server's UPnP device description.</param>
     /// <param name="sequenceNumber">A unique sequence number or index for this instance.</param>
-    public TunerSatIpSatellite(DeviceDescriptor serverDescriptor, int sequenceNumber)
-      : base(serverDescriptor, sequenceNumber, 'S')
+    /// <param name="streamTuner">An internal tuner implementation, used for RTP stream reception.</param>
+    public TunerSatIpSatellite(DeviceDescriptor serverDescriptor, int sequenceNumber, ITunerInternal streamTuner)
+      : base(serverDescriptor, sequenceNumber, streamTuner, 'S')
     {
       _tunerType = CardType.DvbS;
     }
@@ -71,7 +67,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
     /// Actually tune to a channel.
     /// </summary>
     /// <param name="channel">The channel to tune to.</param>
-    protected override void PerformTuning(IChannel channel)
+    public override void PerformTuning(IChannel channel)
     {
       this.LogDebug("SAT>IP satellite: construct URL");
       DVBSChannel satelliteChannel = channel as DVBSChannel;
@@ -79,8 +75,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
       {
         throw new TvException("Received request to tune incompatible channel.");
       }
-
-      _diseqcController.SwitchToChannel(satelliteChannel);
 
       string frequency = ((int)(satelliteChannel.Frequency / 1000)).ToString();
 
@@ -217,39 +211,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
     }
 
     #endregion
-
-    /// <summary>
-    /// Actually load the tuner.
-    /// </summary>
-    protected override void PerformLoading()
-    {
-      base.PerformLoading();
-
-      // Check if one of the supported extensions is capable of sending DiSEqC commands.
-      foreach (ICustomDevice extension in _extensions)
-      {
-        IDiseqcDevice diseqcDevice = extension as IDiseqcDevice;
-        if (diseqcDevice != null)
-        {
-          this.LogDebug("SAT>IP satellite: found DiSEqC command interface");
-          _diseqcController = new DiseqcController(diseqcDevice);
-          _diseqcController.ReloadConfiguration(_cardId);
-          break;
-        }
-      }
-    }
-
-    /// <summary>
-    /// Reload the tuner's configuration.
-    /// </summary>
-    public override void ReloadConfiguration()
-    {
-      base.ReloadConfiguration();
-      if (_diseqcController != null)
-      {
-        _diseqcController.ReloadConfiguration(_cardId);
-      }
-    }
 
     #region IDiseqcDevice members
 

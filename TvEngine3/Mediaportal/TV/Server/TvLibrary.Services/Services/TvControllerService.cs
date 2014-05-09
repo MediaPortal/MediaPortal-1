@@ -20,16 +20,17 @@
 
 using System;
 using System.Collections.Generic;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVDatabase.Presentation;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.CiMenu;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 using Mediaportal.TV.Server.TVService.Interfaces;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.TVLibrary.Services
 {
@@ -1100,7 +1101,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
     /// <param name="cardId"></param>
     /// <param name="callbackHandler"></param>
     /// <returns></returns>
-    public bool SetCiMenuHandler(int cardId, IConditionalAccessMenuCallBacks callbackHandler)
+    public bool SetCiMenuHandler(int cardId, IConditionalAccessMenuCallBack callbackHandler)
     {
       return Service.SetCiMenuHandler(cardId, callbackHandler);
     }

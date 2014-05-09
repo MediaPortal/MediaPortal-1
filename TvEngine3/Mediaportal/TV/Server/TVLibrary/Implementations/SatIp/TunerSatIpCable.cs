@@ -25,7 +25,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using UPnP.Infrastructure.CP.Description;
 
-namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
 {
   /// <summary>
   /// An implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles SAT>IP DVB-C
@@ -40,8 +40,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
     /// </summary>
     /// <param name="serverDescriptor">The server's UPnP device description.</param>
     /// <param name="sequenceNumber">A unique sequence number or index for this instance.</param>
-    public TunerSatIpCable(DeviceDescriptor serverDescriptor, int sequenceNumber)
-      : base(serverDescriptor, sequenceNumber, 'C')
+    /// <param name="streamTuner">An internal tuner implementation, used for RTP stream reception.</param>
+    public TunerSatIpCable(DeviceDescriptor serverDescriptor, int sequenceNumber, ITunerInternal streamTuner)
+      : base(serverDescriptor, sequenceNumber, streamTuner, 'C')
     {
       _tunerType = CardType.DvbC;
     }
@@ -54,7 +55,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
     /// Actually tune to a channel.
     /// </summary>
     /// <param name="channel">The channel to tune to.</param>
-    protected override void PerformTuning(IChannel channel)
+    public override void PerformTuning(IChannel channel)
     {
       this.LogDebug("SAT>IP cable: construct URL");
       DVBCChannel cableChannel = channel as DVBCChannel;

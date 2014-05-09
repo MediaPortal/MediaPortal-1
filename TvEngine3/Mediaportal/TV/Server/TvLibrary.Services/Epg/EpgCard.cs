@@ -44,10 +44,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
 {
   /// <summary>
   /// Class which will  grab the epg for for a specific card
-  public class EpgCard : BaseEpgGrabber, IDisposable
+  public class EpgCard : IEpgGrabberCallBack, IDisposable
   {
-
-
     #region const
 
     private int _epgTimeOut = (10*60); // 10 mins
@@ -71,7 +69,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
     private EpgState _state;
 
     private bool _reEntrant;
-    private List<EpgChannel> _epg;
 
     private DateTime _grabStartTime;
     private bool _isRunning;
@@ -103,7 +100,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
       _epgTimer.Interval = 30000;
       _epgTimer.Elapsed += _epgTimer_Elapsed;
       _eventHandler = controller_OnTvServerEvent;
-      _dbUpdater = new EpgDBUpdater(ServiceManager.Instance.InternalControllerService, "IdleEpgGrabber", true);
+      _dbUpdater = new EpgDBUpdater(ServiceManager.Instance.InternalControllerService.OnImportEpgPrograms, "IdleEpgGrabber", true);
     }
 
     #endregion
@@ -159,23 +156,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
     /// The method checks if epg grabbing was in progress and ifso creates a new workerthread
     /// to update the database with the new epg data
     /// </summary>
-    public override int OnEpgReceived()
+    /// <param name="epg">The new EPG data.</param>
+    public override void OnEpgReceived(IList<EpgChannel> epg)
     {
       try
       {
-        //is epg grabbing in progress?
-        /*if (_state == EpgState.Idle)
-        {
-          this.LogInfo("Epg: card:{0} OnEpgReceived while idle", _user.CardId);
-          return 0;
-        }*/
-        //is epg grabber already updating the database?
-
         int cardId = _user.CardId;
         if (_state == EpgState.Updating)
         {
           this.LogInfo("Epg: card:{0} OnEpgReceived while updating", cardId);
-          return 0;
+          return;
         }
 
         // It is not safe to stop the tuner graph from here because we're in
@@ -189,13 +179,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
           stopThread.IsBackground = true;
           stopThread.Name = "EPG grabber stop thread";
           stopThread.Start();
-          return 0;
+          return;
         }
 
-        List<EpgChannel> epg = ServiceManager.Instance.InternalControllerService.Epg(cardId) ??
-                               new List<EpgChannel>();
         //did we receive epg info?
-        if (epg.Count == 0)
+        if (epg == null)
         {
           //no epg found for this transponder
           this.LogInfo("Epg: card:{0} no epg found", cardId);
@@ -204,23 +192,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
           stopThread.IsBackground = true;
           stopThread.Name = "EPG grabber stop thread";
           stopThread.Start();
-          return 0;
+          return;
         }
 
         //create worker thread to update the database
         this.LogInfo("Epg: card:{0} received epg for {1} channels", cardId, epg.Count);
         _state = EpgState.Updating;
-        _epg = epg;
-        Thread workerThread = new Thread(UpdateDatabaseThread);
+        Thread workerThread = new Thread(new ParameterizedThreadStart(UpdateDatabaseThread));
         workerThread.IsBackground = true;
         workerThread.Name = "EPG Update thread";
-        workerThread.Start();
+        workerThread.Start(epg);
       }
       catch (Exception ex)
       {
         this.LogError(ex);
       }
-      return 0;
     }
 
     #endregion
@@ -540,8 +526,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
     /// <summary>
     /// workerthread which will update the database with the new epg received
     /// </summary>
-    private void UpdateDatabaseThread()
+    private void UpdateDatabaseThread(object epgObj)
     {
+      IList<EpgChannel> epg = epgObj as IList<EpgChannel>;
+      if (epg == null)
+      {
+        return;
+      }
       Thread.CurrentThread.Priority = ThreadPriority.Lowest;
 
       int cardId = _user.CardId;
@@ -550,7 +541,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
       _dbUpdater.ReloadConfig();
       try
       {
-        foreach (EpgChannel epgChannel in _epg)
+        foreach (EpgChannel epgChannel in epg)
         {
           _dbUpdater.UpdateEpgForChannel(epgChannel);
           if (_state != EpgState.Updating)
@@ -566,7 +557,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
             return;
           }
         }
-        _epg.Clear();
         ProgramManagement.SynchProgramStatesForAllSchedules(ScheduleManagement.ListAllSchedules());
         this.LogInfo("Epg: card:{0} Finished updating the database.", cardId);
       }

@@ -817,8 +817,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
     {
       get
       {
-        // This plugin can easily be disabled on a per-tuner basis, so we will give it higher priority than
-        // hardware conditional access interfaces.
+        // This extension can easily be disabled on a per-tuner basis, so we will give it higher
+        // priority than hardware conditional access extensions.
         return 100;
       }
     }

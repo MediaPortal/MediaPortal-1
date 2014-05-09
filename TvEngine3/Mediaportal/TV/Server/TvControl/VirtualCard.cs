@@ -1412,7 +1412,7 @@ namespace Mediaportal.TV.Server.TVControl
     /// </summary>
     /// <param name="CallbackHandler"></param>
     /// <returns></returns>
-    public bool SetCiMenuHandler(IConditionalAccessMenuCallBacks CallbackHandler)
+    public bool SetCiMenuHandler(IConditionalAccessMenuCallBack CallbackHandler)
     {
       this.LogDebug("VC: SetCiMenuHandler");
       try

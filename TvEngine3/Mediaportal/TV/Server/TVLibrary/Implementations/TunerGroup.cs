@@ -1,0 +1,142 @@
+﻿#region Copyright (C) 2005-2011 Team MediaPortal
+
+// Copyright (C) 2005-2011 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
+
+#endregion
+
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+
+namespace Mediaportal.TV.Server.TVLibrary.Implementations
+{
+  internal class TunerGroup : ITunerGroup
+  {
+    #region variables
+
+    private CardGroup _databaseTunerGroup = null;
+    private string _productInstanceId = null;
+    private string _tunerInstanceId = null;
+    private IList<ITVCard> _tuners = new List<ITVCard>();
+
+    #endregion
+
+    /// <summary>
+    /// Initialise a new instance of the <see cref="TunerGroup"/> class.
+    /// </summary>
+    /// <param name="dbGroup">The tuner's name.</param>
+    /// <param name="externalId">The external identifier for the tuner.</param>
+    public TunerGroup(CardGroup dbGroup)
+    {
+      _databaseTunerGroup = dbGroup;
+    }
+
+    /// <summary>
+    /// Add a tuner to the group.
+    /// </summary>
+    /// <param name="tuner">The tuner to add.</param>
+    public void Add(ITVCard tuner)
+    {
+      _tuners.Add(tuner);
+    }
+
+    /// <summary>
+    /// Remove a tuner from the group.
+    /// </summary>
+    /// <param name="tuner">The tuner to remove.</param>
+    /// <returns><c>true</c> if the tuner was in the group and was removed, otherwise <c>false</c></returns>
+    public bool Remove(ITVCard tuner)
+    {
+      bool toReturn = false;
+      for (int i = _tuners.Count - 1; i >= 0; i--)
+      {
+        if (_tuners[i].ExternalId.Equals(tuner.ExternalId))
+        {
+          _tuners.RemoveAt(i);
+          toReturn = true;
+        }
+      }
+      return toReturn;
+    }
+
+    #region ITunerGroup members
+
+    /// <summary>
+    /// Get the tuner group's identifier.
+    /// </summary>
+    public int TunerGroupId
+    {
+      get
+      {
+        return _databaseTunerGroup.IdCardGroup;
+      }
+    }
+
+    /// <summary>
+    /// Get the tuner group's name.
+    /// </summary>
+    public string Name
+    {
+      get
+      {
+        return _databaseTunerGroup.Name;
+      }
+    }
+
+    /// <summary>
+    /// Get or set the tuner group's product instance identifier.
+    /// </summary>
+    public string ProductInstanceId
+    {
+      get
+      {
+        return _productInstanceId;
+      }
+      set
+      {
+        _productInstanceId = value;
+      }
+    }
+
+    /// <summary>
+    /// Get or set the tuner group's tuner instance identifier.
+    /// </summary>
+    public string TunerInstanceId
+    {
+      get
+      {
+        return _tunerInstanceId;
+      }
+      set
+      {
+        _tunerInstanceId = value;
+      }
+    }
+
+    public ReadOnlyCollection<ITVCard> Tuners
+    {
+      get
+      {
+        return new ReadOnlyCollection<ITVCard>(_tuners);
+      }
+    }
+
+    #endregion
+  }
+}

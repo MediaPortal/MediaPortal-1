@@ -83,12 +83,14 @@
     <Compile Include="..\..\..\..\..\Common-MP-TVE3\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
-    <Compile Include="Implementations\DirectShow\Dri\TunerDri.cs" />
+    <Compile Include="Implementations\DirectShow\EpgGrabberDirectShow.cs" />
+    <Compile Include="Implementations\Dri\TunerDri.cs" />
     <Compile Include="Implementations\DirectShow\Pbda\TunerPbdaCableCard.cs" />
-    <Compile Include="Implementations\DirectShow\SatIp\TunerSatIpCable.cs" />
-    <Compile Include="Implementations\DirectShow\SatIp\TunerSatIpBase.cs" />
-    <Compile Include="Implementations\DirectShow\SatIp\TunerSatIpSatellite.cs" />
-    <Compile Include="Implementations\DirectShow\SatIp\TunerSatIpTerrestrial.cs" />
+    <Compile Include="Implementations\SatIp\ScannerStreamWrapper.cs" />
+    <Compile Include="Implementations\SatIp\TunerSatIpCable.cs" />
+    <Compile Include="Implementations\SatIp\TunerSatIpBase.cs" />
+    <Compile Include="Implementations\SatIp\TunerSatIpSatellite.cs" />
+    <Compile Include="Implementations\SatIp\TunerSatIpTerrestrial.cs" />
     <Compile Include="Implementations\DirectShow\Wdm\Analog\Components\Capture.cs" />
     <Compile Include="Implementations\DirectShow\Wdm\Analog\Components\ComponentBase.cs" />
     <Compile Include="Implementations\DirectShow\Wdm\Analog\Components\Crossbar.cs" />
@@ -131,7 +133,7 @@
     <Compile Include="Implementations\DirectShow\Wdm\B2c2\TunerB2c2Satellite.cs" />
     <Compile Include="Implementations\DirectShow\Wdm\Analog\TunerAnalog.cs" />
     <Compile Include="Implementations\BaseSubChannel.cs" />
-    <Compile Include="Implementations\CustomDeviceLoader.cs" />
+    <Compile Include="Implementations\Helper\TunerExtensionLoader.cs" />
     <Compile Include="Implementations\DiseqcController.cs" />
     <Compile Include="Implementations\DirectShow\TunerDirectShowBase.cs" />
     <Compile Include="Implementations\Rtsp\RtspClient.cs" />
@@ -150,6 +152,7 @@
     <Compile Include="Implementations\Scte\Parser\ParserNit.cs" />
     <Compile Include="Implementations\Scte\Parser\ParserNtt.cs" />
     <Compile Include="Implementations\Scte\Parser\ParserSvct.cs" />
+    <Compile Include="Implementations\Scte\TunerScteWrapper.cs" />
     <Compile Include="Implementations\TunerDetector.cs" />
     <Compile Include="Implementations\Mpeg2SubChannel.cs" />
     <Compile Include="Implementations\Helper\DevicesInUse.cs" />
@@ -163,8 +166,7 @@
     <Compile Include="Implementations\DirectShow\Bda\TunerBdaBase.cs" />
     <Compile Include="Implementations\Helper\EncodersInUse.cs" />
     <Compile Include="Implementations\Helper\FilterGraphTools.cs" />
-    <Compile Include="Implementations\Hybrid\HybridCardGroup.cs" />
-    <Compile Include="Implementations\Hybrid\HybridCard.cs" />
+    <Compile Include="Implementations\TunerGroup.cs" />
     <Compile Include="Implementations\TvCardBase.cs" />
     <Compile Include="Implementations\Upnp\Enum\AvTransportState.cs" />
     <Compile Include="Implementations\Upnp\Enum\AvTransportRecordMediumWriteStatus.cs" />
@@ -187,13 +189,14 @@
     <Compile Include="Interfaces\Analyzer\ITsEpgScanner.cs" />
     <Compile Include="Interfaces\Analyzer\ITsFilter.cs" />
     <Compile Include="Interfaces\Analyzer\ITsChannelScan.cs" />
+    <Compile Include="Interfaces\IScannerInternal.cs" />
     <Compile Include="Interfaces\ITsMultiplexer.cs" />
     <Compile Include="Interfaces\Analyzer\ITsPmtGrabber.cs" />
     <Compile Include="Interfaces\Analyzer\IVideoAudioObserver.cs" />
+    <Compile Include="Interfaces\ITunerInternal.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Streaming\RtspStream.cs" />
     <Compile Include="Streaming\RtspStreaming.cs" />
-    <Compile Include="TimeShiftingEPGGrabber.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\Common-MP-TVE3\Common.Utils\Common.Utils.csproj">
@@ -241,6 +244,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

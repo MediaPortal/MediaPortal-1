@@ -23,7 +23,6 @@ using System.Collections.Generic;
 using System.Threading;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
-using Mediaportal.TV.Server.TVLibrary.Implementations.Hybrid;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
@@ -38,8 +37,6 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 {
   public class CardTuner : ICardTuner
   {
-
-
     private readonly ITvCardHandler _cardHandler;
 
     private readonly List<ICardTuneReservationTicket> _reservationsForTune = new List<ICardTuneReservationTicket>();
@@ -133,7 +130,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
           {
             return tvResult;
           }
-          result = _cardHandler.Card.Scan(_cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, idChannel), channel);
+          result = _cardHandler.Card.Tune(_cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, idChannel), channel);
           if (result != null)
           {
             return AfterTune(user, idChannel, result);
@@ -530,17 +527,8 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
           this.LogInfo("card2:{0} {1} {2}", user.Name, user.CardId, _cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, dbChannel.IdChannel));
           return result;
         }
-        bool cardActive = true;
-        HybridCard hybridCard = _cardHandler.Card as HybridCard;
-        if (hybridCard != null)
-        {
-          if (!hybridCard.IsCardIdActive(user.CardId))
-          {
-            cardActive = false;
-          }
-        }
 
-        if (cardActive && _cardHandler.CurrentDbChannel(user.Name) == dbChannel.IdChannel && dbChannel.IdChannel >= 0)
+        if (_cardHandler.CurrentDbChannel(user.Name) == dbChannel.IdChannel && dbChannel.IdChannel >= 0)
         {
           return TvResult.Succeeded;
         }

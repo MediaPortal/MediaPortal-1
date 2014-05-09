@@ -11,18 +11,12 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.CardHandler
     /// grabs the epg.
     /// </summary>
     /// <returns></returns>
-    bool Start(BaseEpgGrabber grabber);
+    bool Start(IEpgGrabberCallBack callBack);
 
     /// <summary>
     /// Aborts grabbing the epg. This also triggers the OnEpgReceived callback.
     /// </summary>
     void Abort();
-
-    /// <summary>
-    /// Gets the epg.
-    /// </summary>
-    /// <value>The epg.</value>
-    List<EpgChannel> Epg { get; }
 
     /// <summary>
     /// Returns if the card is grabbing the epg or not

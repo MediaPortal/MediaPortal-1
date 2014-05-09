@@ -375,7 +375,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
     private Thread _mmiHandlerThread = null;
     private AutoResetEvent _mmiHandlerThreadStopEvent = null;
     private object _mmiLock = new object();
-    private IConditionalAccessMenuCallBacks _caMenuCallBacks = null;
+    private IConditionalAccessMenuCallBack _caMenuCallBack = null;
     private object _caMenuCallBackLock = new object();
 
     // This is a first-in-first-out queue of messages that are ready to be passed to the CAM.
@@ -857,25 +857,25 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
 
       lock (_caMenuCallBackLock)
       {
-        if (_caMenuCallBacks == null)
+        if (_caMenuCallBack == null)
         {
-          this.LogDebug("Turbosight: menu call backs are not set");
+          this.LogDebug("Turbosight: menu call back not set");
         }
 
         this.LogDebug("  title     = {0}", entries[0]);
         this.LogDebug("  sub-title = {0}", entries[1]);
         this.LogDebug("  footer    = {0}", entries[2]);
         this.LogDebug("  # entries = {0}", expectedEntryCount);
-        if (_caMenuCallBacks != null)
+        if (_caMenuCallBack != null)
         {
-          _caMenuCallBacks.OnCiMenu(entries[0], entries[1], entries[2], expectedEntryCount - 3);
+          _caMenuCallBack.OnCiMenu(entries[0], entries[1], entries[2], expectedEntryCount - 3);
         }
         for (int i = 3; i < expectedEntryCount; i++)
         {
           this.LogDebug("    {0, -7} = {1}", i - 2, entries[i]);
-          if (_caMenuCallBacks != null)
+          if (_caMenuCallBack != null)
           {
-            _caMenuCallBacks.OnCiMenuChoice(i - 3, entries[i]);
+            _caMenuCallBack.OnCiMenuChoice(i - 3, entries[i]);
           }
         }
       }
@@ -899,13 +899,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
       this.LogDebug("  blind  = {0}", blind);
       lock (_caMenuCallBackLock)
       {
-        if (_caMenuCallBacks != null)
+        if (_caMenuCallBack != null)
         {
-          _caMenuCallBacks.OnCiRequest(blind, answerLength, prompt);
+          _caMenuCallBack.OnCiRequest(blind, answerLength, prompt);
         }
         else
         {
-          this.LogDebug("Turbosight: menu call backs are not set");
+          this.LogDebug("Turbosight: menu call back not set");
         }
       }
       return true;
@@ -1525,12 +1525,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
     /// <summary>
     /// Set the menu call back delegate.
     /// </summary>
-    /// <param name="callBacks">The call back delegate.</param>
-    public void SetCallBacks(IConditionalAccessMenuCallBacks callBacks)
+    /// <param name="callBack">The call back delegate.</param>
+    public void SetMenuCallBack(IConditionalAccessMenuCallBack callBack)
     {
       lock (_caMenuCallBackLock)
       {
-        _caMenuCallBacks = callBacks;
+        _caMenuCallBack = callBack;
       }
       StartMmiHandlerThread();
     }

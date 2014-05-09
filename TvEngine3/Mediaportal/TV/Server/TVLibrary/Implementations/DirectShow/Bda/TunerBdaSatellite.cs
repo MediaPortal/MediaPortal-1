@@ -37,15 +37,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
   /// </summary>
   internal class TunerBdaSatellite : TunerBdaBase
   {
-    #region variables
-
-    /// <summary>
-    /// The DiSEqC control interface for the tuner.
-    /// </summary>
-    private IDiseqcController _diseqcController = null;
-
-    #endregion
-
     #region constructor
 
     /// <summary>
@@ -61,28 +52,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     #endregion
 
     #region graph building
-
-    /// <summary>
-    /// Actually load the tuner.
-    /// </summary>
-    protected override void PerformLoading()
-    {
-      this.LogDebug("BDA satellite: perform loading");
-      base.PerformLoading();
-
-      // Check if one of the supported extensions is capable of sending DiSEqC commands.
-      foreach (ICustomDevice extension in _extensions)
-      {
-        IDiseqcDevice diseqcDevice = extension as IDiseqcDevice;
-        if (diseqcDevice != null)
-        {
-          this.LogDebug("BDA satellite: found DiSEqC command interface");
-          _diseqcController = new DiseqcController(diseqcDevice);
-          _diseqcController.ReloadConfiguration(_cardId);
-          break;
-        }
-      }
-    }
 
     /// <summary>
     /// Create and register a BDA tuning space for the tuner type.
@@ -170,21 +139,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     #endregion
 
     #region tuning
-
-    /// <summary>
-    /// Actually tune to a channel.
-    /// </summary>
-    /// <param name="channel">The channel to tune to.</param>
-    protected override void PerformTuning(IChannel channel)
-    {
-      // Send DiSEqC commands (if necessary) before actually tuning in case the driver applies the commands
-      // during the tuning process.
-      if (_diseqcController != null)
-      {
-        _diseqcController.SwitchToChannel(channel as DVBSChannel);
-      }
-      base.PerformTuning(channel);
-    }
 
     /// <summary>
     /// Assemble a BDA tune request for a given channel.
@@ -321,45 +275,5 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     }
 
     #endregion
-
-    /// <summary>
-    /// Reload the tuner's configuration.
-    /// </summary>
-    public override void ReloadConfiguration()
-    {
-      base.ReloadConfiguration();
-      if (_diseqcController != null)
-      {
-        _diseqcController.ReloadConfiguration(_cardId);
-      }
-    }
-
-    /// <summary>
-    /// Get the tuner's DiSEqC control interface. This interface is only applicable for satellite tuners.
-    /// It is used for controlling switch, positioner and LNB settings.
-    /// </summary>
-    /// <value><c>null</c> if the tuner is not a satellite tuner or the tuner does not support sending/receiving
-    /// DiSEqC commands</value>
-    public override IDiseqcController DiseqcController
-    {
-      get
-      {
-        return _diseqcController;
-      }
-    }
-
-    /// <summary>
-    /// Stop the tuner. The actual result of this function depends on tuner configuration.
-    /// </summary>
-    public override void Stop()
-    {
-      base.Stop();
-      // Force the DiSEqC controller to forget the previously tuned channel. This guarantees that the
-      // next call to SwitchToChannel() will actually cause commands to be sent.
-      if (_currentTuningDetail == null && _diseqcController != null)
-      {
-        _diseqcController.SwitchToChannel(null);
-      }
-    }
   }
 }

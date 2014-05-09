@@ -25,8 +25,6 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Text.RegularExpressions;
 using DirectShowLib.BDA;
-using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream;
-using Mediaportal.TV.Server.TVLibrary.Implementations.Dri;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Service;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Rtsp;
@@ -43,9 +41,9 @@ using UPnP.Infrastructure.CP;
 using UPnP.Infrastructure.CP.Description;
 using UPnP.Infrastructure.CP.DeviceTree;
 
-namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
 {
-  internal class TunerDri : TunerStream, IConditionalAccessMenuActions
+  internal class TunerDri : TvCardBase, IConditionalAccessMenuActions
   {
     #region constants
 
@@ -55,6 +53,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
 
     #region variables
 
+    // UPnP
     private DeviceDescriptor _descriptor = null;
     private UPnPControlPoint _controlPoint = null;
     private DeviceConnection _deviceConnection = null;
@@ -96,13 +95,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
 
     // CA menu variables
     private object _caMenuCallBackLock = new object();
-    private IConditionalAccessMenuCallBacks _caMenuCallBacks = null;
+    private IConditionalAccessMenuCallBack _caMenuCallBack = null;
     private CableCardMmiHandler _caMenuHandler = null;
 
     private volatile bool _isTunerSignalLocked = false;
     private int _currentFrequency = -1;
     private readonly bool _isCetonDevice = false;
     private bool _canPause = false;
+
+    /// <summary>
+    /// Internal stream tuner, used to receive the RTP stream. This allows us
+    /// to decouple the stream tuning implementation (eg. DirectShow) from the
+    /// DRI implementation.
+    /// </summary>
+    private ITunerInternal _streamTuner = null;
 
     #endregion
 
@@ -111,12 +117,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
     /// </summary>
     /// <param name="descriptor">The UPnP device description.</param>
     /// <param name="controlPoint">The control point to use to connect to the device.</param>
-    public TunerDri(DeviceDescriptor descriptor, UPnPControlPoint controlPoint)
+    /// <param name="streamTuner">An internal tuner implementation, used for RTP stream reception.</param>
+    public TunerDri(DeviceDescriptor descriptor, UPnPControlPoint controlPoint, ITunerInternal streamTuner)
       : base(descriptor.FriendlyName, descriptor.DeviceUUID)
     {
+      DVBIPChannel streamChannel = new DVBIPChannel();
+      streamChannel.Url = "rtp://127.0.0.1";
+      if (streamTuner == null || !streamTuner.CanTune(streamChannel))
+      {
+        throw new TvException("Internal tuner implementation is not usable.");
+      }
+
       _tunerType = CardType.Atsc;
       _descriptor = descriptor;
       _controlPoint = controlPoint;
+      _streamTuner = streamTuner;
       _isCetonDevice = descriptor.FriendlyName.Contains("Ceton");
       _caMenuHandler = new CableCardMmiHandler(EnterMenu, CloseDialog);
 
@@ -150,6 +165,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
           _tunerInstanceId = m.Groups[2].Captures[0].Value;
         }
       }
+    }
+
+    /// <summary>
+    /// Reload the tuner's configuration.
+    /// </summary>
+    public override void ReloadConfiguration()
+    {
+      base.ReloadConfiguration();
+      _streamTuner.ReloadConfiguration();
     }
 
     private void ReadDeviceInfo()
@@ -203,12 +227,26 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
       }
     }
 
+    #region subchannel management
+
+    /// <summary>
+    /// Allocate a new subchannel instance.
+    /// </summary>
+    /// <param name="id">The identifier for the subchannel.</param>
+    /// <returns>the new subchannel instance</returns>
+    public override ITvSubChannel CreateNewSubChannel(int id)
+    {
+      return _streamTuner.CreateNewSubChannel(id);
+    }
+
+    #endregion
+
     #region graph building
 
     /// <summary>
     /// Actually load the tuner.
     /// </summary>
-    protected override void PerformLoading()
+    public override void PerformLoading()
     {
       this.LogDebug("DRI CableCARD: perform loading");
 
@@ -245,14 +283,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
       this.LogDebug("DRI CableCARD: PrepareForConnection, connection ID = {0}, AV transport ID = {1}", _connectionId, _avTransportId);
 
       ReadDeviceInfo();
+      LoadExtensions(_descriptor);
 
-      base.PerformLoading();
+      _streamTuner.PerformLoading();
+      _channelScanner = new ScannerDri(this, _serviceFdc);
     }
 
     /// <summary>
     /// Actually unload the tuner.
     /// </summary>
-    protected override void PerformUnloading()
+    public override void PerformUnloading()
     {
       this.LogDebug("DRI CableCARD: perform unloading");
 
@@ -323,14 +363,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
         _deviceConnection = null;
       }
 
-      base.PerformUnloading();
+      _streamTuner.PerformUnloading();
     }
 
     /// <summary>
     /// Set the state of the tuner.
     /// </summary>
     /// <param name="state">The state to apply to the tuner.</param>
-    protected override void SetTunerState(TunerState state)
+    public override void SetTunerState(TunerState state)
     {
       this.LogDebug("DRI CableCARD: set tuner state, current state = {0}, requested state = {1}", _state, state);
 
@@ -372,7 +412,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
           StartStreaming();
         }
       }
-      base.SetTunerState(state);
+
+      _streamTuner.SetTunerState(state);
     }
 
     /// <summary>
@@ -405,7 +446,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
     /// Actually tune to a channel.
     /// </summary>
     /// <param name="channel">The channel to tune to.</param>
-    protected override void PerformTuning(IChannel channel)
+    public override void PerformTuning(IChannel channel)
     {
       this.LogDebug("DRI CableCARD: perform tuning");
       ATSCChannel atscChannel = channel as ATSCChannel;
@@ -634,7 +675,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
       }
       this.LogDebug("DRI CableCARD: RTSP PLAY response okay");
 
-      base.PerformTuning(streamChannel);
+      _streamTuner.PerformTuning(streamChannel);
     }
 
     private void StopStreaming()
@@ -698,14 +739,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
       }
     }
 
-    public override ITVScanning ScanningInterface
-    {
-      get
-      {
-        return new ScannerDri(this, _serviceFdc);
-      }
-    }
-
     #endregion
 
     #region signal
@@ -714,7 +747,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
     /// Actually update tuner signal status statistics.
     /// </summary>
     /// <param name="onlyUpdateLock"><c>True</c> to only update lock status.</param>
-    protected override void PerformSignalStatusUpdate(bool onlyUpdateLock)
+    public override void PerformSignalStatusUpdate(bool onlyUpdateLock)
     {
       if (onlyUpdateLock)
       {
@@ -823,7 +856,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
         {
           if (!(bool)newValue)
           {
-            this.LogInfo("DRI CableCARD: tuner {0} {1} update, not locked", _cardId, stateVariable.Name);
+            this.LogInfo("DRI CableCARD: tuner {0} {1} update, not locked", _tunerId, stateVariable.Name);
           }
           _isTunerSignalLocked = (bool)newValue;
           if (!IsScanning)
@@ -837,21 +870,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
           _cardStatus = (CasCardStatus)(string)newValue;
           if (oldStatus != _cardStatus)
           {
-            this.LogInfo("DRI CableCARD: tuner {0} CableCARD status update, old status = {1}, new status = {2}", _cardId, oldStatus, _cardStatus);
+            this.LogInfo("DRI CableCARD: tuner {0} CableCARD status update, old status = {1}, new status = {2}", _tunerId, oldStatus, _cardStatus);
           }
         }
         else if (stateVariable.Name.Equals("CardMessage"))
         {
           if (!string.IsNullOrEmpty(newValue.ToString()))
           {
-            this.LogInfo("DRI CableCARD: tuner {0} received message from the CableCARD, current status = {1}, message = {2}", _cardId, _cardStatus, newValue);
+            this.LogInfo("DRI CableCARD: tuner {0} received message from the CableCARD, current status = {1}, message = {2}", _tunerId, _cardStatus, newValue);
           }
         }
         else if (stateVariable.Name.Equals("MMIMessage"))
         {
           lock (_caMenuCallBackLock)
           {
-            _caMenuHandler.HandleDialog((byte[])newValue, _caMenuCallBacks);
+            _caMenuHandler.HandleDialog((byte[])newValue, _caMenuCallBack);
           }
         }
         else if (stateVariable.Name.Equals("DescramblingStatus"))
@@ -860,7 +893,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
           _descramblingStatus = (CasDescramblingStatus)(string)newValue;
           if (oldStatus != _descramblingStatus)
           {
-            this.LogInfo("DRI CableCARD: tuner {0} descrambling status update, old status = {1}, new status = {2}", _cardId, oldStatus, _descramblingStatus);
+            this.LogInfo("DRI CableCARD: tuner {0} descrambling status update, old status = {1}, new status = {2}", _tunerId, oldStatus, _descramblingStatus);
           }
         }
         else if (stateVariable.Name.Equals("DrmPairingStatus"))
@@ -869,18 +902,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
           _pairingStatus = (SecurityPairingStatus)(string)newValue;
           if (oldStatus != _pairingStatus)
           {
-            this.LogInfo("DRI CableCARD: tuner {0} pairing status update, old status = {1}, new status = {2}", _cardId, oldStatus, _pairingStatus);
+            this.LogInfo("DRI CableCARD: tuner {0} pairing status update, old status = {1}, new status = {2}", _tunerId, oldStatus, _pairingStatus);
           }
         }
         else
         {
           string unqualifiedServiceName = stateVariable.ParentService.ServiceId.Substring(stateVariable.ParentService.ServiceId.LastIndexOf(":") + 1);
-          this.LogDebug("DRI CableCARD: tuner {0} state variable {1} for service {2} changed to {3}", _cardId, stateVariable.Name, unqualifiedServiceName, newValue ?? "[null]");
+          this.LogDebug("DRI CableCARD: tuner {0} state variable {1} for service {2} changed to {3}", _tunerId, stateVariable.Name, unqualifiedServiceName, newValue ?? "[null]");
         }
       }
       catch (Exception ex)
       {
-        this.LogError(ex, "DRI CableCARD: tuner {0} failed to handle state variable change", _cardId);
+        this.LogError(ex, "DRI CableCARD: tuner {0} failed to handle state variable change", _tunerId);
       }
     }
 
@@ -892,7 +925,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
     private void OnEventSubscriptionFailed(CpService service, UPnPError error)
     {
       string unqualifiedServiceName = service.ServiceId.Substring(service.ServiceId.LastIndexOf(":") + 1);
-      this.LogError("DRI CableCARD: tuner {0} failed to subscribe to state variable events for service {1}, code = {2}, description = {3}", _cardId, unqualifiedServiceName, error.ErrorCode, error.ErrorDescription);
+      this.LogError("DRI CableCARD: tuner {0} failed to subscribe to state variable events for service {1}, code = {2}, description = {3}", _tunerId, unqualifiedServiceName, error.ErrorCode, error.ErrorDescription);
     }
 
     /// <summary>
@@ -916,12 +949,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
     /// <summary>
     /// Set the menu call back delegate.
     /// </summary>
-    /// <param name="callBacks">The call back delegate.</param>
-    public void SetCallBacks(IConditionalAccessMenuCallBacks callBacks)
+    /// <param name="callBack">The call back delegate.</param>
+    public void SetMenuCallBack(IConditionalAccessMenuCallBack callBack)
     {
       lock (_caMenuCallBackLock)
       {
-        _caMenuCallBacks = callBacks;
+        _caMenuCallBack = callBack;
       }
     }
 
@@ -982,7 +1015,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
 
       lock (_caMenuCallBackLock)
       {
-        return _caMenuHandler.EnterMenu(manufacturer, string.Empty, string.Empty, list, _caMenuCallBacks);
+        return _caMenuHandler.EnterMenu(manufacturer, string.Empty, string.Empty, list, _caMenuCallBack);
       }
     }
 
@@ -1034,7 +1067,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
       this.LogDebug("DRI CableCARD: select menu entry, choice = {0}", choice);
       lock (_caMenuCallBackLock)
       {
-        return _caMenuHandler.SelectEntry(choice, _caMenuCallBacks);
+        return _caMenuHandler.SelectEntry(choice, _caMenuCallBack);
       }
     }
 
@@ -1054,6 +1087,23 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Dri
 
       // TODO I don't know how to implement this yet.
       return true;
+    }
+
+    #endregion
+
+    #region IDisposable member
+
+    /// <summary>
+    /// Release and dispose all resources.
+    /// </summary>
+    public override void Dispose()
+    {
+      base.Dispose();
+      if (_streamTuner != null)
+      {
+        _streamTuner.Dispose();
+        _streamTuner = null;
+      }
     }
 
     #endregion

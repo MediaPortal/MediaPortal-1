@@ -33,6 +33,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
+using Mediaportal.TV.Server.SetupControls;
 
 namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
 {
@@ -271,7 +272,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
     private Thread _mmiHandlerThread = null;
     private AutoResetEvent _mmiHandlerThreadStopEvent = null;
     private object _mmiLock = new object();
-    private IConditionalAccessMenuCallBacks _caMenuCallBacks = null;
+    private IConditionalAccessMenuCallBack _caMenuCallBack = null;
     private object _caMenuCallBackLock = new object();
 
     // For DiSEqC support only.
@@ -480,9 +481,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
 
                 lock (_caMenuCallBackLock)
                 {
-                  if (_caMenuCallBacks == null)
+                  if (_caMenuCallBack == null)
                   {
-                    this.LogDebug("Digital Devices: menu call backs are not set");
+                    this.LogDebug("Digital Devices: menu call back not set");
                   }
 
                   if (type == DigitalDevicesCiSlot.MenuType.Menu || type == DigitalDevicesCiSlot.MenuType.List)
@@ -492,18 +493,18 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
                     this.LogDebug("  footer    = {0}", entries[2]);
                     this.LogDebug("  # entries = {0}", entries.Count - 3);
 
-                    if (_caMenuCallBacks != null)
+                    if (_caMenuCallBack != null)
                     {
-                      _caMenuCallBacks.OnCiMenu(entries[0], entries[1], entries[2], entries.Count - 3);
+                      _caMenuCallBack.OnCiMenu(entries[0], entries[1], entries[2], entries.Count - 3);
                     }
 
                     for (int i = 3; i < entries.Count; i++)
                     {
                       string entry = entries[i];
                       this.LogDebug("    {0, -7} = {1}", i + 1, entry);
-                      if (_caMenuCallBacks != null)
+                      if (_caMenuCallBack != null)
                       {
-                        _caMenuCallBacks.OnCiMenuChoice(i, entry);
+                        _caMenuCallBack.OnCiMenuChoice(i, entry);
                       }
                     }
                   }
@@ -511,9 +512,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
                   {
                     this.LogDebug("  prompt    = {0}", entries[0]);
                     this.LogDebug("  length    = {0}", answerLength);
-                    if (_caMenuCallBacks != null)
+                    if (_caMenuCallBack != null)
                     {
-                      _caMenuCallBacks.OnCiRequest(false, (uint)answerLength, entries[0]);
+                      _caMenuCallBack.OnCiRequest(false, (uint)answerLength, entries[0]);
                     }
                   }
                 }
@@ -846,9 +847,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
     /// <summary>
     /// Get an instance of the configuration section for use in TV Server configuration (SetupTv).
     /// </summary>
-    public Mediaportal.TV.Server.SetupControls.SectionSettings Setup
+    public SectionSettings Setup
     {
-      get { return new DigitalDevicesConfig(); }
+      get
+      {
+        return new DigitalDevicesConfig();
+      }
     }
 
     /// <summary>
@@ -1316,12 +1320,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
     /// <summary>
     /// Set the menu call back delegate.
     /// </summary>
-    /// <param name="callBacks">The call back delegate.</param>
-    public void SetCallBacks(IConditionalAccessMenuCallBacks callBacks)
+    /// <param name="callBack">The call back delegate.</param>
+    public void SetMenuCallBack(IConditionalAccessMenuCallBack callBack)
     {
       lock (_caMenuCallBackLock)
       {
-        _caMenuCallBacks = callBacks;
+        _caMenuCallBack = callBack;
       }
       StartMmiHandlerThread();
     }
@@ -1369,17 +1373,17 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
       this.LogDebug("Digital Devices: opening root menu");
       lock (_caMenuCallBackLock)
       {
-        if (_caMenuCallBacks == null)
+        if (_caMenuCallBack == null)
         {
-          this.LogDebug("Digital Devices: menu call backs are not set");
+          this.LogDebug("Digital Devices: menu call back not set");
           return false;
         }
 
-        _caMenuCallBacks.OnCiMenu("CAM Selection", "Please select a CAM.", string.Empty, entries.Count);
+        _caMenuCallBack.OnCiMenu("CAM Selection", "Please select a CAM.", string.Empty, entries.Count);
         int i = 0;
         foreach (string entry in entries)
         {
-          _caMenuCallBacks.OnCiMenuChoice(i++, entry);
+          _caMenuCallBack.OnCiMenuChoice(i++, entry);
           this.LogDebug("  {0} = {1}", i, entry);
         }
       }
@@ -1498,13 +1502,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
           this.LogDebug("Digital Devices: close root menu");
           lock (_caMenuCallBackLock)
           {
-            if (_caMenuCallBacks != null)
+            if (_caMenuCallBack != null)
             {
-              _caMenuCallBacks.OnCiCloseDisplay(0);
+              _caMenuCallBack.OnCiCloseDisplay(0);
             }
             else
             {
-              this.LogDebug("Digital Devices: menu call backs are not set");
+              this.LogDebug("Digital Devices: menu call back not set");
             }
           }
           return true;

@@ -22,7 +22,7 @@ using System;
 using System.IO;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.ChannelLinkage;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
@@ -33,8 +33,6 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 {
   public class TimeShifter : TimeShifterBase, ITimeShifter
   {
- 
-
     private readonly ChannelLinkageGrabber _linkageGrabber;
     private readonly bool _linkageScannerEnabled;
     private DateTime _timeAudioEvent;

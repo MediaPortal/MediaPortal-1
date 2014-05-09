@@ -59,7 +59,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     /// Actually tune to a channel.
     /// </summary>
     /// <param name="channel">The channel to tune to.</param>
-    protected override void PerformTuning(IChannel channel)
+    public override void PerformTuning(IChannel channel)
     {
       this.LogDebug("B2C2 ATSC: set tuning parameters");
       ATSCChannel atscChannel = channel as ATSCChannel;
@@ -93,19 +93,24 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       hr = _interfaceTuner.SetModulation(modulation);
       HResult.ThrowException(hr, "Failed to set modulation.");
 
-      this.LogDebug("B2C2 ATSC: apply tuning parameters");
-      HResult.ThrowException(_interfaceTuner.SetTunerStatus(), "Failed to apply tuning parameters.");
+      base.PerformTuning(channel);
     }
 
+    #endregion
+
+    #region graph building
+
     /// <summary>
-    /// Get the tuner's channel scanning interface.
+    /// Actually load the tuner.
     /// </summary>
-    public override ITVScanning ScanningInterface
+    public override void PerformLoading()
     {
-      get
-      {
-        return new ScannerMpeg2TsAtsc(this, _filterTsWriter as ITsChannelScan);
-      }
+      base.PerformLoading();
+
+      // ATSC/SCTE EPG grabbing currently not supported.
+      _epgGrabber = null;
+
+      _channelScanner = new ScannerMpeg2TsAtsc(this, _filterTsWriter as ITsChannelScan);
     }
 
     #endregion

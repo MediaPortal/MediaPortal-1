@@ -20,14 +20,13 @@
 
 using System;
 using System.Collections.Generic;
-using DirectShowLib;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.ChannelLinkage;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
@@ -38,7 +37,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
   /// <summary>
   /// Base class for all tuners.
   /// </summary>
-  internal abstract class TvCardBase : ITVCard, IDisposable
+  internal abstract class TvCardBase : ITunerInternal, ITVCard, IDisposable
   {
     #region events
 
@@ -116,17 +115,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// Scanning Paramters
     /// </summary>
-    protected ScanParameters _parameters = new ScanParameters();
+    private ScanParameters _parameters = new ScanParameters();
 
     /// <summary>
     /// Dictionary of the corresponding sub channels
     /// </summary>
-    protected Dictionary<int, ITvSubChannel> _mapSubChannels = new Dictionary<int, ITvSubChannel>();
+    private Dictionary<int, ITvSubChannel> _mapSubChannels = new Dictionary<int, ITvSubChannel>();
 
     /// <summary>
     /// Context reference
     /// </summary>
-    protected object _context;
+    private object _context;
 
     /// <summary>
     /// Indicates, if the tuner is locked
@@ -150,12 +149,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// The source of this identifier varies from class to class. DirectShow
     /// tuners may use the IMoniker display name (AKA device path).
     /// </remarks>
-    protected string _externalId;
-
-    /// <summary>
-    /// Indicates, if the card is grabbing epg
-    /// </summary>
-    protected bool _epgGrabbing;
+    private string _externalId;
 
     /// <summary>
     /// Name of the tv card
@@ -163,9 +157,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     protected string _name;
 
     /// <summary>
-    /// Indicates, if the card is scanning
+    /// Indicator: is the tuner scanning?
     /// </summary>
-    protected bool _isScanning;
+    protected bool _isScanning = false;
 
     /// <summary>
     /// The tuner type (eg. DVB-S, DVB-T... etc.).
@@ -183,36 +177,31 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     protected bool _isSignalPresent;
 
     /// <summary>
-    /// Indicates, if the card is present
-    /// </summary>
-    protected bool _cardPresent = true;
-
-    /// <summary>
     /// The db card id
     /// </summary>
-    protected int _cardId;
+    protected int _tunerId;
 
     /// <summary>
     /// The action that will be taken when the tuner is no longer being actively used.
     /// </summary>
-    protected IdleMode _idleMode = IdleMode.Stop;
+    private IdleMode _idleMode = IdleMode.Stop;
 
     /// <summary>
-    /// A list containing the custom device interfaces supported by this tuner. The list is ordered by
-    /// interface priority.
+    /// A list containing the extension interfaces supported by this tuner. The list is ordered by
+    /// descending extension priority.
     /// </summary>
     protected List<ICustomDevice> _extensions = new List<ICustomDevice>();
 
     /// <summary>
-    /// A list containing the custom device interfaces supported by this tuner. The list is ordered by
-    /// interface priority.
+    /// A list containing the conditional access provider extensions supported by this tuner. The
+    /// list is ordered by descending extension priority.
     /// </summary>
-    protected List<IConditionalAccessProvider> _caProviders = new List<IConditionalAccessProvider>();
+    private List<IConditionalAccessProvider> _caProviders = new List<IConditionalAccessProvider>();
 
     /// <summary>
     /// Enable or disable the use of conditional access interface(s).
     /// </summary>
-    protected bool _useConditionalAccessInterface = true;
+    private bool _useConditionalAccessInterface = true;
 
     /// <summary>
     /// The type of conditional access module available to the conditional access interface.
@@ -220,13 +209,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <remarks>
     /// Certain conditional access modules require specific handling to ensure compatibility.
     /// </remarks>
-    protected CamType _camType = CamType.Default;
+    private CamType _camType = CamType.Default;
 
     /// <summary>
     /// The number of channels that the device is capable of or permitted to decrypt simultaneously. Zero means
     /// there is no limit.
     /// </summary>
-    protected int _decryptLimit = 0;
+    private int _decryptLimit = 0;
 
     /// <summary>
     /// The method that should be used to communicate the set of channels that the tuner's conditional access
@@ -244,12 +233,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// Changes = Use Add, Update and Remove to pass changes to the interface. The full channel list is never
     ///         passed. Most interfaces don't support these commands.
     /// </remarks>
-    protected MultiChannelDecryptMode _multiChannelDecryptMode = MultiChannelDecryptMode.List;
+    private MultiChannelDecryptMode _multiChannelDecryptMode = MultiChannelDecryptMode.List;
 
     /// <summary>
     /// Enable or disable waiting for the conditional interface to be ready before sending commands.
     /// </summary>
-    protected bool _waitUntilCaInterfaceReady = true;
+    private bool _waitUntilCaInterfaceReady = true;
 
     /// <summary>
     /// The number of times to re-attempt decrypting the current service set when one or more services are
@@ -260,7 +249,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// successfully, all interfaces are retried until each interface has been tried
     /// _decryptFailureRetryCount + 1 times, or until decrypting is successful.
     /// </remarks>
-    protected int _decryptFailureRetryCount = 2;
+    private int _decryptFailureRetryCount = 2;
 
     /// <summary>
     /// The device's current tuning parameter values or null if the device is not tuned.
@@ -268,18 +257,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     protected IChannel _currentTuningDetail = null;
 
     /// <summary>
-    /// Enable or disable the use of custom device interfaces for tuning.
+    /// Enable or disable the use of extensions for tuning.
     /// </summary>
     /// <remarks>
-    /// Custom/direct tuning may be faster or more reliable than regular tuning methods. Equally, it can
-    /// also be slower (eg. TeVii) or more limiting (eg. Digital Everywhere) than regular tuning methods.
+    /// Custom/direct tuning *may* be faster or more reliable than regular tuning methods. It might
+    /// be slower (eg. TeVii) or more limiting (eg. Digital Everywhere) than regular tuning
+    /// methods. User gets to choose which method to use.
     /// </remarks>
-    protected bool _useCustomTuning = false;
+    private bool _useCustomTuning = false;
 
     /// <summary>
     /// A flag used by the TV service as a signal to abort the tuning process before it is completed.
     /// </summary>
-    protected volatile bool _cancelTune = false;
+    private volatile bool _cancelTune = false;
 
     /// <summary>
     /// The current state of the tuner.
@@ -306,6 +296,31 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     protected string _tunerInstanceId = null;
 
+    /// <summary>
+    /// The tuner group that this tuner is a member of, if any.
+    /// </summary>
+    private ITunerGroup _group = null;
+
+    /// <summary>
+    /// The tuner's channel scanning interface.
+    /// </summary>
+    protected ITVScanning _channelScanner = null;
+
+    /// <summary>
+    /// The tuner's EPG grabber interface.
+    /// </summary>
+    protected IEpgGrabber _epgGrabber = null;
+
+    /// <summary>
+    /// The tuner's DiSEqC control interface.
+    /// </summary>
+    protected IDiseqcController _diseqcController = null;
+
+    /// <summary>
+    /// The tuner's encoder control interface.
+    /// </summary>
+    protected IQuality _encoderController = null;
+
     #endregion
 
     #region constructor
@@ -317,36 +332,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <param name="externalId">An identifier for the device. Useful for distinguishing this instance from other devices of the same type.</param>
     protected TvCardBase(string name, string externalId)
     {
-      _epgGrabbing = false;   // EPG grabbing not supported by default.
       _name = name;
       _externalId = externalId;
-
-      if (ExternalId != null)
-      {
-        Card d = CardManagement.GetCardByDevicePath(ExternalId, CardIncludeRelationEnum.None);
-        if (d != null)
-        {
-          _cardId = d.IdCard;
-          _name = d.Name;   // We prefer to use the name that can be set in TV Server configuration for more readable logs...
-          _idleMode = (IdleMode)d.IdleMode;
-          _pidFilterMode = (PidFilterMode)d.PidFilterMode;
-          _useCustomTuning = d.UseCustomTuning;
-
-          // Conditional access...
-          _useConditionalAccessInterface = d.UseConditionalAccess;
-          _camType = (CamType)d.CamType;
-          _decryptLimit = d.DecryptLimit;
-          _multiChannelDecryptMode = (MultiChannelDecryptMode)d.MultiChannelDecryptMode;
-
-          // Preload the device if configured to do so.
-          // TODO preloading shouldn't be done here - it should happen in TunerDetector (in case required components can't be loaded until the super constructor is executed)
-          if (d.Enabled && d.PreloadCard)
-          {
-            this.LogInfo("TvCardBase: preloading device {0}", Name);
-            Load();
-          }
-        }
-      }
     }
 
     #endregion
@@ -366,13 +353,30 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     #region properties
 
     /// <summary>
-    /// Gets or sets the unique id of this card
+    /// Get the tuner's unique identifier.
     /// </summary>
-    public int CardId
+    public int TunerId
     {
-      get { return _cardId; }
+      get
+      {
+        return _tunerId;
+      }
     }
 
+    /// <summary>
+    /// Get or set the tuner's group.
+    /// </summary>
+    public ITunerGroup Group
+    {
+      get
+      {
+        return _group;
+      }
+      set
+      {
+        _group = value;
+      }
+    }
 
     /// <summary>
     /// Gets or sets the parameters.
@@ -393,28 +397,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     }
 
     /// <summary>
-    /// Gets/sets the card name
+    /// Get the tuner's name.
     /// </summary>
-    /// <value></value>
     public string Name
     {
-      get { return _name; }
-      set { _name = value; }
-    }
-
-    /// <summary>
-    /// returns true if card is currently present
-    /// </summary>
-    public bool CardPresent
-    {
-      get { return _cardPresent; }
-      set { _cardPresent = value; }
+      get
+      {
+        return _name;
+      }
     }
 
     /// <summary>
     /// Get the tuner's unique external identifier.
     /// </summary>
-    public virtual string ExternalId
+    public string ExternalId
     {
       get
       {
@@ -447,7 +443,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// Gets the device tuner type.
     /// </summary>
-    public virtual CardType CardType
+    public CardType CardType
     {
       get { return _tunerType; }
     }
@@ -474,10 +470,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       get
       {
         return _camType;
-      }
-      set
-      {
-        _camType = value;
       }
     }
 
@@ -591,18 +583,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     /// <value><c>null</c> if the tuner is not a satellite tuner or the tuner
     /// does not support sending/receiving DiSEqC commands</value>
-    public virtual IDiseqcController DiseqcController
+    public IDiseqcController DiseqcController
     {
       get
       {
-        return null;
+        return _diseqcController;
       }
     }
 
     /// <summary>
     /// Get an indicator to determine whether the tuner is locked on signal.
     /// </summary>
-    public virtual bool IsTunerLocked
+    public bool IsTunerLocked
     {
       get
       {
@@ -659,19 +651,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     }
 
     /// <summary>
-    /// returns true if card is currently grabbing the epg
-    /// </summary>
-    public bool IsEpgGrabbing
-    {
-      get { return _epgGrabbing; }
-      set
-      {
-        UpdateEpgGrabber(value);
-        _epgGrabbing = value;
-      }
-    }
-
-    /// <summary>
     /// Get or set a value indicating whether this tuner is scanning for channels.
     /// </summary>
     /// <value><c>true</c> if the tuner is currently scanning, otherwise <c>false</c></value>
@@ -704,98 +683,113 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// Load the <see cref="T:TvLibrary.Interfaces.ICustomDevice">extensions</see> for this tuner.
     /// </summary>
-    /// <remarks>
-    /// It is expected that this function will be called at some stage during tuner loading.
-    /// This function may update the lastFilter reference parameter to insert filters for <see cref="IDirectShowAddOnDevice"/>
-    /// extensions.
-    /// </remarks>
-    /// <param name="mainFilter">The main device source filter. Usually a tuner filter.</param>
-    /// <param name="graph">The tuner graph.</param>
-    /// <param name="lastFilter">The source filter (usually either a tuner or capture/receiver filter) to
-    ///   connect the [first] device filter to.</param>
-    protected void LoadPlugins(IBaseFilter mainFilter, IFilterGraph2 graph, ref IBaseFilter lastFilter)
+    /// <param name="context">Any context required to initialise supported extensions.</param>
+    protected void LoadExtensions(object context)
     {
-      this.LogDebug("TvCardBase: load custom device plugins");
+      this.LogDebug("TvCardBase: load tuner extensions");
 
-      if (mainFilter == null)
-      {
-        this.LogWarn("TvCardBase: the main filter is null");
-        return;
-      }
+      TunerExtensionLoader tunerExtensionLoader = new TunerExtensionLoader();
+      IEnumerable<ICustomDevice> extensions = tunerExtensionLoader.Load();
 
-      CustomDeviceLoader customDeviceLoader = new CustomDeviceLoader();
-
-      customDeviceLoader.Load();
-      IEnumerable<ICustomDevice> extensions = customDeviceLoader.Plugins;
-
-      this.LogDebug("TvCardBase: checking for supported plugins");
+      this.LogDebug("TvCardBase: checking for supported extensions");
+      HashSet<string> foundInterfaces = new HashSet<string>();
       foreach (ICustomDevice extension in extensions)
       {
-        if (!extension.Initialise(ExternalId, _tunerType, mainFilter))
+        // We only support one implementation of each interface, unless the
+        // extension is a DirectShow add-on.
+        Type[] interfaces = new Type[0];
+        if (!(extension is IDirectShowAddOnDevice))
+        {
+          bool foundInterface = false;
+          interfaces = extension.GetType().GetInterfaces();
+          foreach (Type i in interfaces)
+          {
+            // TODO this could pick up interfaces that we don't care about...
+            // but we don't want an explicit list of interfaces we care about.
+            // Need to be smarter!
+            if (i != typeof(ICustomDevice) &&
+              i != typeof(IRemoteControlListener) &&
+              i != typeof(IDisposable) &&
+              foundInterfaces.Contains(i.Name))
+            {
+              this.LogDebug("TvCardBase: extension \"{0}\" supports already found interface {1}, won't use", extension.Name, i.Name);
+              foundInterface = true;
+              break;
+            }
+          }
+          if (foundInterface)
+          {
+            continue;
+          }
+        }
+
+        this.LogDebug("TvCardBase: try extension \"{0}\"", extension.Name);
+        if (!extension.Initialise(ExternalId, _tunerType, context))
         {
           extension.Dispose();
           continue;
         }
 
-        // The plugin is supported. If the plugin is an add on plugin, we attempt to add it to the graph.
-        bool isAddOn = false;
-        if (lastFilter != null)
-        {
-          IDirectShowAddOnDevice addOn = extension as IDirectShowAddOnDevice;
-          if (addOn != null)
-          {
-            this.LogDebug("TvCardBase: DirectShow add-on plugin found");
-            if (!addOn.AddToGraph(graph, ref lastFilter))
-            {
-              this.LogDebug("TvCardBase: failed to add filter(s) to graph");
-              addOn.Dispose();
-              continue;
-            }
-            isAddOn = true;
-          }
-        }
+        _extensions.Add(extension);
+      }
 
-        try
-        {
-          // When we find the main plugin, then we stop searching...
-          if (!isAddOn)
-          {
-            this.LogDebug("TvCardBase: primary plugin found");
-            break;
-          }
-        }
-        finally
-        {
-          _extensions.Add(extension);
-        }
-      }
-      if (_extensions.Count == 0)
-      {
-        this.LogDebug("TvCardBase: no plugins supported");
-      }
+      this.LogDebug("TvCardBase: {0} extension(s) supported", _extensions.Count);
     }
 
     /// <summary>
-    /// Open any <see cref="T:TvLibrary.Interfaces.ICustomDevice"/> plugins loaded for this device by LoadPlugins().
+    /// Open any <see cref="T:TvLibrary.Interfaces.ICustomDevice"/> extensions loaded for this tuner.
     /// </summary>
     /// <remarks>
-    /// We separate this from the loading because some plugins (for example, the NetUP plugin) can't be opened
-    /// until the graph has finished being built.
+    /// We separate this from the loading because some extensions (for example, the NetUP extension)
+    /// can't be opened until the graph has finished being built.
     /// </remarks>
-    protected void OpenPlugins()
+    protected void OpenExtensions()
     {
-      this.LogDebug("TvCardBase: open custom device plugins");
-      if (_useConditionalAccessInterface)
+      this.LogDebug("TvCardBase: open tuner extensions");
+
+      foreach (ICustomDevice extension in _extensions)
       {
-        foreach (ICustomDevice extension in _extensions)
+        if (_useConditionalAccessInterface)
         {
           IConditionalAccessProvider caProvider = extension as IConditionalAccessProvider;
           if (caProvider != null)
           {
+            this.LogDebug("TvCardBase: found conditional access provider \"{0}\"", extension.Name);
             if (caProvider.OpenConditionalAccessInterface())
             {
               _caProviders.Add(caProvider);
             }
+            else
+            {
+              this.LogDebug("TvCardBase: provider will not be used");
+            }
+          }
+        }
+        if (_diseqcController == null)
+        {
+          IDiseqcDevice diseqcDevice = extension as IDiseqcDevice;
+          if (diseqcDevice != null)
+          {
+            this.LogDebug("TvCardBase: found DiSEqC control interface \"{0}\"", extension.Name);
+            _diseqcController = new DiseqcController(_tunerId, diseqcDevice);
+          }
+        }
+        if (_encoderController == null)
+        {
+          IEncoder encoder = extension as IEncoder;
+          if (encoder != null)
+          {
+            this.LogDebug("TvCardBase: found encoder control interface \"{0}\"", extension.Name);
+            _encoderController = new EncoderController(_extensions);
+          }
+        }
+        IRemoteControlListener rcListener = extension as IRemoteControlListener;
+        if (rcListener != null)
+        {
+          this.LogDebug("TvCardBase: found remote control interface \"{0}\"", extension.Name);
+          if (!rcListener.OpenRemoteControlInterface())
+          {
+            this.LogDebug("TvCardBase: interface will not be used");
           }
         }
       }
@@ -808,10 +802,33 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     public void Load()
     {
+      if (_state == TunerState.Loading)
+      {
+        this.LogWarn("TvCardBase: the tuner is already loading");
+        return;
+      }
       if (_state != TunerState.NotLoaded)
       {
         this.LogWarn("TvCardBase: the tuner is already loaded");
         return;
+      }
+      _state = TunerState.Loading;
+
+      // Related tuners must be unloaded before this tuner can be loaded.
+      if (_group != null)
+      {
+        this.LogDebug("TvCardBase: unload tuners in group");
+        foreach (ITVCard tuner in _group.Tuners)
+        {
+          if (tuner.TunerId != _tunerId)
+          {
+            TvCardBase tunerBase = tuner as TvCardBase;
+            if (tunerBase != null)
+            {
+              tunerBase.Unload();
+            }
+          }
+        }
       }
 
       this.LogDebug("TvCardBase: load tuner {0}", _name);
@@ -824,7 +841,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
         // Open any plugins that were detected during loading. This is separated from loading because some
         // plugins can't be opened until the tuner has fully loaded.
-        OpenPlugins();
+        OpenExtensions();
 
         // Plugins can request to pause or start the tuner - other actions don't make sense here. The started
         // state is considered more compatible than the paused state, so start takes precedence.
@@ -882,18 +899,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// Unload the tuner.
     /// </summary>
-    public void Unload()
+    private void Unload()
     {
       this.LogDebug("TvCardBase: unload tuner");
       FreeAllSubChannels();
       PerformTunerAction(TunerAction.Stop);
 
-      // Dispose plugins.
+      // Dispose extensions.
       if (_extensions != null)
       {
         foreach (ICustomDevice extension in _extensions)
         {
-          // Avoid recursive loop for ITVCard implementations that also implement ICustomDevice... like TunerB2c2Base.
+          // Avoid recursive loop for ITVCard implementations that also implement ICustomDevice.
           if (!(extension is ITVCard))
           {
             extension.Dispose();
@@ -911,6 +928,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       {
         this.LogWarn(ex, "TvCardBase: failed to completely unload the tuner");
       }
+
+      _epgGrabber = null;
+      _channelScanner = null;
+      _diseqcController = null;
+      _encoderController = null;
 
       _state = TunerState.NotLoaded;
     }
@@ -945,20 +967,64 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     }
 
     /// <summary>
-    /// Reload configuration.
+    /// Reload the tuner's configuration.
     /// </summary>
     public virtual void ReloadConfiguration()
     {
+      if (ExternalId != null)
+      {
+        this.LogDebug("tuner base: reload configuration");
+        Card t = CardManagement.GetCardByDevicePath(ExternalId, CardIncludeRelationEnum.None);
+        if (t != null)
+        {
+          _tunerId = t.IdCard;
+          _name = t.Name;   // We prefer to use the name that can be set via configuration for more readable logs...
+          _idleMode = (IdleMode)t.IdleMode;
+          _pidFilterMode = (PidFilterMode)t.PidFilterMode;
+          _useCustomTuning = t.UseCustomTuning;
+
+          // Conditional access...
+          _useConditionalAccessInterface = t.UseConditionalAccess;
+          _camType = (CamType)t.CamType;
+          _decryptLimit = t.DecryptLimit;
+          _multiChannelDecryptMode = (MultiChannelDecryptMode)t.MultiChannelDecryptMode;
+
+          if (_state == TunerState.NotLoaded && t.PreloadCard)
+          {
+            Load();
+          }
+        }
+      }
+
+      if (_epgGrabber != null)
+      {
+        _epgGrabber.ReloadConfiguration();
+      }
+      if (_diseqcController != null)
+      {
+        _diseqcController.ReloadConfiguration();
+      }
+    }
+
+    /// <summary>
+    /// Get the tuner's electronic programme guide data grabbing interface.
+    /// </summary>
+    public IEpgGrabber EpgGrabberInterface
+    {
+      get
+      {
+        return _epgGrabber;
+      }
     }
 
     /// <summary>
     /// Get the tuner's channel scanning interface.
     /// </summary>
-    public virtual ITVScanning ScanningInterface
+    public ITVScanning ScanningInterface
     {
       get
       {
-        return null;
+        return _channelScanner;
       }
     }
 
@@ -1012,7 +1078,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       TunerAction action = TunerAction.Stop;
       try
       {
-        UpdateEpgGrabber(false);  // Stop grabbing EPG.
+        if (_epgGrabber != null)
+        {
+          _epgGrabber.AbortGrabbing();
+        }
         IsScanning = false;
         FreeAllSubChannels();
 
@@ -1065,6 +1134,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           // considerations here. Most tuners should remember current settings
           // when paused; some do when stopped as well, but the majority don't.
           _currentTuningDetail = null;
+          if (_diseqcController != null)
+          {
+            _diseqcController.SwitchToChannel(null);
+          }
         }
       }
     }
@@ -1073,7 +1146,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// Perform a specific tuner action. For example, stop the tuner.
     /// </summary>
     /// <param name="action">The action to perform with the device.</param>
-    protected virtual void PerformTunerAction(TunerAction action)
+    private void PerformTunerAction(TunerAction action)
     {
       this.LogDebug("TvCardBase: perform tuner action, action = {0}", action);
       try
@@ -1122,7 +1195,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// Set the state of the tuner.
     /// </summary>
     /// <param name="state">The state to apply to the tuner.</param>
-    protected abstract void SetTunerState(TunerState state);
+    public abstract void SetTunerState(TunerState state);
 
     #endregion
 
@@ -1134,17 +1207,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <param name="channel">The channel to check.</param>
     /// <returns><c>true</c> if the tuner can tune to the channel, otherwise <c>false</c></returns>
     public abstract bool CanTune(IChannel channel);
-
-    /// <summary>
-    /// Scan a specific channel.
-    /// </summary>
-    /// <param name="subChannelId">The ID of the subchannel associated with the channel that is being scanned.</param>
-    /// <param name="channel">The channel to scan.</param>
-    /// <returns>the subchannel associated with the scanned channel</returns>
-    public virtual ITvSubChannel Scan(int subChannelId, IChannel channel)
-    {
-      return Tune(subChannelId, channel);
-    }
 
     /// <summary>
     /// Tune to a specific channel.
@@ -1220,9 +1282,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         // Do we need to tune?
         if (_currentTuningDetail == null || _currentTuningDetail.IsDifferentTransponder(channel))
         {
-          // Stop the EPG grabber. We're going to move to a different channel so any EPG data that has been
-          // grabbed for the previous channel should be stored.
-          UpdateEpgGrabber(false);
+          // Stop the EPG grabber. We're going to move to a different channel. Any EPG data that
+          // has been grabbed but not stored is thrown away.
+          if (_epgGrabber != null)
+          {
+            _epgGrabber.AbortGrabbing();
+          }
 
           // When we call ICustomDevice.OnBeforeTune(), the ICustomDevice may modify the tuning parameters.
           // However, the original channel object *must not* be modified otherwise IsDifferentTransponder()
@@ -1260,6 +1325,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           if (action != TunerAction.Default)
           {
             PerformTunerAction(action);
+          }
+
+          // Send DiSEqC commands (if necessary) before actually tuning in case the driver applies the commands
+          // during the tuning process.
+          if (_diseqcController != null)
+          {
+            _diseqcController.SwitchToChannel(channel as DVBSChannel);
           }
 
           // Apply tuning parameters.
@@ -1375,7 +1447,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// Check if the current tuning process has been cancelled and throw an exception if it has.
     /// </summary>
-    protected void ThrowExceptionIfTuneCancelled()
+    private void ThrowExceptionIfTuneCancelled()
     {
       if (_cancelTune)
       {
@@ -1387,39 +1459,27 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// Actually tune to a channel.
     /// </summary>
     /// <param name="channel">The channel to tune to.</param>
-    protected abstract void PerformTuning(IChannel channel);
+    public abstract void PerformTuning(IChannel channel);
 
     /// <summary>
     /// Actually load the tuner.
     /// </summary>
-    protected abstract void PerformLoading();
+    public abstract void PerformLoading();
 
     /// <summary>
     /// Actually unload the tuner.
     /// </summary>
-    protected abstract void PerformUnloading();
+    public abstract void PerformUnloading();
 
     /// <summary>
     /// Actually update tuner signal status statistics.
     /// </summary>
     /// <param name="onlyUpdateLock"><c>True</c> to only update lock status.</param>
-    protected abstract void PerformSignalStatusUpdate(bool onlyUpdateLock);
+    public abstract void PerformSignalStatusUpdate(bool onlyUpdateLock);
 
     #endregion
 
     #region quality control
-
-    /// <summary>
-    /// Check if the device supports stream quality control.
-    /// </summary>
-    /// <value></value>
-    public virtual bool SupportsQualityControl
-    {
-      get
-      {
-        return false;
-      }
-    }
 
     /// <summary>
     /// Get the device's quality control interface.
@@ -1428,65 +1488,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     {
       get
       {
-        return null;
+        return _encoderController;
       }
-    }
-
-    #endregion
-
-    #region EPG
-
-    /// <summary>
-    /// Get the device's ITVEPG interface, used for grabbing electronic programme guide data.
-    /// </summary>
-    public virtual ITVEPG EpgInterface
-    {
-      get
-      {
-        return null;
-      }
-    }
-
-    /// <summary>
-    /// Abort grabbing electronic programme guide data.
-    /// </summary>
-    public virtual void AbortGrabbing()
-    {
-    }
-
-    /// <summary>
-    /// Get the electronic programme guide data found in a grab session.
-    /// </summary>
-    /// <value>EPG data if the device supports EPG grabbing and grabbing is complete, otherwise <c>null</c></value>
-    public virtual List<EpgChannel> Epg
-    {
-      get
-      {
-        return null;
-      }
-    }
-
-    /// <summary>
-    /// Start grabbing electronic programme guide data (idle EPG grabber).
-    /// </summary>
-    /// <param name="callBack">The delegate to call when grabbing is complete or canceled.</param>
-    public virtual void GrabEpg(BaseEpgGrabber callBack)
-    {
-    }
-
-    /// <summary>
-    /// Start grabbing electronic programme guide data (timeshifting/recording EPG grabber).
-    /// </summary>
-    public virtual void GrabEpg()
-    {
-    }
-
-    /// <summary>
-    /// Activate or deactivate the EPG grabber.
-    /// </summary>
-    /// <param name="value"><c>True</c> to enable EPG grabbing.</param>
-    protected virtual void UpdateEpgGrabber(bool value)
-    {
     }
 
     #endregion
@@ -1528,13 +1531,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     /// <param name="id">The identifier for the subchannel.</param>
     /// <returns>the new subchannel instance</returns>
-    protected abstract ITvSubChannel CreateNewSubChannel(int id);
+    public abstract ITvSubChannel CreateNewSubChannel(int id);
 
     /// <summary>
     /// Free a subchannel.
     /// </summary>
     /// <param name="id">The subchannel identifier.</param>
-    public virtual void FreeSubChannel(int id)
+    public void FreeSubChannel(int id)
     {
       this.LogDebug("TvCardBase: free subchannel, ID = {0}, count = {1}", id, _mapSubChannels.Count);
       ITvSubChannel subChannel;
@@ -1583,7 +1586,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// Free all subchannels.
     /// </summary>
-    protected void FreeAllSubChannels()
+    private void FreeAllSubChannels()
     {
       this.LogInfo("TvCardBase: free all subchannels, count = {0}", _mapSubChannels.Count);
       Dictionary<int, ITvSubChannel>.Enumerator en = _mapSubChannels.GetEnumerator();

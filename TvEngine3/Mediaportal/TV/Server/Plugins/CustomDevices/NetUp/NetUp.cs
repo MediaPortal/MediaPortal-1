@@ -219,7 +219,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
     private Thread _mmiHandlerThread = null;
     private AutoResetEvent _mmiHandlerThreadStopEvent = null;
     private object _mmiLock = new object();
-    private IConditionalAccessMenuCallBacks _caMenuCallBacks = null;
+    private IConditionalAccessMenuCallBack _caMenuCallBack = null;
     private object _caMenuCallBackLock = new object();
 
     private int _ciStateInfoSize = NETUP_CI_STATE_INFO_SIZE;
@@ -607,9 +607,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
 
       lock (_caMenuCallBackLock)
       {
-        if (_caMenuCallBacks == null)
+        if (_caMenuCallBack == null)
         {
-          this.LogDebug("NetUP: menu call backs are not set");
+          this.LogDebug("NetUP: menu call back not set");
         }
 
         string title = DvbTextConverter.Convert(mmi.Title);
@@ -620,18 +620,18 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
         this.LogDebug("  sub-title = {0}", subTitle);
         this.LogDebug("  footer    = {0}", footer);
         this.LogDebug("  # entries = {0}", mmi.EntryCount);
-        if (_caMenuCallBacks != null)
+        if (_caMenuCallBack != null)
         {
-          _caMenuCallBacks.OnCiMenu(title, subTitle, footer, (int)mmi.EntryCount);
+          _caMenuCallBack.OnCiMenu(title, subTitle, footer, (int)mmi.EntryCount);
         }
 
         for (int i = 0; i < mmi.EntryCount; i++)
         {
           string entry = DvbTextConverter.Convert(mmi.Entries[i].Text);
           this.LogDebug("    {0, -7} = {1}", i + 1, entry);
-          if (_caMenuCallBacks != null)
+          if (_caMenuCallBack != null)
           {
-            _caMenuCallBacks.OnCiMenuChoice(i, entry);
+            _caMenuCallBack.OnCiMenuChoice(i, entry);
           }
         }
       }
@@ -670,17 +670,17 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
 
       lock (_caMenuCallBackLock)
       {
-        if (_caMenuCallBacks == null)
+        if (_caMenuCallBack == null)
         {
-          this.LogDebug("NetUP: menu call backs are not set");
+          this.LogDebug("NetUP: menu call back not set");
         }
 
         this.LogDebug("  prompt = {0}", prompt);
         this.LogDebug("  length = {0}", mmi.ExpectedAnswerLength);
         this.LogDebug("  blind  = {0}", mmi.IsBlindAnswer);
-        if (_caMenuCallBacks != null)
+        if (_caMenuCallBack != null)
         {
-          _caMenuCallBacks.OnCiRequest(mmi.IsBlindAnswer, mmi.ExpectedAnswerLength, prompt);
+          _caMenuCallBack.OnCiRequest(mmi.IsBlindAnswer, mmi.ExpectedAnswerLength, prompt);
         }
       }
       return (int)HResult.Severity.Success;
@@ -1056,12 +1056,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
     /// <summary>
     /// Set the menu call back delegate.
     /// </summary>
-    /// <param name="callBacks">The call back delegate.</param>
-    public void SetCallBacks(IConditionalAccessMenuCallBacks callBacks)
+    /// <param name="callBack">The call back delegate.</param>
+    public void SetMenuCallBack(IConditionalAccessMenuCallBack callBack)
     {
       lock (_caMenuCallBackLock)
       {
-        _caMenuCallBacks = callBacks;
+        _caMenuCallBack = callBack;
       }
       StartMmiHandlerThread();
     }

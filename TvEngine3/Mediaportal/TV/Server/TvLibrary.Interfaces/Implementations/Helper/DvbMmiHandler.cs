@@ -38,8 +38,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
     /// Handle raw MMI data which contains one or more APDU objects, performing CA menu call backs appropriately.
     /// </summary>
     /// <param name="mmi">The MMI data.</param>
-    /// <param name="callBacks">The call back delegate.</param>
-    public static void HandleMmiData(byte[] mmi, IConditionalAccessMenuCallBacks callBacks)
+    /// <param name="callBack">The call back delegate.</param>
+    public static void HandleMmiData(byte[] mmi, IConditionalAccessMenuCallBack callBack)
     {
       Log.Debug("DVB MMI: handle MMI data");
       if (mmi == null || mmi.Length < 4)
@@ -65,18 +65,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
       if (tag == MmiTag.CloseMmi)
       {
         // The CAM is requesting that we close the menu.
-        HandleClose(mmi, offset, apduLength, callBacks);
+        HandleClose(mmi, offset, apduLength, callBack);
       }
       else if (tag == MmiTag.Enquiry)
       {
         // The CAM wants input from the user.
-        HandleEnquiry(mmi, offset, apduLength, callBacks);
+        HandleEnquiry(mmi, offset, apduLength, callBack);
       }
       else if (tag == MmiTag.ListLast || tag == MmiTag.MenuLast ||
           tag == MmiTag.MenuMore || tag == MmiTag.ListMore)
       {
         // The CAM is providing a menu or list to present to the user.
-        HandleMenu(mmi, offset, apduLength, callBacks);
+        HandleMenu(mmi, offset, apduLength, callBack);
       }
       else
       {
@@ -85,7 +85,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
       }
     }
 
-    private static void HandleClose(byte[] apdu, int offset, int apduLength, IConditionalAccessMenuCallBacks callBacks)
+    private static void HandleClose(byte[] apdu, int offset, int apduLength, IConditionalAccessMenuCallBack callBack)
     {
       Log.Debug("DVB MMI: handle close");
 
@@ -110,17 +110,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
       Log.Debug("  command = {0}", command);
       Log.Debug("  delay   = {0} s", delay);
 
-      if (callBacks != null)
+      if (callBack != null)
       {
-        callBacks.OnCiCloseDisplay(delay);
+        callBack.OnCiCloseDisplay(delay);
       }
       else
       {
-        Log.Debug("DVB MMI: menu call backs are not set");
+        Log.Debug("DVB MMI: menu call back not set");
       }
     }
 
-    private static void HandleEnquiry(byte[] apdu, int offset, int apduLength, IConditionalAccessMenuCallBacks callBacks)
+    private static void HandleEnquiry(byte[] apdu, int offset, int apduLength, IConditionalAccessMenuCallBack callBack)
     {
       Log.Debug("DVB MMI: handle enquiry");
 
@@ -138,17 +138,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
       Log.Debug("  length = {0}", expectedAnswerLength);
       Log.Debug("  blind  = {0}", passwordMode);
 
-      if (callBacks != null)
+      if (callBack != null)
       {
-        callBacks.OnCiRequest(passwordMode, expectedAnswerLength, prompt);
+        callBack.OnCiRequest(passwordMode, expectedAnswerLength, prompt);
       }
       else
       {
-        Log.Debug("DVB MMI: menu call backs are not set");
+        Log.Debug("DVB MMI: menu call back not set");
       }
     }
 
-    private static void HandleMenu(byte[] apdu, int offset, int apduLength, IConditionalAccessMenuCallBacks callBacks)
+    private static void HandleMenu(byte[] apdu, int offset, int apduLength, IConditionalAccessMenuCallBack callBack)
     {
       Log.Debug("DVB MMI: handle menu");
 
@@ -182,9 +182,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
         return;
       }
 
-      if (callBacks == null)
+      if (callBack == null)
       {
-        Log.Debug("DVB MMI: menu call backs are not set");
+        Log.Debug("DVB MMI: menu call back not set");
       }
 
       entryCount = (byte)(entries.Count - 3);
@@ -192,17 +192,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
       Log.Debug("  sub-title = {0}", entries[1]);
       Log.Debug("  footer    = {0}", entries[2]);
       Log.Debug("  # entries = {0}", entryCount);
-      if (callBacks != null)
+      if (callBack != null)
       {
-        callBacks.OnCiMenu(entries[0], entries[1], entries[2], entryCount);
+        callBack.OnCiMenu(entries[0], entries[1], entries[2], entryCount);
       }
 
       for (byte i = 0; i < entryCount; i++)
       {
         Log.Debug("    {0, -7} = {1}", i + 1, entries[i + 3]);
-        if (callBacks != null)
+        if (callBack != null)
         {
-          callBacks.OnCiMenuChoice(i, entries[i + 3]);
+          callBack.OnCiMenuChoice(i, entries[i + 3]);
         }
       }
     }

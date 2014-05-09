@@ -316,12 +316,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     {
       this.LogDebug("MPEG 2 sub-channel: subchannel {0} OnGraphRunning()", _subChannelId);
 
-      DVBBaseChannel dvbService = _currentChannel as DVBBaseChannel;
-      if (dvbService == null)
+      int programNumber = 0;
+      int pmtPid = 0;
+      DVBBaseChannel digitalService = _currentChannel as DVBBaseChannel;
+      if (digitalService != null)
       {
-        throw new TvException("MPEG 2 sub-channel: current service is not set");
+        programNumber = digitalService.ServiceId;
+        pmtPid = digitalService.PmtPid;
       }
-      if (!WaitForPmt(dvbService.ServiceId, dvbService.PmtPid))
+      if (!WaitForPmt(programNumber, pmtPid))
       {
         throw new TvExceptionNoPMT("MPEG 2 sub-channel: PMT not received");
       }

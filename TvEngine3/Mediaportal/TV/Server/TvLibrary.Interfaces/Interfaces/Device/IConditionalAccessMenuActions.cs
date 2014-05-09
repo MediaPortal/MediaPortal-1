@@ -28,8 +28,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension
     /// <summary>
     /// Set the menu call back delegate.
     /// </summary>
-    /// <param name="callBacks">The call back delegate.</param>
-    void SetCallBacks(IConditionalAccessMenuCallBacks callBacks);
+    /// <param name="callBack">The call back delegate.</param>
+    void SetMenuCallBack(IConditionalAccessMenuCallBack callBack);
 
     /// <summary>
     /// Send a request from the user to the CAM to open the menu.

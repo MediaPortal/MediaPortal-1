@@ -24,7 +24,6 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Text.RegularExpressions;
 using System.Threading;
-using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Rtsp;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
@@ -35,12 +34,12 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 using UPnP.Infrastructure.CP.Description;
 using RtspClient = Mediaportal.TV.Server.TVLibrary.Implementations.Rtsp.RtspClient;
 
-namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
 {
   /// <summary>
   /// A base implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> for SAT>IP tuners.
   /// </summary>
-  internal abstract class TunerSatIpBase : TunerStream, IMpeg2PidFilter
+  internal abstract class TunerSatIpBase : TvCardBase, IMpeg2PidFilter
   {
     #region constants
 
@@ -106,6 +105,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
     private HashSet<ushort> _pidFilterPidsToRemove = new HashSet<ushort>();
     private HashSet<ushort> _pidFilterPidsToAdd = new HashSet<ushort>();
 
+    /// <summary>
+    /// Internal stream tuner, used to receive the RTP stream. This allows us
+    /// to decouple the stream tuning implementation (eg. DirectShow) from the
+    /// SAT>IP implementation.
+    /// </summary>
+    private ITunerInternal _streamTuner = null;
+
     #endregion
 
     #region constructor
@@ -115,11 +121,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
     /// </summary>
     /// <param name="serverDescriptor">The server's UPnP device description.</param>
     /// <param name="sequenceNumber">A unique sequence number or index for this instance.</param>
+    /// <param name="streamTuner">An internal tuner implementation, used for RTP stream reception.</param>
     /// <param name="tunerType">A character describing the tuner type.</param>
-    public TunerSatIpBase(DeviceDescriptor serverDescriptor, int sequenceNumber, char tunerType)
+    public TunerSatIpBase(DeviceDescriptor serverDescriptor, int sequenceNumber, ITunerInternal streamTuner, char tunerType)
       : base(serverDescriptor.FriendlyName + " Tuner " + sequenceNumber, serverDescriptor.DeviceUUID + sequenceNumber + tunerType)
     {
+      DVBIPChannel streamChannel = new DVBIPChannel();
+      streamChannel.Url = "rtp://127.0.0.1";
+      if (streamTuner == null || !streamTuner.CanTune(streamChannel))
+      {
+        throw new TvException("Internal tuner implementation is not usable.");
+      }
+
       _serverDescriptor = serverDescriptor;
+      _streamTuner = streamTuner;
       _localIpAddress = serverDescriptor.RootDescriptor.SSDPRootEntry.PreferredLink.Endpoint.EndPointIPAddress;
       _serverIpAddress = new Uri(serverDescriptor.RootDescriptor.SSDPRootEntry.PreferredLink.DescriptionLocation).Host;
       _productInstanceId = serverDescriptor.DeviceUUID;
@@ -127,6 +142,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
     }
 
     #endregion
+
+    /// <summary>
+    /// Reload the tuner's configuration.
+    /// </summary>
+    public override void ReloadConfiguration()
+    {
+      base.ReloadConfiguration();
+      _streamTuner.ReloadConfiguration();
+    }
 
     #region tuning & scanning
 
@@ -287,21 +311,24 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
         this.LogDebug("SAT>IP base: configure stream source filter");
         DVBIPChannel streamChannel = new DVBIPChannel();
         streamChannel.Url = rtpUrl;
-        base.PerformTuning(streamChannel);
+        _streamTuner.PerformTuning(streamChannel);
       }
 
       StartKeepAliveThread();
     }
 
+    #endregion
+
+    #region subchannel management
+
     /// <summary>
-    /// Get the tuner's channel scanning interface.
+    /// Allocate a new subchannel instance.
     /// </summary>
-    public override ITVScanning ScanningInterface
+    /// <param name="id">The identifier for the subchannel.</param>
+    /// <returns>the new subchannel instance</returns>
+    public override ITvSubChannel CreateNewSubChannel(int id)
     {
-      get
-      {
-        return new ScannerMpeg2TsBase(this, _filterTsWriter as ITsChannelScan);
-      }
+      return _streamTuner.CreateNewSubChannel(id);
     }
 
     #endregion
@@ -309,17 +336,28 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
     /// <summary>
     /// Actually load the tuner.
     /// </summary>
-    protected override void PerformLoading()
+    public override void PerformLoading()
     {
       _extensions.Add(this);
-      base.PerformLoading();
+      LoadExtensions(_serverDescriptor);
+      _streamTuner.PerformLoading();
+      _epgGrabber = _streamTuner.EpgGrabberInterface;
+      _channelScanner = new ScannerStreamWrapper(_streamTuner.ScanningInterface as IScannerInternal, this);
+    }
+
+    /// <summary>
+    /// Actually unload the tuner.
+    /// </summary>
+    public override void PerformUnloading()
+    {
+      _streamTuner.PerformUnloading();
     }
 
     /// <summary>
     /// Set the state of the tuner.
     /// </summary>
     /// <param name="state">The state to apply to the tuner.</param>
-    protected override void SetTunerState(TunerState state)
+    public override void SetTunerState(TunerState state)
     {
       this.LogDebug("SAT>IP base: set tuner state, current state = {0}, requested state = {1}", _state, state);
 
@@ -345,14 +383,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
         _satIpStreamId = string.Empty;
         _rtspSessionId = string.Empty;
       }
-      base.SetTunerState(state);
+      _streamTuner.SetTunerState(state);
     }
 
     /// <summary>
     /// Actually update tuner signal status statistics.
     /// </summary>
     /// <param name="onlyUpdateLock"><c>True</c> to only update lock status.</param>
-    protected override void PerformSignalStatusUpdate(bool onlyUpdateLock)
+    public override void PerformSignalStatusUpdate(bool onlyUpdateLock)
     {
       bool isSignalLocked = false;
       int signalLevel = 0;
@@ -411,7 +449,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
         this.LogDebug("SAT>IP base: starting new keep-alive thread");
         _keepAliveThreadStopEvent = new AutoResetEvent(false);
         _keepAliveThread = new Thread(new ThreadStart(KeepAlive));
-        _keepAliveThread.Name = string.Format("SAT>IP tuner {0} keep alive", _cardId);
+        _keepAliveThread.Name = string.Format("SAT>IP tuner {0} keep alive", _tunerId);
         _keepAliveThread.IsBackground = true;
         _keepAliveThread.Priority = ThreadPriority.Lowest;
         _keepAliveThread.Start();
@@ -548,7 +586,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
     /// This call back is invoked before the tuner is stopped.
     /// </summary>
     /// <param name="tuner">The tuner instance that this extension instance is associated with.</param>
-    /// <param name="action">As an input, the action that TV Server wants to take; as an output, the action to take.</param>
+    /// <param name="action">As an input, the action that the TV Engine wants to take; as an output, the action to take.</param>
     public virtual void OnStop(ITVCard tuner, ref TunerAction action)
     {
     }
@@ -680,6 +718,23 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
         this.LogError(ex, "SAT>IP base: exception configuring PID filter");
       }
       return false;
+    }
+
+    #endregion
+
+    #region IDisposable member
+
+    /// <summary>
+    /// Release and dispose all resources.
+    /// </summary>
+    public override void Dispose()
+    {
+      base.Dispose();
+      if (_streamTuner != null)
+      {
+        _streamTuner.Dispose();
+        _streamTuner = null;
+      }
     }
 
     #endregion

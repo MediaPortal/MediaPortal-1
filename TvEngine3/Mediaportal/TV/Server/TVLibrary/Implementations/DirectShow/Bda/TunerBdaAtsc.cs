@@ -140,6 +140,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       }
     }
 
+    /// <summary>
+    /// Actually load the tuner.
+    /// </summary>
+    public override void PerformLoading()
+    {
+      base.PerformLoading();
+
+      // ATSC/SCTE EPG grabbing currently not supported.
+      _epgGrabber = null;
+
+      _channelScanner = new ScannerMpeg2TsAtsc(this, _filterTsWriter as ITsChannelScan);
+    }
+
     #endregion
 
     #region tuning & scanning
@@ -239,17 +252,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
         SymbolRate = uint.MaxValue
       };
       return networkProvider.TuneATSC((uint)atscChannel.PhysicalChannel, frequencySettings, demodulatorSettings);
-    }
-
-    /// <summary>
-    /// Get the tuner's channel scanning interface.
-    /// </summary>
-    public override ITVScanning ScanningInterface
-    {
-      get
-      {
-        return new ScannerMpeg2TsAtsc(this, _filterTsWriter as ITsChannelScan);
-      }
     }
 
     /// <summary>

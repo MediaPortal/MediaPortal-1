@@ -282,7 +282,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
 
     private string _tunerDevicePath = string.Empty;
 
-    private IConditionalAccessMenuCallBacks _caMenuCallBacks = null;
+    private IConditionalAccessMenuCallBack _caMenuCallBack = null;
     private object _caMenuCallBackLock = new object();
 
     // The interface requires the call back delegate pointers to be passed
@@ -361,9 +361,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
 
       lock (_caMenuCallBackLock)
       {
-        if (_caMenuCallBacks == null)
+        if (_caMenuCallBack == null)
         {
-          this.LogDebug("AVerMedia: menu call backs are not set");
+          this.LogDebug("AVerMedia: menu call back not set");
         }
 
         MmiData data = (MmiData)Marshal.PtrToStructure(messageData, typeof(MmiData));
@@ -382,9 +382,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
           this.LogDebug("  sub-title    = {0}", subTitle);
           this.LogDebug("  footer       = {0}", footer);
           this.LogDebug("  # entries    = {0}", data.Count);
-          if (_caMenuCallBacks != null)
+          if (_caMenuCallBack != null)
           {
-            _caMenuCallBacks.OnCiMenu(title, subTitle, footer, data.Count);
+            _caMenuCallBack.OnCiMenu(title, subTitle, footer, data.Count);
           }
           if (data.Count > 0)
           {
@@ -392,9 +392,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
             {
               string entry = DvbTextConverter.Convert(data.Strings[i + 3].Text);
               this.LogDebug("    {0, -10} = {1}", i + 1, entry);
-              if (_caMenuCallBacks != null)
+              if (_caMenuCallBack != null)
               {
-                _caMenuCallBacks.OnCiMenuChoice(i, entry);
+                _caMenuCallBack.OnCiMenuChoice(i, entry);
               }
             }
           }
@@ -405,9 +405,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
           this.LogDebug("  prompt       = {0}", prompt);
           this.LogDebug("  length       = {0}", data.Count);
           this.LogDebug("  blind        = {0}", data.IsBlindAnswer != 0);
-          if (_caMenuCallBacks != null)
+          if (_caMenuCallBack != null)
           {
-            _caMenuCallBacks.OnCiRequest(data.IsBlindAnswer != 0, data.Count, prompt);
+            _caMenuCallBack.OnCiRequest(data.IsBlindAnswer != 0, data.Count, prompt);
           }
         }
         else
@@ -753,12 +753,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
     /// <summary>
     /// Set the menu call back delegate.
     /// </summary>
-    /// <param name="callBacks">The call back delegate.</param>
-    public void SetCallBacks(IConditionalAccessMenuCallBacks callBacks)
+    /// <param name="callBack">The call back delegate.</param>
+    public void SetMenuCallBack(IConditionalAccessMenuCallBack callBack)
     {
       lock (_caMenuCallBackLock)
       {
-        _caMenuCallBacks = callBacks;
+        _caMenuCallBack = callBack;
       }
     }
 

@@ -26,35 +26,33 @@ using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Services;
 
 namespace Mediaportal.TV.Server.TVLibrary
 {
-  internal class TimeShiftingEPGGrabber : BaseEpgGrabber, IDisposable
+  internal class TimeShiftingEpgGrabber : IEpgGrabberCallBack, IDisposable
   {
-
     #region Variables
 
     private readonly ITVCard _card;
     private readonly System.Timers.Timer _epgTimer = new System.Timers.Timer();
     private DateTime _grabStartTime;
-    private List<EpgChannel> _epg;
     private bool _updateThreadRunning;
     private readonly EpgDBUpdater _dbUpdater;
     private bool _disposed;
 
     #endregion
 
-    public TimeShiftingEPGGrabber(IEpgEvents epgEvents, ITVCard card)
+    public TimeShiftingEpgGrabber(ITVCard card)
     {
       _card = card;
-      _dbUpdater = new EpgDBUpdater(epgEvents, "TimeshiftingEpgGrabber", false);
+      _dbUpdater = new EpgDBUpdater(ServiceManager.Instance.InternalControllerService.OnImportEpgPrograms, "TimeShiftingEpgGrabber", false);
       _updateThreadRunning = false;
       _epgTimer.Elapsed += _epgTimer_Elapsed;
     }
 
     private void LoadSettings()
     {
-
       double timeout = SettingsManagement.GetValue("timeshiftingEpgGrabberTimeout", 2.0);
       _epgTimer.Interval = timeout * 60000;
     }
@@ -78,19 +76,22 @@ namespace Mediaportal.TV.Server.TVLibrary
       TimeSpan ts = DateTime.Now - _grabStartTime;
       this.LogInfo("TimeshiftingEpgGrabber: timeout after {0} mins", ts.TotalMinutes);
       _epgTimer.Enabled = false;
-      _card.AbortGrabbing();
+      IEpgGrabber epgGrabber = _card.EpgGrabberInterface;
+      if (epgGrabber != null)
+      {
+        epgGrabber.AbortGrabbing();
+      }
     }
 
-    #region BaseEpgGrabber implementation
+    #region IEpgCallBack implementation
 
     /// <summary>
     /// Gets called when epg has been cancelled
     /// Should be overriden by the class
     /// </summary>
-    public new void OnEpgCancelled()
+    public void OnEpgCancelled()
     {
       this.LogInfo("Timeshifting epg grabber stopped.");
-      _card.IsEpgGrabbing = false;
       _epgTimer.Enabled = false;
     }
 
@@ -98,66 +99,46 @@ namespace Mediaportal.TV.Server.TVLibrary
     /// Gets called when epg has been received
     /// Should be overriden by the class
     /// </summary>
-    /// <returns></returns>
-    public override int OnEpgReceived()
+    public void OnEpgReceived(IList<EpgChannel> epg)
     {
-      List<EpgChannel> grabbedEpg = null;
-      try
-      {
-        grabbedEpg = _card.Epg;
-      }
-      catch (Exception ex)
-      {
-        this.LogInfo(ex, "TimeshiftingEpgGrabber: Error while retrieving the epg data: ");
-      }
-      if (grabbedEpg == null)
+      if (epg == null || epg.Count == 0)
       {
         this.LogInfo("TimeshiftingEpgGrabber: No epg received.");
-        return 0;
+        return;
       }
-      _epg = new List<EpgChannel>(grabbedEpg);
-      this.LogInfo("TimeshiftingEpgGrabber: OnEPGReceived got {0} channels", _epg.Count);
-      if (_epg.Count == 0)
-        this.LogInfo("TimeshiftingEpgGrabber: No epg received.");
-      else
-      {
-        Thread workerThread = new Thread(UpdateDatabaseThread);
-        workerThread.IsBackground = true;
-        workerThread.Name = "EPG Update thread";
-        workerThread.Start();
-      }
+      this.LogInfo("TimeshiftingEpgGrabber: OnEPGReceived got {0} channels", epg.Count);
+      Thread workerThread = new Thread(new ParameterizedThreadStart(UpdateDatabaseThread));
+      workerThread.IsBackground = true;
+      workerThread.Name = "EPG Update thread";
+      workerThread.Start(epg);
       _epgTimer.Enabled = false;
-      return 0;
     }
 
     #endregion
 
     #region Database update routines
 
-    private void UpdateDatabaseThread()
+    private void UpdateDatabaseThread(object epgObj)
     {
       try
       {
-        if (_epg == null)
+        IList<EpgChannel> epg = epgObj as IList<EpgChannel>;
+        if (epg == null)
         {
           return;
         }
-        _card.IsEpgGrabbing = true;
         _updateThreadRunning = true;
         Thread.CurrentThread.Priority = ThreadPriority.Lowest;
         _dbUpdater.ReloadConfig();
-        foreach (EpgChannel epgChannel in _epg)
+        foreach (EpgChannel epgChannel in epg)
         {
           _dbUpdater.UpdateEpgForChannel(epgChannel);
         }
         ProgramManagement.SynchProgramStatesForAllSchedules(ScheduleManagement.ListAllSchedules());
         this.LogInfo("TimeshiftingEpgGrabber: Finished updating the database.");
-        _epg.Clear();
-        _epg = null;
       }
       finally
       {
-        _card.IsEpgGrabbing = false;
         _updateThreadRunning = false;         
       }            
     }
@@ -195,7 +176,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       GC.SuppressFinalize(this);
     }
 
-    ~TimeShiftingEPGGrabber()
+    ~TimeShiftingEpgGrabber()
     {
       Dispose(false);
     }

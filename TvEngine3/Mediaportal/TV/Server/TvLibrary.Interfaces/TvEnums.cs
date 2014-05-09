@@ -173,6 +173,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     [Description("Not Loaded")]
     NotLoaded,
     /// <summary>
+    /// The tuner is being loaded.
+    /// </summary>
+    Loading,
+    /// <summary>
     /// The tuner is loaded but not paused or started.
     /// </summary>
     Stopped,

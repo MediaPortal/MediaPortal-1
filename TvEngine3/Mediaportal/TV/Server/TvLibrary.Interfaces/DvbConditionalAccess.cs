@@ -534,7 +534,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
   }
 
   /// <summary>
-  /// TV Server stream types used for unified standard handling.
+  /// TV Engine stream types used for unified standard handling.
   /// </summary>
   /// <remarks>
   /// Standard, de-facto standard or unique stream types are used where possible to simplify the conversion

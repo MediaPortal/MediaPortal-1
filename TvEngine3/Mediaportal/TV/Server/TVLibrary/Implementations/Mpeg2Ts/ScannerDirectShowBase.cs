@@ -22,6 +22,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using System.Threading;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
@@ -40,12 +41,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
   /// A base implementation of <see cref="T:TvLibrary.Interfaces.ITVScanning"/> for MPEG 2
   /// transport streams.
   /// </summary>
-  internal class ScannerMpeg2TsBase : ITVScanning, IChannelScanCallBack
+  internal class ScannerMpeg2TsBase : IScannerInternal, IChannelScanCallBack
   {
     #region variables
 
     private ITsChannelScan _analyser;
-    protected readonly ITVCard _tuner;
+    protected ITVCard _tuner;
     private ManualResetEvent _event;
 
     #endregion
@@ -79,6 +80,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
 
     #endregion
 
+    #region IScannerInternal member
+
+    /// <summary>
+    /// Set the scanner's _tuner.
+    /// </summary>
+    public virtual ITVCard Tuner
+    {
+      set
+      {
+        _tuner = value;
+      }
+    }
+
+    #endregion
+
     #region channel scanning
 
     /// <summary>
@@ -93,7 +109,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       {
         _tuner.IsScanning = true;
         // An exception is thrown here if signal is not locked.
-        _tuner.Scan(0, channel);
+        _tuner.Tune(0, channel);
 
         this.LogDebug("Scan: tuner locked:{0} signal:{1} quality:{2}", _tuner.IsTunerLocked, _tuner.SignalLevel,
                           _tuner.SignalQuality);
@@ -126,7 +142,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
 
           // Start scanning, then wait for TsWriter to tell us that scanning is complete.
           _analyser.ScanStream(standard);
-          _event.WaitOne(settings.TimeOutSDT * 1000, true);
+          _event.WaitOne(_tuner.Parameters.TimeOutSDT * 1000, true);
 
           int found = 0;
           int serviceCount;
@@ -253,13 +269,61 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
               digitalChannel.TransportId = transportStreamId;
               digitalChannel.ServiceId = serviceId;
               digitalChannel.PmtPid = pmtPid;
-              try
+
+              // TODO this case should be moved to a separate ATSC scanner after adding a TsWriter ATSC/SCTE scan interface
+              if (standard == BroadcastStandard.Atsc || standard == BroadcastStandard.Scte)
               {
-                digitalChannel.LogicalChannelNumber = int.Parse(logicalChannelNumber); //TODO this won't work for ATSC x.y LCNs. LCN must be a string.
+                ATSCChannel newAtscChannel = newChannel as ATSCChannel;
+                if (string.IsNullOrEmpty(logicalChannelNumber))
+                {
+                  newAtscChannel.MajorChannel = newAtscChannel.PhysicalChannel;
+                  newAtscChannel.MinorChannel = newAtscChannel.ServiceId;
+                }
+                else
+                {
+                  // ATSC x.y LCNs
+                  // TODO LCN should be a string in the DB so that we don't have to do this, and then we could remove major and minor channel
+                  Match m = Regex.Match(logicalChannelNumber, @"^(\d+)(\.(\d+))?$");
+                  if (m.Success)
+                  {
+                    newAtscChannel.MajorChannel = int.Parse(m.Groups[1].Captures[0].Value);
+                    if (m.Groups[2].Captures.Count > 0)
+                    {
+                      newAtscChannel.MinorChannel = int.Parse(m.Groups[3].Captures[0].Value);
+                    }
+                    else
+                    {
+                      newAtscChannel.MinorChannel = 0;
+                    }
+                  }
+                }
+                if (newAtscChannel.MajorChannel > 0)
+                {
+                  if (newAtscChannel.MinorChannel > 0)
+                  {
+                    digitalChannel.LogicalChannelNumber = (newAtscChannel.MajorChannel * 1000) + newAtscChannel.MinorChannel;
+                  }
+                  else
+                  {
+                    digitalChannel.LogicalChannelNumber = newAtscChannel.MajorChannel;
+                  }
+                }
+                else
+                {
+                  digitalChannel.LogicalChannelNumber = 10000;
+                }
               }
-              catch (Exception)
+              else
               {
-                digitalChannel.LogicalChannelNumber = 10000;
+                int lcn = 10000;
+                if (!string.IsNullOrEmpty(logicalChannelNumber) && int.TryParse(logicalChannelNumber, out lcn))
+                {
+                  digitalChannel.LogicalChannelNumber = lcn;
+                }
+                else
+                {
+                  digitalChannel.LogicalChannelNumber = 10000;
+                }
               }
             }
 
@@ -311,7 +375,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       {
         _tuner.IsScanning = true;
         // An exception is thrown here if signal is not locked.
-        _tuner.Scan(0, channel);
+        _tuner.Tune(0, channel);
 
         if (_analyser == null)
         {
@@ -329,7 +393,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
                             _tuner.SignalQuality);
 
           // Start scanning, then wait for TsWriter to tell us that scanning is complete.
-          _event.WaitOne(settings.TimeOutSDT * 1000, true); //TODO: timeout SDT should be "max scan time"
+          _event.WaitOne(_tuner.Parameters.TimeOutSDT * 1000, true); //TODO: timeout SDT should be "max scan time"
 
           //TODO: add min scan time
 
@@ -351,7 +415,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
           {
             int originalNetworkId;
             int transportStreamId;
-            int type;   // This is as-per the TV Server channel types.
+            int type;   // This is as-per the TVE channel types.
             int frequency;
             int polarisation;
             int modulation;
@@ -682,8 +746,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     /// Determine whether a service type is a known service type.
     /// </summary>
     /// <remarks>
-    /// Known service types are the types that TV Server is able to manage. At present only television and
-    /// radio service types are supported.
+    /// Known service types are the types that the TV Engine is able to manage. At present only
+    /// television and radio service types are supported.
     /// </remarks>
     /// <param name="serviceType">The service type to check.</param>
     /// <returns><c>true</c> if the service type is a known service type, otherwise <c>false</c></returns>

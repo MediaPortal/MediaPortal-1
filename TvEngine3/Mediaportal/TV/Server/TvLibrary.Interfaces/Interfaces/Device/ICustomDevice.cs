@@ -113,7 +113,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension
     /// Example usage: don't allow the device to be stopped to ensure optimal operation or compatibility.
     /// </remarks>
     /// <param name="tuner">The tuner instance that this extension instance is associated with.</param>
-    /// <param name="action">As an input, the action that TV Server wants to take; as an output, the action to take.</param>
+    /// <param name="action">As an input, the action that the TV Engine wants to take; as an output, the action to take.</param>
     void OnStop(ITVCard tuner, ref TunerAction action);
 
     #endregion
@@ -221,7 +221,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension
     /// This call back is invoked before the tuner is stopped.
     /// </summary>
     /// <param name="tuner">The tuner instance that this extension instance is associated with.</param>
-    /// <param name="action">As an input, the action that TV Server wants to take; as an output, the action to take.</param>
+    /// <param name="action">As an input, the action that the TV Engine wants to take; as an output, the action to take.</param>
     public virtual void OnStop(ITVCard tuner, ref TunerAction action)
     {
     }

@@ -101,50 +101,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       // and a virtual channel number (eg. 21.2). The callsign is a historical thing - if available, it is usually
       // found in the short name field in the VCT. Virtual channel numbers were introduced in the analog (NTSC)
       // switch-off. They don't necessarily have any relationship to the physical channel number (6 MHz frequency
-      // slot - in TV Server, ATSCChannel.PhysicalChannel) that the service is transmitted in.
-
-      //TODO redo
-      // If possible we use <major channel>-<minor channel> labelling.
-      /*int majorChannel = atscChannel.MajorChannel;
-      int minorChannel = atscChannel.MinorChannel;
-      if (atscChannel.MajorChannel > 0)
+      // slot - in TVE, ATSCChannel.PhysicalChannel) that the service is transmitted in.
+      if (atscChannel.MinorChannel >= 0)
       {
-        Log.this.LogDebug("AtscScanning: service name not set, translated with VCT info to {0}", atscChannel.Name);
+        atscChannel.Name = "Unknown " + atscChannel.MajorChannel + "-" + atscChannel.MinorChannel;
       }
       else
       {
-        // If we don't have the major and minor channel numbers or the name then use the physical channel number or
-        // frequency for the major channel substitute.
-        Log.this.LogDebug("AtscScanning: service name not set, translated with other info to {0}", atscChannel.Name);
-        if (atscChannel.PhysicalChannel > 0)
-        {
-          majorChannel = atscChannel.PhysicalChannel;
-        }
-        else
-        {
-          majorChannel = (int)atscChannel.Frequency;
-        }
-
-        // For minor channel number, use the SID or PMT PID. These are sometimes used in strange ways...
-        if (atscChannel.ServiceId < 16)
-        {
-          minorChannel = atscChannel.ServiceId;
-        }
-        else if (atscChannel.PmtPid % 16 == 0)
-        {
-          minorChannel = atscChannel.PmtPid / 16;
-        }
-        else if (atscChannel.ServiceId % 16 == 0)
-        {
-          minorChannel = atscChannel.ServiceId / 16;
-        }
-        else
-        {
-          minorChannel = atscChannel.ServiceId;
-        }
+        atscChannel.Name = "Unknown " + atscChannel.MajorChannel;
       }
-
-      atscChannel.Name = majorChannel + "-" + minorChannel;*/
     }
   }
 }

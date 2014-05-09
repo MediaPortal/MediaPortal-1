@@ -327,7 +327,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// A structure for holding the full set of call back function and context pointers.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    private struct TtFullCiCallBacks
+    private struct TtFullCiCallBack
     {
       public OnTtSlotStatus OnSlotStatus;
       public IntPtr OnSlotStatusContext;
@@ -376,7 +376,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// A structure for holding a minimal ("slim") set of call back function and context pointers.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    private struct TtSlimCiCallBacks
+    private struct TtSlimCiCallBack
     {
       public OnTtSlotStatus OnSlotStatus;
       public IntPtr OnSlotStatusContext;
@@ -701,32 +701,32 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// Initialise the conditional access interface. In this case the full set of call back delegates are specified.
     /// </summary>
     /// <param name="handle">The handle allocated to a device when it was opened.</param>
-    /// <param name="callBacks">Full call back structure pointer.</param>
+    /// <param name="callBack">Full call back structure pointer.</param>
     /// <returns><c>TtApiResult.Success</c> if a CI slot is present/connected, otherwise <c>TtApiResult.Error</c></returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiOpenCI(IntPtr handle, TtFullCiCallBacks callBacks);
+    private static extern TtApiResult bdaapiOpenCI(IntPtr handle, TtFullCiCallBack callBack);
 
     /// <summary>
     /// Initialise the conditional access interface. In this case the full set of call back delegates are specified.
     /// </summary>
     /// <param name="handle">The handle allocated to a device when it was opened.</param>
-    /// <param name="callBacks">Full call back structure pointer.</param>
+    /// <param name="callBack">Full call back structure pointer.</param>
     /// <param name="ciMessageHandler">A delegate for handling raw messages from the interface.</param>
     /// <returns><c>TtApiResult.Success</c> if a CI slot is present/connected, otherwise <c>TtApiResult.Error</c></returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiOpenCIext(IntPtr handle, TtFullCiCallBacks callBacks, OnTtCiMessage ciMessageHandler);
+    private static extern TtApiResult bdaapiOpenCIext(IntPtr handle, TtFullCiCallBack callBack, OnTtCiMessage ciMessageHandler);
 
     /// <summary>
     /// Initialise the conditional access interface. In this case a minimal set of call back delegates are specified.
     /// </summary>
     /// <param name="handle">The handle allocated to a device when it was opened.</param>
-    /// <param name="callBacks">Minimal call back structure pointer.</param>
+    /// <param name="callBack">Minimal call back structure pointer.</param>
     /// <returns><c>TtApiResult.Success</c> if a CI slot is present/connected, otherwise <c>TtApiResult.Error</c></returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiOpenCISlim(IntPtr handle, TtSlimCiCallBacks callBacks);
+    private static extern TtApiResult bdaapiOpenCISlim(IntPtr handle, TtSlimCiCallBack callBack);
 
     /// <summary>
     /// Initialise the conditional access interface. In this case call back delegates are not specified.
@@ -1060,8 +1060,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     private IntPtr _pmtBuffer = IntPtr.Zero;
     private IntPtr _generalBuffer = IntPtr.Zero;
 
-    private TtFullCiCallBacks _ciCallBacks;
-    private IConditionalAccessMenuCallBacks _caMenuCallBacks = null;
+    private TtFullCiCallBack _ciCallBack;
+    private IConditionalAccessMenuCallBack _caMenuCallBack = null;
     private object _caMenuCallBackLock = new object();
 
     // When the CAM asks for input (via call back), the input request prompt is provided
@@ -1420,9 +1420,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
 
       lock (_caMenuCallBackLock)
       {
-        if (_caMenuCallBacks == null)
+        if (_caMenuCallBack == null)
         {
-          this.LogDebug("TechnoTrend: menu call backs are not set");
+          this.LogDebug("TechnoTrend: menu call back not set");
         }
 
         // Decode menu/list strings for call back.
@@ -1454,17 +1454,17 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
         this.LogDebug("  sub-title = {0}", entryStrings[1]);
         this.LogDebug("  footer    = {0}", entryStrings[2]);
         this.LogDebug("  # entries = {0}", entryCount - 3);
-        if (_caMenuCallBacks != null)
+        if (_caMenuCallBack != null)
         {
-          _caMenuCallBacks.OnCiMenu(entryStrings[0], entryStrings[1], entryStrings[2], entryCount - 3);
+          _caMenuCallBack.OnCiMenu(entryStrings[0], entryStrings[1], entryStrings[2], entryCount - 3);
         }
 
         for (int i = 3; i < entryCount; i++)
         {
           this.LogDebug("    {0, -7} = {1}", i - 2, entryStrings[i]);
-          if (_caMenuCallBacks != null)
+          if (_caMenuCallBack != null)
           {
-            _caMenuCallBacks.OnCiMenuChoice(i - 3, entryStrings[i]);
+            _caMenuCallBack.OnCiMenuChoice(i - 3, entryStrings[i]);
           }
         }
       }
@@ -1480,13 +1480,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       this.LogInfo("TechnoTrend: switch OSD off call back, slot = {0}", slotIndex);
       lock (_caMenuCallBackLock)
       {
-        if (_caMenuCallBacks != null)
+        if (_caMenuCallBack != null)
         {
-          _caMenuCallBacks.OnCiCloseDisplay(0);
+          _caMenuCallBack.OnCiCloseDisplay(0);
         }
         else
         {
-          this.LogDebug("TechnoTrend: menu call backs are not set");
+          this.LogDebug("TechnoTrend: menu call back not set");
         }
       }
     }
@@ -1507,13 +1507,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       this.LogDebug("  key mask = 0x{0:x4}", keyMask);
       lock (_caMenuCallBackLock)
       {
-        if (_caMenuCallBacks != null)
+        if (_caMenuCallBack != null)
         {
-          _caMenuCallBacks.OnCiRequest(blind, answerLength, _camInputRequestPrompt);
+          _caMenuCallBack.OnCiRequest(blind, answerLength, _camInputRequestPrompt);
         }
         else
         {
-          this.LogDebug("TechnoTrend: menu call backs are not set");
+          this.LogDebug("TechnoTrend: menu call back not set");
         }
       }
     }
@@ -1888,38 +1888,38 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       }
 
       // Call back contexts.
-      _ciCallBacks.OnSlotStatusContext = _tunerHandle;
-      _ciCallBacks.OnCaStatusContext = _tunerHandle;
-      _ciCallBacks.OnDisplayStringContext = _tunerHandle;
-      _ciCallBacks.OnDisplayMenuContext = _tunerHandle;
-      _ciCallBacks.OnDisplayListContext = _tunerHandle;
-      _ciCallBacks.OnSwitchOsdOffContext = _tunerHandle;
-      _ciCallBacks.OnInputRequestContext = _tunerHandle;
-      _ciCallBacks.OnLscSetDescriptorContext = _tunerHandle;
-      _ciCallBacks.OnLscConnectContext = _tunerHandle;
-      _ciCallBacks.OnLscDisconnectContext = _tunerHandle;
-      _ciCallBacks.OnLscSetParamsContext = _tunerHandle;
-      _ciCallBacks.OnLscEnquireStatusContext = _tunerHandle;
-      _ciCallBacks.OnLscGetNextBufferContext = _tunerHandle;
-      _ciCallBacks.OnLscTransmitBufferContext = _tunerHandle;
+      _ciCallBack.OnSlotStatusContext = _tunerHandle;
+      _ciCallBack.OnCaStatusContext = _tunerHandle;
+      _ciCallBack.OnDisplayStringContext = _tunerHandle;
+      _ciCallBack.OnDisplayMenuContext = _tunerHandle;
+      _ciCallBack.OnDisplayListContext = _tunerHandle;
+      _ciCallBack.OnSwitchOsdOffContext = _tunerHandle;
+      _ciCallBack.OnInputRequestContext = _tunerHandle;
+      _ciCallBack.OnLscSetDescriptorContext = _tunerHandle;
+      _ciCallBack.OnLscConnectContext = _tunerHandle;
+      _ciCallBack.OnLscDisconnectContext = _tunerHandle;
+      _ciCallBack.OnLscSetParamsContext = _tunerHandle;
+      _ciCallBack.OnLscEnquireStatusContext = _tunerHandle;
+      _ciCallBack.OnLscGetNextBufferContext = _tunerHandle;
+      _ciCallBack.OnLscTransmitBufferContext = _tunerHandle;
 
       // Call back functions.
-      _ciCallBacks.OnSlotStatus = OnSlotStatus;
-      _ciCallBacks.OnCaStatus = OnCaStatus;
-      _ciCallBacks.OnDisplayString = OnDisplayString;
-      _ciCallBacks.OnDisplayMenu = OnDisplayMenuOrList;
-      _ciCallBacks.OnDisplayList = OnDisplayMenuOrList;
-      _ciCallBacks.OnSwitchOsdOff = OnSwitchOsdOff;
-      _ciCallBacks.OnInputRequest = OnInputRequest;
-      _ciCallBacks.OnLscSetDescriptor = OnLscSetDescriptor;
-      _ciCallBacks.OnLscConnect = OnLscConnect;
-      _ciCallBacks.OnLscDisconnect = OnLscDisconnect;
-      _ciCallBacks.OnLscSetParams = OnLscSetParams;
-      _ciCallBacks.OnLscEnquireStatus = OnLscEnquireStatus;
-      _ciCallBacks.OnLscGetNextBuffer = OnLscGetNextBuffer;
-      _ciCallBacks.OnLscTransmitBuffer = OnLscTransmitBuffer;
+      _ciCallBack.OnSlotStatus = OnSlotStatus;
+      _ciCallBack.OnCaStatus = OnCaStatus;
+      _ciCallBack.OnDisplayString = OnDisplayString;
+      _ciCallBack.OnDisplayMenu = OnDisplayMenuOrList;
+      _ciCallBack.OnDisplayList = OnDisplayMenuOrList;
+      _ciCallBack.OnSwitchOsdOff = OnSwitchOsdOff;
+      _ciCallBack.OnInputRequest = OnInputRequest;
+      _ciCallBack.OnLscSetDescriptor = OnLscSetDescriptor;
+      _ciCallBack.OnLscConnect = OnLscConnect;
+      _ciCallBack.OnLscDisconnect = OnLscDisconnect;
+      _ciCallBack.OnLscSetParams = OnLscSetParams;
+      _ciCallBack.OnLscEnquireStatus = OnLscEnquireStatus;
+      _ciCallBack.OnLscGetNextBuffer = OnLscGetNextBuffer;
+      _ciCallBack.OnLscTransmitBuffer = OnLscTransmitBuffer;
 
-      TtApiResult result = bdaapiOpenCI(_tunerHandle, _ciCallBacks);
+      TtApiResult result = bdaapiOpenCI(_tunerHandle, _ciCallBack);
       if (result == TtApiResult.Success)
       {
         this.LogDebug("TechnoTrend: result = success");
@@ -2119,12 +2119,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <summary>
     /// Set the menu call back delegate.
     /// </summary>
-    /// <param name="callBacks">The call back delegate.</param>
-    public void SetCallBacks(IConditionalAccessMenuCallBacks callBacks)
+    /// <param name="callBack">The call back delegate.</param>
+    public void SetMenuCallBack(IConditionalAccessMenuCallBack callBack)
     {
       lock (_caMenuCallBackLock)
       {
-        _caMenuCallBacks = callBacks;
+        _caMenuCallBack = callBack;
       }
     }
 

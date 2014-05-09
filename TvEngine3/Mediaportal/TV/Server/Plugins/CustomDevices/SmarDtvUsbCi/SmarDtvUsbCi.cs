@@ -25,6 +25,7 @@ using System.Globalization;
 using System.Runtime.InteropServices;
 using DirectShowLib;
 using Mediaportal.TV.Server.Plugins.Base.Interfaces;
+using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
@@ -97,7 +98,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
     #region structs
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    private struct SmarDtvUsbCiCallBacks
+    private struct SmarDtvUsbCiCallBack
     {
       public IntPtr Context;  // Optional context that the interface will pass back as a parameter when the delegates are executed.
       public OnSmarDtvUsbCiState OnCiState;
@@ -143,7 +144,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
 
     //private static readonly int APPLICATION_INFO_SIZE = Marshal.SizeOf(typeof(ApplicationInfo));    // 358
     private static readonly int VERSION_INFO_SIZE = Marshal.SizeOf(typeof(VersionInfo));            // 52
-    private static readonly int CI_CALLBACKS_SIZE = Marshal.SizeOf(typeof(SmarDtvUsbCiCallBacks));  // 20
+    private static readonly int CI_CALLBACK_SIZE = Marshal.SizeOf(typeof(SmarDtvUsbCiCallBack));    // 20
 
     #endregion
 
@@ -168,9 +169,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
     private IFilterGraph2 _graph = null;
 
     // Call backs
-    private IConditionalAccessMenuCallBacks _caMenuCallBacks = null;
+    private IConditionalAccessMenuCallBack _caMenuCallBack = null;
     private object _caMenuCallBackLock = new object();
-    private SmarDtvUsbCiCallBacks _ciCallBacks;
+    private SmarDtvUsbCiCallBack _ciCallBack;
     private IntPtr _ciCallBackBuffer = IntPtr.Zero;
 
     #endregion
@@ -236,13 +237,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
       this.LogInfo("SmarDTV USB CI: close MMI call back");
       lock (_caMenuCallBackLock)
       {
-        if (_caMenuCallBacks != null)
+        if (_caMenuCallBack != null)
         {
-          _caMenuCallBacks.OnCiCloseDisplay(0);
+          _caMenuCallBack.OnCiCloseDisplay(0);
         }
         else
         {
-          this.LogDebug("SmarDTV USB CI: menu call backs are not set");
+          this.LogDebug("SmarDTV USB CI: menu call back not set");
         }
       }
       return 0;
@@ -264,7 +265,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
       Marshal.Copy(apdu, apduBytes, 0, apduLength);
       lock (_caMenuCallBackLock)
       {
-        DvbMmiHandler.HandleMmiData(apduBytes, _caMenuCallBacks);
+        DvbMmiHandler.HandleMmiData(apduBytes, _caMenuCallBack);
       }
       return 0;
     }
@@ -510,9 +511,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
     /// <summary>
     /// Get an instance of the configuration section for use in TV Server configuration (SetupTv).
     /// </summary>
-    public Mediaportal.TV.Server.SetupControls.SectionSettings Setup
+    public SectionSettings Setup
     {
-      get { return new SmarDtvUsbCiConfig(); }
+      get
+      {
+        return new SmarDtvUsbCiConfig();
+      }
     }
 
     /// <summary>
@@ -559,13 +563,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
       }
 
       // Setup call backs and open the interface.
-      _ciCallBacks = new SmarDtvUsbCiCallBacks();
-      _ciCallBacks.OnApdu = new OnSmarDtvUsbCiApdu(OnApdu);
-      _ciCallBacks.OnApplicationInfo = new OnSmarDtvUsbCiApplicationInfo(OnApplicationInfo);
-      _ciCallBacks.OnCiState = new OnSmarDtvUsbCiState(OnCiState);
-      _ciCallBacks.OnCloseMmi = new OnSmarDtvUsbCiCloseMmi(OnCloseMmi);
-      _ciCallBackBuffer = Marshal.AllocCoTaskMem(CI_CALLBACKS_SIZE);
-      Marshal.StructureToPtr(_ciCallBacks, _ciCallBackBuffer, false);
+      _ciCallBack = new SmarDtvUsbCiCallBack();
+      _ciCallBack.OnApdu = new OnSmarDtvUsbCiApdu(OnApdu);
+      _ciCallBack.OnApplicationInfo = new OnSmarDtvUsbCiApplicationInfo(OnApplicationInfo);
+      _ciCallBack.OnCiState = new OnSmarDtvUsbCiState(OnCiState);
+      _ciCallBack.OnCloseMmi = new OnSmarDtvUsbCiCloseMmi(OnCloseMmi);
+      _ciCallBackBuffer = Marshal.AllocCoTaskMem(CI_CALLBACK_SIZE);
+      Marshal.StructureToPtr(_ciCallBack, _ciCallBackBuffer, false);
       int hr = (int)_ciType.GetMethod("USB2CI_Init").Invoke(_ciFilter, new object[] { _ciCallBackBuffer });
       if (hr == (int)HResult.Severity.Success)
       {
@@ -721,12 +725,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
     /// <summary>
     /// Set the menu call back delegate.
     /// </summary>
-    /// <param name="callBacks">The call back delegate.</param>
-    public void SetCallBacks(IConditionalAccessMenuCallBacks callBacks)
+    /// <param name="callBack">The call back delegate.</param>
+    public void SetMenuCallBack(IConditionalAccessMenuCallBack callBack)
     {
       lock (_caMenuCallBackLock)
       {
-        _caMenuCallBacks = callBacks;
+        _caMenuCallBack = callBack;
       }
     }
 

@@ -460,12 +460,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbSky
     /// <summary>
     /// Set the menu call back delegate.
     /// </summary>
-    /// <param name="callBacks">The call back delegate.</param>
-    public void SetCallBacks(IConditionalAccessMenuCallBacks callBacks)
+    /// <param name="callBack">The call back delegate.</param>
+    public void SetMenuCallBack(IConditionalAccessMenuCallBack callBack)
     {
       if (_netUpInterface != null)
       {
-        _netUpInterface.SetCallBacks(callBacks);
+        _netUpInterface.SetMenuCallBack(callBack);
       }
     }
 

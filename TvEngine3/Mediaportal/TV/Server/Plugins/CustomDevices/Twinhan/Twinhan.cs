@@ -699,7 +699,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
     private Thread _mmiHandlerThread = null;
     private AutoResetEvent _mmiHandlerThreadStopEvent = null;
     private object _mmiLock = new object();
-    private IConditionalAccessMenuCallBacks _caMenuCallBacks = null;
+    private IConditionalAccessMenuCallBack _caMenuCallBack = null;
     private object _caMenuCallBackLock = new object();
 
     private bool _isRemoteControlInterfaceOpen = false;
@@ -1068,13 +1068,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
                 this.LogDebug("  type      = {0}", mmi.Type);
                 lock (_caMenuCallBackLock)
                 {
-                  if (_caMenuCallBacks != null)
+                  if (_caMenuCallBack != null)
                   {
-                    _caMenuCallBacks.OnCiRequest(mmi.IsBlindAnswer, (uint)mmi.AnswerLength, mmi.Prompt);
+                    _caMenuCallBack.OnCiRequest(mmi.IsBlindAnswer, (uint)mmi.AnswerLength, mmi.Prompt);
                   }
                   else
                   {
-                    this.LogDebug("Twinhan: menu call backs are not set");
+                    this.LogDebug("Twinhan: menu call back not set");
                   }
                 }
               }
@@ -1084,25 +1084,25 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
 
                 lock (_caMenuCallBackLock)
                 {
-                  if (_caMenuCallBacks == null)
+                  if (_caMenuCallBack == null)
                   {
-                    this.LogDebug("Twinhan: menu call backs are not set");
+                    this.LogDebug("Twinhan: menu call back not set");
                   }
 
                   this.LogDebug("  title     = {0}", mmi.Title);
                   this.LogDebug("  sub-title = {0}", mmi.SubTitle);
                   this.LogDebug("  footer    = {0}", mmi.Footer);
                   this.LogDebug("  # entries = {0}", mmi.EntryCount);
-                  if (_caMenuCallBacks != null)
+                  if (_caMenuCallBack != null)
                   {
-                    _caMenuCallBacks.OnCiMenu(mmi.Title, mmi.SubTitle, mmi.Footer, mmi.EntryCount);
+                    _caMenuCallBack.OnCiMenu(mmi.Title, mmi.SubTitle, mmi.Footer, mmi.EntryCount);
                   }
                   for (int i = 0; i < mmi.EntryCount; i++)
                   {
                     this.LogDebug("    {0, -7} = {1}", i + 1, mmi.Entries[i]);
-                    if (_caMenuCallBacks != null)
+                    if (_caMenuCallBack != null)
                     {
-                      _caMenuCallBacks.OnCiMenuChoice(i, mmi.Entries[i]);
+                      _caMenuCallBack.OnCiMenuChoice(i, mmi.Entries[i]);
                     }
                   }
                 }
@@ -1124,13 +1124,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
             this.LogDebug("Twinhan: menu close request");
             lock (_caMenuCallBackLock)
             {
-              if (_caMenuCallBacks != null)
+              if (_caMenuCallBack != null)
               {
-                _caMenuCallBacks.OnCiCloseDisplay(0);
+                _caMenuCallBack.OnCiCloseDisplay(0);
               }
               else
               {
-                this.LogDebug("Twinhan: menu call backs are not set");
+                this.LogDebug("Twinhan: menu call back not set");
               }
             }
             CloseMenu();
@@ -2088,12 +2088,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
     /// <summary>
     /// Set the menu call back delegate.
     /// </summary>
-    /// <param name="callBacks">The call back delegate.</param>
-    public void SetCallBacks(IConditionalAccessMenuCallBacks callBacks)
+    /// <param name="callBack">The call back delegate.</param>
+    public void SetMenuCallBack(IConditionalAccessMenuCallBack callBack)
     {
       lock (_caMenuCallBackLock)
       {
-        _caMenuCallBacks = callBacks;
+        _caMenuCallBack = callBack;
       }
       StartMmiHandlerThread();
     }

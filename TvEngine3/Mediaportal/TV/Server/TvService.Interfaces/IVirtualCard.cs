@@ -337,6 +337,6 @@ namespace Mediaportal.TV.Server.TVService.Interfaces
     /// </summary>
     /// <param name="callbackHandler"></param>
     /// <returns></returns>
-    bool SetCiMenuHandler(IConditionalAccessMenuCallBacks callbackHandler);
+    bool SetCiMenuHandler(IConditionalAccessMenuCallBack callbackHandler);
   }
 }

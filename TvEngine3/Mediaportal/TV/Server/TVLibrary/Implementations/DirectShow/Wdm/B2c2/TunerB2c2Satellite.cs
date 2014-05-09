@@ -45,11 +45,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     #region variables
 
     /// <summary>
-    /// The DiSEqC control interface for this tuner.
-    /// </summary>
-    private IDiseqcController _diseqcController = null;
-
-    /// <summary>
     /// <c>True</c> if the tuner is capable of sending raw DiSEqC commands, otherwise <c>false</c>.
     /// </summary>
     private bool _isRawDiseqcSupported = false;
@@ -89,30 +84,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     /// <summary>
     /// Actually load the tuner.
     /// </summary>
-    protected override void PerformLoading()
+    public override void PerformLoading()
     {
       base.PerformLoading();
       _diseqcBuffer = Marshal.AllocCoTaskMem(DISEQC_BUFFER_SIZE);
       _isRawDiseqcSupported = _capabilities.AcquisitionCapabilities.HasFlag(B2c2AcquisionCapability.RawDiseqc);
-
-      // Check if one of the supported extensions is capable of sending DiSEqC commands.
-      foreach (ICustomDevice extension in _extensions)
-      {
-        IDiseqcDevice diseqcDevice = extension as IDiseqcDevice;
-        if (diseqcDevice != null)
-        {
-          this.LogDebug("B2C2 base: found DiSEqC command interface");
-          _diseqcController = new DiseqcController(diseqcDevice);
-          _diseqcController.ReloadConfiguration(_cardId);
-          break;
-        }
-      }
     }
 
     /// <summary>
     /// Actually unload the tuner.
     /// </summary>
-    protected override void PerformUnloading()
+    public override void PerformUnloading()
     {
       if (_diseqcBuffer != IntPtr.Zero)
       {
@@ -120,46 +102,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
         _diseqcBuffer = IntPtr.Zero;
       }
       base.PerformUnloading();
-    }
-
-    /// <summary>
-    /// Reload the tuner's configuration.
-    /// </summary>
-    public override void ReloadConfiguration()
-    {
-      base.ReloadConfiguration();
-      if (_diseqcController != null)
-      {
-        _diseqcController.ReloadConfiguration(_cardId);
-      }
-    }
-
-    /// <summary>
-    /// Stop the tuner. The actual result of this function depends on tuner configuration.
-    /// </summary>
-    public override void Stop()
-    {
-      base.Stop();
-      // Force the DiSEqC controller to forget the previously tuned channel. This guarantees that the
-      // next call to SwitchToChannel() will actually cause commands to be sent.
-      if (_currentTuningDetail == null && _diseqcController != null)
-      {
-        _diseqcController.SwitchToChannel(null);
-      }
-    }
-
-    /// <summary>
-    /// Get the tuner's DiSEqC control interface. This interface is only applicable for satellite tuners.
-    /// It is used for controlling switch, positioner and LNB settings.
-    /// </summary>
-    /// <value><c>null</c> if the tuner is not a satellite tuner or the tuner does not support sending/receiving
-    /// DiSEqC commands</value>
-    public override IDiseqcController DiseqcController
-    {
-      get
-      {
-        return _diseqcController;
-      }
     }
 
     #region tuning
@@ -178,7 +120,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     /// Actually tune to a channel.
     /// </summary>
     /// <param name="channel">The channel to tune to.</param>
-    protected override void PerformTuning(IChannel channel)
+    public override void PerformTuning(IChannel channel)
     {
       this.LogDebug("B2C2 satellite: set tuning parameters");
       DVBSChannel dvbsChannel = channel as DVBSChannel;
@@ -223,8 +165,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       hr = _interfaceTuner.SetPolarity(b2c2Polarisation);
       HResult.ThrowException(hr, "Failed to set polarisation.");
 
-      _diseqcController.SwitchToChannel(dvbsChannel);
-
       if (dvbsChannel.Frequency > dvbsChannel.LnbType.SwitchFrequency)
       {
         hr = _interfaceTuner.SetLnbFrequency(dvbsChannel.LnbType.HighBandFrequency / 1000);
@@ -235,8 +175,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       }
       HResult.ThrowException(hr, "Failed to set LNB LOF frequency.");
 
-      this.LogDebug("B2C2 satellite: apply tuning parameters");
-      HResult.ThrowException(_interfaceTuner.SetTunerStatus(), "Failed to apply tuning parameters.");
+      base.PerformTuning(channel);
     }
 
     #endregion

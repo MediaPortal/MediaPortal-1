@@ -3,7 +3,6 @@ using System.Threading;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
-using Mediaportal.TV.Server.TVLibrary.Implementations;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
@@ -15,10 +14,9 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 {
   public abstract class TimeShifterBase
   {
-
-
     protected ITvCardHandler _cardHandler;
     protected bool _timeshiftingEpgGrabberEnabled;
+    private TimeShiftingEpgGrabber _timeShiftingEpgGrabber = null;
     private readonly int _waitForTimeshifting = 15;
     protected readonly ManualResetEvent _eventAudio = new ManualResetEvent(false); // gets signaled when audio PID is seen
     protected readonly ManualResetEvent _eventVideo = new ManualResetEvent(false); // gets signaled when video PID is seen
@@ -34,14 +32,13 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       
       _waitForTimeshifting = SettingsManagement.GetValue("timeshiftWaitForTimeshifting", 15);
 
-      if (_cardHandler != null && _cardHandler.Tuner != null)
+      if (_cardHandler != null)
       {
-        _cardHandler.Tuner.OnAfterCancelTuneEvent += Tuner_OnAfterCancelTuneEvent;
-      }
-
-      if (_cardHandler != null && _cardHandler.Tuner != null)
-      {
-        _cardHandler.Tuner.OnAfterCancelTuneEvent += new OnAfterCancelTuneDelegate(Tuner_OnAfterCancelTuneEvent);
+        if (_cardHandler.Tuner != null)
+        {
+          _cardHandler.Tuner.OnAfterCancelTuneEvent += new OnAfterCancelTuneDelegate(Tuner_OnAfterCancelTuneEvent);
+        }
+        _timeShiftingEpgGrabber = new TimeShiftingEpgGrabber(_cardHandler.Card);
       }
     }
 
@@ -229,9 +226,13 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       if (_timeshiftingEpgGrabberEnabled)
       {
         Channel channel = ChannelManagement.GetChannel(_cardHandler.UserManagement.GetRecentChannelId(user.Name));
-        if (channel.GrabEpg)
+        if (channel.GrabEpg && _timeShiftingEpgGrabber.StartGrab())
         {
-          _cardHandler.Card.GrabEpg();
+          IEpgGrabber epgGrabber = _cardHandler.Card.EpgGrabberInterface;
+          if (epgGrabber != null)
+          {
+            epgGrabber.GrabEpg(_cardHandler.Card.CurrentTuningDetail, _timeShiftingEpgGrabber);
+          }
         }
         else
         {

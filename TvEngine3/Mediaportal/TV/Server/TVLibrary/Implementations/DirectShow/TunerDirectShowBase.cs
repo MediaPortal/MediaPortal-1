@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using DirectShowLib;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
@@ -27,12 +28,13 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
 {
   /// <summary>
-  /// A base implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> for tuners that expose
-  /// DirectShow filters.
+  /// A base implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> for tuners implemented
+  /// using a DirectShow graph.
   /// </summary>
   internal abstract class TunerDirectShowBase : TvCardBase
   {
@@ -129,9 +131,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     /// </summary>
     /// <param name="id">The identifier for the subchannel.</param>
     /// <returns>the new subchannel instance</returns>
-    protected override ITvSubChannel CreateNewSubChannel(int id)
+    public override ITvSubChannel CreateNewSubChannel(int id)
     {
-      return new Mpeg2SubChannel(id, this, _filterTsWriter as ITsFilter);
+      return new Mpeg2SubChannel(id, _filterTsWriter as ITsFilter);
     }
 
     #endregion
@@ -152,11 +154,54 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     }
 
     /// <summary>
+    /// Load the <see cref="T:TvLibrary.Interfaces.ICustomDevice">extensions</see> for this tuner.
+    /// </summary>
+    /// <remarks>
+    /// It is expected that this function will be called at some stage during tuner loading.
+    /// This function may update the lastFilter reference parameter to insert filters for
+    /// <see cref="IDirectShowAddOnDevice"/> extensions.
+    /// </remarks>
+    /// <param name="context">Any context required to initialise supported extensions.</param>
+    /// <param name="lastFilter">The source filter (usually either a tuner or capture/receiver
+    ///   filter) to connect the [first] device filter to.</param>
+    protected void LoadExtensions(object context, ref IBaseFilter lastFilter)
+    {
+      this.LogDebug("DirectShow base: load tuner extensions");
+      base.LoadExtensions(context);
+
+      if (lastFilter != null)
+      {
+        List<IDirectShowAddOnDevice> addOnsToDispose = new List<IDirectShowAddOnDevice>();
+        foreach (ICustomDevice extension in _extensions)
+        {
+          IDirectShowAddOnDevice addOn = extension as IDirectShowAddOnDevice;
+          if (addOn != null)
+          {
+            this.LogDebug("DirectShow base: add-on \"{0}\" found", extension.Name);
+            if (!addOn.AddToGraph(_graph, ref lastFilter))
+            {
+              this.LogDebug("DirectShow base: failed to add filter(s) to graph");
+              addOnsToDispose.Add(addOn);
+              continue;
+            }
+          }
+        }
+        foreach (IDirectShowAddOnDevice addOn in addOnsToDispose)
+        {
+          addOn.Dispose();
+          _extensions.Remove(addOn);
+        }
+      }
+    }
+
+    /// <summary>
     /// Complete the DirectShow graph.
     /// </summary>
     protected void CompleteGraph()
     {
       FilterGraphTools.SaveGraphFile(_graph, Name + " - " + _tunerType + " Graph.grf");
+      _channelScanner = new ScannerMpeg2TsBase(this, _filterTsWriter as ITsChannelScan);
+      _epgGrabber = new EpgGrabberDirectShow(_filterTsWriter as ITsEpgScanner);
     }
 
     /// <summary>
@@ -196,7 +241,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     /// Set the state of the tuner.
     /// </summary>
     /// <param name="state">The state to apply to the tuner.</param>
-    protected override void SetTunerState(TunerState state)
+    public override void SetTunerState(TunerState state)
     {
       this.LogDebug("DirectShow base: set tuner state, current state = {0}, requested state = {1}", _state, state);
 
@@ -288,21 +333,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       }
       Release.ComObject("DirectShow tuner graph builder", ref _captureGraphBuilder);
       Release.ComObject("TS writer/analyser filter", ref _filterTsWriter);
-    }
-
-    #endregion
-
-    #region tuning & scanning
-
-    /// <summary>
-    /// Get the tuner's channel scanning interface.
-    /// </summary>
-    public override ITVScanning ScanningInterface
-    {
-      get
-      {
-        return new ScannerMpeg2TsBase(this, _filterTsWriter as ITsChannelScan);
-      }
     }
 
     #endregion

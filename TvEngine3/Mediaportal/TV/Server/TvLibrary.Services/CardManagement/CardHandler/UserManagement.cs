@@ -149,12 +149,6 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
           cleanupThread.Start();
         }
       }
-
-
-      if (_cardHandler.IsIdle)
-      {
-        _cardHandler.Card.Stop();
-      }
     }
 
 

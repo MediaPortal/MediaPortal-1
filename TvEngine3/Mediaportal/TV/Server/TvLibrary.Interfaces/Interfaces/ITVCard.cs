@@ -18,10 +18,10 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.ChannelLinkage;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
@@ -71,17 +71,34 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
     /// <summary>
     /// Gets/sets the card name
     /// </summary>
-    string Name { get; set; }
+    string Name { get; }
 
     /// <summary>
-    /// Gets/Sets that the card is present
+    /// Get the tuner's group.
     /// </summary>
-    bool CardPresent { get; set; }
+    ITunerGroup Group
+    {
+      get;
+    }
+
+    /// <summary>
+    /// Get the tuner's unique identifier.
+    /// </summary>
+    /// <remarks>
+    /// This is the TV Engine's unique internal identifier.
+    /// </remarks>
+    int TunerId
+    {
+      get;
+    }
 
     /// <summary>
     /// Get the tuner's unique external identifier.
     /// </summary>		
-    string ExternalId { get; }
+    string ExternalId
+    {
+      get;
+    }
 
     /// <summary>
     /// Get the tuner's product instance identifier.
@@ -89,15 +106,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
     /// <remarks>
     /// The product instance identifier is a shared identifier for all tuner instances derived from a [multi-tuner] product.
     /// </remarks>
-    string ProductInstanceId { get; }
+    string ProductInstanceId
+    {
+      get;
+    }
 
     /// <summary>
     /// Get the tuner's instance identifier.
     /// </summary>
-    /// <summary>
+    /// <remarks>
     /// The tuner instance identifier is a shared identifier for all tuner instances derived from a single physical tuner.
-    /// </summary>
-    string TunerInstanceId { get; }
+    /// </remarks>
+    string TunerInstanceId
+    {
+      get;
+    }
 
     /// <summary>
     /// Method to check if card can tune to the channel specified
@@ -108,13 +131,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
     /// <summary>
     /// Stop the card.
     /// </summary>
+    [Obsolete("This function should not be used. Instead use FreeSubChannel() to free each remaining sub channel. The tuner will be stopped after the last sub channel is freed... but that is implementation detail which you should not have to care about.")]
     void Stop();
 
     /// <summary>
     /// Gets or sets the type of the cam.
     /// </summary>
     /// <value>The type of the cam.</value>
-    CamType CamType { get; set; }
+    CamType CamType { get; }
 
     /// <summary>
     /// Gets/sets the card type
@@ -174,35 +198,24 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
     #region epg & scanning
 
     /// <summary>
-    /// Grabs the epg.
+    /// Get the tuner's electronic programme guide data grabbing interface.
     /// </summary>
-    /// <param name="callBack">The call back which gets called when epg is received or canceled.</param>
-    void GrabEpg(BaseEpgGrabber callBack);
-
-    /// <summary>
-    /// Start grabbing the epg while timeshifting
-    /// </summary>
-    void GrabEpg();
-
-    /// <summary>
-    /// Aborts grabbing the epg. This also triggers the OnEpgReceived call back.
-    /// </summary>
-    void AbortGrabbing();
-
-    /// <summary>
-    /// returns a list of all epg data for each channel found.
-    /// </summary>
-    /// <value>The epg.</value>
-    List<EpgChannel> Epg { get; }
+    IEpgGrabber EpgGrabberInterface
+    {
+      get;
+    }
 
     /// <summary>
     /// Get the tuner's channel scanning interface.
     /// </summary>
-    ITVScanning ScanningInterface { get; }
+    ITVScanning ScanningInterface
+    {
+      get;
+    }
 
     #endregion
 
-    #region tuning & scanning
+    #region tuning
 
     /// <summary>
     /// Tune to a specific channel.
@@ -211,14 +224,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
     /// <param name="channel">The channel to tune to.</param>
     /// <returns>the subchannel associated with the tuned channel</returns>
     ITvSubChannel Tune(int subChannelId, IChannel channel);
-
-    /// <summary>
-    /// Scan a specific channel.
-    /// </summary>
-    /// <param name="subChannelId">The ID of the subchannel associated with the channel that is being scanned.</param>
-    /// <param name="channel">The channel to scan.</param>
-    /// <returns>the subchannel associated with the scanned channel</returns>
-    ITvSubChannel Scan(int subChannelId, IChannel channel);
 
     /// <summary>
     /// Cancel the current tuning process.
@@ -232,11 +237,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
     /// Get/Set the quality
     /// </summary>
     IQuality Quality { get; }
-
-    /// <summary>
-    /// Property which returns true if card supports quality control
-    /// </summary>
-    bool SupportsQualityControl { get; }
 
     /// <summary>
     /// Reload the tuner's configuration.
@@ -271,14 +271,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
     /// </summary>
     /// <value>The context.</value>
     object Context { get; set; }
-
-    /// <summary>
-    /// Gets or sets a value indicating whether this card is epg grabbing.
-    /// </summary>
-    /// <value>
-    /// 	<c>true</c> if this instance is epg grabbing; otherwise, <c>false</c>.
-    /// </value>
-    bool IsEpgGrabbing { get; set; }
 
     /// <summary>
     /// Get or set a value indicating whether this tuner is scanning for channels.

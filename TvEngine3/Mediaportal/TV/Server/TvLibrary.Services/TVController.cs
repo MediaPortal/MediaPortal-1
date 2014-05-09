@@ -30,7 +30,6 @@ using System.Net.Sockets;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Xml;
 using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.Events;
 using Mediaportal.TV.Server.TVControl.Interfaces.Events;
@@ -40,13 +39,12 @@ using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.Presentation;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation;
-using Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler;
 using Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation;
 using Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Implementations;
 using Mediaportal.TV.Server.TVLibrary.DiskManagement;
 using Mediaportal.TV.Server.TVLibrary.Epg;
 using Mediaportal.TV.Server.TVLibrary.EventDispatchers;
-using Mediaportal.TV.Server.TVLibrary.Implementations.Hybrid;
+using Mediaportal.TV.Server.TVLibrary.Implementations;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
@@ -74,8 +72,8 @@ namespace Mediaportal.TV.Server.TVLibrary
   /// and if server is the master it will delegate the requests to the 
   /// correct slave servers
   /// </summary>
-  public class 
-      TvController : IInternalControllerService, IDisposable, ITvServerEvent, IConditionalAccessMenuCallBacks
+  public class
+      TvController : IInternalControllerService, IDisposable, ITvServerEvent, IConditionalAccessMenuCallBack, ITunerDetectionEventListener
   {
 
 
@@ -110,9 +108,7 @@ namespace Mediaportal.TV.Server.TVLibrary
     /// </summary>
     private RtspStreaming _streamer;
 
-
-    /// <summary>
-    private TvCardCollection _localCardCollection;
+    private TunerDetector _tunerDetector = null;
 
     /// <summary>
     /// Indicates how many free cards to try for timeshifting
@@ -326,7 +322,7 @@ namespace Mediaportal.TV.Server.TVLibrary
     /// <param name="cardId">card</param>
     /// <param name="callbackHandler">null, not required</param>
     /// <returns>true is successful</returns>
-    public bool SetCiMenuHandler(int cardId, IConditionalAccessMenuCallBacks callbackHandler)
+    public bool SetCiMenuHandler(int cardId, IConditionalAccessMenuCallBack callbackHandler)
     {
       // register tvservice itself as handler
       try
@@ -471,7 +467,6 @@ namespace Mediaportal.TV.Server.TVLibrary
       try
       {
         _cards = new Dictionary<int, ITvCardHandler>();
-        _localCardCollection = new TvCardCollection(this);
 
         //log all local ip adresses, usefull for debugging problems
         this.LogDebug("Controller: started at {0}", Dns.GetHostName());
@@ -491,165 +486,6 @@ namespace Mediaportal.TV.Server.TVLibrary
         _maxFreeCardsToTry = SettingsManagement.GetValue("timeshiftMaxFreeCardsToTry", 0);
 
         IList<Card> allCards = TVDatabase.TVBusinessLayer.CardManagement.ListAllCards(CardIncludeRelationEnum.None);
-
-        bool oneOrMoreCardsFound = false;
-
-        foreach (ITVCard itvCard in _localCardCollection.Cards)
-        {
-          //for each card, check if its already mentioned in the database
-          bool found = allCards.Any(card => card.DevicePath == itvCard.ExternalId);
-          if (!found)
-          {
-            // card is not yet in the database, so add it
-            this.LogInfo("Controller: add card:{0}", itvCard.Name);
-
-            var newCard = new Card
-            {
-              TimeshiftingFolder = "",
-              RecordingFolder = "",
-              DevicePath = itvCard.ExternalId,
-              Name = itvCard.Name,
-              Priority = 1,
-              GrabEPG = true,
-              Enabled = true,
-              CamType = 0,
-              DecryptLimit = 0,              
-              NetProvider = (int)DbNetworkProvider.Generic,              
-              MultiChannelDecryptMode = (int)MultiChannelDecryptMode.Disabled,
-              PidFilterMode = (int)PidFilterMode.Auto,
-              IdleMode = (int)IdleMode.Stop
-            };
-            oneOrMoreCardsFound = true;
-            TVDatabase.TVBusinessLayer.CardManagement.SaveCard(newCard);
-          }
-        }
-        if (oneOrMoreCardsFound)
-        {
-          allCards = TVDatabase.TVBusinessLayer.CardManagement.ListAllCards(CardIncludeRelationEnum.None);
-        }
-        //notify log about cards from the database which are removed from the pc
-        int cardsInstalled = _localCardCollection.Cards.Count;
-        foreach (Card dbsCard in allCards)
-        {
-          {
-            bool found = false;
-            for (int cardNumber = 0; cardNumber < cardsInstalled; ++cardNumber)
-            {
-              if (dbsCard.DevicePath == _localCardCollection.Cards[cardNumber].DevicePath)
-              {
-                found = true;
-                break;
-              }
-            }
-            if (!found)
-            {
-              this.LogInfo("Controller: card not found :{0}", dbsCard.Name);
-
-              foreach (ITVCard t in _localCardCollection.Cards.Where(t => t.DevicePath == dbsCard.DevicePath))
-              {
-                t.CardPresent = false;
-                break;
-              }
-
-              // Fix mantis 0002790: Bad behavior when card count for IPTV = 0 
-              if (dbsCard.Name.StartsWith("MediaPortal IPTV Source Filter"))
-              {
-                CardRemove(dbsCard.IdCard);
-              }
-            }
-          }
-        }
-
-        Dictionary<int, ITVCard> localcards = new Dictionary<int, ITVCard>();
-
-
-        //allCards = TVDatabase.TVBusinessLayer.CardManagement.ListAllCards();
-        foreach (Card card in allCards)
-        {
-          {
-            foreach (ITVCard t in _localCardCollection.Cards)
-            {
-              if (t.ExternalId == card.DevicePath)
-              {
-                localcards[card.IdCard] = t;
-                break;
-              }
-            }
-          }
-        }
-
-        this.LogInfo("Controller: setup hybrid cards");
-        IList<CardGroup> cardgroups = TVDatabase.TVBusinessLayer.CardManagement.ListAllCardGroups();
-        foreach (CardGroup group in cardgroups)
-        {
-          IList<CardGroupMap> cards = group.CardGroupMaps;
-          var hybridCardGroup = new HybridCardGroup();
-          foreach (CardGroupMap card in cards)
-          {
-            if (localcards.ContainsKey(card.IdCard))
-            {
-              this.LogDebug("Hybrid card: " + localcards[card.IdCard].Name + " (" + group.Name + ")");
-              HybridCard hybridCard = hybridCardGroup.Add(card.IdCard, localcards[card.IdCard]);
-              localcards[card.IdCard] = hybridCard;
-            }
-          }
-        }
-
-        allCards = TVDatabase.TVBusinessLayer.CardManagement.ListAllCards(CardIncludeRelationEnum.None); //SEB
-        foreach (Card dbsCard in allCards)
-        {
-          if (localcards.ContainsKey(dbsCard.IdCard))
-          {
-            ITVCard card = localcards[dbsCard.IdCard];
-            var tvcard = new TvCardHandler(dbsCard, card);
-            _cards[dbsCard.IdCard] = tvcard;
-          }
-
-          // remove any old timeshifting TS files	
-          try
-          {
-            string timeShiftPath = dbsCard.TimeshiftingFolder;
-            if (string.IsNullOrEmpty(dbsCard.TimeshiftingFolder))
-            {
-              timeShiftPath = Path.Combine(PathManager.GetDataPath, "timeshiftbuffer");
-            }
-            if (!Directory.Exists(timeShiftPath))
-            {
-              this.LogInfo("Controller: creating timeshifting folder {0} for card \"{1}\"", timeShiftPath, dbsCard.Name);
-              Directory.CreateDirectory(timeShiftPath);
-            }
-
-            this.LogDebug("Controller: card {0}: current timeshiftpath = {1}", dbsCard.Name, timeShiftPath);
-            if (timeShiftPath != null)
-            {
-              string[] files = Directory.GetFiles(timeShiftPath);
-
-              foreach (string file in files)
-              {
-                try
-                {
-                  var fInfo = new FileInfo(file);
-                  bool delFile = (fInfo.Extension.ToUpperInvariant().IndexOf(".TSBUFFER") == 0);
-
-                  if (!delFile)
-                  {
-                    delFile = (fInfo.Extension.ToUpperInvariant().IndexOf(".TS") == 0) &&
-                              (fInfo.Name.ToUpperInvariant().IndexOf("TSBUFFER") > 0);
-                  }
-                  if (delFile)
-                  {
-                    File.Delete(fInfo.FullName);
-                  }
-                }
-                catch (IOException) { }
-              }
-            }
-          }
-          catch (Exception exd)
-          {
-            this.LogInfo("Controller: Error cleaning old ts buffer - {0}", exd.Message);
-          }
-        }
 
         this.LogInfo("Controller: setup streaming");
         _hostName = Dns.GetHostName();
@@ -955,23 +791,14 @@ namespace Mediaportal.TV.Server.TVLibrary
       bool cardPresent = false;
       try
       {        
-        if (cardId > 0)
+        if (_cards != null)
         {
-          if (_cards != null)
+          ITvCardHandler handler;
+          if (_cards.TryGetValue(cardId, out handler))
           {
-            if (_cards.ContainsKey(cardId))
-            {
-              string devicePath = _cards[cardId].Card.ExternalId;
-              if (devicePath.Length > 0)
-              {
-                // RemoveUser it from the local card collection
-                cardPresent =
-                  (from t in _localCardCollection.Cards where t.DevicePath == devicePath select t.CardPresent).
-                    FirstOrDefault();
-              }
-            }
+            return true;
           }
-        }        
+        }
       }
       catch (Exception e)
       {
@@ -997,8 +824,6 @@ namespace Mediaportal.TV.Server.TVLibrary
             TVDatabase.TVBusinessLayer.CardManagement.DeleteCard(cardId);
             // RemoveUser it from the card collection
             _cards.Remove(cardId);
-            // RemoveUser it from the local card collection
-            _localCardCollection.Cards.Remove(_cards[cardId].Card);
           }
         }
         else
@@ -2205,16 +2030,6 @@ namespace Mediaportal.TV.Server.TVLibrary
             return true;
           }
 
-
-          var hybridCard = tvcard.Card as HybridCard;
-          if (hybridCard != null)
-          {
-            if (!hybridCard.IsCardIdActive(cardId))
-            {
-              return true;
-            }
-          }
-
           tvcard.UserManagement.RefreshUser(ref user);
           if (!tvcard.TimeShifter.IsTimeShifting(user))
             return true;
@@ -2486,7 +2301,6 @@ namespace Mediaportal.TV.Server.TVLibrary
           settings.TimeOutCAT = SettingsManagement.GetValue("timeoutCAT", 5);
           settings.TimeOutPMT = SettingsManagement.GetValue("timeoutPMT", 10);
           settings.TimeOutSDT = SettingsManagement.GetValue("timeoutSDT", 20);
-          settings.TimeOutAnalog = SettingsManagement.GetValue("timeoutAnalog", 20);
           channels = _cards[cardId].Scanner.Scan(channel, settings); 
         }        
       }
@@ -2511,6 +2325,10 @@ namespace Mediaportal.TV.Server.TVLibrary
           StopEPGgrabber();
           ScanParameters settings = new ScanParameters();
           settings.TimeOutTune = SettingsManagement.GetValue("timeoutTune", 2);
+          settings.TimeOutPAT = SettingsManagement.GetValue("timeoutPAT", 5);
+          settings.TimeOutCAT = SettingsManagement.GetValue("timeoutCAT", 5);
+          settings.TimeOutPMT = SettingsManagement.GetValue("timeoutPMT", 10);
+          settings.TimeOutSDT = SettingsManagement.GetValue("timeoutSDT", 20);
           scanNit = _cards[cardId].Scanner.ScanNIT(channel, settings);
         }
       }
@@ -2531,7 +2349,7 @@ namespace Mediaportal.TV.Server.TVLibrary
     /// <param name="grabber">EPG grabber</param>    
     /// <param name="user"> </param>
     /// <returns></returns>
-    public bool GrabEpg(BaseEpgGrabber grabber, IUser user)
+    public bool GrabEpg(IEpgGrabberCallBack grabber, IUser user)
     {
       int cardId = user.CardId;
       bool grabEpg = false;
@@ -2561,21 +2379,6 @@ namespace Mediaportal.TV.Server.TVLibrary
       {
         this.LogError("Controller: AbortEPGGrabbing - invalid cardId");
       }      
-    }
-
-    /// <summary>
-    /// Epgs the specified card id.
-    /// </summary>
-    /// <param name="cardId">The card id.</param>
-    /// <returns></returns>
-    public List<EpgChannel> Epg(int cardId)
-    {
-      var epgChannels = new List<EpgChannel>();
-      if (ValidateTvControllerParams(cardId))
-      {
-        epgChannels = _cards[cardId].Epg.Epg;
-      }
-      return epgChannels;      
     }
 
     /// <summary>
@@ -2827,29 +2630,6 @@ namespace Mediaportal.TV.Server.TVLibrary
       catch (Exception e)
       {        
         HandleControllerException(e, "Controller: Can't get recording chapters - Second catch");
-      }
-      return "";
-    }
-
-    /// <summary>
-    /// Gets the rtsp URL for file located on the tvserver.
-    /// </summary>
-    /// <param name="fileName">Name of the file.</param>
-    /// <returns>rtsp url</returns>
-    public string GetUrlForFile(string fileName)
-    {
-      if (File.Exists(fileName))
-      {
-        if (_streamer != null)
-        {
-          _streamer.Start();
-          string streamName = String.Format("{0:X}", fileName.GetHashCode());
-          RtspStream stream = new RtspStream(streamName, fileName, streamName);
-          _streamer.AddStream(stream);
-          string url = String.Format("rtsp://{0}:{1}/{2}", _hostName, _streamer.Port, streamName);
-          this.LogInfo("Controller: streaming url:{0} file:{1}", url, fileName);
-          return url;
-        }
       }
       return "";
     }
@@ -4357,7 +4137,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       {
         if (ValidateTvControllerParams(cardId))
         {
-          result = _cards[cardId].Card.SupportsQualityControl;
+          result = (_cards[cardId].Card.Quality != null);
         }
       }
       catch (Exception e)
@@ -4457,7 +4237,7 @@ namespace Mediaportal.TV.Server.TVLibrary
     {
       try
       {
-        if (ValidateTvControllerParams(cardId) && SupportsQualityControl(cardId))
+        if (ValidateTvControllerParams(cardId))
         {
           _cards[cardId].Card.ReloadConfiguration(); 
         }        
@@ -4479,7 +4259,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       QualityType qualityType = QualityType.Default;
       try
       {
-        if (ValidateTvControllerParams(cardId) && SupportsQualityControl(cardId))
+        if (ValidateTvControllerParams(cardId))
         {
           IQuality qualityControl = _cards[cardId].Card.Quality;
           if (qualityControl != null)
@@ -4505,7 +4285,7 @@ namespace Mediaportal.TV.Server.TVLibrary
     {
       try
       {
-        if (ValidateTvControllerParams(cardId) && SupportsQualityControl(cardId))
+        if (ValidateTvControllerParams(cardId))
         {
           IQuality qualityControl = _cards[cardId].Card.Quality;
           if (qualityControl != null)
@@ -4530,7 +4310,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       VIDEOENCODER_BITRATE_MODE videoencoderBitrateMode = VIDEOENCODER_BITRATE_MODE.Undefined;
       try
       {
-        if (ValidateTvControllerParams(cardId) && SupportsQualityControl(cardId))
+        if (ValidateTvControllerParams(cardId))
         {
           IQuality qualityControl = _cards[cardId].Card.Quality;
           if (qualityControl != null)
@@ -4556,7 +4336,7 @@ namespace Mediaportal.TV.Server.TVLibrary
     {
       try
       {
-        if (ValidateTvControllerParams(cardId) && SupportsQualityControl(cardId))
+        if (ValidateTvControllerParams(cardId))
         {
           IQuality qualityControl = _cards[cardId].Card.Quality;
           if (qualityControl != null)

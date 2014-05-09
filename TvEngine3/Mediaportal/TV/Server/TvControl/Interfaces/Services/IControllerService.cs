@@ -951,7 +951,7 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// <param name="callbackHandler"></param>
     /// <returns></returns>
     [OperationContract]
-    bool SetCiMenuHandler(int cardId, IConditionalAccessMenuCallBacks callbackHandler);
+    bool SetCiMenuHandler(int cardId, IConditionalAccessMenuCallBack callbackHandler);
 
     
 

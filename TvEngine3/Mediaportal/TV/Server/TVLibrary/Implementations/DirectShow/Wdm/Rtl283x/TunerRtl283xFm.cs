@@ -708,7 +708,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
 
       if (_encoder != null)
       {
-        _encoder.ReloadConfiguration(_cardId);
+        _encoder.ReloadConfiguration(_tunerId);
       }
     }
 
@@ -717,7 +717,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
     /// </summary>
     /// <param name="id">The identifier for the subchannel.</param>
     /// <returns>the new subchannel instance</returns>
-    protected override ITvSubChannel CreateNewSubChannel(int id)
+    public override ITvSubChannel CreateNewSubChannel(int id)
     {
       return new Mpeg2SubChannel(id, _staTsWriter);
     }
@@ -918,7 +918,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
     /// <summary>
     /// Actually load the tuner.
     /// </summary>
-    protected override void PerformLoading()
+    public override void PerformLoading()
     {
       object[] p = null;
       InvokeGraphJob(GraphJobType.Load, ref p);
@@ -928,7 +928,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
     /// Actually tune to a channel.
     /// </summary>
     /// <param name="channel">The channel to tune to.</param>
-    protected override void PerformTuning(IChannel channel)
+    public override void PerformTuning(IChannel channel)
     {
       object[] p = new object[1] { channel };
       InvokeGraphJob(GraphJobType.Tune, ref p);
@@ -938,7 +938,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
     /// Actually update tuner signal status statistics.
     /// </summary>
     /// <param name="onlyUpdateLock"><c>True</c> to only update lock status.</param>
-    protected override void PerformSignalStatusUpdate(bool onlyUpdateLock)
+    public override void PerformSignalStatusUpdate(bool onlyUpdateLock)
     {
       object[] p = new object[1] { onlyUpdateLock };
       InvokeGraphJob(GraphJobType.UpdateSignalStatus, ref p);
@@ -948,7 +948,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
     /// Set the state of the tuner.
     /// </summary>
     /// <param name="state">The state to apply to the tuner.</param>
-    protected override void SetTunerState(TunerState state)
+    public override void SetTunerState(TunerState state)
     {
       object[] p = new object[1] { state };
       InvokeGraphJob(GraphJobType.SetGraphState, ref p);
@@ -957,7 +957,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
     /// <summary>
     /// Actually unload the tuner.
     /// </summary>
-    protected override void PerformUnloading()
+    public override void PerformUnloading()
     {
       object[] p = null;
       InvokeGraphJob(GraphJobType.Unload, ref p);
@@ -998,7 +998,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       // this should allow multiple tuners to operate in special modes.
       string originalListTunerName = null;
       string originalTunerName = _mainTunerDevice.Name;
-      string fakeUniqueTunerName = "MediaPortal FM Tuner " + _cardId;
+      string fakeUniqueTunerName = "MediaPortal FM Tuner " + _tunerId;
       List<RegistryView> views = new List<RegistryView>() { RegistryView.Default };
       if (OSInfo.OSInfo.Is64BitOs() && IntPtr.Size != 8)
       {
@@ -1062,12 +1062,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
 
       // Check for and load extensions, adding any additional filters to the graph.
       IBaseFilter lastFilter = _encoder.TsMultiplexerFilter;
-      LoadPlugins(_capture.AudioFilter, _graph, ref lastFilter);
+      LoadExtensions(_capture.AudioFilter, ref lastFilter);
       AddAndConnectTsWriterIntoGraph(lastFilter);
       CompleteGraph();
 
       _fmSource = _capture.AudioFilter as IRtl283xFmSource;
       _staTsWriter = new TsWriterStaWrapper(InvokeTsWriterSubChannelJob, InvokeTsWriterScanJob);
+
+      // RDS grabbing currently not supported.
+      _epgGrabber = null;
+
+      _channelScanner = new ScannerMpeg2TsBase(this, _staTsWriter);
 
       int lowerLimit;
       int upperLimit;
@@ -1158,17 +1163,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
         throw new TvException("Failed to set frequency.");
       }
       _encoder.PerformTuning(analogChannel);
-    }
-
-    /// <summary>
-    /// Get the tuner's channel scanning interface.
-    /// </summary>
-    public override ITVScanning ScanningInterface
-    {
-      get
-      {
-        return new ScannerMpeg2TsBase(this, _staTsWriter);
-      }
     }
 
     #endregion

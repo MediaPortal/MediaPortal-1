@@ -36,9 +36,11 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
 {
   public class EpgDBUpdater
   {
+    public delegate void OnImportProgramsForChannel(EpgChannel channel);
+
     #region Variables
 
-    private readonly IEpgEvents _epgEvents;
+    private readonly OnImportProgramsForChannel _importDelegate;
     private string _titleTemplate;
     private string _descriptionTemplate;
     private string _epgLanguages;
@@ -54,9 +56,9 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
 
     #region ctor
 
-    public EpgDBUpdater(IEpgEvents epgEvents, string grabberName, bool checkForLastUpdate)
+    public EpgDBUpdater(OnImportProgramsForChannel epgCallBack, string grabberName, bool checkForLastUpdate)
     {
-      _epgEvents = epgEvents;
+      _importDelegate = epgCallBack;
       _grabberName = grabberName;
       _checkForLastUpdate = checkForLastUpdate;
       ReloadConfig();
@@ -167,7 +169,10 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
       // Store the data in our database
       ImportPrograms(dbChannel, epgChannel.Programs);
       // Raise an event with the data so that other plugins can handle the data on their own
-      _epgEvents.OnImportEpgPrograms(epgChannel);
+      if (_importDelegate != null)
+      {
+        _importDelegate(epgChannel);
+      }
     }
 
     private void ImportPrograms(Channel dbChannel, IList<EpgProgram> epgPrograms)

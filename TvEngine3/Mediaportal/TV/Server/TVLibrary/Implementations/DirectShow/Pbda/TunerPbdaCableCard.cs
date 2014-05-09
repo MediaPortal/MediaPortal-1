@@ -59,7 +59,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
 
     // CA menu variables
     private object _caMenuCallBackLock = new object();
-    private IConditionalAccessMenuCallBacks _caMenuCallBacks = null;
+    private IConditionalAccessMenuCallBack _caMenuCallBack = null;
     private CableCardMmiHandler _caMenuHandler = null;
 
     #endregion
@@ -114,7 +114,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
     /// <summary>
     /// Actually load the tuner.
     /// </summary>
-    protected override void PerformLoading()
+    public override void PerformLoading()
     {
       this.LogDebug("PBDA CableCARD: perform loading");
       base.PerformLoading();
@@ -133,7 +133,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
     /// <summary>
     /// Actually unload the tuner.
     /// </summary>
-    protected override void PerformUnloading()
+    public override void PerformUnloading()
     {
       this.LogDebug("PBDA CableCARD: perform unloading");
       if (_graph != null)
@@ -153,7 +153,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
     /// Actually tune to a channel.
     /// </summary>
     /// <param name="channel">The channel to tune to.</param>
-    protected override void PerformTuning(IChannel channel)
+    public override void PerformTuning(IChannel channel)
     {
       this.LogDebug("PBDA CableCARD: perform tuning");
       ATSCChannel atscChannel = channel as ATSCChannel;
@@ -208,12 +208,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
     /// <summary>
     /// Set the menu call back delegate.
     /// </summary>
-    /// <param name="callBacks">The call back delegate.</param>
-    public void SetCallBacks(IConditionalAccessMenuCallBacks callBacks)
+    /// <param name="callBack">The call back delegate.</param>
+    public void SetMenuCallBack(IConditionalAccessMenuCallBack callBack)
     {
       lock (_caMenuCallBackLock)
       {
-        _caMenuCallBacks = callBacks;
+        _caMenuCallBack = callBack;
       }
     }
 
@@ -293,7 +293,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
       }
       lock (_caMenuCallBackLock)
       {
-        return _caMenuHandler.EnterMenu(cardName, cardManufacturer, string.Empty, applicationList, _caMenuCallBacks);
+        return _caMenuHandler.EnterMenu(cardName, cardManufacturer, string.Empty, applicationList, _caMenuCallBack);
       }
     }
 
@@ -343,7 +343,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
       this.LogDebug("PBDA CableCARD: select menu entry, choice = {0}", choice);
       lock (_caMenuCallBackLock)
       {
-        return _caMenuHandler.SelectEntry(choice, _caMenuCallBacks);
+        return _caMenuHandler.SelectEntry(choice, _caMenuCallBack);
       }
     }
 
@@ -371,7 +371,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
     /// Actually update tuner signal status statistics.
     /// </summary>
     /// <param name="onlyUpdateLock"><c>True</c> to only update lock status.</param>
-    protected override void PerformSignalStatusUpdate(bool onlyUpdateLock)
+    public override void PerformSignalStatusUpdate(bool onlyUpdateLock)
     {
       if (IsScanning)
       {

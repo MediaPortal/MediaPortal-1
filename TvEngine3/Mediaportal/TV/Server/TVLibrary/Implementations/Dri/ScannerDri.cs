@@ -36,7 +36,7 @@ using UPnP.Infrastructure.CP.DeviceTree;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
 {
-  internal class ScannerDri : ITVScanning
+  internal class ScannerDri : IScannerInternal
   {
     private enum ScanStage
     {
@@ -262,7 +262,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
         channel.Provider = "Cable";
       }
       channel.NetworkId = sourceId;
-      channel.PmtPid = -1;  // TV Server will automatically lookup and save the correct PID from the PAT when the channel is tuned.
+      channel.PmtPid = -1;  // The engine will automatically lookup and save the correct PID from the PAT when the channel is tuned.
       channel.ServiceId = programNumber;
       channel.TransportId = channelTsid;
     }
@@ -294,7 +294,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       channel.ModulationType = _modulationModes[mmsReference];
       channel.NetworkId = sourceId;
       channel.PhysicalChannel = _carrierFrequencies[cdsReference].Channel;
-      channel.PmtPid = -1;  // TV Server will automatically lookup and save the correct PID from the PAT when the channel is tuned.
+      channel.PmtPid = -1;  // The engine will automatically lookup and save the correct PID from the PAT when the channel is tuned.
       channel.Provider = "Cable";
       channel.ServiceId = programNumber;
       channel.TransportId = 0;  // We don't have these details.
@@ -327,6 +327,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
 
     #endregion
 
+    #region IScannerInternal member
+
+    /// <summary>
+    /// Set the scanner's _tuner.
+    /// </summary>
+    public virtual ITVCard Tuner
+    {
+      set
+      {
+        _tuner = value;
+      }
+    }
+
+    #endregion
+
     public List<IChannel> Scan(IChannel channel, ScanParameters settings)
     {
       _channels.Clear();
@@ -337,7 +352,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       try
       {
         _tuner.IsScanning = true;
-        _tuner.Scan(0, channel);
+        _tuner.Tune(0, channel);
         _fdcService.SubscribeStateVariables(OnTableSection, OnEventSubscriptionFailed);
 
         // Configure the MGT parser. We don't use MGT info right now but we

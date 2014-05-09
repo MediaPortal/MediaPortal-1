@@ -550,7 +550,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
     private Thread _mmiHandlerThread = null;
     private AutoResetEvent _mmiHandlerThreadStopEvent = null;
     private object _mmiLock = new object();
-    private IConditionalAccessMenuCallBacks _caMenuCallBacks = null;
+    private IConditionalAccessMenuCallBack _caMenuCallBack = null;
     private object _caMenuCallBackLock = new object();
 
     #endregion
@@ -966,7 +966,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
             Array.Copy(data.Data, objectData, data.DataLength);
             lock (_caMenuCallBackLock)
             {
-              DvbMmiHandler.HandleMmiData(objectData, _caMenuCallBacks);
+              DvbMmiHandler.HandleMmiData(objectData, _caMenuCallBack);
             }
           }
         }
@@ -1829,12 +1829,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
     /// <summary>
     /// Set the menu call back delegate.
     /// </summary>
-    /// <param name="callBacks">The call back delegate.</param>
-    public void SetCallBacks(IConditionalAccessMenuCallBacks callBacks)
+    /// <param name="callBack">The call back delegate.</param>
+    public void SetMenuCallBack(IConditionalAccessMenuCallBack callBack)
     {
       lock (_caMenuCallBackLock)
       {
-        _caMenuCallBacks = callBacks;
+        _caMenuCallBack = callBack;
       }
       StartMmiHandlerThread();
     }

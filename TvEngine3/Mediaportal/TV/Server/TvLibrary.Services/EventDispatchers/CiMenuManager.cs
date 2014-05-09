@@ -7,7 +7,7 @@ using Mediaportal.TV.Server.TVLibrary.Services;
 
 namespace Mediaportal.TV.Server.TVLibrary.EventDispatchers
 {
-  public class CiMenuManager : EventDispatcher, IConditionalAccessMenuCallBacks
+  public class CiMenuManager : EventDispatcher, IConditionalAccessMenuCallBack
   {
     #region CI Menu Event handling
 

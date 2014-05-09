@@ -1155,7 +1155,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
     private IntPtr _ciStateChangeCallBackPtr = IntPtr.Zero;
     private OnAnyseeMmiMessage _mmiMessageDelegate = null;
     private IntPtr _mmiMessageCallBackPtr = IntPtr.Zero;
-    private IConditionalAccessMenuCallBacks _caMenuCallBacks = null;
+    private IConditionalAccessMenuCallBack _caMenuCallBack = null;
     private object _caMenuCallBackLock = new object();
 
     private bool _isRemoteControlInterfaceOpen = false;
@@ -1461,18 +1461,18 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
         }
         lock (_caMenuCallBackLock)
         {
-          if (_caMenuCallBacks == null)
+          if (_caMenuCallBack == null)
           {
-            this.LogDebug("Anysee: menu call backs are not set");
+            this.LogDebug("Anysee: menu call back not set");
           }
 
           string prompt = DvbTextConverter.Convert(Marshal.ReadIntPtr(menu.Entries, 0));
           this.LogDebug("  prompt    = {0}", prompt);
           this.LogDebug("  length    = {0}", msg.ExpectedAnswerLength);
           this.LogDebug("  key count = {0}", msg.KeyCount);
-          if (_caMenuCallBacks != null)
+          if (_caMenuCallBack != null)
           {
-            _caMenuCallBacks.OnCiRequest(false, (uint)msg.ExpectedAnswerLength, prompt);
+            _caMenuCallBack.OnCiRequest(false, (uint)msg.ExpectedAnswerLength, prompt);
           }
         }
         return 0;
@@ -1488,9 +1488,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       }
       lock (_caMenuCallBackLock)
       {
-        if (_caMenuCallBacks == null)
+        if (_caMenuCallBack == null)
         {
-          this.LogDebug("Anysee: menu call backs are not set");
+          this.LogDebug("Anysee: menu call back not set");
         }
 
         string title = DvbTextConverter.Convert(Marshal.ReadIntPtr(menu.Entries, 0));
@@ -1506,9 +1506,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
           Dump.DumpBinary(message, MMI_MESSAGE_SIZE);
           return 1;
         }
-        if (_caMenuCallBacks != null)
+        if (_caMenuCallBack != null)
         {
-          _caMenuCallBacks.OnCiMenu(title, subTitle, footer, msg.EntryCount);
+          _caMenuCallBack.OnCiMenu(title, subTitle, footer, msg.EntryCount);
         }
 
         string entry;
@@ -1518,9 +1518,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
           entry = DvbTextConverter.Convert(Marshal.ReadIntPtr(entryPtr, 0));
           entryPtr = IntPtr.Add(entryPtr, IntPtr.Size);
           this.LogDebug("    {0, -7} = {1}", i + 1, entry);
-          if (_caMenuCallBacks != null)
+          if (_caMenuCallBack != null)
           {
-            _caMenuCallBacks.OnCiMenuChoice(i, entry);
+            _caMenuCallBack.OnCiMenuChoice(i, entry);
           }
         }
       }
@@ -2022,12 +2022,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
     /// <summary>
     /// Set the menu call back delegate.
     /// </summary>
-    /// <param name="callBacks">The call back delegate.</param>
-    public void SetCallBacks(IConditionalAccessMenuCallBacks callBacks)
+    /// <param name="callBack">The call back delegate.</param>
+    public void SetMenuCallBack(IConditionalAccessMenuCallBack callBack)
     {
       lock (_caMenuCallBackLock)
       {
-        _caMenuCallBacks = callBacks;
+        _caMenuCallBack = callBack;
       }
     }
 

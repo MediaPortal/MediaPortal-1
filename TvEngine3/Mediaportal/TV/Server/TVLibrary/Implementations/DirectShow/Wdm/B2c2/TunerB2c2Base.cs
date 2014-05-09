@@ -1388,7 +1388,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     /// Actually update tuner signal status statistics.
     /// </summary>
     /// <param name="onlyUpdateLock"><c>True</c> to only update lock status.</param>
-    protected override void PerformSignalStatusUpdate(bool onlyUpdateLock)
+    public override void PerformSignalStatusUpdate(bool onlyUpdateLock)
     {
       if (_interfaceTuner == null)
       {
@@ -1408,12 +1408,22 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       }
     }
 
+    /// <summary>
+    /// Actually tune to a channel.
+    /// </summary>
+    /// <param name="channel">The channel to tune to.</param>
+    public override void PerformTuning(IChannel channel)
+    {
+      this.LogDebug("B2C2 base: apply tuning parameters");
+      HResult.ThrowException(_interfaceTuner.SetTunerStatus(), "Failed to apply tuning parameters.");
+    }
+
     #region graph building
 
     /// <summary>
     /// Actually load the tuner.
     /// </summary>
-    protected override void PerformLoading()
+    public override void PerformLoading()
     {
       this.LogDebug("B2C2 base: perform loading");
       InitialiseGraph();
@@ -1441,7 +1451,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
 
       // Load and open extensions.
       IBaseFilter lastFilter = _filterInfiniteTee;
-      LoadPlugins(_filterB2c2Adapter, _graph, ref lastFilter);
+      LoadExtensions(_filterB2c2Adapter, ref lastFilter);
 
       // This class implements the extension interface and should be treated as the main extension.
       _extensions.Add(this);
@@ -1466,7 +1476,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     /// <summary>
     /// Actually unload the tuner.
     /// </summary>
-    protected override void PerformUnloading()
+    public override void PerformUnloading()
     {
       this.LogDebug("B2C2 base: perform unloading");
       _interfaceData = null;
@@ -1775,7 +1785,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     /// This call back is invoked before the tuner is stopped.
     /// </summary>
     /// <param name="tuner">The tuner instance that this extension instance is associated with.</param>
-    /// <param name="action">As an input, the action that TV Server wants to take; as an output, the action to take.</param>
+    /// <param name="action">As an input, the action that the TV Engine wants to take; as an output, the action to take.</param>
     public virtual void OnStop(ITVCard tuner, ref TunerAction action)
     {
     }

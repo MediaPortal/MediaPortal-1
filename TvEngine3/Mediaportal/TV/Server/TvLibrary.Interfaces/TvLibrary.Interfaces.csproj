@@ -135,8 +135,10 @@
     <Compile Include="Implementations\Helper\DvbTextConverter.cs" />
     <Compile Include="Implementations\Channels\DVBIPChannel.cs" />
     <Compile Include="Interfaces\Device\IConditionalAccessMenuActions.cs" />
-    <Compile Include="Interfaces\Device\IConditionalAccessMenuCallBacks.cs" />
+    <Compile Include="Interfaces\Device\IConditionalAccessMenuCallBack.cs" />
+    <Compile Include="Interfaces\IEpgGrabber.cs" />
     <Compile Include="Interfaces\ITunerDetectionEventListener.cs" />
+    <Compile Include="Interfaces\ITunerGroup.cs" />
     <Compile Include="Interfaces\ITVChannelLinkage.cs" />
     <Compile Include="Interfaces\ITvSubChannel.cs" />
     <Compile Include="Interfaces\TvPluginCallback.cs" />
@@ -159,7 +161,7 @@
     <Compile Include="Interfaces\IChannel.cs" />
     <Compile Include="Interfaces\IQuality.cs" />
     <Compile Include="Interfaces\ITVCard.cs" />
-    <Compile Include="Interfaces\ITVEPG.cs" />
+    <Compile Include="Interfaces\IEpgGrabberCallBack.cs" />
     <Compile Include="Interfaces\ITVScanning.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Simmetrics\AbstractStringMetric.cs" />
