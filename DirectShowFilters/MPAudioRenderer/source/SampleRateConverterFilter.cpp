@@ -293,7 +293,7 @@ HRESULT CSampleRateConverter::SetupConversion()
     m_pSrcState = src_delete(m_pSrcState);
 
   int error = 0;
-  m_pSrcState = src_new(m_pSettings->m_nResamplingQuality, m_pInputFormat->Format.nChannels, &error);
+  m_pSrcState = src_new(m_pSettings->GetResamplingQuality(), m_pInputFormat->Format.nChannels, &error);
 
   m_llFramesInput = 0;
   m_llFramesOutput = 0;

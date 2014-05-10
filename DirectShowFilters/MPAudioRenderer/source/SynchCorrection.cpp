@@ -282,7 +282,7 @@ void SynchCorrection::AddSample(INT64 rtOriginalStart, INT64 rtAdjustedStart, IN
   newSample->rtOriginalSampleEnd = rtOriginalEnd;
   newSample->rtAdjustedSampleEnd = rtAdjustedEnd;
 
-  if (m_pSettings->m_bLogDebug)
+  if (m_pSettings->GetLogDebug())
     Log ("SynchCorrection::AddSample Size: %4u rtOriginalStart: %10.8f rtAdjustedStart: %10.8f rtOriginalEnd: %10.8f rtAdjustedEnd: %10.8f m_rtQueueDuration: %10.8f  m_rtAdjustedQueueDuration: %10.8f",
       m_qSampleTimes.size(),rtOriginalStart / 10000000.0, rtAdjustedStart / 10000000.0, rtOriginalEnd / 10000000.0, rtAdjustedEnd / 10000000.0, m_rtQueueDuration / 10000000.0, m_rtQueueAdjustedDuration/ 10000000.0);
 
@@ -334,7 +334,7 @@ INT64 SynchCorrection::CalculateDrift(REFERENCE_TIME rtAHwTime, REFERENCE_TIME r
 {
   rtAHwTime -= m_rtAHwStart;
 
-  if (m_pSettings->m_bLogDebug)
+  if (m_pSettings->GetLogDebug())
     Log ("SynchCorrection::CalculateDrift Size: %4u rtAHwTime: %10.8f rtRCTime: %10.8f m_rtStart: %10.8f",
       m_qSampleTimes.size(),rtAHwTime / 10000000.0, rtRCTime / 10000000.0, m_rtStart / 10000000.0);
 

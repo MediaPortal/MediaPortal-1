@@ -161,6 +161,7 @@
       <Filter>AC3_encoder</Filter>
     </ClInclude>
     <ClInclude Include="source\SettingsProp.h" />
+    <ClInclude Include="source\IMPAudioSettings.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="source\MpAudioRenderer.rc" />

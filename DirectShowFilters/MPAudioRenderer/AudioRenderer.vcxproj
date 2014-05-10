@@ -172,6 +172,7 @@
     <None Include="source\MpAudioRenderer.def" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="source\IMPAudioSettings.h" />
     <ClInclude Include="libresample\src\samplerate.h" />
     <ClInclude Include="AE_mixer\AEAudioFormat.h" />
     <ClInclude Include="AE_mixer\AEChannelInfo.h" />

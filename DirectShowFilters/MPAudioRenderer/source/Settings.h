@@ -22,14 +22,9 @@
 #include <Avrt.h>
 #include <audioclient.h>
 
-#define MAX_REG_LENGTH 256
+#include "IMPAudioSettings.h"
 
-enum AC3Encoding
-{ 
-  DISABLED = 0,
-  AUTO,
-  FORCED
-};
+#define MAX_REG_LENGTH 256
 
 // {101A150C-DD66-4230-BFD7-168CC184408C}
 DEFINE_GUID(IID_IMPARSettings,
@@ -95,7 +90,7 @@ interface IMPARSettings : public IUnknown
   virtual void SetAudioDevice(int setting) = 0;
 };
 
-class AudioRendererSettings : public CUnknown, public IMPARSettings, public ISpecifyPropertyPages
+class AudioRendererSettings : public CUnknown, public IMPARSettings, public ISpecifyPropertyPages, public IMPAudioRendererConfig
 {
 public:
   AudioRendererSettings();
@@ -162,6 +157,69 @@ public:
 
   HRESULT GetAvailableAudioDevices(IMMDeviceCollection** ppMMDevices, HWND hDialog, bool pLog);
   void SetAudioDevice(int setting);
+  void SetAudioDevice(LPWSTR setting);
+
+  // IMPAudioRendererConfig - external setting interface
+  STDMETHODIMP GetBool(MPARSetting setting, bool* pValue);
+  STDMETHODIMP SetBool(MPARSetting setting, bool value);
+
+  STDMETHODIMP GetInt(MPARSetting setting, int* pValue);
+  STDMETHODIMP SetInt(MPARSetting setting, int value);
+
+  STDMETHODIMP GetString(MPARSetting setting, LPWSTR* pValue);
+  STDMETHODIMP SetString(MPARSetting setting, LPWSTR value);
+
+  int GetSpeakerCount();
+  bool GetReleaseDeviceOnStop();
+  double GetMinBias();
+  double GetMaxBias();
+  bool GetLogDebug();
+  bool GetUseWASAPI();
+  void SetUseWASAPI(bool setting);
+
+  int GetUseFilters();
+
+  int GetSpeakerMatchOutput();
+  void SetSpeakerMatchOutput(bool setting);
+
+  bool GetAllowBitStreaming();
+  void SetAllowBitStreaming(bool setting);
+
+  DWORD GetForceBitDepth();
+  DWORD GetForceSamplingRate();
+
+  REFERENCE_TIME GetPeriod();
+  void SetPeriod(REFERENCE_TIME period);
+  bool GetHWBasedRefClock();
+
+  bool GetQuality_USE_QUICKSEEK();
+  bool GetQuality_USE_AA_FILTER();
+  int GetQuality_AA_FILTER_LENGTH();
+  int GetQuality_SEQUENCE_MS(); 
+  int GetQuality_SEEKWINDOW_MS();
+
+private:
+  bool IsValidSampleRate(int value);
+  bool IsValidBitDepth(int value);
+  bool IsValidResamplingQuality(int value);
+  bool IsValidSpeakerConfig(int value);
+  bool IsValidWASAPIMode(int value);
+  bool IsValidAC3Bitrate(int value);
+  bool IsValidAC3EncodingMode(int value);
+  bool IsValidOutputBuffer(int value);
+  bool IsValidAudioDelay(int value);
+  bool IsValidUseFilters(int value);
+
+  bool AllowedValue(unsigned int allowedValues[], unsigned int size, unsigned int rate);
+
+   // For accessing the registry
+  void LoadSettingsFromRegistry();
+  void ReadRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data);
+  void WriteRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data);
+  void ReadRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data);
+  void WriteRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data);
+
+  unsigned int ChannelCount(unsigned int channelMask);
 
   bool m_bLogSampleTimes;
   bool m_bLogDebug;
@@ -205,17 +263,6 @@ public:
   
   WCHAR* m_wWASAPIPreferredDeviceId;
 
-private:
-   // For accessing the registry
-  void LoadSettingsFromRegistry();
-  void ReadRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data);
-  void WriteRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data);
-  void ReadRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data);
-  void WriteRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data);
-
-  bool AllowedValue(unsigned int allowedRates[], unsigned int size, unsigned int rate);
-  unsigned int ChannelCount(unsigned int channelMask);
-
-  // TODO lock against this for dynamic setting changes
-  // CCritSec  m_csSettings;
+  int m_nUseFilters;
+  CCritSec m_csSettings;
 };

@@ -74,19 +74,19 @@ HRESULT CTimeStretchFilter::Init()
 
   setTempoChange(0);
   setPitchSemiTones(0);
-  setSetting(SETTING_USE_QUICKSEEK, m_pSettings->m_bQuality_USE_QUICKSEEK);
-  setSetting(SETTING_USE_AA_FILTER, m_pSettings->m_bQuality_USE_AA_FILTER);
-  setSetting(SETTING_AA_FILTER_LENGTH, m_pSettings->m_lQuality_AA_FILTER_LENGTH);
-  setSetting(SETTING_SEQUENCE_MS, m_pSettings->m_lQuality_SEQUENCE_MS); 
-  setSetting(SETTING_SEEKWINDOW_MS, m_pSettings->m_lQuality_SEEKWINDOW_MS);
-  setSetting(SETTING_OVERLAP_MS, m_pSettings->m_lQuality_SEQUENCE_MS);
+  setSetting(SETTING_USE_QUICKSEEK, m_pSettings->GetQuality_USE_QUICKSEEK());
+  setSetting(SETTING_USE_AA_FILTER, m_pSettings->GetQuality_USE_AA_FILTER());
+  setSetting(SETTING_AA_FILTER_LENGTH, m_pSettings->GetQuality_AA_FILTER_LENGTH());
+  setSetting(SETTING_SEQUENCE_MS, m_pSettings->GetQuality_SEQUENCE_MS()); 
+  setSetting(SETTING_SEEKWINDOW_MS, m_pSettings->GetQuality_SEEKWINDOW_MS());
+  setSetting(SETTING_OVERLAP_MS, m_pSettings->GetQuality_SEQUENCE_MS());
 
   return CQueuedAudioSink::Init();
 }
 
 HRESULT CTimeStretchFilter::PutSample(IMediaSample* pSample)
 {
-  if (m_pSettings->m_bUseTimeStretching)
+  if (m_pSettings->GetUseTimeStretching())
     CQueuedAudioSink::PutSample(pSample);
   else if (m_pNextSink)
     return m_pNextSink->PutSample(pSample);
@@ -151,7 +151,7 @@ HRESULT CTimeStretchFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, in
   else
     LogWaveFormat(pwfx, "TS   -          ");
 
-  m_bNextFormatPassthru = !m_pSettings->m_bUseTimeStretching;
+  m_bNextFormatPassthru = !m_pSettings->GetUseTimeStretching();
   m_chOrder = *pChOrder;
 
   return S_OK;
