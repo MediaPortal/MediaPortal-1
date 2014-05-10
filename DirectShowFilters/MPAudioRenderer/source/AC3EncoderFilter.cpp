@@ -82,7 +82,7 @@ HRESULT CAC3EncoderFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int
 
   // If AC3 encoding is not forced check first if the audio format can be played without 
   // encoding (for example 2 channel on SPDIF or channel mixer downmixing the channels)
-  if (m_pSettings->m_lAC3Encoding == DISABLED || m_pSettings->m_lAC3Encoding == AUTO)
+  if (m_pSettings->GetAC3EncodingMode() == DISABLED || m_pSettings->GetAC3EncodingMode() == AUTO)
   {
     hr = m_pNextSink->NegotiateFormat(pwfx, nApplyChangesDepth, pChOrder);
     if (SUCCEEDED(hr))
@@ -104,7 +104,7 @@ HRESULT CAC3EncoderFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int
   
   m_bNextFormatPassthru = false;
 
-  if (m_pSettings->m_lAC3Encoding == DISABLED)
+  if (m_pSettings->GetAC3EncodingMode() == DISABLED)
     return VFW_E_TYPE_NOT_ACCEPTED;
 
   // Verify input format bit depth, channels and sample rate

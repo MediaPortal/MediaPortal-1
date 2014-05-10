@@ -24,8 +24,6 @@
 #include "alloctracing.h"
 
 extern void Log(const char *fmt, ...);
-extern void StartLogger();
-extern void LogRotate();
 
 unsigned int gAllowedAC3bitrates[9]         = {192, 224, 256, 320, 384, 448, 512, 576, 640};
 unsigned int gAllowedSampleRates[7]         = {22050, 32000, 44100, 48000, 88200, 96000, 192000};
@@ -39,6 +37,8 @@ LPCTSTR folder = TEXT("Software\\Team MediaPortal\\Audio Renderer");
 #define DEFAULT_OUTPUT_BUFFER 500
 #define MAX_OUTPUT_BUFFER 5000
 #define MIN_OUTPUT_BUFFER 100
+#define MAX_AUDIO_DELAY 2000
+#define MIN_AUDIO_DELAY 0
 
 // Registry setting names
 LPCTSTR enableTimestretching = TEXT("EnableTimestretching");
@@ -130,12 +130,9 @@ AudioRendererSettings::AudioRendererSettings() :
   m_lSpeakerConfig(SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT),
   m_bForceChannelMixing(false),
   m_bReleaseDeviceOnStop(false),
-  m_bExpandMonoToStereo(true)
+  m_bExpandMonoToStereo(true),
+  m_nUseFilters(USE_FILTERS_ALL)
 {
-  StartLogger();
-  LogRotate();
-  Log("MP Audio Renderer - v1.1.6");
-
   LoadSettingsFromRegistry();
 }
 
@@ -255,7 +252,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     else
       m_bExpandMonoToStereo = false;
 
-    if (AC3EncodingData == DISABLED || AC3EncodingData == AUTO || AC3EncodingData == FORCED)
+    if (IsValidAC3EncodingMode(AC3EncodingData))
       m_lAC3Encoding = AC3EncodingData;
     else
       m_lAC3Encoding = 0;
@@ -286,8 +283,8 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
       m_bEnableSyncAdjustment = false;
 
     bool AC3EncodingForced = AC3EncodingData == FORCED;
-    bool sampleRateAllowed = AllowedValue(gAllowedSampleRates, sizeof(gAllowedSampleRates) / sizeof(int), forceSamplingRateData);
-    bool bitDepthAllowed = AllowedValue(gAllowedBitDepths, sizeof(gAllowedBitDepths) / sizeof(int), forceBitDepthData);
+    bool sampleRateAllowed = IsValidSampleRate(forceSamplingRateData);
+    bool bitDepthAllowed = IsValidBitDepth(forceBitDepthData);
 
     if (AC3EncodingForced)
     {
@@ -318,15 +315,15 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
         Log("   invalid forced bit depth!");
     }
 
-    if (AllowedValue(gAllowedResamplingQualities, sizeof(gAllowedResamplingQualities) / sizeof(int), resamplingQualityData))
+    if (IsValidResamplingQuality(resamplingQualityData))
       m_nResamplingQuality = resamplingQualityData;
     else
     {
-      m_nResamplingQuality = 4;
+      m_nResamplingQuality = SRC_LINEAR;
       Log("   invalid resampling quality setting, using 4 (SRC_LINEAR)");
     }
 
-    if (AllowedValue(gAllowedAC3bitrates, sizeof(gAllowedAC3bitrates) / sizeof(int), AC3bitrateData))
+    if (IsValidAC3Bitrate(AC3bitrateData))
       m_AC3bitrate = AC3bitrateData * 1000;
     else
     {
@@ -367,8 +364,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     else
       m_bForceChannelMixing = false;
 
-    // TODO validate channel mask
-    if (speakerConfigData > 0)
+    if (IsValidSpeakerConfig(speakerConfigData))
     {
       m_lSpeakerConfig = speakerConfigData;
       m_lSpeakerCount = ChannelCount(m_lSpeakerConfig);
@@ -595,19 +591,19 @@ void AudioRendererSettings::WriteRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey,
     Log("Error writing to Registry - subkey: %s error: %d", T2A(lpSubKey), result);
 }
 
-bool AudioRendererSettings::AllowedValue(unsigned int allowedRates[], unsigned int size, unsigned int rate)
+bool AudioRendererSettings::AllowedValue(unsigned int allowedValues[], unsigned int size, unsigned int value)
 {
-  bool rateOk = false;
+  bool valueOk = false;
   for (unsigned int i = 0; i < size; i++)
   {
-    if (allowedRates[i] == rate)
+    if (allowedValues[i] == value)
     {
-      rateOk = true;
+      valueOk = true;
       break;
     }
   }
 
-  return rateOk;
+  return valueOk;
 }
 
 LPCTSTR AudioRendererSettings::ResamplingQualityAsString(int setting)
@@ -668,7 +664,7 @@ HRESULT AudioRendererSettings::GetAudioDevice(IMMDevice** ppMMDevice)
   Log("CWASAPIRenderFilter::GetAudioDevice");
 
   CComPtr<IMMDeviceEnumerator> enumerator;
-  IMMDeviceCollection* devices;
+  IMMDeviceCollection* devices = NULL;
   HRESULT hr = enumerator.CoCreateInstance(__uuidof(MMDeviceEnumerator));
 
   if (FAILED(hr))
@@ -863,15 +859,9 @@ HRESULT AudioRendererSettings::GetAvailableAudioDevices(IMMDeviceCollection** pp
 
 void AudioRendererSettings::SetAudioDevice(int setting)
 {
-  CComPtr<IMMDeviceEnumerator> enumerator;
-  IMMDeviceCollection* devices;
-  HRESULT hr = enumerator.CoCreateInstance(__uuidof(MMDeviceEnumerator));
-
-  if (FAILED(hr))
-  {
-    Log("SetAudioDevice failed (0x%08x)", hr);
-    return;
-  }
+  CAutoLock settingLock(&m_csSettings);
+  IMMDeviceCollection* devices = NULL;
+  HRESULT hr = S_OK;
 
   if (setting == 0) // default audio device
   {
@@ -894,8 +884,7 @@ void AudioRendererSettings::SetAudioDevice(int setting)
       {
         // Found the selectde audio endpoint
         wcsncpy(m_wWASAPIPreferredDeviceId, pwszID, MAX_REG_LENGTH);
-        
-        SAFE_RELEASE(devices);
+
         SAFE_RELEASE(pEndpoint);
         CoTaskMemFree(pwszID);
         pwszID = NULL;
@@ -904,6 +893,61 @@ void AudioRendererSettings::SetAudioDevice(int setting)
         Log("  devices->GetId failed: (0x%08x)", hr);
     }
   }
+
+  SAFE_RELEASE(devices);
+}
+
+void AudioRendererSettings::SetAudioDevice(LPWSTR setting)
+{
+  CAutoLock settingLock(&m_csSettings);
+  IMMDeviceCollection* devices = NULL;
+  HRESULT hr = S_OK;
+
+  if (FAILED(hr))
+  {
+    Log("SetAudioDevice failed (0x%08x)", hr);
+    return;
+  }
+
+  if (!setting || wcscmp(setting, L"") == 0) // default audio device
+  {
+    WCHAR empty[1] = {0};
+    wcsncpy(m_wWASAPIPreferredDeviceId, empty, MAX_REG_LENGTH);
+  }
+  else if (GetAvailableAudioDevices(&devices, NULL, false) == S_OK)
+  {
+    IMMDevice* pEndpoint = NULL;
+    LPWSTR pwszID = NULL;
+
+    UINT count = 0;
+    hr = devices->GetCount(&count);
+    bool done = false;
+
+    for (UINT i = 0; i < count; i++)
+    {
+      if (devices->Item(i, &pEndpoint) != S_OK)
+        break;
+
+      if (pEndpoint->GetId(&pwszID) != S_OK)
+        break;
+
+      if (wcscmp(pwszID, setting) == 0)
+      {
+        // Found the selectd audio endpoint
+        wcsncpy(m_wWASAPIPreferredDeviceId, pwszID, MAX_REG_LENGTH);
+        done = true;
+      }
+
+      CoTaskMemFree(pwszID);
+      pwszID = NULL;
+
+      SAFE_RELEASE(pEndpoint)
+      if (done)
+        break;
+    }
+  }
+
+  SAFE_RELEASE(devices);
 }
 
 HRESULT AudioRendererSettings::GetPages(CAUUID* pPages)
@@ -924,150 +968,603 @@ HRESULT AudioRendererSettings::GetPages(CAUUID* pPages)
 
 int AudioRendererSettings::GetAC3EncodingMode()
 {
+  CAutoLock settingLock(&m_csSettings);
   return m_lAC3Encoding;
 }
 
 void AudioRendererSettings::SetAC3EncodingMode(int mode)
 {
+  CAutoLock settingLock(&m_csSettings);
   m_lAC3Encoding = mode;
 }
 
 bool AudioRendererSettings::GetLogSampleTimes()
 {
+  CAutoLock settingLock(&m_csSettings);
   return m_bLogSampleTimes;
 }
 
 void AudioRendererSettings::SetLogSampleTimes(bool setting)
 {
+  CAutoLock settingLock(&m_csSettings);
   m_bLogSampleTimes = setting;
 }
 
 bool AudioRendererSettings::GetEnableSyncAdjustment()
 {
+  CAutoLock settingLock(&m_csSettings);
   return m_bEnableSyncAdjustment;
 }
 
 void AudioRendererSettings::SetEnableSyncAdjustment(bool setting)
 {
+  CAutoLock settingLock(&m_csSettings);
   m_bEnableSyncAdjustment = setting;
 }
 
 AUDCLNT_SHAREMODE AudioRendererSettings::GetWASAPIMode()
 {
+  CAutoLock settingLock(&m_csSettings);
   return m_WASAPIShareMode; 
 }
 
 void AudioRendererSettings::SetWASAPIMode(AUDCLNT_SHAREMODE setting)
 {
+  CAutoLock settingLock(&m_csSettings);
   m_WASAPIShareMode = setting;
 }
 
 bool AudioRendererSettings::GetUseWASAPIEventMode()
 {
+  CAutoLock settingLock(&m_csSettings);
   return m_bWASAPIUseEventMode;
 }
 
 void AudioRendererSettings::SetUseWASAPIEventMode(bool setting)
 {
+  CAutoLock settingLock(&m_csSettings);
   m_bWASAPIUseEventMode = setting;
 }
 
 bool AudioRendererSettings::GetUseTimeStretching()
 {
+  CAutoLock settingLock(&m_csSettings);
   return m_bUseTimeStretching;
 }
 
 void AudioRendererSettings::SetUseTimeStretching(bool setting)
 {
+  CAutoLock settingLock(&m_csSettings);
   m_bUseTimeStretching = setting;
 }
 
 bool AudioRendererSettings::GetExpandMonoToStereo()
 {
+  CAutoLock settingLock(&m_csSettings);
   return m_bExpandMonoToStereo;
 }
 
 void AudioRendererSettings::SetExpandMonoToStereo(bool setting)
 {
+  CAutoLock settingLock(&m_csSettings);
   m_bExpandMonoToStereo = setting;
 }
 
 int AudioRendererSettings::GetAC3Bitrate()
 {
+  CAutoLock settingLock(&m_csSettings);
   return m_AC3bitrate / 1000;
 }
 
 void AudioRendererSettings::SetAC3Bitrate(int setting)
 {
+  CAutoLock settingLock(&m_csSettings);
   m_AC3bitrate = setting * 1000;
+}
+
+int AudioRendererSettings::GetSpeakerCount()
+{
+  CAutoLock settingLock(&m_csSettings);
+  return m_lSpeakerCount;
 }
 
 int AudioRendererSettings::GetSpeakerConfig()
 {
+  CAutoLock settingLock(&m_csSettings);
   return m_lSpeakerConfig;
 }
 
 void AudioRendererSettings::SetSpeakerConfig(int setting)
 {
+  CAutoLock settingLock(&m_csSettings);
   m_lSpeakerConfig = setting;
+  m_lSpeakerCount = ChannelCount(m_lSpeakerConfig);
+
+  if ((m_lAC3Encoding == FORCED) && m_lSpeakerCount > 6 && m_bForceChannelMixing)
+  {
+    m_lSpeakerConfig = KSAUDIO_SPEAKER_5POINT1_SURROUND;
+    m_lSpeakerCount = 6;
+    Log("   Warning: incompatible settings. ForceChannelMixing + AC3 encoding forced + more than 6 channels");
+  }
 }
 
 bool AudioRendererSettings::GetForceChannelMixing()
 {
+  CAutoLock settingLock(&m_csSettings);
   return m_bForceChannelMixing;
 }
 
 void AudioRendererSettings::SetForceChannelMixing(bool setting)
 {
+  CAutoLock settingLock(&m_csSettings);
   m_bForceChannelMixing = setting;
 }
 
 int AudioRendererSettings::GetAudioDelay()
 {
+  CAutoLock settingLock(&m_csSettings);
   return m_lAudioDelay;
 }
 
 void AudioRendererSettings::SetAudioDelay(int setting)
 {
+  CAutoLock settingLock(&m_csSettings);
   m_lAudioDelay = setting;
 }
 
 int AudioRendererSettings::GetOutputBuffer()
 {
+  CAutoLock settingLock(&m_csSettings);
   return m_msOutputBuffer;
 }
 
 void AudioRendererSettings::SetOutputBuffer(int setting)
 {
+  CAutoLock settingLock(&m_csSettings);
   m_msOutputBuffer = setting;
 }
 
 int AudioRendererSettings::GetSampleRate()
 {
+  CAutoLock settingLock(&m_csSettings);
   return m_nForceSamplingRate;
 }
 
 void AudioRendererSettings::SetSampleRate(int setting)
 {
+  CAutoLock settingLock(&m_csSettings);
   m_nForceSamplingRate = setting;
 }
 
 int AudioRendererSettings::GetBitDepth()
 {
+  CAutoLock settingLock(&m_csSettings);
   return m_nForceBitDepth;
 }
 
 void AudioRendererSettings::SetBitDepth(int setting)
 {
+  CAutoLock settingLock(&m_csSettings);
   m_nForceBitDepth = setting;
 }
 
 int AudioRendererSettings::GetResamplingQuality()
 {
+  CAutoLock settingLock(&m_csSettings);
   return m_nResamplingQuality;
 }
 
 void AudioRendererSettings::SetResamplingQuality(int setting)
 {
+  CAutoLock settingLock(&m_csSettings);
   m_nResamplingQuality = setting;
+}
+
+bool AudioRendererSettings::GetReleaseDeviceOnStop()
+{
+  CAutoLock settingLock(&m_csSettings);
+  return m_bReleaseDeviceOnStop;
+}
+
+double AudioRendererSettings::GetMinBias()
+{
+  CAutoLock settingLock(&m_csSettings);
+  return m_dMinBias;
+}
+
+double AudioRendererSettings::GetMaxBias()
+{
+  CAutoLock settingLock(&m_csSettings);
+  return m_dMaxBias;
+}
+
+bool AudioRendererSettings::GetLogDebug()
+{
+  CAutoLock settingLock(&m_csSettings);
+  return m_bLogDebug;
+}
+
+bool AudioRendererSettings::GetUseWASAPI()
+{
+  CAutoLock settingLock(&m_csSettings);
+  return m_bUseWASAPI;
+}
+
+void AudioRendererSettings::SetUseWASAPI(bool setting)
+{
+  CAutoLock settingLock(&m_csSettings);
+  m_bUseWASAPI = setting;
+}
+
+int AudioRendererSettings::GetUseFilters()
+{
+  CAutoLock settingLock(&m_csSettings);
+  return m_nUseFilters;
+}
+
+DWORD AudioRendererSettings::GetForceBitDepth()
+{
+  CAutoLock settingLock(&m_csSettings);
+  return m_nForceBitDepth;
+}
+
+DWORD AudioRendererSettings::GetForceSamplingRate()
+{
+  CAutoLock settingLock(&m_csSettings);
+  return m_nForceSamplingRate;
+}
+
+REFERENCE_TIME AudioRendererSettings::GetPeriod()
+{
+  CAutoLock settingLock(&m_csSettings);
+  return m_hnsPeriod;
+}
+
+void AudioRendererSettings::SetPeriod(REFERENCE_TIME period)
+{
+  CAutoLock settingLock(&m_csSettings);
+  m_hnsPeriod = period;
+}
+
+bool AudioRendererSettings::GetHWBasedRefClock()
+{
+  CAutoLock settingLock(&m_csSettings);
+  return m_bHWBasedRefClock;
+}
+
+bool AudioRendererSettings::GetQuality_USE_QUICKSEEK()
+{
+  CAutoLock settingLock(&m_csSettings);
+  return m_bQuality_USE_QUICKSEEK;
+}
+
+bool AudioRendererSettings::GetQuality_USE_AA_FILTER()
+{
+  CAutoLock settingLock(&m_csSettings);
+  return m_bQuality_USE_QUICKSEEK;
+}
+
+int AudioRendererSettings::GetQuality_AA_FILTER_LENGTH()
+{
+  CAutoLock settingLock(&m_csSettings);
+  return m_lQuality_AA_FILTER_LENGTH;
+}
+
+int AudioRendererSettings::GetQuality_SEQUENCE_MS()
+{
+  CAutoLock settingLock(&m_csSettings);
+  return m_lQuality_SEQUENCE_MS;
+}
+
+int AudioRendererSettings::GetQuality_SEEKWINDOW_MS()
+{
+  CAutoLock settingLock(&m_csSettings);
+  return m_lQuality_SEEKWINDOW_MS;
+}
+
+HRESULT AudioRendererSettings::GetBool(MPARSetting setting, bool* pValue)
+{
+  CheckPointer(pValue, E_POINTER);
+
+  HRESULT hr = S_OK;
+  CAutoLock settingLock(&m_csSettings);
+
+  switch (setting)
+  {
+    case LOG_SAMPLE_TIMES:
+      *pValue = m_bLogSampleTimes;
+      break;
+
+    case ENABLE_SYNC_ADJUSTMENT:
+      *pValue = m_bEnableSyncAdjustment;
+      break;
+
+    case WASAPI_EVENT_DRIVEN:
+      *pValue = m_bWASAPIUseEventMode;
+      break;
+
+    case ENABLE_TIME_STRETCHING:
+      *pValue = m_bUseTimeStretching;
+      break;
+
+    case EXPAND_MONO_TO_STEREO:
+      *pValue = m_bExpandMonoToStereo;
+      break;
+
+    case FORCE_CHANNEL_MIXING:
+      *pValue = m_bForceChannelMixing;
+      break;
+
+    default:
+      hr = E_NOTIMPL;
+  }
+
+  return hr;
+}
+
+HRESULT AudioRendererSettings::SetBool(MPARSetting setting, bool value)
+{
+  HRESULT hr = S_OK;
+  CAutoLock settingLock(&m_csSettings);
+
+  switch (setting)
+  {
+    case LOG_SAMPLE_TIMES:
+      m_bLogSampleTimes = value;
+      break;
+
+    case ENABLE_SYNC_ADJUSTMENT:
+      m_bEnableSyncAdjustment = value;
+      break;
+
+    case WASAPI_EVENT_DRIVEN:
+      m_bWASAPIUseEventMode = value;
+      break;
+
+    case ENABLE_TIME_STRETCHING:
+      m_bUseTimeStretching = value;
+      break;
+
+    case EXPAND_MONO_TO_STEREO:
+      m_bExpandMonoToStereo = value;
+      break;
+
+    case FORCE_CHANNEL_MIXING:
+      m_bForceChannelMixing = value;
+      break;
+
+    default:
+      hr = E_NOTIMPL;
+  }
+
+  return hr;
+}
+
+HRESULT AudioRendererSettings::GetInt(MPARSetting setting, int* pValue)
+{
+  CheckPointer(pValue, E_POINTER);
+
+  HRESULT hr = S_OK;
+  CAutoLock settingLock(&m_csSettings);
+
+  switch (setting)
+  {
+    case AC3_ENCODING:
+      *pValue = m_lAC3Encoding;
+      break;
+    
+    case WASAPI_MODE:
+      if (m_WASAPIShareMode == AUDCLNT_SHAREMODE_SHARED)
+        *pValue = SHARED;
+      else
+        *pValue = EXCLUSIVE;
+      break;
+
+    case AC3_BITRATE:
+      *pValue = m_AC3bitrate;
+      break;
+
+    case SPEAKER_CONFIG:
+      *pValue = m_lSpeakerConfig;
+      break;
+
+    case AUDIO_DELAY:
+      *pValue = m_lAudioDelay;
+      break;
+
+    case OUTPUT_BUFFER_LENGTH:
+      *pValue = m_msOutputBuffer;
+      break;
+
+    case SAMPLE_RATE:
+      *pValue = m_nForceSamplingRate;
+      break;
+
+    case BIT_DEPTH:
+      *pValue = m_nForceBitDepth;
+      break;
+
+    case LIB_RESAMPLE_QUALITY:
+      *pValue = m_nResamplingQuality;
+      break;
+
+    default:
+      hr = E_NOTIMPL;
+  }
+
+  return hr;
+}
+
+HRESULT AudioRendererSettings::SetInt(MPARSetting setting, int value)
+{
+  HRESULT hr = S_OK;
+  CAutoLock settingLock(&m_csSettings);
+
+  switch (setting)
+  {
+    case AC3_ENCODING:
+      if (IsValidAC3EncodingMode(value))
+        m_lAC3Encoding = value;
+      else
+        hr = E_INVALIDARG;
+
+      break;
+
+    case WASAPI_MODE:
+      if (IsValidWASAPIMode(value))
+      {
+        if (value == SHARED)
+          m_WASAPIShareMode = AUDCLNT_SHAREMODE_SHARED;
+        else 
+          m_WASAPIShareMode = AUDCLNT_SHAREMODE_EXCLUSIVE;
+      }
+      else
+        hr = E_INVALIDARG;
+
+      break;
+
+    case AC3_BITRATE:
+      if (IsValidAC3Bitrate(value))
+        m_AC3bitrate = value;
+      else
+        hr = E_INVALIDARG;
+
+      break;
+
+    case SPEAKER_CONFIG:
+      if (IsValidSpeakerConfig(value))
+        m_lSpeakerConfig = value;
+      else
+        hr = E_INVALIDARG;
+
+      break;
+
+    case AUDIO_DELAY:
+      m_lAudioDelay = value;
+      break;
+
+    case OUTPUT_BUFFER_LENGTH:
+      m_msOutputBuffer = value;
+      break;
+
+    case SAMPLE_RATE:
+      if (IsValidSampleRate(value))
+        m_nForceSamplingRate = value;
+      else
+        hr = E_INVALIDARG;
+
+      break;
+
+    case BIT_DEPTH:
+      if (IsValidBitDepth(value))
+        m_nForceBitDepth = value;
+      else
+        hr = E_INVALIDARG;
+
+      break;
+
+    case LIB_RESAMPLE_QUALITY:
+      if (IsValidResamplingQuality(value))
+        m_nResamplingQuality = value;
+      else
+        hr = E_INVALIDARG;
+
+    case USE_FILTERS:
+      if (IsValidUseFilters(value))
+        m_nUseFilters = value;
+      else
+        hr = E_INVALIDARG;
+
+      break;
+
+    default:
+      hr = E_NOTIMPL;
+  }
+
+  return hr;
+}
+
+STDMETHODIMP AudioRendererSettings::GetString(MPARSetting setting, LPWSTR* ppValue)
+{
+  CheckPointer(*ppValue, E_POINTER);
+  return E_NOTIMPL;
+}
+
+STDMETHODIMP AudioRendererSettings::SetString(MPARSetting setting, LPWSTR pValue)
+{
+  CheckPointer(pValue, E_POINTER);
+
+  HRESULT hr = S_OK;
+
+  switch (setting)
+  {
+    case SETTING_AUDIO_DEVICE:
+      SetAudioDevice(pValue);
+      break;
+
+    default:
+      hr = E_NOTIMPL;
+  }
+
+  return hr;
+}
+
+bool AudioRendererSettings::IsValidSampleRate(int value)
+{
+  return AllowedValue(gAllowedSampleRates, sizeof(gAllowedSampleRates) / sizeof(int), value);
+}
+
+bool AudioRendererSettings::IsValidBitDepth(int value)
+{
+  return AllowedValue(gAllowedBitDepths, sizeof(gAllowedBitDepths) / sizeof(int), value);
+}
+
+bool AudioRendererSettings::IsValidResamplingQuality(int value)
+{
+  return AllowedValue(gAllowedResamplingQualities, sizeof(gAllowedResamplingQualities) / sizeof(int), value);
+}
+
+bool AudioRendererSettings::IsValidSpeakerConfig(int value)
+{
+  return AllowedValue(speakerConfigs, sizeof(speakerConfigs) / sizeof(int), value);
+}
+
+bool AudioRendererSettings::IsValidWASAPIMode(int value)
+{
+  return value == SHARED || value == EXCLUSIVE;
+}
+
+bool AudioRendererSettings::IsValidAC3Bitrate(int value)
+{
+  return AllowedValue(gAllowedAC3bitrates, sizeof(gAllowedAC3bitrates) / sizeof(int), value);
+}
+
+bool AudioRendererSettings::IsValidAC3EncodingMode(int value)
+{
+  return value == DISABLED || value == AUTO || value == FORCED;
+}
+
+bool AudioRendererSettings::IsValidOutputBuffer(int value)
+{
+  return MIN_OUTPUT_BUFFER <= value && value <= MAX_OUTPUT_BUFFER;
+}
+
+bool AudioRendererSettings::IsValidAudioDelay(int value)
+{
+  return MIN_AUDIO_DELAY <= value && value <= MAX_AUDIO_DELAY;
+}
+
+bool AudioRendererSettings::IsValidUseFilters(int value)
+{
+  value &= ~USE_FILTERS_AC3ENCODER;
+  value &= ~USE_FILTERS_BIT_DEPTH_IN;
+  value &= ~USE_FILTERS_BIT_DEPTH_OUT;
+  value &= ~USE_FILTERS_TIME_STRETCH;
+  value &= ~USE_FILTERS_SAMPLE_RATE_CONVERTER;
+  value &= ~USE_FILTERS_CHANNEL_MIXER;
+
+  if (value == 0)
+    return true;
+  else
+    return false;
 }
