@@ -37,7 +37,7 @@ using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {
-  public class VLSYS_Mplay : BaseDisplay, IDisplay
+  public class VLSYS_Mplay : BaseDisplay
   {
     #region variables
 
@@ -252,7 +252,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public void CleanUp()
+    public override void CleanUp()
     {
       Log.Info("VLSYS_Mplay.CleanUp() called");
       if (isDisabled)
@@ -352,7 +352,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public void Configure()
+    public override void Configure()
     {
       Form form = new VLSYS_AdvancedSetupForm();
       form.ShowDialog();
@@ -480,7 +480,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       _EnableDisplay = true;
     }
 
-    public void Dispose()
+    public override void Dispose()
     {
       Log.Info("VLSYS_Mplay.Dispose() called");
       try
@@ -498,7 +498,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       Log.Info("VLSYS_Mplay.Dispose() completed");
     }
 
-    public void DrawImage(Bitmap bitmap) {}
+    public override void DrawImage(Bitmap bitmap) { }
 
     private void EQ_Update()
     {
@@ -790,7 +790,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public void Initialize()
+    public override void Initialize()
     {
       Log.Info("VLSYS_Mplay.Initialize(): called");
       if (_ManageMHC)
@@ -1552,7 +1552,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       Thread.Sleep(DelayTimeMS);
     }
 
-    public void SetCustomCharacters(int[][] customCharacters)
+    public override void SetCustomCharacters(int[][] customCharacters)
     {
       Log.Info("VLSYS_Mplay.SetCustomCharacters: called");
       if (DefaultCustomCharacters == null)
@@ -1636,7 +1636,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public void SetLine(int line, string message)
+    public override void SetLine(int line, string message)
     {
       if (!isDisabled && _EnableDisplay)
       {
@@ -1745,7 +1745,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public void Setup(string _port, int _lines, int _cols, int _delay, int _linesG, int _colsG, int _delayG,
+    public override void Setup(string _port, int _lines, int _cols, int _delay, int _linesG, int _colsG, int _delayG,
                       bool _backLightControl, int _backlightLevel, bool _contrastControl, int _contrastLevel,
                       bool _blankOnExit)
     {
@@ -2412,12 +2412,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public string Description
+    public override string Description
     {
       get { return "VL System Mplay/LIS2 driver"; }
     }
 
-    public string ErrorMessage
+    public override string ErrorMessage
     {
       get
       {
@@ -2426,7 +2426,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public bool IsDisabled
+    public override bool IsDisabled
     {
       get
       {
@@ -2435,17 +2435,17 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public string Name
+    public override string Name
     {
       get { return "VLSYS_Mplay"; }
     }
 
-    public bool SupportsGraphics
+    public override bool SupportsGraphics
     {
       get { return false; }
     }
 
-    public bool SupportsText
+    public override bool SupportsText
     {
       get { return true; }
     }

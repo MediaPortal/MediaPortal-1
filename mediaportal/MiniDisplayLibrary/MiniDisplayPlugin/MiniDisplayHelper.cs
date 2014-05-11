@@ -29,7 +29,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 {
   public class MiniDisplayHelper
   {
-    private static int _IdleTimeout = 5;
     public static bool _PropertyBrowserAvailable = false;
     public static SystemStatus MPStatus;
     public static object PropertyBrowserMutex = new object();
@@ -55,11 +54,19 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       get { return _bass; }
       set { _bass = value; }
     }
+
+    /// <summary>
+    /// Check our EQ settings and MP states to determine if it is appropriate to show our EQ.
+    /// </summary>
+    /// <param name="EQSETTINGS"></param>
+    /// <returns>True if it is appropriate to show our EQ, false otherwise.</returns>    public static bool GetEQ(ref EQControl EQSETTINGS)
     public static bool GetEQ(ref EQControl EQSETTINGS)
     {
+      SystemStatus MPStatus=new SystemStatus();
+      GetSystemStatus(ref MPStatus);
       bool extensiveLogging = Settings.Instance.ExtensiveLogging;
       bool flag2 = (EQSETTINGS.UseStereoEq | EQSETTINGS.UseVUmeter) | EQSETTINGS.UseVUmeter2;
-      if (g_Player.Player == null || !g_Player.IsMusic || !BassMusicPlayer.IsDefaultMusicPlayer)
+      if (!MPStatus.UserIsIdle || g_Player.Player == null || !g_Player.IsMusic || !BassMusicPlayer.IsDefaultMusicPlayer)
       {
         return false;
       }
@@ -74,6 +81,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       }
       try
       {
+        if (g_Player.Paused)
+        {
+            return false;
+        }
+
         if (EQSETTINGS.DelayEQ & (g_Player.CurrentPosition < EQSETTINGS._DelayEQTime))
         {
           EQSETTINGS._EQDisplayTitle = false;
@@ -133,7 +145,15 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           {
             num3 = -2147483646;
           }
-          num2 = Bass.GetChannelData(handle, EQSETTINGS.EqFftData, num3);
+
+          if (Bass.BASS_WASAPI_IsStarted())
+          {
+            num2 = Bass.GetDataFFT(EQSETTINGS.EqFftData, num3);
+          }
+          else
+          {
+            num2 = Bass.GetChannelData(handle, EQSETTINGS.EqFftData, num3);
+          }
         }
         catch
         {
@@ -166,13 +186,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       {
         CurrentStatus.CurrentPluginStatus = MPStatus.CurrentPluginStatus;
         CurrentStatus.CurrentIconMask = MPStatus.CurrentIconMask;
+        CurrentStatus.UserIsIdle = MPStatus.UserIsIdle;
         CurrentStatus.MP_Is_Idle = MPStatus.MP_Is_Idle;
+        CurrentStatus.TimeIdleStateChanged = MPStatus.TimeIdleStateChanged;   
 
         CurrentStatus.SystemVolumeLevel = MPStatus.SystemVolumeLevel;
         CurrentStatus.IsMuted = MPStatus.IsMuted;
 
         CurrentStatus.MediaPlayer_Active = MPStatus.MediaPlayer_Active;
         CurrentStatus.MediaPlayer_Playing = MPStatus.MediaPlayer_Playing;
+        CurrentStatus.TimePlayingStateChanged = MPStatus.TimePlayingStateChanged;
         CurrentStatus.MediaPlayer_Paused = MPStatus.MediaPlayer_Paused;
         CurrentStatus.Media_IsRecording = MPStatus.Media_IsRecording;
         CurrentStatus.Media_IsTV = MPStatus.Media_IsTV;
@@ -273,11 +296,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           CurrentStatus._AudioUseWaveVolume = flag;
         }
         CurrentStatus.CurrentIconMask = 0L;
+        CurrentStatus.UserIsIdle = false;
         CurrentStatus.MP_Is_Idle = false;
+        CurrentStatus.TimeIdleStateChanged = DateTime.MinValue;
         CurrentStatus.SystemVolumeLevel = 0;
         CurrentStatus.IsMuted = false;
         CurrentStatus.MediaPlayer_Active = false;
         CurrentStatus.MediaPlayer_Playing = false;
+        CurrentStatus.TimePlayingStateChanged = DateTime.MinValue;
         CurrentStatus.MediaPlayer_Paused = false;
         CurrentStatus.Media_IsRecording = false;
         CurrentStatus.Media_IsTV = false;
@@ -788,23 +814,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       }
     }
 
-    public static void SetIdleTimeout(int TimeOutSeconds)
-    {
-      if (TimeOutSeconds == -1)
-      {
-        _IdleTimeout = 5;
-      }
-      else
-      {
-        _IdleTimeout = TimeOutSeconds;
-      }
-    }
-
-    public static int GetIdleTimeout()
-    {
-      return _IdleTimeout;
-    }
-
     public static ulong SetPluginIcons()
     {
       string[] strArray;
@@ -824,7 +833,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       }
 
       MPStatus.MediaPlayer_Active = false;
-      MPStatus.MediaPlayer_Playing = false;
       MPStatus.MediaPlayer_Paused = false;
       MPStatus.Media_IsCD = false;
       MPStatus.Media_IsRadio = false;
@@ -854,12 +862,22 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         num |= (ulong)0x40000000000L;
         MPStatus.MediaPlayer_Active = false;
         MPStatus.MediaPlayer_Paused = false;
-        MPStatus.MediaPlayer_Playing = false;
+        if (MPStatus.MediaPlayer_Playing)
+        {
+            //Update our playing state and mark the time
+            MPStatus.MediaPlayer_Playing = false;
+            MPStatus.TimePlayingStateChanged = DateTime.Now;
+        }
         return num;
       }
-      if (g_Player.Playing & !g_Player.Paused)
+      if (g_Player.Playing && !g_Player.Paused)
       {
-        MPStatus.MediaPlayer_Playing = true;
+        if (!MPStatus.MediaPlayer_Playing)
+        {
+            //Update our playing state and mark the time
+            MPStatus.MediaPlayer_Playing = true;
+            MPStatus.TimePlayingStateChanged = DateTime.Now;
+        }
         if (g_Player.Speed > 1)
         {
           num |= (ulong)0x20000000000L;
@@ -882,7 +900,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       {
         MPStatus.Media_IsMusic = true;
         num |= (ulong)0x80L;
-        property = GUIPropertyManager.GetProperty("#Play.Current.File");
+        property = g_Player.currentFileName;
         if (property.Length > 0)
         {
           string str2;

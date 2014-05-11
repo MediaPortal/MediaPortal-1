@@ -36,7 +36,7 @@ using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {
-  public class GenericSerial : BaseDisplay, IDisplay
+  public class GenericSerial : BaseDisplay
   {
     private bool _BackLightControl = false;
     //private int _BackLightLevel = 0x7f;
@@ -77,7 +77,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.Initialize();
     }
 
-    public void CleanUp()
+    public override void CleanUp()
     {
       AdvancedSettings.OnSettingsChanged -=
         new AdvancedSettings.OnSettingsChangedHandler(this.AdvancedSettings_OnSettingsChanged);
@@ -109,7 +109,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.GSD.ClearDisplay();
     }
 
-    public void Configure()
+    public override void Configure()
     {
       Form form = new GenericSerial_AdvancedSetupForm();
       form.ShowDialog();
@@ -228,12 +228,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public void Dispose()
+    public override void Dispose()
     {
       this.GSD.CloseDisplay(this._BackLightControl);
     }
 
-    public void DrawImage(Bitmap bitmap) {}
+    public override void DrawImage(Bitmap bitmap) { }
 
     private void InitCommandSet(ref CommandStrings CommandSet)
     {
@@ -253,7 +253,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       CommandSet.CMD_ToggleDTR = false;
     }
 
-    public void Initialize()
+    public override void Initialize()
     {
       this.Clear();
     }
@@ -373,9 +373,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public void SetCustomCharacters(int[][] customCharacters) {}
+    public override void SetCustomCharacters(int[][] customCharacters) { }
 
-    public void SetLine(int line, string message)
+    public override void SetLine(int line, string message)
     {
       if (this._IsDisabled)
       {
@@ -455,7 +455,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public void Setup(string _port, int _lines, int _cols, int _delay, int _linesG, int _colsG, int _delayG,
+    public override void Setup(string _port, int _lines, int _cols, int _delay, int _linesG, int _colsG, int _delayG,
                       bool _useBackLight, int _useBackLightLevel, bool _useContrast, int _useContrastLevel,
                       bool _blankOnExit)
     {
@@ -546,32 +546,32 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public string Description
+    public override string Description
     {
       get { return "Generic Serial Character VFD/LCD driver v04_10_2008"; }
     }
 
-    public string ErrorMessage
+    public override string ErrorMessage
     {
       get { return this._ErrorMessage; }
     }
 
-    public bool IsDisabled
+    public override bool IsDisabled
     {
       get { return this._IsDisabled; }
     }
 
-    public string Name
+    public override string Name
     {
       get { return "GenericSerial"; }
     }
 
-    public bool SupportsGraphics
+    public override bool SupportsGraphics
     {
       get { return false; }
     }
 
-    public bool SupportsText
+    public override bool SupportsText
     {
       get { return true; }
     }

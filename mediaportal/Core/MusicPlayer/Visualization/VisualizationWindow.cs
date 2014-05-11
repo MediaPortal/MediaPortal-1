@@ -1796,8 +1796,11 @@ namespace MediaPortal.Visualization
         return;
       }
 
-      Visible = true;
-      Refresh();
+      if (FullScreen)
+      {
+        Visible = true;
+        Refresh();
+      }
       Application.DoEvents();
 
       // Soundspectrum Viz need special handling on Render
