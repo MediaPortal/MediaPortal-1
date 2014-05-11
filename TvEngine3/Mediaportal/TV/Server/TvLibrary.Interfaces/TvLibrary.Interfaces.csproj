@@ -141,7 +141,6 @@
     <Compile Include="Interfaces\ITunerGroup.cs" />
     <Compile Include="Interfaces\ITVChannelLinkage.cs" />
     <Compile Include="Interfaces\ITvSubChannel.cs" />
-    <Compile Include="Interfaces\TvPluginCallback.cs" />
     <Compile Include="Logging\Log.cs" />
     <Compile Include="Logging\LogExtensions.cs" />
     <Compile Include="PathManager.cs" />
