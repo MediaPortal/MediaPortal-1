@@ -18,10 +18,33 @@
 
 #endregion
 
+using System.Drawing;
+
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 {
-  public abstract class BaseDisplay
-  {
-    protected BaseDisplay() {}
-  }
+    public abstract class BaseDisplay : IDisplay
+    {
+        protected BaseDisplay() {}
+        
+        //From IDisplay
+        //  Methods
+        public abstract void CleanUp();
+        public abstract void Configure();
+        public abstract void DrawImage(Bitmap bitmap);
+        public abstract void Initialize();
+        public abstract void SetCustomCharacters(int[][] customCharacters);
+        public abstract void SetLine(int line, string message);
+        public abstract void Setup(string port, int lines, int cols, int delay, int linesG, int colsG, int timeG, bool backLight, int backLightLevel, bool contrast, int contrastLevel, bool BlankOnExit);
+        public virtual void Update() { }
+        //  Properties
+        public abstract string Description { get; }
+        public abstract string ErrorMessage { get; }
+        public abstract bool IsDisabled { get; }
+        public abstract string Name { get; }
+        public abstract bool SupportsGraphics { get; }
+        public abstract bool SupportsText { get; }
+
+        //From IDisposable
+        public abstract void Dispose();
+    }
 }

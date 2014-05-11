@@ -85,6 +85,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     private MPTextBox txtRowsG;
     private MPTextBox txtScrollDelay;
     private MPTextBox txtTim;
+    private MPTextBox txtIdleTimeout;
+    private MPLabel mpLabel7;
+    private ToolTip toolTip1;
+    private IContainer components;
+    private MPTextBox txtUpdateDelay;
+    private MPLabel mpLabel8;
     private MPTextBox txtTimG;
 
     public SetupForm()
@@ -113,6 +119,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       this.txtFont.DataBindings.Add("Text", Settings.Instance, "Font");
       this.txtFontSize.DataBindings.Add("Text", Settings.Instance, "FontSize");
       this.txtScrollDelay.DataBindings.Add("Text", Settings.Instance, "ScrollDelay");
+      this.txtScrollDelay.Validating += new CancelEventHandler(txtUpdateDelay_Validating);
+      this.txtUpdateDelay.DataBindings.Add("Text", Settings.Instance, "UpdateDelay");
+      this.txtUpdateDelay.Validating += new CancelEventHandler(txtUpdateDelay_Validating);
+      this.txtIdleTimeout.DataBindings.Add("Text", Settings.Instance, "IdleTimeout");
       this.ckForceGraphicText.DataBindings.Add("Checked", Settings.Instance, "ForceGraphicText");
       this.txtPixelsToScroll.DataBindings.Add("Text", Settings.Instance, "PixelsToScroll");
       this.txtCharsToScroll.DataBindings.Add("Text", Settings.Instance, "CharsToScroll");
@@ -140,6 +150,31 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       }
       Log.Info("MiniDisplay.SetupForm(): constructor completed");
     }
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    void txtUpdateDelay_Validating(object sender, CancelEventArgs e)
+    {
+        int updateDelay;
+        int scrollDelay;
+
+        if (!int.TryParse(txtUpdateDelay.Text, out updateDelay) || !int.TryParse(txtScrollDelay.Text, out scrollDelay))
+        {
+            MessageBox.Show("You need to enter an integer", "ERROR: Check update and scroll delay", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return;
+        }
+
+        if (updateDelay>scrollDelay)
+        {
+            MessageBox.Show("Update delay must be shorter than scroll delay", "ERROR: Check update and scroll delay", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            txtUpdateDelay.Text = txtScrollDelay.Text;
+        }
+    }
+
 
     private void btnAdvanced_Click(object sender, EventArgs e)
     {
@@ -197,6 +232,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           Thread.Sleep(1000);
           this.lcd.SetLine(0, "MiniDisplay");
           this.lcd.SetLine(1, this.lcd.Name);
+          this.lcd.Update();
           Thread.Sleep(5000);
           this.lcd.CleanUp();
         }
@@ -230,724 +266,741 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
     private void InitializeComponent()
     {
-      this.btnAdvanced = new MediaPortal.UserInterface.Controls.MPButton();
-      this.cmbPort = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.btnTest = new MediaPortal.UserInterface.Controls.MPButton();
-      this.groupShutdown = new System.Windows.Forms.GroupBox();
-      this.label11 = new System.Windows.Forms.Label();
-      this.label6 = new System.Windows.Forms.Label();
-      this.mpShutdown2 = new System.Windows.Forms.TextBox();
-      this.mpShutdown1 = new System.Windows.Forms.TextBox();
-      this.cbContrast = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.cbDisplayOff = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.lblBrightness = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbBrightness = new System.Windows.Forms.TrackBar();
-      this.btnTestDisplay = new MediaPortal.UserInterface.Controls.MPButton();
-      this.lblContrast = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbContrast = new System.Windows.Forms.TrackBar();
-      this.txtScrollDelay = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.gbGraphMode = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.txtPixelsToScroll = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.mpLabel5 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.ckForceGraphicText = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.txtFontSize = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.txtFont = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label8 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.txtTimG = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.txtRowsG = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.txtColsG = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label9 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label10 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.gbTextMode = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.mpPrefixChar = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.mpLabel6 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.txtCharsToScroll = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.mpLabel4 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.txtTim = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.txtRows = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.txtCols = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label4 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label7 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.cmbType = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.cbLight = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.cbPropertyBrowser = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.btnOK = new MediaPortal.UserInterface.Controls.MPButton();
-      this.cbExtensiveLogging = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.mpDisableGUISetup = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.btnCancel = new MediaPortal.UserInterface.Controls.MPButton();
-      this.groupBox1.SuspendLayout();
-      this.groupShutdown.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.tbBrightness)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.tbContrast)).BeginInit();
-      this.gbGraphMode.SuspendLayout();
-      this.gbTextMode.SuspendLayout();
-      this.SuspendLayout();
-      // 
-      // btnAdvanced
-      // 
-      this.btnAdvanced.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnAdvanced.Location = new System.Drawing.Point(271, 41);
-      this.btnAdvanced.Name = "btnAdvanced";
-      this.btnAdvanced.Size = new System.Drawing.Size(88, 23);
-      this.btnAdvanced.TabIndex = 70;
-      this.btnAdvanced.Text = "&Advanced";
-      this.btnAdvanced.UseVisualStyleBackColor = true;
-      this.btnAdvanced.Click += new System.EventHandler(this.btnAdvanced_Click);
-      // 
-      // cmbPort
-      // 
-      this.cmbPort.BorderColor = System.Drawing.Color.Empty;
-      this.cmbPort.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cmbPort.Items.AddRange(new object[]
-                                    {
-                                      "LPT1",
-                                      "LPT2",
-                                      "LPT3",
-                                      "LPT4",
-                                      "USB",
-                                      "COM1",
-                                      "COM2",
-                                      "COM3",
-                                      "COM4",
-                                      "COM5",
-                                      "COM6",
-                                      "COM7",
-                                      "COM8",
-                                      "NONE",
-                                      "localhost"
-                                    });
-      this.cmbPort.Location = new System.Drawing.Point(40, 42);
-      this.cmbPort.Name = "cmbPort";
-      this.cmbPort.Size = new System.Drawing.Size(64, 21);
-      this.cmbPort.TabIndex = 20;
-      // 
-      // label1
-      // 
-      this.label1.Location = new System.Drawing.Point(8, 42);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(32, 23);
-      this.label1.TabIndex = 2;
-      this.label1.Text = "Port";
-      this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // groupBox1
-      // 
-      this.groupBox1.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBox1.Controls.Add(this.btnTest);
-      this.groupBox1.Controls.Add(this.groupShutdown);
-      this.groupBox1.Controls.Add(this.cbContrast);
-      this.groupBox1.Controls.Add(this.cbDisplayOff);
-      this.groupBox1.Controls.Add(this.lblBrightness);
-      this.groupBox1.Controls.Add(this.tbBrightness);
-      this.groupBox1.Controls.Add(this.btnTestDisplay);
-      this.groupBox1.Controls.Add(this.lblContrast);
-      this.groupBox1.Controls.Add(this.tbContrast);
-      this.groupBox1.Controls.Add(this.txtScrollDelay);
-      this.groupBox1.Controls.Add(this.gbGraphMode);
-      this.groupBox1.Controls.Add(this.mpLabel3);
-      this.groupBox1.Controls.Add(this.gbTextMode);
-      this.groupBox1.Controls.Add(this.label7);
-      this.groupBox1.Controls.Add(this.cmbType);
-      this.groupBox1.Controls.Add(this.cbLight);
-      this.groupBox1.Controls.Add(this.btnAdvanced);
-      this.groupBox1.Controls.Add(this.cmbPort);
-      this.groupBox1.Controls.Add(this.label1);
-      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox1.Location = new System.Drawing.Point(8, 8);
-      this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(373, 402);
-      this.groupBox1.TabIndex = 3;
-      this.groupBox1.TabStop = false;
-      this.groupBox1.Text = "Configuration";
-      // 
-      // btnTest
-      // 
-      this.btnTest.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnTest.Location = new System.Drawing.Point(271, 348);
-      this.btnTest.Name = "btnTest";
-      this.btnTest.Size = new System.Drawing.Size(92, 48);
-      this.btnTest.TabIndex = 83;
-      this.btnTest.Text = "Configuration Editor";
-      this.btnTest.UseVisualStyleBackColor = true;
-      this.btnTest.Click += new System.EventHandler(this.btnTest_Click);
-      // 
-      // groupShutdown
-      // 
-      this.groupShutdown.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.groupShutdown.Controls.Add(this.label11);
-      this.groupShutdown.Controls.Add(this.label6);
-      this.groupShutdown.Controls.Add(this.mpShutdown2);
-      this.groupShutdown.Controls.Add(this.mpShutdown1);
-      this.groupShutdown.Location = new System.Drawing.Point(8, 331);
-      this.groupShutdown.Name = "groupShutdown";
-      this.groupShutdown.Size = new System.Drawing.Size(191, 65);
-      this.groupShutdown.TabIndex = 76;
-      this.groupShutdown.TabStop = false;
-      this.groupShutdown.Text = " ShutDown Message ";
-      // 
-      // label11
-      // 
-      this.label11.AutoSize = true;
-      this.label11.Location = new System.Drawing.Point(6, 43);
-      this.label11.Name = "label11";
-      this.label11.Size = new System.Drawing.Size(36, 13);
-      this.label11.TabIndex = 79;
-      this.label11.Text = "Line 2";
-      // 
-      // label6
-      // 
-      this.label6.AutoSize = true;
-      this.label6.Location = new System.Drawing.Point(6, 20);
-      this.label6.Name = "label6";
-      this.label6.Size = new System.Drawing.Size(36, 13);
-      this.label6.TabIndex = 78;
-      this.label6.Text = "Line 1";
-      // 
-      // mpShutdown2
-      // 
-      this.mpShutdown2.Location = new System.Drawing.Point(46, 40);
-      this.mpShutdown2.Name = "mpShutdown2";
-      this.mpShutdown2.Size = new System.Drawing.Size(139, 20);
-      this.mpShutdown2.TabIndex = 77;
-      // 
-      // mpShutdown1
-      // 
-      this.mpShutdown1.Location = new System.Drawing.Point(46, 17);
-      this.mpShutdown1.Name = "mpShutdown1";
-      this.mpShutdown1.Size = new System.Drawing.Size(139, 20);
-      this.mpShutdown1.TabIndex = 76;
-      // 
-      // cbContrast
-      // 
-      this.cbContrast.AutoSize = true;
-      this.cbContrast.Checked = true;
-      this.cbContrast.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.cbContrast.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbContrast.Location = new System.Drawing.Point(190, 265);
-      this.cbContrast.Name = "cbContrast";
-      this.cbContrast.Size = new System.Drawing.Size(98, 17);
-      this.cbContrast.TabIndex = 81;
-      this.cbContrast.Text = "Control contrast";
-      this.cbContrast.UseVisualStyleBackColor = true;
-      this.cbContrast.Visible = false;
-      // 
-      // cbDisplayOff
-      // 
-      this.cbDisplayOff.AutoSize = true;
-      this.cbDisplayOff.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbDisplayOff.Location = new System.Drawing.Point(8, 234);
-      this.cbDisplayOff.Name = "cbDisplayOff";
-      this.cbDisplayOff.Size = new System.Drawing.Size(138, 17);
-      this.cbDisplayOff.TabIndex = 80;
-      this.cbDisplayOff.Text = "Turn OFF display on exit";
-      this.cbDisplayOff.UseVisualStyleBackColor = true;
-      this.cbDisplayOff.CheckedChanged += new System.EventHandler(this.cbDisplayOff_CheckedChanged);
-      // 
-      // lblBrightness
-      // 
-      this.lblBrightness.Location = new System.Drawing.Point(16, 283);
-      this.lblBrightness.Name = "lblBrightness";
-      this.lblBrightness.Size = new System.Drawing.Size(96, 16);
-      this.lblBrightness.TabIndex = 79;
-      this.lblBrightness.Text = "Brightness: ";
-      // 
-      // tbBrightness
-      // 
-      this.tbBrightness.Location = new System.Drawing.Point(15, 299);
-      this.tbBrightness.Maximum = 255;
-      this.tbBrightness.Name = "tbBrightness";
-      this.tbBrightness.Size = new System.Drawing.Size(160, 45);
-      this.tbBrightness.TabIndex = 78;
-      this.tbBrightness.TickFrequency = 8;
-      this.tbBrightness.TickStyle = System.Windows.Forms.TickStyle.None;
-      this.tbBrightness.Value = 127;
-      this.tbBrightness.ValueChanged += new System.EventHandler(this.tbBrightness_ValueChanged);
-      // 
-      // btnTestDisplay
-      // 
-      this.btnTestDisplay.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnTestDisplay.Location = new System.Drawing.Point(179, 41);
-      this.btnTestDisplay.Name = "btnTestDisplay";
-      this.btnTestDisplay.Size = new System.Drawing.Size(88, 23);
-      this.btnTestDisplay.TabIndex = 77;
-      this.btnTestDisplay.Text = "&Test Display";
-      this.btnTestDisplay.UseVisualStyleBackColor = true;
-      this.btnTestDisplay.Click += new System.EventHandler(this.btnTestDisplay_Click);
-      // 
-      // lblContrast
-      // 
-      this.lblContrast.Location = new System.Drawing.Point(187, 283);
-      this.lblContrast.Name = "lblContrast";
-      this.lblContrast.Size = new System.Drawing.Size(96, 16);
-      this.lblContrast.TabIndex = 74;
-      this.lblContrast.Text = "Contrast:";
-      // 
-      // tbContrast
-      // 
-      this.tbContrast.Location = new System.Drawing.Point(186, 299);
-      this.tbContrast.Maximum = 255;
-      this.tbContrast.Name = "tbContrast";
-      this.tbContrast.Size = new System.Drawing.Size(160, 45);
-      this.tbContrast.TabIndex = 73;
-      this.tbContrast.TickFrequency = 8;
-      this.tbContrast.TickStyle = System.Windows.Forms.TickStyle.None;
-      this.tbContrast.Value = 127;
-      this.tbContrast.ValueChanged += new System.EventHandler(this.tbContrast_ValueChanged);
-      // 
-      // txtScrollDelay
-      // 
-      this.txtScrollDelay.BorderColor = System.Drawing.Color.Empty;
-      this.txtScrollDelay.Location = new System.Drawing.Point(96, 209);
-      this.txtScrollDelay.Name = "txtScrollDelay";
-      this.txtScrollDelay.Size = new System.Drawing.Size(48, 20);
-      this.txtScrollDelay.TabIndex = 52;
-      this.txtScrollDelay.Text = "300";
-      // 
-      // gbGraphMode
-      // 
-      this.gbGraphMode.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
-      this.gbGraphMode.Controls.Add(this.txtPixelsToScroll);
-      this.gbGraphMode.Controls.Add(this.mpLabel5);
-      this.gbGraphMode.Controls.Add(this.ckForceGraphicText);
-      this.gbGraphMode.Controls.Add(this.txtFontSize);
-      this.gbGraphMode.Controls.Add(this.mpLabel2);
-      this.gbGraphMode.Controls.Add(this.txtFont);
-      this.gbGraphMode.Controls.Add(this.mpLabel1);
-      this.gbGraphMode.Controls.Add(this.label8);
-      this.gbGraphMode.Controls.Add(this.txtTimG);
-      this.gbGraphMode.Controls.Add(this.txtRowsG);
-      this.gbGraphMode.Controls.Add(this.txtColsG);
-      this.gbGraphMode.Controls.Add(this.label9);
-      this.gbGraphMode.Controls.Add(this.label10);
-      this.gbGraphMode.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.gbGraphMode.Location = new System.Drawing.Point(168, 68);
-      this.gbGraphMode.Name = "gbGraphMode";
-      this.gbGraphMode.Size = new System.Drawing.Size(191, 188);
-      this.gbGraphMode.TabIndex = 72;
-      this.gbGraphMode.TabStop = false;
-      this.gbGraphMode.Text = "GraphMode";
-      // 
-      // txtPixelsToScroll
-      // 
-      this.txtPixelsToScroll.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
-      this.txtPixelsToScroll.BorderColor = System.Drawing.Color.Empty;
-      this.txtPixelsToScroll.Location = new System.Drawing.Point(86, 135);
-      this.txtPixelsToScroll.Name = "txtPixelsToScroll";
-      this.txtPixelsToScroll.Size = new System.Drawing.Size(48, 20);
-      this.txtPixelsToScroll.TabIndex = 57;
-      this.txtPixelsToScroll.Text = "10";
-      // 
-      // mpLabel5
-      // 
-      this.mpLabel5.Location = new System.Drawing.Point(8, 133);
-      this.mpLabel5.Name = "mpLabel5";
-      this.mpLabel5.Size = new System.Drawing.Size(80, 23);
-      this.mpLabel5.TabIndex = 56;
-      this.mpLabel5.Text = "Pixels to scroll";
-      this.mpLabel5.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // ckForceGraphicText
-      // 
-      this.ckForceGraphicText.AutoSize = true;
-      this.ckForceGraphicText.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.ckForceGraphicText.Location = new System.Drawing.Point(11, 161);
-      this.ckForceGraphicText.Name = "ckForceGraphicText";
-      this.ckForceGraphicText.Size = new System.Drawing.Size(123, 17);
-      this.ckForceGraphicText.TabIndex = 55;
-      this.ckForceGraphicText.Text = "Force Graphical Text";
-      this.ckForceGraphicText.UseVisualStyleBackColor = true;
-      // 
-      // txtFontSize
-      // 
-      this.txtFontSize.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
-      this.txtFontSize.BorderColor = System.Drawing.Color.Empty;
-      this.txtFontSize.Location = new System.Drawing.Point(86, 110);
-      this.txtFontSize.Name = "txtFontSize";
-      this.txtFontSize.Size = new System.Drawing.Size(48, 20);
-      this.txtFontSize.TabIndex = 54;
-      this.txtFontSize.Text = "10";
-      // 
-      // mpLabel2
-      // 
-      this.mpLabel2.Location = new System.Drawing.Point(8, 110);
-      this.mpLabel2.Name = "mpLabel2";
-      this.mpLabel2.Size = new System.Drawing.Size(64, 23);
-      this.mpLabel2.TabIndex = 53;
-      this.mpLabel2.Text = "Font Size";
-      this.mpLabel2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // txtFont
-      // 
-      this.txtFont.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
-      this.txtFont.BorderColor = System.Drawing.Color.Empty;
-      this.txtFont.Location = new System.Drawing.Point(86, 87);
-      this.txtFont.Name = "txtFont";
-      this.txtFont.Size = new System.Drawing.Size(99, 21);
-      this.txtFont.TabIndex = 52;
-      this.txtFont.Text = "Arial Black";
-      // 
-      // mpLabel1
-      // 
-      this.mpLabel1.Location = new System.Drawing.Point(8, 87);
-      this.mpLabel1.Name = "mpLabel1";
-      this.mpLabel1.Size = new System.Drawing.Size(80, 23);
-      this.mpLabel1.TabIndex = 51;
-      this.mpLabel1.Text = "Font";
-      this.mpLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // label8
-      // 
-      this.label8.Location = new System.Drawing.Point(8, 16);
-      this.label8.Name = "label8";
-      this.label8.Size = new System.Drawing.Size(64, 23);
-      this.label8.TabIndex = 3;
-      this.label8.Text = "Columns";
-      this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // txtTimG
-      // 
-      this.txtTimG.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
-      this.txtTimG.BorderColor = System.Drawing.Color.Empty;
-      this.txtTimG.Location = new System.Drawing.Point(86, 64);
-      this.txtTimG.Name = "txtTimG";
-      this.txtTimG.Size = new System.Drawing.Size(48, 20);
-      this.txtTimG.TabIndex = 50;
-      this.txtTimG.Text = "1";
-      // 
-      // txtRowsG
-      // 
-      this.txtRowsG.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
-      this.txtRowsG.BorderColor = System.Drawing.Color.Empty;
-      this.txtRowsG.Location = new System.Drawing.Point(86, 40);
-      this.txtRowsG.Name = "txtRowsG";
-      this.txtRowsG.Size = new System.Drawing.Size(48, 20);
-      this.txtRowsG.TabIndex = 40;
-      this.txtRowsG.Text = "240";
-      // 
-      // txtColsG
-      // 
-      this.txtColsG.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
-      this.txtColsG.BorderColor = System.Drawing.Color.Empty;
-      this.txtColsG.Location = new System.Drawing.Point(86, 16);
-      this.txtColsG.Name = "txtColsG";
-      this.txtColsG.Size = new System.Drawing.Size(48, 20);
-      this.txtColsG.TabIndex = 30;
-      this.txtColsG.Text = "320";
-      // 
-      // label9
-      // 
-      this.label9.Location = new System.Drawing.Point(8, 64);
-      this.label9.Name = "label9";
-      this.label9.Size = new System.Drawing.Size(80, 23);
-      this.label9.TabIndex = 5;
-      this.label9.Text = "Comm. Delay";
-      this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // label10
-      // 
-      this.label10.Location = new System.Drawing.Point(8, 40);
-      this.label10.Name = "label10";
-      this.label10.Size = new System.Drawing.Size(72, 23);
-      this.label10.TabIndex = 4;
-      this.label10.Text = "Rows";
-      this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // mpLabel3
-      // 
-      this.mpLabel3.Location = new System.Drawing.Point(5, 207);
-      this.mpLabel3.Name = "mpLabel3";
-      this.mpLabel3.Size = new System.Drawing.Size(80, 23);
-      this.mpLabel3.TabIndex = 51;
-      this.mpLabel3.Text = "Scroll Delay";
-      this.mpLabel3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // gbTextMode
-      // 
-      this.gbTextMode.Controls.Add(this.mpPrefixChar);
-      this.gbTextMode.Controls.Add(this.mpLabel6);
-      this.gbTextMode.Controls.Add(this.txtCharsToScroll);
-      this.gbTextMode.Controls.Add(this.mpLabel4);
-      this.gbTextMode.Controls.Add(this.label2);
-      this.gbTextMode.Controls.Add(this.txtTim);
-      this.gbTextMode.Controls.Add(this.txtRows);
-      this.gbTextMode.Controls.Add(this.txtCols);
-      this.gbTextMode.Controls.Add(this.label4);
-      this.gbTextMode.Controls.Add(this.label3);
-      this.gbTextMode.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.gbTextMode.Location = new System.Drawing.Point(8, 68);
-      this.gbTextMode.Name = "gbTextMode";
-      this.gbTextMode.Size = new System.Drawing.Size(152, 136);
-      this.gbTextMode.TabIndex = 71;
-      this.gbTextMode.TabStop = false;
-      this.gbTextMode.Text = "TextMode";
-      // 
-      // mpPrefixChar
-      // 
-      this.mpPrefixChar.BorderColor = System.Drawing.Color.Empty;
-      this.mpPrefixChar.Location = new System.Drawing.Point(88, 112);
-      this.mpPrefixChar.Name = "mpPrefixChar";
-      this.mpPrefixChar.Size = new System.Drawing.Size(48, 20);
-      this.mpPrefixChar.TabIndex = 56;
-      this.mpPrefixChar.Visible = false;
-      // 
-      // mpLabel6
-      // 
-      this.mpLabel6.Location = new System.Drawing.Point(8, 112);
-      this.mpLabel6.Name = "mpLabel6";
-      this.mpLabel6.Size = new System.Drawing.Size(88, 23);
-      this.mpLabel6.TabIndex = 55;
-      this.mpLabel6.Text = "Line Prefix     0x";
-      this.mpLabel6.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this.mpLabel6.Visible = false;
-      // 
-      // txtCharsToScroll
-      // 
-      this.txtCharsToScroll.BorderColor = System.Drawing.Color.Empty;
-      this.txtCharsToScroll.Location = new System.Drawing.Point(88, 87);
-      this.txtCharsToScroll.Name = "txtCharsToScroll";
-      this.txtCharsToScroll.Size = new System.Drawing.Size(48, 20);
-      this.txtCharsToScroll.TabIndex = 54;
-      this.txtCharsToScroll.Text = "1";
-      // 
-      // mpLabel4
-      // 
-      this.mpLabel4.Location = new System.Drawing.Point(8, 87);
-      this.mpLabel4.Name = "mpLabel4";
-      this.mpLabel4.Size = new System.Drawing.Size(80, 23);
-      this.mpLabel4.TabIndex = 53;
-      this.mpLabel4.Text = "#Chars to scroll";
-      this.mpLabel4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // label2
-      // 
-      this.label2.Location = new System.Drawing.Point(8, 16);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(64, 23);
-      this.label2.TabIndex = 3;
-      this.label2.Text = "Columns";
-      this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // txtTim
-      // 
-      this.txtTim.BorderColor = System.Drawing.Color.Empty;
-      this.txtTim.Location = new System.Drawing.Point(88, 64);
-      this.txtTim.Name = "txtTim";
-      this.txtTim.Size = new System.Drawing.Size(48, 20);
-      this.txtTim.TabIndex = 50;
-      this.txtTim.Text = "1";
-      // 
-      // txtRows
-      // 
-      this.txtRows.BorderColor = System.Drawing.Color.Empty;
-      this.txtRows.Location = new System.Drawing.Point(88, 40);
-      this.txtRows.Name = "txtRows";
-      this.txtRows.Size = new System.Drawing.Size(48, 20);
-      this.txtRows.TabIndex = 40;
-      this.txtRows.Text = "2";
-      // 
-      // txtCols
-      // 
-      this.txtCols.BorderColor = System.Drawing.Color.Empty;
-      this.txtCols.Location = new System.Drawing.Point(88, 16);
-      this.txtCols.Name = "txtCols";
-      this.txtCols.Size = new System.Drawing.Size(48, 20);
-      this.txtCols.TabIndex = 30;
-      this.txtCols.Text = "16";
-      this.txtCols.TextChanged += new System.EventHandler(this.txtCols_TextChanged);
-      // 
-      // label4
-      // 
-      this.label4.Location = new System.Drawing.Point(8, 64);
-      this.label4.Name = "label4";
-      this.label4.Size = new System.Drawing.Size(80, 23);
-      this.label4.TabIndex = 5;
-      this.label4.Text = "Comm. Delay";
-      this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // label3
-      // 
-      this.label3.Location = new System.Drawing.Point(8, 40);
-      this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(72, 23);
-      this.label3.TabIndex = 4;
-      this.label3.Text = "Rows";
-      this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // label7
-      // 
-      this.label7.Location = new System.Drawing.Point(8, 16);
-      this.label7.Name = "label7";
-      this.label7.Size = new System.Drawing.Size(32, 23);
-      this.label7.TabIndex = 11;
-      this.label7.Text = "Type";
-      this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // cmbType
-      // 
-      this.cmbType.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
-      this.cmbType.BorderColor = System.Drawing.Color.Empty;
-      this.cmbType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cmbType.Location = new System.Drawing.Point(40, 16);
-      this.cmbType.Name = "cmbType";
-      this.cmbType.Size = new System.Drawing.Size(319, 21);
-      this.cmbType.Sorted = true;
-      this.cmbType.TabIndex = 10;
-      this.cmbType.SelectionChangeCommitted += new System.EventHandler(this.cmbType_SelectionChangeCommitted);
-      // 
-      // cbLight
-      // 
-      this.cbLight.AutoSize = true;
-      this.cbLight.Checked = true;
-      this.cbLight.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.cbLight.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbLight.Location = new System.Drawing.Point(19, 265);
-      this.cbLight.Name = "cbLight";
-      this.cbLight.Size = new System.Drawing.Size(108, 17);
-      this.cbLight.TabIndex = 60;
-      this.cbLight.Text = "Control brightness";
-      this.cbLight.UseVisualStyleBackColor = true;
-      this.cbLight.Visible = false;
-      // 
-      // cbPropertyBrowser
-      // 
-      this.cbPropertyBrowser.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.cbPropertyBrowser.AutoSize = true;
-      this.cbPropertyBrowser.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbPropertyBrowser.Location = new System.Drawing.Point(8, 447);
-      this.cbPropertyBrowser.Name = "cbPropertyBrowser";
-      this.cbPropertyBrowser.Size = new System.Drawing.Size(132, 17);
-      this.cbPropertyBrowser.TabIndex = 4;
-      this.cbPropertyBrowser.Text = "Show property browser";
-      this.cbPropertyBrowser.UseVisualStyleBackColor = true;
-      // 
-      // btnOK
-      // 
-      this.btnOK.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnOK.Location = new System.Drawing.Point(213, 435);
-      this.btnOK.Name = "btnOK";
-      this.btnOK.Size = new System.Drawing.Size(78, 23);
-      this.btnOK.TabIndex = 5;
-      this.btnOK.Text = "&OK";
-      this.btnOK.UseVisualStyleBackColor = true;
-      this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
-      // 
-      // cbExtensiveLogging
-      // 
-      this.cbExtensiveLogging.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.cbExtensiveLogging.AutoSize = true;
-      this.cbExtensiveLogging.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbExtensiveLogging.Location = new System.Drawing.Point(8, 430);
-      this.cbExtensiveLogging.Name = "cbExtensiveLogging";
-      this.cbExtensiveLogging.Size = new System.Drawing.Size(107, 17);
-      this.cbExtensiveLogging.TabIndex = 6;
-      this.cbExtensiveLogging.Text = "Extensive logging";
-      this.cbExtensiveLogging.UseVisualStyleBackColor = true;
-      // 
-      // mpDisableGUISetup
-      // 
-      this.mpDisableGUISetup.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.mpDisableGUISetup.AutoSize = true;
-      this.mpDisableGUISetup.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpDisableGUISetup.Location = new System.Drawing.Point(8, 413);
-      this.mpDisableGUISetup.Name = "mpDisableGUISetup";
-      this.mpDisableGUISetup.Size = new System.Drawing.Size(112, 17);
-      this.mpDisableGUISetup.TabIndex = 77;
-      this.mpDisableGUISetup.Text = "Disable GUI Setup";
-      this.mpDisableGUISetup.UseVisualStyleBackColor = true;
-      // 
-      // btnCancel
-      // 
-      this.btnCancel.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.btnCancel.Location = new System.Drawing.Point(297, 435);
-      this.btnCancel.Name = "btnCancel";
-      this.btnCancel.Size = new System.Drawing.Size(78, 23);
-      this.btnCancel.TabIndex = 78;
-      this.btnCancel.Text = "&Cancel";
-      this.btnCancel.UseVisualStyleBackColor = true;
-      this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
-      // 
-      // SetupForm
-      // 
-      this.AcceptButton = this.btnOK;
-      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-      this.CancelButton = this.btnCancel;
-      this.ClientSize = new System.Drawing.Size(389, 464);
-      this.Controls.Add(this.btnCancel);
-      this.Controls.Add(this.mpDisableGUISetup);
-      this.Controls.Add(this.cbExtensiveLogging);
-      this.Controls.Add(this.btnOK);
-      this.Controls.Add(this.cbPropertyBrowser);
-      this.Controls.Add(this.groupBox1);
-      this.Name = "SetupForm";
-      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-      this.Text = "MiniDisplay - Setup";
-      this.Load += new System.EventHandler(this.SetupForm_Load);
-      this.groupBox1.ResumeLayout(false);
-      this.groupBox1.PerformLayout();
-      this.groupShutdown.ResumeLayout(false);
-      this.groupShutdown.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.tbBrightness)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.tbContrast)).EndInit();
-      this.gbGraphMode.ResumeLayout(false);
-      this.gbGraphMode.PerformLayout();
-      this.gbTextMode.ResumeLayout(false);
-      this.gbTextMode.PerformLayout();
-      this.ResumeLayout(false);
-      this.PerformLayout();
+            this.components = new System.ComponentModel.Container();
+            this.btnAdvanced = new MediaPortal.UserInterface.Controls.MPButton();
+            this.cmbPort = new MediaPortal.UserInterface.Controls.MPComboBox();
+            this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
+            this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+            this.txtIdleTimeout = new MediaPortal.UserInterface.Controls.MPTextBox();
+            this.mpLabel7 = new MediaPortal.UserInterface.Controls.MPLabel();
+            this.btnTest = new MediaPortal.UserInterface.Controls.MPButton();
+            this.groupShutdown = new System.Windows.Forms.GroupBox();
+            this.label11 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.mpShutdown2 = new System.Windows.Forms.TextBox();
+            this.mpShutdown1 = new System.Windows.Forms.TextBox();
+            this.cbContrast = new MediaPortal.UserInterface.Controls.MPCheckBox();
+            this.cbDisplayOff = new MediaPortal.UserInterface.Controls.MPCheckBox();
+            this.lblBrightness = new MediaPortal.UserInterface.Controls.MPLabel();
+            this.tbBrightness = new System.Windows.Forms.TrackBar();
+            this.btnTestDisplay = new MediaPortal.UserInterface.Controls.MPButton();
+            this.lblContrast = new MediaPortal.UserInterface.Controls.MPLabel();
+            this.tbContrast = new System.Windows.Forms.TrackBar();
+            this.txtScrollDelay = new MediaPortal.UserInterface.Controls.MPTextBox();
+            this.gbGraphMode = new MediaPortal.UserInterface.Controls.MPGroupBox();
+            this.txtPixelsToScroll = new MediaPortal.UserInterface.Controls.MPTextBox();
+            this.mpLabel5 = new MediaPortal.UserInterface.Controls.MPLabel();
+            this.ckForceGraphicText = new MediaPortal.UserInterface.Controls.MPCheckBox();
+            this.txtFontSize = new MediaPortal.UserInterface.Controls.MPTextBox();
+            this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
+            this.txtFont = new MediaPortal.UserInterface.Controls.MPComboBox();
+            this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
+            this.label8 = new MediaPortal.UserInterface.Controls.MPLabel();
+            this.txtTimG = new MediaPortal.UserInterface.Controls.MPTextBox();
+            this.txtRowsG = new MediaPortal.UserInterface.Controls.MPTextBox();
+            this.txtColsG = new MediaPortal.UserInterface.Controls.MPTextBox();
+            this.label9 = new MediaPortal.UserInterface.Controls.MPLabel();
+            this.label10 = new MediaPortal.UserInterface.Controls.MPLabel();
+            this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
+            this.gbTextMode = new MediaPortal.UserInterface.Controls.MPGroupBox();
+            this.mpPrefixChar = new MediaPortal.UserInterface.Controls.MPTextBox();
+            this.mpLabel6 = new MediaPortal.UserInterface.Controls.MPLabel();
+            this.txtCharsToScroll = new MediaPortal.UserInterface.Controls.MPTextBox();
+            this.mpLabel4 = new MediaPortal.UserInterface.Controls.MPLabel();
+            this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
+            this.txtTim = new MediaPortal.UserInterface.Controls.MPTextBox();
+            this.txtRows = new MediaPortal.UserInterface.Controls.MPTextBox();
+            this.txtCols = new MediaPortal.UserInterface.Controls.MPTextBox();
+            this.label4 = new MediaPortal.UserInterface.Controls.MPLabel();
+            this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
+            this.label7 = new MediaPortal.UserInterface.Controls.MPLabel();
+            this.cmbType = new MediaPortal.UserInterface.Controls.MPComboBox();
+            this.cbLight = new MediaPortal.UserInterface.Controls.MPCheckBox();
+            this.cbPropertyBrowser = new MediaPortal.UserInterface.Controls.MPCheckBox();
+            this.btnOK = new MediaPortal.UserInterface.Controls.MPButton();
+            this.cbExtensiveLogging = new MediaPortal.UserInterface.Controls.MPCheckBox();
+            this.mpDisableGUISetup = new MediaPortal.UserInterface.Controls.MPCheckBox();
+            this.btnCancel = new MediaPortal.UserInterface.Controls.MPButton();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.txtUpdateDelay = new MediaPortal.UserInterface.Controls.MPTextBox();
+            this.mpLabel8 = new MediaPortal.UserInterface.Controls.MPLabel();
+            this.groupBox1.SuspendLayout();
+            this.groupShutdown.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tbBrightness)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbContrast)).BeginInit();
+            this.gbGraphMode.SuspendLayout();
+            this.gbTextMode.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // btnAdvanced
+            // 
+            this.btnAdvanced.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnAdvanced.Location = new System.Drawing.Point(271, 41);
+            this.btnAdvanced.Name = "btnAdvanced";
+            this.btnAdvanced.Size = new System.Drawing.Size(88, 23);
+            this.btnAdvanced.TabIndex = 70;
+            this.btnAdvanced.Text = "&Advanced";
+            this.btnAdvanced.UseVisualStyleBackColor = true;
+            this.btnAdvanced.Click += new System.EventHandler(this.btnAdvanced_Click);
+            // 
+            // cmbPort
+            // 
+            this.cmbPort.BorderColor = System.Drawing.Color.Empty;
+            this.cmbPort.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbPort.Items.AddRange(new object[] {
+            "LPT1",
+            "LPT2",
+            "LPT3",
+            "LPT4",
+            "USB",
+            "COM1",
+            "COM2",
+            "COM3",
+            "COM4",
+            "COM5",
+            "COM6",
+            "COM7",
+            "COM8",
+            "NONE",
+            "localhost"});
+            this.cmbPort.Location = new System.Drawing.Point(40, 42);
+            this.cmbPort.Name = "cmbPort";
+            this.cmbPort.Size = new System.Drawing.Size(64, 21);
+            this.cmbPort.TabIndex = 20;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(8, 42);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(32, 23);
+            this.label1.TabIndex = 2;
+            this.label1.Text = "Port";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.txtUpdateDelay);
+            this.groupBox1.Controls.Add(this.mpLabel8);
+            this.groupBox1.Controls.Add(this.txtIdleTimeout);
+            this.groupBox1.Controls.Add(this.mpLabel7);
+            this.groupBox1.Controls.Add(this.btnTest);
+            this.groupBox1.Controls.Add(this.groupShutdown);
+            this.groupBox1.Controls.Add(this.cbContrast);
+            this.groupBox1.Controls.Add(this.cbDisplayOff);
+            this.groupBox1.Controls.Add(this.lblBrightness);
+            this.groupBox1.Controls.Add(this.tbBrightness);
+            this.groupBox1.Controls.Add(this.btnTestDisplay);
+            this.groupBox1.Controls.Add(this.lblContrast);
+            this.groupBox1.Controls.Add(this.tbContrast);
+            this.groupBox1.Controls.Add(this.txtScrollDelay);
+            this.groupBox1.Controls.Add(this.gbGraphMode);
+            this.groupBox1.Controls.Add(this.mpLabel3);
+            this.groupBox1.Controls.Add(this.gbTextMode);
+            this.groupBox1.Controls.Add(this.label7);
+            this.groupBox1.Controls.Add(this.cmbType);
+            this.groupBox1.Controls.Add(this.cbLight);
+            this.groupBox1.Controls.Add(this.btnAdvanced);
+            this.groupBox1.Controls.Add(this.cmbPort);
+            this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.groupBox1.Location = new System.Drawing.Point(8, 8);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(373, 458);
+            this.groupBox1.TabIndex = 3;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Configuration";
+            // 
+            // txtIdleTimeout
+            // 
+            this.txtIdleTimeout.BorderColor = System.Drawing.Color.Empty;
+            this.txtIdleTimeout.Location = new System.Drawing.Point(106, 271);
+            this.txtIdleTimeout.Name = "txtIdleTimeout";
+            this.txtIdleTimeout.Size = new System.Drawing.Size(48, 20);
+            this.txtIdleTimeout.TabIndex = 85;
+            this.txtIdleTimeout.Text = "5";
+            // 
+            // mpLabel7
+            // 
+            this.mpLabel7.Location = new System.Drawing.Point(15, 269);
+            this.mpLabel7.Name = "mpLabel7";
+            this.mpLabel7.Size = new System.Drawing.Size(86, 23);
+            this.mpLabel7.TabIndex = 84;
+            this.mpLabel7.Text = "Idle timeout (s)";
+            this.mpLabel7.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.toolTip1.SetToolTip(this.mpLabel7, "Time in seconds after which MiniDisplay will go in idle mode if no user action is" +
+        " received");
+            // 
+            // btnTest
+            // 
+            this.btnTest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnTest.Location = new System.Drawing.Point(271, 404);
+            this.btnTest.Name = "btnTest";
+            this.btnTest.Size = new System.Drawing.Size(92, 48);
+            this.btnTest.TabIndex = 83;
+            this.btnTest.Text = "Configuration Editor";
+            this.btnTest.UseVisualStyleBackColor = true;
+            this.btnTest.Click += new System.EventHandler(this.btnTest_Click);
+            // 
+            // groupShutdown
+            // 
+            this.groupShutdown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.groupShutdown.Controls.Add(this.label11);
+            this.groupShutdown.Controls.Add(this.label6);
+            this.groupShutdown.Controls.Add(this.mpShutdown2);
+            this.groupShutdown.Controls.Add(this.mpShutdown1);
+            this.groupShutdown.Location = new System.Drawing.Point(8, 387);
+            this.groupShutdown.Name = "groupShutdown";
+            this.groupShutdown.Size = new System.Drawing.Size(191, 65);
+            this.groupShutdown.TabIndex = 76;
+            this.groupShutdown.TabStop = false;
+            this.groupShutdown.Text = " ShutDown Message ";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(6, 43);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(36, 13);
+            this.label11.TabIndex = 79;
+            this.label11.Text = "Line 2";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(6, 20);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(36, 13);
+            this.label6.TabIndex = 78;
+            this.label6.Text = "Line 1";
+            // 
+            // mpShutdown2
+            // 
+            this.mpShutdown2.Location = new System.Drawing.Point(46, 40);
+            this.mpShutdown2.Name = "mpShutdown2";
+            this.mpShutdown2.Size = new System.Drawing.Size(139, 20);
+            this.mpShutdown2.TabIndex = 77;
+            // 
+            // mpShutdown1
+            // 
+            this.mpShutdown1.Location = new System.Drawing.Point(46, 17);
+            this.mpShutdown1.Name = "mpShutdown1";
+            this.mpShutdown1.Size = new System.Drawing.Size(139, 20);
+            this.mpShutdown1.TabIndex = 76;
+            // 
+            // cbContrast
+            // 
+            this.cbContrast.AutoSize = true;
+            this.cbContrast.Checked = true;
+            this.cbContrast.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbContrast.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.cbContrast.Location = new System.Drawing.Point(190, 324);
+            this.cbContrast.Name = "cbContrast";
+            this.cbContrast.Size = new System.Drawing.Size(98, 17);
+            this.cbContrast.TabIndex = 81;
+            this.cbContrast.Text = "Control contrast";
+            this.cbContrast.UseVisualStyleBackColor = true;
+            this.cbContrast.Visible = false;
+            // 
+            // cbDisplayOff
+            // 
+            this.cbDisplayOff.AutoSize = true;
+            this.cbDisplayOff.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.cbDisplayOff.Location = new System.Drawing.Point(8, 299);
+            this.cbDisplayOff.Name = "cbDisplayOff";
+            this.cbDisplayOff.Size = new System.Drawing.Size(138, 17);
+            this.cbDisplayOff.TabIndex = 80;
+            this.cbDisplayOff.Text = "Turn OFF display on exit";
+            this.cbDisplayOff.UseVisualStyleBackColor = true;
+            this.cbDisplayOff.CheckedChanged += new System.EventHandler(this.cbDisplayOff_CheckedChanged);
+            // 
+            // lblBrightness
+            // 
+            this.lblBrightness.Location = new System.Drawing.Point(16, 342);
+            this.lblBrightness.Name = "lblBrightness";
+            this.lblBrightness.Size = new System.Drawing.Size(96, 16);
+            this.lblBrightness.TabIndex = 79;
+            this.lblBrightness.Text = "Brightness: ";
+            // 
+            // tbBrightness
+            // 
+            this.tbBrightness.Location = new System.Drawing.Point(15, 358);
+            this.tbBrightness.Maximum = 255;
+            this.tbBrightness.Name = "tbBrightness";
+            this.tbBrightness.Size = new System.Drawing.Size(160, 45);
+            this.tbBrightness.TabIndex = 78;
+            this.tbBrightness.TickFrequency = 8;
+            this.tbBrightness.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.tbBrightness.Value = 127;
+            this.tbBrightness.ValueChanged += new System.EventHandler(this.tbBrightness_ValueChanged);
+            // 
+            // btnTestDisplay
+            // 
+            this.btnTestDisplay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnTestDisplay.Location = new System.Drawing.Point(179, 41);
+            this.btnTestDisplay.Name = "btnTestDisplay";
+            this.btnTestDisplay.Size = new System.Drawing.Size(88, 23);
+            this.btnTestDisplay.TabIndex = 77;
+            this.btnTestDisplay.Text = "&Test Display";
+            this.btnTestDisplay.UseVisualStyleBackColor = true;
+            this.btnTestDisplay.Click += new System.EventHandler(this.btnTestDisplay_Click);
+            // 
+            // lblContrast
+            // 
+            this.lblContrast.Location = new System.Drawing.Point(187, 342);
+            this.lblContrast.Name = "lblContrast";
+            this.lblContrast.Size = new System.Drawing.Size(96, 16);
+            this.lblContrast.TabIndex = 74;
+            this.lblContrast.Text = "Contrast:";
+            // 
+            // tbContrast
+            // 
+            this.tbContrast.Location = new System.Drawing.Point(186, 358);
+            this.tbContrast.Maximum = 255;
+            this.tbContrast.Name = "tbContrast";
+            this.tbContrast.Size = new System.Drawing.Size(160, 45);
+            this.tbContrast.TabIndex = 73;
+            this.tbContrast.TickFrequency = 8;
+            this.tbContrast.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.tbContrast.Value = 127;
+            this.tbContrast.ValueChanged += new System.EventHandler(this.tbContrast_ValueChanged);
+            // 
+            // txtScrollDelay
+            // 
+            this.txtScrollDelay.BorderColor = System.Drawing.Color.Empty;
+            this.txtScrollDelay.Location = new System.Drawing.Point(106, 219);
+            this.txtScrollDelay.Name = "txtScrollDelay";
+            this.txtScrollDelay.Size = new System.Drawing.Size(48, 20);
+            this.txtScrollDelay.TabIndex = 52;
+            this.txtScrollDelay.Text = "300";
+            // 
+            // gbGraphMode
+            // 
+            this.gbGraphMode.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbGraphMode.Controls.Add(this.txtPixelsToScroll);
+            this.gbGraphMode.Controls.Add(this.mpLabel5);
+            this.gbGraphMode.Controls.Add(this.ckForceGraphicText);
+            this.gbGraphMode.Controls.Add(this.txtFontSize);
+            this.gbGraphMode.Controls.Add(this.mpLabel2);
+            this.gbGraphMode.Controls.Add(this.txtFont);
+            this.gbGraphMode.Controls.Add(this.mpLabel1);
+            this.gbGraphMode.Controls.Add(this.label8);
+            this.gbGraphMode.Controls.Add(this.txtTimG);
+            this.gbGraphMode.Controls.Add(this.txtRowsG);
+            this.gbGraphMode.Controls.Add(this.txtColsG);
+            this.gbGraphMode.Controls.Add(this.label9);
+            this.gbGraphMode.Controls.Add(this.label10);
+            this.gbGraphMode.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.gbGraphMode.Location = new System.Drawing.Point(168, 68);
+            this.gbGraphMode.Name = "gbGraphMode";
+            this.gbGraphMode.Size = new System.Drawing.Size(191, 188);
+            this.gbGraphMode.TabIndex = 72;
+            this.gbGraphMode.TabStop = false;
+            this.gbGraphMode.Text = "GraphMode";
+            // 
+            // txtPixelsToScroll
+            // 
+            this.txtPixelsToScroll.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtPixelsToScroll.BorderColor = System.Drawing.Color.Empty;
+            this.txtPixelsToScroll.Location = new System.Drawing.Point(86, 135);
+            this.txtPixelsToScroll.Name = "txtPixelsToScroll";
+            this.txtPixelsToScroll.Size = new System.Drawing.Size(48, 20);
+            this.txtPixelsToScroll.TabIndex = 57;
+            this.txtPixelsToScroll.Text = "10";
+            // 
+            // mpLabel5
+            // 
+            this.mpLabel5.Location = new System.Drawing.Point(8, 133);
+            this.mpLabel5.Name = "mpLabel5";
+            this.mpLabel5.Size = new System.Drawing.Size(80, 23);
+            this.mpLabel5.TabIndex = 56;
+            this.mpLabel5.Text = "Pixels to scroll";
+            this.mpLabel5.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // ckForceGraphicText
+            // 
+            this.ckForceGraphicText.AutoSize = true;
+            this.ckForceGraphicText.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.ckForceGraphicText.Location = new System.Drawing.Point(11, 161);
+            this.ckForceGraphicText.Name = "ckForceGraphicText";
+            this.ckForceGraphicText.Size = new System.Drawing.Size(123, 17);
+            this.ckForceGraphicText.TabIndex = 55;
+            this.ckForceGraphicText.Text = "Force Graphical Text";
+            this.ckForceGraphicText.UseVisualStyleBackColor = true;
+            // 
+            // txtFontSize
+            // 
+            this.txtFontSize.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtFontSize.BorderColor = System.Drawing.Color.Empty;
+            this.txtFontSize.Location = new System.Drawing.Point(86, 110);
+            this.txtFontSize.Name = "txtFontSize";
+            this.txtFontSize.Size = new System.Drawing.Size(48, 20);
+            this.txtFontSize.TabIndex = 54;
+            this.txtFontSize.Text = "10";
+            // 
+            // mpLabel2
+            // 
+            this.mpLabel2.Location = new System.Drawing.Point(8, 110);
+            this.mpLabel2.Name = "mpLabel2";
+            this.mpLabel2.Size = new System.Drawing.Size(64, 23);
+            this.mpLabel2.TabIndex = 53;
+            this.mpLabel2.Text = "Font Size";
+            this.mpLabel2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // txtFont
+            // 
+            this.txtFont.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtFont.BorderColor = System.Drawing.Color.Empty;
+            this.txtFont.Location = new System.Drawing.Point(86, 87);
+            this.txtFont.Name = "txtFont";
+            this.txtFont.Size = new System.Drawing.Size(99, 21);
+            this.txtFont.TabIndex = 52;
+            this.txtFont.Text = "Arial Black";
+            // 
+            // mpLabel1
+            // 
+            this.mpLabel1.Location = new System.Drawing.Point(8, 87);
+            this.mpLabel1.Name = "mpLabel1";
+            this.mpLabel1.Size = new System.Drawing.Size(80, 23);
+            this.mpLabel1.TabIndex = 51;
+            this.mpLabel1.Text = "Font";
+            this.mpLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // label8
+            // 
+            this.label8.Location = new System.Drawing.Point(8, 16);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(64, 23);
+            this.label8.TabIndex = 3;
+            this.label8.Text = "Columns";
+            this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // txtTimG
+            // 
+            this.txtTimG.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtTimG.BorderColor = System.Drawing.Color.Empty;
+            this.txtTimG.Location = new System.Drawing.Point(86, 64);
+            this.txtTimG.Name = "txtTimG";
+            this.txtTimG.Size = new System.Drawing.Size(48, 20);
+            this.txtTimG.TabIndex = 50;
+            this.txtTimG.Text = "1";
+            // 
+            // txtRowsG
+            // 
+            this.txtRowsG.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtRowsG.BorderColor = System.Drawing.Color.Empty;
+            this.txtRowsG.Location = new System.Drawing.Point(86, 40);
+            this.txtRowsG.Name = "txtRowsG";
+            this.txtRowsG.Size = new System.Drawing.Size(48, 20);
+            this.txtRowsG.TabIndex = 40;
+            this.txtRowsG.Text = "240";
+            // 
+            // txtColsG
+            // 
+            this.txtColsG.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtColsG.BorderColor = System.Drawing.Color.Empty;
+            this.txtColsG.Location = new System.Drawing.Point(86, 16);
+            this.txtColsG.Name = "txtColsG";
+            this.txtColsG.Size = new System.Drawing.Size(48, 20);
+            this.txtColsG.TabIndex = 30;
+            this.txtColsG.Text = "320";
+            // 
+            // label9
+            // 
+            this.label9.Location = new System.Drawing.Point(8, 64);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(80, 23);
+            this.label9.TabIndex = 5;
+            this.label9.Text = "Comm. Delay";
+            this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // label10
+            // 
+            this.label10.Location = new System.Drawing.Point(8, 40);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(72, 23);
+            this.label10.TabIndex = 4;
+            this.label10.Text = "Rows";
+            this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // mpLabel3
+            // 
+            this.mpLabel3.Location = new System.Drawing.Point(15, 217);
+            this.mpLabel3.Name = "mpLabel3";
+            this.mpLabel3.Size = new System.Drawing.Size(86, 23);
+            this.mpLabel3.TabIndex = 51;
+            this.mpLabel3.Text = "Scroll delay (ms)";
+            this.mpLabel3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.toolTip1.SetToolTip(this.mpLabel3, "Time in milliseconds after which we scroll our texts, typically by one character");
+            // 
+            // gbTextMode
+            // 
+            this.gbTextMode.Controls.Add(this.mpPrefixChar);
+            this.gbTextMode.Controls.Add(this.mpLabel6);
+            this.gbTextMode.Controls.Add(this.txtCharsToScroll);
+            this.gbTextMode.Controls.Add(this.mpLabel4);
+            this.gbTextMode.Controls.Add(this.label2);
+            this.gbTextMode.Controls.Add(this.txtTim);
+            this.gbTextMode.Controls.Add(this.txtRows);
+            this.gbTextMode.Controls.Add(this.txtCols);
+            this.gbTextMode.Controls.Add(this.label4);
+            this.gbTextMode.Controls.Add(this.label3);
+            this.gbTextMode.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.gbTextMode.Location = new System.Drawing.Point(8, 68);
+            this.gbTextMode.Name = "gbTextMode";
+            this.gbTextMode.Size = new System.Drawing.Size(152, 136);
+            this.gbTextMode.TabIndex = 71;
+            this.gbTextMode.TabStop = false;
+            this.gbTextMode.Text = "TextMode";
+            // 
+            // mpPrefixChar
+            // 
+            this.mpPrefixChar.BorderColor = System.Drawing.Color.Empty;
+            this.mpPrefixChar.Location = new System.Drawing.Point(88, 112);
+            this.mpPrefixChar.Name = "mpPrefixChar";
+            this.mpPrefixChar.Size = new System.Drawing.Size(48, 20);
+            this.mpPrefixChar.TabIndex = 56;
+            this.mpPrefixChar.Visible = false;
+            // 
+            // mpLabel6
+            // 
+            this.mpLabel6.Location = new System.Drawing.Point(8, 112);
+            this.mpLabel6.Name = "mpLabel6";
+            this.mpLabel6.Size = new System.Drawing.Size(88, 23);
+            this.mpLabel6.TabIndex = 55;
+            this.mpLabel6.Text = "Line Prefix     0x";
+            this.mpLabel6.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.mpLabel6.Visible = false;
+            // 
+            // txtCharsToScroll
+            // 
+            this.txtCharsToScroll.BorderColor = System.Drawing.Color.Empty;
+            this.txtCharsToScroll.Location = new System.Drawing.Point(88, 87);
+            this.txtCharsToScroll.Name = "txtCharsToScroll";
+            this.txtCharsToScroll.Size = new System.Drawing.Size(48, 20);
+            this.txtCharsToScroll.TabIndex = 54;
+            this.txtCharsToScroll.Text = "1";
+            // 
+            // mpLabel4
+            // 
+            this.mpLabel4.Location = new System.Drawing.Point(8, 87);
+            this.mpLabel4.Name = "mpLabel4";
+            this.mpLabel4.Size = new System.Drawing.Size(80, 23);
+            this.mpLabel4.TabIndex = 53;
+            this.mpLabel4.Text = "#Chars to scroll";
+            this.mpLabel4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(8, 16);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(64, 23);
+            this.label2.TabIndex = 3;
+            this.label2.Text = "Columns";
+            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // txtTim
+            // 
+            this.txtTim.BorderColor = System.Drawing.Color.Empty;
+            this.txtTim.Location = new System.Drawing.Point(88, 64);
+            this.txtTim.Name = "txtTim";
+            this.txtTim.Size = new System.Drawing.Size(48, 20);
+            this.txtTim.TabIndex = 50;
+            this.txtTim.Text = "1";
+            // 
+            // txtRows
+            // 
+            this.txtRows.BorderColor = System.Drawing.Color.Empty;
+            this.txtRows.Location = new System.Drawing.Point(88, 40);
+            this.txtRows.Name = "txtRows";
+            this.txtRows.Size = new System.Drawing.Size(48, 20);
+            this.txtRows.TabIndex = 40;
+            this.txtRows.Text = "2";
+            // 
+            // txtCols
+            // 
+            this.txtCols.BorderColor = System.Drawing.Color.Empty;
+            this.txtCols.Location = new System.Drawing.Point(88, 16);
+            this.txtCols.Name = "txtCols";
+            this.txtCols.Size = new System.Drawing.Size(48, 20);
+            this.txtCols.TabIndex = 30;
+            this.txtCols.Text = "16";
+            this.txtCols.TextChanged += new System.EventHandler(this.txtCols_TextChanged);
+            // 
+            // label4
+            // 
+            this.label4.Location = new System.Drawing.Point(8, 64);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(80, 23);
+            this.label4.TabIndex = 5;
+            this.label4.Text = "Comm. Delay";
+            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(8, 40);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(72, 23);
+            this.label3.TabIndex = 4;
+            this.label3.Text = "Rows";
+            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // label7
+            // 
+            this.label7.Location = new System.Drawing.Point(8, 16);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(32, 23);
+            this.label7.TabIndex = 11;
+            this.label7.Text = "Type";
+            this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // cmbType
+            // 
+            this.cmbType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cmbType.BorderColor = System.Drawing.Color.Empty;
+            this.cmbType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbType.Location = new System.Drawing.Point(40, 16);
+            this.cmbType.Name = "cmbType";
+            this.cmbType.Size = new System.Drawing.Size(319, 21);
+            this.cmbType.Sorted = true;
+            this.cmbType.TabIndex = 10;
+            this.cmbType.SelectionChangeCommitted += new System.EventHandler(this.cmbType_SelectionChangeCommitted);
+            // 
+            // cbLight
+            // 
+            this.cbLight.AutoSize = true;
+            this.cbLight.Checked = true;
+            this.cbLight.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbLight.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.cbLight.Location = new System.Drawing.Point(19, 324);
+            this.cbLight.Name = "cbLight";
+            this.cbLight.Size = new System.Drawing.Size(108, 17);
+            this.cbLight.TabIndex = 60;
+            this.cbLight.Text = "Control brightness";
+            this.cbLight.UseVisualStyleBackColor = true;
+            this.cbLight.Visible = false;
+            // 
+            // cbPropertyBrowser
+            // 
+            this.cbPropertyBrowser.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.cbPropertyBrowser.AutoSize = true;
+            this.cbPropertyBrowser.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.cbPropertyBrowser.Location = new System.Drawing.Point(8, 503);
+            this.cbPropertyBrowser.Name = "cbPropertyBrowser";
+            this.cbPropertyBrowser.Size = new System.Drawing.Size(132, 17);
+            this.cbPropertyBrowser.TabIndex = 4;
+            this.cbPropertyBrowser.Text = "Show property browser";
+            this.cbPropertyBrowser.UseVisualStyleBackColor = true;
+            // 
+            // btnOK
+            // 
+            this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnOK.Location = new System.Drawing.Point(213, 491);
+            this.btnOK.Name = "btnOK";
+            this.btnOK.Size = new System.Drawing.Size(78, 23);
+            this.btnOK.TabIndex = 5;
+            this.btnOK.Text = "&OK";
+            this.btnOK.UseVisualStyleBackColor = true;
+            this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
+            // 
+            // cbExtensiveLogging
+            // 
+            this.cbExtensiveLogging.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.cbExtensiveLogging.AutoSize = true;
+            this.cbExtensiveLogging.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.cbExtensiveLogging.Location = new System.Drawing.Point(8, 486);
+            this.cbExtensiveLogging.Name = "cbExtensiveLogging";
+            this.cbExtensiveLogging.Size = new System.Drawing.Size(107, 17);
+            this.cbExtensiveLogging.TabIndex = 6;
+            this.cbExtensiveLogging.Text = "Extensive logging";
+            this.cbExtensiveLogging.UseVisualStyleBackColor = true;
+            // 
+            // mpDisableGUISetup
+            // 
+            this.mpDisableGUISetup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.mpDisableGUISetup.AutoSize = true;
+            this.mpDisableGUISetup.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.mpDisableGUISetup.Location = new System.Drawing.Point(8, 469);
+            this.mpDisableGUISetup.Name = "mpDisableGUISetup";
+            this.mpDisableGUISetup.Size = new System.Drawing.Size(112, 17);
+            this.mpDisableGUISetup.TabIndex = 77;
+            this.mpDisableGUISetup.Text = "Disable GUI Setup";
+            this.mpDisableGUISetup.UseVisualStyleBackColor = true;
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnCancel.Location = new System.Drawing.Point(297, 491);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(78, 23);
+            this.btnCancel.TabIndex = 78;
+            this.btnCancel.Text = "&Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            // 
+            // txtUpdateDelay
+            // 
+            this.txtUpdateDelay.BorderColor = System.Drawing.Color.Empty;
+            this.txtUpdateDelay.Location = new System.Drawing.Point(106, 245);
+            this.txtUpdateDelay.Name = "txtUpdateDelay";
+            this.txtUpdateDelay.Size = new System.Drawing.Size(48, 20);
+            this.txtUpdateDelay.TabIndex = 87;
+            this.txtUpdateDelay.Text = "300";
+            // 
+            // mpLabel8
+            // 
+            this.mpLabel8.Location = new System.Drawing.Point(15, 243);
+            this.mpLabel8.Name = "mpLabel8";
+            this.mpLabel8.Size = new System.Drawing.Size(86, 23);
+            this.mpLabel8.TabIndex = 86;
+            this.mpLabel8.Text = "Update (ms)";
+            this.mpLabel8.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.toolTip1.SetToolTip(this.mpLabel8, "Time in milliseconds after which our MiniDisplay is refreshed");
+            // 
+            // SetupForm
+            // 
+            this.AcceptButton = this.btnOK;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.CancelButton = this.btnCancel;
+            this.ClientSize = new System.Drawing.Size(389, 520);
+            this.Controls.Add(this.btnCancel);
+            this.Controls.Add(this.mpDisableGUISetup);
+            this.Controls.Add(this.cbExtensiveLogging);
+            this.Controls.Add(this.btnOK);
+            this.Controls.Add(this.cbPropertyBrowser);
+            this.Controls.Add(this.groupBox1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.Name = "SetupForm";
+            this.ShowInTaskbar = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.Text = "MiniDisplay - Setup";
+            this.Load += new System.EventHandler(this.SetupForm_Load);
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
+            this.groupShutdown.ResumeLayout(false);
+            this.groupShutdown.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tbBrightness)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbContrast)).EndInit();
+            this.gbGraphMode.ResumeLayout(false);
+            this.gbGraphMode.PerformLayout();
+            this.gbTextMode.ResumeLayout(false);
+            this.gbTextMode.PerformLayout();
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
     }
 
     private void SetupForm_Load(object sender, EventArgs e)
@@ -988,22 +1041,28 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     private void VerifyLCDType()
     {
       Log.Info("MiniDisplay.SetupForm.VerifyLCDType(): called");
+      //Disable OK button and other stuff until the display driver tells us otherwise
+      this.btnOK.Enabled = false;
+      this.gbGraphMode.Visible = false;
+      this.gbTextMode.Visible = false;
+      //Try check if our driver is up and running and get its capabilities
       try
       {
         this.lcd = this.cmbType.SelectedItem as IDisplay;
-        if (this.lcd.IsDisabled)
-        {
-          this.btnOK.Enabled = false;
-        }
-        else
-        {
-          this.btnOK.Enabled = true;
-        }
         this.gbGraphMode.Visible = this.lcd.SupportsGraphics;
         this.gbTextMode.Visible = this.lcd.SupportsText;
         Settings.Instance.LCDType = this.lcd;
+        if (!this.lcd.IsDisabled)
+        {
+            this.btnOK.Enabled = true;
+        }
       }
-      catch {}
+      catch (Exception ex)
+      {
+        Log.Error(ex);
+        Log.Error("MiniDisplay.SetupForm.VerifyLCDType exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);               
+      }
+
       Log.Info("MiniDisplay.SetupForm.Load(): completed");
     }
 

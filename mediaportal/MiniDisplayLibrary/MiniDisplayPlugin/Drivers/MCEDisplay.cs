@@ -30,7 +30,7 @@ using Microsoft.Win32;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {
-  public class MCEDisplay : BaseDisplay, IDisplay
+  public class MCEDisplay : BaseDisplay
   {
     private readonly string[] _lines = new string[2];
     public const bool ExtensiveLogging = true;
@@ -42,18 +42,18 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     private static bool stopRequested = false;
     private static object ThreadMutex = new object();
 
-    public void CleanUp()
+    public override void CleanUp()
     {
       Log.Info("MCEDisplay.Cleanup(): called");
       this.Stop();
       Log.Info("MCEDisplay.Cleanup(): completed");
     }
 
-    public void Configure() {}
+    public override void Configure() { }
 
-    public virtual void Dispose() {}
+    public override void Dispose() { }
 
-    public void DrawImage(Bitmap bitmap) {}
+    public override void DrawImage(Bitmap bitmap) { }
 
     private void GUIPropertyManager_OnPropertyChanged(string tag, string tagValue)
     {
@@ -76,7 +76,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public void Initialize()
+    public override void Initialize()
     {
       Log.Info("MCEDisplay.Initialize(): called");
       this.Start();
@@ -160,14 +160,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public void SetCustomCharacters(int[][] customCharacters) {}
+    public override void SetCustomCharacters(int[][] customCharacters) { }
 
-    public void SetLine(int line, string message)
+    public override void SetLine(int line, string message)
     {
       if (!this.IDisplayToMCE) {}
     }
 
-    public void Setup(string _port, int _lines, int _cols, int _time, int _linesG, int _colsG, int _timeG,
+    public override void Setup(string _port, int _lines, int _cols, int _time, int _linesG, int _colsG, int _timeG,
                       bool _backLight, int _backlightLevel, bool _contrast, int _contrastLevel, bool _blankOnExit)
     {
       Log.Info("{0}", new object[] {this.Description});
@@ -204,32 +204,32 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       Log.Info("MCEDisplay.Stop(): MCEDisplay driver STOPPED!");
     }
 
-    public string Description
+    public override string Description
     {
       get { return "MCE Compatible Display driver v_03_09_2008b"; }
     }
 
-    public string ErrorMessage
+    public override string ErrorMessage
     {
       get { return ""; }
     }
 
-    public bool IsDisabled
+    public override bool IsDisabled
     {
       get { return false; }
     }
 
-    public string Name
+    public override string Name
     {
       get { return "MCEDisplay"; }
     }
 
-    public bool SupportsGraphics
+    public override bool SupportsGraphics
     {
       get { return false; }
     }
 
-    public bool SupportsText
+    public override bool SupportsText
     {
       get { return true; }
     }
