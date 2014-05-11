@@ -37,7 +37,7 @@ using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {
-  public class LCDHypeWrapper : BaseDisplay, IDisplay
+  public class LCDHypeWrapper : BaseDisplay
   {
     private bool _BlankDisplayOnExit;
     private Thread _EqThread;
@@ -116,7 +116,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.Initialize();
     }
 
-    public void CleanUp()
+    public override void CleanUp()
     {
       Log.Info("LCDHypeWrapper.Cleanup(): called");
       AdvancedSettings.OnSettingsChanged -=
@@ -187,7 +187,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       Log.Debug("LCDHypeWrapper.Clear(): completed");
     }
 
-    public void Configure()
+    public override void Configure()
     {
       string tag = string.Empty;
       Form form = new LCDHypeWrapper_SetupPickerForm();
@@ -540,9 +540,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public void Dispose() {}
+    public override void Dispose() { }
 
-    public void DrawImage(Bitmap bitmap)
+    public override void DrawImage(Bitmap bitmap)
     {
       if ((this.SupportsGraphics && !this.EQSettings._EqDataAvailable) && (bitmap != this.lastBitmap))
       {
@@ -610,7 +610,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public void Initialize()
+    public override void Initialize()
     {
       Log.Info("LCDHypeWrapper.Initialize(): called");
       this.LCD_Init();
@@ -1010,7 +1010,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public void SetCustomCharacters(int[][] customCharacters)
+    public override void SetCustomCharacters(int[][] customCharacters)
     {
       for (int i = 0; i < customCharacters.GetLength(0); i++)
       {
@@ -1023,7 +1023,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public void SetLine(int line, string message)
+    public override void SetLine(int line, string message)
     {
       this.UpdateAdvancedSettings();
       if (this.DoDebug)
@@ -1104,7 +1104,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                                   new object[] {x, y});
     }
 
-    public void Setup(string _port, int _lines, int _cols, int _time, int _linesG, int _colsG, int _timeG,
+    public override void Setup(string _port, int _lines, int _cols, int _time, int _linesG, int _colsG, int _timeG,
                       bool _backLight, int _backlightSetting, bool _contrast, int _contrastSetting, bool _blankOnExit)
     {
       this.DoDebug = Assembly.GetEntryAssembly().FullName.Contains("Configuration") | Settings.Instance.ExtensiveLogging;
@@ -1167,7 +1167,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public string Description
+    public override string Description
     {
       get
       {
@@ -1189,27 +1189,27 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public string ErrorMessage
+    public override string ErrorMessage
     {
       get { return this.errorMessage; }
     }
 
-    public bool IsDisabled
+    public override bool IsDisabled
     {
       get { return this.isDisabled; }
     }
 
-    public string Name
+    public override string Name
     {
       get { return this.name; }
     }
 
-    public bool SupportsGraphics
+    public override bool SupportsGraphics
     {
       get { return this.info.SupportGfxLCD; }
     }
 
-    public bool SupportsText
+    public override bool SupportsText
     {
       get { return this.info.SupportTxtLCD; }
     }
