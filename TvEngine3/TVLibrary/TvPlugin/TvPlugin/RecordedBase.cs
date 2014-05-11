@@ -1,7 +1,7 @@
 ﻿using System;
 using MediaPortal.GUI.Library;
 using TvDatabase;
-using WindowPlugins;
+using Common.GUIPlugins;
 using Action = MediaPortal.GUI.Library.Action;
 
 namespace TvPlugin

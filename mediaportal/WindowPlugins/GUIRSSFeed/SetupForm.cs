@@ -28,7 +28,7 @@ using MediaPortal.UserInterface.Controls;
 
 namespace GUIRSSFeed
 {
-  [PluginIcons("WindowPlugins.GUIRSSFeed.rssicon.png", "WindowPlugins.GUIRSSFeed.rssicon_disabled.png")]
+  [PluginIcons("GUIRSSFeed.rssicon.png", "GUIRSSFeed.rssicon_disabled.png")]
   /// <summary>
     /// A setup form for the My News Plugin
     /// </summary>

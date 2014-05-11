@@ -289,7 +289,7 @@ namespace TvDatabase
         }
 
         TimeSpan ts = (endTime - startTime);
-        return (ts.TotalHours == 24);
+        return ((int)ts.TotalHours == 24);
       }
     }
 

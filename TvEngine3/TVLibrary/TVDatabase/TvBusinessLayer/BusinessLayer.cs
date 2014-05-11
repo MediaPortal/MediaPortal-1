@@ -1786,10 +1786,19 @@ namespace TvDatabase
       SqlSelectCommand.Append("select p.* from Program p inner join Channel c on c.idChannel = p.idChannel ");
       SqlSelectCommand.AppendFormat("where endTime > '{0}' ", DateTime.Now.ToString(GetDateTimeString(), mmddFormat));
 
-      if (searchCriteria.Length > 0)
+      string provider = ProviderFactory.GetDefaultProvider().Name.ToLowerInvariant();
+      if (provider == "mysql" && searchCriteria == "[0-9]")
+      {
+        if (searchCriteria.Length > 0)
+        {
+          SqlSelectCommand.AppendFormat("and title REGEXP '^{0}' ", EscapeSQLString(searchCriteria));
+        }
+      }
+      else if (searchCriteria.Length > 0)
       {
         SqlSelectCommand.AppendFormat("and title like '{0}%' ", EscapeSQLString(searchCriteria));
       }
+
       switch (channelType)
       {
         case ChannelType.Radio:

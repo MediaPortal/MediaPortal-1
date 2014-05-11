@@ -23,13 +23,16 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Music.Database;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
+using MediaPortal.TagReader;
 using Microsoft.DirectX.Direct3D;
 using Action = MediaPortal.GUI.Library.Action;
 
@@ -72,11 +75,11 @@ namespace MediaPortal.GUI.Pictures
           {
             _slideList.Remove(_slideList[_currentSlideIndex]);
           }
-          if (_slideDirection == 1 || _slideDirection == 0)
+          if (GUIPictureSlideShow._slideDirection == 1 || GUIPictureSlideShow._slideDirection == 0)
           {
             ShowNext();
           }
-          if (_slideDirection == -1)
+          if (GUIPictureSlideShow._slideDirection == -1)
           {
             ShowPrevious();
           }
@@ -114,14 +117,14 @@ namespace MediaPortal.GUI.Pictures
           return _currentSlide;
         }*/
 
-        if (!tmpGUIpictures._playVideosInSlideshows && _isSlideShow && _slideDirection == 1)
+        if (!tmpGUIpictures._playVideosInSlideshows && _isSlideShow && GUIPictureSlideShow._slideDirection == 1)
         {
           ShowNext();
           _currentSlide = _slideCache.GetCurrentSlide(_slideList[_currentSlideIndex]);
           return _currentSlide;
         }
 
-        if (!tmpGUIpictures._playVideosInSlideshows && _isSlideShow && _slideDirection == -1)
+        if (!tmpGUIpictures._playVideosInSlideshows && _isSlideShow && GUIPictureSlideShow._slideDirection == -1)
         {
           ShowPrevious();
           _currentSlide = _slideCache.GetCurrentSlide(_slideList[_currentSlideIndex]);
@@ -147,7 +150,7 @@ namespace MediaPortal.GUI.Pictures
 
         if (_isSlideShow)
         {
-          _slideDirection = 1;
+          GUIPictureSlideShow._slideDirection = 1;
         }
 
         _loadVideoPlayback = false;
@@ -155,7 +158,7 @@ namespace MediaPortal.GUI.Pictures
       }
       else
       {
-        _slideDirection = 0;
+        GUIPictureSlideShow._slideDirection = 0;
       }
 
       // Get Name of actual played slide.
@@ -338,7 +341,6 @@ namespace MediaPortal.GUI.Pictures
     private float _defaultZoomFactor = 1.0f;
     internal bool _returnedFromVideoPlayback = false;
     internal bool _loadVideoPlayback = false;
-    public static int _slideDirection = 0; //-1=backwards, 0=nothing, 1=forward
     private double pausedMusicLastPosition;
     public bool pausedMusic;
     private bool resumeSong = false;
@@ -399,12 +401,6 @@ namespace MediaPortal.GUI.Pictures
 
     #endregion
 
-    public static int SlideDirection
-    {
-      get { return _slideDirection; }
-      set { _slideDirection = value; }
-    }
-
     #region GUIWindow overrides
 
     public GUISlideShow()
@@ -415,6 +411,7 @@ namespace MediaPortal.GUI.Pictures
 
     public override bool Init()
     {
+      g_Player.PlayBackStarted += OnPlayBackStarted;
       return Load(GUIGraphicsContext.GetThemedSkinFile(@"\slideshow.xml"));
     }
 
@@ -429,16 +426,16 @@ namespace MediaPortal.GUI.Pictures
 
           if (_returnedFromVideoPlayback)
           {
-            if (SlideDirection == 1)
+            if (GUIPictureSlideShow.SlideDirection == 1)
             {
               ShowNext();
             }
             //Backward
-            if (SlideDirection == -1)
+            if (GUIPictureSlideShow.SlideDirection == -1)
             {
               ShowPrevious();
             }
-            if (SlideDirection == 0)
+            if (GUIPictureSlideShow.SlideDirection == 0)
             {
               // Get folder path for recursive selectedItemIndex.
               if (_slideList.Count != 0)
@@ -468,21 +465,6 @@ namespace MediaPortal.GUI.Pictures
             Reset();
           }
           GUIGraphicsContext.Overlay = _showOverlayFlag;
-          break;
-
-        case GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED:
-          if (g_Player.IsMusic)
-          {
-            if (mDB == null)
-            {
-              mDB = MusicDatabase.Instance;
-            }
-            if (!resumeSong)
-            {
-              ShowSong();
-            }
-            resumeSong = false;
-          }
           break;
       }
       return base.OnMessage(message);
@@ -549,7 +531,7 @@ namespace MediaPortal.GUI.Pictures
           {
             _returnedFromVideoPlayback = false;
           }
-          SlideDirection = 0;
+          GUIPictureSlideShow.SlideDirection = 0;
           ShowPreviousWindow();
           break;
 
@@ -562,15 +544,15 @@ namespace MediaPortal.GUI.Pictures
           if (_lastSegmentIndex != -1)
           {
             ShowPrevious(true);
-            _slideDirection = -1;
+            GUIPictureSlideShow._slideDirection = -1;
           }
           else if (_isSlideShow)
           {
-            _slideDirection = -1;
+            GUIPictureSlideShow._slideDirection = -1;
           }
           else
           {
-            _slideDirection = 0;
+            GUIPictureSlideShow._slideDirection = 0;
           }
 
           if (!_isPictureZoomed)
@@ -594,15 +576,15 @@ namespace MediaPortal.GUI.Pictures
           if (_lastSegmentIndex != -1)
           {
             ShowNext(false, true);
-            _slideDirection = 1;
+            GUIPictureSlideShow._slideDirection = 1;
           }
           else if (_isSlideShow)
           {
-            _slideDirection = 1;
+            GUIPictureSlideShow._slideDirection = 1;
           }
           else
           {
-            _slideDirection = 0;
+            GUIPictureSlideShow._slideDirection = 0;
           }
 
           if (!_isPictureZoomed)
@@ -615,7 +597,7 @@ namespace MediaPortal.GUI.Pictures
                 _folderCurrentItem = _slideList[_currentSlideIndex];
               }
               // We reach the end of slideshow
-              _slideDirection = 0;
+              GUIPictureSlideShow._slideDirection = 0;
               ShowPreviousWindow();
             }
             else
@@ -1277,7 +1259,7 @@ namespace MediaPortal.GUI.Pictures
     {
       LoadSettings();
       _isBackgroundMusicPlaying = false;
-      _slideDirection = 1;
+      GUIPictureSlideShow._slideDirection = 1;
       _isSlideShow = true;
       if (_autoShuffle && (_isSlideShow || _showRecursive))
       {
@@ -1293,7 +1275,7 @@ namespace MediaPortal.GUI.Pictures
       LoadSettings();
       _isBackgroundMusicPlaying = false;
       StartBackgroundMusic(path);
-      _slideDirection = 1;
+      GUIPictureSlideShow._slideDirection = 1;
       _isSlideShow = true;
       if (_autoShuffle && (_isSlideShow || _showRecursive))
       {
@@ -2911,9 +2893,9 @@ namespace MediaPortal.GUI.Pictures
       GUIWindowManager.ShowPreviousWindow();
     }
 
-    private void ShowSong()
+    private void ShowSong(string filename)
     {
-      GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
+      GUIDialogNotify dlg = (GUIDialogNotify) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_NOTIFY);
       if (dlg == null)
       {
         return;
@@ -2941,21 +2923,84 @@ namespace MediaPortal.GUI.Pictures
       // Accessing the Music Database instead of using the Tagreader.
       //MediaPortal.TagReader.MusicTag tag = MediaPortal.TagReader.TagReader.ReadTag(g_Player.CurrentFile);
       Song song = new Song();
+      MusicTag currentSong = new MusicTag();
 
       // If we don't have a tag in the db, we use the filename without the extension as song.title
       if (!mDB.GetSongByFileName(g_Player.CurrentFile, ref song))
-        song.Title = Path.GetFileNameWithoutExtension(g_Player.CurrentFile);
+      {
+        try
+        {
+          // try Tagreader method to parse information
+          var pl = PlayListPlayer.SingletonPlayer.GetPlaylist(PlayListPlayer.SingletonPlayer.CurrentPlaylistType);
+          var plI = pl.First(plItem => plItem.FileName == filename);
+          if (plI != null || plI.MusicTag != null)
+          {
+            currentSong = (MusicTag)plI.MusicTag;
+          }
+        }
+        catch (Exception)
+        {
+          // Catch the COM execption but continue code with Music Database instead.
+        }
+      }
 
       // Show Dialog
       dlg.Reset();
       dlg.Dispose();
       dlg.SetImage(albumart);
       dlg.SetHeading(4540);
-      //dlg.SetText(tag.Title + "\n" + tag.Artist + "\n" + tag.Album);
-      dlg.SetText(song.Title + "\n" + song.Artist + "\n" + song.Album);
+      if (currentSong == null || string.IsNullOrEmpty(currentSong.Title) ||
+          (string.IsNullOrEmpty(currentSong.Artist) && string.IsNullOrEmpty(currentSong.AlbumArtist)))
+      {
+        song.Title = Path.GetFileNameWithoutExtension(g_Player.CurrentFile);
+        dlg.SetText(song.Title + "\n" + song.Artist + "\n" + song.Album);
+      }
+      else
+      {
+        dlg.SetText(currentSong.Title + "\n" + currentSong.Artist + "\n" + currentSong.Album);
+      }
       dlg.TimeOut = 5;
       dlg.DoModal(GUIWindowManager.ActiveWindow);
     }
+
+    #region g_player events
+
+    /// <summary>
+    /// Handle event fired by MP player.  Something has started playing so check if it is music then
+    /// show song track on MyPictures Plugin or slideshow
+    /// </summary>
+    /// <param name="type">MediaType of item that has started</param>
+    /// <param name="filename">filename of item that has started</param>
+    private void OnPlayBackStarted(g_Player.MediaType type, string filename)
+    {
+      try
+      {
+        // Show song only when we are on MyPictures Plugin or slideshow when playing/change music track
+        string activeWindowName;
+        GUIWindow.Window activeWindow;
+        activeWindowName = GUIWindowManager.ActiveWindow.ToString(CultureInfo.InvariantCulture);
+        activeWindow = (GUIWindow.Window)Enum.Parse(typeof(GUIWindow.Window), activeWindowName);
+        if (activeWindow == GUIWindow.Window.WINDOW_SLIDESHOW || activeWindow == GUIWindow.Window.WINDOW_PICTURES)
+          if (g_Player.IsMusic)
+          {
+            if (mDB == null)
+            {
+              mDB = MusicDatabase.Instance;
+            }
+            if (!resumeSong)
+            {
+              ShowSong(filename);
+            }
+            resumeSong = false;
+          }
+      }
+      catch (Exception e)
+      {
+        Log.Debug("GUISlideShow.OnPlayBackStarted", e.Message);
+      }
+    }
+
+    #endregion
 
     #endregion
   }

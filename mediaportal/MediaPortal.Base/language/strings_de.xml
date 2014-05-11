@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <Language name="German" characters="255">
   <Section name="unmapped">
     <String id="0" prefix="Meine ">Anwendungen</String>
@@ -51,13 +51,13 @@
     <String id="62">Initialisiere DirectX...</String>
     <String id="63">Initialisiere Eingabegeräte...</String>
     <String id="64">Starte Plugins...</String>
-    <String id="65">Lade keymap.xml...</String>
+    <String id="65">Lade Tastenbelegung...</String>
     <String id="66">Lade Texte...</String>
     <String id="67">Cache Grafiken...</String>
     <String id="68">Lade Schriften...</String>
     <String id="69">Lade Oberfläche ({0})...</String>
-    <String id="70">Lade Anzeigeplugins...</String>
-    <String id="71">Initialisiere Fenstermanager...</String>
+    <String id="70">Lade MP-Plugins...</String>
+    <String id="71">Initialisiere Fenster-Manager...</String>
     <String id="90">Skin-Thema wählen</String>
     <String id="94">Thema: </String>
     <String id="95">Layout: </String>
@@ -540,7 +540,7 @@
     <String id="600">TV-Programm</String>
     <String id="601">Jetzt aufnehmen</String>
     <String id="602">Kanal</String>
-    <String id="603">Geplante Aufnahmen</String>
+    <String id="603">Aufnahme-Timer</String>
     <String id="604">Aufnahmen</String>
     <String id="605" prefix="Mein ">TV</String>
     <String id="606">Lade neues TV-Programm</String>
@@ -562,7 +562,7 @@
     <String id="622">Name</String>
     <String id="623">Typ</String>
     <String id="624">Aufräumen</String>
-    <String id="625">Geplante Aufnahmen gelöscht: </String>
+    <String id="625">Timer-Aufnahmen gelöscht: </String>
     <String id="626">Typ ändern</String>
     <String id="627">Kanäle: </String>
     <String id="628">Programme: </String>
@@ -583,7 +583,7 @@
     <String id="643">Lade TV-Programme</String>
     <String id="644">Sortiere TV-Programme</String>
     <String id="645">Lade XML-Datei</String>
-    <String id="646">Geplante Aufnahmen</String>
+    <String id="646">Aufnahme-Timer</String>
     <String id="647">Einmal</String>
     <String id="648">Täglich</String>
     <String id="649">Immer</String>
@@ -715,8 +715,8 @@
     <String id="782">Erweiterte Aufnahme</String>
     <String id="783">Um 180° drehen</String>
     <String id="784">Um 270° drehen</String>
-    <String id="789">Jetzt: </String>
-    <String id="790">Anschließend: </String>
+    <String id="789"></String>
+    <String id="790"></String>
     <String id="791">Cover-Flow</String>
     <String id="792">Ansichts-Menü</String>
     <String id="798">niedrig</String>
@@ -1118,7 +1118,7 @@
     <String id="1510">Verbindung zum TV-Service verloren</String>
     <String id="1511">Keine Streams aktiv</String>
     <String id="1512">Vorherigen Kanal zeigen?</String>
-    <String id="1513">TV wurde für eine geplante Aufnahme gestoppt</String>
+    <String id="1513">TV wurde für eine Timer-Aufnahme gestoppt</String>
     <String id="1514">TV wurde von einem Administrator gestoppt</String>
     <String id="1515">TV wurde vom TV-Server gestoppt</String>
     <String id="1516">TV wurde aus unbekannten Gründen gestoppt</String>
@@ -2199,6 +2199,7 @@
     <String id="300094">Neustart-Verzögerung in Sekunden</String>
     <String id="300095">Bildschirm ausschalten (bei Dunkeltastung des Bildschirms)</String>
     <String id="300100">Letztes aktives Modul nach Wake-Up anzeigen</String>
+    <String id="300101">MP-Startbildschirm mit Screen Selector auswählen</String>
     <String id="300102">Startverzögerung</String>
     <String id="300103">Bei Start von MediaPortal</String>
     <String id="300104">Bei Wiederaufnahme von MediaPortal</String>
@@ -2328,6 +2329,5 @@
     <String id="300229">In Tray minimieren bei Fokuswechsel</String>
     <String id="300230">Wiedergabe stoppen bei Entfernen eines Audio-Renderers</String>
     <String id="300231">Wiederholfrequenz senken wenn MP keinen Fokus hat</String>
-	<String id="300232">Nur Dateien nach {0} ändern</String>
   </Section>
 </Language>

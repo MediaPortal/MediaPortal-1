@@ -32,78 +32,144 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public abstract class GUIKeyboard : GUIControl
   {
-    [XMLSkinElement("keyboardPosX")] protected int _keyboardPosX = 64;
-    [XMLSkinElement("keyboardPosY")] protected int _keyboardPosY = 250;
-    [XMLSkinElement("keyWidth")] protected int _keyWidth = 34;
-    [XMLSkinElement("keyHeight")] protected int _keyHeight = 54;
-    [XMLSkinElement("keyHSpacing")] protected int _keyHorizontalSpacing = 0;
-    [XMLSkinElement("keyVSpacing")] protected int _keyVerticalSpacing = 2;
-    [XMLSkinElement("modeKeySpacing")] protected int _modeKeySpacing = 4;
-    [XMLSkinElement("modeKeyWidth")] protected int _modeKeyWidth = 110;
-    [XMLSkinElement("searchModeKeyWidth")] protected int _searchModeKeyWidth = 130;
-    [XMLSkinElement("label")] protected string _labelText = "";
-    [XMLSkinElement("labelBoxPosX")] protected int _labelBoxPosX = 64;
-    [XMLSkinElement("labelBoxPosY")] protected int _labelBoxPosY = 218;
-    [XMLSkinElement("labelBoxWidth")] protected int _labelBoxWidth = -1; //calculated
-    [XMLSkinElement("labelBoxHeight")] protected int _labelBoxHeight = 30;
-    [XMLSkinElement("labelBoxTexture")] protected string _labelBoxTexture = "white.bmp";
-    [XMLSkinElement("labelAlign")] protected Alignment _labelAlign = Alignment.ALIGN_LEFT;
-    [XMLSkinElement("labelOffX")] protected int _labelOffX = 18;
-    [XMLSkinElement("labelOffY")] protected int _labelOffY = 2;
-    [XMLSkinElement("labelFont")] protected string _labelFont = "font10";
-    [XMLSkinElement("labelColor")] protected long _labelColor = 0xff000000;
-    [XMLSkinElement("labelShadowAngle")] protected int _labelShadowAngle = 0;
-    [XMLSkinElement("labelShadowDistance")] protected int _labelShadowDistance = 0;
-    [XMLSkinElement("labelShadowColor")] protected long _labelShadowColor = 0xFF000000;
-    [XMLSkinElement("inputTextBoxPosX")] protected int _inputTextBoxPosX = 64;
-    [XMLSkinElement("inputTextBoxPosY")] protected int _inputTextBoxPosY = 218;
-    [XMLSkinElement("inputTextBoxWidth")] protected int _inputTextBoxWidth = -1; //calculated
-    [XMLSkinElement("inputTextBoxHeight")] protected int _inputTextBoxHeight = 30;
-    [XMLSkinElement("inputTextBoxTexture")] protected string _inputTextBoxTexture = "white.bmp";
-    [XMLSkinElement("showLabelAsInitialText")] protected bool _showLabelAsInitialText = false;
-    [XMLSkinElement("inputTextAlign")] protected Alignment _inputTextAlign = Alignment.ALIGN_LEFT;
-    [XMLSkinElement("inputTextOffX")] protected int _inputTextOffX = 18;
-    [XMLSkinElement("inputTextOffY")] protected int _inputTextOffY = 2;
-    [XMLSkinElement("inputTextFont")] protected string _inputTextFont = "font10";
-    [XMLSkinElement("inputTextColor")] protected long _inputTextColor = 0xff000000;
-    [XMLSkinElement("inputTextShadowAngle")] protected int _inputTextShadowAngle = 0;
-    [XMLSkinElement("inputTextShadowDistance")] protected int _inputTextShadowDistance = 0;
-    [XMLSkinElement("inputTextShadowColor")] protected long _inputTextShadowColor = 0xFF000000;
-    [XMLSkinElement("charKeyFont")] protected string _charKeyFont = "font14";
-    [XMLSkinElement("namedKeyFont")] protected string _namedKeyFont = "font10";
-    [XMLSkinElement("keyTextShadowAngle")] protected int _keyTextShadowAngle = 0;
-    [XMLSkinElement("keyTextShadowDistance")] protected int _keyTextShadowDistance = 0;
-    [XMLSkinElement("keyTextShadowColor")] protected long _keyTextShadowColor = 0xFF000000;
-    [XMLSkinElement("keyTextureFocus")] protected string _keyTextureFocus = "keyNF.bmp";
-    [XMLSkinElement("keyTextureNoFocus")] protected string _keyTextureNoFocus = "keyNF.bmp";
-    [XMLSkinElement("keyHighlightColor")] protected long _keyHighlightColor = 0xff00ff00;
-    [XMLSkinElement("keyPressedColor")] protected long _keyPressedColor = 0xff808080;
-    [XMLSkinElement("keyDisabledColor")] protected long _keyDisabledColor = 0xffffffff;
-    [XMLSkinElement("keyFontColor")] protected long _keyFontColor = 0xff000000;
-    [XMLSkinElement("keySelFontColor")] protected long _keySelFontColor = 0xff000000;
-    [XMLSkinElement("keyDisabledFontColor")] protected long _keyDisabledFontColor = 0xff808080;
-    [XMLSkin("keyTextureFocus", "border")] protected string _strBorderKTF = "";
+    [XMLSkinElement("keyboardPosX")]
+    protected int _keyboardPosX = 64;
+    [XMLSkinElement("keyboardPosY")]
+    protected int _keyboardPosY = 250;
+    [XMLSkinElement("keyWidth")]
+    protected int _keyWidth = 34;
+    [XMLSkinElement("keyHeight")]
+    protected int _keyHeight = 54;
+    [XMLSkinElement("keyHSpacing")]
+    protected int _keyHorizontalSpacing = 0;
+    [XMLSkinElement("keyVSpacing")]
+    protected int _keyVerticalSpacing = 2;
+    [XMLSkinElement("modeKeySpacing")]
+    protected int _modeKeySpacing = 4;
+    [XMLSkinElement("modeKeyWidth")]
+    protected int _modeKeyWidth = 110;
+    [XMLSkinElement("searchModeKeyWidth")]
+    protected int _searchModeKeyWidth = 130;
+    [XMLSkinElement("label")]
+    protected string _labelText = "";
+    [XMLSkinElement("labelBoxPosX")]
+    protected int _labelBoxPosX = 64;
+    [XMLSkinElement("labelBoxPosY")]
+    protected int _labelBoxPosY = 218;
+    [XMLSkinElement("labelBoxWidth")]
+    protected int _labelBoxWidth = -1; //calculated
+    [XMLSkinElement("labelBoxHeight")]
+    protected int _labelBoxHeight = 30;
+    [XMLSkinElement("labelBoxTexture")]
+    protected string _labelBoxTexture = "white.bmp";
+    [XMLSkinElement("labelAlign")]
+    protected Alignment _labelAlign = Alignment.ALIGN_LEFT;
+    [XMLSkinElement("labelOffX")]
+    protected int _labelOffX = 18;
+    [XMLSkinElement("labelOffY")]
+    protected int _labelOffY = 2;
+    [XMLSkinElement("labelFont")]
+    protected string _labelFont = "font10";
+    [XMLSkinElement("labelColor")]
+    protected long _labelColor = 0xff000000;
+    [XMLSkinElement("labelShadowAngle")]
+    protected int _labelShadowAngle = 0;
+    [XMLSkinElement("labelShadowDistance")]
+    protected int _labelShadowDistance = 0;
+    [XMLSkinElement("labelShadowColor")]
+    protected long _labelShadowColor = 0xFF000000;
+    [XMLSkinElement("inputTextBoxPosX")]
+    protected int _inputTextBoxPosX = 64;
+    [XMLSkinElement("inputTextBoxPosY")]
+    protected int _inputTextBoxPosY = 218;
+    [XMLSkinElement("inputTextBoxWidth")]
+    protected int _inputTextBoxWidth = -1; //calculated
+    [XMLSkinElement("inputTextBoxHeight")]
+    protected int _inputTextBoxHeight = 30;
+    [XMLSkinElement("inputTextBoxTexture")]
+    protected string _inputTextBoxTexture = "white.bmp";
+    [XMLSkinElement("showLabelAsInitialText")]
+    protected bool _showLabelAsInitialText = false;
+    [XMLSkinElement("inputTextAlign")]
+    protected Alignment _inputTextAlign = Alignment.ALIGN_LEFT;
+    [XMLSkinElement("inputTextOffX")]
+    protected int _inputTextOffX = 18;
+    [XMLSkinElement("inputTextOffY")]
+    protected int _inputTextOffY = 2;
+    [XMLSkinElement("inputTextFont")]
+    protected string _inputTextFont = "font10";
+    [XMLSkinElement("inputTextColor")]
+    protected long _inputTextColor = 0xff000000;
+    [XMLSkinElement("inputTextShadowAngle")]
+    protected int _inputTextShadowAngle = 0;
+    [XMLSkinElement("inputTextShadowDistance")]
+    protected int _inputTextShadowDistance = 0;
+    [XMLSkinElement("inputTextShadowColor")]
+    protected long _inputTextShadowColor = 0xFF000000;
+    [XMLSkinElement("charKeyFont")]
+    protected string _charKeyFont = "font14";
+    [XMLSkinElement("namedKeyFont")]
+    protected string _namedKeyFont = "font10";
+    [XMLSkinElement("keyTextShadowAngle")]
+    protected int _keyTextShadowAngle = 0;
+    [XMLSkinElement("keyTextShadowDistance")]
+    protected int _keyTextShadowDistance = 0;
+    [XMLSkinElement("keyTextShadowColor")]
+    protected long _keyTextShadowColor = 0xFF000000;
+    [XMLSkinElement("keyTextureFocus")]
+    protected string _keyTextureFocus = "keyNF.bmp";
+    [XMLSkinElement("keyTextureNoFocus")]
+    protected string _keyTextureNoFocus = "keyNF.bmp";
+    [XMLSkinElement("keyHighlightColor")]
+    protected long _keyHighlightColor = 0xff00ff00;
+    [XMLSkinElement("keyPressedColor")]
+    protected long _keyPressedColor = 0xff808080;
+    [XMLSkinElement("keyDisabledColor")]
+    protected long _keyDisabledColor = 0xffffffff;
+    [XMLSkinElement("keyFontColor")]
+    protected long _keyFontColor = 0xff000000;
+    [XMLSkinElement("keySelFontColor")]
+    protected long _keySelFontColor = 0xff000000;
+    [XMLSkinElement("keyDisabledFontColor")]
+    protected long _keyDisabledFontColor = 0xff808080;
+    [XMLSkin("keyTextureFocus", "border")]
+    protected string _strBorderKTF = "";
 
-    [XMLSkin("keyTextureFocus", "position")] protected GUIImage.BorderPosition _borderPositionKTF =
+    [XMLSkin("keyTextureFocus", "position")]
+    protected GUIImage.BorderPosition _borderPositionKTF =
       GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
 
-    [XMLSkin("keyTextureFocus", "textureRepeat")] protected bool _borderTextureRepeatKTF = false;
-    [XMLSkin("keyTextureFocus", "textureRotate")] protected bool _borderTextureRotateKTF = false;
-    [XMLSkin("keyTextureFocus", "texture")] protected string _borderTextureFileNameKTF = "image_border.png";
-    [XMLSkin("keyTextureFocus", "colorKey")] protected long _borderColorKeyKTF = 0xFFFFFFFF;
-    [XMLSkin("keyTextureFocus", "corners")] protected bool _borderHasCornersKTF = false;
-    [XMLSkin("keyTextureFocus", "cornerRotate")] protected bool _borderCornerTextureRotateKTF = true;
-    [XMLSkin("keyTextureNoFocus", "border")] protected string _strBorderKTNF = "";
+    [XMLSkin("keyTextureFocus", "textureRepeat")]
+    protected bool _borderTextureRepeatKTF = false;
+    [XMLSkin("keyTextureFocus", "textureRotate")]
+    protected bool _borderTextureRotateKTF = false;
+    [XMLSkin("keyTextureFocus", "texture")]
+    protected string _borderTextureFileNameKTF = "image_border.png";
+    [XMLSkin("keyTextureFocus", "colorKey")]
+    protected long _borderColorKeyKTF = 0xFFFFFFFF;
+    [XMLSkin("keyTextureFocus", "corners")]
+    protected bool _borderHasCornersKTF = false;
+    [XMLSkin("keyTextureFocus", "cornerRotate")]
+    protected bool _borderCornerTextureRotateKTF = true;
+    [XMLSkin("keyTextureNoFocus", "border")]
+    protected string _strBorderKTNF = "";
 
-    [XMLSkin("keyTextureNoFocus", "position")] protected GUIImage.BorderPosition _borderPositionKTNF =
+    [XMLSkin("keyTextureNoFocus", "position")]
+    protected GUIImage.BorderPosition _borderPositionKTNF =
       GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
 
-    [XMLSkin("keyTextureNoFocus", "textureRepeat")] protected bool _borderTextureRepeatKTNF = false;
-    [XMLSkin("ketTextureNoFocus", "textureRotate")] protected bool _borderTextureRotateKTNF = false;
-    [XMLSkin("keyTextureNoFocus", "texture")] protected string _borderTextureFileNameKTNF = "image_border.png";
-    [XMLSkin("keyTextureNoFocus", "colorKey")] protected long _borderColorKeyKTNF = 0xFFFFFFFF;
-    [XMLSkin("keyTextureNoFocus", "corners")] protected bool _borderHasCornersKTNF = false;
-    [XMLSkin("keyTextureNoFocus", "cornerRotate")] protected bool _borderCornerTextureRotateKTNF = true;
+    [XMLSkin("keyTextureNoFocus", "textureRepeat")]
+    protected bool _borderTextureRepeatKTNF = false;
+    [XMLSkin("ketTextureNoFocus", "textureRotate")]
+    protected bool _borderTextureRotateKTNF = false;
+    [XMLSkin("keyTextureNoFocus", "texture")]
+    protected string _borderTextureFileNameKTNF = "image_border.png";
+    [XMLSkin("keyTextureNoFocus", "colorKey")]
+    protected long _borderColorKeyKTNF = 0xFFFFFFFF;
+    [XMLSkin("keyTextureNoFocus", "corners")]
+    protected bool _borderHasCornersKTNF = false;
+    [XMLSkin("keyTextureNoFocus", "cornerRotate")]
+    protected bool _borderCornerTextureRotateKTNF = true;
 
     #region constants
 
@@ -490,7 +556,6 @@ namespace MediaPortal.GUI.Library
       {
         if (value != _useSmsStyleTextInsertion)
         {
-          if (Password) return; //sms is disabled during password input - we cannot see chars!
           smsLastKeyPressed = -1;
           _lastColumn = 0;
           _useSmsStyleTextInsertion = value;
@@ -515,10 +580,6 @@ namespace MediaPortal.GUI.Library
         dwWidth = iwidth;
 
         // Create a button control template.
-        if (button != null)
-        {
-          button.Dispose();
-        }
         button = new GUIButtonControl(kb.GetID, -1, 0, 0, 0, 0, kb._keyTextureFocus, kb._keyTextureNoFocus,
                                       kb._keyTextShadowAngle, kb._keyTextShadowDistance, kb._keyTextShadowColor);
 
@@ -594,7 +655,7 @@ namespace MediaPortal.GUI.Library
     }
 
     public GUIKeyboard(int dwParentID)
-      : base(dwParentID) {}
+      : base(dwParentID) { }
 
     /// <summary>
     /// The constructor of the GUIKeyboard class.
@@ -655,16 +716,17 @@ namespace MediaPortal.GUI.Library
         inputText.Dispose();
         inputTextCaret.Dispose();
 
-        ArrayList keyBoard = null;
         for (int kb = 0; kb < _keyboardList.Count; kb++)
-          keyBoard = (ArrayList)_keyboardList[kb];
-        for (int row = 0; row < _maxRows; ++row)
         {
-          ArrayList keyRow = (ArrayList)keyBoard[row];
-          for (int i = 0; i < keyRow.Count; i++)
+          ArrayList keyBoard = (ArrayList)_keyboardList[kb];
+          for (int row = 0; row < _maxRows; ++row)
           {
-            Key key = (Key)keyRow[i];
-            key.button.Dispose();
+            ArrayList keyRow = (ArrayList)keyBoard[row];
+            for (int i = 0; i < keyRow.Count; i++)
+            {
+              Key key = (Key)keyRow[i];
+              key.button.Dispose();
+            }
           }
         }
 
@@ -1086,16 +1148,16 @@ namespace MediaPortal.GUI.Library
       }
       if (!_useSmsStyleTextInsertion)
       {
-      keyRow.Add(new Key(Xkey.XK_K, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_L, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_M, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_N, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_O, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_P, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_Q, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_R, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_S, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_T, _keyWidth, this));
+        keyRow.Add(new Key(Xkey.XK_K, _keyWidth, this));
+        keyRow.Add(new Key(Xkey.XK_L, _keyWidth, this));
+        keyRow.Add(new Key(Xkey.XK_M, _keyWidth, this));
+        keyRow.Add(new Key(Xkey.XK_N, _keyWidth, this));
+        keyRow.Add(new Key(Xkey.XK_O, _keyWidth, this));
+        keyRow.Add(new Key(Xkey.XK_P, _keyWidth, this));
+        keyRow.Add(new Key(Xkey.XK_Q, _keyWidth, this));
+        keyRow.Add(new Key(Xkey.XK_R, _keyWidth, this));
+        keyRow.Add(new Key(Xkey.XK_S, _keyWidth, this));
+        keyRow.Add(new Key(Xkey.XK_T, _keyWidth, this));
       }
       else
       {
@@ -1431,7 +1493,7 @@ namespace MediaPortal.GUI.Library
               Press(Xkey.XK_ARROWRIGHT);
               break;
 
-              // Navigation
+            // Navigation
             case Event.EV_UP:
               MoveUp();
               break;
@@ -1493,7 +1555,7 @@ namespace MediaPortal.GUI.Library
           float fWidth = 0, fHeight = 0;
           _fontCharKey.GetTextExtent(_textEntered, ref fWidth, ref fHeight);
 
-          if (fWidth < (GUIGraphicsContext.ScaleHorizontal((int) fTextBoxWidth)))
+          if (fWidth < (GUIGraphicsContext.ScaleHorizontal((int)fTextBoxWidth)))
           {
             if (_position >= _textEntered.Length)
             {
@@ -1580,9 +1642,9 @@ namespace MediaPortal.GUI.Library
             Close();
             _pressedEnter = true;
             break;
-            // added to the original code VirtualKeyboard.cs
-            // by Agree
-            // starts here...
+          // added to the original code VirtualKeyboard.cs
+          // by Agree
+          // starts here...
 
           case Xkey.XK_SEARCH_IS:
             _searchKind = (int)SearchKinds.SEARCH_STARTS_WITH;
@@ -1603,8 +1665,8 @@ namespace MediaPortal.GUI.Library
             _searchKind = (int)SearchKinds.SEARCH_CONTAINS;
             SetSearchKind();
             break;
-            // code by Agree ends here
-            //
+          // code by Agree ends here
+          //
 
           case Xkey.XK_SMS0:
             ProcessSmsInsertion(0);
@@ -1851,8 +1913,8 @@ namespace MediaPortal.GUI.Library
       {
         switch (key.xKey)
         {
-            // Adjust the last column for the arrow keys to confine it
-            // within the range of the key width
+          // Adjust the last column for the arrow keys to confine it
+          // within the range of the key width
           case Xkey.XK_ARROWLEFT:
             if (!_useSmsStyleTextInsertion || _currentKeyboard != KeyboardTypes.TYPE_ALPHABET)
             {
@@ -1866,7 +1928,7 @@ namespace MediaPortal.GUI.Library
             }
             break;
 
-            // Single char, non-arrow
+          // Single char, non-arrow
           default:
             _lastColumn = _currentKey;
             break;
@@ -1892,11 +1954,6 @@ namespace MediaPortal.GUI.Library
         {
           return true;
         }
-      }
-
-      if (_password && key.xKey == Xkey.XK_SMS)
-      {
-        return true;
       }
 
       return false;
@@ -1947,7 +2004,7 @@ namespace MediaPortal.GUI.Library
           return smsResult.ToLowerInvariant();
         }
       }
-      
+
       // Handle case conversion
       char wc = (char)(((uint)xk) & 0xffff);
 
@@ -2149,7 +2206,7 @@ namespace MediaPortal.GUI.Library
     public bool Password
     {
       get { return _password; }
-      set 
+      set
       {
         if (_password != value)
         {

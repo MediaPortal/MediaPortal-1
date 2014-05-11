@@ -182,9 +182,9 @@
     <Optimize>false</Optimize>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\WindowPlugins\WindowPlugins.csproj">
+    <ProjectReference Include="..\WindowPlugins\GUIHome\GUIHome.csproj">
       <Project>{B282C55B-A37B-4CEC-A4FC-00791069BF00}</Project>
-      <Name>WindowPlugins</Name>
+      <Name>GUIHome</Name>
     </ProjectReference>
     <Reference Include="Microsoft.DirectX, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
       <SpecificVersion>True</SpecificVersion>
