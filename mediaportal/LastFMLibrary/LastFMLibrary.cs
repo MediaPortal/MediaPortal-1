@@ -215,59 +215,6 @@ namespace MediaPortal.LastFM
 
     #endregion
 
-    #region radio methods
-
-    /// <summary>
-    /// Tune to a radio station.   After runing call GetRadioPlaylist to get the track listing
-    /// </summary>
-    /// <param name="stationURL"></param>
-    public static bool TuneRadio(string stationURL)
-    {
-      var parms = new Dictionary<string, string>();
-      const string methodName = "radio.tune";
-      parms.Add("station", stationURL);
-      parms.Add("sk", _sessionKey);
-
-      var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, true);
-      GetXml(buildLastFMString, "POST", false);
-
-      return true;
-    }
-
-    /// <summary>
-    /// Gets the playlist of radio station (will only be a small number of tracks)
-    /// </summary>
-    /// <returns>A list of tracks</returns>
-    public static List<LastFMStreamingTrack> GetRadioPlaylist()
-    {
-      var parms = new Dictionary<string, string>();
-      const string methodName = "radio.getPlaylist";
-      parms.Add("bitrate", "128");
-      parms.Add("sk", _sessionKey);
-
-      var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, true);
-      var xDoc = GetXml(buildLastFMString, "GET", false);
-
-      if (xDoc != null)
-      {
-        XNamespace ns = "http://xspf.org/ns/0/";
-        var tracks = (from a in xDoc.Descendants(ns + "track")
-                      select new LastFMStreamingTrack
-                               {
-                                 ArtistName = (string) a.Element(ns + "creator"),
-                                 TrackTitle = (string) a.Element(ns + "title"),
-                                 TrackStreamingURL = (string) a.Element(ns + "location"),
-                                 Duration = Int32.Parse((string) a.Element(ns + "duration"))/1000,
-                                 Identifier = Int32.Parse((string) a.Element(ns + "identifier")),
-                                 ImageURL = (string) a.Element(ns + "image")
-                               }).ToList();
-        return tracks;
-      }
-      return null;
-    }
-
-    #endregion
-
     #region track methods
 
     /// <summary>
