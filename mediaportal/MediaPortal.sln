@@ -117,6 +117,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TvControl", "..\TvEngine3\M
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TvService.Interfaces", "..\TvEngine3\Mediaportal\TV\Server\TvService.Interfaces\TvService.Interfaces.csproj", "{A2BFFBDD-3BEA-4B68-94F1-C34D2BE10AEB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Presentation", "..\TvEngine3\Mediaportal\TV\Server\TVDatabase\Presentation\Presentation.csproj", "{FB53D159-8115-4155-921D-F64E0072A633}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -391,6 +393,14 @@ Global
 		{A2BFFBDD-3BEA-4B68-94F1-C34D2BE10AEB}.Release|Any CPU.ActiveCfg = Release|x86
 		{A2BFFBDD-3BEA-4B68-94F1-C34D2BE10AEB}.Release|x86.ActiveCfg = Release|x86
 		{A2BFFBDD-3BEA-4B68-94F1-C34D2BE10AEB}.Release|x86.Build.0 = Release|x86
+		{FB53D159-8115-4155-921D-F64E0072A633}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB53D159-8115-4155-921D-F64E0072A633}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB53D159-8115-4155-921D-F64E0072A633}.Debug|x86.ActiveCfg = Debug|x86
+		{FB53D159-8115-4155-921D-F64E0072A633}.Debug|x86.Build.0 = Debug|x86
+		{FB53D159-8115-4155-921D-F64E0072A633}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB53D159-8115-4155-921D-F64E0072A633}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB53D159-8115-4155-921D-F64E0072A633}.Release|x86.ActiveCfg = Release|x86
+		{FB53D159-8115-4155-921D-F64E0072A633}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -416,5 +426,6 @@ Global
 		{4C2D9698-AF44-4157-99B6-48F5269F20CC} = {19A1FFF4-3B79-4677-A0F4-DE79C782F99B}
 		{0DB878C6-1B68-4DC5-B6EF-564B7C08486F} = {19A1FFF4-3B79-4677-A0F4-DE79C782F99B}
 		{A2BFFBDD-3BEA-4B68-94F1-C34D2BE10AEB} = {19A1FFF4-3B79-4677-A0F4-DE79C782F99B}
+		{FB53D159-8115-4155-921D-F64E0072A633} = {19A1FFF4-3B79-4677-A0F4-DE79C782F99B}
 	EndGlobalSection
 EndGlobal
