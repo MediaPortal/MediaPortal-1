@@ -977,9 +977,9 @@ void CDiskRecorder::WriteTs(byte* tsPacket)
           info.seenStart = true;
           CPidTable pidTable = m_pPmtParser->GetPidInfo();
           bool foundPid = false;
-          for (vector<VideoPid>::iterator it2 = pidTable.videoPids.begin(); it2 != pidTable.videoPids.end(); it2++)
+          for (vector<VideoPid*>::iterator it2 = pidTable.VideoPids.begin(); it2 != pidTable.VideoPids.end(); it2++)
           {
-            if (it2->Pid == info.elementaryPid)
+            if ((*it2)->Pid == info.elementaryPid)
             {
               foundPid = true;
               m_AudioOrVideoSeen = true;
@@ -993,9 +993,9 @@ void CDiskRecorder::WriteTs(byte* tsPacket)
           }
           if (!foundPid)
           {
-            for (vector<AudioPid>::iterator it2 = pidTable.audioPids.begin(); it2 != pidTable.audioPids.end(); it2++)
+            for (vector<AudioPid*>::iterator it2 = pidTable.AudioPids.begin(); it2 != pidTable.AudioPids.end(); it2++)
             {
-              if (it2->Pid == info.elementaryPid)
+              if ((*it2)->Pid == info.elementaryPid)
               {
                 foundPid = true;
                 m_AudioOrVideoSeen = true;
@@ -1174,13 +1174,13 @@ void CDiskRecorder::CreateFakePMT(byte* realPmt)
     pi.ccPrev = 255;
     pi.seenStart = false;
     pi.elementaryPid = elementary_pid;
-    vector<VideoPid>::iterator it = pidTable.videoPids.begin();
-    while (it != pidTable.videoPids.end())
+    vector<VideoPid*>::iterator it = pidTable.VideoPids.begin();
+    while (it != pidTable.VideoPids.end())
     {
-      if (elementary_pid == it->Pid)
+      if (elementary_pid == (*it)->Pid)
       {
         pi.fakePid = DR_FAKE_VIDEO_PID++;
-        WriteLog("add video stream, PID = 0x%x, fake PID = 0x%x, stream type = 0x%x, logical stream type = 0x%x", elementary_pid, pi.fakePid, stream_type, it->StreamType);
+        WriteLog("add video stream, PID = 0x%x, fake PID = 0x%x, stream type = 0x%x, logical stream type = 0x%x", elementary_pid, pi.fakePid, stream_type, (*it)->StreamType);
         keepStream = true;
         break;
       }
@@ -1188,13 +1188,13 @@ void CDiskRecorder::CreateFakePMT(byte* realPmt)
     }
     if (!keepStream)
     {
-      vector<AudioPid>::iterator it = pidTable.audioPids.begin();
-      while (it != pidTable.audioPids.end())
+      vector<AudioPid*>::iterator it = pidTable.AudioPids.begin();
+      while (it != pidTable.AudioPids.end())
       {
-        if (elementary_pid == it->Pid)
+        if (elementary_pid == (*it)->Pid)
         {
           pi.fakePid = DR_FAKE_AUDIO_PID++;
-          WriteLog("add audio stream, PID = 0x%x, fake PID = 0x%x, stream type = 0x%x, logical stream type = 0x%x", elementary_pid, pi.fakePid, stream_type, it->StreamType);
+          WriteLog("add audio stream, PID = 0x%x, fake PID = 0x%x, stream type = 0x%x, logical stream type = 0x%x", elementary_pid, pi.fakePid, stream_type, (*it)->StreamType);
           keepStream = true;
           break;
         }
@@ -1203,24 +1203,33 @@ void CDiskRecorder::CreateFakePMT(byte* realPmt)
     }
     if (!keepStream)
     {
-      vector<SubtitlePid>::iterator it = pidTable.subtitlePids.begin();
-      while (it != pidTable.subtitlePids.end())
+      vector<SubtitlePid*>::iterator it = pidTable.SubtitlePids.begin();
+      while (it != pidTable.SubtitlePids.end())
       {
-        if (elementary_pid == it->Pid)
+        if (elementary_pid == (*it)->Pid)
         {
           pi.fakePid = DR_FAKE_SUBTITLE_PID++;
-          WriteLog("add subtitle stream, PID = 0x%x, fake PID = 0x%x, stream type = 0x%x, logical stream type = 0x%x", elementary_pid, pi.fakePid, stream_type, it->StreamType);
+          WriteLog("add subtitle stream, PID = 0x%x, fake PID = 0x%x, stream type = 0x%x, logical stream type = 0x%x", elementary_pid, pi.fakePid, stream_type, (*it)->StreamType);
           keepStream = true;
           break;
         }
         it++;
       }
     }
-    if (!keepStream && elementary_pid == pidTable.TeletextPid)
+    if (!keepStream)
     {
-      pi.fakePid = DR_FAKE_TELETEXT_PID++;
-      WriteLog("add teletext stream, PID = 0x%x, fake PID = 0x%x, stream type = 0x%x, logical stream type = 0x%x", elementary_pid, pi.fakePid, stream_type, it->StreamType);
-      keepStream = true;
+      vector<TeletextPid*>::iterator it = pidTable.TeletextPids.begin();
+      while (it != pidTable.TeletextPids.end())
+      {
+        if (elementary_pid == (*it)->Pid)
+        {
+          pi.fakePid = DR_FAKE_TELETEXT_PID++;
+          WriteLog("add teletext stream, PID = 0x%x, fake PID = 0x%x, stream type = 0x%x, logical stream type = 0x%x", elementary_pid, pi.fakePid, stream_type, (*it)->StreamType);
+          keepStream = true;
+          break;
+        }
+        it++;
+      }
     }
     if (keepStream)
     {
@@ -1242,7 +1251,7 @@ void CDiskRecorder::CreateFakePMT(byte* realPmt)
     }
     else
     {
-      WriteLog("reject stream, PID = 0x%x, fake PID = 0x%x, stream type = 0x%x, logical stream type = 0x%x", elementary_pid, pi.fakePid, stream_type, it->StreamType);
+      WriteLog("reject stream, PID = 0x%x, fake PID = 0x%x, stream type = 0x%x", elementary_pid, pi.fakePid, stream_type);
     }
     realPmtOffset += es_info_length;
   }

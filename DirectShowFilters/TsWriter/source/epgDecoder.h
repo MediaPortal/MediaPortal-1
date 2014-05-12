@@ -78,7 +78,7 @@ typedef struct stEPGChannel
   typedef map<int,bool>::iterator imapSectionsReceived;
 }EPGChannel;
 
-class CEpgDecoder : public CDvbUtil
+class CEpgDecoder
 
 {
 

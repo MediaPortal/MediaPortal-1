@@ -58,7 +58,7 @@ typedef struct stPortalChannel
   typedef map<int,bool>::iterator imapSectionsReceived;
 }PortalChannel;
 
-class CChannelLinkageParser :  public ISectionCallback, public CDvbUtil
+class CChannelLinkageParser :  public ISectionCallback
 {
 public:
   CChannelLinkageParser(void);

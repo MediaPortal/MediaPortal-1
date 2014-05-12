@@ -625,7 +625,7 @@ STDMETHODIMP CMpTs::AnalyserGetPid(int handle, int pidIdx, int* pid, EncryptionS
   {
     return S_FALSE;
   }
-  return pChannel->m_pEncryptionAnalyser->GetPid(pidIdx, pid, encryptionState);
+  return pChannel->m_pEncryptionAnalyser->GetPidByIndex(pidIdx, pid, encryptionState);
 }
 
 STDMETHODIMP CMpTs::AnalyserSetCallBack(int handle, IEncryptionStateChangeCallBack* callBack)

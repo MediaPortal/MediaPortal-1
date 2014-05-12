@@ -200,6 +200,9 @@ class CChannelScan : public CUnknown, public ITsChannelScan, IPatCallBack, IPmtC
     void OnLvctReceived(const CChannelInfo& vctInfo);
     STDMETHODIMP OnEncryptionStateChange(int pid, EncryptionState encryptionState);
 
+    void OnPatChanged(int programNumber, int oldPmtPid, int newPmtPid);
+    void OnPatRemoved(int programNumber, int pmtPid);
+
   private:
     void CleanUp();
 

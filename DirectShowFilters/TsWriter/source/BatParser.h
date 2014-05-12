@@ -30,7 +30,7 @@ class CBatParser : public CNitParser
   public:
     CBatParser(void);
     virtual ~CBatParser(void);
-    void GetBouquetIds(int originalNetworkId, int transportStreamId, int serviceId, vector<int>* bouquetIds);
+    void GetBouquetIds(int originalNetworkId, int transportStreamId, int serviceId, vector<unsigned short>* bouquetIds);
     int GetBouquetNameCount(int bouquetId);
     void GetBouquetName(int bouquetId, int index, unsigned int* language, char** name);
 };
