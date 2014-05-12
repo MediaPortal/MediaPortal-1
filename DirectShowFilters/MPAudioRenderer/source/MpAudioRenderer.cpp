@@ -139,8 +139,8 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT* phr)
 CMPAudioRenderer::~CMPAudioRenderer()
 {
   Log("MP Audio Renderer - destructor - instance 0x%x", this);
-  
-  CAutoLock cInterfaceLock(&m_InterfaceLock);
+
+  CAutoLock cs(&m_csAudioRenderer);
 
   m_pRenderer->SetMoreSamplesEvent(NULL);
 
@@ -187,7 +187,7 @@ HRESULT CMPAudioRenderer::InitFilter()
 {
   HRESULT hr = S_OK;
 
-  CAutoLock cAutoLock(&m_InterfaceLock);
+  CAutoLock cs(&m_csAudioRenderer);
 
   if (!m_bInitialized)
   {
@@ -710,7 +710,7 @@ bool CMPAudioRenderer::CheckForLiveSouce()
 
 HRESULT CMPAudioRenderer::AdjustClock(DOUBLE pAdjustment)
 {
-  CAutoLock cAutoLock(&m_InterfaceLock); 
+  CAutoLock cs(&m_csAudioRenderer);
 
   if (m_pSettings->GetUseTimeStretching() && m_pSettings->GetEnableSyncAdjustment())
   {
@@ -728,7 +728,7 @@ HRESULT CMPAudioRenderer::AdjustClock(DOUBLE pAdjustment)
 
 HRESULT CMPAudioRenderer::SetEVRPresentationDelay(DOUBLE pEVRDelay)
 {
-  CAutoLock cAutoLock(&m_InterfaceLock); 
+  CAutoLock cs(&m_csAudioRenderer);
 
   bool ret = S_FALSE;
 
