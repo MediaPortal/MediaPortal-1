@@ -98,15 +98,18 @@ STDMETHODIMP CMPAudioRenderer::GetAvailable(LONGLONG* pEarliest, LONGLONG* pLate
 
 STDMETHODIMP CMPAudioRenderer::SetRate(double dRate)
 {
-  CAutoLock cInterfaceLock(&m_InterfaceLock);
+  {
+    CAutoLock cInterfaceLock(&m_csAudioRenderer);
 
-  if (dRate < 0.1)
-    return VFW_E_UNSUPPORTED_AUDIO;
+    if (dRate < 0.1)
+      return VFW_E_UNSUPPORTED_AUDIO;
 
-  if (m_pTimeStretch)
-    m_pTimeStretch->setRate(dRate);
+    if (m_pTimeStretch)
+      m_pTimeStretch->setRate(dRate);
 
-  m_dRate = dRate;
+    m_dRate = dRate;
+  }
+
   return S_OK;
 }
 

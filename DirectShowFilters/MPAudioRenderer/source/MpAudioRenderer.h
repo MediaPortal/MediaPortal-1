@@ -155,4 +155,6 @@ private:
 
   AM_MEDIA_TYPE* m_pMediaType;
   bool m_bInitialized;
+
+  CCritSec  m_csAudioRenderer;
 };
