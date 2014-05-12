@@ -48,6 +48,7 @@ namespace PowerScheduler.Setup
     private void LoadProcesses()
     {
       comboBox1.Items.Clear();
+      // TODO incompatible for multi-seat
       foreach (System.Diagnostics.Process p in System.Diagnostics.Process.GetProcesses())
       {
         comboBox1.Items.Add(p.ProcessName);

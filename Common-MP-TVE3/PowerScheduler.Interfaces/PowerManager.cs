@@ -37,6 +37,7 @@ namespace TvEngine.PowerScheduler.Interfaces
   /// </summary>
   public static class PowerManager
   {
+    // TODO all function references in this class are incompatible for multi-seat
     #region Variables
 
     #endregion

@@ -254,8 +254,6 @@ namespace PowerScheduler.Setup
         }
 
 #endif
-        // Update settings of old PS versions
-        UpdateSettings();
 
         bool buttonApplyEnabled = false;
 
@@ -512,70 +510,6 @@ namespace PowerScheduler.Setup
 #endif
     }
 
-    private void UpdateSettings()
-    {
-#if SERVER
-      // Check if update is necessary
-      string value = ServiceAgents.Instance.SettingServiceAgent.GetValue("PowerSchedulerExpertMode", string.Empty);
-      if (string.IsNullOrEmpty(value))
-        return;
-      // TODO how to remove a setting?
-      //setting.Remove();
-
-      // Initialise list of old and new settings to update
-      List<String[]> settingNames = new List<String[]>();
-      settingNames.Add(new String[] {"PreventStandybyWhenSpecificSharesInUse", "PowerSchedulerActiveShares"});
-      settingNames.Add(new String[] {"PreventStandybyWhenSharesInUse", "PowerSchedulerActiveSharesEnabled"});
-      settingNames.Add(new String[] {"PowerSchedulerEpgCommand", "PowerSchedulerEPGCommand"});
-      settingNames.Add(new String[] {"PreventStandbyWhenGrabbingEPG", "PowerSchedulerEPGPreventStandby"});
-      settingNames.Add(new String[] {"WakeupSystemForEPGGrabbing", "PowerSchedulerEPGWakeup"});
-      settingNames.Add(new String[] {"EPGWakeupConfig", "PowerSchedulerEPGWakeupConfig"});
-      settingNames.Add(new String[] {"NetworkMonitorEnabled", "PowerSchedulerNetworkMonitorEnabled"});
-      settingNames.Add(new String[] {"NetworkMonitorIdleLimit", "PowerSchedulerNetworkMonitorIdleLimit"});
-      settingNames.Add(new String[] {"PowerSchedulerPreNoShutdownTime", "PowerSchedulerPreNoStandbyTime"});
-      settingNames.Add(new String[] {"PowerSchedulerShutdownActive", "PowerSchedulerShutdownEnabled"});
-      settingNames.Add(new String[] {"PowerSchedulerStandbyAllowedStart", "PowerSchedulerStandbyHoursFrom"});
-      settingNames.Add(new String[] {"PowerSchedulerStandbyAllowedEnd", "PowerSchedulerStandbyHoursTo"});
-
-      // Update settings names
-      foreach (String[] settingName in settingNames)
-      {
-        value = ServiceAgents.Instance.SettingServiceAgent.GetValue(settingName[0], "---");
-        if (value != "---")
-        {
-          ServiceAgents.Instance.SettingServiceAgent.SaveValue(settingName[1], value);
-        }
-        else
-        {
-          // TODO how to remove a setting?
-          //setting.Remove();
-        }
-      }  
-#endif
-#if CLIENT
-      // Check if update is necessary
-      if (_settings.GetValue("psclientplugin", "ExpertMode") != "")
-        return;
-
-      // Initialise list of old and new settings names to update
-      List<String[]> settingNames = new List<String[]>();
-      settingNames.Add(new String[] { "homeonly", "HomeOnly" });
-      settingNames.Add(new String[] { "idletimeout", "IdleTimeout" });
-      settingNames.Add(new String[] { "shutdownenabled", "ShutdownEnabled" });
-      settingNames.Add(new String[] { "shutdownmode", "ShutdownMode" });
-
-      // Update settings names
-      foreach (String[] settingName in settingNames)
-      {
-        String settingValue = _settings.GetValue("psclientplugin", settingName[0]);
-        if (settingValue != "")
-        {
-          _settings.RemoveEntry("psclientplugin", settingName[0]);
-          _settings.SetValue("psclientplugin", settingName[1], settingValue);
-        }
-      }
-    #endif
-    }
 #if SERVER
     public override void SaveSettings()
     {

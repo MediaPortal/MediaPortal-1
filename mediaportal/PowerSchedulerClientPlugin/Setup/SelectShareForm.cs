@@ -49,6 +49,7 @@ namespace PowerScheduler.Setup
     private void LoadShares()
     {
       comboBox1.Items.Clear();
+      // TODO incompatible for multi-seat
       foreach (ManagementObject obj in new ManagementObjectSearcher(
         "SELECT ComputerName, ShareName, UserName FROM Win32_ServerConnection WHERE NumberOfFiles > 0").Get())
       {
