@@ -110,7 +110,7 @@ STDMETHODIMP CMPAudioRenderer::SetRate(double dRate)
     m_dRate = dRate;
   }
 
-  return S_OK;
+  return m_pPosition->SetRate(dRate);
 }
 
 STDMETHODIMP CMPAudioRenderer::GetRate(double* pdRate)
