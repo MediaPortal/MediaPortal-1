@@ -30,4 +30,8 @@ public:
   STDMETHODIMP get_Volume(long* plVolume);
   STDMETHODIMP put_Balance(long lBalance);
   STDMETHODIMP get_Balance(long* plBalance);
+
+private:
+  long m_lVolume;
+  CCritSec m_csLock;
 };
