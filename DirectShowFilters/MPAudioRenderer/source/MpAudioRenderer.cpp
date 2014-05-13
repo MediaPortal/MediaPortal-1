@@ -323,8 +323,11 @@ HRESULT	CMPAudioRenderer::CheckMediaType(const CMediaType* pmt)
 
   if (IS_WAVEFORMATEXTENSIBLE(pwfx))
   {
+    if (!m_pSettings->GetAllowBitStreaming() && CBaseAudioSink::CanBitstream((WAVEFORMATEXTENSIBLE*)pwfx))
+      return VFW_E_TYPE_NOT_ACCEPTED;
+
     LogWaveFormat((WAVEFORMATEXTENSIBLE*)pwfx, "CheckMediaType  ");
-    return m_pPipeline->NegotiateFormat((WAVEFORMATEXTENSIBLE*)(pwfx), 0, &chOrder);
+    hr = m_pPipeline->NegotiateFormat((WAVEFORMATEXTENSIBLE*)(pwfx), 0, &chOrder);
   }
   else
   {
@@ -332,13 +335,17 @@ HRESULT	CMPAudioRenderer::CheckMediaType(const CMediaType* pmt)
     hr = ToWaveFormatExtensible(&wfe, pwfx);
     if (SUCCEEDED(hr))
     {
+      if (!m_pSettings->GetAllowBitStreaming() && CBaseAudioSink::CanBitstream((WAVEFORMATEXTENSIBLE*)pwfx))
+        return VFW_E_TYPE_NOT_ACCEPTED;
+
       LogWaveFormat(wfe, "CheckMediaType  ");
       hr = m_pPipeline->NegotiateFormat(wfe, 0, &chOrder);
     }
-    
+
     SAFE_DELETE_WAVEFORMATEX(wfe);
-    return hr;
   }
+
+  return hr;
 }
 
 HRESULT CMPAudioRenderer::AudioClock(ULONGLONG& ullTimestamp, ULONGLONG& ullQpc, ULONGLONG ullQpcNow)

@@ -58,7 +58,9 @@ public:
   virtual HRESULT EndOfStream();
   virtual HRESULT BeginFlush();
   virtual HRESULT EndFlush();
-  
+
+  static bool CanBitstream(const WAVEFORMATEXTENSIBLE* pwfx);
+
 protected:
   // Helpers
   static bool FormatsEqual(const WAVEFORMATEXTENSIBLE* pwfx1, const WAVEFORMATEXTENSIBLE* pwfx2);

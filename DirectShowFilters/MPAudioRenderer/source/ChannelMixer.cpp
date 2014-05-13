@@ -63,7 +63,7 @@ HRESULT CChannelMixer::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nAp
   if (nApplyChangesDepth != INFINITE && nApplyChangesDepth > 0)
     nApplyChangesDepth--;
 
-  if (pwfx->SubFormat != KSDATAFORMAT_SUBTYPE_IEEE_FLOAT)
+  if (pwfx->SubFormat != KSDATAFORMAT_SUBTYPE_IEEE_FLOAT && !CanBitstream(pwfx))
     return VFW_E_TYPE_NOT_ACCEPTED;
 
   HRESULT hr = S_OK;

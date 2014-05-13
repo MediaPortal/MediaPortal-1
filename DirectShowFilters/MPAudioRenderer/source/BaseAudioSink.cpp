@@ -19,6 +19,8 @@
 #include "BaseAudioSink.h"
 
 #include "alloctracing.h"
+#include <ks.h>
+#include <ksmedia.h>
 
 CBaseAudioSink::CBaseAudioSink(bool bHandleSampleRelease) : 
   m_bHandleSampleRelease(bHandleSampleRelease),
@@ -241,6 +243,22 @@ bool CBaseAudioSink::FormatsEqual(const WAVEFORMATEXTENSIBLE* pwfx1, const WAVEF
     return false;
 
   return true;
+}
+
+bool CBaseAudioSink::CanBitstream(const WAVEFORMATEXTENSIBLE* pwfx)
+{
+  if (pwfx)
+  {
+    if (pwfx->SubFormat == KSDATAFORMAT_SUBTYPE_IEC61937_DOLBY_DIGITAL
+      || pwfx->SubFormat == KSDATAFORMAT_SUBTYPE_IEC61937_DOLBY_DIGITAL_PLUS
+      || pwfx->SubFormat == KSDATAFORMAT_SUBTYPE_IEC61937_DOLBY_MLP
+      || pwfx->SubFormat == KSDATAFORMAT_SUBTYPE_IEC61937_DTS
+      || pwfx->SubFormat == KSDATAFORMAT_SUBTYPE_IEC61937_DTS_HD
+      || pwfx->SubFormat == KSDATAFORMAT_SUBTYPE_IEC61937_WMA_PRO)
+      return true;
+  }
+
+  return false;
 }
 
 HRESULT CBaseAudioSink::InitAllocator()

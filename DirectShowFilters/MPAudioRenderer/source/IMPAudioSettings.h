@@ -37,7 +37,8 @@ enum MPARSetting
   BIT_DEPTH = 13,             // enum (MPARBitDepth)
   LIB_RESAMPLE_QUALITY = 14,  // enum (MPARLibResampleQuality)
   USE_FILTERS = 15,           // int (flags from MPARUseFilters enum)
-  SETTING_AUDIO_DEVICE = 16   // wchar
+  SETTING_AUDIO_DEVICE = 16,  // wchar
+  ALLOW_BITSTREAMING = 17     // bool
 };
 
 enum MPARWASAPIMode

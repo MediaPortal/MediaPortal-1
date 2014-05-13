@@ -263,6 +263,7 @@ private:
   
   WCHAR* m_wWASAPIPreferredDeviceId;
 
+  bool m_bAllowBitStreaming;
   int m_nUseFilters;
   CCritSec m_csSettings;
 };
