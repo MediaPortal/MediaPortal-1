@@ -148,6 +148,7 @@ private:
   double m_fCurrentAdjustment;
   double m_fNewTempo;
   double m_fNewAdjustment;
+  bool m_bBitstreaming;
 
   CCritSec m_allocatorLock;
 

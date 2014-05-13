@@ -69,7 +69,8 @@ LPCTSTR speakerConfig = TEXT("SpeakerConfig");
 LPCTSTR forceChannelMixing = TEXT("ForceChannelMixing");
 LPCTSTR releaseDeviceOnStop = TEXT("ReleaseDeviceOnStop");
 LPCTSTR expandMonoToStereo = TEXT("ExpandMonoToStereo");
-  
+LPCTSTR allowBitStreaming = TEXT("AllowBitStreaming");
+
 // Default values for the settings in registry
 DWORD enableTimestretchingData = 1;
 DWORD WASAPIExclusiveData = 1;
@@ -98,6 +99,7 @@ DWORD quality_AA_FILTER_LENGTHData = 32;  // in ms (same as soundtouch default)
 DWORD quality_SEQUENCE_MSData = 82;       // in ms (same as soundtouch default)
 DWORD quality_SEEKWINDOW_MSData = 28;     // in ms (same as soundtouch default)
 DWORD quality_OVERLAP_MSData = 28;        // in ms (same as soundtouch default)
+DWORD allowBitStreamingData = 1;
 
 AudioRendererSettings::AudioRendererSettings() :
   CUnknown(_T("MPAR_Settings"), NULL),
@@ -131,7 +133,8 @@ AudioRendererSettings::AudioRendererSettings() :
   m_bForceChannelMixing(false),
   m_bReleaseDeviceOnStop(false),
   m_bExpandMonoToStereo(true),
-  m_nUseFilters(USE_FILTERS_ALL)
+  m_nUseFilters(USE_FILTERS_ALL),
+  m_bAllowBitStreaming(true)
 {
   LoadSettingsFromRegistry();
 }
@@ -190,6 +193,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     ReadRegistryKeyDword(hKey, forceChannelMixing, forceChannelMixingData);
     ReadRegistryKeyDword(hKey, releaseDeviceOnStop, releaseDeviceOnStopData);
     ReadRegistryKeyDword(hKey, expandMonoToStereo, expandMonoToStereoData);
+    ReadRegistryKeyDword(hKey, allowBitStreaming, allowBitStreamingData);
 
     // SoundTouch quality settings
     ReadRegistryKeyDword(hKey, quality_USE_QUICKSEEK, quality_USE_QUICKSEEKData);
@@ -220,6 +224,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     Log("   ForceChannelMixing:       %d", forceChannelMixingData);
     Log("   ReleaseDeviceOnStop:      %d", releaseDeviceOnStopData);
     Log("   ExpandMonoToStereo:       %d", expandMonoToStereoData);
+    Log("   AllowBitStreaming:        %d", allowBitStreamingData);
     Log("   quality_USE_QUICKSEEK:    %d", quality_USE_QUICKSEEKData);
     Log("   quality_USE_AA_FILTER:    %d", quality_USE_AA_FILTERData);
     Log("   quality_AA_FILTER_LENGTH: %d", quality_AA_FILTER_LENGTHData);
@@ -251,6 +256,11 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
       m_bExpandMonoToStereo = true;
     else
       m_bExpandMonoToStereo = false;
+
+    if (allowBitStreamingData > 0)
+      m_bAllowBitStreaming = true;
+    else
+      m_bAllowBitStreaming = false;
 
     if (IsValidAC3EncodingMode(AC3EncodingData))
       m_lAC3Encoding = AC3EncodingData;
@@ -435,6 +445,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
       WriteRegistryKeyDword(hKey, forceChannelMixing, forceChannelMixingData);
       WriteRegistryKeyDword(hKey, releaseDeviceOnStop, releaseDeviceOnStopData);
       WriteRegistryKeyDword(hKey, expandMonoToStereo, expandMonoToStereoData);
+      WriteRegistryKeyDword(hKey, allowBitStreaming, allowBitStreamingData);
       WriteRegistryKeyDword(hKey, quality_USE_QUICKSEEK, quality_USE_QUICKSEEKData);
       WriteRegistryKeyDword(hKey, quality_USE_AA_FILTER, quality_USE_AA_FILTERData);
       WriteRegistryKeyDword(hKey, quality_AA_FILTER_LENGTH, quality_AA_FILTER_LENGTHData);
@@ -487,6 +498,7 @@ void AudioRendererSettings::SaveSettingsToRegistry(HKEY hKey)
   forceChannelMixingData = m_bForceChannelMixing ? 1 : 0;
   releaseDeviceOnStopData = m_bReleaseDeviceOnStop ? 1 : 0;
   expandMonoToStereoData = m_bExpandMonoToStereo ? 1 : 0;
+  allowBitStreamingData = m_bAllowBitStreaming ? 1 : 0;
   quality_USE_QUICKSEEKData = m_bQuality_USE_QUICKSEEK;
   quality_USE_AA_FILTERData = m_bQuality_USE_AA_FILTER;
   quality_AA_FILTER_LENGTHData = m_lQuality_AA_FILTER_LENGTH;
@@ -517,6 +529,7 @@ void AudioRendererSettings::SaveSettingsToRegistry(HKEY hKey)
   WriteRegistryKeyDword(hKey, forceChannelMixing, forceChannelMixingData);
   WriteRegistryKeyDword(hKey, releaseDeviceOnStop, releaseDeviceOnStopData);
   WriteRegistryKeyDword(hKey, expandMonoToStereo, expandMonoToStereoData);
+  WriteRegistryKeyDword(hKey, allowBitStreaming, allowBitStreamingData);
   WriteRegistryKeyDword(hKey, quality_USE_QUICKSEEK, quality_USE_QUICKSEEKData);
   WriteRegistryKeyDword(hKey, quality_USE_AA_FILTER, quality_USE_AA_FILTERData);
   WriteRegistryKeyDword(hKey, quality_AA_FILTER_LENGTH, quality_AA_FILTER_LENGTHData);
@@ -1166,6 +1179,12 @@ bool AudioRendererSettings::GetReleaseDeviceOnStop()
   return m_bReleaseDeviceOnStop;
 }
 
+bool AudioRendererSettings::GetAllowBitStreaming()
+{
+  CAutoLock settingLock(&m_csSettings);
+  return m_bAllowBitStreaming;
+}
+
 double AudioRendererSettings::GetMinBias()
 {
   CAutoLock settingLock(&m_csSettings);
@@ -1295,6 +1314,9 @@ HRESULT AudioRendererSettings::GetBool(MPARSetting setting, bool* pValue)
       *pValue = m_bForceChannelMixing;
       break;
 
+    case ALLOW_BITSTREAMING:
+      *pValue = m_bAllowBitStreaming;
+
     default:
       hr = E_NOTIMPL;
   }
@@ -1332,6 +1354,9 @@ HRESULT AudioRendererSettings::SetBool(MPARSetting setting, bool value)
     case FORCE_CHANNEL_MIXING:
       m_bForceChannelMixing = value;
       break;
+
+    case ALLOW_BITSTREAMING:
+      m_bAllowBitStreaming = value;
 
     default:
       hr = E_NOTIMPL;

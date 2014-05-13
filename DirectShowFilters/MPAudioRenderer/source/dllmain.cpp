@@ -384,6 +384,9 @@ HRESULT ToWaveFormatExtensible(WAVEFORMATEXTENSIBLE** dst, WAVEFORMATEX* src)
   case WAVE_FORMAT_IEEE_FLOAT:
     pwfe->SubFormat = KSDATAFORMAT_SUBTYPE_IEEE_FLOAT;
     break;
+  case WAVE_FORMAT_DOLBY_AC3_SPDIF:
+    pwfe->SubFormat = KSDATAFORMAT_SUBTYPE_IEC61937_DOLBY_DIGITAL;
+    break;
   default:
     delete pwfe;
     return VFW_E_TYPE_NOT_ACCEPTED;

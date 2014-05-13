@@ -43,7 +43,8 @@ CTimeStretchFilter::CTimeStretchFilter(AudioRendererSettings* pSettings, CSyncCl
   m_rtLastOuputStart(0),
   m_rtLastOuputEnd(-1),
   m_rtNextIncomingSampleTime(0),
-  m_pClock(pClock)
+  m_pClock(pClock),
+  m_bBitstreaming(false)
 {
 }
 
@@ -86,7 +87,7 @@ HRESULT CTimeStretchFilter::Init()
 
 HRESULT CTimeStretchFilter::PutSample(IMediaSample* pSample)
 {
-  if (m_pSettings->GetUseTimeStretching())
+  if (m_pSettings->GetUseTimeStretching() && !m_bBitstreaming)
     CQueuedAudioSink::PutSample(pSample);
   else if (m_pNextSink)
     return m_pNextSink->PutSample(pSample);
@@ -100,6 +101,25 @@ HRESULT CTimeStretchFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, in
   if (!pwfx)
     return VFW_E_TYPE_NOT_ACCEPTED;
 
+  if (FormatsEqual(pwfx, m_pInputFormat))
+  {
+    *pChOrder = m_chOrder;
+    return S_OK;
+  }
+
+  m_bBitstreaming = CanBitstream(pwfx);
+
+  if (m_bBitstreaming && m_pSettings->GetAllowBitStreaming())
+  {
+    HRESULT hr = m_pNextSink->NegotiateFormat(pwfx, nApplyChangesDepth, pChOrder);
+    if (SUCCEEDED(hr))
+    {
+      m_bNextFormatPassthru = true;
+      m_chOrder = *pChOrder;
+      return hr;
+    }
+  }
+
 #ifdef INTEGER_SAMPLES
   // only accept 16bit int
   if (pwfx->Format.wBitsPerSample != 16 || pwfx->SubFormat != KSDATAFORMAT_SUBTYPE_PCM)
@@ -109,12 +129,6 @@ HRESULT CTimeStretchFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, in
   if (pwfx->Format.wBitsPerSample != 32 || pwfx->SubFormat != KSDATAFORMAT_SUBTYPE_IEEE_FLOAT)
     return VFW_E_TYPE_NOT_ACCEPTED;
 #endif
-
-  if (FormatsEqual(pwfx, m_pInputFormat))
-  {
-    *pChOrder = m_chOrder;
-    return S_OK;
-  }
 
   bool bApplyChanges = (nApplyChangesDepth != 0);
   if (nApplyChangesDepth != INFINITE && nApplyChangesDepth > 0)
