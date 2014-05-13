@@ -1069,7 +1069,8 @@
     <String id="1991">Várj, ameddig a szerver elindul!</String>
     <String id="1992">A szerver nem elérhető.</String>
     <String id="1993">Ellenőrizd a hálózati kapcsolatokat vagy növeld meg próbálkozási időt.</String>
-    <String id="1994">Várj, ameddig a megosztás elérhetővé válik.</String> 
+    <String id="1994">Várj, ameddig a megosztás elérhetővé válik.</String>
+    <String id="1995">Mappa előnézeti kép készítése a filmekből</String>
     <String id="2005">Törlés</String>
     <String id="2006">Megnevezés</String>
     <String id="2007">Tömeg</String>
