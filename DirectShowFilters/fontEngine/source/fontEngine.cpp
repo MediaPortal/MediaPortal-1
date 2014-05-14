@@ -1765,7 +1765,32 @@ void UpdateVertex(TransformMatrix& matrix, FONT_DATA_T* pFont, CUSTOMVERTEX* pVe
       continue;
     }
     else if (c < font->iFirstChar || c >= font->iEndChar)
-      continue;
+    {
+      if (c == 0x2019 || c == 0x2018) // ‘ or // ’
+      {
+        c = 0x0027;  // single quotes
+      }
+      else if (c == 0x2013 || c == 0x2014) // – or // —
+      {
+        c = 0x002D; // '-'
+      }
+      else if (c == 0x201C || c == 0x201D || c == 0x201F) // “ or // ” or // ‟
+      {
+        c = 0x0022; // '"'
+      }
+      else if (c == 0x2026) // …
+      {
+        c = 0x002E;
+      }
+      else if (c == 0x2022) // 
+      {
+        c = 0x002A;
+      }
+      else
+      {
+        continue;
+      }
+    }
     else if (totalWidth >= maxWidth)		// Reached max width?
       continue;							// Skip until row break or end of text
 
@@ -1796,7 +1821,32 @@ void UpdateVertex(TransformMatrix& matrix, FONT_DATA_T* pFont, CUSTOMVERTEX* pVe
       continue;
     }
     else if (c < font->iFirstChar || c >= font->iEndChar)
-      continue;
+    {
+      if (c == 0x2019 || c == 0x2018) // ‘ or // ’
+      {
+        c = 0x0027;  // single quotes
+      }
+      else if (c == 0x2013 || c == 0x2014) // – or // —
+      {
+        c = 0x002D; // '-'
+      }
+      else if (c == 0x201C || c == 0x201D || c == 0x201F) // “ or // ” or // ‟
+      {
+        c = 0x0022; // '"'
+      }
+      else if (c == 0x2026) // …
+      {
+        c = 0x002E;
+      }
+      else if (c == 0x2022) // 
+      {
+        c = 0x002A;
+      }
+      else
+      {
+        continue;
+      }
+    }
     else if (totalWidth >= maxWidth)		// Reached max width?
       continue;							// Skip until row break or end of text
 
