@@ -190,8 +190,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
               // We can't use pins that are already connected.
               IPin tempPin = null;
               hr = pinUpstream.ConnectedTo(out tempPin);
-              HResult.ThrowException(hr, "Failed to get connected pin for upstream pin.");
-              if (tempPin != null)
+              if (hr == (int)HResult.Severity.Success && tempPin != null)
               {
                 this.LogDebug("WDM analog component: upstream output pin {0} already connected", pinIndex++);
                 Release.ComObject("WDM analog component upstream filter connected pin", ref tempPin);
@@ -245,8 +244,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
               // We can't use pins that are already connected.
               IPin tempPin = null;
               hr = pinDownstream.ConnectedTo(out tempPin);
-              HResult.ThrowException(hr, "Failed to get connected pin for downstream pin.");
-              if (tempPin != null)
+              if (hr == (int)HResult.Severity.Success && tempPin != null)
               {
                 this.LogDebug("WDM analog component: downstream input pin {0} already connected", pinIndex++);
                 Release.ComObject("WDM analog component downstream filter connected pin", ref tempPin);
