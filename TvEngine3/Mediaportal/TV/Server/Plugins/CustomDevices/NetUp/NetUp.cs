@@ -753,7 +753,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
         pin = DsFindPin.ByDirection(tunerFilter, PinDirection.Output, 0);
         IPin connected;
         int hr = pin.ConnectedTo(out connected);
-        if (hr == (int)HResult.Severity.Success && connected == null)
+        if (hr == (int)HResult.Severity.Success && connected != null)
         {
           // We don't need to connect the infinite tee in this case.
           Release.ComObject("NetUP tuner filter connected pin", ref connected);
