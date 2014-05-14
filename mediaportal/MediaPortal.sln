@@ -102,6 +102,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{BCDCE8
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LastFMLibrary", "LastFMLibrary\LastFMLibrary.csproj", "{FE0B7969-38A1-4150-BB3B-C2E87F40AEED}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6DA0E4DF-6230-4642-98B5-E690BB6942BB} = {6DA0E4DF-6230-4642-98B5-E690BB6942BB}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GUIDisc", "WindowPlugins\GUIDisc\GUIDisc.csproj", "{C6517107-415A-4D5B-AA3A-8928853F44A9}"
 EndProject
