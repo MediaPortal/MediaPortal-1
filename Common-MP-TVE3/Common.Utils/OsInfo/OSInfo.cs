@@ -2,17 +2,17 @@
 
 // Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
-// 
+//
 // MediaPortal is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // MediaPortal is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
@@ -40,7 +40,8 @@ namespace OSInfo
       public int dwMinorVersion;
       public int dwBuildNumber;
       public int dwPlatformId;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)] public string szCSDVersion;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+      public string szCSDVersion;
       public short wServicePackMajor;
       public short wServicePackMinor;
       public short wSuiteMask;
@@ -258,7 +259,7 @@ namespace OSInfo
     public static string GetOSProductType()
     {
       OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
-      osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof (OSVERSIONINFOEX));
+      osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof(OSVERSIONINFOEX));
       if (!GetVersionEx(ref osVersionInfo)) return string.Empty;
 
       switch (OSMajorVersion)
@@ -393,8 +394,8 @@ namespace OSInfo
               return "Enterprise Edition for Itanium-based Systems";
             case PRODUCT_SMALLBUSINESS_SERVER:
               return "Small Business Server";
-              //case PRODUCT_SMALLBUSINESS_SERVER_PREMIUM:
-              //  return "Small Business Server Premium Edition";
+            //case PRODUCT_SMALLBUSINESS_SERVER_PREMIUM:
+            // return "Small Business Server Premium Edition";
             case PRODUCT_SERVER_FOR_SMALLBUSINESS:
             case PRODUCT_SERVER_FOR_SMALLBUSINESS_V:
               return "Windows Essential Server Solutions";
@@ -429,7 +430,7 @@ namespace OSInfo
     public static string GetOSServicePack()
     {
       OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
-      osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof (OSVERSIONINFOEX));
+      osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof(OSVERSIONINFOEX));
       return !GetVersionEx(ref osVersionInfo) ? string.Empty : osVersionInfo.szCSDVersion;
     }
 
@@ -780,7 +781,7 @@ namespace OSInfo
       get
       {
         OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
-        osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof (OSVERSIONINFOEX));
+        osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof(OSVERSIONINFOEX));
         if (!GetVersionEx(ref osVersionInfo)) return -1;
         return osVersionInfo.wServicePackMajor;
       }
@@ -794,7 +795,7 @@ namespace OSInfo
       get
       {
         OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
-        osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof (OSVERSIONINFOEX));
+        osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof(OSVERSIONINFOEX));
         return !GetVersionEx(ref osVersionInfo) ? -1 : osVersionInfo.wServicePackMinor;
       }
     }
@@ -807,7 +808,7 @@ namespace OSInfo
       get
       {
         OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
-        osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof (OSVERSIONINFOEX));
+        osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof(OSVERSIONINFOEX));
         return !GetVersionEx(ref osVersionInfo) ? String.Empty : osVersionInfo.szCSDVersion;
       }
     }
@@ -820,12 +821,12 @@ namespace OSInfo
       get
       {
         OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
-        osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof (OSVERSIONINFOEX));
+        osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof(OSVERSIONINFOEX));
         if (!GetVersionEx(ref osVersionInfo)) return 0x0;
         return osVersionInfo.wProductType;
       }
     }
-    
+
     #endregion
 
     #region private methods
@@ -882,7 +883,7 @@ namespace OSInfo
 
     /// <summary>
     /// Checks whether the OS version reported via GetVersionEx matches that of VerifyVersionInfo
-    /// When running in compatibility mode GetVersionEx can return the value of the 
+    /// When running in compatibility mode GetVersionEx can return the value of the
     /// compatibility setting rather than the actual OS
     /// </summary>
     /// <param name="majorVersion">Reported OS Major Version</param>

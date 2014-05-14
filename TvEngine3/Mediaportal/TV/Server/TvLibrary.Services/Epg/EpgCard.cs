@@ -557,7 +557,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
             return;
           }
         }
-        ProgramManagement.SynchProgramStatesForAllSchedules(ScheduleManagement.ListAllSchedules());
+        ProgramManagement.SynchProgramStatesForAllSchedules();
         this.LogInfo("Epg: card:{0} Finished updating the database.", cardId);
       }
       catch (Exception ex)

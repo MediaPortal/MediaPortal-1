@@ -134,7 +134,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         {
           _dbUpdater.UpdateEpgForChannel(epgChannel);
         }
-        ProgramManagement.SynchProgramStatesForAllSchedules(ScheduleManagement.ListAllSchedules());
+        ProgramManagement.SynchProgramStatesForAllSchedules();
         this.LogInfo("TimeshiftingEpgGrabber: Finished updating the database.");
       }
       finally

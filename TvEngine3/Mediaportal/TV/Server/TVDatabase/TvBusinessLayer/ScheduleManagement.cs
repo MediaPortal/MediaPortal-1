@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Mediaportal.TV.Server.TVDatabase.Entities;
@@ -41,10 +40,10 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       {
         scheduleRepository.AttachEntityIfChangeTrackingDisabled(scheduleRepository.ObjectContext.Schedules, schedule);
         scheduleRepository.ApplyChanges(scheduleRepository.ObjectContext.Schedules, schedule);
-        scheduleRepository.UnitOfWork.SaveChanges();        
+        scheduleRepository.UnitOfWork.SaveChanges();
         schedule.AcceptChanges();
       }
-      ProgramManagement.SynchProgramStates(new ScheduleBLL(schedule));
+      ProgramManagement.SynchProgramStates(schedule.IdSchedule);
       return schedule;
     }
 
@@ -53,6 +52,17 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       using (IScheduleRepository scheduleRepository = new ScheduleRepository())
       {
         return scheduleRepository.Single<Schedule>(s => s.IdSchedule == idSchedule);
+      }
+    }
+
+    public static Schedule GetSchedule(int idSchedule, ScheduleIncludeRelationEnum includeRelations)
+    {
+      using (IScheduleRepository scheduleRepository = new ScheduleRepository())
+      {
+        var query = scheduleRepository.GetQuery<Schedule>(s => s.IdSchedule == idSchedule);
+        query = scheduleRepository.IncludeAllRelations(query, includeRelations);
+        var schedule = query.FirstOrDefault();
+        return schedule;
       }
     }
 
@@ -80,8 +90,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IScheduleRepository scheduleRepository = new ScheduleRepository())
       {
-        Schedule schedule =
-          scheduleRepository.First<Schedule>(s => s.IdParentSchedule == parentScheduleId && s.StartTime == startTime);
+        Schedule schedule = scheduleRepository.First<Schedule>(s => s.IdParentSchedule == parentScheduleId && s.StartTime == startTime);
         if (schedule == null)
         {
           schedule = scheduleRepository.First<Schedule>(s => s.IdParentSchedule == parentScheduleId);
@@ -147,7 +156,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       Schedule scheduleToDelete;
       using (IScheduleRepository scheduleRepository = new ScheduleRepository(true))
-      {        
+      {
         SetRelatedRecordingsToNull(idSchedule, scheduleRepository);
         scheduleToDelete = scheduleRepository.First<Schedule>(schedule => schedule.IdSchedule == idSchedule);
         if (scheduleToDelete == null)
@@ -155,6 +164,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
         scheduleRepository.Delete(scheduleToDelete);
         scheduleRepository.UnitOfWork.SaveChanges();
+        scheduleToDelete.MarkAsDeleted();
       }
       ProgramManagement.SynchProgramStates(new ScheduleBLL(scheduleToDelete));
     }
@@ -163,7 +173,11 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       // todo : since "on delete: set null" is not currently supported in EF, we have to do this manually - remove this ugly workaround once EF gets mature enough.
       var schedules = scheduleRepository.GetQuery<Schedule>(s => s.IdSchedule == idSchedule);
-      schedules = scheduleRepository.IncludeAllRelations(schedules);
+      // Morpheus_xx, 2013-12-15: only include the recordings here, it's the only relation we change. Limiting the query to recordings fixes a bug with SQLite database,
+      // EF throws an exception: System.ServiceModel.FaultException`1[System.ServiceModel.ExceptionDetail]:
+      // The type of the key field 'IdSchedule' is expected to be 'System.Int32', but the value provided is actually of type 'System.Int64'.
+
+      schedules = scheduleRepository.IncludeAllRelations(schedules, ScheduleIncludeRelationEnum.Recordings);
       Schedule schedule = schedules.FirstOrDefault();
 
       if (schedule != null)
@@ -182,7 +196,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       bool isScheduleRecording = false;
       Program prg = ProgramManagement.GetProgram(idProgram);
-      
+
       if (prg != null)
       {
         var programBll = new ProgramBLL(prg);
@@ -206,7 +220,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
           }
         }
       }
-      
+
       return isScheduleRecording;
     }
 
@@ -264,7 +278,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       // as he decided to keep them before. That's why they are in the db
       foreach (Schedule schedule in schedulesList)
       {
-        
+
 
         List<Schedule> episodes = GetRecordingTimes(schedule);
         foreach (Schedule episode in episodes)
@@ -317,7 +331,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       bool canView = false;
       int count = 0;
       foreach (Card card in cards)
-      {        
+      {
         ScheduleBLL scheduleBll = new ScheduleBLL(schedule);
         if (card.Enabled && CardManagement.CanViewTvChannel(card, schedule.IdChannel))
         {
@@ -364,7 +378,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     }
 
     public static List<Schedule> GetRecordingTimes(Schedule rec, int days)
-    {      
+    {
       var recordings = new List<Schedule>();
       var recBLL = new ScheduleBLL(rec);
 
@@ -444,7 +458,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       {
         IEnumerable<Program> progList = ProgramManagement.GetProgramsByChannelAndTitleAndStartEndTimes(recBLL.Entity.IdChannel,
                                                                         recBLL.Entity.ProgramName, dtDay,
-                                                                        dtDay.AddDays(days));        
+                                                                        dtDay.AddDays(days));
         foreach (Program prog in progList)
         {
           if ((recBLL.IsRecordingProgram(prog, false)) &&
@@ -505,7 +519,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         //this.LogDebug("get {0} {1} EveryTimeOnThisChannel", rec.ProgramName, rec.ReferencedChannel().Name);
         programs = ProgramManagement.GetProgramsByChannelAndTitleAndStartEndTimes(recBLL.Entity.IdChannel,
                                                                         recBLL.Entity.ProgramName, dtDay,
-                                                                        dtDay.AddDays(days));        
+                                                                        dtDay.AddDays(days));
         foreach (Program prog in programs)
         {
           // dtDay.DayOfWeek == rec.startTime.DayOfWeek
@@ -575,7 +589,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       {
         IList<Schedule> schedules =
           scheduleRepository.GetQuery<Schedule>(
-            s => s.ScheduleType == (int) ScheduleRecordingType.Once && s.EndTime < DateTime.Now).ToList();        
+            s => s.ScheduleType == (int)ScheduleRecordingType.Once && s.EndTime < DateTime.Now).ToList();
 
         if (schedules.Count > 0)
         {
@@ -583,12 +597,12 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
           foreach (var schedule in schedules)
           {
-            SetRelatedRecordingsToNull(schedule.IdSchedule, scheduleRepository); 
-          }          
+            SetRelatedRecordingsToNull(schedule.IdSchedule, scheduleRepository);
+          }
 
           scheduleRepository.DeleteList(schedules);
           scheduleRepository.UnitOfWork.SaveChanges();
-        }        
+        }
       }
     }
 
@@ -597,7 +611,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       using (IScheduleRepository scheduleRepository = new ScheduleRepository())
       {
         Schedule onceSchedule =
-          scheduleRepository.FindOne<Schedule>(s=>s.ScheduleType == (int)ScheduleRecordingType.Once 
+          scheduleRepository.FindOne<Schedule>(s => s.ScheduleType == (int)ScheduleRecordingType.Once
             && s.IdChannel == idChannel && s.ProgramName == title && s.EndTime == endTime);
         return onceSchedule;
       }

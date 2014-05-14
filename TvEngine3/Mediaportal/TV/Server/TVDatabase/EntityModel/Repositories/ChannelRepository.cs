@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Threading.Tasks;
 using Mediaportal.Common.Utils;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
@@ -38,11 +37,9 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       return channels;
     }
 
-
     public IQueryable<TuningDetail> IncludeAllRelations(IQueryable<TuningDetail> query)
     {
-      IQueryable<TuningDetail> includeRelations = query.Include(c => c.Channel).
-        Include(c => c.Channel.GroupMaps);
+      IQueryable<TuningDetail> includeRelations = query.Include(c => c.Channel).Include(c => c.Channel.GroupMaps);
       return includeRelations;
     }
 
@@ -101,10 +98,8 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       return query;
     }
 
-
-
     private IDictionary<int, ChannelGroup> GetChannelGroupsDictionary()
-    {      
+    {
       List<ChannelGroup> groups = GetAll<ChannelGroup>().ToList();
       IDictionary<int, ChannelGroup> groupsDict = new Dictionary<int, ChannelGroup>();
       foreach (ChannelGroup group in groups)
@@ -142,15 +137,10 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       return LoadNavigationProperties(channel, includeRelations);
     }
 
-
-
-
-
     public IList<Channel> LoadNavigationProperties(IEnumerable<Channel> channels)
     {
       ChannelIncludeRelationEnum includeRelations = GetAllRelationsForChannel();
       return LoadNavigationProperties(channels, includeRelations);
-
     }
 
     public IList<Channel> LoadNavigationProperties(IEnumerable<Channel> channels, ChannelIncludeRelationEnum includeRelations)
@@ -205,7 +195,6 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
           }
         }
       }
-
       return list;
     }
 
@@ -270,11 +259,8 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
             }
           }
         );
-
       return channel;
     }
-
-
 
     private static void LoadGroupMap(IDictionary<int, ChannelGroup> groupDict, GroupMap groupMap)
     {
@@ -314,7 +300,6 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
         }
       }
     }
-
 
     public IQueryable<Channel> IncludeAllRelations(IQueryable<Channel> query)
     {
