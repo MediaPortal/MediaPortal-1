@@ -138,7 +138,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       {
         return;
       }
-      this.LogInfo("detector: starting tuner detection...");
+      this.LogInfo("detector: starting tuner detection");
       // Start detecting tuners connected directly to the system.
       DetectSystemTuners();
 
@@ -288,7 +288,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     {
       lock (_knownTuners)
       {
-        this.LogDebug("Detecting system tuners...");
+        this.LogDebug("detector: detecting system tuners...");
 
         HashSet<string> knownTuners = new HashSet<string>();
 
@@ -1430,7 +1430,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       // are available and what type they are.
       XmlNamespaceManager nm = new XmlNamespaceManager(rootDeviceDescriptor.DeviceNavigator.NameTable);
       nm.AddNamespace("s", "urn:ses-com:satip");
-      XPathNodeIterator it = rootDeviceDescriptor.DeviceNavigator.Select("s:X_SATIPCAP/text()");
+      XPathNodeIterator it = rootDeviceDescriptor.DeviceNavigator.Select("s:X_SATIPCAP/text()", nm);
       if (it.MoveNext())
       {
         // The easiest way to get the information we need is from X_SATIPCAP,
