@@ -44,9 +44,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// </summary>
     /// <param name="device">The <see cref="DsDevice"/> instance to encapsulate.</param>
     public TunerBdaSatellite(DsDevice device)
-      : base(device, device.DevicePath + "S")
+      : base(device, device.DevicePath + "S", CardType.DvbS)
     {
-      _tunerType = CardType.DvbS;
     }
 
     #endregion

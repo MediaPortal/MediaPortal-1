@@ -1355,7 +1355,7 @@ namespace Mediaportal.TV.TvPlugin
 
     /*if (TVHome.Navigator.Groups.Count > 1)
         dlg.AddLocalizedString(971); // Group*/
-      if (!g_Player.IsTVRecording && TVHome.Card.HasTeletext)
+      if (!g_Player.IsTVRecording && false)// TODO reimplement in TV plugin library TVHome.Card.HasTeletext)
       {
         dlg.AddLocalizedString(1441); // Fullscreen teletext
       }

@@ -23,7 +23,7 @@ using System.Collections.ObjectModel;
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
 {
   /// <summary>
-  /// This interface links related tuners.
+  /// This interface links related tuner instances.
   /// </summary>
   public interface ITunerGroup
   {
@@ -69,7 +69,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
     }
 
     /// <summary>
-    /// Get the members of the group.
+    /// Get the tuner group's members.
     /// </summary>
     ReadOnlyCollection<ITVCard> Tuners
     {

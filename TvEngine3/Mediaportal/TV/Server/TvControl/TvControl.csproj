@@ -124,6 +124,7 @@
     <Compile Include="Interfaces\Services\IScheduleService.cs" />
     <Compile Include="Interfaces\Services\ISettingService.cs" />
     <Compile Include="Interfaces\Events\ITvServerEventCallbackClient.cs" />
+    <Compile Include="Interfaces\Services\IThumbnailService.cs" />
     <Compile Include="RemoteControl.cs" />
     <Compile Include="ServiceAgents\CanceledScheduleServiceAgent.cs" />
     <Compile Include="ServiceAgents\CardServiceAgent.cs" />
@@ -141,6 +142,7 @@
     <Compile Include="ServiceAgents\ServerMonitor.cs" />
     <Compile Include="ServiceAgents\ServiceAgent.cs" />
     <Compile Include="ServiceAgents\ServiceAgents.cs" />
+    <Compile Include="ServiceAgents\ThumbnailServiceAgent.cs" />
     <Compile Include="ServiceHelper.cs" />
     <Compile Include="SubChannel.cs" />
     <Compile Include="User.cs" />

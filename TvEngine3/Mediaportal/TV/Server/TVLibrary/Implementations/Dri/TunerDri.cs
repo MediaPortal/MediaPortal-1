@@ -43,7 +43,7 @@ using UPnP.Infrastructure.CP.DeviceTree;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
 {
-  internal class TunerDri : TvCardBase, IConditionalAccessMenuActions
+  internal class TunerDri : TunerBase, IConditionalAccessMenuActions
   {
     #region constants
 
@@ -98,7 +98,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     private IConditionalAccessMenuCallBack _caMenuCallBack = null;
     private CableCardMmiHandler _caMenuHandler = null;
 
-    private volatile bool _isTunerSignalLocked = false;
     private int _currentFrequency = -1;
     private readonly bool _isCetonDevice = false;
     private bool _canPause = false;
@@ -119,7 +118,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     /// <param name="controlPoint">The control point to use to connect to the device.</param>
     /// <param name="streamTuner">An internal tuner implementation, used for RTP stream reception.</param>
     public TunerDri(DeviceDescriptor descriptor, UPnPControlPoint controlPoint, ITunerInternal streamTuner)
-      : base(descriptor.FriendlyName, descriptor.DeviceUUID)
+      : base(descriptor.FriendlyName, descriptor.DeviceUUID, CardType.Atsc)
     {
       DVBIPChannel streamChannel = new DVBIPChannel();
       streamChannel.Url = "rtp://127.0.0.1";
@@ -128,7 +127,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
         throw new TvException("Internal tuner implementation is not usable.");
       }
 
-      _tunerType = CardType.Atsc;
       _descriptor = descriptor;
       _controlPoint = controlPoint;
       _streamTuner = streamTuner;
@@ -227,13 +225,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       }
     }
 
-    #region subchannel management
+    #region sub-channel management
 
     /// <summary>
-    /// Allocate a new subchannel instance.
+    /// Allocate a new sub-channel instance.
     /// </summary>
-    /// <param name="id">The identifier for the subchannel.</param>
-    /// <returns>the new subchannel instance</returns>
+    /// <param name="id">The identifier for the sub-channel.</param>
+    /// <returns>the new sub-channel instance</returns>
     public override ITvSubChannel CreateNewSubChannel(int id)
     {
       return _streamTuner.CreateNewSubChannel(id);
@@ -286,7 +284,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       LoadExtensions(_descriptor);
 
       _streamTuner.PerformLoading();
-      _channelScanner = new ScannerDri(this, _serviceFdc);
+      _channelScanner = new ChannelScannerDri(this, _serviceFdc);
     }
 
     /// <summary>
@@ -381,7 +379,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       }
 
       ATSCChannel atscChannel = _currentTuningDetail as ATSCChannel;
-      if (IsScanning && atscChannel != null && atscChannel.PhysicalChannel == 0)
+      if (_channelScanner != null && _channelScanner.IsScanning && atscChannel != null && atscChannel.PhysicalChannel == 0)
       {
         // Scanning with a CableCARD doesn't require streaming. The channel
         // info is evented via the forward data channel service.
@@ -417,7 +415,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     }
 
     /// <summary>
-    /// Stop the tuner. The actual result of this function depends on tuner configuration.
+    /// Stop the tuner.
     /// </summary>
     public override void Stop()
     {
@@ -457,7 +455,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
 
       // Is a CableCARD required?
       bool isSignalLocked = false;
-      if (!atscChannel.FreeToAir || (IsScanning && atscChannel.PhysicalChannel == 0))
+      if (!atscChannel.FreeToAir || (_channelScanner.IsScanning && atscChannel.PhysicalChannel == 0))
       {
         if (_cardStatus != CasCardStatus.Inserted)
         {
@@ -467,7 +465,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
         // We only need the OOB tuner when scanning with the CableCARD. We
         // don't even have to start a stream so we don't interrupt other
         // applications. Just check that the OOB tuner is locked.
-        if (IsScanning)
+        if (_channelScanner.IsScanning)
         {
           this.LogDebug("DRI CableCARD: check out-of-band tuner lock");
           uint bitrate = 0;
@@ -717,30 +715,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
 
     #endregion
 
-    #region scanning
-
-    /// <summary>
-    /// Get or set a value indicating whether this tuner is scanning for channels.
-    /// </summary>
-    /// <value><c>true</c> if the tuner is currently scanning, otherwise <c>false</c></value>
-    public override bool IsScanning
-    {
-      get
-      {
-        return _isScanning;
-      }
-      set
-      {
-        _isScanning = value;
-        if (!value)
-        {
-          _isSignalLocked = _isTunerSignalLocked;
-        }
-      }
-    }
-
-    #endregion
-
     #region signal
 
     /// <summary>
@@ -762,7 +736,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       try
       {
         uint frequency = 0;
-        if (IsScanning)
+        if (_channelScanner != null && _channelScanner.IsScanning)
         {
           ATSCChannel atscChannel = _currentTuningDetail as ATSCChannel;
           if (atscChannel != null && atscChannel.PhysicalChannel == 0)
@@ -858,10 +832,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
           {
             this.LogInfo("DRI CableCARD: tuner {0} {1} update, not locked", _tunerId, stateVariable.Name);
           }
-          _isTunerSignalLocked = (bool)newValue;
-          if (!IsScanning)
+          if (_channelScanner == null || !_channelScanner.IsScanning)
           {
-            _isSignalLocked = _isTunerSignalLocked;
+            _isSignalLocked = (bool)newValue;
           }
         }
         else if (stateVariable.Name.Equals("CardStatus"))

@@ -39,7 +39,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
   internal interface ITsFilter
   {
     /// <summary>
-    /// Adds a new sub channel
+    /// Adds a new sub-channel
     /// </summary>
     /// <param name="handle">Handle of the channel</param>
     /// <returns></returns>
@@ -47,15 +47,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     int AddChannel(ref int handle);
 
     /// <summary>
-    /// Deletes the given sub channel
+    /// Deletes the given sub-channel
     /// </summary>
-    /// <param name="handle">Handle of the sub channel to delete</param>
+    /// <param name="handle">Handle of the sub-channel to delete</param>
     /// <returns></returns>
     [PreserveSig]
     int DeleteChannel(int handle);
 
     /// <summary>
-    /// Deletes all sub channels
+    /// Deletes all sub-channels
     /// </summary>
     /// <returns></returns>
     [PreserveSig]
@@ -64,36 +64,36 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     #region encryption analyser
 
     /// <summary>
-    /// Add an elementary stream to the set of streams that the analyser for a subchannel should monitor.
+    /// Add an elementary stream to the set of streams that the analyser for a sub-channel should monitor.
     /// </summary>
-    /// <param name="handle">The subchannel handle.</param>
+    /// <param name="handle">The sub-channel handle.</param>
     /// <param name="pid">The PID associated with the elementary stream.</param>
     /// <returns>an HRESULT indicating whether the elementary stream was successfully registered</returns>
     [PreserveSig]
     int AnalyserAddPid(int handle, int pid);
 
     /// <summary>
-    /// Remove an elementary stream from the set of streams that the analyser for a subchannel is monitoring.
+    /// Remove an elementary stream from the set of streams that the analyser for a sub-channel is monitoring.
     /// </summary>
-    /// <param name="handle">The subchannel handle.</param>
+    /// <param name="handle">The sub-channel handle.</param>
     /// <param name="pid">The PID associated with the elementary stream.</param>
     /// <returns>an HRESULT indicating whether the elementary stream was successfully deregistered</returns>
     [PreserveSig]
     int AnalyserRemovePid(int handle, int pid);
 
     /// <summary>
-    /// Get a count of the elementary streams that the analyser for a subchannel is currently monitoring.
+    /// Get a count of the elementary streams that the analyser for a sub-channel is currently monitoring.
     /// </summary>
-    /// <param name="handle">The subchannel handle.</param>
+    /// <param name="handle">The sub-channel handle.</param>
     /// <param name="pidCount">The number of elementary streams that the analyser is currently monitoring.</param>
     /// <returns>an HRESULT indicating whether the elementary stream count was successfully retrieved</returns>
     [PreserveSig]
     int AnalyserGetPidCount(int handle, out int pidCount);
 
     /// <summary>
-    /// Get the encryption state for a specific elementary stream that the analyser for a subchannel is monitoring.
+    /// Get the encryption state for a specific elementary stream that the analyser for a sub-channel is monitoring.
     /// </summary>
-    /// <param name="handle">The subchannel handle.</param>
+    /// <param name="handle">The sub-channel handle.</param>
     /// <param name="pidIndex">The PID index. The value of this parameter should be in the range 0..[GetPidCount() - 1] (inclusive).</param>
     /// <param name="pid">The PID associated with the stream.</param>
     /// <param name="encryptionState">The current encryption state of the elementary stream.</param>
@@ -102,18 +102,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     int AnalyserGetPid(int handle, int pidIndex, out int pid, out EncryptionState encryptionState);
 
     /// <summary>
-    /// Set the delegate for the analyser for a subchannel to notify when the encryption state of one of the monitored elementary streams changes.
+    /// Set the delegate for the analyser for a sub-channel to notify when the encryption state of one of the monitored elementary streams changes.
     /// </summary>
-    /// <param name="handle">The subchannel handle.</param>
+    /// <param name="handle">The sub-channel handle.</param>
     /// <param name="callBack">The delegate call back interface.</param>
     /// <returns>an HRESULT indicating whether the delegate was successfully registered</returns>
     [PreserveSig]
     int AnalyserSetCallBack(int handle, IEncryptionStateChangeCallBack callBack);
 
     /// <summary>
-    /// Reset the encryption analyser for a subchannel.
+    /// Reset the encryption analyser for a sub-channel.
     /// </summary>
-    /// <param name="handle">The subchannel handle.</param>
+    /// <param name="handle">The sub-channel handle.</param>
     /// <returns>an HRESULT indicating whether the analyser was successfully reset</returns>
     [PreserveSig]
     int AnalyserReset(int handle);
@@ -123,9 +123,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     #region PMT grabber
 
     /// <summary>
-    /// Set the PID and service for the PMT grabber for a subchannel to monitor.
+    /// Set the PID and service for the PMT grabber for a sub-channel to monitor.
     /// </summary>
-    /// <param name="handle">The subchannel handle.</param>
+    /// <param name="handle">The sub-channel handle.</param>
     /// <param name="pmtPid">The PID that the grabber should monitor.</param>
     /// <param name="serviceId">The ID of the service that the grabber should monitor.</param>
     /// <returns>an HRESULT indicating whether the grabber parameters were successfully registered</returns>
@@ -133,18 +133,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     int PmtSetPmtPid(int handle, int pmtPid, int serviceId);
 
     /// <summary>
-    /// Set the delegate for the PMT grabber for a subchannel to notify when a new PMT section is received.
+    /// Set the delegate for the PMT grabber for a sub-channel to notify when a new PMT section is received.
     /// </summary>
-    /// <param name="handle">The subchannel handle.</param>
+    /// <param name="handle">The sub-channel handle.</param>
     /// <param name="callBack">The delegate call back interface.</param>
     /// <returns>an HRESULT indicating whether the delegate was successfully registered</returns>
     [PreserveSig]
     int PmtSetCallBack(int handle, IPmtCallBack callBack);
 
     /// <summary>
-    /// Used by the delegate to retrieve a PMT section from the PMT grabber for a subchannel.
+    /// Used by the delegate to retrieve a PMT section from the PMT grabber for a sub-channel.
     /// </summary>
-    /// <param name="handle">The subchannel handle.</param>
+    /// <param name="handle">The sub-channel handle.</param>
     /// <param name="pmtData">A pointer to a buffer that will be populated with the most recently received PMT section.</param>
     /// <returns>the length of the PMT section in bytes</returns>
     [PreserveSig]
@@ -153,34 +153,34 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     #endregion
 
     /// <summary>
-    /// Sets the recorder unicode filename for the given subchannel
+    /// Sets the recorder unicode filename for the given sub-channel
     /// </summary>
-    /// <param name="handle">Handle of the sub channel</param>
+    /// <param name="handle">Handle of the sub-channel</param>
     /// <param name="fileName">Filename for the recording</param>
     /// <returns></returns>
     [PreserveSig]
     int RecordSetRecordingFileNameW(int handle, [In, MarshalAs(UnmanagedType.LPWStr)] string fileName);
 
     /// <summary>
-    /// Starts recording on the given sub channel
+    /// Starts recording on the given sub-channel
     /// </summary>
-    /// <param name="handle">Handle of the sub channel</param>
+    /// <param name="handle">Handle of the sub-channel</param>
     /// <returns></returns>
     [PreserveSig]
     int RecordStartRecord(int handle);
 
     /// <summary>
-    /// Stops recording on the given sub channel
+    /// Stops recording on the given sub-channel
     /// </summary>
-    /// <param name="handle">Handle of the sub channel</param>
+    /// <param name="handle">Handle of the sub-channel</param>
     /// <returns></returns>
     [PreserveSig]
     int RecordStopRecord(int handle);
 
     /// <summary>
-    /// Sets the pmt pid for recording on the sub channel
+    /// Sets the pmt pid for recording on the sub-channel
     /// </summary>
-    /// <param name="handle">Handle of the sub channel</param>
+    /// <param name="handle">Handle of the sub-channel</param>
     /// <param name="pmtPid">The PMT pid</param>
     /// <param name="serviceId">The service id</param>
     /// <param name="pmtData">The PMT data</param>
@@ -193,7 +193,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <summary>
     /// Sets the video/audio observer call back for recorder
     /// </summary>
-    /// <param name="handle">Handle of the sub channel</param>
+    /// <param name="handle">Handle of the sub-channel</param>
     /// <param name="observer">Oberserver call back</param>
     /// <returns></returns>
     [PreserveSig]
@@ -202,49 +202,49 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <summary>
     /// Sets the timeshifting filename
     /// </summary>
-    /// <param name="handle">Handle of the sub channel</param>
+    /// <param name="handle">Handle of the sub-channel</param>
     /// <param name="fileName">Filename</param>
     /// <returns></returns>
     [PreserveSig]
     int TimeShiftSetTimeShiftingFileNameW(int handle, [In, MarshalAs(UnmanagedType.LPWStr)] string fileName);
 
     /// <summary>
-    /// Starts timeshifting on the given sub channel
+    /// Starts timeshifting on the given sub-channel
     /// </summary>
-    /// <param name="handle">Handle of the sub channel</param>
+    /// <param name="handle">Handle of the sub-channel</param>
     /// <returns></returns>
     [PreserveSig]
     int TimeShiftStart(int handle);
 
     /// <summary>
-    /// Stops timeshifting on the given sub channel
+    /// Stops timeshifting on the given sub-channel
     /// </summary>
-    /// <param name="handle">Handle of the sub channel</param>
+    /// <param name="handle">Handle of the sub-channel</param>
     /// <returns></returns>
     [PreserveSig]
     int TimeShiftStop(int handle);
 
     /// <summary>
-    /// Resets timeshifting on the given sub channel
+    /// Resets timeshifting on the given sub-channel
     /// </summary>
-    /// <param name="handle">Handle of the sub channel</param>
+    /// <param name="handle">Handle of the sub-channel</param>
     /// <returns></returns>
     [PreserveSig]
     int TimeShiftReset(int handle);
 
     /// <summary>
-    /// Gets the timeshifting buffer size of the given sub channel
+    /// Gets the timeshifting buffer size of the given sub-channel
     /// </summary>
-    /// <param name="handle">Handle of the sub channel</param>
+    /// <param name="handle">Handle of the sub-channel</param>
     /// <param name="size">Size of the buffer</param>
     /// <returns></returns>
     [PreserveSig]
     int TimeShiftGetBufferSize(int handle, out long size);
 
     /// <summary>
-    /// Sets the PMT pid on the given sub channel
+    /// Sets the PMT pid on the given sub-channel
     /// </summary>
-    /// <param name="handle">Handle of the sub channel</param>
+    /// <param name="handle">Handle of the sub-channel</param>
     /// <param name="pmtPid">The PMT pid</param>
     /// <param name="serviceId">The service id</param>
     /// <param name="pmtData">The PMT data</param>
@@ -255,18 +255,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
                            int pmtLength);
 
     /// <summary>
-    /// Pauses/Continues timeshifting on the given sub channel
+    /// Pauses/Continues timeshifting on the given sub-channel
     /// </summary>
-    /// <param name="handle">Handle of the sub channel</param>
+    /// <param name="handle">Handle of the sub-channel</param>
     /// <param name="onOff">Flag for pausing the timeshifting</param>
     /// <returns></returns>
     [PreserveSig]
     int TimeShiftPause(int handle, byte onOff);
 
     /// <summary>
-    /// Sets the timeshifting parameters on the given subchannel
+    /// Sets the timeshifting parameters on the given sub-channel
     /// </summary>
-    /// <param name="handle">Handle of the sub channel</param>
+    /// <param name="handle">Handle of the sub-channel</param>
     /// <param name="minFiles">Minimum timeshifting files</param>
     /// <param name="maxFiles">Maximum timeshifting files</param>
     /// <param name="chunkSize">Chunk size</param>
@@ -277,7 +277,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <summary>
     /// Returns the position in the current timeshift file and the id of the current timeshift file
     /// </summary>
-    /// <param name="handle">Handle of the sub channel</param>
+    /// <param name="handle">Handle of the sub-channel</param>
     /// <param name="position">The position in the current timeshift buffer file</param>
     /// <param name="bufferId">The id of the current timeshift buffer file</param>
     [PreserveSig]
@@ -286,7 +286,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <summary>
     /// Sets the video/audio observer call back
     /// </summary>
-    /// <param name="handle">Handle of the sub channel</param>
+    /// <param name="handle">Handle of the sub-channel</param>
     /// <param name="observer">Oberserver call back</param>
     /// <returns></returns>
     [PreserveSig]
@@ -295,26 +295,26 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     #region CAT grabber
 
     /// <summary>
-    /// Reset the CAT grabber for a subchannel, causing it to forget about previously seen CAT sections.
+    /// Reset the CAT grabber for a sub-channel, causing it to forget about previously seen CAT sections.
     /// </summary>
-    /// <param name="handle">The subchannel handle.</param>
+    /// <param name="handle">The sub-channel handle.</param>
     /// <returns>an HRESULT indicating whether the grabber was successfully reset</returns>
     [PreserveSig]
     int CaReset(int handle);
 
     /// <summary>
-    /// Set the delegate for the CAT grabber for a subchannel to notify when a new CAT section is received.
+    /// Set the delegate for the CAT grabber for a sub-channel to notify when a new CAT section is received.
     /// </summary>
-    /// <param name="handle">The subchannel handle.</param>
+    /// <param name="handle">The sub-channel handle.</param>
     /// <param name="callBack">The delegate call back interface.</param>
     /// <returns>an HRESULT indicating whether the delegate was successfully registered</returns>
     [PreserveSig]
     int CaSetCallBack(int handle, ICaCallBack callBack);
 
     /// <summary>
-    /// Used by the delegate to retrieve a CAT section from the CAT grabber for a subchannel.
+    /// Used by the delegate to retrieve a CAT section from the CAT grabber for a sub-channel.
     /// </summary>
-    /// <param name="handle">The subchannel handle.</param>
+    /// <param name="handle">The sub-channel handle.</param>
     /// <param name="caData">A pointer to a buffer that will be populated with the most recently received CAT section.</param>
     /// <returns>the length of the CAT section in bytes</returns>
     [PreserveSig]
@@ -325,7 +325,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <summary>
     /// Fetches the stream quality information
     /// </summary>
-    /// <param name="handle">Handle of the sub channel</param>
+    /// <param name="handle">Handle of the sub-channel</param>
     /// <param name="totalTsBytes">Amount of packets processed - timeshifting</param>
     /// <param name="totalRecordingBytes">Amount of packets processed - recording</param>
     /// <param name="TsDiscontinuity">Number of stream discontinuities - timeshifting</param>
@@ -336,9 +336,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
                                  out int TsDiscontinuity, out int recordingDiscontinuity);
 
     /// <summary>
-    /// Sets the channel type of the sub channel
+    /// Sets the channel type of the sub-channel
     /// </summary>
-    /// <param name="handle">Handle of the sub channel</param>
+    /// <param name="handle">Handle of the sub-channel</param>
     /// <param name="channelType">Type of the channel (tv=0, radio=1)</param>
     /// <returns></returns>
     [PreserveSig]

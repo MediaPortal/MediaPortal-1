@@ -61,7 +61,7 @@ namespace Mediaportal.TV.TvPlugin.Teletext
       // Save the settings and then stop the update thread. Also the teletext grabbing
       SaveSettings();
       Join();
-      TVHome.Card.GrabTeletext = false;
+      // TODO reimplement in TV plugin library TVHome.Card.GrabTeletext = false;
       base.OnPageDestroy(newWindowId);
     }
 

@@ -110,7 +110,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
       get { return _card; }
     }
    
-
+    /// <summary>
+    /// Gets the stream media type.
+    /// </summary>
+    /// <value>The media type.</value>
     public MediaTypeEnum MediaType
     {
       get { return _mediaType; }      

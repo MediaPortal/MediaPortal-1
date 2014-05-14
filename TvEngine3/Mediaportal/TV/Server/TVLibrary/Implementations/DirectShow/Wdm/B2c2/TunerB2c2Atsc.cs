@@ -19,8 +19,8 @@
 #endregion
 
 using DirectShowLib.BDA;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Atsc;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
@@ -36,11 +36,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     /// <summary>
     /// Initialise a new instance of the <see cref="TunerB2c2Atsc"/> class.
     /// </summary>
-    /// <param name="info">The B2C2-specific information (<see cref="DeviceInfo"/>) about the tuner.</param>
+    /// <param name="info">The B2C2-specific information (<see cref="TunerB2c2Base.DeviceInfo"/>) about the tuner.</param>
     public TunerB2c2Atsc(DeviceInfo info)
-      : base(info)
+      : base(info, CardType.Atsc)
     {
-      _tunerType = CardType.Atsc;
     }
 
     #region tuning & scanning
@@ -110,7 +109,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       // ATSC/SCTE EPG grabbing currently not supported.
       _epgGrabber = null;
 
-      _channelScanner = new ScannerMpeg2TsAtsc(this, _filterTsWriter as ITsChannelScan);
+      IChannelScannerInternal scanner = _channelScanner as IChannelScannerInternal;
+      if (scanner != null)
+      {
+        scanner.Helper = new ChannelScannerHelperAtsc();
+      }
     }
 
     #endregion

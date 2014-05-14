@@ -34,11 +34,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     /// <summary>
     /// Initialise a new instance of the <see cref="TunerB2c2Cable"/> class.
     /// </summary>
-    /// <param name="info">The B2C2-specific information (<see cref="DeviceInfo"/>) about the tuner.</param>
+    /// <param name="info">The B2C2-specific information (<see cref="TunerB2c2Base.DeviceInfo"/>) about the tuner.</param>
     public TunerB2c2Cable(DeviceInfo info)
-      : base(info)
+      : base(info, CardType.DvbC)
     {
-      _tunerType = CardType.DvbC;
     }
 
     #region tuning

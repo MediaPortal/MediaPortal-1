@@ -144,7 +144,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
     /// Gets called when epg has been cancelled
     /// Should be overriden by the class
     /// </summary>
-    public override void OnEpgCancelled()
+    public void OnEpgCancelled()
     {      
       this.LogInfo("epg grabber:epg cancelled");
       Stop();
@@ -157,7 +157,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
     /// to update the database with the new epg data
     /// </summary>
     /// <param name="epg">The new EPG data.</param>
-    public override void OnEpgReceived(IList<EpgChannel> epg)
+    public void OnEpgReceived(IList<EpgChannel> epg)
     {
       try
       {

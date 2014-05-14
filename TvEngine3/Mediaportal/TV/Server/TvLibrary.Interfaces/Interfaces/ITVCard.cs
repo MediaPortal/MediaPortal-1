@@ -29,9 +29,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
   #region event delegates
 
   /// <summary>
-  /// Delegate for the new subchannel event.
+  /// Delegate for the new sub-channel event.
   /// </summary>
-  /// <param name="subChannelId">The ID of the new subchannel.</param>
+  /// <param name="subChannelId">The ID of the new sub-channel.</param>
   public delegate void OnNewSubChannelDelegate(int subChannelId);
 
   /// <summary>
@@ -49,7 +49,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
     #region events
 
     /// <summary>
-    /// Set the tuner's new subchannel event handler.
+    /// Set the tuner's new sub-channel event handler.
     /// </summary>
     event OnNewSubChannelDelegate OnNewSubChannelEvent;
 
@@ -63,15 +63,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
     #region properties
 
     /// <summary>
-    /// Gets or sets the timeout parameters.
+    /// Get the tuner's name.
     /// </summary>
-    /// <value>The parameters.</value>
-    ScanParameters Parameters { get; set; }
-
-    /// <summary>
-    /// Gets/sets the card name
-    /// </summary>
-    string Name { get; }
+    string Name
+    {
+      get;
+    }
 
     /// <summary>
     /// Get the tuner's group.
@@ -123,15 +120,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
     }
 
     /// <summary>
-    /// Method to check if card can tune to the channel specified
+    /// Check if the tuner can tune to a specific channel.
     /// </summary>
-    /// <returns>true if card can tune to the channel otherwise false</returns>
+    /// <param name="channel">The channel to check.</param>
+    /// <returns><c>true</c> if the tuner can tune to the channel, otherwise <c>false</c></returns>
     bool CanTune(IChannel channel);
 
     /// <summary>
-    /// Stop the card.
+    /// Stop the tuner.
     /// </summary>
-    [Obsolete("This function should not be used. Instead use FreeSubChannel() to free each remaining sub channel. The tuner will be stopped after the last sub channel is freed... but that is implementation detail which you should not have to care about.")]
+    /// <remarks>
+    /// The actual result of this function depends on tuner configuration.
+    /// </remarks>
+    [Obsolete("This function should not be used. Instead use FreeSubChannel() to free each remaining sub-channel. The tuner will be stopped after the last sub-channel is freed... but that is implementation detail which you should not have to care about.")]
     void Stop();
 
     /// <summary>
@@ -141,32 +142,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
     CamType CamType { get; }
 
     /// <summary>
-    /// Gets/sets the card type
+    /// Get the tuner's type.
     /// </summary>
-    CardType CardType { get; }
-
-
-
-    /// <summary>
-    /// Get the tuner's DiSEqC control interface. This interface is only applicable for satellite tuners.
-    /// It is used for controlling switch, positioner and LNB settings.
-    /// </summary>
-    /// <value><c>null</c> if the tuner is not a satellite tuner or the tuner does not support sending/receiving
-    /// DiSEqC commands</value>
-    IDiseqcController DiseqcController { get; }
+    CardType TunerType
+    {
+      get;
+    }
 
     /// <summary>
     /// Does the tuner support conditional access?
     /// </summary>
     /// <value><c>true</c> if the tuner supports conditional access, otherwise <c>false</c></value>
     bool IsConditionalAccessSupported { get; }
-
-    /// <summary>
-    /// Get the device's conditional access menu interaction interface. This interface is only applicable if
-    /// conditional access is supported.
-    /// </summary>
-    /// <value><c>null</c> if the device does not support conditional access</value>
-    IConditionalAccessMenuActions CaMenuInterface { get; }
 
     /// <summary>
     /// Get a count of the number of services that the device is currently decrypting.
@@ -195,7 +182,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
 
     #endregion
 
-    #region epg & scanning
+    #region interfaces
 
     /// <summary>
     /// Get the tuner's electronic programme guide data grabbing interface.
@@ -208,10 +195,33 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
     /// <summary>
     /// Get the tuner's channel scanning interface.
     /// </summary>
-    ITVScanning ScanningInterface
+    IChannelScanner ChannelScanningInterface
     {
       get;
     }
+
+    /// <summary>
+    /// Get the tuner's DiSEqC control interface.
+    /// </summary>
+    /// <remarks>
+    /// This interface is only applicable for satellite tuners. It is used for controlling switch,
+    /// positioner and LNB settings.
+    /// </remarks>
+    /// <value><c>null</c> if the tuner is not a satellite tuner or the tuner does not support
+    /// sending/receiving DiSEqC commands</value>
+    IDiseqcController DiseqcController
+    {
+      get;
+    }
+
+    /// <summary>
+    /// Get the tuner's conditional access menu interaction interface.
+    /// </summary>
+    /// <remarks>
+    /// This interface is only applicable if conditional access is supported.
+    /// </remarks>
+    /// <value><c>null</c> if the tuner does not support conditional access</value>
+    IConditionalAccessMenuActions CaMenuInterface { get; }
 
     #endregion
 
@@ -220,15 +230,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
     /// <summary>
     /// Tune to a specific channel.
     /// </summary>
-    /// <param name="subChannelId">The ID of the subchannel associated with the channel that is being tuned.</param>
+    /// <param name="subChannelId">The ID of the sub-channel associated with the channel that is being tuned.</param>
     /// <param name="channel">The channel to tune to.</param>
-    /// <returns>the subchannel associated with the tuned channel</returns>
+    /// <returns>the sub-channel associated with the tuned channel</returns>
     ITvSubChannel Tune(int subChannelId, IChannel channel);
 
     /// <summary>
     /// Cancel the current tuning process.
     /// </summary>
-    /// <param name="subChannelId">The ID of the subchannel associated with the channel that is being cancelled.</param>
+    /// <param name="subChannelId">The ID of the sub-channel associated with the channel that is being cancelled.</param>
     void CancelTune(int subChannelId);
 
     #endregion
@@ -272,12 +282,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
     /// <value>The context.</value>
     object Context { get; set; }
 
-    /// <summary>
-    /// Get or set a value indicating whether this tuner is scanning for channels.
-    /// </summary>
-    /// <value><c>true</c> if the tuner is currently scanning, otherwise <c>false</c></value>
-    bool IsScanning { get; set; }
-
     #endregion
 
     #region idisposable
@@ -289,25 +293,25 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
 
     #endregion
 
-    #region sub channels
+    #region sub-channels
 
     /// <summary>
-    /// Gets the sub channel.
+    /// Gets the sub-channel.
     /// </summary>
     /// <param name="id">The id.</param>
     /// <returns></returns>
     ITvSubChannel GetSubChannel(int id);
 
     /// <summary>
-    /// Frees the sub channel.
+    /// Frees the sub-channel.
     /// </summary>
     /// <param name="id">The id.</param>
     void FreeSubChannel(int id);
 
     /// <summary>
-    /// Gets the sub channels.
+    /// Gets the sub-channels.
     /// </summary>
-    /// <value>The sub channels.</value>
+    /// <value>The sub-channels.</value>
     ITvSubChannel[] SubChannels { get; }
 
     #endregion

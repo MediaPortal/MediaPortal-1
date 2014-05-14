@@ -327,11 +327,9 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       discontinuityCounter = 0;
 
       ITvSubChannel subchannel = GetSubChannel(_cardHandler.UserManagement.GetTimeshiftingSubChannel(userName));
-
-      var dvbSubchannel = subchannel as TvDvbChannel;
-      if (dvbSubchannel != null)
+      if (subchannel != null)
       {
-        dvbSubchannel.GetStreamQualityCounters(out totalTSpackets, out discontinuityCounter);
+        subchannel.GetStreamQualityCounters(out totalTSpackets, out discontinuityCounter);
       }
     }
 

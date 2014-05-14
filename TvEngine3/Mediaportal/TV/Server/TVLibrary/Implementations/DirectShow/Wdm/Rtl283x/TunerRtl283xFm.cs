@@ -25,6 +25,7 @@ using System.Threading;
 using DirectShowLib;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
@@ -251,7 +252,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
         _delegateScan = delegateScan;
       }
 
-      #region subchannel delegation
+      #region sub-channel delegation
 
       public int AddChannel(ref int handle)
       {
@@ -693,8 +694,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
 
     #endregion
 
+    /// <summary>
+    /// Initialise a new instance of the <see cref="TunerRtl283xFm"/> class.
+    /// </summary>
+    /// <param name="mainTunerDevice">The main BDA tuner device for for the tuner.</param>
     public TunerRtl283xFm(DsDevice mainTunerDevice)
-      : base("Realtek RTL283x FM Tuner", mainTunerDevice.DevicePath + "FM")
+      : base("Realtek RTL283x FM Tuner", mainTunerDevice.DevicePath + "FM", CardType.Analog)
     {
       _mainTunerDevice = mainTunerDevice;
     }
@@ -713,13 +718,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
     }
 
     /// <summary>
-    /// Allocate a new subchannel instance.
+    /// Allocate a new sub-channel instance.
     /// </summary>
-    /// <param name="id">The identifier for the subchannel.</param>
-    /// <returns>the new subchannel instance</returns>
+    /// <param name="id">The identifier for the sub-channel.</param>
+    /// <returns>the new sub-channel instance</returns>
     public override ITvSubChannel CreateNewSubChannel(int id)
     {
-      return new Mpeg2SubChannel(id, _staTsWriter);
+      return new SubChannelMpeg2Ts(id, _staTsWriter);
     }
 
     /// <summary>
@@ -1072,7 +1077,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       // RDS grabbing currently not supported.
       _epgGrabber = null;
 
-      _channelScanner = new ScannerMpeg2TsBase(this, _staTsWriter);
+      _channelScanner = new ChannelScannerDirectShowAnalog(this, _staTsWriter);
 
       int lowerLimit;
       int upperLimit;

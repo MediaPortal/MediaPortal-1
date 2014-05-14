@@ -59,6 +59,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
   /// </summary>
   public class TunerDetector : IDisposable
   {
+    private bool _isStarted = false;
+
     // Used for detecting and communicating with UPnP devices.
     private CPData _upnpControlPointData = null;
     private UPnPNetworkTracker _upnpAgent = null;
@@ -86,7 +88,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     private Dictionary<string, HashSet<string>> _tunerExternalIds = new Dictionary<string, HashSet<string>>();
     // tuner external ID => tuner
     private Dictionary<string, ITVCard> _knownTuners = new Dictionary<string, ITVCard>();
-    // product instance ID => tuner instance ID => tuners
+    // product instance ID => tuner instance ID => tuner external IDs
     private Dictionary<string, Dictionary<string, HashSet<string>>> _naturalTunerGroups = new Dictionary<string, Dictionary<string, HashSet<string>>>();
     // database group ID => group
     private Dictionary<int, TunerGroup> _configuredTunerGroups = new Dictionary<int, TunerGroup>();
@@ -127,8 +129,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       _systemDeviceChangeEventWatcher.EventArrived += OnSystemDeviceConnectedOrDisconnected;
     }
 
+    /// <summary>
+    /// Start tuner detection.
+    /// </summary>
     public void Start()
     {
+      if (_isStarted)
+      {
+        return;
+      }
       this.LogInfo("detector: starting tuner detection...");
       // Start detecting tuners connected directly to the system.
       DetectSystemTuners();
@@ -155,8 +164,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       _upnpAgent.Start();
       _upnpAgent.SharedControlPointData.SSDPController.SearchDeviceByDeviceTypeVersion("schemas-opencable-com:service:Tuner", "1", null);
       _upnpAgent.SharedControlPointData.SSDPController.SearchDeviceByDeviceTypeVersion("urn:ses-com:device:SatIPServer", "1", null);
+      _isStarted = true;
     }
 
+    /// <summary>
+    /// Reset and restart tuner detection.
+    /// </summary>
     public void Reset()
     {
       Stop();
@@ -169,8 +182,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       Start();
     }
 
+    /// <summary>
+    /// Stop tuner detection.
+    /// </summary>
     public void Stop()
     {
+      if (!_isStarted)
+      {
+        return;
+      }
       this.LogInfo("detector: stopping tuner detection...");
       _upnpAgent.Close();
       _upnpControlPoint.Close();
@@ -419,7 +439,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       this.LogInfo("  add...");
       this.LogInfo("    name        = {0}", tuner.Name);
       this.LogInfo("    external ID = {0}", tuner.ExternalId);
-      this.LogInfo("    type        = {0}", tuner.CardType);
+      this.LogInfo("    type        = {0}", tuner.TunerType);
       this.LogInfo("    product ID  = {0}", tuner.ProductInstanceId ?? "[null]");
       this.LogInfo("    tuner ID    = {0}", tuner.TunerInstanceId ?? "[null]");
       _knownTuners.Add(tuner.ExternalId, tuner);
@@ -443,7 +463,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           DevicePath = tuner.ExternalId,
           Name = tuner.Name,
           Priority = 1,
-          GrabEPG = (tuner.CardType != CardType.Analog && tuner.CardType != CardType.Atsc),   // analog signals don't carry EPG, ATSC EPG not supported
+          GrabEPG = (tuner.TunerType != CardType.Analog && tuner.TunerType != CardType.Atsc),   // analog signals don't carry EPG, ATSC EPG not supported
           Enabled = true,
           PreloadCard = false,
           AlwaysSendDiseqcCommands = false,
@@ -530,7 +550,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
             foreach (string id in relatedTuners)
             {
               ITVCard t = _knownTuners[id];
-              this.LogInfo("      name = {0}, type = {1}, external ID = {2}", t.Name, t.CardType, id);
+              this.LogInfo("      name = {0}, type = {1}, external ID = {2}", t.Name, t.TunerType, id);
             }
           }
           relatedTuners.Add(tuner.ExternalId);
@@ -679,7 +699,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
             {
               foreach (ITVCard t in group.Tuners)
               {
-                this.LogInfo("      name = {0}, type = {1}, external ID = {2}", t.Name, t.CardType, t.ExternalId);
+                this.LogInfo("      name = {0}, type = {1}, external ID = {2}", t.Name, t.TunerType, t.ExternalId);
               }
             }
             group.Add(tuner);
@@ -696,7 +716,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       this.LogInfo("  remove...");
       this.LogInfo("    name        = {0}", tuner.Name);
       this.LogInfo("    external ID = {0}", tuner.ExternalId);
-      this.LogInfo("    type        = {0}", tuner.CardType);
+      this.LogInfo("    type        = {0}", tuner.TunerType);
       this.LogInfo("    product ID  = {0}", tuner.ProductInstanceId ?? "[null]");
       this.LogInfo("    tuner ID    = {0}", tuner.TunerInstanceId ?? "[null]");
       _eventListener.OnTunerRemoved(tuner);
@@ -716,6 +736,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
       _firstDetectionTuners.Remove(tuner.ExternalId);
       _knownTuners.Remove(tuner.ExternalId);
+      tuner.Dispose();
     }
 
     private void DetectSupportedLegacyAmFilters(ref HashSet<string> knownTuners)

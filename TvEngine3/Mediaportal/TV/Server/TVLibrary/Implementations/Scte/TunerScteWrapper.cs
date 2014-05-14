@@ -1,5 +1,6 @@
 ﻿
 using DirectShowLib.BDA;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Atsc;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
@@ -24,6 +25,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte
   /// 143827ab-f77b-498d-81ca-5a007aec28bf
   /// dc0c0fe7-0485-4266-b93f-68fbf80ed834
   /// 
+  /// 
   /// 2. EyeTV Hybrid [North American model]
   /// EyeTV Hybrid ATSC Tuner
   /// @device:pnp:\\?\usb#vid_0fd9&pid_0024#081004017082#{71985f48-1ca1-11d3-9cc8-00c04f7971e0}\{7c8095ab-c110-40e5-9f4d-310858bbbf64}
@@ -33,8 +35,26 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte
   /// @device:pnp:\\?\usb#vid_0fd9&pid_0024#081004017082#{71985f48-1ca1-11d3-9cc8-00c04f7971e0}\{b50b8116-da24-4f97-80d1-00451702c5f7}
   /// 143827ab-f77b-498d-81ca-5a007aec28bf
   /// dc0c0fe7-0485-4266-b93f-68fbf80ed834
+  /// 
+  /// 
+  /// 3. ATI Theater 750 USB
+  /// ATI AVStream Analog Tuner
+  /// @device:pnp:\\?\usb#vid_0438&pid_ac14#1234-5678#{a799a800-a46d-11d0-a18c-00a02401dcd4}\{e6223d77-45f9-4025-a86f-27bddb4c8ca9}
+  /// 
+  /// ATI CQAM Digital Tuner
+  /// @device:pnp:\\?\usb#vid_0438&pid_ac14#1234-5678#{71985f48-1ca1-11d3-9cc8-00c04f7971e0}\{9c40b733-1a99-496e-bc6a-88a85232fad6}
+  /// 143827ab-f77b-498d-81ca-5a007aec28bf
+  /// dc0c0fe7-0485-4266-b93f-68fbf80ed834
+  /// 
+  /// ATI DVBT Digital Tuner
+  /// @device:pnp:\\?\usb#vid_0438&pid_ac14#1234-5678#{71985f48-1ca1-11d3-9cc8-00c04f7971e0}\{a9224736-86b6-4242-9cc4-4328f2cd2df4}
+  /// 216c62df-6d7f-4e9a-8571-05f14edb766a
+  /// 
+  /// ATI BDA Digital Tuner
+  /// @device:pnp:\\?\usb#vid_0438&pid_ac14#1234-5678#{71985f48-1ca1-11d3-9cc8-00c04f7971e0}\{eec5a519-643f-4a74-bc7f-5ce7d46fefd5}
+  /// 0dad2fdd-5fd7-11d3-8f50-00c04f7971e2
   /// </remarks>
-  internal class TunerScteWrapper : TvCardBase
+  internal class TunerScteWrapper : TunerBase
   {
     /// <summary>
     /// Internal DVB-C tuner. This allows us to decouple this wrapper from the
@@ -49,7 +69,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte
     /// <param name="externalId">The external identifier for the tuner.</param>
     /// <param name="dvbcTuner">The internal tuner implementation.</param>
     public TunerScteWrapper(string name, string externalId, ITunerInternal dvbcTuner)
-      : base(name, externalId)
+      : base(name, externalId, CardType.Atsc)
     {
       DVBCChannel dvbChannel = new DVBCChannel();
       if (dvbcTuner == null || !dvbcTuner.CanTune(dvbChannel))
@@ -57,7 +77,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte
         throw new TvException("Internal tuner implementation is not usable.");
       }
 
-      _tunerType = CardType.Atsc;
       _dvbcTuner = dvbcTuner;
     }
 
@@ -95,12 +114,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte
     {
       _dvbcTuner.PerformLoading();
 
-      // TODO need a proper wrapper that does what ScannerDirectShowAtsc does
-      _channelScanner = _dvbcTuner.ScanningInterface;
-      IScannerInternal scanner = _channelScanner as IScannerInternal;
+      _channelScanner = _dvbcTuner.ChannelScanningInterface;
+      IChannelScannerInternal scanner = _channelScanner as IChannelScannerInternal;
       if (scanner != null)
       {
         scanner.Tuner = this;
+        scanner.Helper = new ChannelScannerHelperAtsc();
       }
     }
 
@@ -122,10 +141,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte
     }
 
     /// <summary>
-    /// Allocate a new subchannel instance.
+    /// Allocate a new sub-channel instance.
     /// </summary>
-    /// <param name="id">The identifier for the subchannel.</param>
-    /// <returns>the new subchannel instance</returns>
+    /// <param name="id">The identifier for the sub-channel.</param>
+    /// <returns>the new sub-channel instance</returns>
     public override ITvSubChannel CreateNewSubChannel(int id)
     {
       return _dvbcTuner.CreateNewSubChannel(id);

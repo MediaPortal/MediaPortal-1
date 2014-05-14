@@ -33,16 +33,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
   #endregion
 
   /// <summary>
-  /// Sub Channel interface in TsWriter
+  /// Sub-Channel interface in TsWriter
   /// </summary>
   public interface ITvSubChannel
   {
     #region properties
 
     /// <summary>
-    /// Gets the sub channel id.
+    /// Gets the sub-channel id.
     /// </summary>
-    /// <value>The sub channel id.</value>
+    /// <value>The sub-channel id.</value>
     int SubChannelId { get; }
 
     /// <summary>
@@ -90,7 +90,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
 
     #endregion
 
-    ScanParameters Parameters { get; set; }
+    /// <summary>
+    /// Reload the sub-channel's configuration.
+    /// </summary>
+    void ReloadConfiguration();
 
     #region timeshifting and recording
 
@@ -140,5 +143,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
     void OnGraphRunning();
     void OnAfterTune();
     void Decompose();
+
+    /// <summary>
+    /// Fetch stream quality information from TsWriter.
+    /// </summary>   
+    /// <param name="totalBytes">The number of packets processed.</param>    
+    /// <param name="discontinuityCounter">The number of stream discontinuities.</param>
+    void GetStreamQualityCounters(out int totalBytes, out int discontinuityCounter);
   }
 }

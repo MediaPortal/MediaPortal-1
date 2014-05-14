@@ -18,41 +18,49 @@
 
 #endregion
 
+using System.Collections.Generic;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Analog;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
-namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
 {
   /// <summary>
-  /// An implementation of <see cref="T:TvLibrary.Interfaces.ITVScanning"/> for stream tuners.
+  /// An implementation of <see cref="T:TvLibrary.Interfaces.IChannelScanner"/> for WDM analog tuners.
   /// </summary>
-  internal class ScannerStream : ScannerMpeg2TsBase
+  internal class ChannelScannerDirectShowAnalog : ChannelScannerDirectShowBase
   {
     /// <summary>
-    /// Initialise a new instance of the <see cref="ScannerStream"/> class.
+    /// Initialise a new instance of the <see cref="ChannelScannerDirectShowAnalog"/> class.
     /// </summary>
     /// <param name="tuner">The tuner associated with this scanner.</param>
     /// <param name="analyser">The stream analyser instance to use for scanning.</param>
-    public ScannerStream(TunerStream tuner, ITsChannelScan analyser)
-      : base(tuner, analyser)
+    public ChannelScannerDirectShowAnalog(ITVCard tuner, ITsChannelScan analyser)
+      : base(tuner, new ChannelScannerHelperAnalog(), analyser)
     {
     }
 
     /// <summary>
-    /// Set the name for services which do not supply a name.
+    /// Scans the specified transponder.
     /// </summary>
-    /// <param name="channel">The service details.</param>
-    protected override void SetMissingServiceName(IChannel channel)
+    /// <param name="channel">The channel.</param>
+    /// <returns></returns>
+    public override List<IChannel> Scan(IChannel channel)
     {
-      DVBIPChannel dvbipChannel = channel as DVBIPChannel;
-      if (dvbipChannel == null)
+      AnalogChannel analogChannel = channel as AnalogChannel;
+      if (analogChannel != null && analogChannel.VideoSource != CaptureSourceVideo.Tuner)
       {
-        return;
+        TunerAnalog analogTuner = _tuner as TunerAnalog;
+        if (analogTuner != null)
+        {
+          return (List<IChannel>)analogTuner.GetSourceChannels();
+        }
+        return null;
       }
-
-      // Streams often don't have meaningful PSI. Just use the URL in those cases.
-      dvbipChannel.Name = dvbipChannel.Url;
+      return base.Scan(channel);
     }
   }
 }

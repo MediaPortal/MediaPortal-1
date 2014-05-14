@@ -18,37 +18,30 @@
 
 #endregion
 
-namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces
 {
   /// <summary>
-  /// Tuner in band electronic programme guide data grabber interface.
+  /// This interface defines extensions to the <see cref="IChannelScanner"/>
+  /// interface that we don't want to publicly expose.
   /// </summary>
-  public interface IEpgGrabber
+  internal interface IChannelScannerInternal : IChannelScanner
   {
     /// <summary>
-    /// Reload the grabber's configuration.
+    /// Set the scanner's tuner.
     /// </summary>
-    void ReloadConfiguration();
-
-    /// <summary>
-    /// Get the grabber's current status.
-    /// </summary>
-    /// <value><c>true</c> if the grabber is grabbing, otherwise <c>false</c></value>
-    bool IsEpgGrabbing
+    ITVCard Tuner
     {
-      get;
+      set;
     }
 
     /// <summary>
-    /// Start grabbing electronic programme guide data.
+    /// Set the scanner's helper.
     /// </summary>
-    /// <param name="tuningDetail">The current transponder/multiplex tuning details.</param>
-    /// <param name="callBack">The delegate to notify when grabbing is complete or canceled.</param>
-    void GrabEpg(IChannel tuningDetail, IEpgGrabberCallBack callBack);
-
-    /// <summary>
-    /// Abort grabbing electronic programme guide data.
-    /// </summary>
-    void AbortGrabbing();
+    IChannelScannerHelper Helper
+    {
+      set;
+    }
   }
 }

@@ -22,7 +22,9 @@ using System;
 using System.Collections.Generic;
 using DirectShowLib;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Dvb;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
@@ -36,7 +38,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
   /// A base implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> for tuners implemented
   /// using a DirectShow graph.
   /// </summary>
-  internal abstract class TunerDirectShowBase : TvCardBase
+  internal abstract class TunerDirectShowBase : TunerBase
   {
     #region variables
 
@@ -78,8 +80,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     /// Initialise a new instance of the <see cref="TunerDirectShowBase"/> class.
     /// </summary>
     /// <param name="device">The <see cref="DsDevice"/> instance to encapsulate.</param>
-    protected TunerDirectShowBase(DsDevice device)
-      : base(device.Name, device.DevicePath)
+    /// <param name="type">The tuner type.</param>
+    protected TunerDirectShowBase(DsDevice device, CardType type)
+      : base(device.Name, device.DevicePath, type)
     {
       _deviceMain = device;
       if (_deviceMain != null)
@@ -98,8 +101,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     /// </summary>
     /// <param name="name">The tuner's name.</param>
     /// <param name="externalId">The external identifier for the tuner.</param>
-    protected TunerDirectShowBase(string name, string externalId)
-      : base(name, externalId)
+    /// <param name="type">The tuner type.</param>
+    protected TunerDirectShowBase(string name, string externalId, CardType type)
+      : base(name, externalId, type)
     {
     }
 
@@ -124,16 +128,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       }
     }
 
-    #region subchannel management
+    #region sub-channel management
 
     /// <summary>
-    /// Allocate a new subchannel instance.
+    /// Allocate a new sub-channel instance.
     /// </summary>
-    /// <param name="id">The identifier for the subchannel.</param>
-    /// <returns>the new subchannel instance</returns>
+    /// <param name="id">The identifier for the sub-channel.</param>
+    /// <returns>the new sub-channel instance</returns>
     public override ITvSubChannel CreateNewSubChannel(int id)
     {
-      return new Mpeg2SubChannel(id, _filterTsWriter as ITsFilter);
+      return new SubChannelMpeg2Ts(id, _filterTsWriter as ITsFilter);
     }
 
     #endregion
@@ -199,8 +203,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     /// </summary>
     protected void CompleteGraph()
     {
-      FilterGraphTools.SaveGraphFile(_graph, Name + " - " + _tunerType + " Graph.grf");
-      _channelScanner = new ScannerMpeg2TsBase(this, _filterTsWriter as ITsChannelScan);
+      FilterGraphTools.SaveGraphFile(_graph, Name + " - " + TunerType + " Graph.grf");
+      _channelScanner = new ChannelScannerDirectShowBase(this, new ChannelScannerHelperDvb(), _filterTsWriter as ITsChannelScan);
       _epgGrabber = new EpgGrabberDirectShow(_filterTsWriter as ITsEpgScanner);
     }
 

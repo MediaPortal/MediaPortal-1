@@ -53,7 +53,7 @@ namespace Mediaportal.TV.TvPlugin.Teletext
     {
       SaveSettings();
       Join();
-      TVHome.Card.GrabTeletext = false;
+      // TODO reimplement in TV plugin library TVHome.Card.GrabTeletext = false;
       GUILayerManager.UnRegisterLayer(this);
       GUIGraphicsContext.IsFullScreenVideo = _isFullScreenVideo;
       base.OnPageDestroy(newWindowId);

@@ -2072,7 +2072,7 @@ namespace Mediaportal.TV.TvPlugin
 
       UpdateProgressPercentageBar();
 
-      bool hasTeletext = (!Connected || Card.HasTeletext) && (playbackStarted);
+      bool hasTeletext = (!Connected || false /* TODO reimplement in TV plugin library Card.HasTeletext*/) && (playbackStarted);
       btnTeletext.IsVisible = hasTeletext;
     }
 
@@ -2087,7 +2087,7 @@ namespace Mediaportal.TV.TvPlugin
 
       UpdateProgressPercentageBar();
 
-      bool hasTeletext = (!Connected || Card.HasTeletext) && (isTimeShiftingTV);
+      bool hasTeletext = (!Connected || false /* TODO reimplement in TV plugin library Card.HasTeletext*/) && (isTimeShiftingTV);
       btnTeletext.IsVisible = hasTeletext;
     }
 

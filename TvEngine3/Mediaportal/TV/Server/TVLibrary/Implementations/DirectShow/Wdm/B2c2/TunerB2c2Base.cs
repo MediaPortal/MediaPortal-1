@@ -1378,8 +1378,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     /// Initialise a new instance of the <see cref="TunerB2c2Base"/> class.
     /// </summary>
     /// <param name="info">The B2C2-specific information (<see cref="DeviceInfo"/>) about the tuner.</param>
-    public TunerB2c2Base(DeviceInfo info)
-      : base(info.ProductName, "B2C2 tuner " + info.DeviceId)
+    /// <param name="type">The tuner type.</param>
+    public TunerB2c2Base(DeviceInfo info, CardType type)
+      : base(info.ProductName, "B2C2 tuner " + info.DeviceId, type)
     {
       _deviceInfo = info;
     }
@@ -1628,20 +1629,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
         else
         {
           //Dump.DumpBinary(_generalBuffer, returnedByteCount);
-          TunerCapabilities capabilities = (TunerCapabilities)Marshal.PtrToStructure(buffer, typeof(TunerCapabilities));
-          this.LogDebug("  tuner type                = {0}", capabilities.TunerType);
-          this.LogDebug("  set constellation?        = {0}", capabilities.ConstellationSupported);
-          this.LogDebug("  set FEC rate?             = {0}", capabilities.FecSupported);
-          this.LogDebug("  min transponder frequency = {0} kHz", capabilities.MinTransponderFrequency);
-          this.LogDebug("  max transponder frequency = {0} kHz", capabilities.MaxTransponderFrequency);
-          this.LogDebug("  min tuner frequency       = {0} kHz", capabilities.MinTunerFrequency);
-          this.LogDebug("  max tuner frequency       = {0} kHz", capabilities.MaxTunerFrequency);
-          this.LogDebug("  min symbol rate           = {0} baud", capabilities.MinSymbolRate);
-          this.LogDebug("  max symbol rate           = {0} baud", capabilities.MaxSymbolRate);
-          this.LogDebug("  performance monitoring    = {0}", capabilities.PerformanceMonitoringCapabilities);
-          this.LogDebug("  lock time                 = {0} ms", capabilities.LockTime);
-          this.LogDebug("  kernel lock time          = {0} ms", capabilities.KernelLockTime);
-          this.LogDebug("  acquisition capabilities  = {0}", capabilities.AcquisitionCapabilities);
+          _capabilities = (TunerCapabilities)Marshal.PtrToStructure(buffer, typeof(TunerCapabilities));
+          this.LogDebug("  tuner type                = {0}", _capabilities.TunerType);
+          this.LogDebug("  set constellation?        = {0}", _capabilities.ConstellationSupported);
+          this.LogDebug("  set FEC rate?             = {0}", _capabilities.FecSupported);
+          this.LogDebug("  min transponder frequency = {0} kHz", _capabilities.MinTransponderFrequency);
+          this.LogDebug("  max transponder frequency = {0} kHz", _capabilities.MaxTransponderFrequency);
+          this.LogDebug("  min tuner frequency       = {0} kHz", _capabilities.MinTunerFrequency);
+          this.LogDebug("  max tuner frequency       = {0} kHz", _capabilities.MaxTunerFrequency);
+          this.LogDebug("  min symbol rate           = {0} baud", _capabilities.MinSymbolRate);
+          this.LogDebug("  max symbol rate           = {0} baud", _capabilities.MaxSymbolRate);
+          this.LogDebug("  performance monitoring    = {0}", _capabilities.PerformanceMonitoringCapabilities);
+          this.LogDebug("  lock time                 = {0} ms", _capabilities.LockTime);
+          this.LogDebug("  kernel lock time          = {0} ms", _capabilities.KernelLockTime);
+          this.LogDebug("  acquisition capabilities  = {0}", _capabilities.AcquisitionCapabilities);
         }
       }
       finally
@@ -1807,7 +1808,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       {
         return true;
       }
-      if (_tunerType != CardType.DvbS && _tunerType != CardType.DvbC)
+      if (TunerType != CardType.DvbS && TunerType != CardType.DvbC)
       {
         return false;
       }

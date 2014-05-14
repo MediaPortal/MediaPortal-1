@@ -313,7 +313,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     /// Try to determine if the capture source is a video or audio source.
     /// </summary>
     /// <param name="isVideoSource"><c>True</c> if the capture source is a video source.</param>
-    /// <param name="isVideoSource"><c>True</c> if the capture source is an audio source.</param>
+    /// <param name="isAudioSource"><c>True</c> if the capture source is an audio source.</param>
     private void IsVideoOrAudioSource(out bool isVideoSource, out bool isAudioSource)
     {
       this.LogDebug("WDM analog capture: is video or audio source");

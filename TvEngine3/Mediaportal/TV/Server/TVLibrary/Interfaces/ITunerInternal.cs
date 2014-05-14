@@ -31,9 +31,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
   {
     #region remove these
 
-    // TODO I'd like to remove these methods because this interface is intended to describe
-    // the functions that must be overriden/implemented in order to successfully reuse TvCardBase
-    // via inherritence... and in general these functions shouldn't or can't be overriden
+    // TODO I'd like to remove these methods because this interface is intended to describe the
+    // functions that must be overriden/implemented in order to successfully reuse TunerBase via
+    // inherritence... and in general these functions shouldn't or can't be overriden
 
     /// <summary>
     /// Set the tuner's group.
@@ -54,7 +54,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// <summary>
     /// Get the tuner's channel scanning interface.
     /// </summary>
-    ITVScanning ScanningInterface
+    IChannelScanner ChannelScanningInterface
     {
       get;
     }
@@ -90,10 +90,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     void PerformSignalStatusUpdate(bool onlyUpdateLock);
 
     /// <summary>
-    /// Allocate a new subchannel instance.
+    /// Allocate a new sub-channel instance.
     /// </summary>
-    /// <param name="id">The identifier for the subchannel.</param>
-    /// <returns>the new subchannel instance</returns>
+    /// <param name="id">The identifier for the sub-channel.</param>
+    /// <returns>the new sub-channel instance</returns>
     ITvSubChannel CreateNewSubChannel(int id);
 
     /// <summary>

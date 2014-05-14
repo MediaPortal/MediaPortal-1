@@ -35,6 +35,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.NetworkProvider;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Dvb;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
 {
@@ -109,9 +110,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// Initialise a new instance of the <see cref="TunerBdaBase"/> class.
     /// </summary>
     /// <param name="device">The <see cref="DsDevice"/> instance to encapsulate.</param>
-    /// <param name="externalId">The external identifier for the tuner.</param>
-    protected TunerBdaBase(DsDevice device, string externalId)
-      : base(device.Name, externalId)
+    /// <param name="externalId">The unique external identifier for the tuner.</param>
+    /// <param name="type">The tuner type.</param>
+    protected TunerBdaBase(DsDevice device, string externalId, CardType type)
+      : base(device.Name, externalId, type)
     {
       _deviceMain = device;
     }
@@ -166,9 +168,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// <summary>
     /// Tune to a specific channel.
     /// </summary>
-    /// <param name="subChannelId">The ID of the subchannel associated with the channel that is being tuned.</param>
+    /// <param name="subChannelId">The ID of the sub-channel associated with the channel that is being tuned.</param>
     /// <param name="channel">The channel to tune to.</param>
-    /// <returns>the subchannel associated with the tuned channel</returns>
+    /// <returns>the sub-channel associated with the tuned channel</returns>
     public override ITvSubChannel Tune(int subChannelId, IChannel channel)
     {
       ITvSubChannel subChannel = base.Tune(subChannelId, channel);

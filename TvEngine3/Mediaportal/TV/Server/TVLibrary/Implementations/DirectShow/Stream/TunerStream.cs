@@ -95,9 +95,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
     /// <param name="name">The tuner's name.</param>
     /// <param name="externalId">The external identifier for the tuner.</param>
     protected TunerStream(string name, string externalId)
-      : base(name, externalId)
+      : base(name, externalId, CardType.DvbIP)
     {
-      _tunerType = CardType.DvbIP;
       _defaultUrl = "udp://@0.0.0.0:1234";
       _sourceFilterClsid = typeof(MediaPortalStreamSource).GUID;
 
@@ -142,8 +141,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
       // Complete the graph.
       AddAndConnectTsWriterIntoGraph(lastFilter);
       CompleteGraph();
-
-      _channelScanner = new ScannerStream(this, _filterTsWriter as ITsChannelScan);
     }
 
     /// <summary>

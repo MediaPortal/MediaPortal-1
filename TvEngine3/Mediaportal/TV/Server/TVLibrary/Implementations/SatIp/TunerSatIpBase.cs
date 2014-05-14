@@ -24,9 +24,9 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Text.RegularExpressions;
 using System.Threading;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Dvb;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Rtsp;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
@@ -39,7 +39,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
   /// <summary>
   /// A base implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> for SAT>IP tuners.
   /// </summary>
-  internal abstract class TunerSatIpBase : TvCardBase, IMpeg2PidFilter
+  internal abstract class TunerSatIpBase : TunerBase, IMpeg2PidFilter
   {
     #region constants
 
@@ -122,9 +122,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     /// <param name="serverDescriptor">The server's UPnP device description.</param>
     /// <param name="sequenceNumber">A unique sequence number or index for this instance.</param>
     /// <param name="streamTuner">An internal tuner implementation, used for RTP stream reception.</param>
-    /// <param name="tunerType">A character describing the tuner type.</param>
-    public TunerSatIpBase(DeviceDescriptor serverDescriptor, int sequenceNumber, ITunerInternal streamTuner, char tunerType)
-      : base(serverDescriptor.FriendlyName + " Tuner " + sequenceNumber, serverDescriptor.DeviceUUID + sequenceNumber + tunerType)
+    /// <param name="type">The tuner type.</param>
+    public TunerSatIpBase(DeviceDescriptor serverDescriptor, int sequenceNumber, ITunerInternal streamTuner, CardType type)
+      : base(serverDescriptor.FriendlyName + " Tuner " + sequenceNumber, serverDescriptor.DeviceUUID + sequenceNumber + type.ToString()[type.ToString().Length - 1], type)
     {
       DVBIPChannel streamChannel = new DVBIPChannel();
       streamChannel.Url = "rtp://127.0.0.1";
@@ -319,13 +319,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
 
     #endregion
 
-    #region subchannel management
+    #region sub-channel management
 
     /// <summary>
-    /// Allocate a new subchannel instance.
+    /// Allocate a new sub-channel instance.
     /// </summary>
-    /// <param name="id">The identifier for the subchannel.</param>
-    /// <returns>the new subchannel instance</returns>
+    /// <param name="id">The identifier for the sub-channel.</param>
+    /// <returns>the new sub-channel instance</returns>
     public override ITvSubChannel CreateNewSubChannel(int id)
     {
       return _streamTuner.CreateNewSubChannel(id);
@@ -342,7 +342,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
       LoadExtensions(_serverDescriptor);
       _streamTuner.PerformLoading();
       _epgGrabber = _streamTuner.EpgGrabberInterface;
-      _channelScanner = new ScannerStreamWrapper(_streamTuner.ScanningInterface as IScannerInternal, this);
+      _channelScanner = _streamTuner.ChannelScanningInterface;
+      IChannelScannerInternal scanner = _channelScanner as IChannelScannerInternal;
+      if (scanner != null)
+      {
+        scanner.Tuner = this;
+        scanner.Helper = new ChannelScannerHelperDvb();
+      }
     }
 
     /// <summary>

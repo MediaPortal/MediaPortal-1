@@ -64,9 +64,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
     /// <param name="device">The <see cref="DsDevice"/> instance to encapsulate.</param>
     /// <param name="category">The device/filter category of <paramref name="device"/>.</param>
     public TunerAnalog(DsDevice device, Guid category)
-      : base(device)
+      : base(device, CardType.Analog)
     {
-      _tunerType = CardType.Analog;
       _mainDeviceCategory = category;
 
       if (category == FilterCategory.AMKSCrossbar)
@@ -184,19 +183,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
     /// <returns>a list of channels, one channel per source</returns>
     public IList<IChannel> GetSourceChannels()
     {
-     if (_state == TunerState.NotLoaded)
-      {
-        try
-        {
-          // TODO ideally we shouldn't be able to access this from here
-          Load();
-        }
-        catch (Exception ex)
-        {
-          this.LogWarn(ex, "WDM analog: failed to load, cannot get source channels");
-          return new List<IChannel>();
-        }
-      }
       if (_crossbar != null)
       {
         IList<AnalogChannel> channels = _crossbar.SourceChannels;
@@ -273,7 +259,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
       // Teletext scraping and RDS grabbing currently not supported.
       _epgGrabber = null;
 
-      _channelScanner = new ScannerAnalog(this, _filterTsWriter as ITsChannelScan);
+      _channelScanner = new ChannelScannerDirectShowAnalog(this, _filterTsWriter as ITsChannelScan);
     }
 
     /// <summary>

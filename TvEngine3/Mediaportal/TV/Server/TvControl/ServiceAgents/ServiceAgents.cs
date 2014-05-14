@@ -43,6 +43,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       GetOrCreateCustomServiceAgent<IScheduleService, ScheduleServiceAgent>();
       GetOrCreateCustomServiceAgent<ICanceledScheduleService, CanceledScheduleServiceAgent>();
       GetOrCreateCustomServiceAgent<IConflictService, ConflictServiceAgent>();
+      GetOrCreateCustomServiceAgent<IThumbnailService, ThumbnailServiceAgent>();
 
       GetOrCreateEventServiceAgent();
       GetOrCreateDiscovererServiceAgent();      
@@ -66,6 +67,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       AddCustomService<IScheduleService,ScheduleServiceAgent>();
       AddCustomService<ICanceledScheduleService,CanceledScheduleServiceAgent>();
       AddCustomService<IConflictService,ConflictServiceAgent>();
+      AddCustomService<IThumbnailService, ThumbnailServiceAgent>();
       
       AddEventService();
       AddDiscoveryService();
@@ -253,6 +255,14 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       }
     }
 
+    public IThumbnailService ThumbnailServiceAgent
+    {
+      get
+      {
+        return GetOrCreateCustomServiceAgent<IThumbnailService, ThumbnailServiceAgent>();
+      }
+    }
+
 
     public string Hostname
     {
@@ -415,6 +425,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       DisposeCustomServiceProxy<ICanceledScheduleService>();
       DisposeCustomServiceProxy<IConflictService>();
       DisposeCustomServiceProxy<IProgramCategoryService>();
+      DisposeCustomServiceProxy<IThumbnailService>();
 
       DisposeGenericServiceProxy<ISettingService>();
       DisposeGenericServiceProxy<IControllerService>();

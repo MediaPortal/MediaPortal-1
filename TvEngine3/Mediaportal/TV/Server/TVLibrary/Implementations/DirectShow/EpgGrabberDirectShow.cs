@@ -103,6 +103,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
         _epgScanner.IsMHWReady(out mhwReady);
         if (dvbReady == false || mhwReady == false)
         {
+          // This should never happen!
+          this.LogWarn("DirectShow EPG: not ready");
           return null;
         }
         uint titleCount;
@@ -112,8 +114,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
         _epgScanner.GetEPGChannelCount(out channelCount);
         dvbReady = channelCount > 0;
         List<EpgChannel> epgChannels = new List<EpgChannel>();
-        this.LogInfo("dvb:mhw ready MHW {0} titles found", titleCount);
-        this.LogInfo("dvb:dvb ready.EPG {0} channels", channelCount);
+        this.LogDebug("DirectShow EPG: ready, EIT channel(s) = {0}, MHW title(s) = {1}", channelCount, titleCount);
         if (mhwReady)
         {
           _epgScanner.GetMHWTitleCount(out titleCount);
@@ -385,9 +386,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     /// <returns></returns>
     public int OnEpgReceived()
     {
-      this.LogDebug("DirectShow base: EPG received");
+      this.LogDebug("DirectShow EPG: EPG received");
       if (_epgGrabberCallBack != null)
       {
+        // TODO Start thread to collect EPG data => avoid timeshifting EPG grabber glitch?
         _epgGrabberCallBack.OnEpgReceived(CollectEpgData());
       }
       _isEpgGrabbing = false;
@@ -403,17 +405,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     /// </summary>
     public void ReloadConfiguration()
     {
-      this.LogDebug("EPG DirectShow: reload configuration");
+      this.LogDebug("DirectShow EPG: reload configuration");
       _storeOnlyDataForCurrentTransponder = SettingsManagement.GetValue("generalGrapOnlyForSameTransponder", false);
     }
 
     /// <summary>
     /// Start grabbing electronic programme guide data.
     /// </summary>
+    /// <param name="tuningDetail">The current transponder/multiplex tuning details.</param>
     /// <param name="callBack">The delegate to notify when grabbing is complete or canceled.</param>
     public void GrabEpg(IChannel tuningDetail, IEpgGrabberCallBack callBack)
     {
-      this.LogDebug("DirectShow base: grab EPG");
+      this.LogDebug("DirectShow EPG: grab EPG");
       _currentTuningDetail = tuningDetail;
       _epgGrabberCallBack = callBack;
       _epgScanner.Reset();
@@ -440,7 +443,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     /// </summary>
     public void AbortGrabbing()
     {
-      this.LogDebug("DirectShow base: abort EPG grabbing");
+      this.LogDebug("DirectShow EPG: abort grabbing");
       _epgScanner.AbortGrabbing();
       if (_epgGrabberCallBack != null)
       {

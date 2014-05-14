@@ -23,13 +23,14 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations
 {
   /// <summary>
-  /// Base class for a sub channel of a tv card
+  /// Base class for a sub-channel of a tv card
   /// </summary>
-  internal abstract class BaseSubChannel : ITvSubChannel
+  internal abstract class SubChannelBase : ITvSubChannel
   {
     #region events
 
@@ -98,28 +99,38 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     protected DateTime _dateRecordingStarted;
 
     /// <summary>
-    /// ID of this subchannel
+    /// This sub-channel's unique identifier.
     /// </summary>
     protected int _subChannelId;
-
-    /// <summary>
-    /// Scanning parameters
-    /// </summary>
-    protected ScanParameters _parameters;
 
     /// <summary>
     /// A flag used by the TV service as a signal to abort the tuning process before it is completed.
     /// </summary>
     protected volatile bool _cancelTune;
 
+    /// <summary>
+    /// The minimum number of buffer files to use for time shifting.
+    /// </summary>
+    protected int _timeShiftFileCountMinimum = 6;
+
+    /// <summary>
+    /// The maximum number of buffer files to use for time shifting.
+    /// </summary>
+    protected int _timeShiftFileCountMaximum = 20;
+
+    /// <summary>
+    /// The size in bytes of each time shift buffer file.
+    /// </summary>
+    protected uint _timeShiftFileSize = 256 * 1024 * 1024;    // bytes
+
     #endregion
 
     #region constructor
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="BaseSubChannel"/> class.
+    /// Initializes a new instance of the <see cref="SubChannelBase"/> class.
     /// </summary>
-    protected BaseSubChannel(int subChannelId)
+    protected SubChannelBase(int subChannelId)
     {
       _cancelTune = false;
       _subChannelId = subChannelId;
@@ -127,6 +138,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       _recordingFileName = string.Empty;
       _dateRecordingStarted = DateTime.MinValue;
       _dateTimeShiftStarted = DateTime.MinValue;
+      ReloadConfiguration();
     }
 
     #endregion
@@ -134,9 +146,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     #region properties
 
     /// <summary>
-    /// Gets the sub channel id.
+    /// Gets the sub-channel id.
     /// </summary>
-    /// <value>The sub channel id.</value>
+    /// <value>The sub-channel id.</value>
     public int SubChannelId
     {
       get { return _subChannelId; }
@@ -201,16 +213,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       set { _currentChannel = value; }
     }
 
-    /// <summary>
-    /// Gets or sets the parameters.
-    /// </summary>
-    /// <value>The parameters.</value>
-    public ScanParameters Parameters
-    {
-      get { return _parameters; }
-      set { _parameters = value; }
-    }
-
     #endregion
 
     #region timeshifting and recording
@@ -222,7 +224,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <returns></returns>
     public bool StartTimeShifting(string fileName)
     {
-      this.LogDebug("BaseSubChannel: subchannel {0} start timeshifting to {1}", _subChannelId, fileName);
+      this.LogDebug("sub-channel base: sub-channel {0} start timeshifting to {1}", _subChannelId, fileName);
       try
       {
         OnStartTimeShifting(fileName);
@@ -231,7 +233,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       }
       catch (Exception ex)
       {
-        this.LogError(ex, "BaseSubChannel: failed to start timeshifting");
+        this.LogError(ex, "sub-channel base: failed to start timeshifting");
         StopTimeShifting();
         return false;
       }
@@ -245,7 +247,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <returns></returns>
     public bool StopTimeShifting()
     {
-      this.LogDebug("BaseSubChannel: subchannel {0} stop timeshifting", _subChannelId);
+      this.LogDebug("sub-channel base: sub-channel {0} stop timeshifting", _subChannelId);
       OnStopTimeShifting();
       _timeshiftFileName = string.Empty;
       _dateTimeShiftStarted = DateTime.MinValue;
@@ -259,7 +261,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <returns></returns>
     public bool StartRecording(string fileName)
     {
-      this.LogDebug("BaseSubChannel: subchannel {0} start recording to {1}", _subChannelId, fileName);
+      this.LogDebug("sub-channel base: sub-channel {0} start recording to {1}", _subChannelId, fileName);
       try
       {
         OnStartRecording(fileName);
@@ -268,7 +270,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       }
       catch (Exception ex)
       {
-        this.LogError(ex, "BaseSubChannel: failed to start recording");
+        this.LogError(ex, "sub-channel base: failed to start recording");
         StopRecording();
         return false;
       }
@@ -282,7 +284,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <returns></returns>
     public bool StopRecording()
     {
-      this.LogDebug("BaseSubChannel: subchannel {0} stop recording", _subChannelId);
+      this.LogDebug("sub-channel base: sub-channel {0} stop recording", _subChannelId);
       OnStopRecording();
       _recordingFileName = string.Empty;
       _dateRecordingStarted = DateTime.MinValue;
@@ -304,7 +306,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     public virtual void CancelTune()
     {
-      this.LogDebug("BaseSubChannel: subchannel {0} cancel tune", _subChannelId);
+      this.LogDebug("sub-channel base: sub-channel {0} cancel tune", _subChannelId);
       _cancelTune = true;
     }
 
@@ -346,11 +348,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     #region public helper
 
     /// <summary>
-    /// Decomposes the sub channel
+    /// Decomposes the sub-channel
     /// </summary>
     public void Decompose()
     {
-      this.LogDebug("BaseSubChannel: subchannel {0} decompose", _subChannelId);
+      this.LogDebug("sub-channel base: sub-channel {0} decompose", _subChannelId);
 
       if (IsRecording)
       {
@@ -432,5 +434,24 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     public abstract bool IsReceivingAudioVideo { get; }
 
     #endregion
+
+    /// <summary>
+    /// Reload the sub-channel's configuration.
+    /// </summary>
+    public virtual void ReloadConfiguration()
+    {
+      this.LogDebug("sub-channel base: reload configuration");
+      _timeShiftFileCountMinimum = SettingsManagement.GetValue("timeshiftMinFiles", 6);
+      _timeShiftFileCountMaximum = SettingsManagement.GetValue("timeshiftMaxFiles", 20);
+      _timeShiftFileSize = (uint)SettingsManagement.GetValue("timeshiftMaxFileSize", 256);
+      _timeShiftFileSize *= (1024 * 1024);  // convert MB to bytes
+    }
+
+    /// <summary>
+    /// Fetch stream quality information from TsWriter.
+    /// </summary>   
+    /// <param name="totalBytes">The number of packets processed.</param>    
+    /// <param name="discontinuityCounter">The number of stream discontinuities.</param>
+    public abstract void GetStreamQualityCounters(out int totalBytes, out int discontinuityCounter);
   }
 }

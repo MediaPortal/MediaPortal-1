@@ -32,50 +32,47 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPageApplication = new System.Windows.Forms.TabPage();
-      this.groupBox8 = new MPGroupBox();
-      this.lblPriority = new MPLabel();
-      this.mpComboBoxPrio = new MPComboBox();
-      this.groupBox6 = new MPGroupBox();
-      this.label45 = new MPLabel();
-      this.label44 = new MPLabel();
+      this.groupBox8 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.lblPriority = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpComboBoxPrio = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
+      this.groupBox6 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.label45 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label44 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.delayDetectUpDown = new System.Windows.Forms.NumericUpDown();
       this.tabPageScan = new System.Windows.Forms.TabPage();
-      this.numericUpDownAnalog = new System.Windows.Forms.NumericUpDown();
-      this.label21 = new MPLabel();
-      this.groupBox4 = new MPGroupBox();
-      this.checkBoxEnableLinkageScanner = new MPCheckBox();
-      this.label24 = new MPLabel();
-      this.groupBox1 = new MPGroupBox();
+      this.groupBox4 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.checkBoxEnableLinkageScanner = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.groupBox1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
       this.numericUpDownSDT = new System.Windows.Forms.NumericUpDown();
       this.numericUpDownPMT = new System.Windows.Forms.NumericUpDown();
       this.numericUpDownCAT = new System.Windows.Forms.NumericUpDown();
       this.numericUpDownPAT = new System.Windows.Forms.NumericUpDown();
       this.numericUpDownTune = new System.Windows.Forms.NumericUpDown();
-      this.label13 = new MPLabel();
-      this.label12 = new MPLabel();
-      this.label11 = new MPLabel();
-      this.label10 = new MPLabel();
-      this.label9 = new MPLabel();
-      this.label1 = new MPLabel();
-      this.label3 = new MPLabel();
-      this.label4 = new MPLabel();
-      this.label5 = new MPLabel();
-      this.label6 = new MPLabel();
+      this.label13 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label12 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label11 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label10 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label9 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label3 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label4 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label5 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label6 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.tabPageSoftwareEncoder = new System.Windows.Forms.TabPage();
       this.numericUpDownReuseLimit = new System.Windows.Forms.NumericUpDown();
-      this.label2 = new MPLabel();
-      this.labelSoftwareEncoder = new MPLabel();
-      this.groupBoxVideo = new MPGroupBox();
-      this.buttonVideoDown = new MPButton();
-      this.buttonVideoUp = new MPButton();
+      this.label2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelSoftwareEncoder = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.groupBoxVideo = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.buttonVideoDown = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.buttonVideoUp = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.mpListViewVideo = new System.Windows.Forms.DataGridView();
       this.columnHeaderVideoInstalled = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.columnHeaderVideoPriority = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.columnHeaderVideoName = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.columnHeaderVideoReusable = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-      this.groupBoxAudio = new MPGroupBox();
-      this.buttonAudioDown = new MPButton();
-      this.buttonAudioUp = new MPButton();
+      this.groupBoxAudio = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.buttonAudioDown = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.buttonAudioUp = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.mpListViewAudio = new System.Windows.Forms.DataGridView();
       this.columnHeaderAudioInstalled = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.columnHeaderAudioPriority = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -87,7 +84,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBox6.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.delayDetectUpDown)).BeginInit();
       this.tabPageScan.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAnalog)).BeginInit();
       this.groupBox4.SuspendLayout();
       this.groupBox1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSDT)).BeginInit();
@@ -136,6 +132,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox8.Controls.Add(this.lblPriority);
       this.groupBox8.Controls.Add(this.mpComboBoxPrio);
+      this.groupBox8.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox8.Location = new System.Drawing.Point(6, 6);
       this.groupBox8.Name = "groupBox8";
       this.groupBox8.Size = new System.Drawing.Size(464, 50);
@@ -169,6 +166,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBox6.Controls.Add(this.label45);
       this.groupBox6.Controls.Add(this.label44);
       this.groupBox6.Controls.Add(this.delayDetectUpDown);
+      this.groupBox6.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox6.Location = new System.Drawing.Point(6, 62);
       this.groupBox6.Name = "groupBox6";
       this.groupBox6.Size = new System.Drawing.Size(464, 107);
@@ -210,10 +208,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // tabPageScan
       // 
-      this.tabPageScan.Controls.Add(this.numericUpDownAnalog);
-      this.tabPageScan.Controls.Add(this.label21);
       this.tabPageScan.Controls.Add(this.groupBox4);
-      this.tabPageScan.Controls.Add(this.label24);
       this.tabPageScan.Controls.Add(this.groupBox1);
       this.tabPageScan.Location = new System.Drawing.Point(4, 22);
       this.tabPageScan.Name = "tabPageScan";
@@ -223,37 +218,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabPageScan.Text = "Scan";
       this.tabPageScan.UseVisualStyleBackColor = true;
       // 
-      // numericUpDownAnalog
-      // 
-      this.numericUpDownAnalog.Location = new System.Drawing.Point(95, 155);
-      this.numericUpDownAnalog.Maximum = new decimal(new int[] {
-            3600,
-            0,
-            0,
-            0});
-      this.numericUpDownAnalog.Name = "numericUpDownAnalog";
-      this.numericUpDownAnalog.Size = new System.Drawing.Size(88, 20);
-      this.numericUpDownAnalog.TabIndex = 22;
-      this.numericUpDownAnalog.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-      this.numericUpDownAnalog.Value = new decimal(new int[] {
-            20,
-            0,
-            0,
-            0});
-      // 
-      // label21
-      // 
-      this.label21.AutoSize = true;
-      this.label21.Location = new System.Drawing.Point(189, 157);
-      this.label21.Name = "label21";
-      this.label21.Size = new System.Drawing.Size(29, 13);
-      this.label21.TabIndex = 21;
-      this.label21.Text = "secs";
-      // 
       // groupBox4
       // 
       this.groupBox4.Controls.Add(this.checkBoxEnableLinkageScanner);
-      this.groupBox4.Location = new System.Drawing.Point(6, 195);
+      this.groupBox4.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBox4.Location = new System.Drawing.Point(6, 168);
       this.groupBox4.Name = "groupBox4";
       this.groupBox4.Size = new System.Drawing.Size(221, 46);
       this.groupBox4.TabIndex = 18;
@@ -272,15 +241,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.checkBoxEnableLinkageScanner.Text = "Enabled";
       this.checkBoxEnableLinkageScanner.UseVisualStyleBackColor = true;
       // 
-      // label24
-      // 
-      this.label24.AutoSize = true;
-      this.label24.Location = new System.Drawing.Point(12, 157);
-      this.label24.Name = "label24";
-      this.label24.Size = new System.Drawing.Size(43, 13);
-      this.label24.TabIndex = 20;
-      this.label24.Text = "Analog:";
-      // 
       // groupBox1
       // 
       this.groupBox1.Controls.Add(this.numericUpDownSDT);
@@ -298,9 +258,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBox1.Controls.Add(this.label4);
       this.groupBox1.Controls.Add(this.label5);
       this.groupBox1.Controls.Add(this.label6);
+      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox1.Location = new System.Drawing.Point(6, 6);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(221, 183);
+      this.groupBox1.Size = new System.Drawing.Size(221, 156);
       this.groupBox1.TabIndex = 15;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Scanning";
@@ -512,7 +473,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.label2.AutoSize = true;
       this.label2.Location = new System.Drawing.Point(19, 377);
       this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(357, 13);
+      this.label2.Size = new System.Drawing.Size(352, 13);
       this.label2.TabIndex = 6;
       this.label2.Text = "Number of tuners each reusable encoder can be used with (0 = unlimited)";
       // 
@@ -531,6 +492,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxVideo.Controls.Add(this.buttonVideoDown);
       this.groupBoxVideo.Controls.Add(this.buttonVideoUp);
       this.groupBoxVideo.Controls.Add(this.mpListViewVideo);
+      this.groupBoxVideo.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxVideo.Location = new System.Drawing.Point(8, 31);
       this.groupBoxVideo.Name = "groupBoxVideo";
       this.groupBoxVideo.Size = new System.Drawing.Size(449, 162);
@@ -623,6 +585,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxAudio.Controls.Add(this.buttonAudioDown);
       this.groupBoxAudio.Controls.Add(this.buttonAudioUp);
       this.groupBoxAudio.Controls.Add(this.mpListViewAudio);
+      this.groupBoxAudio.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxAudio.Location = new System.Drawing.Point(8, 207);
       this.groupBoxAudio.Name = "groupBoxAudio";
       this.groupBoxAudio.Size = new System.Drawing.Size(449, 162);
@@ -725,8 +688,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBox6.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.delayDetectUpDown)).EndInit();
       this.tabPageScan.ResumeLayout(false);
-      this.tabPageScan.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAnalog)).EndInit();
       this.groupBox4.ResumeLayout(false);
       this.groupBox4.PerformLayout();
       this.groupBox1.ResumeLayout(false);
@@ -795,9 +756,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private System.Windows.Forms.DataGridViewCheckBoxColumn columnHeaderAudioReusable;
     private MPButton buttonAudioDown;
     private MPButton buttonAudioUp;
-    private System.Windows.Forms.NumericUpDown numericUpDownAnalog;
-    private MPLabel label21;
-    private MPLabel label24;
     private System.Windows.Forms.NumericUpDown numericUpDownReuseLimit;
     private MPLabel label2;
   }

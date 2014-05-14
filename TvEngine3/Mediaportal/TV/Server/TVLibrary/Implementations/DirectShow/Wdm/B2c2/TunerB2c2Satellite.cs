@@ -50,23 +50,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     private bool _isRawDiseqcSupported = false;
 
     /// <summary>
-    /// Enable or disable always sending DiSEqC commands.
+    /// A buffer used for sending DiSEqC commands.
     /// </summary>
-    /// <remarks>
-    /// DiSEqC commands are usually only sent when changing to a channel on a different switch port or at a
-    /// different positioner location. Enabling this option will cause DiSEqC commands to be sent on each
-    /// channel change.
-    /// </remarks>
-    private bool _alwaysSendDiseqcCommands = false;
-
-    /// <summary>
-    /// The number of times to repeat DiSEqC commands.
-    /// </summary>
-    /// <remarks>
-    /// When set to zero, commands are sent once; when set to one, commands are sent twice... etc.
-    /// </remarks>
-    private ushort _diseqcCommandRepeatCount = 0;
-
     private IntPtr _diseqcBuffer = IntPtr.Zero;
 
     #endregion
@@ -74,11 +59,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     /// <summary>
     /// Initialise a new instance of the <see cref="TunerB2c2Satellite"/> class.
     /// </summary>
-    /// <param name="info">The B2C2-specific information (<see cref="DeviceInfo"/>) about the tuner.</param>
+    /// <param name="info">The B2C2-specific information (<see cref="TunerB2c2Base.DeviceInfo"/>) about the tuner.</param>
     public TunerB2c2Satellite(DeviceInfo info)
-      : base(info)
+      : base(info, CardType.DvbS)
     {
-      _tunerType = CardType.DvbS;
     }
 
     /// <summary>

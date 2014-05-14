@@ -83,10 +83,12 @@
     <Compile Include="..\..\..\..\..\Common-MP-TVE3\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
+    <Compile Include="Implementations\Analog\ChannelScannerHelperAnalog.cs" />
+    <Compile Include="Implementations\Atsc\ChannelScannerHelperAtsc.cs" />
     <Compile Include="Implementations\DirectShow\EpgGrabberDirectShow.cs" />
     <Compile Include="Implementations\Dri\TunerDri.cs" />
     <Compile Include="Implementations\DirectShow\Pbda\TunerPbdaCableCard.cs" />
-    <Compile Include="Implementations\SatIp\ScannerStreamWrapper.cs" />
+    <Compile Include="Implementations\Dvb\ChannelScannerHelperDvb.cs" />
     <Compile Include="Implementations\SatIp\TunerSatIpCable.cs" />
     <Compile Include="Implementations\SatIp\TunerSatIpBase.cs" />
     <Compile Include="Implementations\SatIp\TunerSatIpSatellite.cs" />
@@ -115,7 +117,7 @@
     <Compile Include="Implementations\Dri\Enum\EncoderVideoFrameRate.cs" />
     <Compile Include="Implementations\Dri\Enum\SecurityPairingStatus.cs" />
     <Compile Include="Implementations\Dri\Enum\TunerModulation.cs" />
-    <Compile Include="Implementations\Dri\ScannerDri.cs" />
+    <Compile Include="Implementations\Dri\ChannelScannerDri.cs" />
     <Compile Include="Implementations\Dri\Service\ServiceAux.cs" />
     <Compile Include="Implementations\Dri\Service\ServiceCas.cs" />
     <Compile Include="Implementations\Dri\Service\ServiceDiag.cs" />
@@ -132,16 +134,15 @@
     <Compile Include="Implementations\DirectShow\Wdm\B2c2\TunerB2c2Terrestrial.cs" />
     <Compile Include="Implementations\DirectShow\Wdm\B2c2\TunerB2c2Satellite.cs" />
     <Compile Include="Implementations\DirectShow\Wdm\Analog\TunerAnalog.cs" />
-    <Compile Include="Implementations\BaseSubChannel.cs" />
+    <Compile Include="Implementations\SubChannelBase.cs" />
     <Compile Include="Implementations\Helper\TunerExtensionLoader.cs" />
     <Compile Include="Implementations\DiseqcController.cs" />
     <Compile Include="Implementations\DirectShow\TunerDirectShowBase.cs" />
     <Compile Include="Implementations\Rtsp\RtspClient.cs" />
-    <Compile Include="Implementations\Mpeg2Ts\ScannerDirectShowBase.cs" />
-    <Compile Include="Implementations\Mpeg2Ts\ScannerStream.cs" />
+    <Compile Include="Implementations\DirectShow\ChannelScannerDirectShowBase.cs" />
     <Compile Include="Implementations\DirectShow\Stream\TunerStream.cs" />
     <Compile Include="Implementations\DirectShow\Stream\TunerStreamElecard.cs" />
-    <Compile Include="Implementations\Mpeg2Ts\Mpeg2TunerController.cs" />
+    <Compile Include="Implementations\Mpeg2Ts\SubChannelManagerMpeg2Ts.cs" />
     <Compile Include="Implementations\Rtsp\RtspMethod.cs" />
     <Compile Include="Implementations\Rtsp\RtspRequest.cs" />
     <Compile Include="Implementations\Rtsp\RtspResponse.cs" />
@@ -154,10 +155,9 @@
     <Compile Include="Implementations\Scte\Parser\ParserSvct.cs" />
     <Compile Include="Implementations\Scte\TunerScteWrapper.cs" />
     <Compile Include="Implementations\TunerDetector.cs" />
-    <Compile Include="Implementations\Mpeg2SubChannel.cs" />
+    <Compile Include="Implementations\Mpeg2Ts\SubChannelMpeg2Ts.cs" />
     <Compile Include="Implementations\Helper\DevicesInUse.cs" />
-    <Compile Include="Implementations\Mpeg2Ts\ScannerAnalog.cs" />
-    <Compile Include="Implementations\Mpeg2Ts\ScannerDirectShowAtsc.cs" />
+    <Compile Include="Implementations\DirectShow\ChannelScannerDirectShowAnalog.cs" />
     <Compile Include="Implementations\DirectShow\Bda\TunerBdaAtsc.cs" />
     <Compile Include="Implementations\DirectShow\Bda\TunerBdaCable.cs" />
     <Compile Include="Implementations\DirectShow\Bda\TunerBdaSatellite.cs" />
@@ -167,7 +167,7 @@
     <Compile Include="Implementations\Helper\EncodersInUse.cs" />
     <Compile Include="Implementations\Helper\FilterGraphTools.cs" />
     <Compile Include="Implementations\TunerGroup.cs" />
-    <Compile Include="Implementations\TvCardBase.cs" />
+    <Compile Include="Implementations\TunerBase.cs" />
     <Compile Include="Implementations\Upnp\Enum\AvTransportState.cs" />
     <Compile Include="Implementations\Upnp\Enum\AvTransportRecordMediumWriteStatus.cs" />
     <Compile Include="Implementations\Upnp\Enum\AvTransportRecordQualityMode.cs" />
@@ -182,6 +182,7 @@
     <Compile Include="Implementations\Upnp\Service\ServiceAvTransport.cs" />
     <Compile Include="Implementations\Upnp\Service\ServiceBase.cs" />
     <Compile Include="Implementations\Upnp\Service\ServiceConnectionManager.cs" />
+    <Compile Include="Interfaces\IChannelScannerHelper.cs" />
     <Compile Include="Interfaces\IDVBNetworkProvider.cs" />
     <Compile Include="Interfaces\Analyzer\ITsCaGrabber.cs" />
     <Compile Include="Interfaces\Analyzer\ITsChannelLinkageScanner.cs" />
@@ -189,7 +190,8 @@
     <Compile Include="Interfaces\Analyzer\ITsEpgScanner.cs" />
     <Compile Include="Interfaces\Analyzer\ITsFilter.cs" />
     <Compile Include="Interfaces\Analyzer\ITsChannelScan.cs" />
-    <Compile Include="Interfaces\IScannerInternal.cs" />
+    <Compile Include="Interfaces\IChannelScannerInternal.cs" />
+    <Compile Include="Interfaces\IChannelScannerMpeg2Ts.cs" />
     <Compile Include="Interfaces\ITsMultiplexer.cs" />
     <Compile Include="Interfaces\Analyzer\ITsPmtGrabber.cs" />
     <Compile Include="Interfaces\Analyzer\IVideoAudioObserver.cs" />

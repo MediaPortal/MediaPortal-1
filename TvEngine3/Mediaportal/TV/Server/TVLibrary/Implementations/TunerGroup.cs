@@ -26,6 +26,10 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations
 {
+  /// <summary>
+  /// An implementation of <see cref="ITunerGroup"/>, used to support multi-mode and hybrid
+  /// tuners.
+  /// </summary>
   internal class TunerGroup : ITunerGroup
   {
     #region variables
@@ -40,8 +44,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// Initialise a new instance of the <see cref="TunerGroup"/> class.
     /// </summary>
-    /// <param name="dbGroup">The tuner's name.</param>
-    /// <param name="externalId">The external identifier for the tuner.</param>
+    /// <param name="dbGroup">The database settings for the group.</param>
     public TunerGroup(CardGroup dbGroup)
     {
       _databaseTunerGroup = dbGroup;
@@ -129,6 +132,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       }
     }
 
+    /// <summary>
+    /// Get the tuner group's members.
+    /// </summary>
     public ReadOnlyCollection<ITVCard> Tuners
     {
       get

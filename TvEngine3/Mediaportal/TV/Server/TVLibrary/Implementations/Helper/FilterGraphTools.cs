@@ -100,7 +100,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
     /// </summary>
     /// <param name="graph">The graph.</param>
     /// <param name="device">The device.</param>
-    /// <param name="filterName">The name or label to use for the filter.</param>
+    /// <param name="name">The name or label to use for the filter.</param>
     /// <returns>the instance of the filter if the method successfully created it, otherwise <c>null</c></returns>
     public static IBaseFilter AddFilterFromDevice(IFilterGraph2 graph, DsDevice device, string name = null)
     {

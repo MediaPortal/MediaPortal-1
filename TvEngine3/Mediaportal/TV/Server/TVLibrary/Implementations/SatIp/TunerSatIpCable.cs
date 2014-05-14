@@ -42,9 +42,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     /// <param name="sequenceNumber">A unique sequence number or index for this instance.</param>
     /// <param name="streamTuner">An internal tuner implementation, used for RTP stream reception.</param>
     public TunerSatIpCable(DeviceDescriptor serverDescriptor, int sequenceNumber, ITunerInternal streamTuner)
-      : base(serverDescriptor, sequenceNumber, streamTuner, 'C')
+      : base(serverDescriptor, sequenceNumber, streamTuner, CardType.DvbC)
     {
-      _tunerType = CardType.DvbC;
     }
 
     #endregion

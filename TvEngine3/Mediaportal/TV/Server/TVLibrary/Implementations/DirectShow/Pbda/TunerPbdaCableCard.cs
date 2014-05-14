@@ -73,7 +73,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
     public TunerPbdaCableCard(DsDevice device)
       : base(device)
     {
-      _tunerType = CardType.Atsc;
       _caMenuHandler = new CableCardMmiHandler(EnterMenu, CloseDialog);
 
       // CableCARD tuners are limited to one channel per tuner, even for
@@ -162,13 +161,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
         throw new TvException("Received request to tune incompatible channel.");
       }
 
+      // Tuning without a CableCARD (clear QAM) is currently not supported.
       SmartCardStatusType status;
       SmartCardAssociationType association;
       string error;
       bool isOutOfBandTunerLocked = false;
       int hr = _caInterface.get_SmartCardStatus(out status, out association, out error, out isOutOfBandTunerLocked);
       HResult.ThrowException(hr, "Failed to read smart card status.");
-      if (status != SmartCardStatusType.CardInserted || (IsScanning && !isOutOfBandTunerLocked) || !string.IsNullOrEmpty(error))
+      if (status != SmartCardStatusType.CardInserted || (_channelScanner.IsScanning && !isOutOfBandTunerLocked) || !string.IsNullOrEmpty(error))
       {
         this.LogError("PBDA CableCARD: smart card status");
         this.LogError("  status      = {0}", status);
@@ -178,7 +178,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
         throw new TvExceptionNoSignal();
       }
 
-      if (!IsScanning)
+      if (!_channelScanner.IsScanning)
       {
         hr = _caInterface.TuneByChannel((short)atscChannel.MajorChannel);
         HResult.ThrowException(hr, "Failed to tune channel.");
@@ -197,6 +197,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
       {
         return false;
       }
+      // Tuning without a CableCARD (clear QAM) is currently not supported.
       // Major channel holds the virtual channel number that we use for tuning.
       return atscChannel.MajorChannel > 0;
     }
@@ -373,7 +374,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
     /// <param name="onlyUpdateLock"><c>True</c> to only update lock status.</param>
     public override void PerformSignalStatusUpdate(bool onlyUpdateLock)
     {
-      if (IsScanning)
+      if (_channelScanner != null && _channelScanner.IsScanning)
       {
         // When scanning we need the OOB tuner to be locked. We already updated
         // the lock status when tuning, so only update again when monitoring.

@@ -32,12 +32,12 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
 {
   ///<summary>
-  /// A base class for digital services ("subchannels").
+  /// An <see cref="ITvSubChannel"/> implementation for MPEG 2 transport stream sub-channels (programs).
   ///</summary>
-  internal class Mpeg2SubChannel : BaseSubChannel, IPmtCallBack, ICaCallBack, IVideoAudioObserver
+  internal class SubChannelMpeg2Ts : SubChannelBase, IPmtCallBack, ICaCallBack, IVideoAudioObserver
   {
     #region variables
 
@@ -50,7 +50,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
 
     /// <summary>
     /// Set by the TsWriter OnPmtReceived() call back. Indicates whether the
-    /// service that this subchannel represents is currently active.
+    /// service that this sub-channel represents is currently active.
     /// </summary>
     private bool _isServiceRunning = false;
 
@@ -63,6 +63,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     /// The handle that links this sub-channel with a corresponding sub-channel instance in TsWriter.
     /// </summary>
     private int _subChannelIndex = -1;
+
+    /// <summary>
+    /// The maximum length of time to wait for the program map table.
+    /// </summary>
+    private int _timeOutProgramMapTable = 10000;        // milliseconds
+
+    /// <summary>
+    /// The maximum length of time to wait for the conditional access table.
+    /// </summary>
+    private int _timeOutConditionalAccessTable = 5000;  // milliseconds
 
     private Pmt _pmt;
     private Cat _cat;
@@ -89,11 +99,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     #region constructor
 
     /// <summary>
-    /// Initialise a new instance of the <see cref="Mpeg2SubChannel"/> class.
+    /// Initialise a new instance of the <see cref="SubChannelMpeg2Ts"/> class.
     /// </summary>
-    /// <param name="subChannelId">The subchannel ID to associate with this instance.</param>
+    /// <param name="subChannelId">The sub-channel ID to associate with this instance.</param>
     /// <param name="tsWriter">The TsWriter filter instance used to perform/implement timeshifting and recording.</param>
-    public Mpeg2SubChannel(int subChannelId, ITsFilter tsWriter)
+    public SubChannelMpeg2Ts(int subChannelId, ITsFilter tsWriter)
       : base(subChannelId)
     {
       _eventPmt = new ManualResetEvent(false);
@@ -102,13 +112,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       _subChannelIndex = -1;
       _tsFilterInterface = tsWriter;
       _tsFilterInterface.AddChannel(ref _subChannelIndex);
-      this.LogDebug("MPEG 2 sub-channel: new subchannel {0} index {1}", _subChannelId, _subChannelIndex);
+      this.LogDebug("MPEG 2 sub-channel: new sub-channel {0} index {1}", _subChannelId, _subChannelIndex);
     }
 
     /// <summary>
     /// Destructor
     /// </summary>
-    ~Mpeg2SubChannel()
+    ~SubChannelMpeg2Ts()
     {
       if (_eventPmt != null)
       {
@@ -209,7 +219,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     protected bool WaitForPmt(int serviceId, int pmtPid)
     {
       ThrowExceptionIfTuneCancelled();
-      this.LogDebug("MPEG 2 sub-channel: subchannel {0} wait for PMT, service ID = {1}, PMT PID = {2}", _subChannelId, serviceId, pmtPid);
+      this.LogDebug("MPEG 2 sub-channel: sub-channel {0} wait for PMT, service ID = {1}, PMT PID = {2}", _subChannelId, serviceId, pmtPid);
 
       // There 3 classes of service ID settings:
       // -1 = Scanning behaviour, where we don't care about PMT.
@@ -266,7 +276,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
         _eventPmt.Reset();
         DateTime dtStartWait = DateTime.Now;
         ThrowExceptionIfTuneCancelled();
-        pmtFound = _eventPmt.WaitOne(_parameters.TimeOutPMT * 1000, true);
+        pmtFound = _eventPmt.WaitOne(_timeOutProgramMapTable, true);
         ThrowExceptionIfTuneCancelled();
         waitLength = DateTime.Now - dtStartWait;
         if (!pmtFound)
@@ -314,7 +324,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     /// </summary>
     public override void OnGraphRunning()
     {
-      this.LogDebug("MPEG 2 sub-channel: subchannel {0} OnGraphRunning()", _subChannelId);
+      this.LogDebug("MPEG 2 sub-channel: sub-channel {0} OnGraphRunning()", _subChannelId);
 
       int programNumber = 0;
       int pmtPid = 0;
@@ -396,8 +406,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       {
         this.LogDebug("Set video / audio observer");
         _tsFilterInterface.SetVideoAudioObserver(_subChannelIndex, this);
-        _tsFilterInterface.TimeShiftSetParams(_subChannelIndex, _parameters.MinimumFiles, _parameters.MaximumFiles,
-                                              _parameters.MaximumFileSize);
+        _tsFilterInterface.TimeShiftSetParams(_subChannelIndex, _timeShiftFileCountMinimum, _timeShiftFileCountMaximum, _timeShiftFileSize);
         _tsFilterInterface.TimeShiftSetTimeShiftingFileNameW(_subChannelIndex, fileName);
 
         if (CurrentChannel == null)
@@ -447,7 +456,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     /// </summary>
     public override void CancelTune()
     {
-      this.LogDebug("MPEG 2 sub-channel: subchannel {0} cancel tune", _subChannelId);
+      this.LogDebug("MPEG 2 sub-channel: sub-channel {0} cancel tune", _subChannelId);
       _cancelTune = true;
       if (_eventCat != null)
       {
@@ -513,7 +522,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       try
       {
         ThrowExceptionIfTuneCancelled();
-        this.LogDebug("MPEG 2 sub-channel: subchannel {0} build PID list", _subChannelId);
+        this.LogDebug("MPEG 2 sub-channel: sub-channel {0} build PID list", _subChannelId);
         if (_pmt == null)
         {
           this.LogError("MPEG 2 sub-channel: PMT not available");
@@ -637,7 +646,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     private bool HandlePmt()
     {
       ThrowExceptionIfTuneCancelled();
-      this.LogDebug("MPEG 2 sub-channel: subchannel {0} handle PMT", _subChannelId);
+      this.LogDebug("MPEG 2 sub-channel: sub-channel {0} handle PMT", _subChannelId);
 
       if (_currentChannel == null)
       {
@@ -700,7 +709,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     private void GrabCat()
     {
       ThrowExceptionIfTuneCancelled();
-      this.LogDebug("MPEG 2 sub-channel: subchannel {0} grab CAT", _subChannelId);
+      this.LogDebug("MPEG 2 sub-channel: sub-channel {0} grab CAT", _subChannelId);
       IntPtr catBuffer = Marshal.AllocCoTaskMem(Cat.MAX_SIZE);
       try
       {
@@ -708,7 +717,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
         _eventCat.Reset();
         _tsFilterInterface.CaSetCallBack(_subChannelIndex, this);
         _tsFilterInterface.CaReset(_subChannelIndex);
-        bool found = _eventCat.WaitOne(_parameters.TimeOutCAT * 1000, true);
+        bool found = _eventCat.WaitOne(_timeOutConditionalAccessTable, true);
         ThrowExceptionIfTuneCancelled();
         TimeSpan ts = DateTime.Now - dtNow;
         if (!found)
@@ -741,7 +750,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     /// </summary>   
     /// <param name="totalBytes">The number of packets processed.</param>    
     /// <param name="discontinuityCounter">The number of stream discontinuities.</param>
-    public void GetStreamQualityCounters(out int totalBytes, out int discontinuityCounter)
+    public override void GetStreamQualityCounters(out int totalBytes, out int discontinuityCounter)
     {
       discontinuityCounter = 0;
       totalBytes = 0;
@@ -781,7 +790,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     /// <returns></returns>
     public int OnCaReceived()
     {
-      this.LogDebug("MPEG 2 sub-channel: subchannel {0} OnCaReceived()", _subChannelId);
+      this.LogDebug("MPEG 2 sub-channel: sub-channel {0} OnCaReceived()", _subChannelId);
       if (_eventCat != null)
       {
         _eventCat.Set();
@@ -806,7 +815,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     /// <returns>an HRESULT indicating whether the PMT section was successfully handled</returns>
     public int OnPmtReceived(int pmtPid, int serviceId, bool isServiceRunning)
     {
-      this.LogDebug("MPEG 2 sub-channel: subchannel {0} OnPmtReceived(), PMT PID = {1}, service ID = {2}, is service running = {3}, dynamic = {4}",
+      this.LogDebug("MPEG 2 sub-channel: sub-channel {0} OnPmtReceived(), PMT PID = {1}, service ID = {2}, is service running = {3}, dynamic = {4}",
           _subChannelId, pmtPid, serviceId, isServiceRunning, _pmt != null);
       _pmtPid = pmtPid;
       _isServiceRunning = isServiceRunning;
@@ -875,5 +884,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     #endregion
 
     #endregion
+
+    /// <summary>
+    /// Reload the sub-channel's configuration.
+    /// </summary>
+    public override void ReloadConfiguration()
+    {
+      this.LogDebug("MPEG 2 sub-channel: reload configuration");
+      _timeOutConditionalAccessTable = SettingsManagement.GetValue("timeoutCAT", 5) * 1000;
+      _timeOutProgramMapTable = SettingsManagement.GetValue("timeoutPMT", 10) * 1000;
+      base.ReloadConfiguration();
+    }
   }
 }

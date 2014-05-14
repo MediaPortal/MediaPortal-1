@@ -50,8 +50,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     /// <param name="upstreamFilter">The upstream filter to connect the new filter to. This filter
     ///   should already be present in the graph.</param>
     /// <param name="productInstanceId">A <see cref="DsDevice"/> device path (<see
-    ///   cref="IMoniker"/> display name) section. Related filters share common sections. This
-    ///   parameter is used to prioritise filter candidates. <c>Null</c> is permitted.</param>
+    ///   cref="System.Runtime.InteropServices.ComTypes.IMoniker"/> display name) section. Related
+    ///   filters share common sections. This parameter is used to prioritise filter candidates.
+    ///   <c>Null</c> is permitted.</param>
     /// <param name="filter">The filter that was added to the graph. If a filter was not
     ///   successfully added this parameter will be <c>null</c>.</param>
     /// <param name="device">The <see cref="DsDevice"/> instance corresponding with the filter that

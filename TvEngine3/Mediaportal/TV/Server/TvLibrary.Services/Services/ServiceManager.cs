@@ -39,6 +39,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
         AddService<IRecordingService, RecordingService>();
         AddService<IScheduleService, ScheduleService>();
         AddService<IChannelGroupService, ChannelGroupService>();
+        AddService<IThumbnailService, ThumbnailService>();
         AddService<IControllerService, TvControllerService>();
         GlobalServiceProvider.Add<IInternalControllerService>(new TvController());
         AddEventService<IEventService, EventService>();
@@ -219,6 +220,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
     public IProgramCategoryService ProgramCategoryService
     {
       get { return GlobalServiceProvider.Get<IProgramCategoryService>(); }
+    }
+
+    public IThumbnailService ThumbnailService
+    {
+      get { return GlobalServiceProvider.Get<IThumbnailService>(); }
     }
 
     public IInternalControllerService InternalControllerService

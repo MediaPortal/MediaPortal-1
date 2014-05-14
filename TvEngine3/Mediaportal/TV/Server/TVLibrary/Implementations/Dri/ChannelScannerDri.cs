@@ -20,10 +20,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Atsc;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Service;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
@@ -36,7 +37,7 @@ using UPnP.Infrastructure.CP.DeviceTree;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
 {
-  internal class ScannerDri : IScannerInternal
+  internal class ChannelScannerDri : IChannelScannerInternal
   {
     private enum ScanStage
     {
@@ -63,6 +64,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
 
     private ITVCard _tuner = null;
     private ServiceFdc _fdcService = null;
+    private IChannelScannerHelper _scanHelper = null;
+    private bool _isScanning = false;
+    private int _scanTimeOut = 20000;   // milliseconds
 
     private volatile ScanStage _scanStage = ScanStage.NotScanning;
     private ManualResetEvent _event = null;
@@ -81,10 +85,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
 
     #endregion
 
-    public ScannerDri(ITVCard tuner, ServiceFdc fdcService)
+    public ChannelScannerDri(ITVCard tuner, ServiceFdc fdcService)
     {
       _tuner = tuner;
       _fdcService = fdcService;
+      _scanHelper = new ChannelScannerHelperAtsc();
     }
 
     #region delegates
@@ -236,14 +241,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
           break;
       }
       channel.FreeToAir = !accessControlled;
-      if (serviceType == AtscServiceType.Audio)
-      {
-        channel.MediaType = MediaTypeEnum.Radio;
-      }
-      else if (serviceType == AtscServiceType.DigitalTelevision)
-      {
-        channel.MediaType = MediaTypeEnum.TV;
-      }
+      channel.MediaType = _scanHelper.GetMediaType((int)serviceType, 0, 0).Value;
+
+      // TODO these two lines should be removed when ATSC channel gets a real LCN field
+      channel.MajorChannel = majorChannelNumber;
+      channel.MinorChannel = minorChannelNumber;
+
       if (minorChannelNumber == 0)
       {
         channel.LogicalChannelNumber = majorChannelNumber;
@@ -330,7 +333,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     #region IScannerInternal member
 
     /// <summary>
-    /// Set the scanner's _tuner.
+    /// Set the scanner's tuner.
     /// </summary>
     public virtual ITVCard Tuner
     {
@@ -340,9 +343,49 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       }
     }
 
+    /// <summary>
+    /// Set the scanner's helper.
+    /// </summary>
+    public IChannelScannerHelper Helper
+    {
+      set
+      {
+        _scanHelper = value;
+      }
+    }
+
     #endregion
 
-    public List<IChannel> Scan(IChannel channel, ScanParameters settings)
+    /// <summary>
+    /// Reload the scanner's configuration.
+    /// </summary>
+    public void ReloadConfiguration()
+    {
+      this.LogDebug("DRI scan: reload configuration");
+      _scanTimeOut = SettingsManagement.GetValue("timeoutSDT", 20) * 1000;
+    }
+
+    /// <summary>
+    /// Get the scanner's current status.
+    /// </summary>
+    /// <value><c>true</c> if the scanner is scanning, otherwise <c>false</c></value>
+    public bool IsScanning
+    {
+      get
+      {
+        return _isScanning;
+      }
+    }
+
+    /// <summary>
+    /// Abort scanning for channels.
+    /// </summary>
+    public void AbortScanning()
+    {
+      // TODO
+    }
+
+    public List<IChannel> Scan(IChannel channel)
     {
       _channels.Clear();
       _sourcesWithoutNames.Clear();
@@ -351,7 +394,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       _event = new ManualResetEvent(false);
       try
       {
-        _tuner.IsScanning = true;
+        _isScanning = true;
         _tuner.Tune(0, channel);
         _fdcService.SubscribeStateVariables(OnTableSection, OnEventSubscriptionFailed);
 
@@ -370,7 +413,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
         _parserNit.OnModulationMode += OnModulationMode;
         _parserNit.OnTableComplete += OnTableComplete;
         _event.Reset();
-        int availableTimeMilliseconds = _tuner.Parameters.TimeOutSDT * 1000;
+        int availableTimeMilliseconds = _scanTimeOut;
         bool completedStage = false;
         while (availableTimeMilliseconds > 0)
         {
@@ -444,30 +487,26 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
         if (_sourcesWithoutNames.Count > 0)
         {
           this.LogWarn("DRI scan: have {0} source(s) with missing names", _sourcesWithoutNames.Count);
-          foreach (int sourceId in _sourcesWithoutNames)
-          {
-            ATSCChannel atscChannel = _channels[sourceId];
-            if (atscChannel.MinorChannel != 0)
-            {
-              atscChannel.Name = string.Format("Unknown {0}-{1}", atscChannel.MajorChannel, atscChannel.MinorChannel);
-            }
-            else
-            {
-              atscChannel.Name = string.Format("Unknown {0} ({1}-{2})", atscChannel.LogicalChannelNumber, atscChannel.PhysicalChannel, atscChannel.ServiceId);
-            }
-          }
         }
+
+        List<IChannel> channels = new List<IChannel>();
+        foreach (ATSCChannel atscChannel in _channels.Values)
+        {
+          IChannel c = atscChannel as IChannel;
+          _scanHelper.UpdateChannel(ref c);
+          channels.Add(c);
+        }
+        return channels;
       }
       finally
       {
         _event.Close();
-        _tuner.IsScanning = false;
+        _isScanning = false;
         _fdcService.UnsubscribeStateVariables();
       }
-      return _channels.Values.ToList<IChannel>();
     }
 
-    public List<IChannel> ScanNIT(IChannel channel, ScanParameters settings)
+    public List<IChannel> ScanNIT(IChannel channel)
     {
       throw new NotImplementedException("DRI scan: NIT scanning not implemented");
     }

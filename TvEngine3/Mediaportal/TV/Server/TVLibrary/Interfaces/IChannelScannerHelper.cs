@@ -18,22 +18,28 @@
 
 #endregion
 
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces
 {
   /// <summary>
-  /// This interface defines extensions to the <see cref="ITVScanning"/>
-  /// interface that we don't want to publicly expose.
+  /// An interface - independent of tuner implementation - for channel scanning logic implementation.
   /// </summary>
-  internal interface IScannerInternal : ITVScanning
+  interface IChannelScannerHelper
   {
     /// <summary>
-    /// Set the scanner's tuner.
+    /// Set or modify channel detail.
     /// </summary>
-    ITVCard Tuner
-    {
-      set;
-    }
+    /// <param name="channel">The channel.</param>
+    void UpdateChannel(ref IChannel channel);
+
+    /// <summary>
+    /// Get the correct media type for a channel.
+    /// </summary>
+    /// <param name="serviceType">The service type.</param>
+    /// <param name="videoStreamCount">The number of video streams associated with the service.</param>
+    /// <param name="audioStreamCount">The number of audio streams associated with the service.</param>
+    MediaTypeEnum? GetMediaType(int serviceType, int videoStreamCount, int audioStreamCount);
   }
 }
