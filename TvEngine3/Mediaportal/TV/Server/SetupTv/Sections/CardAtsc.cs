@@ -41,12 +41,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class CardAtsc : SectionSettings
   {
-
     [Serializable]
     public class ATSCTuning
     {
       public int frequency; // frequency
-      public ATSCTuning() {}
+      public ATSCTuning() { }
 
       public ATSCTuning(int f)
       {
@@ -54,22 +53,22 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
     }
 
-    private readonly int _cardNumber;
+    private readonly int _cardId;
     private List<ATSCTuning> _atscChannels = new List<ATSCTuning>();
     private bool _isScanning;
     private bool _stopScanning;
     private FileFilters fileFilters;
 
     public CardAtsc()
-      : this("DVBC") {}
+      : this("ATSC") { }
 
     public CardAtsc(string name)
-      : base(name) {}
+      : base(name) { }
 
-    public CardAtsc(string name, int cardNumber)
+    public CardAtsc(string name, int cardId)
       : base(name)
     {
-      _cardNumber = cardNumber;
+      _cardId = cardId;
       InitializeComponent();
       base.Text = name;
       Init();
@@ -77,7 +76,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void Init()
     {
-      checkBoxQAM_CheckedChanged(null, null);
+      UpdateQamFrequencyFieldAvailability();
       mpComboBoxFrequencies.Items.Clear();
       try
       {
@@ -97,51 +96,48 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       base.OnSectionActivated();
       UpdateStatus();
-      checkBoxQAM.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("atsc" + _cardNumber + "supportsqam", false);
-      checkBoxQAM_CheckedChanged(null, null);
-      checkBoxQAM_CheckedChanged(null, null);
+      mpComboBoxTuningMode.SelectedItem = ServiceAgents.Instance.SettingServiceAgent.GetValue("atsc" + _cardId + "TuningMode", "ATSC Digital Terrestrial");
     }
 
     public override void OnSectionDeActivated()
     {
       base.OnSectionDeActivated();
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("atsc" + _cardNumber + "supportsqam", checkBoxQAM.Checked);      
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("atsc" + _cardId + "TuningMode", (string)mpComboBoxTuningMode.SelectedItem);
     }
 
     private void UpdateStatus()
     {
-      progressBarLevel.Value = Math.Min(100, ServiceAgents.Instance.ControllerServiceAgent.SignalLevel(_cardNumber));
-      progressBarQuality.Value = Math.Min(100, ServiceAgents.Instance.ControllerServiceAgent.SignalQuality(_cardNumber));
+      progressBarLevel.Value = Math.Min(100, ServiceAgents.Instance.ControllerServiceAgent.SignalLevel(_cardId));
+      progressBarQuality.Value = Math.Min(100, ServiceAgents.Instance.ControllerServiceAgent.SignalQuality(_cardId));
     }
 
     private void mpButtonScanTv_Click(object sender, EventArgs e)
     {
-      if (_isScanning == false)
+      if (!_isScanning)
       {
-        checkBoxQAM.Enabled = false;
+        mpComboBoxTuningMode.Enabled = false;
 
-        
-        Card card = ServiceAgents.Instance.CardServiceAgent.GetCard(_cardNumber);
-        if (card.Enabled == false)
+        Card card = ServiceAgents.Instance.CardServiceAgent.GetCard(_cardId);
+        if (!card.Enabled)
         {
           MessageBox.Show(this, "Tuner is disabled. Please enable the tuner before scanning.");
           return;
         }
-        if (!ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(card.IdCard))
+        if (!ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(_cardId))
         {
           MessageBox.Show(this, "Tuner is not found. Please make sure the tuner is present before scanning.");
           return;
         }
         // Check if the card is locked for scanning.
         IUser user;
-        if (ServiceAgents.Instance.ControllerServiceAgent.IsCardInUse(_cardNumber, out user))
+        if (ServiceAgents.Instance.ControllerServiceAgent.IsCardInUse(_cardId, out user))
         {
           MessageBox.Show(this,
                           "Tuner is locked. Scanning is not possible at the moment. Perhaps you are using another part of a hybrid card?");
           return;
         }
         SimpleFileName tuningFile = (SimpleFileName)mpComboBoxFrequencies.SelectedItem;
-        _atscChannels = (List<ATSCTuning>)fileFilters.LoadList(tuningFile.FileName, typeof (List<ATSCTuning>));
+        _atscChannels = (List<ATSCTuning>)fileFilters.LoadList(tuningFile.FileName, typeof(List<ATSCTuning>));
         if (_atscChannels == null)
         {
           return;
@@ -164,6 +160,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       int tvChannelsUpdated = 0;
       int radioChannelsUpdated = 0;
       string buttonText = mpButtonScanTv.Text;
+      IUser user = new User();
+      user.CardId = _cardId;
       try
       {
         _isScanning = true;
@@ -174,17 +172,19 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           return;
         mpComboBoxFrequencies.Enabled = false;
         listViewStatus.Items.Clear();
-        
-        Card card = ServiceAgents.Instance.CardServiceAgent.GetCard(_cardNumber);
-        IUser user = new User();
-        user.CardId = _cardNumber;
+
+        Card card = ServiceAgents.Instance.CardServiceAgent.GetCardByDevicePath(ServiceAgents.Instance.ControllerServiceAgent.CardDevice(_cardId));
         int minchan = 2;
-        int maxchan = 69;
-        //Check if QAM if so then the number of channels varies
-        if (checkBoxQAM.Checked)
+        int maxchan = 69 + 1;
+        if ((string)mpComboBoxTuningMode.SelectedItem == "Clear QAM Cable")
+        {
+          minchan = 1;
+          maxchan = _atscChannels.Count + 1;
+        }
+        else if ((string)mpComboBoxTuningMode.SelectedItem == "Digital Cable")
         {
           minchan = 0;
-          maxchan = _atscChannels.Count;
+          maxchan = 1;
         }
         for (int index = minchan; index < maxchan; ++index)
         {
@@ -201,59 +201,53 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           tuneChannel.ServiceId = -1;
           tuneChannel.MinorChannel = -1;
           tuneChannel.MajorChannel = -1;
-          if (checkBoxQAM.Checked)
+          string line;
+          if ((string)mpComboBoxTuningMode.SelectedItem == "Clear QAM Cable")
           {
-            this.LogDebug("ATSC tune: QAM checkbox selected... using Modulation 256Qam");
-            tuneChannel.PhysicalChannel = index + 1;
-            tuneChannel.Frequency = _atscChannels[index].frequency;
+            tuneChannel.PhysicalChannel = index;
+            tuneChannel.Frequency = _atscChannels[index - 1].frequency;
+            if (tuneChannel.Frequency < 10000)
+            {
+              continue;
+            }
             tuneChannel.ModulationType = ModulationType.Mod256Qam;
+            line = string.Format("physical channel = {0}, frequency = {1} kHz, modulation = 256 QAM", tuneChannel.PhysicalChannel, tuneChannel.Frequency);
+            this.LogInfo("ATSC: scanning clear QAM cable, {0}, frequency plan = {1}", line, mpComboBoxFrequencies.SelectedItem);
           }
-          else
+          else if ((string)mpComboBoxTuningMode.SelectedItem == "ATSC Digital Terrestrial")
           {
-            this.LogDebug("ATSC tune: QAM checkbox not selected... using Modulation 8Vsb");
             tuneChannel.PhysicalChannel = index;
             tuneChannel.Frequency = -1;
             tuneChannel.ModulationType = ModulationType.Mod8Vsb;
+            line = string.Format("physical channel = {0}, modulation = 8 VSB", tuneChannel.PhysicalChannel);
+            this.LogInfo("ATSC: scanning ATSC over-the-air, {0}", line);
           }
-          this.LogDebug("ATSC tune: PhysicalChannel: {0} Frequency: {1} Modulation: {2}", tuneChannel.PhysicalChannel,
-                        tuneChannel.Frequency, tuneChannel.ModulationType);
-          string line = String.Format("physical channel:{0} frequency:{1} modulation:{2}", tuneChannel.PhysicalChannel,
-                                      tuneChannel.Frequency, tuneChannel.ModulationType);
+          else
+          {
+            tuneChannel.PhysicalChannel = 0;
+            tuneChannel.ModulationType = ModulationType.Mod256Qam;
+            line = "out-of-band service information";
+            this.LogInfo("ATSC: scanning digital cable, {0}", line);
+          }
+          line += "... ";
           ListViewItem item = listViewStatus.Items.Add(new ListViewItem(line));
           item.EnsureVisible();
-          UpdateStatus();
           if (index == minchan)
           {
             ServiceAgents.Instance.ControllerServiceAgent.Scan(user.Name, user.CardId, out user, tuneChannel, -1);
-            UpdateStatus();
           }
-          IChannel[] channels = ServiceAgents.Instance.ControllerServiceAgent.Scan(_cardNumber, tuneChannel);
+          IChannel[] channels = ServiceAgents.Instance.ControllerServiceAgent.Scan(_cardId, tuneChannel);
           UpdateStatus();
-          /*if (channels == null || channels.Length == 0)
-          {
-            if (checkBoxQAM.Checked)
-            {
-              //try Modulation 64Qam now
-              tuneChannel.PhysicalChannel = index + 1;
-              tuneChannel.Frequency = _atscChannels[index].frequency;
-              tuneChannel.ModulationType = ModulationType.Mod64Qam;
-              line = String.Format("physical channel:{0} frequency:{1} modulation:{2}: No signal", tuneChannel.PhysicalChannel, tuneChannel.Frequency, tuneChannel.ModulationType);
-              item.Text = line;
-              channels = ServiceAgents.Instance.ControllerService.Scan(_cardNumber, tuneChannel);
-            }
-          }*/
           if (channels == null || channels.Length == 0)
           {
-            if (ServiceAgents.Instance.ControllerServiceAgent.TunerLocked(_cardNumber) == false)
+            if (tuneChannel.PhysicalChannel > 0 && !ServiceAgents.Instance.ControllerServiceAgent.TunerLocked(_cardId))
             {
-              line = String.Format("physical channel:{0} frequency:{1} modulation:{2}: No signal",
-                                   tuneChannel.PhysicalChannel, tuneChannel.Frequency, tuneChannel.ModulationType);
-              item.Text = line;
-              item.ForeColor = Color.Red;
-              continue;
+              line += "no signal";
             }
-            line = String.Format("physical channel:{0} frequency:{1} modulation:{2}: Nothing found",
-                                 tuneChannel.PhysicalChannel, tuneChannel.Frequency, tuneChannel.ModulationType);
+            else
+            {
+              line += "signal locked, no channels found";
+            }
             item.Text = line;
             item.ForeColor = Color.Red;
             continue;
@@ -268,8 +262,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             //We do not know how ATSC works to correctly implement this.
             TuningDetail currentDetail = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetail(channel);
             if (currentDetail != null)
-              if (channel.Frequency != currentDetail.Frequency)
+            {
+              // TODO ideally this should use IsDifferentTransponder, but we can't convert a
+              // tuning detail to a channel here.
+              //if (channel.IsDifferentTransponder(layer.GetTuningChannel(currentDetail)))
+              if (currentDetail.ChannelNumber != channel.PhysicalChannel)
+              {
                 currentDetail = null;
+              }
+            }
             bool exists;
             if (currentDetail == null)
             {
@@ -281,24 +282,25 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
               {
                 dbChannel.SortOrder = channel.LogicalChannelNumber;
               }
+              dbChannel.MediaType = (int)channel.MediaType;
+              dbChannel = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
+              dbChannel.AcceptChanges();
             }
             else
             {
               exists = true;
               dbChannel = currentDetail.Channel;
             }
-            dbChannel.MediaType = (int)channel.MediaType;
-            dbChannel = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
-            dbChannel.AcceptChanges();
-            if (dbChannel.MediaType == (decimal) MediaTypeEnum.TV)
+
+            if (dbChannel.MediaType == (int)MediaTypeEnum.TV)
             {
               ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
-              MappingHelper.AddChannelToGroup(ref dbChannel, @group);              
+              MappingHelper.AddChannelToGroup(ref dbChannel, group);
             }
-            else if (dbChannel.MediaType == (decimal) MediaTypeEnum.Radio)
+            else if (dbChannel.MediaType == (int)MediaTypeEnum.Radio)
             {
               ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.RadioGroupNames.AllChannels, MediaTypeEnum.Radio);
-              MappingHelper.AddChannelToGroup(ref dbChannel, @group);                            
+              MappingHelper.AddChannelToGroup(ref dbChannel, group);
             }
             if (currentDetail == null)
             {
@@ -334,15 +336,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
                 radioChannelsNew++;
                 newChannels++;
               }
-            }            
+            }
             MappingHelper.AddChannelToCard(dbChannel, card, false);
-            line = String.Format("physical channel:{0} frequency:{1} modulation:{2} New:{3} Updated:{4}",
-                                 tuneChannel.PhysicalChannel, tuneChannel.Frequency, tuneChannel.ModulationType,
-                                 newChannels, updatedChannels);
-            item.Text = line;
           }
+          line += string.Format("new = {0}, updated = {1}", newChannels, updatedChannels);
+          item.Text = line;
+          this.LogInfo("ATSC: scan result, new = {0}, updated = {1}", newChannels, updatedChannels);
         }
-        //DatabaseManager.Instance.SaveChanges();
       }
       catch (Exception ex)
       {
@@ -350,28 +350,39 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
       finally
       {
-        IUser user = new User();
-        user.CardId = _cardNumber;
         ServiceAgents.Instance.ControllerServiceAgent.StopCard(user.CardId);
         ServiceAgents.Instance.ControllerServiceAgent.EpgGrabberEnabled = true;
         progressBar1.Value = 100;
-        checkBoxQAM.Enabled = true;
-        checkBoxQAM_CheckedChanged(null, null);
+        mpComboBoxTuningMode.Enabled = true;
+        UpdateQamFrequencyFieldAvailability();
         mpButtonScanTv.Text = buttonText;
         _isScanning = false;
       }
       listViewStatus.Items.Add(
-        new ListViewItem(String.Format("Total radio channels new:{0} updated:{1}", radioChannelsNew,
+        new ListViewItem(String.Format("Total radio channels, new = {0}, updated = {1}", radioChannelsNew,
                                        radioChannelsUpdated)));
       listViewStatus.Items.Add(
-        new ListViewItem(String.Format("Total tv channels new:{0} updated:{1}", tvChannelsNew, tvChannelsUpdated)));
-      ListViewItem lastItem = listViewStatus.Items.Add(new ListViewItem("Scan done..."));
+        new ListViewItem(String.Format("Total TV channels, new = {0} updated = {1}", tvChannelsNew, tvChannelsUpdated)));
+      ListViewItem lastItem = listViewStatus.Items.Add(new ListViewItem("Scan done!"));
       lastItem.EnsureVisible();
+      this.LogInfo("ATSC: scan summary, new TV = {0}, updated TV = {1}, new radio = {2}, updated radio = {3}", tvChannelsNew, tvChannelsUpdated, radioChannelsNew, radioChannelsUpdated);
     }
 
-    private void checkBoxQAM_CheckedChanged(object sender, EventArgs e)
+    private void mpComboBoxTuningMode_SelectedIndexChanged(object sender, EventArgs e)
     {
-      mpComboBoxFrequencies.Enabled = checkBoxQAM.Checked;
+      UpdateQamFrequencyFieldAvailability();
+    }
+
+    private void UpdateQamFrequencyFieldAvailability()
+    {
+      if ((string)mpComboBoxTuningMode.SelectedItem == "Clear QAM Cable")
+      {
+        mpComboBoxFrequencies.Enabled = true;
+      }
+      else
+      {
+        mpComboBoxFrequencies.Enabled = false;
+      }
     }
   }
 }
