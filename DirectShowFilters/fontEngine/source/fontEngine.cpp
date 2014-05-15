@@ -1774,7 +1774,7 @@ void UpdateVertex(TransformMatrix& matrix, FONT_DATA_T* pFont, CUSTOMVERTEX* pVe
       {
         c = 0x002D; // '-'
       }
-      else if (c == 0x201C || c == 0x201D || c == 0x201F) // “ or // ” or // ‟
+      else if (c == 0x201C || c == 0x201D || c == 0x201F || c == 0x201E) // “ or // ” or // ‟
       {
         c = 0x0022; // '"'
       }
@@ -1830,7 +1830,7 @@ void UpdateVertex(TransformMatrix& matrix, FONT_DATA_T* pFont, CUSTOMVERTEX* pVe
       {
         c = 0x002D; // '-'
       }
-      else if (c == 0x201C || c == 0x201D || c == 0x201F) // “ or // ” or // ‟
+      else if (c == 0x201C || c == 0x201D || c == 0x201F || c == 0x201E) // “ or // ” or // ‟
       {
         c = 0x0022; // '"'
       }
