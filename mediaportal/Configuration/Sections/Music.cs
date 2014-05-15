@@ -288,8 +288,8 @@ namespace MediaPortal.Configuration.Sections
         int vizType = xmlreader.GetValueAsInt("musicvisualization", "vizType", (int)VisualizationInfo.PluginType.None);
         string vizName = xmlreader.GetValueAsString("musicvisualization", "name", "None");
         string vizPath = xmlreader.GetValueAsString("musicvisualization", "path", "");
-        string vizClsid = xmlreader.GetValueAsString("musicvisualization", "clsid", "");
         int vizPreset = xmlreader.GetValueAsInt("musicvisualization", "preset", 0);
+        int vizPlgIndex = xmlreader.GetValueAsInt("musicvisualization", "plgIndex", -1);
 
         if (vizType == (int)VisualizationInfo.PluginType.None
             && vizName == "None")
@@ -299,8 +299,8 @@ namespace MediaPortal.Configuration.Sections
 
         else
         {
-          VizPluginInfo = new VisualizationInfo((VisualizationInfo.PluginType)vizType, vizPath, vizName, vizClsid,
-                                                vizPreset);
+          VizPluginInfo = new VisualizationInfo((VisualizationInfo.PluginType)vizType, vizPath, vizName,
+                                                vizPreset, vizPlgIndex);
         }
 
         ckUseOpenGL.Checked = xmlreader.GetValueAsBool("musicvisualization", "useOpenGL", true);
@@ -487,8 +487,8 @@ namespace MediaPortal.Configuration.Sections
           xmlwriter.SetValue("musicvisualization", "vizType",
                              ((int)vizPluginsInfo[selIndex].VisualizationType).ToString());
           xmlwriter.SetValue("musicvisualization", "path", vizPluginsInfo[selIndex].FilePath);
-          xmlwriter.SetValue("musicvisualization", "clsid", vizPluginsInfo[selIndex].CLSID);
           xmlwriter.SetValue("musicvisualization", "preset", vizPluginsInfo[selIndex].PresetIndex.ToString());
+          xmlwriter.SetValue("musicvisualization", "plgIndex", selIndex.ToString());
           xmlwriter.SetValueAsBool("musicvisualization", "useOpenGL", ckUseOpenGL.Checked);
           xmlwriter.SetValueAsBool("musicvisualization", "useCover", ckUseCover.Checked);
           xmlwriter.SetValue("musicvisualization", "renderTiming", soniqueRenderTiming.Value.ToString());
@@ -502,8 +502,8 @@ namespace MediaPortal.Configuration.Sections
           xmlwriter.SetValue("musicvisualization", "name", VizPluginInfo.Name);
           xmlwriter.SetValue("musicvisualization", "vizType", ((int)VizPluginInfo.VisualizationType).ToString());
           xmlwriter.SetValue("musicvisualization", "path", VizPluginInfo.FilePath);
-          xmlwriter.SetValue("musicvisualization", "clsid", VizPluginInfo.CLSID);
           xmlwriter.SetValue("musicvisualization", "preset", VizPluginInfo.PresetIndex.ToString());
+          xmlwriter.SetValue("musicvisualization", "plgIndex", VizPluginInfo.PlgIndex.ToString());
           xmlwriter.SetValueAsBool("musicvisualization", "useOpenGL", ckUseOpenGL.Checked);
           xmlwriter.SetValueAsBool("musicvisualization", "useCover", ckUseCover.Checked);
           xmlwriter.SetValue("musicvisualization", "renderTiming", soniqueRenderTiming.Value.ToString());
@@ -516,8 +516,8 @@ namespace MediaPortal.Configuration.Sections
           xmlwriter.SetValue("musicvisualization", "name", "");
           xmlwriter.SetValue("musicvisualization", "vizType", 0);
           xmlwriter.SetValue("musicvisualization", "path", "");
-          xmlwriter.SetValue("musicvisualization", "clsid", "");
           xmlwriter.SetValue("musicvisualization", "preset", "");
+          xmlwriter.SetValue("musicvisualization", "plgIndex", "");
           xmlwriter.SetValueAsBool("musicvisualization", "useOpenGL", false);
           xmlwriter.SetValueAsBool("musicvisualization", "useCover", false);
           xmlwriter.SetValue("musicvisualization", "renderTiming", "");

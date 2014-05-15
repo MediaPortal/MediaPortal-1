@@ -1374,11 +1374,11 @@ namespace MediaPortal.MusicPlayer.BASS
         int vizType = xmlreader.GetValueAsInt("musicvisualization", "vizType", (int)VisualizationInfo.PluginType.None);
         string vizName = xmlreader.GetValueAsString("musicvisualization", "name", "");
         string vizPath = xmlreader.GetValueAsString("musicvisualization", "path", "");
-        string vizClsid = xmlreader.GetValueAsString("musicvisualization", "clsid", "");
         int vizPreset = xmlreader.GetValueAsInt("musicvisualization", "preset", 0);
+        int vizPlgIndex = xmlreader.GetValueAsInt("musicvisualization", "plgIndex", 0);
 
-        VizPluginInfo = new VisualizationInfo((VisualizationInfo.PluginType)vizType, vizPath, vizName, vizClsid,
-                                              vizPreset);
+        VizPluginInfo = new VisualizationInfo((VisualizationInfo.PluginType)vizType, vizPath, vizName,
+                                              vizPreset, vizPlgIndex);
 
         if (vizType == (int)VisualizationInfo.PluginType.Sonique)
         {
