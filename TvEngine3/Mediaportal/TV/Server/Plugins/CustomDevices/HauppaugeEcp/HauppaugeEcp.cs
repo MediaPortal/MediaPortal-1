@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.IO;
 using System.Runtime.InteropServices;
 using DirectShowLib;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
@@ -170,7 +171,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
 
       try
       {
-        _interfaceEcp = ComHelper.LoadComObjectFromFile("HauppaugeEcp.dll", typeof(MpHcwEcp).GUID, typeof(IMpHcwEcp).GUID, true) as IMpHcwEcp;
+        string file = Path.Combine(PathManager.BuildAssemblyRelativePath("Resources"), "HauppaugeEcp.dll");
+        _interfaceEcp = ComHelper.LoadComObjectFromFile(file, typeof(MpHcwEcp).GUID, typeof(IMpHcwEcp).GUID, true) as IMpHcwEcp;
       }
       catch (Exception ex)
       {
