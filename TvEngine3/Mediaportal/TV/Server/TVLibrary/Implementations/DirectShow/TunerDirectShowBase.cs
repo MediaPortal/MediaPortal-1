@@ -85,15 +85,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       : base(device.Name, device.DevicePath, type)
     {
       _deviceMain = device;
-      if (_deviceMain != null)
-      {
-        _productInstanceId = device.ProductInstanceIdentifier;
-        int tunerInstanceId = device.TunerInstanceIdentifier;
-        if (tunerInstanceId >= 0)
-        {
-          _tunerInstanceId = tunerInstanceId.ToString();
-        }
-      }
+      SetProductAndTunerInstanceIds(_deviceMain);
     }
 
     /// <summary>
@@ -108,6 +100,23 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     }
 
     #endregion
+
+    /// <summary>
+    /// Set the tuner's product and tuner instance identifier attributes.
+    /// </summary>
+    /// <param name="device">The device instance to read the attributes from.</param>
+    protected void SetProductAndTunerInstanceIds(DsDevice device)
+    {
+      if (device != null)
+      {
+        _productInstanceId = device.ProductInstanceIdentifier;
+        int tunerInstanceId = device.TunerInstanceIdentifier;
+        if (tunerInstanceId >= 0)
+        {
+          _tunerInstanceId = tunerInstanceId.ToString();
+        }
+      }
+    }
 
     /// <summary>
     /// Reload the tuner's configuration.

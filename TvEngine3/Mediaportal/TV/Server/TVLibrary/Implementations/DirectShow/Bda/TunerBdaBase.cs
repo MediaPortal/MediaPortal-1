@@ -116,15 +116,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       : base(device.Name, externalId, type)
     {
       _deviceMain = device;
-      if (_deviceMain != null)
-      {
-        _productInstanceId = device.ProductInstanceIdentifier;
-        int tunerInstanceId = device.TunerInstanceIdentifier;
-        if (tunerInstanceId >= 0)
-        {
-          _tunerInstanceId = tunerInstanceId.ToString();
-        }
-      }
+      SetProductAndTunerInstanceIds(_deviceMain);
     }
 
     #endregion

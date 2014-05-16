@@ -702,6 +702,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       : base("Realtek RTL283x FM Tuner", mainTunerDevice.DevicePath + "FM", CardType.Analog)
     {
       _mainTunerDevice = mainTunerDevice;
+      SetProductAndTunerInstanceIds(_mainTunerDevice);
     }
 
     /// <summary>

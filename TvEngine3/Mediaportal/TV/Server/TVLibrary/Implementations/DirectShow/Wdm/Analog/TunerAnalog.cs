@@ -77,14 +77,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
         try
         {
           crossbar.PerformLoading(graph);
-          int tunerInstanceId = -1;
           if (crossbar.PinIndexInputTunerVideo >= 0 || crossbar.PinIndexInputTunerAudio >= 0)
           {
             Tuner tuner = new Tuner();
             try
             {
               tuner.PerformLoading(graph, _productInstanceId, crossbar);
-              tunerInstanceId = tuner.Device.TunerInstanceIdentifier;
+              SetProductAndTunerInstanceIds(tuner.Device);
             }
             finally
             {
@@ -93,11 +92,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
           }
           else
           {
-            tunerInstanceId = device.TunerInstanceIdentifier;
-          }
-          if (tunerInstanceId >= 0)
-          {
-            _tunerInstanceId = tunerInstanceId.ToString();
+            SetProductAndTunerInstanceIds(device);
           }
         }
         catch (Exception ex)
