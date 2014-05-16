@@ -360,9 +360,6 @@
     <Compile Include="Sections\Plugins.Designer.cs">
       <DependentUpon>Plugins.cs</DependentUpon>
     </Compile>
-    <Compile Include="Sections\RadioEpgGrabber.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Sections\ScanSettings.cs">
       <SubType>UserControl</SubType>
     </Compile>
