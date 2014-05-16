@@ -462,24 +462,25 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
               foreach (KeyValuePair<string, IPin> pair in pinsUpstream)
               {
                 IPin pinUpstream = pair.Value;
-                this.LogDebug("WDM analog capture: try to connect upstream {0} pin to downstream input pin {1}...", pair.Key, pinIndex++);
+                this.LogDebug("WDM analog capture: try to connect upstream {0} pin to downstream input pin {1}...", pair.Key, pinIndex);
                 try
                 {
                   hr = graph.ConnectDirect(pinUpstream, pinUpstream, null);
                   HResult.ThrowException(hr, "Failed to connect pins.");
                   this.LogDebug("WDM analog capture: connected!");
                   pinCountConnected++;
-                  pinCountUnconnected--;
-                  if (pinCountUnconnected == 0)
+                  if (pinCountConnected == pinCountUnconnected)
                   {
                     return pinCountConnected;
                   }
+                  break;
                 }
                 catch
                 {
                   // Connection failed, maybe try the other upstream pin.
                 }
               }
+              pinIndex++;
             }
             finally
             {

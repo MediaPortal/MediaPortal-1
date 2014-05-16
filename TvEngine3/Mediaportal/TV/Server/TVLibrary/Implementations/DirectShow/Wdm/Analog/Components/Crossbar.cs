@@ -120,8 +120,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       get
       {
         int index = -1;
-        _pinMapVideo.TryGetValue(CaptureSourceVideo.Tuner, out index);
-        return index;
+        if (_pinMapVideo.TryGetValue(CaptureSourceVideo.Tuner, out index))
+        {
+          return index;
+        }
+        return -1;
       }
     }
 
@@ -133,8 +136,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       get
       {
         int index = -1;
-        _pinMapVideo.TryGetValue(CaptureSourceVideo.Tuner, out index);
-        return index;
+        if (_pinMapAudio.TryGetValue(CaptureSourceAudio.Tuner, out index))
+        {
+          return index;
+        }
+        return -1;
       }
     }
 

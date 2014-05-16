@@ -99,24 +99,25 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
 
           // Instantiate the corresponding filter.
           this.LogDebug("WDM analog component: attempt to add {0} {1}", d.Name, d.DevicePath);
+          IBaseFilter f = null;
           try
           {
-            filter = FilterGraphTools.AddFilterFromDevice(graph, d);
+            f = FilterGraphTools.AddFilterFromDevice(graph, d);
           }
           catch (Exception ex)
           {
             this.LogDebug(ex, "WDM analog component: failed to add filter from category");
             DevicesInUse.Instance.Remove(d);
-            filter = null;
             continue;
           }
-          device = d;
 
           try
           {
-            connectedPinCount = ConnectFilters(graph, upstreamFilter, filter);
+            connectedPinCount = ConnectFilters(graph, upstreamFilter, f);
             if (connectedPinCount != 0)
             {
+              device = d;
+              filter = f;
               break;
             }
           }
@@ -125,9 +126,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
             if (connectedPinCount == 0)
             {
               DevicesInUse.Instance.Remove(d);
-              graph.RemoveFilter(filter);
-              Release.ComObject("WDM analog component filter from category", ref filter);
-              device = null;
+              graph.RemoveFilter(f);
+              Release.ComObject("WDM analog component filter from category", ref f);
             }
           }
         }
@@ -366,12 +366,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     {
       isVideo = false;
 
-      // For each pin media type...
+      // First try media types. They're more reliable.
       IEnumMediaTypes enumMediaTypes;
       int hr = pin.EnumMediaTypes(out enumMediaTypes);
       HResult.ThrowException(hr, "Failed to obtain media type enumerator for pin.");
       try
       {
+        // For each pin media type...
         int mediaTypeCount;
         AMMediaType[] mediaTypes = new AMMediaType[2];
         while (enumMediaTypes.Next(1, mediaTypes, out mediaTypeCount) == (int)HResult.Severity.Success && mediaTypeCount == 1)
@@ -400,6 +401,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       {
         Release.ComObject("encoder pin media type enumerator", ref enumMediaTypes);
       }
+
+      // If media types don't tell us, check the pin name.
+      string pinName = FilterGraphTools.GetPinName(pin);
+      if (pinName != null && pinName.ToLowerInvariant().Contains("video"))
+      {
+        isVideo = true;
+        return true;
+      }
+
+      this.LogWarn("WDM analog component: failed to determine pin type");
       return false;
     }
   }

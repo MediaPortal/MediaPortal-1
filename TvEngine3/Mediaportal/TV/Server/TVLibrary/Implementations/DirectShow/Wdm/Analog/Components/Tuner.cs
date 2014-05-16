@@ -309,24 +309,25 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
               foreach (KeyValuePair<string, IPin> pair in pinsDownstream)
               {
                 IPin pinDownstream = pair.Value;
-                this.LogDebug("WDM analog tuner: try to connect upstream output pin {0} to downstream {1} pin...", pinIndex++, pair.Key);
+                this.LogDebug("WDM analog tuner: try to connect upstream output pin {0} to downstream {1} pin...", pinIndex, pair.Key);
                 try
                 {
                   hr = graph.ConnectDirect(pinUpstream, pinDownstream, null);
                   HResult.ThrowException(hr, "Failed to connect pins.");
                   this.LogDebug("WDM analog tuner: connected!");
                   pinCountConnected++;
-                  pinCountUnconnected--;
-                  if (pinCountUnconnected == 0)
+                  if (pinCountConnected == pinCountUnconnected)
                   {
                     return pinCountConnected;
                   }
+                  break;
                 }
                 catch
                 {
                   // Connection failed, maybe try the other downstream pin.
                 }
               }
+              pinIndex++;
             }
             finally
             {
