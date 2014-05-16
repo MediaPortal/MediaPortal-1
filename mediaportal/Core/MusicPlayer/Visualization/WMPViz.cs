@@ -20,14 +20,9 @@
 
 using System;
 using System.Drawing;
-using System.Runtime.InteropServices;
-using System.Collections.Generic;
-using System.IO;
 using MediaPortal.GUI.Library;
 using MediaPortal.MusicPlayer.BASS;
 using MediaPortal.TagReader;
-using MediaPortal.Util;
-using MediaPortal.Player;
 using BassVis_Api;
 
 

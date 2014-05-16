@@ -20,16 +20,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.MusicPlayer.BASS;
-using Microsoft.Win32;
 using BassVis_Api;
 
 namespace MediaPortal.Visualization

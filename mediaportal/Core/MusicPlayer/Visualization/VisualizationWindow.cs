@@ -31,7 +31,6 @@ using System.Security;
 using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
-using MediaPortal.Configuration;
 using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.MusicPlayer.BASS;
