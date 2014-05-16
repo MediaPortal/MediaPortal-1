@@ -225,7 +225,7 @@ namespace Mediaportal.TV.TvPlugin.Search
         {
           btnLetter.AddSubItem(k.ToString());
         }
-        //btnLetter.AddSubItem("#");  // => will be everything beside a-z
+        btnLetter.AddSubItem("#");
       }
       Update();
 
@@ -513,66 +513,56 @@ namespace Mediaportal.TV.TvPlugin.Search
       }
       else
       {
-        if (filterLetter != "#")
+        listView.IsVisible = false;
+        titleView.IsVisible = true;
+        GUIControl.FocusControl(GetID, titleView.GetID);
+
+        if (filterShow == String.Empty)
         {
           listView.IsVisible = false;
           titleView.IsVisible = true;
           GUIControl.FocusControl(GetID, titleView.GetID);
 
-          if (filterShow == string.Empty)
-          {
-            if (imgChannelLogo != null)
-            {
-              imgChannelLogo.IsVisible = false;
-            }
-            if (titleView.SubItemCount == 2)
-            {
-              string subItem = (string)titleView.GetSubItem(1);
-              int h = Int32.Parse(subItem.Substring(1));
-              GUIGraphicsContext.ScaleVertical(ref h);
-              titleView.Height = h;
-              h = Int32.Parse(subItem.Substring(1));
-              h -= 55;
-              GUIGraphicsContext.ScaleVertical(ref h);
-              titleView.SpinY = titleView.YPosition + h;
-              titleView.Dispose();
-              titleView.AllocResources();
-            }
-          }
-          else
-          {
-            if (imgChannelLogo != null)
-            {
-              imgChannelLogo.IsVisible = true;
-            }
-            if (titleView.SubItemCount == 2)
-            {
-              string subItem = (string)titleView.GetSubItem(0);
-              int h = Int32.Parse(subItem.Substring(1));
-              GUIGraphicsContext.ScaleVertical(ref h);
-              titleView.Height = h;
-
-              h = Int32.Parse(subItem.Substring(1));
-              h -= 50;
-              GUIGraphicsContext.ScaleVertical(ref h);
-              titleView.SpinY = titleView.YPosition + h;
-
-              titleView.Dispose();
-              titleView.AllocResources();
-            }
-            lblNumberOfItems.YPosition = titleView.SpinY;
-          }
-        }
-        else
-        {
-          listView.IsVisible = true;
-          titleView.IsVisible = false;
-          GUIControl.FocusControl(GetID, listView.GetID);
-
           if (imgChannelLogo != null)
           {
             imgChannelLogo.IsVisible = false;
           }
+          if (titleView.SubItemCount == 2)
+          {
+            string subItem = (string)titleView.GetSubItem(1);
+            int h = Int32.Parse(subItem.Substring(1));
+            GUIGraphicsContext.ScaleVertical(ref h);
+            titleView.Height = h;
+            h = Int32.Parse(subItem.Substring(1));
+            h -= 55;
+            GUIGraphicsContext.ScaleVertical(ref h);
+            titleView.SpinY = titleView.YPosition + h;
+            titleView.Dispose();
+            titleView.AllocResources();
+          }
+        }
+        else
+        {
+          if (imgChannelLogo != null)
+          {
+            imgChannelLogo.IsVisible = true;
+          }
+          if (titleView.SubItemCount == 2)
+          {
+            string subItem = (string)titleView.GetSubItem(0);
+            int h = Int32.Parse(subItem.Substring(1));
+            GUIGraphicsContext.ScaleVertical(ref h);
+            titleView.Height = h;
+
+            h = Int32.Parse(subItem.Substring(1));
+            h -= 50;
+            GUIGraphicsContext.ScaleVertical(ref h);
+            titleView.SpinY = titleView.YPosition + h;
+
+            titleView.Dispose();
+            titleView.AllocResources();
+          }
+          lblNumberOfItems.YPosition = titleView.SpinY;
         }
 
         if (currentSearchMode != SearchMode.Genre)
@@ -757,11 +747,11 @@ namespace Mediaportal.TV.TvPlugin.Search
             {              
               if (filterShow == string.Empty)
               {                       
-                titles = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByTitleAndMediaType("[^a-z]", MediaType, stringComparison);
+                titles = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByTitleAndMediaType("[0-9]", MediaType, stringComparison);
               }
               else
               {
-                titles = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByTitleAndMediaType(filterShow, MediaType, stringComparison);
+                titles = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByTitleAndMediaType("%" + filterShow, MediaType, stringComparison);
               }
             }
             else
@@ -772,65 +762,36 @@ namespace Mediaportal.TV.TvPlugin.Search
               }
               else
               {
-                titles = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByTitleAndMediaType(filterShow, MediaType, stringComparison);
+                titles = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByTitleAndMediaType("%" + filterShow, MediaType, stringComparison);
               }
             }
             foreach (Program program in titles)
             {
-              if (filterLetter != "#")
+              bool add = true;
+              foreach (Program prog in programs)
               {
-                bool add = true;
-                foreach (Program prog in programs)
+                if (prog.Title == program.Title)
                 {
-                  if (prog.Title == program.Title)
-                  {
-                    add = false;
-                  }
-                }
-                if (!add && filterShow == string.Empty)
-                {
-                  continue;
-                }
-                if (add)
-                {
-                  programs.Add(program);
-                }
-
-                if (filterShow != string.Empty)
-                {
-                  if (program.Title == filterShow)
-                  {
-                    episodes.Add(program);
-                  }
-                }
-              } //if (filterLetter!="#")
-              else
-              {
-                bool add = true;
-                foreach (Program prog in programs)
-                {
-                  if (prog.Title == program.Title)
-                  {
-                    add = false;
-                  }
-                }
-                if (!add && filterShow == string.Empty)
-                {
-                  continue;
-                }
-                if (add)
-                {
-                  programs.Add(program);
-                }
-
-                if (filterShow != string.Empty)
-                {
-                  if (program.Title == filterShow)
-                  {
-                    episodes.Add(program);
-                  }
+                  add = false;
                 }
               }
+              if (!add && filterShow == string.Empty)
+              {
+                continue;
+              }
+              if (add)
+              {
+                programs.Add(program);
+              }
+
+              if (filterShow != string.Empty)
+              {
+                if (program.Title == filterShow)
+                {
+                  episodes.Add(program);
+                }
+              }
+
               if (filterShow != string.Empty && program.Title != filterShow)
               {
                 continue;
@@ -919,16 +880,14 @@ namespace Mediaportal.TV.TvPlugin.Search
               {
                 continue;
               }
-              if (filterLetter != "#")
+
+              programs.Add(program);
+
+              if (filterShow != string.Empty)
               {
-                programs.Add(program);
-                
-                if (filterShow != string.Empty)
+                if (program.Title == filterShow)
                 {
-                  if (program.Title == filterShow)
-                  {
-                    episodes.Add(program);
-                  }
+                  episodes.Add(program);
                 }
               }
 

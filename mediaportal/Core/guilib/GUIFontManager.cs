@@ -91,14 +91,6 @@ namespace MediaPortal.GUI.Library
       get { return RenderLock; }
     }
 
-    public static void ReleaseUnmanagedResources()
-    {
-      unsafe
-      {
-        DXNative.FontEngineSetDevice(null);
-      }
-    }
-
     /// <summary>
     /// Loads the fonts from a file.
     /// </summary>
@@ -634,6 +626,15 @@ namespace MediaPortal.GUI.Library
       unsafe
       {
         DXNative.FontEngineSetDevice(upDevice.ToPointer());
+      }
+    }
+
+    public static void SetDeviceNull()
+    {
+      Log.Debug("GUIFontManager SetDeviceNull()");
+      unsafe
+      {
+        DXNative.FontEngineSetDevice(null);
       }
     }
 

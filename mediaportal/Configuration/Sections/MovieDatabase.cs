@@ -4960,7 +4960,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void GetNfoFiles(string path, ref ArrayList availableFiles)
     {
-      string[] files = Directory.GetFiles(path, "*.nfo", SearchOption.AllDirectories);
+      var files = GetFilesRecursive(path, "*.nfo");
       var sortedFiles = files.OrderBy(f => f);
 
       foreach (string file in sortedFiles)
@@ -4968,7 +4968,87 @@ namespace MediaPortal.Configuration.Sections
         availableFiles.Add(file);
       }
     }
-    
+
+    /// <summary>
+    /// Get Files recursive, making sure that access to protected folders don't lead to a crash
+    /// </summary>
+    /// <param name="path"></param>
+    /// <param name="searchPattern"></param>
+    /// <returns></returns>
+    public List<string> GetFilesRecursive(string path, string searchPattern)
+    {
+      var foundFiles = new List<string>();
+      
+      // Data structure to hold names of subfolders to be examined for files.
+      var dirs = new Stack<string>();
+      dirs.Push(path);
+
+      while (dirs.Count > 0)
+      {
+        var currentDir = dirs.Pop();
+        string[] subDirs;
+
+        // Avoid processing of junction points, which could result in an infinite loop
+        // see here for an explanation: http://www.blackwasp.co.uk/FolderRecursion.aspx
+        if ((File.GetAttributes(currentDir) & FileAttributes.ReparsePoint)
+            == FileAttributes.ReparsePoint)
+        {
+          continue;
+        }
+
+        try
+        {
+          subDirs = Directory.GetDirectories(currentDir);
+        }
+        catch (UnauthorizedAccessException)
+        {
+          continue;
+        }
+        catch (DirectoryNotFoundException)
+        {
+          continue;
+        }
+
+        string[] files = null;
+        try
+        {
+          files = Directory.GetFiles(currentDir, searchPattern);
+        }
+        catch (UnauthorizedAccessException)
+        {
+          continue;
+        }
+        catch (DirectoryNotFoundException)
+        {
+          continue;
+        }
+
+        // Push the subdirectories onto the stack for traversal. 
+        foreach (string str in subDirs)
+        {
+          dirs.Push(str);
+        }
+
+        // Perform the required action on each file here. 
+        foreach (string file in files)
+        {
+          try
+          {
+            foundFiles.Add(file);
+          }
+          catch (UnauthorizedAccessException)
+          {
+            continue;
+          }
+          catch (FileNotFoundException)
+          {
+            continue;
+          }
+        }
+      }
+      return foundFiles;
+    }
+
     #endregion
 
     #region Other

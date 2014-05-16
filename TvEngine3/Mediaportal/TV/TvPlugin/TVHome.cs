@@ -2003,7 +2003,11 @@ namespace Mediaportal.TV.TvPlugin
             pDlgOK.Reset();
             pDlgOK.SetHeading(605); //my tv
             pDlgOK.AddLocalizedString(875); //current program
-            pDlgOK.AddLocalizedString(876); //till manual stop
+
+            if (!DoesManualScheduleAlreadyExist(channel.Entity))
+            {
+              pDlgOK.AddLocalizedString(876); //till manual stop
+            }
             pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
             switch (pDlgOK.SelectedId)
             {
@@ -2014,13 +2018,8 @@ namespace Mediaportal.TV.TvPlugin
 
               case 876:
                 //manual
-                bool doesManuelScheduleAlreadyExist = DoesManualScheduleAlreadyExist(channel.Entity);
-                if (!doesManuelScheduleAlreadyExist)
-                {
-                  StartRecordingSchedule(channel, true);
-                  return true;
-                }
-                break;
+                StartRecordingSchedule(channel, true);
+                return true;
             }
           }
         }
@@ -2051,7 +2050,7 @@ namespace Mediaportal.TV.TvPlugin
 
         if (s != null && idChannel > 0)
         {
-          TVUtil.DeleteRecAndSchedWithPrompt(s);
+          TVUtil.StopRecAndSchedWithPrompt(s, idChannel);
         }
       }
       return false;

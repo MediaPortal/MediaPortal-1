@@ -22,27 +22,24 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Windows.Forms;
 using System.Xml.Serialization;
+using Common.GUIPlugins;
 using MediaPortal.Configuration;
 using MediaPortal.Database;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Picture.Database;
-using MediaPortal.Playlists;
-using MediaPortal.Profile;
+using MediaPortal.Player;
 using MediaPortal.Services;
 using MediaPortal.Threading;
 using MediaPortal.Util;
-using MediaPortal.Player;
 using Action = MediaPortal.GUI.Library.Action;
 using Layout = MediaPortal.GUI.Library.GUIFacadeControl.Layout;
-using WindowPlugins;
 using ThreadPool = System.Threading.ThreadPool;
 
 namespace MediaPortal.GUI.Pictures
@@ -50,7 +47,7 @@ namespace MediaPortal.GUI.Pictures
   /// <summary>
   /// Displays pictures and offers methods for exif and rotation
   /// </summary>
-  [PluginIcons("WindowPlugins.GUIPictures.Pictures.gif", "WindowPlugins.GUIPictures.PicturesDisabled.gif")]
+  [PluginIcons("GUIPictures.Pictures.gif", "GUIPictures.PicturesDisabled.gif")]
   public class GUIPictures : WindowPluginBase, IComparer<GUIListItem>, ISetupForm, IShowPlugin
   {
     #region ThumbCacher class
@@ -137,9 +134,6 @@ namespace MediaPortal.GUI.Pictures
                         !File.Exists(thumbnailImageL) || !Util.Utils.FileExistsInCache(thumbnailImageL))
                     {
                       Thread.Sleep(5);
-
-                      iRotate = Util.Picture.GetRotateByExif(item.Path);
-                      Log.Debug("Picture.GetRotateByExif = {0} for {1}", iRotate, item.Path);
 
                       if (autocreateLargeThumbs && !File.Exists(thumbnailImageL))
                       {
@@ -276,11 +270,6 @@ namespace MediaPortal.GUI.Pictures
           if (recreateThumbs || !File.Exists(thumbnailImage) || !Util.Utils.FileExistsInCache(thumbnailImage) ||
               !File.Exists(thumbnailImageL) || !Util.Utils.FileExistsInCache(thumbnailImageL))
           {
-
-            iRotate = Util.Picture.GetRotateByExif(item);
-            Log.Debug("Picture.GetRotateByExif = {0} for {1}", iRotate, item);
-            Thread.Sleep(5);
-
             if (autocreateLargeThumbs && !File.Exists(thumbnailImageL))
             {
               thumbRet = Util.Picture.CreateThumbnail(item, thumbnailImageL, (int) Thumbs.ThumbLargeResolution,
@@ -406,6 +395,10 @@ namespace MediaPortal.GUI.Pictures
     public static string fileNameCheck = string.Empty;
     protected PictureSort.SortMethod currentSortMethod = PictureSort.SortMethod.Name;
     public static List<string> _thumbnailFolderItem = new List<string>();
+    private static string _prevServerName = string.Empty;
+    private static DateTime _prevWolTime;
+    private static int _wolTimeout;
+    private static int _wolResendTime;
 
     #endregion
 
@@ -431,6 +424,8 @@ namespace MediaPortal.GUI.Pictures
         isFileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
         fileMenuPinCode = Util.Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", string.Empty));
         //string strDefault = xmlreader.GetValueAsString("pictures", "default", string.Empty);
+        _wolTimeout = xmlreader.GetValueAsInt("WOL", "WolTimeout", 10);
+        _wolResendTime = xmlreader.GetValueAsInt("WOL", "WolResendTime", 1);
         _virtualDirectory = VirtualDirectories.Instance.Pictures;
         
         if (currentFolder == string.Empty)
@@ -527,6 +522,21 @@ namespace MediaPortal.GUI.Pictures
 
     public override void OnAction(Action action)
     {
+      if (action.wID == Action.ActionType.ACTION_STOP)
+      {
+        if (g_Player.IsPicture)
+        {
+          GUIPictureSlideShow._slideDirection = 0;
+        }
+      }
+      if (action.wID == Action.ActionType.ACTION_SWITCH_HOME)
+      {
+        if (g_Player.IsPicture)
+        {
+          GUIPictureSlideShow._slideDirection = 0;
+          g_Player.Stop();
+        }
+      }
       if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
       {
         if (facadeLayout.Focus)
@@ -629,8 +639,8 @@ namespace MediaPortal.GUI.Pictures
         Log.Debug("GUIPictures: currentSlideIndex {0}", SlideShow._currentSlideIndex);
         /*if (SlideShow._currentSlideIndex != -1)
           selectedItemIndex += SlideShow._currentSlideIndex+1;*/
-        int direction = GUISlideShow.SlideDirection;
-        GUISlideShow.SlideDirection = 0;
+        int direction = GUIPictureSlideShow.SlideDirection;
+        GUIPictureSlideShow.SlideDirection = 0;
         g_Player.IsPicture = false;
 
         if (SlideShow._returnedFromVideoPlayback && !SlideShow._loadVideoPlayback)
@@ -1295,7 +1305,7 @@ namespace MediaPortal.GUI.Pictures
       }
       if (item2.IsFolder && item2.Label == "..")
       {
-        return -1;
+        return 1;
       }
       if (item1.IsFolder && !item2.IsFolder)
       {
@@ -1734,6 +1744,12 @@ namespace MediaPortal.GUI.Pictures
       {
         return;
       }
+
+      if (!WakeUpSrv(item.Path))
+      {
+        return;
+      }
+
       if (item.IsFolder)
       {
         selectedItemIndex = -1;
@@ -1784,6 +1800,12 @@ namespace MediaPortal.GUI.Pictures
       {
         return;
       }
+
+      if (!WakeUpSrv(item.Path))
+      {
+        return;
+      }
+
       if (item.IsFolder)
       {
         i++;
@@ -2139,6 +2161,45 @@ namespace MediaPortal.GUI.Pictures
       }
     }
 
+    private bool WakeUpSrv(string newFolderName)
+    {
+      if (!Util.Utils.IsUNCNetwork(newFolderName))
+      {
+        return true;
+      }
+
+      string serverName = string.Empty;
+      bool wakeOnLanEnabled = _virtualDirectory.IsWakeOnLanEnabled(_virtualDirectory.GetShare(newFolderName));
+
+      if (wakeOnLanEnabled)
+      {
+        serverName = Util.Utils.GetServerNameFromUNCPath(newFolderName);
+      }
+
+      DateTime now = DateTime.Now;
+      TimeSpan ts = now - _prevWolTime;
+
+      if (serverName == _prevServerName && _wolResendTime * 60 > ts.TotalSeconds)
+      {
+        return true;
+      }
+
+      _prevWolTime = DateTime.Now;
+      _prevServerName = serverName;
+
+      try
+      {
+        Log.Debug("WakeUpSrv: FolderName = {0}, ShareName = {1}, WOL enabled = {2}", newFolderName, _virtualDirectory.GetShare(newFolderName).Name, wakeOnLanEnabled);
+      }
+      catch { };
+
+      if (!string.IsNullOrEmpty(serverName))
+      {
+        return WakeupUtils.HandleWakeUpServer(serverName, _wolTimeout);
+      }
+      return true;
+    }
+
     public static void Filter(ref List<GUIListItem> itemlist)
     {
       itemlist.RemoveAll(ContainsFolderThumb);
@@ -2148,6 +2209,11 @@ namespace MediaPortal.GUI.Pictures
     {
       List<GUIListItem> itemlist;
       string objectCount = string.Empty;
+
+      if (!WakeUpSrv(strNewDirectory))
+      {
+        return;
+      }
 
       GUIWaitCursor.Show();
 

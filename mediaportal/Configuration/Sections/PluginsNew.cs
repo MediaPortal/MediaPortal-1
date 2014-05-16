@@ -215,6 +215,7 @@ namespace MediaPortal.Configuration.Sections
         LoadSettings();
         PopulateListView();
         pluginsLoadedOnPage = true;
+        listViewPlugins.Sorting = SortOrder.Ascending;
       }
     }
 
@@ -344,13 +345,6 @@ namespace MediaPortal.Configuration.Sections
         // Hide the Music Share Watcher Plugin
         // It is Enabled / Disabled via the "Auto-Update DB on changes in Shares" flag
         if (tag.SetupForm.PluginName() == "Music Share Watcher")
-        {
-          continue;
-        }
-
-        //Mantis 3772 - Weather.com API is not free any more
-        //temporarily disable plugin
-        if (tag.SetupForm.PluginName() == "Weather")
         {
           continue;
         }

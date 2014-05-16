@@ -135,6 +135,7 @@ namespace MediaPortal.Player
 
     private PlaneScene _scene = null;
     private bool _useVmr9 = false;
+    private bool _inMenu = false;
     private IRender _renderFrame;
     private IBaseFilter _vmr9Filter = null;
     private int _videoHeight, _videoWidth;
@@ -208,6 +209,10 @@ namespace MediaPortal.Player
       set { _freeframeCounter = value; }
     }
 
+    public bool InMenu
+    {
+      get { return _inMenu; }
+    }
 
     /// <summary>
     /// returns the width of the video
@@ -591,6 +596,7 @@ namespace MediaPortal.Player
     public void EVRSetDVDMenuState(bool isInDVDMenu)
     {
       EVRNotifyDVDMenuState(isInDVDMenu);
+      _inMenu = isInDVDMenu;
     }
 
     /// <summary>

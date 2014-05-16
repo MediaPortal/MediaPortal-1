@@ -243,6 +243,7 @@ namespace Mediaportal.TV.TvPlugin
         _zapTimeOutValue = 1000 * xmlreader.GetValueAsInt("movieplayer", "zaptimeout", 5);
         _byIndex = xmlreader.GetValueAsBool("mytv", "byindex", true);
         _channelNumberMaxLength = xmlreader.GetValueAsInt("mytv", "channelnumbermaxlength", 3);
+        _confirmTimeshiftStop = xmlreader.GetValueAsBool("mytv", "confirmTimeshiftStop", true);
         if (xmlreader.GetValueAsBool("mytv", "allowarzoom", true))
         {
           _allowedArModes.Add(Geometry.Type.Zoom);

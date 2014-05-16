@@ -108,7 +108,15 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
         }
         else if (startsWith)
         {
-          query = query.Where(p => p.Title.StartsWith(searchCriteria));
+          if (searchCriteria == "[0-9]")
+          {
+            query = query.Where(p => p.Title.StartsWith("0") || p.Title.StartsWith("1") || p.Title.StartsWith("2") || p.Title.StartsWith("3") || p.Title.StartsWith("4")
+                                || p.Title.StartsWith("5") || p.Title.StartsWith("6") || p.Title.StartsWith("7") || p.Title.StartsWith("8") || p.Title.StartsWith("9"));
+          }
+          else
+          {
+            query = query.Where(p => p.Title.StartsWith(searchCriteria));
+          }
         }
         else
         {

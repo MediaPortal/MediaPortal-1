@@ -44,6 +44,7 @@ namespace MediaPortal.Util
   /// </summary>
   public class Picture
   {
+    private static ExifOrientations orientation = ExifOrientations.Normal;
     public enum ExifOrientations
     {
         None = 0,
@@ -1016,19 +1017,22 @@ namespace MediaPortal.Util
                 break;
             }
 
-            switch (iRotate)
+            if (!OSInfo.OSInfo.Win8OrLater())
             {
-              case 1:
-                shellThumb.RotateFlip(RotateFlipType.Rotate90FlipNone);
-                break;
-              case 2:
-                shellThumb.RotateFlip(RotateFlipType.Rotate180FlipNone);
-                break;
-              case 3:
-                shellThumb.RotateFlip(RotateFlipType.Rotate270FlipNone);
-                break;
-              default:
-                break;
+              switch (iRotate)
+              {
+                case 1:
+                  shellThumb.RotateFlip(RotateFlipType.Rotate90FlipNone);
+                  break;
+                case 2:
+                  shellThumb.RotateFlip(RotateFlipType.Rotate180FlipNone);
+                  break;
+                case 3:
+                  shellThumb.RotateFlip(RotateFlipType.Rotate270FlipNone);
+                  break;
+                default:
+                  break;
+              }
             }
 
             if (shellThumb != null && !autocreateLargeThumbs)
@@ -1091,35 +1095,6 @@ namespace MediaPortal.Util
           meta = frame.Metadata as BitmapMetadata;
           ret = frame.Thumbnail;
 
-          //if ((meta != null) && (ret != null)) //si on a des meta, tentative de récupération de l'orientation
-          //{
-          //  if (meta.GetQuery("/app1/ifd/{ushort=274}") != null)
-          //  {
-          //    orientation =
-          //      (ExifOrientations)
-          //      Enum.Parse(typeof (ExifOrientations), meta.GetQuery("/app1/ifd/{ushort=274}").ToString());
-          //  }
-
-          //  switch (orientation)
-          //  {
-          //    case ExifOrientations.Rotate90:
-          //      angle = -90;
-          //      break;
-          //    case ExifOrientations.Rotate180:
-          //      angle = 180;
-          //      break;
-          //    case ExifOrientations.Rotate270:
-          //      angle = 90;
-          //      break;
-          //  }
-
-          //  if (angle != 0) //on doit effectuer une rotation de l'image
-          //  {
-          //    ret = new TransformedBitmap(ret.Clone(), new RotateTransform(angle));
-          //    ret.Freeze();
-          //  }
-          //}
-
           if (autocreateLargeThumbs)
           {
             if (ret != null)
@@ -1141,6 +1116,7 @@ namespace MediaPortal.Util
               thumbnail.Transform = transformGroup;
               thumbnail.EndInit();
               ret = thumbnail;
+              ret = MetaOrientation(meta, ret);
 
               // Write Large thumbnail
               result = BitmapFromSource(ret, thumbnailImageDest);
@@ -1151,6 +1127,7 @@ namespace MediaPortal.Util
             if (ret != null)
             {
               // Write small thumbnail
+              ret = MetaOrientation(meta, ret);
               result = BitmapFromSource(ret, thumbnailImageDest);
             }
           }
@@ -1354,6 +1331,40 @@ namespace MediaPortal.Util
         Utils.DoInsertExistingFileIntoCache(aThumbTargetPath);
       }
       return result;
+    }
+
+    private static BitmapSource MetaOrientation(BitmapMetadata meta, BitmapSource ret)
+    {
+      double angle = 0;
+      if ((meta != null) && (ret != null)) //si on a des meta, tentative de récupération de l'orientation
+      {
+        if (meta.GetQuery("/app1/ifd/{ushort=274}") != null)
+        {
+          orientation =
+            (ExifOrientations)
+            Enum.Parse(typeof (ExifOrientations), meta.GetQuery("/app1/ifd/{ushort=274}").ToString());
+        }
+
+        switch (orientation)
+        {
+          case ExifOrientations.Rotate90:
+            angle = -90;
+            break;
+          case ExifOrientations.Rotate180:
+            angle = 180;
+            break;
+          case ExifOrientations.Rotate270:
+            angle = 90;
+            break;
+        }
+
+        if (angle != 0) //on doit effectuer une rotation de l'image
+        {
+          ret = new TransformedBitmap(ret.Clone(), new RotateTransform(angle));
+          ret.Freeze();
+        }
+      }
+      return ret;
     }
 
     public static bool SaveThumbnail(string aThumbTargetPath, Image myImage)

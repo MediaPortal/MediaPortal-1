@@ -36,7 +36,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     {
       if (TuningDetail != null)
       {
-        textBoxProgram.Text = TuningDetail.ChannelNumber.ToString();
+        textBoxPhysicalChannel.Text = TuningDetail.ChannelNumber.ToString();
         textBoxFrequency.Text = TuningDetail.Frequency.ToString();
         textBoxMajor.Text = TuningDetail.MajorChannel.ToString();
         textBoxMinor.Text = TuningDetail.MinorChannel.ToString();
@@ -55,23 +55,23 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
             comboBoxQAMModulation.SelectedIndex = 3;
             break;
         }
-        textBoxQamONID.Text = TuningDetail.NetworkId.ToString();
         textBoxQamTSID.Text = TuningDetail.TransportId.ToString();
         textBoxQamSID.Text = TuningDetail.ServiceId.ToString();
+        textBoxQamSource.Text = TuningDetail.NetworkId.ToString();
         textBoxQamPmt.Text = TuningDetail.PmtPid.ToString();
         textBoxQamProvider.Text = TuningDetail.Provider;
         checkBoxQamfta.Checked = TuningDetail.FreeToAir;
       }
       else
       {
-        textBoxProgram.Text = "";
+        textBoxPhysicalChannel.Text = "";
         textBoxFrequency.Text = "";
         textBoxMajor.Text = "";
         textBoxMinor.Text = "";
         comboBoxQAMModulation.SelectedIndex = -1;
-        textBoxQamONID.Text = "";
         textBoxQamTSID.Text = "";
         textBoxQamSID.Text = "";
+        textBoxQamSource.Text = "";
         textBoxQamPmt.Text = "";
         textBoxQamProvider.Text = "";
         checkBoxQamfta.Checked = false;
@@ -95,7 +95,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     private void UpdateTuningDetail()
     {
       TuningDetail.ChannelType = 1;
-      TuningDetail.ChannelNumber = Int32.Parse(textBoxProgram.Text);
+      TuningDetail.ChannelNumber = Int32.Parse(textBoxPhysicalChannel.Text);
       TuningDetail.Frequency = Int32.Parse(textBoxFrequency.Text);
       TuningDetail.MajorChannel = Int32.Parse(textBoxMajor.Text);
       TuningDetail.MinorChannel = Int32.Parse(textBoxMinor.Text);
@@ -114,9 +114,9 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
           TuningDetail.Modulation = (int)ModulationType.Mod256Qam;
           break;
       }
-      TuningDetail.NetworkId = Int32.Parse(textBoxQamONID.Text);
       TuningDetail.TransportId = Int32.Parse(textBoxQamTSID.Text);
       TuningDetail.ServiceId = Int32.Parse(textBoxQamSID.Text);
+      TuningDetail.NetworkId = Int32.Parse(textBoxQamSource.Text);
       TuningDetail.PmtPid = Int32.Parse(textBoxQamPmt.Text);
       TuningDetail.Provider = textBoxQamProvider.Text;
       TuningDetail.FreeToAir = checkBoxQamfta.Checked;
@@ -124,13 +124,13 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
     private bool ValidateInput()
     {
-      if (textBoxProgram.Text.Length == 0)
+      if (textBoxPhysicalChannel.Text.Length == 0)
       {
         MessageBox.Show(this, "Please enter a physical channel number!", "Incorrect input");
         return false;
       }
-      int physical, frequency, major, minor, onid, tsid, sid, pmt;
-      if (!Int32.TryParse(textBoxProgram.Text, out physical))
+      int physical, frequency, major, minor, tsid, serviceId, sourceId, pmt;
+      if (!Int32.TryParse(textBoxPhysicalChannel.Text, out physical))
       {
         MessageBox.Show(this, "Please enter a valid physical channel number!", "Incorrect input");
         return false;
@@ -145,9 +145,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         MessageBox.Show(this, "Please enter a valid frequency!", "Incorrect input");
         return false;
       }
-      // Frequency must be set to -1 for ATSC channels as they are tuned by channel
-      // number. QAM channels are tuned by frequency and must have a valid frequency
-      // specified.
+      // Frequency must be set to -1 for ATSC over-the-air channels as they are tuned by
+      // channel number. Otherwise a valid frequency must be provided.
       if ((comboBoxQAMModulation.SelectedIndex == 1 && frequency != -1) || (comboBoxQAMModulation.SelectedIndex != 1 && frequency <= 0))
       {
         MessageBox.Show(this, "Please enter a valid frequency!", "Incorrect input");
@@ -173,24 +172,24 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         MessageBox.Show(this, "Please enter a valid modulation!", "Incorrect input");
         return false;
       }
-      if (!Int32.TryParse(textBoxQamONID.Text, out onid))
-      {
-        MessageBox.Show(this, "Please enter a valid network ID!", "Incorrect input");
-        return false;
-      }
       if (!Int32.TryParse(textBoxQamTSID.Text, out tsid))
       {
         MessageBox.Show(this, "Please enter a valid transport ID!", "Incorrect input");
         return false;
       }
-      if (!Int32.TryParse(textBoxQamSID.Text, out sid))
+      if (!Int32.TryParse(textBoxQamSID.Text, out serviceId))
       {
         MessageBox.Show(this, "Please enter a valid service ID!", "Incorrect input");
         return false;
       }
-      if (onid < 0 || tsid < 0 || sid < 0)
+      if (!Int32.TryParse(textBoxQamSource.Text, out sourceId))
       {
-        MessageBox.Show(this, "Please enter valid network, transport and service IDs!", "Incorrect input");
+        MessageBox.Show(this, "Please enter a valid source ID!", "Incorrect input");
+        return false;
+      }
+      if (sourceId < 0 || tsid < 0 || serviceId < 0)
+      {
+        MessageBox.Show(this, "Please enter valid transport, service and source IDs!", "Incorrect input");
         return false;
       }
       if (!Int32.TryParse(textBoxQamPmt.Text, out pmt))

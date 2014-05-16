@@ -61,7 +61,7 @@
 
 !ifdef BUILD_MediaPortal
 !insertmacro PrepareBuildReport DirectShowFilters
-!system '"$%WINDIR%\Microsoft.NET\Framework\v4.0.30319\MSBUILD.exe" ${logger} /target:Rebuild /property:Configuration=Release ${git_DirectShowFilters}\Filters.sln' = 0
+!system '"$%WINDIR%\Microsoft.NET\Framework\v4.0.30319\MSBUILD.exe" ${logger} /target:rebuild /property:Configuration=Release ${git_DirectShowFilters}\Filters.sln' = 0
 !insertmacro FinalizeBuildReport
 !insertmacro PrepareBuildReport MediaPortal
 !system '"$%WINDIR%\Microsoft.NET\Framework\v4.0.30319\MSBUILD.exe" ${logger} /target:Rebuild /property:Configuration=Release;Platform=x86 "${git_MP}\MediaPortal.sln"' = 0

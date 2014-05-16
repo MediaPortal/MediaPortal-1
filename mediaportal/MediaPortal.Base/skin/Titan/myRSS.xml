@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+	<id>2700</id>
+  <defaultcontrol>50</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+	<define>#header.label:RSS</define>	
+	<define>#header.hover:background.png</define>	
+	<controls>
+		<control>
+			<description>BACKGROUND</description>
+			<id>0</id>
+			<type>image</type>
+			<posX>0</posX>
+			<posY>0</posY>
+			<width>1920</width>
+			<height>1080</height>
+			<texture>#header.hover</texture>
+			<shouldCache>true</shouldCache>		
+		</control>
+		<control>
+			<description>VIEWPORT</description>
+			<type>image</type>
+			<id>0</id>
+			<posX>10</posX>
+			<posY>145</posY>
+			<width>1903</width>
+			<height>897</height>
+			<texture>panel_tv.png</texture>
+			<animation effect="fade" time="250">WindowOpen</animation>
+			<animation effect="fade" time="250">WindowClose</animation>
+		</control>
+		<control>
+			<id>0</id>
+			<type>image</type>
+			<posX>66</posX>
+			<posY>34</posY>
+			<width>61</width>
+			<height>60</height>
+			<texture>icon_plugin.png</texture>
+			<animation effect="fade" time="250">WindowOpen</animation>
+			<animation effect="fade" time="250">WindowClose</animation>
+		</control>
+		<import>common.time.xml</import>
+		<control Style="smallTitle">
+			<description>Selected item Label</description>
+			<type>fadelabel</type>
+			<id>1</id>
+			<posX>510</posX>
+			<posY>1015</posY>
+			<label>#selecteditem</label>
+			<visible>Control.HasFocus(50)</visible>
+			<animation effect="fade" time="250">WindowOpen</animation>
+			<animation effect="fade" time="250">WindowClose</animation>
+		</control>
+    <control>
+      <description>Channel name label</description>
+      <type>label</type>
+      <id>12</id>
+			<posX>72</posX>
+      <posY>94</posY>
+      <align>left</align>
+      <textcolor>FFFFFFFF</textcolor>
+      <label>-</label>
+      <font>TitanLight12</font>
+      <width>1280</width>
+    </control>
+		<control>
+			<type>actiongroup</type>
+			<description>action menu</description>
+			<defaultcontrol>4</defaultcontrol>
+			<onexit>50</onexit>
+			<dimColor>00ffffff</dimColor>
+			<buttonX>0</buttonX>
+			<buttonY>0</buttonY>
+			<buttonwidth>521</buttonwidth>
+			<buttonheight>1080</buttonheight>
+			<control>
+				<type>image</type>
+				<id>0</id>
+				<width>1920</width>
+				<height>1080</height>
+				<texture>semi_trans_back_hidden_menu.png</texture>
+				<visible>!Control.HasFocus(50)+control.isvisible(50)</visible>
+				<animation effect="fade" time="450">visible</animation>
+				<animation effect="fade" time="400">hidden</animation>
+			</control>
+			<control>
+				<type>image</type>
+				<id>0</id>
+				<posY>0</posY>
+				<posX>0</posX>
+				<width>612</width>
+				<height>1074</height>
+				<texture>menu_bg.png</texture>
+				<visible>!Control.HasFocus(50)+control.isvisible(50)</visible>
+				<animation effect="fade" time="0">WindowClose</animation>
+				<animation effect="slide" start="-150,0" time="100">visible</animation>
+				<animation effect="fade" time="50">visible</animation>
+				<animation effect="fade" time="0">hidden</animation>
+			</control>
+			<control>
+				<description>Menu label</description>
+				<type>label</type>
+				<id>1</id>
+				<posX>116</posX>
+				<posY>100</posY>
+				<label>924</label>
+				<font>fontB16</font>
+				<textcolor>393939</textcolor>
+				<visible>!Control.HasFocus(50)+control.isvisible(50)</visible>
+				<animation effect="fade" time="0">WindowClose</animation>
+				<animation effect="slide" start="-150,0" time="100">visible</animation>
+				<animation effect="fade" time="50">visible</animation>
+				<animation effect="fade" time="0">hidden</animation>
+			</control>
+			<control>
+				<type>group</type>
+				<description>group element</description>
+				<visible>!Control.HasFocus(50)+control.isvisible(50)</visible>
+				<animation effect="fade" time="0">WindowClose</animation>
+				<animation effect="slide" start="-150,0" time="100">visible</animation>
+				<animation effect="fade" time="50">visible</animation>
+				<animation effect="fade" time="0">hidden</animation>
+				<posX>53</posX>
+				<posY>155</posY>
+				<layout>StackLayout(0, Vertical, true)</layout>	
+				<control>
+					<description>RSS feed select</description>
+					<type>button</type>
+					<id>4</id>
+					<posX>50</posX>
+					<posY>170</posY>
+					<label>706</label>
+					<onleft>4</onleft>
+					<onright>50</onright>
+					<onup>2</onup>
+					<ondown>2</ondown>
+					<textureFocus>hiddenmenu_item_selected.png</textureFocus>
+					<textureNoFocus>-</textureNoFocus>		
+					<width>499</width>
+					<height>69</height>
+					<textXOff>62</textXOff>
+					<textYOff>16</textYOff>	
+				</control>
+				<control>
+					<description>Refresh Button</description>
+					<type>button</type>
+					<id>2</id>
+					<posX>50</posX>
+					<posY>215</posY>
+					<label>184</label>
+					<onleft>2</onleft>
+					<onright>50</onright>
+					<onup>4</onup>
+					<ondown>4</ondown>
+					<textureFocus>hiddenmenu_item_selected.png</textureFocus>
+					<textureNoFocus>-</textureNoFocus>		
+					<width>499</width>
+					<height>69</height>
+					<textXOff>62</textXOff>
+					<textYOff>16</textYOff>	
+				</control>				
+			</control>
+		</control>
+    <control>
+      <description>Site Logo</description>
+      <type>image</type>
+      <id>101</id>
+      <posX>-2000</posX>
+      <posY>270</posY>
+      <width>227</width>
+      <height>160</height>
+      <texture>-</texture>
+      <keepaspectratio>yes</keepaspectratio>
+    </control>
+		<!--            :: Listview Lines ::            -->
+		<control>
+			<description>List Lines</description>
+			<type>image</type>
+			<id>1</id>
+			<posX>998</posX>
+			<posY>273</posY>
+			<width>811</width>
+			<height>618</height>
+			<texture>list_lines_tv.png</texture>  
+			<animation effect="fade" time="250">WindowOpen</animation>
+			<animation effect="fade" time="250">WindowClose</animation>
+		</control>
+		<control>
+			<description>listcontrol</description>
+			<type>listcontrol</type>
+			<id>50</id>
+			<posX>918</posX>
+			<posY>219</posY>
+			<height>800</height>
+			<width>943</width>
+			<onleft>4</onleft>
+			<onright>4</onright>
+			<scrollOffset>1</scrollOffset>
+			<textureFocus>listcontrol_item_selected_tv.png</textureFocus>
+			<textureNoFocus>-</textureNoFocus>		
+			<textXOff>50</textXOff>
+			<textXOff2>914</textXOff2>
+			<keepaspectratio>no</keepaspectratio>
+			<spinCanFocus>no</spinCanFocus>
+			<dimColor>ffffffff</dimColor>
+			<spinPosX>1832</spinPosX>
+			<spinPosY>950</spinPosY>
+			<animation effect="fade" time="250">WindowOpen</animation>
+			<animation effect="fade" time="250">WindowClose</animation>
+		</control>
+		<control>
+			<type>textboxscrollup</type>
+			<description>Description</description>
+			<id>506</id>
+			<posX>99</posX>
+			<posY>226</posY>
+			<width>780</width>
+			<height>720</height>
+			<label>-</label>
+			<lineSpacing>0.92</lineSpacing>
+			<seperator>---------------------------------------------------------------------------------------------------------------------</seperator>
+			<visible>control.isvisible(50)</visible>
+			<animation effect="fade" time="250">WindowOpen</animation>
+			<animation effect="fade" time="250">WindowClose</animation>
+		</control>
+		<control>
+			<id>1</id>
+			<type>image</type>
+			<posX>0</posX>
+			<posY>440</posY>
+			<width>64</width>
+			<height>199</height>
+			<texture>hiddenmenu_tab.png</texture>
+			<visible>Control.HasFocus(50) + !string.contains(#Titan.HiddenMenu, false)</visible>
+			<animation effect="slide" start="-60,0" end="0,0" tween="quadratic" easing="in" time="250" delay="400">WindowOpen</animation>
+			<animation effect="slide" start="0,0" end="-60,0" tween="quadratic" easing="in" time="250" delay="100">WindowClose</animation>
+		</control>
+		<import>common.overlay.xml</import>
+  </controls>
+</window>

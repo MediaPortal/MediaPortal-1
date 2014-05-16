@@ -1336,5 +1336,6 @@ namespace TvEngine.PowerScheduler.Interfaces
     }
 
     #endregion
+
   }
 }

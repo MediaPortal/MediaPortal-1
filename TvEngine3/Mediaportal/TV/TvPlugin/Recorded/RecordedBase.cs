@@ -1,4 +1,4 @@
-﻿#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2010 Team MediaPortal
 
 // Copyright (C) 2005-2010 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -26,6 +26,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using Common.GUIPlugins;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
@@ -39,7 +40,6 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Profile;
 using MediaPortal.Util;
-using WindowPlugins;
 using Action = MediaPortal.GUI.Library.Action;
 using Log = Mediaportal.TV.Server.TVLibrary.Interfaces.Logging.Log;
 
@@ -1584,7 +1584,7 @@ namespace Mediaportal.TV.TvPlugin.Recorded
         }
         if (item2.IsFolder && item2.Label == "..")
         {
-          return -1;
+          return 1;
         }
 
         SortMethod cSortMethod = _currentSortMethod;

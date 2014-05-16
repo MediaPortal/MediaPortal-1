@@ -1,4 +1,4 @@
-﻿#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2010 Team MediaPortal
 
 // Copyright (C) 2005-2010 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -4372,8 +4372,8 @@ namespace Mediaportal.TV.TvPlugin.EPG
         case Action.ActionType.ACTION_PREVIOUS_MENU:
           if (_singleChannelView)
           {
-            OnSwitchMode();
-            return; // base.OnAction would close the EPG as well
+            GUIWindowManager.ActivateWindow(GetID);
+            return;
           }
           GUIWindowManager.ShowPreviousWindow();
           return;

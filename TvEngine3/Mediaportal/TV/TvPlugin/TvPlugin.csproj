@@ -54,14 +54,20 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Common.GUIPlugins">
+      <HintPath>..\..\..\..\mediaportal\WindowPlugins\Common.GUIPlugins\bin\Release\Common.GUIPlugins.dll</HintPath>
+    </Reference>
     <Reference Include="Core">
-      <HintPath>..\..\..\..\mediaportal\WindowPlugins\bin\Release\Core.dll</HintPath>
+      <HintPath>..\..\..\..\mediaportal\Core\bin\Release\Core.dll</HintPath>
     </Reference>
     <Reference Include="Databases">
       <HintPath>..\..\..\..\mediaportal\WindowPlugins\bin\Release\Databases.dll</HintPath>
     </Reference>
     <Reference Include="Dialogs">
       <HintPath>..\..\..\..\mediaportal\Dialogs\bin\Release\Dialogs.dll</HintPath>
+    </Reference>
+    <Reference Include="GUIVideos">
+      <HintPath>..\..\..\..\mediaportal\WindowPlugins\GUIVideos\bin\Release\GUIVideos.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -77,9 +83,6 @@
     <Reference Include="System.Xml" />
     <Reference Include="Utils">
       <HintPath>..\..\..\..\mediaportal\WindowPlugins\bin\Release\Utils.dll</HintPath>
-    </Reference>
-    <Reference Include="WindowPlugins">
-      <HintPath>..\..\..\..\mediaportal\WindowPlugins\bin\Release\WindowPlugins.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

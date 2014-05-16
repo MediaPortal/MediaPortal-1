@@ -1978,7 +1978,8 @@ namespace MediaPortal.Player
         // Do not change refresh rate if the clip is less than 1 minute long
         if (titleInfo.native.duration/90000 > 60)
         {
-          RefreshRateChanger.SetRefreshRateBasedOnFPS(VideoRatetoDouble(videoRate), "", RefreshRateChanger.MediaType.Video);
+          RefreshRateChanger.SetRefreshRateBasedOnFPS(VideoRatetoDouble(videoRate), "",
+                                                      RefreshRateChanger.MediaType.Video);
         }
       }
     }

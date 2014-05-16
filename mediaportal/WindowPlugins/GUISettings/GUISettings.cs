@@ -41,7 +41,7 @@ namespace MediaPortal.GUI.Settings
   /// <summary>
   /// Change and tweak settings like Video codecs, skins, etc from inside MP
   /// </summary>
-  [PluginIcons("WindowPlugins.GUISettings.Settings.gif", "WindowPlugins.GUISettings.SettingsDisabled.gif")]
+  [PluginIcons("GUISettings.Settings.gif", "GUISettings.SettingsDisabled.gif")]
   public sealed class GUISettings : GUIInternalWindow, ISetupForm, IShowPlugin
   {
     [SkinControl(11)] private readonly GUIButtonControl _btnMiniDisplay = null;
@@ -106,8 +106,8 @@ namespace MediaPortal.GUI.Settings
         {
           GUIWindowManager.CloseCurrentWindow();
         }
+        }
       }
-    }
 
     protected override void OnPageDestroy(int newWindowId)
     {

@@ -473,9 +473,11 @@ namespace Mediaportal.TV.Server.TVService
       strFName = strFName.Replace('?', '_');
       strFName = strFName.Replace('\"', '_');
       strFName = strFName.Replace('<', '_');
-      ;
       strFName = strFName.Replace('>', '_');
       strFName = strFName.Replace('|', '_');
+      strFName = strFName.Replace('\t', '_');
+      strFName = strFName.Replace("\r", String.Empty);
+      strFName = strFName.Replace("\n", String.Empty);
       return strFName;
     }
 
