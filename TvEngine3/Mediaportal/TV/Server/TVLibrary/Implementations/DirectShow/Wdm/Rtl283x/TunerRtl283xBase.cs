@@ -112,7 +112,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
     /// Detect the compatible tuners connected to the system.
     /// </summary>
     /// <returns>an enumerable collection of <see cref="T:TvLibrary.Interfaces.ITVCard"/></returns>
-    private static IEnumerable<ITVCard> DetectTuners()
+    public static IEnumerable<ITVCard> DetectTuners()
     {
       Log.Debug("RTL283x base: detect tuners");
       List<ITVCard> tuners = new List<ITVCard>();
@@ -154,7 +154,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
           }
           KSPropertySupport support;
           int hr = ps.QuerySupported(BDA_EXTENSION_FILTER_MODE_PROPERTY_SET, (int)BdaExtensionFilterModeProperty.GetDemodSupportedModes, out support);
-          if (hr != (int)HResult.Severity.Success || support.HasFlag(KSPropertySupport.Get))
+          if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Get))
           {
             Log.Debug("RTL283x base: property set not supported, hr = 0x{0:x}", hr);
             device.Dispose();

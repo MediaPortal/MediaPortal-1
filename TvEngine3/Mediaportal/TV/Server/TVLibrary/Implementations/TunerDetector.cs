@@ -37,6 +37,7 @@ using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Dri;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Rtsp;
@@ -745,6 +746,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
       int streamTunerCount = SettingsManagement.GetValue("iptvCardCount", 1);
 
+      bool detectedRtl283x = false;
       DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.LegacyAmFilterCategory);
       foreach (DsDevice device in devices)
       {
@@ -789,6 +791,24 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
                 tuner.Dispose();
               }
             }
+          }
+          else if (!detectedRtl283x && (name.Equals("RTKFMSourceFilter") || name.Equals("RTKDABSourceFilter") || name.Equals("RTKISDBTSourceFilter")))
+          {
+            this.LogInfo("detector: detected RTL283x source device");
+            IEnumerable<ITVCard> rtl283xTuners = TunerRtl283xBase.DetectTuners();
+            foreach (ITVCard tuner in rtl283xTuners)
+            {
+              knownTuners.Add(tuner.ExternalId);
+              if (!_knownTuners.ContainsKey(tuner.ExternalId))
+              {
+                OnTunerDetected(tuner);
+              }
+              else
+              {
+                tuner.Dispose();
+              }
+            }
+            detectedRtl283x = true;
           }
         }
         finally
