@@ -1281,6 +1281,12 @@ int AudioRendererSettings::GetQuality_SEEKWINDOW_MS()
   return m_lQuality_SEEKWINDOW_MS;
 }
 
+int AudioRendererSettings::GetQuality_OVERLAP_MS()
+{
+  CAutoLock settingLock(&m_csSettings);
+  return m_lQuality_OVERLAP_MS;
+}
+
 HRESULT AudioRendererSettings::GetBool(MPARSetting setting, bool* pValue)
 {
   CheckPointer(pValue, E_POINTER);

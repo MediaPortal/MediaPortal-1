@@ -80,7 +80,7 @@ HRESULT CTimeStretchFilter::Init()
   setSetting(SETTING_AA_FILTER_LENGTH, m_pSettings->GetQuality_AA_FILTER_LENGTH());
   setSetting(SETTING_SEQUENCE_MS, m_pSettings->GetQuality_SEQUENCE_MS()); 
   setSetting(SETTING_SEEKWINDOW_MS, m_pSettings->GetQuality_SEEKWINDOW_MS());
-  setSetting(SETTING_OVERLAP_MS, m_pSettings->GetQuality_SEQUENCE_MS());
+  setSetting(SETTING_OVERLAP_MS, m_pSettings->GetQuality_OVERLAP_MS());
 
   return CQueuedAudioSink::Init();
 }

@@ -197,6 +197,7 @@ public:
   int GetQuality_AA_FILTER_LENGTH();
   int GetQuality_SEQUENCE_MS(); 
   int GetQuality_SEEKWINDOW_MS();
+  int GetQuality_OVERLAP_MS();
 
 private:
   bool IsValidSampleRate(int value);
