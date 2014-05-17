@@ -24,6 +24,8 @@
 #define DEFINE_STREAM_FUNC(funcname, paramtype, paramname) \
   void CTimeStretchFilter::funcname(paramtype paramname) \
   { \
+    CAutoLock streamLock(&m_csStreamLock); \
+    ASSERT(m_Streams); \
     if (m_Streams) \
     { \
       for(int i=0; i<m_Streams->size(); i++) \
@@ -55,6 +57,7 @@ CTimeStretchFilter::~CTimeStretchFilter(void)
   SetEvent(m_hStopThreadEvent);
   WaitForSingleObject(m_hThread, INFINITE);
 
+  CAutoLock streamLock(&m_csStreamLock);
   CAutoLock lock(&m_csResources);
   SetFormat(NULL);
   DeleteMediaType(m_pMediaType);
@@ -72,15 +75,6 @@ HRESULT CTimeStretchFilter::Init()
   m_dwSampleWaitObjects.push_back(S_OK);
   m_dwSampleWaitObjects.push_back(MPAR_S_OOB_COMMAND_AVAILABLE);
   m_dwSampleWaitObjects.push_back(MPAR_S_THREAD_STOPPING);
-
-  setTempoChange(0);
-  setPitchSemiTones(0);
-  setSetting(SETTING_USE_QUICKSEEK, m_pSettings->GetQuality_USE_QUICKSEEK());
-  setSetting(SETTING_USE_AA_FILTER, m_pSettings->GetQuality_USE_AA_FILTER());
-  setSetting(SETTING_AA_FILTER_LENGTH, m_pSettings->GetQuality_AA_FILTER_LENGTH());
-  setSetting(SETTING_SEQUENCE_MS, m_pSettings->GetQuality_SEQUENCE_MS()); 
-  setSetting(SETTING_SEEKWINDOW_MS, m_pSettings->GetQuality_SEEKWINDOW_MS());
-  setSetting(SETTING_OVERLAP_MS, m_pSettings->GetQuality_OVERLAP_MS());
 
   return CQueuedAudioSink::Init();
 }
@@ -301,10 +295,10 @@ HRESULT CTimeStretchFilter::SetFormat(const WAVEFORMATEXTENSIBLE *pwfe)
     }
   }
 
+  CAutoLock streamLock(&m_csStreamLock);
+
   // delete old ones
   std::vector<CSoundTouchEx*>* oldStreams = m_Streams;
-  m_Streams = newStreams;
-
   if (oldStreams)
   {
     for (int i = 0; i < oldStreams->size(); i++)
@@ -314,10 +308,21 @@ HRESULT CTimeStretchFilter::SetFormat(const WAVEFORMATEXTENSIBLE *pwfe)
     SAFE_DELETE(oldStreams);
   }
 
-  if (m_Streams)
+  m_Streams = newStreams;
+
+  if (newStreams && pwfe)
   {
+    setSetting(SETTING_USE_QUICKSEEK, m_pSettings->GetQuality_USE_QUICKSEEK());
+    setSetting(SETTING_USE_AA_FILTER, m_pSettings->GetQuality_USE_AA_FILTER());
+    setSetting(SETTING_AA_FILTER_LENGTH, m_pSettings->GetQuality_AA_FILTER_LENGTH());
+    setSetting(SETTING_SEQUENCE_MS, m_pSettings->GetQuality_SEQUENCE_MS()); 
+    setSetting(SETTING_SEEKWINDOW_MS, m_pSettings->GetQuality_SEEKWINDOW_MS());
+    setSetting(SETTING_OVERLAP_MS, m_pSettings->GetQuality_OVERLAP_MS());
+
     setTempoInternal(m_fNewTempo, m_fNewAdjustment);
     setSampleRate(pwfe->Format.nSamplesPerSec);
+    setTempoChange(0);
+    setPitchSemiTones(0);
   }
 
   return S_OK;
@@ -621,35 +626,41 @@ DEFINE_STREAM_FUNC(setPitchSemiTones, int, newPitch)
 DEFINE_STREAM_FUNC(setPitchSemiTones, float, newPitch)
 DEFINE_STREAM_FUNC(setSampleRate, uint, srate)
 
-// clear requires a specific handling since we need to be able to use the CAutoLock
 void CTimeStretchFilter::clear() 
 { 
-  CAutoLock allocatorLock(&m_allocatorLock);
-  if (m_Streams) 
+  CAutoLock streamLock(&m_csStreamLock);
+  ASSERT(m_Streams);
+
+  if (m_Streams)
   { 
-    for(int i = 0; i < m_Streams->size(); i++) 
+    for (int i = 0; i < m_Streams->size(); i++) 
       m_Streams->at(i)->clear(); 
-  } 
+  }
 }
 
-// flush requires a specific handling since we need to be able to use the CAutoLock
 void CTimeStretchFilter::flush() 
 { 
-  CAutoLock allocatorLock(&m_allocatorLock);
-  if (m_Streams) 
+  CAutoLock streamLock(&m_csStreamLock);
+  ASSERT(m_Streams);
+
+  if (m_Streams)
   { 
-    for(int i = 0; i < m_Streams->size(); i++) 
+    for (int i = 0; i < m_Streams->size(); i++)
+    {
       m_Streams->at(i)->flush(); 
+    }
   }
 }
 
 uint CTimeStretchFilter::flushEx()
 { 
-  CAutoLock allocatorLock(&m_allocatorLock);
+  CAutoLock streamLock(&m_csStreamLock);
+  ASSERT(m_Streams);
+
   uint minZeros = 0;
   if (m_Streams) 
   { 
-    for(int i = 0; i < m_Streams->size(); i++)
+    for (int i = 0; i < m_Streams->size(); i++)
     {
       uint zeros = m_Streams->at(i)->flushEx();
       if (i == 0 || minZeros > zeros)
@@ -668,10 +679,15 @@ void CTimeStretchFilter::setTempo(float newTempo, float newAdjustment)
 
 void CTimeStretchFilter::setTempoInternal(float newTempo, float newAdjustment)
 {
-  if (m_Streams) 
+  CAutoLock streamLock(&m_csStreamLock);
+  ASSERT(m_Streams);
+
+  if (m_Streams)
   { 
-    for (int i = 0; i < m_Streams->size(); i++) 
-      m_Streams->at(i)->setTempo(newTempo * newAdjustment); 
+    for (int i = 0; i < m_Streams->size(); i++)
+    {
+      m_Streams->at(i)->setTempo(newTempo * newAdjustment);
+    }
 
     m_fCurrentTempo = newTempo;
     m_fCurrentAdjustment = newAdjustment;
@@ -680,19 +696,29 @@ void CTimeStretchFilter::setTempoInternal(float newTempo, float newAdjustment)
 
 BOOL CTimeStretchFilter::setSetting(int settingId, int value)
 {
+  CAutoLock streamLock(&m_csStreamLock);
+  ASSERT(m_Streams);
+
   // TODO should LFE channel have separate settings since it is by nature quite
   // different when it comes to frequency response
   if (m_Streams)
   {
-    for(int i = 0; i < m_Streams->size(); i++)
+    for (int i = 0; i < m_Streams->size(); i++)
+    {
       m_Streams->at(i)->setSetting(settingId, value);
+    }
+
     return true;
-  } 
+  }
+
   return false;
 }
 
 uint CTimeStretchFilter::numUnprocessedSamples() const
 {
+  CAutoLock streamLock(&m_csStreamLock);
+  ASSERT(m_Streams);
+
   uint maxSamples = 0;
   for (int i = 0; i < m_Streams->size(); i++)
   {
@@ -700,12 +726,16 @@ uint CTimeStretchFilter::numUnprocessedSamples() const
     if (maxSamples == 0 || maxSamples < samples)
       maxSamples = samples;
   }
+
   return maxSamples;
 }
 
 /// Returns number of samples currently available.
 uint CTimeStretchFilter::numSamples() const
 {
+  CAutoLock streamLock(&m_csStreamLock);
+  ASSERT(m_Streams);
+
   uint minSamples = 0;
   for (int i = 0; i < m_Streams->size(); i++)
   {
@@ -720,6 +750,9 @@ uint CTimeStretchFilter::numSamples() const
 /// Returns nonzero if there aren't any samples available for outputting.
 int CTimeStretchFilter::isEmpty() const
 {
+  CAutoLock streamLock(&m_csStreamLock);
+  ASSERT(m_Streams);
+
   for (int i = 0; i < m_Streams->size(); i++)
   {
     if (m_Streams->at(i)->isEmpty())
@@ -731,6 +764,9 @@ int CTimeStretchFilter::isEmpty() const
 
 bool CTimeStretchFilter::putSamplesInternal(const short *inBuffer, long inSamples)
 {
+  CAutoLock streamLock(&m_csStreamLock);
+  ASSERT(m_Streams);
+
   if (!m_Streams)
     return false;
 
@@ -745,6 +781,9 @@ bool CTimeStretchFilter::putSamplesInternal(const short *inBuffer, long inSample
 
 uint CTimeStretchFilter::receiveSamplesInternal(short *outBuffer, uint maxSamples)
 {
+  CAutoLock streamLock(&m_csStreamLock);
+  ASSERT(m_Streams);
+
   if (!m_Streams)
     return 0;
 
