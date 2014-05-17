@@ -33,7 +33,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Microsoft.Win32;
 using BroadcastStandard = Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer.BroadcastStandard;
-using Encoder = Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.Components.Encoder;
+using Encoder = Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.Component.Encoder;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
 {
@@ -901,6 +901,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
               catch (Exception ex)
               {
                 job.ThrownException = ex;
+                job.WaitEvent.Set();
               }
             }
           }
@@ -912,9 +913,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       catch (Exception ex)
       {
         this.LogError(ex, "RTL283x FM: graph thread exception");
-        return;
       }
-      this.LogDebug("RTL283x FM: graph thread stopping");
+      finally
+      {
+        this.LogDebug("RTL283x FM: graph thread stopped");
+      }
     }
 
     #endregion
@@ -1095,7 +1098,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
     {
       this.LogDebug("RTL283x FM: perform unloading");
 
-      StopGraphThread();
+      // This function is called from inside the graph thread, which means we
+      // can't force the thread to stop from here. Setting the stop variable
+      // and event should be enough to cause the thread to stop immediately
+      // after this function finishes executing.
+      _stopGraphThread = true;
+      _graphThreadWaitEvent.Set();
 
       if (_capture != null)
       {
@@ -1169,6 +1177,23 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
         throw new TvException("Failed to set frequency.");
       }
       _encoder.PerformTuning(analogChannel);
+    }
+
+    #endregion
+
+    #region IDisposable member
+
+    /// <summary>
+    /// Release and dispose all resources.
+    /// </summary>
+    public override void Dispose()
+    {
+      base.Dispose();
+      if (_mainTunerDevice != null)
+      {
+        _mainTunerDevice.Dispose();
+        _mainTunerDevice = null;
+      }
     }
 
     #endregion
