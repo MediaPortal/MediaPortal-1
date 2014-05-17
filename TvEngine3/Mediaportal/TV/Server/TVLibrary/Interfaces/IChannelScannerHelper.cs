@@ -26,7 +26,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
   /// <summary>
   /// An interface - independent of tuner implementation - for channel scanning logic implementation.
   /// </summary>
-  interface IChannelScannerHelper
+  internal interface IChannelScannerHelper
   {
     /// <summary>
     /// Set or modify channel detail.
