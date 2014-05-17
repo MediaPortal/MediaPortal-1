@@ -61,7 +61,7 @@
       <HintPath>..\..\..\..\mediaportal\Core\bin\Release\Core.dll</HintPath>
     </Reference>
     <Reference Include="Databases">
-      <HintPath>..\..\..\..\mediaportal\WindowPlugins\bin\Release\Databases.dll</HintPath>
+      <HintPath>..\..\..\..\mediaportal\Databases\bin\Release\Databases.dll</HintPath>
     </Reference>
     <Reference Include="Dialogs">
       <HintPath>..\..\..\..\mediaportal\Dialogs\bin\Release\Dialogs.dll</HintPath>
@@ -82,7 +82,7 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Utils">
-      <HintPath>..\..\..\..\mediaportal\WindowPlugins\bin\Release\Utils.dll</HintPath>
+      <HintPath>..\..\..\..\mediaportal\Utils\bin\Release\Utils.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
