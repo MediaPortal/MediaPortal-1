@@ -1131,6 +1131,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <param name="action">The action to perform.</param>
     private void PerformTunerAction(TunerAction action)
     {
+      // Don't do anything if the tuner is not loaded.
+      if (_state == TunerState.NotLoaded)
+      {
+        return;
+      }
       this.LogDebug("tuner base: perform tuner action, action = {0}", action);
       try
       {
