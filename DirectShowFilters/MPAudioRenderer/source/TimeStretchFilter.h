@@ -150,7 +150,7 @@ private:
   double m_fNewAdjustment;
   bool m_bBitstreaming;
 
-  CCritSec m_allocatorLock;
+  mutable CCritSec m_csStreamLock;  // allow const methods to use the lock
 
   CSyncClock* m_pClock;
 };
