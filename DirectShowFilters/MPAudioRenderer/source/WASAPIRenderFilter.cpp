@@ -926,8 +926,12 @@ REFERENCE_TIME CWASAPIRenderFilter::BufferredDataDuration()
   vector<TQueueEntry>::iterator it = m_inputQueue.begin();
   while (it != m_inputQueue.end())
   {
-    it->Sample->GetTime(&rtStart, &rtStop);
-    rtDuration += rtStop - rtStart;
+    // EOS marker is currently a NULL sample
+    if (it->Sample)
+    {
+      it->Sample->GetTime(&rtStart, &rtStop);
+      rtDuration += rtStop - rtStart;
+    }
     ++it;
   }
 
