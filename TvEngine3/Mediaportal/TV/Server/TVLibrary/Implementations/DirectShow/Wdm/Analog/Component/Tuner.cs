@@ -28,7 +28,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Microsoft.Win32;
 
-namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.Components
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.Component
 {
   /// <summary>
   /// A WDM analog DirectShow tuner and TV audio graph component.

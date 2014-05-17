@@ -29,7 +29,11 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
 {
-  internal class TunerRtl283xBase
+  /// <summary>
+  /// An implementation of <see cref="ITunerDetectorSystem"/> which detects the supported
+  /// proprietary modes for BDA tuners based on Realtek's RTL283x chipset.
+  /// </summary>
+  internal class TunerDetectorRtl283x : ITunerDetectorSystem
   {
     #region enums
 
@@ -109,12 +113,23 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
     #endregion
 
     /// <summary>
-    /// Detect the compatible tuners connected to the system.
+    /// Get the detector's name.
     /// </summary>
-    /// <returns>an enumerable collection of <see cref="T:TvLibrary.Interfaces.ITVCard"/></returns>
-    public static IEnumerable<ITVCard> DetectTuners()
+    public string Name
     {
-      Log.Debug("RTL283x base: detect tuners");
+      get
+      {
+        return "RTL283x";
+      }
+    }
+
+    /// <summary>
+    /// Detect and instanciate the compatible tuners connected to the system.
+    /// </summary>
+    /// <returns>the tuners that are currently available</returns>
+    public ICollection<ITVCard> DetectTuners()
+    {
+      this.LogDebug("RTL283x detector: detect tuners");
       List<ITVCard> tuners = new List<ITVCard>();
 
       DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.BDASourceFiltersCategory);
@@ -129,7 +144,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
         }
 
         // First check if we have an RTL283x based tuner.
-        Log.Debug("RTL283x base: check tuner {0} {1}", name, devicePath);
+        this.LogDebug("RTL283x detector: check tuner {0} {1}", name, devicePath);
         Guid filterClsid = typeof(IBaseFilter).GUID;
         object obj = null;
         try
@@ -138,7 +153,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
         }
         catch (Exception ex)
         {
-          Log.Error(ex, "RTL283x base: failed to create filter instance for {0} {1}", name, devicePath);
+          this.LogError(ex, "RTL283x detector: failed to create filter instance for {0} {1}", name, devicePath);
           device.Dispose();
           continue;
         }
@@ -148,7 +163,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
           IKsPropertySet ps = obj as IKsPropertySet;
           if (ps == null)
           {
-            Log.Debug("RTL283x base: filter is not a property set");
+            this.LogDebug("RTL283x detector: filter is not a property set");
             device.Dispose();
             continue;
           }
@@ -156,12 +171,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
           int hr = ps.QuerySupported(BDA_EXTENSION_FILTER_MODE_PROPERTY_SET, (int)BdaExtensionFilterModeProperty.GetDemodSupportedModes, out support);
           if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Get))
           {
-            Log.Debug("RTL283x base: property set not supported, hr = 0x{0:x}", hr);
+            this.LogDebug("RTL283x detector: property set not supported, hr = 0x{0:x}", hr);
             device.Dispose();
             continue;
           }
 
-          Log.Debug("RTL283x base: property set supported, checking supported modes");
+          this.LogDebug("RTL283x detector: property set supported, checking supported modes");
           IntPtr buffer = Marshal.AllocCoTaskMem(4);
           Rtl283xBroadcastStandard supportedModes;
           try
@@ -170,7 +185,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
             hr = ps.Get(BDA_EXTENSION_FILTER_MODE_PROPERTY_SET, (int)BdaExtensionFilterModeProperty.GetDemodSupportedModes, IntPtr.Zero, 0, buffer, 4, out returnedByteCount);
             if (hr != (int)HResult.Severity.Success || returnedByteCount != 4)
             {
-              Log.Error("RTL283x base: failed to read supported modes, hr = 0x{0:x}, byte count = {1}", hr, returnedByteCount);
+              this.LogError("RTL283x detector: failed to read supported modes, hr = 0x{0:x}, byte count = {1}", hr, returnedByteCount);
               device.Dispose();
               continue;
             }
@@ -181,7 +196,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
             Marshal.FreeCoTaskMem(buffer);
           }
 
-          Log.Debug("  modes = {0}", supportedModes);
+          this.LogDebug("  modes = {0}", supportedModes);
 
           if (supportedModes.HasFlag(Rtl283xBroadcastStandard.Fm))
           {

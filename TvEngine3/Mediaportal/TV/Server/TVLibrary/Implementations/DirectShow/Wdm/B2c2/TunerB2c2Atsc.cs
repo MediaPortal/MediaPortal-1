@@ -20,6 +20,8 @@
 
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Atsc;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Enum;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Struct;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
@@ -36,7 +38,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     /// <summary>
     /// Initialise a new instance of the <see cref="TunerB2c2Atsc"/> class.
     /// </summary>
-    /// <param name="info">The B2C2-specific information (<see cref="TunerB2c2Base.DeviceInfo"/>) about the tuner.</param>
+    /// <param name="info">The B2C2-specific information (<see cref="DeviceInfo"/>) about the tuner.</param>
     public TunerB2c2Atsc(DeviceInfo info)
       : base(info, CardType.Atsc)
     {
@@ -70,7 +72,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       // If the channel modulation scheme is 8 VSB then it is an over-the-air ATSC channel, otherwise
       // it is a cable (SCTE ITU-T annex B) channel.
       int frequency;
-      B2c2Modulation modulation = B2c2Modulation.Vsb8;
+      Modulation modulation = Modulation.Vsb8;
       if (atscChannel.ModulationType == ModulationType.Mod8Vsb)
       {
         frequency = ATSCChannel.GetTerrestrialFrequencyFromPhysicalChannel(atscChannel.PhysicalChannel);
@@ -79,10 +81,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       else
       {
         frequency = (int)atscChannel.Frequency;
-        modulation = B2c2Modulation.Qam256AnnexB;
+        modulation = Modulation.Qam256AnnexB;
         if (atscChannel.ModulationType == ModulationType.Mod64Qam)
         {
-          modulation = B2c2Modulation.Qam64AnnexB;
+          modulation = Modulation.Qam64AnnexB;
         }
       }
 

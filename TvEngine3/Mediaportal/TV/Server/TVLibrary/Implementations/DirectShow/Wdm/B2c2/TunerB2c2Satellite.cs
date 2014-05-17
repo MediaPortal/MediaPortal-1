@@ -21,6 +21,8 @@
 using System;
 using System.Runtime.InteropServices;
 using DirectShowLib.BDA;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Enum;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Struct;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
@@ -28,6 +30,8 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
+using B2c2DiseqcPort = Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Enum.DiseqcPort;
+using B2c2Polarisation = Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Enum.Polarisation;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
 {
@@ -59,7 +63,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     /// <summary>
     /// Initialise a new instance of the <see cref="TunerB2c2Satellite"/> class.
     /// </summary>
-    /// <param name="info">The B2C2-specific information (<see cref="TunerB2c2Base.DeviceInfo"/>) about the tuner.</param>
+    /// <param name="info">The B2C2-specific information (<see cref="DeviceInfo"/>) about the tuner.</param>
     public TunerB2c2Satellite(DeviceInfo info)
       : base(info, CardType.DvbS)
     {
@@ -72,7 +76,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     {
       base.PerformLoading();
       _diseqcBuffer = Marshal.AllocCoTaskMem(DISEQC_BUFFER_SIZE);
-      _isRawDiseqcSupported = _capabilities.AcquisitionCapabilities.HasFlag(B2c2AcquisionCapability.RawDiseqc);
+      _isRawDiseqcSupported = _capabilities.AcquisitionCapabilities.HasFlag(AcquisitionCapability.RawDiseqc);
     }
 
     /// <summary>
@@ -119,30 +123,30 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       hr = _interfaceTuner.SetSymbolRate(dvbsChannel.SymbolRate);
       HResult.ThrowException(hr, "Failed to set symbol rate.");
 
-      B2c2FecRate fec = B2c2FecRate.Auto;
+      FecRate fec = FecRate.Auto;
       switch (dvbsChannel.InnerFecRate)
       {
         case BinaryConvolutionCodeRate.Rate1_2:
-          fec = B2c2FecRate.Rate1_2;
+          fec = FecRate.Rate1_2;
           break;
         case BinaryConvolutionCodeRate.Rate2_3:
-          fec = B2c2FecRate.Rate2_3;
+          fec = FecRate.Rate2_3;
           break;
         case BinaryConvolutionCodeRate.Rate3_4:
-          fec = B2c2FecRate.Rate3_4;
+          fec = FecRate.Rate3_4;
           break;
         case BinaryConvolutionCodeRate.Rate5_6:
-          fec = B2c2FecRate.Rate5_6;
+          fec = FecRate.Rate5_6;
           break;
         case BinaryConvolutionCodeRate.Rate7_8:
-          fec = B2c2FecRate.Rate7_8;
+          fec = FecRate.Rate7_8;
           break;
       }
       hr = _interfaceTuner.SetFec(fec);
       HResult.ThrowException(hr, "Failed to set FEC rate.");
 
       B2c2Polarisation b2c2Polarisation = B2c2Polarisation.Horizontal;
-      if (dvbsChannel.Polarisation == Polarisation.LinearV || dvbsChannel.Polarisation == Polarisation.CircularR)
+      if (dvbsChannel.Polarisation == DirectShowLib.BDA.Polarisation.LinearV || dvbsChannel.Polarisation == DirectShowLib.BDA.Polarisation.CircularR)
       {
         b2c2Polarisation = B2c2Polarisation.Vertical;
       }
@@ -207,10 +211,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
         }
       }
 
-      B2c2Tone tone = B2c2Tone.Off;
+      Tone tone = Tone.Off;
       if (tone22kState == Tone22k.On)
       {
-        tone = B2c2Tone.Tone22k;
+        tone = Tone.Tone22k;
       }
       hr = _interfaceTuner.SetLnbKHz(tone);
       if (hr == (int)HResult.Severity.Success)
@@ -266,7 +270,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
         }
         catch (COMException ex)
         {
-          if ((B2c2Error)ex.ErrorCode == B2c2Error.Diseqc12NotSupported)
+          if ((Error)ex.ErrorCode == Error.Diseqc12NotSupported)
           {
             // DiSEqC 1.2 commands not supported. This is a little unexpected given that the
             // driver previously reported that it supports them.

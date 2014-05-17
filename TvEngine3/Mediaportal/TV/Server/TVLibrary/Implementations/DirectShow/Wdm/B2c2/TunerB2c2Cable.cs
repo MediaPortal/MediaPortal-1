@@ -19,6 +19,8 @@
 #endregion
 
 using DirectShowLib.BDA;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Enum;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Struct;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
@@ -34,7 +36,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     /// <summary>
     /// Initialise a new instance of the <see cref="TunerB2c2Cable"/> class.
     /// </summary>
-    /// <param name="info">The B2C2-specific information (<see cref="TunerB2c2Base.DeviceInfo"/>) about the tuner.</param>
+    /// <param name="info">The B2C2-specific information (<see cref="DeviceInfo"/>) about the tuner.</param>
     public TunerB2c2Cable(DeviceInfo info)
       : base(info, CardType.DvbC)
     {
@@ -71,20 +73,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       hr = _interfaceTuner.SetSymbolRate(dvbcChannel.SymbolRate);
       HResult.ThrowException(hr, "Failed to set symbol rate.");
 
-      B2c2Modulation modulation = B2c2Modulation.Qam64;
+      Modulation modulation = Modulation.Qam64;
       switch (dvbcChannel.ModulationType)
       {
         case ModulationType.Mod16Qam:
-          modulation = B2c2Modulation.Qam16;
+          modulation = Modulation.Qam16;
           break;
         case ModulationType.Mod32Qam:
-          modulation = B2c2Modulation.Qam32;
+          modulation = Modulation.Qam32;
           break;
         case ModulationType.Mod128Qam:
-          modulation = B2c2Modulation.Qam128;
+          modulation = Modulation.Qam128;
           break;
         case ModulationType.Mod256Qam:
-          modulation = B2c2Modulation.Qam256;
+          modulation = Modulation.Qam256;
           break;
       }
       hr = _interfaceTuner.SetModulation(modulation);

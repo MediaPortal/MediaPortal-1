@@ -25,7 +25,7 @@ using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.Components
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.Component
 {
   /// <summary>
   /// A base class for WDM analog DirectShow graph components. Intended to be used for sharing

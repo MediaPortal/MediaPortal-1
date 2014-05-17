@@ -18,6 +18,8 @@
 
 #endregion
 
+using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Enum;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Struct;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
@@ -33,7 +35,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     /// <summary>
     /// Initialise a new instance of the <see cref="TunerB2c2Terrestrial"/> class.
     /// </summary>
-    /// <param name="info">The B2C2-specific information (<see cref="TunerB2c2Base.DeviceInfo"/>) about the tuner.</param>
+    /// <param name="info">The B2C2-specific information (<see cref="DeviceInfo"/>) about the tuner.</param>
     public TunerB2c2Terrestrial(DeviceInfo info)
       : base(info, CardType.DvbT)
     {
@@ -72,7 +74,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
 
       // Note: it is not guaranteed that guard interval auto detection is supported, but if it isn't
       // then we can't tune - we have no idea what the actual value should be.
-      hr = _interfaceTuner.SetGuardInterval(B2c2GuardInterval.Auto);
+      hr = _interfaceTuner.SetGuardInterval(GuardInterval.Auto);
       HResult.ThrowException(hr, "Failed to use automatic guard interval detection.");
 
       base.PerformTuning(channel);
