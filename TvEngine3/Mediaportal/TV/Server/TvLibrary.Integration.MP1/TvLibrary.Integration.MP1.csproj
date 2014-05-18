@@ -47,21 +47,24 @@
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Castle.Core, Version=3.1.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\Packages\Castle.Core.3.1.0\lib\net40-client\Castle.Core.dll</HintPath>
+    <Reference Include="Castle.Core">
+      <HintPath>..\..\..\..\..\Packages\Castle.Core.3.2.2\lib\net40-client\Castle.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Castle.Facilities.Logging">
-      <HintPath>..\..\..\..\..\Packages\Castle.LoggingFacility.3.1.0\lib\net40\Castle.Facilities.Logging.dll</HintPath>
-    </Reference>
-    <Reference Include="Castle.Services.Logging.Log4netIntegration">
-      <HintPath>..\..\..\..\..\Packages\Castle.Core-log4net.3.1.0\lib\net40\Castle.Services.Logging.Log4netIntegration.dll</HintPath>
-    </Reference>
-    <Reference Include="Castle.Windsor, Version=3.1.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\Packages\Castle.Windsor.3.1.0\lib\net40\Castle.Windsor.dll</HintPath>
-    </Reference>
-    <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
+    <Reference Include="Castle.Facilities.Logging, Version=3.2.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Packages\log4net.1.2.10\lib\2.0\log4net.dll</HintPath>
+      <HintPath>..\..\..\..\..\Packages\Castle.LoggingFacility.3.2.0\lib\net40\Castle.Facilities.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Services.Logging.Log4netIntegration, Version=3.2.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Packages\Castle.Core-log4net1211.3.2.0.1\lib\net40\Castle.Services.Logging.Log4netIntegration.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Windsor, Version=3.2.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Packages\Castle.Windsor.3.2.1\lib\net40\Castle.Windsor.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net, Version=1.2.11.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Packages\log4net.2.0.0\lib\net40-full\log4net.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
