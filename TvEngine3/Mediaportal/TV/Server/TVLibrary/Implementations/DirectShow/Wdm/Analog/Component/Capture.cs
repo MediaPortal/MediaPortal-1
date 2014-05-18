@@ -388,12 +388,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       {
         if (_crossbarOutputPinIndexVideo >= 0 && _filterVideo == null)
         {
-          pinUpstreamVideo = DsFindPin.ByDirection(filterUpstream, PinDirection.Input, _crossbarOutputPinIndexVideo);
+          pinUpstreamVideo = DsFindPin.ByDirection(filterUpstream, PinDirection.Output, _crossbarOutputPinIndexVideo);
           pinCountUnconnected++;
         }
         if (_crossbarOutputPinIndexAudio >= 0)
         {
-          pinUpstreamAudio = DsFindPin.ByDirection(filterUpstream, PinDirection.Input, _crossbarOutputPinIndexAudio);
+          pinUpstreamAudio = DsFindPin.ByDirection(filterUpstream, PinDirection.Output, _crossbarOutputPinIndexAudio);
           pinCountUnconnected++;
         }
 
@@ -465,7 +465,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
                 this.LogDebug("WDM analog capture: try to connect upstream {0} pin to downstream input pin {1}...", pair.Key, pinIndex);
                 try
                 {
-                  hr = graph.ConnectDirect(pinUpstream, pinUpstream, null);
+                  hr = graph.ConnectDirect(pinUpstream, pinDownstream, null);
                   HResult.ThrowException(hr, "Failed to connect pins.");
                   this.LogDebug("WDM analog capture: connected!");
                   pinCountConnected++;
