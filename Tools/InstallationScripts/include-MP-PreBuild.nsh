@@ -70,11 +70,11 @@
 
 !ifdef BUILD_TVServer
 !insertmacro PrepareBuildReport TvServer
-!system '"$%WINDIR%\Microsoft.NET\Framework\v4.0.30319\MSBUILD.exe" /target:Rebuild /property:Configuration=Release;Platform=x86 "${git_TVServer}\\Server\Mediaportal.TV.Server.sln"' = 0
+!system '"$%WINDIR%\Microsoft.NET\Framework\v4.0.30319\MSBUILD.exe" ${logger} /target:Rebuild /property:Configuration=Release;Platform=x86 "${git_TVServer}\Server\Mediaportal.TV.Server.sln"' = 0
 !insertmacro FinalizeBuildReport
-!insertmacro PrepareBuildReport TvPlugin
+;!insertmacro PrepareBuildReport TvPlugin
 ;!system '"$%WINDIR%\Microsoft.NET\Framework\v4.0.30319\MSBUILD.exe" ${logger} /target:Rebuild /property:Configuration=Release;Platform=x86 "${git_TVServer}\TvPlugin\Mediaportal.TV.TvPlugin.sln"' = 0
-!insertmacro FinalizeBuildReport
+;!insertmacro FinalizeBuildReport
 !endif
 
 !if ${VER_BUILD} != 0
