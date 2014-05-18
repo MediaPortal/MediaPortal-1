@@ -486,9 +486,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
             string devicePath = device.DevicePath;
             string deviceName = device.Name;
             if (devicePath.Contains("root#system#") ||
-              (matchProductInstanceId && _productInstanceId != null && _productInstanceId.Equals(device.ProductInstanceIdentifier))
+              (matchProductInstanceId && _productInstanceId != null && !_productInstanceId.Equals(device.ProductInstanceIdentifier))
             )
             {
+              DevicesInUse.Instance.Remove(device);
               continue;
             }
             this.LogDebug("BDA base: try {0} {1}", deviceName, devicePath);
