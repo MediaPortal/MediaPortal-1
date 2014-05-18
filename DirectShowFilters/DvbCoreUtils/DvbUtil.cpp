@@ -91,8 +91,6 @@ void getString468a(BYTE* buf, int bufLen, char* text, int textLen)
     return;
   }
   BYTE c;
-  WORD w;
-
 	int bufIndex = 0;
   int textIndex = 0;
 
@@ -101,24 +99,20 @@ void getString468a(BYTE* buf, int bufLen, char* text, int textLen)
   c = buf[bufIndex++];
   if (c != 0x11)
   {
-    if (c > 0 && c <= 0x15)
+    text[textIndex++] = c;
+    // Encoding indicator byte - EN 300 468 Annex A table A.4.
+    if (c == 0x10)  // Table A.4.
     {
-      // Encoding indicator byte - EN 300 468 Annex A table A.3 or A.4.
-      if (c == 0x10)  // Table A.4.
+      if (bufLen < 3 || textLen < 3)
       {
-        if (bufLen < 3 || textLen < 3)
-        {
-          text[0] = 0;
-          return;
-        }
-        text[textIndex++] = 0x10;
-        text[textIndex++] = buf[2];
-        bufIndex += 2;
+        text[0] = 0;
+        return;
       }
-      else            // Table A.3.
-      {
-        text[textIndex++] = c;
-      }
+      // Skip the zero byte to avoid premature NULL termination, and process
+      // the encoding indicator byte here because the loop below would throw
+      // it away.
+      bufIndex++;
+      text[textIndex++] = buf[bufIndex++];
     }
 
     while (bufIndex < bufLen && textIndex < textLen)
@@ -143,6 +137,7 @@ void getString468a(BYTE* buf, int bufLen, char* text, int textLen)
   {
     // Re-encode 2 byte Unicode characters to UTF-8 to avoid premature NULL termination.
     text[textIndex++] = 0x15;
+    WORD w;
     while (bufIndex + 1 < bufLen)
     {
       w = (buf[bufIndex++] << 8);
@@ -158,7 +153,7 @@ void getString468a(BYTE* buf, int bufLen, char* text, int textLen)
 
       if (w != 0)
       {
-        // How many bytes does this character require, and do we have enough buffer?
+        // How many bytes does this character require, and do we have enough buffer space?
         if (w < 0x80)
         {
           c = 1;
