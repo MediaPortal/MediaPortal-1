@@ -95,6 +95,33 @@ namespace DirectShowLib
   }
 
   /// <summary>
+  /// From TVAudioMode
+  /// </summary>
+  [Flags]
+  public enum TVAudioMode
+  {
+    None = 0,
+    Mono = 0x0001,
+    Stereo = 0x0002,
+    [Description("language A")]
+    LangA = 0x0010,
+    [Description("language B (SAP)")]
+    LangB = 0x0020,
+    [Description("language C")]
+    LangC = 0x0040,
+
+    // Added...
+    [Description("preset stereo")]
+    PresetStereo = 0x0200,
+    [Description("preset language A")]
+    PresetLangA = 0x1000,
+    [Description("preset language B")]
+    PresetLangB = 0x2000,
+    [Description("preset language C")]
+    PresetLangC = 0x4000
+  }
+
+  /// <summary>
   /// From VideoProcAmpProperty
   /// </summary>
   public enum VideoProcAmpProperty
