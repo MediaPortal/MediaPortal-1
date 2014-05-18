@@ -157,59 +157,10 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>"$(ProjectDir)PostBuild.bat" "$(SolutionDir)" "$(OutDir)" "$(TargetDir)"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PreBuildEvent>xcopy "$(SolutionDir)\..\ExternalBinaries\*.*"  /s /i /y
-rem xcopy "$(SolutionDir)TVServer.Base\*.*" "$(TargetDir)" /C/Y/S
-xcopy "$(SolutionDir)Plugins\XmlTvImport\$(OutDir)Mediaportal.TV.Server.Plugins.XmlTvImport.*" "$(TargetDir)"Plugins\ /C/Y/S
-xcopy "$(SolutionDir)Plugins\XmlTvImport\$(OutDir)Ionic.Zip.dll" "$(TargetDir)" /C/Y/S
-xcopy "$(SolutionDir)Plugins\ComSkipLauncher\$(OutDir)Mediaportal.TV.Server.Plugins.ComSkipLauncher.*" "$(TargetDir)"Plugins\ /C/Y/S
-xcopy "$(SolutionDir)Plugins\ConflictsManager\$(OutDir)Mediaportal.TV.Server.Plugins.ConflictsManager.*" "$(TargetDir)"Plugins\ /C/Y/S
-xcopy "$(SolutionDir)Plugins\PluginBase\$(OutDir)Mediaportal.TV.Server.Plugins.Base.*" "$(TargetDir)"Plugins\ /C/Y/S
-xcopy "$(SolutionDir)Plugins\PowerScheduler\$(OutDir)Mediaportal.TV.Server.Plugins.PowerScheduler.dll" "$(TargetDir)Plugins\" /C/Y/S
-xcopy "$(SolutionDir)Plugins\PowerScheduler\$(OutDir)Mediaportal.TV.Server.Plugins.PowerScheduler.pdb" "$(TargetDir)Plugins\" /C/Y/S
-xcopy "$(SolutionDir)Plugins\PowerScheduler\$(OutDir)Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.dll" "$(TargetDir)\Plugins\" /C/Y/S
-xcopy "$(SolutionDir)Plugins\PowerScheduler\$(OutDir)Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.pdb" "$(TargetDir)\Plugins\" /C/Y/S
-xcopy "$(SolutionDir)Plugins\ServerBlaster\ServerBlaster\$(OutDir)Mediaportal.TV.Server.Plugins.ServerBlaster.*" "$(TargetDir)Plugins\" /C/Y/S
-xcopy "$(SolutionDir)Plugins\ServerBlaster\ServerBlaster.Learn\$(OutDir)Mediaportal.TV.Server.Plugins.ServerBlaster.Learn.*" "$(TargetDir)Plugins\" /C/Y/S
-xcopy "$(SolutionDir)Plugins\WebEPG\WebEPG\$(OutDir)Mediaportal.TV.Server.Plugins.WebEPG.*" "$(TargetDir)Plugins\" /C/Y/S
-rem xcopy "$(SolutionDir)\ServiceAgents\$(OutDir)Mediaportal.TV.Server.Plugins.WebEPG.*" "$(TargetDir)" /C/Y/S
-xcopy "$(SolutionDir)\SetupControls\$(OutDir)Mediaportal.TV.Server.SetupControls.*" "$(TargetDir)" /C/Y/S
-rem xcopy "$(SolutionDir)..\..\..\..\Common-MP-TVE3\PowerScheduler.Interfaces\$(OutDir)Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces" "$(TargetDir)" /C/Y/S
-xcopy "$(SolutionDir)..\..\..\..\DirectShowFilters\TsWriter\bin\Release\*.ax" "$(TargetDir)" /C/Y/S
-xcopy "$(SolutionDir)..\..\..\..\DirectShowFilters\streamingserver\bin\Release\*.dll" "$(TargetDir)" /C/Y/S
-xcopy "$(SolutionDir)Plugins\CustomDevices\Anysee\$(OutDir)Mediaportal.TV.Server.Plugins.CustomDevices.Anysee.*" "$(TargetDir)Plugins\CustomDevices\" /C/Y/S
-xcopy "$(SolutionDir)Plugins\CustomDevices\Compro\$(OutDir)Mediaportal.TV.Server.Plugins.CustomDevices.Compro.*" "$(TargetDir)Plugins\CustomDevices\" /C/Y/S
-xcopy "$(SolutionDir)Plugins\CustomDevices\Conexant\$(OutDir)Mediaportal.TV.Server.Plugins.CustomDevices.*" "$(TargetDir)Plugins\CustomDevices\" /C/Y/S
-xcopy "$(SolutionDir)Plugins\CustomDevices\DigitalDevices\$(OutDir)Mediaportal.TV.Server.Plugins.CustomDevices.*" "$(TargetDir)Plugins\CustomDevices\" /C/Y/S
-xcopy "$(SolutionDir)Plugins\CustomDevices\DigitalEverywhere\$(OutDir)Mediaportal.TV.Server.Plugins.CustomDevices.*" "$(TargetDir)Plugins\CustomDevices\" /C/Y/S
-xcopy "$(SolutionDir)Plugins\CustomDevices\DvbSky\$(OutDir)Mediaportal.TV.Server.Plugins.CustomDevices.*" "$(TargetDir)Plugins\CustomDevices\" /C/Y/S
-xcopy "$(SolutionDir)Plugins\CustomDevices\Geniatech\$(OutDir)Mediaportal.TV.Server.Plugins.CustomDevices.*" "$(TargetDir)Plugins\CustomDevices\" /C/Y/S
-xcopy "$(SolutionDir)Plugins\CustomDevices\Genpix\$(OutDir)Mediaportal.TV.Server.Plugins.CustomDevices.*" "$(TargetDir)Plugins\CustomDevices\" /C/Y/S
-xcopy "$(SolutionDir)Plugins\CustomDevices\GenpixOpenSource\$(OutDir)Mediaportal.TV.Server.Plugins.CustomDevices.*" "$(TargetDir)Plugins\CustomDevices\" /C/Y/S
-xcopy "$(SolutionDir)Plugins\CustomDevices\Hauppauge\$(OutDir)Mediaportal.TV.Server.Plugins.CustomDevices.*" "$(TargetDir)Plugins\CustomDevices\" /C/Y/S
-xcopy "$(SolutionDir)Plugins\CustomDevices\Knc\$(OutDir)Mediaportal.TV.Server.Plugins.CustomDevices.*" "$(TargetDir)Plugins\CustomDevices\" /C/Y/S
-xcopy "$(SolutionDir)Plugins\CustomDevices\MdPlugin\$(OutDir)Mediaportal.TV.Server.Plugins.CustomDevices.*" "$(TargetDir)Plugins\CustomDevices\" /C/Y/S
-xcopy "$(SolutionDir)Plugins\CustomDevices\Microsoft\$(OutDir)Mediaportal.TV.Server.Plugins.CustomDevices.*" "$(TargetDir)Plugins\CustomDevices\" /C/Y/S
-xcopy "$(SolutionDir)Plugins\CustomDevices\NetUp\$(OutDir)Mediaportal.TV.Server.Plugins.CustomDevices.*" "$(TargetDir)Plugins\CustomDevices\" /C/Y/S
-xcopy "$(SolutionDir)Plugins\CustomDevices\Omicom\$(OutDir)Mediaportal.TV.Server.Plugins.CustomDevices.*" "$(TargetDir)Plugins\CustomDevices\" /C/Y/S
-xcopy "$(SolutionDir)Plugins\CustomDevices\Prof\$(OutDir)Mediaportal.TV.Server.Plugins.CustomDevices.*" "$(TargetDir)Plugins\CustomDevices\" /C/Y/S
-xcopy "$(SolutionDir)Plugins\CustomDevices\ProfUsb\$(OutDir)Mediaportal.TV.Server.Plugins.CustomDevices.*" "$(TargetDir)Plugins\CustomDevices\" /C/Y/S
-xcopy "$(SolutionDir)Plugins\CustomDevices\SmarDtvUsbCi\$(OutDir)Mediaportal.TV.Server.Plugins.CustomDevices.*" "$(TargetDir)Plugins\CustomDevices\" /C/Y/S
-xcopy "$(SolutionDir)Plugins\CustomDevices\TechnoTrend\$(OutDir)Mediaportal.TV.Server.Plugins.CustomDevices.*" "$(TargetDir)Plugins\CustomDevices\" /C/Y/S
-xcopy "$(SolutionDir)Plugins\CustomDevices\TeVii\$(OutDir)Mediaportal.TV.Server.Plugins.CustomDevices.*" "$(TargetDir)Plugins\CustomDevices\" /C/Y/S
-xcopy "$(SolutionDir)Plugins\CustomDevices\Turbosight\$(OutDir)Mediaportal.TV.Server.Plugins.CustomDevices.*" "$(TargetDir)Plugins\CustomDevices\" /C/Y/S
-xcopy "$(SolutionDir)Plugins\CustomDevices\Twinhan\$(OutDir)Mediaportal.TV.Server.Plugins.CustomDevices.*" "$(TargetDir)Plugins\CustomDevices\" /C/Y/S
-xcopy "$(SolutionDir)Plugins\CustomDevices\ViXS\$(OutDir)Mediaportal.TV.Server.Plugins.CustomDevices.*" "$(TargetDir)Plugins\CustomDevices\" /C/Y/S
-xcopy "$(SolutionDir)TVServer.Base\*.dll" "$(TargetDir)Plugins\CustomDevices\Resources\" /C/Y/S
-xcopy "$(SolutionDir)..\..\..\..\DirectShowFilters\DXErr9\$(OutDir)dxerr9.*" "$(TargetDir)" /C/Y/S
-xcopy "$(SolutionDir)TvLibrary.IntegrationProvider.Interfaces\$(OutDir)*.dll" "$(TargetDir)" /C/Y/S
-xcopy "$(SolutionDir)TvLibrary.IntegrationProvider.Interfaces\$(OutDir)*.pdb" "$(TargetDir)" /C/Y/S
-xcopy "$(SolutionDir)TvLibrary.Integration.MP1\$(OutDir)*.dll" "$(TargetDir)" /C/Y/S
-xcopy "$(SolutionDir)TvLibrary.Integration.MP1\$(OutDir)*.pdb" "$(TargetDir)" /C/Y/S
-xcopy "$(SolutionDir)TvLibrary.Integration.MP1\$(OutDir)*.dll" "$(SolutionDir)..\..\..\..\mediaportal\MediaPortal.Application\$(OutDir)" /C/Y/S
-xcopy "$(SolutionDir)TvLibrary.Integration.MP1\$(OutDir)*.pdb" "$(SolutionDir)..\..\..\..\mediaportal\MediaPortal.Application\$(OutDir)" /C/Y/S</PreBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
   </PropertyGroup>
 </Project>
