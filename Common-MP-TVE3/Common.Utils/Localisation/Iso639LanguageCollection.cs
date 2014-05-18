@@ -541,8 +541,8 @@ namespace MediaPortal.Common.Utils.Localisation
       new Iso639Language("Zaza; Dimili; Dimli; Kirdki; Kirmanjki; Zazaki", null, "zza", "zza", false),
 
       // Deprecated codes, included for backwards compatibility.
-      new Iso639Language("Javanese [alt]", "jw", "jaw", null, true),
-      new Iso639Language("Moldavian; Moldovan", "mo", "mol", null, true)
+      new Iso639Language("Javanese [alt]", "jw", "jaw", "jaw", true),
+      new Iso639Language("Moldavian; Moldovan", "mo", "mol", "mol", true)
     };
 
     #endregion
