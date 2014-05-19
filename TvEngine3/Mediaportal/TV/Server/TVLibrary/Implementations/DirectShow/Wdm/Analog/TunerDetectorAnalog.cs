@@ -93,7 +93,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
           // This source has a crossbar. Don't use it.
           this.LogDebug("  already detected crossbar", name, devicePath);
           tuner.Dispose();
-          break;
+          continue;
         }
 
         tuners.Add(tuner);
