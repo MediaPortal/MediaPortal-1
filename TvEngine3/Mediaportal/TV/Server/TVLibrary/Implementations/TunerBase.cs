@@ -664,10 +664,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       {
         // We only support one implementation of each interface, unless the
         // extension is a DirectShow add-on.
+        Type[] interfaces = new Type[0];
         if (!(extension is IDirectShowAddOnDevice))
         {
           bool foundInterface = false;
-          Type[] interfaces = extension.GetType().GetInterfaces();
+          interfaces = extension.GetType().GetInterfaces();
           foreach (Type i in interfaces)
           {
             // TODO this could pick up interfaces that we don't care about...
@@ -682,7 +683,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
               foundInterface = true;
               break;
             }
-            foundInterfaces.Add(i.Name);
           }
           if (foundInterface)
           {
@@ -698,6 +698,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         }
 
         _extensions.Add(extension);
+        foreach (Type i in interfaces)
+        {
+          foundInterfaces.Add(i.Name);
+        }
       }
 
       this.LogDebug("tuner base: {0} extension(s) supported", _extensions.Count);
