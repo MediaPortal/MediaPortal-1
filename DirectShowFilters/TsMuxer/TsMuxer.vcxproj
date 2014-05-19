@@ -175,6 +175,11 @@
   <ItemGroup>
     <ResourceCompile Include="source\TsMuxer.rc" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DvbCoreUtils\DvbCoreUtils.vcxproj">
+      <Project>{4b134b4c-4ef6-4647-9cea-a59ff0013357}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

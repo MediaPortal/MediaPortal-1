@@ -338,20 +338,24 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         IList<IPin> pinsToConnect = new List<IPin>();
         if (teletextPin != null)
         {
+          this.LogDebug("  teletext pin");
           pinsToConnect.Add(teletextPin);
         }
         if (capturePin != null)
         {
+          this.LogDebug("  capture pin");
           pinsToConnect.Add(capturePin);
         }
         else
         {
           if (videoPin != null)
           {
+            this.LogDebug("  video pin");
             pinsToConnect.Add(videoPin);
           }
           if (audioPin != null)
           {
+            this.LogDebug("  audio pin");
             pinsToConnect.Add(audioPin);
           }
         }

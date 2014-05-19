@@ -255,7 +255,7 @@ CTsMuxer::CTsMuxer(LPUNKNOWN unk, HRESULT* hr)
   LogDebug(L"initial version");
   LogDebug(L"muxer: constructor");
 
-  m_filter = new CTsMuxerFilter(this, g_logFilePath, unk, &m_filterLock, &m_receiveLock, hr);
+  m_filter = new CTsMuxerFilter(this, g_logFilePath, GetOwner(), &m_filterLock, &m_receiveLock, hr);
   if (m_filter == NULL)
   {
     *hr = E_OUTOFMEMORY;
@@ -744,7 +744,8 @@ STDMETHODIMP CTsMuxer::NonDelegatingQueryInterface(REFIID iid, void** ppv)
   {
     return GetInterface((ITsMuxer*)this, ppv);
   }
-  if (iid == IID_IBaseFilter || iid == IID_IMediaFilter || iid == IID_IPersist) {
+  if (iid == IID_IBaseFilter || iid == IID_IMediaFilter || iid == IID_IPersist)
+  {
     return m_filter->NonDelegatingQueryInterface(iid, ppv);
   }
 
