@@ -36,19 +36,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     /// <summary>
     /// Add and connect a filter into a DirectShow graph.
     /// </summary>
-    /// <remarks>
-    /// This function assumes that successful graph contruction requires that
-    /// <paramref name="upstreamFilter">the supplied upstream filter</paramref> must be connected
-    /// to [at least] one specific downstream filter. Therefore, it searches the specified device
-    /// category for a filter that will connect to any of the upstream filter's output pins. Once
-    /// it finds such a filter, the function makes as many connections as possible before
-    /// returning.
-    /// </remarks>
     /// <param name="graph">The graph.</param>
     /// <param name="category">The <see cref="DsDevice"/> category to search for a compatible
     ///   filter.</param>
-    /// <param name="upstreamFilter">The upstream filter to connect the new filter to. This filter
-    ///   should already be present in the graph.</param>
+    /// <param name="pinToConnect">The upstream or downstream filter pin that the filter must
+    ///   connect to.</param>
+    /// <param name="pinToConnectDirection">The direction - input or output - of
+    ///   <paramref name="pinToConnect"/>.</param>
     /// <param name="productInstanceId">A <see cref="DsDevice"/> device path (<see
     ///   cref="System.Runtime.InteropServices.ComTypes.IMoniker"/> display name) section. Related
     ///   filters share common sections. This parameter is used to prioritise filter candidates.
@@ -58,17 +52,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     /// <param name="device">The <see cref="DsDevice"/> instance corresponding with the filter that
     ///   was added to the graph. If a filter was not successfully added this parameter will be
     ///   <c>null</c>.</param>
-    /// <returns>the number of pin connections between the upstream and new filter</returns>
-    protected int AddAndConnectFilterFromCategory(IFilterGraph2 graph, Guid category, IBaseFilter upstreamFilter, string productInstanceId, out IBaseFilter filter, out DsDevice device)
+    /// <returns><c>true</c> if a filter was successfully added and connected, otherwise <c>false</c></returns>
+    protected bool AddAndConnectFilterFromCategory(IFilterGraph2 graph, Guid category, IPin pinToConnect, PinDirection pinToConnectDirection, string productInstanceId, out IBaseFilter filter, out DsDevice device)
     {
       filter = null;
       device = null;
-      int connectedPinCount = 0;
+      bool checkInUse = (category != MediaPortalGuid.AM_KS_CATEGORY_MULTI_VBI_CODEC && category != FilterCategory.AMKSVBICodec);
 
       // Sort the devices in the category of interest based on whether the
       // device path contains all or part of the hardware identifier.
       DsDevice[] devices = DsDevice.GetDevicesOfCat(category);
-      this.LogDebug("WDM analog component: add and connect filter from category {0}, device count = {1}", category, devices.Length);
+      this.LogDebug("WDM analog component: add and connect filter from category {0}, direction = {1}, device count = {2}", category, pinToConnectDirection, devices.Length);
       if (!string.IsNullOrEmpty(productInstanceId))
       {
         Array.Sort(devices, delegate(DsDevice d1, DsDevice d2)
@@ -92,7 +86,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       {
         foreach (DsDevice d in devices)
         {
-          if (!DevicesInUse.Instance.Add(d))
+          if (checkInUse && !DevicesInUse.Instance.Add(d))
           {
             continue;
           }
@@ -107,25 +101,32 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
           catch (Exception ex)
           {
             this.LogDebug(ex, "WDM analog component: failed to add filter from category");
-            DevicesInUse.Instance.Remove(d);
+            if (checkInUse)
+            {
+              DevicesInUse.Instance.Remove(d);
+            }
             continue;
           }
 
+          bool connected = false;
           try
           {
-            connectedPinCount = ConnectFilters(graph, upstreamFilter, f);
-            if (connectedPinCount != 0)
+            connected = ConnectFilterWithPin(graph, pinToConnect, pinToConnectDirection, f);
+            if (connected)
             {
               device = d;
               filter = f;
-              break;
+              return true;
             }
           }
           finally
           {
-            if (connectedPinCount == 0)
+            if (!connected)
             {
-              DevicesInUse.Instance.Remove(d);
+              if (checkInUse)
+              {
+                DevicesInUse.Instance.Remove(d);
+              }
               graph.RemoveFilter(f);
               Release.ComObject("WDM analog component filter from category", ref f);
             }
@@ -143,7 +144,89 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         }
       }
 
-      return connectedPinCount;
+      return false;
+    }
+
+    /// <summary>
+    /// Connect a filter pin of known direction with any one of the pins on another filter.
+    /// </summary>
+    /// <param name="graph">The graph containing the two filters.</param>
+    /// <param name="pinToConnect">The upstream or downstream filter pin that
+    ///   <paramref name="filter"/> must connect to.</param>
+    /// <param name="pinToConnectDirection">The direction - input or output - of
+    ///   <paramref name="pinToConnect"/>.</param>
+    /// <param name="filter">The filter to connect to <paramref name="pinToConnect"/>.</param>
+    /// <returns><c>true</c> if <paramref name="filter"/> was successfully connected to <paramref name="pinToConnect"/>, otherwise <c>false</c></returns>
+    protected virtual bool ConnectFilterWithPin(IFilterGraph2 graph, IPin pinToConnect, PinDirection pinToConnectDirection, IBaseFilter filter)
+    {
+      this.LogDebug("WDM analog component: connect filter with pin");
+      int hr = (int)HResult.Severity.Success;
+      int pinCount = 0;
+      int pinIndex = 0;
+
+      IEnumPins pinEnum = null;
+      hr = filter.EnumPins(out pinEnum);
+      HResult.ThrowException(hr, "Failed to obtain pin enumerator for filter.");
+      try
+      {
+        IPin[] pinsTemp = new IPin[2];
+        while (pinEnum.Next(1, pinsTemp, out pinCount) == (int)HResult.Severity.Success && pinCount == 1)
+        {
+          IPin pinToTry = pinsTemp[0];
+          try
+          {
+            // We're not interested in pins unless they're the right direction.
+            PinDirection direction;
+            hr = pinToTry.QueryDirection(out direction);
+            HResult.ThrowException(hr, "Failed to query pin direction for filter pin.");
+            if (direction == pinToConnectDirection)
+            {
+              this.LogDebug("WDM analog component: pin {0} is the wrong direction", pinIndex++);
+              continue;
+            }
+
+            // We can't use pins that are already connected.
+            IPin tempPin = null;
+            hr = pinToTry.ConnectedTo(out tempPin);
+            if (hr == (int)HResult.Severity.Success && tempPin != null)
+            {
+              this.LogDebug("WDM analog component: pin {0} is already connected", pinIndex++);
+              Release.ComObject("WDM analog component filter connected pin", ref tempPin);
+              continue;
+            }
+
+            try
+            {
+              if (pinToConnectDirection == PinDirection.Input)
+              {
+                hr = graph.ConnectDirect(pinToTry, pinToConnect, null);
+              }
+              else
+              {
+                hr = graph.ConnectDirect(pinToConnect, pinToTry, null);
+              }
+              HResult.ThrowException(hr, "Failed to connect pins.");
+              this.LogDebug("WDM analog component: pin {0} connected!", pinIndex);
+              return true;
+            }
+            catch
+            {
+              // Connection failed, move on to next upstream pin.
+            }
+            pinIndex++;
+          }
+          finally
+          {
+            Release.ComObject("WDM analog component filter pin", ref pinToTry);
+          }
+        }
+      }
+      finally
+      {
+        Release.ComObject("WDM analog component filter pin enumerator", ref pinEnum);
+      }
+
+      return false;
     }
 
     /// <summary>
@@ -153,7 +236,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     /// <param name="filterUpstream">The upstream filter.</param>
     /// <param name="filterDownstream">The downstream filter.</param>
     /// <returns>the number of pin connections between the upstream and downstream filter</returns>
-    protected virtual int ConnectFilters(IFilterGraph2 graph, IBaseFilter filterUpstream, IBaseFilter filterDownstream)
+    protected virtual int ConnectFiltersByPinName(IFilterGraph2 graph, IBaseFilter filterUpstream, IBaseFilter filterDownstream)
     {
       this.LogDebug("WDM analog component: connect filters by pin name");
       int connectedPinCount = 0;

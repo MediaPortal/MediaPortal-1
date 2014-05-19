@@ -108,6 +108,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     /// </summary>
     private IBaseFilter _filterVbiSplitter = null;
 
+    #region temporary variables for filter connection
+
+    // These allow us to modify the behaviour of the filter connection method
+    // in ComponentBase.
+    private bool _isVbiConnectAttempt = false;
+    private int _filterConnectionCount = 0;
+    private IBaseFilter _filterConnectFilters = null;
+
+    #endregion
+
     #endregion
 
     #region properties
@@ -223,6 +233,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     }
 
     #endregion
+
+    #region graph building
 
     /// <summary>
     /// Load the encoder component.
@@ -391,7 +403,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         {
           // We have to ensure that we don't mix up the video and audio
           // encoders. If we have a shared video and audio capture filter but
-          // only connected 1 pin the above encoder, it might be the audio
+          // only connected 1 pin to the above encoder, it might be the audio
           // encoder.
           this.LogDebug("WDM analog encoder: added and connected encoder, confirm audio or video");
           IPin pin;
@@ -429,7 +441,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         }
         else
         {
-          if (ConnectFilters(graph, audioFilter, _filterMultiplexer) == 0)
+          if (ConnectFiltersByPinName(graph, audioFilter, _filterMultiplexer) == 0)
           {
             // We don't support connecting software audio encoders into
             // hardware multiplexers.
@@ -446,69 +458,28 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       IPin vbiPin = null;
       if (FindPinByCategoryOrMediaType(capture.VideoFilter, PinCategory.VBI, MEDIA_TYPES_VBI, out vbiPin))
       {
-        // We have a VBI pin. Connect the VBI codec/splitter filter.
-        this.LogInfo("WDM analog encoder: add VBI splitter");
-        int hr = (int)HResult.Severity.Success;
         try
         {
-          DsDevice[] devices1 = DsDevice.GetDevicesOfCat(MediaPortalGuid.AM_KS_CATEGORY_MULTI_VBI_CODEC);
-          DsDevice[] devices2 = DsDevice.GetDevicesOfCat(FilterCategory.AMKSVBICodec);
-          DsDevice[] devices = new DsDevice[devices1.Length + devices2.Length];
-          devices1.CopyTo(devices, 0);
-          devices2.CopyTo(devices, devices1.Length);
-          try
+          // We have a VBI pin. Connect the VBI codec/splitter filter.
+          this.LogInfo("WDM analog encoder: add VBI splitter");
+          DsDevice d = null;
+          _isVbiConnectAttempt = true;
+          if (!AddAndConnectFilterFromCategory(graph, MediaPortalGuid.AM_KS_CATEGORY_MULTI_VBI_CODEC, vbiPin, PinDirection.Output, null, out _filterVbiSplitter, out d))
           {
-            foreach (DsDevice d in devices)
+            if (!AddAndConnectFilterFromCategory(graph, FilterCategory.AMKSVBICodec, vbiPin, PinDirection.Output, null, out _filterVbiSplitter, out d))
             {
-              if (d.Name == null || (!d.Name.Equals("VBI Codec") && !d.Name.Equals("WST Codec")))
-              {
-                continue;
-              }
-
-              this.LogDebug("WDM analog encoder: attempt to add {0} {1}", d.Name, d.DevicePath);
-              try
-              {
-                _filterVbiSplitter = FilterGraphTools.AddFilterFromDevice(graph, d);
-              }
-              catch (Exception ex)
-              {
-                this.LogDebug(ex, "WDM analog encoder: failed to add VBI splitter filter to graph");
-                _filterVbiSplitter = null;
-                continue;
-              }
-
-              IPin inputPin = null;
-              try
-              {
-                inputPin = DsFindPin.ByDirection(_filterVbiSplitter, PinDirection.Input, 0);
-                hr = graph.ConnectDirect(vbiPin, inputPin, null);
-                HResult.ThrowException(hr, "Failed to connect VBI splitter.");
-                this.LogDebug("WDM analog encoder: connected!");
-                break;
-              }
-              catch (Exception ex)
-              {
-                this.LogDebug(ex, "WDM analog encoder: failed to connect VBI splitter");
-                graph.RemoveFilter(_filterVbiSplitter);
-                Release.ComObject("encoder VBI splitter filter", ref _filterVbiSplitter);
-              }
-              finally
-              {
-                Release.ComObject("encoder VBI splitter filter input pin", ref inputPin);
-              }
+              this.LogWarn("WDM analog encoder: failed to connect VBI splitter");
             }
           }
-          finally
+          if (d != null)
           {
-            foreach (DsDevice d in devices)
-            {
-              d.Dispose();
-            }
+            d.Dispose();
           }
         }
         finally
         {
           Release.ComObject("encoder upstream VBI source pin", ref vbiPin);
+          _isVbiConnectAttempt = false;
         }
       }
 
@@ -654,7 +625,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
           }
           catch (Exception ex)
           {
-            this.LogDebug(ex, "WDM analog encoder: failed to add software multiplexer filter to graph");
+            this.LogError(ex, "WDM analog encoder: failed to add software multiplexer filter to graph");
             _filterMultiplexer = null;
             continue;
           }
@@ -664,11 +635,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
           {
             if (_filterEncoderVideo != null)
             {
-              connectedPinCount += ConnectFilters(graph, _filterEncoderVideo, _filterMultiplexer);
+              connectedPinCount += ConnectFiltersByPinName(graph, _filterEncoderVideo, _filterMultiplexer);
             }
             if (_filterEncoderAudio != null)
             {
-              connectedPinCount += ConnectFilters(graph, _filterEncoderAudio, _filterMultiplexer);
+              connectedPinCount += ConnectFiltersByPinName(graph, _filterEncoderAudio, _filterMultiplexer);
             }
             if (connectedPinCount != 0)
             {
@@ -864,7 +835,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
           }
           catch (Exception ex)
           {
-            this.LogDebug(ex, "WDM analog encoder: failed to add software encoder filter to graph");
+            this.LogError(ex, "WDM analog encoder: failed to add software encoder filter to graph");
             EncodersInUse.Instance.Remove(d);
             filter = null;
             continue;
@@ -882,7 +853,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
           }
           catch (Exception ex)
           {
-            this.LogDebug(ex, "WDM analog encoder: failed to connect software encoder");
+            this.LogError(ex, "WDM analog encoder: failed to connect software encoder");
             EncodersInUse.Instance.Remove(d);
             graph.RemoveFilter(filter);
             Release.ComObject("encoder software encoder filter candidate", ref filter);
@@ -941,6 +912,32 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       }
       return true;
     }
+
+    protected int AddAndConnectFilterFromCategory(IFilterGraph2 graph, Guid category, IBaseFilter upstreamFilter, string productInstanceId, out IBaseFilter filter, out DsDevice device)
+    {
+      _filterConnectFilters = upstreamFilter;
+      AddAndConnectFilterFromCategory(graph, category, null, PinDirection.Output, productInstanceId, out filter, out device);
+      return _filterConnectionCount;
+    }
+
+    protected override bool ConnectFilterWithPin(IFilterGraph2 graph, IPin pinToConnect, PinDirection pinToConnectDirection, IBaseFilter filter)
+    {
+      if (_isVbiConnectAttempt)
+      {
+        this.LogDebug("WDM analog encoder: connect filter with pin");
+        string filterName = FilterGraphTools.GetFilterName(filter);
+        if (!filterName.Equals("VBI Codec") && !filterName.Equals("WST Codec"))
+        {
+          this.LogDebug("WDM analog encoder: filter \"{0}\" is not on whitelist, ignoring", filterName);
+          return false;
+        }
+        return base.ConnectFilterWithPin(graph, pinToConnect, pinToConnectDirection, filter);
+      }
+      _filterConnectionCount = ConnectFiltersByPinName(graph, _filterConnectFilters, filter);
+      return _filterConnectionCount != 0;
+    }
+
+    #endregion
 
     /// <summary>
     /// Actually tune to a channel.

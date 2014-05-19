@@ -79,22 +79,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     /// </summary>
     private AnalogChannel _currentChannel = null;
 
-    /// <summary>
-    /// The downstream crossbar component tuner video input pin index.
-    /// </summary>
-    private int _crossbarInputPinIndexVideo = -1;
-
-    /// <summary>
-    /// The downstream crossbar component tuner audio input pin index.
-    /// </summary>
-    private int _crossbarInputPinIndexAudio = -1;
-
-    /// <summary>
-    /// An internal variable, used to control which implementation of
-    /// ConnectFilters() is used during loading.
-    /// </summary>
-    private bool _useBaseConnectionMethod = false;
-
     #endregion
 
     #region properties
@@ -142,210 +126,110 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     public void PerformLoading(IFilterGraph2 graph, string productInstanceId, Crossbar crossbar)
     {
       this.LogDebug("WDM analog tuner: perform loading");
-      _crossbarInputPinIndexVideo = crossbar.PinIndexInputTunerVideo;
-      _crossbarInputPinIndexAudio = crossbar.PinIndexInputTunerAudio;
-      _useBaseConnectionMethod = false;
-      int expectedConnectionCount = 0;
-      if (_crossbarInputPinIndexVideo >= 0)
+      int crossbarInputPinIndexVideo = crossbar.PinIndexInputTunerVideo;
+      int crossbarInputPinIndexAudio = crossbar.PinIndexInputTunerAudio;
+
+      IPin crossbarInputPinTuner = null;
+      if (crossbarInputPinIndexVideo >= 0)
       {
-        expectedConnectionCount++;
+        crossbarInputPinTuner = DsFindPin.ByDirection(crossbar.Filter, PinDirection.Input, crossbarInputPinIndexVideo);
       }
-      if (_crossbarInputPinIndexAudio >= 0)
+      else if (crossbarInputPinIndexAudio >= 0)
       {
-        expectedConnectionCount++;
+        crossbarInputPinTuner = DsFindPin.ByDirection(crossbar.Filter, PinDirection.Input, crossbarInputPinIndexAudio);
       }
-
-      this.LogDebug("WDM analog tuner: add tuner filter");
-      int connectionCount = AddAndConnectFilterFromCategory(graph, FilterCategory.AMKSTVTuner, crossbar.Filter, productInstanceId, out _filterTuner, out _deviceTuner);
-      if (connectionCount != expectedConnectionCount)
+      if (crossbarInputPinTuner != null)
       {
-        if (connectionCount == 0 && _crossbarInputPinIndexVideo >= 0)
-        {
-          this.LogWarn("WDM analog tuner: failed to connect tuner filter to crossbar, allowing crossbar to operate without tuner and TV audio filters");
-        }
-        else
-        {
-          this.LogDebug("WDM analog tuner: add TV audio filter");
-          if (_filterTuner != null)
-          {
-            // We prefer to find the TV audio filter by connection to the tuner
-            // filter. This is because it seems some TV audio filters don't
-            // connect to the crossbar input pins for some reason.
-            _useBaseConnectionMethod = true;
-            connectionCount = AddAndConnectFilterFromCategory(graph, FilterCategory.AMKSTVAudio, _filterTuner, productInstanceId, out _filterTvAudio, out _deviceTvAudio);
-            if (connectionCount == 0)
-            {
-              this.LogWarn("WDM analog tuner: failed to connect TV audio filter to tuner, allowing crossbar to operate with tuner only");
-            }
-            else
-            {
-              this.LogDebug("WDM analog tuner: connect TV audio to crossbar");
-              _useBaseConnectionMethod = false;
-              connectionCount = ConnectFilters(graph, crossbar.Filter, _filterTvAudio);
-              if (connectionCount == 0)
-              {
-                this.LogWarn("WDM analog tuner: failed to connect TV audio filter to crossbar, allowing crossbar to operate with unconnected TV audio pin");
-              }
-            }
-          }
-          else
-          {
-            connectionCount = AddAndConnectFilterFromCategory(graph, FilterCategory.AMKSTVAudio, crossbar.Filter, productInstanceId, out _filterTvAudio, out _deviceTvAudio);
-            if (connectionCount == 0)
-            {
-              this.LogWarn("WDM analog tuner: failed to connect TV audio filter to crossbar, allowing crossbar to operate without tuner and TV audio filters");
-            }
-            else
-            {
-              this.LogDebug("WDM analog tuner: add audio tuner filter");
-              connectionCount = AddAndConnectFilterFromCategory(graph, FilterCategory.AMKSTVTuner, crossbar.Filter, productInstanceId, out _filterTuner, out _deviceTuner);
-              if (connectionCount == 0)
-              {
-                throw new TvException("Failed to connect audio tuner filter after connecting TV audio filter.");
-              }
-            }
-          }
-        }
-      }
-
-      CheckCapabilities();
-    }
-
-    /// <summary>
-    /// Make as many direct connections as possible between two DirectShow filters.
-    /// </summary>
-    /// <param name="graph">The graph containing the two filters.</param>
-    /// <param name="filterDownstream">The downstream filter.</param>
-    /// <param name="filterUpstream">The upstream filter candidate.</param>
-    /// <returns>the number of pin connections between the upstream and downstream filter</returns>
-    protected override int ConnectFilters(IFilterGraph2 graph, IBaseFilter filterDownstream, IBaseFilter filterUpstream)
-    {
-      if (_useBaseConnectionMethod)
-      {
-        return base.ConnectFilters(graph, filterDownstream, filterUpstream);
-      }
-
-      this.LogDebug("WDM analog tuner: connect filters");
-      int pinCountConnected = 0;
-      int pinCountUnconnected = 0;
-
-      IPin pinDownstreamVideo = null;
-      IPin pinDownstreamAudio = null;
-      try
-      {
-        if (_crossbarInputPinIndexVideo >= 0 && _filterTuner == null)
-        {
-          pinDownstreamVideo = DsFindPin.ByDirection(filterDownstream, PinDirection.Input, _crossbarInputPinIndexVideo);
-          pinCountUnconnected++;
-        }
-        if (_crossbarInputPinIndexAudio >= 0)
-        {
-          pinDownstreamAudio = DsFindPin.ByDirection(filterDownstream, PinDirection.Input, _crossbarInputPinIndexAudio);
-          pinCountUnconnected++;
-        }
-
-        IEnumPins pinEnumUpstream;
-        int hr = filterUpstream.EnumPins(out pinEnumUpstream);
-        HResult.ThrowException(hr, "Failed to obtain pin enumerator for upstream filter.");
+        this.LogDebug("WDM analog tuner: add tuner filter");
         try
         {
-          int pinIndex = 0;
-          int pinCount = 0;
-          IPin[] pinsUpstream = new IPin[2];
-          while (pinEnumUpstream.Next(1, pinsUpstream, out pinCount) == (int)HResult.Severity.Success && pinCount == 1)
+          if (!AddAndConnectFilterFromCategory(graph, FilterCategory.AMKSTVTuner, crossbarInputPinTuner, PinDirection.Input, productInstanceId, out _filterTuner, out _deviceTuner))
           {
-            IPin pinUpstream = pinsUpstream[0];
+            if (crossbarInputPinIndexVideo >= 0)
+            {
+              this.LogWarn("WDM analog tuner: failed to connect tuner filter to crossbar, allowing crossbar to operate without tuner and TV audio filters");
+              return;
+            }
+
+            this.LogDebug("WDM analog tuner: failed to connect tuner filter to crossbar, try TV audio filter instead");
+            if (!AddAndConnectFilterFromCategory(graph, FilterCategory.AMKSTVAudio, crossbarInputPinTuner, PinDirection.Input, productInstanceId, out _filterTvAudio, out _deviceTvAudio))
+            {
+              this.LogWarn("WDM analog tuner: failed to connect tuner and TV audio filters to crossbar, allowing crossbar to operate without them");
+              return;
+            }
+            this.LogDebug("WDM analog tuner: succeeded with TV audio filter, now try to connect a tuner filter again");
+            IPin tvAudioInputPin = DsFindPin.ByDirection(_filterTvAudio, PinDirection.Input, 0);
+            if (tvAudioInputPin == null)
+            {
+              this.LogWarn("WDM analog tuner: failed to find input pin on TV audio filter, assuming TV audio filter is also tuner filter");
+              _filterTuner = _filterTvAudio;
+              _deviceTuner = _deviceTvAudio;
+            }
             try
             {
-              // We're not interested in input pins on the upstream filter.
-              PinDirection direction;
-              hr = pinUpstream.QueryDirection(out direction);
-              HResult.ThrowException(hr, "Failed to query pin direction for upstream pin.");
-              if (direction == PinDirection.Input)
+              if (!AddAndConnectFilterFromCategory(graph, FilterCategory.AMKSTVTuner, tvAudioInputPin, PinDirection.Input, productInstanceId, out _filterTuner, out _deviceTuner))
               {
-                this.LogDebug("WDM analog tuner: upstream pin {0} is an input pin", pinIndex++);
-                continue;
+                this.LogWarn("WDM analog tuner: failed to connect tuner filter to TV audio filter, assuming TV audio filter is also tuner filter");
+                _filterTuner = _filterTvAudio;
+                _deviceTuner = _deviceTvAudio;
               }
-
-              // We can't use pins that are already connected.
-              IPin tempPin = null;
-              hr = pinUpstream.ConnectedTo(out tempPin);
-              if (hr == (int)HResult.Severity.Success && tempPin != null)
-              {
-                this.LogDebug("WDM analog tuner: upstream output pin {0} already connected", pinIndex++);
-                Release.ComObject("WDM analog tuner upstream filter connected pin", ref tempPin);
-                continue;
-              }
-
-              // Try to connect the upstream output pin with a downstream input
-              // pin. Either the video or audio pin.
-              List<KeyValuePair<string, IPin>> pinsDownstream = new List<KeyValuePair<string, IPin>>();
-              if (pinCountUnconnected == 1)
-              {
-                if (pinDownstreamVideo != null)
-                {
-                  pinsDownstream.Add(new KeyValuePair<string, IPin>("video", pinDownstreamVideo));
-                }
-                else
-                {
-                  pinsDownstream.Add(new KeyValuePair<string, IPin>("audio", pinDownstreamAudio));
-                }
-              }
-              else
-              {
-                bool isVideo;
-                if (IsVideoOrAudioPin(pinUpstream, out isVideo) && !isVideo)
-                {
-                  pinsDownstream.Add(new KeyValuePair<string, IPin>("audio", pinDownstreamAudio));
-                  pinsDownstream.Add(new KeyValuePair<string, IPin>("video", pinDownstreamVideo));
-                }
-                else
-                {
-                  pinsDownstream.Add(new KeyValuePair<string, IPin>("video", pinDownstreamVideo));
-                  pinsDownstream.Add(new KeyValuePair<string, IPin>("audio", pinDownstreamAudio));
-                }
-              }
-
-              foreach (KeyValuePair<string, IPin> pair in pinsDownstream)
-              {
-                IPin pinDownstream = pair.Value;
-                this.LogDebug("WDM analog tuner: try to connect upstream output pin {0} to downstream {1} pin...", pinIndex, pair.Key);
-                try
-                {
-                  hr = graph.ConnectDirect(pinUpstream, pinDownstream, null);
-                  HResult.ThrowException(hr, "Failed to connect pins.");
-                  this.LogDebug("WDM analog tuner: connected!");
-                  pinCountConnected++;
-                  if (pinCountConnected == pinCountUnconnected)
-                  {
-                    return pinCountConnected;
-                  }
-                  break;
-                }
-                catch
-                {
-                  // Connection failed, maybe try the other downstream pin.
-                }
-              }
-              pinIndex++;
             }
             finally
             {
-              Release.ComObject("WDM analog tuner upstream filter output pin", ref pinUpstream);
+              Release.ComObject("WDM analog TV audio input pin", ref crossbarInputPinTuner);
             }
           }
         }
         finally
         {
-          Release.ComObject("WDM analog tuner upstream filter pin enumerator", ref pinEnumUpstream);
+          Release.ComObject("WDM analog crossbar tuner video input pin", ref crossbarInputPinTuner);
         }
       }
-      finally
+
+      if (_filterTvAudio == null && crossbarInputPinIndexAudio >= 0)
       {
-        Release.ComObject("WDM analog tuner downstream filter video pin", ref pinDownstreamVideo);
-        Release.ComObject("WDM analog tuner downstream filter audio pin", ref pinDownstreamAudio);
+        IPin crossbarInputPinTvAudio = DsFindPin.ByDirection(crossbar.Filter, PinDirection.Input, crossbarInputPinIndexAudio);
+        try
+        {
+          this.LogDebug("WDM analog tuner: try to connect tuner filter directly to crossbar audio pin");
+          if (!ConnectFilterWithPin(graph, crossbarInputPinTvAudio, PinDirection.Input, _filterTuner))
+          {
+            this.LogDebug("WDM analog tuner: add TV audio filter");
+            if (!AddAndConnectFilterFromCategory(graph, FilterCategory.AMKSTVAudio, crossbarInputPinTvAudio, PinDirection.Input, productInstanceId, out _filterTvAudio, out _deviceTvAudio))
+            {
+              this.LogWarn("WDM analog tuner: failed to connect TV audio filter to crossbar, allowing crossbar to operate without TV audio filter");
+            }
+            else
+            {
+              IPin tvAudioInputPin = DsFindPin.ByDirection(_filterTvAudio, PinDirection.Input, 0);
+              if (tvAudioInputPin == null)
+              {
+                this.LogWarn("WDM analog tuner: failed to find input pin on TV audio filter, assuming connection not required");
+              }
+              else
+              {
+                try
+                {
+                  if (!ConnectFilterWithPin(graph, tvAudioInputPin, PinDirection.Input, _filterTuner))
+                  {
+                    this.LogWarn("WDM analog tuner: failed to connect tuner filter to TV audio filter, assuming connection not required");
+                  }
+                }
+                finally
+                {
+                  Release.ComObject("WDM analog TV audio input pin", ref crossbarInputPinTuner);
+                }
+              }
+            }
+          }
+        }
+        finally
+        {
+          Release.ComObject("WDM analog crossbar tuner audio input pin", ref crossbarInputPinTvAudio);
+        }
       }
-      return pinCountConnected;
+
+      CheckCapabilities();
     }
 
     /// <summary>
@@ -499,7 +383,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
 
       int frequencyVideo = 0;
       int frequencyAudio = 0;
-      if (_currentChannel.MediaType == MediaTypeEnum.TV)
+      if (channel.MediaType == MediaTypeEnum.TV)
       {
         hr = tuner.get_VideoFrequency(out frequencyVideo);
         HResult.ThrowException(hr, "Failed to read current video frequency.");
@@ -607,6 +491,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       _supportedTvAudioModes = TVAudioMode.None;
       _currentChannel = null;
 
+      if (_filterTvAudio != null && _filterTvAudio != _filterTuner)
+      {
+        if (graph != null)
+        {
+          graph.RemoveFilter(_filterTvAudio);
+        }
+        Release.ComObject("tuner TV audio filter", ref _filterTvAudio);
+
+        DevicesInUse.Instance.Remove(_deviceTvAudio);
+        _deviceTvAudio.Dispose();
+        _deviceTvAudio = null;
+      }
       if (_filterTuner != null)
       {
         if (graph != null)
@@ -618,18 +514,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         DevicesInUse.Instance.Remove(_deviceTuner);
         _deviceTuner.Dispose();
         _deviceTuner = null;
-      }
-      if (_filterTvAudio != null)
-      {
-        if (graph != null)
-        {
-          graph.RemoveFilter(_filterTvAudio);
-        }
-        Release.ComObject("tuner TV audio filter", ref _filterTvAudio);
-
-        DevicesInUse.Instance.Remove(_deviceTvAudio);
-        _deviceTvAudio.Dispose();
-        _deviceTvAudio = null;
       }
     }
   }

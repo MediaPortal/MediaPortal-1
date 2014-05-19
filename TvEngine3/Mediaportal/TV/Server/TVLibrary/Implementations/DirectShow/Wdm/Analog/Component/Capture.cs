@@ -128,16 +128,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     /// </summary>
     private Dictionary<VideoProcAmpProperty, VideoProcAmpPropertyDetail> _supportedVideoProcAmpProperties = new Dictionary<VideoProcAmpProperty, VideoProcAmpPropertyDetail>();
 
-    /// <summary>
-    /// The upstream crossbar component video output pin index.
-    /// </summary>
-    private int _crossbarOutputPinIndexVideo = -1;
-
-    /// <summary>
-    /// The upstream crossbar component audio output pin index.
-    /// </summary>
-    private int _crossbarOutputPinIndexAudio = -1;
-
     #region configuration
 
     /// <summary>
@@ -265,37 +255,58 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       else
       {
         this.LogDebug("WDM analog capture: perform loading");
-        _crossbarOutputPinIndexVideo = crossbar.PinIndexOutputVideo;
-        _crossbarOutputPinIndexAudio = crossbar.PinIndexOutputAudio;
-        if (_crossbarOutputPinIndexVideo >= 0)
+
+        int crossbarOutputPinIndexVideo = crossbar.PinIndexOutputVideo;
+        if (crossbarOutputPinIndexVideo >= 0)
         {
-          int connectionCount = AddAndConnectFilterFromCategory(graph, FilterCategory.AMKSCapture, crossbar.Filter, productInstanceId, out _filterVideo, out _deviceVideo);
-          if (connectionCount == 0)
+          this.LogDebug("WDM analog capture: add video capture filter");
+          IPin crossbarOutputPinVideo = DsFindPin.ByDirection(crossbar.Filter, PinDirection.Output, crossbarOutputPinIndexVideo);
+          try
           {
-            connectionCount = AddAndConnectFilterFromCategory(graph, FilterCategory.VideoInputDevice, crossbar.Filter, productInstanceId, out _filterVideo, out _deviceVideo);
+            if (!AddAndConnectFilterFromCategory(graph, FilterCategory.AMKSCapture, crossbarOutputPinVideo, PinDirection.Output, productInstanceId, out _filterVideo, out _deviceVideo))
+            {
+              if (!AddAndConnectFilterFromCategory(graph, FilterCategory.VideoInputDevice, crossbarOutputPinVideo, PinDirection.Output, productInstanceId, out _filterVideo, out _deviceVideo))
+              {
+                throw new TvException("Failed to connect video capture filter.");
+              }
+            }
           }
-          if (connectionCount == 0)
+          finally
           {
-            throw new TvException("Failed to connect video capture filter.");
-          }
-          if (connectionCount > 1)
-          {
-            // We assume the video capture filter also handles audio if more than
-            // one connection was made.
-            _filterAudio = _filterVideo;
-            _deviceAudio = _deviceVideo;
+            Release.ComObject("WDM analog crossbar video output pin", ref crossbarOutputPinVideo);
           }
         }
-        if (_crossbarOutputPinIndexAudio >= 0 && _filterAudio == null)
+
+        int crossbarOutputPinIndexAudio = crossbar.PinIndexOutputAudio;
+        if (crossbarOutputPinIndexAudio >= 0)
         {
-          int connectionCount = AddAndConnectFilterFromCategory(graph, FilterCategory.AMKSCapture, crossbar.Filter, productInstanceId, out _filterAudio, out _deviceAudio);
-          if (connectionCount == 0)
+          IPin crossbarOutputPinAudio = DsFindPin.ByDirection(crossbar.Filter, PinDirection.Output, crossbarOutputPinIndexAudio);
+          try
           {
-            connectionCount = AddAndConnectFilterFromCategory(graph, FilterCategory.AudioInputDevice, crossbar.Filter, productInstanceId, out _filterAudio, out _deviceAudio);
+            if (_filterVideo != null)
+            {
+              this.LogDebug("WDM analog capture: try to connect crossbar audio output to video capture filter");
+              if (ConnectFilterWithPin(graph, crossbarOutputPinAudio, PinDirection.Output, _filterVideo))
+              {
+                _filterAudio = _filterVideo;
+                _deviceAudio = _deviceVideo;
+              }
+            }
+            if (_filterAudio == null)
+            {
+              this.LogDebug("WDM analog capture: add audio capture filter");
+              if (!AddAndConnectFilterFromCategory(graph, FilterCategory.AMKSCapture, crossbarOutputPinAudio, PinDirection.Output, productInstanceId, out _filterAudio, out _deviceAudio))
+              {
+                if (!AddAndConnectFilterFromCategory(graph, FilterCategory.AudioInputDevice, crossbarOutputPinAudio, PinDirection.Output, productInstanceId, out _filterAudio, out _deviceAudio))
+                {
+                  throw new TvException("Failed to connect audio capture filter.");
+                }
+              }
+            }
           }
-          if (connectionCount == 0)
+          finally
           {
-            throw new TvException("Failed to connect audio capture filter.");
+            Release.ComObject("WDM analog crossbar audio output pin", ref crossbarOutputPinAudio);
           }
         }
       }
@@ -365,140 +376,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       }
     }
 
-    /// <summary>
-    /// Make as many direct connections as possible between two DirectShow filters.
-    /// </summary>
-    /// <param name="graph">The graph containing the two filters.</param>
-    /// <param name="filterUpstream">The upstream filter.</param>
-    /// <param name="filterDownstream">The downstream filter candidate.</param>
-    /// <returns>the number of pin connections between the upstream and downstream filter</returns>
-    protected override int ConnectFilters(IFilterGraph2 graph, IBaseFilter filterUpstream, IBaseFilter filterDownstream)
+    protected override bool ConnectFilterWithPin(IFilterGraph2 graph, IPin pinToConnect, PinDirection pinToConnectDirection, IBaseFilter filter)
     {
-      this.LogDebug("WDM analog capture: connect filters");
-      if (CAPTURE_DEVICE_BLACKLIST.Contains(FilterGraphTools.GetFilterName(filterDownstream)))
+      this.LogDebug("WDM analog capture: connect filter with pin");
+      string filterName = FilterGraphTools.GetFilterName(filter);
+      if (CAPTURE_DEVICE_BLACKLIST.Contains(filterName))
       {
-        return 0;
+        this.LogDebug("WDM analog capture: filter \"{0}\" is blacklisted, ignoring", filterName);
+        return false;
       }
-      int pinCountConnected = 0;
-      int pinCountUnconnected = 0;
-
-      IPin pinUpstreamVideo = null;
-      IPin pinUpstreamAudio = null;
-      try
-      {
-        if (_crossbarOutputPinIndexVideo >= 0 && _filterVideo == null)
-        {
-          pinUpstreamVideo = DsFindPin.ByDirection(filterUpstream, PinDirection.Output, _crossbarOutputPinIndexVideo);
-          pinCountUnconnected++;
-        }
-        if (_crossbarOutputPinIndexAudio >= 0)
-        {
-          pinUpstreamAudio = DsFindPin.ByDirection(filterUpstream, PinDirection.Output, _crossbarOutputPinIndexAudio);
-          pinCountUnconnected++;
-        }
-
-        IEnumPins pinEnumDownstream;
-        int hr = filterDownstream.EnumPins(out pinEnumDownstream);
-        HResult.ThrowException(hr, "Failed to obtain pin enumerator for downstream filter.");
-        try
-        {
-          int pinIndex = 0;
-          int pinCount = 0;
-          IPin[] pinsDownstream = new IPin[2];
-          while (pinEnumDownstream.Next(1, pinsDownstream, out pinCount) == (int)HResult.Severity.Success && pinCount == 1)
-          {
-            IPin pinDownstream = pinsDownstream[0];
-            try
-            {
-              // We're not interested in output pins on the downstream filter.
-              PinDirection direction;
-              hr = pinDownstream.QueryDirection(out direction);
-              HResult.ThrowException(hr, "Failed to query pin direction for downstream pin.");
-              if (direction == PinDirection.Output)
-              {
-                this.LogDebug("WDM analog capture: downstream pin {0} is an output pin", pinIndex++);
-                continue;
-              }
-
-              // We can't use pins that are already connected.
-              IPin tempPin = null;
-              hr = pinDownstream.ConnectedTo(out tempPin);
-              if (hr == (int)HResult.Severity.Success && tempPin != null)
-              {
-                this.LogDebug("WDM analog capture: downstream input pin {0} already connected", pinIndex++);
-                Release.ComObject("WDM analog capture downstream filter connected pin", ref tempPin);
-                continue;
-              }
-
-              // Try to connect either the upstream video or audio pin with the
-              // downstream input pin.
-              List<KeyValuePair<string, IPin>> pinsUpstream = new List<KeyValuePair<string, IPin>>();
-              if (pinCountUnconnected == 1)
-              {
-                if (pinUpstreamVideo != null)
-                {
-                  pinsUpstream.Add(new KeyValuePair<string, IPin>("video", pinUpstreamVideo));
-                }
-                else
-                {
-                  pinsUpstream.Add(new KeyValuePair<string, IPin>("audio", pinUpstreamAudio));
-                }
-              }
-              else
-              {
-                bool isVideo;
-                if (IsVideoOrAudioPin(pinDownstream, out isVideo) && !isVideo)
-                {
-                  pinsUpstream.Add(new KeyValuePair<string, IPin>("audio", pinUpstreamAudio));
-                  pinsUpstream.Add(new KeyValuePair<string, IPin>("video", pinUpstreamVideo));
-                }
-                else
-                {
-                  pinsUpstream.Add(new KeyValuePair<string, IPin>("video", pinUpstreamVideo));
-                  pinsUpstream.Add(new KeyValuePair<string, IPin>("audio", pinUpstreamAudio));
-                }
-              }
-
-              foreach (KeyValuePair<string, IPin> pair in pinsUpstream)
-              {
-                IPin pinUpstream = pair.Value;
-                this.LogDebug("WDM analog capture: try to connect upstream {0} pin to downstream input pin {1}...", pair.Key, pinIndex);
-                try
-                {
-                  hr = graph.ConnectDirect(pinUpstream, pinDownstream, null);
-                  HResult.ThrowException(hr, "Failed to connect pins.");
-                  this.LogDebug("WDM analog capture: connected!");
-                  pinCountConnected++;
-                  if (pinCountConnected == pinCountUnconnected)
-                  {
-                    return pinCountConnected;
-                  }
-                  break;
-                }
-                catch
-                {
-                  // Connection failed, maybe try the other upstream pin.
-                }
-              }
-              pinIndex++;
-            }
-            finally
-            {
-              Release.ComObject("WDM analog capture downstream filter output pin", ref pinDownstream);
-            }
-          }
-        }
-        finally
-        {
-          Release.ComObject("WDM analog capture downstream filter pin enumerator", ref pinEnumDownstream);
-        }
-      }
-      finally
-      {
-        Release.ComObject("WDM analog capture upstream filter video pin", ref pinUpstreamVideo);
-        Release.ComObject("WDM analog capture upstream filter audio pin", ref pinUpstreamAudio);
-      }
-      return pinCountConnected;
+      return base.ConnectFilterWithPin(graph, pinToConnect, pinToConnectDirection, filter);
     }
 
     #region check capabilities
@@ -631,6 +518,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
           this.LogDebug("WDM analog capture: recognised country {0}, using {1} defaults", countryName, country.VideoStandard);
           _currentVideoStandard = country.VideoStandard;
         }
+        SettingsManagement.SaveValue("tuner" + tunerId + "VideoStandard", (int)_currentVideoStandard);
 
         _currentFrameWidth = 720;
         if (_currentVideoStandard == AnalogVideoStandard.NTSC_M || _currentVideoStandard == AnalogVideoStandard.NTSC_M_J || _currentVideoStandard == AnalogVideoStandard.NTSC_433 || _currentVideoStandard == AnalogVideoStandard.PAL_M)
@@ -643,7 +531,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
           _currentFrameHeight = 576;
           _currentFrameRate = 25;
         }
-        SettingsManagement.SaveValue("tuner" + tunerId + "VideoStandard", (int)_currentVideoStandard);
+        SettingsManagement.SaveValue("tuner" + tunerId + "FrameWidth", _currentFrameWidth);
+        SettingsManagement.SaveValue("tuner" + tunerId + "FrameHeight", _currentFrameHeight);
+        SettingsManagement.SaveValue("tuner" + tunerId + "FrameRate", _currentFrameRate);
       }
 
       AnalogVideoStandard newVideoStandard = (AnalogVideoStandard)SettingsManagement.GetValue("tuner" + tunerId + "VideoStandard", (int)_currentVideoStandard);
