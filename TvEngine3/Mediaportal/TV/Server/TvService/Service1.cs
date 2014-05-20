@@ -21,6 +21,9 @@
 using System;
 using System.Collections;
 using System.Configuration.Install;
+#if DEBUG
+using System.IO;
+#endif
 using System.Reflection;
 using System.ServiceProcess;
 using System.Threading;
