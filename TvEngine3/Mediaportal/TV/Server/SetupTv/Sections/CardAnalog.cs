@@ -797,6 +797,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             // Successful tuning means we're guaranteed to have found the tuner capabilities.
             // Now we can load the other settings.
             ReCheckSettings();
+            UpdateStatus();
           }
           IChannel[] channels = ServiceAgents.Instance.ControllerServiceAgent.Scan(_cardId, channel);
 
