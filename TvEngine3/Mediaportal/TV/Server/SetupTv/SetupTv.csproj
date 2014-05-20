@@ -424,7 +424,6 @@
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\Common-MP-TVE3\Common.Utils\Common.Utils.csproj">
