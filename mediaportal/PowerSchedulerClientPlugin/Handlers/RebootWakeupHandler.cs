@@ -126,7 +126,7 @@ namespace MediaPortal.Plugins.Process.Handlers
 
               // Save last reboot status
               reader.SetValue("psclientplugin", "RebootConfig", config.SerializeAsString());
-              Log.Debug("RebootHandler: Set time of last reboot: {0}", config.LastRun);
+              Log.Debug(LogType.PS, "RebootHandler: Set time of last reboot: {0}", config.LastRun);
             }
 
             // Check if system should wakeup for reboot
@@ -145,7 +145,7 @@ namespace MediaPortal.Plugins.Process.Handlers
               {
                 ps.Unregister(this as IWakeupHandler);
               }
-              Log.Debug("RebootHandler: Wakeup system for reboot: {0}", enabled ? "enabled" : "disabled");
+              Log.Debug(LogType.PS, "RebootHandler: Wakeup system for reboot: {0}", enabled ? "enabled" : "disabled");
             }
 
             // Check if a reboot time is set
@@ -153,7 +153,7 @@ namespace MediaPortal.Plugins.Process.Handlers
             if (!config.Equals(setting.Get<EPGWakeupConfig>()))
             {
               setting.Set<EPGWakeupConfig>(config);
-              Log.Debug("RebootHandler: Reboot system at {0:00}:{1:00}", config.Hour, config.Minutes);
+              Log.Debug(LogType.PS, "RebootHandler: Reboot system at {0:00}:{1:00}", config.Hour, config.Minutes);
               if (config.Days != null)
               {
                 String days = "";
@@ -164,7 +164,7 @@ namespace MediaPortal.Plugins.Process.Handlers
                   else
                     days = days + ", " + day.ToString();
                 }
-                Log.Debug("RebootHandler: Reboot system on: {0}", days);
+                Log.Debug(LogType.PS, "RebootHandler: Reboot system on: {0}", days);
               }
             }
 
@@ -184,7 +184,7 @@ namespace MediaPortal.Plugins.Process.Handlers
               if (!disAllowShutdown)
               {
                 // Kick off reboot thread
-                  Log.Debug("RebootHandler: Reboot is due - reboot now");
+                  Log.Debug(LogType.PS, "RebootHandler: Reboot is due - reboot now");
                   Thread workerThread = new Thread(new ThreadStart(RebootThread));
                   workerThread.Name = "RebootHandler";
                   workerThread.IsBackground = true;
@@ -192,7 +192,7 @@ namespace MediaPortal.Plugins.Process.Handlers
                   workerThread.Start();
                 }
                 else
-                  Log.Debug("RebootHandler: Reboot is due - reboot when standby is allowed");
+                  Log.Debug(LogType.PS, "RebootHandler: Reboot is due - reboot when standby is allowed");
               }
             }
             break;
@@ -222,7 +222,7 @@ namespace MediaPortal.Plugins.Process.Handlers
           psi.Verb = "runas";
 
           p.StartInfo = psi;
-          Log.Debug("RebootHandler: Starting external command: {0} {1}", p.StartInfo.FileName, p.StartInfo.Arguments);
+          Log.Debug(LogType.PS, "RebootHandler: Starting external command: {0} {1}", p.StartInfo.FileName, p.StartInfo.Arguments);
           try
           {
             p.Start();
@@ -230,9 +230,9 @@ namespace MediaPortal.Plugins.Process.Handlers
           }
           catch (Exception ex)
           {
-            Log.Error("RebootHandler: Exception in RunExternalCommand: {0}", ex.Message);
+            Log.Error(LogType.PS, "RebootHandler: Exception in RunExternalCommand: {0}", ex.Message);
           }
-          Log.Debug("RebootHandler: External command finished");
+          Log.Debug(LogType.PS, "RebootHandler: External command finished");
         }
       }
     }
@@ -246,13 +246,13 @@ namespace MediaPortal.Plugins.Process.Handlers
       {
         EPGWakeupConfig config = new EPGWakeupConfig(reader.GetValueAsString("psclientplugin", "RebootConfig", String.Empty));
 
-        Log.Debug("RebootHandler: Reboot schedule {0:00}:{1:00} is due", config.Hour, config.Minutes);
+        Log.Debug(LogType.PS, "RebootHandler: Reboot schedule {0:00}:{1:00} is due", config.Hour, config.Minutes);
 
         // Start external command
         RunExternalCommand("reboot");
 
         // Trigger reboot
-        Log.Info("RebootHandler: Reboot system");
+        Log.Info(LogType.PS, "RebootHandler: Reboot system");
         IPowerScheduler ps = GlobalServiceProvider.Instance.Get<IPowerScheduler>();
         ps.SuspendSystem("RebootHandler", (int)RestartOptions.Reboot, false);
       }

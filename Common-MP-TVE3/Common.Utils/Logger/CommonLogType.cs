@@ -18,5 +18,6 @@ namespace MediaPortal.Common.Utils.Logger
     Tv =200,
     TvConfig = 201,
     TvPlugIn = 202,
+    PS = 300,
   }
 }

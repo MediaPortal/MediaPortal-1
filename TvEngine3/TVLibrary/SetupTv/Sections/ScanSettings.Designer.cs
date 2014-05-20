@@ -31,14 +31,29 @@ namespace SetupTv.Sections
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPageApplication = new System.Windows.Forms.TabPage();
       this.groupBox8 = new System.Windows.Forms.GroupBox();
-      this.lblLogLevel = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpComboBoxLog = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.lblPriority = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpComboBoxPrio = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.groupBox6 = new System.Windows.Forms.GroupBox();
       this.label45 = new System.Windows.Forms.Label();
       this.label44 = new System.Windows.Forms.Label();
       this.delayDetectUpDown = new System.Windows.Forms.NumericUpDown();
+      this.tabPageLogging = new System.Windows.Forms.TabPage();
+      this.groupBox2 = new System.Windows.Forms.GroupBox();
+      this.groupBox3 = new System.Windows.Forms.GroupBox();
+      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpComboBox1 = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpLabel4 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpComboBox2 = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpLabel7 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpComboBox3 = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpLabel8 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpComboBox4 = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpLabel6 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpComboBoxLogLevelPowerScheduler = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpLabel5 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpComboBoxLogLevelEpg = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpComboBoxLogLevel = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.tabPageScan = new System.Windows.Forms.TabPage();
       this.numericUpDownAnalog = new System.Windows.Forms.NumericUpDown();
       this.label21 = new System.Windows.Forms.Label();
@@ -86,6 +101,9 @@ namespace SetupTv.Sections
       this.groupBox8.SuspendLayout();
       this.groupBox6.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.delayDetectUpDown)).BeginInit();
+      this.tabPageLogging.SuspendLayout();
+      this.groupBox2.SuspendLayout();
+      this.groupBox3.SuspendLayout();
       this.tabPageScan.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAnalog)).BeginInit();
       this.groupBox4.SuspendLayout();
@@ -109,6 +127,7 @@ namespace SetupTv.Sections
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControl1.Controls.Add(this.tabPageApplication);
+      this.tabControl1.Controls.Add(this.tabPageLogging);
       this.tabControl1.Controls.Add(this.tabPageScan);
       this.tabControl1.Controls.Add(this.tabPageSoftwareEncoder);
       this.tabControl1.ItemSize = new System.Drawing.Size(64, 18);
@@ -134,8 +153,6 @@ namespace SetupTv.Sections
       // 
       this.groupBox8.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBox8.Controls.Add(this.lblLogLevel);
-      this.groupBox8.Controls.Add(this.mpComboBoxLog);
       this.groupBox8.Controls.Add(this.lblPriority);
       this.groupBox8.Controls.Add(this.mpComboBoxPrio);
       this.groupBox8.Location = new System.Drawing.Point(6, 6);
@@ -144,25 +161,6 @@ namespace SetupTv.Sections
       this.groupBox8.TabIndex = 81;
       this.groupBox8.TabStop = false;
       this.groupBox8.Text = "TVService";
-      // 
-      // lblLogLevel
-      // 
-      this.lblLogLevel.AutoSize = true;
-      this.lblLogLevel.Location = new System.Drawing.Point(6, 61);
-      this.lblLogLevel.Name = "lblLogLevel";
-      this.lblLogLevel.Size = new System.Drawing.Size(57, 13);
-      this.lblLogLevel.TabIndex = 78;
-      this.lblLogLevel.Text = "Log Level:";
-      // 
-      // mpComboBoxLog
-      // 
-      this.mpComboBoxLog.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.mpComboBoxLog.FormattingEnabled = true;
-      this.mpComboBoxLog.Location = new System.Drawing.Point(125, 58);
-      this.mpComboBoxLog.Name = "mpComboBoxLog";
-      this.mpComboBoxLog.Size = new System.Drawing.Size(179, 21);
-      this.mpComboBoxLog.TabIndex = 79;
-      this.mpComboBoxLog.SelectedIndexChanged += new System.EventHandler(this.mpComboBoxLog_SelectedIndexChanged);
       // 
       // lblPriority
       // 
@@ -228,6 +226,183 @@ namespace SetupTv.Sections
       this.delayDetectUpDown.Name = "delayDetectUpDown";
       this.delayDetectUpDown.Size = new System.Drawing.Size(47, 20);
       this.delayDetectUpDown.TabIndex = 79;
+      // 
+      // tabPageLogging
+      // 
+      this.tabPageLogging.Controls.Add(this.groupBox2);
+      this.tabPageLogging.Location = new System.Drawing.Point(4, 22);
+      this.tabPageLogging.Name = "tabPageLogging";
+      this.tabPageLogging.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPageLogging.Size = new System.Drawing.Size(476, 428);
+      this.tabPageLogging.TabIndex = 5;
+      this.tabPageLogging.Text = "Logging";
+      this.tabPageLogging.UseVisualStyleBackColor = true;
+      // 
+      // groupBox2
+      // 
+      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox2.Controls.Add(this.groupBox3);
+      this.groupBox2.Controls.Add(this.mpLabel6);
+      this.groupBox2.Controls.Add(this.mpComboBoxLogLevelPowerScheduler);
+      this.groupBox2.Controls.Add(this.mpLabel5);
+      this.groupBox2.Controls.Add(this.mpComboBoxLogLevelEpg);
+      this.groupBox2.Controls.Add(this.mpLabel2);
+      this.groupBox2.Controls.Add(this.mpComboBoxLogLevel);
+      this.groupBox2.Location = new System.Drawing.Point(6, 6);
+      this.groupBox2.Name = "groupBox2";
+      this.groupBox2.Size = new System.Drawing.Size(464, 128);
+      this.groupBox2.TabIndex = 82;
+      this.groupBox2.TabStop = false;
+      this.groupBox2.Text = "Log Level";
+      // 
+      // groupBox3
+      // 
+      this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox3.Controls.Add(this.mpLabel1);
+      this.groupBox3.Controls.Add(this.mpComboBox1);
+      this.groupBox3.Controls.Add(this.mpLabel4);
+      this.groupBox3.Controls.Add(this.mpComboBox2);
+      this.groupBox3.Controls.Add(this.mpLabel7);
+      this.groupBox3.Controls.Add(this.mpComboBox3);
+      this.groupBox3.Controls.Add(this.mpLabel8);
+      this.groupBox3.Controls.Add(this.mpComboBox4);
+      this.groupBox3.Location = new System.Drawing.Point(0, 173);
+      this.groupBox3.Name = "groupBox3";
+      this.groupBox3.Size = new System.Drawing.Size(464, 144);
+      this.groupBox3.TabIndex = 90;
+      this.groupBox3.TabStop = false;
+      this.groupBox3.Text = "TVService Logging";
+      // 
+      // mpLabel1
+      // 
+      this.mpLabel1.AutoSize = true;
+      this.mpLabel1.Location = new System.Drawing.Point(12, 73);
+      this.mpLabel1.Name = "mpLabel1";
+      this.mpLabel1.Size = new System.Drawing.Size(138, 13);
+      this.mpLabel1.TabIndex = 88;
+      this.mpLabel1.Text = "PowerScheduler Log Level:";
+      // 
+      // mpComboBox1
+      // 
+      this.mpComboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.mpComboBox1.FormattingEnabled = true;
+      this.mpComboBox1.Location = new System.Drawing.Point(170, 70);
+      this.mpComboBox1.Name = "mpComboBox1";
+      this.mpComboBox1.Size = new System.Drawing.Size(179, 21);
+      this.mpComboBox1.TabIndex = 89;
+      // 
+      // mpLabel4
+      // 
+      this.mpLabel4.AutoSize = true;
+      this.mpLabel4.Location = new System.Drawing.Point(12, 48);
+      this.mpLabel4.Name = "mpLabel4";
+      this.mpLabel4.Size = new System.Drawing.Size(82, 13);
+      this.mpLabel4.TabIndex = 86;
+      this.mpLabel4.Text = "EPG Log Level:";
+      // 
+      // mpComboBox2
+      // 
+      this.mpComboBox2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.mpComboBox2.FormattingEnabled = true;
+      this.mpComboBox2.Location = new System.Drawing.Point(170, 45);
+      this.mpComboBox2.Name = "mpComboBox2";
+      this.mpComboBox2.Size = new System.Drawing.Size(179, 21);
+      this.mpComboBox2.TabIndex = 87;
+      // 
+      // mpLabel7
+      // 
+      this.mpLabel7.AutoSize = true;
+      this.mpLabel7.Location = new System.Drawing.Point(12, 106);
+      this.mpLabel7.Name = "mpLabel7";
+      this.mpLabel7.Size = new System.Drawing.Size(101, 13);
+      this.mpLabel7.TabIndex = 82;
+      this.mpLabel7.Text = "SetupTv Log Level:";
+      // 
+      // mpComboBox3
+      // 
+      this.mpComboBox3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.mpComboBox3.FormattingEnabled = true;
+      this.mpComboBox3.Location = new System.Drawing.Point(170, 103);
+      this.mpComboBox3.Name = "mpComboBox3";
+      this.mpComboBox3.Size = new System.Drawing.Size(179, 21);
+      this.mpComboBox3.TabIndex = 83;
+      // 
+      // mpLabel8
+      // 
+      this.mpLabel8.AutoSize = true;
+      this.mpLabel8.Location = new System.Drawing.Point(12, 23);
+      this.mpLabel8.Name = "mpLabel8";
+      this.mpLabel8.Size = new System.Drawing.Size(110, 13);
+      this.mpLabel8.TabIndex = 80;
+      this.mpLabel8.Text = "TVService Log Level:";
+      // 
+      // mpComboBox4
+      // 
+      this.mpComboBox4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.mpComboBox4.FormattingEnabled = true;
+      this.mpComboBox4.Location = new System.Drawing.Point(170, 20);
+      this.mpComboBox4.Name = "mpComboBox4";
+      this.mpComboBox4.Size = new System.Drawing.Size(179, 21);
+      this.mpComboBox4.TabIndex = 81;
+      // 
+      // mpLabel6
+      // 
+      this.mpLabel6.AutoSize = true;
+      this.mpLabel6.Location = new System.Drawing.Point(12, 89);
+      this.mpLabel6.Name = "mpLabel6";
+      this.mpLabel6.Size = new System.Drawing.Size(88, 13);
+      this.mpLabel6.TabIndex = 88;
+      this.mpLabel6.Text = "PowerScheduler:";
+      // 
+      // mpComboBoxLogLevelPowerScheduler
+      // 
+      this.mpComboBoxLogLevelPowerScheduler.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.mpComboBoxLogLevelPowerScheduler.FormattingEnabled = true;
+      this.mpComboBoxLogLevelPowerScheduler.Location = new System.Drawing.Point(170, 86);
+      this.mpComboBoxLogLevelPowerScheduler.Name = "mpComboBoxLogLevelPowerScheduler";
+      this.mpComboBoxLogLevelPowerScheduler.Size = new System.Drawing.Size(179, 21);
+      this.mpComboBoxLogLevelPowerScheduler.TabIndex = 89;
+      this.mpComboBoxLogLevelPowerScheduler.SelectedIndexChanged += new System.EventHandler(this.mpComboBoxLogLevelPowerScheduler_SelectedIndexChanged);
+      // 
+      // mpLabel5
+      // 
+      this.mpLabel5.AutoSize = true;
+      this.mpLabel5.Location = new System.Drawing.Point(12, 56);
+      this.mpLabel5.Name = "mpLabel5";
+      this.mpLabel5.Size = new System.Drawing.Size(32, 13);
+      this.mpLabel5.TabIndex = 86;
+      this.mpLabel5.Text = "EPG:";
+      // 
+      // mpComboBoxLogLevelEpg
+      // 
+      this.mpComboBoxLogLevelEpg.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.mpComboBoxLogLevelEpg.FormattingEnabled = true;
+      this.mpComboBoxLogLevelEpg.Location = new System.Drawing.Point(170, 53);
+      this.mpComboBoxLogLevelEpg.Name = "mpComboBoxLogLevelEpg";
+      this.mpComboBoxLogLevelEpg.Size = new System.Drawing.Size(179, 21);
+      this.mpComboBoxLogLevelEpg.TabIndex = 87;
+      this.mpComboBoxLogLevelEpg.SelectedIndexChanged += new System.EventHandler(this.mpComboBoxLogLevelEpg_SelectedIndexChanged);
+      // 
+      // mpLabel2
+      // 
+      this.mpLabel2.AutoSize = true;
+      this.mpLabel2.Location = new System.Drawing.Point(12, 23);
+      this.mpLabel2.Name = "mpLabel2";
+      this.mpLabel2.Size = new System.Drawing.Size(112, 13);
+      this.mpLabel2.TabIndex = 80;
+      this.mpLabel2.Text = "TVService / SetupTv:";
+      // 
+      // mpComboBoxLogLevel
+      // 
+      this.mpComboBoxLogLevel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.mpComboBoxLogLevel.FormattingEnabled = true;
+      this.mpComboBoxLogLevel.Location = new System.Drawing.Point(170, 20);
+      this.mpComboBoxLogLevel.Name = "mpComboBoxLogLevel";
+      this.mpComboBoxLogLevel.Size = new System.Drawing.Size(179, 21);
+      this.mpComboBoxLogLevel.TabIndex = 81;
+      this.mpComboBoxLogLevel.SelectedIndexChanged += new System.EventHandler(this.mpComboBoxLogLevel_SelectedIndexChanged);
       // 
       // tabPageScan
       // 
@@ -745,6 +920,11 @@ namespace SetupTv.Sections
       this.groupBox6.ResumeLayout(false);
       this.groupBox6.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.delayDetectUpDown)).EndInit();
+      this.tabPageLogging.ResumeLayout(false);
+      this.groupBox2.ResumeLayout(false);
+      this.groupBox2.PerformLayout();
+      this.groupBox3.ResumeLayout(false);
+      this.groupBox3.PerformLayout();
       this.tabPageScan.ResumeLayout(false);
       this.tabPageScan.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAnalog)).EndInit();
@@ -821,7 +1001,22 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label label24;
     private System.Windows.Forms.NumericUpDown numericUpDownReuseLimit;
     private System.Windows.Forms.Label label2;
-    private MediaPortal.UserInterface.Controls.MPLabel lblLogLevel;
-    private MediaPortal.UserInterface.Controls.MPComboBox mpComboBoxLog;
+    private System.Windows.Forms.TabPage tabPageLogging;
+    private System.Windows.Forms.GroupBox groupBox2;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel6;
+    private MediaPortal.UserInterface.Controls.MPComboBox mpComboBoxLogLevelPowerScheduler;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel5;
+    private MediaPortal.UserInterface.Controls.MPComboBox mpComboBoxLogLevelEpg;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
+    private MediaPortal.UserInterface.Controls.MPComboBox mpComboBoxLogLevel;
+    private System.Windows.Forms.GroupBox groupBox3;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
+    private MediaPortal.UserInterface.Controls.MPComboBox mpComboBox1;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel4;
+    private MediaPortal.UserInterface.Controls.MPComboBox mpComboBox2;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel7;
+    private MediaPortal.UserInterface.Controls.MPComboBox mpComboBox3;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel8;
+    private MediaPortal.UserInterface.Controls.MPComboBox mpComboBox4;
   }
 }

@@ -29,40 +29,26 @@ using MediaPortal.Common.Utils.Logger;
 namespace TvLibrary.Log
 {
   /// <summary>
+  /// Type of log (default is "Log")
+  /// </summary>
+  public enum LogType
+  {
+    Log,
+    Recorder,
+    Error,
+    EPG,
+    VMR9,
+    Config,
+    MusicShareWatcher,
+    WebEPG,
+    PS
+  }
+
+  /// <summary>
   /// An implementation of a log mechanism for the GUI library.
   /// </summary>
   public class Log
   {
-    private enum LogType
-    {
-      /// <summary>
-      /// Debug logging
-      /// </summary>
-      Debug,
-      /// <summary>
-      /// normal logging
-      /// </summary>
-      Info,
-      /// <summary>
-      /// error logging
-      /// </summary>
-      Error,
-      /// <summary>
-      /// epg logging
-      /// </summary>
-      Epg
-    }
-
-    /// <summary>
-    /// Configure after how many days the log file shall be rotated when a new line is added
-    /// </summary>
-    private static readonly TimeSpan _logDaysToKeep = new TimeSpan(1, 0, 0, 0);
-
-    /// <summary>
-    /// The maximum size of each log file in Megabytes
-    /// </summary>
-    private const int _maxLogSizeMb = 100;
-
     /// <summary>
     /// The maximum count of identic messages to be logged in a row
     /// </summary>
@@ -85,7 +71,6 @@ namespace TvLibrary.Log
     /// </summary>
     static Log()
     {
-      //BackupLogFiles(); <-- do not rotate logs when e.g. SetupTv is started.
       _lastLogLines.Clear();
     }
 
@@ -98,7 +83,6 @@ namespace TvLibrary.Log
     /// </summary>
     public static void BackupLogFiles()
     {
-      RotateLogs();
       _lastLogLines.Clear();
     }
 
@@ -135,7 +119,7 @@ namespace TvLibrary.Log
       //		MethodBase methodBase = stackFrame.GetMethod();
       //		WriteFile(LogType.Log, "{0}", methodBase.Name);
 
-      WriteToFile(LogType.Info, format, arg);
+      WriteToFile(LogLevel.Information, format, arg);
     }
 
     /// <summary>
@@ -152,7 +136,7 @@ namespace TvLibrary.Log
       //		MethodBase methodBase = stackFrame.GetMethod();
       //		WriteFile(LogType.Log, "{0}", methodBase.Name);
       string log = String.Format("{0:X} {1}", Thread.CurrentThread.ManagedThreadId, String.Format(format, arg));
-      WriteToFile(LogType.Info, log);
+      WriteToFile(LogLevel.Information, log);
     }
 
     /// <summary>
@@ -162,7 +146,39 @@ namespace TvLibrary.Log
     /// <param name="arg">The arg.</param>
     public static void Error(string format, params object[] arg)
     {
-      WriteToFile(LogType.Error, format, arg);
+      WriteToFile(LogLevel.Error, format, arg);
+    }
+
+    /// <summary>
+    /// Logs an error message to the log specified
+    /// </summary>
+    /// <param name="logType">logger</param>
+    /// <param name="format">message format string</param>
+    /// <param name="arg">message arguments</param>
+    public static void Error(LogType logType, string format, params object[] arg)
+    {
+      WriteToFile(logType, LogLevel.Error, format, arg);
+    }
+
+    /// <summary>
+    /// Logs the message to the warning file
+    /// </summary>
+    /// <param name="format">The format.</param>
+    /// <param name="arg">The arg.</param>
+    public static void Warn(string format, params object[] arg)
+    {
+      WriteToFile(LogLevel.Warning, format, arg);
+    }
+
+    /// <summary>
+    /// Logs a warn message to the log specified
+    /// </summary>
+    /// <param name="logType">logger</param>
+    /// <param name="format">message format string</param>
+    /// <param name="arg">message arguments</param>
+    public static void Warn(LogType logType, string format, params object[] arg)
+    {
+      WriteToFile(logType, LogLevel.Warning, format, arg);
     }
 
     /// <summary>
@@ -172,7 +188,18 @@ namespace TvLibrary.Log
     /// <param name="arg">The arg.</param>
     public static void Info(string format, params object[] arg)
     {
-      WriteToFile(LogType.Info, format, arg);
+      WriteToFile(LogLevel.Information, format, arg);
+    }
+
+    /// <summary>
+    /// Logs an info message to the log specified
+    /// </summary>
+    /// <param name="logType">logType</param>
+    /// <param name="format">message format string</param>
+    /// <param name="arg">message arguments</param>
+    public static void Info(LogType logType, string format, params object[] arg)
+    {
+      WriteToFile(logType, LogLevel.Information, format, arg);
     }
 
     /// <summary>
@@ -182,7 +209,18 @@ namespace TvLibrary.Log
     /// <param name="arg">The arg.</param>
     public static void Debug(string format, params object[] arg)
     {
-      WriteToFile(LogType.Debug, format, arg);
+      WriteToFile(LogLevel.Debug, format, arg);
+    }
+
+    /// <summary>
+    /// Logs a debug message to the log specified
+    /// </summary>
+    /// <param name="logType">logType</param>
+    /// <param name="format">message format string</param>
+    /// <param name="arg">message arguments</param>
+    public static void Debug(LogType logType, string format, params object[] arg)
+    {
+      WriteToFile(logType, LogLevel.Debug, format, arg);
     }
 
     /// <summary>
@@ -192,7 +230,7 @@ namespace TvLibrary.Log
     /// <param name="arg">The arg.</param>
     public static void Epg(string format, params object[] arg)
     {
-      WriteToFile(LogType.Epg, format, arg);
+      WriteToFile(LogType.EPG, LogLevel.Information, format, arg);
     }
 
     /// <summary>
@@ -202,7 +240,7 @@ namespace TvLibrary.Log
     /// <param name="arg">The arg.</param>
     public static void WriteFile(string format, params object[] arg)
     {
-      WriteToFile(LogType.Info, format, arg);
+      WriteToFile(LogLevel.Information, format, arg);
     }
 
     ///<summary>
@@ -225,101 +263,20 @@ namespace TvLibrary.Log
       CommonLogger.Instance.LogLevel = ConvertToCommonLogLevel(level);
     }
 
+    /// <summary>
+    /// Set the log level for the log type
+    /// </summary>
+    /// <param name="type">log type</param>
+    /// <param name="level">level to set</param>
+    public static void SetLogLevel(LogType type, LogLevel level)
+    {
+      Log.Info(type, "Set loglevel for {0} to: {1}", type.ToString(), level.ToString());
+      CommonLogger.Instance.SetLogLevel(ConvertToCommonLogType(type), ConvertToCommonLogLevel(level));
+    }
+
     #endregion
 
     #region Private methods
-
-    private static string GetFileName(LogType logType)
-    {
-      string Path = GetPathName();
-      switch (logType)
-      {
-        case LogType.Debug:
-        case LogType.Info:
-          return String.Format(@"{0}\log\tv.log", Path);
-
-        case LogType.Error:
-          return String.Format(@"{0}\log\error.log", Path);
-
-        case LogType.Epg:
-          return String.Format(@"{0}\log\epg.log", Path);
-
-        default:
-          return String.Format(@"{0}\log\tv.log", Path);
-      }
-    }
-
-    /// <summary>
-    /// Since Windows caches API calls to the FileSystem a simple FileInfo.CreationTime will be wrong when replacing files (even after refresh).
-    /// Therefore we set it manually.
-    /// </summary>
-    /// <param name="aFileName"></param>
-    private static void CreateBlankFile(string aFileName)
-    {
-      try
-      {
-        using (StreamWriter sw = File.CreateText(aFileName))
-        {
-          sw.Close();
-          try
-          {
-            File.SetCreationTime(aFileName, DateTime.Now);
-          }
-          catch (Exception) {}
-        }
-      }
-      catch (Exception) {}
-    }
-
-    /// <summary>
-    /// Deletes .bak file, moves .log to .bak for every LogType
-    /// </summary>
-    private static void RotateLogs()
-    {
-      try
-      {
-        List<string> physicalLogFiles = new List<string>(3);
-        // Get all log types
-        foreach (LogType logtype in Enum.GetValues(typeof (LogType)))
-        {
-          // Get full path for log
-          string name = GetFileName(logtype);
-          // Since e.g. debug and info might share the same file make sure we only rotate once
-          if (!physicalLogFiles.Contains(name))
-          {
-            physicalLogFiles.Add(name);
-          }
-        }
-
-        foreach (string logFileName in physicalLogFiles)
-        {
-          // make sure other files will be rotated even if one file fails
-          try
-          {
-            string bakFileName = logFileName.Replace(".log", ".bak");
-            // Delete outdated log
-            if (File.Exists(bakFileName))
-            {
-              File.Delete(bakFileName);
-            }
-            // Rotate current log
-            if (File.Exists(logFileName))
-            {
-              File.Move(logFileName, bakFileName);
-            }
-            // Create a new log file with correct timestamps
-            CreateBlankFile(logFileName);
-          }
-          catch (UnauthorizedAccessException) {}
-          catch (ArgumentException) {}
-          catch (IOException) {}
-        }
-      }
-      catch (Exception)
-      {
-        // Maybe add EventLog here...
-      }
-    }
 
     /// <summary>
     /// Compares the cache's last log entries to check whether we have repeating lines that should not be logged
@@ -364,45 +321,14 @@ namespace TvLibrary.Log
 
 
     /// <summary>
-    /// Does pre-logging tasks - like check for rotation, oversize, etc
+    /// Writes the file.
     /// </summary>
-    /// <param name="aLogFileName">The file to be checked</param>
-    /// <returns>False if logging must not go on</returns>
-    private static bool CheckLogPrepared(string aLogFileName)
+    /// <param name="logType">the type of logging.</param>
+    /// <param name="format">The format.</param>
+    /// <param name="arg">The arg.</param>
+    private static void WriteToFile(LogLevel logLevel, string format, params object[] arg)
     {
-      bool result = true;
-      try
-      {
-        // If the user or some other event deleted the dir make sure to recreate it.
-        Directory.CreateDirectory(Path.GetDirectoryName(aLogFileName));
-        if (File.Exists(aLogFileName))
-        {
-          DateTime checkDate = DateTime.Now - _logDaysToKeep;
-          // Set the file date to a default which would NOT rotate for the case that FileInfo fetching will fail
-          DateTime fileDate = DateTime.Now;
-          try
-          {
-            FileInfo logFi = new FileInfo(aLogFileName);
-            // The information is retrieved from a cache and might be outdated.
-            logFi.Refresh();
-            fileDate = logFi.CreationTime;
-
-            // Some log source went out of control here - do not log until out of disk space!
-            if (logFi.Length > _maxLogSizeMb * 1000 * 1000)
-            {
-              result = false;
-            }
-          }
-          catch (Exception) {}
-          // File is older than today - _logDaysToKeep = rotate
-          if (checkDate.CompareTo(fileDate) > 0)
-          {
-            BackupLogFiles();
-          }
-        }
-      }
-      catch (Exception) {}
-      return result;
+      WriteToFile(LogType.Log, logLevel, format, arg);
     }
 
     /// <summary>
@@ -411,9 +337,9 @@ namespace TvLibrary.Log
     /// <param name="logType">the type of logging.</param>
     /// <param name="format">The format.</param>
     /// <param name="arg">The arg.</param>
-    private static void WriteToFile(LogType logType, string format, params object[] arg)
+    private static void WriteToFile(LogType logType, LogLevel logLevel, string format, params object[] arg)
     {
-      lock (typeof (Log))
+      lock (typeof(Log))
       {
         try
         {
@@ -426,33 +352,51 @@ namespace TvLibrary.Log
           CacheLogLine(logLine);
 
           // implementation
-          switch (logType)
+          switch (logLevel)
           {
-            case LogType.Debug: CommonLogger.Instance.Debug(CommonLogType.Log, format, arg); break;
-            case LogType.Info: CommonLogger.Instance.Info(CommonLogType.Log, format, arg); break;
-            case LogType.Error:CommonLogger.Instance.Error(CommonLogType.Log, format, arg); break;
-            case LogType.Epg: CommonLogger.Instance.Info(CommonLogType.EPG, format, arg); break;
+            case LogLevel.Debug:
+              CommonLogger.Instance.Debug(ConvertToCommonLogType(logType), format, arg);
+              break;
+            case LogLevel.Information:
+              CommonLogger.Instance.Info(ConvertToCommonLogType(logType), format, arg);
+              break;
+            case LogLevel.Warning:
+              CommonLogger.Instance.Warn(ConvertToCommonLogType(logType), format, arg);
+              break;
+            case LogLevel.Error:
+              CommonLogger.Instance.Error(ConvertToCommonLogType(logType), format, arg);
+              break;
           }
-          
-
-          /*
-          string logFileName = GetFileName(logType);
-          if (CheckLogPrepared(logFileName))
-          {
-            using (StreamWriter writer = new StreamWriter(logFileName, true, Encoding.UTF8))
-            {
-              string threadName = Thread.CurrentThread.Name;
-              int threadId = Thread.CurrentThread.ManagedThreadId;
-
-              writer.BaseStream.Seek(0, SeekOrigin.End); // set the file pointer to the end of file
-              writer.WriteLine("{0:yyyy-MM-dd HH:mm:ss.ffffff} [{1}({2})]: {3}", DateTime.Now, threadName, threadId,
-                               logLine);
-              writer.Close();
-            }
-          }
-           */
         }
-        catch (Exception) {}
+        catch (Exception ex)
+        {
+          CommonLogger.Instance.Error(CommonLogType.Error, "Error in writing log entry", ex);
+        }
+      }
+    }
+
+    private static CommonLogType ConvertToCommonLogType(LogType logType)
+    {
+      switch (logType)
+      {
+        case LogType.Recorder:
+          return CommonLogType.Recorder;
+        case LogType.Error:
+          return CommonLogType.Error;
+        case LogType.EPG:
+          return CommonLogType.EPG;
+        case LogType.VMR9:
+          return CommonLogType.VMR9;
+        case LogType.Config:
+          return CommonLogType.Config;
+        case LogType.MusicShareWatcher:
+          return CommonLogType.MusicShareWatcher;
+        case LogType.WebEPG:
+          return CommonLogType.WebEPG;
+        case LogType.PS:
+          return CommonLogType.PS;
+        default:
+          return CommonLogType.Log;
       }
     }
 
@@ -467,7 +411,6 @@ namespace TvLibrary.Log
         default: return CommonLogLevel.All;
       }
     }
-
 
     #endregion
   }

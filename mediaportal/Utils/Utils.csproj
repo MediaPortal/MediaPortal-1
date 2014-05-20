@@ -150,7 +150,6 @@
     <Compile Include="Localisation\StringsFile\StringFile.cs" />
     <Compile Include="ServiceImplementations\Log.cs" />
     <Compile Include="ServiceImplementations\Log4NetWrapper.cs" />
-    <Compile Include="ServiceImplementations\LogImpl.cs" />
     <Compile Include="Services\GlobalServiceProvider.cs" />
     <Compile Include="Services\ILog.cs" />
     <Compile Include="Services\ISelectBDHandler.cs" />

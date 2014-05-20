@@ -29,6 +29,7 @@ namespace MediaPortal.Services
     VMR9,
     Config,
     MusicShareWatcher,
-    WebEPG
+    WebEPG,
+    PS
   }
 }

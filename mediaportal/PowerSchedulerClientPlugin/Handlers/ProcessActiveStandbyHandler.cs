@@ -95,7 +95,7 @@ namespace MediaPortal.Plugins.Process.Handlers
             {
               setting.Set<List<string>>(processList);
               _processList = processList;
-              Log.Debug("ProcessActiveHandler: Preventing standby for processes: {0}", processes);
+              Log.Debug(LogType.PS, "ProcessActiveHandler: Preventing standby for processes: {0}", processes);
             }
 
             // Check if away mode should be used
@@ -104,7 +104,7 @@ namespace MediaPortal.Plugins.Process.Handlers
             if (setting.Get<bool>() != _useAwayMode)
             {
               setting.Set<bool>(_useAwayMode);
-              Log.Debug("ProcessActiveHandler: Use away mode: {0}", _useAwayMode);
+              Log.Debug(LogType.PS, "ProcessActiveHandler: Use away mode: {0}", _useAwayMode);
             }
 
             break;

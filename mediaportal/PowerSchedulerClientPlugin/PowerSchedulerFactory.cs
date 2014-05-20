@@ -56,7 +56,7 @@ namespace MediaPortal.Plugins.Process
     /// </summary>
     public PowerSchedulerFactory()
     {
-      Log.Info("PS: PowerSchedulerFactory");
+      Log.Info(LogType.PS, "PS: PowerSchedulerFactory");
 
       // Add handlers for preventing the system from entering standby
       IStandbyHandler standbyHandler;

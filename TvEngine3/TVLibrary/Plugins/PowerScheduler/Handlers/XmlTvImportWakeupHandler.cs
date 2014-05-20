@@ -91,7 +91,7 @@ namespace TvEngine.PowerScheduler.Handlers
         remoteScheduleTime.AddDays(1);
       }
 
-      Log.Debug(this._handlerName + ".GetNextWakeupTime {0}", remoteScheduleTime);
+      Log.Debug(LogType.PS, this._handlerName + ".GetNextWakeupTime {0}", remoteScheduleTime);
 
       remoteScheduleTime.AddMinutes(-1); // resume 60sec before      
 

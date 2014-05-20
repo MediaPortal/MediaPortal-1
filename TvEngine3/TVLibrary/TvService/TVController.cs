@@ -3639,6 +3639,14 @@ namespace TvService
       return groupNames;
     }
 
+    /// <summary>
+    /// Set the log levels as defined in the settings
+    /// </summary>
+    public void SetLogLevels()
+    {
+      Service1.SetLogLevels();
+    }
+
     #endregion
 
     #region streaming

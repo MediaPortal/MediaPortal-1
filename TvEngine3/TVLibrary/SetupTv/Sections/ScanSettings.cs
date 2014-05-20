@@ -97,9 +97,7 @@ namespace SetupTv.Sections
 
     #region Vars
 
-    private bool _needInformUser;
-    private LogLevel _logLevelStart;
-    private LogLevel _logLevel;
+    private bool _logLevelChanged;
 
     #endregion
 
@@ -118,7 +116,7 @@ namespace SetupTv.Sections
     public override void OnSectionActivated()
     {
       base.OnSectionActivated();
-      _needInformUser = false;
+      _logLevelChanged = false;
       TvBusinessLayer layer = new TvBusinessLayer();
 
       numericUpDownTune.Value = Convert.ToDecimal(layer.GetSetting("timeoutTune", "2").Value);
@@ -140,32 +138,30 @@ namespace SetupTv.Sections
       mpComboBoxPrio.Items.Add("Below Normal");
       mpComboBoxPrio.Items.Add("Idle");
 
-      mpComboBoxLog.Items.Clear();
-      mpComboBoxLog.Items.Add("Error");
-      mpComboBoxLog.Items.Add("Warning");
-      mpComboBoxLog.Items.Add("Information");
-      mpComboBoxLog.Items.Add("Debug");
+      mpComboBoxPrio.SelectedIndex = Convert.ToInt32(layer.GetSetting("processPriority", "3").Value);   //default is normal=3       
 
-      try
-      {
-        mpComboBoxPrio.SelectedIndex = Convert.ToInt32(layer.GetSetting("processPriority", "3").Value);
-        //default is normal=3       
-      }
-      catch (Exception)
-      {
-        mpComboBoxPrio.SelectedIndex = 3; //fall back to default which is normal=3
-      }
+      mpComboBoxLogLevel.Items.Clear();
+      mpComboBoxLogLevel.Items.Add("Error");
+      mpComboBoxLogLevel.Items.Add("Warning");
+      mpComboBoxLogLevel.Items.Add("Information");
+      mpComboBoxLogLevel.Items.Add("Debug");
 
-      try
-      {
-        mpComboBoxLog.SelectedIndex = Convert.ToInt32(layer.GetSetting("loglevel", "5").Value) - 2;
-        //default is debug=5 but first two options in enum (none and critical) are not used so offset by 2
-        _logLevelStart = (LogLevel) (mpComboBoxLog.SelectedIndex + 2); // Store logLevel value
-      }
-      catch (Exception)
-      {
-        mpComboBoxPrio.SelectedIndex = 3; //fall back to default which is debug (4th entry in drop down; ie. index = 3)
-      }
+      mpComboBoxLogLevelEpg.Items.Clear();
+      mpComboBoxLogLevelEpg.Items.Add("Error");
+      mpComboBoxLogLevelEpg.Items.Add("Warning");
+      mpComboBoxLogLevelEpg.Items.Add("Information");
+      mpComboBoxLogLevelEpg.Items.Add("Debug");
+
+      mpComboBoxLogLevelPowerScheduler.Items.Clear();
+      mpComboBoxLogLevelPowerScheduler.Items.Add("Error");
+      mpComboBoxLogLevelPowerScheduler.Items.Add("Warning");
+      mpComboBoxLogLevelPowerScheduler.Items.Add("Information");
+      mpComboBoxLogLevelPowerScheduler.Items.Add("Debug");
+
+      mpComboBoxLogLevel.SelectedIndex = Convert.ToInt32(layer.GetSetting("loglevel", "5").Value) - 2;
+      int logLevel = mpComboBoxLogLevel.SelectedIndex + 2;
+      mpComboBoxLogLevelEpg.SelectedIndex = Convert.ToInt32(layer.GetSetting("loglevelepg", logLevel.ToString()).Value) - 2;
+      mpComboBoxLogLevelPowerScheduler.SelectedIndex = Convert.ToInt32(layer.GetSetting("loglevelpowerscheduler", logLevel.ToString()).Value) - 2;
 
       BuildLists(layer);
       numericUpDownReuseLimit.Value = Convert.ToDecimal(layer.GetSetting("softwareEncoderReuseLimit", "0").Value);
@@ -208,7 +204,13 @@ namespace SetupTv.Sections
       s.Persist();
 
       s = layer.GetSetting("loglevel", "5");
-      s.Value = (mpComboBoxLog.SelectedIndex + 2).ToString();
+      s.Value = (mpComboBoxLogLevel.SelectedIndex + 2).ToString();
+      s.Persist();
+      s = layer.GetSetting("loglevelepg", "5");
+      s.Value = (mpComboBoxLogLevelEpg.SelectedIndex + 2).ToString();
+      s.Persist();
+      s = layer.GetSetting("loglevelpowerscheduler", "5");
+      s.Value = (mpComboBoxLogLevelPowerScheduler.SelectedIndex + 2).ToString();
       s.Persist();
 
       s = layer.GetSetting("delayCardDetect", "0");
@@ -229,14 +231,13 @@ namespace SetupTv.Sections
         encoder.Persist();
       }
 
-      // Check if log level has change
-      checkLogStatus();
-
-      if (_needInformUser)
+      if (_logLevelChanged)
       {
-        if (
-          MessageBox.Show(this, "The log level will be changed after you restart the TVService manually","Information about log level change",
-                          MessageBoxButtons.OK, MessageBoxIcon.Exclamation) == DialogResult.OK) ;
+        // Set log level for TV-Server Configuration
+        Log.SetLogLevel((LogLevel)(mpComboBoxLogLevel.SelectedIndex + 2));
+
+        // Set log levels for TVService
+        RemoteControl.Instance.SetLogLevels();
       }
     }
 
@@ -438,14 +439,6 @@ namespace SetupTv.Sections
       }
     }
 
-    private void checkLogStatus()
-    {
-      if (_logLevelStart != _logLevel)
-      {
-        _needInformUser = true;
-      }
-    }
-
     private void button1_Click(object sender, EventArgs e)
     {
       MoveEncodersUp(mpListViewVideo, _bindingVideoEncoders);
@@ -466,10 +459,19 @@ namespace SetupTv.Sections
       MoveEncodersDown(mpListViewAudio, _bindingAudioEncoders);
     }
 
-    private void mpComboBoxLog_SelectedIndexChanged(object sender, EventArgs e)
+    private void mpComboBoxLogLevel_SelectedIndexChanged(object sender, EventArgs e)
     {
-      _logLevel = (LogLevel) (mpComboBoxLog.SelectedIndex + 2); // Legacy log levels exist and first value starts at index 2 rather than 0
-      Log.SetLogLevel(_logLevel);
+      _logLevelChanged = true;
+    }
+
+    private void mpComboBoxLogLevelEpg_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      _logLevelChanged = true;
+    }
+
+    private void mpComboBoxLogLevelPowerScheduler_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      _logLevelChanged = true;
     }
   }
 }

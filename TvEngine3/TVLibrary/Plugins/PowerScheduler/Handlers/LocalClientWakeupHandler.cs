@@ -47,7 +47,7 @@ namespace TvEngine.PowerScheduler.Handlers
       }
       catch (Exception ex)
       {
-        Log.Debug("LocalClientWakeupHandler: {0}", ex.Message);
+        Log.Debug(LogType.PS, "LocalClientWakeupHandler: {0}", ex.Message);
       }
     }
 
@@ -69,7 +69,7 @@ namespace TvEngine.PowerScheduler.Handlers
       catch (Exception ex)
       {
         // broken remote handler, nullify this one (dead)
-        Log.Debug("LocalClientWakeupHandler: {0}", ex.Message);
+        Log.Debug(LogType.PS, "LocalClientWakeupHandler: {0}", ex.Message);
         _remote = null;
         return DateTime.MaxValue;
       }
@@ -89,7 +89,7 @@ namespace TvEngine.PowerScheduler.Handlers
         catch (Exception ex)
         {
           // broken remote handler, nullify this one (dead)
-          Log.Debug("LocalClientWakeupHandler: {0}", ex.Message);
+          Log.Debug(LogType.PS, "LocalClientWakeupHandler: {0}", ex.Message);
           _remote = null;
           return "<dead#" + _tag + ">";
         }

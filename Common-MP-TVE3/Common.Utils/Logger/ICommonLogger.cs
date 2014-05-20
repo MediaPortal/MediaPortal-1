@@ -15,6 +15,13 @@ namespace MediaPortal.Common.Utils.Logger
     CommonLogLevel LogLevel { get; set; }
 
     /// <summary>
+    /// Sets the log level for the log type.
+    /// </summary>
+    /// <param name="logType"></param>
+    /// <param name="logLevel"></param>
+    void SetLogLevel(CommonLogType logType, CommonLogLevel logLevel);
+
+    /// <summary>
     /// Writes a debug message to the Log  
     /// </summary>
     /// <param name="logType">Defines log4net logger</param>

@@ -58,7 +58,7 @@ namespace TvEngine.PowerScheduler
     /// <param name="controller">Reference to tvservice's TVController</param>
     public PowerSchedulerFactory(IController controller)
     {
-      Log.Info("PS: PowerSchedulerFactory");
+      Log.Info(LogType.PS, "PS: PowerSchedulerFactory");
 
       // Add handlers for preventing the system from entering standby
       IStandbyHandler standbyHandler;

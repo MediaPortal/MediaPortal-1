@@ -47,7 +47,7 @@ namespace TvEngine.PowerScheduler.Handlers
       }
       catch (Exception ex)
       {
-        Log.Debug("LocalClientStandbyHandler: {0}", ex.Message);
+        Log.Debug(LogType.PS, "LocalClientStandbyHandler: {0}", ex.Message);
       }
     }
 
@@ -71,7 +71,7 @@ namespace TvEngine.PowerScheduler.Handlers
         catch (Exception ex)
         {
           // broken remote handler, nullify this one (dead)
-          Log.Debug("LocalClientStandbyHandler: {0}", ex.Message);
+          Log.Debug(LogType.PS, "LocalClientStandbyHandler: {0}", ex.Message);
           _remote = null;
           return false;
         }
@@ -89,7 +89,7 @@ namespace TvEngine.PowerScheduler.Handlers
       catch (Exception ex)
       {
         // broken remote handler, nullify this one (dead)
-        Log.Debug("LocalClientStandbyHandler: {0}", ex.Message);
+        Log.Debug(LogType.PS, "LocalClientStandbyHandler: {0}", ex.Message);
         _remote = null;
       }
     }
@@ -107,7 +107,7 @@ namespace TvEngine.PowerScheduler.Handlers
         catch (Exception ex)
         {
           // broken remote handler, nullify this one (dead)
-          Log.Debug("LocalClientStandbyHandler: {0}", ex.Message);
+          Log.Debug(LogType.PS, "LocalClientStandbyHandler: {0}", ex.Message);
           _remote = null;
           return "<dead#" + _tag + ">";
         }

@@ -159,7 +159,7 @@ namespace TvEngine.PowerScheduler.Handlers
         }
       }
       if (isExternal)
-        Log.Debug("EpgGrabbingHandler: Next EPG wakeup set by external EPG source {0}", externalName);
+        Log.Debug(LogType.PS, "EpgGrabbingHandler: Next EPG wakeup set by external EPG source {0}", externalName);
       return nextRun;
     }
 
@@ -195,7 +195,7 @@ namespace TvEngine.PowerScheduler.Handlers
         foreach (GrabberSource source in _extGrabbers.Values)
           if (!source.StandbyAllowed)
           {
-            Log.Debug("EpgGrabbingHandler: {0} does not allow standby", source.Name);
+            Log.Debug(LogType.PS, "EpgGrabbingHandler: {0} does not allow standby", source.Name);
             return _useAwayMode ? StandbyMode.AwayModeRequested : StandbyMode.StandbyPrevented;
           }
 
@@ -311,7 +311,7 @@ namespace TvEngine.PowerScheduler.Handlers
             {
               ps.Unregister(this as IStandbyHandler);
             }
-            Log.Debug("EpgGrabbingHandler: Preventing standby when grabbing EPG: {0}", enabled);
+            Log.Debug(LogType.PS, "EpgGrabbingHandler: Preventing standby when grabbing EPG: {0}", enabled);
           }
 
           // Check if away mode should be used
@@ -320,7 +320,7 @@ namespace TvEngine.PowerScheduler.Handlers
           if (setting.Get<bool>() != _useAwayMode)
           {
             setting.Set<bool>(_useAwayMode);
-            Log.Debug("EpgGrabbingHandler: Use away mode: {0}", _useAwayMode);
+            Log.Debug(LogType.PS, "EpgGrabbingHandler: Use away mode: {0}", _useAwayMode);
           }
 
           // Check if system should wakeup for EPG grabs
@@ -339,7 +339,7 @@ namespace TvEngine.PowerScheduler.Handlers
             {
               ps.Unregister(this as IWakeupHandler);
             }
-            Log.Debug("EpgGrabbingHandler: Wakeup system for EPG grabbing: {0}", enabled ? "enabled" : "disabled");
+            Log.Debug(LogType.PS, "EpgGrabbingHandler: Wakeup system for EPG grabbing: {0}", enabled ? "enabled" : "disabled");
           }
 
           // Check if a wakeup time is set
@@ -348,7 +348,7 @@ namespace TvEngine.PowerScheduler.Handlers
           if (!config.Equals(setting.Get<EPGWakeupConfig>()))
           {
             setting.Set<EPGWakeupConfig>(config);
-            Log.Debug("EpgGrabbingHandler: EPG grabbing at {0:00}:{1:00}", config.Hour, config.Minutes);
+            Log.Debug(LogType.PS, "EpgGrabbingHandler: EPG grabbing at {0:00}:{1:00}", config.Hour, config.Minutes);
             if (config.Days != null)
             {
               String days = "";
@@ -359,9 +359,9 @@ namespace TvEngine.PowerScheduler.Handlers
                 else
                   days = days + ", " + day.ToString();
               }
-              Log.Debug("EpgGrabbingHandler: EPG grabbing on: {0}", days);
+              Log.Debug(LogType.PS, "EpgGrabbingHandler: EPG grabbing on: {0}", days);
             }
-            Log.Debug("EpgGrabbingHandler: EPG last run was at {0}", config.LastRun);
+            Log.Debug(LogType.PS, "EpgGrabbingHandler: EPG last run was at {0}", config.LastRun);
           }
 
           // check if schedule is due
@@ -386,7 +386,7 @@ namespace TvEngine.PowerScheduler.Handlers
             GrabberSource s = _extGrabbers[o];
             if (s.Timeout < DateTime.Now)
             {
-              Log.Debug("EpgGrabbingHandler: EPG source '{0}' timed out, setting allow-standby = true for this source.",
+              Log.Debug(LogType.PS, "EpgGrabbingHandler: EPG source '{0}' timed out, setting allow-standby = true for this source.",
                         s.Name);
               // timeout passed, standby is allowed
               s.SetStandbyAllowed(true, 0);
@@ -428,7 +428,7 @@ namespace TvEngine.PowerScheduler.Handlers
         }
 
         p.StartInfo = psi;
-        Log.Debug("EpgGrabbingHandler: Starting external command: {0} {1}", p.StartInfo.FileName, p.StartInfo.Arguments);
+        Log.Debug(LogType.PS, "EpgGrabbingHandler: Starting external command: {0} {1}", p.StartInfo.FileName, p.StartInfo.Arguments);
         try
         {
           p.Start();
@@ -436,10 +436,10 @@ namespace TvEngine.PowerScheduler.Handlers
         }
         catch (Exception ex)
         {
-          Log.Error("EpgGrabbingHandler: Exception in RunExternalCommand: {0}", ex.Message);
-          Log.Info("EpgGrabbingHandler: Exception in RunExternalCommand: {0}", ex.Message);
+          Log.Error(LogType.PS, "EpgGrabbingHandler: Exception in RunExternalCommand: {0}", ex.Message);
+          Log.Info(LogType.PS, "EpgGrabbingHandler: Exception in RunExternalCommand: {0}", ex.Message);
         }
-        Log.Debug("EpgGrabbingHandler: External command finished");
+        Log.Debug(LogType.PS, "EpgGrabbingHandler: External command finished");
       }
     }
 
@@ -453,7 +453,7 @@ namespace TvEngine.PowerScheduler.Handlers
       TvBusinessLayer layer = new TvBusinessLayer();
       EPGWakeupConfig config = new EPGWakeupConfig((layer.GetSetting("PowerSchedulerEPGWakeupConfig", String.Empty).Value));
 
-      Log.Debug("EpgGrabbingHandler: EPG schedule {0:00}:{1:00} is due", config.Hour, config.Minutes);
+      Log.Debug(LogType.PS, "EpgGrabbingHandler: EPG schedule {0:00}:{1:00} is due", config.Hour, config.Minutes);
 
       // start external command
       RunExternalCommand("epg");
