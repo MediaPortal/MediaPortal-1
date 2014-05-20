@@ -253,7 +253,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
               else if (parts[0].Equals("client_port"))
               {
                 string[] ports = parts[1].Split('-');
-                if (!ports[0].Equals(rtpClientPort))
+                if (!ports[0].Equals(rtpClientPort.ToString()))
                 {
                   this.LogWarn("SAT>IP base: server specified RTP client port {0} instead of {1}", ports[0], rtpClientPort);
                 }
@@ -356,7 +356,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     /// </summary>
     public override void PerformUnloading()
     {
-      _streamTuner.PerformUnloading();
+      if (_streamTuner != null)
+      {
+        _streamTuner.PerformUnloading();
+      }
     }
 
     /// <summary>

@@ -70,7 +70,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
       // modulation type and inner FEC rate. However, we don't have these
       // details, and the Digital Devices Octopus Net - currently the only
       // avaliable SAT>IP DVB-T/T2 tuner - doesn't require/use them.
-      PerformTuning(string.Format("msys=dvbt&freq={1}&bw={2}", frequency, bandwidth));
+      PerformTuning(string.Format("msys=dvbt&freq={0}&bw={1}", frequency, bandwidth));
     }
 
     /// <summary>

@@ -141,7 +141,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
         this.LogWarn("SAT>IP satellite: unsupported inner FEC rate {0}, assuming 3/4", satelliteChannel.InnerFecRate);
       }
 
-      string parameters = string.Format("src={1}&freq={2}&pol={3}&sr={4}&fec={5}&msys=dvbs", _currentSource, frequency, polarisation, satelliteChannel.SymbolRate, fecRate);
+      string parameters = string.Format("src={0}&freq={1}&pol={2}&sr={3}&fec={4}&msys=dvbs", _currentSource, frequency, polarisation, satelliteChannel.SymbolRate, fecRate);
 
       // DVB-S2 or DVB-S?
       if (satelliteChannel.ModulationType == ModulationType.ModNotSet)
