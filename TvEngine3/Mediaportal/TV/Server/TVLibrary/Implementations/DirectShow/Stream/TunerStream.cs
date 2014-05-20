@@ -196,10 +196,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
     /// <param name="onlyUpdateLock"><c>True</c> to only update lock status.</param>
     public override void PerformSignalStatusUpdate(bool onlyUpdateLock)
     {
-      _isSignalPresent = true;
-      _isSignalLocked = true;
-      _signalLevel = 100;
-      _signalQuality = 100;
+      if (_state == TunerState.Started)
+      {
+        _isSignalPresent = true;
+        _isSignalLocked = true;
+        _signalLevel = 100;
+        _signalQuality = 100;
+      }
+      else
+      {
+        _isSignalPresent = false;
+        _isSignalLocked = false;
+        _signalLevel = 0;
+        _signalQuality = 0;
+      }
     }
   }
 }

@@ -212,7 +212,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     /// </summary>
     protected void CompleteGraph()
     {
-      FilterGraphTools.SaveGraphFile(_graph, Name + " - " + TunerType + " Graph.grf");
+      // For some reason this fails for graphs containing a stream source
+      // filter. In any case we should never allow failure to prevent using the
+      // tuner.
+      try
+      {
+        FilterGraphTools.SaveGraphFile(_graph, Name + " - " + TunerType + " Graph.grf");
+      }
+      catch
+      {
+      }
       _channelScanner = new ChannelScannerDirectShowBase(this, new ChannelScannerHelperDvb(), _filterTsWriter as ITsChannelScan);
       _epgGrabber = new EpgGrabberDirectShow(_filterTsWriter as ITsEpgScanner);
     }
