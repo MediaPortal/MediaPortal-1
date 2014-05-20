@@ -78,6 +78,7 @@ namespace MediaPortal.Util
           string remoteFolder = String.Format("shareremotepath{0}", i);
           string shareViewPath = String.Format("shareview{0}", i);
           string sharewakeonlan = String.Format("sharewakeonlan{0}", i);
+          string sharedonotfolderjpgifpin = String.Format("sharedonotfolderjpgifpin{0}", i);
           Share share = new Share();
           share.Name = xmlreader.GetValueAsString(section, strShareName, string.Empty);
           share.Path = xmlreader.GetValueAsString(section, strSharePath, string.Empty);
@@ -95,6 +96,7 @@ namespace MediaPortal.Util
           share.FtpFolder = xmlreader.GetValueAsString(section, remoteFolder, "/");
           share.DefaultLayout = (Layout)xmlreader.GetValueAsInt(section, shareViewPath, (int)Layout.List);
           share.ShareWakeOnLan = xmlreader.GetValueAsBool(section, sharewakeonlan, false);
+          share.DonotFolderJpgIfPin = xmlreader.GetValueAsBool(section, sharedonotfolderjpgifpin, true);
 
           if (share.Name.Length > 0)
           {
@@ -1492,7 +1494,7 @@ namespace MediaPortal.Util
           Log.Debug("GetRootExt(): Path = {0}, IconImage = {1}", item.Path, item.IconImage);
         }
 
-        if (share.Pincode < 0 && pathOnline)
+        if ((share.Pincode < 0 || !share.DonotFolderJpgIfPin) && pathOnline)
         {
           string coverArt = Utils.GetCoverArtName(item.Path, "folder");
           string largeCoverArt = Utils.GetLargeCoverArtName(item.Path, "folder");
