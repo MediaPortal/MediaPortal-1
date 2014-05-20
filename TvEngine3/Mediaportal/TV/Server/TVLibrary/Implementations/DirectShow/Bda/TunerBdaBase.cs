@@ -131,7 +131,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       this.LogDebug("BDA base: reload configuration");
       bool save = false;
       Card tuner = CardManagement.GetCard(_tunerId, CardIncludeRelationEnum.None);
-      _networkProviderClsid = Guid.Empty; // specific network provider
+      _networkProviderClsid = NetworkProviderClsid; // specific network provider
       if (tuner.NetProvider == (int)DbNetworkProvider.MediaPortal)
       {
         if (!File.Exists(PathManager.BuildAssemblyRelativePath("NetworkProvider.ax")))
@@ -249,20 +249,27 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       int hr = (int)HResult.Severity.Success;
       if (_networkProviderClsid != typeof(MediaPortalNetworkProvider).GUID)
       {
-        // Some Microsoft network providers won't connect to the tuner filter
-        // unless you set a tuning space.
+        // Initialise the tuning space for Microsoft network providers.
         _tuningSpace = GetTuningSpace();
         if (_tuningSpace == null)
         {
           _tuningSpace = CreateTuningSpace();
         }
-        ITuner tuner = _filterNetworkProvider as ITuner;
-        if (tuner == null)
+
+        // Some specific Microsoft network providers won't connect to the tuner
+        // filter unless you set a tuning space first. This is not required for
+        // the generic network provider, which returns HRESULT 0x80070057
+        // (E_INVALIDARG).
+        if (_networkProviderClsid == NetworkProviderClsid)
         {
-          throw new TvException("Failed to find tuner interface on network provider.");
+          ITuner tuner = _filterNetworkProvider as ITuner;
+          if (tuner == null)
+          {
+            throw new TvException("Failed to find tuner interface on network provider.");
+          }
+          hr = tuner.put_TuningSpace(_tuningSpace);
+          HResult.ThrowException(hr, "Failed to apply tuning space on tuner.");
         }
-        hr = tuner.put_TuningSpace(_tuningSpace);
-        HResult.ThrowException(hr, "Failed to apply tuning space on tuner.");
       }
 
       AddMainComponentFilterToGraph();
@@ -313,7 +320,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       else
       {
         filterName = "Specific Network Provider";
-        _networkProviderClsid = NetworkProviderClsid;
       }
       this.LogDebug("BDA base: using {0}", filterName);
       if (_networkProviderClsid == typeof(MediaPortalNetworkProvider).GUID)
