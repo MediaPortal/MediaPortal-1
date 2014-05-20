@@ -27,6 +27,9 @@
 
 #define RESPONSE_HEADER_TYPE_UNSPECIFIED                              NULL
 
+#define RTSP_RESPONSE_HEADER_FLAG_NONE                                0x00000000
+#define MAX_RTSP_RESPONSE_HEADER_FLAG                                 0x00000000
+
 class CRtspResponseHeader : public CHttpHeader
 {
 public:
@@ -43,6 +46,11 @@ public:
 
   /* other methods */
 
+  // tests if combination of flags is set
+  // @param flags : the combination of flags to test
+  // @return : true if combination of flags is set, false otherwise
+  virtual bool IsSetFlags(unsigned int flags);
+
   // tests if instance response header type is same as specified response header type
   // @param responseHeaderType : response header type to test
   // @return : true if same, false otherwise
@@ -53,6 +61,9 @@ public:
   virtual CRtspResponseHeader *Clone(void);
 
 protected:
+
+  // holds various flags
+  unsigned int flags;
 
   wchar_t *responseHeaderType;
 

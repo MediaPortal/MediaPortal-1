@@ -98,12 +98,12 @@ unsigned int CRtpPacket::GetPayloadSize(void)
 
 bool CRtpPacket::IsExtended(void)
 {
-  return ((this->flags & FLAG_RTP_PACKET_EXTENSION_HEADER) != 0);
+  return ((this->flags & RTP_PACKET_FLAG_EXTENSION_HEADER) != 0);
 }
 
 bool CRtpPacket::IsMarked(void)
 {
-  return ((this->flags & FLAG_RTP_PACKET_MARKER) != 0);
+  return ((this->flags & RTP_PACKET_FLAG_MARKER) != 0);
 }
 
 bool CRtpPacket::Parse(const unsigned char *buffer, unsigned int length)
@@ -122,12 +122,12 @@ bool CRtpPacket::Parse(const unsigned char *buffer, unsigned int length)
     // parse extension header flag and CSRC identifier count from first byte
     unsigned int position = 0;
 
-    this->flags |= ((RBE8(buffer, position) & 0x10) != 0) ? FLAG_RTP_PACKET_EXTENSION_HEADER : FLAG_RTP_PACKET_NONE;
+    this->flags |= ((RBE8(buffer, position) & 0x10) != 0) ? RTP_PACKET_FLAG_EXTENSION_HEADER : RTP_PACKET_FLAG_NONE;
 
     unsigned int csrcIdentifierCount = RBE8(buffer, position) & 0x0F;
     position++;
 
-    this->flags |= ((RBE8(buffer, position) & 0x80) != 0) ? FLAG_RTP_PACKET_MARKER : FLAG_RTP_PACKET_NONE;
+    this->flags |= ((RBE8(buffer, position) & 0x80) != 0) ? RTP_PACKET_FLAG_MARKER : RTP_PACKET_FLAG_NONE;
     this->payloadType = RBE8(buffer, position) & 0x7F;
     position++;
 
@@ -164,7 +164,7 @@ bool CRtpPacket::Parse(const unsigned char *buffer, unsigned int length)
       }
     }
 
-    if (result && ((this->flags & FLAG_RTP_PACKET_EXTENSION_HEADER) != 0))
+    if (result && ((this->flags & RTP_PACKET_FLAG_EXTENSION_HEADER) != 0))
     {
       // extension header
       RBE16INC(buffer, position, this->profileSpecificExtensionHeaderId);
@@ -206,7 +206,7 @@ bool CRtpPacket::Parse(const unsigned char *buffer, unsigned int length)
           memcpy(this->payload, buffer + position, this->payloadSize);
           position += this->payloadSize;
 
-          if ((this->flags & FLAG_RTP_PACKET_PADDING) != 0)
+          if ((this->flags & RTP_PACKET_FLAG_PADDING) != 0)
           {
             this->paddingSize = RBE8(this->payload, this->payloadSize - 1) & 0xFF;
           }

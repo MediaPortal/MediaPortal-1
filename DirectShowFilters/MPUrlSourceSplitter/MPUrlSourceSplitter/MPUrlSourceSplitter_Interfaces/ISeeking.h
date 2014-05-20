@@ -43,10 +43,12 @@ struct ISeeking
   // @return : bitwise combination of SEEKING_METHOD flags
   virtual unsigned int GetSeekingCapabilities(void) = 0;
 
-  // request protocol implementation to receive data from specified time (in ms)
+  // request protocol implementation to receive data from specified time (in ms) for specified stream
+  // this method is called with same time for each stream in protocols with multiple streams
+  // @param streamId : the stream ID to receive data from specified time
   // @param time : the requested time (zero is start of stream)
   // @return : time (in ms) where seek finished or lower than zero if error
-  virtual int64_t SeekToTime(int64_t time) = 0;
+  virtual int64_t SeekToTime(unsigned int streamId, int64_t time) = 0;
 
   // request protocol implementation to receive data from specified position to specified position
   // @param start : the requested start position (zero is start of stream)
@@ -54,9 +56,10 @@ struct ISeeking
   // @return : position where seek finished or lower than zero if error
   virtual int64_t SeekToPosition(int64_t start, int64_t end) = 0;
 
-  // sets if protocol implementation have to supress sending data to filter
+  // sets if protocol implementation have to supress sending data with specified stream ID to filter
+  // @param streamId : the stream ID to supress data
   // @param supressData : true if protocol have to supress sending data to filter, false otherwise
-  virtual void SetSupressData(bool supressData) = 0;
+  virtual void SetSupressData(unsigned int streamId, bool supressData) = 0;
 };
 
 #endif

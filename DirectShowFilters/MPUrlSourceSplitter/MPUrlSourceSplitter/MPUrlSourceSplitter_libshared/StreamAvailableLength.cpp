@@ -24,40 +24,36 @@
 
 CStreamAvailableLength::CStreamAvailableLength(void)
 {
-  this->queryResult = E_FAIL;
   this->availableLength = 0;
+  this->streamId = 0;
 }
 
 CStreamAvailableLength::~CStreamAvailableLength(void)
 {
 }
 
-HRESULT CStreamAvailableLength::GetQueryResult(void)
-{
-  return this->queryResult;
-}
+/* get methods */
 
 LONGLONG CStreamAvailableLength::GetAvailableLength(void)
 {
   return this->availableLength;
 }
 
-bool CStreamAvailableLength::IsQueryCompleted(void)
+unsigned int CStreamAvailableLength::GetStreamId(void)
 {
-  return (this->queryResult == S_OK);
+  return this->streamId;
 }
 
-bool CStreamAvailableLength::IsQueryError(void)
-{
-  return (!this->IsQueryCompleted());
-}
+/* set methods */
 
 void CStreamAvailableLength::SetAvailableLength(LONGLONG availableLength)
 {
   this->availableLength = availableLength;
 }
 
-void CStreamAvailableLength::SetQueryResult(HRESULT queryResult)
+void CStreamAvailableLength::SetStreamId(unsigned int streamId)
 {
-  this->queryResult = queryResult;
+  this->streamId = streamId;
 }
+
+/* other methods */

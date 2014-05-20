@@ -24,13 +24,22 @@
 #define __RTSP_STREAM_TRACK_DEFINED
 
 #include "RtspStreamFragmentCollection.h"
+#include "CacheFile.h"
 
 #include <stdint.h>
+
+// DirectShow times are in 100ns units
+#ifndef DSHOW_TIME_BASE
+#define DSHOW_TIME_BASE                                               10000000
+#endif
 
 #define RTSP_STREAM_TRACK_FLAG_NONE                                   0x00000000
 #define RTSP_STREAM_TRACK_FLAG_SET_FIRST_RTP_PACKET_TIMESTAMP         0x00000001
 #define RTSP_STREAM_TRACK_FLAG_SET_STREAM_LENGTH                      0x00000002
 #define RTSP_STREAM_TRACK_FLAG_END_OF_STREAM                          0x00000004
+#define RTSP_STREAM_TRACK_FLAG_SUPRESS_DATA                           0x00000008
+#define RTSP_STREAM_TRACK_FLAG_RECEIVED_ALL_DATA                      0x00000010
+#define RTSP_STREAM_TRACK_FLAG_SET_FIRST_RTP_PACKET_TICKS             0x00000020
 
 class CRtspStreamTrack
 {
@@ -44,18 +53,6 @@ public:
   // gets RTSP steam fragments
   // @return : RTSP stream fragments
   CRtspStreamFragmentCollection *GetStreamFragments(void);
-
-  // gets fragment timestamp based on current RTP packet timestamp and clock frequency defined by SDP
-  // @param currentRtpPacketTimestamp : current RTP packet timestamp to get fragment timestamp
-  // @param clockFrequency : clock frequency defined by SDP (value is per second)
-  // @param initialTime : the time in ms to add to first timestamp (if no first timestamp is set)
-  // @return : fragment timestamp in ms
-  uint64_t GetFragmentTimestamp(unsigned int currentRtpPacketTimestamp, unsigned int clockFrequency, uint64_t initialTime);
-
-  // gets fragment RTP timestamp based on current RTP packet timestamp
-  // @param currentRtpPacketTimestamp : current RTP packet timestamp to get fragment timestamp
-  // @return : fragment RTP timestamp
-  uint64_t GetFragmentRtpTimestamp(unsigned int currentRtpPacketTimestamp);
 
   // gets currently downloading fragment
   // @return : currently downloading fragment or UINT_MAX if none
@@ -79,17 +76,36 @@ public:
   // @return : byte position in buffer
   int64_t GetBytePosition(void);
 
-  // gets full path to store file
-  // @return : store file path or NULL if not specified
-  const wchar_t *GetStoreFilePath(void);
+  // gets first RTP packet timestamp
+  // @return : first RTP packet timestamp
+  unsigned int GetFirstRtpPacketTimestamp(void);
 
-  // gets last RTP packet stream fragment index
-  // @return : last RTP packet stream fragment index
-  unsigned int GetLastRtpPacketStreamFragmentIndex(void);
-  
-  // gets last RTP packet fragment received data position
-  // @return : last RTP packet fragment received data position
-  unsigned int GetLastRtpPacketFragmentReceivedDataPosition(void);
+  // gets first RTP packet ticks
+  // @return : first RTP packet ticks
+  DWORD GetFirstRtpPacketTicks(void);
+
+  // gets RTP packet timestamp based on current RTP packet timestamp
+  // @param currentRtpPacketTimestamp : current RTP packet timestamp to get RTP packet timestamp
+  // @param storeLastRtpPacketTimestamp : true if current RTP packet timestamp have to be stored as last RTP packet timestamp, false otherwise
+  // @return : RTP packet timestamp
+  int64_t GetRtpPacketTimestamp(unsigned int currentRtpPacketTimestamp, bool storeLastRtpPacketTimestamp);
+
+  // gets RTP packet timestamp in DSHOW_TIME_BASE units
+  // @param rtpPacketTimestamp : the RTP packet timestamp to get in DSHOW_TIME_BASE units
+  // @return : RTP packet timestamp in DSHOW_TIME_BASE units
+  int64_t GetRtpPacketTimestampInDshowTimeBaseUnits(int64_t rtpPacketTimestamp);
+
+  // gets RTP timestamp correction
+  // @return : RTP timestamp correction
+  int64_t GetRtpTimestampCorrection(void);
+
+  // gets track clock frequency
+  // @return : track clock frequency
+  unsigned int GetClockFrequency(void);
+
+  // gets cache file instance
+  // @return : cache file instance or NULL if error
+  CCacheFile *GetCacheFile(void);
 
   /* set methods */
 
@@ -122,22 +138,28 @@ public:
   // @param endOfStreamFlag : end of stream flag to set
   void SetEndOfStreamFlag(bool endOfStreamFlag);
 
-  // set full path to store file
-  // @param storeFilePath : full path to store file to set
-  // @return : true if successful, false otherwise
-  bool SetStoreFilePath(const wchar_t *storeFilePath);
+  // sets supress data flag
+  // @param supressDataFlag : supress data flag to set
+  void SetSupressDataFlag(bool supressDataFlag);
 
-  // sets first RTP packet timestamp flag
-  // @param setStreamLengthFlag : first RTP packet timestamp flag to set
-  void SetFirstRtpPacketTimestampFlag(bool firstRtpPacketTimestampFlag);
+  // sets received all data flag
+  // @param receivedAllDataFlag : received all data flag to set
+  void SetReceivedAllDataFlag(bool receivedAllDataFlag);
 
-  // sets last RTP packet stream fragment index
-  // @param lastRtpPacketStreamFragmentIndex : last RTP packet stream fragment index to set
-  void SetLastRtpPacketStreamFragmentIndex(unsigned int lastRtpPacketStreamFragmentIndex);
-  
-  // sets last RTP packet fragment received data position
-  // @param lastRtpPacketFragmentReceivedDataPosition : last RTP packet fragment received data position to set
-  void SetLastRtpPacketFragmentReceivedDataPosition(unsigned int lastRtpPacketFragmentReceivedDataPosition);
+  // sets first RTP packet timestamp (it also set last RTP packet timestamp)
+  // @param rtpPacketTimestamp : RTP packet timestamp to set as first RTP packet timestamp
+  // @param firstRtpPacketTimestampFlag : the first RTP packet timestamp flag (true if first RTP packet timestamp is to be set, false otherwise)
+  // @param firstRtpPacketTicks : the first RTP packet ticks (it is only set when firstRtpPacketTimestampFlag is true and ticks were not set earlier)
+  void SetFirstRtpPacketTimestamp(unsigned int rtpPacketTimestamp, bool firstRtpPacketTimestampFlag, DWORD firstRtpPacketTicks);
+
+  // sets clock frequency used to convert RTP timestamp to real time
+  // it also sets numerator and denominator used to convert RTP timestamp to DSHOW_TIME_BASE units
+  // @param clockFrequency : the clock frequency to set
+  void SetClockFrequency(unsigned int clockFrequency);
+
+  // sets RTP timestamp correction
+  // @param rtpTimestampCorrection : the RTP timestamp correction to set
+  void SetRtpTimestampCorrection(int64_t rtpTimestampCorrection);
 
   /* other methods */
 
@@ -153,9 +175,17 @@ public:
   // @return : true if end of stream is set, false otherwise
   bool IsSetEndOfStream(void);
 
+  // tests if supress data is set
+  // @return : true if supress data is set, false otherwise
+  bool IsSetSupressData(void);
+
+  // tests if all data are received
+  // @return : true if all data received flag is set, false otherwise
+  bool IsReceivedAllData(void);
+
   // tests if specific combination of flags is set
   // @return : true if specific combination of flags is set, false otherwise
-  bool IsFlags(unsigned int flags);
+  bool IsSetFlags(unsigned int flags);
 
 protected:
   // holds various flags
@@ -166,8 +196,13 @@ protected:
   unsigned int firstRtpPacketTimestamp;
   // holds last RTP packet timestamp
   unsigned int lastRtpPacketTimestamp;
-  // holds last fragment RTP timestamp
-  uint64_t lastFragmentRtpTimestamp;
+  // holds last cumulated RTP packet timestamp
+  int64_t lastCumulatedRtpTimestamp;
+  // holds RTP timestamp correction (calculated after seek)
+  int64_t rtpTimestampCorrection;
+
+  // holds ticks for only first RTP packet (if restarted download then firstRtpPacketTicks is not changed)
+  DWORD firstRtpPacketTicks;
 
   // holds which fragment is currently downloading (UINT_MAX means none)
   unsigned int streamFragmentDownloading;
@@ -183,13 +218,17 @@ protected:
   // it is always reset on seek
   int64_t bytePosition;
 
-  // holds full path to store file
-  wchar_t *storeFilePath;
+  // numerator and denominator to convert RTP timestamp to DSHOW_TIME_BASE units
+  int64_t dshowTimeBaseNumerator;
+  int64_t dshowTimeBaseDenominator;
 
-  // holds last RTP packet stream fragment index
-  unsigned int lastRtpPacketStreamFragmentIndex;
-  // holds last RTP packet fragment received data position
-  unsigned int lastRtpPacketFragmentReceivedDataPosition;
+  // clock frequency 
+  unsigned int clockFrequency;
+
+  // holds cache file instance
+  CCacheFile *cacheFile;
+
+  /* methods */
 };
 
 #endif

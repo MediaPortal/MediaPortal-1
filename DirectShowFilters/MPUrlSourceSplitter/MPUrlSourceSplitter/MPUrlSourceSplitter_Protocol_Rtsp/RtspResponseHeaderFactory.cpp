@@ -33,6 +33,7 @@
 #include "RtspContentTypeResponseHeader.h"
 #include "RtspTransportResponseHeader.h"
 #include "RtspSessionResponseHeader.h"
+#include "RtspRtpInfoResponseHeader.h"
 
 CRtspResponseHeaderFactory::CRtspResponseHeaderFactory(void)
 {
@@ -71,6 +72,7 @@ CRtspResponseHeader *CRtspResponseHeaderFactory::CreateResponseHeader(const wcha
       CREATE_SPECIFIC_RESPONSE_HEADER(CRtspContentTypeResponseHeader, buffer, length, continueParsing, result);
       CREATE_SPECIFIC_RESPONSE_HEADER(CRtspTransportResponseHeader, buffer, length, continueParsing, result);
       CREATE_SPECIFIC_RESPONSE_HEADER(CRtspSessionResponseHeader, buffer, length, continueParsing, result);
+      CREATE_SPECIFIC_RESPONSE_HEADER(CRtspRtpInfoResponseHeader, buffer, length, continueParsing, result);
     }
 
     CHECK_CONDITION_NOT_NULL_EXECUTE(result, FREE_MEM_CLASS(header));

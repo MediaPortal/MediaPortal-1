@@ -36,11 +36,11 @@
 #define ORIGIN_ADDRESS_TYPE_IPV4                            L"IP4"
 #define ORIGIN_ADDRESS_TYPE_IPV6                            L"IP6"
 
-#define FLAG_ORIGIN_NONE                                    0
-#define FLAG_ORIGIN_USER_NAME_NOT_SPECIFIED                 1
-#define FLAG_ORIGIN_NETWORK_TYPE_INTERNET                   2
-#define FLAG_ORIGIN_ADDRESS_TYPE_IPV4                       4
-#define FLAG_ORIGIN_ADDRESS_TYPE_IPV6                       8
+#define ORIGIN_FLAG_NONE                                    0
+#define ORIGIN_FLAG_USER_NAME_NOT_SPECIFIED                 1
+#define ORIGIN_FLAG_NETWORK_TYPE_INTERNET                   2
+#define ORIGIN_FLAG_ADDRESS_TYPE_IPV4                       4
+#define ORIGIN_FLAG_ADDRESS_TYPE_IPV6                       8
 
 class COrigin : public CSessionTag
 {

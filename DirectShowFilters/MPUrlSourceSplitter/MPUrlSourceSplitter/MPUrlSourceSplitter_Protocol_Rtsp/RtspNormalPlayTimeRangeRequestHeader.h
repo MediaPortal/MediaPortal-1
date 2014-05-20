@@ -25,9 +25,9 @@
 
 #include "RtspRangeRequestHeader.h"
 
-#define FLAG_NORMAL_PLAY_TIME_NONE                                    0x00000000
-#define FLAG_NORMAL_PLAY_TIME_START                                   0x00000001
-#define FLAG_NORMAL_PLAY_TIME_END                                     0x00000002
+#define NORMAL_PLAY_TIME_RANGE_REQUEST_HEADER_FLAG_NONE               0x00000000
+#define NORMAL_PLAY_TIME_RANGE_REQUEST_HEADER_FLAG_START              0x00000001
+#define NORMAL_PLAY_TIME_RANGE_REQUEST_HEADER_FLAG_END                0x00000002
 
 #define TIME_UNSPECIFIED                                              UINT64_MAX
 

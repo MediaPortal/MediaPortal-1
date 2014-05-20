@@ -39,8 +39,8 @@ public:
 
   /* set methods */
 
-  // sets RTSP start time
-  // @return : RTSP start time in ms to set
+  // sets RTSP start time in ms
+  // @param startTime : RTSP start time in ms to set
   void SetStartTime(uint64_t startTime);
 
   /* other methods */

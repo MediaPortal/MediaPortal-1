@@ -62,9 +62,6 @@ const AVCodecTag mp_bmp_tags[] = {
 };
 const struct AVCodecTag * const mp_bmp_taglists[] = { avformat_get_riff_video_tags(), mp_bmp_tags, 0};
 
-// DirectShow times are in 100ns units
-#define DSHOW_TIME_BASE                                               10000000
-
 class CDemuxerVideoHelper
 {
 public:

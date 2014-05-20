@@ -45,18 +45,13 @@ int CParameterCollection::CompareItemKeys(const wchar_t *firstKey, const wchar_t
   }
 }
 
-bool CParameterCollection::Add(CParameter *item)
-{
-  return __super::Add(item);
-}
-
 bool CParameterCollection::Add(const wchar_t *name, const wchar_t *value)
 {
   HRESULT result = S_OK;
   CParameter *parameter = new CParameter(name, value);
   CHECK_POINTER_HRESULT(result, parameter, result, E_OUTOFMEMORY);
 
-  CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->Add(parameter) ? result : E_OUTOFMEMORY);
+  CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->CCollection::Add(parameter) ? result : E_OUTOFMEMORY);
   CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(parameter));
 
   return SUCCEEDED(result);
@@ -198,7 +193,7 @@ bool CParameterCollection::CopyParameter(const wchar_t *parameterName, bool inva
       continueAdding &= (newParameter != NULL);
       if (continueAdding)
       {
-        continueAdding = this->Add(newParameter);
+        continueAdding = this->CCollection::Add(newParameter);
       }
 
       if (!continueAdding)
@@ -214,14 +209,4 @@ bool CParameterCollection::CopyParameter(const wchar_t *parameterName, bool inva
 bool CParameterCollection::Remove(const wchar_t *name, bool invariant)
 {
   return __super::Remove(name, (void *)&invariant);
-}
-
-bool CParameterCollection::Remove(unsigned int index)
-{
-  return __super::Remove(index);
-}
-
-bool CParameterCollection::Remove(unsigned int index, unsigned int count)
-{
-  return __super::Remove(index, count);
 }

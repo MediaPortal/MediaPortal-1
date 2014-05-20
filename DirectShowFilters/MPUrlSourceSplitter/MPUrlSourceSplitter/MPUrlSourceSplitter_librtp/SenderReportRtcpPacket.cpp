@@ -164,7 +164,7 @@ void CSenderReportRtcpPacket::SetSenderOctetCount(unsigned int senderOctetCount)
 
 bool CSenderReportRtcpPacket::HasProfileSpecificExtensions(void)
 {
-  return ((this->flags & FLAG_SENDER_REPORT_RTCP_PACKET_PROFILE_EXTENSIONS) != 0);
+  return ((this->flags & SENDER_REPORT_RTCP_PACKET_FLAG_PROFILE_EXTENSIONS) != 0);
 }
 
 void CSenderReportRtcpPacket::Clear(void)

@@ -64,12 +64,13 @@ extern "C" {
 #define METHOD_PIN_END_FORMAT                                     L"%s: %s: pin '%s', End"
 #define METHOD_PIN_END_FAIL_RESULT_FORMAT                         L"%s: %s: pin '%s', End, Fail, result: 0x%08X"
 
-CMPUrlSourceSplitterOutputPin::CMPUrlSourceSplitterOutputPin(CMediaTypeCollection *mediaTypes, LPCWSTR pName, CBaseFilter *pFilter, CCritSec *pLock, HRESULT *phr, const wchar_t *containerFormat)
+CMPUrlSourceSplitterOutputPin::CMPUrlSourceSplitterOutputPin(CLogger *logger, CMediaTypeCollection *mediaTypes, LPCWSTR pName, CBaseFilter *pFilter, CCritSec *pLock, HRESULT *phr, const wchar_t *containerFormat)
   : CBaseOutputPin(NAME("MediaPortal Url Source Splitter Output Pin"), pFilter, pLock, phr, pName)
 {
   this->mediaPackets = NULL;
   this->filter = NULL;
   this->mediaTypes = NULL;
+  this->demuxerId = DEMUXER_ID_UNSPECIFIED;
   this->streamPid = STREAM_PID_UNSPECIFIED;
   this->flushing = false;
   this->mediaTypeToSend = NULL;
@@ -93,11 +94,13 @@ CMPUrlSourceSplitterOutputPin::CMPUrlSourceSplitterOutputPin(CMediaTypeCollectio
   {
     if (SUCCEEDED(*phr))
     {
+      this->logger = logger;
       this->mediaPackets = new COutputPinPacketCollection();
       this->filter = dynamic_cast<IOutputPinFilter *>(pFilter);
       this->mediaPacketsLock = CreateMutex(NULL, FALSE, NULL);
       this->mediaTypes = new CMediaTypeCollection();
 
+      CHECK_POINTER_HRESULT(*phr, logger, *phr, E_INVALIDARG);
       CHECK_POINTER_HRESULT(*phr, mediaTypes, *phr, E_INVALIDARG);
 
       CHECK_POINTER_HRESULT(*phr, this->mediaPackets, *phr, E_OUTOFMEMORY);
@@ -126,12 +129,12 @@ CMPUrlSourceSplitterOutputPin::CMPUrlSourceSplitterOutputPin(CMediaTypeCollectio
     }
   }
 
-  CHECK_CONDITION_NOT_NULL_EXECUTE(this->filter, this->filter->GetLogger()->Log(LOGGER_INFO, METHOD_PIN_END_FORMAT, MODULE_NAME, METHOD_CONSTRUCTOR_NAME, this->m_pName));
+  CHECK_CONDITION_NOT_NULL_EXECUTE(this->logger, this->logger->Log(LOGGER_INFO, METHOD_PIN_END_FORMAT, MODULE_NAME, METHOD_CONSTRUCTOR_NAME, this->m_pName));
 }
 
 CMPUrlSourceSplitterOutputPin::~CMPUrlSourceSplitterOutputPin()
 {
-  CHECK_CONDITION_NOT_NULL_EXECUTE(this->filter, this->filter->GetLogger()->Log(LOGGER_INFO, METHOD_PIN_START_FORMAT, MODULE_NAME, METHOD_DESTRUCTOR_NAME, this->m_pName));
+  CHECK_CONDITION_NOT_NULL_EXECUTE(this->logger, this->logger->Log(LOGGER_INFO, METHOD_PIN_START_FORMAT, MODULE_NAME, METHOD_DESTRUCTOR_NAME, this->m_pName));
 
   CAMThread::CallWorker(CMD_EXIT);
   CAMThread::Close();
@@ -150,7 +153,7 @@ CMPUrlSourceSplitterOutputPin::~CMPUrlSourceSplitterOutputPin()
   CHECK_CONDITION_NOT_NULL_EXECUTE(this->mediaPacketsLock, CloseHandle(this->mediaPacketsLock));
   this->mediaPacketsLock = NULL;
 
-  CHECK_CONDITION_NOT_NULL_EXECUTE(this->filter, this->filter->GetLogger()->Log(LOGGER_INFO, METHOD_PIN_END_FORMAT, MODULE_NAME, METHOD_DESTRUCTOR_NAME, this->m_pName));
+  CHECK_CONDITION_NOT_NULL_EXECUTE(this->logger, this->logger->Log(LOGGER_INFO, METHOD_PIN_END_FORMAT, MODULE_NAME, METHOD_DESTRUCTOR_NAME, this->m_pName));
 
   // filter is only reference, it is not needed to remove
   this->filter = NULL;
@@ -191,7 +194,7 @@ HRESULT CMPUrlSourceSplitterOutputPin::CheckMediaType(const CMediaType* pmt)
     }
   }
 
-  CHECK_CONDITION_EXECUTE(FAILED(result), this->filter->GetLogger()->Log(SUCCEEDED(result) ? LOGGER_INFO : LOGGER_ERROR, SUCCEEDED(result) ? METHOD_PIN_END_FORMAT : METHOD_PIN_END_FAIL_RESULT_FORMAT, MODULE_NAME, METHOD_CHECK_MEDIA_TYPE_NAME, this->m_pName, result));
+  CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(SUCCEEDED(result) ? LOGGER_INFO : LOGGER_ERROR, SUCCEEDED(result) ? METHOD_PIN_END_FORMAT : METHOD_PIN_END_FAIL_RESULT_FORMAT, MODULE_NAME, METHOD_CHECK_MEDIA_TYPE_NAME, this->m_pName, result));
   return result;
 }
 
@@ -207,14 +210,14 @@ HRESULT CMPUrlSourceSplitterOutputPin::GetMediaType(int iPosition, CMediaType* p
     *pMediaType = *this->mediaTypes->GetItem((unsigned int)iPosition);
   }
 
-  CHECK_CONDITION_EXECUTE(FAILED(result), this->filter->GetLogger()->Log(SUCCEEDED(result) ? LOGGER_INFO : LOGGER_ERROR, SUCCEEDED(result) ? METHOD_PIN_END_FORMAT : METHOD_PIN_END_FAIL_RESULT_FORMAT, MODULE_NAME, METHOD_GET_MEDIA_TYPE_NAME, this->m_pName, result));
+  CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(SUCCEEDED(result) ? LOGGER_INFO : LOGGER_ERROR, SUCCEEDED(result) ? METHOD_PIN_END_FORMAT : METHOD_PIN_END_FAIL_RESULT_FORMAT, MODULE_NAME, METHOD_GET_MEDIA_TYPE_NAME, this->m_pName, result));
   return result;
 }
 
 STDMETHODIMP CMPUrlSourceSplitterOutputPin::Connect(IPin *pReceivePin, const AM_MEDIA_TYPE *pMediaType)
 {
   HRESULT result = __super::Connect(pReceivePin, pMediaType);
-  CHECK_CONDITION_EXECUTE(FAILED(result), this->filter->GetLogger()->Log(SUCCEEDED(result) ? LOGGER_INFO : LOGGER_ERROR, SUCCEEDED(result) ? METHOD_PIN_END_FORMAT : METHOD_PIN_END_FAIL_RESULT_FORMAT, MODULE_NAME, METHOD_CONNECT_NAME, this->m_pName, result));
+  CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(SUCCEEDED(result) ? LOGGER_INFO : LOGGER_ERROR, SUCCEEDED(result) ? METHOD_PIN_END_FORMAT : METHOD_PIN_END_FAIL_RESULT_FORMAT, MODULE_NAME, METHOD_CONNECT_NAME, this->m_pName, result));
 
   return result;
 }
@@ -290,7 +293,7 @@ HRESULT CMPUrlSourceSplitterOutputPin::DecideAllocator(IMemInputPin * pPin, IMem
     }
   }
 
-  CHECK_CONDITION_EXECUTE(FAILED(result), this->filter->GetLogger()->Log(SUCCEEDED(result) ? LOGGER_INFO : LOGGER_ERROR, SUCCEEDED(result) ? METHOD_PIN_END_FORMAT : METHOD_PIN_END_FAIL_RESULT_FORMAT, MODULE_NAME, METHOD_DECIDE_ALLOCATOR_NAME, this->m_pName, result));
+  CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(SUCCEEDED(result) ? LOGGER_INFO : LOGGER_ERROR, SUCCEEDED(result) ? METHOD_PIN_END_FORMAT : METHOD_PIN_END_FAIL_RESULT_FORMAT, MODULE_NAME, METHOD_DECIDE_ALLOCATOR_NAME, this->m_pName, result));
   return result;
 }
 
@@ -314,7 +317,7 @@ HRESULT CMPUrlSourceSplitterOutputPin::DecideBufferSize(IMemAllocator* pAlloc, A
     CHECK_CONDITION_HRESULT(result, (test.cBuffers >= pProperties->cBuffers), result, E_OUTOFMEMORY);
   }
 
-  CHECK_CONDITION_EXECUTE(FAILED(result), this->filter->GetLogger()->Log(SUCCEEDED(result) ? LOGGER_INFO : LOGGER_ERROR, SUCCEEDED(result) ? METHOD_PIN_END_FORMAT : METHOD_PIN_END_FAIL_RESULT_FORMAT, MODULE_NAME, METHOD_DECIDE_BUFFER_SIZE_NAME, this->m_pName, result));
+  CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(SUCCEEDED(result) ? LOGGER_INFO : LOGGER_ERROR, SUCCEEDED(result) ? METHOD_PIN_END_FORMAT : METHOD_PIN_END_FAIL_RESULT_FORMAT, MODULE_NAME, METHOD_DECIDE_BUFFER_SIZE_NAME, this->m_pName, result));
   return result;
 }
 
@@ -330,7 +333,7 @@ HRESULT CMPUrlSourceSplitterOutputPin::Active()
 
   CHECK_HRESULT_EXECUTE(result, __super::Active());
 
-  CHECK_CONDITION_EXECUTE(FAILED(result), this->filter->GetLogger()->Log(SUCCEEDED(result) ? LOGGER_INFO : LOGGER_ERROR, SUCCEEDED(result) ? METHOD_PIN_END_FORMAT : METHOD_PIN_END_FAIL_RESULT_FORMAT, MODULE_NAME, METHOD_ACTIVE_NAME, this->m_pName, result));
+  CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(SUCCEEDED(result) ? LOGGER_INFO : LOGGER_ERROR, SUCCEEDED(result) ? METHOD_PIN_END_FORMAT : METHOD_PIN_END_FAIL_RESULT_FORMAT, MODULE_NAME, METHOD_ACTIVE_NAME, this->m_pName, result));
   return result;
 }
 
@@ -347,7 +350,7 @@ HRESULT CMPUrlSourceSplitterOutputPin::Inactive()
 
   CHECK_HRESULT_EXECUTE(result, __super::Inactive());
 
-  CHECK_CONDITION_EXECUTE(FAILED(result), this->filter->GetLogger()->Log(SUCCEEDED(result) ? LOGGER_INFO : LOGGER_ERROR, SUCCEEDED(result) ? METHOD_PIN_END_FORMAT : METHOD_PIN_END_FAIL_RESULT_FORMAT, MODULE_NAME, METHOD_INACTIVE_NAME, this->m_pName, result));
+  CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(SUCCEEDED(result) ? LOGGER_INFO : LOGGER_ERROR, SUCCEEDED(result) ? METHOD_PIN_END_FORMAT : METHOD_PIN_END_FAIL_RESULT_FORMAT, MODULE_NAME, METHOD_INACTIVE_NAME, this->m_pName, result));
   return result;
 }
 
@@ -368,8 +371,8 @@ HRESULT CMPUrlSourceSplitterOutputPin::DeliverBeginFlush()
     }
   }
 
-  this->filter->GetLogger()->Log(LOGGER_INFO, L"%s: %s: pin '%s', sent data length: %llu", MODULE_NAME, METHOD_THREAD_PROC_NAME, this->m_pName, this->outputPinDataLength);
-  this->filter->GetLogger()->Log(LOGGER_INFO, L"%s: %s: pin '%s', flushed data length: %llu", MODULE_NAME, METHOD_THREAD_PROC_NAME, this->m_pName, flushedDataLength);
+  this->logger->Log(LOGGER_INFO, L"%s: %s: pin '%s', sent data length: %llu", MODULE_NAME, METHOD_THREAD_PROC_NAME, this->m_pName, this->outputPinDataLength);
+  this->logger->Log(LOGGER_INFO, L"%s: %s: pin '%s', flushed data length: %llu", MODULE_NAME, METHOD_THREAD_PROC_NAME, this->m_pName, flushedDataLength);
 
   this->DumpDataAndDumpDataSizes();
   this->dumpDataCounter++;
@@ -393,6 +396,7 @@ HRESULT CMPUrlSourceSplitterOutputPin::DeliverEndFlush()
   CAMThread::CallWorker(CMD_END_FLUSH);
   result = this->IsConnected() ? this->GetConnected()->EndFlush() : S_OK;
   this->flushing = false;
+  this->flags &= ~OUTPUT_PIN_FLAG_END_OF_STREAM;
 
   return result;
 }
@@ -417,6 +421,8 @@ HRESULT CMPUrlSourceSplitterOutputPin::QueuePacket(COutputPinPacket *packet, DWO
       {
         // add packet to output packet collection
         result = this->mediaPackets->Add(packet) ? result : E_OUTOFMEMORY;
+
+        CHECK_CONDITION_EXECUTE(SUCCEEDED(result), this->flags |= OUTPUT_PIN_FLAG_END_OF_STREAM);
       }
       else
       {
@@ -432,7 +438,7 @@ HRESULT CMPUrlSourceSplitterOutputPin::QueuePacket(COutputPinPacket *packet, DWO
 HRESULT CMPUrlSourceSplitterOutputPin::QueueEndOfStream()
 {
   HRESULT result = S_OK;
-  this->filter->GetLogger()->Log(LOGGER_INFO, METHOD_PIN_START_FORMAT, MODULE_NAME, METHOD_QUEUE_END_OF_STREAM_NAME, this->m_pName);
+  this->logger->Log(LOGGER_INFO, METHOD_PIN_START_FORMAT, MODULE_NAME, METHOD_QUEUE_END_OF_STREAM_NAME, this->m_pName);
 
   COutputPinPacket *endOfStream = new COutputPinPacket();
   CHECK_POINTER_HRESULT(result, endOfStream, result, E_OUTOFMEMORY);
@@ -444,9 +450,10 @@ HRESULT CMPUrlSourceSplitterOutputPin::QueueEndOfStream()
     result = this->QueuePacket(endOfStream, INFINITE);
   }
 
+  CHECK_CONDITION_EXECUTE(SUCCEEDED(result), this->flags |= OUTPUT_PIN_FLAG_END_OF_STREAM);
   CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(endOfStream));
 
-  this->filter->GetLogger()->Log(SUCCEEDED(result) ? LOGGER_INFO : LOGGER_ERROR, SUCCEEDED(result) ? METHOD_PIN_END_FORMAT : METHOD_PIN_END_FAIL_RESULT_FORMAT, MODULE_NAME, METHOD_QUEUE_END_OF_STREAM_NAME, this->m_pName, result);
+  this->logger->Log(SUCCEEDED(result) ? LOGGER_INFO : LOGGER_ERROR, SUCCEEDED(result) ? METHOD_PIN_END_FORMAT : METHOD_PIN_END_FAIL_RESULT_FORMAT, MODULE_NAME, METHOD_QUEUE_END_OF_STREAM_NAME, this->m_pName, result);
   return result;
 }
 
@@ -469,12 +476,22 @@ HRESULT CMPUrlSourceSplitterOutputPin::DeliverNewSegment(REFERENCE_TIME tStart, 
 
 /* get methods */
 
+unsigned int CMPUrlSourceSplitterOutputPin::GetDemuxerId(void)
+{
+  return this->demuxerId;
+}
+
 unsigned int CMPUrlSourceSplitterOutputPin::GetStreamPid(void)
 {
   return this->streamPid;
 }
 
 /* set methods */
+
+void CMPUrlSourceSplitterOutputPin::SetDemuxerId(unsigned int demuxerId)
+{
+  this->demuxerId = demuxerId;
+}
 
 void CMPUrlSourceSplitterOutputPin::SetStreamPid(unsigned int streamPid)
 {
@@ -513,55 +530,60 @@ HRESULT CMPUrlSourceSplitterOutputPin::SendMediaType(CMediaType *mediaType)
 
 bool CMPUrlSourceSplitterOutputPin::IsContainerMpegTs(void)
 {
-  return this->IsFlags(OUTPUT_PIN_FLAG_CONTAINER_MPEG_TS);
+  return this->IsSetFlags(OUTPUT_PIN_FLAG_CONTAINER_MPEG_TS);
 }
 
 bool CMPUrlSourceSplitterOutputPin::IsContainerMpeg(void)
 {
-  return this->IsFlags(OUTPUT_PIN_FLAG_CONTAINER_MPEG);
+  return this->IsSetFlags(OUTPUT_PIN_FLAG_CONTAINER_MPEG);
 }
 
 bool CMPUrlSourceSplitterOutputPin::IsContainerWtv(void)
 {
-  return this->IsFlags(OUTPUT_PIN_FLAG_CONTAINER_WTV);
+  return this->IsSetFlags(OUTPUT_PIN_FLAG_CONTAINER_WTV);
 }
 
 bool CMPUrlSourceSplitterOutputPin::IsContainerAsf(void)
 {
-  return this->IsFlags(OUTPUT_PIN_FLAG_CONTAINER_ASF);
+  return this->IsSetFlags(OUTPUT_PIN_FLAG_CONTAINER_ASF);
 }
 
 bool CMPUrlSourceSplitterOutputPin::IsContainerOgg(void)
 {
-  return this->IsFlags(OUTPUT_PIN_FLAG_CONTAINER_OGG);
+  return this->IsSetFlags(OUTPUT_PIN_FLAG_CONTAINER_OGG);
 }
 
 bool CMPUrlSourceSplitterOutputPin::IsContainerMatroska(void)
 {
-  return this->IsFlags(OUTPUT_PIN_FLAG_CONTAINER_MATROSKA);
+  return this->IsSetFlags(OUTPUT_PIN_FLAG_CONTAINER_MATROSKA);
 }
 
 bool CMPUrlSourceSplitterOutputPin::IsContainerAvi(void)
 {
-  return this->IsFlags(OUTPUT_PIN_FLAG_CONTAINER_AVI);
+  return this->IsSetFlags(OUTPUT_PIN_FLAG_CONTAINER_AVI);
 }
 
 bool CMPUrlSourceSplitterOutputPin::IsContainerMp4(void)
 {
-  return this->IsFlags(OUTPUT_PIN_FLAG_CONTAINER_MP4);
+  return this->IsSetFlags(OUTPUT_PIN_FLAG_CONTAINER_MP4);
 }
 
 bool CMPUrlSourceSplitterOutputPin::HasAccessUnitDelimiters(void)
 {
-  return this->IsFlags(OUTPUT_PIN_FLAG_HAS_ACCESS_UNIT_DELIMITERS);
+  return this->IsSetFlags(OUTPUT_PIN_FLAG_HAS_ACCESS_UNIT_DELIMITERS);
 }
 
 bool CMPUrlSourceSplitterOutputPin::IsPGSDropState(void)
 {
-  return this->IsFlags(OUTPUT_PIN_FLAG_PGS_DROP_STATE);
+  return this->IsSetFlags(OUTPUT_PIN_FLAG_PGS_DROP_STATE);
 }
 
-bool CMPUrlSourceSplitterOutputPin::IsFlags(unsigned int flags)
+bool CMPUrlSourceSplitterOutputPin::IsEndOfStream(void)
+{
+  return this->IsSetFlags(OUTPUT_PIN_FLAG_END_OF_STREAM);
+}
+
+bool CMPUrlSourceSplitterOutputPin::IsSetFlags(unsigned int flags)
 {
   return ((this->flags & flags) == flags);
 }
@@ -578,26 +600,26 @@ DWORD CMPUrlSourceSplitterOutputPin::ThreadProc()
     switch (cmd)
     {
     case CMD_EXIT:
-      this->filter->GetLogger()->Log(LOGGER_INFO, METHOD_PIN_MESSAGE_FORMAT, MODULE_NAME, METHOD_THREAD_PROC_NAME, this->m_pName, L"CMD_EXIT");
+      this->logger->Log(LOGGER_INFO, METHOD_PIN_MESSAGE_FORMAT, MODULE_NAME, METHOD_THREAD_PROC_NAME, this->m_pName, L"CMD_EXIT");
       break;
     case CMD_BEGIN_FLUSH:
-      this->filter->GetLogger()->Log(LOGGER_INFO, METHOD_PIN_MESSAGE_FORMAT, MODULE_NAME, METHOD_THREAD_PROC_NAME, this->m_pName, L"CMD_BEGIN_FLUSH");
+      this->logger->Log(LOGGER_INFO, METHOD_PIN_MESSAGE_FORMAT, MODULE_NAME, METHOD_THREAD_PROC_NAME, this->m_pName, L"CMD_BEGIN_FLUSH");
       break;
     case CMD_END_FLUSH:
-      this->filter->GetLogger()->Log(LOGGER_INFO, METHOD_PIN_MESSAGE_FORMAT, MODULE_NAME, METHOD_THREAD_PROC_NAME, this->m_pName, L"CMD_END_FLUSH");
+      this->logger->Log(LOGGER_INFO, METHOD_PIN_MESSAGE_FORMAT, MODULE_NAME, METHOD_THREAD_PROC_NAME, this->m_pName, L"CMD_END_FLUSH");
       break;
     case CMD_PLAY:
-      this->filter->GetLogger()->Log(LOGGER_INFO, METHOD_PIN_MESSAGE_FORMAT, MODULE_NAME, METHOD_THREAD_PROC_NAME, this->m_pName, L"CMD_PLAY");
+      this->logger->Log(LOGGER_INFO, METHOD_PIN_MESSAGE_FORMAT, MODULE_NAME, METHOD_THREAD_PROC_NAME, this->m_pName, L"CMD_PLAY");
       break;
     case CMD_PAUSE:
-      this->filter->GetLogger()->Log(LOGGER_INFO, METHOD_PIN_MESSAGE_FORMAT, MODULE_NAME, METHOD_THREAD_PROC_NAME, this->m_pName, L"CMD_PAUSE");
+      this->logger->Log(LOGGER_INFO, METHOD_PIN_MESSAGE_FORMAT, MODULE_NAME, METHOD_THREAD_PROC_NAME, this->m_pName, L"CMD_PAUSE");
       break;
     case (DWORD)-1:
       // ignore, it means no command
-      this->filter->GetLogger()->Log(LOGGER_INFO, METHOD_PIN_MESSAGE_FORMAT, MODULE_NAME, METHOD_THREAD_PROC_NAME, this->m_pName, L"no command");
+      this->logger->Log(LOGGER_INFO, METHOD_PIN_MESSAGE_FORMAT, MODULE_NAME, METHOD_THREAD_PROC_NAME, this->m_pName, L"no command");
       break;
     default:
-      this->filter->GetLogger()->Log(LOGGER_INFO, L"%s: %s: pin '%s', unknown command: %d", MODULE_NAME, METHOD_THREAD_PROC_NAME, this->m_pName, cmd);
+      this->logger->Log(LOGGER_INFO, L"%s: %s: pin '%s', unknown command: %d", MODULE_NAME, METHOD_THREAD_PROC_NAME, this->m_pName, cmd);
       break;
     }
 
@@ -609,7 +631,7 @@ DWORD CMPUrlSourceSplitterOutputPin::ThreadProc()
       this->flags &= ~OUTPUT_PIN_FLAG_DUMPING_DATA_AND_SIZES;
       this->flags |= (this->filter->GetConfiguration()->GetValueBool(PARAMETER_NAME_DUMP_OUTPUT_PIN_RAW_DATA, true, PARAMETER_NAME_DUMP_OUTPUT_PIN_RAW_DATA_DEFAULT)) ? OUTPUT_PIN_FLAG_DUMPING_DATA_AND_SIZES : OUTPUT_PIN_FLAG_NONE;
 
-      if (this->IsFlags(OUTPUT_PIN_FLAG_DUMPING_DATA_AND_SIZES))
+      if (this->IsSetFlags(OUTPUT_PIN_FLAG_DUMPING_DATA_AND_SIZES))
       {
         if (this->dumpData == NULL)
         {
@@ -732,7 +754,7 @@ DWORD CMPUrlSourceSplitterOutputPin::ThreadProc()
                 // count send data to output pin
                 this->outputPinDataLength += (uint64_t)sampleSize;
 
-                if (this->IsFlags(OUTPUT_PIN_FLAG_DUMPING_DATA_AND_SIZES))
+                if (this->IsSetFlags(OUTPUT_PIN_FLAG_DUMPING_DATA_AND_SIZES))
                 {
                   // we are dumping data, we must copy output data to temporary buffer
 
@@ -787,7 +809,7 @@ DWORD CMPUrlSourceSplitterOutputPin::ThreadProc()
 
           if (FAILED(result))
           {
-            this->filter->GetLogger()->Log(LOGGER_ERROR, L"%s: %s: pin '%s', result: 0x%08X", MODULE_NAME, METHOD_THREAD_PROC_NAME, this->m_pName, result);
+            this->logger->Log(LOGGER_ERROR, L"%s: %s: pin '%s', result: 0x%08X", MODULE_NAME, METHOD_THREAD_PROC_NAME, this->m_pName, result);
           }
         }
       }
@@ -798,7 +820,7 @@ DWORD CMPUrlSourceSplitterOutputPin::ThreadProc()
     }
   }
 
-  this->filter->GetLogger()->Log(LOGGER_INFO, L"%s: %s: pin '%s', sent data length: %llu", MODULE_NAME, METHOD_THREAD_PROC_NAME, this->m_pName, this->outputPinDataLength);
+  this->logger->Log(LOGGER_INFO, L"%s: %s: pin '%s', sent data length: %llu", MODULE_NAME, METHOD_THREAD_PROC_NAME, this->m_pName, this->outputPinDataLength);
   this->DumpDataAndDumpDataSizes();
 
   return S_OK;
@@ -839,6 +861,7 @@ HRESULT CMPUrlSourceSplitterOutputPin::Parse(GUID subType, COutputPinPacket *pac
         if (SUCCEEDED(result))
         {
           // copy packet data to H264 buffer
+          this->h264Buffer->SetDemuxerId(packet->GetDemuxerId());
           this->h264Buffer->SetStreamPid(packet->GetStreamPid());
           this->h264Buffer->SetDiscontinuity(packet->IsDiscontinuity());
           this->h264Buffer->SetSyncPoint(packet->IsSyncPoint());
@@ -924,6 +947,7 @@ HRESULT CMPUrlSourceSplitterOutputPin::Parse(GUID subType, COutputPinPacket *pac
             {
               // no error and we have some data
 
+              packetToCollection->SetDemuxerId(this->h264Buffer->GetDemuxerId());
               packetToCollection->SetStreamPid(this->h264Buffer->GetStreamPid());
               packetToCollection->SetDiscontinuity(this->h264Buffer->IsDiscontinuity());
               packetToCollection->SetSyncPoint(this->h264Buffer->IsSyncPoint());
@@ -1081,9 +1105,10 @@ HRESULT CMPUrlSourceSplitterOutputPin::Parse(GUID subType, COutputPinPacket *pac
 
                 queuePacket->SetStartTime(firstPacket->GetStartTime());
                 queuePacket->SetEndTime(firstPacket->GetEndTime());
+                queuePacket->SetDemuxerId(firstPacket->GetDemuxerId());
                 queuePacket->SetStreamPid(firstPacket->GetStreamPid());
                 queuePacket->SetMediaType(firstPacket->GetMediaType());
-                // clear media type in first packet to avoid of crash in freeing memory
+                // clear media type in first packet to avoid crash in freeing memory
                 firstPacket->SetMediaType(NULL);
                 queuePacket->SetFlags(firstPacket->GetFlags());
               }
@@ -1317,9 +1342,9 @@ void CMPUrlSourceSplitterOutputPin::SetPGSDropState(bool pgsDropState)
 
 void CMPUrlSourceSplitterOutputPin::DumpDataAndDumpDataSizes(void)
 {
-  if (this->IsFlags(OUTPUT_PIN_FLAG_DUMPING_DATA_AND_SIZES))
+  if (this->IsSetFlags(OUTPUT_PIN_FLAG_DUMPING_DATA_AND_SIZES))
   {
-    CStaticLoggerContext *context = this->filter->GetLogger()->GetStaticLoggerContext();
+    CStaticLoggerContext *context = this->logger->GetStaticLoggerContext();
 
     if (context != NULL)
     {
@@ -1328,7 +1353,7 @@ void CMPUrlSourceSplitterOutputPin::DumpDataAndDumpDataSizes(void)
 
       if (contextLogFile != NULL)
       {
-        wchar_t *guid = ConvertGuidToString(this->filter->GetLogger()->GetLoggerInstanceId());
+        wchar_t *guid = ConvertGuidToString(this->logger->GetLoggerInstanceId());
         wchar_t *dumpDataFileName = FormatString(L"%s\\MPUrlSourceSplitter-%s-%s-%08u.dump", contextLogFile, guid, this->m_pName, this->dumpDataCounter);
         wchar_t *dumpMetadataFileName = FormatString(L"%s\\MPUrlSourceSplitter-%s-%s-%08u.metadata", contextLogFile, guid, this->m_pName, this->dumpDataCounter);
 

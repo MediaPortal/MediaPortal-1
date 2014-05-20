@@ -23,7 +23,7 @@
 #include "MediaTypeCollection.h"
 
 CMediaTypeCollection::CMediaTypeCollection(void)
-  : CCollection()
+  : CCollection<CMediaType>()
 {
 }
 

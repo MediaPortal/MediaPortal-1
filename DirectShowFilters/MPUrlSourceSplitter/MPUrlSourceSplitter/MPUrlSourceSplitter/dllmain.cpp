@@ -160,12 +160,13 @@ BOOL APIENTRY DllMain(HMODULE hModule,
   {
   case DLL_PROCESS_ATTACH:
     {
+#ifndef _DEBUG
       if (exceptionHandler == NULL)
       {
         // register exception handler
         exceptionHandler = AddVectoredExceptionHandler(1, ExceptionHandler);
       }
-
+#endif
       staticLogger = new CStaticLogger();
       curl_global_init(CURL_GLOBAL_ALL);
     }
@@ -176,12 +177,13 @@ BOOL APIENTRY DllMain(HMODULE hModule,
     break;
   case DLL_PROCESS_DETACH:
     {
+#ifndef _DEBUG
       if (exceptionHandler != NULL)
       {
         RemoveVectoredExceptionHandler(exceptionHandler);
         exceptionHandler = NULL;
       }
-
+#endif
       // free FFmpeg logger instance
       FREE_MEM_CLASS(ffmpegLoggerInstance);
       FREE_MEM_CLASS(staticLogger);
@@ -290,11 +292,11 @@ LONG WINAPI ExceptionHandler(struct _EXCEPTION_POINTERS *exceptionInfo)
         FREE_MEM(contextLogFile);
       }
     }
+  }
 
-    if (staticLogger != NULL)
-    {
-      staticLogger->Flush();
-    }
+  if (staticLogger != NULL)
+  {
+    staticLogger->Flush();
   }
 
   return EXCEPTION_CONTINUE_SEARCH;

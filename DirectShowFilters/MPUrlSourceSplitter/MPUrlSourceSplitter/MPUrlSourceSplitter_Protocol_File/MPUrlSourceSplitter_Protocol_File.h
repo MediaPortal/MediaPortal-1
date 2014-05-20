@@ -27,10 +27,6 @@
 
 #include <stdio.h>
 
-// we should get data in two seconds
-#define FILE_RECEIVE_DATA_TIMEOUT_DEFAULT                         2000
-#define FILE_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT             3
-
 #define DEFAULT_BUFFER_SIZE                                       64 * 1024
 
 #define PROTOCOL_NAME                                             L"FILE"
@@ -87,10 +83,9 @@ public:
   HRESULT StopReceivingData(void);
 
   // retrieves the progress of the stream reading operation
-  // @param total : reference to a variable that receives the length of the entire stream, in bytes
-  // @param current : reference to a variable that receives the length of the downloaded portion of the stream, in bytes
-  // @return : S_OK if successful, VFW_S_ESTIMATED if returned values are estimates, E_UNEXPECTED if unexpected error
-  HRESULT QueryStreamProgress(LONGLONG *total, LONGLONG *current);
+  // @param streamProgress : reference to instance of class that receives the stream progress
+  // @return : S_OK if successful, VFW_S_ESTIMATED if returned values are estimates, E_INVALIDARG if stream ID is unknown, E_UNEXPECTED if unexpected error
+  HRESULT QueryStreamProgress(CStreamProgress *streamProgress);
   
   // retrieves available lenght of stream
   // @param available : reference to instance of class that receives the available length of stream, in bytes

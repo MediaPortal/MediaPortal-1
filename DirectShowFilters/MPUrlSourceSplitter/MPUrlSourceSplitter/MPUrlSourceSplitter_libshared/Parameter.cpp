@@ -58,19 +58,9 @@ const wchar_t *CParameter::GetName(void)
   return this->name;
 }
 
-unsigned int CParameter::GetNameLength(void)
-{
-  return (this->name == NULL) ? UINT_MAX : wcslen(this->name);
-}
-
 const wchar_t *CParameter::GetValue(void)
 {
   return this->value;
-}
-
-unsigned int CParameter::GetValueLength(void)
-{
-  return (this->value == NULL) ? UINT_MAX : wcslen(this->value);
 }
 
 CParameter *CParameter::Clone(void)

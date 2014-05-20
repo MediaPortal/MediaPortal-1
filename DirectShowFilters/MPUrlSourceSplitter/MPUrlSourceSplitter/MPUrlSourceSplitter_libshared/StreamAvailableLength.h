@@ -29,33 +29,31 @@ public:
   CStreamAvailableLength(void);
   ~CStreamAvailableLength(void);
 
-  // returns query result if ranges are supported
-  // @return : S_OK if query was successful, other error code if error
-  HRESULT GetQueryResult(void);
+  /* get methods */
 
   // gets available length
   // @return : the available length value
   LONGLONG GetAvailableLength(void);
 
-  // tests if query result is successfully completed
-  // @return : true if query result is successfully completed, false otherwise
-  bool IsQueryCompleted(void);
+  // gets stream ID to get stream available length
+  // @return : stream ID to get stream available length
+  unsigned int GetStreamId(void);
 
-  // tests if query result is error
-  // @return : true if query result is error, false otherwise
-  bool IsQueryError(void);
+  /* set methods */
 
   // sets available length
   // @param availableLength : the available length value
   void SetAvailableLength(LONGLONG availableLength);
 
-  // sets query result
-  // @param queryResult : the result of query
-  void SetQueryResult(HRESULT queryResult);
+  // sets stream ID to get stream available length
+  // @param streamId : the stream ID to set
+  void SetStreamId(unsigned int streamId);
+
+  /* other methods */
 
 private:
+  unsigned int streamId;
   LONGLONG availableLength;
-  HRESULT queryResult;
 };
 
 #endif

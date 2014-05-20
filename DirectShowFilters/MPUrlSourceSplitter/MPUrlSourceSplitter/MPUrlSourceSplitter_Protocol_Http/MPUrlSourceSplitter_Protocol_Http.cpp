@@ -67,7 +67,7 @@ CMPUrlSourceSplitter_Protocol_Http::CMPUrlSourceSplitter_Protocol_Http(CLogger *
   }
 
   this->logger = new CLogger(logger);
-  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_CONSTRUCTOR_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME, this);
 
   wchar_t *version = GetVersionInfo(COMMIT_INFO_MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP, DATE_INFO_MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP);
   if (version != NULL)
@@ -243,7 +243,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CReceiveData *receiveDat
     this->internalExitRequest = false;
   }
 
-  if ((this->IsConnected()) && (!this->wholeStreamDownloaded))
+  // HTTP has always one stream
+  if ((this->IsConnected()) && (!this->wholeStreamDownloaded) && (receiveData->SetStreamCount(1)))
   {
     long responseCode = this->mainCurlInstance->GetHttpDownloadResponse()->GetResponseCode();
     if ((responseCode >= 0) && ((responseCode < 200) || (responseCode >= 400)))
@@ -262,7 +263,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CReceiveData *receiveDat
           LONGLONG total = LONGLONG(streamSize);
           this->streamLength = total;
           this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, total);
-          receiveData->GetTotalLength()->SetTotalLength(total, false);
+          receiveData->GetStreams()->GetItem(0)->GetTotalLength()->SetTotalLength(total, false);
           this->setLength = true;
         }
         else
@@ -273,14 +274,14 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CReceiveData *receiveDat
             // just make guess
             this->streamLength = LONGLONG(MINIMUM_RECEIVED_DATA_FOR_SPLITTER);
             this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-            receiveData->GetTotalLength()->SetTotalLength(this->streamLength, true);
+            receiveData->GetStreams()->GetItem(0)->GetTotalLength()->SetTotalLength(this->streamLength, true);
           }
           else if ((this->streamTime > (this->streamLength * 3 / 4)))
           {
             // it is time to adjust stream length, we are approaching to end but still we don't know total length
             this->streamLength = this->streamTime * 2;
             this->logger->Log(LOGGER_VERBOSE, L"%s: %s: adjusting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-            receiveData->GetTotalLength()->SetTotalLength(this->streamLength, true);
+            receiveData->GetStreams()->GetItem(0)->GetTotalLength()->SetTotalLength(this->streamLength, true);
           }
         }
       }
@@ -330,7 +331,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CReceiveData *receiveDat
         mediaPacket->SetStart(this->streamTime);
         mediaPacket->SetEnd(this->streamTime + bufferOccupiedSpace - 1);
 
-        if (!receiveData->GetMediaPacketCollection()->Add(mediaPacket))
+        if (!receiveData->GetStreams()->GetItem(0)->GetMediaPacketCollection()->Add(mediaPacket))
         {
           FREE_MEM_CLASS(mediaPacket);
         }
@@ -359,14 +360,14 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CReceiveData *receiveDat
         {
           this->streamLength = this->streamTime;
           this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-          receiveData->GetTotalLength()->SetTotalLength(this->streamLength, false);
+          receiveData->GetStreams()->GetItem(0)->GetTotalLength()->SetTotalLength(this->streamLength, false);
           this->setLength = true;
         }
 
         // notify filter the we reached end of stream
         int64_t streamTime = this->streamTime;
         this->streamTime = this->streamLength;
-        receiveData->GetEndOfStreamReached()->SetStreamPosition(max(0, streamTime - 1));
+        receiveData->GetStreams()->GetItem(0)->GetEndOfStreamReached()->SetStreamPosition(max(0, streamTime - 1));
       }
       else
       {
@@ -482,6 +483,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::StartReceivingData(CParameterCollect
     {
       unsigned int currentTime = GetTickCount();
       this->logger->Log(LOGGER_VERBOSE, L"%s: %s: finish time specified, current time: %u, finish time: %u, diff: %u (ms)", PROTOCOL_IMPLEMENTATION_NAME, METHOD_START_RECEIVING_DATA_NAME, currentTime, finishTime, finishTime - currentTime);
+      this->configurationParameters->Remove(PARAMETER_NAME_FINISH_TIME, true);
     }
   }
 
@@ -598,16 +600,16 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::StopReceivingData(void)
   return S_OK;
 }
 
-HRESULT CMPUrlSourceSplitter_Protocol_Http::QueryStreamProgress(LONGLONG *total, LONGLONG *current)
+HRESULT CMPUrlSourceSplitter_Protocol_Http::QueryStreamProgress(CStreamProgress *streamProgress)
 {
   HRESULT result = S_OK;
-  CHECK_POINTER_DEFAULT_HRESULT(result, total);
-  CHECK_POINTER_DEFAULT_HRESULT(result, current);
+  CHECK_POINTER_DEFAULT_HRESULT(result, streamProgress);
+  CHECK_CONDITION_HRESULT(result, streamProgress->GetStreamId() == 0, result, E_INVALIDARG);
 
-  if (result == S_OK)
+  if (SUCCEEDED(result))
   {
-    *total = this->streamLength;
-    *current = this->streamTime;
+    streamProgress->SetTotalLength(this->streamLength);
+    streamProgress->SetCurrentLength(this->streamTime);
   }
 
   return result;
@@ -617,13 +619,13 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::QueryStreamAvailableLength(CStreamAv
 {
   HRESULT result = S_OK;
   CHECK_POINTER_DEFAULT_HRESULT(result, availableLength);
+  CHECK_CONDITION_HRESULT(result, availableLength->GetStreamId() == 0, result, E_INVALIDARG);
 
   if (result == S_OK)
   {
     // lock access to stream
     CLockMutex lock(this->lockMutex, INFINITE);
 
-    availableLength->SetQueryResult(S_OK);
     availableLength->SetAvailableLength(((this->mainCurlInstance != NULL) && (this->mainCurlInstance->GetHttpDownloadResponse()->GetRangesSupported())) ? this->streamLength : this->streamTime);
   }
 

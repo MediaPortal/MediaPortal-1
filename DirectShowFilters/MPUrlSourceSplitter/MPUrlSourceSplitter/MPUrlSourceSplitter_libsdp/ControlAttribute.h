@@ -29,8 +29,8 @@
 
 #define TAG_ATTRIBUTE_INSTANCE_CONTROL                      L"a_control"
 
-#define FLAG_CONTROL_ATTRIBUTE_NONE                         0x00000000
-#define FLAG_CONTROL_ATTRIBUTE_ASTERISK                     0x00000001
+#define CONTROL_ATTRIBUTE_FLAG_NONE                         0x00000000
+#define CONTROL_ATTRIBUTE_FLAG_ASTERISK                     0x00000001
 
 #define CONTROL_ATTRIBUTE_ASTERISK                          L"*"
 

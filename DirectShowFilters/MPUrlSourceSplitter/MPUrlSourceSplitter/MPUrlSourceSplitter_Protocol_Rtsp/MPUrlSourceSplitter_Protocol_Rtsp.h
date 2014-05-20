@@ -37,10 +37,6 @@ wchar_t *SUPPORTED_PROTOCOLS[TOTAL_SUPPORTED_PROTOCOLS] =                     { 
 
 #define MINIMUM_RECEIVED_DATA_FOR_SPLITTER                                    1 * 1024 * 1024
 
-// minimum RTP packet data overlap in bytes
-// we assume that no data (audio/video/etc) packet in RTP packet is less than MINIMUM_RTP_PACKET_OVERLAP in bytes
-#define MINIMUM_RTP_PACKET_OVERLAP                                            100
-
 struct CompareDataResult
 {
   int position;
@@ -96,10 +92,9 @@ public:
   HRESULT StopReceivingData(void);
 
   // retrieves the progress of the stream reading operation
-  // @param total : reference to a variable that receives the length of the entire stream, in bytes
-  // @param current : reference to a variable that receives the length of the downloaded portion of the stream, in bytes
-  // @return : S_OK if successful, VFW_S_ESTIMATED if returned values are estimates, E_UNEXPECTED if unexpected error
-  HRESULT QueryStreamProgress(LONGLONG *total, LONGLONG *current);
+  // @param streamProgress : reference to instance of class that receives the stream progress
+  // @return : S_OK if successful, VFW_S_ESTIMATED if returned values are estimates, E_INVALIDARG if stream ID is unknown, E_UNEXPECTED if unexpected error
+  HRESULT QueryStreamProgress(CStreamProgress *streamProgress);
   
   // retrieves available lenght of stream
   // @param available : reference to instance of class that receives the available length of stream, in bytes
@@ -124,10 +119,12 @@ public:
   // @return : bitwise combination of SEEKING_METHOD flags
   unsigned int GetSeekingCapabilities(void);
 
-  // request protocol implementation to receive data from specified time (in ms)
+  // request protocol implementation to receive data from specified time (in ms) for specified stream
+  // this method is called with same time for each stream in protocols with multiple streams
+  // @param streamId : the stream ID to receive data from specified time
   // @param time : the requested time (zero is start of stream)
   // @return : time (in ms) where seek finished or lower than zero if error
-  int64_t SeekToTime(int64_t time);
+  int64_t SeekToTime(unsigned int streamId, int64_t time);
 
   // request protocol implementation to receive data from specified position to specified position
   // @param start : the requested start position (zero is start of stream)
@@ -135,9 +132,10 @@ public:
   // @return : position where seek finished or lower than zero if error
   int64_t SeekToPosition(int64_t start, int64_t end);
 
-  // sets if protocol implementation have to supress sending data to filter
+  // sets if protocol implementation have to supress sending data with specified stream ID to filter
+  // @param streamId : the stream ID to supress data
   // @param supressData : true if protocol have to supress sending data to filter, false otherwise
-  void SetSupressData(bool supressData);
+  void SetSupressData(unsigned int streamId, bool supressData);
 
   // IPlugin interface
 
@@ -181,10 +179,6 @@ protected:
   bool internalExitRequest;
   // specifies if whole stream is downloaded
   bool wholeStreamDownloaded;
-  // specifies if seeking (cleared when first data arrive)
-  bool seekingActive;
-  // specifies if filter requested supressing data
-  bool supressData;
   // specifies if working with live stream
   bool liveStream;
 
@@ -200,7 +194,7 @@ protected:
   // holds SDP from CURL instance
   CSessionDescription *sessionDescription;
 
-  // holds filter actual stream time
+  // holds filter actual stream time (in ms)
   uint64_t reportedStreamTime;
 
   // gets store file path based on configuration
@@ -213,11 +207,9 @@ protected:
   // @param fragments : stream fragments collection
   // @param streamFragmentProcessing : fragment to get data
   // @param storeFile : the name of store file
+  // @param loadStreamFragmentToMemory : specifies if fragment can be loaded to memory if stored to file
   // @return : buffer for processing with filled data, NULL otherwise
-  CLinearBuffer *FillBufferForProcessing(CRtspStreamFragmentCollection *fragments, unsigned int streamFragmentProcessing, const wchar_t *storeFile);
-
-  CompareDataResult CompareData(CRtspStreamTrack *track, unsigned int fragmentIndex, unsigned int fragmentReceivedDataPosition, CRtpPacket *rtpPacket, unsigned int rtpPacketPosition, bool onlyInFragmentReceivedDataPosition);
-  CompareDataResult CompareDataReversed(CRtspStreamTrack *track, unsigned int fragmentIndex, unsigned int fragmentReceivedDataPosition, CRtpPacket *rtpPacket, unsigned int rtpPacketPosition, bool onlyInFragmentReceivedDataPosition);
+  //CLinearBuffer *FillBufferForProcessing(CRtspStreamFragmentCollection *fragments, unsigned int streamFragmentProcessing, const wchar_t *storeFile, bool loadStreamFragmentToMemory);
 };
 
 #endif

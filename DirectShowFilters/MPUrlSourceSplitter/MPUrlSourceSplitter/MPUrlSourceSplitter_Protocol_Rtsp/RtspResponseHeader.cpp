@@ -26,6 +26,7 @@ CRtspResponseHeader::CRtspResponseHeader(void)
   : CHttpHeader()
 {
   this->responseHeaderType = RESPONSE_HEADER_TYPE_UNSPECIFIED;
+  this->flags = RTSP_RESPONSE_HEADER_FLAG_NONE;
 }
 
 CRtspResponseHeader::~CRtspResponseHeader(void)
@@ -43,6 +44,11 @@ const wchar_t *CRtspResponseHeader::GetResponseHeaderType(void)
 /* set methods */
 
 /* other methods */
+
+bool CRtspResponseHeader::IsSetFlags(unsigned int flags)
+{
+  return ((this->flags & flags) == flags);
+}
 
 bool CRtspResponseHeader::IsResponseHeaderType(const wchar_t *responseHeaderType)
 {
@@ -62,6 +68,8 @@ bool CRtspResponseHeader::CloneInternal(CHttpHeader *clonedHeader)
 
   if (result)
   {
+    header->flags = this->flags;
+
     SET_STRING_RESULT_WITH_NULL(header->responseHeaderType, this->responseHeaderType, result);
   }
 

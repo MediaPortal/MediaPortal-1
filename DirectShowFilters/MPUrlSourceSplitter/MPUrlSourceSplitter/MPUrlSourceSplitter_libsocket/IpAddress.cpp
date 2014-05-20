@@ -24,7 +24,7 @@
 
 CIpAddress::CIpAddress()
 {
-  this->flags = FLAG_IP_ADDRESS_NONE;
+  this->flags = IP_ADDRESS_FLAG_NONE;
   this->addr = NULL;
   this->canonicalName = NULL;
   this->family = AF_UNSPEC;
@@ -36,7 +36,7 @@ CIpAddress::CIpAddress()
 
 CIpAddress::CIpAddress(const ADDRINFOW *addrInfo, const wchar_t *canonicalName)
 {
-  this->flags = FLAG_IP_ADDRESS_NONE;
+  this->flags = IP_ADDRESS_FLAG_NONE;
   this->addr = NULL;
   this->canonicalName = NULL;
   this->family = AF_UNSPEC;
@@ -87,7 +87,7 @@ CIpAddress::CIpAddress(const ADDRINFOW *addrInfo, const wchar_t *canonicalName)
 
   if (!result)
   {
-    this->flags = FLAG_IP_ADDRESS_NONE;
+    this->flags = IP_ADDRESS_FLAG_NONE;
     FREE_MEM(this->addr);
     FREE_MEM(this->canonicalName);
     this->family = AF_UNSPEC;
@@ -100,7 +100,7 @@ CIpAddress::CIpAddress(const ADDRINFOW *addrInfo, const wchar_t *canonicalName)
 
 CIpAddress::CIpAddress(const SOCKADDR_STORAGE *addr, unsigned int length)
 {
-  this->flags = FLAG_IP_ADDRESS_NONE;
+  this->flags = IP_ADDRESS_FLAG_NONE;
   this->addr = NULL;
   this->canonicalName = NULL;
   this->family = AF_UNSPEC;
@@ -144,7 +144,7 @@ CIpAddress::CIpAddress(const SOCKADDR_STORAGE *addr, unsigned int length)
 
   if (!result)
   {
-    this->flags = FLAG_IP_ADDRESS_NONE;
+    this->flags = IP_ADDRESS_FLAG_NONE;
     FREE_MEM(this->addr);
     FREE_MEM(this->canonicalName);
     this->family = AF_UNSPEC;
@@ -157,7 +157,7 @@ CIpAddress::CIpAddress(const SOCKADDR_STORAGE *addr, unsigned int length)
 
 CIpAddress::CIpAddress(const struct sockaddr *addr, unsigned int length)
 {
-  this->flags = FLAG_IP_ADDRESS_NONE;
+  this->flags = IP_ADDRESS_FLAG_NONE;
   this->addr = NULL;
   this->canonicalName = NULL;
   this->family = AF_UNSPEC;
@@ -201,7 +201,7 @@ CIpAddress::CIpAddress(const struct sockaddr *addr, unsigned int length)
 
   if (!result)
   {
-    this->flags = FLAG_IP_ADDRESS_NONE;
+    this->flags = IP_ADDRESS_FLAG_NONE;
     FREE_MEM(this->addr);
     FREE_MEM(this->canonicalName);
     this->family = AF_UNSPEC;

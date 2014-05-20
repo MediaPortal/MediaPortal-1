@@ -25,7 +25,7 @@
 CRtspStreamTrack::CRtspStreamTrack(void)
 {
   this->streamFragments = new CRtspStreamFragmentCollection();
-  this->lastFragmentRtpTimestamp = 0;
+  this->lastCumulatedRtpTimestamp = 0;
   this->lastRtpPacketTimestamp = 0;
   this->firstRtpPacketTimestamp = 0;
   this->streamFragmentDownloading = UINT_MAX;
@@ -34,17 +34,18 @@ CRtspStreamTrack::CRtspStreamTrack(void)
   this->streamLength = 0;
   this->bytePosition = 0;
   this->flags = RTSP_STREAM_TRACK_FLAG_NONE;
-  this->storeFilePath = NULL;
-  this->lastRtpPacketStreamFragmentIndex = 0;
-  this->lastRtpPacketFragmentReceivedDataPosition = 0;
+  this->clockFrequency = 0;
+  this->dshowTimeBaseNumerator = 0;
+  this->dshowTimeBaseDenominator = 1;
+  this->rtpTimestampCorrection = 0;
+
+  this->cacheFile = new CCacheFile();
 }
 
 CRtspStreamTrack::~CRtspStreamTrack(void)
 {
-  CHECK_CONDITION_NOT_NULL_EXECUTE(this->storeFilePath, DeleteFile(this->storeFilePath));
-
   FREE_MEM_CLASS(this->streamFragments);
-  FREE_MEM(this->storeFilePath);
+  FREE_MEM_CLASS(this->cacheFile);
 }
 
 /* get methods */
@@ -52,43 +53,6 @@ CRtspStreamTrack::~CRtspStreamTrack(void)
 CRtspStreamFragmentCollection *CRtspStreamTrack::GetStreamFragments(void)
 {
   return this->streamFragments;
-}
-
-uint64_t CRtspStreamTrack::GetFragmentTimestamp(unsigned int currentRtpPacketTimestamp, unsigned int clockFrequency, uint64_t initialTime)
-{
-  uint64_t correction = (this->IsSetFirstRtpPacketTimestamp()) ? 0 : (initialTime * clockFrequency / 1000);
-  uint64_t fragmentRtpTimestamp = this->GetFragmentRtpTimestamp(currentRtpPacketTimestamp);
-
-  // correct values of last fragment timestamp and current fragment timestamp
-  this->lastFragmentRtpTimestamp += correction;
-  fragmentRtpTimestamp += correction;
-
-  fragmentRtpTimestamp -= this->firstRtpPacketTimestamp;
-  // clock frequency is per second, we need to adjust result to ms
-  fragmentRtpTimestamp *= 1000;
-  fragmentRtpTimestamp /= clockFrequency;
-
-  return fragmentRtpTimestamp;
-}
-
-uint64_t CRtspStreamTrack::GetFragmentRtpTimestamp(unsigned int currentRtpPacketTimestamp)
-{
-  if (!this->IsSetFirstRtpPacketTimestamp())
-  {
-    this->lastRtpPacketTimestamp = currentRtpPacketTimestamp;
-    this->lastFragmentRtpTimestamp = currentRtpPacketTimestamp;
-    this->firstRtpPacketTimestamp = currentRtpPacketTimestamp;
-    this->flags |= RTSP_STREAM_TRACK_FLAG_SET_FIRST_RTP_PACKET_TIMESTAMP;
-  }
-
-  uint64_t difference = ((currentRtpPacketTimestamp < this->lastRtpPacketTimestamp) ? 0x0000000100000000 : 0);
-  difference += currentRtpPacketTimestamp;
-  difference -= this->lastRtpPacketTimestamp;
-
-  this->lastFragmentRtpTimestamp += difference;
-  this->lastRtpPacketTimestamp = currentRtpPacketTimestamp;
-
-  return this->lastFragmentRtpTimestamp;
 }
 
 unsigned int CRtspStreamTrack::GetStreamFragmentDownloading(void)
@@ -116,19 +80,64 @@ int64_t CRtspStreamTrack::GetBytePosition(void)
   return this->bytePosition;
 }
 
-const wchar_t *CRtspStreamTrack::GetStoreFilePath(void)
+unsigned int CRtspStreamTrack::GetFirstRtpPacketTimestamp(void)
 {
-  return this->storeFilePath;
+  return this->firstRtpPacketTimestamp;
 }
 
-unsigned int CRtspStreamTrack::GetLastRtpPacketStreamFragmentIndex(void)
+DWORD CRtspStreamTrack::GetFirstRtpPacketTicks(void)
 {
-  return this->lastRtpPacketStreamFragmentIndex;
+  return this->firstRtpPacketTicks;
 }
-  
-unsigned int CRtspStreamTrack::GetLastRtpPacketFragmentReceivedDataPosition(void)
+
+int64_t CRtspStreamTrack::GetRtpPacketTimestamp(unsigned int currentRtpPacketTimestamp, bool storeLastRtpPacketTimestamp)
 {
-  return this->lastRtpPacketFragmentReceivedDataPosition;
+  int64_t difference = ((currentRtpPacketTimestamp < this->lastRtpPacketTimestamp) ? 0x0000000100000000 : 0);
+  difference += currentRtpPacketTimestamp;
+  difference -= this->lastRtpPacketTimestamp;
+
+  if (currentRtpPacketTimestamp < this->lastRtpPacketTimestamp)
+  {
+    // try to identify if overflow occured or RTP timestamp is only slightly decreased
+    uint64_t diff = this->lastRtpPacketTimestamp - currentRtpPacketTimestamp;
+
+    // on this place is difference always greater than or equal to zero, we can safely cast it to uint64_t
+    if (diff < (uint64_t)difference)
+    {
+      // RTP timestamp decrease is more probable than overflow
+      difference -= 0x0000000100000000;
+    }
+  }
+
+  int64_t result = this->lastCumulatedRtpTimestamp + difference;
+
+  if (storeLastRtpPacketTimestamp)
+  {
+    this->lastCumulatedRtpTimestamp += difference;
+    this->lastRtpPacketTimestamp = currentRtpPacketTimestamp;
+  }
+
+  return result;
+}
+
+int64_t CRtspStreamTrack::GetRtpPacketTimestampInDshowTimeBaseUnits(int64_t rtpPacketTimestamp)
+{
+  return (rtpPacketTimestamp * this->dshowTimeBaseNumerator / this->dshowTimeBaseDenominator);
+}
+
+int64_t CRtspStreamTrack::GetRtpTimestampCorrection(void)
+{
+  return this->rtpTimestampCorrection;
+}
+
+unsigned int CRtspStreamTrack::GetClockFrequency(void)
+{
+  return this->clockFrequency;
+}
+
+CCacheFile *CRtspStreamTrack::GetCacheFile(void)
+{
+  return this->cacheFile;
 }
 
 /* set methods */
@@ -170,45 +179,78 @@ void CRtspStreamTrack::SetEndOfStreamFlag(bool endOfStreamFlag)
   this->flags |= endOfStreamFlag ? RTSP_STREAM_TRACK_FLAG_END_OF_STREAM : RTSP_STREAM_TRACK_FLAG_NONE;
 }
 
-bool CRtspStreamTrack::SetStoreFilePath(const wchar_t *storeFilePath)
+void CRtspStreamTrack::SetSupressDataFlag(bool supressDataFlag)
 {
-  SET_STRING_RETURN_WITH_NULL(this->storeFilePath, storeFilePath);
+  this->flags &= ~RTSP_STREAM_TRACK_FLAG_SUPRESS_DATA;
+  this->flags |= supressDataFlag ? RTSP_STREAM_TRACK_FLAG_SUPRESS_DATA : RTSP_STREAM_TRACK_FLAG_NONE;
 }
 
-void CRtspStreamTrack::SetFirstRtpPacketTimestampFlag(bool firstRtpPacketTimestampFlag)
+void CRtspStreamTrack::SetReceivedAllDataFlag(bool receivedAllDataFlag)
 {
+  this->flags &= ~RTSP_STREAM_TRACK_FLAG_RECEIVED_ALL_DATA;
+  this->flags |= receivedAllDataFlag ? RTSP_STREAM_TRACK_FLAG_RECEIVED_ALL_DATA : RTSP_STREAM_TRACK_FLAG_NONE;
+}
+
+void CRtspStreamTrack::SetFirstRtpPacketTimestamp(unsigned int rtpPacketTimestamp, bool firstRtpPacketTimestampFlag, DWORD firstRtpPacketTicks)
+{
+  this->firstRtpPacketTimestamp = rtpPacketTimestamp;
+  this->lastRtpPacketTimestamp = 0;
+  this->lastCumulatedRtpTimestamp = 0;
+
   this->flags &= ~RTSP_STREAM_TRACK_FLAG_SET_FIRST_RTP_PACKET_TIMESTAMP;
   this->flags |= firstRtpPacketTimestampFlag ? RTSP_STREAM_TRACK_FLAG_SET_FIRST_RTP_PACKET_TIMESTAMP : RTSP_STREAM_TRACK_FLAG_NONE;
+
+  if (firstRtpPacketTimestampFlag && (!this->IsSetFlags(RTSP_STREAM_TRACK_FLAG_SET_FIRST_RTP_PACKET_TICKS)))
+  {
+    this->firstRtpPacketTicks = firstRtpPacketTicks;
+    this->flags |= RTSP_STREAM_TRACK_FLAG_SET_FIRST_RTP_PACKET_TICKS;
+  }
 }
 
-void CRtspStreamTrack::SetLastRtpPacketStreamFragmentIndex(unsigned int lastRtpPacketStreamFragmentIndex)
+void CRtspStreamTrack::SetClockFrequency(unsigned int clockFrequency)
 {
-  this->lastRtpPacketStreamFragmentIndex = lastRtpPacketStreamFragmentIndex;
+  this->clockFrequency = clockFrequency;
+
+  unsigned int gcd = GreatestCommonDivisor(DSHOW_TIME_BASE, this->clockFrequency);
+  this->dshowTimeBaseNumerator = (int64_t)(DSHOW_TIME_BASE / gcd);
+  this->dshowTimeBaseDenominator = (int64_t)(this->clockFrequency / gcd);
 }
-  
-void CRtspStreamTrack::SetLastRtpPacketFragmentReceivedDataPosition(unsigned int lastRtpPacketFragmentReceivedDataPosition)
+
+void CRtspStreamTrack::SetRtpTimestampCorrection(int64_t rtpTimestampCorrection)
 {
-  this->lastRtpPacketFragmentReceivedDataPosition = lastRtpPacketFragmentReceivedDataPosition;
+  this->rtpTimestampCorrection = rtpTimestampCorrection;
 }
 
 /* other methods */
 
 bool CRtspStreamTrack::IsSetFirstRtpPacketTimestamp(void)
 {
-  return this->IsFlags(RTSP_STREAM_TRACK_FLAG_SET_FIRST_RTP_PACKET_TIMESTAMP);
+  return this->IsSetFlags(RTSP_STREAM_TRACK_FLAG_SET_FIRST_RTP_PACKET_TIMESTAMP);
 }
 
 bool CRtspStreamTrack::IsSetStreamLength(void)
 {
-  return this->IsFlags(RTSP_STREAM_TRACK_FLAG_SET_STREAM_LENGTH);
+  return this->IsSetFlags(RTSP_STREAM_TRACK_FLAG_SET_STREAM_LENGTH);
 }
 
 bool CRtspStreamTrack::IsSetEndOfStream(void)
 {
-  return this->IsFlags(RTSP_STREAM_TRACK_FLAG_END_OF_STREAM);
+  return this->IsSetFlags(RTSP_STREAM_TRACK_FLAG_END_OF_STREAM);
 }
 
-bool CRtspStreamTrack::IsFlags(unsigned int flags)
+bool CRtspStreamTrack::IsSetSupressData(void)
+{
+  return this->IsSetFlags(RTSP_STREAM_TRACK_FLAG_SUPRESS_DATA);
+}
+
+bool CRtspStreamTrack::IsReceivedAllData(void)
+{
+  return this->IsSetFlags(RTSP_STREAM_TRACK_FLAG_RECEIVED_ALL_DATA);
+}
+
+bool CRtspStreamTrack::IsSetFlags(unsigned int flags)
 {
   return ((this->flags & flags) == flags);
 }
+
+/* protected methods */

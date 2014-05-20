@@ -27,7 +27,7 @@
 
 CBaseRtpPacket::CBaseRtpPacket(void)
 {
-  this->flags = FLAG_BASE_RTP_PACKET_NONE;
+  this->flags = BASE_RTP_PACKET_FLAG_NONE;
   this->version = UINT_MAX;
   this->paddingSize = 0;
   this->baseType = UINT_MAX;
@@ -63,12 +63,12 @@ unsigned int CBaseRtpPacket::GetSize(void)
 
 bool CBaseRtpPacket::IsPadded(void)
 {
-  return ((this->flags & FLAG_BASE_RTP_PACKET_PADDING) != 0);
+  return ((this->flags & BASE_RTP_PACKET_FLAG_PADDING) != 0);
 }
 
 void CBaseRtpPacket::Clear(void)
 {
-  this->flags = FLAG_BASE_RTP_PACKET_NONE;
+  this->flags = BASE_RTP_PACKET_FLAG_NONE;
   this->version = UINT_MAX;
   this->paddingSize = 0;
   this->baseType = UINT_MAX;
@@ -88,7 +88,7 @@ bool CBaseRtpPacket::Parse(const unsigned char *buffer, unsigned int length)
     unsigned int position = 0;
 
     this->version = (RBE8(buffer, position) & 0xC0) >> 6;
-    this->flags |= ((RBE8(buffer, position) & 0x20) != 0) ? FLAG_BASE_RTP_PACKET_PADDING : FLAG_BASE_RTP_PACKET_NONE;
+    this->flags |= ((RBE8(buffer, position) & 0x20) != 0) ? BASE_RTP_PACKET_FLAG_PADDING : BASE_RTP_PACKET_FLAG_NONE;
     position++;
 
     // we don't set this->baseType because base RTP packet is mostly abstract class

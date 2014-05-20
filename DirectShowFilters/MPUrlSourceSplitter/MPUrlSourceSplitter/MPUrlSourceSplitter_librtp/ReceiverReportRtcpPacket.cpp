@@ -113,7 +113,7 @@ void CReceiverReportRtcpPacket::SetSenderSynchronizationSourceIdentifier(unsigne
 
 bool CReceiverReportRtcpPacket::HasProfileSpecificExtensions(void)
 {
-  return ((this->flags & FLAG_RECEIVER_REPORT_RTCP_PACKET_PROFILE_EXTENSIONS) != 0);
+  return ((this->flags & RECEIVER_REPORT_RTCP_PACKET_FLAG_PROFILE_EXTENSIONS) != 0);
 }
 
 void CReceiverReportRtcpPacket::Clear(void)

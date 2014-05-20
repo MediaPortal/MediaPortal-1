@@ -32,7 +32,7 @@
 CParserHoster::CParserHoster(CLogger *logger, CParameterCollection *configuration, IParserOutputStream *parserOutputStream)
   : COutputStreamHoster(logger, configuration, L"ParserHoster", L"mpurlsourcesplitter_parser_*.dll", parserOutputStream)
 {
-  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_PARSER_HOSTER_NAME, METHOD_CONSTRUCTOR_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_CONSTRUCTOR_START_FORMAT, MODULE_PARSER_HOSTER_NAME, METHOD_CONSTRUCTOR_NAME, this);
 
   this->parserOutputStream = parserOutputStream;
 
@@ -45,17 +45,14 @@ CParserHoster::CParserHoster(CLogger *logger, CParameterCollection *configuratio
   this->receiveDataWorkerShouldExit = false;
   this->parsingPlugin = NULL;
   this->parseMediaPackets = true;
-  this->setTotalLengthCalled = false;
-  this->endOfStreamReachedCalled = false;
-  this->streamPosition = 0;
-  this->total = 0;
-  this->estimate = true;
+  this->streams = new CStreamReceiveDataColletion();
 
   this->hReceiveDataWorkerThread = NULL;
   this->status = STATUS_NONE;
 
   this->supressData = false;
   this->startReceivingData = false;
+  this->liveStream = false;
   this->finishTime = 0;
   this->lockMutex = CreateMutex(NULL, FALSE, NULL);
 
@@ -73,6 +70,8 @@ CParserHoster::~CParserHoster(void)
     this->protocolHoster->RemoveAllPlugins();
     FREE_MEM_CLASS(this->protocolHoster);
   }
+
+  FREE_MEM_CLASS(this->streams);
 
   if (this->lockMutex != NULL)
   {
@@ -129,28 +128,42 @@ PluginConfiguration *CParserHoster::GetPluginConfiguration(void)
 
 // IOutputStream interface implementation
 
-HRESULT CParserHoster::SetTotalLength(int64_t total, bool estimate)
+HRESULT CParserHoster::SetStreamCount(unsigned int streamCount, bool liveStream)
 {
   if (this->outputStream != NULL)
   {
     if (status == STATUS_RECEIVING_DATA)
     {
-      return this->outputStream->SetTotalLength(total, estimate);
+      return this->outputStream->SetStreamCount(streamCount, liveStream);
     }
     else
     {
-      this->total = total;
-      this->estimate = estimate;
-      this->setTotalLengthCalled = true;
-    }
+      this->liveStream = liveStream;
 
-    return S_OK;
+      HRESULT result = (this->streams != NULL) ? S_OK : E_OUTOFMEMORY;
+
+      if (this->streams->Count() != streamCount)
+      {
+        this->streams->Clear();
+
+        for (unsigned int i = 0; (SUCCEEDED(result) && (i < streamCount)); i++)
+        {
+          CStreamReceiveData *stream = new CStreamReceiveData();
+          CHECK_POINTER_HRESULT(result, stream, result, E_OUTOFMEMORY);
+
+          CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->streams->Add(stream) ? result : E_OUTOFMEMORY);
+          CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(stream));
+        }
+      }
+
+      return result;
+    }
   }
 
   return E_NOT_VALID_STATE;
 }
 
-HRESULT CParserHoster::PushMediaPackets(CMediaPacketCollection *mediaPackets)
+HRESULT CParserHoster::PushStreamReceiveData(unsigned int streamId, CStreamReceiveData *streamReceiveData)
 {
   HRESULT result = E_NOT_VALID_STATE;
 
@@ -177,7 +190,7 @@ HRESULT CParserHoster::PushMediaPackets(CMediaPacketCollection *mediaPackets)
     {
       // is there is plugin which returned ParseResult::Known result
       CParameterCollection *currentConnectionParameters = this->protocolHoster->GetConnectionParameters();
-      this->parsingPlugin->ParseMediaPackets(mediaPackets, currentConnectionParameters);
+      this->parsingPlugin->ParseMediaPackets(streamId, streamReceiveData->GetMediaPacketCollection(), currentConnectionParameters);
       FREE_MEM_CLASS(currentConnectionParameters);
       result = S_OK;
     }
@@ -198,31 +211,31 @@ HRESULT CParserHoster::PushMediaPackets(CMediaPacketCollection *mediaPackets)
           // if parser returned ParseResult::NotKnown result than parser surely 
           // doesn't recognize any pattern in stream
 
-          ParseResult pluginParseResult = plugin->ParseMediaPackets(mediaPackets, currentConnectionParameters);
+          ParseResult pluginParseResult = plugin->ParseMediaPackets(streamId, streamReceiveData->GetMediaPacketCollection(), currentConnectionParameters);
           implementation->result = pluginParseResult;
 
           switch(pluginParseResult)
           {
           case ParseResult_Unspecified:
-            this->logger->Log(LOGGER_WARNING, L"%s: %s: parser '%s' return unspecified result", MODULE_PARSER_HOSTER_NAME, METHOD_PUSH_MEDIA_PACKETS_NAME, implementation->name);
+            this->logger->Log(LOGGER_WARNING, L"%s: %s: parser '%s' return unspecified result", MODULE_PARSER_HOSTER_NAME, METHOD_PUSH_STREAM_RECEIVE_DATA_NAME, implementation->name);
             break;
           case ParseResult_NotKnown:
-            this->logger->Log(LOGGER_INFO, L"%s: %s: parser '%s' doesn't recognize any pattern", MODULE_PARSER_HOSTER_NAME, METHOD_PUSH_MEDIA_PACKETS_NAME, implementation->name);
+            this->logger->Log(LOGGER_INFO, L"%s: %s: parser '%s' doesn't recognize any pattern", MODULE_PARSER_HOSTER_NAME, METHOD_PUSH_STREAM_RECEIVE_DATA_NAME, implementation->name);
             break;
           case ParseResult_Pending:
-            this->logger->Log(LOGGER_INFO, L"%s: %s: parser '%s' waits for more data", MODULE_PARSER_HOSTER_NAME, METHOD_PUSH_MEDIA_PACKETS_NAME, implementation->name);
+            this->logger->Log(LOGGER_INFO, L"%s: %s: parser '%s' waits for more data", MODULE_PARSER_HOSTER_NAME, METHOD_PUSH_STREAM_RECEIVE_DATA_NAME, implementation->name);
             pendingPlugin = true;
             break;
           case ParseResult_Known:
-            this->logger->Log(LOGGER_INFO, L"%s: %s: parser '%s' recognizes pattern", MODULE_PARSER_HOSTER_NAME, METHOD_PUSH_MEDIA_PACKETS_NAME, implementation->name);
+            this->logger->Log(LOGGER_INFO, L"%s: %s: parser '%s' recognizes pattern", MODULE_PARSER_HOSTER_NAME, METHOD_PUSH_STREAM_RECEIVE_DATA_NAME, implementation->name);
             this->parsingPlugin = plugin;
             break;
           case ParseResult_DrmProtected:
-            this->logger->Log(LOGGER_INFO, L"%s: %s: parser '%s' recognizes pattern, DRM protected", MODULE_PARSER_HOSTER_NAME, METHOD_PUSH_MEDIA_PACKETS_NAME, implementation->name);
+            this->logger->Log(LOGGER_INFO, L"%s: %s: parser '%s' recognizes pattern, DRM protected", MODULE_PARSER_HOSTER_NAME, METHOD_PUSH_STREAM_RECEIVE_DATA_NAME, implementation->name);
             drmProtected = true;
             break;
           default:
-            this->logger->Log(LOGGER_WARNING, L"%s: %s: parser '%s' return unknown result", MODULE_PARSER_HOSTER_NAME, METHOD_PUSH_MEDIA_PACKETS_NAME, implementation->name);
+            this->logger->Log(LOGGER_WARNING, L"%s: %s: parser '%s' return unknown result", MODULE_PARSER_HOSTER_NAME, METHOD_PUSH_STREAM_RECEIVE_DATA_NAME, implementation->name);
             break;
           }
         }
@@ -245,41 +258,7 @@ HRESULT CParserHoster::PushMediaPackets(CMediaPacketCollection *mediaPackets)
       this->parseMediaPackets = false;
 
       this->status = STATUS_RECEIVING_DATA;
-
-      if (pendingPluginsBeforeParsing)
-      {
-        // we need to resend any store media packets
-        CMediaPacketCollection *mediaPacketsToResend = NULL;
-        unsigned int mediaPacketsToResendCount = 0;
-        for (unsigned int i = 0; i < this->pluginImplementationsCount; i++)
-        {
-          ParserImplementation *implementation = (ParserImplementation *)this->GetPluginImplementation(i);
-          IParserPlugin *plugin = (IParserPlugin *)implementation->pImplementation;
-
-          CMediaPacketCollection *mediaPackets = plugin->GetStoredMediaPackets();
-          if (mediaPackets != NULL)
-          {
-            if (mediaPackets->Count() > mediaPacketsToResendCount)
-            {
-              mediaPacketsToResendCount = mediaPackets->Count();
-              mediaPacketsToResend = mediaPackets;
-            }
-          }
-        }
-
-        if ((mediaPacketsToResend != NULL) && (this->outputStream != NULL))
-        {
-          result = this->outputStream->PushMediaPackets(mediaPacketsToResend);
-          if (FAILED(result))
-          {
-            this->logger->Log(LOGGER_WARNING, L"%s: %s: resending media packets failed: 0x%08X", MODULE_PARSER_HOSTER_NAME, METHOD_PUSH_MEDIA_PACKETS_NAME, result);
-          }
-        }
-      }
-      else if (this->outputStream != NULL)
-      {
-        result = this->outputStream->PushMediaPackets(mediaPackets);
-      }
+      result = S_OK;
     }
     else if (this->parsingPlugin != NULL)
     {
@@ -291,16 +270,16 @@ HRESULT CParserHoster::PushMediaPackets(CMediaPacketCollection *mediaPackets)
       switch (action)
       {
       case Action_Unspecified:
-        this->logger->Log(LOGGER_WARNING, L"%s: %s: parser '%s' returns unspecified action", MODULE_PARSER_HOSTER_NAME, METHOD_PUSH_MEDIA_PACKETS_NAME, name);
+        this->logger->Log(LOGGER_WARNING, L"%s: %s: parser '%s' returns unspecified action", MODULE_PARSER_HOSTER_NAME, METHOD_PUSH_STREAM_RECEIVE_DATA_NAME, name);
         result = E_FAIL;
         break;
       case Action_GetNewConnection:
         this->status = STATUS_NEW_URL_SPECIFIED;
-        this->logger->Log(LOGGER_INFO, L"%s: %s: parser '%s' specifies new connection", MODULE_PARSER_HOSTER_NAME, METHOD_PUSH_MEDIA_PACKETS_NAME, name);
+        this->logger->Log(LOGGER_INFO, L"%s: %s: parser '%s' specifies new connection", MODULE_PARSER_HOSTER_NAME, METHOD_PUSH_STREAM_RECEIVE_DATA_NAME, name);
         result = S_OK;
         break;
       default:
-        this->logger->Log(LOGGER_WARNING, L"%s: %s: parser '%s' returns unknown action", MODULE_PARSER_HOSTER_NAME, METHOD_PUSH_MEDIA_PACKETS_NAME, name);
+        this->logger->Log(LOGGER_WARNING, L"%s: %s: parser '%s' returns unknown action", MODULE_PARSER_HOSTER_NAME, METHOD_PUSH_STREAM_RECEIVE_DATA_NAME, name);
         result = E_FAIL;
         break;
       }
@@ -310,6 +289,35 @@ HRESULT CParserHoster::PushMediaPackets(CMediaPacketCollection *mediaPackets)
       // there is pending plugin
       this->status = STATUS_PARSER_PENDING;
       result = S_OK;
+
+    }
+
+    // add received data to stream collection
+    CStreamReceiveData *stream = this->streams->GetItem(streamId);
+
+    if (streamReceiveData->GetTotalLength()->IsSet())
+    {
+      stream->GetTotalLength()->SetTotalLength(streamReceiveData->GetTotalLength()->GetTotalLength(), streamReceiveData->GetTotalLength()->IsEstimate());
+    }
+    if (streamReceiveData->GetEndOfStreamReached()->IsSet())
+    {
+      stream->GetEndOfStreamReached()->SetStreamPosition(streamReceiveData->GetEndOfStreamReached()->GetStreamPosition());
+    }
+    result = stream->SetStreamInputFormat(streamReceiveData->GetStreamInputFormat()) ? result : E_OUTOFMEMORY;
+    result = stream->GetMediaPacketCollection()->Append(streamReceiveData->GetMediaPacketCollection()) ? result : E_OUTOFMEMORY;
+    stream->SetFlags(streamReceiveData->GetFlags());
+
+    if (SUCCEEDED(result) && (this->status == STATUS_RECEIVING_DATA))
+    {
+      result = this->SetStreamCount(this->streams->Count(), this->liveStream);
+
+      for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->streams->Count())); i++)
+      {
+        CStreamReceiveData *stream = this->streams->GetItem(i);
+
+        result = this->PushStreamReceiveData(i, stream);
+        CHECK_CONDITION_EXECUTE(SUCCEEDED(result), stream->Clear());
+      }
     }
   }
   else
@@ -318,31 +326,12 @@ HRESULT CParserHoster::PushMediaPackets(CMediaPacketCollection *mediaPackets)
 
     if (this->outputStream != NULL)
     {
-      result = this->outputStream->PushMediaPackets(mediaPackets);
+      result = this->SetStreamCount(this->streams->Count(), this->liveStream);
+      CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->outputStream->PushStreamReceiveData(streamId, streamReceiveData));
     }
   }
 
   return result;
-}
-
-HRESULT CParserHoster::EndOfStreamReached(int64_t streamPosition)
-{
-  if (this->outputStream != NULL)
-  {
-    if (status == STATUS_RECEIVING_DATA)
-    {
-      return this->outputStream->EndOfStreamReached(streamPosition);
-    }
-    else
-    {
-      this->streamPosition = streamPosition;
-      this->endOfStreamReachedCalled = true;
-    }
-
-    return S_OK;
-  }
-
-  return E_NOT_VALID_STATE;
 }
 
 // ISimpleProtocol implementation
@@ -373,8 +362,7 @@ HRESULT CParserHoster::StartReceivingData(CParameterCollection *parameters)
         this->status = STATUS_NONE;
         newUrlSpecified = false;
 
-        this->setTotalLengthCalled = false;
-        this->endOfStreamReachedCalled = false;
+        this->streams->Clear();
 
         // clear all protocol plugins and parse url connection
         // the first thing of ParseUrl() is call to ClearSession()
@@ -453,7 +441,6 @@ HRESULT CParserHoster::StartReceivingData(CParameterCollection *parameters)
             if (FAILED(retval))
             {
               this->StopReceivingData();
-              //this->DestroyReceiveDataWorker();
             }
 
             if (this->status == STATUS_NEW_URL_SPECIFIED)
@@ -479,21 +466,6 @@ HRESULT CParserHoster::StartReceivingData(CParameterCollection *parameters)
     FREE_MEM_CLASS(urlConnection);
   }
 
-  if (SUCCEEDED(retval))
-  {
-    // call SetTotalLength() or EndOfStreamReached() if there is need
-
-    if (this->setTotalLengthCalled)
-    {
-      this->SetTotalLength(this->total, this->estimate);
-    }
-
-    if (this->endOfStreamReachedCalled)
-    {
-      this->EndOfStreamReached(this->streamPosition);
-    }
-  }
-
   return retval;
 }
 
@@ -508,6 +480,8 @@ HRESULT CParserHoster::StopReceivingData(void)
   this->protocolHoster->StopReceivingData();
   this->parsingPlugin = NULL;
   this->parseMediaPackets = true;
+  this->streams->Clear();
+  this->liveStream = false;
 
   for (unsigned int i = 0; i < this->pluginImplementationsCount; i++)
   {
@@ -519,14 +493,14 @@ HRESULT CParserHoster::StopReceivingData(void)
   return S_OK;
 }
 
-HRESULT CParserHoster::QueryStreamProgress(LONGLONG *total, LONGLONG *current)
+HRESULT CParserHoster::QueryStreamProgress(CStreamProgress *streamProgress)
 {
   HRESULT result = E_NOT_VALID_STATE;
 
   {
     CLockMutex lock(this->lockMutex, INFINITE);
 
-    result = (this->protocolHoster != NULL) ? this->protocolHoster->QueryStreamProgress(total, current) : E_NOT_VALID_STATE;
+    result = (this->protocolHoster != NULL) ? this->protocolHoster->QueryStreamProgress(streamProgress) : E_NOT_VALID_STATE;
   }
 
   return result;
@@ -570,8 +544,6 @@ HRESULT CParserHoster::ClearSession(void)
   // reset all protocol implementations
   this->protocolHoster->ClearSession();
 
-  this->setTotalLengthCalled = false;
-  this->endOfStreamReachedCalled = false;
   return S_OK;
 }
 
@@ -595,9 +567,9 @@ unsigned int CParserHoster::GetSeekingCapabilities(void)
   return (this->protocolHoster != NULL) ? this->protocolHoster->GetSeekingCapabilities() : SEEKING_METHOD_NONE;
 }
 
-int64_t CParserHoster::SeekToTime(int64_t time)
+int64_t CParserHoster::SeekToTime(unsigned int streamId, int64_t time)
 {
-  return (this->protocolHoster != NULL) ? this->protocolHoster->SeekToTime(time) : E_NOT_VALID_STATE;
+  return (this->protocolHoster != NULL) ? this->protocolHoster->SeekToTime(streamId, time) : E_NOT_VALID_STATE;
 }
 
 int64_t CParserHoster::SeekToPosition(int64_t start, int64_t end)
@@ -605,7 +577,7 @@ int64_t CParserHoster::SeekToPosition(int64_t start, int64_t end)
   return (this->protocolHoster != NULL) ? this->protocolHoster->SeekToPosition(start, end) : E_NOT_VALID_STATE;
 }
 
-void CParserHoster::SetSupressData(bool supressData)
+void CParserHoster::SetSupressData(unsigned int streamId, bool supressData)
 {
   // supress data can be set only when not receiving data in ReceiveDataWorker()
   CLockMutex lock(this->lockMutex, INFINITE);
@@ -613,7 +585,7 @@ void CParserHoster::SetSupressData(bool supressData)
   this->supressData = supressData;
   if (this->protocolHoster != NULL)
   {
-    this->protocolHoster->SetSupressData(supressData);
+    this->protocolHoster->SetSupressData(streamId, supressData);
   }
 }
 
@@ -704,24 +676,24 @@ unsigned int WINAPI CParserHoster::ReceiveDataWorker(LPVOID lpParam)
             receiveData->Clear();
             result = caller->protocolHoster->ReceiveData(receiveData);
 
+            if (SUCCEEDED(result) && (receiveData->IsSetStreamCount()))
+            {
+              result = caller->SetStreamCount(receiveData->GetStreams()->Count(), receiveData->IsLiveStream());
+            }
+
             if (SUCCEEDED(result))
             {
-              if (receiveData->GetTotalLength()->IsSet())
+              for (unsigned int i = 0; (SUCCEEDED(result) && (i < receiveData->GetStreams()->Count())); i++)
               {
-                caller->SetTotalLength(receiveData->GetTotalLength()->GetTotalLength(), receiveData->GetTotalLength()->IsEstimate());
-              }
+                CStreamReceiveData *stream = receiveData->GetStreams()->GetItem(i);
 
-              if (receiveData->GetMediaPacketCollection()->Count() != 0)
-              {
-                // we are receiving data
-                openedConnection = true;
+                if (SUCCEEDED(result) && (stream->GetMediaPacketCollection()->Count() != 0))
+                {
+                  // we are receiving data
+                  openedConnection = true;
 
-                caller->PushMediaPackets(receiveData->GetMediaPacketCollection());
-              }
-
-              if (receiveData->GetEndOfStreamReached()->IsSet())
-              {
-                caller->EndOfStreamReached(receiveData->GetEndOfStreamReached()->GetStreamPosition());
+                  result = caller->PushStreamReceiveData(i, stream);
+                }
               }
             }
 

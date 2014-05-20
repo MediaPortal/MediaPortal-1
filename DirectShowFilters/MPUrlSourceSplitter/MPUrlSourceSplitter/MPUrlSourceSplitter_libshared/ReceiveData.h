@@ -23,9 +23,13 @@
 #ifndef __RECEIVE_DATA_DEFINED
 #define __RECEIVE_DATA_DEFINED
 
-#include "SetTotalLength.h"
-#include "MediaPacketCollection.h"
-#include "EndOfStreamReached.h"
+#include "StreamReceiveDataColletion.h"
+
+#define RECEIVE_DATA_FLAG_NONE                                        0x00000000
+// specifies that stream count was set
+#define RECEIVE_DATA_FLAG_SET_STREAM_COUNT                            0x00000001
+// specifies that streams are in live streams
+#define RECEIVE_DATA_FLAG_LIVE_STREAM                                 0x00000002
 
 class CReceiveData
 {
@@ -35,35 +39,46 @@ public:
 
   /* get methods */
 
-  // gets total length
-  // @return : total length
-  CSetTotalLength *GetTotalLength(void);
-
-  // gets received media packets
-  // @return : media packet collection
-  CMediaPacketCollection *GetMediaPacketCollection(void);
-
-  // gets end of stream reached
-  // @return : end of stream reached
-  CEndOfStreamReached *GetEndOfStreamReached(void);
+  // gets received streams
+  // @return : received streams collection
+  CStreamReceiveDataColletion *GetStreams(void);
 
   /* set methods */
 
+  // sets stream count
+  // @param streamCount : the stream count to set
+  // @return : true if successful, false otherwise
+  bool SetStreamCount(unsigned int streamCount);
+
+  // sets live stream flag
+  // @param liveStream : true if live stream, false otherwise
+  void SetLiveStream(bool liveStream);
+
   /* other methods */
+
+  // tests if stream count was set
+  // @return : true if stream count was set, false otherwise
+  bool IsSetStreamCount(void);
+
+  // tests if streams are in live streams
+  // @return : true if streams are in live streams, false otherwise
+  bool IsLiveStream(void);
+
+  // tests if specific combination of flags is set
+  // @param flags : the set of flags to test
+  // @return : true if set of flags is set, false otherwise
+  bool IsSetFlags(unsigned int flags);
 
   // clears current instance to default state
   void Clear(void);
 
 private:
 
-  // holds total length
-  CSetTotalLength *totalLength;
+  // holds various flags
+  unsigned int flags;
 
-  // holds received media packets
-  CMediaPacketCollection *mediaPackets;
-
-  // holds end of stream reached
-  CEndOfStreamReached *endOfStreamReached;
+  // holds streams data
+  CStreamReceiveDataColletion *streams;
 };
 
 #endif

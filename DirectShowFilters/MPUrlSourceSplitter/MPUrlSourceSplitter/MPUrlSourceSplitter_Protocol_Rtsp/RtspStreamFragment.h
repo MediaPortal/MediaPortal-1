@@ -23,45 +23,28 @@
 #ifndef __RTSP_STREAM_FRAGMENT_DEFINED
 #define __RTSP_STREAM_FRAGMENT_DEFINED
 
-#include "LinearBuffer.h"
+#include "CacheFileItem.h"
 #include "RtpPacket.h"
 
-#include <stdint.h>
+#define RTSP_STREAM_FRAGMENT_FLAG_NONE                                CACHE_FILE_ITEM_FLAG_NONE
+#define RTSP_STREAM_FRAGMENT_FLAG_DOWNLOADED                          (1 << (CACHE_FILE_ITEM_FLAG_LAST + 1))
+#define RTSP_STREAM_FRAGMENT_FLAG_SET_RTP_TIMESTAMP                   (1 << (CACHE_FILE_ITEM_FLAG_LAST + 2))
 
-#define RTSP_STREAM_FRAGMENT_FLAG_NONE                                0x00000000
-#define RTSP_STREAM_FRAGMENT_FLAG_DOWNLOADED                          0x00000001
-#define RTSP_STREAM_FRAGMENT_FLAG_STORED_TO_FILE                      0x00000002
-
-class CRtspStreamFragment
+class CRtspStreamFragment : public CCacheFileItem
 {
 public:
   // initializes a new instance of CSegmentFragment class
-  CRtspStreamFragment(uint64_t fragmentStartTimestamp);
+  CRtspStreamFragment(void);
+  CRtspStreamFragment(int64_t fragmentRtpTimestamp, bool setRtpTimestampFlag);
 
   // destructor
-  ~CRtspStreamFragment(void);
+  virtual ~CRtspStreamFragment(void);
 
   /* get methods */
 
-  // gets fragment start timestamp in ms
-  // @return : fragment start timestamp in ms
-  uint64_t GetFragmentStartTimestamp(void);
-
-  // gets fragment end timestamp in ms
-  // @return : fragment end timestamp in ms or UINT64_MAX if not specified
-  uint64_t GetFragmentEndTimestamp(void);
-
-  // gets position of start of segment and fragment within store file
-  // @return : file position or -1 if error
-  int64_t GetStoreFilePosition(void);
-
-  // gets the length of segment and fragment data
-  // @return : the length of segment and fragment data
-  unsigned int GetLength(void);
-
-  // gets received data
-  // @return : received data
-  CLinearBuffer *GetReceivedData(void);
+  // gets fragment RTP timestamp
+  // @return : fragment RTP timestamp
+  int64_t GetFragmentRtpTimestamp(void);
 
   /* set methods */
 
@@ -69,51 +52,43 @@ public:
   // @param downloaded : true if segment and fragment is downloaded
   void SetDownloaded(bool downloaded);
 
-  // sets position within store file
-  // if segment and fragment is stored than linear buffer is deleted
-  // if store file path is cleared (NULL) than linear buffer is created
-  // @param position : the position of start of segment and fragment within store file or (-1) if segment and fragment is in memory
-  void SetStoredToFile(int64_t position);
+  // sets fragment RTP timestamp
+  // @param fragmentRtpTimestamp : the fragment RTP timestamp to set
+  void SetFragmentRtpTimestamp(int64_t fragmentRtpTimestamp);
 
-  // sets fragment start timestamp in ms
-  // @param fragmentStartTimestamp : the fragment start timestamp in ms to set
-  void SetFragmentStartTimestamp(uint64_t fragmentStartTimestamp);
-
-  // sets fragment end timestamp in ms
-  // @param fragmentEndTimestamp : the fragment end timestamp in ms to set
-  void SetFragmentEndTimestamp(uint64_t fragmentEndTimestamp);
+  // sets fragment RTP timestamp with specified flag
+  // @param fragmentRtpTimestamp : the fragment RTP timestamp to set
+  // @param setRtpTimestampFlag : fragment has set RTP timestamp flag
+  void SetFragmentRtpTimestamp(int64_t fragmentRtpTimestamp, bool setRtpTimestampFlag);
 
   /* other methods */
 
-  // tests if media packet is stored to file
-  // @return : true if media packet is stored to file, false otherwise
-  bool IsStoredToFile(void);
-
   // tests if fragment is downloaded
   // @return : true if downloaded, false otherwise
-  bool IsDownloaded(void);
+  virtual bool IsDownloaded(void);
 
-  // tests if specific combination of flags is set
-  // @return : true if specific combination of flags is set, false otherwise
-  bool IsFlags(unsigned int flags);
+  // tests if fragment has set RTP timestamp
+  // @return : true if fragment has set RTP timestamp, false otherwise
+  virtual bool IsSetFragmentRtpTimestamp(void);
 
   // deeply clones current instance
   // @return : deep clone of current instance or NULL if error
-  CRtspStreamFragment *Clone(void);
+  //CRtspStreamFragment *Clone(void);
 
-private:
-  // holds various flags
-  unsigned int flags;
-  // stores fragment start timestamp in ms
-  uint64_t fragmentStartTimestamp;
-  // stores fragment end timestamp in ms
-  uint64_t fragmentEndTimestamp;
-  // posittion in store file
-  int64_t storeFilePosition;
-  // the length of segment and fragment data
-  unsigned int length;
-  // holds buffer with received data
-  CLinearBuffer *receivedData;
+protected:
+  /* timestamps are with sign, sometimes are timestamps negative */
+
+  // stores fragment RTP timestamp
+  int64_t fragmentRtpTimestamp;
+
+  // gets new instance of RTSP stream fragment
+  // @return : new RTSP stream fragment instance or NULL if error
+  virtual CCacheFileItem *CreateItem(void);
+
+  // deeply clones current instance
+  // @param item : the cache file item instance to clone
+  // @return : true if successful, false otherwise
+  virtual bool InternalClone(CCacheFileItem *item);
 };
 
 #endif

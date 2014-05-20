@@ -42,6 +42,9 @@
     <ClInclude Include="MediaTypeCollection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="StreamReceiveDataColletion.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -57,6 +60,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MediaTypeCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StreamReceiveDataColletion.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -36,22 +36,17 @@ public:
 
   // IOutputStream interface
 
-  // sets total length of stream to output pin
-  // @param total : total length of stream in bytes
-  // @param estimate : specifies if length is estimate
-  // @return : S_OK if successful
-  HRESULT SetTotalLength(int64_t total, bool estimate);
+  // notifies output stream about stream count
+  // @param streamCount : the stream count
+  // @param liveStream : true if stream(s) are live, false otherwise
+  // @return : S_OK if successful, false otherwise
+  HRESULT SetStreamCount(unsigned int streamCount, bool liveStream);
 
-  // pushes media packets to filter
-  // @param mediaPackets : collection of media packets to push to filter
-  // @return : S_OK if successful
-  HRESULT PushMediaPackets(CMediaPacketCollection *mediaPackets);
-
-  // notifies output stream that end of stream was reached
-  // this method can be called only when protocol support SEEKING_METHOD_POSITION
-  // @param streamPosition : the last valid stream position
-  // @return : S_OK if successful
-  HRESULT EndOfStreamReached(int64_t streamPosition);
+  // pushes stream received data to filter
+  // @param streamId : the stream ID to push stream received data
+  // @param streamReceivedData : the stream received data to push to filter
+  // @return : S_OK if successful, error code otherwise
+  HRESULT PushStreamReceiveData(unsigned int streamId, CStreamReceiveData *streamReceiveData);
 
 protected:
   // reference to output stream methods

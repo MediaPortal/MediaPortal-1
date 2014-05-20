@@ -28,6 +28,7 @@
 #include "RtspDownloadRequest.h"
 #include "RtspDownloadResponse.h"
 #include "BaseRtpPacketCollection.h"
+#include "StreamReceiveData.h"
 
 // connection parameters
 
@@ -36,16 +37,7 @@
 // PARAMETER_NAME_RTSP_UDP_PREFERENCE
 // PARAMETER_NAME_RTSP_SAME_CONNECTION_TCP_PREFERENCE
 
-#define RTSP_DESCRIBE_CONTENT_TYPE                          L"application/sdp"
-
-struct SupportedPayloadType
-{
-  unsigned int payloadType;
-  const wchar_t *name;
-};
-
-#define TOTAL_SUPPORTED_PAYLOAD_TYPES                       1
-static struct SupportedPayloadType SUPPORTED_PAYLOAD_TYPES[TOTAL_SUPPORTED_PAYLOAD_TYPES] = { { 33, L"MP2T" } };
+#define RTSP_DESCRIBE_CONTENT_TYPE                                    L"application/sdp"
 
 #define RTSP_CURL_INSTANCE_FLAG_NONE                                  0x00000000
 #define RTSP_CURL_INSTANCE_FLAG_REQUEST_COMMAND_FINISHED              0x00000001
@@ -137,7 +129,7 @@ public:
   // tests if specific combination of flags is set
   // @param flags : the combination of flags to test
   // @return : true if specific combination of flags is set, false otherwise
-  virtual bool IsFlags(unsigned int flags);
+  virtual bool IsSetFlags(unsigned int flags);
 
   // initializes CURL instance
   // @param downloadRequest : download request

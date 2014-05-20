@@ -305,3 +305,34 @@ bool CLinearBuffer::ResizeBuffer(unsigned int size)
 
   return result;
 }
+
+bool CLinearBuffer::CompareBuffer(const unsigned char *buffer, unsigned int length)
+{
+  return this->CompareBuffer(buffer, length, 0);
+}
+
+bool CLinearBuffer::CompareBuffer(const unsigned char *buffer, unsigned int length, unsigned int start)
+{
+  unsigned int bufferOccupiedSpace = this->GetBufferOccupiedSpace();
+  bool result = ((buffer != NULL) && (length > 0) && (bufferOccupiedSpace > start) && ((bufferOccupiedSpace - start) == length));
+
+  if (result)
+  {
+    result = (memcmp(this->dataStart + start, buffer, length) == 0);
+  }
+
+  return result;
+}
+
+bool CLinearBuffer::CompareBuffer(CLinearBuffer *buffer)
+{
+  return this->CompareBuffer(buffer, 0);
+}
+
+bool CLinearBuffer::CompareBuffer(CLinearBuffer *buffer, unsigned int start)
+{
+  const unsigned char *dataStart = ((buffer != NULL) && (start < buffer->GetBufferOccupiedSpace())) ? (buffer->dataStart + start) : NULL;
+  unsigned int dataLength = (dataStart != NULL) ? (buffer->GetBufferOccupiedSpace() - start) : 0;
+
+  return this->CompareBuffer(dataStart, dataLength, 0);
+}

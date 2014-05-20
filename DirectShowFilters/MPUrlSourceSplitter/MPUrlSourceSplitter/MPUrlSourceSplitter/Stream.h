@@ -28,6 +28,8 @@
 class CStream
 {
 public:
+  enum StreamType { Video, Audio, Subpic, Unknown };
+
   CStream(void);
   ~CStream(void);
 
@@ -37,24 +39,32 @@ public:
   // @return : stream info or NULL if error
   CStreamInfo *GetStreamInfo(void);
 
-  // gets stream PID
-  // @return : stream PID
+  // gets stream PID in demuxer
+  // @return : stream PID in demuxer
   unsigned int GetPid(void);
 
   // gets stream language
   // @return : stream language or NULL if error
   const wchar_t *GetLanguage(void);
 
+  // gets stream type
+  // @return : stream type
+  StreamType GetStreamType(void);
+
   /* set methods */
 
-  // sets stream PID
-  // @param pid : the stream PID to set
+  // sets stream PID in demuxer
+  // @param pid : the stream PID in demuxer to set
   void SetPid(unsigned int pid);
 
   // sets stream language
   // @param language : the language to set
   // @return : true if successful, false otherwise
   bool SetLanguage(const wchar_t *language);
+
+  // sets stream type
+  // @param streamType : stream type to set
+  void SetStreamType(StreamType streamType);
 
   /* other methods */
 
@@ -74,6 +84,8 @@ protected:
   unsigned int pid;
 
   wchar_t *language;
+
+  StreamType streamType;
 };
 
 

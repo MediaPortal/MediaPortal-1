@@ -34,7 +34,7 @@ CMediaDescription::CMediaDescription(void)
   this->numberOfPorts = MEDIA_DESCRIPTION_NUMBER_OF_PORTS_DEFAULT;
   this->port = MEDIA_DESCRIPTION_PORT_DEFAULT;
   this->transportProtocol = NULL;
-  this->flags = FLAG_MEDIA_DESCRIPTION_NONE;
+  this->flags = MEDIA_DESCRIPTION_FLAG_NONE;
   this->attributes = new CAttributeCollection();
   this->mediaFormats = new CMediaFormatCollection();
   this->connectionData = NULL;
@@ -92,27 +92,27 @@ CConnectionData *CMediaDescription::GetConnectionData(void)
 
 bool CMediaDescription::IsAudio(void)
 {
-  return ((this->flags & FLAG_MEDIA_DESCRIPTION_MEDIA_TYPE_AUDIO) != 0);
+  return ((this->flags & MEDIA_DESCRIPTION_FLAG_MEDIA_TYPE_AUDIO) != 0);
 }
 
 bool CMediaDescription::IsVideo(void)
 {
-  return ((this->flags & FLAG_MEDIA_DESCRIPTION_MEDIA_TYPE_VIDEO) != 0);
+  return ((this->flags & MEDIA_DESCRIPTION_FLAG_MEDIA_TYPE_VIDEO) != 0);
 }
 
 bool CMediaDescription::IsApplication(void)
 {
-  return ((this->flags & FLAG_MEDIA_DESCRIPTION_MEDIA_TYPE_APPLICATION) != 0);
+  return ((this->flags & MEDIA_DESCRIPTION_FLAG_MEDIA_TYPE_APPLICATION) != 0);
 }
 
 bool CMediaDescription::IsData(void)
 {
-  return ((this->flags & FLAG_MEDIA_DESCRIPTION_MEDIA_TYPE_DATA) != 0);
+  return ((this->flags & MEDIA_DESCRIPTION_FLAG_MEDIA_TYPE_DATA) != 0);
 }
 
 bool CMediaDescription::IsControl(void)
 {
-  return ((this->flags & FLAG_MEDIA_DESCRIPTION_MEDIA_TYPE_CONTROL) != 0);
+  return ((this->flags & MEDIA_DESCRIPTION_FLAG_MEDIA_TYPE_CONTROL) != 0);
 }
 
 void CMediaDescription::Clear(void)
@@ -123,7 +123,7 @@ void CMediaDescription::Clear(void)
   FREE_MEM(this->transportProtocol);
   this->numberOfPorts = MEDIA_DESCRIPTION_NUMBER_OF_PORTS_DEFAULT;
   this->port = MEDIA_DESCRIPTION_PORT_DEFAULT;
-  this->flags = FLAG_MEDIA_DESCRIPTION_NONE;
+  this->flags = MEDIA_DESCRIPTION_FLAG_NONE;
 
   CHECK_CONDITION_NOT_NULL_EXECUTE(this->attributes, this->attributes->Clear());
   CHECK_CONDITION_NOT_NULL_EXECUTE(this->mediaFormats, this->mediaFormats->Clear());
@@ -274,32 +274,32 @@ unsigned int CMediaDescription::Parse(const wchar_t *buffer, unsigned int length
     {
       if (wcscmp(this->mediaType, MEDIA_DESCRIPTION_MEDIA_TYPE_AUDIO) == 0)
       {
-        this->flags |= FLAG_MEDIA_DESCRIPTION_MEDIA_TYPE_AUDIO;
+        this->flags |= MEDIA_DESCRIPTION_FLAG_MEDIA_TYPE_AUDIO;
       }
       if (wcscmp(this->mediaType, MEDIA_DESCRIPTION_MEDIA_TYPE_VIDEO) == 0)
       {
-        this->flags |= FLAG_MEDIA_DESCRIPTION_MEDIA_TYPE_VIDEO;
+        this->flags |= MEDIA_DESCRIPTION_FLAG_MEDIA_TYPE_VIDEO;
       }
       if (wcscmp(this->mediaType, MEDIA_DESCRIPTION_MEDIA_TYPE_APPLICATION) == 0)
       {
-        this->flags |= FLAG_MEDIA_DESCRIPTION_MEDIA_TYPE_APPLICATION;
+        this->flags |= MEDIA_DESCRIPTION_FLAG_MEDIA_TYPE_APPLICATION;
       }
       if (wcscmp(this->mediaType, MEDIA_DESCRIPTION_MEDIA_TYPE_DATA) == 0)
       {
-        this->flags |= FLAG_MEDIA_DESCRIPTION_MEDIA_TYPE_DATA;
+        this->flags |= MEDIA_DESCRIPTION_FLAG_MEDIA_TYPE_DATA;
       }
       if (wcscmp(this->mediaType, MEDIA_DESCRIPTION_MEDIA_TYPE_CONTROL) == 0)
       {
-        this->flags |= FLAG_MEDIA_DESCRIPTION_MEDIA_TYPE_CONTROL;
+        this->flags |= MEDIA_DESCRIPTION_FLAG_MEDIA_TYPE_CONTROL;
       }
 
       if (wcscmp(this->transportProtocol, MEDIA_DESCRIPTION_TRANSPORT_PROTOCOL_RTP_AVP) == 0)
       {
-        this->flags |= FLAG_MEDIA_DESCRIPTION_TRANSPORT_PROTOCOL_RTP_AVP;
+        this->flags |= MEDIA_DESCRIPTION_FLAG_TRANSPORT_PROTOCOL_RTP_AVP;
       }
       if (wcscmp(this->transportProtocol, MEDIA_DESCRIPTION_TRANSPORT_PROTOCOL_UDP) == 0)
       {
-        this->flags |= FLAG_MEDIA_DESCRIPTION_TRANSPORT_PROTOCOL_UDP;
+        this->flags |= MEDIA_DESCRIPTION_FLAG_TRANSPORT_PROTOCOL_UDP;
       }
 
       CKnownPayloadTypeCollection *knownPayloadTypes = new CKnownPayloadTypeCollection();
@@ -353,7 +353,7 @@ unsigned int CMediaDescription::Parse(const wchar_t *buffer, unsigned int length
                   result = mediaFormat->SetName(rtpMap->GetEncodingName()) ? result : 0;
                   mediaFormat->SetClockRate(rtpMap->GetClockRate());
 
-                  if ((this->flags & FLAG_MEDIA_DESCRIPTION_MEDIA_TYPE_AUDIO) != 0)
+                  if ((this->flags & MEDIA_DESCRIPTION_FLAG_MEDIA_TYPE_AUDIO) != 0)
                   {
                     mediaFormat->SetChannels(GetValueUnsignedInt(rtpMap->GetEncodingParameters(), MEDIA_FORMAT_CHANNELS_UNSPECIFIED));
                   }

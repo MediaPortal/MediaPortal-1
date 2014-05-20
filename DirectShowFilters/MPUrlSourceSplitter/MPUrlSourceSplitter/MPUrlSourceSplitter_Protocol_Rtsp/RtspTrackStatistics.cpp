@@ -24,7 +24,7 @@
 
 CRtspTrackStatistics::CRtspTrackStatistics()
 {
-  this->flags = RTSP_TRACK_FLAG_NONE;
+  this->flags = RTSP_TRACK_STATISTICS_FLAG_NONE;
 
   this->jitter = 0;
   this->lastTime = 0;
@@ -186,7 +186,7 @@ void CRtspTrackStatistics::AdjustExpectedAndLostPacketCount(unsigned int sequenc
     this->receivedPacketCount = 0;
     this->lastReceivedPacketCount = 0;
     this->previousLastReceivedPacketCount = 0;
-    this->flags |= RTSP_TRACK_FLAG_SET_SEQUENCE_NUMBER;
+    this->flags |= RTSP_TRACK_STATISTICS_FLAG_SET_SEQUENCE_NUMBER;
   }
   else
   {
@@ -215,7 +215,7 @@ void CRtspTrackStatistics::AdjustLastSenderReportTimestamp(uint64_t ntpTimestamp
 
 bool CRtspTrackStatistics::IsSetSequenceNumber(void)
 {
-  return this->IsSetFlags(RTSP_TRACK_FLAG_SET_SEQUENCE_NUMBER);
+  return this->IsSetFlags(RTSP_TRACK_STATISTICS_FLAG_SET_SEQUENCE_NUMBER);
 }
 
 bool CRtspTrackStatistics::IsSetFlags(unsigned int flags)

@@ -34,6 +34,7 @@
 #define OUTPUT_PIN_PACKET_FLAG_PACKET_MOV_TEXT                        0x00000020
 #define OUTPUT_PIN_PACKET_FLAG_PACKET_FORCED_SUBTITLE                 0x00000040
 
+#define DEMUXER_ID_UNSPECIFIED                                        UINT_MAX
 #define STREAM_PID_UNSPECIFIED                                        UINT_MAX
 
 class COutputPinPacket
@@ -60,6 +61,11 @@ public:
   // gets media type
   // @return : packet media type
   AM_MEDIA_TYPE *GetMediaType(void);
+
+  // gets demuxer ID
+  // it is specified for splitter, which needs to identify output pin for specific output packet
+  // @return : demuxer ID or DEMUXER_ID_UNSPECIFIED if not specified
+  unsigned int GetDemuxerId(void);
 
   // gets stream PID
   // it is specified for splitter, which needs to identify output pin for specific output packet
@@ -99,6 +105,10 @@ public:
   // sets media type
   // @param mediaType : the media type to set
   void SetMediaType(AM_MEDIA_TYPE *mediaType);
+
+  // sets demuxer ID
+  // @param demuxerId : the demuxer ID to set
+  void SetDemuxerId(unsigned int demuxerId);
 
   // sets stream PID
   // @param streamPid : the stream PID to set
@@ -158,6 +168,9 @@ protected:
 
   // holds media type
   AM_MEDIA_TYPE *mediaType;
+
+  // holds demuxer ID for splitter (it specifies to which output pin goes this packet)
+  unsigned int demuxerId;
 
   // holds stream PID for splitter (it specifies to which output pin goes this packet)
   unsigned int streamPid;

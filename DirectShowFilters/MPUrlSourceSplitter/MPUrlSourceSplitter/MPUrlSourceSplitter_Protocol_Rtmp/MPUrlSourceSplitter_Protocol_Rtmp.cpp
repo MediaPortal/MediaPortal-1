@@ -84,7 +84,7 @@ CMPUrlSourceSplitter_Protocol_Rtmp::CMPUrlSourceSplitter_Protocol_Rtmp(CLogger *
   }
 
   this->logger = new CLogger(logger);
-  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_CONSTRUCTOR_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME, this);
 
   wchar_t *version = GetVersionInfo(COMMIT_INFO_MP_URL_SOURCE_SPLITTER_PROTOCOL_RTMP, DATE_INFO_MP_URL_SOURCE_SPLITTER_PROTOCOL_RTMP);
   if (version != NULL)
@@ -264,7 +264,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(CReceiveData *receiveDat
 
   CLockMutex lock(this->lockMutex, INFINITE);
 
-  if (this->IsConnected())
+  // RTMP has always one stream
+  if (this->IsConnected() && (receiveData->SetStreamCount(1)))
   {
     if (!this->wholeStreamDownloaded)
     {
@@ -718,7 +719,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(CReceiveData *receiveDat
                 mediaPacket->SetStart(this->bytePosition);
                 mediaPacket->SetEnd(this->bytePosition + flvPacket->GetSize() - 1);
 
-                if (!receiveData->GetMediaPacketCollection()->Add(mediaPacket))
+                if (!receiveData->GetStreams()->GetItem(0)->GetMediaPacketCollection()->Add(mediaPacket))
                 {
                   FREE_MEM_CLASS(mediaPacket);
                 }
@@ -772,7 +773,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(CReceiveData *receiveDat
             // specified duration in RTMP connect response
             this->streamLength = this->bytePosition * this->duration / lastFlvPacketTimestamp;
             this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length (by time): %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-            receiveData->GetTotalLength()->SetTotalLength(this->streamLength, true);
+            receiveData->GetStreams()->GetItem(0)->GetTotalLength()->SetTotalLength(this->streamLength, true);
           }
         }
         else
@@ -784,14 +785,14 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(CReceiveData *receiveDat
             // just make guess
             this->streamLength = LONGLONG(MINIMUM_RECEIVED_DATA_FOR_SPLITTER);
             this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-            receiveData->GetTotalLength()->SetTotalLength(this->streamLength, true);
+            receiveData->GetStreams()->GetItem(0)->GetTotalLength()->SetTotalLength(this->streamLength, true);
           }
           else if ((this->bytePosition > (this->streamLength * 3 / 4)))
           {
             // it is time to adjust stream length, we are approaching to end but still we don't know total length
             this->streamLength = this->bytePosition * 2;
             this->logger->Log(LOGGER_VERBOSE, L"%s: %s: adjusting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-            receiveData->GetTotalLength()->SetTotalLength(this->streamLength, true);
+            receiveData->GetStreams()->GetItem(0)->GetTotalLength()->SetTotalLength(this->streamLength, true);
           }
         }
       }
@@ -820,14 +821,14 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(CReceiveData *receiveDat
             {
               this->streamLength = this->bytePosition;
               this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-              receiveData->GetTotalLength()->SetTotalLength(this->streamLength, false);
+              receiveData->GetStreams()->GetItem(0)->GetTotalLength()->SetTotalLength(this->streamLength, false);
               this->setLength = true;
             }
 
             if (!this->setEndOfStream)
             {
               // notify filter the we reached end of stream
-              receiveData->GetEndOfStreamReached()->SetStreamPosition(max(0, this->bytePosition - 1));
+              receiveData->GetStreams()->GetItem(0)->GetEndOfStreamReached()->SetStreamPosition(max(0, this->bytePosition - 1));
               this->setEndOfStream = true;
             }
           }
@@ -971,7 +972,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(CReceiveData *receiveDat
       {
         this->streamLength = this->bytePosition;
         this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-        receiveData->GetTotalLength()->SetTotalLength(this->streamLength, false);
+        receiveData->GetStreams()->GetItem(0)->GetTotalLength()->SetTotalLength(this->streamLength, false);
         this->setLength = true;
       }
     }
@@ -1170,16 +1171,16 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::StopReceivingData(void)
   return S_OK;
 }
 
-HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::QueryStreamProgress(LONGLONG *total, LONGLONG *current)
+HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::QueryStreamProgress(CStreamProgress *streamProgress)
 {
   HRESULT result = S_OK;
-  CHECK_POINTER_DEFAULT_HRESULT(result, total);
-  CHECK_POINTER_DEFAULT_HRESULT(result, current);
+  CHECK_POINTER_DEFAULT_HRESULT(result, streamProgress);
+  CHECK_CONDITION_HRESULT(result, streamProgress->GetStreamId() == 0, result, E_INVALIDARG);
 
   if (SUCCEEDED(result))
   {
-    *total = (this->streamLength == 0) ? 1 : this->streamLength;
-    *current = (this->streamLength == 0) ? 0 : this->bytePosition;
+    streamProgress->SetTotalLength((this->streamLength == 0) ? 1 : this->streamLength);
+    streamProgress->SetCurrentLength((this->streamLength == 0) ? 0 : this->bytePosition);
 
     if (!this->setLength)
     {
@@ -1194,18 +1195,11 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::QueryStreamAvailableLength(CStreamAv
 {
   HRESULT result = S_OK;
   CHECK_POINTER_DEFAULT_HRESULT(result, availableLength);
+  CHECK_CONDITION_HRESULT(result, availableLength->GetStreamId() == 0, result, E_INVALIDARG);
 
   if (SUCCEEDED(result))
   {
-    availableLength->SetQueryResult(S_OK);
-    if (!this->setLength)
-    {
-      availableLength->SetAvailableLength(this->bytePosition);
-    }
-    else
-    {
-      availableLength->SetAvailableLength(this->streamLength);
-    }
+    availableLength->SetAvailableLength((this->setLength) ? this->streamLength : this->bytePosition);
   }
 
   return result;

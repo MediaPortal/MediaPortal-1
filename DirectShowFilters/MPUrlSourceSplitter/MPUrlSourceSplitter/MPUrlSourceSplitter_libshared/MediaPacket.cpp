@@ -21,52 +21,92 @@
 #include "StdAfx.h"
 
 #include "MediaPacket.h"
+#include "Utilities.h"
 
 CMediaPacket::CMediaPacket(void)
+  : CCacheFileItem()
 {
-  this->buffer = new CLinearBuffer();
-  this->buffer->DeleteBuffer();
-
   this->start = 0;
   this->end = 0;
-  this->storeFilePosition = -1;
+  this->presentationTimestamp = MEDIA_PACKET_PRESENTATION_TIMESTAMP_UNDEFINED;
+  this->presentationTimestampTicksPerSecond = 0;
 }
 
 CMediaPacket::~CMediaPacket(void)
 {
-  FREE_MEM_CLASS(this->buffer);
 }
 
-CLinearBuffer *CMediaPacket::GetBuffer()
+/* get methods */
+
+int64_t CMediaPacket::GetStart(void)
 {
-  return this->buffer;
+  return this->start;
 }
 
-CMediaPacket *CMediaPacket::Clone(void)
+int64_t CMediaPacket::GetEnd(void)
 {
-  CMediaPacket *clone = new CMediaPacket();
-  clone->start = this->start;
-  clone->end = this->end;
-  clone->storeFilePosition = this->storeFilePosition;
+  return this->end;
+}
 
-  // because in clone is created linear buffer we need to delete clone buffer
-  FREE_MEM_CLASS(clone->buffer);
+int64_t CMediaPacket::GetPresentationTimestamp(void)
+{
+  return this->presentationTimestamp;
+}
 
-  if (!this->IsStoredToFile())
+int64_t CMediaPacket::GetPresentationTimestampInDirectShowTimeUnits(void)
+{
+  int64_t result = MEDIA_PACKET_PRESENTATION_TIMESTAMP_UNDEFINED;
+
+  if (this->GetPresentationTimestamp() != MEDIA_PACKET_PRESENTATION_TIMESTAMP_UNDEFINED)
   {
-    // media packet is not stored in file
-    // we need to copy buffer in that case
-    clone->buffer = this->buffer->Clone();
-
-    if (clone->buffer == NULL)
+    if (this->GetPresentationTimestampTicksPerSecond() == DSHOW_TIME_BASE)
     {
-      // error occured while cloning current instance
-      FREE_MEM_CLASS(clone);
+      result = this->GetPresentationTimestamp();
+    }
+    else
+    {
+      // there can be a problem in multiplication and dividing of big numbers
+      // we can't use 128-bit numbers, so we need to use greatest common divisor method
+
+      unsigned int gcd = GreatestCommonDivisor(DSHOW_TIME_BASE, this->GetPresentationTimestampTicksPerSecond());
+      unsigned int numerator = DSHOW_TIME_BASE / gcd;
+      unsigned int denumerator = this->GetPresentationTimestampTicksPerSecond() / gcd;
+
+      result = this->GetPresentationTimestamp() * numerator / denumerator;
     }
   }
 
-  return clone;
+  return result;
 }
+
+unsigned int CMediaPacket::GetPresentationTimestampTicksPerSecond(void)
+{
+  return this->presentationTimestampTicksPerSecond;
+}
+
+/* set methods */
+
+void CMediaPacket::SetStart(int64_t position)
+{
+  this->start = position;
+}
+
+void CMediaPacket::SetEnd(int64_t position)
+{
+  this->end = position;
+}
+
+void CMediaPacket::SetPresentationTimestamp(int64_t presentationTimestamp)
+{
+  this->presentationTimestamp = presentationTimestamp;
+}
+
+void CMediaPacket::SetPresentationTimestampTicksPerSecond(unsigned int presentationTimestampTicksPerSecond)
+{
+  this->presentationTimestampTicksPerSecond = presentationTimestampTicksPerSecond;
+}
+
+/* other methods */
 
 CMediaPacket *CMediaPacket::CreateMediaPacketBasedOnPacket(int64_t start, int64_t end)
 {
@@ -117,54 +157,30 @@ CMediaPacket *CMediaPacket::CreateMediaPacketBasedOnPacket(int64_t start, int64_
   return mediaPacket;
 }
 
-int64_t CMediaPacket::GetStart(void)
+/* protected methods */
+
+CCacheFileItem *CMediaPacket::CreateItem(void)
 {
-  return this->start;
+  return new CMediaPacket();
 }
 
-int64_t CMediaPacket::GetEnd(void)
+bool CMediaPacket::InternalClone(CCacheFileItem *item)
 {
-  return this->end;
-}
-
-
-void CMediaPacket::SetStart(int64_t position)
-{
-  this->start = position;
-}
-
-void CMediaPacket::SetEnd(int64_t position)
-{
-  this->end = position;
-}
-
-bool CMediaPacket::IsStoredToFile(void)
-{
-  return (this->storeFilePosition != (-1));
-}
-
-void CMediaPacket::SetStoredToFile(LONGLONG position)
-{
-  this->storeFilePosition = position;
-  if (this->storeFilePosition != (-1))
+  bool result = __super::InternalClone(item);
+  
+  if (result)
   {
-    if (this->buffer != NULL)
+    CMediaPacket *mediaPacket = dynamic_cast<CMediaPacket *>(item);
+    result &= (mediaPacket != NULL);
+
+    if (result)
     {
-      delete this->buffer;
-    }
-    this->buffer = NULL;
-  }
-  else
-  {
-    if (this->buffer == NULL)
-    {
-      this->buffer = new CLinearBuffer();
-      this->buffer->DeleteBuffer();
+      mediaPacket->start = this->start;
+      mediaPacket->end = this->end;
+      mediaPacket->presentationTimestamp = this->presentationTimestamp;
+      mediaPacket->presentationTimestampTicksPerSecond = this->presentationTimestampTicksPerSecond;
     }
   }
-}
 
-LONGLONG CMediaPacket::GetStoreFilePosition(void)
-{
-  return this->storeFilePosition;
+  return result;
 }

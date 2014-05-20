@@ -27,22 +27,21 @@
 
 #define RTSP_TRANSPORT_RESPONSE_HEADER_TYPE                               L"Transport"
 
-#define FLAG_RTSP_TRANSPORT_RESPONSE_HEADER_NONE                          0x00000000
-#define FLAG_RTSP_TRANSPORT_RESPONSE_HEADER_UNICAST                       0x00000001
-#define FLAG_RTSP_TRANSPORT_RESPONSE_HEADER_MULTICAST                     0x00000002
-#define FLAG_RTSP_TRANSPORT_RESPONSE_HEADER_INTERLEAVED                   0x00000004
-#define FLAG_RTSP_TRANSPORT_RESPONSE_HEADER_TRANSPORT_PROTOCOL_RTP        0x00000008
-#define FLAG_RTSP_TRANSPORT_RESPONSE_HEADER_PROFILE_AVP                   0x00000010
-#define FLAG_RTSP_TRANSPORT_RESPONSE_HEADER_LOWER_TRANSPORT_TCP           0x00000020
-#define FLAG_RTSP_TRANSPORT_RESPONSE_HEADER_LOWER_TRANSPORT_UDP           0x00000040
-#define FLAG_RTSP_TRANSPORT_RESPONSE_HEADER_APPEND                        0x00000080
-#define FLAG_RTSP_TRANSPORT_RESPONSE_HEADER_TIME_TO_LIVE                  0x00000100
-#define FLAG_RTSP_TRANSPORT_RESPONSE_HEADER_LAYERS                        0x00000200
-#define FLAG_RTSP_TRANSPORT_RESPONSE_HEADER_PORT                          0x00000400
-#define FLAG_RTSP_TRANSPORT_RESPONSE_HEADER_CLIENT_PORT                   0x00000800
-#define FLAG_RTSP_TRANSPORT_RESPONSE_HEADER_SERVER_PORT                   0x00001000
-#define FLAG_RTSP_TRANSPORT_RESPONSE_HEADER_SSRC                          0x00002000
-#define FLAG_RTSP_TRANSPORT_RESPONSE_HEADER_MODE                          0x00004000
+#define RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_UNICAST                       (1 << (MAX_RTSP_RESPONSE_HEADER_FLAG + 1))
+#define RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_MULTICAST                     (1 << (MAX_RTSP_RESPONSE_HEADER_FLAG + 2))
+#define RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_INTERLEAVED                   (1 << (MAX_RTSP_RESPONSE_HEADER_FLAG + 3))
+#define RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_TRANSPORT_PROTOCOL_RTP        (1 << (MAX_RTSP_RESPONSE_HEADER_FLAG + 4))
+#define RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_PROFILE_AVP                   (1 << (MAX_RTSP_RESPONSE_HEADER_FLAG + 5))
+#define RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_LOWER_TRANSPORT_TCP           (1 << (MAX_RTSP_RESPONSE_HEADER_FLAG + 6))
+#define RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_LOWER_TRANSPORT_UDP           (1 << (MAX_RTSP_RESPONSE_HEADER_FLAG + 7))
+#define RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_APPEND                        (1 << (MAX_RTSP_RESPONSE_HEADER_FLAG + 8))
+#define RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_TIME_TO_LIVE                  (1 << (MAX_RTSP_RESPONSE_HEADER_FLAG + 9))
+#define RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_LAYERS                        (1 << (MAX_RTSP_RESPONSE_HEADER_FLAG + 10))
+#define RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_PORT                          (1 << (MAX_RTSP_RESPONSE_HEADER_FLAG + 11))
+#define RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_CLIENT_PORT                   (1 << (MAX_RTSP_RESPONSE_HEADER_FLAG + 12))
+#define RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_SERVER_PORT                   (1 << (MAX_RTSP_RESPONSE_HEADER_FLAG + 13))
+#define RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_SSRC                          (1 << (MAX_RTSP_RESPONSE_HEADER_FLAG + 14))
+#define RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_MODE                          (1 << (MAX_RTSP_RESPONSE_HEADER_FLAG + 15))
 
 #define RTSP_TRANSPORT_RESPONSE_HEADER_PARAMETER_UNICAST                  L"unicast"
 #define RTSP_TRANSPORT_RESPONSE_HEADER_PARAMETER_MULTICAST                L"multicast"
@@ -225,11 +224,6 @@ public:
   // @return : true if synchronization source identifier is set, false otherwise
   virtual bool IsSynchronizationSourceIdentifier(void);
 
-  // tests if flag is set
-  // @param flag : the flag to test
-  // @return : true if flag is set, false otherwise
-  virtual bool IsSetFlag(unsigned int flag);
-
   // deep clones of current instance
   // @return : deep clone of current instance or NULL if error
   virtual CRtspTransportResponseHeader *Clone(void);
@@ -241,9 +235,6 @@ public:
   virtual bool Parse(const wchar_t *header, unsigned int length);
 
 protected:
-
-  // holds various flags
-  unsigned int flags;
 
   // holds transport protocol (it should be RTP)
   wchar_t *transportProtocol;

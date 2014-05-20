@@ -94,19 +94,32 @@ void CPayloadType::SetChannels(unsigned int channels)
 
 CPayloadType *CPayloadType::Clone(void)
 {
-  bool res = true;
   CPayloadType *result = new CPayloadType();
+  bool res = (result != NULL);
 
-  if (result != NULL)
+  if (res)
   {
-    
-    result->id = this->id;
-    result->channels = this->channels;
-    result->clockRate = this->clockRate;
-    SET_STRING_AND_RESULT_WITH_NULL(result->encodingName, this->encodingName, res);
-    result->mediaType = this->mediaType;
+    res &= this->CloneInternal(result);
   }
 
   CHECK_CONDITION_EXECUTE(!res, FREE_MEM_CLASS(result));
+  return result;
+}
+
+/* protected methods */
+
+bool CPayloadType::CloneInternal(CPayloadType *payloadType)
+{
+  bool result = (payloadType != NULL);
+
+  if (result)
+  {
+    payloadType->id = this->id;
+    payloadType->channels = this->channels;
+    payloadType->clockRate = this->clockRate;
+    SET_STRING_AND_RESULT_WITH_NULL(payloadType->encodingName, this->encodingName, result);
+    payloadType->mediaType = this->mediaType;
+  }
+
   return result;
 }

@@ -59,6 +59,8 @@
 
 #include "CanonicalEndPointSourceDescriptionItem.h"
 
+#include "RtspSupportedPayloadTypeCollection.h"
+
 #include "hex.h"
 
 #define METHOD_PROCESS_RECEIVED_BASE_RTP_PACKETS_NAME                 L"ProcessReceivedBaseRtpPackets()"
@@ -159,10 +161,10 @@ void CRtspCurlInstance::SetIgnoreRtpPayloadType(bool ignoreRtpPayloadType)
 
 bool CRtspCurlInstance::IsIgnoreRtpPayloadTypeFlag(void)
 {
-  return this->IsFlags(RTSP_CURL_INSTANCE_FLAG_IGNORE_RTP_PAYLOAD_TYPE);
+  return this->IsSetFlags(RTSP_CURL_INSTANCE_FLAG_IGNORE_RTP_PAYLOAD_TYPE);
 }
 
-bool CRtspCurlInstance::IsFlags(unsigned int flags)
+bool CRtspCurlInstance::IsSetFlags(unsigned int flags)
 {
   return ((this->flags & flags) == flags);
 }
@@ -255,14 +257,14 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
 
             if (errorCode == CURLE_OK)
             {
-              if (!publicHeader->IsSetFlag(FLAG_RTSP_PUBLIC_RESPONSE_HEADER_METHOD_DESCRIBE | FLAG_RTSP_PUBLIC_RESPONSE_HEADER_METHOD_SETUP | FLAG_RTSP_PUBLIC_RESPONSE_HEADER_METHOD_PLAY | FLAG_RTSP_PUBLIC_RESPONSE_HEADER_METHOD_TEARDOWN))
+              if (!publicHeader->IsSetFlags(RTSP_PUBLIC_RESPONSE_HEADER_FLAG_METHOD_DESCRIBE | RTSP_PUBLIC_RESPONSE_HEADER_FLAG_METHOD_SETUP | RTSP_PUBLIC_RESPONSE_HEADER_FLAG_METHOD_PLAY | RTSP_PUBLIC_RESPONSE_HEADER_FLAG_METHOD_TEARDOWN))
               {
                 this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, this->protocolName, METHOD_INITIALIZE_NAME, L"not all required methods (DESCRIBE, SETUP, PLAY and TEARDOWN) defined in PUBLIC RTSP OPTIONS response header");
                 errorCode = CURLE_FAILED_INIT;
               }
 
               // test for GET_PARAMETER method, we can use it to maintain connection
-              this->flags |= publicHeader->IsSetFlag(FLAG_RTSP_PUBLIC_RESPONSE_HEADER_METHOD_GET_PARAMETER) ? RTSP_CURL_INSTANCE_FLAG_METHOD_GET_PARAMETER_SUPPORTED : RTSP_CURL_INSTANCE_FLAG_NONE;
+              this->flags |= publicHeader->IsSetFlags(RTSP_PUBLIC_RESPONSE_HEADER_FLAG_METHOD_GET_PARAMETER) ? RTSP_CURL_INSTANCE_FLAG_METHOD_GET_PARAMETER_SUPPORTED : RTSP_CURL_INSTANCE_FLAG_NONE;
             }
           }
         }
@@ -387,6 +389,7 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
     transportPreference = min(transportPreference, this->udpPreference);
 
     bool negotiatedTransport = false;
+    CRtspSupportedPayloadTypeCollection *supportedPayloadTypes = new CRtspSupportedPayloadTypeCollection();
 
     while ((!negotiatedTransport) && (errorCode == CURLE_OK) && (endTicks > GetTickCount()))
     {
@@ -404,35 +407,33 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
         for (unsigned int i = 0; ((error == CURLE_OK) && (i < this->rtspDownloadResponse->GetSessionDescription()->GetMediaDescriptions()->Count())); i++)
         {
           CMediaDescription *mediaDescription = this->rtspDownloadResponse->GetSessionDescription()->GetMediaDescriptions()->GetItem(i);
+          CRtspPayloadType *supportedPayloadType = NULL;
 
-          bool supportedPayloadType = false;
-          for (unsigned int j = 0; ((error == CURLE_OK) && (!supportedPayloadType) && (j < TOTAL_SUPPORTED_PAYLOAD_TYPES)); j++)
+          if (mediaDescription->GetMediaFormats()->Count() == 1)
           {
-            SupportedPayloadType payloadType = SUPPORTED_PAYLOAD_TYPES[j];
+            // there must be only one media format
+            CMediaFormat *mediaFormat = mediaDescription->GetMediaFormats()->GetItem(0);
 
-            if (mediaDescription->GetMediaFormats()->Count() == 1)
+            for (unsigned int j = 0; ((error == CURLE_OK) && (supportedPayloadType == NULL) && (j < supportedPayloadTypes->Count())); j++)
             {
-              // there must be only one media format
-              CMediaFormat *mediaFormat = mediaDescription->GetMediaFormats()->GetItem(0);
+              CRtspPayloadType *payloadType = supportedPayloadTypes->GetItem(j);
 
-              if ((mediaFormat->GetPayloadType() == payloadType.payloadType) ||
-                  (CompareWithNull(mediaFormat->GetName(), payloadType.name) == 0))
+              if ((mediaFormat->GetPayloadType() == payloadType->GetId()) ||
+                (CompareWithNull(mediaFormat->GetName(), payloadType->GetEncodingName()) == 0))
               {
-                supportedPayloadType = true;
-              }
-              else
-              {
-                this->logger->Log(LOGGER_WARNING, L"%s: %s: media description format not supported: %d, %s", this->protocolName, METHOD_INITIALIZE_NAME, mediaFormat->GetPayloadType(), (mediaFormat->GetName() == NULL) ? L"unknown" : mediaFormat->GetName());
+                supportedPayloadType = payloadType;
               }
             }
-            else
+
+            if (supportedPayloadType == NULL)
             {
-              this->logger->Log(LOGGER_ERROR, L"%s: %s: media description specify more media formats as allowed: '%s'", this->protocolName, METHOD_INITIALIZE_NAME, mediaDescription->GetTagContent());
+              this->logger->Log(LOGGER_WARNING, L"%s: %s: media description format not supported: %d, %s", this->protocolName, METHOD_INITIALIZE_NAME, mediaFormat->GetPayloadType(), (mediaFormat->GetName() == NULL) ? L"unknown" : mediaFormat->GetName());
+              continue;
             }
           }
-
-          if (!supportedPayloadType)
+          else
           {
+            this->logger->Log(LOGGER_ERROR, L"%s: %s: media description specify more media formats as allowed: '%s'", this->protocolName, METHOD_INITIALIZE_NAME, mediaDescription->GetTagContent());
             continue;
           }
 
@@ -503,7 +504,7 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
               header->SetLowerTransport(RTSP_TRANSPORT_REQUEST_HEADER_LOWER_TRANSPORT_TCP);
               header->SetMinInterleavedChannel(interleavedChannel);
               header->SetMaxInterleavedChannel(interleavedChannel + 1);
-              header->SetFlags(FLAG_RTSP_TRANSPORT_REQUEST_HEADER_LOWER_TRANSPORT_TCP | FLAG_RTSP_TRANSPORT_REQUEST_HEADER_INTERLEAVED | FLAG_RTSP_TRANSPORT_REQUEST_HEADER_TRANSPORT_PROTOCOL_RTP | FLAG_RTSP_TRANSPORT_REQUEST_HEADER_PROFILE_AVP);
+              header->SetFlags(RTSP_TRANSPORT_REQUEST_HEADER_FLAG_LOWER_TRANSPORT_TCP | RTSP_TRANSPORT_REQUEST_HEADER_FLAG_INTERLEAVED | RTSP_TRANSPORT_REQUEST_HEADER_FLAG_TRANSPORT_PROTOCOL_RTP | RTSP_TRANSPORT_REQUEST_HEADER_FLAG_PROFILE_AVP);
             }
 
             CHECK_CONDITION_EXECUTE(error == CURLE_OK, error = this->SendAndReceive(setup, error, L"SETUP", METHOD_INITIALIZE_NAME));
@@ -603,8 +604,7 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
                       }
 
                       // set payload type for RTSP track
-                      track->GetPayloadType()->SetId(mediaDescription->GetMediaFormats()->GetItem(0)->GetPayloadType());
-                      track->GetPayloadType()->SetEncodingName(mediaDescription->GetMediaFormats()->GetItem(0)->GetName());
+                      error = track->GetPayloadType()->CopyFromPayloadType(supportedPayloadType) ? error : CURLE_OUT_OF_MEMORY;
                       CHECK_CONDITION_EXECUTE(CompareWithNull(mediaDescription->GetMediaType(), MEDIA_DESCRIPTION_MEDIA_TYPE_AUDIO) == 0, track->GetPayloadType()->SetMediaType(CPayloadType::Audio));
                       CHECK_CONDITION_EXECUTE(CompareWithNull(mediaDescription->GetMediaType(), MEDIA_DESCRIPTION_MEDIA_TYPE_VIDEO) == 0, track->GetPayloadType()->SetMediaType(CPayloadType::Video));
                       CHECK_CONDITION_EXECUTE(mediaDescription->GetMediaFormats()->GetItem(0)->GetClockRate() != MEDIA_FORMAT_CLOCK_RATE_UNSPECIFIED, track->GetPayloadType()->SetClockRate(mediaDescription->GetMediaFormats()->GetItem(0)->GetClockRate()));
@@ -649,35 +649,33 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
         for (unsigned int i = 0; ((error == CURLE_OK) && (i < this->rtspDownloadResponse->GetSessionDescription()->GetMediaDescriptions()->Count())); i++)
         {
           CMediaDescription *mediaDescription = this->rtspDownloadResponse->GetSessionDescription()->GetMediaDescriptions()->GetItem(i);
+          CRtspPayloadType *supportedPayloadType = NULL;
 
-          bool supportedPayloadType = false;
-          for (unsigned int j = 0; ((error == CURLE_OK) && (!supportedPayloadType) && (j < TOTAL_SUPPORTED_PAYLOAD_TYPES)); j++)
+          if (mediaDescription->GetMediaFormats()->Count() == 1)
           {
-            SupportedPayloadType payloadType = SUPPORTED_PAYLOAD_TYPES[j];
+            // there must be only one media format
+            CMediaFormat *mediaFormat = mediaDescription->GetMediaFormats()->GetItem(0);
 
-            if (mediaDescription->GetMediaFormats()->Count() == 1)
+            for (unsigned int j = 0; ((error == CURLE_OK) && (supportedPayloadType == NULL) && (j < supportedPayloadTypes->Count())); j++)
             {
-              // there must be only one media format
-              CMediaFormat *mediaFormat = mediaDescription->GetMediaFormats()->GetItem(0);
+              CRtspPayloadType *payloadType = supportedPayloadTypes->GetItem(j);
 
-              if ((mediaFormat->GetPayloadType() == payloadType.payloadType) ||
-                  (CompareWithNull(mediaFormat->GetName(), payloadType.name) == 0))
+              if ((mediaFormat->GetPayloadType() == payloadType->GetId()) ||
+                (CompareWithNull(mediaFormat->GetName(), payloadType->GetEncodingName()) == 0))
               {
-                supportedPayloadType = true;
-              }
-              else
-              {
-                this->logger->Log(LOGGER_WARNING, L"%s: %s: media description format not supported: %d, %s", this->protocolName, METHOD_INITIALIZE_NAME, mediaFormat->GetPayloadType(), (mediaFormat->GetName() == NULL) ? L"unknown" : mediaFormat->GetName());
+                supportedPayloadType = payloadType;
               }
             }
-            else
+
+            if (supportedPayloadType == NULL)
             {
-              this->logger->Log(LOGGER_ERROR, L"%s: %s: media description specify more media formats as allowed: '%s'", this->protocolName, METHOD_INITIALIZE_NAME, mediaDescription->GetTagContent());
+              this->logger->Log(LOGGER_WARNING, L"%s: %s: media description format not supported: %d, %s", this->protocolName, METHOD_INITIALIZE_NAME, mediaFormat->GetPayloadType(), (mediaFormat->GetName() == NULL) ? L"unknown" : mediaFormat->GetName());
+              continue;
             }
           }
-
-          if (!supportedPayloadType)
+          else
           {
+            this->logger->Log(LOGGER_ERROR, L"%s: %s: media description specify more media formats as allowed: '%s'", this->protocolName, METHOD_INITIALIZE_NAME, mediaDescription->GetTagContent());
             continue;
           }
 
@@ -788,7 +786,7 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
                 header->SetProfile(RTSP_TRANSPORT_REQUEST_HEADER_PROFILE_AVP);
                 header->SetMinClientPort(clientPort);
                 header->SetMaxClientPort(clientPort + 1);
-                header->SetFlags(FLAG_RTSP_TRANSPORT_REQUEST_HEADER_UNICAST | FLAG_RTSP_TRANSPORT_REQUEST_HEADER_TRANSPORT_PROTOCOL_RTP | FLAG_RTSP_TRANSPORT_REQUEST_HEADER_PROFILE_AVP | FLAG_RTSP_TRANSPORT_REQUEST_HEADER_CLIENT_PORT);
+                header->SetFlags(RTSP_TRANSPORT_REQUEST_HEADER_FLAG_UNICAST | RTSP_TRANSPORT_REQUEST_HEADER_FLAG_TRANSPORT_PROTOCOL_RTP | RTSP_TRANSPORT_REQUEST_HEADER_FLAG_PROFILE_AVP | RTSP_TRANSPORT_REQUEST_HEADER_FLAG_CLIENT_PORT);
               }
 
               CHECK_CONDITION_EXECUTE(error == CURLE_OK, error = this->SendAndReceive(setup, error, L"SETUP", METHOD_INITIALIZE_NAME));
@@ -911,8 +909,7 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
                     }
 
                     // set payload type for RTSP track
-                    track->GetPayloadType()->SetId(mediaDescription->GetMediaFormats()->GetItem(0)->GetPayloadType());
-                    track->GetPayloadType()->SetEncodingName(mediaDescription->GetMediaFormats()->GetItem(0)->GetName());
+                    error = track->GetPayloadType()->CopyFromPayloadType(supportedPayloadType) ? error : CURLE_OUT_OF_MEMORY;
                     CHECK_CONDITION_EXECUTE(CompareWithNull(mediaDescription->GetMediaType(), MEDIA_DESCRIPTION_MEDIA_TYPE_AUDIO) == 0, track->GetPayloadType()->SetMediaType(CPayloadType::Audio));
                     CHECK_CONDITION_EXECUTE(CompareWithNull(mediaDescription->GetMediaType(), MEDIA_DESCRIPTION_MEDIA_TYPE_VIDEO) == 0, track->GetPayloadType()->SetMediaType(CPayloadType::Video));
                     CHECK_CONDITION_EXECUTE(mediaDescription->GetMediaFormats()->GetItem(0)->GetClockRate() != MEDIA_FORMAT_CLOCK_RATE_UNSPECIFIED, track->GetPayloadType()->SetClockRate(mediaDescription->GetMediaFormats()->GetItem(0)->GetClockRate()));
@@ -1009,6 +1006,7 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
         }
       }
     }
+    FREE_MEM_CLASS(supportedPayloadTypes);
     CHECK_CONDITION_EXECUTE((errorCode == CURLE_OK) && (endTicks <= GetTickCount()), errorCode = CURLE_OPERATION_TIMEDOUT);
     
     if (errorCode == CURLE_OK)
@@ -1151,8 +1149,9 @@ bool CRtspCurlInstance::ProcessReceivedBaseRtpPackets(CRtspTrack *track, unsigne
       }
       else
       {
-        // check if RTP packet if for this track
+        // check if RTP packet is for this track
         // in another case ignore RTP packet
+
         if ((rtpPacket->GetPayloadType() == track->GetPayloadType()->GetId()) ||
             (this->IsIgnoreRtpPayloadTypeFlag()))
         {
@@ -1498,7 +1497,7 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
       FREE_MEM_CLASS(rtspResponse);
     }
 
-    if ((errorCode == CURLE_OK) && (this->IsFlags(RTSP_CURL_INSTANCE_FLAG_METHOD_GET_PARAMETER_SUPPORTED)) && (this->lastCommand == RTSP_CURL_INSTANCE_COMMAND_PLAY_RESPONSE_VALID) && (rtspRequest == NULL) && (GetTickCount() > nextMaintainConnectionRequest))
+    if ((errorCode == CURLE_OK) && (this->IsSetFlags(RTSP_CURL_INSTANCE_FLAG_METHOD_GET_PARAMETER_SUPPORTED)) && (this->lastCommand == RTSP_CURL_INSTANCE_COMMAND_PLAY_RESPONSE_VALID) && (rtspRequest == NULL) && (GetTickCount() > nextMaintainConnectionRequest))
     {
       // create GET_PARAMETER request to maintain connection alive
       CRtspGetParameterRequest *getParameter = new CRtspGetParameterRequest();
@@ -1533,6 +1532,40 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
             for (unsigned int k = 0; k < 2; k++)
             {
               CUdpServer *server = (k == 0) ? (CUdpServer *)dataServer : (CUdpServer *)controlServer;
+
+              // check only data servers, check only in case of not consolidated servers (not consolidated servers have more contexts)
+              if ((k == 0) && (dataServer->GetServers()->Count() != 1))
+              {
+                for (unsigned int j = 0; ((errorCode == CURLE_OK) && (j < dataServer->GetServers()->Count())); j++)
+                {
+                  CUdpSocketContext *udpContext = (CUdpSocketContext *)(dataServer->GetServers()->GetItem(j));
+                  unsigned int pendingIncomingDataLength = 0;
+
+                  if (SUCCEEDED(udpContext->GetPendingIncomingDataLength(&pendingIncomingDataLength)))
+                  {
+                    if (pendingIncomingDataLength != 0)
+                    {
+                      // found data server context with some pending incoming data
+                      // consolidate data and control server contexts
+
+                      // remove all data and control server contexts except 'j'
+                      // server contexts are created in same order for data and control servers
+                      unsigned int count = dataServer->GetServers()->Count() - 1;
+                      for (unsigned int m = 0; m < (count - j); m++)
+                      {
+                        dataServer->GetServers()->Remove(dataServer->GetServers()->Count() - 1);
+                        controlServer->GetServers()->Remove(controlServer->GetServers()->Count() - 1);
+                      }
+                      for (unsigned int m = 0; m < j; m++)
+                      {
+                        dataServer->GetServers()->Remove(0);
+                        controlServer->GetServers()->Remove(0);
+                      }
+                      break;
+                    }
+                  }
+                }
+              }
 
               for (unsigned int j = 0; ((errorCode == CURLE_OK) && (j < server->GetServers()->Count())); j++)
               {
@@ -1973,7 +2006,6 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
   CHECK_CONDITION_EXECUTE(errorCode != CURLE_OK, this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_CURL_WORKER_NAME, L"error while sending, receiving or processing data", errorCode));
   this->rtspDownloadResponse->SetResultCode(errorCode);
 
-  unsigned int count = 0;
   {
     CLockMutex lock(this->mutex, INFINITE);
 

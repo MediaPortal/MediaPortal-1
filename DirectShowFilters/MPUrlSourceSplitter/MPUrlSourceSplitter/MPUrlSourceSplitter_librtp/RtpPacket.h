@@ -84,10 +84,10 @@ Extension header: optional, the first 32-bit word contains a profile-specific id
 #define RTP_PACKET_MAXIMUM_SEQUENCE_NUMBER                              0xFFFF          // maximum RTP packet sequence number
 #define RTP_PACKET_MAXIMUM_CONTRIBUTING_SOURCE_ID_COUNT                 0x0F            // maximum RTP packet contributing source ID count
 
-#define FLAG_RTP_PACKET_NONE                                            FLAG_BASE_RTP_PACKET_NONE
-#define FLAG_RTP_PACKET_PADDING                                         FLAG_BASE_RTP_PACKET_PADDING
-#define FLAG_RTP_PACKET_EXTENSION_HEADER                                0x00000002
-#define FLAG_RTP_PACKET_MARKER                                          0x00000004
+#define RTP_PACKET_FLAG_NONE                                            BASE_RTP_PACKET_FLAG_NONE
+#define RTP_PACKET_FLAG_PADDING                                         BASE_RTP_PACKET_FLAG_PADDING
+#define RTP_PACKET_FLAG_EXTENSION_HEADER                                0x00000002
+#define RTP_PACKET_FLAG_MARKER                                          0x00000004
 
 class CRtpPacket : public CBaseRtpPacket
 {

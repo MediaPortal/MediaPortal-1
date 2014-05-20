@@ -23,6 +23,7 @@
 #ifndef __MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_DEFINED
 #define __MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_DEFINED
 
+#include "Logger.h"
 #include "IOutputPinFilter.h"
 #include "OutputPinPacketCollection.h"
 #include "MediaTypeCollection.h"
@@ -47,6 +48,7 @@
 #define OUTPUT_PIN_FLAG_HAS_ACCESS_UNIT_DELIMITERS                    0x00000100
 #define OUTPUT_PIN_FLAG_PGS_DROP_STATE                                0x00000200
 #define OUTPUT_PIN_FLAG_DUMPING_DATA_AND_SIZES                        0x00000400
+#define OUTPUT_PIN_FLAG_END_OF_STREAM                                 0x00000800
 
 struct DumpMetadata
 {
@@ -59,7 +61,7 @@ class CMPUrlSourceSplitterOutputPin
   , protected CAMThread
 {
 public:
-  CMPUrlSourceSplitterOutputPin(CMediaTypeCollection *mediaTypes, LPCWSTR pName, CBaseFilter *pFilter, CCritSec *pLock, HRESULT *phr, const wchar_t *containerFormat);
+  CMPUrlSourceSplitterOutputPin(CLogger *logger, CMediaTypeCollection *mediaTypes, LPCWSTR pName, CBaseFilter *pFilter, CCritSec *pLock, HRESULT *phr, const wchar_t *containerFormat);
   ~CMPUrlSourceSplitterOutputPin();
 
   DECLARE_IUNKNOWN;
@@ -141,12 +143,21 @@ public:
 
   /* get methods */
 
+  // gets demuxer ID
+  // it is specified for splitter, which needs to identify output pin for specific output packet
+  // @return : demuxer ID or DEMUXER_ID_UNSPECIFIED if not specified
+  unsigned int GetDemuxerId(void);
+
   // gets stream PID
   // it is specified for splitter, which needs to identify output pin for specific output packet
   // @return : stream PID or STREAM_PID_UNSPECIFIED if not specified
   unsigned int GetStreamPid(void);
 
   /* set methods */
+
+  // sets demuxer ID
+  // @param demuxerId : the demuxer ID to set
+  void SetDemuxerId(unsigned int demuxerId);
 
   // sets stream PID
   // @param streamPid : the stream PID to set
@@ -212,10 +223,14 @@ public:
   // @return : true if PGS drop state flag is set, false otherwise
   bool IsPGSDropState(void);
 
+  // tests if end of stream flag is set
+  // @return : true if end of stream flag is set, false otherwise
+  bool IsEndOfStream(void);
+
   // tests if specific combination of flags is set
   // @param flags : the combination of flags to test
   // @return : true if specific combination of flags is set, false otherwise
-  bool IsFlags(unsigned int flags);
+  bool IsSetFlags(unsigned int flags);
  
 protected:
   enum { CMD_EXIT, CMD_BEGIN_FLUSH, CMD_END_FLUSH, CMD_PLAY, CMD_PAUSE };
@@ -232,8 +247,14 @@ protected:
   // holds media types associated with output pin
   CMediaTypeCollection *mediaTypes;
 
+  // holds logger instance
+  CLogger *logger;
   // holds filter reference
   IOutputPinFilter *filter;
+
+  // holds demuxer ID
+  // it is specified for splitter, which needs to identify output pin for specific demuxer
+  unsigned int demuxerId;
 
   // holds stream PID
   // it is specified for splitter, which needs to identify output pin for specific output packet

@@ -23,33 +23,26 @@
 #ifndef __IOUTPUT_STREAM_DEFINED
 #define __IOUTPUT_STREAM_DEFINED
 
-#include "MediaPacketCollection.h"
+#include "StreamReceiveData.h"
 
 #include <stdint.h>
 
-#define METHOD_PUSH_MEDIA_PACKETS_NAME                                        L"PushMediaPackets()"
-#define METHOD_END_OF_STREAM_REACHED_NAME                                     L"EndOfStreamReached()"
+#define METHOD_PUSH_STREAM_RECEIVE_DATA_NAME                          L"PushStreamReceiveData()"
 
 // defines interface for stream output
 struct IOutputStream
 {
-  // sets total length of stream to output pin
-  // caller is responsible for deleting output pin name
-  // @param total : total length of stream in bytes
-  // @param estimate : specifies if length is estimate
-  // @return : S_OK if successful
-  virtual HRESULT SetTotalLength(int64_t total, bool estimate) = 0;
+  // notifies output stream about stream count
+  // @param streamCount : the stream count
+  // @param liveStream : true if stream(s) are live, false otherwise
+  // @return : S_OK if successful, false otherwise
+  virtual HRESULT SetStreamCount(unsigned int streamCount, bool liveStream) = 0;
 
-  // pushes media packets to filter
-  // @param mediaPackets : collection of media packets to push to filter
-  // @return : S_OK if successful
-  virtual HRESULT PushMediaPackets(CMediaPacketCollection *mediaPackets) = 0;
-
-  // notifies output stream that end of stream was reached
-  // this method can be called only when protocol support SEEKING_METHOD_POSITION
-  // @param streamPosition : the last valid stream position
-  // @return : S_OK if successful
-  virtual HRESULT EndOfStreamReached(int64_t streamPosition) = 0;
+  // pushes stream received data to filter
+  // @param streamId : the stream ID to push stream received data
+  // @param streamReceivedData : the stream received data to push to filter
+  // @return : S_OK if successful, error code otherwise
+  virtual HRESULT PushStreamReceiveData(unsigned int streamId, CStreamReceiveData *streamReceiveData) = 0;
 };
 
 #endif

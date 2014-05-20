@@ -23,8 +23,8 @@
 #ifndef __RTSP_TRACK_STATISTICS_DEFINED
 #define __RTSP_TRACK_STATISTICS_DEFINED
 
-#define RTSP_TRACK_FLAG_NONE                                          0x00000000
-#define RTSP_TRACK_FLAG_SET_SEQUENCE_NUMBER                           0x00000001
+#define RTSP_TRACK_STATISTICS_FLAG_NONE                               0x00000000
+#define RTSP_TRACK_STATISTICS_FLAG_SET_SEQUENCE_NUMBER                0x00000001
 
 class CRtspTrackStatistics
 {

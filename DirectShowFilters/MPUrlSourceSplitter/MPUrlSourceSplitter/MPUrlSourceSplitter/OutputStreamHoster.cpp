@@ -25,7 +25,7 @@
 COutputStreamHoster::COutputStreamHoster(CLogger *logger, CParameterCollection *configuration, const wchar_t *moduleName, const wchar_t *moduleSearchPattern, IOutputStream *outputStream)
   : CHoster(logger, configuration, moduleName, moduleSearchPattern)
 {
-  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_OUTPUT_STREAM_HOSTER_NAME, METHOD_CONSTRUCTOR_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_CONSTRUCTOR_START_FORMAT, MODULE_OUTPUT_STREAM_HOSTER_NAME, METHOD_CONSTRUCTOR_NAME, this);
 
   this->outputStream = outputStream;
 
@@ -39,31 +39,22 @@ COutputStreamHoster::~COutputStreamHoster(void)
 }
 
 // IOutputStream interface
-HRESULT COutputStreamHoster::SetTotalLength(int64_t total, bool estimate)
+
+HRESULT COutputStreamHoster::SetStreamCount(unsigned int streamCount, bool liveStream)
 {
   if (this->outputStream != NULL)
   {
-    return this->outputStream->SetTotalLength(total, estimate);
+    return this->outputStream->SetStreamCount(streamCount, liveStream);
   }
 
   return E_NOT_VALID_STATE;
 }
 
-HRESULT COutputStreamHoster::PushMediaPackets(CMediaPacketCollection *mediaPackets)
+HRESULT COutputStreamHoster::PushStreamReceiveData(unsigned int streamId, CStreamReceiveData *streamReceiveData)
 {
   if (this->outputStream != NULL)
   {
-    return this->outputStream->PushMediaPackets(mediaPackets);
-  }
-
-  return E_NOT_VALID_STATE;
-}
-
-HRESULT COutputStreamHoster::EndOfStreamReached(int64_t streamPosition)
-{
-  if (this->outputStream != NULL)
-  {
-    return this->outputStream->EndOfStreamReached(streamPosition);
+    return this->outputStream->PushStreamReceiveData(streamId, streamReceiveData);
   }
 
   return E_NOT_VALID_STATE;

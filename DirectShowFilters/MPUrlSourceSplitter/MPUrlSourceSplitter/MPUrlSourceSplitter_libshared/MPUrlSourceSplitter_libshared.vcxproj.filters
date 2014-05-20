@@ -66,6 +66,12 @@
     <ClInclude Include="moreuuids.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="StreamReceiveData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StreamProgress.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -102,6 +108,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="StreamAvailableLength.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StreamReceiveData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StreamProgress.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

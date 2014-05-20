@@ -379,7 +379,7 @@ CParameterCollection *CHttpCurlInstance::GetCurrentCookies(void)
         {
           CParameter *parameter = new CParameter(L"", convertedValue);
 
-          if (!result->Add(parameter))
+          if (!result->CCollection::Add(parameter))
           {
             FREE_MEM_CLASS(parameter);
           }

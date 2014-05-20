@@ -255,7 +255,7 @@ HRESULT CF4MBootstrapInfo::DownloadBootstrapInfo(CLogger *logger, const wchar_t 
 
               if (SUCCEEDED(result))
               {
-                result = (cookies->Add(clone)) ? result : E_OUTOFMEMORY;
+                result = (cookies->CCollection::Add(clone)) ? result : E_OUTOFMEMORY;
               }
 
               if (FAILED(result))

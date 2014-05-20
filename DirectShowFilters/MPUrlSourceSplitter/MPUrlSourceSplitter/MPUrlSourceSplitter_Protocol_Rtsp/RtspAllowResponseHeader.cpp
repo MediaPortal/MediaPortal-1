@@ -25,7 +25,6 @@
 CRtspAllowResponseHeader::CRtspAllowResponseHeader(void)
   : CRtspResponseHeader()
 {
-  this->flags = FLAG_RTSP_ALLOW_RESPONSE_HEADER_METHOD_NONE;
 }
 
 CRtspAllowResponseHeader::~CRtspAllowResponseHeader(void)
@@ -51,7 +50,6 @@ bool CRtspAllowResponseHeader::CloneInternal(CHttpHeader *clonedHeader)
 
   if (result)
   {
-    header->flags = this->flags;
   }
 
   return result;
@@ -75,57 +73,57 @@ bool CRtspAllowResponseHeader::Parse(const wchar_t *header, unsigned int length)
       unsigned int valueLength = wcslen(this->value);
       if (IndexOf(this->value, valueLength, RTSP_ALLOW_RESPONSE_HEADER_METHOD_DESCRIBE, RTSP_ALLOW_RESPONSE_HEADER_METHOD_DESCRIBE_LENGTH) != (-1))
       {
-        this->flags |= FLAG_RTSP_ALLOW_RESPONSE_HEADER_METHOD_DESCRIBE;
+        this->flags |= RTSP_ALLOW_RESPONSE_HEADER_FLAG_METHOD_DESCRIBE;
       }
 
       if (IndexOf(this->value, valueLength, RTSP_ALLOW_RESPONSE_HEADER_METHOD_ANNOUNCE, RTSP_ALLOW_RESPONSE_HEADER_METHOD_ANNOUNCE_LENGTH) != (-1))
       {
-        this->flags |= FLAG_RTSP_ALLOW_RESPONSE_HEADER_METHOD_ANNOUNCE;
+        this->flags |= RTSP_ALLOW_RESPONSE_HEADER_FLAG_METHOD_ANNOUNCE;
       }
 
       if (IndexOf(this->value, valueLength, RTSP_ALLOW_RESPONSE_HEADER_METHOD_GET_PARAMETER, RTSP_ALLOW_RESPONSE_HEADER_METHOD_GET_PARAMETER_LENGTH) != (-1))
       {
-        this->flags |= FLAG_RTSP_ALLOW_RESPONSE_HEADER_METHOD_GET_PARAMETER;
+        this->flags |= RTSP_ALLOW_RESPONSE_HEADER_FLAG_METHOD_GET_PARAMETER;
       }
 
       if (IndexOf(this->value, valueLength, RTSP_ALLOW_RESPONSE_HEADER_METHOD_OPTIONS, RTSP_ALLOW_RESPONSE_HEADER_METHOD_OPTIONS_LENGTH) != (-1))
       {
-        this->flags |= FLAG_RTSP_ALLOW_RESPONSE_HEADER_METHOD_OPTIONS;
+        this->flags |= RTSP_ALLOW_RESPONSE_HEADER_FLAG_METHOD_OPTIONS;
       }
 
       if (IndexOf(this->value, valueLength, RTSP_ALLOW_RESPONSE_HEADER_METHOD_PAUSE, RTSP_ALLOW_RESPONSE_HEADER_METHOD_PAUSE_LENGTH) != (-1))
       {
-        this->flags |= FLAG_RTSP_ALLOW_RESPONSE_HEADER_METHOD_PAUSE;
+        this->flags |= RTSP_ALLOW_RESPONSE_HEADER_FLAG_METHOD_PAUSE;
       }
 
       if (IndexOf(this->value, valueLength, RTSP_ALLOW_RESPONSE_HEADER_METHOD_PLAY, RTSP_ALLOW_RESPONSE_HEADER_METHOD_PLAY_LENGTH) != (-1))
       {
-        this->flags |= FLAG_RTSP_ALLOW_RESPONSE_HEADER_METHOD_PLAY;
+        this->flags |= RTSP_ALLOW_RESPONSE_HEADER_FLAG_METHOD_PLAY;
       }
 
       if (IndexOf(this->value, valueLength, RTSP_ALLOW_RESPONSE_HEADER_METHOD_RECORD, RTSP_ALLOW_RESPONSE_HEADER_METHOD_RECORD_LENGTH) != (-1))
       {
-        this->flags |= FLAG_RTSP_ALLOW_RESPONSE_HEADER_METHOD_RECORD;
+        this->flags |= RTSP_ALLOW_RESPONSE_HEADER_FLAG_METHOD_RECORD;
       }
 
       if (IndexOf(this->value, valueLength, RTSP_ALLOW_RESPONSE_HEADER_METHOD_REDIRECT, RTSP_ALLOW_RESPONSE_HEADER_METHOD_REDIRECT_LENGTH) != (-1))
       {
-        this->flags |= FLAG_RTSP_ALLOW_RESPONSE_HEADER_METHOD_REDIRECT;
+        this->flags |= RTSP_ALLOW_RESPONSE_HEADER_FLAG_METHOD_REDIRECT;
       }
 
       if (IndexOf(this->value, valueLength, RTSP_ALLOW_RESPONSE_HEADER_METHOD_SETUP, RTSP_ALLOW_RESPONSE_HEADER_METHOD_SETUP_LENGTH) != (-1))
       {
-        this->flags |= FLAG_RTSP_ALLOW_RESPONSE_HEADER_METHOD_SETUP;
+        this->flags |= RTSP_ALLOW_RESPONSE_HEADER_FLAG_METHOD_SETUP;
       }
 
       if (IndexOf(this->value, valueLength, RTSP_ALLOW_RESPONSE_HEADER_METHOD_SET_PARAMETER, RTSP_ALLOW_RESPONSE_HEADER_METHOD_SET_PARAMETER_LENGTH) != (-1))
       {
-        this->flags |= FLAG_RTSP_ALLOW_RESPONSE_HEADER_METHOD_SET_PARAMETER;
+        this->flags |= RTSP_ALLOW_RESPONSE_HEADER_FLAG_METHOD_SET_PARAMETER;
       }
 
       if (IndexOf(this->value, valueLength, RTSP_ALLOW_RESPONSE_HEADER_METHOD_TEARDOWN, RTSP_ALLOW_RESPONSE_HEADER_METHOD_TEARDOWN_LENGTH) != (-1))
       {
-        this->flags |= FLAG_RTSP_ALLOW_RESPONSE_HEADER_METHOD_TEARDOWN;
+        this->flags |= RTSP_ALLOW_RESPONSE_HEADER_FLAG_METHOD_TEARDOWN;
       }
     }
   }
@@ -141,60 +139,55 @@ bool CRtspAllowResponseHeader::Parse(const wchar_t *header, unsigned int length)
 
 bool CRtspAllowResponseHeader::IsDefinedDescribeMethod(void)
 {
-  return this->IsSetFlag(FLAG_RTSP_ALLOW_RESPONSE_HEADER_METHOD_DESCRIBE);
+  return this->IsSetFlags(RTSP_ALLOW_RESPONSE_HEADER_FLAG_METHOD_DESCRIBE);
 }
 
 bool CRtspAllowResponseHeader::IsDefinedAnnounceMethod(void)
 {
-  return this->IsSetFlag(FLAG_RTSP_ALLOW_RESPONSE_HEADER_METHOD_ANNOUNCE);
+  return this->IsSetFlags(RTSP_ALLOW_RESPONSE_HEADER_FLAG_METHOD_ANNOUNCE);
 }
 
 bool CRtspAllowResponseHeader::IsDefinedGetParameterMethod(void)
 {
-  return this->IsSetFlag(FLAG_RTSP_ALLOW_RESPONSE_HEADER_METHOD_GET_PARAMETER);
+  return this->IsSetFlags(RTSP_ALLOW_RESPONSE_HEADER_FLAG_METHOD_GET_PARAMETER);
 }
 
 bool CRtspAllowResponseHeader::IsDefinedOptionsMethod(void)
 {
-  return this->IsSetFlag(FLAG_RTSP_ALLOW_RESPONSE_HEADER_METHOD_OPTIONS);
+  return this->IsSetFlags(RTSP_ALLOW_RESPONSE_HEADER_FLAG_METHOD_OPTIONS);
 }
 
 bool CRtspAllowResponseHeader::IsDefinedPauseMethod(void)
 {
-  return this->IsSetFlag(FLAG_RTSP_ALLOW_RESPONSE_HEADER_METHOD_PAUSE);
+  return this->IsSetFlags(RTSP_ALLOW_RESPONSE_HEADER_FLAG_METHOD_PAUSE);
 }
 
 bool CRtspAllowResponseHeader::IsDefinedPlayMethod(void)
 {
-  return this->IsSetFlag(FLAG_RTSP_ALLOW_RESPONSE_HEADER_METHOD_PLAY);
+  return this->IsSetFlags(RTSP_ALLOW_RESPONSE_HEADER_FLAG_METHOD_PLAY);
 }
 
 bool CRtspAllowResponseHeader::IsDefinedRecordMethod(void)
 {
-  return this->IsSetFlag(FLAG_RTSP_ALLOW_RESPONSE_HEADER_METHOD_RECORD);
+  return this->IsSetFlags(RTSP_ALLOW_RESPONSE_HEADER_FLAG_METHOD_RECORD);
 }
 
 bool CRtspAllowResponseHeader::IsDefinedRedirectMethod(void)
 {
-  return this->IsSetFlag(FLAG_RTSP_ALLOW_RESPONSE_HEADER_METHOD_REDIRECT);
+  return this->IsSetFlags(RTSP_ALLOW_RESPONSE_HEADER_FLAG_METHOD_REDIRECT);
 }
 
 bool CRtspAllowResponseHeader::IsDefinedSetupMethod(void)
 {
-  return this->IsSetFlag(FLAG_RTSP_ALLOW_RESPONSE_HEADER_METHOD_SETUP);
+  return this->IsSetFlags(RTSP_ALLOW_RESPONSE_HEADER_FLAG_METHOD_SETUP);
 }
 
 bool CRtspAllowResponseHeader::IsDefinedSetParameterMethod(void)
 {
-  return this->IsSetFlag(FLAG_RTSP_ALLOW_RESPONSE_HEADER_METHOD_SET_PARAMETER);
+  return this->IsSetFlags(RTSP_ALLOW_RESPONSE_HEADER_FLAG_METHOD_SET_PARAMETER);
 }
 
 bool CRtspAllowResponseHeader::IsDefinedTeardownMethod(void)
 {
-  return this->IsSetFlag(FLAG_RTSP_ALLOW_RESPONSE_HEADER_METHOD_TEARDOWN);
-}
-
-bool CRtspAllowResponseHeader::IsSetFlag(unsigned int flag)
-{
-  return ((this->flags & flag) == flag);
+  return this->IsSetFlags(RTSP_ALLOW_RESPONSE_HEADER_FLAG_METHOD_TEARDOWN);
 }

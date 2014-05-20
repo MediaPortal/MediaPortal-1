@@ -23,21 +23,24 @@
 #ifndef __MEDIA_PACKET_DEFINED
 #define __MEDIA_PACKET_DEFINED
 
-#include "LinearBuffer.h"
+#include "CacheFileItem.h"
 
-#include <stdint.h>
+#define MEDIA_PACKET_PRESENTATION_TIMESTAMP_UNDEFINED                 INT64_MIN
+
+// DirectShow times are in 100ns units
+#ifndef DSHOW_TIME_BASE
+#define DSHOW_TIME_BASE                                               10000000
+#endif
 
 // CMediaPacket class is wrapper for IMediaSample interface
 // this class doesn't implement all methods of IMediaSample interface
-class CMediaPacket
+class CMediaPacket : public CCacheFileItem
 {
 public:
   CMediaPacket(void);
   virtual ~CMediaPacket();
 
-  // gets linear buffer
-  // @return : linear buffer or NULL if error or media packet is stored to file
-  CLinearBuffer *GetBuffer();
+  /* get methods */
 
   // gets the stream position where this packet starts
   // @return : the stream position where this packet starts
@@ -47,6 +50,20 @@ public:
   // @return : the stream position where this packet ends
   int64_t GetEnd(void);
 
+  // gets presentation timestamp
+  // @return : presentation timestamp in ticks per second or MEDIA_PACKET_PRESENTATION_TIMESTAMP_UNDEFINED if not defined
+  int64_t GetPresentationTimestamp(void);
+
+  // gets presentation timestamp in 100ns (DSHOW_TIME_BASE ticks per second) units
+  // @return : presentation timestamp in 100ns units or MEDIA_PACKET_PRESENTATION_TIMESTAMP_UNDEFINED if not defined
+  int64_t GetPresentationTimestampInDirectShowTimeUnits(void);
+
+  // gets presentation timestamp ticks per second
+  // @return : presentation timestamp ticks per second
+  unsigned int GetPresentationTimestampTicksPerSecond(void);
+
+  /* set methods */
+
   // sets the stream position where this packet starts
   // @param position : the stream position where this packet starts
   void SetStart(int64_t position);
@@ -55,9 +72,15 @@ public:
   // @param position : the stream position where this packet ends
   void SetEnd(int64_t position);
 
-  // deeply clones current instance of media packet
-  // @return : deep clone of current instance or NULL if error
-  CMediaPacket *Clone(void);
+  // sets presentation timestamp
+  // @param presentationTimestamp : the presentation timestamp in ticks per second to set or MEDIA_PACKET_PRESENTATION_TIMESTAMP_UNDEFINED if not defined
+  void SetPresentationTimestamp(int64_t presentationTimestamp);
+
+  // sets presentation timestamp ticks per second
+  // @param presentationTimestampTicksPerSecond : presentation timestamp ticks per second to set
+  void SetPresentationTimestampTicksPerSecond(unsigned int presentationTimestampTicksPerSecond);
+
+  /* other methods */
 
   // deeply clone current instance of media packet with specified position range to new media packet
   // @param start : start position of new media packet
@@ -65,31 +88,25 @@ public:
   // @return : new media packet or NULL if error or media packet is stored to file
   CMediaPacket *CreateMediaPacketBasedOnPacket(int64_t start, int64_t end);
 
-  // tests if media packet is stored to file
-  // @return : true if media packet is stored to file, false otherwise
-  bool IsStoredToFile(void);
-
-  // sets position within store file
-  // if media packet is stored than linear buffer is deleted
-  // if store file path is cleared (NULL) than linear buffer is created
-  // @param position : the position of start of media packet within store file or (-1) if media packet is in memory
-  void SetStoredToFile(int64_t position);
-
-  // gets position of start of media packet within store file
-  // @return : file position or -1 if error
-  int64_t GetStoreFilePosition(void);
-
 protected:
-  // internal linear buffer for media data
-  CLinearBuffer *buffer;
-
   // start sample - byte position
   int64_t start;
   // end sample - byte position
   int64_t end;
 
-  // posittion in store file
-  int64_t storeFilePosition;
+  // holds presentation timestamp
+  int64_t presentationTimestamp;
+  // holds presentation timestamp ticks per second
+  unsigned int presentationTimestampTicksPerSecond;
+
+  // gets new instance of media packet
+  // @return : new media packet instance or NULL if error
+  virtual CCacheFileItem *CreateItem(void);
+
+  // deeply clones current instance
+  // @param item : the cache file item instance to clone
+  // @return : true if successful, false otherwise
+  virtual bool InternalClone(CCacheFileItem *item);
 };
 
 #endif

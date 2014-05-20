@@ -25,7 +25,7 @@
 
 #include <Ws2tcpip.h>
 
-#define FLAG_IP_ADDRESS_NONE                                          0
+#define IP_ADDRESS_FLAG_NONE                                          0
 
 class CIpAddress
 {

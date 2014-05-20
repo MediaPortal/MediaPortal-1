@@ -29,6 +29,7 @@ COutputPinPacket::COutputPinPacket(void)
   this->startTime = COutputPinPacket::INVALID_TIME;
   this->endTime = COutputPinPacket::INVALID_TIME;
   this->mediaType = NULL;
+  this->demuxerId = DEMUXER_ID_UNSPECIFIED;
   this->streamPid = STREAM_PID_UNSPECIFIED;
 }
 
@@ -59,6 +60,11 @@ REFERENCE_TIME COutputPinPacket::GetEndTime(void)
 AM_MEDIA_TYPE *COutputPinPacket::GetMediaType(void)
 {
   return this->mediaType;
+}
+
+unsigned int COutputPinPacket::GetDemuxerId(void)
+{
+  return this->demuxerId;
 }
 
 unsigned int COutputPinPacket::GetStreamPid(void)
@@ -109,6 +115,11 @@ void COutputPinPacket::SetEndTime(REFERENCE_TIME endTime)
 void COutputPinPacket::SetMediaType(AM_MEDIA_TYPE *mediaType)
 {
   this->mediaType = mediaType;
+}
+
+void COutputPinPacket::SetDemuxerId(unsigned int demuxerId)
+{
+  this->demuxerId = demuxerId;
 }
 
 void COutputPinPacket::SetStreamPid(unsigned int streamPid)

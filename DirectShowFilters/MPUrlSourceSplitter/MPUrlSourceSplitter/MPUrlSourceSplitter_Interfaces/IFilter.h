@@ -25,6 +25,8 @@
 
 #include "ISeeking.h"
 #include "Logger.h"
+#include "StreamProgress.h"
+#include "StreamAvailableLength.h"
 
 #include <stdint.h>
 
@@ -38,23 +40,23 @@
 // defines interface for filter
 struct IFilter : public ISeeking
 {
-  // gets logger instance
-  // @return : logger instance or NULL if error
-  virtual CLogger *GetLogger(void) = 0;
-
-  // gets total length of stream in bytes
-  // @param totalLength : reference to total length variable
-  // @return : S_OK if success, VFW_S_ESTIMATED if total length is not surely known, error code if error
-  virtual HRESULT GetTotalLength(int64_t *totalLength) = 0;
-
-  // gets available length of stream in bytes
-  // @param availableLength : reference to available length variable
-  // @return : S_OK if success, error code if error
-  virtual HRESULT GetAvailableLength(int64_t *availableLength) = 0;
-
   // gets duration of stream in ms
   // @return : stream duration in ms or DURATION_LIVE_STREAM in case of live stream or DURATION_UNSPECIFIED if duration is unknown
   virtual int64_t GetDuration(void) = 0;
+
+  // get timeout (in ms) for receiving data
+  // @return : timeout (in ms) for receiving data
+  virtual unsigned int GetReceiveDataTimeout(void) = 0;
+
+  // retrieves the progress of the stream reading operation
+  // @param streamProgress : reference to instance of class that receives the stream progress
+  // @return : S_OK if successful, VFW_S_ESTIMATED if returned values are estimates, E_INVALIDARG if stream ID is unknown, E_UNEXPECTED if unexpected error
+  virtual HRESULT QueryStreamProgress(CStreamProgress *streamProgress) = 0;
+  
+  // retrieves available lenght of stream
+  // @param available : reference to instance of class that receives the available length of stream, in bytes
+  // @return : S_OK if successful, other error codes if error
+  virtual HRESULT QueryStreamAvailableLength(CStreamAvailableLength *availableLength) = 0;
 };
 
 #endif

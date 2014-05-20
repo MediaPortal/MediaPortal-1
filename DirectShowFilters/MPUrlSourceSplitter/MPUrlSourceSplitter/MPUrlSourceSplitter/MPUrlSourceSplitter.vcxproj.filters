@@ -30,9 +30,6 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AsyncRequest.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ParserHoster.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -93,6 +90,18 @@
     <ClInclude Include="Demuxer.h">
       <Filter>Demuxers\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DemuxerCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AsyncRequest.h">
+      <Filter>Demuxers\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PacketInputFormat.h">
+      <Filter>Demuxers\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IPacketDemuxer.h">
+      <Filter>Demuxers\Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="IOutputPinFilter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -102,9 +111,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="dllmain.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AsyncRequest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ParserHoster.cpp">
@@ -165,6 +171,15 @@
       <Filter>Demuxers\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Demuxer.cpp">
+      <Filter>Demuxers\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DemuxerCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AsyncRequest.cpp">
+      <Filter>Demuxers\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PacketInputFormat.cpp">
       <Filter>Demuxers\Source Files</Filter>
     </ClCompile>
   </ItemGroup>

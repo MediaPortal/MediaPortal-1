@@ -27,8 +27,8 @@
 #include "RtspTransportResponseHeader.h"
 #include "IpAddress.h"
 #include "RtspTrackStatistics.h"
-#include "PayloadType.h"
 #include "RtpPacketCollection.h"
+#include "RtspPayloadType.h"
 
 #define PORT_UNSPECIFIED                                              UINT_MAX
 // receiver report minimum time is 5000 ms
@@ -101,13 +101,13 @@ public:
   // @return : RTSP strack statistical information
   CRtspTrackStatistics *GetStatistics(void);
 
-  // gets payload type from media description
-  // @return : payload type
-  CPayloadType *GetPayloadType(void);
-
   // gets received RTP packets for current track
   // @return : RTP packets for current track
   CRtpPacketCollection *GetRtpPackets(void);
+
+  // gets payload type from media description
+  // @return : payload type
+  CRtspPayloadType *GetPayloadType(void);
 
   /* set methods */
 
@@ -193,18 +193,13 @@ public:
   // @return : true if SSRC is set, false otherwise
   bool IsSetSenderSynchronizationSourceIdentifier(void);
 
-  // deeply clones current instance
-  // curl handle is not cloned
-  // @result : deep clone of current instance or NULL if error
-  CRtspTrack *Clone(void);
-
   // tests if end of stream is set
   // @return : true if end of stream is set, false otherwise
   bool IsEndOfStream(void);
 
   // tests if specific combination of flags is set
   // @return : true if specific combination of flags is set, false otherwise
-  bool IsFlags(unsigned int flags);
+  bool IsSetFlags(unsigned int flags);
 
 protected:
   // holds flags
@@ -241,7 +236,7 @@ protected:
   CRtspTrackStatistics *statistics;
 
   // holds payload type from SDP media description
-  CPayloadType *payloadType;
+  CRtspPayloadType *payloadType;
 
   // holds collection of received and unprocessed RTP packets
   CRtpPacketCollection *rtpPackets;

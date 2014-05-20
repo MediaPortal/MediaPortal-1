@@ -69,7 +69,7 @@ CMPUrlSourceSplitter_Parser_F4M::CMPUrlSourceSplitter_Parser_F4M(CLogger *logger
   }
 
   this->logger = new CLogger(logger);
-  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_CONSTRUCTOR_START_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME, this);
 
   wchar_t *version = GetVersionInfo(COMMIT_INFO_MP_URL_SOURCE_SPLITTER_PARSER_F4M, DATE_INFO_MP_URL_SOURCE_SPLITTER_PARSER_F4M);
   if (version != NULL)
@@ -108,7 +108,7 @@ HRESULT CMPUrlSourceSplitter_Parser_F4M::ClearSession(void)
   return S_OK;
 }
 
-ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPackets(CMediaPacketCollection *mediaPackets, CParameterCollection *connectionParameters)
+ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPackets(unsigned int streamId, CMediaPacketCollection *mediaPackets, CParameterCollection *connectionParameters)
 {
   ParseResult result = ParseResult_NotKnown;
   this->logger->Log(LOGGER_VERBOSE, METHOD_START_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME);
@@ -799,11 +799,6 @@ HRESULT CMPUrlSourceSplitter_Parser_F4M::GetConnectionParameters(CParameterColle
   }
 
   return result;
-}
-
-CMediaPacketCollection *CMPUrlSourceSplitter_Parser_F4M::GetStoredMediaPackets(void)
-{
-  return this->storedMediaPackets;
 }
 
 // IPlugin interface

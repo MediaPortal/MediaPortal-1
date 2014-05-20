@@ -52,3 +52,8 @@ extern "C" {
 
 #define QI(i) (riid == __uuidof(i)) ? GetInterface((i*)this, ppv) :
 #define QI2(i) (riid == IID_##i) ? GetInterface((i*)this, ppv) :
+
+// DirectShow times are in 100ns units
+#ifndef DSHOW_TIME_BASE
+#define DSHOW_TIME_BASE                                               10000000
+#endif

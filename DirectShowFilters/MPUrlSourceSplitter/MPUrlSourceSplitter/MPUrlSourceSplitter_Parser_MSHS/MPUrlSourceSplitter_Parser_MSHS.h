@@ -52,10 +52,11 @@ public:
   HRESULT ClearSession(void);
 
   // parses media packets
+  // @param streamId : the stream ID to parse media packets
   // @param mediaPackets : media packet collection to parse
   // @param connectionParameters : current connection parameters
   // @return : one of ParseResult values
-  ParseResult ParseMediaPackets(CMediaPacketCollection *mediaPackets, CParameterCollection *connectionParameters);
+  ParseResult ParseMediaPackets(unsigned int streamId, CMediaPacketCollection *mediaPackets, CParameterCollection *connectionParameters);
 
   // sets current connection url and parameters
   // @param parameters : the collection of url and connection parameters
@@ -70,10 +71,6 @@ public:
   // @param parameters : the collection of url and connection parameters to fill
   // @return : S_OK if successful
   HRESULT GetConnectionParameters(CParameterCollection *parameters);
-
-  // gets stored media packets (in case that parser plugin returned ParseResult_Pending)
-  // @return : stored media packets collection
-  CMediaPacketCollection *GetStoredMediaPackets(void);
 
   // IPlugin interface
 

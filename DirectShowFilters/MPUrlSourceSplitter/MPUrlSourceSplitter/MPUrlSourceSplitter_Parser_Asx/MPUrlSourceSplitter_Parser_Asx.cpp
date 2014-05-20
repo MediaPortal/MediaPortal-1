@@ -61,7 +61,7 @@ CMPUrlSourceSplitter_Parser_Asx::CMPUrlSourceSplitter_Parser_Asx(CLogger *logger
   }
 
   this->logger = new CLogger(logger);
-  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_CONSTRUCTOR_START_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME, this);
 
   wchar_t *version = GetVersionInfo(COMMIT_INFO_MP_URL_SOURCE_SPLITTER_PARSER_ASX, DATE_INFO_MP_URL_SOURCE_SPLITTER_PARSER_ASX);
   if (version != NULL)
@@ -100,7 +100,7 @@ HRESULT CMPUrlSourceSplitter_Parser_Asx::ClearSession(void)
   return S_OK;
 }
 
-ParseResult CMPUrlSourceSplitter_Parser_Asx::ParseMediaPackets(CMediaPacketCollection *mediaPackets, CParameterCollection *connectionParameters)
+ParseResult CMPUrlSourceSplitter_Parser_Asx::ParseMediaPackets(unsigned int streamId, CMediaPacketCollection *mediaPackets, CParameterCollection *connectionParameters)
 {
   ParseResult result = ParseResult_NotKnown;
   this->logger->Log(LOGGER_VERBOSE, METHOD_START_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME);
@@ -332,11 +332,6 @@ HRESULT CMPUrlSourceSplitter_Parser_Asx::GetConnectionParameters(CParameterColle
   }
 
   return result;
-}
-
-CMediaPacketCollection *CMPUrlSourceSplitter_Parser_Asx::GetStoredMediaPackets(void)
-{
-  return NULL;
 }
 
 // IPlugin interface

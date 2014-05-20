@@ -57,10 +57,11 @@ struct IParserPlugin : public IPlugin
   virtual HRESULT ClearSession(void) = 0;
 
   // parses media packets
+  // @param streamId : the stream ID to parse media packets
   // @param mediaPackets : media packet collection to parse
   // @param connectionParameters : current connection parameters
   // @return : one of ParseResult values
-  virtual ParseResult ParseMediaPackets(CMediaPacketCollection *mediaPackets, CParameterCollection *connectionParameters) = 0;
+  virtual ParseResult ParseMediaPackets(unsigned int streamId, CMediaPacketCollection *mediaPackets, CParameterCollection *connectionParameters) = 0;
 
   // sets current connection url and parameters
   // @param parameters : the collection of url and connection parameters
@@ -75,10 +76,6 @@ struct IParserPlugin : public IPlugin
   // @param parameters : the collection of url and connection parameters to fill
   // @return : S_OK if successful
   virtual HRESULT GetConnectionParameters(CParameterCollection *parameters) = 0;
-
-  // gets stored media packets (in case that parser plugin returned ParseResult_Pending)
-  // @return : stored media packets collection
-  virtual CMediaPacketCollection *GetStoredMediaPackets(void) = 0;
 };
 
 typedef IParserPlugin* PIParserPlugin;

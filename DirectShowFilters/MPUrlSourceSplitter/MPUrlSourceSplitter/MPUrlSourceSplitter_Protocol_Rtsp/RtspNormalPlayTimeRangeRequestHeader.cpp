@@ -25,7 +25,7 @@
 CRtspNormalPlayTimeRangeRequestHeader::CRtspNormalPlayTimeRangeRequestHeader(void)
   : CRtspRangeRequestHeader()
 {
-  this->flags = FLAG_NORMAL_PLAY_TIME_NONE;
+  this->flags = NORMAL_PLAY_TIME_RANGE_REQUEST_HEADER_FLAG_NONE;
   this->startTime = TIME_UNSPECIFIED;
   this->endTime = TIME_UNSPECIFIED;
 }
@@ -40,15 +40,15 @@ const wchar_t *CRtspNormalPlayTimeRangeRequestHeader::GetValue(void)
 {
   FREE_MEM(this->value);
 
-  if (this->IsSetFlag(FLAG_NORMAL_PLAY_TIME_START | FLAG_NORMAL_PLAY_TIME_END))
+  if (this->IsSetFlag(NORMAL_PLAY_TIME_RANGE_REQUEST_HEADER_FLAG_START | NORMAL_PLAY_TIME_RANGE_REQUEST_HEADER_FLAG_END))
   {
     this->value = FormatString(NORMAL_PLAY_TIME_START_END_VALUE_FORMAT, this->GetStartTime() / 1000, this->GetStartTime() % 1000, this->GetEndTime() / 1000, this->GetEndTime() % 1000);
   }
-  else if (this->IsSetFlag(FLAG_NORMAL_PLAY_TIME_START))
+  else if (this->IsSetFlag(NORMAL_PLAY_TIME_RANGE_REQUEST_HEADER_FLAG_START))
   {
     this->value = FormatString(NORMAL_PLAY_TIME_START_VALUE_FORMAT, this->GetStartTime() / 1000, this->GetStartTime() % 1000);
   }
-  else if (this->IsSetFlag(FLAG_NORMAL_PLAY_TIME_END))
+  else if (this->IsSetFlag(NORMAL_PLAY_TIME_RANGE_REQUEST_HEADER_FLAG_END))
   {
     this->value = FormatString(NORMAL_PLAY_TIME_END_VALUE_FORMAT, this->GetEndTime() / 1000, this->GetEndTime() % 1000);
   }
@@ -98,12 +98,12 @@ void CRtspNormalPlayTimeRangeRequestHeader::SetFlags(unsigned int flags)
 
 bool CRtspNormalPlayTimeRangeRequestHeader::IsSetStart(void)
 {
-  return this->IsSetFlag(FLAG_NORMAL_PLAY_TIME_START);
+  return this->IsSetFlag(NORMAL_PLAY_TIME_RANGE_REQUEST_HEADER_FLAG_START);
 }
 
 bool CRtspNormalPlayTimeRangeRequestHeader::IsSetEnd(void)
 {
-  return this->IsSetFlag(FLAG_NORMAL_PLAY_TIME_END);
+  return this->IsSetFlag(NORMAL_PLAY_TIME_RANGE_REQUEST_HEADER_FLAG_END);
 }
 
 bool CRtspNormalPlayTimeRangeRequestHeader::IsSetFlag(unsigned int flag)

@@ -24,7 +24,7 @@
 #include "RtspStreamFragmentCollection.h"
 
 CRtspStreamFragmentCollection::CRtspStreamFragmentCollection(void)
-  : CCollection()
+  : CCacheFileItemCollection()
 {
 }
 
@@ -32,9 +32,9 @@ CRtspStreamFragmentCollection::~CRtspStreamFragmentCollection(void)
 {
 }
 
-CRtspStreamFragment *CRtspStreamFragmentCollection::Clone(CRtspStreamFragment *item)
+CRtspStreamFragment *CRtspStreamFragmentCollection::GetItem(unsigned int index)
 {
-  return item->Clone();
+  return (CRtspStreamFragment *)__super::GetItem(index);
 }
 
 unsigned int CRtspStreamFragmentCollection::GetFirstNotDownloadedStreamFragment(unsigned int start)

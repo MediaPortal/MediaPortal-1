@@ -38,21 +38,16 @@ public:
   virtual ~CParameterCollection(void);
 
   // add parameter to collection
-  // @param item : the reference to parameter to add
-  // @return : true if successful, false otherwise
-  virtual bool Add(CParameter *item);
-
-  // add parameter to collection
   // @param name : the name of parameter to add
   // @param value : the value of parameter to add
   // @return : true if successful, false otherwise
-  bool Add(const wchar_t *name, const wchar_t *value);
+  virtual bool Add(const wchar_t *name, const wchar_t *value);
 
   // test if parameter exists in collection
   // @param name : the name of parameter to find
   // @param invariant : specifies if parameter name shoud be find with invariant casing
   // @return : true if parameter exists, false otherwise
-  bool Contains(const wchar_t *name, bool invariant);
+  virtual bool Contains(const wchar_t *name, bool invariant);
 
   // updates value of parameter in collection
   // if parameter doesn't exist, then is added to collection
@@ -60,67 +55,67 @@ public:
   // @param invariant : specifies if parameter name shoud be find with invariant casing
   // @param parameter : new parameter value
   // @return : true if successful, false otherwise
-  bool Update(const wchar_t *name, bool invariant, CParameter *parameter);
+  virtual bool Update(const wchar_t *name, bool invariant, CParameter *parameter);
 
   // get the parameter from collection with specified index
   // @param index : the index of parameter to find
   // @return : the reference to parameter or NULL if not find
-  CParameter *GetParameter(unsigned int index);
+  virtual CParameter *GetParameter(unsigned int index);
 
   // get the parameter from collection with specified name
   // @param name : the name of parameter to find
   // @param invariant : specifies if parameter name shoud be find with invariant casing
   // @return : the reference to parameter or NULL if not find
-  CParameter *GetParameter(const wchar_t *name, bool invariant);
+  virtual CParameter *GetParameter(const wchar_t *name, bool invariant);
 
   // get the string value of parameter with specified name
   // @param name : the name of parameter to find
   // @param invariant : specifies if parameter name shoud be find with invariant casing
   // @param defaultValue : the default value to return
   // @return : the value of parameter or default value if not found
-  const wchar_t *GetValue(const wchar_t *name, bool invariant, const wchar_t *defaultValue);
+  virtual const wchar_t *GetValue(const wchar_t *name, bool invariant, const wchar_t *defaultValue);
 
   // get the integer value of parameter with specified name
   // @param name : the name of parameter to find
   // @param invariant : specifies if parameter name shoud be find with invariant casing
   // @param defaultValue : the default value to return
   // @return : the value of parameter or default value if not found
-  long GetValueLong(const wchar_t *name, bool invariant, long defaultValue);
+  virtual long GetValueLong(const wchar_t *name, bool invariant, long defaultValue);
 
   // get the unsigned integer value of parameter with specified name
   // @param name : the name of parameter to find
   // @param invariant : specifies if parameter name shoud be find with invariant casing
   // @param defaultValue : the default value to return
   // @return : the value of parameter or default value if not found
-  long GetValueUnsignedInt(const wchar_t *name, bool invariant, unsigned int defaultValue);
+  virtual long GetValueUnsignedInt(const wchar_t *name, bool invariant, unsigned int defaultValue);
 
   // get 64-bit integer value of parameter with specified name
   // @param name : the name of parameter to find
   // @param invariant : specifies if parameter name shoud be find with invariant casing
   // @param defaultValue : the default value to return
   // @return : the value of parameter or default value if not found
-  int64_t GetValueInt64(const wchar_t *name, bool invariant, int64_t defaultValue);
+  virtual int64_t GetValueInt64(const wchar_t *name, bool invariant, int64_t defaultValue);
 
   // get the boolean value of parameter with specified name
   // @param name : the name of parameter to find
   // @param invariant : specifies if parameter name shoud be find with invariant casing
   // @param defaultValue : the default value to return
   // @return : the value of parameter or default value if not found
-  bool GetValueBool(const wchar_t *name, bool invariant, bool defaultValue);
+  virtual bool GetValueBool(const wchar_t *name, bool invariant, bool defaultValue);
 
   // log all parameters to log file
   // @param logger : the logger
   // @param loggerLevel : the logger level of messages
   // @param protocolName : name of protocol calling LogCollection()
   // @param functionName : name of function calling LogCollection()
-  void LogCollection(CLogger *logger, unsigned int loggerLevel, const wchar_t *protocolName, const wchar_t *functionName);
+  virtual void LogCollection(CLogger *logger, unsigned int loggerLevel, const wchar_t *protocolName, const wchar_t *functionName);
 
   // copies parameter in collection
   // @param parameterName : the name of parameter to copy
   // @param invariant : specifies if parameter name shoud be find with invariant casing
   // @param newParameterName : the name of new parameter to create
   // @return : true if parameter created, false otherwise
-  bool CopyParameter(const wchar_t *parameterName, bool invariant, const wchar_t *newParameterName);
+  virtual bool CopyParameter(const wchar_t *parameterName, bool invariant, const wchar_t *newParameterName);
 
   // remove parameter with specified name from collection
   // @param name : the name of parameter to remove
@@ -128,34 +123,23 @@ public:
   // @return : true if removed, false otherwise
   virtual bool Remove(const wchar_t *name, bool invariant);
 
-  // remove parameter with specified index from collection
-  // @param index : the index of parameter to remove
-  // @return : true if removed, false otherwise
-  virtual bool Remove(unsigned int index);
-
-  // removes count of items from collection from specified index
-  // @param index : the index of item to start removing
-  // @param count : the count of items to remove
-  // @return : true if removed, false otherwise
-  virtual bool Remove(unsigned int index, unsigned int count);
-
 protected:
   // compare two item keys
   // @param firstKey : the first item key to compare
   // @param secondKey : the second item key to compare
   // @param context : the reference to user defined context
   // @return : 0 if keys are equal, lower than zero if firstKey is lower than secondKey, greater than zero if firstKey is greater than secondKey
-  int CompareItemKeys(const wchar_t *firstKey, const wchar_t *secondKey, void *context);
+  virtual int CompareItemKeys(const wchar_t *firstKey, const wchar_t *secondKey, void *context);
 
   // gets key for item
   // @param item : the item to get key
   // @return : the key of item
-  const wchar_t *GetKey(CParameter *item);
+  virtual const wchar_t *GetKey(CParameter *item);
 
   // clones specified item
   // @param item : the item to clone
   // @return : deep clone of item or NULL if not implemented
-  CParameter *Clone(CParameter *item);
+  virtual CParameter *Clone(CParameter *item);
 };
 
 #endif

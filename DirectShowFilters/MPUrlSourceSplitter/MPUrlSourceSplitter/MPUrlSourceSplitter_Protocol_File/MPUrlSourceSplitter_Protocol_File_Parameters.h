@@ -23,4 +23,7 @@
 
 #define PARAMETER_NAME_FILE_RECEIVE_DATA_TIMEOUT                  L"FileReceiveDataTimeout"
 
+// we should get data in two seconds
+#define FILE_RECEIVE_DATA_TIMEOUT_DEFAULT                         2000
+
 #endif

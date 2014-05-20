@@ -24,42 +24,74 @@
 
 CReceiveData::CReceiveData(void)
 {
-  this->endOfStreamReached = new CEndOfStreamReached();
-  this->totalLength = new CSetTotalLength();
-  this->mediaPackets = new CMediaPacketCollection();
+  this->streams = new CStreamReceiveDataColletion();
+  this->flags = RECEIVE_DATA_FLAG_NONE;
 }
 
 CReceiveData::~CReceiveData(void)
 {
-  FREE_MEM_CLASS(this->endOfStreamReached);
-  FREE_MEM_CLASS(this->totalLength);
-  FREE_MEM_CLASS(this->mediaPackets);
+  FREE_MEM_CLASS(this->streams);
 }
 
 /* get methods */
 
-CSetTotalLength *CReceiveData::GetTotalLength(void)
+CStreamReceiveDataColletion *CReceiveData::GetStreams(void)
 {
-  return this->totalLength;
-}
-
-CMediaPacketCollection *CReceiveData::GetMediaPacketCollection(void)
-{
-  return this->mediaPackets;
-}
-
-CEndOfStreamReached *CReceiveData::GetEndOfStreamReached(void)
-{
-  return this->endOfStreamReached;
+  return this->streams;
 }
 
 /* set methods */
 
+bool CReceiveData::SetStreamCount(unsigned int streamCount)
+{
+  bool result = true;
+
+  if (this->streams->Count() != streamCount)
+  {
+    this->streams->Clear();
+
+    for (unsigned int i = 0; (result && (i < streamCount)); i++)
+    {
+      CStreamReceiveData *stream = new CStreamReceiveData();
+      result &= (stream != NULL);
+
+      CHECK_CONDITION_EXECUTE(result, result = this->streams->Add(stream));
+      CHECK_CONDITION_EXECUTE(!result, FREE_MEM_CLASS(stream));
+    }
+  }
+
+  this->flags |= result ? RECEIVE_DATA_FLAG_SET_STREAM_COUNT : RECEIVE_DATA_FLAG_NONE;
+  return result;
+}
+
+void CReceiveData::SetLiveStream(bool liveStream)
+{
+  this->flags &= ~RECEIVE_DATA_FLAG_LIVE_STREAM;
+  this->flags |= liveStream ? RECEIVE_DATA_FLAG_LIVE_STREAM : RECEIVE_DATA_FLAG_NONE;
+}
+
 /* other methods */
+
+bool CReceiveData::IsSetStreamCount(void)
+{
+  return this->IsSetFlags(RECEIVE_DATA_FLAG_SET_STREAM_COUNT);
+}
+
+bool CReceiveData::IsLiveStream(void)
+{
+  return this->IsSetFlags(RECEIVE_DATA_FLAG_LIVE_STREAM);
+}
+
+bool CReceiveData::IsSetFlags(unsigned int flags)
+{
+  return ((this->flags & flags) == flags);
+}
 
 void CReceiveData::Clear(void)
 {
-  this->endOfStreamReached->Clear();
-  this->mediaPackets->Clear();
-  this->totalLength->Clear();
+  for (unsigned int i = 0; i < this->streams->Count(); i++)
+  {
+    this->streams->GetItem(i)->Clear();
+  }
+  this->flags = RECEIVE_DATA_FLAG_NONE;
 }

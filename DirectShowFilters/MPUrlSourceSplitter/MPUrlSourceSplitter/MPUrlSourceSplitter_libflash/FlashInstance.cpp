@@ -29,7 +29,7 @@ CFlashInstance::CFlashInstance(CLogger *logger, const wchar_t *instanceName, con
 {
   this->logger = logger;
   this->instanceName = Duplicate(instanceName);
-  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, this->instanceName, METHOD_CONSTRUCTOR_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_CONSTRUCTOR_START_FORMAT, this->instanceName, METHOD_CONSTRUCTOR_NAME, this);
 
   this->swfFilePath = Duplicate(swfFilePath);
 

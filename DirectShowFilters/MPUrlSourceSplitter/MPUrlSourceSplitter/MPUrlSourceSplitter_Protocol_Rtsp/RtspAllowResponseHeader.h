@@ -51,18 +51,17 @@
 #define RTSP_ALLOW_RESPONSE_HEADER_METHOD_SET_PARAMETER_LENGTH        13
 #define RTSP_ALLOW_RESPONSE_HEADER_METHOD_TEARDOWN_LENGTH             8
 
-#define FLAG_RTSP_ALLOW_RESPONSE_HEADER_METHOD_NONE                   0x00000000
-#define FLAG_RTSP_ALLOW_RESPONSE_HEADER_METHOD_DESCRIBE               0x00000001
-#define FLAG_RTSP_ALLOW_RESPONSE_HEADER_METHOD_ANNOUNCE               0x00000002
-#define FLAG_RTSP_ALLOW_RESPONSE_HEADER_METHOD_GET_PARAMETER          0x00000004
-#define FLAG_RTSP_ALLOW_RESPONSE_HEADER_METHOD_OPTIONS                0x00000008
-#define FLAG_RTSP_ALLOW_RESPONSE_HEADER_METHOD_PAUSE                  0x00000010
-#define FLAG_RTSP_ALLOW_RESPONSE_HEADER_METHOD_PLAY                   0x00000020
-#define FLAG_RTSP_ALLOW_RESPONSE_HEADER_METHOD_RECORD                 0x00000040
-#define FLAG_RTSP_ALLOW_RESPONSE_HEADER_METHOD_REDIRECT               0x00000080
-#define FLAG_RTSP_ALLOW_RESPONSE_HEADER_METHOD_SETUP                  0x00000100
-#define FLAG_RTSP_ALLOW_RESPONSE_HEADER_METHOD_SET_PARAMETER          0x00000200
-#define FLAG_RTSP_ALLOW_RESPONSE_HEADER_METHOD_TEARDOWN               0x00000400
+#define RTSP_ALLOW_RESPONSE_HEADER_FLAG_METHOD_DESCRIBE               (1 << (MAX_RTSP_RESPONSE_HEADER_FLAG + 1))
+#define RTSP_ALLOW_RESPONSE_HEADER_FLAG_METHOD_ANNOUNCE               (1 << (MAX_RTSP_RESPONSE_HEADER_FLAG + 2))
+#define RTSP_ALLOW_RESPONSE_HEADER_FLAG_METHOD_GET_PARAMETER          (1 << (MAX_RTSP_RESPONSE_HEADER_FLAG + 3))
+#define RTSP_ALLOW_RESPONSE_HEADER_FLAG_METHOD_OPTIONS                (1 << (MAX_RTSP_RESPONSE_HEADER_FLAG + 4))
+#define RTSP_ALLOW_RESPONSE_HEADER_FLAG_METHOD_PAUSE                  (1 << (MAX_RTSP_RESPONSE_HEADER_FLAG + 5))
+#define RTSP_ALLOW_RESPONSE_HEADER_FLAG_METHOD_PLAY                   (1 << (MAX_RTSP_RESPONSE_HEADER_FLAG + 6))
+#define RTSP_ALLOW_RESPONSE_HEADER_FLAG_METHOD_RECORD                 (1 << (MAX_RTSP_RESPONSE_HEADER_FLAG + 7))
+#define RTSP_ALLOW_RESPONSE_HEADER_FLAG_METHOD_REDIRECT               (1 << (MAX_RTSP_RESPONSE_HEADER_FLAG + 8))
+#define RTSP_ALLOW_RESPONSE_HEADER_FLAG_METHOD_SETUP                  (1 << (MAX_RTSP_RESPONSE_HEADER_FLAG + 9))
+#define RTSP_ALLOW_RESPONSE_HEADER_FLAG_METHOD_SET_PARAMETER          (1 << (MAX_RTSP_RESPONSE_HEADER_FLAG + 10))
+#define RTSP_ALLOW_RESPONSE_HEADER_FLAG_METHOD_TEARDOWN               (1 << (MAX_RTSP_RESPONSE_HEADER_FLAG + 11))
 
 class CRtspAllowResponseHeader : public CRtspResponseHeader
 {
@@ -120,11 +119,6 @@ public:
   // @return : true if method is defined, false otherwise
   virtual bool IsDefinedTeardownMethod(void);
 
-  // tests if flag is set
-  // @param flag : the flag to test
-  // @return : true if flag is set, false otherwise
-  virtual bool IsSetFlag(unsigned int flag);
-
   // deep clones of current instance
   // @return : deep clone of current instance or NULL if error
   virtual CRtspAllowResponseHeader *Clone(void);
@@ -136,8 +130,6 @@ public:
   virtual bool Parse(const wchar_t *header, unsigned int length);
 
 protected:
-
-  unsigned int flags;
 
   // deeply clones current instance to cloned header
   // @param  clonedHeader : cloned header to hold clone of current instance

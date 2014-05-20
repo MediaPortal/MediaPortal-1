@@ -67,10 +67,9 @@ public:
   HRESULT StopReceivingData(void);
 
   // retrieves the progress of the stream reading operation
-  // @param total : reference to a variable that receives the length of the entire stream, in bytes
-  // @param current : reference to a variable that receives the length of the downloaded portion of the stream, in bytes
-  // @return : S_OK if successful, VFW_S_ESTIMATED if returned values are estimates, E_UNEXPECTED if unexpected error
-  HRESULT QueryStreamProgress(LONGLONG *total, LONGLONG *current);
+  // @param streamProgress : reference to instance of class that receives the stream progress
+  // @return : S_OK if successful, VFW_S_ESTIMATED if returned values are estimates, E_INVALIDARG if stream ID is unknown, E_UNEXPECTED if unexpected error
+  HRESULT QueryStreamProgress(CStreamProgress *streamProgress);
   
   // retrieves available lenght of stream
   // @param available : reference to instance of class that receives the available length of stream, in bytes
@@ -95,10 +94,12 @@ public:
   // @return : bitwise combination of SEEKING_METHOD flags
   unsigned int GetSeekingCapabilities(void);
 
-  // request protocol implementation to receive data from specified time (in ms)
+  // request protocol implementation to receive data from specified time (in ms) for specified stream
+  // this method is called with same time for each stream in protocols with multiple streams
+  // @param streamId : the stream ID to receive data from specified time
   // @param time : the requested time (zero is start of stream)
   // @return : time (in ms) where seek finished or lower than zero if error
-  int64_t SeekToTime(int64_t time);
+  int64_t SeekToTime(unsigned int streamId, int64_t time);
 
   // request protocol implementation to receive data from specified position to specified position
   // @param start : the requested start position (zero is start of stream)
@@ -106,28 +107,24 @@ public:
   // @return : position where seek finished or lower than zero if error
   int64_t SeekToPosition(int64_t start, int64_t end);
 
-  // sets if protocol implementation have to supress sending data to filter
+  // sets if protocol implementation have to supress sending data with specified stream ID to filter
+  // @param streamId : the stream ID to supress data
   // @param supressData : true if protocol have to supress sending data to filter, false otherwise
-  void SetSupressData(bool supressData);
+  void SetSupressData(unsigned int streamId, bool supressData);
 
   // IOutputStream interface implementation
 
-  // sets total length of stream to output pin
-  // @param total : total length of stream in bytes
-  // @param estimate : specifies if length is estimate
-  // @return : S_OK if successful
-  HRESULT SetTotalLength(int64_t total, bool estimate);
+  // notifies output stream about stream count
+  // @param streamCount : the stream count
+  // @param liveStream : true if stream(s) are live, false otherwise
+  // @return : S_OK if successful, false otherwise
+  HRESULT SetStreamCount(unsigned int streamCount, bool liveStream);
 
-  // pushes media packets to filter
-  // @param mediaPackets : collection of media packets to push to filter
-  // @return : S_OK if successful
-  HRESULT PushMediaPackets(CMediaPacketCollection *mediaPackets);
-
-  // notifies output stream that end of stream was reached
-  // this method can be called only when protocol support SEEKING_METHOD_POSITION
-  // @param streamPosition : the last valid stream position
-  // @return : S_OK if successful
-  HRESULT EndOfStreamReached(int64_t streamPosition);
+  // pushes stream received data to filter
+  // @param streamId : the stream ID to push stream received data
+  // @param streamReceivedData : the stream received data to push to filter
+  // @return : S_OK if successful, error code otherwise
+  HRESULT PushStreamReceiveData(unsigned int streamId, CStreamReceiveData *streamReceiveData);
 
   // gets parser hoster status
   // @return : one of STATUS_* values or error code if error
@@ -183,17 +180,11 @@ protected:
 
   // specifies if hoster have to parse media packets
   bool parseMediaPackets;
+  // specifies if received streams are live
+  bool liveStream;
 
-  // specifies if SetTotalLength() method was called
-  bool setTotalLengthCalled;
-  // holds last SetTotalLength() method call parameters
-  int64_t total;
-  bool estimate;
-
-  // specifies if EndOfStreamReached() method was called
-  bool endOfStreamReachedCalled;
-  // holds last EndOfStreamReached() method call parameters
-  int64_t streamPosition;
+  // holds streams data - total length, end of stream and media packets
+  CStreamReceiveDataColletion *streams;
 
   // holds if data are supressed
   bool supressData;

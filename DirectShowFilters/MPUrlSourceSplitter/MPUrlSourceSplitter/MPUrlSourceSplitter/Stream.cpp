@@ -27,6 +27,7 @@ CStream::CStream(void)
   this->language = NULL;
   this->pid = 0;
   this->streamInfo = NULL;
+  this->streamType = Unknown;
 }
 
 CStream::~CStream(void)
@@ -52,6 +53,11 @@ const wchar_t *CStream::GetLanguage(void)
   return this->language;
 }
 
+CStream::StreamType CStream::GetStreamType(void)
+{
+  return this->streamType;
+}
+
 /* set methods */
 
 void CStream::SetPid(unsigned int pid)
@@ -62,6 +68,11 @@ void CStream::SetPid(unsigned int pid)
 bool CStream::SetLanguage(const wchar_t *language)
 {
   SET_STRING_RETURN_WITH_NULL(this->language, language);
+}
+
+void CStream::SetStreamType(StreamType streamType)
+{
+  this->streamType = streamType;
 }
 
 /* other methods */

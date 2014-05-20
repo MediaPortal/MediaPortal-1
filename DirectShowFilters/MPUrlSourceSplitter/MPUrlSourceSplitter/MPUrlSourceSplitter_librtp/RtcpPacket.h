@@ -73,8 +73,8 @@ From RFC 3550:
 #define RTCP_PACKET_HEADER_SIZE                                         4               // length of the RTCP header in bytes
 #define RTCP_PACKET_VERSION                                             2               // RTCP packet version
 
-#define FLAG_RTCP_PACKET_NONE                                           FLAG_BASE_RTP_PACKET_NONE
-#define FLAG_RTCP_PACKET_PADDING                                        FLAG_BASE_RTP_PACKET_PADDING
+#define RTCP_PACKET_FLAG_NONE                                           BASE_RTP_PACKET_FLAG_NONE
+#define RTCP_PACKET_FLAG_PADDING                                        BASE_RTP_PACKET_FLAG_PADDING
 
 class CRtcpPacket : public CBaseRtpPacket
 {

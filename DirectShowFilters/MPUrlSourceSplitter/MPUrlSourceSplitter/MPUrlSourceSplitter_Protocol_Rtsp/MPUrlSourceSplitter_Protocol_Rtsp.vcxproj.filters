@@ -180,6 +180,21 @@
     <ClInclude Include="RtspGetParameterRequest.h">
       <Filter>RtspRequest\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="RtspRtpInfoResponseHeader.h">
+      <Filter>RtspResponse\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtpInfoTrack.h">
+      <Filter>RtspResponse\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtpInfoTrackCollection.h">
+      <Filter>RtspResponse\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspPayloadType.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspSupportedPayloadTypeCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -325,6 +340,21 @@
     </ClCompile>
     <ClCompile Include="RtspGetParameterRequest.cpp">
       <Filter>RtspRequest\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspRtpInfoResponseHeader.cpp">
+      <Filter>RtspResponse\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtpInfoTrack.cpp">
+      <Filter>RtspResponse\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtpInfoTrackCollection.cpp">
+      <Filter>RtspResponse\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspPayloadType.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspSupportedPayloadTypeCollection.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

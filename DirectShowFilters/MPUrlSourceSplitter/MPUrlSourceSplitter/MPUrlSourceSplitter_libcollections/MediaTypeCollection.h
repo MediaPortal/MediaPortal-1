@@ -38,7 +38,7 @@ protected:
   // clones specified item
   // @param item : the item to clone
   // @return : deep clone of item or NULL if not implemented
-  CMediaType *Clone(CMediaType *item);
+  virtual CMediaType *Clone(CMediaType *item);
 };
 
 

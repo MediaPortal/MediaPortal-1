@@ -147,6 +147,30 @@ public:
   // @return : true if successful, false otherwise
   bool ResizeBuffer(unsigned int size);
 
+  // compares data in linear buffer with specified buffer
+  // @param buffer : the buffer to compare with linear buffer
+  // @param length : the length of buffer to compare
+  // @return : true if data are same, false otherwise
+  bool CompareBuffer(const unsigned char *buffer, unsigned int length);
+
+  // compares data in linear buffer with specified buffer
+  // @param buffer : the buffer to compare with linear buffer
+  // @param length : the length of buffer to compare
+  // @param start : the position in linear buffer to start comparing
+  // @return : true if data are same, false otherwise
+  bool CompareBuffer(const unsigned char *buffer, unsigned int length, unsigned int start);
+
+  // compares data in linear buffer with specified linear buffer
+  // @param buffer : the linear buffer to compare with linear buffer
+  // @return : true if data are same, false otherwise
+  bool CompareBuffer(CLinearBuffer *buffer);
+
+  // compares data in linear buffer with specified linear buffer
+  // @param buffer : the buffer to compare with linear buffer
+  // @param start : the position in specified linear buffer to start comparing
+  // @return : true if data are same, false otherwise
+  bool CompareBuffer(CLinearBuffer *buffer, unsigned int start);
+
 private:
   // internal buffer
   unsigned char *buffer;

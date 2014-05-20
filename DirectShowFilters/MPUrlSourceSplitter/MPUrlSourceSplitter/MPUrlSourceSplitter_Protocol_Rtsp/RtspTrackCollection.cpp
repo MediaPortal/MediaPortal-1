@@ -34,5 +34,5 @@ CRtspTrackCollection::~CRtspTrackCollection(void)
 
 CRtspTrack *CRtspTrackCollection::Clone(CRtspTrack *item)
 {
-  return item->Clone();
+  return NULL;
 }

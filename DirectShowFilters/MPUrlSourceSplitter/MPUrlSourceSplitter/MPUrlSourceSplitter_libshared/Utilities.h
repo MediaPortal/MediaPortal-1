@@ -68,4 +68,25 @@ wchar_t *GetStoreFilePath(const wchar_t *folder, CParameterCollection *configura
 // @param szThreadName : the thread name to set
 void SetThreadName(DWORD dwThreadID, LPCSTR szThreadName);
 
+// computes greatest common divisor by binary GCD algorithm
+// http://en.wikipedia.org/wiki/Binary_GCD_algorithm
+// @param u : first number
+// @param v : second number
+// @return : greatest common divisor
+unsigned int GreatestCommonDivisor(unsigned int u, unsigned int v);
+
+// computes greatest common divisor by binary GCD algorithm
+// http://en.wikipedia.org/wiki/Binary_GCD_algorithm
+// @param u : first number
+// @param v : second number
+// @return : greatest common divisor
+int64_t GreatestCommonDivisor(int64_t u, int64_t v);
+
+// computes greatest common divisor by binary GCD algorithm
+// http://en.wikipedia.org/wiki/Binary_GCD_algorithm
+// @param u : first number
+// @param v : second number
+// @return : greatest common divisor
+uint64_t GreatestCommonDivisor(uint64_t u, uint64_t v);
+
 #endif

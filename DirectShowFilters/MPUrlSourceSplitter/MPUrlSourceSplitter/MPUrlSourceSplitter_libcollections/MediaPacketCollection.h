@@ -23,30 +23,24 @@
 #ifndef __MEDIA_PACKET_COLLECTION_DEFINED
 #define __MEDIA_PACKET_COLLECTION_DEFINED
 
-#include "KeyedCollection.h"
+#include "CacheFileItemCollection.h"
 #include "MediaPacket.h"
 
-class CMediaPacketCollection : public CKeyedCollection<CMediaPacket, int64_t>
+class CMediaPacketCollection : public CCacheFileItemCollection
 {
 public:
   CMediaPacketCollection(void);
-  ~CMediaPacketCollection(void);
+  virtual ~CMediaPacketCollection(void);
+
+  // adds media packet to collection
+  // @param item : the reference to media packet to add
+  // @return : true if successful, false otherwise
+  virtual bool Add(CMediaPacket *item);
 
   // gets index of media packet where position is between start position and end position
   // @param position : the position between start position and end position
   // @return : index of media packet or UINT_MAX if not exists
   unsigned int GetMediaPacketIndexBetweenPositions(int64_t position);
-
-  // get item index of item with specified start position
-  // @param key : the key of item to find
-  // @param context : reference to user defined context
-  // @return : the index of item or UINT_MAX if not found
-  unsigned int GetItemIndex(int64_t key, void *context);
-
-  // add item to collection
-  // @param item : the reference to item to add
-  // @return : true if successful, false otherwise
-  bool Add(CMediaPacket *item);
 
   // returns indexes where item have to be placed
   // startIndex == UINT_MAX && endIndex == 0 => item have to be placed on beginning
@@ -54,11 +48,10 @@ public:
   // startIndex == endIndex => item with same key exists in collection (index of item is startIndex)
   // item have to be placed between startIndex and endIndex
   // @param key : the item key to compare
-  // @param context : the reference to user defined context
   // @param startIndex : reference to variable which holds start index where item have to be placed
   // @param endIndex : reference to variable which holds end index where item have to be placed
   // @return : true if successful, false otherwise
-  bool GetItemInsertPosition(int64_t key, void *context, unsigned int *startIndex, unsigned int *endIndex);
+  bool GetItemInsertPosition(int64_t key, unsigned int *startIndex, unsigned int *endIndex);
 
   // gets overlapped region between specified packet and consolidated space
   // @param packet : packet to get overlapped region
@@ -69,26 +62,14 @@ public:
   // clear collection of items
   virtual void Clear(void);
 
+  // get the item from collection with specified index
+  // @param index : the index of item to find
+  // @return : the reference to item or NULL if not find
+  virtual CMediaPacket *GetItem(unsigned int index);
+
 protected:
 
   CMediaPacketCollection(bool consolidateSpace);
-
-  // compare two item keys
-  // @param firstKey : the first item key to compare
-  // @param secondKey : the second item key to compare
-  // @param context : the reference to user defined context
-  // @return : 0 if keys are equal, lower than zero if firstKey is lower than secondKey, greater than zero if firstKey is greater than secondKey
-  int CompareItemKeys(int64_t firstKey, int64_t secondKey, void *context);
-
-  // gets key for item
-  // @param item : the item to get key
-  // @return : the key of item
-  int64_t GetKey(CMediaPacket *item);
-
-  // clones specified item
-  // @param item : the item to clone
-  // @return : deep clone of item or NULL if not implemented
-  CMediaPacket *Clone(CMediaPacket *item);
 
   // holds consolidated media packets space
   CMediaPacketCollection *consolidatedMediaPackets;

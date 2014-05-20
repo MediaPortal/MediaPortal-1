@@ -52,5 +52,4 @@ protected:
   CLinearBuffer *Clone(CLinearBuffer *item);
 };
 
-
 #endif

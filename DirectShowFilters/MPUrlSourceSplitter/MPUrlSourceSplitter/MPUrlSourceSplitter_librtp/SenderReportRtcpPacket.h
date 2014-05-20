@@ -101,9 +101,9 @@ delay since last SR (DLSR): 32 bits
 
 #define SENDER_REPORT_REPORT_BLOCK_SIZE                                 24
 
-#define FLAG_SENDER_REPORT_RTCP_PACKET_NONE                             FLAG_RTCP_PACKET_NONE
-#define FLAG_SENDER_REPORT_RTCP_PACKET_PADDING                          FLAG_RTCP_PACKET_PADDING
-#define FLAG_SENDER_REPORT_RTCP_PACKET_PROFILE_EXTENSIONS               0x00000002
+#define SENDER_REPORT_RTCP_PACKET_FLAG_NONE                             RTCP_PACKET_FLAG_NONE
+#define SENDER_REPORT_RTCP_PACKET_FLAG_PADDING                          RTCP_PACKET_FLAG_PADDING
+#define SENDER_REPORT_RTCP_PACKET_FLAG_PROFILE_EXTENSIONS               0x00000002
 
 class CSenderReportRtcpPacket : public CRtcpPacket
 {

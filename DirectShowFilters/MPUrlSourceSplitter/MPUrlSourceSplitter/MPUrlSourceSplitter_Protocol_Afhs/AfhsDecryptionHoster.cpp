@@ -25,7 +25,7 @@
 CAfhsDecryptionHoster::CAfhsDecryptionHoster(CLogger *logger, CParameterCollection *configuration)
   : CHoster(logger, configuration, L"AfhsDecryptionHoster", L"mpurlsourcesplitter_afhs_decryption_*.dll")
 {
-  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_AFHS_DECRYPTION_PLUGIN_HOSTER_NAME, METHOD_CONSTRUCTOR_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_CONSTRUCTOR_START_FORMAT, MODULE_AFHS_DECRYPTION_PLUGIN_HOSTER_NAME, METHOD_CONSTRUCTOR_NAME, this);
 
   this->activeDecryptionPlugin = NULL;
   this->decidedDecryptionPlugin = false;

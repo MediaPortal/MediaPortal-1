@@ -66,10 +66,10 @@ bool CRtspPlayRequest::SetStartTime(uint64_t startTime)
 
         if (result)
         {
-          if (header->IsSetFlag(FLAG_NORMAL_PLAY_TIME_END))
+          if (header->IsSetFlag(NORMAL_PLAY_TIME_RANGE_REQUEST_HEADER_FLAG_END))
           {
             header->SetStartTime(startTime);
-            header->SetFlags(header->GetFlags() & (~FLAG_NORMAL_PLAY_TIME_START));
+            header->SetFlags(header->GetFlags() & (~NORMAL_PLAY_TIME_RANGE_REQUEST_HEADER_FLAG_START));
           }
           else
           {
@@ -85,7 +85,7 @@ bool CRtspPlayRequest::SetStartTime(uint64_t startTime)
       result &= (header != NULL);
 
       CHECK_CONDITION_EXECUTE(result, header->SetStartTime(startTime));
-      CHECK_CONDITION_EXECUTE(result, header->SetFlags(FLAG_NORMAL_PLAY_TIME_START));
+      CHECK_CONDITION_EXECUTE(result, header->SetFlags(NORMAL_PLAY_TIME_RANGE_REQUEST_HEADER_FLAG_START));
       CHECK_CONDITION_EXECUTE(result, result &= this->requestHeaders->Add(header));
       CHECK_CONDITION_EXECUTE(!result, FREE_MEM_CLASS(header));
     }
@@ -114,10 +114,10 @@ bool CRtspPlayRequest::SetEndTime(uint64_t endTime)
 
         if (result)
         {
-          if (header->IsSetFlag(FLAG_NORMAL_PLAY_TIME_START))
+          if (header->IsSetFlag(NORMAL_PLAY_TIME_RANGE_REQUEST_HEADER_FLAG_START))
           {
             header->SetEndTime(endTime);
-            header->SetFlags(header->GetFlags() & (~FLAG_NORMAL_PLAY_TIME_END));
+            header->SetFlags(header->GetFlags() & (~NORMAL_PLAY_TIME_RANGE_REQUEST_HEADER_FLAG_END));
           }
           else
           {
@@ -133,7 +133,7 @@ bool CRtspPlayRequest::SetEndTime(uint64_t endTime)
       result &= (header != NULL);
 
       CHECK_CONDITION_EXECUTE(result, header->SetEndTime(endTime));
-      CHECK_CONDITION_EXECUTE(result, header->SetFlags(FLAG_NORMAL_PLAY_TIME_END));
+      CHECK_CONDITION_EXECUTE(result, header->SetFlags(NORMAL_PLAY_TIME_RANGE_REQUEST_HEADER_FLAG_END));
       CHECK_CONDITION_EXECUTE(result, result &= this->requestHeaders->Add(header));
       CHECK_CONDITION_EXECUTE(!result, FREE_MEM_CLASS(header));
     }

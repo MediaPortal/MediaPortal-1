@@ -26,7 +26,7 @@
 CProtocolHoster::CProtocolHoster(CLogger *logger, CParameterCollection *configuration)
   : CHoster(logger, configuration, L"ProtocolHoster", L"mpurlsourcesplitter_protocol_*.dll")
 {
-  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_PROTOCOL_HOSTER_NAME, METHOD_CONSTRUCTOR_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_CONSTRUCTOR_START_FORMAT, MODULE_PROTOCOL_HOSTER_NAME, METHOD_CONSTRUCTOR_NAME, this);
 
   this->activeProtocol = NULL;
 
@@ -176,9 +176,9 @@ HRESULT CProtocolHoster::StopReceivingData(void)
   return S_OK;
 }
 
-HRESULT CProtocolHoster::QueryStreamProgress(LONGLONG *total, LONGLONG *current)
+HRESULT CProtocolHoster::QueryStreamProgress(CStreamProgress *streamProgress)
 {
-  return (this->activeProtocol != NULL) ? this->activeProtocol->QueryStreamProgress(total, current) : E_NOT_VALID_STATE;
+  return (this->activeProtocol != NULL) ? this->activeProtocol->QueryStreamProgress(streamProgress) : E_NOT_VALID_STATE;
 }
   
 HRESULT CProtocolHoster::QueryStreamAvailableLength(CStreamAvailableLength *availableLength)
@@ -228,9 +228,9 @@ unsigned int CProtocolHoster::GetSeekingCapabilities(void)
   return (this->activeProtocol != NULL) ? this->activeProtocol->GetSeekingCapabilities() : SEEKING_METHOD_NONE;
 }
 
-int64_t CProtocolHoster::SeekToTime(int64_t time)
+int64_t CProtocolHoster::SeekToTime(unsigned int streamId, int64_t time)
 {
-  return (this->activeProtocol != NULL) ? this->activeProtocol->SeekToTime(time) : E_NOT_VALID_STATE;
+  return (this->activeProtocol != NULL) ? this->activeProtocol->SeekToTime(streamId, time) : E_NOT_VALID_STATE;
 }
 
 int64_t CProtocolHoster::SeekToPosition(int64_t start, int64_t end)
@@ -238,11 +238,11 @@ int64_t CProtocolHoster::SeekToPosition(int64_t start, int64_t end)
   return (this->activeProtocol != NULL) ? this->activeProtocol->SeekToPosition(start, end) : E_NOT_VALID_STATE;
 }
 
-void CProtocolHoster::SetSupressData(bool supressData)
+void CProtocolHoster::SetSupressData(unsigned int streamId, bool supressData)
 {
   if (this->activeProtocol != NULL)
   {
-    this->activeProtocol->SetSupressData(supressData);
+    this->activeProtocol->SetSupressData(streamId, supressData);
   }
 }
 

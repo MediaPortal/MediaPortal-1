@@ -24,25 +24,32 @@
 #define __RTSP_STREAM_FRAGMENT_COLLECTION_DEFINED
 
 #include "RtspStreamFragment.h"
-#include "Collection.h"
+#include "CacheFileItemCollection.h"
 
-class CRtspStreamFragmentCollection : public CCollection<CRtspStreamFragment>
+class CRtspStreamFragmentCollection : public CCacheFileItemCollection
 {
 public:
   CRtspStreamFragmentCollection(void);
-  ~CRtspStreamFragmentCollection(void);
+  virtual ~CRtspStreamFragmentCollection(void);
+
+  /* get methods */
+
+  // get the item from collection with specified index
+  // @param index : the index of item to find
+  // @return : the reference to item or NULL if not find
+  virtual CRtspStreamFragment *GetItem(unsigned int index);
 
   // gets first not downloaded stream fragment
   // @param requested : start index for searching
   // @return : index of first not downloaded stream fragment or UINT_MAX if not exists
   unsigned int GetFirstNotDownloadedStreamFragment(unsigned int start);
 
+  /* set methods */
+
+  /* other methods */
+
 protected:
 
-  // clones specified item
-  // @param item : the item to clone
-  // @return : deep clone of item or NULL if not implemented
-  CRtspStreamFragment *Clone(CRtspStreamFragment *item);
 };
 
 #endif

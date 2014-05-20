@@ -1162,7 +1162,7 @@ char *ToUpperA(const char *string, unsigned int length)
 
   if (result != NULL)
   {
-    if (_strupr_s(result, length) != 0)
+    if (_strupr_s(result, length + 1) != 0)
     {
       FREE_MEM(result);
     }
@@ -1182,7 +1182,7 @@ wchar_t *ToUpperW(const wchar_t *string, unsigned int length)
 
   if (result != NULL)
   {
-    if (_wcsupr_s(result, length) != 0)
+    if (_wcsupr_s(result, length + 1) != 0)
     {
       FREE_MEM(result);
     }

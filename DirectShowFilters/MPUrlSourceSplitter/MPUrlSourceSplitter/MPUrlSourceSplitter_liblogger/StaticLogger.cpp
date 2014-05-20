@@ -221,7 +221,7 @@ void CStaticLogger::Add(void)
 {
   CLockMutex lock(this->mutex, INFINITE);
 
-  if (this->referencies == 0)
+  if (this->loggerWorkerThread == NULL)
   {
     this->CreateLoggerWorker();
   }
@@ -351,7 +351,7 @@ void CStaticLogger::Flush(void)
       {
         CLockMutex lock(context->GetMutex(), INFINITE);
 
-        context->GetMessages()->Remove(0, messagesCount);
+        context->GetMessages()->CCollection::Remove(0, messagesCount);
       }
     }
   }

@@ -64,7 +64,7 @@ CMPUrlSourceSplitter_Protocol_File::CMPUrlSourceSplitter_Protocol_File(CLogger *
   }
 
   this->logger = new CLogger(logger);
-  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_CONSTRUCTOR_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME, this);
 
   wchar_t *version = GetVersionInfo(COMMIT_INFO_MP_URL_SOURCE_SPLITTER_PROTOCOL_FILE, DATE_INFO_MP_URL_SOURCE_SPLITTER_PROTOCOL_FILE);
   if (version != NULL)
@@ -298,7 +298,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_File::ReceiveData(CReceiveData *receiveDat
 
   */
 
-  if (!this->supressData)
+  // file has always one stream
+  if ((!this->supressData) && (receiveData->SetStreamCount(1)))
   {
     if (this->IsConnected())
     {
@@ -306,7 +307,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_File::ReceiveData(CReceiveData *receiveDat
       {
         if (!this->setLength)
         {
-          receiveData->GetTotalLength()->SetTotalLength(this->fileLength, false);
+          receiveData->GetStreams()->GetItem(0)->GetTotalLength()->SetTotalLength(this->fileLength, false);
           this->setLength = true;
         }
 
@@ -327,7 +328,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_File::ReceiveData(CReceiveData *receiveDat
             mediaPacket->SetStart(this->streamTime);
             mediaPacket->SetEnd(this->streamTime + bytesRead - 1);
 
-            if (!receiveData->GetMediaPacketCollection()->Add(mediaPacket))
+            if (!receiveData->GetStreams()->GetItem(0)->GetMediaPacketCollection()->Add(mediaPacket))
             {
               FREE_MEM_CLASS(mediaPacket);
             }
@@ -344,7 +345,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_File::ReceiveData(CReceiveData *receiveDat
           int64_t streamTime = this->streamTime;
           this->streamTime = this->fileLength;
 
-          receiveData->GetEndOfStreamReached()->SetStreamPosition(max(0, streamTime - 1));
+          receiveData->GetStreams()->GetItem(0)->GetEndOfStreamReached()->SetStreamPosition(max(0, streamTime - 1));
         }
       }
     }
@@ -440,16 +441,16 @@ HRESULT CMPUrlSourceSplitter_Protocol_File::StopReceivingData(void)
   return S_OK;
 }
 
-HRESULT CMPUrlSourceSplitter_Protocol_File::QueryStreamProgress(LONGLONG *total, LONGLONG *current)
+HRESULT CMPUrlSourceSplitter_Protocol_File::QueryStreamProgress(CStreamProgress *streamProgress)
 {
   HRESULT result = S_OK;
-  CHECK_POINTER_DEFAULT_HRESULT(result, total);
-  CHECK_POINTER_DEFAULT_HRESULT(result, current);
+  CHECK_POINTER_DEFAULT_HRESULT(result, streamProgress);
+  CHECK_CONDITION_HRESULT(result, streamProgress->GetStreamId() == 0, result, E_INVALIDARG);
 
-  if (result == S_OK)
+  if (SUCCEEDED(result))
   {
-    *total = this->fileLength;
-    *current = this->streamTime;
+    streamProgress->SetTotalLength(this->fileLength);
+    streamProgress->SetCurrentLength(this->streamTime);
   }
 
   return result;
@@ -459,10 +460,10 @@ HRESULT CMPUrlSourceSplitter_Protocol_File::QueryStreamAvailableLength(CStreamAv
 {
   HRESULT result = S_OK;
   CHECK_POINTER_DEFAULT_HRESULT(result, availableLength);
+  CHECK_CONDITION_HRESULT(result, availableLength->GetStreamId() == 0, result, E_INVALIDARG);
 
-  if (result == S_OK)
+  if (SUCCEEDED(result))
   {
-    availableLength->SetQueryResult(S_OK);
     availableLength->SetAvailableLength(this->fileLength);
   }
 

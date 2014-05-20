@@ -30,9 +30,9 @@
 #define CONNECTION_DATA_NETWORK_TYPE_INTERNET               L"IN"
 #define CONNECTION_DATA_ADDRESS_TYPE_IPV4                   L"IP4"
 
-#define FLAG_CONNECTION_DATA_NONE                           0
-#define FLAG_CONNECTION_DATA_NETWORK_TYPE_INTERNET          1
-#define FLAG_CONNECTION_DATA_ADDRESS_TYPE_IPV4              2
+#define CONNECTION_DATA_FLAG_NONE                           0
+#define CONNECTION_DATA_FLAG_NETWORK_TYPE_INTERNET          1
+#define CONNECTION_DATA_FLAG_ADDRESS_TYPE_IPV4              2
 
 class CConnectionData : public CSessionTag
 {

@@ -25,8 +25,8 @@
 
 #define BASE_RTP_PACKET_HEADER_SIZE                                     1               // length of the header in bytes
 
-#define FLAG_BASE_RTP_PACKET_NONE                                       0x00000000
-#define FLAG_BASE_RTP_PACKET_PADDING                                    0x00000001
+#define BASE_RTP_PACKET_FLAG_NONE                                       0x00000000
+#define BASE_RTP_PACKET_FLAG_PADDING                                    0x00000001
 
 // base RTP packet is simple base class for RTP packets and RTCP packets
 // RTP and RTCP packets have similar header but totally different meanings of each value

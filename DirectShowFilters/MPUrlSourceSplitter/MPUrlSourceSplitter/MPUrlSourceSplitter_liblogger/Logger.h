@@ -39,6 +39,7 @@
 
 // methods' common string formats
 #define METHOD_START_FORMAT                                                   L"%s: %s: Start"
+#define METHOD_CONSTRUCTOR_START_FORMAT                                       L"%s: %s: Start, instance address: 0x%p"
 #define METHOD_END_FORMAT                                                     L"%s: %s: End"
 #define METHOD_END_HRESULT_FORMAT                                             L"%s: %s: End, result: 0x%08X"
 #define METHOD_END_INT_FORMAT                                                 L"%s: %s: End, result: %d"
