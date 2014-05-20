@@ -495,7 +495,8 @@ namespace PowerScheduler.Setup
 
         numericUpDownStandbyHoursFrom.Value = Convert.ToInt32(GetSetting("StandbyHoursFrom", "0"));
         numericUpDownStandbyHoursTo.Value = Convert.ToInt32(GetSetting("StandbyHoursTo", "24"));
-
+        numericUpDownStandbyHoursOnWeekendFrom.Value = Convert.ToInt32(GetSetting("StandbyHoursOnWeekendFrom", "0"));
+        numericUpDownStandbyHoursOnWeekendTo.Value = Convert.ToInt32(GetSetting("StandbyHoursOnWeekendTo", "24"));
 
         buttonApply.Enabled = buttonApplyEnabled;
 
@@ -765,6 +766,8 @@ namespace PowerScheduler.Setup
 
         SetSetting("StandbyHoursFrom", numericUpDownStandbyHoursFrom.Value.ToString());
         SetSetting("StandbyHoursTo", numericUpDownStandbyHoursTo.Value.ToString());
+        SetSetting("StandbyHoursOnWeekendFrom", numericUpDownStandbyHoursOnWeekendFrom.Value.ToString());
+        SetSetting("StandbyHoursOnWeekendTo", numericUpDownStandbyHoursOnWeekendTo.Value.ToString());
 
         // Power settings
         if (checkBoxAutoPowerSettings.Checked)
@@ -994,8 +997,8 @@ namespace PowerScheduler.Setup
       // Legacy
       numericUpDownPreWakeupTime.Value = 60;
       numericUpDownPreNoStandbyTime.Value = 300;
-      numericUpDownStandbyHoursFrom.Value = 0;
-      numericUpDownStandbyHoursTo.Value = 24;
+      //numericUpDownStandbyHoursFrom.Value = 0;
+      //numericUpDownStandbyHoursTo.Value = 24;
       
       // Power Settings
       _recommendedSettingsAC = _defaultSettingsDesktopAC;
