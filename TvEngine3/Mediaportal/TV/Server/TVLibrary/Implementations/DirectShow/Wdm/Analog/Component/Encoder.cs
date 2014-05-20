@@ -50,6 +50,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     private static IList<AMMediaType> MEDIA_TYPES_CAPTURE = new List<AMMediaType>();
     private static IList<AMMediaType> MEDIA_TYPES_VIDEO = new List<AMMediaType>();
     private static IList<AMMediaType> MEDIA_TYPES_AUDIO = new List<AMMediaType>();
+    private static IList<AMMediaType> MEDIA_TYPES_AUDIO_PCM = new List<AMMediaType>();
     private static IList<AMMediaType> MEDIA_TYPES_VBI = new List<AMMediaType>();
     private static IList<AMMediaType> MEDIA_TYPES_TELETEXT = new List<AMMediaType>();
     private static IList<AMMediaType> MEDIA_TYPES_CLOSED_CAPTIONS = new List<AMMediaType>();
@@ -169,40 +170,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         return;
       }
 
-      AMMediaType mt1 = new AMMediaType();
-      mt1.majorType = MediaType.Stream;
-      mt1.subType = MediaSubType.Null;
-      AMMediaType mt2 = new AMMediaType();
-      mt2.majorType = MediaType.Video;
-      mt2.subType = MediaSubType.Mpeg2Transport;
-      AMMediaType mt3 = new AMMediaType();
-      mt3.majorType = MediaType.Video;
-      mt3.subType = MediaSubType.Mpeg2Program;
-      AMMediaType mt4 = new AMMediaType();
-      mt4.majorType = MediaType.Video;
-      mt4.subType = MediaSubType.Null;
-      AMMediaType mt5 = new AMMediaType();
-      mt5.majorType = MediaType.Audio;
-      mt5.subType = MediaSubType.Null;
-      AMMediaType mt6 = new AMMediaType();
-      mt6.majorType = MediaType.VBI;
-      mt6.subType = MediaSubType.Null;
-      AMMediaType mt7 = new AMMediaType();
-      mt7.majorType = MediaType.VBI;
-      mt7.subType = MediaSubType.TELETEXT;
-      AMMediaType mt8 = new AMMediaType();
-      mt8.majorType = MediaType.AuxLine21Data;
-      mt8.subType = MediaSubType.Line21_BytePair;
+      MEDIA_TYPES_CAPTURE.Add(new AMMediaType() { majorType = MediaType.Stream, subType = MediaSubType.Null });
+      MEDIA_TYPES_CAPTURE.Add(new AMMediaType() { majorType = MediaType.Video, subType = MediaSubType.Mpeg2Transport });
+      MEDIA_TYPES_CAPTURE.Add(new AMMediaType() { majorType = MediaType.Video, subType = MediaSubType.Mpeg2Program });
 
-      MEDIA_TYPES_CAPTURE.Add(mt1);
-      MEDIA_TYPES_CAPTURE.Add(mt2);
-      MEDIA_TYPES_CAPTURE.Add(mt3);
-
-      MEDIA_TYPES_VIDEO.Add(mt4);
-      MEDIA_TYPES_AUDIO.Add(mt5);
-      MEDIA_TYPES_VBI.Add(mt6);
-      MEDIA_TYPES_TELETEXT.Add(mt7);
-      MEDIA_TYPES_CLOSED_CAPTIONS.Add(mt8);
+      MEDIA_TYPES_VIDEO.Add(new AMMediaType() { majorType = MediaType.Video, subType = MediaSubType.Null });
+      MEDIA_TYPES_AUDIO.Add(new AMMediaType() { majorType = MediaType.Audio, subType = MediaSubType.Null });
+      MEDIA_TYPES_AUDIO_PCM.Add(new AMMediaType() { majorType = MediaType.Audio, subType = MediaSubType.PCM });
+      MEDIA_TYPES_VBI.Add(new AMMediaType() { majorType = MediaType.VBI, subType = MediaSubType.Null });
+      MEDIA_TYPES_TELETEXT.Add(new AMMediaType() { majorType = MediaType.VBI, subType = MediaSubType.TELETEXT });
+      MEDIA_TYPES_CLOSED_CAPTIONS.Add(new AMMediaType() { majorType = MediaType.AuxLine21Data, subType = MediaSubType.Line21_BytePair });
     }
 
     #endregion
@@ -404,16 +381,29 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
           // We have to ensure that we don't mix up the video and audio
           // encoders. If we have a shared video and audio capture filter but
           // only connected 1 pin to the above encoder, it might be the audio
-          // encoder.
-          this.LogDebug("WDM analog encoder: added and connected encoder, confirm audio or video");
-          IPin pin;
-          if (FindPinByCategoryOrMediaType(_filterEncoderVideo, Guid.Empty, MEDIA_TYPES_AUDIO, out pin))
+          // encoder. There is also a chance that it is an audio capture
+          // filter.
+          this.LogDebug("WDM analog encoder: added and connected filter with one connection, confirm audio/video and encoder/capture");
+          IPin pin = null;
+          try
           {
-            this.LogDebug("WDM analog encoder: detected audio encoder");
+            if (FindPinByCategoryOrMediaType(_filterEncoderVideo, Guid.Empty, MEDIA_TYPES_AUDIO_PCM, out pin))
+            {
+              this.LogDebug("WDM analog encoder: detected audio capture filter");
+              capture.SetAudioCapture(_filterEncoderVideo, _deviceEncoderVideo);
+              AddAndConnectFilterFromCategory(graph, FilterCategory.WDMStreamingEncoderDevices, capture.VideoFilter, productInstanceId, out _filterEncoderVideo, out _deviceEncoderVideo);
+            }
+            else if (FindPinByCategoryOrMediaType(_filterEncoderVideo, Guid.Empty, MEDIA_TYPES_AUDIO, out pin))
+            {
+              this.LogDebug("WDM analog encoder: detected audio encoder");
+              _filterEncoderAudio = _filterEncoderVideo;
+              _deviceEncoderAudio = _deviceEncoderVideo;
+              AddAndConnectFilterFromCategory(graph, FilterCategory.WDMStreamingEncoderDevices, capture.VideoFilter, productInstanceId, out _filterEncoderVideo, out _deviceEncoderVideo);
+            }
+          }
+          finally
+          {
             Release.ComObject("encoder video encoder test audio pin", ref pin);
-            _filterEncoderAudio = _filterEncoderVideo;
-            _deviceEncoderAudio = _deviceEncoderVideo;
-            AddAndConnectFilterFromCategory(graph, FilterCategory.WDMStreamingEncoderDevices, capture.VideoFilter, productInstanceId, out _filterEncoderVideo, out _deviceEncoderVideo);
           }
         }
       }

@@ -388,6 +388,28 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       return base.ConnectFilterWithPin(graph, pinToConnect, pinToConnectDirection, filter);
     }
 
+    /// <summary>
+    /// Set/override the audio capture filter.
+    /// </summary>
+    /// <remarks>
+    /// This function is used by the encoder component when it discovers that
+    /// what it thought was an audio encoder filter is actually an audio
+    /// capture filter.
+    /// The Hauppauge Nova S Plus crossbar video and audio outputs both connect
+    /// to a capture filter. To us it looks like that filter is a combined
+    /// video and audio capture filter, but actually a separate audio capture
+    /// filter is required. The audio output pin "I2S" on the video capture
+    /// filter claims to be a PCM output, but it won't connect to any filter
+    /// except the dedicated hardware audio capture filter.
+    /// </remarks>
+    /// <param name="filter">The audio capture filter.</param>
+    /// <param name="device">The audio capture device.</param>
+    public void SetAudioCapture(IBaseFilter filter, DsDevice device)
+    {
+      _filterAudio = filter;
+      _deviceAudio = device;
+    }
+
     #region check capabilities
 
     /// <summary>
