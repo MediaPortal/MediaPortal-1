@@ -119,6 +119,7 @@
     <Compile Include="Implementations\DirectShow\Wdm\B2c2\Struct\DeviceInfo.cs" />
     <Compile Include="Implementations\DirectShow\Wdm\B2c2\Struct\MacAddress.cs" />
     <Compile Include="Implementations\DirectShow\Wdm\B2c2\TunerDetectorB2c2.cs" />
+    <Compile Include="Implementations\DirectShow\Wdm\Rtl283x\EncoderRtl283xFm.cs" />
     <Compile Include="Implementations\Dri\TunerDetectorDri.cs" />
     <Compile Include="Implementations\Dri\TunerDri.cs" />
     <Compile Include="Implementations\DirectShow\Pbda\TunerPbdaCableCard.cs" />
@@ -133,7 +134,6 @@
     <Compile Include="Implementations\DirectShow\Wdm\Analog\Component\Crossbar.cs" />
     <Compile Include="Implementations\DirectShow\Wdm\Analog\Component\Encoder.cs" />
     <Compile Include="Implementations\DirectShow\Wdm\Analog\Component\Tuner.cs" />
-    <Compile Include="Implementations\DirectShow\Wdm\Rtl283x\CaptureRtl283xFm.cs" />
     <Compile Include="Implementations\DirectShow\Wdm\Rtl283x\TunerDetectorRtl283x.cs" />
     <Compile Include="Implementations\DirectShow\Wdm\Rtl283x\TunerRtl283xFm.cs" />
     <Compile Include="Implementations\Dri\Enum\AuxFormat.cs" />

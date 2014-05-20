@@ -222,7 +222,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     /// <param name="captureGraphBuilder">The capture graph builder instance associated with the graph.</param>
     /// <param name="productInstanceId">A common identifier shared by the tuner's components.</param>
     /// <param name="crossbar">The crossbar component.</param>
-    public virtual void PerformLoading(IFilterGraph2 graph, ICaptureGraphBuilder2 captureGraphBuilder, string productInstanceId, Crossbar crossbar)
+    public void PerformLoading(IFilterGraph2 graph, ICaptureGraphBuilder2 captureGraphBuilder, string productInstanceId, Crossbar crossbar)
     {
       if (_deviceMain != null)
       {

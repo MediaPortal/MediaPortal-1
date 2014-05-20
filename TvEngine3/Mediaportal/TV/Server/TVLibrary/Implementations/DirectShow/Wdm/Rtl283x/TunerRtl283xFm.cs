@@ -24,6 +24,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using DirectShowLib;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.Component;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
@@ -103,10 +104,26 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
 
     #region COM interfaces
 
-    [Guid("61a9051f-04c4-435e-8742-9edd2c543ce9"),
+    [Guid("6c433cea-7f9c-40cc-a670-bacae16097b8"),
       InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     private interface IRtl283xFmSource
     {
+      /// <summary>
+      /// Debug use only.
+      /// </summary>
+      /// <param name="mediaType">The media type to set.</param>
+      /// <returns>an HRESULT indicating whether the media type was set successfully</returns>
+      [PreserveSig]
+      int DABSetMediaType(byte mediaType);
+
+      /// <summary>
+      /// Call this function to set the audio sample rate.
+      /// </summary>
+      /// <param name="sampleRate">The audio sample rate for the tuner to use.</param>
+      /// <returns><c>RtlFmResult.Success</c> if successful, otherwise <c>RtlFmResult.Fail</c></returns>
+      [PreserveSig]
+      Rtl283xFmResult SetAudioSampleRate(Rtl283xFmSampleRate sampleRate);
+
       /// <summary>
       /// Call this function to set the tuner frequency directly.
       /// </summary>
@@ -138,6 +155,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       /// <summary>
       /// Call this function to obtain the frequency range that the tuner supports.
       /// </summary>
+      /// <remarks>
+      /// Doesn't work. The values returned are always zero.
+      /// </remarks>
       /// <param name="lowerLimit">The lower limit of the tuner's range, in kHz.</param>
       /// <param name="upperLimit">The upper limit of the tuner's range, in kHz.</param>
       /// <returns><c>RtlFmResult.Success</c> if successful, otherwise <c>RtlFmResult.Fail</c></returns>
@@ -189,14 +209,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       Rtl283xFmResult GetPCMInfo(out byte channelCount, out Rtl283xFmSampleRate sampleRate, out uint sampleSize);
 
       /// <summary>
-      /// Call this function to set the audio sample rate.
-      /// </summary>
-      /// <param name="sampleRate">The audio sample rate for the tuner to use.</param>
-      /// <returns><c>RtlFmResult.Success</c> if successful, otherwise <c>RtlFmResult.Fail</c></returns>
-      [PreserveSig]
-      Rtl283xFmResult SetAudioSampleRate(Rtl283xFmSampleRate sampleRate);
-
-      /// <summary>
       /// Call this function to set the audio de-emphasis time constant.
       /// </summary>
       /// <param name="timeConstant">The de-emphasis time constant.</param>
@@ -229,6 +241,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       [PreserveSig]
       Rtl283xFmResult SetScanStopQuality(uint thresholdQuality);
     }
+
+    #endregion
+
+    #region graph delegation/wrapping
 
     private class GraphJob
     {
@@ -675,12 +691,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
 
     #endregion
 
+    #region constants
+
+    private static readonly Guid SOURCE_FILTER_CLSID = new Guid(0x6b368f8c, 0xf383, 0x44d3, 0xb8, 0xc2, 0x3a, 0x15, 0x0b, 0x70, 0xb1, 0xc9);
+
+    #endregion
+
     #region variables
 
     private IRtl283xFmSource _fmSource = null;
-    private CaptureRtl283xFm _capture = null;
+    private IBaseFilter _filterSource = null;
     private Encoder _encoder = null;
     private DsDevice _mainTunerDevice = null;
+    private bool _mainTunerDeviceInUse = false;
     private TsWriterStaWrapper _staTsWriter = null;
 
     // STA graph thread variables.
@@ -744,22 +767,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       }
 
       bool isSignalLocked;
-      if (_fmSource.GetSignalLock(out isSignalLocked) != Rtl283xFmResult.Fail)
+      if (_fmSource.GetSignalLock(out isSignalLocked) == Rtl283xFmResult.Fail)
       {
-        this.LogError("RTL283x FM: failed to update signal lock status");
+        this.LogWarn("RTL283x FM: failed to update signal lock status");
+        isSignalLocked = false;
       }
-      else
-      {
-        _isSignalLocked = isSignalLocked;
-      }
+      _isSignalLocked = isSignalLocked;
       if (onlyUpdateLock)
       {
         return;
       }
       _isSignalPresent = _isSignalLocked;
-      if (_fmSource.GetSignalQuality(out _signalQuality) != Rtl283xFmResult.Fail)
+      if (_fmSource.GetSignalQuality(out _signalQuality) == Rtl283xFmResult.Fail)
       {
-        this.LogError("RTL283x FM: failed to update signal quality");
+        this.LogWarn("RTL283x FM: failed to update signal quality");
+        _signalQuality = 0;
       }
       _signalLevel = _signalQuality;
     }
@@ -997,6 +1019,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       {
         throw new TvException("Tuner is in use.");
       }
+      _mainTunerDeviceInUse = true;
 
       InitialiseGraph();
 
@@ -1033,17 +1056,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       {
         _mainTunerDevice.SetPropBagValue("FriendlyName", fakeUniqueTunerName);
 
+        // After loading the source filter we have to put the registry back to
+        // how it was before.
         try
         {
-          // After loading the source filter we have to put everything back to
-          // how it was before.
-          _capture = new CaptureRtl283xFm();
-          _capture.PerformLoading(_graph, _captureGraphBuilder, null, null);
-        }
-        catch
-        {
-          DevicesInUse.Instance.Remove(_mainTunerDevice);
-          throw;
+          _filterSource = FilterGraphTools.AddFilterFromRegisteredClsid(_graph, SOURCE_FILTER_CLSID, "RTL283x FM Source");
         }
         finally
         {
@@ -1066,29 +1083,24 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
         }
       }
 
-      _encoder = new Encoder();
-      _encoder.PerformLoading(_graph, null, _capture);
+      Capture capture = new Capture();
+      capture.SetAudioCapture(_filterSource, null);
+      _encoder = new EncoderRtl283xFm();
+      _encoder.PerformLoading(_graph, null, capture);
 
       // Check for and load extensions, adding any additional filters to the graph.
       IBaseFilter lastFilter = _encoder.TsMultiplexerFilter;
-      LoadExtensions(_capture.AudioFilter, ref lastFilter);
+      LoadExtensions(_filterSource, ref lastFilter);
       AddAndConnectTsWriterIntoGraph(lastFilter);
       CompleteGraph();
 
-      _fmSource = _capture.AudioFilter as IRtl283xFmSource;
+      _fmSource = _filterSource as IRtl283xFmSource;
       _staTsWriter = new TsWriterStaWrapper(InvokeTsWriterSubChannelJob, InvokeTsWriterScanJob);
 
       // RDS grabbing currently not supported.
       _epgGrabber = null;
 
       _channelScanner = new ChannelScannerDirectShowAnalog(this, _staTsWriter);
-
-      int lowerLimit;
-      int upperLimit;
-      if (_fmSource.GetTunerRange(out lowerLimit, out upperLimit) == Rtl283xFmResult.Success)
-      {
-        this.LogDebug("RTL283x FM: tuner range, lower limit = {0} kHz, upper limit = {1} kHz", lowerLimit, upperLimit);
-      }
     }
 
     /// <summary>
@@ -1105,18 +1117,30 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       _stopGraphThread = true;
       _graphThreadWaitEvent.Set();
 
-      if (_capture != null)
+      if (_filterSource != null)
       {
-        _capture.PerformUnloading(_graph);
-        _capture = null;
-        DevicesInUse.Instance.Remove(_mainTunerDevice);
+        if (_graph != null)
+        {
+          _graph.RemoveFilter(_filterSource);
+        }
+        Release.ComObject("RTL283x FM source filter", ref _filterSource);
       }
+      _fmSource = null;
+
       if (_encoder != null)
       {
         _encoder.PerformUnloading(_graph);
         _encoder = null;
       }
-      _fmSource = null;
+
+      // Only remove the main tuner device from use when we registered it.
+      if (_mainTunerDeviceInUse)
+      {
+        DevicesInUse.Instance.Remove(_mainTunerDevice);
+        _mainTunerDeviceInUse = false;
+        // Do NOT Dispose() or set the main tuner device to NULL. We would be
+        // unable to reload.
+      }
 
       CleanUpGraph();
     }

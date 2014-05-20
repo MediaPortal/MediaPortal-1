@@ -18,37 +18,41 @@
 
 #endregion
 
-using System.Runtime.InteropServices;
+using System.Collections.Generic;
 using DirectShowLib;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.Component;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
 {
-  /// <summary>
-  /// An override of the analog capture component class. This enables us to
-  /// easily buid an RTL283x FM radio capture graph.
-  /// </summary>
-  internal class CaptureRtl283xFm : Capture
+  internal class EncoderRtl283xFm : Encoder
   {
-    [ComImport, Guid("6b368f8c-f383-44d3-b8c2-3a150b70b1c9")]
-    private class Rtl283xFmSource
-    {
-    }
-
     /// <summary>
-    /// Load the component.
+    /// Load the encoder component.
     /// </summary>
+    /// <remarks>
+    /// This override is required because the standard encoder component
+    /// incorrectly detects the source filter RDS output pin as a capture pin,
+    /// which then results in graph building failure.
+    /// </remarks>
     /// <param name="graph">The tuner's DirectShow graph.</param>
-    /// <param name="captureGraphBuilder">The capture graph builder instance associated with the graph.</param>
     /// <param name="productInstanceId">A common identifier shared by the tuner's components.</param>
-    /// <param name="crossbar">The crossbar component.</param>
-    public override void PerformLoading(IFilterGraph2 graph, ICaptureGraphBuilder2 captureGraphBuilder, string productInstanceId, Crossbar crossbar)
+    /// <param name="capture">The capture component.</param>
+    public override void PerformLoading(IFilterGraph2 graph, string productInstanceId, Capture capture)
     {
-      this.LogDebug("RTL283x FM capture: perform loading");
-      _filterAudio = FilterGraphTools.AddFilterFromRegisteredClsid(graph, typeof(Rtl283xFmSource).GUID, "RTL283x FM Source");
+      AddAndConnectSoftwareFilters(graph, capture, null);
+      IPin pin = DsFindPin.ByDirection(_filterEncoderAudio, PinDirection.Output, 0);
+      try
+      {
+        if (!AddAndConnectTsMultiplexer(graph, new List<IPin> { pin }))
+        {
+          throw new TvException("Failed to add and connect TS multiplexer.");
+        }
+      }
+      finally
+      {
+        Release.ComObject("RTL283x FM encoder output pin", ref pin);
+      }
     }
   }
 }

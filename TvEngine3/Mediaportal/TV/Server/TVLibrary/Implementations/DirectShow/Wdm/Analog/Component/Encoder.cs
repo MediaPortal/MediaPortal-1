@@ -92,7 +92,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     /// <summary>
     /// The hardware or software audio encoder filter.
     /// </summary>
-    private IBaseFilter _filterEncoderAudio = null;
+    protected IBaseFilter _filterEncoderAudio = null;
 
     /// <summary>
     /// The hardware multiplexer/encoder or software multiplexer filter.
@@ -122,28 +122,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     #endregion
 
     #region properties
-
-    /// <summary>
-    /// Get the hardware video encoder filter.
-    /// </summary>
-    public IBaseFilter VideoEncoderFilter
-    {
-      get
-      {
-        return _filterEncoderVideo;
-      }
-    }
-
-    /// <summary>
-    /// Get the hardware multiplexer/encoder filter.
-    /// </summary>
-    public IBaseFilter MultiplexerFilter
-    {
-      get
-      {
-        return _filterMultiplexer;
-      }
-    }
 
     /// <summary>
     /// Get the TS multiplexer filter.
@@ -233,8 +211,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     /// <param name="graph">The tuner's DirectShow graph.</param>
     /// <param name="productInstanceId">A common identifier shared by the tuner's components.</param>
     /// <param name="capture">The capture component.</param>
-    public void PerformLoading(IFilterGraph2 graph, string productInstanceId, Capture capture)
+    public virtual void PerformLoading(IFilterGraph2 graph, string productInstanceId, Capture capture)
     {
+      this.LogDebug("WDM analog encoder: perform loading");
       IPin capturePin = null;
       IPin videoPin = null;
       IPin audioPin = null;
@@ -484,7 +463,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       }
     }
 
-    private void AddAndConnectSoftwareFilters(IFilterGraph2 graph, Capture capture, IPin closedCaptionPin)
+    protected void AddAndConnectSoftwareFilters(IFilterGraph2 graph, Capture capture, IPin closedCaptionPin)
     {
       this.LogInfo("WDM analog encoder: add software encoder(s)");
       IPin videoPin = null;
@@ -867,7 +846,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       return false;
     }
 
-    private bool AddAndConnectTsMultiplexer(IFilterGraph2 graph, IList<IPin> pinsToConnect)
+    protected bool AddAndConnectTsMultiplexer(IFilterGraph2 graph, IList<IPin> pinsToConnect)
     {
       this.LogDebug("WDM analog encoder: add and connect TS multiplexer");
       try
