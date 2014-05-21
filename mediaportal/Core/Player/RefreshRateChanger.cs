@@ -328,20 +328,25 @@ namespace MediaPortal.Player
 
     public static void FixDwm()
     {
-      try
+      if (!OSInfo.OSInfo.Win7OrLater())
       {
-        int dwmEnabled = 0;
-        DwmIsCompositionEnabled(ref dwmEnabled);
-
-        if (dwmEnabled > 0)
+        try
         {
-          Log.Debug("CycleRefresh: DWM Detected, performing shenanigans");
-          ThreadStart starter = KillFormThread;
-          var killFormThread = new Thread(starter) {IsBackground = true};
-          killFormThread.Start();
+          int dwmEnabled = 0;
+          DwmIsCompositionEnabled(ref dwmEnabled);
+
+          if (dwmEnabled > 0)
+          {
+            Log.Debug("CycleRefresh: DWM Detected, performing shenanigans");
+            ThreadStart starter = KillFormThread;
+            var killFormThread = new Thread(starter) {IsBackground = true};
+            killFormThread.Start();
+          }
+        }
+        catch
+        {
         }
       }
-      catch {}
     }
   }
 
