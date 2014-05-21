@@ -32,36 +32,36 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPageScan = new System.Windows.Forms.TabPage();
-      this.checkBoxEnableChannelMoveDetection = new MPCheckBox();
-      this.checkBoxCreateSignalGroup = new MPCheckBox();
-      this.checkBoxAdvancedTuning = new MPCheckBox();
-      this.mpGrpAdvancedTuning = new MPGroupBox();
-      this.mpLabel2 = new MPLabel();
-      this.groupBox2 = new MPGroupBox();
+      this.checkBoxEnableChannelMoveDetection = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.checkBoxCreateSignalGroup = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.checkBoxAdvancedTuning = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.mpGrpAdvancedTuning = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.mpLabel7 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpLabel2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.groupBox2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
       this.scanNIT = new System.Windows.Forms.RadioButton();
       this.scanSingleTransponder = new System.Windows.Forms.RadioButton();
       this.scanPredefProvider = new System.Windows.Forms.RadioButton();
-      this.mpLabel5 = new MPLabel();
-      this.textBoxFreq = new MPTextBox();
-      this.textBoxBandwidth = new MPTextBox();
-      this.mpLabel4 = new MPLabel();
-      this.mpGrpScanProgress = new MPGroupBox();
-      this.mpLabel3 = new MPLabel();
+      this.mpLabel5 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.textBoxFreq = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
+      this.textBoxBandwidth = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
+      this.mpLabel4 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpGrpScanProgress = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.mpLabel3 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.progressBar1 = new System.Windows.Forms.ProgressBar();
-      this.label1 = new MPLabel();
-      this.label2 = new MPLabel();
+      this.label1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.progressBarLevel = new System.Windows.Forms.ProgressBar();
       this.progressBarQuality = new System.Windows.Forms.ProgressBar();
       this.listViewStatus = new System.Windows.Forms.ListView();
       this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.checkBoxCreateGroups = new MPCheckBox();
-      this.mpButtonScanTv = new MPButton();
-      this.mpLabel6 = new MPLabel();
-      this.mpLabel1 = new MPLabel();
-      this.mpComboBoxRegion = new MPComboBox();
-      this.mpComboBoxCountry = new MPComboBox();
+      this.checkBoxCreateGroups = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.mpButtonScanTv = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.mpLabel6 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpLabel1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpComboBoxRegion = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
+      this.mpComboBoxCountry = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
       this.tabPageCIMenu = new System.Windows.Forms.TabPage();
-      this.mpLabel7 = new MPLabel();
       this.tabControl1.SuspendLayout();
       this.tabPageScan.SuspendLayout();
       this.mpGrpAdvancedTuning.SuspendLayout();
@@ -106,9 +106,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // checkBoxEnableChannelMoveDetection
       // 
       this.checkBoxEnableChannelMoveDetection.AutoSize = true;
+      this.checkBoxEnableChannelMoveDetection.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxEnableChannelMoveDetection.Location = new System.Drawing.Point(13, 85);
       this.checkBoxEnableChannelMoveDetection.Name = "checkBoxEnableChannelMoveDetection";
-      this.checkBoxEnableChannelMoveDetection.Size = new System.Drawing.Size(199, 17);
+      this.checkBoxEnableChannelMoveDetection.Size = new System.Drawing.Size(197, 17);
       this.checkBoxEnableChannelMoveDetection.TabIndex = 6;
       this.checkBoxEnableChannelMoveDetection.Text = "Enable channel movement detection";
       this.checkBoxEnableChannelMoveDetection.UseVisualStyleBackColor = true;
@@ -116,9 +117,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // checkBoxCreateSignalGroup
       // 
       this.checkBoxCreateSignalGroup.AutoSize = true;
+      this.checkBoxCreateSignalGroup.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxCreateSignalGroup.Location = new System.Drawing.Point(194, 62);
       this.checkBoxCreateSignalGroup.Name = "checkBoxCreateSignalGroup";
-      this.checkBoxCreateSignalGroup.Size = new System.Drawing.Size(178, 17);
+      this.checkBoxCreateSignalGroup.Size = new System.Drawing.Size(176, 17);
       this.checkBoxCreateSignalGroup.TabIndex = 5;
       this.checkBoxCreateSignalGroup.Text = "Create \"Digital Terrestrial\" group";
       this.checkBoxCreateSignalGroup.UseVisualStyleBackColor = true;
@@ -126,9 +128,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // checkBoxAdvancedTuning
       // 
       this.checkBoxAdvancedTuning.AutoSize = true;
+      this.checkBoxAdvancedTuning.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxAdvancedTuning.Location = new System.Drawing.Point(13, 108);
       this.checkBoxAdvancedTuning.Name = "checkBoxAdvancedTuning";
-      this.checkBoxAdvancedTuning.Size = new System.Drawing.Size(165, 17);
+      this.checkBoxAdvancedTuning.Size = new System.Drawing.Size(163, 17);
       this.checkBoxAdvancedTuning.TabIndex = 7;
       this.checkBoxAdvancedTuning.Text = "Use advanced tuning options";
       this.checkBoxAdvancedTuning.UseVisualStyleBackColor = true;
@@ -155,6 +158,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpGrpAdvancedTuning.Text = "Advanced tuning options";
       this.mpGrpAdvancedTuning.Visible = false;
       // 
+      // mpLabel7
+      // 
+      this.mpLabel7.AutoSize = true;
+      this.mpLabel7.Location = new System.Drawing.Point(154, 54);
+      this.mpLabel7.Name = "mpLabel7";
+      this.mpLabel7.Size = new System.Drawing.Size(26, 13);
+      this.mpLabel7.TabIndex = 14;
+      this.mpLabel7.Text = "kHz";
+      // 
       // mpLabel2
       // 
       this.mpLabel2.AutoSize = true;
@@ -169,6 +181,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBox2.Controls.Add(this.scanNIT);
       this.groupBox2.Controls.Add(this.scanSingleTransponder);
       this.groupBox2.Controls.Add(this.scanPredefProvider);
+      this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox2.Location = new System.Drawing.Point(267, 16);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(174, 89);
@@ -232,11 +245,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // textBoxBandwidth
       // 
       this.textBoxBandwidth.Location = new System.Drawing.Point(98, 51);
-      this.textBoxBandwidth.MaxLength = 2;
+      this.textBoxBandwidth.MaxLength = 5;
       this.textBoxBandwidth.Name = "textBoxBandwidth";
       this.textBoxBandwidth.Size = new System.Drawing.Size(50, 20);
       this.textBoxBandwidth.TabIndex = 13;
-      this.textBoxBandwidth.Text = "8";
+      this.textBoxBandwidth.Text = "8000";
       // 
       // mpLabel4
       // 
@@ -344,9 +357,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // checkBoxCreateGroups
       // 
       this.checkBoxCreateGroups.AutoSize = true;
+      this.checkBoxCreateGroups.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxCreateGroups.Location = new System.Drawing.Point(13, 62);
       this.checkBoxCreateGroups.Name = "checkBoxCreateGroups";
-      this.checkBoxCreateGroups.Size = new System.Drawing.Size(175, 17);
+      this.checkBoxCreateGroups.Size = new System.Drawing.Size(173, 17);
       this.checkBoxCreateGroups.TabIndex = 4;
       this.checkBoxCreateGroups.Text = "Create groups for each provider";
       this.checkBoxCreateGroups.UseVisualStyleBackColor = true;
@@ -406,15 +420,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabPageCIMenu.Size = new System.Drawing.Size(550, 407);
       this.tabPageCIMenu.TabIndex = 1;
       this.tabPageCIMenu.Text = "CI Menu";
-      // 
-      // mpLabel7
-      // 
-      this.mpLabel7.AutoSize = true;
-      this.mpLabel7.Location = new System.Drawing.Point(154, 54);
-      this.mpLabel7.Name = "mpLabel7";
-      this.mpLabel7.Size = new System.Drawing.Size(29, 13);
-      this.mpLabel7.TabIndex = 14;
-      this.mpLabel7.Text = "kHz";
       // 
       // CardDvbT
       // 
