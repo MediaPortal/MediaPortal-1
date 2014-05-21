@@ -458,7 +458,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           PidFilterMode = (int)PidFilterMode.Auto,
           IdleMode = (int)IdleMode.Stop
         };
-        CardManagement.SaveCard(tunerDbSettings);
+        tunerDbSettings = CardManagement.SaveCard(tunerDbSettings);
+        // Configuration loading is necessary before group detection.
+        tuner.ReloadConfiguration();
 
         // If we have product/tuner instance information and detected the tuner is a member of a
         // natural group...
@@ -499,8 +501,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         internalTuner.Group = group;
       }
 
-      // Do this manually here to avoid preloading temporary tuner instances.
-      tuner.ReloadConfiguration();
+      if (!_firstDetectionTuners.Contains(tuner.ExternalId))
+      {
+        // Load configuration for existing tuners. This triggers preloading.
+        tuner.ReloadConfiguration();
+      }
 
       _eventListener.OnTunerAdded(tuner);
     }
@@ -628,7 +633,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
       CardGroup dbGroup = new CardGroup();
       dbGroup.Name = string.Format("Product Instance {0} Tuner {1}", tuner.ProductInstanceId, tuner.TunerInstanceId);
-      CardManagement.SaveCardGroup(dbGroup);
+      dbGroup = CardManagement.SaveCardGroup(dbGroup);
       TunerGroup group = new TunerGroup(dbGroup);
       group.ProductInstanceId = tuner.ProductInstanceId;
       group.TunerInstanceId = tuner.TunerInstanceId;
