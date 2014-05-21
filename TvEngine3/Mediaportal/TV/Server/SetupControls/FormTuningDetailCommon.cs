@@ -73,7 +73,7 @@ namespace Mediaportal.TV.Server.SetupControls
         RollOff = -1,
         Url = string.Empty,
         Bitrate = 0,
-        IdLnbType = 0
+        IdLnbType = null
       };
 
       return initialTuningDetail;
