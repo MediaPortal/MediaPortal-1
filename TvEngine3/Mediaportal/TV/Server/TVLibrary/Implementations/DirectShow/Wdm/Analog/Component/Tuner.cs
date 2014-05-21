@@ -210,6 +210,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
               {
                 try
                 {
+                  this.LogDebug("WDM analog tuner: connect TV audio filter to tuner filter");
                   if (!ConnectFilterWithPin(graph, tvAudioInputPin, PinDirection.Input, _filterTuner))
                   {
                     this.LogWarn("WDM analog tuner: failed to connect tuner filter to TV audio filter, assuming connection not required");
@@ -449,9 +450,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       {
         broadcastOrCable = 1;
       }
-      string[] registryLocations = new string[]
+
+      string[] registryLocations = new string[2]
       {
-        string.Format(@"Software\Microsoft\TV System Services\TVAutoTune\TS0-{1}", broadcastOrCable),
+        string.Format(@"Software\Microsoft\TV System Services\TVAutoTune\TS0-{0}", broadcastOrCable),
         string.Format(@"Software\Microsoft\TV System Services\TVAutoTune\TS{0}-{1}", countryCode, broadcastOrCable)
       };
 
