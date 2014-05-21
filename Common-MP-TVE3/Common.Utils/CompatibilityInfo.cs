@@ -99,7 +99,7 @@ using MediaPortal.Common.Utils;
 [assembly: SubsystemVersion("TVE.Plugins.TunerExtension", "1.2.3.0")]
 [assembly: SubsystemVersion("TVE.Plugins.TunerExtension.DirectShowAddOn", "1.2.3.0")]         // IDirectShowAddOnDevice
 [assembly: SubsystemVersion("TVE.Plugins.TunerExtension.ConditionalAccess", "1.2.3.0")]       // IConditionalAccessProvider
-[assembly: SubsystemVersion("TVE.Plugins.TunerExtension.ConditionalAccessMenu", "1.2.3.0")]   // ICiMenuActions
+[assembly: SubsystemVersion("TVE.Plugins.TunerExtension.ConditionalAccessMenu", "1.2.3.0")]   // IConditionalAccessMenuActions
 [assembly: SubsystemVersion("TVE.Plugins.TunerExtension.Diseqc", "1.2.3.0")]                  // IDiseqcDevice
 [assembly: SubsystemVersion("TVE.Plugins.TunerExtension.Encoder", "1.2.3.0")]                 // IEncoder
 [assembly: SubsystemVersion("TVE.Plugins.TunerExtension.Mpeg2PidFilter", "1.2.3.0")]          // IMpeg2PidFilter
