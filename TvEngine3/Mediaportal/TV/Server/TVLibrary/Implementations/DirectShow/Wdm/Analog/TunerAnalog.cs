@@ -180,8 +180,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
     {
       if (_crossbar != null)
       {
-        IList<AnalogChannel> channels = _crossbar.SourceChannels;
-        foreach (AnalogChannel channel in channels)
+        IList<AnalogChannel> sourceChannels = _crossbar.SourceChannels;
+        IList<IChannel> channels = new List<IChannel>();
+        foreach (AnalogChannel channel in sourceChannels)
         {
           if (channel.VideoSource != CaptureSourceVideo.None)
           {
@@ -191,8 +192,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
           {
             channel.Name = string.Format("Tuner {0} {1} Audio Source", _tunerId, channel.AudioSource.GetDescription());
           }
+          channels.Add(channel);
         }
-        return (List<IChannel>)channels;
+        return channels;
       }
       else
       {
