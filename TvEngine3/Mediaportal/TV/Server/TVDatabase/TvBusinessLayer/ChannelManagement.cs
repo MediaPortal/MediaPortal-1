@@ -518,6 +518,21 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       using (IChannelRepository channelRepository = new ChannelRepository(true))
       {
         SetRelatedRecordingsToNull(idChannel, channelRepository);
+        // todo gibman, why do we have to delete all the related entities manually? This should be on-delete-cascade in most cases (exception: recordings).
+        Channel channel = GetChannel(idChannel);
+        foreach (TuningDetail td in channel.TuningDetails)
+        {
+          DeleteTuningDetail(td.IdTuning);
+        }
+        foreach (GroupMap map in channel.GroupMaps)
+        {
+          ChannelGroupManagement.DeleteChannelGroupMap(map.IdMap);
+        }
+        foreach (ChannelMap map in channel.ChannelMaps)
+        {
+          DeleteChannelMap(map.IdChannelMap);
+        }
+        // TODO have ignored programs and schedules here for now
         channelRepository.Delete<Channel>(p => p.IdChannel == idChannel);
 
         /*Channel ch = new Channel();
