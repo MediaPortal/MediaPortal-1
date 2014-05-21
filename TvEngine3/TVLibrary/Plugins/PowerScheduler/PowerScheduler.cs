@@ -553,8 +553,51 @@ namespace TvEngine.PowerScheduler
             else
               standbyHandler += ", " + handler.HandlerName;
           }
-          Log.Debug("PS: Inspecting {0}: {1}", handler.HandlerName,
-            handlerStandbyMode == StandbyMode.StandbyAllowed ? "" : handlerStandbyMode.ToString());
+
+          TvBusinessLayer layer = new TvBusinessLayer();
+
+          if (handler.HandlerName == "Processes")
+          {
+            if (layer.GetSetting("PowerSchedulerProcesses").Value != string.Empty)
+              Log.Debug("PS: Inspecting {0}: {1}", handler.HandlerName,
+                handlerStandbyMode == StandbyMode.StandbyAllowed ? "" : handlerStandbyMode.ToString());
+          }
+          else if (handler.HandlerName == "Active Network")
+          {
+            if (Convert.ToBoolean(layer.GetSetting("PowerSchedulerNetworkMonitorEnabled", "false").Value))
+              Log.Debug("PS: Inspecting {0}: {1}", handler.HandlerName,
+                handlerStandbyMode == StandbyMode.StandbyAllowed ? "" : handlerStandbyMode.ToString());
+          }
+          else if (handler.HandlerName == "Active Shares")
+          {
+            if (Convert.ToBoolean(layer.GetSetting("PowerSchedulerActiveSharesEnabled", "false").Value))
+              Log.Debug("PS: Inspecting {0}: {1}", handler.HandlerName,
+                handlerStandbyMode == StandbyMode.StandbyAllowed ? "" : handlerStandbyMode.ToString());
+          }
+          else if (handler.HandlerName == "Ping Monitor")
+          {
+            if (Convert.ToBoolean(layer.GetSetting("PowerSchedulerPingMonitorEnabled", "false").Value))
+              Log.Debug("PS: Inspecting {0}: {1}", handler.HandlerName,
+                handlerStandbyMode == StandbyMode.StandbyAllowed ? "" : handlerStandbyMode.ToString());
+          }
+          else if (handler.HandlerName == "Reboot")
+          {
+            if (Convert.ToBoolean(layer.GetSetting("PowerSchedulerRebootWakeup", "false").Value))
+              Log.Debug("PS: Inspecting {0}: {1}", handler.HandlerName,
+                handlerStandbyMode == StandbyMode.StandbyAllowed ? "" : handlerStandbyMode.ToString());
+          }
+          else if (handler.HandlerName == "XmlTvImport")
+          {
+            if (Convert.ToBoolean(layer.GetSetting("xmlTvRemoteSchedulerEnabled", "false").Value))
+              Log.Debug("PS: Inspecting {0}: {1}", handler.HandlerName,
+                handlerStandbyMode == StandbyMode.StandbyAllowed ? "" : handlerStandbyMode.ToString());
+          }
+          else
+          {
+            Log.Debug("PS: Inspecting {0}: {1}", handler.HandlerName,
+              handlerStandbyMode == StandbyMode.StandbyAllowed ? "" : handlerStandbyMode.ToString());
+          }
+
         }
         if (standbyMode != StandbyMode.StandbyAllowed)
         {
@@ -670,8 +713,26 @@ namespace TvEngine.PowerScheduler
         DateTime nextTime = handler.GetNextWakeupTime(earliestWakeupTime);
         if (nextTime < earliestWakeupTime)
           nextTime = DateTime.MaxValue;
-        Log.Debug("PS: Inspecting {0}: {1}",
+
+        TvBusinessLayer layer = new TvBusinessLayer();
+        if (handler.HandlerName == "Reboot")
+        {
+          if (Convert.ToBoolean(layer.GetSetting("PowerSchedulerRebootWakeup", "false").Value))
+            Log.Debug("PS: Inspecting {0}: {1}",
+              handler.HandlerName, (nextTime < DateTime.MaxValue ? nextTime.ToString() : ""));
+        }
+        else if (handler.HandlerName == "XmlTvImport")
+        {
+          if (Convert.ToBoolean(layer.GetSetting("xmlTvRemoteSchedulerEnabled", "false").Value))
+            Log.Debug("PS: Inspecting {0}: {1}",
+              handler.HandlerName, (nextTime < DateTime.MaxValue ? nextTime.ToString() : ""));
+        }
+        else
+        {
+          Log.Debug("PS: Inspecting {0}: {1}",
           handler.HandlerName, (nextTime < DateTime.MaxValue ? nextTime.ToString() : ""));
+        }
+
         if (nextTime < nextWakeupTime && nextTime >= earliestWakeupTime)
         {
           handlerName = handler.HandlerName;
