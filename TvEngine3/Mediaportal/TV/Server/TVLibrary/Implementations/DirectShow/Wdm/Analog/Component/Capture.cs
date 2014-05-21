@@ -797,10 +797,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       {
         this.LogDebug("WDM analog capture: perform tuning");
         IAMAnalogVideoDecoder analogVideoDecoder = _filterVideo as IAMAnalogVideoDecoder;
-        if (_filterVideo != null)
+        if (analogVideoDecoder != null)
         {
+          // This property is not always supported, so don't throw an exception on failure.
           int hr = analogVideoDecoder.put_VCRHorizontalLocking(channel.IsVcrSignal);
-          HResult.ThrowException(hr, "Failed to set VCR horizontal locking.");
+          if (hr != (int)HResult.Severity.Success)
+          {
+            this.LogWarn("WDM analog capture: failed to set VCR horizontal locking, hr = 0x{0:x}", hr);
+          }
         }
         else
         {
