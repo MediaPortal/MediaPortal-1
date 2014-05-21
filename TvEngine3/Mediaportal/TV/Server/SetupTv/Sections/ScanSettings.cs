@@ -242,7 +242,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           if (devices3.Any(t => t != null && t.Name == encoder.Name))
           {
             displayEncoder.Installed = "Yes";
-            break;
           }
         }
         _bindingVideoEncoders.Add(displayEncoder);
@@ -259,14 +258,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         {
           found = true;
           displayEncoder.Installed = "Yes";
-          break;
         }
         if (!found)
         {
           if (devices3.Any(t => t != null && t.Name == encoder.Name))
           {
             displayEncoder.Installed = "Yes";
-            break;
           }
         }
         _bindingAudioEncoders.Add(displayEncoder);
