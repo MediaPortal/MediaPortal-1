@@ -609,7 +609,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (checkBoxNoMerge.Checked)
       {
         dbChannel = ChannelFactory.CreateChannel(channel.Name);
-        ChannelFactory.CreateChannel(channel.Name);
       }
       else
       {
@@ -629,7 +628,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         }
       }
       dbChannel.MediaType = (int)channel.MediaType;
-      ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
+      dbChannel = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
+      dbChannel.AcceptChanges();
       ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, channel);
       MappingHelper.AddChannelToCard(dbChannel, card, false);
 
