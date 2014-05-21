@@ -413,7 +413,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
               _propertySet = filter as IKsPropertySet;
               if (_propertySet == null)
               {
-                this.LogDebug("Hauppauge encoder: filter is not a property set");
+                this.LogDebug("Hauppauge encoder:   filter is not a property set");
                 continue;
               }
 
@@ -428,7 +428,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
                 ReadDeviceInfo();
                 return true;
               }
-              this.LogDebug("Hauppauge encoder: property set not supported");
+              this.LogDebug("Hauppauge encoder:   property set not supported");
             }
             finally
             {
