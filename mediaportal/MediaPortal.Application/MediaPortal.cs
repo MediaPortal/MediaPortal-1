@@ -2400,6 +2400,21 @@ public class MediaPortalApp : D3D, IRender
       Log.Debug("Main: OnResumeSuspend - set GUIGraphicsContext.State.LOST");
       GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
     }
+
+    if (!_showLastActiveModule && !Utils.IsGUISettingsWindow(GUIWindowManager.GetPreviousActiveWindow()))
+    {
+      if (_startWithBasicHome && File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\basichome.xml")))
+      {
+        Log.Info("Main: OnResume - Switch to basic home screen");
+        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SECOND_HOME);
+      }
+      else
+      {
+        Log.Info("Main: OnResume - Switch to home screen");
+        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
+      }
+    }
+
     RecoverDevice();
 
     if (GUIGraphicsContext.IsDirectX9ExUsed())
