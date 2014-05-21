@@ -233,7 +233,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
               else
               {
                 _interfaceEcp.Dispose();
-                Release.ComObject("Hauppauge ECP interface", ref _interfaceEcp);
               }
             }
             finally
@@ -255,6 +254,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
         Release.ComObject("Hauppauge ECP graph", ref filterInfo.pGraph);
       }
 
+      this.LogDebug("Hauppauge ECP: no supported filters detected");
+      Release.ComObject("Hauppauge ECP interface", ref _interfaceEcp);
       return false;
     }
 
