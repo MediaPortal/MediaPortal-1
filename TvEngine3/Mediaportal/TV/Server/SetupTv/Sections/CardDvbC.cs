@@ -532,11 +532,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
               //add new channel
               exists = false;
               dbChannel = ChannelFactory.CreateChannel(channel.Name);
-              dbChannel.SortOrder = 10000;
-              if (channel.LogicalChannelNumber >= 1)
-              {
-                dbChannel.SortOrder = channel.LogicalChannelNumber;
-              }
+              dbChannel.SortOrder = channel.LogicalChannelNumber;
+              dbChannel.ChannelNumber = channel.LogicalChannelNumber;
               dbChannel.MediaType = (int) channel.MediaType;
               dbChannel = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
               dbChannel.AcceptChanges();

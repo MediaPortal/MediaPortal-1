@@ -304,7 +304,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
             newChannel.FreeToAir = !isEncrypted;
 
             // Set non-tuning parameters (ie. parameters determined by scanning).
-            DVBBaseChannel digitalChannel = channel as DVBBaseChannel;
+            DVBBaseChannel digitalChannel = newChannel as DVBBaseChannel;
             if (digitalChannel != null)
             {
               digitalChannel.Provider = providerName;

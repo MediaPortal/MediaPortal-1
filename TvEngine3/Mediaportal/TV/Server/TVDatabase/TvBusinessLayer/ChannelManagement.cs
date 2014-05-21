@@ -672,7 +672,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       {
         symbolRate = dvbcChannel.SymbolRate;
         modulation = (int)dvbcChannel.ModulationType;
-        channelNumber = dvbcChannel.LogicalChannelNumber > 999 ? idChannel : dvbcChannel.LogicalChannelNumber;
+        channelNumber = dvbcChannel.LogicalChannelNumber;
         channelType = 2;
       }
 
@@ -688,7 +688,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         innerFecRate = (int)dvbsChannel.InnerFecRate;
         pilot = (int)dvbsChannel.Pilot;
         rollOff = (int)dvbsChannel.RollOff;
-        channelNumber = dvbsChannel.LogicalChannelNumber > 999 ? idChannel : dvbsChannel.LogicalChannelNumber;
+        channelNumber = dvbsChannel.LogicalChannelNumber;
         channelType = 3;
       }
 

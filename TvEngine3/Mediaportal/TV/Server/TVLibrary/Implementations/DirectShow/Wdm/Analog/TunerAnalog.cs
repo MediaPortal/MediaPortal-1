@@ -192,6 +192,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
           {
             channel.Name = string.Format("Tuner {0} {1} Audio Source", _tunerId, channel.AudioSource.GetDescription());
           }
+          channel.ChannelNumber = 10000;
           channels.Add(channel);
         }
         return channels;

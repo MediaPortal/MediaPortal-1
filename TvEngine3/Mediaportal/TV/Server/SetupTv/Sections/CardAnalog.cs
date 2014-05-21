@@ -609,6 +609,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (checkBoxNoMerge.Checked)
       {
         dbChannel = ChannelFactory.CreateChannel(channel.Name);
+        AnalogChannel analogChannel = channel as AnalogChannel;
+        if (analogChannel != null)
+        {
+          dbChannel.SortOrder = analogChannel.ChannelNumber;
+          dbChannel.ChannelNumber = analogChannel.ChannelNumber;
+        }
       }
       else
       {
