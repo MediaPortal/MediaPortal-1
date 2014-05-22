@@ -145,25 +145,25 @@ void CPidTable::LogPids()
   for (unsigned int i = 0; i < VideoPids.size(); i++)
   {
     VideoPid* pid = VideoPids[i];
-    LogDebug(L"  video PID = %d, type = %s, logical type = %s", pid->Pid, pid->StreamType, StreamFormatAsString(pid->LogicalStreamType));
+    LogDebug(L"  video PID = %d, type = %d, logical type = %s", pid->Pid, pid->StreamType, StreamFormatAsString(pid->LogicalStreamType));
   }
 
   for (unsigned int i = 0; i < AudioPids.size(); i++)
   {
     AudioPid* pid = AudioPids[i];
-    LogDebug(L"  audio PID = %d, type = %s, logical type = %s, language = %s", pid->Pid, pid->StreamType, StreamFormatAsString(pid->LogicalStreamType), pid->Lang);
+    LogDebug(L"  audio PID = %d, type = %d, logical type = %s, language = %s", pid->Pid, pid->StreamType, StreamFormatAsString(pid->LogicalStreamType), pid->Lang);
   }
   
   for (unsigned int i = 0; i < SubtitlePids.size(); i++)
   {
     SubtitlePid* pid = SubtitlePids[i];
-    LogDebug(L"  subtitle PID = %d, type = %s, logical type = %s, language = %s", pid->Pid, pid->StreamType, StreamFormatAsString(pid->LogicalStreamType), pid->Lang);
+    LogDebug(L"  subtitle PID = %d, type = %d, logical type = %s, language = %s", pid->Pid, pid->StreamType, StreamFormatAsString(pid->LogicalStreamType), pid->Lang);
   }
 
   for (unsigned int i = 0; i < TeletextPids.size(); i++)
   {
     TeletextPid* pid = TeletextPids[i];
-    LogDebug(L"  teletext PID = %d, type = %s, logical type = %s", pid->Pid, pid->StreamType, StreamFormatAsString(pid->LogicalStreamType));
+    LogDebug(L"  teletext PID = %d, type = %d, logical type = %s", pid->Pid, pid->StreamType, StreamFormatAsString(pid->LogicalStreamType));
   }
 }
 
