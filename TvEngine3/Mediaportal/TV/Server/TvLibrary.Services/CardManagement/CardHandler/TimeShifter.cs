@@ -260,8 +260,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
             }
             else
             {
-              this.LogInfo("start subch:{0} No PMT received. Timeshifting failed", subchannel.SubChannelId);
-              result = TvResult.UnableToStartGraph;
+              this.LogError("start subch:subchannel is null");
             }
           }
         }

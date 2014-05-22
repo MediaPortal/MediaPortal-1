@@ -2842,7 +2842,12 @@ namespace Mediaportal.TV.Server.TVLibrary
       while (moreCardsAvailable && !HasTvSucceeded(result))
       {
         tickets = CardReservationHelper.RequestCardReservations(user, freeCardsForReservation, cardResImpl, freeCardsIterated, channel.IdChannel);
-        AdjustCardReservations(user, tickets, channel.IdChannel, cardResImpl);
+
+        // TODO This function seems to do stuff that makes no sense. Unfortunately there are no
+        // comments and I couldn't find the original commit either. About all that I can see is
+        // that this function isn't in TVE 3 and was probably written after card reservation was
+        // merged. So, I'm commenting it for now... but really I think it should be removed.
+        //AdjustCardReservations(user, tickets, channel.IdChannel, cardResImpl);
 
         List<ICardTuneReservationTicket> ticketsList = tickets.Values.ToList();
         if (HasTickets(ticketsList))
