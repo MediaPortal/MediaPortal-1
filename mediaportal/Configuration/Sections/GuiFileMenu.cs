@@ -35,6 +35,7 @@ namespace MediaPortal.Configuration.Sections
     private MPTextBox textPinCodeBox;
     private MPLabel label3;
     private MPTextBox textTrashcanFolder;
+    private System.Windows.Forms.CheckBox chbDeleteReadonly;
     private IContainer components = null;
 
     public GuiFileMenu()
@@ -71,6 +72,7 @@ namespace MediaPortal.Configuration.Sections
       using (Settings xmlreader = new MPSettings())
       {
         chbEnabled.Checked = xmlreader.GetValueAsBool("filemenu", "enabled", true);
+        chbDeleteReadonly.Checked = xmlreader.GetValueAsBool("filemenu", "readonly", false);
         textPinCodeBox.Text = Util.Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", ""));
         textTrashcanFolder.Text = xmlreader.GetValueAsString("filemenu", "trashcan", "");
       }
@@ -81,6 +83,7 @@ namespace MediaPortal.Configuration.Sections
       using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValueAsBool("filemenu", "enabled", chbEnabled.Checked);
+        xmlwriter.SetValueAsBool("filemenu", "readonly", chbDeleteReadonly.Checked);
         xmlwriter.SetValue("filemenu", "pincode", Util.Utils.EncryptPin(textPinCodeBox.Text));
         xmlwriter.SetValue("filemenu", "trashcan", textTrashcanFolder.Text);
       }
@@ -95,6 +98,7 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.chbDeleteReadonly = new System.Windows.Forms.CheckBox();
       this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.textPinCodeBox = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.chbEnabled = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -105,10 +109,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.chbDeleteReadonly);
       this.groupBox1.Controls.Add(this.label1);
       this.groupBox1.Controls.Add(this.textPinCodeBox);
       this.groupBox1.Controls.Add(this.chbEnabled);
@@ -119,6 +122,16 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Settings";
+      // 
+      // chbDeleteReadonly
+      // 
+      this.chbDeleteReadonly.AutoSize = true;
+      this.chbDeleteReadonly.Location = new System.Drawing.Point(161, 21);
+      this.chbDeleteReadonly.Name = "chbDeleteReadonly";
+      this.chbDeleteReadonly.Size = new System.Drawing.Size(173, 17);
+      this.chbDeleteReadonly.TabIndex = 3;
+      this.chbDeleteReadonly.Text = "Enable  to delete read only files";
+      this.chbDeleteReadonly.UseVisualStyleBackColor = true;
       // 
       // label1
       // 
@@ -131,10 +144,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // textPinCodeBox
       // 
-      this.textPinCodeBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.textPinCodeBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.textPinCodeBox.BorderColor = System.Drawing.Color.Empty;
       this.textPinCodeBox.Location = new System.Drawing.Point(71, 44);
       this.textPinCodeBox.Name = "textPinCodeBox";
@@ -165,10 +176,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // textTrashcanFolder
       // 
-      this.textTrashcanFolder.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.textTrashcanFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.textTrashcanFolder.BorderColor = System.Drawing.Color.Empty;
       this.textTrashcanFolder.Location = new System.Drawing.Point(108, 100);
       this.textTrashcanFolder.Name = "textTrashcanFolder";
@@ -188,6 +197,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.PerformLayout();
       this.ResumeLayout(false);
       this.PerformLayout();
+
     }
 
     #endregion
@@ -197,5 +207,6 @@ namespace MediaPortal.Configuration.Sections
       textPinCodeBox.Enabled = chbEnabled.Checked;
       textTrashcanFolder.Enabled = chbEnabled.Checked;
     }
+
   }
 }
