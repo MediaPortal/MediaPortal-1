@@ -320,9 +320,16 @@ namespace MediaPortal.Player
 
     public static void KillFormThread()
     {
-      var suicideForm = new SuicideForm();
-      suicideForm.Show();
-      suicideForm.Focus();
+      try
+      {
+        var suicideForm = new SuicideForm();
+        suicideForm.Show();
+        suicideForm.Focus();
+      }
+      catch (Exception ex)
+      {
+        Log.Error("CycleRefresh: KillFormThread exception {0}", ex);
+      }
     }
 
 
