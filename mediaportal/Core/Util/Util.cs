@@ -2332,17 +2332,11 @@ namespace MediaPortal.Util
           return false;
         }
 
-        Profile.Settings xmlreader = new Profile.MPSettings();
-        bool deleteReadonly = xmlreader.GetValueAsBool("filemenu", "readonly", false);
-
-        if (deleteReadonly)
-          File.SetAttributes(strFile, File.GetAttributes(strFile) & ~FileAttributes.ReadOnly);
-
         File.Delete(strFile);
 
         if (File.Exists(strFile))
         {
-          Log.Debug("Util: FileDelete {0} error. The file is read only or in used.", strFile);
+          Log.Debug("Util: FileDelete {0} error. The file is in used.", strFile);
           return false;
         }
 

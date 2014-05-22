@@ -607,7 +607,16 @@ namespace MediaPortal.Dialogs
       }
       if (m_preselectDelete)
       {
-        OnDeleteItem(item);
+        FileAttributes attributes = File.GetAttributes(item.Path);
+        if ((attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+        {
+          OnDeleteReadOnlyItem(item);
+        }
+        else
+        {
+          OnDeleteItem(item);
+        }
+        
         return;
       }
 
@@ -658,7 +667,15 @@ namespace MediaPortal.Dialogs
       switch (dlg.SelectedId)
       {
         case 117: // delete
-          OnDeleteItem(item);
+          FileAttributes attributes = File.GetAttributes(item.Path);
+          if ((attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+          {
+            OnDeleteReadOnlyItem(item);
+          }
+          else
+          {
+            OnDeleteItem(item);
+          }
           break;
 
         case 118: // rename
@@ -884,6 +901,58 @@ namespace MediaPortal.Dialogs
       m_bReload = true;
       DoDeleteItem(item);
     }
+
+    private void OnDeleteReadOnlyItem(GUIListItem item)
+    {
+      if (item.IsRemote)
+      {
+        return;
+      }
+
+      GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
+      if (null == dlgYesNo)
+      {
+        return;
+      }
+      string strFileName = Path.GetFileName(item.Path);
+      if (!item.IsFolder)
+      {
+        if (Util.Utils.IsAudio(item.Path))
+        {
+          dlgYesNo.SetHeading(2000); // Audio
+        }
+        else if (Util.Utils.IsVideo(item.Path))
+        {
+          dlgYesNo.SetHeading(2002); // Movie
+        }
+        else if (Util.Utils.IsPicture(item.Path))
+        {
+          dlgYesNo.SetHeading(2001); // Picture
+        }
+        else
+        {
+          dlgYesNo.SetHeading(2003); // Unknown file
+        }
+      }
+      else
+      {
+        dlgYesNo.SetHeading(503);
+      }
+      dlgYesNo.SetLine(1, 2004);
+      dlgYesNo.SetLine(2, strFileName);
+      dlgYesNo.SetLine(3, "");
+      dlgYesNo.DoModal(GetID);
+
+      if (!dlgYesNo.IsConfirmed)
+      {
+        return;
+      }
+      m_bReload = true;
+
+      File.SetAttributes(item.Path, File.GetAttributes(item.Path) & ~FileAttributes.ReadOnly);
+      DoDeleteItem(item);
+    }
+
 
     private void DoDeleteItem(GUIListItem item)
     {

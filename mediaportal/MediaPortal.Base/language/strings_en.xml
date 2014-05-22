@@ -1190,6 +1190,11 @@
     <String id="1993">Check the network connection or increase the timeout value.</String>
     <String id="1994">Wait until the share comes online.</String>
     <String id="1995">Create folder thumb from thumbnails</String>
+    <String id="2000">The song is read only!</String>
+    <String id="2001">The picture is read only!</String>
+    <String id="2002">The movie is read only!</String>
+    <String id="2003">The file is read only!</String>
+    <String id="2004">Do you want to delete?</String>
     <String id="2005">Delete</String>
     <String id="2006">Title</String>
     <String id="2007">Yield</String>
