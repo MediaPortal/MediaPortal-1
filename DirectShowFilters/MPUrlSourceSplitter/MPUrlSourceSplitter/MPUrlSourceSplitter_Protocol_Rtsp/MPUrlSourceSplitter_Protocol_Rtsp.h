@@ -37,12 +37,6 @@ wchar_t *SUPPORTED_PROTOCOLS[TOTAL_SUPPORTED_PROTOCOLS] =                     { 
 
 #define MINIMUM_RECEIVED_DATA_FOR_SPLITTER                                    1 * 1024 * 1024
 
-struct CompareDataResult
-{
-  int position;
-  unsigned int size;
-};
-
 class CMPUrlSourceSplitter_Protocol_Rtsp : public IProtocolPlugin
 {
 public:
@@ -202,14 +196,6 @@ protected:
   // @param trackId : the ID of track to get store file path
   // @return : store file or NULL if error
   wchar_t *GetStoreFile(unsigned int trackId);
-
-  // fills buffer for processing with fragment data (stored in memory or in store file)
-  // @param fragments : stream fragments collection
-  // @param streamFragmentProcessing : fragment to get data
-  // @param storeFile : the name of store file
-  // @param loadStreamFragmentToMemory : specifies if fragment can be loaded to memory if stored to file
-  // @return : buffer for processing with filled data, NULL otherwise
-  //CLinearBuffer *FillBufferForProcessing(CRtspStreamFragmentCollection *fragments, unsigned int streamFragmentProcessing, const wchar_t *storeFile, bool loadStreamFragmentToMemory);
 };
 
 #endif

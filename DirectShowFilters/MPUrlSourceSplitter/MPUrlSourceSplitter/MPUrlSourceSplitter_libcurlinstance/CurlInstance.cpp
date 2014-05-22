@@ -456,7 +456,7 @@ unsigned int CCurlInstance::CurlWorker(void)
       }
 
       // sleep some time, get chance for other threads to work
-      Sleep(10);
+      Sleep(1);
     }
 
     if (multiErrorCode != CURLM_OK)

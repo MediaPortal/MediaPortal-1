@@ -1313,16 +1313,12 @@ STDMETHODIMP CMPUrlSourceSplitter::Info(long lIndex, AM_MEDIA_TYPE **ppmt, DWORD
 
 STDMETHODIMP CMPUrlSourceSplitter::QueryProgress(LONGLONG *pllTotal, LONGLONG *pllCurrent)
 {
-  HRESULT result = E_NOT_VALID_STATE;
+  HRESULT result = (this->parserHoster != NULL) ? S_OK : E_NOT_VALID_STATE;
 
-  if (this->parserHoster != NULL)
+  if (SUCCEEDED(result))
   {
     CStreamProgress *streamProgress = new CStreamProgress();
     CHECK_POINTER_HRESULT(result, streamProgress, result, E_OUTOFMEMORY);
-
-    // we should find demuxer with video stream
-
-    result = E_NOTIMPL;
 
     if (SUCCEEDED(result))
     {
@@ -1614,9 +1610,7 @@ HRESULT CMPUrlSourceSplitter::GetCacheFileName(wchar_t **path)
   {
     CLockMutex lock(this->demuxersMutex, INFINITE);
 
-    //const wchar_t *storeFilePath = (this->demuxers->Count() == 1) ? (this->demuxers->GetItem(0)->GetStoreFile()) : L"";
-
-    const wchar_t *storeFilePath = L"";
+    const wchar_t *storeFilePath = (this->demuxers->Count() == 1) ? (this->demuxers->GetItem(0)->GetCacheFilePath()) : L"";
     
     SET_STRING(*path, storeFilePath);
     result = TEST_STRING_WITH_NULL(*path, storeFilePath) ? result : E_OUTOFMEMORY;

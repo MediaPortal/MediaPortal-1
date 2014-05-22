@@ -87,9 +87,16 @@ static const AVRational AV_RATIONAL_TIMEBASE = {1, AV_TIME_BASE};
 //  bool needRecalculate;
 //};
 
-#define FLV_TIMESTAMP_MAX                                             1024
+//#define FLV_TIMESTAMP_MAX                                             1024
 
 #define DEMUXER_STORE_FILE_RELOAD_SIZE                                1048576
+
+// disabled everything - internal demuxer and also reading in seek methods
+#define PAUSE_SEEK_STOP_REQUEST_DISABLE_ALL                           2
+// disabled only internal demuxer, reading from seek methods is allowed
+#define PAUSE_SEEK_STOP_REQUEST_DISABLE_DEMUXING                      1
+// internal demuxing and reading from seek methods is allowed
+#define PAUSE_SEEK_STOP_REQUEST_NONE                                  0
 
 class CDemuxer : public IOutputStream, public IPacketDemuxer
 {
@@ -157,14 +164,13 @@ public:
   // @return : parser stream ID
   unsigned int GetParserStreamId(void);
 
-  // gets cache file path based on configuration for media packet collection
-  // creates folder structure if not created
-  // @return : cache file or NULL if error
-  wchar_t *GetMediaPacketCollectionCacheFilePath(void);
-
   // gets associated filter instance
   // @return : filter instance
   IFilter *GetFilter(void);
+
+  // gets cache file path
+  // @return : cache file path or NULL if not set
+  const wchar_t *GetCacheFilePath(void);
 
   /* set methods */
 
@@ -314,7 +320,7 @@ protected:
 
   // holds if filter want to call CAMThread::CallWorker() with CMD_PAUSE, CMD_SEEK, CMD_STOP values
   // in that case demuxer do not demux input stream
-  volatile bool pauseSeekStopRequest;
+  volatile unsigned int pauseSeekStopRequest;
 
   // holds demuxing worker handle
   HANDLE demuxingWorkerThread;
@@ -467,6 +473,11 @@ protected:
   // initializes format context
   // @return : S_OK if successful, error code otherwise
   HRESULT InitFormatContext();
+
+  // gets cache file path based on configuration for media packet collection
+  // creates folder structure if not created
+  // @return : cache file or NULL if error
+  wchar_t *GetMediaPacketCollectionCacheFilePath(void);
 };
 
 #endif

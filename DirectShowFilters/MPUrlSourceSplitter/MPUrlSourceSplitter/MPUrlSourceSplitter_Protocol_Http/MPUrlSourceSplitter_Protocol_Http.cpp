@@ -408,7 +408,7 @@ CParameterCollection *CMPUrlSourceSplitter_Protocol_Http::GetConnectionParameter
 
         if (retval)
         {
-          retval &= result->Add(cookiesCount);
+          retval &= result->CKeyedCollection::Add(cookiesCount);
         }
 
         if (!retval)
@@ -432,7 +432,7 @@ CParameterCollection *CMPUrlSourceSplitter_Protocol_Http::GetConnectionParameter
 
             if (retval)
             {
-              retval &= result->Add(cookieToAdd);
+              retval &= result->CKeyedCollection::Add(cookieToAdd);
             }
 
             if (!retval)
@@ -679,7 +679,7 @@ unsigned int CMPUrlSourceSplitter_Protocol_Http::GetSeekingCapabilities(void)
   return result;
 }
 
-int64_t CMPUrlSourceSplitter_Protocol_Http::SeekToTime(int64_t time)
+int64_t CMPUrlSourceSplitter_Protocol_Http::SeekToTime(unsigned int streamId, int64_t time)
 {
   this->logger->Log(LOGGER_VERBOSE, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME);
   this->logger->Log(LOGGER_VERBOSE, L"%s: %s: from time: %llu, to time: %llu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME, time);
@@ -731,7 +731,7 @@ int64_t CMPUrlSourceSplitter_Protocol_Http::SeekToPosition(int64_t start, int64_
   return result;
 }
 
-void CMPUrlSourceSplitter_Protocol_Http::SetSupressData(bool supressData)
+void CMPUrlSourceSplitter_Protocol_Http::SetSupressData(unsigned int streamId, bool supressData)
 {
   this->supressData = supressData;
 }
