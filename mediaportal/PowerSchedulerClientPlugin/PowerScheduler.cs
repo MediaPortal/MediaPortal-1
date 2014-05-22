@@ -474,8 +474,41 @@ namespace MediaPortal.Plugins.Process
             else
               standbyHandler += ", " + handler.HandlerName;
           }
-          Log.Debug("PS: Inspecting {0}: {1}", handler.HandlerName,
-            handlerStandbyMode == StandbyMode.StandbyAllowed ? "" : handlerStandbyMode.ToString());
+
+
+          using (Settings xmlreader = new MPSettings())
+          {
+            if (handler.HandlerName == "Processes")
+            {
+              if (xmlreader.GetValueAsString("psclientplugin", "Processes", string.Empty) != string.Empty)
+                Log.Debug("PS: Inspecting {0}: {1}", handler.HandlerName,
+                  handlerStandbyMode == StandbyMode.StandbyAllowed ? "" : handlerStandbyMode.ToString());
+            }
+            else if (handler.HandlerName == "Active Network")
+            {
+              if (xmlreader.GetValueAsBool("psclientplugin", "NetworkMonitorEnabled", false))
+                Log.Debug("PS: Inspecting {0}: {1}", handler.HandlerName,
+                  handlerStandbyMode == StandbyMode.StandbyAllowed ? "" : handlerStandbyMode.ToString());
+            }
+            else if (handler.HandlerName == "Active Shares")
+            {
+              if (xmlreader.GetValueAsBool("psclientplugin", "ActiveSharesEnabled", false))
+                Log.Debug("PS: Inspecting {0}: {1}", handler.HandlerName,
+                  handlerStandbyMode == StandbyMode.StandbyAllowed ? "" : handlerStandbyMode.ToString());
+            }
+            else if (handler.HandlerName == "Reboot")
+            {
+              if (xmlreader.GetValueAsBool("psclientplugin", "RebootWakeup", false))
+                Log.Debug("PS: Inspecting {0}: {1}", handler.HandlerName,
+                  handlerStandbyMode == StandbyMode.StandbyAllowed ? "" : handlerStandbyMode.ToString());
+            }
+            else
+            {
+              Log.Debug("PS: Inspecting {0}: {1}", handler.HandlerName,
+                handlerStandbyMode == StandbyMode.StandbyAllowed ? "" : handlerStandbyMode.ToString());
+            }
+          }
+
         }
         if (standbyMode != StandbyMode.StandbyAllowed)
         {
@@ -631,8 +664,22 @@ namespace MediaPortal.Plugins.Process
         DateTime nextTime = handler.GetNextWakeupTime(earliestWakeupTime);
         if (nextTime < earliestWakeupTime)
           nextTime = DateTime.MaxValue;
-        Log.Debug("PS: Inspecting {0}: {1}",
-          handler.HandlerName, (nextTime < DateTime.MaxValue ? nextTime.ToString() : ""));
+
+        using (Settings xmlreader = new MPSettings())
+        {
+          if (handler.HandlerName == "Reboot")
+          {
+            if (xmlreader.GetValueAsBool("psclientplugin", "RebootWakeup", false))
+              Log.Debug("PS: Inspecting {0}: {1}",
+                handler.HandlerName, (nextTime < DateTime.MaxValue ? nextTime.ToString() : ""));
+          }
+          else
+          {
+            Log.Debug("PS: Inspecting {0}: {1}",
+            handler.HandlerName, (nextTime < DateTime.MaxValue ? nextTime.ToString() : ""));
+          }
+        }
+
         if (nextTime < nextWakeupTime && nextTime >= earliestWakeupTime)
         {
           handlerName = handler.HandlerName;
