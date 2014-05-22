@@ -1234,6 +1234,11 @@ namespace MediaPortal.GUI.Pictures
       UpdateButtonStates();
     }
 
+    public static void ClearFolderHistory()
+    {
+      MediaPortal.GUI.Pictures.GUIPictures.currentFolder = string.Empty;
+    }
+
     /// <summary>
     /// Set the selected item of the facadeLayout
     /// </summary>

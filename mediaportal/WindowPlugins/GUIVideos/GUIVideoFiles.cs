@@ -195,7 +195,7 @@ namespace MediaPortal.GUI.Video
     private bool _useSortTitle = false;
     private bool _useOnlyNfoScraper = false;
     private bool _doNotUseDatabase = false;
-
+    
     private static string _prevServerName = string.Empty;
     private static DateTime _prevWolTime;
     private static int _wolTimeout;
@@ -1690,6 +1690,11 @@ namespace MediaPortal.GUI.Video
 
     #region Public methods
 
+     public static void ClearFolderHistory()
+     {
+       MediaPortal.GUI.Video.GUIVideoFiles._currentFolder = string.Empty;
+     }
+
     /// <summary>
     /// Total video duration in seconds (single or multiple -> stacked file(s))
     /// Also sets duration into videodatabase (movie table) -> full lenght with stacked parts
@@ -3034,11 +3039,11 @@ namespace MediaPortal.GUI.Video
             if (movieId < 0 || movieId != -1 && item.Duration == 0)
             {
               itemlist2.Add(item);
-          }
+            }
           }
 
           //Do NOT add OnItemSelected event handler here, because its still there...
-
+          
           facadeLayout.Add(item);
           currentItemIndex ++;
         }
@@ -3054,7 +3059,7 @@ namespace MediaPortal.GUI.Video
 
           for (int i = 0; i < itemlist.Count; ++i)
           {
-
+            
             GUIListItem item1 = itemlist[i];
             string cleanFilename = item1.Label;
             Util.Utils.RemoveStackEndings(ref cleanFilename);
@@ -3173,7 +3178,7 @@ namespace MediaPortal.GUI.Video
               }
 
               item.OnItemSelected += item_OnItemSelected;
-              facadeLayout.Add(item);
+              facadeLayout.Add(item);  
             }
           }
           itemlist = facadeLayout.ListLayout.ListItems;
@@ -3249,7 +3254,7 @@ namespace MediaPortal.GUI.Video
       if (_cachedItems != null)
       {
         _cachedItems.Clear();
-        _cachedItems.AddRange(facadeLayout.ListLayout.ListItems);
+        _cachedItems.AddRange(facadeLayout.ListLayout.ListItems); 
       }
 
       _cachedDir = _currentFolder;
@@ -4537,7 +4542,7 @@ namespace MediaPortal.GUI.Video
         {
           File.Copy(pictureList[0], filePath, true);
         }
-        catch
+        catch 
         {
           Log.Error("CreateFolderThumb:: unable to create {0}", filePath);
         }

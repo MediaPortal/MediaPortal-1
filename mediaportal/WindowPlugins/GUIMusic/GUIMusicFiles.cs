@@ -585,6 +585,11 @@ namespace MediaPortal.GUI.Music
       base.OnClicked(controlId, control, actionType);
     }
 
+    public static void ClearFolderHistory()
+    {
+      MediaPortal.GUI.Music.GUIMusicFiles.currentFolder = string.Empty;
+    }
+
     public override bool OnMessage(GUIMessage message)
     {
       switch (message.Message)

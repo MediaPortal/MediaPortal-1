@@ -2413,6 +2413,10 @@ public class MediaPortalApp : D3D, IRender
         Log.Info("Main: OnResume - Switch to home screen");
         GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
       }
+      MediaPortal.GUI.Video.GUIVideoFiles.ClearFolderHistory();
+      MediaPortal.GUI.Pictures.GUIPictures.ClearFolderHistory();
+      MediaPortal.GUI.Music.GUIMusicFiles.ClearFolderHistory();
+      GUIWindowManager.ResetWindowsHistory();
     }
 
     RecoverDevice();
