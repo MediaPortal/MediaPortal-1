@@ -149,7 +149,7 @@ void CPatParser::OnNewSection(CSection& sections)
 
     if (versionNumber > m_currentVersionNumber || (versionNumber == MAX_TABLE_VERSION_NUMBER && versionNumber < m_currentVersionNumber))
     {
-      LogDebug("PAT: new table version, version = %d, section number = %d, last section number = %d", sections.table_id, versionNumber, sectionNumber, lastSectionNumber);
+      LogDebug("PAT: new table version, version = %d, section number = %d, last section number = %d", versionNumber, sectionNumber, lastSectionNumber);
       m_isReady = false;
       if (m_currentVersionNumber != -1)
       {
