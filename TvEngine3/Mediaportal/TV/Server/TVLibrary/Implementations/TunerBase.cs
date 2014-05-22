@@ -114,9 +114,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     #region variables
 
     /// <summary>
-    /// Dictionary of the corresponding sub-channels
+    /// Dictionary of sub-channels.
     /// </summary>
     private Dictionary<int, ITvSubChannel> _mapSubChannels = new Dictionary<int, ITvSubChannel>();
+
+    /// <summary>
+    /// The ID to use for the next new sub-channel.
+    /// </summary>
+    private int _nextSubChannelId = 0;
 
     /// <summary>
     /// Context reference
@@ -1250,6 +1255,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         if (subChannel == null && !_mapSubChannels.TryGetValue(subChannelId, out subChannel))
         {
           description = "creating new sub-channel";
+          subChannelId = _nextSubChannelId++;
           subChannel = CreateNewSubChannel(subChannelId);
           _mapSubChannels[subChannelId] = subChannel;
           FireNewSubChannelEvent(subChannelId);
@@ -1566,6 +1572,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       if (_mapSubChannels.Count == 0)
       {
         this.LogDebug("tuner base: no sub-channels present, stopping tuner");
+        _nextSubChannelId = 0;
         Stop();
       }
       else
@@ -1586,6 +1593,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         en.Current.Value.Decompose();
       }
       _mapSubChannels.Clear();
+      _nextSubChannelId = 0;
     }
 
     /// <summary>
