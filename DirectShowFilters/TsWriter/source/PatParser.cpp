@@ -61,6 +61,7 @@ void CPatParser::Reset()
   m_unseenSections.clear();
   CleanUp();
   m_isReady = false;
+  m_wasReset = true;
   LogDebug("PAT: reset done");
 }
 
@@ -165,6 +166,7 @@ void CPatParser::OnNewSection(CSection& sections)
         m_unseenSections.push_back(s);
       }
     }
+    m_wasReset = false;
     vector<int>::iterator sectionIt = find(m_unseenSections.begin(), m_unseenSections.end(), sectionNumber);
     if (sectionIt == m_unseenSections.end())
     {
@@ -198,6 +200,8 @@ void CPatParser::OnNewSection(CSection& sections)
         {
           detail = new ProgramDetail();
           detail->ProgramNumber = programNumber;
+          detail->Pid = pmtPid;
+          detail->IsCurrent = true;
           m_programs[programNumber] = detail;
           LogDebug("PAT: PMT PID for program number %d is %d", programNumber, pmtPid);
           if (m_callBack != NULL)
@@ -210,15 +214,22 @@ void CPatParser::OnNewSection(CSection& sections)
           detail = it->second;
           if (detail->Pid != pmtPid)
           {
-            LogDebug("PAT: PMT PID for program number %d changed from %d to %d", programNumber, detail->Pid, pmtPid);
+            int oldPid = detail->Pid;
+            detail->Pid = pmtPid;
+            detail->IsCurrent = true;
+            LogDebug("PAT: PMT PID for program number %d changed from %d to %d", programNumber, oldPid, pmtPid);
             if (m_callBack != NULL)
             {
-              m_callBack->OnPatChanged(programNumber, detail->Pid, pmtPid);
+              m_callBack->OnPatChanged(programNumber, oldPid, pmtPid);
             }
           }
         }
-        detail->Pid = pmtPid;
-        detail->IsCurrent = true;
+        // If we were reset as a result of one of the above call backs, stop
+        // processing this section immediately.
+        if (m_wasReset)
+        {
+          return;
+        }
       }
     }
 
@@ -241,6 +252,10 @@ void CPatParser::OnNewSection(CSection& sections)
           if (m_callBack != NULL)
           {
             m_callBack->OnPatRemoved(detail->ProgramNumber, detail->Pid);
+            if (m_wasReset)
+            {
+              return;
+            }
           }
           delete it->second;
           it->second = NULL;
