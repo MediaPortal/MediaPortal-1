@@ -26,9 +26,8 @@
 // The strategy with these stream types is to use ISO standard stream types
 // where possible. In many cases these are aligned with the broadcasting
 // standards from DVB and ATSC.
-#define STREAM_TYPE_UNKNOWN                     -1
+#define STREAM_TYPE_UNKNOWN                     0xff
 
-#define STREAM_TYPE_VIDEO_UNKNOWN               -1
 #define STREAM_TYPE_VIDEO_MPEG1                 0x01
 #define STREAM_TYPE_VIDEO_MPEG2                 0x02
 #define STREAM_TYPE_VIDEO_MPEG4_PART2           0x10
@@ -42,7 +41,6 @@
 #define STREAM_TYPE_VIDEO_MPEG4_PART10_STEREO   0x24
 #define STREAM_TYPE_VIDEO_VC1                   0xea  // this is the [SMPTE] standard stream type; DVB uses STREAM_TYPE_PES_PRIVATE_DATA with a registration descriptor
 
-#define STREAM_TYPE_AUDIO_UNKNOWN               -1
 #define STREAM_TYPE_AUDIO_MPEG1                 0x03
 #define STREAM_TYPE_AUDIO_MPEG2_PART3           0x04
 #define STREAM_TYPE_AUDIO_MPEG2_PART7           0x0f
