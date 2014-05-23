@@ -37,7 +37,7 @@
 #define STREAM_ID_AUDIO_FIRST 0xc0
 #define STREAM_ID_VIDEO_FIRST 0xe0
 
-#define PID_NOT_SET -1
+#define PID_NOT_SET 0
 #define PID_PAT 0
 #define PID_PMT_FIRST 0x20
 #define PID_SDT 0x11
@@ -63,7 +63,7 @@
 #define PTS_LENGTH 5
 #define PCR_LENGTH 6
 
-#define VERSION_NOT_SET -1
+#define VERSION_NOT_SET 255
 #define TIME_NOT_SET -1
 
 #define TELETEXT_DATA_IDENTIFIER 0x10     // EBU data
@@ -692,6 +692,7 @@ STDMETHODIMP CTsMuxer::SetActiveComponents(bool video, bool audio, bool teletext
   m_isAudioActive = audio;
   m_isTeletextActive = teletext;
   bool changedActiveStream = false;
+  bool haveTeletextStream = false;
   m_serviceType = SERVICE_TYPE_RADIO;
   map<unsigned long, StreamInfo*>::iterator sIt = m_streamInfo.begin();
   while (sIt != m_streamInfo.end())
@@ -711,6 +712,7 @@ STDMETHODIMP CTsMuxer::SetActiveComponents(bool video, bool audio, bool teletext
     {
       changedActiveStream = (sIt->second->isIgnored == m_isTeletextActive && sIt->second->isCompatible);
       sIt->second->isIgnored = !m_isTeletextActive;
+      haveTeletextStream = true;
     }
     sIt++;
   }
@@ -719,6 +721,12 @@ STDMETHODIMP CTsMuxer::SetActiveComponents(bool video, bool audio, bool teletext
   m_sdtVersion = VERSION_NOT_SET;
   memset(m_serviceName, 0, SERVICE_NAME_LENGTH);
   m_sdtResetTime = GetTickCount();
+  if (!m_isTeletextActive || !haveTeletextStream)
+  {
+    // No point in waiting for teletext to update the SDT if we're ignoring or
+    // don't have teletext.
+    UpdateSdt();
+  }
 
   // Update our PMT PID.
   m_pmtPid++;
@@ -760,6 +768,7 @@ bool CTsMuxer::CanDeliver()
   }
 
   // For each input pin...
+  bool haveTeletextPin = false;
   int pinCount = m_filter->GetPinCount();
   for (int p = 0; p < pinCount; p++)
   {
@@ -826,6 +835,10 @@ bool CTsMuxer::CanDeliver()
         else
         {
           expectedStreamCount = 1;
+          if (pin->GetStreamType() == STREAM_TYPE_TELETEXT)
+          {
+            haveTeletextPin = true;
+          }
         }
 
         // How many substreams are we actually receiving from this pin?
@@ -866,7 +879,16 @@ bool CTsMuxer::CanDeliver()
   // Waiting for SDT?
   if (m_sdtVersion == VERSION_NOT_SET)
   {
-    m_sdtResetTime = GetTickCount();
+    // If we don't have teletext then we're not going to get a service name, so
+    // we may as well start delivering SDT immediately.
+    if (!haveTeletextPin || !m_isTeletextActive)
+    {
+      UpdateSdt();
+    }
+    else
+    {
+      m_sdtResetTime = GetTickCount();
+    }
   }
   return true;
 }
@@ -2137,7 +2159,7 @@ HRESULT CTsMuxer::DeliverTransportStreamData(PBYTE inputData, long inputDataLeng
       }
 
       // Only inject the SDT when we've had the chance to set it.
-      if (m_sdtVersion != TIME_NOT_SET)
+      if (m_sdtVersion != VERSION_NOT_SET)
       {
         m_sdtContinuityCounter = ((m_sdtContinuityCounter + 1) & 0xf);
         m_sdtPacket[3] &= 0xf0;
