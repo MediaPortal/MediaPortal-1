@@ -253,7 +253,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
 
       textBoxFreq.Text = ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbt" + _cardNumber + "Freq", "306000");
-      textBoxBandwidth.Text = ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbt" + _cardNumber + "Bandwidth", "8");
+      textBoxBandwidth.Text = ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbt" + _cardNumber + "Bandwidth", "8000");
 
       checkBoxCreateGroups.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbt" + _cardNumber + "creategroups", false));
       checkBoxCreateSignalGroup.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbt" + _cardNumber + "createsignalgroup", false));
