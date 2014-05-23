@@ -79,6 +79,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     /// </summary>
     private AnalogChannel _currentChannel = null;
 
+    /// <summary>
+    /// The maximum signal level that we expect the tuner to report.
+    /// </summary>
+    private int _maxSignalLevel = 1;
+
     #endregion
 
     #region properties
@@ -278,11 +283,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         return;
       }
 
-      // Some tuners (in particular, cards based on the Philips/NXP SAA713x and
-      // SAA716x PCI-e bridge chipsets such as the Hauppauge HVR2200) report
-      // values outside the documented range when they are locked. It is best
-      // to assume that the tuner is locked unless "no signal" is reported. See
-      // Mantis #0002445.
       AMTunerSignalStrength signalStrength;
       int hr = tuner.SignalPresent(out signalStrength);
       if (hr != (int)HResult.Severity.Success)
@@ -291,8 +291,36 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       }
       else
       {
+        // Some tuners (in particular, cards based on the Philips/NXP SAA713x
+        // and SAA716x PCI-e bridge chipsets such as the Hauppauge HVR2200)
+        // report values outside the documented range when they are locked.
+        // This seems to be an attempt to give a better indication of signal
+        // strength/quality/level. We try to show that extra information.
         isSignalLocked = (signalStrength != AMTunerSignalStrength.NoSignal);
+
         signalLevel = (int)signalStrength;
+        if (signalLevel > _maxSignalLevel)
+        {
+          this.LogDebug("WDM analog tuner: adjusting signal range, current limit = {0}, new maximum = {1}", _maxSignalLevel, signalLevel);
+          if (signalLevel <= 5)
+          {
+            _maxSignalLevel = 5;
+          }
+          else if (signalLevel <= 10)
+          {
+            _maxSignalLevel = 10;
+          }
+          else if (signalLevel <= 100)
+          {
+            _maxSignalLevel = 100;
+          }
+          else
+          {
+            _maxSignalLevel = signalLevel;
+          }
+        }
+
+        signalLevel = signalLevel * 100 / _maxSignalLevel;
       }
     }
 
