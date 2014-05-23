@@ -1778,7 +1778,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       pidFilterParams.FilterMode = TwinhanPidFilterMode.Disabled;
       pidFilterParams.ValidPidMask = 0;
       Marshal.StructureToPtr(pidFilterParams, _generalBuffer, false);
-      Dump.DumpBinary(_generalBuffer, PID_FILTER_PARAMS_SIZE);
+      //Dump.DumpBinary(_generalBuffer, PID_FILTER_PARAMS_SIZE);
       int hr = SetIoctl(TwinhanIoControlCode.SetPidFilterInfo, _generalBuffer, PID_FILTER_PARAMS_SIZE);
       if (hr == (int)HResult.Severity.Success)
       {
