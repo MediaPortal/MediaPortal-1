@@ -62,7 +62,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog
     /// <param name="audioStreamCount">The number of audio streams associated with the service.</param>
     public virtual MediaTypeEnum? GetMediaType(int serviceType, int videoStreamCount, int audioStreamCount)
     {
-      // Not applicable.
+      if (videoStreamCount > 0)
+      {
+        return MediaTypeEnum.TV;
+      }
+      if (audioStreamCount > 0)
+      {
+        return MediaTypeEnum.Radio;
+      }
       return null;
     }
   }
