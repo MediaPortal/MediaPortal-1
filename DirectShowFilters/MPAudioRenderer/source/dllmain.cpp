@@ -162,16 +162,16 @@ UINT CALLBACK LogThread(void* param)
     if (result == WAIT_OBJECT_0)
     {
       FILE* pFile = _tfopen(fileName, _T("a+"));
-      if (pFile)
+
+      string line = GetLogLine();
+      while (!line.empty())
       {
-        string line = GetLogLine();
-        while (!line.empty())
-        {
+        if (pFile)
           fprintf(pFile, "%s", line.c_str());
-          line = GetLogLine();
-        }
-        fclose(pFile);
+        line = GetLogLine();
       }
+      if (pFile)
+        fclose(pFile);
     }
     else if (result == WAIT_FAILED)
     {
