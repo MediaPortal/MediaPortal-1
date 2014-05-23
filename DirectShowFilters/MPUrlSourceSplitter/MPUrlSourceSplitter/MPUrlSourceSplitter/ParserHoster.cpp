@@ -687,13 +687,10 @@ unsigned int WINAPI CParserHoster::ReceiveDataWorker(LPVOID lpParam)
               {
                 CStreamReceiveData *stream = receiveData->GetStreams()->GetItem(i);
 
-                if (SUCCEEDED(result) && (stream->GetMediaPacketCollection()->Count() != 0))
-                {
-                  // we are receiving data
-                  openedConnection = true;
+                // we are receiving data
+                openedConnection = true;
 
-                  result = caller->PushStreamReceiveData(i, stream);
-                }
+                result = caller->PushStreamReceiveData(i, stream);
               }
             }
 
