@@ -334,6 +334,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
         programNumber = digitalService.ServiceId;
         pmtPid = digitalService.PmtPid;
       }
+      else if (string.IsNullOrEmpty(_currentChannel.Name))
+      {
+        // TODO When the channel name is not set we must be scanning analog. What a terrible hack!!!
+        programNumber = -1;
+        pmtPid = -1;
+      }
       if (!WaitForPmt(programNumber, pmtPid))
       {
         throw new TvExceptionNoPMT("MPEG 2 sub-channel: PMT not received");
@@ -650,7 +656,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
 
       if (_currentChannel == null)
       {
-        this.LogDebug("MPEG 2 sub-channel: current channel is not set");
+        this.LogError("MPEG 2 sub-channel: failed to handle PMT, current channel is not set");
         return false;
       }
 
