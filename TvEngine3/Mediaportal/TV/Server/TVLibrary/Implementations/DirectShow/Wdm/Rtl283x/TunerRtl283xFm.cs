@@ -273,7 +273,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       public int AddChannel(ref int handle)
       {
         object[] parameters = new object[2] { "AddChannel", handle };
-        return _delegateSubChannel(ref parameters);
+        int hr = _delegateSubChannel(ref parameters);
+        handle = (int)parameters[1];
+        return hr;
       }
 
       public int DeleteChannel(int handle)
@@ -304,7 +306,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       {
         pidCount = 0;
         object[] parameters = new object[3] { "AnalyserGetPidCount", handle, pidCount };
-        return _delegateSubChannel(ref parameters);
+        int hr = _delegateSubChannel(ref parameters);
+        pidCount = (int)parameters[2];
+        return hr;
       }
 
       public int AnalyserGetPid(int handle, int pidIndex, out int pid, out EncryptionState encryptionState)
@@ -312,7 +316,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
         pid = 0;
         encryptionState = EncryptionState.NotSet;
         object[] parameters = new object[5] { "AnalyserGetPid", handle, pidIndex, pid, encryptionState };
-        return _delegateSubChannel(ref parameters);
+        int hr = _delegateSubChannel(ref parameters);
+        pid = (int)parameters[3];
+        encryptionState = (EncryptionState)parameters[4];
+        return hr;
       }
 
       public int AnalyserSetCallBack(int handle, IEncryptionStateChangeCallBack callBack)
@@ -403,7 +410,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       {
         size = 0;
         object[] parameters = new object[3] { "TimeShiftGetBufferSize", handle, size };
-        return _delegateSubChannel(ref parameters);
+        int hr = _delegateSubChannel(ref parameters);
+        size = (long)parameters[2];
+        return hr;
       }
 
       public int TimeShiftSetPmtPid(int handle, int pmtPid, int serviceId, byte[] pmtData, int pmtLength)
@@ -429,7 +438,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
         position = 0;
         bufferId = 0;
         object[] parameters = new object[4] { "TimeShiftGetCurrentFilePosition", handle, position, bufferId };
-        return _delegateSubChannel(ref parameters);
+        int hr =  _delegateSubChannel(ref parameters);
+        position = (long)parameters[2];
+        bufferId = (long)parameters[3];
+        return hr;
       }
 
       public int SetVideoAudioObserver(int handle, IVideoAudioObserver observer)
@@ -481,7 +493,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
         timeShiftDiscontinuityCount = 0;
         recordDiscontinuityCount = 0;
         object[] parameters = new object[6] { "GetStreamQualityCounters", handle, timeShiftByteCount, recordByteCount, timeShiftDiscontinuityCount, recordDiscontinuityCount };
-        return _delegateSubChannel(ref parameters);
+        int hr = _delegateSubChannel(ref parameters);
+        timeShiftByteCount = (int)parameters[2];
+        recordByteCount = (int)parameters[3];
+        timeShiftDiscontinuityCount = (int)parameters[4];
+        recordDiscontinuityCount = (int)parameters[5];
+        return hr;
       }
 
       public int TimeShiftSetChannelType(int handle, int channelType)
@@ -516,7 +533,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       {
         serviceCount = 0;
         object[] parameters = new object[2] { "GetServiceCount", serviceCount };
-        return _delegateScan(ref parameters);
+        int hr = _delegateScan(ref parameters);
+        serviceCount = (int)parameters[1];
+        return hr;
       }
 
       public int GetServiceDetail(int index,
@@ -598,7 +617,40 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
                                               targetRegionCount, targetRegions,
                                               availableInCountryCount, availableInCountries,
                                               unavailableInCountryCount, unavailableInCountries };
-        return _delegateScan(ref parameters);
+        int hr = _delegateScan(ref parameters);
+        originalNetworkId = (int)parameters[2];
+        transportStreamId = (int)parameters[3];
+        serviceId = (int)parameters[4];
+        serviceName = (IntPtr)parameters[5];
+        providerName = (IntPtr)parameters[6];
+        logicalChannelNumber = (IntPtr)parameters[7];
+        serviceType = (int)parameters[8];
+        videoStreamCount = (int)parameters[9];
+        audioStreamCount = (int)parameters[10];
+        isHighDefinition = (bool)parameters[11];
+        isEncrypted = (bool)parameters[12];
+        isRunning = (bool)parameters[13];
+        pmtPid = (int)parameters[14];
+        previousOriginalNetworkId = (int)parameters[15];
+        previousTransportStreamId = (int)parameters[16];
+        previousServiceId = (int)parameters[17];
+        networkIdCount = (int)parameters[18];
+        networkIds = (IntPtr)parameters[19];
+        bouquetIdCount = (int)parameters[20];
+        bouquetIds = (IntPtr)parameters[21];
+        languageCount = (int)parameters[22];
+        languages = (IntPtr)parameters[23];
+        availableInCellCount = (int)parameters[24];
+        availableInCells = (IntPtr)parameters[25];
+        unavailableInCellCount = (int)parameters[26];
+        unavailableInCells = (IntPtr)parameters[27];
+        targetRegionCount = (int)parameters[28];
+        targetRegions = (IntPtr)parameters[29];
+        availableInCountryCount = (int)parameters[30];
+        availableInCountries = (IntPtr)parameters[31];
+        unavailableInCountryCount = (int)parameters[32];
+        unavailableInCountries = (IntPtr)parameters[33];
+        return hr;
       }
 
       public int ScanNetwork()
@@ -611,14 +663,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       {
         isOtherMuxServiceInfoAvailable = false;
         object[] parameters = new object[2] { "StopNetworkScan", isOtherMuxServiceInfoAvailable };
-        return _delegateScan(ref parameters);
+        int hr = _delegateScan(ref parameters);
+        isOtherMuxServiceInfoAvailable = (bool)parameters[1];
+        return hr;
       }
 
       public int GetMultiplexCount(out int multiplexCount)
       {
         multiplexCount = 0;
         object[] parameters = new object[2] { "GetMultiplexCount", multiplexCount };
-        return _delegateScan(ref parameters);
+        int hr = _delegateScan(ref parameters);
+        multiplexCount = (int)parameters[1];
+        return hr;
       }
 
       public int GetMultiplexDetail(int index,
@@ -655,28 +711,49 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
                                               transportStreamId, type, frequency, polarisation,
                                               modulation, symbolRate, bandwidth, innerFecRate,
                                               rollOff, longitude, cellId, cellIdExtension, plpId };
-        return _delegateScan(ref parameters);
+        int hr = _delegateScan(ref parameters);
+        originalNetworkId = (int)parameters[1];
+        transportStreamId = (int)parameters[2];
+        type = (int)parameters[3];
+        frequency = (int)parameters[4];
+        polarisation = (int)parameters[5];
+        modulation = (int)parameters[6];
+        symbolRate = (int)parameters[7];
+        bandwidth = (int)parameters[8];
+        innerFecRate = (int)parameters[9];
+        rollOff = (int)parameters[10];
+        longitude = (int)parameters[11];
+        cellId = (int)parameters[12];
+        cellIdExtension = (int)parameters[13];
+        plpId = (int)parameters[14];
+        return hr;
       }
 
       public int GetTargetRegionName(long targetRegionId, out IntPtr name)
       {
         name = IntPtr.Zero;
         object[] parameters = new object[3] { "GetTargetRegionName", targetRegionId, name };
-        return _delegateScan(ref parameters);
+        int hr = _delegateScan(ref parameters);
+        name = (IntPtr)parameters[2];
+        return hr;
       }
 
       public int GetBouquetName(int bouquetId, out IntPtr name)
       {
         name = IntPtr.Zero;
         object[] parameters = new object[3] { "GetBouquetName", bouquetId, name };
-        return _delegateScan(ref parameters);
+        int hr = _delegateScan(ref parameters);
+        name = (IntPtr)parameters[2];
+        return hr;
       }
 
       public int GetNetworkName(int networkId, out IntPtr name)
       {
         name = IntPtr.Zero;
         object[] parameters = new object[3] { "GetNetworkName", networkId, name };
-        return _delegateScan(ref parameters);
+        int hr = _delegateScan(ref parameters);
+        name = (IntPtr)parameters[2];
+        return hr;
       }
 
       #endregion
