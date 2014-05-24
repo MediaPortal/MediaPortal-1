@@ -867,7 +867,7 @@ namespace MediaPortal.GUI.Music
         // add each item of the playlist to the playlistplayer
         for (int i = 0; i < newPlaylist.Count; ++i)
         {
-          PlayListItem playListItem = pl[i];
+          PlayListItem playListItem = newPlaylist[i];
           if (Util.Utils.FileExistsInCache(playListItem.FileName) ||
               playListItem.Type == PlayListItem.PlayListItemType.AudioStream)
           {
