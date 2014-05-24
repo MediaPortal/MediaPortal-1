@@ -88,6 +88,7 @@
     <Compile Include="Implementations\DirectShow\Bda\TunerDetectorBda.cs" />
     <Compile Include="Implementations\DirectShow\EpgGrabberDirectShow.cs" />
     <Compile Include="Implementations\DirectShow\Stream\TunerDetectorStream.cs" />
+    <Compile Include="Implementations\DirectShow\TsWriterWrapper.cs" />
     <Compile Include="Implementations\DirectShow\Wdm\Analog\TunerDetectorAnalog.cs" />
     <Compile Include="Implementations\DirectShow\Wdm\B2c2\Constants.cs" />
     <Compile Include="Implementations\DirectShow\Wdm\B2c2\Enum\BusType.cs" />

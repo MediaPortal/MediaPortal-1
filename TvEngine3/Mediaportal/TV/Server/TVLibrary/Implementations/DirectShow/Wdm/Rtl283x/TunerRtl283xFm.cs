@@ -33,18 +33,29 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Microsoft.Win32;
-using BroadcastStandard = Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer.BroadcastStandard;
 using Encoder = Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.Component.Encoder;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
 {
+  /// <summary>
+  /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles the proprietary
+  /// FM radio mode for tuners based on Realtek's RTL283x series of chipsets.
+  /// </summary>
+  /// <remarks>
+  /// The tuner filter runs in a single threaded COM apartment. That means we can't directly
+  /// interact with the filter (because TVE runs in a multi-threaded apartment). All interaction
+  /// with the graph or tuner must be funnelled through a thread which runs in a STA.
+  /// Call backs are trickier. If you try to interact with the graph or tuner in any way in that
+  /// context it will result in deadlock, because the STA message queue doesn't get pumped until
+  /// after the call back completes. You must allow the call back to complete before attempting
+  /// any interation.
+  /// In short, this code is complex. Please take care and make sure you understand what you're
+  /// doing before you make changes.
+  /// </remarks>
   internal class TunerRtl283xFm : TunerDirectShowBase
   {
     #region enums
 
-    // Any interaction with the graph or tuner must be done from a COM single
-    // threaded apartment. We run in a multi-threaded apartment, so we need to
-    // perform the following interactions from an STA thread.
     private enum GraphJobType
     {
       Load,
@@ -244,529 +255,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
 
     #endregion
 
-    #region graph delegation/wrapping
-
     private class GraphJob
     {
       public GraphJobType JobType;
+      public string MethodName;     // optional
       public object[] Parameters;
       public object ReturnValue;
       public Exception ThrownException;
       public AutoResetEvent WaitEvent;
     }
-
-    // A wrapper class for TsWriter. This class makes it easy to funnel all
-    // TsWriter interaction through our STA thread.
-    private class TsWriterStaWrapper : ITsFilter, ITsChannelScan
-    {
-      private TsWriterSubChannelJob _delegateSubChannel = null;
-      private TsWriterScanJob _delegateScan = null;
-
-      public TsWriterStaWrapper(TsWriterSubChannelJob delegateSubChannel, TsWriterScanJob delegateScan)
-      {
-        _delegateSubChannel = delegateSubChannel;
-        _delegateScan = delegateScan;
-      }
-
-      #region sub-channel delegation
-
-      public int AddChannel(ref int handle)
-      {
-        object[] parameters = new object[2] { "AddChannel", handle };
-        int hr = _delegateSubChannel(ref parameters);
-        handle = (int)parameters[1];
-        return hr;
-      }
-
-      public int DeleteChannel(int handle)
-      {
-        object[] parameters = new object[2] { "DeleteChannel", handle };
-        return _delegateSubChannel(ref parameters);
-      }
-
-      public int DeleteAllChannels()
-      {
-        object[] parameters = new object[1] { "DeleteAllChannels" };
-        return _delegateSubChannel(ref parameters);
-      }
-
-      public int AnalyserAddPid(int handle, int pid)
-      {
-        object[] parameters = new object[3] { "AnalyserAddPid", handle, pid };
-        return _delegateSubChannel(ref parameters);
-      }
-
-      public int AnalyserRemovePid(int handle, int pid)
-      {
-        object[] parameters = new object[3] { "AnalyserRemovePid", handle, pid };
-        return _delegateSubChannel(ref parameters);
-      }
-
-      public int AnalyserGetPidCount(int handle, out int pidCount)
-      {
-        pidCount = 0;
-        object[] parameters = new object[3] { "AnalyserGetPidCount", handle, pidCount };
-        int hr = _delegateSubChannel(ref parameters);
-        pidCount = (int)parameters[2];
-        return hr;
-      }
-
-      public int AnalyserGetPid(int handle, int pidIndex, out int pid, out EncryptionState encryptionState)
-      {
-        pid = 0;
-        encryptionState = EncryptionState.NotSet;
-        object[] parameters = new object[5] { "AnalyserGetPid", handle, pidIndex, pid, encryptionState };
-        int hr = _delegateSubChannel(ref parameters);
-        pid = (int)parameters[3];
-        encryptionState = (EncryptionState)parameters[4];
-        return hr;
-      }
-
-      public int AnalyserSetCallBack(int handle, IEncryptionStateChangeCallBack callBack)
-      {
-        object[] parameters = new object[3] { "AnalyserSetCallBack", handle, callBack };
-        return _delegateSubChannel(ref parameters);
-      }
-
-      public int AnalyserReset(int handle)
-      {
-        object[] parameters = new object[2] { "AnalyserReset", handle };
-        return _delegateSubChannel(ref parameters);
-      }
-
-      public int PmtSetPmtPid(int handle, int pmtPid, int serviceId)
-      {
-        object[] parameters = new object[4] { "PmtSetPmtPid", handle, pmtPid, serviceId };
-        return _delegateSubChannel(ref parameters);
-      }
-
-      public int PmtSetCallBack(int handle, IPmtCallBack callBack)
-      {
-        object[] parameters = new object[3] { "PmtSetCallBack", handle, callBack };
-        return _delegateSubChannel(ref parameters);
-      }
-
-      public int PmtGetPmtData(int handle, IntPtr pmtData)
-      {
-        object[] parameters = new object[3] { "PmtGetPmtData", handle, pmtData };
-        return _delegateSubChannel(ref parameters);
-      }
-
-      public int RecordSetRecordingFileNameW(int handle, string fileName)
-      {
-        object[] parameters = new object[3] { "RecordSetRecordingFileNameW", handle, fileName };
-        return _delegateSubChannel(ref parameters);
-      }
-
-      public int RecordStartRecord(int handle)
-      {
-        object[] parameters = new object[2] { "RecordStartRecord", handle };
-        return _delegateSubChannel(ref parameters);
-      }
-
-      public int RecordStopRecord(int handle)
-      {
-        object[] parameters = new object[2] { "RecordStopRecord", handle };
-        return _delegateSubChannel(ref parameters);
-      }
-
-      public int RecordSetPmtPid(int handle, int pmtPid, int serviceId, byte[] pmtData, int pmtLength)
-      {
-        object[] parameters = new object[6] { "RecordSetPmtPid", handle, pmtPid, serviceId, pmtData, pmtLength };
-        return _delegateSubChannel(ref parameters);
-      }
-
-      public int RecorderSetVideoAudioObserver(int handle, IVideoAudioObserver observer)
-      {
-        object[] parameters = new object[3] { "RecorderSetVideoAudioObserver", handle, observer };
-        return _delegateSubChannel(ref parameters);
-      }
-
-      public int TimeShiftSetTimeShiftingFileNameW(int handle, string fileName)
-      {
-        object[] parameters = new object[3] { "TimeShiftSetTimeShiftingFileNameW", handle, fileName };
-        return _delegateSubChannel(ref parameters);
-      }
-
-      public int TimeShiftStart(int handle)
-      {
-        object[] parameters = new object[2] { "TimeShiftStart", handle };
-        return _delegateSubChannel(ref parameters);
-      }
-
-      public int TimeShiftStop(int handle)
-      {
-        object[] parameters = new object[2] { "TimeShiftStop", handle };
-        return _delegateSubChannel(ref parameters);
-      }
-
-      public int TimeShiftReset(int handle)
-      {
-        object[] parameters = new object[2] { "TimeShiftReset", handle };
-        return _delegateSubChannel(ref parameters);
-      }
-
-      public int TimeShiftGetBufferSize(int handle, out long size)
-      {
-        size = 0;
-        object[] parameters = new object[3] { "TimeShiftGetBufferSize", handle, size };
-        int hr = _delegateSubChannel(ref parameters);
-        size = (long)parameters[2];
-        return hr;
-      }
-
-      public int TimeShiftSetPmtPid(int handle, int pmtPid, int serviceId, byte[] pmtData, int pmtLength)
-      {
-        object[] parameters = new object[6] { "TimeShiftSetPmtPid", handle, pmtPid, serviceId, pmtData, pmtLength };
-        return _delegateSubChannel(ref parameters);
-      }
-
-      public int TimeShiftPause(int handle, byte onOff)
-      {
-        object[] parameters = new object[3] { "TimeShiftPause", handle, onOff };
-        return _delegateSubChannel(ref parameters);
-      }
-
-      public int TimeShiftSetParams(int handle, int minFiles, int maxFiles, uint chunkSize)
-      {
-        object[] parameters = new object[5] { "TimeShiftSetParams", handle, minFiles, maxFiles, chunkSize };
-        return _delegateSubChannel(ref parameters);
-      }
-
-      public int TimeShiftGetCurrentFilePosition(int handle, out long position, out long bufferId)
-      {
-        position = 0;
-        bufferId = 0;
-        object[] parameters = new object[4] { "TimeShiftGetCurrentFilePosition", handle, position, bufferId };
-        int hr =  _delegateSubChannel(ref parameters);
-        position = (long)parameters[2];
-        bufferId = (long)parameters[3];
-        return hr;
-      }
-
-      public int SetVideoAudioObserver(int handle, IVideoAudioObserver observer)
-      {
-        object[] parameters = new object[3] { "SetVideoAudioObserver", handle, observer };
-        return _delegateSubChannel(ref parameters);
-      }
-
-      public int TTxStart(int handle)
-      {
-        object[] parameters = new object[2] { "TTxStart", handle };
-        return _delegateSubChannel(ref parameters);
-      }
-
-      public int TTxStop(int handle)
-      {
-        object[] parameters = new object[2] { "TTxStop", handle };
-        return _delegateSubChannel(ref parameters);
-      }
-
-      public int TTxSetTeletextPid(int handle, int teletextPid)
-      {
-        object[] parameters = new object[3] { "TTxSetTeletextPid", handle, teletextPid };
-        return _delegateSubChannel(ref parameters);
-      }
-
-      public int CaReset(int handle)
-      {
-        object[] parameters = new object[2] { "CaReset", handle };
-        return _delegateSubChannel(ref parameters);
-      }
-
-      public int CaSetCallBack(int handle, ICaCallBack callBack)
-      {
-        object[] parameters = new object[3] { "CaSetCallBack", handle, callBack };
-        return _delegateSubChannel(ref parameters);
-      }
-
-      public int CaGetCaData(int handle, IntPtr caData)
-      {
-        object[] parameters = new object[3] { "CaGetCaData", handle, caData };
-        return _delegateSubChannel(ref parameters);
-      }
-
-      public int GetStreamQualityCounters(int handle, out int timeShiftByteCount, out int recordByteCount, out int timeShiftDiscontinuityCount, out int recordDiscontinuityCount)
-      {
-        timeShiftByteCount = 0;
-        recordByteCount = 0;
-        timeShiftDiscontinuityCount = 0;
-        recordDiscontinuityCount = 0;
-        object[] parameters = new object[6] { "GetStreamQualityCounters", handle, timeShiftByteCount, recordByteCount, timeShiftDiscontinuityCount, recordDiscontinuityCount };
-        int hr = _delegateSubChannel(ref parameters);
-        timeShiftByteCount = (int)parameters[2];
-        recordByteCount = (int)parameters[3];
-        timeShiftDiscontinuityCount = (int)parameters[4];
-        recordDiscontinuityCount = (int)parameters[5];
-        return hr;
-      }
-
-      public int TimeShiftSetChannelType(int handle, int channelType)
-      {
-        object[] parameters = new object[3] { "TimeShiftSetChannelType", handle, channelType };
-        return _delegateSubChannel(ref parameters);
-      }
-
-      #endregion
-
-      #region scan delegation
-
-      public int SetCallBack(IChannelScanCallBack callBack)
-      {
-        object[] parameters = new object[2] { "SetCallBack", callBack };
-        return _delegateScan(ref parameters);
-      }
-
-      public int ScanStream(BroadcastStandard broadcastStandard)
-      {
-        object[] parameters = new object[2] { "ScanStream", broadcastStandard };
-        return _delegateScan(ref parameters);
-      }
-
-      public int StopStreamScan()
-      {
-        object[] parameters = new object[1] { "StopStreamScan" };
-        return _delegateScan(ref parameters);
-      }
-
-      public int GetServiceCount(out int serviceCount)
-      {
-        serviceCount = 0;
-        object[] parameters = new object[2] { "GetServiceCount", serviceCount };
-        int hr = _delegateScan(ref parameters);
-        serviceCount = (int)parameters[1];
-        return hr;
-      }
-
-      public int GetServiceDetail(int index,
-                          out int originalNetworkId,
-                          out int transportStreamId,
-                          out int serviceId,
-                          out IntPtr serviceName,
-                          out IntPtr providerName,
-                          out IntPtr logicalChannelNumber,
-                          out int serviceType,
-                          out int videoStreamCount,
-                          out int audioStreamCount,
-                          out bool isHighDefinition,
-                          out bool isEncrypted,
-                          out bool isRunning,
-                          out int pmtPid,
-                          out int previousOriginalNetworkId,
-                          out int previousTransportStreamId,
-                          out int previousServiceId,
-                          out int networkIdCount,
-                          out IntPtr networkIds,
-                          out int bouquetIdCount,
-                          out IntPtr bouquetIds,
-                          out int languageCount,
-                          out IntPtr languages,
-                          out int availableInCellCount,
-                          out IntPtr availableInCells,
-                          out int unavailableInCellCount,
-                          out IntPtr unavailableInCells,
-                          out int targetRegionCount,
-                          out IntPtr targetRegions,
-                          out int availableInCountryCount,
-                          out IntPtr availableInCountries,
-                          out int unavailableInCountryCount,
-                          out IntPtr unavailableInCountries)
-      {
-        originalNetworkId = 0;
-        transportStreamId = 0;
-        serviceId = 0;
-        serviceName = IntPtr.Zero;
-        providerName = IntPtr.Zero;
-        logicalChannelNumber = IntPtr.Zero;
-        serviceType = 0;
-        videoStreamCount = 0;
-        audioStreamCount = 0;
-        isHighDefinition = false;
-        isEncrypted = false;
-        isRunning = false;
-        pmtPid = 0;
-        previousOriginalNetworkId = 0;
-        previousTransportStreamId = 0;
-        previousServiceId = 0;
-        networkIdCount = 0;
-        networkIds = IntPtr.Zero;
-        bouquetIdCount = 0;
-        bouquetIds = IntPtr.Zero;
-        languageCount = 0;
-        languages = IntPtr.Zero;
-        availableInCellCount = 0;
-        availableInCells = IntPtr.Zero;
-        unavailableInCellCount = 0;
-        unavailableInCells = IntPtr.Zero;
-        targetRegionCount = 0;
-        targetRegions = IntPtr.Zero;
-        availableInCountryCount = 0;
-        availableInCountries = IntPtr.Zero;
-        unavailableInCountryCount = 0;
-        unavailableInCountries = IntPtr.Zero;
-        object[] parameters = new object[34] { "GetServiceDetail", index, originalNetworkId,
-                                              transportStreamId, serviceId, serviceName,
-                                              providerName, logicalChannelNumber, serviceType,
-                                              videoStreamCount, audioStreamCount, isHighDefinition,
-                                              isEncrypted, isRunning, pmtPid,
-                                              previousOriginalNetworkId, previousTransportStreamId,
-                                              previousServiceId, networkIdCount, networkIds,
-                                              bouquetIdCount, bouquetIds, languageCount, languages,
-                                              availableInCellCount, availableInCells,
-                                              unavailableInCellCount, unavailableInCells,
-                                              targetRegionCount, targetRegions,
-                                              availableInCountryCount, availableInCountries,
-                                              unavailableInCountryCount, unavailableInCountries };
-        int hr = _delegateScan(ref parameters);
-        originalNetworkId = (int)parameters[2];
-        transportStreamId = (int)parameters[3];
-        serviceId = (int)parameters[4];
-        serviceName = (IntPtr)parameters[5];
-        providerName = (IntPtr)parameters[6];
-        logicalChannelNumber = (IntPtr)parameters[7];
-        serviceType = (int)parameters[8];
-        videoStreamCount = (int)parameters[9];
-        audioStreamCount = (int)parameters[10];
-        isHighDefinition = (bool)parameters[11];
-        isEncrypted = (bool)parameters[12];
-        isRunning = (bool)parameters[13];
-        pmtPid = (int)parameters[14];
-        previousOriginalNetworkId = (int)parameters[15];
-        previousTransportStreamId = (int)parameters[16];
-        previousServiceId = (int)parameters[17];
-        networkIdCount = (int)parameters[18];
-        networkIds = (IntPtr)parameters[19];
-        bouquetIdCount = (int)parameters[20];
-        bouquetIds = (IntPtr)parameters[21];
-        languageCount = (int)parameters[22];
-        languages = (IntPtr)parameters[23];
-        availableInCellCount = (int)parameters[24];
-        availableInCells = (IntPtr)parameters[25];
-        unavailableInCellCount = (int)parameters[26];
-        unavailableInCells = (IntPtr)parameters[27];
-        targetRegionCount = (int)parameters[28];
-        targetRegions = (IntPtr)parameters[29];
-        availableInCountryCount = (int)parameters[30];
-        availableInCountries = (IntPtr)parameters[31];
-        unavailableInCountryCount = (int)parameters[32];
-        unavailableInCountries = (IntPtr)parameters[33];
-        return hr;
-      }
-
-      public int ScanNetwork()
-      {
-        object[] parameters = new object[1] { "ScanNetwork" };
-        return _delegateScan(ref parameters);
-      }
-
-      public int StopNetworkScan(out bool isOtherMuxServiceInfoAvailable)
-      {
-        isOtherMuxServiceInfoAvailable = false;
-        object[] parameters = new object[2] { "StopNetworkScan", isOtherMuxServiceInfoAvailable };
-        int hr = _delegateScan(ref parameters);
-        isOtherMuxServiceInfoAvailable = (bool)parameters[1];
-        return hr;
-      }
-
-      public int GetMultiplexCount(out int multiplexCount)
-      {
-        multiplexCount = 0;
-        object[] parameters = new object[2] { "GetMultiplexCount", multiplexCount };
-        int hr = _delegateScan(ref parameters);
-        multiplexCount = (int)parameters[1];
-        return hr;
-      }
-
-      public int GetMultiplexDetail(int index,
-                              out int originalNetworkId,
-                              out int transportStreamId,
-                              out int type,
-                              out int frequency,
-                              out int polarisation,
-                              out int modulation,
-                              out int symbolRate,
-                              out int bandwidth,
-                              out int innerFecRate,
-                              out int rollOff,
-                              out int longitude,
-                              out int cellId,
-                              out int cellIdExtension,
-                              out int plpId)
-      {
-        originalNetworkId = 0;
-        transportStreamId = 0;
-        type = 0;
-        frequency = 0;
-        polarisation = 0;
-        modulation = 0;
-        symbolRate = 0;
-        bandwidth = 0;
-        innerFecRate = 0;
-        rollOff = 0;
-        longitude = 0;
-        cellId = 0;
-        cellIdExtension = 0;
-        plpId = 0;
-        object[] parameters = new object[16] { "GetMultiplexDetail", index, originalNetworkId,
-                                              transportStreamId, type, frequency, polarisation,
-                                              modulation, symbolRate, bandwidth, innerFecRate,
-                                              rollOff, longitude, cellId, cellIdExtension, plpId };
-        int hr = _delegateScan(ref parameters);
-        originalNetworkId = (int)parameters[1];
-        transportStreamId = (int)parameters[2];
-        type = (int)parameters[3];
-        frequency = (int)parameters[4];
-        polarisation = (int)parameters[5];
-        modulation = (int)parameters[6];
-        symbolRate = (int)parameters[7];
-        bandwidth = (int)parameters[8];
-        innerFecRate = (int)parameters[9];
-        rollOff = (int)parameters[10];
-        longitude = (int)parameters[11];
-        cellId = (int)parameters[12];
-        cellIdExtension = (int)parameters[13];
-        plpId = (int)parameters[14];
-        return hr;
-      }
-
-      public int GetTargetRegionName(long targetRegionId, out IntPtr name)
-      {
-        name = IntPtr.Zero;
-        object[] parameters = new object[3] { "GetTargetRegionName", targetRegionId, name };
-        int hr = _delegateScan(ref parameters);
-        name = (IntPtr)parameters[2];
-        return hr;
-      }
-
-      public int GetBouquetName(int bouquetId, out IntPtr name)
-      {
-        name = IntPtr.Zero;
-        object[] parameters = new object[3] { "GetBouquetName", bouquetId, name };
-        int hr = _delegateScan(ref parameters);
-        name = (IntPtr)parameters[2];
-        return hr;
-      }
-
-      public int GetNetworkName(int networkId, out IntPtr name)
-      {
-        name = IntPtr.Zero;
-        object[] parameters = new object[3] { "GetNetworkName", networkId, name };
-        int hr = _delegateScan(ref parameters);
-        name = (IntPtr)parameters[2];
-        return hr;
-      }
-
-      #endregion
-    }
-
-    #endregion
-
-    #region delegates
-
-    private delegate int TsWriterSubChannelJob(ref object[] parameters);
-    private delegate int TsWriterScanJob(ref object[] parameters);
-
-    #endregion
 
     #region constants
 
@@ -781,7 +278,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
     private Encoder _encoder = null;
     private DsDevice _mainTunerDevice = null;
     private bool _mainTunerDeviceInUse = false;
-    private TsWriterStaWrapper _staTsWriter = null;
+    private TsWriterWrapper _staTsWriter = null;
 
     // STA graph thread variables.
     private object _graphThreadLock = new object();
@@ -868,7 +365,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
     /// <summary>
     /// Do something that requires interaction with the graph or tuner.
     /// </summary>
-    private object InvokeGraphJob(GraphJobType jobType, ref object[] parameters)
+    private object InvokeGraphJob(GraphJobType jobType, ref object[] parameters, string methodName = null)
     {
       lock (_graphThreadLock)
       {
@@ -896,6 +393,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
 
         GraphJob job = new GraphJob();
         job.JobType = jobType;
+        job.MethodName = methodName;
         job.Parameters = parameters;
         job.WaitEvent = new AutoResetEvent(false);
 
@@ -985,10 +483,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
                     InternalPerformUnloading();
                     break;
                   case GraphJobType.TsWriterSubChannelMethod:
-                    job.ReturnValue = InternalInvokeTsWriterMethod(typeof(ITsFilter), ref job.Parameters);
+                    job.ReturnValue = InternalInvokeTsWriterMethod(typeof(ITsFilter), job.MethodName, ref job.Parameters);
                     break;
                   case GraphJobType.TsWriterScanMethod:
-                    job.ReturnValue = InternalInvokeTsWriterMethod(typeof(ITsChannelScan), ref job.Parameters);
+                    job.ReturnValue = InternalInvokeTsWriterMethod(typeof(ITsChannelScan), job.MethodName, ref job.Parameters);
                     break;
                 }
                 job.WaitEvent.Set();
@@ -1028,8 +526,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
     /// </summary>
     public override void PerformLoading()
     {
-      object[] p = null;
-      InvokeGraphJob(GraphJobType.Load, ref p);
+      if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
+      {
+        InternalPerformLoading();
+      }
+      else
+      {
+        object[] p = null;
+        InvokeGraphJob(GraphJobType.Load, ref p);
+      }
     }
 
     /// <summary>
@@ -1038,8 +543,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
     /// <param name="channel">The channel to tune to.</param>
     public override void PerformTuning(IChannel channel)
     {
-      object[] p = new object[1] { channel };
-      InvokeGraphJob(GraphJobType.Tune, ref p);
+      if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
+      {
+        InternalPerformTuning(channel);
+      }
+      else
+      {
+        object[] p = new object[1] { channel };
+        InvokeGraphJob(GraphJobType.Tune, ref p);
+      }
     }
 
     /// <summary>
@@ -1048,8 +560,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
     /// <param name="onlyUpdateLock"><c>True</c> to only update lock status.</param>
     public override void PerformSignalStatusUpdate(bool onlyUpdateLock)
     {
-      object[] p = new object[1] { onlyUpdateLock };
-      InvokeGraphJob(GraphJobType.UpdateSignalStatus, ref p);
+      if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
+      {
+        InternalPerformSignalStatusUpdate(onlyUpdateLock);
+      }
+      else
+      {
+        object[] p = new object[1] { onlyUpdateLock };
+        InvokeGraphJob(GraphJobType.UpdateSignalStatus, ref p);
+      }
     }
 
     /// <summary>
@@ -1058,8 +577,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
     /// <param name="state">The state to apply to the tuner.</param>
     public override void SetTunerState(TunerState state)
     {
-      object[] p = new object[1] { state };
-      InvokeGraphJob(GraphJobType.SetGraphState, ref p);
+      if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
+      {
+        InternalSetTunerState(state);
+      }
+      else
+      {
+        object[] p = new object[1] { state };
+        InvokeGraphJob(GraphJobType.SetGraphState, ref p);
+      }
     }
 
     /// <summary>
@@ -1067,18 +593,33 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
     /// </summary>
     public override void PerformUnloading()
     {
-      object[] p = null;
-      InvokeGraphJob(GraphJobType.Unload, ref p);
+      if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
+      {
+        InternalPerformUnloading();
+      }
+      else
+      {
+        object[] p = null;
+        InvokeGraphJob(GraphJobType.Unload, ref p);
+      }
     }
 
-    private int InvokeTsWriterSubChannelJob(ref object[] parameters)
+    private int InvokeTsWriterSubChannelJob(string methodName, ref object[] parameters)
     {
-      return (int)InvokeGraphJob(GraphJobType.TsWriterSubChannelMethod, ref parameters);
+      if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
+      {
+        return InternalInvokeTsWriterMethod(typeof(ITsFilter), methodName, ref parameters);
+      }
+      return (int)InvokeGraphJob(GraphJobType.TsWriterSubChannelMethod, ref parameters, methodName);
     }
 
-    private int InvokeTsWriterScanJob(ref object[] parameters)
+    private int InvokeTsWriterScanJob(string methodName, ref object[] parameters)
     {
-      return (int)InvokeGraphJob(GraphJobType.TsWriterScanMethod, ref parameters);
+      if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
+      {
+        return InternalInvokeTsWriterMethod(typeof(ITsChannelScan), methodName, ref parameters);
+      }
+      return (int)InvokeGraphJob(GraphJobType.TsWriterScanMethod, ref parameters, methodName);
     }
 
     #endregion
@@ -1104,7 +645,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       // special mode. The driver selects this tuner by first match on a list
       // of friendly names located in the registry. We manipulate the registry
       // list and tuner name to ensure the driver matches this tuner. In theory
-      // this should allow multiple tuners to operate in special modes.
+      // this should allow multiple tuners to operate in special modes
+      // simultaneously.
       string originalListTunerName = null;
       string originalTunerName = _mainTunerDevice.Name;
       string fakeUniqueTunerName = "MediaPortal FM Tuner " + _tunerId;
@@ -1172,7 +714,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       CompleteGraph();
 
       _fmSource = _filterSource as IRtl283xFmSource;
-      _staTsWriter = new TsWriterStaWrapper(InvokeTsWriterSubChannelJob, InvokeTsWriterScanJob);
+      _staTsWriter = new TsWriterWrapper(InvokeTsWriterSubChannelJob, InvokeTsWriterScanJob);
 
       // RDS grabbing currently not supported.
       _epgGrabber = null;
@@ -1231,20 +773,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       base.SetTunerState(state);
     }
 
-    private int InternalInvokeTsWriterMethod(Type type, ref object[] parameters)
+    private int InternalInvokeTsWriterMethod(Type type, string methodName, ref object[] parameters)
     {
-      object[] p = null;
-      if (parameters.Length > 1)
-      {
-        p = new object[parameters.Length - 1];
-        Array.Copy(parameters, 1, p, 0, p.Length);
-      }
-      int returnValue = (int)(type.GetMethod((string)parameters[0]).Invoke(_filterTsWriter, p));
-      if (parameters.Length > 1)
-      {
-        Array.Copy(p, 0, parameters, 1, p.Length);
-      }
-      return returnValue;
+      return (int)(type.GetMethod(methodName).Invoke(_filterTsWriter, parameters));
     }
 
     #endregion
