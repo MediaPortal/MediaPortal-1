@@ -132,6 +132,9 @@ HRESULT CSampleRateConverter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, 
     hr = m_pNextSink->NegotiateFormat(pOutWfx, nApplyChangesDepth, pChOrder);
     sampleRatesTested++;
 
+    if (hr == AUDCLNT_E_DEVICE_IN_USE) // If the audio client is in use changing the format won't help
+      break;
+
     if (FAILED(hr))
       pOutWfx->Format.nSamplesPerSec = 0;
 
