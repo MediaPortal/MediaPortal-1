@@ -45,7 +45,8 @@ CWASAPIRenderFilter::CWASAPIRenderFilter(AudioRendererSettings* pSettings, CSync
   m_llPosError(0),
   m_ullPrevQpc(0),
   m_ullPrevPos(0),
-  m_hNeedMoreSamples(NULL)
+  m_hNeedMoreSamples(NULL),
+  m_rtLatency(0)
 {
   OSVERSIONINFO osvi;
   ZeroMemory(&osvi, sizeof(OSVERSIONINFO));
@@ -596,7 +597,10 @@ void CWASAPIRenderFilter::ResetClockData()
 
 REFERENCE_TIME CWASAPIRenderFilter::Latency()
 {
-  return m_pSettings->GetPeriod();
+  if (m_rtLatency == 0)
+    m_rtLatency = m_pSettings->GetPeriod(); // This is set in StartAudioClient, but ThreadProc will call this before StartAudioClient is called
+  
+  return m_rtLatency;
 }
 
 HRESULT CWASAPIRenderFilter::Run(REFERENCE_TIME rtStart)
@@ -1162,6 +1166,9 @@ HRESULT CWASAPIRenderFilter::StartAudioClient()
   if (!m_bIsAudioClientStarted)
   {
     Log("WASAPIRenderFilter::StartAudioClient");
+
+    // Set the latency here so we don't have to retrieve it every time
+    m_rtLatency = m_pSettings->GetPeriod();
 
     if (m_pAudioClient)
     {
