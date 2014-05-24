@@ -900,7 +900,7 @@ bool CDemuxer::IsEndOfStreamOutputPacketQueued(void)
 {
   return this->IsSetFlags(DEMUXER_FLAG_END_OF_STREAM_OUTPUT_PACKET_QUEUED);
 }
-  
+
 HRESULT CDemuxer::StartCreatingDemuxer(void)
 {
   HRESULT result = S_OK;
@@ -3188,6 +3188,10 @@ HRESULT CDemuxer::GetNextPacketInternal(COutputPinPacket *packet)
           if (SUCCEEDED(result))
           {
             packet->GetBuffer()->AddToBuffer(temp, (unsigned int)res);
+
+            packet->SetStreamPid(0);
+            packet->SetDemuxerId(this->parserStreamId);
+
             result = S_OK;
           }
         }

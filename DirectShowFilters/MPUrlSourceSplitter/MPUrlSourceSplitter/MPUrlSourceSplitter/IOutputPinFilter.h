@@ -24,10 +24,11 @@
 #define __IOUTPUT_PIN_FILTER_DEFINED
 
 #include "IFilter.h"
+#include "IParserOutputStream.h"
 #include "ParameterCollection.h"
 
 // defines interface for output pin filter
-struct IOutputPinFilter : public IFilter
+struct IOutputPinFilter : public IFilter, public IParserOutputStream
 {
   // gets filter parameters
   // @return : filter parameters or NULL if error

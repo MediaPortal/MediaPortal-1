@@ -249,7 +249,7 @@ public:
   // tests if end of stream output packet is queued into output packet collection
   // return : true if end of stream output packet is queued into output packet collection, false otherwise
   bool IsEndOfStreamOutputPacketQueued(void);
-  
+
   // starts creating demuxer
   // @return : S_OK if successful, error code otherwise
   HRESULT StartCreatingDemuxer(void);

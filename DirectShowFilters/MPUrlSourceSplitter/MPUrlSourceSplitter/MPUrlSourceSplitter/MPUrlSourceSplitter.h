@@ -67,7 +67,7 @@ class CMPUrlSourceSplitter
   , public CCritSec
   , protected CAMThread
   , public IFileSourceFilter
-  , public IParserOutputStream
+  //, public IParserOutputStream
   , public IMediaSeeking
   , public IAMStreamSelect
   //, public ILAVFSettingsInternal

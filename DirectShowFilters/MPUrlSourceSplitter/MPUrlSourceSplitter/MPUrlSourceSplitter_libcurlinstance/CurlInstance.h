@@ -152,7 +152,7 @@ public:
   // sends data through current CURL instance
   // @param data : data to send
   // @param length : the length of data to send
-  // @param timeout : the timeout for sending data
+  // @param timeout : the timeout in us (microseconds) for sending data
   // @return : CURLE_OK is successful, error code otherwise
   virtual CURLcode SendData(const unsigned char *data, unsigned int length, unsigned int timeout);
 
@@ -161,6 +161,13 @@ public:
   // @param length : the length of data buffer
   // @return : the length of read data or error code (lower than zero) if error
   virtual int ReadData(unsigned char *data, unsigned int length);
+
+  // tests if current instance is in readable (there are data to read) or writable (we can send data) state
+  // @param read : true if testing for readable state, false otherwise
+  // @param write : true if testing for writable state, false otherwise
+  // @param timeout : the timeout in us (microseconds), UINT_MAX for no timeout
+  // @return : S_OK if successful, E_NOT_VALID_STATE if no CURL instance or can't get internal socket, E_INVALIDARG if read and write are false, error code if another error
+  virtual HRESULT Select(bool read, bool write, unsigned int timeout);
 
 protected:
   CURL *curl;

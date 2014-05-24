@@ -179,8 +179,11 @@ echo #endif &gt;&gt; VersionInfo.h</Command>
     <ClInclude Include="IPacketDemuxer.h" />
     <ClInclude Include="IOutputPinFilter.h" />
     <ClInclude Include="MPUrlSourceSplitter.h" />
+    <ClInclude Include="MPUrlSourceSplitterInputDownloadPin.h" />
+    <ClInclude Include="MPUrlSourceSplitterOutputDownloadPin.h" />
     <ClInclude Include="MPUrlSourceSplitterOutputPin.h" />
     <ClInclude Include="MPUrlSourceSplitterOutputPinCollection.h" />
+    <ClInclude Include="MPUrlSourceSplitterOutputSplitterPin.h" />
     <ClInclude Include="OutputPinAllocator.h" />
     <ClInclude Include="OutputPinMediaSample.h" />
     <ClInclude Include="OutputPinPacket.h" />
@@ -214,8 +217,11 @@ echo #endif &gt;&gt; VersionInfo.h</Command>
     <ClCompile Include="ExtraDataParser.cpp" />
     <ClCompile Include="H264Nalu.cpp" />
     <ClCompile Include="MPUrlSourceSplitter.cpp" />
+    <ClCompile Include="MPUrlSourceSplitterInputDownloadPin.cpp" />
+    <ClCompile Include="MPUrlSourceSplitterOutputDownloadPin.cpp" />
     <ClCompile Include="MPUrlSourceSplitterOutputPin.cpp" />
     <ClCompile Include="MPUrlSourceSplitterOutputPinCollection.cpp" />
+    <ClCompile Include="MPUrlSourceSplitterOutputSplitterPin.cpp" />
     <ClCompile Include="OutputPinAllocator.cpp" />
     <ClCompile Include="OutputPinMediaSample.cpp" />
     <ClCompile Include="OutputPinPacket.cpp" />

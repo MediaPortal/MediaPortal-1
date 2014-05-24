@@ -264,19 +264,6 @@ bool CCacheFile::StoreItems(CCacheFileItemCollection *collection, unsigned int l
             // find suitable free space
             unsigned int freeSpaceIndex = (this->freeSpaces != NULL) ? this->freeSpaces->FindSuitableFreeSpace((int64_t)bufferPosition) : FREE_SPACE_NOT_FOUND;
 
-            //if (freeSpaceIndex == FREE_SPACE_NOT_FOUND)
-            //{
-            //  // if not found, get file size
-            //  if (!GetFileSizeEx(hCacheFile, &size))
-            //  {
-            //    size.QuadPart = -1;
-            //  }
-            //}
-            //else
-            //{
-            //  size.QuadPart = this->freeSpaces->GetItem(freeSpaceIndex)->GetStart();
-            //}
-
             if (freeSpaceIndex != FREE_SPACE_NOT_FOUND)
             {
               size.QuadPart = this->freeSpaces->GetItem(freeSpaceIndex)->GetStart();

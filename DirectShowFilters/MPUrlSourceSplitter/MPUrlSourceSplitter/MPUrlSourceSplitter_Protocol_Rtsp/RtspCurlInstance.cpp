@@ -1958,7 +1958,7 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
                 reportBuffer[1] = track->GetTransportResponseHeader()->GetMaxInterleavedChannel();  // interleaved packet channnel (specified in transport header)
                 WBE16(reportBuffer, 2, (receiverReportSize + sourceDescriptionSize));               // interleaved packet length (without header length)
 
-                errorCode = this->SendData(reportBuffer, receiverReportSize + sourceDescriptionSize + 4, this->GetReceiveDataTimeout());
+                errorCode = this->SendData(reportBuffer, receiverReportSize + sourceDescriptionSize + 4, this->GetReceiveDataTimeout() * 1000);
                 CHECK_CONDITION_EXECUTE(errorCode != CURLE_OK, this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_CURL_WORKER_NAME, L"error while sending interleaved RTCP packets", errorCode));
               }
 

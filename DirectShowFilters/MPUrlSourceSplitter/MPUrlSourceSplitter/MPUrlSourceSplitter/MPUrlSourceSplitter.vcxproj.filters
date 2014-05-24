@@ -105,6 +105,15 @@
     <ClInclude Include="IOutputPinFilter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MPUrlSourceSplitterOutputSplitterPin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MPUrlSourceSplitterOutputDownloadPin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MPUrlSourceSplitterInputDownloadPin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -181,6 +190,15 @@
     </ClCompile>
     <ClCompile Include="PacketInputFormat.cpp">
       <Filter>Demuxers\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MPUrlSourceSplitterOutputSplitterPin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MPUrlSourceSplitterOutputDownloadPin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MPUrlSourceSplitterInputDownloadPin.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -30,6 +30,8 @@
 #include "Parameters.h"
 #include "LockMutex.h"
 #include "StreamProgress.h"
+#include "MPUrlSourceSplitterOutputSplitterPin.h"
+#include "MPUrlSourceSplitterOutputDownloadPin.h"
 
 #include <crtdbg.h>
 #include <process.h>
@@ -427,7 +429,7 @@ CUnknown * WINAPI CMPUrlSourceSplitter::CreateInstanceIptvSource(LPUNKNOWN lpunk
 
       if (SUCCEEDED(*phr))
       {
-        CMPUrlSourceSplitterOutputPin *outputPin = new CMPUrlSourceSplitterOutputPin(instance->logger, mediaTypes, L"Output", instance, instance, phr, L"mpegts");
+        CMPUrlSourceSplitterOutputPin *outputPin = new CMPUrlSourceSplitterOutputPin(instance->logger, mediaTypes, L"Output", instance, instance, phr);
         CHECK_POINTER_HRESULT(*phr, outputPin, *phr, E_OUTOFMEMORY);
 
         CHECK_CONDITION_HRESULT(*phr, instance->outputPins->Add(outputPin), *phr, E_OUTOFMEMORY);
@@ -689,7 +691,7 @@ STDMETHODIMP CMPUrlSourceSplitter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TY
 
       if (SUCCEEDED(result))
       {
-        CMPUrlSourceSplitterOutputPin *outputPin = new CMPUrlSourceSplitterOutputPin(this->logger, mediaTypes, L"Output", this, this, &result, L"mpegts");
+        CMPUrlSourceSplitterOutputPin *outputPin = new CMPUrlSourceSplitterOutputPin(this->logger, mediaTypes, L"Output", this, this, &result);
         CHECK_POINTER_HRESULT(result, outputPin, result, E_OUTOFMEMORY);
 
         CHECK_CONDITION_HRESULT(result, this->outputPins->Add(outputPin), result, E_OUTOFMEMORY);
@@ -791,7 +793,7 @@ HRESULT CMPUrlSourceSplitter::SetStreamCount(unsigned int streamCount, bool live
         {
           demuxer->SetLiveStream(this->IsLiveStream() || liveStream);
           demuxer->SetParserStreamId(i);
-          demuxer->SetRealDemuxingNeeded(this->IsSplitter());
+          demuxer->SetRealDemuxingNeeded(this->IsSplitter() && (!this->IsDownloadingFile()));
         }
 
         CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->demuxers->Add(demuxer) ? result : E_OUTOFMEMORY);
@@ -828,7 +830,25 @@ bool CMPUrlSourceSplitter::IsDownloading(void)
 
 void CMPUrlSourceSplitter::FinishDownload(HRESULT result)
 {
-  this->OnDownloadCallback(result);
+  // we accept only first call
+  if (this->m_State == State_Running)
+  {
+    this->SetPauseSeekStopRequest(true);
+    CAMThread::CallWorker(CMD_EXIT);
+    CAMThread::Close();
+
+    // change our state to stopped
+    this->m_State = State_Stopped;
+
+    // disconnect all output pins
+    for (unsigned int i = 0; i < this->outputPins->Count(); i++)
+    {
+      this->outputPins->GetItem(i)->Disconnect();
+    }
+
+    // call callback method
+    this->OnDownloadCallback(result);
+  }
 }
 
 // IMediaSeeking
@@ -1404,7 +1424,7 @@ STDMETHODIMP CMPUrlSourceSplitter::DownloadAsync(LPCOLESTR uri, LPCOLESTR fileNa
 
     result = (this->downloadFileName == NULL) ? E_CONVERT_STRING_ERROR : S_OK;
   }
-
+  
   if (SUCCEEDED(result))
   {
     CParameterCollection *suppliedParameters = this->ParseParameters(uri);
@@ -2403,7 +2423,7 @@ unsigned int WINAPI CMPUrlSourceSplitter::CreateAllDemuxersWorker(LPVOID lpParam
     Sleep(1);
   }
 
-  if (SUCCEEDED(result) && (caller->IsSplitter()) && (!caller->createAllDemuxersWorkerShouldExit) && (activeDemuxer >= caller->demuxers->Count()))
+  if (SUCCEEDED(result) && (caller->IsSplitter()) && (!caller->IsDownloadingFile()) && (!caller->createAllDemuxersWorkerShouldExit) && (activeDemuxer >= caller->demuxers->Count()))
   {
     // all demuxers successfully created
     // initialize output pins
@@ -2419,7 +2439,7 @@ unsigned int WINAPI CMPUrlSourceSplitter::CreateAllDemuxersWorker(LPVOID lpParam
 
       if (videoStream != NULL)
       {
-        CMPUrlSourceSplitterOutputPin *outputPin = new CMPUrlSourceSplitterOutputPin(caller->logger, videoStream->GetStreamInfo()->GetMediaTypes(), L"Video", caller, caller, &result, demuxer->GetContainerFormat());
+        CMPUrlSourceSplitterOutputSplitterPin *outputPin = new CMPUrlSourceSplitterOutputSplitterPin(caller->logger, videoStream->GetStreamInfo()->GetMediaTypes(), L"Video", caller, caller, &result, demuxer->GetContainerFormat());
         CHECK_POINTER_HRESULT(result, outputPin, result, E_OUTOFMEMORY);
 
         if (SUCCEEDED(result))
@@ -2444,7 +2464,7 @@ unsigned int WINAPI CMPUrlSourceSplitter::CreateAllDemuxersWorker(LPVOID lpParam
 
       if (audioStream != NULL)
       {
-        CMPUrlSourceSplitterOutputPin *outputPin = new CMPUrlSourceSplitterOutputPin(caller->logger, audioStream->GetStreamInfo()->GetMediaTypes(), L"Audio", caller, caller, &result, demuxer->GetContainerFormat());
+        CMPUrlSourceSplitterOutputSplitterPin *outputPin = new CMPUrlSourceSplitterOutputSplitterPin(caller->logger, audioStream->GetStreamInfo()->GetMediaTypes(), L"Audio", caller, caller, &result, demuxer->GetContainerFormat());
         CHECK_POINTER_HRESULT(result, outputPin, result, E_OUTOFMEMORY);
 
         if (SUCCEEDED(result))
@@ -2471,7 +2491,7 @@ unsigned int WINAPI CMPUrlSourceSplitter::CreateAllDemuxersWorker(LPVOID lpParam
 
       if (subtitleStream != NULL)
       {
-        CMPUrlSourceSplitterOutputPin *outputPin = new CMPUrlSourceSplitterOutputPin(caller->logger, subtitleStream->GetStreamInfo()->GetMediaTypes(), L"Subtitle", caller, caller, &result, demuxer->GetContainerFormat());
+        CMPUrlSourceSplitterOutputSplitterPin *outputPin = new CMPUrlSourceSplitterOutputSplitterPin(caller->logger, subtitleStream->GetStreamInfo()->GetMediaTypes(), L"Subtitle", caller, caller, &result, demuxer->GetContainerFormat());
         CHECK_POINTER_HRESULT(result, outputPin, result, E_OUTOFMEMORY);
 
         if (SUCCEEDED(result))
@@ -2491,6 +2511,41 @@ unsigned int WINAPI CMPUrlSourceSplitter::CreateAllDemuxersWorker(LPVOID lpParam
     // if there are no pins, then it is bad
     CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = (caller->outputPins->Count() > 0) ? result : E_FAIL);
   }
+  else if (SUCCEEDED(result) && (caller->IsSplitter()) && (caller->IsDownloadingFile()) && (!caller->createAllDemuxersWorkerShouldExit) && (activeDemuxer >= caller->demuxers->Count()))
+  {
+    // we are downloading file
+    // create output pin, which save received data to file
+    
+    CMediaTypeCollection *mediaTypes = new CMediaTypeCollection();
+    CHECK_POINTER_HRESULT(result, mediaTypes, result, E_OUTOFMEMORY);
+
+    if (SUCCEEDED(result))
+    {
+      CMediaType *mediaType = new CMediaType();
+      CHECK_POINTER_HRESULT(result, mediaTypes, result, E_OUTOFMEMORY);
+
+      CHECK_CONDITION_HRESULT(result, mediaTypes->Add(mediaType), result, E_OUTOFMEMORY);
+      CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(mediaType));
+    }
+
+    if (SUCCEEDED(result))
+    {
+      CMPUrlSourceSplitterOutputDownloadPin *outputPin = new CMPUrlSourceSplitterOutputDownloadPin(caller->logger, mediaTypes, PathFindFileName(caller->downloadFileName), caller, caller, &result, caller->downloadFileName);
+      CHECK_POINTER_HRESULT(result, outputPin, result, E_OUTOFMEMORY);
+
+      if (SUCCEEDED(result))
+      {
+        outputPin->SetStreamPid(caller->demuxers->GetItem(0)->GetParserStreamId());
+        outputPin->SetDemuxerId(0);
+
+        result = (caller->outputPins->Add(outputPin)) ? result : E_OUTOFMEMORY;
+      }
+
+      CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(outputPin));
+    }
+
+    FREE_MEM_CLASS(mediaTypes);
+  }
 
   if (SUCCEEDED(result))
   {
@@ -2503,6 +2558,12 @@ unsigned int WINAPI CMPUrlSourceSplitter::CreateAllDemuxersWorker(LPVOID lpParam
       demuxer->SetPauseSeekStopRequest(true);
       result = demuxer->StartDemuxing();
     }
+  }
+
+  if (SUCCEEDED(result) && (caller->IsDownloadingFile()))
+  {
+    // start downloading and storing file
+    caller->Run(0);
   }
 
   caller->logger->Log(SUCCEEDED(result) ? LOGGER_INFO : LOGGER_ERROR, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_CREATE_ALL_DEMUXERS_WORKER_NAME, result);

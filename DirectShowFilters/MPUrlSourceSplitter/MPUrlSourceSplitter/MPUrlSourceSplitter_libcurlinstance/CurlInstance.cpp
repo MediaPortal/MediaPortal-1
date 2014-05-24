@@ -455,8 +455,16 @@ unsigned int CCurlInstance::CurlWorker(void)
         break;
       }
 
-      // sleep some time, get chance for other threads to work
-      Sleep(1);
+      int ret = 0;
+      if (curl_multi_wait(this->multi_curl, NULL, 0, 0, &ret) == CURLM_OK)
+      {
+        if (ret == 0)
+        {
+          // nothing is waiting to read data
+          // sleep some time, get chance for other threads to work
+          Sleep(1);
+        }
+      }
     }
 
     if (multiErrorCode != CURLM_OK)
@@ -622,82 +630,90 @@ CURLcode CCurlInstance::SetString(CURL *curl, CURLoption option, const wchar_t *
   return result;
 }
 
-HRESULT Select(SOCKET socket, bool read, bool write, unsigned int timeout)
+HRESULT CCurlInstance::Select(bool read, bool write, unsigned int timeout)
 {
   HRESULT result = S_OK;
-  CHECK_CONDITION_HRESULT(result, socket != INVALID_SOCKET, result, E_INVALIDARG);
+
+  CHECK_CONDITION_HRESULT(result, this->curl, result, E_NOT_VALID_STATE);
   CHECK_CONDITION_HRESULT(result, read || write, result, E_INVALIDARG);
-  CHECK_CONDITION_HRESULT(result, timeout > 0, result, E_INVALIDARG);
 
   if (SUCCEEDED(result))
   {
-    fd_set readFD;
-    fd_set writeFD;
-    fd_set exceptFD;
-
-    FD_ZERO(&readFD);
-    FD_ZERO(&writeFD);
-    FD_ZERO(&exceptFD);
-
-    if (read)
-    {
-      // want to read from socket
-      FD_SET(socket, &readFD);
-    }
-    if (write)
-    {
-      // want to write to socket
-      FD_SET(socket, &writeFD);
-    }
-    // we want to receive errors
-    FD_SET(socket, &exceptFD);
-
-    timeval sendTimeout;
-    sendTimeout.tv_sec = timeout;
-    sendTimeout.tv_usec = 0;
-
-    int selectResult = select(0, &readFD, &writeFD, &exceptFD, &sendTimeout);
-    if (selectResult == 0)
-    {
-      // timeout occured
-      result = HRESULT_FROM_WIN32(WSAETIMEDOUT);
-    }
-    else if (selectResult == SOCKET_ERROR)
-    {
-      // socket error occured
-      result = HRESULT_FROM_WIN32(WSAGetLastError());
-    }
+    curl_socket_t socket = CURL_SOCKET_BAD;
+    curl_easy_getinfo(this->curl, CURLINFO_LASTSOCKET, &socket);
+    
+    CHECK_CONDITION_HRESULT(result, socket != CURL_SOCKET_BAD, result, E_NOT_VALID_STATE);
 
     if (SUCCEEDED(result))
     {
-      if (FD_ISSET(socket, &exceptFD))
-      {
-        // error occured on socket, select function was successful
-        int err;
-        int errlen = sizeof(err);
+      fd_set readFD;
+      fd_set writeFD;
+      fd_set exceptFD;
 
-        if (getsockopt(socket, SOL_SOCKET, SO_ERROR, (char *)&err, &errlen) == 0)
-        {
-          // successfully get error
-          result = HRESULT_FROM_WIN32(err);
-        }
-        else
-        {
-          // error occured while getting error
-          result = HRESULT_FROM_WIN32(WSAGetLastError());
-        }
+      FD_ZERO(&readFD);
+      FD_ZERO(&writeFD);
+      FD_ZERO(&exceptFD);
+
+      if (read)
+      {
+        // want to read from socket
+        FD_SET(socket, &readFD);
+      }
+      if (write)
+      {
+        // want to write to socket
+        FD_SET(socket, &writeFD);
+      }
+      // we want to receive errors
+      FD_SET(socket, &exceptFD);
+
+      timeval sendTimeout;
+      sendTimeout.tv_sec = (int)(timeout / 1000000);
+      sendTimeout.tv_usec = (int)(timeout % 1000000);
+
+      int selectResult = select(0, &readFD, &writeFD, &exceptFD, (timeout == UINT_MAX) ? NULL : &sendTimeout);
+      if (selectResult == 0)
+      {
+        // timeout occured
+        result = HRESULT_FROM_WIN32(WSAETIMEDOUT);
+      }
+      else if (selectResult == SOCKET_ERROR)
+      {
+        // socket error occured
+        result = HRESULT_FROM_WIN32(WSAGetLastError());
       }
 
-      if (result == 0)
+      if (SUCCEEDED(result))
       {
-        if (read && (FD_ISSET(socket, &readFD) == 0))
+        if (FD_ISSET(socket, &exceptFD))
         {
-          result = E_NOT_VALID_STATE;
+          // error occured on socket, select function was successful
+          int err;
+          int errlen = sizeof(err);
+
+          if (getsockopt(socket, SOL_SOCKET, SO_ERROR, (char *)&err, &errlen) == 0)
+          {
+            // successfully get error
+            result = HRESULT_FROM_WIN32(err);
+          }
+          else
+          {
+            // error occured while getting error
+            result = HRESULT_FROM_WIN32(WSAGetLastError());
+          }
         }
 
-        if (write && (FD_ISSET(socket, &writeFD) == 0))
+        if (result == 0)
         {
-          result = E_NOT_VALID_STATE;
+          if (read && (FD_ISSET(socket, &readFD) == 0))
+          {
+            result = E_NOT_VALID_STATE;
+          }
+
+          if (write && (FD_ISSET(socket, &writeFD) == 0))
+          {
+            result = E_NOT_VALID_STATE;
+          }
         }
       }
     }
@@ -714,21 +730,13 @@ CURLcode CCurlInstance::SendData(const unsigned char *data, unsigned int length,
   if (errorCode == CURLE_AGAIN)
   {
     errorCode = CURLE_OK;
-    curl_socket_t socket = CURL_SOCKET_BAD;
-
-    CHECK_CONDITION_EXECUTE_RESULT(errorCode == CURLE_OK, curl_easy_getinfo(curl, CURLINFO_LASTSOCKET, &socket), errorCode);
-    CHECK_CONDITION_EXECUTE((errorCode == CURLE_OK) && (socket == CURL_SOCKET_BAD), errorCode = CURLE_NO_CONNECTION_AVAILABLE);
-    CHECK_CONDITION_EXECUTE(errorCode != CURLE_OK, this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, L"SendData()", L"error while sending data", errorCode));
     
-    if (errorCode == CURLE_OK)
-    {
-      HRESULT result = Select(socket, false, true, timeout);
+    HRESULT result = this->Select(false, true, timeout);
 
-      if (FAILED(result))
-      {
-        this->logger->Log(LOGGER_ERROR, L"%s: %s: error while sending data: 0x%08X", protocolName, L"SendData()", result);
-        errorCode = CURLE_SEND_ERROR;
-      }
+    if (FAILED(result))
+    {
+      this->logger->Log(LOGGER_ERROR, L"%s: %s: error while sending data: 0x%08X", protocolName, L"SendData()", result);
+      errorCode = CURLE_SEND_ERROR;
     }
 
     CHECK_CONDITION_EXECUTE(errorCode != CURLE_OK, this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, L"SendData()", L"error while sending data", errorCode));
