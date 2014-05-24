@@ -250,7 +250,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
 
       // Check for and load extensions, adding any additional filters to the graph.
       IBaseFilter lastFilter = _encoder.TsMultiplexerFilter;
-      LoadExtensions(_filterMain, ref lastFilter);
+      if (_mainDeviceCategory == FilterCategory.AMKSCrossbar)
+      {
+        LoadExtensions(_crossbar.Filter, ref lastFilter);
+      }
+      else
+      {
+        LoadExtensions(_capture.VideoFilter ?? _capture.AudioFilter, ref lastFilter);
+      }
       AddAndConnectTsWriterIntoGraph(lastFilter);
       CompleteGraph();
 
