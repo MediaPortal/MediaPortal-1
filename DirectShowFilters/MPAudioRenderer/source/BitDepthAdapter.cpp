@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "Globals.h"
 #include "BitDepthAdapter.h"
+#include <Audioclient.h>
 
 #include "alloctracing.h"
 
@@ -183,6 +184,8 @@ HRESULT CBitDepthAdapter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int 
     pOutWfx->Format.nAvgBytesPerSec = pOutWfx->Format.nBlockAlign * pOutWfx->Format.nSamplesPerSec;
   
     hr = m_pNextSink->NegotiateFormat(pOutWfx, nApplyChangesDepth, pChOrder);
+    if (hr == AUDCLNT_E_DEVICE_IN_USE) // If the audio client is in use changing the format won't help
+      break;
   }
 
   if (FAILED(hr))
