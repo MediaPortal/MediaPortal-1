@@ -229,6 +229,10 @@ void Log(const char *fmt, ...)
   if (ret < 0)
     return;
 
+#ifdef TRACELOGENTRY
+  TRACE("%s\n", buffer);
+#endif
+
   SYSTEMTIME systemTime;
   GetLocalTime(&systemTime);
   char msg[MAX_LOG_LINE_LENGHT];
