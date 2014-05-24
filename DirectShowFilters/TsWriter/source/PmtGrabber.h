@@ -76,5 +76,6 @@ class CPmtGrabber : public CUnknown, public CSectionDecoder, public IPmtGrabber,
     CPatParser m_patParser;
     CSdtParser m_sdtParser;
     CLvctParser m_lvctParser;
-    CCriticalSection m_section;
+    CCriticalSection m_sectionCallBack;
+    CCriticalSection m_sectionPmt;
 };

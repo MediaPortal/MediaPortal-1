@@ -50,7 +50,6 @@ STDMETHODIMP CPmtGrabber::SetPmtPid(int pmtPid, int serviceId)
 {
   try
   {
-    CEnterCriticalSection enter(m_section);
     CSectionDecoder::Reset();
     if (serviceId == 0)
     {
@@ -61,11 +60,11 @@ STDMETHODIMP CPmtGrabber::SetPmtPid(int pmtPid, int serviceId)
     {
       if (pmtPid != 0)
       {
-        LogDebug("PmtGrabber: grab PMT for service 0x%x", serviceId);
+        LogDebug("PmtGrabber: grab PMT from PID 0x%x for service 0x%x", pmtPid, serviceId);
       }
       else
       {
-        LogDebug("PmtGrabber: grab PMT PID from PID 0x%x for service 0x%x", pmtPid, serviceId);
+        LogDebug("PmtGrabber: grab PMT for service 0x%x", serviceId);
       }
       m_sdtParser.Reset(false);
       m_sdtParser.SetCallBack(this);
@@ -92,7 +91,7 @@ STDMETHODIMP CPmtGrabber::SetCallBack(IPmtCallBack* callBack)
 {
   try
   {
-    CEnterCriticalSection enter(m_section);
+    CEnterCriticalSection enter(m_sectionCallBack);
     LogDebug("PmtGrabber: set callback 0x%x", callBack);
     m_pCallBack = callBack;
   }
@@ -106,7 +105,6 @@ STDMETHODIMP CPmtGrabber::SetCallBack(IPmtCallBack* callBack)
 
 void CPmtGrabber::OnPatReceived(int serviceId, int pmtPid)
 {
-  CEnterCriticalSection enter(m_section);
   try
   {
     if (m_iOriginalServiceId == 0 && serviceId != m_iCurrentServiceId)  // ([originally] searching for any service and service ID has changed [again]...)
@@ -143,7 +141,6 @@ void CPmtGrabber::OnPatReceived(int serviceId, int pmtPid)
 
 void CPmtGrabber::OnSdtReceived(const CChannelInfo& sdtInfo)
 {
-  CEnterCriticalSection enter(m_section);
   try
   {
     // Do we have a service ID?
@@ -159,6 +156,7 @@ void CPmtGrabber::OnSdtReceived(const CChannelInfo& sdtInfo)
     LogDebug("PmtGrabber: SDT information for service 0x%x received, is running = %d", sdtInfo.ServiceId, sdtInfo.IsRunning);
     if (!sdtInfo.IsRunning)
     {
+      CEnterCriticalSection enter(m_sectionCallBack);
       if (m_pCallBack != NULL)
       {
         LogDebug("PmtGrabber: do callback (SDT)...");
@@ -180,7 +178,6 @@ void CPmtGrabber::OnSdtReceived(const CChannelInfo& sdtInfo)
 
 void CPmtGrabber::OnLvctReceived(const CChannelInfo& vctInfo)
 {
-  CEnterCriticalSection enter(m_section);
   try
   {
     // Do we have a service ID?
@@ -196,6 +193,7 @@ void CPmtGrabber::OnLvctReceived(const CChannelInfo& vctInfo)
     LogDebug("PmtGrabber: L-VCT information for service 0x%x received, is running = %d", vctInfo.ServiceId, vctInfo.IsRunning);
     if (!vctInfo.IsRunning)
     {
+      CEnterCriticalSection enter(m_sectionCallBack);
       if (m_pCallBack != NULL)
       {
         LogDebug("PmtGrabber: do callback (L-VCT)...");
@@ -219,7 +217,6 @@ void CPmtGrabber::OnTsPacket(byte* tsPacket)
 {
   try
   {
-    CEnterCriticalSection enter(m_section);
     if (m_pCallBack == NULL)
     {
       return;
@@ -257,12 +254,12 @@ void CPmtGrabber::OnNewSection(CSection& section)
       // (Don't stop the PAT parser here - if the service ID passed to us
       // was not set then the service ID could potentially change mid-stream.)
 
-      // Useful check: if the PAT doesn't list any services then it is pointless
-      // to keep waiting for any PMT. Assume the service is not running.
-      int serviceCount = m_patParser.GetProgramCount();
-      if (serviceCount == 0)
+      // Useful check: if the PAT didn't give us a PMT PID to track then it is
+      // pointless to keep waiting for PMT. Assume the service is not running.
+      if (GetPid() == 0)
       {
         LogDebug("PmtGrabber: PAT search failed, no services found");
+        CEnterCriticalSection enter(m_sectionCallBack);
         if (m_pCallBack != NULL)
         {
           LogDebug("PmtGrabber: do callback (PAT)...");
@@ -287,8 +284,6 @@ void CPmtGrabber::OnNewSection(CSection& section)
       return;
     }
 
-    CEnterCriticalSection enter(m_section);
-
     if (section.section_length < 13 || section.section_length >= 1021)
     {
       // Invalid PMT section length.
@@ -304,9 +299,9 @@ void CPmtGrabber::OnNewSection(CSection& section)
       return;
     }
 
-    if (m_pCallBack == NULL || m_iPmtVersion == section.version_number)
+    if (m_iPmtVersion == section.version_number)
     {
-      // PMT hasn't changed or we can't perform a callback. Save effort...
+      // PMT hasn't changed. Save effort...
       return;
     }
 
@@ -335,6 +330,7 @@ void CPmtGrabber::OnNewSection(CSection& section)
       prevPmtParser.SetPid(GetPid());
       prevPmtParser.DecodePmtSection(m_pmtPrevSection);
 
+      // TODO fix me
       //if (!(prevPmtParser.GetPidInfo() == currPmtParser.GetPidInfo()))
       //{
         LogDebug("PmtGrabber: PMT elementary streams to include changed from:");
@@ -349,18 +345,28 @@ void CPmtGrabber::OnNewSection(CSection& section)
     // hold up-to-date. The + 3 is because the section length doesn't include the
     // table ID, section syntax indicator, and section length bytes that we want
     // to pass back.
+    CEnterCriticalSection enterPmt(m_sectionPmt);
     m_iPmtLength = section.section_length + 3;
     memcpy(m_pmtData, section.Data, m_iPmtLength);
     m_iPmtVersion = section.version_number;
     m_pmtPrevSection = section;
+    enterPmt.Leave();
 
     // If the elementary streams are different then a callback is required.
     if (pidsChanged)
     {
       LogDebug("PmtGrabber: do callback...");
 
-      // If we receive PMT, assume the service is running.
-      m_pCallBack->OnPmtReceived(GetPid(), serviceId, 1);
+      CEnterCriticalSection enterCallBack(m_sectionCallBack);
+      if (m_pCallBack != NULL)
+      {
+        // If we receive PMT, assume the service is running.
+        m_pCallBack->OnPmtReceived(GetPid(), serviceId, 1);
+      }
+      else
+      {
+        LogDebug("PmtGrabber: callback is NULL");
+      }
 
       // We're not interested in continually monitoring if the service is running.
       m_sdtParser.SetCallBack(NULL);
@@ -381,7 +387,7 @@ STDMETHODIMP CPmtGrabber::GetPmtData(BYTE* pmtData)
 {
   try
   {
-    CEnterCriticalSection enter(m_section);
+    CEnterCriticalSection enter(m_sectionPmt);
     if (m_iPmtLength > 0)
     {
       memcpy(pmtData, m_pmtData, m_iPmtLength);
