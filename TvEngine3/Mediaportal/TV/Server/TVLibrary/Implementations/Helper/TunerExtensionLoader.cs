@@ -91,7 +91,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
       {
         var assemblyFilter = new AssemblyFilter(_extensionDirectory);
         GlobalServiceProvider.Instance.Get<IWindsorContainer>().Register(
-          AllTypes.FromAssemblyInDirectory(assemblyFilter).
+          Classes.FromAssemblyInDirectory(assemblyFilter).
             BasedOn<ICustomDevice>().
             If(IsExtensionCompatible).
             WithServiceBase().
