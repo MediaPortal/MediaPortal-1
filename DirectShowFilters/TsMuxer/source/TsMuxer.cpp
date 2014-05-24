@@ -71,8 +71,8 @@
 #define VBI_LINE_LENGTH 43
 #define TELETEXT_PES_STUFFING_LENGTH 31
 
-#define TS_BUFFER_FLUSH_RATE_VIDEO 100
-#define TS_BUFFER_FLUSH_RATE_AUDIO 20
+#define TS_BUFFER_FLUSH_RATE_VIDEO 50
+#define TS_BUFFER_FLUSH_RATE_AUDIO 5
 
 
 // Table for inverting/reversing bit ordering of teletext/VBI bytes.
