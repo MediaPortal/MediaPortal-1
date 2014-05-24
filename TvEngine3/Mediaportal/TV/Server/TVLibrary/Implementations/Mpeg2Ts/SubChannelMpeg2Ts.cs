@@ -215,8 +215,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
     /// </summary>
     /// <param name="serviceId">The service ID of the service being tuned.</param>
     /// <param name="pmtPid">The PMT PID of the service being tuned.</param>
-    /// <returns><c>true</c> if PMT was found, otherwise <c>false</c></returns>
-    protected bool WaitForPmt(int serviceId, int pmtPid)
+    private void WaitForPmt(int serviceId, int pmtPid)
     {
       ThrowExceptionIfTuneCancelled();
       this.LogDebug("MPEG 2 sub-channel: sub-channel {0} wait for PMT, service ID = {1}, PMT PID = {2}", _subChannelId, serviceId, pmtPid);
@@ -240,7 +239,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
 
       if (serviceId < 0)
       {
-        return true;
+        return;
       }
 
       int pmtPidToSearchFor;
@@ -257,10 +256,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
       TimeSpan waitLength = TimeSpan.MinValue;
       while (!pmtFound)
       {
-        if (pmtPidToSearchFor == 0)
-        {
-          this.LogDebug("MPEG 2 sub-channel: search for updated PMT PID in PAT");
-        }
         this.LogDebug("MPEG 2 sub-channel: configure PMT grabber, PMT PID = {0}", pmtPidToSearchFor);
         _tsFilterInterface.PmtSetCallBack(_subChannelIndex, this);
         _tsFilterInterface.PmtSetPmtPid(_subChannelIndex, pmtPidToSearchFor, serviceId);
@@ -286,7 +281,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
           if (pmtPidToSearchFor == 0)
           {
             this.LogError("MPEG 2 sub-channel: giving up waiting for PMT - you might need to increase the PMT timeout");
-            return false;
+            throw new TvExceptionNoPMT();
           }
           else
           {
@@ -301,21 +296,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
       }
 
       this.LogDebug("MPEG 2 sub-channel: found PMT after {0} seconds", waitLength.TotalSeconds);
-      bool pmtIsValid = HandlePmt();
-      if (pmtIsValid)
+      try
       {
-        BuildPidList();
-        if (IsTimeShifting)
-        {
-          SetTimeShiftPids();
-        }
-        if (IsRecording)
-        {
-          SetRecorderPids();
-        }
+        HandlePmt();
       }
-
-      return pmtIsValid;
+      catch (Exception ex)
+      {
+        throw new TvExceptionNoPMT("Failed to handle PMT.", ex);
+      }
     }
 
     /// <summary>
@@ -340,10 +328,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
         programNumber = -1;
         pmtPid = -1;
       }
-      if (!WaitForPmt(programNumber, pmtPid))
-      {
-        throw new TvExceptionNoPMT("MPEG 2 sub-channel: PMT not received");
-      }
+      WaitForPmt(programNumber, pmtPid);
     }
 
     #endregion
@@ -523,7 +508,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
     /// <summary>
     /// maps the correct pidSet to the TsFileSink filter and teletext pins
     /// </summary>
-    protected void BuildPidList()
+    private void BuildPidList()
     {
       try
       {
@@ -649,15 +634,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
     /// <summary>
     /// Decode and process PMT data received from TsWriter.
     /// </summary>
-    private bool HandlePmt()
+    private void HandlePmt()
     {
       ThrowExceptionIfTuneCancelled();
       this.LogDebug("MPEG 2 sub-channel: sub-channel {0} handle PMT", _subChannelId);
 
       if (_currentChannel == null)
       {
-        this.LogError("MPEG 2 sub-channel: failed to handle PMT, current channel is not set");
-        return false;
+        throw new TvException("Failed to handle PMT, current channel is not set.");
       }
 
       IntPtr pmtBuffer = Marshal.AllocCoTaskMem(Pmt.MAX_SIZE);
@@ -669,8 +653,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
         Pmt pmt = Pmt.Decode(pmtData);
         if (pmt == null)
         {
-          this.LogError("MPEG 2 sub-channel: invalid PMT detected");
-          return false;
+          throw new TvException("Invalid PMT detected.");
         }
 
         this.LogDebug("MPEG 2 sub-channel: service ID = {0}, PMT PID = {1}, version = {2}",
@@ -680,7 +663,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
         // redundant check as TsWriter should only pass us new PMT when the version changes.
         if (_pmt != null && _pmt.Version == pmt.Version)
         {
-          return false;
+          return;
         }
         this.LogDebug("MPEG 2 sub-channel: new PMT version");
         _pmt = pmt;
@@ -694,19 +677,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
           GrabCat();
         }
 
-        // TODO: call _tuner.OnPmtReady().
-
-        return true;
-      }
-      catch (Exception ex)
-      {
-        this.LogError(ex, "MPEG 2 sub-channel: caught exception while handling PMT");
+        // TODO: this code is hacked and needs a full and proper rework with good design
+        BuildPidList();
+        if (IsTimeShifting)
+        {
+          SetTimeShiftPids();
+        }
+        if (IsRecording)
+        {
+          SetRecorderPids();
+        }
       }
       finally
       {
         Marshal.FreeCoTaskMem(pmtBuffer);
       }
-      return false;
     }
 
     /// <summary>
@@ -832,17 +817,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
       // Was the PMT requested? If not, we are responsible for handling it.
       if (_pmt != null)
       {
-        if (HandlePmt())
+        try
         {
-          BuildPidList();
-          if (IsTimeShifting)
-          {
-            SetTimeShiftPids();
-          }
-          if (IsRecording)
-          {
-            SetRecorderPids();
-          }
+          HandlePmt();
+        }
+        catch (Exception ex)
+        {
+          this.LogError(ex, "MPEG 2 sub-channel: caught exception while handling PMT");
         }
       }
       PersistPmtPid(pmtPid);
