@@ -358,12 +358,16 @@ namespace MediaPortal.Util
 
     public static string GetServerNameFromUNCPath(string sFilePath)
     {
-      Uri uri = new Uri(sFilePath);
-      
-      if (!uri.IsUnc)
-        return string.Empty;
+      if (!string.IsNullOrEmpty(sFilePath))
+      {
+        Uri uri = new Uri(sFilePath);
 
-      return uri.Host;
+        if (!uri.IsUnc)
+          return string.Empty;
+
+        return uri.Host;
+      }
+      return sFilePath;
     }
 
     public static long GetDiskSize(string drive)
@@ -597,7 +601,18 @@ namespace MediaPortal.Util
     public static bool CheckServerStatus(string folderName)
     {
       if (!Util.Utils.IsUNCNetwork(folderName))
-        return true;
+      {
+        // Check if letter drive is a network drive
+        string detectedFolderName = FindUNCPaths(folderName);
+        if (Util.Utils.IsUNCNetwork(detectedFolderName))
+        {
+          folderName = detectedFolderName;
+        }
+        else
+        {
+          return true;
+        }
+      }
       
       string serverName = string.Empty;
       
@@ -1272,6 +1287,67 @@ namespace MediaPortal.Util
       if (strPath.Length < 2) return false;
       if (strPath.StartsWith(@"\\")) return true;
       return false;
+    }
+
+    public static string FindUNCPaths(string strDrive)
+    {
+      DriveInfo[] dis = DriveInfo.GetDrives();
+      foreach (DriveInfo di in dis)
+      {
+        if (di.DriveType == DriveType.Network && strDrive.ToLowerInvariant().StartsWith(di.Name.ToLowerInvariant()) &&
+            !string.IsNullOrEmpty(strDrive))
+        {
+          DirectoryInfo dir = di.RootDirectory;
+          string UNCPathResult = FindNetworkPath(strDrive);
+          if (IsUNCNetwork(UNCPathResult))
+          {
+            return UNCPathResult;
+          }
+          return GetUNCPath(dir.FullName.Substring(0, 2));
+        }
+      }
+      return strDrive;
+    }
+
+    public static string FindNetworkPath(string path)
+    {
+      if (string.IsNullOrEmpty(path)) return path;
+      string pathRoot = Path.GetPathRoot(path);
+      if (string.IsNullOrEmpty(pathRoot)) return path;
+      ProcessStartInfo pinfo = new ProcessStartInfo("net", "use");
+      pinfo.CreateNoWindow = true;
+      pinfo.RedirectStandardOutput = true;
+      pinfo.UseShellExecute = false;
+      string output;
+      using (Process p = Process.Start(pinfo))
+      {
+        output = p.StandardOutput.ReadToEnd();
+      }
+      //if we have a folder like D:\ then remove the \
+      if (pathRoot.EndsWith(@"\"))
+      {
+        pathRoot = pathRoot.Substring(0, pathRoot.Length - 1);
+      }
+      string line = output;
+      if (line.Contains(pathRoot))
+      {
+        try
+        {
+          string UNCPath = line;
+          string UNCPathSubstring = UNCPath.Substring(UNCPath.LastIndexOf(pathRoot));
+          int Pos1 = UNCPathSubstring.IndexOf(pathRoot) + pathRoot.Length;
+          int Pos2 = UNCPathSubstring.IndexOf("Microsoft Windows Network");
+          string result = UNCPathSubstring.Substring(Pos1, Pos2 - Pos1);
+          result = result.TrimStart();
+          result = Path.GetFullPath(result);
+          return result;
+        }
+        catch (Exception)
+        {
+          return path;
+        }
+      }
+      return path;
     }
 
     public static bool IsPersistentNetwork(string strPath)

@@ -522,7 +522,12 @@ namespace MediaPortal.Util
         if (strDir != "cdda:")
           try
           {
-            strRoot = Path.GetFullPath(strDir);
+            // TODO (Fix slow issue if hostname is not linked to IP address in system32/drivers/host file
+            //bool available = Util.Utils.CheckServerStatus(strDir);
+            //if (available)
+            {
+              strRoot = Path.GetFullPath(strDir);
+            }
           }
           catch (Exception) {}
       }
@@ -1452,6 +1457,7 @@ namespace MediaPortal.Util
       List<GUIListItem> items = new List<GUIListItem>();
       foreach (Share share in m_shares)
       {
+        bool pathOnline = false;
         GUIListItem item = new GUIListItem();
         item.Label = share.Name;
         item.Path = share.Path;
@@ -1484,16 +1490,7 @@ namespace MediaPortal.Util
         }
         Utils.SetDefaultIcons(item);
 
-        bool pathOnline = Util.Utils.CheckServerStatus(item.Path);
-
-        if (Util.Utils.IsUNCNetwork(item.Path) && !pathOnline && Util.Utils.FileExistsInCache(GUIGraphicsContext.GetThemedSkinFile("\\Media\\defaultNetworkOffline.png")))
-        {
-          item.IconImage = "defaultNetworkOffline.png";
-          item.IconImageBig = "defaultNetworkBigOffline.png";
-          item.ThumbnailImage = "defaultNetworkBigOffline.png";
-          Log.Debug("GetRootExt(): Path = {0}, IconImage = {1}", item.Path, item.IconImage);
-        }
-
+        pathOnline = Util.Utils.CheckServerStatus(item.Path);
         if ((share.Pincode < 0 || !share.DonotFolderJpgIfPin) && pathOnline)
         {
           string coverArt = Utils.GetCoverArtName(item.Path, "folder");
@@ -1516,7 +1513,17 @@ namespace MediaPortal.Util
             item.ThumbnailImage = coverArt;
           }
         }
-
+        else
+        {
+          if ((Util.Utils.IsUNCNetwork(item.Path) || Util.Utils.IsUNCNetwork(Util.Utils.FindUNCPaths(item.Path))) &&
+              Util.Utils.FileExistsInCache(GUIGraphicsContext.GetThemedSkinFile("\\Media\\defaultNetworkOffline.png")))
+          {
+            item.IconImage = "defaultNetworkOffline.png";
+            item.IconImageBig = "defaultNetworkBigOffline.png";
+            item.ThumbnailImage = "defaultNetworkBigOffline.png";
+            Log.Debug("GetRootExt(): Path = {0}, IconImage = {1}", item.Path, item.IconImage);
+          }
+        }
         items.Add(item);
       }
 
@@ -1593,11 +1600,16 @@ namespace MediaPortal.Util
 
       try
       {
+        IntPtr handle = new IntPtr(-1);
         Win32API.WIN32_FIND_DATA fd = new Win32API.WIN32_FIND_DATA();
         fd.cFileName = new String(' ', 256);
         fd.cAlternate = new String(' ', 14);
         // http://msdn.microsoft.com/en-us/library/aa364418%28VS.85%29.aspx
-        IntPtr handle = Win32API.FindFirstFile(aDirectory + @"\*.*", out fd);
+        bool available = Util.Utils.CheckServerStatus(aDirectory);
+        if (available)
+        {
+          handle = Win32API.FindFirstFile(aDirectory + @"\*.*", out fd);
+        }
 
         int count = 0;
         do
