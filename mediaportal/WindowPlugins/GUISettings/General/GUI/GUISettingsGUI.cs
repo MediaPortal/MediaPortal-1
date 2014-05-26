@@ -171,19 +171,36 @@ namespace WindowPlugins.GUISettings
       }
       if (control == btnPin)
       {
-        string tmpPin = _pin;
-        GetStringFromKeyboard(ref tmpPin, 4);
+        if (_pin != string.Empty)
+        {
+          var dlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+          if (null == dlgOK)
+          {
+            return;
+          }
+          dlgOK.SetHeading(100513);
+          dlgOK.DoModal(GetID);
 
-        int number;
-        if (Int32.TryParse(tmpPin, out number))
-        {
-          _pin = number.ToString();
+          if (!RequestPin())
+          {
+            return;
+          }
         }
-        else
+
+        var dlgOK2 = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+        if (null == dlgOK2)
         {
-          _pin = string.Empty;
+          return;
+        }
+        dlgOK2.SetHeading(100514);
+        dlgOK2.DoModal(GetID);
+
+        if (!SetPin())
+        {
+          return;
         }
         SettingsChanged(true);
+
       }
       if (control == btnOnScreenDisplay)
       {
@@ -198,6 +215,71 @@ namespace WindowPlugins.GUISettings
       }
 
       base.OnClicked(controlId, control, actionType);
+    }
+
+    private bool SetPin()
+    {
+      var msgGetPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_PASSWORD, 0, 0, 0, 0, 0, 0);
+      GUIWindowManager.SendMessage(msgGetPassword);
+
+      try
+      {
+        if (msgGetPassword.Label != string.Empty)
+        {
+          int iPincode = Int32.Parse(msgGetPassword.Label);
+          _pin = iPincode.ToString(CultureInfo.InvariantCulture);
+        }
+        else
+        {
+          _pin = string.Empty;
+        }
+        return true;
+      }
+      catch (Exception ex) 
+      { 
+        Log.Error("Setpin() Exception {0} ", ex.Message);
+      }
+      return false;
+    }
+
+    public bool RequestPin()
+    {
+      bool retry = true;
+      bool sucess = false;
+
+      while (retry)
+      {
+        var msgGetPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_PASSWORD, 0, 0, 0, 0, 0, 0);
+        GUIWindowManager.SendMessage(msgGetPassword);
+        int iPincode = -1;
+        try
+        {
+          iPincode = Int32.Parse(msgGetPassword.Label);
+        }
+        // ReSharper disable EmptyGeneralCatchClause
+        catch (Exception) { }
+        // ReSharper restore EmptyGeneralCatchClause
+
+        if (iPincode == Convert.ToInt32(_pin))
+        {
+          sucess = true;
+        }
+
+        if (sucess)
+        {
+          return true;
+        }
+
+        var msgWrongPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WRONG_PASSWORD, 0, 0, 0, 0, 0,
+                                                     0);
+        GUIWindowManager.SendMessage(msgWrongPassword);
+
+        if (!(bool)msgWrongPassword.Object)
+        {
+          retry = false;
+        }
+      }
+      return false;
     }
 
     protected override void OnPageLoad()
