@@ -23,22 +23,15 @@
 #include "RtmpStreamFragment.h"
 
 CRtmpStreamFragment::CRtmpStreamFragment(void)
+  : CCacheFileItem()
 {
   this->fragmentStartTimestamp = 0;
   this->fragmentEndTimestamp = 0;
-  this->downloaded = false;
-  this->storeFilePosition = -1;
-  this->length = 0;
-  this->buffer = new CLinearBuffer();
-  this->setStartTimestamp = false;
-  this->seeked = false;
-  this->hasIncorrectTimestamps = false;
   this->packetCorrection = 0;
 }
 
 CRtmpStreamFragment::~CRtmpStreamFragment(void)
 {
-  FREE_MEM_CLASS(this->buffer);
 }
 
 /* get methods */
@@ -53,21 +46,6 @@ uint64_t CRtmpStreamFragment::GetFragmentEndTimestamp(void)
   return this->fragmentEndTimestamp;
 }
 
-int64_t CRtmpStreamFragment::GetStoreFilePosition(void)
-{
-  return this->storeFilePosition;
-}
-
-unsigned int CRtmpStreamFragment::GetLength(void)
-{
-  return (this->buffer != NULL) ? this->buffer->GetBufferOccupiedSpace() : this->length;
-}
-
-CLinearBuffer *CRtmpStreamFragment::GetBuffer()
-{
-  return this->buffer;
-}
-
 int CRtmpStreamFragment::GetPacketCorrection(void)
 {
   return this->packetCorrection;
@@ -78,7 +56,9 @@ int CRtmpStreamFragment::GetPacketCorrection(void)
 void CRtmpStreamFragment::SetFragmentStartTimestamp(uint64_t fragmentStartTimestamp, bool setStartTimestamp)
 {
   this->fragmentStartTimestamp = fragmentStartTimestamp;
-  this->setStartTimestamp = setStartTimestamp;
+  
+  this->flags &= ~RTMP_STREAM_FRAGMENT_FLAG_SET_START_TIMESTAMP;
+  this->flags |= (setStartTimestamp) ? RTMP_STREAM_FRAGMENT_FLAG_SET_START_TIMESTAMP : RTMP_STREAM_FRAGMENT_FLAG_NONE;
 }
 
 void CRtmpStreamFragment::SetFragmentEndTimestamp(uint64_t fragmentEndTimestamp)
@@ -88,38 +68,29 @@ void CRtmpStreamFragment::SetFragmentEndTimestamp(uint64_t fragmentEndTimestamp)
 
 void CRtmpStreamFragment::SetDownloaded(bool downloaded)
 {
-  this->downloaded = downloaded;
-}
+  this->flags &= ~RTMP_STREAM_FRAGMENT_FLAG_DOWNLOADED;
 
-void CRtmpStreamFragment::SetStoredToFile(int64_t position)
-{
-  this->storeFilePosition = position;
-  if (this->storeFilePosition != (-1))
+  if (downloaded)
   {
-    if (this->buffer != NULL)
-    {
-      this->length = this->buffer->GetBufferOccupiedSpace();
-    }
-
-    FREE_MEM_CLASS(this->buffer);
+    this->flags |= RTMP_STREAM_FRAGMENT_FLAG_DOWNLOADED;
+    this->SetLoadedToMemoryTime(GetTickCount());
   }
   else
   {
-    if (this->buffer == NULL)
-    {
-      this->buffer = new CLinearBuffer();
-    }
+    this->SetLoadedToMemoryTime(CACHE_FILE_ITEM_LOAD_MEMORY_TIME_NOT_SET);
   }
 }
 
 void CRtmpStreamFragment::SetSeeked(bool seeked)
 {
-  this->seeked = seeked;
+  this->flags &= ~RTMP_STREAM_FRAGMENT_FLAG_SEEKED;
+  this->flags |= (seeked) ? RTMP_STREAM_FRAGMENT_FLAG_SEEKED : RTMP_STREAM_FRAGMENT_FLAG_NONE;
 }
 
 void CRtmpStreamFragment::SetIncorrectTimestamps(bool hasIncorrectTimestamps)
 {
-  this->hasIncorrectTimestamps = hasIncorrectTimestamps;
+  this->flags &= ~RTMP_STREAM_FRAGMENT_FLAG_HAS_INCORRECT_TIMESTAMPS;
+  this->flags |= (hasIncorrectTimestamps) ? RTMP_STREAM_FRAGMENT_FLAG_HAS_INCORRECT_TIMESTAMPS : RTMP_STREAM_FRAGMENT_FLAG_NONE;
 }
 
 void CRtmpStreamFragment::SetPacketCorrection(int packetCorrection)
@@ -129,27 +100,49 @@ void CRtmpStreamFragment::SetPacketCorrection(int packetCorrection)
 
 /* other methods */
 
-bool CRtmpStreamFragment::IsStoredToFile(void)
-{
-  return (this->storeFilePosition != (-1));
-}
-
 bool CRtmpStreamFragment::IsDownloaded(void)
 {
-  return this->downloaded;
+  return this->IsSetFlags(RTMP_STREAM_FRAGMENT_FLAG_DOWNLOADED);
 }
 
 bool CRtmpStreamFragment::IsStartTimestampSet(void)
 {
-  return this->setStartTimestamp;
+  return this->IsSetFlags(RTMP_STREAM_FRAGMENT_FLAG_SET_START_TIMESTAMP);
 }
 
 bool CRtmpStreamFragment::IsSeeked(void)
 {
-  return this->seeked;
+  return this->IsSetFlags(RTMP_STREAM_FRAGMENT_FLAG_SEEKED);
 }
 
 bool CRtmpStreamFragment::HasIncorrectTimestamps(void)
 {
-  return this->hasIncorrectTimestamps;
+  return this->IsSetFlags(RTMP_STREAM_FRAGMENT_FLAG_HAS_INCORRECT_TIMESTAMPS);
+}
+
+/* protected methods */
+
+CCacheFileItem *CRtmpStreamFragment::CreateItem(void)
+{
+  return new CRtmpStreamFragment();
+}
+
+bool CRtmpStreamFragment::InternalClone(CCacheFileItem *item)
+{
+  bool result = __super::InternalClone(item);
+  
+  if (result)
+  {
+    CRtmpStreamFragment *fragment = dynamic_cast<CRtmpStreamFragment *>(item);
+    result &= (fragment != NULL);
+
+    if (result)
+    {
+      fragment->fragmentStartTimestamp = this->fragmentStartTimestamp;
+      fragment->fragmentEndTimestamp = this->fragmentEndTimestamp;
+      fragment->packetCorrection = this->packetCorrection;
+    }
+  }
+
+  return result;
 }

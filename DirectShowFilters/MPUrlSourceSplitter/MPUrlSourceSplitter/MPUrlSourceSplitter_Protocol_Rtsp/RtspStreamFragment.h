@@ -71,10 +71,6 @@ public:
   // @return : true if fragment has set RTP timestamp, false otherwise
   virtual bool IsSetFragmentRtpTimestamp(void);
 
-  // deeply clones current instance
-  // @return : deep clone of current instance or NULL if error
-  //CRtspStreamFragment *Clone(void);
-
 protected:
   /* timestamps are with sign, sometimes are timestamps negative */
 

@@ -1800,7 +1800,7 @@ DWORD CMPUrlSourceSplitter::ThreadProc()
 
               // in case of end of stream is not set stream PID
               if ((outputPin->GetDemuxerId() == packet->GetDemuxerId()) &&
-                (packet->IsEndOfStream() || (outputPin->GetStreamPid() == packet->GetStreamPid())))
+                  (outputPin->GetStreamPid() == packet->GetStreamPid()))
               {
                 pin = outputPin;
                 break;

@@ -23,14 +23,21 @@
 #ifndef __RTMP_STREAM_FRAGMENT_COLLECTION_DEFINED
 #define __RTMP_STREAM_FRAGMENT_COLLECTION_DEFINED
 
-#include "Collection.h"
 #include "RtmpStreamFragment.h"
+#include "CacheFileItemCollection.h"
 
-class CRtmpStreamFragmentCollection : public CCollection<CRtmpStreamFragment>
+class CRtmpStreamFragmentCollection : public CCacheFileItemCollection
 {
 public:
   CRtmpStreamFragmentCollection(void);
-  ~CRtmpStreamFragmentCollection(void);
+  virtual ~CRtmpStreamFragmentCollection(void);
+
+  /* get methods */
+
+  // get the item from collection with specified index
+  // @param index : the index of item to find
+  // @return : the reference to item or NULL if not find
+  virtual CRtmpStreamFragment *GetItem(unsigned int index);
 
   // gets first not downloaded stream fragment
   // @param requested : start index for searching
@@ -43,12 +50,12 @@ public:
   // @return : index of found fragment or UINT_MAX if not found
   unsigned int GetFragmentWithTimestamp(uint64_t timestamp, unsigned int position);
 
+  /* set methods */
+
+  /* other methods */
+
 protected:
 
-  // clones specified item
-  // @param item : the item to clone
-  // @return : deep clone of item or NULL if not implemented
-  CRtmpStreamFragment *Clone(CRtmpStreamFragment *item);
 };
 
 #endif

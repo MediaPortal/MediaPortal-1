@@ -28,6 +28,7 @@
 #include "LinearBuffer.h"
 #include "RtmpCurlInstance.h"
 #include "RtmpStreamFragmentCollection.h"
+#include "CacheFile.h"
 
 #include <WinSock2.h>
 
@@ -115,10 +116,12 @@ public:
   // @return : bitwise combination of SEEKING_METHOD flags
   unsigned int GetSeekingCapabilities(void);
 
-  // request protocol implementation to receive data from specified time (in ms)
+  // request protocol implementation to receive data from specified time (in ms) for specified stream
+  // this method is called with same time for each stream in protocols with multiple streams
+  // @param streamId : the stream ID to receive data from specified time
   // @param time : the requested time (zero is start of stream)
   // @return : time (in ms) where seek finished or lower than zero if error
-  int64_t SeekToTime(int64_t time);
+  int64_t SeekToTime(unsigned int streamId, int64_t time);
 
   // request protocol implementation to receive data from specified position to specified position
   // @param start : the requested start position (zero is start of stream)
@@ -126,9 +129,10 @@ public:
   // @return : position where seek finished or lower than zero if error
   int64_t SeekToPosition(int64_t start, int64_t end);
 
-  // sets if protocol implementation have to supress sending data to filter
+  // sets if protocol implementation have to supress sending data with specified stream ID to filter
+  // @param streamId : the stream ID to supress data
   // @param supressData : true if protocol have to supress sending data to filter, false otherwise
-  void SetSupressData(bool supressData);
+  void SetSupressData(unsigned int streamId, bool supressData);
 
   // IPlugin interface
 
@@ -202,15 +206,17 @@ protected:
   wchar_t *GetStoreFile(void);
 
   // holds store file path
-  wchar_t *storeFilePath;
+  //wchar_t *storeFilePath;
   // holds last store time of storing stream fragments to file
   DWORD lastStoreTime;
 
   // specifies if we are still connected
   bool isConnected;
 
-  // holds RTMP stream fragment
+  // holds RTMP stream fragments
   CRtmpStreamFragmentCollection *rtmpStreamFragments;
+  // holds cache file
+  CCacheFile *cacheFile;
 
   // holds which fragment is currently downloading (UINT_MAX means none)
   unsigned int streamFragmentDownloading;
@@ -219,13 +225,6 @@ protected:
   // holds which fragment have to be downloaded
   // (UINT_MAX means next fragment, always reset after started download of fragment)
   unsigned int streamFragmentToDownload;
-
-  // fills buffer for processing with segment and fragment data (stored in memory or in store file)
-  // @param fragments : stream fragments collection
-  // @param streamFragmentProcessing : fragment to get data
-  // @param storeFile : the name of store file
-  // @return : buffer for processing with filled data, NULL otherwise
-  CLinearBuffer *FillBufferForProcessing(CRtmpStreamFragmentCollection *fragments, unsigned int streamFragmentProcessing, wchar_t *storeFile);
 
   // specifies if FLV packets until key frame with timestamp higher than specified is received
   unsigned int ignoreKeyFrameTimestamp;

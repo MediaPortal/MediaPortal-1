@@ -38,6 +38,8 @@
 #include <WinInet.h>
 #include <stdio.h>
 
+#include <assert.h>
+
 #pragma warning(pop)
 
 // protocol implementation name
@@ -112,7 +114,6 @@ CMPUrlSourceSplitter_Protocol_Rtmp::CMPUrlSourceSplitter_Protocol_Rtmp(CLogger *
   this->bytePosition = 0;
   this->seekingActive = false;
   this->supressData = false;
-  this->storeFilePath = NULL;
   this->lastStoreTime = 0;
   this->isConnected = false;
   this->rtmpStreamFragments = NULL;
@@ -123,6 +124,7 @@ CMPUrlSourceSplitter_Protocol_Rtmp::CMPUrlSourceSplitter_Protocol_Rtmp(CLogger *
   this->additionalCorrection = 0;
   this->duration = RTMP_DURATION_UNSPECIFIED;
   this->liveStream = false;
+  this->cacheFile = new CCacheFile();
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
 }
@@ -136,14 +138,9 @@ CMPUrlSourceSplitter_Protocol_Rtmp::~CMPUrlSourceSplitter_Protocol_Rtmp()
     this->StopReceivingData();
   }
 
-  if (this->storeFilePath != NULL)
-  {
-    DeleteFile(this->storeFilePath);
-  }
-
   FREE_MEM_CLASS(this->mainCurlInstance);
   FREE_MEM_CLASS(this->configurationParameters);
-  FREE_MEM(this->storeFilePath);
+  FREE_MEM_CLASS(this->cacheFile);
   FREE_MEM_CLASS(this->rtmpStreamFragments);
 
   if (this->lockMutex != NULL)
@@ -555,8 +552,14 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(CReceiveData *receiveDat
                         this->streamFragmentDownloading = position;
 
                         positionFragment->SetSeeked(false);
-                        positionFragment->SetDownloaded(false);
-                        positionFragment->SetStoredToFile(-1);
+
+                        assert(!positionFragment->IsDownloaded());
+                        assert(!positionFragment->IsStoredToFile());
+
+                        //positionFragment->SetDownloaded(false);
+                        //positionFragment->SetStoredToFile(-1);
+
+
                         positionFragment->GetBuffer()->ClearBuffer();
                         positionFragment->SetFragmentStartTimestamp(flvPacket->GetTimestamp(), true);
                         positionFragment->SetIncorrectTimestamps(fragment->HasIncorrectTimestamps());
@@ -661,7 +664,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(CReceiveData *receiveDat
                 }
               }
 
-              // downloading instance can be deleted
+              // we must check downloading instance, because we can delete it before
               if (this->mainCurlInstance != NULL)
               {
                 CLockMutex lockData(this->lockCurlMutex, INFINITE);
@@ -681,61 +684,75 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(CReceiveData *receiveDat
 
       if (SUCCEEDED(result) && (!this->supressData) && (this->streamFragmentProcessing < this->rtmpStreamFragments->Count()))
       {
-        CLinearBuffer *bufferForProcessing = this->FillBufferForProcessing(this->rtmpStreamFragments, this->streamFragmentProcessing, this->storeFilePath);
+        bool loadStreamFragmentToMemory = true;
 
-        if (SUCCEEDED(result) && (!this->supressData) && (bufferForProcessing != NULL))
+        while (this->cacheFile->LoadItems(this->rtmpStreamFragments, this->streamFragmentProcessing, loadStreamFragmentToMemory))
         {
-          CFlvPacket *flvPacket = new CFlvPacket();
-          if (flvPacket != NULL)
+          // do not load next stream fragment from cache file - in another case it leads to situation that whole cache file will be loaded to memory
+          loadStreamFragmentToMemory = false;
+
+          CRtmpStreamFragment *fragment = this->rtmpStreamFragments->GetItem(this->streamFragmentProcessing);
+
+          CLinearBuffer *bufferForProcessing = ((fragment != NULL) && (fragment->GetBuffer() != NULL)) ? fragment->GetBuffer()->Clone() : NULL;
+          unsigned int bufferOccupiedSpace = (bufferForProcessing != NULL) ? bufferForProcessing->GetBufferOccupiedSpace() : 0;
+
+          if (bufferOccupiedSpace > 0)
           {
-            while (SUCCEEDED(result) && (flvPacket->ParsePacket(bufferForProcessing) == FLV_PARSE_RESULT_OK))
+            CFlvPacket *flvPacket = new CFlvPacket();
+            if (flvPacket != NULL)
             {
-              // FLV packet parsed correctly
-              // push FLV packet to filter
-
-              if ((flvPacket->GetType() == FLV_PACKET_AUDIO) ||
-                (flvPacket->GetType() == FLV_PACKET_HEADER) ||
-                (flvPacket->GetType() == FLV_PACKET_META) ||
-                (flvPacket->GetType() == FLV_PACKET_VIDEO))
+              while (SUCCEEDED(result) && (flvPacket->ParsePacket(bufferForProcessing) == FLV_PARSE_RESULT_OK))
               {
-                // do nothing, known packet types
-                CHECK_CONDITION_HRESULT(result, !flvPacket->IsEncrypted(), result, E_DRM_PROTECTED);
-              }
-              else
-              {
-                this->logger->Log(LOGGER_WARNING, L"%s: %s: unknown FLV packet: %d, size: %d", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, flvPacket->GetType(), flvPacket->GetSize());
-                result = E_UNKNOWN_STREAM_TYPE;
-              }
+                // FLV packet parsed correctly
+                // push FLV packet to filter
 
-              if ((flvPacket->GetType() != FLV_PACKET_HEADER) || (!this->seekingActive))
-              {
-                lastFlvPacketTimestamp = flvPacket->GetTimestamp();
-
-                // create media packet
-                // set values of media packet
-                CMediaPacket *mediaPacket = new CMediaPacket();
-                mediaPacket->GetBuffer()->InitializeBuffer(flvPacket->GetSize());
-                mediaPacket->GetBuffer()->AddToBuffer(flvPacket->GetData(), flvPacket->GetSize());
-                mediaPacket->SetStart(this->bytePosition);
-                mediaPacket->SetEnd(this->bytePosition + flvPacket->GetSize() - 1);
-
-                if (!receiveData->GetStreams()->GetItem(0)->GetMediaPacketCollection()->Add(mediaPacket))
+                if ((flvPacket->GetType() == FLV_PACKET_AUDIO) ||
+                  (flvPacket->GetType() == FLV_PACKET_HEADER) ||
+                  (flvPacket->GetType() == FLV_PACKET_META) ||
+                  (flvPacket->GetType() == FLV_PACKET_VIDEO))
                 {
-                  FREE_MEM_CLASS(mediaPacket);
+                  // do nothing, known packet types
+                  CHECK_CONDITION_HRESULT(result, !flvPacket->IsEncrypted(), result, E_DRM_PROTECTED);
                 }
-                this->bytePosition += flvPacket->GetSize();
-              }
-              // we are definitely not seeking
-              this->seekingActive = false;
-              bufferForProcessing->RemoveFromBufferAndMove(flvPacket->GetSize());
+                else
+                {
+                  this->logger->Log(LOGGER_WARNING, L"%s: %s: unknown FLV packet: %d, size: %d", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, flvPacket->GetType(), flvPacket->GetSize());
+                  result = E_UNKNOWN_STREAM_TYPE;
+                }
 
-              flvPacket->Clear();
+                if ((flvPacket->GetType() != FLV_PACKET_HEADER) || (!this->seekingActive))
+                {
+                  lastFlvPacketTimestamp = flvPacket->GetTimestamp();
+                  flvPacket->SetTimestamp(flvPacket->GetTimestamp() + fragment->GetPacketCorrection());
+
+                  // create media packet
+                  // set values of media packet
+                  CMediaPacket *mediaPacket = new CMediaPacket();
+                  mediaPacket->GetBuffer()->InitializeBuffer(flvPacket->GetSize());
+                  mediaPacket->GetBuffer()->AddToBuffer(flvPacket->GetData(), flvPacket->GetSize());
+                  mediaPacket->SetStart(this->bytePosition);
+                  mediaPacket->SetEnd(this->bytePosition + flvPacket->GetSize() - 1);
+
+                  if (!receiveData->GetStreams()->GetItem(0)->GetMediaPacketCollection()->Add(mediaPacket))
+                  {
+                    FREE_MEM_CLASS(mediaPacket);
+                  }
+                  this->bytePosition += flvPacket->GetSize();
+                }
+                // we are definitely not seeking
+                this->seekingActive = false;
+                bufferForProcessing->RemoveFromBufferAndMove(flvPacket->GetSize());
+
+                flvPacket->Clear();
+              }
+
+              FREE_MEM_CLASS(flvPacket);
             }
 
-            FREE_MEM_CLASS(flvPacket);
+            result = (bufferForProcessing->GetBufferOccupiedSpace() == 0) ? result : E_FAIL;
           }
 
-          result = (bufferForProcessing->GetBufferOccupiedSpace() == 0) ? result : E_FAIL;
+          FREE_MEM_CLASS(bufferForProcessing);
 
           if (SUCCEEDED(result))
           {
@@ -755,8 +772,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(CReceiveData *receiveDat
             }
           }
         }
-
-        FREE_MEM_CLASS(bufferForProcessing);
       }
 
       if (SUCCEEDED(result) && (!this->setLength) && (this->bytePosition != 0))
@@ -900,8 +915,13 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(CReceiveData *receiveDat
             int64_t rtmpStart = fragment->IsStartTimestampSet() ? previousFragment->GetFragmentStartTimestamp() : fragment->GetFragmentStartTimestamp();
 
             // clean fragment buffer
-            fragment->SetDownloaded(false);
-            fragment->SetStoredToFile(-1);
+            assert(!fragment->IsDownloaded());
+            assert(!fragment->IsStoredToFile());
+
+            //fragment->SetDownloaded(false);
+            //fragment->SetStoredToFile(-1);
+
+
             fragment->GetBuffer()->ClearBuffer();
             this->firstTimestamp = -1;
             this->firstVideoTimestamp = -1;
@@ -979,105 +999,58 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(CReceiveData *receiveDat
   }
 
   // store stream fragments to temporary file
-  if ((GetTickCount() - this->lastStoreTime) > 1000)
+  if (this->wholeStreamDownloaded || ((GetTickCount() - this->lastStoreTime) > CACHE_FILE_LOAD_TO_MEMORY_TIME_SPAN_DEFAULT))
   {
     this->lastStoreTime = GetTickCount();
 
-    if ((!this->liveStream) && (this->rtmpStreamFragments->Count() > 0))
+    // in case of live stream remove all downloaded and processed stream fragments before reported stream time
+    if ((this->liveStream) && (this->reportedStreamTime > 0))
     {
-      // store all stream fragments (which are not stored) to file
-      if (this->storeFilePath == NULL)
+      unsigned int fragmentRemoveCount = 0;
+      while (fragmentRemoveCount < this->streamFragmentProcessing)
       {
-        this->storeFilePath = this->GetStoreFile();
+        CRtmpStreamFragment *fragment = this->rtmpStreamFragments->GetItem(fragmentRemoveCount);
+
+        if (fragment->IsDownloaded() && (fragment->GetFragmentEndTimestamp() < this->reportedStreamTime))
+        {
+          // fragment will be removed
+          fragmentRemoveCount++;
+        }
+        else
+        {
+          break;
+        }
       }
 
-      if (this->storeFilePath != NULL)
+      if ((fragmentRemoveCount > 0) && (this->cacheFile->RemoveItems(this->rtmpStreamFragments, 0, fragmentRemoveCount)))
       {
-        LARGE_INTEGER size;
-        size.QuadPart = 0;
+        this->rtmpStreamFragments->Remove(0, fragmentRemoveCount);
+        this->streamFragmentProcessing -= fragmentRemoveCount;
 
-        // open or create file
-        HANDLE hTempFile = CreateFile(this->storeFilePath, FILE_APPEND_DATA, FILE_SHARE_READ, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 
-        if (hTempFile != INVALID_HANDLE_VALUE)
+        if (this->streamFragmentDownloading != UINT_MAX)
         {
-          if (!GetFileSizeEx(hTempFile, &size))
-          {
-            this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"error while getting size");
-            // error occured while getting file size
-            size.QuadPart = -1;
-          }
+          this->streamFragmentDownloading -= fragmentRemoveCount;
+        }
 
-          if (size.QuadPart >= 0)
-          {
-            unsigned int i = 0;
-            while (i < this->rtmpStreamFragments->Count())
-            {
-              CRtmpStreamFragment *streamFragment = this->rtmpStreamFragments->GetItem(i);
-
-              if ((!streamFragment->IsStoredToFile()) && (streamFragment->IsDownloaded()))
-              {
-                // if stream fragment is not stored to file
-                // store it to file
-                unsigned int length = streamFragment->GetLength();
-
-                ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
-                if (streamFragment->GetBuffer()->CopyFromBuffer(buffer, length) == length)
-                {
-                  DWORD written = 0;
-                  if (WriteFile(hTempFile, buffer, length, &written, NULL))
-                  {
-                    if (length == written)
-                    {
-                      // mark as stored
-                      streamFragment->SetStoredToFile(size.QuadPart);
-                      size.QuadPart += length;
-                    }
-                  }
-                }
-                FREE_MEM(buffer);
-              }
-
-              i++;
-            }
-          }
-
-          CloseHandle(hTempFile);
-          hTempFile = INVALID_HANDLE_VALUE;
+        if (this->streamFragmentToDownload != UINT_MAX)
+        {
+          this->streamFragmentToDownload -= fragmentRemoveCount;
         }
       }
     }
 
-    if (this->liveStream)
+    if (this->cacheFile->GetCacheFile() == NULL)
     {
-      // in case of live stream remove all downloaded fragments before reported stream time
-      if ((this->rtmpStreamFragments->Count() > 0) && (this->streamFragmentProcessing != UINT_MAX))
-      {
-        // leave last fragment in collection in order to not add downloaded and processed fragments
-        while ((this->streamFragmentProcessing > 0) && (this->rtmpStreamFragments->Count() > 1))
-        {
-          CRtmpStreamFragment *fragment = this->rtmpStreamFragments->GetItem(0);
+      wchar_t *storeFilePath = this->GetStoreFile();
+      CHECK_CONDITION_NOT_NULL_EXECUTE(storeFilePath, this->cacheFile->SetCacheFile(storeFilePath));
+      FREE_MEM(storeFilePath);
+    }
 
-          if (fragment->IsDownloaded() && (fragment->GetFragmentStartTimestamp() < this->reportedStreamTime))
-          {
-            this->rtmpStreamFragments->Remove(0);
-            this->streamFragmentProcessing--;
-
-            if (this->streamFragmentDownloading != UINT_MAX)
-            {
-              this->streamFragmentDownloading--;
-            }
-            if (this->streamFragmentToDownload != UINT_MAX)
-            {
-              this->streamFragmentToDownload--;
-            }
-          }
-          else
-          {
-            break;
-          }
-        }
-      }
+    // store all stream fragments (which are not stored) to file
+    if ((this->cacheFile->GetCacheFile() != NULL) && (this->rtmpStreamFragments->Count() != 0))
+    {
+      this->cacheFile->StoreItems(this->rtmpStreamFragments, this->lastStoreTime, this->wholeStreamDownloaded);
     }
   }
 
@@ -1214,11 +1187,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ClearSession(void)
     this->StopReceivingData();
   }
 
-  if (this->storeFilePath != NULL)
-  {
-    DeleteFile(this->storeFilePath);
-  }
- 
   this->streamLength = 0;
   this->setLength = false;
   this->setEndOfStream = false;
@@ -1227,7 +1195,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ClearSession(void)
   this->streamDuration = 0;
   this->bytePosition = 0;
   FREE_MEM_CLASS(this->rtmpStreamFragments);
-  FREE_MEM(this->storeFilePath);
+  this->cacheFile->Clear();
   this->isConnected = false;
   this->streamFragmentDownloading = UINT_MAX;
   this->streamFragmentProcessing = 0;
@@ -1259,7 +1227,7 @@ unsigned int CMPUrlSourceSplitter_Protocol_Rtmp::GetSeekingCapabilities(void)
   return SEEKING_METHOD_TIME;
 }
 
-int64_t CMPUrlSourceSplitter_Protocol_Rtmp::SeekToTime(int64_t time)
+int64_t CMPUrlSourceSplitter_Protocol_Rtmp::SeekToTime(unsigned int streamId, int64_t time)
 {
   CLockMutex lock(this->lockMutex, INFINITE);
 
@@ -1362,7 +1330,7 @@ int64_t CMPUrlSourceSplitter_Protocol_Rtmp::SeekToPosition(int64_t start, int64_
   return result;
 }
 
-void CMPUrlSourceSplitter_Protocol_Rtmp::SetSupressData(bool supressData)
+void CMPUrlSourceSplitter_Protocol_Rtmp::SetSupressData(unsigned int streamId, bool supressData)
 {
   this->supressData = supressData;
 }
@@ -1424,149 +1392,6 @@ wchar_t *CMPUrlSourceSplitter_Protocol_Rtmp::GetStoreFile(void)
       result = FormatString(L"%smpurlsourcesplitter_protocol_rtmp_%s.temp", folder, guid);
     }
     FREE_MEM(guid);
-  }
-
-  return result;
-}
-
-CLinearBuffer *CMPUrlSourceSplitter_Protocol_Rtmp::FillBufferForProcessing(CRtmpStreamFragmentCollection *fragments, unsigned int streamFragmentProcessing, wchar_t *storeFile)
-{
-  CLinearBuffer *result = NULL;
-
-  if (fragments != NULL)
-  {
-    if (streamFragmentProcessing < fragments->Count())
-    {
-      CRtmpStreamFragment *fragment = fragments->GetItem(streamFragmentProcessing);
-
-      if (fragment->IsDownloaded())
-      {
-        // fragment is downloaded
-        // fragment can be stored in memory or in store file
-
-        // temporary buffer for data (from store file or from memory)
-        unsigned int bufferLength = fragment->GetLength();
-        ALLOC_MEM_DEFINE_SET(buffer, unsigned char, bufferLength, 0);
-
-        if (buffer != NULL)
-        {
-          if ((fragment->IsStoredToFile()) && (storeFile != NULL))
-          {
-            // segment and fragment is stored into file and store file is specified
-
-            LARGE_INTEGER size;
-            size.QuadPart = 0;
-
-            // open or create file
-            HANDLE hTempFile = CreateFile(storeFile, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-
-            if (hTempFile != INVALID_HANDLE_VALUE)
-            {
-              bool error = false;
-
-              LONG distanceToMoveLow = (LONG)(fragment->GetStoreFilePosition());
-              LONG distanceToMoveHigh = (LONG)(fragment->GetStoreFilePosition() >> 32);
-              LONG distanceToMoveHighResult = distanceToMoveHigh;
-              DWORD setFileResult = SetFilePointer(hTempFile, distanceToMoveLow, &distanceToMoveHighResult, FILE_BEGIN);
-              if (setFileResult == INVALID_SET_FILE_POINTER)
-              {
-                DWORD lastError = GetLastError();
-                if (lastError != NO_ERROR)
-                {
-                  this->logger->Log(LOGGER_ERROR, L"%s: %s: error occured while setting position: %lu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_FILL_BUFFER_FOR_PROCESSING_NAME, lastError);
-                  error = true;
-                }
-              }
-
-              if (!error)
-              {
-                DWORD read = 0;
-                if (ReadFile(hTempFile, buffer, bufferLength, &read, NULL) == 0)
-                {
-                  this->logger->Log(LOGGER_ERROR, L"%s: %s: error occured reading file: %lu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_FILL_BUFFER_FOR_PROCESSING_NAME, GetLastError());
-                  FREE_MEM(buffer);
-                }
-                else if (read != bufferLength)
-                {
-                  this->logger->Log(LOGGER_WARNING, L"%s: %s: readed data length not same as requested, requested: %u, readed: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_FILL_BUFFER_FOR_PROCESSING_NAME, bufferLength, read);
-                  FREE_MEM(buffer);
-                }
-              }
-
-              CloseHandle(hTempFile);
-              hTempFile = INVALID_HANDLE_VALUE;
-            }
-          }
-          else if (!fragment->IsStoredToFile())
-          {
-            // fragment is stored in memory
-            if (fragment->GetBuffer()->CopyFromBuffer(buffer, bufferLength) != bufferLength)
-            {
-              // error occured while copying data
-              FREE_MEM(buffer);
-            }
-          }
-        }
-
-        if ((buffer != NULL) && (fragment->GetPacketCorrection() != 0))
-        {
-          // correct FLV packets timestamps
-          CFlvPacket *flvPacket = new CFlvPacket();
-          bool correct = (flvPacket != NULL);
-          unsigned int position = 0;
-
-          while (correct && (position < bufferLength))
-          {
-            correct = (flvPacket->ParsePacket(buffer + position, bufferLength - position) == FLV_PARSE_RESULT_OK);
-
-            if (correct)
-            {
-              if (flvPacket->GetType() != FLV_PACKET_HEADER)
-              {
-                flvPacket->SetTimestamp(flvPacket->GetTimestamp() + fragment->GetPacketCorrection());
-
-                memcpy(buffer + position, flvPacket->GetData(), flvPacket->GetSize());
-              }
-            }
-
-            if (correct)
-            {
-              position += flvPacket->GetSize();
-            }
-
-            flvPacket->Clear();
-          }
-
-          FREE_MEM_CLASS(flvPacket);
-        }
-
-        if (buffer != NULL)
-        {
-          // all data are read
-          bool correct = false;
-          result = new CLinearBuffer();
-          if (result != NULL)
-          {
-            if (result->InitializeBuffer(bufferLength))
-            {
-              if (result->AddToBuffer(buffer, bufferLength) == bufferLength)
-              {
-                // everything correct, data copied successfully
-                correct = true;
-              }
-            }
-          }
-
-          if (!correct)
-          {
-            FREE_MEM_CLASS(result);
-          }
-        }
-
-        // clean-up buffer
-        FREE_MEM(buffer);
-      }
-    }
   }
 
   return result;

@@ -1,7 +1,7 @@
 
 The purpose of this document is to remark all changes made in librtmp by any developer. These same changes
 (or at least their meaning) must be made in next releases of librtmp.
- 
+
 Changes in Commit: 7340f6dbc6b3c8e552baab2e5a891c2de75cddcc:
 
 File: \amf.h, \dh.h, \handshake.h, \http.h

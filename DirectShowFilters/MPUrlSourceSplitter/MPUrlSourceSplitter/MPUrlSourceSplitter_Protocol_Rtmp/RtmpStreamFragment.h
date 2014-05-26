@@ -23,14 +23,20 @@
 #ifndef __RTMP_STREAM_FRAGMENT_DEFINED
 #define __RTMP_STREAM_FRAGMENT_DEFINED
 
-#include "LinearBuffer.h"
+#include "CacheFileItem.h"
 
-class CRtmpStreamFragment
+#define RTMP_STREAM_FRAGMENT_FLAG_NONE                                CACHE_FILE_ITEM_FLAG_NONE
+#define RTMP_STREAM_FRAGMENT_FLAG_DOWNLOADED                          (1 << (CACHE_FILE_ITEM_FLAG_LAST + 1))
+#define RTMP_STREAM_FRAGMENT_FLAG_SEEKED                              (1 << (CACHE_FILE_ITEM_FLAG_LAST + 2))
+#define RTMP_STREAM_FRAGMENT_FLAG_HAS_INCORRECT_TIMESTAMPS            (1 << (CACHE_FILE_ITEM_FLAG_LAST + 3))
+#define RTMP_STREAM_FRAGMENT_FLAG_SET_START_TIMESTAMP                 (1 << (CACHE_FILE_ITEM_FLAG_LAST + 4))
+
+class CRtmpStreamFragment : public CCacheFileItem
 {
 public:
   // creates new instance of CRtmpStreamFragment class with specified key frame timestamp
   CRtmpStreamFragment(void);
-  ~CRtmpStreamFragment(void);
+  virtual ~CRtmpStreamFragment(void);
 
   /* get methods */
 
@@ -41,18 +47,6 @@ public:
   // gets fragment end timestamp in ms
   // @return : fragment end timestamp in ms
   uint64_t GetFragmentEndTimestamp(void);
-
-  // gets position of start of fragment within store file
-  // @return : file position or -1 if error
-  int64_t GetStoreFilePosition(void);
-
-  // gets the length of fragment data
-  // @return : the length of fragment data
-  unsigned int GetLength(void);
-
-  // gets linear buffer
-  // @return : linear buffer or NULL if error or fragment is stored to file
-  CLinearBuffer *GetBuffer();
 
   // gets packet correction (positive or negative)
   // @return : packet correction
@@ -73,12 +67,6 @@ public:
   // @param downloaded : true if fragment is downloaded
   void SetDownloaded(bool downloaded);
 
-  // sets position within store file
-  // if segment and fragment is stored than linear buffer is deleted
-  // if store file path is cleared (NULL) than linear buffer is created
-  // @param position : the position of start of segment and fragment within store file or (-1) if segment and fragment is in memory
-  void SetStoredToFile(int64_t position);
-
   // sets if fragment is first fragment after seek (it can be incomplete)
   // @param seeked : true if fragment is first after seek, false otherwise
   void SetSeeked(bool seeked);
@@ -92,10 +80,6 @@ public:
   void SetPacketCorrection(int packetCorrection);
 
   /* other methods */
-
-  // tests if media packet is stored to file
-  // @return : true if media packet is stored to file, false otherwise
-  bool IsStoredToFile(void);
 
   // tests if segment and fragment is downloaded
   // @return : true if downloaded, false otherwise
@@ -117,22 +101,19 @@ private:
   uint64_t fragmentStartTimestamp;
   // stores fragment end timestamp
   uint64_t fragmentEndTimestamp;
-  // stores if fragment is downloaded
-  bool downloaded;
-  // posittion in store file
-  int64_t storeFilePosition;
-  // the length of fragment data
-  unsigned int length;
-  // internal linear buffer for fragment data
-  CLinearBuffer *buffer;
-  // specifies if start timestamp was set
-  bool setStartTimestamp;
-  // specifies if fragment is first fragment after seek (it can be incomplete)
-  bool seeked;
-  // specifies if fragment has incorrect timestamps (it happen after seeking)
-  bool hasIncorrectTimestamps;
   // holds packet correction
   int packetCorrection;
+
+  /* methods */
+
+  // gets new instance of RTSP stream fragment
+  // @return : new RTSP stream fragment instance or NULL if error
+  virtual CCacheFileItem *CreateItem(void);
+
+  // deeply clones current instance
+  // @param item : the cache file item instance to clone
+  // @return : true if successful, false otherwise
+  virtual bool InternalClone(CCacheFileItem *item);
 };
 
 #endif

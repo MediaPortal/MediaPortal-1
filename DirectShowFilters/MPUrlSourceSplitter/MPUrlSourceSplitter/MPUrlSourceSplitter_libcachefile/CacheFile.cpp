@@ -81,14 +81,17 @@ bool CCacheFile::LoadItems(CCacheFileItemCollection *collection, unsigned int in
 
   if (result)
   {
-    if (!collection->GetItem(index)->IsLoadedToMemory())
+    CCacheFileItem *item = collection->GetItem(index);
+    result &= (item->IsLoadedToMemory() || item->IsStoredToFile());
+
+    if (result && (!collection->GetItem(index)->IsLoadedToMemory()))
     {
       result &= (loadFromCacheFileAllowed && (this->GetCacheFile() != NULL));
 
       if (result)
       {
         // load items which are not in memory
-        CCacheFileItem *item = collection->GetItem(index);
+        
         int64_t lastStoreFilePosition = item->GetCacheFilePosition() + (int64_t)item->GetLength();
 
         unsigned int totalItemsToReload = 1;
@@ -98,7 +101,7 @@ bool CCacheFile::LoadItems(CCacheFileItemCollection *collection, unsigned int in
         {
           CCacheFileItem *itemToReload = collection->GetItem(index + totalItemsToReload);
 
-          if (item->IsLoadedToMemory())
+          if (itemToReload->IsLoadedToMemory())
           {
             break;
           }

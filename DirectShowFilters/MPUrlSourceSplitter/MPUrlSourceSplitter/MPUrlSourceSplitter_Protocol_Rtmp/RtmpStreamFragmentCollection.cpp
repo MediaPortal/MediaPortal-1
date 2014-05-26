@@ -23,7 +23,7 @@
 #include "RtmpStreamFragmentCollection.h"
 
 CRtmpStreamFragmentCollection::CRtmpStreamFragmentCollection(void)
-  : CCollection()
+  : CCacheFileItemCollection()
 {
 }
 
@@ -31,9 +31,11 @@ CRtmpStreamFragmentCollection::~CRtmpStreamFragmentCollection(void)
 {
 }
 
-CRtmpStreamFragment *CRtmpStreamFragmentCollection::Clone(CRtmpStreamFragment *item)
+/* get methods */
+
+CRtmpStreamFragment *CRtmpStreamFragmentCollection::GetItem(unsigned int index)
 {
-  return NULL;
+  return (CRtmpStreamFragment *)__super::GetItem(index);
 }
 
 unsigned int CRtmpStreamFragmentCollection::GetFirstNotDownloadedStreamFragment(unsigned int start)
@@ -70,3 +72,7 @@ unsigned int CRtmpStreamFragmentCollection::GetFragmentWithTimestamp(uint64_t ti
 
   return result;
 }
+
+/* set methods */
+
+/* other methods */

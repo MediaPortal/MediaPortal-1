@@ -1384,6 +1384,9 @@ HRESULT CDemuxer::SeekByTime(REFERENCE_TIME time, int flags)
         this->totalLength = 0;
         this->flags &= ~(DEMUXER_FLAG_ESTIMATE_TOTAL_LENGTH | DEMUXER_FLAG_END_OF_STREAM_OUTPUT_PACKET_QUEUED);
         this->flags |= (SUCCEEDED(result)) ? DEMUXER_FLAG_ESTIMATE_TOTAL_LENGTH : DEMUXER_FLAG_NONE;
+
+        // enable reading from seek method, do not allow (yet) to read from demuxing worker
+        this->pauseSeekStopRequest = PAUSE_SEEK_STOP_REQUEST_DISABLE_DEMUXING;
       }
 
       // if correctly seeked than reset flag that all data are received
@@ -1526,20 +1529,6 @@ HRESULT CDemuxer::SeekByTime(REFERENCE_TIME time, int flags)
               {
                 found = true;
                 break;
-
-                //if (avPacket.flags & AV_PKT_FLAG_KEY)
-                //{
-                //  this->logger->Log(LOGGER_VERBOSE, L"%s: %s: stream %u, found keyframe with timestamp: %lld, position: %lld, stream index: %d", MODULE_NAME, METHOD_SEEK_BY_TIME_NAME, this->parserStreamId, avPacket.dts, avPacket.pos, streamId);
-                //  found = true;
-                //  break;
-                //}
-
-                //if((nonkey++ > 1000) && (st->codec->codec_id != CODEC_ID_CDGRAPHICS))
-                //{
-                //  this->logger->Log(LOGGER_ERROR, L"%s: %s: stream %u, failed as this stream seems to contain no keyframes after the target timestamp, %d non keyframes found", MODULE_NAME, METHOD_SEEK_BY_TIME_NAME, this->parserStreamId, nonkey);
-                //  //found = true;
-                //  break;
-                //}
               }
             }
           }
@@ -2476,7 +2465,7 @@ unsigned int WINAPI CDemuxer::DemuxerReadRequestWorker(LPVOID lpParam)
                 {
                   // we are receiving data, wait for all requested data
                 }
-                else if ((caller->pauseSeekStopRequest != PAUSE_SEEK_STOP_REQUEST_NONE) || (caller->IsAllDataReceived()) || ((caller->IsTotalLengthReceived()) && (!caller->IsEstimateTotalLength()) && (caller->totalLength <= (request->GetStart() + request->GetBufferLength()))))
+                else if ((caller->pauseSeekStopRequest == PAUSE_SEEK_STOP_REQUEST_DISABLE_ALL) || (caller->IsAllDataReceived()) || ((caller->IsTotalLengthReceived()) && (!caller->IsEstimateTotalLength()) && (caller->totalLength <= (request->GetStart() + request->GetBufferLength()))))
                 {
                   // we are not receiving more data
                   // finish request
@@ -2493,7 +2482,7 @@ unsigned int WINAPI CDemuxer::DemuxerReadRequestWorker(LPVOID lpParam)
               }
               else
               {
-                caller->logger->Log(LOGGER_ERROR, L"%s: %s: stream %u, request '%u' found data length '%u' bigger than requested '%lu'", MODULE_NAME, METHOD_DEMUXER_READ_REQUEST_WORKER_NAME, caller->parserStreamId, request->GetRequestId(), foundDataLength, request->GetBufferLength());
+                caller->logger->Log(LOGGER_ERROR, L"%s: %s: stream %u, request '%u' found data length '%u' bigger than requested '%d'", MODULE_NAME, METHOD_DEMUXER_READ_REQUEST_WORKER_NAME, caller->parserStreamId, request->GetRequestId(), foundDataLength, request->GetBufferLength());
                 request->Complete(E_RESULT_DATA_LENGTH_BIGGER_THAN_REQUESTED);
               }
             }
@@ -2841,8 +2830,6 @@ unsigned int WINAPI CDemuxer::DemuxingWorker(LPVOID lpParam)
           packet->SetDemuxerId(caller->parserStreamId);
           packet->SetEndOfStream(true);
           result = S_OK;
-          caller->flags |= DEMUXER_FLAG_END_OF_STREAM_OUTPUT_PACKET_QUEUED;
-          caller->logger->Log(LOGGER_INFO, L"%s: %s: stream %u, queued end of stream output packet", MODULE_NAME, METHOD_DEMUXING_WORKER_NAME, caller->parserStreamId);
         }
       }
 
@@ -2850,8 +2837,45 @@ unsigned int WINAPI CDemuxer::DemuxingWorker(LPVOID lpParam)
       if (result == S_OK)
       {
         CLockMutex lock(caller->outputPacketMutex, INFINITE);
+        
+        if (packet->IsEndOfStream())
+        {
+          for (unsigned int i = 0; (SUCCEEDED(result) && (i < CStream::Unknown)); i++)
+          {
+            CStreamCollection *streams = caller->streams[i];
 
-        result = caller->outputPacketCollection->Add(packet) ? result : E_OUTOFMEMORY;
+            for (unsigned int j = 0; (SUCCEEDED(result) && (j < streams->Count())); j++)
+            {
+              CStream *stream = streams->GetItem(j);
+
+              COutputPinPacket *endOfStreamPacket = new COutputPinPacket();
+              CHECK_POINTER_HRESULT(result, endOfStreamPacket, result, E_OUTOFMEMORY);
+
+              if (SUCCEEDED(result))
+              {
+                endOfStreamPacket->SetDemuxerId(caller->parserStreamId);
+                endOfStreamPacket->SetEndOfStream(true);
+                endOfStreamPacket->SetStreamPid(stream->GetPid());
+
+                result = caller->outputPacketCollection->Add(endOfStreamPacket) ? result : E_OUTOFMEMORY;
+              }
+
+              CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(endOfStreamPacket));
+            }
+          }
+
+          FREE_MEM_CLASS(packet);
+
+          if (SUCCEEDED(result))
+          {
+            caller->flags |= DEMUXER_FLAG_END_OF_STREAM_OUTPUT_PACKET_QUEUED;
+            caller->logger->Log(LOGGER_INFO, L"%s: %s: stream %u, queued end of stream output packet", MODULE_NAME, METHOD_DEMUXING_WORKER_NAME, caller->parserStreamId);
+          }
+        }
+        else
+        {
+          result = caller->outputPacketCollection->Add(packet) ? result : E_OUTOFMEMORY;
+        }
       }
 
       CHECK_CONDITION_EXECUTE(result != S_OK, FREE_MEM_CLASS(packet));
