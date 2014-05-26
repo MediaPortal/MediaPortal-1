@@ -21,10 +21,13 @@
 #pragma warning(disable : 4995)
 #include <windows.h>
 #include "..\..\shared\BasePmtParser.h"
+#include "..\..\shared\PidTable.h"
 #include "LvctParser.h"
 
 extern void LogDebug(const char *fmt, ...);
 extern bool DisableCRCCheck();
+extern bool IsVideoStream(byte streamType);
+extern bool IsAudioStream(byte streamType);
 
 CLvctParser::CLvctParser(void)
 {
@@ -211,7 +214,7 @@ void CLvctParser::OnNewSection(CSection& sections)
       vector<char*> extendedNames;
       int videoStreamCount = 0;
       int audioStreamCount = 0;
-      vector<unsigned int> languages;
+      vector<unsigned long> languages;
       while (pointer + 1 < endOfDescriptors)
       {
         int tag = section[pointer++];
@@ -352,7 +355,7 @@ void CLvctParser::OnNewSection(CSection& sections)
       // the guide, and running services are either not hidden or excluded from the
       // guide [if they are tests].
       info.IsRunning = (hidden == 0) || (hide_guide == 1);
-      info.IsOtherMux = transport_stream_id != channel_tsid;
+      info.IsOtherTransportStream = transport_stream_id != channel_tsid;
 
       if (m_pCallBack != NULL)
       {
@@ -394,7 +397,7 @@ void CLvctParser::OnNewSection(CSection& sections)
   }
 }
 
-void CLvctParser::DecodeServiceLocationDescriptor(byte* b, int length, int* videoStreamCount, int* audioStreamCount, vector<unsigned int>* languages)
+void CLvctParser::DecodeServiceLocationDescriptor(byte* b, int length, int* videoStreamCount, int* audioStreamCount, vector<unsigned long>* languages)
 {
   if (length < 3)
   {
@@ -414,7 +417,7 @@ void CLvctParser::DecodeServiceLocationDescriptor(byte* b, int length, int* vide
       int stream_type = b[pointer++];
       int elementary_pid = ((b[pointer] & 0x1f) << 8) + b[pointer + 1];
       pointer += 2;
-      unsigned int iso_639_language_code = b[pointer] + (b[pointer + 1] << 8) + (b[pointer + 2] << 16);
+      unsigned long iso_639_language_code = b[pointer] + (b[pointer + 1] << 8) + (b[pointer + 2] << 16);
       if (iso_639_language_code != 0)
       {
         languages->push_back(iso_639_language_code);
@@ -422,20 +425,11 @@ void CLvctParser::DecodeServiceLocationDescriptor(byte* b, int length, int* vide
       pointer += 3;
       //LogDebug("LvctParser: stream type = 0x%x, elementary PID = 0x%x", stream_type, elementary_pid);
 
-      if (stream_type == STREAM_TYPE_VIDEO_MPEG1 ||
-          stream_type == STREAM_TYPE_VIDEO_MPEG2 ||
-          stream_type == STREAM_TYPE_VIDEO_MPEG4 ||
-          stream_type == STREAM_TYPE_VIDEO_H264 ||
-          stream_type == STREAM_TYPE_VIDEO_MPEG2_DCII)
+      if (IsVideoStream(stream_type) || stream_type == STREAM_TYPE_VIDEO_MPEG2_DCII)
       {
         *videoStreamCount++;
       }
-      else if (stream_type == STREAM_TYPE_AUDIO_MPEG1 ||
-          stream_type == STREAM_TYPE_AUDIO_MPEG2 ||
-          stream_type == STREAM_TYPE_AUDIO_AAC ||
-          stream_type == STREAM_TYPE_AUDIO_LATM_AAC ||
-          stream_type == STREAM_TYPE_AUDIO_AC3 ||
-          stream_type == STREAM_TYPE_AUDIO_E_AC3_ATSC)
+      else if (IsAudioStream(stream_type))
       {
         *audioStreamCount++;
       }

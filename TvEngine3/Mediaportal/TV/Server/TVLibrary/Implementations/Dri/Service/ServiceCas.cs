@@ -27,7 +27,7 @@ using UPnP.Infrastructure.CP.DeviceTree;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Service
 {
-  public class ServiceCas : ServiceBase
+  internal class ServiceCas : ServiceBase
   {
     private CpAction _getCardStatusAction = null;
     private CpAction _getEntitlementAction = null;

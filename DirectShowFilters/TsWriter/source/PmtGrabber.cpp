@@ -259,7 +259,7 @@ void CPmtGrabber::OnNewSection(CSection& section)
 
       // Useful check: if the PAT doesn't list any services then it is pointless
       // to keep waiting for any PMT. Assume the service is not running.
-      int serviceCount = m_patParser.GetServiceCount();
+      int serviceCount = m_patParser.GetProgramCount();
       if (serviceCount == 0)
       {
         LogDebug("PmtGrabber: PAT search failed, no services found");
@@ -324,7 +324,7 @@ void CPmtGrabber::OnNewSection(CSection& section)
     {
       LogDebug("PmtGrabber: got PMT for service 0x%x from PID 0x%x", serviceId, GetPid());
       LogDebug("PmtGrabber: elementary streams to include:");
-      currPmtParser.GetPidInfo().LogPIDs();
+      currPmtParser.GetPidInfo().LogPids();
       pidsChanged = true;
     }
     else
@@ -335,14 +335,14 @@ void CPmtGrabber::OnNewSection(CSection& section)
       prevPmtParser.SetPid(GetPid());
       prevPmtParser.DecodePmtSection(m_pmtPrevSection);
 
-      if (!(prevPmtParser.GetPidInfo() == currPmtParser.GetPidInfo()))
-      {
+      //if (!(prevPmtParser.GetPidInfo() == currPmtParser.GetPidInfo()))
+      //{
         LogDebug("PmtGrabber: PMT elementary streams to include changed from:");
-        prevPmtParser.GetPidInfo().LogPIDs();
+        prevPmtParser.GetPidInfo().LogPids();
         LogDebug("PmtGrabber: PMT elementary streams to include changed to:");
-        currPmtParser.GetPidInfo().LogPIDs();
+        currPmtParser.GetPidInfo().LogPids();
         pidsChanged = true;
-      }
+      //}
     }
 
     // PIDs may not have changed but we still need to keep the PMT data that we
@@ -393,4 +393,11 @@ STDMETHODIMP CPmtGrabber::GetPmtData(BYTE* pmtData)
     LogDebug("PmtGrabber: unhandled exception in GetPmtData()");
   }
   return 0;
+}
+
+void CPmtGrabber::OnPatChanged(int programNumber, int oldPmtPid, int newPmtPid)
+{
+}
+void CPmtGrabber::OnPatRemoved(int programNumber, int pmtPid)
+{
 }

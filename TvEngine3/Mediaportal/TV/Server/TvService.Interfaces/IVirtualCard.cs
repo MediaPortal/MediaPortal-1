@@ -88,19 +88,6 @@ namespace Mediaportal.TV.Server.TVService.Interfaces
     string RTSPUrl { get; }
 
     /// <summary>
-    /// turn on/off teletext grabbing
-    /// </summary>
-    [XmlIgnore]
-    bool GrabTeletext { set; }
-
-    /// <summary>
-    /// Returns if the current channel has teletext or not
-    /// </summary>
-    /// <returns>yes if channel has teletext otherwise false</returns>
-    [DataMember]
-    bool HasTeletext { get; }
-
-    /// <summary>
     /// Returns if we arecurrently grabbing the epg or not
     /// </summary>
     /// <returns>true when card is grabbing the epg otherwise false</returns>
@@ -205,14 +192,6 @@ namespace Mediaportal.TV.Server.TVService.Interfaces
     void GetStreamQualityCounters(out int totalTSpackets, out int discontinuityCounter);
 
     /// <summary>
-    /// Gets a raw teletext page.
-    /// </summary>
-    /// <param name="pageNumber">The page number. (0x100-0x899)</param>
-    /// <param name="subPageNumber">The sub page number.(0x0-0x79)</param>
-    /// <returns>byte[] array containing the raw teletext page or null if page is not found</returns>
-    byte[] GetTeletextPage(int pageNumber, int subPageNumber);
-
-    /// <summary>
     /// Stops the time shifting.
     /// </summary>
     /// <returns>true if success otherwise false</returns>
@@ -230,44 +209,6 @@ namespace Mediaportal.TV.Server.TVService.Interfaces
     /// <param name="fileName">Name of the recording file.</param>
     /// <returns>true if success otherwise false</returns>
     TvResult StartRecording(ref string fileName);
-
-    /// <summary>
-    /// Gets the number of subpages for a teletext page.
-    /// </summary>
-    /// <param name="pageNumber">The page number (0x100-0x899)</param>
-    /// <returns>number of teletext subpages for the pagenumber</returns>
-    int SubPageCount(int pageNumber);
-
-    /// <summary>
-    /// Gets the teletext pagenumber for the red button
-    /// </summary>
-    /// <returns>Teletext pagenumber for the red button</returns>
-    int GetTeletextRedPageNumber();
-
-    /// <summary>
-    /// Gets the teletext pagenumber for the green button
-    /// </summary>
-    /// <returns>Teletext pagenumber for the green button</returns>
-    int GetTeletextGreenPageNumber();
-
-    /// <summary>
-    /// Gets the teletext pagenumber for the yellow button
-    /// </summary>
-    /// <returns>Teletext pagenumber for the yellow button</returns>
-    int GetTeletextYellowPageNumber();
-
-    /// <summary>
-    /// Gets the teletext pagenumber for the blue button
-    /// </summary>
-    /// <returns>Teletext pagenumber for the blue button</returns>
-    int GetTeletextBluePageNumber();
-
-    /// <summary>f
-    /// Returns the rotation time for a specific teletext page
-    /// </summary>
-    /// <param name="pageNumber">The pagenumber (0x100-0x899)</param>
-    /// <returns>timespan containing the rotation time</returns>
-    TimeSpan TeletextRotation(int pageNumber);
 
     /// <summary>
     /// Indicates, if the user is the owner of the card
@@ -337,6 +278,6 @@ namespace Mediaportal.TV.Server.TVService.Interfaces
     /// </summary>
     /// <param name="callbackHandler"></param>
     /// <returns></returns>
-    bool SetCiMenuHandler(IConditionalAccessMenuCallBacks callbackHandler);
+    bool SetCiMenuHandler(IConditionalAccessMenuCallBack callbackHandler);
   }
 }

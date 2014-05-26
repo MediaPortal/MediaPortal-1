@@ -25,7 +25,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Rtsp
   /// <summary>
   /// Standard RTSP request methods.
   /// </summary>
-  public sealed class RtspMethod
+  internal sealed class RtspMethod
   {
     private readonly string _name;
     private static readonly IDictionary<string, RtspMethod> _values = new Dictionary<string, RtspMethod>();
@@ -63,9 +63,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Rtsp
       return false;
     }
 
+    public override int GetHashCode()
+    {
+      return _name.GetHashCode();
+    }
+
     public static ICollection<RtspMethod> Values
     {
-      get { return _values.Values; }
+      get
+      {
+        return _values.Values;
+      }
     }
 
     public static explicit operator RtspMethod(string name)

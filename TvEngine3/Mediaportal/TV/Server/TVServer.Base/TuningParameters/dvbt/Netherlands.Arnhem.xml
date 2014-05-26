@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ArrayOfDVBTTuning xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <DVBTTuning>
+    <Frequency>530000</Frequency>
+    <Bandwidth>8000</Bandwidth>
+    <Offset>0</Offset>
+    <CellId>0</CellId>
+    <CellIdExtension>0</CellIdExtension>
+    <IsDvbT2>False</IsDvbT2>
+  </DVBTTuning>
+  <DVBTTuning>
+    <Frequency>594000</Frequency>
+    <Bandwidth>8000</Bandwidth>
+    <Offset>0</Offset>
+    <CellId>0</CellId>
+    <CellIdExtension>0</CellIdExtension>
+    <IsDvbT2>False</IsDvbT2>
+  </DVBTTuning>
+  <DVBTTuning>
     <Frequency>642000</Frequency>
     <Bandwidth>8000</Bandwidth>
     <Offset>0</Offset>
@@ -9,7 +25,7 @@
     <IsDvbT2>False</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>826000</Frequency>
+    <Frequency>730000</Frequency>
     <Bandwidth>8000</Bandwidth>
     <Offset>0</Offset>
     <CellId>0</CellId>
@@ -18,14 +34,6 @@
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>770000</Frequency>
-    <Bandwidth>8000</Bandwidth>
-    <Offset>0</Offset>
-    <CellId>0</CellId>
-    <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
-  </DVBTTuning>
-  <DVBTTuning>
-    <Frequency>834000</Frequency>
     <Bandwidth>8000</Bandwidth>
     <Offset>0</Offset>
     <CellId>0</CellId>

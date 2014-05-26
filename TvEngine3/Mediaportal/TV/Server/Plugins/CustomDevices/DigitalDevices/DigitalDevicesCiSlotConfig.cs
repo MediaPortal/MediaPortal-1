@@ -56,8 +56,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
     /// </remarks>
     public HashSet<string> Providers;
 
-    private readonly ISettingService _settingServiceAgent = ServiceAgents.Instance.SettingServiceAgent;
-
     /// <summary>
     /// Default constructor.
     /// </summary>
@@ -82,16 +80,16 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
       byte i = 0;
       while (true)  // Loop until we don't find any more settings.
       {
-        string devicePath = _settingServiceAgent.GetValue("digitalDevicesCiDevicePath" + i, string.Empty);
+        string devicePath = ServiceAgents.Instance.SettingServiceAgent.GetValue("digitalDevicesCiDevicePath" + i, string.Empty);
         if (string.IsNullOrEmpty(devicePath))
         {
           break;
         }
         if (devicePath.Equals(DevicePath))
         {
-          DeviceName = _settingServiceAgent.GetValue("digitalDevicesCiDeviceName" + i, DeviceName);
-          DecryptLimit = _settingServiceAgent.GetValue("digitalDevicesCiDecryptLimit" + i, 0);
-          string providers = _settingServiceAgent.GetValue("digitalDevicesCiProviderList" + i, string.Empty);
+          DeviceName = ServiceAgents.Instance.SettingServiceAgent.GetValue("digitalDevicesCiDeviceName" + i, DeviceName);
+          DecryptLimit = ServiceAgents.Instance.SettingServiceAgent.GetValue("digitalDevicesCiDecryptLimit" + i, 0);
+          string providers = ServiceAgents.Instance.SettingServiceAgent.GetValue("digitalDevicesCiProviderList" + i, string.Empty);
           Providers = new HashSet<string>(providers.Split('|'));
           break;
         }
@@ -107,13 +105,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
       byte i = 0;
       while (true)  // Loop until we find existing settings or a free space to store new settings.
       {
-        string devicePath = _settingServiceAgent.GetValue("digitalDevicesCiDevicePath" + i, DevicePath);
+        string devicePath = ServiceAgents.Instance.SettingServiceAgent.GetValue("digitalDevicesCiDevicePath" + i, DevicePath);
         if (devicePath.Equals(DevicePath))
         {
-          _settingServiceAgent.SaveValue("digitalDevicesCiDevicePath" + i, DevicePath);
-          _settingServiceAgent.SaveValue("digitalDevicesCiDeviceName" + i, DeviceName);
-          _settingServiceAgent.SaveValue("digitalDevicesCiDecryptLimit" + i, DecryptLimit);
-          _settingServiceAgent.SaveValue("digitalDevicesCiProviderList" + i, string.Join("|", Providers));
+          ServiceAgents.Instance.SettingServiceAgent.SaveValue("digitalDevicesCiDevicePath" + i, DevicePath);
+          ServiceAgents.Instance.SettingServiceAgent.SaveValue("digitalDevicesCiDeviceName" + i, DeviceName);
+          ServiceAgents.Instance.SettingServiceAgent.SaveValue("digitalDevicesCiDecryptLimit" + i, DecryptLimit);
+          ServiceAgents.Instance.SettingServiceAgent.SaveValue("digitalDevicesCiProviderList" + i, string.Join("|", Providers));
           break;
         }
         i++;

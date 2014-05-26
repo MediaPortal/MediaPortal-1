@@ -21,17 +21,18 @@
 #include "TsMuxerFilter.h"
 #include <map>
 #include <process.h>
-#include <wxutil.h>
+#include <stdio.h>
 
 
 extern void LogDebug(const wchar_t* fmt, ...);
-extern bool MuxerDumpInput();
-extern bool MuxerDumpOutput();
+extern bool TsMuxerDumpInput();
+extern bool TsMuxerDumpOutput();
 
 CTsMuxerFilter::CTsMuxerFilter(IStreamMultiplexer* multiplexer, wchar_t* debugPath, LPUNKNOWN unk, CCritSec* filterLock, CCritSec* receiveLock, HRESULT* hr)
-  : CBaseFilter(NAME("MediaPortal TS Muxer"), unk, filterLock, CLSID_TS_MUXER), m_multiplexer(multiplexer)
+  : CBaseFilter(NAME("MediaPortal TS Muxer"), unk, filterLock, CLSID_TS_MUXER)
 {
   LogDebug(L"filter: constructor");
+  m_multiplexer = multiplexer;
   m_receiveLock = receiveLock;
   m_outputPin = new CTsOutputPin(this, filterLock, hr);
   if (m_outputPin == NULL)
@@ -58,7 +59,7 @@ CTsMuxerFilter::CTsMuxerFilter(IStreamMultiplexer* multiplexer, wchar_t* debugPa
   LogDebug(L"filter: completed, hr = 0x%x", *hr);
 }
 
-CTsMuxerFilter::~CTsMuxerFilter()
+CTsMuxerFilter::~CTsMuxerFilter(void)
 {
   LogDebug(L"filter: destructor");
   CAutoLock filterLock(m_pLock);
@@ -113,7 +114,7 @@ HRESULT CTsMuxerFilter::AddPin()
     LogDebug(L"filter: can't add pin unless filter is stopped");
     return VFW_E_NOT_STOPPED;
   }
-  int pinIndex = 0;
+  byte pinIndex = 0;
   vector<CMuxInputPin*>::iterator it = m_inputPins.begin();
   while (it != m_inputPins.end())
   {
@@ -177,13 +178,13 @@ STDMETHODIMP CTsMuxerFilter::Run(REFERENCE_TIME startTime)
   }
 
   // Configure dumping.
-  int inputPinDebugMask = m_inputPinDebugMask;
+  long inputPinDebugMask = m_inputPinDebugMask;
   bool isOutputDebugEnabled = m_isOutputDebugEnabled;
-  if (MuxerDumpInput())
+  if (TsMuxerDumpInput())
   {
     inputPinDebugMask = 0xffffffff;
   }
-  if (MuxerDumpOutput())
+  if (TsMuxerDumpOutput())
   {
     isOutputDebugEnabled = true;
   }
@@ -193,12 +194,12 @@ STDMETHODIMP CTsMuxerFilter::Run(REFERENCE_TIME startTime)
     if (inputPinDebugMask != 0)
     {
       vector<CMuxInputPin*>::iterator it = m_inputPins.begin();
-      int mask = 1;
+      long mask = 1;
       while (it != m_inputPins.end())
       {
         if ((inputPinDebugMask & mask) != 0 || inputPinDebugMask == 0xffffffff)
         {
-          swprintf_s(fileName, L"%s\\muxer_input_%d_dump.dmp", m_debugPath, (*it)->GetId());
+          swprintf_s(fileName, L"%s\\ts_muxer_input_%d_dump.dmp", m_debugPath, (*it)->GetId());
           (*it)->StartDumping(fileName);
         }
         mask = mask << 1;
@@ -207,7 +208,7 @@ STDMETHODIMP CTsMuxerFilter::Run(REFERENCE_TIME startTime)
     }
     if (isOutputDebugEnabled)
     {
-      swprintf_s(fileName, L"%s\\muxer_output_dump.ts", m_debugPath);
+      swprintf_s(fileName, L"%s\\ts_muxer_output_dump.ts", m_debugPath);
       m_outputPin->StartDumping(fileName);
     }
   }
@@ -252,7 +253,7 @@ void __cdecl CTsMuxerFilter::StreamingMonitorThreadFunction(void* arg)
   LogDebug(L"filter: monitor thread started");
   CTsMuxerFilter* filter = (CTsMuxerFilter*)arg;
   IStreamMultiplexer* muxer = filter->m_multiplexer;
-  map<byte, bool> pinStates;
+  map<byte, BOOL> pinStates;
   bool isFirst = true;
   while (true)
   {
@@ -283,11 +284,11 @@ void __cdecl CTsMuxerFilter::StreamingMonitorThreadFunction(void* arg)
         {
           CMuxInputPin* pin = *it;
           byte pinId = pin->GetId();
-          bool wasReceiving = pinStates[pinId];
-          bool isReceiving = true;
-          if (!pin->IsConnected() || pin->GetReceiveTickCount() == NOT_RECEIVING || GetTickCount() - pin->GetReceiveTickCount() >= STREAM_IDLE_TIMEOUT)
+          BOOL wasReceiving = pinStates[pinId];
+          BOOL isReceiving = TRUE;
+          if (pin->IsConnected() != TRUE || pin->GetReceiveTickCount() == NOT_RECEIVING || GetTickCount() - pin->GetReceiveTickCount() >= STREAM_IDLE_TIMEOUT)
           {
-            isReceiving = false;
+            isReceiving = FALSE;
           }
           if (wasReceiving != isReceiving)
           {
@@ -313,7 +314,7 @@ STDMETHODIMP CTsMuxerFilter::SetDumpFilePath(wchar_t* path)
   return S_OK;
 }
 
-STDMETHODIMP CTsMuxerFilter::DumpInput(int mask)
+STDMETHODIMP CTsMuxerFilter::DumpInput(long mask)
 {
   CAutoLock filterLock(m_pLock);
   m_inputPinDebugMask = mask;

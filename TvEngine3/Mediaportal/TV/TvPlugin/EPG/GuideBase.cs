@@ -1,4 +1,4 @@
-﻿#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2010 Team MediaPortal
 
 // Copyright (C) 2005-2010 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -44,11 +44,8 @@ namespace Mediaportal.TV.TvPlugin.EPG
 {
   public abstract class GuideBase : GUIDialogWindow
   {
-
-
     #region consts
     
-    protected int _previousChannelCount = 0;
     protected const int MAX_DAYS_IN_GUIDE = 30;
     protected const int ROW_ID = 1000;
     protected const int COL_ID = 10;
@@ -97,6 +94,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
     #region protected
 
+    protected int _previousChannelCount = 0;
     protected IList<GuideChannel> _channelList = new List<GuideChannel>();
     protected IList<Schedule> _recordingList = new List<Schedule>();
     protected int _channelCount = 5;
@@ -134,7 +132,6 @@ namespace Mediaportal.TV.TvPlugin.EPG
     protected List<TvGuideCategory> _mpGenres = null; // The list of MediaPortal genre objects
     protected Dictionary<string, long> _genreColorsOnNow = new Dictionary<string, long>();
     protected Dictionary<string, long> _genreColorsOnLater = new Dictionary<string, long>();
-
 
     #endregion
 
@@ -179,7 +176,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
       TvGuideCategory genreObj = _mpGenres.Find(x => x.IsEnabled == true);
 
-      // Do not render the key if the template controls are not present or there are no enabled mp genres.
+      // Do not render the key if not required or the template controls are not present or there are no enabled mp genres.
       if (imgGenreColor == null || labelGenreName == null || genreObj == null)
       {
         return;
@@ -193,7 +190,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
       foreach (var genreName in genreKeys)
       {
         // If the genre is not enabled then skip it.  This can occur if the user desires to have less than the maximum number of MP genres available.
-        genreObj = ((List<TvGuideCategory>)_mpGenres).Find(x => x.Name.Equals(genreName));
+        genreObj = _mpGenres.Find(x => x.Name.Equals(genreName));
         if (!genreObj.IsEnabled)
         {
           continue;
@@ -246,8 +243,6 @@ namespace Mediaportal.TV.TvPlugin.EPG
       }
     }
 
-
-
     protected void Update(bool selectCurrentShow)
     {
       lock (this)
@@ -256,9 +251,14 @@ namespace Mediaportal.TV.TvPlugin.EPG
         {
           return;
         }
+
+        if (!TVHome.Connected)
+        {
+          return;
+        }
+
         // Skin settings may have changed via the MP GUI, reload them.
         LoadSkinSettings();
-
 
         // sets button visible state
         UpdateGroupButton();
@@ -271,7 +271,6 @@ namespace Mediaportal.TV.TvPlugin.EPG
         {
           cntlChannelGroup.ColourDiffuse = _guideColorGroupButton;
         }
-
 
         _updateTimer = DateTime.Now;
         var cntlDay = GetControl((int)Controls.SPINCONTROL_DAY) as GUISpinControl;
@@ -384,10 +383,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
         // add channels...
         int iHeight = cntlPanel.Height + cntlPanel.YPosition - cntlChannelTemplate.YPosition;
         int iItemHeight = cntlChannelTemplate.Height;
-
         _channelCount = (int)(((float)iHeight) / ((float)iItemHeight));
-
-
         for (int iChan = 0; iChan < _channelCount; ++iChan)
         {
           xpos = cntlChannelTemplate.XPosition;
@@ -686,6 +682,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
     {
       String temp;
 
+      // TODO is this reference to #skin.tvguide compatible with the radio guide?
       // Guide coloring options are defined by each skin (and may not be present).  Read the settings from skin properties.
       _useColorsForButtons = false;
       temp = GUIPropertyManager.GetProperty("#skin.tvguide.usecolorsforbuttons");
@@ -1181,7 +1178,6 @@ namespace Mediaportal.TV.TvPlugin.EPG
             mpg = mpGenre.Name;
           }
         }
-
 
         GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Title", _currentProgram.Entity.Title);
         GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.CompositeTitle",
@@ -1977,7 +1973,6 @@ namespace Mediaportal.TV.TvPlugin.EPG
         height = GetControl((int)Controls.IMG_CHAN1).Height;
       }
 
-
       foreach (ProgramBLL program in programs)
       {
         if (Utils.datetolong(program.Entity.EndTime) <= iStart)
@@ -2477,7 +2472,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
             }
           }
 
-if (bEndsAfter)
+          if (bEndsAfter)
           {
             img.RenderRight = true;
 
@@ -2862,8 +2857,11 @@ if (bEndsAfter)
     {
       using (Settings xmlwriter = new MPSettings())
       {
-        xmlwriter.SetValue("mytv", "channel", _currentChannel.DisplayName);
-        xmlwriter.SetValue("tvguide", "timeperblock", _timePerBlock);
+        if (_currentChannel != null)
+        {
+          xmlwriter.SetValue(SettingsGuideSection, "channel", _currentChannel.DisplayName);
+        }
+        xmlwriter.SetValue(SettingsGuideSection, "timeperblock", _timePerBlock);
       }
     }
 
@@ -2940,7 +2938,6 @@ if (bEndsAfter)
           _guideColorsLoaded = LoadGuideColors(xmlreader);
         }
       }
-
 
       _useNewRecordingButtonColor =
         Utils.FileExistsInCache(GUIGraphicsContext.GetThemedSkinFile(@"\media\tvguide_recButton_Focus_middle.png"));
@@ -4134,6 +4131,10 @@ if (bEndsAfter)
             {
               base.OnMessage(message);
               SaveSettings();
+              if (_recordingList != null && TVHome.Connected)
+              {
+                _recordingList.Clear();
+              }
               _controls = new Dictionary<int, GUIButton3PartControl>();
               _channelList = null;
               _recordingList = null;
@@ -4371,8 +4372,8 @@ if (bEndsAfter)
         case Action.ActionType.ACTION_PREVIOUS_MENU:
           if (_singleChannelView)
           {
-            OnSwitchMode();
-            return; // base.OnAction would close the EPG as well
+            GUIWindowManager.ActivateWindow(GetID);
+            return;
           }
           GUIWindowManager.ShowPreviousWindow();
           return;

@@ -26,7 +26,7 @@ using UPnP.Infrastructure.CP.DeviceTree;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Service
 {
-  public class ServiceMux : ServiceBase
+  internal class ServiceMux : ServiceBase
   {
     private CpAction _setProgramAction = null;
     private CpAction _addPidAction = null;

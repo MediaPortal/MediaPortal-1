@@ -50,7 +50,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBdaDiseqc
     private bool _isMicrosoftBdaDiseqc = false;
 
     private IKsPropertySet _propertySet = null;
-    private uint _requestId = 1;                          // Unique request ID for raw DiSEqC commands.
+    private int _requestId = 1;                           // Unique request ID for raw DiSEqC commands.
     private IBDA_DeviceControl _deviceControl = null;
 
     private IntPtr _instanceBuffer = IntPtr.Zero;
@@ -264,12 +264,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBdaDiseqc
       }
       if (command == null || command.Length == 0)
       {
-        this.LogError("Microsoft BDA DiSEqC: command not supplied");
+        this.LogWarn("Microsoft BDA DiSEqC: DiSEqC command not supplied");
         return true;
       }
       if (command.Length > MAX_DISEQC_MESSAGE_LENGTH)
       {
-        this.LogError("Microsoft BDA DiSEqC: command too long, length = {0}", command.Length);
+        this.LogError("Microsoft BDA DiSEqC: DiSEqC command too long, length = {0}", command.Length);
         return false;
       }
 
@@ -351,10 +351,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBdaDiseqc
         {
           BdaDiseqcMessage message = new BdaDiseqcMessage();
           message.RequestId = _requestId++;
-          message.PacketLength = (uint)command.Length;
+          message.PacketLength = command.Length;
           message.PacketData = new byte[MAX_DISEQC_MESSAGE_LENGTH];
           Buffer.BlockCopy(command, 0, message.PacketData, 0, command.Length);
-          Marshal.StructureToPtr(message, _paramBuffer, true);
+          Marshal.StructureToPtr(message, _paramBuffer, false);
           //Dump.DumpBinary(_paramBuffer, BDA_DISEQC_MESSAGE_SIZE);
           hr = _propertySet.Set(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.Send, _instanceBuffer, INSTANCE_SIZE, _paramBuffer, BDA_DISEQC_MESSAGE_SIZE);
           if (hr != (int)HResult.Severity.Success)
@@ -423,7 +423,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBdaDiseqc
         }
         this.LogDebug("Microsoft BDA DiSEqC: result = success");
         response = new byte[message.PacketLength];
-        Buffer.BlockCopy(message.PacketData, 0, response, 0, (int)message.PacketLength);
+        Buffer.BlockCopy(message.PacketData, 0, response, 0, message.PacketLength);
         return true;
       }
 

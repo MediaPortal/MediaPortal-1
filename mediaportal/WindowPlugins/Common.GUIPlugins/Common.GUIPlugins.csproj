@@ -1,0 +1,119 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{03FEC69F-6D10-46FB-A0CA-4D266E4A21E2}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Common.GUIPlugins</RootNamespace>
+    <AssemblyName>Common.GUIPlugins</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisLogFile>bin\Debug\Common.GUIPlugins.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+    <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisLogFile>bin\Release\Common.GUIPlugins.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization.Formatters.Soap" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\Common-MP-TVE3\SolutionInfo.cs">
+      <Link>SolutionInfo.cs</Link>
+    </Compile>
+    <Compile Include="Music\GUICoverArtGrabberResults.cs" />
+    <Compile Include="Music\GUIMusicArtistInfo.cs" />
+    <Compile Include="Music\GUIMusicBaseWindow.cs" />
+    <Compile Include="Music\GUIMusicInfo.cs" />
+    <Compile Include="Music\GUIMusicPlayingNow.cs" />
+    <Compile Include="Music\GUIMusicPlaylist.cs" />
+    <Compile Include="Music\MusicImport.cs" />
+    <Compile Include="Music\MusicSort.cs" />
+    <Compile Include="Music\MusicState.cs" />
+    <Compile Include="Music\MusicViewHandler.cs" />
+    <Compile Include="Pictures\GUIPictureSlideShow.cs" />
+    <Compile Include="Video\GUIVideoFullscreen.cs" />
+    <Compile Include="Video\GUIVideoOSD.cs" />
+    <Compile Include="Video\GUIVideoOverlay.cs" />
+    <Compile Include="Video\GUIVideoTopOverlay.cs" />
+    <Compile Include="Video\SelectBDHandler.cs" />
+    <Compile Include="WakeupUtils.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WindowPluginBase.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common-MP-TVE3\Common.Utils\Common.Utils.csproj">
+      <Project>{f6eda1f3-3dcd-43f4-8a90-e32da70c8227}</Project>
+      <Name>Common.Utils</Name>
+    </ProjectReference>
+    <Reference Include="Microsoft.DirectX.Direct3D, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <SpecificVersion>True</SpecificVersion>
+    </Reference>
+    <ProjectReference Include="..\..\Core\Core.csproj">
+      <Project>{02FFFC1F-2555-4B99-8B01-3432D0673855}</Project>
+      <Name>Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Databases\Databases.csproj">
+      <Project>{c1bcec3e-6074-4328-b5d9-391a457c8ffb}</Project>
+      <Name>Databases</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Dialogs\Dialogs.csproj">
+      <Project>{396C5208-5D46-4A11-92C1-FD0F2F42D7DD}</Project>
+      <Name>Dialogs</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\LastFMLibrary\LastFMLibrary.csproj">
+      <Project>{fe0b7969-38a1-4150-bb3b-c2e87f40aeed}</Project>
+      <Name>LastFMLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Utils\Utils.csproj">
+      <Project>{6DA0E4DF-6230-4642-98B5-E690BB6942BB}</Project>
+      <Name>Utils</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

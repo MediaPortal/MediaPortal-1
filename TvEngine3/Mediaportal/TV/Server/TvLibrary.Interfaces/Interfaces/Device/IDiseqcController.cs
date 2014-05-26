@@ -20,6 +20,7 @@
 
 using System;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc
 {
@@ -645,8 +646,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc
     /// <summary>
     /// Reload the controller's configuration.
     /// </summary>
-    /// <param name="tunerId">The identifier for the associated tuner.</param>
-    void ReloadConfiguration(int tunerId);
+    void ReloadConfiguration();
 
     /// <summary>
     /// Reset a device's microcontroller.

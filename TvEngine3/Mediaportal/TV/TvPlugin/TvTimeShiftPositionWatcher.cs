@@ -32,8 +32,6 @@ namespace Mediaportal.TV.TvPlugin
 {
   internal class TvTimeShiftPositionWatcher
   {
- 
-
     #region Variables
     private static int idChannelToWatch = -1;
     private static Int64 snapshotBuferPosition = -1;
@@ -189,7 +187,7 @@ namespace Mediaportal.TV.TvPlugin
         return;
       if (preRecordInterval == -1)
       {
-        preRecordInterval = Decimal.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("preRecordInterval", "5").Value);
+        preRecordInterval = ServiceAgents.Instance.SettingServiceAgent.GetValue("preRecordInterval", 5);
       }
       Log.Debug("TvTimeShiftPositionWatcher: SetNewChannel(" + idChannel.ToString() + ")");
       idChannelToWatch = idChannel;

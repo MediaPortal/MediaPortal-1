@@ -1,3 +1,4 @@
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
 namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   partial class EpgGrabber
@@ -33,10 +34,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.linkLabelLanguageNone = new System.Windows.Forms.LinkLabel();
-      this.mpListView2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
-      this.mpLabel1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpListView2 = new MPListView();
+      this.mpLabel1 = new MPLabel();
       this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.mpListView1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
+      this.mpListView1 = new MPListView();
       this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       this.tabPage1 = new System.Windows.Forms.TabPage();
@@ -45,9 +46,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.linkLabelGroupedVisible = new System.Windows.Forms.LinkLabel();
       this.linkLabelAllGrouped = new System.Windows.Forms.LinkLabel();
       this.linkLabelAll = new System.Windows.Forms.LinkLabel();
-      this.mpCheckBoxStoreOnlySelected = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
-      this.mpLabel2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.mpLabelChannelCount = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpCheckBoxStoreOnlySelected = new MPCheckBox();
+      this.mpLabel2 = new MPLabel();
+      this.mpLabelChannelCount = new MPLabel();
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1.SuspendLayout();
       this.tabControl1.SuspendLayout();
@@ -94,7 +95,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpListView2.UseCompatibleStateImageBehavior = false;
       this.mpListView2.View = System.Windows.Forms.View.Details;
       this.mpListView2.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.mpListView_ColumnClick);
-      this.mpListView2.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.mpListView2_ItemChecked);
       // 
       // mpLabel1
       // 
@@ -269,7 +269,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabControl1.SelectedIndex = 0;
       this.tabControl1.Size = new System.Drawing.Size(485, 431);
       this.tabControl1.TabIndex = 12;
-      this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
       // 
       // EpgGrabber
       // 
@@ -278,12 +277,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.Controls.Add(this.tabControl1);
       this.Name = "EpgGrabber";
       this.Size = new System.Drawing.Size(491, 437);
-      this.Load += new System.EventHandler(this.EpgGrabber_Load);
       this.tabPage1.ResumeLayout(false);
       this.tabPage1.PerformLayout();
       this.tabControl1.ResumeLayout(false);
       this.ResumeLayout(false);
-
     }
 
     #endregion
@@ -291,10 +288,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private System.Windows.Forms.ColumnHeader columnHeader2;
     private System.Windows.Forms.ColumnHeader columnHeader4;
     private System.Windows.Forms.LinkLabel linkLabelLanguageNone;
-    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView mpListView2;
-    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel mpLabel1;
+    private MPListView mpListView2;
+    private MPLabel mpLabel1;
     private System.Windows.Forms.ColumnHeader columnHeader3;
-    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView mpListView1;
+    private MPListView mpListView1;
     private System.Windows.Forms.ColumnHeader columnHeader1;
     private System.Windows.Forms.ImageList imageList1;
     private System.Windows.Forms.TabPage tabPage1;
@@ -303,9 +300,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private System.Windows.Forms.LinkLabel linkLabelGroupedVisible;
     private System.Windows.Forms.LinkLabel linkLabelAllGrouped;
     private System.Windows.Forms.LinkLabel linkLabelAll;
-    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox mpCheckBoxStoreOnlySelected;
-    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel mpLabel2;
-    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel mpLabelChannelCount;
+    private MPCheckBox mpCheckBoxStoreOnlySelected;
+    private MPLabel mpLabel2;
+    private MPLabel mpLabelChannelCount;
     private System.Windows.Forms.TabControl tabControl1;
   }
 }

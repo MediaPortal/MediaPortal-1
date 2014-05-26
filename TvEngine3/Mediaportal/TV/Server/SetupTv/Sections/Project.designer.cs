@@ -49,9 +49,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.labelHomepage = new MPLabel();
       this.labelMePo = new MPLabel();
       this.mpGroupBoxAbout = new MPGroupBox();
-      this.labelVersion3 = new System.Windows.Forms.Label();
-      this.labelVersion2 = new System.Windows.Forms.Label();
-      this.labelVersion1 = new System.Windows.Forms.Label();
+      this.labelVersion3 = new MPLabel();
+      this.labelVersion2 = new MPLabel();
+      this.labelVersion1 = new MPLabel();
       this.paypalPictureBox = new System.Windows.Forms.PictureBox();
       this.groupBoxInfo.SuspendLayout();
       this.groupBoxContact.SuspendLayout();
@@ -315,9 +315,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private MPLabel labelInfo2;
     private MPLabel labelMePo;
     private MPGroupBox mpGroupBoxAbout;
-    private System.Windows.Forms.Label labelVersion3;
-    private System.Windows.Forms.Label labelVersion2;
-    private System.Windows.Forms.Label labelVersion1;
+    private MPLabel labelVersion3;
+    private MPLabel labelVersion2;
+    private MPLabel labelVersion1;
     private System.Windows.Forms.PictureBox paypalPictureBox;
   }
 }

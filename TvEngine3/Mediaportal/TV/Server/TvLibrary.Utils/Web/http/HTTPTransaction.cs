@@ -244,17 +244,9 @@ namespace Mediaportal.TV.Server.TvLibrary.Utils.Web.http
           redirect.Referer = _response.ResponseUri.ToString();
 
           redirect.CookieContainer = new CookieContainer();
-          if (_response.Headers["Set-Cookie"] != null)
+          foreach (Cookie cookie in _response.Cookies)
           {
-            string cookieStr = _response.Headers["Set-Cookie"];
-            Regex cookieParser = new Regex("(?<name>[^=]+)=(?<value>[^;]+)(;)");
-            Match result = cookieParser.Match(cookieStr);
-            if (result.Success)
-            {
-              Cookie reply = new Cookie(result.Groups["name"].ToString(), result.Groups["value"].ToString());
-              reply.Domain = uri.Host;
-              redirect.CookieContainer.Add(reply);
-            }
+            redirect.CookieContainer.Add(cookie);
           }
           //redirect.ContentType = "text/html"; 
           _response = (HttpWebResponse)redirect.GetResponse();

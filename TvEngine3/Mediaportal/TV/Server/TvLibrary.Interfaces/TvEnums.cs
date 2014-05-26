@@ -49,10 +49,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// </summary>
     Atsc,
     /// <summary>
-    /// Internet radio stream tuner.
-    /// </summary>
-    RadioWebStream,
-    /// <summary>
     /// DVB-IP tuner.
     /// </summary>
     DvbIP,
@@ -176,6 +172,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// </summary>
     [Description("Not Loaded")]
     NotLoaded,
+    /// <summary>
+    /// The tuner is being loaded.
+    /// </summary>
+    Loading,
     /// <summary>
     /// The tuner is loaded but not paused or started.
     /// </summary>

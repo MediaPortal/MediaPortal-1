@@ -74,15 +74,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
 
     // NetUP and DVBSky structures don't quite match due to different
     // strategies for 64 bit compatibility and struct alignment. Refer to the
-    // notes in NetUpCommand.Execute() for more detail. The structures below
-    // represent the original NetUP and current DVBSky structures.
+    // notes in ExecuteIoctl() for more detail. The structures below represent
+    // the original NetUP and current DVBSky structures.
 
-    // NetUP 261 vs DVBSky 262 => marshal manually.
+    // Okay.
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct ApplicationInfo    // NETUP_CAM_APPLICATION_INFO
     {
       public MmiApplicationType ApplicationType;
-      private byte Padding;             // New NetUP driver: not present.
       public ushort Manufacturer;
       public ushort ManufacturerCode;
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_STRING_LENGTH)]
@@ -95,7 +94,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
     {
       public NetUpCiState CiState;      // New NetUP driver: DWORD64 instead of DWORD.
 
-      // These fields don't ever seem to be filled by the NetUp driver. We can
+      // These fields don't ever seem to be filled by the NetUP driver. We can
       // query for application info directly.
       public ushort Manufacturer;
       public ushort ManufacturerCode;
@@ -139,15 +138,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
       public uint EntryCount;           // New NetUP driver: DWORD64 instead of DWORD.
     }
 
-    // NetUP 261 vs DVBSky 264 => marshal manually.
+    // Okay.
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct MmiEnquiry   // NETUP_CAM_MMI_ENQUIRY
     {
       [MarshalAs(UnmanagedType.Bool)]
       public bool IsBlindAnswer;
       public byte ExpectedAnswerLength;
-      private byte Padding1;            // New NetUP driver: not present.
-      private short Padding2;           // New NetUP driver: not present.
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_STRING_LENGTH)]
       public byte[] Prompt;
     }
@@ -168,28 +165,24 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
     private static readonly Guid NETUP_BDA_EXTENSION_PROPERTY_SET = new Guid(0x5aa642f2, 0xbf94, 0x4199, 0xa9, 0x8c, 0xc2, 0x22, 0x20, 0x91, 0xe3, 0xc3);
 
     // Default (DVBSky, TechnoTrend clones)
-    private static readonly int DEFAULT_APPLICATION_INFO_SIZE = Marshal.SizeOf(typeof(ApplicationInfo));  // 262
     private static readonly int DEFAULT_CI_STATE_INFO_SIZE = Marshal.SizeOf(typeof(CiStateInfo));         // 264
     private static readonly int DEFAULT_CA_INFO_SIZE = Marshal.SizeOf(typeof(CaInfo));                    // 516
     private static readonly int DEFAULT_MMI_MENU_SIZE = Marshal.SizeOf(typeof(MmiMenu));                  // 17160
-    private static readonly int DEFAULT_MMI_ENQUIRY_SIZE = Marshal.SizeOf(typeof(MmiEnquiry));            // 264
 
     // NetUP
-    private static readonly int NETUP_APPLICATION_INFO_SIZE = DEFAULT_APPLICATION_INFO_SIZE - 1;          // 261
     private static readonly int NETUP_CI_STATE_INFO_SIZE = DEFAULT_CI_STATE_INFO_SIZE + 4;                // 268
     private static readonly int NETUP_CA_INFO_SIZE = DEFAULT_CA_INFO_SIZE + 4;                            // 520
     private static readonly int NETUP_MMI_MENU_SIZE = DEFAULT_MMI_MENU_SIZE + 4;                          // 17164
-    private static readonly int NETUP_MMI_ENQUIRY_SIZE = DEFAULT_MMI_ENQUIRY_SIZE - 3;                    // 261
 
     // max
-    private static readonly int APPLICATION_INFO_SIZE = Math.Max(DEFAULT_APPLICATION_INFO_SIZE, NETUP_APPLICATION_INFO_SIZE);
     private static readonly int CI_STATE_INFO_SIZE = Math.Max(DEFAULT_CI_STATE_INFO_SIZE, NETUP_CI_STATE_INFO_SIZE);
     private static readonly int CA_INFO_SIZE = Math.Max(DEFAULT_CA_INFO_SIZE, NETUP_CA_INFO_SIZE);
     private static readonly int MMI_MENU_SIZE = Math.Max(DEFAULT_MMI_MENU_SIZE, NETUP_MMI_MENU_SIZE);
-    private static readonly int MMI_ENQUIRY_SIZE = Math.Max(DEFAULT_MMI_ENQUIRY_SIZE, NETUP_MMI_ENQUIRY_SIZE);
 
     private const int INSTANCE_SIZE = 32;   // The size of a property instance (KSP_NODE) parameter.
     private const int COMMAND_SIZE = 48;
+    private static readonly int APPLICATION_INFO_SIZE = Marshal.SizeOf(typeof(ApplicationInfo));  // 261
+    private static readonly int MMI_ENQUIRY_SIZE = Marshal.SizeOf(typeof(MmiEnquiry));            // 261
     private static readonly int MMI_ANSWER_SIZE = Marshal.SizeOf(typeof(MmiAnswer));              // 257
     private const int MAX_BUFFER_SIZE = 65536;
     private const int MAX_STRING_LENGTH = 256;
@@ -226,14 +219,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
     private Thread _mmiHandlerThread = null;
     private AutoResetEvent _mmiHandlerThreadStopEvent = null;
     private object _mmiLock = new object();
-    private IConditionalAccessMenuCallBacks _caMenuCallBacks = null;
+    private IConditionalAccessMenuCallBack _caMenuCallBack = null;
     private object _caMenuCallBackLock = new object();
 
-    private int _applicationInfoSize = NETUP_APPLICATION_INFO_SIZE;
     private int _ciStateInfoSize = NETUP_CI_STATE_INFO_SIZE;
     private int _caInfoSize = NETUP_CA_INFO_SIZE;
     private int _mmiMenuSize = NETUP_MMI_MENU_SIZE;
-    private int _mmiEnquirySize = NETUP_MMI_ENQUIRY_SIZE;
 
     #endregion
 
@@ -252,13 +243,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
     public NetUp(Guid propertySetGuid)
     {
       _propertySetGuid = propertySetGuid;
-      if (_propertySetGuid == NETUP_BDA_EXTENSION_PROPERTY_SET)
+      if (_propertySetGuid != NETUP_BDA_EXTENSION_PROPERTY_SET)
       {
-        _applicationInfoSize = DEFAULT_APPLICATION_INFO_SIZE;
         _ciStateInfoSize = DEFAULT_CI_STATE_INFO_SIZE;
         _caInfoSize = DEFAULT_CA_INFO_SIZE;
         _mmiMenuSize = DEFAULT_MMI_MENU_SIZE;
-        _mmiEnquirySize = DEFAULT_MMI_ENQUIRY_SIZE;
       }
     }
 
@@ -279,24 +268,18 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
 
       int returnedByteCount;
       int hr = GetIoctl(NetUpIoControl.ApplicationInfo, _mmiBuffer, APPLICATION_INFO_SIZE, out returnedByteCount);
-      if (hr == (int)HResult.Severity.Success && returnedByteCount == _applicationInfoSize)
+      if (hr == (int)HResult.Severity.Success && returnedByteCount == APPLICATION_INFO_SIZE)
       {
-        // Have to marshal manually due to mismatch between the NetUP and
-        // DVBSky structures.
         //Dump.DumpBinary(_mmiBuffer, APPLICATION_INFO_SIZE);
-        this.LogDebug("  type         = {0}", (MmiApplicationType)Marshal.ReadByte(_mmiBuffer, 0));
-        int offset = 0;
-        if (_propertySetGuid != NETUP_BDA_EXTENSION_PROPERTY_SET)
-        {
-          offset++;
-        }
-        this.LogDebug("  manufacturer = 0x{0:x4}", Marshal.ReadInt16(_mmiBuffer, 1 + offset));
-        this.LogDebug("  code         = 0x{0:x4}", Marshal.ReadInt16(_mmiBuffer, 3 + offset));
-        this.LogDebug("  menu title   = {0}", DvbTextConverter.Convert(IntPtr.Add(_mmiBuffer, 5 + offset)));
+        ApplicationInfo info = (ApplicationInfo)Marshal.PtrToStructure(_mmiBuffer, typeof(ApplicationInfo));
+        this.LogDebug("  type         = {0}", info.ApplicationType);
+        this.LogDebug("  manufacturer = 0x{0:x4}", info.Manufacturer);
+        this.LogDebug("  code         = 0x{0:x4}", info.ManufacturerCode);
+        this.LogDebug("  menu title   = {0}", DvbTextConverter.Convert(info.RootMenuTitle));
       }
       else
       {
-        this.LogWarn("NetUP: result = failure, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+        this.LogWarn("NetUP: failed to read application information, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
       }
 
       return hr;
@@ -336,7 +319,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
       }
       else
       {
-        this.LogWarn("NetUP: result = failure, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+        this.LogWarn("NetUP: failed to read conditional access information, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
       }
 
       return hr;
@@ -395,7 +378,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
       int hr = (int)HResult.Severity.Error;
       if (_propertySet == null)
       {
-        this.LogError("Twinhan: attempted to execute IOCTL when property set is NULL");
+        this.LogError("NetUP: attempted to execute IOCTL when property set is NULL");
         return hr;
       }
 
@@ -404,15 +387,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
       // This was somewhat inconvenient as detecting whether you're running
       // under WOW64 can be awkward. I contacted NetUP and asked whether it
       // would be possible to expose a consistent interface. They kindly
-      // obliged and padded the command struct pointers in their driver for
-      // 32 bit operating systems. At the same time they also changed all
-      // DWORDs in structs to DWORD64, which was unnecessary.
+      // obliged and padded the command struct pointers in their driver for 32
+      // bit operating systems. At the same time they also changed all DWORDs
+      // in structs to DWORD64 (which was unnecessary).
       // ...then I found out DVBSky use the same API but have modified it to
-      // use 32 bit pointers even under 64 bit operating systems. <doh!!!>
-      // I really don't want to maintain two similar versions of this API.
-      // Since NetUP's driver is open source we can patch and compile it as
-      // required.
-      // https://github.com/netup/netup-dvb-s2-ci-dual/
+      // use 32 bit pointers even under 64 bit operating systems. <DOH!!!>
+      // This class supports both variants of the API.
       // mm1352000, 2013-07-20
       if (_operatingSystemPointerSize == 0)
       {
@@ -619,7 +599,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
         int hr = GetIoctl(NetUpIoControl.MmiGetMenu, _mmiBuffer, MMI_MENU_SIZE, out returnedByteCount);
         if (hr != (int)HResult.Severity.Success || returnedByteCount != _mmiMenuSize)
         {
-          this.LogError("NetUP: result = failure, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+          this.LogError("NetUP: failed to get menu detail, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
           return hr;
         }
         mmi = (MmiMenu)Marshal.PtrToStructure(_mmiBuffer, typeof(MmiMenu));
@@ -627,9 +607,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
 
       lock (_caMenuCallBackLock)
       {
-        if (_caMenuCallBacks == null)
+        if (_caMenuCallBack == null)
         {
-          this.LogDebug("NetUP: menu call backs are not set");
+          this.LogDebug("NetUP: menu call back not set");
         }
 
         string title = DvbTextConverter.Convert(mmi.Title);
@@ -640,18 +620,18 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
         this.LogDebug("  sub-title = {0}", subTitle);
         this.LogDebug("  footer    = {0}", footer);
         this.LogDebug("  # entries = {0}", mmi.EntryCount);
-        if (_caMenuCallBacks != null)
+        if (_caMenuCallBack != null)
         {
-          _caMenuCallBacks.OnCiMenu(title, subTitle, footer, (int)mmi.EntryCount);
+          _caMenuCallBack.OnCiMenu(title, subTitle, footer, (int)mmi.EntryCount);
         }
 
         for (int i = 0; i < mmi.EntryCount; i++)
         {
           string entry = DvbTextConverter.Convert(mmi.Entries[i].Text);
           this.LogDebug("    {0, -7} = {1}", i + 1, entry);
-          if (_caMenuCallBacks != null)
+          if (_caMenuCallBack != null)
           {
-            _caMenuCallBacks.OnCiMenuChoice(i, entry);
+            _caMenuCallBack.OnCiMenuChoice(i, entry);
           }
         }
       }
@@ -677,41 +657,30 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
 
         int returnedByteCount;
         int hr = GetIoctl(NetUpIoControl.MmiGetEnquiry, _mmiBuffer, MMI_ENQUIRY_SIZE, out returnedByteCount);
-        if (hr != (int)HResult.Severity.Success || returnedByteCount != _mmiEnquirySize)
+        if (hr != (int)HResult.Severity.Success || returnedByteCount != MMI_ENQUIRY_SIZE)
         {
-          this.LogError("NetUP: result = failure, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+          this.LogError("NetUP: failed to get enquiry detail, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
           return hr;
         }
 
-        // Have to marshal manually due to mismatch between the NetUP and
-        // DVBSky structures.
         //Dump.DumpBinary(_mmiBuffer, MMI_ENQUIRY_SIZE);
-        mmi.IsBlindAnswer = (Marshal.ReadInt32(_mmiBuffer, 0) != 0);
-        mmi.ExpectedAnswerLength = Marshal.ReadByte(_mmiBuffer, 4);
-        mmi.Prompt = new byte[MAX_STRING_LENGTH];
-        if (_propertySetGuid == NETUP_BDA_EXTENSION_PROPERTY_SET)
-        {
-          prompt = DvbTextConverter.Convert(IntPtr.Add(_mmiBuffer, 5));
-        }
-        else
-        {
-          prompt = DvbTextConverter.Convert(IntPtr.Add(_mmiBuffer, 8));
-        }
+        mmi = (MmiEnquiry)Marshal.PtrToStructure(_mmiBuffer, typeof(MmiEnquiry));
+        prompt = DvbTextConverter.Convert(mmi.Prompt);
       }
 
       lock (_caMenuCallBackLock)
       {
-        if (_caMenuCallBacks == null)
+        if (_caMenuCallBack == null)
         {
-          this.LogDebug("NetUP: menu call backs are not set");
+          this.LogDebug("NetUP: menu call back not set");
         }
 
         this.LogDebug("  prompt = {0}", prompt);
         this.LogDebug("  length = {0}", mmi.ExpectedAnswerLength);
         this.LogDebug("  blind  = {0}", mmi.IsBlindAnswer);
-        if (_caMenuCallBacks != null)
+        if (_caMenuCallBack != null)
         {
-          _caMenuCallBacks.OnCiRequest(mmi.IsBlindAnswer, mmi.ExpectedAnswerLength, prompt);
+          _caMenuCallBack.OnCiRequest(mmi.IsBlindAnswer, mmi.ExpectedAnswerLength, prompt);
         }
       }
       return (int)HResult.Severity.Success;
@@ -759,42 +728,39 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
         return false;
       }
 
-      IPin pin = DsFindPin.ByDirection(tunerFilter, PinDirection.Output, 0);
-      _propertySet = pin as IKsPropertySet;
-      if (_propertySet == null)
-      {
-        this.LogDebug("NetUP: pin is not a property set");
-        Release.ComObject("NetUP tuner filter output pin", ref pin);
-        return false;
-      }
-
-      // The NetUP property set is found on the tuner filter output pin. Since current NetUP tuners
-      // are implemented as a combined filter, the filter output pin is normally going to be
-      // unconnected when this function is called. That is a problem because a pin won't correctly
-      // report whether it supports a property set unless it is connected to a filter. If this
-      // filter pin is currently unconnected, we temporarily connect an infinite tee so that we can
-      // check if the pin supports the property set.
-      IPin connected;
-      int hr = pin.ConnectedTo(out connected);
-      if (hr == (int)HResult.Severity.Success && connected != null)
-      {
-        // We don't need to connect the infinite tee in this case.
-        Release.ComObject("NetUP tuner filter connected pin", ref connected);
-        KSPropertySupport support;
-        hr = _propertySet.QuerySupported(_propertySetGuid, 0, out support);
-        if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Set))
-        {
-          this.LogDebug("NetUP: property set not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-          return false;
-        }
-        this.LogInfo("NetUP: extension supported");
-        _isNetUp = true;
-        _generalBuffer = Marshal.AllocCoTaskMem(GENERAL_BUFFER_SIZE);
-        return true;
-      }
-
+      IPin pin = null;
       try
       {
+        // Find the property set if it exists.
+        // The DVBSky and TechnoTrend clones expose the property set on the
+        // tuner filter input pin. Try this first because it is easier.
+        pin = DsFindPin.ByDirection(tunerFilter, PinDirection.Input, 0);
+        _propertySet = CheckPropertySet(pin, "input");
+        if (_propertySet != null)
+        {
+          return true;
+        }
+        Release.ComObject("NetUP tuner filter input pin", ref pin);
+
+        // NetUP exposes the property set on the tuner filter output pin. Since
+        // current NetUP tuners are implemented as a combined filter, the
+        // filter output pin is normally going to be unconnected when this
+        // function is called. That is a problem because a pin won't correctly
+        // report whether it supports a property set unless it is connected to
+        // a filter. If this filter pin is currently unconnected, we
+        // temporarily connect an infinite tee so that we can check if the pin
+        // supports the property set.
+        pin = DsFindPin.ByDirection(tunerFilter, PinDirection.Output, 0);
+        IPin connected;
+        int hr = pin.ConnectedTo(out connected);
+        if (hr == (int)HResult.Severity.Success && connected != null)
+        {
+          // We don't need to connect the infinite tee in this case.
+          Release.ComObject("NetUP tuner filter connected pin", ref connected);
+          _propertySet = CheckPropertySet(pin, "output");
+          return _propertySet != null;
+        }
+
         // Get a reference to the filter graph.
         FilterInfo filterInfo;
         hr = tunerFilter.QueryFilterInfo(out filterInfo);
@@ -818,7 +784,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
           hr = graph.AddFilter(infTee, "Temp Infinite Tee");
           if (hr != (int)HResult.Severity.Success)
           {
-            this.LogError("NetUP: failed to add inf tee to graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+            this.LogError("NetUP: failed to add infinite tee to graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
             return false;
           }
 
@@ -826,29 +792,18 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
           infTeeInputPin = DsFindPin.ByDirection(infTee, PinDirection.Input, 0);
           if (infTeeInputPin == null)
           {
-            this.LogError("NetUP: failed to find the inf tee input pin, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+            this.LogError("NetUP: failed to find the infinite tee input pin, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
             return false;
           }
           hr = graph.ConnectDirect(pin, infTeeInputPin, null);
           if (hr != (int)HResult.Severity.Success)
           {
-            this.LogError("NetUP: failed to connect pins, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+            this.LogError("NetUP: failed to connect infinite tee, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
             return false;
           }
 
-          // Check if the NetUP property set is supported.
-          KSPropertySupport support;
-          hr = _propertySet.QuerySupported(_propertySetGuid, 0, out support);
-          if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Set))
-          {
-            this.LogDebug("NetUP: property set not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-            return false;
-          }
-
-          this.LogInfo("NetUP: extension supported");
-          _isNetUp = true;
-          _generalBuffer = Marshal.AllocCoTaskMem(GENERAL_BUFFER_SIZE);
-          return true;
+          _propertySet = CheckPropertySet(pin, "output");
+          return _propertySet != null;
         }
         finally
         {
@@ -862,11 +817,37 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
       }
       finally
       {
-        if (!_isNetUp)
+        if (_propertySet != null)
+        {
+          this.LogInfo("NetUP: extension supported");
+          _isNetUp = true;
+          _generalBuffer = Marshal.AllocCoTaskMem(GENERAL_BUFFER_SIZE);
+        }
+        else
         {
           Release.ComObject("NetUP tuner filter output pin", ref pin);
         }
       }
+    }
+
+    private IKsPropertySet CheckPropertySet(IPin pin, string pinLogName)
+    {
+      IKsPropertySet propertySet = pin as IKsPropertySet;
+      if (propertySet == null)
+      {
+        this.LogDebug("NetUP: {0} pin is not a property set", pinLogName);
+      }
+      else
+      {
+        KSPropertySupport support;
+        int hr = propertySet.QuerySupported(_propertySetGuid, 0, out support);
+        if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Set))
+        {
+          this.LogDebug("NetUP: property set not supported on {0} pin, hr = 0x{1:x} ({2})", pinLogName, hr, HResult.GetDXErrorString(hr));
+          propertySet = null;
+        }
+      }
+      return propertySet;
     }
 
     #region device state change call backs
@@ -905,13 +886,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
       }
       if (_isCaInterfaceOpen)
       {
-        this.LogWarn("NetUP: interface is already open");
+        this.LogWarn("NetUP: conditional access interface is already open");
         return true;
       }
 
+      _isCaInterfaceOpen = true;
       _mmiBuffer = Marshal.AllocCoTaskMem(MMI_BUFFER_SIZE);
       _isCamPresent = IsConditionalAccessInterfaceReady();
-      _isCaInterfaceOpen = true;
       StartMmiHandlerThread();
 
       this.LogDebug("NetUP: result = success");
@@ -966,7 +947,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
       }
       else
       {
-        this.LogError("NetUP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("NetUP: failed to reset conditional access interface, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         success = false;
       }
 
@@ -1028,22 +1009,22 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
       }
       if (!_isCamPresent)
       {
-        this.LogError("NetUP: the CAM is not present");
+        this.LogError("NetUP: failed to send conditional access command, the CAM is not present");
         return false;
       }
       if (listAction == CaPmtListManagementAction.Add || listAction == CaPmtListManagementAction.Update)
       {
-        this.LogWarn("NetUP: list action {0} is not supported", listAction);
+        this.LogWarn("NetUP: conditional access command list action {0} is not supported", listAction);
         return true;
       }
       if (command == CaPmtCommand.NotSelected)
       {
-        this.LogError("NetUP: command type {0} is not supported", command);
+        this.LogError("NetUP: conditional access command type {0} is not supported", command);
         return true;
       }
       if (pmt == null)
       {
-        this.LogError("NetUP: PMT not supplied");
+        this.LogError("NetUP: failed to send conditional access command, PMT not supplied");
         return true;
       }
 
@@ -1064,7 +1045,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
         return true;
       }
 
-      this.LogError("NetUP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("NetUP: failed to send conditional access command, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -1075,12 +1056,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
     /// <summary>
     /// Set the menu call back delegate.
     /// </summary>
-    /// <param name="callBacks">The call back delegate.</param>
-    public void SetCallBacks(IConditionalAccessMenuCallBacks callBacks)
+    /// <param name="callBack">The call back delegate.</param>
+    public void SetMenuCallBack(IConditionalAccessMenuCallBack callBack)
     {
       lock (_caMenuCallBackLock)
       {
-        _caMenuCallBacks = callBacks;
+        _caMenuCallBack = callBack;
       }
       StartMmiHandlerThread();
     }
@@ -1101,7 +1082,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
       StartMmiHandlerThread();
       if (!_isCamPresent)
       {
-        this.LogError("NetUP: the CAM is not present");
+        this.LogError("NetUP: failed to enter menu, the CAM is not present");
         return false;
       }
 
@@ -1119,7 +1100,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
         return true;
       }
 
-      this.LogError("NetUP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("NetUP: failed to enter menu, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -1139,7 +1120,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
       StartMmiHandlerThread();
       if (!_isCamPresent)
       {
-        this.LogError("NetUP: the CAM is not present");
+        this.LogError("NetUP: failed to close menu, the CAM is not present");
         return false;
       }
 
@@ -1154,7 +1135,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
         return true;
       }
 
-      this.LogError("NetUP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("NetUP: failed to close menu, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -1175,7 +1156,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
       StartMmiHandlerThread();
       if (!_isCamPresent)
       {
-        this.LogError("NetUP: the CAM is not present");
+        this.LogError("NetUP: failed to select menu entry, the CAM is not present");
         return false;
       }
 
@@ -1191,7 +1172,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
         return true;
       }
 
-      this.LogError("NetUP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("NetUP: failed to select menu entry, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -1217,7 +1198,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
       StartMmiHandlerThread();
       if (!_isCamPresent)
       {
-        this.LogError("NetUP: the CAM is not present");
+        this.LogError("NetUP: failed to answer enquiry, the CAM is not present");
         return false;
       }
 
@@ -1240,7 +1221,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
       int hr;
       lock (_mmiLock)
       {
-        Marshal.StructureToPtr(mmi, _mmiBuffer, true);
+        Marshal.StructureToPtr(mmi, _mmiBuffer, false);
         //Dump.DumpBinary(_mmiBuffer, MMI_ANSWER_SIZE);
         NetUpIoControl code = (NetUpIoControl)((uint)NetUpIoControl.MmiPutAnswer | ((byte)responseType << 8));
         hr = SetIoctl(code, _mmiBuffer, MMI_ANSWER_SIZE);
@@ -1251,7 +1232,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
         return true;
       }
 
-      this.LogError("NetUP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("NetUP: failed to answer enquiry, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -1292,12 +1273,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
       }
       if (command == null || command.Length == 0)
       {
-        this.LogError("NetUP: command not supplied");
+        this.LogWarn("NetUP: DiSEqC command not supplied");
         return true;
       }
       if (command.Length > MAX_DISEQC_MESSAGE_LENGTH)
       {
-        this.LogError("NetUP: command too long, length = {0}", command.Length);
+        this.LogError("NetUP: DiSEqC command too long, length = {0}", command.Length);
         return false;
       }
 
@@ -1311,7 +1292,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
         return true;
       }
 
-      this.LogError("NetUP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("NetUP: failed to send DiSEqC command, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 

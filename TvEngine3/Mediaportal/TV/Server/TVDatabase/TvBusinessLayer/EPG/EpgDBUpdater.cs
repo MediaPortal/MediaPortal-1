@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Data.SqlTypes;
+using System.Linq;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
@@ -36,9 +37,11 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
 {
   public class EpgDBUpdater
   {
+    public delegate void OnImportProgramsForChannel(EpgChannel channel);
+
     #region Variables
 
-    private readonly IEpgEvents _epgEvents;
+    private readonly OnImportProgramsForChannel _importDelegate;
     private string _titleTemplate;
     private string _descriptionTemplate;
     private string _epgLanguages;
@@ -54,9 +57,9 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
 
     #region ctor
 
-    public EpgDBUpdater(IEpgEvents epgEvents, string grabberName, bool checkForLastUpdate)
+    public EpgDBUpdater(OnImportProgramsForChannel epgCallBack, string grabberName, bool checkForLastUpdate)
     {
-      _epgEvents = epgEvents;
+      _importDelegate = epgCallBack;
       _grabberName = grabberName;
       _checkForLastUpdate = checkForLastUpdate;
       ReloadConfig();
@@ -167,7 +170,10 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
       // Store the data in our database
       ImportPrograms(dbChannel, epgChannel.Programs);
       // Raise an event with the data so that other plugins can handle the data on their own
-      _epgEvents.OnImportEpgPrograms(epgChannel);
+      if (_importDelegate != null)
+      {
+        _importDelegate(epgChannel);
+      }
     }
 
     private void ImportPrograms(Channel dbChannel, IList<EpgProgram> epgPrograms)
@@ -202,6 +208,8 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
       EpgProgram lastProgram = null;
       IList<Program> programs = new List<Program>();
 
+      // Sort EPG by start time to allow proper duplicate detection
+      epgPrograms = epgPrograms.OrderBy(p => p.StartTime).ToList();
       for (int i = 0; i < epgPrograms.Count; i++)
       {
         EpgProgram epgProgram = epgPrograms[i];
@@ -271,7 +279,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
         lastProgram = epgProgram;
       }
 
-      PersistPrograms(programs);
+      ProgramManagement.SavePrograms(programs);
 
       dbChannel.LastGrabTime = DateTime.Now;
       dbChannel.EpgHasGaps = hasGaps;
@@ -455,12 +463,6 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
       }
     }
 
-
-    private void PersistPrograms(IEnumerable<Program> programs)
-    {
-      ProgramManagement.SavePrograms(programs);
-    }
-
     private void AddProgramAndApplyTemplates(Channel dbChannel, EpgProgram ep, Program dbProg, IList<Program> programs)
     {
       string title;
@@ -469,8 +471,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
       int starRating;
       string classification;
       int parentRating;
-      GetEPGLanguage(ep.Text, out title, out description, out genre, out starRating, out classification,
-                     out parentRating);
+      GetEPGLanguage(ep.Text, out title, out description, out genre, out starRating, out classification, out parentRating);
       var values = new NameValueCollection
                      {
                        {"%TITLE%", title},
@@ -524,7 +525,12 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
         prgBLL.Entity.Title = title;
         prgBLL.Entity.StartTime = ep.StartTime;
         prgBLL.Entity.EndTime = ep.EndTime;
-        prgBLL.Entity.ProgramCategory = programCategory;
+        // Note: do not assign the ProgramCategory objects here, as EF state tracking would lead to duplicated programs,
+        // as also the relation to ProgramCategory will be tracked.
+        if (programCategory != null)
+        {
+          prgBLL.Entity.IdProgramCategory = programCategory.IdProgramCategory;
+        } 
         prgBLL.Entity.StarRating = starRating;
         prgBLL.Entity.Classification = classification;
         prgBLL.Entity.ParentalRating = parentRating;

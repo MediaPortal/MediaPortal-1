@@ -49,7 +49,7 @@ void CPmtParser::SetCallBack(IPmtCallBack2* callBack)
 
 void CPmtParser::OnNewSection(CSection& sections)
 { 
-  if (m_bIsFound)
+  if (m_isFound)
   {
     return;
   }
@@ -62,7 +62,7 @@ void CPmtParser::OnNewSection(CSection& sections)
   if (m_pCallBack != NULL)
   {
     m_pCallBack->OnPmtReceived(m_pidInfo);
-    m_bIsFound = true;
+    m_isFound = true;
     m_pCallBack = NULL;
   }
 }

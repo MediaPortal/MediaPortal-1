@@ -27,6 +27,19 @@
 	</control>
 	
 	<control>
+		<description>Plot DUMMY</description>
+		<type>textboxscrollup</type>
+		<id>38</id>
+    <posX>-2000</posX>
+    <posY>168</posY>
+    <width>1120</width>
+    <height>0</height>
+		<label>#TV.View.description</label>
+		<font>TitanLight16</font>
+		<textcolor>ff393939</textcolor>
+	</control>
+	
+	<control>
 		<description>OSD Background</description>
 		<type>image</type>
 		<id>0</id>
@@ -55,7 +68,7 @@
    	<posX>588</posX>
    	<posY>907</posY>
    	<width>737</width>
-   	<height>18</height>
+   	<height>17</height>
 		<texture>osd_progress_bg.png</texture>
 	</control>
     
@@ -81,10 +94,13 @@
 		<filltexture1>osd_progress_mid.png</filltexture1>
 		<filltexture2>osd_progress_mid.png</filltexture2>
 		<filltexture3>osd_progress_mid_orange.png</filltexture3>
+		<markertexture>osd_progress_comskip_marker.png</markertexture>
 		<fillheight>15</fillheight>
 		<label>#TV.Record.percent1</label>
 		<label1>#TV.Record.percent2</label1>
 		<label2>#TV.Record.percent3</label2>
+		<labelmarkerstarts>#jumppoints</labelmarkerstarts>
+		<labelmarkerends>#chapters</labelmarkerends>
 		<startlabel />
 		<endlabel />
 		<toplabel />
@@ -260,7 +276,7 @@
 	<control>
 		<description>Plot</description>
 		<type>textboxscrollup</type>
-		<id>38</id>
+		<id>1</id>
     <posX>497</posX>
     <posY>168</posY>
     <width>1120</width>
@@ -311,16 +327,16 @@
     
 	  <control>
 			<description>Subtitles Menu</description>
-			<type>togglebutton</type>
+			<type>checkbutton</type>
 			<id>218</id>
 			<posY>888</posY>
 			<posX>1555</posX>
 			<width>47</width>
 			<height>47</height>
-			<AltTextureFocus>osd_sub_button_focus.png</AltTextureFocus>
-			<AltTextureNoFocus>osd_sub_button_nofocus.png</AltTextureNoFocus>
-			<textureFocus>osd_sub_button_focus.png</textureFocus>
-			<textureNoFocus>osd_sub_button_nofocus.png</textureNoFocus>
+      <textureFocus>osd_sub_button_focus.png</textureFocus>
+      <textureNoFocus>osd_sub_button_nofocus.png</textureNoFocus>
+      <textureCheckmark>osd_sub_button_focus.png</textureCheckmark>
+      <textureCheckmarkNoFocus>osd_sub_button_nofocus.png</textureCheckmarkNoFocus> 
 			<label>-</label>
 			<font>-</font>
 			<onleft>995</onleft>
@@ -331,7 +347,7 @@
 	
 		<control>
 			<description>Audio Menu</description>
-			<type>togglebutton</type>
+			<type>checkbutton</type>
 			<id>221</id>
 			<posY>887</posY>
 			<posX>1618</posX>
@@ -341,26 +357,26 @@
 			<onright>995</onright>
 			<ondown>221</ondown>
 			<onup>221</onup>
-			<AltTextureFocus>osd_audio_button_focus.png</AltTextureFocus>
-			<AltTextureNoFocus>osd_audio_button_nofocus.png</AltTextureNoFocus>
-			<textureFocus>osd_audio_button_focus.png</textureFocus>
-			<textureNoFocus>osd_audio_button_nofocus.png</textureNoFocus>
+      <textureFocus>osd_audio_button_focus.png</textureFocus>
+      <textureNoFocus>osd_audio_button_nofocus.png</textureNoFocus>
+      <textureCheckmark>osd_audio_button_focus.png</textureCheckmark>
+      <textureCheckmarkNoFocus>osd_audio_button_nofocus.png</textureCheckmarkNoFocus> 
 			<label>-</label>
 			<font>-</font>
 	  </control>
 	   
 		<control>
 	  	<description>Video Menu</description>
-	    <type>togglebutton</type>
+	    <type>checkbutton</type>
 	    <id>220</id>
 			<posY>888</posY>
 			<posX>-2000</posX>
 			<width>47</width>
 			<height>47</height>
-	    <AltTextureFocus>osd_video_button_focus.png</AltTextureFocus>
-	    <AltTextureNoFocus>osd_video_button_nofocus.png</AltTextureNoFocus>
-	    <textureFocus>osd_video_button_focus.png</textureFocus>
-	    <textureNoFocus>osd_video_button_nofocus.png</textureNoFocus>
+      <textureFocus>osd_video_button_focus.png</textureFocus>
+      <textureNoFocus>osd_video_button_nofocus.png</textureNoFocus>
+      <textureCheckmark>osd_video_button_focus.png</textureCheckmark>
+      <textureCheckmarkNoFocus>osd_video_button_nofocus.png</textureCheckmarkNoFocus> 
 	    <label>-</label>
 	    <font>-</font>
 	    <onleft>995</onleft>
@@ -596,16 +612,16 @@
 
     <control>
       <description>Bookmarks Menu</description>
-      <type>togglebutton</type>
+      <type>checkbutton</type>
       <id>219</id>
-      <posX>256</posX>
+      <posX>-2000</posX>
       <posY>537</posY>
       <width>62</width>
       <height>43</height>
-      <AltTextureFocus>osd_settings_bookmark_focus.png</AltTextureFocus>
-      <AltTextureNoFocus>osd_settings_bookmark_nofocus.png</AltTextureNoFocus>
       <textureFocus>-</textureFocus>
-      <textureNoFocus>osd_settings_bookmark_focus.png</textureNoFocus>
+      <textureNoFocus>-</textureNoFocus>
+      <textureCheckmark>-</textureCheckmark>
+      <textureCheckmarkNoFocus>-</textureCheckmarkNoFocus> 
       <label>-</label>
       <font>-</font>
       <onleft>213</onleft>
@@ -951,7 +967,7 @@
       <textureFocus>button_green_focus_165x32.png</textureFocus>
       <textureNoFocus>button_green_nofocus_165x32.png</textureNoFocus>
       <label>294</label>
-      <font>font13</font>
+      <font>font12</font>
       <colordiffuse>ffffffff</colordiffuse>
       <onleft>600</onleft>
       <onright>602</onright>
@@ -970,7 +986,7 @@
       <textureFocus>button_green_focus_165x32.png</textureFocus>
       <textureNoFocus>button_green_nofocus_165x32.png</textureNoFocus>
       <label>296</label>
-      <font>font13</font>
+      <font>font12</font>
       <colordiffuse>ffffffff</colordiffuse>
       <onleft>600</onleft>
       <onright>601</onright>

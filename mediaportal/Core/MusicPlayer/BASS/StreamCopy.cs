@@ -1,4 +1,4 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+﻿#region Copyright (C) 2005-2011 Team MediaPortal
 
 // Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -32,10 +32,10 @@ namespace MediaPortal.Player
     private BASSFlag _streamFlags;
 
     public StreamCopy()
-      : base() {}
+      : base() { }
 
     public StreamCopy(int channel, int priority)
-      : base(channel, priority, IntPtr.Zero) {}
+      : base(channel, priority, IntPtr.Zero) { }
 
     public override void OnChannelChanged()
     {
@@ -118,7 +118,7 @@ namespace MediaPortal.Player
       get { return this._stream; }
     }
 
-    public BASSFlag StreamFlags
+    public BASSFlag StreamCopyFlags
     {
       get { return this._streamFlags; }
       set { this._streamFlags = value; }

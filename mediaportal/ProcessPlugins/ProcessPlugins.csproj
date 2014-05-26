@@ -186,6 +186,10 @@
       <Project>{396C5208-5D46-4A11-92C1-FD0F2F42D7DD}</Project>
       <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
     </ProjectReference>
+    <ProjectReference Include="..\LastFMLibrary\LastFMLibrary.csproj">
+      <Project>{FE0B7969-38A1-4150-BB3B-C2E87F40AEED}</Project>
+      <Name>LastFMLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MiniDisplayLibrary\MiniDisplayLibrary.csproj">
       <Project>{8635D515-A5D4-4FB7-BD30-71770651E18B}</Project>
       <Name>MiniDisplayLibrary</Name>
@@ -194,22 +198,30 @@
       <Project>{6DA0E4DF-6230-4642-98B5-E690BB6942BB}</Project>
       <Name>Utils</Name>
     </ProjectReference>
+    <ProjectReference Include="..\WindowPlugins\Common.GUIPlugins\Common.GUIPlugins.csproj">
+      <Project>{03fec69f-6d10-46fb-a0ca-4d266e4a21e2}</Project>
+      <Name>Common.GUIPlugins</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WindowPlugins\GUIMusic\GUIMusic.csproj">
+      <Project>{70f7ce2d-b69f-43d6-ab65-a42d3983e2ba}</Project>
+      <Name>GUIMusic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WindowPlugins\GUIHome\GUIHome.csproj">
+      <Project>{B282C55B-A37B-4CEC-A4FC-00791069BF00}</Project>
+      <Name>GUIHome</Name>
+    </ProjectReference>
     <ProjectReference Include="MusicShareWatcher\MusicShareWatcherHelper\MusicShareWatcherHelper.csproj">
       <Project>{C6564AA7-976B-43EF-9E35-7E607EE1DD12}</Project>
       <Name>MusicShareWatcherHelper</Name>
     </ProjectReference>
-    <Reference Include="System">
-      <Name>System</Name>
-    </Reference>
-    <Reference Include="System.Drawing">
-      <Name>System.Drawing</Name>
-    </Reference>
-    <Reference Include="System.Web">
-      <Name>System.Web</Name>
-    </Reference>
-    <Reference Include="System.Windows.Forms">
-      <Name>System.Windows.Forms</Name>
-    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\Common-MP-TVE3\SolutionInfo.cs">
@@ -218,13 +230,19 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="AudioScrobbler\AudioscrobblerPlugin.cs" />
-    <Compile Include="AudioScrobbler\AudioscrobblerSettings.cs">
+    <Compile Include="LastFMScrobbler\LastFMAuthentication.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="AudioScrobbler\AudioscrobblerSettings.Designer.cs">
-      <DependentUpon>AudioscrobblerSettings.cs</DependentUpon>
+    <Compile Include="LastFMScrobbler\LastFMAuthentication.Designer.cs">
+      <DependentUpon>LastFMAuthentication.cs</DependentUpon>
     </Compile>
+    <Compile Include="LastFMScrobbler\LastFMConfig.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LastFMScrobbler\LastFMConfig.designer.cs">
+      <DependentUpon>LastFMConfig.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LastFMScrobbler\LastFMScrobbler.cs" />
     <Compile Include="MiniDisplay\MiniDisplay.cs" />
     <Compile Include="MiniDisplay\SetupForm.cs">
       <SubType>Form</SubType>
@@ -259,21 +277,17 @@
     </Compile>
     <Compile Include="ViewModeSwitcher\ViewModeSwitcherRules.cs" />
     <Compile Include="ViewModeSwitcher\ViewModeSwitcherSettings.cs" />
-    <EmbeddedResource Include="AudioScrobbler\AudioscrobblerSettings.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>AudioscrobblerSettings.cs</DependentUpon>
+    <EmbeddedResource Include="LastFMScrobbler\LastFMAuthentication.resx">
+      <DependentUpon>LastFMAuthentication.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LastFMScrobbler\LastFMConfig.resx">
+      <DependentUpon>LastFMConfig.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Audioscrobbler\Audioscrobbler.gif" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Audioscrobbler\AudioscrobblerDisabled.gif" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="MusicShareWatcher\MusicShareWatcher.gif" />
@@ -306,6 +320,10 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="LastFMScrobbler\LastFMScrobbler.gif" />
+    <EmbeddedResource Include="LastFMScrobbler\LastFMScrobblerDisabled.gif" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -50,8 +50,8 @@ namespace ProcessPlugins.ViewModeSwitcher
       txbMaxWidth.Text = currentRule.MaxWidth.ToString();
       txbMinHeight.Text = currentRule.MinHeight.ToString();
       txbMaxHeight.Text = currentRule.MaxHeight.ToString();
-      cbViewModeSwitchEnabled.Checked = currentRule.ChangeAR;
-      cbOverScanEnabled.Checked = currentRule.ChangeOs;
+      cbAutoCropEnabled.Checked = currentRule.AutoCrop;
+      cbMaxCropEnabled.Checked = currentRule.MaxCrop;
       txbOverScan.Text = currentRule.OverScan.ToString();
       cmbViewMode.SelectedItem = currentRule.ViewMode.ToString();
       cb_EnableLBDetection.Checked = currentRule.EnableLBDetection;
@@ -64,36 +64,44 @@ namespace ProcessPlugins.ViewModeSwitcher
 
     private void bOK_Click(object sender, EventArgs e)
     {
-      currentRule.Enabled = cbEnabled.Checked;
-      currentRule.Name = txbName.Text;
-      currentRule.ARFrom = (float)Convert.ToDouble(txbARFrom.Text);
-      currentRule.ARTo = (float)Convert.ToDouble(txbARTo.Text);
-      currentRule.MinWidth = Convert.ToInt16(txbMinWidth.Text);
-      currentRule.MaxWidth = Convert.ToInt16(txbMaxWidth.Text);
-      currentRule.MinHeight = Convert.ToInt16(txbMinHeight.Text);
-      currentRule.MaxHeight = Convert.ToInt16(txbMaxHeight.Text);
-
-      currentRule.ChangeAR = cbViewModeSwitchEnabled.Checked;
-
-      String tmpViewMode = cmbViewMode.Text;
-
-      currentRule.ViewMode = ViewModeswitcherSettings.StringToViewMode(tmpViewMode);
-
-      currentRule.ChangeOs = cbOverScanEnabled.Checked;
-      currentRule.OverScan = Convert.ToInt16(txbOverScan.Text);
-      currentRule.EnableLBDetection = cb_EnableLBDetection.Checked;
-
+      try {
+        currentRule.Enabled = cbEnabled.Checked;
+        currentRule.Name = txbName.Text;
+        currentRule.ARFrom = Math.Max(Math.Min(Convert.ToDouble(txbARFrom.Text), 20.0), -20.0);
+        currentRule.ARTo   = Math.Max(Math.Min(Convert.ToDouble(txbARTo.Text), 20.0), -20.0);
+        currentRule.MinWidth = Convert.ToInt16(txbMinWidth.Text);
+        currentRule.MaxWidth = Convert.ToInt16(txbMaxWidth.Text);
+        currentRule.MinHeight = Convert.ToInt16(txbMinHeight.Text);
+        currentRule.MaxHeight = Convert.ToInt16(txbMaxHeight.Text);
+  
+        currentRule.AutoCrop = cbAutoCropEnabled.Checked;
+  
+        String tmpViewMode = cmbViewMode.Text;
+  
+        currentRule.ViewMode = ViewModeswitcherSettings.StringToViewMode(tmpViewMode);
+  
+        currentRule.MaxCrop = cbMaxCropEnabled.Checked;
+        currentRule.OverScan = Convert.ToInt16(txbOverScan.Text);
+        currentRule.EnableLBDetection = cb_EnableLBDetection.Checked;
+      } catch (Exception) {}
+  
       Close();
     }
 
-    private void cbViewModeSwitchEnabled_CheckedChanged(object sender, EventArgs e)
+    private void cbAutoCropEnabled_CheckedChanged(object sender, EventArgs e)
     {
-      cmbViewMode.Enabled = cbViewModeSwitchEnabled.Checked;
+      if (cbAutoCropEnabled.Checked)
+      {
+        cb_EnableLBDetection.Checked = true; //Tick this box as well
+      }
     }
-
-    private void cbOverScanEnabled_CheckedChanged(object sender, EventArgs e)
+    
+    private void cb_EnableLBDetection_CheckedChanged(object sender, EventArgs e)
     {
-      txbOverScan.Enabled = cbOverScanEnabled.Checked;
+      if (!cb_EnableLBDetection.Checked)
+      {
+        cbAutoCropEnabled.Checked = false;
+      }
     }
   }
 }

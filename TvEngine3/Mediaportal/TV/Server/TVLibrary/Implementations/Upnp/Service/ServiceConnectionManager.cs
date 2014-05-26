@@ -29,7 +29,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Upnp.Service
   /// <summary>
   /// This class implements a UPnP connection manager service client.
   /// </summary>
-  public class ServiceConnectionManager : ServiceBase
+  internal class ServiceConnectionManager : ServiceBase
   {
     private CpAction _getProtocolInfoAction = null;
     private CpAction _prepareForConnectionAction = null;

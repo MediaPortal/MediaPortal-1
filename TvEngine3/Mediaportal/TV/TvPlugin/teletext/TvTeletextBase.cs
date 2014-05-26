@@ -27,6 +27,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Action = MediaPortal.GUI.Library.Action;
+using MediaPortal.Drawing;
 
 namespace Mediaportal.TV.TvPlugin.Teletext
 {
@@ -127,7 +128,7 @@ namespace Mediaportal.TV.TvPlugin.Teletext
       lblMessage.Label = "";
       lblMessage.Visible = false;
       // Activate teletext grabbing in the server
-      TVHome.Card.GrabTeletext = true;
+      // TODO reimplement in TV plugin library TVHome.Card.GrabTeletext = true;
       // Set the current page to the index page
       currentPageNumber = 0x100;
       currentSubPageNumber = 0;
@@ -392,7 +393,8 @@ namespace Mediaportal.TV.TvPlugin.Teletext
     /// <param name="button"></param>
     protected void showTeletextButtonPage(TeletextButton button)
     {
-      switch (button)
+      // TODO reimplement in TV plugin library
+      /*switch (button)
       {
         case TeletextButton.Red:
           showNewPage(TVHome.Card.GetTeletextRedPageNumber());
@@ -406,7 +408,7 @@ namespace Mediaportal.TV.TvPlugin.Teletext
         case TeletextButton.Blue:
           showNewPage(TVHome.Card.GetTeletextBluePageNumber());
           break;
-      }
+      }*/
     }
 
     /// <summary>
@@ -464,7 +466,8 @@ namespace Mediaportal.TV.TvPlugin.Teletext
         return;
       }
       // Check the rotation speed
-      TimeSpan tsRotation = TVHome.Card.TeletextRotation(currentPageNumber);
+      TimeSpan tsRotation = TimeSpan.Zero; // TODO reimplement in TV plugin library TVHome.Card.TeletextRotation(currentPageNumber);
+      return; // TODO remove this when reimplemented in TV plugin library
       // Should we rotate?
       if (ts.TotalMilliseconds < tsRotation.TotalMilliseconds)
       {
@@ -481,7 +484,7 @@ namespace Mediaportal.TV.TvPlugin.Teletext
       {
         currentPageNumber = 0x899;
       }
-      int NumberOfSubpages = TVHome.Card.SubPageCount(currentPageNumber) - 1;
+      int NumberOfSubpages = -1;  // TODO reimplement in TV plugin library TVHome.Card.SubPageCount(currentPageNumber) - 1;
       NumberOfSubpages = NumberOfSubpages < -1 ? -1 : NumberOfSubpages;
       if (currentSubPageNumber <= NumberOfSubpages)
       {
@@ -493,7 +496,7 @@ namespace Mediaportal.TV.TvPlugin.Teletext
       }
       if (currentSubPageNumber > NumberOfSubpages)
       {
-        byte[] page = TVHome.Card.GetTeletextPage(currentPageNumber, 0);
+        byte[] page = null;// TODO reimplement in TV plugin library TVHome.Card.GetTeletextPage(currentPageNumber, 0);
         if (page == null && _trottling == DateTime.MinValue)
         {
           _trottling = DateTime.Now.AddMilliseconds(tsRotation.TotalMilliseconds);
@@ -515,13 +518,13 @@ namespace Mediaportal.TV.TvPlugin.Teletext
     /// </summary>
     protected void UpdatePage()
     {
-      imgTeletextForeground.Centered = false;
+      imgTeletextBackground.VerticalAlignment = VerticalAlignment.Center;
       imgTeletextForeground.KeepAspectRatio = false;
       imgTeletextForeground.ColorKey = Color.HotPink.ToArgb();
       imgTeletextForeground.SetMemoryImageSize(_renderer.Width, _renderer.Height);
       imgTeletextForeground.FileName = "[teletextpage]";
 
-      imgTeletextBackground.Centered = false;
+      imgTeletextBackground.VerticalAlignment = VerticalAlignment.Center;
       imgTeletextBackground.KeepAspectRatio = false;
       imgTeletextBackground.ColorKey = Color.HotPink.ToArgb();
       imgTeletextBackground.SetMemoryImageSize(_renderer.Width, _renderer.Height);
@@ -576,7 +579,7 @@ namespace Mediaportal.TV.TvPlugin.Teletext
     protected void GetNewPage()
     {
       int sub = currentSubPageNumber;
-      int maxSubs = TVHome.Card.SubPageCount(currentPageNumber) - 1;
+      int maxSubs = -1; // TODO reimplement in TV plugin library TVHome.Card.SubPageCount(currentPageNumber) - 1;
       maxSubs = maxSubs < -1 ? -1 : maxSubs;
 
       //this.LogInfo("dvb-teletext: GetNewPage: page = {0}, subpage = {1}, maxsubpages = {2}", currentPageNumber, currentSubPageNumber, maxSubs);
@@ -607,7 +610,7 @@ namespace Mediaportal.TV.TvPlugin.Teletext
       _renderer.SubPageSelectText = Convert.ToString(currentSubPageNumber + 1, 16);
 
       // Try to get the page
-      byte[] page = TVHome.Card.GetTeletextPage(currentPageNumber, currentSubPageNumber);
+      byte[] page = null;// TODO reimplement in TV plugin library TVHome.Card.GetTeletextPage(currentPageNumber, currentSubPageNumber);
       if (page == null && _showFirstAvailableSubPage)
       {
         page = GetExistingTeletextPage(currentSubPageNumber + 1, maxSubs, ref currentSubPageNumber);
@@ -643,7 +646,7 @@ namespace Mediaportal.TV.TvPlugin.Teletext
     {
       for (int i = startSubPage; i <= maxSubPage; i++)
       {
-        byte[] page = TVHome.Card.GetTeletextPage(currentPageNumber, i);
+        byte[] page = null;// TODO reimplement in TV plugin library TVHome.Card.GetTeletextPage(currentPageNumber, i);
         if (page != null)
         {
           foundPage = i;

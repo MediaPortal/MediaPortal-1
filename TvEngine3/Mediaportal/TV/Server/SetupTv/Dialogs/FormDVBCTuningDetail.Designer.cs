@@ -1,3 +1,4 @@
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
 namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
   partial class FormDVBCTuningDetail
@@ -28,26 +29,26 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     /// </summary>
     private void InitializeComponent()
     {
-      this.comboBoxDvbCModulation = new System.Windows.Forms.ComboBox();
-      this.label42 = new System.Windows.Forms.Label();
-      this.checkBoxDVBCfta = new System.Windows.Forms.CheckBox();
-      this.label46 = new System.Windows.Forms.Label();
-      this.textBoxDVBCProvider = new System.Windows.Forms.TextBox();
-      this.textBoxDVBCPmt = new System.Windows.Forms.TextBox();
-      this.textBoxSymbolRate = new System.Windows.Forms.TextBox();
-      this.textBoxSID = new System.Windows.Forms.TextBox();
-      this.textBoxTSID = new System.Windows.Forms.TextBox();
-      this.textBoxONID = new System.Windows.Forms.TextBox();
-      this.textboxFreq = new System.Windows.Forms.TextBox();
-      this.label43 = new System.Windows.Forms.Label();
-      this.label6 = new System.Windows.Forms.Label();
-      this.label4 = new System.Windows.Forms.Label();
-      this.label5 = new System.Windows.Forms.Label();
-      this.label7 = new System.Windows.Forms.Label();
-      this.label8 = new System.Windows.Forms.Label();
-      this.textBoxChannel = new System.Windows.Forms.TextBox();
-      this.label47 = new System.Windows.Forms.Label();
-      this.label1 = new System.Windows.Forms.Label();
+      this.comboBoxDvbCModulation = new MPComboBox();
+      this.label42 = new MPLabel();
+      this.checkBoxDVBCfta = new MPCheckBox();
+      this.label46 = new MPLabel();
+      this.textBoxDVBCProvider = new MPTextBox();
+      this.textBoxDVBCPmt = new MPTextBox();
+      this.textBoxSymbolRate = new MPTextBox();
+      this.textBoxSID = new MPTextBox();
+      this.textBoxTSID = new MPTextBox();
+      this.textBoxONID = new MPTextBox();
+      this.textboxFreq = new MPTextBox();
+      this.label43 = new MPLabel();
+      this.label6 = new MPLabel();
+      this.label4 = new MPLabel();
+      this.label5 = new MPLabel();
+      this.label7 = new MPLabel();
+      this.label8 = new MPLabel();
+      this.textBoxChannel = new MPTextBox();
+      this.label47 = new MPLabel();
+      this.label1 = new MPLabel();
       this.SuspendLayout();
       // 
       // mpButtonCancel
@@ -290,25 +291,25 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
     #endregion
 
-    private System.Windows.Forms.ComboBox comboBoxDvbCModulation;
-    private System.Windows.Forms.Label label42;
-    private System.Windows.Forms.CheckBox checkBoxDVBCfta;
-    private System.Windows.Forms.Label label46;
-    private System.Windows.Forms.TextBox textBoxDVBCProvider;
-    private System.Windows.Forms.TextBox textBoxDVBCPmt;
-    private System.Windows.Forms.TextBox textBoxSymbolRate;
-    private System.Windows.Forms.TextBox textBoxSID;
-    private System.Windows.Forms.TextBox textBoxTSID;
-    private System.Windows.Forms.TextBox textBoxONID;
-    private System.Windows.Forms.TextBox textboxFreq;
-    private System.Windows.Forms.Label label43;
-    private System.Windows.Forms.Label label6;
-    private System.Windows.Forms.Label label4;
-    private System.Windows.Forms.Label label5;
-    private System.Windows.Forms.Label label7;
-    private System.Windows.Forms.Label label8;
-    private System.Windows.Forms.TextBox textBoxChannel;
-    private System.Windows.Forms.Label label47;
-    private System.Windows.Forms.Label label1;
+    private MPComboBox comboBoxDvbCModulation;
+    private MPLabel label42;
+    private MPCheckBox checkBoxDVBCfta;
+    private MPLabel label46;
+    private MPTextBox textBoxDVBCProvider;
+    private MPTextBox textBoxDVBCPmt;
+    private MPTextBox textBoxSymbolRate;
+    private MPTextBox textBoxSID;
+    private MPTextBox textBoxTSID;
+    private MPTextBox textBoxONID;
+    private MPTextBox textboxFreq;
+    private MPLabel label43;
+    private MPLabel label6;
+    private MPLabel label4;
+    private MPLabel label5;
+    private MPLabel label7;
+    private MPLabel label8;
+    private MPTextBox textBoxChannel;
+    private MPLabel label47;
+    private MPLabel label1;
   }
 }

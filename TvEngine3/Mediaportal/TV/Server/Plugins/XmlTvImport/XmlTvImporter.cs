@@ -339,7 +339,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
                   string newLoc = SettingsManagement.GetValue("xmlTv", "") + @"\";
                   this.LogInfo("extracting zip file {0} to location {1}", path, newLoc);
                   ZipFile zip = new ZipFile(path);
-                  zip.ExtractAll(newLoc, true);
+                  zip.ExtractAll(newLoc, ExtractExistingFileAction.OverwriteSilently);
                 }
                 catch (Exception ex2)
                 {
@@ -383,8 +383,6 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
 
       _remoteURL = URL;
       
-      Setting setting;
-
       string errMsg = "";
       if (URL.Length == 0)
       {
@@ -531,7 +529,6 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
         {
           //timed out;
           _remoteFileDownloadInProgress = false;          
-          Setting setting;
           SettingsManagement.SaveValue("xmlTvRemoteScheduleTransferStatus", "File transfer timed out.");
           SettingsManagement.SaveValue("xmlTvRemoteScheduleLastTransfer", now);
 

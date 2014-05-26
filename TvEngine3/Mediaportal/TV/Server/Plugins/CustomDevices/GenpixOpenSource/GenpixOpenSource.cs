@@ -188,7 +188,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.GenpixOpenSource
         message.Message[0] = (byte)GenpixToneBurst.DataBurst;
       }
 
-      Marshal.StructureToPtr(message, _diseqcBuffer, true);
+      Marshal.StructureToPtr(message, _diseqcBuffer, false);
       int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Diseqc,
         _instanceBuffer, INSTANCE_SIZE,
         _diseqcBuffer, DISEQC_MESSAGE_SIZE
@@ -199,7 +199,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.GenpixOpenSource
         return true;
       }
 
-      this.LogError("Genpix open source: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Genpix open source: failed to set tone state, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -219,12 +219,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.GenpixOpenSource
       }
       if (command == null || command.Length == 0)
       {
-        this.LogError("Genpix open source: command not supplied");
+        this.LogWarn("Genpix open source: DiSEqC command not supplied");
         return true;
       }
       if (command.Length > MAX_DISEQC_MESSAGE_LENGTH)
       {
-        this.LogError("Genpix open source: command too long, length = {0}", command.Length);
+        this.LogError("Genpix open source: DiSEqC command too long, length = {0}", command.Length);
         return false;
       }
 
@@ -233,7 +233,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.GenpixOpenSource
       message.Message = new byte[MAX_DISEQC_MESSAGE_LENGTH];
       Buffer.BlockCopy(command, 0, message.Message, 0, command.Length);
 
-      Marshal.StructureToPtr(message, _diseqcBuffer, true);
+      Marshal.StructureToPtr(message, _diseqcBuffer, false);
       int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Diseqc,
         _instanceBuffer, INSTANCE_SIZE,
         _diseqcBuffer, DISEQC_MESSAGE_SIZE
@@ -244,7 +244,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.GenpixOpenSource
         return true;
       }
 
-      this.LogError("Genpix open source: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Genpix open source: failed to send DiSEqC command, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 

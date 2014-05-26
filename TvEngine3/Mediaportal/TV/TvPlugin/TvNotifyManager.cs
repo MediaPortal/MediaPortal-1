@@ -22,9 +22,8 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading;
 using System.Windows.Forms;
-using MediaPortal.GUI.Library;
-using MediaPortal.Profile;
 using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.Events;
 using Mediaportal.TV.Server.TVControl.Interfaces.Events;
@@ -35,13 +34,15 @@ using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.TvPlugin.Helper;
+using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
 using Log = Mediaportal.TV.Server.TVLibrary.Interfaces.Logging.Log;
+using Timer = System.Windows.Forms.Timer;
 
 namespace Mediaportal.TV.TvPlugin
 {
   public class TvNotifyManager : ITvServerEventCallbackClient
   {
- 
     private readonly Timer _timer;
     // flag indicating that notifies have been added/changed/removed
     private readonly IRecordingService _recordingServiceAgent = ServiceAgents.Instance.RecordingServiceAgent;
@@ -69,6 +70,12 @@ namespace Mediaportal.TV.TvPlugin
       _timer.Interval = 15000;
       _timer.Enabled = true;
       _timer.Tick += new EventHandler(_timer_Tick);
+      // Execute TvNotifyManager in a separate thread, so that it doesn't block the Main UI Render thread when Tvservice connection died
+      new Thread(() =>
+        {
+          _timer.Tick += new EventHandler(_timer_Tick);
+        }
+      ) { Name = "TvNotifyManager" }.Start();
     }
 
     private void OnRecordingFailed(int idSchedule)
@@ -268,7 +275,6 @@ namespace Mediaportal.TV.TvPlugin
           return;
         }
 
-      
         DateTime preNotifySecs = DateTime.Now.AddSeconds(_preNotifyConfig);
         ProcessNotifies(preNotifySecs);
       }

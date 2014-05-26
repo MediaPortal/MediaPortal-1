@@ -22,7 +22,6 @@ REM Configuration
 xcopy %1\Configuration\Wizards\*.* Wizards\ /Y /D
 xcopy %1\Configuration\bin\%2\Configuration.* . /Y /D
 xcopy %1\Configuration\WinCustomControls\bin\%2\WinCustomControls.* . /Y /D
-xcopy %1\..\TvEngine3\TVLibrary\TvLibrary.Interfaces\bin\%2\TvLibrary.Interfaces.* . /Y /D
 xcopy %1\..\TvEngine3\Mediaportal\TV\Server\TvLibrary.IntegrationProvider.Interfaces\bin\%2\Mediaportal.TV.Server.TVLibrary.IntegrationProvider.Interfaces.* . /Y /D
 xcopy %1\..\TvEngine3\Mediaportal\TV\ExternalBinaries\*.* . /Y /D
 xcopy %1\..\TvEngine3\Mediaportal\TV\Server\TvService.Interfaces\bin\%2\Mediaportal.TV.Server.TVService.Interfaces.* . /Y /D
@@ -49,11 +48,27 @@ REM Plugins
 REM SubtitlePlugin
 xcopy %1\SubtitlePlugins\bin\%2\SubtitlePlugins.* plugins\subtitle\ /Y /D
 
+REM LastFMLibrary
+xcopy %1\LastFMLibrary\bin\%2\LastFMLibrary.* . /Y /D
+
 REM ExternalPlayers
 xcopy %1\ExternalPlayers\bin\%2\ExternalPlayers.* plugins\ExternalPlayers\ /Y /D
 
 REM WindowPlugins
-xcopy %1\WindowPlugins\bin\%2\WindowPlugins.* plugins\Windows\ /Y /D
+xcopy %1\WindowPlugins\GUIDisc\bin\%2\GUIDisc.* plugins\Windows\ /Y /D
+xcopy %1\WindowPlugins\GUIDVD\bin\%2\GUIDVD.* plugins\Windows\ /Y /D
+xcopy %1\WindowPlugins\GUIHome\bin\%2\GUIHome.* plugins\Windows\ /Y /D
+xcopy %1\WindowPlugins\GUILastFMRadio\bin\%2\GUILastFMRadio.* plugins\Windows\ /Y /D
+xcopy %1\WindowPlugins\GUIMusic\bin\%2\GUIMusic.* plugins\Windows\ /Y /D
+xcopy %1\WindowPlugins\GUISudoku\bin\%2\GUISudoku.* plugins\Windows\ /Y /D
+xcopy %1\WindowPlugins\GUIPictures\bin\%2\GUIPictures.* plugins\Windows\ /Y /D
+xcopy %1\WindowPlugins\GUIRSSFeed\bin\%2\GUIRSSFeed.* plugins\Windows\ /Y /D
+xcopy %1\WindowPlugins\GUISettings\bin\%2\GUISettings.* plugins\Windows\ /Y /D
+xcopy %1\WindowPlugins\GUITetris\bin\%2\GUITetris.* plugins\Windows\ /Y /D
+xcopy %1\WindowPlugins\GUITopbar\bin\%2\GUITopbar.* plugins\Windows\ /Y /D
+xcopy %1\WindowPlugins\GUIVideos\bin\%2\GUIVideos.* plugins\Windows\ /Y /D
+xcopy %1\WindowPlugins\GUIWikipedia\bin\%2\GUIWikipedia.* plugins\Windows\ /Y /D
+xcopy %1\WindowPlugins\Common.GUIPlugins\bin\%2\Common.GUIPlugins.* plugins\Windows\ /Y /D
 
 REM Dialogs
 xcopy %1\Dialogs\bin\%2\Dialogs.* plugins\Windows\ /Y /D
@@ -113,6 +128,9 @@ ren libbluray.dll bluray.dll
 REM Copy one dll from DirectShowFilters folder
 xcopy %1\..\DirectShowFilters\DXErr9\bin\%2\dxerr9.dll . /Y /D
 
+REM Copy bluray dll from DirectShowFilters folder
+xcopy %1\..\DirectShowFilters\BDReader\libbluray\bluray.dll . /Y /D
+
 REM mpWatchDog
 xcopy %1\WatchDog\bin\%2\WatchDog.exe . /Y /D
 xcopy %1\WatchDog\bin\%2\DaggerLib.dll . /Y /D
@@ -127,3 +145,9 @@ REM MPE
 xcopy %1\MPE\MpeCore\bin\%2\MpeCore.* . /Y /D
 xcopy %1\MPE\MpeInstaller\bin\%2\MpeInstaller.* . /Y /D
 xcopy %1\MPE\MpeMaker\bin\%2\MpeMaker.* . /Y /D
+
+REM Nuget 
+xcopy %1\Databases\bin\%2\HtmlAgilityPack.* . /Y /D
+
+REM ffmpeg 
+xcopy %1\..\Packages\ffmpeg.2.1.1\ffmpeg.exe MovieThumbnailer\ /Y /D

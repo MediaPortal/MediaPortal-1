@@ -33,7 +33,6 @@ namespace Mediaportal.TV.TvPlugin
   public class TvRecordingSettings : GUIInternalWindow
   {
     [SkinControl(4)] protected GUICheckMarkControl cbAutoDeleteRecordings = null;
-    [SkinControl(5)] protected GUICheckMarkControl cbCreateTagInfoXML = null;
     [SkinControl(27)] protected GUISpinControl spinPreRecord = null;
     [SkinControl(30)] protected GUISpinControl spinPostRecord = null;
 
@@ -44,7 +43,7 @@ namespace Mediaportal.TV.TvPlugin
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\settings_recording.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\settings_recording.xml"));
     }
 
     protected override void OnPageLoad()
@@ -53,11 +52,10 @@ namespace Mediaportal.TV.TvPlugin
       spinPreRecord.SetRange(0, 30);
       spinPostRecord.SetRange(0, 30);
 
-      spinPreRecord.Value = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("preRecordInterval", "5").Value);
-      spinPostRecord.Value = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("postRecordInterval", "5").Value);
+      spinPreRecord.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("preRecordInterval", 5);
+      spinPostRecord.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("postRecordInterval", 5);
 
-      cbAutoDeleteRecordings.Selected = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("autodeletewatchedrecordings", "no").Value == "yes");
-      cbCreateTagInfoXML.Selected = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("createtaginfoxml", "yes").Value == "yes");
+      cbAutoDeleteRecordings.Selected = ServiceAgents.Instance.SettingServiceAgent.GetValue("autodeletewatchedrecordings", false);
     }
 
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
@@ -65,10 +63,6 @@ namespace Mediaportal.TV.TvPlugin
       if (control == cbAutoDeleteRecordings)
       {
         OnAutoDeleteRecordings();
-      }
-      if (control == cbCreateTagInfoXML)
-      {
-        OnCreateTagInfoXML();
       }
       if (control == spinPreRecord)
       {
@@ -83,22 +77,17 @@ namespace Mediaportal.TV.TvPlugin
 
     private void OnAutoDeleteRecordings()
     {
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("autodeletewatchedrecordings", cbAutoDeleteRecordings.Selected ? "yes" : "no");
-    }
-
-    private void OnCreateTagInfoXML()
-    {
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("createtaginfoxml", cbCreateTagInfoXML.Selected ? "yes" : "no");
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("autodeletewatchedrecordings", cbAutoDeleteRecordings.Selected);
     }
 
     private void OnPreRecord()
     {
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("preRecordInterval", spinPreRecord.Value.ToString());      
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("preRecordInterval", spinPreRecord.Value);
     }
 
     private void OnPostRecord()
     {
-      ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("postRecordInterval", spinPostRecord.Value.ToString());
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("postRecordInterval", spinPostRecord.Value);
     }
 
     public override void Process()

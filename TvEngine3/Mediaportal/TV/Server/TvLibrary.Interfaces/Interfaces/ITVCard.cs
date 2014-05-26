@@ -18,10 +18,10 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.ChannelLinkage;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
@@ -29,9 +29,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
   #region event delegates
 
   /// <summary>
-  /// Delegate for the new subchannel event.
+  /// Delegate for the new sub-channel event.
   /// </summary>
-  /// <param name="subChannelId">The ID of the new subchannel.</param>
+  /// <param name="subChannelId">The ID of the new sub-channel.</param>
   public delegate void OnNewSubChannelDelegate(int subChannelId);
 
   /// <summary>
@@ -49,7 +49,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
     #region events
 
     /// <summary>
-    /// Set the tuner's new subchannel event handler.
+    /// Set the tuner's new sub-channel event handler.
     /// </summary>
     event OnNewSubChannelDelegate OnNewSubChannelEvent;
 
@@ -63,25 +63,39 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
     #region properties
 
     /// <summary>
-    /// Gets or sets the timeout parameters.
+    /// Get the tuner's name.
     /// </summary>
-    /// <value>The parameters.</value>
-    ScanParameters Parameters { get; set; }
+    string Name
+    {
+      get;
+    }
 
     /// <summary>
-    /// Gets/sets the card name
+    /// Get the tuner's group.
     /// </summary>
-    string Name { get; set; }
+    ITunerGroup Group
+    {
+      get;
+    }
 
     /// <summary>
-    /// Gets/Sets that the card is present
+    /// Get the tuner's unique identifier.
     /// </summary>
-    bool CardPresent { get; set; }
+    /// <remarks>
+    /// This is the TV Engine's unique internal identifier.
+    /// </remarks>
+    int TunerId
+    {
+      get;
+    }
 
     /// <summary>
     /// Get the tuner's unique external identifier.
     /// </summary>		
-    string ExternalId { get; }
+    string ExternalId
+    {
+      get;
+    }
 
     /// <summary>
     /// Get the tuner's product instance identifier.
@@ -89,60 +103,57 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
     /// <remarks>
     /// The product instance identifier is a shared identifier for all tuner instances derived from a [multi-tuner] product.
     /// </remarks>
-    string ProductInstanceId { get; }
+    string ProductInstanceId
+    {
+      get;
+    }
 
     /// <summary>
     /// Get the tuner's instance identifier.
     /// </summary>
-    /// <summary>
+    /// <remarks>
     /// The tuner instance identifier is a shared identifier for all tuner instances derived from a single physical tuner.
-    /// </summary>
-    string TunerInstanceId { get; }
+    /// </remarks>
+    string TunerInstanceId
+    {
+      get;
+    }
 
     /// <summary>
-    /// Method to check if card can tune to the channel specified
+    /// Check if the tuner can tune to a specific channel.
     /// </summary>
-    /// <returns>true if card can tune to the channel otherwise false</returns>
+    /// <param name="channel">The channel to check.</param>
+    /// <returns><c>true</c> if the tuner can tune to the channel, otherwise <c>false</c></returns>
     bool CanTune(IChannel channel);
 
     /// <summary>
-    /// Stop the card.
+    /// Stop the tuner.
     /// </summary>
+    /// <remarks>
+    /// The actual result of this function depends on tuner configuration.
+    /// </remarks>
+    [Obsolete("This function should not be used. Instead use FreeSubChannel() to free each remaining sub-channel. The tuner will be stopped after the last sub-channel is freed... but that is implementation detail which you should not have to care about.")]
     void Stop();
 
     /// <summary>
     /// Gets or sets the type of the cam.
     /// </summary>
     /// <value>The type of the cam.</value>
-    CamType CamType { get; set; }
+    CamType CamType { get; }
 
     /// <summary>
-    /// Gets/sets the card type
+    /// Get the tuner's type.
     /// </summary>
-    CardType CardType { get; }
-
-
-
-    /// <summary>
-    /// Get the tuner's DiSEqC control interface. This interface is only applicable for satellite tuners.
-    /// It is used for controlling switch, positioner and LNB settings.
-    /// </summary>
-    /// <value><c>null</c> if the tuner is not a satellite tuner or the tuner does not support sending/receiving
-    /// DiSEqC commands</value>
-    IDiseqcController DiseqcController { get; }
+    CardType TunerType
+    {
+      get;
+    }
 
     /// <summary>
     /// Does the tuner support conditional access?
     /// </summary>
     /// <value><c>true</c> if the tuner supports conditional access, otherwise <c>false</c></value>
     bool IsConditionalAccessSupported { get; }
-
-    /// <summary>
-    /// Get the device's conditional access menu interaction interface. This interface is only applicable if
-    /// conditional access is supported.
-    /// </summary>
-    /// <value><c>null</c> if the device does not support conditional access</value>
-    IConditionalAccessMenuActions CaMenuInterface { get; }
 
     /// <summary>
     /// Get a count of the number of services that the device is currently decrypting.
@@ -171,59 +182,63 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
 
     #endregion
 
-    #region epg & scanning
+    #region interfaces
 
     /// <summary>
-    /// Grabs the epg.
+    /// Get the tuner's electronic programme guide data grabbing interface.
     /// </summary>
-    /// <param name="callBack">The call back which gets called when epg is received or canceled.</param>
-    void GrabEpg(BaseEpgGrabber callBack);
-
-    /// <summary>
-    /// Start grabbing the epg while timeshifting
-    /// </summary>
-    void GrabEpg();
-
-    /// <summary>
-    /// Aborts grabbing the epg. This also triggers the OnEpgReceived call back.
-    /// </summary>
-    void AbortGrabbing();
-
-    /// <summary>
-    /// returns a list of all epg data for each channel found.
-    /// </summary>
-    /// <value>The epg.</value>
-    List<EpgChannel> Epg { get; }
+    IEpgGrabber EpgGrabberInterface
+    {
+      get;
+    }
 
     /// <summary>
     /// Get the tuner's channel scanning interface.
     /// </summary>
-    ITVScanning ScanningInterface { get; }
+    IChannelScanner ChannelScanningInterface
+    {
+      get;
+    }
+
+    /// <summary>
+    /// Get the tuner's DiSEqC control interface.
+    /// </summary>
+    /// <remarks>
+    /// This interface is only applicable for satellite tuners. It is used for controlling switch,
+    /// positioner and LNB settings.
+    /// </remarks>
+    /// <value><c>null</c> if the tuner is not a satellite tuner or the tuner does not support
+    /// sending/receiving DiSEqC commands</value>
+    IDiseqcController DiseqcController
+    {
+      get;
+    }
+
+    /// <summary>
+    /// Get the tuner's conditional access menu interaction interface.
+    /// </summary>
+    /// <remarks>
+    /// This interface is only applicable if conditional access is supported.
+    /// </remarks>
+    /// <value><c>null</c> if the tuner does not support conditional access</value>
+    IConditionalAccessMenuActions CaMenuInterface { get; }
 
     #endregion
 
-    #region tuning & scanning
+    #region tuning
 
     /// <summary>
     /// Tune to a specific channel.
     /// </summary>
-    /// <param name="subChannelId">The ID of the subchannel associated with the channel that is being tuned.</param>
+    /// <param name="subChannelId">The ID of the sub-channel associated with the channel that is being tuned.</param>
     /// <param name="channel">The channel to tune to.</param>
-    /// <returns>the subchannel associated with the tuned channel</returns>
+    /// <returns>the sub-channel associated with the tuned channel</returns>
     ITvSubChannel Tune(int subChannelId, IChannel channel);
-
-    /// <summary>
-    /// Scan a specific channel.
-    /// </summary>
-    /// <param name="subChannelId">The ID of the subchannel associated with the channel that is being scanned.</param>
-    /// <param name="channel">The channel to scan.</param>
-    /// <returns>the subchannel associated with the scanned channel</returns>
-    ITvSubChannel Scan(int subChannelId, IChannel channel);
 
     /// <summary>
     /// Cancel the current tuning process.
     /// </summary>
-    /// <param name="subChannelId">The ID of the subchannel associated with the channel that is being cancelled.</param>
+    /// <param name="subChannelId">The ID of the sub-channel associated with the channel that is being cancelled.</param>
     void CancelTune(int subChannelId);
 
     #endregion
@@ -232,11 +247,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
     /// Get/Set the quality
     /// </summary>
     IQuality Quality { get; }
-
-    /// <summary>
-    /// Property which returns true if card supports quality control
-    /// </summary>
-    bool SupportsQualityControl { get; }
 
     /// <summary>
     /// Reload the tuner's configuration.
@@ -272,20 +282,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
     /// <value>The context.</value>
     object Context { get; set; }
 
-    /// <summary>
-    /// Gets or sets a value indicating whether this card is epg grabbing.
-    /// </summary>
-    /// <value>
-    /// 	<c>true</c> if this instance is epg grabbing; otherwise, <c>false</c>.
-    /// </value>
-    bool IsEpgGrabbing { get; set; }
-
-    /// <summary>
-    /// Get or set a value indicating whether this tuner is scanning for channels.
-    /// </summary>
-    /// <value><c>true</c> if the tuner is currently scanning, otherwise <c>false</c></value>
-    bool IsScanning { get; set; }
-
     #endregion
 
     #region idisposable
@@ -297,25 +293,25 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
 
     #endregion
 
-    #region sub channels
+    #region sub-channels
 
     /// <summary>
-    /// Gets the sub channel.
+    /// Gets the sub-channel.
     /// </summary>
     /// <param name="id">The id.</param>
     /// <returns></returns>
     ITvSubChannel GetSubChannel(int id);
 
     /// <summary>
-    /// Frees the sub channel.
+    /// Frees the sub-channel.
     /// </summary>
     /// <param name="id">The id.</param>
     void FreeSubChannel(int id);
 
     /// <summary>
-    /// Gets the sub channels.
+    /// Gets the sub-channels.
     /// </summary>
-    /// <value>The sub channels.</value>
+    /// <value>The sub-channels.</value>
     ITvSubChannel[] SubChannels { get; }
 
     #endregion

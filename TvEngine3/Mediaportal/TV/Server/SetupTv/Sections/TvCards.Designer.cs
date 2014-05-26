@@ -39,24 +39,24 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
       this.deleteCardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.deleteEntireHybridCardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.label3 = new System.Windows.Forms.Label();
-      this.mpCheckBox1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.label3 = new MPLabel();
+      this.mpCheckBox1 = new MPCheckBox();
       this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.columnHeader8 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.groupBox4 = new System.Windows.Forms.GroupBox();
-      this.label8 = new System.Windows.Forms.Label();
-      this.mpCheckBox2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
-      this.label9 = new System.Windows.Forms.Label();
-      this.mpCheckBox3 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.groupBox4 = new MPGroupBox();
+      this.label8 = new MPLabel();
+      this.mpCheckBox2 = new MPCheckBox();
+      this.label9 = new MPLabel();
+      this.mpCheckBox3 = new MPCheckBox();
       this.tabPage2 = new System.Windows.Forms.TabPage();
       this.treeView1 = new System.Windows.Forms.TreeView();
       this.tabPage1 = new System.Windows.Forms.TabPage();
-      this.buttonDown = new System.Windows.Forms.Button();
-      this.buttonUp = new System.Windows.Forms.Button();
-      this.buttonEdit = new System.Windows.Forms.Button();
-      this.mpListView1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
+      this.buttonDown = new MPButton();
+      this.buttonUp = new MPButton();
+      this.buttonEdit = new MPButton();
+      this.mpListView1 = new MPListView();
       this.colEnabled = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.colPriority = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.colType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -67,15 +67,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.colInit = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.colGrabEpg = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.colDevicePath = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.buttonRemove = new System.Windows.Forms.Button();
-      this.labelCardPriority = new System.Windows.Forms.Label();
-      this.labelHybridCard = new System.Windows.Forms.Label();
+      this.buttonRemove = new MPButton();
+      this.labelCardPriority = new MPLabel();
+      this.labelHybridCard = new MPLabel();
       this.linkLabelHybridCard = new System.Windows.Forms.LinkLabel();
-      this.grpIPTV = new System.Windows.Forms.GroupBox();
-      this.label25 = new System.Windows.Forms.Label();
+      this.grpIPTV = new MPGroupBox();
+      this.label25 = new MPLabel();
       this.iptvUpDown = new System.Windows.Forms.NumericUpDown();
-      this.label26 = new System.Windows.Forms.Label();
-      this.label7 = new System.Windows.Forms.Label();
+      this.label26 = new MPLabel();
+      this.label7 = new MPLabel();
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.contextMenuStrip2.SuspendLayout();
       this.contextMenuStrip1.SuspendLayout();
@@ -305,7 +305,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // mpListView1
       // 
-      this.mpListView1.AllowDrop = true;
       this.mpListView1.AllowRowReorder = false;
       this.mpListView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
@@ -533,25 +532,25 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private System.Windows.Forms.ContextMenuStrip contextMenuStrip2;
     private System.Windows.Forms.ToolStripMenuItem placeInHybridCardToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem;
-    private System.Windows.Forms.Label label3;
+    private MPLabel label3;
     private MPCheckBox mpCheckBox1;
-    private System.Windows.Forms.GroupBox groupBox4;
-    private System.Windows.Forms.Label label8;
+    private MPGroupBox groupBox4;
+    private MPLabel label8;
     private MPCheckBox mpCheckBox2;
-    private System.Windows.Forms.Label label9;
+    private MPLabel label9;
     private MPCheckBox mpCheckBox3;
     private System.Windows.Forms.TabPage tabPage2;
     private System.Windows.Forms.TreeView treeView1;
     private System.Windows.Forms.TabPage tabPage1;
-    private System.Windows.Forms.Label label7;
-    private System.Windows.Forms.GroupBox grpIPTV;
-    private System.Windows.Forms.Label label26;
+    private MPLabel label7;
+    private MPGroupBox grpIPTV;
+    private MPLabel label26;
     private System.Windows.Forms.NumericUpDown iptvUpDown;
-    private System.Windows.Forms.Label label25;
+    private MPLabel label25;
     private System.Windows.Forms.LinkLabel linkLabelHybridCard;
-    private System.Windows.Forms.Label labelHybridCard;
-    private System.Windows.Forms.Label labelCardPriority;
-    private System.Windows.Forms.Button buttonRemove;
+    private MPLabel labelHybridCard;
+    private MPLabel labelCardPriority;
+    private MPButton buttonRemove;
     private MPListView mpListView1;
     private System.Windows.Forms.ColumnHeader colEnabled;
     private System.Windows.Forms.ColumnHeader colPriority;
@@ -563,9 +562,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private System.Windows.Forms.ColumnHeader colInit;
     private System.Windows.Forms.ColumnHeader colGrabEpg;
     private System.Windows.Forms.ColumnHeader colDevicePath;
-    private System.Windows.Forms.Button buttonEdit;
-    private System.Windows.Forms.Button buttonUp;
-    private System.Windows.Forms.Button buttonDown;
+    private MPButton buttonEdit;
+    private MPButton buttonUp;
+    private MPButton buttonDown;
     private System.Windows.Forms.TabControl tabControl1;
   }
 }

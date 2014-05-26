@@ -22,7 +22,7 @@ using System;
 using System.IO;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.ChannelLinkage;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
@@ -33,8 +33,6 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 {
   public class TimeShifter : TimeShifterBase, ITimeShifter
   {
- 
-
     private readonly ChannelLinkageGrabber _linkageGrabber;
     private readonly bool _linkageScannerEnabled;
     private DateTime _timeAudioEvent;
@@ -262,8 +260,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
             }
             else
             {
-              this.LogInfo("start subch:{0} No PMT received. Timeshifting failed", subchannel.SubChannelId);
-              result = TvResult.UnableToStartGraph;
+              this.LogError("start subch:subchannel is null");
             }
           }
         }
@@ -329,11 +326,9 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       discontinuityCounter = 0;
 
       ITvSubChannel subchannel = GetSubChannel(_cardHandler.UserManagement.GetTimeshiftingSubChannel(userName));
-
-      var dvbSubchannel = subchannel as TvDvbChannel;
-      if (dvbSubchannel != null)
+      if (subchannel != null)
       {
-        dvbSubchannel.GetStreamQualityCounters(out totalTSpackets, out discontinuityCounter);
+        subchannel.GetStreamQualityCounters(out totalTSpackets, out discontinuityCounter);
       }
     }
 

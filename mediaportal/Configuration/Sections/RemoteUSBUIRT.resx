@@ -117,7 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="label2.Text" xml:space="preserve">
+  <data name="_label2.Text" xml:space="preserve">
     <value>The USBUIRT is an external USB device which allows MediaPortal to both Transmit and Receive infrared signals. With USBUIRT you can tell mediaportal to remote control your settop box and/or you can control mediaportal using any remote control you may have.</value>
   </data>
 </root>

@@ -23,8 +23,8 @@ using System.Windows.Forms;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.CiMenu;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections.CIMenu
 {

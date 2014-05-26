@@ -23,6 +23,7 @@
 #include "NitParser.h"
 
 extern bool DisableCRCCheck();
+extern void getString468a(BYTE* buf, int bufLen, char* text, int textLen);
 
 CNitParser::CNitParser(void)
 {
@@ -533,7 +534,7 @@ int CNitParser::GetLogicialChannelNumber(int originalNetworkId, int transportStr
   return m_mLogicalChannelNumbers[serviceKey];
 }
 
-void CNitParser::GetNetworkIds(int originalNetworkId, int transportStreamId, int serviceId, vector<int>* networkIds)
+void CNitParser::GetNetworkIds(int originalNetworkId, int transportStreamId, int serviceId, vector<unsigned short>* networkIds)
 {
   if (networkIds == NULL)
   {
@@ -1452,7 +1453,7 @@ void CNitParser::DecodeNameDescriptor(byte* b, int length, char** name)
     LogDebug("%s: failed to allocate memory in DecodeNameDescriptor()", m_sName);
     return;
   }
-  getString468A(b, length, *name, length + 1);
+  getString468a(b, length, *name, length + 1);
 }
 
 void CNitParser::DecodeMultilingualNameDescriptor(byte* b, int length, map<unsigned int, char*>* names)
@@ -1471,7 +1472,7 @@ void CNitParser::DecodeMultilingualNameDescriptor(byte* b, int length, map<unsig
         LogDebug("%s: failed to allocate memory in DecodeMultilingualNameDescriptor()", m_sName);
         return;
       }
-      getString468A(&b[pointer], network_name_length, name, network_name_length + 1);
+      getString468a(&b[pointer], network_name_length, name, network_name_length + 1);
       (*names)[iso_639_language_code] = name;
 
       pointer += network_name_length;
@@ -1659,7 +1660,7 @@ void CNitParser::DecodeTargetRegionNameDescriptor(byte* b, int length, map<__int
           LogDebug("%s: failed to allocate memory in DecodeTargetRegionNameDescriptor()", m_sName);
           return;
         }
-        getString468A(&b[pointer], region_name_length, targetRegionName, region_name_length + 1);
+        getString468a(&b[pointer], region_name_length, targetRegionName, region_name_length + 1);
         pointer += region_name_length;
 
         __int64 targetRegionId = ((__int64)country_code << 32) + (b[pointer++] << 24);

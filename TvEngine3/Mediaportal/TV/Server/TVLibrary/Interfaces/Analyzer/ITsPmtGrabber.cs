@@ -28,7 +28,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
   /// </summary>
   [Guid("37a1c1e3-4760-49fe-ab59-6688ada54923"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  public interface IPmtCallBack
+  internal interface IPmtCallBack
   {
     /// <summary>
     /// Called by an ITsPmtGrabber instance when it receives a new PMT section for a service.
@@ -47,7 +47,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
   /// </summary>
   [Guid("6e714740-803d-4175-bef6-67246bdf1855"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  public interface ITsPmtGrabber
+  internal interface ITsPmtGrabber
   {
     /// <summary>
     /// Set the PID and service for the grabber to monitor.

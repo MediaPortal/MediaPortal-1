@@ -30,68 +30,72 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      this.mpWarningLabel = new MPLabel();
-      this.mpResetGraphCheckBox = new MPCheckBox();
-      this.mpUsePatLookupCheckBox = new MPCheckBox();
-      this.mpDumpRawTSCheckBox = new MPCheckBox();
-      this.mpFormToolTips = new MPToolTip();
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DebugOptions));
+      this.mpLabelGeneralWarning = new MPLabel();
+      this.mpCheckBoxTsWriterDumpInputs = new MPCheckBox();
+      this.mpCheckBoxTsMuxerDumpInputs = new MPCheckBox();
+      this.mpLabelTsWriterDumpInputsWarning = new MPLabel();
+      this.mpLabelTsMuxerDumpInputsWarning = new MPLabel();
       this.SuspendLayout();
       // 
-      // mpWarningLabel
+      // mpLabelGeneralWarning
       // 
-      this.mpWarningLabel.ForeColor = System.Drawing.Color.Red;
-      this.mpWarningLabel.Location = new System.Drawing.Point(9, 6);
-      this.mpWarningLabel.Name = "mpWarningLabel";
-      this.mpWarningLabel.Size = new System.Drawing.Size(464, 48);
-      this.mpWarningLabel.TabIndex = 0;
-      this.mpWarningLabel.Text = "This section provides special/debugging settings that are not supported by the Te" +
-          "am. Some of these settings are experimental. Do not alter any of the settings be" +
-          "low unless you know what you are doing.";
+      this.mpLabelGeneralWarning.ForeColor = System.Drawing.Color.Red;
+      this.mpLabelGeneralWarning.Location = new System.Drawing.Point(9, 6);
+      this.mpLabelGeneralWarning.Name = "mpLabelGeneralWarning";
+      this.mpLabelGeneralWarning.Size = new System.Drawing.Size(464, 39);
+      this.mpLabelGeneralWarning.TabIndex = 0;
+      this.mpLabelGeneralWarning.Text = "This section provides access to test and debug settings. Some are experimental an" +
+          "d may cause unexpected problems. Please don\'t modify anything here unless you kn" +
+          "ow what you are doing.";
       // 
-      // mpResetGraphCheckBox
+      // mpCheckBoxTsWriterDumpInputs
       // 
-      this.mpResetGraphCheckBox.AutoSize = true;
-      this.mpResetGraphCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpResetGraphCheckBox.Location = new System.Drawing.Point(12, 57);
-      this.mpResetGraphCheckBox.Name = "mpResetGraphCheckBox";
-      this.mpResetGraphCheckBox.Size = new System.Drawing.Size(160, 17);
-      this.mpResetGraphCheckBox.TabIndex = 1;
-      this.mpResetGraphCheckBox.Text = "Always reset graph after stop";
-      this.mpResetGraphCheckBox.UseVisualStyleBackColor = true;
+      this.mpCheckBoxTsWriterDumpInputs.AutoSize = true;
+      this.mpCheckBoxTsWriterDumpInputs.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpCheckBoxTsWriterDumpInputs.Location = new System.Drawing.Point(12, 48);
+      this.mpCheckBoxTsWriterDumpInputs.Name = "mpCheckBoxTsWriterDumpInputs";
+      this.mpCheckBoxTsWriterDumpInputs.Size = new System.Drawing.Size(124, 17);
+      this.mpCheckBoxTsWriterDumpInputs.TabIndex = 1;
+      this.mpCheckBoxTsWriterDumpInputs.Text = "dump TsWriter inputs";
+      this.mpCheckBoxTsWriterDumpInputs.UseVisualStyleBackColor = true;
       // 
-      // mpUsePatLookupCheckBox
+      // mpCheckBoxTsMuxerDumpInputs
       // 
-      this.mpUsePatLookupCheckBox.AutoSize = true;
-      this.mpUsePatLookupCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpUsePatLookupCheckBox.Location = new System.Drawing.Point(12, 81);
-      this.mpUsePatLookupCheckBox.Name = "mpUsePatLookupCheckBox";
-      this.mpUsePatLookupCheckBox.Size = new System.Drawing.Size(136, 17);
-      this.mpUsePatLookupCheckBox.TabIndex = 2;
-      this.mpUsePatLookupCheckBox.Text = "Always use PAT lookup";
-      this.mpUsePatLookupCheckBox.UseVisualStyleBackColor = true;
+      this.mpCheckBoxTsMuxerDumpInputs.AutoSize = true;
+      this.mpCheckBoxTsMuxerDumpInputs.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpCheckBoxTsMuxerDumpInputs.Location = new System.Drawing.Point(12, 123);
+      this.mpCheckBoxTsMuxerDumpInputs.Name = "mpCheckBoxTsMuxerDumpInputs";
+      this.mpCheckBoxTsMuxerDumpInputs.Size = new System.Drawing.Size(125, 17);
+      this.mpCheckBoxTsMuxerDumpInputs.TabIndex = 3;
+      this.mpCheckBoxTsMuxerDumpInputs.Text = "dump TsMuxer inputs";
+      this.mpCheckBoxTsMuxerDumpInputs.UseVisualStyleBackColor = true;
       // 
-      // mpDumpRawTSCheckBox
+      // mpLabelTsWriterDumpInputsWarning
       // 
-      this.mpDumpRawTSCheckBox.AutoSize = true;
-      this.mpDumpRawTSCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpDumpRawTSCheckBox.Location = new System.Drawing.Point(12, 105);
-      this.mpDumpRawTSCheckBox.Name = "mpDumpRawTSCheckBox";
-      this.mpDumpRawTSCheckBox.Size = new System.Drawing.Size(175, 17);
-      this.mpDumpRawTSCheckBox.TabIndex = 3;
-      this.mpDumpRawTSCheckBox.Text = "Dump raw TS (use with caution)";
-      this.mpFormToolTips.SetToolTip(this.mpDumpRawTSCheckBox, "When enabled the entire TS will be written to a file. This can easily create huge" +
-              " files and use up your disk space fast. Use with care and only for testing/debug" +
-              "ing.");
-      this.mpDumpRawTSCheckBox.UseVisualStyleBackColor = true;
+      this.mpLabelTsWriterDumpInputsWarning.Location = new System.Drawing.Point(9, 68);
+      this.mpLabelTsWriterDumpInputsWarning.Name = "mpLabelTsWriterDumpInputsWarning";
+      this.mpLabelTsWriterDumpInputsWarning.Size = new System.Drawing.Size(450, 41);
+      this.mpLabelTsWriterDumpInputsWarning.TabIndex = 2;
+      this.mpLabelTsWriterDumpInputsWarning.Text = resources.GetString("mpLabelTsWriterDumpInputsWarning.Text");
+      // 
+      // mpLabelTsMuxerDumpInputsWarning
+      // 
+      this.mpLabelTsMuxerDumpInputsWarning.Location = new System.Drawing.Point(9, 143);
+      this.mpLabelTsMuxerDumpInputsWarning.Name = "mpLabelTsMuxerDumpInputsWarning";
+      this.mpLabelTsMuxerDumpInputsWarning.Size = new System.Drawing.Size(450, 46);
+      this.mpLabelTsMuxerDumpInputsWarning.TabIndex = 4;
+      this.mpLabelTsMuxerDumpInputsWarning.Text = resources.GetString("mpLabelTsMuxerDumpInputsWarning.Text");
       // 
       // DebugOptions
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.Controls.Add(this.mpDumpRawTSCheckBox);
-      this.Controls.Add(this.mpUsePatLookupCheckBox);
-      this.Controls.Add(this.mpResetGraphCheckBox);
-      this.Controls.Add(this.mpWarningLabel);
+      this.Controls.Add(this.mpLabelTsMuxerDumpInputsWarning);
+      this.Controls.Add(this.mpLabelTsWriterDumpInputsWarning);
+      this.Controls.Add(this.mpCheckBoxTsMuxerDumpInputs);
+      this.Controls.Add(this.mpCheckBoxTsWriterDumpInputs);
+      this.Controls.Add(this.mpLabelGeneralWarning);
       this.Name = "DebugOptions";
       this.Padding = new System.Windows.Forms.Padding(6);
       this.Size = new System.Drawing.Size(482, 419);
@@ -102,10 +106,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     #endregion
 
-    private MPLabel mpWarningLabel;
-    private MPCheckBox mpResetGraphCheckBox;
-    private MPCheckBox mpUsePatLookupCheckBox;
-    private MPCheckBox mpDumpRawTSCheckBox;
-    private MPToolTip mpFormToolTips;
+    private MPLabel mpLabelGeneralWarning;
+    private MPCheckBox mpCheckBoxTsWriterDumpInputs;
+    private MPCheckBox mpCheckBoxTsMuxerDumpInputs;
+    private MPLabel mpLabelTsWriterDumpInputsWarning;
+    private MPLabel mpLabelTsMuxerDumpInputsWarning;
   }
 }

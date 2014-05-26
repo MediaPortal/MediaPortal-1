@@ -48,6 +48,8 @@
 !define git_InstallScripts "${git_ROOT}\Tools\InstallationScripts"
 # common script init
 !include "${git_InstallScripts}\include\MediaPortalScriptInit.nsh"
+# NET4.0 Checking
+!include "${git_InstallScripts}\include\DotNetSearch.nsh"
 # Castle binaries
 !define EXTBIN "${git_TVServer}\ExternalBinaries"
 
@@ -242,7 +244,7 @@ ShowUninstDetails show
   ${LOG_TEXT} "DEBUG" "MACRO SectionList ${MacroName}"
   ; This macro used to perform operation on multiple sections.
   ; List all of your components in following manner here.
-;  !insertmacro "${MacroName}" "SecPowerScheduler"
+  !insertmacro "${MacroName}" "SecPowerScheduler"
   !insertmacro "${MacroName}" "SecMpeInstaller"
 !macroend
 
@@ -261,6 +263,9 @@ ShowUninstDetails show
   ; MPTray
   ${KillProcess} "MPTray.exe"
   StrCpy $MPTray_Running $R0
+  
+  ; ffmpeg
+  ${KillProcess} "ffmpeg.exe"
   
   ; MovieThumbnailer
   ${KillProcess} "mtn.exe"
@@ -421,6 +426,7 @@ Section "MediaPortal core files (required)" SecCore
   
   SetOutPath "$MPdir.Config\scripts"
   File /nonfatal "${MEDIAPORTAL.BASE}\scripts\InternalActorMoviesGrabber.csscript"
+	File /nonfatal "${MEDIAPORTAL.BASE}\scripts\InternalMovieImagesGrabber.csscript"
   File /nonfatal "${MEDIAPORTAL.BASE}\scripts\VDBParserStrings.xml"
   
   SetOutPath "$MPdir.Base"
@@ -435,11 +441,11 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_MP}\Configuration\bin\${BUILD_TYPE}\WinCustomControls.dll"  ; Core
   File "${git_MP}\core\bin\${BUILD_TYPE}\Core.dll"
   File "${git_Common_MP_TVE3}\DirectShowLib\bin\${BUILD_TYPE}\DirectShowLib.dll"
-  File "${git_MP}\core.cpp\fontEngine\bin\${BUILD_TYPE}\fontengine.dll"
-  File "${git_MP}\core.cpp\DirectShowHelper\bin\${BUILD_TYPE}\dshowhelper.dll"
-  File "${git_MP}\core.cpp\Win7RefreshRateHelper\bin\${BUILD_TYPE}\Win7RefreshRateHelper.dll"
-  File "${git_MP}\core.cpp\DxUtil\bin\${BUILD_TYPE}\dxutil.dll"
-  File "${git_MP}\core.cpp\mpc-hc_subs\bin\${BUILD_TYPE}\mpcSubs.dll"
+  File "${git_DirectShowFilters}\fontEngine\bin\${BUILD_TYPE}\fontengine.dll"
+  File "${git_DirectShowFilters}\DirectShowHelper\bin\${BUILD_TYPE}\dshowhelper.dll"
+  File "${git_DirectShowFilters}\Win7RefreshRateHelper\bin\${BUILD_TYPE}\Win7RefreshRateHelper.dll"
+  File "${git_DirectShowFilters}\DxUtil\bin\${BUILD_TYPE}\dxutil.dll"
+  File "${git_DirectShowFilters}\mpc-hc_subs\bin\${BUILD_TYPE}\mpcSubs.dll"
   File "${git_DirectShowFilters}\DXErr9\bin\${BUILD_TYPE}\Dxerr9.dll"
   File "${git_MP}\MiniDisplayLibrary\bin\${BUILD_TYPE}\MiniDisplayLibrary.dll"
   ; Utils
@@ -450,6 +456,7 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_MP}\MediaPortal.Support\bin\${BUILD_TYPE}\MediaPortal.Support.dll"
   ; Databases
   File "${git_MP}\databases\bin\${BUILD_TYPE}\Databases.dll"
+  File "${git_MP}\databases\bin\${BUILD_TYPE}\HtmlAgilityPack.dll"
   ; MusicShareWatcher
   File "${git_MP}\ProcessPlugins\MusicShareWatcher\MusicShareWatcher\bin\${BUILD_TYPE}\MusicShareWatcher.exe"
   File "${git_MP}\ProcessPlugins\MusicShareWatcher\MusicShareWatcherHelper\bin\${BUILD_TYPE}\MusicShareWatcherHelper.dll"
@@ -473,7 +480,28 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_MP}\SubtitlePlugins\bin\${BUILD_TYPE}\SubtitlePlugins.dll"
   SetOutPath "$MPdir.Plugins\Windows"
   File "${git_MP}\Dialogs\bin\${BUILD_TYPE}\Dialogs.dll"
-  File "${git_MP}\WindowPlugins\bin\${BUILD_TYPE}\WindowPlugins.dll"
+  ; Window Plugins
+  File "${git_MP}\WindowPlugins\GUIDisc\bin\${BUILD_TYPE}\GUIDisc.dll"
+  File "${git_MP}\WindowPlugins\GUIDVD\bin\${BUILD_TYPE}\GUIDVD.dll"
+  File "${git_MP}\WindowPlugins\GUIHome\bin\${BUILD_TYPE}\GUIHome.dll"
+  File "${git_MP}\WindowPlugins\GUILastFMRadio\bin\${BUILD_TYPE}\GUILastFMRadio.dll"
+  File "${git_MP}\WindowPlugins\GUIMusic\bin\${BUILD_TYPE}\GUIMusic.dll"
+  File "${git_MP}\WindowPlugins\GUISudoku\bin\${BUILD_TYPE}\GUISudoku.dll"
+  File "${git_MP}\WindowPlugins\GUIPictures\bin\${BUILD_TYPE}\GUIPictures.dll"
+  File "${git_MP}\WindowPlugins\GUIRSSFeed\bin\${BUILD_TYPE}\GUIRSSFeed.dll"
+  File "${git_MP}\WindowPlugins\GUISettings\bin\${BUILD_TYPE}\GUISettings.dll"
+  File "${git_MP}\WindowPlugins\GUITetris\bin\${BUILD_TYPE}\GUITetris.dll"
+  File "${git_MP}\WindowPlugins\GUITopbar\bin\${BUILD_TYPE}\GUITopbar.dll"
+  File "${git_MP}\WindowPlugins\GUIVideos\bin\${BUILD_TYPE}\GUIVideos.dll"
+  File "${git_MP}\WindowPlugins\GUIWikipedia\bin\${BUILD_TYPE}\GUIWikipedia.dll"
+  ; Common Plugins
+  File "${git_MP}\WindowPlugins\Common.GUIPlugins\bin\${BUILD_TYPE}\Common.GUIPlugins.dll"
+  ; ffmpeg
+  SetOutPath "$MPdir.Base\MovieThumbnailer"
+  File "${git_ROOT}\Packages\ffmpeg.2.1.1\ffmpeg.exe"
+  ; ffmpeg
+  SetOutPath "$MPdir.Base\MovieThumbnailer"
+  File "${git_ROOT}\Packages\ffmpeg.2.1.1\ffmpeg.exe"
   ; Doc
   SetOutPath "$MPdir.Base\Docs"
   File "${git_MP}\Docs\BASS License.txt"
@@ -483,6 +511,7 @@ Section "MediaPortal core files (required)" SecCore
   File /oname=bluray.dll "${git_DirectShowFilters}\bin_Win32\libbluray\libbluray.dll"
   ; TvLibrary for Genre
   File "${git_TVServer}\Server\TvLibrary.Interfaces\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TvLibrary.Interfaces.dll"
+  File "${git_MP}\LastFMLibrary\bin\${BUILD_TYPE}\LastFMLibrary.dll"
   ; MediaPortal.exe
   File "${EXTBIN}\Castle.Core.dll"
   File "${EXTBIN}\Castle.Facilities.EventWiring.dll"
@@ -521,27 +550,14 @@ Section "MediaPortal core files (required)" SecCore
     !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\MPAudioRenderer\bin\${BUILD_TYPE}\mpaudiorenderer.ax"                "$MPdir.Base\mpaudiorenderer.ax"         "$MPdir.Base"
   ${EndIf}
 
-  ; used for Default Skin Font
+  ; used for Default and Titan Skin Font
   StrCpy $FONT_DIR $FONTS
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\DefaultWide\MPDefaultFonts\MediaPortalDefault.ttf"
-  SendMessage ${HWND_BROADCAST} ${WM_FONTCHANGE} 0 0 /TIMEOUT=5000
-  
-  ; used for Titan Skin
-  StrCpy $FONT_DIR $FONTS
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanSmall.ttf"
-  SendMessage ${HWND_BROADCAST} ${WM_FONTCHANGE} 0 0 /TIMEOUT=5000  
-  
-  StrCpy $FONT_DIR $FONTS
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\Titan.ttf"
-  SendMessage ${HWND_BROADCAST} ${WM_FONTCHANGE} 0 0 /TIMEOUT=5000    
-
-  StrCpy $FONT_DIR $FONTS
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanLight.ttf"
-  SendMessage ${HWND_BROADCAST} ${WM_FONTCHANGE} 0 0 /TIMEOUT=5000    
-
-  StrCpy $FONT_DIR $FONTS
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanMedium.ttf"
-  SendMessage ${HWND_BROADCAST} ${WM_FONTCHANGE} 0 0 /TIMEOUT=5000    
+  SendMessage ${HWND_BROADCAST} ${WM_FONTCHANGE} 0 0 /TIMEOUT=1000
   
 SectionEnd
 !macro Remove_${SecCore}
@@ -588,7 +604,8 @@ SectionEnd
   ; Config Files
   Delete "$MPdir.Config\CaptureCardDefinitions.xml"
   Delete "$MPdir.Config\eHome Infrared Transceiver List XP.xml"
-  Delete "$MPdir.Config\keymap.xml"
+  ; Don't delete this file (needed for manual user input)
+  ;Delete "$MPdir.Config\keymap.xml"
   Delete "$MPdir.Config\wikipedia.xml"
 
   Delete "$MPdir.Config\Installer\cleanup.xml"
@@ -597,6 +614,7 @@ SectionEnd
   Delete "$MPdir.Config\scripts\MovieInfo\IMDB_MP13x.csscript"
   RMDir "$MPdir.Config\scripts\MovieInfo"
   Delete "$MPdir.Config\scripts\InternalActorMoviesGrabber.csscript"
+	Delete "$MPdir.Config\scripts\InternalMovieImagesGrabber.csscript"
   Delete "$MPdir.Config\scripts\VDBParserStrings.xml"
   RMDir "$MPdir.Config\scripts"
 
@@ -626,6 +644,7 @@ SectionEnd
   Delete "$MPdir.Base\MediaPortal.Support.dll"
   ; Databases
   Delete "$MPdir.Base\Databases.dll"
+  Delete "$MPdir.Base\\HtmlAgilityPack.dll"
   ; MusicShareWatcher
   Delete "$MPdir.Base\MusicShareWatcher.exe"
   Delete "$MPdir.Base\MusicShareWatcherHelper.dll"
@@ -661,7 +680,19 @@ SectionEnd
   Delete "$MPdir.Plugins\subtitle\SubtitlePlugins.dll"
   RMDir "$MPdir.Plugins\subtitle"
   Delete "$MPdir.Plugins\Windows\Dialogs.dll"
-  Delete "$MPdir.Plugins\Windows\WindowPlugins.dll"
+  Delete "$MPdir.Plugins\Windows\GUIDisc.dll"
+  Delete "$MPdir.Plugins\Windows\GUIDVD.dll"
+  Delete "$MPdir.Plugins\Windows\GUIHome.dll"
+  Delete "$MPdir.Plugins\Windows\GUIMusic.dll"
+  Delete "$MPdir.Plugins\Windows\GUISudoku.dll"
+  Delete "$MPdir.Plugins\Windows\GUIPictures.dll"
+  Delete "$MPdir.Plugins\Windows\GUIRSSFeed.dll"
+  Delete "$MPdir.Plugins\Windows\GUISettings.dll"
+  Delete "$MPdir.Plugins\Windows\GUITetris.dll"
+  Delete "$MPdir.Plugins\Windows\GUITopbar.dll"
+  Delete "$MPdir.Plugins\Windows\GUIVideos.dll"
+  Delete "$MPdir.Plugins\Windows\GUIWikipedia.dll"
+  Delete "$MPdir.Plugins\Windows\Common.GUIPlugins.dll"
   RMDir "$MPdir.Plugins\Windows"
   RMDir "$MPdir.Plugins"
   ; Doc
@@ -670,24 +701,27 @@ SectionEnd
   RMDir "$MPdir.Base\Docs"
   ; Wizards
   RMDir /r "$MPdir.Base\Wizards"
+  ; Log
+  Delete "$MPdir.Base\log4net.dll"
+  
 !macroend
 
-;Section "-Powerscheduler Client plugin" SecPowerScheduler
-;  ${LOG_TEXT} "INFO" "Installing Powerscheduler client plugin..."
+Section "-Powerscheduler Client plugin" SecPowerScheduler
+  ${LOG_TEXT} "INFO" "Installing Powerscheduler client plugin..."
 
-;  SetOutPath "$MPdir.Base"
-;  File "${git_Common_MP_TVE3}\PowerScheduler.Interfaces\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.dll"
+  SetOutPath "$MPdir.Base"
+  File "${git_Common_MP_TVE3}\PowerScheduler.Interfaces\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.dll"
 
-;  SetOutPath "$MPdir.Plugins\Process"
-;  File "${git_MP}\PowerSchedulerClientPlugin\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.PowerSchedulerClientPlugin.dll"
-;SectionEnd
-;!macro Remove_${SecPowerScheduler}
-;  ${LOG_TEXT} "INFO" "Uninstalling Powerscheduler client plugin..."
+  SetOutPath "$MPdir.Plugins\Process"
+  File "${git_MP}\PowerSchedulerClientPlugin\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.PowerSchedulerClientPlugin.dll"
+SectionEnd
+!macro Remove_${SecPowerScheduler}
+  ${LOG_TEXT} "INFO" "Uninstalling Powerscheduler client plugin..."
 
-;  Delete "$MPdir.Base\Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.dll"
+  Delete "$MPdir.Base\Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.dll"
 
-;  Delete "$MPdir.Plugins\Process\Mediaportal.TV.Server.Plugins.PowerSchedulerClientPlugin.dll"
-;!macroend
+  Delete "$MPdir.Plugins\Process\Mediaportal.TV.Server.Plugins.PowerSchedulerClientPlugin.dll"
+!macroend
 
 Section "-MediaPortal Extension Installer" SecMpeInstaller
   ${LOG_TEXT} "INFO" "MediaPortal Extension Installer..."
@@ -774,6 +808,10 @@ Section -Post
   ${LOG_TEXT} "INFO" "Removing obsolete BASS 2.3 files"
   Delete "$MPdir.Base\MusicPlayer\plugins\audio decoders\bass_wv.dll"
 
+  ; MP1-4315 Blow windowplugins dll to separate plugin dlls
+  ${LOG_TEXT} "INFO" "Removing obsolete WindowPlugins.dll"
+  Delete "$MPdir.Plugins\Windows\WindowPlugins.dll"
+  
   ; removing old shortcut
   ${LOG_TEXT} "INFO" "Removing obsolete startmenu shortcuts"
   Delete "${STARTMENU_GROUP}\MediaPortal Logs Collector.lnk"
@@ -935,6 +973,9 @@ FunctionEnd
 Function .onInit
   ${LOG_OPEN}
   ${LOG_TEXT} "DEBUG" "FUNCTION .onInit"
+
+  !insertmacro MediaPortalNetFrameworkCheck
+  !insertmacro MediaPortalNet4FrameworkCheck
 
   StrCpy $MPTray_Running 0
 

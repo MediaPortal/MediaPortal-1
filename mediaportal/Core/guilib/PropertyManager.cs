@@ -126,6 +126,8 @@ namespace MediaPortal.GUI.Library
       _properties["#shortcurrentplaytime"] = string.Empty;
       _properties["#duration"] = string.Empty;
       _properties["#shortduration"] = string.Empty;
+      _properties["#chapters"] = string.Empty;
+      _properties["#jumppoints"] = string.Empty;
       _properties["#playlogo"] = string.Empty;
       _properties["#playspeed"] = string.Empty;
       _properties["#percentage"] = string.Empty;
@@ -545,6 +547,16 @@ namespace MediaPortal.GUI.Library
       SetProperty("#Play.Next.TimesPlayed", string.Empty);
       SetProperty("#Play.Next.TrackTotal", string.Empty);
 
+      SetProperty("#currentplaytime", string.Empty);
+      SetProperty("#currentremaining", string.Empty);
+      SetProperty("#shortcurrentplaytime", string.Empty);
+      SetProperty("#shortcurrentremaining", string.Empty);
+      SetProperty("#duration", string.Empty);
+      SetProperty("#shortduration", string.Empty);
+      SetProperty("#percentage", "0,0");
+      SetProperty("#chapters", string.Empty);
+      SetProperty("#jumppoints", string.Empty);
+      
       _isChanged = true;
     }
 

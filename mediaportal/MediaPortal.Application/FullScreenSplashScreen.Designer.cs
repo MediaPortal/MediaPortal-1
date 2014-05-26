@@ -1,4 +1,6 @@
-﻿namespace MediaPortal
+﻿using System.Windows.Forms;
+
+namespace MediaPortal
 {
   partial class FullScreenSplashScreen
   {
@@ -93,7 +95,7 @@
       // FullScreenSplashScreen
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
       this.ClientSize = new System.Drawing.Size(284, 264);
       this.ControlBox = false;
       this.Controls.Add(this.lblVersion);
@@ -108,9 +110,7 @@
       this.ShowInTaskbar = false;
       this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
       this.Text = "FullScreenSplashScreen";
-      this.TopMost = true;
-      this.Load += new System.EventHandler(this.FullScreenSplashScreen_Load);
-      this.Activated += new System.EventHandler(this.FullScreenSplashScreen_Activated);
+      this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
       ((System.ComponentModel.ISupportInitialize)(this.pbBackground)).EndInit();
       this.ResumeLayout(false);
 

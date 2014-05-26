@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Grabber>
+  <Info treatErrorAsWarning="false" language="es" availableDays="3" timezone="W. Europe Standard Time" version="2.0" />
+  <Channels>
+    <Channel id="Antena 3" siteId="antena-3" />
+    <Channel id="Canal Sur 2" siteId="canal-sur-2" />
+    <Channel id="Canal Sur" siteId="canal-sur" />
+    <Channel id="Clan" siteId="clan" />
+    <Channel id="Cuatro" siteId="cuatro" />
+    <Channel id="Disney Channel" siteId="disney" />
+    <Channel id="Divinity" siteId="divinity" />
+    <Channel id="FDF" siteId="fdf-tele5" />
+    <Channel id="IB3" siteId="ib3" />
+    <Channel id="La 1" siteId="tve-1" />
+    <Channel id="La 2" siteId="la-2" />
+    <Channel id="La Sexta 3" siteId="la-sexta-3" />
+    <Channel id="La Sexta" siteId="la-sexta" />
+    <Channel id="La Siete" siteId="lasiete" />
+    <Channel id="Neox" siteId="neox" />
+    <Channel id="Nova" siteId="nova" />
+    <Channel id="Telecinco" siteId="tele-5" />
+    <Channel id="Teledeporte" siteId="teledeporte" />
+    <Channel id="TPA" siteId="tpa" />
+    <Channel id="TV Canaria" siteId="tvcan" />
+    <Channel id="TVG" siteId="tvg" />
+    <Channel id="Xplora" siteId="xplora" />
+  </Channels>
+  <Listing type="Html">
+    <Site url="http://ocio.lne.es/tv/programacion-television/[ID].html&amp;[YYYY][MM][DD]" post="" external="false" encoding="iso-8859-1" />
+    <Html>
+      <Template name="default" start="programasTv" end="ficha_right">
+        <SectionTemplate tags="SAD">
+          <TemplateText>
+&lt;span&gt;&lt;#START&gt;&lt;/span&gt;
+&lt;a&gt;&lt;#TITLE&gt;&lt;/a&gt;
+&lt;z(&gt;&lt;div&gt;&lt;#DESCRIPTION&gt;&lt;/div&gt;&lt;/z)?&gt;
+          </TemplateText>  
+      </SectionTemplate>
+      </Template>
+    </Html>
+  </Listing>
+</Grabber>

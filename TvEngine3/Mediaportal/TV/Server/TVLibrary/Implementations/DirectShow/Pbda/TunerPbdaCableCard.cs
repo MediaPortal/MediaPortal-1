@@ -36,7 +36,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
   /// An implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles North
   /// American CableCARD tuners with PBDA drivers.
   /// </summary>
-  public class TunerPbdaCableCard : TunerBdaAtsc, IConditionalAccessMenuActions
+  internal class TunerPbdaCableCard : TunerBdaAtsc, IConditionalAccessMenuActions
   {
     #region constants
 
@@ -59,7 +59,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
 
     // CA menu variables
     private object _caMenuCallBackLock = new object();
-    private IConditionalAccessMenuCallBacks _caMenuCallBacks = null;
+    private IConditionalAccessMenuCallBack _caMenuCallBack = null;
     private CableCardMmiHandler _caMenuHandler = null;
 
     #endregion
@@ -73,7 +73,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
     public TunerPbdaCableCard(DsDevice device)
       : base(device)
     {
-      _tunerType = CardType.Atsc;
       _caMenuHandler = new CableCardMmiHandler(EnterMenu, CloseDialog);
 
       // CableCARD tuners are limited to one channel per tuner, even for
@@ -92,7 +91,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
     /// Add and connect the appropriate BDA capture/receiver filter into the graph.
     /// </summary>
     /// <param name="lastFilter">The upstream filter to connect the capture filter to.</param>
-    protected virtual void AddAndConnectCaptureFilterIntoGraph(ref IBaseFilter lastFilter)
+    protected override void AddAndConnectCaptureFilterIntoGraph(ref IBaseFilter lastFilter)
     {
       // PBDA graphs don't require a capture filter. Expect problems if you try to connect anything
       // other than the PBDA PT filter to the tuner filter output.
@@ -114,7 +113,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
     /// <summary>
     /// Actually load the tuner.
     /// </summary>
-    protected override void PerformLoading()
+    public override void PerformLoading()
     {
       this.LogDebug("PBDA CableCARD: perform loading");
       base.PerformLoading();
@@ -133,7 +132,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
     /// <summary>
     /// Actually unload the tuner.
     /// </summary>
-    protected override void PerformUnloading()
+    public override void PerformUnloading()
     {
       this.LogDebug("PBDA CableCARD: perform unloading");
       if (_graph != null)
@@ -153,7 +152,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
     /// Actually tune to a channel.
     /// </summary>
     /// <param name="channel">The channel to tune to.</param>
-    protected override void PerformTuning(IChannel channel)
+    public override void PerformTuning(IChannel channel)
     {
       this.LogDebug("PBDA CableCARD: perform tuning");
       ATSCChannel atscChannel = channel as ATSCChannel;
@@ -162,13 +161,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
         throw new TvException("Received request to tune incompatible channel.");
       }
 
+      // Tuning without a CableCARD (clear QAM) is currently not supported.
       SmartCardStatusType status;
       SmartCardAssociationType association;
       string error;
       bool isOutOfBandTunerLocked = false;
       int hr = _caInterface.get_SmartCardStatus(out status, out association, out error, out isOutOfBandTunerLocked);
       HResult.ThrowException(hr, "Failed to read smart card status.");
-      if (status != SmartCardStatusType.CardInserted || (IsScanning && !isOutOfBandTunerLocked) || !string.IsNullOrEmpty(error))
+      if (status != SmartCardStatusType.CardInserted || (_channelScanner.IsScanning && !isOutOfBandTunerLocked) || !string.IsNullOrEmpty(error))
       {
         this.LogError("PBDA CableCARD: smart card status");
         this.LogError("  status      = {0}", status);
@@ -178,7 +178,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
         throw new TvExceptionNoSignal();
       }
 
-      if (!IsScanning)
+      if (!_channelScanner.IsScanning)
       {
         hr = _caInterface.TuneByChannel((short)atscChannel.MajorChannel);
         HResult.ThrowException(hr, "Failed to tune channel.");
@@ -197,6 +197,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
       {
         return false;
       }
+      // Tuning without a CableCARD (clear QAM) is currently not supported.
       // Major channel holds the virtual channel number that we use for tuning.
       return atscChannel.MajorChannel > 0;
     }
@@ -208,12 +209,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
     /// <summary>
     /// Set the menu call back delegate.
     /// </summary>
-    /// <param name="callBacks">The call back delegate.</param>
-    public void SetCallBacks(IConditionalAccessMenuCallBacks callBacks)
+    /// <param name="callBack">The call back delegate.</param>
+    public void SetMenuCallBack(IConditionalAccessMenuCallBack callBack)
     {
       lock (_caMenuCallBackLock)
       {
-        _caMenuCallBacks = callBacks;
+        _caMenuCallBack = callBack;
       }
     }
 
@@ -293,7 +294,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
       }
       lock (_caMenuCallBackLock)
       {
-        return _caMenuHandler.EnterMenu(cardName, cardManufacturer, string.Empty, applicationList, _caMenuCallBacks);
+        return _caMenuHandler.EnterMenu(cardName, cardManufacturer, string.Empty, applicationList, _caMenuCallBack);
       }
     }
 
@@ -343,7 +344,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
       this.LogDebug("PBDA CableCARD: select menu entry, choice = {0}", choice);
       lock (_caMenuCallBackLock)
       {
-        return _caMenuHandler.SelectEntry(choice, _caMenuCallBacks);
+        return _caMenuHandler.SelectEntry(choice, _caMenuCallBack);
       }
     }
 
@@ -371,9 +372,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
     /// Actually update tuner signal status statistics.
     /// </summary>
     /// <param name="onlyUpdateLock"><c>True</c> to only update lock status.</param>
-    protected override void PerformSignalStatusUpdate(bool onlyUpdateLock)
+    public override void PerformSignalStatusUpdate(bool onlyUpdateLock)
     {
-      if (IsScanning)
+      if (_channelScanner != null && _channelScanner.IsScanning)
       {
         // When scanning we need the OOB tuner to be locked. We already updated
         // the lock status when tuning, so only update again when monitoring.

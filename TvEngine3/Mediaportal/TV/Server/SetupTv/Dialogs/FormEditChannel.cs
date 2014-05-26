@@ -33,17 +33,16 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
   public partial class FormEditChannel : Form
   {
-    private bool _newChannel;
+    private bool _newChannel = true;
     private MediaTypeEnum _mediaType = MediaTypeEnum.TV;
-    private Channel _channel;    
-    
+    private Channel _channel = null;    
 
-    public FormEditChannel()
+    public FormEditChannel(Channel channel, MediaTypeEnum mediaType)
     {
+      _channel = channel;
+      _mediaType = mediaType;
       InitializeComponent();
     }
-
-    
 
     public Channel Channel
     {
@@ -68,8 +67,15 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       _channel.VisibleInGuide = checkBoxVisibleInTvGuide.Checked;
       _channel.MediaType = (int) _mediaType;
 
+      // Have to create a channel before we can save tuning details.
+      if (_newChannel)
+      {
+        _channel = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(_channel);
+        _channel.AcceptChanges();
+      }
+
       foreach (TuningDetail detail in _channel.TuningDetails)
-      {                
+      {
         if (detail.ChangeTracker.State != ObjectState.Deleted)
         {
           detail.IdChannel = _channel.IdChannel;
@@ -81,7 +87,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         }    
       }
 
-      _channel = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(_channel);      
+      _channel = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(_channel);
+      _channel.AcceptChanges();
 
       if (_newChannel)
       {
@@ -93,9 +100,9 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         {
           MappingHelper.AddChannelToGroup(ref _channel, TvConstants.RadioGroupNames.AllChannels, MediaTypeEnum.Radio);          
         }
-      }            
+      }
 
-
+      _newChannel = false;
       DialogResult = DialogResult.OK;
       Close();
     }
@@ -265,8 +272,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
           return new FormDVBSTuningDetail();
         case 4:
           return new FormDVBTTuningDetail();
-        case 5:
-          return new FormWebStreamTuningDetail();
         case 7:
           return new FormDVBIPTuningDetail();
       }

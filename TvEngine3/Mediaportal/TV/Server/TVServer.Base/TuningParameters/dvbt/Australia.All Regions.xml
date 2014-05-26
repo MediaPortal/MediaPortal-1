@@ -127,7 +127,7 @@
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
     <IsDvbT2>False</IsDvbT2>
-  </DVBTTuning>    
+  </DVBTTuning>
   <DVBTTuning>
     <Frequency>578500</Frequency>
     <Bandwidth>7000</Bandwidth>

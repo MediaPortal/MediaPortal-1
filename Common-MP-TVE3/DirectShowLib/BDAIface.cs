@@ -1587,9 +1587,6 @@ namespace DirectShowLib.BDA
       out MulticastMode pulModeMask);
   }
 
-  /*
-   * Interface redefined in MediaPortalCustomisations.
-   * 
   [ComImport, SuppressUnmanagedCodeSecurity,
    Guid("71985F47-1CA1-11d3-9CC8-00C04F7971E0"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -1630,7 +1627,7 @@ namespace DirectShowLib.BDA
 
     [PreserveSig]
     int get_FrequencyMultiplier([Out] out int pulMultiplier);
-  }*/
+  }
 
   [ComImport, SuppressUnmanagedCodeSecurity,
    Guid("3F4DC8E2-4050-11d3-8F4B-00C04F7971E2"),

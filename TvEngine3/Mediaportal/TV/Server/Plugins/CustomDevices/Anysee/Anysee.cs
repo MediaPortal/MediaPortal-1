@@ -380,7 +380,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       Audio,
       Video,
       Teletext,
-      SubTitle,
+      Subtitle,
       Private
     }
 
@@ -578,7 +578,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       public byte PmtByte6;                     // Byte 6 from the PMT section (PMT version, current next indicator). 
       private byte Padding1;
       public ushort PcrPid;
-      public ushort ServiceId;
+      public ushort ProgramNumber;
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_DESCRIPTOR_DATA_LENGTH)]
       public byte[] ProgramCaDescriptorData;    // The first two bytes should specify the length of the descriptor data.
       private ushort Padding2;
@@ -725,7 +725,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
         _apiCount++;
         _apiIndex = _apiCount;
         this.LogDebug("Anysee: loading API, API index = {0}", _apiIndex);
-        string resourcesFolder = PathManager.BuildAssemblyRelativePath("Resources"); // It's called already inside plugins\CustomDevices !
+        string resourcesFolder = PathManager.BuildAssemblyRelativePath("Resources");
         string sourceFilename = Path.Combine(resourcesFolder, "CIAPI.dll");
         string targetFilename = Path.Combine(resourcesFolder, "CIAPI" + _apiIndex + ".dll");
         if (!File.Exists(targetFilename))
@@ -743,7 +743,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
         _libHandle = NativeMethods.LoadLibraryA(targetFilename);
         if (_libHandle == IntPtr.Zero)
         {
-          this.LogError("Anysee: failed to load the DLL");
+          this.LogError("Anysee: failed to load the CI API DLL");
           return;
         }
 
@@ -900,7 +900,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
           this.LogDebug("Anysee: API access thread running");
           return true;
         }
-        this.LogError("Anysee: API access thread self-terminated");
+        this.LogError("Anysee: CI API access thread self-terminated");
         return false;
       }
 
@@ -915,7 +915,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
         int result = _createApi(_ciApiInstance);
         if (result != 1)
         {
-          this.LogError("Anysee: failed to create instance, result = {0}", result);
+          this.LogError("Anysee: failed to create CI API instance, result = {0}", result);
           return;
         }
         this.LogDebug("Anysee: created instance successfully");
@@ -971,7 +971,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
           }
           else
           {
-            this.LogError("Anysee: result = failure, hr = 0x{0:x} ({1})", result, HResult.GetDXErrorString(result));
+            this.LogError("Anysee: failed to open CI API, hr = 0x{0:x} ({1})", result, HResult.GetDXErrorString(result));
           }
         }
 
@@ -991,14 +991,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
 
         if (!_dllLoaded)
         {
-          this.LogWarn("Anysee: the CIAPI.dll functions have not been loaded");
+          this.LogWarn("Anysee: the CI API DLL has not been successfully loaded");
           return true;
         }
 
         // Stop the API access thread.
         if (_apiAccessThread == null)
         {
-          this.LogWarn("Anysee: API access thread is null");
+          this.LogWarn("Anysee: CI API access thread is null, earlier failure?");
         }
         else
         {
@@ -1006,7 +1006,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
           _apiAccessThreadStopEvent.Set();
           if (!_apiAccessThread.Join(API_ACCESS_THREAD_WAIT_TIME * 2))
           {
-            this.LogWarn("Anysee: failed to join API access thread, aborting thread");
+            this.LogWarn("Anysee: failed to join CI API access thread, aborting thread");
             _apiAccessThread.Abort();
           }
           _apiAccessThread = null;
@@ -1049,12 +1049,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
 
         if (_apiAccessThread == null)
         {
-          this.LogError("Anysee: API access thread is null");
+          this.LogError("Anysee: failed to execute CI control command, API access thread is null");
           return false;
         }
         if (!_apiAccessThread.IsAlive)
         {
-          this.LogError("Anysee: the API is not open");
+          this.LogError("Anysee: failed to execute CI control command, the API is not open");
           return false;
         }
 
@@ -1069,7 +1069,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
           return true;
         }
 
-        this.LogError("Anysee: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("Anysee: failed to execute CI control command {0}, hr = 0x{1:x} ({2})", command, hr, HResult.GetDXErrorString(hr));
         return false;
       }
     }
@@ -1155,7 +1155,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
     private IntPtr _ciStateChangeCallBackPtr = IntPtr.Zero;
     private OnAnyseeMmiMessage _mmiMessageDelegate = null;
     private IntPtr _mmiMessageCallBackPtr = IntPtr.Zero;
-    private IConditionalAccessMenuCallBacks _caMenuCallBacks = null;
+    private IConditionalAccessMenuCallBack _caMenuCallBack = null;
     private object _caMenuCallBackLock = new object();
 
     private bool _isRemoteControlInterfaceOpen = false;
@@ -1186,7 +1186,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       );
       if (hr != (int)HResult.Severity.Success || returnedByteCount != NIM_CONFIG_SIZE)
       {
-        this.LogWarn("Anysee: result = failure, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+        this.LogWarn("Anysee: failed to read NIM configuration, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
       }
 
       // Most of the info here is not very relevant.
@@ -1223,7 +1223,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       );
       if (hr != (int)HResult.Severity.Success || returnedByteCount != DRIVER_VERSION_SIZE)
       {
-        this.LogWarn("Anysee: result = failure, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+        this.LogWarn("Anysee: failed to read driver version, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
         return;
       }
 
@@ -1251,7 +1251,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       );
       if (hr != (int)HResult.Severity.Success || returnedByteCount != PLATFORM_INFO_SIZE)
       {
-        this.LogWarn("Anysee: result = failure, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+        this.LogWarn("Anysee: failed to read platform information, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
         return;
       }
 
@@ -1290,7 +1290,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       );
       if (hr != (int)HResult.Severity.Success || returnedByteCount != BOARD_INFO_SIZE)
       {
-        this.LogWarn("Anysee: result = failure, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+        this.LogWarn("Anysee: failed to read board information, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
         return;
       }
 
@@ -1322,7 +1322,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       );
       if (hr != (int)HResult.Severity.Success || returnedByteCount != CAPABILITIES_SIZE)
       {
-        this.LogWarn("Anysee: result = failure, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+        this.LogWarn("Anysee: failed to read capabilities, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
         return;
       }
 
@@ -1350,12 +1350,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       this.LogDebug("Anysee: send key, key = {0}", key);
       if (!_isCaInterfaceOpen)
       {
-        this.LogError("Anysee: not initialised or interface not supported");
+        this.LogWarn("Anysee: not initialised or interface not supported");
         return false;
       }
       if (_isCamReady == false)
       {
-        this.LogError("Anysee: the CAM is not ready");
+        this.LogError("Anysee: failed to send key press to CAM, the CAM is not ready");
         return false;
       }
 
@@ -1369,7 +1369,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
           return true;
         }
 
-        this.LogError("Anysee: result = failure");
+        this.LogError("Anysee: failed to send key press {0} to CAM", key);
         return false;
       }
       finally
@@ -1455,23 +1455,24 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
         this.LogDebug("Anysee: enquiry");
         if (msg.HeaderCount != 1)
         {
-          this.LogError("Anysee: unexpected header count, count = {0}", msg.HeaderCount);
+          this.LogError("Anysee: unexpected MMI input request header count, count = {0}", msg.HeaderCount);
+          Dump.DumpBinary(message, MMI_MESSAGE_SIZE);
           return 1;
         }
         lock (_caMenuCallBackLock)
         {
-          if (_caMenuCallBacks == null)
+          if (_caMenuCallBack == null)
           {
-            this.LogDebug("Anysee: menu call backs are not set");
+            this.LogDebug("Anysee: menu call back not set");
           }
 
           string prompt = DvbTextConverter.Convert(Marshal.ReadIntPtr(menu.Entries, 0));
           this.LogDebug("  prompt    = {0}", prompt);
           this.LogDebug("  length    = {0}", msg.ExpectedAnswerLength);
           this.LogDebug("  key count = {0}", msg.KeyCount);
-          if (_caMenuCallBacks != null)
+          if (_caMenuCallBack != null)
           {
-            _caMenuCallBacks.OnCiRequest(false, (uint)msg.ExpectedAnswerLength, prompt);
+            _caMenuCallBack.OnCiRequest(false, (uint)msg.ExpectedAnswerLength, prompt);
           }
         }
         return 0;
@@ -1481,14 +1482,15 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       this.LogDebug("Anysee: menu");
       if (msg.HeaderCount != 3)
       {
-        this.LogError("Anysee: unexpected header count, count = {0}", msg.HeaderCount);
+        this.LogError("Anysee: unexpected MMI menu or list header count, count = {0}", msg.HeaderCount);
+        Dump.DumpBinary(message, MMI_MESSAGE_SIZE);
         return 1;
       }
       lock (_caMenuCallBackLock)
       {
-        if (_caMenuCallBacks == null)
+        if (_caMenuCallBack == null)
         {
-          this.LogDebug("Anysee: menu call backs are not set");
+          this.LogDebug("Anysee: menu call back not set");
         }
 
         string title = DvbTextConverter.Convert(Marshal.ReadIntPtr(menu.Entries, 0));
@@ -1500,12 +1502,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
         this.LogDebug("  # entries = {0}", msg.EntryCount);
         if (msg.EntryCount > MAX_CAM_MENU_ENTRIES - 3)
         {
-          this.LogError("Anysee: entry count {0} exceeds the maximum supported entry count {1}");
+          this.LogError("Anysee: MMI menu or list entry count {0} exceeds the maximum supported entry count {1}", msg.EntryCount, MAX_CAM_MENU_ENTRIES - 3);
+          Dump.DumpBinary(message, MMI_MESSAGE_SIZE);
           return 1;
         }
-        if (_caMenuCallBacks != null)
+        if (_caMenuCallBack != null)
         {
-          _caMenuCallBacks.OnCiMenu(title, subTitle, footer, msg.EntryCount);
+          _caMenuCallBack.OnCiMenu(title, subTitle, footer, msg.EntryCount);
         }
 
         string entry;
@@ -1515,9 +1518,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
           entry = DvbTextConverter.Convert(Marshal.ReadIntPtr(entryPtr, 0));
           entryPtr = IntPtr.Add(entryPtr, IntPtr.Size);
           this.LogDebug("    {0, -7} = {1}", i + 1, entry);
-          if (_caMenuCallBacks != null)
+          if (_caMenuCallBack != null)
           {
-            _caMenuCallBacks.OnCiMenuChoice(i, entry);
+            _caMenuCallBack.OnCiMenuChoice(i, entry);
           }
         }
       }
@@ -1760,7 +1763,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       }
       if (_isCaInterfaceOpen)
       {
-        this.LogWarn("Anysee: interface is already open");
+        this.LogWarn("Anysee: conditional access interface is already open");
         return true;
       }
 
@@ -1775,7 +1778,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       _ciApi = new AnyseeCiApi();
       if (!_ciApi.OpenApi(_tunerDevicePath))
       {
-        this.LogError("Anysee: open API failed");
+        this.LogError("Anysee: failed to open CI API");
         _ciApi.CloseApi();
         _ciApi = null;
         return false;
@@ -1795,7 +1798,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
         return true;
       }
 
-      this.LogError("Anysee: result = failure");
+      this.LogError("Anysee: failed to open conditional access interface");
       return false;
     }
 
@@ -1832,7 +1835,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
         return true;
       }
 
-      this.LogError("Anysee: result = failure");
+      this.LogError("Anysee: failed to close conditional access interface");
       return false;
     }
 
@@ -1889,12 +1892,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       }
       if (command == CaPmtCommand.OkMmi || command == CaPmtCommand.Query)
       {
-        this.LogError("Anysee: command type {0} is not supported", command);
+        this.LogError("Anysee: conditional access command type {0} is not supported", command);
         return true;
       }
       if (pmt == null)
       {
-        this.LogError("Anysee: PMT not supplied");
+        this.LogError("Anysee: failed to send conditional access command, PMT not supplied");
         return true;
       }
 
@@ -1910,7 +1913,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       PmtData pmtData = new PmtData();
       pmtData.PmtByte6 = (byte)((pmt.Version << 1) | pmt.CurrentNextIndicator);
       pmtData.PcrPid = pmt.PcrPid;
-      pmtData.ServiceId = pmt.ProgramNumber;
+      pmtData.ProgramNumber = pmt.ProgramNumber;
 
       // Program CA descriptor data.
       int offset = 2;   // 2 bytes reserved for the data length
@@ -1947,9 +1950,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
         {
           esType = AnyseeEsType.Audio;
         }
-        else if (es.LogicalStreamType == LogicalStreamType.SubTitles)
+        else if (es.LogicalStreamType == LogicalStreamType.Subtitles)
         {
-          esType = AnyseeEsType.SubTitle;
+          esType = AnyseeEsType.Subtitle;
         }
         else if (es.LogicalStreamType == LogicalStreamType.Teletext)
         {
@@ -2000,7 +2003,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       pmtData.EsCount = esCount;
 
       // Pass the PMT structure to the API.
-      Marshal.StructureToPtr(pmtData, _pmtBuffer, true);
+      Marshal.StructureToPtr(pmtData, _pmtBuffer, false);
       //Dump.DumpBinary(_pmtBuffer, PMT_DATA_SIZE);
       if (_ciApi.ExecuteCommand(AnyseeCiCommand.SetPmt, _pmtBuffer, IntPtr.Zero))
       {
@@ -2008,7 +2011,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
         return true;
       }
 
-      this.LogError("Anysee: result = failure");
+      this.LogError("Anysee: failed to send conditional access command");
       return false;
     }
 
@@ -2019,12 +2022,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
     /// <summary>
     /// Set the menu call back delegate.
     /// </summary>
-    /// <param name="callBacks">The call back delegate.</param>
-    public void SetCallBacks(IConditionalAccessMenuCallBacks callBacks)
+    /// <param name="callBack">The call back delegate.</param>
+    public void SetMenuCallBack(IConditionalAccessMenuCallBack callBack)
     {
       lock (_caMenuCallBackLock)
       {
-        _caMenuCallBacks = callBacks;
+        _caMenuCallBack = callBack;
       }
     }
 
@@ -2140,7 +2143,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
         message.ToneBurst = AnyseeToneBurst.DataBurst;
       }
 
-      Marshal.StructureToPtr(message, _generalBuffer, true);
+      Marshal.StructureToPtr(message, _generalBuffer, false);
       //Dump.DumpBinary(_generalBuffer, DISEQC_MESSAGE_SIZE);
 
       int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Diseqc,
@@ -2153,7 +2156,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
         return true;
       }
 
-      this.LogError("Anysee: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Anysee: failed to set tone state, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -2173,12 +2176,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       }
       if (command == null || command.Length == 0)
       {
-        this.LogError("Anysee: command not supplied");
+        this.LogWarn("Anysee: DiSEqC command not supplied");
         return true;
       }
       if (command.Length > MAX_DISEQC_MESSAGE_LENGTH)
       {
-        this.LogError("Anysee: command too long, length = {0}", command.Length);
+        this.LogError("Anysee: DiSEqC command too long, length = {0}", command.Length);
         return false;
       }
 
@@ -2188,7 +2191,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       message.MessageLength = command.Length;
       message.ToneBurst = AnyseeToneBurst.Off;
 
-      Marshal.StructureToPtr(message, _generalBuffer, true);
+      Marshal.StructureToPtr(message, _generalBuffer, false);
       //Dump.DumpBinary(_generalBuffer, DISEQC_MESSAGE_SIZE);
 
       int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Diseqc,
@@ -2201,7 +2204,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
         return true;
       }
 
-      this.LogError("Anysee: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Anysee: failed to send DiSEqC command, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -2237,14 +2240,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       }
       if (_isRemoteControlInterfaceOpen)
       {
-        this.LogWarn("Anysee: interface is already open");
+        this.LogWarn("Anysee: remote control interface is already open");
         return true;
       }
 
       _remoteControlBuffer = Marshal.AllocCoTaskMem(IR_DATA_SIZE);
       IrData command = new IrData();
       command.Enable = true;
-      Marshal.StructureToPtr(command, _remoteControlBuffer, true);
+      Marshal.StructureToPtr(command, _remoteControlBuffer, false);
       int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Ir,
         _remoteControlBuffer, IR_DATA_SIZE,
         _remoteControlBuffer, IR_DATA_SIZE
@@ -2275,7 +2278,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       {
         IrData command = new IrData();
         command.Enable = false;
-        Marshal.StructureToPtr(command, _remoteControlBuffer, true);
+        Marshal.StructureToPtr(command, _remoteControlBuffer, false);
         int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Ir,
           _remoteControlBuffer, IR_DATA_SIZE,
           _remoteControlBuffer, IR_DATA_SIZE

@@ -25,8 +25,8 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
 {
-  // See ATSC A-56 table 5.1.
-  public enum AtscTransmissionMedium
+  // See ATSC A/56 or SCTE 57 table 5.1.
+  internal enum AtscTransmissionMedium
   {
     Cable = 0,
     Satellite,
@@ -35,7 +35,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
     OverTheAir
   }
 
-  public enum WaveformStandard
+  internal enum WaveformStandard
   {
     Ntsc = 1,
     Pal625,
@@ -51,14 +51,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
     Leitch
   }
 
-  public enum MatrixMode
+  internal enum MatrixMode
   {
     Mono = 0,
     DiscreteStereo,
     MatrixStereo
   }
 
-  public enum TransmissionSystem
+  internal enum TransmissionSystem
   {
     ItutAnnex1 = 1, // ITU ETSI cable (DVB-C)
     ItutAnnex2,     // ITU North American cable (SCTE)
@@ -67,14 +67,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
     DigiCipher      // DC II satellite
   }
 
-  public delegate void NitCarrierDefinitionDelegate(AtscTransmissionMedium transmissionMedium, byte index, int carrierFrequency);
-  public delegate void NitModulationModeDelegate(AtscTransmissionMedium transmissionMedium, byte index, TransmissionSystem transmissionSystem,
+  internal delegate void NitCarrierDefinitionDelegate(AtscTransmissionMedium transmissionMedium, byte index, int carrierFrequency);
+  internal delegate void NitModulationModeDelegate(AtscTransmissionMedium transmissionMedium, byte index, TransmissionSystem transmissionSystem,
     BinaryConvolutionCodeRate innerCodingMode, bool isSplitBitstreamMode, ModulationType modulationFormat, int symbolRate);
 
   /// <summary>
-  /// ATSC/SCTE network information table parser. Refer to ATSC A-56 and SCTE 65.
+  /// ATSC/SCTE network information table parser. Refer to ATSC A/56 and SCTE 65.
   /// </summary>
-  public class ParserNit : ParserBase
+  internal class ParserNit : ParserBase
   {
     private enum TableSubtype
     {
@@ -394,6 +394,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser
       }
       pointer++;
 
+      // Comes from SCTE 65. Don't be confused by ATSC A/56 or SCTE 57.
       bool isSplitBitstreamMode = ((section[pointer] & 0x80) != 0);
       ModulationType modulationFormat = ModulationType.ModNotSet;
       switch (section[pointer] & 0x1f)

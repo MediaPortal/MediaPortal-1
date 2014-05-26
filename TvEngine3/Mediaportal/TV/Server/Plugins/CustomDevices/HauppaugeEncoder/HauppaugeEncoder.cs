@@ -413,7 +413,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
               _propertySet = filter as IKsPropertySet;
               if (_propertySet == null)
               {
-                this.LogDebug("Hauppauge encoder: filter is not a property set");
+                this.LogDebug("Hauppauge encoder:   filter is not a property set");
                 continue;
               }
 
@@ -428,7 +428,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
                 ReadDeviceInfo();
                 return true;
               }
-              this.LogDebug("Hauppauge encoder: property set not supported");
+              this.LogDebug("Hauppauge encoder:   property set not supported");
             }
             finally
             {
@@ -480,7 +480,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
       int hr = _propertySet.Get(PROPERTY_SET_VIDEO, (int)PropertyVideo.SourceInfo, _generalBuffer, VIDEO_SOURCE_INFO_SIZE, _generalBuffer, VIDEO_SOURCE_INFO_SIZE, out returnedByteCount);
       if (hr != (int)HResult.Severity.Success || returnedByteCount != VIDEO_SOURCE_INFO_SIZE)
       {
-        this.LogError("Hauppauge encoder: result = failure, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+        this.LogError("Hauppauge encoder: failed to get source information, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
         return;
       }
 
@@ -764,7 +764,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
         int hr = _propertySet.Get(PROPERTY_SET_VIDEO, (int)PropertyVideo.BitRate, _generalBuffer, VIDEO_BIT_RATE_SETTINGS_SIZE, _generalBuffer, VIDEO_BIT_RATE_SETTINGS_SIZE, out returnedByteCount);
         if (hr != (int)HResult.Severity.Success || returnedByteCount != VIDEO_BIT_RATE_SETTINGS_SIZE)
         {
-          this.LogError("Hauppauge encoder: result = failure, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+          this.LogError("Hauppauge encoder: failed to get video bit rate, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
           return false;
         }
 
@@ -800,7 +800,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
         int hr = _propertySet.Get(PROPERTY_SET_AUDIO, (int)PropertyAudio.AacSettings, _generalBuffer, AUDIO_AAC_SETTINGS_SIZE, _generalBuffer, AUDIO_AAC_SETTINGS_SIZE, out returnedByteCount);
         if (hr != (int)HResult.Severity.Success || returnedByteCount != AUDIO_AAC_SETTINGS_SIZE)
         {
-          this.LogError("Hauppauge encoder: result = failure, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+          this.LogError("Hauppauge encoder: failed to get AAC audio settings, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
           return false;
         }
 
@@ -857,7 +857,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
         int hr = _propertySet.Get(PROPERTY_SET_VIDEO, (int)PropertyVideo.BitRate, _generalBuffer, VIDEO_BIT_RATE_SETTINGS_SIZE, _generalBuffer, VIDEO_BIT_RATE_SETTINGS_SIZE, out returnedByteCount);
         if (hr != (int)HResult.Severity.Success || returnedByteCount != VIDEO_BIT_RATE_SETTINGS_SIZE)
         {
-          this.LogError("Hauppauge encoder: result = failure, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+          this.LogError("Hauppauge encoder: failed to get video bit rate, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
           return false;
         }
 
@@ -897,7 +897,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
         hr = _propertySet.Set(PROPERTY_SET_VIDEO, (int)PropertyVideo.BitRate, _generalBuffer, VIDEO_BIT_RATE_SETTINGS_SIZE, _generalBuffer, VIDEO_BIT_RATE_SETTINGS_SIZE);
         if (hr != (int)HResult.Severity.Success)
         {
-          this.LogError("Hauppauge encoder: result = failure, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+          this.LogError("Hauppauge encoder: failed to set video bit rate, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
           return false;
         }
       }
@@ -911,7 +911,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
         int hr = _propertySet.Get(PROPERTY_SET_AUDIO, (int)PropertyAudio.AacSettings, _generalBuffer, AUDIO_AAC_SETTINGS_SIZE, _generalBuffer, AUDIO_AAC_SETTINGS_SIZE, out returnedByteCount);
         if (hr != (int)HResult.Severity.Success || returnedByteCount != AUDIO_AAC_SETTINGS_SIZE)
         {
-          this.LogError("Hauppauge encoder: result = failure, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+          this.LogError("Hauppauge encoder: failed to get AAC audio settings, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
           return false;
         }
 
@@ -937,7 +937,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
         hr = _propertySet.Set(PROPERTY_SET_AUDIO, (int)PropertyAudio.AacSettings, _generalBuffer, AUDIO_AAC_SETTINGS_SIZE, _generalBuffer, AUDIO_AAC_SETTINGS_SIZE);
         if (hr != (int)HResult.Severity.Success)
         {
-          this.LogError("Hauppauge encoder: result = failure, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+          this.LogError("Hauppauge encoder: failed to set AAC audio settings, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
           return false;
         }
       }

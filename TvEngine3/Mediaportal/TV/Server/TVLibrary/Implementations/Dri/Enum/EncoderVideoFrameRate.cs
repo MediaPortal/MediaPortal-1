@@ -20,7 +20,7 @@
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Enum
 {
-  public enum EncoderVideoFrameRate : byte
+  internal enum EncoderVideoFrameRate : byte
   {
     Fr23_976 = 1,
     Fr24 = 2,

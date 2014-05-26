@@ -62,5 +62,6 @@ class CPatParser : public CSectionDecoder
     int m_currentVersionNumber;
     vector<int> m_unseenSections;
     bool m_isReady;
+    bool m_wasReset;
     map<int, ProgramDetail*> m_programs;
 };

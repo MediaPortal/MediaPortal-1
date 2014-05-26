@@ -27,6 +27,7 @@
 #define MULTIFILEWRITER
 
 #include "FileWriter.h"
+#include <streams.h>
 #include <vector>
 
 typedef struct 

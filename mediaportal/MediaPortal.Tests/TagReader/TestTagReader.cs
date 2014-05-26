@@ -105,7 +105,7 @@ namespace MediaPortal.Tests.TagReader
     private void GetTag(string filename)
     {
       MusicTag tag;
-      string expectedArtist = Path.GetExtension(filename).ToLower();
+      string expectedArtist = Path.GetExtension(filename).ToLowerInvariant();
       tag = MediaPortal.TagReader.TagReader.ReadTag(filename);
       Assert.IsNotNull(tag, string.Format("Failed to read tag from file: {0}", filename));
       Assert.AreNotEqual(expectedArtist, tag.Artist);

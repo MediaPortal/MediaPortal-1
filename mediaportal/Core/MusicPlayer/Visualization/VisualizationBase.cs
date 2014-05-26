@@ -23,6 +23,7 @@ using System.Drawing;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using MediaPortal.GUI.Library;
+using MediaPortal.MusicPlayer.BASS;
 using MediaPortal.Player;
 using BassVis_Api;
 
@@ -109,13 +110,18 @@ namespace MediaPortal.Visualization
       switch (VizPluginInfo.VisualizationType)
       {
         case VisualizationInfo.PluginType.Sonique:
-          BassVis.BASSVIS_Init(BASSVISKind.BASSVISKIND_SONIQUE, hInstance, GUIGraphicsContext.form.Handle);
+          BassVis.BASSVIS_Init(BASSVISKind.BASSVISKIND_SONIQUE, GUIGraphicsContext.form.Handle);
           _visParam = new BASSVIS_PARAM(BASSVISKind.BASSVISKIND_SONIQUE);
           break;
 
         case VisualizationInfo.PluginType.Winamp:
-          BassVis.BASSVIS_Init(BASSVISKind.BASSVISKIND_WINAMP, hInstance, GUIGraphicsContext.form.Handle);
+          BassVis.BASSVIS_Init(BASSVISKind.BASSVISKIND_WINAMP, GUIGraphicsContext.form.Handle);
           _visParam = new BASSVIS_PARAM(BASSVISKind.BASSVISKIND_WINAMP);
+          break;
+
+        case VisualizationInfo.PluginType.Bassbox:
+          BassVis.BASSVIS_Init(BASSVISKind.BASSVISKIND_BASSBOX, GUIGraphicsContext.form.Handle);
+          _visParam = new BASSVIS_PARAM(BASSVISKind.BASSVISKIND_BASSBOX);
           break;
       }
     }
@@ -142,6 +148,16 @@ namespace MediaPortal.Visualization
     }
 
     public virtual bool IsWinampVis()
+    {
+      return false;
+    }
+
+    public virtual bool IsSoniqueVis()
+    {
+      return false;
+    }
+
+    public virtual bool IsBassboxVis()
     {
       return false;
     }
@@ -214,12 +230,16 @@ namespace MediaPortal.Visualization
       {
         if (_visParam != null)
         {
+          Log.Info("VisualizationBase: Destroy BassVis with {0} viz plugins...", VizPluginInfo.Name);
           BassVis.BASSVIS_Quit(_visParam);
           _visParam = null;
         }
         return true;
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("VisualizationBase: Failed to destroy BassVis - {0}", ex.ToString());
+      }
       return false;
     }
 

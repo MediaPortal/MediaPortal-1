@@ -332,7 +332,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Prof
       }
       this.LogDebug("  roll-off       = {0}", command.RollOff);
 
-      Marshal.StructureToPtr(command, _generalBuffer, true);
+      Marshal.StructureToPtr(command, _generalBuffer, false);
       //Dump.DumpBinary(_generalBuffer, NBC_TUNING_PARAMS_SIZE);
 
       hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.NbcParams,
@@ -378,7 +378,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Prof
         command.LnbPower = ProfLnbPower.On;
       }
 
-      Marshal.StructureToPtr(command, _generalBuffer, true);
+      Marshal.StructureToPtr(command, _generalBuffer, false);
       //Dump.DumpBinary(_generalBuffer, BDA_EXTENSION_PARAMS_SIZE);
 
       int returnedByteCount = 0;
@@ -437,7 +437,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Prof
         command.Tone22k = Prof22k.On;
       }
 
-      Marshal.StructureToPtr(command, _generalBuffer, true);
+      Marshal.StructureToPtr(command, _generalBuffer, false);
       //Dump.DumpBinary(_generalBuffer, BDA_EXTENSION_PARAMS_SIZE);
 
       int returnedByteCount = 0;
@@ -472,12 +472,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Prof
       }
       if (command == null || command.Length == 0)
       {
-        this.LogError("Prof: command not supplied");
+        this.LogWarn("Prof: DiSEqC command not supplied");
         return true;
       }
       if (command.Length > MAX_DISEQC_TX_MESSAGE_LENGTH)
       {
-        this.LogError("Prof: command too long, length = {0}", command.Length);
+        this.LogError("Prof: DiSEqC command too long, length = {0}", command.Length);
         return false;
       }
 
@@ -490,7 +490,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Prof
       propertyParams.IsLastMessage = true;
       propertyParams.LnbPower = ProfLnbPower.On;
 
-      Marshal.StructureToPtr(propertyParams, _generalBuffer, true);
+      Marshal.StructureToPtr(propertyParams, _generalBuffer, false);
       //Dump.DumpBinary(_generalBuffer, BDA_EXTENSION_PARAMS_SIZE);
 
       int returnedByteCount = 0;

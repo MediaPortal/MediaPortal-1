@@ -27,6 +27,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
 
     public void Start()
     {
+      _isConnected = false;
       _evtHeartbeatCtrl.Reset();
       StartServerMonitorThread();
     }
@@ -35,6 +36,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
     {
       StopServerMonitorThread();
       _evtHeartbeatCtrl.Reset();
+      _isConnected = false;
     }
 
     public bool WaitForConnection(int timeOut)

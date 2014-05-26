@@ -57,7 +57,14 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
         if (card.RecordingFolder.Length > 0)
         {
           string driveLetter = String.Format("{0}:", card.RecordingFolder[0]);
-          if (Utils.getDriveType(driveLetter) == 3)
+          if (card.RecordingFolder.StartsWith(@"\"))
+          {
+            if (!drives.Contains(driveLetter))
+            {
+              drives.Add(card.RecordingFolder);
+            }
+          } 
+          else if (Utils.getDriveType(driveLetter) == 3)
           {
             if (!drives.Contains(driveLetter))
             {
@@ -105,8 +112,13 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
 
     private static bool OutOfDiskSpace(string drive)
     {
-      ulong minimiumFreeDiskSpace = (ulong) SettingsManagement.GetValue("freediskspace" + drive[0], 51200);
+      string settingName = "freediskspace" + drive;
+      if (!drive.StartsWith(@"\"))
+      {
+        settingName = "freediskspace" + drive[0];
+      }
 
+      ulong minimiumFreeDiskSpace = (ulong)SettingsManagement.GetValue(settingName, 51200);
       if (minimiumFreeDiskSpace <= 51200) // 50MB
       {
         minimiumFreeDiskSpace = 51200;

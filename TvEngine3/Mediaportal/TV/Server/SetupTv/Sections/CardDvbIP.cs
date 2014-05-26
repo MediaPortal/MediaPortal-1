@@ -201,21 +201,25 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           string line = String.Format("{0}- {1} - {2}", 1 + index, tuneChannel.Name, tuneChannel.Url);
           ListViewItem item = listViewStatus.Items.Add(new ListViewItem(line));
           item.EnsureVisible();
-          ServiceAgents.Instance.ControllerServiceAgent.Tune(user.Name, user.CardId, out user, tuneChannel, -1);
+          if (index == 0)
+          {
+            ServiceAgents.Instance.ControllerServiceAgent.Scan(user.Name, user.CardId, out user, tuneChannel, -1);
+            UpdateStatus();
+          }
           IChannel[] channels = ServiceAgents.Instance.ControllerServiceAgent.Scan(_cardNumber, tuneChannel);
           UpdateStatus();
           if (channels == null || channels.Length == 0)
           {
             if (ServiceAgents.Instance.ControllerServiceAgent.TunerLocked(_cardNumber) == false)
             {
-              line = String.Format("{0}- {1} :No Signal", 1 + index, tuneChannel.Url);
+              line = String.Format("{0}- {1} - {2} :No Signal", 1 + index, tuneChannel.Url, tuneChannel.Name);
               item.Text = line;
               item.ForeColor = Color.Red;
               continue;
             }
             else
             {
-              line = String.Format("{0}- {1} :Nothing found", 1 + index, tuneChannel.Url);
+              line = String.Format("{0}- {1} - {2} :Nothing found", 1 + index, tuneChannel.Url, tuneChannel.Name);
               item.Text = line;
               item.ForeColor = Color.Red;
               continue;
@@ -262,11 +266,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
               //add new channel
               exists = false;
               dbChannel = ChannelFactory.CreateChannel(channel.Name);
-              dbChannel.SortOrder = 10000;
-              if (channel.LogicalChannelNumber >= 1)
-              {
-                dbChannel.SortOrder = channel.LogicalChannelNumber;
-              }
+              dbChannel.SortOrder = channel.LogicalChannelNumber;
+              dbChannel.ChannelNumber = channel.LogicalChannelNumber;
               dbChannel.MediaType = (int) channel.MediaType;
               dbChannel = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
               dbChannel.AcceptChanges();

@@ -120,7 +120,7 @@
       <height>240</height>
       <colordiffuse>ffffffff</colordiffuse>
       <visible>no</visible>
-      <font>font13</font>
+      <font>font12</font>
       <label>#VideoSearch.trailerdesc</label>
       <textcolor>FFFFFFFF</textcolor>
     </control>    

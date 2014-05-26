@@ -47,13 +47,13 @@ class CSdtParser : public CSectionDecoder
   private:
     void CleanUp();
 
-    void DecodeServiceDescriptor(byte* b, int length, int* serviceType, char** providerName, char** serviceName);
+    void DecodeServiceDescriptor(byte* b, int length, byte* serviceType, char** providerName, char** serviceName);
     bool DecodeComponentDescriptor(byte* b, int length, bool* isVideo, bool* isAudio, bool* isHighDefinition, unsigned int* language);
-    void DecodeServiceAvailabilityDescriptor(byte* b, int length, vector<int>* availableInCells, vector<int>* unavailableInCells);
-    void DecodeCountryAvailabilityDescriptor(byte* b, int length, vector<unsigned int>* availableInCountries, vector<unsigned int>* unavailableInCountries);
+    void DecodeServiceAvailabilityDescriptor(byte* b, int length, vector<unsigned long>* availableInCells, vector<unsigned long>* unavailableInCells);
+    void DecodeCountryAvailabilityDescriptor(byte* b, int length, vector<unsigned long>* availableInCountries, vector<unsigned long>* unavailableInCountries);
     void DecodeBouquetNameDescriptor(byte* b, int length, char** name);
     void DecodeTargetRegionDescriptor(byte* b, int length, vector<__int64>* targetRegions);
-    void DecodeServiceRelocatedDescriptor(byte* b, int length, int* previousOriginalNetworkId, int* previousTransportStreamId, int* previousServiceId);
+    void DecodeServiceRelocatedDescriptor(byte* b, int length, unsigned short* previousOriginalNetworkId, unsigned short* previousTransportStreamId, unsigned short* previousServiceId);
 
     ISdtCallBack* m_pCallBack;
     map<unsigned __int64, bool> m_mSeenSections;

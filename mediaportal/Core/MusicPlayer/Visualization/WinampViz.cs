@@ -22,9 +22,11 @@ using System;
 using System.Drawing;
 using System.IO;
 using MediaPortal.GUI.Library;
+using MediaPortal.MusicPlayer.BASS;
 using MediaPortal.Player;
 using MediaPortal.TagReader;
 using MediaPortal.Util;
+using MediaPortal.Playlists;
 using BassVis_Api;
 
 namespace MediaPortal.Visualization
@@ -34,14 +36,16 @@ namespace MediaPortal.Visualization
     #region Variables
 
     private BASSVIS_INFO _mediaInfo = null;
+    private BassVis.BASSVISSTATE _visCallback;
+    private BASSVIS_PARAM _tmpVisParam = null;
+    private MusicTag trackTag = null;
+    private PlayListPlayer _playlistPlayer = null;
 
     private bool RenderStarted = false;
     private bool firstRun = true;
-
-    private IntPtr hwndChild; // Handle to the Winamp Child Window.
-
-    private MusicTag trackTag = null;
     private string _songTitle = "   "; // Title of the song played
+    private string _OldCurrentFile = "   ";
+    private int _playlistTitlePos;
 
     #endregion
 
@@ -96,33 +100,60 @@ namespace MediaPortal.Visualization
     private void PlaybackStateChanged(object sender, BassAudioEngine.PlayState oldState,
                                       BassAudioEngine.PlayState newState)
     {
-      Log.Debug("WinampViz: BassPlayer_PlaybackStateChanged from {0} to {1}", oldState.ToString(), newState.ToString());
-      if (newState == BassAudioEngine.PlayState.Playing)
+      if (_visParam.VisHandle != 0)
       {
-        RenderStarted = false;
-        trackTag = TagReader.TagReader.ReadTag(Bass.CurrentFile);
-        if (trackTag != null)
+        Log.Debug("WinampViz: BassPlayer_PlaybackStateChanged from {0} to {1}", oldState.ToString(), newState.ToString());
+        if (newState == BassAudioEngine.PlayState.Playing)
         {
-          _songTitle = String.Format("{0} - {1}", trackTag.Artist, trackTag.Title);
+          RenderStarted = false;
+          trackTag = TagReader.TagReader.ReadTag(Bass.CurrentFile);
+          if (trackTag != null)
+          {
+            _songTitle = String.Format("{0} - {1}", trackTag.Artist, trackTag.Title);
+          }
+          else
+          {
+            _songTitle = "   ";
+          }
+
+          _mediaInfo.SongTitle = _songTitle;
+          _mediaInfo.SongFile = Bass.CurrentFile;
+          _OldCurrentFile = Bass.CurrentFile;
+
+          BassVis.BASSVIS_SetPlayState(_visParam, BASSVIS_PLAYSTATE.Play);
         }
-        else
+        else if (newState == BassAudioEngine.PlayState.Paused)
         {
-          _songTitle = "   ";
+          BassVis.BASSVIS_SetPlayState(_visParam, BASSVIS_PLAYSTATE.Pause);
         }
-
-        _mediaInfo.SongTitle = _songTitle;
-        _mediaInfo.SongFile = Bass.CurrentFile;
-
-        BassVis.BASSVIS_SetPlayState(_visParam, BASSVIS_PLAYSTATE.Play);
+        else if (newState == BassAudioEngine.PlayState.Ended)
+        {
+          BassVis.BASSVIS_SetPlayState(_visParam, BASSVIS_PLAYSTATE.Stop);
+          RenderStarted = false;
+        }
       }
-      else if (newState == BassAudioEngine.PlayState.Paused)
+    }
+
+    #endregion
+
+    #region BASSVIS_StateCallback()
+
+    public void BASSVIS_StateCallback(BASSVIS_PLAYSTATE NewState)
+    {
+      //CallBack PlayState for Winamp only
+      switch (NewState)
       {
-        BassVis.BASSVIS_SetPlayState(_visParam, BASSVIS_PLAYSTATE.Pause);
-      }
-      else if (newState == BassAudioEngine.PlayState.Ended)
-      {
-        BassVis.BASSVIS_SetPlayState(_visParam, BASSVIS_PLAYSTATE.Stop);
-        RenderStarted = false;
+
+        case BASSVIS_PLAYSTATE.SetPlaylistTitle:
+
+          BassVis.BASSVIS_SetPlayState(_visParam, BASSVIS_PLAYSTATE.SetPlaylistTitle, -1, _songTitle);
+
+          break;
+        case BASSVIS_PLAYSTATE.GetPlaylistTitlePos:
+
+          _playlistTitlePos = BassVis.BASSVIS_SetPlayState(_visParam, BASSVIS_PLAYSTATE.GetPlaylistTitlePos);
+          break;
+
       }
     }
 
@@ -138,7 +169,6 @@ namespace MediaPortal.Visualization
 
     public override void Dispose()
     {
-      Bass.PlaybackStateChanged -= new BassAudioEngine.PlaybackStateChangedDelegate(PlaybackStateChanged);
       base.Dispose();
       Close();
     }
@@ -152,21 +182,67 @@ namespace MediaPortal.Visualization
           return 0;
         }
 
-        // Set Song information, so that the plugin can display it
-        if (trackTag != null && Bass != null)
+        // Any is wrong with PlaybackStateChanged, if the songfile automatically changed
+        // so i have create a new variable which fix this problem
+        if (Bass != null)
         {
-          _mediaInfo.Position = (int)Bass.CurrentPosition;
-          _mediaInfo.Duration = (int)Bass.Duration;
-          _mediaInfo.PlaylistLen = 1;
-          _mediaInfo.PlaylistPos = 1;
+          if (Bass.CurrentFile != _OldCurrentFile && !Bass.IsRadio)
+          {
+            trackTag = TagReader.TagReader.ReadTag(Bass.CurrentFile);
+            if (trackTag != null)
+            {
+              _songTitle = String.Format("{0} - {1}", trackTag.Artist, trackTag.Title);
+              _OldCurrentFile = Bass.CurrentFile;
+            }
+            else
+            {
+              _songTitle = "   ";
+            }
+          }
+
+          // Set Song information, so that the plugin can display it
+          if (trackTag != null && !Bass.IsRadio)
+          {
+            _playlistPlayer = PlayListPlayer.SingletonPlayer;
+            PlayListItem curPlaylistItem = _playlistPlayer.GetCurrentItem();
+
+            MusicStream streams = Bass.GetCurrentStream();
+            // Do not change this line many Plugins search for Songtitle with a number before.
+            _mediaInfo.SongFile = Bass.CurrentFile;
+            _mediaInfo.SongTitle = (_playlistPlayer.CurrentPlaylistPos + 1) + ". " + _songTitle;
+            _mediaInfo.Position = (int)(1000 * Bass.CurrentPosition);
+            _mediaInfo.Duration = (int)Bass.Duration;
+            _mediaInfo.PlaylistLen = 1;
+            _mediaInfo.PlaylistPos = _playlistPlayer.CurrentPlaylistPos;
+          }
+          else
+          {
+            if (Bass.IsRadio)
+            {
+              // Change TrackTag to StreamTag for Radio
+              trackTag = Bass.GetStreamTags();
+              if (trackTag != null)
+              {
+                // Artist and Title show better i think
+                _songTitle = trackTag.Artist + ": " + trackTag.Title;
+                _mediaInfo.SongTitle = _songTitle;
+              }
+              else
+              {
+                _songTitle = "   ";
+              }
+              _mediaInfo.Position = (int)(1000 * Bass.CurrentPosition);
+            }
+            else
+            {
+              _mediaInfo.Position = 0;
+              _mediaInfo.Duration = 0;
+              _mediaInfo.PlaylistLen = 0;
+              _mediaInfo.PlaylistPos = 0;
+            }
+          }
         }
-        else
-        {
-          _mediaInfo.Position = 0;
-          _mediaInfo.Duration = 0;
-          _mediaInfo.PlaylistLen = 0;
-          _mediaInfo.PlaylistPos = 0;
-        }
+
         if (IsPreviewVisualization)
         {
           _mediaInfo.SongTitle = "Mediaportal Preview";
@@ -185,8 +261,20 @@ namespace MediaPortal.Visualization
           stream = (int)Bass.GetCurrentVizStream();
         }
 
-        BassVis.BASSVIS_SetPlayState(_visParam, BASSVIS_PLAYSTATE.Play);
-        RenderStarted = BassVis.BASSVIS_RenderChannel(_visParam, stream);
+        // ckeck is playing
+        int nReturn = BassVis.BASSVIS_SetPlayState(_visParam, BASSVIS_PLAYSTATE.IsPlaying);
+        if (nReturn == Convert.ToInt32(BASSVIS_PLAYSTATE.Play) && (_visParam.VisHandle != 0))
+        {
+          // Do not Render without playing
+          if (MusicPlayer.BASS.Config.MusicPlayer == AudioPlayer.WasApi)
+          {
+            RenderStarted = BassVis.BASSVIS_RenderChannel(_visParam, stream, true);
+          }
+          else
+          {
+          RenderStarted = BassVis.BASSVIS_RenderChannel(_visParam, stream, false);
+          }
+        }
       }
 
       catch (Exception) {}
@@ -196,6 +284,7 @@ namespace MediaPortal.Visualization
 
     public override bool Close()
     {
+      Bass.PlaybackStateChanged -= new BassAudioEngine.PlaybackStateChangedDelegate(PlaybackStateChanged);
       if (base.Close())
       {
         return true;
@@ -209,11 +298,21 @@ namespace MediaPortal.Visualization
       if (_visParam.VisHandle != 0)
       {
         BassVis.BASSVIS_SetPlayState(_visParam, BASSVIS_PLAYSTATE.Stop);
-        BassVis.BASSVIS_Free(_visParam, ref _baseVisParam);
-        _visParam.VisHandle = 0;
-      }
 
-      int tmpVis = BassVis.BASSVIS_GetPluginHandle(BASSVISKind.BASSVISKIND_WINAMP, VizPluginInfo.FilePath);
+        BassVis.BASSVIS_Free(_visParam);
+        bool bFree = BassVis.BASSVIS_IsFree(_visParam);
+        if (bFree)
+        {
+          _visParam.VisHandle = 0;
+        }
+        else
+        {
+          Log.Warn("Visualization Manager: Failed to unload Winamp viz module - {0}", VizPluginInfo.Name);
+          _visParam.VisHandle = 0;
+        }
+      }           
+
+      int tmpVis = BassVis.BASSVIS_GetModuleHandle(BASSVISKind.BASSVISKIND_WINAMP, VizPluginInfo.FilePath);
       if (tmpVis != 0)
       {
         int numModules = BassVis.BASSVIS_GetModulePresetCount(_visParam, VizPluginInfo.FilePath);
@@ -246,11 +345,11 @@ namespace MediaPortal.Visualization
       // Do a move of the Winamp Viz
       if (_visParam.VisHandle != 0)
       {
-        hwndChild = Win32API.GetWindow(VisualizationWindow.Handle, Win32API.ShowWindowFlags.Show);
-        if (hwndChild != IntPtr.Zero)
-        {
-          Win32API.MoveWindow(hwndChild, 0, 0, newSize.Width, newSize.Height, true);
-        }
+        // Hide the Viswindow, so that we don't see it, while moving
+        Win32API.ShowWindow(VisualizationWindow.Handle, Win32API.ShowWindowFlags.Hide);        
+        _tmpVisParam = new BASSVIS_PARAM(BASSVISKind.BASSVISKIND_WINAMP);
+        _tmpVisParam.VisGenWinHandle = VisualizationWindow.Handle;
+        BassVis.BASSVIS_Resize(_tmpVisParam, 0, 0, newSize.Width, newSize.Height);
       }
       return true;
     }
@@ -279,38 +378,42 @@ namespace MediaPortal.Visualization
         return false;
       }
 
-      if (_visParam.VisHandle != 0)
-      {
-        BassVis.BASSVIS_Free(_visParam, ref _baseVisParam);
-        _visParam.VisHandle = 0;
-        RenderStarted = false;
-      }
-
-      // Set Dummy Information for the plugin, before creating it
-      _mediaInfo.SongTitle = "";
-      _mediaInfo.SongFile = "";
-      _mediaInfo.Position = 0;
-      _mediaInfo.Duration = 0;
-      _mediaInfo.PlaylistPos = 0;
-      _mediaInfo.PlaylistLen = 0;
-      BassVis.BASSVIS_SetInfo(_visParam, _mediaInfo);
-
       try
       {
-        // Create the Visualisation
+        using (Profile.Settings xmlreader = new Profile.MPSettings())
+        {
+          VizPluginInfo.FFTSensitivity = xmlreader.GetValueAsInt("musicvisualization", "fftSensitivity", 36);
+          VizPluginInfo.PresetIndex = xmlreader.GetValueAsInt("musicvisualization", "preset", 0);
+        }
+
+        //Remove existing CallBacks
+        BassVis.BASSVIS_WINAMPRemoveCallback();
+
+        // Call Play befor use BASSVIS_ExecutePlugin (moved here)
+        BassVis.BASSVIS_SetPlayState(_visParam, BASSVIS_PLAYSTATE.Play);
+
+        // Set CallBack for PlayState
+        _visCallback = BASSVIS_StateCallback;
+        BassVis.BASSVIS_WINAMPSetStateCallback(_visCallback);
+
+        // Hide the Viswindow, so that we don't see it, befor any Render
+        Win32API.ShowWindow(VisualizationWindow.Handle, Win32API.ShowWindowFlags.Hide);
+
+        // Create the Visualisation 
         BASSVIS_EXEC visExec = new BASSVIS_EXEC(VizPluginInfo.FilePath);
         visExec.AMP_ModuleIndex = VizPluginInfo.PresetIndex;
         visExec.AMP_UseOwnW1 = 1;
         visExec.AMP_UseOwnW2 = 1;
+        // The flag below is needed for the Vis to have it's own message queue
+        // Thus it is avoided that it steals focus from MP.
+        visExec.AMP_UseFakeWindow = true; 
+        
         BassVis.BASSVIS_ExecutePlugin(visExec, _visParam);
-        if (_visParam.VisGenWinHandle != IntPtr.Zero)
+        
+        if (_visParam.VisHandle != 0)
         {
-          hwndChild = Win32API.GetWindow(VisualizationWindow.Handle, Win32API.ShowWindowFlags.Show);
-          if (hwndChild != IntPtr.Zero)
-          {
-            Win32API.MoveWindow(hwndChild, 0, 0, VisualizationWindow.Width, VisualizationWindow.Height, true);
-          }
 
+          // Set the visualization window that was taken over from BASSVIS_ExecutePlugin
           BassVis.BASSVIS_SetVisPort(_visParam,
                                      _visParam.VisGenWinHandle,
                                      VisualizationWindow.Handle,
@@ -319,21 +422,11 @@ namespace MediaPortal.Visualization
                                      VisualizationWindow.Width,
                                      VisualizationWindow.Height);
 
-          BassVis.BASSVIS_SetPlayState(_visParam, BASSVIS_PLAYSTATE.Play);
-        }
-        else
-        {
-          BassVis.BASSVIS_SetVisPort(_visParam,
-                                     _visParam.VisGenWinHandle,
-                                     IntPtr.Zero,
-                                     0,
-                                     0,
-                                     0,
-                                     0);
-        }
+          BassVis.BASSVIS_SetOption(_visParam, BASSVIS_CONFIGFLAGS.BASSVIS_CONFIG_FFTAMP, VizPluginInfo.FFTSensitivity); 
 
-        // The Winamp Plugin has stolen focus on the MP window. Bring it back to froeground
-        Win32API.SetForegroundWindow(GUIGraphicsContext.form.Handle);
+          // SetForegroundWindow
+          GUIGraphicsContext.form.Activate();
+        }
 
         firstRun = false;
       }

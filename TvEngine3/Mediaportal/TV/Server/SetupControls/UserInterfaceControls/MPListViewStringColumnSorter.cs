@@ -18,14 +18,17 @@
 
 #endregion
 
-using System;
 using System.Collections;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
 {
   public class MPListViewStringColumnSorter : IComparer
   {
+    [DllImport("shlwapi.dll", CharSet = CharSet.Unicode)]
+    private static extern int StrCmpLogicalW(string x, string y);
+
     public enum OrderTypes
     {
       AsString,
@@ -46,8 +49,8 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
       {
         case OrderTypes.AsString:
           compareResult = SortColumn == 0
-                            ? String.Compare(listviewX.Text, listviewY.Text)
-                            : String.Compare(listviewX.SubItems[SortColumn].Text, listviewY.SubItems[SortColumn].Text);
+                            ? StrCmpLogicalW(listviewX.Text, listviewY.Text)
+                            : StrCmpLogicalW(listviewX.SubItems[SortColumn].Text, listviewY.SubItems[SortColumn].Text);
           break;
         case OrderTypes.AsValue:
           string line1 = SortColumn == 0 ? listviewX.Text : listviewX.SubItems[SortColumn].Text;

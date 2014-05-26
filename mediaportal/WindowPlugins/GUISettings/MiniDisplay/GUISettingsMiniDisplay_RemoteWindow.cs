@@ -20,7 +20,6 @@
 
 using System;
 using System.IO;
-using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.InputDevices;
 using MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers;
@@ -31,8 +30,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setup
   public class RemoteWindow : GUIInternalWindow
   {
     [SkinControl(40)] protected GUILabelControl label1 = null;
-    [SkinControl(50)] protected GUIToggleButtonControl btnDisableRemote = null;
-    [SkinControl(51)] protected GUIToggleButtonControl btnDisableRepeat = null;
+    [SkinControl(50)] protected GUICheckButton btnDisableRemote = null;
+    [SkinControl(51)] protected GUICheckButton btnDisableRepeat = null;
     [SkinControl(52)] protected GUISelectButtonControl btnRepeatDelay = null;
     [SkinControl(53)] protected GUIButtonControl btnRemoteMapping = null;
 

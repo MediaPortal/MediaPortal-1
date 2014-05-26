@@ -85,9 +85,6 @@ namespace Mediaportal.TV.Server.TVControl
     private bool _isGrabbingEpg;
 
     [DataMember]
-    private bool _hasTeletext;
-
-    [DataMember]
     private string _rtspUrl;
 
     [DataMember]
@@ -159,7 +156,6 @@ namespace Mediaportal.TV.Server.TVControl
       {
         _isTimeshifting = controllerService.IsTimeShifting(userName);
         _isScrambled = controllerService.IsScrambled(userName);
-        _hasTeletext = controllerService.HasTeletext(userName);
         _rtspUrl = controllerService.GetStreamingUrl(userName);
         _recordingFileName = controllerService.RecordingFileName(userName);
         _idChannel = controllerService.CurrentDbChannel(userName);
@@ -403,33 +399,6 @@ namespace Mediaportal.TV.Server.TVControl
     }
 
     /// <summary>
-    /// Returns if the current channel has teletext or not
-    /// </summary>
-    /// <returns>yes if channel has teletext otherwise false</returns>    
-    public bool HasTeletext
-    {
-      get
-      {
-        return _hasTeletext;
-        /*try
-        {
-          if (User.CardId < 0)
-          {
-            return false;
-          }
-          RemoteControl.HostName = _server;
-          return GlobalServiceProvider.Get<IControllerService>().HasTeletext(User.Name);
-        }
-        catch (Exception)
-        {
-          //HandleFailure();
-        }
-        return false;*/
-      }
-      set { _hasTeletext = value; }
-    }
-
-    /// <summary>
     /// Returns if we arecurrently grabbing the epg or not
     /// </summary>
     /// <returns>true when card is grabbing the epg otherwise false</returns>    
@@ -634,30 +603,6 @@ namespace Mediaportal.TV.Server.TVControl
     }
 
     /// <summary>
-    /// turn on/off teletext grabbing
-    /// </summary>
-    [XmlIgnore]
-    public bool GrabTeletext
-    {
-      set
-      {
-        try
-        {
-          if (User.CardId < 0)
-          {
-            return;
-          }
-          RemoteControl.HostName = _server;
-          GlobalServiceProvider.Get<IControllerService>().GrabTeletext(User.Name, value);
-        }
-        catch (Exception)
-        {
-          //HandleFailure();
-        }
-      }
-    }
-
-    /// <summary>
     /// Returns if the tuner is locked onto a signal or not
     /// </summary>
     /// <returns>true if tuner is locked otherwise false</returns>
@@ -824,54 +769,6 @@ namespace Mediaportal.TV.Server.TVControl
     #region methods
 
     /// <summary>
-    /// Gets a raw teletext page.
-    /// </summary>
-    /// <param name="pageNumber">The page number. (0x100-0x899)</param>
-    /// <param name="subPageNumber">The sub page number.(0x0-0x79)</param>
-    /// <returns>byte[] array containing the raw teletext page or null if page is not found</returns>
-    public byte[] GetTeletextPage(int pageNumber, int subPageNumber)
-    {
-      try
-      {
-        if (User.CardId < 0)
-        {
-          return new byte[] { 1 };
-        }
-        RemoteControl.HostName = _server;
-        return GlobalServiceProvider.Get<IControllerService>().GetTeletextPage(User.Name, pageNumber, subPageNumber);
-      }
-      catch (Exception)
-      {
-        //HandleFailure();
-      }
-      return new byte[] { 1 };
-    }
-
-    /// <summary>
-    /// Stops the time shifting.
-    /// </summary>
-    /// <returns>true if success otherwise false</returns>
-    /*public void StartTimeShifting()
-    {
-      try
-      {
-        RemoteControl.HostName = _server;
-        IUser userResult;
-        GlobalServiceProvider.Get<IControllerService>().StartTimeShifting(_user.Name, out userResult);
-
-        if (userResult != null)
-        {
-          _user = userResult;
-          _isTimeshifting = false;
-        }
-      }
-      catch (Exception)
-      {
-        //HandleFailure();
-      }
-    }*/
-
-    /// <summary>
     /// Stops the time shifting.
     /// </summary>
     /// <returns>true if success otherwise false</returns>
@@ -898,7 +795,6 @@ namespace Mediaportal.TV.Server.TVControl
         _isTimeshifting = false;
         _timeShiftFileName = null;
         _isScrambled = false;
-        _hasTeletext = false;
         _rtspUrl = null;
         _name = null;
         _cardType = CardType.Analog;
@@ -965,142 +861,6 @@ namespace Mediaportal.TV.Server.TVControl
       }
       return TvResult.UnknownError;
     }
-
-    /// <summary>
-    /// Gets the number of subpages for a teletext page.
-    /// </summary>
-    /// <param name="pageNumber">The page number (0x100-0x899)</param>
-    /// <returns>number of teletext subpages for the pagenumber</returns>
-    public int SubPageCount(int pageNumber)
-    {
-      try
-      {
-        if (User.CardId < 0)
-        {
-          return -1;
-        }
-        RemoteControl.HostName = _server;
-        return GlobalServiceProvider.Get<IControllerService>().SubPageCount(User.Name, pageNumber);
-      }
-      catch (Exception)
-      {
-        //HandleFailure();
-      }
-      return -1;
-    }
-
-    /// <summary>
-    /// Gets the teletext pagenumber for the red button
-    /// </summary>
-    /// <returns>Teletext pagenumber for the red button</returns>
-    public int GetTeletextRedPageNumber()
-    {
-      try
-      {
-        if (User.CardId < 0)
-        {
-          return -1;
-        }
-        RemoteControl.HostName = _server;
-        return GlobalServiceProvider.Get<IControllerService>().GetTeletextRedPageNumber(User.Name);
-      }
-      catch (Exception)
-      {
-        //HandleFailure();
-      }
-      return -1;
-    }
-
-    /// <summary>
-    /// Gets the teletext pagenumber for the green button
-    /// </summary>
-    /// <returns>Teletext pagenumber for the green button</returns>
-    public int GetTeletextGreenPageNumber()
-    {
-      try
-      {
-        if (User.CardId < 0)
-        {
-          return -1;
-        }
-        RemoteControl.HostName = _server;
-        return GlobalServiceProvider.Get<IControllerService>().GetTeletextGreenPageNumber(User.Name);
-      }
-      catch (Exception)
-      {
-        //HandleFailure();
-      }
-      return -1;
-    }
-
-    /// <summary>
-    /// Gets the teletext pagenumber for the yellow button
-    /// </summary>
-    /// <returns>Teletext pagenumber for the yellow button</returns>
-    public int GetTeletextYellowPageNumber()
-    {
-      try
-      {
-        if (User.CardId < 0)
-        {
-          return -1;
-        }
-        RemoteControl.HostName = _server;
-        return GlobalServiceProvider.Get<IControllerService>().GetTeletextYellowPageNumber(User.Name);
-      }
-      catch (Exception)
-      {
-        //HandleFailure();
-      }
-      return -1;
-    }
-
-    /// <summary>
-    /// Gets the teletext pagenumber for the blue button
-    /// </summary>
-    /// <returns>Teletext pagenumber for the blue button</returns>
-    public int GetTeletextBluePageNumber()
-    {
-      try
-      {
-        if (User.CardId < 0)
-        {
-          return -1;
-        }
-        RemoteControl.HostName = _server;
-        return GlobalServiceProvider.Get<IControllerService>().GetTeletextBluePageNumber(User.Name);
-      }
-      catch (Exception)
-      {
-        //HandleFailure();
-      }
-      return -1;
-    }
-
-    /// <summary>f
-    /// Returns the rotation time for a specific teletext page
-    /// </summary>
-    /// <param name="pageNumber">The pagenumber (0x100-0x899)</param>
-    /// <returns>timespan containing the rotation time</returns>
-    public TimeSpan TeletextRotation(int pageNumber)
-    {
-      try
-      {
-        if (User.CardId < 0)
-        {
-          return new TimeSpan(0, 0, 0, 15);
-        }
-        RemoteControl.HostName = _server;
-        return GlobalServiceProvider.Get<IControllerService>().TeletextRotation(User.Name, pageNumber);
-      }
-      catch (Exception)
-      {
-        //HandleFailure();
-      }
-      return new TimeSpan(0, 0, 0, 15);
-    }
-
-
 
     #endregion
 
@@ -1412,7 +1172,7 @@ namespace Mediaportal.TV.Server.TVControl
     /// </summary>
     /// <param name="CallbackHandler"></param>
     /// <returns></returns>
-    public bool SetCiMenuHandler(IConditionalAccessMenuCallBacks CallbackHandler)
+    public bool SetCiMenuHandler(IConditionalAccessMenuCallBack CallbackHandler)
     {
       this.LogDebug("VC: SetCiMenuHandler");
       try

@@ -5,7 +5,6 @@ using DirectShowLib;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
-using Mediaportal.TV.Server.TVDatabase.EntityModel;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories;
@@ -377,6 +376,11 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
           //atscChannel.SymbolRate = detail.Symbolrate;
           atscChannel.TransportId = detail.TransportId;
           atscChannel.ModulationType = (ModulationType)detail.Modulation;
+          atscChannel.LogicalChannelNumber = detail.MajorChannel;
+          if (detail.MinorChannel >= 0)
+          {
+            atscChannel.LogicalChannelNumber = detail.MajorChannel * 1000 + detail.MinorChannel;
+          }
           return atscChannel;
         case 2: //DVBCChannel
           DVBCChannel dvbcChannel = new DVBCChannel();
@@ -483,7 +487,9 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IChannelRepository channelRepository = new ChannelRepository())
       {
-        TuningDetail tuningDetail = channelRepository.FindOne<TuningDetail>(t => t.ChannelType == channelType);
+        TuningDetail tuningDetail = channelRepository.GetQuery<TuningDetail>()
+                .Include(t => t.LnbType)
+                .FirstOrDefault(t => t.ChannelType == channelType && t.IdChannel == channel.IdChannel);
 
         if (tuningDetail != null)
         {
@@ -512,6 +518,21 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       using (IChannelRepository channelRepository = new ChannelRepository(true))
       {
         SetRelatedRecordingsToNull(idChannel, channelRepository);
+        // todo gibman, why do we have to delete all the related entities manually? This should be on-delete-cascade in most cases (exception: recordings).
+        Channel channel = GetChannel(idChannel);
+        foreach (TuningDetail td in channel.TuningDetails)
+        {
+          DeleteTuningDetail(td.IdTuning);
+        }
+        foreach (GroupMap map in channel.GroupMaps)
+        {
+          ChannelGroupManagement.DeleteChannelGroupMap(map.IdMap);
+        }
+        foreach (ChannelMap map in channel.ChannelMaps)
+        {
+          DeleteChannelMap(map.IdChannelMap);
+        }
+        // TODO have ignored programs and schedules here for now
         channelRepository.Delete<Channel>(p => p.IdChannel == idChannel);
 
         /*Channel ch = new Channel();
@@ -530,18 +551,8 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       // todo : since "on delete: set null" is not currently supported in EF, we have to do this manually - remove this ugly workaround once EF gets mature enough.
       IQueryable<Channel> channels = channelRepository.GetQuery<Channel>(s => s.IdChannel == idChannel);
 
-      ChannelIncludeRelationEnum include = ChannelIncludeRelationEnum.TuningDetails;
-      include |= ChannelIncludeRelationEnum.ChannelMapsCard;
-      include |= ChannelIncludeRelationEnum.GroupMaps;
-      include |= ChannelIncludeRelationEnum.GroupMapsChannelGroup;
-      include |= ChannelIncludeRelationEnum.ChannelMaps;
-      include |= ChannelIncludeRelationEnum.ChannelLinkMapsChannelLink;
-      include |= ChannelIncludeRelationEnum.ChannelLinkMapsChannelPortal;
-      include |= ChannelIncludeRelationEnum.Recordings;
-
-      channels = channelRepository.IncludeAllRelations(channels, include);
+      channels = channelRepository.IncludeAllRelations(channels, ChannelIncludeRelationEnum.Recordings);
       Channel channel = channels.FirstOrDefault();
-      channelRepository.LoadNavigationProperties(channel, include);
 
       if (channel != null)
       {
@@ -589,9 +600,9 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         OnStateChangedTuningDetailEvent(tuningDetail, ObjectState.Added);
       }
     }
+
     public static void UpdateTuningDetail(int idChannel, int idTuning, IChannel channel)
     {
-
       using (IChannelRepository channelRepository = new ChannelRepository())
       {
         var query = channelRepository.GetQuery<TuningDetail>(t => t.IdTuning == idTuning && t.IdChannel == idChannel);
@@ -671,7 +682,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       {
         symbolRate = dvbcChannel.SymbolRate;
         modulation = (int)dvbcChannel.ModulationType;
-        channelNumber = dvbcChannel.LogicalChannelNumber > 999 ? idChannel : dvbcChannel.LogicalChannelNumber;
+        channelNumber = dvbcChannel.LogicalChannelNumber;
         channelType = 2;
       }
 
@@ -687,7 +698,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         innerFecRate = (int)dvbsChannel.InnerFecRate;
         pilot = (int)dvbsChannel.Pilot;
         rollOff = (int)dvbsChannel.RollOff;
-        channelNumber = dvbsChannel.LogicalChannelNumber > 999 ? idChannel : dvbsChannel.LogicalChannelNumber;
+        channelNumber = dvbsChannel.LogicalChannelNumber;
         channelType = 3;
       }
 
@@ -766,8 +777,6 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
                                              innerFecRate, pilot, rollOff, url, 0);*/
       return tuningDetail;
     }
-
-
 
     public static IList<TuningDetail> GetTuningDetailsByName(string channelName, int channelType)
     {

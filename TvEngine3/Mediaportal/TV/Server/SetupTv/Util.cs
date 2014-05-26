@@ -150,25 +150,6 @@ namespace Mediaportal.TV.Server.SetupTV
       return 0;
     }
 
-    public static long GetDiskSize(string drive)
-    {
-      long diskSize;
-      try
-      {
-        string cmd = String.Format("win32_logicaldisk.deviceid=\"{0}:\"", drive[0]);
-        using (ManagementObject disk = new ManagementObject(cmd))
-        {
-          disk.Get();
-          diskSize = Int64.Parse(disk["Size"].ToString());
-        }
-      }
-      catch (Exception)
-      {
-        return -1;
-      }
-      return diskSize;
-    }
-
     public static string GetSize(long dwFileSize)
     {
       if (dwFileSize < 0)
@@ -754,10 +735,30 @@ namespace Mediaportal.TV.Server.SetupTV
       return ReplaceTag(line, tag, value, String.Empty);
     }
 
+    public static ulong GetDiskSpace(string drive)
+    {
+      if (drive.StartsWith(@"\"))
+      {
+        return GetShareSpace(drive);
+      }
+      ulong freeBytesAvailable = 0;
+      ulong totalNumberOfBytes = 0;
+      ulong totalNumberOfFreeBytes = 0;
+
+      GetDiskFreeSpaceEx(
+        drive[0] + @":\",
+        out freeBytesAvailable,
+        out totalNumberOfBytes,
+        out totalNumberOfFreeBytes);
+      return totalNumberOfBytes;
+    }
+
     public static ulong GetFreeDiskSpace(string drive)
     {
-      if (drive == null)
-        return 0;
+      if (drive.StartsWith(@"\"))
+      {
+        return GetFreeShareSpace(drive);
+      }
       ulong freeBytesAvailable;
       ulong totalNumberOfBytes;
       ulong totalNumberOfFreeBytes;
@@ -768,6 +769,34 @@ namespace Mediaportal.TV.Server.SetupTV
         out totalNumberOfBytes,
         out totalNumberOfFreeBytes);
       return freeBytesAvailable;
+    }
+
+    public static ulong GetFreeShareSpace(string UNCPath)
+    {
+      ulong freeBytesAvailable = 0;
+      ulong totalNumberOfBytes = 0;
+      ulong totalNumberOfFreeBytes = 0;
+
+      GetDiskFreeSpaceEx(
+        System.IO.Path.GetPathRoot(UNCPath),
+        out freeBytesAvailable,
+        out totalNumberOfBytes,
+        out totalNumberOfFreeBytes);
+      return freeBytesAvailable;
+    }
+
+    public static ulong GetShareSpace(string UNCPath)
+    {
+      ulong freeBytesAvailable = 0;
+      ulong totalNumberOfBytes = 0;
+      ulong totalNumberOfFreeBytes = 0;
+
+      GetDiskFreeSpaceEx(
+        System.IO.Path.GetPathRoot(UNCPath),
+        out freeBytesAvailable,
+        out totalNumberOfBytes,
+        out totalNumberOfFreeBytes);
+      return totalNumberOfBytes;
     }
 
     public static bool HibernateSystem(bool forceShutDown)

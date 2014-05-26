@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ArrayOfDVBTTuning xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <!-- PSB1; BBC TV and Radio channels (SD) -->
   <DVBTTuning>
     <Frequency>514000</Frequency>
     <Bandwidth>8000</Bandwidth>
@@ -8,6 +9,7 @@
     <CellIdExtension>0</CellIdExtension>
     <IsDvbT2>False</IsDvbT2>
   </DVBTTuning>
+  <!-- PSB2; STV/+1 (SD) ITV2, Channel 4/+1 (SD), More4, E4, Channel 5 -->
   <DVBTTuning>
     <Frequency>490000</Frequency>
     <Bandwidth>8000</Bandwidth>
@@ -16,6 +18,7 @@
     <CellIdExtension>0</CellIdExtension>
     <IsDvbT2>False</IsDvbT2>
   </DVBTTuning>
+  <!-- PSB3; DVBT2/Freeview HD multiplex -->
   <DVBTTuning>
     <Frequency>538000</Frequency>
     <Bandwidth>8000</Bandwidth>
@@ -24,6 +27,7 @@
     <CellIdExtension>0</CellIdExtension>
     <IsDvbT2>False</IsDvbT2>
   </DVBTTuning>
+  <!-- COM4 -->
   <DVBTTuning>
     <Frequency>730000</Frequency>
     <Bandwidth>8000</Bandwidth>
@@ -32,6 +36,7 @@
     <CellIdExtension>0</CellIdExtension>
     <IsDvbT2>False</IsDvbT2>
   </DVBTTuning>
+  <!-- COM5 -->
   <DVBTTuning>
     <Frequency>762000</Frequency>
     <Bandwidth>8000</Bandwidth>
@@ -40,6 +45,7 @@
     <CellIdExtension>0</CellIdExtension>
     <IsDvbT2>False</IsDvbT2>
   </DVBTTuning>
+  <!-- COM6 -->
   <DVBTTuning>
     <Frequency>786000</Frequency>
     <Bandwidth>8000</Bandwidth>

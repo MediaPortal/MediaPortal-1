@@ -22,7 +22,7 @@ using System.Collections.Generic;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Enum
 {
-  public sealed class CasCaptureMode
+  internal sealed class CasCaptureMode
   {
     private readonly string _name;
     private static readonly IDictionary<string, CasCaptureMode> _values = new Dictionary<string, CasCaptureMode>();
@@ -52,9 +52,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Enum
       return false;
     }
 
+    public override int GetHashCode()
+    {
+      return _name.GetHashCode();
+    }
+
     public static ICollection<CasCaptureMode> Values
     {
-      get { return _values.Values; }
+      get
+      {
+        return _values.Values;
+      }
     }
 
     public static explicit operator CasCaptureMode(string name)

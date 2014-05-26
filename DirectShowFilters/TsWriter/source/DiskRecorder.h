@@ -20,13 +20,16 @@
  */
 #pragma once
 #include "multifilewriter.h"
-#include "criticalsection.h"
-#include "entercriticalsection.h"
+#include "CriticalSection.h"
 #include "..\..\shared\TsHeader.h"
 #include "..\..\shared\adaptionfield.h"
 #include "..\..\shared\pcr.h"
+
+#include "..\..\shared\BasePmtParser.h"
+#include "..\..\shared\PacketSync.h"
+
+
 #include "videoaudioobserver.h"
-#include "PmtParser.h"
 #include <vector>
 #include <map>
 using namespace std;
@@ -36,6 +39,8 @@ using namespace Mediaportal;
 
 //  Incremental buffer sizes
 #define NUMBER_THROTTLE_BUFFER_SIZES  20
+#define MAX_TS_PACKET_QUEUE 4
+#define MAX_PES_HEADER_BYTES 19
 
 
 //* enum which specified the timeshifting mode 
@@ -53,148 +58,129 @@ enum PidType
   Other=2
 };
 
-enum ChannelType
+typedef struct
 {
-  TV = 0,
-  Radio = 1,
-};
+  public:
+    int OriginalPid;
+    int FakePid;
+    bool IsStillPresent;
+    bool SeenStart;
+    byte PrevContinuityCounter;
 
-typedef struct stLastPtsDtsRecord
-{
-  __int64 m_prevPts ;
-  __int64 m_prevDts ;
-  DWORD   m_prevPtsTimeStamp ;
-  DWORD   m_prevDtsTimeStamp ;
-  __int64 m_PtsCompensation ;
-  __int64 m_DtsCompensation ;
-  int m_Pid ;
-} LastPtsDtsRecord;
+    // Used to patch and/or generate PCR.
+    // The main purpose is to be able to reassemble PES packet headers which
+    // are split over multiple TS packets.
+    int TsPacketQueueLength;
+    byte TsPacketQueue[MAX_TS_PACKET_QUEUE][TS_PACKET_LEN];
+    byte TsPacketPayloadStartQueue[MAX_TS_PACKET_QUEUE];
+    byte PesHeader[MAX_PES_HEADER_BYTES];
+    int PesHeaderLength;
 
-typedef struct stPidInfo2
-{
-public:
-  int elementaryPid;
-  int fakePid;
-  bool seenStart;
-  byte TsPktQ[4][188] ;
-  int  NPktQ ;
-  CTsHeader TsHeaderQ[4] ;
-  byte PesHeader[19] ;
-  int  PesHeaderLength ;
-  byte ccPrev ;
-  byte m_Pkt[188] ;
-}PidInfo2;
+    __int64 PrevPts;
+    DWORD PrevPtsTimeStamp;
+    __int64 PrevDts;
+    DWORD PrevDtsTimeStamp;
+}PidInfo;
 
-typedef vector<stPidInfo2>::iterator ivecPidInfo2;
-
-class IFileWriter
-{
-public:
-  virtual void Write(byte* buffer, int len)=0;
-};
-
-class CDiskRecorder: public IFileWriter
+class CDiskRecorder
 {
 public:
   CDiskRecorder(RecordingMode mode);
   ~CDiskRecorder(void);
   
-  void SetFileNameW(wchar_t* pwszFileName);
-  void SetChannelType(int channelType);
-  bool Start();
+  void SetFileName(wchar_t* fileName);
+  HRESULT Start();
   void Stop();
-  void Pause( BYTE onOff) ;
-  void Reset();
 
-  void GetRecordingMode(int *mode) ;
-  void SetPmtPid(int pmtPid,int serviceId,byte* pmtData,int pmtLength);
+  void GetRecordingMode(int* mode);
+  HRESULT SetPmt(byte* pmt, int pmtLength);
 
   // Only needed for timeshifting
-  void SetVideoAudioObserver (IVideoAudioObserver* callback);
-  void GetBufferSize( long * size) ;
-  void GetNumbFilesAdded( WORD *numbAdd) ;
-  void GetNumbFilesRemoved( WORD *numbRem) ;
-  void GetCurrentFileId( WORD *fileID) ;
-  void GetMinTSFiles( WORD *minFiles) ;
-  void SetMinTSFiles( WORD minFiles) ;
-  void GetMaxTSFiles( WORD *maxFiles) ;
-  void SetMaxTSFiles( WORD maxFiles) ;
-  void GetMaxTSFileSize( __int64 *maxSize) ;
-  void SetMaxTSFileSize( __int64 maxSize) ;
-  void GetChunkReserve( __int64 *chunkSize) ;
-  void SetChunkReserve( __int64 chunkSize) ;
-  void GetFileBufferSize( __int64 *lpllsize) ;
-  void GetTimeShiftPosition(__int64 * position,long * bufferId);
-  void GetDiscontinuityCounter(int* counter);
-  void GetTotalBytes(int* packetsProcessed);
+  void SetVideoAudioObserver(IVideoAudioObserver* callBack);
+  void GetBufferSize(__int64* size);
+
+  void SetMinTsFiles(WORD minFiles);
+  void SetMaxTsFiles(WORD maxFiles);
+  void SetMaxTsFileSize(__int64 maxSize);
+  void SetChunkReserve(__int64 chunkSize);
+
+  void GetTimeShiftPosition(__int64* position, long* bufferId);
+  void GetDiscontinuityCount(int* count);
+  void GetProcessedPacketCount(int* count);
 
   void OnTsPacket(byte* tsPacket);
   void Write(byte* buffer, int len);
 
-private:  
+private:
+  void ClearPids();
   void WriteToRecording(byte* buffer, int len);
   void WriteToTimeshiftFile(byte* buffer, int len);
-  void WriteLog(const char *fmt, ...);
-  void WriteLog(const wchar_t *fmt, ...);
-  void SetPcrPid(int pcrPid);
+  void WriteLog(const char* fmt, ...);
+  void WriteLog(const wchar_t* fmt, ...);
   void Flush();
-  void WriteTs(byte* tsPacket);
-  void WriteFakePAT();
-  void CreateFakePMT(byte* realPmt);
-  void WriteFakePMT();
+  void InjectPcrFromPts(PidInfo& info);
+  void WritePacket(byte* tsPacket);
+  void CreateFakePat();
+  void CreateFakePmt(CPidTable& pidTable);
+  void AddPidToPmt(BasePid* pid, const string& pidType, int& nextFakePid, int& pmtOffset);
+  void WriteFakeServiceInfo();
 
-  __int64 EcPcrTime(__int64 New, __int64 Prev) ;
   void PatchPcr(byte* tsPacket,CTsHeader& header);
-  void PatchPtsDts(byte* tsPacket,CTsHeader& header,PidInfo2& pidInfo);
+  void HandlePcrInstability(CPcr& pcrNew, __int64 pcrChange);
+  void PatchPtsDts(byte* tsPacket, PidInfo& pidInfo);
 
   MultiFileWriterParam m_params;
-  RecordingMode    m_recordingMode;
-  CPmtParser*           m_pPmtParser;
-  bool                 m_bRunning;
-  wchar_t                 m_wszFileName[2048];
-  MultiFileWriter*     m_pTimeShiftFile;
-  HANDLE               m_hFile;
-  CCriticalSection     m_section;
-  int                  m_iPmtPid;
-  byte                 m_fakePmt[MAX_SECTION_LENGTH];
-  int                  m_pcrPid;
-  int                   m_iServiceId;
-  vector<PidInfo2>     m_vecPids;
-//  bool                 m_bSeenAudioStart;
-  bool                 m_AudioOrVideoSeen;
-  int                   m_iPmtContinuityCounter;
-  int                   m_iPatContinuityCounter;
-  int                   m_iTsContinuityCounter;
+  RecordingMode m_recordingMode;
+  CBasePmtParser m_pmtParser;
+  bool m_isRunning;
+  wchar_t m_fileName[2048];
+  MultiFileWriter* m_pTimeShiftFile;
+  HANDLE m_hFile;
+  CCriticalSection m_section;
+
+
+  DWORD m_seenVideoOrAudio;
+
+  map<int, PidInfo*> m_pids;
+  unsigned long m_tsPacketCount;
+  int m_discontinuityCount;
+
+  int m_nextFakePidVideo;
+  int m_nextFakePidAudio;
+  int m_nextFakePidSubtitles;
+  int m_nextFakePidTeletext;
   
-  BOOL            m_bPaused;
-  bool            m_bDetermineNewStartPcr;
-  bool            m_bStartPcrFound;
-  int             m_iPacketCounter;
-  int              m_iPatVersion;
-  int              m_iPmtVersion;
+  byte m_fakePat[TS_PACKET_LEN];
+  int m_patContinuityCounter;
+  int m_patVersion;
+  byte m_fakePmt[MAX_SECTION_LENGTH];
+  int m_pmtContinuityCounter;
+  int m_pmtVersion;
+  int m_serviceInfoPacketCounter;
+
+  int m_originalPcrPid;
+  int m_substitutePcrSourcePid;
+  int m_fakePcrPid;
+  bool m_waitingForPcr;
+  CPcr m_prevPcr;
+  DWORD m_prevPcrReceiveTimeStamp;
+  float m_averagePcrSpeed;                    // Time average between PCR samples
+  __int64 m_pcrCompensation;             // Compensation from PCR/PTS/DTS to fake PCR/PTS/DTS ( 33 bits offset with PCR resoluion )
+  int m_pcrGapConfirmations;
+  __int64 m_pcrFutureCompensation;
+  bool m_generatePcrFromPts;
+
   int             m_iPart;
   byte*           m_pWriteBuffer;
   int             m_iWriteBufferPos;
   int        m_iWriteBufferSize;
   int      m_iThrottleBufferSizes[NUMBER_THROTTLE_BUFFER_SIZES];
-  int        m_iWriteBufferThrottle;
-  BOOL        m_bThrottleAtMax;
-  ChannelType    m_eChannelType;
+  int        m_writeBufferThrottle;
+  bool        m_throttleAtMax;
+  int         m_throttleMaxPacketCount;
   CTsHeader       m_tsHeader;
-  CAdaptionField  m_adaptionField;
-  CPcr            m_prevPcr;
-
-  int             m_JumpInProgress;              // Jump detected, wait confirmation
-  float           m_PcrSpeed;                    // Time average between PCR samples
-  __int64         m_PcrCompensation;             // Compensation from PCR/PTS/DTS to fake PCR/PTS/DTS ( 33 bits offset with PCR resoluion )
-  __int64         m_PcrFutureCompensation;       // Future compensation computed during jump detection.
-  DWORD           m_prevTimeStamp;               // TimeStamp of last PCR patching.
 
   bool            m_bClearTsQueue;
-  unsigned long   m_TsPacketCount;
-
-  vector <LastPtsDtsRecord> m_mapLastPtsDts;
-  typedef vector<LastPtsDtsRecord>::iterator imapLastPtsDts;
 
   IVideoAudioObserver *m_pVideoAudioObserver;
 };

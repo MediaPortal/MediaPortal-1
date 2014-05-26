@@ -55,15 +55,19 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
           if (_cardHandler.DataBaseCard.Enabled == false)
           {
             return false;
-          }        
+          }
 
-          return _cardHandler.Card.IsScanning;
+          IChannelScanner scanner = _cardHandler.Card.ChannelScanningInterface;
+          if (scanner != null)
+          {
+            return scanner.IsScanning;
+          }
         }
         catch (Exception ex)
         {
           this.LogError(ex);
-          return false;
         }
+        return false;
       }
     }
 
@@ -71,9 +75,8 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     /// scans current transponder for more channels.
     /// </summary>
     /// <param name="channel">IChannel containing the transponder tuning details.</param>
-    /// <param name="settings">Scan settings</param>
     /// <returns>list of channels found</returns>
-    public IChannel[] Scan(IChannel channel, ScanParameters settings)
+    public IChannel[] Scan(IChannel channel)
     {
       try
       {
@@ -83,10 +86,10 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         }
 
         
-        ITVScanning scanner = _cardHandler.Card.ScanningInterface;
+        IChannelScanner scanner = _cardHandler.Card.ChannelScanningInterface;
         if (scanner == null)
           return null;
-        List<IChannel> channelsFound = scanner.Scan(channel, settings);
+        List<IChannel> channelsFound = scanner.Scan(channel);
         if (channelsFound == null)
           return null;
         return channelsFound.ToArray();
@@ -103,7 +106,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
     }
 
-    public IChannel[] ScanNIT(IChannel channel, ScanParameters settings)
+    public IChannel[] ScanNIT(IChannel channel)
     {
       try
       {
@@ -112,10 +115,10 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
           return new List<IChannel>().ToArray();
         }
        
-        ITVScanning scanner = _cardHandler.Card.ScanningInterface;
+        IChannelScanner scanner = _cardHandler.Card.ChannelScanningInterface;
         if (scanner == null)
           return null;
-        List<IChannel> channelsFound = scanner.ScanNIT(channel, settings);
+        List<IChannel> channelsFound = scanner.ScanNIT(channel);
         if (channelsFound == null)
           return null;
         return channelsFound.ToArray();

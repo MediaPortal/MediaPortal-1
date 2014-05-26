@@ -26,24 +26,12 @@ extern void LogDebug(const wchar_t* fmt, ...);
 CTsOutputPin::CTsOutputPin(CBaseFilter* filter, CCritSec* filterLock, HRESULT* hr)
   : CBaseOutputPin(NAME("TS Output"), filter, filterLock, hr, L"TS Output")
 {
-  m_isConnected = false;
   m_isDumpEnabled = false;
 }
 
 CTsOutputPin::~CTsOutputPin(void)
 {
   StopDumping();
-}
-
-HRESULT CTsOutputPin::BreakConnect()
-{
-  m_isConnected = false;
-  return CBaseOutputPin::BreakConnect();
-}
-
-HRESULT CTsOutputPin::CheckConnect(IPin* receivePin)
-{
-  return CBaseOutputPin::CheckConnect(receivePin);
 }
 
 HRESULT CTsOutputPin::CheckMediaType(const CMediaType* mediaType)
@@ -58,12 +46,6 @@ HRESULT CTsOutputPin::CheckMediaType(const CMediaType* mediaType)
   }
   return VFW_E_TYPE_NOT_ACCEPTED;*/
   return S_OK;
-}
-
-HRESULT CTsOutputPin::CompleteConnect(IPin* receivePin)
-{
-  m_isConnected = true;
-  return CBaseOutputPin::CompleteConnect(receivePin);
 }
 
 HRESULT CTsOutputPin::DecideBufferSize(IMemAllocator* allocator, ALLOCATOR_PROPERTIES* properties)
@@ -143,11 +125,6 @@ HRESULT CTsOutputPin::GetMediaType(int position, CMediaType* mediaType)
   mediaType->majortype = *OUTPUT_MEDIA_TYPES[position].clsMajorType;
   mediaType->subtype = *OUTPUT_MEDIA_TYPES[position].clsMinorType;
   return S_OK;
-}
-
-bool CTsOutputPin::IsConnected()
-{
-  return m_isConnected;
 }
 
 HRESULT CTsOutputPin::StartDumping(wchar_t* fileName)

@@ -245,6 +245,10 @@ namespace MediaPortal.Player
       }*/
       SetVideoWindow();
 
+      // With static DVD menus the 1st frame might happen before 
+      GUIGraphicsContext.IsPlaying = true;
+      GUIGraphicsContext.IsPlayingVideo = true;
+
       return true;
     }
 
@@ -377,7 +381,8 @@ namespace MediaPortal.Player
         _videoHeight = videoAttr.sourceResolutionY;
 
         _state = PlayState.Playing;
-        VMR9Util.g_vmr9.EVRSetDVDMenuState(false);
+        // if menu is not opened first then DVD navigator's events are correcting the state
+        VMR9Util.g_vmr9.EVRSetDVDMenuState(true); 
 
         _pendingCmd = false;
         Log.Info("DVDPlayer:Started playing()");
@@ -512,7 +517,7 @@ namespace MediaPortal.Player
       using (Settings xmlreader = new MPSettings())
       {
         dvdNavigator = xmlreader.GetValueAsString("dvdplayer", "navigator", "DVD Navigator");
-        aspectRatioMode = xmlreader.GetValueAsString("dvdplayer", "armode", "").ToLower();
+        aspectRatioMode = xmlreader.GetValueAsString("dvdplayer", "armode", "").ToLowerInvariant();
         if (aspectRatioMode == "crop")
         {
           arMode = AspectRatioMode.Crop;
@@ -531,7 +536,7 @@ namespace MediaPortal.Player
           arMode = AspectRatioMode.StretchedAsPrimary;
         }
         useAC3Filter = xmlreader.GetValueAsBool("dvdplayer", "ac3", false);
-        displayMode = xmlreader.GetValueAsString("dvdplayer", "displaymode", "").ToLower();
+        displayMode = xmlreader.GetValueAsString("dvdplayer", "displaymode", "").ToLowerInvariant();
         if (displayMode == "default")
         {
           _videoPref = DvdPreferredDisplayMode.DisplayContentDefault;
@@ -820,7 +825,6 @@ namespace MediaPortal.Player
                 case DvdDomain.FirstPlay:
                   Log.Debug("EVT:DVDPlayer:domain=firstplay");
                   _state = PlayState.Playing;
-                  VMR9Util.g_vmr9.EVRSetDVDMenuState(false);
                   break;
                   // The DVD Navigator has completed playback of the title or 
                   // chapter and did not find any other branching instruction for 

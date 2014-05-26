@@ -201,16 +201,10 @@ namespace MediaPortal.GUI.Library
       _imageLogo = LoadAnimationControl(_parentControlId, _controlId, 0, 0, 0, 0, _logoTextureName);
       _imageLogo.ParentControl = this;
       FontName = _fontName;
-      
-      //create an image for the markers that we will move around and render as needed.
-      string strText = GUIPropertyManager.Parse(LabelMarkerStarts);
-      if (strText.Length > 0)
-      {
-        _imageFillMarker = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, 0, 0,
-                                                _markerTextureName);
-        _imageFillMarker.KeepAspectRatio = false;
-        _imageFillMarker.ParentControl = this;
-      }
+
+      _imageFillMarker = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _markerTextureName);
+      _imageFillMarker.KeepAspectRatio = false;
+      _imageFillMarker.ParentControl = this;
     }
 
     public override void ScaleToScreenResolution()
@@ -1077,44 +1071,59 @@ namespace MediaPortal.GUI.Library
     }
     
     #region Private methods
-    private void parseMarkerValues(string strStarts, string strEnds) {
+
+    private void parseMarkerValues(string strStarts, string strEnds)
+    {
       //parse the labels and populate the percentages
       Log.Debug("GUITVProgressControl.parseMarkerValues() - parsing markers");
-      if (LabelMarkerStarts.Length > 0)
+      if (!string.IsNullOrEmpty(LabelMarkerStarts))
       {
-        if (strStarts.Length>0) {
+        if (!string.IsNullOrEmpty(strStarts))
+        {
           string[] strMarkerStarts = strStarts.Trim().Split(' ');
           MarkerStartsPercent.Clear();
-          for (int i=0; i < strMarkerStarts.Length; i++)
+          for (int i = 0; i < strMarkerStarts.Length; i++)
           {
             try
             {
               MarkerStartsPercent.Add(float.Parse(strMarkerStarts[i]));
             }
-            catch (Exception) {}
-            if (MarkerStartsPercent[i] < 0 || MarkerStartsPercent[i] > 100)
+            catch (Exception)
             {
-              MarkerStartsPercent[i] = 0;
+              break;
+            }
+            if (MarkerStartsPercent.Count > i)
+            {
+              if (MarkerStartsPercent[i] < 0)
+                MarkerStartsPercent[i] = 0;
+              if (MarkerStartsPercent[i] > 100)
+                MarkerStartsPercent[i] = 100;
             }
           }
         }
       }
-      if (LabelMarkerEnds.Length > 0)
+      if (!string.IsNullOrEmpty(LabelMarkerEnds))
       {
-        if (strEnds.Length > 0)
+        if (!string.IsNullOrEmpty(strEnds))
         {
           string[] strMarkerEnds = strEnds.Trim().Split(' ');
           MarkerEndsPercent.Clear();
-          for (int i=0; i < strMarkerEnds.Length; i++)
+          for (int i = 0; i < strMarkerEnds.Length; i++)
           {
             try
             {
               MarkerEndsPercent.Add(float.Parse(strMarkerEnds[i]));
             }
-            catch (Exception) {}
-            if (MarkerEndsPercent[i] < 0 || MarkerEndsPercent[i] > 100)
+            catch (Exception)
             {
-              MarkerEndsPercent[i] = 0;
+              break;
+            }
+            if (MarkerEndsPercent.Count > i)
+            {
+              if (MarkerEndsPercent[i] < 0)
+                MarkerEndsPercent[i] = 0;
+              if (MarkerEndsPercent[i] > 100)
+                MarkerEndsPercent[i] = 100;
             }
           }
         }
@@ -1129,7 +1138,7 @@ namespace MediaPortal.GUI.Library
       {
         return;
       }
-      
+
       float fPercentIncrement = fTotWidth;
       float fJumpWidth = 0;
       int iCurrentPosition = 0;
@@ -1139,8 +1148,8 @@ namespace MediaPortal.GUI.Library
       _markerWidths.Clear();
       _markerXPositions.Clear();
       _markerYPositions.Clear();
-      
-      for (int i=0; i < MarkerStartsPercent.Count || i < MarkerEndsPercent.Count; i++)
+
+      for (int i = 0; i < MarkerStartsPercent.Count || i < MarkerEndsPercent.Count; i++)
       {
         //set the width of the bar
         fJumpWidth = (float) MarkerEndsPercent[i] - (float) MarkerStartsPercent[i];
@@ -1152,7 +1161,7 @@ namespace MediaPortal.GUI.Library
         
         iCurrentPosition = iWidth1 + iXPos;
         iWidth1 = (int) Math.Floor(fJumpWidth);
-        
+
         if (iWidth1 > 0)
         {
           _markerWidths.Add(iWidth1);

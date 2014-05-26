@@ -170,6 +170,15 @@
     <ClInclude Include="source\TsMuxerFilter.h" />
     <ClInclude Include="source\TsOutputPin.h" />
     <ClInclude Include="source\MuxInputPin.h" />
+    <ClInclude Include="source\Version.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="source\TsMuxer.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DvbCoreUtils\DvbCoreUtils.vcxproj">
+      <Project>{4b134b4c-4ef6-4647-9cea-a59ff0013357}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

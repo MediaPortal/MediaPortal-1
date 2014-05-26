@@ -49,9 +49,6 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     private readonly CardTuner _tuner;
     private IConditionalAccessMenuActions _ciMenu;    
 
-    private static ScanParameters _settings;
-    private static object _settingsLock = new object();
-
     #endregion
 
     #region ctor
@@ -62,7 +59,11 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     public TvCardHandler(Card dbsCard, ITVCard card)
     {      
       _dbsCard = dbsCard;
-      Card = card;
+      _card = card;
+      if (_card != null)
+      {
+        _card.Context = new TvCardContext();
+      }
       _userManagement = new UserManagement(this);
       _parkedUserManagement = new ParkedUserManagement(this);
 
@@ -88,7 +89,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
           return false;
         }
         IConditionalAccessProvider caProvider = menuInterface as IConditionalAccessProvider;
-        if (caProvider != null && caProvider.IsInterfaceReady())
+        if (caProvider != null && caProvider.IsConditionalAccessInterfaceReady())
         {
           _ciMenu = menuInterface;
           return true;
@@ -161,15 +162,6 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     public ITVCard Card
     {
       get { return _card; }
-      set
-      {
-        _card = value;
-        if (_card.Context == null)
-        {
-          _card.Context = new TvCardContext();
-        }
-        SetParameters();
-      }
     }
 
     /// <summary>
@@ -235,7 +227,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       {
         try
         {         
-          return _card.CardType;
+          return _card.TunerType;
         }
         catch (ThreadAbortException)
         {
@@ -401,35 +393,6 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
     }
 
-    private static ScanParameters Settings
-    {
-      get
-      {
-        lock (_settingsLock)
-        {
-          if (_settings == null)
-          {
-            _settings = new ScanParameters
-              {
-                TimeOutTune = SettingsManagement.GetValue("timeoutTune", 2),
-                TimeOutPAT = SettingsManagement.GetValue("timeoutPAT", 5),
-                TimeOutCAT = SettingsManagement.GetValue("timeoutCAT", 5),
-                TimeOutPMT = SettingsManagement.GetValue("timeoutPMT", 10),
-                TimeOutSDT = SettingsManagement.GetValue("timeoutSDT", 20),
-                TimeOutAnalog = SettingsManagement.GetValue("timeoutAnalog", 20),
-                MinimumFiles = SettingsManagement.GetValue("timeshiftMinFiles", 6),
-                MaximumFiles = SettingsManagement.GetValue("timeshiftMaxFiles", 20),
-                MaximumFileSize = (uint) SettingsManagement.GetValue("timeshiftMaxFileSize", 256)
-              };
-            _settings.MaximumFileSize *= 1000;
-            _settings.MaximumFileSize *= 1000;
-          }
-        }        
-        return _settings;
-      }
-    }
-
-
     /// <summary>
     /// Disposes this instance.
     /// </summary>
@@ -438,15 +401,6 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       _card.Dispose();
     }
     
-    private void SetParameters()
-    {
-      if (_card == null)
-      {
-        return;
-      }      
-      _card.Parameters = Settings;
-    }
-
     /// <summary>
     /// Gets the current channel.
     /// </summary>

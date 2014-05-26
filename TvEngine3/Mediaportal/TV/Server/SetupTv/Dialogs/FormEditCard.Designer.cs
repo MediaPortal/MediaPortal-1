@@ -1,3 +1,4 @@
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
 namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
   partial class FormEditCard
@@ -28,37 +29,37 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     /// </summary>
     private void InitializeComponent()
     {
-      this.label1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.label3 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.label4 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.mpButtonSave = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.label1 = new MPLabel();
+      this.label3 = new MPLabel();
+      this.label4 = new MPLabel();
+      this.mpButtonSave = new MPButton();
       this.numericUpDownDecryptLimit = new System.Windows.Forms.NumericUpDown();
-      this.mpButtonCancel = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
-      this.groupBoxConditionalAccessSettings = new System.Windows.Forms.GroupBox();
-      this.mpLabel3 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.mpComboBoxMultiChannelDecryptMode = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
-      this.label5 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.mpComboBoxCamType = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
-      this.checkBoxConditionalAccessEnabled = new System.Windows.Forms.CheckBox();
-      this.checkBoxAllowEpgGrab = new System.Windows.Forms.CheckBox();
-      this.checkBoxPreloadCard = new System.Windows.Forms.CheckBox();
-      this.groupBoxAdvancedSettings = new System.Windows.Forms.GroupBox();
-      this.checkBoxUseCustomTuning = new System.Windows.Forms.CheckBox();
-      this.mpLabel6 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.mpLabel5 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.comboBoxNetworkProvider = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
-      this.mpComboBoxPidFilterMode = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
-      this.mpLabel1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.mpComboBoxIdleMode = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
-      this.mpLabel4 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.mpTextBoxDeviceName = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
-      this.mpLabel2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.groupBoxGeneralSettings = new System.Windows.Forms.GroupBox();
-      this.groupBoxDiseqcSettings = new System.Windows.Forms.GroupBox();
-      this.mpLabel7 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpButtonCancel = new MPButton();
+      this.groupBoxConditionalAccessSettings = new MPGroupBox();
+      this.mpLabel3 = new MPLabel();
+      this.mpComboBoxMultiChannelDecryptMode = new MPComboBox();
+      this.label5 = new MPLabel();
+      this.mpComboBoxCamType = new MPComboBox();
+      this.checkBoxConditionalAccessEnabled = new MPCheckBox();
+      this.checkBoxAllowEpgGrab = new MPCheckBox();
+      this.checkBoxPreloadCard = new MPCheckBox();
+      this.groupBoxAdvancedSettings = new MPGroupBox();
+      this.checkBoxUseCustomTuning = new MPCheckBox();
+      this.mpLabel6 = new MPLabel();
+      this.mpLabel5 = new MPLabel();
+      this.comboBoxNetworkProvider = new MPComboBox();
+      this.mpComboBoxPidFilterMode = new MPComboBox();
+      this.mpLabel1 = new MPLabel();
+      this.mpComboBoxIdleMode = new MPComboBox();
+      this.mpLabel4 = new MPLabel();
+      this.mpTextBoxDeviceName = new MPTextBox();
+      this.mpLabel2 = new MPLabel();
+      this.groupBoxGeneralSettings = new MPGroupBox();
+      this.groupBoxDiseqcSettings = new MPGroupBox();
+      this.mpLabel7 = new MPLabel();
       this.numericUpDownDiseqcCommandRepeatCount = new System.Windows.Forms.NumericUpDown();
-      this.mpLabel8 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.checkBoxAlwaysSendDiseqcCommands = new System.Windows.Forms.CheckBox();
+      this.mpLabel8 = new MPLabel();
+      this.checkBoxAlwaysSendDiseqcCommands = new MPCheckBox();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDecryptLimit)).BeginInit();
       this.groupBoxConditionalAccessSettings.SuspendLayout();
       this.groupBoxAdvancedSettings.SuspendLayout();
@@ -446,36 +447,36 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
     #endregion
 
-    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel label1;
-    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel label3;
-    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel label4;
-    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton mpButtonSave;
+    private MPLabel label1;
+    private MPLabel label3;
+    private MPLabel label4;
+    private MPButton mpButtonSave;
     private System.Windows.Forms.NumericUpDown numericUpDownDecryptLimit;
-    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton mpButtonCancel;
-    private System.Windows.Forms.GroupBox groupBoxConditionalAccessSettings;
-    private System.Windows.Forms.CheckBox checkBoxAllowEpgGrab;
-    private System.Windows.Forms.CheckBox checkBoxPreloadCard;
-    private System.Windows.Forms.GroupBox groupBoxAdvancedSettings;
-    private System.Windows.Forms.CheckBox checkBoxConditionalAccessEnabled;
-    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel label5;
-    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox mpComboBoxCamType;
-    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox comboBoxNetworkProvider;
-    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel mpLabel3;
-    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox mpComboBoxMultiChannelDecryptMode;
-    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox mpTextBoxDeviceName;
-    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel mpLabel2;
-    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel mpLabel6;
-    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel mpLabel5;
-    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox mpComboBoxPidFilterMode;
-    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel mpLabel1;
-    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox mpComboBoxIdleMode;
-    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel mpLabel4;
-    private System.Windows.Forms.GroupBox groupBoxGeneralSettings;
-    private System.Windows.Forms.CheckBox checkBoxUseCustomTuning;
-    private System.Windows.Forms.GroupBox groupBoxDiseqcSettings;
-    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel mpLabel7;
+    private MPButton mpButtonCancel;
+    private MPGroupBox groupBoxConditionalAccessSettings;
+    private MPCheckBox checkBoxAllowEpgGrab;
+    private MPCheckBox checkBoxPreloadCard;
+    private MPGroupBox groupBoxAdvancedSettings;
+    private MPCheckBox checkBoxConditionalAccessEnabled;
+    private MPLabel label5;
+    private MPComboBox mpComboBoxCamType;
+    private MPComboBox comboBoxNetworkProvider;
+    private MPLabel mpLabel3;
+    private MPComboBox mpComboBoxMultiChannelDecryptMode;
+    private MPTextBox mpTextBoxDeviceName;
+    private MPLabel mpLabel2;
+    private MPLabel mpLabel6;
+    private MPLabel mpLabel5;
+    private MPComboBox mpComboBoxPidFilterMode;
+    private MPLabel mpLabel1;
+    private MPComboBox mpComboBoxIdleMode;
+    private MPLabel mpLabel4;
+    private MPGroupBox groupBoxGeneralSettings;
+    private MPCheckBox checkBoxUseCustomTuning;
+    private MPGroupBox groupBoxDiseqcSettings;
+    private MPLabel mpLabel7;
     private System.Windows.Forms.NumericUpDown numericUpDownDiseqcCommandRepeatCount;
-    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel mpLabel8;
-    private System.Windows.Forms.CheckBox checkBoxAlwaysSendDiseqcCommands;
+    private MPLabel mpLabel8;
+    private MPCheckBox checkBoxAlwaysSendDiseqcCommands;
   }
 }

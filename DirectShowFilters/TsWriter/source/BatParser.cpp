@@ -39,7 +39,7 @@ CBatParser::~CBatParser(void)
 {
 }
 
-void CBatParser::GetBouquetIds(int originalNetworkId, int transportStreamId, int serviceId, vector<int>* bouquetIds)
+void CBatParser::GetBouquetIds(int originalNetworkId, int transportStreamId, int serviceId, vector<unsigned short>* bouquetIds)
 {
   GetNetworkIds(originalNetworkId, transportStreamId, serviceId, bouquetIds);
 }

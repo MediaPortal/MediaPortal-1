@@ -181,7 +181,7 @@ namespace Mediaportal.TV.Server.TVLibrary
     {
       if (msg == WM_POWERBROADCAST)
       {
-        this.LogDebug("TV service PowerEventThread received WM_POWERBROADCAST {1}", wParam.ToInt32());
+        this.LogDebug("TV service PowerEventThread received WM_POWERBROADCAST {0}", wParam.ToInt32());
         switch (wParam.ToInt32())
         {
           case PBT_APMQUERYSUSPENDFAILED:

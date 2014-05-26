@@ -375,7 +375,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
     private Thread _mmiHandlerThread = null;
     private AutoResetEvent _mmiHandlerThreadStopEvent = null;
     private object _mmiLock = new object();
-    private IConditionalAccessMenuCallBacks _caMenuCallBacks = null;
+    private IConditionalAccessMenuCallBack _caMenuCallBack = null;
     private object _caMenuCallBackLock = new object();
 
     // This is a first-in-first-out queue of messages that are ready to be passed to the CAM.
@@ -857,25 +857,25 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
 
       lock (_caMenuCallBackLock)
       {
-        if (_caMenuCallBacks == null)
+        if (_caMenuCallBack == null)
         {
-          this.LogDebug("Turbosight: menu call backs are not set");
+          this.LogDebug("Turbosight: menu call back not set");
         }
 
         this.LogDebug("  title     = {0}", entries[0]);
         this.LogDebug("  sub-title = {0}", entries[1]);
         this.LogDebug("  footer    = {0}", entries[2]);
         this.LogDebug("  # entries = {0}", expectedEntryCount);
-        if (_caMenuCallBacks != null)
+        if (_caMenuCallBack != null)
         {
-          _caMenuCallBacks.OnCiMenu(entries[0], entries[1], entries[2], expectedEntryCount - 3);
+          _caMenuCallBack.OnCiMenu(entries[0], entries[1], entries[2], expectedEntryCount - 3);
         }
         for (int i = 3; i < expectedEntryCount; i++)
         {
           this.LogDebug("    {0, -7} = {1}", i - 2, entries[i]);
-          if (_caMenuCallBacks != null)
+          if (_caMenuCallBack != null)
           {
-            _caMenuCallBacks.OnCiMenuChoice(i - 3, entries[i]);
+            _caMenuCallBack.OnCiMenuChoice(i - 3, entries[i]);
           }
         }
       }
@@ -899,13 +899,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
       this.LogDebug("  blind  = {0}", blind);
       lock (_caMenuCallBackLock)
       {
-        if (_caMenuCallBacks != null)
+        if (_caMenuCallBack != null)
         {
-          _caMenuCallBacks.OnCiRequest(blind, answerLength, prompt);
+          _caMenuCallBack.OnCiRequest(blind, answerLength, prompt);
         }
         else
         {
-          this.LogDebug("Turbosight: menu call backs are not set");
+          this.LogDebug("Turbosight: menu call back not set");
         }
       }
       return true;
@@ -1242,7 +1242,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
         return;
       }
 
-      Marshal.StructureToPtr(command, _generalBuffer, true);
+      Marshal.StructureToPtr(command, _generalBuffer, false);
       //Dump.DumpBinary(_generalBuffer, NBC_TUNING_PARAMS_SIZE);
 
       hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.NbcParams,
@@ -1303,7 +1303,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
         accessParams.LnbPower = TbsLnbPower.Off;
       }
 
-      Marshal.StructureToPtr(accessParams, _generalBuffer, true);
+      Marshal.StructureToPtr(accessParams, _generalBuffer, false);
       //Dump.DumpBinary(_generalBuffer, TBS_ACCESS_PARAMS_SIZE);
 
       int hr = _propertySet.Set(_propertySetGuid, _tbsAccessProperty,
@@ -1340,7 +1340,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
       }
       if (_isCaInterfaceOpen)
       {
-        this.LogWarn("Turbosight: interface is already open");
+        this.LogWarn("Turbosight: conditional access interface is already open");
         return true;
       }
 
@@ -1385,7 +1385,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
       StartMmiHandlerThread();
 
       this.LogDebug("Turbosight: result = success");
-      return true;
+      return _isCiSlotPresent;
     }
 
     /// <summary>
@@ -1491,12 +1491,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
       }
       if (!_isCamPresent)
       {
-        this.LogError("Turbosight: the CAM is not present");
+        this.LogError("Turbosight: failed to send conditional access command, the CAM is not present");
         return false;
       }
       if (pmt == null)
       {
-        this.LogError("Turbosight: PMT not supplied");
+        this.LogError("Turbosight: failed to send conditional access command, PMT not supplied");
         return true;
       }
 
@@ -1525,12 +1525,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
     /// <summary>
     /// Set the menu call back delegate.
     /// </summary>
-    /// <param name="callBacks">The call back delegate.</param>
-    public void SetCallBacks(IConditionalAccessMenuCallBacks callBacks)
+    /// <param name="callBack">The call back delegate.</param>
+    public void SetMenuCallBack(IConditionalAccessMenuCallBack callBack)
     {
       lock (_caMenuCallBackLock)
       {
-        _caMenuCallBacks = callBacks;
+        _caMenuCallBack = callBack;
       }
       StartMmiHandlerThread();
     }
@@ -1551,7 +1551,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
       StartMmiHandlerThread();
       if (!_isCamPresent)
       {
-        this.LogError("Turbosight: the CAM is not present");
+        this.LogError("Turbosight: failed to enter menu, the CAM is not present");
         return false;
       }
 
@@ -1588,7 +1588,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
       StartMmiHandlerThread();
       if (!_isCamPresent)
       {
-        this.LogError("Turbosight: the CAM is not present");
+        this.LogError("Turbosight: failed to close menu, the CAM is not present");
         return false;
       }
 
@@ -1616,7 +1616,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
       StartMmiHandlerThread();
       if (!_isCamPresent)
       {
-        this.LogError("Turbosight: the CAM is not present");
+        this.LogError("Turbosight: failed to select menu entry, the CAM is not present");
         return false;
       }
 
@@ -1660,7 +1660,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
       StartMmiHandlerThread();
       if (!_isCamPresent)
       {
-        this.LogError("Turbosight: the CAM is not present");
+        this.LogError("Turbosight: failed to answer enquiry, the CAM is not present");
         return false;
       }
 
@@ -1727,7 +1727,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
           accessParams.Tone = TbsTone.BurstModulated;
         }
 
-        Marshal.StructureToPtr(accessParams, _generalBuffer, true);
+        Marshal.StructureToPtr(accessParams, _generalBuffer, false);
         //Dump.DumpBinary(_generalBuffer, TBS_ACCESS_PARAMS_SIZE);
 
         hr = _propertySet.Set(_propertySetGuid, _tbsAccessProperty,
@@ -1752,7 +1752,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
         accessParams.Tone = TbsTone.On;
       }
 
-      Marshal.StructureToPtr(accessParams, _generalBuffer, true);
+      Marshal.StructureToPtr(accessParams, _generalBuffer, false);
       //Dump.DumpBinary(_generalBuffer, TBS_ACCESS_PARAMS_SIZE);
 
       hr = _propertySet.Set(_propertySetGuid, _tbsAccessProperty,
@@ -1788,12 +1788,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
       }
       if (command == null || command.Length == 0)
       {
-        this.LogError("Turbosight: command not supplied");
+        this.LogWarn("Turbosight: DiSEqC command not supplied");
         return true;
       }
       if (command.Length > MAX_DISEQC_MESSAGE_LENGTH)
       {
-        this.LogError("Turbosight: command too long, length = {0}", command.Length);
+        this.LogError("Turbosight: DiSEqC command too long, length = {0}", command.Length);
         return false;
       }
 
@@ -1803,7 +1803,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
       accessParams.DiseqcTransmitMessage = new byte[MAX_DISEQC_MESSAGE_LENGTH];
       Buffer.BlockCopy(command, 0, accessParams.DiseqcTransmitMessage, 0, command.Length);
 
-      Marshal.StructureToPtr(accessParams, _generalBuffer, true);
+      Marshal.StructureToPtr(accessParams, _generalBuffer, false);
       //Dump.DumpBinary(_generalBuffer, TBS_ACCESS_PARAMS_SIZE);
 
       int hr = _propertySet.Set(_propertySetGuid, _tbsAccessProperty,
@@ -1889,7 +1889,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
       }
       if (_isRemoteControlInterfaceOpen)
       {
-        this.LogWarn("Turbosight: interface is already open");
+        this.LogWarn("Turbosight: remote control interface is already open");
         return true;
       }
 

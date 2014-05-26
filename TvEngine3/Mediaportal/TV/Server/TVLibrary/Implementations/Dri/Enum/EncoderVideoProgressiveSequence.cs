@@ -20,7 +20,7 @@
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Enum
 {
-  public enum EncoderVideoProgressiveSequence : byte
+  internal enum EncoderVideoProgressiveSequence : byte
   {
     Interlaced = 0,
     Progressive = 1

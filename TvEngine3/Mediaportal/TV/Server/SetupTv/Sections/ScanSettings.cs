@@ -119,7 +119,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       numericUpDownCAT.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeoutCAT", 5);
       numericUpDownPMT.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeoutPMT", 10);
       numericUpDownSDT.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeoutSDT", 20);
-      numericUpDownAnalog.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeoutAnalog", 20);
 
       delayDetectUpDown.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("delayCardDetect", 0);
 
@@ -155,7 +154,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeoutCAT", (int) numericUpDownCAT.Value);
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeoutPMT", (int) numericUpDownPMT.Value);
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeoutSDT", (int) numericUpDownSDT.Value);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeoutAnalog", (int) numericUpDownAnalog.Value);
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("linkageScannerEnabled", checkBoxEnableLinkageScanner.Checked);
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("processPriority", mpComboBoxPrio.SelectedIndex);
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("delayCardDetect", (int) delayDetectUpDown.Value);
@@ -244,7 +242,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           if (devices3.Any(t => t != null && t.Name == encoder.Name))
           {
             displayEncoder.Installed = "Yes";
-            break;
           }
         }
         _bindingVideoEncoders.Add(displayEncoder);
@@ -261,14 +258,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         {
           found = true;
           displayEncoder.Installed = "Yes";
-          break;
         }
         if (!found)
         {
           if (devices3.Any(t => t != null && t.Name == encoder.Name))
           {
             displayEncoder.Installed = "Yes";
-            break;
           }
         }
         _bindingAudioEncoders.Add(displayEncoder);

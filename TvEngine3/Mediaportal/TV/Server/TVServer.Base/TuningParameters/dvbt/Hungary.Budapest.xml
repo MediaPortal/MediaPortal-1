@@ -9,7 +9,7 @@
     <IsDvbT2>False</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>802000</Frequency>
+    <Frequency>770000</Frequency>
     <Bandwidth>8000</Bandwidth>
     <Offset>125</Offset>
     <CellId>0</CellId>
@@ -18,6 +18,14 @@
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>610000</Frequency>
+    <Bandwidth>8000</Bandwidth>
+    <Offset>125</Offset>
+    <CellId>0</CellId>
+    <CellIdExtension>0</CellIdExtension>
+    <IsDvbT2>False</IsDvbT2>
+  </DVBTTuning>
+  <DVBTTuning>
+    <Frequency>554000</Frequency>
     <Bandwidth>8000</Bandwidth>
     <Offset>125</Offset>
     <CellId>0</CellId>

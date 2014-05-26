@@ -31,7 +31,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
   /// This class is used to keep track of the number of instances of each video and audio encoder
   /// <see cref="DsDevice"/> which are in use.
   /// </summary>
-  public class EncodersInUse
+  internal class EncodersInUse
   {
     private static EncodersInUse _instance = new EncodersInUse();
     private readonly Dictionary<DsDevice, int> _encodersInUse = new Dictionary<DsDevice, int>();
@@ -94,7 +94,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
         // Encoder not yet in DB -> assume reusable.
         if (dbEncoder == null)
         {
-          this.LogDebug("encoders-in-use: unrecognised, assuming usable");
+          this.LogWarn("encoders-in-use: {0} unrecognised, assuming usable", device.Name);
           _encodersInUse[key]++;
           return true;
         }

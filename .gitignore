@@ -1,5 +1,5 @@
-[Bb]in
-[Oo]bj
+[B|b]in
+obj
 *.log
 *.suo
 *.sln.cache
@@ -14,3 +14,11 @@ _ReSharper.*
 /Build/_BuildReport_Files
 /Build/*.html
 /Build/*.xml
+/Build/NuGet.exe
+
+# Other randoms
+Thumbs.db
+*.bak
+/mediaportal/Setup/uninstall.nsh
+Packages
+*.DotSettings

@@ -28,7 +28,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
   /// </summary>
   [Guid("38536ab6-7a41-404f-917F-c47dd8b639c7"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  public interface ICaCallBack
+  internal interface ICaCallBack
   {
     /// <summary>
     /// Called by an ITsCaGrabber instance when it receives a new CAT section.
@@ -43,7 +43,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
   /// </summary>
   [Guid("f9aa3910-7818-452a-94d1-72e039df50ef"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  public interface ITsCaGrabber
+  internal interface ITsCaGrabber
   {
     /// <summary>
     /// Reset the grabber, causing it to forget about previously seen CAT sections.

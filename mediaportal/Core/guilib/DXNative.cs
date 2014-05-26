@@ -38,33 +38,63 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public class DXNative
   {
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    // Synchronize access to methods known to cause AccessViolationException 
+    // on native side when called simultaneously from multiple threads
+    private static readonly object _lock = new object();
+
+    public static void FontEngineRemoveTextureSync(int textureNo)
+    {
+      lock (_lock)
+      {
+        FontEngineRemoveTexture(textureNo);
+      }
+    }
+
+    public static unsafe int FontEngineAddTextureSync(int hasCode, bool useAlphaBlend, void* fontTexture)
+    {
+      lock (_lock)
+      {
+        return FontEngineAddTexture(hasCode, useAlphaBlend, fontTexture);
+      }
+    }
+
+    public static void FontEngineDrawTextureSync(int textureNo, float x, float y, float nw, float nh,
+                                             float uoff, float voff, float umax, float vmax, uint color,
+                                             float[,] matrix)
+    {
+      lock (_lock)
+      {
+        FontEngineDrawTexture(textureNo, x, y, nw, nh, uoff, voff, umax, vmax, color, matrix);
+      }
+    }
+
+    [DllImport("fontEngine.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     public static extern unsafe void FontEngineInitialize(int iScreenWidth, int iScreenHeight, int poolFormat);
 
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport("fontEngine.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     public static extern unsafe void FontEngineSetRenderState(Int32 state, System.UInt32 dwValue);
 
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport("fontEngine.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     public static extern unsafe void FontEngineSetSamplerState(System.UInt32 dwStage, Int32 state, System.UInt32 dwValue);
 
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport("fontEngine.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     public static extern unsafe void FontEngineSetTextureStageState(System.UInt32 dwStage, Int32 state, System.UInt32 dwValue);
 
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport("fontEngine.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     public static extern unsafe void FontEngineSetTexture(void* texture);
 
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    public static extern unsafe void FontEngineRemoveTexture(int textureNo);
+    [DllImport("fontEngine.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    private static extern unsafe int FontEngineAddTexture(int hasCode, bool useAlphaBlend, void* fontTexture);
 
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    public static extern unsafe int FontEngineAddTexture(int hasCode, bool useAlphaBlend, void* fontTexture);
+    [DllImport("fontEngine.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    private static extern unsafe void FontEngineRemoveTexture(int textureNo);
 
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    public static extern unsafe void FontEngineDrawTexture(int textureNo, float x, float y, float nw, float nh,
-                                                           float uoff, float voff, float umax, float vmax, uint color,
-                                                           float[,] matrix);
+    [DllImport("fontEngine.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    private static extern unsafe void FontEngineDrawTexture(int textureNo, float x, float y, float nw, float nh,
+                                                            float uoff, float voff, float umax, float vmax, uint color,
+                                                            float[,] matrix);
 
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport("fontEngine.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     public static extern unsafe void FontEngineDrawMaskedTexture(int textureNo1, float x, float y, float nw, float nh,
                                                                  float uoff, float voff, float umax, float vmax,
                                                                  uint color,
@@ -72,7 +102,7 @@ namespace MediaPortal.GUI.Library
                                                                  float voff2,
                                                                  float umax2, float vmax2);
 
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport("fontEngine.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     public static extern unsafe void FontEngineDrawMaskedTexture2(int textureNo1, float x, float y, float nw, float nh,
                                                                   float uoff, float voff, float umax, float vmax,
                                                                   uint color,
@@ -82,7 +112,7 @@ namespace MediaPortal.GUI.Library
                                                                   float voff3, float umax3, float vmax3,
                                                                   FontEngineBlendMode blendMode);
 
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport("fontEngine.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     public static extern unsafe void FontEngineDrawTexture2(int textureNo1, float x, float y, float nw, float nh,
                                                             float uoff, float voff, float umax, float vmax,
                                                             uint color,
@@ -91,38 +121,38 @@ namespace MediaPortal.GUI.Library
                                                             float umax2, float vmax2,
                                                             FontEngineBlendMode blendMode);
 
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport("fontEngine.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     public static extern unsafe void FontEnginePresentTextures();
 
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport("fontEngine.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     public static extern unsafe void FontEngineSetDevice(void* device);
 
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport("fontEngine.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     public static extern unsafe void FontEngineSetClipEnable();
 
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport("fontEngine.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     public static extern unsafe void FontEngineSetClipDisable();
 
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport("fontEngine.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     public static extern unsafe void FontEngineAddFont(int fontNumber, void* fontTexture, int firstChar, int endChar,
                                                         float textureScale, float textureWidth, float textureHeight,
                                                         float fSpacingPerChar, int maxVertices);
 
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport("fontEngine.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     public static extern unsafe void FontEngineRemoveFont(int fontNumber);
 
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport("fontEngine.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     public static extern unsafe void FontEngineSetCoordinate(int fontNumber, int index, int subindex, float fValue1,
                                                               float fValue2, float fValue3, float fValue4);
 
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport("fontEngine.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     public static extern unsafe void FontEngineDrawText3D(int fontNumber, void* text, int xposStart, int yposStart,
                                                            uint intColor, int maxWidth, float[,] matrix);
 
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport("fontEngine.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     public static extern unsafe void FontEnginePresent3D(int fontNumber);
 
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport("fontEngine.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     public static extern unsafe int FontEngineSetMaximumFrameLatency(uint maxLatency);
   }
 }

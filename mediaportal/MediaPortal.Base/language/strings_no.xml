@@ -2196,12 +2196,7 @@
     <String id="300093">Start MP på nytt etter en krasj</String>
     <String id="300094">Forsinkelse i sekunder før ny start</String>
     <String id="300095">Slå av monitor (når skjermen tømmes)</String>
-    <String id="300096">Slå monitor/tv på (gjennoptakelse fra ventemodus)</String>
-    <String id="300097">Tillat S3 ventemodus (selv om reaktivering enheter er til stede)</String>
-    <String id="300098">Workaround for å fikse MediaPortal hvis den stopper opp ved gjennoptakelse</String>
-    <String id="300099">Start MediaPortal på nytt ved gjennopptakelse</String>
     <String id="300100">Vis siste aktive modul etter oppvåkning</String>
-    <String id="300101">Bruk skjerm velgeren til å velge skjerm MediaPortal skal startes på</String>
     <String id="300102">Tidsforsinkelse ved oppstart</String>
     <String id="300103">Når MediaPortal startes</String>
     <String id="300104">Når MediaPortal gjennopptas</String>
@@ -2223,7 +2218,6 @@
     <String id="300120">Skinn</String>
     <String id="300121">On-screen Display</String>
     <String id="300122">Tillat husk av siste element som hadde fokus</String>
-    <String id="300123">Set automatisk størrelse etter vindu modusen til skinnet</String>
     <String id="300124">Gjem filendelser (.mp3, .avi...)</String>
     <String id="300125">Aktiver buffer for fileksistens</String>
     <String id="300126">Aktiver lyd effekter for skinn</String>
@@ -2255,10 +2249,10 @@
     <String id="300152">Bilder</String>
     <String id="300153">Lag kun små miniatyrbilder</String>
     <String id="300154">Slett bilde bufferen</String>
-    <String id="300155">TV/Video</String>
+    <String id="300155">Video</String>
     <String id="300156">Lag miniatyrbilder automatisk</String>
     <String id="300157">Lag miniatyr i opptaksmappen</String>
-    <String id="300158">Slett TV/Video miniatyrbilder</String>
+    <String id="300158">Slett Video miniatyrbilder</String>
     <String id="300159">Utseende for forhåndsvisning</String>
     <String id="300160">Rader</String>
     <String id="300161">Database</String>

@@ -21,7 +21,10 @@
 using System;
 using System.Collections;
 using System.Configuration.Install;
+#if DEBUG
 using System.IO;
+#endif
+using System.Reflection;
 using System.ServiceProcess;
 using System.Threading;
 using System.Windows.Forms;
@@ -35,11 +38,40 @@ namespace Mediaportal.TV.Server.TVService
     //private Thread _tvServiceThread = null;
     private static Thread _unhandledExceptionInThread = null;
 
+    const int SERVICE_ACCEPT_PRESHUTDOWN = 0x100;   // not supported on Windows XP
+    const int SERVICE_CONTROL_PRESHUTDOWN = 0xf;    // not supported on Windows XP
+
     /// <summary>
     /// Initializes a new instance of the <see cref="Service1"/> class.
     /// </summary>
     public Service1()
     {
+      if (OSInfo.OSInfo.VistaOrLater())
+      {
+        try
+        {
+          // Call base Creator
+          MethodInfo init = typeof(ServiceBase).GetMethod("Initialize", BindingFlags.Instance | BindingFlags.NonPublic);
+          init.Invoke(this, new object[] { false });
+
+          // Register the "TvServiceCallbackEx" handler
+          Type targetDelegate = typeof(ServiceBase).Assembly.GetType("System.ServiceProcess.NativeMethods+ServiceControlCallbackEx");
+          FieldInfo commandCallbackEx = typeof(ServiceBase).GetField("commandCallbackEx", BindingFlags.Instance | BindingFlags.NonPublic);
+          commandCallbackEx.SetValue(this, Delegate.CreateDelegate(targetDelegate, this, "TvServiceCallbackEx"));
+
+          // Accept SERVICE_CONTROL_PRESHUTDOWN
+          var acceptedCommands = typeof(ServiceBase).GetField("acceptedCommands", BindingFlags.Instance | BindingFlags.NonPublic);
+          int accCom = (int)acceptedCommands.GetValue(this);
+          acceptedCommands.SetValue(this, accCom | SERVICE_ACCEPT_PRESHUTDOWN);
+
+        }
+        catch (Exception ex)
+        {
+          this.LogError(ex, "Exception on Starting TV Service");
+          throw;
+        }
+      }
+
       AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
       InitializeComponent();
     }
@@ -176,6 +208,7 @@ namespace Mediaportal.TV.Server.TVService
       else
       {
         ServiceBase[] ServicesToRun = new ServiceBase[] { new Service1() };
+        ServicesToRun[0].CanShutdown = true;    // Allow OnShutdown()
         ServiceBase.Run(ServicesToRun);
       }
     }
@@ -338,6 +371,37 @@ namespace Mediaportal.TV.Server.TVService
       }
       base.OnStop();
       ExitCode = 0;
+    }
+
+    /// <summary>
+    /// When implemented in a derived class, executes when the system is shutting down. Specifies what should occur immediately prior to the system shutting down.
+    /// </summary>
+    protected override void OnShutdown()
+    {
+      OnStop();
+    }
+
+    /// <summary>
+    /// Handle service events
+    /// </summary>
+    /// <param name="control"></param>
+    /// <param name="eventType"></param>
+    /// <param name="eventData"></param>
+    /// <param name="eventContext"></param>
+    /// <returns></returns>
+    internal virtual int TvServiceCallbackEx(int control, int eventType, IntPtr eventData, IntPtr eventContext)
+    {
+      var baseCallback = typeof(ServiceBase).GetMethod("ServiceCommandCallbackEx", BindingFlags.Instance | BindingFlags.NonPublic);
+      switch (control)
+      {
+        case SERVICE_CONTROL_PRESHUTDOWN:
+          this.LogDebug("TV Service got PRESHUTDOWN event");
+          // Pretend shutdown was called
+          return (int)baseCallback.Invoke(this, new object[] { 0x00000005, eventType, eventData, eventContext });
+        default:
+          // Call base
+          return (int)baseCallback.Invoke(this, new object[] { control, eventType, eventData, eventContext });
+      }
     }
   }
 }

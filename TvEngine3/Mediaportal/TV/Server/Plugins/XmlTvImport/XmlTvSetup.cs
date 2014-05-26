@@ -64,6 +64,12 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
 
     public override void OnSectionDeActivated()
     {
+      SaveSettings();
+      base.OnSectionDeActivated();
+    }
+
+    public override void SaveSettings()
+    {
       _settingServiceAgent.SaveValue("xmlTv", textBoxFolder.Text);
       _settingServiceAgent.SaveValue("xmlTvUseTimeZone", checkBox1.Checked);
       _settingServiceAgent.SaveValue("xmlTvImportXML", cbImportXML.Checked);
@@ -78,9 +84,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       DateTime xmlTvRemoteScheduleTime = dateTimePickerScheduler.Value;
       _settingServiceAgent.SaveValue("xmlTvRemoteScheduleTime", xmlTvRemoteScheduleTime);
       _settingServiceAgent.SaveValue("xmlTvRemoteSchedulerEnabled", chkScheduler.Checked);
-      _settingServiceAgent.SaveValue("xmlTvRemoteSchedulerDownloadOnWakeUpEnabled", radioDownloadOnWakeUp.Checked);            
-
-      base.OnSectionDeActivated();
+      _settingServiceAgent.SaveValue("xmlTvRemoteSchedulerDownloadOnWakeUpEnabled", radioDownloadOnWakeUp.Checked);
     }
 
     private class CBChannelGroup
@@ -110,16 +114,14 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       checkBoxDeleteBeforeImport.Checked = _settingServiceAgent.GetValue("xmlTvDeleteBeforeImport", true);
       textBoxHours.Text = _settingServiceAgent.GetValue("xmlTvTimeZoneHours", 0).ToString();
       textBoxMinutes.Text = _settingServiceAgent.GetValue("xmlTvTimeZoneMins", 0).ToString();
-      labelLastImport.Text = _settingServiceAgent.GetValue("xmlTvResultLastImport", "");
-      labelChannels.Text = _settingServiceAgent.GetValue("xmlTvResultChannels", "");
-      labelPrograms.Text = _settingServiceAgent.GetValue("xmlTvResultPrograms", "");
-      labelStatus.Text = _settingServiceAgent.GetValue("xmlTvResultStatus", "");
+
+      UpdateLastImportUiDetails();
 
       chkScheduler.Checked = (_settingServiceAgent.GetValue("xmlTvRemoteSchedulerEnabled", false));
       radioDownloadOnWakeUp.Checked = (_settingServiceAgent.GetValue("xmlTvRemoteSchedulerDownloadOnWakeUpEnabled", false));
       radioDownloadOnSchedule.Checked = !radioDownloadOnWakeUp.Checked;
 
-      txtRemoteURL.Text = _settingServiceAgent.GetValue("xmlTvRemoteURL", "http://www.mysite.com/TVguide.xml");
+      txtRemoteURL.Text = _settingServiceAgent.GetValue("xmlTvRemoteURL", "http://www.mysite.com/tvguide.xml");
 
       DateTime dt = DateTime.Now;
       DateTimeFormatInfo DTFI = new DateTimeFormatInfo();
@@ -145,8 +147,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
 
       dateTimePickerScheduler.Value = dt;
 
-      lblLastTransferAt.Text = _settingServiceAgent.GetValue("xmlTvRemoteScheduleLastTransfer", "");
-      lblTransferStatus.Text = _settingServiceAgent.GetValue("xmlTvRemoteScheduleTransferStatus", "");
+      UpdateLastTransferUiDetails();
 
       // load all distinct groups
       try
@@ -166,8 +167,6 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
         this.LogError("Failed to load groups {0}", e.Message);
       }
     }
-
-    private void XmlSetup_Load(object sender, EventArgs e) {}
 
     private void buttonBrowse_Click(object sender, EventArgs e)
     {
@@ -687,20 +686,18 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
 
     private void buttonManualImport_Click(object sender, EventArgs e)
     {
-      _settingServiceAgent.SaveValue("xmlTv", textBoxFolder.Text);
-      _settingServiceAgent.SaveValue("xmlTvImportXML", cbImportXML.Checked);
-      _settingServiceAgent.SaveValue("xmlTvImportLST", cbImportLST.Checked);
-
-      IXMLTVImportService pluginServiceAgent = ServiceAgents.Instance.PluginService<IXMLTVImportService>();
-      pluginServiceAgent.ImportNow();
-      
-      labelLastImport.Text = _settingServiceAgent.GetValue("xmlTvResultLastImport", "");
-      labelChannels.Text = _settingServiceAgent.GetValue("xmlTvResultChannels", "");
-      labelPrograms.Text = _settingServiceAgent.GetValue("xmlTvResultPrograms", "");
-      labelStatus.Text = _settingServiceAgent.GetValue("xmlTvResultStatus", "");
+      SaveSettings();
+      ServiceAgents.Instance.PluginService<IXMLTVImportService>().ImportNow();
+      UpdateLastImportUiDetails();
     }
 
-    private void panel1_Paint(object sender, PaintEventArgs e) {}
+    private void UpdateLastImportUiDetails()
+    {
+      labelLastImport.Text = _settingServiceAgent.GetValue("xmlTvResultLastImport", string.Empty);
+      labelChannels.Text = _settingServiceAgent.GetValue("xmlTvResultChannels", string.Empty);
+      labelPrograms.Text = _settingServiceAgent.GetValue("xmlTvResultPrograms", string.Empty);
+      labelStatus.Text = _settingServiceAgent.GetValue("xmlTvResultStatus", string.Empty);
+    }
 
     private void buttonExport_Click(object sender, EventArgs e)
     {
@@ -770,27 +767,27 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       textBoxFolder.Text = folderBrowserDialogTVGuide.SelectedPath;
     }
 
-
-    private void retrieveRemoteFile()
-    {
-      XmlTvImporter importer = new XmlTvImporter();
-      importer.RetrieveRemoteFile(textBoxFolder.Text, txtRemoteURL.Text);
-      lblLastTransferAt.Text = _settingServiceAgent.GetValue("xmlTvRemoteScheduleLastTransfer", "");
-      lblTransferStatus.Text = _settingServiceAgent.GetValue("xmlTvRemoteScheduleTransferStatus", "");
-    }
-
     private void btnGetNow_Click(object sender, EventArgs e)
     {
-      retrieveRemoteFile();
+      SaveSettings();
+      ServiceAgents.Instance.PluginService<IXMLTVImportService>().RetrieveRemoteFileNow();
+      UpdateLastTransferUiDetails();
+    }
+
+    private void UpdateLastTransferUiDetails()
+    {
+      lblLastTransferAt.Text = _settingServiceAgent.GetValue("xmlTvRemoteScheduleLastTransfer", string.Empty);
+      lblTransferStatus.Text = _settingServiceAgent.GetValue("xmlTvRemoteScheduleTransferStatus", string.Empty);
     }
 
     private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
     {
       //persist stuff when changing tabs in the plugin.
-      OnSectionDeActivated();
+      SaveSettings();
 
-      //load settings      
-      OnSectionActivated();
+      //load status
+      UpdateLastImportUiDetails();
+      UpdateLastTransferUiDetails();
     }
 
     private void chkScheduler_CheckedChanged(object sender, EventArgs e)

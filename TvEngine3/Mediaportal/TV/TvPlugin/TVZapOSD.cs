@@ -36,7 +36,6 @@ namespace Mediaportal.TV.TvPlugin
   /// 
   public class TvZapOsd : GUIInternalWindow
   {
-
     [SkinControl(35)] protected GUILabelControl lblCurrentChannel = null;
     [SkinControl(36)] protected GUITextControl lblOnTvNow = null;
     [SkinControl(37)] protected GUITextControl lblOnTvNext = null;
@@ -77,7 +76,7 @@ namespace Mediaportal.TV.TvPlugin
 
     public override bool Init()
     {
-      bool bResult = Load(GUIGraphicsContext.Skin + @"\tvZAPOSD.xml");
+      bool bResult = Load(GUIGraphicsContext.GetThemedSkinFile(@"\tvZAPOSD.xml"));
       GetID = (int)Window.WINDOW_TVZAPOSD;
       return bResult;
     }
@@ -129,16 +128,6 @@ namespace Mediaportal.TV.TvPlugin
       }
 
       base.OnAction(action);
-    }
-
-    public override bool OnMessage(GUIMessage message)
-    {
-      switch (message.Message)
-      {
-        case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
-          break;
-      }
-      return base.OnMessage(message);
     }
 
     protected override void OnPageDestroy(int newWindowId)
@@ -274,7 +263,7 @@ namespace Mediaportal.TV.TvPlugin
 
     public void UpdateChannelInfo()
     {
-      if (LastError != null)
+      if (LastError == null)
       {
         channelNr = GetChannelNumber();
       }

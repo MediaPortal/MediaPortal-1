@@ -1,21 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ArrayOfDVBTTuning xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <DVBTTuning>
-    <Frequency>634000</Frequency>
-    <Bandwidth>8000</Bandwidth>
-    <Offset>125</Offset>
-    <CellId>0</CellId>
-    <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
-  </DVBTTuning>
-  <DVBTTuning>
-    <Frequency>674000</Frequency>
-    <Bandwidth>8000</Bandwidth>
-    <Offset>125</Offset>
-    <CellId>0</CellId>
-    <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
-  </DVBTTuning>
+  <!-- Multiplex 1 -->
   <DVBTTuning>
     <Frequency>730000</Frequency>
     <Bandwidth>8000</Bandwidth>
@@ -24,6 +9,16 @@
     <CellIdExtension>0</CellIdExtension>
     <IsDvbT2>False</IsDvbT2>
   </DVBTTuning>
+  <!-- Multiplex 2 -->
+  <DVBTTuning>
+    <Frequency>634000</Frequency>
+    <Bandwidth>8000</Bandwidth>
+    <Offset>125</Offset>
+    <CellId>0</CellId>
+    <CellIdExtension>0</CellIdExtension>
+    <IsDvbT2>False</IsDvbT2>
+  </DVBTTuning>
+  <!-- Multiplex 3 -->
   <DVBTTuning>
     <Frequency>778000</Frequency>
     <Bandwidth>8000</Bandwidth>
@@ -32,8 +27,45 @@
     <CellIdExtension>0</CellIdExtension>
     <IsDvbT2>False</IsDvbT2>
   </DVBTTuning>
+  <!-- Multiplex 4 -->
   <DVBTTuning>
-    <Frequency>810000</Frequency>
+    <Frequency>642000</Frequency>
+    <Bandwidth>8000</Bandwidth>
+    <Offset>125</Offset>
+    <CellId>0</CellId>
+    <CellIdExtension>0</CellIdExtension>
+    <IsDvbT2>False</IsDvbT2>
+  </DVBTTuning>
+  <!-- Regional multiplex 4 -->
+  <DVBTTuning>
+    <Frequency>674000</Frequency>
+    <Bandwidth>8000</Bandwidth>
+    <Offset>125</Offset>
+    <CellId>0</CellId>
+    <CellIdExtension>0</CellIdExtension>
+    <IsDvbT2>False</IsDvbT2>
+  </DVBTTuning>
+  <!-- Regional multiplex 7 -->
+  <DVBTTuning>
+    <Frequency>602000</Frequency>
+    <Bandwidth>8000</Bandwidth>
+    <Offset>125</Offset>
+    <CellId>0</CellId>
+    <CellIdExtension>0</CellIdExtension>
+    <IsDvbT2>False</IsDvbT2>
+  </DVBTTuning>
+  <!-- Regional multiplex 8 -->
+  <DVBTTuning>
+    <Frequency>714000</Frequency>
+    <Bandwidth>8000</Bandwidth>
+    <Offset>125</Offset>
+    <CellId>0</CellId>
+    <CellIdExtension>0</CellIdExtension>
+    <IsDvbT2>False</IsDvbT2>
+  </DVBTTuning>
+  <!-- Regional multiplex 12 -->
+  <DVBTTuning>
+    <Frequency>682000</Frequency>
     <Bandwidth>8000</Bandwidth>
     <Offset>125</Offset>
     <CellId>0</CellId>

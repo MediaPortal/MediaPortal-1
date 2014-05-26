@@ -306,7 +306,7 @@ class CNitParser : public CSectionDecoder
     bool IsReady();
 
     int GetLogicialChannelNumber(int originalNetworkId, int transportStreamId, int serviceId);
-    void GetNetworkIds(int originalNetworkId, int transportStreamId, int serviceId, vector<int>* networkIds);
+    void GetNetworkIds(int originalNetworkId, int transportStreamId, int serviceId, vector<unsigned short>* networkIds);
     void GetAvailableInCells(int originalNetworkId, int transportStreamId, int serviceId, vector<int>* cellIds);
     void GetTargetRegionIds(int originalNetworkId, int transportStreamId, int serviceId, vector<__int64>* targetRegionIds);
     void GetAvailableInCountries(int originalNetworkId, int transportStreamId, int serviceId, vector<unsigned int>* availableInCountries);

@@ -450,8 +450,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// Throw an exception for an HRESULT code.
     /// </summary>
     /// <remarks>
-    /// See <see cref="DsError.ThrowExceptionForHR()"/>. The difference here is that we
-    /// throw an exception for any non-zero HRESULT, and we use DXGetErrorString().
+    /// See DirectShowLib.DsError.ThrowExceptionForHR(). The difference here is
+    /// that we throw an exception for any non-zero HRESULT, and we use
+    /// DXGetErrorString().
     /// </remarks>
     /// <param name="hr">The HRESULT code.</param>
     /// <param name="description">A description that gives error context.</param>

@@ -34,8 +34,6 @@ namespace Mediaportal.TV.TvPlugin
 {
   public class WakeOnLanManager
   {
-
-
     #region Constants
 
     // Maximum length of a physical address
@@ -274,35 +272,34 @@ namespace Mediaportal.TV.TvPlugin
     {
       int waited = 0;
 
-      // we have to make sure the remoting system knows that we have resumed the server by means of WOL.
-      // this will make sure the connection timeout for the remoting framework is increased.
-      this.LogDebug("WOLMgr: Increasing timeout for RemoteControl");
-      RemoteControl.UseIncreasedTimeoutForInitialConnection = true;
-
       this.LogDebug("WOLMgr: Ping {0}", wakeupTarget);
       if (Ping(wakeupTarget, timeout))
       {
-        this.LogDebug("WOLMgr: {0} already started", wakeupTarget);
+        this.LogDebug("WOLMgr: {0} already awake", wakeupTarget);
         return true;
-      }
-
-      if (!SendWakeOnLanPacket(hwAddress, IPAddress.Broadcast))
-      {
-        this.LogDebug("WOLMgr: FAILED to send wake-on-lan packet!");
-        return false;
       }
 
       while (waited < timeout * 1000)
       {
-        this.LogDebug("WOLMgr: Ping {0}", wakeupTarget);
+        this.LogDebug("WOLMgr: Send wake-on-lan packet...");
+        if (!SendWakeOnLanPacket(hwAddress, IPAddress.Broadcast))
+        {
+          this.LogWarn("WOLMgr: Failed to send wake-on-lan packet, is network interface up?");
+        }
+
+        this.LogDebug("WOLMgr: Ping...");
         if (Ping(wakeupTarget, 1000))
         {
+          this.LogDebug("WOLMgr: {0} is awake!", wakeupTarget);
           return true;
         }
-        this.LogDebug("WOLMgr: System {0} still not reachable, waiting...", wakeupTarget);
+        this.LogDebug("WOLMgr: Not reachable, waiting 1 second...");
         System.Threading.Thread.Sleep(1000);
-        waited += 2000;
+        waited += 1000;
       }
+
+      // Timeout was reached.
+      this.LogWarn("WOLMgr: Timed out waiting for {0} to wake, try increasing the WOL timeout value!", wakeupTarget);
       return false;
     }
 

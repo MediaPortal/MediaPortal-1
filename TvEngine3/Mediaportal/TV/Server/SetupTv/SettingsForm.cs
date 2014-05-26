@@ -103,7 +103,7 @@ namespace Mediaportal.TV.Server.SetupTV
       bool connected = false;
       while (!connected)
       {
-        RemoteControl.HostName = ServiceAgents.Instance.SettingServiceAgent.GetSetting("hostname").Value;
+        RemoteControl.HostName = ServiceAgents.Instance.SettingServiceAgent.GetValue("hostname", "localhost");
 
         if (cards.Count > 0)
         {
@@ -257,13 +257,6 @@ namespace Mediaportal.TV.Server.SetupTV
                 cardName = String.Format("{0} DVB-IP {1}", cardId, cardName);
                 AddChildSection(cardPage, new CardDvbIP(cardName, dbsCard.IdCard), 1);
                 break;
-              case CardType.RadioWebStream:
-                cardName = String.Format("{0} {1}", cardId, cardName);
-                InfoPage RadioWebStreamInfo = new InfoPage(cardName);
-                RadioWebStreamInfo.InfoText =
-                  "The RadioWebStream card does not have any options.\n\n\nYou can add your favourite radio webstreams under:\n\n --> 'Radio Channels', 'Add', 'Web-Stream' or by importing a playlist.";
-                AddChildSection(cardPage, RadioWebStreamInfo, 1);
-                break;
               case CardType.Unknown:
                 cardName = String.Format("{0} Unknown {1}", cardId, cardName);
                 AddChildSection(cardPage, new CardAnalog(cardName, dbsCard.IdCard), 1);
@@ -313,7 +306,7 @@ namespace Mediaportal.TV.Server.SetupTV
           RemoveAllChildSections((SectionTreeNode)settingSections[servers.Text]);
 
           // re-add tvservers and cards to tree          
-          AddServerTvCards(ServiceAgents.Instance.SettingServiceAgent.GetSetting("hostname").Value, true);
+          AddServerTvCards(ServiceAgents.Instance.SettingServiceAgent.GetValue("hostname", "localhost"), true);
         }
         finally
         {
@@ -341,7 +334,13 @@ namespace Mediaportal.TV.Server.SetupTV
           settingSections.Remove(childNode.Text);
         }
         // first remove all children and sections, then nodes themself (otherwise collection changes during iterate)
-        parentTreeNode.Nodes.Clear();       
+        foreach (SectionTreeNode childNode in parentTreeNode.Nodes)
+        {
+          if (childNode != null)
+          {
+            parentTreeNode.Nodes.Remove(childNode);
+          }
+        }
       }
     }
 
@@ -438,15 +437,16 @@ namespace Mediaportal.TV.Server.SetupTV
     /// <param name="e">eventarg will always retrun empty</param>
     public void SectChanged(object sender, EventArgs e)
     {
-      string name = ((Setting)sender).Tag.Substring(6);
+      string settingName = ((string)sender);
+      string pluginName = settingName.Substring(6);
 
       foreach (ITvServerPlugin plugin in _pluginLoader.Plugins)
       {
         SectionSettings settings = plugin.Setup;
-        if (settings != null && plugin.Name == name)
+        if (settings != null && plugin.Name == pluginName)
         {
-          bool isActive = ServiceAgents.Instance.SettingServiceAgent.GetValue(((Setting)sender).Tag, false);
-          settings.Text = name;
+          bool isActive = ServiceAgents.Instance.SettingServiceAgent.GetValue(settingName, false);
+          settings.Text = pluginName;
 
           if (isActive)
           {

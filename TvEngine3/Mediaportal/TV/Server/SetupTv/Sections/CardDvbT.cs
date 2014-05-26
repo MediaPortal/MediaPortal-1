@@ -253,7 +253,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
 
       textBoxFreq.Text = ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbt" + _cardNumber + "Freq", "306000");
-      textBoxBandwidth.Text = ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbt" + _cardNumber + "Bandwidth", "8");
+      textBoxBandwidth.Text = ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbt" + _cardNumber + "Bandwidth", "8000");
 
       checkBoxCreateGroups.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbt" + _cardNumber + "creategroups", false));
       checkBoxCreateSignalGroup.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbt" + _cardNumber + "createsignalgroup", false));
@@ -531,11 +531,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
               //add new channel
               exists = false;
               dbChannel = ChannelFactory.CreateChannel(channel.Name);
-              dbChannel.SortOrder = 10000;
-              if (channel.LogicalChannelNumber >= 1)
-              {
-                dbChannel.SortOrder = channel.LogicalChannelNumber;
-              }
+              dbChannel.SortOrder = channel.LogicalChannelNumber;
+              dbChannel.ChannelNumber = channel.LogicalChannelNumber;
               dbChannel.MediaType = (int) channel.MediaType;
               dbChannel = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
               dbChannel.AcceptChanges();

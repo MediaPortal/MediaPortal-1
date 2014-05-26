@@ -342,7 +342,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
       }
       if (_isRemoteControlInterfaceOpen)
       {
-        this.LogWarn("Turbosight remote: interface is already open");
+        this.LogWarn("Turbosight remote: remote control interface is already open");
         return true;
       }
 

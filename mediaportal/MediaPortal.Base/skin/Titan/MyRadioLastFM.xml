@@ -162,7 +162,7 @@
 			</control>
 			<control>
 				<description>toggle submit mode</description>
-				<type>togglebutton</type>
+				<type>checkbutton</type>
 				<id>35</id>
 				<label>34014</label>
 				<onleft>35</onleft>
@@ -173,7 +173,7 @@
 			</control>
 			<control>
 				<description>toggle discovery mode</description>
-				<type>togglebutton</type>
+				<type>checkbutton</type>
 				<id>40</id>
 				<label>34013</label>
 				<onleft>40</onleft>

@@ -27,7 +27,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Rtsp
   /// <summary>
   /// A simple class that can be used to deserialise RTSP responses.
   /// </summary>
-  public class RtspResponse
+  internal class RtspResponse
   {
     private static readonly Regex REGEX_STATUS_LINE = new Regex(@"RTSP/(\d+)\.(\d+)\s+(\d+)\s+([^.]+?)\r\n(.*)", RegexOptions.Singleline);
 

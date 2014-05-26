@@ -261,11 +261,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private static bool IsStreamingPortAvailable()
     {
-      int RtspPort = ServiceAgents.Instance.ControllerServiceAgent.StreamingPort;
-      STREAMING_PORT = RtspPort;
+      STREAMING_PORT = ServiceAgents.Instance.ControllerServiceAgent.StreamingPort;
       if (STREAMING_PORT == 0)
       {        
-        STREAMING_PORT = Convert.ToInt32(ServiceAgents.Instance.SettingServiceAgent.GetSetting("rtspport").Value);
+        STREAMING_PORT = ServiceAgents.Instance.SettingServiceAgent.GetValue("rtspport", 554);
         return false;
       }
 

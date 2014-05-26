@@ -29,7 +29,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
   /// </summary>
   [Guid("26DF395C-3D13-4f3e-9EC1-453FAAFFB13E"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  public interface ITsChannelLinkageScanner
+  internal interface ITsChannelLinkageScanner
   {
     /// <summary>
     /// Start scanning for channel links.

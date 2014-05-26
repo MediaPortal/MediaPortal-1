@@ -743,7 +743,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               new object[0]);
           }
         }
-        else if (DLLFullPath.ToLower().Contains("antec"))
+        else if (DLLFullPath.ToLowerInvariant().Contains("antec"))
         {
           _A_DLL = true;
           if (DoDebug)
@@ -752,7 +752,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                      new object[] {FileVersionInfo.GetVersionInfo(DLLFullPath).FileVersion});
           }
         }
-        else if (DLLFullPath.ToLower().Contains("soundgraph"))
+        else if (DLLFullPath.ToLowerInvariant().Contains("soundgraph"))
         {
           _S_DLL = true;
           if (DoDebug)

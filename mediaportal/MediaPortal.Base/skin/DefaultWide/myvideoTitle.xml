@@ -662,10 +662,10 @@
       <description>Content locked</description>
       <type>image</type>
       <id>1</id>
-      <posX>1165</posX>
+      <posX>1240</posX>
       <posY>80</posY>
-      <width>80</width>
-      <height>80</height>
+      <width>30</width>
+      <height>30</height>
       <visible>string.equals(#MyVideos.PinLocked, True)</visible>
       <texture>lock.png</texture>
       <keepaspectratio>yes</keepaspectratio>
@@ -674,10 +674,10 @@
       <description>Content unlock</description>
       <type>image</type>
       <id>1</id>
-      <posX>1165</posX>
+      <posX>1240</posX>
       <posY>80</posY>
-      <width>80</width>
-      <height>80</height>
+      <width>30</width>
+      <height>30</height>
       <visible>string.equals(#MyVideos.PinLocked, False)</visible>
       <texture>unlock.png</texture>
       <keepaspectratio>yes</keepaspectratio>

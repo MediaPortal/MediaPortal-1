@@ -20,16 +20,17 @@
 
 using System;
 using System.Collections.Generic;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVDatabase.Presentation;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.CiMenu;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 using Mediaportal.TV.Server.TVService.Interfaces;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.TVLibrary.Services
 {
@@ -648,107 +649,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
     }
 
     /// <summary>
-    /// Returns the rotation time for a specific teletext page
-    /// </summary>
-    /// <param name="userName"> </param>
-    /// <param name="pageNumber">The pagenumber (0x100-0x899)</param>
-    /// <returns>timespan containing the rotation time</returns>
-    public TimeSpan TeletextRotation(string userName, int pageNumber)
-    {
-      return Service.TeletextRotation(userName, pageNumber);
-    }
-
-    /// <summary>
-    /// Returns if the channel to which the card is currently tuned
-    /// has teletext or not
-    /// </summary>
-    /// <param name="userName"> </param>
-    /// <returns>
-    /// yes if channel has teletext otherwise false
-    /// </returns>
-    public bool HasTeletext(string userName)
-    {
-      return Service.HasTeletext(userName);
-    }
-
-    /// <summary>
-    /// turn on/off teletext grabbing for a card
-    /// </summary>
-    /// <param name="userName"> </param>
-    /// <param name="onOff">boolean indicating if teletext grabbing should be enabled or not</param>
-    public void GrabTeletext(string userName, bool onOff)
-    {
-      Service.GrabTeletext(userName, onOff);
-    }
-
-    /// <summary>
-    /// Gets a raw teletext page.
-    /// </summary>
-    /// <param name="userName"> </param>
-    /// <param name="pageNumber">The page number. (0x100-0x899)</param>
-    /// <param name="subPageNumber">The sub page number.(0x0-0x79)</param>
-    /// <returns>
-    /// byte[] array containing the raw teletext page or null if page is not found
-    /// </returns>
-    public byte[] GetTeletextPage(string userName, int pageNumber, int subPageNumber)
-    {
-      return Service.GetTeletextPage(userName, pageNumber, subPageNumber);
-    }
-
-    /// <summary>
-    /// Gets the number of subpages for a teletext page.
-    /// </summary>
-    /// <param name="userName"> </param>
-    /// <param name="pageNumber">The page number (0x100-0x899)</param>
-    /// <returns>
-    /// number of teletext subpages for the pagenumber
-    /// </returns>
-    public int SubPageCount(string userName, int pageNumber)
-    {
-      return Service.SubPageCount(userName, pageNumber);
-    }
-
-    /// <summary>
-    /// Gets the teletext pagenumber for the red button
-    /// </summary>
-    /// <param name="userName"> </param>
-    /// <returns>Teletext pagenumber for the red button</returns>
-    public int GetTeletextRedPageNumber(string userName)
-    {
-      return Service.GetTeletextRedPageNumber(userName);
-    }
-
-    /// <summary>
-    /// Gets the teletext pagenumber for the green button
-    /// </summary>
-    /// <param name="userName"> </param>
-    /// <returns>Teletext pagenumber for the green button</returns>
-    public int GetTeletextGreenPageNumber(string userName)
-    {
-      return Service.GetTeletextGreenPageNumber(userName);
-    }
-
-    /// <summary>
-    /// Gets the teletext pagenumber for the yellow button
-    /// </summary>
-    /// <param name="userName"> </param>
-    /// <returns>Teletext pagenumber for the yellow button</returns>
-    public int GetTeletextYellowPageNumber(string userName)
-    {
-      return Service.GetTeletextYellowPageNumber(userName);
-    }
-
-    /// <summary>
-    /// Gets the teletext pagenumber for the blue button
-    /// </summary>
-    /// <param name="userName"> </param>
-    /// <returns>Teletext pagenumber for the blue button</returns>
-    public int GetTeletextBluePageNumber(string userName)
-    {
-      return Service.GetTeletextBluePageNumber(userName);
-    }
-
-    /// <summary>
     /// 
     /// </summary>
     /// <param name="position1"></param>
@@ -1100,7 +1000,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
     /// <param name="cardId"></param>
     /// <param name="callbackHandler"></param>
     /// <returns></returns>
-    public bool SetCiMenuHandler(int cardId, IConditionalAccessMenuCallBacks callbackHandler)
+    public bool SetCiMenuHandler(int cardId, IConditionalAccessMenuCallBack callbackHandler)
     {
       return Service.SetCiMenuHandler(cardId, callbackHandler);
     }

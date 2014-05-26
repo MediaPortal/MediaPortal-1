@@ -625,7 +625,7 @@ STDMETHODIMP CMpTs::AnalyserGetPid(int handle, int pidIdx, int* pid, EncryptionS
   {
     return S_FALSE;
   }
-  return pChannel->m_pEncryptionAnalyser->GetPid(pidIdx, pid, encryptionState);
+  return pChannel->m_pEncryptionAnalyser->GetPidByIndex(pidIdx, pid, encryptionState);
 }
 
 STDMETHODIMP CMpTs::AnalyserSetCallBack(int handle, IEncryptionStateChangeCallBack* callBack)
@@ -684,7 +684,7 @@ STDMETHODIMP CMpTs::RecordSetRecordingFileNameW( int handle, wchar_t* pwszFileNa
 {
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
-  pChannel->m_pRecorder->SetFileNameW(pwszFileName);
+  pChannel->m_pRecorder->SetFileName(pwszFileName);
   return S_OK;
 }
 
@@ -710,7 +710,7 @@ STDMETHODIMP CMpTs::RecordSetPmtPid(int handle,int mtPid, int serviceId,byte* pm
 {
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
-  pChannel->m_pRecorder->SetPmtPid( mtPid, serviceId,pmtData,pmtLength );
+  pChannel->m_pRecorder->SetPmt(pmtData, pmtLength);
   return S_OK;
 }
 
@@ -730,7 +730,7 @@ STDMETHODIMP CMpTs::TimeShiftSetTimeShiftingFileNameW( int handle, wchar_t* pwsz
     LogDebug(L"Setting name for raw packet dump file to %s", fileName.c_str());
     m_rawPaketWriter->SetFileName(fileName.c_str());
   }
-  pChannel->m_pTimeShifting->SetFileNameW(pwszFileName);
+  pChannel->m_pTimeShifting->SetFileName(pwszFileName);
   return S_OK;
 }
 STDMETHODIMP CMpTs::TimeShiftStart( int handle )
@@ -771,11 +771,11 @@ STDMETHODIMP CMpTs:: TimeShiftReset( int handle )
     m_rawPaketWriter->OpenFile();
     LogDebug("Raw packet dump file reset");
   }
-  pChannel->m_pTimeShifting->Reset( );
+  //pChannel->m_pTimeShifting->Reset( );
   return S_OK;
 }
 
-STDMETHODIMP CMpTs:: TimeShiftGetBufferSize( int handle, long * size) 
+STDMETHODIMP CMpTs:: TimeShiftGetBufferSize( int handle, __int64* size) 
 {
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
@@ -787,7 +787,7 @@ STDMETHODIMP CMpTs:: TimeShiftSetPmtPid( int handle, int pmtPid, int serviceId,b
 {
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
-  pChannel->m_pTimeShifting->SetPmtPid( pmtPid,serviceId,pmtData,pmtLength);
+  pChannel->m_pTimeShifting->SetPmt(pmtData, pmtLength);
   return S_OK;
 }
 
@@ -795,7 +795,7 @@ STDMETHODIMP CMpTs:: TimeShiftPause( int handle, BYTE onOff)
 {
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
-  pChannel->m_pTimeShifting->Pause( onOff);
+  //pChannel->m_pTimeShifting->Pause( onOff);
   return S_OK;
 }
 
@@ -803,9 +803,9 @@ STDMETHODIMP CMpTs::TimeShiftSetParams(int handle, int minFiles, int maxFiles, U
 {
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
-  pChannel->m_pTimeShifting->SetMinTSFiles(minFiles);
-  pChannel->m_pTimeShifting->SetMaxTSFiles(maxFiles);
-  pChannel->m_pTimeShifting->SetMaxTSFileSize(chunkSize);
+  pChannel->m_pTimeShifting->SetMinTsFiles(minFiles);
+  pChannel->m_pTimeShifting->SetMaxTsFiles(maxFiles);
+  pChannel->m_pTimeShifting->SetMaxTsFileSize(chunkSize);
   pChannel->m_pTimeShifting->SetChunkReserve(chunkSize);
   return S_OK;
 }
@@ -874,14 +874,14 @@ STDMETHODIMP CMpTs::GetStreamQualityCounters(int handle, int* totalTsBytes, int*
 
   if (pChannel->m_pTimeShifting)
   {
-    pChannel->m_pTimeShifting->GetDiscontinuityCounter(TsDiscontinuity);
-    pChannel->m_pTimeShifting->GetTotalBytes(totalTsBytes);
+    pChannel->m_pTimeShifting->GetDiscontinuityCount(TsDiscontinuity);
+    pChannel->m_pTimeShifting->GetProcessedPacketCount(totalTsBytes);
   }
 
   if (pChannel->m_pRecorder)
   {
-    pChannel->m_pRecorder->GetDiscontinuityCounter(recordingDiscontinuity);
-    pChannel->m_pRecorder->GetTotalBytes(totalRecordingBytes);
+    pChannel->m_pRecorder->GetDiscontinuityCount(recordingDiscontinuity);
+    pChannel->m_pRecorder->GetProcessedPacketCount(totalRecordingBytes);
   }
 
   if (pChannel->m_pRecorder || pChannel->m_pTimeShifting)
@@ -895,7 +895,7 @@ STDMETHODIMP CMpTs::TimeShiftSetChannelType(int handle, int channelType)
 {
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
-  pChannel->m_pRecorder->SetChannelType(channelType);
-  pChannel->m_pTimeShifting->SetChannelType(channelType);
+  //pChannel->m_pRecorder->SetChannelType(channelType);
+  //pChannel->m_pTimeShifting->SetChannelType(channelType);
   return S_OK;
 }

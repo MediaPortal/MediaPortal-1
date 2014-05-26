@@ -95,6 +95,33 @@ namespace DirectShowLib
   }
 
   /// <summary>
+  /// From TVAudioMode
+  /// </summary>
+  [Flags]
+  public enum TVAudioMode
+  {
+    None = 0,
+    Mono = 0x0001,
+    Stereo = 0x0002,
+    [Description("language A")]
+    LangA = 0x0010,
+    [Description("language B (SAP)")]
+    LangB = 0x0020,
+    [Description("language C")]
+    LangC = 0x0040,
+
+    // Added...
+    [Description("preset stereo")]
+    PresetStereo = 0x0200,
+    [Description("preset language A")]
+    PresetLangA = 0x1000,
+    [Description("preset language B")]
+    PresetLangB = 0x2000,
+    [Description("preset language C")]
+    PresetLangC = 0x4000
+  }
+
+  /// <summary>
   /// From VideoProcAmpProperty
   /// </summary>
   public enum VideoProcAmpProperty
@@ -162,6 +189,9 @@ namespace DirectShowLib
       );
   }
 
+  // Disable obsolete interface warning. Some implementations of IEncoderAPI
+  // that we want to support do not implement ICodecAPI.
+  #pragma warning disable 618
   [ComImport, SuppressUnmanagedCodeSecurity,
    Guid("02997C3B-8E1B-460e-9270-545E0DE9563E"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -210,6 +240,7 @@ namespace DirectShowLib
 
     #endregion
   }
+  #pragma warning restore 618
 }
 
   #endregion
@@ -238,48 +269,6 @@ namespace DirectShowLib.BDA
 
     [PreserveSig]
     int Clone([Out] out IEnumPIDMap ppIEnumPIDMap);
-  }
-
-  [ComImport, SuppressUnmanagedCodeSecurity,
-   Guid("71985F47-1CA1-11d3-9CC8-00C04F7971E0"),
-   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  public interface IBDA_FrequencyFilter
-  {
-    [PreserveSig]
-    int put_Autotune([In] int ulTransponder);
-
-    [PreserveSig]
-    int get_Autotune([Out] out int pulTransponder);
-
-    [PreserveSig]
-    int put_Frequency([In] int ulFrequency);
-
-    [PreserveSig]
-    int get_Frequency([Out] out int pulFrequency);
-
-    [PreserveSig]
-    int put_Polarity([In] Polarisation Polarity);
-
-    [PreserveSig]
-    int get_Polarity([Out] out Polarisation pPolarity);
-
-    [PreserveSig]
-    int put_Range([In] ulong ulRange);        // *** Changed from int to ulong. ***
-
-    [PreserveSig]
-    int get_Range([Out] out ulong pulRange);  // *** Changed from int to ulong. ***
-
-    [PreserveSig]
-    int put_Bandwidth([In] int ulBandwidth);
-
-    [PreserveSig]
-    int get_Bandwidth([Out] out int pulBandwidth);
-
-    [PreserveSig]
-    int put_FrequencyMultiplier([In] int ulMultiplier);
-
-    [PreserveSig]
-    int get_FrequencyMultiplier([Out] out int pulMultiplier);
   }
 
   [ComImport, SuppressUnmanagedCodeSecurity,
@@ -1578,8 +1567,8 @@ namespace DirectShowLib.BDA
   /// </summary>
   public struct BdaDiseqcMessage
   {
-    public UInt32 RequestId;
-    public UInt32 PacketLength;
+    public int RequestId;
+    public int PacketLength;
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
     public byte[] PacketData;
   }

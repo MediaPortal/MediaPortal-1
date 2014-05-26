@@ -39,13 +39,10 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     /// Initializes a new instance of the <see cref="GenericRepository&lt;TEntity&gt;"/> class.
     /// </summary>
     public GenericRepository()
-      : this(string.Empty)
-    {
-      _objectContext = ObjectContextManager.CreateDbContext() as TEntity;
-    }
+      : this(false)
+    { }
 
     public GenericRepository(bool trackingEnabled)
-      : this(string.Empty)
     {
       _trackingEnabled = trackingEnabled;
       _objectContext = ObjectContextManager.CreateDbContext() as TEntity;
@@ -53,15 +50,6 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 
     /// <summary>
     /// Initializes a new instance of the <see cref="GenericRepository&lt;TEntity&gt;"/> class.
-    /// </summary>
-    /// <param name="connectionStringName">Name of the connection string.</param>
-    public GenericRepository(string connectionStringName)
-    {
-      _connectionStringName = connectionStringName;
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="GenericRepository"/> class.
     /// </summary>
     /// <param name="objectContext">The object context.</param>
     public GenericRepository(TEntity objectContext)
@@ -81,7 +69,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
         return (TEntity)originalItem;
       }
       return default(TEntity);
-    }    
+    }
 
     public IQueryable<TEntity> GetQuery<TEntity>() where TEntity : class
     {
@@ -97,7 +85,6 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     {
       return GetQuery<TEntity>().Where(predicate);
     }
-    
 
     public IQueryable<TEntity> GetQuery<TEntity>(ISpecification<TEntity> specification) where TEntity : class
     {
@@ -165,7 +152,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       foreach (var entity in entities)
       {
         Add(entity);
-      }     
+      }
     }
 
     public void Attach<TEntity>(TEntity entity) where TEntity : class
@@ -183,7 +170,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       if (entity == null)
       {
         throw new ArgumentNullException("entity");
-      }      
+      }
       objectSet.ApplyChanges(entity);
     }
 
@@ -192,7 +179,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       foreach (var entity in entities)
       {
         ApplyChanges(objectSet, entity);
-      }      
+      }
     }
 
     public void ApplyChanges<TEntity>(string entitySetName, TEntity entity) where TEntity : class, IObjectWithChangeTracker
@@ -204,28 +191,27 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       ObjectContext.ApplyChanges(entitySetName, entity);
     }
 
-
     private string GetEntitySetFullName<TEntity>(TEntity entity) where TEntity : class
     {
-       // If the EntityKey exists, simply get the Entity Set name from the key
-       /*if (entity.EntityKey != null)
-       {
-          return entity.EntityKey.EntitySetName;
-       }
-       else*/
-       {
-          string entityTypeName = entity.GetType().Name;
-          var container = ObjectContext.MetadataWorkspace.GetEntityContainer(ObjectContext.DefaultContainerName, DataSpace.CSpace);
-          string entitySetName = (from meta in container.BaseEntitySets
-                                  where meta.ElementType.Name == entityTypeName
-                                  select meta.Name).First();
+      // If the EntityKey exists, simply get the Entity Set name from the key
+      /*if (entity.EntityKey != null)
+      {
+         return entity.EntityKey.EntitySetName;
+      }
+      else*/
+      {
+        string entityTypeName = entity.GetType().Name;
+        var container = ObjectContext.MetadataWorkspace.GetEntityContainer(ObjectContext.DefaultContainerName, DataSpace.CSpace);
+        string entitySetName = (from meta in container.BaseEntitySets
+                                where meta.ElementType.Name == entityTypeName
+                                select meta.Name).First();
 
-          return entitySetName;
-       }
+        return entitySetName;
+      }
     }
 
     private bool IsAttached<TEntity>(string entitySetFullName, TEntity entity) where TEntity : class
-    {      
+    {
       EntityKey key = ObjectContext.CreateEntityKey(entitySetFullName, entity);
       if (key == null)
       {
@@ -239,8 +225,6 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       return false;
     }
 
-
-
     public void Delete<TEntity>(TEntity entity) where TEntity : class
     {
       if (entity == null)
@@ -251,12 +235,11 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       string entitySetFullName = GetEntitySetFullName(entity);
       if (!IsAttached(entitySetFullName, entity))
       {
-        ObjectContext.AttachTo(entitySetFullName, entity);  
+        ObjectContext.AttachTo(entitySetFullName, entity);
       }
 
       //IObjectWithChangeTracker e = entity as IObjectWithChangeTracker;
-      //e.ChangeTracker.State = ObjectState.Deleted;      
-
+      //e.ChangeTracker.State = ObjectState.Deleted;
       ObjectContext.DeleteObject(entity);
     }
 
@@ -266,25 +249,25 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       {
         TEntity entity = entities[i];
         Delete(entity);
-      }      
+      }
     }
 
     public void Delete<TEntity>(Expression<Func<TEntity, bool>> criteria) where TEntity : class
     {
-      IEnumerable<TEntity> records = Find<TEntity>(criteria);                  
+      IEnumerable<TEntity> records = Find(criteria);
 
       foreach (TEntity record in records)
       {
-        Delete<TEntity>(record);
+        Delete(record);
       }
     }
 
     public void Delete<TEntity>(ISpecification<TEntity> criteria) where TEntity : class
     {
-      IEnumerable<TEntity> records = Find<TEntity>(criteria);      
+      IEnumerable<TEntity> records = Find(criteria);
       foreach (TEntity record in records)
       {
-        Delete<TEntity>(record);
+        Delete(record);
       }
     }
 
@@ -310,7 +293,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       foreach (var entity in entities)
       {
         Update(entity);
-      } 
+      }
     }
 
     public IQueryable<TEntity> Find<TEntity>(Expression<Func<TEntity, bool>> criteria) where TEntity : class
@@ -350,26 +333,12 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 
     public IUnitOfWork UnitOfWork
     {
-      get
-      {
-        if (_unitOfWork == null)
-        {
-          _unitOfWork = new UnitOfWork(ObjectContext);
-        }
-        return _unitOfWork;
-      }
+      get { return _unitOfWork ?? (_unitOfWork = new UnitOfWork(ObjectContext)); }
     }
 
     public TEntity ObjectContext
     {
-      get
-      {
-        if (_objectContext == null)
-        {
-          _objectContext = ObjectContextManager.CreateDbContext() as TEntity;
-        }
-        return _objectContext;
-      }
+      get { return _objectContext ?? (_objectContext = ObjectContextManager.CreateDbContext() as TEntity); }
     }
 
     private EntityKey GetEntityKey<TEntity>(object keyValue) where TEntity : class
@@ -385,7 +354,6 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     {
       return string.Format("{0}.{1}", ObjectContext.DefaultContainerName, _pluralizer.Pluralize(typeof(TEntity).Name));
     }
-    
 
     public Expression<Func<TElement, bool>> BuildContainsExpression<TElement, TValue>(
       Expression<Func<TElement, TValue>> valueSelector, IEnumerable<TValue> values)
@@ -399,20 +367,18 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
         return e => false;
       }
       var equals = values.Select(value => (Expression)Expression.Equal(valueSelector.Body, Expression.Constant(value, typeof(TValue))));
-      var body = @equals.Aggregate<Expression>((accumulate, equal) => Expression.Or(accumulate, equal));
+      var body = @equals.Aggregate(Expression.Or);
       return Expression.Lambda<Func<TElement, bool>>(body, p);
-
     }
 
     private bool Exists<TEntity>(TEntity entity) where TEntity : class
-    {     
+    {
       var objSet = ObjectContext.CreateObjectSet<TEntity>();
       var entityKey = ObjectContext.CreateEntityKey(objSet.EntitySet.Name, entity);
 
       Object foundEntity;
       var exists = ObjectContext.TryGetObjectByKey(entityKey, out foundEntity);
-      // TryGetObjectByKey attaches a found entity      
-
+      // TryGetObjectByKey attaches a found entity
       return (exists);
     }
 
@@ -424,8 +390,8 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
         {
           //if (Exists(entity))
           //{
-            // Detach it here to prevent side-effects
-            //ObjectContext.Detach(entity);
+          // Detach it here to prevent side-effects
+          //ObjectContext.Detach(entity);
           //}
           objectSet.Attach(entity);
           ObjectContext.ObjectStateManager.ChangeObjectState(entity, EntityState.Modified);
@@ -456,13 +422,6 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
           _disposed = true;
         }
       }
-    }
-
-    public IQueryable<ProgramCategory> IncludeAllRelations(IQueryable<ProgramCategory> query)
-    {
-      var includeRelations = query.Include(p => p.IdTvGuideCategory);
-
-      return includeRelations;
     }
   }
 }

@@ -20,13 +20,14 @@
 
 using System;
 using System.Net.Sockets;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Rtsp
 {
   /// <summary>
   /// A simple implementation of an RTSP client.
   /// </summary>
-  public class RtspClient
+  internal class RtspClient
   {
     #region variables
 
@@ -47,7 +48,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Rtsp
     {
       _serverHost = serverHost;
       _serverPort = serverPort;
-      _client = new TcpClient(serverHost, serverPort);
     }
 
     ~RtspClient()
@@ -70,27 +70,49 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Rtsp
     /// <returns>the response status code</returns>
     public RtspStatusCode SendRequest(RtspRequest request, out RtspResponse response)
     {
+      response = null;
       lock (_lockObject)
       {
         NetworkStream stream = null;
-        try
+        int retryCount = 0;
+        while (true)
         {
-          stream = _client.GetStream();
-          if (stream == null)
+          try
           {
-            throw new Exception();
+            if (_client == null)
+            {
+              _client = new TcpClient(_serverHost, _serverPort);
+            }
+          }
+          catch (Exception ex)
+          {
+            this.LogError(ex, "RTSP: failed to connect to server");
+            return RtspStatusCode.RequestTimeOut;
+          }
+          try
+          {
+            stream = _client.GetStream();
+            if (stream == null)
+            {
+              throw new Exception();
+            }
+            break;
+          }
+          catch (Exception ex)
+          {
+            _client.Close();
+            _client = null;
+            if (retryCount == 1)
+            {
+              this.LogError(ex, "RTSP: failed to open stream to server");
+              return RtspStatusCode.RequestTimeOut;
+            }
+            retryCount++;
           }
         }
-        catch
-        {
-          _client.Close();
-        }
+
         try
         {
-          if (_client == null)
-          {
-            _client = new TcpClient(_serverHost, _serverPort);
-          }
           // Send the request and get the response.
           request.Headers.Add("CSeq", _cseq.ToString());
           _cseq++;

@@ -1,3 +1,4 @@
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
 namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
   partial class FormDVBTTuningDetail
@@ -28,25 +29,25 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     /// </summary>
     private void InitializeComponent()
     {
-      this.checkBoxDVBTfta = new System.Windows.Forms.CheckBox();
-      this.label48 = new System.Windows.Forms.Label();
-      this.textBoxDVBTProvider = new System.Windows.Forms.TextBox();
-      this.textBoxPmt = new System.Windows.Forms.TextBox();
-      this.textBoxDVBTChannel = new System.Windows.Forms.TextBox();
-      this.textBoxServiceId = new System.Windows.Forms.TextBox();
-      this.textBoxTransportId = new System.Windows.Forms.TextBox();
-      this.textBoxNetworkId = new System.Windows.Forms.TextBox();
-      this.textBoxDVBTfreq = new System.Windows.Forms.TextBox();
-      this.label50 = new System.Windows.Forms.Label();
-      this.channelDVBT = new System.Windows.Forms.Label();
-      this.label17 = new System.Windows.Forms.Label();
-      this.label18 = new System.Windows.Forms.Label();
-      this.label19 = new System.Windows.Forms.Label();
-      this.label20 = new System.Windows.Forms.Label();
-      this.label21 = new System.Windows.Forms.Label();
-      this.label1 = new System.Windows.Forms.Label();
-      this.textBoxDVBTBandwidth = new System.Windows.Forms.TextBox();
-      this.label2 = new System.Windows.Forms.Label();
+      this.checkBoxDVBTfta = new MPCheckBox();
+      this.label48 = new MPLabel();
+      this.textBoxDVBTProvider = new MPTextBox();
+      this.textBoxPmt = new MPTextBox();
+      this.textBoxDVBTChannel = new MPTextBox();
+      this.textBoxServiceId = new MPTextBox();
+      this.textBoxTransportId = new MPTextBox();
+      this.textBoxNetworkId = new MPTextBox();
+      this.textBoxDVBTfreq = new MPTextBox();
+      this.label50 = new MPLabel();
+      this.channelDVBT = new MPLabel();
+      this.label17 = new MPLabel();
+      this.label18 = new MPLabel();
+      this.label19 = new MPLabel();
+      this.label20 = new MPLabel();
+      this.label21 = new MPLabel();
+      this.label1 = new MPLabel();
+      this.textBoxDVBTBandwidth = new MPTextBox();
+      this.label2 = new MPLabel();
       this.SuspendLayout();
       // 
       // mpButtonCancel
@@ -278,24 +279,24 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
     #endregion
 
-    private System.Windows.Forms.CheckBox checkBoxDVBTfta;
-    private System.Windows.Forms.Label label48;
-    private System.Windows.Forms.TextBox textBoxDVBTProvider;
-    private System.Windows.Forms.TextBox textBoxPmt;
-    private System.Windows.Forms.TextBox textBoxDVBTChannel;
-    private System.Windows.Forms.TextBox textBoxServiceId;
-    private System.Windows.Forms.TextBox textBoxTransportId;
-    private System.Windows.Forms.TextBox textBoxNetworkId;
-    private System.Windows.Forms.TextBox textBoxDVBTfreq;
-    private System.Windows.Forms.Label label50;
-    private System.Windows.Forms.Label channelDVBT;
-    private System.Windows.Forms.Label label17;
-    private System.Windows.Forms.Label label18;
-    private System.Windows.Forms.Label label19;
-    private System.Windows.Forms.Label label20;
-    private System.Windows.Forms.Label label21;
-    private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.TextBox textBoxDVBTBandwidth;
-    private System.Windows.Forms.Label label2;
+    private MPCheckBox checkBoxDVBTfta;
+    private MPLabel label48;
+    private MPTextBox textBoxDVBTProvider;
+    private MPTextBox textBoxPmt;
+    private MPTextBox textBoxDVBTChannel;
+    private MPTextBox textBoxServiceId;
+    private MPTextBox textBoxTransportId;
+    private MPTextBox textBoxNetworkId;
+    private MPTextBox textBoxDVBTfreq;
+    private MPLabel label50;
+    private MPLabel channelDVBT;
+    private MPLabel label17;
+    private MPLabel label18;
+    private MPLabel label19;
+    private MPLabel label20;
+    private MPLabel label21;
+    private MPLabel label1;
+    private MPTextBox textBoxDVBTBandwidth;
+    private MPLabel label2;
   }
 }

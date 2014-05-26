@@ -21,6 +21,7 @@
 using System;
 using DirectShowLib;
 using DirectShowLib.BDA;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Atsc;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
@@ -34,7 +35,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
   /// An implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles ATSC
   /// terrestrial and SCTE cable tuners with BDA drivers.
   /// </summary>
-  public class TunerBdaAtsc : TunerBdaBase
+  internal class TunerBdaAtsc : TunerBdaBase
   {
     #region constructor
 
@@ -43,9 +44,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// </summary>
     /// <param name="device">The <see cref="DsDevice"/> instance to encapsulate.</param>
     public TunerBdaAtsc(DsDevice device)
-      : base(device, device.DevicePath + "A")
+      : base(device, device.DevicePath + "A", CardType.Atsc)
     {
-      _tunerType = CardType.Atsc;
     }
 
     #endregion
@@ -137,6 +137,23 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       get
       {
         return "MediaPortal ATSC Tuning Space";
+      }
+    }
+
+    /// <summary>
+    /// Actually load the tuner.
+    /// </summary>
+    public override void PerformLoading()
+    {
+      base.PerformLoading();
+
+      // ATSC/SCTE EPG grabbing currently not supported.
+      _epgGrabber = null;
+
+      IChannelScannerInternal scanner = _channelScanner as IChannelScannerInternal;
+      if (scanner != null)
+      {
+        scanner.Helper = new ChannelScannerHelperAtsc();
       }
     }
 
@@ -239,17 +256,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
         SymbolRate = uint.MaxValue
       };
       return networkProvider.TuneATSC((uint)atscChannel.PhysicalChannel, frequencySettings, demodulatorSettings);
-    }
-
-    /// <summary>
-    /// Get the tuner's channel scanning interface.
-    /// </summary>
-    public override ITVScanning ScanningInterface
-    {
-      get
-      {
-        return new ScannerMpeg2TsAtsc(this, _filterTsWriter as ITsChannelScan);
-      }
     }
 
     /// <summary>

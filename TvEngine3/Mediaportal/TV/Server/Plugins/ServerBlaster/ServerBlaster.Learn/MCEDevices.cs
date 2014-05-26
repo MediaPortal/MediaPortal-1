@@ -455,13 +455,6 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn
       foreach (byte[] packetBytes in _packetArray)
       {
         int indexOf9F = Array.IndexOf(packetBytes, (byte)0x9F);
-
-        if (indexOf9F != -1)
-        {
-          bool b = true;
-        }
-        ;
-
         packetLength += indexOf9F == -1 ? packetBytes.Length : indexOf9F + 1;
       }
 

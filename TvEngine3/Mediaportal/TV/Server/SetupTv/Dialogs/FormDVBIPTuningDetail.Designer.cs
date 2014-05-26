@@ -1,3 +1,4 @@
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
 namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
   partial class FormDVBIPTuningDetail
@@ -28,21 +29,21 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     /// </summary>
     private void InitializeComponent()
     {
-      this.textBoxDVBIPUrl = new System.Windows.Forms.TextBox();
-      this.textBoxDVBIPProvider = new System.Windows.Forms.TextBox();
-      this.textBoxDVBIPPmtPid = new System.Windows.Forms.TextBox();
-      this.textBoxDVBIPServiceId = new System.Windows.Forms.TextBox();
-      this.textBoxDVBIPTransportId = new System.Windows.Forms.TextBox();
-      this.textBoxDVBIPNetworkId = new System.Windows.Forms.TextBox();
-      this.textBoxDVBIPChannel = new System.Windows.Forms.TextBox();
-      this.label53 = new System.Windows.Forms.Label();
-      this.checkBoxDVBIPfta = new System.Windows.Forms.CheckBox();
-      this.labelDVBIPProvider = new System.Windows.Forms.Label();
-      this.ipPmtLabel = new System.Windows.Forms.Label();
-      this.label54 = new System.Windows.Forms.Label();
-      this.label55 = new System.Windows.Forms.Label();
-      this.label56 = new System.Windows.Forms.Label();
-      this.label57 = new System.Windows.Forms.Label();
+      this.textBoxDVBIPUrl = new MPTextBox();
+      this.textBoxDVBIPProvider = new MPTextBox();
+      this.textBoxDVBIPPmtPid = new MPTextBox();
+      this.textBoxDVBIPServiceId = new MPTextBox();
+      this.textBoxDVBIPTransportId = new MPTextBox();
+      this.textBoxDVBIPNetworkId = new MPTextBox();
+      this.textBoxDVBIPChannel = new MPTextBox();
+      this.label53 = new MPLabel();
+      this.checkBoxDVBIPfta = new MPCheckBox();
+      this.labelDVBIPProvider = new MPLabel();
+      this.ipPmtLabel = new MPLabel();
+      this.label54 = new MPLabel();
+      this.label55 = new MPLabel();
+      this.label56 = new MPLabel();
+      this.label57 = new MPLabel();
       this.SuspendLayout();
       // 
       // mpButtonCancel
@@ -230,20 +231,20 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
     #endregion
 
-    private System.Windows.Forms.TextBox textBoxDVBIPUrl;
-    private System.Windows.Forms.TextBox textBoxDVBIPProvider;
-    private System.Windows.Forms.TextBox textBoxDVBIPPmtPid;
-    private System.Windows.Forms.TextBox textBoxDVBIPServiceId;
-    private System.Windows.Forms.TextBox textBoxDVBIPTransportId;
-    private System.Windows.Forms.TextBox textBoxDVBIPNetworkId;
-    private System.Windows.Forms.TextBox textBoxDVBIPChannel;
-    private System.Windows.Forms.Label label53;
-    private System.Windows.Forms.CheckBox checkBoxDVBIPfta;
-    private System.Windows.Forms.Label labelDVBIPProvider;
-    private System.Windows.Forms.Label ipPmtLabel;
-    private System.Windows.Forms.Label label54;
-    private System.Windows.Forms.Label label55;
-    private System.Windows.Forms.Label label56;
-    private System.Windows.Forms.Label label57;
+    private MPTextBox textBoxDVBIPUrl;
+    private MPTextBox textBoxDVBIPProvider;
+    private MPTextBox textBoxDVBIPPmtPid;
+    private MPTextBox textBoxDVBIPServiceId;
+    private MPTextBox textBoxDVBIPTransportId;
+    private MPTextBox textBoxDVBIPNetworkId;
+    private MPTextBox textBoxDVBIPChannel;
+    private MPLabel label53;
+    private MPCheckBox checkBoxDVBIPfta;
+    private MPLabel labelDVBIPProvider;
+    private MPLabel ipPmtLabel;
+    private MPLabel label54;
+    private MPLabel label55;
+    private MPLabel label56;
+    private MPLabel label57;
   }
 }

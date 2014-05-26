@@ -20,7 +20,7 @@
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Enum
 {
-  public enum EncoderAudioAlgorithm : byte
+  internal enum EncoderAudioAlgorithm : byte
   {
     Mpeg1Layer2 = 0,
     DobyAc3 = 1

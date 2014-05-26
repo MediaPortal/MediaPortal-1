@@ -27,7 +27,6 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using DirectShowLib;
-using Mediaportal.TV.Server.TVLibrary.Interfaces;
 
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
 {
@@ -108,7 +107,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
         classFactory = ComHelper.GetClassFactory(fileName, clsid, useAssemblyRelativeLocation);
         if (classFactory == null)
         {
-          return null;
+          throw new TvException("Failed to obtain class factory for COM class {0} and interface {1}.", clsid, iid);
         }
         object obj;
         Guid interfaceId = iid;
@@ -135,7 +134,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
       IntPtr libraryHandle = MediaPortal.Common.Utils.NativeMethods.LoadLibraryA(filePath);
       if (libraryHandle == IntPtr.Zero)
       {
-        return null;
+        throw new TvException("Failed to load {0}.", filePath);
       }
 
       // Keep a reference to the library. This reference must be released later
@@ -146,7 +145,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
       IntPtr functionAddress = MediaPortal.Common.Utils.NativeMethods.GetProcAddress(libraryHandle, "DllGetClassObject");
       if (functionAddress == IntPtr.Zero)
       {
-        return null;
+        throw new TvException("Failed to find DllGetClassObject entry point in {0}.", filePath);
       }
       DllGetClassObject dllGetClassObject = (DllGetClassObject)Marshal.GetDelegateForFunctionPointer(functionAddress, typeof(DllGetClassObject));
 

@@ -62,6 +62,9 @@ class CPmtGrabber : public CUnknown, public CSectionDecoder, public IPmtGrabber,
     void OnSdtReceived(const CChannelInfo& sdtInfo);
     void OnLvctReceived(const CChannelInfo& vctInfo);
 
+    void OnPatChanged(int programNumber, int oldPmtPid, int newPmtPid);
+    void OnPatRemoved(int programNumber, int pmtPid);
+
   private:
     IPmtCallBack* m_pCallBack;
     byte m_pmtData[MAX_SECTION_LENGTH];

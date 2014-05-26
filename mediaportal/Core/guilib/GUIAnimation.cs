@@ -227,7 +227,7 @@ namespace MediaPortal.GUI.Library
 
       foreach (string trigger in _triggerNames.Split(';'))
       {
-        switch ((trigger.Trim()).ToUpper())
+        switch ((trigger.Trim()).ToUpperInvariant())
         {
           case "INIT":
             _triggerList.Add(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT);

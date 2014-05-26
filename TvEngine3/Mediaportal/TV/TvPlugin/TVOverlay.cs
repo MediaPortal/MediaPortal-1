@@ -39,7 +39,7 @@ namespace Mediaportal.TV.TvPlugin
 
     public override bool Init()
     {
-      bool bResult = Load(GUIGraphicsContext.Skin + @"\tvOverlay.xml");
+      bool bResult = Load(GUIGraphicsContext.GetThemedSkinFile(@"\tvOverlay.xml"));
       GetID = (int)Window.WINDOW_TV_OVERLAY;
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.TvOverlay);
       return bResult;

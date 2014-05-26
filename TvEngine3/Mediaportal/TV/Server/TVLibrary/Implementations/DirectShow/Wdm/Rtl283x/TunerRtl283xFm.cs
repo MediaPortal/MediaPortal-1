@@ -24,7 +24,9 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using DirectShowLib;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.Component;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
@@ -32,11 +34,11 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Microsoft.Win32;
 using BroadcastStandard = Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer.BroadcastStandard;
-using Encoder = Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.Components.Encoder;
+using Encoder = Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.Component.Encoder;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
 {
-  public class TunerRtl283xFm : TunerDirectShowBase
+  internal class TunerRtl283xFm : TunerDirectShowBase
   {
     #region enums
 
@@ -102,10 +104,26 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
 
     #region COM interfaces
 
-    [Guid("61a9051f-04c4-435e-8742-9edd2c543ce9"),
+    [Guid("6c433cea-7f9c-40cc-a670-bacae16097b8"),
       InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     private interface IRtl283xFmSource
     {
+      /// <summary>
+      /// Debug use only.
+      /// </summary>
+      /// <param name="mediaType">The media type to set.</param>
+      /// <returns>an HRESULT indicating whether the media type was set successfully</returns>
+      [PreserveSig]
+      int DABSetMediaType(byte mediaType);
+
+      /// <summary>
+      /// Call this function to set the audio sample rate.
+      /// </summary>
+      /// <param name="sampleRate">The audio sample rate for the tuner to use.</param>
+      /// <returns><c>RtlFmResult.Success</c> if successful, otherwise <c>RtlFmResult.Fail</c></returns>
+      [PreserveSig]
+      Rtl283xFmResult SetAudioSampleRate(Rtl283xFmSampleRate sampleRate);
+
       /// <summary>
       /// Call this function to set the tuner frequency directly.
       /// </summary>
@@ -137,6 +155,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       /// <summary>
       /// Call this function to obtain the frequency range that the tuner supports.
       /// </summary>
+      /// <remarks>
+      /// Doesn't work. The values returned are always zero.
+      /// </remarks>
       /// <param name="lowerLimit">The lower limit of the tuner's range, in kHz.</param>
       /// <param name="upperLimit">The upper limit of the tuner's range, in kHz.</param>
       /// <returns><c>RtlFmResult.Success</c> if successful, otherwise <c>RtlFmResult.Fail</c></returns>
@@ -188,14 +209,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       Rtl283xFmResult GetPCMInfo(out byte channelCount, out Rtl283xFmSampleRate sampleRate, out uint sampleSize);
 
       /// <summary>
-      /// Call this function to set the audio sample rate.
-      /// </summary>
-      /// <param name="sampleRate">The audio sample rate for the tuner to use.</param>
-      /// <returns><c>RtlFmResult.Success</c> if successful, otherwise <c>RtlFmResult.Fail</c></returns>
-      [PreserveSig]
-      Rtl283xFmResult SetAudioSampleRate(Rtl283xFmSampleRate sampleRate);
-
-      /// <summary>
       /// Call this function to set the audio de-emphasis time constant.
       /// </summary>
       /// <param name="timeConstant">The de-emphasis time constant.</param>
@@ -229,6 +242,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       Rtl283xFmResult SetScanStopQuality(uint thresholdQuality);
     }
 
+    #endregion
+
+    #region graph delegation/wrapping
+
     private class GraphJob
     {
       public GraphJobType JobType;
@@ -251,12 +268,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
         _delegateScan = delegateScan;
       }
 
-      #region subchannel delegation
+      #region sub-channel delegation
 
       public int AddChannel(ref int handle)
       {
         object[] parameters = new object[2] { "AddChannel", handle };
-        return _delegateSubChannel(ref parameters);
+        int hr = _delegateSubChannel(ref parameters);
+        handle = (int)parameters[1];
+        return hr;
       }
 
       public int DeleteChannel(int handle)
@@ -287,7 +306,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       {
         pidCount = 0;
         object[] parameters = new object[3] { "AnalyserGetPidCount", handle, pidCount };
-        return _delegateSubChannel(ref parameters);
+        int hr = _delegateSubChannel(ref parameters);
+        pidCount = (int)parameters[2];
+        return hr;
       }
 
       public int AnalyserGetPid(int handle, int pidIndex, out int pid, out EncryptionState encryptionState)
@@ -295,7 +316,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
         pid = 0;
         encryptionState = EncryptionState.NotSet;
         object[] parameters = new object[5] { "AnalyserGetPid", handle, pidIndex, pid, encryptionState };
-        return _delegateSubChannel(ref parameters);
+        int hr = _delegateSubChannel(ref parameters);
+        pid = (int)parameters[3];
+        encryptionState = (EncryptionState)parameters[4];
+        return hr;
       }
 
       public int AnalyserSetCallBack(int handle, IEncryptionStateChangeCallBack callBack)
@@ -386,7 +410,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       {
         size = 0;
         object[] parameters = new object[3] { "TimeShiftGetBufferSize", handle, size };
-        return _delegateSubChannel(ref parameters);
+        int hr = _delegateSubChannel(ref parameters);
+        size = (long)parameters[2];
+        return hr;
       }
 
       public int TimeShiftSetPmtPid(int handle, int pmtPid, int serviceId, byte[] pmtData, int pmtLength)
@@ -412,7 +438,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
         position = 0;
         bufferId = 0;
         object[] parameters = new object[4] { "TimeShiftGetCurrentFilePosition", handle, position, bufferId };
-        return _delegateSubChannel(ref parameters);
+        int hr =  _delegateSubChannel(ref parameters);
+        position = (long)parameters[2];
+        bufferId = (long)parameters[3];
+        return hr;
       }
 
       public int SetVideoAudioObserver(int handle, IVideoAudioObserver observer)
@@ -464,7 +493,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
         timeShiftDiscontinuityCount = 0;
         recordDiscontinuityCount = 0;
         object[] parameters = new object[6] { "GetStreamQualityCounters", handle, timeShiftByteCount, recordByteCount, timeShiftDiscontinuityCount, recordDiscontinuityCount };
-        return _delegateSubChannel(ref parameters);
+        int hr = _delegateSubChannel(ref parameters);
+        timeShiftByteCount = (int)parameters[2];
+        recordByteCount = (int)parameters[3];
+        timeShiftDiscontinuityCount = (int)parameters[4];
+        recordDiscontinuityCount = (int)parameters[5];
+        return hr;
       }
 
       public int TimeShiftSetChannelType(int handle, int channelType)
@@ -499,7 +533,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       {
         serviceCount = 0;
         object[] parameters = new object[2] { "GetServiceCount", serviceCount };
-        return _delegateScan(ref parameters);
+        int hr = _delegateScan(ref parameters);
+        serviceCount = (int)parameters[1];
+        return hr;
       }
 
       public int GetServiceDetail(int index,
@@ -581,7 +617,40 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
                                               targetRegionCount, targetRegions,
                                               availableInCountryCount, availableInCountries,
                                               unavailableInCountryCount, unavailableInCountries };
-        return _delegateScan(ref parameters);
+        int hr = _delegateScan(ref parameters);
+        originalNetworkId = (int)parameters[2];
+        transportStreamId = (int)parameters[3];
+        serviceId = (int)parameters[4];
+        serviceName = (IntPtr)parameters[5];
+        providerName = (IntPtr)parameters[6];
+        logicalChannelNumber = (IntPtr)parameters[7];
+        serviceType = (int)parameters[8];
+        videoStreamCount = (int)parameters[9];
+        audioStreamCount = (int)parameters[10];
+        isHighDefinition = (bool)parameters[11];
+        isEncrypted = (bool)parameters[12];
+        isRunning = (bool)parameters[13];
+        pmtPid = (int)parameters[14];
+        previousOriginalNetworkId = (int)parameters[15];
+        previousTransportStreamId = (int)parameters[16];
+        previousServiceId = (int)parameters[17];
+        networkIdCount = (int)parameters[18];
+        networkIds = (IntPtr)parameters[19];
+        bouquetIdCount = (int)parameters[20];
+        bouquetIds = (IntPtr)parameters[21];
+        languageCount = (int)parameters[22];
+        languages = (IntPtr)parameters[23];
+        availableInCellCount = (int)parameters[24];
+        availableInCells = (IntPtr)parameters[25];
+        unavailableInCellCount = (int)parameters[26];
+        unavailableInCells = (IntPtr)parameters[27];
+        targetRegionCount = (int)parameters[28];
+        targetRegions = (IntPtr)parameters[29];
+        availableInCountryCount = (int)parameters[30];
+        availableInCountries = (IntPtr)parameters[31];
+        unavailableInCountryCount = (int)parameters[32];
+        unavailableInCountries = (IntPtr)parameters[33];
+        return hr;
       }
 
       public int ScanNetwork()
@@ -594,14 +663,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       {
         isOtherMuxServiceInfoAvailable = false;
         object[] parameters = new object[2] { "StopNetworkScan", isOtherMuxServiceInfoAvailable };
-        return _delegateScan(ref parameters);
+        int hr = _delegateScan(ref parameters);
+        isOtherMuxServiceInfoAvailable = (bool)parameters[1];
+        return hr;
       }
 
       public int GetMultiplexCount(out int multiplexCount)
       {
         multiplexCount = 0;
         object[] parameters = new object[2] { "GetMultiplexCount", multiplexCount };
-        return _delegateScan(ref parameters);
+        int hr = _delegateScan(ref parameters);
+        multiplexCount = (int)parameters[1];
+        return hr;
       }
 
       public int GetMultiplexDetail(int index,
@@ -638,28 +711,49 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
                                               transportStreamId, type, frequency, polarisation,
                                               modulation, symbolRate, bandwidth, innerFecRate,
                                               rollOff, longitude, cellId, cellIdExtension, plpId };
-        return _delegateScan(ref parameters);
+        int hr = _delegateScan(ref parameters);
+        originalNetworkId = (int)parameters[1];
+        transportStreamId = (int)parameters[2];
+        type = (int)parameters[3];
+        frequency = (int)parameters[4];
+        polarisation = (int)parameters[5];
+        modulation = (int)parameters[6];
+        symbolRate = (int)parameters[7];
+        bandwidth = (int)parameters[8];
+        innerFecRate = (int)parameters[9];
+        rollOff = (int)parameters[10];
+        longitude = (int)parameters[11];
+        cellId = (int)parameters[12];
+        cellIdExtension = (int)parameters[13];
+        plpId = (int)parameters[14];
+        return hr;
       }
 
       public int GetTargetRegionName(long targetRegionId, out IntPtr name)
       {
         name = IntPtr.Zero;
         object[] parameters = new object[3] { "GetTargetRegionName", targetRegionId, name };
-        return _delegateScan(ref parameters);
+        int hr = _delegateScan(ref parameters);
+        name = (IntPtr)parameters[2];
+        return hr;
       }
 
       public int GetBouquetName(int bouquetId, out IntPtr name)
       {
         name = IntPtr.Zero;
         object[] parameters = new object[3] { "GetBouquetName", bouquetId, name };
-        return _delegateScan(ref parameters);
+        int hr = _delegateScan(ref parameters);
+        name = (IntPtr)parameters[2];
+        return hr;
       }
 
       public int GetNetworkName(int networkId, out IntPtr name)
       {
         name = IntPtr.Zero;
         object[] parameters = new object[3] { "GetNetworkName", networkId, name };
-        return _delegateScan(ref parameters);
+        int hr = _delegateScan(ref parameters);
+        name = (IntPtr)parameters[2];
+        return hr;
       }
 
       #endregion
@@ -674,12 +768,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
 
     #endregion
 
+    #region constants
+
+    private static readonly Guid SOURCE_FILTER_CLSID = new Guid(0x6b368f8c, 0xf383, 0x44d3, 0xb8, 0xc2, 0x3a, 0x15, 0x0b, 0x70, 0xb1, 0xc9);
+
+    #endregion
+
     #region variables
 
     private IRtl283xFmSource _fmSource = null;
-    private CaptureRtl283xFm _capture = null;
+    private IBaseFilter _filterSource = null;
     private Encoder _encoder = null;
     private DsDevice _mainTunerDevice = null;
+    private bool _mainTunerDeviceInUse = false;
     private TsWriterStaWrapper _staTsWriter = null;
 
     // STA graph thread variables.
@@ -693,20 +794,38 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
 
     #endregion
 
+    /// <summary>
+    /// Initialise a new instance of the <see cref="TunerRtl283xFm"/> class.
+    /// </summary>
+    /// <param name="mainTunerDevice">The main BDA tuner device for for the tuner.</param>
     public TunerRtl283xFm(DsDevice mainTunerDevice)
-      : base("Realtek RTL283x FM Tuner", mainTunerDevice.DevicePath + "FM")
+      : base("Realtek RTL283x FM Tuner", mainTunerDevice.DevicePath + "FM", CardType.Analog)
     {
       _mainTunerDevice = mainTunerDevice;
+      SetProductAndTunerInstanceIds(_mainTunerDevice);
     }
 
     /// <summary>
-    /// Allocate a new subchannel instance.
+    /// Reload the tuner's configuration.
     /// </summary>
-    /// <param name="id">The identifier for the subchannel.</param>
-    /// <returns>the new subchannel instance</returns>
-    protected override ITvSubChannel CreateNewSubChannel(int id)
+    public override void ReloadConfiguration()
     {
-      return new Mpeg2SubChannel(id, this, _staTsWriter);
+      base.ReloadConfiguration();
+
+      if (_encoder != null)
+      {
+        _encoder.ReloadConfiguration(_tunerId);
+      }
+    }
+
+    /// <summary>
+    /// Allocate a new sub-channel instance.
+    /// </summary>
+    /// <param name="id">The identifier for the sub-channel.</param>
+    /// <returns>the new sub-channel instance</returns>
+    public override ITvSubChannel CreateNewSubChannel(int id)
+    {
+      return new SubChannelMpeg2Ts(id, _staTsWriter);
     }
 
     /// <summary>
@@ -725,22 +844,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       }
 
       bool isSignalLocked;
-      if (_fmSource.GetSignalLock(out isSignalLocked) != Rtl283xFmResult.Fail)
+      if (_fmSource.GetSignalLock(out isSignalLocked) == Rtl283xFmResult.Fail)
       {
-        this.LogError("RTL283x FM: failed to update signal lock status");
+        this.LogWarn("RTL283x FM: failed to update signal lock status");
+        isSignalLocked = false;
       }
-      else
-      {
-        _isSignalLocked = isSignalLocked;
-      }
+      _isSignalLocked = isSignalLocked;
       if (onlyUpdateLock)
       {
         return;
       }
       _isSignalPresent = _isSignalLocked;
-      if (_fmSource.GetSignalQuality(out _signalQuality) != Rtl283xFmResult.Fail)
+      if (_fmSource.GetSignalQuality(out _signalQuality) == Rtl283xFmResult.Fail)
       {
-        this.LogError("RTL283x FM: failed to update signal quality");
+        this.LogWarn("RTL283x FM: failed to update signal quality");
+        _signalQuality = 0;
       }
       _signalLevel = _signalQuality;
     }
@@ -882,6 +1000,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
               catch (Exception ex)
               {
                 job.ThrownException = ex;
+                job.WaitEvent.Set();
               }
             }
           }
@@ -893,9 +1012,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       catch (Exception ex)
       {
         this.LogError(ex, "RTL283x FM: graph thread exception");
-        return;
       }
-      this.LogDebug("RTL283x FM: graph thread stopping");
+      finally
+      {
+        this.LogDebug("RTL283x FM: graph thread stopped");
+      }
     }
 
     #endregion
@@ -905,7 +1026,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
     /// <summary>
     /// Actually load the tuner.
     /// </summary>
-    protected override void PerformLoading()
+    public override void PerformLoading()
     {
       object[] p = null;
       InvokeGraphJob(GraphJobType.Load, ref p);
@@ -915,7 +1036,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
     /// Actually tune to a channel.
     /// </summary>
     /// <param name="channel">The channel to tune to.</param>
-    protected override void PerformTuning(IChannel channel)
+    public override void PerformTuning(IChannel channel)
     {
       object[] p = new object[1] { channel };
       InvokeGraphJob(GraphJobType.Tune, ref p);
@@ -925,7 +1046,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
     /// Actually update tuner signal status statistics.
     /// </summary>
     /// <param name="onlyUpdateLock"><c>True</c> to only update lock status.</param>
-    protected override void PerformSignalStatusUpdate(bool onlyUpdateLock)
+    public override void PerformSignalStatusUpdate(bool onlyUpdateLock)
     {
       object[] p = new object[1] { onlyUpdateLock };
       InvokeGraphJob(GraphJobType.UpdateSignalStatus, ref p);
@@ -935,7 +1056,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
     /// Set the state of the tuner.
     /// </summary>
     /// <param name="state">The state to apply to the tuner.</param>
-    protected override void SetTunerState(TunerState state)
+    public override void SetTunerState(TunerState state)
     {
       object[] p = new object[1] { state };
       InvokeGraphJob(GraphJobType.SetGraphState, ref p);
@@ -944,7 +1065,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
     /// <summary>
     /// Actually unload the tuner.
     /// </summary>
-    protected override void PerformUnloading()
+    public override void PerformUnloading()
     {
       object[] p = null;
       InvokeGraphJob(GraphJobType.Unload, ref p);
@@ -975,6 +1096,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       {
         throw new TvException("Tuner is in use.");
       }
+      _mainTunerDeviceInUse = true;
 
       InitialiseGraph();
 
@@ -985,7 +1107,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       // this should allow multiple tuners to operate in special modes.
       string originalListTunerName = null;
       string originalTunerName = _mainTunerDevice.Name;
-      string fakeUniqueTunerName = "MediaPortal FM Tuner " + _cardId;
+      string fakeUniqueTunerName = "MediaPortal FM Tuner " + _tunerId;
       List<RegistryView> views = new List<RegistryView>() { RegistryView.Default };
       if (OSInfo.OSInfo.Is64BitOs() && IntPtr.Size != 8)
       {
@@ -1011,17 +1133,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       {
         _mainTunerDevice.SetPropBagValue("FriendlyName", fakeUniqueTunerName);
 
+        // After loading the source filter we have to put the registry back to
+        // how it was before.
         try
         {
-          // After loading the source filter we have to put everything back to
-          // how it was before.
-          _capture = new CaptureRtl283xFm();
-          _capture.PerformLoading(_graph, _captureGraphBuilder, null, null);
-        }
-        catch
-        {
-          DevicesInUse.Instance.Remove(_mainTunerDevice);
-          throw;
+          _filterSource = FilterGraphTools.AddFilterFromRegisteredClsid(_graph, SOURCE_FILTER_CLSID, "RTL283x FM Source");
         }
         finally
         {
@@ -1044,24 +1160,24 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
         }
       }
 
-      _encoder = new Encoder();
-      _encoder.PerformLoading(_graph, null, _capture);
+      Capture capture = new Capture();
+      capture.SetAudioCapture(_filterSource, null);
+      _encoder = new EncoderRtl283xFm();
+      _encoder.PerformLoading(_graph, null, capture);
 
       // Check for and load extensions, adding any additional filters to the graph.
       IBaseFilter lastFilter = _encoder.TsMultiplexerFilter;
-      LoadPlugins(_capture.AudioFilter, _graph, ref lastFilter);
+      LoadExtensions(_filterSource, ref lastFilter);
       AddAndConnectTsWriterIntoGraph(lastFilter);
       CompleteGraph();
 
-      _fmSource = _capture.AudioFilter as IRtl283xFmSource;
+      _fmSource = _filterSource as IRtl283xFmSource;
       _staTsWriter = new TsWriterStaWrapper(InvokeTsWriterSubChannelJob, InvokeTsWriterScanJob);
 
-      int lowerLimit;
-      int upperLimit;
-      if (_fmSource.GetTunerRange(out lowerLimit, out upperLimit) == Rtl283xFmResult.Success)
-      {
-        this.LogDebug("RTL283x FM: tuner range, lower limit = {0} kHz, upper limit = {1} kHz", lowerLimit, upperLimit);
-      }
+      // RDS grabbing currently not supported.
+      _epgGrabber = null;
+
+      _channelScanner = new ChannelScannerDirectShowAnalog(this, _staTsWriter);
     }
 
     /// <summary>
@@ -1071,20 +1187,37 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
     {
       this.LogDebug("RTL283x FM: perform unloading");
 
-      StopGraphThread();
+      // This function is called from inside the graph thread, which means we
+      // can't force the thread to stop from here. Setting the stop variable
+      // and event should be enough to cause the thread to stop immediately
+      // after this function finishes executing.
+      _stopGraphThread = true;
+      _graphThreadWaitEvent.Set();
 
-      if (_capture != null)
+      if (_filterSource != null)
       {
-        _capture.PerformUnloading(_graph);
-        _capture = null;
-        DevicesInUse.Instance.Remove(_mainTunerDevice);
+        if (_graph != null)
+        {
+          _graph.RemoveFilter(_filterSource);
+        }
+        Release.ComObject("RTL283x FM source filter", ref _filterSource);
       }
+      _fmSource = null;
+
       if (_encoder != null)
       {
         _encoder.PerformUnloading(_graph);
         _encoder = null;
       }
-      _fmSource = null;
+
+      // Only remove the main tuner device from use when we registered it.
+      if (_mainTunerDeviceInUse)
+      {
+        DevicesInUse.Instance.Remove(_mainTunerDevice);
+        _mainTunerDeviceInUse = false;
+        // Do NOT Dispose() or set the main tuner device to NULL. We would be
+        // unable to reload.
+      }
 
       CleanUpGraph();
     }
@@ -1147,14 +1280,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       _encoder.PerformTuning(analogChannel);
     }
 
+    #endregion
+
+    #region IDisposable member
+
     /// <summary>
-    /// Get the tuner's channel scanning interface.
+    /// Release and dispose all resources.
     /// </summary>
-    public override ITVScanning ScanningInterface
+    public override void Dispose()
     {
-      get
+      base.Dispose();
+      if (_mainTunerDevice != null)
       {
-        return new ScannerMpeg2TsBase(this, _staTsWriter);
+        _mainTunerDevice.Dispose();
+        _mainTunerDevice = null;
       }
     }
 

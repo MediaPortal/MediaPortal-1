@@ -28,7 +28,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations
 {
-  public class EncoderController : IQuality
+  internal class EncoderController : IQuality
   {
     #region variables
 
@@ -55,8 +55,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     public bool SupportsBitRateModes()
     {
       // TODO the IQuality interface is annoying. It needs a complete redo... but that would be a
-      // lot of work due to the user interfaces in TV Server configuration and the TV plugin. We'll
-      // come back to this later.
+      // lot of work due to the configuration and plugin user interfaces. We'll come back to this
+      // later.
       return true;
     }
 

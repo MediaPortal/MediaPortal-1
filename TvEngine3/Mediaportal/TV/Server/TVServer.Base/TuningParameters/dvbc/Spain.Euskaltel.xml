@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ArrayOfDVBCTuning xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">  
+<ArrayOfDVBCTuning xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <DVBCTuning>
     <Frequency>378000</Frequency>
     <ModulationType>Mod256Qam</ModulationType>
@@ -39,7 +39,7 @@
     <Frequency>434000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>  
+  </DVBCTuning>
   <DVBCTuning>
     <Frequency>458000</Frequency>
     <ModulationType>Mod256Qam</ModulationType>
@@ -54,7 +54,7 @@
     <Frequency>698000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6875</SymbolRate>
-  </DVBCTuning> 
+  </DVBCTuning>
   <DVBCTuning>
     <Frequency>706000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>

@@ -1,3 +1,4 @@
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
 namespace Mediaportal.TV.Server.SetupTV
 {
   partial class NotifyForm
@@ -28,7 +29,7 @@ namespace Mediaportal.TV.Server.SetupTV
     /// </summary>
     private void InitializeComponent()
     {
-      this.label1 = new System.Windows.Forms.Label();
+      this.label1 = new MPLabel();
       this.SuspendLayout();
       // 
       // label1
@@ -57,6 +58,6 @@ namespace Mediaportal.TV.Server.SetupTV
 
     #endregion
 
-    private System.Windows.Forms.Label label1;
+    private MPLabel label1;
   }
 }

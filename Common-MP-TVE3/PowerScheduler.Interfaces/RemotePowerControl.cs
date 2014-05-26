@@ -57,6 +57,9 @@ namespace TvEngine.PowerScheduler.Interfaces
           {
             return _powerController;
           }
+          // TODO gibman or somebody to fix this - PS can't work without a connection to the server side
+          // Also, check how/when the ServiceAgents hostname is set.
+          throw new Exception("gibman incomplete code");
           //_powerController = PluginServiceAgent.Instance<IPowerController, PowerScheduler>();
           bool connected = _powerController.IsConnected();
           return _powerController;
@@ -68,29 +71,6 @@ namespace TvEngine.PowerScheduler.Interfaces
       }
     }
 
-    /// <summary>
-    /// Is the RemotePowerControl client connected to the server?
-    /// </summary>
-    public static bool Isconnected
-    {
-      get
-      {
-        try
-        {
-          if (_powerController == null)
-          {
-            return false;
-          }
-          return _powerController.IsConnected();
-        }
-        catch (Exception)
-        {
-          return false;
-        }
-      }
-    }
-
     #endregion
-   
   }
 }

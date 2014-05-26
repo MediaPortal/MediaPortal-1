@@ -412,45 +412,72 @@ namespace MediaPortal.Configuration.Sections
         groupBox_x64.Visible = _isx64;
         linkLabel_x64.Enabled = _isx64;
 
-        // Is the FireDTV remote enabled
-        checkBoxFireDTVEnabled.Checked = xmlreader.GetValueAsBool("remote", "FireDTV", false);
-
-        // Fill combobox with list of availabe FireDTV recievers
         try
         {
-          fireDTV = new FireDTVControl((IntPtr)0);
-          if (fireDTV.OpenDrivers())
+          string prgPath = Environment.GetEnvironmentVariable("ProgramW6432");
+          if (string.IsNullOrEmpty(prgPath))
           {
-            comboBoxFireDTVReceiver.DataSource = fireDTV.SourceFilters;
-            comboBoxFireDTVReceiver.DisplayMember = "FriendlyName";
-            comboBoxFireDTVReceiver.ValueMember = "Name";
+            prgPath = Environment.GetEnvironmentVariable("ProgramFiles");
+          }
+
+          // Look for Digital Everywhere's software which uses a hardcoded path
+          string fullDllPath = Path.Combine(prgPath, @"FireDTV\Tools\FiresatApi.dll");
+          if (File.Exists(fullDllPath))
+          {
+            // Is the FireDTV remote enabled
+            checkBoxFireDTVEnabled.Checked = xmlreader.GetValueAsBool("remote", "FireDTV", false);
+
+            // Fill combobox with list of availabe FireDTV recievers
+            try
+            {
+              Log.Info("FireDTV: Using FiresatApi.dll located in FireDTV's install path {0}", fullDllPath);
+              fireDTV = new FireDTVControl((IntPtr) 0);
+              if (fireDTV.OpenDrivers())
+              {
+                comboBoxFireDTVReceiver.DataSource = fireDTV.SourceFilters;
+                comboBoxFireDTVReceiver.DisplayMember = "FriendlyName";
+                comboBoxFireDTVReceiver.ValueMember = "Name";
+              }
+            }
+            catch (Exception e)
+            {
+              Log.Error("FireDTVRemote: Exception during setting combo {0}", e.Message);
+            }
+
+            // Set the rest of the controls
+            checkBoxFireDTVExtendedLogging.Checked = xmlreader.GetValueAsBool("remote", "FireDTVVerboseLog", false);
+            string deviceName = xmlreader.GetValueAsString("remote", "FireDTVDeviceName", string.Empty);
+            try
+            {
+              if ((deviceName != null) && (!deviceName.Equals(string.Empty)))
+              {
+                comboBoxFireDTVReceiver.SelectedValue = deviceName;
+              }
+            }
+            catch (InvalidOperationException ex)
+            {
+              Log.Error("FireDTV: Error setting device name - device unplugged?! - {0}", ex.Message);
+            }
+
+            // Enable/Disable the controls
+            buttonFireDTVMapping.Enabled = checkBoxFireDTVEnabled.Checked;
+            checkBoxFireDTVExtendedLogging.Enabled = checkBoxFireDTVEnabled.Checked;
+            comboBoxFireDTVReceiver.Enabled = checkBoxFireDTVEnabled.Checked;
+            groupBoxFireDTVRecieiverSettings.Enabled = checkBoxFireDTVEnabled.Checked;
+          }
+          else
+          {
+            checkBoxFireDTVEnabled.Enabled = false;
+            checkBoxFireDTVExtendedLogging.Enabled = false;
+            buttonFireDTVMapping.Enabled = false;
+            groupBoxFireDTVRecieiverSettings.Enabled = false;
+            Log.Info("FireDTV: FiresatApi.dll could not be found on your system!");
           }
         }
-        catch (Exception e)
+        catch (Exception)
         {
-          Log.Error("FireDTVRemote: Exception during setting combo {0}", e.Message);
+          Log.Error("FireDTVRemote: Exception during checking path and dll");
         }
-
-        // Set the rest of the controls
-        checkBoxFireDTVExtendedLogging.Checked = xmlreader.GetValueAsBool("remote", "FireDTVVerboseLog", false);
-        string deviceName = xmlreader.GetValueAsString("remote", "FireDTVDeviceName", string.Empty);
-        try
-        {
-          if ((deviceName != null) && (!deviceName.Equals(string.Empty)))
-          {
-            comboBoxFireDTVReceiver.SelectedValue = deviceName;
-          }
-        }
-        catch (InvalidOperationException ex)
-        {
-          Log.Error("FireDTV: Error setting device name - device unplugged?! - {0}", ex.Message);
-        }
-
-        // Enable/Disable the controls
-        buttonFireDTVMapping.Enabled = checkBoxFireDTVEnabled.Checked;
-        checkBoxFireDTVExtendedLogging.Enabled = checkBoxFireDTVEnabled.Checked;
-        comboBoxFireDTVReceiver.Enabled = checkBoxFireDTVEnabled.Checked;
-        groupBoxFireDTVRecieiverSettings.Enabled = checkBoxFireDTVEnabled.Checked;
 
         #endregion
 
@@ -2170,16 +2197,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void linkLabelDownloadX10_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      Settings xmlreader = new MPSettings();
-      string language = xmlreader.GetValueAsString("gui", "language", "");
-      if (language == "English")
-      {
-        Process.Start("http://www.snapstream.net/download/Firefly_Drivers.aspx");
-      }
-      else
-      {
-        Process.Start("http://www1.medion.de/downloads/download.pl?id=1675&type=treiber&filename=remote_x10.exe&lang=de");
-      }
+      Process.Start("http://ftp.x10.com/pub/applications/drivers/x10drivers_rf_all.exe");
     }
 
     private void checkBoxX10ChannelControl_CheckedChanged(object sender, EventArgs e)

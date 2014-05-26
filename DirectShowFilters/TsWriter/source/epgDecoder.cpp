@@ -31,7 +31,8 @@
 #include "..\..\shared\dvbutil.h"
 #include "FreesatHuffmanTables.h"
 
-extern void LogDebug(const char *fmt, ...) ;
+extern void LogDebug(const char *fmt, ...);
+extern void getString468a(BYTE* buf, int bufLen, char* text, int textLen);
 
 #define S_FINISHED (S_OK+1)
 #define PID_FREESAT_EPG 0xBBA
@@ -615,7 +616,7 @@ void CEpgDecoder::DecodeExtendedEvent(byte* data, EPGEvent& epgEvent)
       {
 
         CAutoString buffer2 (item_length*4);
-        getString468A(&data[pointer+1], item_length, buffer2.GetBuffer(), item_length*4);
+        getString468a(&data[pointer+1], item_length, buffer2.GetBuffer(), item_length*4);
         item = buffer2.GetBuffer();
       }
 
@@ -636,7 +637,7 @@ void CEpgDecoder::DecodeExtendedEvent(byte* data, EPGEvent& epgEvent)
     if (text_length>0)
     {
       CAutoString buffer (text_length*4);
-      getString468A(&data[pointer], text_length, buffer.GetBuffer(), text_length*4);
+      getString468a(&data[pointer], text_length, buffer.GetBuffer(), text_length*4);
       text = buffer.GetBuffer();
     }
 
@@ -757,7 +758,7 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int N
       else
       {
         CAutoString buffer(event_len*4);
-        getString468A(&buf[6],event_len,buffer.GetBuffer(), event_len*4);
+        getString468a(&buf[6],event_len,buffer.GetBuffer(), event_len*4);
         eventText=buffer.GetBuffer();
       }
       //    LogDebug("  event:%s",eventText.c_str());
@@ -802,7 +803,7 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int N
       else
       {
         CAutoString buffer (text_len*4);
-        getString468A(&buf[off+1],text_len,buffer.GetBuffer(), text_len*4);
+        getString468a(&buf[off+1],text_len,buffer.GetBuffer(), text_len*4);
         eventDescription=buffer.GetBuffer();
       }
 

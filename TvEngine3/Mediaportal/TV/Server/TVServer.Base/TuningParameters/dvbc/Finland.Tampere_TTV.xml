@@ -95,5 +95,4 @@
     <ModulationType>Mod256Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
-
 </ArrayOfDVBCTuning>

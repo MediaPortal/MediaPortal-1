@@ -19,14 +19,7 @@
  *
  */
 #pragma once
+#include <Windows.h>
 
-DWORD crc32 (char *data, int len);
-
-class CDvbUtil
-{
-public:
-  CDvbUtil(void);
-  void getString468A(BYTE *buf, int bufLen, char *text, int textLen);
-public:
-  virtual ~CDvbUtil(void);
-};
+DWORD crc32(char* data, int len);
+void getString468a(BYTE* buf, int bufLen, char* text, int textLen);

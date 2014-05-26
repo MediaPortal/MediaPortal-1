@@ -22,7 +22,7 @@ using System.Collections.Generic;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Enum
 {
-  public sealed class SecurityPairingStatus
+  internal sealed class SecurityPairingStatus
   {
     private readonly string _name;
     private static readonly IDictionary<string, SecurityPairingStatus> _values = new Dictionary<string, SecurityPairingStatus>();
@@ -66,9 +66,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Enum
       return false;
     }
 
+    public override int GetHashCode()
+    {
+      return _name.GetHashCode();
+    }
+
     public static ICollection<SecurityPairingStatus> Values
     {
-      get { return _values.Values; }
+      get
+      {
+        return _values.Values;
+      }
     }
 
     public static explicit operator SecurityPairingStatus(string name)

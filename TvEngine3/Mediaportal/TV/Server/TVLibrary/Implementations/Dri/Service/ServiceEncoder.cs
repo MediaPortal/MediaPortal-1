@@ -28,7 +28,7 @@ using UPnP.Infrastructure.CP.DeviceTree;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Service
 {
-  public class ServiceEncoder : ServiceBase
+  internal class ServiceEncoder : ServiceBase
   {
     private CpAction _getEncoderCapabilitiesAction = null;
     private CpAction _setEncoderParametersAction = null;

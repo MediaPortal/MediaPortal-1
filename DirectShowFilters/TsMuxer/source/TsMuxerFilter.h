@@ -40,7 +40,7 @@ class CTsMuxerFilter : public CBaseFilter
 {
   public:
     CTsMuxerFilter(IStreamMultiplexer* multiplexer, wchar_t* debugPath, LPUNKNOWN unk, CCritSec* filterLock, CCritSec* receiveLock, HRESULT* hr);
-    ~CTsMuxerFilter();
+    virtual ~CTsMuxerFilter(void);
 
     CBasePin* GetPin(int n);
     HRESULT AddPin();
@@ -54,11 +54,11 @@ class CTsMuxerFilter : public CBaseFilter
     static void __cdecl StreamingMonitorThreadFunction(void* arg);
 
     STDMETHODIMP SetDumpFilePath(wchar_t* path);
-    STDMETHODIMP DumpInput(int mask);
+    STDMETHODIMP DumpInput(long mask);
     STDMETHODIMP DumpOutput(bool enable);
 
   private:
-    IStreamMultiplexer* const m_multiplexer;
+    IStreamMultiplexer* m_multiplexer;
     CTsOutputPin* m_outputPin;          // MPEG 2 transport stream output pin
     vector<CMuxInputPin*> m_inputPins;  // input pins
     CCritSec* m_receiveLock;            // sample receive lock
@@ -67,6 +67,6 @@ class CTsMuxerFilter : public CBaseFilter
     HANDLE m_streamingMonitorThreadStopEvent;
 
     wchar_t m_debugPath[MAX_PATH];
-    int m_inputPinDebugMask;
+    long m_inputPinDebugMask;
     bool m_isOutputDebugEnabled;
 };

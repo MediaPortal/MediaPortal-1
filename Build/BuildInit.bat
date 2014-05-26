@@ -15,7 +15,6 @@ set progpath=%ProgramFiles%
 if not "%ProgramFiles(x86)%".=="". set progpath=%ProgramFiles(x86)%
 
 REM Select Visual Studio version
-set vsver=10.0
 
 REM set other MP related paths
 set GIT_ROOT=..
@@ -49,3 +48,6 @@ echo. >> %log%
 
 REM copy BuildReport resources
 xcopy /I /Y .\BuildReport\_BuildReport_Files .\_BuildReport_Files
+
+REM Download NuGet packages
+@"%WINDIR%\Microsoft.NET\Framework\v4.0.30319\MSBUILD.exe" RestorePackages.targets

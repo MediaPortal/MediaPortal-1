@@ -38,7 +38,7 @@ namespace Mediaportal.TV.TvPlugin
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\dialogTVNotifyYesNo.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\dialogTVNotifyYesNo.xml"));
     }
 
     public override bool OnMessage(GUIMessage message)

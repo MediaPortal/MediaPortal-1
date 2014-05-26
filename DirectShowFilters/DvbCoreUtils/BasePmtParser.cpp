@@ -21,17 +21,34 @@
 #include "..\shared\BasePmtParser.h"
 
 
-void LogDebug(const char* fmt, ...);
-extern bool DisableCRCCheck();
+extern void LogDebug(const wchar_t* fmt, ...);
+extern bool IsVideoStream(byte streamType);
+extern bool IsAudioStream(byte streamType);
 
+
+//-----------------------------------------------------------------------------
+// UTILITY FUNCTIONS
+//-----------------------------------------------------------------------------
+bool IsValidDigiCipher2Stream(byte streamType)
+{
+  if (streamType == STREAM_TYPE_VIDEO_MPEG2_DCII ||
+    streamType == STREAM_TYPE_AUDIO_AC3 ||
+    streamType == STREAM_TYPE_AUDIO_E_AC3 ||
+    streamType == STREAM_TYPE_SUBTITLES_SCTE)
+  {
+    return true;
+  }
+  return false;
+}
+
+
+//-----------------------------------------------------------------------------
+// CLASS
+//-----------------------------------------------------------------------------
 CBasePmtParser::CBasePmtParser()
 {
-  m_isFound = false;
+  Reset();
   m_programNumber = -1;
-  if (DisableCRCCheck())
-  {
-    EnableCrcCheck(false);
-  }
 }
 
 CBasePmtParser::~CBasePmtParser(void)
@@ -45,13 +62,13 @@ void CBasePmtParser::Reset()
   CSectionDecoder::Reset();
 }
 
-void CBasePmtParser::SetFilter(int pid, int programNumber)
+void CBasePmtParser::SetFilter(unsigned short pid, unsigned short programNumber)
 {
   SetPid(pid);
   m_programNumber = programNumber;
 }
 
-void CBasePmtParser::GetFilter(int& pid, int& programNumber)
+void CBasePmtParser::GetFilter(unsigned short& pid, unsigned short& programNumber)
 {
   pid = GetPid();
   programNumber = m_programNumber;
@@ -71,188 +88,261 @@ void CBasePmtParser::OnTsPacket(byte* tsPacket)
   CSectionDecoder::OnTsPacket(tsPacket);
 }
 
-bool CBasePmtParser::DecodePmtSection(CSection& sections)
+bool CBasePmtParser::DecodePmtSection(CSection& section)
 {   
   // 0x02 = standard PMT table ID
-  if (sections.table_id != 0x02)
+  if (section.table_id != 0x02)
   {
     return false;
   }
-  byte* section = sections.Data;
 
   try
   {
-    int sectionSyntaxIndicator = section[1] & 0x80;
-    int sectionLength = ((section[1] & 0xf) << 8) + section[2];
-    if (sectionLength > 1021 || sectionLength < 13)
+    if (section.section_length > 1021 || section.section_length < 13)
     {
-      LogDebug("PMT: invalid section length = %d", sectionLength);
+      LogDebug(L"PMT: invalid section length = %d", section.section_length);
       return false;
     }
-    int programNumber = (section[3] << 8) + section[4];
-    int versionNumber = (section[5] >> 1) & 0x1f;
-    int currentNextIndicator = section[5] & 1;
-    if (currentNextIndicator == 0)
+    if (section.current_next_indicator == 0)
     {
       // Details do not apply yet...
       return false;
     }
-    int sectionNumber = section[6];
-    int lastSectionNumber = section[7];
-    int pcrPid = ((section[8] & 0x1f) << 8) + section[9];
-    int programInfoLength = ((section[10] & 0xf) << 8) + section[11];
 
-    int pointer = 12;
-    int endOfProgramInfo = pointer + programInfoLength;
-    int endOfSection = sectionLength - 1;
-    //LogDebug("PMT: program number = %d, section number = %d, version number = %d, last section number = %d, program info length = %d, end of program info = %d, section length = %d, end of section = %d",
-    //          programNumber, sectionNumber, versionNumber, lastSectionNumber, programInfoLength, endOfProgramInfo, sectionLength, endOfSection);
+    byte* data = section.Data;
+    unsigned short pcrPid = ((data[8] & 0x1f) << 8) + data[9];
+    unsigned short programInfoLength = ((data[10] & 0xf) << 8) + data[11];
+
+    unsigned short pointer = 12;
+    unsigned short endOfProgramInfo = pointer + programInfoLength;
+    unsigned short endOfSection = section.section_length - 1;
+    //LogDebug(L"PMT: program number = %d, section number = %d, version number = %d, last section number = %d, PCR PID = %d, program info length = %d, end of program info = %d, section length = %d, end of section = %d",
+    //          section.table_id_extension, section.section_number, section.version_number, section.last_section_number, pcrPid, programInfoLength, endOfProgramInfo, section.section_length, endOfSection);
     if (endOfProgramInfo > endOfSection)
     {
-      LogDebug("PMT: invalid program info length = %d, pointer = %d, end of program info = %d, end of section = %d, section length = %d", programInfoLength, pointer, endOfProgramInfo, endOfSection, sectionLength);
+      LogDebug(L"PMT: invalid program info length = %d, pointer = %d, end of program info = %d, end of section = %d, section length = %d", programInfoLength, pointer, endOfProgramInfo, endOfSection, section.section_length);
       return false;
     }
-    while (pointer + 1 < endOfProgramInfo)
+
+    m_pidInfo.Reset();
+    m_pidInfo.PmtPid = GetPid();
+    m_pidInfo.PmtVersion = section.version_number;
+    m_pidInfo.ProgramNumber = section.table_id_extension;
+    m_pidInfo.PcrPid = pcrPid;
+    m_pidInfo.DescriptorsLength = programInfoLength;
+    if (programInfoLength != 0)
     {
-      int tag = section[pointer++];
-      int length = section[pointer++];
-      int endOfDescriptor = pointer + length;
-      //LogDebug("PMT: program descriptor, tag = 0x%x, length = %d, pointer = %d, end of descriptor = %d", tag, length, pointer, endOfDescriptor);
-      if (endOfDescriptor > endOfProgramInfo)
+      m_pidInfo.Descriptors = new byte[programInfoLength];
+      if (m_pidInfo.Descriptors == NULL)
       {
-        LogDebug("PMT: invalid program descriptor length = %d, pointer = %d, end of descriptor = %d, end of program info = %d, section length = %d", length, pointer, endOfDescriptor, endOfProgramInfo, sectionLength);
+        LogDebug(L"PMT: failed to allocate %d bytes for program descriptors", programInfoLength);
         return false;
       }
-      if (tag == DESCRIPTOR_CONDITIONAL_ACCESS)
+      memcpy(m_pidInfo.Descriptors, &data[pointer], programInfoLength);
+    }
+
+    bool isScteTs = false;
+    while (pointer + 1 < endOfProgramInfo)
+    {
+      byte tag = data[pointer++];
+      byte length = data[pointer++];
+      unsigned short endOfDescriptor = pointer + length;
+      //LogDebug(L"PMT: program descriptor, tag = 0x%x, length = %d, pointer = %d, end of descriptor = %d", tag, length, pointer, endOfDescriptor);
+      if (endOfDescriptor > endOfProgramInfo)
       {
-        m_pidInfo.ConditionalAccessDescriptorCount++;
+        LogDebug(L"PMT: invalid program descriptor length = %d, pointer = %d, end of descriptor = %d, end of program info = %d, section length = %d", length, pointer, endOfDescriptor, endOfProgramInfo, section.section_length);
+        return false;
+      }
+
+      if (tag == DESCRIPTOR_REGISTRATION)
+      {
+        if (length >= 4 &&
+          data[pointer] == 'S' &&
+          data[pointer + 1] == 'C' &&
+          data[pointer + 2] == 'T' &&
+          data[pointer + 3] == 'E')
+        {
+          isScteTs = true;
+        }
       }
       pointer += length;
     }
     pointer = endOfProgramInfo;
 
-    m_pidInfo.Reset();
-    m_pidInfo.PmtPid = GetPid();
-    m_pidInfo.ServiceId = programNumber;
-    m_pidInfo.PcrPid = pcrPid;
-    bool seenMpegVideoEs = false;
+    bool isNotDc2Ts = false;
+    bool foundDc2VideoStream = false;
     while (pointer + 4 < endOfSection)
     {
-      int streamType = section[pointer++];
-      int elementaryPid = ((section[pointer] & 0x1f) << 8) + section[pointer + 1];
+      byte streamType = data[pointer++];
+      unsigned short elementaryPid = ((data[pointer] & 0x1f) << 8) + data[pointer + 1];
       pointer += 2;
-      int esInfoLength = ((section[pointer] & 0xf) << 8) + section[pointer + 1];
+      unsigned short esInfoLength = ((data[pointer] & 0xf) << 8) + data[pointer + 1];
       pointer += 2;
-      int endOfEsInfo = pointer + esInfoLength;
-      //LogDebug("PMT: stream type = 0x%x, elementary PID = %d, elementary stream info length = %d, end of elementary stream info = %d", streamType, elementaryPid, esInfoLength, endOfEsInfo);
+      unsigned short endOfEsInfo = pointer + esInfoLength;
+      //LogDebug(L"PMT: stream type = 0x%x, elementary PID = %d, elementary stream info length = %d, end of elementary stream info = %d", streamType, elementaryPid, esInfoLength, endOfEsInfo);
       if (endOfEsInfo > endOfSection)
       {
-        LogDebug("PMT: invalid elementary stream info length = %d, pointer = %d, end of elementary stream info = %d, end of section = %d, section length = %d", esInfoLength, pointer, endOfEsInfo, endOfSection, sectionLength);
+        LogDebug(L"PMT: invalid elementary stream info length = %d, pointer = %d, end of elementary stream info = %d, end of section = %d, section length = %d", esInfoLength, pointer, endOfEsInfo, endOfSection, section.section_length);
         return false;
       }
 
-      if (streamType == STREAM_TYPE_VIDEO_MPEG1 ||
-        streamType == STREAM_TYPE_VIDEO_MPEG2 ||
-        streamType == STREAM_TYPE_VIDEO_MPEG4 ||
-        streamType == STREAM_TYPE_VIDEO_H264 ||
-        (streamType == STREAM_TYPE_VIDEO_MPEG2_DCII && !seenMpegVideoEs))
+      BasePid* basePid = NULL;
+      if (IsVideoStream(streamType) || (streamType == STREAM_TYPE_VIDEO_MPEG2_DCII && !isNotDc2Ts))
       {
-        VideoPid pid;
-        pid.Pid = elementaryPid;
-        pid.StreamType = streamType;
+        VideoPid* pid = new VideoPid();
+        if (pid == NULL)
+        {
+          LogDebug(L"PMT: failed to allocate video PID");
+          return false;
+        }
+        // Only allow DigiCipher II video detection until we see a clear
+        // indication that this is not a DC II transport stream.
         if (streamType == STREAM_TYPE_VIDEO_MPEG2_DCII)
         {
-          pid.StreamType = STREAM_TYPE_VIDEO_MPEG2;
-        }
-        else if (!seenMpegVideoEs)
-        {
-          // Attempt to avoid false-positive DC II detection. Only allow DC II
-          // detection in the case where ISO video stream types are not seen.
-          // This may fail for audio-only programs.
-          m_pidInfo.VideoPids.clear();
-          seenMpegVideoEs = true;
-        }
-        m_pidInfo.VideoPids.push_back(pid);
-        //LogDebug("PMT:  video PID %d, stream type = 0x%x", elementaryPid, streamType);
-      }
-      else if (streamType == STREAM_TYPE_AUDIO_MPEG1 ||
-        streamType == STREAM_TYPE_AUDIO_MPEG2 ||
-        streamType == STREAM_TYPE_AUDIO_AAC ||
-        streamType == STREAM_TYPE_AUDIO_LATM_AAC ||
-        streamType == STREAM_TYPE_AUDIO_AC3 ||
-        streamType == STREAM_TYPE_AUDIO_E_AC3 ||
-        streamType == STREAM_TYPE_AUDIO_E_AC3_ATSC)
-      {          
-        AudioPid pid;
-        pid.Pid = elementaryPid;
-        if (streamType == STREAM_TYPE_AUDIO_E_AC3_ATSC)
-        {
-          pid.StreamType = STREAM_TYPE_AUDIO_E_AC3;
+          pid->LogicalStreamType = STREAM_TYPE_VIDEO_MPEG2;
+          foundDc2VideoStream = true;
         }
         else
         {
-          pid.StreamType = streamType;
+          pid->LogicalStreamType = streamType;
         }
+        m_pidInfo.VideoPids.push_back(pid);
+        basePid = pid;
+        //LogDebug(L"PMT:  video PID %d, stream type = 0x%x", elementaryPid, streamType);
+      }
+      else if (IsAudioStream(streamType))
+      {          
+        AudioPid* pid = new AudioPid();
+        if (pid == NULL)
+        {
+          LogDebug(L"PMT: failed to allocate audio PID");
+          return false;
+        }
+        pid->LogicalStreamType = streamType;
         m_pidInfo.AudioPids.push_back(pid);
-        //LogDebug("PMT:  audio PID %d, stream type = 0x%x", elementaryPid, streamType);
+        basePid = pid;
+        //LogDebug(L"PMT:  audio PID %d, stream type = 0x%x", elementaryPid, streamType);
+      }
+
+      if (!isNotDc2Ts && !IsValidDigiCipher2Stream(streamType))
+      {
+        isNotDc2Ts = true;
+        if (foundDc2VideoStream)
+        {
+          // Fix false positive DC II video detections.
+          std::vector<VideoPid*>::iterator vPidIt = m_pidInfo.VideoPids.begin();
+          while (vPidIt != m_pidInfo.VideoPids.end())
+          {
+            if ((*vPidIt)->StreamType == STREAM_TYPE_VIDEO_MPEG2_DCII)
+            {
+              delete *vPidIt;
+              *vPidIt = NULL;
+              m_pidInfo.VideoPids.erase(vPidIt++);
+              continue;
+            }
+            vPidIt++;
+          }
+        }
       }
 
       char lang[7];
+      int startOfEsInfo = pointer;
       while (pointer + 1 < endOfEsInfo)
       {
-        int tag = section[pointer++];
-        int length = section[pointer++];
+        int tag = data[pointer++];
+        int length = data[pointer++];
         ZeroMemory(lang, sizeof(lang));
         int endOfDescriptor = pointer + length;
-        //LogDebug("PMT: descriptor, tag = 0x%x, length = %d, pointer = %d, end of descriptor = %d", tag, length, pointer, endOfDescriptor);
+        //LogDebug(L"PMT: descriptor, tag = 0x%x, length = %d, pointer = %d, end of descriptor = %d", tag, length, pointer, endOfDescriptor);
         if (endOfDescriptor > endOfEsInfo)
         {
-          LogDebug("PMT: invalid descriptor length = %d, pointer = %d, end of descriptor = %d, end of elementary stream info = %d, section length = %d", length, pointer, endOfDescriptor, endOfEsInfo, sectionLength);
+          LogDebug(L"PMT: invalid descriptor length = %d, pointer = %d, end of descriptor = %d, end of elementary stream info = %d, section length = %d", length, pointer, endOfDescriptor, endOfEsInfo, section.section_length);
           return false;
         }
 
-        if (tag == DESCRIPTOR_AC3_DVB || tag == DESCRIPTOR_E_AC3_DVB)
-        {                
-          AudioPid pid;
-          pid.Pid = elementaryPid;
-          if (tag == DESCRIPTOR_AC3_DVB)
+        if (tag == DESCRIPTOR_REGISTRATION)
+        {
+          if (length >= 4 &&
+            data[pointer] == 'V' &&
+            data[pointer + 1] == 'C' &&
+            data[pointer + 2] == '-' &&
+            data[pointer + 3] == '1')
           {
-            pid.StreamType = STREAM_TYPE_AUDIO_AC3;
-            //LogDebug("PMT:  AC-3 audio PID %d, stream type = 0x%x", elementaryPid, streamType);
+            // This is a VC-1 video stream in a DVB TS.
+            VideoPid* pid = new VideoPid();
+            if (pid == NULL)
+            {
+              LogDebug(L"PMT: failed to allocate video PID");
+              return false;
+            }
+            pid->LogicalStreamType = STREAM_TYPE_VIDEO_VC1;
+            m_pidInfo.VideoPids.push_back(pid);
+            basePid = pid;
+            //LogDebug(L"PMT:  video PID %d, stream type = 0x%x", elementaryPid, streamType);
+          }
+        }
+        else if (tag == DESCRIPTOR_DVB_AC3 ||
+          tag == DESCRIPTOR_DVB_E_AC3 ||
+          (tag == DESCRIPTOR_DVB_DTS && !isScteTs) ||
+          (tag == DESCRIPTOR_DVB_EXTENSION && length >= 1 && data[pointer] == DESCRIPTOR_DVB_X_DTS_HD) ||
+          (tag == DESCRIPTOR_SCTE_DTS_HD && isScteTs))
+        {
+          AudioPid* pid = new AudioPid();
+          if (pid == NULL)
+          {
+            LogDebug(L"PMT: failed to allocate audio PID");
+            return false;
+          }
+          if (tag == DESCRIPTOR_DVB_AC3)
+          {
+            pid->LogicalStreamType = STREAM_TYPE_AUDIO_AC3;
+          }
+          else if (tag == DESCRIPTOR_DVB_E_AC3)
+          {
+            pid->LogicalStreamType = STREAM_TYPE_AUDIO_E_AC3;
+          }
+          else if (tag == DESCRIPTOR_DVB_DTS && !isScteTs)
+          {
+            pid->LogicalStreamType = STREAM_TYPE_AUDIO_DTS;
           }
           else
           {
-            pid.StreamType = STREAM_TYPE_AUDIO_E_AC3;
-            //LogDebug("PMT:  enhanced AC-3 audio PID %d, stream type = 0x%x", elementaryPid, streamType);
+            pid->LogicalStreamType = STREAM_TYPE_AUDIO_DTS_HD;
           }
           if (lang[0] != 0)
           {
-            memcpy(pid.Lang, lang, sizeof(pid.Lang));
+            memcpy(pid->Lang, lang, sizeof(pid->Lang));
           }
 
           m_pidInfo.AudioPids.push_back(pid);
+          basePid = pid;
+          //LogDebug(L"PMT:  audio PID %d, stream type = 0x%x", elementaryPid, streamType);
         }
         // audio or subtitle language
         else if (tag == DESCRIPTOR_ISO_639_LANG)
-        {          
+        {
+          // Copy the language to the corresponding audio or subtitle PID. In
+          // cases where we rely on a descriptor to determine the stream type
+          // we might not yet know the stream type, ergo we might not have a
+          // PID yet. In those cases copy the language to our local variable.
+          // We'll copy the value from the local variable to the PID if/when we
+          // create one.
           BYTE* pidLang = NULL;
-          int pidLangLength = 6;
-          for (unsigned int i = 0; i < m_pidInfo.AudioPids.size(); i++)
+          for (unsigned short i = 0; i < m_pidInfo.AudioPids.size(); i++)
           {
-            if (m_pidInfo.AudioPids[i].Pid == elementaryPid)
+            if (m_pidInfo.AudioPids[i]->Pid == elementaryPid)
             {
-              pidLang = (BYTE*)&m_pidInfo.AudioPids[i].Lang;
+              pidLang = (BYTE*)&m_pidInfo.AudioPids[i]->Lang;
               break;
             }
           }
           if (pidLang == NULL)
           {
-            for (unsigned int i = 0; i < m_pidInfo.SubtitlePids.size(); i++)
+            for (unsigned short i = 0; i < m_pidInfo.SubtitlePids.size(); i++)
             {
-              if (m_pidInfo.SubtitlePids[i].Pid == elementaryPid)
+              if (m_pidInfo.SubtitlePids[i]->Pid == elementaryPid)
               {
-                pidLang = (BYTE*)&m_pidInfo.SubtitlePids[i].Lang;
-                pidLangLength = 3;  // we only support one language per subtitle stream
+                pidLang = (BYTE*)&m_pidInfo.SubtitlePids[i]->Lang;
                 break;
               }
             }
@@ -261,34 +351,44 @@ bool CBasePmtParser::DecodePmtSection(CSection& sections)
           {
             pidLang = (BYTE*)&lang;
           }
-          int pidLangOffset = 0;
-          while (pointer + 3 < endOfDescriptor && pidLangLength >= 3)
+          int pidLangLength = sizeof(pidLang);
+
+          // There may be more than one language. This makes sense for dual
+          // mono audio streams.
+          byte pidLangOffset = 0;
+          while (pointer + 3 < endOfDescriptor && pidLangOffset + 3 < pidLangLength)
           {
-            memcpy(&pidLang[pidLangOffset], &section[pointer], 3);
+            memcpy(&pidLang[pidLangOffset], &data[pointer], 3);
             pidLangOffset += 3;
             pidLang[pidLangOffset] = 0;   // NULL terminate
             pointer += 4;
           }
         }
-        else if (tag == DESCRIPTOR_TELETEXT_DVB /*&& m_pidInfo.TeletextPid == 0*/)
+        else if (tag == DESCRIPTOR_DVB_TELETEXT)
         {
-          m_pidInfo.TeletextPid = elementaryPid;
+          TeletextPid* pid = new TeletextPid();
+          if (pid == NULL)
+          {
+            LogDebug(L"PMT: failed to allocate teletext PID");
+            return false;
+          }
+          // Store the page details.
           while (pointer + 4 < endOfDescriptor)
           {
             TeletextServiceInfo info;
-            info.Lang[0] = section[pointer++];
-            info.Lang[1] = section[pointer++];
-            info.Lang[2] = section[pointer++];
+            info.Lang[0] = data[pointer++];
+            info.Lang[1] = data[pointer++];
+            info.Lang[2] = data[pointer++];
             info.Lang[3] = 0;
-            info.Type = section[pointer] >> 3;
+            info.Type = data[pointer] >> 3;
             if (info.Type == 2 || info.Type == 5) // subtitle page or subtitle page for hearing impaired
             {
-              info.Page = (section[pointer++] & 0x7) * 100;
-              info.Page += (section[pointer] >> 4) * 10;
-              info.Page += (section[pointer++] & 0xf);
-              if (!m_pidInfo.HasTeletextPageInfo(info.Page))
+              info.Page = (data[pointer++] & 0x7) * 100;
+              info.Page += (data[pointer] >> 4) * 10;
+              info.Page += (data[pointer++] & 0xf);
+              if (!pid->HasTeletextPageInfo(info.Page))
               {
-                m_pidInfo.TeletextInfo.push_back(info);
+                pid->Services.push_back(info);
               }
             }
             else
@@ -296,50 +396,70 @@ bool CBasePmtParser::DecodePmtSection(CSection& sections)
               pointer += 2;
             }
           }
-          //LogDebug("PMT:  teletext PID %d, stream type = 0x%x", elementaryPid, streamType);
+          m_pidInfo.TeletextPids.push_back(pid);
+          basePid = pid;
+          //LogDebug(L"PMT:  teletext PID %d, stream type = 0x%x", elementaryPid, streamType);
         }
-        else if (streamType == STREAM_TYPE_SUBTITLES_SCTE || (tag == DESCRIPTOR_SUBTITLING_DVB && streamType == STREAM_TYPE_PES_PRIVATE_DATA))
+        else if (streamType == STREAM_TYPE_SUBTITLES_SCTE ||
+          (streamType == STREAM_TYPE_PES_PRIVATE_DATA && tag == DESCRIPTOR_DVB_SUBTITLING) ||
+          streamType == STREAM_TYPE_TEXT_MPEG4)
         {
-          SubtitlePid pid;
-          pid.Pid = elementaryPid;
-          pid.StreamType = streamType;
-          if (tag == DESCRIPTOR_SUBTITLING_DVB)
+          SubtitlePid* pid = new SubtitlePid();
+          if (pid == NULL)
           {
-            if (length > 3)
-            {
-              memcpy(pid.Lang, &section[pointer], 3);
-              pid.Lang[3] = 0;  // NULL terminate
-            }
+            LogDebug(L"PMT: failed to allocate subtitle PID");
+            return false;
+          }
+          // Populate the PID language if we can.
+          if (tag == DESCRIPTOR_DVB_SUBTITLING && length > 3)
+          {
+            memcpy(pid->Lang, &data[pointer], 3);
+            pid->Lang[3] = 0;  // NULL terminate
           }
           else if (lang[0] != 0)
           {
-            memcpy(pid.Lang, lang, sizeof(pid.Lang));
+            memcpy(pid->Lang, lang, sizeof(pid->Lang));
           }
           m_pidInfo.SubtitlePids.push_back(pid);
-          //LogDebug("PMT:  subtitle PID %d, stream type = 0x%x", elementaryPid, streamType);
-        }
-        else if (tag == DESCRIPTOR_CONDITIONAL_ACCESS)
-        {
-          m_pidInfo.ConditionalAccessDescriptorCount++;
+          basePid = pid;
+          //LogDebug(L"PMT:  subtitle PID %d, stream type = 0x%x", elementaryPid, streamType);
         }
 
         pointer = endOfDescriptor;
       }
       if (pointer != endOfEsInfo)
       {
-        LogDebug("PMT: section parsing error 1");
+        LogDebug(L"PMT: section parsing error 1");
         return false;
+      }
+
+      // Common code for all PIDs.
+      if (basePid != NULL)
+      {
+        basePid->Pid = elementaryPid;
+        basePid->StreamType = streamType;
+        basePid->DescriptorsLength = esInfoLength;
+        if (esInfoLength != 0)
+        {
+          basePid->Descriptors = new byte[esInfoLength];
+          if (basePid->Descriptors == NULL)
+          {
+            LogDebug(L"PMT: failed to allocate %d bytes for elementary stream descriptors", esInfoLength);
+            return false;
+          }
+          memcpy(basePid->Descriptors, &data[startOfEsInfo], esInfoLength);
+        }
       }
     }
     if (pointer != endOfSection)
     {
-      LogDebug("PMT: section parsing error 2");
+      LogDebug(L"PMT: section parsing error 2");
       return false;
     }
   } 
   catch (...) 
   { 
-    LogDebug("PMT: unhandled exception in DecodePmtSection()");
+    LogDebug(L"PMT: unhandled exception in DecodePmtSection()");
     return false;
   }
   return true;
@@ -350,8 +470,8 @@ CPidTable& CBasePmtParser::GetPidInfo()
   return m_pidInfo;
 }
 
-void CBasePmtParser::OnNewSection(CSection& sections)
+void CBasePmtParser::OnNewSection(CSection& section)
 { 
   // Can be overriden by derived classes.
-  DecodePmtSection(sections);
+  DecodePmtSection(section);
 }

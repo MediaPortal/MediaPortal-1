@@ -19,8 +19,10 @@
 #endregion
 
 using DirectShowLib.BDA;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Atsc;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Enum;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Struct;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
@@ -31,16 +33,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
   /// An implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> for TechniSat ATSC tuners
   /// with B2C2 chipsets and WDM drivers.
   /// </summary>
-  public class TunerB2c2Atsc : TunerB2c2Base
+  internal class TunerB2c2Atsc : TunerB2c2Base
   {
     /// <summary>
     /// Initialise a new instance of the <see cref="TunerB2c2Atsc"/> class.
     /// </summary>
     /// <param name="info">The B2C2-specific information (<see cref="DeviceInfo"/>) about the tuner.</param>
     public TunerB2c2Atsc(DeviceInfo info)
-      : base(info)
+      : base(info, CardType.Atsc)
     {
-      _tunerType = CardType.Atsc;
     }
 
     #region tuning & scanning
@@ -59,7 +60,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     /// Actually tune to a channel.
     /// </summary>
     /// <param name="channel">The channel to tune to.</param>
-    protected override void PerformTuning(IChannel channel)
+    public override void PerformTuning(IChannel channel)
     {
       this.LogDebug("B2C2 ATSC: set tuning parameters");
       ATSCChannel atscChannel = channel as ATSCChannel;
@@ -71,7 +72,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       // If the channel modulation scheme is 8 VSB then it is an over-the-air ATSC channel, otherwise
       // it is a cable (SCTE ITU-T annex B) channel.
       int frequency;
-      B2c2Modulation modulation = B2c2Modulation.Vsb8;
+      Modulation modulation = Modulation.Vsb8;
       if (atscChannel.ModulationType == ModulationType.Mod8Vsb)
       {
         frequency = ATSCChannel.GetTerrestrialFrequencyFromPhysicalChannel(atscChannel.PhysicalChannel);
@@ -80,10 +81,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       else
       {
         frequency = (int)atscChannel.Frequency;
-        modulation = B2c2Modulation.Qam256AnnexB;
+        modulation = Modulation.Qam256AnnexB;
         if (atscChannel.ModulationType == ModulationType.Mod64Qam)
         {
-          modulation = B2c2Modulation.Qam64AnnexB;
+          modulation = Modulation.Qam64AnnexB;
         }
       }
 
@@ -93,18 +94,27 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       hr = _interfaceTuner.SetModulation(modulation);
       HResult.ThrowException(hr, "Failed to set modulation.");
 
-      this.LogDebug("B2C2 ATSC: apply tuning parameters");
-      HResult.ThrowException(_interfaceTuner.SetTunerStatus(), "Failed to apply tuning parameters.");
+      base.PerformTuning(channel);
     }
 
+    #endregion
+
+    #region graph building
+
     /// <summary>
-    /// Get the tuner's channel scanning interface.
+    /// Actually load the tuner.
     /// </summary>
-    public override ITVScanning ScanningInterface
+    public override void PerformLoading()
     {
-      get
+      base.PerformLoading();
+
+      // ATSC/SCTE EPG grabbing currently not supported.
+      _epgGrabber = null;
+
+      IChannelScannerInternal scanner = _channelScanner as IChannelScannerInternal;
+      if (scanner != null)
       {
-        return new ScannerMpeg2TsAtsc(this, _filterTsWriter as ITsChannelScan);
+        scanner.Helper = new ChannelScannerHelperAtsc();
       }
     }
 

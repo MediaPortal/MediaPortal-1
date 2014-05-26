@@ -26,7 +26,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
   /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which supports the Elecard
   /// IPTV source filter.
   /// </summary>
-  public class TunerStreamElecard : TunerStream
+  internal class TunerStreamElecard : TunerStream
   {
     /// <summary>
     /// Initialise a new instance of the <see cref="TunerStreamElecard"/> class.

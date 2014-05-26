@@ -19,21 +19,26 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using DirectShowLib;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Dvb;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
 {
   /// <summary>
-  /// A base implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> for tuners that expose
-  /// DirectShow filters.
+  /// A base implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> for tuners implemented
+  /// using a DirectShow graph.
   /// </summary>
-  public abstract class TunerDirectShowBase : TvCardBase
+  internal abstract class TunerDirectShowBase : TunerBase
   {
     #region variables
 
@@ -75,11 +80,34 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     /// Initialise a new instance of the <see cref="TunerDirectShowBase"/> class.
     /// </summary>
     /// <param name="device">The <see cref="DsDevice"/> instance to encapsulate.</param>
-    protected TunerDirectShowBase(DsDevice device)
-      : base(device.Name, device.DevicePath)
+    /// <param name="type">The tuner type.</param>
+    protected TunerDirectShowBase(DsDevice device, CardType type)
+      : base(device.Name, device.DevicePath, type)
     {
       _deviceMain = device;
-      if (_deviceMain != null)
+      SetProductAndTunerInstanceIds(_deviceMain);
+    }
+
+    /// <summary>
+    /// Initialise a new instance of the <see cref="TunerDirectShowBase"/> class.
+    /// </summary>
+    /// <param name="name">The tuner's name.</param>
+    /// <param name="externalId">The external identifier for the tuner.</param>
+    /// <param name="type">The tuner type.</param>
+    protected TunerDirectShowBase(string name, string externalId, CardType type)
+      : base(name, externalId, type)
+    {
+    }
+
+    #endregion
+
+    /// <summary>
+    /// Set the tuner's product and tuner instance identifier attributes.
+    /// </summary>
+    /// <param name="device">The device instance to read the attributes from.</param>
+    protected void SetProductAndTunerInstanceIds(DsDevice device)
+    {
+      if (device != null)
       {
         _productInstanceId = device.ProductInstanceIdentifier;
         int tunerInstanceId = device.TunerInstanceIdentifier;
@@ -91,27 +119,34 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     }
 
     /// <summary>
-    /// Initialise a new instance of the <see cref="TunerDirectShowBase"/> class.
+    /// Reload the tuner's configuration.
     /// </summary>
-    /// <param name="name">The tuner's name.</param>
-    /// <param name="externalId">The external identifier for the tuner.</param>
-    protected TunerDirectShowBase(string name, string externalId)
-      : base(name, externalId)
+    public override void ReloadConfiguration()
     {
+      base.ReloadConfiguration();
+
+      this.LogDebug("DirectShow base: reload configuration");
+      // TODO apply these settings to TsWriter here
+      if (SettingsManagement.GetValue("tsWriterDisableCrcCheck", false))
+      {
+        this.LogDebug("DirectShow base: disable TsWriter CRC checking");
+      }
+      if (SettingsManagement.GetValue("tsWriterDumpInputs", false))
+      {
+        this.LogDebug("DirectShow base: enable TsWriter input dumping");
+      }
     }
 
-    #endregion
-
-    #region subchannel management
+    #region sub-channel management
 
     /// <summary>
-    /// Allocate a new subchannel instance.
+    /// Allocate a new sub-channel instance.
     /// </summary>
-    /// <param name="id">The identifier for the subchannel.</param>
-    /// <returns>the new subchannel instance</returns>
-    protected override ITvSubChannel CreateNewSubChannel(int id)
+    /// <param name="id">The identifier for the sub-channel.</param>
+    /// <returns>the new sub-channel instance</returns>
+    public override ITvSubChannel CreateNewSubChannel(int id)
     {
-      return new Mpeg2SubChannel(id, this, _filterTsWriter as ITsFilter);
+      return new SubChannelMpeg2Ts(id, _filterTsWriter as ITsFilter);
     }
 
     #endregion
@@ -132,11 +167,63 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     }
 
     /// <summary>
+    /// Load the <see cref="T:TvLibrary.Interfaces.ICustomDevice">extensions</see> for this tuner.
+    /// </summary>
+    /// <remarks>
+    /// It is expected that this function will be called at some stage during tuner loading.
+    /// This function may update the lastFilter reference parameter to insert filters for
+    /// <see cref="IDirectShowAddOnDevice"/> extensions.
+    /// </remarks>
+    /// <param name="context">Any context required to initialise supported extensions.</param>
+    /// <param name="lastFilter">The source filter (usually either a tuner or capture/receiver
+    ///   filter) to connect the [first] device filter to.</param>
+    protected void LoadExtensions(object context, ref IBaseFilter lastFilter)
+    {
+      this.LogDebug("DirectShow base: load tuner extensions");
+      base.LoadExtensions(context);
+
+      if (lastFilter != null)
+      {
+        List<IDirectShowAddOnDevice> addOnsToDispose = new List<IDirectShowAddOnDevice>();
+        foreach (ICustomDevice extension in _extensions)
+        {
+          IDirectShowAddOnDevice addOn = extension as IDirectShowAddOnDevice;
+          if (addOn != null)
+          {
+            this.LogDebug("DirectShow base: add-on \"{0}\" found", extension.Name);
+            if (!addOn.AddToGraph(_graph, ref lastFilter))
+            {
+              this.LogDebug("DirectShow base: failed to add filter(s) to graph");
+              addOnsToDispose.Add(addOn);
+              continue;
+            }
+          }
+        }
+        foreach (IDirectShowAddOnDevice addOn in addOnsToDispose)
+        {
+          addOn.Dispose();
+          _extensions.Remove(addOn);
+        }
+      }
+    }
+
+    /// <summary>
     /// Complete the DirectShow graph.
     /// </summary>
     protected void CompleteGraph()
     {
-      FilterGraphTools.SaveGraphFile(_graph, Name + " - " + _tunerType + " Graph.grf");
+      // For some reason this fails for graphs containing a stream source
+      // filter. In any case we should never allow failure to prevent using the
+      // tuner.
+      try
+      {
+        FilterGraphTools.SaveGraphFile(_graph, Name + " - " + TunerType + " Graph.grf");
+      }
+      catch
+      {
+      }
+      _channelScanner = new ChannelScannerDirectShowBase(this, new ChannelScannerHelperDvb(), _filterTsWriter as ITsChannelScan);
+      _epgGrabber = new EpgGrabberDirectShow(_filterTsWriter as ITsEpgScanner);
     }
 
     /// <summary>
@@ -176,7 +263,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     /// Set the state of the tuner.
     /// </summary>
     /// <param name="state">The state to apply to the tuner.</param>
-    protected override void SetTunerState(TunerState state)
+    public override void SetTunerState(TunerState state)
     {
       this.LogDebug("DirectShow base: set tuner state, current state = {0}, requested state = {1}", _state, state);
 
@@ -272,27 +359,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
 
     #endregion
 
-    #region tuning & scanning
-
-    /// <summary>
-    /// Get the tuner's channel scanning interface.
-    /// </summary>
-    public override ITVScanning ScanningInterface
-    {
-      get
-      {
-        return new ScannerMpeg2TsBase(this, _filterTsWriter as ITsChannelScan);
-      }
-    }
-
-    #endregion
-
     #region IDisposable member
 
     /// <summary>
     /// Release and dispose all resources.
     /// </summary>
-    public void Dispose()
+    public override void Dispose()
     {
       base.Dispose();
       if (_deviceMain != null)

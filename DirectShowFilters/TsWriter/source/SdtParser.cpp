@@ -24,6 +24,7 @@
 
 void LogDebug(const char* fmt, ...);
 extern bool DisableCRCCheck();
+extern void getString468a(BYTE* buf, int bufLen, char* text, int textLen);
 
 CSdtParser::CSdtParser(void)
 {
@@ -176,7 +177,7 @@ void CSdtParser::OnNewSection(CSection& sections)
       info.OriginalNetworkId = original_network_id;
       info.TransportStreamId = transport_stream_id;
       info.ServiceId = service_id;
-      info.IsOtherMux = (sections.table_id == 0x46);
+      info.IsOtherTransportStream = (sections.table_id == 0x46);
       info.IsRunning = (running_status == 2 || running_status == 4);    // running or starting in a few seconds
       info.IsEncrypted = (free_ca_mode == 1);
       //LogDebug("SdtParser: service ID = 0x%x, EIT schedule flag = %d, EIT present following flag = %d, running status = %d, free CA mode = %d",
@@ -314,7 +315,7 @@ char* CSdtParser::GetBouquetName(int bouquetId)
   return it->second;
 }
 
-void CSdtParser::DecodeServiceDescriptor(byte* b, int length, int* serviceType, char** providerName, char** serviceName)
+void CSdtParser::DecodeServiceDescriptor(byte* b, int length, byte* serviceType, char** providerName, char** serviceName)
 {
   if (length < 3)
   {
@@ -340,7 +341,7 @@ void CSdtParser::DecodeServiceDescriptor(byte* b, int length, int* serviceType, 
       }
       else
       {
-        getString468A(&b[pointer], service_provider_name_length, *providerName, service_provider_name_length + 1);
+        getString468a(&b[pointer], service_provider_name_length, *providerName, service_provider_name_length + 1);
       }
       pointer += service_provider_name_length;
     }
@@ -360,7 +361,7 @@ void CSdtParser::DecodeServiceDescriptor(byte* b, int length, int* serviceType, 
       }
       else
       {
-        getString468A(&b[pointer], service_name_length, *serviceName, service_name_length + 1);
+        getString468a(&b[pointer], service_name_length, *serviceName, service_name_length + 1);
       }
     }
   }
@@ -412,7 +413,7 @@ bool CSdtParser::DecodeComponentDescriptor(byte* b, int length, bool* isVideo, b
   }
 }
 
-void CSdtParser::DecodeServiceAvailabilityDescriptor(byte* b, int length, vector<int>* availableInCells, vector<int>* unavailableInCells)
+void CSdtParser::DecodeServiceAvailabilityDescriptor(byte* b, int length, vector<unsigned long>* availableInCells, vector<unsigned long>* unavailableInCells)
 {
   if (length < 1)
   {
@@ -425,7 +426,7 @@ void CSdtParser::DecodeServiceAvailabilityDescriptor(byte* b, int length, vector
     bool availability_flag = (b[pointer++] & 0x80) != 0;
     while (pointer + 1 < length)
     {
-      int cell_id = (b[pointer] << 8) + b[pointer + 1];
+      unsigned long cell_id = (b[pointer] << 8) + b[pointer + 1];
       pointer += 2;
       if (availability_flag)
       {
@@ -443,7 +444,7 @@ void CSdtParser::DecodeServiceAvailabilityDescriptor(byte* b, int length, vector
   }
 }
 
-void CSdtParser::DecodeCountryAvailabilityDescriptor(byte* b, int length, vector<unsigned int>* availableInCountries, vector<unsigned int>* unavailableInCountries)
+void CSdtParser::DecodeCountryAvailabilityDescriptor(byte* b, int length, vector<unsigned long>* availableInCountries, vector<unsigned long>* unavailableInCountries)
 {
   if (length < 1)
   {
@@ -456,7 +457,7 @@ void CSdtParser::DecodeCountryAvailabilityDescriptor(byte* b, int length, vector
     bool country_availability_flag = (b[pointer++] & 0x80) != 0;
     while (pointer + 2 < length)
     {
-      unsigned int country_code = b[pointer] + (b[pointer + 1] << 8) + (b[pointer + 2] << 16);
+      unsigned long country_code = b[pointer] + (b[pointer + 1] << 8) + (b[pointer + 2] << 16);
       pointer += 3;
       if (country_availability_flag)
       {
@@ -486,7 +487,7 @@ void CSdtParser::DecodeBouquetNameDescriptor(byte* b, int length, char** name)
     LogDebug("SdtParser: failed to allocate %d bytes in DecodeBouquetNameDescriptor()", length + 1);
     return;
   }
-  getString468A(b, length, *name, length + 1);
+  getString468a(b, length, *name, length + 1);
 }
 
 void CSdtParser::DecodeTargetRegionDescriptor(byte* b, int length, vector<__int64>* targetRegions)
@@ -559,7 +560,7 @@ void CSdtParser::DecodeTargetRegionDescriptor(byte* b, int length, vector<__int6
   }
 }
 
-void CSdtParser::DecodeServiceRelocatedDescriptor(byte* b, int length, int* previousOriginalNetworkId, int* previousTransportStreamId, int* previousServiceId)
+void CSdtParser::DecodeServiceRelocatedDescriptor(byte* b, int length, unsigned short* previousOriginalNetworkId, unsigned short* previousTransportStreamId, unsigned short* previousServiceId)
 {
   if (length != 7)
   {

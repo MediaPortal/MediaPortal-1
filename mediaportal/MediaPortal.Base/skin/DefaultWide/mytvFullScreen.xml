@@ -15,7 +15,7 @@
       <width>1124</width>
       <texture>osd_mask3.png</texture>
       <colordiffuse>ddffffff</colordiffuse>
-      <visible>!window.isosdvisible+[window.ispauseosdvisible+player.paused|player.rewinding|player.forwarding]</visible>
+      <visible>!window.isosdvisible+[window.ispauseosdvisible+player.paused|player.rewinding|player.forwarding|control.isVisible(10)|control.isVisible(11)|control.isVisible(12)]</visible>
     </control>
     <control>
       <description>background for 10,11,12</description>
@@ -89,8 +89,8 @@
       <label>#TV.Record.percent1</label>
       <label1>#TV.Record.percent2</label1>
       <label2>#TV.Record.percent3</label2>
-      <labelmarkerstarts>#TV.Record.jumppoints</labelmarkerstarts>
-      <labelmarkerends>#TV.Record.chapters</labelmarkerends>
+      <labelmarkerstarts>#jumppoints</labelmarkerstarts>
+      <labelmarkerends>#chapters</labelmarkerends>
       <startlabel />
       <endlabel />
       <toplabel />

@@ -26,7 +26,7 @@ using UPnP.Infrastructure.CP.DeviceTree;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Upnp.Service
 {
-  public class ServiceAvTransport : ServiceBase
+  internal class ServiceAvTransport : ServiceBase
   {
     private CpAction _setAvTransportUriAction = null;
     private CpAction _setNextAvTransportUriAction = null;

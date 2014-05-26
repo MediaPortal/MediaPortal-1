@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ArrayOfDVBTTuning xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <DVBTTuning>
-    <Frequency>570000</Frequency>
+    <Frequency>770000</Frequency>
     <Bandwidth>8000</Bandwidth>
     <Offset>167</Offset>
     <CellId>0</CellId>
@@ -9,23 +9,7 @@
     <IsDvbT2>False</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>578000</Frequency>
-    <Bandwidth>8000</Bandwidth>
-    <Offset>167</Offset>
-    <CellId>0</CellId>
-    <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
-  </DVBTTuning>
-  <DVBTTuning>
-    <Frequency>594000</Frequency>
-    <Bandwidth>8000</Bandwidth>
-    <Offset>167</Offset>
-    <CellId>0</CellId>
-    <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
-  </DVBTTuning>
-  <DVBTTuning>
-    <Frequency>690000</Frequency>
+    <Frequency>738000</Frequency>
     <Bandwidth>8000</Bandwidth>
     <Offset>167</Offset>
     <CellId>0</CellId>
@@ -49,15 +33,7 @@
     <IsDvbT2>False</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>730000</Frequency>
-    <Bandwidth>8000</Bandwidth>
-    <Offset>167</Offset>
-    <CellId>0</CellId>
-    <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
-  </DVBTTuning>
-  <DVBTTuning>
-    <Frequency>738000</Frequency>
+    <Frequency>778000</Frequency>
     <Bandwidth>8000</Bandwidth>
     <Offset>167</Offset>
     <CellId>0</CellId>
@@ -73,7 +49,7 @@
     <IsDvbT2>False</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>770000</Frequency>
+    <Frequency>754000</Frequency>
     <Bandwidth>8000</Bandwidth>
     <Offset>167</Offset>
     <CellId>0</CellId>
@@ -81,7 +57,7 @@
     <IsDvbT2>False</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>778000</Frequency>
+    <Frequency>570000</Frequency>
     <Bandwidth>8000</Bandwidth>
     <Offset>167</Offset>
     <CellId>0</CellId>
@@ -89,31 +65,7 @@
     <IsDvbT2>False</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>794000</Frequency>
-    <Bandwidth>8000</Bandwidth>
-    <Offset>167</Offset>
-    <CellId>0</CellId>
-    <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
-  </DVBTTuning>
-  <DVBTTuning>
-    <Frequency>802000</Frequency>
-    <Bandwidth>8000</Bandwidth>
-    <Offset>167</Offset>
-    <CellId>0</CellId>
-    <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
-  </DVBTTuning>
-  <DVBTTuning>
-    <Frequency>818000</Frequency>
-    <Bandwidth>8000</Bandwidth>
-    <Offset>167</Offset>
-    <CellId>0</CellId>
-    <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
-  </DVBTTuning>
-  <DVBTTuning>
-    <Frequency>826000</Frequency>
+    <Frequency>578000</Frequency>
     <Bandwidth>8000</Bandwidth>
     <Offset>167</Offset>
     <CellId>0</CellId>

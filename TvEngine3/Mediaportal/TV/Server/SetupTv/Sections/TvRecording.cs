@@ -28,7 +28,9 @@ using System.IO;
 using System.Threading;
 using System.Windows.Forms;
 using Mediaportal.TV.Server.SetupControls;
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
 using Mediaportal.TV.Server.SetupTV.Dialogs;
+using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
@@ -42,7 +44,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class TvRecording : SectionSettings
   {
- 
+    #region constants
+
+    private const int MIN_DISK_QUOTA_MB = 500;
+
+    #endregion
 
     #region CardInfo class
 
@@ -238,6 +244,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       enableDiskQuotaControls();
 
       LoadComboBoxDrive();
+
+      checkBoxTVThumbs.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("thumbnailerEnabled", true);
+      checkBoxShareThumb.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("thumbnailerLeaveShareThumb", false);
+      numericUpDownThumbColumns.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("thumbnailerColumns", 1);
+      numericUpDownThumbRows.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("thumbnailerRows", 1);
+      trackBarQuality.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("thumbnailerQuality", 4);
+      numericUpDownTimeOffset.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("thumbnailerTimeOffset", 0);
     }
 
     private static decimal ValueSanityCheck(int value, int min, int max)
@@ -255,31 +268,38 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       return value;
     }
 
-
     public override void SaveSettings()
     {
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("preRecordInterval", (int) numericUpDownPreRec.Value);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("postRecordInterval", (int) numericUpDownPostRec.Value);
+      ISettingService s = ServiceAgents.Instance.SettingServiceAgent;
+      s.SaveValue("preRecordInterval", (int) numericUpDownPreRec.Value);
+      s.SaveValue("postRecordInterval", (int) numericUpDownPostRec.Value);
 
 
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("moviesformat", _formatIndex[0] == (_formatString[0].Length - 1)
+      s.SaveValue("moviesformat", _formatIndex[0] == (_formatString[0].Length - 1)
                         ? _customFormat[0]
                         : _formatString[0][_formatIndex[0]]);
       
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("moviesformatindex",_formatIndex[0]);
+      s.SaveValue("moviesformatindex",_formatIndex[0]);
       
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("seriesformat", _formatIndex[1] == (_formatString[1].Length - 1)
+      s.SaveValue("seriesformat", _formatIndex[1] == (_formatString[1].Length - 1)
                         ? _customFormat[1]
                         : _formatString[1][_formatIndex[1]]);
 
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("seriesformatindex", _formatIndex[1]);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("FirstDayOfWeekend", comboBoxWeekend.SelectedIndex); //default is Saturday=0      
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("autodeletewatchedrecordings", checkBoxAutoDelete.Checked);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("PreventDuplicates", checkBoxPreventDupes.Checked);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("EpisodeKey", comboBoxEpisodeKey.SelectedIndex);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("recordMaxFreeCardsToTry", (int) numericUpDownMaxFreeCardsToTry.Value);      
+      s.SaveValue("seriesformatindex", _formatIndex[1]);
+      s.SaveValue("FirstDayOfWeekend", comboBoxWeekend.SelectedIndex); //default is Saturday=0      
+      s.SaveValue("autodeletewatchedrecordings", checkBoxAutoDelete.Checked);
+      s.SaveValue("PreventDuplicates", checkBoxPreventDupes.Checked);
+      s.SaveValue("EpisodeKey", comboBoxEpisodeKey.SelectedIndex);
+      s.SaveValue("recordMaxFreeCardsToTry", (int) numericUpDownMaxFreeCardsToTry.Value);      
 
       UpdateDriveInfo(true);
+
+      s.SaveValue("thumbnailerEnabled", checkBoxTVThumbs.Checked);
+      s.SaveValue("thumbnailerLeaveShareThumb", checkBoxShareThumb.Checked);
+      s.SaveValue("thumbnailerColumns", (int)numericUpDownThumbColumns.Value);
+      s.SaveValue("thumbnailerRows", (int)numericUpDownThumbRows.Value);
+      s.SaveValue("thumbnailerQuality", trackBarQuality.Value);
+      s.SaveValue("thumbnailerTimeOffset", (int)numericUpDownTimeOffset.Value);
     }
 
     #endregion
@@ -445,28 +465,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         {
           info.card.RecordingFolder = textBoxFolder.Text;
           ServiceAgents.Instance.CardServiceAgent.SaveCard(info.card);
-          if (!_needRestart)
-          {
-            _needRestart = true;
-          }
+          _needRestart = true;
         }
       }
     }
-
-    /*
-     * Mantis #0001991: disable mpg recording  (part I: force TS recording format)
-     * 
-    private void comboBox1_SelectedIndexChanged_1(object sender, EventArgs e)
-    {
-      CardInfo info = (CardInfo)comboBoxCards.SelectedItem;
-      if (info.card.RecordingFormat != comboBoxRecordingFormat.SelectedIndex)
-      {
-        info.card.RecordingFormat = comboBoxRecordingFormat.SelectedIndex;
-        info.ServiceAgents.Instance.CardServiceAgent.SaveCard(card);
-        _needRestart = true;
-      }
-    }
-    */
 
     private void mpNumericTextBoxDiskQuota_Leave(object sender, EventArgs e)
     {
@@ -477,7 +479,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       enableDiskQuotaControls();
 
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("diskQuotaEnabled", ((CheckBox)sender).Checked.ToString());      
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("diskQuotaEnabled", ((MPCheckBox)sender).Checked.ToString());      
     }
 
     private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
@@ -494,6 +496,36 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       _needRestart = true;
     }
 
+    private void buttonClearTVThumbs_Click(object sender, EventArgs e)
+    {
+      this.LogDebug("recording config: delete thumbnails");
+      ServiceAgents.Instance.ThumbnailServiceAgent.DeleteAllThumbnails();
+    }
+
+    private void trackBarQuality_ValueChanged(object sender, EventArgs e)
+    {
+      switch (trackBarQuality.Value)
+      {
+        case 0:
+          labelThumbnailRecommendation.Text = "small CRTs";
+          break;
+        case 1:
+          labelThumbnailRecommendation.Text = "medium CRTs";
+          break;
+        case 2:
+          labelThumbnailRecommendation.Text = "large CRTs, small LCDs";
+          break;
+        case 3:
+          labelThumbnailRecommendation.Text = "LCDs, plasmas";
+          break;
+        case 4:
+          labelThumbnailRecommendation.Text = "projectors, very large LCDs and plasmas";
+          break;
+      }
+
+      _needRestart = true;
+    }
+
     #endregion
 
     #region Quota handling
@@ -503,37 +535,46 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (comboBoxDrive.SelectedItem == null)
         return;
       string drive = (string)comboBoxDrive.SelectedItem;
+      string settingName = "freediskspace" + drive;
+      if (!drive.StartsWith(@"\"))
+      {
+        settingName = "freediskspace" + drive[0];
+      }
       ulong freeSpace = Utils.GetFreeDiskSpace(drive);
-      long totalSpace = Utils.GetDiskSize(drive);
+      ulong totalSpace = Utils.GetDiskSpace(drive);
 
       labelFreeDiskspace.Text = Utils.GetSize((long)freeSpace);
-      labelTotalDiskSpace.Text = Utils.GetSize(totalSpace);
+      labelTotalDiskSpace.Text = Utils.GetSize((long)totalSpace);
       if (labelTotalDiskSpace.Text == "0")
         labelTotalDiskSpace.Text = "Not available - WMI service not available";
       if (save)
       {
-        
-        Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSetting("freediskspace" + drive[0]);
-        if (mpNumericTextBoxDiskQuota.Value < 500)
-          mpNumericTextBoxDiskQuota.Value = 500;
-        long quota = mpNumericTextBoxDiskQuota.Value * 1024;        
-        ServiceAgents.Instance.SettingServiceAgent.SaveValue("freediskspace", quota.ToString());
+        if (mpNumericTextBoxDiskQuota.Value < MIN_DISK_QUOTA_MB)
+          mpNumericTextBoxDiskQuota.Value = MIN_DISK_QUOTA_MB;
+
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue(settingName, mpNumericTextBoxDiskQuota.Value * 1024);
+        if (enableDiskQuota.Checked)
+        {
+          this.LogDebug("SetupTV: Disk Quota for {0} is enabled and set to {1} MB", drive, mpNumericTextBoxDiskQuota.Value);
+        }
+        else
+        {
+          this.LogDebug("SetupTV: Disk Quota for {0} is disabled", drive);
+        }
       }
       else
       {
-        
-        Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSetting("freediskspace" + drive[0]);
         try
         {
-          long quota = Int64.Parse(setting.Value);
-          mpNumericTextBoxDiskQuota.Value = (int)quota / 1024;
+          long quota = ServiceAgents.Instance.SettingServiceAgent.GetValue(settingName, MIN_DISK_QUOTA_MB * 1024);
+          mpNumericTextBoxDiskQuota.Value = (int)(quota / 1024);
         }
         catch (Exception)
         {
           mpNumericTextBoxDiskQuota.Value = 0;
         }
-        if (mpNumericTextBoxDiskQuota.Value < 500)
-          mpNumericTextBoxDiskQuota.Value = 500;
+        if (mpNumericTextBoxDiskQuota.Value < MIN_DISK_QUOTA_MB)
+          mpNumericTextBoxDiskQuota.Value = MIN_DISK_QUOTA_MB;
       }
     }
 
@@ -576,7 +617,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         if (card.RecordingFolder.Length > 0)
         {
           string driveLetter = String.Format("{0}:", card.RecordingFolder[0]);
-          if (Utils.getDriveType(driveLetter) == 3)
+          if (card.RecordingFolder.StartsWith(@"\"))
+          {
+            if (!comboBoxDrive.Items.Contains(driveLetter))
+            {
+              comboBoxDrive.Items.Add(card.RecordingFolder);
+            }
+          }
+          else if (Utils.getDriveType(driveLetter) == 3)
           {
             if (!comboBoxDrive.Items.Contains(driveLetter))
             {

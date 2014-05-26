@@ -34,7 +34,8 @@ namespace WebEPG.config.Grabber
     {
       Html,
       Data,
-      Xml
+      Xml,
+      Json
     }
 
     #endregion
@@ -47,6 +48,7 @@ namespace WebEPG.config.Grabber
     [XmlElement("Html")] public WebParserTemplate HtmlTemplate;
     [XmlElement("Xml")] public XmlParserTemplate XmlTemplate;
     [XmlElement("Data")] public DataParserTemplate DataTemplate;
+    [XmlElement("JSON")] public JsonParserTemplate JsonTemplate;
 
     #endregion
   }

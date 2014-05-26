@@ -30,7 +30,6 @@ using System.Net.Sockets;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Xml;
 using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.Events;
 using Mediaportal.TV.Server.TVControl.Interfaces.Events;
@@ -46,7 +45,7 @@ using Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Implementat
 using Mediaportal.TV.Server.TVLibrary.DiskManagement;
 using Mediaportal.TV.Server.TVLibrary.Epg;
 using Mediaportal.TV.Server.TVLibrary.EventDispatchers;
-using Mediaportal.TV.Server.TVLibrary.Implementations.Hybrid;
+using Mediaportal.TV.Server.TVLibrary.Implementations;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
@@ -74,8 +73,8 @@ namespace Mediaportal.TV.Server.TVLibrary
   /// and if server is the master it will delegate the requests to the 
   /// correct slave servers
   /// </summary>
-  public class 
-      TvController : IInternalControllerService, IDisposable, ITvServerEvent, IConditionalAccessMenuCallBacks
+  public class
+      TvController : IInternalControllerService, IDisposable, ITvServerEvent, IConditionalAccessMenuCallBack, ITunerDetectionEventListener
   {
 
 
@@ -110,9 +109,7 @@ namespace Mediaportal.TV.Server.TVLibrary
     /// </summary>
     private RtspStreaming _streamer;
 
-
-    /// <summary>
-    private TvCardCollection _localCardCollection;
+    private TunerDetector _tunerDetector = null;
 
     /// <summary>
     /// Indicates how many free cards to try for timeshifting
@@ -326,7 +323,7 @@ namespace Mediaportal.TV.Server.TVLibrary
     /// <param name="cardId">card</param>
     /// <param name="callbackHandler">null, not required</param>
     /// <returns>true is successful</returns>
-    public bool SetCiMenuHandler(int cardId, IConditionalAccessMenuCallBacks callbackHandler)
+    public bool SetCiMenuHandler(int cardId, IConditionalAccessMenuCallBack callbackHandler)
     {
       // register tvservice itself as handler
       try
@@ -354,7 +351,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         if (_cards[cardId].CiMenuActions != null)
         {
           _ciMenuManager.ActiveCiMenuCard = cardId;
-          _cards[cardId].CiMenuActions.SetCallBacks(this);
+          _cards[cardId].CiMenuActions.SetMenuCallBack(this);
           this.LogDebug("TvController: SetCiMenuHandler: result {0}", enableCiMenuHandler);
         }
       }
@@ -471,7 +468,6 @@ namespace Mediaportal.TV.Server.TVLibrary
       try
       {
         _cards = new Dictionary<int, ITvCardHandler>();
-        _localCardCollection = new TvCardCollection(this);
 
         //log all local ip adresses, usefull for debugging problems
         this.LogDebug("Controller: started at {0}", Dns.GetHostName());
@@ -490,166 +486,17 @@ namespace Mediaportal.TV.Server.TVLibrary
         //enumerate all tv cards in this pc...
         _maxFreeCardsToTry = SettingsManagement.GetValue("timeshiftMaxFreeCardsToTry", 0);
 
-        IList<Card> allCards = TVDatabase.TVBusinessLayer.CardManagement.ListAllCards(CardIncludeRelationEnum.None);
-
-        bool oneOrMoreCardsFound = false;
-
-        foreach (ITVCard itvCard in _localCardCollection.Cards)
+        _cards = new Dictionary<int, ITvCardHandler>();
+        _tunerDetector = new TunerDetector(this);
+        // Logic here to delay starting to detect tuners.
+        // Ideally this should also apply after resuming from standby.
+        int delayDetect = SettingsManagement.GetValue("delayCardDetect", 0);
+        if (delayDetect >= 1)
         {
-          //for each card, check if its already mentioned in the database
-          bool found = allCards.Any(card => card.DevicePath == itvCard.ExternalId);
-          if (!found)
-          {
-            // card is not yet in the database, so add it
-            this.LogInfo("Controller: add card:{0}", itvCard.Name);
-
-            var newCard = new Card
-            {
-              TimeshiftingFolder = "",
-              RecordingFolder = "",
-              DevicePath = itvCard.ExternalId,
-              Name = itvCard.Name,
-              Priority = 1,
-              GrabEPG = true,
-              Enabled = true,
-              CamType = 0,
-              DecryptLimit = 0,              
-              NetProvider = (int)DbNetworkProvider.Generic,              
-              MultiChannelDecryptMode = (int)MultiChannelDecryptMode.Disabled,
-              PidFilterMode = (int)PidFilterMode.Auto,
-              IdleMode = (int)IdleMode.Stop
-            };
-            oneOrMoreCardsFound = true;
-            TVDatabase.TVBusinessLayer.CardManagement.SaveCard(newCard);
-          }
+          Log.Info("Controller: delaying device detection for {0} second(s)", delayDetect);
+          Thread.Sleep(delayDetect * 1000);
         }
-        if (oneOrMoreCardsFound)
-        {
-          allCards = TVDatabase.TVBusinessLayer.CardManagement.ListAllCards(CardIncludeRelationEnum.None);
-        }
-        //notify log about cards from the database which are removed from the pc
-        int cardsInstalled = _localCardCollection.Cards.Count;
-        foreach (Card dbsCard in allCards)
-        {
-          {
-            bool found = false;
-            for (int cardNumber = 0; cardNumber < cardsInstalled; ++cardNumber)
-            {
-              if (dbsCard.DevicePath == _localCardCollection.Cards[cardNumber].DevicePath)
-              {
-                found = true;
-                break;
-              }
-            }
-            if (!found)
-            {
-              this.LogInfo("Controller: card not found :{0}", dbsCard.Name);
-
-              foreach (ITVCard t in _localCardCollection.Cards.Where(t => t.DevicePath == dbsCard.DevicePath))
-              {
-                t.CardPresent = false;
-                break;
-              }
-
-              // Fix mantis 0002790: Bad behavior when card count for IPTV = 0 
-              if (dbsCard.Name.StartsWith("MediaPortal IPTV Source Filter"))
-              {
-                CardRemove(dbsCard.IdCard);
-              }
-            }
-          }
-        }
-
-        Dictionary<int, ITVCard> localcards = new Dictionary<int, ITVCard>();
-
-
-        //allCards = TVDatabase.TVBusinessLayer.CardManagement.ListAllCards();
-        foreach (Card card in allCards)
-        {
-          {
-            foreach (ITVCard t in _localCardCollection.Cards)
-            {
-              if (t.ExternalId == card.DevicePath)
-              {
-                localcards[card.IdCard] = t;
-                break;
-              }
-            }
-          }
-        }
-
-        this.LogInfo("Controller: setup hybrid cards");
-        IList<CardGroup> cardgroups = TVDatabase.TVBusinessLayer.CardManagement.ListAllCardGroups();
-        foreach (CardGroup group in cardgroups)
-        {
-          IList<CardGroupMap> cards = group.CardGroupMaps;
-          var hybridCardGroup = new HybridCardGroup();
-          foreach (CardGroupMap card in cards)
-          {
-            if (localcards.ContainsKey(card.IdCard))
-            {
-              this.LogDebug("Hybrid card: " + localcards[card.IdCard].Name + " (" + group.Name + ")");
-              HybridCard hybridCard = hybridCardGroup.Add(card.IdCard, localcards[card.IdCard]);
-              localcards[card.IdCard] = hybridCard;
-            }
-          }
-        }
-
-        allCards = TVDatabase.TVBusinessLayer.CardManagement.ListAllCards(CardIncludeRelationEnum.None); //SEB
-        foreach (Card dbsCard in allCards)
-        {
-          if (localcards.ContainsKey(dbsCard.IdCard))
-          {
-            ITVCard card = localcards[dbsCard.IdCard];
-            var tvcard = new TvCardHandler(dbsCard, card);
-            _cards[dbsCard.IdCard] = tvcard;
-          }
-
-          // remove any old timeshifting TS files	
-          try
-          {
-            string timeShiftPath = dbsCard.TimeshiftingFolder;
-            if (string.IsNullOrEmpty(dbsCard.TimeshiftingFolder))
-            {
-              timeShiftPath = Path.Combine(PathManager.GetDataPath, "timeshiftbuffer");
-            }
-            if (!Directory.Exists(timeShiftPath))
-            {
-              this.LogInfo("Controller: creating timeshifting folder {0} for card \"{1}\"", timeShiftPath, dbsCard.Name);
-              Directory.CreateDirectory(timeShiftPath);
-            }
-
-            this.LogDebug("Controller: card {0}: current timeshiftpath = {1}", dbsCard.Name, timeShiftPath);
-            if (timeShiftPath != null)
-            {
-              string[] files = Directory.GetFiles(timeShiftPath);
-
-              foreach (string file in files)
-              {
-                try
-                {
-                  var fInfo = new FileInfo(file);
-                  bool delFile = (fInfo.Extension.ToUpperInvariant().IndexOf(".TSBUFFER") == 0);
-
-                  if (!delFile)
-                  {
-                    delFile = (fInfo.Extension.ToUpperInvariant().IndexOf(".TS") == 0) &&
-                              (fInfo.Name.ToUpperInvariant().IndexOf("TSBUFFER") > 0);
-                  }
-                  if (delFile)
-                  {
-                    File.Delete(fInfo.FullName);
-                  }
-                }
-                catch (IOException) { }
-              }
-            }
-          }
-          catch (Exception exd)
-          {
-            this.LogInfo("Controller: Error cleaning old ts buffer - {0}", exd.Message);
-          }
-        }
+        _tunerDetector.Start();
 
         this.LogInfo("Controller: setup streaming");
         _hostName = Dns.GetHostName();
@@ -671,7 +518,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       }
       catch (Exception ex)
       {
-        this.LogError("TvControllerException");
+        this.LogError(ex, "TvControllerException");
         throw;
       }
 
@@ -689,7 +536,7 @@ namespace Mediaportal.TV.Server.TVLibrary
             try
             {
               ProgramManagement.ResetAllStates();
-              ProgramManagement.SynchProgramStatesForAllSchedules(ScheduleManagement.ListAllSchedules());
+              ProgramManagement.SynchProgramStatesForAllSchedules();
             }
             catch (Exception e)
             {
@@ -774,6 +621,9 @@ namespace Mediaportal.TV.Server.TVLibrary
         _epgGrabber = null;
 
         //clean up the tv cards
+        _tunerDetector.Stop();
+        _tunerDetector.Dispose();
+        _tunerDetector = null;
         FreeCards();
 
         ////Gentle.Common.CacheManager.Clear();
@@ -955,23 +805,14 @@ namespace Mediaportal.TV.Server.TVLibrary
       bool cardPresent = false;
       try
       {        
-        if (cardId > 0)
+        if (_cards != null)
         {
-          if (_cards != null)
+          ITvCardHandler handler;
+          if (_cards.TryGetValue(cardId, out handler))
           {
-            if (_cards.ContainsKey(cardId))
-            {
-              string devicePath = _cards[cardId].Card.ExternalId;
-              if (devicePath.Length > 0)
-              {
-                // RemoveUser it from the local card collection
-                cardPresent =
-                  (from t in _localCardCollection.Cards where t.DevicePath == devicePath select t.CardPresent).
-                    FirstOrDefault();
-              }
-            }
+            return true;
           }
-        }        
+        }
       }
       catch (Exception e)
       {
@@ -997,8 +838,6 @@ namespace Mediaportal.TV.Server.TVLibrary
             TVDatabase.TVBusinessLayer.CardManagement.DeleteCard(cardId);
             // RemoveUser it from the card collection
             _cards.Remove(cardId);
-            // RemoveUser it from the local card collection
-            _localCardCollection.Cards.Remove(_cards[cardId].Card);
           }
         }
         else
@@ -1346,6 +1185,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       return _scheduler.IsTimeToRecord(time);
     }
 
+    /// <summary>
     /// This function checks if a spedific schedule should be recorded at the given time.
     /// </summary>
     /// <param name="time">the time to check for recordings.</param>
@@ -2205,16 +2045,6 @@ namespace Mediaportal.TV.Server.TVLibrary
             return true;
           }
 
-
-          var hybridCard = tvcard.Card as HybridCard;
-          if (hybridCard != null)
-          {
-            if (!hybridCard.IsCardIdActive(cardId))
-            {
-              return true;
-            }
-          }
-
           tvcard.UserManagement.RefreshUser(ref user);
           if (!tvcard.TimeShifter.IsTimeShifting(user))
             return true;
@@ -2479,15 +2309,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         if (ValidateTvControllerParams(cardId))
         {
           StopEPGgrabber();
-          ScanParameters settings = new ScanParameters();
-
-          settings.TimeOutTune = SettingsManagement.GetValue("timeoutTune", 2);
-          settings.TimeOutPAT = SettingsManagement.GetValue("timeoutPAT", 5);
-          settings.TimeOutCAT = SettingsManagement.GetValue("timeoutCAT", 5);
-          settings.TimeOutPMT = SettingsManagement.GetValue("timeoutPMT", 10);
-          settings.TimeOutSDT = SettingsManagement.GetValue("timeoutSDT", 20);
-          settings.TimeOutAnalog = SettingsManagement.GetValue("timeoutAnalog", 20);
-          channels = _cards[cardId].Scanner.Scan(channel, settings); 
+          channels = _cards[cardId].Scanner.Scan(channel); 
         }        
       }
       catch (Exception e)
@@ -2509,9 +2331,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         if (ValidateTvControllerParams(cardId))
         {
           StopEPGgrabber();
-          ScanParameters settings = new ScanParameters();
-          settings.TimeOutTune = SettingsManagement.GetValue("timeoutTune", 2);
-          scanNit = _cards[cardId].Scanner.ScanNIT(channel, settings);
+          scanNit = _cards[cardId].Scanner.ScanNIT(channel);
         }
       }
       catch (Exception e)
@@ -2531,7 +2351,7 @@ namespace Mediaportal.TV.Server.TVLibrary
     /// <param name="grabber">EPG grabber</param>    
     /// <param name="user"> </param>
     /// <returns></returns>
-    public bool GrabEpg(BaseEpgGrabber grabber, IUser user)
+    public bool GrabEpg(IEpgGrabberCallBack grabber, IUser user)
     {
       int cardId = user.CardId;
       bool grabEpg = false;
@@ -2561,21 +2381,6 @@ namespace Mediaportal.TV.Server.TVLibrary
       {
         this.LogError("Controller: AbortEPGGrabbing - invalid cardId");
       }      
-    }
-
-    /// <summary>
-    /// Epgs the specified card id.
-    /// </summary>
-    /// <param name="cardId">The card id.</param>
-    /// <returns></returns>
-    public List<EpgChannel> Epg(int cardId)
-    {
-      var epgChannels = new List<EpgChannel>();
-      if (ValidateTvControllerParams(cardId))
-      {
-        epgChannels = _cards[cardId].Epg.Epg;
-      }
-      return epgChannels;      
     }
 
     /// <summary>
@@ -2831,29 +2636,6 @@ namespace Mediaportal.TV.Server.TVLibrary
       return "";
     }
 
-    /// <summary>
-    /// Gets the rtsp URL for file located on the tvserver.
-    /// </summary>
-    /// <param name="fileName">Name of the file.</param>
-    /// <returns>rtsp url</returns>
-    public string GetUrlForFile(string fileName)
-    {
-      if (File.Exists(fileName))
-      {
-        if (_streamer != null)
-        {
-          _streamer.Start();
-          string streamName = String.Format("{0:X}", fileName.GetHashCode());
-          RtspStream stream = new RtspStream(streamName, fileName, streamName);
-          _streamer.AddStream(stream);
-          string url = String.Format("rtsp://{0}:{1}/{2}", _hostName, _streamer.Port, streamName);
-          this.LogInfo("Controller: streaming url:{0} file:{1}", url, fileName);
-          return url;
-        }
-      }
-      return "";
-    }
-
     #endregion
 
     #endregion
@@ -3060,7 +2842,12 @@ namespace Mediaportal.TV.Server.TVLibrary
       while (moreCardsAvailable && !HasTvSucceeded(result))
       {
         tickets = CardReservationHelper.RequestCardReservations(user, freeCardsForReservation, cardResImpl, freeCardsIterated, channel.IdChannel);
-        AdjustCardReservations(user, tickets, channel.IdChannel, cardResImpl);
+
+        // TODO This function seems to do stuff that makes no sense. Unfortunately there are no
+        // comments and I couldn't find the original commit either. About all that I can see is
+        // that this function isn't in TVE 3 and was probably written after card reservation was
+        // merged. So, I'm commenting it for now... but really I think it should be removed.
+        //AdjustCardReservations(user, tickets, channel.IdChannel, cardResImpl);
 
         List<ICardTuneReservationTicket> ticketsList = tickets.Values.ToList();
         if (HasTickets(ticketsList))
@@ -3924,31 +3711,6 @@ namespace Mediaportal.TV.Server.TVLibrary
     }
 
     /// <summary>
-    /// Returns the SQl connection string to the database
-    /// </summary>
-    public void GetDatabaseConnectionString(out string connectionString, out string provider)
-    {
-      connectionString = "";
-      provider = "";
-      try
-      {
-        XmlDocument doc = new XmlDocument();
-        doc.Load(String.Format(@"{0}\gentle.config", PathManager.GetDataPath));
-        XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
-        XmlNode nodeConnection = nodeKey.Attributes.GetNamedItem("connectionString");
-        XmlNode nodeProvider = nodeKey.Attributes.GetNamedItem("name");
-        connectionString = nodeConnection.InnerText;
-        provider = nodeProvider.InnerText;
-      }
-      catch (Exception ex)
-      {
-        this.LogError(ex);
-      }
-    }
-
-
-
-    /// <summary>
     /// Gets a value indicating whether all cards are idle.
     /// </summary>
     /// <value><c>true</c> if [all cards idle]; otherwise, <c>false</c>.</value>
@@ -4382,7 +4144,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       {
         if (ValidateTvControllerParams(cardId))
         {
-          result = _cards[cardId].Card.SupportsQualityControl;
+          result = (_cards[cardId].Card.Quality != null);
         }
       }
       catch (Exception e)
@@ -4482,7 +4244,7 @@ namespace Mediaportal.TV.Server.TVLibrary
     {
       try
       {
-        if (ValidateTvControllerParams(cardId) && SupportsQualityControl(cardId))
+        if (ValidateTvControllerParams(cardId))
         {
           _cards[cardId].Card.ReloadConfiguration(); 
         }        
@@ -4504,7 +4266,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       QualityType qualityType = QualityType.Default;
       try
       {
-        if (ValidateTvControllerParams(cardId) && SupportsQualityControl(cardId))
+        if (ValidateTvControllerParams(cardId))
         {
           IQuality qualityControl = _cards[cardId].Card.Quality;
           if (qualityControl != null)
@@ -4530,7 +4292,7 @@ namespace Mediaportal.TV.Server.TVLibrary
     {
       try
       {
-        if (ValidateTvControllerParams(cardId) && SupportsQualityControl(cardId))
+        if (ValidateTvControllerParams(cardId))
         {
           IQuality qualityControl = _cards[cardId].Card.Quality;
           if (qualityControl != null)
@@ -4555,7 +4317,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       VIDEOENCODER_BITRATE_MODE videoencoderBitrateMode = VIDEOENCODER_BITRATE_MODE.Undefined;
       try
       {
-        if (ValidateTvControllerParams(cardId) && SupportsQualityControl(cardId))
+        if (ValidateTvControllerParams(cardId))
         {
           IQuality qualityControl = _cards[cardId].Card.Quality;
           if (qualityControl != null)
@@ -4581,7 +4343,7 @@ namespace Mediaportal.TV.Server.TVLibrary
     {
       try
       {
-        if (ValidateTvControllerParams(cardId) && SupportsQualityControl(cardId))
+        if (ValidateTvControllerParams(cardId))
         {
           IQuality qualityControl = _cards[cardId].Card.Quality;
           if (qualityControl != null)
@@ -5549,5 +5311,124 @@ namespace Mediaportal.TV.Server.TVLibrary
       }
       return cardPresentations;
     }
+
+    #region ITunerDetectionEventListener members
+
+    /// <summary>
+    /// This call back is invoked when a tuner is detected.
+    /// </summary>
+    /// <param name="tuner">The tuner that has been detected.</param>
+    public void OnTunerAdded(ITVCard tuner)
+    {
+      this.LogInfo("Controller: add tuner {0} {1}", tuner.Name, tuner.ExternalId);
+
+      // We should have settings for this tuner in the DB.
+      Card dbSettings = TVDatabase.TVBusinessLayer.CardManagement.GetCardByDevicePath(tuner.ExternalId);
+      if (dbSettings == null)
+      {
+        this.LogWarn("Controller: failed to locate settings, can't use tuner");
+        return;
+      }
+
+      // Do we already have a handler for this tuner? If so, replace it.
+      ITvCardHandler handler = null;
+      if (_cards.TryGetValue(tuner.TunerId, out handler))
+      {
+        this.LogWarn("Controller: handler was already present, replacing");
+        handler.Dispose();
+        handler = null;
+      }
+
+      this.LogDebug("Controller: creating handler");
+      handler = new TvCardHandler(dbSettings, tuner);
+      _cards[tuner.TunerId] = handler;
+
+      // Remove any old timeshift buffer files or create the timeshifting folder.
+      try
+      {
+        string timeShiftingFolder = dbSettings.TimeshiftingFolder;
+        if (string.IsNullOrEmpty(timeShiftingFolder))
+        {
+          timeShiftingFolder = Path.Combine(PathManager.GetDataPath, "timeshiftbuffer");
+        }
+
+        if (!Directory.Exists(timeShiftingFolder))
+        {
+          this.LogInfo("Controller: creating timeshifting folder \"{0}\"", timeShiftingFolder);
+          Directory.CreateDirectory(timeShiftingFolder);
+        }
+        else
+        {
+          this.LogInfo("Controller: current timeshifting folder is \"{0}\"", timeShiftingFolder);
+          string[] files = Directory.GetFiles(timeShiftingFolder);
+          foreach (string file in files)
+          {
+            try
+            {
+              FileInfo fInfo = new FileInfo(file);
+              if (
+                (fInfo.Extension.ToUpperInvariant().IndexOf(".TSBUFFER") == 0) ||
+                (
+                  (fInfo.Extension.ToUpperInvariant().IndexOf(".TS") == 0) &&
+                  (fInfo.Name.ToUpperInvariant().IndexOf("TSBUFFER") > 0)
+                )
+              )
+              {
+                File.Delete(fInfo.FullName);
+              }
+            }
+            catch (IOException)
+            {
+            }
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        this.LogError(ex, "Controller: failed to create timeshifting folder or clean up old buffer files");
+      }
+
+      try
+      {
+        string recordingFolder = dbSettings.RecordingFolder;
+        if (string.IsNullOrEmpty(recordingFolder))
+        {
+          recordingFolder = Path.Combine(PathManager.GetDataPath, "recordings");
+        }
+
+        if (!Directory.Exists(recordingFolder))
+        {
+          this.LogInfo("Controller: creating recording folder \"{0}\"", recordingFolder);
+          Directory.CreateDirectory(recordingFolder);
+        }
+        else
+        {
+          this.LogInfo("Controller: current recording folder is \"{0}\"", recordingFolder);
+        }
+      }
+      catch (Exception ex)
+      {
+        this.LogError(ex, "Controller: failed to create recording folder");
+      }
+    }
+
+    /// <summary>
+    /// This call back is invoked when a tuner is removed.
+    /// </summary>
+    /// <param name="tuner">The tuner that has been removed.</param>
+    public void OnTunerRemoved(ITVCard tuner)
+    {
+      this.LogInfo("Controller: remove tuner {0} {1}", tuner.Name, tuner.ExternalId);
+
+      // Do we have a handler for this tuner? If so, dispose it.
+      ITvCardHandler handler = null;
+      if (_cards.TryGetValue(tuner.TunerId, out handler))
+      {
+        handler.Dispose();
+        _cards.Remove(tuner.TunerId);
+      }
+    }
+
+    #endregion
   }
 }

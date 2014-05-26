@@ -749,12 +749,12 @@ namespace Mediaportal.TV.TvPlugin.Teletext
           txtLanguage = 1;
           break;
       }
-      // Detect if it's a boxed page. Boxed Page = sub-title and/or newsflash bit is set
-      bool isSubTitlePage = Hamming.IsSubTitleBitSet(0, ref byPage);
+      // Detect if it's a boxed page. Boxed Page = subtitle and/or newsflash bit is set
+      bool isSubtitlePage = Hamming.IsSubtitleBitSet(0, ref byPage);
       bool isNewsflash = Hamming.IsNewsflash(0, ref byPage);
-      isBoxed = isNewsflash | isSubTitlePage;
+      isBoxed = isNewsflash | isSubtitlePage;
       this.LogDebug("News flash: " + isNewsflash);
-      this.LogDebug("Sub-title: " + isSubTitlePage);
+      this.LogDebug("Subtitle: " + isSubtitlePage);
       this.LogDebug("Boxed: " + isBoxed);
 
       // Determine if the header or toptext line sould be displayed.

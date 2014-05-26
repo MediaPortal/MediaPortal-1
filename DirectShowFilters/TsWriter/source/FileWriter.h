@@ -25,6 +25,7 @@
 
 #ifndef FILEWRITER
 #define FILEWRITER
+#include <Windows.h>
 
 class FileWriter
 {

@@ -8,17 +8,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
 {
   public class CardService : ICardService
   {    
-
     public IList<Card> ListAllCards()
     {
-      var listAllCards = TVDatabase.TVBusinessLayer.CardManagement.ListAllCards();
-      return listAllCards;
+      return TVDatabase.TVBusinessLayer.CardManagement.ListAllCards();
     }
 
     public IList<Card> ListAllCards(CardIncludeRelationEnum includeRelations)
     {
-      var listAllCards = TVDatabase.TVBusinessLayer.CardManagement.ListAllCards(includeRelations);
-      return listAllCards;
+      return TVDatabase.TVBusinessLayer.CardManagement.ListAllCards(includeRelations);
     }
 
     public IList<Card> SaveCards(IEnumerable<Card> cards)
@@ -28,14 +25,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
 
     public Card GetCardByDevicePath(string cardDevice)
     {
-      var cardByDevicePath = TVDatabase.TVBusinessLayer.CardManagement.GetCardByDevicePath(cardDevice);
-      return cardByDevicePath;
+      return TVDatabase.TVBusinessLayer.CardManagement.GetCardByDevicePath(cardDevice);
     }
 
     public Card GetCardByDevicePath(string cardDevice, CardIncludeRelationEnum includeRelations)
     {
-      var cardByDevicePath = TVDatabase.TVBusinessLayer.CardManagement.GetCardByDevicePath(cardDevice, includeRelations);
-      return cardByDevicePath;
+      return TVDatabase.TVBusinessLayer.CardManagement.GetCardByDevicePath(cardDevice, includeRelations);
     }
 
     public Card SaveCard(Card card)
@@ -82,6 +77,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
     {
       return TVDatabase.TVBusinessLayer.CardManagement.ListAllSofwareEncodersVideo();
     }
+
     public IList<SoftwareEncoder> ListAllSofwareEncodersAudio()
     {
       return TVDatabase.TVBusinessLayer.CardManagement.ListAllSofwareEncodersAudio();
@@ -111,7 +107,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
     {
       return TVDatabase.TVBusinessLayer.CardManagement.SaveCardGroupMap(map);
     }
-
     
     public LnbType GetLnbType(int idLnbType)
     {

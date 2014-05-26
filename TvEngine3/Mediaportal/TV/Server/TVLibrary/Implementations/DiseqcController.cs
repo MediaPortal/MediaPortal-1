@@ -34,10 +34,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
   /// A controller class for DiSEqC devices. This controller is able to control positioners and
   /// switches.
   /// </summary>
-  public class DiseqcController : IDiseqcController
+  internal class DiseqcController : IDiseqcController
   {
     #region variables
 
+    private int _tunerId = -1;
     private IDiseqcDevice _device = null;
     private DVBSChannel _previousChannel = null;
 
@@ -70,23 +71,26 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// Initialise a new instance of the <see cref="DiseqcController"/> class.
     /// </summary>
+    /// <param name="tunerId">The identifier for the associated tuner.</param>
     /// <param name="device">A tuner's DiSEqC control interface.</param>
-    public DiseqcController(IDiseqcDevice device)
+    public DiseqcController(int tunerId, IDiseqcDevice device)
     {
+      _tunerId = tunerId;
       _device = device;
       if (device == null)
       {
-        throw new ArgumentException("DiSEqC: device is null");
+        throw new ArgumentException("DiSEqC device is null");
       }
+      ReloadConfiguration();
     }
 
     /// <summary>
     /// Reload the controller's configuration.
     /// </summary>
-    /// <param name="tunerId">The identifier for the associated tuner.</param>
-    public void ReloadConfiguration(int tunerId)
+    public void ReloadConfiguration()
     {
-      Card tuner = CardManagement.GetCard(tunerId, CardIncludeRelationEnum.None);
+      this.LogDebug("DiSEqC: reload configuration");
+      Card tuner = CardManagement.GetCard(_tunerId, CardIncludeRelationEnum.None);
       if (tuner != null)
       {
         _alwaysSendCommands = tuner.AlwaysSendDiseqcCommands;
@@ -97,7 +101,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           // is a more than reasonable practical limit.
           _repeatCount = 5;
         }
-        _commandDelay = SettingsManagement.GetValue("tuner" + tunerId + "DiseqcCommandDelay", 100);
+        _commandDelay = SettingsManagement.GetValue("tuner" + _tunerId + "DiseqcCommandDelay", 100);
       }
       else
       {

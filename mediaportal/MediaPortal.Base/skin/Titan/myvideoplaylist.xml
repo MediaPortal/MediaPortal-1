@@ -182,16 +182,16 @@
 		
 					<control>
 						<description>Repeat on/off button</description>
-						<type>togglebutton</type>
+						<type>checkbutton</type>
 						<id>30</id>
 						<label>486</label>
 						<onright>50</onright>
 						<onup>20</onup>
 						<ondown>21</ondown>
-						<textureFocus>hiddenmenu_toggle-on-focus.png</textureFocus>
-						<textureNoFocus>hiddenmenu_toggle-on-nofocus.png</textureNoFocus>
-						<AltTextureFocus>hiddenmenu_toggle-off-focus.png</AltTextureFocus>
-						<AltTextureNoFocus>hiddenmenu_toggle-off-nofocus.png</AltTextureNoFocus>
+						<textureFocus>hiddenmenu_item_selected.png</textureFocus>
+						<textureNoFocus>-</textureNoFocus>
+			      <textureCheckmark>settings_checkmark_checked.png</textureCheckmark>
+			      <textureCheckmarkNoFocus>settings_checkmark_unchecked.png</textureCheckmarkNoFocus>
             <textcolor>FFFFFFFF</textcolor>
             <colordiffuse>ffffffff</colordiffuse>
             <textcolorNoFocus>ff393939</textcolorNoFocus>

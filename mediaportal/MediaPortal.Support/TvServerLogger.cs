@@ -46,16 +46,6 @@ namespace MediaPortal.Support
       {
         bakFile.CopyTo(destinationFolder + "\\tvserver_" + bakFile.Name, true);
       }
-
-      string AnalogPath = basePath + "\\AnalogCard";
-      if (Directory.Exists(AnalogPath))
-      {
-        FileInfo[] xmlFiles = new DirectoryInfo(AnalogPath).GetFiles("*.xml");
-        foreach (FileInfo xmlFile in xmlFiles)
-        {
-          xmlFile.CopyTo(destinationFolder + "\\tvserver_AnalogCard_" + xmlFile.Name, true);
-        }
-      }
     }
 
     public string ActionMessage

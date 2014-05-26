@@ -24,7 +24,7 @@ using System.Diagnostics;
 using DirectShowLib;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
-using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.Components;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.Component;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Countries;
@@ -39,26 +39,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
   /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles analog tuners
   /// and capture devices with WDM/DirectShow drivers.
   /// </summary>
-  public class TunerAnalog : TunerDirectShowBase
+  internal class TunerAnalog : TunerDirectShowBase
   {
-    #region constants
-
-    // The MediaPortal TS multiplexer delivers a DVB stream containing a single
-    // service with a fixed service ID. The PMT PID starts at 0x20 and is
-    // incremented with each channel change up to the fixed limit 0x90 after
-    // which it is reset to 0x20. This is done in order to clearly signal
-    // channel change transitions. TsWriter suppresses changes in PMT version
-    // so we had to be a bit more radical.
-    private const int SERVICE_ID = 1;
-    private const int PMT_PID_FIRST = 0x20;
-    private const int PMT_PID_MAX = 0x90;
-
-    #endregion
-
     #region variables
 
     private Guid _mainDeviceCategory = Guid.Empty;
-    private int _expectedPmtPid = PMT_PID_FIRST;
 
     private Tuner _tuner = null;
     private Crossbar _crossbar = null;
@@ -79,9 +64,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
     /// <param name="device">The <see cref="DsDevice"/> instance to encapsulate.</param>
     /// <param name="category">The device/filter category of <paramref name="device"/>.</param>
     public TunerAnalog(DsDevice device, Guid category)
-      : base(device)
+      : base(device, CardType.Analog)
     {
-      _tunerType = CardType.Analog;
       _mainDeviceCategory = category;
 
       if (category == FilterCategory.AMKSCrossbar)
@@ -93,14 +77,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
         try
         {
           crossbar.PerformLoading(graph);
-          int tunerInstanceId = -1;
           if (crossbar.PinIndexInputTunerVideo >= 0 || crossbar.PinIndexInputTunerAudio >= 0)
           {
             Tuner tuner = new Tuner();
             try
             {
               tuner.PerformLoading(graph, _productInstanceId, crossbar);
-              tunerInstanceId = tuner.Device.TunerInstanceIdentifier;
+              SetProductAndTunerInstanceIds(tuner.Device);
             }
             finally
             {
@@ -109,11 +92,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
           }
           else
           {
-            tunerInstanceId = device.TunerInstanceIdentifier;
-          }
-          if (tunerInstanceId >= 0)
-          {
-            _tunerInstanceId = tunerInstanceId.ToString();
+            SetProductAndTunerInstanceIds(device);
           }
         }
         catch (Exception ex)
@@ -137,14 +116,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
     {
       base.ReloadConfiguration();
 
+      this.LogDebug("WDM analog: reload configuration");
       _externalTunerChannel = new AnalogChannel();
-      _externalTunerChannel.TunerSource = (TunerInputType)SettingsManagement.GetValue("tuner" + _cardId + "ExternalTunerTunerSource", (int)TunerInputType.Cable);
-      int countryId = SettingsManagement.GetValue("tuner" + _cardId + "ExternalTunerCountry", 1);
+      _externalTunerChannel.TunerSource = (TunerInputType)SettingsManagement.GetValue("tuner" + _tunerId + "ExternalTunerTunerSource", (int)TunerInputType.Cable);
+      int countryId = SettingsManagement.GetValue("tuner" + _tunerId + "ExternalTunerCountry", 1);
       CountryCollection countries = new CountryCollection();
       _externalTunerChannel.Country = countries.GetTunerCountryFromID(countryId);
-      _externalTunerChannel.ChannelNumber = SettingsManagement.GetValue("tuner" + _cardId + "ExternalTunerSourceChannelNumber", 6);
-      _externalTunerChannel.VideoSource = (CaptureSourceVideo)SettingsManagement.GetValue("tuner" + _cardId + "ExternalTunerSourceVideo", (int)CaptureSourceVideo.Composite1);
-      _externalTunerChannel.AudioSource = (CaptureSourceAudio)SettingsManagement.GetValue("tuner" + _cardId + "ExternalTunerSourceAudio", (int)CaptureSourceAudio.Line1);
+      _externalTunerChannel.ChannelNumber = SettingsManagement.GetValue("tuner" + _tunerId + "ExternalTunerSourceChannelNumber", 6);
+      _externalTunerChannel.VideoSource = (CaptureSourceVideo)SettingsManagement.GetValue("tuner" + _tunerId + "ExternalTunerSourceVideo", (int)CaptureSourceVideo.Composite1);
+      _externalTunerChannel.AudioSource = (CaptureSourceAudio)SettingsManagement.GetValue("tuner" + _tunerId + "ExternalTunerSourceAudio", (int)CaptureSourceAudio.Line1);
       _externalTunerChannel.MediaType = MediaTypeEnum.TV;
       if (_externalTunerChannel.VideoSource == CaptureSourceVideo.None)
       {
@@ -156,13 +136,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
       _externalTunerChannel.FreeToAir = true;
       this.LogDebug("WDM analog: external tuner source, {0}", _externalTunerChannel.ToString());
 
-      _externalTunerCommand = SettingsManagement.GetValue("tuner" + _cardId + "ExternalTunerCommand", string.Empty);
-      _externalTunerCommandArguments = SettingsManagement.GetValue("tuner" + _cardId + "ExternalTunerCommandArguments", string.Empty);
+      _externalTunerCommand = SettingsManagement.GetValue("tuner" + _tunerId + "ExternalTunerCommand", string.Empty);
+      _externalTunerCommandArguments = SettingsManagement.GetValue("tuner" + _tunerId + "ExternalTunerCommandArguments", string.Empty);
       this.LogDebug("WDM analog: external tuner command, {0} {1}", _externalTunerCommand, _externalTunerCommandArguments);
 
       if (_capture != null)
       {
-        _capture.ReloadConfiguration(_cardId);
+        _capture.ReloadConfiguration(_tunerId);
+      }
+      if (_encoder != null)
+      {
+        _encoder.ReloadConfiguration(_tunerId);
       }
     }
 
@@ -170,7 +154,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
     /// Actually update tuner signal status statistics.
     /// </summary>
     /// <param name="onlyUpdateLock"><c>True</c> to only update lock status.</param>
-    protected override void PerformSignalStatusUpdate(bool onlyUpdateLock)
+    public override void PerformSignalStatusUpdate(bool onlyUpdateLock)
     {
       if (_tuner == null)
       {
@@ -194,33 +178,24 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
     /// <returns>a list of channels, one channel per source</returns>
     public IList<IChannel> GetSourceChannels()
     {
-      if (_state == TunerState.NotLoaded)
-      {
-        try
-        {
-          Load();
-        }
-        catch (Exception ex)
-        {
-          this.LogWarn(ex, "WDM analog: failed to load, cannot get source channels");
-          return new List<IChannel>();
-        }
-      }
       if (_crossbar != null)
       {
-        IList<AnalogChannel> channels = _crossbar.SourceChannels;
-        foreach (AnalogChannel channel in channels)
+        IList<AnalogChannel> sourceChannels = _crossbar.SourceChannels;
+        IList<IChannel> channels = new List<IChannel>();
+        foreach (AnalogChannel channel in sourceChannels)
         {
           if (channel.VideoSource != CaptureSourceVideo.None)
           {
-            channel.Name = string.Format("Tuner {0} {1} Video Source", _cardId, channel.VideoSource.GetDescription());
+            channel.Name = string.Format("Tuner {0} {1} Video Source", _tunerId, channel.VideoSource.GetDescription());
           }
           else
           {
-            channel.Name = string.Format("Tuner {0} {1} Audio Source", _cardId, channel.AudioSource.GetDescription());
+            channel.Name = string.Format("Tuner {0} {1} Audio Source", _tunerId, channel.AudioSource.GetDescription());
           }
+          channel.ChannelNumber = 10000;
+          channels.Add(channel);
         }
-        return (List<IChannel>)channels;
+        return channels;
       }
       else
       {
@@ -229,13 +204,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
         if (_capture.VideoFilter != null)
         {
           channel.MediaType = MediaTypeEnum.TV;
-          channel.Name = "Tuner " + _cardId + " Video Capture";
+          channel.Name = "Tuner " + _tunerId + " Video Capture";
           channel.VideoSource = CaptureSourceVideo.Composite1;  // Anything other than "none" and "tuner" is okay.
         }
         else
         {
           channel.MediaType = MediaTypeEnum.Radio;
-          channel.Name = "Tuner " + _cardId + " Audio Capture";
+          channel.Name = "Tuner " + _tunerId + " Audio Capture";
           channel.VideoSource = CaptureSourceVideo.None;
         }
         return new List<IChannel>() { channel };
@@ -247,7 +222,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
     /// <summary>
     /// Actually load the tuner.
     /// </summary>
-    protected override void PerformLoading()
+    public override void PerformLoading()
     {
       this.LogDebug("WDM analog: perform loading");
 
@@ -275,15 +250,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
 
       // Check for and load extensions, adding any additional filters to the graph.
       IBaseFilter lastFilter = _encoder.TsMultiplexerFilter;
-      LoadPlugins(_filterMain, _graph, ref lastFilter);
+      LoadExtensions(_filterMain, ref lastFilter);
       AddAndConnectTsWriterIntoGraph(lastFilter);
       CompleteGraph();
+
+      // Teletext scraping and RDS grabbing currently not supported.
+      _epgGrabber = null;
+
+      _channelScanner = new ChannelScannerDirectShowAnalog(this, _filterTsWriter as ITsChannelScan);
     }
 
     /// <summary>
     /// Actually unload the tuner.
     /// </summary>
-    protected override void PerformUnloading()
+    public override void PerformUnloading()
     {
       this.LogDebug("WDM analog: perform unloading");
       if (_tuner != null)
@@ -328,20 +308,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
     /// Actually tune to a channel.
     /// </summary>
     /// <param name="channel">The channel to tune to.</param>
-    protected override void PerformTuning(IChannel channel)
+    public override void PerformTuning(IChannel channel)
     {
-      // TODO how am I going to do this???
-      AnalogSubChannel analogSubChannel = subChannel as AnalogSubChannel;
-      if (analogSubChannel != null)
-      {
-        _expectedPmtPid++;
-        if (_expectedPmtPid == PMT_PID_MAX)
-        {
-          _expectedPmtPid = PMT_PID_FIRST;
-        }
-        analogSubChannel.SetServiceParameters(SERVICE_ID, _expectedPmtPid);
-      }
-
       AnalogChannel analogChannel = channel as AnalogChannel;
       if (analogChannel == null)
       {
@@ -397,17 +365,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
       }
       _capture.PerformTuning(tuneChannel);
       _encoder.PerformTuning(tuneChannel);
-    }
-
-    /// <summary>
-    /// Get the tuner's channel scanning interface.
-    /// </summary>
-    public override ITVScanning ScanningInterface
-    {
-      get
-      {
-        return new ScannerAnalog(this, _filterTsWriter as ITsChannelScan);
-      }
     }
 
     #endregion

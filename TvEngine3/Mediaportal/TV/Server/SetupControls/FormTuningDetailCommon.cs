@@ -21,7 +21,6 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
-using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 
 namespace Mediaportal.TV.Server.SetupControls
@@ -44,69 +43,37 @@ namespace Mediaportal.TV.Server.SetupControls
 
     protected static TuningDetail CreateInitialTuningDetail()
     {
-      string channelName = "";
-      int channelFrequency = 0;
-      int channelNumber = 0;
-      int country = 31;
-      bool isRadio = false;
-      bool isTv = false;
-      int tunerSource = 0;
-      int videoInputType = 0;
-      int audioInputType = 0;
-      bool isVcrSignal = false;
-      int symbolRate = 0;
-      int modulation = (int)ModulationType.ModNotSet;
-      int polarisation = (int)Polarisation.NotSet;
-      int diseqc = 0;
-      int bandwidth = 8;
-      int pmtPid = -1;
-      bool freeToAir = true;
-      int networkId = -1;
-      int serviceId = -1;
-      int transportId = -1;
-      int minorChannel = -1;
-      int majorChannel = -1;
-      string provider = "";
-      int channelType = 0;
-      int idLnbType = 0;
-      int satIndex = -1;
-      var innerFecRate = (int)BinaryConvolutionCodeRate.RateNotSet;
-      var pilot = (int)Pilot.NotSet;
-      var rollOff = (int)RollOff.NotSet;
-      string url = "";
-      int bitrate = 0;
-
       var initialTuningDetail = new TuningDetail
       {
-        Name = channelName,
-        Provider = provider,
-        ChannelType = channelType,
-        ChannelNumber = channelNumber,
-        Frequency = (int)channelFrequency,
-        CountryId = country,
-        NetworkId = networkId,
-        TransportId = transportId,
-        ServiceId = serviceId,
-        PmtPid = pmtPid,
+        Name = string.Empty,
+        Provider = string.Empty,
+        ChannelType = 0,
+        ChannelNumber = 0,
+        Frequency = 0,
+        CountryId = 31, // The Netherlands
+        NetworkId = 0,
+        TransportId = 0,
+        ServiceId = 0,
+        PmtPid = 0,
         FreeToAir = true,
-        Modulation = modulation,
-        Polarisation = polarisation,
-        Symbolrate = symbolRate,
-        DiSEqC = diseqc,
-        Bandwidth = bandwidth,
-        MajorChannel = majorChannel,
-        MinorChannel = minorChannel,
-        VideoSource = videoInputType,
-        AudioSource = audioInputType,
+        Modulation = -1,
+        Polarisation = -1,
+        Symbolrate = 0,
+        DiSEqC = 0,
+        Bandwidth = 8000,
+        MajorChannel = 0,
+        MinorChannel = 0,
+        VideoSource = 0,
+        AudioSource = 0,
         IsVCRSignal = false,
-        TuningSource = tunerSource,
-        SatIndex = satIndex,
-        InnerFecRate = innerFecRate,
-        Pilot = pilot,
-        RollOff = rollOff,
-        Url = url,
+        TuningSource = 0,
+        SatIndex = -1,
+        InnerFecRate = -1,
+        Pilot = -1,
+        RollOff = -1,
+        Url = string.Empty,
         Bitrate = 0,
-        IdLnbType = idLnbType
+        IdLnbType = null
       };
 
       return initialTuningDetail;

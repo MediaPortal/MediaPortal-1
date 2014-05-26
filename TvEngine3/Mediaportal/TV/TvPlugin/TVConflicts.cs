@@ -53,8 +53,7 @@ namespace Mediaportal.TV.TvPlugin
 
     public override bool Init()
     {
-      bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvconflicts.xml");
-      return bResult;
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\mytvconflicts.xml"));
     }
 
     protected override void OnPageLoad()
@@ -73,18 +72,6 @@ namespace Mediaportal.TV.TvPlugin
     {
       base.OnPageDestroy(newWindowId);
       m_iSelectedItem = GetSelectedItemNo();
-
-      if (!GUIGraphicsContext.IsTvWindow(newWindowId))
-      {
-        if (TVHome.Card.IsTimeShifting && !(TVHome.Card.IsTimeShifting || TVHome.Card.IsRecording))
-        {
-          if (GUIGraphicsContext.ShowBackground)
-          {
-            // stop timeshifting & viewing... 
-            TVHome.Card.StopTimeShifting();
-          }
-        }
-      }
     }
 
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
@@ -382,7 +369,7 @@ namespace Mediaportal.TV.TvPlugin
           {
             if (schedule.ScheduleType == (int)ScheduleRecordingType.Once)
             {
-              ServiceAgents.Instance.ScheduleServiceAgent.DeleteSchedule(schedule.IdSchedule);                            
+              ServiceAgents.Instance.ScheduleServiceAgent.DeleteSchedule(schedule.IdSchedule);
               selectedItem = null;
             }
           }
@@ -405,14 +392,14 @@ namespace Mediaportal.TV.TvPlugin
           switch (dlg.SelectedId)
           {
             case 981: //delete specific series
-              CanceledSchedule canceledSchedule = CanceledScheduleFactory.CreateCanceledSchedule(schedule.IdSchedule, schedule.IdChannel, schedule.StartTime);              
+              CanceledSchedule canceledSchedule = CanceledScheduleFactory.CreateCanceledSchedule(schedule.IdSchedule, schedule.IdChannel, schedule.StartTime);
               ServiceAgents.Instance.CanceledScheduleServiceAgent.SaveCanceledSchedule(canceledSchedule);
               selectedItem = null;
               
               ServiceAgents.Instance.ControllerServiceAgent.OnNewSchedule();
               break;
-            case 982: //Delete entire recording              
-              ServiceAgents.Instance.ScheduleServiceAgent.DeleteSchedule(schedule.IdSchedule);                            
+            case 982: //Delete entire recording
+              ServiceAgents.Instance.ScheduleServiceAgent.DeleteSchedule(schedule.IdSchedule);
               selectedItem = null;
               break;
           }

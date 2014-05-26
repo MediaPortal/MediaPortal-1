@@ -31,5 +31,5 @@ class IStreamMultiplexer
     virtual bool IsStarted() = 0;
     virtual HRESULT Receive(IMuxInputPin* pin, PBYTE data, long dataLength, REFERENCE_TIME dataStartTime) = 0;
     virtual HRESULT Reset() = 0;
-    virtual HRESULT StreamTypeChange(IMuxInputPin* pin, int oldStreamType, int newStreamType) = 0;
+    virtual HRESULT StreamTypeChange(IMuxInputPin* pin, byte oldStreamType, byte newStreamType) = 0;
 };

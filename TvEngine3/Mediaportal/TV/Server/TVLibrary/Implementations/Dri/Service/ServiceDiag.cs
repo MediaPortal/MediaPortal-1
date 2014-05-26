@@ -26,7 +26,7 @@ using UPnP.Infrastructure.CP.DeviceTree;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Service
 {
-  public class ServiceDiag : ServiceBase
+  internal class ServiceDiag : ServiceBase
   {
     private CpAction _getParameterAction = null;
 

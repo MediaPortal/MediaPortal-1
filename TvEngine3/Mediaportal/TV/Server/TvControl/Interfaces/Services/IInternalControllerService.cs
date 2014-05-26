@@ -12,7 +12,7 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
 
   public delegate void TvServerEventHandler(object sender, EventArgs eventArgs);
 
-  public interface IInternalControllerService : IControllerService, IEpgEvents
+  public interface IInternalControllerService : IControllerService
   {
 
     /// <summary>
@@ -92,10 +92,10 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// <summary>
     /// grabs the epg.
     /// </summary>
-    /// <param name="grabber">EPG grabber</param>    
+    /// <param name="callBack">EPG grabber</param>    
     /// <param name="user"> </param>
     /// <returns></returns>
-    bool GrabEpg(BaseEpgGrabber grabber, IUser user);
+    bool GrabEpg(IEpgGrabberCallBack callBack, IUser user);
 
     /// <summary>
     /// Aborts grabbing the epg. This also triggers the OnEpgReceived callback.
@@ -103,11 +103,10 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     void AbortEPGGrabbing(int cardId);
 
     /// <summary>
-    /// Epgs the specified card id.
+    /// Call back invoked by EPG grabbers when import for a channel is completed.
     /// </summary>
-    /// <param name="cardId">The card id.</param>
-    /// <returns></returns>
-    List<EpgChannel> Epg(int cardId);
+    /// <param name="channel">The imported channel.</param>
+    void OnImportEpgPrograms(EpgChannel channel);
 
     TvResult StartTimeShifting(ref IUser user, ref string timeshiftFileName, int idChannel);
 

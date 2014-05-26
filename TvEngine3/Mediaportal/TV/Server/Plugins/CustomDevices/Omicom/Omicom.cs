@@ -207,12 +207,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Omicom
       }
       if (command == null || command.Length == 0)
       {
-        this.LogError("Omicom: command not supplied");
+        this.LogWarn("Omicom: DiSEqC command not supplied");
         return true;
       }
       if (command.Length > MAX_DISEQC_MESSAGE_LENGTH)
       {
-        this.LogError("Omicom: command too long, length = {0}", command.Length);
+        this.LogError("Omicom: DiSEqC command too long, length = {0}", command.Length);
         return false;
       }
 
@@ -222,7 +222,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Omicom
       message.MessageLength = (byte)command.Length;
       message.RepeatCount = 0;
 
-      Marshal.StructureToPtr(message, _diseqcBuffer, true);
+      Marshal.StructureToPtr(message, _diseqcBuffer, false);
       //Dump.DumpBinary(_diseqcBuffer, DISEQC_MESSAGE_SIZE);
 
       int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.DiseqcWrite,
@@ -276,7 +276,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Omicom
       DiseqcMessage message = (DiseqcMessage)Marshal.PtrToStructure(_diseqcBuffer, typeof(DiseqcMessage));
       if (message.MessageLength > MAX_DISEQC_MESSAGE_LENGTH)
       {
-        this.LogError("Omicom: reply too long, length = {0}", message.MessageLength);
+        this.LogError("Omicom: DiSEqC reply too long, length = {0}", message.MessageLength);
         return false;
       }
       this.LogDebug("Omicom: result = success");

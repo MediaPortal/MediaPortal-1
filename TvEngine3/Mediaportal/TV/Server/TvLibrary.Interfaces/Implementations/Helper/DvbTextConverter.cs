@@ -35,8 +35,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
     /// Convert DVB-encoded string in a NULL terminated buffer to Unicode.
     /// </summary>
     /// <param name="buffer">The buffer containing the string to convert.</param>
-    /// <param name="encodedByteCount">The number of bytes in <paramref name="stringBytes"/> used to encode the string, if known.</param>
-    /// <param name="offset">The offset in <paramref name="stringBytes"/> at which the string starts.</param>
+    /// <param name="encodedByteCount">The number of bytes in <paramref name="buffer"/> used to encode the string, if known.</param>
+    /// <param name="offset">The offset in <paramref name="buffer"/> at which the string starts.</param>
     /// <returns>the converted string</returns>
     public static string Convert(IntPtr buffer, int encodedByteCount = -1, int offset = 0)
     {
@@ -48,8 +48,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
     /// Convert DVB-encoded string in a NULL terminated buffer to Unicode.
     /// </summary>
     /// <param name="buffer">The buffer containing the string to convert.</param>
-    /// <param name="encodedByteCount">The number of bytes in <paramref name="stringBytes"/> used to encode the string, if known.</param>
-    /// <param name="offset">The offset in <paramref name="stringBytes"/> at which the string starts.</param>
+    /// <param name="encodedByteCount">The number of bytes in <paramref name="buffer"/> used to encode the string, if known.</param>
+    /// <param name="offset">The offset in <paramref name="buffer"/> at which the string starts.</param>
     /// <param name="decodedByteCount">The number of bytes actually read when decoding/converting the string.</param>
     /// <returns>the converted string</returns>
     public static string Convert(IntPtr buffer, int encodedByteCount, int offset, out int decodedByteCount)

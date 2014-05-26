@@ -18,160 +18,210 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-#include <atlbase.h>
 #include "..\shared\PidTable.h"
 
 
-void LogDebug(const char* fmt, ...);
+extern void LogDebug(const wchar_t* fmt, ...);
 
-CPidTable::CPidTable(void)
+
+//-----------------------------------------------------------------------------
+// UTILITY FUNCTIONS
+//-----------------------------------------------------------------------------
+bool IsVideoStream(byte logicalStreamType)
 {
-  Reset();
-}
-
-CPidTable::CPidTable(const CPidTable& pids)
-{
-  Copy(pids);
-}
-
-CPidTable::~CPidTable(void)
-{
-}
-
-void CPidTable::Reset()
-{
-  ServiceId = -1;
-  PmtPid = 0;
-  PmtVersion = -1;
-  PcrPid = 0;
-
-  VideoPids.clear();
-  AudioPids.clear();
-  SubtitlePids.clear();
-
-  TeletextPid = 0;
-  // no reason to reset TeletextSubLang
-
-  ConditionalAccessDescriptorCount = 0;
-}
-
-CPidTable& CPidTable::operator = (const CPidTable& other)
-{
-  if (&other == this)
+  if (logicalStreamType == STREAM_TYPE_VIDEO_MPEG1 ||
+    logicalStreamType == STREAM_TYPE_VIDEO_MPEG2 ||
+    logicalStreamType == STREAM_TYPE_VIDEO_MPEG2_STEREO_FP ||
+    logicalStreamType == STREAM_TYPE_VIDEO_MPEG2_STEREO ||
+    logicalStreamType == STREAM_TYPE_VIDEO_MPEG4_PART2 ||
+    logicalStreamType == STREAM_TYPE_VIDEO_MPEG4_PART10_ANNEXA ||
+    logicalStreamType == STREAM_TYPE_VIDEO_MPEG4_PART10_ANNEXG ||
+    logicalStreamType == STREAM_TYPE_VIDEO_MPEG4_PART10_ANNEXH ||
+    logicalStreamType == STREAM_TYPE_VIDEO_MPEG4_PART10_STEREO ||
+    logicalStreamType == STREAM_TYPE_VIDEO_AUX ||
+    logicalStreamType == STREAM_TYPE_VIDEO_JPEG ||
+    logicalStreamType == STREAM_TYPE_VIDEO_VC1)
   {
-    return *this;
-  }
-  Copy(other);
-  return *this;
-}
-
-bool CPidTable::operator == (const CPidTable& other) const
-{
-  // Not all members are compared. This is intentional.
-  if (ServiceId != other.ServiceId ||
-    PmtPid != other.PmtPid ||
-    PcrPid != other.PcrPid ||
-    VideoPids != other.VideoPids ||
-    AudioPids != other.AudioPids ||
-    SubtitlePids != other.SubtitlePids)
-  {
-    return false;
-  }
-  return true;
-}
-
-void CPidTable::Copy(const CPidTable& other)
-{
-  ServiceId = other.ServiceId;
-  PmtPid = other.PmtPid;
-  PmtVersion = other.PmtVersion;
-  PcrPid = other.PcrPid;
-
-  VideoPids = other.VideoPids;
-  AudioPids = other.AudioPids;
-  SubtitlePids = other.SubtitlePids;
-
-  TeletextPid = other.TeletextPid;
-  //TeletextInfo = other.TeletextInfo;
-
-  ConditionalAccessDescriptorCount = other.ConditionalAccessDescriptorCount;
-}
-
-bool CPidTable::HasTeletextPageInfo(int page)
-{
-  std::vector<TeletextServiceInfo>::iterator it = TeletextInfo.begin();
-  while (it != TeletextInfo.end())
-  {
-    TeletextServiceInfo& info = *it;
-    if (info.Page == page)
-    {
-      return true;
-    }
-    it++;
+    return true;
   }
   return false;
 }
 
+bool IsAudioStream(byte streamType)
+{
+  if (streamType == STREAM_TYPE_AUDIO_MPEG1 ||
+    streamType == STREAM_TYPE_AUDIO_MPEG2_PART3 ||
+    streamType == STREAM_TYPE_AUDIO_MPEG2_PART7 ||
+    streamType == STREAM_TYPE_AUDIO_MPEG4_PART3 ||
+    streamType == STREAM_TYPE_AUDIO_MPEG4_PART3_LATM ||
+    streamType == STREAM_TYPE_AUDIO_AC3 ||
+    // DTS is a logical stream type. The ID clashes with SCTE subtitles, so can't use it directly.
+    //streamType == STREAM_TYPE_AUDIO_DTS ||
+    streamType == STREAM_TYPE_AUDIO_E_AC3 ||
+    streamType == STREAM_TYPE_AUDIO_DTS_HD)
+  {
+    return true;
+  }
+  return false;
+}
+
+bool IsAudioLogicalStream(byte logicalStreamType)
+{
+  if (IsAudioStream(logicalStreamType) || logicalStreamType == STREAM_TYPE_AUDIO_DTS)
+  {
+    return true;
+  }
+  return false;
+}
+
+
+//-----------------------------------------------------------------------------
+// CLASS
+//-----------------------------------------------------------------------------
+CPidTable::CPidTable(void)
+{
+  Descriptors = NULL;
+  Reset();
+}
+
+CPidTable::~CPidTable(void)
+{
+  Reset();
+}
+
+void CPidTable::Reset()
+{
+  ProgramNumber = -1;
+  PmtPid = 0;
+  PmtVersion = 0xff;
+  PcrPid = 0;
+
+  std::vector<VideoPid*>::iterator vPidIt = VideoPids.begin();
+  while (vPidIt != VideoPids.end())
+  {
+    delete *vPidIt;
+    vPidIt++;
+  }
+  VideoPids.clear();
+
+  std::vector<AudioPid*>::iterator aPidIt = AudioPids.begin();
+  while (aPidIt != AudioPids.end())
+  {
+    delete *aPidIt;
+    aPidIt++;
+  }
+  AudioPids.clear();
+
+  std::vector<SubtitlePid*>::iterator sPidIt = SubtitlePids.begin();
+  while (sPidIt != SubtitlePids.end())
+  {
+    delete *sPidIt;
+    sPidIt++;
+  }
+  SubtitlePids.clear();
+
+  std::vector<TeletextPid*>::iterator tPidIt = TeletextPids.begin();
+  while (tPidIt != TeletextPids.end())
+  {
+    delete *tPidIt;
+    tPidIt++;
+  }
+  TeletextPids.clear();
+
+  DescriptorsLength = 0;
+  if (Descriptors != NULL)
+  {
+    delete[] Descriptors;
+    Descriptors = NULL;
+  }
+}
+
 void CPidTable::LogPids()
 {
-  USES_CONVERSION;
-  LogDebug("  program = %d", ServiceId);
-  LogDebug("  PMT PID = %d, version = %d", PmtPid, PmtVersion);
-  LogDebug("  PCR PID = %d", PcrPid);
+  LogDebug(L"  program = %d", ProgramNumber);
+  LogDebug(L"  PMT PID = %d, version = %d", PmtPid, PmtVersion);
+  LogDebug(L"  PCR PID = %d", PcrPid);
 
   for (unsigned int i = 0; i < VideoPids.size(); i++)
   {
-    VideoPid* pid = &VideoPids[i];
-    LogDebug("  video PID = %d, type = %s", pid->Pid, T2A(StreamFormatAsString(pid->StreamType)));
+    VideoPid* pid = VideoPids[i];
+    LogDebug(L"  video PID = %d, type = %d, logical type = %s", pid->Pid, pid->StreamType, StreamFormatAsString(pid->LogicalStreamType));
   }
 
   for (unsigned int i = 0; i < AudioPids.size(); i++)
   {
-    AudioPid* pid = &AudioPids[i];
-    LogDebug("  audio PID = %d, type = %s, language = %s", pid->Pid, T2A(StreamFormatAsString(pid->StreamType)), pid->Lang);
+    AudioPid* pid = AudioPids[i];
+    LogDebug(L"  audio PID = %d, type = %d, logical type = %s, language = %s", pid->Pid, pid->StreamType, StreamFormatAsString(pid->LogicalStreamType), pid->Lang);
   }
   
   for (unsigned int i = 0; i < SubtitlePids.size(); i++)
   {
-    SubtitlePid* pid = &SubtitlePids[i];
-    LogDebug("  subtitle PID = %d, type = %s, language = %s", pid->Pid, T2A(StreamFormatAsString(pid->StreamType)), pid->Lang);
+    SubtitlePid* pid = SubtitlePids[i];
+    LogDebug(L"  subtitle PID = %d, type = %d, logical type = %s, language = %s", pid->Pid, pid->StreamType, StreamFormatAsString(pid->LogicalStreamType), pid->Lang);
   }
 
-  if (TeletextPid > 0)
+  for (unsigned int i = 0; i < TeletextPids.size(); i++)
   {
-    LogDebug("  teletext PID = %d", TeletextPid);
+    TeletextPid* pid = TeletextPids[i];
+    LogDebug(L"  teletext PID = %d, type = %d, logical type = %s", pid->Pid, pid->StreamType, StreamFormatAsString(pid->LogicalStreamType));
   }
 }
 
-LPCTSTR CPidTable::StreamFormatAsString(int streamType)
+const wchar_t* CPidTable::StreamFormatAsString(byte streamType)
 {
   switch (streamType)
   {
     case STREAM_TYPE_VIDEO_MPEG1:
-      return _T("MPEG 1");
+      return L"MPEG 1";
     case STREAM_TYPE_VIDEO_MPEG2:
-      return _T("MPEG 2");
+      return L"MPEG 2";
+    case STREAM_TYPE_VIDEO_MPEG4_PART2:
+      return L"MPEG 4";
+    case STREAM_TYPE_VIDEO_MPEG4_PART10_ANNEXA:
+      return L"H.264";
+    case STREAM_TYPE_VIDEO_AUX:
+      return L"aux";
+    case STREAM_TYPE_VIDEO_MPEG4_PART10_ANNEXG:
+      return L"H.264 G";
+    case STREAM_TYPE_VIDEO_MPEG4_PART10_ANNEXH:
+      return L"H.264 H";
+    case STREAM_TYPE_VIDEO_JPEG:
+      return L"JPEG";
+    case STREAM_TYPE_VIDEO_MPEG2_STEREO_FP:
+      return L"MPEG 2 frame-packed 3D";
+    case STREAM_TYPE_VIDEO_MPEG2_STEREO:
+      return L"MPEG 2 3D";
+    case STREAM_TYPE_VIDEO_MPEG4_PART10_STEREO:
+      return L"H.264 3D";
+    case STREAM_TYPE_VIDEO_VC1:
+      return L"VC-1";
+
     case STREAM_TYPE_AUDIO_MPEG1:
-      return _T("MPEG 1");
-    case STREAM_TYPE_AUDIO_MPEG2:
-      return _T("MPEG 2");
-    case STREAM_TYPE_PRIVATE_SECTIONS:
-      return _T("private sections");
-    case STREAM_TYPE_PES_PRIVATE_DATA:
-      return _T("private data");
-    case STREAM_TYPE_AUDIO_AAC:
-      return _T("AAC");
-    case STREAM_TYPE_VIDEO_MPEG4:
-      return _T("MPEG 4");
-    case STREAM_TYPE_AUDIO_LATM_AAC:
-      return _T("LATM AAC");
-    case STREAM_TYPE_VIDEO_H264:
-      return _T("H.264");
+      return L"MPEG 1";
+    case STREAM_TYPE_AUDIO_MPEG2_PART3:
+      return L"MPEG 2";
+    case STREAM_TYPE_AUDIO_MPEG2_PART7:
+      return L"ADTS AAC";
+    case STREAM_TYPE_AUDIO_MPEG4_PART3_LATM:
+      return L"LATM AAC";
+    case STREAM_TYPE_AUDIO_MPEG4_PART3:
+      return L"AAC";
     case STREAM_TYPE_AUDIO_AC3:
-      return _T("AC3");
+      return L"AC3/DD";
+    case STREAM_TYPE_AUDIO_DTS:
+      return L"DTS";
     case STREAM_TYPE_AUDIO_E_AC3:
-      return _T("DD+");
+      return L"E-AC3/DD+";
+    case STREAM_TYPE_AUDIO_DTS_HD:
+      return L"DTS HD";
+
+    case STREAM_TYPE_PRIVATE_SECTIONS:
+      return L"private sections";
+    case STREAM_TYPE_PES_PRIVATE_DATA:
+      return L"private data";
+    case STREAM_TYPE_TEXT_MPEG4:
+      return L"MPEG 4";
     default:
-      return _T("Unknown");
+      return L"Unknown";
   }
 }

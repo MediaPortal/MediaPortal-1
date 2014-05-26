@@ -22,7 +22,7 @@ using System.Collections.Generic;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Upnp.Enum
 {
-  public sealed class ConnectionDirection
+  internal sealed class ConnectionDirection
   {
     private readonly string _name;
     private static readonly IDictionary<string, ConnectionDirection> _values = new Dictionary<string, ConnectionDirection>();
@@ -51,9 +51,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Upnp.Enum
       return false;
     }
 
+    public override int GetHashCode()
+    {
+      return _name.GetHashCode();
+    }
+
     public static ICollection<ConnectionDirection> Values
     {
-      get { return _values.Values; }
+      get
+      {
+        return _values.Values;
+      }
     }
 
     public static explicit operator ConnectionDirection(string name)

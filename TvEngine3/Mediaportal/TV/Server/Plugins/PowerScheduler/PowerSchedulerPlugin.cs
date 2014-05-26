@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2013 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2013 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -21,11 +21,13 @@
 #region Usings
 
 using System;
+using System.Reflection;
 using Castle.Core;
 using Mediaportal.TV.Server.Plugins.Base.Interfaces;
 using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
+using PowerScheduler.Setup;
 
 #endregion
 
@@ -41,7 +43,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
     #region Constructor
 
     /// <summary>
-    /// Creates a new PowerSchedulerPlugin
+    /// Creates a new PowerScheduler plugin
     /// </summary>
     public PowerSchedulerPlugin() {}
 
@@ -71,7 +73,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
     /// </summary>
     public string Author
     {
-      get { return "micheloe"; }
+      get { return "michael_t (based on the work of micheloe and others)"; }
     }
 
     /// <summary>
@@ -87,7 +89,17 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
     /// </summary>
     public string Name
     {
-      get { return "Power Scheduler"; }
+      get
+      {
+        object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyProductAttribute), false);
+        if (attributes.Length > 0)
+        {
+          AssemblyProductAttribute attribute = attributes[0] as AssemblyProductAttribute;
+          if (attribute != null && attribute.Product != "MediaPortal")
+            return attribute.Product;
+        }
+        return "PowerScheduler";
+      }
     }
 
     /// <summary>
@@ -95,17 +107,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
     /// </summary>
     public SectionSettings Setup
     {
-      get
-      {
-        return new PowerSchedulerMasterSetup();
-        /*unreachable 
-        if (_controller.IsMaster)
-          return new PowerSchedulerMasterSetup();
-        else
-          // return new PowerSchedulerSlaveSetup();
-          return new PowerSchedulerMasterSetup();
-        */
-      }
+      get { return new PowerSchedulerSetup(); }
     }
 
     /// <summary>
@@ -113,7 +115,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
     /// </summary>
     public string Version
     {
-      get { return "0.1.0.0"; }
+      get { return Assembly.GetExecutingAssembly().GetName().Version.ToString(); }
     }
 
     #endregion

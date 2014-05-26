@@ -56,7 +56,7 @@ namespace MediaPortal.Player
       public string Filter;
       public StreamType Type;
       public int LCID;
-    } ;
+    };
 
     protected class FilterStreams
     {
@@ -111,7 +111,7 @@ namespace MediaPortal.Player
       public bool AddStreamInfos(FilterStreamInfos streamInfos)
       {
         return AddStreamInfos(streamInfos, ref cStreams, Streams);
-      }      
+      }
 
       public bool AddStreamInfosEx(FilterStreamInfos streamInfos)
       {
@@ -156,7 +156,7 @@ namespace MediaPortal.Player
       private int cStreams;
       private FilterStreamInfos[] StreamsExternal;
       private int cStreamsExternal;
-    } ;
+    };
 
     public enum PlayState
     {
@@ -245,7 +245,6 @@ namespace MediaPortal.Player
     protected IBaseFilter _AudioSourceFilter = null;
     protected IBaseFilter _AudioExtFilter = null;
     protected IBaseFilter _AudioExtSplitterFilter = null;
-    protected static MediaInfoWrapper _mediaInfo = null;
     protected IBaseFilter _interfaceSourceFilter = null;
     protected IBaseFilter Splitter = null;
     protected bool FileSync = false;
@@ -436,7 +435,8 @@ namespace MediaPortal.Player
             ci.EnglishName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
             ci.TwoLetterISOLanguageName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
             ci.ThreeLetterISOLanguageName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
-            ci.ThreeLetterWindowsLanguageName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase))
+            ci.ThreeLetterWindowsLanguageName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
+            subtitleLanguage.ToUpperInvariant().Contains(ci.ThreeLetterWindowsLanguageName))
         {
           CurrentSubtitleStream = i;
           Log.Info("VideoPlayerVMR7: CultureInfo Selected active subtitle track language: {0} ({1})", ci.EnglishName, i);
@@ -575,9 +575,9 @@ namespace MediaPortal.Player
         Log.Info("overlay: AR type    : {0}", GUIGraphicsContext.ARType);
         Log.Info("overlay: PixelRatio : {0}", GUIGraphicsContext.PixelRatio);
         Log.Info("overlay: src        : ({0},{1})-({2},{3})",
-                 rSource.X, rSource.Y, rSource.X + rSource.Width, rSource.Y + rSource.Height);
+          rSource.X, rSource.Y, rSource.X + rSource.Width, rSource.Y + rSource.Height);
         Log.Info("overlay: dst        : ({0},{1})-({2},{3})",
-                 rDest.X, rDest.Y, rDest.X + rDest.Width, rDest.Y + rDest.Height);
+          rDest.X, rDest.Y, rDest.X + rDest.Width, rDest.Y + rDest.Height);
         SetSourceDestRectangles(rSource, rDest);
         SetVideoPosition(rDest);
         _sourceRectangle = rSource;
@@ -1483,12 +1483,12 @@ namespace MediaPortal.Player
       if (streamName.EndsWith(".mp3") || streamName.EndsWith(".ac3") || streamName.EndsWith(".mka") ||
           streamName.EndsWith(".dts"))
       {
-        return Path.GetExtension(streamName).ToUpper().Replace(".", "EXTERNAL ");
+        return Path.GetExtension(streamName).ToUpperInvariant().Replace(".", "EXTERNAL ");
       }
 
       // No stream info from splitter
       if (streamName.Contains(Path.GetFileName(m_strCurrentFile)))
-        return Path.GetExtension(m_strCurrentFile).ToUpper().Replace(".", "");
+        return Path.GetExtension(m_strCurrentFile).ToUpperInvariant().Replace(".", "");
 
       // remove prefix, which is added by Haali Media Splitter
       streamName = Regex.Replace(streamName, @"^A: ", "");
@@ -1799,6 +1799,52 @@ namespace MediaPortal.Player
       set { SubEngine.GetInstance().AutoShow = value; }
     }
 
+    public void AnalyseStreamsChapters()
+    {
+      try
+      {
+        //RETRIEVING THE CURRENT SPLITTER
+        IBaseFilter[] foundfilter = new IBaseFilter[2];
+        int fetched = 0;
+        IEnumFilters enumFilters;
+        graphBuilder.EnumFilters(out enumFilters);
+        if (enumFilters != null)
+        {
+          enumFilters.Reset();
+          while (enumFilters.Next(1, foundfilter, out fetched) == 0)
+          {
+            if (foundfilter[0] != null && fetched == 1)
+            {
+              IAMExtendedSeeking pEs = foundfilter[0] as IAMExtendedSeeking;
+              if (pEs != null)
+              {
+                int markerCount = 0;
+                if (pEs.get_MarkerCount(out markerCount) == 0 && markerCount > 0)
+                {
+                  chapters = new double[markerCount];
+                  chaptersname = new string[markerCount];
+                  for (int i = 1; i <= markerCount; i++)
+                  {
+                    double markerTime = 0;
+                    pEs.GetMarkerTime(i, out markerTime);
+                    chapters[i - 1] = markerTime;
+                    //fill up chapter names
+                    string name = null;
+                    pEs.GetMarkerName(i, out name);
+                    chaptersname[i - 1] = name;
+                  }
+                }
+              }
+              DirectShowUtil.ReleaseComObject(foundfilter[0]);
+            }
+          }
+        }
+      }
+      catch
+      {
+      }
+    }
+
     public bool AnalyseStreams()
     {
       try
@@ -2047,6 +2093,8 @@ namespace MediaPortal.Player
                      FStreams.GetStreamInfos(StreamType.Edition, value).Filter);
         EnableStream(FStreams.GetStreamInfos(StreamType.Edition, value).Id, AMStreamSelectEnableFlags.Enable,
                      FStreams.GetStreamInfos(StreamType.Edition, value).Filter);
+        // Refresh Chapters list
+        AnalyseStreamsChapters();
         Log.Info("VideoPlayer:Edition Duration Change:{0}", m_dDuration);
         return;
       }
@@ -2155,7 +2203,7 @@ namespace MediaPortal.Player
 
       // No stream info from splitter
       if (streamName.Contains(Path.GetFileName(m_strCurrentFile)))
-        return Path.GetExtension(m_strCurrentFile).ToUpper().Replace(".", "");
+        return Path.GetExtension(m_strCurrentFile).ToUpperInvariant().Replace(".", "");
 
       // remove prefix, which is added by Haali Media Splitter
       streamName = Regex.Replace(streamName, @"^V: ", "");

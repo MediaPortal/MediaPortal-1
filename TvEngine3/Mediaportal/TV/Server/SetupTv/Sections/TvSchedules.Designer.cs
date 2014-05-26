@@ -58,7 +58,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.comboBoxGroups = new SetupControls.ComboBoxEx();
       this.comboBoxChannels = new MPComboBox();
       this.mpLabel1 = new MPLabel();
-      this.label25 = new System.Windows.Forms.Label();
+      this.label25 = new MPLabel();
       this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
       this.listView2 = new System.Windows.Forms.ListView();
       this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -540,7 +540,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private System.Windows.Forms.ColumnHeader columnHeader11;
     private System.Windows.Forms.ColumnHeader columnHeader12;
     private System.Windows.Forms.ColumnHeader columnHeader13;
-    private System.Windows.Forms.Label label25;
+    private MPLabel label25;
     private System.Windows.Forms.ColumnHeader columnHeader14;
     private System.Windows.Forms.ColumnHeader columnHeader15;
     private System.Windows.Forms.ColumnHeader columnHeader16;

@@ -38,7 +38,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Geniatech
   {
     #region enums
 
-    private new enum BdaExtensionProperty
+    private enum BdaExtensionProperty
     {
       /// For sending and receiving DiSEqC messages.
       DiseqcMessage = 0,
@@ -231,7 +231,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Geniatech
       }
       this.LogDebug("  roll-off   = {0}", nbcParams.RollOff);
 
-      Marshal.StructureToPtr(nbcParams, _paramBuffer, true);
+      Marshal.StructureToPtr(nbcParams, _paramBuffer, false);
       int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.NbcParams,
         _instanceBuffer, INSTANCE_SIZE,
         _paramBuffer, NBC_PARAMS_SIZE
@@ -268,6 +268,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Geniatech
       if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Set))
       {
         this.LogDebug("Geniatech: LNB power property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        return false;
       }
 
       if (state == PowerState.On)
@@ -288,7 +289,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Geniatech
         return true;
       }
 
-      this.LogError("Geniatech: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Geniatech: failed to set power state, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 

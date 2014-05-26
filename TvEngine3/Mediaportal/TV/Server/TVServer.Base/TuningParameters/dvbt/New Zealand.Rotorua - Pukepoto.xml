@@ -1,34 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ArrayOfDVBTTuning xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <!-- Igloo (Sky) -->
+  <DVBTTuning>
+    <Frequency>522000</Frequency>
+    <Bandwidth>8000</Bandwidth>
+    <Offset>0</Offset>
+    <CellId>0</CellId>
+    <CellIdExtension>0</CellIdExtension>
+    <IsDvbT2>False</IsDvbT2>
+  </DVBTTuning>
+  <!-- Freeview World TV -->
+  <DVBTTuning>
+    <Frequency>538000</Frequency>
+    <Bandwidth>8000</Bandwidth>
+    <Offset>0</Offset>
+    <CellId>0</CellId>
+    <CellIdExtension>0</CellIdExtension>
+    <IsDvbT2>False</IsDvbT2>
+  </DVBTTuning>
+  <!-- Freeview MediaWorks [pre-DSO] -->
   <DVBTTuning>
     <Frequency>554000</Frequency>
     <Bandwidth>8000</Bandwidth>
     <Offset>0</Offset>
-    <CellId>20220</CellId>
+    <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
     <IsDvbT2>False</IsDvbT2>
   </DVBTTuning>
-  <DVBTTuning>
-    <Frequency>586000</Frequency>
-    <Bandwidth>8000</Bandwidth>
-    <Offset>0</Offset>
-    <CellId>10220</CellId>
-    <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
-  </DVBTTuning>
-  <DVBTTuning>
-    <Frequency>602000</Frequency>
-    <Bandwidth>8000</Bandwidth>
-    <Offset>0</Offset>
-    <CellId>30220</CellId>
-    <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
-  </DVBTTuning>
+  <!-- Freeview MediaWorks [post-DSO] -->
   <DVBTTuning>
     <Frequency>570000</Frequency>
     <Bandwidth>8000</Bandwidth>
     <Offset>0</Offset>
-    <CellId>10220</CellId>
+    <CellId>0</CellId>
+    <CellIdExtension>0</CellIdExtension>
+    <IsDvbT2>False</IsDvbT2>
+  </DVBTTuning>
+  <!-- Freeview TVNZ -->
+  <DVBTTuning>
+    <Frequency>586000</Frequency>
+    <Bandwidth>8000</Bandwidth>
+    <Offset>0</Offset>
+    <CellId>0</CellId>
+    <CellIdExtension>0</CellIdExtension>
+    <IsDvbT2>False</IsDvbT2>
+  </DVBTTuning>
+  <!-- Freeview JDA -->
+  <DVBTTuning>
+    <Frequency>602000</Frequency>
+    <Bandwidth>8000</Bandwidth>
+    <Offset>0</Offset>
+    <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
     <IsDvbT2>False</IsDvbT2>
   </DVBTTuning>

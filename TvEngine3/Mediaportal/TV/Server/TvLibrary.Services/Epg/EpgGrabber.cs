@@ -273,8 +273,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
     private void GrabEpgOnCard(EpgCard epgCard)
     {
       CardType type = ServiceManager.Instance.InternalControllerService.Type(epgCard.Card.IdCard);
-      //skip analog and webstream cards 
-      if (type == CardType.Analog || type == CardType.RadioWebStream)
+      //skip analog cards 
+      if (type == CardType.Analog)
         return;
 
       while (TransponderList.Instance.GetNextTransponder() != null)

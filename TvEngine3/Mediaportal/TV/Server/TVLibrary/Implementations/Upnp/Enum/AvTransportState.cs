@@ -22,7 +22,7 @@ using System.Collections.Generic;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Upnp.Enum
 {
-  public sealed class AvTransportState
+  internal sealed class AvTransportState
   {
     private readonly string _name;
     private static readonly IDictionary<string, AvTransportState> _values = new Dictionary<string, AvTransportState>();
@@ -54,6 +54,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Upnp.Enum
         return true;
       }
       return false;
+    }
+
+    public override int GetHashCode()
+    {
+      return _name.GetHashCode();
     }
 
     public static explicit operator AvTransportState(string name)

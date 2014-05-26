@@ -22,7 +22,7 @@ using System.Collections.Generic;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Enum
 {
-  public sealed class EncoderMode
+  internal sealed class EncoderMode
   {
     private readonly string _name;
     private static readonly IDictionary<string, EncoderMode> _values = new Dictionary<string, EncoderMode>();
@@ -52,9 +52,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Enum
       return false;
     }
 
+    public override int GetHashCode()
+    {
+      return _name.GetHashCode();
+    }
+
     public static ICollection<EncoderMode> Values
     {
-      get { return _values.Values; }
+      get
+      {
+        return _values.Values;
+      }
     }
 
     public static explicit operator EncoderMode(string name)

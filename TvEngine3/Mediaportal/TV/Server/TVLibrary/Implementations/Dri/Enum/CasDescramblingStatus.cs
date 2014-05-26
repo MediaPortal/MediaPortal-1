@@ -22,7 +22,7 @@ using System.Collections.Generic;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Enum
 {
-  public sealed class CasDescramblingStatus
+  internal sealed class CasDescramblingStatus
   {
     private readonly string _name;
     private static readonly IDictionary<string, CasDescramblingStatus> _values = new Dictionary<string, CasDescramblingStatus>();
@@ -73,9 +73,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Enum
       return false;
     }
 
+    public override int GetHashCode()
+    {
+      return _name.GetHashCode();
+    }
+
     public static ICollection<CasDescramblingStatus> Values
     {
-      get { return _values.Values; }
+      get
+      {
+        return _values.Values;
+      }
     }
 
     public static explicit operator CasDescramblingStatus(string name)

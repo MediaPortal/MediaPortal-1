@@ -27,8 +27,6 @@
 #include "IMuxInputPin.h"
 #include "IStreamMultiplexer.h"
 
-using namespace std;
-
 
 #define NOT_RECEIVING -1
 
@@ -77,8 +75,8 @@ const int STREAM_TYPES[] =
   STREAM_TYPE_AUDIO_MPEG1,
   STREAM_TYPE_AUDIO_MPEG1,
 
-  STREAM_TYPE_AUDIO_MPEG2,
-  STREAM_TYPE_AUDIO_MPEG2,
+  STREAM_TYPE_AUDIO_MPEG2_PART3,
+  STREAM_TYPE_AUDIO_MPEG2_PART3,
 
   STREAM_TYPE_VIDEO_MPEG1,
   STREAM_TYPE_VIDEO_MPEG1,
@@ -127,7 +125,7 @@ class CMuxInputPin : public CRenderedInputPin, CPacketSync, public IMuxInputPin
     HRESULT SetMediaType(const CMediaType* mediaType);
 
     byte GetId();
-    int GetStreamType();
+    byte GetStreamType();
     DWORD GetReceiveTickCount();
     HRESULT StartDumping(wchar_t* fileName);
     HRESULT StopDumping();
@@ -136,13 +134,13 @@ class CMuxInputPin : public CRenderedInputPin, CPacketSync, public IMuxInputPin
     void OnTsPacket(byte* tsPacket);
 
     byte m_pinId;
-    int m_streamType;
+    byte m_streamType;
     DWORD m_receiveTickCount;
     CCritSec* m_receiveLock;
 
     IStreamMultiplexer* m_multiplexer;
 
-    int m_tsReceiveBufferOffset;
+    short m_tsReceiveBufferOffset;
     byte m_tsReceiveBuffer[RECEIVE_BUFFER_SIZE];
 
     bool m_isDumpEnabled;

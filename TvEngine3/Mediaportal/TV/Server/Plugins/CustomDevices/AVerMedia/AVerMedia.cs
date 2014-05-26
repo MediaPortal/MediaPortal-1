@@ -282,7 +282,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
 
     private string _tunerDevicePath = string.Empty;
 
-    private IConditionalAccessMenuCallBacks _caMenuCallBacks = null;
+    private IConditionalAccessMenuCallBack _caMenuCallBack = null;
     private object _caMenuCallBackLock = new object();
 
     // The interface requires the call back delegate pointers to be passed
@@ -361,9 +361,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
 
       lock (_caMenuCallBackLock)
       {
-        if (_caMenuCallBacks == null)
+        if (_caMenuCallBack == null)
         {
-          this.LogDebug("AVerMedia: menu call backs are not set");
+          this.LogDebug("AVerMedia: menu call back not set");
         }
 
         MmiData data = (MmiData)Marshal.PtrToStructure(messageData, typeof(MmiData));
@@ -382,9 +382,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
           this.LogDebug("  sub-title    = {0}", subTitle);
           this.LogDebug("  footer       = {0}", footer);
           this.LogDebug("  # entries    = {0}", data.Count);
-          if (_caMenuCallBacks != null)
+          if (_caMenuCallBack != null)
           {
-            _caMenuCallBacks.OnCiMenu(title, subTitle, footer, data.Count);
+            _caMenuCallBack.OnCiMenu(title, subTitle, footer, data.Count);
           }
           if (data.Count > 0)
           {
@@ -392,9 +392,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
             {
               string entry = DvbTextConverter.Convert(data.Strings[i + 3].Text);
               this.LogDebug("    {0, -10} = {1}", i + 1, entry);
-              if (_caMenuCallBacks != null)
+              if (_caMenuCallBack != null)
               {
-                _caMenuCallBacks.OnCiMenuChoice(i, entry);
+                _caMenuCallBack.OnCiMenuChoice(i, entry);
               }
             }
           }
@@ -405,14 +405,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
           this.LogDebug("  prompt       = {0}", prompt);
           this.LogDebug("  length       = {0}", data.Count);
           this.LogDebug("  blind        = {0}", data.IsBlindAnswer != 0);
-          if (_caMenuCallBacks != null)
+          if (_caMenuCallBack != null)
           {
-            _caMenuCallBacks.OnCiRequest(data.IsBlindAnswer != 0, data.Count, prompt);
+            _caMenuCallBack.OnCiRequest(data.IsBlindAnswer != 0, data.Count, prompt);
           }
         }
         else
         {
-          this.LogWarn("AVerMedia: message type {0} not supported", data.MessageType);
+          this.LogWarn("AVerMedia: MMI message type {0} not supported", data.MessageType);
         }
       }
 
@@ -506,7 +506,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
       }
       if (_isCaInterfaceOpen)
       {
-        this.LogWarn("AVerMedia: interface is already open");
+        this.LogWarn("AVerMedia: conditional access interface is already open");
         return true;
       }
 
@@ -521,7 +521,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
       }
       catch
       {
-        this.LogError("AVerMedia: failed to create CI API instance");
+        this.LogError("AVerMedia: failed to create CI API instance, is the AVerMedia software installed?");
         return false;
       }
 
@@ -541,6 +541,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
       if (_pmtInterface == null)
       {
         this.LogError("AVerMedia: failed to obtain PMT interface");
+        return false;
       }
 
       _ciState = AVerMediaCiState.Empty;
@@ -580,7 +581,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
         return true;
       }
 
-      this.LogError("AVerMedia: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("AVerMedia: failed to open conditional access interface, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -693,12 +694,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
       }
       if (!_isCamReady)
       {
-        this.LogError("AVerMedia: the CAM is not ready");
+        this.LogError("AVerMedia: failed to send conditional access command, the CAM is not ready");
         return false;
       }
       if (pmt == null)
       {
-        this.LogError("AVerMedia: PMT not supplied");
+        this.LogError("AVerMedia: failed to send conditional access command, PMT not supplied");
         return true;
       }
 
@@ -720,7 +721,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
         Marshal.WriteByte(averPmt.PmtPtr, i, rawPmt[i]);
       }
       IntPtr structPtr = Marshal.AllocCoTaskMem(AVERMEDIA_PMT_SIZE);
-      Marshal.StructureToPtr(averPmt, structPtr, true);
+      Marshal.StructureToPtr(averPmt, structPtr, false);
 
       //Dump.DumpBinary(structPtr, AVERMEDIA_PMT_SIZE);
       //Dump.DumpBinary(averPmt.PmtPtr, caPmt.Length);
@@ -734,11 +735,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
           this.LogDebug("AVerMedia: result = success");
           return true;
         }
-        this.LogError("AVerMedia: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("AVerMedia: failed to send conditional access command, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
       }
       finally
       {
+        Marshal.DestroyStructure(structPtr, typeof(AVerMediaPmt));
         Marshal.FreeCoTaskMem(averPmt.PmtPtr);
         Marshal.FreeCoTaskMem(structPtr);
       }
@@ -751,12 +753,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
     /// <summary>
     /// Set the menu call back delegate.
     /// </summary>
-    /// <param name="callBacks">The call back delegate.</param>
-    public void SetCallBacks(IConditionalAccessMenuCallBacks callBacks)
+    /// <param name="callBack">The call back delegate.</param>
+    public void SetMenuCallBack(IConditionalAccessMenuCallBack callBack)
     {
       lock (_caMenuCallBackLock)
       {
-        _caMenuCallBacks = callBacks;
+        _caMenuCallBack = callBack;
       }
     }
 
@@ -775,7 +777,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
       }
       if (!_isCamReady)
       {
-        this.LogError("AVerMedia: the CAM is not ready");
+        this.LogError("AVerMedia: failed to enter menu, the CAM is not ready");
         return false;
       }
 
@@ -786,7 +788,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
         return true;
       }
 
-      this.LogError("AVerMedia: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("AVerMedia: failed to enter menu, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -805,7 +807,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
       }
       if (!_isCamReady)
       {
-        this.LogError("AVerMedia: the CAM is not ready");
+        this.LogError("AVerMedia: failed to close menu, the CAM is not ready");
         return false;
       }
 
@@ -816,7 +818,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
         return true;
       }
 
-      this.LogError("AVerMedia: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("AVerMedia: failed to close menu, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -836,7 +838,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
       }
       if (!_isCamReady)
       {
-        this.LogError("AVerMedia: the CAM is not ready");
+        this.LogError("AVerMedia: failed to select menu entry, the CAM is not ready");
         return false;
       }
 
@@ -847,7 +849,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
         return true;
       }
 
-      this.LogError("AVerMedia: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("AVerMedia: failed to select menu entry, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -872,7 +874,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
       }
       if (!_isCamReady)
       {
-        this.LogError("AVerMedia: the CAM is not ready");
+        this.LogError("AVerMedia: failed to answer enquiry, the CAM is not ready");
         return false;
       }
 
@@ -893,7 +895,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
         return true;
       }
 
-      this.LogError("AVerMedia: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("AVerMedia: failed to answer enquiry, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 

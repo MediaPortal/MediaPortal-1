@@ -28,7 +28,7 @@ using UPnP.Infrastructure.CP.DeviceTree;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Service
 {
-  public class ServiceTuner : ServiceBase
+  internal class ServiceTuner : ServiceBase
   {
     private CpAction _setTunerParametersAction = null;
     private CpAction _getTunerParametersAction = null;

@@ -88,10 +88,10 @@ namespace MediaPortal.GUI.Settings
     {
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
-        btnExtractthumbs.Selected = xmlreader.GetValueAsBool("musicfiles", "extractthumbs", false);
+        btnExtractthumbs.Selected = xmlreader.GetValueAsBool("musicfiles", "extractthumbs", true);
         btnCreateartistthumbs.Selected = xmlreader.GetValueAsBool("musicfiles", "createartistthumbs", false);
         btnCreategenrethumbs.Selected = xmlreader.GetValueAsBool("musicfiles", "creategenrethumbs", true);
-        btnUseFolderThumbs.Selected = xmlreader.GetValueAsBool("musicfiles", "useFolderThumbs", true);
+        btnUseFolderThumbs.Selected = xmlreader.GetValueAsBool("musicfiles", "useFolderThumbs", false);
         btnUseAllImages.Selected = xmlreader.GetValueAsBool("musicfiles", "useAllImages",
                                                              btnUseFolderThumbs.Selected);
         btnTreatFolderAsAlbum.Selected = xmlreader.GetValueAsBool("musicfiles", "treatFolderAsAlbum", false);
@@ -109,7 +109,7 @@ namespace MediaPortal.GUI.Settings
                                                                      btnTreatFolderAsAlbum.Selected);
         btnMonitorShares.Selected = xmlreader.GetValueAsBool("musicfiles", "monitorShares", false);
         btnUpdateSinceLastImport.Selected = xmlreader.GetValueAsBool("musicfiles", "updateSinceLastImport", true);
-        _updateSinceLastImport = String.Format("Only update files after {0}",
+        _updateSinceLastImport = String.Format(GUILocalizeStrings.Get(300232),
                                                            xmlreader.GetValueAsString("musicfiles", "lastImport",
                                                                                       "1900-01-01 00:00:00"));
         btnStripartistprefixes.Selected = xmlreader.GetValueAsBool("musicfiles", "stripartistprefixes", false);
@@ -124,7 +124,7 @@ namespace MediaPortal.GUI.Settings
         
         foreach (GUIListItem item in settingsSharesHelper.ShareListControl)
         {
-          string driveLetter = FolderInfo(item).Folder.Substring(0, 3).ToUpper();
+          string driveLetter = FolderInfo(item).Folder.Substring(0, 3).ToUpperInvariant();
 
           if (driveLetter.StartsWith("\\\\") || Util.Utils.getDriveType(driveLetter) == 3 ||
               Util.Utils.getDriveType(driveLetter) == 4)
@@ -404,7 +404,7 @@ namespace MediaPortal.GUI.Settings
       // Now create a Settings Object with the Settings checked to pass to the Import
       MusicDatabaseSettings setting = new MusicDatabaseSettings();
       setting.CreateMissingFolderThumb = btnCreateMissingFolderThumbs.Selected;
-      setting.ExtractEmbeddedCoverArt = btnUseAllImages.Selected;
+      setting.ExtractEmbeddedCoverArt = btnExtractthumbs.Selected;
       setting.StripArtistPrefixes = btnStripartistprefixes.Selected;
       setting.TreatFolderAsAlbum = btnTreatFolderAsAlbum.Selected;
       setting.UseFolderThumbs = btnUseFolderThumbs.Selected;
@@ -427,7 +427,7 @@ namespace MediaPortal.GUI.Settings
 
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
-        _updateSinceLastImport = String.Format("Only update files after {0}",
+        _updateSinceLastImport = String.Format(GUILocalizeStrings.Get(300232),
                                                            xmlreader.GetValueAsString("musicfiles", "lastImport",
                                                                                       "1900-01-01 00:00:00"));
       }

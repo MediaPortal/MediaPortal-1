@@ -36,8 +36,12 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Castle.Windsor">
-      <HintPath>..\..\..\ExternalBinaries\Castle.Windsor.dll</HintPath>
+    <Reference Include="Castle.Core">
+      <HintPath>..\..\..\..\..\..\Packages\Castle.Core.3.2.2\lib\net40-client\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Windsor, Version=3.2.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Packages\Castle.Windsor.3.2.1\lib\net40\Castle.Windsor.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -80,18 +84,9 @@
       <Project>{4C2D9698-AF44-4157-99B6-48F5269F20CC}</Project>
       <Name>Entities</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\TVDatabase\TvBusinessLayer\TvBusinessLayer.csproj">
-      <Project>{58C35C9D-F18D-40F2-8024-24E50D01E9C5}</Project>
-      <Name>TvBusinessLayer</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj">
       <Project>{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}</Project>
       <Name>TvLibrary.Interfaces</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\..\TvLibrary.Utils\TvLibrary.Utils.csproj">
-      <Project>{954F9929-7FDA-4F59-88E3-FD2B9A7B6E6E}</Project>
-      <Name>TvLibrary.Utils</Name>
     </ProjectReference>
     <ProjectReference Include="..\PluginBase\PluginBase.csproj">
       <Project>{5EE20DC0-B22B-4BDB-828B-8DC5723A1873}</Project>
@@ -104,6 +99,9 @@
       <DependentUpon>ComSkipSetup.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

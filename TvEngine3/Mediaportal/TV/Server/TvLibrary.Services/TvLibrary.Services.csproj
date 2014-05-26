@@ -46,9 +46,6 @@
     <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Castle.Windsor">
-      <HintPath>..\..\ExternalBinaries\Castle.Windsor.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Management" />
@@ -80,6 +77,7 @@
     <Compile Include="CardManagement\CardHandler\Recorder.cs" />
     <Compile Include="CardManagement\CardHandler\TimeShifter.cs" />
     <Compile Include="CardManagement\CardHandler\TimeShifterBase.cs" />
+    <Compile Include="CardManagement\CardHandler\TimeShiftingEpgGrabber.cs" />
     <Compile Include="CardManagement\CardHandler\TvCardHandler.cs" />
     <Compile Include="CardManagement\CardHandler\UserManagement.cs" />
     <Compile Include="CardManagement\CardReservation\CardReservationHelper.cs" />
@@ -135,6 +133,7 @@
     <Compile Include="Services\ScheduleService.cs" />
     <Compile Include="Services\ServiceManager.cs" />
     <Compile Include="Services\SettingsService.cs" />
+    <Compile Include="Services\ThumbnailService.cs" />
     <Compile Include="Services\TvControllerService.cs" />
     <Compile Include="TsCopier.cs" />
     <Compile Include="TvCardContext.cs" />
@@ -181,7 +180,7 @@
     </ProjectReference>
     <ProjectReference Include="..\TVLibrary\TVLibrary.csproj">
       <Project>{59C2EBC8-0FEA-4B2E-B5D1-476347332331}</Project>
-      <Name>TVLibrary %28TVLibrary\TVLibrary%29</Name>
+      <Name>TVLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\TvService.Interfaces\TvService.Interfaces.csproj">
       <Project>{A2BFFBDD-3BEA-4B68-94F1-C34D2BE10AEB}</Project>

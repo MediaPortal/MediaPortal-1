@@ -72,45 +72,44 @@ namespace MediaPortal.Player
   {
     #region imports
 
-    [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe bool Vmr9Init(IVMR9PresentCallback callback, uint dwD3DDevice, IBaseFilter vmr9Filter,
                                                uint monitor);
 
-    [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void Vmr9Deinit();
 
-    [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void Vmr9SetDeinterlaceMode(Int16 mode);
 
-    [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void Vmr9SetDeinterlacePrefs(uint dwMethod);
 
-    [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe bool EvrInit(IVMR9PresentCallback callback, uint dwD3DDevice, 
-                                              ref IBaseFilter vmr9Filter, uint monitor, int monitorIdx);
                                               ref IBaseFilter vmr9Filter, uint monitor, int monitorIdx,
                                               bool disVsyncCorr, bool disMparCorr);
 
     //, uint dwWindow);
-    [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void EvrDeinit();
 
-    [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void EVRDrawStats(bool enable);
 
-    [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void EVRResetStatCounters();
 
-    [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void EVRNotifyRateChange(double pRate);
 
-    [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void EVRNotifyDVDMenuState(bool pIsInMenu);
 
-    [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe double EVRGetVideoFPS(int fpsSource);
 
-    [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void EVRUpdateDisplayFPS();
 
     #endregion
@@ -136,6 +135,7 @@ namespace MediaPortal.Player
 
     private PlaneScene _scene = null;
     private bool _useVmr9 = false;
+    private bool _inMenu = false;
     private IRender _renderFrame;
     private IBaseFilter _vmr9Filter = null;
     private int _videoHeight, _videoWidth;
@@ -209,6 +209,10 @@ namespace MediaPortal.Player
       set { _freeframeCounter = value; }
     }
 
+    public bool InMenu
+    {
+      get { return _inMenu; }
+    }
 
     /// <summary>
     /// returns the width of the video
@@ -379,12 +383,17 @@ namespace MediaPortal.Player
 
       if (_useEvr)
       {
+        // Fix RDP Screen out of bound (force to use AdapterOrdinal to 0 if adapter number are out of bounds)
+        int AdapterOrdinal = GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal;
+        if (AdapterOrdinal >= Screen.AllScreens.Length)
+        {
+          AdapterOrdinal = Screen.AllScreens.Length - 1;
+          Log.Info("VMR9: adapter number out of bounds");
+        }
         if (GUIGraphicsContext.currentMonitorIdx != -1)
         {
-          EvrInit(_scene, (uint) upDevice.ToInt32(), ref _vmr9Filter, (uint) hMonitor.ToInt32(), GUIGraphicsContext.currentMonitorIdx);
           if ((OSInfo.OSInfo.Win7OrLater() &&
-               Screen.AllScreens[GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal].Primary) ||
-              OSInfo.OSInfo.Win8OrLater())
+               Screen.AllScreens[AdapterOrdinal].Primary) || OSInfo.OSInfo.Win8OrLater())
           {
             EvrInit(_scene, (uint) upDevice.ToInt32(), ref _vmr9Filter, (uint) hMonitor.ToInt32(),
                     GUIGraphicsContext.currentMonitorIdx, false, false);
@@ -394,25 +403,23 @@ namespace MediaPortal.Player
             EvrInit(_scene, (uint) upDevice.ToInt32(), ref _vmr9Filter, (uint) hMonitor.ToInt32(),
                     GUIGraphicsContext.currentMonitorIdx, true, true);
             Log.Debug("VMR9: force disable vsync and bias correction for Win7 or lower - current primary is : {0}",
-                      Screen.AllScreens[GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal].Primary);
+                      Screen.AllScreens[AdapterOrdinal].Primary);
           }
         }
         else
         {
-          EvrInit(_scene, (uint)upDevice.ToInt32(), ref _vmr9Filter, (uint)hMonitor.ToInt32(), GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal);
           if ((OSInfo.OSInfo.Win7OrLater() &&
-               Screen.AllScreens[GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal].Primary) ||
-              OSInfo.OSInfo.Win8OrLater())
+               Screen.AllScreens[AdapterOrdinal].Primary) || OSInfo.OSInfo.Win8OrLater())
           {
             EvrInit(_scene, (uint) upDevice.ToInt32(), ref _vmr9Filter, (uint) hMonitor.ToInt32(),
-                    GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal, false, false);
+                    AdapterOrdinal, false, false);
           }
           else
           {
             EvrInit(_scene, (uint) upDevice.ToInt32(), ref _vmr9Filter, (uint) hMonitor.ToInt32(),
-                    GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal, true, true);
+                    AdapterOrdinal, true, true);
             Log.Debug("VMR9: force disable vsync and bias correction for Win7 or lower - current primary is : {0}",
-                      Screen.AllScreens[GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal].Primary);
+                      Screen.AllScreens[AdapterOrdinal].Primary);
           }
         }
         hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "Enhanced Video Renderer"));
@@ -420,11 +427,9 @@ namespace MediaPortal.Player
       }
       else
       {
-        _vmr9Filter = (IBaseFilter)new VideoMixingRenderer9();
         _vmr9Filter = (IBaseFilter) new VideoMixingRenderer9();
         Log.Info("VMR9: added Video Mixing Renderer 9 to graph");
 
-        Vmr9Init(_scene, (uint)upDevice.ToInt32(), _vmr9Filter, (uint)hMonitor.ToInt32());
         Vmr9Init(_scene, (uint) upDevice.ToInt32(), _vmr9Filter, (uint) hMonitor.ToInt32());
         hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "Video Mixing Renderer 9"));
       }
@@ -591,6 +596,7 @@ namespace MediaPortal.Player
     public void EVRSetDVDMenuState(bool isInDVDMenu)
     {
       EVRNotifyDVDMenuState(isInDVDMenu);
+      _inMenu = isInDVDMenu;
     }
 
     /// <summary>

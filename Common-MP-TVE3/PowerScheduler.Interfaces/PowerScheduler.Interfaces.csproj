@@ -111,4 +111,10 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common.Utils\Common.Utils.csproj">
+      <Project>{F6EDA1F3-3DCD-43F4-8A90-E32DA70C8227}</Project>
+      <Name>Common.Utils</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>

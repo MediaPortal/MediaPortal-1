@@ -42,7 +42,7 @@ namespace Mediaportal.TV.TvPlugin
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\settings_tvEpg.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\settings_tvEpg.xml"));
     }
 
     protected override void OnPageLoad()
@@ -53,7 +53,7 @@ namespace Mediaportal.TV.TvPlugin
 
     private void Update()
     {
-      listChannels.Clear();      
+      listChannels.Clear();
       IEnumerable<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels();
       foreach (Channel chan in channels)
       {

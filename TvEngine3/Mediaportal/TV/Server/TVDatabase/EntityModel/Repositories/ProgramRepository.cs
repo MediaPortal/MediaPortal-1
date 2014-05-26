@@ -9,7 +9,6 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 {
   public class ProgramRepository : GenericRepository<Model>, IProgramRepository
   {
-
     public ProgramRepository()
     {
     }
@@ -19,28 +18,24 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     {
     }
 
-
     public ProgramRepository(Model context)
       : base(context)
     {
-
     }
 
     public IQueryable<Program> GetNowProgramsForChannelGroup(int idGroup)
     {
-      IQueryable<int> channels = GetQuery<Channel>(c => c.GroupMaps.Any(g => g.IdGroup == idGroup)).Select(g=>g.IdChannel);
+      IQueryable<int> channels = GetQuery<Channel>(c => c.GroupMaps.Any(g => g.IdGroup == idGroup)).Select(g => g.IdChannel);
 
       DateTime now = DateTime.Now;
-      IQueryable<Program> programs = GetQuery<Program>().Where(p =>
-                      channels.Contains(p.IdChannel) &&
-                      p.EndTime > now && p.StartTime <= now);
+      IQueryable<Program> programs = GetQuery<Program>().Where(p => channels.Contains(p.IdChannel) && p.EndTime > now && p.StartTime <= now);
       return programs;
     }
 
     public IQueryable<Program> GetNextProgramsForChannelGroup(int idGroup)
     {
       IQueryable<int> channels = GetQuery<Channel>(c => c.GroupMaps.Any(g => g.IdGroup == idGroup)).Select(g => g.IdChannel);
-      DateTime now = DateTime.Now;      
+      DateTime now = DateTime.Now;
 
       var q = GetQuery<Program>().Where(p =>
             channels.Contains(p.IdChannel) && p.StartTime > now)
@@ -50,11 +45,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
           idChannel = pg.Key,
           minStartTime = pg.Min(p => p.StartTime)
         });
-      IQueryable<Program> programs =
-              GetQuery<Program>().Where(p =>
-                  q.Any(pmin =>
-                    p.IdChannel == pmin.idChannel &&
-                    p.StartTime == pmin.minStartTime));
+      IQueryable<Program> programs = GetQuery<Program>().Where(p => q.Any(pmin => p.IdChannel == pmin.idChannel && p.StartTime == pmin.minStartTime));
 
       return programs;
     }
@@ -117,7 +108,15 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
         }
         else if (startsWith)
         {
-          query = query.Where(p => p.Title.StartsWith(searchCriteria));
+          if (searchCriteria == "[0-9]")
+          {
+            query = query.Where(p => p.Title.StartsWith("0") || p.Title.StartsWith("1") || p.Title.StartsWith("2") || p.Title.StartsWith("3") || p.Title.StartsWith("4")
+                                || p.Title.StartsWith("5") || p.Title.StartsWith("6") || p.Title.StartsWith("7") || p.Title.StartsWith("8") || p.Title.StartsWith("9"));
+          }
+          else
+          {
+            query = query.Where(p => p.Title.StartsWith(searchCriteria));
+          }
         }
         else
         {
@@ -125,7 +124,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
         }
       }
 
-      return query.OrderBy(p => p.Title).OrderBy(p => p.StartTime);
+      return query.OrderBy(p => p.Title).ThenBy(p => p.StartTime);
     }
 
     public IQueryable<Program> GetProgramsByCategory(IQueryable<Program> query, string searchCriteria, StringComparisonEnum stringComparison)
@@ -155,8 +154,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
           query = query.Where(p => p.ProgramCategory.Category.EndsWith(searchCriteria));
         }
       }
-
-      return query.OrderBy(p => p.Title).OrderBy(p => p.StartTime);
+      return query.OrderBy(p => p.Title).ThenBy(p => p.StartTime);
     }
 
     public IQueryable<Program> GetProgramsByDescription(IQueryable<Program> query, string searchCriteria, StringComparisonEnum stringComparison)
@@ -187,7 +185,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
         }
       }
 
-      return query.OrderBy(p => p.Description).OrderBy(p => p.StartTime);
+      return query.OrderBy(p => p.Description).ThenBy(p => p.StartTime);
     }
 
     public IQueryable<Program> GetProgramsByTimesInterval(DateTime startTime, DateTime endTime)
@@ -201,21 +199,16 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       return programsByTimesInterval;
     }
 
-
-
     public IQueryable<Program> GetProgramsByStartEndTimes(DateTime startTime, DateTime endTime)
-    {      
+    {
       var query = GetQuery<Program>(p => p.Channel.VisibleInGuide && p.StartTime < endTime && p.EndTime > startTime);
       return query;
     }
 
     public IQueryable<Program> IncludeAllRelations(IQueryable<Program> query)
     {
-      var includeRelations = query.Include(p => p.ProgramCategory)
-        .Include(p => p.Channel);
-
+      var includeRelations = query.Include(p => p.ProgramCategory).Include(p => p.Channel);
       return includeRelations;
     }
-
   }
 }

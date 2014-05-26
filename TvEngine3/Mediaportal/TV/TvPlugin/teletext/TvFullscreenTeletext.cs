@@ -46,14 +46,14 @@ namespace Mediaportal.TV.TvPlugin.Teletext
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\myfsteletext.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\myfsteletext.xml"));
     }
 
     protected override void OnPageDestroy(int newWindowId)
     {
       SaveSettings();
       Join();
-      TVHome.Card.GrabTeletext = false;
+      // TODO reimplement in TV plugin library TVHome.Card.GrabTeletext = false;
       GUILayerManager.UnRegisterLayer(this);
       GUIGraphicsContext.IsFullScreenVideo = _isFullScreenVideo;
       base.OnPageDestroy(newWindowId);
@@ -123,8 +123,4 @@ namespace Mediaportal.TV.TvPlugin.Teletext
 
     #endregion
   }
-
-  // class
 }
-
-// namespace

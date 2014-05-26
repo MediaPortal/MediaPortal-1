@@ -19,6 +19,8 @@
 #endregion
 
 using DirectShowLib.BDA;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Enum;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Struct;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
@@ -29,16 +31,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
   /// <summary>
   /// An implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> for TechniSat cable tuners with B2C2 chipsets and WDM drivers.
   /// </summary>
-  public class TunerB2c2Cable : TunerB2c2Base
+  internal class TunerB2c2Cable : TunerB2c2Base
   {
     /// <summary>
     /// Initialise a new instance of the <see cref="TunerB2c2Cable"/> class.
     /// </summary>
     /// <param name="info">The B2C2-specific information (<see cref="DeviceInfo"/>) about the tuner.</param>
     public TunerB2c2Cable(DeviceInfo info)
-      : base(info)
+      : base(info, CardType.DvbC)
     {
-      _tunerType = CardType.DvbC;
     }
 
     #region tuning
@@ -57,7 +58,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     /// Actually tune to a channel.
     /// </summary>
     /// <param name="channel">The channel to tune to.</param>
-    protected override void PerformTuning(IChannel channel)
+    public override void PerformTuning(IChannel channel)
     {
       this.LogDebug("B2C2 cable: set tuning parameters");
       DVBCChannel dvbcChannel = channel as DVBCChannel;
@@ -72,27 +73,26 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       hr = _interfaceTuner.SetSymbolRate(dvbcChannel.SymbolRate);
       HResult.ThrowException(hr, "Failed to set symbol rate.");
 
-      B2c2Modulation modulation = B2c2Modulation.Qam64;
+      Modulation modulation = Modulation.Qam64;
       switch (dvbcChannel.ModulationType)
       {
         case ModulationType.Mod16Qam:
-          modulation = B2c2Modulation.Qam16;
+          modulation = Modulation.Qam16;
           break;
         case ModulationType.Mod32Qam:
-          modulation = B2c2Modulation.Qam32;
+          modulation = Modulation.Qam32;
           break;
         case ModulationType.Mod128Qam:
-          modulation = B2c2Modulation.Qam128;
+          modulation = Modulation.Qam128;
           break;
         case ModulationType.Mod256Qam:
-          modulation = B2c2Modulation.Qam256;
+          modulation = Modulation.Qam256;
           break;
       }
       hr = _interfaceTuner.SetModulation(modulation);
       HResult.ThrowException(hr, "Failed to set modulation.");
 
-      this.LogDebug("B2C2 cable: apply tuning parameters");
-      HResult.ThrowException(_interfaceTuner.SetTunerStatus(), "Failed to apply tuning parameters.");
+      base.PerformTuning(channel);
     }
 
     #endregion

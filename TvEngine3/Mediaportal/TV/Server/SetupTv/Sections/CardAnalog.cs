@@ -451,9 +451,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         temp.VideoSource = CaptureSourceVideo.Tuner;
         temp.AudioSource = CaptureSourceAudio.Tuner;
         temp.Country = countries.Countries[mpComboBoxCountry.SelectedIndex];
-        
+        temp.ChannelNumber = 1;
         temp.MediaType = MediaTypeEnum.TV;
-        TvResult tuneResult = ServiceAgents.Instance.ControllerServiceAgent.Tune(user.Name, user.CardId, out user, temp, -1);
+        TvResult tuneResult = ServiceAgents.Instance.ControllerServiceAgent.Scan(user.Name, user.CardId, out user, temp, -1);
         if (tuneResult == TvResult.SWEncoderMissing)
         {
           this.LogError("analog: failed to scan, missing software encoder");
@@ -544,22 +544,22 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             continue;
           }
 
-          channel = (AnalogChannel)channels[0];
-          if (channel.Name == "")
-            channel.Name = String.Format(channel.ChannelNumber.ToString());
-          if (UpdateDatabase(card, channel))
+          foreach (IChannel c in channels)
           {
-            line = String.Format("channel:{0} source:{1} : Channel update found - {2}", channel.ChannelNumber,
-                                 mpComboBoxSource.SelectedItem, channel.Name);
-            channelsUpdated++;
+            if (UpdateDatabase(card, c))
+            {
+              line = String.Format("channel:{0} source:{1} : Channel update found - {2}", channel.ChannelNumber,
+                                   mpComboBoxSource.SelectedItem, c.Name);
+              channelsUpdated++;
+            }
+            else
+            {
+              line = String.Format("channel:{0} source:{1} : New channel found - {2}", channel.ChannelNumber,
+                                   mpComboBoxSource.SelectedItem, c.Name);
+              channelsNew++;
+            }
+            item.Text = line;
           }
-          else
-          {
-            line = String.Format("channel:{0} source:{1} : New channel found - {2}", channel.ChannelNumber,
-                                 mpComboBoxSource.SelectedItem, channel.Name);
-            channelsNew++;
-          }
-          item.Text = line;
         }
       }
       catch (TvExceptionSWEncoderMissing)
@@ -609,7 +609,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (checkBoxNoMerge.Checked)
       {
         dbChannel = ChannelFactory.CreateChannel(channel.Name);
-        ChannelFactory.CreateChannel(channel.Name);
+        AnalogChannel analogChannel = channel as AnalogChannel;
+        if (analogChannel != null)
+        {
+          dbChannel.SortOrder = analogChannel.ChannelNumber;
+          dbChannel.ChannelNumber = analogChannel.ChannelNumber;
+        }
       }
       else
       {
@@ -629,7 +634,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         }
       }
       dbChannel.MediaType = (int)channel.MediaType;
-      ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
+      dbChannel = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
+      dbChannel.AcceptChanges();
       ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, channel);
       MappingHelper.AddChannelToCard(dbChannel, card, false);
 
@@ -684,7 +690,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         radioChannel.MediaType = MediaTypeEnum.Radio;
         radioChannel.VideoSource = CaptureSourceVideo.Tuner;
         radioChannel.AudioSource = CaptureSourceAudio.Automatic;
-        // TODO this check won't work
+        // TODO this doesn't actually check FM radio support (not all analog tuners support both TV and FM radio)
         if (!ServiceAgents.Instance.ControllerServiceAgent.CanTune(_cardId, radioChannel))
         {
           MessageBox.Show(this, "This tuner does not support radio.");
@@ -777,42 +783,49 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           item.EnsureVisible();
           IUser user = new User();
           user.CardId = _cardId;
-          TvResult tuneResult = ServiceAgents.Instance.ControllerServiceAgent.Tune(user.Name, user.CardId, out user, channel, -1);
-          if (tuneResult == TvResult.SWEncoderMissing)
+          if (percent == 0)
           {
-            this.LogError("analog: failed to scan, missing software encoder");
-            MessageBox.Show("Please install supported software encoders for your tuner.", "Unable to scan", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            break;
+            TvResult tuneResult = ServiceAgents.Instance.ControllerServiceAgent.Scan(user.Name, user.CardId, out user, channel, -1);
+            if (tuneResult == TvResult.SWEncoderMissing)
+            {
+              this.LogError("analog: failed to scan, missing software encoder");
+              MessageBox.Show("Please install supported software encoders for your tuner.", "Unable to scan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+              break;
+            }
+            if (tuneResult == TvResult.GraphBuildingFailed)
+            {
+              this.LogError("analog: failed to scan, tuner loading failed");
+              MessageBox.Show("Failed to load the tuner. Your tuner is probably not supported. Please create a report in our forum.",
+                "Unable to scan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+              break;
+            }
+
+            // Successful tuning means we're guaranteed to have found the tuner capabilities.
+            // Now we can load the other settings.
+            ReCheckSettings();
+            UpdateStatus();
           }
-          if (tuneResult == TvResult.GraphBuildingFailed)
-          {
-            this.LogError("analog: failed to scan, tuner loading failed");
-            MessageBox.Show("Failed to load the tuner. Your tuner is probably not supported. Please create a report in our forum.",
-              "Unable to scan", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            break;
-          }
+          IChannel[] channels = ServiceAgents.Instance.ControllerServiceAgent.Scan(_cardId, channel);
+
           UpdateStatus();
 
-          // Successful tuning means we're guaranteed to have found the tuner capabilities.
-          // Now we can load the other settings.
-          ReCheckSettings();
-
           Thread.Sleep(2000);
-          if (SignalStrength(sensitivity) == 100)
+          if (channels != null && channels.Length >= 0 && SignalStrength(sensitivity) >= 100)
           {
-            channel.Name = String.Format("{0}", freq);
-            if (UpdateDatabase(card, channel))
+            foreach (IChannel c in channels)
             {
-              line = String.Format("frequence:{0} MHz : Channel update found - {1}", freqMHz.ToString("f2"), channel.Name);
-              channelsUpdated++;
+              if (UpdateDatabase(card, c))
+              {
+                line = String.Format("frequence:{0} MHz : Channel update found - {1}", freqMHz.ToString("f2"), c.Name);
+                channelsUpdated++;
+              }
+              else
+              {
+                line = String.Format("frequence:{0} MHz : New channel found - {1}", freqMHz.ToString("f2"), c.Name);
+                channelsNew++;
+              }
+              item.Text = line;
             }
-            else
-            {
-              line = String.Format("frequence:{0} MHz : New channel found - {1}", freqMHz.ToString("f2"), channel.Name);
-              channelsNew++;
-            }
-            item.Text = line;
-            freq += 300000;
           }
           else
           {

@@ -31,12 +31,11 @@ using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.ChannelLinkage;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.NetworkProvider;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Dvb;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
 {
@@ -44,7 +43,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
   /// A base implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> for tuners with BDA
   /// drivers.
   /// </summary>
-  public abstract class TunerBdaBase : TunerDirectShowBase
+  internal abstract class TunerBdaBase : TunerDirectShowBase
   {
     #region variables
 
@@ -69,7 +68,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// Enable or disable use of the MPEG 2 demultiplexer and BDA TIF. Compatibility with some tuners
     /// requires these filters to be connected into the graph.
     /// </summary>
-    private bool _addCompatibilityFilters = false;
+    private bool _addCompatibilityFilters = true;
 
     /// <summary>
     /// An infinite tee filter, used to fork the stream to the demultiplexer and TS writer/analyser.
@@ -111,11 +110,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// Initialise a new instance of the <see cref="TunerBdaBase"/> class.
     /// </summary>
     /// <param name="device">The <see cref="DsDevice"/> instance to encapsulate.</param>
-    /// <param name="externalId">The external identifier for the tuner.</param>
-    protected TunerBdaBase(DsDevice device, string externalId)
-      : base(device.Name, externalId)
+    /// <param name="externalId">The unique external identifier for the tuner.</param>
+    /// <param name="type">The tuner type.</param>
+    protected TunerBdaBase(DsDevice device, string externalId, CardType type)
+      : base(device.Name, externalId, type)
     {
       _deviceMain = device;
+      SetProductAndTunerInstanceIds(_deviceMain);
     }
 
     #endregion
@@ -127,9 +128,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     {
       base.ReloadConfiguration();
 
+      this.LogDebug("BDA base: reload configuration");
       bool save = false;
-      Card tuner = CardManagement.GetCard(_cardId, CardIncludeRelationEnum.None);
-      _networkProviderClsid = Guid.Empty; // specific network provider
+      Card tuner = CardManagement.GetCard(_tunerId, CardIncludeRelationEnum.None);
+      _networkProviderClsid = NetworkProviderClsid; // specific network provider
       if (tuner.NetProvider == (int)DbNetworkProvider.MediaPortal)
       {
         if (!File.Exists(PathManager.BuildAssemblyRelativePath("NetworkProvider.ax")))
@@ -167,9 +169,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// <summary>
     /// Tune to a specific channel.
     /// </summary>
-    /// <param name="subChannelId">The ID of the subchannel associated with the channel that is being tuned.</param>
+    /// <param name="subChannelId">The ID of the sub-channel associated with the channel that is being tuned.</param>
     /// <param name="channel">The channel to tune to.</param>
-    /// <returns>the subchannel associated with the tuned channel</returns>
+    /// <returns>the sub-channel associated with the tuned channel</returns>
     public override ITvSubChannel Tune(int subChannelId, IChannel channel)
     {
       ITvSubChannel subChannel = base.Tune(subChannelId, channel);
@@ -184,7 +186,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// Actually tune to a channel.
     /// </summary>
     /// <param name="channel">The channel to tune to.</param>
-    protected override void PerformTuning(IChannel channel)
+    public override void PerformTuning(IChannel channel)
     {
       int hr = (int)HResult.Severity.Success;
       if (_networkProviderClsid == typeof(MediaPortalNetworkProvider).GUID)
@@ -238,7 +240,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// <summary>
     /// Actually load the tuner.
     /// </summary>
-    protected override void PerformLoading()
+    public override void PerformLoading()
     {
       this.LogDebug("BDA base: perform loading");
       InitialiseGraph();
@@ -247,20 +249,27 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       int hr = (int)HResult.Severity.Success;
       if (_networkProviderClsid != typeof(MediaPortalNetworkProvider).GUID)
       {
-        // Some Microsoft network providers won't connect to the tuner filter
-        // unless you set a tuning space.
+        // Initialise the tuning space for Microsoft network providers.
         _tuningSpace = GetTuningSpace();
         if (_tuningSpace == null)
         {
           _tuningSpace = CreateTuningSpace();
         }
-        ITuner tuner = _filterNetworkProvider as ITuner;
-        if (tuner == null)
+
+        // Some specific Microsoft network providers won't connect to the tuner
+        // filter unless you set a tuning space first. This is not required for
+        // the generic network provider, which returns HRESULT 0x80070057
+        // (E_INVALIDARG).
+        if (_networkProviderClsid == NetworkProviderClsid)
         {
-          throw new TvException("Failed to find tuner interface on network provider.");
+          ITuner tuner = _filterNetworkProvider as ITuner;
+          if (tuner == null)
+          {
+            throw new TvException("Failed to find tuner interface on network provider.");
+          }
+          hr = tuner.put_TuningSpace(_tuningSpace);
+          HResult.ThrowException(hr, "Failed to apply tuning space on tuner.");
         }
-        hr = tuner.put_TuningSpace(_tuningSpace);
-        HResult.ThrowException(hr, "Failed to apply tuning space on tuner.");
       }
 
       AddMainComponentFilterToGraph();
@@ -271,7 +280,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       AddAndConnectCaptureFilterIntoGraph(ref lastFilter);
 
       // Check for and load extensions, adding any additional filters to the graph.
-      LoadPlugins(_filterMain, _graph, ref lastFilter);
+      LoadExtensions(_filterMain, ref lastFilter);
 
       // If using a Microsoft network provider and configured to do so, add an infinite
       // tee, MPEG 2 demultiplexer and transport information filter.
@@ -311,7 +320,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       else
       {
         filterName = "Specific Network Provider";
-        _networkProviderClsid = NetworkProviderClsid;
       }
       this.LogDebug("BDA base: using {0}", filterName);
       if (_networkProviderClsid == typeof(MediaPortalNetworkProvider).GUID)
@@ -484,9 +492,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
             string devicePath = device.DevicePath;
             string deviceName = device.Name;
             if (devicePath.Contains("root#system#") ||
-              (matchProductInstanceId && _productInstanceId != null && _productInstanceId.Equals(device.ProductInstanceIdentifier))
+              (matchProductInstanceId && _productInstanceId != null && !_productInstanceId.Equals(device.ProductInstanceIdentifier))
             )
             {
+              DevicesInUse.Instance.Remove(device);
               continue;
             }
             this.LogDebug("BDA base: try {0} {1}", deviceName, devicePath);
@@ -603,7 +612,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// <summary>
     /// Actually unload the tuner.
     /// </summary>
-    protected override void PerformUnloading()
+    public override void PerformUnloading()
     {
       this.LogDebug("BDA base: perform unloading");
       if (_graph != null)
@@ -652,7 +661,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// Actually update tuner signal status statistics.
     /// </summary>
     /// <param name="onlyUpdateLock"><c>True</c> to only update lock status.</param>
-    protected override void PerformSignalStatusUpdate(bool onlyUpdateLock)
+    public override void PerformSignalStatusUpdate(bool onlyUpdateLock)
     {
       if (_signalStatisticsInterfaces == null || _signalStatisticsInterfaces.Count == 0)
       {
@@ -839,374 +848,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
           return new List<PortalChannel>();
         }
       }
-    }
-
-    #endregion
-
-    #region EPG
-
-    /// <summary>
-    /// Start grabbing the epg
-    /// </summary>
-    public override void GrabEpg(BaseEpgGrabber callBack)
-    {
-      _epgGrabberCallBack = callBack;
-      this.LogDebug("dvb:grab epg...");
-      ITsEpgScanner epgGrabber = _filterTsWriter as ITsEpgScanner;
-      if (epgGrabber == null)
-      {
-        return;
-      }
-      epgGrabber.SetCallBack(callBack);
-      epgGrabber.GrabEPG();
-      epgGrabber.GrabMHW();
-      _epgGrabbing = true;
-    }
-
-    /// <summary>
-    /// Start grabbing the epg while timeshifting
-    /// </summary>
-    public override void GrabEpg()
-    {
-      if (_timeshiftingEpgGrabber.StartGrab())
-        GrabEpg(_timeshiftingEpgGrabber);
-    }
-
-    /// <summary>
-    /// Activates / deactivates the epg grabber
-    /// </summary>
-    /// <param name="value">Mode</param>
-    protected override void UpdateEpgGrabber(bool value)
-    {
-      if (_epgGrabbing && value == false)
-      {
-        if (_epgGrabberCallBack != null)
-        {
-          _epgGrabberCallBack.OnEpgCancelled();
-        }
-        (_filterTsWriter as ITsEpgScanner).Reset();
-      }
-      _epgGrabbing = value;
-    }
-
-    /// <summary>
-    /// Gets the UTC.
-    /// </summary>
-    /// <param name="val">The val.</param>
-    /// <returns></returns>
-    private static int getUTC(int val)
-    {
-      if ((val & 0xF0) >= 0xA0)
-        return 0;
-      if ((val & 0xF) >= 0xA)
-        return 0;
-      return ((val & 0xF0) >> 4) * 10 + (val & 0xF);
-    }
-
-    /// <summary>
-    /// Aborts grabbing the epg
-    /// </summary>
-    public override void AbortGrabbing()
-    {
-      this.LogDebug("dvb:abort grabbing epg");
-      ITsEpgScanner epgGrabber = _filterTsWriter as ITsEpgScanner;
-      if (epgGrabber != null)
-      {
-        epgGrabber.AbortGrabbing();
-      }
-      if (_timeshiftingEpgGrabber != null)
-      {
-        _timeshiftingEpgGrabber.OnEpgCancelled();
-      }
-    }
-
-    /// <summary>
-    /// Returns the EPG grabbed or null if epg grabbing is still busy
-    /// </summary>
-    public override List<EpgChannel> Epg
-    {
-      get
-      {
-        try
-        {
-          ITsEpgScanner epgGrabber = _filterTsWriter as ITsEpgScanner;
-          bool dvbReady, mhwReady;
-          epgGrabber.IsEPGReady(out dvbReady);
-          epgGrabber.IsMHWReady(out mhwReady);
-          if (dvbReady == false || mhwReady == false)
-            return null;
-          uint titleCount;
-          uint channelCount;
-          epgGrabber.GetMHWTitleCount(out titleCount);
-          mhwReady = titleCount > 10;
-          epgGrabber.GetEPGChannelCount(out channelCount);
-          dvbReady = channelCount > 0;
-          List<EpgChannel> epgChannels = new List<EpgChannel>();
-          this.LogInfo("dvb:mhw ready MHW {0} titles found", titleCount);
-          this.LogInfo("dvb:dvb ready.EPG {0} channels", channelCount);
-          if (mhwReady)
-          {
-            epgGrabber.GetMHWTitleCount(out titleCount);
-            for (int i = 0; i < titleCount; ++i)
-            {
-              uint id = 0;
-              uint programid = 0;
-              uint transportid = 0, networkid = 0, channelnr = 0, channelid = 0, themeid = 0, PPV = 0, duration = 0;
-              byte summaries = 0;
-              uint datestart = 0, timestart = 0;
-              uint tmp1 = 0, tmp2 = 0;
-              IntPtr ptrTitle, ptrProgramName;
-              IntPtr ptrChannelName, ptrSummary, ptrTheme;
-              epgGrabber.GetMHWTitle((ushort)i, ref id, ref tmp1, ref tmp2, ref channelnr, ref programid,
-                                               ref themeid, ref PPV, ref summaries, ref duration, ref datestart,
-                                               ref timestart, out ptrTitle, out ptrProgramName);
-              epgGrabber.GetMHWChannel(channelnr, ref channelid, ref networkid, ref transportid,
-                                                 out ptrChannelName);
-              epgGrabber.GetMHWSummary(programid, out ptrSummary);
-              epgGrabber.GetMHWTheme(themeid, out ptrTheme);
-              string channelName = DvbTextConverter.Convert(ptrChannelName);
-              string title = DvbTextConverter.Convert(ptrTitle);
-              string summary = DvbTextConverter.Convert(ptrSummary);
-              string theme = DvbTextConverter.Convert(ptrTheme);
-              if (channelName == null)
-                channelName = string.Empty;
-              if (title == null)
-                title = string.Empty;
-              if (summary == null)
-                summary = string.Empty;
-              if (theme == null)
-                theme = string.Empty;
-              channelName = channelName.Trim();
-              title = title.Trim();
-              summary = summary.Trim();
-              theme = theme.Trim();
-              EpgChannel epgChannel = null;
-              foreach (EpgChannel chan in epgChannels)
-              {
-                DVBBaseChannel dvbChan = (DVBBaseChannel)chan.Channel;
-                if (dvbChan.NetworkId == networkid && dvbChan.TransportId == transportid &&
-                    dvbChan.ServiceId == channelid)
-                {
-                  epgChannel = chan;
-                  break;
-                }
-              }
-              if (epgChannel == null)
-              {
-                // We need to use a matching channel type per card, because tuning details will be looked up with cardtype as filter.
-                DVBBaseChannel channel = (DVBBaseChannel)_currentTuningDetail.Clone();
-                channel.NetworkId = (int)networkid;
-                channel.TransportId = (int)transportid;
-                channel.ServiceId = (int)channelid;
-                epgChannel = new EpgChannel { Channel = channel };
-                //this.LogInfo("dvb: start filtering channel NID {0} TID {1} SID{2}", dvbChan.NetworkId, dvbChan.TransportId, dvbChan.ServiceId);
-                if (FilterOutEPGChannel((ushort)networkid, (ushort)transportid, (ushort)channelid) == false)
-                {
-                  //this.LogInfo("dvb: Not Filtered channel NID {0} TID {1} SID{2}", dvbChan.NetworkId, dvbChan.TransportId, dvbChan.ServiceId);
-                  epgChannels.Add(epgChannel);
-                }
-              }
-              uint d1 = datestart;
-              uint m = timestart & 0xff;
-              uint h1 = (timestart >> 16) & 0xff;
-              DateTime dayStart = DateTime.Now;
-              dayStart =
-                dayStart.Subtract(new TimeSpan(1, dayStart.Hour, dayStart.Minute, dayStart.Second, dayStart.Millisecond));
-              int day = (int)dayStart.DayOfWeek;
-              DateTime programStartTime = dayStart;
-              int minVal = (int)((d1 - day) * 86400 + h1 * 3600 + m * 60);
-              if (minVal < 21600)
-                minVal += 604800;
-              programStartTime = programStartTime.AddSeconds(minVal);
-              EpgProgram program = new EpgProgram(programStartTime, programStartTime.AddMinutes(duration));
-              EpgLanguageText epgLang = new EpgLanguageText("ALL", title, summary, theme, 0, string.Empty, -1);
-              program.Text.Add(epgLang);
-              epgChannel.Programs.Add(program);
-            }
-            for (int i = 0; i < epgChannels.Count; ++i)
-            {
-              epgChannels[i].Sort();
-            }
-            // free the epg infos in TsWriter so that the mem used gets released 
-            epgGrabber.Reset();
-            return epgChannels;
-          }
-
-          if (dvbReady)
-          {
-            ushort networkid = 0;
-            ushort transportid = 0;
-            ushort serviceid = 0;
-            for (uint x = 0; x < channelCount; ++x)
-            {
-              epgGrabber.GetEPGChannel(x, ref networkid, ref transportid, ref serviceid);
-              // We need to use a matching channel type per card, because tuning details will be looked up with cardtype as filter.
-              DVBBaseChannel channel = (DVBBaseChannel)_currentTuningDetail.Clone();
-              channel.NetworkId = networkid;
-              channel.TransportId = transportid;
-              channel.ServiceId = serviceid;
-              EpgChannel epgChannel = new EpgChannel { Channel = channel };
-              uint eventCount;
-              epgGrabber.GetEPGEventCount(x, out eventCount);
-              for (uint i = 0; i < eventCount; ++i)
-              {
-                uint start_time_MJD, start_time_UTC, duration, languageCount;
-                string title, description;
-                IntPtr ptrGenre;
-                int starRating;
-                IntPtr ptrClassification;
-
-                epgGrabber.GetEPGEvent(x, i, out languageCount, out start_time_MJD, out start_time_UTC,
-                                                 out duration, out ptrGenre, out starRating, out ptrClassification);
-                string genre = DvbTextConverter.Convert(ptrGenre);
-                string classification = DvbTextConverter.Convert(ptrClassification);
-
-                if (starRating < 1 || starRating > 7)
-                  starRating = 0;
-
-                int duration_hh = getUTC((int)((duration >> 16)) & 255);
-                int duration_mm = getUTC((int)((duration >> 8)) & 255);
-                int duration_ss = 0; //getUTC((int) (duration )& 255);
-                int starttime_hh = getUTC((int)((start_time_UTC >> 16)) & 255);
-                int starttime_mm = getUTC((int)((start_time_UTC >> 8)) & 255);
-                int starttime_ss = 0; //getUTC((int) (start_time_UTC )& 255);
-
-                if (starttime_hh > 23)
-                  starttime_hh = 23;
-                if (starttime_mm > 59)
-                  starttime_mm = 59;
-                if (starttime_ss > 59)
-                  starttime_ss = 59;
-
-                // DON'T ENABLE THIS. Some entries can be indeed >23 Hours !!!
-                //if (duration_hh > 23) duration_hh = 23;
-                if (duration_mm > 59)
-                  duration_mm = 59;
-                if (duration_ss > 59)
-                  duration_ss = 59;
-
-                // convert the julian date
-                int year = (int)((start_time_MJD - 15078.2) / 365.25);
-                int month = (int)((start_time_MJD - 14956.1 - (int)(year * 365.25)) / 30.6001);
-                int day = (int)(start_time_MJD - 14956 - (int)(year * 365.25) - (int)(month * 30.6001));
-                int k = (month == 14 || month == 15) ? 1 : 0;
-                year += 1900 + k; // start from year 1900, so add that here
-                month = month - 1 - k * 12;
-                int starttime_y = year;
-                int starttime_m = month;
-                int starttime_d = day;
-                if (year < 2000)
-                  continue;
-
-                try
-                {
-                  DateTime dtUTC = new DateTime(starttime_y, starttime_m, starttime_d, starttime_hh, starttime_mm,
-                                                starttime_ss, 0);
-                  DateTime dtStart = dtUTC.ToLocalTime();
-                  if (dtStart < DateTime.Now.AddDays(-1) || dtStart > DateTime.Now.AddMonths(2))
-                    continue;
-                  DateTime dtEnd = dtStart.AddHours(duration_hh);
-                  dtEnd = dtEnd.AddMinutes(duration_mm);
-                  dtEnd = dtEnd.AddSeconds(duration_ss);
-                  EpgProgram epgProgram = new EpgProgram(dtStart, dtEnd);
-                  //EPGEvent newEvent = new EPGEvent(genre, dtStart, dtEnd);
-                  for (int z = 0; z < languageCount; ++z)
-                  {
-                    uint languageId;
-                    IntPtr ptrTitle;
-                    IntPtr ptrDesc;
-                    int parentalRating;
-                    epgGrabber.GetEPGLanguage(x, i, (uint)z, out languageId, out ptrTitle, out ptrDesc,
-                                                        out parentalRating);
-                    string language = string.Empty;
-                    language += (char)((languageId >> 16) & 0xff);
-                    language += (char)((languageId >> 8) & 0xff);
-                    language += (char)((languageId) & 0xff);
-                    title = DvbTextConverter.Convert(ptrTitle);
-                    description = DvbTextConverter.Convert(ptrDesc);
-                    if (title == null)
-                      title = string.Empty;
-                    if (description == null)
-                      description = string.Empty;
-                    if (string.IsNullOrEmpty(language))
-                      language = string.Empty;
-                    if (genre == null)
-                      genre = string.Empty;
-                    if (classification == null)
-                      classification = string.Empty;
-                    title = title.Trim();
-                    description = description.Trim();
-                    language = language.Trim();
-                    genre = genre.Trim();
-                    EpgLanguageText epgLangague = new EpgLanguageText(language, title, description, genre, starRating,
-                                                                      classification, parentalRating);
-                    epgProgram.Text.Add(epgLangague);
-                  }
-                  epgChannel.Programs.Add(epgProgram);
-                }
-                catch (Exception ex)
-                {
-                  this.LogError(ex);
-                }
-              } //for (uint i = 0; i < eventCount; ++i)
-              if (epgChannel.Programs.Count > 0)
-              {
-                epgChannel.Sort();
-                //this.LogInfo("dvb: start filtering channel NID {0} TID {1} SID{2}", chan.NetworkId, chan.TransportId, chan.ServiceId);
-                if (FilterOutEPGChannel(networkid, transportid, serviceid) == false)
-                {
-                  //this.LogInfo("dvb: Not Filtered channel NID {0} TID {1} SID{2}", chan.NetworkId, chan.TransportId, chan.ServiceId);
-                  epgChannels.Add(epgChannel);
-                }
-              }
-            } //for (uint x = 0; x < channelCount; ++x)
-          }
-          // free the epg infos in TsWriter so that the mem used gets released 
-          epgGrabber.Reset();
-          return epgChannels;
-        }
-        catch (Exception ex)
-        {
-          this.LogError(ex);
-          return new List<EpgChannel>();
-        }
-      }
-    }
-
-    /// <summary>
-    /// Check if the EPG data found in a scan should not be kept.
-    /// </summary>
-    /// <remarks>
-    /// This function implements the logic to filter out data for services that are not on the same transponder.
-    /// </remarks>
-    /// <value><c>false</c> if the data should be kept, otherwise <c>true</c></value>
-    protected virtual bool FilterOutEPGChannel(ushort networkId, ushort transportStreamId, ushort serviceId)
-    {
-      bool setting = SettingsManagement.GetValue("generalGrapOnlyForSameTransponder", true);
-
-      if (!setting)
-      {
-        return false;
-      }
-
-      // The following code attempts to find a tuning detail for the tuner type (eg. a DVB-T tuning detail for
-      // a DVB-T tuner), and check if that tuning detail corresponds with the same transponder that the EPG was
-      // collected from (ie. the transponder that the tuner is currently tuned to). This logic will potentially
-      // fail for people that merge HD and SD tuning details that happen to be for the same tuner type.
-      Channel dbchannel = ChannelManagement.GetChannelByTuningDetail(networkId, transportStreamId, serviceId);
-      if (dbchannel == null)
-      {
-        return false;
-      }
-      foreach (TuningDetail detail in dbchannel.TuningDetails)
-      {
-        IChannel channel = ChannelManagement.GetTuningChannel(detail);
-        if (CanTune(channel))
-        {
-          return _currentTuningDetail.IsDifferentTransponder(channel);
-        }
-      }
-      return false;
     }
 
     #endregion

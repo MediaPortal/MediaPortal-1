@@ -31,10 +31,11 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbSky
 {
   /// <summary>
-  /// A class for handling conditional access, DiSEqC and remote controls for DVBSky tuners.
-  /// Actually with the exception of the GUIDs, the DVBSky conditional access interface is
-  /// identical to the NetUP conditional access interface, and their DiSEqC interface is identical
-  /// to the Conexant interface.
+  /// A class for handling conditional access, DiSEqC and remote controls for DVBSky tuners and
+  /// clones (eg. certain newer TechnoTrend and Mystique models). Actually with the exception of
+  /// the property set GUIDs, the DVBSky conditional access interface is [almost] identical to the
+  /// NetUP conditional access interface, and their DiSEqC interface is identical to the Conexant
+  /// interface.
   /// </summary>
   public class DvbSky : BaseCustomDevice, IConditionalAccessProvider, IConditionalAccessMenuActions, IDiseqcDevice
   {
@@ -170,7 +171,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbSky
             hr = _propertySet.Get(BDA_EXTENSION_PROPERTY_SET_GENERAL, (int)properties[i], instanceBuffer, INSTANCE_SIZE, dataBuffer, MAC_ADDRESS_LENGTH, out returnedByteCount);
             if (hr != (int)HResult.Severity.Success || returnedByteCount != MAC_ADDRESS_LENGTH)
             {
-              this.LogWarn("DVBSky: result = failure, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+              this.LogWarn("DVBSky: failed to read {0}, hr = 0x{1:x} ({2}), byte count = {3}", propertyNames[i], hr, HResult.GetDXErrorString(hr), returnedByteCount);
             }
             else
             {
@@ -459,12 +460,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbSky
     /// <summary>
     /// Set the menu call back delegate.
     /// </summary>
-    /// <param name="callBacks">The call back delegate.</param>
-    public void SetCallBacks(IConditionalAccessMenuCallBacks callBacks)
+    /// <param name="callBack">The call back delegate.</param>
+    public void SetMenuCallBack(IConditionalAccessMenuCallBack callBack)
     {
       if (_netUpInterface != null)
       {
-        _netUpInterface.SetCallBacks(callBacks);
+        _netUpInterface.SetMenuCallBack(callBack);
       }
     }
 
@@ -592,7 +593,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbSky
       }
       if (_isRemoteControlInterfaceOpen)
       {
-        this.LogWarn("DVBSky: interface is already open");
+        this.LogWarn("DVBSky: conditional access interface is already open");
         return true;
       }
 

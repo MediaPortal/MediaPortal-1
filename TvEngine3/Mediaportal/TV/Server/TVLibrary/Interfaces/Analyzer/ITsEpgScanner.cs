@@ -20,16 +20,30 @@
 
 using System;
 using System.Runtime.InteropServices;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
 {
+  /// <summary>
+  /// call back interface for the EPG
+  /// </summary>
+  [Guid("FFAB5D98-2309-4d90-9C71-E4B2F490CF5A"),
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  public interface IEpgCallBack
+  {
+    /// <summary>
+    /// Called when epg is received.
+    /// </summary>
+    /// <returns></returns>
+    [PreserveSig]
+    int OnEpgReceived();
+  }
+
   /// <summary>
   /// Interface to the epg grabber com object
   /// </summary>
   [Guid("5CDAC655-D9FB-4c71-8119-DD07FE86A9CE"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  public interface ITsEpgScanner
+  internal interface ITsEpgScanner
   {
     /// <summary>
     /// Start grabbing the EPG.

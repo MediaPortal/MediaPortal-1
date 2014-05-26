@@ -68,7 +68,7 @@ DECLARE_INTERFACE_(ITSFilter, IUnknown)
   STDMETHOD(TimeShiftStart)(THIS_ int handle )PURE;
   STDMETHOD(TimeShiftStop)(THIS_ int handle )PURE;
   STDMETHOD(TimeShiftReset)(THIS_ int handle )PURE;
-  STDMETHOD(TimeShiftGetBufferSize) (THIS_ int handle, long * size) PURE;
+  STDMETHOD(TimeShiftGetBufferSize) (THIS_ int handle, __int64 * size) PURE;
   STDMETHOD(TimeShiftSetPmtPid) (THIS_ int handle, int pmtPid,int serviceId,byte* pmtData,int pmtLength) PURE;
   STDMETHOD(TimeShiftPause) (THIS_ int handle, BYTE onOff) PURE;
   STDMETHOD(TimeShiftSetParams) (THIS_ int handle, int minFiles, int maxFiles, ULONG chunkSize) PURE;
@@ -182,7 +182,7 @@ public:
     STDMETHODIMP TimeShiftStart( int handle );
     STDMETHODIMP TimeShiftStop( int handle );
     STDMETHODIMP TimeShiftReset( int handle );
-    STDMETHODIMP TimeShiftGetBufferSize( int handle, long * size) ;
+    STDMETHODIMP TimeShiftGetBufferSize( int handle, __int64 * size) ;
     STDMETHODIMP TimeShiftSetPmtPid( int handle, int pmtPid, int serviceId,byte* pmtData,int pmtLength) ;
     STDMETHODIMP TimeShiftPause( int handle, BYTE onOff) ;
     STDMETHODIMP TimeShiftSetParams(int handle, int minFiles, int maxFiles, ULONG chunkSize) ;

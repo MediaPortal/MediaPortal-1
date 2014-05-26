@@ -31,14 +31,23 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
 {
   #region events
 
+  /// <summary>
+  /// A delegate for the enter menu action.
+  /// </summary>
+  /// <returns><c>true</c> if the menu is entered successfully, otherwise <c>false</c></returns>
   public delegate bool EnterMenuDelegate();
+
+  /// <summary>
+  /// A delegate for the close dialog action.
+  /// </summary>
+  /// <returns><c>true</c> if the dialog is closed successfully, otherwise <c>false</c></returns>
   public delegate bool CloseDialogDelegate(byte dialogNumber);
 
   #endregion
 
   /// <summary>
   /// This class parses HTML which is compliant with the OpenCable CCIF 2.0 I22 baseline HTML
-  /// profile, performing CA menu callbacks appropriately.
+  /// profile, performing CA menu call backs appropriately.
   /// </summary>
   public class CableCardMmiHandler
   {
@@ -109,9 +118,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
     /// <param name="subTitle">The menu sub-title.</param>
     /// <param name="footer">The menu footer.</param>
     /// <param name="applicationList">The raw/unparsed menu data.</param>
-    /// <param name="callBacks">The call back delegate.</param>
+    /// <param name="callBack">The call back delegate.</param>
     /// <returns><c>true</c> if the menu is presented successfully, otherwise <c>false</c></returns>
-    public bool EnterMenu(string title, string subTitle, string footer, byte[] applicationList, IConditionalAccessMenuCallBacks callBacks)
+    public bool EnterMenu(string title, string subTitle, string footer, byte[] applicationList, IConditionalAccessMenuCallBack callBack)
     {
       this.LogDebug("CableCARD MMI: enter menu, title = {0}, sub-title = {1}, footer = {2}", title, subTitle, footer);
       Reset();
@@ -155,18 +164,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
         return false;
       }
 
-      if (callBacks == null)
+      if (callBack == null)
       {
-        this.LogDebug("CableCARD MMI: menu call backs are not set");
+        this.LogDebug("CableCARD MMI: menu call back not set");
         return true;
       }
 
       _currentUri = ROOT_URI;
-      callBacks.OnCiMenu(title, subTitle, footer, applications.Count);
+      callBack.OnCiMenu(title, subTitle, footer, applications.Count);
       for (int i = 0; i < applications.Count; i++)
       {
         SmartCardApplication application = applications[i];
-        callBacks.OnCiMenuChoice(i, application.pbstrApplicationName);
+        callBack.OnCiMenuChoice(i, application.pbstrApplicationName);
         _currentMenuUris.Add(application.pbstrApplicationURL);
       }
       this.LogDebug("CableCARD MMI: result = true");
@@ -178,9 +187,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
     /// and present the corresponding menu.
     /// </summary>
     /// <param name="choice">The index of the selection as an unsigned byte value.</param>
-    /// <param name="callBacks">The call back delegate.</param>
+    /// <param name="callBack">The call back delegate.</param>
     /// <returns><c>true</c> if the selection is completed successfully, otherwise <c>false</c></returns>
-    public bool SelectEntry(byte choice, IConditionalAccessMenuCallBacks callBacks)
+    public bool SelectEntry(byte choice, IConditionalAccessMenuCallBack callBack)
     {
       this.LogDebug("CableCARD MMI: select entry, choice = {0}", choice);
 
@@ -190,9 +199,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
       {
         if (_uriHistoryStack.Count == 0)
         {
-          if (callBacks == null)
+          if (callBack == null)
           {
-            this.LogDebug("CableCARD MMI: menu call backs are not set");
+            this.LogDebug("CableCARD MMI: menu call back not set");
             return true;
           }
 
@@ -203,7 +212,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
             closingRootMenu = true;
           }
 
-          callBacks.OnCiCloseDisplay(0);
+          callBack.OnCiCloseDisplay(0);
 
           if (closingRootMenu)
           {
@@ -258,7 +267,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
         }
       }
 
-      toReturn = GenerateMenuFromUri(nextUri, callBacks);
+      toReturn = GenerateMenuFromUri(nextUri, callBack);
       if (toReturn)
       {
         if (choice == 0)
@@ -281,9 +290,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
     /// Initiated by the CableCARD.
     /// </remarks>
     /// <param name="data">The raw/unparsed dialog data.</param>
-    /// <param name="callBacks">The call back delegate.</param>
+    /// <param name="callBack">The call back delegate.</param>
     /// <returns><c>true</c> if the dialog is handled successfully, otherwise <c>false</c></returns>
-    public void HandleDialog(byte[] data, IConditionalAccessMenuCallBacks callBacks)
+    public void HandleDialog(byte[] data, IConditionalAccessMenuCallBack callBack)
     {
       this.LogDebug("CableCARD MMI: handle dialog");
 
@@ -300,13 +309,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
 
         if (action == MmiAction.Close)
         {
-          if (callBacks == null)
+          if (callBack == null)
           {
-            this.LogDebug("CableCARD MMI: menu call backs are not set");
+            this.LogDebug("CableCARD MMI: menu call back not set");
             return;
           }
 
-          callBacks.OnCiCloseDisplay(0);
+          callBack.OnCiCloseDisplay(0);
           if (_closeDialogDelegate == null)
           {
             this.LogWarn("CableCARD MMI: delegate not set, unable to close dialog");
@@ -335,10 +344,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
         return;
       }
 
-      GenerateMenuFromUri(uri, callBacks);
+      GenerateMenuFromUri(uri, callBack);
     }
 
-    private bool GenerateMenuFromUri(string uri, IConditionalAccessMenuCallBacks callBacks)
+    private bool GenerateMenuFromUri(string uri, IConditionalAccessMenuCallBack callBack)
     {
       this.LogDebug("CableCARD MMI: retrieving menu from URI {0}", uri);
 
@@ -436,16 +445,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
       }
 
       // Do call backs.
-      if (callBacks == null)
+      if (callBack == null)
       {
-        this.LogDebug("CableCARD MMI: menu call backs are not set");
+        this.LogDebug("CableCARD MMI: menu call back not set");
         return false;
       }
 
-      callBacks.OnCiMenu(entries[0], string.Empty, string.Empty, entries.Count - 1);
+      callBack.OnCiMenu(entries[0], string.Empty, string.Empty, entries.Count - 1);
       for (int i = 1; i < entries.Count; i++)
       {
-        callBacks.OnCiMenuChoice(i - 1, entries[i]);
+        callBack.OnCiMenuChoice(i - 1, entries[i]);
       }
       _currentMenuUris = entryUris;
       return true;

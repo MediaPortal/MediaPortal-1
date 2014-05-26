@@ -1,3 +1,4 @@
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
 namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
   partial class FormAnalogTuningDetail
@@ -28,24 +29,24 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     /// </summary>
     private void InitializeComponent()
     {
-      this.groupBox2 = new System.Windows.Forms.GroupBox();
-      this.label51 = new System.Windows.Forms.Label();
-      this.checkBoxVCR = new System.Windows.Forms.CheckBox();
-      this.label30 = new System.Windows.Forms.Label();
-      this.textBoxAnalogFrequency = new System.Windows.Forms.TextBox();
-      this.label29 = new System.Windows.Forms.Label();
-      this.textBoxChannel = new System.Windows.Forms.TextBox();
-      this.comboBoxCountry = new System.Windows.Forms.ComboBox();
-      this.label3 = new System.Windows.Forms.Label();
-      this.comboBoxInput = new System.Windows.Forms.ComboBox();
-      this.label2 = new System.Windows.Forms.Label();
-      this.label1 = new System.Windows.Forms.Label();
-      this.groupBox1 = new System.Windows.Forms.GroupBox();
-      this.comboBoxAudioSource = new System.Windows.Forms.ComboBox();
-      this.label52 = new System.Windows.Forms.Label();
-      this.comboBoxVideoSource = new System.Windows.Forms.ComboBox();
-      this.label28 = new System.Windows.Forms.Label();
-      this.label31 = new System.Windows.Forms.Label();
+      this.groupBox2 = new MPGroupBox();
+      this.label51 = new MPLabel();
+      this.checkBoxVCR = new MPCheckBox();
+      this.label30 = new MPLabel();
+      this.textBoxAnalogFrequency = new MPTextBox();
+      this.label29 = new MPLabel();
+      this.textBoxChannel = new MPTextBox();
+      this.comboBoxCountry = new MPComboBox();
+      this.label3 = new MPLabel();
+      this.comboBoxInput = new MPComboBox();
+      this.label2 = new MPLabel();
+      this.label1 = new MPLabel();
+      this.groupBox1 = new MPGroupBox();
+      this.comboBoxAudioSource = new MPComboBox();
+      this.label52 = new MPLabel();
+      this.comboBoxVideoSource = new MPComboBox();
+      this.label28 = new MPLabel();
+      this.label31 = new MPLabel();
       this.groupBox2.SuspendLayout();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
@@ -200,6 +201,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       this.comboBoxAudioSource.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxAudioSource.FormattingEnabled = true;
+      // TODO take values from the AudioSource enum
       this.comboBoxAudioSource.Items.AddRange(new object[] {
             "Automatic",
             "Tuner",
@@ -209,9 +211,12 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
             "Line In #1",
             "Line In #2",
             "Line In #3",
-            "SPDIF In #1",
-            "SPDIF In #2",
-            "SPDIF In #3"});
+            "S/PDIF #1",
+            "S/PDIF #2",
+            "S/PDIF #3",
+            "AES #1",
+            "AES #2",
+            "AES #3"});
       this.comboBoxAudioSource.Location = new System.Drawing.Point(93, 59);
       this.comboBoxAudioSource.Name = "comboBoxAudioSource";
       this.comboBoxAudioSource.Size = new System.Drawing.Size(258, 21);
@@ -230,6 +235,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       this.comboBoxVideoSource.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxVideoSource.FormattingEnabled = true;
+      // TODO take values from the VideoSource enum
       this.comboBoxVideoSource.Items.AddRange(new object[] {
             "Tuner",
             "CVBS #1",
@@ -297,23 +303,23 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
     #endregion
 
-    private System.Windows.Forms.GroupBox groupBox2;
-    private System.Windows.Forms.Label label51;
-    private System.Windows.Forms.CheckBox checkBoxVCR;
-    private System.Windows.Forms.Label label30;
-    private System.Windows.Forms.TextBox textBoxAnalogFrequency;
-    private System.Windows.Forms.Label label29;
-    private System.Windows.Forms.TextBox textBoxChannel;
-    private System.Windows.Forms.ComboBox comboBoxCountry;
-    private System.Windows.Forms.Label label3;
-    private System.Windows.Forms.ComboBox comboBoxInput;
-    private System.Windows.Forms.Label label2;
-    private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.GroupBox groupBox1;
-    private System.Windows.Forms.ComboBox comboBoxAudioSource;
-    private System.Windows.Forms.Label label52;
-    private System.Windows.Forms.ComboBox comboBoxVideoSource;
-    private System.Windows.Forms.Label label28;
-    private System.Windows.Forms.Label label31;
+    private MPGroupBox groupBox2;
+    private MPLabel label51;
+    private MPCheckBox checkBoxVCR;
+    private MPLabel label30;
+    private MPTextBox textBoxAnalogFrequency;
+    private MPLabel label29;
+    private MPTextBox textBoxChannel;
+    private MPComboBox comboBoxCountry;
+    private MPLabel label3;
+    private MPComboBox comboBoxInput;
+    private MPLabel label2;
+    private MPLabel label1;
+    private MPGroupBox groupBox1;
+    private MPComboBox comboBoxAudioSource;
+    private MPLabel label52;
+    private MPComboBox comboBoxVideoSource;
+    private MPLabel label28;
+    private MPLabel label31;
   }
 }

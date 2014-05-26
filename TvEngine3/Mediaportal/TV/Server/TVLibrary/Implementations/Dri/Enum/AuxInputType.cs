@@ -22,7 +22,7 @@ using System.Collections.Generic;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Enum
 {
-  public sealed class AuxInputType
+  internal sealed class AuxInputType
   {
     private readonly string _name;
     private static readonly IDictionary<string, AuxInputType> _values = new Dictionary<string, AuxInputType>();
@@ -51,9 +51,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Enum
       return false;
     }
 
+    public override int GetHashCode()
+    {
+      return _name.GetHashCode();
+    }
+
     public static ICollection<AuxInputType> Values
     {
-      get { return _values.Values; }
+      get
+      {
+        return _values.Values;
+      }
     }
 
     public static explicit operator AuxInputType(string name)

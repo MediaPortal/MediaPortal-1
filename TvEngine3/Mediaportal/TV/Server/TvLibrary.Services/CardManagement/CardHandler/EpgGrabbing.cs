@@ -47,7 +47,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     /// grabs the epg.
     /// </summary>
     /// <returns></returns>
-    public bool Start(BaseEpgGrabber grabber)
+    public bool Start(IEpgGrabberCallBack grabber)
     {
       this.LogInfo("EpgGrabbing: Start");
       try
@@ -61,7 +61,12 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         {
           return false;
         }
-        _cardHandler.Card.GrabEpg(grabber);
+        IEpgGrabber epgGrabber = _cardHandler.Card.EpgGrabberInterface;
+        if (epgGrabber == null)
+        {
+          return true;
+        }
+        epgGrabber.GrabEpg(_cardHandler.Card.CurrentTuningDetail, grabber);
         return true;
       }
       catch (Exception ex)
@@ -83,31 +88,17 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         {
           return;
         }
-        _cardHandler.Card.AbortGrabbing();
-        _cardHandler.Card.IsEpgGrabbing = false;
+        IEpgGrabber epgGrabber = _cardHandler.Card.EpgGrabberInterface;
+        if (epgGrabber != null)
+        {
+          epgGrabber.AbortGrabbing();
+        }
       }
       catch (Exception ex)
       {
         this.LogError(ex);
       }
     }
-
-    /// <summary>
-    /// Gets the epg.
-    /// </summary>
-    /// <value>The epg.</value>
-    public List<EpgChannel> Epg
-    {
-      get
-      {
-        if (_cardHandler.DataBaseCard.Enabled == false)
-        {
-          return new List<EpgChannel>();
-        }
-        return _cardHandler.Card.Epg;
-      }
-    }
-
 
     /// <summary>
     /// Returns if the card is grabbing the epg or not
@@ -123,8 +114,13 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
           {
             return false;
           }
-         
-          return _cardHandler.Card.IsEpgGrabbing;
+
+          IEpgGrabber epgGrabber = _cardHandler.Card.EpgGrabberInterface;
+          if (epgGrabber != null)
+          {
+            return epgGrabber.IsEpgGrabbing;
+          }
+          return false;
         }
         catch (Exception ex)
         {
@@ -147,7 +143,6 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       {
         _cardHandler.Card.FreeSubChannel(recentSubChannelId);        
       }      
-      _cardHandler.Card.IsEpgGrabbing = false;
     }
   }
 }

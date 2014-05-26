@@ -79,7 +79,7 @@ void CChannelInfo::Copy(const CChannelInfo &info)
   IsHighDefinition = info.IsHighDefinition;
   IsEncrypted = info.IsEncrypted;
   IsRunning = info.IsRunning;
-  IsOtherMux = info.IsOtherMux;
+  IsOtherTransportStream = info.IsOtherTransportStream;
   PmtPid = info.PmtPid;
   PreviousOriginalNetworkId = info.PreviousOriginalNetworkId;
   PreviousTransportStreamId = info.PreviousTransportStreamId;
@@ -101,7 +101,7 @@ void CChannelInfo::Reset()
   IsHighDefinition = false;
   IsEncrypted = false;
   IsRunning = false;
-  IsOtherMux = false;
+  IsOtherTransportStream = false;
   PmtPid = 0;
   PreviousOriginalNetworkId = 0;
   PreviousTransportStreamId = 0;

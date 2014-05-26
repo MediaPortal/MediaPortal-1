@@ -36,7 +36,7 @@ using UPnP.Infrastructure.Utils;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Upnp.Service
 {
-  public class ServiceBase : IDisposable
+  internal class ServiceBase : IDisposable
   {
     protected CpDevice _device = null;
     protected CpService _service = null;

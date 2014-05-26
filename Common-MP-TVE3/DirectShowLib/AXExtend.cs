@@ -702,6 +702,9 @@ namespace DirectShowLib
     Trigger = 0x0008
   }
 
+  /*
+   * Redefined in MediaPortalCustomisations.cs.
+   * 
   /// <summary>
   /// From TVAudioMode
   /// </summary>
@@ -714,7 +717,7 @@ namespace DirectShowLib
     LangA = 0x0010,
     LangB = 0x0020,
     LangC = 0x0040,
-  }
+  }*/
 
   /*
    * Redefined in MediaPortalCustomisations.cs.

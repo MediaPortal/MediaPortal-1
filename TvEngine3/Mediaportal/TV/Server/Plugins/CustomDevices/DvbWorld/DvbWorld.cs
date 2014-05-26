@@ -524,7 +524,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbWorld
       DVBSChannel dvbsChannel = channel as DVBSChannel;
       if (dvbsChannel == null)
       {
-        this.LogError("DVB World: tuning is not supported for this channel");
+        this.LogError("DVB World: tuning is not supported for channel");
         return false;
       }
 
@@ -570,8 +570,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbWorld
         tuningParams.LnbLof = (uint)dvbsChannel.LnbType.LowBandFrequency;
         tuningParams.Tone22kEnabled = false;
       }
-    
-      Marshal.StructureToPtr(tuningParams, _generalBuffer, true);
+
+      Marshal.StructureToPtr(tuningParams, _generalBuffer, false);
       //Dump.DumpBinary(_generalBuffer, TUNING_PARAMS_SIZE);
 
       int hr = SetIoctl(_generalBuffer, TUNING_PARAMS_SIZE);
@@ -625,7 +625,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbWorld
         return true;
       }
 
-      this.LogError("DVB World: failed to set tone burst, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("DVB World: failed to set tone state, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -645,12 +645,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbWorld
       }
       if (command == null || command.Length == 0)
       {
-        this.LogError("DVB World: command not supplied");
+        this.LogWarn("DVB World: DiSEqC command not supplied");
         return true;
       }
       if (command.Length > MAX_DISEQC_MESSAGE_LENGTH)
       {
-        this.LogError("DVB World: command too long, length = {0}", command.Length);
+        this.LogError("DVB World: DiSEqC command too long, length = {0}", command.Length);
         return false;
       }
 
@@ -660,7 +660,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbWorld
       dcommand.Command = new byte[MAX_DISEQC_MESSAGE_LENGTH];
       Buffer.BlockCopy(command, 0, dcommand.Command, 0, command.Length);
 
-      Marshal.StructureToPtr(dcommand, _generalBuffer, true);
+      Marshal.StructureToPtr(dcommand, _generalBuffer, false);
       //Dump.DumpBinary(_generalBuffer, DISEQC_COMMAND_SIZE);
 
       int hr = SetIoctl(_generalBuffer, DISEQC_COMMAND_SIZE);
@@ -706,7 +706,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbWorld
       }
       if (_isRemoteControlInterfaceOpen)
       {
-        this.LogWarn("DVB World: interface is already open");
+        this.LogWarn("DVB World: remote control interface is already open");
         return true;
       }
 

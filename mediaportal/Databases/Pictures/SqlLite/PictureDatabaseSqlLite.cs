@@ -253,7 +253,7 @@ namespace MediaPortal.Picture.Database
             bool searching = true;
             while ((s = sr.ReadLine()) != null && searching)
             {
-              if (s.ToLower() == "[" + Path.GetFileName(strPic).ToLower() + "]")
+              if (s.ToLowerInvariant() == "[" + Path.GetFileName(strPic).ToLowerInvariant() + "]")
               {
                 do
                 {
@@ -339,6 +339,12 @@ namespace MediaPortal.Picture.Database
         {
           iRotation = Int32.Parse(DatabaseUtility.Get(results, 0, 1));
           return iRotation;
+        }
+
+        if (_useExif)
+        {
+          iRotation = Util.Picture.GetRotateByExif(strPic);
+          Log.Debug("PictureDatabaseSqlLite: GetRotateByExif = {0} for {1}", iRotation, strPic);
         }
 
         AddPicture(strPicture, iRotation);

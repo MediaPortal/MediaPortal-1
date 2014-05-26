@@ -22,7 +22,7 @@ using System.Collections.Generic;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Upnp.Enum
 {
-  public sealed class AvTransportStorageMedium
+  internal sealed class AvTransportStorageMedium
   {
     private readonly string _name;
     private static readonly IDictionary<string, AvTransportStorageMedium> _values = new Dictionary<string, AvTransportStorageMedium>();
@@ -79,6 +79,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Upnp.Enum
         return true;
       }
       return false;
+    }
+
+    public override int GetHashCode()
+    {
+      return _name.GetHashCode();
     }
 
     public static explicit operator AvTransportStorageMedium(string name)

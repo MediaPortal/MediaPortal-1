@@ -103,6 +103,24 @@ namespace MediaPortal.Music.Database
       return 0;
     }
 
+    public string GetLastFMUser()
+    {
+      strSQL = @"select strUsername from lastfmusers";
+      var results = DirectExecute(strSQL);
+      if (results.Rows.Count == 0) return string.Empty;
+      var row = results.Rows[0];
+      return row.fields[0];
+    }
+
+    public string GetLastFMSK()
+    {
+      strSQL = @"select strSK from lastfmusers";
+      var results = DirectExecute(strSQL);
+      if (results.Rows.Count == 0) return string.Empty;
+      var row = results.Rows[0];
+      return row.fields[0];
+    }
+
     public int GetTotalSongs()
     {
       try
@@ -191,6 +209,31 @@ namespace MediaPortal.Music.Database
       }
 
       return false;
+    }
+
+
+    public void GetSongsBySQL(string aSQL, out List<Song> aSongs)
+    {
+      aSongs = new List<Song>();
+      try
+      {
+        SQLiteResultSet results = DirectExecute(aSQL);
+        Song song = null;
+
+        for (int i = 0; i < results.Rows.Count; i++)
+        {
+          song = new Song();
+          SQLiteResultSet.Row fields = results.Rows[i];
+          int columnIndex = 0;
+          AssignAllSongFieldsFromResultSet(ref song, results, i);
+          aSongs.Add(song);
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
     }
 
     public void GetSongsByFilter(string aSQL, out List<Song> aSongs, string filter)

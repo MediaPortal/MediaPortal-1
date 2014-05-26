@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- List updated on 5 June 2011 from  -->
 <ArrayOfDVBTTuning xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-<!-- Band III-VHF (eur.) -->
+  <!-- List updated on 5 June 2011 from -->
+  <!-- Band III-VHF (eur.) -->
   <DVBTTuning>
     <Frequency>177500</Frequency>
     <Bandwidth>7000</Bandwidth>
@@ -66,7 +66,7 @@
     <CellIdExtension>0</CellIdExtension>
     <IsDvbT2>False</IsDvbT2>
   </DVBTTuning>
-<!-- Band IV-VHF -->
+  <!-- Band IV-VHF -->
   <DVBTTuning>
     <Frequency>474000</Frequency>
     <Bandwidth>8000</Bandwidth>
@@ -203,7 +203,7 @@
     <CellIdExtension>0</CellIdExtension>
     <IsDvbT2>False</IsDvbT2>
   </DVBTTuning>
-<!-- Band V-VHF -->
+  <!-- Band V-VHF -->
   <DVBTTuning>
     <Frequency>610000</Frequency>
     <Bandwidth>8000</Bandwidth>

@@ -32,7 +32,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.NetworkProvider
   /// The MediaPortal BDA network provider class.
   /// </summary>
   [Guid("d7d42e5c-eb36-4aad-933b-b4c419429c98")]
-  public class MediaPortalNetworkProvider
+  internal class MediaPortalNetworkProvider
   {
     /// <summary>
     /// Generates the file and pathname of the log file
@@ -67,7 +67,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.NetworkProvider
   /// Tuning types enumeration
   /// </summary>
   [Flags]
-  public enum TuningType : uint
+  internal enum TuningType : uint
   {
     /// <summary>
     /// Not set
@@ -119,7 +119,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.NetworkProvider
     IsdbS = 0x400
   }
 
-  public enum DiseqC11Switches
+  internal enum DiseqC11Switches
   {
     Switch_NOT_SET = -1,
     Switch_0 = 0x0,
@@ -142,25 +142,25 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.NetworkProvider
 
 
   [StructLayout(LayoutKind.Sequential)]
-  public struct FrequencySettings
+  internal struct FrequencySettings
   {
     public uint Multiplier;
     public uint Frequency;
     public uint Bandwidth;
     public Polarisation Polarity;
     public uint Range;
-  } ;
+  }
 
   [StructLayout(LayoutKind.Sequential)]
-  public struct LnbInfoSettings
+  internal struct LnbInfoSettings
   {
     public uint LnbSwitchFrequency;
     public uint LowOscillator;
     public uint HighOscillator;
-  } ;
+  }
 
   [StructLayout(LayoutKind.Sequential)]
-  public struct DigitalDemodulatorSettings
+  internal struct DigitalDemodulatorSettings
   {
     public FECMethod InnerFECMethod;
     public BinaryConvolutionCodeRate InnerFECRate;
@@ -169,10 +169,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.NetworkProvider
     public BinaryConvolutionCodeRate OuterFECRate;
     public SpectralInversion SpectralInversion;
     public uint SymbolRate;
-  } ;
+  }
 
   [StructLayout(LayoutKind.Sequential)]
-  public struct DigitalDemodulator2Settings
+  internal struct DigitalDemodulator2Settings
   {
     public FECMethod InnerFECMethod;
     public BinaryConvolutionCodeRate InnerFECRate;
@@ -185,18 +185,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.NetworkProvider
     public Pilot Pilot;
     public RollOff RollOff;
     public TransmissionMode TransmissionMode;
-  } ;
+  }
 
   [StructLayout(LayoutKind.Sequential)]
-  public struct DiseqcSatelliteSettings
+  internal struct DiseqcSatelliteSettings
   {
     public uint Enabled;
     public uint ToneBurstEnabled;
     public LNB_Source Diseq10Selection;
     public DiseqC11Switches Diseq11Selection;
-  } ;
+  }
 
-  public enum LogLevelOption
+  internal enum LogLevelOption
   {
     NotSet = -1,
     All = 0,
@@ -207,14 +207,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.NetworkProvider
     Error = 40000,
     Fatal = 50000,
     Off = 60000
-  } ;
+  }
 
   ///<summary>
   /// Channel scanning call back
   ///</summary>
   [Guid("4564675E-C69B-4e05-853D-30870988DEB9"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  public interface IDvbNetworkProvider
+  internal interface IDvbNetworkProvider
   {
     [PreserveSig]
     int TuneDVBT(FrequencySettings fSettings);

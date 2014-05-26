@@ -136,7 +136,7 @@ namespace WebEPG.config
     public void Load()
     {
       _ConfigList = new ArrayList();
-
+      // TODO use of config files should be eliminated, this is not multi-seat compatible
       string configFile = _strPath + "\\WebEPG.xml";
       if (!File.Exists(configFile))
       {
@@ -178,6 +178,7 @@ namespace WebEPG.config
     {
       if (_ConfigList != null)
       {
+        // TODO use of config files should be eliminated, this is not multi-seat compatible
         string confFile = _strPath + "\\WebEPG.xml";
         if (File.Exists(confFile))
         {

@@ -38,7 +38,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBda
   {
     #region enums
 
-    private new enum BdaExtensionProperty
+    private enum BdaExtensionProperty
     {
       /// For sending and receiving DiSEqC messages.
       DiseqcMessage = 0,
@@ -97,7 +97,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBda
         return true;
       }
 
-      this.LogError("Hauppauge BDA: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Hauppauge BDA: failed to set pilot, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -129,7 +129,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBda
         return true;
       }
 
-      this.LogError("Hauppauge BDA: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Hauppauge BDA: failed to set roll-off, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 

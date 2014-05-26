@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2013 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2013 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -21,11 +21,11 @@
 #region Usings
 
 using System.Collections.Generic;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers;
 using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 
 #endregion
 
@@ -36,8 +36,6 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
   /// </summary>
   public class PowerSchedulerFactory
   {
-
-
     #region Variables
 
     /// <summary>
@@ -50,11 +48,6 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
     /// </summary>
     private List<IWakeupHandler> _wakeupHandlers;
 
-    /// <summary>
-    /// Controls standby/wakeup of system for EPG grabbing
-    /// </summary>
-    private EpgGrabbingHandler _epgHandler;
-
     #endregion
 
     #region Constructor
@@ -65,32 +58,24 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
     /// <param name="controllerService">Reference to tvservice's TVController</param>
     public PowerSchedulerFactory(IInternalControllerService controllerService)
     {
-      this.LogInfo("PowerSchedulerFactory CTOR");
-
-      _standbyHandlers = new List<IStandbyHandler>();
-      _wakeupHandlers = new List<IWakeupHandler>();
+      this.LogInfo("PS: PowerSchedulerFactory");
 
       // Add handlers for preventing the system from entering standby
-      IStandbyHandler standbyHandler = new ActiveStreamsHandler(controllerService);
-      _standbyHandlers.Add(standbyHandler);
-      standbyHandler = new ControllerActiveHandler(controllerService);
-      _standbyHandlers.Add(standbyHandler);
-      standbyHandler = new ProcessActiveHandler();
-      _standbyHandlers.Add(standbyHandler);
-      standbyHandler = new NetworkMonitorHandler();
-      _standbyHandlers.Add(standbyHandler);
-      standbyHandler = new ActiveSharesHandler();
-      _standbyHandlers.Add(standbyHandler);
-
-      ScheduledRecordingsHandler recHandler = new ScheduledRecordingsHandler();
-      XmlTvImportWakeupHandler xmltvHandler = new XmlTvImportWakeupHandler();
+      _standbyHandlers = new List<IStandbyHandler>();
+      _standbyHandlers.Add(new ActiveStreamsStandbyHandler(controllerService));
+      _standbyHandlers.Add(new ControllerActiveStandbyHandler(controllerService));
+      _standbyHandlers.Add(new ProcessActiveStandbyHandler());
+      _standbyHandlers.Add(new ActiveNetworkStandbyHandler());
+      _standbyHandlers.Add(new ActiveSharesStandbyHandler());
 
       // Add handlers for resuming from standby
-      _wakeupHandlers.Add(recHandler);
-      _wakeupHandlers.Add(xmltvHandler);
+      _wakeupHandlers = new List<IWakeupHandler>();
+      _wakeupHandlers.Add(new ScheduledRecordingsWakeupHandler(controllerService));
+      _wakeupHandlers.Add(new XmlTvImportWakeupHandler());
 
-      // Activate the EPG grabbing handler
-      _epgHandler = new EpgGrabbingHandler(controllerService);
+      // Activate the handlers which register/unregister themselves dynamically
+      IWakeupHandler wakeupHandler = new EpgGrabbingStandbyWakeupHandler(controllerService);
+      wakeupHandler = new RebootWakeupHandler();
     }
 
     #endregion

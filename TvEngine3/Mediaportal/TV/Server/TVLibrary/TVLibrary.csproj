@@ -56,39 +56,85 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Castle.Windsor">
-      <HintPath>..\..\ExternalBinaries\Castle.Windsor.dll</HintPath>
+    <Reference Include="Castle.Core">
+      <HintPath>..\..\..\..\..\Packages\Castle.Core.3.2.2\lib\net40-client\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Windsor, Version=3.2.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\Packages\Castle.Windsor.3.2.1\lib\net40\Castle.Windsor.dll</HintPath>
+    </Reference>
+    <Reference Include="HttpServer">
+      <HintPath>..\..\..\..\..\Packages\MediaPortal.HttpServer.1.0.0.0\lib\net40\HttpServer.dll</HintPath>
+    </Reference>
+    <Reference Include="MediaPortal.Utilities">
+      <HintPath>..\..\..\..\..\Packages\MediaPortal.Utilities.2.0.0.1402\lib\net40\MediaPortal.Utilities.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
     <Reference Include="System.Xml" />
     <Reference Include="UPnP">
-      <HintPath>..\TVServer.Base\UPnP.dll</HintPath>
+      <HintPath>..\..\..\..\..\Packages\MediaPortal.UPnP.2.0.0.1402\lib\net40\UPnP.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\..\..\Common-MP-TVE3\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
-    <Compile Include="DebugSettings.cs" />
-    <Compile Include="Implementations\DirectShow\Dri\TunerDri.cs" />
+    <Compile Include="Implementations\Analog\ChannelScannerHelperAnalog.cs" />
+    <Compile Include="Implementations\Atsc\ChannelScannerHelperAtsc.cs" />
+    <Compile Include="Implementations\DirectShow\Bda\TunerDetectorBda.cs" />
+    <Compile Include="Implementations\DirectShow\EpgGrabberDirectShow.cs" />
+    <Compile Include="Implementations\DirectShow\Stream\TunerDetectorStream.cs" />
+    <Compile Include="Implementations\DirectShow\Wdm\Analog\TunerDetectorAnalog.cs" />
+    <Compile Include="Implementations\DirectShow\Wdm\B2c2\Constants.cs" />
+    <Compile Include="Implementations\DirectShow\Wdm\B2c2\Enum\BusType.cs" />
+    <Compile Include="Implementations\DirectShow\Wdm\B2c2\Enum\AcquisitionCapability.cs" />
+    <Compile Include="Implementations\DirectShow\Wdm\B2c2\Enum\PvrOption.cs" />
+    <Compile Include="Implementations\DirectShow\Wdm\B2c2\Enum\KeyType.cs" />
+    <Compile Include="Implementations\DirectShow\Wdm\B2c2\Enum\TableId.cs" />
+    <Compile Include="Implementations\DirectShow\Wdm\B2c2\Enum\PidFilterMode.cs" />
+    <Compile Include="Implementations\DirectShow\Wdm\B2c2\Enum\PvrCallBackState.cs" />
+    <Compile Include="Implementations\DirectShow\Wdm\B2c2\Enum\VideoAspectRatio.cs" />
+    <Compile Include="Implementations\DirectShow\Wdm\B2c2\Enum\VideoFrameRate.cs" />
+    <Compile Include="Implementations\DirectShow\Wdm\B2c2\Enum\GuardInterval.cs" />
+    <Compile Include="Implementations\DirectShow\Wdm\B2c2\Enum\DiseqcPort.cs" />
+    <Compile Include="Implementations\DirectShow\Wdm\B2c2\Enum\Tone.cs" />
+    <Compile Include="Implementations\DirectShow\Wdm\B2c2\Enum\FecRate.cs" />
+    <Compile Include="Implementations\DirectShow\Wdm\B2c2\Enum\Polarisation.cs" />
+    <Compile Include="Implementations\DirectShow\Wdm\B2c2\Enum\Modulation.cs" />
+    <Compile Include="Implementations\DirectShow\Wdm\B2c2\Enum\PerformanceMonitoringCapability.cs" />
+    <Compile Include="Implementations\DirectShow\Wdm\B2c2\Enum\Error.cs" />
+    <Compile Include="Implementations\DirectShow\Wdm\B2c2\Enum\TunerType.cs" />
+    <Compile Include="Implementations\DirectShow\Wdm\B2c2\Interface\IMpeg2AvCtrl3.cs" />
+    <Compile Include="Implementations\DirectShow\Wdm\B2c2\Interface\IMpeg2DataCtrl6.cs" />
+    <Compile Include="Implementations\DirectShow\Wdm\B2c2\Interface\IMpeg2MulticastCtrl.cs" />
+    <Compile Include="Implementations\DirectShow\Wdm\B2c2\Interface\IMpeg2TimeShiftCtrl.cs" />
+    <Compile Include="Implementations\DirectShow\Wdm\B2c2\Interface\IMpeg2TunerCtrl4.cs" />
+    <Compile Include="Implementations\DirectShow\Wdm\B2c2\Struct\MacAddressList.cs" />
+    <Compile Include="Implementations\DirectShow\Wdm\B2c2\Struct\VideoInfo.cs" />
+    <Compile Include="Implementations\DirectShow\Wdm\B2c2\Struct\TunerCapabilities.cs" />
+    <Compile Include="Implementations\DirectShow\Wdm\B2c2\Struct\DeviceInfo.cs" />
+    <Compile Include="Implementations\DirectShow\Wdm\B2c2\Struct\MacAddress.cs" />
+    <Compile Include="Implementations\DirectShow\Wdm\B2c2\TunerDetectorB2c2.cs" />
+    <Compile Include="Implementations\DirectShow\Wdm\Rtl283x\EncoderRtl283xFm.cs" />
+    <Compile Include="Implementations\Dri\TunerDetectorDri.cs" />
+    <Compile Include="Implementations\Dri\TunerDri.cs" />
     <Compile Include="Implementations\DirectShow\Pbda\TunerPbdaCableCard.cs" />
-    <Compile Include="Implementations\DirectShow\SatIp\TunerSatIpCable.cs" />
-    <Compile Include="Implementations\DirectShow\SatIp\TunerSatIpBase.cs" />
-    <Compile Include="Implementations\DirectShow\SatIp\TunerSatIpSatellite.cs" />
-    <Compile Include="Implementations\DirectShow\SatIp\TunerSatIpTerrestrial.cs" />
-    <Compile Include="Implementations\DirectShow\Wdm\Analog\Components\Capture.cs" />
-    <Compile Include="Implementations\DirectShow\Wdm\Analog\Components\ComponentBase.cs" />
-    <Compile Include="Implementations\DirectShow\Wdm\Analog\Components\Crossbar.cs" />
-    <Compile Include="Implementations\DirectShow\Wdm\Analog\Components\Encoder.cs" />
-    <Compile Include="Implementations\DirectShow\Wdm\Analog\Components\Tuner.cs" />
-    <Compile Include="Implementations\DirectShow\Wdm\Rtl283x\CaptureRtl283xFm.cs" />
-    <Compile Include="Implementations\DirectShow\Wdm\Rtl283x\TunerRtl283xBase.cs" />
+    <Compile Include="Implementations\Dvb\ChannelScannerHelperDvb.cs" />
+    <Compile Include="Implementations\SatIp\TunerDetectorSatIp.cs" />
+    <Compile Include="Implementations\SatIp\TunerSatIpCable.cs" />
+    <Compile Include="Implementations\SatIp\TunerSatIpBase.cs" />
+    <Compile Include="Implementations\SatIp\TunerSatIpSatellite.cs" />
+    <Compile Include="Implementations\SatIp\TunerSatIpTerrestrial.cs" />
+    <Compile Include="Implementations\DirectShow\Wdm\Analog\Component\Capture.cs" />
+    <Compile Include="Implementations\DirectShow\Wdm\Analog\Component\ComponentBase.cs" />
+    <Compile Include="Implementations\DirectShow\Wdm\Analog\Component\Crossbar.cs" />
+    <Compile Include="Implementations\DirectShow\Wdm\Analog\Component\Encoder.cs" />
+    <Compile Include="Implementations\DirectShow\Wdm\Analog\Component\Tuner.cs" />
+    <Compile Include="Implementations\DirectShow\Wdm\Rtl283x\TunerDetectorRtl283x.cs" />
     <Compile Include="Implementations\DirectShow\Wdm\Rtl283x\TunerRtl283xFm.cs" />
     <Compile Include="Implementations\Dri\Enum\AuxFormat.cs" />
     <Compile Include="Implementations\Dri\Enum\CasCaptureMode.cs" />
@@ -106,7 +152,7 @@
     <Compile Include="Implementations\Dri\Enum\EncoderVideoFrameRate.cs" />
     <Compile Include="Implementations\Dri\Enum\SecurityPairingStatus.cs" />
     <Compile Include="Implementations\Dri\Enum\TunerModulation.cs" />
-    <Compile Include="Implementations\Dri\ScannerDri.cs" />
+    <Compile Include="Implementations\Dri\ChannelScannerDri.cs" />
     <Compile Include="Implementations\Dri\Service\ServiceAux.cs" />
     <Compile Include="Implementations\Dri\Service\ServiceCas.cs" />
     <Compile Include="Implementations\Dri\Service\ServiceDiag.cs" />
@@ -123,16 +169,15 @@
     <Compile Include="Implementations\DirectShow\Wdm\B2c2\TunerB2c2Terrestrial.cs" />
     <Compile Include="Implementations\DirectShow\Wdm\B2c2\TunerB2c2Satellite.cs" />
     <Compile Include="Implementations\DirectShow\Wdm\Analog\TunerAnalog.cs" />
-    <Compile Include="Implementations\BaseSubChannel.cs" />
-    <Compile Include="Implementations\CustomDeviceLoader.cs" />
+    <Compile Include="Implementations\SubChannelBase.cs" />
+    <Compile Include="Implementations\Helper\TunerExtensionLoader.cs" />
     <Compile Include="Implementations\DiseqcController.cs" />
     <Compile Include="Implementations\DirectShow\TunerDirectShowBase.cs" />
     <Compile Include="Implementations\Rtsp\RtspClient.cs" />
-    <Compile Include="Implementations\Mpeg2Ts\ScannerDirectShowBase.cs" />
-    <Compile Include="Implementations\Mpeg2Ts\ScannerStream.cs" />
+    <Compile Include="Implementations\DirectShow\ChannelScannerDirectShowBase.cs" />
     <Compile Include="Implementations\DirectShow\Stream\TunerStream.cs" />
     <Compile Include="Implementations\DirectShow\Stream\TunerStreamElecard.cs" />
-    <Compile Include="Implementations\Mpeg2Ts\Mpeg2TunerController.cs" />
+    <Compile Include="Implementations\Mpeg2Ts\SubChannelManagerMpeg2Ts.cs" />
     <Compile Include="Implementations\Rtsp\RtspMethod.cs" />
     <Compile Include="Implementations\Rtsp\RtspRequest.cs" />
     <Compile Include="Implementations\Rtsp\RtspResponse.cs" />
@@ -143,11 +188,11 @@
     <Compile Include="Implementations\Scte\Parser\ParserNit.cs" />
     <Compile Include="Implementations\Scte\Parser\ParserNtt.cs" />
     <Compile Include="Implementations\Scte\Parser\ParserSvct.cs" />
+    <Compile Include="Implementations\Scte\TunerScteWrapper.cs" />
     <Compile Include="Implementations\TunerDetector.cs" />
-    <Compile Include="Implementations\Mpeg2SubChannel.cs" />
+    <Compile Include="Implementations\Mpeg2Ts\SubChannelMpeg2Ts.cs" />
     <Compile Include="Implementations\Helper\DevicesInUse.cs" />
-    <Compile Include="Implementations\Mpeg2Ts\ScannerAnalog.cs" />
-    <Compile Include="Implementations\Mpeg2Ts\ScannerDirectShowAtsc.cs" />
+    <Compile Include="Implementations\DirectShow\ChannelScannerDirectShowAnalog.cs" />
     <Compile Include="Implementations\DirectShow\Bda\TunerBdaAtsc.cs" />
     <Compile Include="Implementations\DirectShow\Bda\TunerBdaCable.cs" />
     <Compile Include="Implementations\DirectShow\Bda\TunerBdaSatellite.cs" />
@@ -156,9 +201,8 @@
     <Compile Include="Implementations\DirectShow\Bda\TunerBdaBase.cs" />
     <Compile Include="Implementations\Helper\EncodersInUse.cs" />
     <Compile Include="Implementations\Helper\FilterGraphTools.cs" />
-    <Compile Include="Implementations\Hybrid\HybridCardGroup.cs" />
-    <Compile Include="Implementations\Hybrid\HybridCard.cs" />
-    <Compile Include="Implementations\TvCardBase.cs" />
+    <Compile Include="Implementations\TunerGroup.cs" />
+    <Compile Include="Implementations\TunerBase.cs" />
     <Compile Include="Implementations\Upnp\Enum\AvTransportState.cs" />
     <Compile Include="Implementations\Upnp\Enum\AvTransportRecordMediumWriteStatus.cs" />
     <Compile Include="Implementations\Upnp\Enum\AvTransportRecordQualityMode.cs" />
@@ -173,6 +217,8 @@
     <Compile Include="Implementations\Upnp\Service\ServiceAvTransport.cs" />
     <Compile Include="Implementations\Upnp\Service\ServiceBase.cs" />
     <Compile Include="Implementations\Upnp\Service\ServiceConnectionManager.cs" />
+    <Compile Include="Interfaces\ITunerDetectorSystem.cs" />
+    <Compile Include="Interfaces\IChannelScannerHelper.cs" />
     <Compile Include="Interfaces\IDVBNetworkProvider.cs" />
     <Compile Include="Interfaces\Analyzer\ITsCaGrabber.cs" />
     <Compile Include="Interfaces\Analyzer\ITsChannelLinkageScanner.cs" />
@@ -180,13 +226,16 @@
     <Compile Include="Interfaces\Analyzer\ITsEpgScanner.cs" />
     <Compile Include="Interfaces\Analyzer\ITsFilter.cs" />
     <Compile Include="Interfaces\Analyzer\ITsChannelScan.cs" />
+    <Compile Include="Interfaces\IChannelScannerInternal.cs" />
+    <Compile Include="Interfaces\IChannelScannerMpeg2Ts.cs" />
     <Compile Include="Interfaces\ITsMultiplexer.cs" />
     <Compile Include="Interfaces\Analyzer\ITsPmtGrabber.cs" />
     <Compile Include="Interfaces\Analyzer\IVideoAudioObserver.cs" />
+    <Compile Include="Interfaces\ITunerDetectorUpnp.cs" />
+    <Compile Include="Interfaces\ITunerInternal.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Streaming\RtspStream.cs" />
     <Compile Include="Streaming\RtspStreaming.cs" />
-    <Compile Include="TimeShiftingEPGGrabber.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\Common-MP-TVE3\Common.Utils\Common.Utils.csproj">
@@ -196,10 +245,6 @@
     <ProjectReference Include="..\..\..\..\..\Common-MP-TVE3\DirectShowLib\DirectShowLib.csproj">
       <Project>{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}</Project>
       <Name>DirectShowLib</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Plugins\WebEPG\WebEPG\WebEPG.csproj">
-      <Project>{F7CB2A9F-004E-4667-BEAF-782F1C28E2D3}</Project>
-      <Name>WebEPG %28Plugins\WebEPG\WebEPG%29</Name>
     </ProjectReference>
     <ProjectReference Include="..\TVDatabase\Entities\Entities.csproj">
       <Project>{4C2D9698-AF44-4157-99B6-48F5269F20CC}</Project>
@@ -218,7 +263,9 @@
       <Name>TvLibrary.Utils</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
       <Visible>False</Visible>
@@ -236,6 +283,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

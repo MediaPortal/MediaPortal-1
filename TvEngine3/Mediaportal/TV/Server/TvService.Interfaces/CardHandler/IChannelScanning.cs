@@ -15,10 +15,9 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.CardHandler
     /// scans current transponder for more channels.
     /// </summary>
     /// <param name="channel">IChannel containing the transponder tuning details.</param>
-    /// <param name="settings">Scan settings</param>
     /// <returns>list of channels found</returns>
-    IChannel[] Scan(IChannel channel, ScanParameters settings);
+    IChannel[] Scan(IChannel channel);
 
-    IChannel[] ScanNIT(IChannel channel, ScanParameters settings);
+    IChannel[] ScanNIT(IChannel channel);
   }
 }

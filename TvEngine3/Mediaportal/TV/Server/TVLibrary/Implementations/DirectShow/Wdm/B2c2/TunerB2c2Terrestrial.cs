@@ -18,6 +18,8 @@
 
 #endregion
 
+using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Enum;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Struct;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
@@ -28,16 +30,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
   /// <summary>
   /// An implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> for TechniSat terrestrial tuners with B2C2 chipsets and WDM drivers.
   /// </summary>
-  public class TunerB2c2Terrestrial : TunerB2c2Base
+  internal class TunerB2c2Terrestrial : TunerB2c2Base
   {
     /// <summary>
     /// Initialise a new instance of the <see cref="TunerB2c2Terrestrial"/> class.
     /// </summary>
     /// <param name="info">The B2C2-specific information (<see cref="DeviceInfo"/>) about the tuner.</param>
     public TunerB2c2Terrestrial(DeviceInfo info)
-      : base(info)
+      : base(info, CardType.DvbT)
     {
-      _tunerType = CardType.DvbT;
     }
 
     #region tuning
@@ -56,7 +57,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     /// Actually tune to a channel.
     /// </summary>
     /// <param name="channel">The channel to tune to.</param>
-    protected override void PerformTuning(IChannel channel)
+    public override void PerformTuning(IChannel channel)
     {
       this.LogDebug("B2C2 terrestrial: set tuning parameters");
       DVBTChannel dvbtChannel = channel as DVBTChannel;
@@ -73,11 +74,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
 
       // Note: it is not guaranteed that guard interval auto detection is supported, but if it isn't
       // then we can't tune - we have no idea what the actual value should be.
-      hr = _interfaceTuner.SetGuardInterval(B2c2GuardInterval.Auto);
+      hr = _interfaceTuner.SetGuardInterval(GuardInterval.Auto);
       HResult.ThrowException(hr, "Failed to use automatic guard interval detection.");
 
-      this.LogDebug("B2C2 terrestrial: apply tuning parameters");
-      HResult.ThrowException(_interfaceTuner.SetTunerStatus(), "Failed to apply tuning parameters.");
+      base.PerformTuning(channel);
     }
 
     #endregion

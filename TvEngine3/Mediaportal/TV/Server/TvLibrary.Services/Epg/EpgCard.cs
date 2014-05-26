@@ -44,10 +44,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
 {
   /// <summary>
   /// Class which will  grab the epg for for a specific card
-  public class EpgCard : BaseEpgGrabber, IDisposable
+  public class EpgCard : IEpgGrabberCallBack, IDisposable
   {
-
-
     #region const
 
     private int _epgTimeOut = (10*60); // 10 mins
@@ -71,7 +69,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
     private EpgState _state;
 
     private bool _reEntrant;
-    private List<EpgChannel> _epg;
 
     private DateTime _grabStartTime;
     private bool _isRunning;
@@ -103,7 +100,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
       _epgTimer.Interval = 30000;
       _epgTimer.Elapsed += _epgTimer_Elapsed;
       _eventHandler = controller_OnTvServerEvent;
-      _dbUpdater = new EpgDBUpdater(ServiceManager.Instance.InternalControllerService, "IdleEpgGrabber", true);
+      _dbUpdater = new EpgDBUpdater(ServiceManager.Instance.InternalControllerService.OnImportEpgPrograms, "IdleEpgGrabber", true);
     }
 
     #endregion
@@ -147,18 +144,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
     /// Gets called when epg has been cancelled
     /// Should be overriden by the class
     /// </summary>
-    public override void OnEpgCancelled()
+    public void OnEpgCancelled()
     {      
       this.LogInfo("epg grabber:epg cancelled");
-
-      if (_state == EpgState.Idle)
-      {
-        return;
-      }
-      _state = EpgState.Idle;
-      ServiceManager.Instance.InternalControllerService.StopGrabbingEpg(_user);
-      _user.CardId = -1;
-      _currentTransponder.InUse = false;
+      Stop();
       return;
     }
 
@@ -167,68 +156,57 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
     /// The method checks if epg grabbing was in progress and ifso creates a new workerthread
     /// to update the database with the new epg data
     /// </summary>
-    public override int OnEpgReceived()
+    /// <param name="epg">The new EPG data.</param>
+    public void OnEpgReceived(IList<EpgChannel> epg)
     {
       try
       {
-        //is epg grabbing in progress?
-        /*if (_state == EpgState.Idle)
-        {
-          this.LogInfo("Epg: card:{0} OnEpgReceived while idle", _user.CardId);
-          return 0;
-        }*/
-        //is epg grabber already updating the database?
-
         int cardId = _user.CardId;
         if (_state == EpgState.Updating)
         {
           this.LogInfo("Epg: card:{0} OnEpgReceived while updating", cardId);
-          return 0;
+          return;
         }
 
+        // It is not safe to stop the tuner graph from here because we're in
+        // a callback that has been triggered during sample processing. Start
+        // a thread to stop the graph safely...
         //is the card still idle?
         if (IsCardIdle(_user) == false)
         {
           this.LogInfo("Epg: card:{0} OnEpgReceived but card is not idle", cardId);
-          _state = EpgState.Idle;
-          ServiceManager.Instance.InternalControllerService.StopGrabbingEpg(_user);
-          _user.CardId = -1;
-          _currentTransponder.InUse = false;
-          return 0;
+          Thread stopThread = new Thread(Stop);
+          stopThread.IsBackground = true;
+          stopThread.Name = "EPG grabber stop thread";
+          stopThread.Start();
+          return;
         }
 
-        List<EpgChannel> epg = ServiceManager.Instance.InternalControllerService.Epg(cardId) ??
-                               new List<EpgChannel>();
         //did we receive epg info?
-        if (epg.Count == 0)
+        if (epg == null)
         {
           //no epg found for this transponder
           this.LogInfo("Epg: card:{0} no epg found", cardId);
-          _currentTransponder.InUse = false;
           _currentTransponder.OnTimeOut();
-
-          _state = EpgState.Idle;
-          ServiceManager.Instance.InternalControllerService.StopGrabbingEpg(_user);
-          ServiceManager.Instance.InternalControllerService.StopCard(cardId);
-          _user.CardId = -1;
-          _currentTransponder.InUse = false;
-          return 0;
+          Thread stopThread = new Thread(Stop);
+          stopThread.IsBackground = true;
+          stopThread.Name = "EPG grabber stop thread";
+          stopThread.Start();
+          return;
         }
 
         //create worker thread to update the database
         this.LogInfo("Epg: card:{0} received epg for {1} channels", cardId, epg.Count);
         _state = EpgState.Updating;
-        _epg = epg;
-        Thread workerThread = new Thread(UpdateDatabaseThread);
+        Thread workerThread = new Thread(new ParameterizedThreadStart(UpdateDatabaseThread));
         workerThread.IsBackground = true;
         workerThread.Name = "EPG Update thread";
-        workerThread.Start();
+        workerThread.Start(epg);
       }
       catch (Exception ex)
       {
         this.LogError(ex);
       }
-      return 0;
     }
 
     #endregion
@@ -283,6 +261,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
       ServiceManager.Instance.InternalControllerService.OnTvServerEvent -= _eventHandler;
       _epgTimer.Enabled = false;
       _isRunning = false;
+      _state = EpgState.Idle;
+      _user.CardId = -1;
     }
 
     #endregion
@@ -515,8 +495,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
                 {
                   if (!_isRunning)
                     this.LogInfo("Tuning finished but EpgGrabber no longer enabled");
-                  ServiceManager.Instance.InternalControllerService.StopGrabbingEpg(_user);
-                  _user.CardId = -1;
+                  Stop();
                   this.LogInfo("Epg: card:{0} could not start dvbt grabbing", card.IdCard);
                   return false;
                 }
@@ -547,23 +526,22 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
     /// <summary>
     /// workerthread which will update the database with the new epg received
     /// </summary>
-    private void UpdateDatabaseThread()
+    private void UpdateDatabaseThread(object epgObj)
     {
-      Thread.CurrentThread.Priority = ThreadPriority.Lowest;
-
-      //if card is not idle anymore we return
-      if (IsCardIdle(_user) == false)
+      IList<EpgChannel> epg = epgObj as IList<EpgChannel>;
+      if (epg == null)
       {
-        _currentTransponder.InUse = false;
         return;
       }
+      Thread.CurrentThread.Priority = ThreadPriority.Lowest;
+
       int cardId = _user.CardId;
       this.LogInfo("Epg: card:{0} Updating database with new programs", cardId);
       bool timeOut = false;
       _dbUpdater.ReloadConfig();
       try
       {
-        foreach (EpgChannel epgChannel in _epg)
+        foreach (EpgChannel epgChannel in epg)
         {
           _dbUpdater.UpdateEpgForChannel(epgChannel);
           if (_state != EpgState.Updating)
@@ -579,8 +557,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
             return;
           }
         }
-        _epg.Clear();
-        ProgramManagement.SynchProgramStatesForAllSchedules(ScheduleManagement.ListAllSchedules());
+        ProgramManagement.SynchProgramStatesForAllSchedules();
         this.LogInfo("Epg: card:{0} Finished updating the database.", cardId);
       }
       catch (Exception ex)
@@ -600,14 +577,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
             this.LogError(ex);
           }          
         }
-        if (_state != EpgState.Idle && cardId >= 0)
-        {
-          ServiceManager.Instance.InternalControllerService.StopGrabbingEpg(_user);
-          ServiceManager.Instance.InternalControllerService.StopCard(cardId);
-        }
-        _currentTransponder.InUse = false;
-        _state = EpgState.Idle;
-        _user.CardId = -1;
+        Stop();
         ServiceManager.Instance.InternalControllerService.Fire(this,
                                                                new TvServerEventArgs(TvServerEventType.ProgramUpdated));
       }

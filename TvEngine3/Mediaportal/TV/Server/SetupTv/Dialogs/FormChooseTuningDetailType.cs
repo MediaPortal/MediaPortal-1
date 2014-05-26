@@ -59,10 +59,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       {
         return 0;
       }
-      if (mpRadioButton1.Checked)
-      {
-        return 5;
-      }
       if (mpRadioButton2.Checked)
       {
         return 1;
@@ -90,14 +86,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     {
       DialogResult = DialogResult.Cancel;
       Close();
-    }
-
-    private void FormChooseTuningDetailType_Load(object sender, EventArgs e)
-    {
-      if (_mediaType != MediaTypeEnum.Radio)
-      {
-        mpRadioButton1.Visible = false;
-      }
     }
   }
 }
