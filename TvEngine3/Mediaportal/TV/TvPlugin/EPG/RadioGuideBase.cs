@@ -520,7 +520,8 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
 
           case 939: // switch mode
-            OnSwitchMode();
+            _backupSingleViewCursorX = _cursorX;
+            OnSwitchMode(false);
             break;
           case 629: //stop recording
             if (_currentProgram != null)

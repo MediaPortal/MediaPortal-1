@@ -106,6 +106,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
     protected string _currentTitle = String.Empty;
     protected int _cursorX;
     protected int _cursorY;
+    protected int _backupSingleViewCursorX;
     protected bool _needUpdate;
     protected int _numberOfBlocks = 4;
     protected bool _showChannelLogos;
@@ -856,7 +857,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
       }
     }
 
-    protected void OnSwitchMode()
+    protected void OnSwitchMode(bool returnPreviousMenu)
     {
       UnFocus();
       _singleChannelView = !_singleChannelView;
@@ -867,6 +868,13 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
         _programOffset = _cursorY = _cursorX = 0;
         _recalculateProgramOffset = true;
+      }
+      else if (returnPreviousMenu)
+      {
+        //focus current channel
+        _cursorY = 0;
+        _cursorX = _backupSingleViewCursorX;
+        ChannelOffset = _backupChannelOffset;
       }
       else
       {
@@ -4132,12 +4140,15 @@ if (bEndsAfter)
 
           case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
             {
-              base.OnMessage(message);
-              SaveSettings();
-              _controls = new Dictionary<int, GUIButton3PartControl>();
-              _channelList = null;
-              _recordingList = null;
-              _currentProgram = null;
+              if (!_singleChannelView)
+              {
+                base.OnMessage(message);
+                SaveSettings();
+                _controls = new Dictionary<int, GUIButton3PartControl>();
+                _channelList = null;
+                _recordingList = null;
+                _currentProgram = null;
+              }
               return true;
             }
 
@@ -4352,7 +4363,8 @@ if (bEndsAfter)
             }
             else if (_cursorY == 0)
             {
-              OnSwitchMode();
+              _backupSingleViewCursorX = _cursorX;
+              OnSwitchMode(false);
             }
             break;
         }
@@ -4371,8 +4383,7 @@ if (bEndsAfter)
         case Action.ActionType.ACTION_PREVIOUS_MENU:
           if (_singleChannelView)
           {
-            // TODO is it needed to check current GETID for Radio or TV
-            GUIWindowManager.ActivateWindow((int)Window.WINDOW_TVGUIDE);
+            OnSwitchMode(true);
             return;
           }
           GUIWindowManager.ShowPreviousWindow();
@@ -4475,7 +4486,8 @@ if (bEndsAfter)
             {
               if (_cursorY == 0)
               {
-                OnSwitchMode();
+                _backupSingleViewCursorX = _cursorX;
+                OnSwitchMode(false);
                 return;
               }
               ShowContextMenu();
