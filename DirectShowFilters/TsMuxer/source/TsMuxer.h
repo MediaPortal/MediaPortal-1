@@ -26,6 +26,7 @@
 #include "..\..\shared\DebugSettings.h"
 #include "..\..\shared\PacketSync.h"
 #include "..\..\shared\PidTable.h"
+#include "CniRegister.h"
 #include "IMuxInputPin.h"
 #include "IStreamMultiplexer.h"
 #include "TsMuxerFilter.h"
@@ -33,7 +34,9 @@
 using namespace std;
 
 
-#define SERVICE_NAME_LENGTH 20
+// This has to be large enough to contain the longest string in the CNI
+// register, and the longest possible string from a VBI line (29 characters).
+#define SERVICE_NAME_LENGTH 50
 
 
 DEFINE_TVE_DEBUG_SETTING(TsMuxerDumpInput)
@@ -133,6 +136,7 @@ class CTsMuxer : public CUnknown, public IStreamMultiplexer, public ITsMuxer
     HRESULT UpdatePmt();
     HRESULT UpdateSdt();
     HRESULT WrapVbiTeletextData(StreamInfo* info, PBYTE inputData, long inputDataLength, REFERENCE_TIME systemClockReference, PBYTE* outputData, long* outputDataLength);
+    HRESULT ReadChannelNameFromVbiTeletextData(PBYTE inputData, long inputDataLength);
     HRESULT WrapElementaryStreamData(StreamInfo* info, PBYTE inputData, long inputDataLength, REFERENCE_TIME systemClockReference, PBYTE* outputData, long* outputDataLength);
     HRESULT WrapPacketisedElementaryStreamData(StreamInfo* info, PBYTE inputData, long inputDataLength, REFERENCE_TIME systemClockReference, PBYTE* outputData, long* outputDataLength);
     HRESULT DeliverTransportStreamData(PBYTE inputData, long inputDataLength);
@@ -157,6 +161,8 @@ class CTsMuxer : public CUnknown, public IStreamMultiplexer, public ITsMuxer
     byte m_sdtPacket[TS_PACKET_LEN];
     byte m_sdtContinuityCounter;
     byte m_sdtVersion;
+    CCniRegister m_cniRegister;
+    bool m_isCniName;
     char m_serviceName[SERVICE_NAME_LENGTH + 1];
     byte m_serviceType;
     DWORD m_sdtResetTime;

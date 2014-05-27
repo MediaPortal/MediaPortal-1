@@ -18,9 +18,11 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#pragma once
 #include <Windows.h>
 
 // 8/4 Hamming decoding table
+// transmission order: [LSB] P1 D1 P2 D2 P3 D3 P4 D4 [MSB]
 const byte UNHAM_TABLE[256] =
 {
   0x01, 0xff, 0x81, 0x01, 0xff, 0x00, 0x01, 0xff,
@@ -58,7 +60,30 @@ const byte UNHAM_TABLE[256] =
 };
 
 // Decode two 8/4 Hamming encoded bytes into one byte.
-byte unham(byte low, byte high)
-{ 
-  return (UNHAM_TABLE[high] << 4) | (UNHAM_TABLE[low] & 0x0f);
+bool UnhamWord(byte low, byte high, byte* unhammedByte)
+{
+  byte highPart = UNHAM_TABLE[high];
+  if (highPart == 0xff)
+  {
+    return false;
+  }
+  byte lowPart = UNHAM_TABLE[low];
+  if (lowPart == 0xff)
+  {
+    return false;
+  }
+  *unhammedByte = (highPart << 4) | (lowPart & 0x0f);
+  return true;
+}
+
+// Decode one 8/4 Hamming encoded byte into one nibble (4 bits).
+bool UnhamByte(byte b, byte* unhammedNibble)
+{
+  *unhammedNibble = UNHAM_TABLE[b];
+  if (*unhammedNibble == 0xff)
+  {
+    return false;
+  }
+  *unhammedNibble &= 0x0f;
+  return true;
 }

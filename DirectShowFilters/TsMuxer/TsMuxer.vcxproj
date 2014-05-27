@@ -163,6 +163,7 @@
     <None Include="source\TsMuxer.def" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="source\CniRegister.h" />
     <ClInclude Include="source\Hamming.h" />
     <ClInclude Include="source\IMuxInputPin.h" />
     <ClInclude Include="source\IStreamMultiplexer.h" />

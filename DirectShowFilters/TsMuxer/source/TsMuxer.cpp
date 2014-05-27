@@ -69,7 +69,8 @@
 #define TELETEXT_DATA_IDENTIFIER 0x10     // EBU data
 #define TELETEXT_DATA_UNIT_ID 0x02        // EBU teletext non-subtitle data
 #define VBI_LINE_LENGTH 43
-#define TELETEXT_PES_STUFFING_LENGTH 31
+#define VBI_LINE_ES_LENGTH 46             // VBI_LINE_LENGTH + data unit byte + length byte + line offset byte
+#define TELETEXT_PES_HEADER_DATA_LENGTH 36
 
 #define TS_BUFFER_FLUSH_RATE_VIDEO 50
 #define TS_BUFFER_FLUSH_RATE_AUDIO 5
@@ -94,6 +95,27 @@ const byte REVERSE_BITS[256] =
   0x0b, 0x8b, 0x4b, 0xcb, 0x2b, 0xab, 0x6b, 0xeb, 0x1b, 0x9b, 0x5b, 0xdb, 0x3b, 0xbb, 0x7b, 0xfb,
   0x07, 0x87, 0x47, 0xc7, 0x27, 0xa7, 0x67, 0xe7, 0x17, 0x97, 0x57, 0xd7, 0x37, 0xb7, 0x77, 0xf7,
   0x0f, 0x8f, 0x4f, 0xcf, 0x2f, 0xaf, 0x6f, 0xef, 0x1f, 0x9f, 0x5f, 0xdf, 0x3f, 0xbf, 0x7f, 0xff
+};
+
+// 0 = even, 1 = odd
+const byte PARITY[256] =
+{
+  0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
+  1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
+  1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
+  0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
+  1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
+  0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
+  0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
+  1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
+  1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
+  0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
+  0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
+  1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
+  0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
+  1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
+  1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
+  0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0
 };
 
 
@@ -344,6 +366,7 @@ CTsMuxer::CTsMuxer(LPUNKNOWN unk, HRESULT* hr)
 
   m_sdtContinuityCounter = 0;
   m_sdtVersion = VERSION_NOT_SET;
+  m_isCniName = false;
   memset(m_serviceName, 0, SERVICE_NAME_LENGTH + 1);
   m_serviceType = SERVICE_TYPE_NOT_SET;
   m_sdtResetTime = TIME_NOT_SET;
@@ -719,6 +742,7 @@ STDMETHODIMP CTsMuxer::SetActiveComponents(bool video, bool audio, bool teletext
 
   // Clear our SDT details.
   m_sdtVersion = VERSION_NOT_SET;
+  m_isCniName = false;
   memset(m_serviceName, 0, SERVICE_NAME_LENGTH);
   m_sdtResetTime = GetTickCount();
   if (!m_isTeletextActive || !haveTeletextStream)
@@ -1847,6 +1871,17 @@ HRESULT CTsMuxer::UpdateSdt()
   }
   memset(pointer, 0xff, stuffingLength);
   m_packetCounter = 0;  // trigger SDT to be delivered before the next content
+
+  if (serviceNameLength > 0)
+  {
+    wchar_t temp[SERVICE_NAME_LENGTH + 1];
+    MultiByteToWideChar(CP_ACP, 0, m_serviceName, -1, temp, serviceNameLength + 1);
+    LogDebug(L"muxer: updated SDT, version = %d, service type = %d, service name = %s", m_sdtVersion, m_serviceType, temp);
+  }
+  else
+  {
+    LogDebug(L"muxer: updated SDT, version = %d, service type = %d, service name = [not set]", m_sdtVersion, m_serviceType);
+  }
   return S_OK;
 }
 
@@ -1868,82 +1903,240 @@ HRESULT CTsMuxer::WrapVbiTeletextData(StreamInfo* info, PBYTE inputData, long in
     return E_UNEXPECTED;
   }
 
-  // Refer to EN 300 472.
-  // Convert the raw VBI data into PES data.
-  long pesBufferLength = TELETEXT_PES_STUFFING_LENGTH + 1 + ((3 + VBI_LINE_LENGTH) * (inputDataLength / VBI_LINE_LENGTH));  // + 1 for data indentifier, + 3 for field header
-  byte* pesBuffer = new byte[pesBufferLength];
-  if (pesBuffer == NULL)
+  // Side task.
+  ReadChannelNameFromVbiTeletextData(inputData, inputDataLength);
+
+  // Convert the raw VBI data into ES data. Refer to EN 300 472.
+  // The number of ES bytes we expect to generate from the input, assuming no
+  // empty lines thrown away.
+  long esDataLength = (VBI_LINE_ES_LENGTH * (inputDataLength / VBI_LINE_LENGTH));
+
+  // Calculate the maximum buffer space required to wrap the input data. This
+  // is tricky because Teletext ES data must be organised and packed in such a
+  // way that it finishes at the end of a TS packet. The PES header + data
+  // identifier (fixed length) will give us 46 bytes on top of the 46 bytes
+  // from each VBI line. If necessary we will add fake/empty VBI lines at the
+  // end to make up any difference.
+  long esBufferLength = esDataLength;
+  while ((esBufferLength + 46) % (TS_PACKET_LEN - TS_HEADER_LENGTH) != 0) // + 46 for the PES header + data identifier
+  {
+    esBufferLength += VBI_LINE_ES_LENGTH;   // + fake line
+  }
+  esBufferLength++;  // data identifier
+
+  // The PES header data length is fixed by EN 300 472. We will add PTS, but
+  // the rest of the space has to be made up with stuffing, which we add in
+  // this function as if it is part of the ES data.
+  int stuffingLength = TELETEXT_PES_HEADER_DATA_LENGTH - PTS_LENGTH;
+  esBufferLength += stuffingLength;
+
+  byte* esBuffer = new byte[esBufferLength];
+  if (esBuffer == NULL)
   {
     return E_OUTOFMEMORY;
   }
 
-  bool gotRealData = false;
   byte* inputPointer = inputData;
-  byte* pesPointer = &pesBuffer[TELETEXT_PES_STUFFING_LENGTH + 1]; // + 1 for data identifier
+  byte* esPointer = &esBuffer[stuffingLength + 1];  // + 1 for data identifier
   while (inputDataLength >= VBI_LINE_LENGTH)
   {
     // If this line has real content...
     if (*inputPointer != 0 || *(inputPointer + 1) != 0 || *(inputPointer + 2) != 0 || *(inputPointer + 3) != 0 || *(inputPointer + 4) != 0)
     {
-      gotRealData = true;
-      *pesPointer++ = TELETEXT_DATA_UNIT_ID;
-      *pesPointer++ = 1 + VBI_LINE_LENGTH;    // data unit length, + 1 for line offset
-      *pesPointer++ = 0xc0;                   // undefined line offset
-      *pesPointer++ = 0xe4;                   // framing code
+      *esPointer++ = TELETEXT_DATA_UNIT_ID;
+      *esPointer++ = 1 + VBI_LINE_LENGTH;     // data unit length, + 1 for line offset
+      *esPointer++ = 0xc0;                    // field parity 0, undefined line offset
+      *esPointer++ = 0xe4;                    // framing code
       inputPointer++;                         // (skipped framing code)
-      byte* linePointer = pesPointer;
-      for (byte i = 1; i < VBI_LINE_LENGTH; i++)  // 1.. because we skip/overwrite the framing code
+      for (byte i = 1; i < VBI_LINE_LENGTH; i++)        // 1.. because we skip/overwrite the framing code
       {
-        *pesPointer++ = REVERSE_BITS[*inputPointer++];
-      }
-
-      // Side task - search for the channel name for the SDT.
-      byte mapa1 = *linePointer;
-      byte mapa2 = *(linePointer + 1);
-      byte magazineAndPacketAddress = unham(mapa1, mapa2);
-      byte magazineNumber = magazineAndPacketAddress & 0x07;
-      byte packetNumber = magazineAndPacketAddress >> 3;
-      if (magazineNumber == 0 && packetNumber == 30)
-      {
-        // Use the last SERVICE_NAME_LENGTH bytes (excluding the last byte)
-        // from the line as the service name.
-        linePointer += (VBI_LINE_LENGTH - SERVICE_NAME_LENGTH - 1);
-        char tempName[SERVICE_NAME_LENGTH + 1];
-        for (byte i = 0; i < SERVICE_NAME_LENGTH; i++)
-        {
-          tempName[i] = (char)(*linePointer++ & 0x7f);
-        }
-        tempName[SERVICE_NAME_LENGTH] = '\0';
-        if (strcmp(tempName, m_serviceName) != 0)
-        {
-          LogDebug(L"muxer: found channel name '%s' in teletext", tempName);
-          strcpy(m_serviceName, tempName);
-          UpdateSdt();
-        }
+        *esPointer++ = REVERSE_BITS[*inputPointer++];   // Reverse because the TS packet bits must be in transmission order.
       }
     }
     else
     {
       inputPointer += VBI_LINE_LENGTH;
+      esDataLength -= VBI_LINE_ES_LENGTH;
     }
     inputDataLength -= VBI_LINE_LENGTH;
   }
 
   // If we have some real teletext data (ie. not all zeroes)...
   HRESULT hr = S_OK;
-  if (gotRealData)
+  if (esDataLength > 0)
   {
-    memset(pesBuffer, 0xff, TELETEXT_PES_STUFFING_LENGTH);
-    pesBuffer[TELETEXT_PES_STUFFING_LENGTH] = TELETEXT_DATA_IDENTIFIER;
-    hr = WrapElementaryStreamData(info, pesBuffer, pesBufferLength, systemClockReference, outputData, outputDataLength);
+    memset(esBuffer, 0xff, stuffingLength); 
+    esBuffer[stuffingLength] = TELETEXT_DATA_IDENTIFIER;
+    while ((esDataLength + 46) % (TS_PACKET_LEN - TS_HEADER_LENGTH) != 0)
+    {
+      memset(esPointer, 0xff, VBI_LINE_ES_LENGTH);
+      *(esPointer + 1) = 1 + VBI_LINE_LENGTH;     // data unit length
+      esDataLength += VBI_LINE_ES_LENGTH;
+    }
+    hr = WrapElementaryStreamData(info, esBuffer, stuffingLength + 1 + esDataLength, systemClockReference, outputData, outputDataLength);
     if (SUCCEEDED(hr) && *outputDataLength > 0)
     {
-      // Overwrite the PES header length to include the extra stuffing required
-      // by EN 300 472.
-      (*outputData)[8] = TELETEXT_PES_STUFFING_LENGTH + PTS_LENGTH;
+      // Overwrite the PES header length to include the stuffing.
+      (*outputData)[8] = TELETEXT_PES_HEADER_DATA_LENGTH;
     }
   }
-  delete[] pesBuffer;
+  delete[] esBuffer;
+  return hr;
+}
+
+HRESULT CTsMuxer::ReadChannelNameFromVbiTeletextData(PBYTE inputData, long inputDataLength)
+{
+  if (m_isCniName)
+  {
+    return S_OK;
+  }
+
+  byte* input = inputData;
+  HRESULT hr = S_OK;
+  while (inputDataLength >= VBI_LINE_LENGTH)
+  {
+    inputDataLength -= VBI_LINE_LENGTH;
+    byte* inputPointer = input;
+    input += VBI_LINE_LENGTH;
+
+    // If this line has real content...
+    if (*inputPointer == 0 && *(inputPointer + 1) == 0 && *(inputPointer + 2) == 0 && *(inputPointer + 3) == 0 && *(inputPointer + 4) == 0)
+    {
+      continue;
+    }
+
+    // Search for the channel name for the SDT. Refer to ETS 300 706, section
+    // 9.8 - Broadcast Service Data Packets.
+    byte magazineAndPacketAddress = 0xff;
+    if (!UnhamWord(*(inputPointer + 1), *(inputPointer + 2), &magazineAndPacketAddress))
+    {
+      continue;
+    }
+
+    byte magazineNumber = magazineAndPacketAddress & 0x07;
+    byte packetNumber = magazineAndPacketAddress >> 3;
+    if (magazineNumber != 0 || packetNumber != 30)  // magazine 0 is referred to as magazine 8
+    {
+      continue;
+    }
+
+    byte designationCode = 0xff;
+    if (!UnhamByte(*(inputPointer + 3), &designationCode))
+    {
+      continue;
+    }
+
+    designationCode = (designationCode >> 1);
+    if (designationCode == 7 && strlen(m_serviceName) > 0)
+    {
+      // If we get to here we already have a name from a format 8 (German)
+      // packet. Assume the name won't be different => no need to continue.
+      continue;
+    }
+    LogDebug(L"muxer: found teletext magazine 8 packet 30, designation code = %d", designationCode);
+    if (designationCode == 7)   // German proprietary format, not preferred
+    {
+      // 1 byte         framing code - actually seems to be a random value in many cases
+      // 2 bytes        magazine and packet numbers, Hamming 8/4 protected
+      // 1 byte         designation code and multiplexed flag
+      // 6 bytes        unknown
+      // 3 bytes        unknown, looks like a hex number encoded in ASCII (eg. FAC) which seems to increase sequentially over time
+      // 1 byte         value 0x83
+      // 7 to 9 bytes   teletext service name (eg. RTL II, RTL NITRO, ZDFtext), seems to often have "text" on the end
+      // 1 byte         value 0x02 or 0x07
+      // 8 to 11 bytes  date encoded in ASCII (eg. So 25 Mai, Sa 24.5.)
+      // 1 byte         value 0x83
+      // 8 or 9 bytes   time encoded in ASCII (eg.  05:59:18, 06:01:50)
+      // 1 byte         value 0x64
+      inputPointer = inputPointer + 14;
+      int i = 0;
+      int j = 0;
+      for (i = 0; i < 29; i++)
+      {
+        char c = *inputPointer++;
+        if ((c & 0x7f) < 0x20)
+        {
+          // End of name, NULL terminate.
+          if (j > 0)
+          {
+            hr = UpdateSdt();
+          }
+          m_serviceName[j] = NULL;
+          break;
+        }
+        if (PARITY[c] == 0)
+        {
+          // Error detected => bail and reset name.
+          LogDebug(L"muxer: parity error, reset channel name", c);
+          m_serviceName[0] = NULL;
+          break;
+        }
+        if (c != 0x20 || j > 0) // Ignore leadings space characters.
+        {
+          m_serviceName[j++] = c & 0x7f;
+          if (i == 28)
+          {
+            // No more bytes left.
+            hr = UpdateSdt();
+            m_serviceName[j] = NULL;
+            break;
+          }
+        }
+      }
+    }
+    else if (designationCode == 0)    // format 1 packet/line (standard - EN 300 706), preferred
+    {
+      // The network identifier field is transmitted MSB first. We
+      // have to undo the reversing process performed by the VBI/WST
+      // filter.
+      unsigned short networkId = (REVERSE_BITS[*(inputPointer + 10)] << 8) + REVERSE_BITS[*(inputPointer + 11)];
+      string* name = NULL;
+      if (m_cniRegister.GetType1NetworkName(networkId, name))
+      {
+        strcpy(m_serviceName, name->c_str());
+        LogDebug(L"muxer: network ID = %d", networkId);
+        m_isCniName = true;
+        return UpdateSdt();
+      }
+
+      LogDebug(L"muxer: network ID = %d, name not registered", networkId);
+    }
+    else if (designationCode == 1)    // format 2 packet/line (PDC - EN 300 706 and EN 300 231), preferred
+    {
+      // The bit manipulation here is really tricky!
+      // The bits reach us in reversed transmission order. The Hamming table is
+      // designed to work on them in that order, so we unham first.
+      // Normally teletext fields are transmitted LSB first, but the CNI field
+      // is the opposite. So we have to reverse the unhammed bits to get them
+      // back to transmission order, then finally shift them to construct the
+      // final identifiers.
+      byte byte1;
+      byte byte2;
+      byte byte3;
+      byte byte4;
+      byte byte5;
+      if (UnhamByte(*(inputPointer + 12), &byte1) &&  // EN 300 231 byte 15
+        UnhamByte(*(inputPointer + 13), &byte2) &&    // byte 16
+        UnhamByte(*(inputPointer + 18), &byte3) &&    // byte 21
+        UnhamByte(*(inputPointer + 19), &byte4) &&    // byte 22
+        UnhamByte(*(inputPointer + 20), &byte5)       // byte 23
+      )
+      {
+        byte countryId = REVERSE_BITS[byte1] | ((REVERSE_BITS[byte3] & 0xc0) >> 4) | ((REVERSE_BITS[byte4] & 0x30) >> 4);
+        byte networkId = ((REVERSE_BITS[byte2] & 0x30) << 2) | ((REVERSE_BITS[byte4] & 0xc0) >> 2) | REVERSE_BITS[byte5];
+        string* name = NULL;
+        if (m_cniRegister.GetType2NetworkName(countryId, networkId, name))
+        {
+          strcpy(m_serviceName, name->c_str());
+          LogDebug(L"muxer: country ID = %d, network ID = %d", countryId, networkId);
+          m_isCniName = true;
+          return UpdateSdt();
+        }
+
+        LogDebug(L"muxer: country ID = %d, network ID = %d, name not registered", countryId, networkId);
+      }
+    }
+  }
   return hr;
 }
 
