@@ -62,7 +62,7 @@ CTsMuxerFilter::CTsMuxerFilter(IStreamMultiplexer* multiplexer, wchar_t* debugPa
 CTsMuxerFilter::~CTsMuxerFilter(void)
 {
   LogDebug(L"filter: destructor");
-  CAutoLock filterLock(m_pLock);
+  CAutoLock pinLock(&m_inputPinsLock);
   vector<CMuxInputPin*>::iterator it = m_inputPins.begin();
   while (it != m_inputPins.end())
   {
@@ -95,7 +95,7 @@ CBasePin* CTsMuxerFilter::GetPin(int n)
   }
   n--;
 
-  CAutoLock filterLock(m_pLock);
+  CAutoLock pinLock(&m_inputPinsLock);
   if (n < 0 || n >= (int)m_inputPins.size())
   {
     return NULL;
@@ -105,10 +105,10 @@ CBasePin* CTsMuxerFilter::GetPin(int n)
 
 HRESULT CTsMuxerFilter::AddPin()
 {
+  CAutoLock pinLock(&m_inputPinsLock);
   LogDebug(L"filter: add pin, current pin count = %d", m_inputPins.size());
 
   // If any pin is unconnected or the filter is running then don't add a new pin.
-  CAutoLock filterLock(m_pLock);
   if (!IsStopped())
   {
     LogDebug(L"filter: can't add pin unless filter is stopped");
@@ -145,7 +145,7 @@ HRESULT CTsMuxerFilter::AddPin()
 
 int CTsMuxerFilter::GetPinCount()
 {
-  CAutoLock filterLock(m_pLock);
+  CAutoLock pinLock(&m_inputPinsLock);
   return 1 + m_inputPins.size();
 }
 
@@ -193,6 +193,7 @@ STDMETHODIMP CTsMuxerFilter::Run(REFERENCE_TIME startTime)
     wchar_t fileName[MAX_PATH];
     if (inputPinDebugMask != 0)
     {
+      CAutoLock pinLock(&m_inputPinsLock);
       vector<CMuxInputPin*>::iterator it = m_inputPins.begin();
       long mask = 1;
       while (it != m_inputPins.end())
@@ -234,6 +235,7 @@ STDMETHODIMP CTsMuxerFilter::Stop()
   WaitForSingleObject(m_streamingMonitorThread, INFINITE);
   m_streamingMonitorThread = INVALID_HANDLE_VALUE;
 
+  CAutoLock pinLock(&m_inputPinsLock);
   vector<CMuxInputPin*>::iterator it = m_inputPins.begin();
   while (it != m_inputPins.end())
   {
@@ -266,7 +268,7 @@ void __cdecl CTsMuxerFilter::StreamingMonitorThreadFunction(void* arg)
 
     if (muxer != NULL && muxer->IsStarted())
     {
-      CAutoLock filterLock(filter->m_pLock);
+      CAutoLock pinLock(&(filter->m_inputPinsLock));
       vector<CMuxInputPin*>::iterator it = filter->m_inputPins.begin();
       if (isFirst)
       {

@@ -61,6 +61,7 @@ class CTsMuxerFilter : public CBaseFilter
     IStreamMultiplexer* m_multiplexer;
     CTsOutputPin* m_outputPin;          // MPEG 2 transport stream output pin
     vector<CMuxInputPin*> m_inputPins;  // input pins
+    CCritSec m_inputPinsLock;           // input pins vector lock
     CCritSec* m_receiveLock;            // sample receive lock
 
     HANDLE m_streamingMonitorThread;
