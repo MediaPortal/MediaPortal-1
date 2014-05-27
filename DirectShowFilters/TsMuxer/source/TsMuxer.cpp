@@ -1823,9 +1823,12 @@ HRESULT CTsMuxer::UpdatePmt()
   }
   memset(pointer, 0xff, stuffingLength);
 
+  // Check if the service type has changed, and update the SDT that we're
+  // delivering if it has. Be careful though: we don't want to trigger SDT
+  // delivery from here (hence the SDT version check).
   byte oldServiceType = m_serviceType;
   m_serviceType = pcrPidIsVideo ? SERVICE_TYPE_TELEVISION : SERVICE_TYPE_RADIO;
-  if (oldServiceType != m_serviceType)
+  if (oldServiceType != m_serviceType && m_sdtVersion != VERSION_NOT_SET)
   {
     UpdateSdt();
   }
