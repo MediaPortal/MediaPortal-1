@@ -72,7 +72,7 @@ namespace MediaPortal.Configuration.Sections
       using (Settings xmlreader = new MPSettings())
       {
         chbEnabled.Checked = xmlreader.GetValueAsBool("filemenu", "enabled", true);
-        textPinCodeBox.Text = Util.Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", ""));
+        textPinCodeBox.Text = Util.Utils.DecryptPasssword(xmlreader.GetValueAsString("filemenu", "pincode", ""));
         textTrashcanFolder.Text = xmlreader.GetValueAsString("filemenu", "trashcan", "");
       }
     }
@@ -82,19 +82,8 @@ namespace MediaPortal.Configuration.Sections
       using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValueAsBool("filemenu", "enabled", chbEnabled.Checked);
-        xmlwriter.SetValue("filemenu", "pincode", Util.Utils.EncryptPin(textPinCodeBox.Text));
+        xmlwriter.SetValue("filemenu", "pincode", Util.Utils.EncryptPasssword(textPinCodeBox.Text));
         xmlwriter.SetValue("filemenu", "trashcan", textTrashcanFolder.Text);
-      }
-    }
-
-    private void textPinCodeBox_KeyPress(object sender, KeyPressEventArgs e)
-    {
-      //
-      // Allow only numbers, and backspace.
-      //
-      if (char.IsNumber(e.KeyChar) == false && e.KeyChar != 8)
-      {
-        e.Handled = true;
       }
     }
 
@@ -149,7 +138,6 @@ namespace MediaPortal.Configuration.Sections
       this.textPinCodeBox.PasswordChar = '*';
       this.textPinCodeBox.Size = new System.Drawing.Size(278, 20);
       this.textPinCodeBox.TabIndex = 2;
-      this.textPinCodeBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textPinCodeBox_KeyPress);
       // 
       // chbEnabled
       // 

@@ -2752,7 +2752,7 @@ public class MediaPortalApp : D3D, IRender
         var virtualDir = new VirtualDirectory();
         virtualDir.LoadSettings(section);
 
-        int pincode;
+        string pincode;
         bool lastFolderPinProtected = virtualDir.IsProtectedShare(lastFolder, out pincode);
         if (rememberLastFolder && lastFolderPinProtected)
         {

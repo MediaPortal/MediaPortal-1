@@ -169,7 +169,7 @@ namespace MediaPortal.GUI.Pictures
               }
               else
               {
-                int pin;
+                string pin;
                 if ((item.Label != "..") && (!vDir.IsProtectedShare(item.Path, out pin)))
                 {
                   string thumbnailImage = item.Path + @"\folder.jpg";
@@ -423,7 +423,7 @@ namespace MediaPortal.GUI.Pictures
         _enableVideoPlayback = xmlreader.GetValueAsBool("pictures", "enableVideoPlayback", false);
         _playVideosInSlideshows = xmlreader.GetValueAsBool("pictures", "playVideosInSlideshows", false);
         isFileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
-        fileMenuPinCode = Util.Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", string.Empty));
+        fileMenuPinCode = Util.Utils.DecryptPasssword(xmlreader.GetValueAsString("filemenu", "pincode", string.Empty));
         //string strDefault = xmlreader.GetValueAsString("pictures", "default", string.Empty);
         _wolTimeout = xmlreader.GetValueAsInt("WOL", "WolTimeout", 10);
         _wolResendTime = xmlreader.GetValueAsInt("WOL", "WolResendTime", 1);
@@ -464,7 +464,7 @@ namespace MediaPortal.GUI.Pictures
       {
         VirtualDirectory vDir = new VirtualDirectory();
         vDir.LoadSettings("pictures");
-        int pincode = 0;
+        string pincode = string.Empty;
         bool FolderPinProtected = vDir.IsProtectedShare(currentFolder, out pincode);
         if (FolderPinProtected)
         {
@@ -971,7 +971,7 @@ namespace MediaPortal.GUI.Pictures
       }
 
       dlg.AddLocalizedString(457); //Switch View
-      int iPincodeCorrect;
+      string iPincodeCorrect;
       
       if (!_virtualDirectory.IsProtectedShare(item.Path, out iPincodeCorrect) && !item.IsRemote && isFileMenuEnabled)
       {
@@ -1512,7 +1512,7 @@ namespace MediaPortal.GUI.Pictures
       {
         if (item.Label != "..")
         {
-          int pin;
+          string pin;
           if (!_virtualDirectory.IsProtectedShare(item.Path, out pin))
           {
             Util.Utils.SetThumbnails(ref item);
@@ -1572,7 +1572,7 @@ namespace MediaPortal.GUI.Pictures
       {
         if (item.Label != "..")
         {
-          int pin;
+          string pin;
           if (!_virtualDirectory.IsProtectedShare(item.Path, out pin))
           {
             Util.Utils.SetThumbnails(ref item);
@@ -2795,7 +2795,7 @@ namespace MediaPortal.GUI.Pictures
 
       if (_virtualDirectory.DefaultShare != null)
       {
-        int pincode;
+        string pincode;
         bool folderPinProtected = _virtualDirectory.IsProtectedShare(_virtualDirectory.DefaultShare.Path, out pincode);
         if (folderPinProtected)
         {

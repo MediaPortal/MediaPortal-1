@@ -80,7 +80,7 @@ namespace WindowPlugins.GUISettings
       {
         btnFileMenu.Selected = xmlreader.GetValueAsBool("filemenu", "enabled", true);
         btnPin.IsEnabled = btnFileMenu.Selected;
-        _pin = Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", ""));
+        _pin = Utils.DecryptPasssword(xmlreader.GetValueAsString("filemenu", "pincode", ""));
       }
     }
 
@@ -89,7 +89,7 @@ namespace WindowPlugins.GUISettings
       using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValueAsBool("filemenu", "enabled", btnFileMenu.Selected);
-        xmlwriter.SetValue("filemenu", "pincode", Utils.EncryptPin(_pin));
+        xmlwriter.SetValue("filemenu", "pincode", Utils.EncryptPasssword(_pin));
       }
     }
 
@@ -195,10 +195,8 @@ namespace WindowPlugins.GUISettings
         dlgOK2.SetHeading(100514);
         dlgOK2.DoModal(GetID);
 
-        if (!SetPin())
-        {
-          return;
-        }
+        SetPin();
+        
         SettingsChanged(true);
 
       }
@@ -217,55 +215,24 @@ namespace WindowPlugins.GUISettings
       base.OnClicked(controlId, control, actionType);
     }
 
-    private bool SetPin()
+    private void SetPin()
     {
       var msgGetPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_PASSWORD, 0, 0, 0, 0, 0, 0);
       GUIWindowManager.SendMessage(msgGetPassword);
-
-      try
-      {
-        if (msgGetPassword.Label != string.Empty)
-        {
-          int iPincode = Int32.Parse(msgGetPassword.Label);
-          _pin = iPincode.ToString(CultureInfo.InvariantCulture);
-        }
-        else
-        {
-          _pin = string.Empty;
-        }
-        return true;
-      }
-      catch (Exception ex) 
-      { 
-        Log.Error("Setpin() Exception {0} ", ex.Message);
-      }
-      return false;
+        
+      _pin = msgGetPassword.Label;
     }
 
-    public bool RequestPin()
+    private bool RequestPin()
     {
       bool retry = true;
-      bool sucess = false;
 
       while (retry)
       {
         var msgGetPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_PASSWORD, 0, 0, 0, 0, 0, 0);
         GUIWindowManager.SendMessage(msgGetPassword);
-        int iPincode = -1;
-        try
-        {
-          iPincode = Int32.Parse(msgGetPassword.Label);
-        }
-        // ReSharper disable EmptyGeneralCatchClause
-        catch (Exception) { }
-        // ReSharper restore EmptyGeneralCatchClause
 
-        if (iPincode == Convert.ToInt32(_pin))
-        {
-          sucess = true;
-        }
-
-        if (sucess)
+        if (msgGetPassword.Label == _pin)
         {
           return true;
         }
