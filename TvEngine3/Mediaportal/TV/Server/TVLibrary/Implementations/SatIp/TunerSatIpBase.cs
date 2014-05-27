@@ -268,11 +268,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
         }
         if (string.IsNullOrEmpty(rtpServerPort) || rtpServerPort.Equals("0"))
         {
-          rtpUrl = string.Format("rtp://{0}:{1}@{2}", _localIpAddress, rtpClientPort, _serverIpAddress);
+          rtpUrl = string.Format("rtp://{0}@{1}:{2}", _serverIpAddress, _localIpAddress, rtpClientPort);
         }
         else
         {
-          rtpUrl = string.Format("rtp://{0}:{1}@{2}:{3}", _localIpAddress, rtpClientPort, _serverIpAddress, rtpServerPort);
+          rtpUrl = string.Format("rtp://{0}:{1}@{2}:{3}", _serverIpAddress, rtpServerPort, _localIpAddress, rtpClientPort);
         }
         this.LogDebug("SAT>IP base: RTSP SETUP response okay");
         this.LogDebug("  session ID = {0}", _rtspSessionId);
@@ -285,7 +285,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
 
       // PLAY to change channel or start the stream
       this.LogDebug("SAT>IP base: send RTSP PLAY");
-      string pidFilterPhrase = "none";
+      string pidFilterPhrase = "0";   // If you use "none" the source filter will not receive data => fail to start graph.
       if (_isPidFilterDisabled)
       {
         pidFilterPhrase = "all";
