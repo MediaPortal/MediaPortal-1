@@ -99,7 +99,7 @@ namespace MediaPortal.Util
 
     /// <summary>
     /// property to get/set the pincode for the share
-    /// (-1 means no pincode)
+    /// (string.empty means no pincode)
     /// </summary>
     public string Pincode
     {

@@ -448,7 +448,7 @@ namespace MediaPortal.Util
     /// This method checks if the specified folder is protected by a pincode
     /// </summary>
     /// <param name="strDir">folder to check</param>
-    /// <param name="iPincode">on return: pincode to use or -1 when no pincode is needed</param>
+    /// <param name="iPincode">on return: pincode to use or string.Empty when no pincode is needed</param>
     /// <returns>
     /// true : folder is protected by a pincode
     /// false: folder is not protected
@@ -457,8 +457,12 @@ namespace MediaPortal.Util
     {
       iPincode = string.Empty;
       Share share = GetShare(strDir);
-      if (share == null) return false;
+
+      if (share == null) 
+        return false;
+
       iPincode = share.Pincode;
+
       if (share.Pincode != string.Empty)
       {
         if (share.IsFtpShare)
