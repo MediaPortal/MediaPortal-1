@@ -89,16 +89,31 @@ HRESULT CTsOutputPin::Deliver(PBYTE data, long dataLength)
 
   IMediaSample* sample;
   HRESULT hr = GetDeliveryBuffer(&sample, NULL, NULL, 0);
-  hr |= sample->SetActualDataLength(dataLength);
-  PBYTE sampleBuffer;
-  hr |= sample->GetPointer(&sampleBuffer);
-  memcpy(sampleBuffer, data, dataLength);
-  sample->Release();
-
-  hr |= CBaseOutputPin::Deliver(sample);
-  if (hr != 0)
+  if (!SUCCEEDED(hr))
   {
-    LogDebug(L"TS output: failed to deliver, hr = 0x%x", hr);
+    LogDebug(L"TS output: failed to get delivery buffer, hr = 0x%x", hr);
+    return hr;
+  }
+  hr = sample->SetActualDataLength(dataLength);
+  if (!SUCCEEDED(hr))
+  {
+    LogDebug(L"TS output: failed to set actual data length, hr = 0x%x", hr);
+    return hr;
+  }
+  PBYTE sampleBuffer;
+  hr = sample->GetPointer(&sampleBuffer);
+  if (!SUCCEEDED(hr))
+  {
+    LogDebug(L"TS output: failed to get sample pointer, hr = 0x%x", hr);
+    return hr;
+  }
+  memcpy(sampleBuffer, data, dataLength);
+
+  hr = CBaseOutputPin::Deliver(sample);
+  sample->Release();
+  if (hr != S_OK)
+  {
+    LogDebug(L"TS output: failed to deliver sample, hr = 0x%x", hr);
   }
   return hr;
 }
