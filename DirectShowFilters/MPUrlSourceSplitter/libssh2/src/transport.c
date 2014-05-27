@@ -139,7 +139,7 @@ decrypt(LIBSSH2_SESSION * session, unsigned char *source,
     assert((len % blocksize) == 0);
 
     while (len >= blocksize) {
-        if (session->remote.crypt->crypt(session, source,
+        if (session->remote.crypt->crypt(session, source, blocksize,
                                          &session->remote.crypt_abstract)) {
             LIBSSH2_FREE(session, p->payload);
             return LIBSSH2_ERROR_DECRYPT;
@@ -167,6 +167,7 @@ fullpacket(LIBSSH2_SESSION * session, int encrypted /* 1 or 0 */ )
     unsigned char macbuf[MAX_MACSIZE];
     struct transportpacket *p = &session->packet;
     int rc;
+    int compressed;
 
     if (session->fullpacket_state == libssh2_NB_state_idle) {
         session->fullpacket_macstate = LIBSSH2_MAC_CONFIRMED;
@@ -199,9 +200,13 @@ fullpacket(LIBSSH2_SESSION * session, int encrypted /* 1 or 0 */ )
         session->fullpacket_payload_len -= p->padding_length;
 
         /* Check for and deal with decompression */
-        if (session->remote.comp &&
-            session->remote.comp->compress &&
-            session->remote.comp_abstract) {
+        compressed =
+            session->local.comp != NULL &&
+            session->local.comp->compress &&
+            ((session->state & LIBSSH2_STATE_AUTHENTICATED) ||
+             session->local.comp->use_in_auth);
+
+        if (compressed && session->remote.comp_abstract) {
             /*
              * The buffer for the decompression (remote.comp_abstract) is
              * initialised in time when it is needed so as long it is NULL we
@@ -296,7 +301,7 @@ int _libssh2_transport_read(LIBSSH2_SESSION * session)
          * is done!
          */
         _libssh2_debug(session, LIBSSH2_TRACE_TRANS, "Redirecting into the"
-                       " key re-exchange");
+                       " key re-exchange from _libssh2_transport_read");
         rc = _libssh2_kex_exchange(session, 1, &session->startup_key_state);
         if (rc)
             return rc;
@@ -682,10 +687,29 @@ int _libssh2_transport_send(LIBSSH2_SESSION *session,
 #endif
     struct transportpacket *p = &session->packet;
     int encrypted;
+    int compressed;
     ssize_t ret;
     int rc;
     const unsigned char *orgdata = data;
     size_t orgdata_len = data_len;
+
+    /*
+     * If the last read operation was interrupted in the middle of a key
+     * exchange, we must complete that key exchange before continuing to write
+     * further data.
+     *
+     * See the similar block in _libssh2_transport_read for more details.
+     */
+    if (session->state & LIBSSH2_STATE_EXCHANGING_KEYS &&
+        !(session->state & LIBSSH2_STATE_KEX_ACTIVE)) {
+        /* Don't write any new packets if we're still in the middle of a key
+         * exchange. */
+        _libssh2_debug(session, LIBSSH2_TRACE_TRANS, "Redirecting into the"
+                       " key re-exchange from _libssh2_transport_send");
+        rc = _libssh2_kex_exchange(session, 1, &session->startup_key_state);
+        if (rc)
+            return rc;
+    }
 
     debugdump(session, "libssh2_transport_write plain", data, data_len);
     if(data2)
@@ -705,7 +729,13 @@ int _libssh2_transport_send(LIBSSH2_SESSION *session,
 
     encrypted = (session->state & LIBSSH2_STATE_NEWKEYS) ? 1 : 0;
 
-    if (encrypted && session->local.comp->compress) {
+    compressed =
+        session->local.comp != NULL &&
+        session->local.comp->compress &&
+        ((session->state & LIBSSH2_STATE_AUTHENTICATED) ||
+         session->local.comp->use_in_auth);
+
+    if (encrypted && compressed) {
         /* the idea here is that these function must fail if the output gets
            larger than what fits in the assigned buffer so thus they don't
            check the input size as we don't know how much it compresses */
@@ -816,6 +846,7 @@ int _libssh2_transport_send(LIBSSH2_SESSION *session,
         for(i = 0; i < packet_length; i += session->local.crypt->blocksize) {
             unsigned char *ptr = &p->outbuf[i];
             if (session->local.crypt->crypt(session, ptr,
+                                            session->local.crypt->blocksize,
                                             &session->local.crypt_abstract))
                 return LIBSSH2_ERROR_ENCRYPT;     /* encryption failure */
         }

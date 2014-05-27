@@ -910,8 +910,11 @@ libssh2_knownhost_readfile(LIBSSH2_KNOWNHOSTS *hosts,
     file = fopen(filename, "r");
     if(file) {
         while(fgets(buf, sizeof(buf), file)) {
-            if(libssh2_knownhost_readline(hosts, buf, strlen(buf), type))
+            if(libssh2_knownhost_readline(hosts, buf, strlen(buf), type)) {
+                num = _libssh2_error(hosts->session, LIBSSH2_ERROR_KNOWN_HOSTS,
+                                     "Failed to parse known hosts file");
                 break;
+            }
             num++;
         }
         fclose(file);
@@ -997,10 +1000,10 @@ knownhost_writeline(LIBSSH2_KNOWNHOSTS *hosts,
 
         if(nlen <= buflen)
             if(node->comment)
-                sprintf(buf, "|1|%s|%s%s %s %s\n", saltalloc, namealloc,
+                snprintf(buf, buflen, "|1|%s|%s%s %s %s\n", saltalloc, namealloc,
                         keytype, node->key, node->comment);
             else
-                sprintf(buf, "|1|%s|%s%s %s\n", saltalloc, namealloc,
+                snprintf(buf, buflen, "|1|%s|%s%s %s\n", saltalloc, namealloc,
                         keytype, node->key);
         else
             rc = _libssh2_error(hosts->session, LIBSSH2_ERROR_BUFFER_TOO_SMALL,
@@ -1016,10 +1019,10 @@ knownhost_writeline(LIBSSH2_KNOWNHOSTS *hosts,
         if(nlen <= buflen)
             /* these types have the plain name */
             if(node->comment)
-                sprintf(buf, "%s%s %s %s\n", node->name, keytype, node->key,
+                snprintf(buf, buflen, "%s%s %s %s\n", node->name, keytype, node->key,
                         node->comment);
             else
-                sprintf(buf, "%s%s %s\n", node->name, keytype, node->key);
+                snprintf(buf, buflen, "%s%s %s\n", node->name, keytype, node->key);
         else
             rc = _libssh2_error(hosts->session, LIBSSH2_ERROR_BUFFER_TOO_SMALL,
                                 "Known-host write buffer too small");

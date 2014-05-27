@@ -1418,7 +1418,7 @@ _libssh2_channel_flush(LIBSSH2_CHANNEL *channel, int streamid)
 
         rc = _libssh2_channel_receive_window_adjust(channel,
                                                     channel->flush_refund_bytes,
-                                                    0, NULL);
+                                                    1, NULL);
         if (rc == LIBSSH2_ERROR_EAGAIN)
             return rc;
     }
@@ -1483,10 +1483,11 @@ libssh2_channel_get_exit_signal(LIBSSH2_CHANNEL *channel,
                                 char **langtag,
                                 size_t *langtag_len)
 {
-    LIBSSH2_SESSION *session = channel->session;
     size_t namelen = 0;
 
     if (channel) {
+        LIBSSH2_SESSION *session = channel->session;
+
         if (channel->exit_signal) {
             namelen = strlen(channel->exit_signal);
             if (exitsignal) {
@@ -1898,7 +1899,7 @@ libssh2_channel_read_ex(LIBSSH2_CHANNEL *channel, int stream_id, char *buf,
     if(buflen > recv_window) {
         BLOCK_ADJUST(rc, channel->session,
                      _libssh2_channel_receive_window_adjust(channel, buflen,
-                                                            0, NULL));
+                                                            1, NULL));
     }
 
     BLOCK_ADJUST(rc, channel->session,
@@ -2007,6 +2008,9 @@ _libssh2_channel_write(LIBSSH2_CHANNEL *channel, int stream_id,
         do
             rc = _libssh2_transport_read(session);
         while (rc > 0);
+
+        if((rc < 0) && (rc != LIBSSH2_ERROR_EAGAIN))
+            return rc;
 
         if(channel->local.window_size <= 0)
             /* there's no room for data so we stop */

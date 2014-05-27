@@ -175,25 +175,19 @@ _libssh2_cipher_init(_libssh2_cipher_ctx * h,
                      unsigned char *iv, unsigned char *secret, int encrypt)
 {
     EVP_CIPHER_CTX_init(h);
-    EVP_CipherInit(h, algo(), secret, iv, encrypt);
-    return 0;
+    return !EVP_CipherInit(h, algo(), secret, iv, encrypt);
 }
 
 int
 _libssh2_cipher_crypt(_libssh2_cipher_ctx * ctx,
                       _libssh2_cipher_type(algo),
-                      int encrypt, unsigned char *block)
+                      int encrypt, unsigned char *block, size_t blocksize)
 {
-    int blocksize = ctx->cipher->block_size;
     unsigned char buf[EVP_MAX_BLOCK_LENGTH];
     int ret;
     (void) algo;
     (void) encrypt;
 
-    if (blocksize == 1) {
-/* Hack for arcfour. */
-        blocksize = 8;
-    }
     ret = EVP_Cipher(ctx, buf, block, blocksize);
     if (ret == 1) {
         memcpy(block, buf, blocksize);
@@ -201,7 +195,7 @@ _libssh2_cipher_crypt(_libssh2_cipher_ctx * ctx,
     return ret == 1 ? 0 : 1;
 }
 
-#if LIBSSH2_AES_CTR && !defined(HAVE_EVP_AES_128_CTR)
+#if LIBSSH2_AES_CTR
 
 #include <openssl/aes.h>
 #include <openssl/evp.h>
@@ -217,12 +211,13 @@ static int
 aes_ctr_init(EVP_CIPHER_CTX *ctx, const unsigned char *key,
              const unsigned char *iv, int enc) /* init key */
 {
-    aes_ctr_ctx *c = malloc(sizeof(*c));
+    /*
+     * variable "c" is leaked from this scope, but is later freed
+     * in aes_ctr_cleanup
+     */
+    aes_ctr_ctx *c;
     const EVP_CIPHER *aes_cipher;
     (void) enc;
-
-    if (c == NULL)
-        return 0;
 
     switch (ctx->key_len) {
     case 16:
@@ -237,11 +232,20 @@ aes_ctr_init(EVP_CIPHER_CTX *ctx, const unsigned char *key,
     default:
         return 0;
     }
-    c->aes_ctx = malloc(sizeof(EVP_CIPHER_CTX));
-    if (c->aes_ctx == NULL)
+
+    c = malloc(sizeof(*c));
+    if (c == NULL)
         return 0;
 
+    c->aes_ctx = malloc(sizeof(EVP_CIPHER_CTX));
+    if (c->aes_ctx == NULL) {
+        free(c);
+        return 0;
+    }
+
     if (EVP_EncryptInit(c->aes_ctx, aes_cipher, key, NULL) != 1) {
+        free(c->aes_ctx);
+        free(c);
         return 0;
     }
 
@@ -358,6 +362,8 @@ void _libssh2_init_aes_ctr(void)
     _libssh2_EVP_aes_256_ctr();
 }
 
+#else
+void _libssh2_init_aes_ctr(void) {}
 #endif /* LIBSSH2_AES_CTR */
 
 /* TODO: Optionally call a passphrase callback specified by the

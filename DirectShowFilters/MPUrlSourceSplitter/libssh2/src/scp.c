@@ -294,8 +294,8 @@ scp_recv(LIBSSH2_SESSION * session, const char *path, struct stat * sb)
             return NULL;
         }
 
-        /* sprintf() is fine here since we allocated a large enough buffer */
-        sprintf((char *)session->scpRecv_command, "scp -%sf ", sb?"p":"");
+        snprintf((char *)session->scpRecv_command,
+                 session->scpRecv_command_len, "scp -%sf ", sb?"p":"");
 
         cmd_len = strlen((char *)session->scpRecv_command);
 
@@ -796,8 +796,8 @@ scp_send(LIBSSH2_SESSION * session, const char *path, int mode,
             return NULL;
         }
 
-        sprintf((char *)session->scpSend_command, "scp -%st ",
-                (mtime || atime)?"p":"");
+        snprintf((char *)session->scpSend_command, session->scpSend_command_len,
+                 "scp -%st ", (mtime || atime)?"p":"");
 
         cmd_len = strlen((char *)session->scpSend_command);
 
@@ -957,7 +957,7 @@ scp_send(LIBSSH2_SESSION * session, const char *path, int mode,
         session->scpSend_response_len =
             snprintf((char *) session->scpSend_response,
                      LIBSSH2_SCP_RESPONSE_BUFLEN, "C0%o %"
-                     LIBSSH2_INT64_T_FORMAT "u %s\n", mode,
+                     LIBSSH2_INT64_T_FORMAT " %s\n", mode,
                      size, base);
         _libssh2_debug(session, LIBSSH2_TRACE_SCP, "Sent %s",
                        session->scpSend_response);

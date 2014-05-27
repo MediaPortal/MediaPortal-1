@@ -553,16 +553,10 @@ _libssh2_cipher_init(_libssh2_cipher_ctx * h,
 int
 _libssh2_cipher_crypt(_libssh2_cipher_ctx * ctx,
                       _libssh2_cipher_type(algo),
-                      int encrypt, unsigned char *block)
+                      int encrypt, unsigned char *block, size_t blklen)
 {
     int cipher = _libssh2_gcry_cipher (algo);
-    size_t blklen = gcry_cipher_get_algo_blklen(cipher);
     int ret;
-
-    if (blklen == 1) {
-/* Hack for arcfour. */
-        blklen = 8;
-    }
 
     if (encrypt) {
         ret = gcry_cipher_encrypt(*ctx, block, blklen, block, blklen);
@@ -581,7 +575,7 @@ _libssh2_pub_priv_keyfile(LIBSSH2_SESSION *session,
                           const char *privatekey,
                           const char *passphrase)
 {
-    return _libssh_error(session, LIBSSH2_ERROR_FILE,
+    return _libssh2_error(session, LIBSSH2_ERROR_FILE,
                          "Unable to extract public key from private key file: "
                          "Method unimplemented in libgcrypt backend");
 }

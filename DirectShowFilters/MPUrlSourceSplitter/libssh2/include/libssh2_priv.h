@@ -597,6 +597,7 @@ struct _LIBSSH2_SESSION
     uint32_t server_hostkey_len;
 #if LIBSSH2_MD5
     unsigned char server_hostkey_md5[MD5_DIGEST_LENGTH];
+    int server_hostkey_md5_valid;
 #endif                          /* ! LIBSSH2_MD5 */
     unsigned char server_hostkey_sha1[SHA_DIGEST_LENGTH];
 
@@ -882,7 +883,7 @@ struct _LIBSSH2_CRYPT_METHOD
                  int *free_iv, unsigned char *secret, int *free_secret,
                  int encrypt, void **abstract);
     int (*crypt) (LIBSSH2_SESSION * session, unsigned char *block,
-                  void **abstract);
+                  size_t blocksize, void **abstract);
     int (*dtor) (LIBSSH2_SESSION * session, void **abstract);
 
       _libssh2_cipher_type(algo);
@@ -892,6 +893,7 @@ struct _LIBSSH2_COMP_METHOD
 {
     const char *name;
     int compress; /* 1 if it does compress, 0 if it doesn't */
+    int use_in_auth; /* 1 if compression should be used in userauth */
     int (*init) (LIBSSH2_SESSION *session, int compress, void **abstract);
     int (*comp) (LIBSSH2_SESSION *session,
                  unsigned char *dest,
@@ -1030,9 +1032,9 @@ void _libssh2_init_if_needed (void);
 
 /* define to output the libssh2_int64_t type in a *printf() */
 #if defined( __BORLANDC__ ) || defined( _MSC_VER ) || defined( __MINGW32__ )
-#define LIBSSH2_INT64_T_FORMAT "I64"
+#define LIBSSH2_INT64_T_FORMAT "I64d"
 #else
-#define LIBSSH2_INT64_T_FORMAT "ll"
+#define LIBSSH2_INT64_T_FORMAT "lld"
 #endif
 
 #endif /* LIBSSH2_H */
