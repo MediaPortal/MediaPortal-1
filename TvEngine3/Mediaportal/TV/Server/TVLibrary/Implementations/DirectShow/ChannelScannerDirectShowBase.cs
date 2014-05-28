@@ -240,7 +240,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
                           out targetRegionCount, out targetRegionBuffer,
                           out availableInCountryCount, out availableInCountryBuffer, out unavailableInCountryCount, out unavailableInCountryBuffer);
 
-            string serviceName = DvbTextConverter.Convert(serviceNamePtr);
+            string serviceName = DvbTextConverter.Convert(serviceNamePtr).Trim();
             string providerName = DvbTextConverter.Convert(providerNamePtr);
             string logicalChannelNumber = Marshal.PtrToStringAnsi(logicalChannelNumberPtr);
             this.LogDebug("{0}) {1,-32} provider = {2,-16}, LCN = {3,-7}, ONID = {4,-5}, TSID = {5,-5}, SID = {6,-5}, PMT PID = {7,-5}, previous ONID = {8,-5}, previous TSID = {9,-5}, previous SID = {10,-5}",
