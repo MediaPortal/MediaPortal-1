@@ -957,7 +957,8 @@ namespace MediaPortal.GUI.Settings
         {
           return;
         }
-        dlgOK.SetHeading(100513);
+        dlgOK.SetHeading("");
+        dlgOK.SetLine(1, 100513);
         dlgOK.DoModal(GetID);
 
         if (!RequestPin())
@@ -971,7 +972,8 @@ namespace MediaPortal.GUI.Settings
       {
         return;
       }
-      dlgOK2.SetHeading(100514);
+      dlgOK2.SetHeading("");
+      dlgOK2.SetLine(1, 100514);
       dlgOK2.DoModal(GetID);
 
       SetPin();
