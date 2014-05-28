@@ -350,8 +350,9 @@ namespace MediaPortal.Player
             killFormThread.Start();
           }
         }
-        catch
+        catch (Exception ex)
         {
+          Log.Error("CycleRefresh: FixDwm exception {0}", ex);
         }
       }
     }
