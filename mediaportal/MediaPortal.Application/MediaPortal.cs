@@ -83,6 +83,7 @@ public class MediaPortalApp : D3D, IRender
   private readonly bool         _useIdlePluginScreen;
   private bool                  _idlePluginActive = false;
   private bool                  _changeScreen;
+  private bool                  _changeScreenDisplayChange;
   private readonly bool         _useIdleblankScreen;
   private int                   _idlePluginWindowId;
   private readonly bool         _showLastActiveModule;
@@ -1886,12 +1887,12 @@ public class MediaPortalApp : D3D, IRender
         Log.Debug("Main: Screen MP OnDisplayChange start screen                                           {0}", GetCleanDisplayName(GUIGraphicsContext.currentStartScreen));
         Log.Debug("Main: Screen MP OnDisplayChange change current screen {0} with current detected screen {1}", GetCleanDisplayName(GUIGraphicsContext.currentScreen), GetCleanDisplayName(screen));
         GUIGraphicsContext.currentScreen = screen;
-        Log.Debug("Main: Screen MP OnDisplayChange set current screen bounds {0} to Bounds {1}",
-          GUIGraphicsContext.currentScreen.Bounds, Bounds);
+        Log.Debug("Main: Screen MP OnDisplayChange set current detected screen bounds : {0} to previous bounds values : {1}", GUIGraphicsContext.currentScreen.Bounds, Bounds);
         Bounds = screen.Bounds;
         Log.Debug("Main: Screen MP OnDisplayChange recreate swap chain");
+        NeedRecreateSwapChain = true;
         RecreateSwapChain();
-        _changeScreen = true;
+        _changeScreenDisplayChange = true;
       }
       // Restore original Start Screen in case of change from RDP Session
       if (!Equals(screen, GUIGraphicsContext.currentStartScreen))
@@ -1909,6 +1910,7 @@ public class MediaPortalApp : D3D, IRender
             break;
           }
           GUIGraphicsContext.currentScreen = screen;
+          Log.Debug("Main: Screen MP OnDisplayChange restore screen");
         }
       }
     }
@@ -1977,6 +1979,7 @@ public class MediaPortalApp : D3D, IRender
       Log.Debug("Main: Screen MP OnGetMinMaxInfo set current screen bounds {0} to Bounds {1}", GUIGraphicsContext.currentScreen.Bounds, Bounds);
       Bounds = screen.Bounds;
       Log.Debug("Main: Screen MP OnGetMinMaxInfo recreate swap chain");
+      NeedRecreateSwapChain = true;
       RecreateSwapChain();
       _changeScreen = true;
 
@@ -1986,11 +1989,12 @@ public class MediaPortalApp : D3D, IRender
       }
     }
 
-    if (_changeScreen)
+    if (_changeScreen || _changeScreenDisplayChange)
     {
       Log.Debug("Main: Screen MP OnGetMinMaxInfo (changeScreen) change current screen {0} with current detected screen {1}", GetCleanDisplayName(GUIGraphicsContext.currentScreen), GetCleanDisplayName(screen));
       GUIGraphicsContext.currentScreen = screen;
       _changeScreen = false;
+      _changeScreenDisplayChange = false;
     }
 
     // calculate form dimension limits based on primary screen.
@@ -2010,10 +2014,10 @@ public class MediaPortalApp : D3D, IRender
     }
     else
     {
-      mmi.ptMaxSize.x      = Screen.PrimaryScreen.Bounds.Width;
-      mmi.ptMaxSize.y      = Screen.PrimaryScreen.Bounds.Height;
-      mmi.ptMaxPosition.x  = Screen.PrimaryScreen.Bounds.X;
-      mmi.ptMaxPosition.y  = Screen.PrimaryScreen.Bounds.Y;
+      mmi.ptMaxSize.x = screen.Bounds.Width;
+      mmi.ptMaxSize.y = screen.Bounds.Height;
+      mmi.ptMaxPosition.x = screen.Bounds.X;
+      mmi.ptMaxPosition.y = screen.Bounds.Y;
       mmi.ptMinTrackSize.x = GUIGraphicsContext.currentScreen.Bounds.Width;
       mmi.ptMinTrackSize.y = GUIGraphicsContext.currentScreen.Bounds.Height;
       mmi.ptMaxTrackSize.x = GUIGraphicsContext.currentScreen.Bounds.Width;
@@ -2396,6 +2400,21 @@ public class MediaPortalApp : D3D, IRender
       Log.Debug("Main: OnResumeSuspend - set GUIGraphicsContext.State.LOST");
       GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
     }
+
+    if (!_showLastActiveModule && !Utils.IsGUISettingsWindow(GUIWindowManager.GetPreviousActiveWindow()))
+    {
+      if (_startWithBasicHome && File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\basichome.xml")))
+      {
+        Log.Info("Main: OnResume - Switch to basic home screen");
+        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SECOND_HOME);
+      }
+      else
+      {
+        Log.Info("Main: OnResume - Switch to home screen");
+        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
+      }
+    }
+
     RecoverDevice();
 
     if (GUIGraphicsContext.IsDirectX9ExUsed())

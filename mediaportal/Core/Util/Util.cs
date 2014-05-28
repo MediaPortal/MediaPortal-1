@@ -3906,9 +3906,20 @@ namespace MediaPortal.Util
 
     public static bool CreateFolderPreviewThumb(List<string> aPictureList, string aThumbPath)
     {
+      return CreateFolderPreviewThumb(aPictureList, aThumbPath, true);
+    }
+
+    public static bool CreateFolderPreviewThumb(List<string> aPictureList, string aThumbPath, bool needBorder)
+    {
       bool result = false;
       Stopwatch benchClock = new Stopwatch();
       benchClock.Start();
+      int border = 0;
+
+      if (needBorder)
+      {
+        border = 10;
+      }
 
       if (aPictureList.Count > 0)
       {
@@ -3939,18 +3950,18 @@ namespace MediaPortal.Util
               int width = imgFolder.Width;
               int height = imgFolder.Height;
 
-              int thumbnailWidth = 256;
-              int thumbnailHeight = 256;
+              int thumbnailWidth = (int)Thumbs.ThumbLargeResolution;
+              int thumbnailHeight = (int)Thumbs.ThumbLargeResolution;
               // draw a fullsize thumb if only 1 pic is available
               if (aPictureList.Count == 1)
               {
-                thumbnailWidth = (width - 20);
-                thumbnailHeight = (height - 20);
+                thumbnailWidth = (width - border * 2);
+                thumbnailHeight = (height - border * 2);
               }
               else
               {
-                thumbnailWidth = (width - 30) / 2;
-                thumbnailHeight = (height - 30) / 2;
+                thumbnailWidth = (width - border * 3) / 2;
+                thumbnailHeight = (height - border * 3) / 2;
               }
 
               using (Bitmap bmp = new Bitmap(width, height))
@@ -3970,24 +3981,24 @@ namespace MediaPortal.Util
                   //Load first of 4 images for the folder thumb.                  
                   try
                   {
-                    AddPicture(g, (string)aPictureList[0], x + 10, y + 10, w, h);
+                    AddPicture(g, (string)aPictureList[0], x + border, y + border, w, h);
 
                     //If exists load second of 4 images for the folder thumb.
                     if (aPictureList.Count > 1)
                     {
-                      AddPicture(g, (string)aPictureList[1], x + thumbnailWidth + 20, y + 10, w, h);
+                      AddPicture(g, (string)aPictureList[1], x + thumbnailWidth + border * 2, y + border, w, h);
                     }
 
                     //If exists load third of 4 images for the folder thumb.
                     if (aPictureList.Count > 2)
                     {
-                      AddPicture(g, (string)aPictureList[2], x + 10, y + thumbnailHeight + 20, w, h);
+                      AddPicture(g, (string)aPictureList[2], x + border, y + thumbnailHeight + border * 2, w, h);
                     }
 
                     //If exists load fourth of 4 images for the folder thumb.
                     if (aPictureList.Count > 3)
                     {
-                      AddPicture(g, (string)aPictureList[3], x + thumbnailWidth + 20, y + thumbnailHeight + 20, w, h);
+                      AddPicture(g, (string)aPictureList[3], x + thumbnailWidth + border * 2, y + thumbnailHeight + border * 2, w, h);
                     }
                   }
                   catch (Exception ex)

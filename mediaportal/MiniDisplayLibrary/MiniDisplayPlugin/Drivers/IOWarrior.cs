@@ -38,7 +38,7 @@ using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {
-  public class IOWarrior : BaseDisplay, IDisplay
+  public class IOWarrior : BaseDisplay
   {
     private string _errorMessage = "";
     private int _Gcols;
@@ -69,7 +69,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       Initialize();
     }
 
-    public void CleanUp()
+    public override void CleanUp()
     {
       if (iowcommDisplay.IsOpen)
       {
@@ -90,17 +90,17 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public void Configure()
+    public override void Configure()
     {
       new IOWarrior_AdvancedSetupForm().ShowDialog();
     }
 
-    public void Dispose()
+    public override void Dispose()
     {
       Log.Debug("IOWarrior.Dispose() - called");
     }
 
-    public void DrawImage(Bitmap bitmap)
+    public override void DrawImage(Bitmap bitmap)
     {
       if (!_isDisabled && iowcommDisplay.IsOpen)
       {
@@ -145,7 +145,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public void Initialize()
+    public override void Initialize()
     {
       if (!_isDisabled)
       {
@@ -180,11 +180,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       LastSettingsCheck = DateTime.Now;
     }
 
-    public void SetCustomCharacters(int[][] customCharacters) {}
+    public override void SetCustomCharacters(int[][] customCharacters) { }
 
-    public void SetLine(int line, string message) {}
+    public override void SetLine(int line, string message) { }
 
-    public void Setup(string _port, int _lines, int _cols, int _delay, int _linesG, int _colsG, int _delayG,
+    public override void Setup(string _port, int _lines, int _cols, int _delay, int _linesG, int _colsG, int _delayG,
                       bool _backLight, int _backLightLevel, bool _contrast, int _contrastLevel, bool _blankOnExit)
     {
       _IsConfiguring = Assembly.GetEntryAssembly().FullName.Contains("Configuration");
@@ -252,17 +252,17 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public string Description
+    public override string Description
     {
       get { return "IOWarrior Series Graphic LCD driver v04_17_2008"; }
     }
 
-    public string ErrorMessage
+    public override string ErrorMessage
     {
       get { return _errorMessage; }
     }
 
-    public bool IsDisabled
+    public override bool IsDisabled
     {
       get
       {
@@ -282,17 +282,17 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public string Name
+    public override string Name
     {
       get { return "IOWarrior"; }
     }
 
-    public bool SupportsGraphics
+    public override bool SupportsGraphics
     {
       get { return true; }
     }
 
-    public bool SupportsText
+    public override bool SupportsText
     {
       get { return false; }
     }

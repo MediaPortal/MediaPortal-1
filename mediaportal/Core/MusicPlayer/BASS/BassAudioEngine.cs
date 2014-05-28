@@ -697,6 +697,7 @@ namespace MediaPortal.MusicPlayer.BASS
             g_Player.currentMedia = g_Player.MediaType.Music;
             g_Player.currentFilePlaying = nextSong;
             g_Player.OnStarted();
+            NotifyPlaying = true;
           }
           else
           {
@@ -2497,7 +2498,8 @@ namespace MediaPortal.MusicPlayer.BASS
       {
         NeedUpdate = true;
         SetVideoWindow();
-        VizWindow.Visible = true;
+        if (_IsFullScreen)
+          VizWindow.Visible = true;
       }
 
       if (NotifyPlaying && CurrentPosition >= 10.0)
@@ -2544,7 +2546,8 @@ namespace MediaPortal.MusicPlayer.BASS
       }
       else
       {
-        VizWindow.Size = new Size(_VideoWidth, _VideoHeight);
+        // bad idea use VideoWindow Size for VisualizationWindow Size, is not visible 1 pixel is enough
+        VizWindow.Size = new Size(1, 1);
 
         VizWindow.Location = new Point(_VideoPositionX, _VideoPositionY);
         _videoRectangle = new Rectangle(_VideoPositionX, _VideoPositionY, VizWindow.Size.Width, VizWindow.Size.Height);
@@ -2553,7 +2556,8 @@ namespace MediaPortal.MusicPlayer.BASS
 
       if (!GUIWindowManager.IsRouted && VizPluginInfo.VisualizationType != VisualizationInfo.PluginType.None)
       {
-        VizWindow.Visible = _state == PlayState.Playing;
+        if (_IsFullScreen)
+          VizWindow.Visible = _state == PlayState.Playing; 
       }
       else
       {

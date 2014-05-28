@@ -25,6 +25,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using DShowNET.Helper;
@@ -238,7 +239,7 @@ namespace MediaPortal.GUI.Library
         char c = text[i];
         if ((c < _StartCharacter || c >= _EndCharacter) && c != '\n')
         {
-          return true;
+          Log.Debug("GUIFont: remaining high order char = '{0}', TypeCode = '{1}'", c.ToString(), (int)c);
         }
       }
       return false;

@@ -45,7 +45,7 @@ namespace MediaPortal.Visualization
     private MusicTag trackTag = null;
     private string _OldCurrentFile = "   ";
     private string _songTitle = "   "; // Title of the song played
-
+    private bool VizVisible = false;
     #endregion
 
     #region Constructors/Destructors
@@ -288,10 +288,14 @@ namespace MediaPortal.Visualization
       // Do a move of the Sonique Viz
       if (_visParam.VisHandle != 0)
       {
-        // Hide the Viswindow, so that we don't see it, while moving
         GUIGraphicsContext.form.Refresh();
-        Win32API.ShowWindow(VisualizationWindow.Handle, Win32API.ShowWindowFlags.Hide);
+        // Visible State hold
+        VizVisible = VisualizationWindow.Visible;
+        // Hide the Viswindow, so that we don't see it, while moving
+        VisualizationWindow.Visible = false;
         BassVis.BASSVIS_Resize(_visParam, 0, 0, newSize.Width, newSize.Height);
+        // reactivate old Visible state
+        VisualizationWindow.Visible = VizVisible;
       }
       return true;
     }
@@ -339,7 +343,6 @@ namespace MediaPortal.Visualization
         // Create the Visualisation
         visExec = new BASSVIS_EXEC(vizPath);
         visExec.SON_ConfigFile = configFile;
-        visExec.SON_Flags = BASSVISFlags.BASSVIS_DEFAULT;
         visExec.SON_ParentHandle = VisualizationWindow.Handle;
         visExec.Width = VisualizationWindow.Width;
         visExec.Height = VisualizationWindow.Height;
@@ -374,8 +377,6 @@ namespace MediaPortal.Visualization
           BassVis.BASSVIS_SetOption(_visParam, BASSVIS_CONFIGFLAGS.BASSVIS_SONIQUEVIS_CONFIG_USESLOWFADE, 1);
           BassVis.BASSVIS_SetOption(_visParam, BASSVIS_CONFIGFLAGS.BASSVIS_SONIQUEVIS_CONFIG_SLOWFADE, 5);
           BassVis.BASSVIS_SetOption(_visParam, BASSVIS_CONFIGFLAGS.BASSVIS_CONFIG_FFTAMP, 5);
-        
-          Win32API.ShowWindow(VisualizationWindow.Handle, Win32API.ShowWindowFlags.Hide);
           
           // SetForegroundWindow
           GUIGraphicsContext.form.Activate();

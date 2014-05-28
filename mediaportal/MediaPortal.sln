@@ -96,11 +96,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tv Library", "Tv Library", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TvLibrary.Interfaces", "..\TvEngine3\TVLibrary\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj", "{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{BCDCE826-22A2-4955-9B9B-A3E9D45F721F}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\NuGet.targets = .nuget\NuGet.targets
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LastFMLibrary", "LastFMLibrary\LastFMLibrary.csproj", "{FE0B7969-38A1-4150-BB3B-C2E87F40AEED}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GUIDisc", "WindowPlugins\GUIDisc\GUIDisc.csproj", "{C6517107-415A-4D5B-AA3A-8928853F44A9}"

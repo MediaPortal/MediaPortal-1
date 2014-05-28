@@ -46,5 +46,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     bool SupportsGraphics { get; }
 
     bool SupportsText { get; }
+
+    void Update();
   }
 }

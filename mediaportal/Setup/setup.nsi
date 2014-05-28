@@ -446,6 +446,9 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_DirectShowFilters}\mpc-hc_subs\bin\${BUILD_TYPE}\mpcSubs.dll"
   File "${git_DirectShowFilters}\DXErr9\bin\${BUILD_TYPE}\Dxerr9.dll"
   File "${git_MP}\MiniDisplayLibrary\bin\${BUILD_TYPE}\MiniDisplayLibrary.dll"
+  ; iMON VFD/LCD
+  File "${git_ROOT}\Packages\MediaPortal-iMON-Display.1.1.0\lib\iMONDisplay.dll"
+  File "${git_ROOT}\Packages\MediaPortal-iMON-Display.1.1.0\lib\iMONDisplayWrapper.dll"
   ; Utils
   File "${git_MP}\Utils\bin\${BUILD_TYPE}\Utils.dll"
   ; Common Utils
@@ -497,6 +500,39 @@ Section "MediaPortal core files (required)" SecCore
   ; ffmpeg
   SetOutPath "$MPdir.Base\MovieThumbnailer"
   File "${git_ROOT}\Packages\ffmpeg.2.1.1\ffmpeg.exe"
+  ; NuGet binaries MediaInfo
+  SetOutPath "$MPdir.Base\"
+  File "${git_ROOT}\Packages\MediaInfo.0.7.69\MediaInfo.dll"
+  ; NuGet binaries
+  ; Bass Core
+  SetOutPath "$MPdir.Base\"
+  File "${git_ROOT}\Packages\BASS.2.4.10\bass.dll"
+  File "${git_ROOT}\Packages\BASS.NET.2.4.10.3\lib\net40\Bass.Net.dll"
+  ; Bass Addons
+  SetOutPath "$MPdir.Base\"
+  File "${git_ROOT}\Packages\bass.asio.1.3.0.2\bassasio.dll"
+  File "${git_ROOT}\Packages\bass.fx.2.4.10.1\bass_fx.dll"
+  File "${git_ROOT}\Packages\bass.mix.2.4.7.2\bassmix.dll"
+  File "${git_ROOT}\Packages\bass.vst.2.4.5\bass_vst.dll"
+  File "${git_ROOT}\Packages\bass.wadsp.2.4.1\bass_wadsp.dll"
+  File "${git_ROOT}\Packages\bass.wasapi.2.4.0.2\basswasapi.dll"
+  File "${git_ROOT}\Packages\bass.ofr.2.4.0.2\OptimFROG.dll"
+  ; Bass AudioDecoders
+  SetOutPath "$MPdir.Base\MusicPlayer\plugins\audio decoders"
+  File "${git_ROOT}\Packages\bass.aac.2.4.4.4\bass_aac.dll"
+  File "${git_ROOT}\Packages\bass.ac3.2.4.0.3\bass_ac3.dll"
+  File "${git_ROOT}\Packages\bass.alac.2.4.3\bass_alac.dll"
+  File "${git_ROOT}\Packages\bass.ape.2.4.1\bass_ape.dll"
+  File "${git_ROOT}\Packages\bass.mpc.2.4.1.1\bass_mpc.dll"
+  File "${git_ROOT}\Packages\bass.ofr.2.4.0.2\bass_ofr.dll"
+  File "${git_ROOT}\Packages\bass.spx.2.4.2\bass_spx.dll"
+  File "${git_ROOT}\Packages\bass.tta.2.4.0\bass_tta.dll"
+  File "${git_ROOT}\Packages\bass.cd.2.4.5\basscd.dll"
+  File "${git_ROOT}\Packages\bass.flac.2.4.1\bassflac.dll"
+  File "${git_ROOT}\Packages\bass.midi.2.4.8\bassmidi.dll"
+  File "${git_ROOT}\Packages\bass.opus.2.4.1.3\bassopus.dll"
+  File "${git_ROOT}\Packages\bass.wma.2.4.4\basswma.dll"
+  File "${git_ROOT}\Packages\bass.wv.2.4.4\basswv.dll"
   ; Doc
   SetOutPath "$MPdir.Base\Docs"
   File "${git_MP}\Docs\BASS License.txt"
@@ -621,6 +657,9 @@ SectionEnd
   Delete "$MPdir.Base\Dxerr9.dll"
   Delete "$MPdir.Base\mpcSubs.dll"
   Delete "$MPdir.Base\MiniDisplayLibrary.dll"
+  ; iMON VFD/LCD
+  Delete "$MPdir.Base\iMONDisplay.dll"
+  Delete "$MPdir.Base\iMONDisplayWrapper.dll"
   ; Utils
   Delete "$MPdir.Base\Utils.dll"
   ; Common Utils
