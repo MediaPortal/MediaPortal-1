@@ -308,8 +308,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
       {
         return true;
       }
+
+      // This code only cares about the tuning properties for the LNBs.
+      if (LnbType == null ||
+        dvbsChannel.LnbType == null ||
+        LnbType.IsBandStacked != dvbsChannel.LnbType.IsBandStacked ||
+        LnbType.IsToroidal != dvbsChannel.LnbType.IsToroidal ||
+        LnbType.LowBandFrequency != dvbsChannel.LnbType.LowBandFrequency ||
+        LnbType.SwitchFrequency != dvbsChannel.LnbType.SwitchFrequency ||
+        LnbType.HighBandFrequency != dvbsChannel.LnbType.HighBandFrequency
+      )
+      {
+        return true;
+      }
+
       return dvbsChannel.Diseqc != _diseqc ||
-             dvbsChannel.LnbType != _lnbType ||
              dvbsChannel.SatelliteIndex != _satelliteIndex ||
              dvbsChannel.Frequency != Frequency ||
              dvbsChannel.Polarisation != _polarisation ||
