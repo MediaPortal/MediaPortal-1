@@ -394,7 +394,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
           {
             _serviceAvTransport.Stop((uint)_avTransportId);
             _transportState = AvTransportState.Stopped;
-            _gotTunerControl = false;
           }
           else
           {
@@ -411,7 +410,46 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
         }
       }
 
-      _streamTuner.SetTunerState(state);
+      // Attempt to set the stream tuner state.
+      try
+      {
+        _streamTuner.SetTunerState(state);
+      }
+      catch
+      {
+        // Fail. Rollback the streaming state changes above.
+        this.LogDebug("DRI CableCARD: failed to set stream tuner state, reverting to previous streaming state");
+        if (_serviceAvTransport != null)
+        {
+          if (_state == TunerState.Stopped || _state == TunerState.Paused)
+          {
+            if (_state == TunerState.Stopped)
+            {
+              _serviceAvTransport.Stop((uint)_avTransportId);
+              _transportState = AvTransportState.Stopped;
+            }
+            else
+            {
+              _serviceAvTransport.Pause((uint)_avTransportId);
+              _transportState = AvTransportState.PausedPlayback;
+            }
+            StopStreaming();
+          }
+          else if (_state == TunerState.Started)
+          {
+            _serviceAvTransport.Play((uint)_avTransportId, "1");
+            _transportState = AvTransportState.Playing;
+            StartStreaming();
+          }
+        }
+        throw;
+      }
+
+      if (_transportState == AvTransportState.Stopped)
+      {
+        _gotTunerControl = false;
+      }
+      _state = state;
     }
 
     /// <summary>
@@ -656,11 +694,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       DVBIPChannel streamChannel = new DVBIPChannel();
       if (string.IsNullOrEmpty(rtpServerPort) || rtpServerPort.Equals("0"))
       {
-        streamChannel.Url = string.Format("rtp://{0}:{1}@{2}", _localIpAddress, rtpClientPort, _serverIpAddress);
+        streamChannel.Url = string.Format("rtp://{0}@{1}:{2}", _serverIpAddress, _localIpAddress, rtpClientPort);
       }
       else
       {
-        streamChannel.Url = string.Format("rtp://{0}:{1}@{2}:{3}", _localIpAddress, rtpClientPort, _serverIpAddress, rtpServerPort);
+        streamChannel.Url = string.Format("rtp://{0}:{1}@{2}:{3}", _serverIpAddress, rtpServerPort, _localIpAddress, rtpClientPort);
       }
       this.LogDebug("DRI CableCARD: RTSP SETUP response okay, session ID = {0}, RTP URL = {1}", _rtspSessionId, streamChannel.Url);
 

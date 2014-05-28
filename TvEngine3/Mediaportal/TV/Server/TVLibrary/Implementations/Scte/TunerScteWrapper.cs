@@ -188,6 +188,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte
     public override void SetTunerState(TunerState state)
     {
       _dvbcTuner.SetTunerState(state);
+      _state = state;
     }
 
     #endregion

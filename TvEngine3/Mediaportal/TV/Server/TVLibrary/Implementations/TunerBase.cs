@@ -879,7 +879,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     {
       this.LogDebug("tuner base: unload tuner");
       FreeAllSubChannels();
-      PerformTunerAction(TunerAction.Stop);
+      try
+      {
+        PerformTunerAction(TunerAction.Stop);
+      }
+      catch (Exception ex)
+      {
+        this.LogError(ex, "tuner base: failed to stop tuner before unloading");
+      }
 
       // Dispose extensions.
       if (_extensions != null)
@@ -1106,7 +1113,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           }
         }
 
-        PerformTunerAction(action);
+        try
+        {
+          PerformTunerAction(action);
+        }
+        catch (Exception ex)
+        {
+          this.LogError(ex, "tuner base: failed to stop tuner with action {0}", action);
+        }
 
         // Turn off the tuner power.
         foreach (ICustomDevice extension in _extensions)
@@ -1146,46 +1160,40 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         return;
       }
       this.LogDebug("tuner base: perform tuner action, action = {0}", action);
-      try
-      {
-        if (action == TunerAction.Reset)
-        {
-          Unload();
-          Load();
-        }
-        else if (action == TunerAction.Unload)
-        {
-          Unload();
-        }
-        else if (action == TunerAction.Pause)
-        {
-          SetTunerState(TunerState.Paused);
-        }
-        else if (action == TunerAction.Stop)
-        {
-          SetTunerState(TunerState.Stopped);
-        }
-        else if (action == TunerAction.Start)
-        {
-          SetTunerState(TunerState.Started);
-        }
-        else if (action == TunerAction.Restart)
-        {
-          SetTunerState(TunerState.Stopped);
-          SetTunerState(TunerState.Started);
-        }
-        else
-        {
-          this.LogWarn("tuner base: unhandled action {0}", action);
-          return;
-        }
 
-        this.LogDebug("tuner base: action succeeded");
-      }
-      catch (Exception ex)
+      if (action == TunerAction.Reset)
       {
-        this.LogError(ex, "tuner base: action {0} failed", action);
+        Unload();
+        Load();
       }
+      else if (action == TunerAction.Unload)
+      {
+        Unload();
+      }
+      else if (action == TunerAction.Pause)
+      {
+        SetTunerState(TunerState.Paused);
+      }
+      else if (action == TunerAction.Stop)
+      {
+        SetTunerState(TunerState.Stopped);
+      }
+      else if (action == TunerAction.Start)
+      {
+        SetTunerState(TunerState.Started);
+      }
+      else if (action == TunerAction.Restart)
+      {
+        SetTunerState(TunerState.Stopped);
+        SetTunerState(TunerState.Started);
+      }
+      else
+      {
+        this.LogWarn("tuner base: unhandled action {0}", action);
+        return;
+      }
+
+      this.LogDebug("tuner base: action succeeded");
     }
 
     /// <summary>

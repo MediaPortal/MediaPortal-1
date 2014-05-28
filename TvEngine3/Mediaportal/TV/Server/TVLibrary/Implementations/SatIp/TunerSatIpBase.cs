@@ -376,6 +376,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
         return;
       }
 
+      // Attempt to set the stream tuner state first, because if this fails we
+      // can't unsend a TEARDOWN.
+      _streamTuner.SetTunerState(state);
+
       if (_rtspClient != null && !string.IsNullOrEmpty(_satIpStreamId) && !string.IsNullOrEmpty(_rtspSessionId) && state == TunerState.Stopped)
       {
         StopKeepAliveThread();
@@ -392,7 +396,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
         _satIpStreamId = string.Empty;
         _rtspSessionId = string.Empty;
       }
-      _streamTuner.SetTunerState(state);
+
+      _state = state;
     }
 
     /// <summary>
