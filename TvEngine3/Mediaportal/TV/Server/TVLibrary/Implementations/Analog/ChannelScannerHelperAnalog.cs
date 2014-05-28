@@ -18,6 +18,7 @@
 
 #endregion
 
+using System.Text.RegularExpressions;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
@@ -50,6 +51,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog
           {
             analogChannel.Name = string.Format("FM {0}", ((float)analogChannel.Frequency / 1000000).ToString("F1"));
           }
+        }
+      }
+      else
+      {
+        // Names pulled from German teletext often end with "text" (because we
+        // are actually getting the teletext service name). Remove the suffix.
+        Match m = Regex.Match(channel.Name, @"(.*?)\s*text$", RegexOptions.IgnoreCase);
+        if (m.Success)
+        {
+          channel.Name = m.Groups[1].Captures[0].Value;
         }
       }
     }
