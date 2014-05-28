@@ -70,12 +70,7 @@ void CCacheFile::Clear()
   this->cacheFileSize = 0;
 }
 
-bool CCacheFile::LoadItems(CCacheFileItemCollection *collection, unsigned int index)
-{
-  return this->LoadItems(collection, index, true);
-}
-
-bool CCacheFile::LoadItems(CCacheFileItemCollection *collection, unsigned int index, bool loadFromCacheFileAllowed)
+bool CCacheFile::LoadItems(CCacheFileItemCollection *collection, unsigned int index, bool loadFromCacheFileAllowed, bool cleanUpPreviousItems)
 {
   bool result = ((collection != NULL) && (index < collection->Count()));
 
@@ -90,6 +85,18 @@ bool CCacheFile::LoadItems(CCacheFileItemCollection *collection, unsigned int in
 
       if (result)
       {
+        for (unsigned int i = 0; (SUCCEEDED(result) && (i < index)); i++)
+        {
+          CCacheFileItem *item = collection->GetItem(i);
+
+          if (item->IsStoredToFile() && item->IsLoadedToMemory())
+          {
+            // release memory
+            item->GetBuffer()->DeleteBuffer();
+            item->SetLoadedToMemoryTime(CACHE_FILE_ITEM_LOAD_MEMORY_TIME_NOT_SET);
+          }
+        }
+
         // load items which are not in memory
         
         int64_t lastStoreFilePosition = item->GetCacheFilePosition() + (int64_t)item->GetLength();

@@ -110,7 +110,6 @@ CMPUrlSourceSplitter_Protocol_Rtmp::CMPUrlSourceSplitter_Protocol_Rtmp(CLogger *
   this->lockCurlMutex = CreateMutex(NULL, FALSE, NULL);
   this->wholeStreamDownloaded = false;
   this->mainCurlInstance = NULL;
-  this->streamDuration = 0;
   this->bytePosition = 0;
   this->seekingActive = false;
   this->supressData = false;
@@ -686,7 +685,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(CReceiveData *receiveDat
       {
         bool loadStreamFragmentToMemory = true;
 
-        while (this->cacheFile->LoadItems(this->rtmpStreamFragments, this->streamFragmentProcessing, loadStreamFragmentToMemory))
+        while (this->cacheFile->LoadItems(this->rtmpStreamFragments, this->streamFragmentProcessing, loadStreamFragmentToMemory, true))
         {
           // do not load next stream fragment from cache file - in another case it leads to situation that whole cache file will be loaded to memory
           loadStreamFragmentToMemory = false;
@@ -787,7 +786,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(CReceiveData *receiveDat
           {
             // specified duration in RTMP connect response
             this->streamLength = this->bytePosition * this->duration / lastFlvPacketTimestamp;
-            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length (by time): %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
+            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length (by duration %llu ms): %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->duration, this->streamLength);
             receiveData->GetStreams()->GetItem(0)->GetTotalLength()->SetTotalLength(this->streamLength, true);
           }
         }
@@ -1192,7 +1191,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ClearSession(void)
   this->setEndOfStream = false;
   this->wholeStreamDownloaded = false;
   this->receiveDataTimeout = RTMP_RECEIVE_DATA_TIMEOUT_DEFAULT;
-  this->streamDuration = 0;
   this->bytePosition = 0;
   FREE_MEM_CLASS(this->rtmpStreamFragments);
   this->cacheFile->Clear();
@@ -1212,7 +1210,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ClearSession(void)
 
 int64_t CMPUrlSourceSplitter_Protocol_Rtmp::GetDuration(void)
 {
-  return (this->liveStream) ? DURATION_LIVE_STREAM : DURATION_UNSPECIFIED;
+  return (this->liveStream) ? DURATION_LIVE_STREAM : (this->duration != RTMP_DURATION_UNSPECIFIED) ? (int64_t)this->duration : DURATION_UNSPECIFIED;
 }
 
 void CMPUrlSourceSplitter_Protocol_Rtmp::ReportStreamTime(uint64_t streamTime)

@@ -163,10 +163,6 @@ protected:
   // the lenght of stream
   LONGLONG streamLength;
 
-  // the duration of stream
-  // mostly we get only stream duration instead of stream length
-  double streamDuration;
-
   // holds if length of stream was set
   bool setLength;
   // holds if end of stream was set

@@ -431,7 +431,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CReceiveData *receiveDat
       {
         bool loadStreamFragmentToMemory = true;
 
-        while (track->GetCacheFile()->LoadItems(track->GetStreamFragments(), track->GetStreamFragmentProcessing(), loadStreamFragmentToMemory))
+        while (track->GetCacheFile()->LoadItems(track->GetStreamFragments(), track->GetStreamFragmentProcessing(), loadStreamFragmentToMemory, true))
         {
           // do not load next stream fragment from cache file - in another case it leads to situation that whole cache file will be loaded to memory
           loadStreamFragmentToMemory = false;

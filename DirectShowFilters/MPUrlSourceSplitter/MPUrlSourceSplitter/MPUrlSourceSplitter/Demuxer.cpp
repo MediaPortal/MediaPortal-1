@@ -2116,7 +2116,10 @@ unsigned int WINAPI CDemuxer::CreateDemuxerWorker(LPVOID lpParam)
       }
     }
 
-    Sleep(100);
+    if (!caller->IsCreatedDemuxer())
+    {
+      Sleep(100);
+    }
   }
 
   caller->logger->Log(LOGGER_INFO, METHOD_DEMUXER_END_FORMAT, MODULE_NAME, METHOD_CREATE_DEMUXER_WORKER_NAME, caller->parserStreamId);
@@ -2420,7 +2423,7 @@ unsigned int WINAPI CDemuxer::DemuxerReadRequestWorker(LPVOID lpParam)
                 // copy data from media packet to request buffer
                 unsigned char *requestBuffer = request->GetBuffer() + foundDataLength;
 
-                if ((request->GetBuffer() != NULL) && (caller->mediaPacketCollectionCacheFile->LoadItems(caller->mediaPacketCollection, packetIndex, true)))
+                if ((request->GetBuffer() != NULL) && (caller->mediaPacketCollectionCacheFile->LoadItems(caller->mediaPacketCollection, packetIndex, true, false)))
                 {
                   mediaPacket->GetBuffer()->CopyFromBuffer(requestBuffer, mediaPacketDataLength, mediaPacketDataStart);
                 }
@@ -3476,14 +3479,15 @@ HRESULT CDemuxer::InitFormatContext(void)
 
       this->formatContext->flags |= AVFMT_FLAG_IGNPARSERSYNC;
 
-      /*if (this->IsMpegTs())
-      {
-        this->formatContext->max_analyze_duration = (this->formatContext->max_analyze_duration * 3) / 2;
-      }*/
+      // set minimum time for stream analysis in FFmpeg (1000 ms)
+      this->formatContext->max_analyze_duration = 1000000;
+
+      unsigned int startTime = GetTickCount();
 
       int ret = avformat_find_stream_info(this->formatContext, NULL);
       CHECK_CONDITION_EXECUTE(ret < 0, result = ret);
-      
+      this->logger->Log(LOGGER_VERBOSE, L"%s: %s: stream %u, finished finding stream information (%s), duration: %u ms", MODULE_NAME, L"InitFormatContext()", this->parserStreamId, ret < 0 ? L"failed" : L"succeeded", GetTickCount() - startTime);
+
       FREE_MEM(this->streamParseType);
       this->streamParseType = ALLOC_MEM_SET(this->streamParseType, enum AVStreamParseType, this->formatContext->nb_streams, 0);
       CHECK_POINTER_HRESULT(result, this->streamParseType, result, E_OUTOFMEMORY);
@@ -3844,7 +3848,7 @@ HRESULT CDemuxer::GetNextMediaPacket(CMediaPacket **mediaPacket)
       CMediaPacket *temp = this->mediaPacketCollection->GetItem(this->lastMediaPacket);
       if (temp != NULL)
       {
-        if (this->mediaPacketCollectionCacheFile->LoadItems(this->mediaPacketCollection, this->lastMediaPacket, true))
+        if (this->mediaPacketCollectionCacheFile->LoadItems(this->mediaPacketCollection, this->lastMediaPacket, true, true))
         {
           this->lastMediaPacket++;
           result = S_OK;

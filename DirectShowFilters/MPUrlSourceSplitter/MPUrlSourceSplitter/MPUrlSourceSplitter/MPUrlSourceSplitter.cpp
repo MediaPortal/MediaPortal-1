@@ -2508,8 +2508,16 @@ unsigned int WINAPI CMPUrlSourceSplitter::CreateAllDemuxersWorker(LPVOID lpParam
       }
     }
 
-    // if there are no pins, then it is bad
-    CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = (caller->outputPins->Count() > 0) ? result : E_FAIL);
+    if (SUCCEEDED(result))
+    {
+      CHECK_CONDITION_HRESULT(result, caller->outputPins->Count() > 0, result, E_FAIL);
+
+      // if there are no pins, then it is bad
+      if (FAILED(result))
+      {
+        caller->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_CREATE_ALL_DEMUXERS_WORKER_NAME, L"no output in any of demuxers, no output pin created");
+      }
+    }
   }
   else if (SUCCEEDED(result) && (caller->IsSplitter()) && (caller->IsDownloadingFile()) && (!caller->createAllDemuxersWorkerShouldExit) && (activeDemuxer >= caller->demuxers->Count()))
   {

@@ -62,16 +62,10 @@ public:
   // if item is loading from cache file, next items in collection are also loaded from cache file (until buffer size is reached)
   // @param collection : the collection of items to load from cache file
   // @param index : the index of item to load from cache file
-  // @return : true if item successfully loaded (also in case if item is in memory), false otherwise
-  virtual bool LoadItems(CCacheFileItemCollection *collection, unsigned int index);
-
-  // loads item with specified index to memory from cache file (if needed)
-  // if item is loading from cache file, next items in collection are also loaded from cache file (until buffer size is reached)
-  // @param collection : the collection of items to load from cache file
-  // @param index : the index of item to load from cache file
   // @param loadFromCacheFileAllowed : true if load from cache file is allowed, false otherwise
+  // @param cleanUpPreviousItems : true if items before index are released from memory (if they are stored to file)
   // @return : true if item successfully loaded (also in case if item is in memory), false otherwise
-  virtual bool LoadItems(CCacheFileItemCollection *collection, unsigned int index, bool loadFromCacheFileAllowed);
+  virtual bool LoadItems(CCacheFileItemCollection *collection, unsigned int index, bool loadFromCacheFileAllowed, bool cleanUpPreviousItems);
 
   // stores unstored items to cache file
   // it also release from memory items which are loaded to memory more than specified time span
