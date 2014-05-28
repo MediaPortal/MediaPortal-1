@@ -551,7 +551,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       _enableEvents = false;
 
       int idx = 0;
-
+      // TODO the values for all of these fields should come from enums
       mpComboBoxPolarisation.Items.AddRange(new object[]
                                               {
                                                 "Not Set",
@@ -676,6 +676,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
         curBox = mpComboDiseqc[ctlIndex];
         curBox.Items.Clear();
+        // TODO from enum
         curBox.Items.AddRange(new object[] {
             "None",
             // Simple DiSEqC (burst)
