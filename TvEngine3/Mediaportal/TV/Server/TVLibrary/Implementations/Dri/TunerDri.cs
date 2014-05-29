@@ -394,6 +394,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
           {
             _serviceAvTransport.Stop((uint)_avTransportId);
             _transportState = AvTransportState.Stopped;
+            _gotTunerControl = false;
           }
           else
           {
@@ -410,46 +411,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
         }
       }
 
-      // Attempt to set the stream tuner state.
-      try
-      {
-        _streamTuner.SetTunerState(state);
-      }
-      catch
-      {
-        // Fail. Rollback the streaming state changes above.
-        this.LogDebug("DRI CableCARD: failed to set stream tuner state, reverting to previous streaming state");
-        if (_serviceAvTransport != null)
-        {
-          if (_state == TunerState.Stopped || _state == TunerState.Paused)
-          {
-            if (_state == TunerState.Stopped)
-            {
-              _serviceAvTransport.Stop((uint)_avTransportId);
-              _transportState = AvTransportState.Stopped;
-            }
-            else
-            {
-              _serviceAvTransport.Pause((uint)_avTransportId);
-              _transportState = AvTransportState.PausedPlayback;
-            }
-            StopStreaming();
-          }
-          else if (_state == TunerState.Started)
-          {
-            _serviceAvTransport.Play((uint)_avTransportId, "1");
-            _transportState = AvTransportState.Playing;
-            StartStreaming();
-          }
-        }
-        throw;
-      }
-
-      if (_transportState == AvTransportState.Stopped)
-      {
-        _gotTunerControl = false;
-      }
+      // Attempt to set the stream tuner state. This might fail and leave us in
+      // an inconsistent state, but there isn't too much we can do about that.
       _state = state;
+      _streamTuner.SetTunerState(state);
     }
 
     /// <summary>

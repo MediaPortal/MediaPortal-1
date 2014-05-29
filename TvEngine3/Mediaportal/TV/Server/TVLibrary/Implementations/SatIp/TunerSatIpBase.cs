@@ -165,156 +165,148 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
       RtspRequest request;
       RtspResponse response = null;
       string rtpUrl = null;
-      if (string.IsNullOrEmpty(_satIpStreamId))
+
+      if (!string.IsNullOrEmpty(_satIpStreamId))
       {
-        // Find a free port for receiving the RTP stream.
-        int rtpClientPort = 0;
-        TcpConnectionInformation[] activeTcpConnections = IPGlobalProperties.GetIPGlobalProperties().GetActiveTcpConnections();
-        HashSet<int> usedPorts = new HashSet<int>();
-        foreach (TcpConnectionInformation connection in activeTcpConnections)
-        {
-          if (connection.LocalEndPoint.Address == _localIpAddress)
-          {
-            usedPorts.Add(connection.LocalEndPoint.Port);
-          }
-          if (connection.RemoteEndPoint.Address == _localIpAddress)
-          {
-            usedPorts.Add(connection.RemoteEndPoint.Port);
-          }
-        }
-        for (int port = 40000; port <= 65534; port += 2)
-        {
-          // We need two adjacent ports. One for RTP; one for RTCP. By
-          // convention, the RTP port is even.
-          if (!usedPorts.Contains(port) && !usedPorts.Contains(port + 1))
-          {
-            rtpClientPort = port;
-            break;
-          }
-        }
-        this.LogDebug("SAT>IP base: send RTSP SETUP, RTP client port = {0}", rtpClientPort);
-
-        // SETUP a session.
-        _rtspClient = new RtspClient(_serverIpAddress);
-        request = new RtspRequest(RtspMethod.Setup, string.Format("rtsp://{0}/?{1}", _serverIpAddress, parameters));
-        request.Headers.Add("Transport", string.Format("RTP/AVP;unicast;client_port={0}-{1}", rtpClientPort, rtpClientPort + 1));
-
+        // Change channel = RTSP PLAY.
+        this.LogDebug("SAT>IP base: send RTSP PLAY");
+        string uri = string.Format("rtsp://{0}/stream={1}?{2}", _serverIpAddress, _satIpStreamId, parameters);
+        request = new RtspRequest(RtspMethod.Play, uri);
+        request.Headers.Add("Session", _rtspSessionId);
         if (_rtspClient.SendRequest(request, out response) != RtspStatusCode.Ok)
         {
-          throw new TvException("Failed to tune, non-OK RTSP SETUP status code {0} {1}", response.StatusCode, response.ReasonPhrase);
+          throw new TvException("Failed to tune, non-OK RTSP PLAY status code {0} {1}", response.StatusCode, response.ReasonPhrase);
         }
-        if (!response.Headers.TryGetValue("com.ses.streamID", out _satIpStreamId))
-        {
-          throw new TvException("Failed to tune, not able to find stream ID header in RTSP SETUP response");
-        }
+        this.LogDebug("SAT>IP base: RTSP PLAY response okay");
+        return;
+      }
 
-        string sessionHeader;
-        if (!response.Headers.TryGetValue("Session", out sessionHeader))
+      // First tune = RTSP SETUP.
+      // Find a free port for receiving the RTP stream.
+      int rtpClientPort = 0;
+      TcpConnectionInformation[] activeTcpConnections = IPGlobalProperties.GetIPGlobalProperties().GetActiveTcpConnections();
+      HashSet<int> usedPorts = new HashSet<int>();
+      foreach (TcpConnectionInformation connection in activeTcpConnections)
+      {
+        if (connection.LocalEndPoint.Address == _localIpAddress)
         {
-          throw new TvException("Failed to tune, not able to find session header in RTSP SETUP response");
+          usedPorts.Add(connection.LocalEndPoint.Port);
         }
-        Match m = REGEX_RTSP_SESSION_HEADER.Match(sessionHeader);
-        if (!m.Success)
+        if (connection.RemoteEndPoint.Address == _localIpAddress)
         {
-          throw new TvException("Failed to tune, RTSP SETUP response session header {0} format not recognised");
+          usedPorts.Add(connection.RemoteEndPoint.Port);
         }
-        _rtspSessionId = m.Groups[1].Captures[0].Value;
-        if (m.Groups[3].Captures.Count == 1)
+      }
+      for (int port = 40000; port <= 65534; port += 2)
+      {
+        // We need two adjacent ports. One for RTP; one for RTCP. By
+        // convention, the RTP port is even.
+        if (!usedPorts.Contains(port) && !usedPorts.Contains(port + 1))
         {
-          _rtspSessionTimeout = int.Parse(m.Groups[3].Captures[0].Value);
+          rtpClientPort = port;
+          break;
         }
-        else
-        {
-          _rtspSessionTimeout = DEFAULT_RTSP_SESSION_TIMEOUT;
-        }
+      }
+      this.LogDebug("SAT>IP base: send RTSP SETUP, RTP client port = {0}", rtpClientPort);
 
-        bool foundRtpTransport = false;
-        string rtpServerPort = null;
-        string transportHeader;
-        if (!response.Headers.TryGetValue("Transport", out transportHeader))
+      // SETUP a session.
+      _rtspClient = new RtspClient(_serverIpAddress);
+      request = new RtspRequest(RtspMethod.Setup, string.Format("rtsp://{0}/?{1}", _serverIpAddress, parameters));
+      request.Headers.Add("Transport", string.Format("RTP/AVP;unicast;client_port={0}-{1}", rtpClientPort, rtpClientPort + 1));
+      if (_rtspClient.SendRequest(request, out response) != RtspStatusCode.Ok)
+      {
+        throw new TvException("Failed to tune, non-OK RTSP SETUP status code {0} {1}", response.StatusCode, response.ReasonPhrase);
+      }
+
+      // Handle the SETUP response.
+      // Find the SAT>IP stream ID.
+      if (!response.Headers.TryGetValue("com.ses.streamID", out _satIpStreamId))
+      {
+        throw new TvException("Failed to tune, not able to find stream ID header in RTSP SETUP response");
+      }
+
+      // Find the RTSP session ID and timeout.
+      string sessionHeader;
+      if (!response.Headers.TryGetValue("Session", out sessionHeader))
+      {
+        throw new TvException("Failed to tune, not able to find session header in RTSP SETUP response");
+      }
+      Match m = REGEX_RTSP_SESSION_HEADER.Match(sessionHeader);
+      if (!m.Success)
+      {
+        throw new TvException("Failed to tune, RTSP SETUP response session header {0} format not recognised");
+      }
+      _rtspSessionId = m.Groups[1].Captures[0].Value;
+      if (m.Groups[3].Captures.Count == 1)
+      {
+        _rtspSessionTimeout = int.Parse(m.Groups[3].Captures[0].Value);
+      }
+      else
+      {
+        _rtspSessionTimeout = DEFAULT_RTSP_SESSION_TIMEOUT;
+      }
+
+      // Find the server's streaming port and check that it registered our
+      // preferred local port.
+      bool foundRtpTransport = false;
+      string rtpServerPort = null;
+      string transportHeader;
+      if (!response.Headers.TryGetValue("Transport", out transportHeader))
+      {
+        throw new TvException("Failed to tune, not able to find transport header in RTSP SETUP response");
+      }
+      string[] transports = transportHeader.Split(',');
+      foreach (string transport in transports)
+      {
+        if (transport.Trim().StartsWith("RTP/AVP"))
         {
-          throw new TvException("Failed to tune, not able to find transport header in RTSP SETUP response");
-        }
-        string[] transports = transportHeader.Split(',');
-        foreach (string transport in transports)
-        {
-          if (transport.Trim().StartsWith("RTP/AVP"))
+          foundRtpTransport = true;
+          string[] sections = transport.Split(';');
+          foreach (string section in sections)
           {
-            foundRtpTransport = true;
-            string[] sections = transport.Split(';');
-            foreach (string section in sections)
+            string[] parts = section.Split('=');
+            if (parts[0].Equals("server_port"))
             {
-              string[] parts = section.Split('=');
-              if (parts[0].Equals("server_port"))
+              string[] ports = parts[1].Split('-');
+              rtpServerPort = ports[0];
+            }
+            else if (parts[0].Equals("client_port"))
+            {
+              string[] ports = parts[1].Split('-');
+              if (!ports[0].Equals(rtpClientPort.ToString()))
               {
-                string[] ports = parts[1].Split('-');
-                rtpServerPort = ports[0];
+                this.LogWarn("SAT>IP base: server specified RTP client port {0} instead of {1}", ports[0], rtpClientPort);
               }
-              else if (parts[0].Equals("client_port"))
-              {
-                string[] ports = parts[1].Split('-');
-                if (!ports[0].Equals(rtpClientPort.ToString()))
-                {
-                  this.LogWarn("SAT>IP base: server specified RTP client port {0} instead of {1}", ports[0], rtpClientPort);
-                }
-                rtpClientPort = int.Parse(ports[0]);
-              }
+              rtpClientPort = int.Parse(ports[0]);
             }
           }
         }
-        if (!foundRtpTransport)
-        {
-          throw new TvException("Failed to tune, not able to find RTP transport details in RTSP SETUP response transport header");
-        }
-        if (string.IsNullOrEmpty(rtpServerPort) || rtpServerPort.Equals("0"))
-        {
-          rtpUrl = string.Format("rtp://{0}@{1}:{2}", _serverIpAddress, _localIpAddress, rtpClientPort);
-        }
-        else
-        {
-          rtpUrl = string.Format("rtp://{0}:{1}@{2}:{3}", _serverIpAddress, rtpServerPort, _localIpAddress, rtpClientPort);
-        }
-        this.LogDebug("SAT>IP base: RTSP SETUP response okay");
-        this.LogDebug("  session ID = {0}", _rtspSessionId);
-        this.LogDebug("  timeout    = {0}", _rtspSessionTimeout);
-        this.LogDebug("  stream ID  = {0}", _satIpStreamId);
-        this.LogDebug("  RTP URL    = {0}", rtpUrl);
-
-        parameters = string.Empty;
+      }
+      if (!foundRtpTransport)
+      {
+        throw new TvException("Failed to tune, not able to find RTP transport details in RTSP SETUP response transport header");
       }
 
-      // PLAY to change channel or start the stream
-      this.LogDebug("SAT>IP base: send RTSP PLAY");
-      string pidFilterPhrase = "0";   // If you use "none" the source filter will not receive data => fail to start graph.
-      if (_isPidFilterDisabled)
+      // Construct the RTP URL.
+      if (string.IsNullOrEmpty(rtpServerPort) || rtpServerPort.Equals("0"))
       {
-        pidFilterPhrase = "all";
+        rtpUrl = string.Format("rtp://{0}@{1}:{2}", _serverIpAddress, _localIpAddress, rtpClientPort);
       }
-      string uri = string.Format("rtsp://{0}/stream={1}?pids={2}", _serverIpAddress, _satIpStreamId, pidFilterPhrase);
-      if (!string.IsNullOrEmpty(parameters))
+      else
       {
-        uri += "&" + parameters;
+        rtpUrl = string.Format("rtp://{0}:{1}@{2}:{3}", _serverIpAddress, rtpServerPort, _localIpAddress, rtpClientPort);
       }
-      request = new RtspRequest(RtspMethod.Play, uri);
-      request.Headers.Add("Session", _rtspSessionId);
-      if (_rtspClient.SendRequest(request, out response) != RtspStatusCode.Ok)
-      {
-        throw new TvException("Failed to tune, non-OK RTSP PLAY status code {0} {1}", response.StatusCode, response.ReasonPhrase);
-      }
-      this.LogDebug("SAT>IP base: RTSP PLAY response okay");
+      this.LogDebug("SAT>IP base: RTSP SETUP response okay");
+      this.LogDebug("  session ID = {0}", _rtspSessionId);
+      this.LogDebug("  timeout    = {0}", _rtspSessionTimeout);
+      this.LogDebug("  stream ID  = {0}", _satIpStreamId);
+      this.LogDebug("  RTP URL    = {0}", rtpUrl);
 
-      if (string.IsNullOrEmpty(parameters))
-      {
-        // If we SETUP the session as part of this tune process, we also need
-        // to configure the stream source filter to receive the RTP stream from
-        // the tuner.
-        this.LogDebug("SAT>IP base: configure stream source filter");
-        DVBIPChannel streamChannel = new DVBIPChannel();
-        streamChannel.Url = rtpUrl;
-        _streamTuner.PerformTuning(streamChannel);
-      }
-
-      StartKeepAliveThread();
+      // Configure the stream source filter to receive the RTP stream.
+      this.LogDebug("SAT>IP base: configure stream source filter");
+      DVBIPChannel streamChannel = new DVBIPChannel();
+      streamChannel.Url = rtpUrl;
+      _streamTuner.PerformTuning(streamChannel);
     }
 
     #endregion
@@ -376,28 +368,49 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
         return;
       }
 
-      // Attempt to set the stream tuner state first, because if this fails we
-      // can't unsend a TEARDOWN.
-      _streamTuner.SetTunerState(state);
+      RtspRequest request = null;
+      RtspResponse response = null;
 
-      if (_rtspClient != null && !string.IsNullOrEmpty(_satIpStreamId) && !string.IsNullOrEmpty(_rtspSessionId) && state == TunerState.Stopped)
+      if (_rtspClient != null && !string.IsNullOrEmpty(_satIpStreamId) && !string.IsNullOrEmpty(_rtspSessionId))
       {
-        StopKeepAliveThread();
-
-        RtspRequest request = new RtspRequest(RtspMethod.Teardown, string.Format("rtsp://{0}/stream={1}", _serverIpAddress, _satIpStreamId));
-        request.Headers.Add("Session", _rtspSessionId);
-        RtspResponse response;
-        if (_rtspClient.SendRequest(request, out response) != RtspStatusCode.Ok)
+        if (state == TunerState.Started)
         {
-          throw new TvException("Failed to stop tuner, non-OK RTSP TEARDOWN status code {0} {1}.", response.StatusCode, response.ReasonPhrase);
+          // PLAY to start a previously SETUP stream.
+          string pidFilterPhrase = "0";   // If you use "none" the source filter will not receive data => fail to start graph.
+          if (_isPidFilterDisabled)
+          {
+            pidFilterPhrase = "all";
+          }
+          string uri = string.Format("rtsp://{0}/stream={1}?pids={2}", _serverIpAddress, _satIpStreamId, pidFilterPhrase);
+          request = new RtspRequest(RtspMethod.Play, uri);
+          request.Headers.Add("Session", _rtspSessionId);
+          if (_rtspClient.SendRequest(request, out response) != RtspStatusCode.Ok)
+          {
+            throw new TvException("Failed to tune, non-OK RTSP PLAY status code {0} {1}", response.StatusCode, response.ReasonPhrase);
+          }
+          StartKeepAliveThread();
         }
+        else if (state == TunerState.Stopped)
+        {
+          StopKeepAliveThread();
 
-        _rtspClient = null;
-        _satIpStreamId = string.Empty;
-        _rtspSessionId = string.Empty;
+          request = new RtspRequest(RtspMethod.Teardown, string.Format("rtsp://{0}/stream={1}", _serverIpAddress, _satIpStreamId));
+          request.Headers.Add("Session", _rtspSessionId);
+          if (_rtspClient.SendRequest(request, out response) != RtspStatusCode.Ok)
+          {
+            throw new TvException("Failed to stop tuner, non-OK RTSP TEARDOWN status code {0} {1}.", response.StatusCode, response.ReasonPhrase);
+          }
+
+          _rtspClient = null;
+          _satIpStreamId = string.Empty;
+          _rtspSessionId = string.Empty;
+        }
       }
 
+      // Attempt to set the stream tuner state. This might fail and leave us in
+      // an inconsistent state, but there isn't too much we can do about that.
       _state = state;
+      _streamTuner.SetTunerState(state);
     }
 
     /// <summary>
