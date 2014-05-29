@@ -1285,8 +1285,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         subChannel.OnBeforeTune();
 
         // Do we need to tune?
+        bool tuned = false;
         if (_currentTuningDetail == null || _currentTuningDetail.IsDifferentTransponder(channel))
         {
+          tuned = true;
           // Stop the EPG grabber. We're going to move to a different channel. Any EPG data that
           // has been grabbed but not stored is thrown away.
           if (_epgGrabber != null && _epgGrabber.IsEpgGrabbing)
@@ -1395,7 +1397,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
         // Ensure that data/streams which are required to detect the service will pass through the
         // tuner's PID filter.
-        ConfigurePidFilter();
+        ConfigurePidFilter(tuned);
         ThrowExceptionIfTuneCancelled();
 
         subChannel.OnGraphRunning();
@@ -1656,7 +1658,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// Configure the tuner's PID filter(s) to enable receiving the PIDs for each of the current sub-channels.
     /// </summary>
-    protected void ConfigurePidFilter()
+    private void ConfigurePidFilter(bool isTune = false)
     {
       this.LogDebug("Mpeg2TunerController: configure PID filter, mode = {0}", _pidFilterMode);
 
@@ -1687,6 +1689,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           return;
         }
 
+        if (isTune)
+        {
+          _previousPids.Clear();
+        }
         this.LogDebug("Mpeg2TunerController: current, count = {0}, PIDs = {1}", _previousPids.Count, string.Join(", ", _previousPids));
         pidSet = new HashSet<ushort>();
         foreach (ITvSubChannel subChannel in _mapSubChannels.Values)
@@ -1698,7 +1704,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
             pidSet.UnionWith(dvbChannel.Pids);
           }
         }
-        this.LogDebug("Mpeg2TunerController: new, count = {0}, PIDs = {1}", pidSet.Count, string.Join(", ", pidSet));
+        this.LogDebug("Mpeg2TunerController: required, count = {0}, PIDs = {1}", pidSet.Count, string.Join(", ", pidSet));
 
         bool tooManyPids = (filter.MaximumPidCount > 0 && pidSet.Count > filter.MaximumPidCount);
         if (tooManyPids && _pidFilterMode == PidFilterMode.Auto)
