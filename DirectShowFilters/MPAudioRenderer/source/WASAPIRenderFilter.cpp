@@ -1098,6 +1098,8 @@ HRESULT CWASAPIRenderFilter::GetBufferSize(const WAVEFORMATEX* pWaveFormatEx, RE
       m_nBufferSize = 32768;
     else if (wfext->SubFormat == KSDATAFORMAT_SUBTYPE_IEC61937_DOLBY_DIGITAL_PLUS)
       m_nBufferSize = 24576;
+    else if (wfext->Format.wFormatTag == WAVE_FORMAT_DOLBY_AC3_SPDIF || wfext->SubFormat == KSDATAFORMAT_SUBTYPE_IEC61937_DOLBY_DIGITAL) 
+      m_nBufferSize = 6144;
     else 
       return S_OK;
   }
