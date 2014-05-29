@@ -1333,7 +1333,7 @@ HRESULT CWASAPIRenderFilter::InitAudioClient()
     if (SUCCEEDED(hr)) 
       hr = CreateAudioClient();
       
-    Log("WASAPIRenderFilter::InitAudioClient Trying again with periodicity of %I64u hundred-nanoseconds, or %u frames", m_pSettings->GetPeriod(), m_nFramesInBuffer);
+    Log("WASAPIRenderFilter::InitAudioClient Trying again with periodicity of %I64u hundred-nanoseconds, or %u frames", rtPeriod, m_nFramesInBuffer);
 
     if (SUCCEEDED (hr)) 
       hr = m_pAudioClient->Initialize(m_pSettings->GetWASAPIMode(), m_dwStreamFlags, rtPeriod, 
