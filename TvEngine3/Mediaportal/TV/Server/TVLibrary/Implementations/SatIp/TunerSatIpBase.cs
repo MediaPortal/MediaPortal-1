@@ -386,7 +386,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
           request.Headers.Add("Session", _rtspSessionId);
           if (_rtspClient.SendRequest(request, out response) != RtspStatusCode.Ok)
           {
-            throw new TvException("Failed to tune, non-OK RTSP PLAY status code {0} {1}", response.StatusCode, response.ReasonPhrase);
+            throw new TvException("Failed to start tuner, non-OK RTSP PLAY status code {0} {1}", response.StatusCode, response.ReasonPhrase);
           }
           StartKeepAliveThread();
         }
