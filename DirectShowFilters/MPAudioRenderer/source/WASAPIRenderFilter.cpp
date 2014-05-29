@@ -598,8 +598,11 @@ void CWASAPIRenderFilter::ResetClockData()
 REFERENCE_TIME CWASAPIRenderFilter::Latency()
 {
   if (m_rtLatency == 0)
+  {
     m_rtLatency = m_pSettings->GetPeriod(); // This is set in StartAudioClient, but ThreadProc will call this before StartAudioClient is called
-  
+    Log("CWASAPIRenderFilter set latency: %I64u", m_rtLatency);
+  }
+
   return m_rtLatency;
 }
 
@@ -1095,7 +1098,8 @@ HRESULT CWASAPIRenderFilter::GetBufferSize(const WAVEFORMATEX* pWaveFormatEx, RE
       m_nBufferSize = 32768;
     else if (wfext->SubFormat == KSDATAFORMAT_SUBTYPE_IEC61937_DOLBY_DIGITAL_PLUS)
       m_nBufferSize = 24576;
-    else return S_OK;
+    else 
+      return S_OK;
   }
 
   *pHnsBufferPeriod = (REFERENCE_TIME)((REFERENCE_TIME)m_nBufferSize * 10000 * 8 / ((REFERENCE_TIME)pWaveFormatEx->nChannels * pWaveFormatEx->wBitsPerSample *
@@ -1169,6 +1173,7 @@ HRESULT CWASAPIRenderFilter::StartAudioClient()
 
     // Set the latency here so we don't have to retrieve it every time
     m_rtLatency = m_pSettings->GetPeriod();
+    Log("CWASAPIRenderFilter set latency: %I64u", m_rtLatency);
 
     if (m_pAudioClient)
     {
