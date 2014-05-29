@@ -1359,6 +1359,7 @@ HRESULT CWASAPIRenderFilter::InitAudioClient()
   } // if (AUDCLNT_E_BUFFER_SIZE_NOT_ALIGNED == hr) 
 
   m_pSettings->SetPeriod(rtPeriod);
+  m_rtLatency = rtPeriod;
 
   // get the buffer size, which is aligned
   if (SUCCEEDED(hr)) 
