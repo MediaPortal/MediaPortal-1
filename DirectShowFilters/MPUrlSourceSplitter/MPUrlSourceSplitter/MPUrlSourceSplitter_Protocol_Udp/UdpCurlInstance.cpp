@@ -163,18 +163,72 @@ unsigned int CUdpCurlInstance::CurlWorker(void)
 
   if (errorCode == CURLE_OK)
   {
-    server = localIpAddresses->GetItem(0)->IsMulticast() ? new CMulticastUdpServer() : new CUdpServer();
+    CIpAddress *localIpAddress = localIpAddresses->GetItem(0);
+
+    server = localIpAddress->IsMulticast() ? new CMulticastUdpServer() : new CUdpServer();
     CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = (server != NULL) ? errorCode : CURLE_OUT_OF_MEMORY);
 
-    if ((errorCode == CURLE_OK) && (localIpAddresses->GetItem(0)->IsMulticast()))
+    if ((errorCode == CURLE_OK) && (localIpAddress->IsMulticast()))
     {
       CMulticastUdpServer *multicastServer = dynamic_cast<CMulticastUdpServer *>(server);
 
-      CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = SUCCEEDED(multicastServer->Initialize(AF_UNSPEC, localIpAddresses->GetItem(0), (this->sourceAddress != NULL) ? sourceIpAddresses->GetItem(0) : NULL, this->networkInterfaces)) ? errorCode : CURLE_FAILED_INIT);
+      CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = SUCCEEDED(multicastServer->Initialize(AF_UNSPEC, localIpAddress, (this->sourceAddress != NULL) ? sourceIpAddresses->GetItem(0) : NULL, this->networkInterfaces)) ? errorCode : CURLE_FAILED_INIT);
     }
-    else if ((errorCode == CURLE_OK) && (!localIpAddresses->GetItem(0)->IsMulticast()))
+    else if ((errorCode == CURLE_OK) && (!localIpAddress->IsMulticast()))
     {
-      CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = SUCCEEDED(server->Initialize(AF_UNSPEC, this->localPort, this->networkInterfaces)) ? errorCode : CURLE_FAILED_INIT);
+      // if not multicast address, then binding to local address
+      // we need to find correct network interface (with same IP address) and bind to it
+
+      CNetworkInterfaceCollection *interfaces = new CNetworkInterfaceCollection();
+      CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = (interfaces != NULL) ? errorCode : CURLE_OUT_OF_MEMORY);
+      CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = (interfaces->Append(this->networkInterfaces)) ? errorCode : CURLE_OUT_OF_MEMORY);
+
+      if (errorCode == CURLE_OK)
+      {
+        unsigned int i = 0;
+        while ((errorCode == CURLE_OK) && (i < interfaces->Count()))
+        {
+          CNetworkInterface *networkInterface = interfaces->GetItem(i);
+
+          unsigned int j = 0;
+          while ((errorCode == CURLE_OK) && (j < networkInterface->GetUnicastAddresses()->Count()))
+          {
+            CIpAddress *ipAddress = networkInterface->GetUnicastAddresses()->GetItem(j);
+
+            errorCode = (ipAddress->SetPort(localIpAddress->GetPort())) ? errorCode : CURLE_OUT_OF_MEMORY;
+
+            if (errorCode == CURLE_OK)
+            {
+              if ((ipAddress->GetAddressLength() == localIpAddress->GetAddressLength()) &&
+                  (memcmp(ipAddress->GetAddress(), localIpAddress->GetAddress(), ipAddress->GetAddressLength()) == 0))
+              {
+                j++;
+              }
+              else
+              {
+                networkInterface->GetUnicastAddresses()->Remove(j);
+              }
+            }
+          }
+
+          if (errorCode == CURLE_OK)
+          {
+            if (networkInterface->GetUnicastAddresses()->Count() != 0)
+            {
+              i++;
+            }
+            else
+            {
+              interfaces->Remove(i);
+            }
+          }
+        }
+      }
+
+      CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = (interfaces->Count() != 0) ? errorCode : CURLE_FAILED_INIT);
+      CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = SUCCEEDED(server->Initialize(AF_UNSPEC, this->localPort, interfaces)) ? errorCode : CURLE_FAILED_INIT);
+
+      FREE_MEM_CLASS(interfaces);
     }
     else
     {
@@ -251,20 +305,6 @@ unsigned int CUdpCurlInstance::CurlWorker(void)
           }
         }
       }
-
-
-
-      //    if (endOfStreamReached && (this->state != CURL_STATE_RECEIVED_ALL_DATA) && (rtspRequest == NULL))
-      //    {
-      //      // we have end of stream on all tracks, we can't do more
-      //      // report error code and wait for destroying CURL instance
-
-      //      CLockMutex lock(this->mutex, INFINITE);
-
-      //      this->rtspDownloadResponse->SetResultCode(errorCode);
-      //      this->state = CURL_STATE_RECEIVED_ALL_DATA;
-      //    }
-      //  }
 
       if ((errorCode != CURLE_OK) && (this->state != CURL_STATE_RECEIVED_ALL_DATA))
       {

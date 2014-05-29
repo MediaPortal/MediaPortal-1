@@ -243,9 +243,11 @@ HRESULT CMPUrlSourceSplitter_Protocol_Udp::ReceiveData(CReceiveData *receiveData
   // UDP has always one stream
   if (this->IsConnected() && (receiveData->SetStreamCount(1)))
   {
+    receiveData->SetLiveStream(true);
+
     if (!this->wholeStreamDownloaded)
     {
-      if (SUCCEEDED(result) && (this->mainCurlInstance != NULL))
+      if (SUCCEEDED(result) && (!this->supressData) && (this->mainCurlInstance != NULL))
       {
         if (this->mainCurlInstance->GetUdpDownloadResponse()->GetResultCode() == CURLE_OK)
         {
@@ -275,7 +277,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Udp::ReceiveData(CReceiveData *receiveData
       }
 
       // adjust total length (if necessary)
-      if (SUCCEEDED(result) && (!this->setLength) && (this->bytePosition != 0))
+      if (SUCCEEDED(result) && (!this->supressData) && (!this->setLength) && (this->bytePosition != 0))
       {
         // adjust total length if not already set
         if (this->streamLength == 0)
@@ -295,7 +297,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Udp::ReceiveData(CReceiveData *receiveData
         }
       }
 
-      if ((this->mainCurlInstance != NULL) && (this->mainCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
+      if ((!this->supressData) && (this->mainCurlInstance != NULL) && (this->mainCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
       {
         if (this->mainCurlInstance->GetDownloadResponse()->GetResultCode() == CURLE_OK)
         {
@@ -529,7 +531,7 @@ unsigned int CMPUrlSourceSplitter_Protocol_Udp::GetSeekingCapabilities(void)
   return SEEKING_METHOD_NONE;
 }
 
-int64_t CMPUrlSourceSplitter_Protocol_Udp::SeekToTime(int64_t time)
+int64_t CMPUrlSourceSplitter_Protocol_Udp::SeekToTime(unsigned int streamId, int64_t time)
 {
   CLockMutex lock(this->lockMutex, INFINITE);
 
@@ -553,7 +555,7 @@ int64_t CMPUrlSourceSplitter_Protocol_Udp::SeekToPosition(int64_t start, int64_t
   return result;
 }
 
-void CMPUrlSourceSplitter_Protocol_Udp::SetSupressData(bool supressData)
+void CMPUrlSourceSplitter_Protocol_Udp::SetSupressData(unsigned int streamId, bool supressData)
 {
   this->supressData = supressData;
 }

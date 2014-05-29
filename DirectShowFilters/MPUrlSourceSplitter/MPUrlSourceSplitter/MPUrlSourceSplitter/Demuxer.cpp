@@ -2010,6 +2010,17 @@ HRESULT CDemuxer::SeekBySequenceReading(REFERENCE_TIME time, int flags)
       AVIndexEntry *ie = (index != -1) ? &st->index_entries[index] : NULL;
       int64_t seekPosition = (ie != NULL) ? ie->pos : this->formatContext->data_offset;
 
+      // check seek position against our first media packet (we don't have data before) 
+
+      {
+        // lock access to media packets
+        CLockMutex mediaPacketLock(this->mediaPacketMutex, INFINITE);
+
+        CMediaPacket *mediaPacket = this->mediaPacketCollection->GetItem(0);
+
+        CHECK_CONDITION_NOT_NULL_EXECUTE(mediaPacket, seekPosition = max(seekPosition, mediaPacket->GetStart()));
+      }
+
       avio_seek(this->formatContext->pb, seekPosition, SEEK_SET);
     }
 
@@ -2696,7 +2707,7 @@ unsigned int WINAPI CDemuxer::DemuxerReadRequestWorker(LPVOID lpParam)
         // lock access to media packets
         CLockMutex mediaPacketLock(caller->mediaPacketMutex, INFINITE);
 
-        if (caller->IsLiveStream())
+        if (caller->IsLiveStream() && (caller->pauseSeekStopRequest == PAUSE_SEEK_STOP_REQUEST_NONE))
         {
           // remove used media packets
           // in case of live stream they will not be needed (after created demuxer and started playing)
@@ -2711,20 +2722,20 @@ unsigned int WINAPI CDemuxer::DemuxerReadRequestWorker(LPVOID lpParam)
             {
               CMediaPacket *mediaPacket = caller->mediaPacketCollection->GetItem(packetsToRemove);
 
-              if ((mediaPacket->GetPresentationTimestampInDirectShowTimeUnits() / (DSHOW_TIME_BASE / 1000)) < (int64_t)caller->streamTime)
+              if (caller->demuxerContextBufferPosition <= mediaPacket->GetEnd())
               {
-                if (caller->demuxerContextBufferPosition <= mediaPacket->GetStart())
-                {
-                  caller->logger->Log(LOGGER_WARNING, L"%s: %s: stream %u, trying to remove not read data, position: %lld, media packet start: %lld", MODULE_NAME, METHOD_DEMUXER_READ_REQUEST_WORKER_NAME, caller->parserStreamId, caller->demuxerContextBufferPosition, mediaPacket->GetStart());
-                  break;
-                }
-
-                packetsToRemove++;
-              }
-              else
-              {
+                // current demuxer position is before media packet end = not whole media packet is processed
                 break;
               }
+
+              if ((mediaPacket->GetPresentationTimestampInDirectShowTimeUnits() != MEDIA_PACKET_PRESENTATION_TIMESTAMP_UNDEFINED) &&
+                  ((mediaPacket->GetPresentationTimestampInDirectShowTimeUnits() / (DSHOW_TIME_BASE / 1000)) >= (int64_t)caller->streamTime))
+              {
+                // media packet PTS is after current stream (play) time
+                break;
+              }
+
+              packetsToRemove++;
             }
 
             if ((packetsToRemove > 0) && (caller->mediaPacketCollectionCacheFile->RemoveItems(caller->mediaPacketCollection, 0, packetsToRemove)))
