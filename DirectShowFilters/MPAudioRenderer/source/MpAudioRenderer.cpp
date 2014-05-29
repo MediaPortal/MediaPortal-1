@@ -581,12 +581,16 @@ HRESULT CMPAudioRenderer::CompleteConnect(IPin* pReceivePin)
 STDMETHODIMP CMPAudioRenderer::Run(REFERENCE_TIME tStart)
 {
   Log("Run - %6.3f", tStart / 10000000.0);
-  CAutoLock cInterfaceLock(&m_InterfaceLock);
-  
   HRESULT	hr = S_OK;
 
-  if (m_State == State_Running) 
-    return hr;
+  { // Scope this to only protect base object's state
+    CAutoLock cInterfaceLock(&m_InterfaceLock);
+
+    if (m_State == State_Running) 
+      return hr;
+  }
+
+  CAutoLock cInterfaceLock(&m_csAudioRenderer);
 
   if (m_pClock)
     m_pClock->Reset();
@@ -603,7 +607,7 @@ STDMETHODIMP CMPAudioRenderer::Stop()
 {
   Log("Stop");
 
-  CAutoLock cInterfaceLock(&m_InterfaceLock);
+  CAutoLock cInterfaceLock(&m_csAudioRenderer);
   
   if (m_hStopWaitingRenderer)
     SetEvent(m_hStopWaitingRenderer);
@@ -620,7 +624,7 @@ STDMETHODIMP CMPAudioRenderer::Stop()
 STDMETHODIMP CMPAudioRenderer::Pause()
 {
   Log("Pause");
-  CAutoLock cInterfaceLock(&m_InterfaceLock);
+  CAutoLock cInterfaceLock(&m_csAudioRenderer);
 
   if (m_hStopWaitingRenderer)
     SetEvent(m_hStopWaitingRenderer);
