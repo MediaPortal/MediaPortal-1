@@ -335,7 +335,7 @@ namespace MediaPortal.Player
 
     public static void FixDwm()
     {
-      if (!OSInfo.OSInfo.Win7OrLater())
+      if (!OSInfo.OSInfo.Win8OrLater())
       {
         try
         {
