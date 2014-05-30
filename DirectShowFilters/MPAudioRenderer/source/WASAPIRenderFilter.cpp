@@ -34,7 +34,7 @@ CWASAPIRenderFilter::CWASAPIRenderFilter(AudioRendererSettings* pSettings, CSync
   m_hDataEvent(NULL),
   m_pAudioClock(NULL),
   m_nHWfreq(0),
-  m_dwStreamFlags(AUDCLNT_STREAMFLAGS_EVENTCALLBACK),
+  m_dwStreamFlags(AUDCLNT_STREAMFLAGS_EVENTCALLBACK | AUDCLNT_STREAMFLAGS_NOPERSIST),
   m_state(StateStopped),
   m_bIsAudioClientStarted(false),
   m_bDeviceInitialized(false),
@@ -110,7 +110,7 @@ HRESULT CWASAPIRenderFilter::Init()
   {
     // Using HW DMA buffer based event notification
     m_hDataEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
-    m_dwStreamFlags = AUDCLNT_STREAMFLAGS_EVENTCALLBACK;
+    m_dwStreamFlags = AUDCLNT_STREAMFLAGS_EVENTCALLBACK | AUDCLNT_STREAMFLAGS_NOPERSIST;
   }
   else
   {
