@@ -546,9 +546,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       public int StringCount;
       public int MenuIndex;
       // This is a pointer to an array of pointers. The maximum size of the
-      // array is MAX_CAM_MENU_ENTRIES. Each of the pointers points to a
-      // block of memory with size MAX_API_STRING_LENGTH containing a
-      // string encoded according to EN 300 468 Annex A.
+      // array is MAX_CAM_MENU_ENTRIES. Each of the pointers points to a block
+      // of memory with size MAX_API_STRING_LENGTH containing a string encoded
+      // according to EN 300 468 Annex A. Note that StringCount does NOT seem
+      // to specify the number of entries in the array, and therefore we can't
+      // marshal automatically.
       public IntPtr Entries;
     }
 
@@ -649,10 +651,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       /// Get the number of Anysee devices connected to the system with corresponding
       /// device path and index detail to enable opening a common interface API instance.
       /// </summary>
-      /// <param name="deviceInfo">A buffer containing device path and index information for all Anysee devices connected to the system.</param>
+      /// <param name="deviceInfo">A structure containing device path and index information for all Anysee devices connected to the system.</param>
       /// <returns>the number of Anysee devices connected to the system</returns>
       [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-      private delegate int GetanyseeNumberofDevicesEx(IntPtr deviceInfo);
+      private delegate int GetanyseeNumberofDevicesEx(out CiDeviceInfo deviceInfo);
 
       #endregion
 
@@ -922,21 +924,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
 
         // We have an API instance, but now we need to open it by linking it with hardware.
         this.LogDebug("Anysee: determining instance index");
-        IntPtr infoBuffer = Marshal.AllocCoTaskMem(CI_DEVICE_INFO_SIZE);
-        for (int i = 0; i < CI_DEVICE_INFO_SIZE; i++)
-        {
-          Marshal.WriteByte(infoBuffer, i, 0);
-        }
-
-        int numDevices = _getAnyseeDeviceCount(infoBuffer);
+        CiDeviceInfo deviceInfo;
+        int numDevices = _getAnyseeDeviceCount(out deviceInfo);
         this.LogDebug("Anysee: number of devices = {0}", numDevices);
         if (numDevices == 0)
         {
-          Marshal.FreeCoTaskMem(infoBuffer);
           return;
         }
-        CiDeviceInfo deviceInfo = (CiDeviceInfo)Marshal.PtrToStructure(infoBuffer, typeof(CiDeviceInfo));
-        Marshal.FreeCoTaskMem(infoBuffer);
 
         string captureDevicePath;
         int index = -1;
@@ -1093,7 +1087,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
     /// <param name="message">The message from the CAM.</param>
     /// <returns>an HRESULT to indicate whether the message was successfully processed</returns>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate int OnAnyseeMmiMessage(int slotIndex, IntPtr message);
+    private delegate int OnAnyseeMmiMessage(int slotIndex, ref MmiMessage message);
 
     #endregion
 
@@ -1152,9 +1146,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
     private IntPtr _remoteControlBuffer = IntPtr.Zero;
 
     private OnAnyseeCiState _ciStateChangeDelegate = null;
-    private IntPtr _ciStateChangeCallBackPtr = IntPtr.Zero;
     private OnAnyseeMmiMessage _mmiMessageDelegate = null;
-    private IntPtr _mmiMessageCallBackPtr = IntPtr.Zero;
     private IConditionalAccessMenuCallBack _caMenuCallBack = null;
     private object _caMenuCallBackLock = new object();
 
@@ -1435,28 +1427,26 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     /// <param name="message">The message from the CAM.</param>
     /// <returns>an HRESULT to indicate whether the message was successfully processed</returns>
-    private int OnMmiMessage(int slotIndex, IntPtr message)
+    private int OnMmiMessage(int slotIndex, ref MmiMessage message)
     {
       this.LogInfo("Anysee: MMI message call back, slot = {0}", slotIndex);
 
-      MmiMessage msg = (MmiMessage)Marshal.PtrToStructure(message, typeof(MmiMessage));
-      this.LogDebug("  device index  = {0}", msg.DeviceIndex);
-      this.LogDebug("  slot index    = {0}", msg.SlotIndex);
-      this.LogDebug("  menu title    = {0}", DvbTextConverter.Convert(msg.RootMenuTitle));
-      this.LogInfo("  message type  = {0}", msg.Type);
-      MmiMenu menu = (MmiMenu)Marshal.PtrToStructure(msg.Menu, typeof(MmiMenu));
+      this.LogDebug("  device index  = {0}", message.DeviceIndex);
+      this.LogDebug("  slot index    = {0}", message.SlotIndex);
+      this.LogDebug("  menu title    = {0}", DvbTextConverter.Convert(message.RootMenuTitle));
+      this.LogInfo("  message type  = {0}", message.Type);
+      MmiMenu menu = (MmiMenu)Marshal.PtrToStructure(message.Menu, typeof(MmiMenu));
       this.LogDebug("  string count  = {0}", menu.StringCount);
       this.LogDebug("  menu index    = {0}", menu.MenuIndex);
 
 
       // Enquiry
-      if (msg.Type == AnyseeMmiMessageType.InputRequest)
+      if (message.Type == AnyseeMmiMessageType.InputRequest)
       {
         this.LogDebug("Anysee: enquiry");
-        if (msg.HeaderCount != 1)
+        if (message.HeaderCount != 1)
         {
-          this.LogError("Anysee: unexpected MMI input request header count, count = {0}", msg.HeaderCount);
-          Dump.DumpBinary(message, MMI_MESSAGE_SIZE);
+          this.LogError("Anysee: unexpected MMI input request header count, count = {0}", message.HeaderCount);
           return 1;
         }
         lock (_caMenuCallBackLock)
@@ -1468,11 +1458,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
 
           string prompt = DvbTextConverter.Convert(Marshal.ReadIntPtr(menu.Entries, 0));
           this.LogDebug("  prompt    = {0}", prompt);
-          this.LogDebug("  length    = {0}", msg.ExpectedAnswerLength);
-          this.LogDebug("  key count = {0}", msg.KeyCount);
+          this.LogDebug("  length    = {0}", message.ExpectedAnswerLength);
+          this.LogDebug("  key count = {0}", message.KeyCount);
           if (_caMenuCallBack != null)
           {
-            _caMenuCallBack.OnCiRequest(false, (uint)msg.ExpectedAnswerLength, prompt);
+            _caMenuCallBack.OnCiRequest(false, (uint)message.ExpectedAnswerLength, prompt);
           }
         }
         return 0;
@@ -1480,10 +1470,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
 
       // Menu or list
       this.LogDebug("Anysee: menu");
-      if (msg.HeaderCount != 3)
+      if (message.HeaderCount != 3)
       {
-        this.LogError("Anysee: unexpected MMI menu or list header count, count = {0}", msg.HeaderCount);
-        Dump.DumpBinary(message, MMI_MESSAGE_SIZE);
+        this.LogError("Anysee: unexpected MMI menu or list header count, count = {0}", message.HeaderCount);
         return 1;
       }
       lock (_caMenuCallBackLock)
@@ -1499,21 +1488,20 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
         this.LogDebug("  title     = {0}", title);
         this.LogDebug("  sub-title = {0}", subTitle);
         this.LogDebug("  footer    = {0}", footer);
-        this.LogDebug("  # entries = {0}", msg.EntryCount);
-        if (msg.EntryCount > MAX_CAM_MENU_ENTRIES - 3)
+        this.LogDebug("  # entries = {0}", message.EntryCount);
+        if (message.EntryCount > MAX_CAM_MENU_ENTRIES - 3)
         {
-          this.LogError("Anysee: MMI menu or list entry count {0} exceeds the maximum supported entry count {1}", msg.EntryCount, MAX_CAM_MENU_ENTRIES - 3);
-          Dump.DumpBinary(message, MMI_MESSAGE_SIZE);
+          this.LogError("Anysee: MMI menu or list entry count {0} exceeds the maximum supported entry count {1}", message.EntryCount, MAX_CAM_MENU_ENTRIES - 3);
           return 1;
         }
         if (_caMenuCallBack != null)
         {
-          _caMenuCallBack.OnCiMenu(title, subTitle, footer, msg.EntryCount);
+          _caMenuCallBack.OnCiMenu(title, subTitle, footer, message.EntryCount);
         }
 
         string entry;
-        IntPtr entryPtr = IntPtr.Add(menu.Entries, IntPtr.Size * 2);
-        for (int i = 0; i < msg.EntryCount; i++)
+        IntPtr entryPtr = IntPtr.Add(menu.Entries, IntPtr.Size * 3);
+        for (int i = 0; i < message.EntryCount; i++)
         {
           entry = DvbTextConverter.Convert(Marshal.ReadIntPtr(entryPtr, 0));
           entryPtr = IntPtr.Add(entryPtr, IntPtr.Size);
@@ -1788,10 +1776,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
 
       this.LogDebug("Anysee: setting call backs");
       _ciStateChangeDelegate = OnCiState;
-      _ciStateChangeCallBackPtr = Marshal.GetFunctionPointerForDelegate(_ciStateChangeDelegate);
       _mmiMessageDelegate = OnMmiMessage;
-      _mmiMessageCallBackPtr = Marshal.GetFunctionPointerForDelegate(_mmiMessageDelegate);
-      if (_ciApi.ExecuteCommand(AnyseeCiCommand.IsOpenSetCallBacks, _ciStateChangeCallBackPtr, _mmiMessageCallBackPtr))
+      if (_ciApi.ExecuteCommand(AnyseeCiCommand.IsOpenSetCallBacks, Marshal.GetFunctionPointerForDelegate(_ciStateChangeDelegate), Marshal.GetFunctionPointerForDelegate(_mmiMessageDelegate)))
       {
         this.LogDebug("Anysee: result = success");
         _isCaInterfaceOpen = true;
@@ -1825,8 +1811,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
         Marshal.FreeCoTaskMem(_pmtBuffer);
         _pmtBuffer = IntPtr.Zero;
       }
-      _ciStateChangeCallBackPtr = IntPtr.Zero;
-      _mmiMessageCallBackPtr = IntPtr.Zero;
 
       if (result)
       {
