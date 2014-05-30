@@ -204,11 +204,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
     /// devices simultaneously.
     /// </remarks>
     /// <param name="index">The zero-based device index (0 &lt;= index &lt; FindDevices()).</param>
-    /// <param name="captureCallBack">An optional pointer to a function that will be executed when raw stream packets are received.</param>
+    /// <param name="captureCallBack">An optional delegate that will be invoked when raw stream packets are received.</param>
     /// <param name="context">An optional pointer that will be passed as a paramter to the capture call back.</param>
     /// <returns><c>true</c> if the device access is successfully established, otherwise <c>false</c></returns>
     [DllImport("Resources\\TeVii.dll", CallingConvention = CallingConvention.Cdecl)]
-    private static extern bool OpenDevice(int index, IntPtr captureCallBack, IntPtr context);
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool OpenDevice(int index, OnTeViiCaptureData captureCallBack, IntPtr context);
 
     /// <summary>
     /// Close access to a specific TeVii device.
@@ -245,6 +246,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
     /// <param name="quality">A signal quality rating ranging between 0 (low quality) and 100 (high quality).</param>
     /// <returns><c>true</c> if the signal status is successfully retrieved, otherwise <c>false</c></returns>
     [DllImport("Resources\\TeVii.dll", CallingConvention = CallingConvention.Cdecl)]
+    [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool GetSignalStatus(int index, [Out, MarshalAs(UnmanagedType.Bool)] out bool isLocked, out int strength, out int quality);
 
     /// <summary>
@@ -264,30 +266,30 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
     /// Set the remote control receiver call back function.
     /// </summary>
     /// <param name="index">The zero-based device index (0 &lt;= index &lt; FindDevices()).</param>
-    /// <param name="remoteKeyCallBack">An optional pointer to a function that will be called when remote keypress events are detected.</param>
+    /// <param name="remoteKeyCallBack">A delegate that will be invoked when remote keypress events are detected.</param>
     /// <param name="context">An optional pointer that will be passed as a paramter to the remote key call back.</param>
     /// <returns><c>true</c> if the call back function is successfully set, otherwise <c>false</c></returns>
     [DllImport("Resources\\TeVii.dll", CallingConvention = CallingConvention.Cdecl)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool SetRemoteControl(int index, IntPtr remoteKeyCallBack, IntPtr context);
+    private static extern bool SetRemoteControl(int index, OnTeViiIrRemoteKeyPress remoteKeyCallBack, IntPtr context);
 
     #endregion
 
     #endregion
 
-    #region call back definitions
+    #region delegate definitions
 
     /// <summary>
-    /// Called by the tuner driver when raw packet data is received.
+    /// Invoked by the tuner driver when raw packet data is received.
     /// </summary>
     /// <param name="context">The optional context passed to the interface when the call back was registered.</param>
     /// <param name="data">The raw data.</param>
     /// <param name="dataLength">The number of bytes of available data.</param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.StdCall)]
-    private delegate void OnTeViiCaptureData(IntPtr context, IntPtr data, Int32 dataLength);
+    private delegate void OnTeViiCaptureData(IntPtr context, byte[] data, int dataLength);
 
     /// <summary>
-    /// Called by the tuner driver when an IR remote key press is detected.
+    /// Invoked by the tuner driver when an IR remote key press is detected.
     /// </summary>
     /// <param name="context">The optional context passed to the interface when the call back was registered.</param>
     /// <param name="code">The key code.</param>
@@ -305,7 +307,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
 
     private bool _isRemoteControlInterfaceOpen = false;
     private OnTeViiIrRemoteKeyPress _remoteControlKeyPressDelegate = null;
-    private IntPtr _remoteControlKeyPressCallBackPtr = IntPtr.Zero;
 
     #endregion
 
@@ -511,7 +512,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
         return false;
       }
 
-      if (!OpenDevice(_deviceIndex, IntPtr.Zero, IntPtr.Zero))
+      if (!OpenDevice(_deviceIndex, null, IntPtr.Zero))
       {
         this.LogError("TeVii: failed to open device");
         return false;
@@ -693,8 +694,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
       }
 
       _remoteControlKeyPressDelegate = OnRemoteControlKeyPress;
-      _remoteControlKeyPressCallBackPtr = Marshal.GetFunctionPointerForDelegate(_remoteControlKeyPressDelegate);
-      if (!SetRemoteControl(_deviceIndex, _remoteControlKeyPressCallBackPtr, IntPtr.Zero))
+      if (!SetRemoteControl(_deviceIndex, _remoteControlKeyPressDelegate, IntPtr.Zero))
       {
         this.LogError("TeVii: failed to set remote control event/delegate");
         return false;
@@ -713,14 +713,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
     {
       this.LogDebug("TeVii: close remote control interface");
 
-      bool success = SetRemoteControl(_deviceIndex, IntPtr.Zero, IntPtr.Zero);
+      bool success = SetRemoteControl(_deviceIndex, null, IntPtr.Zero);
       if (!success)
       {
         this.LogError("TeVii: failed to unset remote control event/delegate");
         return false;
       }
 
-      _remoteControlKeyPressCallBackPtr = IntPtr.Zero;
       _isRemoteControlInterfaceOpen = false;
       this.LogDebug("TeVii: result = success");
       return true;
