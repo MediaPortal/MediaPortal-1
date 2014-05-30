@@ -215,6 +215,30 @@ namespace MediaPortal.Player
         {
           _videoResolution = "1080I";
         }
+        if (_width <= 720 && _height == 240)
+        {
+          _videoResolution = "240";
+        }
+        if (_width <= 720 && _height == 360)
+        {
+          _videoResolution = "360";
+        }
+        if (_width <= 720 && _height == 480)
+        {
+          _videoResolution = "480";
+        }
+        if (_width <= 720 && _height == 576)
+        {
+          _videoResolution = "576";
+        }
+        if ((_width == 3840 || _height == 2160) && !_isInterlaced)
+        {
+          _videoResolution = "2160P";
+        }
+        if ((_width == 7680 || _height == 4320) && !_isInterlaced)
+        {
+          _videoResolution = "4320P";
+        }
 
         if (_videoDuration == 0)
         {
