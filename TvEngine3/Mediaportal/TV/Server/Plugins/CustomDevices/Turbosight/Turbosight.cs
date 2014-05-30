@@ -301,7 +301,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
     /// <param name="pmt">The PMT command.</param>
     /// <param name="pmtLength">The length of the PMT.</param>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate void TBS_ci_SendPmt(IntPtr handle, IntPtr pmt, ushort pmtLength);
+    private delegate void TBS_ci_SendPmt(IntPtr handle, byte[] pmt, ushort pmtLength);
 
     /// <summary>
     /// Close the conditional access interface for a specific Turbosight device.
@@ -354,7 +354,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
     // Buffers for use in conditional access related functions.
     private IntPtr _mmiMessageBuffer = IntPtr.Zero;
     private IntPtr _mmiResponseBuffer = IntPtr.Zero;
-    private IntPtr _pmtBuffer = IntPtr.Zero;
 
     // A buffer for general use in synchronised methods.
     private IntPtr _generalBuffer = IntPtr.Zero;
@@ -415,7 +414,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
           return false;
         }
       }
-      _libHandle = NativeMethods.LoadLibraryA(targetFilename);
+      _libHandle = NativeMethods.LoadLibrary(targetFilename);
       if (_libHandle == IntPtr.Zero)
       {
         this.LogError("Turbosight: failed to load TBS CI API DLL");
@@ -668,8 +667,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
             }
 
             // Yes, we expect a response -> check for a response.
-            TbsMmiMessageType response = TbsMmiMessageType.Null;
-            response = (TbsMmiMessageType)Marshal.ReadByte(_mmiResponseBuffer, 4);
+            TbsMmiMessageType response = (TbsMmiMessageType)Marshal.ReadByte(_mmiResponseBuffer, 4);
             if (response == TbsMmiMessageType.Null)
             {
               // If we are waiting for a response to a message that we sent
@@ -691,7 +689,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
             #region response handling
 
             // Get the response bytes.
-            int length = (ushort)Marshal.ReadInt16(_mmiResponseBuffer, 5);
+            ushort length = (ushort)Marshal.ReadInt16(_mmiResponseBuffer, 5);
             if (length > MMI_RESPONSE_BUFFER_SIZE - 7)
             {
               this.LogDebug("Turbosight: response too long, length = {0}", length);
@@ -1376,7 +1374,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
 
       _mmiMessageBuffer = Marshal.AllocCoTaskMem(MMI_MESSAGE_BUFFER_SIZE);
       _mmiResponseBuffer = Marshal.AllocCoTaskMem(MMI_RESPONSE_BUFFER_SIZE);
-      _pmtBuffer = Marshal.AllocCoTaskMem(Pmt.MAX_SIZE + 2);  // + 2 for TBS PMT header
       _mmiMessageQueue = new List<MmiMessage>();
       _isCamPresent = _camAvailable(_ciHandle);
       this.LogDebug("Turbosight: CAM available = {0}", _isCamPresent);
@@ -1413,11 +1410,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
       {
         Marshal.FreeCoTaskMem(_mmiResponseBuffer);
         _mmiResponseBuffer = IntPtr.Zero;
-      }
-      if (_pmtBuffer != IntPtr.Zero)
-      {
-        Marshal.FreeCoTaskMem(_pmtBuffer);
-        _pmtBuffer = IntPtr.Zero;
       }
       if (_libHandle != IntPtr.Zero)
       {
@@ -1501,18 +1493,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
       }
 
       // TBS have a short header at the start of the PMT.
-      Marshal.WriteByte(_pmtBuffer, 0, (byte)listAction);
-      Marshal.WriteByte(_pmtBuffer, 1, (byte)command);
-      int offset = 2;
       ReadOnlyCollection<byte> rawPmt = pmt.GetRawPmt();
-      for (int i = 0; i < rawPmt.Count; i++)
-      {
-        Marshal.WriteByte(_pmtBuffer, offset++, rawPmt[i]);
-      }
+      byte[] pmtBytes = new byte[rawPmt.Count + 2];
+      pmtBytes[0] = (byte)listAction;
+      pmtBytes[1] = (byte)command;
+      rawPmt.CopyTo(pmtBytes, 2);
 
-      //Dump.DumpBinary(_pmtBuffer, rawPmt.Count + 2);
-
-      _sendPmt(_ciHandle, _pmtBuffer, (ushort)(rawPmt.Count + 2));
+      _sendPmt(_ciHandle, pmtBytes, (ushort)pmtBytes.Length);
 
       this.LogDebug("Turbosight: result = success");
       return true;
