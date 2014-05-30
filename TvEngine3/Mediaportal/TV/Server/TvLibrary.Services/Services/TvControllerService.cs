@@ -1026,7 +1026,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
 
     public void RegisterUserForCiMenu(string username)
     {
-      Service.RegisterUserForHeartbeatMonitoring(username);
+      Service.RegisterUserForCiMenu(username);
     }
 
     public void UnRegisterUserForHeartbeatMonitoring(string username)
