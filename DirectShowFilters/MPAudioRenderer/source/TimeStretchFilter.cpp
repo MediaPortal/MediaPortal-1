@@ -720,13 +720,15 @@ uint CTimeStretchFilter::numUnprocessedSamples() const
   ASSERT(m_Streams);
 
   uint maxSamples = 0;
-  for (int i = 0; i < m_Streams->size(); i++)
+  if (m_Streams)
   {
-    uint samples = m_Streams->at(i)->numUnprocessedSamples();
-    if (maxSamples == 0 || maxSamples < samples)
-      maxSamples = samples;
+    for (int i = 0; i < m_Streams->size(); i++)
+    {
+      uint samples = m_Streams->at(i)->numUnprocessedSamples();
+      if (maxSamples == 0 || maxSamples < samples)
+        maxSamples = samples;
+    }
   }
-
   return maxSamples;
 }
 
@@ -737,13 +739,15 @@ uint CTimeStretchFilter::numSamples() const
   ASSERT(m_Streams);
 
   uint minSamples = 0;
-  for (int i = 0; i < m_Streams->size(); i++)
+  if (m_Streams)
   {
-    uint samples = m_Streams->at(i)->numSamples();
-    if (i == 0 || minSamples > samples)
-      minSamples = samples;
+    for (int i = 0; i < m_Streams->size(); i++)
+    {
+      uint samples = m_Streams->at(i)->numSamples();
+      if (i == 0 || minSamples > samples)
+        minSamples = samples;
+    }
   }
-
   return minSamples;
 }
 
@@ -753,13 +757,16 @@ int CTimeStretchFilter::isEmpty() const
   CAutoLock streamLock(&m_csStreamLock);
   ASSERT(m_Streams);
 
-  for (int i = 0; i < m_Streams->size(); i++)
+  if (m_Streams)
   {
-    if (m_Streams->at(i)->isEmpty())
-      return true;
+    for (int i = 0; i < m_Streams->size(); i++)
+    {
+      if (m_Streams->at(i)->isEmpty())
+        return true;
+    }
   }
 
-  return false;
+  return false; // TODO: not sure if this is the right thing to return if m_Streams is NULL
 }
 
 bool CTimeStretchFilter::putSamplesInternal(const short *inBuffer, long inSamples)
