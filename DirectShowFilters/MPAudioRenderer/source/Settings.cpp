@@ -688,54 +688,56 @@ HRESULT AudioRendererSettings::GetAudioDevice(IMMDevice** ppMMDevice)
 
   Log("Target end point: %S", m_wWASAPIPreferredDeviceId);
 
-  if (GetAvailableAudioDevices(&devices, NULL, false) == S_OK)
+  if(m_wWASAPIPreferredDeviceId && wcscmp(L"", m_wWASAPIPreferredDeviceId) != 0) // Skip this step if we don't have a preferred device
   {
-    UINT count = 0;
-    hr = devices->GetCount(&count);
-    if (FAILED(hr))
+    if (GetAvailableAudioDevices(&devices, NULL, false) == S_OK)
     {
-      Log("  devices->GetCount failed: (0x%08x)", hr);
-      return hr;
-    }
-    
-    for (UINT i = 0; i < count; i++)
-    {
-      LPWSTR pwszID = NULL;
-      IMMDevice* endpoint = NULL;
-      hr = devices->Item(i, &endpoint);
-      if (SUCCEEDED(hr))
+      UINT count = 0;
+      hr = devices->GetCount(&count);
+      if (FAILED(hr))
       {
-        hr = endpoint->GetId(&pwszID);
+        Log("  devices->GetCount failed: (0x%08x)", hr);
+        return hr;
+      }
+    
+      for (UINT i = 0; i < count; i++)
+      {
+        LPWSTR pwszID = NULL;
+        IMMDevice* endpoint = NULL;
+        hr = devices->Item(i, &endpoint);
         if (SUCCEEDED(hr))
         {
-          // Found the configured audio endpoint
-          if (wcscmp(pwszID, m_wWASAPIPreferredDeviceId) == 0)
+          hr = endpoint->GetId(&pwszID);
+          if (SUCCEEDED(hr))
           {
-            enumerator->GetDevice(m_wWASAPIPreferredDeviceId, ppMMDevice);
-            SAFE_RELEASE(devices);
-            *ppMMDevice = endpoint;
-            CoTaskMemFree(pwszID);
-            pwszID = NULL;
-            return S_OK;
+            // Found the configured audio endpoint
+            if (wcscmp(pwszID, m_wWASAPIPreferredDeviceId) == 0)
+            {
+              enumerator->GetDevice(m_wWASAPIPreferredDeviceId, ppMMDevice);
+              SAFE_RELEASE(devices);
+              *ppMMDevice = endpoint;
+              CoTaskMemFree(pwszID);
+              pwszID = NULL;
+              return S_OK;
+            }
+            else
+            {
+              SAFE_RELEASE(endpoint);
+              CoTaskMemFree(pwszID);
+              pwszID = NULL;
+            }
           }
           else
-          {
-            SAFE_RELEASE(endpoint);
-            CoTaskMemFree(pwszID);
-            pwszID = NULL;
-          }
+            Log("  devices->GetId failed: (0x%08x)", hr);
         }
         else
-          Log("  devices->GetId failed: (0x%08x)", hr);
-      }
-      else
-        Log("  devices->Item failed: (0x%08x)", hr);
+          Log("  devices->Item failed: (0x%08x)", hr);
 
-      CoTaskMemFree(pwszID);
-      pwszID = NULL;
+        CoTaskMemFree(pwszID);
+        pwszID = NULL;
+      }
     }
   }
-
   Log("Unable to find selected audio device, using the default end point!");
   hr = enumerator->GetDefaultAudioEndpoint(eRender, eConsole, ppMMDevice);
 
