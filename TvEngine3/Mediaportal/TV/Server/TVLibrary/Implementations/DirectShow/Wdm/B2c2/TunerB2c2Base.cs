@@ -51,15 +51,32 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     #region variables
 
     private IBaseFilter _filterB2c2Adapter = null;
-    private IMpeg2DataCtrl6 _interfaceData = null;
+
     /// <summary>
-    /// The main tuning control interface.
+    /// The data/streaming control interface.
+    /// </summary>
+    protected IMpeg2DataCtrl6 _interfaceData = null;
+    /// <summary>
+    /// The tuning control interface.
     /// </summary>
     protected IMpeg2TunerCtrl4 _interfaceTuner = null;
 
+    /// <summary>
+    /// A lock used to avoid simultaneous tuner interaction.
+    /// </summary>
+    protected static object _tunerAccessLock = new object();
+
+    /// <summary>
+    /// An infinite tee filter, necessary because downstream filters assume
+    /// they should connect to the first output pin (the B2C2 source filter
+    /// streams from the second output pin).
+    /// </summary>
     private IBaseFilter _filterInfiniteTee = null;
 
-    private DeviceInfo _deviceInfo;
+    /// <summary>
+    /// B2C2-specific tuner identify information.
+    /// </summary>
+    protected DeviceInfo _deviceInfo;
     /// <summary>
     /// B2C2-specific tuner hardware capability information.
     /// </summary>
@@ -100,23 +117,22 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
         return;
       }
 
-      _isSignalLocked = (_interfaceTuner.CheckLock() == 0);
-      _isSignalPresent = _isSignalLocked;
-      if (!onlyUpdateLock)
+      lock (_tunerAccessLock)
       {
-        _interfaceTuner.GetSignalStrength(out _signalLevel);
-        _interfaceTuner.GetSignalQuality(out _signalQuality);
+        int hr = _interfaceData.SelectDevice(_deviceInfo.DeviceId);
+        if (hr != (int)HResult.Severity.Success)
+        {
+          this.LogError("B2C2 base: failed to select device to update signal status, hr = 0x{0:x}", hr);
+          return;
+        }
+        _isSignalLocked = (_interfaceTuner.CheckLock() == 0);
+        _isSignalPresent = _isSignalLocked;
+        if (!onlyUpdateLock)
+        {
+          _interfaceTuner.GetSignalStrength(out _signalLevel);
+          _interfaceTuner.GetSignalQuality(out _signalQuality);
+        }
       }
-    }
-
-    /// <summary>
-    /// Actually tune to a channel.
-    /// </summary>
-    /// <param name="channel">The channel to tune to.</param>
-    public override void PerformTuning(IChannel channel)
-    {
-      this.LogDebug("B2C2 base: apply tuning parameters");
-      HResult.ThrowException(_interfaceTuner.SetTunerStatus(), "Failed to apply tuning parameters.");
     }
 
     #region graph building
@@ -140,10 +156,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       int hr = _interfaceTuner.Initialize();
       HResult.ThrowException(hr, "Failed to initialise tuner interface.");
 
-      // This line is a remnant from old code. I don't know if/why it is necessary, but no harm
-      // in leaving it...
-      _interfaceTuner.CheckLock();
-
       // The source filter has multiple output pins, and connecting to the right one is critical.
       // Extensions can't handle this automatically, so we add an extra infinite tee in between the
       // source filter and any extension filters.
@@ -152,7 +164,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
 
       // Load and open extensions.
       IBaseFilter lastFilter = _filterInfiniteTee;
-      LoadExtensions(_filterB2c2Adapter, ref lastFilter);
+      LoadExtensions(_deviceInfo, ref lastFilter);
 
       // This class implements the extension interface and should be treated as the main extension.
       _extensions.Add(this);
@@ -203,49 +215,38 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     {
       this.LogDebug("B2C2 base: read tuner information");
 
-      int hr = _interfaceData.SelectDevice(_deviceInfo.DeviceId);
-      if (hr != (int)HResult.Severity.Success)
+      int returnedByteCount = TUNER_CAPABILITIES_SIZE;
+      int hr = (int)HResult.Severity.Success;
+      lock (_tunerAccessLock)
       {
-        this.LogError("B2C2 base: failed to select device, hr = 0x{0:x}", hr);
+        hr = _interfaceData.SelectDevice(_deviceInfo.DeviceId);
+        if (hr != (int)HResult.Severity.Success)
+        {
+          this.LogError("B2C2 base: failed to select device to read tuner information, hr = 0x{0:x}", hr);
+          return;
+        }
+
+        hr = _interfaceTuner.GetTunerCapabilities(out _capabilities, ref returnedByteCount);
+      }
+      if (hr != (int)HResult.Severity.Success || returnedByteCount != TUNER_CAPABILITIES_SIZE)
+      {
+        this.LogWarn("B2C2 base: failed to get tuner capabilities, hr = 0x{0:x}, byte count = {1}", hr, returnedByteCount);
         return;
       }
 
-      IntPtr buffer = Marshal.AllocCoTaskMem(TUNER_CAPABILITIES_SIZE);
-      try
-      {
-        for (int i = 0; i < TUNER_CAPABILITIES_SIZE; i++)
-        {
-          Marshal.WriteByte(buffer, i, 0);
-        }
-        int returnedByteCount = TUNER_CAPABILITIES_SIZE;
-        hr = _interfaceTuner.GetTunerCapabilities(buffer, ref returnedByteCount);
-        if (hr != (int)HResult.Severity.Success || returnedByteCount != TUNER_CAPABILITIES_SIZE)
-        {
-          this.LogWarn("B2C2 base: failed to get tuner capabilities, hr = 0x{0:x}, byte count = {1}", hr, returnedByteCount);
-        }
-        else
-        {
-          //Dump.DumpBinary(_generalBuffer, returnedByteCount);
-          _capabilities = (TunerCapabilities)Marshal.PtrToStructure(buffer, typeof(TunerCapabilities));
-          this.LogDebug("  tuner type                = {0}", _capabilities.TunerType);
-          this.LogDebug("  set constellation?        = {0}", _capabilities.ConstellationSupported);
-          this.LogDebug("  set FEC rate?             = {0}", _capabilities.FecSupported);
-          this.LogDebug("  min transponder frequency = {0} kHz", _capabilities.MinTransponderFrequency);
-          this.LogDebug("  max transponder frequency = {0} kHz", _capabilities.MaxTransponderFrequency);
-          this.LogDebug("  min tuner frequency       = {0} kHz", _capabilities.MinTunerFrequency);
-          this.LogDebug("  max tuner frequency       = {0} kHz", _capabilities.MaxTunerFrequency);
-          this.LogDebug("  min symbol rate           = {0} baud", _capabilities.MinSymbolRate);
-          this.LogDebug("  max symbol rate           = {0} baud", _capabilities.MaxSymbolRate);
-          this.LogDebug("  performance monitoring    = {0}", _capabilities.PerformanceMonitoringCapabilities);
-          this.LogDebug("  lock time                 = {0} ms", _capabilities.LockTime);
-          this.LogDebug("  kernel lock time          = {0} ms", _capabilities.KernelLockTime);
-          this.LogDebug("  acquisition capabilities  = {0}", _capabilities.AcquisitionCapabilities);
-        }
-      }
-      finally
-      {
-        Marshal.FreeCoTaskMem(buffer);
-      }
+      this.LogDebug("  tuner type                = {0}", _capabilities.TunerType);
+      this.LogDebug("  set constellation?        = {0}", _capabilities.ConstellationSupported);
+      this.LogDebug("  set FEC rate?             = {0}", _capabilities.FecSupported);
+      this.LogDebug("  min transponder frequency = {0} kHz", _capabilities.MinTransponderFrequency);
+      this.LogDebug("  max transponder frequency = {0} kHz", _capabilities.MaxTransponderFrequency);
+      this.LogDebug("  min tuner frequency       = {0} kHz", _capabilities.MinTunerFrequency);
+      this.LogDebug("  max tuner frequency       = {0} kHz", _capabilities.MaxTunerFrequency);
+      this.LogDebug("  min symbol rate           = {0} baud", _capabilities.MinSymbolRate);
+      this.LogDebug("  max symbol rate           = {0} baud", _capabilities.MaxSymbolRate);
+      this.LogDebug("  performance monitoring    = {0}", _capabilities.PerformanceMonitoringCapabilities);
+      this.LogDebug("  lock time                 = {0} ms", _capabilities.LockTime);
+      this.LogDebug("  kernel lock time          = {0} ms", _capabilities.KernelLockTime);
+      this.LogDebug("  acquisition capabilities  = {0}", _capabilities.AcquisitionCapabilities);
     }
 
     private void ReadPidFilterInfo()
@@ -255,7 +256,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       int hr = _interfaceData.SelectDevice(_deviceInfo.DeviceId);
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogError("B2C2 base: failed to select device, hr = 0x{0:x}", hr);
+        this.LogError("B2C2 base: failed to select device to read PID filter information, hr = 0x{0:x}", hr);
         return;
       }
 
@@ -556,32 +557,36 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       }
 
       this.LogDebug("B2C2 base: disable PID filter");
-      int hr = _interfaceData.SelectDevice(_deviceInfo.DeviceId);
-      if (hr != (int)HResult.Severity.Success)
+      int hr = (int)HResult.Severity.Success;
+      lock (_tunerAccessLock)
       {
-        this.LogError("B2C2 base: failed to select device, hr = 0x{0:x}", hr);
-        return false;
-      }
-
-      // Remove all current PIDs.
-      if (_pidFilterPids.Count > 0)
-      {
-        this.LogDebug("  delete {0} current PID(s)...", _pidFilterPids.Count);
-        int[] currentPids = new int[_pidFilterPids.Count];
-        _pidFilterPids.CopyTo(currentPids, 0, _pidFilterPids.Count);
-        hr = _interfaceData.DeletePIDsFromPin(_pidFilterPids.Count, currentPids, 0);
+        hr = _interfaceData.SelectDevice(_deviceInfo.DeviceId);
         if (hr != (int)HResult.Severity.Success)
         {
-          this.LogError("B2C2 base: failed to delete current PIDs, hr = 0x{0:x}", hr);
+          this.LogError("B2C2 base: failed to select device to disable PID filter, hr = 0x{0:x}", hr);
           return false;
         }
-        _pidFilterPids.Clear();
-      }
 
-      // Allow all PIDs.
-      this.LogDebug("  add all excluding NULL...");
-      int changingPidCount = 1;
-      hr = _interfaceData.AddPIDsToPin(ref changingPidCount, new int[1] { (int)B2c2PidFilterMode.AllExcludingNull }, 0);
+        // Remove all current PIDs.
+        if (_pidFilterPids.Count > 0)
+        {
+          this.LogDebug("  delete {0} current PID(s)...", _pidFilterPids.Count);
+          int[] currentPids = new int[_pidFilterPids.Count];
+          _pidFilterPids.CopyTo(currentPids, 0, _pidFilterPids.Count);
+          hr = _interfaceData.DeletePIDsFromPin(_pidFilterPids.Count, currentPids, 0);
+          if (hr != (int)HResult.Severity.Success)
+          {
+            this.LogError("B2C2 base: failed to delete current PIDs, hr = 0x{0:x}", hr);
+            return false;
+          }
+          _pidFilterPids.Clear();
+        }
+
+        // Allow all PIDs.
+        this.LogDebug("  add all excluding NULL...");
+        int changingPidCount = 1;
+        hr = _interfaceData.AddPIDsToPin(ref changingPidCount, new int[1] { (int)B2c2PidFilterMode.AllExcludingNull }, 0);
+      }
       if (hr == (int)HResult.Severity.Success)
       {
         _isPidFilterDisabled = true;
@@ -642,70 +647,73 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       }
 
       this.LogDebug("B2C2 base: apply PID filter");
-      int hr = _interfaceData.SelectDevice(_deviceInfo.DeviceId);
-      if (hr != (int)HResult.Severity.Success)
+      lock (_tunerAccessLock)
       {
-        this.LogError("B2C2 base: failed to select device, hr = 0x{0:x}", hr);
-        return false;
-      }
-
-      if (_isPidFilterDisabled)
-      {
-        this.LogDebug("  delete all excluding NULL...");
-        hr = _interfaceData.DeletePIDsFromPin(1, new int[1] { (int)B2c2PidFilterMode.AllExcludingNull }, 0);
+        int hr = _interfaceData.SelectDevice(_deviceInfo.DeviceId);
         if (hr != (int)HResult.Severity.Success)
         {
-          this.LogError("B2C2 base: failed to delete all PIDs, hr = 0x{0:x}", hr);
+          this.LogError("B2C2 base: failed to select device to apply PID filter configuration, hr = 0x{0:x}", hr);
           return false;
         }
-        _isPidFilterDisabled = false;
-      }
 
-      int changingPidCount = 0;
-      if (_pidFilterPidsToRemove.Count > 0)
-      {
-        changingPidCount = _pidFilterPidsToRemove.Count;
-        this.LogDebug("  delete {0} current PID(s)...", changingPidCount);
-        int[] newPids = new int[changingPidCount];
-        int i = 0;
-        foreach (ushort pid in _pidFilterPidsToRemove)
+        if (_isPidFilterDisabled)
         {
-          newPids[i++] = pid;
+          this.LogDebug("  delete all excluding NULL...");
+          hr = _interfaceData.DeletePIDsFromPin(1, new int[1] { (int)B2c2PidFilterMode.AllExcludingNull }, 0);
+          if (hr != (int)HResult.Severity.Success)
+          {
+            this.LogError("B2C2 base: failed to delete all PIDs, hr = 0x{0:x}", hr);
+            return false;
+          }
+          _isPidFilterDisabled = false;
         }
-        hr = _interfaceData.DeletePIDsFromPin(changingPidCount, newPids, 0);
-        if (hr != (int)HResult.Severity.Success)
-        {
-          this.LogError("B2C2 base: failed to delete current PID(s), hr = 0x{0:x}", hr);
-          return false;
-        }
-        foreach (ushort pid in _pidFilterPidsToRemove)
-        {
-          _pidFilterPids.Remove(pid);
-        }
-        _pidFilterPidsToRemove.Clear();
-      }
 
-      if (_pidFilterPidsToAdd.Count > 0)
-      {
-        changingPidCount = _pidFilterPidsToAdd.Count;
-        this.LogDebug("  add {0} new PID(s)...", changingPidCount);
-        int[] newPids = new int[changingPidCount];
-        int i = 0;
-        foreach (ushort pid in _pidFilterPidsToAdd)
+        int changingPidCount = 0;
+        if (_pidFilterPidsToRemove.Count > 0)
         {
-          newPids[i++] = pid;
+          changingPidCount = _pidFilterPidsToRemove.Count;
+          this.LogDebug("  delete {0} current PID(s)...", changingPidCount);
+          int[] newPids = new int[changingPidCount];
+          int i = 0;
+          foreach (ushort pid in _pidFilterPidsToRemove)
+          {
+            newPids[i++] = pid;
+          }
+          hr = _interfaceData.DeletePIDsFromPin(changingPidCount, newPids, 0);
+          if (hr != (int)HResult.Severity.Success)
+          {
+            this.LogError("B2C2 base: failed to delete current PID(s), hr = 0x{0:x}", hr);
+            return false;
+          }
+          foreach (ushort pid in _pidFilterPidsToRemove)
+          {
+            _pidFilterPids.Remove(pid);
+          }
+          _pidFilterPidsToRemove.Clear();
         }
-        hr = _interfaceData.AddPIDsToPin(ref changingPidCount, newPids, 0);
-        if (hr != (int)HResult.Severity.Success)
+
+        if (_pidFilterPidsToAdd.Count > 0)
         {
-          this.LogError("B2C2 base: failed to add new PID(s), hr = 0x{0:x}", hr);
-          return false;
+          changingPidCount = _pidFilterPidsToAdd.Count;
+          this.LogDebug("  add {0} new PID(s)...", changingPidCount);
+          int[] newPids = new int[changingPidCount];
+          int i = 0;
+          foreach (ushort pid in _pidFilterPidsToAdd)
+          {
+            newPids[i++] = pid;
+          }
+          hr = _interfaceData.AddPIDsToPin(ref changingPidCount, newPids, 0);
+          if (hr != (int)HResult.Severity.Success)
+          {
+            this.LogError("B2C2 base: failed to add new PID(s), hr = 0x{0:x}", hr);
+            return false;
+          }
+          foreach (ushort pid in _pidFilterPidsToAdd)
+          {
+            _pidFilterPids.Add(pid);
+          }
+          _pidFilterPidsToAdd.Clear();
         }
-        foreach (ushort pid in _pidFilterPidsToAdd)
-        {
-          _pidFilterPids.Add(pid);
-        }
-        _pidFilterPidsToAdd.Clear();
       }
 
       this.LogDebug("B2C2 base: result = success");

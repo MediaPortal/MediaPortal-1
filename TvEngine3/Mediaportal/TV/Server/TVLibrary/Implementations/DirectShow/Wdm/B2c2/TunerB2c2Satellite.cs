@@ -42,7 +42,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
   {
     #region constants
 
-    private static readonly int DISEQC_BUFFER_SIZE = 10;
+    private static readonly int MAX_DISEQC_MESSAGE_LENGTH = 10;
 
     #endregion
 
@@ -52,11 +52,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     /// <c>True</c> if the tuner is capable of sending raw DiSEqC commands, otherwise <c>false</c>.
     /// </summary>
     private bool _isRawDiseqcSupported = false;
-
-    /// <summary>
-    /// A buffer used for sending DiSEqC commands.
-    /// </summary>
-    private IntPtr _diseqcBuffer = IntPtr.Zero;
 
     #endregion
 
@@ -75,21 +70,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     public override void PerformLoading()
     {
       base.PerformLoading();
-      _diseqcBuffer = Marshal.AllocCoTaskMem(DISEQC_BUFFER_SIZE);
       _isRawDiseqcSupported = _capabilities.AcquisitionCapabilities.HasFlag(AcquisitionCapability.RawDiseqc);
-    }
-
-    /// <summary>
-    /// Actually unload the tuner.
-    /// </summary>
-    public override void PerformUnloading()
-    {
-      if (_diseqcBuffer != IntPtr.Zero)
-      {
-        Marshal.FreeCoTaskMem(_diseqcBuffer);
-        _diseqcBuffer = IntPtr.Zero;
-      }
-      base.PerformUnloading();
     }
 
     #region tuning
@@ -117,53 +98,53 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
         throw new TvException("Received request to tune incompatible channel.");
       }
 
-      int hr = _interfaceTuner.SetFrequency((int)dvbsChannel.Frequency / 1000);
-      HResult.ThrowException(hr, "Failed to set frequency.");
-
-      hr = _interfaceTuner.SetSymbolRate(dvbsChannel.SymbolRate);
-      HResult.ThrowException(hr, "Failed to set symbol rate.");
-
-      FecRate fec = FecRate.Auto;
-      switch (dvbsChannel.InnerFecRate)
+      lock (_tunerAccessLock)
       {
-        case BinaryConvolutionCodeRate.Rate1_2:
-          fec = FecRate.Rate1_2;
-          break;
-        case BinaryConvolutionCodeRate.Rate2_3:
-          fec = FecRate.Rate2_3;
-          break;
-        case BinaryConvolutionCodeRate.Rate3_4:
-          fec = FecRate.Rate3_4;
-          break;
-        case BinaryConvolutionCodeRate.Rate5_6:
-          fec = FecRate.Rate5_6;
-          break;
-        case BinaryConvolutionCodeRate.Rate7_8:
-          fec = FecRate.Rate7_8;
-          break;
-      }
-      hr = _interfaceTuner.SetFec(fec);
-      HResult.ThrowException(hr, "Failed to set FEC rate.");
+        HResult.ThrowException(_interfaceData.SelectDevice(_deviceInfo.DeviceId), "Failed to select device.");
+        HResult.ThrowException(_interfaceTuner.SetFrequency((int)dvbsChannel.Frequency / 1000), "Failed to set frequency.");
+        HResult.ThrowException(_interfaceTuner.SetSymbolRate(dvbsChannel.SymbolRate), "Failed to set symbol rate.");
 
-      B2c2Polarisation b2c2Polarisation = B2c2Polarisation.Horizontal;
-      if (dvbsChannel.Polarisation == DirectShowLib.BDA.Polarisation.LinearV || dvbsChannel.Polarisation == DirectShowLib.BDA.Polarisation.CircularR)
-      {
-        b2c2Polarisation = B2c2Polarisation.Vertical;
-      }
-      hr = _interfaceTuner.SetPolarity(b2c2Polarisation);
-      HResult.ThrowException(hr, "Failed to set polarisation.");
+        FecRate fec = FecRate.Auto;
+        switch (dvbsChannel.InnerFecRate)
+        {
+          case BinaryConvolutionCodeRate.Rate1_2:
+            fec = FecRate.Rate1_2;
+            break;
+          case BinaryConvolutionCodeRate.Rate2_3:
+            fec = FecRate.Rate2_3;
+            break;
+          case BinaryConvolutionCodeRate.Rate3_4:
+            fec = FecRate.Rate3_4;
+            break;
+          case BinaryConvolutionCodeRate.Rate5_6:
+            fec = FecRate.Rate5_6;
+            break;
+          case BinaryConvolutionCodeRate.Rate7_8:
+            fec = FecRate.Rate7_8;
+            break;
+        }
+        HResult.ThrowException(_interfaceTuner.SetFec(fec), "Failed to set FEC rate.");
 
-      if (dvbsChannel.Frequency > dvbsChannel.LnbType.SwitchFrequency)
-      {
-        hr = _interfaceTuner.SetLnbFrequency(dvbsChannel.LnbType.HighBandFrequency / 1000);
-      }
-      else
-      {
-        hr = _interfaceTuner.SetLnbFrequency(dvbsChannel.LnbType.LowBandFrequency / 1000);
-      }
-      HResult.ThrowException(hr, "Failed to set LNB LOF frequency.");
+        B2c2Polarisation b2c2Polarisation = B2c2Polarisation.Horizontal;
+        if (dvbsChannel.Polarisation == DirectShowLib.BDA.Polarisation.LinearV || dvbsChannel.Polarisation == DirectShowLib.BDA.Polarisation.CircularR)
+        {
+          b2c2Polarisation = B2c2Polarisation.Vertical;
+        }
+        HResult.ThrowException(_interfaceTuner.SetPolarity(b2c2Polarisation), "Failed to set polarisation.");
 
-      base.PerformTuning(channel);
+        int hr = (int)HResult.Severity.Success;
+        if (dvbsChannel.Frequency > dvbsChannel.LnbType.SwitchFrequency)
+        {
+          hr = _interfaceTuner.SetLnbFrequency(dvbsChannel.LnbType.HighBandFrequency / 1000);
+        }
+        else
+        {
+          hr = _interfaceTuner.SetLnbFrequency(dvbsChannel.LnbType.LowBandFrequency / 1000);
+        }
+        HResult.ThrowException(hr, "Failed to set LNB LOF frequency.");
+
+        HResult.ThrowException(_interfaceTuner.SetTunerStatus(), "Failed to apply tuning parameters.");
+      }
     }
 
     #endregion
@@ -249,19 +230,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
         this.LogWarn("B2C2 satellite: DiSEqC command not supplied");
         return true;
       }
-      if (command.Length > DISEQC_BUFFER_SIZE)
+      if (command.Length > MAX_DISEQC_MESSAGE_LENGTH)
       {
         this.LogDebug("B2C2 satellite: DiSEqC command too long, length = {0}", command.Length);
         return true;
       }
 
-      Marshal.Copy(command, 0, _diseqcBuffer, command.Length);
       int hr = (int)HResult.Severity.Success;
       if (_isRawDiseqcSupported)
       {
         try
         {
-          hr = _interfaceTuner.SendDiSEqCCommand(command.Length, _diseqcBuffer);
+          hr = _interfaceTuner.SendDiSEqCCommand(command.Length, command);
           if (hr == (int)HResult.Severity.Success)
           {
             this.LogDebug("B2C2 satellite: result = success");

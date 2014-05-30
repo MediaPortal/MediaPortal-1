@@ -67,32 +67,32 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
         throw new TvException("Received request to tune incompatible channel.");
       }
 
-      int hr = _interfaceTuner.SetFrequency((int)dvbcChannel.Frequency / 1000);
-      HResult.ThrowException(hr, "Failed to set frequency.");
-
-      hr = _interfaceTuner.SetSymbolRate(dvbcChannel.SymbolRate);
-      HResult.ThrowException(hr, "Failed to set symbol rate.");
-
-      Modulation modulation = Modulation.Qam64;
-      switch (dvbcChannel.ModulationType)
+      lock (_tunerAccessLock)
       {
-        case ModulationType.Mod16Qam:
-          modulation = Modulation.Qam16;
-          break;
-        case ModulationType.Mod32Qam:
-          modulation = Modulation.Qam32;
-          break;
-        case ModulationType.Mod128Qam:
-          modulation = Modulation.Qam128;
-          break;
-        case ModulationType.Mod256Qam:
-          modulation = Modulation.Qam256;
-          break;
-      }
-      hr = _interfaceTuner.SetModulation(modulation);
-      HResult.ThrowException(hr, "Failed to set modulation.");
+        HResult.ThrowException(_interfaceData.SelectDevice(_deviceInfo.DeviceId), "Failed to select device.");
+        HResult.ThrowException(_interfaceTuner.SetFrequency((int)dvbcChannel.Frequency / 1000), "Failed to set frequency.");
+        HResult.ThrowException(_interfaceTuner.SetSymbolRate(dvbcChannel.SymbolRate), "Failed to set symbol rate.");
 
-      base.PerformTuning(channel);
+        Modulation modulation = Modulation.Qam64;
+        switch (dvbcChannel.ModulationType)
+        {
+          case ModulationType.Mod16Qam:
+            modulation = Modulation.Qam16;
+            break;
+          case ModulationType.Mod32Qam:
+            modulation = Modulation.Qam32;
+            break;
+          case ModulationType.Mod128Qam:
+            modulation = Modulation.Qam128;
+            break;
+          case ModulationType.Mod256Qam:
+            modulation = Modulation.Qam256;
+            break;
+        }
+        HResult.ThrowException(_interfaceTuner.SetModulation(modulation), "Failed to set modulation.");
+
+        HResult.ThrowException(_interfaceTuner.SetTunerStatus(), "Failed to apply tuning parameters.");
+      }
     }
 
     #endregion

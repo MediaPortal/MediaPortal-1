@@ -69,32 +69,33 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
         throw new TvException("Received request to tune incompatible channel.");
       }
 
-      // If the channel modulation scheme is 8 VSB then it is an over-the-air ATSC channel, otherwise
-      // it is a cable (SCTE ITU-T annex B) channel.
-      int frequency;
-      Modulation modulation = Modulation.Vsb8;
-      if (atscChannel.ModulationType == ModulationType.Mod8Vsb)
+      lock (_tunerAccessLock)
       {
-        frequency = ATSCChannel.GetTerrestrialFrequencyFromPhysicalChannel(atscChannel.PhysicalChannel);
-        this.LogDebug("B2C2 ATSC: translated ATSC physical channel number {0} to {1} kHz", atscChannel.PhysicalChannel, frequency);
-      }
-      else
-      {
-        frequency = (int)atscChannel.Frequency;
-        modulation = Modulation.Qam256AnnexB;
-        if (atscChannel.ModulationType == ModulationType.Mod64Qam)
+        HResult.ThrowException(_interfaceData.SelectDevice(_deviceInfo.DeviceId), "Failed to select device.");
+
+        // If the channel modulation scheme is 8 VSB then it is an over-the-air ATSC channel,
+        // otherwise it is a cable (SCTE ITU-T annex B) channel.
+        int frequency;
+        Modulation modulation = Modulation.Vsb8;
+        if (atscChannel.ModulationType == ModulationType.Mod8Vsb)
         {
-          modulation = Modulation.Qam64AnnexB;
+          frequency = ATSCChannel.GetTerrestrialFrequencyFromPhysicalChannel(atscChannel.PhysicalChannel);
+          this.LogDebug("B2C2 ATSC: translated ATSC physical channel number {0} to {1} kHz", atscChannel.PhysicalChannel, frequency);
         }
+        else
+        {
+          frequency = (int)atscChannel.Frequency;
+          modulation = Modulation.Qam256AnnexB;
+          if (atscChannel.ModulationType == ModulationType.Mod64Qam)
+          {
+            modulation = Modulation.Qam64AnnexB;
+          }
+        }
+
+        HResult.ThrowException(_interfaceTuner.SetFrequency(frequency / 1000), "Failed to set frequency.");
+        HResult.ThrowException(_interfaceTuner.SetModulation(modulation), "Failed to set modulation.");
+        HResult.ThrowException(_interfaceTuner.SetTunerStatus(), "Failed to apply tuning parameters.");
       }
-
-      int hr = _interfaceTuner.SetFrequency(frequency / 1000);
-      HResult.ThrowException(hr, "Failed to set frequency.");
-
-      hr = _interfaceTuner.SetModulation(modulation);
-      HResult.ThrowException(hr, "Failed to set modulation.");
-
-      base.PerformTuning(channel);
     }
 
     #endregion

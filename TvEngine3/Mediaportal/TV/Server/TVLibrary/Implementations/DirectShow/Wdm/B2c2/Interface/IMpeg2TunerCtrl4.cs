@@ -21,6 +21,7 @@
 using System;
 using System.Runtime.InteropServices;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Enum;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Struct;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Interface
 {
@@ -122,11 +123,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <summary>
     /// Get the tuner capabilities.
     /// </summary>
-    /// <param name="capabilities">A pointer to a tuner capabilities structure.</param>
+    /// <param name="capabilities">The tuner capabilities.</param>
     /// <param name="size">The size of the capabilities structure.</param>
     /// <returns>an HRESULT indicating whether the capabilities were successfully retrieved</returns>
     [PreserveSig]
-    int GetTunerCapabilities(IntPtr capabilities, [In, Out] ref int size);
+    int GetTunerCapabilities([Out] out TunerCapabilities capabilities, [In, Out] ref int size);
 
     #region getters
 
@@ -352,7 +353,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <param name="length">The length of the command in bytes.</param>
     /// <param name="command">The command.</param>
     /// <returns>an HRESULT indicating whether the command was successfully sent</returns>
-    int SendDiSEqCCommand(int length, IntPtr command);
+    int SendDiSEqCCommand(int length, byte[] command);
 
     #endregion
   }

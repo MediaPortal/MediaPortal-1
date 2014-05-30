@@ -66,18 +66,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
         throw new TvException("Received request to tune incompatible channel.");
       }
 
-      int hr = _interfaceTuner.SetFrequency((int)dvbtChannel.Frequency / 1000);
-      HResult.ThrowException(hr, "Failed to set frequency.");
+      lock (_tunerAccessLock)
+      {
+        HResult.ThrowException(_interfaceData.SelectDevice(_deviceInfo.DeviceId), "Failed to select device.");
+        HResult.ThrowException(_interfaceTuner.SetFrequency((int)dvbtChannel.Frequency / 1000), "Failed to set frequency.");
+        HResult.ThrowException(_interfaceTuner.SetBandwidth(dvbtChannel.Bandwidth / 1000), "Failed to set bandwidth.");
 
-      hr = _interfaceTuner.SetBandwidth(dvbtChannel.Bandwidth / 1000);
-      HResult.ThrowException(hr, "Failed to set bandwidth.");
+        // Note: it is not guaranteed that guard interval auto detection is supported, but if it isn't
+        // then we can't tune - we have no idea what the actual value should be.
+        HResult.ThrowException(_interfaceTuner.SetGuardInterval(GuardInterval.Auto), "Failed to use automatic guard interval detection.");
 
-      // Note: it is not guaranteed that guard interval auto detection is supported, but if it isn't
-      // then we can't tune - we have no idea what the actual value should be.
-      hr = _interfaceTuner.SetGuardInterval(GuardInterval.Auto);
-      HResult.ThrowException(hr, "Failed to use automatic guard interval detection.");
-
-      base.PerformTuning(channel);
+        HResult.ThrowException(_interfaceTuner.SetTunerStatus(), "Failed to apply tuning parameters.");
+      }
     }
 
     #endregion

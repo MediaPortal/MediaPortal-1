@@ -48,10 +48,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <param name="address">The IPv4 network interface address (eg. 192.168.1.1) to multicast on.</param>
     /// <param name="port">The network interface port to multicast from.</param>
     /// <param name="pidCount">The number of PIDs in the list of PIDs to multicast.</param>
-    /// <param name="pidList">A pointer to a list of PIDs (Int32) to multicast.</param>
+    /// <param name="pidList">A list of PIDs to multicast.</param>
     /// <returns>an HRESULT indicating whether the multicast was successfully started</returns>
     [PreserveSig]
-    int StartMulticast([MarshalAs(UnmanagedType.LPStr)] string address, ushort port, int pidCount, IntPtr pidList);
+    int StartMulticast([MarshalAs(UnmanagedType.LPStr)] string address, ushort port, int pidCount, int[] pidList);
 
     /// <summary>
     /// Stop multicasting on a specific network interface.

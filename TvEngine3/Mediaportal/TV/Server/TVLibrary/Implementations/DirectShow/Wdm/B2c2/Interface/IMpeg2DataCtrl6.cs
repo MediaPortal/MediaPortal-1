@@ -335,7 +335,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <param name="macAddress">The MAC address.</param>
     /// <returns>an HRESULT indicating whether the MAC address was successfully retrieved</returns>
     [PreserveSig]
-    int GetHardwareMacAddress(IntPtr macAddress);
+    int GetHardwareMacAddress([Out, MarshalAs(UnmanagedType.LPArray, SizeConst = Constants.MAC_ADDRESS_LENGTH)] out byte[] macAddress);
 
     [PreserveSig]
     int SetTableId(int tableId);
@@ -360,11 +360,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// Get the details for the keys that are registered with and being used by the interface.
     /// </summary>
     /// <param name="keyCount">The number of keys in use.</param>
-    /// <param name="keyTypes">A pointer to an array listing the type of each key.</param>
-    /// <param name="pids">A pointer to an array listing the PID associated with each key.</param>
+    /// <param name="keyTypes">The list of keys.</param>
+    /// <param name="pids">A list of the PID associated with each key.</param>
     /// <returns>an HRESULT indicating whether the key details were successfully retrieved</returns>
     [PreserveSig]
-    int GetKeysInUse([Out] out int keyCount, [Out] out IntPtr keyTypes, [Out] out IntPtr pids);
+    int GetKeysInUse([Out] out int keyCount, [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] out int keyTypes, [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] out int pids);
 
     /// <summary>
     /// Register a decryption key with the interface.
@@ -375,7 +375,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <param name="keyLength">The length of the key.</param>
     /// <returns>an HRESULT indicating whether the key was successfully registered</returns>
     [PreserveSig]
-    int AddKey(KeyType keyType, uint pid, IntPtr key, int keyLength);
+    int AddKey(KeyType keyType, uint pid, byte[] key, int keyLength);
 
     /// <summary>
     /// Deregister a decryption key.
