@@ -289,7 +289,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
         return -1;
       }
 
-      Int32 value = sourceData[offset++];
+      int value = sourceData[offset++];
       for (byte i = 1; i < bytesRead; i++)
       {
         value = (value << 8) + sourceData[offset++];

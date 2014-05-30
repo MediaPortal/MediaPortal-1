@@ -693,7 +693,7 @@ namespace DirectShowLib
             m = Regex.Match(name, @"\s+\([^\s]+\)\s+Tuner\s+(\d+)", RegexOptions.IgnoreCase);
             if (m.Success)
             {
-              return Int32.Parse(m.Groups[1].Captures[0].Value);
+              return int.Parse(m.Groups[1].Captures[0].Value);
             }
           }
           // Silicondust HDHomeRun tuners (Hauppauge CableCARD tuners are clones)
@@ -703,7 +703,7 @@ namespace DirectShowLib
             m = Regex.Match(name, @"\s+[^\s]+-(\d)$", RegexOptions.IgnoreCase);
             if (m.Success)
             {
-              return Int32.Parse(m.Groups[1].Captures[0].Value);
+              return int.Parse(m.Groups[1].Captures[0].Value);
             }
           }
         }
@@ -720,7 +720,7 @@ namespace DirectShowLib
         m = Regex.Match(devicePath, @"8b884e\d(\d)-fbca-11de-b16f-000000004d56", RegexOptions.IgnoreCase);
         if (m.Success)
         {
-          return Int32.Parse(m.Groups[1].Captures[0].Value);
+          return int.Parse(m.Groups[1].Captures[0].Value);
         }
 
         //----------------
@@ -733,7 +733,7 @@ namespace DirectShowLib
         object id = GetPropBagValue("TunerInstanceID");
         if (id != null)
         {
-          return (Int32)id;
+          return (int)id;
         }
         return -1;
       }
@@ -1322,38 +1322,38 @@ namespace DirectShowLib
     [PreserveSig]
     int KsProperty(
       [In] ref KsProperty Property,
-      [In] Int32 PropertyLength,
+      [In] int PropertyLength,
       [In, Out] IntPtr PropertyData,
-      [In] Int32 DataLength,
-      [In, Out] ref Int32 BytesReturned
+      [In] int DataLength,
+      [In, Out] ref int BytesReturned
     );
 
     [PreserveSig]
     int KsMethod(
       [In] ref KsMethod Method,
-      [In] Int32 MethodLength,
+      [In] int MethodLength,
       [In, Out] IntPtr MethodData,
-      [In] Int32 DataLength,
-      [In, Out] ref Int32 BytesReturned
+      [In] int DataLength,
+      [In, Out] ref int BytesReturned
     );
 
     [PreserveSig]
     int KsEvent(
       [In, Optional] ref KsEvent Event,
-      [In] Int32 EventLength,
+      [In] int EventLength,
       [In, Out] IntPtr EventData,
-      [In] Int32 DataLength,
-      [In, Out] ref Int32 BytesReturned
+      [In] int DataLength,
+      [In, Out] ref int BytesReturned
     );
   }
 
   public struct KsProperty
   {
     public Guid Set;
-    public Int32 Id;
+    public int Id;
     public KsPropertyFlag Flags;
 
-    public KsProperty(Guid set, Int32 id, KsPropertyFlag flags)
+    public KsProperty(Guid set, int id, KsPropertyFlag flags)
     {
       Set = set;
       Id = id;
@@ -1382,10 +1382,10 @@ namespace DirectShowLib
   public struct KsMethod
   {
     public Guid Set;
-    public Int32 Id;
+    public int Id;
     public KsMethodFlag Flags;
 
-    public KsMethod(Guid set, Int32 id, KsMethodFlag flags)
+    public KsMethod(Guid set, int id, KsMethodFlag flags)
     {
       Set = set;
       Id = id;
@@ -1410,10 +1410,10 @@ namespace DirectShowLib
   public struct KsEvent
   {
     public Guid Set;
-    public Int32 Id;
+    public int Id;
     public KsEventFlag Flags;
 
-    public KsEvent(Guid set, Int32 id, KsEventFlag flags)
+    public KsEvent(Guid set, int id, KsEventFlag flags)
     {
       Set = set;
       Id = id;
