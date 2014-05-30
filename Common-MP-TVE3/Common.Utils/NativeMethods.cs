@@ -31,7 +31,7 @@ namespace MediaPortal.Common.Utils
   {
     #region kernel32.dll
 
-    [DllImport("kernel32.dll", SetLastError = true)]
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     private static extern bool DeviceIoControl(IntPtr hDevice, uint dwIoControlCode,
                                                IntPtr lpInBuffer, uint nInBufferSize,
                                                IntPtr lpOutBuffer, uint nOutBufferSize,
@@ -42,7 +42,7 @@ namespace MediaPortal.Common.Utils
     /// </summary>
     /// <param name="hLibModule">Handle to the loaded DLL module. The LoadLibrary or GetModuleHandle function returns this handle.</param>
     /// <returns>If the function succeeds, the return value is nonzero.<br></br><br>If the function fails, the return value is zero. To get extended error information, call Marshal.GetLastWin32Error.</br></returns>
-    [DllImport("kernel32.dll", SetLastError = true)]
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     public static extern bool FreeLibrary(IntPtr hLibModule);
 
     /// <summary>
@@ -50,7 +50,7 @@ namespace MediaPortal.Common.Utils
     /// </summary>
     /// <param name="lpModuleName">The name of the loaded module (either a .dll or .exe file).</param>
     /// <returns>If the function succeeds, the return value is a handle to the module.<br></br><br>If the function fails, the return value is NULL. To get extended error information, call Marshal.GetLastWin32Error.</br></returns>
-    [DllImport("kernel32.dll", CharSet = CharSet.Ansi, SetLastError = true)]
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     public static extern IntPtr GetModuleHandle(string lpModuleName);
 
     /// <summary>
@@ -68,7 +68,7 @@ namespace MediaPortal.Common.Utils
     /// <param name="hProcess">A handle to the process. The handle must have the PROCESS_QUERY_INFORMATION or PROCESS_QUERY_LIMITED_INFORMATION access right.</param>
     /// <param name="Wow64Process">A pointer to a value that is set to TRUE if the process is running under WOW64. If the process is running under 32-bit Windows, the value is set to FALSE. If the process is a 64-bit application running under 64-bit Windows, the value is also set to FALSE.</param>
     /// <returns>If the function succeeds, the return value is nonzero.<br></br><br>If the function fails, the return value is zero. To get extended error information, call Marshal.GetLastWin32Error.</br></returns>
-    [DllImport("kernel32.dll", SetLastError = true)]
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     public static extern bool IsWow64Process(IntPtr hProcess, out bool Wow64Process);
 
     /// <summary>
@@ -76,49 +76,49 @@ namespace MediaPortal.Common.Utils
     /// </summary>
     /// <param name="lpLibFileName">Pointer to a null-terminated string that names the executable module (either a .dll or .exe file). The name specified is the file name of the module and is not related to the name stored in the library module itself, as specified by the LIBRARY keyword in the module-definition (.def) file.</param>
     /// <returns>If the function succeeds, the return value is a handle to the module.<br></br><br>If the function fails, the return value is NULL. To get extended error information, call Marshal.GetLastWin32Error.</br></returns>
-    [DllImport("kernel32.dll", CharSet = CharSet.Ansi, SetLastError = true)]
-    public static extern IntPtr LoadLibraryA(string lpLibFileName);
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    public static extern IntPtr LoadLibrary(string lpLibFileName);
 
     /// <summary>
     /// The SetDllDirectory function adds a directory to the search path used to locate DLLs for the application.
     /// </summary>
     /// <param name="PathName">Pointer to a null-terminated string that specifies the directory to be added to the search path.</param>
     /// <returns>If the function succeeds, the return value is nonzero.<br></br><br>If the function fails, the return value is zero. To get extended error information, call Marshal.GetLastWin32Error.</br></returns>
-    [DllImport("kernel32.dll", SetLastError = true)]
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     public static extern bool SetDllDirectory(string PathName);
 
     #endregion
 
     #region user32.dll
 
-    [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     public static extern IntPtr CreateWindowEx(uint dwExStyle, string lpClassName, string lpWindowName, uint dwStyle,
                                                 int x, int y,
                                                 int nWidth, int nHeight, IntPtr hWndParent, IntPtr hMenu,
                                                 IntPtr hInstance, IntPtr lpParam);
 
-    [DllImport("user32.dll")]
+    [DllImport("user32.dll", CharSet = CharSet.Unicode)]
     public static extern IntPtr DefWindowProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
 
-    [DllImport("user32.dll")]
-    public static extern IntPtr DispatchMessageA(ref MSG msg);
+    [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+    public static extern IntPtr DispatchMessage(ref MSG msg);
 
-    [DllImport("kernel32.dll")]
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
     public static extern uint GetCurrentThreadId();
 
-    [DllImport("user32.dll", SetLastError = true)]
-    public static extern bool GetMessageA(ref MSG msg, IntPtr hWnd, int uMsgFilterMin, int uMsgFilterMax);
+    [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    public static extern bool GetMessage(ref MSG msg, IntPtr hWnd, int uMsgFilterMin, int uMsgFilterMax);
 
-    [DllImport("user32.dll", SetLastError = true)]
+    [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     public static extern bool PostThreadMessage(uint idThread, uint Msg, IntPtr wParam, IntPtr lParam);
 
-    [DllImport("user32.dll", SetLastError = true)]
+    [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     public static extern int RegisterClass(ref WNDCLASS wndclass);
 
-    [DllImport("user32.dll")]
+    [DllImport("user32.dll", CharSet = CharSet.Unicode)]
     public static extern bool TranslateMessage(ref MSG msg);
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
     public struct MSG
     {
       public IntPtr hwnd;
@@ -132,7 +132,7 @@ namespace MediaPortal.Common.Utils
 
     public delegate IntPtr WndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
     public struct WNDCLASS
     {
       public uint style;

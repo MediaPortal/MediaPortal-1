@@ -344,7 +344,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
     /// <returns>True if the specified method is present, false otherwise.</returns>
     protected static bool CheckEntryPoint(string library, string method)
     {
-      IntPtr libPtr = NativeMethods.LoadLibraryA(library);
+      IntPtr libPtr = NativeMethods.LoadLibrary(library);
       if (!libPtr.Equals(IntPtr.Zero))
       {
         if (!NativeMethods.GetProcAddress(libPtr, method).Equals(IntPtr.Zero))

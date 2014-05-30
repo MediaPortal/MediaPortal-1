@@ -182,13 +182,25 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeRemote
           wndclass.lpszMenuName = null;
           wndclass.lpszClassName = "HauppaugeRemoteListenerThreadWindowClass";
 
-          NativeMethods.RegisterClass(ref wndclass);
+          int atom = NativeMethods.RegisterClass(ref wndclass);
+          if (atom == 0)
+          {
+            this.LogError("Hauppauge remote: failed to register window class, hr = 0x{0:x}", Marshal.GetLastWin32Error());
+            return;
+          }
 
+          // Create a tool (ie. not in taskbar or alt+tab list etc.) popup window instance with size 0x0.
           handle = NativeMethods.CreateWindowEx(0x80, wndclass.lpszClassName, "", 0x80000000, 0, 0, 0, 0, IntPtr.Zero,
                                                         IntPtr.Zero, wndclass.hInstance, IntPtr.Zero);
           if (handle.Equals(IntPtr.Zero))
           {
-            this.LogError("Hauppauge remote: failed to create receive window");
+            this.LogError("Hauppauge remote: failed to create receive window, hr = 0x{0:x}", Marshal.GetLastWin32Error());
+            return;
+          }
+
+          if (!NativeMethods.SetDllDirectory(_ir32Path))
+          {
+            this.LogError("Hauppauge remote: failed to add Hauppauge IR32 directory {0} to path", _ir32Path);
             return;
           }
 
@@ -217,7 +229,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeRemote
             NativeMethods.MSG msgApi = new NativeMethods.MSG();
             // This call will block until a message is received. It returns
             // false if the message is WM_QUIT.
-            if (!NativeMethods.GetMessageA(ref msgApi, IntPtr.Zero, 0, 0))
+            if (!NativeMethods.GetMessage(ref msgApi, IntPtr.Zero, 0, 0))
             {
               if (!IR_Close(handle.ToInt32(), 0))
               {
@@ -227,7 +239,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeRemote
             }
 
             NativeMethods.TranslateMessage(ref msgApi);
-            NativeMethods.DispatchMessageA(ref msgApi);
+            NativeMethods.DispatchMessage(ref msgApi);
           }
           catch (Exception ex)
           {
@@ -301,24 +313,19 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeRemote
           return false;
         }
 
-        FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(_ir32Path + IR32_EXE_NAME);
+        FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Path.Combine(_ir32Path, IR32_EXE_NAME));
         if (versionInfo.FileVersion.CompareTo(MINIMUM_COMPATIBLE_VERSION) < 0)
         {
           this.LogDebug("Hauppauge remote: {0} {1} installed, please install IR32 {2} or later", IR32_EXE_NAME, versionInfo.FileVersion, MINIMUM_COMPATIBLE_VERSION);
           return false;
         }
-        versionInfo = FileVersionInfo.GetVersionInfo(_ir32Path + IR32_DLL_NAME);
+        versionInfo = FileVersionInfo.GetVersionInfo(Path.Combine(_ir32Path, IR32_DLL_NAME));
         if (versionInfo.FileVersion.CompareTo(MINIMUM_COMPATIBLE_VERSION) < 0)
         {
           this.LogDebug("Hauppauge remote: {0} {1} installed, please install IR32 {2} or later", IR32_DLL_NAME, versionInfo.FileVersion, MINIMUM_COMPATIBLE_VERSION);
           return false;
         }
 
-        if (!NativeMethods.SetDllDirectory(_ir32Path))
-        {
-          this.LogError("Hauppauge remote: failed to add Hauppauge IR32 directory {0} to path", _ir32Path);
-          return false;
-        }
         _isLoaded = true;
       }
 

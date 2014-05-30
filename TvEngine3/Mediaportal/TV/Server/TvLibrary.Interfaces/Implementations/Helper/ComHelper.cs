@@ -131,7 +131,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
     public static IClassFactory GetClassFactory(string fileName, Guid clsid, bool useAssemblyRelativeLocation = false)
     {
       string filePath = useAssemblyRelativeLocation ? PathManager.BuildAssemblyRelativePath(fileName) : fileName;
-      IntPtr libraryHandle = MediaPortal.Common.Utils.NativeMethods.LoadLibraryA(filePath);
+      IntPtr libraryHandle = MediaPortal.Common.Utils.NativeMethods.LoadLibrary(filePath);
       if (libraryHandle == IntPtr.Zero)
       {
         throw new TvException("Failed to load {0}.", filePath);

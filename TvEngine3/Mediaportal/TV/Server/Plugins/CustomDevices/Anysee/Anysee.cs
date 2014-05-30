@@ -740,7 +740,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
             return;
           }
         }
-        _libHandle = NativeMethods.LoadLibraryA(targetFilename);
+        _libHandle = NativeMethods.LoadLibrary(targetFilename);
         if (_libHandle == IntPtr.Zero)
         {
           this.LogError("Anysee: failed to load the CI API DLL");
@@ -1074,10 +1074,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       }
     }
 
-    #region call back definitions
+    #region delegate definitions
 
     /// <summary>
-    /// Called by the tuner driver when the common interface slot state changes.
+    /// Invoked by the tuner driver when the common interface slot state changes.
     /// </summary>
     /// <param name="slotIndex">The index of the CI slot.</param>
     /// <param name="state">The new CI state.</param>
@@ -1087,7 +1087,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
     private delegate int OnAnyseeCiState(int slotIndex, AnyseeCiState state, [MarshalAs(UnmanagedType.LPStr)] string message);
 
     /// <summary>
-    /// Called by the tuner driver when MMI information is ready to be processed.
+    /// Invoked by the tuner driver when MMI information is ready to be processed.
     /// </summary>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     /// <param name="message">The message from the CAM.</param>
@@ -1378,10 +1378,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       }
     }
 
-    #region call back handlers
+    #region delegate implementations
 
     /// <summary>
-    /// Called by the tuner driver when the common interface slot state changes.
+    /// Invoked by the tuner driver when the common interface slot state changes.
     /// </summary>
     /// <param name="slotIndex">The index of the CI slot.</param>
     /// <param name="state">The new CI state.</param>
@@ -1430,7 +1430,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
     }
 
     /// <summary>
-    /// Called by the tuner driver when MMI information is ready to be processed.
+    /// Invoked by the tuner driver when MMI information is ready to be processed.
     /// </summary>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     /// <param name="message">The message from the CAM.</param>

@@ -840,10 +840,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
 
     #endregion
 
-    #region call back definitions
+    #region delegate definitions
 
     /// <summary>
-    /// Called when a signal from the remote is detected by the IR receiver.
+    /// Invoked when a signal from the remote is detected by the IR receiver.
     /// </summary>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     /// <param name="code">A buffer containing the remote code. If the code is an RC5 code then it can be found in the lower 2 bytes. RC6 codes use 4 bytes.</param>
@@ -851,7 +851,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     private delegate void OnTtIrCode(IntPtr context, IntPtr code);
 
     /// <summary>
-    /// Called by the tuner driver when the state of the CI slot changes.
+    /// Invoked by the tuner driver when the state of the CI slot changes.
     /// </summary>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
@@ -861,7 +861,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     private delegate void OnTtSlotStatus(IntPtr context, byte slotIndex, TtCiState state, IntPtr slotInfo);
 
     /// <summary>
-    /// Called by the tuner driver when the result of an interaction with the CAM is known.
+    /// Invoked by the tuner driver when the result of an interaction with the CAM is known.
     /// </summary>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
@@ -871,7 +871,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     private delegate void OnTtCaStatus(IntPtr context, byte slotIndex, TtMmiMessage reply, TtCiError error);
 
     /// <summary>
-    /// Called by the tuner driver when the CAM requests input from the user. This delegate is called
+    /// Invoked by the tuner driver when the CAM requests input from the user. This delegate is called
     /// immediately before OnTtInputRequest().
     /// </summary>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
@@ -882,7 +882,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     private delegate void OnTtDisplayString(IntPtr context, byte slotIndex, IntPtr prompt, short promptByteCount);
 
     /// <summary>
-    /// Called by the tuner driver when a menu or list from the CAM is available.
+    /// Invoked by the tuner driver when a menu or list from the CAM is available.
     /// </summary>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
@@ -893,7 +893,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     private delegate void OnTtDisplayMenuOrList(IntPtr context, byte slotIndex, short entryCount, IntPtr entries, short totalMenuLength);
 
     /// <summary>
-    /// Called by the tuner driver when the CAM wants to close the menu.
+    /// Invoked by the tuner driver when the CAM wants to close the menu.
     /// </summary>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
@@ -901,7 +901,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     private delegate void OnTtSwitchOsdOff(IntPtr context, byte slotIndex);
 
     /// <summary>
-    /// Called by the tuner driver when the CAM requests input from the user.
+    /// Invoked by the tuner driver when the CAM requests input from the user.
     /// </summary>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
@@ -912,7 +912,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     private delegate void OnTtInputRequest(IntPtr context, byte slotIndex, [MarshalAs(UnmanagedType.Bool)] bool blind, byte answerLength, short keyMask);
 
     /// <summary>
-    /// Called by the tuner driver when a message is received from the CAM. This delegate receives the raw
+    /// Invoked by the tuner driver when a message is received from the CAM. This delegate receives the raw
     /// message/response data from the CAM.
     /// </summary>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
@@ -1276,10 +1276,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       }
     }
 
-    #region call back handlers
+    #region delegate implementations
 
     /// <summary>
-    /// Called when a signal from the remote is detected by the IR receiver.
+    /// Invoked when a signal from the remote is detected by the IR receiver.
     /// </summary>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     /// <param name="code">A buffer containing the remote code. If the code is an RC5 code then it can be found in the lower 2 bytes. RC6 codes use 4 bytes.</param>
@@ -1289,7 +1289,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     }
 
     /// <summary>
-    /// Called by the tuner driver when the state of the CI slot changes.
+    /// Invoked by the tuner driver when the state of the CI slot changes.
     /// </summary>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
@@ -1358,7 +1358,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     }
 
     /// <summary>
-    /// Called by the tuner driver when the result of an interaction with the CAM is known.
+    /// Invoked by the tuner driver when the result of an interaction with the CAM is known.
     /// </summary>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
@@ -1386,7 +1386,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     }
 
     /// <summary>
-    /// Called by the tuner driver when the CAM requests input from the user. This delegate is called
+    /// Invoked by the tuner driver when the CAM requests input from the user. This delegate is called
     /// immediately before OnTtInputRequest().
     /// </summary>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
@@ -1407,7 +1407,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     }
 
     /// <summary>
-    /// Called by the tuner driver when a menu or list from the CAM is available.
+    /// Invoked by the tuner driver when a menu or list from the CAM is available.
     /// </summary>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
@@ -1471,7 +1471,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     }
 
     /// <summary>
-    /// Called by the tuner driver when the CAM wants to close the menu.
+    /// Invoked by the tuner driver when the CAM wants to close the menu.
     /// </summary>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
@@ -1492,7 +1492,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     }
 
     /// <summary>
-    /// Called by the tuner driver when the CAM requests input from the user.
+    /// Invoked by the tuner driver when the CAM requests input from the user.
     /// </summary>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
