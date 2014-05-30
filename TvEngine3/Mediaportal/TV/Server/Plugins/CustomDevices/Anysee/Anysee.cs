@@ -531,7 +531,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       private byte[] Padding;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Auto)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
     private struct ApiString
     {
       #pragma warning disable 0649
