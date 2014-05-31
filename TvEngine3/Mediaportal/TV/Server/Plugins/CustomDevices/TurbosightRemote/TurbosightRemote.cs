@@ -185,7 +185,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
             else
             {
               IrData data = (IrData)Marshal.PtrToStructure(_codeBuffer, typeof(IrData));
-              if (data.Command != 0)
+              if (data.Address != 0xffff && data.Command != 0xffff && data.Command != 0xff && data.Command != 0)
               {
                 this.LogDebug("Turbosight remote: remote control key press, address = 0x{0:x4}, command = 0x{1:x4}", data.Address, data.Command);
               }
@@ -250,7 +250,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
         _graph = (IFilterGraph2)new FilterGraph();
         try
         {
-          DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSCapture);
+          DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.VideoInputDevice);
           foreach (DsDevice device in devices)
           {
             bool isTbsIrFilter = false;
@@ -278,8 +278,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
               }
 
               KSPropertySupport support;
-              hr = propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Code, out support);
-              if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Get))
+              hr = propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Command, out support);
+              if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Set))
               {
                 this.LogDebug("Turbosight remote: property set not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
                 continue;
