@@ -946,21 +946,27 @@ REFERENCE_TIME CWASAPIRenderFilter::BufferredDataDuration()
 
 void CWASAPIRenderFilter::CheckBufferStatus()
 {
-  REFERENCE_TIME bufferedAmount = BufferredDataDuration();
-  if (m_hNeedMoreSamples && bufferedAmount < m_pSettings->GetOutputBuffer() * 10000)
+  CAutoLock lock(&m_csResources);
+  if (m_hNeedMoreSamples)
   {
-    //Log("CWASAPIRenderFilter::Render -      need more data - buffer: %6.3f", bufferedAmount / 10000000.0);
-    SetEvent(*m_hNeedMoreSamples);
-  }
-  else
-  {
-    //Log("CWASAPIRenderFilter::Render - dont need more data - buffer: %6.3f", bufferedAmount / 10000000.0);
-    ResetEvent(*m_hNeedMoreSamples);
+    REFERENCE_TIME bufferedAmount = BufferredDataDuration();
+    if (m_hNeedMoreSamples && bufferedAmount < m_pSettings->GetOutputBuffer() * 10000)
+    {
+      //Log("CWASAPIRenderFilter::Render -      need more data - buffer: %6.3f", bufferedAmount / 10000000.0);
+      SetEvent(*m_hNeedMoreSamples);
+    }
+    else
+    {
+      //Log("CWASAPIRenderFilter::Render - dont need more data - buffer: %6.3f", bufferedAmount / 10000000.0);
+      ResetEvent(*m_hNeedMoreSamples);
+    }
   }
 }
 
 HRESULT CWASAPIRenderFilter::SetMoreSamplesEvent(HANDLE* hEvent)
 {
+  CAutoLock lock(&m_csResources);
+
   m_hNeedMoreSamples = hEvent;
   
   // Request the initial sample as soon as it is available
