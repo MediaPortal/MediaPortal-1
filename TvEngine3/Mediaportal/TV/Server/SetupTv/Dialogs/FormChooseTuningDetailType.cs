@@ -57,30 +57,37 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     {
       if (mpRadioButton7.Checked)
       {
+        //analog
         return 0;
       }
       if (mpRadioButton1.Checked)
       {
+        //webstream
         return 5;
       }
       if (mpRadioButton2.Checked)
       {
+        ////atsc
         return 1;
       }
       if (mpRadioButton3.Checked)
       {
+        //dvb-c
         return 2;
       }
       if (mpRadioButton4.Checked)
       {
+        //dvb-s
         return 3;
       }
       if (mpRadioButton5.Checked)
       {
+        //dvb-t
         return 4;
       }
       if (mpRadioButton6.Checked)
       {
+        //ip
         return 7;
       }
       return -1;

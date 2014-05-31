@@ -462,7 +462,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
               item.Label = channel.DisplayName;
               item.IsFolder = false;
               item.MusicTag = channel;
-              if (channel.IsWebstream())
+              if (channel.IsWebstream)
               {
                 item.IconImageBig = "DefaultMyradioStreamBig.png";
                 item.IconImage = "DefaultMyradioStream.png";
@@ -514,7 +514,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
               item.IsFolder = false;
               item.MusicTag = channel;
               item.AlbumInfoTag = map;
-              if (channel.IsWebstream())
+              if (channel.IsWebstream)
               {
                 item.IconImageBig = "DefaultMyradioStreamBig.png";
                 item.IconImage = "DefaultMyradioStream.png";
@@ -784,7 +784,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
     {
       IList<TuningDetail> details = channel.TuningDetails;
       TuningDetail detail = details[0];
-      if (channel.IsWebstream())
+      if (channel.IsWebstream)
       {
         return detail.Url;
       }
@@ -828,13 +828,13 @@ namespace Mediaportal.TV.TvPlugin.Radio
 
       if (g_Player.Playing)
       {
-        if (!g_Player.IsTimeShifting || (g_Player.IsTimeShifting && _currentChannel.IsWebstream()))
+        if (!g_Player.IsTimeShifting || (g_Player.IsTimeShifting && _currentChannel.IsWebstream))
         {
           g_Player.Stop();
         }
       }
 
-      if (_currentChannel.IsWebstream())
+      if (_currentChannel.IsWebstream)
       {
         g_Player.PlayAudioStream(GetPlayPath(_currentChannel));
         GUIPropertyManager.SetProperty("#Play.Current.Title", _currentChannel.DisplayName);

@@ -20,10 +20,14 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.SetupControls;
+using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 
 namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
@@ -34,35 +38,67 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       InitializeComponent();
     }
 
+    protected ServiceDvb CreateInitialServiceDetail()
+    {
+      var initialServiceDetail = new ServiceDvb { TuningDetail = new TuningDetailDvbS2() };
+      return initialServiceDetail;
+    }
+
     private void FormDVBSTuningDetail_Load(object sender, EventArgs e)
     {
-      if (TuningDetail != null)
+      IList<Satellite> tempSatellites = ServiceAgents.Instance.CardServiceAgent.ListAllSatellites();
+      comboBoxSatellite.Items.AddRange(tempSatellites.Cast<object>().ToArray());      
+
+      var serviceDetailDvb = ServiceDetail as ServiceDvb;
+      if (serviceDetailDvb != null)
       {
-        textBoxFrequency.Text = TuningDetail.Frequency.ToString();
-        textBoxNetworkId.Text = TuningDetail.NetworkId.ToString();
-        textBoxTransportId.Text = TuningDetail.TransportId.ToString();
-        textBoxServiceId.Text = TuningDetail.ServiceId.ToString();
-        textBoxSymbolRate.Text = TuningDetail.Symbolrate.ToString();
-        textBoxDVBSChannel.Text = TuningDetail.ChannelNumber.ToString();
-        textBoxDVBSPmt.Text = TuningDetail.PmtPid.ToString();
-        textBoxDVBSProvider.Text = TuningDetail.Provider;
-        checkBoxDVBSfta.Checked = TuningDetail.FreeToAir;
-        comboBoxPol.SelectedIndex = TuningDetail.Polarisation + 1;
-        comboBoxModulation.SelectedIndex = TuningDetail.Modulation + 1;
-        comboBoxInnerFecRate.SelectedIndex = TuningDetail.InnerFecRate + 1;
-        comboBoxPilot.SelectedIndex = TuningDetail.Pilot + 1;
-        comboBoxRollOff.SelectedIndex = TuningDetail.RollOff + 1;
-        comboBoxDiseqc.SelectedIndex = TuningDetail.DiSEqC;
-        IEnumerator en = comboBoxLnbType.Items.GetEnumerator();
-        while (en.MoveNext())
+
+        var tuningDetail = (TuningDetailDvbS2)ServiceDetail.TuningDetail;
+
+        textBoxFrequency.Text = tuningDetail.Frequency.GetValueOrDefault().ToString();
+        textBoxNetworkId.Text = serviceDetailDvb.OriginalNetworkId.GetValueOrDefault().ToString();
+        textBoxTransportId.Text = serviceDetailDvb.TransportStreamId.GetValueOrDefault().ToString();
+        textBoxServiceId.Text = serviceDetailDvb.ServiceId.GetValueOrDefault().ToString();
+        textBoxSymbolRate.Text = tuningDetail.SymbolRate.GetValueOrDefault(0).ToString();
+        textBoxDVBSChannel.Text = ServiceDetail.LogicalChannelNumber;
+
+
+        textBoxDVBSPmt.Text = serviceDetailDvb.PmtPid.GetValueOrDefault().ToString();
+        textBoxDVBSProvider.Text = serviceDetailDvb.Provider;
+
+        mpRadioFree.Checked = (ServiceDetail.EncryptionScheme == (int)EncryptionSchemeEnum.Free);
+        mpRadioEncrypted.Checked = (ServiceDetail.EncryptionScheme == (int)EncryptionSchemeEnum.Encrypted);
+        mpRadioSometimesEncrypted.Checked = (ServiceDetail.EncryptionScheme == (int)EncryptionSchemeEnum.SometimesEncrypted);
+        
+
+        comboBoxPol.SelectedIndex = tuningDetail.Polarisation.GetValueOrDefault(0) + 1;
+        comboBoxModulation.SelectedIndex = tuningDetail.Modulation.GetValueOrDefault(0) + 1;
+        comboBoxInnerFecRate.SelectedIndex = tuningDetail.FecRate.GetValueOrDefault(0) + 1;
+
+        comboBoxPilot.SelectedIndex = tuningDetail.Pilot.GetValueOrDefault(0) + 1;
+        comboBoxRollOff.SelectedIndex = tuningDetail.RollOff.GetValueOrDefault(0) + 1;
+
+        int idSatellite = 0;
+        if (tuningDetail.Satellite.TunerSatellites.Count > 0)
         {
-          LnbType lnbType = (LnbType)en.Current;
-          if (lnbType != null && lnbType.IdLnbType == TuningDetail.IdLnbType)
-          {
-            comboBoxLnbType.SelectedItem = en.Current;
-            break;
-          }
+          idSatellite = tuningDetail.IdSatellite.GetValueOrDefault();
         }
+
+        
+        if ( idSatellite > 0)
+        {
+          IEnumerator en = comboBoxSatellite.Items.GetEnumerator();
+          while (en.MoveNext())
+          {
+            var satellite = (Satellite)en.Current;
+            if (satellite != null && satellite.IdSatellite == idSatellite)
+            {
+              comboBoxSatellite.SelectedItem = en.Current;
+              break;
+            }
+          }  
+        }
+        
       }
       else
       {
@@ -74,14 +110,15 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         textBoxDVBSChannel.Text = "";
         textBoxDVBSPmt.Text = "";
         textBoxDVBSProvider.Text = "";
-        checkBoxDVBSfta.Checked = false;
+        mpRadioFree.Checked = true;
+        mpRadioEncrypted.Checked = false;
+        mpRadioSometimesEncrypted.Checked = false;
         comboBoxPol.SelectedIndex = -1;
         comboBoxModulation.SelectedIndex = -1;
         comboBoxInnerFecRate.SelectedIndex = -1;
         comboBoxPilot.SelectedIndex = -1;
         comboBoxRollOff.SelectedIndex = -1;
-        comboBoxDiseqc.SelectedIndex = -1;
-        comboBoxLnbType.SelectedIndex = -1;
+        comboBoxSatellite.SelectedIndex = -1;        
       }
     }
 
@@ -89,9 +126,9 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     {
       if (ValidateInput())
       {
-        if (TuningDetail == null)
+        if (ServiceDetail == null)
         {
-          TuningDetail = CreateInitialTuningDetail();
+          ServiceDetail = CreateInitialServiceDetail();
         }
         UpdateTuningDetail();
         DialogResult = DialogResult.OK;
@@ -101,24 +138,81 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
     private void UpdateTuningDetail()
     {
-      TuningDetail.ChannelType = 3;
-      TuningDetail.Frequency = Int32.Parse(textBoxFrequency.Text);
-      TuningDetail.NetworkId = Int32.Parse(textBoxNetworkId.Text);
-      TuningDetail.TransportId = Int32.Parse(textBoxTransportId.Text);
-      TuningDetail.ServiceId = Int32.Parse(textBoxServiceId.Text);
-      TuningDetail.Symbolrate = Int32.Parse(textBoxSymbolRate.Text);
-      TuningDetail.Polarisation = (int)(Polarisation)(comboBoxPol.SelectedIndex - 1);
-      TuningDetail.InnerFecRate = (int)(BinaryConvolutionCodeRate)(comboBoxInnerFecRate.SelectedIndex - 1);
-      TuningDetail.Pilot = (int)(Pilot)(comboBoxPilot.SelectedIndex - 1);
-      TuningDetail.RollOff = (int)(RollOff)(comboBoxRollOff.SelectedIndex - 1);
-      TuningDetail.Modulation = (int)(ModulationType)(comboBoxModulation.SelectedIndex - 1);
-      TuningDetail.ChannelNumber = Int32.Parse(textBoxDVBSChannel.Text);
-      TuningDetail.PmtPid = Int32.Parse(textBoxDVBSPmt.Text);
-      TuningDetail.Provider = textBoxDVBSProvider.Text;
-      TuningDetail.FreeToAir = checkBoxDVBSfta.Checked;
-      TuningDetail.DiSEqC = comboBoxDiseqc.SelectedIndex;
+      var tuningDetail = (TuningDetailDvbS2)ServiceDetail.TuningDetail;
+      if (comboBoxPilot.SelectedIndex == -1 && comboBoxRollOff.SelectedIndex == -1)
+      {
+        ServiceDetail.TuningDetail = new TuningDetailSatellite();
+      }
+      else
+      {
+        tuningDetail.Pilot = (int)(Pilot)(comboBoxPilot.SelectedIndex - 1);
+        tuningDetail.RollOff = (int)(RollOff)(comboBoxRollOff.SelectedIndex - 1);  
+      }
+
+      var serviceDetailDvb = ServiceDetail as ServiceDvb;
+      tuningDetail.Frequency = Int32.Parse(textBoxFrequency.Text);
+      serviceDetailDvb.OriginalNetworkId = Int32.Parse(textBoxNetworkId.Text);
+      serviceDetailDvb.TransportStreamId = Int32.Parse(textBoxTransportId.Text);
+      serviceDetailDvb.ServiceId = Int32.Parse(textBoxServiceId.Text);
+      tuningDetail.SymbolRate = Int32.Parse(textBoxSymbolRate.Text);
+      tuningDetail.Polarisation = (int)(Polarisation)(comboBoxPol.SelectedIndex - 1);
+      tuningDetail.FecRate = (int)(BinaryConvolutionCodeRate)(comboBoxInnerFecRate.SelectedIndex - 1);
+
+      tuningDetail.Modulation = (int)(ModulationType)(comboBoxModulation.SelectedIndex - 1);
+      ServiceDetail.LogicalChannelNumber = Int32.Parse(textBoxDVBSChannel.Text).ToString();
+      serviceDetailDvb.PmtPid = Int32.Parse(textBoxDVBSPmt.Text);
+      serviceDetailDvb.Provider = textBoxDVBSProvider.Text;
+                  
+
+      if (mpRadioFree.Checked)
+      {
+        ServiceDetail.EncryptionScheme = (int)EncryptionSchemeEnum.Free;
+      }
+      else if (mpRadioEncrypted.Checked)
+      {
+        ServiceDetail.EncryptionScheme = (int)EncryptionSchemeEnum.Encrypted;
+      }
+      else if (mpRadioSometimesEncrypted.Checked)
+      {
+        ServiceDetail.EncryptionScheme = (int)EncryptionSchemeEnum.SometimesEncrypted;
+      }
+
+
+      //gibman ...todo
+      /*
+      TrackableCollection<TunerSatellite> sats = tuningDetail.Satellite.TunerSatellites;
+      
+
+      bool foundDiseqc = false;
+      if (sats.Count > 0)
+      {
+        foreach (TunerSatellite tunerSatellite in sats)
+        {
+          if (tunerSatellite.DiseqcSwitchSetting == comboBoxDiseqc.SelectedIndex)
+          {
+            foundDiseqc = true;
+            break;
+          }
+        }
+      }
+
+      if (!foundDiseqc)
+      {
+        var tunerSatellite = new TunerSatellite();
+        tunerSatellite.DiseqcSwitchSetting = comboBoxDiseqc.SelectedIndex;
+        tunerSatellite.IdCard = 0;
+        tunerSatellite.LnbType;
+
+        LnbType l;
+        l.SwitchFrequency
+
+      }
+
+      tuningDetail.DiSEqC = comboBoxDiseqc.SelectedIndex;
+
       // This should be safe because we've validated the selection in ValidateInput().
-      TuningDetail.IdLnbType = ((LnbType)comboBoxLnbType.SelectedItem).IdLnbType;
+      tuningDetail.IdLnbType = ((LnbType)comboBoxLnbType.SelectedItem).IdLnbType;
+       */
     }
 
     private bool ValidateInput()
@@ -134,16 +228,11 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         MessageBox.Show(this, "Please enter a valid channel number!", "Incorrect input");
         return false;
       }
-      if (comboBoxDiseqc.SelectedIndex < 0)
+      if (comboBoxSatellite.SelectedIndex < 0)
       {
-        MessageBox.Show(this, "Please select a valid DiSEqC port!", "Incorrect input");
+        MessageBox.Show(this, "Please select a valid satellite!", "Incorrect input");
         return false;
-      }
-      if (comboBoxLnbType.SelectedIndex < 0)
-      {
-        MessageBox.Show(this, "Please select a valid LNB type!", "Incorrect input");
-        return false;
-      }
+      }      
       if (textBoxFrequency.Text.Length == 0)
       {
         MessageBox.Show(this, "Please enter a frequency!", "Incorrect input");

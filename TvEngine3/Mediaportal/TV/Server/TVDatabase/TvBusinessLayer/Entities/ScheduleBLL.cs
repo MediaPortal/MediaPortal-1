@@ -214,16 +214,17 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
     /// <returns>True if a common transponder exists</returns>
     public bool IsSameTransponder(Schedule schedule)
     {
-      IList<TuningDetail> tuningList1 = _entity.Channel.TuningDetails;
-      IList<TuningDetail> tuningList2 = schedule.Channel.TuningDetails;
-      foreach (TuningDetail tun1 in tuningList1)
+      IList<ServiceDetail> tuningList1 = _entity.Channel.ServiceDetails;
+      IList<ServiceDetail> tuningList2 = schedule.Channel.ServiceDetails;
+
+      foreach (ServiceDetail tun1 in tuningList1)
       {
-        foreach (TuningDetail tun2 in tuningList2)
-        {
-          if (tun1.Frequency == tun2.Frequency)
+        foreach (ServiceDetail tun2 in tuningList2)
+        {          
+          if (tun1.IdTuningDetail == tun2.IdTuningDetail)
           {
             return true;
-          }
+          }          
         }
       }
       return false;

@@ -32,10 +32,10 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       _channel.DeleteCard(idCard);
     }
 
-    public DisEqcMotor SaveDisEqcMotor(DisEqcMotor motor)
+    public TunerSatellite SaveTunerSatellite(TunerSatellite tunerSatellite)
     {
-      motor.UnloadAllUnchangedRelationsForEntity();
-      return _channel.SaveDisEqcMotor(motor);
+      tunerSatellite.UnloadAllUnchangedRelationsForEntity();
+      return _channel.SaveTunerSatellite(tunerSatellite);
     }
 
     public Card GetCard(int idCard)
@@ -100,6 +100,16 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
     public LnbType GetLnbType(int idLnbType)
     {
       return _channel.GetLnbType(idLnbType);
+    }
+
+    public LnbType SaveLnbType(LnbType lnbType)
+    {
+      return _channel.SaveLnbType(lnbType);
+    }
+
+    public void DeleteLnbType(int idLnbType)
+    {
+      _channel.DeleteLnbType(idLnbType);
     }
 
     public IList<LnbType> ListAllLnbTypes()

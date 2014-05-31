@@ -36,10 +36,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
 
     #region variables
 
-    private TuningDetail _detail;
+    private ServiceDetail _detail;
     private List<Channel> _channels;
     private int _currentChannelIndex;
-    private bool _inUse;
+    private bool _inUse;    
 
     #endregion
 
@@ -49,8 +49,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
     /// Initializes a new instance of the <see cref="Transponder"/> class.
     /// </summary>
     /// <param name="detail">The detail.</param>
-    public Transponder(TuningDetail detail)
-    {
+    public Transponder(ServiceDetail detail)
+    {      
       _channels = new List<Channel>();
       _detail = detail;
       _currentChannelIndex = -1;
@@ -110,7 +110,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
     /// Gets or sets the tuning details for this transponder.
     /// </summary>
     /// <value>The tuning detail.</value>
-    public TuningDetail TuningDetail
+    public ServiceDetail ServiceDetail
     {
       get { return _detail; }
       set { _detail = value; }
@@ -128,8 +128,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
         {
           this.LogError("transponder index out of range:{0}/{1}", Index, Channels.Count);
           return null;
-        }                
-        return ChannelManagement.GetTuningChannelByType(Channels[Index], TuningDetail.ChannelType);
+        }
+        return ChannelManagement.GetTuningChannel(ServiceDetail);        
       }
     }
 
@@ -144,7 +144,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
     {
       if (Index < 0 || Index >= Channels.Count)
         return;
-      Channels[Index].LastGrabTime = DateTime.Now;
+      //Channels[Index].LastGrabTime = DateTime.Now;
+      //todo: MM handle grabEPG
       ChannelManagement.SaveChannel(Channels[Index]);
       this.LogDebug("EPG: database updated for #{0} {1}", Index, Channels[Index].DisplayName);
     }
@@ -159,17 +160,35 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
     public override bool Equals(object obj)
     {
       Transponder other = (Transponder)obj;
-      if (other.TuningDetail.ChannelType != TuningDetail.ChannelType)
+
+      if (other.ServiceDetail.GetType() != ServiceDetail.GetType())
         return false;
-      if (other.TuningDetail.Frequency != TuningDetail.Frequency)
+      if (other.ServiceDetail.TuningDetail.GetType() != ServiceDetail.TuningDetail.GetType())
+        return false;   
+      
+      int currModulation;
+      int currFrequency;
+      int currSymbolrate;
+      int currPolarisation;
+      int currBandwidth;
+      GetCommonTuningDetails(ServiceDetail, out currModulation, out currFrequency, out currSymbolrate, out currPolarisation, out currBandwidth);
+
+      int otherModulation;
+      int otherFrequency;
+      int otherSymbolrate;
+      int otherPolarisation;
+      int otherBandwidth;
+      GetCommonTuningDetails(other.ServiceDetail, out otherModulation, out otherFrequency, out otherSymbolrate, out otherPolarisation, out otherBandwidth);
+
+      if (otherFrequency != currFrequency)
         return false;
-      if (other.TuningDetail.Modulation != TuningDetail.Modulation)
+      if (otherModulation != currModulation)
         return false;
-      if (other.TuningDetail.Symbolrate != TuningDetail.Symbolrate)
+      if (otherSymbolrate != currSymbolrate)
         return false;
-      if (other.TuningDetail.Bandwidth != TuningDetail.Bandwidth)
+      if (otherBandwidth != currBandwidth)
         return false;
-      if (other.TuningDetail.Polarisation != TuningDetail.Polarisation)
+      if (otherPolarisation != currPolarisation)
         return false;
       return true;
     }
@@ -179,7 +198,51 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
     /// </summary>
     public override int GetHashCode()
     {
-      return TuningDetail.Frequency + TuningDetail.ChannelType;
+      int currModulation;
+      int currFrequency;
+      int currSymbolrate;
+      int currPolarisation;
+      int currBandwidth;
+      GetCommonTuningDetails(ServiceDetail, out currModulation, out currFrequency, out currSymbolrate, out currPolarisation, out currBandwidth);
+      
+      return currFrequency + GetChannelType(ServiceDetail);
+    }
+
+    private int GetChannelType(ServiceDetail serviceDetail)
+    {        
+      if (serviceDetail.TuningDetail is TuningDetailAtsc)
+      {
+        return 0;
+      }
+      else if (serviceDetail.TuningDetail is TuningDetailAnalog)
+      {
+        return 1;
+      }
+      else if (serviceDetail.TuningDetail is TuningDetailCable)
+      {
+        return 2;        
+      }
+      else if (serviceDetail.TuningDetail is TuningDetailDvbS2)
+      {
+        return 3;
+      }
+      else if (serviceDetail.TuningDetail is TuningDetailSatellite)
+      {
+        return 4;
+      }
+      else if (serviceDetail.TuningDetail is TuningDetailDvbT2)
+      {
+        return 5;
+      }
+      else if (serviceDetail.TuningDetail is TuningDetailTerrestrial)
+      {
+        return 6;
+      }
+      else if (serviceDetail.TuningDetail is TuningDetailStream)
+      {
+        return 7;
+      }
+      return -1;
     }
 
     /// <summary>
@@ -187,9 +250,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
     /// </summary>
     public void Dump()
     {
-      this.LogDebug("Transponder:{0} {1} {2} {3} {4} {5}", _currentChannelIndex, TuningDetail.ChannelType,
-                TuningDetail.Frequency, TuningDetail.Modulation, TuningDetail.Symbolrate, TuningDetail.Bandwidth,
-                TuningDetail.Polarisation);
+
+      int currModulation;
+      int currFrequency;
+      int currSymbolrate;
+      int currPolarisation;
+      int currBandwidth;
+      GetCommonTuningDetails(ServiceDetail, out currModulation, out currFrequency, out currSymbolrate, out currPolarisation, out currBandwidth);
+
+      this.LogDebug("Transponder:{0} {1} {2} {3} {4} {5}", _currentChannelIndex, GetChannelType(ServiceDetail),
+                currFrequency, currModulation, currSymbolrate, currBandwidth,
+                currPolarisation);
       foreach (Channel c in _channels)
       {
         this.LogDebug(" {0}", c.DisplayName);
@@ -204,10 +275,57 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
     /// </returns>
     public override string ToString()
     {
+      int modulation;
+      int frequency;
+      int symbolrate;
+      int polarisation;
+      int bandwidth;
+      GetCommonTuningDetails(ServiceDetail, out modulation, out frequency, out symbolrate, out polarisation, out bandwidth);
+
       return string.Format("type:{0} freq:{1} mod:{2} sr:{3} bw:{4} pol:{5}",
-                           TuningDetail.ChannelType, TuningDetail.Frequency,
-                           TuningDetail.Modulation, TuningDetail.Symbolrate, TuningDetail.Bandwidth,
-                           TuningDetail.Polarisation);
+                           ServiceDetail.TuningDetail.ToString(), frequency,
+                           modulation, symbolrate, bandwidth,
+                           polarisation);
+    }
+
+    private void GetCommonTuningDetails(ServiceDetail serviceDetail, out int modulation, out int frequency, out int symbolrate, out int polarisation, out int bandwidth)
+    {
+      frequency = 0;
+      modulation = 0;
+      symbolrate = 0;
+      bandwidth = 0;
+      polarisation = 0;
+
+      var tuningDetailAtsc = serviceDetail.TuningDetail as TuningDetailAtsc;
+      if (tuningDetailAtsc != null)
+      {
+        frequency = tuningDetailAtsc.Frequency.GetValueOrDefault(0);
+        modulation = tuningDetailAtsc.Modulation.GetValueOrDefault(0);
+      }
+
+      var tuningDetailCable = ServiceDetail.TuningDetail as TuningDetailCable;
+      if (tuningDetailCable != null)
+      {
+        frequency = tuningDetailCable.Frequency.GetValueOrDefault(0);
+        modulation = tuningDetailCable.Modulation.GetValueOrDefault(0);
+        symbolrate = tuningDetailCable.Modulation.GetValueOrDefault(0);
+      }
+
+      var tuningDetailTerrestrial = ServiceDetail.TuningDetail as TuningDetailTerrestrial;
+      if (tuningDetailTerrestrial != null)
+      {
+        frequency = tuningDetailTerrestrial.Frequency.GetValueOrDefault(0);
+        bandwidth = tuningDetailTerrestrial.Bandwidth.GetValueOrDefault(0);
+      }
+
+      var tuningDetailSatellite = ServiceDetail.TuningDetail as TuningDetailSatellite;
+      if (tuningDetailSatellite != null)
+      {
+        frequency = tuningDetailSatellite.Frequency.GetValueOrDefault(0);
+        modulation = tuningDetailSatellite.Modulation.GetValueOrDefault(0);
+        symbolrate = tuningDetailSatellite.Modulation.GetValueOrDefault(0);
+        polarisation = tuningDetailSatellite.Polarisation.GetValueOrDefault(0);
+      }
     }
 
     #endregion
@@ -261,7 +379,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
       foreach (Channel channel in channels)
       {
         //for each tuning detail of the channel
-        foreach (TuningDetail detail in channel.TuningDetails)
+        foreach (ServiceDetail detail in channel.ServiceDetails)
         {
           //create a new transponder
           Transponder t = new Transponder(detail);

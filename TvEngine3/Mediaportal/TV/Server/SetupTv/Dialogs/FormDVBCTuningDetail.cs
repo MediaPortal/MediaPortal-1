@@ -21,6 +21,8 @@
 using System;
 using System.Windows.Forms;
 using DirectShowLib.BDA;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 
 namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
@@ -29,6 +31,14 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     public FormDVBCTuningDetail()
     {
       InitializeComponent();
+    }
+
+    
+
+    protected ServiceDvb CreateInitialServiceDetail()
+    {
+      var initialServiceDetail = new ServiceDvb { TuningDetail = new TuningDetailCable() };
+      return initialServiceDetail;
     }
 
     private void FormDVBCTuningDetail_Load(object sender, System.EventArgs e)
@@ -73,19 +83,23 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
                                                 "DirectTV"
                                               });
 
-      if (TuningDetail != null)
+      if (ServiceDetail != null)
       {
         //Editing
-        textBoxChannel.Text = TuningDetail.ChannelNumber.ToString();
-        textboxFreq.Text = TuningDetail.Frequency.ToString();
-        textBoxONID.Text = TuningDetail.NetworkId.ToString();
-        textBoxTSID.Text = TuningDetail.TransportId.ToString();
-        textBoxSID.Text = TuningDetail.ServiceId.ToString();
-        textBoxSymbolRate.Text = TuningDetail.Symbolrate.ToString();
-        textBoxDVBCPmt.Text = TuningDetail.PmtPid.ToString();
-        textBoxDVBCProvider.Text = TuningDetail.Provider;
-        checkBoxDVBCfta.Checked = TuningDetail.FreeToAir;
-        comboBoxDvbCModulation.SelectedIndex = TuningDetail.Modulation + 1;
+
+        var tuningDetail = (TuningDetailCable)ServiceDetail.TuningDetail;
+
+        textBoxChannel.Text = ServiceDetail.LogicalChannelNumber.ToString();
+        textboxFreq.Text = tuningDetail.Frequency.GetValueOrDefault().ToString();
+        var serviceDetailDvb = ServiceDetail as ServiceDvb;
+        textBoxONID.Text = serviceDetailDvb.OriginalNetworkId.GetValueOrDefault().ToString();
+        textBoxTSID.Text = serviceDetailDvb.TransportStreamId.GetValueOrDefault().ToString();
+        textBoxSID.Text = serviceDetailDvb.ServiceId.GetValueOrDefault().ToString();
+        textBoxSymbolRate.Text = tuningDetail.SymbolRate.GetValueOrDefault().ToString();
+        textBoxDVBCPmt.Text = serviceDetailDvb.PmtPid.GetValueOrDefault().ToString();
+        textBoxDVBCProvider.Text = serviceDetailDvb.Provider;
+        checkBoxDVBCfta.Checked = (EncryptionSchemeEnum)ServiceDetail.EncryptionScheme.GetValueOrDefault(0) == EncryptionSchemeEnum.Free;
+        comboBoxDvbCModulation.SelectedIndex = tuningDetail.Modulation.GetValueOrDefault(0) + 1;
       }
       else
       {
@@ -106,9 +120,9 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     {
       if (ValidateInput())
       {
-        if (TuningDetail == null)
+        if (ServiceDetail == null)
         {
-          TuningDetail = CreateInitialTuningDetail();
+          ServiceDetail = CreateInitialServiceDetail();
         }
         UpdateTuningDetail();
         DialogResult = DialogResult.OK;
@@ -118,17 +132,28 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
     private void UpdateTuningDetail()
     {
-      TuningDetail.ChannelNumber = Int32.Parse(textBoxChannel.Text);
-      TuningDetail.Frequency = Convert.ToInt32(textboxFreq.Text);
-      TuningDetail.NetworkId = Convert.ToInt32(textBoxONID.Text);
-      TuningDetail.TransportId = Convert.ToInt32(textBoxTSID.Text);
-      TuningDetail.ServiceId = Convert.ToInt32(textBoxSID.Text);
-      TuningDetail.Symbolrate = Convert.ToInt32(textBoxSymbolRate.Text);
-      TuningDetail.PmtPid = Convert.ToInt32(textBoxDVBCPmt.Text);
-      TuningDetail.Provider = textBoxDVBCProvider.Text;
-      TuningDetail.FreeToAir = checkBoxDVBCfta.Checked;
-      TuningDetail.Modulation = (int)(ModulationType)(comboBoxDvbCModulation.SelectedIndex - 1);
-      TuningDetail.ChannelType = 2;
+      var tuningDetail = (TuningDetailCable)ServiceDetail.TuningDetail;
+
+      ServiceDetail.LogicalChannelNumber = Int32.Parse(textBoxChannel.Text).ToString();
+      tuningDetail.Frequency = Convert.ToInt32(textboxFreq.Text);
+      var serviceDetailDvb = ServiceDetail as ServiceDvb;
+      serviceDetailDvb.OriginalNetworkId = Convert.ToInt32(textBoxONID.Text);
+      serviceDetailDvb.TransportStreamId = Convert.ToInt32(textBoxTSID.Text);
+      serviceDetailDvb.ServiceId = Convert.ToInt32(textBoxSID.Text);
+      tuningDetail.SymbolRate = Convert.ToInt32(textBoxSymbolRate.Text);
+      serviceDetailDvb.PmtPid = Convert.ToInt32(textBoxDVBCPmt.Text);
+      serviceDetailDvb.Provider = textBoxDVBCProvider.Text;
+
+      if (checkBoxDVBCfta.Checked)
+      {
+        ServiceDetail.EncryptionScheme = (int)EncryptionSchemeEnum.Free;
+      }
+      else
+      {
+        ServiceDetail.EncryptionScheme = (int)EncryptionSchemeEnum.Encrypted;
+      }
+      
+      tuningDetail.Modulation = (int)(ModulationType)(comboBoxDvbCModulation.SelectedIndex - 1);      
     }
 
     private bool ValidateInput()

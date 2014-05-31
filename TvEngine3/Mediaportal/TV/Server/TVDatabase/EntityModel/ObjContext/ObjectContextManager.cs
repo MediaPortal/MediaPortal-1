@@ -196,7 +196,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
       model.ChannelMaps.MergeOption = MergeOption.NoTracking;
       model.Channels.MergeOption = MergeOption.NoTracking;
       model.Conflicts.MergeOption = MergeOption.NoTracking;
-      model.DisEqcMotors.MergeOption = MergeOption.NoTracking;
+      model.TunerSatellites.MergeOption = MergeOption.NoTracking;
       model.Favorites.MergeOption = MergeOption.NoTracking;
       model.GroupMaps.MergeOption = MergeOption.NoTracking;
       model.Histories.MergeOption = MergeOption.NoTracking;

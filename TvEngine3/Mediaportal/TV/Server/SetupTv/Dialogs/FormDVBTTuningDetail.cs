@@ -20,6 +20,8 @@
 
 using System;
 using System.Windows.Forms;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 
 namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
@@ -30,19 +32,30 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       InitializeComponent();
     }
 
+
+    protected ServiceDvb CreateInitialServiceDetail()
+    {
+      var initialServiceDetail = new ServiceDvb { TuningDetail = new TuningDetailTerrestrial() };
+      return initialServiceDetail;
+    }
+
     private void FormDVBTTuningDetail_Load(object sender, EventArgs e)
     {
-      if (TuningDetail != null)
+      if (ServiceDetail != null)
       {
-        textBoxDVBTChannel.Text = TuningDetail.ChannelNumber.ToString();
-        textBoxDVBTfreq.Text = TuningDetail.Frequency.ToString();
-        textBoxDVBTBandwidth.Text = TuningDetail.Bandwidth.ToString();
-        textBoxNetworkId.Text = TuningDetail.NetworkId.ToString();
-        textBoxTransportId.Text = TuningDetail.TransportId.ToString();
-        textBoxServiceId.Text = TuningDetail.ServiceId.ToString();
-        textBoxDVBTProvider.Text = TuningDetail.Provider;
-        checkBoxDVBTfta.Checked = TuningDetail.FreeToAir;
-        textBoxPmt.Text = TuningDetail.PmtPid.ToString();
+        var tuningDetail = (TuningDetailTerrestrial)ServiceDetail.TuningDetail;
+        var serviceDetailDvb = ServiceDetail as ServiceDvb;
+
+        textBoxDVBTChannel.Text = ServiceDetail.LogicalChannelNumber;
+        textBoxDVBTfreq.Text = tuningDetail.Frequency.GetValueOrDefault(0).ToString();
+        textBoxDVBTBandwidth.Text = tuningDetail.Bandwidth.ToString();
+        textBoxNetworkId.Text = serviceDetailDvb.OriginalNetworkId.GetValueOrDefault(0).ToString();
+        textBoxTransportId.Text = serviceDetailDvb.TransportStreamId.ToString();
+
+        textBoxServiceId.Text = serviceDetailDvb.ServiceId.GetValueOrDefault(0).ToString();
+        textBoxDVBTProvider.Text = serviceDetailDvb.Provider;
+        checkBoxDVBTfta.Checked = ((EncryptionSchemeEnum)ServiceDetail.EncryptionScheme.GetValueOrDefault(0)) == EncryptionSchemeEnum.Free;
+        textBoxPmt.Text = serviceDetailDvb.PmtPid.GetValueOrDefault(0).ToString();
       }
       else
       {
@@ -62,9 +75,9 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     {
       if (ValidateInput())
       {
-        if (TuningDetail == null)
+        if (ServiceDetail == null)
         {
-          TuningDetail = CreateInitialTuningDetail();
+          ServiceDetail = CreateInitialServiceDetail();
         }
         UpdateTuningDetail();
         DialogResult = DialogResult.OK;
@@ -74,16 +87,27 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
     private void UpdateTuningDetail()
     {
-      TuningDetail.ChannelType = 4;
-      TuningDetail.ChannelNumber = Int32.Parse(textBoxDVBTChannel.Text);
-      TuningDetail.Frequency = Int32.Parse(textBoxDVBTfreq.Text);
-      TuningDetail.Bandwidth = Int32.Parse(textBoxDVBTBandwidth.Text);
-      TuningDetail.NetworkId = Int32.Parse(textBoxNetworkId.Text);
-      TuningDetail.TransportId = Int32.Parse(textBoxTransportId.Text);
-      TuningDetail.ServiceId = Int32.Parse(textBoxServiceId.Text);
-      TuningDetail.Provider = textBoxDVBTProvider.Text;
-      TuningDetail.FreeToAir = checkBoxDVBTfta.Checked;
-      TuningDetail.PmtPid = Int32.Parse(textBoxPmt.Text);
+      var tuningDetail = (TuningDetailTerrestrial)ServiceDetail.TuningDetail;
+      var serviceDetailDvb = ServiceDetail as ServiceDvb;
+
+      ServiceDetail.LogicalChannelNumber = Int32.Parse(textBoxDVBTChannel.Text).ToString();
+      tuningDetail.Frequency = Int32.Parse(textBoxDVBTfreq.Text);
+      tuningDetail.Bandwidth = Int32.Parse(textBoxDVBTBandwidth.Text);
+      serviceDetailDvb.OriginalNetworkId = Int32.Parse(textBoxNetworkId.Text);
+      serviceDetailDvb.TransportStreamId = Int32.Parse(textBoxTransportId.Text);
+      serviceDetailDvb.ServiceId = Int32.Parse(textBoxServiceId.Text);
+      serviceDetailDvb.Provider = textBoxDVBTProvider.Text;
+
+      if (checkBoxDVBTfta.Checked)
+      {
+        ServiceDetail.EncryptionScheme = (int)EncryptionSchemeEnum.Free;
+      }
+      else
+      {
+        ServiceDetail.EncryptionScheme = (int)EncryptionSchemeEnum.Encrypted;
+      }
+
+      serviceDetailDvb.PmtPid = Int32.Parse(textBoxPmt.Text);
     }
 
     private bool ValidateInput()

@@ -43,7 +43,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
     /// <summary>
     /// Get/set whether the channel is a free-to-air or encrypted channel.
     /// </summary>
-    bool FreeToAir { get; set; }
+    EncryptionSchemeEnum EncryptionScheme { get; set; }
 
 
 

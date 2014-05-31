@@ -20,7 +20,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
     [DataContract(IsReference = true)]
     [KnownType(typeof(TuningDetailSatellite))]
     [KnownType(typeof(TuningDetailAnalog))]
-    [KnownType(typeof(TuningDetailCapture))]
     [KnownType(typeof(TuningDetailDvbS2))]
     [KnownType(typeof(TuningDetailStream))]
     [KnownType(typeof(TuningDetailCable))]

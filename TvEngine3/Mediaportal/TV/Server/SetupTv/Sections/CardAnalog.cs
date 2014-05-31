@@ -945,12 +945,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           }
           else
           {
-            IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channel.Name, 0);
-            if (tuningDetails != null && tuningDetails.Count > 0)
-            {
-              dbChannel = tuningDetails[0].Channel;
-            }
-
+            dbChannel = ServiceAgents.Instance.ChannelServiceAgent.GetChannelFromServiceDetailByName<TuningDetailAnalog>(channel.Name);            
             if (dbChannel != null)
             {
               exists = true;
@@ -962,7 +957,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           }
           dbChannel.MediaType = (int) channel.MediaType;
           ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);          
-          ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, channel);
+          ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, channel, _cardNumber);
           MappingHelper.AddChannelToCard(dbChannel, card, false);                    
 
 
@@ -1197,11 +1192,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           {
             channel.Name = String.Format("{0}", freq);
             Channel dbChannel = null;
-            IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channel.Name, 0);
-            if (tuningDetails != null && tuningDetails.Count > 0)
-            {
-              dbChannel = tuningDetails[0].Channel;
-            }
+            dbChannel = ServiceAgents.Instance.ChannelServiceAgent.GetChannelFromServiceDetailByName<TuningDetailAnalog>(channel.Name);            
             if (dbChannel != null)
             {
               line = String.Format("frequence:{0} MHz : Channel update found - {1}", freqMHz.ToString("f2"),
@@ -1226,7 +1217,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
               MappingHelper.AddChannelToGroup(ref dbChannel, @group);                          
             }
 
-            ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, channel);            
+            ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, channel, _cardNumber);            
             MappingHelper.AddChannelToCard(dbChannel, card, false);
             freq += 300000;
           }
@@ -1297,22 +1288,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.VideoInput1))
       {
         string channelName = "CVBS#1 on " + card.IdCard;
-        IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
-        if (tuningDetails != null && tuningDetails.Count > 0)
-        {
-          dbChannel = tuningDetails[0].Channel;
-        }
-        else
-        {
-          dbChannel = ChannelFactory.CreateChannel(channelName);
-        }
+        dbChannel = GetOrCreateChannel(channelName);
         dbChannel.MediaType = (int)MediaTypeEnum.TV;
         ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
         tuningDetail = new AnalogChannel();
         tuningDetail.MediaType = MediaTypeEnum.TV;
         tuningDetail.Name = dbChannel.DisplayName;
         tuningDetail.VideoSource = AnalogChannel.VideoInputType.VideoInput1;
-        ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
+        ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail, _cardNumber);        
         MappingHelper.AddChannelToCard(dbChannel, card, false);
 
         MappingHelper.AddChannelToGroup(ref dbChannel, TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);        
@@ -1320,22 +1303,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.VideoInput2))
       {
         string channelName = "CVBS#2 on " + card.IdCard;
-        IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
-        if (tuningDetails != null && tuningDetails.Count > 0)
-        {
-          dbChannel = tuningDetails[0].Channel;
-        }
-        else
-        {
-          dbChannel = ChannelFactory.CreateChannel(channelName);
-        }
+        dbChannel = GetOrCreateChannel(channelName);
         dbChannel.MediaType = (int)MediaTypeEnum.TV;
         ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
         tuningDetail = new AnalogChannel();
         tuningDetail.MediaType = MediaTypeEnum.TV;
         tuningDetail.Name = dbChannel.DisplayName;
         tuningDetail.VideoSource = AnalogChannel.VideoInputType.VideoInput2;
-        ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
+        ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail, _cardNumber);        
         MappingHelper.AddChannelToCard(dbChannel, card, false);
 
         ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
@@ -1345,23 +1320,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.VideoInput3))
       {
         string channelName = "CVBS#3 on " + card.IdCard;
-        IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
-
-        if (tuningDetails != null && tuningDetails.Count > 0)
-        {
-          dbChannel = tuningDetails[0].Channel;
-        }
-        else
-        {
-          dbChannel = ChannelFactory.CreateChannel(channelName);
-        }
+        dbChannel = GetOrCreateChannel(channelName);
         dbChannel.MediaType = (int)MediaTypeEnum.TV;
         ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
         tuningDetail = new AnalogChannel();
         tuningDetail.MediaType = MediaTypeEnum.TV;
         tuningDetail.Name = dbChannel.DisplayName;
         tuningDetail.VideoSource = AnalogChannel.VideoInputType.VideoInput3;
-        ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
+        ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail, _cardNumber);        
         MappingHelper.AddChannelToCard(dbChannel, card, false);
 
         ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
@@ -1371,22 +1337,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.SvhsInput1))
       {
         string channelName = "S-Video#1 on " + card.IdCard;
-        IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
-        if (tuningDetails != null && tuningDetails.Count > 0)
-        {
-          dbChannel = tuningDetails[0].Channel;
-        }
-        else
-        {
-          dbChannel = ChannelFactory.CreateChannel(channelName);
-        }
+        dbChannel = GetOrCreateChannel(channelName);
         dbChannel.MediaType = (int)MediaTypeEnum.TV;
         ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
         tuningDetail = new AnalogChannel();
         tuningDetail.MediaType = MediaTypeEnum.TV;
         tuningDetail.Name = dbChannel.DisplayName;
         tuningDetail.VideoSource = AnalogChannel.VideoInputType.SvhsInput1;
-        ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
+        ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail, _cardNumber);        
         MappingHelper.AddChannelToCard(dbChannel, card, false);
 
         ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
@@ -1395,22 +1353,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.SvhsInput2))
       {
         string channelName = "S-Video#2 on " + card.IdCard;
-        IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
-        if (tuningDetails != null && tuningDetails.Count > 0)
-        {
-          dbChannel = tuningDetails[0].Channel;
-        }
-        else
-        {
-          dbChannel = ChannelFactory.CreateChannel(channelName);
-        }
+        dbChannel = GetOrCreateChannel(channelName);
         dbChannel.MediaType = (int)MediaTypeEnum.TV;
         ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
         tuningDetail = new AnalogChannel();
         tuningDetail.MediaType = MediaTypeEnum.TV;
         tuningDetail.Name = dbChannel.DisplayName;
         tuningDetail.VideoSource = AnalogChannel.VideoInputType.SvhsInput2;
-        ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
+        ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail, _cardNumber);        
         MappingHelper.AddChannelToCard(dbChannel, card, false);
 
         ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
@@ -1419,22 +1369,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.SvhsInput3))
       {
         string channelName = "S-Video#3 on " + card.IdCard;
-        IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
-        if (tuningDetails != null && tuningDetails.Count > 0)
-        {
-          dbChannel = tuningDetails[0].Channel;
-        }
-        else
-        {
-          dbChannel = ChannelFactory.CreateChannel(channelName);
-        }
+        dbChannel = GetOrCreateChannel(channelName);
         dbChannel.MediaType = (int)MediaTypeEnum.TV;
         ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
         tuningDetail = new AnalogChannel();
         tuningDetail.MediaType = MediaTypeEnum.TV;
         tuningDetail.Name = dbChannel.DisplayName;
         tuningDetail.VideoSource = AnalogChannel.VideoInputType.SvhsInput3;
-        ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
+        ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail, _cardNumber);        
         MappingHelper.AddChannelToCard(dbChannel, card, false);
         ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
         MappingHelper.AddChannelToGroup(ref dbChannel, @group);
@@ -1442,22 +1384,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.RgbInput1))
       {
         string channelName = "RGB#1 on " + card.IdCard;
-        IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
-        if (tuningDetails != null && tuningDetails.Count > 0)
-        {
-          dbChannel = tuningDetails[0].Channel;
-        }
-        else
-        {
-          dbChannel = ChannelFactory.CreateChannel(channelName);
-        }
+        dbChannel = GetOrCreateChannel(channelName);
         dbChannel.MediaType = (int)MediaTypeEnum.TV;
         ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
         tuningDetail = new AnalogChannel();
         tuningDetail.MediaType = MediaTypeEnum.TV;
         tuningDetail.Name = dbChannel.DisplayName;
         tuningDetail.VideoSource = AnalogChannel.VideoInputType.RgbInput1;
-        ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
+        ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail, _cardNumber);        
         MappingHelper.AddChannelToCard(dbChannel, card, false);
         ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
         MappingHelper.AddChannelToGroup(ref dbChannel, @group);
@@ -1465,22 +1399,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.RgbInput2))
       {
         string channelName = "RGB#2 on " + card.IdCard;
-        IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
-        if (tuningDetails != null && tuningDetails.Count > 0)
-        {
-          dbChannel = tuningDetails[0].Channel;
-        }
-        else
-        {
-          dbChannel = ChannelFactory.CreateChannel(channelName);
-        }
+        dbChannel = GetOrCreateChannel(channelName);
         dbChannel.MediaType = (int)MediaTypeEnum.TV;
         ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
         tuningDetail = new AnalogChannel();
         tuningDetail.MediaType = MediaTypeEnum.TV;
         tuningDetail.Name = dbChannel.DisplayName;
         tuningDetail.VideoSource = AnalogChannel.VideoInputType.RgbInput2;
-        ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
+        ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail, _cardNumber);        
         MappingHelper.AddChannelToCard(dbChannel, card, false);
         ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
         MappingHelper.AddChannelToGroup(ref dbChannel, @group);
@@ -1488,22 +1414,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.RgbInput3))
       {
         string channelName = "RGB#3 on " + card.IdCard;
-        IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
-        if (tuningDetails != null && tuningDetails.Count > 0)
-        {
-          dbChannel = tuningDetails[0].Channel;
-        }
-        else
-        {
-          dbChannel = ChannelFactory.CreateChannel(channelName);
-        }
+        dbChannel = GetOrCreateChannel(channelName);
         dbChannel.MediaType = (int)MediaTypeEnum.TV;
         ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
         tuningDetail = new AnalogChannel();
         tuningDetail.MediaType = MediaTypeEnum.TV;
         tuningDetail.Name = dbChannel.DisplayName;
         tuningDetail.VideoSource = AnalogChannel.VideoInputType.RgbInput3;
-        ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
+        ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail, _cardNumber);        
         MappingHelper.AddChannelToCard(dbChannel, card, false);
         ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
         MappingHelper.AddChannelToGroup(ref dbChannel, @group);
@@ -1511,22 +1429,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.YRYBYInput1))
       {
         string channelName = "YRYBY#1 on " + card.IdCard;
-        IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
-        if (tuningDetails != null && tuningDetails.Count > 0)
-        {
-          dbChannel = tuningDetails[0].Channel;
-        }
-        else
-        {
-          dbChannel = ChannelFactory.CreateChannel(channelName);
-        }
+        dbChannel = GetOrCreateChannel(channelName);
         dbChannel.MediaType = (int)MediaTypeEnum.TV;
         ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
         tuningDetail = new AnalogChannel();
         tuningDetail.MediaType = MediaTypeEnum.TV;
         tuningDetail.Name = dbChannel.DisplayName;
         tuningDetail.VideoSource = AnalogChannel.VideoInputType.YRYBYInput1;
-        ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
+        ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail, _cardNumber);
         MappingHelper.AddChannelToCard(dbChannel, card, false);
         ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
         MappingHelper.AddChannelToGroup(ref dbChannel, @group);
@@ -1534,15 +1444,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.YRYBYInput2))
       {
         string channelName = "YRYBY#2 on " + card.IdCard;
-        IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
-        if (tuningDetails != null && tuningDetails.Count > 0)
-        {
-          dbChannel = tuningDetails[0].Channel;
-        }
-        else
-        {
-          dbChannel = ChannelFactory.CreateChannel(channelName);
-        }
+        dbChannel = GetOrCreateChannel(channelName);
         dbChannel.MediaType = (int)MediaTypeEnum.TV;
         ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
         tuningDetail = new AnalogChannel();
@@ -1550,9 +1452,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         tuningDetail.Name = dbChannel.DisplayName;
         tuningDetail.VideoSource = AnalogChannel.VideoInputType.YRYBYInput2;
 
-        ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);
+        ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail, _cardNumber);
 
-        ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);  //todo gibman ?? why called 2 times ?      
+        ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail, _cardNumber);  //todo gibman ?? why called 2 times ?      
         MappingHelper.AddChannelToCard(dbChannel, card, false);
         ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
         MappingHelper.AddChannelToGroup(ref dbChannel, @group);        
@@ -1560,22 +1462,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.YRYBYInput3))
       {
         string channelName = "YRYBY#3 on " + card.IdCard;
-        IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
-        if (tuningDetails != null && tuningDetails.Count > 0)
-        {
-          dbChannel = tuningDetails[0].Channel;
-        }
-        else
-        {
-          dbChannel = ChannelFactory.CreateChannel(channelName);
-        }
+        dbChannel = GetOrCreateChannel(channelName);
         dbChannel.MediaType = (int)MediaTypeEnum.TV;
         ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
         tuningDetail = new AnalogChannel();
         tuningDetail.MediaType = MediaTypeEnum.TV;
         tuningDetail.Name = dbChannel.DisplayName;
         tuningDetail.VideoSource = AnalogChannel.VideoInputType.YRYBYInput3;
-        ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
+        ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail, _cardNumber);        
         MappingHelper.AddChannelToCard(dbChannel, card, false);
         ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
         MappingHelper.AddChannelToGroup(ref dbChannel, @group);
@@ -1583,22 +1477,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.HdmiInput1))
       {
         string channelName = "HDMI#1 on " + card.IdCard;
-        IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
-        if (tuningDetails != null && tuningDetails.Count > 0)
-        {
-          dbChannel = tuningDetails[0].Channel;
-        }
-        else
-        {
-          dbChannel = ChannelFactory.CreateChannel(channelName);
-        }
+        dbChannel = GetOrCreateChannel(channelName);
         dbChannel.MediaType = (int)MediaTypeEnum.TV;
         ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
         tuningDetail = new AnalogChannel();
         tuningDetail.MediaType = MediaTypeEnum.TV;
         tuningDetail.Name = dbChannel.DisplayName;
         tuningDetail.VideoSource = AnalogChannel.VideoInputType.HdmiInput1;
-        ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
+        ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail, _cardNumber);        
         MappingHelper.AddChannelToCard(dbChannel, card, false);
         ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
         MappingHelper.AddChannelToGroup(ref dbChannel, @group);
@@ -1606,22 +1492,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.HdmiInput2))
       {
         string channelName = "HDMI#2 on " + card.IdCard;
-        IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
-        if (tuningDetails != null && tuningDetails.Count > 0)
-        {
-          dbChannel = tuningDetails[0].Channel;
-        }
-        else
-        {
-          dbChannel = ChannelFactory.CreateChannel(channelName);
-        }
+        dbChannel = GetOrCreateChannel(channelName);
         dbChannel.MediaType = (int)MediaTypeEnum.TV;
         ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
         tuningDetail = new AnalogChannel();
         tuningDetail.MediaType = MediaTypeEnum.TV;
         tuningDetail.Name = dbChannel.DisplayName;
         tuningDetail.VideoSource = AnalogChannel.VideoInputType.HdmiInput2;
-        ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
+        ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail, _cardNumber);        
         MappingHelper.AddChannelToCard(dbChannel, card, false);
         ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
         MappingHelper.AddChannelToGroup(ref dbChannel, @group);
@@ -1629,27 +1507,29 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.HdmiInput3))
       {
         string channelName = "HDMI#3 on " + card.IdCard;
-        IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
-        if (tuningDetails != null && tuningDetails.Count > 0)
-        {
-          dbChannel = tuningDetails[0].Channel;
-        }
-        else
-        {
-          dbChannel = ChannelFactory.CreateChannel(channelName);
-        }
+        dbChannel = GetOrCreateChannel(channelName);
         dbChannel.MediaType = (int)MediaTypeEnum.TV;
         ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
         tuningDetail = new AnalogChannel();
         tuningDetail.MediaType = MediaTypeEnum.TV;
         tuningDetail.Name = dbChannel.DisplayName;
         tuningDetail.VideoSource = AnalogChannel.VideoInputType.HdmiInput3;
-        ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
+        ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail, _cardNumber);        
         MappingHelper.AddChannelToCard(dbChannel, card, false);
         ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
         MappingHelper.AddChannelToGroup(ref dbChannel, @group);        
       }
       MessageBox.Show(this, "Channels added.");
+    }
+
+    private static Channel GetOrCreateChannel(string channelName)
+    {
+      Channel dbChannel = ServiceAgents.Instance.ChannelServiceAgent.GetChannelFromServiceDetailByName<TuningDetailAnalog>(channelName);
+      if (dbChannel == null)
+      {
+        dbChannel = ChannelFactory.CreateChannel(channelName);
+      }
+      return dbChannel;
     }
 
     private void ReCheckSettings()

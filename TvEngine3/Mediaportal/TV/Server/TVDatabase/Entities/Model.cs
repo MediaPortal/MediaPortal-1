@@ -8,16 +8,12 @@
 //------------------------------------------------------------------------------
 
 using System;
-using System.Collections;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Globalization;
 using System.Runtime.Serialization;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Mediaportal.TV.Server.TVDatabase.Entities
 {
@@ -355,76 +351,23 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             trackingItem.ChangeTracker.AcceptChanges();
         }
     }
-            
+    
+    // An System.Collections.ObjectModel.ObservableCollection that raises
+    // individual item removal notifications on clear and prevents adding duplicates.
     public class TrackableCollection<T> : ObservableCollection<T>
     {
-      private readonly HashSet<T> _lookupList = new HashSet<T>();
-
-      private void AddRange(IList list)
-      {
-        if (list == null)
-          return;
-        foreach (T item in list)
-          _lookupList.Add(item);
-      }
-
-      private void RemoveRange(IList list)
-      {
-        if (list == null)
-          return;
-        foreach (T item in list)
-          _lookupList.Remove(item);
-      }
-
-      private void Reset ()
-      {
-        _lookupList.Clear();
-        foreach (T item in this)
-          _lookupList.Add(item);
-      }
-
-      public TrackableCollection ()
-      {
-        CollectionChanged += OnCollectionChanged;
-      }
-
-      public TrackableCollection(IEnumerable<T> collection): 
-        base(collection)
-      {
-        CollectionChanged += OnCollectionChanged;
-      }
-
-      public TrackableCollection(List<T> list)
-        : base(list)
-      {
-        CollectionChanged += OnCollectionChanged;
-      }
-
-      private void OnCollectionChanged (object sender, NotifyCollectionChangedEventArgs notifyCollectionChangedEventArgs)
-      {
-        if (notifyCollectionChangedEventArgs.Action == NotifyCollectionChangedAction.Add)
+        protected override void ClearItems()
         {
-          AddRange(notifyCollectionChangedEventArgs.NewItems);
+            new List<T>(this).ForEach(t => Remove(t));
         }
-        if (notifyCollectionChangedEventArgs.Action == NotifyCollectionChangedAction.Remove)
+    
+        protected override void InsertItem(int index, T item)
         {
-          RemoveRange(notifyCollectionChangedEventArgs.OldItems);
+            if (!this.Contains(item))
+            {
+                base.InsertItem(index, item);
+            }
         }
-        if (notifyCollectionChangedEventArgs.Action == NotifyCollectionChangedAction.Replace)
-        {
-          RemoveRange(notifyCollectionChangedEventArgs.OldItems);
-          AddRange(notifyCollectionChangedEventArgs.NewItems);
-        }
-        if (notifyCollectionChangedEventArgs.Action == NotifyCollectionChangedAction.Reset)
-        {
-          Reset();
-        }
-      }
-
-      public new bool Contains(T item)
-      {
-        return _lookupList.Contains(item);
-      }
     }
     
     // An interface that provides an event that fires when complex properties change.

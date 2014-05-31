@@ -20,22 +20,31 @@
 
 using System;
 using System.Windows.Forms;
+using Mediaportal.TV.Server.TVDatabase.Entities;
 
 namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
   public partial class FormWebStreamTuningDetail : SetupControls.FormTuningDetailCommon
   {
+
+    protected ServiceDvb CreateInitialServiceDetail()
+    {
+      var initialServiceDetail = new ServiceDvb { TuningDetail = new TuningDetailStream() };
+      return initialServiceDetail;
+    }
+
     public FormWebStreamTuningDetail()
     {
       InitializeComponent();
     }
 
+
     private void FormWebStreamTuningDetail_Load(object sender, EventArgs e)
     {
-      if (TuningDetail != null)
+      if (ServiceDetail != null)
       {
-        edStreamURL.Text = TuningDetail.Url;
-        nudStreamBitrate.Value = TuningDetail.Bitrate;
+        edStreamURL.Text = ((TuningDetailStream)ServiceDetail.TuningDetail).Url;
+//        nudStreamBitrate.Value = TuningDetail.Bitrate;
       }
       else
       {
@@ -57,9 +66,9 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     {
       if (ValidateInput())
       {
-        if (TuningDetail == null)
+        if (ServiceDetail == null)
         {
-          TuningDetail = CreateInitialTuningDetail();
+          ServiceDetail = CreateInitialServiceDetail();
         }
         UpdateTuningDetail();
         DialogResult = DialogResult.OK;
@@ -69,9 +78,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
     private void UpdateTuningDetail()
     {
-      TuningDetail.ChannelType = 5;
-      TuningDetail.Url = edStreamURL.Text;
-      TuningDetail.Bitrate = (int)nudStreamBitrate.Value;
+      ((TuningDetailStream) ServiceDetail.TuningDetail).Url = edStreamURL.Text;
+      //TuningDetail.Bitrate = (int)nudStreamBitrate.Value;
     }
 
     private bool ValidateInput()

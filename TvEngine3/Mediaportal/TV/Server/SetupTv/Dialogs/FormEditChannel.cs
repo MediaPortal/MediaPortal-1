@@ -68,7 +68,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       _channel.VisibleInGuide = checkBoxVisibleInTvGuide.Checked;
       _channel.MediaType = (int) _mediaType;
 
-      foreach (TuningDetail detail in _channel.TuningDetails)
+      foreach (ServiceDetail detail in _channel.ServiceDetails)
       {                
         if (detail.ChangeTracker.State != ObjectState.Deleted)
         {
@@ -106,7 +106,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       if (_channel == null)
       {
         _newChannel = true;
-        _channel = ChannelFactory.CreateChannel(MediaTypeEnum.TV, 0, Schedule.MinSchedule, true, Schedule.MinSchedule, 10000, true, "", "");        
+        _channel = ChannelFactory.CreateChannel(MediaTypeEnum.TV, 0, Schedule.MinSchedule, 10000, true, "", "");
       }
       textBoxName.Text = _channel.DisplayName;
       checkBoxVisibleInTvGuide.Checked = _channel.VisibleInGuide;            
@@ -119,69 +119,88 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       try
       {
         mpListView1.Items.Clear();
-        foreach (TuningDetail detail in _channel.TuningDetails)
+        foreach (ServiceDetail serviceDetail in _channel.ServiceDetails)
         {
-          if (detail.ChangeTracker.State == ObjectState.Deleted)
+          if (serviceDetail.ChangeTracker.State == ObjectState.Deleted)
           {
             continue;
           }
           int imageIndex = 1;
-          if (detail.FreeToAir == false)
+          if (((EncryptionSchemeEnum)serviceDetail.EncryptionScheme) != EncryptionSchemeEnum.Free)
+          {
             imageIndex = 2;
-          ListViewItem item = new ListViewItem(detail.IdTuning.ToString(), imageIndex);
-          item.SubItems.Add(detail.Name);
-          item.SubItems.Add(detail.Provider);
-          string channelType = detail.ChannelType.ToString();
+          }
+          var tuningDetail = serviceDetail.TuningDetail;
+
+          ListViewItem item = new ListViewItem(tuningDetail.IdTuningDetail.ToString(), imageIndex);
+          item.SubItems.Add(serviceDetail.Name);
+
+          var serviceDetailDvb = serviceDetail as ServiceDvb;
+          if (serviceDetailDvb != null)
+          {
+            item.SubItems.Add(serviceDetailDvb.Provider);
+          }
+          
+          string channelType = "";
           string description = "";
           float frequency;
-          switch (detail.ChannelType)
+          if (tuningDetail is TuningDetailAnalog)
           {
-            case 0:
-              channelType = "Analog";
-              if (detail.VideoSource == (int)AnalogChannel.VideoInputType.Tuner)
-              {
-                frequency = detail.Frequency;
-                frequency /= 1000000.0f;
-                description = String.Format("#{0} {1} MHz", detail.ChannelNumber, frequency.ToString("f2"));
-              }
-              else
-              {
-                description = detail.VideoSource.ToString();
-              }
-              break;
-            case 1:
-              channelType = "ATSC";
-              description = String.Format("{0} {1}:{2}", detail.ChannelNumber, detail.MajorChannel,
-                                          detail.MinorChannel);
-              break;
-            case 2:
-              channelType = "DVB-C";
-              frequency = detail.Frequency;
-              frequency /= 1000.0f;
-              description = String.Format("{0} MHz SR:{1}", frequency.ToString("f2"), detail.Symbolrate);
-              break;
-            case 3:
-              channelType = "DVB-S";
-              frequency = detail.Frequency;
-              frequency /= 1000.0f;
-              description = String.Format("{0} MHz {1}", frequency.ToString("f2"),
-                                          (((Polarisation)detail.Polarisation)));
-              break;
-            case 4:
-              channelType = "DVB-T";
-              frequency = detail.Frequency;
-              frequency /= 1000.0f;
-              description = String.Format("{0} MHz BW:{1}", frequency.ToString("f2"), detail.Bandwidth);
-              break;
-            case 5:
-              channelType = "Web-Stream";
-              description = detail.Url;
-              break;
-            case 7:
-              channelType = "DVB-IP";
-              description = detail.Url;
-              break;
+            var tuningDetailAnalog = tuningDetail as TuningDetailAnalog;
+            channelType = "Analog";
+            if (tuningDetailAnalog.VideoSource == (int) AnalogChannel.VideoInputType.Tuner)
+            {
+              frequency = tuningDetailAnalog.Frequency.GetValueOrDefault(0);
+              frequency /= 1000000.0f;
+              description = String.Format("#{0} {1} MHz", serviceDetail.LogicalChannelNumber, frequency.ToString("f2"));
+            }
+            else
+            {
+              description = tuningDetailAnalog.VideoSource.GetValueOrDefault(0).ToString();
+            }
           }
+          else if (tuningDetail is TuningDetailAtsc)
+          {
+            var tuningDetailAtsc = tuningDetail as TuningDetailAtsc;
+            channelType = "ATSC";
+            description = String.Format("{0} {1}:{2}", serviceDetail.LogicalChannelNumber, serviceDetail.MajorChannel,
+                                          serviceDetail.MinorChannel);
+          }
+          else if (tuningDetail is TuningDetailCable)
+          {
+            channelType = "DVB-C";
+            var tuningDetailCable = tuningDetail as TuningDetailCable;
+            frequency = tuningDetailCable.Frequency.GetValueOrDefault(0);
+            frequency /= 1000.0f;
+            description = String.Format("{0} MHz SR:{1}", frequency.ToString("f2"), tuningDetailCable.SymbolRate);
+          }
+          else if (tuningDetail is TuningDetailSatellite)
+          {
+            channelType = "DVB-S";
+            var tuningDetailSatellite = tuningDetail as TuningDetailSatellite;
+            frequency = tuningDetailSatellite.Frequency.GetValueOrDefault(0);
+            frequency /= 1000.0f;
+            description = String.Format("{0} MHz {1}", frequency.ToString("f2"),
+                                        (((Polarisation)tuningDetailSatellite.Polarisation.GetValueOrDefault(0))));
+          }
+          else if (tuningDetail is TuningDetailTerrestrial)
+          {
+            channelType = "DVB-T";
+            var tuningDetailTerrestrial = tuningDetail as TuningDetailTerrestrial;
+            frequency = tuningDetailTerrestrial.Frequency.GetValueOrDefault(0);
+            frequency /= 1000.0f;
+            description = String.Format("{0} MHz BW:{1}", frequency.ToString("f2"), tuningDetailTerrestrial.Bandwidth);
+          }
+          else if (tuningDetail is TuningDetailStream)
+          {
+            channelType = "Web-Stream/IP";
+            var tuningDetailStream = tuningDetail as TuningDetailStream;
+            if (tuningDetailStream != null)
+            {
+              description = tuningDetailStream.Url;
+            }
+          }         
+         
           item.SubItems.Add(channelType);
           item.SubItems.Add(description);
           mpListView1.Items.Add(item);
@@ -232,7 +251,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         FormTuningDetailCommon form = CreateDialog(tuningType);
         if (form.ShowDialog(this) == DialogResult.OK)
         {
-          _channel.TuningDetails.Add(form.TuningDetail);
+          _channel.ServiceDetails.Add(form.ServiceDetail);
           UpdateTuningDetailList();
         }
       }
@@ -243,33 +262,82 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       if (mpListView1.SelectedIndices.Count == 1)
       {
         int index = mpListView1.SelectedIndices[0];
-        TuningDetail tuningDetailToEdit = _channel.TuningDetails[index];
-        FormTuningDetailCommon form = CreateDialog(tuningDetailToEdit.ChannelType);
-        form.TuningDetail = tuningDetailToEdit;
+        ServiceDetail detailToEdit = _channel.ServiceDetails[index];
+        FormTuningDetailCommon form = CreateDialog(detailToEdit);
+        form.ServiceDetail = detailToEdit;
         form.ShowDialog(this);
         UpdateTuningDetailList();
       }
     }
-
     private static FormTuningDetailCommon CreateDialog(int tuningType)
     {
       switch (tuningType)
-      {
+      {        
         case 0:
           return new FormAnalogTuningDetail();
+          break;
+
         case 1:
           return new FormATSCTuningDetail();
+          break;
+
         case 2:
           return new FormDVBCTuningDetail();
+          break;
+
         case 3:
           return new FormDVBSTuningDetail();
+          break;
+
         case 4:
           return new FormDVBTTuningDetail();
+          break;
+
         case 5:
           return new FormWebStreamTuningDetail();
+          break;
+
         case 7:
           return new FormDVBIPTuningDetail();
+          break;
       }
+      
+      return null;
+    }
+
+    private static FormTuningDetailCommon CreateDialog(ServiceDetail detailToEdit)
+    {
+      var tuningDetail = detailToEdit.TuningDetail;
+      
+      if (tuningDetail is TuningDetailAnalog)
+      {
+        return new FormAnalogTuningDetail();
+      }
+      else if (tuningDetail is TuningDetailAtsc)
+      {
+        return new FormATSCTuningDetail();
+      }
+      else if (tuningDetail is TuningDetailCable)
+      {
+        return new FormDVBCTuningDetail();
+      }
+      else if (tuningDetail is TuningDetailSatellite)
+      {
+        return new FormDVBSTuningDetail();
+      }
+      else if (tuningDetail is TuningDetailTerrestrial)
+      {
+        return new FormDVBTTuningDetail();
+      }
+      else if (tuningDetail is TuningDetailStream)
+      {
+        if (detailToEdit is ServiceDvb)
+        {
+          return new FormWebStreamTuningDetail();
+        }        
+        return new FormDVBIPTuningDetail();
+      }                             
+      
       return null;
     }
 
@@ -285,7 +353,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
           for (int i = 0; i < mpListView1.SelectedIndices.Count; i++)
           {
             int index = mpListView1.SelectedIndices[i];
-            TuningDetail tuningDetailToDelete = _channel.TuningDetails[index];
+            TuningDetail tuningDetailToDelete = _channel.ServiceDetails[index].TuningDetail;
             tuningDetailToDelete.ChangeTracker.State = ObjectState.Deleted;                        
           }
           UpdateTuningDetailList();

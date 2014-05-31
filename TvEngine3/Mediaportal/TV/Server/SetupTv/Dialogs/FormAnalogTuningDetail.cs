@@ -21,6 +21,7 @@
 using System;
 using System.Windows.Forms;
 using DirectShowLib;
+using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Countries;
 
 namespace Mediaportal.TV.Server.SetupTV.Dialogs
@@ -30,6 +31,12 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     public FormAnalogTuningDetail()
     {
       InitializeComponent();
+    }    
+
+    protected ServiceDetail CreateInitialServiceDetail()
+    {
+      var initialServiceDetail = new ServiceMpeg2() {TuningDetail = new TuningDetailAnalog()};
+      return initialServiceDetail;
     }
 
     private void FormAnalogTuningDetail_Load(object sender, EventArgs e)
@@ -38,18 +45,23 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
       comboBoxCountry.Items.AddRange(countries.Countries);
 
-      if (TuningDetail != null)
+      if (ServiceDetail != null)
       {
         //Editing
-        textBoxChannel.Text = TuningDetail.ChannelNumber.ToString();
+        textBoxChannel.Text = ServiceDetail.LogicalChannelNumber;
         comboBoxInput.SelectedIndex = 0;
-        if (TuningDetail.TuningSource == (int)TunerInputType.Cable)
+        var tuningDetailAnalog = (TuningDetailAnalog) ServiceDetail.TuningDetail;
+
+        if (tuningDetailAnalog.SignalSource == (int)TunerInputType.Cable)
+        {
           comboBoxInput.SelectedIndex = 1;
-        comboBoxCountry.SelectedIndex = TuningDetail.CountryId;
-        comboBoxVideoSource.SelectedIndex = TuningDetail.VideoSource;
-        comboBoxAudioSource.SelectedIndex = TuningDetail.AudioSource;
-        textBoxAnalogFrequency.Text = SetFrequency(TuningDetail.Frequency, "2");
-        checkBoxVCR.Checked = TuningDetail.IsVCRSignal;
+        }
+        
+        comboBoxCountry.SelectedIndex = tuningDetailAnalog.IdCountry.GetValueOrDefault(-1);
+        comboBoxVideoSource.SelectedIndex = tuningDetailAnalog.VideoSource.GetValueOrDefault(-1);
+        comboBoxAudioSource.SelectedIndex = tuningDetailAnalog.AudioSource.GetValueOrDefault(-1);
+        textBoxAnalogFrequency.Text = SetFrequency(tuningDetailAnalog.Frequency.GetValueOrDefault(0), "2");
+        checkBoxVCR.Checked = tuningDetailAnalog.IsVcrSignal.GetValueOrDefault(false);
       }
       else
       {
@@ -68,9 +80,9 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     {
       if (ValidateInput())
       {
-        if (TuningDetail == null)
+        if (ServiceDetail == null)
         {
-          TuningDetail = CreateInitialTuningDetail();
+          ServiceDetail = CreateInitialServiceDetail();
         }
         UpdateTuningDetail();
         DialogResult = DialogResult.OK;
@@ -80,16 +92,16 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
     private void UpdateTuningDetail()
     {
-      TuningDetail.ChannelNumber = Convert.ToInt32(textBoxChannel.Text);
-      TuningDetail.CountryId = ((Country)comboBoxCountry.SelectedItem).Index;
-      TuningDetail.TuningSource = (int)(comboBoxInput.SelectedIndex == 1
+      ServiceDetail.LogicalChannelNumber = textBoxChannel.Text;
+      ((TuningDetailAnalog)ServiceDetail.TuningDetail).IdCountry = ((Country)comboBoxCountry.SelectedItem).Index;
+      ((TuningDetailAnalog)ServiceDetail.TuningDetail).SignalSource = (int)(comboBoxInput.SelectedIndex == 1
                                           ? TunerInputType.Cable
                                           : TunerInputType.Antenna);
-      TuningDetail.VideoSource = comboBoxVideoSource.SelectedIndex;
-      TuningDetail.AudioSource  = comboBoxAudioSource.SelectedIndex;
-      TuningDetail.Frequency = (int)GetFrequency(textBoxAnalogFrequency.Text, "2");
-      TuningDetail.IsVCRSignal = checkBoxVCR.Checked;
-      TuningDetail.ChannelType = 0;
+      ((TuningDetailAnalog)ServiceDetail.TuningDetail).VideoSource = comboBoxVideoSource.SelectedIndex;
+      ((TuningDetailAnalog)ServiceDetail.TuningDetail).AudioSource = comboBoxAudioSource.SelectedIndex;
+      ((TuningDetailAnalog)ServiceDetail.TuningDetail).Frequency = (int)GetFrequency(textBoxAnalogFrequency.Text, "2");
+      ((TuningDetailAnalog)ServiceDetail.TuningDetail).IsVcrSignal = checkBoxVCR.Checked;
+      
     }
 
     private bool ValidateInput()

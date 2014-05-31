@@ -91,9 +91,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
     /// <summary>
     /// Get/set whether the channel is a free-to-air or encrypted channel.
     /// </summary>
-    public bool FreeToAir
+    public EncryptionSchemeEnum EncryptionScheme
     {
-      get { return true; }
+      get { return EncryptionSchemeEnum.Free; }
       set { }
     }
 

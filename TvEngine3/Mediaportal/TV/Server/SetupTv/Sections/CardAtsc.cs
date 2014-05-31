@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using DirectShowLib.BDA;
@@ -262,15 +263,20 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           int updatedChannels = 0;
           for (int i = 0; i < channels.Length; ++i)
           {
-            Channel dbChannel;
+            Channel dbChannel = null;
             ATSCChannel channel = (ATSCChannel)channels[i];
             //No support for channel moving, or merging with existing channels here.
             //We do not know how ATSC works to correctly implement this.
-            TuningDetail currentDetail = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetail(channel);
-            if (currentDetail != null)
-              if (channel.Frequency != currentDetail.Frequency)
+            TuningDetail currentDetail = ServiceAgents.Instance.ChannelServiceAgent.GetServiceDetail(channel).TuningDetail;
+            var currentDetailAtsc = currentDetail as TuningDetailAtsc;
+            if (currentDetailAtsc != null)
+            {
+              if (channel.Frequency != currentDetailAtsc.Frequency)
+              {
                 currentDetail = null;
-            bool exists;
+              } 
+            }              
+            bool exists = false;
             if (currentDetail == null)
             {
               //add new channel
@@ -283,10 +289,24 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
               }
             }
             else
-            {
-              exists = true;
-              dbChannel = currentDetail.Channel;
+            {              
+
+              foreach (ServiceDvb serviceDetail in currentDetail.ServiceDetails.OfType<ServiceDvb>())
+              {
+                if (serviceDetail.Provider == tuneChannel.Provider && serviceDetail.OriginalNetworkId == tuneChannel.NetworkId)
+                {
+                  dbChannel = serviceDetail.Channel;
+                  exists = true;
+                }                
+              }
+
+              if (dbChannel == null)
+              {
+                dbChannel = currentDetail.ServiceDetails.FirstOrDefault().Channel;
+              }              
             }
+
+
             dbChannel.MediaType = (int)channel.MediaType;
             dbChannel = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
             dbChannel.AcceptChanges();
@@ -302,12 +322,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             }
             if (currentDetail == null)
             {
-              ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, channel);
+              ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, channel, _cardNumber);
             }
             else
             {
               //update tuning details...
-              ServiceAgents.Instance.ChannelServiceAgent.UpdateTuningDetail(dbChannel.IdChannel, currentDetail.IdTuning, channel);
+              ServiceAgents.Instance.ChannelServiceAgent.UpdateTuningDetail(dbChannel.IdChannel, currentDetail.IdTuningDetail, channel, _cardNumber);
             }
             if (channel.MediaType == MediaTypeEnum.TV)
             {

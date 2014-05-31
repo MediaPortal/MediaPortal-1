@@ -72,10 +72,10 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       _channel.DeleteChannel(idChannel);
     }
 
-    public TuningDetail SaveTuningDetail(TuningDetail tuningDetail)
+    public ServiceDetail SaveServiceDetail(ServiceDetail serviceDetail)
     {
-      tuningDetail.UnloadAllUnchangedRelationsForEntity();
-      return _channel.SaveTuningDetail(tuningDetail);
+      serviceDetail.UnloadAllUnchangedRelationsForEntity();
+      return _channel.SaveServiceDetail(serviceDetail);
     }
 
     public IList<Channel> ListAllVisibleChannelsByMediaType(MediaTypeEnum mediaType)
@@ -83,14 +83,14 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       return _channel.ListAllVisibleChannelsByMediaType(mediaType);
     }
 
-    public TuningDetail GetTuningDetail(DVBBaseChannel dvbChannel)
+    public ServiceDetail GetServiceDetail(DVBBaseChannel dvbChannel)
     {
-      return _channel.GetTuningDetail(dvbChannel);
+      return _channel.GetServiceDetail(dvbChannel);
     }
 
-    public TuningDetail GetTuningDetailCustom(DVBBaseChannel dvbChannel, TuningDetailSearchEnum tuningDetailSearchEnum)
+    public ServiceDetail GetServiceDetailCustom(DVBBaseChannel dvbChannel, TuningDetailSearchEnum tuningDetailSearchEnum)      
     {
-      return _channel.GetTuningDetailCustom(dvbChannel, tuningDetailSearchEnum);
+      return _channel.GetServiceDetailCustom(dvbChannel, tuningDetailSearchEnum);
     }
 
     public TuningDetail GetTuningDetailByURL(DVBBaseChannel dvbChannel, string url)
@@ -98,19 +98,15 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       return _channel.GetTuningDetailByURL(dvbChannel, url);
     }
 
-    public void AddTuningDetail(int idChannel, IChannel channel)
+    public void AddTuningDetail(int idChannel, IChannel channel, int idCard)
     {
-      _channel.AddTuningDetail(idChannel, channel);
+      _channel.AddTuningDetail(idChannel, channel, idCard);
     }
 
-    public IList<TuningDetail> GetTuningDetailsByName(string channelName, int channelType)
-    {
-      return _channel.GetTuningDetailsByName(channelName, channelType);
-    }
 
-    public void UpdateTuningDetail(int idChannel, int idTuning, IChannel channel)
+    public void UpdateTuningDetail(int idChannel, int idTuning, IChannel channel, int idCard)
     {
-      _channel.UpdateTuningDetail(idChannel, idTuning, channel);
+      _channel.UpdateTuningDetail(idChannel, idTuning, channel, idCard);
     }
 
     public Channel GetChannelByName(string channelName, ChannelIncludeRelationEnum includeRelations)
@@ -153,6 +149,11 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
     public IList<Channel> GetAllChannelsByGroupIdAndMediaType(int idGroup, MediaTypeEnum mediaTypeEnum, ChannelIncludeRelationEnum include)
     {
       return _channel.GetAllChannelsByGroupIdAndMediaType(idGroup, mediaTypeEnum, include);
+    }
+
+    public Channel GetChannelFromServiceDetailByName<T>(string channelName) where T : TuningDetail
+    {
+      return _channel.GetChannelFromServiceDetailByName<T>(channelName);
     }
   }
 }

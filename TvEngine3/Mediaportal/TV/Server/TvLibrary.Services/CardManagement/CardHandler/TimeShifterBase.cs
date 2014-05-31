@@ -232,7 +232,8 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       if (_timeshiftingEpgGrabberEnabled)
       {
         Channel channel = ChannelManagement.GetChannel(_cardHandler.UserManagement.GetRecentChannelId(user.Name));
-        if (channel.GrabEpg)
+        //todo: MM handle grabEPG
+        if (true)//channel.GrabEpg)
         {
           _cardHandler.Card.GrabEpg();
         }

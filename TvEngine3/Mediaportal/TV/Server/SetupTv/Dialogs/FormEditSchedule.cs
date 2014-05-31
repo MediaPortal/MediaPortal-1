@@ -469,25 +469,15 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         foreach (Channel ch in channels)
         {
           if (ch.MediaType != (decimal) MediaTypeEnum.TV) continue;
-          bool hasFta = false;
-          bool hasScrambled = false;
-          IList<TuningDetail> tuningDetails = ch.TuningDetails;
-          foreach (TuningDetail detail in tuningDetails)
-          {
-            if (detail.FreeToAir)
-            {
-              hasFta = true;
-            }
-            if (!detail.FreeToAir)
-            {
-              hasScrambled = true;
-            }
-          }
+          bool isFree;
+          bool encrypted;
+          bool sometimesEncrypted;
+          ch.GetEncrytionState(out isFree, out encrypted, out sometimesEncrypted);
 
-          if (hasFta && hasScrambled)
+          if (isFree && encrypted)
           {
           }
-          else if (hasScrambled)
+          else if (encrypted)
           {
           }
           else
@@ -501,32 +491,25 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       {
         ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetChannelGroup(idItem.Id);
         IList<GroupMap> maps = group.GroupMaps;
-        bool hasFta = false;
+
+        bool isFree = false;
+        bool encrypted = false;
+        bool sometimesEncrypted;
+
         foreach (GroupMap map in maps)
         {
           Channel ch = map.Channel;
           if (ch.MediaType != (decimal) MediaTypeEnum.TV)
-          hasFta = false;
-          bool hasScrambled = false;
-          IList<TuningDetail> tuningDetails = ch.TuningDetails;
-          foreach (TuningDetail detail in tuningDetails)
-          {
-            if (detail.FreeToAir)
-            {
-              hasFta = true;
-            }
-            if (!detail.FreeToAir)
-            {
-              hasScrambled = true;
-            }
+          {            
+            ch.GetEncrytionState(out isFree, out encrypted, out sometimesEncrypted);
           }
 
           int imageIndex;
-          if (hasFta && hasScrambled)
+          if (isFree && encrypted)
           {
             imageIndex = 5;
           }
-          else if (hasScrambled)
+          else if (encrypted)
           {
             imageIndex = 4;
           }

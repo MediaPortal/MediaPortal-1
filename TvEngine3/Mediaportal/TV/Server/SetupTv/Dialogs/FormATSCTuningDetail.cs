@@ -22,6 +22,8 @@ using System;
 using System.Windows.Forms;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.SetupControls;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 
 namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
@@ -32,15 +34,26 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       InitializeComponent();
     }
 
+    protected ServiceAtsc CreateInitialServiceDetail()
+    {
+      var initialServiceDetail = new ServiceAtsc { TuningDetail = new TuningDetailAtsc() };
+      return initialServiceDetail;
+    }
+
+    
+
     private void FormATSCTuningDetail_Load(object sender, EventArgs e)
     {
-      if (TuningDetail != null)
+      if (ServiceDetail != null)
       {
-        textBoxProgram.Text = TuningDetail.ChannelNumber.ToString();
-        textBoxFrequency.Text = TuningDetail.Frequency.ToString();
-        textBoxMajor.Text = TuningDetail.MajorChannel.ToString();
-        textBoxMinor.Text = TuningDetail.MinorChannel.ToString();
-        switch ((ModulationType)TuningDetail.Modulation)
+        var tuningDetailAtsc = (TuningDetailAtsc) ServiceDetail.TuningDetail;
+        var serviceDetailDvb = ServiceDetail as ServiceDvb;
+
+        textBoxProgram.Text = ServiceDetail.LogicalChannelNumber;
+        textBoxFrequency.Text = tuningDetailAtsc.Frequency.ToString();
+        textBoxMajor.Text = ServiceDetail.MajorChannel.ToString();
+        textBoxMinor.Text = ServiceDetail.MinorChannel.ToString();
+        switch ((ModulationType) tuningDetailAtsc.Modulation.GetValueOrDefault(0))
         {
           case ModulationType.ModNotSet:
             comboBoxQAMModulation.SelectedIndex = 0;
@@ -55,12 +68,14 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
             comboBoxQAMModulation.SelectedIndex = 3;
             break;
         }
-        textBoxQamONID.Text = TuningDetail.NetworkId.ToString();
-        textBoxQamTSID.Text = TuningDetail.TransportId.ToString();
-        textBoxQamSID.Text = TuningDetail.ServiceId.ToString();
-        textBoxQamPmt.Text = TuningDetail.PmtPid.ToString();
-        textBoxQamProvider.Text = TuningDetail.Provider;
-        checkBoxQamfta.Checked = TuningDetail.FreeToAir;
+
+
+        textBoxQamTSID.Text = serviceDetailDvb.TransportStreamId.GetValueOrDefault(0).ToString();
+        textBoxQamSID.Text = serviceDetailDvb.ServiceId.GetValueOrDefault(0).ToString();
+        textBoxQamPmt.Text = serviceDetailDvb.PmtPid.GetValueOrDefault(0).ToString();
+        checkBoxQamfta.Checked = (EncryptionSchemeEnum)ServiceDetail.EncryptionScheme.GetValueOrDefault(0) == EncryptionSchemeEnum.Free;
+
+
       }
       else
       {
@@ -82,9 +97,9 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     {
       if (ValidateInput())
       {
-        if (TuningDetail == null)
+        if (ServiceDetail == null)
         {
-          TuningDetail = CreateInitialTuningDetail();
+          ServiceDetail = CreateInitialServiceDetail();
         }
         UpdateTuningDetail();
         DialogResult = DialogResult.OK;
@@ -93,33 +108,42 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     }
 
     private void UpdateTuningDetail()
-    {
-      TuningDetail.ChannelType = 1;
-      TuningDetail.ChannelNumber = Int32.Parse(textBoxProgram.Text);
-      TuningDetail.Frequency = Int32.Parse(textBoxFrequency.Text);
-      TuningDetail.MajorChannel = Int32.Parse(textBoxMajor.Text);
-      TuningDetail.MinorChannel = Int32.Parse(textBoxMinor.Text);
+    {      
+      //todo mm handle LCN in setup
+
+      //ServiceDetail.LogicalChannelNumber = Int32.Parse(textBoxProgram.Text).ToString();
+      ((TuningDetailAtsc) ServiceDetail.TuningDetail).Frequency = Int32.Parse(textBoxFrequency.Text);
+      ServiceDetail.SetLogicalChannelNumberBasedOnMinorAndMajorChannel(Int32.Parse(textBoxMinor.Text), Int32.Parse(textBoxMajor.Text));
+      
       switch (comboBoxQAMModulation.SelectedIndex)
       {
         case 0:
-          TuningDetail.Modulation = (int)ModulationType.ModNotSet;
+          ((TuningDetailAtsc)ServiceDetail.TuningDetail).Modulation = (int)ModulationType.ModNotSet;
           break;
         case 1:
-          TuningDetail.Modulation = (int)ModulationType.Mod8Vsb;
+          ((TuningDetailAtsc)ServiceDetail.TuningDetail).Modulation = (int)ModulationType.Mod8Vsb;
           break;
         case 2:
-          TuningDetail.Modulation = (int)ModulationType.Mod64Qam;
+          ((TuningDetailAtsc)ServiceDetail.TuningDetail).Modulation = (int)ModulationType.Mod64Qam;
           break;
         case 3:
-          TuningDetail.Modulation = (int)ModulationType.Mod256Qam;
+          ((TuningDetailAtsc)ServiceDetail.TuningDetail).Modulation = (int)ModulationType.Mod256Qam;
           break;
       }
-      TuningDetail.NetworkId = Int32.Parse(textBoxQamONID.Text);
-      TuningDetail.TransportId = Int32.Parse(textBoxQamTSID.Text);
-      TuningDetail.ServiceId = Int32.Parse(textBoxQamSID.Text);
-      TuningDetail.PmtPid = Int32.Parse(textBoxQamPmt.Text);
-      TuningDetail.Provider = textBoxQamProvider.Text;
-      TuningDetail.FreeToAir = checkBoxQamfta.Checked;
+      var serviceDetailDvb = ServiceDetail as ServiceDvb;
+      serviceDetailDvb.TransportStreamId = Int32.Parse(textBoxQamTSID.Text);
+      serviceDetailDvb.ServiceId = Int32.Parse(textBoxQamSID.Text);
+      serviceDetailDvb.PmtPid = Int32.Parse(textBoxQamPmt.Text);
+
+      if (checkBoxQamfta.Checked)
+      {
+        ServiceDetail.EncryptionScheme = (int)EncryptionSchemeEnum.Free;
+      }
+      else
+      {
+        ServiceDetail.EncryptionScheme = (int)EncryptionSchemeEnum.Encrypted;
+      }
+      
     }
 
     private bool ValidateInput()

@@ -106,6 +106,7 @@
     <Compile Include="ExtensionMethods\ArrayExtMethods.cs" />
     <Compile Include="ExtensionMethods\DictionaryExtMethods.cs" />
     <Compile Include="ExtensionMethods\DisposeHelper.cs" />
+    <Compile Include="ExtensionMethods\EnumExtensions.cs" />
     <Compile Include="ExtensionMethods\ListExtMethods.cs" />
     <Compile Include="ExtensionMethods\ObjectMethods.cs" />
     <Compile Include="GlobalServiceProvider.cs" />

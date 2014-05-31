@@ -534,7 +534,7 @@ namespace Mediaportal.TV.Server.TVLibrary
               DevicePath = itvCard.DevicePath,
               Name = itvCard.Name,
               Priority = 1,
-              GrabEPG = true,
+              //GrabEPG = true, //todo: MM handle grabEPG
               Enabled = true,
               CamType = 0,
               DecryptLimit = 0,              

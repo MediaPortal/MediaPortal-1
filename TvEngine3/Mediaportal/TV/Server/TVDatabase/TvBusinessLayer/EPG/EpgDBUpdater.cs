@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Data.SqlTypes;
+using System.Linq;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
@@ -162,7 +163,9 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
       {
         return;
       }
-      this.LogDebug("{0}: {1} lastUpdate:{2}", _grabberName, dbChannel.DisplayName, dbChannel.LastGrabTime);
+
+      //todo MM : LastGrabTime is now present in tuningdetails - http://forum.team-mediaportal.com/threads/tve3-5-tuningdetails-refactoring.120520/page-8#post-1044194
+      //this.LogDebug("{0}: {1} lastUpdate:{2}", _grabberName, dbChannel.DisplayName, dbChannel.LastGrabTime);
 
       // Store the data in our database
       ImportPrograms(dbChannel, epgChannel.Programs);
@@ -273,7 +276,8 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
 
       PersistPrograms(programs);
 
-      dbChannel.LastGrabTime = DateTime.Now;
+      //todo MM : LastGrabTime is now present in tuningdetails - http://forum.team-mediaportal.com/threads/tve3-5-tuningdetails-refactoring.120520/page-8#post-1044194
+      //dbChannel.LastGrabTime = DateTime.Now;
       dbChannel.EpgHasGaps = hasGaps;
       ChannelManagement.SaveChannel(dbChannel);
 
@@ -301,10 +305,12 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
       }
       //do we know a channel with these tuning details?
       Channel dbChannel = null;
-      TuningDetail tuningDetail = ChannelManagement.GetTuningDetail(dvbChannel);
-      if (tuningDetail != null)
+
+      //todo gibman - use ChannelManagement.GetChannelByIChannel(dvbChannel);
+      ServiceDetail detail = ChannelManagement.GetServiceDetail(dvbChannel);
+      if (detail != null)
       {
-        dbChannel = tuningDetail.Channel;
+        dbChannel = detail.Channel;        
       }
 
       if (dbChannel == null)
@@ -326,7 +332,8 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
       var isRadio = dbChannel.MediaType == (decimal) MediaTypeEnum.Radio;
       if ((isRadio && StoreOnlySelectedChannelsRadio) || (!isRadio && StoreOnlySelectedChannels))
       {
-        if (!dbChannel.GrabEpg)
+        //todo MM : LastGrabTime is now present in tuningdetails - http://forum.team-mediaportal.com/threads/tve3-5-tuningdetails-refactoring.120520/page-8#post-1044194
+        //if (!dbChannel.GrabEpg)
         {
           this.LogInfo("{0}: channel {1} is not configured to grab epg.", _grabberName, dbChannel.DisplayName);
           return null;
@@ -335,10 +342,12 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
       if (_checkForLastUpdate)
       {
         //is the regrab time reached?
-        TimeSpan ts = DateTime.Now - dbChannel.LastGrabTime.GetValueOrDefault(DateTime.MinValue);
-        if (ts.TotalMinutes < EpgReGrabAfter)
+        //todo MM : LastGrabTime is now present in tuningdetails - http://forum.team-mediaportal.com/threads/tve3-5-tuningdetails-refactoring.120520/page-8#post-1044194
+        //TimeSpan ts = DateTime.Now - dbChannel.LastGrabTime.GetValueOrDefault(DateTime.MinValue);
+        //if (ts.TotalMinutes < EpgReGrabAfter)
         {
-          this.LogInfo("{0}: {1} not needed lastUpdate:{2}", _grabberName, dbChannel.DisplayName, dbChannel.LastGrabTime);
+          ////todo MM : LastGrabTime is now present in tuningdetails - http://forum.team-mediaportal.com/threads/tve3-5-tuningdetails-refactoring.120520/page-8#post-1044194
+          //this.LogInfo("{0}: {1} not needed lastUpdate:{2}", _grabberName, dbChannel.DisplayName, dbChannel.LastGrabTime);
           return null;
         }
       }

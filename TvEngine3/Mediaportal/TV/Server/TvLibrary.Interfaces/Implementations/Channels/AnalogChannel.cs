@@ -186,7 +186,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
     private bool _isVcrSignal;
     
     [DataMember]
-    private bool _freeToAir = true;
+    private EncryptionSchemeEnum _encryptionScheme = EncryptionSchemeEnum.Free;
 
     [DataMember]
     private MediaTypeEnum _mediaType;
@@ -210,7 +210,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
       _audioInputType = AudioInputType.Tuner;
       _isVcrSignal = false;
       _mediaType = MediaTypeEnum.TV;
-      _freeToAir = true;
+      _encryptionScheme = EncryptionSchemeEnum.Free;
     }
 
     /// <summary>
@@ -228,7 +228,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
       _audioInputType = channel.AudioSource;
       _isVcrSignal = channel.IsVcrSignal;
       _mediaType= channel.MediaType;      
-      _freeToAir = channel.FreeToAir;
+      _encryptionScheme = channel.EncryptionScheme;
     }
 
     #endregion
@@ -316,10 +316,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
     /// <summary>
     /// Get/set whether the channel is a free-to-air or encrypted channel.
     /// </summary>
-    public bool FreeToAir
+    public EncryptionSchemeEnum EncryptionScheme
     {
-      get { return _freeToAir; }
-      set { _freeToAir = value; }
+      get { return _encryptionScheme; }
+      set { _encryptionScheme = value; }
     }
 
     public MediaTypeEnum MediaType
@@ -399,7 +399,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
       {
         return false;
       }   
-      if (ch.FreeToAir != _freeToAir)
+      if (ch.EncryptionScheme != _encryptionScheme)
       {
         return false;
       }

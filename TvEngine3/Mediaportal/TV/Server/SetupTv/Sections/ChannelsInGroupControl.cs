@@ -135,14 +135,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       bool hasFta = false;
       bool hasScrambled = false;
-      IList<TuningDetail> tuningDetails = channel.TuningDetails;
-      foreach (TuningDetail detail in tuningDetails)
+      IList<ServiceDetail> serviceDetails = channel.ServiceDetails;
+      foreach (ServiceDetail detail in serviceDetails)
       {
-        if (detail.FreeToAir)
+        if (detail.EncryptionScheme == (int)EncryptionSchemeEnum.Free)
         {
           hasFta = true;
         }
-        if (!detail.FreeToAir)
+        else
         {
           hasScrambled = true;
         }
@@ -167,10 +167,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       item.Checked = channel.VisibleInGuide;
       item.Tag = map;
 
-      IList<TuningDetail> details = channel.TuningDetails;
+      IList<ServiceDetail> details = channel.ServiceDetails;
       if (details.Count > 0)
       {
-        item.SubItems.Add(details[0].ChannelNumber.ToString());
+        item.SubItems.Add(details[0].LogicalChannelNumber);
       }
       return item;
     }

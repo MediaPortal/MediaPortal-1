@@ -271,7 +271,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
             {
               newChannel.LogicalChannelNumber = 10000;
             }
-            newChannel.FreeToAir = !isEncrypted;
+            if (isEncrypted)
+            {
+              newChannel.EncryptionScheme = EncryptionSchemeEnum.Encrypted;
+            }
+            else
+            {
+              newChannel.EncryptionScheme = EncryptionSchemeEnum.Free;
+            }            
 
             if (serviceName.Length == 0)
             {
@@ -626,7 +633,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
             {
               newChannel.LogicalChannelNumber = 10000;
             }
-            newChannel.FreeToAir = !isEncrypted;
+
+            if (isEncrypted)
+            {
+              newChannel.EncryptionScheme = EncryptionSchemeEnum.Encrypted;
+            }
+            else
+            {
+              newChannel.EncryptionScheme = EncryptionSchemeEnum.Free;
+            }   
 
             if (serviceName.Length == 0)
             {

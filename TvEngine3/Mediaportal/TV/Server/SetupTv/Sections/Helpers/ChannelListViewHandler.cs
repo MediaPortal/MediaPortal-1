@@ -207,7 +207,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
       bool dvbip = false;
       bool webstream = false;
       bool notmapped = true;
-      if (ch.IsWebstream())
+      if (ch.IsWebstream)
       {
         webstream = true;
         notmapped = false;
@@ -275,24 +275,23 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
       item.SubItems.Add(group);
 
       List<string> providers = new List<string>();
-      IList<TuningDetail> tuningDetails = ch.TuningDetails;
-      bool hasFta = false;
-      bool hasScrambled = false;
-      foreach (TuningDetail detail in tuningDetails)
+      IList<ServiceDetail> serviceDetails = ch.ServiceDetails;      
+      foreach (ServiceDetail detail in serviceDetails)
       {
-        if (!providers.Contains(detail.Provider) && !String.IsNullOrEmpty(detail.Provider))
+        ServiceDvb serviceDvb = detail as ServiceDvb;
+        if (serviceDvb != null)
         {
-          providers.Add(detail.Provider);
-        }
-        if (detail.FreeToAir)
-        {
-          hasFta = true;
-        }
-        if (!detail.FreeToAir)
-        {
-          hasScrambled = true;
-        }
+          if (!providers.Contains(serviceDvb.Provider) && !String.IsNullOrEmpty(serviceDvb.Provider))
+          {
+            providers.Add(serviceDvb.Provider);
+          } 
+        }        
       }
+
+      bool isFree;
+      bool encrypted;
+      bool sometimesEncrypted;
+      ch.GetEncrytionState(out isFree, out encrypted, out sometimesEncrypted);       
 
       string provider = String.Join(", ", providers.ToArray());
       item.SubItems.Add(provider);
@@ -300,11 +299,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
       int imageIndex = 0;
       if (_type == MediaTypeEnum.TV)
       {
-        if (hasFta && hasScrambled)
+        if ((isFree && encrypted) || sometimesEncrypted)
         {
           imageIndex = 5;
         }
-        else if (hasScrambled)
+        else if (encrypted)
         {
           imageIndex = 4;
         }
@@ -315,11 +314,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
       }
       else if (_type == MediaTypeEnum.Radio)
       {
-        if (hasFta && hasScrambled)
+        if (isFree && encrypted)
         {
           imageIndex = 2;
         }
-        else if (hasScrambled)
+        else if (encrypted)
         {
           imageIndex = 1;
         }
@@ -380,7 +379,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
       }
 
       item.SubItems.Add(builder.ToString());
-      item.SubItems.Add(tuningDetails.Count.ToString());
+      item.SubItems.Add(serviceDetails.Count.ToString());
 
       _listViewCache.Add(ch.IdChannel, item);
 

@@ -25,6 +25,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
@@ -328,7 +329,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
     {
       bool canCardDecodeChannel = true;
       int cardId = cardHandler.DataBaseCard.IdCard;
-      if (!tuningDetail.FreeToAir && !cardHandler.DataBaseCard.UseConditionalAccess)
+      if (tuningDetail.EncryptionScheme == EncryptionSchemeEnum.Encrypted && !cardHandler.DataBaseCard.UseConditionalAccess)
       {
         Log.Info("Controller:    card:{0} type:{1} channel is encrypted but card has no CAM", cardId, cardHandler.Type);
         canCardDecodeChannel = false;

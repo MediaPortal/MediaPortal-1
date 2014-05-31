@@ -30,7 +30,7 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     void DeleteCard(int idCard);
 
     [OperationContract]
-    DisEqcMotor SaveDisEqcMotor(DisEqcMotor motor);
+    TunerSatellite SaveTunerSatellite(TunerSatellite tunerSatellite);
 
     [OperationContract]
     Card GetCard(int idCard);
@@ -73,5 +73,11 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
 
     [OperationContract]
     IList<LnbType> ListAllLnbTypes();
+
+    [OperationContract]
+    LnbType SaveLnbType(LnbType lnbType);
+
+    [OperationContract]
+    void DeleteLnbType(int idLnbType);
   }
 }

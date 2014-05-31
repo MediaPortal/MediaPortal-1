@@ -31,7 +31,8 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
           Include(c => c.ChannelMaps.Select(m => m.Channel).Select(ch => ch.ServiceDetails.Select(s=>s.TuningDetail))).
           Include(c => c.ChannelMaps).
           Include(c => c.CardGroupMaps).
-          Include(c => c.DisEqcMotors);
+          Include(c => c.TunerSatellites);            
+      
       return includeRelations;
 
     }
@@ -58,7 +59,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       }
       if (disEqcMotors)
       {
-        query = query.Include(c => c.DisEqcMotors);
+        query = query.Include(c => c.TunerSatellites);
       }
       return query;
     }

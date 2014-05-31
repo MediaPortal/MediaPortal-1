@@ -48,28 +48,28 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     void DeleteChannel(int idChannel);
 
     [OperationContract]
-    TuningDetail SaveTuningDetail(TuningDetail tuningDetail);
+    ServiceDetail SaveServiceDetail(ServiceDetail serviceDetail);
 
     [OperationContract]
     IList<Channel> ListAllVisibleChannelsByMediaType(MediaTypeEnum mediaType);
 
-    [OperationContract]
-    TuningDetail GetTuningDetail(DVBBaseChannel dvbChannel);
+    //[OperationContract]
+    //TuningDetail GetTuningDetail(DVBBaseChannel dvbChannel);
 
     [OperationContract]
-    TuningDetail GetTuningDetailCustom(DVBBaseChannel dvbChannel, TuningDetailSearchEnum tuningDetailSearchEnum);
+    ServiceDetail GetServiceDetailCustom(DVBBaseChannel dvbChannel, TuningDetailSearchEnum tuningDetailSearchEnum);    
+
+    [OperationContract]
+    ServiceDetail GetServiceDetail(DVBBaseChannel dvbChannel);
 
     [OperationContract]
     TuningDetail GetTuningDetailByURL(DVBBaseChannel dvbChannel, string url);
 
     [OperationContract]
-    void AddTuningDetail(int idChannel, IChannel channel);
+    void AddTuningDetail(int idChannel, IChannel channel, int idCard);    
 
     [OperationContract]
-    IList<TuningDetail> GetTuningDetailsByName(string channelName, int channelType);
-
-    [OperationContract]
-    void UpdateTuningDetail(int idChannel, int idTuning, IChannel channel);    
+    void UpdateTuningDetail(int idChannel, int idTuning, IChannel channel, int idCard);    
 
     [OperationContract]
     Channel GetChannelByName(string channelName, ChannelIncludeRelationEnum includeRelations);
@@ -89,6 +89,10 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     IList<Channel> ListAllChannelsByMediaType(MediaTypeEnum mediaType, ChannelIncludeRelationEnum includeRelations);
 
     [OperationContract(Name = "GetAllChannelsByGroupIdAndMediaTypeWithSpecificRelations")]
-    IList<Channel> GetAllChannelsByGroupIdAndMediaType(int idGroup, MediaTypeEnum mediaTypeEnum, ChannelIncludeRelationEnum include);    
+    IList<Channel> GetAllChannelsByGroupIdAndMediaType(int idGroup, MediaTypeEnum mediaTypeEnum, ChannelIncludeRelationEnum include);
+
+    [OperationContract]
+    Channel GetChannelFromServiceDetailByName<T>(string channelName) where T : TuningDetail;
+
   } 
 }

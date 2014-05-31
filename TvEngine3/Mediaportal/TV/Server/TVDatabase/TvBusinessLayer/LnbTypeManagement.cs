@@ -24,5 +24,26 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         return lnbTypeRepository.GetAll<LnbType>().ToList();
       }
     }
+
+    public static LnbType SaveLnbType(LnbType lnbType)
+    {
+      using (IRepository<TvModel> lnbTypeRepository = new GenericRepository<TvModel>())
+      {
+        lnbTypeRepository.AttachEntityIfChangeTrackingDisabled(lnbTypeRepository.ObjectContext.LnbTypes, lnbType);
+        lnbTypeRepository.ApplyChanges(lnbTypeRepository.ObjectContext.LnbTypes, lnbType);
+        lnbTypeRepository.UnitOfWork.SaveChanges();
+        lnbType.AcceptChanges();
+        return lnbType;
+      }
+    }
+
+    public static void DeleteLnbType(int idLnbType)
+    {
+      using (IRepository<TvModel> lnbTypeRepository = new GenericRepository<TvModel>())
+      {
+        lnbTypeRepository.Delete<LnbType>(l => l.IdLnbType == idLnbType);
+        lnbTypeRepository.UnitOfWork.SaveChanges();
+      }
+    }
   }
 }

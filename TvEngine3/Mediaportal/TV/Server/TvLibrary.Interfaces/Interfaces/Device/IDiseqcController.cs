@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.ComponentModel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device
@@ -506,94 +507,117 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device
     /// <summary>
     /// DiSEqC not used.
     /// </summary>
+    [Description("DiSEqC not used")]
     None = 0,
     /// <summary>
     /// Simple A (tone burst).
     /// </summary>
+    [Description("Simple A (tone burst)")]
     SimpleA = 1,
     /// <summary>
     /// Simple B (data burst).
     /// </summary>
+    [Description("Simple B (data burst)")]
     SimpleB = 2,
     /// <summary>
     /// DiSEqC 1.0 port A (option A, position A)
     /// </summary>
+    [Description("DiSEqC 1.0 port A (option A, position A)")]
     PortA = 3,
     /// <summary>
     /// DiSEqC 1.0 port B (option A, position B)
     /// </summary>
+    [Description("DiSEqC 1.0 port B (option A, position B)")]
     PortB = 4,
     /// <summary>
     /// DiSEqC 1.0 port C (option B, position A)
     /// </summary>
+    [Description("DiSEqC 1.0 port C (option B, position A)")]
     PortC = 5,
     /// <summary>
     /// DiSEqC 1.0 port D (option B, position B)
     /// </summary>
+    [Description("DiSEqC 1.0 port D (option B, position B)")]
     PortD = 6,
     /// <summary>
     /// DiSEqC 1.1 port 1
     /// </summary>
+    [Description("DiSEqC 1.1 port 1")]
     Port1 = 7,
     /// <summary>
     /// DiSEqC 1.1 port 2
     /// </summary>
+    [Description("DiSEqC 1.1 port 2")]
     Port2 = 8,
     /// <summary>
     /// DiSEqC 1.1 port 3
     /// </summary>
+    [Description("DiSEqC 1.1 port 3")]
     Port3 = 9,
     /// <summary>
     /// DiSEqC 1.1 port 4
     /// </summary>
+    [Description("DiSEqC 1.1 port 4")]
     Port4 = 10,
     /// <summary>
     /// DiSEqC 1.1 port 5
     /// </summary>
+    [Description("DiSEqC 1.1 port 5")]
     Port5 = 11,
     /// <summary>
     /// DiSEqC 1.1 port 6
     /// </summary>
+    [Description("DiSEqC 1.1 port 6")]
     Port6 = 12,
     /// <summary>
     /// DiSEqC 1.1 port 7
     /// </summary>
+    [Description("DiSEqC 1.1 port 7")]
     Port7 = 13,
     /// <summary>
     /// DiSEqC 1.1 port 8
     /// </summary>
+    [Description("DiSEqC 1.1 port 8")]
     Port8 = 14,
     /// <summary>
     /// DiSEqC 1.1 port 9
     /// </summary>
+    [Description("DiSEqC 1.1 port 9")]
     Port9 = 15,
     /// <summary>
     /// DiSEqC 1.1 port 10
     /// </summary>
+    [Description("DiSEqC 1.1 port 10")]
     Port10 = 16,
     /// <summary>
     /// DiSEqC 1.1 port 11
     /// </summary>
+    [Description("DiSEqC 1.1 port 11")]
     Port11 = 17,
     /// <summary>
     /// DiSEqC 1.1 port 12
     /// </summary>
+    [Description("DiSEqC 1.1 port 12")]
     Port12 = 18,
     /// <summary>
     /// DiSEqC 1.1 port 13
     /// </summary>
+    [Description("DiSEqC 1.1 port 13")]
     Port13 = 19,
     /// <summary>
     /// DiSEqC 1.1 port 14
     /// </summary>
+    [Description("DiSEqC 1.1 port 14")]
     Port14 = 20,
     /// <summary>
     /// DiSEqC 1.1 port 15
     /// </summary>
+    [Description("DiSEqC 1.1 port 15")]
     Port15 = 21,
     /// <summary>
     /// DiSEqC 1.1 port 16
     /// </summary>
+    [Description("DiSEqC 1.1 port 16")]
     Port16 = 22
   }
 
@@ -624,14 +648,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device
     /// <summary>
     /// Off.
     /// </summary>
+    [Description("Off")]
     Off = 0,
     /// <summary>
     /// On.
     /// </summary>
+    [Description("On")]
     On,
     /// <summary>
     /// Auto - controlled by LNB frequency parameters.
     /// </summary>
+    [Description("Auto")]
     Auto
   }
 

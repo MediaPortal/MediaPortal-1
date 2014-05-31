@@ -44,27 +44,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.checkBoxEnableChannelMoveDetection = new System.Windows.Forms.CheckBox();
       this.mpLabel9 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.checkBoxCreateSignalGroup = new System.Windows.Forms.CheckBox();
-      this.mpLNB1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
-      this.buttonUpdate = new System.Windows.Forms.Button();
-      this.mpTransponder4 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
-      this.mpTransponder3 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
-      this.mpTransponder2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
-      this.mpTransponder1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
-      this.mpComboDiseqc4 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
-      this.mpComboDiseqc3 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
-      this.mpComboDiseqc2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
-      this.mpComboDiseqc1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
-      this.mpComboLnbType4 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
-      this.mpComboLnbType3 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
-      this.mpComboLnbType2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
-      this.mpComboLnbType1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
-      this.mpLabel3 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.mpLNB4 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
-      this.mpLNB3 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
-      this.mpLNB2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
-      this.mpLabel5 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.mpLabel8 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.mpLabel6 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.checkBoxEnableDVBS2 = new System.Windows.Forms.CheckBox();
       this.checkBoxAdvancedTuning = new System.Windows.Forms.CheckBox();
       this.checkBoxCreateGroupsSat = new System.Windows.Forms.CheckBox();
@@ -135,6 +114,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpLabel12 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.textBox2 = new System.Windows.Forms.TextBox();
       this.mpLabel13 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpLabel3 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpListViewTunerSatellites = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
+      this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.mpGrpAdvancedTuning.SuspendLayout();
@@ -257,30 +240,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // tabPage1
       // 
       this.tabPage1.BackColor = System.Drawing.SystemColors.Control;
+      this.tabPage1.Controls.Add(this.mpListViewTunerSatellites);
+      this.tabPage1.Controls.Add(this.mpLabel3);
       this.tabPage1.Controls.Add(this.checkBoxEnableChannelMoveDetection);
       this.tabPage1.Controls.Add(this.mpLabel9);
       this.tabPage1.Controls.Add(this.checkBoxCreateSignalGroup);
-      this.tabPage1.Controls.Add(this.mpLNB1);
-      this.tabPage1.Controls.Add(this.buttonUpdate);
-      this.tabPage1.Controls.Add(this.mpTransponder4);
-      this.tabPage1.Controls.Add(this.mpTransponder3);
-      this.tabPage1.Controls.Add(this.mpTransponder2);
-      this.tabPage1.Controls.Add(this.mpTransponder1);
-      this.tabPage1.Controls.Add(this.mpComboDiseqc4);
-      this.tabPage1.Controls.Add(this.mpComboDiseqc3);
-      this.tabPage1.Controls.Add(this.mpComboDiseqc2);
-      this.tabPage1.Controls.Add(this.mpComboDiseqc1);
-      this.tabPage1.Controls.Add(this.mpComboLnbType4);
-      this.tabPage1.Controls.Add(this.mpComboLnbType3);
-      this.tabPage1.Controls.Add(this.mpComboLnbType2);
-      this.tabPage1.Controls.Add(this.mpComboLnbType1);
-      this.tabPage1.Controls.Add(this.mpLabel3);
-      this.tabPage1.Controls.Add(this.mpLNB4);
-      this.tabPage1.Controls.Add(this.mpLNB3);
-      this.tabPage1.Controls.Add(this.mpLNB2);
-      this.tabPage1.Controls.Add(this.mpLabel5);
-      this.tabPage1.Controls.Add(this.mpLabel8);
-      this.tabPage1.Controls.Add(this.mpLabel6);
       this.tabPage1.Controls.Add(this.checkBoxEnableDVBS2);
       this.tabPage1.Controls.Add(this.checkBoxAdvancedTuning);
       this.tabPage1.Controls.Add(this.checkBoxCreateGroupsSat);
@@ -323,238 +287,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.checkBoxCreateSignalGroup.TabIndex = 24;
       this.checkBoxCreateSignalGroup.Text = "\"Digital Satellite\"";
       this.checkBoxCreateSignalGroup.UseVisualStyleBackColor = true;
-      // 
-      // mpLNB1
-      // 
-      this.mpLNB1.AutoSize = true;
-      this.mpLNB1.Checked = true;
-      this.mpLNB1.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.mpLNB1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpLNB1.Location = new System.Drawing.Point(6, 21);
-      this.mpLNB1.Name = "mpLNB1";
-      this.mpLNB1.Size = new System.Drawing.Size(37, 17);
-      this.mpLNB1.TabIndex = 5;
-      this.mpLNB1.Text = "#1";
-      this.mpLNB1.UseVisualStyleBackColor = true;
-      this.mpLNB1.CheckedChanged += new System.EventHandler(this.mpLNB1_CheckedChanged);
-      // 
-      // buttonUpdate
-      // 
-      this.buttonUpdate.Location = new System.Drawing.Point(322, 157);
-      this.buttonUpdate.Name = "buttonUpdate";
-      this.buttonUpdate.Size = new System.Drawing.Size(112, 23);
-      this.buttonUpdate.TabIndex = 29;
-      this.buttonUpdate.Text = "Update satellite list";
-      this.buttonUpdate.UseVisualStyleBackColor = true;
-      this.buttonUpdate.Click += new System.EventHandler(this.buttonUpdate_Click);
-      // 
-      // mpTransponder4
-      // 
-      this.mpTransponder4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpTransponder4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.mpTransponder4.FormattingEnabled = true;
-      this.mpTransponder4.Location = new System.Drawing.Point(284, 87);
-      this.mpTransponder4.Name = "mpTransponder4";
-      this.mpTransponder4.Size = new System.Drawing.Size(160, 21);
-      this.mpTransponder4.TabIndex = 20;
-      this.mpTransponder4.MouseHover += new System.EventHandler(this.mpCombo_MouseHover);
-      // 
-      // mpTransponder3
-      // 
-      this.mpTransponder3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpTransponder3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.mpTransponder3.FormattingEnabled = true;
-      this.mpTransponder3.Location = new System.Drawing.Point(284, 64);
-      this.mpTransponder3.Name = "mpTransponder3";
-      this.mpTransponder3.Size = new System.Drawing.Size(160, 21);
-      this.mpTransponder3.TabIndex = 16;
-      this.mpTransponder3.MouseHover += new System.EventHandler(this.mpCombo_MouseHover);
-      // 
-      // mpTransponder2
-      // 
-      this.mpTransponder2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpTransponder2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.mpTransponder2.FormattingEnabled = true;
-      this.mpTransponder2.Location = new System.Drawing.Point(284, 41);
-      this.mpTransponder2.Name = "mpTransponder2";
-      this.mpTransponder2.Size = new System.Drawing.Size(160, 21);
-      this.mpTransponder2.TabIndex = 12;
-      this.mpTransponder2.MouseHover += new System.EventHandler(this.mpCombo_MouseHover);
-      // 
-      // mpTransponder1
-      // 
-      this.mpTransponder1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpTransponder1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.mpTransponder1.FormattingEnabled = true;
-      this.mpTransponder1.Location = new System.Drawing.Point(284, 18);
-      this.mpTransponder1.Name = "mpTransponder1";
-      this.mpTransponder1.Size = new System.Drawing.Size(160, 21);
-      this.mpTransponder1.TabIndex = 8;
-      this.mpTransponder1.MouseHover += new System.EventHandler(this.mpCombo_MouseHover);
-      // 
-      // mpComboDiseqc4
-      // 
-      this.mpComboDiseqc4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpComboDiseqc4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.mpComboDiseqc4.FormattingEnabled = true;
-      this.mpComboDiseqc4.Location = new System.Drawing.Point(47, 87);
-      this.mpComboDiseqc4.Name = "mpComboDiseqc4";
-      this.mpComboDiseqc4.Size = new System.Drawing.Size(77, 21);
-      this.mpComboDiseqc4.TabIndex = 18;
-      this.mpComboDiseqc4.MouseHover += new System.EventHandler(this.mpCombo_MouseHover);
-      // 
-      // mpComboDiseqc3
-      // 
-      this.mpComboDiseqc3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpComboDiseqc3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.mpComboDiseqc3.FormattingEnabled = true;
-      this.mpComboDiseqc3.Location = new System.Drawing.Point(47, 64);
-      this.mpComboDiseqc3.Name = "mpComboDiseqc3";
-      this.mpComboDiseqc3.Size = new System.Drawing.Size(77, 21);
-      this.mpComboDiseqc3.TabIndex = 14;
-      this.mpComboDiseqc3.MouseHover += new System.EventHandler(this.mpCombo_MouseHover);
-      // 
-      // mpComboDiseqc2
-      // 
-      this.mpComboDiseqc2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpComboDiseqc2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.mpComboDiseqc2.FormattingEnabled = true;
-      this.mpComboDiseqc2.Location = new System.Drawing.Point(47, 41);
-      this.mpComboDiseqc2.Name = "mpComboDiseqc2";
-      this.mpComboDiseqc2.Size = new System.Drawing.Size(77, 21);
-      this.mpComboDiseqc2.TabIndex = 10;
-      this.mpComboDiseqc2.MouseHover += new System.EventHandler(this.mpCombo_MouseHover);
-      // 
-      // mpComboDiseqc1
-      // 
-      this.mpComboDiseqc1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpComboDiseqc1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.mpComboDiseqc1.FormattingEnabled = true;
-      this.mpComboDiseqc1.Location = new System.Drawing.Point(47, 18);
-      this.mpComboDiseqc1.Name = "mpComboDiseqc1";
-      this.mpComboDiseqc1.Size = new System.Drawing.Size(77, 21);
-      this.mpComboDiseqc1.TabIndex = 6;
-      this.mpComboDiseqc1.MouseHover += new System.EventHandler(this.mpCombo_MouseHover);
-      // 
-      // mpComboLnbType4
-      // 
-      this.mpComboLnbType4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpComboLnbType4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.mpComboLnbType4.FormattingEnabled = true;
-      this.mpComboLnbType4.Location = new System.Drawing.Point(128, 87);
-      this.mpComboLnbType4.Name = "mpComboLnbType4";
-      this.mpComboLnbType4.Size = new System.Drawing.Size(152, 21);
-      this.mpComboLnbType4.TabIndex = 19;
-      // 
-      // mpComboLnbType3
-      // 
-      this.mpComboLnbType3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpComboLnbType3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.mpComboLnbType3.FormattingEnabled = true;
-      this.mpComboLnbType3.Location = new System.Drawing.Point(128, 64);
-      this.mpComboLnbType3.Name = "mpComboLnbType3";
-      this.mpComboLnbType3.Size = new System.Drawing.Size(152, 21);
-      this.mpComboLnbType3.TabIndex = 15;
-      // 
-      // mpComboLnbType2
-      // 
-      this.mpComboLnbType2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpComboLnbType2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.mpComboLnbType2.FormattingEnabled = true;
-      this.mpComboLnbType2.Location = new System.Drawing.Point(128, 41);
-      this.mpComboLnbType2.Name = "mpComboLnbType2";
-      this.mpComboLnbType2.Size = new System.Drawing.Size(152, 21);
-      this.mpComboLnbType2.TabIndex = 11;
-      // 
-      // mpComboLnbType1
-      // 
-      this.mpComboLnbType1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpComboLnbType1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.mpComboLnbType1.FormattingEnabled = true;
-      this.mpComboLnbType1.Location = new System.Drawing.Point(128, 18);
-      this.mpComboLnbType1.Name = "mpComboLnbType1";
-      this.mpComboLnbType1.Size = new System.Drawing.Size(152, 21);
-      this.mpComboLnbType1.TabIndex = 7;
-      // 
-      // mpLabel3
-      // 
-      this.mpLabel3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpLabel3.AutoSize = true;
-      this.mpLabel3.Location = new System.Drawing.Point(125, 3);
-      this.mpLabel3.Name = "mpLabel3";
-      this.mpLabel3.Size = new System.Drawing.Size(58, 13);
-      this.mpLabel3.TabIndex = 3;
-      this.mpLabel3.Text = "LNB Type:";
-      // 
-      // mpLNB4
-      // 
-      this.mpLNB4.AutoSize = true;
-      this.mpLNB4.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpLNB4.Location = new System.Drawing.Point(6, 88);
-      this.mpLNB4.Name = "mpLNB4";
-      this.mpLNB4.Size = new System.Drawing.Size(37, 17);
-      this.mpLNB4.TabIndex = 17;
-      this.mpLNB4.Text = "#4";
-      this.mpLNB4.UseVisualStyleBackColor = true;
-      this.mpLNB4.CheckedChanged += new System.EventHandler(this.mpLNB4_CheckedChanged);
-      // 
-      // mpLNB3
-      // 
-      this.mpLNB3.AutoSize = true;
-      this.mpLNB3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpLNB3.Location = new System.Drawing.Point(6, 65);
-      this.mpLNB3.Name = "mpLNB3";
-      this.mpLNB3.Size = new System.Drawing.Size(37, 17);
-      this.mpLNB3.TabIndex = 13;
-      this.mpLNB3.Text = "#3";
-      this.mpLNB3.UseVisualStyleBackColor = true;
-      this.mpLNB3.CheckedChanged += new System.EventHandler(this.mpLNB3_CheckedChanged);
-      // 
-      // mpLNB2
-      // 
-      this.mpLNB2.AutoSize = true;
-      this.mpLNB2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpLNB2.Location = new System.Drawing.Point(6, 42);
-      this.mpLNB2.Name = "mpLNB2";
-      this.mpLNB2.Size = new System.Drawing.Size(37, 17);
-      this.mpLNB2.TabIndex = 9;
-      this.mpLNB2.Text = "#2";
-      this.mpLNB2.UseVisualStyleBackColor = true;
-      this.mpLNB2.CheckedChanged += new System.EventHandler(this.mpLNB2_CheckedChanged);
-      // 
-      // mpLabel5
-      // 
-      this.mpLabel5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpLabel5.AutoSize = true;
-      this.mpLabel5.Location = new System.Drawing.Point(281, 3);
-      this.mpLabel5.Name = "mpLabel5";
-      this.mpLabel5.Size = new System.Drawing.Size(47, 13);
-      this.mpLabel5.TabIndex = 4;
-      this.mpLabel5.Text = "Satellite:";
-      // 
-      // mpLabel8
-      // 
-      this.mpLabel8.AutoSize = true;
-      this.mpLabel8.Location = new System.Drawing.Point(3, 3);
-      this.mpLabel8.Name = "mpLabel8";
-      this.mpLabel8.Size = new System.Drawing.Size(26, 13);
-      this.mpLabel8.TabIndex = 1;
-      this.mpLabel8.Text = "Sat:";
-      // 
-      // mpLabel6
-      // 
-      this.mpLabel6.AutoSize = true;
-      this.mpLabel6.Location = new System.Drawing.Point(44, 3);
-      this.mpLabel6.Name = "mpLabel6";
-      this.mpLabel6.Size = new System.Drawing.Size(47, 13);
-      this.mpLabel6.TabIndex = 2;
-      this.mpLabel6.Text = "DiSEqC:";
       // 
       // checkBoxEnableDVBS2
       // 
@@ -876,7 +608,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabPage2.Location = new System.Drawing.Point(4, 22);
       this.tabPage2.Name = "tabPage2";
       this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage2.Size = new System.Drawing.Size(472, 424);
+      this.tabPage2.Size = new System.Drawing.Size(469, 424);
       this.tabPage2.TabIndex = 1;
       this.tabPage2.Text = "DiSEqC Motor";
       this.tabPage2.UseVisualStyleBackColor = true;
@@ -1190,7 +922,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabPageCIMenu.BackColor = System.Drawing.Color.Transparent;
       this.tabPageCIMenu.Location = new System.Drawing.Point(4, 22);
       this.tabPageCIMenu.Name = "tabPageCIMenu";
-      this.tabPageCIMenu.Size = new System.Drawing.Size(472, 424);
+      this.tabPageCIMenu.Size = new System.Drawing.Size(469, 424);
       this.tabPageCIMenu.TabIndex = 3;
       this.tabPageCIMenu.Text = "CI Menu";
       this.tabPageCIMenu.UseVisualStyleBackColor = true;
@@ -1290,6 +1022,44 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpLabel13.TabIndex = 97;
       this.mpLabel13.Text = "Symbol rate:";
       // 
+      // mpLabel3
+      // 
+      this.mpLabel3.AutoSize = true;
+      this.mpLabel3.Location = new System.Drawing.Point(6, 3);
+      this.mpLabel3.Name = "mpLabel3";
+      this.mpLabel3.Size = new System.Drawing.Size(117, 13);
+      this.mpLabel3.TabIndex = 115;
+      this.mpLabel3.Text = "Available tunersatellites";
+      // 
+      // mpListViewTunerSatellites
+      // 
+      this.mpListViewTunerSatellites.AllowDrop = true;
+      this.mpListViewTunerSatellites.AllowRowReorder = true;
+      this.mpListViewTunerSatellites.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+      this.mpListViewTunerSatellites.CheckBoxes = true;
+      this.mpListViewTunerSatellites.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader2,
+            this.columnHeader3});
+      this.mpListViewTunerSatellites.FullRowSelect = true;
+      this.mpListViewTunerSatellites.IsChannelListView = false;
+      this.mpListViewTunerSatellites.Location = new System.Drawing.Point(9, 19);
+      this.mpListViewTunerSatellites.Name = "mpListViewTunerSatellites";
+      this.mpListViewTunerSatellites.Size = new System.Drawing.Size(454, 78);
+      this.mpListViewTunerSatellites.TabIndex = 116;
+      this.mpListViewTunerSatellites.UseCompatibleStateImageBehavior = false;
+      this.mpListViewTunerSatellites.View = System.Windows.Forms.View.Details;
+      // 
+      // columnHeader2
+      // 
+      this.columnHeader2.Text = "Satellite";
+      this.columnHeader2.Width = 386;
+      // 
+      // columnHeader3
+      // 
+      this.columnHeader3.Text = "LNB";
+      this.columnHeader3.Width = 61;
+      // 
       // CardDvbS
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1360,8 +1130,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private System.Windows.Forms.Button buttonReset;
     private System.Windows.Forms.Label label12;
     private System.Windows.Forms.Label labelCurrentPosition;
-    private System.Windows.Forms.PictureBox pictureBox1;
-    private System.Windows.Forms.Button buttonUpdate; 
+    private System.Windows.Forms.PictureBox pictureBox1; 
     private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel mpLabel4;  
     private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel mpLabel2;
     private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel mpLabel1;
@@ -1393,27 +1162,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private System.Windows.Forms.CheckBox checkBoxAdvancedTuning;
     private System.Windows.Forms.CheckBox checkBoxEnableDVBS2;
     private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox mpGrpScanProgress;
-    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox mpTransponder4;
-    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox mpTransponder3;
-    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox mpTransponder2;
-    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox mpTransponder1;
-    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox mpComboDiseqc4;
-    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox mpComboDiseqc3;
-    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox mpComboDiseqc2;
-    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox mpComboDiseqc1;
-    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox mpComboLnbType4;
-    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox mpComboLnbType3;
-    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox mpComboLnbType2;
-    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox mpComboLnbType1;
-    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel mpLabel3;
-    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox mpLNB4;
-    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox mpLNB3;
-    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox mpLNB2;
-    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel mpLabel5;
-    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel mpLabel8;
-    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel mpLabel6;
     private System.Windows.Forms.Button button1;
-    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox mpLNB1;
     private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel mpLabel9;
     private System.Windows.Forms.CheckBox checkBoxCreateSignalGroup;
     private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox mpComboBoxPilot;
@@ -1424,5 +1173,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox mpComboBoxInnerFecRate;
     private System.Windows.Forms.CheckBox checkBoxEnableChannelMoveDetection;
     private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel mpLabel21;
+    private SetupControls.UserInterfaceControls.MPLabel mpLabel3;
+    private SetupControls.UserInterfaceControls.MPListView mpListViewTunerSatellites;
+    private System.Windows.Forms.ColumnHeader columnHeader2;
+    private System.Windows.Forms.ColumnHeader columnHeader3;
   }
 }

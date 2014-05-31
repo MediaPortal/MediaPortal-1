@@ -81,6 +81,51 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             }
         }
         private Nullable<int> _frequency;
+    
+        [DataMember]
+        public Nullable<int> VideoSource
+        {
+            get { return _videoSource; }
+            set
+            {
+                if (_videoSource != value)
+                {
+                    _videoSource = value;
+                    OnPropertyChanged("VideoSource");
+                }
+            }
+        }
+        private Nullable<int> _videoSource;
+    
+        [DataMember]
+        public Nullable<int> AudioSource
+        {
+            get { return _audioSource; }
+            set
+            {
+                if (_audioSource != value)
+                {
+                    _audioSource = value;
+                    OnPropertyChanged("AudioSource");
+                }
+            }
+        }
+        private Nullable<int> _audioSource;
+    
+        [DataMember]
+        public Nullable<bool> IsVcrSignal
+        {
+            get { return _isVcrSignal; }
+            set
+            {
+                if (_isVcrSignal != value)
+                {
+                    _isVcrSignal = value;
+                    OnPropertyChanged("IsVcrSignal");
+                }
+            }
+        }
+        private Nullable<bool> _isVcrSignal;
 
         #endregion
         #region ChangeTracking

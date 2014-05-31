@@ -167,14 +167,14 @@ namespace Mediaportal.TV.Server.TestApp
       // 
       this.comboBoxDisEqc.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxDisEqc.FormattingEnabled = true;
-      this.comboBoxDisEqc.Items.AddRange(new object[] {
+      /*this.comboBoxDisEqc.Items.AddRange(new object[] {
             "None",
             "Simple A",
             "Simple B",
             "Level 1 A/A",
             "Level 1 B/A",
             "Level 1 A/B",
-            "Level 1 B/B"});
+            "Level 1 B/B"});*/
       this.comboBoxDisEqc.Location = new System.Drawing.Point(106, 204);
       this.comboBoxDisEqc.Name = "comboBoxDisEqc";
       this.comboBoxDisEqc.Size = new System.Drawing.Size(146, 21);

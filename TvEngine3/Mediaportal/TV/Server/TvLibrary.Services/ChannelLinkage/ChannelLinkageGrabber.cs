@@ -65,7 +65,7 @@ namespace Mediaportal.TV.Server.TVLibrary.ChannelLinkage
 
     private static void PersistPortalChannel(PortalChannel pChannel)
     {      
-      Channel dbPortalChannel = ChannelManagement.GetChannelByTuningDetail(pChannel.NetworkId, pChannel.TransportId,
+      Channel dbPortalChannel = ChannelManagement.GetChannelBy(pChannel.NetworkId, pChannel.TransportId,
                                                                pChannel.ServiceId);
       if (dbPortalChannel == null)
       {
@@ -76,7 +76,7 @@ namespace Mediaportal.TV.Server.TVLibrary.ChannelLinkage
       ChannelManagement.DeleteAllChannelLinkageMaps(dbPortalChannel.IdChannel);
       foreach (LinkedChannel lChannel in pChannel.LinkedChannels)
       {
-        Channel dbLinkedChannnel = ChannelManagement.GetChannelByTuningDetail(lChannel.NetworkId, lChannel.TransportId,
+        Channel dbLinkedChannnel = ChannelManagement.GetChannelBy(lChannel.NetworkId, lChannel.TransportId,
                                                                   lChannel.ServiceId);        
         if (dbLinkedChannnel == null)
         {

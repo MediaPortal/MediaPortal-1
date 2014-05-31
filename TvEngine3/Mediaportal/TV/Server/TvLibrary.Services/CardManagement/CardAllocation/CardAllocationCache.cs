@@ -81,11 +81,11 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
     }
 
 
-    private static void ChannelManagement_OnStateChangedTuningDetailEvent(TuningDetail tuningDetail, ObjectState state)
+    private static void ChannelManagement_OnStateChangedTuningDetailEvent(ServiceDetail serviceDetail, ObjectState state)
     {
-      if (tuningDetail.IdChannel > 0)
+      if (serviceDetail.IdChannel > 0)
       {
-        Channel channel = ChannelManagement.GetChannel(tuningDetail.IdChannel);
+        Channel channel = ChannelManagement.GetChannel(serviceDetail.IdChannel);
         UpdateCacheWithTuningDetailsForChannel(channel);
       }
     }

@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using Mediaportal.TV.Server.SetupControls;
@@ -227,7 +228,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
           for (int i = 0; i < channels.Length; ++i)
           {
-            Channel dbChannel;
+            Channel dbChannel = null;
             DVBIPChannel channel = (DVBIPChannel)channels[i];
             if (channels.Length > 1)
             {
@@ -240,7 +241,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             {
               channel.Name = name;
             }
-            bool exists;
+            bool exists = false;
             TuningDetail currentDetail;
             //Check if we already have this tuningdetail. According to DVB-IP specifications there are two ways to identify DVB-IP
             //services: one ONID + SID based, the other domain/URL based. At this time we don't fully and properly implement the DVB-IP
@@ -250,7 +251,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             {
               TuningDetailSearchEnum tuningDetailSearchEnum = TuningDetailSearchEnum.NetworkId;
               tuningDetailSearchEnum |= TuningDetailSearchEnum.ServiceId;
-              currentDetail = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailCustom(channel, tuningDetailSearchEnum);              
+              currentDetail = ServiceAgents.Instance.ChannelServiceAgent.GetServiceDetailCustom(channel, tuningDetailSearchEnum).TuningDetail;              
             }
             else
             {
@@ -273,8 +274,16 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             }
             else
             {
-              exists = true;
-              dbChannel = currentDetail.Channel;
+              
+
+              foreach (ServiceDvb serviceDetail in currentDetail.ServiceDetails.OfType<ServiceDvb>())
+              {
+                if (serviceDetail.Provider == tuneChannel.Provider && serviceDetail.OriginalNetworkId == tuneChannel.NetworkId)
+                {
+                  dbChannel = serviceDetail.Channel;
+                  exists = true;
+                }
+              }              
             }
 
             ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, channel.MediaType);
@@ -287,12 +296,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             }
             if (currentDetail == null)
             {
-              ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, channel);
+              ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, channel, _cardNumber);
             }
             else
             {
               //update tuning details...
-              ServiceAgents.Instance.ChannelServiceAgent.UpdateTuningDetail(dbChannel.IdChannel, currentDetail.IdTuning, channel);            
+              ServiceAgents.Instance.ChannelServiceAgent.UpdateTuningDetail(dbChannel.IdChannel, currentDetail.IdTuningDetail, channel, _cardNumber);            
             }
 
             if (channel.MediaType == MediaTypeEnum.TV)

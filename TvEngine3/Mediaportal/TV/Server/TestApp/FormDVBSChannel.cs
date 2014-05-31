@@ -19,10 +19,14 @@
 #endregion
 
 using System;
+using System.Linq;
 using System.Windows.Forms;
 using DirectShowLib.BDA;
+using MediaPortal.Common.Utils.ExtensionMethods;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
+
 
 namespace Mediaportal.TV.Server.TestApp
 {
@@ -33,6 +37,15 @@ namespace Mediaportal.TV.Server.TestApp
     public FormDVBSChannel()
     {
       InitializeComponent();
+
+      var diseqCTypes = Enum.GetValues(typeof(DiseqcPort)).Cast<DiseqcPort>(); 
+
+      foreach (DiseqcPort diseqcPort in diseqCTypes)
+      {
+        string description = diseqcPort.GetDescription();
+        this.comboBoxDisEqc.Items.Add(description);
+      }
+
       comboBoxDisEqc.SelectedIndex = 0;
       comboBoxPol.SelectedIndex = 0;
     }

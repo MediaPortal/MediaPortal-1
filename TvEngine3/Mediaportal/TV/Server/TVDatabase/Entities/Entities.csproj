@@ -136,11 +136,16 @@
       <SubType>
       </SubType>
     </Compile>
-    <Compile Include="DisEqcMotor.cs">
-      <DependentUpon>Model.tt</DependentUpon>
-      <SubType>
-      </SubType>
-    </Compile>
+    <Compile Include="testing.cs" />
+    <Compile Include="TuningDetailTerrestrialPartial.cs" />
+    <Compile Include="TuningDetailStreamPartial.cs" />
+    <Compile Include="TuningDetailDvbT2Partial.cs" />
+    <Compile Include="TuningDetailSatellitePartial.cs" />
+    <Compile Include="TuningDetailDvbS2Partial.cs" />
+    <Compile Include="TuningDetailCablePartial.cs" />
+    <Compile Include="TuningDetailAnalogPartial.cs" />
+    <Compile Include="TuningDetailAtscPartial.cs" />
+    <Compile Include="Enums\EncryptionSchemeEnum.cs" />
     <Compile Include="Enums\ScheduleIncludeRelationEnum.cs" />
     <Compile Include="Favorite.cs">
       <DependentUpon>Model.tt</DependentUpon>
@@ -293,6 +298,7 @@
       <SubType>
       </SubType>
     </Compile>
+    <Compile Include="ServiceDetailPartial.cs" />
     <Compile Include="ServiceDvb.cs">
       <DependentUpon>Model.tt</DependentUpon>
       <SubType>
@@ -318,6 +324,11 @@
       <SubType>
       </SubType>
     </Compile>
+    <Compile Include="TunerSatellite.cs">
+      <DependentUpon>Model.tt</DependentUpon>
+      <SubType>
+      </SubType>
+    </Compile>
     <Compile Include="TuningDetail.cs">
       <DependentUpon>Model.tt</DependentUpon>
       <SubType>
@@ -334,11 +345,6 @@
       </SubType>
     </Compile>
     <Compile Include="TuningDetailCable.cs">
-      <DependentUpon>Model.tt</DependentUpon>
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="TuningDetailCapture.cs">
       <DependentUpon>Model.tt</DependentUpon>
       <SubType>
       </SubType>

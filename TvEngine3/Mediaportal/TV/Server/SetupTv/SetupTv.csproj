@@ -58,6 +58,24 @@
     <Compile Include="..\..\..\..\..\Common-MP-TVE3\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
+    <Compile Include="Dialogs\FormSatellite.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\FormSatellite.designer.cs">
+      <DependentUpon>FormSatellite.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\FormLNBType.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\FormLNBType.designer.cs">
+      <DependentUpon>FormLNBType.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\FormTunerSatellite.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\FormTunerSatellite.designer.cs">
+      <DependentUpon>FormTunerSatellite.cs</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\FormEditSchedule.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -160,6 +178,26 @@
     <Compile Include="..\..\..\..\..\Common-MP-TVE3\Common.Utils\OsInfo\OSPrerequisites.cs">
       <Link>Core\OSPrerequisites.cs</Link>
     </Compile>
+    <Compile Include="Sections\LnbTypes.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\LnbTypes.Designer.cs">
+      <DependentUpon>LnbTypes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\Helpers\SatelliteContext.cs" />
+    <Compile Include="Sections\Satellites.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\Satellites.Designer.cs">
+      <DependentUpon>Satellites.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\Helpers\Transponder.cs" />
+    <Compile Include="Sections\TunerSatellites.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\TunerSatellites.Designer.cs">
+      <DependentUpon>TunerSatellites.cs</DependentUpon>
+    </Compile>
     <Compile Include="Sections\EpgGenreMap.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -259,6 +297,18 @@
     <Compile Include="PlaylistSupport\PlayListWPLIO.cs" />
     <Compile Include="PluginLoaderSetupTv.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Dialogs\FormSatellite.resx">
+      <DependentUpon>FormSatellite.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\FormLNBType.resx">
+      <DependentUpon>FormLNBType.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\FormTunerSatellite.resx">
+      <DependentUpon>FormTunerSatellite.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\FormEditSchedule.resx">
       <DependentUpon>FormEditSchedule.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -287,6 +337,18 @@
     <EmbeddedResource Include="Sections\CardDvbT.resx">
       <SubType>Designer</SubType>
       <DependentUpon>CardDvbT.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\LnbTypes.resx">
+      <DependentUpon>LnbTypes.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\Satellites.resx">
+      <DependentUpon>Satellites.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\TunerSatellites.resx">
+      <DependentUpon>TunerSatellites.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\EpgGenreMap.resx">
       <DependentUpon>EpgGenreMap.cs</DependentUpon>

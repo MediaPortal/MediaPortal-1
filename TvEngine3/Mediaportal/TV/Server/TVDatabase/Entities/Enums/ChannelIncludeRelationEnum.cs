@@ -13,6 +13,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities.Enums
     GroupMapsChannelGroup = 32,
     ChannelLinkMapsChannelLink = 64,
     ChannelLinkMapsChannelPortal = 128,
-    Recordings = 256
+    Recordings = 256,
+    ServiceDetails = 512
     } 
 }

@@ -96,15 +96,15 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       }
     }
 
-    public static DisEqcMotor SaveDisEqcMotor(DisEqcMotor motor)
+    public static TunerSatellite SaveTunerSatellite(TunerSatellite tunerSatellite)
     {
       using (ICardRepository cardRepository = new CardRepository())
       {
-        cardRepository.AttachEntityIfChangeTrackingDisabled(cardRepository.ObjectContext.DisEqcMotors, motor);
-        cardRepository.ApplyChanges(cardRepository.ObjectContext.DisEqcMotors, motor);
+        cardRepository.AttachEntityIfChangeTrackingDisabled(cardRepository.ObjectContext.TunerSatellites, tunerSatellite);
+        cardRepository.ApplyChanges(cardRepository.ObjectContext.TunerSatellites, tunerSatellite);
         cardRepository.UnitOfWork.SaveChanges();
-        motor.AcceptChanges();
-        return motor;
+        tunerSatellite.AcceptChanges();
+        return tunerSatellite;
       }  
     }
 

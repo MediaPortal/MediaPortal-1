@@ -1870,14 +1870,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
       // a DVB-T tuner), and check if that tuning detail corresponds with the same transponder that the EPG was
       // collected from (ie. the transponder that the tuner is currently tuned to). This logic will potentially
       // fail for people that merge HD and SD tuning details that happen to be for the same tuner type.
-      Channel dbchannel = ChannelManagement.GetChannelByTuningDetail(networkId, transportStreamId, serviceId);
+      Channel dbchannel = ChannelManagement.GetChannelBy(networkId, transportStreamId, serviceId);
       if (dbchannel == null)
       {
         return false;
       }
-      foreach (TuningDetail detail in dbchannel.TuningDetails)
+      foreach (ServiceDetail serviceDetail in dbchannel.ServiceDetails)
       {
-        IChannel channel = ChannelManagement.GetTuningChannel(detail);
+        IChannel channel = ChannelManagement.GetTuningChannel(serviceDetail, CardId);
         if (CanTune(channel))
         {
           return CurrentChannel.IsDifferentTransponder(channel);

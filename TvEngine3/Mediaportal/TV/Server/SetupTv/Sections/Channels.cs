@@ -537,16 +537,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       foreach (ListViewItem item in mpListView1.Items)
       {
         Channel channel = (Channel)item.Tag;
-        bool hasFTA = false;
-        foreach (TuningDetail tuningDetail in channel.TuningDetails)
-        {
-          if (tuningDetail.FreeToAir)
-          {
-            hasFTA = true;
-            break;
-          }
-        }
-        if (!hasFTA)
+        bool isFree;
+        bool encrypted;
+        bool sometimesEncrypted;
+        channel.GetEncrytionState(out isFree, out encrypted, out sometimesEncrypted);
+
+        if (encrypted)
         {
           item.Checked = false;
         }
@@ -564,16 +560,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       foreach (ListViewItem item in mpListView1.Items)
       {
         Channel channel = (Channel)item.Tag;
-        bool hasFTA = false;
-        foreach (TuningDetail tuningDetail in channel.TuningDetails)
-        {
-          if (tuningDetail.FreeToAir)
-          {
-            hasFTA = true;
-            break;
-          }
-        }
-        if (!hasFTA)
+        bool isFree;
+        bool encrypted;
+        bool sometimesEncrypted;
+        channel.GetEncrytionState(out isFree, out encrypted, out sometimesEncrypted);
+        if (encrypted)
         {
           ServiceAgents.Instance.ChannelServiceAgent.DeleteChannel(channel.IdChannel);
           itemsToRemove.Add(item);
@@ -595,14 +586,18 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       dlg.WaitForDisplay();
       foreach (ListViewItem item in mpListView1.SelectedItems)
       {
-        Channel channel = (Channel)item.Tag;
-        IList<TuningDetail> details = channel.TuningDetails;
+        var channel = (Channel)item.Tag;
+        IList<ServiceDetail> details = channel.ServiceDetails;
         if (details.Count > 0)
         {
-          channel.DisplayName = (details[0]).ServiceId.ToString();
-          channel = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(channel);
-          channel.AcceptChanges();
-          item.Tag = channel;
+          var serviceMpeg2 = details[0] as ServiceMpeg2;
+          if (serviceMpeg2 != null)
+          {
+            channel.DisplayName = serviceMpeg2.ServiceId.ToString();
+            channel = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(channel);
+            channel.AcceptChanges();
+            item.Tag = channel; 
+          }          
         }
       }
       dlg.Close();
@@ -619,10 +614,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       foreach (ListViewItem item in mpListView1.SelectedItems)
       {
         Channel channel = (Channel)item.Tag;
-        IList<TuningDetail> details = channel.TuningDetails;
+        IList<ServiceDetail> details = channel.ServiceDetails;
         if (details.Count > 0)
         {
-          channel.DisplayName = (details[0]).ServiceId + " " + channel.DisplayName;
+          var serviceDetail = details[0] as ServiceMpeg2;
+          channel.DisplayName = serviceDetail.ServiceId + " " + channel.DisplayName;
           channel = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(channel);
           channel.AcceptChanges();
           item.Tag = channel;
@@ -641,12 +637,16 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       foreach (ListViewItem item in mpListView1.SelectedItems)
       {
         Channel channel = (Channel)item.Tag;
-        IList<TuningDetail> details = channel.TuningDetails;
-        foreach (TuningDetail detail in details)
+        IList<ServiceDetail> details = channel.ServiceDetails;
+        foreach (ServiceDetail detail in details)
         {
-          detail.ChannelNumber = detail.ServiceId;
-          ServiceAgents.Instance.ChannelServiceAgent.SaveTuningDetail(detail);
-          detail.AcceptChanges();
+          var serviceMpeg2 = detail as ServiceMpeg2;
+          if (serviceMpeg2 != null)
+          {
+            detail.LogicalChannelNumber = serviceMpeg2.ServiceId.ToString();
+            ServiceAgents.Instance.ChannelServiceAgent.SaveServiceDetail(detail);
+            detail.AcceptChanges(); 
+          }          
         }
       }
       dlg.Close();

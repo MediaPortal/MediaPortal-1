@@ -62,7 +62,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private string _name;
     
         [DataMember]
-        public Nullable<int> LogicalChannelNumber
+        public string LogicalChannelNumber
         {
             get { return _logicalChannelNumber; }
             set
@@ -74,7 +74,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                 }
             }
         }
-        private Nullable<int> _logicalChannelNumber;
+        private string _logicalChannelNumber;
     
         [DataMember]
         public Nullable<int> EncryptionScheme
@@ -151,6 +151,21 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             }
         }
         private int _idTuningDetail;
+    
+        [DataMember]
+        public bool IsEpgSource
+        {
+            get { return _isEpgSource; }
+            set
+            {
+                if (_isEpgSource != value)
+                {
+                    _isEpgSource = value;
+                    OnPropertyChanged("IsEpgSource");
+                }
+            }
+        }
+        private bool _isEpgSource;
 
         #endregion
         #region Navigation Properties

@@ -210,7 +210,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           bool foundValidTuningDetail = tuningDetails.Count > 0;
           if (foundValidTuningDetail)
           {
-            int imageIndex = GetImageIndex(tuningDetails);
+            int imageIndex = GetImageIndex(channel);
             string displayName = channel.DisplayName;
             if (map.EpgOnly)
               displayName = channel.DisplayName + " (EPG Only)";
@@ -244,7 +244,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           bool foundValidTuningDetail = tuningDetails.Count > 0;
           if (foundValidTuningDetail)
           {
-            int imageIndex = GetImageIndex(tuningDetails);
+            int imageIndex = GetImageIndex(channel);
             ListViewItem item = new ListViewItem(channel.DisplayName, imageIndex);
             item.Tag = channel;
             items.Add(item);
@@ -323,48 +323,51 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private static List<TuningDetail> GetTuningDetailsByCardType(Channel channel, CardType cardType, bool enableDVBS2)
     {
       List<TuningDetail> result = new List<TuningDetail>();
-      foreach (TuningDetail tDetail in channel.TuningDetails)
+      foreach (ServiceDetail serviceDetail in channel.ServiceDetails)
       {
         switch (cardType)
         {
           case CardType.Analog:
-            if (tDetail.ChannelType == 0)
-              result.Add(tDetail);
+            if (serviceDetail.TuningDetail is TuningDetailAnalog)
+              result.Add(serviceDetail.TuningDetail);
             break;
           case CardType.Atsc:
-            if (tDetail.ChannelType == 1)
-              result.Add(tDetail);
+            if (serviceDetail.TuningDetail is TuningDetailAtsc)
+              result.Add(serviceDetail.TuningDetail);
             break;
           case CardType.DvbC:
-            if (tDetail.ChannelType == 2)
-              result.Add(tDetail);
+            if (serviceDetail.TuningDetail is TuningDetailCable)
+              result.Add(serviceDetail.TuningDetail);
             break;
           case CardType.DvbS:
-            if (tDetail.ChannelType == 3)
+            if (serviceDetail.TuningDetail is TuningDetailSatellite)
             {
-              if (!enableDVBS2 && (tDetail.Pilot > -1 || tDetail.RollOff > -1))
+              var serviceDetailS2 = serviceDetail.TuningDetail as TuningDetailDvbS2;
+
+              if (!enableDVBS2 && (serviceDetailS2 != null && (serviceDetailS2.Pilot > -1 || serviceDetailS2.RollOff > -1)))
               {
                 Log.Debug(String.Format(
                   "Imported channel {0} detected as DVB-S2. Skipped! \n Enable \"DVB-S2 tuning\" option in your TV-Card properties to be able to map these channels.",
-                  tDetail.Name));
+                  serviceDetail.Name));
               }
               else
               {
-                result.Add(tDetail);
+                result.Add(serviceDetail.TuningDetail);
               }
             }
             break;
           case CardType.DvbT:
-            if (tDetail.ChannelType == 4)
-              result.Add(tDetail);
+            if (serviceDetail.TuningDetail is TuningDetailTerrestrial)
+              result.Add(serviceDetail.TuningDetail);
             break;
           case CardType.DvbIP:
-            if (tDetail.ChannelType == 7)
-              result.Add(tDetail);
+            if (serviceDetail is ServiceDvb && serviceDetail.TuningDetail is TuningDetailStream)
+              result.Add(serviceDetail.TuningDetail);
             break;
           case CardType.RadioWebStream:
-            if (tDetail.ChannelType == 5)
-              result.Add(tDetail);
+            //todo gibman.. what make it a radiowebstream ?=
+            if (serviceDetail.TuningDetail is TuningDetailStream)
+              result.Add(serviceDetail.TuningDetail);
             break;
           default:
             break;
@@ -373,28 +376,19 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       return result;
     }
 
-    private static int GetImageIndex(IList<TuningDetail> tuningDetails)
+    private static int GetImageIndex(Channel channel)
     {
-      bool hasFta = false;
-      bool hasScrambled = false;
-      foreach (TuningDetail detail in tuningDetails)
-      {
-        if (detail.FreeToAir)
-        {
-          hasFta = true;
-        }
-        if (!detail.FreeToAir)
-        {
-          hasScrambled = true;
-        }
-      }
+      bool isFree;
+      bool encrypted;
+      bool sometimesEncrypted;
+      channel.GetEncrytionState(out isFree, out encrypted, out sometimesEncrypted);
 
       int imageIndex;
-      if (hasFta && hasScrambled)
+      if (isFree && encrypted)
       {
         imageIndex = 5;
       }
-      else if (hasScrambled)
+      else if (encrypted)
       {
         imageIndex = 4;
       }

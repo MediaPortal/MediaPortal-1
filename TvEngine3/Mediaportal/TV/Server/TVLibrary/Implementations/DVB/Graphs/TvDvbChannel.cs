@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using DirectShowLib;
@@ -766,7 +767,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
           // Attempt to grab the CAT if the service is encrypted. Note that we trust the setting on the
           // channel because we are not currently able to detect elementary stream level encryption. Better
           // to allow the user to do what they want - "user knows best".
-          if (!_currentChannel.FreeToAir)
+          if (_currentChannel.EncryptionScheme == EncryptionSchemeEnum.Encrypted)
           {
             //TODO fix this
             GrabCat();
@@ -943,22 +944,27 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
       {
         dvbService.PmtPid = pmtPid;   // Set the value here so we don't hammer this function, regardless of update success/fail.
 
-        TuningDetail currentDetail = ChannelManagement.GetTuningDetail(dvbService);
-        if (currentDetail != null)
+
+        //ServiceMpeg2 has pmtpid
+
+        ServiceDetail currentDetail = ChannelManagement.GetServiceDetail(dvbService);                
+        var serviceDetail = currentDetail as ServiceMpeg2;
+        if (serviceDetail != null)
         {
           try
           {
-            int oldPid = currentDetail.PmtPid;
-            currentDetail.PmtPid = pmtPid;
-            ChannelManagement.SaveTuningDetail(currentDetail);
+            int oldPid = serviceDetail.PmtPid.GetValueOrDefault(0);
+            serviceDetail.PmtPid = pmtPid;
+            ChannelManagement.SaveServiceDetail(serviceDetail);
             this.LogDebug("TvDvbChannel: updated PMT PID for service {0} (0x{0:x}) from {1} (0x{1:x}) to {2} (0x{2:x})",
                             dvbService.ServiceId, oldPid, pmtPid);
           }
           catch (Exception ex)
           {
             this.LogError(ex, "TvDvbChannel: failed to persist new PMT PID for service {0} (0x{0:x})", dvbService.ServiceId);
-          }
-        }
+          } 
+        }          
+        
         else
         {
           this.LogDebug("TvDvbChannel: unable to persist new PMT PID for service {0} (0x{0:x})", dvbService.ServiceId);

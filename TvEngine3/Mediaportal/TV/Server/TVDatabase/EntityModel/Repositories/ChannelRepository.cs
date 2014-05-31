@@ -38,6 +38,12 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       return channels;
     }
 
+    public IQueryable<ServiceDetail> IncludeAllRelations(IQueryable<ServiceDetail> query)
+    {
+      IQueryable<ServiceDetail> includeRelations = query.Include(c => c.TuningDetail).Include(c => c.Channel).Include(c=> c.Channel.GroupMaps);              
+
+      return includeRelations;
+    }
 
     public IQueryable<TuningDetail> IncludeAllRelations(IQueryable<TuningDetail> query)
     {      
@@ -157,7 +163,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 
     public IList<Channel> LoadNavigationProperties(IEnumerable<Channel> channels, ChannelIncludeRelationEnum includeRelations)
     {
-      bool tuningDetails = includeRelations.HasFlag(ChannelIncludeRelationEnum.TuningDetails);
+      //bool tuningDetails = includeRelations.HasFlag(ChannelIncludeRelationEnum.TuningDetails);
       bool channelMapsCard = includeRelations.HasFlag(ChannelIncludeRelationEnum.ChannelMapsCard);
       bool groupMapsChannelGroup = includeRelations.HasFlag(ChannelIncludeRelationEnum.GroupMapsChannelGroup);
 
@@ -167,10 +173,10 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       IDictionary<int, Card> cardDict = null;
       IDictionary<int, ChannelGroup> groupDict = null;
 
-      if (tuningDetails)
+      /*if (tuningDetails)
       {
         lnbTypesDict = GetLnbTypesDictionary();
-      }
+      }*/
       if (channelMapsCard)
       {
         cardDict = GetCardsDictionary();
@@ -183,14 +189,14 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 
       //now attach missing relations for tuningdetail - done in order to speed up query                    
       foreach (Channel channel in list)
-      {
-        if (tuningDetails)
+      {        
+        /*if (tuningDetails)
         {
-          foreach (var tuningDetail in channel.TuningDetails)
-          {
-            LoadTuningDetail(lnbTypesDict, tuningDetail);
+          foreach (ServiceDetail serviceDetail in channel.ServiceDetails)
+          {            
+            LoadServiceDetail(lnbTypesDict, serviceDetail);
           }
-        }
+        }*/
         if (channelMapsCard)
         {
           foreach (var channelMap in channel.ChannelMaps)
@@ -223,7 +229,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 
       if (tuningDetails)
       {
-        lnbTypesDict = GetLnbTypesDictionary();
+        //lnbTypesDict = GetLnbTypesDictionary();
       }
       if (channelMapsCard)
       {
@@ -233,20 +239,19 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       if (groupMapsChannelGroup)
       {
         groupDict = GetChannelGroupsDictionary();
-      }
+      }  
 
       ThreadHelper.ParallelInvoke(
         () =>
         {
-          if (tuningDetails)
-          {
-            //now attach missing relations for tuningdetail - done in order to speed up query                    
-            foreach (TuningDetail tuningDetail in channel.TuningDetails)
+          /*if (tuningDetails)
+          {            
+            //now attach missing relations for tuningdetail - done in order to speed up query                                
+            foreach (ServiceDetail serviceDetail in channel.ServiceDetails)
             {
-              LoadTuningDetail(lnbTypesDict, tuningDetail);
-            }
-            //Parallel.ForEach(channel.TuningDetails, (tuningDetail) => LoadTuningDetail(lnbTypesDict, tuningDetail));
-          }
+              LoadServiceDetail(lnbTypesDict, serviceDetail.TuningDetail);
+            }          
+          }*/
         }
           ,
           () =>
@@ -302,21 +307,22 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       }
     }
 
-    private static void LoadTuningDetail(IDictionary<int, LnbType> lnbTypesDict, TuningDetail tuningDetail)
-    {
-      if (tuningDetail.IdLnbType.HasValue)
+    /*
+    private static void LoadServiceDetail(IDictionary<int, LnbType> lnbTypesDict, ServiceDetail serviceDetail)
+    {            
+      
+      if (serviceDetail.IdLnbType.HasValue)
       {
         LnbType lnbType;
         if (
           lnbTypesDict.TryGetValue(
-            tuningDetail.IdLnbType.Value,
-            out lnbType))
+            serviceDetail.IdLnbType.Value, out lnbType))
         {
-          tuningDetail.LnbType = lnbType;
+          serviceDetail.LnbType = lnbType;
         }
       }
     }
-
+    */
 
     public IQueryable<Channel> IncludeAllRelations(IQueryable<Channel> query)
     {

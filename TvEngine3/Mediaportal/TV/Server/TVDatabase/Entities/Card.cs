@@ -19,9 +19,9 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
 {
     [DataContract(IsReference = true)]
     [KnownType(typeof(CardGroupMap))]
-    [KnownType(typeof(DisEqcMotor))]
     [KnownType(typeof(ChannelMap))]
     [KnownType(typeof(Conflict))]
+    [KnownType(typeof(TunerSatellite))]
     public partial class Card: IObjectWithChangeTracker, INotifyPropertyChanged
     {
         #region Primitive Properties
@@ -351,53 +351,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private TrackableCollection<CardGroupMap> _cardGroupMaps;
     
         [DataMember]
-        public TrackableCollection<DisEqcMotor> DisEqcMotors
-        {
-            get
-            {
-                if (_disEqcMotors == null)
-                {
-                    _disEqcMotors = new TrackableCollection<DisEqcMotor>();
-                    _disEqcMotors.CollectionChanged += FixupDisEqcMotors;
-                }
-                return _disEqcMotors;
-            }
-            set
-            {
-                if (!ReferenceEquals(_disEqcMotors, value))
-                {
-                    if (ChangeTracker.ChangeTrackingEnabled)
-                    {
-                        throw new InvalidOperationException("Cannot set the FixupChangeTrackingCollection when ChangeTracking is enabled");
-                    }
-                    if (_disEqcMotors != null)
-                    {
-                        _disEqcMotors.CollectionChanged -= FixupDisEqcMotors;
-                        // This is the principal end in an association that performs cascade deletes.
-                        // Remove the cascade delete event handler for any entities in the current collection.
-                        foreach (DisEqcMotor item in _disEqcMotors)
-                        {
-                            ChangeTracker.ObjectStateChanging -= item.HandleCascadeDelete;
-                        }
-                    }
-                    _disEqcMotors = value;
-                    if (_disEqcMotors != null)
-                    {
-                        _disEqcMotors.CollectionChanged += FixupDisEqcMotors;
-                        // This is the principal end in an association that performs cascade deletes.
-                        // Add the cascade delete event handler for any entities that are already in the new collection.
-                        foreach (DisEqcMotor item in _disEqcMotors)
-                        {
-                            ChangeTracker.ObjectStateChanging += item.HandleCascadeDelete;
-                        }
-                    }
-                    OnNavigationPropertyChanged("DisEqcMotors");
-                }
-            }
-        }
-        private TrackableCollection<DisEqcMotor> _disEqcMotors;
-    
-        [DataMember]
         public TrackableCollection<ChannelMap> ChannelMaps
         {
             get
@@ -490,6 +443,41 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             }
         }
         private TrackableCollection<Conflict> _conflicts;
+    
+        [DataMember]
+        public TrackableCollection<TunerSatellite> TunerSatellites
+        {
+            get
+            {
+                if (_tunerSatellites == null)
+                {
+                    _tunerSatellites = new TrackableCollection<TunerSatellite>();
+                    _tunerSatellites.CollectionChanged += FixupTunerSatellites;
+                }
+                return _tunerSatellites;
+            }
+            set
+            {
+                if (!ReferenceEquals(_tunerSatellites, value))
+                {
+                    if (ChangeTracker.ChangeTrackingEnabled)
+                    {
+                        throw new InvalidOperationException("Cannot set the FixupChangeTrackingCollection when ChangeTracking is enabled");
+                    }
+                    if (_tunerSatellites != null)
+                    {
+                        _tunerSatellites.CollectionChanged -= FixupTunerSatellites;
+                    }
+                    _tunerSatellites = value;
+                    if (_tunerSatellites != null)
+                    {
+                        _tunerSatellites.CollectionChanged += FixupTunerSatellites;
+                    }
+                    OnNavigationPropertyChanged("TunerSatellites");
+                }
+            }
+        }
+        private TrackableCollection<TunerSatellite> _tunerSatellites;
 
         #endregion
         #region ChangeTracking
@@ -570,9 +558,9 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         protected virtual void ClearNavigationProperties()
         {
             CardGroupMaps.Clear();
-            DisEqcMotors.Clear();
             ChannelMaps.Clear();
             Conflicts.Clear();
+            TunerSatellites.Clear();
         }
 
         #endregion
@@ -615,51 +603,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     if (ChangeTracker.ChangeTrackingEnabled)
                     {
                         ChangeTracker.RecordRemovalFromCollectionProperties("CardGroupMaps", item);
-                    }
-                    // This is the principal end in an association that performs cascade deletes.
-                    // Remove the previous dependent from the event listener.
-                    ChangeTracker.ObjectStateChanging -= item.HandleCascadeDelete;
-                }
-            }
-        }
-    
-        private void FixupDisEqcMotors(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (IsDeserializing)
-            {
-                return;
-            }
-    
-            if (e.NewItems != null)
-            {
-                foreach (DisEqcMotor item in e.NewItems)
-                {
-                    item.Card = this;
-                    if (ChangeTracker.ChangeTrackingEnabled)
-                    {
-                        if (!item.ChangeTracker.ChangeTrackingEnabled)
-                        {
-                            item.StartTracking();
-                        }
-                        ChangeTracker.RecordAdditionToCollectionProperties("DisEqcMotors", item);
-                    }
-                    // This is the principal end in an association that performs cascade deletes.
-                    // Update the event listener to refer to the new dependent.
-                    ChangeTracker.ObjectStateChanging += item.HandleCascadeDelete;
-                }
-            }
-    
-            if (e.OldItems != null)
-            {
-                foreach (DisEqcMotor item in e.OldItems)
-                {
-                    if (ReferenceEquals(item.Card, this))
-                    {
-                        item.Card = null;
-                    }
-                    if (ChangeTracker.ChangeTrackingEnabled)
-                    {
-                        ChangeTracker.RecordRemovalFromCollectionProperties("DisEqcMotors", item);
                     }
                     // This is the principal end in an association that performs cascade deletes.
                     // Remove the previous dependent from the event listener.
@@ -754,6 +697,45 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     // This is the principal end in an association that performs cascade deletes.
                     // Remove the previous dependent from the event listener.
                     ChangeTracker.ObjectStateChanging -= item.HandleCascadeDelete;
+                }
+            }
+        }
+    
+        private void FixupTunerSatellites(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (IsDeserializing)
+            {
+                return;
+            }
+    
+            if (e.NewItems != null)
+            {
+                foreach (TunerSatellite item in e.NewItems)
+                {
+                    item.Card = this;
+                    if (ChangeTracker.ChangeTrackingEnabled)
+                    {
+                        if (!item.ChangeTracker.ChangeTrackingEnabled)
+                        {
+                            item.StartTracking();
+                        }
+                        ChangeTracker.RecordAdditionToCollectionProperties("TunerSatellites", item);
+                    }
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (TunerSatellite item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.Card, this))
+                    {
+                        item.Card = null;
+                    }
+                    if (ChangeTracker.ChangeTrackingEnabled)
+                    {
+                        ChangeTracker.RecordRemovalFromCollectionProperties("TunerSatellites", item);
+                    }
                 }
             }
         }

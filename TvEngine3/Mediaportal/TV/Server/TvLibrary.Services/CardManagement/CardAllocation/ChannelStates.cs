@@ -27,6 +27,7 @@ using System.Threading.Tasks;
 using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
@@ -187,7 +188,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
                   continue;
                 }
 
-                if (!tuningDetail.FreeToAir && !cardHandler.DataBaseCard.UseConditionalAccess)
+                if (tuningDetail.EncryptionScheme == EncryptionSchemeEnum.Encrypted && !cardHandler.DataBaseCard.UseConditionalAccess)
                 {
                   UpdateChannelStateUsers(allUsers, ChannelState.nottunable, channel.IdChannel);
                   continue;

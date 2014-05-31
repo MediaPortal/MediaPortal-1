@@ -570,7 +570,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels(ChannelIncludeRelationEnum.None);
       foreach (Channel ch in channels)
       {
-        ch.LastGrabTime = Schedule.MinSchedule;        
+        //todo MM fix EPG
+        //ch.LastGrabTime = Schedule.MinSchedule;        
       }
       ServiceAgents.Instance.ChannelServiceAgent.SaveChannels(channels);
 
@@ -656,27 +657,17 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         foreach (Channel ch in channels)
         {
           if (ch.MediaType != (decimal) MediaTypeEnum.TV) continue;
-          bool hasFta = false;
-          bool hasScrambled = false;
-          IList<TuningDetail> tuningDetails = ch.TuningDetails;
-          foreach (TuningDetail detail in tuningDetails)
-          {
-            if (detail.FreeToAir)
-            {
-              hasFta = true;
-            }
-            if (!detail.FreeToAir)
-            {
-              hasScrambled = true;
-            }
-          }
+          bool isFree;
+          bool encrypted;
+          bool sometimesEncrypted;
+          ch.GetEncrytionState(out isFree, out encrypted, out sometimesEncrypted);         
 
           int imageIndex;
-          if (hasFta && hasScrambled)
+          if (isFree && encrypted)
           {
             imageIndex = 5;
           }
-          else if (hasScrambled)
+          else if (encrypted)
           {
             imageIndex = 4;
           }
@@ -693,32 +684,22 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       {
         ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetChannelGroup(idItem.Id);
         IList<GroupMap> maps = group.GroupMaps;
-        bool hasFta = false;
         foreach (GroupMap map in maps)
         {
           Channel ch = map.Channel;
-          if (ch.MediaType != (decimal) MediaTypeEnum.TV)
-          hasFta = false;
-          bool hasScrambled = false;
-          IList<TuningDetail> tuningDetails = ch.TuningDetails;
-          foreach (TuningDetail detail in tuningDetails)
-          {
-            if (detail.FreeToAir)
-            {
-              hasFta = true;
-            }
-            if (!detail.FreeToAir)
-            {
-              hasScrambled = true;
-            }
-          }
+         
+
+          bool isFree;
+          bool encrypted;
+          bool sometimesEncrypted;
+          ch.GetEncrytionState(out isFree, out encrypted, out sometimesEncrypted);          
 
           int imageIndex;
-          if (hasFta && hasScrambled)
+          if (isFree && encrypted)
           {
             imageIndex = 5;
           }
-          else if (hasScrambled)
+          else if (encrypted)
           {
             imageIndex = 4;
           }

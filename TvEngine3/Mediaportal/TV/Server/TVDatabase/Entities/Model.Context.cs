@@ -131,12 +131,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         }
         private ObjectSet<Conflict> _conflicts;
     
-        public ObjectSet<DisEqcMotor> DisEqcMotors
-        {
-            get { return _disEqcMotors  ?? (_disEqcMotors = CreateObjectSet<DisEqcMotor>("DisEqcMotors")); }
-        }
-        private ObjectSet<DisEqcMotor> _disEqcMotors;
-    
         public ObjectSet<Favorite> Favorites
         {
             get { return _favorites  ?? (_favorites = CreateObjectSet<Favorite>("Favorites")); }
@@ -214,6 +208,12 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             get { return _satellites  ?? (_satellites = CreateObjectSet<Satellite>("Satellites")); }
         }
         private ObjectSet<Satellite> _satellites;
+    
+        public ObjectSet<TunerSatellite> TunerSatellites
+        {
+            get { return _tunerSatellites  ?? (_tunerSatellites = CreateObjectSet<TunerSatellite>("TunerSatellites")); }
+        }
+        private ObjectSet<TunerSatellite> _tunerSatellites;
     
         public ObjectSet<Schedule> Schedules
         {

@@ -967,7 +967,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         this.LogDebug("TvCardBase: subchannel not found");
         return;
       }
-      if (_mapSubChannels[subChannelId].CurrentChannel.FreeToAir)
+      if (_mapSubChannels[subChannelId].CurrentChannel.EncryptionScheme == EncryptionSchemeEnum.Free)
       {
         this.LogDebug("TvCardBase: service is not encrypted");
         return;
@@ -988,7 +988,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       {
         IChannel service = en.Current.CurrentChannel;
         // We don't care about FTA services here.
-        if (service.FreeToAir)
+        if (service.EncryptionScheme == EncryptionSchemeEnum.Free)
         {
           continue;
         }

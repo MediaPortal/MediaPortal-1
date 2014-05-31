@@ -91,21 +91,27 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
       ChannelManagement.DeleteChannel(idChannel);
     }
 
-    public TuningDetail SaveTuningDetail(TuningDetail tuningDetail)
+    public ServiceDetail SaveServiceDetail(ServiceDetail serviceDetail)
     {
-      return ChannelManagement.SaveTuningDetail(tuningDetail);      
+      return ChannelManagement.SaveServiceDetail(serviceDetail);      
     }
 
-    public TuningDetail GetTuningDetail(DVBBaseChannel dvbChannel)
+    /*public TuningDetail GetTuningDetail(DVBBaseChannel dvbChannel)
     {
       var tuningDetail = ChannelManagement.GetTuningDetail(dvbChannel);
       return tuningDetail;
+    }*/
+
+    public ServiceDetail GetServiceDetail(DVBBaseChannel dvbChannel)
+    {
+      var serviceDetail = ChannelManagement.GetServiceDetail(dvbChannel);
+      return serviceDetail;
     }
 
-    public TuningDetail GetTuningDetailCustom(DVBBaseChannel dvbChannel, TuningDetailSearchEnum tuningDetailSearchEnum)
+    public ServiceDetail GetServiceDetailCustom(DVBBaseChannel dvbChannel, TuningDetailSearchEnum tuningDetailSearchEnum)
     {
-      var tuningDetail = ChannelManagement.GetTuningDetail(dvbChannel, tuningDetailSearchEnum);
-      return tuningDetail;
+      var serviceDetail = ChannelManagement.GetServiceDetail(dvbChannel, tuningDetailSearchEnum);
+      return serviceDetail;
     }
 
     public TuningDetail GetTuningDetailByURL(DVBBaseChannel dvbChannel, string url)
@@ -113,19 +119,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
       return ChannelManagement.GetTuningDetail(dvbChannel, url);
     }
 
-    public void AddTuningDetail(int idChannel, IChannel channel)
-    {
-      ChannelManagement.AddTuningDetail(idChannel, channel);
+    public void AddTuningDetail(int idChannel, IChannel channel, int idCard)
+    {      
+      ChannelManagement.AddServiceDetail(idChannel, channel, idCard);
     }
 
-    public IList<TuningDetail> GetTuningDetailsByName(string channelName, int channelType)
+
+    public Channel GetChannelFromServiceDetailByName<T>(string channelName) where T : TuningDetail
     {
-      return ChannelManagement.GetTuningDetailsByName(channelName, channelType);
+      return ChannelManagement.GetChannelFromServiceDetailByName<T>(channelName);
     }
 
-    public void UpdateTuningDetail(int idChannel, int idTuning, IChannel channel)
+    public void UpdateTuningDetail(int idChannel, int idTuning, IChannel channel, int idCard)
     {
-      ChannelManagement.UpdateTuningDetail(idChannel, idTuning, channel);
+      ChannelManagement.UpdateServiceDetail(idChannel, idTuning, channel, idCard);
     }
 
 

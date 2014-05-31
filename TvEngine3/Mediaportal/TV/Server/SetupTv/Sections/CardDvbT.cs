@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
@@ -503,9 +504,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           tv.updChannel = 0;
           for (int i = 0; i < channels.Length; ++i)
           {
-            Channel dbChannel;
+            Channel dbChannel = null;
             DVBTChannel channel = (DVBTChannel)channels[i];
-            bool exists;
+            bool exists = false;
             TuningDetail currentDetail;
             //Check if we already have this tuningdetail. The user has the option to enable channel move detection...
             if (checkBoxEnableChannelMoveDetection.Checked)
@@ -514,16 +515,16 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
               //The DVB spec recommends that the SID should not change if a service moves. This theoretically allows us to
               //track channel movements.
               TuningDetailSearchEnum tuningDetailSearchEnum = TuningDetailSearchEnum.NetworkId;
-              tuningDetailSearchEnum |= TuningDetailSearchEnum.ServiceId;
-              currentDetail = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailCustom(channel, tuningDetailSearchEnum);   
+              tuningDetailSearchEnum |= TuningDetailSearchEnum.ServiceId;              
+              currentDetail = ServiceAgents.Instance.ChannelServiceAgent.GetServiceDetailCustom(channel, tuningDetailSearchEnum).TuningDetail;              
               
             }
             else
             {
               //There are certain providers that do not maintain unique ONID + SID combinations.
               //In those cases, ONID + TSID + SID is generally unique. The consequence of using the TSID to identify
-              //a service is that channel movement tracking won't work (each transponder/mux should have its own TSID).
-              currentDetail = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetail(channel);
+              //a service is that channel movement tracking won't work (each transponder/mux should have its own TSID).              
+              currentDetail = ServiceAgents.Instance.ChannelServiceAgent.GetServiceDetail(channel).TuningDetail;
             }
 
             if (currentDetail == null)
@@ -541,9 +542,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
               dbChannel.AcceptChanges();
             }
             else
-            {
-              exists = true;
-              dbChannel = currentDetail.Channel;
+            {              
+              foreach (ServiceDvb serviceDetail in currentDetail.ServiceDetails.OfType<ServiceDvb>())
+              {
+                if (serviceDetail.Provider == tuneChannel.Provider && serviceDetail.OriginalNetworkId == tuneChannel.NetworkId)
+                {                  
+                  dbChannel = serviceDetail.Channel;
+                  exists = true;
+                }
+              }
             }
 
 
@@ -580,12 +587,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
             if (currentDetail == null)
             {
-              ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, channel);
+              ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, channel, _cardNumber);
             }
             else
             {
               //update tuning details...
-              ServiceAgents.Instance.ChannelServiceAgent.UpdateTuningDetail(dbChannel.IdChannel, currentDetail.IdTuning, channel);
+              ServiceAgents.Instance.ChannelServiceAgent.UpdateTuningDetail(dbChannel.IdChannel, currentDetail.IdTuningDetail, channel, _cardNumber);
             }
 
             if (channel.MediaType == MediaTypeEnum.TV)

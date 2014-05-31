@@ -63,7 +63,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
     private int _lcn = 10000;
         
     [DataMember]
-    private bool _freeToAir = true;
+    private EncryptionSchemeEnum _encryptionScheme = EncryptionSchemeEnum.Free;
 
     [DataMember]
     private MediaTypeEnum _mediaType;
@@ -86,7 +86,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
       _pmtPid = -1;
       _lcn = 10000;
       _mediaType = MediaTypeEnum.TV;
-      _freeToAir = true;
+      _encryptionScheme = EncryptionSchemeEnum.Free;
     }
 
     /// <summary>
@@ -105,7 +105,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
       _pmtPid = channel.PmtPid;
       _lcn = channel.LogicalChannelNumber;
       _mediaType = channel._mediaType;      
-      _freeToAir = channel.FreeToAir;
+      _encryptionScheme = channel.EncryptionScheme;
     }
 
     #endregion
@@ -188,10 +188,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
     /// <summary>
     /// Get/set whether the channel is a free-to-air or encrypted channel.
     /// </summary>
-    public bool FreeToAir
+    public EncryptionSchemeEnum EncryptionScheme
     {
-      get { return _freeToAir; }
-      set { _freeToAir = value; }
+      get { return _encryptionScheme; }
+      set { _encryptionScheme = value; }
     }
 
     public MediaTypeEnum MediaType
@@ -214,7 +214,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
     {
       string line = MediaType.ToString();
       line += String.Format("{0} {1} Freq:{2} ONID:{3} TSID:{4} SID:{5} PMT:0x{6:X} FTA:{7} LCN:{8}",
-                            Provider, Name, Frequency, NetworkId, TransportId, ServiceId, PmtPid, FreeToAir,
+                            Provider, Name, Frequency, NetworkId, TransportId, ServiceId, PmtPid, EncryptionScheme,
                             LogicalChannelNumber);
       return line;
     }
@@ -270,7 +270,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
       {
         return false;
       }      
-      if (ch.FreeToAir != _freeToAir)
+      if (ch.EncryptionScheme != _encryptionScheme)
       {
         return false;
       }
@@ -287,7 +287,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
       return base.GetHashCode() ^ _channelName.GetHashCode() ^ _providerName.GetHashCode() ^
             _channelFrequency.GetHashCode() ^ _networkId.GetHashCode() ^ _transportId.GetHashCode() ^
             _serviceId.GetHashCode() ^ _pmtPid.GetHashCode() ^ _lcn.GetHashCode() ^ _mediaType.GetHashCode() 
-             ^ _freeToAir.GetHashCode();
+             ^ _encryptionScheme.GetHashCode();
     }
 
     #endregion

@@ -48,10 +48,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
       TVDatabase.TVBusinessLayer.CardManagement.DeleteCard(idCard);
     }
 
-    public DisEqcMotor SaveDisEqcMotor(DisEqcMotor motor)
+    public TunerSatellite SaveTunerSatellite(TunerSatellite tunerSatellite)
     {
-      return TVDatabase.TVBusinessLayer.CardManagement.SaveDisEqcMotor(motor);
+      return TVDatabase.TVBusinessLayer.CardManagement.SaveTunerSatellite(tunerSatellite);
     }
+
+    /*public DisEqcMotor SaveDisEqcMotor(DisEqcMotor motor)
+    {
+      return TVDatabase.TVBusinessLayer.CardManagement.SaveTunerSatellite(motor);
+    }*/
 
     public Card GetCard(int idCard)
     {
@@ -116,6 +121,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
     public LnbType GetLnbType(int idLnbType)
     {
       return LnbTypeManagement.GetLnbType(idLnbType);
+    }
+
+    public LnbType SaveLnbType(LnbType lnbType)
+    {
+      return LnbTypeManagement.SaveLnbType(lnbType);
+    }
+
+    public void DeleteLnbType(int idLnbType)
+    {
+      LnbTypeManagement.DeleteLnbType(idLnbType);
     }
 
     public IList<LnbType> ListAllLnbTypes()

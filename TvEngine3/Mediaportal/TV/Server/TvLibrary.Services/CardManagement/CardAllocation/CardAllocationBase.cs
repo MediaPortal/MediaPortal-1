@@ -21,6 +21,7 @@
 #region usings 
 
 using System.Collections.Generic;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
@@ -46,7 +47,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
 
     private bool IsCamAbleToDecryptChannel(IUser user, ITvCardHandler tvcard, IChannel tuningDetail, int decryptLimit)
     {
-      if (!tuningDetail.FreeToAir)
+      if (tuningDetail.EncryptionScheme == EncryptionSchemeEnum.Encrypted)
       {
         bool isCamAbleToDecryptChannel = true;
         if (decryptLimit > 0)
@@ -92,7 +93,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
     protected virtual bool IsFreeToAir(ITvCardHandler tvcard, string userName, int idChannel)
     {      
       IChannel currentUserCh = tvcard.CurrentChannel(userName, idChannel);
-      return (currentUserCh != null && currentUserCh.FreeToAir);
+      return (currentUserCh != null && currentUserCh.EncryptionScheme == EncryptionSchemeEnum.Free);
     }
 
     protected virtual int NumberOfChannelsDecrypting(ITvCardHandler tvcard)
@@ -138,7 +139,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
           //card is in use, but it is tuned to the same transponder.
           //meaning.. we can use it.          
           //if the channel is encrypted check cam decrypt limit.
-          if (!tuningDetail.FreeToAir)
+          if (tuningDetail.EncryptionScheme == EncryptionSchemeEnum.Encrypted)
           {
             //but we must check if cam can decode the extra channel as well
             //first check if cam is already decrypting this channel          

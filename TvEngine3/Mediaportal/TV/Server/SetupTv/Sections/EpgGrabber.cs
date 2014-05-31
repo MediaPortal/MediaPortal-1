@@ -136,17 +136,22 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           bool dvbip = false;
           bool hasFta = false;
           bool hasScrambled = false;
-          if (ch.IsWebstream())
-            continue;
 
-          IList<TuningDetail> tuningDetails = ch.TuningDetails;
-          foreach (TuningDetail detail in tuningDetails)
+          bool isWebstream = ch.IsWebstream;          
+
+          if (isWebstream)
           {
-            if (detail.FreeToAir)
+            continue;
+          }
+
+          IList<ServiceDetail> serviceDetails = ch.ServiceDetails;
+          foreach (ServiceDetail detail in serviceDetails)
+          {
+            if (detail.EncryptionScheme == (int)EncryptionSchemeEnum.Free)
             {
               hasFta = true;
-            }
-            if (!detail.FreeToAir)
+            }            
+            else 
             {
               hasScrambled = true;
             }
@@ -240,7 +245,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             line += "DVB-IP";
           }
           item.SubItems.Add(line);
-          item.Checked = ch.GrabEpg;
+          //TODO MM fix EPG
+          //item.Checked = ch.GrabEpg;
           item.Tag = ch;
         }
       }
@@ -297,7 +303,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         Channel channel = e.Item.Tag as Channel;
         if (channel == null)
           return;
-        channel.GrabEpg = e.Item.Checked;
+        //channel.GrabEpg = e.Item.Checked;
+        //todo MM fix EPG
         ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(channel);
       }      
     }
@@ -306,7 +313,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       mpListView1.BeginUpdate();
       try
-      {
+      {                
         for (int i = 0; i < mpListView1.Items.Count; ++i)
         {
           mpListView1.Items[i].Checked = true;

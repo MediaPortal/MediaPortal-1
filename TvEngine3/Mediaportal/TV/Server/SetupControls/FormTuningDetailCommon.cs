@@ -34,7 +34,8 @@ namespace Mediaportal.TV.Server.SetupControls
     }
 
     [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public TuningDetail TuningDetail { get; set; }
+
+    public ServiceDetail ServiceDetail { get; set; }
 
     private void mpButtonCancel_Click(object sender, EventArgs e)
     {
@@ -42,25 +43,22 @@ namespace Mediaportal.TV.Server.SetupControls
       Close();
     }
 
-    protected static TuningDetail CreateInitialTuningDetail()
-    {
+    //protected abstract ServiceDetail CreateInitialServiceDetail();
+    /*{
+      /*
       string channelName = "";
       int channelFrequency = 0;
       int channelNumber = 0;
-      int country = 31;
-      bool isRadio = false;
-      bool isTv = false;
+      int country = 31;      
       int tunerSource = 0;
       int videoInputType = 0;
       int audioInputType = 0;
-      bool isVcrSignal = false;
       int symbolRate = 0;
       int modulation = (int)ModulationType.ModNotSet;
       int polarisation = (int)Polarisation.NotSet;
       int diseqc = 0;
       int bandwidth = 8;
       int pmtPid = -1;
-      bool freeToAir = true;
       int networkId = -1;
       int serviceId = -1;
       int transportId = -1;
@@ -76,7 +74,7 @@ namespace Mediaportal.TV.Server.SetupControls
       string url = "";
       int bitrate = 0;
 
-      var initialTuningDetail = new TuningDetail
+      var initialTuningDetail = new ServiceDetail
       {
         Name = channelName,
         Provider = provider,
@@ -110,6 +108,6 @@ namespace Mediaportal.TV.Server.SetupControls
       };
 
       return initialTuningDetail;
-    }
+    }*/
   }
 }

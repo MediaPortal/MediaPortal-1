@@ -250,14 +250,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           //EPG grabbing doesn't apply to non-digital cards
           if (cardType.ToUpperInvariant().Contains("DVB") || cardType.ToUpperInvariant().Contains("ATSC"))
           {
-            if (!card.GrabEPG)
+            // TODO MM fix EPG
+            //if (!card.GrabEPG)
             {
               item.SubItems.Add("No");
             }
-            else
+            /*else
             {
               item.SubItems.Add("Yes");
-            }
+            }*/
           }
           else
           {

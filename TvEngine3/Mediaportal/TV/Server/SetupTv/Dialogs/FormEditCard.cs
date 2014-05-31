@@ -82,7 +82,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       }
       else
       {
-        checkBoxAllowEpgGrab.Checked = _card.GrabEPG;
+        // todo MM - fix grabEPG
+        //checkBoxAllowEpgGrab.Checked = _card.GrabEPG;
         checkBoxConditionalAccessEnabled.Checked = _card.UseConditionalAccess;
         numericUpDownDecryptLimit.Value = _card.DecryptLimit;
         mpComboBoxMultiChannelDecryptMode.SelectedItem = ((MultiChannelDecryptMode)_card.MultiChannelDecryptMode).ToString();
@@ -135,7 +136,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       }
 
       _card.Name = mpTextBoxDeviceName.Text;
-      _card.GrabEPG = checkBoxAllowEpgGrab.Checked;
+      //todo mm fix EPG
+      //_card.GrabEPG = checkBoxAllowEpgGrab.Checked;
       _card.UseConditionalAccess = checkBoxConditionalAccessEnabled.Checked;
       _card.DecryptLimit = (int)numericUpDownDecryptLimit.Value;
       _card.AlwaysSendDiseqcCommands = checkBoxAlwaysSendDiseqcCommands.Checked;

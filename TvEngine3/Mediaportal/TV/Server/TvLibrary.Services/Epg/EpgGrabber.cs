@@ -134,7 +134,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
 
       foreach (Card card in cards)
       {
-        if (!card.Enabled || !card.GrabEPG)
+        //todo: MM handle grabEPG
+        if (!card.Enabled )//|| !card.GrabEPG)
         {
           continue;
         }
@@ -284,15 +285,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
           continue;
 
         //check if card type is the same as the channel type of the transponder
-        if (type == CardType.Atsc && TransponderList.Instance.CurrentTransponder.TuningDetail.ChannelType != 1)
+        if (type == CardType.Atsc && !(TransponderList.Instance.CurrentTransponder.ServiceDetail.TuningDetail is TuningDetailAnalog))
           continue;
-        if (type == CardType.DvbC && TransponderList.Instance.CurrentTransponder.TuningDetail.ChannelType != 2)
+        if (type == CardType.DvbC && !(TransponderList.Instance.CurrentTransponder.ServiceDetail.TuningDetail is TuningDetailCable))
           continue;
-        if (type == CardType.DvbS && TransponderList.Instance.CurrentTransponder.TuningDetail.ChannelType != 3)
+        if (type == CardType.DvbS && !(TransponderList.Instance.CurrentTransponder.ServiceDetail.TuningDetail is TuningDetailSatellite))
           continue;
-        if (type == CardType.DvbT && TransponderList.Instance.CurrentTransponder.TuningDetail.ChannelType != 4)
+        if (type == CardType.DvbT && !(TransponderList.Instance.CurrentTransponder.ServiceDetail.TuningDetail is TuningDetailTerrestrial))
           continue;
-        if (type == CardType.DvbIP && TransponderList.Instance.CurrentTransponder.TuningDetail.ChannelType != 7)
+        if (type == CardType.DvbIP && !(TransponderList.Instance.CurrentTransponder.ServiceDetail.TuningDetail is TuningDetailStream))
           continue;
 
         //find next channel to grab
@@ -302,7 +303,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
           Channel ch = TransponderList.Instance.CurrentTransponder.CurrentChannel;
 
           //check if its time to grab the epg for this channel
-          TimeSpan ts = DateTime.Now - TransponderList.Instance.CurrentTransponder.CurrentChannel.LastGrabTime.GetValueOrDefault(DateTime.MinValue);
+          //todo: MM handle grabEPG
+          TimeSpan ts = TimeSpan.FromMinutes(1);//DateTime.Now - TransponderList.Instance.CurrentTransponder.CurrentChannel.LastGrabTime.GetValueOrDefault(DateTime.MinValue);
           if (ts.TotalMinutes < _epgReGrabAfter)
           {
             //this.LogInfo("Skip card:#{0} transponder #{1}/{2} channel: {3} - Less than regrab time",

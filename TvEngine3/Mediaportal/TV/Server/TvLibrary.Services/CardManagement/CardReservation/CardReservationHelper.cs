@@ -23,6 +23,7 @@ using System.Linq;
 using System.Threading;
 using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Ticket;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
@@ -257,9 +258,9 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation
         var currentDVBchannel = tuningDetail as DVBBaseChannel;
         if (currentDVBchannel != null)
         {
-          TuningDetail currentDVBtuningDetail = ChannelManagement.GetTuningDetail(currentDVBchannel);
-          TuningDetail userDVBtuningDetail = ChannelManagement.GetTuningDetail(userDVBchannel);
-          isUserOnSameChannel = (currentDVBtuningDetail != null && currentDVBtuningDetail.IdChannel == userDVBtuningDetail.IdChannel);
+          ServiceDetail currentServiceDetail = ChannelManagement.GetServiceDetail(currentDVBchannel);          
+          ServiceDetail userServiceDetail = ChannelManagement.GetServiceDetail(userDVBchannel);
+          isUserOnSameChannel = (currentServiceDetail != null && currentServiceDetail.IdChannel == userServiceDetail.IdChannel);
         }        
       }
       return isUserOnSameChannel;
@@ -268,7 +269,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation
     public static bool IsFreeToAir(ITvCardHandler tvcard, string userName, int idChannel)
     {
       IChannel currentUserCh = tvcard.CurrentChannel(userName, idChannel);
-      return (currentUserCh != null && currentUserCh.FreeToAir);
+      return (currentUserCh != null && currentUserCh.EncryptionScheme == EncryptionSchemeEnum.Free);
     }
 
     public static bool GetIsTuningPending(ITvCardHandler tvcard, ICardTuneReservationTicket ticket, out bool ticketFound)

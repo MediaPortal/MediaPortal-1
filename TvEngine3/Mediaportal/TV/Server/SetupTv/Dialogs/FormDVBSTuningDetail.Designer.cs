@@ -33,7 +33,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     /// </summary>
     private void InitializeComponent()
     {
-      this.checkBoxDVBSfta = new System.Windows.Forms.CheckBox();
       this.label27 = new System.Windows.Forms.Label();
       this.textBoxDVBSProvider = new System.Windows.Forms.TextBox();
       this.textBoxDVBSPmt = new System.Windows.Forms.TextBox();
@@ -53,8 +52,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.label33 = new System.Windows.Forms.Label();
       this.comboBoxModulation = new System.Windows.Forms.ComboBox();
       this.label32 = new System.Windows.Forms.Label();
-      this.comboBoxDiseqc = new System.Windows.Forms.ComboBox();
-      this.label10 = new System.Windows.Forms.Label();
       this.comboBoxPol = new System.Windows.Forms.ComboBox();
       this.label11 = new System.Windows.Forms.Label();
       this.label12 = new System.Windows.Forms.Label();
@@ -64,8 +61,13 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.label16 = new System.Windows.Forms.Label();
       this.label1 = new System.Windows.Forms.Label();
       this.label2 = new System.Windows.Forms.Label();
-      this.comboBoxLnbType = new System.Windows.Forms.ComboBox();
-      this.label3 = new System.Windows.Forms.Label();
+      this.comboBoxSatellite = new System.Windows.Forms.ComboBox();
+      this.label4 = new System.Windows.Forms.Label();
+      this.groupBox1 = new System.Windows.Forms.GroupBox();
+      this.mpRadioSometimesEncrypted = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPRadioButton();
+      this.mpRadioEncrypted = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPRadioButton();
+      this.mpRadioFree = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPRadioButton();
+      this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
       // mpButtonCancel
@@ -78,17 +80,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.mpButtonOk.Location = new System.Drawing.Point(263, 282);
       this.mpButtonOk.TabIndex = 34;
       this.mpButtonOk.Click += new System.EventHandler(this.mpButtonOk_Click);
-      // 
-      // checkBoxDVBSfta
-      // 
-      this.checkBoxDVBSfta.AutoSize = true;
-      this.checkBoxDVBSfta.Location = new System.Drawing.Point(335, 144);
-      this.checkBoxDVBSfta.Name = "checkBoxDVBSfta";
-      this.checkBoxDVBSfta.Size = new System.Drawing.Size(78, 17);
-      this.checkBoxDVBSfta.TabIndex = 33;
-      this.checkBoxDVBSfta.Text = "Free To Air";
-      this.checkBoxDVBSfta.TextAlign = System.Drawing.ContentAlignment.TopRight;
-      this.checkBoxDVBSfta.UseVisualStyleBackColor = true;
       // 
       // label27
       // 
@@ -124,7 +115,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // textBoxSymbolRate
       // 
-      this.textBoxSymbolRate.Location = new System.Drawing.Point(93, 116);
+      this.textBoxSymbolRate.Location = new System.Drawing.Point(93, 90);
       this.textBoxSymbolRate.Name = "textBoxSymbolRate";
       this.textBoxSymbolRate.Size = new System.Drawing.Size(130, 20);
       this.textBoxSymbolRate.TabIndex = 11;
@@ -156,7 +147,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // textBoxFrequency
       // 
-      this.textBoxFrequency.Location = new System.Drawing.Point(92, 90);
+      this.textBoxFrequency.Location = new System.Drawing.Point(92, 64);
       this.textBoxFrequency.Name = "textBoxFrequency";
       this.textBoxFrequency.Size = new System.Drawing.Size(130, 20);
       this.textBoxFrequency.TabIndex = 8;
@@ -190,7 +181,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
             ".20 Roll Off",
             ".25 Roll Off",
             ".35 Roll Off"});
-      this.comboBoxRollOff.Location = new System.Drawing.Point(93, 250);
+      this.comboBoxRollOff.Location = new System.Drawing.Point(93, 224);
       this.comboBoxRollOff.Name = "comboBoxRollOff";
       this.comboBoxRollOff.Size = new System.Drawing.Size(129, 21);
       this.comboBoxRollOff.TabIndex = 22;
@@ -198,7 +189,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // label36
       // 
       this.label36.AutoSize = true;
-      this.label36.Location = new System.Drawing.Point(11, 253);
+      this.label36.Location = new System.Drawing.Point(11, 227);
       this.label36.Name = "label36";
       this.label36.Size = new System.Drawing.Size(45, 13);
       this.label36.TabIndex = 21;
@@ -213,7 +204,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
             "Not Defined",
             "Off",
             "On"});
-      this.comboBoxPilot.Location = new System.Drawing.Point(93, 223);
+      this.comboBoxPilot.Location = new System.Drawing.Point(93, 197);
       this.comboBoxPilot.Name = "comboBoxPilot";
       this.comboBoxPilot.Size = new System.Drawing.Size(129, 21);
       this.comboBoxPilot.TabIndex = 20;
@@ -221,7 +212,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // label35
       // 
       this.label35.AutoSize = true;
-      this.label35.Location = new System.Drawing.Point(11, 226);
+      this.label35.Location = new System.Drawing.Point(11, 200);
       this.label35.Name = "label35";
       this.label35.Size = new System.Drawing.Size(30, 13);
       this.label35.TabIndex = 19;
@@ -248,7 +239,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
             "6/7",
             "8/9",
             "9/10"});
-      this.comboBoxInnerFecRate.Location = new System.Drawing.Point(93, 196);
+      this.comboBoxInnerFecRate.Location = new System.Drawing.Point(93, 170);
       this.comboBoxInnerFecRate.Name = "comboBoxInnerFecRate";
       this.comboBoxInnerFecRate.Size = new System.Drawing.Size(129, 21);
       this.comboBoxInnerFecRate.TabIndex = 18;
@@ -256,7 +247,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // label33
       // 
       this.label33.AutoSize = true;
-      this.label33.Location = new System.Drawing.Point(11, 199);
+      this.label33.Location = new System.Drawing.Point(11, 173);
       this.label33.Name = "label33";
       this.label33.Size = new System.Drawing.Size(83, 13);
       this.label33.TabIndex = 17;
@@ -302,7 +293,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
             "QPSK2 (DVB-S2)",
             "8 PSK2 (DVB-S2)",
             "DirectTV"});
-      this.comboBoxModulation.Location = new System.Drawing.Point(93, 169);
+      this.comboBoxModulation.Location = new System.Drawing.Point(93, 143);
       this.comboBoxModulation.Name = "comboBoxModulation";
       this.comboBoxModulation.Size = new System.Drawing.Size(129, 21);
       this.comboBoxModulation.TabIndex = 16;
@@ -310,53 +301,11 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // label32
       // 
       this.label32.AutoSize = true;
-      this.label32.Location = new System.Drawing.Point(11, 172);
+      this.label32.Location = new System.Drawing.Point(11, 146);
       this.label32.Name = "label32";
       this.label32.Size = new System.Drawing.Size(62, 13);
       this.label32.TabIndex = 15;
       this.label32.Text = "Modulation:";
-      // 
-      // comboBoxDiseqc
-      // 
-      this.comboBoxDiseqc.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBoxDiseqc.FormattingEnabled = true;
-      this.comboBoxDiseqc.Items.AddRange(new object[] {
-            "None",
-            "Simple A (tone burst)",
-            "Simple B (data burst)",
-            "Port A (option A, position A)",
-            "Port B (option A, position B)",
-            "Port C (option B, position A)",
-            "Port D (option B, position B)",
-            "Port 1",
-            "Port 2",
-            "Port 3",
-            "Port 4",
-            "Port 5",
-            "Port 6",
-            "Port 7",
-            "Port 8",
-            "Port 9",
-            "Port 10",
-            "Port 11",
-            "Port 12",
-            "Port 13",
-            "Port 14",
-            "Port 15",
-            "Port 16"});
-      this.comboBoxDiseqc.Location = new System.Drawing.Point(93, 37);
-      this.comboBoxDiseqc.Name = "comboBoxDiseqc";
-      this.comboBoxDiseqc.Size = new System.Drawing.Size(129, 21);
-      this.comboBoxDiseqc.TabIndex = 4;
-      // 
-      // label10
-      // 
-      this.label10.AutoSize = true;
-      this.label10.Location = new System.Drawing.Point(11, 41);
-      this.label10.Name = "label10";
-      this.label10.Size = new System.Drawing.Size(47, 13);
-      this.label10.TabIndex = 3;
-      this.label10.Text = "DiSEqC:";
       // 
       // comboBoxPol
       // 
@@ -369,7 +318,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
             "Vertical",
             "Circular Left",
             "Circular Right"});
-      this.comboBoxPol.Location = new System.Drawing.Point(93, 142);
+      this.comboBoxPol.Location = new System.Drawing.Point(93, 116);
       this.comboBoxPol.Name = "comboBoxPol";
       this.comboBoxPol.Size = new System.Drawing.Size(129, 21);
       this.comboBoxPol.TabIndex = 14;
@@ -377,7 +326,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // label11
       // 
       this.label11.AutoSize = true;
-      this.label11.Location = new System.Drawing.Point(11, 145);
+      this.label11.Location = new System.Drawing.Point(11, 119);
       this.label11.Name = "label11";
       this.label11.Size = new System.Drawing.Size(64, 13);
       this.label11.TabIndex = 13;
@@ -386,7 +335,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // label12
       // 
       this.label12.AutoSize = true;
-      this.label12.Location = new System.Drawing.Point(11, 119);
+      this.label12.Location = new System.Drawing.Point(11, 93);
       this.label12.Name = "label12";
       this.label12.Size = new System.Drawing.Size(70, 13);
       this.label12.TabIndex = 10;
@@ -422,7 +371,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // label16
       // 
       this.label16.AutoSize = true;
-      this.label16.Location = new System.Drawing.Point(11, 93);
+      this.label16.Location = new System.Drawing.Point(11, 67);
       this.label16.Name = "label16";
       this.label16.Size = new System.Drawing.Size(60, 13);
       this.label16.TabIndex = 7;
@@ -431,7 +380,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // label1
       // 
       this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(222, 93);
+      this.label1.Location = new System.Drawing.Point(222, 67);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(26, 13);
       this.label1.TabIndex = 9;
@@ -440,43 +389,111 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // label2
       // 
       this.label2.AutoSize = true;
-      this.label2.Location = new System.Drawing.Point(223, 119);
+      this.label2.Location = new System.Drawing.Point(223, 93);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(28, 13);
       this.label2.TabIndex = 12;
       this.label2.Text = "ks/s";
       // 
-      // comboBoxLnbType
+      // comboBoxSatellite
       // 
-      this.comboBoxLnbType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBoxLnbType.FormattingEnabled = true;
-      IList<LnbType> tempLnbTypes = ServiceAgents.Instance.CardServiceAgent.ListAllLnbTypes();
-      LnbType[] lnbTypes = new LnbType[tempLnbTypes.Count];
-      tempLnbTypes.CopyTo(lnbTypes, 0);
-      this.comboBoxLnbType.Items.AddRange(lnbTypes);
-      this.comboBoxLnbType.Location = new System.Drawing.Point(93, 63);
-      this.comboBoxLnbType.Name = "comboBoxLnbType";
-      this.comboBoxLnbType.Size = new System.Drawing.Size(129, 21);
-      this.comboBoxLnbType.TabIndex = 6;
+      this.comboBoxSatellite.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxSatellite.FormattingEnabled = true;
+      this.comboBoxSatellite.Items.AddRange(new object[] {
+            "None",
+            "Simple A (tone burst)",
+            "Simple B (data burst)",
+            "Port A (option A, position A)",
+            "Port B (option A, position B)",
+            "Port C (option B, position A)",
+            "Port D (option B, position B)",
+            "Port 1",
+            "Port 2",
+            "Port 3",
+            "Port 4",
+            "Port 5",
+            "Port 6",
+            "Port 7",
+            "Port 8",
+            "Port 9",
+            "Port 10",
+            "Port 11",
+            "Port 12",
+            "Port 13",
+            "Port 14",
+            "Port 15",
+            "Port 16"});
+      this.comboBoxSatellite.Location = new System.Drawing.Point(92, 38);
+      this.comboBoxSatellite.Name = "comboBoxSatellite";
+      this.comboBoxSatellite.Size = new System.Drawing.Size(129, 21);
+      this.comboBoxSatellite.TabIndex = 37;
       // 
-      // label3
+      // label4
       // 
-      this.label3.AutoSize = true;
-      this.label3.Location = new System.Drawing.Point(11, 67);
-      this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(58, 13);
-      this.label3.TabIndex = 5;
-      this.label3.Text = "LNB Type:";
+      this.label4.AutoSize = true;
+      this.label4.Location = new System.Drawing.Point(10, 42);
+      this.label4.Name = "label4";
+      this.label4.Size = new System.Drawing.Size(47, 13);
+      this.label4.TabIndex = 36;
+      this.label4.Text = "Satellite:";
+      // 
+      // groupBox1
+      // 
+      this.groupBox1.Controls.Add(this.mpRadioSometimesEncrypted);
+      this.groupBox1.Controls.Add(this.mpRadioEncrypted);
+      this.groupBox1.Controls.Add(this.mpRadioFree);
+      this.groupBox1.Location = new System.Drawing.Point(228, 146);
+      this.groupBox1.Name = "groupBox1";
+      this.groupBox1.Size = new System.Drawing.Size(209, 94);
+      this.groupBox1.TabIndex = 129;
+      this.groupBox1.TabStop = false;
+      this.groupBox1.Text = "Encryption scheme";
+      // 
+      // mpRadioSometimesEncrypted
+      // 
+      this.mpRadioSometimesEncrypted.AutoSize = true;
+      this.mpRadioSometimesEncrypted.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpRadioSometimesEncrypted.Location = new System.Drawing.Point(7, 65);
+      this.mpRadioSometimesEncrypted.Name = "mpRadioSometimesEncrypted";
+      this.mpRadioSometimesEncrypted.Size = new System.Drawing.Size(125, 17);
+      this.mpRadioSometimesEncrypted.TabIndex = 2;
+      this.mpRadioSometimesEncrypted.TabStop = true;
+      this.mpRadioSometimesEncrypted.Text = "Sometimes encrypted";
+      this.mpRadioSometimesEncrypted.UseVisualStyleBackColor = true;
+      // 
+      // mpRadioEncrypted
+      // 
+      this.mpRadioEncrypted.AutoSize = true;
+      this.mpRadioEncrypted.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpRadioEncrypted.Location = new System.Drawing.Point(7, 42);
+      this.mpRadioEncrypted.Name = "mpRadioEncrypted";
+      this.mpRadioEncrypted.Size = new System.Drawing.Size(72, 17);
+      this.mpRadioEncrypted.TabIndex = 1;
+      this.mpRadioEncrypted.TabStop = true;
+      this.mpRadioEncrypted.Text = "Encrypted";
+      this.mpRadioEncrypted.UseVisualStyleBackColor = true;
+      // 
+      // mpRadioFree
+      // 
+      this.mpRadioFree.AutoSize = true;
+      this.mpRadioFree.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpRadioFree.Location = new System.Drawing.Point(7, 19);
+      this.mpRadioFree.Name = "mpRadioFree";
+      this.mpRadioFree.Size = new System.Drawing.Size(45, 17);
+      this.mpRadioFree.TabIndex = 0;
+      this.mpRadioFree.TabStop = true;
+      this.mpRadioFree.Text = "Free";
+      this.mpRadioFree.UseVisualStyleBackColor = true;
       // 
       // FormDVBSTuningDetail
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.ClientSize = new System.Drawing.Size(449, 317);
-      this.Controls.Add(this.label3);
-      this.Controls.Add(this.comboBoxLnbType);
+      this.Controls.Add(this.groupBox1);
+      this.Controls.Add(this.comboBoxSatellite);
+      this.Controls.Add(this.label4);
       this.Controls.Add(this.label2);
       this.Controls.Add(this.label1);
-      this.Controls.Add(this.checkBoxDVBSfta);
       this.Controls.Add(this.label27);
       this.Controls.Add(this.textBoxDVBSProvider);
       this.Controls.Add(this.textBoxDVBSPmt);
@@ -496,8 +513,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.Controls.Add(this.label33);
       this.Controls.Add(this.comboBoxModulation);
       this.Controls.Add(this.label32);
-      this.Controls.Add(this.comboBoxDiseqc);
-      this.Controls.Add(this.label10);
       this.Controls.Add(this.comboBoxPol);
       this.Controls.Add(this.label11);
       this.Controls.Add(this.label12);
@@ -517,8 +532,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.Controls.SetChildIndex(this.label12, 0);
       this.Controls.SetChildIndex(this.label11, 0);
       this.Controls.SetChildIndex(this.comboBoxPol, 0);
-      this.Controls.SetChildIndex(this.label10, 0);
-      this.Controls.SetChildIndex(this.comboBoxDiseqc, 0);
       this.Controls.SetChildIndex(this.label32, 0);
       this.Controls.SetChildIndex(this.comboBoxModulation, 0);
       this.Controls.SetChildIndex(this.label33, 0);
@@ -538,11 +551,13 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.Controls.SetChildIndex(this.textBoxDVBSPmt, 0);
       this.Controls.SetChildIndex(this.textBoxDVBSProvider, 0);
       this.Controls.SetChildIndex(this.label27, 0);
-      this.Controls.SetChildIndex(this.checkBoxDVBSfta, 0);
       this.Controls.SetChildIndex(this.label1, 0);
       this.Controls.SetChildIndex(this.label2, 0);
-      this.Controls.SetChildIndex(this.comboBoxLnbType, 0);
-      this.Controls.SetChildIndex(this.label3, 0);
+      this.Controls.SetChildIndex(this.label4, 0);
+      this.Controls.SetChildIndex(this.comboBoxSatellite, 0);
+      this.Controls.SetChildIndex(this.groupBox1, 0);
+      this.groupBox1.ResumeLayout(false);
+      this.groupBox1.PerformLayout();
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -550,7 +565,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
     #endregion
 
-    private System.Windows.Forms.CheckBox checkBoxDVBSfta;
     private System.Windows.Forms.Label label27;
     private System.Windows.Forms.TextBox textBoxDVBSProvider;
     private System.Windows.Forms.TextBox textBoxDVBSPmt;
@@ -570,8 +584,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     private System.Windows.Forms.Label label33;
     private System.Windows.Forms.ComboBox comboBoxModulation;
     private System.Windows.Forms.Label label32;
-    private System.Windows.Forms.ComboBox comboBoxDiseqc;
-    private System.Windows.Forms.Label label10;
     private System.Windows.Forms.ComboBox comboBoxPol;
     private System.Windows.Forms.Label label11;
     private System.Windows.Forms.Label label12;
@@ -581,7 +593,11 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     private System.Windows.Forms.Label label16;
     private System.Windows.Forms.Label label1;
     private System.Windows.Forms.Label label2;
-    private System.Windows.Forms.ComboBox comboBoxLnbType;
-    private System.Windows.Forms.Label label3;
+    private System.Windows.Forms.ComboBox comboBoxSatellite;
+    private System.Windows.Forms.Label label4;
+    private System.Windows.Forms.GroupBox groupBox1;
+    private SetupControls.UserInterfaceControls.MPRadioButton mpRadioSometimesEncrypted;
+    private SetupControls.UserInterfaceControls.MPRadioButton mpRadioEncrypted;
+    private SetupControls.UserInterfaceControls.MPRadioButton mpRadioFree;
   }
 }
