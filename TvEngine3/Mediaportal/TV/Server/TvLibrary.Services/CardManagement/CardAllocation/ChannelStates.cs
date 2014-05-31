@@ -48,7 +48,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
     private readonly object _threadlock = new object();
     private Thread _setChannelStatesThread;
 
-    public ChannelStates()      
+    public ChannelStates()
     {
       LogEnabled = false;
     }
@@ -68,7 +68,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
               }
             }
           }
-        );      
+        );
     }
 
     private static void UpdateChannelStateUser(IUser user, ChannelState channelState, int channelId)
@@ -111,9 +111,9 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
           IList<IUser> activeUsers = cardHandler.UserManagement.GetActiveUsersCopy();
           foreach(IUser user in activeUsers)
           {
-            user.ChannelStates = new Dictionary<int, ChannelState>();  
+            user.ChannelStates = new Dictionary<int, ChannelState>();
           }
-          allUsers.AddRange(activeUsers);                    
+          allUsers.AddRange(activeUsers);
         }
       }
       catch (InvalidOperationException tex)
@@ -122,7 +122,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
       }
 
       return allUsers;
-    }    
+    }
 
     private void DoSetChannelStatesForAllUsers(ICollection<Channel> channels, ICollection<IUser> allUsers)
     {
@@ -152,7 +152,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
               continue;
             }
 
-              ICollection<IChannel> tuningDetails = CardAllocationCache.GetTuningDetailsByChannelId(channel);
+            ICollection<IChannel> tuningDetails = CardAllocationCache.GetTuningDetailsByChannelId(channel);
             bool isValidTuningDetails = IsValidTuningDetails(tuningDetails);
             if (!isValidTuningDetails)
             {
@@ -211,7 +211,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
             UpdateRecOrTSChannelStateForUsers(channel, allUsers, timeshiftingAndRecordingStates);*/
           }
 
-          RemoveAllTunableChannelStates(allUsers);        
+          RemoveAllTunableChannelStates(allUsers);
         }
         catch (ThreadAbortException)
         {
@@ -245,14 +245,14 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
                   {
                     ITvCardHandler card = cards[user.CardId];
                     card.UserManagement.SetChannelStates(user.Name, user.ChannelStates); 
-                  }                  
+                  }
                 }
                 catch (Exception e)
                 {
                   this.LogError("ChannelState.DoSetChannelStatesForAllUsers: could not set channel state for user: {0}, exc: {1}", user.Name, e);
                 }
               } 
-            }              
+            }
           }
         }
       }
@@ -322,42 +322,22 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
 
     #region public members
 
-    private void AbortChannelStates()
-    {
-      lock (_threadlock)
-      {
-        if (_setChannelStatesThread != null && _setChannelStatesThread.IsAlive)
-        {
-          _setChannelStatesThread.Abort();
-        }
-      }
-    }
-
     public void SetChannelStatesForAllUsers(ICollection<Channel> channels)
     {
       if (channels == null)
       {
         return;
       }
-      AbortChannelStates();
-      //call the real work as a thread in order to avoid slower channel changes.
-      // find all users      
+
+      // find all users
       ICollection<IUser> allUsers = GetActiveUsers();
-      ThreadStart starter = () => DoSetChannelStatesForAllUsers(channels, allUsers);
-      lock (_threadlock)
-      {
-        _setChannelStatesThread = new Thread(starter)
-                                    {
-                                      Name = "Channel state thread",
-                                      IsBackground = true,
-                                      Priority = ThreadPriority.Lowest
-                                    };
-        _setChannelStatesThread.Start();
+
+      //call the real work as a thread in order to avoid slower channel changes.
+      Task.Factory.StartNew(new Action(() => DoSetChannelStatesForAllUsers(channels, allUsers)), TaskCreationOptions.PreferFairness);
     }
-    }    
 
     /// <summary>
-    /// Gets a list of all channel states    
+    /// Gets a list of all channel states
     /// </summary>    
     /// <returns>dictionary containing all channel states of the channels supplied</returns>
     public void SetChannelStatesForUser(ICollection<Channel> channels, ref IUser user)
@@ -371,7 +351,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
           this.LogDebug("SetChannelStatesForUser OnChannelStatesSet user={0}", user.Name);
           OnChannelStatesSet(user);
         }
-      }           
+      }
     }
 
     #endregion
