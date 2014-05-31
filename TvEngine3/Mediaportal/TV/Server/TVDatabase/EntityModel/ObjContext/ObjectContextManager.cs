@@ -159,15 +159,49 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
     {
       ctx.LnbTypes.AddObject(new LnbType { IdLnbType = 1, Name = "Universal", LowBandFrequency = 9750000, HighBandFrequency = 10600000, SwitchFrequency = 11700000, IsBandStacked = false, IsToroidal = false });
       ctx.LnbTypes.AddObject(new LnbType { IdLnbType = 2, Name = "C-Band", LowBandFrequency = 5150000, HighBandFrequency = 5650000, SwitchFrequency = 18000000, IsBandStacked = false, IsToroidal = false });
-      ctx.LnbTypes.AddObject(new LnbType { IdLnbType = 3, Name = "10750 MHz", LowBandFrequency = 10750000, HighBandFrequency = 11250000, SwitchFrequency = 18000000, IsBandStacked = false, IsToroidal = false });
-      ctx.LnbTypes.AddObject(new LnbType { IdLnbType = 4, Name = "11250 MHz (NA Legacy)", LowBandFrequency = 11250000, HighBandFrequency = 11750000, SwitchFrequency = 18000000, IsBandStacked = false, IsToroidal = false });
-      ctx.LnbTypes.AddObject(new LnbType { IdLnbType = 5, Name = "11300 MHz", LowBandFrequency = 11300000, HighBandFrequency = 11800000, SwitchFrequency = 18000000, IsBandStacked = false, IsToroidal = false });
-      ctx.LnbTypes.AddObject(new LnbType { IdLnbType = 6, Name = "DishPro Band Stacked FSS", LowBandFrequency = 10750000, HighBandFrequency = 13850000, SwitchFrequency = 18000000, IsBandStacked = true, IsToroidal = false });
-      ctx.LnbTypes.AddObject(new LnbType { IdLnbType = 7, Name = "DishPro Band Stacked DBS", LowBandFrequency = 11250000, HighBandFrequency = 14350000, SwitchFrequency = 18000000, IsBandStacked = true, IsToroidal = false });
-      ctx.LnbTypes.AddObject(new LnbType { IdLnbType = 8, Name = "NA Band Stacked FSS", LowBandFrequency = 10750000, HighBandFrequency = 10175000, SwitchFrequency = 18000000, IsBandStacked = true, IsToroidal = false });
-      ctx.LnbTypes.AddObject(new LnbType { IdLnbType = 9, Name = "NA Band Stacked DBS", LowBandFrequency = 11250000, HighBandFrequency = 10675000, SwitchFrequency = 18000000, IsBandStacked = true, IsToroidal = false });
-      ctx.LnbTypes.AddObject(new LnbType { IdLnbType = 10, Name = "Sadoun Band Stacked", LowBandFrequency = 10100000, HighBandFrequency = 10750000, SwitchFrequency = 18000000, IsBandStacked = true, IsToroidal = false });
-      ctx.LnbTypes.AddObject(new LnbType { IdLnbType = 11, Name = "C-Band Band Stacked", LowBandFrequency = 5150000, HighBandFrequency = 5750000, SwitchFrequency = 18000000, IsBandStacked = true, IsToroidal = false });
+      ctx.LnbTypes.AddObject(new LnbType { IdLnbType = 3, Name = "10700 MHz", LowBandFrequency = 10700000, HighBandFrequency = 11200000, SwitchFrequency = 18000000, IsBandStacked = false, IsToroidal = false });
+      ctx.LnbTypes.AddObject(new LnbType { IdLnbType = 4, Name = "10750 MHz", LowBandFrequency = 10750000, HighBandFrequency = 11250000, SwitchFrequency = 18000000, IsBandStacked = false, IsToroidal = false });
+      ctx.LnbTypes.AddObject(new LnbType { IdLnbType = 5, Name = "11250 MHz (NA Legacy)", LowBandFrequency = 11250000, HighBandFrequency = 11750000, SwitchFrequency = 18000000, IsBandStacked = false, IsToroidal = false });
+      ctx.LnbTypes.AddObject(new LnbType { IdLnbType = 6, Name = "11300 MHz", LowBandFrequency = 11300000, HighBandFrequency = 11800000, SwitchFrequency = 18000000, IsBandStacked = false, IsToroidal = false });
+      ctx.LnbTypes.AddObject(new LnbType { IdLnbType = 7, Name = "DishPro Band Stacked FSS", LowBandFrequency = 10750000, HighBandFrequency = 13850000, SwitchFrequency = 18000000, IsBandStacked = true, IsToroidal = false });
+      ctx.LnbTypes.AddObject(new LnbType { IdLnbType = 8, Name = "DishPro Band Stacked DBS", LowBandFrequency = 11250000, HighBandFrequency = 14350000, SwitchFrequency = 18000000, IsBandStacked = true, IsToroidal = false });
+      ctx.LnbTypes.AddObject(new LnbType { IdLnbType = 9, Name = "NA Band Stacked FSS", LowBandFrequency = 10750000, HighBandFrequency = 10175000, SwitchFrequency = 18000000, IsBandStacked = true, IsToroidal = false });
+      ctx.LnbTypes.AddObject(new LnbType { IdLnbType = 10, Name = "NA Band Stacked DBS", LowBandFrequency = 11250000, HighBandFrequency = 10675000, SwitchFrequency = 18000000, IsBandStacked = true, IsToroidal = false });
+      ctx.LnbTypes.AddObject(new LnbType { IdLnbType = 11, Name = "Sadoun Band Stacked", LowBandFrequency = 10100000, HighBandFrequency = 10750000, SwitchFrequency = 18000000, IsBandStacked = true, IsToroidal = false });
+      ctx.LnbTypes.AddObject(new LnbType { IdLnbType = 12, Name = "C-Band Band Stacked", LowBandFrequency = 5150000, HighBandFrequency = 5750000, SwitchFrequency = 18000000, IsBandStacked = true, IsToroidal = false });
+
+      // List of video encoders
+      ctx.SoftwareEncoders.AddObject(new SoftwareEncoder { IdEncoder = 1, Name = "InterVideo Video Encoder", Priority = 1, Reusable = true, Type = 0 });
+      ctx.SoftwareEncoders.AddObject(new SoftwareEncoder { IdEncoder = 2, Name = "CyberLink MPEG Video Encoder", Priority = 2, Reusable = true, Type = 0 });
+      ctx.SoftwareEncoders.AddObject(new SoftwareEncoder { IdEncoder = 3, Name = "CyberLink MPEG Video Encoder(KWorld)", Priority = 3, Reusable = true, Type = 0 });
+      ctx.SoftwareEncoders.AddObject(new SoftwareEncoder { IdEncoder = 4, Name = "CyberLink MPEG Video Encoder(TerraTec)", Priority = 4, Reusable = true, Type = 0 });
+      ctx.SoftwareEncoders.AddObject(new SoftwareEncoder { IdEncoder = 5, Name = "CyberLink MPEG Video Encoder(Twinhan)", Priority = 5, Reusable = true, Type = 0 });
+      ctx.SoftwareEncoders.AddObject(new SoftwareEncoder { IdEncoder = 6, Name = "ATI MPEG Video Encoder", Priority = 6, Reusable = true, Type = 0 });
+      ctx.SoftwareEncoders.AddObject(new SoftwareEncoder { IdEncoder = 7, Name = "MainConcept MPEG Video Encoder", Priority = 7, Reusable = true, Type = 0 });
+      ctx.SoftwareEncoders.AddObject(new SoftwareEncoder { IdEncoder = 8, Name = "MainConcept Demo MPEG Video Encoder", Priority = 8, Reusable = true, Type = 0 });
+      ctx.SoftwareEncoders.AddObject(new SoftwareEncoder { IdEncoder = 9, Name = "MainConcept (Hauppauge) MPEG Video Encoder", Priority = 9, Reusable = true, Type = 0 });
+      ctx.SoftwareEncoders.AddObject(new SoftwareEncoder { IdEncoder = 10, Name = "MainConcept (HCW) MPEG-2 Video Encoder", Priority = 10, Reusable = true, Type = 0 });
+      ctx.SoftwareEncoders.AddObject(new SoftwareEncoder { IdEncoder = 11, Name = "Pinnacle MPEG 2 Encoder", Priority = 11, Reusable = true, Type = 0 });
+      ctx.SoftwareEncoders.AddObject(new SoftwareEncoder { IdEncoder = 12, Name = "nanocosmos MPEG Video Encoder", Priority = 12, Reusable = true, Type = 0 });
+      ctx.SoftwareEncoders.AddObject(new SoftwareEncoder { IdEncoder = 13, Name = "Ulead MPEG Encoder", Priority = 13, Reusable = true, Type = 0 });
+
+      // List of audio encoders
+      ctx.SoftwareEncoders.AddObject(new SoftwareEncoder { IdEncoder = 14, Name = "InterVideo Audio Encoder", Priority = 1, Reusable = true, Type = 1 });
+      ctx.SoftwareEncoders.AddObject(new SoftwareEncoder { IdEncoder = 15, Name = "CyberLink Audio Encoder", Priority = 2, Reusable = true, Type = 1 });
+      ctx.SoftwareEncoders.AddObject(new SoftwareEncoder { IdEncoder = 16, Name = "CyberLink MPEG Audio Encoder", Priority = 3, Reusable = true, Type = 1 });
+      ctx.SoftwareEncoders.AddObject(new SoftwareEncoder { IdEncoder = 17, Name = "CyberLink Audio Encoder(KWorld)", Priority = 4, Reusable = true, Type = 1 });
+      ctx.SoftwareEncoders.AddObject(new SoftwareEncoder { IdEncoder = 18, Name = "CyberLink Audio Encoder(TechnoTrend)", Priority = 5, Reusable = true, Type = 1 });
+      ctx.SoftwareEncoders.AddObject(new SoftwareEncoder { IdEncoder = 19, Name = "CyberLink Audio Encoder(TerraTec)", Priority = 6, Reusable = true, Type = 1 });
+      ctx.SoftwareEncoders.AddObject(new SoftwareEncoder { IdEncoder = 20, Name = "CyberLink Audio Encoder(Twinhan)", Priority = 7, Reusable = true, Type = 1 });
+      ctx.SoftwareEncoders.AddObject(new SoftwareEncoder { IdEncoder = 21, Name = "ATI MPEG Audio Encoder", Priority = 8, Reusable = true, Type = 1 });
+      ctx.SoftwareEncoders.AddObject(new SoftwareEncoder { IdEncoder = 22, Name = "MainConcept MPEG Audio Encoder", Priority = 9, Reusable = true, Type = 1 });
+      ctx.SoftwareEncoders.AddObject(new SoftwareEncoder { IdEncoder = 23, Name = "MainConcept Demo MPEG Audio Encoder", Priority = 10, Reusable = true, Type = 1 });
+      ctx.SoftwareEncoders.AddObject(new SoftwareEncoder { IdEncoder = 24, Name = "MainConcept (Hauppauge) MPEG Audio Encoder", Priority = 11, Reusable = true, Type = 1 });
+      ctx.SoftwareEncoders.AddObject(new SoftwareEncoder { IdEncoder = 25, Name = "MainConcept (HCW) Layer II Audio Encoder", Priority = 12, Reusable = true, Type = 1 });
+      ctx.SoftwareEncoders.AddObject(new SoftwareEncoder { IdEncoder = 26, Name = "Pinnacle MPEG Layer-2 Audio Encoder", Priority = 13, Reusable = true, Type = 1 });
+      ctx.SoftwareEncoders.AddObject(new SoftwareEncoder { IdEncoder = 27, Name = "NVIDIA Audio Encoder", Priority = 14, Reusable = true, Type = 1 });
+      ctx.SoftwareEncoders.AddObject(new SoftwareEncoder { IdEncoder = 28, Name = "Ulead MPEG Audio Encoder", Priority = 15, Reusable = true, Type = 1 });
+
       ctx.SaveChanges();
     }
 

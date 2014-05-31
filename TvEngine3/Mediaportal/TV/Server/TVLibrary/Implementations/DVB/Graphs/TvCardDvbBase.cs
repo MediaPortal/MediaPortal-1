@@ -41,12 +41,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
   /// <summary>
   /// base class for DVB cards
   /// </summary>
-  public abstract class TvCardDvbBase : TvCardBase, IDisposable, ITVCard
+  public abstract class TvCardDvbBase : TvCardBase, IDisposable
   {
     #region constants
 
     [ComImport, Guid("fc50bed6-fe38-42d3-b831-771690091a6e")]
-    private class MpTsAnalyzer { }
+    private class TsWriter { }
 
     #endregion
 
@@ -919,13 +919,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     {
       this.LogDebug("TvCardDvbBase: add Mediaportal TsWriter filter");
 
-      _filterTsWriter = FilterLoader.LoadFilterFromDll("TsWriter.ax", typeof(MpTsAnalyzer).GUID, true);
+      _filterTsWriter = FilterLoader.LoadFilterFromDll("TsWriter.ax", typeof(TsWriter).GUID, true);
       if (_filterTsWriter == null)
       {
         this.LogError("TvCardDvbBase: failed to marshal TsWriter filter");
         throw new TvExceptionGraphBuildingFailed("TvCardDvbBase: failed to marshal TsWriter filter");
       }
-      int hr = _graphBuilder.AddFilter(_filterTsWriter, "MediaPortal TS Analyzer");
+      int hr = _graphBuilder.AddFilter(_filterTsWriter, "MediaPortal Ts Writer");
       if (hr != 0)
       {
         this.LogError("TvCardDvbBase: failed to add TsWriter filter, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));

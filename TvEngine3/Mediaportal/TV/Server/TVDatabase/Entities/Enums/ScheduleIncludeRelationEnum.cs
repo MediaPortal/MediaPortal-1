@@ -12,6 +12,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities.Enums
     Schedules = 16,
     ConflictingSchedules = 32,
     Conflicts = 64,
-    ParentSchedule = 128    
-    } 
+    ParentSchedule = 128,
+    CanceledSchedules = 256
+  }
 }

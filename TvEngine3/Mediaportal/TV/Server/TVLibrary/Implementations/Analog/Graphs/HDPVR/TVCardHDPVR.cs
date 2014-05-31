@@ -37,7 +37,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
   /// <summary>
   /// Class for handling supported capture cards, including the Hauppauge HD PVR and Colossus.
   /// </summary>
-  public class TvCardHDPVR : TvCardBase, ITVCard
+  public class TvCardHDPVR : TvCardBase
   {
 
 
@@ -54,7 +54,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
     #region imports
 
     [ComImport, Guid("fc50bed6-fe38-42d3-b831-771690091a6e")]
-    private class MpTsAnalyzer { }
+    private class TsWriter { }
 
     #endregion
 
@@ -565,8 +565,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
       if (_filterTsWriter == null)
       {
         this.LogDebug("HDPVR: Add Mediaportal TsWriter filter");
-        _filterTsWriter = (IBaseFilter)new MpTsAnalyzer();
-        int hr = _graphBuilder.AddFilter(_filterTsWriter, "MediaPortal Ts Analyzer");
+        _filterTsWriter = FilterLoader.LoadFilterFromDll("TsWriter.ax", typeof(TsWriter).GUID, true);
+        int hr = _graphBuilder.AddFilter(_filterTsWriter, "MediaPortal Ts Writer");
         if (hr != 0)
         {
           this.LogError("HDPVR:  Add main Ts Analyzer returns:0x{0:X}", hr);

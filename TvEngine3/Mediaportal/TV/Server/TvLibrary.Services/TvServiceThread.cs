@@ -181,7 +181,7 @@ namespace Mediaportal.TV.Server.TVLibrary
     {
       if (msg == WM_POWERBROADCAST)
       {
-        this.LogDebug("TV service PowerEventThread received WM_POWERBROADCAST {1}", wParam.ToInt32());
+        this.LogDebug("TV service PowerEventThread received WM_POWERBROADCAST {0}", wParam.ToInt32());
         switch (wParam.ToInt32())
         {
           case PBT_APMQUERYSUSPENDFAILED:
@@ -547,9 +547,20 @@ namespace Mediaportal.TV.Server.TVLibrary
       }
     }
 
-    public void Start()
+    public void Start(bool allowEnvExit = true)
     {
-      var tvServiceThreadStart = new ThreadStart(DoStart);
+      var tvServiceThreadStart = new ThreadStart(() => {
+          try
+          {
+            DoStart();
+          }
+          catch (OSPrerequisites.OSPrerequisites.OperationSystemException ex)
+          {
+            // Only exit the process if the caller forces this behavior.
+            if (allowEnvExit)
+              Environment.Exit(ex.ExitCode);
+          }
+        });
       _tvServiceThread = new Thread(tvServiceThreadStart) { IsBackground = false };
 
 

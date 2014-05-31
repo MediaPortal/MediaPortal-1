@@ -117,7 +117,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       using (IChannelGroupRepository channelGroupRepository = new ChannelGroupRepository(true))
       {
         IQueryable <ChannelGroup> query = channelGroupRepository.GetQuery<ChannelGroup>(g => g.IdGroup == idGroup);
-        ChannelGroup group = channelGroupRepository.IncludeAllRelations(query).FirstOrDefault();
+        ChannelGroup group = channelGroupRepository.IncludeAllRelations(query, ChannelGroupIncludeRelationEnum.GroupMaps).FirstOrDefault();
         if (group.GroupMaps.Count > 0)
         {
           foreach (GroupMap groupmap in group.GroupMaps)

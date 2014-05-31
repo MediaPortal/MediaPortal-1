@@ -2,17 +2,17 @@
 
 // Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
-// 
+//
 // MediaPortal is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // MediaPortal is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
@@ -38,7 +38,8 @@ namespace OSInfo
       public int dwMinorVersion;
       public int dwBuildNumber;
       public int dwPlatformId;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)] public string szCSDVersion;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+      public string szCSDVersion;
       public short wServicePackMajor;
       public short wServicePackMinor;
       public short wSuiteMask;
@@ -51,11 +52,11 @@ namespace OSInfo
 
     [DllImport("kernel32.dll")]
     private static extern bool GetProductInfo(
-      [In] int dwOSMajorVersion,
-      [In] int dwOSMinorVersion,
-      [In] int dwSpMajorVersion,
-      [In] int dwSpMinorVersion,
-      [Out] out int pdwReturnedProductType);
+[In] int dwOSMajorVersion,
+[In] int dwOSMinorVersion,
+[In] int dwSpMajorVersion,
+[In] int dwSpMinorVersion,
+[Out] out int pdwReturnedProductType);
 
     [DllImport("user32.dll")]
     private static extern bool GetSystemMetrics([In] int nIndex);
@@ -65,7 +66,7 @@ namespace OSInfo
 
     [DllImport("kernel32.dll")]
     private static extern ulong VerSetConditionMask([In] ulong dwlConditionMask, [In] uint dwTypeBitMask,
-                                                    [In] byte dwConditionMask);
+[In] byte dwConditionMask);
 
     #endregion
 
@@ -201,6 +202,10 @@ namespace OSInfo
       ///</summary>
       Windows8,
       ///<summary>
+      /// Windows 8
+      ///</summary>
+      Windows81,
+      ///<summary>
       /// Windows 2003 Server
       ///</summary>
       Windows2003,
@@ -252,7 +257,7 @@ namespace OSInfo
     public static string GetOSProductType()
     {
       OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
-      osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof (OSVERSIONINFOEX));
+      osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof(OSVERSIONINFOEX));
       if (!GetVersionEx(ref osVersionInfo)) return string.Empty;
 
       switch (OSMajorVersion)
@@ -387,8 +392,8 @@ namespace OSInfo
               return "Enterprise Edition for Itanium-based Systems";
             case PRODUCT_SMALLBUSINESS_SERVER:
               return "Small Business Server";
-              //case PRODUCT_SMALLBUSINESS_SERVER_PREMIUM:
-              //  return "Small Business Server Premium Edition";
+            //case PRODUCT_SMALLBUSINESS_SERVER_PREMIUM:
+            // return "Small Business Server Premium Edition";
             case PRODUCT_SERVER_FOR_SMALLBUSINESS:
             case PRODUCT_SERVER_FOR_SMALLBUSINESS_V:
               return "Windows Essential Server Solutions";
@@ -423,7 +428,7 @@ namespace OSInfo
     public static string GetOSServicePack()
     {
       OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
-      osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof (OSVERSIONINFOEX));
+      osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof(OSVERSIONINFOEX));
       return !GetVersionEx(ref osVersionInfo) ? string.Empty : osVersionInfo.szCSDVersion;
     }
 
@@ -513,6 +518,9 @@ namespace OSInfo
                     case 2:
                       osName = OSProductType == NT_WORKSTATION ? "Windows 8" : "Windows 2012";
                       break;
+                    case 3:
+                      osName = OSProductType == NT_WORKSTATION ? "Windows 81" : "Windows 2012";
+                      break;
                   }
                   break;
                 }
@@ -551,6 +559,8 @@ namespace OSInfo
           return OSProductType == NT_WORKSTATION ? OSList.Windows7 : OSList.Windows2008R2;
         case 62:
           return OSProductType == NT_WORKSTATION ? OSList.Windows8 : OSList.Windows2012;
+        case 63:
+          return OSProductType == NT_WORKSTATION ? OSList.Windows81 : OSList.Windows2012;
       }
       return OSList.Windows2000andPrevious;
     }
@@ -577,7 +587,7 @@ namespace OSInfo
 
       if (VerifyDesktopOSMinRequirement(5, 1, 2600, NT_WORKSTATION, 3))
       { // XP SP3
-        return OsSupport.FullySupported;
+        return OsSupport.NotSupported;
       }
       if (VerifyDesktopOSMinRequirement(6, 0, 6000, NT_WORKSTATION, 2))
       { // Vista SP2
@@ -589,7 +599,15 @@ namespace OSInfo
       }
       if (VerifyDesktopOSMinRequirement(6, 2, 9200, NT_WORKSTATION, 0))
       { // Windows 8 RTM
-        return OsSupport.NotSupported;
+        return OsSupport.FullySupported;
+      }
+      if (VerifyDesktopOSMinRequirement(6, 3, 9431, NT_WORKSTATION, 0))
+      { // Windows 8.1 Preview
+        return OsSupport.FullySupported;
+      }
+      if (VerifyDesktopOSMinRequirement(6, 3, 9600, NT_WORKSTATION, 0))
+      { // Windows 8.1 RTM
+        return OsSupport.FullySupported;
       }
       if (IsServer())
       { // any server OS
@@ -647,6 +665,16 @@ namespace OSInfo
     public static bool Win8OrLater()
     {
       return VerifyVersionGreaterEqual(6, 2);
+    }
+
+    /// <summary>
+    /// Return if running on Windows8.1 or later
+    /// </summary>
+    /// <returns>true means Windows8.1 or later</returns>
+    /// <returns>false means Win8 or previous</returns>
+    public static bool Win81OrLater()
+    {
+      return VerifyVersionGreaterEqual(6, 3);
     }
 
     /// <summary>
@@ -710,7 +738,7 @@ namespace OSInfo
       get
       {
         OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
-        osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof (OSVERSIONINFOEX));
+        osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof(OSVERSIONINFOEX));
         if (!GetVersionEx(ref osVersionInfo)) return -1;
         return osVersionInfo.wServicePackMajor;
       }
@@ -724,7 +752,7 @@ namespace OSInfo
       get
       {
         OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
-        osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof (OSVERSIONINFOEX));
+        osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof(OSVERSIONINFOEX));
         return !GetVersionEx(ref osVersionInfo) ? -1 : osVersionInfo.wServicePackMinor;
       }
     }
@@ -737,7 +765,7 @@ namespace OSInfo
       get
       {
         OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
-        osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof (OSVERSIONINFOEX));
+        osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof(OSVERSIONINFOEX));
         return !GetVersionEx(ref osVersionInfo) ? String.Empty : osVersionInfo.szCSDVersion;
       }
     }
@@ -750,12 +778,12 @@ namespace OSInfo
       get
       {
         OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
-        osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof (OSVERSIONINFOEX));
+        osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof(OSVERSIONINFOEX));
         if (!GetVersionEx(ref osVersionInfo)) return 0x0;
         return osVersionInfo.wProductType;
       }
     }
-    
+
     #endregion
 
     #region private methods
@@ -812,7 +840,7 @@ namespace OSInfo
 
     /// <summary>
     /// Checks whether the OS version reported via GetVersionEx matches that of VerifyVersionInfo
-    /// When running in compatibility mode GetVersionEx can return the value of the 
+    /// When running in compatibility mode GetVersionEx can return the value of the
     /// compatibility setting rather than the actual OS
     /// </summary>
     /// <param name="majorVersion">Reported OS Major Version</param>

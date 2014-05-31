@@ -205,6 +205,8 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
       EpgProgram lastProgram = null;
       IList<Program> programs = new List<Program>();
 
+      // Sort EPG by start time to allow proper duplicate detection
+      epgPrograms = epgPrograms.OrderBy(p => p.StartTime).ToList();
       for (int i = 0; i < epgPrograms.Count; i++)
       {
         EpgProgram epgProgram = epgPrograms[i];
@@ -274,7 +276,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
         lastProgram = epgProgram;
       }
 
-      PersistPrograms(programs);
+      ProgramManagement.SavePrograms(programs);
 
       //todo MM : LastGrabTime is now present in tuningdetails - http://forum.team-mediaportal.com/threads/tve3-5-tuningdetails-refactoring.120520/page-8#post-1044194
       //dbChannel.LastGrabTime = DateTime.Now;
@@ -464,12 +466,6 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
       }
     }
 
-
-    private void PersistPrograms(IEnumerable<Program> programs)
-    {
-      ProgramManagement.SavePrograms(programs);
-    }
-
     private void AddProgramAndApplyTemplates(Channel dbChannel, EpgProgram ep, Program dbProg, IList<Program> programs)
     {
       string title;
@@ -478,8 +474,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
       int starRating;
       string classification;
       int parentRating;
-      GetEPGLanguage(ep.Text, out title, out description, out genre, out starRating, out classification,
-                     out parentRating);
+      GetEPGLanguage(ep.Text, out title, out description, out genre, out starRating, out classification, out parentRating);
       var values = new NameValueCollection
                      {
                        {"%TITLE%", title},
@@ -533,7 +528,12 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
         prgBLL.Entity.Title = title;
         prgBLL.Entity.StartTime = ep.StartTime;
         prgBLL.Entity.EndTime = ep.EndTime;
-        prgBLL.Entity.ProgramCategory = programCategory;
+        // Note: do not assign the ProgramCategory objects here, as EF state tracking would lead to duplicated programs,
+        // as also the relation to ProgramCategory will be tracked.
+        if (programCategory != null)
+        {
+          prgBLL.Entity.IdProgramCategory = programCategory.IdProgramCategory;
+        } 
         prgBLL.Entity.StarRating = starRating;
         prgBLL.Entity.Classification = classification;
         prgBLL.Entity.ParentalRating = parentRating;

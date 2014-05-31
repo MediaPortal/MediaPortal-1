@@ -8,19 +8,20 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 {
   public class ScheduleRepository : GenericRepository<TvModel>, IScheduleRepository
   {
-    public ScheduleRepository()    
+    public ScheduleRepository()
     {
     }
 
     public ScheduleRepository(bool trackingEnabled)
       : base(trackingEnabled)
-    {      
+    {
     }
 
     public ScheduleRepository(TvModel context)
       : base(context)
     {
     }
+
     public IQueryable<Schedule> IncludeAllRelations(IQueryable<Schedule> query)
     {
       IQueryable<Schedule> includeRelations = query.Include(s => s.Channel)
@@ -30,10 +31,9 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
         .Include(s => s.Schedules)
         .Include(s => s.ConflictingSchedules)
         .Include(s => s.Conflicts)
-        .Include(s => s.ParentSchedule)        
-        .Include(s => s.Channel)        
-      ;       
-       
+        .Include(s => s.ParentSchedule)
+        .Include(s => s.Channel)
+        .Include(s => s.CanceledSchedules);
       return includeRelations;
     }
 
@@ -46,6 +46,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       bool parentSchedule = includeRelations.HasFlag(ScheduleIncludeRelationEnum.ParentSchedule);
       bool recordings = includeRelations.HasFlag(ScheduleIncludeRelationEnum.Recordings);
       bool schedules = includeRelations.HasFlag(ScheduleIncludeRelationEnum.Schedules);
+      bool canceledSchedules = includeRelations.HasFlag(ScheduleIncludeRelationEnum.CanceledSchedules);
 
       if (channel)
       {
@@ -83,7 +84,12 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
         query = query.Include(s => s.Schedules);
       }
 
+      if (canceledSchedules)
+      {
+        query = query.Include(s => s.CanceledSchedules);
+      }
+
       return query;
     }
-  }  
+  }
 }

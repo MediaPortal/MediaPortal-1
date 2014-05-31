@@ -469,7 +469,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
     private bool AddTsFileSink()
     {
       this.LogDebug("analog:AddTsFileSink");
-      _tsFileSink = (IBaseFilter)new MpFileWriter();
+      _tsFileSink = FilterLoader.LoadFilterFromDll("MpFileWriter.ax", typeof(MpFileWriter).GUID, true);
       int hr = _graphBuilder.AddFilter(_tsFileSink, "TsFileSink");
       if (hr != 0)
       {
