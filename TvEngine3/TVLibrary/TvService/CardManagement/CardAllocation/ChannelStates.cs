@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using TvLibrary.Interfaces;
 using TvLibrary.Log;
 using TvControl;
@@ -35,8 +36,6 @@ namespace TvService
     #region private members   
     
     private readonly object _lock = new object();
-    private readonly object _threadlock = new object();
-    private Thread _setChannelStatesThread;
 
     public ChannelStates(TvBusinessLayer businessLayer, TVController controller)
       : base(businessLayer, controller)
@@ -283,40 +282,18 @@ namespace TvService
 
     #region public members
 
-    private void AbortChannelStates()
-    {
-      lock (_threadlock)
-      {
-        if (_setChannelStatesThread != null && _setChannelStatesThread.IsAlive)
-        {
-          _setChannelStatesThread.Abort();
-        }
-      }
-    }
-
     public void SetChannelStates(IDictionary<int, ITvCardHandler> cards, ICollection<Channel> channels,
                                  IController tvController)
     {
       if (channels == null)
-      {
         return;
-      }
-      AbortChannelStates();
-      //call the real work as a thread in order to avoid slower channel changes.
+
       // find all users      
       ICollection<IUser> allUsers = GetActiveUsers(cards);
-      ThreadStart starter = () => DoSetChannelStates(cards, channels, allUsers, tvController);
-      lock (_threadlock)
-      {
-        _setChannelStatesThread = new Thread(starter)
-                                    {
-                                      Name = "Channel state thread",
-                                      IsBackground = true,
-                                      Priority = ThreadPriority.Lowest
-                                    };
-        _setChannelStatesThread.Start();
-      }
-    }    
+
+      //call the real work as a thread in order to avoid slower channel changes.
+      Task.Factory.StartNew(new Action(() => DoSetChannelStates(cards, channels, allUsers, tvController)), TaskCreationOptions.PreferFairness);
+    }
 
     /// <summary>
     /// Gets a list of all channel states    
@@ -332,15 +309,13 @@ namespace TvService
       }
 
       var allUsers = new List<IUser>();
-      allUsers.Add(user);
+      if (user != null)
+      {
+        allUsers.Add(user);
+      }
 
       DoSetChannelStates(cards, channels, allUsers, tvController);
-
-      if (allUsers.Count > 0)
-      {
-        return allUsers[0].ChannelStates;
-      }
-      return new Dictionary<int, ChannelState>();
+      return allUsers.Count > 0 ? allUsers[0].ChannelStates : new Dictionary<int, ChannelState>();
     }
 
     #endregion
