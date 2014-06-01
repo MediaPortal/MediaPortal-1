@@ -45,8 +45,7 @@ CTimeStretchFilter::CTimeStretchFilter(AudioRendererSettings* pSettings, CSyncCl
   m_rtLastOuputStart(0),
   m_rtLastOuputEnd(-1),
   m_rtNextIncomingSampleTime(0),
-  m_pClock(pClock),
-  m_bBitstreaming(false)
+  m_pClock(pClock)
 {
 }
 

@@ -88,6 +88,7 @@
     <ClCompile Include="SoundTouch\source\InterpolateCubic.cpp">
       <Filter>SoundTouch</Filter>
     </ClCompile>
+    <ClCompile Include="source\SampleCopier.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\AC3EncoderFilter.h" />
@@ -180,6 +181,7 @@
     <ClInclude Include="SoundTouch\source\InterpolateShannon.h">
       <Filter>SoundTouch</Filter>
     </ClInclude>
+    <ClInclude Include="source\SampleCopier.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="source\MpAudioRenderer.rc" />

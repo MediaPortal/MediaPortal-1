@@ -105,4 +105,5 @@ protected:
   long m_nOutBufferSize;
 
   bool m_bNextFormatPassthru;
+  bool m_bBitstreaming;
 };

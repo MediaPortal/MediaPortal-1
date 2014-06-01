@@ -38,6 +38,7 @@
 #include "TimeStretchFilter.h"
 #include "SampleRateConverterFilter.h"
 #include "ChannelMixer.h"
+#include "SampleCopier.h"
 
 #include "../SoundTouch/Include/SoundTouch.h"
 #include "SyncClock.h"
@@ -146,6 +147,7 @@ private:
   CTimeStretchFilter*   m_pTimestretchFilter;
   CSampleRateConverter* m_pSampleRateConverter;
   CChannelMixer*        m_pChannelMixer;
+  CSampleCopier*        m_pSampleCopier;
 
   IRenderFilter* m_pRenderer;
   ITimeStretch* m_pTimeStretch;

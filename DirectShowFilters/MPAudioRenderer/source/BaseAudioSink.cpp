@@ -36,7 +36,8 @@ CBaseAudioSink::CBaseAudioSink(bool bHandleSampleRelease) :
   m_chOrder(DS_ORDER),
   m_nOutBufferCount(DEFAULT_OUT_BUFFER_COUNT),
   m_nOutBufferSize(DEFAULT_OUT_BUFFER_SIZE),
-  m_bNextFormatPassthru(false)
+  m_bNextFormatPassthru(false),
+  m_bBitstreaming(false)
 {
 }
 
