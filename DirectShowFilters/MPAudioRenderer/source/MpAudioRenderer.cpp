@@ -517,7 +517,10 @@ HRESULT CMPAudioRenderer::SetMediaType(const CMediaType* pmt)
 
   if (IS_WAVEFORMATEXTENSIBLE(pwfx))
   {
-    wfe = (WAVEFORMATEXTENSIBLE*)pwfx;
+    wfe = (WAVEFORMATEXTENSIBLE*)pwfx;    
+    if (!m_pSettings->GetAllowBitStreaming() && CBaseAudioSink::CanBitstream(wfe))
+      return VFW_E_TYPE_NOT_ACCEPTED;
+
     hr = m_pPipeline->NegotiateFormat(wfe, depth, &chOrder);
   }
   else
@@ -525,6 +528,9 @@ HRESULT CMPAudioRenderer::SetMediaType(const CMediaType* pmt)
     hr = ToWaveFormatExtensible(&wfe, pwfx);
     if (SUCCEEDED(hr))
     {
+      if (!m_pSettings->GetAllowBitStreaming() && CBaseAudioSink::CanBitstream(wfe))
+        return VFW_E_TYPE_NOT_ACCEPTED;
+
       hr = m_pPipeline->NegotiateFormat(wfe, depth, &chOrder);
       freeWaveFormat = true;
     }
