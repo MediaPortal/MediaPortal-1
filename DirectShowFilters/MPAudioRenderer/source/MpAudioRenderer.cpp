@@ -339,7 +339,7 @@ HRESULT	CMPAudioRenderer::CheckMediaType(const CMediaType* pmt)
     hr = ToWaveFormatExtensible(&wfe, pwfx);
     if (SUCCEEDED(hr))
     {
-      if (!m_pSettings->GetAllowBitStreaming() && CBaseAudioSink::CanBitstream((WAVEFORMATEXTENSIBLE*)pwfx))
+      if (!m_pSettings->GetAllowBitStreaming() && CBaseAudioSink::CanBitstream(wfe))
         return VFW_E_TYPE_NOT_ACCEPTED;
 
       LogWaveFormat(wfe, "CheckMediaType  ");
