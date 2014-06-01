@@ -46,7 +46,8 @@ CWASAPIRenderFilter::CWASAPIRenderFilter(AudioRendererSettings* pSettings, CSync
   m_ullPrevQpc(0),
   m_ullPrevPos(0),
   m_hNeedMoreSamples(NULL),
-  m_rtLatency(0)
+  m_rtLatency(0),
+  m_dOutputBufferSize(m_pSettings->GetOutputBuffer() * 10000)
 {
   OSVERSIONINFO osvi;
   ZeroMemory(&osvi, sizeof(OSVERSIONINFO));
@@ -927,6 +928,7 @@ REFERENCE_TIME CWASAPIRenderFilter::BufferredDataDuration()
   REFERENCE_TIME rtDuration = 0;
   REFERENCE_TIME rtStart = 0;
   REFERENCE_TIME rtStop = 0;
+  HRESULT hr = S_OK;
 
   CAutoLock queueLock(&m_inputQueueLock);
 
@@ -936,8 +938,10 @@ REFERENCE_TIME CWASAPIRenderFilter::BufferredDataDuration()
     // EOS marker is currently a NULL sample
     if (it->Sample)
     {
-      it->Sample->GetTime(&rtStart, &rtStop);
-      rtDuration += rtStop - rtStart;
+      if (SUCCEEDED(hr = it->Sample->GetTime(&rtStart, &rtStop)))
+        rtDuration += rtStop - rtStart;
+      else
+        Log("CWASAPIRenderFilter::BufferredDataDuration Failed to get sample times");
     }
     ++it;
   }
@@ -957,7 +961,7 @@ void CWASAPIRenderFilter::CheckBufferStatus()
   if (m_hNeedMoreSamples)
   {
     REFERENCE_TIME bufferedAmount = BufferredDataDuration();
-    if (m_hNeedMoreSamples && bufferedAmount < m_pSettings->GetOutputBuffer() * 10000)
+    if (m_hNeedMoreSamples && bufferedAmount < m_dOutputBufferSize)
     {
       //Log("CWASAPIRenderFilter::Render -      need more data - buffer: %6.3f", bufferedAmount / 10000000.0);
       SetEvent(*m_hNeedMoreSamples);
@@ -1176,6 +1180,8 @@ HRESULT CWASAPIRenderFilter::StartAudioClient()
     // Set the latency here so we don't have to retrieve it every time
     m_rtLatency = m_pSettings->GetPeriod();
     Log("CWASAPIRenderFilter set latency: %I64u", m_rtLatency);
+    m_dOutputBufferSize = m_pSettings->GetOutputBuffer() * 10000;
+    Log("CWASAPIRenderFilter set output buffer size: %d", m_dOutputBufferSize);
 
     if (m_pAudioClient)
     {
