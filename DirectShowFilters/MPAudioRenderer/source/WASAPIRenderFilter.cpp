@@ -1177,12 +1177,6 @@ HRESULT CWASAPIRenderFilter::StartAudioClient()
   {
     Log("WASAPIRenderFilter::StartAudioClient");
 
-    // Set the latency here so we don't have to retrieve it every time
-    m_rtLatency = m_pSettings->GetPeriod();
-    Log("CWASAPIRenderFilter set latency: %I64u", m_rtLatency);
-    m_dOutputBufferSize = m_pSettings->GetOutputBuffer() * 10000;
-    Log("CWASAPIRenderFilter set output buffer size: %d", m_dOutputBufferSize);
-
     if (m_pAudioClient)
     {
       hr = m_pAudioClient->Start();
@@ -1364,7 +1358,7 @@ HRESULT CWASAPIRenderFilter::InitAudioClient()
     }
   } // if (AUDCLNT_E_BUFFER_SIZE_NOT_ALIGNED == hr) 
 
-  m_pSettings->SetPeriod(rtPeriod);
+  //m_pSettings->SetPeriod(rtPeriod);
   m_rtLatency = rtPeriod;
 
   // get the buffer size, which is aligned
