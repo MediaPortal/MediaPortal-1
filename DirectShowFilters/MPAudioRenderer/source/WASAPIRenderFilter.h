@@ -130,6 +130,7 @@ private:
   REFERENCE_TIME      m_rtNextSampleTime;
   REFERENCE_TIME      m_rtHwStart;
   REFERENCE_TIME      m_rtLatency;
+  int                 m_dOutputBufferSize;
 
   // Audio HW clock data
   CCritSec            m_csClockLock;
