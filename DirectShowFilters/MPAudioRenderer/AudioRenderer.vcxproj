@@ -146,6 +146,7 @@
     <ClCompile Include="source\MediaSeeking.cpp" />
     <ClCompile Include="source\MpAudioRenderer.cpp" />
     <ClCompile Include="source\QueuedAudioSink.cpp" />
+    <ClCompile Include="source\SampleCopier.cpp" />
     <ClCompile Include="source\SampleRateConverterFilter.cpp" />
     <ClCompile Include="source\Settings.cpp" />
     <ClCompile Include="source\SettingsProp.cpp" />
@@ -196,6 +197,7 @@
     <ClInclude Include="source\MpAudioRenderer.h" />
     <ClInclude Include="source\QueuedAudioSink.h" />
     <ClInclude Include="source\resource.h" />
+    <ClInclude Include="source\SampleCopier.h" />
     <ClInclude Include="source\SampleRateConverterFilter.h" />
     <ClInclude Include="source\Settings.h" />
     <ClInclude Include="source\SettingsProp.h" />

@@ -148,7 +148,6 @@ private:
   double m_fCurrentAdjustment;
   double m_fNewTempo;
   double m_fNewAdjustment;
-  bool m_bBitstreaming;
 
   mutable CCritSec m_csStreamLock;  // allow const methods to use the lock
 

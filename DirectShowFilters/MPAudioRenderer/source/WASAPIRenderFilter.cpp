@@ -267,7 +267,17 @@ HRESULT CWASAPIRenderFilter::NegotiateBuffer(const WAVEFORMATEXTENSIBLE* pwfx, l
   if (bCanModifyBufferSize)
   {
     UINT32 nFrames = rtBufferLength / (UNITS / pwfx->Format.nSamplesPerSec);
-    *pBufferSize = nFrames / m_nOutBufferCount * pwfx->Format.nBlockAlign;
+
+    if (CanBitstream(pwfx))
+    {
+      REFERENCE_TIME rtPeriod = m_rtLatency;
+      m_nOutBufferCount =  m_rtLatency / 10000; // IME each sample is ~1ms
+      GetBufferSize((WAVEFORMATEX*)pwfx, &rtPeriod);
+      *pBufferSize = m_nBufferSize;
+    }
+    else
+      *pBufferSize = nFrames / m_nOutBufferCount * pwfx->Format.nBlockAlign;
+
     *pBufferCount = m_nOutBufferCount;
   }
   else

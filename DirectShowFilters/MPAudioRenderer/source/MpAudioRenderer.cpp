@@ -74,7 +74,8 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT* phr)
   m_pTimestretchFilter(NULL),
   m_pChannelMixer(NULL),
   m_pClock(NULL),
-  m_bInitialized(false)
+  m_bInitialized(false),
+  m_pSampleCopier(NULL)
 {
   StartLogger();
   LogRotate();
@@ -182,6 +183,7 @@ CMPAudioRenderer::~CMPAudioRenderer()
   delete m_pTimestretchFilter;
   delete m_pSampleRateConverter;
   delete m_pChannelMixer;
+  delete m_pSampleCopier;
 
   Log("MP Audio Renderer - destructor - instance 0x%x - end", this);
   StopLogger();
@@ -276,6 +278,16 @@ HRESULT CMPAudioRenderer::SetupFilterPipeline()
 
     m_pInBitDepthAdapter->ConnectTo(m_pPipeline);
     m_pPipeline = m_pInBitDepthAdapter;
+  }
+
+  if (m_pSettings->GetAllowBitStreaming())
+  {
+    m_pSampleCopier = new CSampleCopier();
+    if (!m_pSampleCopier)
+      return E_OUTOFMEMORY;
+
+    m_pSampleCopier->ConnectTo(m_pPipeline);
+    m_pPipeline = m_pSampleCopier;
   }
 
   return S_OK;
