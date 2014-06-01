@@ -259,10 +259,10 @@ HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, i
 // Buffer negotiation
 HRESULT CWASAPIRenderFilter::NegotiateBuffer(const WAVEFORMATEXTENSIBLE* pwfx, long* pBufferSize, long* pBufferCount, bool bCanModifyBufferSize)
 {
-  REFERENCE_TIME rtBufferLength = m_pSettings->GetOutputBuffer() * 10000;
+  REFERENCE_TIME rtBufferLength = m_dOutputBufferSize;
 
-  if (rtBufferLength < m_pSettings->GetPeriod() * 2)
-    rtBufferLength = m_pSettings->GetPeriod() * 2;
+  if (rtBufferLength < m_rtLatency * 2)
+    rtBufferLength = m_rtLatency * 2;
 
   if (bCanModifyBufferSize)
   {
@@ -891,12 +891,12 @@ DWORD CWASAPIRenderFilter::ThreadProc()
 
         if (SUCCEEDED(hr) && bufferSize > 0)
         {
-          liDueTime.QuadPart = (double)currentPadding / (double)bufferSize * (double)m_pSettings->GetPeriod() * -0.9;
+          liDueTime.QuadPart = (double)currentPadding / (double)bufferSize * (double)m_rtLatency * -0.9;
           // Log(" currentPadding: %d QuadPart: %lld", currentPadding, liDueTime.QuadPart);
         }
         else
         {
-          liDueTime.QuadPart = (double)m_pSettings->GetPeriod() * -0.9;
+          liDueTime.QuadPart = (double)m_rtLatency * -0.9;
           if (hr != AUDCLNT_E_NOT_INITIALIZED)
             Log("CWASAPIRenderFilter::Render thread: GetCurrentPadding failed (0x%08x)", hr);  
         }
