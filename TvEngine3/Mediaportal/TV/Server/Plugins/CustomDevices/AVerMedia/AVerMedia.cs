@@ -51,30 +51,30 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
       Menu = 2,
       List = 3,
       Enquiry = 5,
-      Unknown = 9
+      Close = 9
     }
 
     #endregion
 
-    #region call back definitions
+    #region delegate definitions
 
     /// <summary>
-    /// Called by the CI API COM object when the common interface slot state changes.
+    /// Invoked by the CI API COM object when the common interface slot state changes.
     /// </summary>
     /// <param name="context">Internal context information maintained by the COM object.</param>
-    /// <param name="stateData">Information related to the state change.</param>
+    /// <param name="stateData">Information related to the state change. Format/content is state-dependent.</param>
     /// <returns>an HRESULT to indicate whether the state change was successfully handled</returns>
     [UnmanagedFunctionPointerAttribute(CallingConvention.StdCall)]
     private delegate int OnAVerMediaCiStateChange(IntPtr context, IntPtr stateData);
 
     /// <summary>
-    /// Called by the CI COM object when an MMI message is available.
+    /// Invoked by the CI COM object when an MMI message is available.
     /// </summary>
     /// <param name="context">Internal context information maintained by the COM object.</param>
-    /// <param name="messageData">The MMI message data.</param>
+    /// <param name="message">The MMI message.</param>
     /// <returns>an HRESULT to indicate whether the message was successfully handled</returns>
     [UnmanagedFunctionPointerAttribute(CallingConvention.StdCall)]
-    private delegate int OnAVerMediaMmiMessage(IntPtr context, IntPtr messageData);
+    private delegate int OnAVerMediaMmiMessage(IntPtr context, ref MmiData message);
 
     #endregion
 
@@ -120,14 +120,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
       /// </summary>
       /// <remarks>
       /// This function sends the PMT command twice so although you can send CA PMT, it is not
-      /// necessarily going to work. In practise I was able to decrypt two channels simultaneously
-      /// using this function.
+      /// necessarily going to work. In practice I was able to decrypt two channels simultaneously
+      /// using this function. If you send standard PMT the list action will be "only".
       /// </remarks>
-      /// <param name="pmtBuffer">A pointer to a buffer containing the PMT or CA PMT.</param>
-      /// <param name="isNotCaPmt">Set to any non-zero value if the PMT buffer does not contain CA PMT.</param>
+      /// <param name="pmt">The PMT or CA PMT.</param>
+      /// <param name="isNotCaPmt"><c>True</c> if the PMT is not CA PMT.</param>
       /// <returns>an HRESULT indicating whether the PMT was successfully passed to the CAM</returns>
       [PreserveSig]
-      int SendPmt(IntPtr pmtBuffer, int isNotCaPmt);
+      int SendPmt(ref AVerMediaPmt pmt, [MarshalAs(UnmanagedType.Bool)] bool isNotCaPmt);
     }
 
     [Guid("c5bd61cc-f79a-4a5e-99d0-2e763ee372b6"),
@@ -138,7 +138,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
       /// Set the MMI message handler delegate.
       /// </summary>
       /// <remarks>
-      /// The call back delegate pointer must be a pointer to a pointer to a pointer to the delegate.
+      /// The call back delegate pointer must be a pointer to a pointer to a pointer to the
+      /// delegate.
       /// </remarks>
       /// <param name="callBackPtr">An indirect reference to an OnAVerMediaMmiMessage delegate.</param>
       /// <returns>an HRESULT indicating whether the call back was registered successfully</returns>
@@ -186,26 +187,27 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
     private interface PmtInterface
     {
       /// <summary>
-      /// Send PMT to the CAM. The interface converts the PMT to CA PMT using the specified list action.
+      /// Send PMT to the CAM. The interface converts the PMT to CA PMT using the specified list
+      /// action.
       /// </summary>
-      /// <param name="pmtBuffer">A pointer to a buffer containing the PMT.</param>
+      /// <param name="pmt">The PMT.</param>
       /// <param name="listAction">A CA PMT list management action.</param>
       /// <returns>an HRESULT indicating whether the PMT was successfully passed to the CAM</returns>
       [PreserveSig]
-      int SendPmt1(IntPtr pmtBuffer, short listAction);
+      int SendPmtWithListAction(ref AVerMediaPmt pmt, short listAction);
 
       /// <summary>
       /// Send PMT to the CAM. The interface converts the PMT to CA PMT using the "only" list action.
       /// </summary>
       /// <remarks>
-      /// It is not desirable to use this function because it can't be used to decrypt multiple channels
-      /// simultaneously. Note that the PMT buffer structure seems to be different to the other two PMT
-      /// functions.
+      /// It is not desirable to use this function because it can't be used to decrypt multiple
+      /// channels simultaneously. Note that the PMT structure seems to be different to the other
+      /// two PMT functions.
       /// </remarks>
-      /// <param name="pmtBuffer">A pointer to a buffer containing the PMT.</param>
+      /// <param name="pmt">The PMT.</param>
       /// <returns>an HRESULT indicating whether the PMT was successfully passed to the CAM</returns>
       [PreserveSig]
-      int SendPmt2(IntPtr pmtBuffer);
+      int SendPmtOnly(byte[] pmt);
     }
 
     #endregion
@@ -218,7 +220,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
       private byte Zero1;
       private short Zero2;
       public short Length;
-      public IntPtr PmtPtr;   // Note: if you send normal PMT, do not include the CRC.
+      public IntPtr PmtPtr;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -248,7 +250,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
 
     private static readonly Guid CI_API_CLSID = new Guid(0x68ace120, 0xe5b1, 0x48bd, 0xb8, 0x9f, 0x88, 0xdd, 0x96, 0xc2, 0x83, 0x8b);
 
-    // From version 1.1.0.29 of the COM object.
+    // From version 1.1.0.35 of the COM object.
     private static readonly string[] VALID_DEVICE_PATHS = new string[]
     {
       "ven_1131&dev_7160&subsys_1d551461",
@@ -257,10 +259,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
       "ven_1131&dev_7133&subsys_f01d1461",  // M135 [pictures suggest this doesn't have a CI slot connection]
       "ven_1131&dev_7133&subsys_20551461",  // A706 AVerTV Satellite Hybrid + FM
       "ven_1131&dev_7133&subsys_21551461",  // A706 AVerTV Satellite PCI
-      "ven_1131&dev_7160&subsys_2E551461",  // A707 Pure DVBT CI/CA
+      "ven_1131&dev_7160&subsys_2e551461",  // A707 Pure DVBT CI/CA
       "vid_07ca&pid_0888",                  // R888 AVer3D Satellite TV???
       "vid_07ca&pid_c873",                  // C873 AVer MediaCenter USB Remote Controller
       "vid_07ca&pid_0889",                  // R889 AVer3D Satellite TV
+      "vid_07ca&pid_1889",                  // R889 AVer3D Satellite revision???
       "ven_1131&dev_7160&subsys_71711461"   // A717 AVer3D Quadro HD
     };
 
@@ -276,7 +279,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
     private object _ciApi = null;
     private CiInterface _ciInterface = null;
     private MmiInterface _mmiInterface = null;
-    private PmtInterface _pmtInterface = null;
     private bool _isCamReady = false;
     private AVerMediaCiState _ciState = AVerMediaCiState.Empty;
 
@@ -300,10 +302,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
 
     #endregion
 
-    #region call back handlers
+    #region delegate implementations
 
     /// <summary>
-    /// Called by the CI API COM object when the common interface slot state changes.
+    /// Invoked by the CI API COM object when the common interface slot state changes.
     /// </summary>
     /// <param name="context">Internal context information maintained by the COM object.</param>
     /// <param name="stateData">Information related to the state change.</param>
@@ -336,27 +338,17 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
           }
         }
       }
-      return 0;
+      return (int)HResult.Severity.Success;
     }
 
     /// <summary>
-    /// Called by the CI COM object when an MMI message is available.
+    /// Invoked by the CI COM object when an MMI message is available.
     /// </summary>
     /// <param name="context">Internal context information maintained by the COM object.</param>
-    /// <param name="messageData">The MMI message data.</param>
+    /// <param name="message">The MMI message.</param>
     /// <returns>an HRESULT to indicate whether the message was successfully handled</returns>
-    private int OnMmiMessage(IntPtr context, IntPtr messageData)
+    private int OnMmiMessage(IntPtr context, ref MmiData message)
     {
-      if (messageData == IntPtr.Zero)
-      {
-        this.LogInfo("AVerMedia: MMI message call back, no message data provided");
-        return 0;
-      }
-      if ((short)AVerMediaMmiMessageType.Unknown == Marshal.ReadInt16(messageData, 0))
-      {
-        return 0;
-      }
-
       this.LogInfo("AVerMedia: MMI message call back");
 
       lock (_caMenuCallBackLock)
@@ -366,31 +358,42 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
           this.LogDebug("AVerMedia: menu call back not set");
         }
 
-        MmiData data = (MmiData)Marshal.PtrToStructure(messageData, typeof(MmiData));
-        this.LogDebug("  message type = {0}", data.MessageType);
-        this.LogDebug("  unknown      = {0}", data.Unknown);
-        this.LogDebug("  is blind     = {0}", data.IsBlindAnswer);
-        this.LogDebug("  string count = {0}", data.StringCount);
-        this.LogDebug("  count        = {0}", data.Count);
-
-        if (data.StringCount >= 3)
+        this.LogDebug("  message type = {0}", message.MessageType);
+        if (message.MessageType == AVerMediaMmiMessageType.Close)
         {
-          string title = DvbTextConverter.Convert(data.Strings[0].Text);
-          string subTitle = DvbTextConverter.Convert(data.Strings[1].Text);
-          string footer = DvbTextConverter.Convert(data.Strings[2].Text);
+          // The field structure or meaning appears to be different in this
+          // case. Example: 09 00 00 03 78 2B C2 09. All bytes except byte six
+          // (0xC2) appear to be constant.
+          if (_caMenuCallBack != null)
+          {
+            _caMenuCallBack.OnCiCloseDisplay(0);
+          }
+          return (int)HResult.Severity.Success;
+        }
+
+        this.LogDebug("  unknown      = {0}", message.Unknown);
+        this.LogDebug("  is blind     = {0}", message.IsBlindAnswer);
+        this.LogDebug("  string count = {0}", message.StringCount);
+        this.LogDebug("  count        = {0}", message.Count);
+
+        if (message.StringCount >= 3)
+        {
+          string title = DvbTextConverter.Convert(message.Strings[0].Text);
+          string subTitle = DvbTextConverter.Convert(message.Strings[1].Text);
+          string footer = DvbTextConverter.Convert(message.Strings[2].Text);
           this.LogDebug("  title        = {0}", title);
           this.LogDebug("  sub-title    = {0}", subTitle);
           this.LogDebug("  footer       = {0}", footer);
-          this.LogDebug("  # entries    = {0}", data.Count);
+          this.LogDebug("  # entries    = {0}", message.Count);
           if (_caMenuCallBack != null)
           {
-            _caMenuCallBack.OnCiMenu(title, subTitle, footer, data.Count);
+            _caMenuCallBack.OnCiMenu(title, subTitle, footer, message.Count);
           }
-          if (data.Count > 0)
+          if (message.Count > 0)
           {
-            for (int i = 0; i < data.Count; i++)
+            for (int i = 0; i < message.Count; i++)
             {
-              string entry = DvbTextConverter.Convert(data.Strings[i + 3].Text);
+              string entry = DvbTextConverter.Convert(message.Strings[i + 3].Text);
               this.LogDebug("    {0, -10} = {1}", i + 1, entry);
               if (_caMenuCallBack != null)
               {
@@ -399,24 +402,24 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
             }
           }
         }
-        else if (data.MessageType == AVerMediaMmiMessageType.Enquiry)
+        else if (message.MessageType == AVerMediaMmiMessageType.Enquiry)
         {
-          string prompt = DvbTextConverter.Convert(data.Strings[0].Text);
+          string prompt = DvbTextConverter.Convert(message.Strings[0].Text);
           this.LogDebug("  prompt       = {0}", prompt);
-          this.LogDebug("  length       = {0}", data.Count);
-          this.LogDebug("  blind        = {0}", data.IsBlindAnswer != 0);
+          this.LogDebug("  length       = {0}", message.Count);
+          this.LogDebug("  blind        = {0}", message.IsBlindAnswer != 0);
           if (_caMenuCallBack != null)
           {
-            _caMenuCallBack.OnCiRequest(data.IsBlindAnswer != 0, data.Count, prompt);
+            _caMenuCallBack.OnCiRequest(message.IsBlindAnswer != 0, message.Count, prompt);
           }
         }
         else
         {
-          this.LogWarn("AVerMedia: MMI message type {0} not supported", data.MessageType);
+          this.LogWarn("AVerMedia: MMI message type {0} not supported", message.MessageType);
         }
       }
 
-      return 0;
+      return (int)HResult.Severity.Success;
     }
 
     #endregion
@@ -537,12 +540,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
         this.LogError("AVerMedia: failed to obtain MMI interface");
         return false;
       }
-      _pmtInterface = _ciApi as PmtInterface;
-      if (_pmtInterface == null)
-      {
-        this.LogError("AVerMedia: failed to obtain PMT interface");
-        return false;
-      }
 
       _ciState = AVerMediaCiState.Empty;
       _isCamReady = false;
@@ -604,7 +601,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
         _mmiInterface.SetMessageCallBack(IntPtr.Zero);
         _mmiInterface = null;
       }
-      _pmtInterface = null;
       Release.ComObject("AVerMedia CI API", ref _ciApi);
       _mmiInterface = null;
 
@@ -703,47 +699,47 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
         return true;
       }
 
-      //byte[] caPmt = DvbMmiHandler.CreateCaPmtRequest(pmt.GetCaPmt(listAction, command));
-      ReadOnlyCollection<byte> rawPmt = pmt.GetRawPmt();
-
-      /*AVerMediaPmt averPmt = new AVerMediaPmt();
-      averPmt.Length = (short)caPmt.Length;
-      averPmt.PmtPtr = Marshal.AllocCoTaskMem(caPmt.Length);
-      Marshal.Copy(caPmt, 0, averPmt.PmtPtr, caPmt.Length);
-      IntPtr structPtr = Marshal.AllocCoTaskMem(AVERMEDIA_PMT_SIZE);
-      Marshal.StructureToPtr(averPmt, structPtr, true);*/
-
+      int hr = (int)HResult.Severity.Success;
       AVerMediaPmt averPmt = new AVerMediaPmt();
-      averPmt.Length = (short)rawPmt.Count;
-      averPmt.PmtPtr = Marshal.AllocCoTaskMem(rawPmt.Count);
-      for (int i = 0; i < rawPmt.Count; i++)
-      {
-        Marshal.WriteByte(averPmt.PmtPtr, i, rawPmt[i]);
-      }
-      IntPtr structPtr = Marshal.AllocCoTaskMem(AVERMEDIA_PMT_SIZE);
-      Marshal.StructureToPtr(averPmt, structPtr, false);
-
-      //Dump.DumpBinary(structPtr, AVERMEDIA_PMT_SIZE);
-      //Dump.DumpBinary(averPmt.PmtPtr, caPmt.Length);
-
       try
       {
-        //int hr = _ciInterface.SendPmt(structPtr, 0);
-        int hr = _pmtInterface.SendPmt1(structPtr, (short)listAction);
-        if (hr == (int)HResult.Severity.Success)
+        PmtInterface pmtInterface = _ciApi as PmtInterface;
+        if (pmtInterface == null)
         {
-          this.LogDebug("AVerMedia: result = success");
-          return true;
+          // Use the older CI interface PMT function when the new PMT interface is not available.
+          byte[] caPmt = DvbMmiHandler.CreateCaPmtRequest(pmt.GetCaPmt(listAction, command));
+          averPmt.Length = (short)caPmt.Length;
+          averPmt.PmtPtr = Marshal.AllocCoTaskMem(caPmt.Length);
+          Marshal.Copy(caPmt, 0, averPmt.PmtPtr, caPmt.Length);
+          hr = _ciInterface.SendPmt(ref averPmt, false);
         }
-        this.LogError("AVerMedia: failed to send conditional access command, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        return false;
+        else
+        {
+          ReadOnlyCollection<byte> rawPmt = pmt.GetRawPmt();
+          averPmt.Length = (short)rawPmt.Count;
+          averPmt.PmtPtr = Marshal.AllocCoTaskMem(rawPmt.Count);
+          for (int i = 0; i < rawPmt.Count; i++)
+          {
+            Marshal.WriteByte(averPmt.PmtPtr, i, rawPmt[i]);
+          }
+          hr = pmtInterface.SendPmtWithListAction(ref averPmt, (short)listAction);
+        }
       }
       finally
       {
-        Marshal.DestroyStructure(structPtr, typeof(AVerMediaPmt));
-        Marshal.FreeCoTaskMem(averPmt.PmtPtr);
-        Marshal.FreeCoTaskMem(structPtr);
+        if (averPmt.PmtPtr != IntPtr.Zero)
+        {
+          Marshal.FreeCoTaskMem(averPmt.PmtPtr);
+        }
       }
+
+      if (hr == (int)HResult.Severity.Success)
+      {
+        this.LogDebug("AVerMedia: result = success");
+        return true;
+      }
+      this.LogError("AVerMedia: failed to send conditional access command, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      return false;
     }
 
     #endregion
