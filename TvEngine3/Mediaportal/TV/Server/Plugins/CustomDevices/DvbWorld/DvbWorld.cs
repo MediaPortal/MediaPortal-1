@@ -236,6 +236,55 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbWorld
       }
     }
 
+    /// <summary>
+    /// Attempt to find the BDA frequency filter interface.
+    /// </summary>
+    /// <param name="context">The context supplied to initialise the extension.</param>
+    /// <returns>a frequency filter instance if found, otherwise <c>null</c></returns>
+    private IBDA_FrequencyFilter FindFrequencyFilter(object context)
+    {
+      IBDA_Topology topology = context as IBDA_Topology;
+      if (topology == null)
+      {
+        return null;
+      }
+
+      int nodeTypeCount;
+      int[] nodeTypes = new int[33];
+      int hr = topology.GetNodeTypes(out nodeTypeCount, 32, nodeTypes);
+      if (hr != (int)HResult.Severity.Success)
+      {
+        return null;
+      }
+
+      Guid[] interfaces = new Guid[33];
+      int interfaceCount;
+      for (int i = 0; i < nodeTypeCount; ++i)
+      {
+        hr = topology.GetNodeInterfaces(nodeTypes[i], out interfaceCount, 32, interfaces);
+        if (hr != (int)HResult.Severity.Success)
+        {
+          continue;
+        }
+        for (int j = 0; j < interfaceCount; j++)
+        {
+          if (interfaces[j] == typeof(IBDA_FrequencyFilter).GUID)
+          {
+            object controlNode;
+            hr = topology.GetControlNode(0, 1, nodeTypes[i], out controlNode);
+            IBDA_FrequencyFilter frequencyFilter = controlNode as IBDA_FrequencyFilter;
+            if (frequencyFilter != null)
+            {
+              this.LogDebug("DVB World: found frequency filter interface");
+              return frequencyFilter;
+            }
+            Release.ComObject("DVB World topology control node", ref controlNode);
+          }
+        }
+      }
+      return null;
+    }
+
     #region IOCTL
 
     private int GetIoctl(Guid propertySet, IntPtr outputBuffer, int outputBufferSize)
@@ -430,24 +479,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbWorld
       this.LogInfo("DVB World: extension supported");
       _isDvbWorld = true;
 
-      // Find the IBDA_FrequencyFilter interface, if supported.
-      IBDA_Topology topology = context as IBDA_Topology;
-      if (topology != null)
-      {
-        object controlNode;
-        hr = topology.GetControlNode(0, 1, 0, out controlNode);
-        _frequencyFilterInterface = controlNode as IBDA_FrequencyFilter;
-        if (hr != (int)HResult.Severity.Success)
-        {
-          Release.ComObject("DVB World topology control node", ref controlNode);
-          _frequencyFilterInterface = null;
-        }
-      }
-      if (_frequencyFilterInterface != null)
-      {
-        this.LogDebug("DVB World: found frequency filter interface");
-      }
-
+      _frequencyFilterInterface = FindFrequencyFilter(context);
       ReadTunerInfo();
       return true;
     }

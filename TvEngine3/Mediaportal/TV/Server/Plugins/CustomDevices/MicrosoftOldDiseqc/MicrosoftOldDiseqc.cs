@@ -18,6 +18,7 @@
 
 #endregion
 
+using System;
 using DirectShowLib;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
@@ -101,6 +102,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftOldDiseqc
         return false;
       }
 
+      // The IBDA_FrequencyFilter.put_Range() function was the de-facto "BDA" standard
+      // for DiSEqC 1.0 support prior to the introduction of IBDA_DiseqCommand in Windows
+      // 7. Try to find the interface.
       IBDA_Topology topology = context as IBDA_Topology;
       if (topology == null)
       {
@@ -108,20 +112,44 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftOldDiseqc
         return false;
       }
 
-      // The IBDA_FrequencyFilter.put_Range() function was the de-facto "BDA" standard for DiSEqC
-      // 1.0 prior to the introduction of IBDA_DiseqCommand in Windows 7.
-      object controlNode;
-      int hr = topology.GetControlNode(0, 1, 0, out controlNode);
-      _interface = controlNode as IBDA_FrequencyFilter;
-      if (hr != (int)HResult.Severity.Success || _interface == null)
+      int nodeTypeCount;
+      int[] nodeTypes = new int[33];
+      int hr = topology.GetNodeTypes(out nodeTypeCount, 32, nodeTypes);
+      if (hr != (int)HResult.Severity.Success)
       {
-        this.LogDebug("Microsoft old DiSEqC: frequency filter interface not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogDebug("Microsoft old DiSEqC: failed to get node types");
         return false;
       }
 
-      this.LogInfo("Microsoft old DiSEqC: extension supported");
-      _isMicrosoftOldDiseqc = true;
-      return true;
+      Guid[] interfaces = new Guid[33];
+      int interfaceCount;
+      for (int i = 0; i < nodeTypeCount; ++i)
+      {
+        hr = topology.GetNodeInterfaces(nodeTypes[i], out interfaceCount, 32, interfaces);
+        if (hr != (int)HResult.Severity.Success)
+        {
+          continue;
+        }
+        for (int j = 0; j < interfaceCount; j++)
+        {
+          if (interfaces[j] == typeof(IBDA_FrequencyFilter).GUID)
+          {
+            object controlNode;
+            hr = topology.GetControlNode(0, 1, nodeTypes[i], out controlNode);
+            _interface = controlNode as IBDA_FrequencyFilter;
+            if (_interface != null)
+            {
+              this.LogInfo("Microsoft old DiSEqC: extension supported");
+              _isMicrosoftOldDiseqc = true;
+              return true;
+            }
+            Release.ComObject("Microsoft old DiSEqC topology control node", ref controlNode);
+          }
+        }
+      }
+
+      this.LogDebug("Microsoft old DiSEqC: frequency filter interface not supported");
+      return false;
     }
 
     #endregion
