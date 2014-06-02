@@ -215,27 +215,39 @@ namespace MediaPortal.Player
         {
           _videoResolution = "1080I";
         }
-        if (_width <= 720 && _height == 240)
+        if (_width <= 720 && _height == 240 &&
+          (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\240.png")) ||
+          File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\resolution\240.png"))))
         {
           _videoResolution = "240";
         }
-        if (_width <= 720 && _height == 360)
+        if (_width <= 720 && _height == 360 &&
+          (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\360.png")) ||
+          File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\resolution\360.png"))))
         {
           _videoResolution = "360";
         }
-        if (_width <= 720 && _height == 480)
+        if (_width <= 720 && _height == 480 &&
+          (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\480.png")) ||
+          File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\resolution\480.png"))))
         {
           _videoResolution = "480";
         }
-        if (_width <= 720 && _height == 576)
+        if (_width <= 720 && _height == 576 &&
+          (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\576.png")) ||
+          File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\resolution\576.png"))))
         {
           _videoResolution = "576";
         }
-        if ((_width == 3840 || _height == 2160) && !_isInterlaced)
+        if ((_width == 3840 || _height == 2160) && !_isInterlaced &&
+          (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\2160P.png")) ||
+          File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\resolution\2160P.png"))))
         {
           _videoResolution = "2160P";
         }
-        if ((_width == 7680 || _height == 4320) && !_isInterlaced)
+        if ((_width == 7680 || _height == 4320) && !_isInterlaced &&
+          (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\4320P.png")) ||
+          File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\resolution\4320P.png"))))
         {
           _videoResolution = "4320P";
         }
