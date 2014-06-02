@@ -857,16 +857,28 @@ namespace MediaPortal.MusicPlayer.BASS
             }
           }
 
-          if (Config.MusicPlayer == AudioPlayer.WasApi && BassWasapi.BASS_WASAPI_IsStarted())
+          if (Config.MusicPlayer == AudioPlayer.WasApi)
           {
             try
             {
-              Log.Debug("BASS: Stopping WASAPI Device");
-              if (!BassWasapi.BASS_WASAPI_Stop(true))
+              if (BassWasapi.BASS_WASAPI_IsStarted())
               {
-                Log.Error("BASS: Error stopping WASAPI Device: {0}", Bass.BASS_ErrorGetCode());
+                Log.Debug("BASS: Stopping WASAPI Device");
+                if (!BassWasapi.BASS_WASAPI_Stop(true))
+                {
+                  Log.Error("BASS: Error stopping WASAPI Device: {0}", Bass.BASS_ErrorGetCode());
+                }
               }
+            }
+            catch (Exception ex)
+            {
+              Log.Error("BASS: Exception stopping WASAPI: {0} {1}", ex.Message, ex.StackTrace);
+            }
 
+            // Even if stopping the WASAPI device fails we need to free it to make sure 
+            // the audio device is free to be used by others
+            try
+            {
               if (!BassWasapi.BASS_WASAPI_Free())
               {
                 Log.Error("BASS: Error freeing WASAPI: {0}", Bass.BASS_ErrorGetCode());
@@ -874,7 +886,7 @@ namespace MediaPortal.MusicPlayer.BASS
             }
             catch (Exception ex)
             {
-              Log.Error("BASS: Exception freeing WASAPI. {0} {1}", ex.Message, ex.StackTrace);
+              Log.Error("BASS: Exception freeing WASAPI: {0} {1}", ex.Message, ex.StackTrace);
             }
           }
 
