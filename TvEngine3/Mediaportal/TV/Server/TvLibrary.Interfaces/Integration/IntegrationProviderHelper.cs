@@ -48,7 +48,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Integration
 
       var assemblyFilter = new AssemblyFilter(searchPath, "*.Integration.*.dll");
 
-      container.Register(AllTypes.FromAssemblyInDirectory(assemblyFilter).BasedOn<IIntegrationProvider>().WithServiceBase().LifestyleSingleton());
+      container.Register(Classes.FromAssemblyInDirectory(assemblyFilter).BasedOn<IIntegrationProvider>().WithServiceBase().LifestyleSingleton());
       GlobalServiceProvider.Add(container.Resolve<IIntegrationProvider>());
     }
   }

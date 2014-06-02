@@ -69,7 +69,7 @@ namespace Mediaportal.TV.Server.Plugins.Base
         var assemblyFilter = new AssemblyFilter(pluginFolder);
         IWindsorContainer container = Instantiator.Instance.Container();
         container.Register(
-        AllTypes.FromAssemblyInDirectory(assemblyFilter).
+          Classes.FromAssemblyInDirectory(assemblyFilter).
             BasedOn<ITvServerPlugin>().
             If(IsPluginCompatible).
             WithServiceBase().
