@@ -26,6 +26,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Xml.Linq;
+using MediaPortal.Util;
 
 namespace MediaPortal.LastFM
 {
@@ -75,7 +76,7 @@ namespace MediaPortal.LastFM
       parms.Add("username", username);
       parms.Add("password", password);
       var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, true);
-      var xDoc = GetXml(buildLastFMString, "POST", true);
+      var xDoc = GetXml(buildLastFMString, "POST", true, false);
 
       if (xDoc != null)
       {
@@ -117,7 +118,7 @@ namespace MediaPortal.LastFM
       parms.Add("sk", _sessionKey);
 
       var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, true);
-      GetXml(buildLastFMString, "POST", false);
+      GetXml(buildLastFMString, "POST", false, false);
     }
 
 
@@ -210,7 +211,7 @@ namespace MediaPortal.LastFM
       parms.Add("sk", _sessionKey);
 
       var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, true);
-      GetXml(buildLastFMString, "POST", false);
+      GetXml(buildLastFMString, "POST", false, false);
     }
 
     #endregion
@@ -229,9 +230,13 @@ namespace MediaPortal.LastFM
       parms.Add("sk", _sessionKey);
 
       var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, true);
-      GetXml(buildLastFMString, "POST", false);
+      var result = GetXml(buildLastFMString, "POST", false, true);
+      if (result != null)
+      {
+        return true;
+      }
 
-      return true;
+      return false;
     }
 
     /// <summary>
@@ -246,7 +251,7 @@ namespace MediaPortal.LastFM
       parms.Add("sk", _sessionKey);
 
       var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, true);
-      var xDoc = GetXml(buildLastFMString, "GET", false);
+      var xDoc = GetXml(buildLastFMString, "GET", false, true);
 
       if (xDoc != null)
       {
@@ -282,7 +287,7 @@ namespace MediaPortal.LastFM
       parms.Add("artist", artist);
       parms.Add("track", track);
       var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, true);
-      var xDoc = GetXml(buildLastFMString, "GET", false);
+      var xDoc = GetXml(buildLastFMString, "GET", false, false);
       var trackInfo = new LastFMTrackInfo(xDoc);
 
       return trackInfo;
@@ -306,7 +311,7 @@ namespace MediaPortal.LastFM
       parms.Add("autocorrect", "1");
 
       var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, false);
-      var xDoc = GetXml(buildLastFMString, "GET", false);
+      var xDoc = GetXml(buildLastFMString, "GET", false, false);
 
       if (xDoc != null)
       {
@@ -330,7 +335,7 @@ namespace MediaPortal.LastFM
       parms.Add("sk", _sessionKey);
 
       var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, true);
-      GetXml(buildLastFMString, "POST", false);
+      GetXml(buildLastFMString, "POST", false, true);
 
       return true;
     }
@@ -350,7 +355,7 @@ namespace MediaPortal.LastFM
       parms.Add("sk", _sessionKey);
 
       var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, true);
-      GetXml(buildLastFMString, "POST", false);
+      GetXml(buildLastFMString, "POST", false, true);
 
       return true;
     }
@@ -370,7 +375,7 @@ namespace MediaPortal.LastFM
       parms.Add("sk", _sessionKey);
 
       var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, true);
-      GetXml(buildLastFMString, "POST", false);
+      GetXml(buildLastFMString, "POST", false, true);
 
       return true;
     }
@@ -390,7 +395,7 @@ namespace MediaPortal.LastFM
       parms.Add("sk", _sessionKey);
 
       var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, true);
-      GetXml(buildLastFMString, "POST", false);
+      GetXml(buildLastFMString, "POST", false, true);
 
       return true;
     }
@@ -409,7 +414,7 @@ namespace MediaPortal.LastFM
       const string methodName = "artist.getInfo";
       parms.Add("artist", artist);
       var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, true);
-      var xDoc = GetXml(buildLastFMString, "GET", false);
+      var xDoc = GetXml(buildLastFMString, "GET", false, false);
       var lastFMFullArtist = new LastFMFullArtist(xDoc);
 
       return lastFMFullArtist;
@@ -426,7 +431,7 @@ namespace MediaPortal.LastFM
       const string methodName = "artist.getTopTracks";
       parms.Add("artist", artist);
       var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, true);
-      var xDoc = GetXml(buildLastFMString, "GET", false);
+      var xDoc = GetXml(buildLastFMString, "GET", false, false);
 
       if (xDoc != null)
       {
@@ -453,7 +458,7 @@ namespace MediaPortal.LastFM
       parms.Add("album", album);
 
       var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, true);
-      var xDoc = GetXml(buildLastFMString, "GET", false);
+      var xDoc = GetXml(buildLastFMString, "GET", false, false);
       var lastFMAlbum = new LastFMAlbum(xDoc);
 
       return lastFMAlbum;
@@ -494,7 +499,7 @@ namespace MediaPortal.LastFM
         parms.Add("sk", _sessionKey);
       }
       var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, false);
-      var xDoc = GetXml(buildLastFMString, "GET", false);
+      var xDoc = GetXml(buildLastFMString, "GET", false, false);
       var lastFMUser = new LastFMUser(xDoc);
 
       return lastFMUser;
@@ -512,62 +517,106 @@ namespace MediaPortal.LastFM
     /// <param name="useHttps">Whether to use HTTPS</param>
     /// <returns>The xml returned by Webservice</returns>
     /// <exception cref="LastFMException">Details of last.fm error or will wrap actual exception as inner exception</exception>
-    private static XDocument GetXml(string querystring, string httpMethod, bool useHttps)
+    private static XDocument GetXml(string querystring, string httpMethod, bool useHttps, bool radio)
     {
-      HttpWebResponse response;
-      XDocument xDoc;
-      var url = useHttps ? BaseURLHttps : BaseURL;
-      if (httpMethod == "GET")
+      if (Win32API.IsConnectedToInternet())
       {
-        url = url + "?" + querystring;
-      }
-
-      bool webExceptionStatus = false;
-      var postArray = Encoding.UTF8.GetBytes(querystring);
-      var request = (HttpWebRequest) WebRequest.Create(url);
-      request.Method = httpMethod;
-      request.ServicePoint.Expect100Continue = false;
-      if (httpMethod == "POST")
-      {
-        request.ContentType = "application/x-www-form-urlencoded";
-        request.ContentLength = postArray.Length;
-        var s = request.GetRequestStream();
-        s.Write(postArray, 0, postArray.Length);
-        s.Close();
-      }
-      try
-      {
-        response = (HttpWebResponse) request.GetResponse();
-      }
-      catch (WebException ex)
-      {
-        if (ex.Status == WebExceptionStatus.ProtocolError)
+        HttpWebResponse response;
+        XDocument xDoc = null;
+        var url = useHttps ? BaseURLHttps : BaseURL;
+        if (httpMethod == "GET")
         {
-          // errors on last.fm side such as invalid API key, are returned as HTTP errors
-          // just process these as a standard return
-          response = (HttpWebResponse) ex.Response;
-          //webExceptionStatus = true;
+          url = url + "?" + querystring;
+        }
+
+        bool webExceptionStatus = false;
+        var postArray = Encoding.UTF8.GetBytes(querystring);
+        var request = (HttpWebRequest) WebRequest.Create(url);
+        request.Method = httpMethod;
+        request.ServicePoint.Expect100Continue = false;
+        if (httpMethod == "POST")
+        {
+          try
+          {
+            request.ContentType = "application/x-www-form-urlencoded";
+            request.ContentLength = postArray.Length;
+            var s = request.GetRequestStream();
+            s.Write(postArray, 0, postArray.Length);
+            s.Close();
+          }
+          catch (Exception)
+          {
+            return null;
+          }
+        }
+        try
+        {
+          response = (HttpWebResponse) request.GetResponse();
+        }
+        catch (WebException ex)
+        {
+          if (ex.Status == WebExceptionStatus.ProtocolError)
+          {
+            // errors on last.fm side such as invalid API key, are returned as HTTP errors
+            // just process these as a standard return
+            response = (HttpWebResponse) ex.Response;
+            //webExceptionStatus = true;
+          }
+          else
+          {
+            return null;
+          }
+        }
+
+        if (radio)
+        {
+          using (var stream = response.GetResponseStream())
+          using (var reader = new StreamReader(stream, Encoding.UTF8))
+          {
+            var resp = reader.ReadToEnd();
+            if (!string.IsNullOrEmpty(resp))
+            {
+              xDoc = XDocument.Parse(resp);
+            }
+          }
+
+          if (xDoc != null && (string) xDoc.Root.Attribute("status") != "ok")
+          {
+            throw GetLastFMException(xDoc);
+          }
+          if (xDoc != null)
+          {
+            return xDoc;
+          }
         }
         else
         {
-          throw;
-        }
-      }
+          using (var stream = response.GetResponseStream())
+          using (var reader = new StreamReader(stream, Encoding.UTF8))
+          {
+            try
+            {
+              var resp = reader.ReadToEnd();
+              if (!string.IsNullOrEmpty(resp))
+              {
+                xDoc = XDocument.Parse(resp);
+              }
+            }
+            catch (Exception)
+            {
+              return null;
+            }
+          }
 
-      if (!webExceptionStatus)
-      {
-        using (var stream = response.GetResponseStream())
-        using (var reader = new StreamReader(stream, Encoding.UTF8))
-        {
-          var resp = reader.ReadToEnd();
-          xDoc = XDocument.Parse(resp);
+          if (xDoc != null && (string) xDoc.Root.Attribute("status") != "ok")
+          {
+            throw GetLastFMException(xDoc);
+          }
+          if (xDoc != null)
+          {
+            return xDoc;
+          }
         }
-
-        if ((string) xDoc.Root.Attribute("status") != "ok")
-        {
-          throw GetLastFMException(xDoc);
-        }
-        return xDoc;
       }
       return null;
     }
