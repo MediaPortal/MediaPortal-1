@@ -87,10 +87,11 @@ bool CPlaylistManager::CreateNewPlaylistClip(int nPlaylist, int nClip, bool audi
   {
     // First playlist
     CPlaylist* firstPlaylist = new CPlaylist(nPlaylist, firstPacketTime);
-    firstPlaylist->CreateNewClip(nClip, firstPacketTime, clipOffsetTime, audioPresent, duration, m_rtPlaylistOffset, false, false);
-
-    m_vecPlaylists.push_back(firstPlaylist);
-    m_itCurrentAudioPlayBackPlaylist = m_itCurrentVideoPlayBackPlaylist = m_itCurrentAudioSubmissionPlaylist = m_itCurrentVideoSubmissionPlaylist = m_vecPlaylists.begin();
+    if (firstPlaylist->CreateNewClip(nClip, firstPacketTime, clipOffsetTime, audioPresent, duration, m_rtPlaylistOffset, false, false))
+    {
+      m_vecPlaylists.push_back(firstPlaylist);
+      m_itCurrentAudioPlayBackPlaylist = m_itCurrentVideoPlayBackPlaylist = m_itCurrentAudioSubmissionPlaylist = m_itCurrentVideoSubmissionPlaylist = m_vecPlaylists.begin();
+    }
   }
   else if (m_vecPlaylists.back()->nPlaylist == nPlaylist)
   {
@@ -115,18 +116,19 @@ bool CPlaylistManager::CreateNewPlaylistClip(int nPlaylist, int nClip, bool audi
     }
 
     CPlaylist* newPlaylist = new CPlaylist(nPlaylist,firstPacketTime);
-    newPlaylist->CreateNewClip(nClip,firstPacketTime, clipOffsetTime, audioPresent, duration, m_rtPlaylistOffset, playedDuration == 0, ret);
-    
-    PushPlaylists();
-    m_vecPlaylists.push_back(newPlaylist);
-    PopPlaylists(0);
+    if (newPlaylist->CreateNewClip(nClip,firstPacketTime, clipOffsetTime, audioPresent, duration, m_rtPlaylistOffset, playedDuration == 0, ret))
+    {
+      PushPlaylists();
+      m_vecPlaylists.push_back(newPlaylist);
+      PopPlaylists(0);
 
-    (*m_itCurrentAudioSubmissionPlaylist)->SetFilledAudio();
-    (*m_itCurrentVideoSubmissionPlaylist)->SetFilledVideo();
+      (*m_itCurrentAudioSubmissionPlaylist)->SetFilledAudio();
+      (*m_itCurrentVideoSubmissionPlaylist)->SetFilledVideo();
 
-    //move to this playlist
-    m_itCurrentAudioSubmissionPlaylist++;
-    m_itCurrentVideoSubmissionPlaylist++;
+      //move to this playlist
+      m_itCurrentAudioSubmissionPlaylist++;
+      m_itCurrentVideoSubmissionPlaylist++;
+    }
   }
 
   m_rtPlaylistOffset += CLIP_DELAY;

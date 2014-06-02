@@ -67,6 +67,7 @@ protected:
   typedef vector<CClip*>::iterator ivecClip;
 
   void Reset(int playlistNumber, REFERENCE_TIME firstPacketTime);
+  bool ClipExists(int nClip);
 
   vector<CClip*> m_vecClips;
   ivecClip m_itCurrentAudioPlayBackClip;
