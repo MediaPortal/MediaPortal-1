@@ -731,7 +731,7 @@ namespace MediaPortal.Configuration.Sections
           
           string shareNameData = xmlreader.GetValueAsString(section, shareName, "");
           string sharePathData = xmlreader.GetValueAsString(section, sharePath, "");
-          string sharePinData = Util.Utils.DecryptPasssword(xmlreader.GetValueAsString(section, sharePin, ""));
+          string sharePinData = Util.Utils.DecryptPassword(xmlreader.GetValueAsString(section, sharePin, ""));
 
           // provide default shares
           if (index == 0 && shareNameData == string.Empty)
@@ -746,7 +746,7 @@ namespace MediaPortal.Configuration.Sections
           bool shareTypeData = xmlreader.GetValueAsBool(section, shareType, false);
           string shareServerData = xmlreader.GetValueAsString(section, shareServer, "");
           string shareLoginData = xmlreader.GetValueAsString(section, shareLogin, "");
-          string sharePwdData = Util.Utils.DecryptPasssword(xmlreader.GetValueAsString(section, sharePwd, ""));
+          string sharePwdData = Util.Utils.DecryptPassword(xmlreader.GetValueAsString(section, sharePwd, ""));
           int sharePortData = xmlreader.GetValueAsInt(section, sharePort, 21);
           string shareRemotePathData = xmlreader.GetValueAsString(section, shareRemotePath, "/");
           int shareLayout = xmlreader.GetValueAsInt(section, shareViewPath,
@@ -921,11 +921,11 @@ namespace MediaPortal.Configuration.Sections
 
               xmlwriter.SetValue(section, shareName, shareNameData);
               xmlwriter.SetValue(section, sharePath, sharePathData);
-              xmlwriter.SetValue(section, sharePin, Util.Utils.EncryptPasssword(sharePinData));
+              xmlwriter.SetValue(section, sharePin, Util.Utils.EncryptPassword(sharePinData));
               xmlwriter.SetValueAsBool(section, shareType, shareTypeData);
               xmlwriter.SetValue(section, shareServer, shareServerData);
               xmlwriter.SetValue(section, shareLogin, shareLoginData);
-              xmlwriter.SetValue(section, sharePwd, Util.Utils.EncryptPasssword(sharePwdData));
+              xmlwriter.SetValue(section, sharePwd, Util.Utils.EncryptPassword(sharePwdData));
               xmlwriter.SetValue(section, sharePort, sharePortData.ToString());
               xmlwriter.SetValue(section, shareRemotePath, shareRemotePathData);
               xmlwriter.SetValue(section, shareViewPath, shareLayout);

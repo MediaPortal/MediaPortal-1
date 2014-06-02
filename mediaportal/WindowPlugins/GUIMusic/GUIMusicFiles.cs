@@ -242,7 +242,7 @@ namespace MediaPortal.GUI.Music
         MusicState.StartWindow = xmlreader.GetValueAsInt("music", "startWindow", GetID);
         MusicState.View = xmlreader.GetValueAsString("music", "startview", string.Empty);
         _useFileMenu = xmlreader.GetValueAsBool("filemenu", "enabled", true);
-        _fileMenuPinCode = Util.Utils.DecryptPasssword(xmlreader.GetValueAsString("filemenu", "pincode", string.Empty));
+        _fileMenuPinCode = Util.Utils.DecryptPassword(xmlreader.GetValueAsString("filemenu", "pincode", string.Empty));
         _wolTimeout = xmlreader.GetValueAsInt("WOL", "WolTimeout", 10);
         _wolResendTime = xmlreader.GetValueAsInt("WOL", "WolResendTime", 1);
         //string strDefault = xmlreader.GetValueAsString("music", "default", string.Empty);

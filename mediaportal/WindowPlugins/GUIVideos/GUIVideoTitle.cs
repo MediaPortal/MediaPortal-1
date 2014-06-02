@@ -2314,7 +2314,7 @@ namespace MediaPortal.GUI.Video
         {
           string sharePin = String.Format("pincode{0}", index);
           string sharePath = String.Format("sharepath{0}", index);
-          string sharePinData = Util.Utils.DecryptPasssword(xmlreader.GetValueAsString("movies", sharePin, ""));
+          string sharePinData = Util.Utils.DecryptPassword(xmlreader.GetValueAsString("movies", sharePin, ""));
           string sharePathData = xmlreader.GetValueAsString("movies", sharePath, "");
 
           if (!string.IsNullOrEmpty(sharePinData))

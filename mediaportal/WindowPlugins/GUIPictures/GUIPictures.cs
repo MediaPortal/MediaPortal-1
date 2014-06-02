@@ -423,7 +423,7 @@ namespace MediaPortal.GUI.Pictures
         _enableVideoPlayback = xmlreader.GetValueAsBool("pictures", "enableVideoPlayback", false);
         _playVideosInSlideshows = xmlreader.GetValueAsBool("pictures", "playVideosInSlideshows", false);
         isFileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
-        fileMenuPinCode = Util.Utils.DecryptPasssword(xmlreader.GetValueAsString("filemenu", "pincode", string.Empty));
+        fileMenuPinCode = Util.Utils.DecryptPassword(xmlreader.GetValueAsString("filemenu", "pincode", string.Empty));
         //string strDefault = xmlreader.GetValueAsString("pictures", "default", string.Empty);
         _wolTimeout = xmlreader.GetValueAsInt("WOL", "WolTimeout", 10);
         _wolResendTime = xmlreader.GetValueAsInt("WOL", "WolResendTime", 1);

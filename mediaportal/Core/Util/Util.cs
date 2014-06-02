@@ -4728,7 +4728,7 @@ namespace MediaPortal.Util
       }
     }
 
-    public static string EncryptPasssword(string code)
+    public static string EncryptPassword(string code)
     {
       string result = string.Empty;
       try
@@ -4740,7 +4740,7 @@ namespace MediaPortal.Util
       return result;
     }
 
-    public static string DecryptPasssword(string code)
+    public static string DecryptPassword(string code)
     {
       string result = string.Empty;
       try

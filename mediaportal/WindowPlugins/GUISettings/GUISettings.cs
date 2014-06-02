@@ -70,7 +70,7 @@ namespace MediaPortal.GUI.Settings
     {
       using (Profile.Settings xmlreader = new MPSettings())
       {
-        _pin = Util.Utils.DecryptPasssword(xmlreader.GetValueAsString("mpsettings", "pin", string.Empty));
+        _pin = Util.Utils.DecryptPassword(xmlreader.GetValueAsString("mpsettings", "pin", string.Empty));
 
         if (_pin != string.Empty)
         {
@@ -84,7 +84,7 @@ namespace MediaPortal.GUI.Settings
     {
       using (Profile.Settings xmlwriter = new MPSettings())
       {
-        xmlwriter.SetValue("mpsettings", "pin", Util.Utils.EncryptPasssword(_pin));
+        xmlwriter.SetValue("mpsettings", "pin", Util.Utils.EncryptPassword(_pin));
       }
     }
 
@@ -286,7 +286,7 @@ namespace MediaPortal.GUI.Settings
     {
       using (Profile.Settings xmlreader = new MPSettings())
       {
-        _pin = Util.Utils.DecryptPasssword(xmlreader.GetValueAsString("mpsettings", "pin", string.Empty));
+        _pin = Util.Utils.DecryptPassword(xmlreader.GetValueAsString("mpsettings", "pin", string.Empty));
       }
 
       if (_pin == string.Empty)

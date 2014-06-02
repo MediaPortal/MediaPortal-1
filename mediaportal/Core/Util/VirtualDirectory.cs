@@ -82,11 +82,11 @@ namespace MediaPortal.Util
           Share share = new Share();
           share.Name = xmlreader.GetValueAsString(section, strShareName, string.Empty);
           share.Path = xmlreader.GetValueAsString(section, strSharePath, string.Empty);
-          share.Pincode = Utils.DecryptPasssword(xmlreader.GetValueAsString(section, strPincode, string.Empty));
+          share.Pincode = Utils.DecryptPassword(xmlreader.GetValueAsString(section, strPincode, string.Empty));
           share.IsFtpShare = xmlreader.GetValueAsBool(section, shareType, false);
           share.FtpServer = xmlreader.GetValueAsString(section, shareServer, string.Empty);
           share.FtpLoginName = xmlreader.GetValueAsString(section, shareLogin, string.Empty);
-          share.FtpPassword = Utils.DecryptPasssword(xmlreader.GetValueAsString(section, sharePwd, string.Empty));
+          share.FtpPassword = Utils.DecryptPassword(xmlreader.GetValueAsString(section, sharePwd, string.Empty));
           share.FtpPort = xmlreader.GetValueAsInt(section, sharePort, 21);
           share.FtpFolder = xmlreader.GetValueAsString(section, remoteFolder, "/");
           share.DefaultLayout = (Layout)xmlreader.GetValueAsInt(section, shareViewPath, (int)Layout.List);
@@ -2230,12 +2230,12 @@ namespace MediaPortal.Util
 
           xmlwriter.SetValue(mediaType, shareName, shareNameData);
           xmlwriter.SetValue(mediaType, sharePath, sharePathData);
-          xmlwriter.SetValue(mediaType, sharePin, Util.Utils.EncryptPasssword(sharePinData));
+          xmlwriter.SetValue(mediaType, sharePin, Util.Utils.EncryptPassword(sharePinData));
 
           xmlwriter.SetValueAsBool(mediaType, shareType, shareTypeData);
           xmlwriter.SetValue(mediaType, shareServer, shareServerData);
           xmlwriter.SetValue(mediaType, shareLogin, shareLoginData);
-          xmlwriter.SetValue(mediaType, sharePwd, Util.Utils.EncryptPasssword(sharePwdData));
+          xmlwriter.SetValue(mediaType, sharePwd, Util.Utils.EncryptPassword(sharePwdData));
           xmlwriter.SetValue(mediaType, sharePort, sharePortData.ToString());
           xmlwriter.SetValue(mediaType, shareRemotePath, shareRemotePathData);
         }

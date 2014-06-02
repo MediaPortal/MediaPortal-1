@@ -80,7 +80,7 @@ namespace WindowPlugins.GUISettings
       {
         btnFileMenu.Selected = xmlreader.GetValueAsBool("filemenu", "enabled", true);
         btnPin.IsEnabled = btnFileMenu.Selected;
-        _pin = Utils.DecryptPasssword(xmlreader.GetValueAsString("filemenu", "pincode", ""));
+        _pin = Utils.DecryptPassword(xmlreader.GetValueAsString("filemenu", "pincode", ""));
       }
     }
 
@@ -89,7 +89,7 @@ namespace WindowPlugins.GUISettings
       using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValueAsBool("filemenu", "enabled", btnFileMenu.Selected);
-        xmlwriter.SetValue("filemenu", "pincode", Utils.EncryptPasssword(_pin));
+        xmlwriter.SetValue("filemenu", "pincode", Utils.EncryptPassword(_pin));
       }
     }
 

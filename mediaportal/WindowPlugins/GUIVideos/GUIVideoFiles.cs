@@ -352,7 +352,7 @@ namespace MediaPortal.GUI.Video
         _markWatchedFiles = xmlreader.GetValueAsBool("movies", "markwatched", true);
         //_eachFolderIsMovie = xmlreader.GetValueAsBool("movies", "eachFolderIsMovie", false);
         _fileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
-        _fileMenuPinCode = Util.Utils.DecryptPasssword(xmlreader.GetValueAsString("filemenu", "pincode", string.Empty));
+        _fileMenuPinCode = Util.Utils.DecryptPassword(xmlreader.GetValueAsString("filemenu", "pincode", string.Empty));
         _howToPlayAll = xmlreader.GetValueAsInt("movies", "playallinfolder", 3);
         _watchedPercentage = xmlreader.GetValueAsInt("movies", "playedpercentagewatched", 95);
         _videoInfoInShare = xmlreader.GetValueAsBool("moviedatabase", "movieinfoshareview", false);
