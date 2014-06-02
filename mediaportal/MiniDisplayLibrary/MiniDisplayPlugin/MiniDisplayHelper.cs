@@ -20,11 +20,10 @@
 
 using System;
 using System.IO;
-using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
+using MediaPortal.MusicPlayer.BASS;
 using MediaPortal.Player;
-using Un4seen.Bass;
-using Un4seen.BassWasapi;
+using Config = MediaPortal.Configuration.Config;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 {
@@ -35,6 +34,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     public static object PropertyBrowserMutex = new object();
     public static object StatusMutex = new object();
     public static bool UseTVServer = false;
+    protected static BassAudioEngine _bass = null;
 
     public static void DisablePropertyBrowser()
     {
@@ -44,11 +44,22 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       }
     }
 
+    internal MiniDisplayHelper(BassAudioEngine bass) : base()
+    {
+      Bass = bass;
+    }
+
+    internal static BassAudioEngine Bass
+    {
+      get { return _bass; }
+      set { _bass = value; }
+    }
+
     /// <summary>
     /// Check our EQ settings and MP states to determine if it is appropriate to show our EQ.
     /// </summary>
     /// <param name="EQSETTINGS"></param>
-    /// <returns>True if it is appropriate to show our EQ, false otherwise.</returns>
+    /// <returns>True if it is appropriate to show our EQ, false otherwise.</returns>    public static bool GetEQ(ref EQControl EQSETTINGS)
     public static bool GetEQ(ref EQControl EQSETTINGS)
     {
       SystemStatus MPStatus=new SystemStatus();
@@ -135,15 +146,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             num3 = -2147483646;
           }
 
-          if (BassWasapi.BASS_WASAPI_IsStarted())
+          if (Bass.BASS_WASAPI_IsStarted())
           {
-              num2 = BassWasapi.BASS_WASAPI_GetData(EQSETTINGS.EqFftData, num3);
+            num2 = Bass.GetDataFFT(EQSETTINGS.EqFftData, num3);
           }
           else
           {
-              num2 = Bass.BASS_ChannelGetData(handle, EQSETTINGS.EqFftData, num3);
+            num2 = Bass.GetChannelData(handle, EQSETTINGS.EqFftData, num3);
           }
-
         }
         catch
         {
