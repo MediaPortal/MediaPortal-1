@@ -588,24 +588,28 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       HResult.ThrowException(hr, "Failed to get topology node types.");
 
       IList<IBDA_SignalStatistics> statistics = new List<IBDA_SignalStatistics>();
-      Guid[] guidInterfaces = new Guid[33];
+      int interfaceCount;
+      Guid[] interfaces = new Guid[33];
       for (int i = 0; i < nodeTypeCount; ++i)
       {
-        object controlNode;
-        hr = topology.GetControlNode(0, 1, nodeTypes[i], out controlNode);
-        HResult.ThrowException(hr, "Failed to get topology control node.");
-
-        IBDA_SignalStatistics s = controlNode as IBDA_SignalStatistics;
-        if (s != null)
+        hr = topology.GetNodeInterfaces(nodeTypes[i], out interfaceCount, 32, interfaces);
+        HResult.ThrowException(hr, string.Format("Failed to get topology node interfaces for node type {0} ({1}).", nodeTypes[i], i));
+        for (int j = 0; j < interfaceCount; j++)
         {
-          statistics.Add(s);
+          if (interfaces[j] == typeof(IBDA_SignalStatistics).GUID)
+          {
+            object controlNode;
+            hr = topology.GetControlNode(0, 1, nodeTypes[i], out controlNode);
+            HResult.ThrowException(hr, string.Format("Failed to get topology control node for node type {0} ({1}).", nodeTypes[i], i));
+            statistics.Add(controlNode as IBDA_SignalStatistics);
+          }
         }
       }
       if (statistics.Count == 0)
       {
         throw new TvException("Failed to find signal statistic interfaces.");
       }
-      this.LogDebug("BDA base: found {0} interfaces", statistics.Count);
+      this.LogDebug("BDA base: found {0} interface(s)", statistics.Count);
       return statistics;
     }
 
@@ -690,6 +694,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
           {
             finalIsLocked |= isLocked;
           }
+          else
+          {
+            this.LogWarn("BDA base: failed to update signal lock with interface {0}, hr = 0x{1:x}", i, hr);
+          }
           if (onlyUpdateLock)
           {
             continue;
@@ -701,33 +709,44 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
           {
             finalIsPresent |= isPresent;
           }
+          else
+          {
+            this.LogWarn("BDA base: failed to update signal present with interface {0}, hr = 0x{1:x}", i, hr);
+          }
 
           int quality = 0;
           hr = statisticsInterface.get_SignalQuality(out quality);
-          if (hr == (int)HResult.Severity.Success && quality != 0)
+          if (hr == (int)HResult.Severity.Success)
           {
-            finalQuality += quality;
-            qualityCount++;
+            if (quality != 0)
+            {
+              finalQuality += quality;
+              qualityCount++;
+            }
+          }
+          else
+          {
+            this.LogWarn("BDA base: failed to update signal quality with interface {0}, hr = 0x{1:x}", i, hr);
           }
 
           int strength = 0;
           hr = statisticsInterface.get_SignalStrength(out strength);
-          if (hr == (int)HResult.Severity.Success && strength != 0)
+          if (hr == (int)HResult.Severity.Success)
           {
-            finalStrength += strength;
-            strengthCount++;
+            if (strength != 0)
+            {
+              finalStrength += strength;
+              strengthCount++;
+            }
+          }
+          else
+          {
+            this.LogWarn("BDA base: failed to update signal strength with interface {0}, hr = 0x{1:x}", i, hr);
           }
         }
         catch (Exception ex)
         {
           this.LogWarn(ex, "BDA base: exception updating signal status with interface {0}", i);
-        }
-        finally
-        {
-          if (hr != (int)HResult.Severity.Success)
-          {
-            this.LogWarn("BDA base: potential error updating signal status with interface {0}, hr = 0x{1:x}", i, hr);
-          }
         }
       }
 
