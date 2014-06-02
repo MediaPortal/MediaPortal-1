@@ -406,7 +406,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
                    result == TvResult.AllCardsBusy ||
                    result == TvResult.CardIsDisabled ||
                    result == TvResult.ChannelNotMappedToAnyCard ||
-                   result == TvResult.TuneCancelled
+                   result == TvResult.TuneCancelled ||
+                   result == TvResult.ChannelNotActive
             )
           {
             string err = GetErrMsgFromTVResult(result);
@@ -506,12 +507,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         case TvResult.UnknownError:
           err = "Unknown error occured";
           break;
-        case TvResult.ConnectionToSlaveFailed:
-          err = "Cannot connect to slave server";
-          break;
-        case TvResult.NotTheOwner:
-          err = "Failed since card is in use and we are not the owner";
-          break;
         case TvResult.GraphBuildingFailed:
           err = "Unable to create graph";
           break;
@@ -523,6 +518,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           break;
         case TvResult.TuneCancelled:
           err = "Tune cancelled";
+          break;
+        case TvResult.ChannelNotActive:
+          err = "Channel not active";
           break;
       }
       return err;

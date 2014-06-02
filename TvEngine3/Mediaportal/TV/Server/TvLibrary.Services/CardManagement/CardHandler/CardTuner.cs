@@ -125,7 +125,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         // fix mantis 0002776: Code locking in cardtuner can cause hangs 
         //lock (this)
         {
-         TvResult tvResult = TvResult.UnknownError;
+          TvResult tvResult = TvResult.UnknownError;
           if (!BeforeTune(channel, ref user, out tvResult, idChannel))
           {
             return tvResult;
@@ -141,56 +141,37 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
           }
         }
       }
-      catch (TvExceptionNoSignal)
-      {
-        if (result != null)
-        {
-          _cardHandler.Card.FreeSubChannel(result.SubChannelId);
-        }
-        return TvResult.NoSignalDetected;
-      }
-      catch (TvExceptionSWEncoderMissing ex)
-      {
-        this.LogError(ex);
-        if (result != null)
-        {
-          _cardHandler.Card.FreeSubChannel(result.SubChannelId);
-        }
-        return TvResult.SWEncoderMissing;
-      }
-      catch (TvExceptionTunerLoadFailed ex2)
-      {
-        this.LogError(ex2);
-        if (result != null)
-        {
-          _cardHandler.Card.FreeSubChannel(result.SubChannelId);
-        }
-        return TvResult.GraphBuildingFailed;
-      }
-      catch (TvExceptionNoPMT)
-      {
-        if (result != null)
-        {
-          _cardHandler.Card.FreeSubChannel(result.SubChannelId);
-        }
-        return TvResult.NoPmtFound;
-      }
-
-      catch (TvExceptionTuneCancelled)
-      {
-        if (result != null)
-        {
-          _cardHandler.Card.FreeSubChannel(result.SubChannelId);
-        }
-        return TvResult.TuneCancelled;
-      }
-
       catch (Exception ex)
       {
         this.LogError(ex);
         if (result != null)
         {
           _cardHandler.Card.FreeSubChannel(result.SubChannelId);
+        }
+
+        if (ex is TvExceptionNoSignal)
+        {
+          return TvResult.NoSignalDetected;
+        }
+        else if (ex is TvExceptionSWEncoderMissing)
+        {
+          return TvResult.SWEncoderMissing;
+        }
+        else if (ex is TvExceptionTunerLoadFailed)
+        {
+          return TvResult.GraphBuildingFailed;
+        }
+        else if (ex is TvExceptionNoPMT)
+        {
+          return TvResult.NoPmtFound;
+        }
+        else if (ex is TvExceptionTuneCancelled)
+        {
+          return TvResult.TuneCancelled;
+        }
+        else if (ex is TvExceptionServiceNotRunning)
+        {
+          return TvResult.ChannelNotActive;
         }
         return TvResult.UnknownError;
       }
@@ -321,60 +302,37 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         }
         return TvResult.UnknownError;
       }
-      catch (TvExceptionTuneCancelled)
-      {
-        user.FailedCardId = _cardHandler.DataBaseCard.IdCard;
-        if (result != null)
-        {
-          _cardHandler.Card.FreeSubChannel(result.SubChannelId);
-      }
-        return TvResult.TuneCancelled;
-      }
-      catch (TvExceptionNoSignal)
-      {
-        user.FailedCardId = _cardHandler.DataBaseCard.IdCard;
-        if (result != null)
-        {
-          _cardHandler.Card.FreeSubChannel(result.SubChannelId);
-        }
-        return TvResult.NoSignalDetected;
-      }
-      catch (TvExceptionSWEncoderMissing ex)
-      {
-        user.FailedCardId = _cardHandler.DataBaseCard.IdCard;
-        this.LogError(ex);
-        if (result != null)
-        {
-          _cardHandler.Card.FreeSubChannel(result.SubChannelId);
-        }
-        return TvResult.SWEncoderMissing;
-      }
-      catch (TvExceptionTunerLoadFailed ex2)
-      {
-        user.FailedCardId = _cardHandler.DataBaseCard.IdCard;
-        this.LogError(ex2);
-        if (result != null)
-        {
-          _cardHandler.Card.FreeSubChannel(result.SubChannelId);
-        }
-        return TvResult.GraphBuildingFailed;
-      }
-      catch (TvExceptionNoPMT)
-      {
-        user.FailedCardId = _cardHandler.DataBaseCard.IdCard;
-        if (result != null)
-        {
-          _cardHandler.Card.FreeSubChannel(result.SubChannelId);
-        }
-        return TvResult.NoPmtFound;
-      }
       catch (Exception ex)
       {
-        user.FailedCardId = _cardHandler.DataBaseCard.IdCard;
         this.LogError(ex);
         if (result != null)
         {
           _cardHandler.Card.FreeSubChannel(result.SubChannelId);
+        }
+
+        if (ex is TvExceptionNoSignal)
+        {
+          return TvResult.NoSignalDetected;
+        }
+        else if (ex is TvExceptionSWEncoderMissing)
+        {
+          return TvResult.SWEncoderMissing;
+        }
+        else if (ex is TvExceptionTunerLoadFailed)
+        {
+          return TvResult.GraphBuildingFailed;
+        }
+        else if (ex is TvExceptionNoPMT)
+        {
+          return TvResult.NoPmtFound;
+        }
+        else if (ex is TvExceptionTuneCancelled)
+        {
+          return TvResult.TuneCancelled;
+        }
+        else if (ex is TvExceptionServiceNotRunning)
+        {
+          return TvResult.ChannelNotActive;
         }
         return TvResult.UnknownError;
       }

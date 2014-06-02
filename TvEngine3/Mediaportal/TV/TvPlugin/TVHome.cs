@@ -3036,6 +3036,9 @@ namespace Mediaportal.TV.TvPlugin
         case TvResult.NoFreeDiskSpace:
           TextID = 1520;
           break;
+        case TvResult.ChannelNotActive:
+          TextID = 1524;
+          break;
         default:
           // this error can also happen if we have no connection to the ServiceAgents.Instance.ControllerService.
           if (!Connected)

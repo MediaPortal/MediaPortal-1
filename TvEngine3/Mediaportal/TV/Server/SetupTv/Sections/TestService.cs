@@ -314,12 +314,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         case TvResult.UnknownError:
           MessageBox.Show(this, "Unknown error occured");
           break;
-        case TvResult.ConnectionToSlaveFailed:
-          MessageBox.Show(this, "Cannot connect to slave server");
-          break;
-        case TvResult.NotTheOwner:
-          MessageBox.Show(this, "Failed since card is in use and we are not the owner");
-          break;
         case TvResult.GraphBuildingFailed:
           MessageBox.Show(this, "Unable to create graph");
           break;
@@ -331,6 +325,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           break;
         case TvResult.TuneCancelled:
           MessageBox.Show(this, "Tune cancelled");
+          break;
+        case TvResult.ChannelNotActive:
+          MessageBox.Show(this, "Channel not active");
           break;
       }
     }

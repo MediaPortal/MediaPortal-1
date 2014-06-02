@@ -70,14 +70,6 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.Enums
     /// </summary>
     CardIsDisabled,
     /// <summary>
-    /// Operation failed since we are unable to connect to the slave server
-    /// </summary>
-    ConnectionToSlaveFailed,
-    /// <summary>
-    /// Operation failed since we are not the owner of the card
-    /// </summary>
-    NotTheOwner,
-    /// <summary>
     /// Operation failed since we are unable to build the graph
     /// </summary>
     GraphBuildingFailed,
@@ -98,6 +90,7 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.Enums
     /// </summary>
     TuneCancelled,
     UsersBlocking,
-    AlreadyParked
+    AlreadyParked,
+    ChannelNotActive
   }
 }
