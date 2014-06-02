@@ -49,7 +49,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.En
     DeletePidFixedKey,
     PurgeFixedKey,
 
-    DiseqcInProgress = 1878917105,      // [0x9002000f]
+    DiseqcInProgress = -1878917105,     // [0x9002000f]
     Diseqc12NotSupported,
     NoDeviceAvailable
   }
