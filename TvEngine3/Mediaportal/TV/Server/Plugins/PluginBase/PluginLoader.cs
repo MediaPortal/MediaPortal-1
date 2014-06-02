@@ -36,7 +36,6 @@ namespace Mediaportal.TV.Server.Plugins.Base
     private List<ITvServerPlugin> _plugins = new List<ITvServerPlugin>();
     private readonly List<Type> _incompatiblePlugins = new List<Type>();
 
-
     /// <summary>
     /// returns a list of all plugins loaded.
     /// </summary>
@@ -76,6 +75,16 @@ namespace Mediaportal.TV.Server.Plugins.Base
             LifestyleSingleton()
             );
 
+        assemblyFilter = new AssemblyFilter(Path.Combine(pluginFolder, "CustomDevices"));
+        container.Register(
+          Classes.FromAssemblyInDirectory(assemblyFilter).
+            BasedOn<ITvServerPlugin>().
+            If(IsPluginCompatible).
+            WithServiceBase().
+            LifestyleSingleton().
+            Configure(c => c.Named(c.Implementation.Name + "Plugin"))
+            );
+
         _plugins = new List<ITvServerPlugin>(container.ResolveAll<ITvServerPlugin>());
 
         foreach (ITvServerPlugin plugin in _plugins)
@@ -85,7 +94,7 @@ namespace Mediaportal.TV.Server.Plugins.Base
       }
       catch (Exception ex)
       {
-        this.LogDebug("PluginManager: Error while loading dll's.", ex);
+        this.LogError(ex, "PluginManager: Error while loading DLLs.");
       }
     }
 
