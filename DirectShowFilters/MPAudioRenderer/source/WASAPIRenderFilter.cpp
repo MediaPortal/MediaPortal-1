@@ -271,7 +271,7 @@ HRESULT CWASAPIRenderFilter::NegotiateBuffer(const WAVEFORMATEXTENSIBLE* pwfx, l
     if (CanBitstream(pwfx))
     {
       REFERENCE_TIME rtPeriod = m_rtLatency;
-      m_nOutBufferCount =  m_rtLatency / 10000; // IME each sample is ~1ms
+      m_nOutBufferCount =  m_pSettings->GetOutputBuffer() / 10; //IME each sample is ~10ms
       GetBufferSize((WAVEFORMATEX*)pwfx, &rtPeriod);
       *pBufferSize = m_nBufferSize;
     }
