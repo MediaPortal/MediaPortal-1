@@ -689,7 +689,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
 
       private const int API_INSTANCE_SIZE = 76;
       private const int MAX_DEVICE_COUNT = 32;
-      private static readonly int CI_DEVICE_INFO_SIZE = Marshal.SizeOf(typeof(CiDeviceInfo));   // 8576
       private const int API_ACCESS_THREAD_WAIT_TIME = 500;    // unit = ms
 
       #endregion
@@ -1113,8 +1112,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
 
     private const int MAX_API_STRING_LENGTH = 256;
     private const int MAX_CAM_MENU_ENTRIES = 32;
-    private static readonly int MMI_MENU_SIZE = Marshal.SizeOf(typeof(MmiMenu));              // 8
-    private static readonly int MMI_MESSAGE_SIZE = Marshal.SizeOf(typeof(MmiMessage));        // 32
     private const int MAX_DESCRIPTOR_DATA_LENGTH = 256;
     private const int MAX_PMT_ELEMENTARY_STREAMS = 50;
     private static readonly int ES_PMT_DATA_SIZE = Marshal.SizeOf(typeof(EsPmtData));         // 260

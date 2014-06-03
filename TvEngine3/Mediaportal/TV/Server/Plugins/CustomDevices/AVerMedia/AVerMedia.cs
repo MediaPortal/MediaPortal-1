@@ -267,8 +267,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
       "ven_1131&dev_7160&subsys_71711461"   // A717 AVer3D Quadro HD
     };
 
-    private static readonly int AVERMEDIA_PMT_SIZE = Marshal.SizeOf(typeof(AVerMediaPmt));   // 9
-
     #endregion
 
     #region variables
