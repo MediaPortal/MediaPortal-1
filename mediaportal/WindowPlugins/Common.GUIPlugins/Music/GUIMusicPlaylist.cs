@@ -440,6 +440,13 @@ namespace MediaPortal.GUI.Music
       for (int i = 0; i < pl.Count; i++)
       {
         PlayListItem pi = pl[i];
+        if (PlayListFactory.IsPlayList(pi.FileName))
+        {
+          pl.Remove(pi.FileName, false);
+          LoadPlayList(pi.FileName, false, false, false, false);
+        }
+        // refresh pi if .m3u are cleaned up
+        pi = pl[i];
         GUIListItem pItem = new GUIListItem(pi.Description);
         MusicTag tag = (MusicTag)pi.MusicTag;
         bool dirtyTag = false;
@@ -877,7 +884,7 @@ namespace MediaPortal.GUI.Music
 
     private void bw_DoWork(object sender, DoWorkEventArgs e)
     {
-      LoadPlayList(Path.Combine(_playlistFolder, _defaultPlaylist), false, true, true);
+      LoadPlayList(Path.Combine(_playlistFolder, _defaultPlaylist), false, true, true, true);
       if (null != bw && bw.CancellationPending)
         e.Cancel = true;
     }

@@ -1726,4 +1726,5 @@
   <Import Project="..\..\Packages\bass.wasapi.2.4.0.2\build\bass.wasapi.targets" Condition="Exists('..\..\Packages\bass.wasapi.2.4.0.2\build\bass.wasapi.targets')" />
   <Import Project="..\..\Packages\bass.wma.2.4.4\build\bass.wma.targets" Condition="Exists('..\..\Packages\bass.wma.2.4.4\build\bass.wma.targets')" />
   <Import Project="..\..\Packages\bass.wv.2.4.4\build\bass.wv.targets" Condition="Exists('..\..\Packages\bass.wv.2.4.4\build\bass.wv.targets')" />
+  <Import Project="..\..\Packages\MediaInfo.0.7.69\build\MediaInfo.targets" Condition="Exists('..\..\Packages\MediaInfo.0.7.69\build\MediaInfo.targets')" />
 </Project>
