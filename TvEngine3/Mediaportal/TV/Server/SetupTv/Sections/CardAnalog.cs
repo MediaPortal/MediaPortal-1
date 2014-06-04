@@ -627,6 +627,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         if (dbChannel != null)
         {
           exists = true;
+          ServiceAgents.Instance.ChannelServiceAgent.UpdateTuningDetail(dbChannel.IdChannel, tuningDetails[0].IdTuning, channel);
         }
         else
         {
@@ -636,7 +637,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       dbChannel.MediaType = (int)channel.MediaType;
       dbChannel = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
       dbChannel.AcceptChanges();
-      ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, channel);
+      if (!exists)
+      {
+        ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, channel);
+      }
       MappingHelper.AddChannelToCard(dbChannel, card, false);
 
       if (dbChannel.MediaType == (decimal)MediaTypeEnum.TV)
