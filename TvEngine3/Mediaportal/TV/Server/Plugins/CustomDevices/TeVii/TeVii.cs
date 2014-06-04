@@ -260,7 +260,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
     /// <returns><c>true</c> if the message is successfully sent, otherwise <c>false</c></returns>
     [DllImport("Resources\\TeVii.dll", CallingConvention = CallingConvention.Cdecl)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool SendDiSEqC(int index, byte[] message, int length, int repeatCount, [MarshalAs(UnmanagedType.Bool)] bool repeatFlag);
+    private static extern bool SendDiSEqC(int index, [MarshalAs(UnmanagedType.LPArray)] byte[] message, int length, int repeatCount, [MarshalAs(UnmanagedType.Bool)] bool repeatFlag);
 
     /// <summary>
     /// Set the remote control receiver call back function.
@@ -286,7 +286,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
     /// <param name="data">The raw data.</param>
     /// <param name="dataLength">The number of bytes of available data.</param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.StdCall)]
-    private delegate void OnTeViiCaptureData(IntPtr context, byte[] data, int dataLength);
+    private delegate void OnTeViiCaptureData(IntPtr context, [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)] byte[] data, int dataLength);
 
     /// <summary>
     /// Invoked by the tuner driver when an IR remote key press is detected.

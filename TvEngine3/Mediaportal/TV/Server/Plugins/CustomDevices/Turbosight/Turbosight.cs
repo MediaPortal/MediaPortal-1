@@ -301,7 +301,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
     /// <param name="pmt">The PMT command.</param>
     /// <param name="pmtLength">The length of the PMT.</param>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate void TBS_ci_SendPmt(IntPtr handle, byte[] pmt, ushort pmtLength);
+    private delegate void TBS_ci_SendPmt(IntPtr handle, [MarshalAs(UnmanagedType.LPArray)] byte[] pmt, ushort pmtLength);
 
     /// <summary>
     /// Close the conditional access interface for a specific Turbosight device.
