@@ -139,7 +139,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
         noSlotsLabel.Name = "noSlotsLabel";
         noSlotsLabel.Size = new Size(412, 20);
         noSlotsLabel.TabIndex = 1;
-        noSlotsLabel.Text = "No Digital Devices CI slots detected...";
+        noSlotsLabel.Text = "No Digital Devices CI slots detected.";
         this.Controls.Add(noSlotsLabel);
       }
 

@@ -30,7 +30,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
 {
-  public partial class DigitalDevicesConfig : SectionSettings
+  internal partial class DigitalDevicesConfig : SectionSettings
   {
     private class CiContext
     {

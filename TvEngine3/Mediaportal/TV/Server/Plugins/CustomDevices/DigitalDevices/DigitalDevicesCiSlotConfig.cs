@@ -27,7 +27,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
   /// <summary>
   /// Configuration properties for a Digital Devices CI slot.
   /// </summary>
-  public class DigitalDevicesCiSlotConfig
+  internal class DigitalDevicesCiSlotConfig
   {
     /// <summary>
     /// The device path of the CI slot device.

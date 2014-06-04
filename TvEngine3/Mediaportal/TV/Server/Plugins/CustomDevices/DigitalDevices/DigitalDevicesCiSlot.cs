@@ -31,7 +31,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
   /// <summary>
   /// A wrapper class for Digital Devices CI slot properties and methods.
   /// </summary>
-  public class DigitalDevicesCiSlot
+  internal class DigitalDevicesCiSlot
   {
     #region enums
 
