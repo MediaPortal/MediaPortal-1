@@ -275,8 +275,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     private struct CiSlotInfo   // TYP_SLOT_INFO
     {
       public TtCiState Status;
-      [MarshalAs(UnmanagedType.LPStr)]
-      public string CamMenuTitle;
+      private byte Padding1;
+      private ushort Padding2;
+      public IntPtr CamMenuTitle;
       public IntPtr CaSystemIds;        // array of ushort
       public ushort NumberOfCaSystemIds;
     }
@@ -563,7 +564,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiSetDiSEqCMsg(IntPtr handle, IntPtr command, byte length, byte repeats,
+    private static extern TtApiResult bdaapiSetDiSEqCMsg(IntPtr handle, [MarshalAs(UnmanagedType.LPArray)] byte[] command, byte length, byte repeats,
                                                         TtToneBurst toneBurst, Polarisation polarisation);
 
     /// <summary>
@@ -648,17 +649,17 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiGetUSBHighspeedMode(IntPtr handle, [MarshalAs(UnmanagedType.Bool)] ref bool usbHighSpeedSupported);
+    private static extern TtApiResult bdaapiGetUSBHighspeedMode(IntPtr handle, [MarshalAs(UnmanagedType.Bool)] out bool usbHighSpeedSupported);
 
     /// <summary>
     /// Retrieve details about the device filters and front end.
     /// </summary>
     /// <param name="handle">The handle allocated to a device when it was opened.</param>
-    /// <param name="filterNames">A pointer to a FilterNames struct.</param>
+    /// <param name="filterNames">The filter information.</param>
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiGetDevNameAndFEType(IntPtr handle, IntPtr filterNames);
+    private static extern TtApiResult bdaapiGetDevNameAndFEType(IntPtr handle, out FilterNames filterNames);
 
     /// <summary>
     /// Get the device's hardware index.
@@ -756,7 +757,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiCIReadPSIFastWithPMT(IntPtr handle, IntPtr pmt, ushort pmtLength);
+    private static extern TtApiResult bdaapiCIReadPSIFastWithPMT(IntPtr handle, [MarshalAs(UnmanagedType.LPArray)] byte[] pmt, ushort pmtLength);
 
     /// <summary>
     /// Send a message to the CAM to request that a service be descrambled.
@@ -777,7 +778,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiCIMultiDecode(IntPtr handle, IntPtr sidList, int serviceCount);
+    private static extern TtApiResult bdaapiCIMultiDecode(IntPtr handle, [MarshalAs(UnmanagedType.LPArray)] ushort[] sidList, int serviceCount);
 
     /// <summary>
     /// Enter the CAM menu.
@@ -848,7 +849,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     /// <param name="code">A buffer containing the remote code. If the code is an RC5 code then it can be found in the lower 2 bytes. RC6 codes use 4 bytes.</param>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate void OnTtIrCode(IntPtr context, IntPtr code);
+    private delegate void OnTtIrCode(IntPtr context, ref int code);
 
     /// <summary>
     /// Invoked by the tuner driver when the state of the CI slot changes.
@@ -1056,8 +1057,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     private string _name = "TechnoTrend";
 
     private IntPtr _tunerHandle = IntPtr.Zero;
-    private IntPtr _programNumberBuffer = IntPtr.Zero;
-    private IntPtr _pmtBuffer = IntPtr.Zero;
     private IntPtr _generalBuffer = IntPtr.Zero;
 
     private TtFullCiCallBack _ciCallBack;
@@ -1069,6 +1068,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     private string _camInputRequestPrompt = string.Empty;
 
     private HashSet<ushort> _descrambledPrograms = null;
+
+    private OnTtIrCode _remoteControlKeyPressDelegate = null;
 
     #endregion
 
@@ -1190,15 +1191,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       this.LogDebug("TechnoTrend: read device information");
 
       // General product details.
-      IntPtr info = Marshal.AllocCoTaskMem(FILTER_NAMES_SIZE);
-      for (int i = 0; i < FILTER_NAMES_SIZE; i++)
-      {
-        Marshal.WriteByte(info, i, 0);
-      }
-      TtApiResult result = bdaapiGetDevNameAndFEType(_tunerHandle, info);
+      FilterNames names = new FilterNames();
+      TtApiResult result = bdaapiGetDevNameAndFEType(_tunerHandle, out names);
       if (result == TtApiResult.Success)
       {
-        FilterNames names = (FilterNames)Marshal.PtrToStructure(info, typeof(FilterNames));
         this.LogDebug("  product name        = {0}", names.ProductName);
         this.LogDebug("  tuner type          = {0}", names.FrontEndType);
         this.LogDebug("  tuner filter name   = {0}", names.TunerFilterName);
@@ -1213,7 +1209,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       {
         this.LogWarn("TechnoTrend: failed to read the device details, result = {0}", result);
       }
-      Marshal.FreeCoTaskMem(info);
 
       // Product seller.
       TtProductSeller seller = TtProductSeller.Unknown;
@@ -1236,6 +1231,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       if (result == TtApiResult.Success)
       {
         this.LogDebug("  driver version      = {0}.{1}.{2}.{3}", v1, v2, v3, v4);
+
+        // Check for the WMC driver (not compatible).
+        if ((_deviceCategory == TtDeviceCategory.Usb2 && v1 == 1 && v2 == 0 && v3 == 4 && v4 == 6) ||
+          (_deviceCategory == TtDeviceCategory.Budget2 && v1 == 5 && v2 == 0 && v3 == 3 && v4 == 6))
+        {
+          this.LogError("TechnoTrend: detected incompatible Windows Media Center driver, you must install the standard BDA driver");
+        }
       }
       else
       {
@@ -1264,7 +1266,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       if (_deviceCategory == TtDeviceCategory.Usb2 || _deviceCategory == TtDeviceCategory.Usb2Pinnacle || _deviceCategory == TtDeviceCategory.Usb2Dss)
       {
         bool highSpeed = false;
-        result = bdaapiGetUSBHighspeedMode(_tunerHandle, ref highSpeed);
+        result = bdaapiGetUSBHighspeedMode(_tunerHandle, out highSpeed);
         if (result == TtApiResult.Success)
         {
           this.LogDebug("  USB 2 speed support = {0}", highSpeed);
@@ -1282,10 +1284,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// Invoked when a signal from the remote is detected by the IR receiver.
     /// </summary>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
-    /// <param name="code">A buffer containing the remote code. If the code is an RC5 code then it can be found in the lower 2 bytes. RC6 codes use 4 bytes.</param>
-    private void OnIrCode(IntPtr context, IntPtr code)
+    /// <param name="code">A the remote code. If the code is an RC5 code then it can be found in the lower 2 bytes. RC6 codes use 4 bytes.</param>
+    private void OnIrCode(IntPtr context, ref int code)
     {
-      this.LogDebug("TechnoTrend: remote control key press = 0x{0:x4}", Marshal.ReadInt32(code, 0));
+      this.LogDebug("TechnoTrend: remote control key press = 0x{0:x8}", code);
     }
 
     /// <summary>
@@ -1343,7 +1345,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
         }
         else
         {
-          this.LogDebug("  menu title = {0} ", info.CamMenuTitle);
+          this.LogDebug("  menu title = {0} ", DvbTextConverter.Convert(info.CamMenuTitle));
         }
         this.LogDebug("  # CAS IDs  = {0}", info.NumberOfCaSystemIds);
         for (int i = 0; i < info.NumberOfCaSystemIds; i++)
@@ -1924,8 +1926,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       {
         this.LogDebug("TechnoTrend: result = success");
         _isCiSlotPresent = true;
-        _programNumberBuffer = Marshal.AllocCoTaskMem(SERVICE_BUFFER_SIZE);
-        _pmtBuffer = Marshal.AllocCoTaskMem(Pmt.MAX_SIZE);
         _descrambledPrograms = new HashSet<ushort>();
         _isCaInterfaceOpen = true;
       }
@@ -1949,16 +1949,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       if (_isCiSlotPresent && _tunerHandle != IntPtr.Zero)
       {
         bdaapiCloseCI(_tunerHandle);
-      }
-      if (_programNumberBuffer != IntPtr.Zero)
-      {
-        Marshal.FreeCoTaskMem(_programNumberBuffer);
-        _programNumberBuffer = IntPtr.Zero;
-      }
-      if (_pmtBuffer != IntPtr.Zero)
-      {
-        Marshal.FreeCoTaskMem(_pmtBuffer);
-        _pmtBuffer = IntPtr.Zero;
       }
       _descrambledPrograms = null;
       _camInputRequestPrompt = string.Empty;
@@ -2075,11 +2065,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       if (_descrambledPrograms.Count == 1)
       {
         ReadOnlyCollection<byte> rawPmt = pmt.GetRawPmt();
-        for (int i = 0; i < rawPmt.Count; i++)
-        {
-          Marshal.WriteByte(_pmtBuffer, i, rawPmt[i]);
-        }
-        result = bdaapiCIReadPSIFastWithPMT(_tunerHandle, _pmtBuffer, (ushort)rawPmt.Count);
+        byte[] pmtBytes = new byte[rawPmt.Count];
+        rawPmt.CopyTo(pmtBytes, 0);
+        result = bdaapiCIReadPSIFastWithPMT(_tunerHandle, pmtBytes, (ushort)rawPmt.Count);
       }
       else
       {
@@ -2090,16 +2078,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
         }
 
         // Send the updated list to the CAM.
-        this.LogDebug("TechnoTrend: program list");
         int i = 0;
-        HashSet<ushort>.Enumerator en = _descrambledPrograms.GetEnumerator();
-        while (en.MoveNext())
-        {
-          this.LogDebug("  {0} = {1}", i + 1, en.Current);
-          Marshal.WriteInt16(_programNumberBuffer, 2 * i, (short)en.Current);
-          i++;
-        }
-        result = bdaapiCIMultiDecode(_tunerHandle, _programNumberBuffer, i);
+        ushort[] programNumbers = new ushort[_descrambledPrograms.Count];
+        _descrambledPrograms.CopyTo(programNumbers);
+        this.LogDebug("TechnoTrend: program list = {0}", string.Join(", ", programNumbers));
+        result = bdaapiCIMultiDecode(_tunerHandle, programNumbers, programNumbers.Length);
       }
 
       if (result == TtApiResult.Success)
@@ -2274,7 +2257,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       {
         tone = TtToneBurst.DataBurst;
       }
-      TtApiResult result = bdaapiSetDiSEqCMsg(_tunerHandle, IntPtr.Zero, 0, 0, tone, Polarisation.LinearH);
+      TtApiResult result = bdaapiSetDiSEqCMsg(_tunerHandle, null, 0, 0, tone, Polarisation.LinearH);
       if (result == TtApiResult.Success)
       {
         this.LogDebug("TechnoTrend: result = success");
@@ -2308,15 +2291,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       int length = command.Length;
       if (length > MAX_DISEQC_COMMAND_LENGTH)
       {
-        this.LogError("TechnoTrend: DiSEqC command too long, length = {0}", command.Length);
+        this.LogError("TechnoTrend: DiSEqC command too long, length = {0}", length);
         return false;
       }
-      Marshal.Copy(command, 0, _generalBuffer, length);
-      //Dump.DumpBinary(_generalBuffer, length);
 
       // It is okay to use any polarisation. We chose one that will supply 18 Volts to the LNB because it
       // moves dish motors faster.
-      TtApiResult result = bdaapiSetDiSEqCMsg(_tunerHandle, _generalBuffer, (byte)length, 0, TtToneBurst.Off, Polarisation.LinearH);
+      TtApiResult result = bdaapiSetDiSEqCMsg(_tunerHandle, command, (byte)length, 0, TtToneBurst.Off, Polarisation.LinearH);
       if (result == TtApiResult.Success)
       {
         this.LogDebug("TechnoTrend: result = success");
@@ -2363,7 +2344,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
         return true;
       }
 
-      TtApiResult result = bdaapiOpenIR(_tunerHandle, OnIrCode, IntPtr.Zero);
+      _remoteControlKeyPressDelegate = OnIrCode;
+      TtApiResult result = bdaapiOpenIR(_tunerHandle, _remoteControlKeyPressDelegate, IntPtr.Zero);
       if (result != TtApiResult.Success)
       {
         this.LogError("TechnoTrend: failed to open remote control interface, result = {0}", result);
@@ -2391,6 +2373,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
           this.LogError("TechnoTrend: failed to close remote control interface, result = {0}", result);
           return false;
         }
+        _remoteControlKeyPressDelegate = null;
       }
 
       _isRemoteControlInterfaceOpen = false;
