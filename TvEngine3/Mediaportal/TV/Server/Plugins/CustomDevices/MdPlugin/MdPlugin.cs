@@ -62,7 +62,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
       /// Instruct the softCAM plugin filter to decode a different program using a Program82 structure.
       /// </summary>
       [PreserveSig]
-      int ChangeChannelTP82(IntPtr program82);
+      int ChangeChannelTP82(ref Program82 program82);
 
       ///<summary>
       /// Set the plugin directory.
@@ -79,7 +79,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
       /// Instruct the softCAM plugin filter to decode a different program using Program82 and PidsToDecode structures.
       /// </summary>
       [PreserveSig]
-      int ChangeChannelTP82_Ex(IntPtr program82, IntPtr pidsToDecode);
+      int ChangeChannelTP82_Ex(ref Program82 program82, ref PidsToDecode pidsToDecode);
     }
 
     [Guid("D0EACAB1-3211-414B-B58B-E1157AC4D93A"),
@@ -214,8 +214,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
     private IFilterGraph2 _graph = null;
     private IBaseFilter _infTee = null;
     private List<DecodeSlot> _slots = null;
-    private IntPtr _programBuffer = IntPtr.Zero;
-    private IntPtr _pidBuffer = IntPtr.Zero;
 
     #endregion
 
@@ -1168,8 +1166,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
         return true;
       }
 
-      _programBuffer = Marshal.AllocCoTaskMem(PROGRAM82_SIZE);
-      _pidBuffer = Marshal.AllocCoTaskMem(PIDS_TO_DECODE_SIZE);
       _isCaInterfaceOpen = true;
 
       this.LogDebug("MD plugin: result = success");
@@ -1183,19 +1179,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
     public bool CloseConditionalAccessInterface()
     {
       this.LogDebug("MD plugin: close conditional access interface");
-
-      if (_programBuffer != IntPtr.Zero)
-      {
-        Marshal.FreeCoTaskMem(_programBuffer);
-        _programBuffer = IntPtr.Zero;
-      }
-      if (_pidBuffer != IntPtr.Zero)
-      {
-        Marshal.FreeCoTaskMem(_pidBuffer);
-        _pidBuffer = IntPtr.Zero;
-      }
       _isCaInterfaceOpen = false;
-
       this.LogDebug("MD plugin: result = success");
       return true;
     }
@@ -1405,23 +1389,19 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
       }
 
       // Instruct the MD filter to decrypt the program.
-      Marshal.StructureToPtr(programToDecode, _programBuffer, false);
-      //Dump.DumpBinary(_programBuffer, PROGRAM82_SIZE);
-      Marshal.StructureToPtr(pidsToDecode, _pidBuffer, false);
-      //Dump.DumpBinary(_pidBuffer, PIDS_TO_DECODE_SIZE);
       try
       {
         IChangeChannel_Ex changeEx = freeSlot.Filter as IChangeChannel_Ex;
         if (changeEx != null)
         {
-          changeEx.ChangeChannelTP82_Ex(_programBuffer, _pidBuffer);
+          changeEx.ChangeChannelTP82_Ex(ref programToDecode, ref pidsToDecode);
         }
         else
         {
           IChangeChannel change = freeSlot.Filter as IChangeChannel;
           if (change != null)
           {
-            change.ChangeChannelTP82(_programBuffer);
+            change.ChangeChannelTP82(ref programToDecode);
           }
           else
           {
