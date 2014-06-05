@@ -37,7 +37,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbSky
   /// NetUP conditional access interface, and their DiSEqC interface is identical to the Conexant
   /// interface.
   /// </summary>
-  public class DvbSky : BaseCustomDevice, IConditionalAccessProvider, IConditionalAccessMenuActions, IDiseqcDevice
+  public class DvbSky : BaseCustomDevice, IConditionalAccessProvider, IConditionalAccessMenuActions, IDiseqcDevice, IRemoteControlListener
   {
     #region enums
 
