@@ -143,7 +143,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
         }
         HResult.ThrowException(hr, "Failed to set LNB LOF frequency.");
 
-        HResult.ThrowException(_interfaceTuner.SetTunerStatus(), "Failed to apply tuning parameters.");
+        base.PerformTuning(channel);
       }
     }
 

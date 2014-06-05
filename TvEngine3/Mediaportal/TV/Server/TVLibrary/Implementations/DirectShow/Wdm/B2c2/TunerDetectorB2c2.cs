@@ -79,7 +79,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
           }
           else
           {
-            //Dump.DumpBinary(tempBuffer, size);
+            //Dump.DumpBinary(structurePtr, size);
             this.LogDebug("B2C2 detector: device count = {0}", deviceCount);
             for (int i = 0; i < deviceCount; i++)
             {

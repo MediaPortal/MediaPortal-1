@@ -20,6 +20,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Interface
 {
@@ -28,8 +29,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
   internal interface IMpeg2MulticastCtrl
   {
     /// <summary>
-    /// Enable the video/audio multicasting capability. Any streams that were previously active will be
-    /// re-enabled.
+    /// Enable the video/audio multicasting capability. Any streams that were previously active
+    /// will be re-enabled.
     /// </summary>
     /// <returns>an HRESULT indicating whether the multicasting capability was successfully enabled</returns>
     [PreserveSig]
@@ -51,7 +52,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <param name="pidList">A list of PIDs to multicast.</param>
     /// <returns>an HRESULT indicating whether the multicast was successfully started</returns>
     [PreserveSig]
-    int StartMulticast([MarshalAs(UnmanagedType.LPStr)] string address, ushort port, int pidCount, int[] pidList);
+    int StartMulticast([MarshalAs(UnmanagedType.LPStr)] string address, ushort port, int pidCount, [MarshalAs(UnmanagedType.LPArray)] int[] pidList);
 
     /// <summary>
     /// Stop multicasting on a specific network interface.
@@ -76,6 +77,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <param name="address">The IPv4 network interface address (eg. 192.168.1.1).</param>
     /// <returns>an HRESULT indicating whether the address was successfully retrieved</returns>
     [PreserveSig]
-    int GetNetworkInterface([Out, MarshalAs(UnmanagedType.LPStr)] out string address);
+    int GetNetworkInterface([MarshalAs(UnmanagedType.LPStr)] StringBuilder address);
   }
 }

@@ -22,6 +22,7 @@ using System.Runtime.InteropServices;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Struct
 {
+  [StructLayout(LayoutKind.Sequential, Pack = 1)]
   internal struct MacAddressList
   {
     #pragma warning disable 0649

@@ -127,7 +127,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <param name="size">The size of the capabilities structure.</param>
     /// <returns>an HRESULT indicating whether the capabilities were successfully retrieved</returns>
     [PreserveSig]
-    int GetTunerCapabilities([Out] out TunerCapabilities capabilities, [In, Out] ref int size);
+    int GetTunerCapabilities(out TunerCapabilities capabilities, out int size);
 
     #region getters
 
@@ -137,7 +137,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <param name="frequency">The multiplex frequency in MHz.</param>
     /// <returns>an HRESULT indicating whether the multiplex frequency was successfully retrieved</returns>
     [PreserveSig]
-    int GetFrequency([Out] out int frequency);
+    int GetFrequency(out int frequency);
 
     /// <summary>
     /// Get the tuned multiplex symbol rate in ks/s. Only applicable for ATSC tuners.
@@ -145,7 +145,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <param name="symbolRate">The multiplex symbol rate in ks/s.</param>
     /// <returns>an HRESULT indicating whether the multiplex symbol rate was successfully retrieved</returns>
     [PreserveSig]
-    int GetSymbolRate([Out] out int symbolRate);
+    int GetSymbolRate(out int symbolRate);
 
     /// <summary>
     /// Get the modulation scheme for the tuned multiplex. Only applicable for ATSC tuners.
@@ -153,7 +153,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <param name="modulation">The multiplex modulation scheme.</param>
     /// <returns>an HRESULT indicating whether the multiplex modulation scheme was successfully retrieved</returns>
     [PreserveSig]
-    int GetModulation([Out] out Modulation modulation);
+    int GetModulation(out Modulation modulation);
 
     #endregion
 
@@ -165,15 +165,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <param name="signalStrength">The signal strength as a percentage.</param>
     /// <returns>an HRESULT indicating whether the signal strength was successfully retrieved</returns>
     [PreserveSig]
-    int GetSignalStrength([Out] out int signalStrength);
+    int GetSignalStrength(out int signalStrength);
 
     /// <summary>
     /// Obsolete. Use GetSignalStrength() or GetSignalQuality() instead.
     /// </summary>
     /// <param name="signalLevel">The signal level in dBm.</param>
     /// <returns>an HRESULT indicating whether the signal level was successfully retrieved</returns>
-    [PreserveSig]
-    int GetSignalLevel([Out] out float signalLevel);
+    [PreserveSig, Obsolete("Use GetSignalStrength() or GetSignalQuality() instead.")]
+    int GetSignalLevel(out float signalLevel);
 
     /// <summary>
     /// Get the tuner/demodulator signal to noise ratio (SNR) statistic. Only applicable for ATSC tuners.
@@ -181,7 +181,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <param name="snr">The signal to noise ratio.</param>
     /// <returns>an HRESULT indicating whether the signal to noise ratio was successfully retrieved</returns>
     [PreserveSig]
-    int GetSNR([Out] out float snr);
+    int GetSNR(out float snr);
 
     /// <summary>
     /// Get the pre-error-correction bit error rate (BER) statistic. Only applicable for ATSC tuners.
@@ -190,7 +190,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <param name="wait">(Not used.)</param>
     /// <returns>an HRESULT indicating whether the bit error rate was successfully retrieved</returns>
     [PreserveSig]
-    int GetPreErrorCorrectionBER([Out] out float ber, bool wait);
+    int GetPreErrorCorrectionBER(out float ber, bool wait);
 
     /// <summary>
     /// Get the uncorrected block count since the last call to this function. Only applicable for ATSC tuners.
@@ -198,7 +198,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <param name="blockCount">The block count.</param>
     /// <returns>an HRESULT indicating whether the block count was successfully retrieved</returns>
     [PreserveSig]
-    int GetUncorrectedBlocks([Out] out int blockCount);
+    int GetUncorrectedBlocks(out int blockCount);
 
     /// <summary>
     /// Get the total block count since the last call to this function. Only applicable for ATSC tuners.
@@ -206,7 +206,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <param name="blockCount">The block count.</param>
     /// <returns>an HRESULT indicating whether the block count was successfully retrieved</returns>
     [PreserveSig]
-    int GetTotalBlocks([Out] out int blockCount);
+    int GetTotalBlocks(out int blockCount);
 
     #endregion
 
@@ -216,7 +216,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <param name="channel">The channel number.</param>
     /// <returns>an HRESULT indicating whether the channel number was successfully retrieved</returns>
     [PreserveSig]
-    int GetChannel([Out] out int channel);
+    int GetChannel(out int channel);
 
     /// <summary>
     /// Set the tuner channel number. Only applicable for ATSC tuners.
@@ -263,7 +263,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <param name="interval">The guard interval.</param>
     /// <returns>an HRESULT indicating whether the guard interval was successfully retrieved</returns>
     [PreserveSig]
-    int GetGuardInterval([Out] out GuardInterval interval);
+    int GetGuardInterval(out GuardInterval interval);
 
     /// <summary>
     /// Get the multiplex FEC rate. Only applicable for DVB-S tuners.
@@ -271,7 +271,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <param name="fecRate">The FEC rate.</param>
     /// <returns>an HRESULT indicating whether the FEC rate was successfully retrieved</returns>
     [PreserveSig]
-    int GetFec([Out] out FecRate fecRate);
+    int GetFec(out FecRate fecRate);
 
     /// <summary>
     /// Get the multiplex polarisation. Only applicable for DVB-S tuners.
@@ -279,7 +279,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <param name="polarisation">The polarisation.</param>
     /// <returns>an HRESULT indicating whether the polarisation was successfully retrieved</returns>
     [PreserveSig]
-    int GetPolarity([Out] out Polarisation polarisation);
+    int GetPolarity(out Polarisation polarisation);
 
     /// <summary>
     /// Get the currenly selected satellite. Only applicable for DVB-S tuners.
@@ -287,7 +287,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <param name="diseqcPort">The DiSEqC switch port associated with the satellite.</param>
     /// <returns>an HRESULT indicating whether the setting was successfully retrieved</returns>
     [PreserveSig]
-    int GetDiseqc([Out] out DiseqcPort diseqcPort);
+    int GetDiseqc(out DiseqcPort diseqcPort);
 
     /// <summary>
     /// Get the satellite/LNB/band selection tone state. Only applicable for DVB-S tuners.
@@ -295,7 +295,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <param name="toneState">The tone state.</param>
     /// <returns>an HRESULT indicating whether the tone state was successfully retrieved</returns>
     [PreserveSig]
-    int GetLnbKHz([Out] out Tone toneState);
+    int GetLnbKHz(out Tone toneState);
 
     /// <summary>
     /// Get the LNB local oscillator frequency. Only applicable for DVB-S tuners.
@@ -303,7 +303,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <param name="lnbFrequency">The local oscillator frequency in MHz.</param>
     /// <returns>an HRESULT indicating whether the local oscillator frequency was successfully retrieved</returns>
     [PreserveSig]
-    int GetLnbFrequency([Out] out int lnbFrequency);
+    int GetLnbFrequency(out int lnbFrequency);
 
     #endregion
 
@@ -313,7 +313,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <param name="blockCount">The block count.</param>
     /// <returns>an HRESULT indicating whether the block count was successfully retrieved</returns>
     [PreserveSig]
-    int GetCorrectedBlocks([Out] out int blockCount);
+    int GetCorrectedBlocks(out int blockCount);
 
     /// <summary>
     /// Get the tuner/demodulator signal quality statistic.
@@ -321,7 +321,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <param name="signalQuality">The signal quality as a percentage.</param>
     /// <returns>an HRESULT indicating whether the signal quality was successfully retrieved</returns>
     [PreserveSig]
-    int GetSignalQuality([Out] out int signalQuality);
+    int GetSignalQuality(out int signalQuality);
 
     #endregion
 
@@ -341,7 +341,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <param name="bandwidth">The bandwidth in MHz, expected to be 6, 7 or 8.</param>
     /// <returns>an HRESULT indicating whether the bandwidth was successfully retrieved</returns>
     [PreserveSig]
-    int GetBandwidth([Out] out int bandwidth);
+    int GetBandwidth(out int bandwidth);
 
     #endregion
 
@@ -353,7 +353,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <param name="length">The length of the command in bytes.</param>
     /// <param name="command">The command.</param>
     /// <returns>an HRESULT indicating whether the command was successfully sent</returns>
-    int SendDiSEqCCommand(int length, byte[] command);
+    int SendDiSEqCCommand(int length, [MarshalAs(UnmanagedType.LPArray)] byte[] command);
 
     #endregion
   }

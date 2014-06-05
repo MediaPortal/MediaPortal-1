@@ -18,7 +18,6 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using DirectShowLib;
@@ -100,6 +99,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       : base(info.ProductName, "B2C2 tuner " + info.DeviceId, type)
     {
       _deviceInfo = info;
+    }
+
+    /// <summary>
+    /// Actually tune to a channel.
+    /// </summary>
+    /// <param name="channel">The channel to tune to.</param>
+    public override void PerformTuning(IChannel channel)
+    {
+      int hr = _interfaceTuner.SetTunerStatusEx(1);
+      if (hr != (int)Error.NotLockedOnSignal)
+      {
+        HResult.ThrowException(hr, "Failed to apply tuning parameters.");
+      }
     }
 
     /// <summary>
@@ -226,7 +238,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
           return;
         }
 
-        hr = _interfaceTuner.GetTunerCapabilities(out _capabilities, ref returnedByteCount);
+        hr = _interfaceTuner.GetTunerCapabilities(out _capabilities, out returnedByteCount);
       }
       if (hr != (int)HResult.Severity.Success || returnedByteCount != TUNER_CAPABILITIES_SIZE)
       {
@@ -294,7 +306,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       int runningPidCount;
       int totalPidCount = 0;
       int[] currentPids = new int[_maxPidCount];
-      hr = _interfaceData.GetTsState(out openPidCount, out runningPidCount, ref totalPidCount, currentPids);
+      hr = _interfaceData.GetTsState(out openPidCount, out runningPidCount, ref totalPidCount, ref currentPids);
       if (hr != (int)HResult.Severity.Success)
       {
         this.LogWarn("B2C2 base: failed to get transport stream state, hr = 0x{0:x}", hr);
@@ -414,10 +426,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       // It is not ideal to have to enable PID filtering because doing so can limit
       // the number of channels that can be viewed/recorded simultaneously. However,
       // it does seem that there is a need for filtering on satellite transponders
-      // with high bit rates. Problems have been observed with transponders on Thor
-      // 5/6, Intelsat 10-02 (0.8W) if the filter is not enabled:
-      //   Symbol Rate: 27500, Modulation: 8 PSK, FEC rate: 5/6, Pilot: On, Roll-Off: 0.35
-      //   Symbol Rate: 30000, Modulation: 8 PSK, FEC rate: 3/4, Pilot: On, Roll-Off: 0.35
+      // and cable multiplexes with high bit rates.
       int bitRate = 0;
       DVBSChannel satelliteTuningDetail = tuningDetail as DVBSChannel;
       if (satelliteTuningDetail != null)
@@ -538,8 +547,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       }
 
       // Rough approximation: enable PID filtering when bit rate is over 40 Mb/s.
-      this.LogDebug("B2C2 base: multiplex bit rate = {0} kb/s", bitRate);
-      return bitRate >= 60000;
+      bool enableFilter = (bitRate >= 40000);
+      this.LogDebug("B2C2 base: multiplex bit rate = {0} kb/s, need PID filter = {1}", bitRate, enableFilter);
+      return enableFilter;
     }
 
     /// <summary>

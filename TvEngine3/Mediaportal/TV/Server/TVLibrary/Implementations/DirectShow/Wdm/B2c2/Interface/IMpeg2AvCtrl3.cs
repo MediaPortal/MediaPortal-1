@@ -25,13 +25,13 @@ using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Struct
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Interface
 {
   /// <summary>
-  /// Called by the AV interface when the interface wants to notify the controlling application about the
-  /// video stream information.
+  /// Called by the AV interface when the interface wants to notify the controlling application
+  /// about the video stream information.
   /// </summary>
   /// <param name="info">The video stream information.</param>
   /// <returns>???</returns>
   [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-  internal delegate uint OnVideoInfo(VideoInfo info);
+  internal delegate uint OnVideoInfo(ref VideoInfo info);
 
   [Guid("3ca933bb-4378-4e03-8abd-02450169aa5e"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -40,8 +40,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     #region IMpeg2AvCtrl
 
     /// <summary>
-    /// Register the audio and/or video PID(s) that are of interest to the application. Packets marked
-    /// with these PIDs will be passed on B2C2 filter audio and video output pins.
+    /// Register the audio and/or video PID(s) that are of interest to the application. Packets
+    /// marked with these PIDs will be passed on B2C2 filter audio and video output pins.
     /// </summary>
     /// <param name="audioPid">The audio PID (or zero to not register an audio PID).</param>
     /// <param name="videoPid">The video PID (or zero to not register a video PID).</param>
@@ -54,18 +54,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     #region IMpeg2AvCtrl2
 
     /// <summary>
-    /// Register a call back delegate that the interface can use to notify the application about video
-    /// stream information.
+    /// Register a call back delegate that the interface can use to notify the application about
+    /// video stream information.
     /// </summary>
-    /// <param name="callBack">A pointer to the call back delegate.</param>
+    /// <param name="callBack">The call back delegate.</param>
     /// <returns>an HRESULT indicating whether the call back delegate was successfully registered</returns>
     [PreserveSig]
     int SetCallbackForVideoMode(OnVideoInfo callBack);
 
     /// <summary>
     /// Deregister the current audio and/or video PID(s) when they are no longer of interest to the
-    /// application. Packets marked with the previously registered PIDs will no longer be passed on the
-    /// B2C2 filter audio and video output pins.
+    /// application. Packets marked with the previously registered PIDs will no longer be passed on
+    /// the B2C2 filter audio and video output pins.
     /// </summary>
     /// <param name="audioPid">A non-zero value to deregister the current audio PID.</param>
     /// <param name="videoPid">A non-zero value to deregister the current video PID.</param>
@@ -84,9 +84,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <param name="videoPid">The current video PID.</param>
     /// <returns>an HRESULT indicating whether the settings were successfully retrieved</returns>
     [PreserveSig]
-    int GetAudioVideoState([Out] out int openAudioStreamCount, [Out] out int openVideoStreamCount,
-          [Out] out int totalAudioStreamCount, [Out] out int totalVideoStreamCount,
-          [Out] out int audioPid, [Out] out int videoPid
+    int GetAudioVideoState(out int openAudioStreamCount, out int openVideoStreamCount,
+          out int totalAudioStreamCount, out int totalVideoStreamCount,
+          out int audioPid, out int videoPid
     );
 
     #endregion
@@ -94,15 +94,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     #region IMpeg2AvCtrl3
 
     /// <summary>
-    /// Get IR data from the interface. The size of each code is two bytes, and up to 4 codes may be
-    /// retrieved in one call.
+    /// Get IR data from the interface. The size of each code is two bytes, and up to 4 codes may
+    /// be retrieved in one call.
     /// </summary>
     /// <param name="dataBuffer">A pointer to a buffer for the interface to populate.</param>
     /// <param name="bufferCapacity">The number of IR codes that the buffer is able to hold. Note that this
     ///   is not the same as the size of the buffer since the code size is two bytes not one.</param>
     /// <returns>an HRESULT indicating whether the IR data was successfully retrieved</returns>
     [PreserveSig]
-    int GetIRData([Out] out IntPtr dataBuffer, [In, Out] ref int bufferCapacity);
+    int GetIRData(out long dataBuffer, ref int bufferCapacity);
 
     #endregion
   }

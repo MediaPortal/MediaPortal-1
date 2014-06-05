@@ -24,8 +24,8 @@ using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Enum;
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Interface
 {
   /// <summary>
-  /// Called by the timeshifting interface when the interface needs to notify the controlling application
-  /// about critical playback/recording status changes.
+  /// Called by the timeshifting interface when the interface needs to notify the controlling
+  /// application about critical playback/recording status changes.
   /// </summary>
   /// <param name="state">The current timeshifting interface state.</param>
   /// <returns>???</returns>
@@ -50,19 +50,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <param name="fileName">The name of the timeshifting file.</param>
     /// <returns>an HRESULT indicating whether the file name was successfully retrieved</returns>
     [PreserveSig]
-    int GetFilename([Out, MarshalAs(UnmanagedType.LPWStr)] out string fileName);
+    int GetFilename([MarshalAs(UnmanagedType.LPWStr)] out string fileName);
 
     /// <summary>
-    /// Start recording during live streaming. Recording is usually only started when live streaming is
-    /// paused.
+    /// Start recording during live streaming. Recording is usually only started when live
+    /// streaming is paused.
     /// </summary>
     /// <returns>an HRESULT indicating whether recording was successfully started</returns>
     [PreserveSig]
     int StartRecord();
 
     /// <summary>
-    /// Stop recording immediately. Recording is usually stopped when timeshifting catches up with the
-    /// live position.
+    /// Stop recording immediately. Recording is usually stopped when timeshifting catches up with
+    /// the live position.
     /// </summary>
     /// <returns>an HRESULT indicating whether recording was successfully stopped</returns>
     [PreserveSig]
@@ -98,7 +98,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <param name="value">The option value.</param>
     /// <returns>an HRESULT indicating whether the option value was successfully retrieved</returns>
     [PreserveSig]
-    int GetOption(PvrOption option, [Out] out int value);
+    int GetOption(PvrOption option, out int value);
 
     /// <summary>
     /// Set the playback marker position within the timeshifting file.
@@ -114,7 +114,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <param name="fileSize">The size of the timeshifting file.</param>
     /// <returns>an HRESULT indicating whether the file size was successfully retrieved</returns>
     [PreserveSig]
-    int GetFileSize([Out] out long fileSize);
+    int GetFileSize(out long fileSize);
 
     /// <summary>
     /// Get the playback marker position within the timeshifting file.
@@ -122,11 +122,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <param name="filePosition">The playback marker position.</param>
     /// <returns>an HRESULT indicating whether the marker position was successfully retrieved</returns>
     [PreserveSig]
-    int GetFilePosition([Out] out long filePosition);
+    int GetFilePosition(out long filePosition);
 
     /// <summary>
-    /// Register a call back delegate that the interface can use to notify the application about critical
-    /// playback/recording state changes.
+    /// Register a call back delegate that the interface can use to notify the application about
+    /// critical playback/recording state changes.
     /// </summary>
     /// <param name="callBack">A pointer to the call back delegate.</param>
     /// <returns>an HRESULT indicating whether the call back delegate was successfully registered</returns>

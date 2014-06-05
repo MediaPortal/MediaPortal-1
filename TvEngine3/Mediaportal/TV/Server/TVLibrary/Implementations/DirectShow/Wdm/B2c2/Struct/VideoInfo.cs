@@ -23,6 +23,7 @@ using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Enum;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Struct
 {
+  [StructLayout(LayoutKind.Sequential, Pack = 1)]
   internal struct VideoInfo
   {
     #pragma warning disable 0649

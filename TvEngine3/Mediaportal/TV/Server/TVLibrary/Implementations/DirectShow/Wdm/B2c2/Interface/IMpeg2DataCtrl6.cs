@@ -46,12 +46,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     #region transport stream PIDs
 
     /// <summary>
-    /// Get the maximum number of transport stream class PIDs that may be registered at any given time.
+    /// Get the maximum number of transport stream class PIDs that may be registered at any given
+    /// time.
     /// </summary>
     /// <param name="maxPidCount">The maximum number of PIDs that may be registered.</param>
     /// <returns>an HRESULT indicating whether the maximum PID count was successfully retrieved</returns>
     [PreserveSig]
-    int GetMaxPIDCount([Out] out int maxPidCount);
+    int GetMaxPIDCount(out int maxPidCount);
 
     /// <summary>
     /// Obsolete. Use AddPIDsToPin() or AddTsPIDs() instead.
@@ -59,8 +60,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <param name="pidCount">The number of PIDs to register.</param>
     /// <param name="pids">The PIDs to register.</param>
     /// <returns>an HRESULT indicating whether the PIDs were successfully registered</returns>
-    [PreserveSig]
-    int AddPIDs(int pidCount, [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] int[] pids);
+    [PreserveSig, Obsolete("Use AddPIDsToPin() or AddTsPIDs() instead.")]
+    int AddPIDs(int pidCount, [MarshalAs(UnmanagedType.LPArray)] int[] pids);
 
     /// <summary>
     /// Obsolete. Use DeletePIDsFromPin() or DeleteTsPIDs() instead.
@@ -68,8 +69,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <param name="pidCount">The number of PIDs to deregister.</param>
     /// <param name="pids">The PIDs to deregister.</param>
     /// <returns>an HRESULT indicating whether the PIDs were successfully deregistered</returns>
-    [PreserveSig]
-    int DeletePIDs(int pidCount, [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] int[] pids);
+    [PreserveSig, Obsolete("Use DeletePIDsFromPin() or DeleteTsPIDs() instead.")]
+    int DeletePIDs(int pidCount, [MarshalAs(UnmanagedType.LPArray)] int[] pids);
 
     #endregion
 
@@ -81,68 +82,70 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <param name="maxPidCount">The maximum number of PIDs that may be registered.</param>
     /// <returns>an HRESULT indicating whether the maximum PID count was successfully retrieved</returns>
     [PreserveSig]
-    int GetMaxIpPIDCount([Out] out int maxPidCount);
+    int GetMaxIpPIDCount(out int maxPidCount);
 
     /// <summary>
-    /// Register IP class PID(s) that are of interest to the application. Packets marked with these PIDs
-    /// will be passed on the B2C2 filter's first data output pin.
+    /// Register IP class PID(s) that are of interest to the application. Packets marked with these
+    /// PIDs will be passed to the system network stack.
     /// </summary>
     /// <param name="pidCount">The number of PIDs to register.</param>
     /// <param name="pids">The PIDs to register.</param>
     /// <returns>an HRESULT indicating whether the PIDs were successfully registered</returns>
     [PreserveSig]
-    int AddIpPIDs(int pidCount, [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] int[] pids);
+    int AddIpPIDs(int pidCount, [MarshalAs(UnmanagedType.LPArray)] int[] pids);
 
     /// <summary>
-    /// Deregister IP class PID(s) that are no longer of interest to the application. Packets marked with
-    /// these PIDs will no longer be passed on the B2C2 filter's first data output pin.
+    /// Deregister IP class PID(s) that are no longer of interest to the application. Packets
+    /// marked with these PIDs will no longer be passed to the system network stack.
     /// </summary>
+    /// <remarks>
+    /// If a PID has been registered more than once, this function only removes one registration.
+    /// </remarks>
     /// <param name="pidCount">The number of PIDs to deregister.</param>
     /// <param name="pids">The PIDs to deregister.</param>
     /// <returns>an HRESULT indicating whether the PIDs were successfully deregistered</returns>
     [PreserveSig]
-    int DeleteIpPIDs(int pidCount, [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] int[] pids);
+    int DeleteIpPIDs(int pidCount, [MarshalAs(UnmanagedType.LPArray)] int[] pids);
 
     /// <summary>
     /// Get the list of IP class PIDs that are currently registered with the interface.
     /// </summary>
-    /// <param name="pidCount">The number of PIDs registered.</param>
+    /// <param name="pidCount">As an input, the size of the PID array; as an output, the number of
+    ///   PIDs registered.</param>
     /// <param name="pids">The registered PIDs.</param>
     /// <returns>an HRESULT indicating whether the PIDs were successfully retrieved</returns>
     [PreserveSig]
-    int GetIpPIDs([Out] out int pidCount,
-              [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] out int[] pids
-    );
+    int GetIpPIDs(ref int pidCount, [MarshalAs(UnmanagedType.LPArray)] ref int[] pids);
 
     #endregion
 
     #region all PIDs
 
     /// <summary>
-    /// Deregister all PIDs currently registered with the interface.
+    /// Deregister all IP class PIDs currently registered with the interface.
     /// </summary>
     /// <returns>an HRESULT indicating whether the PIDs were successfully deregistered</returns>
     [PreserveSig]
     int PurgeGlobalPIDs();
 
     /// <summary>
-    /// Get the maximum number of PIDs of any class that may be registered at any given time.
+    /// Get the maximum number of IP class PIDs of any class that may be registered at any given
+    /// time.
     /// </summary>
     /// <param name="maxPidCount">The maximum number of PIDs that may be registered.</param>
     /// <returns>an HRESULT indicating whether the maximum PID count was successfully retrieved</returns>
     [PreserveSig]
-    int GetMaxGlobalPIDCount([Out] out int maxPidCount);
+    int GetMaxGlobalPIDCount(out int maxPidCount);
 
     /// <summary>
-    /// Get the list of PIDs of all classes that are currently registered with the interface.
+    /// Get the list of IP class PIDs that are currently registered with the interface.
     /// </summary>
-    /// <param name="pidCount">The number of PIDs registered.</param>
+    /// <param name="pidCount">As an input, the size of the PID array; as an output, the number of
+    ///   PIDs registered.</param>
     /// <param name="pids">The registered PIDs.</param>
     /// <returns>an HRESULT indicating whether the PIDs were successfully retrieved</returns>
     [PreserveSig]
-    int GetGlobalPIDs([Out] out int pidCount,
-              [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] out int[] pids
-    );
+    int GetGlobalPIDs(ref int pidCount, [MarshalAs(UnmanagedType.LPArray)] ref int[] pids);
 
     #endregion
 
@@ -154,14 +157,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     int ResetDataReceptionStats();
 
     /// <summary>
-    /// Get the current values of statistics that can be used for monitoring signal quality. The statistics
-    /// are measured since the last call to this function or to ResetDataReceptionStats().
+    /// Get the current values of statistics that can be used for monitoring signal quality. The
+    /// statistics are measured since the last call to this function or to
+    /// ResetDataReceptionStats().
     /// </summary>
     /// <param name="ipRatio">The ratio of correctly received IP class packets to total IP packets.</param>
     /// <param name="tsRatio">The ratio of correctly received TS class packets to total TS packets.</param>
     /// <returns>an HRESULT indicating whether the statistics were successfully retrieved</returns>
     [PreserveSig]
-    int GetDataReceptionStats([Out] out int ipRatio, [Out] out int tsRatio);
+    int GetDataReceptionStats(out int ipRatio, out int tsRatio);
 
     #endregion
 
@@ -174,24 +178,25 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <param name="pidCount">As an input, the number of PIDs to attempt to register; as an output, the
     ///   number of PIDs that were successfully registered.</param>
     /// <param name="pids">The PIDs to register.</param>
-    /// <param name="pidIndex">The index (zero-based) of the data output pin to register with.</param>
+    /// <param name="pinIndex">The index (zero-based) of the data output pin to register with.</param>
     /// <returns>an HRESULT indicating whether the PIDs were successfully registered</returns>
     [PreserveSig]
-    int AddPIDsToPin([In, Out] ref int pidCount,
-              [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] int[] pids, int pidIndex);
+    int AddPIDsToPin(ref int pidCount, [MarshalAs(UnmanagedType.LPArray)] int[] pids, int pinIndex);
 
     /// <summary>
     /// Deregister transport stream class PID(s) that are no longer of interest to the application.
     /// Packets marked with these PIDs will no longer be passed on the corrresponding B2C2 filter data
     /// output pin.
     /// </summary>
+    /// <remarks>
+    /// If a PID has been registered more than once, this function only removes one registration.
+    /// </remarks>
     /// <param name="pidCount">The number of PIDs to deregister.</param>
     /// <param name="pids">The PIDs to deregister.</param>
-    /// <param name="pidIndex">The index (zero-based) of the data output pin to deregister with.</param>
+    /// <param name="pinIndex">The index (zero-based) of the data output pin to deregister with.</param>
     /// <returns>an HRESULT indicating whether the PIDs were successfully deregistered</returns>
     [PreserveSig]
-    int DeletePIDsFromPin(int pidCount,
-              [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] int[] pids, int pidIndex);
+    int DeletePIDsFromPin(int pidCount, [MarshalAs(UnmanagedType.LPArray)] int[] pids, int pinIndex);
 
     #endregion
 
@@ -200,39 +205,40 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     #region transport stream PIDs
 
     /// <summary>
-    /// Register transport stream class PID(s) that are of interest to the application. Packets marked
-    /// with these PIDs will be passed on the first data output pin of the B2C2 filter.
+    /// Register transport stream class PID(s) that are of interest to the application. Packets
+    /// marked with these PIDs will be passed to the application via call back.
     /// </summary>
     /// <param name="pidCount">The number of PIDs to register.</param>
     /// <param name="pids">The PIDs to register.</param>
     /// <returns>an HRESULT indicating whether the PIDs were successfully registered</returns>
     [PreserveSig]
-    int AddTsPIDs(int pidCount, [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] int[] pids);
+    int AddTsPIDs(int pidCount, [MarshalAs(UnmanagedType.LPArray)] int[] pids);
 
     /// <summary>
-    /// Deregister transport stream class PID(s) when they are no longer of interest to the application.
-    /// Packets marked with these PIDs will no longer be passed on the first data output pin of the B2C2
-    /// filter.
+    /// Deregister transport stream class PID(s) when they are no longer of interest to the
+    /// application. Packets marked with these PIDs will no longer be passed to the application via
+    /// call back.
     /// </summary>
+    /// <remarks>
+    /// If a PID has been registered more than once, this function only removes one registration.
+    /// </remarks>
     /// <param name="pidCount">The number of PIDs to deregister.</param>
     /// <param name="pids">The PIDs to deregister.</param>
     /// <returns>an HRESULT indicating whether the PIDs were successfully deregistered</returns>
     [PreserveSig]
-    int DeleteTsPIDs(int pidCount, [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] int[] pids);
+    int DeleteTsPIDs(int pidCount, [MarshalAs(UnmanagedType.LPArray)] int[] pids);
 
     /// <summary>
     /// Get the details of transport stream class PIDs that are registered with the interface.
     /// </summary>
     /// <param name="openPidCount">The number of registered PIDs.</param>
     /// <param name="runningPidCount">The number of PIDs that are currently running.</param>
-    /// <param name="pidCount">As an input, the number of PIDs to retrieve; as an output, the number of
-    ///   PIDs actually retrieved.</param>
+    /// <param name="pidCount">As an input, the number of PIDs to retrieve; as an output, the
+    ///   number of PIDs actually retrieved.</param>
     /// <param name="pidList">The list of registered PIDs.</param>
     /// <returns>an HRESULT indicating whether the state information was successfully retrieved</returns>
     [PreserveSig]
-    int GetTsState([Out] out int openPidCount, [Out] out int runningPidCount,
-            [In, Out] ref int pidCount, [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 3)] int[] pidList
-    );
+    int GetTsState(out int openPidCount, out int runningPidCount, ref int pidCount, [MarshalAs(UnmanagedType.LPArray)] ref int[] pidList);
 
     #endregion
 
@@ -248,10 +254,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <param name="pidList">The list of registered PIDs.</param>
     /// <returns>an HRESULT indicating whether the state information was successfully retrieved</returns>
     [PreserveSig]
-    int GetIpState([Out] out int openPidCount, [Out] out int runningPidCount,
-            [In, Out] ref int pidCount,
-            [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)] out int[] pidList
-    );
+    int GetIpState(out int openPidCount, out int runningPidCount, ref int pidCount, [MarshalAs(UnmanagedType.LPArray)] ref int[] pidList);
 
     /// <summary>
     /// Get the number of IP class PID bytes and packets that have been received.
@@ -260,7 +263,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <param name="packetCount">The number of packets received.</param>
     /// <returns>an HRESULT indicating whether the statistics were successfully retrieved</returns>
     [PreserveSig]
-    int GetReceivedDataIp(long byteCount, long packetCount);
+    int GetReceivedDataIp(out long byteCount, out long packetCount);
 
     #endregion
 
@@ -283,7 +286,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <param name="addressList">The list of addresses.</param>
     /// <returns>an HRESULT indicating whether the address list was successfully retrieved</returns>
     [PreserveSig]
-    int GetMulticastMacAddressList([Out] out MacAddressList addressList);
+    int GetMulticastMacAddressList(out MacAddressList addressList);
 
     /// <summary>
     /// Deregister the given multicast MAC addresses from the interface.
@@ -314,7 +317,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <param name="address">The current address.</param>
     /// <returns>an HRESULT indicating whether the address was successfully retrieved</returns>
     [PreserveSig]
-    int GetUnicastMacAddress([Out] out MacAddress address);
+    int GetUnicastMacAddress(out MacAddress address);
 
     /// <summary>
     /// Restore the unicast MAC address to the default address for the device.
@@ -335,13 +338,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <param name="macAddress">The MAC address.</param>
     /// <returns>an HRESULT indicating whether the MAC address was successfully retrieved</returns>
     [PreserveSig]
-    int GetHardwareMacAddress([Out, MarshalAs(UnmanagedType.LPArray, SizeConst = Constants.MAC_ADDRESS_LENGTH)] out byte[] macAddress);
+    int GetHardwareMacAddress(out MacAddress macAddress);
 
     [PreserveSig]
     int SetTableId(int tableId);
 
     [PreserveSig]
-    int GetTableId([Out] out int tableId);
+    int GetTableId(out int tableId);
 
     #region decrypt keys
 
@@ -354,17 +357,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <param name="globalKeyCount">The number of global keys registered.</param>
     /// <returns>an HRESULT indicating whether the key counts were successfully retrieved</returns>
     [PreserveSig]
-    int GetKeyCount([Out] out int totalKeyCount, [Out] out int pidTscKeyCount, [Out] out int pidKeyCount, [Out] out int globalKeyCount);
+    int GetKeyCount(out int totalKeyCount, out int pidTscKeyCount, out int pidKeyCount, out int globalKeyCount);
 
     /// <summary>
     /// Get the details for the keys that are registered with and being used by the interface.
     /// </summary>
-    /// <param name="keyCount">The number of keys in use.</param>
-    /// <param name="keyTypes">The list of keys.</param>
+    /// <param name="keyCount">As an input, the size of the key and PID arrays; as an output, the number of keys in use.</param>
+    /// <param name="keys">The list of keys.</param>
     /// <param name="pids">A list of the PID associated with each key.</param>
     /// <returns>an HRESULT indicating whether the key details were successfully retrieved</returns>
     [PreserveSig]
-    int GetKeysInUse([Out] out int keyCount, [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] out int keyTypes, [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] out int pids);
+    int GetKeysInUse(ref int keyCount, [MarshalAs(UnmanagedType.LPArray)] ref long[] keys, [MarshalAs(UnmanagedType.LPArray)] ref int[] pids);
 
     /// <summary>
     /// Register a decryption key with the interface.
@@ -375,7 +378,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <param name="keyLength">The length of the key.</param>
     /// <returns>an HRESULT indicating whether the key was successfully registered</returns>
     [PreserveSig]
-    int AddKey(KeyType keyType, uint pid, byte[] key, int keyLength);
+    int AddKey(KeyType keyType, uint pid, [MarshalAs(UnmanagedType.LPArray)] byte[] key, int keyLength);
 
     /// <summary>
     /// Deregister a decryption key.
@@ -416,13 +419,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <summary>
     /// Get information about the B2C2 compatible devices installed in the system.
     /// </summary>
-    /// <param name="deviceInfo">A pointer to an array of DeviceInfo instances.</param>
-    /// <param name="infoSize">The number of bytes of device information.</param>
-    /// <param name="deviceCount">As an input, the number of devices supported by the application; as an
+    /// <param name="deviceInfo">A pointer to an array of device information.</param>
+    /// <param name="infoSize">As an input, the size (in bytes) of the device information array;
+    ///   as an output, the number of bytes of the device information which were filled.</param>
+    /// <param name="deviceCount">As an input, the size of the device information array; as an
     ///   output, the number of devices installed in the system.</param>
     /// <returns>an HRESULT indicating whether the device information was successfully retrieved</returns>
     [PreserveSig]
-    int GetDeviceList(IntPtr deviceInfo, [In, Out] ref int infoSize, [In, Out] ref int deviceCount);
+    int GetDeviceList(IntPtr deviceInfo, ref int infoSize, ref int deviceCount);
 
     /// <summary>
     /// Select (activate) a specific B2C2 device.

@@ -75,8 +75,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
         // Note: it is not guaranteed that guard interval auto detection is supported, but if it isn't
         // then we can't tune - we have no idea what the actual value should be.
         HResult.ThrowException(_interfaceTuner.SetGuardInterval(GuardInterval.Auto), "Failed to use automatic guard interval detection.");
-
-        HResult.ThrowException(_interfaceTuner.SetTunerStatus(), "Failed to apply tuning parameters.");
+        base.PerformTuning(channel);
       }
     }
 

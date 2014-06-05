@@ -94,7 +94,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
 
         HResult.ThrowException(_interfaceTuner.SetFrequency(frequency / 1000), "Failed to set frequency.");
         HResult.ThrowException(_interfaceTuner.SetModulation(modulation), "Failed to set modulation.");
-        HResult.ThrowException(_interfaceTuner.SetTunerStatus(), "Failed to apply tuning parameters.");
+        base.PerformTuning(channel);
       }
     }
 

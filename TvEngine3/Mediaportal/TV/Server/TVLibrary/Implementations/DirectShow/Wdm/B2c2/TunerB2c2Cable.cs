@@ -90,8 +90,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
             break;
         }
         HResult.ThrowException(_interfaceTuner.SetModulation(modulation), "Failed to set modulation.");
-
-        HResult.ThrowException(_interfaceTuner.SetTunerStatus(), "Failed to apply tuning parameters.");
+        base.PerformTuning(channel);
       }
     }
 
