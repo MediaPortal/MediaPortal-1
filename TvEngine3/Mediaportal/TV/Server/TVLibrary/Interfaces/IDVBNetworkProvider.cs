@@ -236,7 +236,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.NetworkProvider
     int GetSignalStats(out bool tunerLocked, out bool signalPresent, out int signalQuality, out int signalLevel);
 
     [PreserveSig]
-    int ConfigureLogging([In, MarshalAs(UnmanagedType.LPWStr)] string logFilename,
-                         [In, MarshalAs(UnmanagedType.LPWStr)] string identifier, LogLevelOption logLevel);
+    int ConfigureLogging([MarshalAs(UnmanagedType.LPWStr)] string logFilename,
+                         [MarshalAs(UnmanagedType.LPWStr)] string identifier, LogLevelOption logLevel);
   }
 }

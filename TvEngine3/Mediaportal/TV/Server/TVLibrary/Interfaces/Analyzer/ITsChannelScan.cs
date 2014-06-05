@@ -39,6 +39,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     int OnScannerDone();
   }
 
+  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+  internal struct Iso639Code
+  {
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 4)]
+    string Code;
+
+    public override string ToString()
+    {
+      return Code;
+    }
+  }
+
   /// <summary>
   /// Broadcast standards supported by the TsWriter scanner.
   /// </summary>
@@ -168,21 +180,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
                           out int previousTransportStreamId,
                           out int previousServiceId,
                           out int networkIdCount,
-                          out IntPtr networkIds,
+                          [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 17)] out ushort[] networkIds,
                           out int bouquetIdCount,
-                          out IntPtr bouquetIds,
+                          [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 19)] out ushort[] bouquetIds,
                           out int languageCount,
-                          out IntPtr languages,
+                          [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 21)] out Iso639Code[] languages,
                           out int availableInCellCount,
-                          out IntPtr availableInCells,
+                          [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 23)] out uint[] availableInCells,
                           out int unavailableInCellCount,
-                          out IntPtr unavailableInCells,
+                          [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 25)] out uint[] unavailableInCells,
                           out int targetRegionCount,
-                          out IntPtr targetRegions,
+                          [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 27)] out long[] targetRegions,
                           out int availableInCountryCount,
-                          out IntPtr availableInCountries,
+                          [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 29)] out Iso639Code[] availableInCountries,
                           out int unavailableInCountryCount,
-                          out IntPtr unavailableInCountries);
+                          [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 31)] out Iso639Code[] unavailableInCountries);
 
     /// <summary>
     /// Start scanning for network information in the stream that is currently being received.
@@ -203,7 +215,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     ///   it is not necessary to scan each individual multiplex, which is a huge timesaver.</param>
     /// <returns>an HRESULT indicating whether scanning is successfully stopped</returns>
     [PreserveSig]
-    int StopNetworkScan(out bool isOtherMuxServiceInfoAvailable);
+    int StopNetworkScan([MarshalAs(UnmanagedType.I1)] out bool isOtherMuxServiceInfoAvailable);
 
     /// <summary>
     /// Get the number of multiplexes found during the most recently completed scan.

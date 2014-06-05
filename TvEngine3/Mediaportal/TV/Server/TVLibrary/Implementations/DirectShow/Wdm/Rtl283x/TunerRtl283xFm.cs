@@ -185,7 +185,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       /// <returns><c>RtlFmResult.Success</c> if the lock status is successfully retrieved, otherwise <c>RtlFmResult.Fail</c>
       /// if the status is not successfully retrieved or the device is not in direct-tuning mode.</returns>
       [PreserveSig]
-      Rtl283xFmResult GetSignalLock([Out, MarshalAs(UnmanagedType.Bool)] out bool isLocked);
+      Rtl283xFmResult GetSignalLock([MarshalAs(UnmanagedType.Bool)] out bool isLocked);
 
       /// <summary>
       /// Call this function to check the current signal quality.

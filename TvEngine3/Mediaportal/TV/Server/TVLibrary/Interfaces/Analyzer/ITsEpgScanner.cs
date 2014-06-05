@@ -58,7 +58,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="yesNo">if set to <c>true</c> then epg is ready.</param>
     /// <returns></returns>
     [PreserveSig]
-    int IsEPGReady(out bool yesNo);
+    int IsEPGReady([MarshalAs(UnmanagedType.Bool)] out bool yesNo);
 
     /// <summary>
     /// Gets the nummer of channels for which epg has been received
@@ -66,7 +66,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="channelCount">The channel count.</param>
     /// <returns></returns>
     [PreserveSig]
-    int GetEPGChannelCount([Out] out uint channelCount);
+    int GetEPGChannelCount(out uint channelCount);
 
     /// <summary>
     /// Gets the number of epg events for a channel
@@ -75,7 +75,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="eventCount">The event count.</param>
     /// <returns></returns>
     [PreserveSig]
-    int GetEPGEventCount([In] uint channel, [Out] out uint eventCount);
+    int GetEPGEventCount(uint channel, out uint eventCount);
 
     /// <summary>
     /// Gets the EPG channel details.
@@ -86,8 +86,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="service_id">The service_id.</param>
     /// <returns></returns>
     [PreserveSig]
-    int GetEPGChannel([In] uint channel, [In, Out] ref ushort networkId, [In, Out] ref ushort transportid,
-                      [In, Out] ref ushort service_id);
+    int GetEPGChannel(uint channel, out ushort networkId, out ushort transportid, out ushort service_id);
 
     /// <summary>
     /// Gets the EPG event details.
@@ -103,8 +102,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="classification">The classification</param>
     /// <returns></returns>
     [PreserveSig]
-    int GetEPGEvent([In] uint channel, [In] uint eventid, [Out] out uint languageCount, [Out] out uint date,
-                    [Out] out uint time, [Out] out uint duration, out IntPtr genre, [Out] out int starRating,
+    int GetEPGEvent(uint channel, uint eventid, out uint languageCount, out uint date,
+                    out uint time, out uint duration, out IntPtr genre, out int starRating,
                     out IntPtr classification);
 
     /// <summary>
@@ -119,8 +118,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="parentalRating">The parental rating</param>
     /// <returns></returns>
     [PreserveSig]
-    int GetEPGLanguage([In] uint channel, [In] uint eventid, [In] uint languageIndex, [Out] out uint language,
-                       [Out] out IntPtr eventText, [Out] out IntPtr eventDescription, [Out] out int parentalRating);
+    int GetEPGLanguage(uint channel, uint eventid, uint languageIndex, out uint language,
+                       out IntPtr eventText, out IntPtr eventDescription, out int parentalRating);
 
     /// <summary>
     /// Start grabbing MGW
@@ -135,7 +134,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="yesNo">if MHW has been received then <c>true</c> .</param>
     /// <returns></returns>
     [PreserveSig]
-    int IsMHWReady(out bool yesNo);
+    int IsMHWReady([MarshalAs(UnmanagedType.Bool)] out bool yesNo);
 
     /// <summary>
     /// Gets the number of MHW titles received.
@@ -164,9 +163,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="programName">Name of the program.</param>
     /// <returns></returns>
     [PreserveSig]
-    int GetMHWTitle(uint program, ref uint id, ref uint transportId, ref uint networkId, ref uint channelId,
-                    ref uint programId, ref uint themeId, ref uint PPV, ref byte Summaries, ref uint duration,
-                    ref uint dateStart, ref uint timeStart, out IntPtr title, out IntPtr programName);
+    int GetMHWTitle(uint program, out uint id, out uint transportId, out uint networkId, out uint channelId,
+                    out uint programId, out uint themeId, out uint PPV, out byte Summaries, out uint duration,
+                    out uint dateStart, out uint timeStart, out IntPtr title, out IntPtr programName);
 
     /// <summary>
     /// Gets the details for a MHW channel.
@@ -178,7 +177,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="channelName">Name of the channel.</param>
     /// <returns></returns>
     [PreserveSig]
-    int GetMHWChannel(uint channelNr, ref uint channelId, ref uint networkId, ref uint transportId,
+    int GetMHWChannel(uint channelNr, out uint channelId, out uint networkId, out uint transportId,
                       out IntPtr channelName);
 
     /// <summary>

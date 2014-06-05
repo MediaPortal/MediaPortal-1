@@ -51,7 +51,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="channelCount">The channel count.</param>
     /// <returns></returns>
     [PreserveSig]
-    int GetChannelCount([Out] out uint channelCount);
+    int GetChannelCount(out uint channelCount);
 
     /// <summary>
     /// Gets the channel details.
@@ -62,8 +62,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="service_id">The service_id.</param>
     /// <returns></returns>
     [PreserveSig]
-    int GetChannel([In] uint channelIndex, [In, Out] ref ushort network_id, [In, Out] ref ushort transport_id,
-                   [In, Out] ref ushort service_id);
+    int GetChannel(uint channelIndex, out ushort network_id, out ushort transport_id, out ushort service_id);
 
     /// <summary>
     /// Gets the number of linked channels for a channel
@@ -72,7 +71,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="linkedChannelsCount">The link count.</param>
     /// <returns></returns>
     [PreserveSig]
-    int GetLinkedChannelsCount([In] uint channelIndex, [Out] out uint linkedChannelsCount);
+    int GetLinkedChannelsCount(uint channelIndex, out uint linkedChannelsCount);
 
     /// <summary>
     /// Gets the linked channel details.
@@ -85,8 +84,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="name">The channel name</param>
     /// <returns></returns>
     [PreserveSig]
-    int GetLinkedChannel([In] uint channelIndex, [In] uint linkIndex, [In, Out] ref ushort network_id,
-                         [In, Out] ref ushort transport_id, [In, Out] ref ushort service_id, out IntPtr name);
+    int GetLinkedChannel(uint channelIndex, uint linkIndex, out ushort network_id,
+                         out ushort transport_id, out ushort service_id, out IntPtr name);
 
 
     /// <summary>

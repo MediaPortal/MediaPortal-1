@@ -247,7 +247,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
     /// <returns><c>true</c> if the signal status is successfully retrieved, otherwise <c>false</c></returns>
     [DllImport("Resources\\TeVii.dll", CallingConvention = CallingConvention.Cdecl)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool GetSignalStatus(int index, [Out, MarshalAs(UnmanagedType.Bool)] out bool isLocked, out int strength, out int quality);
+    private static extern bool GetSignalStatus(int index, [MarshalAs(UnmanagedType.Bool)] out bool isLocked, out int strength, out int quality);
 
     /// <summary>
     /// Send an arbitrary DiSEqC message.

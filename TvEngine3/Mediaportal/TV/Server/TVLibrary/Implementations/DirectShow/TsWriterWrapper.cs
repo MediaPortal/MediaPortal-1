@@ -365,21 +365,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
                         out int previousTransportStreamId,
                         out int previousServiceId,
                         out int networkIdCount,
-                        out IntPtr networkIds,
+                        out ushort[] networkIds,
                         out int bouquetIdCount,
-                        out IntPtr bouquetIds,
+                        out ushort[] bouquetIds,
                         out int languageCount,
-                        out IntPtr languages,
+                        out Iso639Code[] languages,
                         out int availableInCellCount,
-                        out IntPtr availableInCells,
+                        out uint[] availableInCells,
                         out int unavailableInCellCount,
-                        out IntPtr unavailableInCells,
+                        out uint[] unavailableInCells,
                         out int targetRegionCount,
-                        out IntPtr targetRegions,
+                        out long[] targetRegions,
                         out int availableInCountryCount,
-                        out IntPtr availableInCountries,
+                        out Iso639Code[] availableInCountries,
                         out int unavailableInCountryCount,
-                        out IntPtr unavailableInCountries)
+                        out Iso639Code[] unavailableInCountries)
     {
       originalNetworkId = 0;
       transportStreamId = 0;
@@ -398,21 +398,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       previousTransportStreamId = 0;
       previousServiceId = 0;
       networkIdCount = 0;
-      networkIds = IntPtr.Zero;
+      networkIds = new ushort[0];
       bouquetIdCount = 0;
-      bouquetIds = IntPtr.Zero;
+      bouquetIds = new ushort[0];
       languageCount = 0;
-      languages = IntPtr.Zero;
+      languages = new Iso639Code[0];
       availableInCellCount = 0;
-      availableInCells = IntPtr.Zero;
+      availableInCells = new uint[0];
       unavailableInCellCount = 0;
-      unavailableInCells = IntPtr.Zero;
+      unavailableInCells = new uint[0];
       targetRegionCount = 0;
-      targetRegions = IntPtr.Zero;
+      targetRegions = new long[0];
       availableInCountryCount = 0;
-      availableInCountries = IntPtr.Zero;
+      availableInCountries = new Iso639Code[0];
       unavailableInCountryCount = 0;
-      unavailableInCountries = IntPtr.Zero;
+      unavailableInCountries = new Iso639Code[0];
       object[] parameters = new object[33] { index, originalNetworkId, transportStreamId,
                                               serviceId, serviceName, providerName,
                                               logicalChannelNumber, serviceType, videoStreamCount,
@@ -444,21 +444,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       previousTransportStreamId = (int)parameters[15];
       previousServiceId = (int)parameters[16];
       networkIdCount = (int)parameters[17];
-      networkIds = (IntPtr)parameters[18];
+      networkIds = (ushort[])parameters[18];
       bouquetIdCount = (int)parameters[19];
-      bouquetIds = (IntPtr)parameters[20];
+      bouquetIds = (ushort[])parameters[20];
       languageCount = (int)parameters[21];
-      languages = (IntPtr)parameters[22];
+      languages = (Iso639Code[])parameters[22];
       availableInCellCount = (int)parameters[23];
-      availableInCells = (IntPtr)parameters[24];
+      availableInCells = (uint[])parameters[24];
       unavailableInCellCount = (int)parameters[25];
-      unavailableInCells = (IntPtr)parameters[26];
+      unavailableInCells = (uint[])parameters[26];
       targetRegionCount = (int)parameters[27];
-      targetRegions = (IntPtr)parameters[28];
+      targetRegions = (long[])parameters[28];
       availableInCountryCount = (int)parameters[29];
-      availableInCountries = (IntPtr)parameters[30];
+      availableInCountries = (Iso639Code[])parameters[30];
       unavailableInCountryCount = (int)parameters[31];
-      unavailableInCountries = (IntPtr)parameters[32];
+      unavailableInCountries = (Iso639Code[])parameters[32];
       return hr;
     }
 

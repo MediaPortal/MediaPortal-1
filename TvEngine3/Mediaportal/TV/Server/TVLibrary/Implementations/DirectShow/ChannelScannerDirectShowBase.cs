@@ -213,32 +213,32 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
             int previousTransportStreamId;
             int previousServiceId;
             int networkIdCount;
-            IntPtr networkIdBuffer;
+            ushort[] networkIds;
             int bouquetIdCount;
-            IntPtr bouquetIdBuffer;
+            ushort[] bouquetIds;
             int languageCount;
-            IntPtr languageBuffer;
+            Iso639Code[] languages;
             int availableInCellCount;
-            IntPtr availableInCellBuffer;
+            uint[] availableInCells;
             int unavailableInCellCount;
-            IntPtr unavailableInCellBuffer;
+            uint[] unavailableInCells;
             int targetRegionCount;
-            IntPtr targetRegionBuffer;
+            long[] targetRegionIds;
             int availableInCountryCount;
-            IntPtr availableInCountryBuffer;
+            Iso639Code[] availableInCountries;
             int unavailableInCountryCount;
-            IntPtr unavailableInCountryBuffer;
+            Iso639Code[] unavailableInCountries;
             _analyser.GetServiceDetail(i,
                           out originalNetworkId, out transportStreamId, out serviceId,
                           out serviceNamePtr, out providerNamePtr, out logicalChannelNumberPtr,
                           out serviceType, out videoStreamCount, out audioStreamCount, out isHighDefinition, out isEncrypted, out isRunning, out pmtPid,
                           out previousOriginalNetworkId, out previousTransportStreamId, out previousServiceId,
-                          out networkIdCount, out networkIdBuffer,
-                          out bouquetIdCount, out bouquetIdBuffer,
-                          out languageCount, out languageBuffer,
-                          out availableInCellCount, out availableInCellBuffer, out unavailableInCellCount, out unavailableInCellBuffer,
-                          out targetRegionCount, out targetRegionBuffer,
-                          out availableInCountryCount, out availableInCountryBuffer, out unavailableInCountryCount, out unavailableInCountryBuffer);
+                          out networkIdCount, out networkIds,
+                          out bouquetIdCount, out bouquetIds,
+                          out languageCount, out languages,
+                          out availableInCellCount, out availableInCells, out unavailableInCellCount, out unavailableInCells,
+                          out targetRegionCount, out targetRegionIds,
+                          out availableInCountryCount, out availableInCountries, out unavailableInCountryCount, out unavailableInCountries);
 
             string serviceName = DvbTextConverter.Convert(serviceNamePtr).Trim();
             string providerName = DvbTextConverter.Convert(providerNamePtr);
@@ -250,44 +250,44 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
 
             List<string> details = new List<string>();
             IntPtr name;
-            List<int> networkIds = (List<int>)BufferToList(networkIdBuffer, typeof(int), networkIdCount);
-            foreach (int nid in networkIds)
+            if (networkIds != null)
             {
-              _analyser.GetNetworkName(nid, out name);
-              details.Add(DvbTextConverter.Convert(name) + string.Format(" ({0})", nid));
+              foreach (int nid in networkIds)
+              {
+                _analyser.GetNetworkName(nid, out name);
+                details.Add(DvbTextConverter.Convert(name) + string.Format(" ({0})", nid));
+              }
             }
             this.LogDebug("    network ID count = {0}, network IDs = {1}", networkIdCount, string.Join(", ", details));
 
             details.Clear();
-            List<int> bouquetIds = (List<int>)BufferToList(bouquetIdBuffer, typeof(int), bouquetIdCount);
-            foreach (int bid in bouquetIds)
+            if (bouquetIds != null)
             {
-              _analyser.GetBouquetName(bid, out name);
-              details.Add(DvbTextConverter.Convert(name) + string.Format(" ({0})", bid));
+              foreach (int bid in bouquetIds)
+              {
+                _analyser.GetBouquetName(bid, out name);
+                details.Add(DvbTextConverter.Convert(name) + string.Format(" ({0})", bid));
+              }
             }
             this.LogDebug("    bouquet ID count = {0}, bouquet IDs = {1}", bouquetIdCount, string.Join(", ", details));
 
-            List<string> languages = (List<string>)LangCodeBufferToList(languageBuffer, languageCount);
-            this.LogDebug("    language count = {0}, languages = {1}", languageCount, string.Join(", ", languages));
-
-            List<int> availableInCells = (List<int>)BufferToList(availableInCellBuffer, typeof(int), availableInCellCount);
-            this.LogDebug("    available in cells count = {0}, cells = {1}", availableInCellCount, string.Join(", ", availableInCells));
-            List<int> unavailableInCells = (List<int>)BufferToList(unavailableInCellBuffer, typeof(int), unavailableInCellCount);
-            this.LogDebug("    unavailable in cells count = {0}, cells = {1}", unavailableInCellCount, string.Join(", ", unavailableInCells));
+            this.LogDebug("    language count = {0}, languages = {1}", languageCount, string.Join(", ", languages ?? new Iso639Code[0]));
+            this.LogDebug("    available in cells count = {0}, cells = {1}", availableInCellCount, string.Join(", ", availableInCells ?? new uint[0]));
+            this.LogDebug("    unavailable in cells count = {0}, cells = {1}", unavailableInCellCount, string.Join(", ", unavailableInCells ?? new uint[0]));
 
             details.Clear();
-            List<long> targetRegionIds = (List<long>)BufferToList(targetRegionBuffer, typeof(long), targetRegionCount);
-            foreach (int regionId in targetRegionIds)
+            if (targetRegionIds != null)
             {
-              _analyser.GetTargetRegionName(regionId, out name);
-              details.Add(DvbTextConverter.Convert(name) + string.Format(" ({0})", regionId));
+              foreach (int regionId in targetRegionIds)
+              {
+                _analyser.GetTargetRegionName(regionId, out name);
+                details.Add(DvbTextConverter.Convert(name) + string.Format(" ({0})", regionId));
+              }
             }
             this.LogDebug("    target region count = {0}, regions = {1}", targetRegionCount, string.Join(", ", details));
 
-            List<string> availableInCountries = (List<string>)LangCodeBufferToList(availableInCountryBuffer, availableInCountryCount);
-            this.LogDebug("    available in country count = {0}, countries = {1}", availableInCountryCount, string.Join(", ", availableInCountries));
-            List<string> unavailableInCountries = (List<string>)LangCodeBufferToList(unavailableInCountryBuffer, unavailableInCountryCount);
-            this.LogDebug("    unavailable in country count = {0}, countries = {1}", unavailableInCountryCount, string.Join(", ", unavailableInCountries));
+            this.LogDebug("    available in country count = {0}, countries = {1}", availableInCountryCount, string.Join(", ", availableInCountries ?? new Iso639Code[0]));
+            this.LogDebug("    unavailable in country count = {0}, countries = {1}", unavailableInCountryCount, string.Join(", ", unavailableInCountries ?? new Iso639Code[0]));
 
             // The SDT/VCT service type is unfortunately not sufficient for service type identification. Many DVB-IP
             // and some ATSC and North American cable broadcasters in particular do not set the service type.
@@ -590,32 +590,32 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
             int previousTransportStreamId;
             int previousServiceId;
             int networkIdCount;
-            IntPtr networkIdBuffer;
+            ushort[] networkIds;
             int bouquetIdCount;
-            IntPtr bouquetIdBuffer;
+            ushort[] bouquetIds;
             int languageCount;
-            IntPtr languageBuffer;
+            Iso639Code[] languages;
             int availableInCellCount;
-            IntPtr availableInCellBuffer;
+            uint[] availableInCells;
             int unavailableInCellCount;
-            IntPtr unavailableInCellBuffer;
+            uint[] unavailableInCells;
             int targetRegionCount;
-            IntPtr targetRegionBuffer;
+            long[] targetRegionIds;
             int availableInCountryCount;
-            IntPtr availableInCountryBuffer;
+            Iso639Code[] availableInCountries;
             int unavailableInCountryCount;
-            IntPtr unavailableInCountryBuffer;
+            Iso639Code[] unavailableInCountries;
             _analyser.GetServiceDetail(i,
                           out originalNetworkId, out transportStreamId, out serviceId,
                           out serviceNamePtr, out providerNamePtr, out logicalChannelNumberPtr,
                           out serviceType, out videoStreamCount, out audioStreamCount, out isHighDefinition, out isEncrypted, out isRunning, out pmtPid,
                           out previousOriginalNetworkId, out previousTransportStreamId, out previousServiceId,
-                          out networkIdCount, out networkIdBuffer,
-                          out bouquetIdCount, out bouquetIdBuffer,
-                          out languageCount, out languageBuffer,
-                          out availableInCellCount, out availableInCellBuffer, out unavailableInCellCount, out unavailableInCellBuffer,
-                          out targetRegionCount, out targetRegionBuffer,
-                          out availableInCountryCount, out availableInCountryBuffer, out unavailableInCountryCount, out unavailableInCountryBuffer);
+                          out networkIdCount, out networkIds,
+                          out bouquetIdCount, out bouquetIds,
+                          out languageCount, out languages,
+                          out availableInCellCount, out availableInCells, out unavailableInCellCount, out unavailableInCells,
+                          out targetRegionCount, out targetRegionIds,
+                          out availableInCountryCount, out availableInCountries, out unavailableInCountryCount, out unavailableInCountries);
 
             string serviceName = DvbTextConverter.Convert(serviceNamePtr);
             string providerName = DvbTextConverter.Convert(providerNamePtr);
@@ -627,44 +627,44 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
 
             List<string> details = new List<string>();
             IntPtr name;
-            List<int> networkIds = (List<int>)BufferToList(networkIdBuffer, typeof(int), networkIdCount);
-            foreach (int nid in networkIds)
+            if (networkIds != null)
             {
-              _analyser.GetNetworkName(nid, out name);
-              details.Add(DvbTextConverter.Convert(name) + string.Format(" ({0})", nid));
+              foreach (int nid in networkIds)
+              {
+                _analyser.GetNetworkName(nid, out name);
+                details.Add(DvbTextConverter.Convert(name) + string.Format(" ({0})", nid));
+              }
             }
             this.LogDebug("    network ID count = {0}, network IDs = {1}", networkIdCount, string.Join(", ", details));
 
             details.Clear();
-            List<int> bouquetIds = (List<int>)BufferToList(bouquetIdBuffer, typeof(int), bouquetIdCount);
-            foreach (int bid in bouquetIds)
+            if (bouquetIds != null)
             {
-              _analyser.GetBouquetName(bid, out name);
-              details.Add(DvbTextConverter.Convert(name) + string.Format(" ({0})", bid));
+              foreach (int bid in bouquetIds)
+              {
+                _analyser.GetBouquetName(bid, out name);
+                details.Add(DvbTextConverter.Convert(name) + string.Format(" ({0})", bid));
+              }
             }
             this.LogDebug("    bouquet ID count = {0}, bouquet IDs = {1}", bouquetIdCount, string.Join(", ", details));
 
-            List<string> languages = (List<string>)LangCodeBufferToList(languageBuffer, languageCount);
-            this.LogDebug("    language count = {0}, languages = {1}", languageCount, string.Join(", ", languages));
-
-            List<int> availableInCells = (List<int>)BufferToList(availableInCellBuffer, typeof(int), availableInCellCount);
-            this.LogDebug("    available in cells count = {0}, cells = {1}", availableInCellCount, string.Join(", ", availableInCells));
-            List<int> unavailableInCells = (List<int>)BufferToList(unavailableInCellBuffer, typeof(int), unavailableInCellCount);
-            this.LogDebug("    unavailable in cells count = {0}, cells = {1}", unavailableInCellCount, string.Join(", ", unavailableInCells));
+            this.LogDebug("    language count = {0}, languages = {1}", languageCount, string.Join(", ", languages ?? new Iso639Code[0]));
+            this.LogDebug("    available in cells count = {0}, cells = {1}", availableInCellCount, string.Join(", ", availableInCells ?? new uint[0]));
+            this.LogDebug("    unavailable in cells count = {0}, cells = {1}", unavailableInCellCount, string.Join(", ", unavailableInCells ?? new uint[0]));
 
             details.Clear();
-            List<long> targetRegionIds = (List<long>)BufferToList(targetRegionBuffer, typeof(long), targetRegionCount);
-            foreach (int regionId in targetRegionIds)
+            if (targetRegionIds != null)
             {
-              _analyser.GetTargetRegionName(regionId, out name);
-              details.Add(DvbTextConverter.Convert(name) + string.Format(" ({0})", regionId));
+              foreach (int regionId in targetRegionIds)
+              {
+                _analyser.GetTargetRegionName(regionId, out name);
+                details.Add(DvbTextConverter.Convert(name) + string.Format(" ({0})", regionId));
+              }
             }
             this.LogDebug("    target region count = {0}, regions = {1}", targetRegionCount, string.Join(", ", details));
 
-            List<string> availableInCountries = (List<string>)LangCodeBufferToList(availableInCountryBuffer, availableInCountryCount);
-            this.LogDebug("    available in country count = {0}, countries = {1}", availableInCountryCount, string.Join(", ", availableInCountries));
-            List<string> unavailableInCountries = (List<string>)LangCodeBufferToList(unavailableInCountryBuffer, unavailableInCountryCount);
-            this.LogDebug("    unavailable in country count = {0}, countries = {1}", unavailableInCountryCount, string.Join(", ", unavailableInCountries));
+            this.LogDebug("    available in country count = {0}, countries = {1}", availableInCountryCount, string.Join(", ", availableInCountries ?? new Iso639Code[0]));
+            this.LogDebug("    unavailable in country count = {0}, countries = {1}", unavailableInCountryCount, string.Join(", ", unavailableInCountries ?? new Iso639Code[0]));
 
             // The SDT/VCT service type is unfortunately not sufficient for service type identification. Many DVB-IP
             // and some ATSC and North American cable broadcasters in particular do not set the service type.
@@ -735,42 +735,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       {
         _isScanning = false;
       }
-    }
-
-    #endregion
-
-    #region Helpers
-
-    /// <summary>
-    /// Read the elements from a buffer into a list.
-    /// </summary>
-    /// <param name="buffer">The buffer.</param>
-    /// <param name="elementType">The type of the elements contained in the buffer.</param>
-    /// <param name="elementCount">The number of elements in the buffer.</param>
-    /// <returns>a list containing the elements from the buffer</returns>
-    private IList BufferToList(IntPtr buffer, Type elementType, int elementCount)
-    {
-      Type customListType = typeof(List<>).MakeGenericType(elementType);
-      IList toReturn = (IList)Activator.CreateInstance(customListType);
-      int size = Marshal.SizeOf(elementType);
-      int offset = 0;
-      for (int i = 0; i < elementCount; i++)
-      {
-        toReturn.Add(Marshal.PtrToStructure(IntPtr.Add(buffer, offset), elementType));
-        offset += size;
-      }
-      return toReturn;
-    }
-    private IList LangCodeBufferToList(IntPtr buffer, int elementCount)
-    {
-      IList toReturn = new List<string>();
-      int offset = 0;
-      for (int i = 0; i < elementCount; i++)
-      {
-        toReturn.Add(Marshal.PtrToStringAnsi(IntPtr.Add(buffer, offset), 3));
-        offset += 4;
-      }
-      return toReturn;
     }
 
     #endregion

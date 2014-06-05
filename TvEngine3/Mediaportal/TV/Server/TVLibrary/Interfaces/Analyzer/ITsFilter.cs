@@ -159,7 +159,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="fileName">Filename for the recording</param>
     /// <returns></returns>
     [PreserveSig]
-    int RecordSetRecordingFileNameW(int handle, [In, MarshalAs(UnmanagedType.LPWStr)] string fileName);
+    int RecordSetRecordingFileNameW(int handle, [MarshalAs(UnmanagedType.LPWStr)] string fileName);
 
     /// <summary>
     /// Starts recording on the given sub-channel
@@ -187,7 +187,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="pmtLength">The length of the PMT</param>
     /// <returns></returns>
     [PreserveSig]
-    int RecordSetPmtPid(int handle, int pmtPid, int serviceId, [In, MarshalAs(UnmanagedType.LPArray)] byte[] pmtData,
+    int RecordSetPmtPid(int handle, int pmtPid, int serviceId, [MarshalAs(UnmanagedType.LPArray)] byte[] pmtData,
                         int pmtLength);
 
     /// <summary>
@@ -206,7 +206,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="fileName">Filename</param>
     /// <returns></returns>
     [PreserveSig]
-    int TimeShiftSetTimeShiftingFileNameW(int handle, [In, MarshalAs(UnmanagedType.LPWStr)] string fileName);
+    int TimeShiftSetTimeShiftingFileNameW(int handle, [MarshalAs(UnmanagedType.LPWStr)] string fileName);
 
     /// <summary>
     /// Starts timeshifting on the given sub-channel
@@ -251,7 +251,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="pmtLength">The length of the PMT</param>
     /// <returns></returns>
     [PreserveSig]
-    int TimeShiftSetPmtPid(int handle, int pmtPid, int serviceId, [In, MarshalAs(UnmanagedType.LPArray)] byte[] pmtData,
+    int TimeShiftSetPmtPid(int handle, int pmtPid, int serviceId, [MarshalAs(UnmanagedType.LPArray)] byte[] pmtData,
                            int pmtLength);
 
     /// <summary>
@@ -281,7 +281,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="position">The position in the current timeshift buffer file</param>
     /// <param name="bufferId">The id of the current timeshift buffer file</param>
     [PreserveSig]
-    int TimeShiftGetCurrentFilePosition(int handle, [Out] out long position, [Out] out long bufferId);
+    int TimeShiftGetCurrentFilePosition(int handle, out long position, out long bufferId);
 
     /// <summary>
     /// Sets the video/audio observer call back

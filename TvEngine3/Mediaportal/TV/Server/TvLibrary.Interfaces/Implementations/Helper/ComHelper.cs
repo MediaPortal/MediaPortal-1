@@ -61,7 +61,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
   /// </summary>
   public static class ComHelper
   {
-    private delegate int DllGetClassObject(ref Guid rClsid, ref Guid rIid, [Out, MarshalAs(UnmanagedType.Interface)] out object ppv);
+    private delegate int DllGetClassObject(ref Guid rClsid, ref Guid rIid, [MarshalAs(UnmanagedType.Interface)] out object ppv);
 
     private class LibrarySet
     {

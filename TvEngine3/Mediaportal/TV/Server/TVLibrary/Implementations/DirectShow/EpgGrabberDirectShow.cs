@@ -128,10 +128,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
             uint tmp1 = 0, tmp2 = 0;
             IntPtr ptrTitle, ptrProgramName;
             IntPtr ptrChannelName, ptrSummary, ptrTheme;
-            _epgScanner.GetMHWTitle((ushort)i, ref id, ref tmp1, ref tmp2, ref channelnr, ref programid,
-                                              ref themeid, ref PPV, ref summaries, ref duration, ref datestart,
-                                              ref timestart, out ptrTitle, out ptrProgramName);
-            _epgScanner.GetMHWChannel(channelnr, ref channelid, ref networkid, ref transportid,
+            _epgScanner.GetMHWTitle((ushort)i, out id, out tmp1, out tmp2, out channelnr, out programid,
+                                              out themeid, out PPV, out summaries, out duration, out datestart,
+                                              out timestart, out ptrTitle, out ptrProgramName);
+            _epgScanner.GetMHWChannel(channelnr, out channelid, out networkid, out transportid,
                                                 out ptrChannelName);
             _epgScanner.GetMHWSummary(programid, out ptrSummary);
             _epgScanner.GetMHWTheme(themeid, out ptrTheme);
@@ -208,7 +208,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
           ushort serviceid = 0;
           for (uint x = 0; x < channelCount; ++x)
           {
-            _epgScanner.GetEPGChannel(x, ref networkid, ref transportid, ref serviceid);
+            _epgScanner.GetEPGChannel(x, out networkid, out transportid, out serviceid);
             // We need to use a matching channel type per card, because tuning details will be looked up with cardtype as filter.
             DVBBaseChannel channel = (DVBBaseChannel)_currentTuningDetail.Clone();
             channel.NetworkId = networkid;

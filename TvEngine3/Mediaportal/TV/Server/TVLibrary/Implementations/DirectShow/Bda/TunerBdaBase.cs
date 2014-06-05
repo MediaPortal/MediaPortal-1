@@ -830,7 +830,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
             ushort network_id = 0;
             ushort transport_id = 0;
             ushort service_id = 0;
-            linkageScanner.GetChannel(i, ref network_id, ref transport_id, ref service_id);
+            linkageScanner.GetChannel(i, out network_id, out transport_id, out service_id);
             PortalChannel pChannel = new PortalChannel();
             pChannel.NetworkId = network_id;
             pChannel.TransportId = transport_id;
@@ -845,7 +845,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
                 ushort tid = 0;
                 ushort sid = 0;
                 IntPtr ptrName;
-                linkageScanner.GetLinkedChannel(i, j, ref nid, ref tid, ref sid, out ptrName);
+                linkageScanner.GetLinkedChannel(i, j, out nid, out tid, out sid, out ptrName);
                 LinkedChannel lChannel = new LinkedChannel();
                 lChannel.NetworkId = nid;
                 lChannel.TransportId = tid;
