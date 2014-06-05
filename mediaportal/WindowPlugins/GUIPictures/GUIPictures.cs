@@ -899,6 +899,11 @@ namespace MediaPortal.GUI.Pictures
             GUIControl.FocusControl(GetID, btnViews.GetID);
           }
           break;
+
+        case GUIMessage.MessageType.GUI_MSG_LAYOUT_CHANGED:
+          FolderSetting folderSetting = new FolderSetting();
+          folderSetting.UpdateFolders(-1, CurrentSortAsc, (int)currentLayout);
+          break;
       }
       return base.OnMessage(message);
     }
@@ -2114,6 +2119,8 @@ namespace MediaPortal.GUI.Pictures
 
       OnSort();
       GUIControl.FocusControl(GetID, btnSortBy.GetID);
+      FolderSetting folderSetting = new FolderSetting();
+      folderSetting.UpdateFolders(mapSettings.SortBy, CurrentSortAsc, -1);
     }
 
     private void OnShowFileMenu()
@@ -2912,5 +2919,10 @@ namespace MediaPortal.GUI.Pictures
     }
 
     #endregion
+
+    public static string GetCurrentFolder
+    {
+      get { return currentFolder; }
+    }
   }
 }

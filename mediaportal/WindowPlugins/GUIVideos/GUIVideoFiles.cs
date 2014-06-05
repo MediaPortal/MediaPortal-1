@@ -628,6 +628,11 @@ namespace MediaPortal.GUI.Video
         case GUIMessage.MessageType.GUI_MSG_PLAY_DVD:
           OnPlayDVD(message.Label, GetID);
           break;
+
+        case GUIMessage.MessageType.GUI_MSG_LAYOUT_CHANGED:
+          FolderSetting folderSetting = new FolderSetting();
+          folderSetting.UpdateFolders(-1, CurrentSortAsc, (int)CurrentLayout);
+          break;
       }
       return base.OnMessage(message);
     }
@@ -5153,5 +5158,10 @@ namespace MediaPortal.GUI.Video
     }
 
     #endregion
+
+    public static string GetCurrentFolder
+    {
+      get { return _currentFolder; }
+    }
   }
 }
