@@ -1333,8 +1333,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
       }
 
       // Rough approximation: enable PID filtering when bit rate is over 60 Mb/s.
-      this.LogDebug("Digital Everywhere: multiplex bit rate = {0} kb/s", bitRate);
-      return bitRate >= 60000;
+      bool enableFilter = (bitRate >= 60000);
+      this.LogDebug("Digital Everywhere: multiplex bit rate = {0} kb/s, need PID filter = {1}", bitRate, enableFilter);
+      return enableFilter;
     }
 
     /// <summary>
