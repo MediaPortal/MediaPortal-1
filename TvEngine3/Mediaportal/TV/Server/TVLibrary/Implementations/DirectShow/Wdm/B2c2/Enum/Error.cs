@@ -22,16 +22,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.En
 {
   internal enum Error
   {
-    NotLockedOnSignal = -1878982377,    // [0x90010115]
+    NotLockedOnSignal = -1878982379,    // [0x90010115]
 
     // For AddPIDsToPin() or AddPIDs()...
     AlreadyExists = 0x10011000,         // PID already registered.
-    PidError = -1878978558,             // [0x90011001]
-    AlreadyFull = -1878978557,          // Max PID count exceeded. [0x90011002]
+    PidError = -1878978559,             // [0x90011001]
+    AlreadyFull = -1878978558,          // Max PID count exceeded. [0x90011002]
 
     // General...
-    CreateInterface = -1878917118,      // Not all interfaces could be created correctly. [0x90020001]
-    UnsupportedDevice = -1878917117,    // The given device is not B2C2-compatible (Linux). [0x90020002]
+    CreateInterface = -1878917119,      // Not all interfaces could be created correctly. [0x90020001]
+    UnsupportedDevice = -1878917118,    // The given device is not B2C2-compatible (Linux). [0x90020002]
     NotInitialised,                     // Initialize() needs to be called.
 
     // (B2C2MPEG2AdapterWin.cpp code...)
