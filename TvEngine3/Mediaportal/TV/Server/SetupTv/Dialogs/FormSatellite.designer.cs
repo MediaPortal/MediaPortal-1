@@ -32,15 +32,15 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     {
       this.mpButtonOK = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.mpButtonCancel = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
-      this.textBoxChannel = new System.Windows.Forms.TextBox();
+      this.txtSatName = new System.Windows.Forms.TextBox();
       this.label47 = new System.Windows.Forms.Label();
       this.groupBoxGeneralSettings = new System.Windows.Forms.GroupBox();
       this.label3 = new System.Windows.Forms.Label();
-      this.textBox3 = new System.Windows.Forms.TextBox();
+      this.txtTransponderListUrl = new System.Windows.Forms.TextBox();
       this.label2 = new System.Windows.Forms.Label();
-      this.textBox2 = new System.Windows.Forms.TextBox();
+      this.txtPos = new System.Windows.Forms.TextBox();
       this.label1 = new System.Windows.Forms.Label();
-      this.textBox1 = new System.Windows.Forms.TextBox();
+      this.txtLocalTranspoderFile = new System.Windows.Forms.TextBox();
       this.groupBoxGeneralSettings.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -53,7 +53,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.mpButtonOK.TabIndex = 1;
       this.mpButtonOK.Text = "OK";
       this.mpButtonOK.UseVisualStyleBackColor = true;
-      this.mpButtonOK.Click += new System.EventHandler(this.button1_Click);
+      this.mpButtonOK.Click += new System.EventHandler(this.mpButtonOK_Click);
       // 
       // mpButtonCancel
       // 
@@ -65,14 +65,14 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.mpButtonCancel.TabIndex = 2;
       this.mpButtonCancel.Text = "Cancel";
       this.mpButtonCancel.UseVisualStyleBackColor = true;
-      this.mpButtonCancel.Click += new System.EventHandler(this.button2_Click);
+      this.mpButtonCancel.Click += new System.EventHandler(this.mpButtonCancel_Click);
       // 
-      // textBoxChannel
+      // txtSatName
       // 
-      this.textBoxChannel.Location = new System.Drawing.Point(127, 19);
-      this.textBoxChannel.Name = "textBoxChannel";
-      this.textBoxChannel.Size = new System.Drawing.Size(123, 20);
-      this.textBoxChannel.TabIndex = 120;
+      this.txtSatName.Location = new System.Drawing.Point(127, 19);
+      this.txtSatName.Name = "txtSatName";
+      this.txtSatName.Size = new System.Drawing.Size(123, 20);
+      this.txtSatName.TabIndex = 120;
       // 
       // label47
       // 
@@ -86,13 +86,13 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // groupBoxGeneralSettings
       // 
       this.groupBoxGeneralSettings.Controls.Add(this.label3);
-      this.groupBoxGeneralSettings.Controls.Add(this.textBox3);
+      this.groupBoxGeneralSettings.Controls.Add(this.txtTransponderListUrl);
       this.groupBoxGeneralSettings.Controls.Add(this.label2);
-      this.groupBoxGeneralSettings.Controls.Add(this.textBox2);
+      this.groupBoxGeneralSettings.Controls.Add(this.txtPos);
       this.groupBoxGeneralSettings.Controls.Add(this.label1);
-      this.groupBoxGeneralSettings.Controls.Add(this.textBox1);
+      this.groupBoxGeneralSettings.Controls.Add(this.txtLocalTranspoderFile);
       this.groupBoxGeneralSettings.Controls.Add(this.label47);
-      this.groupBoxGeneralSettings.Controls.Add(this.textBoxChannel);
+      this.groupBoxGeneralSettings.Controls.Add(this.txtSatName);
       this.groupBoxGeneralSettings.Location = new System.Drawing.Point(12, 12);
       this.groupBoxGeneralSettings.Name = "groupBoxGeneralSettings";
       this.groupBoxGeneralSettings.Size = new System.Drawing.Size(330, 136);
@@ -110,12 +110,12 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.label3.TabIndex = 129;
       this.label3.Text = "TransponderListUrl:";
       // 
-      // textBox3
+      // txtTransponderListUrl
       // 
-      this.textBox3.Location = new System.Drawing.Point(127, 99);
-      this.textBox3.Name = "textBox3";
-      this.textBox3.Size = new System.Drawing.Size(123, 20);
-      this.textBox3.TabIndex = 128;
+      this.txtTransponderListUrl.Location = new System.Drawing.Point(127, 99);
+      this.txtTransponderListUrl.Name = "txtTransponderListUrl";
+      this.txtTransponderListUrl.Size = new System.Drawing.Size(123, 20);
+      this.txtTransponderListUrl.TabIndex = 128;
       // 
       // label2
       // 
@@ -127,13 +127,13 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.label2.TabIndex = 127;
       this.label2.Text = "Position:";
       // 
-      // textBox2
+      // txtPos
       // 
-      this.textBox2.Location = new System.Drawing.Point(127, 72);
-      this.textBox2.Name = "textBox2";
-      this.textBox2.Size = new System.Drawing.Size(43, 20);
-      this.textBox2.TabIndex = 126;
-      this.textBox2.Text = "0";
+      this.txtPos.Location = new System.Drawing.Point(127, 72);
+      this.txtPos.Name = "txtPos";
+      this.txtPos.Size = new System.Drawing.Size(43, 20);
+      this.txtPos.TabIndex = 126;
+      this.txtPos.Text = "0";
       // 
       // label1
       // 
@@ -144,12 +144,12 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.label1.TabIndex = 123;
       this.label1.Text = "LocalTranspoderFile:";
       // 
-      // textBox1
+      // txtLocalTranspoderFile
       // 
-      this.textBox1.Location = new System.Drawing.Point(127, 45);
-      this.textBox1.Name = "textBox1";
-      this.textBox1.Size = new System.Drawing.Size(123, 20);
-      this.textBox1.TabIndex = 122;
+      this.txtLocalTranspoderFile.Location = new System.Drawing.Point(127, 45);
+      this.txtLocalTranspoderFile.Name = "txtLocalTranspoderFile";
+      this.txtLocalTranspoderFile.Size = new System.Drawing.Size(123, 20);
+      this.txtLocalTranspoderFile.TabIndex = 122;
       // 
       // FormSatellite
       // 
@@ -178,14 +178,14 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
     private MPButton mpButtonOK;
     private MPButton mpButtonCancel;
-    private System.Windows.Forms.TextBox textBoxChannel;
+    private System.Windows.Forms.TextBox txtSatName;
     private System.Windows.Forms.Label label47;
     private System.Windows.Forms.GroupBox groupBoxGeneralSettings;
     private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.TextBox textBox1;
+    private System.Windows.Forms.TextBox txtLocalTranspoderFile;
     private System.Windows.Forms.Label label2;
-    private System.Windows.Forms.TextBox textBox2;
+    private System.Windows.Forms.TextBox txtPos;
     private System.Windows.Forms.Label label3;
-    private System.Windows.Forms.TextBox textBox3;
+    private System.Windows.Forms.TextBox txtTransponderListUrl;
   }
 }

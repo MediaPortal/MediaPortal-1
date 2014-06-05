@@ -20,15 +20,18 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
+using Mediaportal.TV.Server.SetupTV.Dialogs;
 using Mediaportal.TV.Server.SetupTV.Sections.Helpers;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
@@ -39,50 +42,57 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class Satellites : SectionSettings
-  {
-    
-
-    
-
-    public Satellites(string name)
-      : base(name)
+  {        
+    public Satellites(string name) : base(name)
     {
      
-    }
+    }    
 
     public override void OnSectionActivated()
-    {                 
-     
+    {      
+      base.OnSectionActivated();
+      RefreshAll();
     }
 
-    private void mpButton1_Click(object sender, EventArgs e)
+    private IList<Satellite> _satellites;
+
+    private void RefreshAll()
     {
-      scanState = ScanState.Updating;
-      SetControlStates();
-      listViewStatus.Items.Clear();
-      string itemLine = String.Format("Updating satellites...");
-      listViewStatus.Items.Add(new ListViewItem(itemLine));
-      Application.DoEvents();
-      List<CardDvbS.SatelliteContext> sats = LoadSatellites();
-      foreach (CardDvbS.SatelliteContext sat in sats)
+      mpListViewSatellites.BeginUpdate();
+      try
       {
-        //DownloadTransponder(sat);//moved
-      }
-      itemLine = String.Format("Update finished");
-      listViewStatus.Items.Add(new ListViewItem(itemLine));
-      scanState = ScanState.Initialized;
-      SetControlStates();
-    }
+        _satellites = LoadSatellites();
 
-    
+        mpListViewSatellites.Items.Clear();
+
+
+        if (_satellites.Count == 0)
+        {
+          MessageBox.Show(this, "No satellite transponder files found. Try and click the update button!", "Missing satellites");
+          return;
+        }
+
+        foreach (Satellite sat in _satellites)
+        {
+          ListViewItem item = CreateListViewItem(sat);
+          mpListViewSatellites.Items.Add(item);
+        }
+      }
+      finally
+      {
+        mpListViewSatellites.EndUpdate();
+      }
+    }
 
     /// <summary>
     /// Loads all known satellites from xml file
     /// </summary>
     /// <returns></returns>
-    private static List<SatelliteContext> LoadSatellites()
+    private List<Satellite> LoadSatellites()
     {
-      List<SatelliteContext> satellites = new List<SatelliteContext>();
+      var existingSatellites = ServiceAgents.Instance.CardServiceAgent.ListAllSatellites();
+
+      List<Satellite> newSatellites = new List<Satellite>();
       XmlDocument doc = new XmlDocument();
       doc.Load(String.Format(@"{0}\TuningParameters\dvbs\satellites.xml", PathManager.GetDataPath));
       XmlNodeList nodes = doc.SelectNodes("/satellites/satellite");
@@ -90,12 +100,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       {
         foreach (XmlNode node in nodes)
         {
-          SatelliteContext ts = new SatelliteContext();
-          ts.SatelliteName = node.Attributes.GetNamedItem("name").Value;
-          ts.Url = node.Attributes.GetNamedItem("url").Value;
-          string name = Utils.FilterFileName(ts.SatelliteName);
-          ts.FileName = String.Format(@"{0}\TuningParameters\dvbs\{1}.xml", PathManager.GetDataPath, name);
-          satellites.Add(ts);
+          var newSat = new Satellite
+          {
+            Name = node.Attributes.GetNamedItem("name").Value,
+            TransponderListUrl = node.Attributes.GetNamedItem("url").Value
+          };
+          string name = Utils.FilterFileName(newSat.Name);
+          newSat.LocalTransponderFile = String.Format(@"{0}\TuningParameters\dvbs\{1}.xml", PathManager.GetDataPath, name);
+          newSatellites.Add(newSat);
         }
       }
       String[] files = System.IO.Directory.GetFiles(String.Format(@"{0}\TuningParameters\dvbs\", PathManager.GetDataPath),
@@ -104,74 +116,268 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       {
         if (Path.GetFileName(file).StartsWith("Manual_Scans"))
         {
-          SatelliteContext ts = new SatelliteContext();
-          ts.SatelliteName = Path.GetFileNameWithoutExtension(file);
-          ts.Url = "";
-          ts.FileName = file;
-          satellites.Add(ts);
+          var newSat = new Satellite
+          {
+            Name = Path.GetFileNameWithoutExtension(file),
+            TransponderListUrl = "",
+            LocalTransponderFile = file
+          };
+          newSatellites.Add(newSat);
         }
       }
-      IList<Satellite> dbSats = ServiceAgents.Instance.CardServiceAgent.ListAllSatellites();
-      foreach (SatelliteContext ts in satellites)
+
+      for (int j = 0; j < newSatellites.Count; j++)
       {
-        foreach (Satellite dbSat in dbSats)
+        Satellite newSat = newSatellites[j];      
+        foreach (Satellite existingSat in existingSatellites)
         {
           string name = "";
-          for (int i = 0; i < ts.SatelliteName.Length; ++i)
+          for (int i = 0; i < newSat.Name.Length; ++i)
           {
-            if (ts.SatelliteName[i] >= (char)32 && ts.SatelliteName[i] < (char)127)
-              name += ts.SatelliteName[i];
+            if (newSat.Name[i] >= (char) 32 && newSat.Name[i] < (char) 127)
+            {
+              name += newSat.Name[i];
+            }
           }
-          if (System.String.Compare(name, dbSat.Name, System.StringComparison.OrdinalIgnoreCase) == 0)
+          if (String.Compare(name, existingSat.Name, System.StringComparison.OrdinalIgnoreCase) == 0)
           {
-            ts.Satellite = dbSat;
+            newSat = existingSat;
+            //newSat.Satellite = existingSat;
             break;
           }
         }
-        if (ts.Satellite == null)
+        //if (newSat.Satellite == null)
+        if (newSat.IdSatellite == 0)
         {
           string name = "";
-          for (int i = 0; i < ts.SatelliteName.Length; ++i)
+          for (int i = 0; i < newSat.Name.Length; ++i)
           {
-            if (ts.SatelliteName[i] >= (char)32 && ts.SatelliteName[i] < (char)127)
-              name += ts.SatelliteName[i];
+            if (newSat.Name[i] >= (char)32 && newSat.Name[i] < (char)127)
+            {
+              name += newSat.Name[i];
+            }
           }
 
-
-          ts.Satellite = new Satellite { Name = name, LocalTranspoderFile = ts.FileName };
-          ts.FileName = ts.FileName;
-
-          ServiceAgents.Instance.CardServiceAgent.SaveSatellite(ts.Satellite);
+          newSat.Name = name;                    
+          ServiceAgents.Instance.CardServiceAgent.SaveSatellite(newSat);
         }
       }
-      return satellites;
+      return newSatellites;
+    }
+
+    private ListViewItem CreateListViewItem(Satellite sat)
+    {
+      var item = new ListViewItem(sat.Name) {Tag = sat};
+
+      item.SubItems.Add(sat.LocalTransponderFile);
+      item.SubItems.Add(sat.Position.ToString(CultureInfo.InvariantCulture));      
+      item.SubItems.Add(sat.TransponderListUrl);
+      return item;
+    }
+
+    private void btnAddSat_Click(object sender, EventArgs e)
+    {
+      var dlg = new FormSatellite {Satellite = null};
+      if (dlg.ShowDialog(this) == DialogResult.OK)
+      {
+        mpListViewSatellites.BeginUpdate();
+        try
+        {
+          RefreshAll();
+        }
+        finally
+        {
+          mpListViewSatellites.EndUpdate();
+        }
+      }
+    }
+
+    private void btnEditSat_Click(object sender, EventArgs e)
+    {
+      ListView.SelectedIndexCollection indexes = mpListViewSatellites.SelectedIndices;
+      if (indexes.Count == 0)
+      {
+        return;
+      }
+      Satellite satellite = (Satellite)mpListViewSatellites.Items[indexes[0]].Tag;
+      FormSatellite dlg = new FormSatellite { Satellite = satellite };
+      if (dlg.ShowDialog(this) == DialogResult.OK)
+      {
+        RefreshAll();        
+      }
+    }
+
+    private void btnUpdateList_Click(object sender, EventArgs e)
+    {
+      string itemLine = String.Format("Updating satellites...");
+      listViewStatus.Items.Add(new ListViewItem(itemLine));
+      Application.DoEvents();
+      DownloadSatelliteXML();
+      _satellites = LoadSatellites();
+      foreach (Satellite sat in _satellites)
+      {
+        DownloadTransponder(sat);
+      }
+      itemLine = String.Format("Update finished");
+      listViewStatus.Items.Add(new ListViewItem(itemLine));
+     
     }
 
     /// <summary>
-    /// Downloads new transponderlist and merges both S and S2 into one XML 
+    /// Downloads new Satellite XML 
     /// </summary>
     /// <param name="context"></param>
-    private void DownloadTransponder(SatelliteContext context)
+    private void DownloadSatelliteXML()
     {
-      if (context.Url == null)
+      var satellite = new Satellite();
+      satellite.TransponderListUrl = "http://install.team-mediaportal.com/tvsetup/DVBS/satellites.xml";
+      satellite.LocalTransponderFile = String.Format(@"{0}\TuningParameters\dvbs\satellites.xml", PathManager.GetDataPath);
+      if (satellite.TransponderListUrl == null)
         return;
-      if (context.Url.Length == 0)
+      if (satellite.TransponderListUrl.Length == 0)
         return;
-      if (!context.Url.ToLowerInvariant().StartsWith("http://"))
+      if (!satellite.TransponderListUrl.ToLowerInvariant().StartsWith("http://"))
         return;
-      string itemLine = String.Format("Downloading transponders for: {0}", context.SatelliteName);
+      string itemLine = String.Format("Downloading satellite xml");
       ListViewItem item = listViewStatus.Items.Add(new ListViewItem(itemLine));
       item.EnsureVisible();
       Application.DoEvents();
 
-      List<Transponder> transponders = new List<Transponder>();
       try
       {
         string[,] contextDownload = new string[2, 2];
-        contextDownload[0, 0] = context.FileName;
+        contextDownload[0, 0] = satellite.LocalTransponderFile;
+        contextDownload[0, 1] = satellite.TransponderListUrl;
+        contextDownload[1, 1] = satellite.TransponderListUrl.Replace(".ini", "-S2.ini");
+        {
+          string satUrl = contextDownload[1, 1];
+          item.Text = itemLine + " connecting...";
+          Application.DoEvents();
+          HttpWebRequest request = (HttpWebRequest)WebRequest.Create(satUrl);
+          request.ReadWriteTimeout = 30 * 1000; //thirty secs timeout
+          request.Proxy.Credentials = CredentialCache.DefaultCredentials;
+
+          item.Text = itemLine + " downloading...";
+          Application.DoEvents();
+          using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+          {
+            item.Text = itemLine + " saving...";
+            Application.DoEvents();
+
+            String newPath = String.Format(@"{0}\TuningParameters\dvbs\{1}.xml", PathManager.GetDataPath,
+                         Path.GetFileNameWithoutExtension(satellite.LocalTransponderFile));
+
+            if (File.Exists(newPath))
+            {
+              File.Delete(newPath);
+            }
+
+            using (FileStream stream = new FileStream(newPath, FileMode.Create, FileAccess.Write))
+            {
+              byte[] bytes = ReadFully(response.GetResponseStream());
+
+              stream.Write(bytes, 0, bytes.Length);
+            }
+
+            #region Replace correct url in satellite.xml
+
+            // Read the XML file and replace URL into content
+            ReplaceInFile(newPath, "http://fastsatfinder.com/bin/mp", "http://install.team-mediaportal.com/tvsetup/DVBS");
+
+            #endregion
+          }
+        } // for
+      }
+      catch (WebException WebEx)
+      {
+        //HTTP Protocol error, like 404 file not found. Do Nothing
+        if (WebEx.Status != WebExceptionStatus.ProtocolError)
+        {
+          throw new WebException(WebEx.Message);
+        }
+        item.Text = itemLine + " done";
+      }
+      catch (Exception)
+      {
+        item.Text = itemLine + " failed";
+      }
+      finally
+      {
+        item.Text = itemLine + " done";
+      }
+      Application.DoEvents();
+    }
+
+    /// <summary>
+    /// Replace string in file 
+    /// </summary>
+    /// <param name="context"></param>
+    public static void ReplaceInFile(
+                      string filePath, string searchText, string replaceText)
+    {
+
+      var content = string.Empty;
+      using (StreamReader reader = new StreamReader(filePath))
+      {
+        content = reader.ReadToEnd();
+        reader.Close();
+      }
+
+      content = Regex.Replace(content, searchText, replaceText);
+
+      using (StreamWriter writer = new StreamWriter(filePath))
+      {
+        writer.Write(content);
+        writer.Close();
+      }
+    }
+
+
+    /// <summary>
+    /// Save reading data in file 
+    /// </summary>
+    /// <param name="context"></param>
+    public static byte[] ReadFully(Stream input)
+    {
+      byte[] buffer = new byte[16 * 1024];
+      using (MemoryStream ms = new MemoryStream())
+      {
+        int read;
+        while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
+        {
+          ms.Write(buffer, 0, read);
+        }
+        return ms.ToArray();
+      }
+    }
+
+    
+
+    /// <summary>
+    /// Downloads new transponderlist and merges both S and S2 into one XML 
+    /// </summary>
+    /// <param name="satellite"></param>
+    private void DownloadTransponder(Satellite satellite)
+    {
+      if (satellite.TransponderListUrl == null)
+        return;
+      if (satellite.TransponderListUrl.Length == 0)
+        return;
+      if (!satellite.TransponderListUrl.ToLowerInvariant().StartsWith("http://"))
+        return;
+      string itemLine = String.Format("Downloading transponders for: {0}", satellite.Name);
+      ListViewItem item = listViewStatus.Items.Add(new ListViewItem(itemLine));
+      item.EnsureVisible();
+      Application.DoEvents();
+
+      var transponders = new List<Transponder>();
+      try
+      {
+        string[,] contextDownload = new string[2, 2];
+        contextDownload[0, 0] = satellite.LocalTransponderFile;
         //        contextDownload[1, 0] = context.FileName.Replace(".ini", "-S2.ini");
-        contextDownload[0, 1] = context.Url;
-        contextDownload[1, 1] = context.Url.Replace(".ini", "-S2.ini");
+        contextDownload[0, 1] = satellite.TransponderListUrl;
+        contextDownload[1, 1] = satellite.TransponderListUrl.Replace(".ini", "-S2.ini");
 
         for (int row = 0; row <= 1; row++)
         {
@@ -216,7 +422,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
                           {
                             tpdata[0] = tpdata[0].Substring(tpdata[0].IndexOf("=") + 1);
                           }
-                          CardDvbS.Transponder transponder = new CardDvbS.Transponder();
+                          Transponder transponder = new Transponder();
                           transponder.CarrierFrequency = Int32.Parse(tpdata[0]) * 1000;
                           switch (tpdata[1].ToLowerInvariant())
                           {
@@ -349,7 +555,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       finally
       {
         String newPath = String.Format(@"{0}\TuningParameters\dvbs\{1}.xml", PathManager.GetDataPath,
-                                       Path.GetFileNameWithoutExtension(context.FileName));
+                                       Path.GetFileNameWithoutExtension(satellite.LocalTransponderFile));
         if (File.Exists(newPath))
         {
           File.Delete(newPath);
@@ -357,15 +563,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         if (transponders.Count > 0)
         {
           System.IO.TextWriter parFileXML = System.IO.File.CreateText(newPath);
-          XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<Transponder>));
+          XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<Transponder>));          
           xmlSerializer.Serialize(parFileXML, transponders);
           parFileXML.Close();
         }
         item.Text = itemLine + " done";
       }
       Application.DoEvents();
-    }
-
-   
+    }   
   }
 }

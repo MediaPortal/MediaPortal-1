@@ -136,6 +136,7 @@
       <SubType>
       </SubType>
     </Compile>
+    <Compile Include="SatellitePartial.cs" />
     <Compile Include="testing.cs" />
     <Compile Include="TuningDetailTerrestrialPartial.cs" />
     <Compile Include="TuningDetailStreamPartial.cs" />

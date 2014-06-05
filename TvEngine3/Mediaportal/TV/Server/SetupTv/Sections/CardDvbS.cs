@@ -438,7 +438,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
     }
 
-    private void Scan(TunerSatellite tunerSatellite) //int lnb, LnbType lnbType, DiseqcPort diseqc, SatelliteContext context
+    private void Scan(Satellite tunerSatellite) //int lnb, LnbType lnbType, DiseqcPort diseqc, SatelliteContext context
     {
       // all transponders to scan
       List<DVBSChannel> _channels = new List<DVBSChannel>();
@@ -455,7 +455,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
 
       // what to scan
-      SatelliteContext context = new SatelliteContext(tunerSatellite.Satellite);      
+      Satellite context = new Satellite(tunerSatellite.Satellite);      
 
       switch (ActiveScanType)
       {
@@ -737,9 +737,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       int index = ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbs" + _cardNumber + "selectedMotorSat", 0);
 
-      List<SatelliteContext> satellites = LoadSatellites();
+      List<Satellite> satellites = LoadSatellites();
 
-      foreach (SatelliteContext sat in satellites)
+      foreach (Satellite sat in satellites)
       {
         comboBoxSat.Items.Add(sat);
       }
@@ -797,7 +797,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         return;
       if (checkBox1.Checked == false)
         return;
-      SatelliteContext sat = (SatelliteContext)comboBoxSat.Items[comboBoxSat.SelectedIndex];
+      Satellite sat = (Satellite)comboBoxSat.Items[comboBoxSat.SelectedIndex];
 
       Card card = ServiceAgents.Instance.CardServiceAgent.GetCard(_cardNumber);
       IList<DisEqcMotor> motorSettings = card.DisEqcMotors;
@@ -824,7 +824,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         return;
       //store motor position..
       int index = -1;
-      SatelliteContext sat = (SatelliteContext)comboBoxSat.SelectedItem;
+      Satellite sat = (Satellite)comboBoxSat.SelectedItem;
       Card card = ServiceAgents.Instance.CardServiceAgent.GetCard(_cardNumber);
       IList<DisEqcMotor> motorSettings = card.DisEqcMotors;
       foreach (DisEqcMotor motor in motorSettings)
@@ -919,7 +919,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       checkBoxEnabled.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbs" + _cardNumber + "limitsEnabled", true);
 
       comboBox1.Items.Clear();
-      SatelliteContext sat = (SatelliteContext)comboBoxSat.SelectedItem;
+      Satellite sat = (Satellite)comboBoxSat.SelectedItem;
       LoadTransponders(sat);
       _transponders.Sort();
       foreach (Transponder transponder in _transponders)
@@ -1314,9 +1314,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     /// Loads new xml transponder list
     /// </summary>
     /// <param name="FileName"></param>
-    private void LoadTransponders(SatelliteContext context)
+    private void LoadTransponders(Satellite context)
     {
-      String fileName = context.FileName;
+      String fileName = context.LocalTransponderFile;
       if (!File.Exists(fileName))
       {
         //DownloadTransponder(context);

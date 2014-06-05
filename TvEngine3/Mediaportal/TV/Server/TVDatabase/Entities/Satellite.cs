@@ -89,7 +89,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private string _transponderListUrl;
     
         [DataMember]
-        public string LocalTranspoderFile
+        public string LocalTransponderFile
         {
             get { return _localTranspoderFile; }
             set
