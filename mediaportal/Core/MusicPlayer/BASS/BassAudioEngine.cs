@@ -1926,8 +1926,8 @@ namespace MediaPortal.MusicPlayer.BASS
           // Extend detection to permit to play the file if it failed.
           if (_state == PlayState.Paused || _state == PlayState.Init)
           {
-          if (_state == PlayState.Paused)
-          {
+            if (_state == PlayState.Paused)
+            {
             // Resume paused stream
             currentStream.ResumePlayback();
             }
@@ -2093,6 +2093,18 @@ namespace MediaPortal.MusicPlayer.BASS
 
         if (oldPlayState == PlayState.Paused)
         {
+          // The connection of a Webstream may have timed ou, during Pause.
+          // The only way to resolve this is to Stop the Stream and restart it
+          if (stream.Filetype.FileMainType == FileMainType.WebStream)
+          {
+            var filePath = stream.FilePath;
+            Log.Debug("BASS: Stopping and Restarting Webstream {0}", stream.FilePath);
+            g_Player.OnStopped();
+            Stop();
+            Play(filePath);
+            return;
+          }
+
           Log.Debug("BASS: Resuming stream {0}", stream.FilePath);
           _state = PlayState.Playing;
 
