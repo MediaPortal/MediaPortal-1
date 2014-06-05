@@ -164,14 +164,11 @@ namespace Databases.Folders
         {
           return;
         }
-        if (strPath == string.Empty)
-        {
-          return;
-        }
+
         string sql = string.Format(
           "SELECT strPath from tblPath where strPath like '{0}%' and idPath in (SELECT idPath from tblSetting where tblSetting.idPath = tblPath.idPath and tblSetting.tagName = '{1}')"
           , strPath, strKey);
-        
+
         SQLiteResultSet results = m_db.Execute(sql);
 
         if (results.Rows.Count == 0)
