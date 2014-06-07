@@ -2029,7 +2029,7 @@ namespace MediaPortal.MusicPlayer.BASS
           stream.SlideIn();
 
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED, 0, 0, 0, 0, 0, null);
-          msg.Label = _filePath;
+          msg.Label = stream.FilePath;
           GUIWindowManager.SendThreadMessage(msg);
           NotifyPlaying = true;
 
