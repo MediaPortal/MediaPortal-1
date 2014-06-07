@@ -143,9 +143,12 @@ namespace MediaPortal.GUI.Pictures
           }
           g_Player.ShowFullScreenWindow();
 
-          if (_isSlideShow)
+          if ((_currentSlideIndex + 1 < _slideList.Count))
           {
-            GUIPictureSlideShow._slideDirection = 1;
+            if (Util.Utils.IsVideo(_slideList[_currentSlideIndex + 1]) || _isSlideShow)
+            {
+              GUIPictureSlideShow._slideDirection = 1;
+            }
           }
 
           _loadVideoPlayback = false;
@@ -578,9 +581,12 @@ namespace MediaPortal.GUI.Pictures
           {
             GUIPictureSlideShow._slideDirection = -1;
           }
-          else if (Util.Utils.IsVideo(_slideList[_currentSlideIndex - 1]))
+          else if ((_currentSlideIndex - 1 < _slideList.Count))
           {
-            GUIPictureSlideShow._slideDirection = -1;
+            if (Util.Utils.IsVideo(_slideList[_currentSlideIndex - 1]))
+            {
+              GUIPictureSlideShow._slideDirection = -1;
+            }
           }
           else
           {
@@ -614,9 +620,12 @@ namespace MediaPortal.GUI.Pictures
           {
             GUIPictureSlideShow._slideDirection = 1;
           }
-          else if (Util.Utils.IsVideo(_slideList[_currentSlideIndex + 1]))
+          else if ((_currentSlideIndex + 1 < _slideList.Count))
           {
-            GUIPictureSlideShow._slideDirection = 1;
+            if (Util.Utils.IsVideo(_slideList[_currentSlideIndex + 1]))
+            {
+              GUIPictureSlideShow._slideDirection = 1;
+            }
           }
           else
           {
@@ -949,6 +958,7 @@ namespace MediaPortal.GUI.Pictures
                   {
                     _currentSlideIndex--;
                     // How to exit back to GUIPictures?
+                    GUIPictureSlideShow.SlideDirection = 0;
                     ShowPreviousWindow();
                   }
                 }
