@@ -59,7 +59,23 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbSky
       MacAddressTuner2
     }
 
-    private enum RemoteCode
+    /// <summary>
+    /// Remote control RC-5 system addresses.
+    /// </summary>
+    private enum DvbSkyRemoteType
+    {
+      DvbSky = 0,
+      TechnoTrend = 21
+    }
+
+    /// <summary>
+    /// Remote codes for DVBSky products.
+    /// </summary>
+    /// <remarks>
+    /// Image: http://www.dvbshop.net/bilder/produkte/gross/Mystique-SaTiX-S2-Sky-PCI-USALS-DiseqC-12-Win-Linux-Remote_b2.jpg
+    /// Testing: untested, based on SDK documentation
+    /// </remarks>
+    private enum DvbSkyRemoteCodeDvbSky : byte
     {
       Zero = 0,
       One,
@@ -70,47 +86,84 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbSky
       Six,
       Seven,
       Eight,
-      Nine, // 0x09
-
-      Mute = 0x0a,
+      Nine,
+      Mute, // 10
       Stop,
       Exit,
       Okay,
-      Snap,
+      Screenshot,
       PictureInPicture,
       Right,
       Left,
       Favourite,
-      Info, // 0x13
+      Info, // 19
 
-      Pause = 0x16,
+      Pause = 22,
       Play,
 
-      Record = 0x1f,
+      Record = 31,
       Up,
       Down,
 
-      Power = 0x25,
+      Power = 37,
       Rewind,
       SkipForward,
 
-      Recall = 0x29,
+      Recall = 41,
 
-      Menu = 0x2b,
+      Menu = 43,
       Epg,
       Zoom
     }
 
-    #endregion
-
-    #region structs
-
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    private struct RemoteControlData
+    /// <summary>
+    /// Remote codes for TechnoTrend clones.
+    /// </summary>
+    /// <remarks>
+    /// Image: http://www.dvbshop.net/bilder/produkte/gross/TechnoTrend-Budget-S-1500-inkl-CI-Common-Int-TT-Viewer_b2.jpg
+    /// Testing: CT2-4500 CI
+    /// </remarks>
+    private enum DvbSkyRemoteCodeTechnoTrend : byte
     {
-      private ushort Reserved;
-      public byte Address;
-      public RemoteCode Code;
+      Power = 1,
+      Back,           // icon: two arrows in a circle (return, refresh, previous channel???)
+      One,
+      Two,
+      Three,
+      Four,
+      Five,
+      Six,
+      Seven,
+      Eight,  // 10
+      Nine,
+      Zero,
+      Up,
+      Left,
+      Okay,
+      Right,
+      Down,
+      Info,
+      Exit,
+      Red,    // 20
+      Green,
+      Yellow,
+      Blue,
+      Mute,
+      Teletext,
+      Source, // 26   // text: TV/radio; icon: musical note
+
+      Epg = 34,
+      ChannelUp,
+      ChannelDown,
+      VolumeUp,
+      VolumeDown,
+
+      Record = 58,
+      Play,
+      Stop,
+      Rewind,
+      Pause,
+      FastForward
     }
 
     #endregion
@@ -122,7 +175,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbSky
 
     private const int INSTANCE_SIZE = 32;   // The size of a property instance (KSP_NODE) parameter.
     private const int MAC_ADDRESS_LENGTH = 6;
-    private static readonly int REMOTE_CONTROL_DATA_SIZE = Marshal.SizeOf(typeof(RemoteControlData));  // 4
+    private const int REMOTE_CONTROL_DATA_SIZE = 4;
 
     private const int REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME = 100;     // unit = ms
 
@@ -134,6 +187,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbSky
     private Conexant.Conexant _conexantInterface = null;
     private NetUp.NetUp _netUpInterface = null;
     private IKsPropertySet _propertySet = null;
+
+    private IntPtr _instanceBuffer = IntPtr.Zero;
 
     private bool _isRemoteControlInterfaceOpen = false;
     private IntPtr _remoteControlBuffer = IntPtr.Zero;
@@ -147,13 +202,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbSky
       this.LogDebug("DVBSky: read MAC addresses");
 
       IntPtr dataBuffer = Marshal.AllocCoTaskMem(MAC_ADDRESS_LENGTH);
-      IntPtr instanceBuffer = Marshal.AllocCoTaskMem(INSTANCE_SIZE);
       try
       {
         BdaExtensionProperty[] properties = new BdaExtensionProperty[] { BdaExtensionProperty.MacAddressTuner1, BdaExtensionProperty.MacAddressTuner2 };
         string[] propertyNames = new string[] { "tuner 1 MAC address", "tuner 2 MAC address" };
 
         KSPropertySupport support;
+        byte[] previousAddress = null;
         for (int i = 0; i < properties.Length; i++)
         {
           int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET_GENERAL, (int)BdaExtensionProperty.MacAddressTuner1, out support);
@@ -168,7 +223,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbSky
               Marshal.WriteByte(dataBuffer, b, 0);
             }
             int returnedByteCount;
-            hr = _propertySet.Get(BDA_EXTENSION_PROPERTY_SET_GENERAL, (int)properties[i], instanceBuffer, INSTANCE_SIZE, dataBuffer, MAC_ADDRESS_LENGTH, out returnedByteCount);
+            hr = _propertySet.Get(BDA_EXTENSION_PROPERTY_SET_GENERAL, (int)properties[i], _instanceBuffer, INSTANCE_SIZE, dataBuffer, MAC_ADDRESS_LENGTH, out returnedByteCount);
             if (hr != (int)HResult.Severity.Success || returnedByteCount != MAC_ADDRESS_LENGTH)
             {
               this.LogWarn("DVBSky: failed to read {0}, hr = 0x{1:x} ({2}), byte count = {3}", propertyNames[i], hr, HResult.GetDXErrorString(hr), returnedByteCount);
@@ -177,7 +232,22 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbSky
             {
               byte[] address = new byte[MAC_ADDRESS_LENGTH];
               Marshal.Copy(dataBuffer, address, 0, MAC_ADDRESS_LENGTH);
-              this.LogDebug("  {0} = {1}", propertyNames[i], BitConverter.ToString(address).ToLowerInvariant());
+              if (previousAddress != null)
+              {
+                for (int b = 0; b < MAC_ADDRESS_LENGTH; b++)
+                {
+                  if (address[b] != previousAddress[b])
+                  {
+                    this.LogDebug("  {0} = {1}", propertyNames[i], BitConverter.ToString(address).ToLowerInvariant());
+                    break;
+                  }
+                }
+              }
+              else
+              {
+                this.LogDebug("  {0} = {1}", propertyNames[i], BitConverter.ToString(address).ToLowerInvariant());
+              }
+              previousAddress = address;
             }
           }
         }
@@ -185,7 +255,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbSky
       finally
       {
         Marshal.FreeCoTaskMem(dataBuffer);
-        Marshal.FreeCoTaskMem(instanceBuffer);
       }
     }
 
@@ -266,7 +335,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbSky
             Marshal.WriteByte(_remoteControlBuffer, i, 0);
           }
           hr = _propertySet.Get(BDA_EXTENSION_PROPERTY_SET_GENERAL, (int)BdaExtensionProperty.RemoteCode,
-            _remoteControlBuffer, REMOTE_CONTROL_DATA_SIZE,
+            _instanceBuffer, INSTANCE_SIZE,
             _remoteControlBuffer, REMOTE_CONTROL_DATA_SIZE,
             out returnedByteCount
           );
@@ -276,10 +345,28 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbSky
           }
           else
           {
-            RemoteControlData data = (RemoteControlData)Marshal.PtrToStructure(_remoteControlBuffer, typeof(RemoteControlData));
-            if ((byte)data.Code != 0xff)
+            int code = Marshal.ReadInt32(_remoteControlBuffer, 0);
+            if ((code & 0xff) != 0xff)
             {
-              this.LogDebug("DVBSky: remote control key press = {0}", data.Code);
+              // Standard RC-5 code structure.
+              int fieldBit = (code & 0x1000) >> 12;
+              int toggleBit = (code & 0x800) >> 11;
+              int systemAddress = (code & 0x7c0) >> 6;
+              int rc5Code = code & 0x3f;
+              string codeName;
+              if (systemAddress == (int)DvbSkyRemoteType.TechnoTrend)
+              {
+                codeName = ((DvbSkyRemoteCodeTechnoTrend)rc5Code).ToString();
+              }
+              else if (systemAddress == (int)DvbSkyRemoteType.DvbSky)
+              {
+                codeName = ((DvbSkyRemoteCodeDvbSky)rc5Code).ToString();
+              }
+              else
+              {
+                codeName = rc5Code.ToString();
+              }
+              this.LogDebug("DVBSky: remote control key press, field bit = {0}, toggle bit = {1} system address = {2}, code = {3}", fieldBit, toggleBit, systemAddress, codeName);
             }
           }
         }
@@ -356,6 +443,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbSky
       }
       this.LogInfo("DVBSky: extension supported");
       _isDvbSky = true;
+      _instanceBuffer = Marshal.AllocCoTaskMem(INSTANCE_SIZE);
       _propertySet = DsFindPin.ByDirection(tunerFilter, PinDirection.Input, 0) as IKsPropertySet;
       ReadMacAddresses();
 
@@ -656,6 +744,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbSky
       {
         _netUpInterface.Dispose();
         _netUpInterface = null;
+      }
+      if (_instanceBuffer != IntPtr.Zero)
+      {
+        Marshal.FreeCoTaskMem(_instanceBuffer);
+        _instanceBuffer = IntPtr.Zero;
       }
       _isDvbSky = false;
     }
