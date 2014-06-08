@@ -194,6 +194,8 @@ namespace MediaPortal
     internal static Point              _moveMouseCursorPosition;
     internal static Point              _moveMouseCursorPositionRefresh;
     protected static bool              _firstLoadedScreen;        //
+    protected static bool              _restoreLoadedScreen;      // Restoring correct screen when multi screen in use
+    protected static Screen            _screenFocus;              // Screen Focus when minimize / restore to systray
 
     #endregion
 
@@ -860,6 +862,10 @@ namespace MediaPortal
           _notifyIcon.Visible = false;
         }
 
+        // Restore previous saved screen
+        GUIGraphicsContext.currentScreen = _screenFocus;
+        _restoreLoadedScreen = true;
+
         WindowState = FormWindowState.Normal;
         Activate();
 
@@ -935,6 +941,7 @@ namespace MediaPortal
           _notifyIcon.Visible = true;
         }
 
+        _screenFocus = Screen.FromControl(this);
         WindowState = FormWindowState.Minimized;
 
         // pause player and mute audio
