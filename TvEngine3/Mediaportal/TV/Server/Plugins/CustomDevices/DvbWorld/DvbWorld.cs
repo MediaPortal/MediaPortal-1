@@ -379,7 +379,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbWorld
     {
       this.LogDebug("DVB World: remote control listener thread start polling");
       int hr;
-      int previousCode = 0;
       try
       {
         while (!_remoteControlListenerThreadStopEvent.WaitOne(REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME))
@@ -396,10 +395,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbWorld
           else
           {
             int code = Marshal.ReadInt32(_remoteControlBuffer);
-            if (code != previousCode)
+            if (code != 0xff && code != unchecked((int)0xffffffee))
             {
-              this.LogDebug("DVB World: remote control keypress = {0}", code);
-              previousCode = code;
+              this.LogDebug("DVB World: remote control keypress, code = {0:x8}", code);
             }
           }
         }
