@@ -97,9 +97,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// Get IR data from the interface. The size of each code is two bytes, and up to 4 codes may
     /// be retrieved in one call.
     /// </summary>
-    /// <param name="dataBuffer">A pointer to a buffer for the interface to populate.</param>
-    /// <param name="bufferCapacity">The number of IR codes that the buffer is able to hold. Note that this
-    ///   is not the same as the size of the buffer since the code size is two bytes not one.</param>
+    /// <param name="dataBuffer">A buffer for the interface to populate.</param>
+    /// <param name="bufferCapacity">As an input, the number of IR codes that the buffer is able
+    ///   to hold; as an output, the number of IR codes in the buffer.</param>
     /// <returns>an HRESULT indicating whether the IR data was successfully retrieved</returns>
     [PreserveSig]
     int GetIRData(out long dataBuffer, ref int bufferCapacity);

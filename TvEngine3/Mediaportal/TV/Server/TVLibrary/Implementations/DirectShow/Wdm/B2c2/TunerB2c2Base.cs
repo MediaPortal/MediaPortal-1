@@ -18,8 +18,10 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Threading;
 using DirectShowLib;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Enum;
@@ -39,11 +41,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
   /// A base implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> for TechniSat tuners
   /// with B2C2 chipsets and WDM drivers.
   /// </summary>
-  internal abstract class TunerB2c2Base : TunerDirectShowBase, IMpeg2PidFilter
+  internal abstract class TunerB2c2Base : TunerDirectShowBase, IMpeg2PidFilter, IRemoteControlListener
   {
     #region constants
 
     private static readonly int TUNER_CAPABILITIES_SIZE = Marshal.SizeOf(typeof(TunerCapabilities));  // 56
+    private const int REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME = 100;     // unit = ms
 
     #endregion
 
@@ -87,6 +90,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     private HashSet<ushort> _pidFilterPidsToRemove = new HashSet<ushort>();
     private HashSet<ushort> _pidFilterPidsToAdd = new HashSet<ushort>();
     private bool _isPidFilterDisabled = true;
+
+    // remote control variables
+    private bool _isRemoteControlInterfaceOpen = false;
+    private Thread _remoteControlListenerThread = null;
+    private AutoResetEvent _remoteControlListenerThreadStopEvent = null;
 
     #endregion
 
@@ -320,6 +328,115 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
         _pidFilterPids.UnionWith(currentPids);
       }
     }
+
+    #region remote control listener thread
+
+    /// <summary>
+    /// Start a thread to listen for remote control commands.
+    /// </summary>
+    private void StartRemoteControlListenerThread()
+    {
+      // Don't start a thread if the interface has not been opened.
+      if (!_isRemoteControlInterfaceOpen)
+      {
+        return;
+      }
+
+      // Kill the existing thread if it is in "zombie" state.
+      if (_remoteControlListenerThread != null && !_remoteControlListenerThread.IsAlive)
+      {
+        StopRemoteControlListenerThread();
+      }
+      if (_remoteControlListenerThread == null)
+      {
+        this.LogDebug("B2C2 base: starting new remote control listener thread");
+        _remoteControlListenerThreadStopEvent = new AutoResetEvent(false);
+        _remoteControlListenerThread = new Thread(new ThreadStart(RemoteControlListener));
+        _remoteControlListenerThread.Name = "B2C2 remote control listener";
+        _remoteControlListenerThread.IsBackground = true;
+        _remoteControlListenerThread.Priority = ThreadPriority.Lowest;
+        _remoteControlListenerThread.Start();
+      }
+    }
+
+    /// <summary>
+    /// Stop the thread that listens for remote control commands.
+    /// </summary>
+    private void StopRemoteControlListenerThread()
+    {
+      if (_remoteControlListenerThread != null)
+      {
+        if (!_remoteControlListenerThread.IsAlive)
+        {
+          this.LogWarn("B2C2 base: aborting old remote control listener thread");
+          _remoteControlListenerThread.Abort();
+        }
+        else
+        {
+          _remoteControlListenerThreadStopEvent.Set();
+          if (!_remoteControlListenerThread.Join(REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME * 2))
+          {
+            this.LogWarn("B2C2 base: failed to join remote control listener thread, aborting thread");
+            _remoteControlListenerThread.Abort();
+          }
+        }
+        _remoteControlListenerThread = null;
+        if (_remoteControlListenerThreadStopEvent != null)
+        {
+          _remoteControlListenerThreadStopEvent.Close();
+          _remoteControlListenerThreadStopEvent = null;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Thread function for receiving remote control commands.
+    /// </summary>
+    private void RemoteControlListener()
+    {
+      this.LogDebug("B2C2 base: remote control listener thread start polling");
+      int hr;
+
+      IMpeg2AvCtrl3 interfaceAudioVideo = _filterB2c2Adapter as IMpeg2AvCtrl3;
+      long codes;
+      int codeCount;
+      try
+      {
+        while (!_remoteControlListenerThreadStopEvent.WaitOne(REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME))
+        {
+          lock (_tunerAccessLock)
+          {
+            hr = _interfaceData.SelectDevice(_deviceInfo.DeviceId);
+            if (hr != (int)HResult.Severity.Success)
+            {
+              this.LogError("B2C2 base: failed to select device to update signal status, hr = 0x{0:x}", hr);
+              return;
+            }
+            codeCount = 1;
+            hr = interfaceAudioVideo.GetIRData(out codes, ref codeCount);
+            if (hr != (int)HResult.Severity.Success)
+            {
+              this.LogError("B2C2 base: failed to read remote code, hr = 0x{0:x}", hr);
+            }
+            else if (codeCount == 1)
+            {
+              this.LogDebug("B2C2 base: remote control key press, code = {0}", codes);
+            }
+          }
+        }
+      }
+      catch (ThreadAbortException)
+      {
+      }
+      catch (Exception ex)
+      {
+        this.LogError(ex, "B2C2 base: remote control listener thread exception");
+        return;
+      }
+      this.LogDebug("B2C2 base: remote control listener thread stop polling");
+    }
+
+    #endregion
 
     #region ICustomDevice members
 
@@ -725,6 +842,55 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
           _pidFilterPidsToAdd.Clear();
         }
       }
+
+      this.LogDebug("B2C2 base: result = success");
+      return true;
+    }
+
+    #endregion
+
+    #region IRemoteControlListener members
+
+    /// <summary>
+    /// Open the remote control interface and start listening for commands.
+    /// </summary>
+    /// <returns><c>true</c> if the interface is successfully opened, otherwise <c>false</c></returns>
+    public bool OpenRemoteControlInterface()
+    {
+      this.LogDebug("B2C2 base: open remote control interface");
+
+      if (_isRemoteControlInterfaceOpen)
+      {
+        this.LogWarn("B2C2 base: remote control interface is already open");
+        return true;
+      }
+      if (!_capabilities.AcquisitionCapabilities.HasFlag(AcquisitionCapability.IrInput))
+      {
+        this.LogDebug("B2C2 base: remote control capability not supported");
+        return false;
+      }
+      if (!(_filterB2c2Adapter is IMpeg2AvCtrl3))
+      {
+        this.LogWarn("B2C2 base: remote control capability advertised but interface not supported");
+        return false;
+      }
+
+      _isRemoteControlInterfaceOpen = true;
+      StartRemoteControlListenerThread();
+      this.LogDebug("B2C2 base: result = success");
+      return true;
+    }
+
+    /// <summary>
+    /// Close the remote control interface and stop listening for commands.
+    /// </summary>
+    /// <returns><c>true</c> if the interface is successfully closed, otherwise <c>false</c></returns>
+    public bool CloseRemoteControlInterface()
+    {
+      this.LogDebug("B2C2 base: close remote control interface");
+
+      StopRemoteControlListenerThread();
+      _isRemoteControlInterfaceOpen = false;
 
       this.LogDebug("B2C2 base: result = success");
       return true;
