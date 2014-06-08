@@ -93,7 +93,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
     /// </remarks>
     private enum ProfUsbRemoteCodeBig : byte
     {
-      Recall = 128,
+      Recall = 128,       // text [v1]: recall, text [v2]: back
       Up,
       Right,
       Record,
@@ -105,26 +105,38 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
       Six,
       Five,
       Four,
-      VolumeDown, // 140
+      VolumeDown, // 140  // overlay [v2]: blue
       Nine,
       Eight,
       Seven,
       Left,
-      ChannelDown,
+      ChannelDown,        // overlay [v2]: yellow
       Zero,
-      VolumeUp,
+      VolumeUp,           // overlay [v2]: green
       Mute,
-      Green,              // text: favourites
-      ChannelUp,  // 150
+      Favourites,         // overlay [v1]: green
+      ChannelUp,  // 150  // overlay [v2]: red
       Subtitles,
       Pause,
       Okay,
       Screenshot,
       Mode,
       Epg,
-      Yellow,             // text: zoom
-      Red,                // text: menu
-      Blue  // 159        // text: exit
+      Zoom,               // overlay [v1]: yellow
+      Menu,               // overlay [v1]: red
+      Exit, // 159        // overlay [v1]: blue
+
+      Asterix = 209,
+      Hash = 210,
+      Clear = 212,
+
+      SkipForward = 216,
+      SkipBack,
+      FastForward,
+      Rewind,
+      Stop,
+      Tv,
+      Play  // 222
     }
 
     /// <remarks>

@@ -134,11 +134,15 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
       //SetDateTime = 0x12          // PC <--
     }
 
-    // Confirmed with the remote pictured here:
-    // http://www.tbsdtv.com/products/images/tbs6981/tbs6981_4.jpg
-    private enum TbsBigRemoteCode : byte
+    /// <remarks>
+    /// Image:
+    ///   v1 = http://www.tbsdtv.com/products/images/tbs6981/tbs6981_4.jpg
+    ///   v2 = http://kubik-digital.com/wp-content/uploads/2013/10/41zlbmefDGL4.jpg
+    /// Testing: v1 (TBS5980 CI), v2 (TBS5980 CI)
+    /// </remarks>
+    private enum TbsRemoteCodeBig : byte
     {
-      Recall = 0x80,
+      Recall = 128,       // text [v1]: recall, text [v2]: back
       Up,
       Right,
       Record,
@@ -150,32 +154,47 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
       Six,
       Five,
       Four,
-      VolumeDown,
+      VolumeDown, // 140  // overlay [v2]: blue
       Nine,
       Eight,
       Seven,
-      Left, // 0x90
-      ChannelDown,
+      Left,
+      ChannelDown,        // overlay [v2]: yellow
       Zero,
-      VolumeUp,
+      VolumeUp,           // overlay [v2]: green
       Mute,
-      Favourites,  // green
-      ChannelUp,
+      Favourites,         // overlay [v1]: green
+      ChannelUp,  // 150  // overlay [v2]: red
       Subtitles,
       Pause,
       Okay,
-      Snapshot,
+      Screenshot,
       Mode,
       Epg,
-      Zoom,        // yellow
-      Menu,        // red
-      Exit         // blue
+      Zoom,               // overlay [v1]: yellow
+      Menu,               // overlay [v1]: red
+      Exit, // 159        // overlay [v1]: blue
+
+      Asterix = 209,
+      Hash = 210,
+      Clear = 212,
+
+      SkipForward = 216,
+      SkipBack,
+      FastForward,
+      Rewind,
+      Stop,
+      Tv,
+      Play  // 222
     }
 
-    // Unverified.
-    private enum TbsSmallRemoteCode : byte
+    /// <remarks>
+    /// Image: [none]
+    /// Testing: untested, based on old SDK.
+    /// </remarks>
+    private enum TbsRemoteCodeSmall : byte
     {
-      Mute = 0x01,
+      Mute = 1,
       Left,
       Down,
       One,
@@ -184,15 +203,15 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
       Four,
       Five,
       Six,
-      Seven,  // 0x0a
+      Seven,  // 10
 
-      FullScreen = 0x0c,
-      Okay = 0x0e,
-      Exit = 0x12,
-      Right = 0x1a,
-      Eight = 0x1b,
-      Up = 0x1e,
-      Nine = 0x1f
+      FullScreen = 12,
+      Okay = 15,
+      Exit = 18,
+      Right = 26,
+      Eight = 27,
+      Up = 30,
+      Nine = 31
     }
 
     #endregion
@@ -1001,11 +1020,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
             {
               if (code < MIN_BIG_REMOTE_CODE)
               {
-                this.LogDebug("Turbosight: small remote control key press = {0}", (TbsSmallRemoteCode)code);
+                this.LogDebug("Turbosight: small remote control key press, code = {0}", (TbsRemoteCodeSmall)code);
               }
               else
               {
-                this.LogDebug("Turbosight: big remote control key press = {0}", (TbsBigRemoteCode)code);
+                this.LogDebug("Turbosight: big remote control key press, code = {0}", (TbsRemoteCodeBig)code);
               }
             }
           }
