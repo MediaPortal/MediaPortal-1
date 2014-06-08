@@ -38,12 +38,210 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeRemote
   {
     #region enums
 
-    private enum RemoteType : int
+    /// <remarks>
+    /// Values are RC-5 system addresses.
+    /// </remarks>
+    private enum HcwRemoteType : int
     {
       Classic21Button = 0,
-      Pvr3_35Button = 0x1d,
+      Pctv = 7,
+
+      /// <remarks>
+      /// From c:\Windows\irremote.ini. Compatible with 35/36 and 45/46 button remotes.
+      /// </remarks>
+      Pvr2_Unknown = 0x1c,
+      Pvr2_35Button = 0x1d,
       Pvr2_45Button = 0x1e,
       Pvr_34Button = 0x1f
+    }
+
+    /// <remarks>
+    /// Image: http://linuxtv.org/vdrwiki/images/a/ae/Remote_control%28Hauppauge_black%29.jpg
+    /// Testing: untested, based on default c:\Windows\irremote.ini.
+    /// </remarks>
+    private enum HcwRemoteCodeClassic
+    {
+      Zero = 0,
+      One,
+      Two,
+      Three,
+      Four,
+      Five,
+      Six,
+      Seven,
+      Eight,
+      Nine,
+
+      Radio = 12,
+      Mute,               // [code clash]
+
+      Tv = 15,            // [code clash]
+      VolumeUp,
+      VolumeDown,
+
+      Reserved = 30,
+
+      ChannelUp = 32,
+      ChannelDown,
+      Source,             // [code clash]
+
+      Minimise = 38,
+      FullScreen = 46     // [code clash]
+    }
+
+    /// <remarks>
+    /// Image:
+    ///   v1 = http://www.hauppauge.com/site/press/pctv/pctv_presspictures/Remote_RC5_Mini_Black_PCTV-logo.jpg
+    ///   v2 = http://www.hauppauge.com/site/press/pctv/pctv_presspictures/PCTV_170e_Pack-Contents_PCTV-branded.jpg
+    /// Testing: untested, based on default c:\Windows\irremote.ini.
+    /// </remarks>
+    private enum HcwRemoteCodePctv
+    {
+      Mute = 0,
+      Logo = 1,           // the button with the PCTV Systems logo on it
+      VolumeUp = 3,       // [overlay: right]
+      Okay = 5,
+      ChannelUp = 6,      // [overlay: up]
+      VolumeDown = 9,     // [overlay: left]
+      ChannelDown = 12,   // [overlay: down]
+      One = 15,
+      Three = 16,
+      Seven = 17,
+      Nine = 18,
+      Two = 21,
+      Four = 24,
+      Five = 27,
+      Six = 30,
+      Eight = 33,
+      FullScreen = 36,
+      Zero = 39,
+      Teletext = 42,
+      Rewind = 45,
+      PlayPause = 48,
+      Record = 54,
+      Power = 57,
+      Stop = 60,
+      Info = 63
+    }
+
+    /// <remarks>
+    /// Image: http://linuxtv.org/vdrwiki/images/7/7b/Remote_control%28Hauppauge_nova-t%29.jpg
+    /// http://i.ebayimg.com/00/s/OTM1WDExMDA=/z/upgAAOxyNwNSLLeM/$%28KGrHqYOKp0FIpQ,5db%29BSLLeMDF0Q~~60_57.JPG
+    /// Testing: untested, based on default c:\Windows\irremote.ini.
+    /// </remarks>
+    private enum HcwRemoteCodePvr1
+    {
+      Zero = 0,
+      One,
+      Two,
+      Three,
+      Four,
+      Five,
+      Six,
+      Seven,
+      Eight,
+      Nine, // 9
+
+      Red = 11,
+      Function,           // [unlabeled, code clash with HcwRemoteCodePvr2 "radio" button]
+      Menu,
+
+      Mute = 15,
+      VolumeUp,
+      VolumeDown,
+
+      SkipForward = 30,
+      BackExit,
+      ChannelUp,
+      ChannelDown,
+
+      SkipBack = 36,      // replay
+      Okay,
+
+      Blue = 41,
+      Green = 46,
+      Pause = 48,
+      Rewind = 50,
+
+      FastForward = 52,
+      Play,
+      Stop,
+      Record,
+      Yellow, // 56
+
+      Go = 59,
+      FullScreen,
+      Power
+    }
+
+    /// <remarks>
+    /// Image:
+    ///   standard = http://www.hauppauge.com/site/press/presspictures/remote_front.jpg
+    ///   credit card 35 (DSR-0112) = http://www.hauppauge.com/site/press/presspictures/remote_creditcard.jpg
+    ///   credit card 36 = http://www.hauppauge.com/site/press/presspictures/remote_creditcard-black_front.png
+    ///   black 46 (DSR-0101) = http://i.ebayimg.com/t/HAUPPAUGE-DSR-0101-REMOTE-CONTROL-A415-HPG-WE-A-/00/s/MTMwOVgxNjAw/z/uHwAAOxymwBSP5YU/$T2eC16FHJIIFHJG5sli0BSP5YT1POQ~~60_57.JPG
+    /// Testing: standard (HVR-4400), DSR-0101 (Nova S Plus)
+    /// Comments are labels above the buttons.
+    /// "New" is as compared with HcwRemoteCodePvr1.
+    /// </remarks>
+    private enum HcwRemoteCodePvr2
+    {
+      Zero = 0,                 // space
+      One,
+      Two,                      // ABC
+      Three,                    // DEF
+      Four,                     // GHI
+      Five,                     // JKL
+      Six,                      // MNO
+      Seven,                    // PQRS
+      Eight,                    // TUV
+      Nine,                     // WXYZ
+      Teletext, // 10           // [new, text = *]
+      Red,
+      Radio,                    // [code clash with HcwRemoteCodePvr1 unlabeled function button]
+      Menu,
+      Subtitles,                // sub/CC [new, text = #]
+      Mute,
+      VolumeUp,
+      VolumeDown,
+      ChannelPrevious,  // 18   // prev. ch [new]
+
+      Up = 20,                  // [new]
+      Down,                     // [new]
+      Left,                     // [new]
+      Right,                    // [new]
+      Videos,                   // [new]
+      Music,                    // [new]
+      Pictures,                 // [new]
+      Epg,                      // guide [new]
+      Tv, // 28                 // [new]
+
+      SkipForward = 30,
+      BackExit,
+      ChannelUp,
+      ChannelDown,
+      Asterix,                  // * [new, untested credit card remote]
+      Hash,                     // # [new, untested credit card remote]
+      SkipBack,                 // replay
+      Okay, // 37
+
+      Enter = 39,               // [new, DSR-0101]
+
+      Blue = 41,
+      Green = 46,
+      Pause = 48,
+
+      Rewind = 50,
+      PlayPause,                // [new, untested credit card remote]
+      FastForward,
+      Play,
+      Stop,
+      Record,
+      Yellow, // 56
+
+      Go = 59,
+      FullScreen,               // [untested credit card remote]
+      Power
     }
 
     #endregion
@@ -51,7 +249,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeRemote
     #region DLL imports
 
     /*
-     * Also available with version 2.66.28078:
+     * Available with version 2.66.28078:
+     * - IR_Open
+     * - IR_GetKeyCode [obsolete]
+     * - IR_Close
      * - IR_Power
      * - IR_GetVersion
      * - IR_GetKeyCodeEx
@@ -68,7 +269,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeRemote
     /// Retrieve details of a key-press event.
     /// </summary>
     [DllImport("irremote.dll")]
-    private static extern bool IR_GetSystemKeyCode(out int repeatCount, out RemoteType remoteType, out int keyCode);
+    private static extern bool IR_GetSystemKeyCode(ref int repeatCount, out HcwRemoteType remoteType, out int code);
 
     /// <summary>
     /// Unregister a window handle with the Hauppauge IR driver.
@@ -106,6 +307,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeRemote
     private volatile bool _isRemoteControlInterfaceOpen = false;
     private uint _remoteControlListenerThreadId = 0;
     private Thread _remoteControlListenerThread = null;
+    private int _repeatCount = 0;
 
     #endregion
 
@@ -169,7 +371,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeRemote
         IntPtr handle;
         try
         {
-          // We need a window handle to receive messages from IR32.
+          // We need a window handle to receive messages from the driver.
           NativeMethods.WNDCLASS wndclass;
           wndclass.style = 0;
           wndclass.lpfnWndProc = RemoteControlListenerWndProc;
@@ -258,12 +460,32 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeRemote
     {
       if (msg == WM_TIMER)  // key press event
       {
-        int repeatCount = 0;
-        RemoteType remoteCode = 0;
-        int keyCode = 0;
-        if (IR_GetSystemKeyCode(out repeatCount, out remoteCode, out keyCode))
+        HcwRemoteType remoteType = 0;
+        int code = 0;
+        if (IR_GetSystemKeyCode(out _repeatCount, out remoteType, out code))
         {
-          this.LogDebug("Hauppauge remote: remote control key press, remote type = {0}, code = {1}, repeat = {2}", remoteCode, keyCode, repeatCount);
+          string codeName;
+          if (remoteType == HcwRemoteType.Pvr2_35Button || remoteType == HcwRemoteType.Pvr2_45Button || remoteType == HcwRemoteType.Pvr2_Unknown)
+          {
+            codeName = ((HcwRemoteCodePvr2)code).ToString();
+          }
+          else if (remoteType == HcwRemoteType.Pvr_34Button)
+          {
+            codeName = ((HcwRemoteCodePvr1)code).ToString();
+          }
+          else if (remoteType == HcwRemoteType.Classic21Button)
+          {
+            codeName = ((HcwRemoteCodeClassic)code).ToString();
+          }
+          else if (remoteType == HcwRemoteType.Pctv)
+          {
+            codeName = ((HcwRemoteCodePctv)code).ToString();
+          }
+          else
+          {
+            codeName = code.ToString();
+          }
+          this.LogDebug("Hauppauge remote: remote control key press, remote type = {0}, code = {1}, repeat = {2}", remoteType, codeName, _repeatCount);
         }
       }
       return NativeMethods.DefWindowProc(hWnd, msg, wParam, lParam);
