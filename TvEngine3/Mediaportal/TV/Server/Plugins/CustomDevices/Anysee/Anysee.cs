@@ -403,7 +403,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       Nine,
       Power,
       Asterix,
-      ChannelPrevious,    // icon: circular arrow (back???)
+      ChannelPrevious,    // icon: circular arrow
       SkipForward,
       Menu, // 270
       Epg,
@@ -421,7 +421,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       Screenshot,
       Yellow,
       Red,
-      Unknown,            // icon: speaker with question mark (SAP???)
+      Audio,              // icon: speaker with question mark
       Green,
       Sleep,
       AspectRatio,        // text: 16:9/4:3
