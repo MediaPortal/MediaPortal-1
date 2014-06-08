@@ -384,6 +384,61 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       Private
     }
 
+    /// <remarks>
+    /// Image: http://www.anyseedirect.eu/components/com_virtuemart/shop_image/product/Anysee_Remote_co_4cdd4de8c2ab3.jpg
+    /// Tested, E7 S2.
+    /// </remarks>
+    private enum AnyseeRemoteCode : int
+    {
+      Null = 255,
+      Zero,
+      One,
+      Two,
+      Three,
+      Four,
+      Five,
+      Six,
+      Seven,
+      Eight,
+      Nine,
+      Power,
+      Asterix,
+      ChannelPrevious,    // icon: circular arrow (back???)
+      SkipForward,
+      Menu, // 270
+      Epg,
+      Exit,
+      Up,                 // overlay: channel up
+      Left,               // overlay: volume down
+      Right,              // overlay: volume up
+      Down,               // overlay: channel down
+      Okay,
+      Source,             // icon: TV/music note
+      Info,
+      SkipBack, // 280
+      Favourites,
+      Subtitles,
+      Screenshot,
+      Yellow,
+      Red,
+      Unknown,            // icon: speaker with question mark (SAP???)
+      Green,
+      Sleep,
+      AspectRatio,        // text: 16:9/4:3
+      Size, // 290
+
+      F1 = 292,
+      F2,
+
+      Mute = 322,
+      Blue = 324,
+      Teletext = 327,
+      Stop = 328,
+      Record = 329,
+      Play = 336,
+      Pause = 337
+    }
+
     #endregion
 
     #region structs
@@ -397,7 +452,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
 
       [MarshalAs(UnmanagedType.Bool)]
       public bool Enable;
-      public int Key;           // bit 8 = repeat flag (0 = repeat), bits 7-0 = key code
+      public AnyseeRemoteCode Key;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
