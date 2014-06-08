@@ -45,9 +45,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
 
     private enum BdaExtensionProperty
     {
-      Rssi = 1,                       // signal strength metric
-      Cnr = 2,                        // carrier to noise ratio
-      Ir = 4,
+      Rssi = 1,                 // signal strength metric
+      Cnr = 2,                  // carrier to noise ratio
+      Ir = 4,                   // infra red remote
       PlatformInfo = 6,
       Locked = 7,
       NimMode = 8,
@@ -64,26 +64,26 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
     private enum AnyseePlatform : ushort
     {
       Pcb507T = 2,              // Anysee E30 - DVB-T
-      Pcb507H,                  // Anysee K30/K50 - External ATSC + NTSC
-      Pcb507S,                  // Anysee E30 S Plus (v1) - External DVB-S + Smartcard Interface
-      Pcb507C,                  // Anysee E30 C Plus (v1) - External DVB-C + analog PAL Smartcard Interface
-      Pcb507CD,                 // Anysee E30 Plus - DVB-T + Smartcard Interface
+      Pcb507H,                  // Anysee K30/K50 - external ATSC + NTSC
+      Pcb507S,                  // Anysee E30 S Plus (v1) - external DVB-S + smartcard interface
+      Pcb507C,                  // Anysee E30 C Plus (v1) - external DVB-C + analog PAL smartcard interface
+      Pcb507CD,                 // Anysee E30 Plus - DVB-T + smartcard interface
       Pcb507HI,                 // Anysee K70 - ATSC + NTSC + DMB
-      Pcb507D,                  // Anysee E30 Combo Plus (v1) - External DVB-T + DVB-C + Smartcard Interface
-      Pcb507E,                  // Anysee E30 C Plus (v2) - External DVB-C + Smartcard Interface
-      Pcb507DC,                 // Anysee E30 C Plus (v3) - External DVB-C + Smartcard Interface
-      Pcb507S2,                 // Anysee E30 S2 Plus - External DVB-S2 + Smartcard Interface
-      Pcb507SI,                 // Anysee E30 S Plus (v2) - External DVB-S + Smartcard Interface
-      Pcb507PS,                 // Anysee E30P S - Internal DVB-S + Smartcard Interface [Optional]
-      Pcb507PS2,                // Anysee E30P S2 - Internal DVB-S2 + Smartcard Interface
-      Pcb507FA = 15,            // Anysee E30 TC Plus (v2)/E30 Plus/E30 C Plus - DVB-T + DVB-C + Smartcard Interface [Optional]
+      Pcb507D,                  // Anysee E30 Combo Plus (v1) - external DVB-T + DVB-C + smartcard interface
+      Pcb507E,                  // Anysee E30 C Plus (v2) - external DVB-C + smartcard interface
+      Pcb507DC,                 // Anysee E30 C Plus (v3) - external DVB-C + smartcard interface
+      Pcb507S2,                 // Anysee E30 S2 Plus - external DVB-S2 + smartcard interface
+      Pcb507SI,                 // Anysee E30 S Plus (v2) - external DVB-S + smartcard interface
+      Pcb507PS,                 // Anysee E30P S - internal DVB-S + smartcard interface [optional]
+      Pcb507PS2,                // Anysee E30P S2 - internal DVB-S2 + smartcard interface
+      Pcb507FA = 15,            // Anysee E30 TC Plus (v2)/E30 Plus/E30 C Plus - DVB-T + DVB-C + smartcard interface [optional]
       Pcb5M01G = 16,            // SLC 1GB NAND flash memory
-      Pcb508TC = 18,            // Anysee E7 TC - External DVB-T + DVB-C + CI + Smartcard Interface [Optional]
-      Pcb508S2,                 // Anysee E7 S2 - External DVB-S2 + CI + Smartcard Interface [Optional]
-      Pcb508T2C,                // Anysee E7 T2C - External DVB-T2 + DVB-C + CI + Smartcard Interface [Optional]
-      Pcb508PTC,                // Anysee E7P TC - Internal DVB-T + DVB-C + CI + Smartcard Interface [Optional]
-      Pcb508PS2,                // Anysee E7P S2 - Internal DVB-S2 + CI + Smartcard Interface [Optional]
-      Pcb508PT2C                // Anysee E7P T2C - Internal DVB-T2 + DVB-C + CI + Smartcard Interface [Optional]
+      Pcb508TC = 18,            // Anysee E7 TC - external DVB-T + DVB-C + CI + smartcard interface [optional]
+      Pcb508S2,                 // Anysee E7 S2 - external DVB-S2 + CI + smartcard interface [optional]
+      Pcb508T2C,                // Anysee E7 T2C - external DVB-T2 + DVB-C + CI + smartcard interface [optional]
+      Pcb508PTC,                // Anysee E7P TC - internal DVB-T + DVB-C + CI + smartcard interface [optional]
+      Pcb508PS2,                // Anysee E7P S2 - internal DVB-S2 + CI + smartcard interface [optional]
+      Pcb508PT2C                // Anysee E7P T2C - internal DVB-T2 + DVB-C + CI + smartcard interface [optional]
     }
 
     // chip combinations
@@ -380,7 +380,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       Audio,
       Video,
       Teletext,
-      Subtitle,
+      Subtitles,
       Private
     }
 
@@ -1934,7 +1934,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
         }
         else if (es.LogicalStreamType == LogicalStreamType.Subtitles)
         {
-          esType = AnyseeEsType.Subtitle;
+          esType = AnyseeEsType.Subtitles;
         }
         else if (es.LogicalStreamType == LogicalStreamType.Teletext)
         {
