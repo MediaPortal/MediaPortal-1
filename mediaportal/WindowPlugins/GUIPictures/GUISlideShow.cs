@@ -581,11 +581,14 @@ namespace MediaPortal.GUI.Pictures
           {
             GUIPictureSlideShow._slideDirection = -1;
           }
-          else if ((_currentSlideIndex - 1 < _slideList.Count))
+          else if (_currentSlideIndex > 0)
           {
-            if (Util.Utils.IsVideo(_slideList[_currentSlideIndex - 1]))
+            if (_currentSlideIndex - 1 < _slideList.Count)
             {
-              GUIPictureSlideShow._slideDirection = -1;
+              if (Util.Utils.IsVideo(_slideList[_currentSlideIndex - 1]))
+              {
+                GUIPictureSlideShow._slideDirection = -1;
+              }
             }
           }
           else
@@ -620,11 +623,14 @@ namespace MediaPortal.GUI.Pictures
           {
             GUIPictureSlideShow._slideDirection = 1;
           }
-          else if ((_currentSlideIndex + 1 < _slideList.Count))
+          else if (_currentSlideIndex > 0)
           {
-            if (Util.Utils.IsVideo(_slideList[_currentSlideIndex + 1]))
+            if (_currentSlideIndex + 1 < _slideList.Count)
             {
-              GUIPictureSlideShow._slideDirection = 1;
+              if (Util.Utils.IsVideo(_slideList[_currentSlideIndex + 1]))
+              {
+                GUIPictureSlideShow._slideDirection = 1;
+              }
             }
           }
           else
@@ -949,9 +955,9 @@ namespace MediaPortal.GUI.Pictures
                   if (_autoRepeat)
                   {
                     _currentSlideIndex = 0;
-                    if (_autoShuffle && (_isSlideShow || _showRecursive))
+                    if (_autoShuffle)
                     {
-                      Shuffle(false, _autoRepeat);
+                      Shuffle(_showRecursive, _autoRepeat);
                     }
                   }
                   else
@@ -1241,6 +1247,10 @@ namespace MediaPortal.GUI.Pictures
     public void Select(string strFile)
     {
       LoadSettings();
+      if (_autoShuffle)
+      {
+        Shuffle(_showRecursive, _autoRepeat);
+      }
       for (int i = 0; i < _slideList.Count; ++i)
       {
         string strSlide = _slideList[i];
@@ -1323,17 +1333,6 @@ namespace MediaPortal.GUI.Pictures
       StartBackgroundMusic(path);
       GUIPictureSlideShow._slideDirection = 1;
       _isSlideShow = true;
-      if (_autoShuffle)
-      {
-        if (_showRecursive)
-        {
-          Shuffle(true, false);
-        }
-        else
-        {
-          Shuffle(false, false);
-        }
-      }
     }
 
 
