@@ -330,25 +330,25 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct TtFullCiCallBack
     {
-      public OnTtSlotStatus OnSlotStatus;
+      public OnTtCiSlotStatus OnSlotStatus;
       public IntPtr OnSlotStatusContext;
 
-      public OnTtCaStatus OnCaStatus;
+      public OnTtCiCaStatus OnCaStatus;
       public IntPtr OnCaStatusContext;
 
-      public OnTtDisplayString OnDisplayString;
+      public OnTtCiDisplayString OnDisplayString;
       public IntPtr OnDisplayStringContext;
 
-      public OnTtDisplayMenuOrList OnDisplayMenu;
+      public OnTtCiDisplayMenuOrList OnDisplayMenu;
       public IntPtr OnDisplayMenuContext;
 
-      public OnTtDisplayMenuOrList OnDisplayList;
+      public OnTtCiDisplayMenuOrList OnDisplayList;
       public IntPtr OnDisplayListContext;
 
-      public OnTtSwitchOsdOff OnSwitchOsdOff;
+      public OnTtCiSwitchOsdOff OnSwitchOsdOff;
       public IntPtr OnSwitchOsdOffContext;
 
-      public OnTtInputRequest OnInputRequest;
+      public OnTtCiInputRequest OnInputRequest;
       public IntPtr OnInputRequestContext;
 
       public OnTtLscSetDescriptor OnLscSetDescriptor;
@@ -379,9 +379,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct TtSlimCiCallBack
     {
-      public OnTtSlotStatus OnSlotStatus;
+      public OnTtCiSlotStatus OnSlotStatus;
       public IntPtr OnSlotStatusContext;
-      public OnTtCaStatus OnCaStatus;
+      public OnTtCiCaStatus OnCaStatus;
       public IntPtr OnCAStatusContext;
     }
 
@@ -539,7 +539,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiOpenIR(IntPtr handle, OnTtIrCode callBack, IntPtr context);
+    private static extern TtApiResult bdaapiOpenIR(IntPtr handle, OnTtRemoteControlKeyPress callBack, IntPtr context);
 
     /// <summary>
     /// Close the infra red remote control interface.
@@ -844,12 +844,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     #region delegate definitions
 
     /// <summary>
-    /// Invoked when a signal from the remote is detected by the IR receiver.
+    /// Invoked by the tuner driver when a remote control key press is detected.
     /// </summary>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
-    /// <param name="code">A buffer containing the remote code. If the code is an RC5 code then it can be found in the lower 2 bytes. RC6 codes use 4 bytes.</param>
+    /// <param name="code">The key code. If the code is an RC5 code then it can be found in the lower 2 bytes. RC6 codes use 4 bytes.</param>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate void OnTtIrCode(IntPtr context, ref int code);
+    private delegate void OnTtRemoteControlKeyPress(IntPtr context, ref int code);
 
     /// <summary>
     /// Invoked by the tuner driver when the state of the CI slot changes.
@@ -859,7 +859,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <param name="state">The new state of the slot.</param>
     /// <param name="slotInfo">A pointer to a CiSlotInfo struct containing extended information about the interface state.</param>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate void OnTtSlotStatus(IntPtr context, byte slotIndex, TtCiState state, IntPtr slotInfo);
+    private delegate void OnTtCiSlotStatus(IntPtr context, byte slotIndex, TtCiState state, IntPtr slotInfo);
 
     /// <summary>
     /// Invoked by the tuner driver when the result of an interaction with the CAM is known.
@@ -869,7 +869,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <param name="reply">A reply message from the CAM.</param>
     /// <param name="error">An error message from the CAM.</param>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate void OnTtCaStatus(IntPtr context, byte slotIndex, TtMmiMessage reply, TtCiError error);
+    private delegate void OnTtCiCaStatus(IntPtr context, byte slotIndex, TtMmiMessage reply, TtCiError error);
 
     /// <summary>
     /// Invoked by the tuner driver when the CAM requests input from the user. This delegate is called
@@ -880,7 +880,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <param name="prompt">A buffer containing the request prompt text from the CAM.</param>
     /// <param name="promptByteCount">The number of bytes in the prompt buffer.</param>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate void OnTtDisplayString(IntPtr context, byte slotIndex, IntPtr prompt, short promptByteCount);
+    private delegate void OnTtCiDisplayString(IntPtr context, byte slotIndex, IntPtr prompt, short promptByteCount);
 
     /// <summary>
     /// Invoked by the tuner driver when a menu or list from the CAM is available.
@@ -891,7 +891,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <param name="entries">The menu/list entries. Each entry is NULL terminated.</param>
     /// <param name="totalMenuLength">The length of the menu (ie. the sum of the lengths of all entries) in bytes.</param>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate void OnTtDisplayMenuOrList(IntPtr context, byte slotIndex, short entryCount, IntPtr entries, short totalMenuLength);
+    private delegate void OnTtCiDisplayMenuOrList(IntPtr context, byte slotIndex, short entryCount, IntPtr entries, short totalMenuLength);
 
     /// <summary>
     /// Invoked by the tuner driver when the CAM wants to close the menu.
@@ -899,7 +899,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate void OnTtSwitchOsdOff(IntPtr context, byte slotIndex);
+    private delegate void OnTtCiSwitchOsdOff(IntPtr context, byte slotIndex);
 
     /// <summary>
     /// Invoked by the tuner driver when the CAM requests input from the user.
@@ -910,7 +910,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <param name="answerLength">The expected answer length.</param>
     /// <param name="keyMask"></param>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate void OnTtInputRequest(IntPtr context, byte slotIndex, [MarshalAs(UnmanagedType.Bool)] bool blind, byte answerLength, short keyMask);
+    private delegate void OnTtCiInputRequest(IntPtr context, byte slotIndex, [MarshalAs(UnmanagedType.Bool)] bool blind, byte answerLength, short keyMask);
 
     /// <summary>
     /// Invoked by the tuner driver when a message is received from the CAM. This delegate receives the raw
@@ -1069,7 +1069,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
 
     private HashSet<ushort> _descrambledPrograms = null;
 
-    private OnTtIrCode _remoteControlKeyPressDelegate = null;
+    private OnTtRemoteControlKeyPress _remoteControlKeyPressDelegate = null;
 
     #endregion
 
@@ -1281,11 +1281,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     #region delegate implementations
 
     /// <summary>
-    /// Invoked when a signal from the remote is detected by the IR receiver.
+    /// Invoked by the tuner driver when a remote control key press is detected.
     /// </summary>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
-    /// <param name="code">A the remote code. If the code is an RC5 code then it can be found in the lower 2 bytes. RC6 codes use 4 bytes.</param>
-    private void OnIrCode(IntPtr context, ref int code)
+    /// <param name="code">The key code. If the code is an RC5 code then it can be found in the lower 2 bytes. RC6 codes use 4 bytes.</param>
+    private void OnRemoteControlKeyPress(IntPtr context, ref int code)
     {
       this.LogDebug("TechnoTrend: remote control key press = 0x{0:x8}", code);
     }
@@ -1297,7 +1297,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     /// <param name="state">The new state of the slot.</param>
     /// <param name="slotInfo">A pointer to a CiSlotInfo struct containing extended information about the interface state.</param>
-    private void OnSlotStatus(IntPtr context, byte slotIndex, TtCiState state, IntPtr slotInfo)
+    private void OnCiSlotStatus(IntPtr context, byte slotIndex, TtCiState state, IntPtr slotInfo)
     {
       this.LogInfo("TechnoTrend: CI slot status call back, slot = {0}", slotIndex);
       if (state == _ciState)
@@ -1366,9 +1366,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     /// <param name="reply">A reply message from the CAM.</param>
     /// <param name="error">An error message from the CAM.</param>
-    private void OnCaStatus(IntPtr context, byte slotIndex, TtMmiMessage reply, TtCiError error)
+    private void OnCiCaStatus(IntPtr context, byte slotIndex, TtMmiMessage reply, TtCiError error)
     {
-      this.LogInfo("TechnoTrend: CA status call back, slot = {0}, reply = {1}, error = {2}", slotIndex, reply, error);
+      this.LogInfo("TechnoTrend: CI CA status call back, slot = {0}, reply = {1}, error = {2}", slotIndex, reply, error);
       try
       {
         // NoCaResource generally seems to indicate a smartcard or CAM error. The TechnoTrend
@@ -1395,12 +1395,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     /// <param name="prompt">A buffer containing the request prompt text from the CAM.</param>
     /// <param name="promptByteCount">The number of bytes in the prompt buffer.</param>
-    private void OnDisplayString(IntPtr context, byte slotIndex, IntPtr prompt, short promptByteCount)
+    private void OnCiDisplayString(IntPtr context, byte slotIndex, IntPtr prompt, short promptByteCount)
     {
       try
       {
         _camInputRequestPrompt = DvbTextConverter.Convert(prompt, promptByteCount);
-        this.LogDebug("TechnoTrend: display string call back, slot = {0}, prompt = {1}", slotIndex, _camInputRequestPrompt);
+        this.LogDebug("TechnoTrend: CI display string call back, slot = {0}, prompt = {1}", slotIndex, _camInputRequestPrompt);
       }
       catch (Exception ex)
       {
@@ -1416,9 +1416,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <param name="entryCount">The number of entries in the menu/list.</param>
     /// <param name="entries">The menu/list entries. Each entry is NULL terminated.</param>
     /// <param name="totalMenuLength">The length of the menu (ie. the sum of the lengths of all entries) in bytes.</param>
-    private void OnDisplayMenuOrList(IntPtr context, byte slotIndex, short entryCount, IntPtr entries, short totalMenuLength)
+    private void OnCiDisplayMenuOrList(IntPtr context, byte slotIndex, short entryCount, IntPtr entries, short totalMenuLength)
     {
-      this.LogInfo("TechnoTrend: display menu/list call back, slot = {0}, total menu length = {1}", slotIndex, totalMenuLength);
+      this.LogInfo("TechnoTrend: CI display menu/list call back, slot = {0}, total menu length = {1}", slotIndex, totalMenuLength);
 
       lock (_caMenuCallBackLock)
       {
@@ -1477,9 +1477,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// </summary>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
-    private void OnSwitchOsdOff(IntPtr context, byte slotIndex)
+    private void OnCiSwitchOsdOff(IntPtr context, byte slotIndex)
     {
-      this.LogInfo("TechnoTrend: switch OSD off call back, slot = {0}", slotIndex);
+      this.LogInfo("TechnoTrend: CI switch OSD off call back, slot = {0}", slotIndex);
       lock (_caMenuCallBackLock)
       {
         if (_caMenuCallBack != null)
@@ -1501,9 +1501,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <param name="blind"><c>True</c> if the input should be hidden (eg. password).</param>
     /// <param name="answerLength">The expected answer length.</param>
     /// <param name="keyMask"></param>
-    private void OnInputRequest(IntPtr context, byte slotIndex, bool blind, byte answerLength, short keyMask)
+    private void OnCiInputRequest(IntPtr context, byte slotIndex, bool blind, byte answerLength, short keyMask)
     {
-      this.LogInfo("TechnoTrend: input request call back, slot = {0}", slotIndex);
+      this.LogInfo("TechnoTrend: CI input request call back, slot = {0}", slotIndex);
       this.LogDebug("  length   = {0}", answerLength);
       this.LogDebug("  blind    = {0}", blind);
       this.LogDebug("  key mask = 0x{0:x4}", keyMask);
@@ -1530,7 +1530,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <param name="descriptor">???</param>
     private void OnLscSetDescriptor(IntPtr context, byte slotIndex, IntPtr descriptor)
     {
-      this.LogDebug("TechnoTrend: OnLscSetDescriptor call back, slot = {0}", slotIndex);
+      this.LogDebug("TechnoTrend: low speed communication set descriptor call back, slot = {0}", slotIndex);
     }
 
     /// <summary>
@@ -1540,7 +1540,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     private void OnLscConnect(IntPtr context, byte slotIndex)
     {
-      this.LogDebug("TechnoTrend: OnLscConnect call back, slot = {0}", slotIndex);
+      this.LogDebug("TechnoTrend: low speed communication connect call back, slot = {0}", slotIndex);
     }
 
     /// <summary>
@@ -1550,7 +1550,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     private void OnLscDisconnect(IntPtr context, byte slotIndex)
     {
-      this.LogDebug("TechnoTrend: OnLscDisconnect call back, slot = {0}", slotIndex);
+      this.LogDebug("TechnoTrend: low speed communication disconnect call back, slot = {0}", slotIndex);
     }
 
     /// <summary>
@@ -1562,7 +1562,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <param name="timeout">A timeout in units of ten milliseconds.</param>
     private void OnLscSetParams(IntPtr context, byte slotIndex, byte bufferSize, byte timeout)
     {
-      this.LogDebug("TechnoTrend: OnLscSetParams call back, slot = {0}, buffer size = {1}, timeout = {2}", slotIndex, bufferSize, timeout);
+      this.LogDebug("TechnoTrend: low speed communication set parameters call back, slot = {0}, buffer size = {1}, timeout = {2}", slotIndex, bufferSize, timeout);
     }
 
     /// <summary>
@@ -1572,7 +1572,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     private void OnLscEnquireStatus(IntPtr context, byte slotIndex)
     {
-      this.LogDebug("TechnoTrend: OnLscEnquireStatus call back, slot = {0}", slotIndex);
+      this.LogDebug("TechnoTrend: low speed communication enquire status call back, slot = {0}", slotIndex);
     }
 
     /// <summary>
@@ -1583,7 +1583,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <param name="phaseId"></param>
     private void OnLscGetNextBuffer(IntPtr context, byte slotIndex, byte phaseId)
     {
-      this.LogDebug("TechnoTrend: OnLscGetNextBuffer call back, slot = {0}, phase = {1}", slotIndex, phaseId);
+      this.LogDebug("TechnoTrend: low speed communication get next buffer call back, slot = {0}, phase = {1}", slotIndex, phaseId);
     }
 
     /// <summary>
@@ -1596,7 +1596,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <param name="bufferSize"></param>
     private void OnLscTransmitBuffer(IntPtr context, byte slotIndex, byte phaseId, IntPtr buffer, short bufferSize)
     {
-      this.LogDebug("TechnoTrend: OnLscTransmitBuffer call back, slot = {0}, phase = {1}", slotIndex, phaseId);
+      this.LogDebug("TechnoTrend: low speed communication transmit buffer call back, slot = {0}, phase = {1}", slotIndex, phaseId);
       Dump.DumpBinary(buffer, bufferSize);
     }
 
@@ -1906,13 +1906,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       _ciCallBack.OnLscTransmitBufferContext = _tunerHandle;
 
       // Call back functions.
-      _ciCallBack.OnSlotStatus = OnSlotStatus;
-      _ciCallBack.OnCaStatus = OnCaStatus;
-      _ciCallBack.OnDisplayString = OnDisplayString;
-      _ciCallBack.OnDisplayMenu = OnDisplayMenuOrList;
-      _ciCallBack.OnDisplayList = OnDisplayMenuOrList;
-      _ciCallBack.OnSwitchOsdOff = OnSwitchOsdOff;
-      _ciCallBack.OnInputRequest = OnInputRequest;
+      _ciCallBack.OnSlotStatus = OnCiSlotStatus;
+      _ciCallBack.OnCaStatus = OnCiCaStatus;
+      _ciCallBack.OnDisplayString = OnCiDisplayString;
+      _ciCallBack.OnDisplayMenu = OnCiDisplayMenuOrList;
+      _ciCallBack.OnDisplayList = OnCiDisplayMenuOrList;
+      _ciCallBack.OnSwitchOsdOff = OnCiSwitchOsdOff;
+      _ciCallBack.OnInputRequest = OnCiInputRequest;
       _ciCallBack.OnLscSetDescriptor = OnLscSetDescriptor;
       _ciCallBack.OnLscConnect = OnLscConnect;
       _ciCallBack.OnLscDisconnect = OnLscDisconnect;
@@ -2344,7 +2344,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
         return true;
       }
 
-      _remoteControlKeyPressDelegate = OnIrCode;
+      _remoteControlKeyPressDelegate = OnRemoteControlKeyPress;
       TtApiResult result = bdaapiOpenIR(_tunerHandle, _remoteControlKeyPressDelegate, IntPtr.Zero);
       if (result != TtApiResult.Success)
       {
