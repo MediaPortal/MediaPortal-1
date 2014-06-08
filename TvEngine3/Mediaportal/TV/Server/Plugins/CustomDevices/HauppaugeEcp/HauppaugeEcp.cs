@@ -57,10 +57,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
       int Dispose();
 
       [PreserveSig]
-      int GetModelNumber(ref uint modelNumber);
+      int GetModelNumber(out uint modelNumber);
 
       [PreserveSig]
-      int GetDriverVersion(ref uint versionMajor, ref uint versionMinor, ref uint revision, ref uint build);
+      int GetDriverVersion(out uint versionMajor, out uint versionMinor, out uint revision, out uint build);
 
       [PreserveSig]
       int GetGeneralInfo([MarshalAs(UnmanagedType.LPStr)] out string info);
@@ -83,7 +83,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
       this.LogDebug("Hauppauge ECP: read device information");
 
       uint modelNumber = 0;
-      int hr = _interfaceEcp.GetModelNumber(ref modelNumber);
+      int hr = _interfaceEcp.GetModelNumber(out modelNumber);
       if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("  model number = {0}", modelNumber);
@@ -97,7 +97,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
       uint versionMinor = 0;
       uint revision = 0;
       uint build = 0;
-      hr = _interfaceEcp.GetDriverVersion(ref versionMajor, ref versionMinor, ref revision, ref build);
+      hr = _interfaceEcp.GetDriverVersion(out versionMajor, out versionMinor, out revision, out build);
       if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("  version      = {0}.{1}.{2}b{3}", versionMajor, versionMinor, revision, build);
