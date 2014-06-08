@@ -457,9 +457,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
 
               int id;
               DigitalDevicesCiSlot.MenuType type;
-              IList<string> entries;
+              IList<string> strings;
               int answerLength;
-              int hr = sharedContext.Slot.GetCamMenu(out id, out type, out entries, out answerLength);
+              int hr = sharedContext.Slot.GetCamMenu(out id, out type, out strings, out answerLength);
               if (hr == (int)HResult.Severity.Success)
               {
                 // Is this a menu that we haven't seen before?
@@ -488,19 +488,19 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
 
                   if (type == DigitalDevicesCiSlot.MenuType.Menu || type == DigitalDevicesCiSlot.MenuType.List)
                   {
-                    this.LogDebug("  title     = {0}", entries[0]);
-                    this.LogDebug("  sub-title = {0}", entries[1]);
-                    this.LogDebug("  footer    = {0}", entries[2]);
-                    this.LogDebug("  # entries = {0}", entries.Count - 3);
+                    this.LogDebug("  title     = {0}", strings[0]);
+                    this.LogDebug("  sub-title = {0}", strings[1]);
+                    this.LogDebug("  footer    = {0}", strings[2]);
+                    this.LogDebug("  # entries = {0}", strings.Count - 3);
 
                     if (_caMenuCallBack != null)
                     {
-                      _caMenuCallBack.OnCiMenu(entries[0], entries[1], entries[2], entries.Count - 3);
+                      _caMenuCallBack.OnCiMenu(strings[0], strings[1], strings[2], strings.Count - 3);
                     }
 
-                    for (int i = 3; i < entries.Count; i++)
+                    for (int i = 3; i < strings.Count; i++)
                     {
-                      string entry = entries[i];
+                      string entry = strings[i];
                       this.LogDebug("    {0, -7} = {1}", i + 1, entry);
                       if (_caMenuCallBack != null)
                       {
@@ -510,11 +510,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
                   }
                   else if (type == DigitalDevicesCiSlot.MenuType.Enquiry)
                   {
-                    this.LogDebug("  prompt    = {0}", entries[0]);
+                    this.LogDebug("  prompt    = {0}", strings[0]);
                     this.LogDebug("  length    = {0}", answerLength);
                     if (_caMenuCallBack != null)
                     {
-                      _caMenuCallBack.OnCiRequest(false, (uint)answerLength, entries[0]);
+                      _caMenuCallBack.OnCiRequest(false, (uint)answerLength, strings[0]);
                     }
                   }
                 }

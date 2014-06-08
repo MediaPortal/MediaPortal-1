@@ -546,12 +546,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       public int StringCount;
       public int MenuIndex;
       // This is a pointer to an array of pointers. The maximum size of the
-      // array is MAX_CAM_MENU_ENTRIES. Each of the pointers points to a block
-      // of memory with size MAX_API_STRING_LENGTH containing a string encoded
-      // according to EN 300 468 Annex A. Note that StringCount does NOT seem
-      // to specify the number of entries in the array, and therefore we can't
-      // marshal automatically.
-      public IntPtr Entries;
+      // array is MAX_MMI_MESSAGE_STRINGS. Each of the pointers points to a
+      // block of memory with size MAX_API_STRING_LENGTH containing a string
+      // encoded according to EN 300 468 Annex A. Note that StringCount does
+      // NOT seem to specify the number of entries in the array, and therefore
+      // we can't marshal automatically.
+      public IntPtr Strings;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -1111,7 +1111,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
     private const int MAX_DISEQC_MESSAGE_LENGTH = 16;
 
     private const int MAX_API_STRING_LENGTH = 256;
-    private const int MAX_CAM_MENU_ENTRIES = 32;
+    private const int MAX_MMI_MESSAGE_STRINGS = 32;
     private const int MAX_DESCRIPTOR_DATA_LENGTH = 256;
     private const int MAX_PMT_ELEMENTARY_STREAMS = 50;
     private static readonly int ES_PMT_DATA_SIZE = Marshal.SizeOf(typeof(EsPmtData));         // 260
@@ -1453,7 +1453,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
             this.LogDebug("Anysee: menu call back not set");
           }
 
-          string prompt = DvbTextConverter.Convert(Marshal.ReadIntPtr(menu.Entries, 0));
+          string prompt = DvbTextConverter.Convert(Marshal.ReadIntPtr(menu.Strings, 0));
           this.LogDebug("  prompt    = {0}", prompt);
           this.LogDebug("  length    = {0}", message.ExpectedAnswerLength);
           this.LogDebug("  key count = {0}", message.KeyCount);
@@ -1479,16 +1479,16 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
           this.LogDebug("Anysee: menu call back not set");
         }
 
-        string title = DvbTextConverter.Convert(Marshal.ReadIntPtr(menu.Entries, 0));
-        string subTitle = DvbTextConverter.Convert(Marshal.ReadIntPtr(menu.Entries, IntPtr.Size));
-        string footer = DvbTextConverter.Convert(Marshal.ReadIntPtr(menu.Entries, IntPtr.Size * 2));
+        string title = DvbTextConverter.Convert(Marshal.ReadIntPtr(menu.Strings, 0));
+        string subTitle = DvbTextConverter.Convert(Marshal.ReadIntPtr(menu.Strings, IntPtr.Size));
+        string footer = DvbTextConverter.Convert(Marshal.ReadIntPtr(menu.Strings, IntPtr.Size * 2));
         this.LogDebug("  title     = {0}", title);
         this.LogDebug("  sub-title = {0}", subTitle);
         this.LogDebug("  footer    = {0}", footer);
         this.LogDebug("  # entries = {0}", message.EntryCount);
-        if (message.EntryCount > MAX_CAM_MENU_ENTRIES - 3)
+        if (message.EntryCount > MAX_MMI_MESSAGE_STRINGS - 3)
         {
-          this.LogError("Anysee: MMI menu or list entry count {0} exceeds the maximum supported entry count {1}", message.EntryCount, MAX_CAM_MENU_ENTRIES - 3);
+          this.LogError("Anysee: MMI menu or list entry count {0} exceeds the maximum supported entry count {1}", message.EntryCount, MAX_MMI_MESSAGE_STRINGS - 3);
           return 1;
         }
         if (_caMenuCallBack != null)
@@ -1497,7 +1497,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
         }
 
         string entry;
-        IntPtr entryPtr = IntPtr.Add(menu.Entries, IntPtr.Size * 3);
+        IntPtr entryPtr = IntPtr.Add(menu.Strings, IntPtr.Size * 3);
         for (int i = 0; i < message.EntryCount; i++)
         {
           entry = DvbTextConverter.Convert(Marshal.ReadIntPtr(entryPtr, 0));
@@ -1582,7 +1582,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       this.LogDebug("Anysee: remote control listener thread start polling");
       int hr;
       int returnedByteCount;
-      int previousCode = 0;
       try
       {
         while (!_remoteControlListenerThreadStopEvent.WaitOne(REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME))
@@ -1603,10 +1602,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
           else
           {
             IrData data = (IrData)Marshal.PtrToStructure(_remoteControlBuffer, typeof(IrData));
-            if (data.Key != previousCode)
+            // Note: the NULL key code is returned when no button is being
+            // pressed. Otherwise the button code is returned for as long as a
+            // button is held down.
+            if (data.Key != AnyseeRemoteCode.Null)
             {
-              this.LogDebug("Anysee: remote control key press = {0}", data.Key);
-              previousCode = data.Key;
+              this.LogDebug("Anysee: remote control key press, code = {0}", data.Key);
             }
           }
         }

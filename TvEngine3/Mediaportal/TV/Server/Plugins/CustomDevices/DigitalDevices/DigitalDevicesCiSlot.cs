@@ -341,14 +341,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
     /// </summary>
     /// <param name="id">The menu identifier. Used to determine whether the menu has been seen before.</param>
     /// <param name="type">The menu type.</param>
-    /// <param name="entries">The menu entries.</param>
+    /// <param name="strings">The menu strings (title, sub-title, entries and footer).</param>
     /// <param name="answerLength">For an enquiry menu: the expected answer length.</param>
     /// <returns>an HRESULT indicating whether the menu was successfully read</returns>
-    public int GetCamMenu(out int id, out MenuType type, out IList<string> entries, out int answerLength)
+    public int GetCamMenu(out int id, out MenuType type, out IList<string> strings, out int answerLength)
     {
       id = 0;
       type = MenuType.Unknown;
-      entries = new List<string>();
+      strings = new List<string>();
       answerLength = 0;
 
       lock (_lock)
@@ -377,28 +377,29 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
           {
             type = MenuType.List;
           }
-          int entryCount = Marshal.ReadInt32(_buffer, 8) + 3;   // + 3 for title, sub-title and footer
+          int stringCount = Marshal.ReadInt32(_buffer, 8) + 3;   // + 3 for title, sub-title and footer
           int byteCount = Marshal.ReadInt32(_buffer, 12);
 
-          IntPtr entryPtr = IntPtr.Add(_buffer, 16);
+          IntPtr stringPtr = IntPtr.Add(_buffer, 16);
           int decodedByteCount;
           int totalDecodedByteCount = 0;
-          for (int i = 0; i < entryCount && totalDecodedByteCount < byteCount; i++)
+          for (int i = 0; i < stringCount && totalDecodedByteCount < byteCount; i++)
           {
-            string entry = DvbTextConverter.Convert(entryPtr, -1, 0, out decodedByteCount);
+            string s = DvbTextConverter.Convert(stringPtr, -1, 0, out decodedByteCount);
             if (decodedByteCount == 0)
             {
-              this.LogWarn("Digital Devices: failed to decode menu/list entry {0} of {1}", i + 1, entryCount);
+              this.LogWarn("Digital Devices: failed to decode menu/list string {0} of {1}", i + 1, stringCount);
+              Dump.DumpBinary(_buffer, returnedByteCount);
               break;
             }
             totalDecodedByteCount += decodedByteCount;
-            entries.Add(entry);
-            entryPtr = IntPtr.Add(entryPtr, decodedByteCount);
+            strings.Add(s);
+            stringPtr = IntPtr.Add(stringPtr, decodedByteCount);
           }
 
-          if (entries.Count < 3 || entryCount != entries.Count)
+          if (strings.Count < 3 || stringCount != strings.Count)
           {
-            this.LogError("Digital Devices: actual menu entry count {0} does not match expected entry count {1}", entries.Count, entryCount);
+            this.LogError("Digital Devices: actual menu entry count {0} does not match expected entry count {1}", strings.Count, stringCount);
             Dump.DumpBinary(_buffer, returnedByteCount);
             return 1;   // fail
           }
@@ -408,7 +409,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
           type = MenuType.Enquiry;
           answerLength = Marshal.ReadInt32(_buffer, 8);
           int byteCount = Marshal.ReadInt32(_buffer, 12);
-          entries.Add(DvbTextConverter.Convert(IntPtr.Add(_buffer, 16)));
+          strings.Add(DvbTextConverter.Convert(IntPtr.Add(_buffer, 16)));
         }
         else
         {

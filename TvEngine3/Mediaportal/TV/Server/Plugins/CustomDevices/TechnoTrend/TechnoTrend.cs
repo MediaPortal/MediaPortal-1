@@ -887,11 +887,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// </summary>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
-    /// <param name="entryCount">The number of entries in the menu/list.</param>
-    /// <param name="entries">The menu/list entries. Each entry is NULL terminated.</param>
-    /// <param name="totalMenuLength">The length of the menu (ie. the sum of the lengths of all entries) in bytes.</param>
+    /// <param name="stringCount">The number of strings in <paramref name="stringBuffer"/>.</param>
+    /// <param name="stringBuffer">A buffer containing menu strings (title, sub-title, entries and footer). Each string is NULL terminated.</param>
+    /// <param name="totalMenuLength">The length of the menu (ie. the size of <paramref name="stringBuffer"/>) in bytes.</param>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate void OnTtCiDisplayMenuOrList(IntPtr context, byte slotIndex, short entryCount, IntPtr entries, short totalMenuLength);
+    private delegate void OnTtCiDisplayMenuOrList(IntPtr context, byte slotIndex, short stringCount, IntPtr stringBuffer, short totalMenuLength);
 
     /// <summary>
     /// Invoked by the tuner driver when the CAM wants to close the menu.
@@ -1424,10 +1424,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// </summary>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
-    /// <param name="entryCount">The number of entries in the menu/list.</param>
-    /// <param name="entries">The menu/list entries. Each entry is NULL terminated.</param>
-    /// <param name="totalMenuLength">The length of the menu (ie. the sum of the lengths of all entries) in bytes.</param>
-    private void OnCiDisplayMenuOrList(IntPtr context, byte slotIndex, short entryCount, IntPtr entries, short totalMenuLength)
+    /// <param name="stringCount">The number of strings in <paramref name="stringBuffer"/>.</param>
+    /// <param name="stringBuffer">A buffer containing menu strings (title, sub-title, entries and footer). Each string is NULL terminated.</param>
+    /// <param name="totalMenuLength">The length of the menu (ie. the size of <paramref name="stringBuffer"/>) in bytes.</param>
+    private void OnCiDisplayMenuOrList(IntPtr context, byte slotIndex, short stringCount, IntPtr stringBuffer, short totalMenuLength)
     {
       this.LogInfo("TechnoTrend: CI display menu/list call back, slot = {0}, total menu length = {1}", slotIndex, totalMenuLength);
 
@@ -1439,45 +1439,47 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
         }
 
         // Decode menu/list strings for call back.
-        List<string> entryStrings = new List<string>();
-        IntPtr entryPtr = entries;
-        string entry;
+        List<string> strings = new List<string>();
+        IntPtr stringPtr = stringBuffer;
+        string s;
         int decodedByteCount;
         int totalDecodedByteCount = 0;
-        for (int i = 0; i < entryCount && totalDecodedByteCount < totalMenuLength; i++)
+        for (int i = 0; i < stringCount && totalDecodedByteCount < totalMenuLength; i++)
         {
-          entry = DvbTextConverter.Convert(entryPtr, -1, 0, out decodedByteCount);
+          s = DvbTextConverter.Convert(stringPtr, -1, 0, out decodedByteCount);
           if (decodedByteCount == 0)
           {
-            this.LogWarn("TechnoTrend: failed to decode menu/list entry {0} of {1}", i + 1, entryCount);
+            this.LogWarn("TechnoTrend: failed to decode menu/list string {0} of {1}", i + 1, stringCount);
+            Dump.DumpBinary(stringBuffer, totalMenuLength);
             break;
           }
           totalDecodedByteCount += decodedByteCount;
-          entryStrings.Add(entry);
-          entryPtr = IntPtr.Add(entryPtr, decodedByteCount);
+          strings.Add(s);
+          stringPtr = IntPtr.Add(stringPtr, decodedByteCount);
         }
 
-        if (entryStrings.Count < 3 || entryCount != entryStrings.Count)
+        if (strings.Count < 3 || stringCount != strings.Count)
         {
-          this.LogError("TechnoTrend: actual menu entry count {0} does not match expected entry count {1}", entryStrings.Count, entryCount);
-          Dump.DumpBinary(entries, totalMenuLength);
+          this.LogError("TechnoTrend: actual menu string count {0} does not match expected string count {1}", strings.Count, stringCount);
+          Dump.DumpBinary(stringBuffer, totalMenuLength);
           return;
         }
-        this.LogDebug("  title     = {0}", entryStrings[0]);
-        this.LogDebug("  sub-title = {0}", entryStrings[1]);
-        this.LogDebug("  footer    = {0}", entryStrings[2]);
-        this.LogDebug("  # entries = {0}", entryCount - 3);
+        this.LogDebug("  title     = {0}", strings[0]);
+        this.LogDebug("  sub-title = {0}", strings[1]);
+        this.LogDebug("  footer    = {0}", strings[2]);
+        this.LogDebug("  # entries = {0}", stringCount - 3);
         if (_caMenuCallBack != null)
         {
-          _caMenuCallBack.OnCiMenu(entryStrings[0], entryStrings[1], entryStrings[2], entryCount - 3);
+          _caMenuCallBack.OnCiMenu(strings[0], strings[1], strings[2], stringCount - 3);
         }
 
-        for (int i = 3; i < entryCount; i++)
+        for (int i = 3; i < stringCount; i++)
         {
-          this.LogDebug("    {0, -7} = {1}", i - 2, entryStrings[i]);
+          s = strings[i];
+          this.LogDebug("    {0, -7} = {1}", i - 2, s);
           if (_caMenuCallBack != null)
           {
-            _caMenuCallBack.OnCiMenuChoice(i - 3, entryStrings[i]);
+            _caMenuCallBack.OnCiMenuChoice(i - 3, s);
           }
         }
       }
