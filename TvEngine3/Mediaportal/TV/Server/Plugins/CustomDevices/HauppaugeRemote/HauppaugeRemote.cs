@@ -196,11 +196,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeRemote
       Seven,                    // PQRS
       Eight,                    // TUV
       Nine,                     // WXYZ
-      Teletext, // 10           // [new, text = *]
+      Teletext, // 10           // [new, text: *]
       Red,
       Radio,                    // [code clash with HcwRemoteCodePvr1 unlabeled function button]
       Menu,
-      Subtitles,                // sub/CC [new, text = #]
+      Subtitles,                // sub/CC [new, text: #]
       Mute,
       VolumeUp,
       VolumeDown,
