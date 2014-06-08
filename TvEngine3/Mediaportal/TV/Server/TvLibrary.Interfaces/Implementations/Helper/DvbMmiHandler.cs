@@ -152,11 +152,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
     {
       Log.Debug("DVB MMI: handle menu");
 
-      byte entryCount = apdu[offset++];
-      List<string> entries = new List<string>();
+      int stringCount = apdu[offset++];
+      List<string> strings = new List<string>();
 
       // Read the menu entries into the entries list.
-      while (entryCount > 0 && offset < apdu.Length)
+      while (stringCount > 0 && offset < apdu.Length)
       {
         if (apdu[offset] != 0x9f)
         {
@@ -165,19 +165,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
           return;
         }
         int bytesRead;
-        string entry = ReadText(apdu, offset, out bytesRead);
-        if (entry == null)
+        string s = ReadText(apdu, offset, out bytesRead);
+        if (s == null)
         {
           Log.Error("DVB MMI: unexpected APDU format, null entry at offset {0}", offset);
           Dump.DumpBinary(apdu);
           return;
         }
-        entries.Add(entry);
+        strings.Add(s);
         offset += bytesRead;
       }
-      if (entries.Count < 3)
+      if (strings.Count < 3)
       {
-        Log.Error("DVB MMI: unexpected MMI format, {0} entries", entries.Count);
+        Log.Error("DVB MMI: unexpected MMI format, {0} string(s)", strings.Count);
         Dump.DumpBinary(apdu);
         return;
       }
@@ -187,22 +187,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
         Log.Debug("DVB MMI: menu call back not set");
       }
 
-      entryCount = (byte)(entries.Count - 3);
-      Log.Debug("  title     = {0}", entries[0]);
-      Log.Debug("  sub-title = {0}", entries[1]);
-      Log.Debug("  footer    = {0}", entries[2]);
-      Log.Debug("  # entries = {0}", entryCount);
+      Log.Debug("  title     = {0}", strings[0]);
+      Log.Debug("  sub-title = {0}", strings[1]);
+      Log.Debug("  footer    = {0}", strings[2]);
+      Log.Debug("  # entries = {0}", strings.Count - 3);
       if (callBack != null)
       {
-        callBack.OnCiMenu(entries[0], entries[1], entries[2], entryCount);
+        callBack.OnCiMenu(strings[0], strings[1], strings[2], strings.Count - 3);
       }
 
-      for (byte i = 0; i < entryCount; i++)
+      for (byte i = 3; i < strings.Count; i++)
       {
-        Log.Debug("    {0, -7} = {1}", i + 1, entries[i + 3]);
+        Log.Debug("    {0, -7} = {1}", i - 2, strings[i]);
         if (callBack != null)
         {
-          callBack.OnCiMenuChoice(i, entries[i + 3]);
+          callBack.OnCiMenuChoice(i - 3, strings[i]);
         }
       }
     }
