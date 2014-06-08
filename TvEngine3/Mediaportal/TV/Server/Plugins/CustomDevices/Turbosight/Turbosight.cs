@@ -245,20 +245,17 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
     private struct MmiMessage
     {
       public TbsMmiMessageType Type;
-      public int Length;
       public byte[] Message;
 
       public MmiMessage(TbsMmiMessageType type, int length)
       {
         Type = type;
-        Length = length;
         Message = new byte[length];
       }
 
       public MmiMessage(TbsMmiMessageType type)
       {
         Type = type;
-        Length = 0;
         Message = null;
       }
     }
@@ -610,7 +607,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
           if (newState != _isCamPresent)
           {
             _isCamPresent = newState;
-            this.LogInfo("Turbosight: CAM state change, CAM present = {0}", _isCamPresent);
+            this.LogInfo("Turbosight: CI state change, CAM present = {0}", _isCamPresent);
             // If a CAM has just been inserted then clear the message queue - we consider
             // any old messages as invalid now.
             if (_isCamPresent)
@@ -641,7 +638,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
                 message = _mmiMessageQueue[0].Type;
                 this.LogDebug("Turbosight: sending message {0}", message);
                 Marshal.WriteByte(_mmiMessageBuffer, 0, (byte)message);
-                Marshal.Copy(_mmiMessageQueue[0].Message, 0, IntPtr.Add(_mmiMessageBuffer, 1), _mmiMessageQueue[0].Message.Length);
+                if (_mmiMessageQueue[0].Message != null && _mmiMessageQueue[0].Message.Length > 0)
+                {
+                  Marshal.Copy(_mmiMessageQueue[0].Message, 0, IntPtr.Add(_mmiMessageBuffer, 1), _mmiMessageQueue[0].Message.Length);
+                }
                 sendCount = 0;
               }
               // No -> poll for unrequested messages from the CAM.
@@ -678,7 +678,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
                 sendCount++;
                 if (sendCount >= 10)
                 {
-                  this.LogDebug("Turbosight: giving up on message {0}", message);
+                  this.LogWarn("Turbosight: giving up on message {0}", message);
                   removeMessage = true;
                 }
               }
@@ -822,34 +822,34 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
     private bool HandleMenu(byte[] content)
     {
       this.LogDebug("Turbosight: menu");
-      int length = content.Length;
-      if (length == 0)
+      if (content.Length == 0)
       {
         this.LogError("Turbosight: menu response too short");
         return false;
       }
-      int expectedEntryCount = content[0];
+      int entryCount = content[0];
+      int expectedStringCount = entryCount + 3;   // + 3 for the title, sub-title and footer
 
-      // Read all the entries into a list. Entries are NULL terminated.
-      List<string> entries = new List<string>();
-      string entry;
+      // Read all the strings into a list. Strings are NULL terminated.
+      List<string> strings = new List<string>();
+      string s;
       int decodedByteCount;
       int totalDecodedByteCount = 1;
-      for (int i = 0; i < expectedEntryCount; i++)
+      while (totalDecodedByteCount != content.Length)
       {
-        entry = DvbTextConverter.Convert(content, -1, totalDecodedByteCount, out decodedByteCount);
+        s = DvbTextConverter.Convert(content, -1, totalDecodedByteCount, out decodedByteCount);
         if (decodedByteCount == 0)
         {
-          this.LogWarn("Turbosight: failed to decode menu entry {0} of {1}", i + 1, expectedEntryCount);
+          this.LogWarn("Turbosight: failed to decode menu string {0} of {1}", strings.Count, expectedStringCount);
           break;
         }
         totalDecodedByteCount += decodedByteCount;
-        entries.Add(entry);
+        strings.Add(s);
       }
 
-      if (entries.Count < 3 || expectedEntryCount != entries.Count)
+      if (expectedStringCount != strings.Count)
       {
-        this.LogError("Turbosight: actual menu entry count {0} does not match expected entry count {1}", entries.Count, expectedEntryCount);
+        this.LogError("Turbosight: actual menu string count {0} does not match expected string count {1}", strings.Count, expectedStringCount);
         return false;
       }
 
@@ -860,20 +860,21 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
           this.LogDebug("Turbosight: menu call back not set");
         }
 
-        this.LogDebug("  title     = {0}", entries[0]);
-        this.LogDebug("  sub-title = {0}", entries[1]);
-        this.LogDebug("  footer    = {0}", entries[2]);
-        this.LogDebug("  # entries = {0}", expectedEntryCount);
+        this.LogDebug("  title     = {0}", strings[0]);
+        this.LogDebug("  sub-title = {0}", strings[1]);
+        this.LogDebug("  footer    = {0}", strings[2]);
+        this.LogDebug("  # entries = {0}", entryCount);
         if (_caMenuCallBack != null)
         {
-          _caMenuCallBack.OnCiMenu(entries[0], entries[1], entries[2], expectedEntryCount - 3);
+          _caMenuCallBack.OnCiMenu(strings[0], strings[1], strings[2], entryCount);
         }
-        for (int i = 3; i < expectedEntryCount; i++)
+        for (int i = 0; i < entryCount; i++)
         {
-          this.LogDebug("    {0, -7} = {1}", i - 2, entries[i]);
+          s = strings[i + 3];
+          this.LogDebug("    {0, -7} = {1}", i + 1, s);
           if (_caMenuCallBack != null)
           {
-            _caMenuCallBack.OnCiMenuChoice(i - 3, entries[i]);
+            _caMenuCallBack.OnCiMenuChoice(i, s);
           }
         }
       }
