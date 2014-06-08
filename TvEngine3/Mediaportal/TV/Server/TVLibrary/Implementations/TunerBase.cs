@@ -867,6 +867,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       }
       catch (Exception ex)
       {
+        this.LogError(ex, "tuner base: failed to load tuner");
         Unload();
         throw new TvExceptionTunerLoadFailed("Failed to load tuner.", ex);
       }
