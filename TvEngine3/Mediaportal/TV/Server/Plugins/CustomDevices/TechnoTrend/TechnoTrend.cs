@@ -1287,7 +1287,18 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <param name="code">The key code. If the code is an RC5 code then it can be found in the lower 2 bytes. RC6 codes use 4 bytes.</param>
     private void OnRemoteControlKeyPress(IntPtr context, ref int code)
     {
-      this.LogDebug("TechnoTrend: remote control key press = 0x{0:x8}", code);
+      if ((code & 0xffffc000) == 0)
+      {
+        int fieldBit = (code & 0x1000) >> 12;
+        int toggleBit = (code & 0x800) >> 11;
+        int systemAddress = (code & 0x7c0) >> 6;
+        int rc5Code = code & 0x3f;
+        this.LogDebug("TechnoTrend: RC5 remote control key press, field bit = {0}, toggle bit = {1} system address = {2}, code = {3}", fieldBit, toggleBit, systemAddress, rc5Code);
+      }
+      else
+      {
+        this.LogDebug("TechnoTrend: RC6 remote control key press, code = 0x{0:x8}", code);
+      }
     }
 
     /// <summary>
