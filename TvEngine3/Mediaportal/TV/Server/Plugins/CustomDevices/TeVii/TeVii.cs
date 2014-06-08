@@ -83,10 +83,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
       Rate9_10
     }
 
-    // Tested with a TeVii S480. Note that TeVii seem to have quite a few
-    // remote control variants. This is the one that I tested with:
-    // http://img607.imageshack.us/img607/951/s1057417.jpg
-    private enum TeViiIrCode
+    /// <remarks>
+    /// Image: http://img607.imageshack.us/img607/951/s1057417.jpg
+    /// Testing: S480
+    /// Comments are labels above the buttons.
+    /// There seem to be many variants. The image linked above is the one I tested with.
+    /// </remarks>
+    private enum TeViiRemoteCode
     {
       Up = 0,
       Down,
@@ -100,9 +103,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
       VolumeUp,
       Power,
       SkipBack,           // timer
-      Mute, // 0x0c
+      Mute, // 12
 
-      SkipForward = 0x0e, // open
+      SkipForward = 15,   // open
       VolumeDown,
       Zero,
       One,
@@ -119,27 +122,27 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
       Menu,
       Back,
       Rewind,
-      Okay,   // 0x1f
+      Okay,   // 31
 
-      PlayPause = 0x40,
-      SwitchAb,
+      PlayPause = 64,
+      SwitchAb,           // [text: A/B]
 
-      Audio = 0x43,
-      Epg ,
+      Audio = 67,
+      Epg,
       Subtitles,
       Tv,                 // satellite
-      Music,              // provider
+      Music,  // 71       // provider
 
-      List = 0x4a,
-      Info = 0x4c,        // more
-      FastForward = 0x4d,
+      List = 74,
+      Info = 76,          // more
+      FastForward = 77,
 
-      Enter = 0x52,       // all
-      Monitor = 0x56,
-      FullScreen = 0x58,
-      Home = 0x5a,
-      Snapshot = 0x5c,    // favourites
-      Radio = 0x5e,       // transponder
+      Enter = 82,         // all
+      Monitor = 86,
+      FullScreen = 88,
+      Home = 90,
+      Pictures = 92,      // favourites
+      Radio = 94,         // transponder
     }
 
     #endregion
@@ -271,7 +274,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
     /// <returns><c>true</c> if the call back function is successfully set, otherwise <c>false</c></returns>
     [DllImport("Resources\\TeVii.dll", CallingConvention = CallingConvention.Cdecl)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool SetRemoteControl(int index, OnTeViiIrRemoteKeyPress remoteKeyCallBack, IntPtr context);
+    private static extern bool SetRemoteControl(int index, OnTeViiRemoteControlKeyPress remoteKeyCallBack, IntPtr context);
 
     #endregion
 
@@ -289,12 +292,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
     private delegate void OnTeViiCaptureData(IntPtr context, [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)] byte[] data, int dataLength);
 
     /// <summary>
-    /// Invoked by the tuner driver when an IR remote key press is detected.
+    /// Invoked by the tuner driver when a remote control key press is detected.
     /// </summary>
     /// <param name="context">The optional context passed to the interface when the call back was registered.</param>
     /// <param name="code">The key code.</param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.StdCall)]
-    private delegate void OnTeViiIrRemoteKeyPress(IntPtr context, TeViiIrCode code);
+    private delegate void OnTeViiRemoteControlKeyPress(IntPtr context, TeViiRemoteCode code);
 
     #endregion
 
@@ -306,18 +309,18 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
     private Tone22k _toneState = Tone22k.Auto;
 
     private bool _isRemoteControlInterfaceOpen = false;
-    private OnTeViiIrRemoteKeyPress _remoteControlKeyPressDelegate = null;
+    private OnTeViiRemoteControlKeyPress _remoteControlKeyPressDelegate = null;
 
     #endregion
 
     #region callback handlers
 
     /// <summary>
-    /// Called by the tuner driver when an IR remote key press is detected.
+    /// Called by the tuner driver when a remote control key press is detected.
     /// </summary>
     /// <param name="context">The optional context passed to the interface when the call back was registered.</param>
     /// <param name="code">The key code.</param>
-    private void OnRemoteControlKeyPress(IntPtr context, TeViiIrCode code)
+    private void OnRemoteControlKeyPress(IntPtr context, TeViiRemoteCode code)
     {
       this.LogDebug("TeVii: remote control key press, code = {0}", code);
     }

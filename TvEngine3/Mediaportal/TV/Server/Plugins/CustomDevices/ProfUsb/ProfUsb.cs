@@ -87,12 +87,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
       On
     }
 
-    // My understanding is that Prof tuners are or were OEM TBS tuners. The
-    // codes for this remote should work:
-    // http://www.tbsdtv.com/products/images/tbs6981/tbs6981_4.jpg
-    private enum ProfUsbBigRemoteCode : byte
+    /// <remarks>
+    /// My understanding is that Prof tuners are or were OEM TBS tuners. This
+    /// is a direct copy from the Turbosight extension.
+    /// </remarks>
+    private enum ProfUsbRemoteCodeBig : byte
     {
-      Recall = 0x80,
+      Recall = 128,
       Up,
       Right,
       Record,
@@ -104,32 +105,35 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
       Six,
       Five,
       Four,
-      VolumeDown,
+      VolumeDown, // 140
       Nine,
       Eight,
       Seven,
-      Left, // 0x90
+      Left,
       ChannelDown,
       Zero,
       VolumeUp,
       Mute,
-      Favourites,  // green
-      ChannelUp,
+      Green,              // text: favourites
+      ChannelUp,  // 150
       Subtitles,
       Pause,
       Okay,
-      Snapshot,
+      Screenshot,
       Mode,
       Epg,
-      Zoom,        // yellow
-      Menu,        // red
-      Exit         // blue
+      Yellow,             // text: zoom
+      Red,                // text: menu
+      Blue  // 159        // text: exit
     }
 
-    // Unverified.
-    private enum ProfUsbSmallRemoteCode : byte
+    /// <remarks>
+    /// Image: [none]
+    /// Testing: untested, based on old TBS SDK.
+    /// </remarks>
+    private enum ProfUsbRemoteCodeSmall : byte
     {
-      Mute = 0x01,
+      Mute = 1,
       Left,
       Down,
       One,
@@ -138,15 +142,15 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
       Four,
       Five,
       Six,
-      Seven,  // 0x0a
+      Seven,  // 10
 
-      FullScreen = 0x0c,
-      Okay = 0x0e,
-      Exit = 0x12,
-      Right = 0x1a,
-      Eight = 0x1b,
-      Up = 0x1e,
-      Nine = 0x1f
+      FullScreen = 12,
+      Okay = 15,
+      Exit = 18,
+      Right = 26,
+      Eight = 27,
+      Up = 30,
+      Nine = 31
     }
 
     #endregion
@@ -364,11 +368,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
             {
               if (data.IrCode < MIN_BIG_REMOTE_CODE)
               {
-                this.LogDebug("Prof USB: small remote control key press = {0}", (ProfUsbSmallRemoteCode)data.IrCode);
+                this.LogDebug("Prof USB: small remote control key press, code = {0}", (ProfUsbRemoteCodeSmall)data.IrCode);
               }
               else
               {
-                this.LogDebug("Prof USB: big remote control key press = {0}", (ProfUsbBigRemoteCode)data.IrCode);
+                this.LogDebug("Prof USB: big remote control key press, code = {0}", (ProfUsbRemoteCodeBig)data.IrCode);
               }
             }
           }
