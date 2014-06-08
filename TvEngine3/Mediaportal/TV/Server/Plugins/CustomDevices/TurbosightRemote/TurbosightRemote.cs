@@ -187,7 +187,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
               IrData data = (IrData)Marshal.PtrToStructure(_codeBuffer, typeof(IrData));
               if (data.Address != 0xffff && data.Command != 0xffff && data.Command != 0xff && data.Command != 0)
               {
-                this.LogDebug("Turbosight remote: remote control key press, address = 0x{0:x4}, command = 0x{1:x4}", data.Address, data.Command);
+                this.LogDebug("Turbosight remote: remote control key press, address = 0x{0:x8}, command = 0x{1:x8}", data.Address, data.Command);
               }
             }
           }

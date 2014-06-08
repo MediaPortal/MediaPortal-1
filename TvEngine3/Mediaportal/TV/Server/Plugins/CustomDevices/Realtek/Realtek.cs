@@ -168,7 +168,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Realtek
             int code = Marshal.ReadInt32(_remoteControlBuffer, 0);
             if (code != previousCode)
             {
-              this.LogDebug("Realtek: remote control key press = 0x{0:x4}", code);
+              this.LogDebug("Realtek: remote control key press, code = 0x{0:x8}", code);
               previousCode = code;
             }
           }
