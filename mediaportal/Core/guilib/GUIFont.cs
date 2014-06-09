@@ -234,12 +234,29 @@ namespace MediaPortal.GUI.Library
 
     public bool containsOutOfBoundsChar(string text)
     {
+      // Add some OutOfBoundsChar as valid to avoid overlap this will be displayed/used in replacement in fontEngine c++
+      ArrayList OutOfBoundsChar = new ArrayList
+                                       {
+                                         (char) 8211,
+                                         (char) 8212,
+                                         (char) 8216,
+                                         (char) 8217,
+                                         (char) 8220,
+                                         (char) 8221,
+                                         (char) 8222,
+                                         (char) 8223,
+                                         (char) 8226,
+                                         (char) 8230
+                                       };
       for (int i = 0; i < text.Length; ++i)
       {
         char c = text[i];
         if ((c < _StartCharacter || c >= _EndCharacter) && c != '\n')
         {
-          Log.Debug("GUIFont: remaining high order char = '{0}', TypeCode = '{1}'", c.ToString(), (int)c);
+          if (!OutOfBoundsChar.Contains(c))
+          {
+            return true;
+          }
         }
       }
       return false;
