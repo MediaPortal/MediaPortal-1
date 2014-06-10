@@ -24,10 +24,12 @@
 #include "PacketReceiver.h"
 #include "TsInputPin.h"
 #include "ringbuffer.h"
-#include "PidFilter.h"
-#include "RtpStreamInterface.h"
+//#include "PidFilter.h"
+//#include "RtpStreamInterface.h"
+#include "StreamHandler.h"
 #include <thread>
 #include <process.h>
+#include <sstream>
 #include "config.h"
 
 using namespace std;
@@ -112,6 +114,7 @@ public:
 	DECLARE_IUNKNOWN
 
 	CSatIP(LPUNKNOWN pUnk, HRESULT *phr);
+	void initialize();
 	~CSatIP();
 
 	static CUnknown * WINAPI CreateInstance(LPUNKNOWN punk, HRESULT *phr);
@@ -123,9 +126,13 @@ public:
 
 	STDMETHODIMP IsReceiving(BOOL* yesNo);
 	STDMETHODIMP Reset();
+	void		 Stop();
 
 	PidFilter*		pidfilter;
-
+	char* clientIp;
+	int clientPort;
+	CStreamHandler _streamHandler[NUMBER_OF_STREAMING_SLOTS];
+	static bool getNextValue(uint32_t& valueTarget, size_t& position, size_t byteCount, BYTE* buffer);
 private:
 
 	// Overriden to say what interfaces we support where
@@ -138,12 +145,13 @@ private:
 
 	// Streaming instance thread
 	//thread streamingThread;
-	char* clientIp;
+
 	char* test2;
 	thread streamingThread;
 	bool streamRunning;
 	bool streamConfigured;
 	int bytesWritten;
+	bool _stop;
 
 	void			FindSync();
 	void			processPackages();

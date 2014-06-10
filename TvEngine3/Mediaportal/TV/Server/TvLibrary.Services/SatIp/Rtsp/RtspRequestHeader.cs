@@ -29,7 +29,7 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
   {
     private int _CSeq;
     private string _sessionId;
-    private RtspMethod _method;
+    //private RtspMethod _method;
     private int _rtpPort;
     private int _rtcpPort;
 
@@ -58,13 +58,13 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
     /// <summary>
     /// Get the request method (SETUP, PLAY...)
     /// </summary>
-    public RtspMethod method
+    /*public RtspMethod method
     {
       get
       {
         return _method;
       }
-    }
+    }*/
 
     /// <summary>
     /// Get the rtp Port

@@ -29,6 +29,7 @@
     <UseOfMfc>false</UseOfMfc>
     <UseOfAtl>false</UseOfAtl>
     <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -66,7 +67,7 @@
       <InlineFunctionExpansion>Default</InlineFunctionExpansion>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>$(DSHOW_BASE);$(WINDOWS_SDK)Include\;$(DXSDK_DIR)Include;../LiveMedia555/BasicUsageEnvironment/include;../LiveMedia555/groupsock/include;../LiveMedia555/liveMedia;../LiveMedia555/liveMedia/include;../LiveMedia555/UsageEnvironment/include;../LiveMedia555/MediaPortal;../streamingserver/Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;$(WINDOWS_SDK)Include\;$(DXSDK_DIR)Include;..\LiveMedia555\BasicUsageEnvironment/include;..\LiveMedia555\UsageEnvironment/include;..\LiveMedia555\liveMedia;..\LiveMedia555\liveMedia/include;..\LiveMedia555\groupsock/include;../LiveMedia555/MediaPortal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUGT;WIN32;_WIN32;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>false</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -162,6 +163,7 @@
     <ClCompile Include="source\ringbuffer.cpp" />
     <ClCompile Include="source\SatIpFilter.cpp" />
     <ClCompile Include="source\Stdafx.cpp" />
+    <ClCompile Include="source\StreamHandler.cpp" />
     <ClCompile Include="source\TsInputPin.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -173,6 +175,7 @@
     <ClInclude Include="source\RtpStreamInterface.h" />
     <ClInclude Include="source\SatIpFilter.h" />
     <ClInclude Include="source\Stdafx.h" />
+    <ClInclude Include="source\StreamHandler.h" />
     <ClInclude Include="source\typeDef.h" />
     <ClInclude Include="source\TsInputPin.h" />
   </ItemGroup>

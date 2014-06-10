@@ -1,6 +1,7 @@
 #include "PidFilter.h"
 #include <stdio.h>
 #include <string.h>
+#include <sstream>
 // for Debug
 #include <streams.h>
 #include <shlobj.h>
@@ -37,46 +38,77 @@ void LogDebug2(const char *fmt, ...)
 
 PidFilter::PidFilter()
 {
-	//_pids = new unsigned char[Number_of_Pids];
-	_pids = new int[Number_of_Pids];
-	pidCounter = 0;
+	InitializeCriticalSection(&csPidsInAccess);
 }
 
 PidFilter::~PidFilter()
 {
-	delete[] _pids;
-	delete &pidCounter, &index;
+	DeleteCriticalSection(&csPidsInAccess);
 }
 
-void PidFilter::Add(int pid) {
+void PidFilter::Add(uint16_t pid) {
 	//memcpy(_pids+4, &pid, 4);
-	_pids[pidCounter] = pid;
-	pidCounter++;
+	EnterCriticalSection(&csPidsInAccess);
+	pids.insert(pid);
+	LeaveCriticalSection(&csPidsInAccess);
 }
 
-void PidFilter::Del(int pid) {
-	for (size_t i = 0; i < sizeof(_pids); i++)
-	{
-		if (_pids[i] == pid) {
-			index = i;
-			i = sizeof(_pids); // leafe the for
-		}
-	}
-
-	for (int i = index; i < sizeof(_pids); i++) {
-		_pids[index] = _pids[index + 1];
-	}
-	_pids[sizeof(_pids) - 1] = 0;
-
-	pidCounter--;
+void PidFilter::Del(uint16_t pid) {
+	EnterCriticalSection(&csPidsInAccess);
+	pids.erase(pid);
+	LeaveCriticalSection(&csPidsInAccess);
 }
 
-bool PidFilter::PidRequested(unsigned short pid) {
-	for (size_t i = 0; i < sizeof(_pids); i++)
-	{
-		if (_pids[i] == static_cast<int>(pid)) {
-			return true;
-		}
+void PidFilter::SyncPids(std::string newPids) {
+	EnterCriticalSection(&csPidsInAccess);
+	
+	// reset Array
+	pids.clear();
+	
+	std::stringstream lines(newPids);
+	std::string line2;
+
+	while (std::getline(lines, line2, '#')) {
+		uint16_t newPid = static_cast<uint16_t>(atoi(line2.c_str()));
+		pids.insert(newPid);
+		LogDebug2("SyncPid: %d", newPid);
 	}
-	return false;
+	LeaveCriticalSection(&csPidsInAccess);
+}
+
+void PidFilter::SyncPids(std::vector<uint16_t> newPids) {
+	EnterCriticalSection(&csPidsInAccess);
+
+	// reset Array
+	pids.clear();
+
+	for (size_t i = 0; i < newPids.size(); ++i) {
+		pids.insert(newPids.at(i));
+	}
+
+	LeaveCriticalSection(&csPidsInAccess);
+}
+
+bool PidFilter::PidRequested(uint16_t pid) {
+	// always allow PMT
+	if (pid == 0) {
+		return true;
+	}
+	
+	EnterCriticalSection(&csPidsInAccess);
+	bool result = pids.find(pid) != pids.end();
+	LeaveCriticalSection(&csPidsInAccess);
+	return result;
+}
+
+uint16_t PidFilter::getPidFromPackage(unsigned char* packageStart) {
+	uint16_t result = 0xFFFF;
+	// Check if the pointer points to a sync byte
+	if (packageStart[0] == 0x47) {
+		// Extract the least significant 13 bits
+		result = (packageStart[1] & 0x1F);
+		result <<= 8;
+		result += packageStart[2];
+	}
+	return result;
 }

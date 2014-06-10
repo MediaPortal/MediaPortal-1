@@ -73,11 +73,13 @@
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
+      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;$(WINDOWS_SDK)Include\;$(DXSDK_DIR)Include;..\LiveMedia555\BasicUsageEnvironment/include;..\LiveMedia555\UsageEnvironment/include;..\LiveMedia555\liveMedia;..\LiveMedia555\liveMedia/include;..\LiveMedia555\groupsock/include;../LiveMedia555/MediaPortal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>
-      </AdditionalDependencies>
+      <AdditionalDependencies>DvbCoreUtils.lib;strmbase.lib;livemedia555.lib;winmm.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)baseclasses\release; $(DXSDK_DIR)lib\x86;$(WINDOWS_SDK)\lib; ..\shared;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <ModuleDefinitionFile>source\RtpStreamer.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -112,11 +114,6 @@
   <ItemGroup>
     <ProjectReference Include="..\LiveMedia555\LiveMedia555.vcxproj">
       <Project>{3c398bd4-5714-4802-ab86-d43add15b3c0}</Project>
-      <Private>true</Private>
-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
-      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
-      <LinkLibraryDependencies>true</LinkLibraryDependencies>
-      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

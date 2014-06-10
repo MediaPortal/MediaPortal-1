@@ -23,6 +23,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Collections;
+using System.IO;
+using System.IO.Pipes;
 
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVService.Interfaces;
@@ -42,7 +44,11 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
     private int _streamId;
     private TuningDetail _tuningDetail;
     private IVirtualCard _card;
+    private int _cardId;
+    private int _slot;
     private IUser _user;
+    private NamedPipeClientStream _namedPipeClientStream;
+    private StreamWriter _namedPipeWriter;
 
     //?src=1&fe=1&freq=12402&pol=v&msys=dvbs&sr=27500&fec=34&pids=0,16
     private int _src;
@@ -53,6 +59,8 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
     private int _fec;
     private int _sessionId;
     private ArrayList _pids = new ArrayList();
+    private bool _isTunedToFrequency = false;
+    private int _tunedToFrequency;
 
     /// <summary>
     /// Get the client id.
@@ -122,6 +130,36 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
     }
 
     /// <summary>
+    /// Get/Set the card id.
+    /// </summary>
+    public int cardId
+    {
+      get
+      {
+        return _cardId;
+      }
+      set
+      {
+        _cardId = value;
+      }
+    }
+
+    /// <summary>
+    /// Get/Set the slot id.
+    /// </summary>
+    public int slot
+    {
+      get
+      {
+        return _slot;
+      }
+      set
+      {
+        _slot = value;
+      }
+    }
+
+    /// <summary>
     /// Get/Set the user.
     /// </summary>
     public IUser user
@@ -134,6 +172,36 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
         {
             _user = value;
         }
+    }
+
+    /// <summary>
+    /// Get/Set if we are tuned to a frequency.
+    /// </summary>
+    public int tunedToFrequency
+    {
+      get
+      {
+        return _tunedToFrequency;
+      }
+      set
+      {
+        _tunedToFrequency = value;
+      }
+    }
+
+    /// <summary>
+    /// Get/Set the frequency we are tuned to.
+    /// </summary>
+    public bool isTunedToFrequency
+    {
+      get
+      {
+        return _isTunedToFrequency;
+      }
+      set
+      {
+        _isTunedToFrequency = value;
+      }
     }
 
     /// <summary>
@@ -309,6 +377,36 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
       set
       {
         _ip = value;
+      }
+    }
+
+    /// <summary>
+    /// Get/set the _namedPipeClientStream.
+    /// </summary>
+    public NamedPipeClientStream namedPipeClientStream
+    {
+      get
+      {
+        return _namedPipeClientStream;
+      }
+      set
+      {
+        _namedPipeClientStream = value;
+      }
+    }
+
+    /// <summary>
+    /// Get/set the _namedPipeWriter.
+    /// </summary>
+    public StreamWriter namedPipeWriter
+    {
+      get
+      {
+        return _namedPipeWriter;
+      }
+      set
+      {
+        _namedPipeWriter = value;
       }
     }
     

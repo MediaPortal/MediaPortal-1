@@ -26,6 +26,9 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include "FramedSource.hh"
 #endif
 
+#include <vector>
+#include <cstdint>
+
 #include <shlobj.h>
 static char logbuffer2[2000];
 static wchar_t logbufferw2[2000];
@@ -35,25 +38,22 @@ void LogDebugRtp2(const char, ...);
 
 class ByteStreamMemoryBufferSource: public FramedSource {
 public:
-  static ByteStreamMemoryBufferSource* createNew(UsageEnvironment& env/*,
-						 u_int8_t* buffer*/, u_int64_t bufferSize,
+  static ByteStreamMemoryBufferSource* createNew(UsageEnvironment& env,
+						 char* stop,
 						 Boolean deleteBufferOnClose = True,
 						 unsigned preferredFrameSize = 0,
 						 unsigned playTimePerFrame = 0);
       // "preferredFrameSize" == 0 means 'no preference'
       // "playTimePerFrame" is in microseconds
 
-  u_int64_t bufferSize() const { return fBufferSize; }
+  u_int64_t bufferSize() const { return bufferVector.size(); }
 
-  void seekToByteAbsolute(u_int64_t byteNumber, u_int64_t numBytesToStream = 0);
-    // if "numBytesToStream" is >0, then we limit the stream to that number of bytes, before treating it as EOF
-  void seekToByteRelative(int64_t offset);
-
-  int ByteStreamMemoryBufferSource::Write(unsigned char *dataPtr, int numBytes);
-
+  int ByteStreamMemoryBufferSource::Write(unsigned char *dataPtr, size_t numBytes);
+  size_t getReadSizeAvailable() const;
+  size_t getWriteSizeAvailable() const;
 protected:
-  ByteStreamMemoryBufferSource(UsageEnvironment& env/*,
-			       u_int8_t* buffer*/, u_int64_t bufferSize,
+  ByteStreamMemoryBufferSource(UsageEnvironment& env,
+				   char* stop,
 			       Boolean deleteBufferOnClose,
 			       unsigned preferredFrameSize,
 			       unsigned playTimePerFrame);
@@ -65,10 +65,10 @@ private:
   // redefined virtual functions:
   virtual void doGetNextFrame();
 
-private:
-  u_int8_t* fBuffer;
-  u_int64_t fBufferSize;
-  u_int64_t fCurIndex;
+  void resizeVectorTo(size_t minSizeRequirement);
+  void writeByte(unsigned char byte);
+  void writeTsNullPackageToBuffer();
+
   Boolean fDeleteBufferOnClose;
   unsigned fPreferredFrameSize;
   unsigned fPlayTimePerFrame;
@@ -76,12 +76,14 @@ private:
   Boolean fLimitNumBytesToStream;
   u_int64_t fNumBytesToStream; // used iff "fLimitNumBytesToStream" is True
 
-  unsigned char* _data;
-  int _readPtr;
-  int _writePtr;
-  int _writeBytesAvail;
   //std::mutex mtx;
   CRITICAL_SECTION csBufferInAccess;
+  Boolean _stop;
+  char* stopAll;
+
+  std::vector<unsigned char> bufferVector;
+  size_t vectorReadPointer;
+  size_t vectorWritePointer;
 };
 
 #endif

@@ -60,7 +60,8 @@ const AMOVIESETUP_FILTER SatIP =
 	L"MediaPortal Sat>IP Filter",	// String name
 	MERIT_DO_NOT_USE,				// Filter merit
 	1,								// Number pins
-	SatIPPins						// Pin details
+	SatIPPins,						// Pin details
+	CLSID_LegacyAmFilterCategory    // category
 };
 
 static char logbuffer[2000]; 
@@ -147,7 +148,7 @@ STDMETHODIMP CSatIPFilter::Stop()
 	CAutoLock cObjectLock(m_pLock);
 
 	LogDebug("CSatIPFilter::Stop()");
-
+	m_pSatIP->Stop();
 	HRESULT result =  CBaseFilter::Stop();
 	LogDebug("CSatIPFilter::Stop() completed");
 	return result;
@@ -177,6 +178,8 @@ STDMETHODIMP CSatIPFilter::Pause()
 		// when restarting the graph with Run().
 		//m_pSatIP->m_pProgramTsWriter->Close();
 		//m_pSatIP->m_pElementaryTsWriter->Close();
+		LogDebug("CSatIPFilter::Pause() - stop stream");
+		m_pSatIP->Stop();
 	}
 	LogDebug("CSatIPFilter::Pause() finished");
 	return CBaseFilter::Pause();
@@ -192,7 +195,8 @@ STDMETHODIMP CSatIPFilter::Run(REFERENCE_TIME tStart)
 {
 	LogDebug("CSatIPFilter::Run()");
 	CAutoLock cObjectLock(m_pLock);
-
+	if (m_pSatIP->_stop)
+		m_pSatIP->initialize();
 	return CBaseFilter::Run(tStart);
 }
 
@@ -236,6 +240,11 @@ m_pTsInputPin(NULL)
 		return;
 	}
 
+	initialize();
+}
+
+void CSatIP::initialize()
+{
 	// ringbuffer
 	ringbuffer = new RingBuffer(TS_PACKET_LEN * 20000);
 
@@ -243,18 +252,18 @@ m_pTsInputPin(NULL)
 
 	pidfilter = new PidFilter();
 	// for testing only
-	pidfilter->Add(0);	// 0x0000
+	/*pidfilter->Add(0);	// 0x0000
 	pidfilter->Add(200); // 0x00c8
 	pidfilter->Add(201); // 0x00c9
 	pidfilter->Add(202); // 0x00ca
-	pidfilter->Add(203); // x00cb
+	pidfilter->Add(203); // x00cb*/
 
 	// starting timer to check for a config file
-	timer = SetTimer(NULL, NULL, 1000, (TIMERPROC)checkConfigFile);
+	//timer = SetTimer(NULL, NULL, 1000, (TIMERPROC)checkConfigFile);
 
 
 	// configure streaming
-	LoadMe = LoadLibrary("RtpStreamer.dll");
+	/*LoadMe = LoadLibrary("RtpStreamer.dll");
 	if (LoadMe != 0)
 		LogDebug("LoadMe library loaded!\n");
 	else
@@ -263,7 +272,8 @@ m_pTsInputPin(NULL)
 	if (!MPrtpStreamEntryPoint) LogDebug("shit!!");
 	MPrtpStream = (IMPrtpStream*)(MPrtpStreamEntryPoint());
 	streamRunning = false;
-	
+	_stop = false;
+
 	clientIp = "192.168.178.26";
 	test2 = "test.ts";
 	bytesWritten = 0;
@@ -274,11 +284,11 @@ m_pTsInputPin(NULL)
 	//streamingThread.detach(); // fire & forget, maybe not the best option so have a look here later: http://stackoverflow.com/questions/16296284/workaround-for-blocking-async
 	//streamingThread (MPrtpStream->MPrtpStreamCreate, ("192.168.178.26", 8888, "test.ts"));
 
-
+	*/
 
 	// create the named pipe
 	//unsigned int id = 0;
-	
+
 	//pipeHandle = createPipe();
 	//parameters.handler = pipeHandle;
 	//parameters.SatIP = this;
@@ -438,37 +448,40 @@ void CSatIP::processPackages()
 	if (ringbuffer->GetReadAvail() >= TS_PACKET_LEN && hasSync) {
 		// process each package
 		while (ringbuffer->GetReadAvail() >= TS_PACKET_LEN) {
-			unsigned char* out = new unsigned char[TS_PACKET_LEN];
+			unsigned char out[TS_PACKET_LEN];
 			ringbuffer->Read(out, TS_PACKET_LEN);
 
 			// check if we are still in sync
 			if (out[0] != TS_PACKET_SYNC) {
 				LogDebug("Lost Sync >_>");
 				hasSync = false;
-
-				delete out;
 				return; // exit while
 			}
 
 			// PID filter
-			unsigned short Pid;
-			Pid = ((out[1] & 0x1F) << 8) + out[2];
+			uint16_t Pid = (out[1] & 0x1F);
+			Pid = Pid << 8;
+			Pid += out[2];
 			//LogDebug("Pid 0x%04x", Pid);
+			
+			// write the packages to every stream handler
+			for (size_t i = 0; i < NUMBER_OF_STREAMING_SLOTS-1; ++i) {
+				_streamHandler[i].write(out, TS_PACKET_LEN);
+			}
 			// the Stream must be configured before we write packages to the buffer
-			if (pidfilter->PidRequested(Pid) && streamConfigured) {
-				//fwrite(out, 1, TS_PACKET_LEN, stream);
+			/*if (pidfilter->PidRequested(Pid) && streamConfigured && MPrtpStream != NULL) {
+				fwrite(out, 1, TS_PACKET_LEN, stream);
 				MPrtpStream->write(out, TS_PACKET_LEN);
 				if (!streamRunning)
 					bytesWritten += TS_PACKET_LEN;
-			}
-			delete out;
+			}*/
 		}
-		if (!streamRunning && hasSync && bytesWritten > (TS_PACKET_LEN * 900)) {
+		/*if (!streamRunning && !_stop && hasSync && bytesWritten > (TS_PACKET_LEN * 900)) {
 			streamRunning = true;
 			LogDebug("startStreaming");
-			streamingThread = thread(&IMPrtpStream::MPrtpStreamCreate, this->MPrtpStream, clientIp, 8888, test2);
+			streamingThread = thread(&IMPrtpStream::MPrtpStreamCreate, this->MPrtpStream, clientIp, clientPort, test2);
 			streamingThread.detach(); // fire & forget, maybe not the best option so have a look here later: http://stackoverflow.com/questions/16296284/workaround-for-blocking-async
-		}
+		}*/
 	}
 }
 
@@ -490,6 +503,26 @@ void CSatIP::FindSync()
 			}
 		}
 	}
+}
+
+void CSatIP::Stop()
+{
+	LogDebug("Stop RTP Streams");
+	streamRunning = false;
+	_stop = true;
+	/*if (MPrtpStream != NULL)
+		MPrtpStream->RtpStop();*/
+	// stop every stream handler
+	for (size_t i = 0; i < NUMBER_OF_STREAMING_SLOTS - 1; ++i) {
+		LogDebug("stop slot: %d", i);
+		_streamHandler[i].stop();
+	}
+	LogDebug("join streaming thread");
+	//TerminateThread(streamingThread.native_handle(), 0);
+	//CloseHandle(streamingThread.native_handle());
+	LogDebug("delete MPrtpStream");
+	//delete(MPrtpStream);
+	LogDebug("MPrtpStream deleted");
 }
 
 HANDLE CSatIP::createPipe(const char* pipeName) {
@@ -561,39 +594,115 @@ unsigned int __stdcall namedPipeReadThread(/*HANDLE&*//*LPVOID hPipe_tmp*/void* 
 			else
 			{
 				LogDebug("Named pipe: received a message");
+				LogDebug("Got %d Bytes.", read);
 				//uMessage = *((UINT*)&buffer[0]);
 				// The processing of the received data
-				LogDebug("Message: %s", buffer);
 				
-				char tokens[] = ":,";
-				char* subStr;
-				char* command = NULL;
-				subStr = strtok((char*)buffer, tokens);
-				while (subStr != NULL)
-				{
-					//LogDebug("Tokenized string using *  is:: %s", subStr);
-
-					if (command == NULL)
-						command = subStr;
-
-					if (subStr != command) {
-						if (strcmp(command, "AddPids") == 0) {
-							LogDebug("Neamed pipe: add pid %d", atoi(subStr));
-							parameters.SatIP->pidfilter->Add(atoi(subStr));
-						}
-						else if (strcmp(command, "DelPids") == 0) {
-							LogDebug("Neamed pipe: del pid %d", atoi(subStr));
-							parameters.SatIP->pidfilter->Del(atoi(subStr));
-						}
+				size_t position = 0;
+				while (position < read) {
+					uint32_t command = 0;
+					if (!parameters.SatIP->getNextValue(command, position, read, buffer)) {
+						LogDebug("Error: Could not extract Command from Pipe.");
 					}
-
-					subStr = strtok(NULL, tokens);
+					uint32_t slot = 0;
+					if (!parameters.SatIP->getNextValue(slot, position, read, buffer)) {
+						LogDebug("Error: Could not extract Slot from Pipe.");
+					}
+					LogDebug("Got Command = %d and Slot = %d.", command, slot);
+					
+					switch (command) {
+						case (SATIP_PROT_ADDPID) : {
+							uint32_t pid = 0;
+							if (!parameters.SatIP->getNextValue(pid, position, read, buffer)) {
+								LogDebug("Error: Could not extract PID for AddPid from Pipe.");
+							}
+							parameters.SatIP->_streamHandler[slot]._pidfilter.Add(pid);
+							LogDebug("Got ADDPID with PID = %d", pid);
+							break;
+						}
+						case (SATIP_PROT_DELPID) : {
+							uint32_t pid = 0;
+							if (!parameters.SatIP->getNextValue(pid, position, read, buffer)) {
+								LogDebug("Error: Could not extract PID for DelPid from Pipe.");
+							}
+							parameters.SatIP->_streamHandler[slot]._pidfilter.Del(pid);
+							LogDebug("Got DELPID with PID = %d", pid);
+							break;
+						}
+						case (SATIP_PROT_SYNCPID) : {
+							uint32_t pidCount = 0;
+							if (!parameters.SatIP->getNextValue(pidCount, position, read, buffer)) {
+								LogDebug("Error: Could not extract PID Count for SyncPid from Pipe.");
+							}
+							std::vector<uint16_t> pids;
+							pids.reserve(pidCount);
+							for (size_t i = 0; i < pidCount; ++i) {
+								uint32_t pid = 0;
+								if (!parameters.SatIP->getNextValue(pid, position, read, buffer)) {
+									LogDebug("Error: Could not extract PID for SyncPid from Pipe.");
+								}
+								pids.push_back(static_cast<uint16_t>(pid));
+								LogDebug("Got SYNCPID with PID = %d", pid);
+							}
+							parameters.SatIP->_streamHandler[slot]._pidfilter.SyncPids(pids);
+							break;
+						}
+						case (SATIP_PROT_CLIENTIP) : {
+							uint32_t ipVersion = 0;
+							if (!parameters.SatIP->getNextValue(ipVersion, position, read, buffer)) {
+								LogDebug("Error: Could not extract IP Version for ClientIP from Pipe.");
+							}
+							std::string ipString;
+							if (ipVersion == 4) {
+								LogDebug("Got an IPv4 Address.");
+								for (size_t i = 0; i < 4; ++i) {
+									uint32_t ipv4 = 0;
+									if (!parameters.SatIP->getNextValue(ipv4, position, read, buffer)) {
+										LogDebug("Error: Could not extract IPv4 Part %d for ClientIP from Pipe.", i+1);
+									}
+									if (i > 0) {
+										ipString.append(".");
+									}
+									ipString.append(std::to_string(ipv4));
+								}								
+							}
+							parameters.SatIP->_streamHandler[slot]._clientIp = ipString;
+							LogDebug("Got CLIENTIP with IP = %s", ipString.c_str());
+							break;
+						}
+						case (SATIP_PROT_CLIENTPORT) : {
+							uint32_t port = 0;
+							if (!parameters.SatIP->getNextValue(port, position, read, buffer)) {
+								LogDebug("Error: Could not extract Port for ClientPort from Pipe.");
+							}
+							parameters.SatIP->_streamHandler[slot]._clientPort = port;
+							LogDebug("Got CLIENTPORT with PID = %d", port);
+							break;
+						}
+						case (SATIP_PROT_NEWSLOT) : {
+							uint32_t newSlot = 0;
+							if (!parameters.SatIP->getNextValue(newSlot, position, read, buffer)) {
+								LogDebug("Error: Could not extract slot for NewSlot from Pipe.");
+							}
+							parameters.SatIP->_streamHandler[newSlot].configure();
+							LogDebug("Got NEWSLOT with Slot %d", newSlot);
+							break;
+						}
+						case (SATIP_PROT_STARTSTREAM) : {
+							parameters.SatIP->_streamHandler[slot].start();
+							LogDebug("Got STARTSTREAM");
+							break;
+						}
+						case (SATIP_PROT_STOPSTREAM) : {
+							parameters.SatIP->_streamHandler[slot].stop();
+							LogDebug("Got STOPSTREAM");
+							break;
+						}
+						default:
+							LogDebug("Got unknown command %d!", command);
+						}
 				}
-
-				//delete command, subStr;
-				//delete[] tokens;
-
-				//parameters.SatIP->pidfilter->Add();
+				
 				// Reply to client
 				strcpy(szBuffer, ACK_MESG_RECV);
 
@@ -635,3 +744,25 @@ void CALLBACK CSatIP::checkConfigFile(
 	LogDebug("Checking config...");
 }
 
+bool CSatIP::getNextValue(uint32_t& valueTarget, size_t& position, size_t byteCount, BYTE* buffer) {
+	if ((position + 4) <= byteCount) {
+		uint32_t result = 0;
+		result |= buffer[position];
+		result <<= 8;
+		++position;
+
+		result |= buffer[position];
+		result <<= 8;
+		++position;
+
+		result |= buffer[position];
+		result <<= 8;
+		++position;
+
+		result |= buffer[position];
+		valueTarget = result;
+		++position;
+		return true;
+	}
+	return false;
+}

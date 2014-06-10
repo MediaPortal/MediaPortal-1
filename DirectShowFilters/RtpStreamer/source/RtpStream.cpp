@@ -48,12 +48,29 @@ void LogDebugRtp(const char *fmt, ...)
 
 void afterPlaying(void* clientData) {
   //MPrtpStream* streamState = (MPrtpStream*)clientData;
+  LogDebugRtp("afterPlaying() called");
   MPrtpStream* streamState = (MPrtpStream*)clientData;
+  LogDebugRtp("afterPlaying() stop playing");
+  if (streamState->videoSink != NULL)
+	streamState->videoSink->stopPlaying();
+  LogDebugRtp("afterPlaying() close video source");
+  if (streamState->videoSource != NULL)
+	Medium::close(streamState->videoSource);
 
-  streamState->videoSink->stopPlaying();
-  Medium::close(streamState->videoSource);
+  if (streamState->stop == 's')
+	  return;
+
   // Note that this also closes the input file that this source read from.
-
+  LogDebugRtp("afterPlaying() reinitialise fileSource");
+  unsigned const inputDataChunkSize
+	  = TRANSPORT_PACKETS_PER_NETWORK_PACKET*TRANSPORT_PACKET_SIZE;
+  streamState->fileSource = ByteStreamMemoryBufferSource::createNew(*streamState->env, &streamState->stop, true, inputDataChunkSize);
+  LogDebugRtp("afterPlaying() wait for data");
+  /*while (streamState->fileSource->getReadSizeAvailable() < TRANSPORT_PACKET_SIZE * TRANSPORT_PACKETS_PER_NETWORK_PACKET) {
+	  LogDebugRtp("afterPlaying() - BytesAvailable %d", streamState->fileSource->getReadSizeAvailable());
+	  Sleep(100);
+  }*/
+  LogDebugRtp("afterPlaying() play!");
   streamState->play();
 }
 
@@ -65,10 +82,10 @@ MPrtpStream::MPrtpStream() {
 	unsigned const inputDataChunkSize
 		= TRANSPORT_PACKETS_PER_NETWORK_PACKET*TRANSPORT_PACKET_SIZE;
 
-	fileSource = ByteStreamMemoryBufferSource::createNew(*env, MEMORY_BUFFER_SIZE, true, inputDataChunkSize);
+	fileSource = ByteStreamMemoryBufferSource::createNew(*env, &stop, true, inputDataChunkSize);
 }
 
-void MPrtpStream::MPrtpStreamCreate(/*char* stopLoop, */char* destinationAddressStr, int _rtpPort, char* fileName)
+void MPrtpStream::MPrtpStreamCreate(/*char* stopLoop, */const char* destinationAddressStr, int _rtpPort, char* fileName)
 {
 	LogDebugRtp("begin RtpSetup");
 
@@ -77,6 +94,7 @@ void MPrtpStream::MPrtpStreamCreate(/*char* stopLoop, */char* destinationAddress
 	const unsigned short rtcpPortNum = rtpPortNum+1;
 	const unsigned char ttl = 7; // low, in case routers don't admin scope
 	inputFileName = fileName;
+	stop = 0;
 
 	LogDebugRtp("filename: %s",inputFileName);
 	LogDebugRtp("client IP: %s", destinationAddressStr);
@@ -117,9 +135,8 @@ void MPrtpStream::MPrtpStreamCreate(/*char* stopLoop, */char* destinationAddress
 	LogDebugRtp("Beginning streaming...");
 	play();
 
-	stop = 0;
 	env->taskScheduler().doEventLoop(&stop/*stopLoop*/); // does not return
-
+	LogDebugRtp("Play() leaving function => stop");
 	//return 0; // ok
 }
 
@@ -158,10 +175,13 @@ void MPrtpStream::play() {
 
 void MPrtpStream::RtpStop() {
   LogDebugRtp("...stop");
-
-  videoSink->stopPlaying();
-  Medium::close(videoSource);
   stop = 's';
+  /*if (videoSink != NULL)
+	videoSink->stopPlaying();
+  LogDebugRtp("RtpStop() stopPlaying() finished");
+  Medium::close(videoSource);
+  LogDebugRtp("RtpStop() close VideoSource finished");
+  */
   // Note that this also closes the input file that this source read from.
 }
 

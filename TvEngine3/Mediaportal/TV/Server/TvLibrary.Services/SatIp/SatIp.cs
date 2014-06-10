@@ -61,15 +61,17 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp
 
         public SatIpServer()
         {
+            this.LogInfo("SAT>IP: Start Server");
             _server = new UPnPLightServer(SERVER_ID.ToString("D")); // vorher B
             _server.Start();
 
             _rtsp = new RtspServer();
             
             // ToDo: move it to proper places - just temprary here
-            IUser user = UserFactory.CreateBasicUser("setuptv");
+            /*IUser user = UserFactory.CreateBasicUser("setuptv");
             TvResult result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(user.Name, _channel.IdChannel, out _card, out user);
             ServiceAgents.Instance.ControllerServiceAgent.CardDevice(_card.Id); // device path
+            Log.Info("SAT>IP: Server started");*/
         }
 
         public void stop()

@@ -20,8 +20,7 @@ void LogDebugRtp(const char , ...);
 void* CreateClassInstance();
 
 class __declspec(dllexport) MPrtpStream : public IMPrtpStream {
-	UsageEnvironment*		env;
-	ByteStreamMemoryBufferSource* fileSource;
+	
 	Boolean static const isSSM =	False;
 
 	char const* inputFileName;
@@ -29,10 +28,12 @@ class __declspec(dllexport) MPrtpStream : public IMPrtpStream {
   public:
     RTPSink*				videoSink;
 	FramedSource*			videoSource;
+	ByteStreamMemoryBufferSource* fileSource;
+	UsageEnvironment*		env;
 	char					stop;
 	  
 	MPrtpStream ();
-	void MPrtpStreamCreate (/*char*, */char*, int, char*);
+	void MPrtpStreamCreate (/*char*, */const char*, int, char*);
 	void RtpStop();
 	void play();
 	void write(unsigned char *dataPtr, int numBytes);

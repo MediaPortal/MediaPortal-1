@@ -63,6 +63,7 @@ using Mediaportal.TV.Server.TVService.Interfaces.Services;
 using MediaPortal.Common.Utils;
 using MediaPortal.Common.Utils.ExtensionMethods;
 using RecordingManagement = Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.RecordingManagement;
+using Mediaportal.TV.Server.TVLibrary.SatIp;
 
 #endregion
 
@@ -103,6 +104,11 @@ namespace Mediaportal.TV.Server.TVLibrary
     /// Recording scheduler
     /// </summary>
     private Scheduler.Scheduler _scheduler;
+
+    /// <summary>
+    /// Recording scheduler
+    /// </summary>
+    private SatIpServer _satIPServer;
 
     /// <summary>
     /// RTSP Streaming Server
@@ -503,11 +509,11 @@ namespace Mediaportal.TV.Server.TVLibrary
         _hostName = SettingsManagement.GetValue("hostname", _hostName);
         _streamer = new RtspStreaming(_hostName, _rtspStreamingPort);
 
-
         _epgGrabber = new EpgGrabber();
         _epgGrabber.Start();
         _scheduler = new Scheduler.Scheduler();
         _scheduler.Start();
+        _satIPServer = new SatIpServer();
 
         StartHeartbeatManager();
         StartTvServerEventDispatcher();
