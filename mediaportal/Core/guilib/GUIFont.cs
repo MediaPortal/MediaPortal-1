@@ -106,6 +106,18 @@ namespace MediaPortal.GUI.Library
     private int _StartCharacter = 32;
     private int _EndCharacter = 255;
     private Microsoft.DirectX.Direct3D.Font _d3dxFont;
+    private static ArrayList _outOfBoundsChar = new ArrayList {
+                                         (char) 8211, // 0x2013 // –
+                                         (char) 8212, // 0x2014 // —
+                                         (char) 8216, // 0x2018 // ’
+                                         (char) 8217, // 0x2019 // ‘
+                                         (char) 8220, // 0x201C // “
+                                         (char) 8221, // 0x201D // ”
+                                         (char) 8222, // 0x201E // „
+                                         (char) 8223, // 0x201F // ‟
+                                         (char) 8226, // 0x2022 // •
+                                         (char) 8230  // 0x2026 // …
+                                       };
 
     #endregion
 
@@ -235,26 +247,13 @@ namespace MediaPortal.GUI.Library
 
     public bool containsOutOfBoundsChar(string text)
     {
-      // Add some OutOfBoundsChar as valid to avoid overlap this will be displayed/used in replacement in fontEngine c++
-      ArrayList OutOfBoundsChar = new ArrayList
-                                       {
-                                         (char) 8211,
-                                         (char) 8212,
-                                         (char) 8216,
-                                         (char) 8217,
-                                         (char) 8220,
-                                         (char) 8221,
-                                         (char) 8222,
-                                         (char) 8223,
-                                         (char) 8226,
-                                         (char) 8230
-                                       };
       for (int i = 0; i < text.Length; ++i)
       {
         char c = text[i];
         if ((c < _StartCharacter || c >= _EndCharacter) && c != '\n')
         {
-          if (!OutOfBoundsChar.Contains(c))
+          // Check some OutOfBoundsChar as valid to avoid overlap this will be displayed/used from replacement in fontEngine c++
+          if (!_outOfBoundsChar.Contains(c))
           {
             return true;
           }
