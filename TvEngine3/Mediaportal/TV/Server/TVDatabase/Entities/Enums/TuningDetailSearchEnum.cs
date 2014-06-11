@@ -27,6 +27,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities.Enums
   {
     NetworkId = 1,
     ServiceId = 2,
-    TransportId = 4    
-  }      
+    TransportId = 4,
+    Name = 8
+  }
 }

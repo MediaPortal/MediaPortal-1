@@ -1066,14 +1066,25 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           bool exists;
           TuningDetail currentDetail;
           //Check if we already have this tuningdetail. The user has the option to enable channel move detection...
-          if (checkBoxEnableChannelMoveDetection.Checked)
+          if (
+            (channel.NetworkId < 3 || channel.NetworkId > ushort.MaxValue - 3) &&
+            (channel.TransportId < 3 || channel.TransportId > ushort.MaxValue - 3) &&
+            (channel.ServiceId < 3 || channel.ServiceId > ushort.MaxValue - 3)
+          )
+          {
+            //In some cases - feeds, provider private transmissions etc. - even ONID + TSID + SID will not be unique.
+            //If we think this might be a feed we override normal behaviour and include the service name in the search.
+            TuningDetailSearchEnum tuningDetailSearchEnum = TuningDetailSearchEnum.NetworkId | TuningDetailSearchEnum.TransportId | TuningDetailSearchEnum.ServiceId | TuningDetailSearchEnum.Name;
+            currentDetail = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailCustom(channel, tuningDetailSearchEnum);
+          }
+          else if (checkBoxEnableChannelMoveDetection.Checked)
           {
             //According to the DVB specs ONID + SID is unique, therefore we do not need to use the TSID to identify a service.
             //The DVB spec recommends that the SID should not change if a service moves. This theoretically allows us to
-            //track channel movements.
-            TuningDetailSearchEnum tuningDetailSearchEnum = TuningDetailSearchEnum.NetworkId;
-            tuningDetailSearchEnum |= TuningDetailSearchEnum.ServiceId;
-            currentDetail = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailCustom(channel, tuningDetailSearchEnum);                             
+            //track channel movements... even between satellites, though that seems unlikely and I feel we should consider
+            //disabling that.
+            TuningDetailSearchEnum tuningDetailSearchEnum = TuningDetailSearchEnum.NetworkId | TuningDetailSearchEnum.ServiceId;
+            currentDetail = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailCustom(channel, tuningDetailSearchEnum);
           }
           else
           {

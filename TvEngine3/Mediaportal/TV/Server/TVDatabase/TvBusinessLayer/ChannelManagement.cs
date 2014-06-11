@@ -290,19 +290,24 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       {
         var query = channelRepository.GetQuery<TuningDetail>(t => t.ChannelType == channelType);
 
-        if ((tuningDetailSearchEnum.HasFlag(TuningDetailSearchEnum.NetworkId)))
+        if (tuningDetailSearchEnum.HasFlag(TuningDetailSearchEnum.NetworkId))
         {
           query = query.Where(t => t.NetworkId == dvbChannel.NetworkId);
         }
 
-        if ((tuningDetailSearchEnum.HasFlag(TuningDetailSearchEnum.ServiceId)))
+        if (tuningDetailSearchEnum.HasFlag(TuningDetailSearchEnum.ServiceId))
         {
           query = query.Where(t => t.ServiceId == dvbChannel.ServiceId);
         }
 
-        if ((tuningDetailSearchEnum.HasFlag(TuningDetailSearchEnum.TransportId)))
+        if (tuningDetailSearchEnum.HasFlag(TuningDetailSearchEnum.TransportId))
         {
           query = query.Where(t => t.TransportId == dvbChannel.TransportId);
+        }
+
+        if (tuningDetailSearchEnum.HasFlag(TuningDetailSearchEnum.Name))
+        {
+          query = query.Where(t => t.Name == dvbChannel.Name);
         }
 
         query = channelRepository.IncludeAllRelations(query);

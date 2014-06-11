@@ -258,18 +258,23 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           {
             Channel dbChannel;
             ATSCChannel channel = (ATSCChannel)channels[i];
-            //No support for channel moving, or merging with existing channels here.
-            //We do not know how ATSC works to correctly implement this.
-            TuningDetail currentDetail = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetail(channel);
-            if (currentDetail != null)
+            //ATSC over-the-air channels don't generally move, but cable channels can occasionally.
+            //ATSC SI has the MPEG 2 TSID and program number (SID), as well as its own source ID
+            //which we currently store in the NetworkId field (TODO!). For CableCARD PSIP, source
+            //ID is unique (by definition it has to be), but for clear QAM cable and ATSC over-the-air
+            //it seems source ID isn't even always unique within a transport stream.
+            TuningDetail currentDetail = null;
+            if ((string)mpComboBoxTuningMode.SelectedItem == "Digital Cable")
             {
-              // TODO ideally this should use IsDifferentTransponder, but we can't convert a
-              // tuning detail to a channel here.
-              //if (channel.IsDifferentTransponder(layer.GetTuningChannel(currentDetail)))
-              if (currentDetail.ChannelNumber != channel.PhysicalChannel)
-              {
-                currentDetail = null;
-              }
+              //CableCARD, support channel movement detection by source ID.
+              currentDetail = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailCustom(channel, TuningDetailSearchEnum.NetworkId);
+            }
+            else
+            {
+              //No support for channel moving, or merging with existing channels here. Even include
+              //the channel name as broadcasters don't always ensure TSID + SID is unique.
+              TuningDetailSearchEnum tuningDetailSearchEnum = TuningDetailSearchEnum.NetworkId | TuningDetailSearchEnum.TransportId | TuningDetailSearchEnum.ServiceId | TuningDetailSearchEnum.Name;
+              currentDetail = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailCustom(channel, tuningDetailSearchEnum);
             }
             bool exists;
             if (currentDetail == null)
