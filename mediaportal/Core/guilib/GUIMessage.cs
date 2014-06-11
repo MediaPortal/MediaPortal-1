@@ -131,6 +131,7 @@ namespace MediaPortal.GUI.Library
       GUI_MSG_NOTIFY_REC = 100,
       GUI_MSG_SKIN_CHANGED = 101,
       GUI_MSG_VIDEOINFO_REFRESH = 102,
+      GUI_MSG_MANUAL_RECORDING_STARTED = 103,
       PS_ONSTANDBY = 9999
     } ;
 
