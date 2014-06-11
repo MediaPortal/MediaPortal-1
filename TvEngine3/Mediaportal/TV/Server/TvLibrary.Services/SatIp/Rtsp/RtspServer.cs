@@ -55,17 +55,6 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
 {
   public class RtspServer
   {
-
-    // Constants for the Protocol over the Named Pipe
-    public static readonly UInt32 SATIP_PROT_ADDPID = 0;
-    public static readonly UInt32 SATIP_PROT_DELPID = 1;
-    public static readonly UInt32 SATIP_PROT_SYNCPID = 2;
-    public static readonly UInt32 SATIP_PROT_CLIENTIP = 3;
-    public static readonly UInt32 SATIP_PROT_CLIENTPORT = 4;
-    public static readonly UInt32 SATIP_PROT_STARTSTREAM = 5;
-    public static readonly UInt32 SATIP_PROT_STOPSTREAM = 6;
-    public static readonly UInt32 SATIP_PROT_NEWSLOT = 7;
-
     private TcpListener tcpListener;
     private Thread listenThread;
     private string serverIp;
@@ -451,120 +440,12 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
             clients[int.Parse(requestHeader.sessionId)].isTunedToFrequency = true;
             clients[int.Parse(requestHeader.sessionId)].tunedToFrequency = clients[int.Parse(requestHeader.sessionId)].freq;
 
-            clients[int.Parse(requestHeader.sessionId)].namedPipeClientStream = new NamedPipeClientStream("MyNamedPipe"); // TODO: chaneg pipe name
-            clients[int.Parse(requestHeader.sessionId)].namedPipeClientStream.Connect();
-            this.LogInfo("Connected to named pipe");
-            if (clients[int.Parse(requestHeader.sessionId)].namedPipeClientStream != null && clients[int.Parse(requestHeader.sessionId)].namedPipeClientStream.IsConnected)
-            {
-              BinaryWriter writer2 = new BinaryWriter(clients[int.Parse(requestHeader.sessionId)].namedPipeClientStream);
-
-              // Client Port
-              Byte[] clientPortBytes = new Byte[4 * 3]; // MSB
-              UInt32 command = SATIP_PROT_CLIENTPORT;
-              clientPortBytes[0] = (byte)(command >> 24); // Command
-              clientPortBytes[1] = (byte)(command >> 16);
-              clientPortBytes[2] = (byte)(command >> 8);
-              clientPortBytes[3] = (byte)(command);
-
-              UInt32 slot = (UInt32)clients[int.Parse(requestHeader.sessionId)].slot;
-              clientPortBytes[4] = (byte)(slot >> 24); // Slot
-              clientPortBytes[5] = (byte)(slot >> 16);
-              clientPortBytes[6] = (byte)(slot >> 8);
-              clientPortBytes[7] = (byte)(slot);
-
-              UInt32 port = (UInt32)clients[int.Parse(requestHeader.sessionId)].rtpClientPort;
-              clientPortBytes[8] = (byte)(port >> 24); // Port
-              clientPortBytes[9] = (byte)(port >> 16);
-              clientPortBytes[10] = (byte)(port >> 8);
-              clientPortBytes[11] = (byte)(port);
-
-              // Client IP
-              Byte[] clientIpBytes = new Byte[4 * 7]; // MSB
-              command = SATIP_PROT_CLIENTIP;
-              clientIpBytes[0] = (byte)(command >> 24); // Command
-              clientIpBytes[1] = (byte)(command >> 16);
-              clientIpBytes[2] = (byte)(command >> 8);
-              clientIpBytes[3] = (byte)(command);
-
-              slot = (UInt32)clients[int.Parse(requestHeader.sessionId)].slot;
-              clientIpBytes[4] = (byte)(slot >> 24); // Slot
-              clientIpBytes[5] = (byte)(slot >> 16);
-              clientIpBytes[6] = (byte)(slot >> 8);
-              clientIpBytes[7] = (byte)(slot);
-
-              UInt32 ipVersion = (UInt32)4;
-              clientIpBytes[8] = (byte)(ipVersion >> 24); // IP Version
-              clientIpBytes[9] = (byte)(ipVersion >> 16);
-              clientIpBytes[10] = (byte)(ipVersion >> 8);
-              clientIpBytes[11] = (byte)(ipVersion);
-
-              UInt32 ipPack1 = (UInt32)192;
-              clientIpBytes[12] = (byte)(ipPack1 >> 24); // IPv4 Part 1
-              clientIpBytes[13] = (byte)(ipPack1 >> 16);
-              clientIpBytes[14] = (byte)(ipPack1 >> 8);
-              clientIpBytes[15] = (byte)(ipPack1);
-
-              UInt32 ipPack2 = (UInt32)168;
-              clientIpBytes[16] = (byte)(ipPack2 >> 24); // IPv4 Part 2
-              clientIpBytes[17] = (byte)(ipPack2 >> 16);
-              clientIpBytes[18] = (byte)(ipPack2 >> 8);
-              clientIpBytes[19] = (byte)(ipPack2);
-
-              UInt32 ipPack3 = (UInt32)178;
-              clientIpBytes[20] = (byte)(ipPack3 >> 24); // IPv4 Part 3
-              clientIpBytes[21] = (byte)(ipPack3 >> 16);
-              clientIpBytes[22] = (byte)(ipPack3 >> 8);
-              clientIpBytes[23] = (byte)(ipPack3);
-
-              UInt32 ipPack4 = (UInt32)26;
-              clientIpBytes[24] = (byte)(ipPack4 >> 24); // IPv4 Part 4
-              clientIpBytes[25] = (byte)(ipPack4 >> 16);
-              clientIpBytes[26] = (byte)(ipPack4 >> 8);
-              clientIpBytes[27] = (byte)(ipPack4);
-
-              // New Slot
-              Byte[] clientSlotBytes = new Byte[4 * 3]; // MSB
-              command = SATIP_PROT_NEWSLOT;
-              clientSlotBytes[0] = (byte)(command >> 24); // Command
-              clientSlotBytes[1] = (byte)(command >> 16);
-              clientSlotBytes[2] = (byte)(command >> 8);
-              clientSlotBytes[3] = (byte)(command);
-
-              slot = (UInt32)0;
-              clientSlotBytes[4] = (byte)(slot >> 24); // Slot
-              clientSlotBytes[5] = (byte)(slot >> 16);
-              clientSlotBytes[6] = (byte)(slot >> 8);
-              clientSlotBytes[7] = (byte)(slot);
-
-              UInt32 newSlot = (UInt32)clients[int.Parse(requestHeader.sessionId)].slot;
-              clientSlotBytes[8] = (byte)(newSlot >> 24); // New Slot
-              clientSlotBytes[9] = (byte)(newSlot >> 16);
-              clientSlotBytes[10] = (byte)(newSlot >> 8);
-              clientSlotBytes[11] = (byte)(newSlot);
-
-              Byte[] tmpArray = new Byte[clientPortBytes.Length + clientIpBytes.Length + clientSlotBytes.Length];
-              int index = 0;
-              for (int i = 0; i < clientPortBytes.Length; ++i) {
-                tmpArray[index] = clientPortBytes[i];
-                ++index;
-              }
-              for (int i = 0; i < clientIpBytes.Length; ++i)
-              {
-                tmpArray[index] = clientIpBytes[i];
-                ++index;
-              }
-              for (int i = 0; i < clientSlotBytes.Length; ++i)
-              {
-                tmpArray[index] = clientSlotBytes[i];
-                ++index;
-              }
-
-              writer2.Write(tmpArray);
-
-              writer2.Flush();
-              clients[int.Parse(requestHeader.sessionId)].namedPipeClientStream.Close();
-              syncPidsWithFilter(int.Parse(requestHeader.sessionId), "MyNamedPipe");
-            }
+            // send commands to the filter
+            FilterCommunication communication = new FilterCommunication("MyNamedPipe", clients[int.Parse(requestHeader.sessionId)].slot);
+            communication.addClientPort(clients[int.Parse(requestHeader.sessionId)].rtpClientPort);
+            communication.addClientIp(clients[int.Parse(requestHeader.sessionId)].ip);
+            communication.requestNewSlot();
+            communication.send();
           }
 
 
@@ -857,54 +738,9 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
 
     private void syncPidsWithFilter(int sessionId, string namedPipeName)
     {
-      /*string syncPids = null;
-      foreach (int pid in clients[sessionId].pids)
-      {
-        if (syncPids == null)
-          syncPids = pid.ToString();
-        else
-          syncPids += "#" + pid;
-      }*/
-
-      clients[sessionId].namedPipeClientStream = new NamedPipeClientStream(namedPipeName);
-      clients[sessionId].namedPipeClientStream.Connect();
-      BinaryWriter writer = new BinaryWriter(clients[sessionId].namedPipeClientStream);
-      
-      // Sync PIDs
-      Byte[] clientSyncBytes = new Byte[4 * 3 + 4 * clients[sessionId].pids.Count]; // MSB
-      UInt32 command = SATIP_PROT_SYNCPID;
-      clientSyncBytes[0] = (byte)(command >> 24); // Command
-      clientSyncBytes[1] = (byte)(command >> 16);
-      clientSyncBytes[2] = (byte)(command >> 8);
-      clientSyncBytes[3] = (byte)(command);
-
-      UInt32 slot = (UInt32)clients[sessionId].slot;
-      clientSyncBytes[4] = (byte)(slot >> 24); // Slot
-      clientSyncBytes[5] = (byte)(slot >> 16);
-      clientSyncBytes[6] = (byte)(slot >> 8);
-      clientSyncBytes[7] = (byte)(slot);
-
-      UInt32 pidCount = (UInt32)clients[sessionId].pids.Count;
-      clientSyncBytes[8] = (byte)(pidCount >> 24); // Port
-      clientSyncBytes[9] = (byte)(pidCount >> 16);
-      clientSyncBytes[10] = (byte)(pidCount >> 8);
-      clientSyncBytes[11] = (byte)(pidCount);
-
-      int nextIndex = 11;
-      foreach (int pid2 in clients[sessionId].pids)
-      {
-        UInt32 pid = (UInt32)pid2;
-        clientSyncBytes[++nextIndex] = (byte)(pid >> 24); // pid
-        clientSyncBytes[++nextIndex] = (byte)(pid >> 16);
-        clientSyncBytes[++nextIndex] = (byte)(pid >> 8);
-        clientSyncBytes[++nextIndex] = (byte)(pid);
-      }
-
-      writer.Write(clientSyncBytes);
-
-      writer.Flush();
-      clients[sessionId].namedPipeClientStream.Close();
-      this.LogDebug("SAT>IP SyncPids command on slot {0} send with pids {1}", clients[sessionId].slot, clients[sessionId].pids.ToString());
+      FilterCommunication communication = new FilterCommunication(namedPipeName, clients[sessionId].slot);
+      communication.addSyncPids(clients[sessionId].pids);
+      communication.send();
     }
 
     #endregion

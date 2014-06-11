@@ -62,6 +62,8 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
     private bool _isTunedToFrequency = false;
     private int _tunedToFrequency;
 
+    #region Properties
+
     /// <summary>
     /// Get the client id.
     /// </summary>
@@ -409,7 +411,9 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
         _namedPipeWriter = value;
       }
     }
-    
+
+    #endregion Properties
+
     public RtspClients()
     {
       lock (this)
