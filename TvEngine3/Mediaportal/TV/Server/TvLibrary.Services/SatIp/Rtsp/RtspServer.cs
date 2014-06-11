@@ -396,8 +396,11 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
                 {
                   this.LogDebug("SAT>IP: no users on card => stop timeshifting on card with id {0} - sessionId {1}", clients[int.Parse(requestHeader.sessionId)].cardId, requestHeader.sessionId);
                   cards[clients[int.Parse(requestHeader.sessionId)].cardId].card.StopTimeShifting();
+                  // delete card from card array
+                  cards.Remove(clients[int.Parse(requestHeader.sessionId)].cardId);
                 }
               }
+
               
               TuningDetail _tuningDetail = ChannelManagement.GetTuningDetail(getChannelTypeAsInt(clients[int.Parse(requestHeader.sessionId)].msys), (clients[int.Parse(requestHeader.sessionId)].freq * 1000));
 

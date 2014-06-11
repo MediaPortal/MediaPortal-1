@@ -185,6 +185,17 @@ void MPrtpStream::RtpStop() {
   // Note that this also closes the input file that this source read from.
 }
 
+void MPrtpStream::RtpStart() {
+	LogDebugRtp("...start");
+	stop = 0;
+	// Begin by setting up our usage environment:
+	TaskScheduler* scheduler = BasicTaskScheduler::createNew();
+	env = BasicUsageEnvironment::createNew(*scheduler);
+	unsigned const inputDataChunkSize
+		= TRANSPORT_PACKETS_PER_NETWORK_PACKET*TRANSPORT_PACKET_SIZE;
+	fileSource = ByteStreamMemoryBufferSource::createNew(*env, &stop, true, inputDataChunkSize);
+}
+
 void* CreateClassInstance()
 {
 	return static_cast< void* > (new MPrtpStream);

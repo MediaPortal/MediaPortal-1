@@ -59,7 +59,7 @@ void CStreamHandler::write(unsigned char *dataPtr, int numBytes)
 	}
 
 	//LogDebug("Stream Running: %d, Stop: %d, _startStreaming: %d, _bytesWritten: %d", (_streamRunning ? 1 : 0), (_stop ? 1 : 0), (_startStreaming ? 1 : 0), _bytesWritten);
-	if (!_streamRunning && !_stop && _startStreaming && _bytesWritten > (TS_PACKET_LEN * 900)) {
+	if (!_streamRunning && !_stop && _startStreaming && _streamConfigured && _bytesWritten > (TS_PACKET_LEN * 900)) {
 		_streamRunning = true;
 		LogDebug("startStreaming");
 		_test2 = "test";
@@ -70,14 +70,27 @@ void CStreamHandler::write(unsigned char *dataPtr, int numBytes)
 
 void CStreamHandler::start()
 {
+	LogDebug("streamHandler: start()");
+	if (_MPrtpStream.get() != nullptr)
+		_MPrtpStream->RtpStart();
 	_stop = false;
+	_bytesWritten = 0;
 	_startStreaming = true;
 }
 
 void CStreamHandler::stop()
 {
+	LogDebug("streamHandler: begin stop()");
 	_stop = true;
-	_startStreaming = false;
-	if (_MPrtpStream.get() != nullptr)
+	if (_MPrtpStream.get() != nullptr) {
 		_MPrtpStream->RtpStop();
+		if (_streamRunning) {
+			//TerminateThread(_streamingThread.native_handle(), 0);
+			//CloseHandle(_streamingThread.native_handle());
+			//_streamingThread.join();
+		}
+	}
+	_streamRunning = false;
+	_startStreaming = false;
+	LogDebug("streamHandler: finished stop()");
 }

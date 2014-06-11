@@ -35,6 +35,7 @@ class __declspec(dllexport) MPrtpStream : public IMPrtpStream {
 	MPrtpStream ();
 	void MPrtpStreamCreate (/*char*, */const char*, int, char*);
 	void RtpStop();
+	void RtpStart();
 	void play();
 	void write(unsigned char *dataPtr, int numBytes);
 };

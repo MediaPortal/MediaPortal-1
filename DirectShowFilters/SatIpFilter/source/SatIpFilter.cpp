@@ -196,7 +196,13 @@ STDMETHODIMP CSatIPFilter::Run(REFERENCE_TIME tStart)
 	LogDebug("CSatIPFilter::Run()");
 	CAutoLock cObjectLock(m_pLock);
 	if (m_pSatIP->_stop)
-		m_pSatIP->initialize();
+		m_pSatIP->_stop = false;
+		//m_pSatIP->initialize();
+	// start every stream handler
+	for (size_t i = 0; i < NUMBER_OF_STREAMING_SLOTS - 1; ++i) {
+		LogDebug("start slot: %d", i);
+		m_pSatIP->_streamHandler[i].start();
+	}
 	return CBaseFilter::Run(tStart);
 }
 

@@ -51,6 +51,7 @@ public:
   int ByteStreamMemoryBufferSource::Write(unsigned char *dataPtr, size_t numBytes);
   size_t getReadSizeAvailable() const;
   size_t getWriteSizeAvailable() const;
+  void reset();
 protected:
   ByteStreamMemoryBufferSource(UsageEnvironment& env,
 				   char* stop,

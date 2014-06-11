@@ -328,3 +328,12 @@ void ByteStreamMemoryBufferSource::writeTsNullPackageToBuffer() {
 		writeByte(0x00);
 	}
 }
+
+void ByteStreamMemoryBufferSource::reset() {
+	LogDebugRtp2("ByteStreamMemoryBufferSource: reset()");
+	//Sleep(2000);
+	EnterCriticalSection(&csBufferInAccess);
+	_stop = false;
+	LeaveCriticalSection(&csBufferInAccess);
+	LogDebugRtp2("ByteStreamMemoryBufferSource: reset() finish");
+}
