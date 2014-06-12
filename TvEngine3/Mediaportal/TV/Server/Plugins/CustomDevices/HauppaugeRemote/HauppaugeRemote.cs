@@ -400,6 +400,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeRemote
             return;
           }
 
+          // We must add the IR32 directory to our path, otherwise any calls to
+          // functions imported from irremote.dll will fail. This also must be
+          // done in the thread from which the functions are invoked.
           if (!NativeMethods.SetDllDirectory(_ir32Path))
           {
             this.LogError("Hauppauge remote: failed to add Hauppauge IR32 directory {0} to path", _ir32Path);
@@ -583,8 +586,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeRemote
       {
         // IR32 is running. We have to stop it to receive remote key presses.
         // We'll restart it when we're done.
-        _restartIrExe = true;
-
         int i = 0;
         int processCount = Process.GetProcessesByName(IR32_PROCESS_NAME).Length;
         this.LogDebug("Hauppauge remote: stop {0} IR32 process(es)", processCount);
@@ -611,6 +612,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeRemote
             return false;
           }
         }
+
+        _restartIrExe = true;
       }
 
       _isRemoteControlInterfaceOpen = false;
@@ -641,9 +644,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeRemote
 
       if (_isRemoteControlInterfaceOpen)
       {
-        NativeMethods.PostThreadMessage(_remoteControlListenerThreadId, WM_QUIT, IntPtr.Zero, IntPtr.Zero);
-        _remoteControlListenerThread.Join();
-        _remoteControlListenerThread = null;
+        if (_remoteControlListenerThread != null && _remoteControlListenerThreadId > 0)
+        {
+          NativeMethods.PostThreadMessage(_remoteControlListenerThreadId, WM_QUIT, IntPtr.Zero, IntPtr.Zero);
+          _remoteControlListenerThread.Join();
+          _remoteControlListenerThreadId = 0;
+          _remoteControlListenerThread = null;
+        }
 
         if (_restartIrExe)
         {
