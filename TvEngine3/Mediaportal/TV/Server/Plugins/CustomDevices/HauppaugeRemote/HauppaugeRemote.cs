@@ -180,7 +180,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeRemote
     ///   credit card 35 (DSR-0112) = http://www.hauppauge.com/site/press/presspictures/remote_creditcard.jpg
     ///   credit card 36 = http://www.hauppauge.com/site/press/presspictures/remote_creditcard-black_front.png
     ///   black 46 (DSR-0101) = http://i.ebayimg.com/t/HAUPPAUGE-DSR-0101-REMOTE-CONTROL-A415-HPG-WE-A-/00/s/MTMwOVgxNjAw/z/uHwAAOxymwBSP5YU/$T2eC16FHJIIFHJG5sli0BSP5YT1POQ~~60_57.JPG
-    /// Testing: standard (HVR-4400), DSR-0101 (Nova S Plus)
+    /// Testing: standard (Nova S Plus), DSR-0101 (HVR-4400)
     /// Comments are labels above the buttons.
     /// "New" is as compared with HcwRemoteCodePvr1.
     /// </remarks>
@@ -462,7 +462,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeRemote
       {
         HcwRemoteType remoteType = 0;
         int code = 0;
-        if (IR_GetSystemKeyCode(out _repeatCount, out remoteType, out code))
+        if (IR_GetSystemKeyCode(ref _repeatCount, out remoteType, out code))
         {
           string codeName;
           if (remoteType == HcwRemoteType.Pvr2_35Button || remoteType == HcwRemoteType.Pvr2_45Button || remoteType == HcwRemoteType.Pvr2_Unknown)
@@ -588,10 +588,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeRemote
         int i = 0;
         int processCount = Process.GetProcessesByName(IR32_PROCESS_NAME).Length;
         this.LogDebug("Hauppauge remote: stop {0} IR32 process(es)", processCount);
+        string irExePath = Path.Combine(_ir32Path, IR32_EXE_NAME);
         while ((Process.GetProcessesByName(IR32_PROCESS_NAME).Length != 0) && (i < processCount))
         {
           i++;
-          Process.Start(_ir32Path + IR32_EXE_NAME, "/QUIT");   // upper case important
+          Process.Start(irExePath, "/QUIT");    // upper case important
           Thread.Sleep(400);
         }
         processCount = Process.GetProcessesByName(IR32_PROCESS_NAME).Length;
@@ -652,7 +653,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeRemote
             int processCount = Process.GetProcessesByName(IR32_PROCESS_NAME).Length;
             if (processCount == 0)
             {
-              Process.Start(_ir32Path + IR32_EXE_NAME, "/QUIET");
+              Process.Start(Path.Combine(_ir32Path, IR32_EXE_NAME), "/QUIET");
             }
             else
             {
