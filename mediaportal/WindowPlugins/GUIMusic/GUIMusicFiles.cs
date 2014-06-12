@@ -157,6 +157,8 @@ namespace MediaPortal.GUI.Music
     private static int _wolTimeout;
     private static int _wolResendTime;
 
+    public static MusicDatabase musicDB = null;
+
     #endregion
 
     public GUIMusicFiles()
@@ -373,6 +375,8 @@ namespace MediaPortal.GUI.Music
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
+
+      musicDB = MusicDatabase.Instance;
 
       if (!KeepVirtualDirectory(PreviousWindowId))
       {
@@ -1584,6 +1588,7 @@ namespace MediaPortal.GUI.Music
     private void GetTagInfo(ref List<GUIListItem> items)
     {
       MusicTag tag;
+      Song song = new Song();
       bool CDLookupAlreadyFailed = false;
       string strExtension;
 
@@ -1609,18 +1614,50 @@ namespace MediaPortal.GUI.Music
         }
         else
         {
-          // not a CD track so attempt to pick up tag info
-          tag = TagReader.TagReader.ReadTag(pItem.Path);
-          if (tag != null)
+          // Check if song is already added to db
+          if (m_database.GetSongByFileName(pItem.Path, ref song))
           {
-            tag.Artist = Util.Utils.FormatMultiItemMusicStringTrim(tag.Artist, _stripArtistPrefixes);
-            tag.AlbumArtist = Util.Utils.FormatMultiItemMusicStringTrim(tag.AlbumArtist, _stripArtistPrefixes);
-            tag.Genre = Util.Utils.FormatMultiItemMusicStringTrim(tag.Genre, false);
-            tag.Composer = Util.Utils.FormatMultiItemMusicStringTrim(tag.Composer, _stripArtistPrefixes);
+            tag = song.ToMusicTag();
             pItem.MusicTag = tag;
-            pItem.Duration = tag.Duration;
-            pItem.Year = tag.Year;
-            pItem.Rating = tag.Rating;
+            if (tag != null)
+            {
+              tag.Artist = Util.Utils.FormatMultiItemMusicStringTrim(tag.Artist, _stripArtistPrefixes);
+              tag.AlbumArtist = Util.Utils.FormatMultiItemMusicStringTrim(tag.AlbumArtist, _stripArtistPrefixes);
+              tag.Genre = Util.Utils.FormatMultiItemMusicStringTrim(tag.Genre, false);
+              tag.Composer = Util.Utils.FormatMultiItemMusicStringTrim(tag.Composer, _stripArtistPrefixes);
+              pItem.MusicTag = tag;
+              pItem.Duration = tag.Duration;
+              pItem.Year = tag.Year;
+              pItem.Rating = tag.Rating;
+            }
+          }
+          else
+          {
+            // Add song to db and read tag
+            if (musicDB != null)
+            {
+              if (!musicDB.SongExists(pItem.Path))
+              {
+                musicDB.AddSong(pItem.Path);
+              }
+              if (m_database.GetSongByFileName(pItem.Path, ref song))
+              {
+                //not a CD track so attempt to pick up tag info
+                tag = song.ToMusicTag();
+                pItem.MusicTag = tag;
+                if (tag != null)
+                {
+                  tag.Artist = Util.Utils.FormatMultiItemMusicStringTrim(tag.Artist, _stripArtistPrefixes);
+                  tag.AlbumArtist = Util.Utils.FormatMultiItemMusicStringTrim(tag.AlbumArtist, _stripArtistPrefixes);
+                  tag.Genre = Util.Utils.FormatMultiItemMusicStringTrim(tag.Genre, false);
+                  tag.Composer = Util.Utils.FormatMultiItemMusicStringTrim(tag.Composer, _stripArtistPrefixes);
+                  pItem.MusicTag = tag;
+                  pItem.Duration = tag.Duration;
+                  pItem.Year = tag.Year;
+                  pItem.Rating = tag.Rating;
+                }
+              }
+            }
           }
         }
       }
