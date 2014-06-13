@@ -580,10 +580,23 @@ namespace MediaPortal.Player.Subtitles
 
     public static Bitmap RenderText(LineContent[] lc)
     {
-      int w = 720;
-      int h = 576;
+      float w = 720;
+      float h = 576;
+      // With DPIAware setting baseSize need to be kept
+      // adjust for different DPI settings (96dpi = 100%)
+      Graphics graphics = GUIGraphicsContext.form.CreateGraphics();
+      if (Environment.OSVersion.Version.Major >= 6 && graphics.DpiY == 96.0)
+      {
+        w = 720;
+        h = 576;
+      }
+      else
+      {
+        w *= graphics.DpiX / 96;
+        h *= graphics.DpiY / 96;
+      }
 
-      Bitmap bmp = new Bitmap(w, h);
+      Bitmap bmp = new Bitmap((int)w, (int)h);
 
       using (Graphics gBmp = Graphics.FromImage(bmp))
       {
@@ -597,7 +610,7 @@ namespace MediaPortal.Player.Subtitles
               using (Font fnt = new Font("Courier", (lc[i].doubleHeight ? 22 : 15), FontStyle.Bold))
                 // fixed width font!
               {
-                int vertOffset = (h / lc.Length) * i;
+                int vertOffset = ((int)h / lc.Length) * i;
 
                 SizeF size = gBmp.MeasureString(lc[i].line, fnt);
                 //gBmp.FillRectangle(new SolidBrush(Color.Pink), new Rectangle(0, 0, w, h));
