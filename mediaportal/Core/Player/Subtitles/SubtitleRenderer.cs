@@ -584,16 +584,13 @@ namespace MediaPortal.Player.Subtitles
       float h = 576;
       // With DPIAware setting baseSize need to be kept
       // adjust for different DPI settings (96dpi = 100%)
-      Graphics graphics = GUIGraphicsContext.form.CreateGraphics();
-      if (Environment.OSVersion.Version.Major >= 6 && graphics.DpiY == 96.0)
+      using (Graphics graphics = GUIGraphicsContext.form.CreateGraphics())
       {
-        w = 720;
-        h = 576;
-      }
-      else
-      {
-        w *= graphics.DpiX / 96;
-        h *= graphics.DpiY / 96;
+        if (Environment.OSVersion.Version.Major >= 6 && graphics.DpiY != 96.0)
+        {
+          w *= graphics.DpiX/96;
+          h *= graphics.DpiY/96;
+        }
       }
 
       Bitmap bmp = new Bitmap((int)w, (int)h);
