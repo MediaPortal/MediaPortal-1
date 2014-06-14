@@ -792,12 +792,23 @@ namespace MediaPortal.Player.Subtitles
           VMR9Util.g_vmr9.GetVideoWindows(out src, out dst);
 
           rationH = dst.Height / (float)_currentSubtitle.screenHeight;
-          rationW = dst.Width / (float)_currentSubtitle.screenWidth;
-          wx = dst.X + (int)(rationW * (float)_currentSubtitle.horizontalPosition);
-          wy = dst.Y + (int)(rationH * (float)_currentSubtitle.firstScanLine);          
-          wwidth = (int)((float)_currentSubtitle.width * rationW);
-          wheight = (int)((float)_currentSubtitle.height * rationH);
-          
+
+          // Get the location to render the subtitle to for blu-ray
+          if (_currentSubtitle.horizontalPosition != 0)
+          {
+            rationW = dst.Width / (float)_currentSubtitle.screenWidth;
+            wx = dst.X + (int)(rationW * (float)_currentSubtitle.horizontalPosition);
+          }
+          else
+          {
+            rationW = rationH;
+            wx = dst.X + (int)((dst.Width - _currentSubtitle.width * rationW) / 2);
+          }
+          wy = dst.Y + (int)(rationH * _currentSubtitle.firstScanLine);
+
+          wwidth = (int)(_currentSubtitle.width * rationW);
+          wheight = (int)(_currentSubtitle.height * rationH);
+
           // make sure the vertex buffer is ready and correct for the coordinates
           CreateVertexBuffer(wx, wy, wwidth, wheight);
 
