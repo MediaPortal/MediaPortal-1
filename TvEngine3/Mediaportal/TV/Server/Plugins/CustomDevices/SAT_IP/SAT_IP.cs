@@ -31,7 +31,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SAT_IP
         private class SatIpIFilter { };
 
         [ComVisible(true), ComImport,
-          Guid("c3f5aa0d-c475-401b-8fc9-e33fb749cd85"),
+          Guid("22D98D0E-6956-4EA0-9D18-4F55DEA8F5EC"),
           InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
         private interface ITsMuxer
         {
@@ -39,7 +39,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SAT_IP
             /// Some summary
             /// </summary>
             [PreserveSig]
-            int FilterCreateNamedPipe(string devicePath);
+            //int FilterCreateNamedPipe(string devicePath);
+            int FilterCreateNamedPipe([MarshalAs(UnmanagedType.LPStr)] string devicePath);
         }
 
         #endregion
@@ -214,8 +215,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SAT_IP
                 ITsMuxer conf = _slot.Filter as ITsMuxer;
                 if (conf != null)
                 {
-                    this.LogInfo("SAT>IP: configure filter, named pipe name: %s", _tunerExternalIdentifier);
-                    conf.FilterCreateNamedPipe(_tunerExternalIdentifier);
+                    this.LogInfo("SAT>IP: configure filter, named pipe name: {0}", _tunerExternalIdentifier);
+                    //conf.FilterCreateNamedPipe(_tunerExternalIdentifier);
                 }
                 else
                 {

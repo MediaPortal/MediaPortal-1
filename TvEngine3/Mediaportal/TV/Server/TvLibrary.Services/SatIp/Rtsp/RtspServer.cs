@@ -428,7 +428,7 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
               clients[int.Parse(requestHeader.sessionId)].user = _user;
               clients[int.Parse(requestHeader.sessionId)].tuningDetail = _tuningDetail;
 
-              // TODO: open the named pipe and set the pids
+              // TODO: change the communication to use the right pipe name
               GlobalServiceProvider.Get<IControllerService>().CardDevice(_card.Id); // device path
             }
             else

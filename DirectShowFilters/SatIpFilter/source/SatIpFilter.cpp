@@ -428,6 +428,8 @@ STDMETHODIMP CSatIP::FilterCreateNamedPipe(char* devicePath)
 	unsigned int id = 0;
 
 	pipeHandle = createPipe(devicePath);
+	if (pipeHandle == INVALID_HANDLE_VALUE)
+		return S_FALSE;
 	parameters.handler = pipeHandle;
 	parameters.SatIP = this;
 	::CloseHandle((HANDLE)::_beginthreadex(0, 0, &namedPipeReadThread, /*(void*)*//*(LPVOID)pipeHandle*/&parameters, 0, &id));
