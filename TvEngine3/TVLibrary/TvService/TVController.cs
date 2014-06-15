@@ -2051,7 +2051,28 @@ namespace TvService
           }
           return true;
         }
-        return (File.Exists(rec.FileName));
+        // Let time to network device to be started 60 seconds when checking if file exist or not
+        TimeSpan maxDuration = TimeSpan.FromSeconds(60);
+        Stopwatch sw = Stopwatch.StartNew();
+        bool doneWithWork = false;
+
+        while (sw.Elapsed < maxDuration && !doneWithWork)
+        {
+          try
+          {
+            DirectoryInfo dirInfo = Directory.GetParent(rec.FileName);
+            if (Directory.Exists(dirInfo.ToString()) || File.Exists(rec.FileName))
+            {
+              // if all the work is completed, set DoneWithWork to true
+              doneWithWork = true;
+            }
+          }
+          catch (Exception)
+          {
+            Log.Error("Controller: unable to detect if directory exist for file: {0}", rec.FileName);
+          }
+        }
+        return File.Exists(rec.FileName);
       }
       catch (Exception)
       {
