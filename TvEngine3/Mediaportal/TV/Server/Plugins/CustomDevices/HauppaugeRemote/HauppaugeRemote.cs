@@ -431,10 +431,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeRemote
         {
           try
           {
-            NativeMethods.MSG msgApi = new NativeMethods.MSG();
             // This call will block until a message is received. It returns
-            // false if the message is WM_QUIT.
-            if (!NativeMethods.GetMessage(ref msgApi, IntPtr.Zero, 0, 0))
+            // false (0) if the message is WM_QUIT.
+            NativeMethods.MSG msg = new NativeMethods.MSG();
+            int result = NativeMethods.GetMessage(ref msg, IntPtr.Zero, 0, 0);
+            if (result == 0)
             {
               if (!IR_Close(handle.ToInt32(), 0))
               {
@@ -442,9 +443,15 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeRemote
               }
               return;
             }
-
-            NativeMethods.TranslateMessage(ref msgApi);
-            NativeMethods.DispatchMessage(ref msgApi);
+            else if (result == -1)
+            {
+              this.LogError("Hauppauge remote: failed to get window message, hr = 0x{0:x}", Marshal.GetLastWin32Error());
+            }
+            else
+            {
+              NativeMethods.TranslateMessage(ref msg);
+              NativeMethods.DispatchMessage(ref msg);
+            }
           }
           catch (Exception ex)
           {
