@@ -2961,7 +2961,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       }
       catch (Exception e)
       {
-        HandleControllerException(e, "Controller: Can't delete recording");        
+        HandleControllerException(e, "Controller: Can't delete recording");
       }
       return false;
     }
@@ -2978,7 +2978,28 @@ namespace Mediaportal.TV.Server.TVLibrary
         {
           return false;
         }
-        return (File.Exists(rec.FileName));
+        // Let time to network device to be started 60 seconds when checking if file exist or not
+        TimeSpan maxDuration = TimeSpan.FromSeconds(60);
+        Stopwatch sw = Stopwatch.StartNew();
+        bool doneWithWork = false;
+
+        while (sw.Elapsed < maxDuration && !doneWithWork)
+        {
+          try
+          {
+            DirectoryInfo dirInfo = Directory.GetParent(rec.FileName);
+            if (Directory.Exists(dirInfo.ToString()) || File.Exists(rec.FileName))
+            {
+              // if all the work is completed, set DoneWithWork to true
+              doneWithWork = true;
+            }
+          }
+          catch (Exception)
+          {
+            Log.Error("Controller: unable to detect if directory exist for file: {0}", rec.FileName);
+          }
+        }
+        return File.Exists(rec.FileName);
       }
       catch (Exception)
       {
@@ -2995,7 +3016,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       try
       {
         this.LogDebug("Deleting invalid recordings");
-        IList<Recording> itemlist = RecordingManagement.ListAllRecordingsByMediaType(MediaTypeEnum.TV);        
+        IList<Recording> itemlist = RecordingManagement.ListAllRecordingsByMediaType(MediaTypeEnum.TV);
         foreach (Recording rec in itemlist.Where(rec => !IsRecordingValid(rec)))
         {
           try

@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -342,8 +343,47 @@ namespace Mediaportal.TV.TvPlugin
       TVHome.ShowTvEngineSettingsUIIfConnectionDown();
 
       base.OnPageLoad();
-      // Fix delete recording when recording are on NAS and not fully ready.
-      //DeleteInvalidRecordings();
+      // launch DeleteInvalidRecordings async for instant start of GUI screen - refresh GUI later, if recordings have been deleted
+      bool recordingsDeleted = false;
+      Object loadFacadeLock = new Object();
+
+      new Thread(delegate()
+      {
+        {
+          try
+          {
+            recordingsDeleted = DeleteInvalidRecordings();
+          }
+          catch (Exception ex)
+          {
+            Log.Debug("TvRecorded: DeleteInvalidRecordings - error: " + ex.Message);
+          }
+        }
+        GUIWindowManager.SendThreadCallbackAndWait((p1, p2, data) =>
+        {
+          {
+            if (recordingsDeleted)
+            {
+              Log.Debug("TvRecorded: recordings were deleted -> now update GUI");
+              lock (loadFacadeLock)
+              {
+                UpdateGUI();
+              }
+            }
+            else
+            {
+              Log.Debug("TvRecorded: no recordings were deleted -> skip GUI update");
+            }
+          }
+          return 0;
+        }, 0, 0, null);
+      }) { Name = "TvRecorded: DeleteInvalidRecordings", IsBackground = true, Priority = ThreadPriority.BelowNormal }.Start();
+
+      LoadSettings();
+      lock (loadFacadeLock)
+      {
+        LoadDirectory();
+      }
 
       if (btnCompress != null)
       {
@@ -1192,17 +1232,30 @@ namespace Mediaportal.TV.TvPlugin
       facadeLayout.EnableSMSsearch = false;
       
       TryDeleteRecordingAndNotifyUser(rec);
-      
 
+      UpdateGUI();
+
+      _resetSMSsearchDelay = DateTime.Now;
+      _resetSMSsearch = true;
+    }
+
+    private void UpdateGUI()
+    {
       LoadDirectory();
+
       while (_iSelectedItem >= GetItemCount() && _iSelectedItem > 0)
       {
         _iSelectedItem--;
       }
       GUIControl.SelectItemControl(GetID, facadeLayout.GetID, _iSelectedItem);
 
-      _resetSMSsearchDelay = DateTime.Now;
-      _resetSMSsearch = true;
+      if (facadeLayout != null && facadeLayout.SelectedListItem != null && facadeLayout.SelectedListItem.Label == "..")
+      {
+        _currentLabel = string.Empty;
+        LoadDirectory();
+        GUIControl.SelectItemControl(GetID, facadeLayout.GetID, _rootItem);
+        _rootItem = 0;
+      }
     }
 
 
@@ -1303,9 +1356,12 @@ namespace Mediaportal.TV.TvPlugin
       ServiceAgents.Instance.ControllerServiceAgent.DeleteWatchedRecordings(currentTitle);
     }
 
-    private void DeleteInvalidRecordings()
+    private bool DeleteInvalidRecordings()
     {
-      ServiceAgents.Instance.ControllerServiceAgent.DeleteInvalidRecordings();
+      Stopwatch watch = new Stopwatch(); watch.Reset(); watch.Start();
+      bool deletedrecordings = ServiceAgents.Instance.ControllerServiceAgent.DeleteInvalidRecordings();
+      watch.Stop();
+      return deletedrecordings;
     }
 
     private void UpdateProperties()
