@@ -912,6 +912,8 @@ namespace Mediaportal.TV.TvPlugin
         ServiceAgents.Instance.ScheduleServiceAgent.SaveSchedule(newSchedule);
         ServiceAgents.Instance.ControllerServiceAgent.OnNewSchedule();
       }
+      GUIMessage msgManualRecord = new GUIMessage(GUIMessage.MessageType.GUI_MSG_MANUAL_RECORDING_STARTED, 0, 0, 0, 0, 0, null);
+      GUIWindowManager.SendMessage(msgManualRecord);
     }
 
     public static bool UseRTSP()
@@ -2014,6 +2016,8 @@ namespace Mediaportal.TV.TvPlugin
               case 875:
                 //record current program                  
                 TVProgramInfo.CreateProgram(prog.Entity, (int)ScheduleRecordingType.Once, dialogId);
+                GUIMessage msgManualRecord = new GUIMessage(GUIMessage.MessageType.GUI_MSG_MANUAL_RECORDING_STARTED, 0, 0, 0, 0, 0, null);
+                GUIWindowManager.SendMessage(msgManualRecord);
                 return true;
 
               case 876:
