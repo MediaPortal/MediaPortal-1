@@ -19,7 +19,9 @@
 #endregion
 
 using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Threading;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
@@ -105,7 +107,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
       SkipBack,           // timer
       Mute, // 12
 
-      SkipForward = 15,   // open
+      SkipForward = 14,   // open
       VolumeDown,
       Zero,
       One,
@@ -301,12 +303,20 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
 
     #endregion
 
+    #region constants
+
+    private const string TEVIIRC_PROCESS_NAME = "TeViiRC";
+
+    #endregion
+
     #region variables
 
     private int _deviceIndex = -1;
     private bool _isTeVii = false;
     private CardType _tunerType = CardType.Unknown;
     private Tone22k _toneState = Tone22k.Auto;
+    private string _tunerExternalId = string.Empty;
+    private bool _restartTeViiRcExe = false;
 
     private bool _isRemoteControlInterfaceOpen = false;
     private OnTeViiRemoteControlKeyPress _remoteControlKeyPressDelegate = null;
@@ -523,6 +533,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
       this.LogInfo("TeVii: extension supported");
       _isTeVii = true;
       _tunerType = tunerType;
+      _tunerExternalId = tunerExternalId.ToLowerInvariant();
       return true;
     }
 
@@ -696,11 +707,40 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
         return true;
       }
 
+      if (_tunerExternalId.Contains("vid_9022&pid_d482") || _tunerExternalId.Contains("vid_9022&pid_d484"))
+      {
+        this.LogDebug("TeVii: detected S480/482 tuner 2, remote control support disabled to avoid double key presses");
+        return false;
+      }
+
       _remoteControlKeyPressDelegate = OnRemoteControlKeyPress;
       if (!SetRemoteControl(_deviceIndex, _remoteControlKeyPressDelegate, IntPtr.Zero))
       {
         this.LogError("TeVii: failed to set remote control event/delegate");
         return false;
+      }
+
+      _restartTeViiRcExe = false;
+      Process[] processes = Process.GetProcessesByName(TEVIIRC_PROCESS_NAME);
+      if (processes.Length > 0)
+      {
+        // TeViiRC is running. We stop it to avoid unnecessary HID keypresses.
+        // We'll restart it when we're done.
+        this.LogWarn("TeVii: attempt terminate {0} TeVii RC process(es)", processes.Length);
+        foreach (Process proc in processes)
+        {
+          proc.Kill();
+        }
+        Thread.Sleep(400);
+        processes = Process.GetProcessesByName(TEVIIRC_PROCESS_NAME);
+        if (processes.Length != 0)
+        {
+          this.LogWarn("TeVii: failed to terminate TeVii RC, still {0} process(es)", processes.Length);
+        }
+        else
+        {
+          _restartTeViiRcExe = true;
+        }
       }
 
       _isRemoteControlInterfaceOpen = true;
@@ -721,6 +761,28 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
       {
         this.LogError("TeVii: failed to unset remote control event/delegate");
         return false;
+      }
+
+      if (_restartTeViiRcExe)
+      {
+        this.LogDebug("TeVii: restart TeVii RC process");
+        try
+        {
+          int processCount = Process.GetProcessesByName(TEVIIRC_PROCESS_NAME).Length;
+          if (processCount == 0)
+          {
+            Process.Start(@"c:\WINDOWS\TeViiRC.exe");
+          }
+          else
+          {
+            this.LogWarn("TeVii: {0} TeVii RC process(es) already running", processCount);
+          }
+          _restartTeViiRcExe = false;
+        }
+        catch (Exception ex)
+        {
+          this.LogWarn(ex, "TeVii: failed to restart TeViiRC process");
+        }
       }
 
       _isRemoteControlInterfaceOpen = false;
