@@ -299,7 +299,7 @@ void CSatIP::initialize()
 	//parameters.handler = pipeHandle;
 	//parameters.SatIP = this;
 	//::CloseHandle((HANDLE)::_beginthreadex(0, 0, &namedPipeReadThread, /*(void*)*//*(LPVOID)pipeHandle*/&parameters, 0, &id));
-	FilterCreateNamedPipe(PIPE_NAME);
+	//FilterCreateNamedPipe(PIPE_NAME);
 }
 
 
@@ -536,11 +536,13 @@ void CSatIP::Stop()
 HANDLE CSatIP::createPipe(const char* pipeName) {
 	LogDebug("Named pipe: create pipe - %s", pipeName);
 
+	std::string finalPipeName = "\\\\.\\Pipe\\";
+	finalPipeName.append(pipeName);
 
 	HANDLE hPipe;
 
 	hPipe = CreateNamedPipe(
-		pipeName,				  // pipe name 
+		finalPipeName.c_str(),				  // pipe name 
 		PIPE_ACCESS_DUPLEX,       // read/write access 
 		PIPE_TYPE_MESSAGE |       // message type pipe 
 		PIPE_READMODE_MESSAGE |   // message-read mode 

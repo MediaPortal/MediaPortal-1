@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 using DirectShowLib;
@@ -215,8 +217,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SAT_IP
                 ITsMuxer conf = _slot.Filter as ITsMuxer;
                 if (conf != null)
                 {
-                    this.LogInfo("SAT>IP: configure filter, named pipe name: {0}", _tunerExternalIdentifier);
-                    //conf.FilterCreateNamedPipe(_tunerExternalIdentifier);
+                  // removing all illegal characters from the pipeName
+                  string regexSearch = new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars());
+                  Regex r = new Regex(string.Format("[{0}]", Regex.Escape(regexSearch)));
+                  string _pipeName = r.Replace(_tunerExternalIdentifier, "");
+                  this.LogInfo("SAT>IP: configure filter, named pipe name: {0}", _pipeName);
+
+                  conf.FilterCreateNamedPipe(_pipeName);
                 }
                 else
                 {

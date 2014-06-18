@@ -23,6 +23,7 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
     private TuningDetail _tuningDetail;
     private IVirtualCard _card;
     private IUser _user;
+    private string _devicePath;
 
     public RtspCards()
     {
@@ -110,6 +111,21 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
       get
       {
         return _streamCount;
+      }
+    }
+
+    /// <summary>
+    /// Get/Set the devicepath of the card.
+    /// </summary>
+    public string devicePath
+    {
+      get
+      {
+        return _devicePath;
+      }
+      set
+      {
+        _devicePath = value;
       }
     }
 

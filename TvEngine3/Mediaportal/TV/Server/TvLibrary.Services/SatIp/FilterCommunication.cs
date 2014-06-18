@@ -5,6 +5,7 @@ using System.Text;
 using System.IO;
 using System.IO.Pipes;
 using System.Collections;
+using System.Text.RegularExpressions;
 
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
@@ -29,7 +30,11 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp
     
     public FilterCommunication(string pipeName, int slot)
     {
-      _pipeName = pipeName;
+      // removing all illegal characters from the pipeName
+      string regexSearch = new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars());
+      Regex r = new Regex(string.Format("[{0}]", Regex.Escape(regexSearch)));
+      _pipeName = r.Replace(pipeName, "");
+
       _slot = slot;
     }
 

@@ -345,7 +345,7 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
           if (clients[int.Parse(requestHeader.sessionId)].isTunedToFrequency)
           {
             this.LogDebug("SAT>IP: sync Pids with Filter for sessionID: {0}", requestHeader.sessionId);
-            syncPidsWithFilter(int.Parse(requestHeader.sessionId), "MyNamedPipe");
+            syncPidsWithFilter(int.Parse(requestHeader.sessionId), cards[clients[int.Parse(requestHeader.sessionId)].cardId].devicePath/*"MyNamedPipe"*/);
           }
 
           parseQuery(int.Parse(requestHeader.sessionId), query);
@@ -429,7 +429,7 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
               clients[int.Parse(requestHeader.sessionId)].tuningDetail = _tuningDetail;
 
               // TODO: change the communication to use the right pipe name
-              GlobalServiceProvider.Get<IControllerService>().CardDevice(_card.Id); // device path
+              cards[clients[int.Parse(requestHeader.sessionId)].cardId].devicePath = GlobalServiceProvider.Get<IControllerService>().CardDevice(_card.Id); // device path
             }
             else
             {
@@ -441,7 +441,7 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
             clients[int.Parse(requestHeader.sessionId)].tunedToFrequency = clients[int.Parse(requestHeader.sessionId)].freq;
 
             // send commands to the filter
-            FilterCommunication communication = new FilterCommunication("MyNamedPipe", clients[int.Parse(requestHeader.sessionId)].slot);
+            FilterCommunication communication = new FilterCommunication(cards[clients[int.Parse(requestHeader.sessionId)].cardId].devicePath/*"MyNamedPipe"*/, clients[int.Parse(requestHeader.sessionId)].slot);
             communication.addClientPort(clients[int.Parse(requestHeader.sessionId)].rtpClientPort);
             communication.addClientIp(clients[int.Parse(requestHeader.sessionId)].ip);
             communication.requestNewSlot();
