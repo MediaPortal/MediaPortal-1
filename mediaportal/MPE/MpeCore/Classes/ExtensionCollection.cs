@@ -176,10 +176,7 @@ namespace MpeCore.Classes
     {
       foreach (PackageClass item in Items)
       {
-        if (item.IsHiden)
-          continue;
-
-        if (item.GeneralInfo.Id == id && item.GeneralInfo.Version.CompareTo(version) == 0)
+        if (item.GeneralInfo.Id == id && String.Compare(item.GeneralInfo.Version.ToString(), version, StringComparison.Ordinal) == 0)
           return item;
       }
       return null;

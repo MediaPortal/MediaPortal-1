@@ -585,9 +585,6 @@ Do you want to continue ?",packageClass.GeneralInfo.Name, pak.GeneralInfo.Versio
 
     private void RefreshUpdateInfo_Click(object sender, EventArgs e)
     {
-      // force KnownExtensions reset on refresh Update Info
-      MpeCore.MpeInstaller.KnownExtensions = ExtensionCollection.Load(string.Format(""));
-      extensionListControlKnown.Set(MpeCore.MpeInstaller.KnownExtensions.GetUniqueList(MpeCore.MpeInstaller.KnownExtensions), false);
       ExtensionUpdateDownloader.UpdateList(false, false, Client_DownloadProgressChanged, Client_DownloadFileCompleted);
       SetFilterForKnownExtensionsList();
       RefreshListControls();
