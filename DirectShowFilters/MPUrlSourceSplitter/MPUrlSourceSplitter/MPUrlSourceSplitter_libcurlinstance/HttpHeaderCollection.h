@@ -29,7 +29,7 @@
 class CHttpHeaderCollection : public CKeyedCollection<CHttpHeader, const wchar_t *>
 {
 public:
-  CHttpHeaderCollection(void);
+  CHttpHeaderCollection(HRESULT *result);
   ~CHttpHeaderCollection(void);
 
   /* get methods */

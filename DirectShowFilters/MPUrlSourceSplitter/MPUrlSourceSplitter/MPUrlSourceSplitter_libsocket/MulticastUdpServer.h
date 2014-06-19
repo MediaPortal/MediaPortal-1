@@ -25,12 +25,17 @@
 
 #include "UdpServer.h"
 
-#define SERVER_TYPE_MULTICAST_UDP                                     0x00000003
+#define MULTICAST_UDP_SERVER_FLAG_NONE                                        UDP_SERVER_FLAG_NONE
+
+#define MULTICAST_UDP_SERVER_FLAG_SERVER                                      (1 << (UDP_SERVER_FLAG_LAST + 0))
+
+#define MULTICAST_UDP_SERVER_FLAG_LAST                                        (UDP_SERVER_FLAG_LAST + 1)
+
 
 class CMulticastUdpServer : public CUdpServer
 {
 public:
-  CMulticastUdpServer(void);
+  CMulticastUdpServer(HRESULT *result);
   virtual ~CMulticastUdpServer(void);
 
   /* get methods */

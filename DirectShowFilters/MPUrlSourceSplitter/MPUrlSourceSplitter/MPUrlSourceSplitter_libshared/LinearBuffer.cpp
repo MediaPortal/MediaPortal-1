@@ -22,19 +22,22 @@
 
 #include "LinearBuffer.h"
 
-CLinearBuffer::CLinearBuffer(void)
+CLinearBuffer::CLinearBuffer(HRESULT *result)
 {
   this->buffer = NULL;
   this->DeleteBuffer();
 }
 
-CLinearBuffer::CLinearBuffer(unsigned int size)
+CLinearBuffer::CLinearBuffer(HRESULT *result, unsigned int size)
 {
   this->buffer = NULL;
   this->DeleteBuffer();
 
-  // create internal buffer
-  this->InitializeBuffer(size);
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    // create internal buffer
+    CHECK_CONDITION_HRESULT(*result, this->InitializeBuffer(size), *result, E_OUTOFMEMORY);
+  }
 }
 
 CLinearBuffer::~CLinearBuffer(void)
@@ -44,21 +47,14 @@ CLinearBuffer::~CLinearBuffer(void)
 
 CLinearBuffer *CLinearBuffer::Clone(void)
 {
-  CLinearBuffer *clone = new CLinearBuffer();
-  bool success = false;
+  HRESULT result = S_OK;
+  CLinearBuffer *clone = new CLinearBuffer(&result);
+  CHECK_POINTER_HRESULT(result, clone, result, E_OUTOFMEMORY);
 
-  success = clone->InitializeBuffer(this->GetBufferSize());
+  CHECK_CONDITION_HRESULT(result, clone->InitializeBuffer(this->GetBufferSize()), result, E_OUTOFMEMORY);
+  CHECK_CONDITION_HRESULT(result, clone->AddToBuffer(this->dataStart, this->GetBufferOccupiedSpace()) == this->GetBufferOccupiedSpace(), result, E_OUTOFMEMORY);
 
-  if (success)
-  {
-    // we got some data to copy from current instance buffer to clone buffer
-    success = (clone->AddToBuffer(this->dataStart, this->GetBufferOccupiedSpace()) == this->GetBufferOccupiedSpace());
-  }
-  
-  if (!success)
-  {
-    FREE_MEM_CLASS(clone);
-  }
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(clone));
 
   return clone;
 }

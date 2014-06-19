@@ -36,19 +36,20 @@
 #define MODULE_NAME                                               L"MPUrlSourceSplitterOutputPin"
 #endif
 
-CMPUrlSourceSplitterOutputPin::CMPUrlSourceSplitterOutputPin(CLogger *logger, CMediaTypeCollection *mediaTypes, LPCWSTR pName, CBaseFilter *pFilter, CCritSec *pLock, HRESULT *phr)
-  : CBaseOutputPin(NAME("MediaPortal Url Source Splitter Output Pin"), pFilter, pLock, phr, pName)
+CMPUrlSourceSplitterOutputPin::CMPUrlSourceSplitterOutputPin(LPCWSTR pName, CBaseFilter *pFilter, CCritSec *pLock, HRESULT *phr, CLogger *logger, CParameterCollection *parameters, CMediaTypeCollection *mediaTypes)
+  : CBaseOutputPin(NAME("MediaPortal Url Source Splitter Output Pin"), pFilter, pLock, phr, pName), CFlags()
 {
   this->mediaPackets = NULL;
-  this->filter = NULL;
+  this->parameters = NULL;
   this->mediaTypes = NULL;
   this->demuxerId = DEMUXER_ID_UNSPECIFIED;
   this->streamPid = STREAM_PID_UNSPECIFIED;
   this->flushing = false;
   this->mediaTypeToSend = NULL;
-  this->flags = OUTPUT_PIN_FLAG_NONE;
   this->mediaTypeSubType = GUID_NULL;
   this->outputPinDataLength = 0;
+  this->lastStoreTime = 0;
+  this->cacheFile = NULL;
 
   this->dumpData = NULL;
   this->dumpDataBufferOccupied = 0;
@@ -60,28 +61,28 @@ CMPUrlSourceSplitterOutputPin::CMPUrlSourceSplitterOutputPin(CLogger *logger, CM
 
   this->dumpDataCounter = 0;
 
-  if (phr != NULL)
+  if ((phr != NULL) && (SUCCEEDED(*phr)))
   {
+    CHECK_POINTER_DEFAULT_HRESULT(*phr, logger);
+    CHECK_POINTER_DEFAULT_HRESULT(*phr, parameters);
+    CHECK_POINTER_DEFAULT_HRESULT(*phr, mediaTypes);
+
     if (SUCCEEDED(*phr))
     {
       this->logger = logger;
-      this->mediaPackets = new COutputPinPacketCollection();
-      this->filter = dynamic_cast<IOutputPinFilter *>(pFilter);
-      this->mediaPacketsLock = CreateMutex(NULL, FALSE, NULL);
-      this->mediaTypes = new CMediaTypeCollection();
+      this->parameters = parameters;
 
-      CHECK_POINTER_HRESULT(*phr, logger, *phr, E_INVALIDARG);
-      CHECK_POINTER_HRESULT(*phr, mediaTypes, *phr, E_INVALIDARG);
+      this->mediaPackets = new COutputPinPacketCollection(phr);
+      this->mediaPacketsLock = CreateMutex(NULL, FALSE, NULL);
+      this->mediaTypes = new CMediaTypeCollection(phr);
+      this->cacheFile = new CCacheFile(phr);
 
       CHECK_POINTER_HRESULT(*phr, this->mediaPackets, *phr, E_OUTOFMEMORY);
-      CHECK_POINTER_HRESULT(*phr, this->filter, *phr, E_INVALIDARG);
       CHECK_POINTER_HRESULT(*phr, this->mediaPacketsLock, *phr, E_OUTOFMEMORY);
       CHECK_POINTER_HRESULT(*phr, this->mediaTypes, *phr, E_OUTOFMEMORY);
+      CHECK_POINTER_HRESULT(*phr, this->cacheFile, *phr, E_OUTOFMEMORY);
 
-      if (SUCCEEDED(*phr))
-      {
-        *phr = this->mediaTypes->Append(mediaTypes) ? (*phr) : E_OUTOFMEMORY;
-      }
+      CHECK_CONDITION_HRESULT(*phr, this->mediaTypes->Append(mediaTypes), *phr, E_OUTOFMEMORY);
     }
   }
 
@@ -95,6 +96,7 @@ CMPUrlSourceSplitterOutputPin::~CMPUrlSourceSplitterOutputPin()
   CAMThread::CallWorker(CMD_EXIT);
   CAMThread::Close();
 
+  FREE_MEM_CLASS(this->cacheFile);
   FREE_MEM_CLASS(this->mediaPackets);
   FREE_MEM_CLASS(this->mediaTypes);
   FREE_MEM_CLASS(this->mediaTypeToSend);
@@ -109,8 +111,9 @@ CMPUrlSourceSplitterOutputPin::~CMPUrlSourceSplitterOutputPin()
 
   CHECK_CONDITION_NOT_NULL_EXECUTE(this->logger, this->logger->Log(LOGGER_INFO, METHOD_PIN_END_FORMAT, MODULE_NAME, METHOD_DESTRUCTOR_NAME, this->m_pName));
 
-  // filter is only reference, it is not needed to remove
-  this->filter = NULL;
+  // logger and parameters are only reference, it is not needed to remove
+  this->logger = NULL;
+  this->parameters = NULL;
 }
 
 // IUnknown interface implementation
@@ -300,6 +303,7 @@ HRESULT CMPUrlSourceSplitterOutputPin::Inactive()
   CAMThread::Close();
 
   // clear media packets, we are going inactive
+  this->cacheFile->RemoveItems(this->mediaPackets, 0, this->mediaPackets->Count());
   this->mediaPackets->Clear();
 
   CHECK_HRESULT_EXECUTE(result, __super::Inactive());
@@ -334,6 +338,7 @@ HRESULT CMPUrlSourceSplitterOutputPin::DeliverBeginFlush()
   this->outputPinDataLength = 0;
 
   // clear all media packets
+  this->cacheFile->RemoveItems(this->mediaPackets, 0, this->mediaPackets->Count());
   this->mediaPackets->Clear();
 
   return result;
@@ -346,7 +351,7 @@ HRESULT CMPUrlSourceSplitterOutputPin::DeliverEndFlush()
   CAMThread::CallWorker(CMD_END_FLUSH);
   result = this->IsConnected() ? this->GetConnected()->EndFlush() : S_OK;
   this->flushing = false;
-  this->flags &= ~OUTPUT_PIN_FLAG_END_OF_STREAM;
+  this->flags &= ~MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_END_OF_STREAM;
 
   return result;
 }
@@ -372,7 +377,7 @@ HRESULT CMPUrlSourceSplitterOutputPin::QueuePacket(COutputPinPacket *packet, DWO
 
       if (packet->IsEndOfStream())
       {
-        CHECK_CONDITION_EXECUTE(SUCCEEDED(result), this->flags |= OUTPUT_PIN_FLAG_END_OF_STREAM);
+        CHECK_CONDITION_EXECUTE(SUCCEEDED(result), this->flags |= MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_END_OF_STREAM);
       }
     }
   }
@@ -385,7 +390,7 @@ HRESULT CMPUrlSourceSplitterOutputPin::QueueEndOfStream()
   HRESULT result = S_OK;
   this->logger->Log(LOGGER_INFO, METHOD_PIN_START_FORMAT, MODULE_NAME, METHOD_QUEUE_END_OF_STREAM_NAME, this->m_pName);
 
-  COutputPinPacket *endOfStream = new COutputPinPacket();
+  COutputPinPacket *endOfStream = new COutputPinPacket(&result);
   CHECK_POINTER_HRESULT(result, endOfStream, result, E_OUTOFMEMORY);
 
   if (SUCCEEDED(result))
@@ -395,7 +400,7 @@ HRESULT CMPUrlSourceSplitterOutputPin::QueueEndOfStream()
     result = this->QueuePacket(endOfStream, INFINITE);
   }
 
-  CHECK_CONDITION_EXECUTE(SUCCEEDED(result), this->flags |= OUTPUT_PIN_FLAG_END_OF_STREAM);
+  CHECK_CONDITION_EXECUTE(SUCCEEDED(result), this->flags |= MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_END_OF_STREAM);
   CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(endOfStream));
 
   this->logger->Log(SUCCEEDED(result) ? LOGGER_INFO : LOGGER_ERROR, SUCCEEDED(result) ? METHOD_PIN_END_FORMAT : METHOD_PIN_END_FAIL_RESULT_FORMAT, MODULE_NAME, METHOD_QUEUE_END_OF_STREAM_NAME, this->m_pName, result);
@@ -475,12 +480,7 @@ HRESULT CMPUrlSourceSplitterOutputPin::SendMediaType(CMediaType *mediaType)
 
 bool CMPUrlSourceSplitterOutputPin::IsEndOfStream(void)
 {
-  return this->IsSetFlags(OUTPUT_PIN_FLAG_END_OF_STREAM);
-}
-
-bool CMPUrlSourceSplitterOutputPin::IsSetFlags(unsigned int flags)
-{
-  return ((this->flags & flags) == flags);
+  return this->IsSetFlags(MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_END_OF_STREAM);
 }
 
 /* protected methods */
@@ -523,10 +523,10 @@ DWORD CMPUrlSourceSplitterOutputPin::ThreadProc()
       // we receive CMD_PLAY command
       // just check dumping data flag in filter configuration
 
-      this->flags &= ~OUTPUT_PIN_FLAG_DUMPING_DATA_AND_SIZES;
-      this->flags |= (this->filter->GetConfiguration()->GetValueBool(PARAMETER_NAME_DUMP_OUTPUT_PIN_RAW_DATA, true, PARAMETER_NAME_DUMP_OUTPUT_PIN_RAW_DATA_DEFAULT)) ? OUTPUT_PIN_FLAG_DUMPING_DATA_AND_SIZES : OUTPUT_PIN_FLAG_NONE;
+      this->flags &= ~MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_DUMPING_DATA_AND_SIZES;
+      this->flags |= (this->parameters->GetValueBool(PARAMETER_NAME_DUMP_OUTPUT_PIN_RAW_DATA, true, PARAMETER_NAME_DUMP_OUTPUT_PIN_RAW_DATA_DEFAULT)) ? MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_DUMPING_DATA_AND_SIZES : MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_NONE;
 
-      if (this->IsSetFlags(OUTPUT_PIN_FLAG_DUMPING_DATA_AND_SIZES))
+      if (this->IsSetFlags(MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_DUMPING_DATA_AND_SIZES))
       {
         if (this->dumpData == NULL)
         {
@@ -546,7 +546,7 @@ DWORD CMPUrlSourceSplitterOutputPin::ThreadProc()
         {
           // error while allocating memory
           // do not dump data, but continue in work
-          this->flags &= ~OUTPUT_PIN_FLAG_DUMPING_DATA_AND_SIZES;
+          this->flags &= ~MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_DUMPING_DATA_AND_SIZES;
           FREE_MEM(this->dumpData);
           FREE_MEM(this->dumpMetadata);
 
@@ -591,7 +591,13 @@ DWORD CMPUrlSourceSplitterOutputPin::ThreadProc()
             {
               if (this->mediaPackets->Count() > 0)
               {
-                packet = this->mediaPackets->GetItem(0);
+                if (this->cacheFile->LoadItems(this->mediaPackets, 0, true, false))
+                {
+                  packet = this->mediaPackets->GetItem(0);
+
+                  // we don't want to remove content of output pin packet from memory
+                  packet->SetNoCleanUpFromMemory(true);
+                }
               }
             }
           }
@@ -607,6 +613,7 @@ DWORD CMPUrlSourceSplitterOutputPin::ThreadProc()
                 CLockMutex lock(this->mediaPacketsLock, INFINITE);
 
                 // remove processed packet
+                this->cacheFile->RemoveItems(this->mediaPackets, 0, 1);
                 this->mediaPackets->Remove(0);
               }
             }
@@ -649,7 +656,7 @@ DWORD CMPUrlSourceSplitterOutputPin::ThreadProc()
                 // count send data to output pin
                 this->outputPinDataLength += (uint64_t)sampleSize;
 
-                if (this->IsSetFlags(OUTPUT_PIN_FLAG_DUMPING_DATA_AND_SIZES))
+                if (this->IsSetFlags(MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_DUMPING_DATA_AND_SIZES))
                 {
                   // we are dumping data, we must copy output data to temporary buffer
 
@@ -687,6 +694,7 @@ DWORD CMPUrlSourceSplitterOutputPin::ThreadProc()
                 CLockMutex lock(this->mediaPacketsLock, INFINITE);
 
                 // remove processed packet
+                this->cacheFile->RemoveItems(this->mediaPackets, 0, 1);
                 this->mediaPackets->Remove(0);
               }
 
@@ -709,6 +717,33 @@ DWORD CMPUrlSourceSplitterOutputPin::ThreadProc()
         }
       }
 
+      // store media packets to temporary file
+      if ((cmd == CMD_PLAY) && ((GetTickCount() - this->lastStoreTime) > CACHE_FILE_LOAD_TO_MEMORY_TIME_SPAN_DEFAULT))
+      {
+        this->lastStoreTime = GetTickCount();
+
+        if (this->cacheFile->GetCacheFile() == NULL)
+        {
+          wchar_t *storeFilePath = this->GetStoreFile();
+          CHECK_CONDITION_NOT_NULL_EXECUTE(storeFilePath, this->cacheFile->SetCacheFile(storeFilePath));
+          FREE_MEM(storeFilePath);
+        }
+
+        {
+          // wait only 10 ms to lock mutex
+          CLockMutex lock(this->mediaPacketsLock, 10);
+
+          if (lock.IsLocked())
+          {
+            // store all media packets (which are not stored) to file
+            if ((this->cacheFile->GetCacheFile() != NULL) && (this->mediaPackets->Count() != 0))
+            {
+              this->cacheFile->StoreItems(this->mediaPackets, this->lastStoreTime, false);
+            }
+          }
+        }
+      }
+
       // we don't do anything in CMD_BEGIN_FLUSH or CMD_END_FLUSH command
 
       CHECK_CONDITION_EXECUTE(sleepAllowed, Sleep(1));
@@ -723,7 +758,7 @@ DWORD CMPUrlSourceSplitterOutputPin::ThreadProc()
 
 void CMPUrlSourceSplitterOutputPin::DumpDataAndDumpDataSizes(void)
 {
-  if (this->IsSetFlags(OUTPUT_PIN_FLAG_DUMPING_DATA_AND_SIZES))
+  if (this->IsSetFlags(MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_DUMPING_DATA_AND_SIZES))
   {
     CStaticLoggerContext *context = this->logger->GetStaticLoggerContext();
 
@@ -775,4 +810,17 @@ void CMPUrlSourceSplitterOutputPin::DumpDataAndDumpDataSizes(void)
 
   this->dumpDataBufferOccupied = 0;
   this->dumpMetadataBufferOccupied = 0;
+}
+
+wchar_t *CMPUrlSourceSplitterOutputPin::GetStoreFile(void)
+{
+  wchar_t *result = NULL;
+  const wchar_t *folder = this->parameters->GetValue(PARAMETER_NAME_CACHE_FOLDER, true, NULL);
+
+  if (folder != NULL)
+  {
+    result = FormatString(L"%smpurlsourcesplitter_output_pin_%02u_%02u.temp", folder, this->GetDemuxerId(), this->GetStreamPid());
+  }
+
+  return result;
 }

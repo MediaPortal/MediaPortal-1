@@ -23,8 +23,8 @@
 #include "MediaPacket.h"
 #include "Utilities.h"
 
-CMediaPacket::CMediaPacket(void)
-  : CCacheFileItem()
+CMediaPacket::CMediaPacket(HRESULT *result)
+  : CCacheFileItem(result)
 {
   this->start = 0;
   this->end = 0;
@@ -110,9 +110,12 @@ void CMediaPacket::SetPresentationTimestampTicksPerSecond(unsigned int presentat
 
 CMediaPacket *CMediaPacket::CreateMediaPacketBasedOnPacket(int64_t start, int64_t end)
 {
-  CMediaPacket *mediaPacket = new CMediaPacket();
+  HRESULT result = S_OK;
+  CMediaPacket *mediaPacket = new CMediaPacket(&result);
+  CHECK_POINTER_HRESULT(result, mediaPacket, result, E_OUTOFMEMORY);
+
   unsigned char *buffer = NULL;
-  bool success = ((start >= this->start) && (end >= start) && (this->GetBuffer() != NULL));
+  bool success = (SUCCEEDED(result) && (start >= this->start) && (end >= start) && (this->GetBuffer() != NULL));
 
   if (success)
   {
@@ -161,7 +164,12 @@ CMediaPacket *CMediaPacket::CreateMediaPacketBasedOnPacket(int64_t start, int64_
 
 CCacheFileItem *CMediaPacket::CreateItem(void)
 {
-  return new CMediaPacket();
+  HRESULT result = S_OK;
+  CMediaPacket *item = new CMediaPacket(&result);
+  CHECK_POINTER_HRESULT(result, item, result, E_OUTOFMEMORY);
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(item));
+
+  return item;
 }
 
 bool CMediaPacket::InternalClone(CCacheFileItem *item)

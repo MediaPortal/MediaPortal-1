@@ -28,8 +28,8 @@
 class CStreamInfo
 {
 public:
-  CStreamInfo(void);
-  CStreamInfo(AVFormatContext *formatContext, AVStream *stream, const wchar_t *containerFormat, HRESULT *result);
+  CStreamInfo(HRESULT *result);
+  CStreamInfo(HRESULT *result, AVFormatContext *formatContext, AVStream *stream, const wchar_t *containerFormat);
 
   ~CStreamInfo(void);
 

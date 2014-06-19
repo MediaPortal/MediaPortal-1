@@ -24,12 +24,17 @@
 #define __MP_URL_SOURCE_SPLITTER_INPUT_DOWNLOAD_PIN_DEFINED
 
 #include "Logger.h"
+#include "Flags.h"
 
 #include <streams.h>
 
+#define MP_URL_SOURCE_SPLITTER_INPUT_DOWNLOAD_PIN_FLAG_NONE           FLAGS_NONE
+
+#define MP_URL_SOURCE_SPLITTER_INPUT_DOWNLOAD_PIN_FLAG_LAST           (FLAGS_LAST + 0)
+
 class CMPUrlSourceSplitterOutputDownloadPin;
 
-class CMPUrlSourceSplitterInputDownloadPin : public CUnknown, public IPin, public IMemInputPin
+class CMPUrlSourceSplitterInputDownloadPin : public CUnknown, public CFlags, public IPin, public IMemInputPin
 {
 public:
   CMPUrlSourceSplitterInputDownloadPin(CLogger *logger, HRESULT *phr, const wchar_t *name, const wchar_t *downloadFileName, CMPUrlSourceSplitterOutputDownloadPin *outputPin);
@@ -121,10 +126,6 @@ public:
   virtual HRESULT STDMETHODCALLTYPE ReceiveCanBlock(void);
 
 protected:
-
-  // holds various flags
-  unsigned int flags;
-
   // holds logger instance
   CLogger *logger;
 

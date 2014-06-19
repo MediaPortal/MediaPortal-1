@@ -22,8 +22,8 @@
 
 #include "MediaTypeCollection.h"
 
-CMediaTypeCollection::CMediaTypeCollection(void)
-  : CCollection<CMediaType>()
+CMediaTypeCollection::CMediaTypeCollection(HRESULT *result)
+  : CCollection(result)
 {
 }
 

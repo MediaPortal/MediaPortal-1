@@ -23,7 +23,7 @@
 #include "Serializable.h"
 #include "BufferHelper.h"
 
-CSerializable::CSerializable(void)
+CSerializable::CSerializable(HRESULT *result)
 {
 }
 

@@ -22,8 +22,8 @@
 
 #include "F4MBootstrapInfoCollection.h"
 
-CF4MBootstrapInfoCollection::CF4MBootstrapInfoCollection(void)
-  : CKeyedCollection()
+CF4MBootstrapInfoCollection::CF4MBootstrapInfoCollection(HRESULT *result)
+  : CKeyedCollection(result)
 {
 }
 

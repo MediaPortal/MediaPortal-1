@@ -22,8 +22,8 @@
 
 #include "MediaCollection.h"
 
-CMediaCollection::CMediaCollection(void)
-  : CKeyedCollection()
+CMediaCollection::CMediaCollection(HRESULT *result)
+  : CKeyedCollection(result)
 {
 }
 

@@ -29,7 +29,7 @@
 class CNetworkInterfaceCollection : public CKeyedCollection<CNetworkInterface, const wchar_t *>
 {
 public:
-  CNetworkInterfaceCollection(void);
+  CNetworkInterfaceCollection(HRESULT *result);
   ~CNetworkInterfaceCollection(void);
 
 protected:

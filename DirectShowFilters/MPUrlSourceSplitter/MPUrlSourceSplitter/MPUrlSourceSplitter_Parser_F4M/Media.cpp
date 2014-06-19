@@ -23,24 +23,44 @@
 #include "Media.h"
 #include "base64.h"
 
-CMedia::CMedia(const wchar_t *url, unsigned int bitrate, unsigned int width, unsigned int height,
-    const wchar_t *drmAdditionalHeaderId, const wchar_t *bootstrapInfoId, const wchar_t *dvrInfoId,
-    const wchar_t *groupspec, const wchar_t *multicastStreamName, const wchar_t *metadata)
+CMedia::CMedia(HRESULT *result,
+  const wchar_t *url, unsigned int bitrate, unsigned int width, unsigned int height,
+  const wchar_t *drmAdditionalHeaderId, const wchar_t *bootstrapInfoId, const wchar_t *dvrInfoId,
+  const wchar_t *groupspec, const wchar_t *multicastStreamName, const wchar_t *metadata)
 {
-  this->url = Duplicate(url);
+  this->url = NULL;
   this->bitrate = bitrate;
   this->width = width;
   this->height = height;
-  this->drmAdditionalHeaderId = Duplicate(drmAdditionalHeaderId);
-  this->bootstrapInfoId = Duplicate((bootstrapInfoId == NULL) ? L"" : bootstrapInfoId);
-  this->dvrInfoId = Duplicate(dvrInfoId);
-  this->groupspec = Duplicate(groupspec);
-  this->multicastStreamName = Duplicate(multicastStreamName);
-  this->metadata = Duplicate(metadata);
+  this->drmAdditionalHeaderId = NULL;
+  this->bootstrapInfoId = NULL;
+  this->dvrInfoId = NULL;
+  this->groupspec = NULL;
+  this->multicastStreamName = NULL;
+  this->metadata = NULL;
 
   this->decodedLength = UINT_MAX;
   this->decodedMetadata = NULL;
   this->decodeResult = E_NOT_VALID_STATE;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->url = Duplicate(url);
+    this->drmAdditionalHeaderId = Duplicate(drmAdditionalHeaderId);
+    this->bootstrapInfoId = Duplicate((bootstrapInfoId == NULL) ? L"" : bootstrapInfoId);
+    this->dvrInfoId = Duplicate(dvrInfoId);
+    this->groupspec = Duplicate(groupspec);
+    this->multicastStreamName = Duplicate(multicastStreamName);
+    this->metadata = Duplicate(metadata);
+
+    CHECK_POINTER_HRESULT(*result, this->url, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->drmAdditionalHeaderId, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->bootstrapInfoId, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->dvrInfoId, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->groupspec, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->multicastStreamName, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->metadata, *result, E_OUTOFMEMORY);
+  }
 }
 
 CMedia::~CMedia(void)

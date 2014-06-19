@@ -26,10 +26,11 @@
 #include "CacheFileItem.h"
 
 #define RTMP_STREAM_FRAGMENT_FLAG_NONE                                CACHE_FILE_ITEM_FLAG_NONE
-#define RTMP_STREAM_FRAGMENT_FLAG_DOWNLOADED                          (1 << (CACHE_FILE_ITEM_FLAG_LAST + 1))
-#define RTMP_STREAM_FRAGMENT_FLAG_SEEKED                              (1 << (CACHE_FILE_ITEM_FLAG_LAST + 2))
-#define RTMP_STREAM_FRAGMENT_FLAG_HAS_INCORRECT_TIMESTAMPS            (1 << (CACHE_FILE_ITEM_FLAG_LAST + 3))
-#define RTMP_STREAM_FRAGMENT_FLAG_SET_START_TIMESTAMP                 (1 << (CACHE_FILE_ITEM_FLAG_LAST + 4))
+
+#define RTMP_STREAM_FRAGMENT_FLAG_DOWNLOADED                          (1 << (CACHE_FILE_ITEM_FLAG_LAST + 0))
+#define RTMP_STREAM_FRAGMENT_FLAG_SEEKED                              (1 << (CACHE_FILE_ITEM_FLAG_LAST + 1))
+#define RTMP_STREAM_FRAGMENT_FLAG_HAS_INCORRECT_TIMESTAMPS            (1 << (CACHE_FILE_ITEM_FLAG_LAST + 2))
+#define RTMP_STREAM_FRAGMENT_FLAG_SET_START_TIMESTAMP                 (1 << (CACHE_FILE_ITEM_FLAG_LAST + 3))
 
 class CRtmpStreamFragment : public CCacheFileItem
 {

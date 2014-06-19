@@ -31,7 +31,7 @@
 class CPacketInputFormat : public AVInputFormat
 {
 public:
-  CPacketInputFormat(IPacketDemuxer *demuxer, const wchar_t *streamFormat);
+  CPacketInputFormat(HRESULT *result, IPacketDemuxer *demuxer, const wchar_t *streamFormat);
   ~CPacketInputFormat(void);
 
   /* get methods */

@@ -23,32 +23,31 @@
 #ifndef __OUTPUT_PIN_PACKET_DEFINED
 #define __OUTPUT_PIN_PACKET_DEFINED
 
-#include "LinearBuffer.h"
+#include "CacheFileItem.h"
 
-#define OUTPUT_PIN_PACKET_FLAG_NONE                                   0x00000000
-#define OUTPUT_PIN_PACKET_FLAG_DISCONTINUITY                          0x00000001
-#define OUTPUT_PIN_PACKET_FLAG_SYNC_POINT                             0x00000002
-#define OUTPUT_PIN_PACKET_FLAG_END_OF_STREAM                          0x00000004
-#define OUTPUT_PIN_PACKET_FLAG_PACKET_H264_ANNEXB                     0x00000008
-#define OUTPUT_PIN_PACKET_FLAG_PACKET_PARSED                          0x00000010
-#define OUTPUT_PIN_PACKET_FLAG_PACKET_MOV_TEXT                        0x00000020
-#define OUTPUT_PIN_PACKET_FLAG_PACKET_FORCED_SUBTITLE                 0x00000040
+#define OUTPUT_PIN_PACKET_FLAG_NONE                                   CACHE_FILE_ITEM_FLAG_NONE
+
+#define OUTPUT_PIN_PACKET_FLAG_DISCONTINUITY                          (1 << (CACHE_FILE_ITEM_FLAG_LAST + 0))
+#define OUTPUT_PIN_PACKET_FLAG_SYNC_POINT                             (1 << (CACHE_FILE_ITEM_FLAG_LAST + 1))
+#define OUTPUT_PIN_PACKET_FLAG_END_OF_STREAM                          (1 << (CACHE_FILE_ITEM_FLAG_LAST + 2))
+#define OUTPUT_PIN_PACKET_FLAG_PACKET_H264_ANNEXB                     (1 << (CACHE_FILE_ITEM_FLAG_LAST + 3))
+#define OUTPUT_PIN_PACKET_FLAG_PACKET_PARSED                          (1 << (CACHE_FILE_ITEM_FLAG_LAST + 4))
+#define OUTPUT_PIN_PACKET_FLAG_PACKET_MOV_TEXT                        (1 << (CACHE_FILE_ITEM_FLAG_LAST + 5))
+#define OUTPUT_PIN_PACKET_FLAG_PACKET_FORCED_SUBTITLE                 (1 << (CACHE_FILE_ITEM_FLAG_LAST + 6))
+
+#define OUTPUT_PIN_PACKET_FLAG_LAST                                   (CACHE_FILE_ITEM_FLAG_NONE + 6)
 
 #define DEMUXER_ID_UNSPECIFIED                                        UINT_MAX
 #define STREAM_PID_UNSPECIFIED                                        UINT_MAX
 
-class COutputPinPacket
+class COutputPinPacket : public CCacheFileItem
 {
 public:
   // initializes a new instance of COutputPinPacket class
-  COutputPinPacket(void);
-  ~COutputPinPacket(void);
+  COutputPinPacket(HRESULT *result);
+  virtual ~COutputPinPacket(void);
 
   /* get methods */
-
-  // gets buffer
-  // @return : buffer or NULL if error
-  CLinearBuffer *GetBuffer(void);
 
   // gets start time of packet
   // @ return : packet start time or INVALID_TIME
@@ -72,8 +71,8 @@ public:
   // @return : stream PID or STREAM_PID_UNSPECIFIED if not specified
   unsigned int GetStreamPid(void);
 
-  // gets combination of flags
-  // @return : combination of flags
+  // gets combination of set flags
+  // @return : combination of set flags
   unsigned int GetFlags(void);
 
   /* set methods */
@@ -90,10 +89,6 @@ public:
   // @param endOfStream : true if packet signalize end of stream, false otherwise
   void SetEndOfStream(bool endOfStream);
 
-  // sets flags
-  // @param flags : the flags to set
-  void SetFlags(unsigned int flags);
-
   // sets packet start time
   // @param startTime : packet start time to set
   void SetStartTime(REFERENCE_TIME startTime);
@@ -102,7 +97,7 @@ public:
   // @param endTime : packet end time to set
   void SetEndTime(REFERENCE_TIME endTime);
 
-  // sets media type
+  // sets media type (only reference)
   // @param mediaType : the media type to set
   void SetMediaType(AM_MEDIA_TYPE *mediaType);
 
@@ -113,6 +108,10 @@ public:
   // sets stream PID
   // @param streamPid : the stream PID to set
   void SetStreamPid(unsigned int streamPid);
+
+  // sets combination of flags
+  // @param flags : the combination of flags to set
+  void SetFlags(unsigned int flags);
 
   /* other methods */
 
@@ -140,26 +139,9 @@ public:
   // @return : true if packet has set OUTPUT_PIN_PACKET_FLAG_PACKET_MOV_TEXT flag, false otherwise
   bool IsPacketMovText(void);
 
-  // tests if specific set of flags is set
-  // @param flags : the flags to test
-  // @return : true if flags are set, false otherwise
-  bool IsSetFlags(unsigned int flags);
-
-  // creates buffer with specified size
-  // @param size : the size of buffer to create
-  // @return : true if successful, false otherwise
-  bool CreateBuffer(unsigned int size);
-
   static const REFERENCE_TIME INVALID_TIME = _I64_MIN;
 
 protected:
-
-  // holds various flags
-  uint32_t flags;
-
-  // holds buffer
-  CLinearBuffer *buffer;
-
   // holds start time of packet
   REFERENCE_TIME startTime;
 
@@ -174,6 +156,17 @@ protected:
 
   // holds stream PID for splitter (it specifies to which output pin goes this packet)
   unsigned int streamPid;
+
+  /* methods */
+
+  // gets new instance of media packet
+  // @return : new media packet instance or NULL if error
+  virtual CCacheFileItem *CreateItem(void);
+
+  // deeply clones current instance
+  // @param item : the cache file item instance to clone
+  // @return : true if successful, false otherwise
+  virtual bool InternalClone(CCacheFileItem *item);
 };
 
 #endif

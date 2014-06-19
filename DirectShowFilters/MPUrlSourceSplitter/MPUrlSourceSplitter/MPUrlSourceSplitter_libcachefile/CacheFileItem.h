@@ -24,20 +24,23 @@
 #define __CACHE_FILE_ITEM_DEFINED
 
 #include "LinearBuffer.h"
+#include "Flags.h"
 
 #include <stdint.h>
 
-#define CACHE_FILE_ITEM_FLAG_NONE                                     0x00000000
+#define CACHE_FILE_ITEM_FLAG_NONE                                     FLAGS_NONE
 
-#define CACHE_FILE_ITEM_FLAG_LAST                                     0
+#define CACHE_FILE_ITEM_FLAG_NO_CLEAN_UP_FROM_MEMORY                  (1 << (FLAGS_LAST + 0))
+
+#define CACHE_FILE_ITEM_FLAG_LAST                                     (FLAGS_LAST + 1)
 
 #define CACHE_FILE_ITEM_LOAD_MEMORY_TIME_NOT_SET                      0
 #define CACHE_FILE_ITEM_POSITION_NOT_SET                              -1
 
-class CCacheFileItem
+class CCacheFileItem : public CFlags
 {
 public:
-  CCacheFileItem(void);
+  CCacheFileItem(HRESULT *result);
   virtual ~CCacheFileItem(void);
 
   /* get methods */
@@ -70,6 +73,10 @@ public:
   // @param time : the time (in ms, GetTickCount()) to set or CACHE_FILE_ITEM_LOAD_MEMORY_TIME_NOT_SET to unset
   virtual void SetLoadedToMemoryTime(unsigned int time);
 
+  // sets no clean up from memory
+  // @param noCleanUpFromMemory : true if no clean up from memory to set, false otherwise
+  virtual void SetNoCleanUpFromMemory(bool noCleanUpFromMemory);
+
   /* other methods */
 
   // tests if item is stored to file
@@ -80,18 +87,15 @@ public:
   // @return : true if item is loaded to memory, false otherwise
   virtual bool IsLoadedToMemory(void);
 
-  // tests if specific combination of flags is set
-  // @return : true if specific combination of flags is set, false otherwise
-  virtual bool IsSetFlags(unsigned int flags);
+  // tests if no clean up from memory is set
+  // @return : true if no clean up from memory is set, false otherwise
+  virtual bool IsNoCleanUpFromMemory(void);
 
   // deeply clones current instance
   // @return : deep clone of current instance or NULL if error
   virtual CCacheFileItem *Clone(void);
 
 protected:
-  // holds various flags
-  unsigned int flags;
-
   // holds buffer data
   CLinearBuffer *buffer;
 
@@ -108,7 +112,7 @@ protected:
 
   // gets new instance of cache file item
   // @return : new cache file item instance or NULL if error
-  virtual CCacheFileItem *CreateItem(void);
+  virtual CCacheFileItem *CreateItem(void) = 0;
 
   // deeply clones current instance
   // @param item : the cache file item instance to clone

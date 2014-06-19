@@ -39,6 +39,7 @@
 
 #include <dbghelp.h>
 #include <Shlwapi.h>
+#include <Psapi.h>
 
 #pragma warning(pop)
 
@@ -156,6 +157,8 @@ BOOL APIENTRY DllMain(HMODULE hModule,
   LPVOID lpReserved
   )
 {
+  HRESULT result = S_OK;
+
   switch (ul_reason_for_call)
   {
   case DLL_PROCESS_ATTACH:
@@ -167,8 +170,11 @@ BOOL APIENTRY DllMain(HMODULE hModule,
         exceptionHandler = AddVectoredExceptionHandler(1, ExceptionHandler);
       }
 #endif
-      staticLogger = new CStaticLogger();
+      staticLogger = new CStaticLogger(&result);
       curl_global_init(CURL_GLOBAL_ALL);
+
+      CHECK_CONDITION_HRESULT(result, staticLogger, result, E_OUTOFMEMORY);
+      CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(staticLogger));
     }
     break;
   case DLL_THREAD_ATTACH:
@@ -192,7 +198,60 @@ BOOL APIENTRY DllMain(HMODULE hModule,
     break;
   }
 
-  return DllEntryPoint((HINSTANCE)(hModule), ul_reason_for_call, lpReserved);
+  return FAILED(result) ? FALSE : DllEntryPoint((HINSTANCE)(hModule), ul_reason_for_call, lpReserved);
+}
+
+HMODULE GetModuleHandleByAddress(LPVOID lpAddress)
+{
+  HMODULE *moduleArray = NULL;
+
+  DWORD moduleArraySize = 0;
+  DWORD moduleArraySizeNeeded = 0;
+
+  if (EnumProcessModules(GetCurrentProcess(), moduleArray, moduleArraySize, &moduleArraySizeNeeded) == 0)
+  {
+    return NULL;
+  }
+
+  moduleArray = ALLOC_MEM_SET(moduleArray, HMODULE, (moduleArraySizeNeeded / sizeof(HMODULE)), 0);
+  if (moduleArray != NULL)
+  {
+    moduleArraySize = moduleArraySizeNeeded;
+
+    if (EnumProcessModules(GetCurrentProcess(), moduleArray, moduleArraySize, &moduleArraySizeNeeded) == 0)
+    {
+      return NULL;
+    }
+  }
+
+  HMODULE result = NULL;
+  unsigned int count = moduleArraySize / sizeof(HMODULE);
+  for (unsigned int i = 0; i < count ; i++)
+  {
+    MODULEINFO modinfo;
+
+    if (GetModuleInformation(GetCurrentProcess(), moduleArray[i], &modinfo, sizeof(modinfo)) == 0)
+    {
+      continue;
+    }
+
+    if (lpAddress < modinfo.lpBaseOfDll)
+    {
+      continue;
+    }
+
+    if ((ULONG_PTR)lpAddress >= ((ULONG_PTR)modinfo.lpBaseOfDll + modinfo.SizeOfImage))
+    {
+      continue;
+    }
+
+    result = (HMODULE)modinfo.lpBaseOfDll;
+    break;
+  }
+
+  FREE_MEM(moduleArray);
+
+  return result;
 }
 
 LONG WINAPI ExceptionHandler(struct _EXCEPTION_POINTERS *exceptionInfo)
@@ -232,64 +291,68 @@ LONG WINAPI ExceptionHandler(struct _EXCEPTION_POINTERS *exceptionInfo)
   if (((exceptionInfo->ExceptionRecord->ExceptionCode & 0xF0000000) == 0xC0000000) &&
        (exceptionHandler != NULL))
   {
-    // remove exception handler
-    RemoveVectoredExceptionHandler(exceptionHandler);
-    exceptionHandler = NULL;
-
-    if (staticLogger != NULL)
+    HMODULE exceptionModule = GetModuleHandleByAddress(exceptionInfo->ExceptionRecord->ExceptionAddress);
+    if (exceptionModule != NULL)
     {
-      SYSTEMTIME currentLocalTime;
-      MINIDUMP_EXCEPTION_INFORMATION minidumpException;
-      GetLocalTime(&currentLocalTime);
+      // remove exception handler
+      RemoveVectoredExceptionHandler(exceptionHandler);
+      exceptionHandler = NULL;
 
-      for (unsigned int i = 0; i < staticLogger->GetLoggerContexts()->Count(); i++)
+      if (staticLogger != NULL)
       {
-        CStaticLoggerContext *context = staticLogger->GetLoggerContexts()->GetItem(i);
+        SYSTEMTIME currentLocalTime;
+        MINIDUMP_EXCEPTION_INFORMATION minidumpException;
+        GetLocalTime(&currentLocalTime);
 
-        wchar_t *contextLogFile = Duplicate(context->GetLogFile());
-        PathRemoveFileSpec(contextLogFile);
-
-        // files with 'dmp' extension are known for Visual Studio
-
-        wchar_t *dumpFileName = FormatString(L"%s\\MPUrlSourceSplitter-%04.4d-%02.2d-%02.2d-%02.2d-%02.2d-%02.2d-%03.3d.dmp", contextLogFile,
-          currentLocalTime.wYear, currentLocalTime.wMonth, currentLocalTime.wDay,
-          currentLocalTime.wHour, currentLocalTime.wMinute, currentLocalTime.wSecond, currentLocalTime.wMilliseconds);
-
-        HANDLE dumpFile = CreateFile(dumpFileName, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_WRITE | FILE_SHARE_READ, 0, CREATE_ALWAYS, 0, 0);
-
-        if (dumpFile != INVALID_HANDLE_VALUE)
+        for (unsigned int i = 0; i < staticLogger->GetLoggerContexts()->Count(); i++)
         {
-          minidumpException.ThreadId = GetCurrentThreadId();
-          minidumpException.ExceptionPointers = exceptionInfo;
-          minidumpException.ClientPointers = TRUE;
+          CStaticLoggerContext *context = staticLogger->GetLoggerContexts()->GetItem(i);
 
-          MINIDUMP_TYPE miniDumpType = (MINIDUMP_TYPE)
-            (MiniDumpWithFullMemory | MiniDumpWithDataSegs | MiniDumpIgnoreInaccessibleMemory); 
+          wchar_t *contextLogFile = Duplicate(context->GetLogFile());
+          PathRemoveFileSpec(contextLogFile);
 
-          if (MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), dumpFile, miniDumpType, &minidumpException, NULL, NULL) == TRUE)
+          // files with 'dmp' extension are known for Visual Studio
+
+          wchar_t *dumpFileName = FormatString(L"%s\\MPUrlSourceSplitter-%04.4d-%02.2d-%02.2d-%02.2d-%02.2d-%02.2d-%03.3d.dmp", contextLogFile,
+            currentLocalTime.wYear, currentLocalTime.wMonth, currentLocalTime.wDay,
+            currentLocalTime.wHour, currentLocalTime.wMinute, currentLocalTime.wSecond, currentLocalTime.wMilliseconds);
+
+          HANDLE dumpFile = CreateFile(dumpFileName, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_WRITE | FILE_SHARE_READ, 0, CREATE_ALWAYS, 0, 0);
+
+          if (dumpFile != INVALID_HANDLE_VALUE)
           {
-            wchar_t *guid = ConvertGuidToString(GUID_NULL);
+            minidumpException.ThreadId = GetCurrentThreadId();
+            minidumpException.ExceptionPointers = exceptionInfo;
+            minidumpException.ClientPointers = TRUE;
 
-            wchar_t *message = FormatString(L"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%03.3d [%4x] [%s] %s %s\r\n",
-              currentLocalTime.wDay, currentLocalTime.wMonth, currentLocalTime.wYear,
-              currentLocalTime.wHour, currentLocalTime.wMinute, currentLocalTime.wSecond,
-              currentLocalTime.wMilliseconds,
-              GetCurrentThreadId(),
-              guid,
-              L"[Error]  ",
-              dumpFileName);
+            MINIDUMP_TYPE miniDumpType = (MINIDUMP_TYPE)
+              (MiniDumpWithFullMemory | MiniDumpWithDataSegs | MiniDumpIgnoreInaccessibleMemory); 
 
-            staticLogger->LogMessage(context, LOGGER_ERROR, message);
+            if (MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), dumpFile, miniDumpType, &minidumpException, NULL, NULL) == TRUE)
+            {
+              wchar_t *guid = ConvertGuidToString(GUID_NULL);
 
-            FREE_MEM(guid);
-            FREE_MEM(message);
+              wchar_t *message = FormatString(L"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%03.3d [%4x] [%s] %s %s\r\n",
+                currentLocalTime.wDay, currentLocalTime.wMonth, currentLocalTime.wYear,
+                currentLocalTime.wHour, currentLocalTime.wMinute, currentLocalTime.wSecond,
+                currentLocalTime.wMilliseconds,
+                GetCurrentThreadId(),
+                guid,
+                L"[Error]  ",
+                dumpFileName);
+
+              staticLogger->LogMessage(context, LOGGER_ERROR, message);
+
+              FREE_MEM(guid);
+              FREE_MEM(message);
+            }
+
+            CloseHandle(dumpFile);
           }
 
-          CloseHandle(dumpFile);
+          FREE_MEM(dumpFileName);
+          FREE_MEM(contextLogFile);
         }
-
-        FREE_MEM(dumpFileName);
-        FREE_MEM(contextLogFile);
       }
     }
   }

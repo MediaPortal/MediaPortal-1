@@ -27,7 +27,7 @@ template <class TItem> class CCollection
 {
 public:
   // create new instance of CCollection class
-  CCollection();
+  CCollection(HRESULT *result);
 
   virtual ~CCollection(void);
 
@@ -94,11 +94,18 @@ protected:
 
 // implementation
 
-template <class TItem> CCollection<TItem>::CCollection()
+template <class TItem> CCollection<TItem>::CCollection(HRESULT *result)
 {
   this->itemCount = 0;
   this->itemMaximumCount = 16;
-  this->items = ALLOC_MEM_SET(this->items, TItem *, this->itemMaximumCount, 0);
+  this->items = NULL;
+
+
+  if ((result != NULL) && SUCCEEDED(*result))
+  {
+    this->items = ALLOC_MEM_SET(this->items, TItem *, this->itemMaximumCount, 0);
+    CHECK_POINTER_HRESULT(*result, this->items, *result, E_OUTOFMEMORY);
+  }
 }
 
 template <class TItem> CCollection<TItem>::~CCollection(void)

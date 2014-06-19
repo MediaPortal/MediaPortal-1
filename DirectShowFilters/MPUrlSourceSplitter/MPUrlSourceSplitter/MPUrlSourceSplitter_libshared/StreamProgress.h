@@ -23,6 +23,8 @@
 #ifndef __STREAM_PROGRESS_DEFINED
 #define __STREAM_PROGRESS_DEFINED
 
+#include <stdint.h>
+
 class CStreamProgress
 {
 public:
@@ -33,11 +35,11 @@ public:
 
   // gets total length
   // @return : the total length value
-  LONGLONG GetTotalLength(void);
+  int64_t GetTotalLength(void);
 
   // gets current length
   // @return : the current length value
-  LONGLONG GetCurrentLength(void);
+  int64_t GetCurrentLength(void);
 
   // gets stream ID to get stream progress
   // @return : stream ID to get stream progress
@@ -47,11 +49,11 @@ public:
 
   // sets total length
   // @param totalLength : the total length to set
-  void SetTotalLength(LONGLONG totalLength);
+  void SetTotalLength(int64_t totalLength);
 
   // sets current length
   // @param currentLength : the current length to set
-  void SetCurrentLength(LONGLONG currentLength);
+  void SetCurrentLength(int64_t currentLength);
 
   // sets stream ID to get stream progress
   // @param streamId : the stream ID to set
@@ -61,8 +63,8 @@ public:
 
 private:
   unsigned int streamId;
-  LONGLONG total;
-  LONGLONG current;
+  int64_t total;
+  int64_t current;
 };
 
 #endif

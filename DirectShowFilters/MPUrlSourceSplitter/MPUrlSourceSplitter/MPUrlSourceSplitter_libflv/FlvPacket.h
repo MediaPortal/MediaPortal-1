@@ -77,7 +77,7 @@ class CFlvPacket
 {
 public:
   // initializes a new instance of CFlvPacket class
-  CFlvPacket(void);
+  CFlvPacket(HRESULT *result);
   virtual ~CFlvPacket(void);
 
   // tests if current instance of CFlvPacket is valid

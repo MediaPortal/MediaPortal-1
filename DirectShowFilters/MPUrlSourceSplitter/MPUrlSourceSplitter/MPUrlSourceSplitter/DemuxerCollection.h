@@ -29,7 +29,7 @@
 class CDemuxerCollection : public CCollection<CDemuxer>
 {
 public:
-  CDemuxerCollection(void);
+  CDemuxerCollection(HRESULT *result);
   virtual ~CDemuxerCollection(void);
 
 protected:

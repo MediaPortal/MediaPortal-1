@@ -99,10 +99,10 @@ HRESULT CDns::GetIpAddresses(const wchar_t *hostName, WORD port, int family, int
         const wchar_t *canonicalName = (addresses != NULL) ? addresses->ai_canonname : NULL;
         for (ADDRINFOW *address = addresses; (SUCCEEDED(result) && (address != NULL)); address = address->ai_next)
         {
-          CIpAddress *ipAddress = new CIpAddress(address, canonicalName);
+          CIpAddress *ipAddress = new CIpAddress(&result, address, canonicalName);
           CHECK_POINTER_HRESULT(result, ipAddress, result, E_OUTOFMEMORY);
 
-          CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = collection->Add(ipAddress) ? result : E_OUTOFMEMORY);
+          CHECK_CONDITION_HRESULT(result, collection->Add(ipAddress), result, E_OUTOFMEMORY);
           CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(ipAddress));
         }
       }

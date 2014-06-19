@@ -23,17 +23,6 @@
 #include "MPUrlSourceSplitterInputDownloadPin.h"
 #include "MPUrlSourceSplitterOutputDownloadPin.h"
 
-//#define METHOD_GET_MEDIA_TYPE_NAME                                    L"GetMediaType()"
-//#define METHOD_CONNECT_NAME                                           L"Connect()"
-//#define METHOD_DECIDE_ALLOCATOR_NAME                                  L"DecideAllocator()"
-//#define METHOD_DECIDE_BUFFER_SIZE_NAME                                L"DecideBufferSize()"
-//#define METHOD_ACTIVE_NAME                                            L"Active()"
-//#define METHOD_INACTIVE_NAME                                          L"Inactive()"
-//#define METHOD_CHECK_MEDIA_TYPE_NAME                                  L"CheckMediaType()"
-//
-//#define METHOD_THREAD_PROC_NAME                                       L"ThreadProc()"
-//#define METHOD_QUEUE_END_OF_STREAM_NAME                               L"QueueEndOfStream()"
-
 #define METHOD_PIN_MESSAGE_FORMAT                                     L"%s: %s: pin '%s', %s"
 #define METHOD_PIN_START_FORMAT                                       L"%s: %s: pin '%s', Start"
 #define METHOD_PIN_END_FORMAT                                         L"%s: %s: pin '%s', End"
@@ -50,7 +39,7 @@
 #define PIN_NAME                                                      (this->name != NULL) ? this->name : L"MediaPortal Url Source Splitter Input Download Pin"
 
 CMPUrlSourceSplitterInputDownloadPin::CMPUrlSourceSplitterInputDownloadPin(CLogger *logger, HRESULT *phr, const wchar_t *name, const wchar_t *downloadFileName, CMPUrlSourceSplitterOutputDownloadPin *outputPin)
-  : CUnknown(NAME("MediaPortal Url Source Splitter Input Download Pin"), NULL)
+  : CUnknown(NAME("MediaPortal Url Source Splitter Input Download Pin"), NULL), CFlags()
 {
   this->downloadFileName = NULL;
   this->name = NULL;

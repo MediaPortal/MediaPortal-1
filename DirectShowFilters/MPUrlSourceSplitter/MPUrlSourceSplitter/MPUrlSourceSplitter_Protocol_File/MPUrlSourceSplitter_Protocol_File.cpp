@@ -516,29 +516,6 @@ int64_t CMPUrlSourceSplitter_Protocol_File::SeekToTime(int64_t time)
   return result;
 }
 
-int64_t CMPUrlSourceSplitter_Protocol_File::SeekToPosition(int64_t start, int64_t end)
-{
-  int64_t result = -1;
-
-  if (this->IsConnected())
-  {
-    {
-      // lock access to file
-      CLockMutex lock(this->lockMutex, INFINITE);
-
-      result = (_fseeki64(this->fileStream, start, SEEK_SET) == 0) ? start : -1;
-
-      if (result >= 0)
-      {
-        this->wholeStreamDownloaded = false;
-        this->streamTime = start;
-      }
-    }
-  }
-
-  return result;
-}
-
 void CMPUrlSourceSplitter_Protocol_File::SetSupressData(bool supressData)
 {
   this->supressData = supressData;

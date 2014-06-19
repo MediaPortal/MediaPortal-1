@@ -22,8 +22,8 @@
 
 #include "CacheFileItemCollection.h"
 
-CCacheFileItemCollection::CCacheFileItemCollection(void)
-  : CCollection()
+CCacheFileItemCollection::CCacheFileItemCollection(HRESULT *result)
+  : CCollection(result)
 {
 }
 

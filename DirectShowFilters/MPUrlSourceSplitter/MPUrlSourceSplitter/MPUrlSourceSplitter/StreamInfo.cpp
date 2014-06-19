@@ -83,41 +83,52 @@ static wchar_t *GetDefaultVOBSubHeader(int width, int height)
   return result;
 }
 
-CStreamInfo::CStreamInfo(void)
+CStreamInfo::CStreamInfo(HRESULT *result)
 {
-  this->mediaTypes = new CMediaTypeCollection();
+  this->mediaTypes = NULL;
   this->streamDescription = NULL;
   this->containerFormat = NULL;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->mediaTypes = new CMediaTypeCollection(result);
+    CHECK_POINTER_HRESULT(*result, this->mediaTypes, *result, E_OUTOFMEMORY);
+  }
 }
 
-CStreamInfo::CStreamInfo(AVFormatContext *formatContext, AVStream *stream, const wchar_t *containerFormat, HRESULT *result)
+CStreamInfo::CStreamInfo(HRESULT *result, AVFormatContext *formatContext, AVStream *stream, const wchar_t *containerFormat)
 {
-  this->mediaTypes = new CMediaTypeCollection();
+  this->mediaTypes = NULL;
   this->streamDescription = NULL;
   this->containerFormat = NULL;
 
-  SET_STRING(this->containerFormat, containerFormat);
-  *result = (TEST_STRING_WITH_NULL(this->containerFormat, containerFormat)) ? *result : E_OUTOFMEMORY;
-
-  if (SUCCEEDED(result))
+  if ((result != NULL) && (SUCCEEDED(*result)))
   {
-    switch(stream->codec->codec_type)
-    {
-    case AVMEDIA_TYPE_AUDIO:
-      *result = CreateAudioMediaType(formatContext, stream);
-      break;
-    case AVMEDIA_TYPE_VIDEO:
-      *result = CreateVideoMediaType(formatContext, stream);
-      break;
-    case AVMEDIA_TYPE_SUBTITLE:
-      *result = CreateSubtitleMediaType(formatContext, stream);
-      break;
-    default:
-      *result = E_FAIL;
-      break;
-    }
+    this->mediaTypes = new CMediaTypeCollection(result);
+    CHECK_POINTER_HRESULT(*result, this->mediaTypes, *result, E_OUTOFMEMORY);
 
-    this->streamDescription = CDemuxerUtils::GetStreamDescription(stream);
+    SET_STRING_HRESULT_WITH_NULL(this->containerFormat, containerFormat, *result);
+
+    if (SUCCEEDED(*result))
+    {
+      switch(stream->codec->codec_type)
+      {
+      case AVMEDIA_TYPE_AUDIO:
+        *result = CreateAudioMediaType(formatContext, stream);
+        break;
+      case AVMEDIA_TYPE_VIDEO:
+        *result = CreateVideoMediaType(formatContext, stream);
+        break;
+      case AVMEDIA_TYPE_SUBTITLE:
+        *result = CreateSubtitleMediaType(formatContext, stream);
+        break;
+      default:
+        *result = E_FAIL;
+        break;
+      }
+
+      this->streamDescription = CDemuxerUtils::GetStreamDescription(stream);
+    }
   }
 }
 
@@ -189,7 +200,7 @@ HRESULT CStreamInfo::CreateAudioMediaType(AVFormatContext *formatContext, AVStre
           CMediaType *addMediaType = new CMediaType(mediaType, &result);
           CHECK_POINTER_HRESULT(result, addMediaType, result, E_OUTOFMEMORY);
 
-          CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->mediaTypes->Add(addMediaType) ? result : E_OUTOFMEMORY);
+          CHECK_CONDITION_HRESULT(result, this->mediaTypes->Add(addMediaType), result, E_OUTOFMEMORY);
           CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(addMediaType));
 
           mediaType.subtype = MEDIASUBTYPE_HDMV_LPCM_AUDIO;
@@ -224,7 +235,7 @@ HRESULT CStreamInfo::CreateAudioMediaType(AVFormatContext *formatContext, AVStre
             CMediaType *addMediaType = new CMediaType(mediaType, &result);
             CHECK_POINTER_HRESULT(result, addMediaType, result, E_OUTOFMEMORY);
 
-            CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->mediaTypes->Add(addMediaType) ? result : E_OUTOFMEMORY);
+            CHECK_CONDITION_HRESULT(result, this->mediaTypes->Add(addMediaType), result, E_OUTOFMEMORY);
             CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(addMediaType));
 
             mediaType.subtype = MEDIASUBTYPE_FLAC;
@@ -234,7 +245,7 @@ HRESULT CStreamInfo::CreateAudioMediaType(AVFormatContext *formatContext, AVStre
             CMediaType *addMediaType = new CMediaType(mediaType, &result);
             CHECK_POINTER_HRESULT(result, addMediaType, result, E_OUTOFMEMORY);
 
-            CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->mediaTypes->Add(addMediaType) ? result : E_OUTOFMEMORY);
+            CHECK_CONDITION_HRESULT(result, this->mediaTypes->Add(addMediaType), result, E_OUTOFMEMORY);
             CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(addMediaType));
 
             mediaType.subtype = MEDIASUBTYPE_DOLBY_DDPLUS_ARCSOFT;
@@ -248,7 +259,7 @@ HRESULT CStreamInfo::CreateAudioMediaType(AVFormatContext *formatContext, AVStre
             CMediaType *addMediaType = new CMediaType(mediaType, &result);
             CHECK_POINTER_HRESULT(result, addMediaType, result, E_OUTOFMEMORY);
 
-            CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->mediaTypes->Add(addMediaType) ? result : E_OUTOFMEMORY);
+            CHECK_CONDITION_HRESULT(result, this->mediaTypes->Add(addMediaType), result, E_OUTOFMEMORY);
             CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(addMediaType));
 
             mediaType.subtype = MEDIASUBTYPE_DOLBY_TRUEHD_ARCSOFT;
@@ -261,7 +272,7 @@ HRESULT CStreamInfo::CreateAudioMediaType(AVFormatContext *formatContext, AVStre
             CMediaType *addMediaType = new CMediaType(mediaType, &result);
             CHECK_POINTER_HRESULT(result, addMediaType, result, E_OUTOFMEMORY);
 
-            CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->mediaTypes->Add(addMediaType) ? result : E_OUTOFMEMORY);
+            CHECK_CONDITION_HRESULT(result, this->mediaTypes->Add(addMediaType), result, E_OUTOFMEMORY);
             CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(addMediaType));
 
             mediaType.subtype = MEDIASUBTYPE_AAC;
@@ -272,7 +283,7 @@ HRESULT CStreamInfo::CreateAudioMediaType(AVFormatContext *formatContext, AVStre
             CMediaType *addMediaType = new CMediaType(mediaType, &result);
             CHECK_POINTER_HRESULT(result, addMediaType, result, E_OUTOFMEMORY);
 
-            CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->mediaTypes->Add(addMediaType) ? result : E_OUTOFMEMORY);
+            CHECK_CONDITION_HRESULT(result, this->mediaTypes->Add(addMediaType), result, E_OUTOFMEMORY);
             CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(addMediaType));
 
             mediaType.subtype = MEDIASUBTYPE_MPEG_LOAS;
@@ -294,7 +305,7 @@ HRESULT CStreamInfo::CreateAudioMediaType(AVFormatContext *formatContext, AVStre
             CMediaType *addMediaType = new CMediaType(mediaType, &result);
             CHECK_POINTER_HRESULT(result, addMediaType, result, E_OUTOFMEMORY);
 
-            CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->mediaTypes->Add(addMediaType) ? result : E_OUTOFMEMORY);
+            CHECK_CONDITION_HRESULT(result, this->mediaTypes->Add(addMediaType), result, E_OUTOFMEMORY);
             CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(addMediaType));
           }
         }
@@ -308,7 +319,7 @@ HRESULT CStreamInfo::CreateAudioMediaType(AVFormatContext *formatContext, AVStre
       CMediaType *addMediaType = new CMediaType(mediaType, &result);
       CHECK_POINTER_HRESULT(result, addMediaType, result, E_OUTOFMEMORY);
 
-      CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->mediaTypes->Add(addMediaType) ? result : E_OUTOFMEMORY);
+      CHECK_CONDITION_HRESULT(result, this->mediaTypes->Add(addMediaType), result, E_OUTOFMEMORY);
       CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(addMediaType));
 
       if (SUCCEEDED(result))
@@ -327,7 +338,7 @@ HRESULT CStreamInfo::CreateAudioMediaType(AVFormatContext *formatContext, AVStre
           specialMediaType->pbFormat = (BYTE *)CDemuxerAudioHelper::CreateWVFMTEX_FF(stream, &specialMediaType->cbFormat);
         }
 
-        CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->mediaTypes->Add(specialMediaType) ? result : E_OUTOFMEMORY);
+        CHECK_CONDITION_HRESULT(result, this->mediaTypes->Add(specialMediaType), result, E_OUTOFMEMORY);
         CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(specialMediaType));
       }
     }
@@ -408,7 +419,7 @@ HRESULT CStreamInfo::CreateVideoMediaType(AVFormatContext *formatContext, AVStre
           CMediaType *addMediaType = new CMediaType(mediaType, &result);
           CHECK_POINTER_HRESULT(result, addMediaType, result, E_OUTOFMEMORY);
 
-          CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->mediaTypes->Add(addMediaType) ? result : E_OUTOFMEMORY);
+          CHECK_CONDITION_HRESULT(result, this->mediaTypes->Add(addMediaType), result, E_OUTOFMEMORY);
           CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(addMediaType));
 
           mediaType.subtype = MEDIASUBTYPE_WVC1_ARCSOFT;
@@ -416,7 +427,7 @@ HRESULT CStreamInfo::CreateVideoMediaType(AVFormatContext *formatContext, AVStre
           addMediaType = new CMediaType(mediaType, &result);
           CHECK_POINTER_HRESULT(result, addMediaType, result, E_OUTOFMEMORY);
 
-          CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->mediaTypes->Add(addMediaType) ? result : E_OUTOFMEMORY);
+          CHECK_CONDITION_HRESULT(result, this->mediaTypes->Add(addMediaType), result, E_OUTOFMEMORY);
           CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(addMediaType));
         }
 
@@ -427,7 +438,7 @@ HRESULT CStreamInfo::CreateVideoMediaType(AVFormatContext *formatContext, AVStre
         CMediaType *addMediaType = new CMediaType(mediaType, &result);
         CHECK_POINTER_HRESULT(result, addMediaType, result, E_OUTOFMEMORY);
 
-        CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->mediaTypes->Add(addMediaType) ? result : E_OUTOFMEMORY);
+        CHECK_CONDITION_HRESULT(result, this->mediaTypes->Add(addMediaType), result, E_OUTOFMEMORY);
         CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(addMediaType));
 
         mediaType.subtype = MEDIASUBTYPE_WVC1;
@@ -464,7 +475,7 @@ HRESULT CStreamInfo::CreateVideoMediaType(AVFormatContext *formatContext, AVStre
           CMediaType *addMediaType = new CMediaType(mediaType, &result);
           CHECK_POINTER_HRESULT(result, addMediaType, result, E_OUTOFMEMORY);
 
-          CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->mediaTypes->Add(addMediaType) ? result : E_OUTOFMEMORY);
+          CHECK_CONDITION_HRESULT(result, this->mediaTypes->Add(addMediaType), result, E_OUTOFMEMORY);
           CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(addMediaType));
 
           mediaType.subtype = MEDIASUBTYPE_RGB32;
@@ -493,7 +504,7 @@ HRESULT CStreamInfo::CreateVideoMediaType(AVFormatContext *formatContext, AVStre
         CMediaType *addMediaType = new CMediaType(mediaType, &result);
         CHECK_POINTER_HRESULT(result, addMediaType, result, E_OUTOFMEMORY);
 
-        CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->mediaTypes->Add(addMediaType) ? result : E_OUTOFMEMORY);
+        CHECK_CONDITION_HRESULT(result, this->mediaTypes->Add(addMediaType), result, E_OUTOFMEMORY);
         CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(addMediaType));
 
         mediaType.subtype = FOURCCMap(fourCC);
@@ -504,7 +515,7 @@ HRESULT CStreamInfo::CreateVideoMediaType(AVFormatContext *formatContext, AVStre
     CMediaType *addMediaType = new CMediaType(mediaType, &result);
     CHECK_POINTER_HRESULT(result, addMediaType, result, E_OUTOFMEMORY);
 
-    CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->mediaTypes->Add(addMediaType) ? result : E_OUTOFMEMORY);
+    CHECK_CONDITION_HRESULT(result, this->mediaTypes->Add(addMediaType), result, E_OUTOFMEMORY);
     CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(addMediaType));
   }
 
@@ -609,7 +620,7 @@ HRESULT CStreamInfo::CreateSubtitleMediaType(AVFormatContext *formatContext, AVS
           CMediaType *addMediaType = new CMediaType(mediaType, &result);
           CHECK_POINTER_HRESULT(result, addMediaType, result, E_OUTOFMEMORY);
 
-          CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->mediaTypes->Add(addMediaType) ? result : E_OUTOFMEMORY);
+          CHECK_CONDITION_HRESULT(result, this->mediaTypes->Add(addMediaType), result, E_OUTOFMEMORY);
           CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(addMediaType));
 
           // offer the DVD subtype
@@ -623,7 +634,7 @@ HRESULT CStreamInfo::CreateSubtitleMediaType(AVFormatContext *formatContext, AVS
             addMediaType->formattype = FORMAT_None;
           }
 
-          CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->mediaTypes->Add(addMediaType) ? result : E_OUTOFMEMORY);
+          CHECK_CONDITION_HRESULT(result, this->mediaTypes->Add(addMediaType), result, E_OUTOFMEMORY);
           CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(addMediaType));
         }
 
@@ -648,7 +659,7 @@ HRESULT CStreamInfo::CreateSubtitleMediaType(AVFormatContext *formatContext, AVS
       CMediaType *addMediaType = new CMediaType(mediaType, &result);
       CHECK_POINTER_HRESULT(result, addMediaType, result, E_OUTOFMEMORY);
 
-      CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->mediaTypes->Add(addMediaType) ? result : E_OUTOFMEMORY);
+      CHECK_CONDITION_HRESULT(result, this->mediaTypes->Add(addMediaType), result, E_OUTOFMEMORY);
       CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(addMediaType));
     }
   }

@@ -29,7 +29,7 @@ template <class TItem, class TItemKey> class CKeyedCollection : public CCollecti
 {
 public:
   // create new instance of CKeyedCollection class
-  CKeyedCollection();
+  CKeyedCollection(HRESULT *result);
 
   virtual ~CKeyedCollection(void);
 
@@ -105,8 +105,8 @@ protected:
 
 // implementation
 
-template <class TItem, class TItemKey> CKeyedCollection<TItem, TItemKey>::CKeyedCollection()
-  : CCollection()
+template <class TItem, class TItemKey> CKeyedCollection<TItem, TItemKey>::CKeyedCollection(HRESULT *result)
+  : CCollection(result)
 {
 }
 

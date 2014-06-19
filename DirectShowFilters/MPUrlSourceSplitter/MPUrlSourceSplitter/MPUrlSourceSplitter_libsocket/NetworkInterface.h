@@ -32,7 +32,7 @@ class CNetworkInterfaceCollection;
 class CNetworkInterface
 {
 public:
-  CNetworkInterface(void);
+  CNetworkInterface(HRESULT *result);
   virtual ~CNetworkInterface(void);
 
   /* get methods */

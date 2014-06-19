@@ -24,9 +24,11 @@
 #define __MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_DEFINED
 
 #include "Logger.h"
-#include "IOutputPinFilter.h"
+#include "ParameterCollection.h"
 #include "OutputPinPacketCollection.h"
 #include "MediaTypeCollection.h"
+#include "CacheFile.h"
+#include "Flags.h"
 
 #include <streams.h>
 
@@ -36,11 +38,12 @@
 #define OUTPUT_PIN_DUMP_DATA_LENGTH                                   1048576
 #define OUTPUT_PIN_DUMP_METADATA_COUNT                                1024
 
-#define OUTPUT_PIN_FLAG_NONE                                          0x00000000
-#define OUTPUT_PIN_FLAG_END_OF_STREAM                                 0x00000001
-#define OUTPUT_PIN_FLAG_DUMPING_DATA_AND_SIZES                        0x00000002
+#define MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_NONE                   FLAGS_NONE
 
-#define OUTPUT_PIN_FLAG_LAST                                          2
+#define MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_END_OF_STREAM          (1 << (FLAGS_LAST + 0))
+#define MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_DUMPING_DATA_AND_SIZES (1 << (FLAGS_LAST + 1))
+
+#define MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_LAST                   (FLAGS_LAST + 2)
 
 #define METHOD_GET_MEDIA_TYPE_NAME                                    L"GetMediaType()"
 #define METHOD_CONNECT_NAME                                           L"Connect()"
@@ -64,12 +67,10 @@ struct DumpMetadata
   SYSTEMTIME time;
 };
 
-class CMPUrlSourceSplitterOutputPin
-  : public CBaseOutputPin
-  , protected CAMThread
+class CMPUrlSourceSplitterOutputPin : public CBaseOutputPin, public CFlags, protected CAMThread
 {
 public:
-  CMPUrlSourceSplitterOutputPin(CLogger *logger, CMediaTypeCollection *mediaTypes, LPCWSTR pName, CBaseFilter *pFilter, CCritSec *pLock, HRESULT *phr);
+  CMPUrlSourceSplitterOutputPin(LPCWSTR pName, CBaseFilter *pFilter, CCritSec *pLock, HRESULT *phr, CLogger *logger, CParameterCollection *parameters, CMediaTypeCollection *mediaTypes);
   virtual ~CMPUrlSourceSplitterOutputPin();
 
   DECLARE_IUNKNOWN;
@@ -195,16 +196,8 @@ public:
   // @return : true if end of stream flag is set, false otherwise
   virtual bool IsEndOfStream(void);
 
-  // tests if specific combination of flags is set
-  // @param flags : the combination of flags to test
-  // @return : true if specific combination of flags is set, false otherwise
-  virtual bool IsSetFlags(unsigned int flags);
- 
 protected:
   enum { CMD_EXIT, CMD_BEGIN_FLUSH, CMD_END_FLUSH, CMD_PLAY, CMD_PAUSE };
-
-  // holds various flags
-  unsigned int flags;
 
   // lock mutex for access to media packets
   HANDLE mediaPacketsLock;
@@ -217,8 +210,8 @@ protected:
 
   // holds logger instance
   CLogger *logger;
-  // holds filter reference
-  IOutputPinFilter *filter;
+  // holds configuration parameters
+  CParameterCollection *parameters;
 
   // holds demuxer ID
   // it is specified for splitter, which needs to identify output pin for specific demuxer
@@ -236,6 +229,11 @@ protected:
 
   // media type sub type for parser
   GUID mediaTypeSubType;
+
+  // holds last store time to cache file
+  unsigned int lastStoreTime;
+  // holds cache file
+  CCacheFile *cacheFile;
 
   /* statistical data */
 
@@ -259,6 +257,10 @@ protected:
 
   // dumps outgoing data and its sizes to dump file
   void DumpDataAndDumpDataSizes(void);
+
+  // gets store file name
+  // @return : store file name or NULL if error
+  wchar_t *GetStoreFile(void);
 };
 
 #endif

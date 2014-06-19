@@ -26,11 +26,16 @@
 #include "SocketContext.h"
 #include "SocketContextCollection.h"
 
+#define TCP_SOCKET_CONTEXT_FLAG_NONE                                          SOCKET_CONTEXT_FLAG_NONE
+
+#define TCP_SOCKET_CONTEXT_FLAG_LAST                                          (SOCKET_CONTEXT_FLAG_LAST + 0)
+
+
 class CTcpSocketContext : public CSocketContext
 {
 public:
-  CTcpSocketContext(void);
-  CTcpSocketContext(SOCKET socket);
+  CTcpSocketContext(HRESULT *result);
+  CTcpSocketContext(HRESULT *result, SOCKET socket);
   virtual ~CTcpSocketContext(void);
 
   /* get methods */

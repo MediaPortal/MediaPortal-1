@@ -25,12 +25,17 @@
 
 #include "SimpleServer.h"
 
-#define SERVER_TYPE_TCP                                               0x00000001
+#define TCP_SERVER_FLAG_NONE                                                  SIMPLE_SERVER_FLAG_NONE
+
+#define TCP_SERVER_FLAG_SERVER                                                (1 << (SIMPLE_SERVER_FLAG_LAST + 2))
+
+#define TCP_SERVER_FLAG_LAST                                                  (SIMPLE_SERVER_FLAG_LAST + 2)
+
 
 class CTcpServer : public CSimpleServer
 {
 public:
-  CTcpServer(void);
+  CTcpServer(HRESULT *result);
   virtual ~CTcpServer(void);
 
   /* get methods */

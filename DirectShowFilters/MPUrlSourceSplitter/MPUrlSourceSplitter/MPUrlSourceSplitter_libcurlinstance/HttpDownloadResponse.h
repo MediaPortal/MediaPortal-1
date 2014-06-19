@@ -26,10 +26,16 @@
 #include "DownloadResponse.h"
 #include "HttpHeaderCollection.h"
 
+#define HTTP_DOWNLOAD_RESPONSE_FLAG_NONE                              DOWNLOAD_RESPONSE_FLAG_NONE
+
+#define HTTP_DOWNLOAD_RESPONSE_FLAG_RANGES_SUPPORTED                  (1 << (DOWNLOAD_RESPONSE_FLAG_LAST + 0))
+
+#define HTTP_DOWNLOAD_RESPONSE_FLAG_LAST                              (DOWNLOAD_RESPONSE_FLAG_LAST + 1)
+
 class CHttpDownloadResponse : public CDownloadResponse
 {
 public:
-  CHttpDownloadResponse(void);
+  CHttpDownloadResponse(HRESULT *result);
   virtual ~CHttpDownloadResponse(void);
 
   /* get methods */
@@ -50,22 +56,21 @@ public:
 
   /* other methods */
 
-  // deeply clones current instance
-  // @result : deep clone of current instance or NULL if error
-  virtual CDownloadResponse *Clone(void);
-
 protected:
 
   // holds received headers
   CHttpHeaderCollection *headers;
 
-  // specifies is ranges are supported
-  bool supportedRanges;
+  /* methods */
+
+  // creates download response
+  // @return : download response or NULL if error
+  virtual CDownloadResponse *CreateDownloadResponse(void);
 
   // deeply clones current instance to cloned response
   // @param  clonedResponse : cloned response to hold clone of current instance
   // @return : true if successful, false otherwise
-  virtual bool CloneInternal(CHttpDownloadResponse *clonedResponse);
+  virtual bool CloneInternal(CDownloadResponse *clonedResponse);
 };
 
 #endif

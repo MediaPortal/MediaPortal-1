@@ -22,11 +22,16 @@
 
 #include "HttpDownloadResponse.h"
 
-CHttpDownloadResponse::CHttpDownloadResponse(void)
-  : CDownloadResponse()
+CHttpDownloadResponse::CHttpDownloadResponse(HRESULT *result)
+  : CDownloadResponse(result)
 {
-  this->headers = new CHttpHeaderCollection();
-  this->supportedRanges = true;
+  this->headers = NULL;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->headers = new CHttpHeaderCollection(result);
+    CHECK_POINTER_HRESULT(*result, this->headers, *result, E_OUTOFMEMORY);
+  }
 }
 
 CHttpDownloadResponse::~CHttpDownloadResponse(void)
@@ -43,38 +48,41 @@ CHttpHeaderCollection *CHttpDownloadResponse::GetHeaders(void)
 
 bool CHttpDownloadResponse::GetRangesSupported(void)
 {
-  return this->supportedRanges;
+  return this->IsSetFlags(HTTP_DOWNLOAD_RESPONSE_FLAG_RANGES_SUPPORTED);
 }
 
 /* set methods */
 
 void CHttpDownloadResponse::SetRangesSupported(bool rangesSupported)
 {
-  this->supportedRanges = rangesSupported;
+  this->flags &= ~HTTP_DOWNLOAD_RESPONSE_FLAG_RANGES_SUPPORTED;
+  this->flags = (rangesSupported) ? HTTP_DOWNLOAD_RESPONSE_FLAG_RANGES_SUPPORTED : HTTP_DOWNLOAD_RESPONSE_FLAG_NONE;
 }
 
 /* other methods */
 
-CDownloadResponse *CHttpDownloadResponse::Clone(void)
+/* protected methods */
+
+CDownloadResponse *CHttpDownloadResponse::CreateDownloadResponse(void)
 {
-  CHttpDownloadResponse *result = new CHttpDownloadResponse();
-  if (result != NULL)
-  {
-    if (!this->CloneInternal(result))
-    {
-      FREE_MEM_CLASS(result);
-    }
-  }
-  return result;
+  HRESULT result = S_OK;
+  CHttpDownloadResponse *response = new CHttpDownloadResponse(&result);
+  CHECK_POINTER_HRESULT(result, response, result, E_OUTOFMEMORY);
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(response));
+  return response;
 }
 
-bool CHttpDownloadResponse::CloneInternal(CHttpDownloadResponse *clonedResponse)
+bool CHttpDownloadResponse::CloneInternal(CDownloadResponse *clonedResponse)
 {
   bool result = __super::CloneInternal(clonedResponse);
+
   if (result)
   {
-    clonedResponse->headers->Clear();
-    result &= clonedResponse->headers->Append(this->headers);
+    CHttpDownloadResponse *response = dynamic_cast<CHttpDownloadResponse *>(clonedResponse);
+
+    response->headers->Clear();
+    result &= response->headers->Append(this->headers);
   }
   return result;
 }

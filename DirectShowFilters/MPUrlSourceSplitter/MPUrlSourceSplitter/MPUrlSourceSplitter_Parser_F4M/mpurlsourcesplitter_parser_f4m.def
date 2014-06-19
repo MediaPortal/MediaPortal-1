@@ -1,5 +1,5 @@
 LIBRARY     mpurlsourcesplitter_parser_f4m.dll
 
 EXPORTS
-			CreatePluginInstance		PRIVATE
-			DestroyPluginInstance		PRIVATE
+			CreatePlugin				PRIVATE
+			DestroyPlugin				PRIVATE

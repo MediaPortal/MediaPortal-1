@@ -26,24 +26,43 @@
 #include "MPUrlSourceSplitterOutputPin.h"
 #include "MPUrlSourceSplitterInputDownloadPin.h"
 
-#define OUTPUT_DOWNLOAD_PIN_FLAG_NONE                                 OUTPUT_PIN_FLAG_NONE
+#define MP_URL_SOURCE_SPLITTER_OUTPUT_DOWNLOAD_PIN_FLAG_NONE               MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_NONE
 
-#define OUTPUT_SPLITTER_PIN_FLAG_LAST                                 (OUTPUT_PIN_FLAG_LAST + 0)
+#define MP_URL_SOURCE_SPLITTER_OUTPUT_DOWNLOAD_PIN_FLAG_DOWNLOAD_FINISHED  (1 << (MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_LAST + 0))
+
+#define MP_URL_SOURCE_SPLITTER_OUTPUT_DOWNLOAD_PIN_FLAG_LAST               (MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_LAST + 1)
 
 class CMPUrlSourceSplitterOutputDownloadPin : public CMPUrlSourceSplitterOutputPin
 {
 public:
-  CMPUrlSourceSplitterOutputDownloadPin(CLogger *logger, CMediaTypeCollection *mediaTypes, LPCWSTR pName, CBaseFilter *pFilter, CCritSec *pLock, HRESULT *phr, const wchar_t *downloadFileName);
+  CMPUrlSourceSplitterOutputDownloadPin(LPCWSTR pName, CBaseFilter *pFilter, CCritSec *pLock, HRESULT *phr, CLogger *logger, CParameterCollection *parameters, CMediaTypeCollection *mediaTypes, const wchar_t *downloadFileName);
   virtual ~CMPUrlSourceSplitterOutputDownloadPin(void);
+
+  /* get methods */
+
+  // gets download result
+  // @return : S_OK if successful, error code otherwise
+  HRESULT GetDownloadResult(void);
+
+  /* set methods */
+
+  /* other methods */
 
   // finishes download with specified result
   // @param result : the result of download
   void FinishDownload(HRESULT result);
 
+  // tests if download is finished
+  // @return : true if download finished, false otherwise
+  bool IsDownloadFinished(void);
+
 protected:
 
   // holds download input pin
   CMPUrlSourceSplitterInputDownloadPin *inputPin;
+
+  // hodls download result
+  HRESULT downloadResult;
 };
 
 #endif

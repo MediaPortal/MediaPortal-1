@@ -25,13 +25,16 @@
 
 #include "SocketContextCollection.h"
 #include "NetworkInterfaceCollection.h"
+#include "Flags.h"
 
-#define SERVER_TYPE_UNSPECIFIED                                       UINT_MAX
+#define SIMPLE_SERVER_FLAG_NONE                                               FLAGS_NONE
 
-class CSimpleServer
+#define SIMPLE_SERVER_FLAG_LAST                                               (FLAGS_LAST + 0)
+
+class CSimpleServer : public CFlags
 {
 public:
-  CSimpleServer(void);
+  CSimpleServer(HRESULT *result);
   virtual ~CSimpleServer(void);
 
   /* get methods */
@@ -40,18 +43,9 @@ public:
   // @return : all servers
   virtual CSocketContextCollection *GetServers(void);
 
-  // gets server type
-  // @return : server type or SERVER_TYPE_UNSPECIFIED if not specified
-  virtual unsigned int GetServerType(void);
-
   /* set methods */
 
   /* other methods */
-
-  // tests if server type is requested type
-  // @param serverType : the requested server type
-  // @return : true if server type is requested type, false otherwise
-  virtual bool IsServerType(unsigned int serverType);
 
   // initializes simple server on all network interfaces
   // @param family : socket family (AF_INET, AF_INET6, ...)
@@ -75,12 +69,10 @@ public:
   virtual HRESULT StopListening(void);
 
 protected:
-
   // holds socket contexts
   CSocketContextCollection *servers;
 
-  // holds server type
-  unsigned int serverType;
+  /* methods */
 };
 
 #endif

@@ -37,17 +37,16 @@ CUdpDownloadResponse::~CUdpDownloadResponse(void)
 
 /* other methods */
 
-CUdpDownloadResponse *CUdpDownloadResponse::Clone(void)
+/* protected methods */
+
+CDownloadResponse *CUdpDownloadResponse::CreateDownloadResponse(void)
 {
-  CUdpDownloadResponse *result = new CUdpDownloadResponse();
-  if (result != NULL)
-  {
-    if (!this->CloneInternal(result))
-    {
-      FREE_MEM_CLASS(result);
-    }
-  }
-  return result;
+  HRESULT result = S_OK;
+  CUdpDownloadResponse *response = new CUdpDownloadResponse(&result);
+  CHECK_POINTER_HRESULT(result, response, result, E_OUTOFMEMORY);
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(response));
+  return response;
 }
 
 bool CUdpDownloadResponse::CloneInternal(CUdpDownloadResponse *clonedRequest)

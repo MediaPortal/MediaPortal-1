@@ -55,13 +55,13 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\..\libcurl\include;..\..\libcurl\include\curl;..\..\ffmpeg;..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_libcollections;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libflv;..\MPUrlSourceSplitter_libcachefile;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\..\libcurl\include;..\..\libcurl\include\curl;..\..\ffmpeg;..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_libcollections;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libflv;..\MPUrlSourceSplitter_libcachefile;..\MPUrlSourceSplitter_libplugin;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)baseclasses\Debug;$(SolutionDir)bin_$(PlatformName)d\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>advapi32.lib;ole32.lib;winmm.lib;user32.lib;oleaut32.lib;Comctl32.lib;shell32.lib;version.lib;Shlwapi.lib;strmbasd.lib;avformat-mpurlsourcesplitter.lib;avutil-mpurlsourcesplitter.lib;avcodec-mpurlsourcesplitter.lib;MPUrlSourceSplitter_libcurl.lib;MPUrlSourceSplitter_libmemory.lib;MPUrlSourceSplitter_libstrings.lib;MPUrlSourceSplitter_libcollections.lib;MPUrlSourceSplitter_liblogger.lib;MPUrlSourceSplitter_libshared.lib;MPUrlSourceSplitter_libcachefile.lib;MPUrlSourceSplitter_libflv.lib;DbgHelp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>advapi32.lib;ole32.lib;winmm.lib;user32.lib;oleaut32.lib;Comctl32.lib;shell32.lib;version.lib;Shlwapi.lib;strmbasd.lib;avformat-mpurlsourcesplitter.lib;avutil-mpurlsourcesplitter.lib;avcodec-mpurlsourcesplitter.lib;MPUrlSourceSplitter_libcurl.lib;MPUrlSourceSplitter_libmemory.lib;MPUrlSourceSplitter_libstrings.lib;MPUrlSourceSplitter_libcollections.lib;MPUrlSourceSplitter_liblogger.lib;MPUrlSourceSplitter_libshared.lib;MPUrlSourceSplitter_libcachefile.lib;MPUrlSourceSplitter_libflv.lib;MPUrlSourceSplitter_libplugin.lib;DbgHelp.lib;psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>MPUrlSourceSplitter.def</ModuleDefinitionFile>
       <GenerateMapFile>false</GenerateMapFile>
     </Link>
@@ -114,7 +114,7 @@ echo #endif &gt;&gt; VersionInfo.h</Command>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\..\libcurl\include;..\..\libcurl\include\curl;..\..\ffmpeg;..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_libcollections;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libflv;..\MPUrlSourceSplitter_libcachefile;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\..\libcurl\include;..\..\libcurl\include\curl;..\..\ffmpeg;..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_libcollections;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libflv;..\MPUrlSourceSplitter_libcachefile;..\MPUrlSourceSplitter_libplugin;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -122,7 +122,7 @@ echo #endif &gt;&gt; VersionInfo.h</Command>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)baseclasses\Release;$(SolutionDir)bin_$(PlatformName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>advapi32.lib;ole32.lib;winmm.lib;user32.lib;oleaut32.lib;Comctl32.lib;shell32.lib;version.lib;Shlwapi.lib;strmbase.lib;avformat-mpurlsourcesplitter.lib;avutil-mpurlsourcesplitter.lib;avcodec-mpurlsourcesplitter.lib;MPUrlSourceSplitter_libcurl.lib;MPUrlSourceSplitter_libmemory.lib;MPUrlSourceSplitter_libstrings.lib;MPUrlSourceSplitter_libcollections.lib;MPUrlSourceSplitter_liblogger.lib;MPUrlSourceSplitter_libshared.lib;MPUrlSourceSplitter_libcachefile.lib;MPUrlSourceSplitter_libflv.lib;DbgHelp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>advapi32.lib;ole32.lib;winmm.lib;user32.lib;oleaut32.lib;Comctl32.lib;shell32.lib;version.lib;Shlwapi.lib;strmbase.lib;avformat-mpurlsourcesplitter.lib;avutil-mpurlsourcesplitter.lib;avcodec-mpurlsourcesplitter.lib;MPUrlSourceSplitter_libcurl.lib;MPUrlSourceSplitter_libmemory.lib;MPUrlSourceSplitter_libstrings.lib;MPUrlSourceSplitter_libcollections.lib;MPUrlSourceSplitter_liblogger.lib;MPUrlSourceSplitter_libshared.lib;MPUrlSourceSplitter_libcachefile.lib;MPUrlSourceSplitter_libflv.lib;MPUrlSourceSplitter_libplugin.lib;DbgHelp.lib;psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>MPUrlSourceSplitter.def</ModuleDefinitionFile>
     </Link>
     <PostBuildEvent>
@@ -167,7 +167,6 @@ echo #endif &gt;&gt; VersionInfo.h</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="AsyncRequest.h" />
     <ClInclude Include="ByteParser.h" />
     <ClInclude Include="Demuxer.h" />
     <ClInclude Include="DemuxerAudioHelper.h" />
@@ -177,7 +176,6 @@ echo #endif &gt;&gt; VersionInfo.h</Command>
     <ClInclude Include="ExtraDataParser.h" />
     <ClInclude Include="H264Nalu.h" />
     <ClInclude Include="IPacketDemuxer.h" />
-    <ClInclude Include="IOutputPinFilter.h" />
     <ClInclude Include="MPUrlSourceSplitter.h" />
     <ClInclude Include="MPUrlSourceSplitterInputDownloadPin.h" />
     <ClInclude Include="MPUrlSourceSplitterOutputDownloadPin.h" />
@@ -188,10 +186,9 @@ echo #endif &gt;&gt; VersionInfo.h</Command>
     <ClInclude Include="OutputPinMediaSample.h" />
     <ClInclude Include="OutputPinPacket.h" />
     <ClInclude Include="OutputPinPacketCollection.h" />
-    <ClInclude Include="OutputStreamHoster.h" />
     <ClInclude Include="PacketInputFormat.h" />
-    <ClInclude Include="ParserHoster.h" />
-    <ClInclude Include="ProtocolHoster.h" />
+    <ClInclude Include="SeekIndexEntry.h" />
+    <ClInclude Include="SeekIndexEntryCollection.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Stream.h" />
     <ClInclude Include="StreamCollection.h" />
@@ -199,7 +196,6 @@ echo #endif &gt;&gt; VersionInfo.h</Command>
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AsyncRequest.cpp" />
     <ClCompile Include="ByteParser.cpp" />
     <ClCompile Include="Demuxer.cpp" />
     <ClCompile Include="DemuxerAudioHelper.cpp" />
@@ -226,10 +222,9 @@ echo #endif &gt;&gt; VersionInfo.h</Command>
     <ClCompile Include="OutputPinMediaSample.cpp" />
     <ClCompile Include="OutputPinPacket.cpp" />
     <ClCompile Include="OutputPinPacketCollection.cpp" />
-    <ClCompile Include="OutputStreamHoster.cpp" />
     <ClCompile Include="PacketInputFormat.cpp" />
-    <ClCompile Include="ParserHoster.cpp" />
-    <ClCompile Include="ProtocolHoster.cpp" />
+    <ClCompile Include="SeekIndexEntry.cpp" />
+    <ClCompile Include="SeekIndexEntryCollection.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

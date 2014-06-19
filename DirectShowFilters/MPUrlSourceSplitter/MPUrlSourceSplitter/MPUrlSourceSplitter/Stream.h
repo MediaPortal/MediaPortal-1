@@ -24,13 +24,14 @@
 #define __STREAM_DEFINED
 
 #include "StreamInfo.h"
+#include "SeekIndexEntryCollection.h"
 
 class CStream
 {
 public:
   enum StreamType { Video, Audio, Subpic, Unknown };
 
-  CStream(void);
+  CStream(HRESULT *result);
   ~CStream(void);
 
   /* get methods */
@@ -50,6 +51,10 @@ public:
   // gets stream type
   // @return : stream type
   StreamType GetStreamType(void);
+
+  // gets seek index entry collection
+  // @return : seek index entry collection
+  CSeekIndexEntryCollection *GetSeekIndexEntries(void);
 
   /* set methods */
 
@@ -77,7 +82,6 @@ public:
   HRESULT CreateStreamInfo(AVFormatContext *formatContext, AVStream *stream, const wchar_t *containerFormat);
 
 protected:
-
   // holds stream info
   CStreamInfo *streamInfo;
 
@@ -86,6 +90,9 @@ protected:
   wchar_t *language;
 
   StreamType streamType;
+
+  // holds seek index entries
+  CSeekIndexEntryCollection *seekIndexEntries;
 };
 
 

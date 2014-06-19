@@ -25,10 +25,10 @@
 #include "IpAddressCollection.h"
 #include "Dns.h"
 
-CTcpServer::CTcpServer(void)
-  : CSimpleServer()
+CTcpServer::CTcpServer(HRESULT *result)
+  : CSimpleServer(result)
 {
-  this->serverType = SERVER_TYPE_TCP;
+  this->flags |= TCP_SERVER_FLAG_SERVER;
 }
 
 CTcpServer::~CTcpServer(void)
@@ -50,7 +50,7 @@ HRESULT CTcpServer::Initialize(int family, WORD port, CNetworkInterfaceCollectio
 HRESULT CTcpServer::Initialize(int family, WORD port, int connections)
 {
   HRESULT result = S_OK;
-  CNetworkInterfaceCollection *interfaces = new CNetworkInterfaceCollection();
+  CNetworkInterfaceCollection *interfaces = new CNetworkInterfaceCollection(&result);
   CHECK_POINTER_HRESULT(result, interfaces, result, E_OUTOFMEMORY);
 
   CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), CNetworkInterface::GetAllNetworkInterfaces(interfaces, family), result);
@@ -92,13 +92,13 @@ HRESULT CTcpServer::Initialize(int family, WORD port, int connections, CNetworkI
               ipAddr->SetSockType(SOCK_STREAM);
               ipAddr->SetProtocol(IPPROTO_TCP);
 
-              CTcpSocketContext *server = new CTcpSocketContext();
+              CTcpSocketContext *server = new CTcpSocketContext(&result);
               CHECK_POINTER_HRESULT(result, server, result, E_OUTOFMEMORY);
 
               CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), server->SetIpAddress(ipAddr), result);
               CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), server->Initialize(connections), result);
 
-              CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->servers->Add(server) ? result : E_OUTOFMEMORY);
+              CHECK_CONDITION_HRESULT(result, this->servers->Add(server), result, E_OUTOFMEMORY);
 
               CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(server));
             }

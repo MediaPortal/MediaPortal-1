@@ -26,7 +26,7 @@
 #include <winsock2.h>
 #include <IPHlpApi.h>
 
-CNetworkInterface::CNetworkInterface(void)
+CNetworkInterface::CNetworkInterface(HRESULT *result)
 {
   this->adapterName = NULL;
   this->friendlyName = NULL;
@@ -36,11 +36,25 @@ CNetworkInterface::CNetworkInterface(void)
   this->ipv4Index = 0;
   this->ipv6Index = 0;
   this->maximumTransmissionUnit = 0;
-  this->unicastAddresses = new CIpAddressCollection();
-  this->anycastAddresses = new CIpAddressCollection();
-  this->multicastAddresses = new CIpAddressCollection();
-  this->dnsServerAddresses = new CIpAddressCollection();
   this->operationalStatus = IfOperStatusUnknown;
+
+  this->unicastAddresses = NULL;
+  this->anycastAddresses = NULL;
+  this->multicastAddresses = NULL;
+  this->dnsServerAddresses = NULL;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->unicastAddresses = new CIpAddressCollection(result);
+    this->anycastAddresses = new CIpAddressCollection(result);
+    this->multicastAddresses = new CIpAddressCollection(result);
+    this->dnsServerAddresses = new CIpAddressCollection(result);
+
+    CHECK_POINTER_HRESULT(*result, this->unicastAddresses, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->anycastAddresses, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->multicastAddresses, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->dnsServerAddresses, *result, E_OUTOFMEMORY);
+  }
 }
 
 CNetworkInterface::~CNetworkInterface(void)
@@ -163,28 +177,30 @@ void CNetworkInterface::SetOperationalStatus(IF_OPER_STATUS operationalStatus)
 
 CNetworkInterface *CNetworkInterface::Clone(void)
 {
-  CNetworkInterface *clone = new CNetworkInterface();
-  bool result = (clone != NULL);
+  HRESULT result = S_OK;
+  CNetworkInterface *clone = new CNetworkInterface(&result);
+  CHECK_POINTER_HRESULT(result, clone, result, E_OUTOFMEMORY);
 
-  if (result)
+  if (SUCCEEDED(result))
   {
     clone->flags = this->flags;
     clone->ipv4Index = this->ipv4Index;
     clone->ipv6Index = this->ipv6Index;
     clone->maximumTransmissionUnit = this->maximumTransmissionUnit;
     clone->operationalStatus = this->operationalStatus;
-    SET_STRING_AND_RESULT_WITH_NULL(clone->adapterName, this->adapterName, result);
-    SET_STRING_AND_RESULT_WITH_NULL(clone->description, this->description, result);
-    SET_STRING_AND_RESULT_WITH_NULL(clone->dnsSuffix, this->dnsSuffix, result);
-    SET_STRING_AND_RESULT_WITH_NULL(clone->friendlyName, this->friendlyName, result);
 
-    result &= clone->anycastAddresses->Append(this->anycastAddresses);
-    result &= clone->dnsServerAddresses->Append(this->dnsServerAddresses);
-    result &= clone->multicastAddresses->Append(this->multicastAddresses);
-    result &= clone->unicastAddresses->Append(this->unicastAddresses);
+    SET_STRING_HRESULT_WITH_NULL(clone->adapterName, this->adapterName, result);
+    SET_STRING_HRESULT_WITH_NULL(clone->description, this->description, result);
+    SET_STRING_HRESULT_WITH_NULL(clone->dnsSuffix, this->dnsSuffix, result);
+    SET_STRING_HRESULT_WITH_NULL(clone->friendlyName, this->friendlyName, result);
+
+    CHECK_CONDITION_HRESULT(result, clone->anycastAddresses->Append(this->anycastAddresses), result, E_OUTOFMEMORY);
+    CHECK_CONDITION_HRESULT(result, clone->dnsServerAddresses->Append(this->anycastAddresses), result, E_OUTOFMEMORY);
+    CHECK_CONDITION_HRESULT(result, clone->multicastAddresses->Append(this->anycastAddresses), result, E_OUTOFMEMORY);
+    CHECK_CONDITION_HRESULT(result, clone->unicastAddresses->Append(this->anycastAddresses), result, E_OUTOFMEMORY);
   }
 
-  CHECK_CONDITION_EXECUTE(!result, FREE_MEM_CLASS(clone));
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(clone));
   return clone;
 }
 
@@ -220,16 +236,11 @@ HRESULT CNetworkInterface::GetAllNetworkInterfaces(CNetworkInterfaceCollection *
     {
       for (PIP_ADAPTER_ADDRESSES address = addresses; (SUCCEEDED(result) && (address != NULL)); address = address->Next)
       {
-        CNetworkInterface *nic = new CNetworkInterface();
+        CNetworkInterface *nic = new CNetworkInterface(&result);
         CHECK_POINTER_HRESULT(result, nic, result, E_OUTOFMEMORY);
         
         if (SUCCEEDED(result))
         {
-          CHECK_POINTER_HRESULT(result, nic->GetUnicastAddresses(), result, E_OUTOFMEMORY);
-          CHECK_POINTER_HRESULT(result, nic->GetAnycastAddresses(), result, E_OUTOFMEMORY);
-          CHECK_POINTER_HRESULT(result, nic->GetMulticastAddresses(), result, E_OUTOFMEMORY);
-          CHECK_POINTER_HRESULT(result, nic->GetDnsServerAddresses(), result, E_OUTOFMEMORY);
-
           nic->SetIpv4Index(address->IfIndex);
 
           wchar_t *temp = ConvertToUnicodeA(address->AdapterName);
@@ -238,50 +249,50 @@ HRESULT CNetworkInterface::GetAllNetworkInterfaces(CNetworkInterfaceCollection *
 
           for (PIP_ADAPTER_UNICAST_ADDRESS unicastAddress = address->FirstUnicastAddress; (SUCCEEDED(result) && (unicastAddress != NULL)); unicastAddress = unicastAddress->Next)
           {
-            CIpAddress *ipAddr = new CIpAddress(unicastAddress->Address.lpSockaddr, unicastAddress->Address.iSockaddrLength);
+            CIpAddress *ipAddr = new CIpAddress(&result, unicastAddress->Address.lpSockaddr, unicastAddress->Address.iSockaddrLength);
             CHECK_POINTER_HRESULT(result, ipAddr, result, E_OUTOFMEMORY);
 
-            CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = nic->GetUnicastAddresses()->Add(ipAddr) ? result : E_OUTOFMEMORY);
+            CHECK_CONDITION_HRESULT(result, nic->GetUnicastAddresses()->Add(ipAddr), result, E_OUTOFMEMORY);
             CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(ipAddr));
           }
 
           for (PIP_ADAPTER_ANYCAST_ADDRESS anycastAddress = address->FirstAnycastAddress; (SUCCEEDED(result) && (anycastAddress != NULL)); anycastAddress = anycastAddress->Next)
           {
-            CIpAddress *ipAddr = new CIpAddress(anycastAddress->Address.lpSockaddr, anycastAddress->Address.iSockaddrLength);
+            CIpAddress *ipAddr = new CIpAddress(&result, anycastAddress->Address.lpSockaddr, anycastAddress->Address.iSockaddrLength);
             CHECK_POINTER_HRESULT(result, ipAddr, result, E_OUTOFMEMORY);
 
-            CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = nic->GetAnycastAddresses()->Add(ipAddr) ? result : E_OUTOFMEMORY);
+            CHECK_CONDITION_HRESULT(result, nic->GetAnycastAddresses()->Add(ipAddr), result, E_OUTOFMEMORY);
             CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(ipAddr));
           }
 
           for (PIP_ADAPTER_MULTICAST_ADDRESS multicastAddress = address->FirstMulticastAddress; (SUCCEEDED(result) && (multicastAddress != NULL)); multicastAddress = multicastAddress->Next)
           {
-            CIpAddress *ipAddr = new CIpAddress(multicastAddress->Address.lpSockaddr, multicastAddress->Address.iSockaddrLength);
+            CIpAddress *ipAddr = new CIpAddress(&result, multicastAddress->Address.lpSockaddr, multicastAddress->Address.iSockaddrLength);
             CHECK_POINTER_HRESULT(result, ipAddr, result, E_OUTOFMEMORY);
 
-            CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = nic->GetMulticastAddresses()->Add(ipAddr) ? result : E_OUTOFMEMORY);
+            CHECK_CONDITION_HRESULT(result, nic->GetMulticastAddresses()->Add(ipAddr), result, E_OUTOFMEMORY);
             CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(ipAddr));
           }
 
           for (PIP_ADAPTER_DNS_SERVER_ADDRESS dnsServerAddress = address->FirstDnsServerAddress; (SUCCEEDED(result) && (dnsServerAddress != NULL)); dnsServerAddress = dnsServerAddress->Next)
           {
-            CIpAddress *ipAddr = new CIpAddress(dnsServerAddress->Address.lpSockaddr, dnsServerAddress->Address.iSockaddrLength);
+            CIpAddress *ipAddr = new CIpAddress(&result, dnsServerAddress->Address.lpSockaddr, dnsServerAddress->Address.iSockaddrLength);
             CHECK_POINTER_HRESULT(result, ipAddr, result, E_OUTOFMEMORY);
 
-            CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = nic->GetDnsServerAddresses()->Add(ipAddr) ? result : E_OUTOFMEMORY);
+            CHECK_CONDITION_HRESULT(result, nic->GetDnsServerAddresses()->Add(ipAddr), result, E_OUTOFMEMORY);
             CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(ipAddr));
           }
 
-          result = nic->SetDnsSuffix(address->DnsSuffix) ? result : E_OUTOFMEMORY;
-          result = nic->SetDescription(address->Description) ? result : E_OUTOFMEMORY;
-          result = nic->SetFriendlyName(address->FriendlyName) ? result : E_OUTOFMEMORY;
-          
+          CHECK_CONDITION_HRESULT(result, nic->SetDnsSuffix(address->DnsSuffix), result, E_OUTOFMEMORY);
+          CHECK_CONDITION_HRESULT(result, nic->SetDescription(address->Description), result, E_OUTOFMEMORY);
+          CHECK_CONDITION_HRESULT(result, nic->SetFriendlyName(address->FriendlyName), result, E_OUTOFMEMORY);
+
           nic->SetMaximumTransmissionUnit(address->Mtu);
 
           nic->SetOperationalStatus(address->OperStatus);
           nic->SetIpv6Index(address->Ipv6IfIndex);
 
-          CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = interfaces->Add(nic) ? result : E_OUTOFMEMORY);
+          CHECK_CONDITION_HRESULT(result, interfaces->Add(nic), result, E_OUTOFMEMORY);
         }
 
         CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(nic));

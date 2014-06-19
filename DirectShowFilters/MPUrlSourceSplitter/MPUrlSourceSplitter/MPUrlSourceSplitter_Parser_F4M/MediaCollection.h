@@ -29,7 +29,7 @@
 class CMediaCollection : public CKeyedCollection<CMedia, const wchar_t *>
 {
 public:
-  CMediaCollection(void);
+  CMediaCollection(HRESULT *result);
   ~CMediaCollection(void);
 
 protected:

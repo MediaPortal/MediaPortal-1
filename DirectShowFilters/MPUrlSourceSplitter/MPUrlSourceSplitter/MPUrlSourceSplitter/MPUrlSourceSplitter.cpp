@@ -168,13 +168,12 @@ CMPUrlSourceSplitter::CMPUrlSourceSplitter(LPCSTR pName, LPUNKNOWN pUnk, const I
   // supressed warning 'warning C4355: 'this' : used in base member initializer list'
   // this is not problem, because in CBaseFilter constructor is not called any method of CMPUrlSourceSplitter object
   // only reference is stored to CBaseFilter m_pLock member
-  : CBaseFilter(pName, pUnk, this, clsid, phr)
+  : CBaseFilter(pName, pUnk, this, clsid, phr), CFlags()
 #pragma warning(pop)
   , lastCommand(-1)
   , pauseSeekStopRequest(false)
   , logger(NULL)
   , outputPins(NULL)
-  , flags(MP_URL_SOURCE_SPLITTER_FLAG_NONE)
   , demuxers(NULL)
   , demuxersMutex(NULL)
   , asyncDownloadResult(S_OK)
@@ -185,7 +184,7 @@ CMPUrlSourceSplitter::CMPUrlSourceSplitter(LPCSTR pName, LPUNKNOWN pUnk, const I
   , demuxStart(0)
   , demuxNewStart(0)
 {
-  CParameterCollection *loggerParameters = new CParameterCollection();
+  CParameterCollection *loggerParameters = new CParameterCollection(phr);
   CHECK_POINTER_HRESULT(*phr, loggerParameters, *phr, E_OUTOFMEMORY);
 
   if (SUCCEEDED(*phr))
@@ -222,7 +221,7 @@ CMPUrlSourceSplitter::CMPUrlSourceSplitter(LPCSTR pName, LPUNKNOWN pUnk, const I
 
   if (SUCCEEDED(*phr))
   {
-    this->logger = new CLogger(staticLogger, loggerParameters);
+    this->logger = new CLogger(phr, staticLogger, loggerParameters);
     CHECK_POINTER_HRESULT(*phr, this->logger, *phr, E_OUTOFMEMORY);
   }
 
@@ -301,28 +300,24 @@ CMPUrlSourceSplitter::CMPUrlSourceSplitter(LPCSTR pName, LPUNKNOWN pUnk, const I
     FREE_MEM(result);
 #endif
 
-    this->outputPins = new CMPUrlSourceSplitterOutputPinCollection();
-
+    this->outputPins = new CMPUrlSourceSplitterOutputPinCollection(phr);
     CHECK_POINTER_HRESULT(*phr, this->outputPins, *phr, E_OUTOFMEMORY);
 
     if (SUCCEEDED(*phr))
     {
-      this->configuration = new CParameterCollection();
+      this->configuration = new CParameterCollection(phr);
       CHECK_POINTER_HRESULT(*phr, this->configuration, *phr, E_OUTOFMEMORY);
 
-      this->parserHoster = new CParserHoster(this->logger, loggerParameters, this);
+      this->parserHoster = new CParserHoster(phr, this->logger, loggerParameters);
       CHECK_POINTER_HRESULT(*phr, this->parserHoster, *phr, E_OUTOFMEMORY);
 
-      this->demuxers = new CDemuxerCollection();
+      this->demuxers = new CDemuxerCollection(phr);
       CHECK_POINTER_HRESULT(*phr, this->demuxers, *phr, E_OUTOFMEMORY);
 
       this->demuxersMutex = CreateMutex(NULL, FALSE, NULL);
       CHECK_POINTER_HRESULT(*phr, this->demuxersMutex != NULL, *phr, E_OUTOFMEMORY);
 
-      if (SUCCEEDED(*phr))
-      {
-        this->parserHoster->LoadPlugins();
-      }
+      CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(*phr), this->parserHoster->LoadPlugins(), *phr);
 
       // TO DO: initialization of FFmpeg have to be in global locked mutex
       if (!ffmpegInitialized)
@@ -345,7 +340,8 @@ CMPUrlSourceSplitter::CMPUrlSourceSplitter(LPCSTR pName, LPUNKNOWN pUnk, const I
 
         // create FFmpeg logger instance
         // logger instance is cleared while unloading DLL (dllmain.cpp)
-        ffmpegLoggerInstance = new CLogger(this->logger);
+        ffmpegLoggerInstance = new CLogger(phr, this->logger);
+        CHECK_POINTER_HRESULT(*phr, ffmpegLoggerInstance, *phr, E_OUTOFMEMORY);
 
         ffmpegLogCallbackSet = true;
       }
@@ -361,19 +357,12 @@ CMPUrlSourceSplitter::~CMPUrlSourceSplitter()
 {
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_DESTRUCTOR_NAME);
 
-  if (this->parserHoster != NULL)
-  {
-    this->parserHoster->StopReceivingData();
-  }
-
   this->ClearSession();
 
   FREE_MEM_CLASS(this->outputPins);
 
   if (this->parserHoster != NULL)
   {
-    this->parserHoster->StopReceivingData();
-    this->parserHoster->RemoveAllPlugins();
     FREE_MEM_CLASS(this->parserHoster);
   }
 
@@ -408,7 +397,7 @@ CUnknown * WINAPI CMPUrlSourceSplitter::CreateInstanceIptvSource(LPUNKNOWN lpunk
     if (instance->outputPins->Count() == 0)
     {
       // create valid MPEG2 TS media type, add it to media types and create output pin
-      CMediaTypeCollection *mediaTypes = new CMediaTypeCollection();
+      CMediaTypeCollection *mediaTypes = new CMediaTypeCollection(phr);
       CHECK_POINTER_HRESULT(*phr, mediaTypes, *phr, E_OUTOFMEMORY);
 
       if (SUCCEEDED(*phr))
@@ -421,7 +410,7 @@ CUnknown * WINAPI CMPUrlSourceSplitter::CreateInstanceIptvSource(LPUNKNOWN lpunk
           mediaType->SetType(&MEDIATYPE_Stream);
           mediaType->SetSubtype(&MEDIASUBTYPE_MPEG2_TRANSPORT);
 
-          *phr = (mediaTypes->Add(mediaType)) ? (*phr) : E_OUTOFMEMORY;
+          CHECK_CONDITION_HRESULT(*phr, mediaTypes->Add(mediaType), *phr, E_OUTOFMEMORY);
         }
 
         CHECK_CONDITION_EXECUTE(FAILED(*phr), FREE_MEM_CLASS(mediaType));
@@ -429,7 +418,7 @@ CUnknown * WINAPI CMPUrlSourceSplitter::CreateInstanceIptvSource(LPUNKNOWN lpunk
 
       if (SUCCEEDED(*phr))
       {
-        CMPUrlSourceSplitterOutputPin *outputPin = new CMPUrlSourceSplitterOutputPin(instance->logger, mediaTypes, L"Output", instance, instance, phr);
+        CMPUrlSourceSplitterOutputPin *outputPin = new CMPUrlSourceSplitterOutputPin(L"Output", instance, instance, phr, instance->logger, instance->configuration, mediaTypes);
         CHECK_POINTER_HRESULT(*phr, outputPin, *phr, E_OUTOFMEMORY);
 
         CHECK_CONDITION_HRESULT(*phr, instance->outputPins->Add(outputPin), *phr, E_OUTOFMEMORY);
@@ -549,6 +538,9 @@ STDMETHODIMP CMPUrlSourceSplitter::Stop()
   {
     // if we are not changing streams stop receiving data, data are not needed
     this->parserHoster->StopReceivingData();
+
+    // clear also session, it will no longer be needed
+    this->parserHoster->ClearSession();
   }
 
   HRESULT result = __super::Stop();
@@ -575,9 +567,6 @@ STDMETHODIMP CMPUrlSourceSplitter::Pause()
   // so if we were stopped before, create demuxing thread
   if (SUCCEEDED(result) && (fs == State_Stopped))
   {
-    // At this point, the graph is hopefully finished, tell the demuxer about all the cool things
-    //m_pDemuxer->SettingsChanged(static_cast<ILAVFSettingsInternal *>(this));
-
     // create demuxing thread
     result = CAMThread::Create() ? result : E_FAIL;
   }
@@ -608,7 +597,7 @@ STDMETHODIMP CMPUrlSourceSplitter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TY
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_LOAD_NAME);
   HRESULT result = E_NOT_VALID_STATE;
 
-  if (this->IsSetFlag(MP_URL_SOURCE_SPLITTER_FLAG_AS_IPTV))
+  if (this->IsSetFlags(MP_URL_SOURCE_SPLITTER_FLAG_AS_IPTV))
   {
     result = S_OK;
     CHECK_POINTER_DEFAULT_HRESULT(result, pszFileName);
@@ -670,7 +659,7 @@ STDMETHODIMP CMPUrlSourceSplitter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TY
     if (SUCCEEDED(result) && (this->outputPins->Count() == 0))
     {
       // create valid MPEG2 TS media type, add it to media types and create output pin
-      CMediaTypeCollection *mediaTypes = new CMediaTypeCollection();
+      CMediaTypeCollection *mediaTypes = new CMediaTypeCollection(&result);
       CHECK_POINTER_HRESULT(result, mediaTypes, result, E_OUTOFMEMORY);
 
       if (SUCCEEDED(result))
@@ -691,7 +680,7 @@ STDMETHODIMP CMPUrlSourceSplitter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TY
 
       if (SUCCEEDED(result))
       {
-        CMPUrlSourceSplitterOutputPin *outputPin = new CMPUrlSourceSplitterOutputPin(this->logger, mediaTypes, L"Output", this, this, &result);
+        CMPUrlSourceSplitterOutputPin *outputPin = new CMPUrlSourceSplitterOutputPin(L"Output", this, this, &result, this->logger, this->configuration, mediaTypes);
         CHECK_POINTER_HRESULT(result, outputPin, result, E_OUTOFMEMORY);
 
         CHECK_CONDITION_HRESULT(result, this->outputPins->Add(outputPin), result, E_OUTOFMEMORY);
@@ -701,7 +690,7 @@ STDMETHODIMP CMPUrlSourceSplitter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TY
       FREE_MEM_CLASS(mediaTypes);
     }
   }
-  else if (this->IsSetFlag(MP_URL_SOURCE_SPLITTER_FLAG_AS_SPLITTER))
+  else if (this->IsSetFlags(MP_URL_SOURCE_SPLITTER_FLAG_AS_SPLITTER))
   {
     result = S_OK;
     CHECK_POINTER_DEFAULT_HRESULT(result, pszFileName);
@@ -767,88 +756,6 @@ STDMETHODIMP CMPUrlSourceSplitter::GetCurFile(LPOLESTR *ppszFileName, AM_MEDIA_T
   }
 
   return S_OK;
-}
-
-// IOutputStream
-
-HRESULT CMPUrlSourceSplitter::SetStreamCount(unsigned int streamCount, bool liveStream)
-{
-  HRESULT result = S_OK;
-  CHECK_POINTER_HRESULT(result, this->demuxers, result, E_OUTOFMEMORY);
-
-  if (SUCCEEDED(result))
-  {
-    CLockMutex lock(this->demuxersMutex, INFINITE);
-
-    if (this->demuxers->Count() != streamCount)
-    {
-      this->demuxers->Clear();
-
-      for (unsigned int i = 0; (SUCCEEDED(result) && (i < streamCount)); i++)
-      {
-        CDemuxer *demuxer = new CDemuxer(this->logger, this, this->configuration, &result);
-        CHECK_POINTER_HRESULT(result, demuxer, result, E_OUTOFMEMORY);
-
-        if (SUCCEEDED(result))
-        {
-          demuxer->SetLiveStream(this->IsLiveStream() || liveStream);
-          demuxer->SetParserStreamId(i);
-          demuxer->SetRealDemuxingNeeded(this->IsSplitter() && (!this->IsDownloadingFile()));
-        }
-
-        CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->demuxers->Add(demuxer) ? result : E_OUTOFMEMORY);
-        CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(demuxer));
-      }
-
-      CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->CreateCreateAllDemuxersWorker());
-    }
-  }
-
-  return result;
-}
-
-HRESULT CMPUrlSourceSplitter::PushStreamReceiveData(unsigned int streamId, CStreamReceiveData *streamReceiveData)
-{
-  HRESULT result = S_OK;
-
-  {
-    CLockMutex lock(this->demuxersMutex, INFINITE);
-
-    CDemuxer *demuxer = this->demuxers->GetItem(streamId);
-    result = demuxer->PushStreamReceiveData(streamId, streamReceiveData);
-  }
-
-  return result;
-}
-
-// IParserOutputStream
-
-bool CMPUrlSourceSplitter::IsDownloading(void)
-{
-  return this->IsDownloadingFile();
-}
-
-void CMPUrlSourceSplitter::FinishDownload(HRESULT result)
-{
-  // we accept only first call
-  if (this->m_State == State_Running)
-  {
-    this->SetPauseSeekStopRequest(true);
-    CAMThread::CallWorker(CMD_EXIT);
-    CAMThread::Close();
-
-    // change our state to stopped
-    this->m_State = State_Stopped;
-
-    // disconnect all output pins
-    for (unsigned int i = 0; i < this->outputPins->Count(); i++)
-    {
-      this->outputPins->GetItem(i)->Disconnect();
-    }
-
-    // call callback method
-    this->OnDownloadCallback(result);
-  }
 }
 
 // IMediaSeeking
@@ -1117,7 +1024,7 @@ STDMETHODIMP CMPUrlSourceSplitter::Enable(long lIndex, DWORD dwFlags)
 
       if (SUCCEEDED(result))
       {
-        if ((targetDemuxer->GetParserStreamId() != groupDemuxer->GetParserStreamId()) || (targetStream->GetPid() != groupStream->GetPid()))
+        if ((targetDemuxer->GetDemuxerId() != groupDemuxer->GetDemuxerId()) || (targetStream->GetPid() != groupStream->GetPid()))
         {
           // the streams are not same, we need to exchange groupStream with targetStream
 
@@ -1148,7 +1055,7 @@ STDMETHODIMP CMPUrlSourceSplitter::Enable(long lIndex, DWORD dwFlags)
               if (SUCCEEDED(result))
               {
                 // update output pin
-                groupOutputPin->SetDemuxerId(targetDemuxer->GetParserStreamId());
+                groupOutputPin->SetDemuxerId(targetDemuxer->GetDemuxerId());
                 groupOutputPin->SetStreamPid(targetStream->GetPid());
                 groupDemuxer->SetActiveStream((CStream::StreamType)targetGroup, ACTIVE_STREAM_NOT_SPECIFIED);
 
@@ -1258,7 +1165,7 @@ STDMETHODIMP CMPUrlSourceSplitter::Enable(long lIndex, DWORD dwFlags)
             // in normal operation, this won't make much sense
             // however, in graphstudio it is now possible to change the stream before connecting
 
-            groupOutputPin->SetDemuxerId(targetDemuxer->GetParserStreamId());
+            groupOutputPin->SetDemuxerId(targetDemuxer->GetDemuxerId());
             groupOutputPin->SetStreamPid(targetStream->GetPid());
             groupDemuxer->SetActiveStream((CStream::StreamType)targetGroup, ACTIVE_STREAM_NOT_SPECIFIED);
 
@@ -1342,7 +1249,7 @@ STDMETHODIMP CMPUrlSourceSplitter::QueryProgress(LONGLONG *pllTotal, LONGLONG *p
 
     if (SUCCEEDED(result))
     {
-      result = SUCCEEDED(this->parserHoster->GetParserHosterStatus()) ? this->parserHoster->QueryStreamProgress(streamProgress) : this->parserHoster->GetParserHosterStatus();
+      result = this->parserHoster->QueryStreamProgress(streamProgress);
 
       if (SUCCEEDED(result))
       {
@@ -1359,17 +1266,9 @@ STDMETHODIMP CMPUrlSourceSplitter::QueryProgress(LONGLONG *pllTotal, LONGLONG *p
 
 STDMETHODIMP CMPUrlSourceSplitter::AbortOperation(void)
 {
-  this->DestroyCreateAllDemuxersWorker();
+  this->ClearSession();
 
-  HRESULT result = E_NOT_VALID_STATE;
-
-  if (this->parserHoster != NULL)
-  {
-    this->parserHoster->StopReceivingData();
-    result = S_OK;
-  }
-
-  return result;
+  return S_OK;
 }
 
 // IDownload
@@ -1410,8 +1309,7 @@ STDMETHODIMP CMPUrlSourceSplitter::DownloadAsync(LPCOLESTR uri, LPCOLESTR fileNa
 
   if (SUCCEEDED(result))
   {
-    // stop receiving data
-    this->parserHoster->StopReceivingData();
+    this->ClearSession();
 
     this->asyncDownloadResult = S_OK;
     this->flags &= ~MP_URL_SOURCE_SPLITTER_FLAG_ASYNC_DOWNLOAD_FINISHED;
@@ -1436,9 +1334,9 @@ STDMETHODIMP CMPUrlSourceSplitter::DownloadAsync(LPCOLESTR uri, LPCOLESTR fileNa
       this->configuration->Append(suppliedParameters);
       if (!this->configuration->Contains(PARAMETER_NAME_URL, true))
       {
-        this->configuration->CCollection::Add(new CParameter(PARAMETER_NAME_URL, uri));
+        CHECK_CONDITION_HRESULT(result, this->configuration->Add(PARAMETER_NAME_URL, uri), result, E_OUTOFMEMORY);
       }
-      this->configuration->CCollection::Add(new CParameter(PARAMETER_NAME_DOWNLOAD_FILE_NAME, this->downloadFileName));
+      CHECK_CONDITION_HRESULT(result, this->configuration->Add(PARAMETER_NAME_DOWNLOAD_FILE_NAME, this->downloadFileName), result, E_OUTOFMEMORY);
 
       FREE_MEM_CLASS(suppliedParameters);
     }
@@ -1446,8 +1344,9 @@ STDMETHODIMP CMPUrlSourceSplitter::DownloadAsync(LPCOLESTR uri, LPCOLESTR fileNa
     {
       // parameters are not supplied, just set current url and download file name as only parameters in configuration
       this->configuration->Clear();
-      this->configuration->CCollection::Add(new CParameter(PARAMETER_NAME_URL, uri));
-      this->configuration->CCollection::Add(new CParameter(PARAMETER_NAME_DOWNLOAD_FILE_NAME, this->downloadFileName));
+
+      CHECK_CONDITION_HRESULT(result, this->configuration->Add(PARAMETER_NAME_URL, uri), result, E_OUTOFMEMORY);
+      CHECK_CONDITION_HRESULT(result, this->configuration->Add(PARAMETER_NAME_DOWNLOAD_FILE_NAME, this->downloadFileName), result, E_OUTOFMEMORY);
     }
   }
 
@@ -1471,10 +1370,11 @@ void STDMETHODCALLTYPE CMPUrlSourceSplitter::OnDownloadCallback(HRESULT download
 
   this->flags |= MP_URL_SOURCE_SPLITTER_FLAG_ASYNC_DOWNLOAD_FINISHED;
 
-  if ((this->asyncDownloadCallback != NULL) && (this->asyncDownloadCallback != this))
+  if ((this->asyncDownloadCallback != NULL) && (!this->IsSetFlags(MP_URL_SOURCE_SPLITTER_FLAG_DOWNLOAD_CALLBACK_CALLED)))
   {
     // if download callback is set and it is not current instance (avoid recursion)
     this->asyncDownloadCallback->OnDownloadCallback(downloadResult);
+    this->flags |= MP_URL_SOURCE_SPLITTER_FLAG_DOWNLOAD_CALLBACK_CALLED;
   }
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_DOWNLOAD_CALLBACK_NAME);
@@ -1507,39 +1407,34 @@ int64_t CMPUrlSourceSplitter::SeekToTime(unsigned int streamId, int64_t time)
   return result;
 }
 
-int64_t CMPUrlSourceSplitter::SeekToPosition(int64_t start, int64_t end)
-{
-  int64_t result = E_NOT_VALID_STATE;
-
-  if (this->parserHoster != NULL)
-  {
-    result = this->parserHoster->SeekToPosition(start, end);
-  }
-
-  return result;
-}
-
-void CMPUrlSourceSplitter::SetSupressData(unsigned int streamId, bool supressData)
+void CMPUrlSourceSplitter::SetPauseSeekStopMode(unsigned int pauseSeekStopMode)
 {
   if (this->parserHoster != NULL)
   {
-    this->parserHoster->SetSupressData(streamId, supressData);
+    this->parserHoster->SetPauseSeekStopMode(pauseSeekStopMode);
   }
 }
 
-// IOutputPinFilter
-
-CParameterCollection *CMPUrlSourceSplitter::GetConfiguration(void)
-{
-  return this->configuration;
-}
-
-// IFilter
+// IDemuxerOwner
 
 int64_t CMPUrlSourceSplitter::GetDuration(void)
 {
   return (this->parserHoster != NULL) ? this->parserHoster->GetDuration() : DURATION_UNSPECIFIED;
 }
+
+HRESULT CMPUrlSourceSplitter::ProcessStreamPackage(CStreamPackage *streamPackage)
+{
+  HRESULT result = E_NOT_VALID_STATE;
+
+  if (this->parserHoster != NULL)
+  {
+    result = this->parserHoster->ProcessStreamPackage(streamPackage);
+  }
+
+  return result;
+}
+
+// IFilter
 
 unsigned int CMPUrlSourceSplitter::GetReceiveDataTimeout(void)
 {
@@ -1565,18 +1460,6 @@ HRESULT CMPUrlSourceSplitter::QueryStreamProgress(CStreamProgress *streamProgres
   return result;
 }
 
-HRESULT CMPUrlSourceSplitter::QueryStreamAvailableLength(CStreamAvailableLength *availableLength)
-{
-  HRESULT result = E_NOTIMPL;
-
-  if (this->parserHoster != NULL)
-  {
-    result = this->parserHoster->QueryStreamAvailableLength(availableLength);
-  }
-
-  return result;
-}
-
 // IFilterState
 
 HRESULT CMPUrlSourceSplitter::IsFilterReadyToConnectPins(bool *ready)
@@ -1588,15 +1471,6 @@ HRESULT CMPUrlSourceSplitter::IsFilterReadyToConnectPins(bool *ready)
   {
     *ready = false;
 
-    if (FAILED(this->GetParserHosterStatus()))
-    {
-      // return parser hoster status, there is error
-      result = this->GetParserHosterStatus();
-    }
-  }
-
-  if (SUCCEEDED(result))
-  {
     {
       CLockMutex lock(this->demuxersMutex, INFINITE);
 
@@ -1609,9 +1483,9 @@ HRESULT CMPUrlSourceSplitter::IsFilterReadyToConnectPins(bool *ready)
 
         createdDemuxers &= demuxer->IsCreatedDemuxer();
 
-        // if demuxer is not created, all data are received and demuxer worker finished its work
-        // it throws exception in OV and immediately stops buffering and playback
-        result = (demuxer->IsAllDataReceived() && (!demuxer->IsCreatedDemuxer()) && demuxer->IsCreateDemuxerWorkerFinished()) ? E_DEMUXER_NOT_CREATED_ALL_DATA_RECEIVED_DEMUXER_WORKER_FINISHED : result;
+        // if demuxer is not created and demuxer worker finished its work
+        // it throws exception in caller and immediately stops buffering and playback
+        result = ((!demuxer->IsCreatedDemuxer()) && demuxer->IsCreateDemuxerWorkerFinished()) ? demuxer->GetCreateDemuxerError() : result;
       }
 
       *ready = SUCCEEDED(result) ? createdDemuxers : false;
@@ -1630,7 +1504,9 @@ HRESULT CMPUrlSourceSplitter::GetCacheFileName(wchar_t **path)
   {
     CLockMutex lock(this->demuxersMutex, INFINITE);
 
-    const wchar_t *storeFilePath = (this->demuxers->Count() == 1) ? (this->demuxers->GetItem(0)->GetCacheFilePath()) : L"";
+    //const wchar_t *storeFilePath = (this->demuxers->Count() == 1) ? (this->demuxers->GetItem(0)->GetCacheFilePath()) : L"";
+
+    const wchar_t *storeFilePath = L"";
     
     SET_STRING(*path, storeFilePath);
     result = TEST_STRING_WITH_NULL(*path, storeFilePath) ? result : E_OUTOFMEMORY;
@@ -1647,6 +1523,7 @@ DWORD CMPUrlSourceSplitter::ThreadProc()
   this->lastCommand = -1;
 
   COutputPinPacket *packet = NULL;
+  bool seekFailed = false;
 
   for (DWORD cmd = (DWORD)-1; ; cmd = GetRequest())
   {
@@ -1698,7 +1575,7 @@ DWORD CMPUrlSourceSplitter::ThreadProc()
         {
           CDemuxer *demuxer = this->demuxers->GetItem(i);
 
-          demuxer->Seek(max(this->demuxStart, 0));
+          seekFailed |= FAILED(demuxer->Seek(max(this->demuxStart, 0)));
         }
       }
 
@@ -1774,10 +1651,32 @@ DWORD CMPUrlSourceSplitter::ThreadProc()
         // get new packet only when we don't have any packet to send
         if (packet == NULL)
         {
-          packet = new COutputPinPacket();
+          packet = new COutputPinPacket(&result);
           CHECK_POINTER_HRESULT(result, packet, result, E_OUTOFMEMORY);
 
-          result = this->GetNextPacket(packet, lastDemuxerId);
+          if (!seekFailed)
+          {
+            result = this->GetNextPacket(packet, lastDemuxerId);
+          }
+          else
+          {
+            for (unsigned int i = 0; i < this->outputPins->Count(); i++)
+            {
+              CMPUrlSourceSplitterOutputPin *outputPin = this->outputPins->GetItem(i);
+
+              if (!outputPin->IsEndOfStream())
+              {
+                // create end of stream packet for output pin
+
+                packet->SetDemuxerId(outputPin->GetDemuxerId());
+                packet->SetStreamPid(outputPin->GetStreamPid());
+                packet->SetEndOfStream(true);
+
+                result = S_OK;
+                break;
+              }
+            }
+          }
         }
 
         // it can return S_FALSE (no output pin packet) or error code
@@ -1798,7 +1697,6 @@ DWORD CMPUrlSourceSplitter::ThreadProc()
             {
               CMPUrlSourceSplitterOutputPin *outputPin = this->outputPins->GetItem(i);
 
-              // in case of end of stream is not set stream PID
               if ((outputPin->GetDemuxerId() == packet->GetDemuxerId()) &&
                   (outputPin->GetStreamPid() == packet->GetStreamPid()))
               {
@@ -1826,6 +1724,7 @@ DWORD CMPUrlSourceSplitter::ThreadProc()
 
             if (pin->IsConnected())
             {
+              packet->SetLoadedToMemoryTime(GetTickCount());
               CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = pin->QueuePacket(packet, 100));
             }
 
@@ -1902,13 +1801,20 @@ DWORD CMPUrlSourceSplitter::ThreadProc()
           {
             uint64_t streamTime = (uint64_t)(this->demuxStart / (DSHOW_TIME_BASE / 1000) + refTime.Millisecs());
 
-            for (unsigned int i = 0; i < this->demuxers->Count(); i++)
-            {
-              this->demuxers->GetItem(i)->ReportStreamTime(streamTime);
-            }
-
-            this->parserHoster->ReportStreamTime(streamTime);
+            this->parserHoster->ReportStreamTime(streamTime, (this->demuxers->Count() == 1) ? this->demuxers->GetItem(0)->GetPositionForStreamTime(streamTime) : 0);
           }
+        }
+      }
+
+      if (endOfStream && this->IsDownloadingFile())
+      {
+        // check if downloading isn't finished
+        CMPUrlSourceSplitterOutputDownloadPin *outputPin = (CMPUrlSourceSplitterOutputDownloadPin *)this->outputPins->GetItem(0);
+
+        if (outputPin->IsDownloadFinished() && (!this->IsSetFlags(MP_URL_SOURCE_SPLITTER_FLAG_DOWNLOAD_CALLBACK_CALLED)))
+        {
+          this->OnDownloadCallback(outputPin->GetDownloadResult());
+          this->flags |= MP_URL_SOURCE_SPLITTER_FLAG_DOWNLOAD_CALLBACK_CALLED;
         }
       }
     }
@@ -1959,67 +1865,47 @@ void CMPUrlSourceSplitter::DeliverEndFlush()
 
 bool CMPUrlSourceSplitter::IsIptv(void)
 {
-  return this->IsSetFlag(MP_URL_SOURCE_SPLITTER_FLAG_AS_IPTV);
+  return this->IsSetFlags(MP_URL_SOURCE_SPLITTER_FLAG_AS_IPTV);
 }
 
 bool CMPUrlSourceSplitter::IsSplitter(void)
 {
-  return this->IsSetFlag(MP_URL_SOURCE_SPLITTER_FLAG_AS_SPLITTER);
-}
-
-bool CMPUrlSourceSplitter::IsSetFlag(unsigned int flags)
-{
-  return ((this->flags & flags) == flags);
-}
-
-void CMPUrlSourceSplitter::SetFlags(unsigned int flags)
-{
-  this->flags = flags;
+  return this->IsSetFlags(MP_URL_SOURCE_SPLITTER_FLAG_AS_SPLITTER);
 }
 
 bool CMPUrlSourceSplitter::IsDownloadingFile(void)
 {
-  return this->IsSetFlag(MP_URL_SOURCE_SPLITTER_FLAG_DOWNLOADING_FILE);
+  return this->IsSetFlags(MP_URL_SOURCE_SPLITTER_FLAG_DOWNLOADING_FILE);
 }
 
 bool CMPUrlSourceSplitter::IsLiveStream(void)
 {
-  return this->IsSetFlag(MP_URL_SOURCE_SPLITTER_FLAG_LIVE_STREAM);
+  return this->IsSetFlags(MP_URL_SOURCE_SPLITTER_FLAG_LIVE_STREAM);
 }
 
 bool CMPUrlSourceSplitter::IsAsyncDownloadFinished(void)
 {
-  return this->IsSetFlag(MP_URL_SOURCE_SPLITTER_FLAG_ASYNC_DOWNLOAD_FINISHED);
+  return this->IsSetFlags(MP_URL_SOURCE_SPLITTER_FLAG_ASYNC_DOWNLOAD_FINISHED);
 }
 
 bool CMPUrlSourceSplitter::IsDownloadCallbackCalled(void)
 {
-  return this->IsSetFlag(MP_URL_SOURCE_SPLITTER_FLAG_DOWNLOAD_CALLBACK_CALLED);
+  return this->IsSetFlags(MP_URL_SOURCE_SPLITTER_FLAG_DOWNLOAD_CALLBACK_CALLED);
 }
 
 bool CMPUrlSourceSplitter::IsEnabledMethodActive(void)
 {
-  return this->IsSetFlag(MP_URL_SOURCE_SPLITTER_FLAG_ENABLED_METHOD_ACTIVE);
+  return this->IsSetFlags(MP_URL_SOURCE_SPLITTER_FLAG_ENABLED_METHOD_ACTIVE);
 }
 
 bool CMPUrlSourceSplitter::IsPlaybackStarted(void)
 {
-  return this->IsSetFlag(MP_URL_SOURCE_SPLITTER_FLAG_PLAYBACK_STARTED);
+  return this->IsSetFlags(MP_URL_SOURCE_SPLITTER_FLAG_PLAYBACK_STARTED);
 }
 
 bool CMPUrlSourceSplitter::CanReportStreamTime(void)
 {
-  return this->IsSetFlag(MP_URL_SOURCE_SPLITTER_FLAG_REPORT_STREAM_TIME);
-}
-
-HRESULT CMPUrlSourceSplitter::GetParserHosterStatus(void)
-{
-  if (this->parserHoster != NULL)
-  {
-    return this->parserHoster->GetParserHosterStatus();
-  }
-
-  return E_NOT_VALID_STATE;
+  return this->IsSetFlags(MP_URL_SOURCE_SPLITTER_FLAG_REPORT_STREAM_TIME);
 }
 
 HRESULT CMPUrlSourceSplitter::GetNextPacket(COutputPinPacket *packet, unsigned int demuxerId)
@@ -2081,7 +1967,7 @@ void CMPUrlSourceSplitter::FFmpegLogCallback(void *ptr, int log_level, const cha
   if ((formatContext != NULL) && (formatContext->pb != NULL) && (formatContext->pb->opaque != NULL))
   {
     demuxer = (CDemuxer *)formatContext->pb->opaque;
-    filter = dynamic_cast<CMPUrlSourceSplitter *>(demuxer->GetFilter());
+    filter = dynamic_cast<CMPUrlSourceSplitter *>(demuxer->GetDemuxerOwner());
 
     if (filter != NULL)
     {
@@ -2113,7 +1999,7 @@ void CMPUrlSourceSplitter::FFmpegLogCallback(void *ptr, int log_level, const cha
           {
             if (demuxer != NULL)
             {
-              loggerInstance->Log(LOGGER_VERBOSE, L"%s: %s: demuxer stream: %u, log level: %d, message: %s", MODULE_NAME, L"ffmpeg_log_callback()", demuxer->GetParserStreamId(), log_level, logLine);
+              loggerInstance->Log(LOGGER_VERBOSE, L"%s: %s: demuxer stream: %u, log level: %d, message: %s", MODULE_NAME, L"ffmpeg_log_callback()", demuxer->GetDemuxerId(), log_level, logLine);
             }
             else
             {
@@ -2185,6 +2071,11 @@ STDMETHODIMP CMPUrlSourceSplitter::Load()
     result = this->parserHoster->StartReceivingData(this->configuration);
   }
 
+  if (SUCCEEDED(result))
+  {
+    result = this->CreateCreateAllDemuxersWorker();
+  }
+
   return result;
 }
 
@@ -2241,7 +2132,7 @@ bool SplitBySeparator(const wchar_t *parameters, const wchar_t *separator, unsig
 CParameterCollection *CMPUrlSourceSplitter::ParseParameters(const wchar_t *parameters)
 {
   HRESULT result = S_OK;
-  CParameterCollection *parsedParameters = new CParameterCollection();
+  CParameterCollection *parsedParameters = new CParameterCollection(&result);
 
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_PARSE_PARAMETERS_NAME);
 
@@ -2347,8 +2238,11 @@ CParameterCollection *CMPUrlSourceSplitter::ParseParameters(const wchar_t *param
                       if (SUCCEEDED(result))
                       {
                         // we got successfully unescaped parameter value
-                        CParameter *parameter = new CParameter(name, unescapedValue);
-                        parsedParameters->CCollection::Add(parameter);
+                        CParameter *parameter = new CParameter(&result, name, unescapedValue);
+                        CHECK_POINTER_HRESULT(result, parameter, result, E_OUTOFMEMORY);
+
+                        CHECK_CONDITION_HRESULT(result, parsedParameters->CCollection::Add(parameter), result, E_OUTOFMEMORY);
+                        CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(parameter));
                       }
 
                       // free unescaped value
@@ -2439,7 +2333,7 @@ unsigned int WINAPI CMPUrlSourceSplitter::CreateAllDemuxersWorker(LPVOID lpParam
 
       if (videoStream != NULL)
       {
-        CMPUrlSourceSplitterOutputSplitterPin *outputPin = new CMPUrlSourceSplitterOutputSplitterPin(caller->logger, videoStream->GetStreamInfo()->GetMediaTypes(), L"Video", caller, caller, &result, demuxer->GetContainerFormat());
+        CMPUrlSourceSplitterOutputSplitterPin *outputPin = new CMPUrlSourceSplitterOutputSplitterPin(L"Video", caller, caller, &result, caller->logger, caller->configuration, videoStream->GetStreamInfo()->GetMediaTypes(), demuxer->GetContainerFormat());
         CHECK_POINTER_HRESULT(result, outputPin, result, E_OUTOFMEMORY);
 
         if (SUCCEEDED(result))
@@ -2452,6 +2346,7 @@ unsigned int WINAPI CMPUrlSourceSplitter::CreateAllDemuxersWorker(LPVOID lpParam
         }
 
         CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(outputPin));
+        CHECK_CONDITION_EXECUTE(SUCCEEDED(result), caller->logger->Log(LOGGER_INFO, L"%s: %s: created video output pin, demuxer: %u, stream ID: %u", MODULE_NAME, METHOD_CREATE_ALL_DEMUXERS_WORKER_NAME, i, videoStream->GetPid()));
         break;
       }
     }
@@ -2464,7 +2359,7 @@ unsigned int WINAPI CMPUrlSourceSplitter::CreateAllDemuxersWorker(LPVOID lpParam
 
       if (audioStream != NULL)
       {
-        CMPUrlSourceSplitterOutputSplitterPin *outputPin = new CMPUrlSourceSplitterOutputSplitterPin(caller->logger, audioStream->GetStreamInfo()->GetMediaTypes(), L"Audio", caller, caller, &result, demuxer->GetContainerFormat());
+        CMPUrlSourceSplitterOutputSplitterPin *outputPin = new CMPUrlSourceSplitterOutputSplitterPin(L"Audio", caller, caller, &result, caller->logger, caller->configuration, audioStream->GetStreamInfo()->GetMediaTypes(), demuxer->GetContainerFormat());
         CHECK_POINTER_HRESULT(result, outputPin, result, E_OUTOFMEMORY);
 
         if (SUCCEEDED(result))
@@ -2477,6 +2372,7 @@ unsigned int WINAPI CMPUrlSourceSplitter::CreateAllDemuxersWorker(LPVOID lpParam
         }
 
         CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(outputPin));
+        CHECK_CONDITION_EXECUTE(SUCCEEDED(result), caller->logger->Log(LOGGER_INFO, L"%s: %s: created audio output pin, demuxer: %u, stream ID: %u", MODULE_NAME, METHOD_CREATE_ALL_DEMUXERS_WORKER_NAME, i, audioStream->GetPid()));
         break;
       }
     }
@@ -2491,7 +2387,7 @@ unsigned int WINAPI CMPUrlSourceSplitter::CreateAllDemuxersWorker(LPVOID lpParam
 
       if (subtitleStream != NULL)
       {
-        CMPUrlSourceSplitterOutputSplitterPin *outputPin = new CMPUrlSourceSplitterOutputSplitterPin(caller->logger, subtitleStream->GetStreamInfo()->GetMediaTypes(), L"Subtitle", caller, caller, &result, demuxer->GetContainerFormat());
+        CMPUrlSourceSplitterOutputSplitterPin *outputPin = new CMPUrlSourceSplitterOutputSplitterPin(L"Subtitle", caller, caller, &result, caller->logger, caller->configuration, subtitleStream->GetStreamInfo()->GetMediaTypes(), demuxer->GetContainerFormat());
         CHECK_POINTER_HRESULT(result, outputPin, result, E_OUTOFMEMORY);
 
         if (SUCCEEDED(result))
@@ -2504,6 +2400,7 @@ unsigned int WINAPI CMPUrlSourceSplitter::CreateAllDemuxersWorker(LPVOID lpParam
         }
 
         CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(outputPin));
+        CHECK_CONDITION_EXECUTE(SUCCEEDED(result), caller->logger->Log(LOGGER_INFO, L"%s: %s: created subtitle output pin, demuxer: %u, stream ID: %u", MODULE_NAME, METHOD_CREATE_ALL_DEMUXERS_WORKER_NAME, i, subtitleStream->GetPid()));
         break;
       }
     }
@@ -2524,7 +2421,7 @@ unsigned int WINAPI CMPUrlSourceSplitter::CreateAllDemuxersWorker(LPVOID lpParam
     // we are downloading file
     // create output pin, which save received data to file
     
-    CMediaTypeCollection *mediaTypes = new CMediaTypeCollection();
+    CMediaTypeCollection *mediaTypes = new CMediaTypeCollection(&result);
     CHECK_POINTER_HRESULT(result, mediaTypes, result, E_OUTOFMEMORY);
 
     if (SUCCEEDED(result))
@@ -2538,12 +2435,12 @@ unsigned int WINAPI CMPUrlSourceSplitter::CreateAllDemuxersWorker(LPVOID lpParam
 
     if (SUCCEEDED(result))
     {
-      CMPUrlSourceSplitterOutputDownloadPin *outputPin = new CMPUrlSourceSplitterOutputDownloadPin(caller->logger, mediaTypes, PathFindFileName(caller->downloadFileName), caller, caller, &result, caller->downloadFileName);
+      CMPUrlSourceSplitterOutputDownloadPin *outputPin = new CMPUrlSourceSplitterOutputDownloadPin(PathFindFileName(caller->downloadFileName), caller, caller, &result, caller->logger, caller->configuration, mediaTypes, caller->downloadFileName);
       CHECK_POINTER_HRESULT(result, outputPin, result, E_OUTOFMEMORY);
 
       if (SUCCEEDED(result))
       {
-        outputPin->SetStreamPid(caller->demuxers->GetItem(0)->GetParserStreamId());
+        outputPin->SetStreamPid(caller->demuxers->GetItem(0)->GetDemuxerId());
         outputPin->SetDemuxerId(0);
 
         result = (caller->outputPins->Add(outputPin)) ? result : E_OUTOFMEMORY;
@@ -2585,18 +2482,50 @@ unsigned int WINAPI CMPUrlSourceSplitter::CreateAllDemuxersWorker(LPVOID lpParam
 HRESULT CMPUrlSourceSplitter::CreateCreateAllDemuxersWorker(void)
 {
   HRESULT result = S_OK;
-
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_CREATE_CREATE_ALL_DEMUXERS_WORKER_NAME);
 
-  this->createAllDemuxersWorkerShouldExit = false;
+  CHECK_POINTER_HRESULT(result, this->demuxers, result, E_OUTOFMEMORY);
 
-  this->createAllDemuxersWorkerThread = (HANDLE)_beginthreadex(NULL, 0, &CMPUrlSourceSplitter::CreateAllDemuxersWorker, this, 0, NULL);
-
-  if (this->createAllDemuxersWorkerThread == NULL)
+  if (SUCCEEDED(result))
   {
-    // thread not created
-    result = HRESULT_FROM_WIN32(GetLastError());
-    this->logger->Log(LOGGER_ERROR, L"%s: %s: _beginthreadex() error: 0x%08X", MODULE_NAME, METHOD_CREATE_CREATE_ALL_DEMUXERS_WORKER_NAME, result);
+    CLockMutex lock(this->demuxersMutex, INFINITE);
+
+    unsigned int streamCount = this->parserHoster->GetStreamCount();
+    CHECK_CONDITION_HRESULT(result, streamCount != STREAM_COUNT_UNKNOWN, result, E_STREAM_COUNT_UNKNOWN);
+
+    if (SUCCEEDED(result) && (this->demuxers->Count() != streamCount))
+    {
+      this->demuxers->Clear();
+
+      for (unsigned int i = 0; (SUCCEEDED(result) && (i < streamCount)); i++)
+      {
+        CDemuxer *demuxer = new CDemuxer(&result, this->logger, this, this->configuration);
+        CHECK_POINTER_HRESULT(result, demuxer, result, E_OUTOFMEMORY);
+
+        if (SUCCEEDED(result))
+        {
+          demuxer->SetDemuxerId(i);
+          demuxer->SetRealDemuxingNeeded(this->IsSplitter() && (!this->IsDownloadingFile()));
+        }
+
+        CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->demuxers->Add(demuxer) ? result : E_OUTOFMEMORY);
+        CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(demuxer));
+      }
+    }
+  }
+
+  if (SUCCEEDED(result))
+  {
+    this->createAllDemuxersWorkerShouldExit = false;
+
+    this->createAllDemuxersWorkerThread = (HANDLE)_beginthreadex(NULL, 0, &CMPUrlSourceSplitter::CreateAllDemuxersWorker, this, 0, NULL);
+
+    if (this->createAllDemuxersWorkerThread == NULL)
+    {
+      // thread not created
+      result = HRESULT_FROM_WIN32(GetLastError());
+      this->logger->Log(LOGGER_ERROR, L"%s: %s: _beginthreadex() error: 0x%08X", MODULE_NAME, METHOD_CREATE_CREATE_ALL_DEMUXERS_WORKER_NAME, result);
+    }
   }
 
   this->logger->Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_CREATE_CREATE_ALL_DEMUXERS_WORKER_NAME, result);
@@ -2663,7 +2592,7 @@ void CMPUrlSourceSplitter::ClearSession(void)
   this->flags &= (MP_URL_SOURCE_SPLITTER_FLAG_AS_IPTV | MP_URL_SOURCE_SPLITTER_FLAG_AS_SPLITTER);
 
   // in case of splitter delete outputs
-  if (this->IsSetFlag(MP_URL_SOURCE_SPLITTER_FLAG_AS_SPLITTER))
+  if (this->IsSetFlags(MP_URL_SOURCE_SPLITTER_FLAG_AS_SPLITTER))
   {
     if (this->outputPins != NULL)
     {
@@ -2690,3 +2619,33 @@ void CMPUrlSourceSplitter::ClearSession(void)
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_CLEAR_SESSION_NAME);
 }
+
+// IParserOutputStream
+
+//bool CMPUrlSourceSplitter::IsDownloading(void)
+//{
+//  return this->IsDownloadingFile();
+//}
+//
+//void CMPUrlSourceSplitter::FinishDownload(HRESULT result)
+//{
+//  // we accept only first call
+//  if (this->m_State == State_Running)
+//  {
+//    this->SetPauseSeekStopRequest(true);
+//    CAMThread::CallWorker(CMD_EXIT);
+//    CAMThread::Close();
+//
+//    // change our state to stopped
+//    this->m_State = State_Stopped;
+//
+//    // disconnect all output pins
+//    for (unsigned int i = 0; i < this->outputPins->Count(); i++)
+//    {
+//      this->outputPins->GetItem(i)->Disconnect();
+//    }
+//
+//    // call callback method
+//    this->OnDownloadCallback(result);
+//  }
+//}

@@ -22,8 +22,8 @@
 
 #include "DemuxerCollection.h"
 
-CDemuxerCollection::CDemuxerCollection(void)
-  : CCollection()
+CDemuxerCollection::CDemuxerCollection(HRESULT *result)
+  : CCollection(result)
 {
 }
 

@@ -26,7 +26,7 @@
 class CParameter
 {
 public:
-  CParameter(const wchar_t *name, const wchar_t *value);
+  CParameter(HRESULT *result, const wchar_t *name, const wchar_t *value);
   ~CParameter(void);
 
   // get parameter name

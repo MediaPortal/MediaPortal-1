@@ -29,7 +29,7 @@
 class CCacheFileItemCollection : public CCollection<CCacheFileItem>
 {
 public:
-  CCacheFileItemCollection(void);
+  CCacheFileItemCollection(HRESULT *result);
   virtual ~CCacheFileItemCollection(void);
 
   /* get methods */

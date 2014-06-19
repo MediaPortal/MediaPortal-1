@@ -32,7 +32,7 @@ template <class TItem, class TItemKey> class CSerializableCollection : public CK
 {
 public:
   // create new instance of CSerializableCollection class
-  CSerializableCollection();
+  CSerializableCollection(HRESULT *result);
 
   virtual ~CSerializableCollection(void);
 
@@ -53,8 +53,8 @@ public:
 
 // implementation
 
-template <class TItem, class TItemKey> CSerializableCollection<TItem, TItemKey>::CSerializableCollection()
-  : CKeyedCollection<TItem, TItemKey>()
+template <class TItem, class TItemKey> CSerializableCollection<TItem, TItemKey>::CSerializableCollection(HRESULT *result)
+  : CKeyedCollection<TItem, TItemKey>(result)
 {
 }
 

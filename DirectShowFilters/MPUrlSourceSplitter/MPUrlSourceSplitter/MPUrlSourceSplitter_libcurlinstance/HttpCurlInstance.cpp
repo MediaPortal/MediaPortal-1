@@ -22,8 +22,8 @@
 
 #include "HttpCurlInstance.h"
 
-CHttpCurlInstance::CHttpCurlInstance(CLogger *logger, HANDLE mutex, const wchar_t *protocolName, const wchar_t *instanceName)
-  : CCurlInstance(logger, mutex, protocolName, instanceName)
+CHttpCurlInstance::CHttpCurlInstance(HRESULT *result, CLogger *logger, HANDLE mutex, const wchar_t *protocolName, const wchar_t *instanceName)
+  : CCurlInstance(result, logger, mutex, protocolName, instanceName)
 {
   this->httpHeaders = NULL;
   this->cookies = NULL;
@@ -344,7 +344,12 @@ CHttpDownloadResponse *CHttpCurlInstance::GetHttpDownloadResponse(void)
 
 CDownloadResponse *CHttpCurlInstance::GetNewDownloadResponse(void)
 {
-  return new CHttpDownloadResponse();
+  HRESULT result = S_OK;
+  CHttpDownloadResponse *response = new CHttpDownloadResponse(&result);
+  CHECK_POINTER_HRESULT(result, response, result, E_OUTOFMEMORY);
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(response));
+  return response;
 }
 
 double CHttpCurlInstance::GetDownloadContentLength(void)
@@ -362,7 +367,9 @@ double CHttpCurlInstance::GetDownloadContentLength(void)
 
 CParameterCollection *CHttpCurlInstance::GetCurrentCookies(void)
 {
-  CParameterCollection *result = new CParameterCollection();
+  HRESULT result = S_OK;
+  CParameterCollection *currentCookies = new CParameterCollection(&result);
+  CHECK_POINTER_HRESULT(result, currentCookies, result, E_OUTOFMEMORY);
 
   if (this->curl != NULL)
   {
@@ -377,13 +384,13 @@ CParameterCollection *CHttpCurlInstance::GetCurrentCookies(void)
 
         if (convertedValue != NULL)
         {
-          CParameter *parameter = new CParameter(L"", convertedValue);
+          CParameter *parameter = new CParameter(&result, L"", convertedValue);
+          CHECK_POINTER_HRESULT(result, parameter, result, E_OUTOFMEMORY);
 
-          if (!result->CCollection::Add(parameter))
-          {
-            FREE_MEM_CLASS(parameter);
-          }
+          CHECK_CONDITION_HRESULT(result, currentCookies->CCollection::Add(parameter), result, E_OUTOFMEMORY);
+          CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(parameter));
         }
+
         FREE_MEM(convertedValue);
       }
 
@@ -392,7 +399,8 @@ CParameterCollection *CHttpCurlInstance::GetCurrentCookies(void)
     }
   }
 
-  return result;
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(currentCookies));
+  return currentCookies;
 }
 
 bool CHttpCurlInstance::SetCurrentCookies(CParameterCollection *cookies)

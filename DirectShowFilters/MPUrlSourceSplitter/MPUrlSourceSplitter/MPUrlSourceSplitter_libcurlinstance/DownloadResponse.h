@@ -24,13 +24,18 @@
 #define __DOWNLOAD_RESPONSE_DEFINED
 
 #include "LinearBuffer.h"
+#include "Flags.h"
 
 #include <curl/curl.h>
 
-class CDownloadResponse
+#define DOWNLOAD_RESPONSE_FLAG_NONE                                   FLAGS_NONE
+
+#define DOWNLOAD_RESPONSE_FLAG_LAST                                   (FLAGS_LAST + 0)
+
+class CDownloadResponse : public CFlags
 {
 public:
-  CDownloadResponse(void);
+  CDownloadResponse(HRESULT *result);
   virtual ~CDownloadResponse(void);
 
   /* get methods */
@@ -64,7 +69,6 @@ public:
   virtual CDownloadResponse *Clone(void);
 
 protected:
-
   // holds received data
   CLinearBuffer *receivedData;
 
@@ -73,6 +77,12 @@ protected:
 
   // holds response code
   long responseCode;
+
+  /* methods */
+
+  // creates download response
+  // @return : download response or NULL if error
+  virtual CDownloadResponse *CreateDownloadResponse(void);
 
   // deeply clones current instance to cloned response
   // @param  clonedResponse : cloned response to hold clone of current instance

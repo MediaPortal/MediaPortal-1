@@ -28,10 +28,11 @@
 #define MODULE_NAME                                               L"MPUrlSourceSplitterOutputDownloadPin"
 #endif
 
-CMPUrlSourceSplitterOutputDownloadPin::CMPUrlSourceSplitterOutputDownloadPin(CLogger *logger, CMediaTypeCollection *mediaTypes, LPCWSTR pName, CBaseFilter *pFilter, CCritSec *pLock, HRESULT *phr, const wchar_t *downloadFileName)
-  : CMPUrlSourceSplitterOutputPin(logger, mediaTypes, pName, pFilter, pLock, phr)
+CMPUrlSourceSplitterOutputDownloadPin::CMPUrlSourceSplitterOutputDownloadPin(LPCWSTR pName, CBaseFilter *pFilter, CCritSec *pLock, HRESULT *phr, CLogger *logger, CParameterCollection *parameters, CMediaTypeCollection *mediaTypes, const wchar_t *downloadFileName)
+  : CMPUrlSourceSplitterOutputPin(pName, pFilter, pLock, phr, logger, parameters, mediaTypes)
 {
   this->inputPin = NULL;
+  this->downloadResult = S_OK;
 
   if (phr != NULL)
   {
@@ -64,7 +65,26 @@ CMPUrlSourceSplitterOutputDownloadPin::~CMPUrlSourceSplitterOutputDownloadPin(vo
   CHECK_CONDITION_NOT_NULL_EXECUTE(this->logger, this->logger->Log(LOGGER_INFO, METHOD_PIN_END_FORMAT, MODULE_NAME, METHOD_DESTRUCTOR_NAME, this->m_pName));
 }
 
+/* get methods */
+
+HRESULT CMPUrlSourceSplitterOutputDownloadPin::GetDownloadResult(void)
+{
+  return this->downloadResult;
+}
+
+/* set methods */
+
+/* other methods */
+
 void CMPUrlSourceSplitterOutputDownloadPin::FinishDownload(HRESULT result)
 {
-  this->filter->FinishDownload(result);
+  this->flags |= MP_URL_SOURCE_SPLITTER_OUTPUT_DOWNLOAD_PIN_FLAG_DOWNLOAD_FINISHED;
+  this->downloadResult = result;
 }
+
+bool CMPUrlSourceSplitterOutputDownloadPin::IsDownloadFinished(void)
+{
+  return this->IsSetFlags(MP_URL_SOURCE_SPLITTER_OUTPUT_DOWNLOAD_PIN_FLAG_DOWNLOAD_FINISHED);
+}
+
+/* protected methods */

@@ -24,13 +24,13 @@
 #define __MP_URL_SOURCE_SPLITTER_DEFINED
 
 #include "IDownload.h"
-#include "IOutputPinFilter.h"
 #include "IFilterState.h"
+#include "IDemuxerOwner.h"
 #include "MPUrlSourceSplitterOutputPinCollection.h"
 #include "ParserHoster.h"
 #include "MediaPacketCollection.h"
-#include "AsyncRequest.h"
 #include "DemuxerCollection.h"
+#include "Flags.h"
 
 const GUID GUID_MP_IPTV_SOURCE            = { 0xD3DD4C59, 0xD3A7, 0x4B82, 0x97, 0x27, 0x7B, 0x92, 0x03, 0xEB, 0x67, 0xC0 };
 const GUID GUID_MP_URL_SOURCE_SPLITTER    = { 0x59ED045A, 0xA938, 0x4A09, 0xA8, 0xA6, 0x82, 0x31, 0xF5, 0x83, 0x42, 0x59 };
@@ -44,38 +44,36 @@ const GUID GUID_MP_URL_SOURCE_SPLITTER    = { 0x59ED045A, 0xA938, 0x4A09, 0xA8, 
 #define MP_URL_SOURCE_SPLITTER_LOG_FILE                               L"log\\MPUrlSourceSplitter.log"
 #define MP_URL_SOURCE_SPLITTER_LOG_BACKUP_FILE                        L"log\\MPUrlSourceSplitter.bak"
 
-#define MP_URL_SOURCE_SPLITTER_FLAG_NONE                              0x00000000
-#define MP_URL_SOURCE_SPLITTER_FLAG_AS_IPTV                           0x00000001
-#define MP_URL_SOURCE_SPLITTER_FLAG_AS_SPLITTER                       0x00000002
+#define MP_URL_SOURCE_SPLITTER_FLAG_NONE                              FLAGS_NONE
+
+#define MP_URL_SOURCE_SPLITTER_FLAG_AS_IPTV                           (1 << (FLAGS_LAST + 0))
+#define MP_URL_SOURCE_SPLITTER_FLAG_AS_SPLITTER                       (1 << (FLAGS_LAST + 1))
 // specifies if we are downloading file, in that case we don't delete file on end
-#define MP_URL_SOURCE_SPLITTER_FLAG_DOWNLOADING_FILE                  0x00000004
+#define MP_URL_SOURCE_SPLITTER_FLAG_DOWNLOADING_FILE                  (1 << (FLAGS_LAST + 2))
 // specifies if filter is processing live stream or not
-#define MP_URL_SOURCE_SPLITTER_FLAG_LIVE_STREAM                       0x00000008
+#define MP_URL_SOURCE_SPLITTER_FLAG_LIVE_STREAM                       (1 << (FLAGS_LAST + 3))
 // specifies if filter finished asynchronous downloading
-#define MP_URL_SOURCE_SPLITTER_FLAG_ASYNC_DOWNLOAD_FINISHED           0x00000010
+#define MP_URL_SOURCE_SPLITTER_FLAG_ASYNC_DOWNLOAD_FINISHED           (1 << (FLAGS_LAST + 4))
 // specifies if filter called download callback
-#define MP_URL_SOURCE_SPLITTER_FLAG_DOWNLOAD_CALLBACK_CALLED          0x00000020
+#define MP_URL_SOURCE_SPLITTER_FLAG_DOWNLOAD_CALLBACK_CALLED          (1 << (FLAGS_LAST + 5))
 // specifies that filter is in Enable() method - this method is for changing streams and there are called method which affects receiving data (Stop(), Run())
-#define MP_URL_SOURCE_SPLITTER_FLAG_ENABLED_METHOD_ACTIVE             0x00000040
+#define MP_URL_SOURCE_SPLITTER_FLAG_ENABLED_METHOD_ACTIVE             (1 << (FLAGS_LAST + 6))
 // specifies that playback started and is not stopped
-#define MP_URL_SOURCE_SPLITTER_FLAG_PLAYBACK_STARTED                  0x00000080
+#define MP_URL_SOURCE_SPLITTER_FLAG_PLAYBACK_STARTED                  (1 << (FLAGS_LAST + 7))
 // specifies that filter can report stream time to protocol
-#define MP_URL_SOURCE_SPLITTER_FLAG_REPORT_STREAM_TIME                0x00000100
+#define MP_URL_SOURCE_SPLITTER_FLAG_REPORT_STREAM_TIME                (1 << (FLAGS_LAST + 8))
 
 class CMPUrlSourceSplitter 
   : public CBaseFilter
   , public CCritSec
+  , public CFlags
   , protected CAMThread
   , public IFileSourceFilter
-  //, public IParserOutputStream
   , public IMediaSeeking
   , public IAMStreamSelect
-  //, public ILAVFSettingsInternal
-  //, public IObjectWithSite
-  //, public IBufferInfo
   , public IDownload
   , public IDownloadCallback
-  , public IOutputPinFilter
+  , public IDemuxerOwner
   , public IFilterState
 {
 public:
@@ -144,30 +142,6 @@ public:
   // E_POINTER if ppszFileName is NULL
   STDMETHODIMP GetCurFile(LPOLESTR *ppszFileName, AM_MEDIA_TYPE *pmt);
 
-  // IOutputStream interface
-
-  // notifies output stream about stream count
-  // @param streamCount : the stream count
-  // @param liveStream : true if stream(s) are live, false otherwise
-  // @return : S_OK if successful, false otherwise
-  HRESULT SetStreamCount(unsigned int streamCount, bool liveStream);
-
-  // pushes stream received data to filter
-  // @param streamId : the stream ID to push stream received data
-  // @param streamReceivedData : the stream received data to push to filter
-  // @return : S_OK if successful, error code otherwise
-  HRESULT PushStreamReceiveData(unsigned int streamId, CStreamReceiveData *streamReceiveData);
-
-  // IParserOutputStream interface
-
-  // tests if filter is downloading
-  // @return : true if downloading, false otherwise
-  bool IsDownloading(void);
-
-  // finishes download with specified result
-  // @param result : the result of download
-  void FinishDownload(HRESULT result);
-
   // IMediaSeeking
   STDMETHODIMP GetCapabilities(DWORD* pCapabilities);
   STDMETHODIMP CheckCapabilities(DWORD* pCapabilities);
@@ -203,17 +177,18 @@ public:
   // IDownloadCallback interface
   void STDMETHODCALLTYPE OnDownloadCallback(HRESULT downloadResult);
 
-  // IOutputPinFilter interface
-
-  // gets filter parameters
-  // @return : filter parameters or NULL if error
-  CParameterCollection *GetConfiguration(void);
-
-  // IFilter interface
+  // IDemuxerOwner interface
 
   // gets duration of stream in ms
   // @return : stream duration in ms or DURATION_LIVE_STREAM in case of live stream or DURATION_UNSPECIFIED if duration is unknown
   int64_t GetDuration(void);
+
+  // process stream package request
+  // @param streamPackage : the stream package request to process
+  // @return : S_OK if successful, error code only in case when error is not related to processing request
+  HRESULT ProcessStreamPackage(CStreamPackage *streamPackage);
+
+  // IFilter interface
 
   // get timeout (in ms) for receiving data
   // @return : timeout (in ms) for receiving data
@@ -242,16 +217,10 @@ public:
   // @return : time (in ms) where seek finished or lower than zero if error
   int64_t SeekToTime(unsigned int streamId, int64_t time);
 
-  // request protocol implementation to receive data from specified position to specified position
-  // @param start : the requested start position (zero is start of stream)
-  // @param end : the requested end position, if end position is lower or equal to start position than end position is not specified
-  // @return : position where seek finished or lower than zero if error
-  int64_t SeekToPosition(int64_t start, int64_t end);
-
-  // sets if protocol implementation have to supress sending data with specified stream ID to filter
-  // @param streamId : the stream ID to supress data
-  // @param supressData : true if protocol have to supress sending data to filter, false otherwise
-  void SetSupressData(unsigned int streamId, bool supressData);
+  // set pause, seek or stop mode
+  // in such mode are reading operations disabled
+  // @param pauseSeekStopMode : one of PAUSE_SEEK_STOP_MODE values
+  void SetPauseSeekStopMode(unsigned int pauseSeekStopMode);
 
   // IFilterState interface
 
@@ -283,9 +252,6 @@ protected:
 
   // holds if filter want to call CAMThread::CallWorker() with CMD_PAUSE, CMD_SEEK, CMD_STOP values
   volatile bool pauseSeekStopRequest;
-
-  // holds various flags
-  unsigned int flags;
 
   // holds mutex for access to demuxers collection
   HANDLE demuxersMutex;
@@ -327,14 +293,6 @@ protected:
   // @return : true if works as splitter, false otherwise
   bool IsSplitter(void);
 
-  // tests if various combination of flags is set
-  // @return : true if combination of flags is set, false otherwise
-  bool IsSetFlag(unsigned int flags);
-
-  // sets combination of flags
-  // @param flags : the combination of flags to set
-  void SetFlags(unsigned int flags);
-
   // tests if filter is downloading file, in that case we don't delete file on end
   // @return : true if filter is downloading file, false otherwise
   bool IsDownloadingFile(void);
@@ -362,10 +320,6 @@ protected:
   // tests if FLAG_MP_URL_SOURCE_SPLITTER_REPORT_STREAM_TIME flag is set
   // @return : true if flag is set, false otherwise
   bool CanReportStreamTime(void);
-
-  // gets parser hoster status
-  // @return : one of STATUS_* values or error code if error
-  HRESULT GetParserHosterStatus(void);
 
   // gets next output pin packet
   // @param packet : pointer to output packet

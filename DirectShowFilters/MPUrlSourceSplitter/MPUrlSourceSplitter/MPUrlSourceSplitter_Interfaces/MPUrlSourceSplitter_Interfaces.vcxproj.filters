@@ -24,25 +24,7 @@
     <ClInclude Include="ErrorCodes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IFilter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IOutputStream.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IParserOutputStream.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IParserPlugin.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IPlugin.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="IProtocol.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IProtocolPlugin.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ISeeking.h">
@@ -58,6 +40,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IFilterState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IDemuxerOwner.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

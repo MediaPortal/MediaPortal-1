@@ -22,8 +22,8 @@
 
 #include "F4MMediaCollection.h"
 
-CF4MMediaCollection::CF4MMediaCollection(void)
-  : CKeyedCollection()
+CF4MMediaCollection::CF4MMediaCollection(HRESULT *result)
+  : CKeyedCollection(result)
 {
 }
 

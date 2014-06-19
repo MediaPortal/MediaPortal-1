@@ -24,7 +24,7 @@
 
 #define STREAM_READ_BUFFER_SIZE                                       32768
 
-CPacketInputFormat::CPacketInputFormat(IPacketDemuxer *demuxer, const wchar_t *streamFormat)
+CPacketInputFormat::CPacketInputFormat(HRESULT *result, IPacketDemuxer *demuxer, const wchar_t *streamFormat)
 {
   // set AVInputFormat default values
   this->codec_tag = NULL;
@@ -48,12 +48,23 @@ CPacketInputFormat::CPacketInputFormat(IPacketDemuxer *demuxer, const wchar_t *s
   this->read_packet = &this->ReadPacket;
   this->read_seek = &this->Seek;
 
-  this->demuxer = demuxer;
-  this->streamFormat = Duplicate(streamFormat);
-
   this->streamFormatContext = NULL;
   this->streamIoContext = NULL;
   this->streamIoContextBufferPosition = 0;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    CHECK_POINTER_DEFAULT_HRESULT(*result, demuxer);
+    CHECK_POINTER_DEFAULT_HRESULT(*result, streamFormat);
+
+    if (SUCCEEDED(*result))
+    {
+      this->demuxer = demuxer;
+      this->streamFormat = Duplicate(streamFormat);
+
+      CHECK_POINTER_HRESULT(*result, this->streamFormat, *result, E_OUTOFMEMORY);
+    }
+  }
 }
 
 CPacketInputFormat::~CPacketInputFormat(void)

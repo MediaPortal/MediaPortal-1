@@ -24,10 +24,11 @@
 #include "Dns.h"
 #include "MulticastUdpSocketContext.h"
 
-CMulticastUdpServer::CMulticastUdpServer(void)
-  : CUdpServer()
+CMulticastUdpServer::CMulticastUdpServer(HRESULT *result)
+  : CUdpServer(result)
 {
-  this->serverType = SERVER_TYPE_MULTICAST_UDP;
+  this->flags |= MULTICAST_UDP_SERVER_FLAG_SERVER;
+  this->flags &= ~UDP_SERVER_FLAG_SERVER;
 }
 
 CMulticastUdpServer::~CMulticastUdpServer(void)
@@ -45,8 +46,8 @@ HRESULT CMulticastUdpServer::Initialize(int family, const wchar_t *multicastAddr
 {
   HRESULT result = S_OK;
 
-  CIpAddressCollection *multicastAddresses = new CIpAddressCollection();
-  CIpAddressCollection *sourceAddresses = new CIpAddressCollection();
+  CIpAddressCollection *multicastAddresses = new CIpAddressCollection(&result);
+  CIpAddressCollection *sourceAddresses = new CIpAddressCollection(&result);
   CHECK_POINTER_HRESULT(result, multicastAddresses, result, E_OUTOFMEMORY);
   CHECK_POINTER_HRESULT(result, sourceAddresses, result, E_OUTOFMEMORY);
 
@@ -95,12 +96,12 @@ HRESULT CMulticastUdpServer::Initialize(int family, CIpAddress *multicastAddress
               ipAddr->SetSockType(SOCK_DGRAM);
               ipAddr->SetProtocol(IPPROTO_UDP);
 
-              CMulticastUdpSocketContext *server = new CMulticastUdpSocketContext(multicastAddress, sourceAddress, nic);
+              CMulticastUdpSocketContext *server = new CMulticastUdpSocketContext(&result, multicastAddress, sourceAddress, nic);
               CHECK_POINTER_HRESULT(result, server, result, E_OUTOFMEMORY);
 
               CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), server->SetIpAddress(ipAddr), result);
 
-              CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->servers->Add(server) ? result : E_OUTOFMEMORY);
+              CHECK_CONDITION_HRESULT(result, this->servers->Add(server), result, E_OUTOFMEMORY);
 
               CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(server));
             }

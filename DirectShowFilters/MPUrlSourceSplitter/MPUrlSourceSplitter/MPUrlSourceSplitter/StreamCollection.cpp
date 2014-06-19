@@ -22,8 +22,8 @@
 
 #include "StreamCollection.h"
 
-CStreamCollection::CStreamCollection(void)
-  : CCollection()
+CStreamCollection::CStreamCollection(HRESULT *result)
+  : CCollection(result)
 {
 }
 

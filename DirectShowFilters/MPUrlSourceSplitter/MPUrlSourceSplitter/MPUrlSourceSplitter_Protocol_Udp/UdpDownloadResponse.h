@@ -37,11 +37,13 @@ public:
 
   /* other methods */
 
-  // deeply clones current instance
-  // @result : deep clone of current instance or NULL if error
-  virtual CUdpDownloadResponse *Clone(void);
-
 protected:
+
+  /* methods */
+
+  // creates download response
+  // @return : download response or NULL if error
+  virtual CDownloadResponse *CreateDownloadResponse(void);
 
   // deeply clones current instance to cloned request
   // @param  clonedRequest : cloned request to hold clone of current instance

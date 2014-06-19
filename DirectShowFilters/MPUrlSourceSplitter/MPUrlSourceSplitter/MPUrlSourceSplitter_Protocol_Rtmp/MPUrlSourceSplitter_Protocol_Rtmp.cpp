@@ -1317,17 +1317,6 @@ int64_t CMPUrlSourceSplitter_Protocol_Rtmp::SeekToTime(unsigned int streamId, in
   return result;
 }
 
-int64_t CMPUrlSourceSplitter_Protocol_Rtmp::SeekToPosition(int64_t start, int64_t end)
-{
-  this->logger->Log(LOGGER_VERBOSE, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_POSITION_NAME);
-  this->logger->Log(LOGGER_VERBOSE, L"%s: %s: from time: %llu, to time: %llu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_POSITION_NAME, start, end);
-
-  int64_t result = -1;
-
-  this->logger->Log(LOGGER_VERBOSE, METHOD_END_INT64_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_POSITION_NAME, result);
-  return result;
-}
-
 void CMPUrlSourceSplitter_Protocol_Rtmp::SetSupressData(unsigned int streamId, bool supressData)
 {
   this->supressData = supressData;

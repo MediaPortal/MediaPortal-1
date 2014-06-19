@@ -22,8 +22,8 @@
 
 #include "SocketContextCollection.h"
 
-CSocketContextCollection::CSocketContextCollection(void)
-  : CCollection()
+CSocketContextCollection::CSocketContextCollection(HRESULT *result)
+  : CCollection(result)
 {
 }
 

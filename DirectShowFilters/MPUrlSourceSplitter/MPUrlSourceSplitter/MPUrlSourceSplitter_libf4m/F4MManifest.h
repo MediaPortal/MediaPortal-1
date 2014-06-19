@@ -33,7 +33,7 @@ class CF4MManifest
 {
 public:
   // initializes a new instance of CF4MManifest class
-  CF4MManifest(void);
+  CF4MManifest(HRESULT *result);
 
   // destructor
   ~CF4MManifest(void);

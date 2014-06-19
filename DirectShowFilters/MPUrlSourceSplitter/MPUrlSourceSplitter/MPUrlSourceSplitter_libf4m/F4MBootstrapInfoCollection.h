@@ -29,7 +29,7 @@
 class CF4MBootstrapInfoCollection : public CKeyedCollection<CF4MBootstrapInfo, const wchar_t *>
 {
 public:
-  CF4MBootstrapInfoCollection(void);
+  CF4MBootstrapInfoCollection(HRESULT *result);
   ~CF4MBootstrapInfoCollection(void);
 
   // test if bootstrap info exists in collection

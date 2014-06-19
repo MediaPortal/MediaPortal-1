@@ -28,7 +28,8 @@ class CMedia
 public:
   // constructor
   // create instance of CBootstrapInfo class
-  CMedia(const wchar_t *url, unsigned int bitrate, unsigned int width, unsigned int height,
+  CMedia(HRESULT *result,
+    const wchar_t *url, unsigned int bitrate, unsigned int width, unsigned int height,
     const wchar_t *drmAdditionalHeaderId, const wchar_t *bootstrapInfoId, const wchar_t *dvrInfoId,
     const wchar_t *groupspec, const wchar_t *multicastStreamName, const wchar_t *metadata);
 

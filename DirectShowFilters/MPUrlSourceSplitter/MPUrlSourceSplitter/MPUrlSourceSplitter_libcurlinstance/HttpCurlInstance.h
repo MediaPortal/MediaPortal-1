@@ -43,7 +43,7 @@ public:
   // @param mutex : mutex for locking access to receive data buffer
   // @param protocolName : the protocol name instantiating
   // @param instanceName : the name of CURL instance
-  CHttpCurlInstance(CLogger *logger, HANDLE mutex, const wchar_t *protocolName, const wchar_t *instanceName);
+  CHttpCurlInstance(HRESULT *result, CLogger *logger, HANDLE mutex, const wchar_t *protocolName, const wchar_t *instanceName);
 
   ~CHttpCurlInstance(void);
 

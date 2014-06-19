@@ -29,7 +29,7 @@
 class CStreamReceiveDataColletion : public CCollection<CStreamReceiveData>
 {
 public:
-  CStreamReceiveDataColletion(void);
+  CStreamReceiveDataColletion(HRESULT *result);
   ~CStreamReceiveDataColletion(void);
 
 protected:

@@ -58,12 +58,12 @@ public:
   // initializes a new instance of CLogger class
   // @param staticLogger : the instance of static logger
   // @param configuration : the collection of configuration parameters to initialize logger (verbosity and max log size)
-  CLogger(CStaticLogger *staticLogger, CParameterCollection *configuration);
+  CLogger(HRESULT *result, CStaticLogger *staticLogger, CParameterCollection *configuration);
 
   // initializes a new instance of CLogger class with specified CLogger instance
   // new logger instance have same mutex, verbosity, log file and max log size
   // @param logger : logger instance to initialize new instance
-  CLogger(CLogger *logger);
+  CLogger(HRESULT *result, CLogger *logger);
 
   ~CLogger(void);
 

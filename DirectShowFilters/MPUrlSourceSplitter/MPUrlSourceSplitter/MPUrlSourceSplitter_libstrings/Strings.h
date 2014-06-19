@@ -33,7 +33,7 @@
                                                                               destination = Duplicate(source);
 
 #define TEST_STRING(destination, source)                                      (destination != NULL)
-#define TEST_STRING_WITH_NULL(destination, source)                            (TEST_STRING(destination, source)  || (destination == source))
+#define TEST_STRING_WITH_NULL(destination, source)                            (TEST_STRING(destination, source) || (destination == source))
 
 #define SET_STRING_RESULT(destination, source, result)                        SET_STRING(destination, source) \
                                                                               result = TEST_STRING(destination, souce);
@@ -55,6 +55,12 @@
 
 #define SET_STRING_AND_RESULT_WITH_NULL(destination, source, result)          SET_STRING(destination, source) \
                                                                               result &= TEST_STRING_WITH_NULL(destination, source);
+
+#define SET_STRING_HRESULT(destination, source, result)                       CHECK_CONDITION_EXECUTE(SUCCEEDED(result), SET_STRING(destination, source)) \
+                                                                              CHECK_CONDITION_HRESULT(result, TEST_STRING(destination, source), result, E_OUTOFMEMORY);
+
+#define SET_STRING_HRESULT_WITH_NULL(destination, source, result)             CHECK_CONDITION_EXECUTE(SUCCEEDED(result), SET_STRING(destination, source)) \
+                                                                              CHECK_CONDITION_HRESULT(result, TEST_STRING_WITH_NULL(destination, source), result, E_OUTOFMEMORY);
 
 
 // converts GUID to MBCS string

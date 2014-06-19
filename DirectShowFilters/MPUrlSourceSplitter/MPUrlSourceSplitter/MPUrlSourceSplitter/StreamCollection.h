@@ -29,7 +29,7 @@
 class CStreamCollection : public CCollection<CStream>
 {
 public:
-  CStreamCollection(void);
+  CStreamCollection(HRESULT *result);
   virtual ~CStreamCollection(void);
 
 protected:

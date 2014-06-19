@@ -35,12 +35,12 @@ CStreamProgress::~CStreamProgress(void)
 
 /* get methods */
 
-LONGLONG CStreamProgress::GetTotalLength(void)
+int64_t CStreamProgress::GetTotalLength(void)
 {
   return this->total;
 }
 
-LONGLONG CStreamProgress::GetCurrentLength(void)
+int64_t CStreamProgress::GetCurrentLength(void)
 {
   return this->current;
 }
@@ -52,12 +52,12 @@ unsigned int CStreamProgress::GetStreamId(void)
 
 /* set methods */
 
-void CStreamProgress::SetTotalLength(LONGLONG totalLength)
+void CStreamProgress::SetTotalLength(int64_t totalLength)
 {
   this->total = totalLength;
 }
 
-void CStreamProgress::SetCurrentLength(LONGLONG currentLength)
+void CStreamProgress::SetCurrentLength(int64_t currentLength)
 {
   this->current = currentLength;
 }

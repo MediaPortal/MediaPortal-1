@@ -76,14 +76,9 @@
   <ItemGroup>
     <ClInclude Include="ErrorCodes.h" />
     <ClInclude Include="IDownload.h" />
-    <ClInclude Include="IFilter.h" />
+    <ClInclude Include="IDemuxerOwner.h" />
     <ClInclude Include="IFilterState.h" />
-    <ClInclude Include="IOutputStream.h" />
-    <ClInclude Include="IParserOutputStream.h" />
-    <ClInclude Include="IParserPlugin.h" />
-    <ClInclude Include="IPlugin.h" />
     <ClInclude Include="IProtocol.h" />
-    <ClInclude Include="IProtocolPlugin.h" />
     <ClInclude Include="ISeeking.h" />
     <ClInclude Include="ISimpleProtocol.h" />
     <ClInclude Include="IOutputPinMediaSample.h" />

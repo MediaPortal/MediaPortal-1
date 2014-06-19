@@ -34,7 +34,7 @@ class CLogger;
 class CParameterCollection : public CKeyedCollection<CParameter, const wchar_t *>
 {
 public:
-  CParameterCollection(void);
+  CParameterCollection(HRESULT *result);
   virtual ~CParameterCollection(void);
 
   // add parameter to collection

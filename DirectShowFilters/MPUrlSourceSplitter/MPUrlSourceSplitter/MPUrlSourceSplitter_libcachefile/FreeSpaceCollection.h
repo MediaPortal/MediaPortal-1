@@ -31,7 +31,7 @@
 class CFreeSpaceCollection : public CCollection<CFreeSpace>
 {
 public:
-  CFreeSpaceCollection(void);
+  CFreeSpaceCollection(HRESULT *result);
   virtual ~CFreeSpaceCollection(void);
 
   /* get methods */

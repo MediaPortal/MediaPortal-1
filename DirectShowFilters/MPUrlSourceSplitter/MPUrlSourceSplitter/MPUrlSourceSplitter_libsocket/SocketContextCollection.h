@@ -29,7 +29,7 @@
 class CSocketContextCollection : public CCollection<CSocketContext>
 {
 public:
-  CSocketContextCollection(void);
+  CSocketContextCollection(HRESULT *result);
   ~CSocketContextCollection(void);
 
 protected:

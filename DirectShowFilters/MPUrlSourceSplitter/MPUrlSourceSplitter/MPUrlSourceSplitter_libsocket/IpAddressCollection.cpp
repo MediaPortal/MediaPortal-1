@@ -22,8 +22,8 @@
 
 #include "IpAddressCollection.h"
 
-CIpAddressCollection::CIpAddressCollection(void)
-  : CCollection()
+CIpAddressCollection::CIpAddressCollection(HRESULT *result)
+  : CCollection(result)
 {
 }
 

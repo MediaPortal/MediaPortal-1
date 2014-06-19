@@ -25,10 +25,10 @@
 #include "Dns.h"
 #include "UdpSocketContext.h"
 
-CUdpServer::CUdpServer(void)
-  : CSimpleServer()
+CUdpServer::CUdpServer(HRESULT *result)
+  : CSimpleServer(result)
 {
-  this->serverType = SERVER_TYPE_UDP;
+  this->flags |= UDP_SERVER_FLAG_SERVER;
 }
 
 CUdpServer::~CUdpServer(void)
@@ -73,12 +73,12 @@ HRESULT CUdpServer::Initialize(int family, WORD port, CNetworkInterfaceCollectio
               ipAddr->SetSockType(SOCK_DGRAM);
               ipAddr->SetProtocol(IPPROTO_UDP);
 
-              CUdpSocketContext *server = new CUdpSocketContext();
+              CUdpSocketContext *server = new CUdpSocketContext(&result);
               CHECK_POINTER_HRESULT(result, server, result, E_OUTOFMEMORY);
 
               CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), server->SetIpAddress(ipAddr), result);
 
-              CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->servers->Add(server) ? result : E_OUTOFMEMORY);
+              CHECK_CONDITION_HRESULT(result, this->servers->Add(server), result, E_OUTOFMEMORY);
 
               CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(server));
             }

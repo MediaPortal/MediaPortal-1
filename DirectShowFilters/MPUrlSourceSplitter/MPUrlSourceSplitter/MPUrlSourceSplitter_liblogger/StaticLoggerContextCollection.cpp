@@ -22,8 +22,8 @@
 
 #include "StaticLoggerContextCollection.h"
 
-CStaticLoggerContextCollection::CStaticLoggerContextCollection(void)
-  : CCollection()
+CStaticLoggerContextCollection::CStaticLoggerContextCollection(HRESULT *result)
+  : CCollection(result)
 {
 }
 

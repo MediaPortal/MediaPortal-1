@@ -26,11 +26,17 @@
 #include "UdpSocketContext.h"
 #include "NetworkInterface.h"
 
+#define MULTICAST_UDP_SOCKET_CONTEXT_FLAG_NONE                                UDP_SOCKET_CONTEXT_FLAG_NONE
+
+#define MULTICAST_UDP_SOCKET_CONTEXT_FLAG_SUBSCRIBED_TO_GROUP                 (1 << (UDP_SOCKET_CONTEXT_FLAG_LAST + 0))
+
+#define MULTICAST_UDP_SOCKET_CONTEXT_FLAG_LAST                                (UDP_SOCKET_CONTEXT_FLAG_LAST + 1)
+
 class CMulticastUdpSocketContext : public CUdpSocketContext
 {
 public:
-  CMulticastUdpSocketContext(CIpAddress *multicastAddress, CIpAddress *sourceAddress, CNetworkInterface *networkInterface);
-  CMulticastUdpSocketContext(CIpAddress *multicastAddress, CIpAddress *sourceAddress, CNetworkInterface *networkInterface, SOCKET socket);
+  CMulticastUdpSocketContext(HRESULT *result, CIpAddress *multicastAddress, CIpAddress *sourceAddress, CNetworkInterface *networkInterface);
+  CMulticastUdpSocketContext(HRESULT *result, CIpAddress *multicastAddress, CIpAddress *sourceAddress, CNetworkInterface *networkInterface, SOCKET socket);
   virtual ~CMulticastUdpSocketContext(void);
 
   /* get methods */
@@ -70,7 +76,7 @@ public:
 
 protected:
 
-  bool subscribedToMulticastGroup;
+  //bool subscribedToMulticastGroup;
   CIpAddress *multicastAddress;
   CIpAddress *sourceAddress;
   CNetworkInterface *networkInterface;

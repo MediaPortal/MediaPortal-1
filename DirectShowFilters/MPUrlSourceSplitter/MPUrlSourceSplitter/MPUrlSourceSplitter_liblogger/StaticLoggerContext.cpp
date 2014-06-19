@@ -91,27 +91,23 @@ CParameterCollection *CStaticLoggerContext::GetMessages(void)
 
 bool CStaticLoggerContext::Initialize(DWORD maxLogSize, unsigned int allowedLogVerbosity, const wchar_t *logFile, const wchar_t *logBackupFile, const wchar_t *globalMutexName)
 {
-  bool result = (this->mutex == NULL) && (this->logFile == NULL) && (this->logBackupFile == NULL) && (this->globalMutexName == NULL) && (this->messages == NULL);
+  HRESULT result = ((this->mutex == NULL) && (this->logFile == NULL) && (this->logBackupFile == NULL) && (this->globalMutexName == NULL) && (this->messages == NULL)) ? S_OK : E_NOT_VALID_STATE;
 
-  if (result)
+  if (SUCCEEDED(result))
   {
-    this->messages = new CParameterCollection();
-    result &= (this->messages != NULL);
+    this->messages = new CParameterCollection(&result);
+    CHECK_POINTER_HRESULT(result, this->messages, result, E_OUTOFMEMORY);
 
-    SET_STRING_AND_RESULT_WITH_NULL(this->logFile, logFile, result);
-    SET_STRING_AND_RESULT_WITH_NULL(this->logBackupFile, logBackupFile, result);
-    SET_STRING_AND_RESULT_WITH_NULL(this->globalMutexName, globalMutexName, result);
+    SET_STRING_HRESULT_WITH_NULL(this->logFile, logFile, result);
+    SET_STRING_HRESULT_WITH_NULL(this->logBackupFile, logBackupFile, result);
+    SET_STRING_HRESULT_WITH_NULL(this->globalMutexName, globalMutexName, result);
     this->allowedLogVerbosity = allowedLogVerbosity;
     this->maxLogSize = maxLogSize;
 
-    if (result)
-    {
-      // create mutex, can return NULL
-      this->mutex = CreateMutex(NULL, FALSE, this->globalMutexName);
-    }
-
-    result &= (this->mutex != NULL);
+    // create mutex, can return NULL
+    CHECK_CONDITION_EXECUTE(SUCCEEDED(result), this->mutex = CreateMutex(NULL, FALSE, this->globalMutexName));
+    CHECK_POINTER_HRESULT(result, this->mutex, result, E_OUTOFMEMORY);
   }
 
-  return result;
+  return SUCCEEDED(result);
 }

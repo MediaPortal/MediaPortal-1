@@ -29,7 +29,7 @@
 class CF4MMediaCollection : public CKeyedCollection<CF4MMedia, const wchar_t *>
 {
 public:
-  CF4MMediaCollection(void);
+  CF4MMediaCollection(HRESULT *result);
   ~CF4MMediaCollection(void);
 
 protected:

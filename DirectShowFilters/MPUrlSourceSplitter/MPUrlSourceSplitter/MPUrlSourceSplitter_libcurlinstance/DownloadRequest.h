@@ -23,10 +23,16 @@
 #ifndef __DOWNLOAD_REQUEST_DEFINED
 #define __DOWNLOAD_REQUEST_DEFINED
 
-class CDownloadRequest
+#include "Flags.h"
+
+#define DOWNLOAD_REQUEST_FLAG_NONE                                    FLAGS_NONE
+
+#define DOWNLOAD_REQUEST_FLAG_LAST                                    (FLAGS_LAST + 0)
+
+class CDownloadRequest : public CFlags
 {
 public:
-  CDownloadRequest(void);
+  CDownloadRequest(HRESULT *result);
   virtual ~CDownloadRequest(void);
 
   /* get methods */
@@ -49,9 +55,14 @@ public:
   virtual CDownloadRequest *Clone(void);
 
 protected:
-
   // holds url to download
   wchar_t *url;
+
+  /* methods */
+
+  // creates empty download request
+  // @return : download request or NULL if error
+  virtual CDownloadRequest *CreateDownloadRequest(void);
 
   // deeply clones current instance to cloned request
   // @param  clonedRequest : cloned request to hold clone of current instance

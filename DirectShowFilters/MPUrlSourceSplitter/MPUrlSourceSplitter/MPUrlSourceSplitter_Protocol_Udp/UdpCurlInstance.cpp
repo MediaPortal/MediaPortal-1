@@ -30,18 +30,22 @@
 #include "IpAddress.h"
 #include "RtpPacket.h"
 
-CUdpCurlInstance::CUdpCurlInstance(CLogger *logger, HANDLE mutex, const wchar_t *protocolName, const wchar_t *instanceName)
-  : CCurlInstance(logger, mutex, protocolName, instanceName)
+CUdpCurlInstance::CUdpCurlInstance(HRESULT *result, CLogger *logger, HANDLE mutex, const wchar_t *protocolName, const wchar_t *instanceName)
+  : CCurlInstance(result, logger, mutex, protocolName, instanceName)
 {
-  this->udpDownloadRequest = dynamic_cast<CUdpDownloadRequest *>(this->downloadRequest);
-  this->udpDownloadResponse = dynamic_cast<CUdpDownloadResponse *>(this->downloadResponse);
-
   this->localAddress = NULL;
   this->sourceAddress = NULL;
   this->localPort = PORT_UNSPECIFIED;
   this->sourcePort = PORT_UNSPECIFIED;
 
   this->flags = UDP_CURL_INSTANCE_FLAG_NONE;
+
+  this->udpDownloadRequest = dynamic_cast<CUdpDownloadRequest *>(this->downloadRequest);
+  this->udpDownloadResponse = dynamic_cast<CUdpDownloadResponse *>(this->downloadResponse);
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+  }
 }
 
 CUdpCurlInstance::~CUdpCurlInstance(void)
@@ -137,7 +141,7 @@ unsigned int CUdpCurlInstance::CurlWorker(void)
   this->stopReceivingTicks = 0;
   this->totalReceivedBytes = 0;
 
-  CURLcode errorCode = CURLE_OK;
+  //CURLcode errorCode = CURLE_OK;
   ALLOC_MEM_DEFINE_SET(buffer, unsigned char, BUFFER_LENGTH_DEFAULT, 0);
   CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = (buffer != NULL) ? errorCode : CURLE_OUT_OF_MEMORY);
 
@@ -237,88 +241,88 @@ unsigned int CUdpCurlInstance::CurlWorker(void)
     
     CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = SUCCEEDED(server->StartListening()) ? errorCode : CURLE_FAILED_INIT);
 
-    while (!this->curlWorkerShouldExit)
-    {
-      if (errorCode == CURLE_OK)
-      {
-        // only one thread can work with UDP data in one time
-        CLockMutex lock(this->mutex, INFINITE);
+    //while (!this->curlWorkerShouldExit)
+    //{
+    //  if (errorCode == CURLE_OK)
+    //  {
+    //    // only one thread can work with UDP data in one time
+    //    CLockMutex lock(this->mutex, INFINITE);
 
-        for (unsigned int i = 0; ((errorCode == CURLE_OK) && (i < server->GetServers()->Count())); i++)
-        {
-          CUdpSocketContext *udpContext = (CUdpSocketContext *)(server->GetServers()->GetItem(i));
+    //    for (unsigned int i = 0; ((errorCode == CURLE_OK) && (i < server->GetServers()->Count())); i++)
+    //    {
+    //      CUdpSocketContext *udpContext = (CUdpSocketContext *)(server->GetServers()->GetItem(i));
 
-          unsigned int pendingIncomingDataLength = 0;
-          HRESULT result = S_OK;
-          do
-          {
-            result = udpContext->GetPendingIncomingDataLength(&pendingIncomingDataLength);
+    //      unsigned int pendingIncomingDataLength = 0;
+    //      HRESULT result = S_OK;
+    //      do
+    //      {
+    //        result = udpContext->GetPendingIncomingDataLength(&pendingIncomingDataLength);
 
-            if (SUCCEEDED(result) && (pendingIncomingDataLength != 0))
-            {
-              // allocate buffer and receive data
-              unsigned int receivedLength = 0;
+    //        if (SUCCEEDED(result) && (pendingIncomingDataLength != 0))
+    //        {
+    //          // allocate buffer and receive data
+    //          unsigned int receivedLength = 0;
 
-              CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = udpContext->Receive((char *)buffer, pendingIncomingDataLength, &receivedLength));
-              CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = (pendingIncomingDataLength == receivedLength) ? result : E_NOT_VALID_STATE);
+    //          CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = udpContext->Receive((char *)buffer, pendingIncomingDataLength, &receivedLength));
+    //          CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = (pendingIncomingDataLength == receivedLength) ? result : E_NOT_VALID_STATE);
 
-              if (SUCCEEDED(result))
-              {
-                if (this->IsSetFlags(UDP_CURL_INSTANCE_FLAG_TRANSPORT_RTP))
-                {
-                  rtpPacket->Clear();
+    //          if (SUCCEEDED(result))
+    //          {
+    //            if (this->IsSetFlags(UDP_CURL_INSTANCE_FLAG_TRANSPORT_RTP))
+    //            {
+    //              rtpPacket->Clear();
 
-                  if (rtpPacket->Parse(buffer, receivedLength))
-                  {
-                    CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = (this->udpDownloadResponse->GetReceivedData()->AddToBufferWithResize(rtpPacket->GetPayload(), rtpPacket->GetPayloadSize()) == rtpPacket->GetPayloadSize()) ? result : E_OUTOFMEMORY);
-                  }
-                }
-                else if (this->IsSetFlags(UDP_CURL_INSTANCE_FLAG_TRANSPORT_UDP))
-                {
-                  CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = (this->udpDownloadResponse->GetReceivedData()->AddToBufferWithResize(buffer, pendingIncomingDataLength) == pendingIncomingDataLength) ? result : E_OUTOFMEMORY);
-                }
-                else
-                {
-                  // transport type is not resolved, try first RTP
-                  rtpPacket->Clear();
+    //              if (rtpPacket->Parse(buffer, receivedLength))
+    //              {
+    //                CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = (this->udpDownloadResponse->GetReceivedData()->AddToBufferWithResize(rtpPacket->GetPayload(), rtpPacket->GetPayloadSize()) == rtpPacket->GetPayloadSize()) ? result : E_OUTOFMEMORY);
+    //              }
+    //            }
+    //            else if (this->IsSetFlags(UDP_CURL_INSTANCE_FLAG_TRANSPORT_UDP))
+    //            {
+    //              CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = (this->udpDownloadResponse->GetReceivedData()->AddToBufferWithResize(buffer, pendingIncomingDataLength) == pendingIncomingDataLength) ? result : E_OUTOFMEMORY);
+    //            }
+    //            else
+    //            {
+    //              // transport type is not resolved, try first RTP
+    //              rtpPacket->Clear();
 
-                  if (rtpPacket->Parse(buffer, receivedLength))
-                  {
-                    CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = (this->udpDownloadResponse->GetReceivedData()->AddToBufferWithResize(rtpPacket->GetPayload(), rtpPacket->GetPayloadSize()) == rtpPacket->GetPayloadSize()) ? result : E_OUTOFMEMORY);
-                    this->flags |= UDP_CURL_INSTANCE_FLAG_TRANSPORT_RTP;
-                  }
-                  else
-                  {
-                    CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = (this->udpDownloadResponse->GetReceivedData()->AddToBufferWithResize(buffer, pendingIncomingDataLength) == pendingIncomingDataLength) ? result : E_OUTOFMEMORY);
-                    this->flags |= UDP_CURL_INSTANCE_FLAG_TRANSPORT_UDP;
-                  }
-                }
-              }
-            }
-          }
-          while (SUCCEEDED(result) && (pendingIncomingDataLength != 0));
+    //              if (rtpPacket->Parse(buffer, receivedLength))
+    //              {
+    //                CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = (this->udpDownloadResponse->GetReceivedData()->AddToBufferWithResize(rtpPacket->GetPayload(), rtpPacket->GetPayloadSize()) == rtpPacket->GetPayloadSize()) ? result : E_OUTOFMEMORY);
+    //                this->flags |= UDP_CURL_INSTANCE_FLAG_TRANSPORT_RTP;
+    //              }
+    //              else
+    //              {
+    //                CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = (this->udpDownloadResponse->GetReceivedData()->AddToBufferWithResize(buffer, pendingIncomingDataLength) == pendingIncomingDataLength) ? result : E_OUTOFMEMORY);
+    //                this->flags |= UDP_CURL_INSTANCE_FLAG_TRANSPORT_UDP;
+    //              }
+    //            }
+    //          }
+    //        }
+    //      }
+    //      while (SUCCEEDED(result) && (pendingIncomingDataLength != 0));
 
-          if (FAILED(result))
-          {
-            this->logger->Log(LOGGER_ERROR, L"%s: %s: error while receiving data: 0x%08X", this->protocolName, METHOD_CURL_WORKER_NAME, result);
-            errorCode = CURLE_READ_ERROR;
-          }
-        }
-      }
+    //      if (FAILED(result))
+    //      {
+    //        this->logger->Log(LOGGER_ERROR, L"%s: %s: error while receiving data: 0x%08X", this->protocolName, METHOD_CURL_WORKER_NAME, result);
+    //        errorCode = CURLE_READ_ERROR;
+    //      }
+    //    }
+    //  }
 
-      if ((errorCode != CURLE_OK) && (this->state != CURL_STATE_RECEIVED_ALL_DATA))
-      {
-        // we have some error, we can't do more
-        // report error code and wait for destroying CURL instance
+    //  if ((errorCode != CURLE_OK) && (this->state != CURL_STATE_RECEIVED_ALL_DATA))
+    //  {
+    //    // we have some error, we can't do more
+    //    // report error code and wait for destroying CURL instance
 
-        CLockMutex lock(this->mutex, INFINITE);
+    //    CLockMutex lock(this->mutex, INFINITE);
 
-        this->udpDownloadResponse->SetResultCode(errorCode);
-        this->state = CURL_STATE_RECEIVED_ALL_DATA;
-      }
+    //    this->udpDownloadResponse->SetResultCode(errorCode);
+    //    this->state = CURL_STATE_RECEIVED_ALL_DATA;
+    //  }
 
-      Sleep(1);
-    }
+    //  Sleep(1);
+    //}
   }
 
   FREE_MEM_CLASS(localIpAddresses);

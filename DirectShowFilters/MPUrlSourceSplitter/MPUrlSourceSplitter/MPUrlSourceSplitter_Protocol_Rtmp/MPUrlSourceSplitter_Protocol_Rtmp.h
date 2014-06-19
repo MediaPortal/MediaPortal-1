@@ -123,12 +123,6 @@ public:
   // @return : time (in ms) where seek finished or lower than zero if error
   int64_t SeekToTime(unsigned int streamId, int64_t time);
 
-  // request protocol implementation to receive data from specified position to specified position
-  // @param start : the requested start position (zero is start of stream)
-  // @param end : the requested end position, if end position is lower or equal to start position than end position is not specified
-  // @return : position where seek finished or lower than zero if error
-  int64_t SeekToPosition(int64_t start, int64_t end);
-
   // sets if protocol implementation have to supress sending data with specified stream ID to filter
   // @param streamId : the stream ID to supress data
   // @param supressData : true if protocol have to supress sending data to filter, false otherwise

@@ -22,19 +22,27 @@
 
 #include "MediaPacketCollection.h"
 
-CMediaPacketCollection::CMediaPacketCollection(void)
-  : CCacheFileItemCollection()
-{
-  this->consolidatedMediaPackets = new CMediaPacketCollection(false);
-}
-
-CMediaPacketCollection::CMediaPacketCollection(bool consolidateSpace)
-  : CCacheFileItemCollection()
+CMediaPacketCollection::CMediaPacketCollection(HRESULT *result)
+  : CCacheFileItemCollection(result)
 {
   this->consolidatedMediaPackets = NULL;
-  if (consolidateSpace)
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
   {
-    this->consolidatedMediaPackets = new CMediaPacketCollection();
+    this->consolidatedMediaPackets = new CMediaPacketCollection(result, false);
+    CHECK_POINTER_HRESULT(*result, this->consolidatedMediaPackets, *result, E_OUTOFMEMORY);
+  }
+}
+
+CMediaPacketCollection::CMediaPacketCollection(HRESULT *result, bool consolidateSpace)
+  : CCacheFileItemCollection(result)
+{
+  this->consolidatedMediaPackets = NULL;
+
+  if ((result != NULL) && (SUCCEEDED(*result)) && consolidateSpace)
+  {
+    this->consolidatedMediaPackets = new CMediaPacketCollection(result);
+    CHECK_POINTER_HRESULT(*result, this->consolidatedMediaPackets, *result, E_OUTOFMEMORY);
   }
 }
 
@@ -45,53 +53,50 @@ CMediaPacketCollection::~CMediaPacketCollection(void)
 
 bool CMediaPacketCollection::Add(CMediaPacket *item)
 {
-  if (item == NULL)
-  {
-    return false;
-  }
+  bool result = (item != NULL);
 
-  if (!this->EnsureEnoughSpace(this->Count() + 1))
-  {
-    return false;
-  }
+  CHECK_CONDITION_EXECUTE(result, result &= this->EnsureEnoughSpace(this->Count() + 1));
 
-  unsigned int startIndex = 0;
-  unsigned int endIndex = 0;
-
-  if (this->GetItemInsertPosition(item->GetStart(), &startIndex, &endIndex))
+  if (result)
   {
-    if (startIndex == endIndex)
+    unsigned int startIndex = 0;
+    unsigned int endIndex = 0;
+
+    if (this->GetItemInsertPosition(item->GetStart(), &startIndex, &endIndex))
     {
-      // media packet exists in collection
-      return false;
-    }
+      // check if media packet exists in collection
+      result &= (startIndex != endIndex);
 
-    CMediaPacket *startPacket = (startIndex == UINT_MAX) ? NULL : this->GetItem(startIndex);
-    CMediaPacket *endPacket = (endIndex == UINT_MAX) ? NULL : this->GetItem(endIndex);
-
-    // everything after endIndex must be moved
-    if (this->itemCount > 0)
-    {
-      for (unsigned int i = this->itemCount; i > endIndex; i--)
+      if (result)
       {
-        *(this->items + i) = *(this->items + i - 1);
+        CMediaPacket *startPacket = (startIndex == UINT_MAX) ? NULL : this->GetItem(startIndex);
+        CMediaPacket *endPacket = (endIndex == UINT_MAX) ? NULL : this->GetItem(endIndex);
+
+        // everything after endIndex must be moved
+        if (this->itemCount > 0)
+        {
+          for (unsigned int i = this->itemCount; i > endIndex; i--)
+          {
+            *(this->items + i) = *(this->items + i - 1);
+          }
+        }
+
+        if (endIndex == UINT_MAX)
+        {
+          // the media packet have to be added after all media packets
+          endIndex = this->itemCount;
+        }
+
+        // add new item to collection and increase item count
+        *(this->items + endIndex) = item;
+        this->itemCount++;
+
+        result &= this->AddPacketToConsolidatedMediaPackets(item);
       }
     }
-
-    if (endIndex == UINT_MAX)
-    {
-      // the media packet have to be added after all media packets
-      endIndex = this->itemCount;
-    }
-
-    // add new item to collection and increase item count
-    *(this->items + endIndex) = item;
-    this->itemCount++;
-
-    this->AddPacketToConsolidatedMediaPackets(item);
   }
 
-  return true;
+  return result;
 }
 
 unsigned int CMediaPacketCollection::GetMediaPacketIndexBetweenPositions(int64_t time)
@@ -121,7 +126,7 @@ unsigned int CMediaPacketCollection::GetMediaPacketIndexBetweenPositions(int64_t
   return index;
 }
 
-bool CMediaPacketCollection::GetItemInsertPosition(int64_t key, unsigned int *startIndex, unsigned int *endIndex)
+bool CMediaPacketCollection::GetItemInsertPosition(int64_t position, unsigned int *startIndex, unsigned int *endIndex)
 {
   bool result = ((startIndex != NULL) && (endIndex != NULL));
 
@@ -143,25 +148,22 @@ bool CMediaPacketCollection::GetItemInsertPosition(int64_t key, unsigned int *st
         // get media packet at middle index
         CMediaPacket *mediaPacket = this->GetItem(middle);
 
-        // media packet key is start time
-        // it is not reference type so there is no need to free item key
-
-        // tests media packet to key value
-        if (key > mediaPacket->GetStart())
+        // compare media packet start to position
+        if (position > mediaPacket->GetStart())
         {
-          // key is bigger than media packet start time
+          // position is bigger than media packet start time
           // search in top half
           first = middle + 1;
         }
-        else if (key < mediaPacket->GetStart()) 
+        else if (position < mediaPacket->GetStart()) 
         {
-          // key is lower than media packet start time
+          // position is lower than media packet start time
           // search in bottom half
           last = middle - 1;
         }
         else
         {
-          // we found media packet with same starting time as key
+          // we found media packet with same starting time as position
           *startIndex = middle;
           *endIndex = middle;
           result = true;
@@ -172,7 +174,7 @@ bool CMediaPacketCollection::GetItemInsertPosition(int64_t key, unsigned int *st
       if (!result)
       {
         // we don't found media packet
-        // it means that media packet with 'key' belongs between first and last
+        // it means that media packet with 'position' belongs between first and last
         *startIndex = last;
         *endIndex = (first >= this->Count()) ? UINT_MAX : first;
         result = true;
@@ -195,8 +197,11 @@ CMediaPacket *CMediaPacketCollection::GetOverlappedRegion(CMediaPacket *packet)
 
   if ((this->consolidatedMediaPackets != NULL) && (packet != NULL))
   {
-    result = new CMediaPacket();
-    if (result != NULL)
+    HRESULT res = S_OK;
+    result = new CMediaPacket(&res);
+    CHECK_POINTER_HRESULT(res, result, res, E_OUTOFMEMORY);
+
+    if (SUCCEEDED(res))
     {
       unsigned int count = this->consolidatedMediaPackets->Count();
       for (unsigned int i = 0; i < count; i++)
@@ -212,6 +217,8 @@ CMediaPacket *CMediaPacketCollection::GetOverlappedRegion(CMediaPacket *packet)
         }
       }
     }
+
+    CHECK_CONDITION_EXECUTE(FAILED(res), FREE_MEM_CLASS(result));
   }
 
   return result;
@@ -232,10 +239,73 @@ CMediaPacket *CMediaPacketCollection::GetItem(unsigned int index)
   return (CMediaPacket *)__super::GetItem(index);
 }
 
+bool CMediaPacketCollection::FindGapInMediaPackets(int64_t position, int64_t *startPosition, int64_t *endPosition)
+{
+  bool result = ((startPosition != NULL) && (endPosition != NULL));
+
+  if (result)
+  {
+    // check media packets from supplied last valid stream position
+    result = false;
+
+    int64_t tempStartPosition = 0;
+    int64_t tempEndPosition = 0;
+    unsigned int mediaPacketIndex = this->GetMediaPacketIndexBetweenPositions(position);
+
+    if (mediaPacketIndex != UINT_MAX)
+    {
+      CMediaPacket *mediaPacket = this->GetItem(mediaPacketIndex);
+      tempStartPosition = mediaPacket->GetStart();
+      tempEndPosition = mediaPacket->GetEnd();
+    }
+
+    // because collection is sorted
+    // then simple going through all media packets will reveal if there is some empty place
+    while (mediaPacketIndex != UINT_MAX)
+    {
+      CMediaPacket *mediaPacket = this->GetItem(mediaPacketIndex);
+      int64_t mediaPacketStart = mediaPacket->GetStart();
+      int64_t mediaPacketEnd = mediaPacket->GetEnd();
+
+      if (tempStartPosition == mediaPacketStart)
+      {
+        // next start time is next to end of current media packet
+        tempStartPosition = mediaPacketEnd + 1;
+        mediaPacketIndex++;
+
+        if (mediaPacketIndex >= this->Count())
+        {
+          // stop checking, all media packets checked
+          tempEndPosition = tempStartPosition;
+          mediaPacketIndex = UINT_MAX;
+        }
+      }
+      else
+      {
+        // we found gap between media packets
+        // set end time and stop checking media packets
+        tempEndPosition = mediaPacketStart - 1;
+        mediaPacketIndex = UINT_MAX;
+        result = true;
+      }
+    }
+
+    if (result)
+    {
+      *startPosition = tempStartPosition;
+      *endPosition = tempEndPosition;
+    }
+  }
+
+  return result;
+}
+
 /* protected methods */
 
-void CMediaPacketCollection::AddPacketToConsolidatedMediaPackets(CMediaPacket *packet)
+bool CMediaPacketCollection::AddPacketToConsolidatedMediaPackets(CMediaPacket *packet)
 {
+  HRESULT result = S_OK;
+
   if ((this->consolidatedMediaPackets != NULL) && (packet != NULL))
   {
     bool merged = false;
@@ -263,14 +333,18 @@ void CMediaPacketCollection::AddPacketToConsolidatedMediaPackets(CMediaPacket *p
     if (!merged)
     {
       // not merged media packet, just add to consolidated packets
-      CMediaPacket *consolidatedPacket = new CMediaPacket();
-      if (consolidatedPacket != NULL)
+      CMediaPacket *consolidatedPacket = new CMediaPacket(&result);
+      CHECK_POINTER_HRESULT(result, consolidatedPacket, result, E_OUTOFMEMORY);
+
+      if (SUCCEEDED(result))
       {
         consolidatedPacket->SetStart(packet->GetStart());
         consolidatedPacket->SetEnd(packet->GetEnd());
 
-        this->consolidatedMediaPackets->Add(consolidatedPacket);
+        CHECK_CONDITION_HRESULT(result, this->consolidatedMediaPackets->Add(consolidatedPacket), result, E_OUTOFMEMORY);
       }
+
+      CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(consolidatedPacket));
     }
 
     while (merged)
@@ -303,4 +377,6 @@ void CMediaPacketCollection::AddPacketToConsolidatedMediaPackets(CMediaPacket *p
       }
     }
   }
+
+  return SUCCEEDED(result);
 }

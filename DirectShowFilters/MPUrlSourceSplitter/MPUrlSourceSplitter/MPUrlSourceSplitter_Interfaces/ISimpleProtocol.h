@@ -42,8 +42,10 @@
 
 #endif
 
+#define STREAM_COUNT_UNKNOWN                                                  0
+
 // defines interface for simple stream protocol
-struct ISimpleProtocol : public ISeeking
+struct ISimpleProtocol : virtual public ISeeking
 {
 public:
   // get timeout (in ms) for receiving data
@@ -64,11 +66,6 @@ public:
   // @return : S_OK if successful, VFW_S_ESTIMATED if returned values are estimates, E_INVALIDARG if stream ID is unknown, E_UNEXPECTED if unexpected error
   virtual HRESULT QueryStreamProgress(CStreamProgress *streamProgress) = 0;
   
-  // retrieves available lenght of stream
-  // @param available : reference to instance of class that receives the available length of stream, in bytes
-  // @return : S_OK if successful, other error codes if error
-  virtual HRESULT QueryStreamAvailableLength(CStreamAvailableLength *availableLength) = 0;
-
   // clear current session
   // @return : S_OK if successfull
   virtual HRESULT ClearSession(void) = 0;
@@ -79,9 +76,13 @@ public:
 
   // reports actual stream time to protocol
   // @param streamTime : the actual stream time in ms to report to protocol
-  virtual void ReportStreamTime(uint64_t streamTime) = 0;
-};
+  // @param streamPosition : the actual stream position (related to stream time) to report to protocol
+  virtual void ReportStreamTime(uint64_t streamTime, uint64_t streamPosition) = 0;
 
-typedef ISimpleProtocol* PISimpleProtocol;
+  // gets stream count
+  // receiving data is disabled until protocol reports valid stream count (at least one)
+  // @return : stream count or STREAM_COUNT_UNKNOWN if not known
+  virtual unsigned int GetStreamCount(void) = 0;
+};
 
 #endif

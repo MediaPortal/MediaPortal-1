@@ -23,33 +23,28 @@
 #ifndef __OUTPUT_PIN_PACKET_COLLECTION_DEFINED
 #define __OUTPUT_PIN_PACKET_COLLECTION_DEFINED
 
-#include "KeyedCollection.h"
+#include "CacheFileItemCollection.h"
 #include "OutputPinPacket.h"
 
-class COutputPinPacketCollection : public CKeyedCollection<COutputPinPacket, REFERENCE_TIME>
+class COutputPinPacketCollection : public CCacheFileItemCollection
 {
 public:
-  COutputPinPacketCollection(void);
-  ~COutputPinPacketCollection(void);
+  COutputPinPacketCollection(HRESULT *result);
+  virtual ~COutputPinPacketCollection(void);
+
+  /* get methods */
+
+  // gets the output pin packet from collection with specified index
+  // @param index : the index of output pin packet to find
+  // @return : the reference to output pin packet or NULL if not found
+  virtual COutputPinPacket *GetItem(unsigned int index);
+
+  /* set methods */
+
+  /* other methods */
 
 protected:
 
-  // compare two item keys
-  // @param firstKey : the first item key to compare
-  // @param secondKey : the second item key to compare
-  // @param context : the reference to user defined context
-  // @return : 0 if keys are equal, lower than zero if firstKey is lower than secondKey, greater than zero if firstKey is greater than secondKey
-  int CompareItemKeys(REFERENCE_TIME firstKey, REFERENCE_TIME secondKey, void *context);
-
-  // gets key for item
-  // @param item : the item to get key
-  // @return : the key of item
-  REFERENCE_TIME GetKey(COutputPinPacket *item);
-
-  // clones specified item
-  // @param item : the item to clone
-  // @return : deep clone of item or NULL if not implemented
-  COutputPinPacket *Clone(COutputPinPacket *item);
 };
 
 #endif

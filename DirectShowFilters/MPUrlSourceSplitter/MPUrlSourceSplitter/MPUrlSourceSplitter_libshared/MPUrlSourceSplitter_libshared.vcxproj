@@ -55,7 +55,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libcollections;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libcachefile;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libcollections;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libcachefile;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -70,7 +70,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libcollections;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libcachefile;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libcollections;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libcachefile;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -81,8 +81,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="BufferHelper.h" />
-    <ClInclude Include="EndOfStreamReached.h" />
-    <ClInclude Include="Hoster.h" />
+    <ClInclude Include="EndOfStreamReached.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="Flags.h" />
     <ClInclude Include="inttypes.h" />
     <ClInclude Include="LinearBuffer.h" />
     <ClInclude Include="LockMutex.h" />
@@ -90,33 +92,65 @@
     <ClInclude Include="moreuuids.h" />
     <ClInclude Include="Parameter.h" />
     <ClInclude Include="Parameters.h" />
-    <ClInclude Include="ReceiveData.h" />
+    <ClInclude Include="ReceiveData.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="Serializable.h" />
-    <ClInclude Include="SetTotalLength.h" />
+    <ClInclude Include="SetTotalLength.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="StreamAvailableLength.h" />
+    <ClInclude Include="StreamAvailableLength.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="StreamPackage.h" />
+    <ClInclude Include="StreamPackageDataRequest.h" />
+    <ClInclude Include="StreamPackageDataResponse.h" />
+    <ClInclude Include="StreamPackageRequest.h" />
+    <ClInclude Include="StreamPackageResponse.h" />
     <ClInclude Include="StreamProgress.h" />
-    <ClInclude Include="StreamReceiveData.h" />
+    <ClInclude Include="StreamReceiveData.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Utilities.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="EndOfStreamReached.cpp" />
-    <ClCompile Include="Hoster.cpp" />
+    <ClCompile Include="EndOfStreamReached.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Flags.cpp" />
     <ClCompile Include="LinearBuffer.cpp" />
     <ClCompile Include="LockMutex.cpp" />
     <ClCompile Include="MediaPacket.cpp" />
     <ClCompile Include="Parameter.cpp" />
-    <ClCompile Include="ReceiveData.cpp" />
+    <ClCompile Include="ReceiveData.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Serializable.cpp" />
-    <ClCompile Include="SetTotalLength.cpp" />
+    <ClCompile Include="SetTotalLength.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="StreamAvailableLength.cpp" />
+    <ClCompile Include="StreamAvailableLength.cpp">
+      <FileType>CppCode</FileType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="StreamPackage.cpp" />
+    <ClCompile Include="StreamPackageDataRequest.cpp" />
+    <ClCompile Include="StreamPackageDataResponse.cpp" />
+    <ClCompile Include="StreamPackageRequest.cpp" />
+    <ClCompile Include="StreamPackageResponse.cpp" />
     <ClCompile Include="StreamProgress.cpp" />
-    <ClCompile Include="StreamReceiveData.cpp" />
+    <ClCompile Include="StreamReceiveData.cpp">
+      <FileType>CppCode</FileType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Utilities.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

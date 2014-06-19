@@ -28,7 +28,7 @@
 class CUdpDownloadRequest : public CDownloadRequest
 {
 public:
-  CUdpDownloadRequest(void);
+  CUdpDownloadRequest(HRESULT *result);
   virtual ~CUdpDownloadRequest(void);
 
   /* get methods */
@@ -37,13 +37,13 @@ public:
 
   /* other methods */
 
-  // deeply clones current instance
-  // @result : deep clone of current instance or NULL if error
-  virtual CUdpDownloadRequest *Clone(void);
-
 protected:
 
-  // UDP protocol specific variables
+  /* methods */
+
+  // creates empty download request
+  // @return : download request or NULL if error
+  virtual CDownloadRequest *CreateDownloadRequest(void);
 
   // deeply clones current instance to cloned request
   // @param  clonedRequest : cloned request to hold clone of current instance

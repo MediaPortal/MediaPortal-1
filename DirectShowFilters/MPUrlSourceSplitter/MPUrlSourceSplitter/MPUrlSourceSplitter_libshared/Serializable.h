@@ -29,7 +29,7 @@ class CSerializable
 {
 public:
   // creates new instance of CSerializable class
-  CSerializable(void);
+  CSerializable(HRESULT *result);
 
   // destructor
   virtual ~CSerializable(void);
@@ -70,7 +70,6 @@ public:
   // @param output : place where deserialized string will be placed
   // @return : true if successful, false otherwise
   virtual bool DeserializeString(const uint8_t *buffer, wchar_t **output);
-
 };
 
 #endif

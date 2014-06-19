@@ -23,17 +23,22 @@
 #include "HttpDownloadRequest.h"
 #include "HttpCurlInstance.h"
 
-CHttpDownloadRequest::CHttpDownloadRequest(void)
-  : CDownloadRequest()
+CHttpDownloadRequest::CHttpDownloadRequest(HRESULT *result)
+  : CDownloadRequest(result)
 {
   this->cookie = NULL;
   this->endPosition = 0;
-  this->ignoreContentLength = HTTP_IGNORE_CONTENT_LENGTH_DEFAULT;
   this->referer = NULL;
   this->startPosition = 0;
   this->userAgent = NULL;
   this->httpVersion = HTTP_VERSION_DEFAULT;
-  this->headers = new CHttpHeaderCollection();
+  this->headers = NULL;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->headers = new CHttpHeaderCollection(result);
+    CHECK_POINTER_HRESULT(*result, this->headers, *result, E_OUTOFMEMORY);
+  }
 }
 
 CHttpDownloadRequest::~CHttpDownloadRequest(void)
@@ -78,7 +83,7 @@ int CHttpDownloadRequest::GetHttpVersion(void)
 
 bool CHttpDownloadRequest::GetIgnoreContentLength(void)
 {
-  return this->ignoreContentLength;
+  return this->IsSetFlags(HTTP_DOWNLOAD_REQUEST_FLAG_IGNORE_CONTENT_LENGTH);
 }
 
 CHttpHeaderCollection *CHttpDownloadRequest::GetHeaders(void)
@@ -120,44 +125,45 @@ void CHttpDownloadRequest::SetHttpVersion(int httpVersion)
 
 void CHttpDownloadRequest::SetIgnoreContentLength(bool ignoreContentLength)
 {
-  this->ignoreContentLength = ignoreContentLength;
+  this->flags &= ~HTTP_DOWNLOAD_REQUEST_FLAG_IGNORE_CONTENT_LENGTH;
+  this->flags |= (ignoreContentLength) ? HTTP_DOWNLOAD_REQUEST_FLAG_IGNORE_CONTENT_LENGTH : HTTP_DOWNLOAD_REQUEST_FLAG_NONE;
 }
 
 /* other methods */
 
-CDownloadRequest *CHttpDownloadRequest::Clone(void)
+/* protected methods */
+
+CDownloadRequest *CHttpDownloadRequest::CreateDownloadRequest(void)
 {
-  CHttpDownloadRequest *result = new CHttpDownloadRequest();
-  if (result != NULL)
-  {
-    if (!this->CloneInternal(result))
-    {
-      FREE_MEM_CLASS(result);
-    }
-  }
-  return result;
+  HRESULT result = S_OK;
+  CHttpDownloadRequest *request = new CHttpDownloadRequest(&result);
+  CHECK_POINTER_HRESULT(result, request, result, E_OUTOFMEMORY);
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(request));
+  return request;
 }
 
-bool CHttpDownloadRequest::CloneInternal(CHttpDownloadRequest *clonedRequest)
+bool CHttpDownloadRequest::CloneInternal(CDownloadRequest *clonedRequest)
 {
   bool result = __super::CloneInternal(clonedRequest);
 
   if (result)
   {
-    clonedRequest->cookie = Duplicate(this->cookie);
-    clonedRequest->endPosition = this->endPosition;
-    clonedRequest->httpVersion = this->httpVersion;
-    clonedRequest->ignoreContentLength = this->ignoreContentLength;
-    clonedRequest->referer = Duplicate(this->referer);
-    clonedRequest->startPosition = this->startPosition;
-    clonedRequest->userAgent = Duplicate(this->userAgent);
+    CHttpDownloadRequest *request = dynamic_cast<CHttpDownloadRequest *>(clonedRequest);
 
-    clonedRequest->headers->Clear();
+    request->cookie = Duplicate(this->cookie);
+    request->endPosition = this->endPosition;
+    request->httpVersion = this->httpVersion;
+    request->referer = Duplicate(this->referer);
+    request->startPosition = this->startPosition;
+    request->userAgent = Duplicate(this->userAgent);
 
-    result &= clonedRequest->headers->Append(this->headers);
-    result &= TEST_STRING_WITH_NULL(clonedRequest->cookie, this->cookie);
-    result &= TEST_STRING_WITH_NULL(clonedRequest->referer, this->referer);
-    result &= TEST_STRING_WITH_NULL(clonedRequest->userAgent, this->userAgent);
+    request->headers->Clear();
+
+    result &= request->headers->Append(this->headers);
+    result &= TEST_STRING_WITH_NULL(request->cookie, this->cookie);
+    result &= TEST_STRING_WITH_NULL(request->referer, this->referer);
+    result &= TEST_STRING_WITH_NULL(request->userAgent, this->userAgent);
   }
 
   return result;

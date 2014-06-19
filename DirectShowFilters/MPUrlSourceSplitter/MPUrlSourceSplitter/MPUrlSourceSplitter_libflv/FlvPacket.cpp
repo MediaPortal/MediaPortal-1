@@ -22,7 +22,7 @@
 
 #include "FlvPacket.h"
 
-CFlvPacket::CFlvPacket(void)
+CFlvPacket::CFlvPacket(HRESULT *result)
 {
   this->packet = NULL;
   this->size = 0;

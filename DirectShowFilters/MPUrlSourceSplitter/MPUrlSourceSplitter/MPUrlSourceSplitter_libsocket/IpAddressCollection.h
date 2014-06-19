@@ -30,7 +30,7 @@ class CIpAddressCollection : public CCollection<CIpAddress>
 {
 public:
   // initializes a new instance of CIpAddressCollection class
-  CIpAddressCollection(void);
+  CIpAddressCollection(HRESULT *result);
   ~CIpAddressCollection(void);
 
 protected:

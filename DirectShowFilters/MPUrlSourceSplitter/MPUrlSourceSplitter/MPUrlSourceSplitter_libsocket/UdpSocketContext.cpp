@@ -22,14 +22,14 @@
 
 #include "UdpSocketContext.h"
 
-CUdpSocketContext::CUdpSocketContext(void)
-  : CSocketContext()
+CUdpSocketContext::CUdpSocketContext(HRESULT *result)
+  : CSocketContext(result)
 {
   this->lastSenderIpAddress = NULL;
 }
 
-CUdpSocketContext::CUdpSocketContext(SOCKET socket)
-  : CSocketContext(socket)
+CUdpSocketContext::CUdpSocketContext(HRESULT *result, SOCKET socket)
+  : CSocketContext(result, socket)
 {
   this->lastSenderIpAddress = NULL;
 }

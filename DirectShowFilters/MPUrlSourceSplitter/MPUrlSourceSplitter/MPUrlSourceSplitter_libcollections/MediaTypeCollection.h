@@ -30,7 +30,7 @@
 class CMediaTypeCollection : public CCollection<CMediaType>
 {
 public:
-  CMediaTypeCollection(void);
+  CMediaTypeCollection(HRESULT *result);
   virtual ~CMediaTypeCollection(void);
 
 protected:

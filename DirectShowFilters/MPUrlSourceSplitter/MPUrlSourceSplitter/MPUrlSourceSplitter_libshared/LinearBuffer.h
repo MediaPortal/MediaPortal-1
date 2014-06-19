@@ -29,10 +29,10 @@ class CLinearBuffer
 {
 public:
   // create linear buffer
-  CLinearBuffer(void);
+  CLinearBuffer(HRESULT *result);
 
   // create linear buffer with specified size
-  CLinearBuffer(unsigned int size);
+  CLinearBuffer(HRESULT *result, unsigned int size);
 
   // destructor
   ~CLinearBuffer(void);

@@ -31,13 +31,13 @@ class CIpAddress
 {
 public:
   // initializes a new instance of CIpAddress class with specified ADDRINFOW structure
-  CIpAddress(const ADDRINFOW *addrInfo, const wchar_t *canonicalName);
+  CIpAddress(HRESULT *result, const ADDRINFOW *addrInfo, const wchar_t *canonicalName);
 
   // initializes a new instance of CIpAddress class with specified SOCKADDR_STORAGE structure and length
-  CIpAddress(const SOCKADDR_STORAGE *addr, unsigned int length);
+  CIpAddress(HRESULT *result, const SOCKADDR_STORAGE *addr, unsigned int length);
 
   // initializes a new instance of CIpAddress class with specified sockaddr structure and length
-  CIpAddress(const struct sockaddr *addr, unsigned int length);
+  CIpAddress(HRESULT *result, const struct sockaddr *addr, unsigned int length);
 
   ~CIpAddress(void);
 

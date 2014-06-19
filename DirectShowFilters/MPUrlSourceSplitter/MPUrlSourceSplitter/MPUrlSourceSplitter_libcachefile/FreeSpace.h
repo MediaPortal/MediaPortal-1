@@ -28,7 +28,7 @@
 class CFreeSpace
 {
 public:
-  CFreeSpace(void);
+  CFreeSpace(HRESULT *result);
   ~CFreeSpace(void);
 
   /* get methods */

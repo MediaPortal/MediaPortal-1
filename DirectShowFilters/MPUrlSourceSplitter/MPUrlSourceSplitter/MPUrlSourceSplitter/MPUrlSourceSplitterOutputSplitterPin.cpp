@@ -44,30 +44,29 @@ extern "C" {
 #define MODULE_NAME                                               L"MPUrlSourceSplitterOutputSplitterPin"
 #endif
 
-CMPUrlSourceSplitterOutputSplitterPin::CMPUrlSourceSplitterOutputSplitterPin(CLogger *logger, CMediaTypeCollection *mediaTypes, LPCWSTR pName, CBaseFilter *pFilter, CCritSec *pLock, HRESULT *phr, const wchar_t *containerFormat)
-  : CMPUrlSourceSplitterOutputPin(logger, mediaTypes, pName, pFilter, pLock, phr)
+CMPUrlSourceSplitterOutputSplitterPin::CMPUrlSourceSplitterOutputSplitterPin(LPCWSTR pName, CBaseFilter *pFilter, CCritSec *pLock, HRESULT *phr, CLogger *logger, CParameterCollection *parameters, CMediaTypeCollection *mediaTypes, const wchar_t *containerFormat)
+  : CMPUrlSourceSplitterOutputPin(pName, pFilter, pLock, phr, logger, parameters, mediaTypes)
 {
-  this->h264Buffer = new COutputPinPacket();
-  this->h264PacketCollection = new COutputPinPacketCollection();
+  this->h264Buffer = NULL;
+  this->h264PacketCollection = NULL;
 
-  if (phr != NULL)
+  if ((phr != NULL) && (SUCCEEDED(*phr)))
   {
-    if (SUCCEEDED(*phr))
-    {
-      CHECK_POINTER_HRESULT(*phr, this->h264Buffer, *phr, E_OUTOFMEMORY);
-      CHECK_POINTER_HRESULT(*phr, this->h264PacketCollection, *phr, E_OUTOFMEMORY);
+    this->h264Buffer = new COutputPinPacket(phr);
+    this->h264PacketCollection = new COutputPinPacketCollection(phr);
+    CHECK_POINTER_HRESULT(*phr, this->h264Buffer, *phr, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*phr, this->h264PacketCollection, *phr, E_OUTOFMEMORY);
 
-      if (SUCCEEDED(*phr) && (containerFormat != NULL))
-      {
-        this->flags |= (wcscmp(L"mpegts", containerFormat) == 0) ? OUTPUT_SPLITTER_PIN_FLAG_CONTAINER_MPEG_TS : OUTPUT_PIN_FLAG_NONE;
-        this->flags |= (wcscmp(L"mpeg", containerFormat) == 0) ? OUTPUT_SPLITTER_PIN_FLAG_CONTAINER_MPEG : OUTPUT_PIN_FLAG_NONE;
-        this->flags |= (wcscmp(L"wtv", containerFormat) == 0) ? OUTPUT_SPLITTER_PIN_FLAG_CONTAINER_WTV : OUTPUT_PIN_FLAG_NONE;
-        this->flags |= (wcscmp(L"asf", containerFormat) == 0) ? OUTPUT_SPLITTER_PIN_FLAG_CONTAINER_ASF : OUTPUT_PIN_FLAG_NONE;
-        this->flags |= (wcscmp(L"ogg", containerFormat) == 0) ? OUTPUT_SPLITTER_PIN_FLAG_CONTAINER_OGG : OUTPUT_PIN_FLAG_NONE;
-        this->flags |= (wcscmp(L"matroska", containerFormat) == 0) ? OUTPUT_SPLITTER_PIN_FLAG_CONTAINER_MATROSKA : OUTPUT_PIN_FLAG_NONE;
-        this->flags |= (wcscmp(L"avi", containerFormat) == 0) ? OUTPUT_SPLITTER_PIN_FLAG_CONTAINER_AVI : OUTPUT_PIN_FLAG_NONE;
-        this->flags |= (wcscmp(L"mp4", containerFormat) == 0) ? OUTPUT_SPLITTER_PIN_FLAG_CONTAINER_MP4 : OUTPUT_PIN_FLAG_NONE;
-      }
+    if (SUCCEEDED(*phr) && (containerFormat != NULL))
+    {
+      this->flags |= (wcscmp(L"mpegts", containerFormat) == 0) ? MP_URL_SOURCE_SPLITTER_OUTPUT_SPLITTER_PIN_FLAG_CONTAINER_MPEG_TS : MP_URL_SOURCE_SPLITTER_OUTPUT_SPLITTER_PIN_FLAG_NONE;
+      this->flags |= (wcscmp(L"mpeg", containerFormat) == 0) ? MP_URL_SOURCE_SPLITTER_OUTPUT_SPLITTER_PIN_FLAG_CONTAINER_MPEG : MP_URL_SOURCE_SPLITTER_OUTPUT_SPLITTER_PIN_FLAG_NONE;
+      this->flags |= (wcscmp(L"wtv", containerFormat) == 0) ? MP_URL_SOURCE_SPLITTER_OUTPUT_SPLITTER_PIN_FLAG_CONTAINER_WTV : MP_URL_SOURCE_SPLITTER_OUTPUT_SPLITTER_PIN_FLAG_NONE;
+      this->flags |= (wcscmp(L"asf", containerFormat) == 0) ? MP_URL_SOURCE_SPLITTER_OUTPUT_SPLITTER_PIN_FLAG_CONTAINER_ASF : MP_URL_SOURCE_SPLITTER_OUTPUT_SPLITTER_PIN_FLAG_NONE;
+      this->flags |= (wcscmp(L"ogg", containerFormat) == 0) ? MP_URL_SOURCE_SPLITTER_OUTPUT_SPLITTER_PIN_FLAG_CONTAINER_OGG : MP_URL_SOURCE_SPLITTER_OUTPUT_SPLITTER_PIN_FLAG_NONE;
+      this->flags |= (wcscmp(L"matroska", containerFormat) == 0) ? MP_URL_SOURCE_SPLITTER_OUTPUT_SPLITTER_PIN_FLAG_CONTAINER_MATROSKA : MP_URL_SOURCE_SPLITTER_OUTPUT_SPLITTER_PIN_FLAG_NONE;
+      this->flags |= (wcscmp(L"avi", containerFormat) == 0) ? MP_URL_SOURCE_SPLITTER_OUTPUT_SPLITTER_PIN_FLAG_CONTAINER_AVI : MP_URL_SOURCE_SPLITTER_OUTPUT_SPLITTER_PIN_FLAG_NONE;
+      this->flags |= (wcscmp(L"mp4", containerFormat) == 0) ? MP_URL_SOURCE_SPLITTER_OUTPUT_SPLITTER_PIN_FLAG_CONTAINER_MP4 : MP_URL_SOURCE_SPLITTER_OUTPUT_SPLITTER_PIN_FLAG_NONE;
     }
   }
 
@@ -122,7 +121,7 @@ HRESULT CMPUrlSourceSplitterOutputSplitterPin::QueuePacket(COutputPinPacket *pac
         // add packet to output packet collection
         result = this->mediaPackets->Add(packet) ? result : E_OUTOFMEMORY;
 
-        CHECK_CONDITION_EXECUTE(SUCCEEDED(result), this->flags |= OUTPUT_PIN_FLAG_END_OF_STREAM);
+        CHECK_CONDITION_EXECUTE(SUCCEEDED(result), this->flags |= MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_END_OF_STREAM);
       }
       else
       {
@@ -162,6 +161,7 @@ HRESULT CMPUrlSourceSplitterOutputSplitterPin::Parse(GUID subType, COutputPinPac
     if (packet->IsPacketParsed())
     {
       // add packet to output packet collection
+      packet->SetLoadedToMemoryTime(GetTickCount());
       result = this->mediaPackets->Add(packet) ? result : E_OUTOFMEMORY;
     }
     else if (this->mediaTypeSubType == MEDIASUBTYPE_AVC1 &&
@@ -170,10 +170,10 @@ HRESULT CMPUrlSourceSplitterOutputSplitterPin::Parse(GUID subType, COutputPinPac
       if (this->h264Buffer == NULL)
       {
         // initialize H264 Annex B buffer with current output pin packet data
-        this->h264Buffer = new COutputPinPacket();
+        this->h264Buffer = new COutputPinPacket(&result);
         CHECK_POINTER_HRESULT(result, this->h264Buffer, result, E_OUTOFMEMORY);
 
-        CHECK_CONDITION_HRESULT(result, this->h264Buffer->CreateBuffer(packet->GetBuffer()->GetBufferSize()), result, E_OUTOFMEMORY);
+        CHECK_CONDITION_HRESULT(result, this->h264Buffer->GetBuffer()->InitializeBuffer(packet->GetBuffer()->GetBufferSize()), result, E_OUTOFMEMORY);
 
         if (SUCCEEDED(result))
         {
@@ -231,9 +231,9 @@ HRESULT CMPUrlSourceSplitterOutputSplitterPin::Parse(GUID subType, COutputPinPac
             CH264Nalu nalu;
             nalu.SetBuffer(start, size, 0);
 
-            COutputPinPacket *packetToCollection = new COutputPinPacket();
+            COutputPinPacket *packetToCollection = new COutputPinPacket(&result);
             CHECK_POINTER_HRESULT(result, packetToCollection, result, E_OUTOFMEMORY);
-            CHECK_CONDITION_HRESULT(result, packetToCollection->CreateBuffer(this->h264Buffer->GetBuffer()->GetBufferOccupiedSpace()), result, E_OUTOFMEMORY);
+            CHECK_CONDITION_HRESULT(result, packetToCollection->GetBuffer()->InitializeBuffer(this->h264Buffer->GetBuffer()->GetBufferOccupiedSpace()), result, E_OUTOFMEMORY);
 
             while (SUCCEEDED(result) && nalu.ReadNext())
             {
@@ -398,7 +398,7 @@ HRESULT CMPUrlSourceSplitterOutputSplitterPin::Parse(GUID subType, COutputPinPac
 
           if (SUCCEEDED(result) && (nextPacketIndex != 0))
           {
-            COutputPinPacket *queuePacket = new COutputPinPacket();
+            COutputPinPacket *queuePacket = new COutputPinPacket(&result);
             CHECK_POINTER_HRESULT(result, queuePacket, result, E_OUTOFMEMORY);
 
             if (SUCCEEDED(result))
@@ -414,7 +414,7 @@ HRESULT CMPUrlSourceSplitterOutputSplitterPin::Parse(GUID subType, COutputPinPac
 
               // copy data from first packet in H264 collection
               COutputPinPacket *firstPacket = this->h264PacketCollection->GetItem(0);
-              result = queuePacket->CreateBuffer(neededSpace) ? result : E_OUTOFMEMORY;
+              CHECK_CONDITION_HRESULT(result, queuePacket->GetBuffer()->InitializeBuffer(neededSpace), result, E_OUTOFMEMORY);
 
               if (SUCCEEDED(result))
               {
@@ -439,6 +439,7 @@ HRESULT CMPUrlSourceSplitterOutputSplitterPin::Parse(GUID subType, COutputPinPac
             }
 
             // add packet to output collection
+            queuePacket->SetLoadedToMemoryTime(GetTickCount());
             CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->mediaPackets->Add(queuePacket) ? result : E_OUTOFMEMORY);
 
             // delete processed H264 packets
@@ -483,6 +484,7 @@ HRESULT CMPUrlSourceSplitterOutputSplitterPin::Parse(GUID subType, COutputPinPac
           packet->SetFlags(packet->GetFlags() | OUTPUT_PIN_PACKET_FLAG_PACKET_PARSED);
 
           // add packet to output packet collection
+          packet->SetLoadedToMemoryTime(GetTickCount());
           result = this->mediaPackets->Add(packet) ? result : E_OUTOFMEMORY;
         }
         else
@@ -560,6 +562,7 @@ HRESULT CMPUrlSourceSplitterOutputSplitterPin::Parse(GUID subType, COutputPinPac
     else if (this->mediaTypeSubType == MEDIASUBTYPE_HDMV_LPCM_AUDIO)
     {
       // add packet to output packet collection, if successful, change it's data
+      packet->SetLoadedToMemoryTime(GetTickCount());
       result = this->mediaPackets->Add(packet) ? result : E_OUTOFMEMORY;
 
       CHECK_CONDITION_EXECUTE(SUCCEEDED(result), packet->GetBuffer()->RemoveFromBuffer(4));
@@ -588,6 +591,7 @@ HRESULT CMPUrlSourceSplitterOutputSplitterPin::Parse(GUID subType, COutputPinPac
             packet->SetFlags(packet->GetFlags() | OUTPUT_PIN_PACKET_FLAG_PACKET_PARSED);
 
             // add packet to output packet collection
+            packet->SetLoadedToMemoryTime(GetTickCount());
             result = this->mediaPackets->Add(packet) ? result : E_OUTOFMEMORY;
           }
           else
@@ -633,11 +637,13 @@ HRESULT CMPUrlSourceSplitterOutputSplitterPin::Parse(GUID subType, COutputPinPac
 
       FREE_MEM(buffer);
 
+      packet->SetLoadedToMemoryTime(GetTickCount());
       CHECK_CONDITION_HRESULT(result, this->mediaPackets->Add(packet), result, E_OUTOFMEMORY);
     }
     else
     {
       // add packet to output packet collection
+      packet->SetLoadedToMemoryTime(GetTickCount());
       result = this->mediaPackets->Add(packet) ? result : E_OUTOFMEMORY;
     }
   }
@@ -647,62 +653,62 @@ HRESULT CMPUrlSourceSplitterOutputSplitterPin::Parse(GUID subType, COutputPinPac
 
 void CMPUrlSourceSplitterOutputSplitterPin::SetHasAccessUnitDelimiters(bool hasAccessUnitDelimiters)
 {
-  this->flags &= ~OUTPUT_SPLITTER_PIN_FLAG_HAS_ACCESS_UNIT_DELIMITERS;
-  this->flags |= (hasAccessUnitDelimiters) ? OUTPUT_SPLITTER_PIN_FLAG_HAS_ACCESS_UNIT_DELIMITERS : OUTPUT_PIN_FLAG_NONE;
+  this->flags &= ~MP_URL_SOURCE_SPLITTER_OUTPUT_SPLITTER_PIN_FLAG_HAS_ACCESS_UNIT_DELIMITERS;
+  this->flags |= (hasAccessUnitDelimiters) ? MP_URL_SOURCE_SPLITTER_OUTPUT_SPLITTER_PIN_FLAG_HAS_ACCESS_UNIT_DELIMITERS : MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_NONE;
 }
 
 void CMPUrlSourceSplitterOutputSplitterPin::SetPGSDropState(bool pgsDropState)
 {
-  this->flags &= ~OUTPUT_SPLITTER_PIN_FLAG_PGS_DROP_STATE;
-  this->flags |= (pgsDropState) ? OUTPUT_SPLITTER_PIN_FLAG_PGS_DROP_STATE : OUTPUT_PIN_FLAG_NONE;
+  this->flags &= ~MP_URL_SOURCE_SPLITTER_OUTPUT_SPLITTER_PIN_FLAG_PGS_DROP_STATE;
+  this->flags |= (pgsDropState) ? MP_URL_SOURCE_SPLITTER_OUTPUT_SPLITTER_PIN_FLAG_PGS_DROP_STATE : MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_NONE;
 }
 
 bool CMPUrlSourceSplitterOutputSplitterPin::IsContainerMpegTs(void)
 {
-  return this->IsSetFlags(OUTPUT_SPLITTER_PIN_FLAG_CONTAINER_MPEG_TS);
+  return this->IsSetFlags(MP_URL_SOURCE_SPLITTER_OUTPUT_SPLITTER_PIN_FLAG_CONTAINER_MPEG_TS);
 }
 
 bool CMPUrlSourceSplitterOutputSplitterPin::IsContainerMpeg(void)
 {
-  return this->IsSetFlags(OUTPUT_SPLITTER_PIN_FLAG_CONTAINER_MPEG);
+  return this->IsSetFlags(MP_URL_SOURCE_SPLITTER_OUTPUT_SPLITTER_PIN_FLAG_CONTAINER_MPEG);
 }
 
 bool CMPUrlSourceSplitterOutputSplitterPin::IsContainerWtv(void)
 {
-  return this->IsSetFlags(OUTPUT_SPLITTER_PIN_FLAG_CONTAINER_WTV);
+  return this->IsSetFlags(MP_URL_SOURCE_SPLITTER_OUTPUT_SPLITTER_PIN_FLAG_CONTAINER_WTV);
 }
 
 bool CMPUrlSourceSplitterOutputSplitterPin::IsContainerAsf(void)
 {
-  return this->IsSetFlags(OUTPUT_SPLITTER_PIN_FLAG_CONTAINER_ASF);
+  return this->IsSetFlags(MP_URL_SOURCE_SPLITTER_OUTPUT_SPLITTER_PIN_FLAG_CONTAINER_ASF);
 }
 
 bool CMPUrlSourceSplitterOutputSplitterPin::IsContainerOgg(void)
 {
-  return this->IsSetFlags(OUTPUT_SPLITTER_PIN_FLAG_CONTAINER_OGG);
+  return this->IsSetFlags(MP_URL_SOURCE_SPLITTER_OUTPUT_SPLITTER_PIN_FLAG_CONTAINER_OGG);
 }
 
 bool CMPUrlSourceSplitterOutputSplitterPin::IsContainerMatroska(void)
 {
-  return this->IsSetFlags(OUTPUT_SPLITTER_PIN_FLAG_CONTAINER_MATROSKA);
+  return this->IsSetFlags(MP_URL_SOURCE_SPLITTER_OUTPUT_SPLITTER_PIN_FLAG_CONTAINER_MATROSKA);
 }
 
 bool CMPUrlSourceSplitterOutputSplitterPin::IsContainerAvi(void)
 {
-  return this->IsSetFlags(OUTPUT_SPLITTER_PIN_FLAG_CONTAINER_AVI);
+  return this->IsSetFlags(MP_URL_SOURCE_SPLITTER_OUTPUT_SPLITTER_PIN_FLAG_CONTAINER_AVI);
 }
 
 bool CMPUrlSourceSplitterOutputSplitterPin::IsContainerMp4(void)
 {
-  return this->IsSetFlags(OUTPUT_SPLITTER_PIN_FLAG_CONTAINER_MP4);
+  return this->IsSetFlags(MP_URL_SOURCE_SPLITTER_OUTPUT_SPLITTER_PIN_FLAG_CONTAINER_MP4);
 }
 
 bool CMPUrlSourceSplitterOutputSplitterPin::HasAccessUnitDelimiters(void)
 {
-  return this->IsSetFlags(OUTPUT_SPLITTER_PIN_FLAG_HAS_ACCESS_UNIT_DELIMITERS);
+  return this->IsSetFlags(MP_URL_SOURCE_SPLITTER_OUTPUT_SPLITTER_PIN_FLAG_HAS_ACCESS_UNIT_DELIMITERS);
 }
 
 bool CMPUrlSourceSplitterOutputSplitterPin::IsPGSDropState(void)
 {
-  return this->IsSetFlags(OUTPUT_SPLITTER_PIN_FLAG_PGS_DROP_STATE);
+  return this->IsSetFlags(MP_URL_SOURCE_SPLITTER_OUTPUT_SPLITTER_PIN_FLAG_PGS_DROP_STATE);
 }

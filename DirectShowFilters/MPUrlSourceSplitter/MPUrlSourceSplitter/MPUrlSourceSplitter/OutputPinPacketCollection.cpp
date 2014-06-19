@@ -22,8 +22,8 @@
 
 #include "OutputPinPacketCollection.h"
 
-COutputPinPacketCollection::COutputPinPacketCollection(void)
-  : CKeyedCollection()
+COutputPinPacketCollection::COutputPinPacketCollection(HRESULT *result)
+  : CCacheFileItemCollection(result)
 {
 }
 
@@ -31,28 +31,13 @@ COutputPinPacketCollection::~COutputPinPacketCollection(void)
 {
 }
 
-int COutputPinPacketCollection::CompareItemKeys(REFERENCE_TIME firstKey, REFERENCE_TIME secondKey, void *context)
+/* get methods */
+
+COutputPinPacket *COutputPinPacketCollection::GetItem(unsigned int index)
 {
-  if (firstKey < secondKey)
-  {
-    return (-1);
-  }
-  else if (firstKey == secondKey)
-  {
-    return 0;
-  }
-  else
-  {
-    return 1;
-  }
+  return (COutputPinPacket *)__super::GetItem(index);
 }
 
-int64_t COutputPinPacketCollection::GetKey(COutputPinPacket *item)
-{
-  return item->GetStartTime();
-}
+/* set methods */
 
-COutputPinPacket *COutputPinPacketCollection::Clone(COutputPinPacket *item)
-{
-  return NULL;
-}
+/* other methods */

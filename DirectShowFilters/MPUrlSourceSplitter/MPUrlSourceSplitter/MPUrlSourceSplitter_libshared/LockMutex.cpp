@@ -26,7 +26,7 @@ CLockMutex::CLockMutex(HANDLE lockMutex, DWORD milliseconds)
 {
   this->lockMutex = lockMutex;
   this->error = NOERROR;
-  this->result = NOERROR;
+  this->result = WAIT_FAILED;
 
   this->Lock(milliseconds);
 }

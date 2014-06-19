@@ -28,7 +28,7 @@
 class CStaticLogger
 {
 public:
-  CStaticLogger(void);
+  CStaticLogger(HRESULT *result);
   ~CStaticLogger(void);
 
   /* get methods */

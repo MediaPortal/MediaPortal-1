@@ -24,8 +24,8 @@
 
 #include <assert.h>
 
-CFreeSpaceCollection::CFreeSpaceCollection(void)
-  : CCollection()
+CFreeSpaceCollection::CFreeSpaceCollection(HRESULT *result)
+  : CCollection(result)
 {
 }
 
@@ -71,8 +71,9 @@ bool CFreeSpaceCollection::AddFreeSpace(int64_t start, int64_t length)
     if (result && (!merged))
     {
       // not merged free space, just add to free space
-      CFreeSpace *freeSpace = new CFreeSpace();
-      result &= (freeSpace != NULL);
+      HRESULT res = S_OK;
+      CFreeSpace *freeSpace = new CFreeSpace(&res);
+      result &= ((freeSpace != NULL) && SUCCEEDED(res));
 
       if (result)
       {
@@ -80,8 +81,9 @@ bool CFreeSpaceCollection::AddFreeSpace(int64_t start, int64_t length)
         freeSpace->SetLength(length);
 
         result &= this->Add(freeSpace);
-        CHECK_CONDITION_EXECUTE(!result, FREE_MEM_CLASS(freeSpace));
       }
+
+      CHECK_CONDITION_EXECUTE(!result, FREE_MEM_CLASS(freeSpace));
     }
 
     while (result && merged)

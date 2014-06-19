@@ -22,18 +22,30 @@
 
 #include "TcpSocketContext.h"
 
-CTcpSocketContext::CTcpSocketContext(void)
-  : CSocketContext()
+CTcpSocketContext::CTcpSocketContext(HRESULT *result)
+  : CSocketContext(result)
 {
   this->connections = 0;
-  this->acceptedConnections = new CSocketContextCollection();
+  this->acceptedConnections = NULL;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->acceptedConnections = new CSocketContextCollection(result);
+    CHECK_POINTER_HRESULT(*result, this->acceptedConnections, *result, E_OUTOFMEMORY);
+  }
 }
 
-CTcpSocketContext::CTcpSocketContext(SOCKET socket)
-  : CSocketContext(socket)
+CTcpSocketContext::CTcpSocketContext(HRESULT *result, SOCKET socket)
+  : CSocketContext(result, socket)
 {
   this->connections = 0;
-  this->acceptedConnections = new CSocketContextCollection();
+  this->acceptedConnections = NULL;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->acceptedConnections = new CSocketContextCollection(result);
+    CHECK_POINTER_HRESULT(*result, this->acceptedConnections, *result, E_OUTOFMEMORY);
+  }
 }
 
 CTcpSocketContext::~CTcpSocketContext(void)
@@ -84,10 +96,11 @@ HRESULT CTcpSocketContext::Accept(CSocketContext **acceptedContext)
 
     if (SUCCEEDED(result))
     {
-      *acceptedContext = new CSocketContext(acceptedSocket);
+      *acceptedContext = new CSocketContext(&result, acceptedSocket);
       CHECK_POINTER_HRESULT(result, (*acceptedContext), result, E_OUTOFMEMORY);
 
       CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), (*acceptedContext)->SetIpAddress(this->GetIpAddress()), result);
+      CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(*acceptedContext));
     }
   }
 
@@ -124,7 +137,7 @@ HRESULT CTcpSocketContext::AcceptPendingIncomingConnection(void)
   CSocketContext *acceptedSocket = NULL;
   HRESULT result = this->Accept(&acceptedSocket);
 
-  CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->acceptedConnections->Add(acceptedSocket) ? result : E_OUTOFMEMORY);
+  CHECK_CONDITION_HRESULT(result, this->acceptedConnections->Add(acceptedSocket), result, E_OUTOFMEMORY);
   CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(acceptedSocket));
 
   return result;

@@ -29,7 +29,7 @@
 class CMPUrlSourceSplitterOutputPinCollection : public CCollection<CMPUrlSourceSplitterOutputPin>
 {
 public:
-  CMPUrlSourceSplitterOutputPinCollection(void);
+  CMPUrlSourceSplitterOutputPinCollection(HRESULT *result);
   virtual ~CMPUrlSourceSplitterOutputPinCollection(void);
 
 protected:

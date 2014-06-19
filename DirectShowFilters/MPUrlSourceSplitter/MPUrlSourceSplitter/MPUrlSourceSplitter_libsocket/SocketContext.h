@@ -24,6 +24,7 @@
 #define __SOCKET_CONTEXT_DEFINED
 
 #include "IpAddress.h"
+#include "Flags.h"
 
 #include <stdint.h>
 
@@ -35,11 +36,17 @@
 #define SOCKET_STATE_READABLE                                                 1
 #define SOCKET_STATE_WRITABLE                                                 2
 
-class CSocketContext
+#define SOCKET_CONTEXT_FLAG_NONE                                              FLAGS_NONE
+
+#define SOCKET_CONTEXT_FLAG_WSA_INITIALIZED                                   (1 << (FLAGS_LAST + 0))
+
+#define SOCKET_CONTEXT_FLAG_LAST                                              (FLAGS_LAST + 1)
+
+class CSocketContext : public CFlags
 {
 public:
-  CSocketContext(void);
-  CSocketContext(SOCKET socket);
+  CSocketContext(HRESULT *result);
+  CSocketContext(HRESULT *result, SOCKET socket);
   virtual ~CSocketContext(void);
 
   /* get methods */
@@ -168,12 +175,8 @@ public:
   virtual HRESULT Select(bool read, bool write, unsigned int timeout, unsigned int *state);
 
 protected:
-
   // holds internal socket
   SOCKET internalSocket;
-
-  // specifies if WSA was correctly initialized
-  bool wsaInitialized;
 
   // holds IP address associated with socket
   CIpAddress *ipAddress;

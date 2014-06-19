@@ -27,14 +27,22 @@
 #include <stdio.h>
 #include <assert.h>
 
-CStaticLogger::CStaticLogger(void)
+CStaticLogger::CStaticLogger(HRESULT *result)
 {
-  this->loggerContexts = new CStaticLoggerContextCollection();
   this->loggerWorkerThread = NULL;
   this->loggerWorkerShouldExit = false;
-
-  this->mutex = CreateMutex(NULL, FALSE, NULL);
   this->referencies = 0;
+  this->loggerContexts = NULL;
+  this->mutex = NULL;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->loggerContexts = new CStaticLoggerContextCollection(result);
+    this->mutex = CreateMutex(NULL, FALSE, NULL);
+
+    CHECK_POINTER_HRESULT(*result, this->loggerContexts, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->mutex, *result, E_OUTOFMEMORY);
+  }
 }
 
 CStaticLogger::~CStaticLogger(void)
@@ -252,10 +260,12 @@ void CStaticLogger::Flush(void)
   assert(!lock.IsTimeout());
   assert(lock.IsLocked());
 
+  HRESULT result = S_OK;
   unsigned int contextCount = this->loggerContexts->Count();
-  CParameterCollection *temporaryMessages = new CParameterCollection();
+  CParameterCollection *temporaryMessages = new CParameterCollection(&result);
+  CHECK_POINTER_HRESULT(result, temporaryMessages, result, E_OUTOFMEMORY);
 
-  for (unsigned int i = 0; ((temporaryMessages != NULL) && (i < contextCount)); i++)
+  for (unsigned int i = 0; (SUCCEEDED(result) && (i < contextCount)); i++)
   {
     CStaticLoggerContext *context = this->loggerContexts->GetItem(i);
 

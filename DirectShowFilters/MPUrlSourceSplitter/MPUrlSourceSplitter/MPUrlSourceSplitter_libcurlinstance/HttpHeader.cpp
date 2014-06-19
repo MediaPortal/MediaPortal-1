@@ -22,7 +22,7 @@
 
 #include "HttpHeader.h"
 
-CHttpHeader::CHttpHeader(void)
+CHttpHeader::CHttpHeader(HRESULT *result)
 {
   this->name = NULL;
   this->value = NULL;
@@ -151,5 +151,10 @@ bool CHttpHeader::Parse(const wchar_t *header, unsigned int length)
 
 CHttpHeader *CHttpHeader::GetNewHeader(void)
 {
-  return new CHttpHeader();
+  HRESULT result = S_OK;
+  CHttpHeader *header = new CHttpHeader(&result);
+  CHECK_POINTER_HRESULT(result, header, result, E_OUTOFMEMORY);
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(header));
+  return header;
 }

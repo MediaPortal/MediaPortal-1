@@ -22,8 +22,8 @@
 
 #include "NetworkInterfaceCollection.h"
 
-CNetworkInterfaceCollection::CNetworkInterfaceCollection(void)
-  : CKeyedCollection()
+CNetworkInterfaceCollection::CNetworkInterfaceCollection(HRESULT *result)
+  : CKeyedCollection(result)
 {
 }
 

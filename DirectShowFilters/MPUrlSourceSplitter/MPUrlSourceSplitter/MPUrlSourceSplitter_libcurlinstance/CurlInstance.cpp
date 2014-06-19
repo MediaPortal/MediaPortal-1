@@ -23,13 +23,15 @@
 #include "CurlInstance.h"
 #include "Logger.h"
 #include "LockMutex.h"
+#include "ErrorCodes.h"
 
 #include <process.h>
 
-CCurlInstance::CCurlInstance(CLogger *logger, HANDLE mutex, const wchar_t *protocolName, const wchar_t *instanceName)
+CCurlInstance::CCurlInstance(HRESULT *result, CLogger *logger, HANDLE mutex, const wchar_t *protocolName, const wchar_t *instanceName)
+  : CFlags()
 {
-  this->logger = logger;
-  this->protocolName = FormatString(L"%s: instance '%s'", protocolName, instanceName);
+  this->logger = NULL;
+  this->protocolName = NULL;
   this->curl = NULL;
   this->multi_curl = NULL;
   this->hCurlWorkerThread = NULL;
@@ -37,21 +39,44 @@ CCurlInstance::CCurlInstance(CLogger *logger, HANDLE mutex, const wchar_t *proto
   this->writeCallback = NULL;
   this->writeData = NULL;
   this->state = CURL_STATE_CREATED;
-  this->mutex = mutex;
+  this->mutex = NULL;
   this->startReceivingTicks = 0;
   this->stopReceivingTicks = 0;
   this->totalReceivedBytes = 0;
   this->curlWorkerShouldExit = false;
   this->lastReceiveTime = 0;
   this->networkInterfaceName = NULL;
-  this->networkInterfaces = new CNetworkInterfaceCollection();
+  this->networkInterfaces = NULL;
   this->finishTime = FINISH_TIME_NOT_SPECIFIED;
-
-  this->SetNetworkInterfaceName(this->networkInterfaceName);    // this sets network interfaces
-  this->SetWriteCallback(CCurlInstance::CurlReceiveDataCallback, this);
-
   this->downloadRequest = NULL;
   this->downloadResponse = NULL;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    CHECK_POINTER_DEFAULT_HRESULT(*result, logger);
+    CHECK_POINTER_DEFAULT_HRESULT(*result, mutex);
+    CHECK_POINTER_DEFAULT_HRESULT(*result, protocolName);
+    CHECK_POINTER_DEFAULT_HRESULT(*result, instanceName);
+
+    if (SUCCEEDED(*result))
+    {
+      this->logger = logger;
+      this->mutex = mutex;
+      this->protocolName = FormatString(L"%s: instance '%s'", protocolName, instanceName);
+      this->networkInterfaces = new CNetworkInterfaceCollection(result);
+
+      CHECK_POINTER_HRESULT(*result, this->protocolName, *result, E_OUTOFMEMORY);
+      CHECK_POINTER_HRESULT(*result, this->networkInterfaces, *result, E_OUTOFMEMORY);
+    }
+
+    if (SUCCEEDED(*result))
+    {
+      HRESULT res = this->SetNetworkInterfaceName(this->networkInterfaceName);    // this sets network interfaces
+      CHECK_CONDITION_HRESULT(*result, SUCCEEDED(res), *result, res);
+
+      this->SetWriteCallback(CCurlInstance::CurlReceiveDataCallback, this);
+    }
+  }
 }
 
 CCurlInstance::~CCurlInstance(void)
@@ -108,7 +133,12 @@ CDownloadResponse *CCurlInstance::GetDownloadResponse(void)
 
 CDownloadResponse *CCurlInstance::GetNewDownloadResponse(void)
 {
-  return new CDownloadResponse();
+  HRESULT result = S_OK;
+  CDownloadResponse *response = new CDownloadResponse(&result);
+  CHECK_POINTER_HRESULT(result, response, result, E_OUTOFMEMORY);
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(response));
+  return response;
 }
 
 const wchar_t *CCurlInstance::GetNetworkInterfaceName(void)
@@ -128,22 +158,19 @@ void CCurlInstance::SetReceivedDataTimeout(unsigned int timeout)
   this->receiveDataTimeout = timeout;
 }
 
-bool CCurlInstance::SetNetworkInterfaceName(const wchar_t *networkInterfaceName)
+HRESULT CCurlInstance::SetNetworkInterfaceName(const wchar_t *networkInterfaceName)
 {
-  bool result = (this->networkInterfaces != NULL);
+  HRESULT result = (this->networkInterfaces != NULL) ? S_OK : E_NOT_VALID_STATE;
 
-  if (result)
+  if (SUCCEEDED(result))
   {
     this->networkInterfaces->Clear();
-    SET_STRING_RESULT_WITH_NULL(this->networkInterfaceName, networkInterfaceName, result);
+    SET_STRING_HRESULT_WITH_NULL(this->networkInterfaceName, networkInterfaceName, result);
   }
 
-  if (result)
-  {
-    result = SUCCEEDED(CNetworkInterface::GetAllNetworkInterfaces(this->networkInterfaces, AF_UNSPEC));
-  }
+  CHECK_HRESULT_EXECUTE(result, CNetworkInterface::GetAllNetworkInterfaces(this->networkInterfaces, AF_UNSPEC));
 
-  if (result && (this->networkInterfaceName != NULL))
+  if (SUCCEEDED(result) && (this->networkInterfaceName != NULL))
   {
     // in network interface collection have to stay only interfaces with specified network interface name
     unsigned int i = 0;
@@ -161,7 +188,7 @@ bool CCurlInstance::SetNetworkInterfaceName(const wchar_t *networkInterfaceName)
       }
     }
 
-    result &= (this->networkInterfaces->Count() != 0);
+    CHECK_CONDITION_HRESULT(result, this->networkInterfaces->Count() != 0, result, E_NOT_FOUND_INTERFACE_NAME);
   }
 
   return result;
@@ -559,7 +586,7 @@ size_t CCurlInstance::CurlReceiveData(const unsigned char *buffer, size_t length
     {
       if (!this->downloadResponse->GetReceivedData()->ResizeBuffer(newBufferSize))
       {
-        this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, this->protocolName, METHOD_CURL_RECEIVE_DATA_NAME, L"resizing of buffer unsuccessful");
+        this->logger->Log(LOGGER_ERROR, L"%s: %s: resizing of buffer unsuccessful, current size: %u, requested size: %u", this->protocolName, METHOD_CURL_RECEIVE_DATA_NAME, this->downloadResponse->GetReceivedData()->GetBufferSize(), newBufferSize);
         // it indicates error
         length = 0;
       }

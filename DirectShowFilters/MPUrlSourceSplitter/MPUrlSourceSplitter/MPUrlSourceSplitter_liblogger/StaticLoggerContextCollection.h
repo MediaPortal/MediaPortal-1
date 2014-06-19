@@ -29,7 +29,7 @@
 class CStaticLoggerContextCollection : public CCollection<CStaticLoggerContext>
 {
 public:
-  CStaticLoggerContextCollection(void);
+  CStaticLoggerContextCollection(HRESULT *result);
   ~CStaticLoggerContextCollection(void);
 
 protected:

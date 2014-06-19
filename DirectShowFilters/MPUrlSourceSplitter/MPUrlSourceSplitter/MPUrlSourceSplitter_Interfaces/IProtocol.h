@@ -24,20 +24,32 @@
 #define __IPROTOCOL_DEFINED
 
 #include "ISimpleProtocol.h"
-#include "ReceiveData.h"
+#include "StreamPackage.h"
 
 #include <streams.h>
 
 #define METHOD_PARSE_URL_NAME                                                 L"ParseUrl()"
 #define METHOD_RECEIVE_DATA_NAME                                              L"ReceiveData()"
 
+enum ProtocolConnectionState
+{
+  None,
+  Initializing,
+  Initialized,
+  InitializeFailed,
+  Opening,
+  OpeningFailed,
+  Opened,
+  Closing
+};
+
 // defines interface for stream protocol implementation
-struct IProtocol : public ISimpleProtocol
+struct IProtocol : virtual public ISimpleProtocol
 {
 public:
-  // test if connection is opened
-  // @return : true if connected, false otherwise
-  virtual bool IsConnected(void) = 0;
+  // gets connection state
+  // @return : one of protocol connection state values
+  virtual ProtocolConnectionState GetConnectionState(void) = 0;
 
   // parse given url to internal variables for specified protocol
   // errors should be logged to log file
@@ -45,18 +57,16 @@ public:
   // @return : S_OK if successfull
   virtual HRESULT ParseUrl(const CParameterCollection *parameters) = 0;
 
-  // receives data and stores them into receive data parameter
-  // the method should fill receiveData parameter with relevant data and finish
+  // receives data and process stream package request
   // the method can't block call (method is called within thread which can be terminated anytime)
-  // @param receiveData : received data
-  // @result: S_OK if successful, error code otherwise
-  virtual HRESULT ReceiveData(CReceiveData *receiveData) = 0;
+  // @param streamPackage : the stream package request to process
+  // @return : S_OK if successful, error code only in case when error is not related to processing request
+  virtual HRESULT ReceiveData(CStreamPackage *streamPackage) = 0;
 
   // gets current connection parameters (can be different as supplied connection parameters)
-  // @return : current connection parameters or NULL if error
-  virtual CParameterCollection *GetConnectionParameters(void) = 0;
+  // @param parameters : the reference to parameter collection to be filled with connection parameters
+  // @return : S_OK if successful, error code otherwise
+  virtual HRESULT GetConnectionParameters(CParameterCollection *parameters) = 0;
 };
-
-typedef IProtocol* PIProtocol;
 
 #endif

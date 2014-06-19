@@ -23,72 +23,131 @@
 #ifndef __MPURLSOURCESPLITTER_PARSER_F4M_DEFINED
 #define __MPURLSOURCESPLITTER_PARSER_F4M_DEFINED
 
-#include "IParserPlugin.h"
+#include "ParserPlugin.h"
 
 #define PARSER_NAME                                               L"F4M"
 
-class CMPUrlSourceSplitter_Parser_F4M : public IParserPlugin
+class CMPUrlSourceSplitter_Parser_F4M : public CParserPlugin
 {
 public:
   // constructor
   // create instance of CMPUrlSourceSplitter_Parser_F4M class
-  CMPUrlSourceSplitter_Parser_F4M(CLogger *logger, CParameterCollection *configuration);
-
+  CMPUrlSourceSplitter_Parser_F4M(HRESULT *result, CLogger *logger, CParameterCollection *configuration);
   // destructor
-  ~CMPUrlSourceSplitter_Parser_F4M(void);
+  virtual ~CMPUrlSourceSplitter_Parser_F4M(void);
 
-  // IParser interface
+  // CParserPlugin
 
-  // clears current parser session
-  // @return : S_OK if successfull
-  HRESULT ClearSession(void);
+  // gets parser result about current stream
+  // @return : one of ParserResult values
+  virtual ParserResult GetParserResult(void);
 
-  // parses media packets
-  // @param streamId : the stream ID to parse media packets
-  // @param mediaPackets : media packet collection to parse
-  // @param connectionParameters : current connection parameters
-  // @return : one of ParseResult values
-  ParseResult ParseMediaPackets(unsigned int streamId, CMediaPacketCollection *mediaPackets, CParameterCollection *connectionParameters);
+  // gets parser score if parser result is Known
+  // @return : parser score (parser with highest score is set as active parser)
+  virtual unsigned int GetParserScore(void);
 
-  // sets current connection url and parameters
-  // @param parameters : the collection of url and connection parameters
-  // @return : S_OK if successful
-  HRESULT SetConnectionParameters(const CParameterCollection *parameters);
-
-  // gets parser action after parser recognizes pattern in stream
+  // gets parser action after parser recognizes stream
   // @return : one of Action values
-  Action GetAction(void);
+  virtual Action GetAction(void);
 
-  // gets (fills) connection url and parameters
-  // @param parameters : the collection of url and connection parameters to fill
-  // @return : S_OK if successful
-  HRESULT GetConnectionParameters(CParameterCollection *parameters);
-
-  // IPlugin interface
+  // CPlugin
 
   // return reference to null-terminated string which represents plugin name
-  // function have to allocate enough memory for plugin name string
   // errors should be logged to log file and returned NULL
   // @return : reference to null-terminated string
-  const wchar_t *GetName(void);
+  virtual const wchar_t *GetName(void);
 
   // get plugin instance ID
   // @return : GUID, which represents instance identifier or GUID_NULL if error
-  GUID GetInstanceId(void);
+  virtual GUID GetInstanceId(void);
 
   // initialize plugin implementation with configuration parameters
   // @param configuration : the reference to additional configuration parameters (created by plugin's hoster class)
+  // @return : S_OK if successfull, error code otherwise
+  virtual HRESULT Initialize(CPluginConfiguration *configuration);
+
+  // ISeeking interface
+
+  // gets seeking capabilities of protocol
+  // @return : bitwise combination of SEEKING_METHOD flags
+  virtual unsigned int GetSeekingCapabilities(void);
+
+  // request protocol implementation to receive data from specified time (in ms) for specified stream
+  // this method is called with same time for each stream in protocols with multiple streams
+  // @param streamId : the stream ID to receive data from specified time
+  // @param time : the requested time (zero is start of stream)
+  // @return : time (in ms) where seek finished or lower than zero if error
+  virtual int64_t SeekToTime(unsigned int streamId, int64_t time);
+
+  // set pause, seek or stop mode
+  // in such mode are reading operations disabled
+  // @param pauseSeekStopMode : one of PAUSE_SEEK_STOP_MODE values
+  virtual void SetPauseSeekStopMode(unsigned int pauseSeekStopMode);
+
+  // IDemuxerOwner interface
+
+  // gets duration of stream in ms
+  // @return : stream duration in ms or DURATION_LIVE_STREAM in case of live stream or DURATION_UNSPECIFIED if duration is unknown
+  virtual int64_t GetDuration(void);
+
+  // process stream package request
+  // @param streamPackage : the stream package request to process
+  // @return : S_OK if successful, error code only in case when error is not related to processing request
+  virtual HRESULT ProcessStreamPackage(CStreamPackage *streamPackage);
+
+  // ISimpleProtocol interface
+
+  // get timeout (in ms) for receiving data
+  // @return : timeout (in ms) for receiving data
+  virtual unsigned int GetReceiveDataTimeout(void);
+
+  // starts receiving data from specified url and configuration parameters
+  // @param parameters : the url and parameters used for connection
+  // @return : S_OK if url is loaded, false otherwise
+  virtual HRESULT StartReceivingData(CParameterCollection *parameters);
+
+  // request protocol implementation to cancel the stream reading operation
+  // @return : S_OK if successful
+  virtual HRESULT StopReceivingData(void);
+
+  // retrieves the progress of the stream reading operation
+  // @param streamProgress : reference to instance of class that receives the stream progress
+  // @return : S_OK if successful, VFW_S_ESTIMATED if returned values are estimates, E_INVALIDARG if stream ID is unknown, E_UNEXPECTED if unexpected error
+  virtual HRESULT QueryStreamProgress(CStreamProgress *streamProgress);
+  
+  // clear current session
   // @return : S_OK if successfull
-  HRESULT Initialize(PluginConfiguration *configuration);
+  virtual HRESULT ClearSession(void);
+
+  // reports actual stream time to protocol
+  // @param streamTime : the actual stream time in ms to report to protocol
+  // @param streamPosition : the actual stream position (related to stream time) to report to protocol
+  virtual void ReportStreamTime(uint64_t streamTime, uint64_t streamPosition);
+
+  // gets stream count
+  // receiving data is disabled until protocol reports valid stream count (at least one)
+  // @return : stream count or STREAM_COUNT_UNKNOWN if not known
+  virtual unsigned int GetStreamCount(void);
+
+  // IProtocol interface
+
+  // gets connection state
+  // @return : one of protocol connection state values
+  ProtocolConnectionState GetConnectionState(void);
+
+  // parse given url to internal variables for specified protocol
+  // errors should be logged to log file
+  // @param parameters : the url and connection parameters
+  // @return : S_OK if successfull
+  virtual HRESULT ParseUrl(const CParameterCollection *parameters);
+
+  // receives data and process stream package request
+  // the method can't block call (method is called within thread which can be terminated anytime)
+  // @param streamPackage : the stream package request to process
+  // @return : S_OK if successful, error code only in case when error is not related to processing request
+  virtual HRESULT ReceiveData(CStreamPackage *streamPackage);
 
 protected:
-  CLogger *logger;
-
-  // holds connection parameters
-  CParameterCollection *connectionParameters;
-
-  // holds stored media packets
-  CMediaPacketCollection *storedMediaPackets;
 };
 
 #endif

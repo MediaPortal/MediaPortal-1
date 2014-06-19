@@ -22,13 +22,19 @@
 
 #include "CacheFileItem.h"
 
-CCacheFileItem::CCacheFileItem(void)
+CCacheFileItem::CCacheFileItem(HRESULT *result)
+  : CFlags()
 {
-  this->buffer = new CLinearBuffer();
-  this->flags = CACHE_FILE_ITEM_FLAG_NONE;
   this->loadedToMemoryTime = CACHE_FILE_ITEM_LOAD_MEMORY_TIME_NOT_SET;
   this->cacheFilePosition = CACHE_FILE_ITEM_POSITION_NOT_SET;
   this->length = 0;
+  this->buffer = NULL;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->buffer = new CLinearBuffer(result);
+    CHECK_POINTER_HRESULT(*result, this->buffer, *result, E_OUTOFMEMORY);
+  }
 }
 
 CCacheFileItem::~CCacheFileItem(void)
@@ -60,6 +66,30 @@ unsigned int CCacheFileItem::GetLoadedToMemoryTime(void)
 
 /* set methods */
 
+void CCacheFileItem::SetCacheFilePosition(int64_t position)
+{
+  this->cacheFilePosition = position;
+
+  if (this->cacheFilePosition != CACHE_FILE_ITEM_POSITION_NOT_SET)
+  {
+    this->length = this->GetBuffer()->GetBufferOccupiedSpace();
+    this->buffer->DeleteBuffer();
+    this->loadedToMemoryTime = CACHE_FILE_ITEM_LOAD_MEMORY_TIME_NOT_SET;
+  }
+}
+
+void CCacheFileItem::SetLoadedToMemoryTime(unsigned int time)
+{
+  this->loadedToMemoryTime = time;
+}
+
+
+void CCacheFileItem::SetNoCleanUpFromMemory(bool noCleanUpFromMemory)
+{
+  this->flags &= ~CACHE_FILE_ITEM_FLAG_NO_CLEAN_UP_FROM_MEMORY;
+  this->flags |= (noCleanUpFromMemory) ? CACHE_FILE_ITEM_FLAG_NO_CLEAN_UP_FROM_MEMORY : CACHE_FILE_ITEM_FLAG_NONE;
+}
+
 /* other methods */
 
 bool CCacheFileItem::IsStoredToFile(void)
@@ -72,9 +102,9 @@ bool CCacheFileItem::IsLoadedToMemory(void)
   return (this->loadedToMemoryTime != CACHE_FILE_ITEM_LOAD_MEMORY_TIME_NOT_SET);
 }
 
-bool CCacheFileItem::IsSetFlags(unsigned int flags)
+bool CCacheFileItem::IsNoCleanUpFromMemory(void)
 {
-  return ((this->flags & flags) == flags);
+  return this->IsSetFlags(CACHE_FILE_ITEM_FLAG_NO_CLEAN_UP_FROM_MEMORY);
 }
 
 CCacheFileItem *CCacheFileItem::Clone(void)
@@ -94,27 +124,6 @@ CCacheFileItem *CCacheFileItem::Clone(void)
 
 /* protected methods */
 
-void CCacheFileItem::SetCacheFilePosition(int64_t position)
-{
-  this->cacheFilePosition = position;
-
-  if (this->cacheFilePosition != CACHE_FILE_ITEM_POSITION_NOT_SET)
-  {
-    this->length = this->GetBuffer()->GetBufferOccupiedSpace();
-    this->buffer->DeleteBuffer();
-    this->loadedToMemoryTime = CACHE_FILE_ITEM_LOAD_MEMORY_TIME_NOT_SET;
-  }
-}
-
-void CCacheFileItem::SetLoadedToMemoryTime(unsigned int time)
-{
-  this->loadedToMemoryTime = time;
-}
-
-CCacheFileItem *CCacheFileItem::CreateItem(void)
-{
-  return NULL;
-}
 
 bool CCacheFileItem::InternalClone(CCacheFileItem *item)
 {

@@ -29,7 +29,7 @@
 class CMediaPacketCollection : public CCacheFileItemCollection
 {
 public:
-  CMediaPacketCollection(void);
+  CMediaPacketCollection(HRESULT *result);
   virtual ~CMediaPacketCollection(void);
 
   // adds media packet to collection
@@ -42,16 +42,16 @@ public:
   // @return : index of media packet or UINT_MAX if not exists
   unsigned int GetMediaPacketIndexBetweenPositions(int64_t position);
 
-  // returns indexes where item have to be placed
-  // startIndex == UINT_MAX && endIndex == 0 => item have to be placed on beginning
-  // startIndex == Count() - 1 && endIndex == UINT_MAX => item have to be placed on end
-  // startIndex == endIndex => item with same key exists in collection (index of item is startIndex)
-  // item have to be placed between startIndex and endIndex
-  // @param key : the item key to compare
-  // @param startIndex : reference to variable which holds start index where item have to be placed
-  // @param endIndex : reference to variable which holds end index where item have to be placed
+  // returns indexes where media packet have to be placed
+  // startIndex == UINT_MAX && endIndex == 0 => media packet have to be placed on beginning
+  // startIndex == Count() - 1 && endIndex == UINT_MAX => media packet have to be placed on end
+  // startIndex == endIndex => media packet with same start position exists in collection (index of media packet is startIndex)
+  // media packet have to be placed between startIndex and endIndex
+  // @param position : the start position to compare
+  // @param startIndex : reference to variable which holds start index where media packet have to be placed
+  // @param endIndex : reference to variable which holds end index where media packet have to be placed
   // @return : true if successful, false otherwise
-  bool GetItemInsertPosition(int64_t key, unsigned int *startIndex, unsigned int *endIndex);
+  bool GetItemInsertPosition(int64_t position, unsigned int *startIndex, unsigned int *endIndex);
 
   // gets overlapped region between specified packet and consolidated space
   // @param packet : packet to get overlapped region
@@ -67,16 +67,24 @@ public:
   // @return : the reference to item or NULL if not find
   virtual CMediaPacket *GetItem(unsigned int index);
 
+  // finds gap in media packets (if any), searching starts from specified position
+  // @param position : the position to start searching, it MUST within any existing media packet in collection
+  // @param startPosition : the reference to variable to gap start position
+  // @param endPosition : the reference to variable to gap end position
+  // @return : true if gap found, false otherwise
+  virtual bool FindGapInMediaPackets(int64_t position, int64_t *startPosition, int64_t *endPosition);
+
 protected:
 
-  CMediaPacketCollection(bool consolidateSpace);
+  CMediaPacketCollection(HRESULT *result, bool consolidateSpace);
 
   // holds consolidated media packets space
   CMediaPacketCollection *consolidatedMediaPackets;
 
   // adds media packet to consolidated media packets space
   // @param packet : packet to add
-  void AddPacketToConsolidatedMediaPackets(CMediaPacket *packet);
+  // @return : true if successful, false otherwise
+  bool AddPacketToConsolidatedMediaPackets(CMediaPacket *packet);
 };
 
 #endif

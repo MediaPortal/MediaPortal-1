@@ -33,7 +33,15 @@
 #define PARAMETER_NAME_HTTP_COOKIES_COUNT                         L"HttpCookiesCount"
 #define HTTP_COOKIE_FORMAT_PARAMETER_NAME                         L"HttpCookie%08u"
 
+// special parameter to force supported seeking by position even if server doesn't respond as expected
+// (HTTP 206 response code or Accept-Ranges HTTP response header)
+#define PARAMETER_NAME_HTTP_SEEKING_SUPPORTED                     L"HttpSeekingSupported"
+// special parameter for enabling (by default) or disabling detection of seeking support
+#define PARAMETER_NAME_HTTP_SEEKING_SUPPORT_DETECTION             L"HttpSeekingSupportDetection"
+
 // we should get data in twenty seconds
 #define HTTP_RECEIVE_DATA_TIMEOUT_DEFAULT                         20000
+#define HTTP_SEEKING_SUPPORTED_DEFAULT                            false
+#define HTTP_SEEKING_SUPPORT_DETECTION_DEFAULT                    true
 
 #endif

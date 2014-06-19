@@ -25,25 +25,25 @@
 
 #include "MPUrlSourceSplitterOutputPin.h"
 
-#define OUTPUT_SPLITTER_PIN_FLAG_NONE                                 OUTPUT_PIN_FLAG_NONE
+#define MP_URL_SOURCE_SPLITTER_OUTPUT_SPLITTER_PIN_FLAG_NONE                                 MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_NONE
 
-#define OUTPUT_SPLITTER_PIN_FLAG_CONTAINER_MPEG_TS                    (1 << (OUTPUT_PIN_FLAG_LAST + 1))
-#define OUTPUT_SPLITTER_PIN_FLAG_CONTAINER_MPEG                       (1 << (OUTPUT_PIN_FLAG_LAST + 2))
-#define OUTPUT_SPLITTER_PIN_FLAG_CONTAINER_WTV                        (1 << (OUTPUT_PIN_FLAG_LAST + 3))
-#define OUTPUT_SPLITTER_PIN_FLAG_CONTAINER_ASF                        (1 << (OUTPUT_PIN_FLAG_LAST + 4))
-#define OUTPUT_SPLITTER_PIN_FLAG_CONTAINER_OGG                        (1 << (OUTPUT_PIN_FLAG_LAST + 5))
-#define OUTPUT_SPLITTER_PIN_FLAG_CONTAINER_MATROSKA                   (1 << (OUTPUT_PIN_FLAG_LAST + 6))
-#define OUTPUT_SPLITTER_PIN_FLAG_CONTAINER_AVI                        (1 << (OUTPUT_PIN_FLAG_LAST + 7))
-#define OUTPUT_SPLITTER_PIN_FLAG_CONTAINER_MP4                        (1 << (OUTPUT_PIN_FLAG_LAST + 8))
-#define OUTPUT_SPLITTER_PIN_FLAG_HAS_ACCESS_UNIT_DELIMITERS           (1 << (OUTPUT_PIN_FLAG_LAST + 9))
-#define OUTPUT_SPLITTER_PIN_FLAG_PGS_DROP_STATE                       (1 << (OUTPUT_PIN_FLAG_LAST + 10))
+#define MP_URL_SOURCE_SPLITTER_OUTPUT_SPLITTER_PIN_FLAG_CONTAINER_MPEG_TS                    (1 << (MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_LAST + 0))
+#define MP_URL_SOURCE_SPLITTER_OUTPUT_SPLITTER_PIN_FLAG_CONTAINER_MPEG                       (1 << (MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_LAST + 1))
+#define MP_URL_SOURCE_SPLITTER_OUTPUT_SPLITTER_PIN_FLAG_CONTAINER_WTV                        (1 << (MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_LAST + 2))
+#define MP_URL_SOURCE_SPLITTER_OUTPUT_SPLITTER_PIN_FLAG_CONTAINER_ASF                        (1 << (MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_LAST + 3))
+#define MP_URL_SOURCE_SPLITTER_OUTPUT_SPLITTER_PIN_FLAG_CONTAINER_OGG                        (1 << (MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_LAST + 4))
+#define MP_URL_SOURCE_SPLITTER_OUTPUT_SPLITTER_PIN_FLAG_CONTAINER_MATROSKA                   (1 << (MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_LAST + 5))
+#define MP_URL_SOURCE_SPLITTER_OUTPUT_SPLITTER_PIN_FLAG_CONTAINER_AVI                        (1 << (MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_LAST + 6))
+#define MP_URL_SOURCE_SPLITTER_OUTPUT_SPLITTER_PIN_FLAG_CONTAINER_MP4                        (1 << (MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_LAST + 7))
+#define MP_URL_SOURCE_SPLITTER_OUTPUT_SPLITTER_PIN_FLAG_HAS_ACCESS_UNIT_DELIMITERS           (1 << (MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_LAST + 8))
+#define MP_URL_SOURCE_SPLITTER_OUTPUT_SPLITTER_PIN_FLAG_PGS_DROP_STATE                       (1 << (MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_LAST + 9))
 
-#define OUTPUT_SPLITTER_PIN_FLAG_LAST                                 (OUTPUT_PIN_FLAG_LAST + 10)
+#define MP_URL_SOURCE_SPLITTER_OUTPUT_SPLITTER_PIN_FLAG_LAST                                 (MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_LAST + 10)
 
 class CMPUrlSourceSplitterOutputSplitterPin : public CMPUrlSourceSplitterOutputPin
 {
 public:
-  CMPUrlSourceSplitterOutputSplitterPin(CLogger *logger, CMediaTypeCollection *mediaTypes, LPCWSTR pName, CBaseFilter *pFilter, CCritSec *pLock, HRESULT *phr, const wchar_t *containerFormat);
+  CMPUrlSourceSplitterOutputSplitterPin(LPCWSTR pName, CBaseFilter *pFilter, CCritSec *pLock, HRESULT *phr, CLogger *logger, CParameterCollection *parameters, CMediaTypeCollection *mediaTypes, const wchar_t *containerFormat);
   virtual ~CMPUrlSourceSplitterOutputSplitterPin();
 
   // CBaseOutputPin

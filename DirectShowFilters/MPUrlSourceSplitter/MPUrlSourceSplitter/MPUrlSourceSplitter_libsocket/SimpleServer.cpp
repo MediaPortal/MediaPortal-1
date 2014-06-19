@@ -24,10 +24,16 @@
 #include "IpAddressCollection.h"
 #include "Dns.h"
 
-CSimpleServer::CSimpleServer(void)
+CSimpleServer::CSimpleServer(HRESULT *result)
+  : CFlags()
 {
-  this->servers = new CSocketContextCollection();
-  this->serverType = SERVER_TYPE_UNSPECIFIED;
+  this->servers = NULL;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->servers = new CSocketContextCollection(result);
+    CHECK_POINTER_HRESULT(*result, this->servers, *result, E_OUTOFMEMORY);
+  }
 }
 
 CSimpleServer::~CSimpleServer(void)
@@ -44,24 +50,14 @@ CSocketContextCollection *CSimpleServer::GetServers(void)
   return this->servers;
 }
 
-unsigned int CSimpleServer::GetServerType(void)
-{
-  return this->serverType;
-}
-
 /* set methods */
 
 /* other methods */
 
-bool CSimpleServer::IsServerType(unsigned int serverType)
-{
-  return (this->serverType == serverType);
-}
-
 HRESULT CSimpleServer::Initialize(int family, WORD port)
 {
   HRESULT result = S_OK;
-  CNetworkInterfaceCollection *interfaces = new CNetworkInterfaceCollection();
+  CNetworkInterfaceCollection *interfaces = new CNetworkInterfaceCollection(&result);
   CHECK_POINTER_HRESULT(result, interfaces, result, E_OUTOFMEMORY);
 
   CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), CNetworkInterface::GetAllNetworkInterfaces(interfaces, family), result);

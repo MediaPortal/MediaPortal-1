@@ -22,8 +22,8 @@
 
 #include "MPUrlSourceSplitterOutputPinCollection.h"
 
-CMPUrlSourceSplitterOutputPinCollection::CMPUrlSourceSplitterOutputPinCollection(void)
-  : CCollection()
+CMPUrlSourceSplitterOutputPinCollection::CMPUrlSourceSplitterOutputPinCollection(HRESULT *result)
+  : CCollection(result)
 {
 }
 

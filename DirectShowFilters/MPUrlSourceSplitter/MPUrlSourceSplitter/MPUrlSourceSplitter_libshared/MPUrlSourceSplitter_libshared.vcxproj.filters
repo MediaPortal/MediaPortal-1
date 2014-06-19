@@ -24,9 +24,6 @@
     <ClInclude Include="BufferHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Hoster.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="LinearBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -72,12 +69,27 @@
     <ClInclude Include="StreamProgress.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="StreamPackage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StreamPackageRequest.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StreamPackageResponse.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StreamPackageDataRequest.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StreamPackageDataResponse.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Flags.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Hoster.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="LinearBuffer.cpp">
@@ -110,10 +122,28 @@
     <ClCompile Include="StreamAvailableLength.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="StreamProgress.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StreamPackage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StreamPackageRequest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StreamPackageResponse.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="StreamReceiveData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="StreamProgress.cpp">
+    <ClCompile Include="StreamPackageDataRequest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StreamPackageDataResponse.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Flags.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

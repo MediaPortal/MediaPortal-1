@@ -22,8 +22,8 @@
 
 #include "StreamReceiveDataColletion.h"
 
-CStreamReceiveDataColletion::CStreamReceiveDataColletion(void)
-  : CCollection()
+CStreamReceiveDataColletion::CStreamReceiveDataColletion(HRESULT *result)
+  : CCollection(result)
 {
 }
 

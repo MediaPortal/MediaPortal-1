@@ -26,7 +26,7 @@
 class CHttpHeader
 {
 public:
-  CHttpHeader(void);
+  CHttpHeader(HRESULT *result);
   virtual ~CHttpHeader(void);
 
   /* get methods */

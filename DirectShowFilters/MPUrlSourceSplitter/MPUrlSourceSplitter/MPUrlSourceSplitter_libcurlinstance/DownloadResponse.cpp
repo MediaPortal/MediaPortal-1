@@ -22,11 +22,18 @@
 
 #include "DownloadResponse.h"
 
-CDownloadResponse::CDownloadResponse(void)
+CDownloadResponse::CDownloadResponse(HRESULT *result)
+  : CFlags()
 {
-  this->receivedData = new CLinearBuffer();
   this->resultCode = CURLE_OK;
   this->responseCode = 0;
+  this->receivedData = NULL;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->receivedData = new CLinearBuffer(result);
+    CHECK_POINTER_HRESULT(*result, this->receivedData, *result, E_OUTOFMEMORY);
+  }
 }
 
 CDownloadResponse::~CDownloadResponse(void)
@@ -67,23 +74,42 @@ void CDownloadResponse::SetResponseCode(long responseCode)
 
 CDownloadResponse *CDownloadResponse::Clone(void)
 {
-  CDownloadResponse *result = new CDownloadResponse();
-  if (result != NULL)
-  {
-    if (!this->CloneInternal(result))
-    {
-      FREE_MEM_CLASS(result);
-    }
-  }
-  return result;
+  HRESULT result = S_OK;
+  CDownloadResponse *clone = this->CreateDownloadResponse();
+  CHECK_POINTER_HRESULT(result, clone, result, E_OUTOFMEMORY);
+
+  CHECK_CONDITION_HRESULT(result, this->CloneInternal(clone), result, E_OUTOFMEMORY);
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(clone));
+  return clone;
+}
+
+/* protected methods */
+
+CDownloadResponse *CDownloadResponse::CreateDownloadResponse(void)
+{
+  HRESULT result = S_OK;
+  CDownloadResponse *response = new CDownloadResponse(&result);
+  CHECK_POINTER_HRESULT(result, response, result, E_OUTOFMEMORY);
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(response));
+  return response;
 }
 
 bool CDownloadResponse::CloneInternal(CDownloadResponse *clonedResponse)
 {
-  clonedResponse->resultCode = this->resultCode;
-  clonedResponse->responseCode = this->responseCode;
-  FREE_MEM_CLASS(clonedResponse->receivedData);
-  clonedResponse->receivedData = this->receivedData->Clone();
+  bool result = (clonedResponse != NULL);
 
-  return (clonedResponse->receivedData != NULL);
+  if (result)
+  {
+    clonedResponse->flags = this->flags;
+    clonedResponse->resultCode = this->resultCode;
+    clonedResponse->responseCode = this->responseCode;
+    FREE_MEM_CLASS(clonedResponse->receivedData);
+    clonedResponse->receivedData = this->receivedData->Clone();
+
+    result &= (clonedResponse->receivedData != NULL);
+  }
+
+  return result;
 }

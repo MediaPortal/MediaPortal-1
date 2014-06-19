@@ -20,24 +20,24 @@
 
 #pragma once
 
-#ifndef __MPURLSOURCESPLITTER_PARSER_ASX_DEFINED
-#define __MPURLSOURCESPLITTER_PARSER_ASX_DEFINED
+#ifndef __MP_URL_SOURCE_SPLITTER_PARSER_ASX_DEFINED
+#define __MP_URL_SOURCE_SPLITTER_PARSER_ASX_DEFINED
 
-#include "IParserPlugin.h"
+#include "ParserPlugin.h"
 
 #define PARSER_NAME                                               L"ASX"
 
-class CMPUrlSourceSplitter_Parser_Asx : public IParserPlugin
+class CMPUrlSourceSplitter_Parser_Asx : public CParserPlugin
 {
 public:
   // constructor
   // create instance of CMPUrlSourceSplitter_Parser_Asx class
-  CMPUrlSourceSplitter_Parser_Asx(CLogger *logger, CParameterCollection *configuration);
+  CMPUrlSourceSplitter_Parser_Asx(HRESULT *result, CLogger *logger, CParameterCollection *configuration);
 
   // destructor
   ~CMPUrlSourceSplitter_Parser_Asx(void);
 
-  // IParser interface
+  // CParserPlugin
 
   // clears current parser session
   // @return : S_OK if successfull
@@ -48,7 +48,7 @@ public:
   // @param mediaPackets : media packet collection to parse
   // @param connectionParameters : current connection parameters
   // @return : one of ParseResult values
-  ParseResult ParseMediaPackets(unsigned int streamId, CMediaPacketCollection *mediaPackets, CParameterCollection *connectionParameters);
+  //ParseResult ParseMediaPackets(unsigned int streamId, CMediaPacketCollection *mediaPackets, CParameterCollection *connectionParameters);
 
   // sets current connection url and parameters
   // @param parameters : the collection of url and connection parameters
@@ -64,10 +64,9 @@ public:
   // @return : S_OK if successful
   HRESULT GetConnectionParameters(CParameterCollection *parameters);
 
-  // IPlugin interface
+  // CPlugin
 
   // return reference to null-terminated string which represents plugin name
-  // function have to allocate enough memory for plugin name string
   // errors should be logged to log file and returned NULL
   // @return : reference to null-terminated string
   const wchar_t *GetName(void);
@@ -78,17 +77,12 @@ public:
 
   // initialize plugin implementation with configuration parameters
   // @param configuration : the reference to additional configuration parameters (created by plugin's hoster class)
-  // @return : S_OK if successfull
-  HRESULT Initialize(PluginConfiguration *configuration);
+  // @return : S_OK if successfull, error code otherwise
+  HRESULT Initialize(CPluginConfiguration *configuration);
 
 protected:
-  CLogger *logger;
-
-  // holds connection parameters
-  CParameterCollection *connectionParameters;
-
   // holds stored media packets
-  CMediaPacketCollection *storedMediaPackets;
+  //CMediaPacketCollection *storedMediaPackets;
 };
 
 #endif

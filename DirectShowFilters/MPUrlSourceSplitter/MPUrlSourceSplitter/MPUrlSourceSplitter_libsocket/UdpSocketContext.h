@@ -23,13 +23,17 @@
 #ifndef __UDP_SOCKET_CONTEXT_DEFINED
 #define __UDP_SOCKET_CONTEXT_DEFINED
 
+#define UDP_SOCKET_CONTEXT_FLAG_NONE                                          SOCKET_CONTEXT_FLAG_NONE
+
+#define UDP_SOCKET_CONTEXT_FLAG_LAST                                          (SOCKET_CONTEXT_FLAG_LAST + 0)
+
 #include "SocketContext.h"
 
 class CUdpSocketContext : public CSocketContext
 {
 public:
-  CUdpSocketContext(void);
-  CUdpSocketContext(SOCKET socket);
+  CUdpSocketContext(HRESULT *result);
+  CUdpSocketContext(HRESULT * result, SOCKET socket);
   virtual ~CUdpSocketContext(void);
 
   /* get methods */

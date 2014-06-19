@@ -22,18 +22,24 @@
 
 #include "Parameter.h"
 
-CParameter::CParameter(const wchar_t *name, const wchar_t *value)
+CParameter::CParameter(HRESULT *result, const wchar_t *name, const wchar_t *value)
 {
-  bool result = true;
   this->name = NULL;
   this->value = NULL;
 
-  SET_STRING_AND_RESULT(this->name, name, result);
-  SET_STRING_AND_RESULT(this->value, value, result);
-
-  if (!result)
+  if ((result != NULL) && (SUCCEEDED(*result)))
   {
-    this->Clear();
+    CHECK_POINTER_DEFAULT_HRESULT(*result, name);
+    CHECK_POINTER_DEFAULT_HRESULT(*result, value);
+
+    if (SUCCEEDED(*result))
+    {
+      this->name = Duplicate(name);
+      this->value = Duplicate(value);
+
+      CHECK_POINTER_HRESULT(*result, this->name, *result, E_OUTOFMEMORY);
+      CHECK_POINTER_HRESULT(*result, this->value, *result, E_OUTOFMEMORY);
+    }
   }
 }
 
@@ -65,7 +71,10 @@ const wchar_t *CParameter::GetValue(void)
 
 CParameter *CParameter::Clone(void)
 {
-  CParameter *clone = new CParameter(this->name, this->value);
+  HRESULT result = S_OK;
+  CParameter *clone = new CParameter(&result, this->name, this->value);
+  CHECK_POINTER_HRESULT(result, clone, result, E_OUTOFMEMORY);
 
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(clone));
   return clone;
 }

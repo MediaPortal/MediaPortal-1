@@ -22,28 +22,68 @@
 
 #include "MulticastUdpSocketContext.h"
 
-CMulticastUdpSocketContext::CMulticastUdpSocketContext(CIpAddress *multicastAddress, CIpAddress *sourceAddress, CNetworkInterface *networkInterface)
-  : CUdpSocketContext()
+CMulticastUdpSocketContext::CMulticastUdpSocketContext(HRESULT *result, CIpAddress *multicastAddress, CIpAddress *sourceAddress, CNetworkInterface *networkInterface)
+  : CUdpSocketContext(result)
 {
-  this->multicastAddress = (multicastAddress != NULL) ? multicastAddress->Clone() : NULL;
-  this->sourceAddress = (sourceAddress != NULL) ? sourceAddress->Clone() : NULL;
-  this->networkInterface = (networkInterface != NULL) ? networkInterface->Clone() : NULL;
-  this->subscribedToMulticastGroup = false;
+  this->multicastAddress = NULL;
+  this->sourceAddress = NULL;
+  this->networkInterface = NULL;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    if (multicastAddress != NULL)
+    {
+      this->multicastAddress = multicastAddress->Clone();
+      CHECK_POINTER_HRESULT(*result, this->multicastAddress, *result, E_OUTOFMEMORY);
+    }
+
+    if (sourceAddress != NULL)
+    {
+      this->sourceAddress = sourceAddress->Clone();
+      CHECK_POINTER_HRESULT(*result, this->sourceAddress, *result, E_OUTOFMEMORY);
+    }
+
+    if (networkInterface != NULL)
+    {
+      this->networkInterface = networkInterface->Clone();
+      CHECK_POINTER_HRESULT(*result, this->networkInterface, *result, E_OUTOFMEMORY);
+    }
+  }
 }
 
-CMulticastUdpSocketContext::CMulticastUdpSocketContext(CIpAddress *multicastAddress, CIpAddress *sourceAddress, CNetworkInterface *networkInterface, SOCKET socket)
-  : CUdpSocketContext(socket)
+CMulticastUdpSocketContext::CMulticastUdpSocketContext(HRESULT *result, CIpAddress *multicastAddress, CIpAddress *sourceAddress, CNetworkInterface *networkInterface, SOCKET socket)
+  : CUdpSocketContext(result, socket)
 {
-  this->multicastAddress = (multicastAddress != NULL) ? multicastAddress->Clone() : NULL;
-  this->sourceAddress = (sourceAddress != NULL) ? sourceAddress->Clone() : NULL;
-  this->networkInterface = (networkInterface != NULL) ? networkInterface->Clone() : NULL;
-  this->subscribedToMulticastGroup = false;
+  this->multicastAddress = NULL;
+  this->sourceAddress = NULL;
+  this->networkInterface = NULL;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    if (multicastAddress != NULL)
+    {
+      this->multicastAddress = multicastAddress->Clone();
+      CHECK_POINTER_HRESULT(*result, this->multicastAddress, *result, E_OUTOFMEMORY);
+    }
+
+    if (sourceAddress != NULL)
+    {
+      this->sourceAddress = sourceAddress->Clone();
+      CHECK_POINTER_HRESULT(*result, this->sourceAddress, *result, E_OUTOFMEMORY);
+    }
+
+    if (networkInterface != NULL)
+    {
+      this->networkInterface = networkInterface->Clone();
+      CHECK_POINTER_HRESULT(*result, this->networkInterface, *result, E_OUTOFMEMORY);
+    }
+  }
 }
 
 
 CMulticastUdpSocketContext::~CMulticastUdpSocketContext(void)
 {
-  if (this->subscribedToMulticastGroup)
+  if (this->IsSetFlags(MULTICAST_UDP_SOCKET_CONTEXT_FLAG_SUBSCRIBED_TO_GROUP))
   {
     this->UnsubscribeFromMulticastGroup();
   }
@@ -148,7 +188,7 @@ HRESULT CMulticastUdpSocketContext::SubscribeToMulticastGroup(void)
     }
   }
 
-  this->subscribedToMulticastGroup = SUCCEEDED(result);
+  this->flags |= SUCCEEDED(result) ? MULTICAST_UDP_SOCKET_CONTEXT_FLAG_SUBSCRIBED_TO_GROUP : MULTICAST_UDP_SOCKET_CONTEXT_FLAG_NONE;
   return result;
 }
 
@@ -241,6 +281,8 @@ HRESULT CMulticastUdpSocketContext::UnsubscribeFromMulticastGroup(void)
     }
   }
 
+  this->flags &= ~MULTICAST_UDP_SOCKET_CONTEXT_FLAG_SUBSCRIBED_TO_GROUP;
+  this->flags |= FAILED(result) ? MULTICAST_UDP_SOCKET_CONTEXT_FLAG_SUBSCRIBED_TO_GROUP : MULTICAST_UDP_SOCKET_CONTEXT_FLAG_NONE;
   return result;
 }
 

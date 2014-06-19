@@ -1318,17 +1318,6 @@ int64_t CMPUrlSourceSplitter_Protocol_Mshs::SeekToTime(int64_t time)
   return result;
 }
 
-int64_t CMPUrlSourceSplitter_Protocol_Mshs::SeekToPosition(int64_t start, int64_t end)
-{
-  this->logger->Log(LOGGER_VERBOSE, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_POSITION_NAME);
-  this->logger->Log(LOGGER_VERBOSE, L"%s: %s: from position: %llu, to position: %llu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_POSITION_NAME, start, end);
-
-  int64_t result = -1;
-
-  this->logger->Log(LOGGER_VERBOSE, METHOD_END_INT64_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_POSITION_NAME, result);
-  return result;
-}
-
 void CMPUrlSourceSplitter_Protocol_Mshs::SetSupressData(bool supressData)
 {
   this->supressData = supressData;

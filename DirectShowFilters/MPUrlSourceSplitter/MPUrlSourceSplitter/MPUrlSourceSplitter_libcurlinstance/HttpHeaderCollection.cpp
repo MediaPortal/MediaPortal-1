@@ -22,8 +22,8 @@
 
 #include "HttpHeaderCollection.h"
 
-CHttpHeaderCollection::CHttpHeaderCollection(void)
-  : CKeyedCollection()
+CHttpHeaderCollection::CHttpHeaderCollection(HRESULT *result)
+  : CKeyedCollection(result)
 {
 }
 
@@ -44,44 +44,35 @@ CHttpHeader *CHttpHeaderCollection::GetHeader(const wchar_t *name, bool invarian
 
 bool CHttpHeaderCollection::Add(const wchar_t *name, const wchar_t *value)
 {
-  CHttpHeader *httpHeader = new CHttpHeader();
-  bool continueAdding = (httpHeader != NULL);
-  if (continueAdding)
-  {
-    continueAdding &= httpHeader->SetName(name);
-    continueAdding &= httpHeader->SetValue(value);
-  }
-  if (continueAdding)
-  {
-    continueAdding &= __super::Add(httpHeader);
-  }
+  HRESULT result = S_OK;
+  CHttpHeader *httpHeader = new CHttpHeader(&result);
+  CHECK_POINTER_HRESULT(result, httpHeader, result, E_OUTOFMEMORY);
 
-  if (!continueAdding)
-  {
-    FREE_MEM_CLASS(httpHeader);
-  }
-  return continueAdding;
+  CHECK_CONDITION_HRESULT(result, httpHeader->SetName(name), result, E_OUTOFMEMORY);
+  CHECK_CONDITION_HRESULT(result, httpHeader->SetValue(value), result, E_OUTOFMEMORY);
+  CHECK_CONDITION_HRESULT(result, __super::Add(httpHeader), result, E_OUTOFMEMORY);
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(httpHeader));
+
+  return SUCCEEDED(result);
 }
 
 bool CHttpHeaderCollection::Add(const wchar_t *header)
 {
-  bool result = (header != NULL);
+  HRESULT result = (header != NULL) ? S_OK : E_POINTER;
 
-  if (result)
+  if (SUCCEEDED(result))
   {
-    CHttpHeader *httpHeader = new CHttpHeader();
-    result &= (httpHeader != NULL);
+    CHttpHeader *httpHeader = new CHttpHeader(&result);
+    CHECK_POINTER_HRESULT(result, httpHeader, result, E_OUTOFMEMORY);
 
-    CHECK_CONDITION_EXECUTE_RESULT(result, httpHeader->Parse(header), result);
-    CHECK_CONDITION_EXECUTE_RESULT(result, __super::Add(httpHeader), result);
+    CHECK_CONDITION_HRESULT(result, httpHeader->Parse(header), result, E_OUTOFMEMORY);
+    CHECK_CONDITION_HRESULT(result, __super::Add(httpHeader), result, E_OUTOFMEMORY);
 
-    if (!result)
-    {
-      FREE_MEM_CLASS(httpHeader);
-    }
+    CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(httpHeader));
   }
 
-  return result;
+  return SUCCEEDED(result);
 }
 
 int CHttpHeaderCollection::CompareItemKeys(const wchar_t *firstKey, const wchar_t *secondKey, void *context)

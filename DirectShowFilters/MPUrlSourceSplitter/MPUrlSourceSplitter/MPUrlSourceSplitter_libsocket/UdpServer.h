@@ -25,12 +25,16 @@
 
 #include "SimpleServer.h"
 
-#define SERVER_TYPE_UDP                                               0x00000002
+#define UDP_SERVER_FLAG_NONE                                                  SIMPLE_SERVER_FLAG_NONE
+
+#define UDP_SERVER_FLAG_SERVER                                                (1 << (SIMPLE_SERVER_FLAG_LAST + 0))
+
+#define UDP_SERVER_FLAG_LAST                                                  (SIMPLE_SERVER_FLAG_LAST + 1)
 
 class CUdpServer : public CSimpleServer
 {
 public:
-  CUdpServer(void);
+  CUdpServer(HRESULT *result);
   virtual ~CUdpServer(void);
 
   /* get methods */

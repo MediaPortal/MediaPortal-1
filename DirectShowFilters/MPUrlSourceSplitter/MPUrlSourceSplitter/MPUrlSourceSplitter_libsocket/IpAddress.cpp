@@ -34,7 +34,7 @@ CIpAddress::CIpAddress()
   this->addressString = NULL;
 }
 
-CIpAddress::CIpAddress(const ADDRINFOW *addrInfo, const wchar_t *canonicalName)
+CIpAddress::CIpAddress(HRESULT *result, const ADDRINFOW *addrInfo, const wchar_t *canonicalName)
 {
   this->flags = IP_ADDRESS_FLAG_NONE;
   this->addr = NULL;
@@ -45,60 +45,50 @@ CIpAddress::CIpAddress(const ADDRINFOW *addrInfo, const wchar_t *canonicalName)
   this->socktype = 0;
   this->addressString = NULL;
 
-  bool result = (addrInfo != NULL);
-
-  if (result)
+  if ((result != NULL) && (SUCCEEDED(*result)))
   {
-    this->flags = addrInfo->ai_flags;
-    
-    this->family = addrInfo->ai_family;
-    this->length = addrInfo->ai_addrlen;
-    this->protocol = addrInfo->ai_protocol;
-    this->socktype = addrInfo->ai_socktype;
+    CHECK_POINTER_DEFAULT_HRESULT(*result, addrInfo);
 
-    SET_STRING(this->canonicalName, (addrInfo->ai_canonname != NULL) ? addrInfo->ai_canonname : canonicalName);
-    result &= TEST_STRING_WITH_NULL(this->canonicalName, ((addrInfo->ai_canonname != NULL) ? addrInfo->ai_canonname : canonicalName));
-
-    if (this->length != 0)
+    if (SUCCEEDED(*result))
     {
-      this->addr = ALLOC_MEM_SET(this->addr, SOCKADDR_STORAGE, 1, 0);
-      result &= (this->addr != NULL);
+      this->flags = addrInfo->ai_flags;
 
-      CHECK_CONDITION_EXECUTE(result, memcpy(this->addr, addrInfo->ai_addr, this->length));
-    }
-  }
+      this->family = addrInfo->ai_family;
+      this->length = addrInfo->ai_addrlen;
+      this->protocol = addrInfo->ai_protocol;
+      this->socktype = addrInfo->ai_socktype;
 
-  if (result)
-  {
-    if (this->IsIP())
-    {
-      DWORD addressStringLength = 128;
-      this->addressString = ALLOC_MEM_SET(this->addressString, wchar_t, addressStringLength, 0);
-      
-      if (this->addressString != NULL)
+      SET_STRING_HRESULT_WITH_NULL(this->canonicalName, ((addrInfo->ai_canonname != NULL) ? addrInfo->ai_canonname : canonicalName), *result);
+
+      if (this->length != 0)
       {
-        if (FAILED(WSAAddressToString((LPSOCKADDR)this->GetAddressIP(), this->length, NULL, this->addressString, &addressStringLength)))
+        this->addr = ALLOC_MEM_SET(this->addr, SOCKADDR_STORAGE, 1, 0);
+        CHECK_POINTER_HRESULT(*result, this->addr, *result, E_OUTOFMEMORY);
+
+        CHECK_CONDITION_EXECUTE(*result, memcpy(this->addr, addrInfo->ai_addr, this->length));
+      }
+    }
+
+    if (SUCCEEDED(*result))
+    {
+      if (this->IsIP())
+      {
+        DWORD addressStringLength = 128;
+        this->addressString = ALLOC_MEM_SET(this->addressString, wchar_t, addressStringLength, 0);
+
+        if (this->addressString != NULL)
         {
-          FREE_MEM(this->addressString);
+          if (FAILED(WSAAddressToString((LPSOCKADDR)this->GetAddressIP(), this->length, NULL, this->addressString, &addressStringLength)))
+          {
+            FREE_MEM(this->addressString);
+          }
         }
       }
     }
-  }
-
-  if (!result)
-  {
-    this->flags = IP_ADDRESS_FLAG_NONE;
-    FREE_MEM(this->addr);
-    FREE_MEM(this->canonicalName);
-    this->family = AF_UNSPEC;
-    this->length = 0;
-    this->protocol = 0;
-    this->socktype = 0;
-    FREE_MEM(this->addressString);
   }
 }
 
-CIpAddress::CIpAddress(const SOCKADDR_STORAGE *addr, unsigned int length)
+CIpAddress::CIpAddress(HRESULT *result, const SOCKADDR_STORAGE *addr, unsigned int length)
 {
   this->flags = IP_ADDRESS_FLAG_NONE;
   this->addr = NULL;
@@ -109,53 +99,45 @@ CIpAddress::CIpAddress(const SOCKADDR_STORAGE *addr, unsigned int length)
   this->socktype = 0;
   this->addressString = NULL;
 
-  bool result = ((addr != NULL) && (length > 0));
-
-  if (result)
+  if ((result != NULL) && (SUCCEEDED(*result)))
   {
-    this->family = addr->ss_family;
-    this->length = length;
+    CHECK_POINTER_DEFAULT_HRESULT(*result, addr);
+    CHECK_CONDITION_HRESULT(*result, length > 0, *result, E_INVALIDARG);
 
-    if (this->length != 0)
+    if (SUCCEEDED(*result))
     {
-      this->addr = ALLOC_MEM_SET(this->addr, SOCKADDR_STORAGE, 1, 0);
-      result &= (this->addr != NULL);
+      this->family = addr->ss_family;
+      this->length = length;
 
-      CHECK_CONDITION_EXECUTE(result, memcpy(this->addr, addr, this->length));
-    }
-  }
-
-  if (result)
-  {
-    if (this->IsIP())
-    {
-      DWORD addressStringLength = 128;
-      this->addressString = ALLOC_MEM_SET(this->addressString, wchar_t, addressStringLength, 0);
-      
-      if (this->addressString != NULL)
+      if (this->length != 0)
       {
-        if (FAILED(WSAAddressToString((LPSOCKADDR)this->GetAddressIP(), this->length, NULL, this->addressString, &addressStringLength)))
+        this->addr = ALLOC_MEM_SET(this->addr, SOCKADDR_STORAGE, 1, 0);
+        CHECK_POINTER_HRESULT(*result, this->addr, *result, E_OUTOFMEMORY);
+
+        CHECK_CONDITION_EXECUTE(*result, memcpy(this->addr, addr, this->length));
+      }
+    }
+
+    if (SUCCEEDED(*result))
+    {
+      if (this->IsIP())
+      {
+        DWORD addressStringLength = 128;
+        this->addressString = ALLOC_MEM_SET(this->addressString, wchar_t, addressStringLength, 0);
+
+        if (this->addressString != NULL)
         {
-          FREE_MEM(this->addressString);
+          if (FAILED(WSAAddressToString((LPSOCKADDR)this->GetAddressIP(), this->length, NULL, this->addressString, &addressStringLength)))
+          {
+            FREE_MEM(this->addressString);
+          }
         }
       }
     }
-  }
-
-  if (!result)
-  {
-    this->flags = IP_ADDRESS_FLAG_NONE;
-    FREE_MEM(this->addr);
-    FREE_MEM(this->canonicalName);
-    this->family = AF_UNSPEC;
-    this->length = 0;
-    this->protocol = 0;
-    this->socktype = 0;
-    FREE_MEM(this->addressString);
   }
 }
 
-CIpAddress::CIpAddress(const struct sockaddr *addr, unsigned int length)
+CIpAddress::CIpAddress(HRESULT *result, const struct sockaddr *addr, unsigned int length)
 {
   this->flags = IP_ADDRESS_FLAG_NONE;
   this->addr = NULL;
@@ -166,49 +148,41 @@ CIpAddress::CIpAddress(const struct sockaddr *addr, unsigned int length)
   this->socktype = 0;
   this->addressString = NULL;
 
-  bool result = ((addr != NULL) && (length > 0));
-
-  if (result)
+  if ((result != NULL) && (SUCCEEDED(*result)))
   {
-    this->family = addr->sa_family;
-    this->length = length;
+    CHECK_POINTER_DEFAULT_HRESULT(*result, addr);
+    CHECK_CONDITION_HRESULT(*result, length > 0, *result, E_INVALIDARG);
 
-    if (this->length != 0)
+    if (SUCCEEDED(*result))
     {
-      this->addr = ALLOC_MEM_SET(this->addr, SOCKADDR_STORAGE, 1, 0);
-      result &= (this->addr != NULL);
+      this->family = addr->sa_family;
+      this->length = length;
 
-      CHECK_CONDITION_EXECUTE(result, memcpy(this->addr, addr, this->length));
-    }
-  }
-
-  if (result)
-  {
-    if (this->IsIP())
-    {
-      DWORD addressStringLength = 128;
-      this->addressString = ALLOC_MEM_SET(this->addressString, wchar_t, addressStringLength, 0);
-      
-      if (this->addressString != NULL)
+      if (this->length != 0)
       {
-        if (FAILED(WSAAddressToString((LPSOCKADDR)this->GetAddressIP(), this->length, NULL, this->addressString, &addressStringLength)))
+        this->addr = ALLOC_MEM_SET(this->addr, SOCKADDR_STORAGE, 1, 0);
+        CHECK_POINTER_HRESULT(*result, this->addr, *result, E_OUTOFMEMORY);
+
+        CHECK_CONDITION_EXECUTE(*result, memcpy(this->addr, addr, this->length));
+      }
+    }
+
+    if (SUCCEEDED(*result))
+    {
+      if (this->IsIP())
+      {
+        DWORD addressStringLength = 128;
+        this->addressString = ALLOC_MEM_SET(this->addressString, wchar_t, addressStringLength, 0);
+
+        if (this->addressString != NULL)
         {
-          FREE_MEM(this->addressString);
+          if (FAILED(WSAAddressToString((LPSOCKADDR)this->GetAddressIP(), this->length, NULL, this->addressString, &addressStringLength)))
+          {
+            FREE_MEM(this->addressString);
+          }
         }
       }
     }
-  }
-
-  if (!result)
-  {
-    this->flags = IP_ADDRESS_FLAG_NONE;
-    FREE_MEM(this->addr);
-    FREE_MEM(this->canonicalName);
-    this->family = AF_UNSPEC;
-    this->length = 0;
-    this->protocol = 0;
-    this->socktype = 0;
-    FREE_MEM(this->addressString);
   }
 }
 
@@ -362,21 +336,20 @@ bool CIpAddress::IsMulticast(void)
 
 CIpAddress *CIpAddress::Clone(void)
 {
-  CIpAddress *clone = new CIpAddress(this->GetAddress(), this->GetAddressLength());
-  bool result = (clone != NULL);
+  HRESULT result = S_OK;
+  CIpAddress *clone = new CIpAddress(&result, this->GetAddress(), this->GetAddressLength());
+  CHECK_POINTER_HRESULT(result, clone, result, E_OUTOFMEMORY);
   
-  if (result)
+  if (SUCCEEDED(result))
   {
     clone->flags = this->flags;
 
-    SET_STRING(clone->canonicalName, this->canonicalName);
-    result &= TEST_STRING_WITH_NULL(clone->canonicalName, this->canonicalName);
+    SET_STRING_HRESULT_WITH_NULL(clone->canonicalName, this->canonicalName, result);
 
     clone->protocol = this->protocol;
     clone->socktype = this->socktype;
   }
 
-  CHECK_CONDITION_EXECUTE(!result, FREE_MEM_CLASS(clone));
-
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(clone));
   return clone;
 }

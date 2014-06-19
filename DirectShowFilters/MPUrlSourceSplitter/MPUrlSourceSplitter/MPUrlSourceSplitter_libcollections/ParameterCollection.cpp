@@ -22,8 +22,8 @@
 
 #include "ParameterCollection.h"
 
-CParameterCollection::CParameterCollection(void)
-  : CKeyedCollection()
+CParameterCollection::CParameterCollection(HRESULT *result)
+  : CKeyedCollection(result)
 {
 }
 
@@ -48,10 +48,10 @@ int CParameterCollection::CompareItemKeys(const wchar_t *firstKey, const wchar_t
 bool CParameterCollection::Add(const wchar_t *name, const wchar_t *value)
 {
   HRESULT result = S_OK;
-  CParameter *parameter = new CParameter(name, value);
+  CParameter *parameter = new CParameter(&result, name, value);
   CHECK_POINTER_HRESULT(result, parameter, result, E_OUTOFMEMORY);
 
-  CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->CCollection::Add(parameter) ? result : E_OUTOFMEMORY);
+  CHECK_CONDITION_HRESULT(result, this->CCollection::Add(parameter), result, E_OUTOFMEMORY);
   CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(parameter));
 
   return SUCCEEDED(result);
@@ -182,28 +182,21 @@ CParameter *CParameterCollection::Clone(CParameter *item)
 
 bool CParameterCollection::CopyParameter(const wchar_t *parameterName, bool invariant, const wchar_t *newParameterName)
 {
-  bool continueAdding = false;
+  HRESULT result = ((parameterName == NULL) || (newParameterName == NULL)) ? E_POINTER : S_OK;
 
-  if ((parameterName != NULL) && (newParameterName != NULL))
+  if (SUCCEEDED(result))
   {
-    continueAdding = true;
     if (this->Contains(parameterName, invariant))
     {
-      CParameter *newParameter = new CParameter(newParameterName, this->GetValue(parameterName, invariant, L""));
-      continueAdding &= (newParameter != NULL);
-      if (continueAdding)
-      {
-        continueAdding = this->CCollection::Add(newParameter);
-      }
+      CParameter *newParameter = new CParameter(&result, newParameterName, this->GetValue(parameterName, invariant, L""));
+      CHECK_POINTER_HRESULT(result, newParameter, result, E_OUTOFMEMORY);
 
-      if (!continueAdding)
-      {
-        FREE_MEM_CLASS(newParameter);
-      }
+      CHECK_CONDITION_HRESULT(result, this->CCollection::Add(newParameter), result, E_OUTOFMEMORY);
+      CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(newParameter));
     }
   }
 
-  return continueAdding;
+  return SUCCEEDED(result);
 }
 
 bool CParameterCollection::Remove(const wchar_t *name, bool invariant)

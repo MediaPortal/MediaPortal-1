@@ -22,28 +22,33 @@
 
 #include "SocketContext.h"
 
-CSocketContext::CSocketContext(void)
+CSocketContext::CSocketContext(HRESULT *result)
+  : CFlags()
 {
   this->internalSocket = INVALID_SOCKET;
-  this->wsaInitialized = false;
-
-  WORD versionRequested;
-  WSADATA wsaData;
-
-  /* Use the MAKEWORD(lowbyte, highbyte) macro declared in Windef.h */
-  versionRequested = MAKEWORD(2, 2);
-
-  this->wsaInitialized = (SUCCEEDED(HRESULT_FROM_WIN32(WSAStartup(versionRequested, &wsaData))));
   this->ipAddress = NULL;
   this->receivedDataLength = 0;
   this->sentDataLength = 0;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    WORD versionRequested;
+    WSADATA wsaData;
+
+    /* Use the MAKEWORD(lowbyte, highbyte) macro declared in Windef.h */
+    versionRequested = MAKEWORD(2, 2);
+
+    HRESULT res = HRESULT_FROM_WIN32(WSAStartup(versionRequested, &wsaData));
+    CHECK_CONDITION_HRESULT(*result, SUCCEEDED(res), *result, res);
+
+    this->flags |= SUCCEEDED(*result) ? SOCKET_CONTEXT_FLAG_WSA_INITIALIZED : SOCKET_CONTEXT_FLAG_NONE;
+  }
 }
 
-CSocketContext::CSocketContext(SOCKET socket)
+CSocketContext::CSocketContext(HRESULT *result, SOCKET socket)
+  : CFlags()
 {
   this->internalSocket = socket;
-  this->wsaInitialized = false;
-
   this->ipAddress = NULL;
   this->receivedDataLength = 0;
   this->sentDataLength = 0;
@@ -54,7 +59,7 @@ CSocketContext::~CSocketContext(void)
   this->CloseSocket();
   FREE_MEM_CLASS(this->ipAddress);
 
-  if (this->wsaInitialized)
+  if (this->IsSetFlags(SOCKET_CONTEXT_FLAG_WSA_INITIALIZED))
   {
     WSACleanup();
   }
@@ -340,7 +345,7 @@ HRESULT CSocketContext::Receive(char *buffer, unsigned int length, int flags, un
 
       if (sender != NULL)
       {
-        *sender = new CIpAddress(&sockAddr, sockAddrLength);
+        *sender = new CIpAddress(&result, &sockAddr, sockAddrLength);
         CHECK_POINTER_HRESULT(result, (*sender), result, E_OUTOFMEMORY);
 
         if (SUCCEEDED(result))
@@ -348,6 +353,8 @@ HRESULT CSocketContext::Receive(char *buffer, unsigned int length, int flags, un
           (*sender)->SetProtocol(this->GetIpAddress()->GetProtocol());
           (*sender)->SetSockType(this->GetIpAddress()->GetSockType());
         }
+
+        CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(*sender));
       }
     }
   }

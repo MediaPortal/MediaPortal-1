@@ -28,10 +28,16 @@
 
 #include <stdint.h>
 
+#define HTTP_DOWNLOAD_REQUEST_FLAG_NONE                               DOWNLOAD_REQUEST_FLAG_NONE
+
+#define HTTP_DOWNLOAD_REQUEST_FLAG_IGNORE_CONTENT_LENGTH              (1 << (DOWNLOAD_REQUEST_FLAG_LAST + 0))
+
+#define HTTP_DOWNLOAD_REQUEST_FLAG_LAST                               (DOWNLOAD_REQUEST_FLAG_LAST + 1)
+
 class CHttpDownloadRequest : public CDownloadRequest
 {
 public:
-  CHttpDownloadRequest(void);
+  CHttpDownloadRequest(HRESULT *result);
   virtual ~CHttpDownloadRequest(void);
 
   /* get methods */
@@ -103,10 +109,6 @@ public:
 
   /* other methods */
 
-  // deeply clones current instance
-  // @result : deep clone of current instance or NULL if error
-  virtual CDownloadRequest *Clone(void);
-
 protected:
 
   // ranges start position and end position
@@ -125,16 +127,19 @@ protected:
   // the HTTP protocol version
   int httpVersion;
 
-  // specifies if CURL have to ignore content length
-  bool ignoreContentLength;
-
   // holds collection of additional headers to set to server
   CHttpHeaderCollection *headers;
+
+  /* methods */
+
+  // creates empty download request
+  // @return : download request or NULL if error
+  virtual CDownloadRequest *CreateDownloadRequest(void);
 
   // deeply clones current instance to cloned request
   // @param  clonedRequest : cloned request to hold clone of current instance
   // @return : true if successful, false otherwise
-  virtual bool CloneInternal(CHttpDownloadRequest *clonedRequest);
+  virtual bool CloneInternal(CDownloadRequest *clonedRequest);
 };
 
 #endif

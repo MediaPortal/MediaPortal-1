@@ -22,7 +22,7 @@
 
 #include "FreeSpace.h"
 
-CFreeSpace::CFreeSpace(void)
+CFreeSpace::CFreeSpace(HRESULT *result)
 {
   this->start = 0;
   this->length = 0;

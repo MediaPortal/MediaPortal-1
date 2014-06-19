@@ -28,44 +28,56 @@
 #include <assert.h>
 #include <stdio.h>
 
-CLogger::CLogger(CStaticLogger *staticLogger, CParameterCollection *configuration)
+CLogger::CLogger(HRESULT *result, CStaticLogger *staticLogger, CParameterCollection *configuration)
 {
-  assert(staticLogger != NULL);
-  assert(configuration != NULL);
-
-  this->staticLogger = staticLogger;
+  this->staticLogger = NULL;
   this->mutex = NULL;
   this->allowedLogVerbosity = LOGGER_NONE;
+  this->loggerInstance = GUID_NULL;
 
-  this->SetParameters(configuration);
-
-  if (CoCreateGuid(&this->loggerInstance) != S_OK)
+  if ((result != NULL) && (SUCCEEDED(*result)))
   {
-    this->loggerInstance = GUID_NULL;
-  }
+    CHECK_POINTER_DEFAULT_HRESULT(*result, staticLogger);
+    CHECK_POINTER_DEFAULT_HRESULT(*result, configuration);
 
-  this->staticLogger->Add();
+    if (SUCCEEDED(*result))
+    {
+      this->staticLogger = staticLogger;
+
+      this->SetParameters(configuration);
+      CoCreateGuid(&this->loggerInstance);
+
+      this->staticLogger->Add();
+    }
+  }
 }
 
-CLogger::CLogger(CLogger *logger)
+CLogger::CLogger(HRESULT *result, CLogger *logger)
 {
-  assert(logger != NULL);
-
-  this->staticLogger = logger->staticLogger;
-  this->mutex = logger->mutex;
-  this->allowedLogVerbosity = logger->allowedLogVerbosity;
-
-  if (CoCreateGuid(&this->loggerInstance) != S_OK)
+  this->staticLogger = NULL;
+  this->mutex = NULL;
+  this->allowedLogVerbosity = LOGGER_NONE;
+  this->loggerInstance = GUID_NULL;
+  
+  if ((result != NULL) && (SUCCEEDED(*result)))
   {
-    this->loggerInstance = GUID_NULL;
-  }
+    CHECK_POINTER_DEFAULT_HRESULT(*result, logger);
 
-  this->staticLogger->Add();
+    if (SUCCEEDED(*result))
+    {
+      this->staticLogger = logger->staticLogger;
+      this->mutex = logger->mutex;
+      this->allowedLogVerbosity = logger->allowedLogVerbosity;
+
+      CoCreateGuid(&this->loggerInstance);
+      this->staticLogger->Add();
+    }
+  }
 }
 
 CLogger::~CLogger(void)
 {
-  this->staticLogger->Remove();
+  CHECK_CONDITION_NOT_NULL_EXECUTE(this->staticLogger, this->staticLogger->Remove());
 }
 
 void CLogger::SetParameters(CParameterCollection *configuration)

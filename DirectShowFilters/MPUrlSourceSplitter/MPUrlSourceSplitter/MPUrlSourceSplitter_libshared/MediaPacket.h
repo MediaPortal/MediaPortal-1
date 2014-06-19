@@ -37,7 +37,7 @@
 class CMediaPacket : public CCacheFileItem
 {
 public:
-  CMediaPacket(void);
+  CMediaPacket(HRESULT *result);
   virtual ~CMediaPacket();
 
   /* get methods */
@@ -98,6 +98,8 @@ protected:
   int64_t presentationTimestamp;
   // holds presentation timestamp ticks per second
   unsigned int presentationTimestampTicksPerSecond;
+
+  /* methods */
 
   // gets new instance of media packet
   // @return : new media packet instance or NULL if error

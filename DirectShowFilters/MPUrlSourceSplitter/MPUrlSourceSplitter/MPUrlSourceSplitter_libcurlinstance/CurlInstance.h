@@ -27,8 +27,13 @@
 #include "LinearBuffer.h"
 #include "DownloadRequest.h"
 #include "DownloadResponse.h"
+#include "Flags.h"
 
 #include <curl/curl.h>
+
+#define CULR_INSTANCE_FLAG_NONE                                               FLAGS_NONE
+
+#define CURL_INSTANCE_FLAG_LAST                                               (FLAGS_LAST + 0)
 
 #define METHOD_CREATE_CURL_WORKER_NAME                                        L"CreateCurlWorker()"
 #define METHOD_DESTROY_CURL_WORKER_NAME                                       L"DestroyCurlWorker()"
@@ -52,7 +57,7 @@
 
 #include "NetworkInterfaceCollection.h"
 
-class CCurlInstance
+class CCurlInstance : public CFlags
 {
 public:
   // initializes a new instance of CCurlInstance class
@@ -60,7 +65,7 @@ public:
   // @param mutex : mutex for locking access to receive data buffer
   // @param protocolName : the protocol name instantiating
   // @param instanceName : the name of CURL instance
-  CCurlInstance(CLogger *logger, HANDLE mutex, const wchar_t *protocolName, const wchar_t *instanceName);
+  CCurlInstance(HRESULT *result, CLogger *logger, HANDLE mutex, const wchar_t *protocolName, const wchar_t *instanceName);
 
   // destructor
   virtual ~CCurlInstance(void);
@@ -104,8 +109,8 @@ public:
 
   // sets network interface name
   // @param networkInterfaceName : the network interface name to set
-  // @return : true if successful, false otherwise
-  virtual bool SetNetworkInterfaceName(const wchar_t *networkInterfaceName);
+  // @return : S_OK if successful, error code otherwise
+  virtual HRESULT SetNetworkInterfaceName(const wchar_t *networkInterfaceName);
 
   // set finish time (methods like Initialize(), StartReceivingData() and StopReceivingData() must finish before this time)
   // @param finishTime : the finish time to set
