@@ -59,13 +59,12 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
     private Thread listenThread;
     private string serverIp;
     private bool listen = true;
-    private int streams = 0;
     private Object StartStreamLock = new Object();
 
     private Dictionary<int, RtspClients> clients = new Dictionary<int, RtspClients>();
     private Dictionary<int, RtspCards> cards = new Dictionary<int, RtspCards>();
 
-    //private static readonly Regex REGEX_STATUS_LINE = new Regex(@"(?<request>\w+)\s([^.]+?)\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b", RegexOptions.Singleline);
+
 
     /// <summary>
     /// Enumeration to describe the available Rtsp Methods, used in responses
@@ -345,37 +344,32 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
           if (clients[int.Parse(requestHeader.sessionId)].isTunedToFrequency)
           {
             this.LogDebug("SAT>IP: sync Pids with Filter for sessionID: {0}", requestHeader.sessionId);
-            syncPidsWithFilter(int.Parse(requestHeader.sessionId), cards[clients[int.Parse(requestHeader.sessionId)].cardId].devicePath/*"MyNamedPipe"*/);
+            syncPidsWithFilter(int.Parse(requestHeader.sessionId), cards[clients[int.Parse(requestHeader.sessionId)].cardId].devicePath);
           }
 
           parseQuery(int.Parse(requestHeader.sessionId), query);
-
-          // starting the stream
-          //if (clients[int.Parse(requestHeader.sessionId)].pids.Count != 1 && (int)clients[int.Parse(requestHeader.sessionId)].pids[0] != 0)
-          //{
-          /*if (query.Get("addpids") == "18") // for debuging only...
-          {
-            // TODO: lock?!
-            this.LogDebug("Start Stream!");
-            this.LogDebug("PLAY CLIENT PORT: " + clients[int.Parse(requestHeader.sessionId)].rtpClientPort.ToString());
-            rtpStreams.Add(streams, new rtpStream(StartStreamThread(streams, clients[int.Parse(requestHeader.sessionId)].ip, clients[int.Parse(requestHeader.sessionId)].rtpClientPort, "test3.ts")));
-            clients[int.Parse(requestHeader.sessionId)].streamId = streams;
-            streams++;
-          }*/
           
           // TODO: Add proper error handling if no tuning Detail is found
           // TODO: check for already tuned cards to this frequency + modulation system (e.g DVB-C)
 
-          if (/*!clients[int.Parse(requestHeader.sessionId)].isTunedToFrequency && */clients[int.Parse(requestHeader.sessionId)].tunedToFrequency != clients[int.Parse(requestHeader.sessionId)].freq)
+          if (clients[int.Parse(requestHeader.sessionId)].tunedToFrequency != clients[int.Parse(requestHeader.sessionId)].freq)
           {
             this.LogDebug("SAT>IP: tuned Freq [{0}] != requested Freq [{1}] - sessionId {2}",clients[int.Parse(requestHeader.sessionId)].tunedToFrequency, clients[int.Parse(requestHeader.sessionId)].freq, requestHeader.sessionId);
             
             
             int cardKey;
-            if (!cardAlreadyTunedToFreq(clients[int.Parse(requestHeader.sessionId)].msys, clients[int.Parse(requestHeader.sessionId)].freq, out cardKey))
+            if (cardAlreadyTunedToFreq(clients[int.Parse(requestHeader.sessionId)].msys, clients[int.Parse(requestHeader.sessionId)].freq, out cardKey))
+            {
+              // there is already a card tuned to the frequency so lets add us to this card.
+              this.LogDebug("SAT>IP: there is already a card tuned to the Freq={0} - sessionID: {1}", clients[int.Parse(requestHeader.sessionId)].freq, requestHeader.sessionId);
+              cards[cardKey].AddSlave(int.Parse(requestHeader.sessionId));
+              clients[int.Parse(requestHeader.sessionId)].cardId = cardKey;
+              clients[int.Parse(requestHeader.sessionId)].slot = cards[cardKey].getSlot(int.Parse(requestHeader.sessionId));
+            }
+            else
             {
               this.LogDebug("SAT>IP: there is no card already tuned to the Freq={0} - sessionID: {1}", clients[int.Parse(requestHeader.sessionId)].freq, requestHeader.sessionId);
-              
+
               // remove user from current card
               if (clients[int.Parse(requestHeader.sessionId)].isTunedToFrequency)
               {
@@ -390,7 +384,7 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
                 }
               }
 
-              
+
               TuningDetail _tuningDetail = ChannelManagement.GetTuningDetail(getChannelTypeAsInt(clients[int.Parse(requestHeader.sessionId)].msys), (clients[int.Parse(requestHeader.sessionId)].freq * 1000));
 
               if (_tuningDetail == null)
@@ -400,7 +394,7 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
               IUser _user = UserFactory.CreateBasicUser("SAT>IP - " + clients[int.Parse(requestHeader.sessionId)].ip);
               IVirtualCard _card;
               this.LogInfo("SAT>IP: Tuning to freq={0} for sessionId: {1}", clients[int.Parse(requestHeader.sessionId)].freq, requestHeader.sessionId);
-              //TvResult result = /*ServiceAgents.Instance.ControllerServiceAgent*/TvControllerInstance.StartTimeShifting(_user.Name, _tuningDetail.IdChannel, out _card, out _user);
+
               TvResult result = GlobalServiceProvider.Get<IControllerService>().StartTimeShifting(_user.Name, _tuningDetail.IdChannel, out _card, out _user);
 
               if (result != TvResult.Succeeded)
@@ -421,27 +415,21 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
               card.msys = clients[int.Parse(requestHeader.sessionId)].msys;
               cards.Add(card.id, card);
               clients[int.Parse(requestHeader.sessionId)].cardId = card.id;
-              clients[int.Parse(requestHeader.sessionId)].slot = card.getSlot();
+              clients[int.Parse(requestHeader.sessionId)].slot = card.getSlot(int.Parse(requestHeader.sessionId));
 
               // TODO remove
               clients[int.Parse(requestHeader.sessionId)].card = _card;
               clients[int.Parse(requestHeader.sessionId)].user = _user;
               clients[int.Parse(requestHeader.sessionId)].tuningDetail = _tuningDetail;
 
-              // TODO: change the communication to use the right pipe name
               cards[clients[int.Parse(requestHeader.sessionId)].cardId].devicePath = GlobalServiceProvider.Get<IControllerService>().CardDevice(_card.Id); // device path
-            }
-            else
-            {
-              // there is already a card tuned to the frequency slo lets add us to this card.
-              cards[cardKey].AddSlave(int.Parse(requestHeader.sessionId));
             }
 
             clients[int.Parse(requestHeader.sessionId)].isTunedToFrequency = true;
             clients[int.Parse(requestHeader.sessionId)].tunedToFrequency = clients[int.Parse(requestHeader.sessionId)].freq;
 
             // send commands to the filter
-            FilterCommunication communication = new FilterCommunication(cards[clients[int.Parse(requestHeader.sessionId)].cardId].devicePath/*"MyNamedPipe"*/, clients[int.Parse(requestHeader.sessionId)].slot);
+            FilterCommunication communication = new FilterCommunication(cards[clients[int.Parse(requestHeader.sessionId)].cardId].devicePath, clients[int.Parse(requestHeader.sessionId)].slot);
             communication.addClientPort(clients[int.Parse(requestHeader.sessionId)].rtpClientPort);
             communication.addClientIp(clients[int.Parse(requestHeader.sessionId)].ip);
             communication.requestNewSlot();
@@ -474,10 +462,6 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
           this.LogDebug(rtspDescribeRequest.ToString());
           this.LogDebug("-----------");
 
-          //rtpStreams.Add(streams, StartStream(clients[int.Parse(requestHeader.sessionId)].ip, clients[int.Parse(requestHeader.sessionId)].rtpClientPort, "test.ts"));
-          //streams++;
-          //rtpStreams[streams].Start(clients[int.Parse(requestHeader.sessionId)].ip, clients[int.Parse(requestHeader.sessionId)].rtpClientPort, "test.ts");
-          //RtpSetup(clients[int.Parse(requestHeader.sessionId)].ip, clients[int.Parse(requestHeader.sessionId)].rtpClientPort, "test.ts");
           #endregion
           break;
         case RtspRequestMethod.DESCRIBE:
@@ -674,7 +658,7 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
     private bool cardAlreadyTunedToFreq(string msys, int freq, out int cardKey)
     {
       foreach (KeyValuePair<int, RtspCards> card in cards) {
-        if (card.Value.freq == freq && card.Value.msys == msys) {
+        if (card.Value.freq == freq && card.Value.msys == msys && card.Value.getNumberOfFreeSlots() > 0) {
           cardKey = card.Key;
           return true;
         }

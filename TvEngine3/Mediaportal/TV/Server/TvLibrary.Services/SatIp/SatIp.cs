@@ -54,9 +54,6 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp
         private static int _rtspStreamingPort = 554;
         static UPnPLightServer _server = null;
 
-        private Channel _channel;
-        private IVirtualCard _card;
-
         #endregion
 
         public SatIpServer()
@@ -66,12 +63,6 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp
             _server.Start();
 
             _rtsp = new RtspServer();
-            
-            // ToDo: move it to proper places - just temprary here
-            /*IUser user = UserFactory.CreateBasicUser("setuptv");
-            TvResult result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(user.Name, _channel.IdChannel, out _card, out user);
-            ServiceAgents.Instance.ControllerServiceAgent.CardDevice(_card.Id); // device path
-            Log.Info("SAT>IP: Server started");*/
         }
 
         public void stop()

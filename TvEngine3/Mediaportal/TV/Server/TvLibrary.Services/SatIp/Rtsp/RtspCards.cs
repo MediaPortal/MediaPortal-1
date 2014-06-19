@@ -7,13 +7,17 @@ using System.Text;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVService.Interfaces;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
 {
   class RtspCards
   {
     private static Int32 counter = 0;
-    private Int32 slotCounter = 0;
+    // 8 is the number of maximal available slots. This number should be equal with the number defined in the filter
+    // the defaul falue for a int array is "0" so we don't have to care about initalisation
+    // 0 = slot unused; anything else = slot used
+    private int[] slotMatrix = new int[8];
     private Int32 _id;
     private int _owner;
     private ArrayList _slaves = new ArrayList();
@@ -68,13 +72,52 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
         {
           _slaves.Remove(sessionId);
         }
+
+        for (int i = 0; i < slotMatrix.Length; ++i)
+        {
+          if (slotMatrix[i] == sessionId)
+          {
+            slotMatrix[i] = 0;  // free slot again
+            break;
+          }
+        }
       }
     }
 
-    public int getSlot()
+    public int getSlot(int sessionId)
     {
-      slotCounter++;
-      return slotCounter-1;
+      lock (this)
+      {
+        for (int i = 0; i < slotMatrix.Length; ++i)
+        {
+          if (slotMatrix[i] == 0)
+          {
+            slotMatrix[i] = sessionId;
+            return i;
+          }
+        }
+      }
+
+      this.LogError("SAT>IP: Error determining free slot for card on freq = {0}", _freq);
+      return -1;
+    }
+
+    public int getNumberOfFreeSlots()
+    {
+      int count = 0;
+
+      lock (this)
+      {
+        for (int i = 0; i < slotMatrix.Length; ++i)
+        {
+          if (slotMatrix[i] == 0)
+          {
+            ++count;
+          }
+        }
+      }
+
+      return count;
     }
 
     /// <summary>
