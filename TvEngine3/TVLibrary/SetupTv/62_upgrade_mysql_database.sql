@@ -33,4 +33,4 @@ ALTER TABLE tuningdetail ENGINE=InnoDB ROW_FORMAT=COMPACT;
 ALTER TABLE tvmoviemapping ENGINE=InnoDB ROW_FORMAT=COMPACT;
 ALTER TABLE version ENGINE=InnoDB ROW_FORMAT=COMPACT;
 
-UPDATE Version SET versionNumber=62;
+UPDATE version SET versionNumber=62 WHERE idVersion=1;
