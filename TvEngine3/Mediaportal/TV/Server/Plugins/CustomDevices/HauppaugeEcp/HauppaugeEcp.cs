@@ -21,6 +21,7 @@
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Text;
 using DirectShowLib;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
@@ -63,7 +64,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
       int GetDriverVersion(out uint versionMajor, out uint versionMinor, out uint revision, out uint build);
 
       [PreserveSig]
-      int GetGeneralInfo([MarshalAs(UnmanagedType.LPStr)] out string info);
+      int GetGeneralInfo([MarshalAs(UnmanagedType.LPStr)] StringBuilder info, uint infoSize);
     }
 
     #region variables
@@ -107,11 +108,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
         this.LogWarn("Hauppauge ECP: failed to read driver version, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       }
 
-      string generalInfo;
-      hr = _interfaceEcp.GetGeneralInfo(out generalInfo);
+      StringBuilder generalInfo = new StringBuilder(4096);
+      hr = _interfaceEcp.GetGeneralInfo(generalInfo, 4096);
       if (hr == (int)HResult.Severity.Success)
       {
-        this.LogDebug("  info         = {0}", generalInfo);
+        this.LogDebug("  info         = {0}", generalInfo.ToString());
       }
       else
       {
