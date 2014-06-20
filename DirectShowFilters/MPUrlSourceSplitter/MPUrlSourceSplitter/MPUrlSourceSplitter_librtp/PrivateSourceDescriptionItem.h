@@ -31,7 +31,7 @@ class CPrivateSourceDescriptionItem : public CSourceDescriptionItem
 {
 public:
   // initializes a new instance of CPrivateSourceDescriptionItem class
-  CPrivateSourceDescriptionItem(void);
+  CPrivateSourceDescriptionItem(HRESULT *result);
   virtual ~CPrivateSourceDescriptionItem(void);
 
   /* get methods */

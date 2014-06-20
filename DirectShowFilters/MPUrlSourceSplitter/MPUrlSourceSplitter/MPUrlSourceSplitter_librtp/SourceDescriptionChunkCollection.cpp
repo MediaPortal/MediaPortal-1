@@ -22,8 +22,8 @@
 
 #include "SourceDescriptionChunkCollection.h"
 
-CSourceDescriptionChunkCollection::CSourceDescriptionChunkCollection(void)
-  : CCollection()
+CSourceDescriptionChunkCollection::CSourceDescriptionChunkCollection(HRESULT *result)
+  : CCollection(result)
 {
 }
 

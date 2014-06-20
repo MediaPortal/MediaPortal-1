@@ -22,8 +22,8 @@
 
 #include "UserNameSourceDescriptionItem.h"
 
-CUserNameSourceDescriptionItem::CUserNameSourceDescriptionItem(void)
-  : CSourceDescriptionItem()
+CUserNameSourceDescriptionItem::CUserNameSourceDescriptionItem(HRESULT *result)
+  : CSourceDescriptionItem(result)
 {
   this->userName = NULL;
   this->type = USER_NAME_SOURCE_DESCRIPTION_ITEM_TYPE;

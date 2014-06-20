@@ -25,8 +25,8 @@
 
 #include <stdint.h>
 
-CMpegAudioRtpPacket::CMpegAudioRtpPacket(void)
-  : CRtpPacket()
+CMpegAudioRtpPacket::CMpegAudioRtpPacket(HRESULT *result)
+  : CRtpPacket(result)
 {
   this->fragOffset = UINT_MAX;
 }
@@ -93,7 +93,12 @@ bool CMpegAudioRtpPacket::Parse(const unsigned char *buffer, unsigned int length
 
 CRtpPacket *CMpegAudioRtpPacket::CreateRtpPacket(void)
 {
-  return new CMpegAudioRtpPacket();
+  HRESULT result = S_OK;
+  CMpegAudioRtpPacket *packet = new CMpegAudioRtpPacket(&result);
+  CHECK_POINTER_HRESULT(result, packet, result, E_OUTOFMEMORY);
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(packet));
+  return packet;
 }
 
 bool CMpegAudioRtpPacket::CloneInternal(CRtpPacket *rtpPacket)

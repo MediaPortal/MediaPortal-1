@@ -25,13 +25,19 @@
 
 #include <stdint.h>
 
-CGoodbyeRtcpPacket::CGoodbyeRtcpPacket(void)
-  : CRtcpPacket()
+CGoodbyeRtcpPacket::CGoodbyeRtcpPacket(HRESULT *result)
+  : CRtcpPacket(result)
 {
   this->reason = NULL;
-  this->senderSynchronizationSourceIdentifiers = new CIdentifierCollection();
+  this->senderSynchronizationSourceIdentifiers = NULL;
 
   this->packetType = GOODBYE_RTCP_PACKET_TYPE;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->senderSynchronizationSourceIdentifiers = new CIdentifierCollection(result);
+    CHECK_POINTER_HRESULT(*result, this->senderSynchronizationSourceIdentifiers, *result, E_OUTOFMEMORY);
+  }
 }
 
 CGoodbyeRtcpPacket::~CGoodbyeRtcpPacket(void)
@@ -147,7 +153,7 @@ bool CGoodbyeRtcpPacket::SetReason(const wchar_t *reason)
 
 bool CGoodbyeRtcpPacket::HasReason(void)
 {
-  return ((this->flags & GOODBYE_RTCP_PACKET_FLAG_REASON) != 0);
+  return this->IsSetFlags(GOODBYE_RTCP_PACKET_FLAG_REASON);
 }
 
 void CGoodbyeRtcpPacket::Clear(void)

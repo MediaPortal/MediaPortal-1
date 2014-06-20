@@ -22,8 +22,8 @@
 
 #include "NoteSourceDescriptionItem.h"
 
-CNoteSourceDescriptionItem::CNoteSourceDescriptionItem(void)
-  : CSourceDescriptionItem()
+CNoteSourceDescriptionItem::CNoteSourceDescriptionItem(HRESULT *result)
+  : CSourceDescriptionItem(result)
 {
   this->note = NULL;
   this->type = NOTE_SOURCE_DESCRIPTION_ITEM_TYPE;

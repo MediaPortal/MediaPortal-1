@@ -23,8 +23,8 @@
 #include "SenderReportRtcpPacket.h"
 #include "BufferHelper.h"
 
-CSenderReportRtcpPacket::CSenderReportRtcpPacket(void)
-  : CRtcpPacket()
+CSenderReportRtcpPacket::CSenderReportRtcpPacket(HRESULT *result)
+  : CRtcpPacket(result)
 {
   this->senderSynchronizationSourceIdentifier = 0;
   this->ntpTimestamp = 0;
@@ -34,9 +34,15 @@ CSenderReportRtcpPacket::CSenderReportRtcpPacket(void)
 
   this->profileSpecificExtensions = NULL;
   this->profileSpecificExtensionsLength = 0;
-  this->reportBlocks = new CReportBlockCollection();
+  this->reportBlocks = NULL;
 
   this->packetType = SENDER_REPORT_RTCP_PACKET_TYPE;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->reportBlocks = new CReportBlockCollection(result);
+    CHECK_POINTER_HRESULT(*result, this->reportBlocks, *result, E_OUTOFMEMORY);
+  }
 }
 
 CSenderReportRtcpPacket::~CSenderReportRtcpPacket(void)
@@ -164,7 +170,7 @@ void CSenderReportRtcpPacket::SetSenderOctetCount(unsigned int senderOctetCount)
 
 bool CSenderReportRtcpPacket::HasProfileSpecificExtensions(void)
 {
-  return ((this->flags & SENDER_REPORT_RTCP_PACKET_FLAG_PROFILE_EXTENSIONS) != 0);
+  return this->IsSetFlags(SENDER_REPORT_RTCP_PACKET_FLAG_PROFILE_EXTENSIONS);
 }
 
 void CSenderReportRtcpPacket::Clear(void)

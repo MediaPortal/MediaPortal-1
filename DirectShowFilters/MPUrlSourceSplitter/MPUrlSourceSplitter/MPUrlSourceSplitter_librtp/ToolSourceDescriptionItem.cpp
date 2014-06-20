@@ -22,8 +22,8 @@
 
 #include "ToolSourceDescriptionItem.h"
 
-CToolSourceDescriptionItem::CToolSourceDescriptionItem(void)
-  : CSourceDescriptionItem()
+CToolSourceDescriptionItem::CToolSourceDescriptionItem(HRESULT *result)
+  : CSourceDescriptionItem(result)
 {
   this->tool = NULL;
   this->type = TOOL_SOURCE_DESCRIPTION_ITEM_TYPE;

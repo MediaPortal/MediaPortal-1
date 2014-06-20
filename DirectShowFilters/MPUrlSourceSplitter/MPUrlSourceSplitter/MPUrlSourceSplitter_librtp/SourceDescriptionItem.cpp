@@ -25,7 +25,7 @@
 
 #include <stdint.h>
 
-CSourceDescriptionItem::CSourceDescriptionItem(void)
+CSourceDescriptionItem::CSourceDescriptionItem(HRESULT *result)
 {
   this->type = UINT_MAX;
   this->payload = NULL;

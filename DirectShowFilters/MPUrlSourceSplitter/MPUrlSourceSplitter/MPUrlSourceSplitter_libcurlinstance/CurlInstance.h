@@ -31,7 +31,11 @@
 
 #include <curl/curl.h>
 
-#define CULR_INSTANCE_FLAG_NONE                                               FLAGS_NONE
+#define HRESULT_FROM_CURL_CODE(curlCode)                                      ((curlCode != 0) ? (HRESULT)((curlCode << 8) | 0x80000000) : 0)
+#define IS_CURL_ERROR(error)                                                  ((error & 0xFFFF00FF) == 0x80000000)
+#define CURL_CODE_FROM_HRESULT(error)                                         ((CURLcode)((error & 0x0000FF00) >> 8))
+
+#define CURL_INSTANCE_FLAG_NONE                                               FLAGS_NONE
 
 #define CURL_INSTANCE_FLAG_LAST                                               (FLAGS_LAST + 0)
 
@@ -234,11 +238,11 @@ protected:
 
   // creates libcurl worker
   // @return : S_OK if successful
-  HRESULT CreateCurlWorker(void);
+  virtual HRESULT CreateCurlWorker(void);
 
   // destroys libcurl worker
   // @return : S_OK if successful
-  HRESULT DestroyCurlWorker(void);
+  virtual HRESULT DestroyCurlWorker(void);
 
   // callback function for receiving data from libcurl
   // its default write callback when not specified other callback

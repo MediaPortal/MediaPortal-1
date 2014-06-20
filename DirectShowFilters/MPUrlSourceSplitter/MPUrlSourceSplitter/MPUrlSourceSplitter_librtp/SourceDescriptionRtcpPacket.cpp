@@ -22,12 +22,18 @@
 
 #include "SourceDescriptionRtcpPacket.h"
 
-CSourceDescriptionRtcpPacket::CSourceDescriptionRtcpPacket(void)
-  : CRtcpPacket()
+CSourceDescriptionRtcpPacket::CSourceDescriptionRtcpPacket(HRESULT *result)
+  : CRtcpPacket(result)
 {
-  this->chunks = new CSourceDescriptionChunkCollection();
+  this->chunks = NULL;
 
   this->packetType = SOURCE_DESCRIPTION_RTCP_PACKET_TYPE;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->chunks = new CSourceDescriptionChunkCollection(result);
+    CHECK_POINTER_HRESULT(*result, this->chunks, *result, E_OUTOFMEMORY);
+  }
 }
 
 CSourceDescriptionRtcpPacket::~CSourceDescriptionRtcpPacket(void)
@@ -114,7 +120,8 @@ bool CSourceDescriptionRtcpPacket::Parse(const unsigned char *buffer, unsigned i
     // parse chunks
     while (result && (position < this->payloadSize))
     {
-      CSourceDescriptionChunk *chunk = new CSourceDescriptionChunk();
+      HRESULT res = S_OK;
+      CSourceDescriptionChunk *chunk = new CSourceDescriptionChunk(&res);
       result &= (chunk != NULL);
 
       if (result)

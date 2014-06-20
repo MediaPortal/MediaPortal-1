@@ -32,7 +32,7 @@ class CNullSourceDescriptionItem : public CSourceDescriptionItem
 {
 public:
   // initializes a new instance of CNullSourceDescriptionItem class
-  CNullSourceDescriptionItem(void);
+  CNullSourceDescriptionItem(HRESULT *result);
   virtual ~CNullSourceDescriptionItem(void);
 
   /* get methods */

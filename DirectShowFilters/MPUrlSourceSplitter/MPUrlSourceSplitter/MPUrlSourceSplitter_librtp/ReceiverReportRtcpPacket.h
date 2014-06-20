@@ -81,14 +81,17 @@ delay since last SR (DLSR): 32 bits
 #define RECEIVER_REPORT_REPORT_BLOCK_SIZE                               24
 
 #define RECEIVER_REPORT_RTCP_PACKET_FLAG_NONE                           RTCP_PACKET_FLAG_NONE
+
 #define RECEIVER_REPORT_RTCP_PACKET_FLAG_PADDING                        RTCP_PACKET_FLAG_PADDING
-#define RECEIVER_REPORT_RTCP_PACKET_FLAG_PROFILE_EXTENSIONS             0x00000002
+#define RECEIVER_REPORT_RTCP_PACKET_FLAG_PROFILE_EXTENSIONS             (1 << (RTCP_PACKET_FLAG_LAST + 0))
+
+#define RECEIVER_REPORT_RTCP_PACKET_FLAG_LAST                           (RTCP_PACKET_FLAG_LAST + 1)
 
 class CReceiverReportRtcpPacket : public CRtcpPacket
 {
 public:
   // initializes a new instance of CReceiverReportRtcpPacket class
-  CReceiverReportRtcpPacket(void);
+  CReceiverReportRtcpPacket(HRESULT *result);
   virtual ~CReceiverReportRtcpPacket(void);
 
   /* get methods */

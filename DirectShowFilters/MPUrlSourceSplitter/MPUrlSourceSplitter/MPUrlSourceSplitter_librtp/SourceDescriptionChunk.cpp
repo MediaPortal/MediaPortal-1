@@ -27,10 +27,16 @@
 
 #include <stdint.h>
 
-CSourceDescriptionChunk::CSourceDescriptionChunk(void)
+CSourceDescriptionChunk::CSourceDescriptionChunk(HRESULT *result)
 {
   this->identifier = 0;
-  this->items = new CSourceDescriptionItemCollection();
+  this->items = NULL;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->items = new CSourceDescriptionItemCollection(result);
+    CHECK_POINTER_HRESULT(*result, this->items, *result, E_OUTOFMEMORY);
+  }
 }
 
 CSourceDescriptionChunk::~CSourceDescriptionChunk(void)

@@ -74,13 +74,16 @@ From RFC 3550:
 #define RTCP_PACKET_VERSION                                             2               // RTCP packet version
 
 #define RTCP_PACKET_FLAG_NONE                                           BASE_RTP_PACKET_FLAG_NONE
+
 #define RTCP_PACKET_FLAG_PADDING                                        BASE_RTP_PACKET_FLAG_PADDING
+
+#define RTCP_PACKET_FLAG_LAST                                           (BASE_RTP_PACKET_FLAG_LAST + 0)
 
 class CRtcpPacket : public CBaseRtpPacket
 {
 public:
   // initializes a new instance of CRtcpPacket
-  CRtcpPacket(void);
+  CRtcpPacket(HRESULT *result);
   virtual ~CRtcpPacket(void);
 
   /* get methods */

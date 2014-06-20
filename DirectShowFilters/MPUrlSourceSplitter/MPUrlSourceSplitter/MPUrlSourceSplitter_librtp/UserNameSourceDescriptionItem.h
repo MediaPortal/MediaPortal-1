@@ -31,7 +31,7 @@ class CUserNameSourceDescriptionItem : public CSourceDescriptionItem
 {
 public:
   // initializes a new instance of CUserNameSourceDescriptionItem class
-  CUserNameSourceDescriptionItem(void);
+  CUserNameSourceDescriptionItem(HRESULT *result);
   virtual ~CUserNameSourceDescriptionItem(void);
 
   /* get methods */

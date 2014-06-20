@@ -22,7 +22,8 @@
 
 #include "SourceDescriptionItemCollection.h"
 
-CSourceDescriptionItemCollection::CSourceDescriptionItemCollection(void)
+CSourceDescriptionItemCollection::CSourceDescriptionItemCollection(HRESULT *result)
+  : CCollection(result)
 {
 }
 

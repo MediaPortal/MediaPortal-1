@@ -25,10 +25,10 @@
 
 #include <stdint.h>
 
-CRtpPacket::CRtpPacket(void)
-  : CBaseRtpPacket()
+CRtpPacket::CRtpPacket(HRESULT *result)
+  : CBaseRtpPacket(result)
 {
-  this->contributeSourceIdentifiers = new CContributeSourceIdentifierCollection();
+  this->contributeSourceIdentifiers = NULL;
   this->payloadType = UINT_MAX;
   this->sequenceNumber = UINT_MAX;
   this->synchronizationSourceIdentifier = UINT_MAX;
@@ -36,6 +36,12 @@ CRtpPacket::CRtpPacket(void)
   this->profileSpecificExtensionHeaderId = UINT_MAX;
   this->extensionHeaderLength = UINT_MAX;
   this->extensionHeader = NULL;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->contributeSourceIdentifiers = new CContributeSourceIdentifierCollection(result);
+    CHECK_POINTER_HRESULT(*result, this->contributeSourceIdentifiers, *result, E_OUTOFMEMORY);
+  }
 }
 
 CRtpPacket::~CRtpPacket(void)
@@ -98,12 +104,12 @@ unsigned int CRtpPacket::GetPayloadSize(void)
 
 bool CRtpPacket::IsExtended(void)
 {
-  return ((this->flags & RTP_PACKET_FLAG_EXTENSION_HEADER) != 0);
+  return this->IsSetFlags(RTP_PACKET_FLAG_EXTENSION_HEADER);
 }
 
 bool CRtpPacket::IsMarked(void)
 {
-  return ((this->flags & RTP_PACKET_FLAG_MARKER) != 0);
+  return this->IsSetFlags(RTP_PACKET_FLAG_MARKER);
 }
 
 bool CRtpPacket::Parse(const unsigned char *buffer, unsigned int length)
@@ -206,7 +212,7 @@ bool CRtpPacket::Parse(const unsigned char *buffer, unsigned int length)
           memcpy(this->payload, buffer + position, this->payloadSize);
           position += this->payloadSize;
 
-          if ((this->flags & RTP_PACKET_FLAG_PADDING) != 0)
+          if (this->IsPadded())
           {
             this->paddingSize = RBE8(this->payload, this->payloadSize - 1) & 0xFF;
           }
@@ -262,7 +268,12 @@ CRtpPacket *CRtpPacket::Clone(void)
 
 CRtpPacket *CRtpPacket::CreateRtpPacket(void)
 {
-  return new CRtpPacket();
+  HRESULT result = S_OK;
+  CRtpPacket *packet = new CRtpPacket(&result);
+  CHECK_POINTER_HRESULT(result, packet, result, E_OUTOFMEMORY);
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(packet));
+  return packet;
 }
 
 bool CRtpPacket::CloneInternal(CRtpPacket *rtpPacket)

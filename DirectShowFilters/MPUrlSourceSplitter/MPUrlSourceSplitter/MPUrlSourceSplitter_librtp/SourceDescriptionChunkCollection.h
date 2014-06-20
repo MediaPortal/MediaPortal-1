@@ -30,7 +30,7 @@ class CSourceDescriptionChunkCollection : public CCollection<CSourceDescriptionC
 {
 public:
   // initializes a new instance of CSourceDescriptionChunkCollection class
-  CSourceDescriptionChunkCollection(void);
+  CSourceDescriptionChunkCollection(HRESULT *result);
   ~CSourceDescriptionChunkCollection(void);
 
 protected:

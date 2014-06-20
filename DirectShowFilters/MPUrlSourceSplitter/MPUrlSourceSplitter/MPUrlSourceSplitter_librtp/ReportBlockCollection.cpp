@@ -22,8 +22,8 @@
 
 #include "ReportBlockCollection.h"
 
-CReportBlockCollection::CReportBlockCollection(void)
-  : CCollection()
+CReportBlockCollection::CReportBlockCollection(HRESULT *result)
+  : CCollection(result)
 {
 }
 

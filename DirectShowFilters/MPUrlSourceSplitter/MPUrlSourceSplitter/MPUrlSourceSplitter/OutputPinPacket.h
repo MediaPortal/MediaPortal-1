@@ -71,10 +71,6 @@ public:
   // @return : stream PID or STREAM_PID_UNSPECIFIED if not specified
   unsigned int GetStreamPid(void);
 
-  // gets combination of set flags
-  // @return : combination of set flags
-  unsigned int GetFlags(void);
-
   /* set methods */
 
   // sets discontinuity flag
@@ -108,10 +104,6 @@ public:
   // sets stream PID
   // @param streamPid : the stream PID to set
   void SetStreamPid(unsigned int streamPid);
-
-  // sets combination of flags
-  // @param flags : the combination of flags to set
-  void SetFlags(unsigned int flags);
 
   /* other methods */
 

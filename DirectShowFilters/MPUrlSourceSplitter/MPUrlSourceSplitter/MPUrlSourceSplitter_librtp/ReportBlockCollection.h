@@ -29,7 +29,7 @@
 class CReportBlockCollection : public CCollection<CReportBlock>
 {
 public:
-  CReportBlockCollection(void);
+  CReportBlockCollection(HRESULT *result);
   ~CReportBlockCollection(void);
 
 protected:

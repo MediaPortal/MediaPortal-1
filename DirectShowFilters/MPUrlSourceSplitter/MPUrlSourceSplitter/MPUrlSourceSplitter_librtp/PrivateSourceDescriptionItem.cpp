@@ -22,8 +22,8 @@
 
 #include "PrivateSourceDescriptionItem.h"
 
-CPrivateSourceDescriptionItem::CPrivateSourceDescriptionItem(void)
-  : CSourceDescriptionItem()
+CPrivateSourceDescriptionItem::CPrivateSourceDescriptionItem(HRESULT *result)
+  : CSourceDescriptionItem(result)
 {
   this->type = PRIVATE_SOURCE_DESCRIPTION_ITEM_TYPE;
 }

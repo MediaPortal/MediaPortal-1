@@ -25,8 +25,8 @@
 
 #include <stdint.h>
 
-CNullSourceDescriptionItem::CNullSourceDescriptionItem(void)
-  : CSourceDescriptionItem()
+CNullSourceDescriptionItem::CNullSourceDescriptionItem(HRESULT *result)
+  : CSourceDescriptionItem(result)
 {
   this->type = NULL_SOURCE_DESCRIPTION_ITEM_TYPE;
 }

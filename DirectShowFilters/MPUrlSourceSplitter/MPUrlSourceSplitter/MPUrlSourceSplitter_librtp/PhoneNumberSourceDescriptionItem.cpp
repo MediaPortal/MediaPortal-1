@@ -22,8 +22,8 @@
 
 #include "PhoneNumberSourceDescriptionItem.h"
 
-CPhoneNumberSourceDescriptionItem::CPhoneNumberSourceDescriptionItem(void)
-  : CSourceDescriptionItem()
+CPhoneNumberSourceDescriptionItem::CPhoneNumberSourceDescriptionItem(HRESULT *result)
+  : CSourceDescriptionItem(result)
 {
   this->phoneNumber = NULL;
   this->type = PHONE_NUMBER_SOURCE_DESCRIPTION_ITEM_TYPE;

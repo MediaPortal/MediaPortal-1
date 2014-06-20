@@ -195,9 +195,9 @@ CNetworkInterface *CNetworkInterface::Clone(void)
     SET_STRING_HRESULT_WITH_NULL(clone->friendlyName, this->friendlyName, result);
 
     CHECK_CONDITION_HRESULT(result, clone->anycastAddresses->Append(this->anycastAddresses), result, E_OUTOFMEMORY);
-    CHECK_CONDITION_HRESULT(result, clone->dnsServerAddresses->Append(this->anycastAddresses), result, E_OUTOFMEMORY);
-    CHECK_CONDITION_HRESULT(result, clone->multicastAddresses->Append(this->anycastAddresses), result, E_OUTOFMEMORY);
-    CHECK_CONDITION_HRESULT(result, clone->unicastAddresses->Append(this->anycastAddresses), result, E_OUTOFMEMORY);
+    CHECK_CONDITION_HRESULT(result, clone->dnsServerAddresses->Append(this->dnsServerAddresses), result, E_OUTOFMEMORY);
+    CHECK_CONDITION_HRESULT(result, clone->multicastAddresses->Append(this->multicastAddresses), result, E_OUTOFMEMORY);
+    CHECK_CONDITION_HRESULT(result, clone->unicastAddresses->Append(this->unicastAddresses), result, E_OUTOFMEMORY);
   }
 
   CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(clone));

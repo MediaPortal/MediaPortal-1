@@ -30,7 +30,7 @@ class CSourceDescriptionItemCollection : public CCollection<CSourceDescriptionIt
 {
 public:
   // initializes a new instance of CSourceDescriptionItemCollection class
-  CSourceDescriptionItemCollection(void);
+  CSourceDescriptionItemCollection(HRESULT *result);
   ~CSourceDescriptionItemCollection(void);
 
 protected:

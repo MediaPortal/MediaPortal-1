@@ -22,8 +22,8 @@
 
 #include "GeographicUserLocationSourceDescriptionItem.h"
 
-CGeographicUserLocationSourceDescriptionItem::CGeographicUserLocationSourceDescriptionItem(void)
-  : CSourceDescriptionItem()
+CGeographicUserLocationSourceDescriptionItem::CGeographicUserLocationSourceDescriptionItem(HRESULT *result)
+  : CSourceDescriptionItem(result)
 {
   this->geographicUserLocation = NULL;
   this->type = GEOGRAPHICS_USER_LOCATION_SOURCE_DESCRIPTION_ITEM_TYPE;

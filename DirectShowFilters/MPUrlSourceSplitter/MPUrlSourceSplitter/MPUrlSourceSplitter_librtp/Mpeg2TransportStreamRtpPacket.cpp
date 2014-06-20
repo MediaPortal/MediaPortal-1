@@ -22,8 +22,8 @@
 
 #include "Mpeg2TransportStreamRtpPacket.h"
 
-CMpeg2TransportStreamRtpPacket::CMpeg2TransportStreamRtpPacket(void)
-  : CRtpPacket()
+CMpeg2TransportStreamRtpPacket::CMpeg2TransportStreamRtpPacket(HRESULT *result)
+  : CRtpPacket(result)
 {
 }
 
@@ -56,7 +56,12 @@ bool CMpeg2TransportStreamRtpPacket::Parse(const unsigned char *buffer, unsigned
 
 CRtpPacket *CMpeg2TransportStreamRtpPacket::CreateRtpPacket(void)
 {
-  return new CMpeg2TransportStreamRtpPacket();
+  HRESULT result = S_OK;
+  CMpeg2TransportStreamRtpPacket *packet = new CMpeg2TransportStreamRtpPacket(&result);
+  CHECK_POINTER_HRESULT(result, packet, result, E_OUTOFMEMORY);
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(packet));
+  return packet;
 }
 
 bool CMpeg2TransportStreamRtpPacket::CloneInternal(CRtpPacket *rtpPacket)

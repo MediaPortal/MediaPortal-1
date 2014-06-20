@@ -68,7 +68,7 @@ class CApplicationRtcpPacket : public CRtcpPacket
 {
 public:
   // initializes a new instance of CApplicationRtcpPacket
-  CApplicationRtcpPacket(void);
+  CApplicationRtcpPacket(HRESULT *result);
   virtual ~CApplicationRtcpPacket(void);
 
   /* get methods */

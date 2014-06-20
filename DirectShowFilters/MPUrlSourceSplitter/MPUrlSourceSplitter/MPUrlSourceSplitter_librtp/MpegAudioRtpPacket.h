@@ -49,7 +49,7 @@
 class CMpegAudioRtpPacket : public CRtpPacket
 {
 public:
-  CMpegAudioRtpPacket(void);
+  CMpegAudioRtpPacket(HRESULT *result);
   virtual ~CMpegAudioRtpPacket(void);
 
   /* get methods */

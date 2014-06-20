@@ -31,7 +31,7 @@ class CGeographicUserLocationSourceDescriptionItem : public CSourceDescriptionIt
 {
 public:
   // initializes a new instance of CGeographicUserLocationSourceDescriptionItem class
-  CGeographicUserLocationSourceDescriptionItem(void);
+  CGeographicUserLocationSourceDescriptionItem(HRESULT *result);
   virtual ~CGeographicUserLocationSourceDescriptionItem(void);
 
   /* get methods */

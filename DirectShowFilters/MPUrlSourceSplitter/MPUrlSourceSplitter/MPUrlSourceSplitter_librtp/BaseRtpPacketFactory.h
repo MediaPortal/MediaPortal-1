@@ -27,12 +27,12 @@
 
 #define CREATE_SPECIFIC_PACKET(packetType, buffer, length, continueParsing, result, position)                       \
                                                                                                                     \
-if (continueParsing && (result == NULL))                                                                            \
+if (SUCCEEDED(continueParsing) && (result == NULL))                                                                 \
 {                                                                                                                   \
-  packetType *packet = new packetType();                                                                            \
-  continueParsing &= (packet != NULL);                                                                              \
+  packetType *packet = new packetType(&continueParsing);                                                            \
+  CHECK_POINTER_HRESULT(continueParsing, packet, continueParsing, E_OUTOFMEMORY);                                   \
                                                                                                                     \
-  if (continueParsing)                                                                                              \
+  if (SUCCEEDED(continueParsing))                                                                                   \
   {                                                                                                                 \
     if (packet->Parse(buffer, length))                                                                              \
     {                                                                                                               \
@@ -41,7 +41,7 @@ if (continueParsing && (result == NULL))                                        
     }                                                                                                               \
   }                                                                                                                 \
                                                                                                                     \
-  if ((!continueParsing) || (result == NULL))                                                                       \
+  if ((FAILED(continueParsing)) || (result == NULL))                                                                \
   {                                                                                                                 \
     FREE_MEM_CLASS(packet);                                                                                         \
     position = 0;                                                                                                   \

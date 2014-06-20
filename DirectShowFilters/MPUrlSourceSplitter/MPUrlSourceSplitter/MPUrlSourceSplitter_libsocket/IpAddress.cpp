@@ -65,7 +65,7 @@ CIpAddress::CIpAddress(HRESULT *result, const ADDRINFOW *addrInfo, const wchar_t
         this->addr = ALLOC_MEM_SET(this->addr, SOCKADDR_STORAGE, 1, 0);
         CHECK_POINTER_HRESULT(*result, this->addr, *result, E_OUTOFMEMORY);
 
-        CHECK_CONDITION_EXECUTE(*result, memcpy(this->addr, addrInfo->ai_addr, this->length));
+        CHECK_CONDITION_EXECUTE(SUCCEEDED(*result), memcpy(this->addr, addrInfo->ai_addr, this->length));
       }
     }
 
@@ -114,7 +114,7 @@ CIpAddress::CIpAddress(HRESULT *result, const SOCKADDR_STORAGE *addr, unsigned i
         this->addr = ALLOC_MEM_SET(this->addr, SOCKADDR_STORAGE, 1, 0);
         CHECK_POINTER_HRESULT(*result, this->addr, *result, E_OUTOFMEMORY);
 
-        CHECK_CONDITION_EXECUTE(*result, memcpy(this->addr, addr, this->length));
+        CHECK_CONDITION_EXECUTE(SUCCEEDED(*result), memcpy(this->addr, addr, this->length));
       }
     }
 
@@ -163,7 +163,7 @@ CIpAddress::CIpAddress(HRESULT *result, const struct sockaddr *addr, unsigned in
         this->addr = ALLOC_MEM_SET(this->addr, SOCKADDR_STORAGE, 1, 0);
         CHECK_POINTER_HRESULT(*result, this->addr, *result, E_OUTOFMEMORY);
 
-        CHECK_CONDITION_EXECUTE(*result, memcpy(this->addr, addr, this->length));
+        CHECK_CONDITION_EXECUTE(SUCCEEDED(*result), memcpy(this->addr, addr, this->length));
       }
     }
 

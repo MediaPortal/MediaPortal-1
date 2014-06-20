@@ -33,7 +33,17 @@ CFlags::~CFlags(void)
 
 /* get methods */
 
+uint64_t CFlags::GetFlags(void)
+{
+  return this->flags;
+}
+
 /* set methods */
+
+void CFlags::SetFlags(uint64_t flags)
+{
+  this->flags = flags;
+}
 
 /* other methods */
 

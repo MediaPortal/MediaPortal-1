@@ -29,7 +29,7 @@ class CSourceDescriptionItem
 {
 public:
   // initialize a new instance of CSourceDescriptionItem class
-  CSourceDescriptionItem(void);
+  CSourceDescriptionItem(HRESULT *result);
   virtual ~CSourceDescriptionItem(void);
 
   /* get methods */

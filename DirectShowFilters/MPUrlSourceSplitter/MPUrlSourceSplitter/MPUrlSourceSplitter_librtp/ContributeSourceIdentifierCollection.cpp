@@ -22,8 +22,8 @@
 
 #include "ContributeSourceIdentifierCollection.h"
 
-CContributeSourceIdentifierCollection::CContributeSourceIdentifierCollection(void)
-  : CCollection()
+CContributeSourceIdentifierCollection::CContributeSourceIdentifierCollection(HRESULT *result)
+  : CCollection(result)
 {
 }
 

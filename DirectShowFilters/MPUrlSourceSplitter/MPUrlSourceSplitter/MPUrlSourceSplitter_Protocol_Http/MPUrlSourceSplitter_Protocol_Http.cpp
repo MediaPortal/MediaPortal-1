@@ -348,7 +348,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CStreamPackage *streamPa
       // all data received, we're not receiving data
       // check end of stream or error on HTTP connection
 
-      if (this->mainCurlInstance->GetHttpDownloadResponse()->GetResultCode() == CURLE_OK)
+      if (SUCCEEDED(this->mainCurlInstance->GetHttpDownloadResponse()->GetResultError()))
       {
         if (!this->IsLiveStreamDetected())
         {
@@ -682,7 +682,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CStreamPackage *streamPa
 
         if (streamPackage->GetState() == CStreamPackage::Waiting)
         {
-          // only in case of opened connection, in other case we are trying to open connection
           if (this->GetSeekingCapabilities() & SEEKING_METHOD_POSITION)
           {
             if (SUCCEEDED(result))
@@ -798,7 +797,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CStreamPackage *streamPa
           {
             CMediaPacket *mediaPacket = this->mediaPackets->GetItem(mediaPacketRemoveCount);
 
-            if (this->reportedStreamPosition <= mediaPacket->GetEnd())
+            if ((int64_t)this->reportedStreamPosition <= mediaPacket->GetEnd())
             {
               // reported stream position is before media packet end = not whole media packet is processed
               break;
@@ -1013,8 +1012,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::Initialize(CPluginConfiguration *con
     this->receiveDataTimeout = this->configuration->GetValueLong(PARAMETER_NAME_HTTP_RECEIVE_DATA_TIMEOUT, true, HTTP_RECEIVE_DATA_TIMEOUT_DEFAULT);
     this->receiveDataTimeout = (this->receiveDataTimeout < 0) ? HTTP_RECEIVE_DATA_TIMEOUT_DEFAULT : this->receiveDataTimeout;
 
-    //this->flags |= this->configuration->GetValueBool(PARAMETER_NAME_LIVE_STREAM, true, PARAMETER_NAME_LIVE_STREAM_DEFAULT) ? PROTOCOL_PLUGIN_FLAG_LIVE_STREAM_SPECIFIED : PROTOCOL_PLUGIN_FLAG_NONE;
-    this->flags |= this->configuration->GetValueBool(PARAMETER_NAME_LIVE_STREAM, true, true) ? PROTOCOL_PLUGIN_FLAG_LIVE_STREAM_SPECIFIED : PROTOCOL_PLUGIN_FLAG_NONE;
+    this->flags |= this->configuration->GetValueBool(PARAMETER_NAME_LIVE_STREAM, true, PARAMETER_NAME_LIVE_STREAM_DEFAULT) ? PROTOCOL_PLUGIN_FLAG_LIVE_STREAM_SPECIFIED : PROTOCOL_PLUGIN_FLAG_NONE;
 
     this->flags |= this->configuration->GetValueBool(PARAMETER_NAME_HTTP_SEEKING_SUPPORT_DETECTION, true, HTTP_SEEKING_SUPPORT_DETECTION_DEFAULT) ? MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_SEEKING_SUPPORT_DETECTION : MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_NONE;
   }

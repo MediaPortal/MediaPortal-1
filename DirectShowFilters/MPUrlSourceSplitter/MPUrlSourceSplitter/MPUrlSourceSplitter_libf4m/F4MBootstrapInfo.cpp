@@ -266,7 +266,7 @@ HRESULT CF4MBootstrapInfo::DownloadBootstrapInfo(CLogger *logger, const wchar_t 
           }
           FREE_MEM_CLASS(currentCookies);
 
-          result = (curlInstance->GetHttpDownloadResponse()->GetResultCode() != CURLE_OK) ? HRESULT_FROM_WIN32(ERROR_INVALID_DATA) : result;
+          result = FAILED(curlInstance->GetHttpDownloadResponse()->GetResultError()) ? HRESULT_FROM_WIN32(ERROR_INVALID_DATA) : result;
         }
 
         if (SUCCEEDED(result))

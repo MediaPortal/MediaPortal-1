@@ -31,7 +31,7 @@ class CSourceDescriptionChunk
 {
 public:
   // initializes a new instance of CSourceDescriptionChunk class
-  CSourceDescriptionChunk(void);
+  CSourceDescriptionChunk(HRESULT *result);
   virtual ~CSourceDescriptionChunk(void);
 
   /* get methods */

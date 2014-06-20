@@ -29,7 +29,7 @@
 class CContributeSourceIdentifierCollection : public CCollection<CContributeSourceIdentifier>
 {
 public:
-  CContributeSourceIdentifierCollection(void);
+  CContributeSourceIdentifierCollection(HRESULT *result);
   ~CContributeSourceIdentifierCollection(void);
 
 protected:

@@ -34,8 +34,11 @@
 #define HTTP_VERSION_DEFAULT                                                  HTTP_VERSION_NONE
 #define HTTP_IGNORE_CONTENT_LENGTH_DEFAULT                                    false
 
-class CHttpCurlInstance :
-  public CCurlInstance
+#define HTTP_CURL_INSTANCE_FLAG_NONE                                          CURL_INSTANCE_FLAG_NONE
+
+#define HTTP_CURL_INSTANCE_FLAG_LAST                                          (CURL_INSTANCE_FLAG_LAST + 0)
+
+class CHttpCurlInstance : public CCurlInstance
 {
 public:
   // initializes a new instance of CHttpCurlInstance class
@@ -115,6 +118,10 @@ protected:
   // gets new instance of download response
   // @return : new download response or NULL if error
   virtual CDownloadResponse *GetNewDownloadResponse(void);
+
+  // destroys libcurl worker
+  // @return : S_OK if successful
+  virtual HRESULT DestroyCurlWorker(void);
 };
 
 #endif

@@ -832,54 +832,62 @@ uint64_t CDemuxer::GetPositionForStreamTime(uint64_t streamTime)
 {
   uint64_t result = 0;
 
-  int streamId = -1;
-  CStream *activeStream = NULL;
-
-  for (unsigned int i = 0; ((streamId == (-1)) && (i < CStream::Unknown)); i++)
+  if (this->IsRealDemuxingNeeded())
   {
-    // stream groups are in order: video, audio, subtitle = in our preference
-    if (this->GetStreams((CStream::StreamType)i)->Count() > 0)
+    int streamId = -1;
+    CStream *activeStream = NULL;
+
+    for (unsigned int i = 0; ((streamId == (-1)) && (i < CStream::Unknown)); i++)
     {
-      activeStream = this->GetStreams((CStream::StreamType)i)->GetItem((this->activeStream[(CStream::StreamType)i] == ACTIVE_STREAM_NOT_SPECIFIED) ? 0 : this->activeStream[(CStream::StreamType)i]);
-      streamId = activeStream->GetPid();
+      // stream groups are in order: video, audio, subtitle = in our preference
+      if (this->GetStreams((CStream::StreamType)i)->Count() > 0)
+      {
+        activeStream = this->GetStreams((CStream::StreamType)i)->GetItem((this->activeStream[(CStream::StreamType)i] == ACTIVE_STREAM_NOT_SPECIFIED) ? 0 : this->activeStream[(CStream::StreamType)i]);
+        streamId = activeStream->GetPid();
+      }
+    }
+
+    if (streamId != (-1))
+    {
+      int64_t streamTimestamp = 0;
+      if ((time >= 0) && (streamId != (-1)))
+      {
+        AVStream *stream = this->formatContext->streams[streamId];
+        streamTimestamp = ConvertRTToTimestamp(streamTime * (DSHOW_TIME_BASE / 1000), stream->time_base.num, stream->time_base.den, (int64_t)AV_NOPTS_VALUE);
+      }
+
+      AVStream *st = this->formatContext->streams[streamId];
+
+      if (st->nb_index_entries != 0)
+      {
+        // check FFmpeg seek index entries
+        int index = av_index_search_timestamp(st, streamTimestamp, AVSEEK_FLAG_BACKWARD);
+
+        if (index != (-1))
+        {
+          AVIndexEntry *ie = &st->index_entries[index];
+
+          result = (ie->pos > 0) ? (uint64_t)ie->pos : 0;
+        }
+      }
+      else
+      {
+        // check our seek index entry collection
+        HRESULT index = activeStream->GetSeekIndexEntries()->FindSeekIndexEntry(streamTimestamp, true);
+
+        if (SUCCEEDED(index))
+        {
+          CSeekIndexEntry *ie = activeStream->GetSeekIndexEntries()->GetItem((unsigned int)index);
+
+          result = (ie->GetPosition() > 0) ? (uint64_t)ie->GetPosition() : 0;
+        }
+      }
     }
   }
-
-  if (streamId != (-1))
+  else
   {
-    int64_t streamTimestamp = 0;
-    if ((time >= 0) && (streamId != (-1)))
-    {
-      AVStream *stream = this->formatContext->streams[streamId];
-      streamTimestamp = ConvertRTToTimestamp(streamTime * (DSHOW_TIME_BASE / 1000), stream->time_base.num, stream->time_base.den, (int64_t)AV_NOPTS_VALUE);
-    }
-
-    AVStream *st = this->formatContext->streams[streamId];
-
-    if (st->nb_index_entries != 0)
-    {
-      // check FFmpeg seek index entries
-      int index = av_index_search_timestamp(st, streamTimestamp, AVSEEK_FLAG_BACKWARD);
-
-      if (index != (-1))
-      {
-        AVIndexEntry *ie = &st->index_entries[index];
-
-        result = (ie->pos > 0) ? (uint64_t)ie->pos : 0;
-      }
-    }
-    else
-    {
-      // check our seek index entry collection
-      HRESULT index = activeStream->GetSeekIndexEntries()->FindSeekIndexEntry(streamTimestamp, true);
-
-      if (SUCCEEDED(index))
-      {
-        CSeekIndexEntry *ie = activeStream->GetSeekIndexEntries()->GetItem((unsigned int)index);
-
-        result = (ie->GetPosition() > 0) ? (uint64_t)ie->GetPosition() : 0;
-      }
-    }
+    // IPTV demuxing case (no demuxing, just passing data out)
+    result = this->demuxerContextBufferPosition;
   }
 
   return result;

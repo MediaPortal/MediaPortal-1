@@ -79,7 +79,7 @@ class CSourceDescriptionRtcpPacket : public CRtcpPacket
 {
 public:
   // initializes a new instance of CSourceDescriptionRtcpPacket
-  CSourceDescriptionRtcpPacket(void);
+  CSourceDescriptionRtcpPacket(HRESULT *result);
   virtual ~CSourceDescriptionRtcpPacket(void);
 
   /* get methods */

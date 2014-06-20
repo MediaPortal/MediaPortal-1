@@ -48,18 +48,27 @@ public:
   // @return : true if ranges are supported, false otherwise
   virtual bool GetRangesSupported(void);
 
+  // gets response code
+  // @return : response code
+  virtual long GetResponseCode(void);
+
   /* set methods */
 
   // sets if ranges are supported
   // @param rangesSupported : true if ranges are supported, false otherwise
   virtual void SetRangesSupported(bool rangesSupported);
 
+  // sets response code
+  // @param responseCode : response code to set
+  virtual void SetResponseCode(long responseCode);
+
   /* other methods */
 
 protected:
-
   // holds received headers
   CHttpHeaderCollection *headers;
+  // holds HTTP response code
+  long responseCode;
 
   /* methods */
 

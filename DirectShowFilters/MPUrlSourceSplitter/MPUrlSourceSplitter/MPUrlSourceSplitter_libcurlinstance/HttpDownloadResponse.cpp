@@ -26,6 +26,7 @@ CHttpDownloadResponse::CHttpDownloadResponse(HRESULT *result)
   : CDownloadResponse(result)
 {
   this->headers = NULL;
+  this->responseCode = 0;
 
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
@@ -51,12 +52,22 @@ bool CHttpDownloadResponse::GetRangesSupported(void)
   return this->IsSetFlags(HTTP_DOWNLOAD_RESPONSE_FLAG_RANGES_SUPPORTED);
 }
 
+long CHttpDownloadResponse::GetResponseCode(void)
+{
+  return this->responseCode;
+}
+
 /* set methods */
 
 void CHttpDownloadResponse::SetRangesSupported(bool rangesSupported)
 {
   this->flags &= ~HTTP_DOWNLOAD_RESPONSE_FLAG_RANGES_SUPPORTED;
   this->flags = (rangesSupported) ? HTTP_DOWNLOAD_RESPONSE_FLAG_RANGES_SUPPORTED : HTTP_DOWNLOAD_RESPONSE_FLAG_NONE;
+}
+
+void CHttpDownloadResponse::SetResponseCode(long responseCode)
+{
+  this->responseCode = responseCode;
 }
 
 /* other methods */
@@ -81,6 +92,7 @@ bool CHttpDownloadResponse::CloneInternal(CDownloadResponse *clonedResponse)
   {
     CHttpDownloadResponse *response = dynamic_cast<CHttpDownloadResponse *>(clonedResponse);
 
+    response->responseCode = this->responseCode;
     response->headers->Clear();
     result &= response->headers->Append(this->headers);
   }

@@ -1977,7 +1977,8 @@ void CMPUrlSourceSplitter::FFmpegLogCallback(void *ptr, int log_level, const cha
     }
   }
 
-  if ((loggerInstance != NULL) && (!isAvi) && ((!isMpegTs) || (isMpegTs && (log_level < AV_LOG_WARNING))))
+  //if ((loggerInstance != NULL) && (!isAvi) && ((!isMpegTs) || (isMpegTs && (log_level < AV_LOG_WARNING))))
+  if (loggerInstance != NULL)
   {
     int warnReportMode = _CrtSetReportMode(_CRT_WARN, 0);
     int errorReportMode = _CrtSetReportMode(_CRT_ERROR, 0);

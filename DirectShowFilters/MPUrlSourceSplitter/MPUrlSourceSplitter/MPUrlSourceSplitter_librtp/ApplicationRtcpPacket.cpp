@@ -25,8 +25,8 @@
 
 #include <stdint.h>
 
-CApplicationRtcpPacket::CApplicationRtcpPacket(void)
-  : CRtcpPacket()
+CApplicationRtcpPacket::CApplicationRtcpPacket(HRESULT *result)
+  : CRtcpPacket(result)
 {
   this->senderSynchronizationSourceIdentifier = 0;
   this->name = NULL;

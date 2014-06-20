@@ -30,7 +30,7 @@ class CIdentifierCollection : public CCollection<CIdentifier>
 {
 public:
   // initializes a new instance of CIdentifierCollection class
-  CIdentifierCollection(void);
+  CIdentifierCollection(HRESULT *result);
   ~CIdentifierCollection(void);
 
 protected:

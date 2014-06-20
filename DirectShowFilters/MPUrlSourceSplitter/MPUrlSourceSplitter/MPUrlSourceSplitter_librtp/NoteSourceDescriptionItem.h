@@ -31,7 +31,7 @@ class CNoteSourceDescriptionItem : public CSourceDescriptionItem
 {
 public:
   // initializes a new instance of CNoteSourceDescriptionItem class
-  CNoteSourceDescriptionItem(void);
+  CNoteSourceDescriptionItem(HRESULT *result);
   virtual ~CNoteSourceDescriptionItem(void);
 
   /* get methods */

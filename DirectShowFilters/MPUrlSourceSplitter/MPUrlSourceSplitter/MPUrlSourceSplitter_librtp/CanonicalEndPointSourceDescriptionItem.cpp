@@ -22,8 +22,8 @@
 
 #include "CanonicalEndPointSourceDescriptionItem.h"
 
-CCanonicalEndPointSourceDescriptionItem::CCanonicalEndPointSourceDescriptionItem(void)
-  : CSourceDescriptionItem()
+CCanonicalEndPointSourceDescriptionItem::CCanonicalEndPointSourceDescriptionItem(HRESULT *result)
+  : CSourceDescriptionItem(result)
 {
   this->endPointName = NULL;
   this->type = CANONICAL_END_POINT_SOURCE_DESCRIPTION_ITEM_TYPE;

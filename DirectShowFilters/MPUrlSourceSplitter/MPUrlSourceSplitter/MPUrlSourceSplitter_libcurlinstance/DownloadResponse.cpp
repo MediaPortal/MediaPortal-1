@@ -25,8 +25,7 @@
 CDownloadResponse::CDownloadResponse(HRESULT *result)
   : CFlags()
 {
-  this->resultCode = CURLE_OK;
-  this->responseCode = 0;
+  this->resultError = S_OK;
   this->receivedData = NULL;
 
   if ((result != NULL) && (SUCCEEDED(*result)))
@@ -48,26 +47,16 @@ CLinearBuffer *CDownloadResponse::GetReceivedData(void)
   return this->receivedData;
 }
 
-CURLcode CDownloadResponse::GetResultCode(void)
+HRESULT CDownloadResponse::GetResultError(void)
 {
-  return this->resultCode;
-}
-
-long CDownloadResponse::GetResponseCode(void)
-{
-  return this->responseCode;
+  return this->resultError;
 }
 
 /* set methods */
 
-void CDownloadResponse::SetResultCode(CURLcode resultCode)
+void CDownloadResponse::SetResultError(HRESULT resultError)
 {
-  this->resultCode = resultCode;
-}
-
-void CDownloadResponse::SetResponseCode(long responseCode)
-{
-  this->responseCode = responseCode;
+  this->resultError = resultError;
 }
 
 /* other methods */
@@ -103,8 +92,7 @@ bool CDownloadResponse::CloneInternal(CDownloadResponse *clonedResponse)
   if (result)
   {
     clonedResponse->flags = this->flags;
-    clonedResponse->resultCode = this->resultCode;
-    clonedResponse->responseCode = this->responseCode;
+    clonedResponse->resultError = this->resultError;
     FREE_MEM_CLASS(clonedResponse->receivedData);
     clonedResponse->receivedData = this->receivedData->Clone();
 

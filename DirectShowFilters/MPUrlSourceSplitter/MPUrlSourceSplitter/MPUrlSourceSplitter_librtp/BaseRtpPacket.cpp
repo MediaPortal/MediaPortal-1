@@ -25,9 +25,9 @@
 
 #include <stdint.h>
 
-CBaseRtpPacket::CBaseRtpPacket(void)
+CBaseRtpPacket::CBaseRtpPacket(HRESULT *result)
+  : CFlags()
 {
-  this->flags = BASE_RTP_PACKET_FLAG_NONE;
   this->version = UINT_MAX;
   this->paddingSize = 0;
   this->baseType = UINT_MAX;
@@ -63,7 +63,7 @@ unsigned int CBaseRtpPacket::GetSize(void)
 
 bool CBaseRtpPacket::IsPadded(void)
 {
-  return ((this->flags & BASE_RTP_PACKET_FLAG_PADDING) != 0);
+  return this->IsSetFlags(BASE_RTP_PACKET_FLAG_PADDING);
 }
 
 void CBaseRtpPacket::Clear(void)

@@ -37,7 +37,15 @@ public:
 
   /* get methods */
 
+  // gets combination of set flags
+  // @return : combination of set flags
+  virtual uint64_t GetFlags(void);
+
   /* set methods */
+
+  // sets combination of flags
+  // @param flags : the combination of flags to set
+  virtual void SetFlags(uint64_t flags);
 
   /* other methods */
 

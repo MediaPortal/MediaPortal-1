@@ -29,7 +29,7 @@
 class CRtpPacketCollection : public CCollection<CRtpPacket>
 {
 public:
-  CRtpPacketCollection(void);
+  CRtpPacketCollection(HRESULT *result);
   ~CRtpPacketCollection(void);
 
 protected:

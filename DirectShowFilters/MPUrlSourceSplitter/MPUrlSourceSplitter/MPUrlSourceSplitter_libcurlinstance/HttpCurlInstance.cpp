@@ -214,7 +214,13 @@ size_t CHttpCurlInstance::CurlReceiveData(const unsigned char *buffer, size_t le
   size_t result = __super::CurlReceiveData(buffer, length);
   if (result == length)
   {
-    long responseCode = this->httpDownloadResponse->GetResponseCode();
+    long responseCode;
+    if (curl_easy_getinfo(this->curl, CURLINFO_RESPONSE_CODE, &responseCode) == CURLE_OK)
+    {
+      this->httpDownloadResponse->SetResponseCode(responseCode);
+    }
+
+    responseCode = this->httpDownloadResponse->GetResponseCode();
     if ((responseCode != 0) && ((responseCode < 200) || (responseCode >= 400)))
     {
       // response code 200 - 299 = OK
@@ -434,4 +440,15 @@ bool CHttpCurlInstance::SetCurrentCookies(CParameterCollection *cookies)
   }
 
   return result;
+}
+
+HRESULT CHttpCurlInstance::DestroyCurlWorker(void)
+{
+  long responseCode;
+  if (curl_easy_getinfo(this->curl, CURLINFO_RESPONSE_CODE, &responseCode) == CURLE_OK)
+  {
+    this->httpDownloadResponse->SetResponseCode(responseCode);
+  }
+
+  return __super::DestroyCurlWorker();
 }

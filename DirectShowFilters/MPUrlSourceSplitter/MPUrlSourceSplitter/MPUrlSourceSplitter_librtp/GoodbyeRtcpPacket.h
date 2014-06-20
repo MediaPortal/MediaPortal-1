@@ -66,13 +66,15 @@ SSRC/CSRC: synchronization source identifier or contribution source, 32 bits
 #define GOODBYE_RTCP_PACKET_HEADER_SIZE                                 0               // length of the goodbye RTCP header in bytes
 #define GOODBYE_RTCP_PACKET_TYPE                                        0xCB            // goodbye RTCP packet type
 
-#define GOODBYE_RTCP_PACKET_FLAG_REASON                                 0x00000002
+#define GOODBYE_RTCP_PACKET_FLAG_REASON                                 (1 << (RTCP_PACKET_FLAG_LAST + 0))
+
+#define GOODBYE_RTCP_PACKET_FLAG_LAST                                   (RTCP_PACKET_FLAG_LAST + 1)
 
 class CGoodbyeRtcpPacket : public CRtcpPacket
 {
 public:
   // initializes a new instance of CGoodbyeRtcpPacket
-  CGoodbyeRtcpPacket(void);
+  CGoodbyeRtcpPacket(HRESULT *result);
   virtual ~CGoodbyeRtcpPacket(void);
 
   /* get methods */

@@ -25,8 +25,8 @@
 
 #include <stdint.h>
 
-CRtcpPacket::CRtcpPacket(void)
-  : CBaseRtpPacket()
+CRtcpPacket::CRtcpPacket(HRESULT *result)
+  : CBaseRtpPacket(result)
 {
   this->packetType = 0;
   this->packetValue = 0;

@@ -22,8 +22,8 @@
 
 #include "UdpDownloadResponse.h"
 
-CUdpDownloadResponse::CUdpDownloadResponse(void)
-  : CDownloadResponse()
+CUdpDownloadResponse::CUdpDownloadResponse(HRESULT *result)
+  : CDownloadResponse(result)
 {
 }
 
@@ -49,7 +49,7 @@ CDownloadResponse *CUdpDownloadResponse::CreateDownloadResponse(void)
   return response;
 }
 
-bool CUdpDownloadResponse::CloneInternal(CUdpDownloadResponse *clonedRequest)
+bool CUdpDownloadResponse::CloneInternal(CDownloadResponse *clonedRequest)
 {
   bool result = __super::CloneInternal(clonedRequest);
 

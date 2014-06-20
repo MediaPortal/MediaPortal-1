@@ -31,7 +31,7 @@ class CCanonicalEndPointSourceDescriptionItem : public CSourceDescriptionItem
 {
 public:
   // initializes a new instance of CCanonicalEndPointSourceDescriptionItem class
-  CCanonicalEndPointSourceDescriptionItem(void);
+  CCanonicalEndPointSourceDescriptionItem(HRESULT *result);
   virtual ~CCanonicalEndPointSourceDescriptionItem(void);
 
   /* get methods */

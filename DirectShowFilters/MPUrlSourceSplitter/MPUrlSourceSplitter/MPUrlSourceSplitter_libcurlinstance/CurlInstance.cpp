@@ -370,8 +370,8 @@ HRESULT CCurlInstance::CreateCurlWorker(void)
   HRESULT result = S_OK;
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, this->protocolName, METHOD_CREATE_CURL_WORKER_NAME);
 
-  // clear curl error code
-  this->downloadResponse->SetResultCode(CURLE_OK);
+  // clear result error
+  this->downloadResponse->SetResultError(S_OK);
 
   if (this->hCurlWorkerThread == NULL)
   {
@@ -405,12 +405,6 @@ HRESULT CCurlInstance::DestroyCurlWorker(void)
       TerminateThread(this->hCurlWorkerThread, 0);
     }
     CloseHandle(this->hCurlWorkerThread);
-
-    long responseCode;
-    if (curl_easy_getinfo(this->curl, CURLINFO_RESPONSE_CODE, &responseCode) == CURLE_OK)
-    {
-      this->downloadResponse->SetResponseCode(responseCode);
-    }
 
     if (this->stopReceivingTicks == 0)
     {
@@ -466,7 +460,7 @@ unsigned int CCurlInstance::CurlWorker(void)
           {
             if (message->msg = CURLMSG_DONE)
             {
-              this->downloadResponse->SetResultCode(message->data.result);
+              this->downloadResponse->SetResultError(HRESULT_FROM_CURL_CODE(message->data.result));
             }
           }
 
@@ -478,7 +472,7 @@ unsigned int CCurlInstance::CurlWorker(void)
       else if ((GetTickCount() - this->lastReceiveTime) > (this->GetReceiveDataTimeout()))
       {
         // timeout occured
-        this->downloadResponse->SetResultCode(CURLE_OPERATION_TIMEDOUT);
+        this->downloadResponse->SetResultError(HRESULT_FROM_CURL_CODE(CURLE_OPERATION_TIMEOUTED));
         break;
       }
 
@@ -511,17 +505,11 @@ unsigned int CCurlInstance::CurlWorker(void)
     }
     this->logger->Log(LOGGER_VERBOSE, L"%s: %s: start: %u, end: %u, received bytes: %lld", this->protocolName, METHOD_CURL_WORKER_NAME, this->startReceivingTicks, this->stopReceivingTicks, this->totalReceivedBytes);
 
-    long responseCode;
-    if (curl_easy_getinfo(this->curl, CURLINFO_RESPONSE_CODE, &responseCode) == CURLE_OK)
-    {
-      this->downloadResponse->SetResponseCode(responseCode);
-    }
-
     this->state = CURL_STATE_RECEIVED_ALL_DATA;
 
-    if ((this->downloadResponse->GetResultCode() != CURLE_OK) && (this->downloadResponse->GetResultCode() != CURLE_WRITE_ERROR))
+    if (IS_CURL_ERROR(this->downloadResponse->GetResultError()) && (this->downloadResponse->GetResultError() != HRESULT_FROM_CURL_CODE(CURLE_WRITE_ERROR)))
     {
-      this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_CURL_WORKER_NAME, L"error while receiving data", this->downloadResponse->GetResultCode());
+      this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_CURL_WORKER_NAME, L"error while receiving data", CURL_CODE_FROM_HRESULT(this->downloadResponse->GetResultError()));
     }
   }
   else
@@ -564,12 +552,6 @@ size_t CCurlInstance::CurlReceiveDataCallback(char *buffer, size_t size, size_t 
 
 size_t CCurlInstance::CurlReceiveData(const unsigned char *buffer, size_t length)
 {
-  long responseCode;
-  if (curl_easy_getinfo(this->curl, CURLINFO_RESPONSE_CODE, &responseCode) == CURLE_OK)
-  {
-    this->downloadResponse->SetResponseCode(responseCode);
-  }
-
   if (length != 0)
   {
     // lock access to receive data buffer

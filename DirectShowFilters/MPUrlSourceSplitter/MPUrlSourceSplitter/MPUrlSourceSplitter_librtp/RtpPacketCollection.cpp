@@ -22,8 +22,8 @@
 
 #include "RtpPacketCollection.h"
 
-CRtpPacketCollection::CRtpPacketCollection(void)
-  : CCollection()
+CRtpPacketCollection::CRtpPacketCollection(HRESULT *result)
+  : CCollection(result)
 {
 }
 

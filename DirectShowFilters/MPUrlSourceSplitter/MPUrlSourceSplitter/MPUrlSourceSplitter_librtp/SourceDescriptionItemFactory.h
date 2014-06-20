@@ -27,12 +27,12 @@
 
 #define CREATE_SPECIFIC_SOURCE_DESCRIPTION_ITEM(sdesItemType, buffer, length, continueParsing, result, position)    \
                                                                                                                     \
-if (continueParsing && (result == NULL))                                                                            \
+if (SUCCEEDED(continueParsing) && (result == NULL))                                                                 \
 {                                                                                                                   \
-  sdesItemType *specificItem = new sdesItemType();                                                                  \
-  continueParsing &= (specificItem != NULL);                                                                        \
+  sdesItemType *specificItem = new sdesItemType(&continueParsing);                                                  \
+  CHECK_POINTER_HRESULT(continueParsing, specificItem, continueParsing, E_OUTOFMEMORY);                             \
                                                                                                                     \
-  if (continueParsing)                                                                                              \
+  if (SUCCEEDED(continueParsing))                                                                                   \
   {                                                                                                                 \
     if (specificItem->Parse(buffer, length))                                                                        \
     {                                                                                                               \

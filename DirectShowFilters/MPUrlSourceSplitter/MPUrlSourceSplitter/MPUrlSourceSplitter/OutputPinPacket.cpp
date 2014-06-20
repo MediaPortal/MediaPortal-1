@@ -65,11 +65,6 @@ unsigned int COutputPinPacket::GetStreamPid(void)
   return this->streamPid;
 }
 
-unsigned int COutputPinPacket::GetFlags(void)
-{
-  return this->flags;
-}
-
 /* set methods */
 
 void COutputPinPacket::SetDiscontinuity(bool discontinuity)
@@ -113,11 +108,6 @@ void COutputPinPacket::SetDemuxerId(unsigned int demuxerId)
 void COutputPinPacket::SetStreamPid(unsigned int streamPid)
 {
   this->streamPid = streamPid;
-}
-
-void COutputPinPacket::SetFlags(unsigned int flags)
-{
-  this->flags = flags;
 }
 
 /* other methods */

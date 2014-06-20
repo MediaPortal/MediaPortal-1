@@ -22,8 +22,8 @@
 
 #include "EmailSourceDescriptionItem.h"
 
-CEmailSourceDescriptionItem::CEmailSourceDescriptionItem(void)
-  : CSourceDescriptionItem()
+CEmailSourceDescriptionItem::CEmailSourceDescriptionItem(HRESULT *result)
+  : CSourceDescriptionItem(result)
 {
   this->email = NULL;
   this->type = EMAIL_SOURCE_DESCRIPTION_ITEM_TYPE;

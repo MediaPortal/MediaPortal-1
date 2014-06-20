@@ -44,23 +44,15 @@ public:
   // @return : received data
   virtual CLinearBuffer *GetReceivedData(void);
 
-  // gets CURL result code
-  // @return : CURL result code
-  virtual CURLcode GetResultCode(void);
-
-  // gets response code
-  // @return : response code
-  virtual long GetResponseCode(void);
+  // gets result error
+  // @return : result error (S_OK if none)
+  virtual HRESULT GetResultError(void);
 
   /* set methods */
 
-  // sets CURL result code
-  // @param resultCode : CURL result code to set
-  virtual void SetResultCode(CURLcode resultCode);
-
-  // sets response code
-  // @param responseCode : response code to set
-  virtual void SetResponseCode(long responseCode);
+  // sets result error
+  // @param resultError : result error to set
+  virtual void SetResultError(HRESULT resultError);
 
   /* other methods */
 
@@ -72,11 +64,8 @@ protected:
   // holds received data
   CLinearBuffer *receivedData;
 
-  // holds CURL result code
-  CURLcode resultCode;
-
-  // holds response code
-  long responseCode;
+  // holds result error
+  HRESULT resultError;
 
   /* methods */
 

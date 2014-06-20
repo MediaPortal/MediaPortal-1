@@ -85,15 +85,17 @@ Extension header: optional, the first 32-bit word contains a profile-specific id
 #define RTP_PACKET_MAXIMUM_CONTRIBUTING_SOURCE_ID_COUNT                 0x0F            // maximum RTP packet contributing source ID count
 
 #define RTP_PACKET_FLAG_NONE                                            BASE_RTP_PACKET_FLAG_NONE
-#define RTP_PACKET_FLAG_PADDING                                         BASE_RTP_PACKET_FLAG_PADDING
-#define RTP_PACKET_FLAG_EXTENSION_HEADER                                0x00000002
-#define RTP_PACKET_FLAG_MARKER                                          0x00000004
+
+#define RTP_PACKET_FLAG_EXTENSION_HEADER                                (1 << (BASE_RTP_PACKET_FLAG_LAST + 0))
+#define RTP_PACKET_FLAG_MARKER                                          (1 << (BASE_RTP_PACKET_FLAG_LAST + 1))
+
+#define RTP_PACKET_FLAG_LAST                                            (BASE_RTP_PACKET_FLAG_LAST + 2)
 
 class CRtpPacket : public CBaseRtpPacket
 {
 public:
   // initializes a new instance of CRtpPacket class
-  CRtpPacket(void);
+  CRtpPacket(HRESULT *result);
   virtual ~CRtpPacket(void);
 
   /* get methods */

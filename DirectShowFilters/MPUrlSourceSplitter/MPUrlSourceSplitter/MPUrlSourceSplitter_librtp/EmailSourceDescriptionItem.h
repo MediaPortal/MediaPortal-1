@@ -31,7 +31,7 @@ class CEmailSourceDescriptionItem : public CSourceDescriptionItem
 {
 public:
   // initializes a new instance of CEmailSourceDescriptionItem class
-  CEmailSourceDescriptionItem(void);
+  CEmailSourceDescriptionItem(HRESULT *result);
   virtual ~CEmailSourceDescriptionItem(void);
 
   /* get methods */

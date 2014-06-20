@@ -31,7 +31,7 @@ class CToolSourceDescriptionItem : public CSourceDescriptionItem
 {
 public:
   // initializes a new instance of CToolSourceDescriptionItem class
-  CToolSourceDescriptionItem(void);
+  CToolSourceDescriptionItem(HRESULT *result);
   virtual ~CToolSourceDescriptionItem(void);
 
   /* get methods */

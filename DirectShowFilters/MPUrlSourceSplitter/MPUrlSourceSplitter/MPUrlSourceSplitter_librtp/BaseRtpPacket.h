@@ -23,19 +23,24 @@
 #ifndef __BASE_RTP_PACKET_DEFINED
 #define __BASE_RTP_PACKET_DEFINED
 
+#include "Flags.h"
+
 #define BASE_RTP_PACKET_HEADER_SIZE                                     1               // length of the header in bytes
 
-#define BASE_RTP_PACKET_FLAG_NONE                                       0x00000000
-#define BASE_RTP_PACKET_FLAG_PADDING                                    0x00000001
+#define BASE_RTP_PACKET_FLAG_NONE                                       FLAGS_NONE
+
+#define BASE_RTP_PACKET_FLAG_PADDING                                    (1 << (FLAGS_LAST + 0))
+
+#define BASE_RTP_PACKET_FLAG_LAST                                       (FLAGS_NONE + 1)
 
 // base RTP packet is simple base class for RTP packets and RTCP packets
 // RTP and RTCP packets have similar header but totally different meanings of each value
 // that's why RTCP packets have each own branch from  RTP packets
-class CBaseRtpPacket
+class CBaseRtpPacket : public CFlags
 {
 public:
   // intializes a new instance of CBaseRtpPacket
-  CBaseRtpPacket(void);
+  CBaseRtpPacket(HRESULT *result);
   virtual ~CBaseRtpPacket(void);
 
   /* get methods */
@@ -70,10 +75,6 @@ public:
   virtual bool Parse(const unsigned char *buffer, unsigned int length);
 
 protected:
-
-  // holds various flags
-  unsigned int flags;
-
   // holds packet version
   unsigned int version;
 

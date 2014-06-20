@@ -42,7 +42,7 @@ CBaseRtpPacketFactory::~CBaseRtpPacketFactory(void)
 CBaseRtpPacket *CBaseRtpPacketFactory::CreateBaseRtpPacket(const unsigned char *buffer, unsigned int length, unsigned int *position)
 {
   CBaseRtpPacket *result = NULL;
-  bool continueParsing = ((buffer != NULL) && (length > 0) && (position != NULL));
+  HRESULT continueParsing = ((buffer != NULL) && (length > 0) && (position != NULL)) ? S_OK : E_INVALIDARG;
 
   if (continueParsing)
   {
@@ -62,10 +62,10 @@ CBaseRtpPacket *CBaseRtpPacketFactory::CreateBaseRtpPacket(const unsigned char *
     CREATE_SPECIFIC_PACKET(CRtpPacket, buffer, length, continueParsing, result, (*position));
 
     // never return base RTP packet
-    continueParsing &= (result != NULL);
+    CHECK_CONDITION_HRESULT(continueParsing, result != NULL, continueParsing, E_FAIL);
   }
 
-  if (!continueParsing)
+  if (FAILED(continueParsing))
   {
     FREE_MEM_CLASS(result);
     *position = 0;

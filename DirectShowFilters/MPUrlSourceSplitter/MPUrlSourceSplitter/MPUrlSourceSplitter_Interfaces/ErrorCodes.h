@@ -30,7 +30,7 @@
 // each module can define other error codes
 // after changing error code appropriate files in OnlineVideos have to be changed
 
-#define IS_OUR_ERROR(error)                                                     (FAILED(error) && (error >= E_HTTP_CANNOT_INITIALIZE))
+#define IS_OUR_ERROR(error)                                                     ((error & 0xFFFFFF00) == 0x80000000)
 
 // common error codes
 

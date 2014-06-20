@@ -22,8 +22,8 @@
 
 #include "IdentifierCollection.h"
 
-CIdentifierCollection::CIdentifierCollection(void)
-  : CCollection()
+CIdentifierCollection::CIdentifierCollection(HRESULT *result)
+  : CCollection(result)
 {
 }
 

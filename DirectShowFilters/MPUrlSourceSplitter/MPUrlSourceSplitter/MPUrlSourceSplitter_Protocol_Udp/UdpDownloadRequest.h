@@ -25,6 +25,11 @@
 
 #include "DownloadRequest.h"
 
+#define UDP_DOWNLOAD_REQUEST_FLAG_NONE                                DOWNLOAD_REQUEST_FLAG_NONE
+
+#define UDP_DOWNLOAD_REQUEST_FLAG_LAST                                (DOWNLOAD_REQUEST_FLAG_LAST + 0)
+
+
 class CUdpDownloadRequest : public CDownloadRequest
 {
 public:
@@ -48,7 +53,7 @@ protected:
   // deeply clones current instance to cloned request
   // @param  clonedRequest : cloned request to hold clone of current instance
   // @return : true if successful, false otherwise
-  virtual bool CloneInternal(CUdpDownloadRequest *clonedRequest);
+  virtual bool CloneInternal(CDownloadRequest *clonedRequest);
 };
 
 #endif

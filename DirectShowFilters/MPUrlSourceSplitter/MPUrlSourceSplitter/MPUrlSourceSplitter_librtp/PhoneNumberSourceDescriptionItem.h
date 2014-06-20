@@ -31,7 +31,7 @@ class CPhoneNumberSourceDescriptionItem : public CSourceDescriptionItem
 {
 public:
   // initializes a new instance of CPhoneNumberSourceDescriptionItem class
-  CPhoneNumberSourceDescriptionItem(void);
+  CPhoneNumberSourceDescriptionItem(HRESULT *result);
   virtual ~CPhoneNumberSourceDescriptionItem(void);
 
   /* get methods */

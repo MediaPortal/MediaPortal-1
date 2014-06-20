@@ -31,7 +31,7 @@ class CMpeg2TransportStreamRtpPacket : public CRtpPacket
 {
 public:
   // initializes a new instance of CMpeg2TransportStreamRtpPacket class
-  CMpeg2TransportStreamRtpPacket(void);
+  CMpeg2TransportStreamRtpPacket(HRESULT *result);
   virtual ~CMpeg2TransportStreamRtpPacket(void);
 
   /* get methods */

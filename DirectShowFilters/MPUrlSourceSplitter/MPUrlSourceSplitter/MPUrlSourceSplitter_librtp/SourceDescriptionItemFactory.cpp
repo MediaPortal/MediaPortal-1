@@ -44,9 +44,9 @@ CSourceDescriptionItemFactory::~CSourceDescriptionItemFactory(void)
 CSourceDescriptionItem *CSourceDescriptionItemFactory::CreateSourceDescriptionItem(const unsigned char *buffer, unsigned int length, unsigned int *position)
 {
   CSourceDescriptionItem *result = NULL;
-  bool continueParsing = ((buffer != NULL) && (length > 0) && (position != NULL));
+  HRESULT continueParsing = ((buffer != NULL) && (length > 0) && (position != NULL)) ? S_OK : E_INVALIDARG;
 
-  if (continueParsing)
+  if (SUCCEEDED(continueParsing))
   {
     *position = 0;
 
@@ -64,7 +64,7 @@ CSourceDescriptionItem *CSourceDescriptionItemFactory::CreateSourceDescriptionIt
     }
   }
 
-  if (!continueParsing)
+  if (FAILED(continueParsing))
   {
     FREE_MEM_CLASS(result);
     *position = 0;
