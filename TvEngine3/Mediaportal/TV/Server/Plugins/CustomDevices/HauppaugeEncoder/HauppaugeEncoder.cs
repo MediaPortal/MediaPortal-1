@@ -27,7 +27,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
-namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
+namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEncoder
 {
   /// <summary>
   /// A class that implements encoder control for newer Hauppauge capture devices based on ViXS
@@ -428,7 +428,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
                 ReadDeviceInfo();
                 return true;
               }
-              this.LogDebug("Hauppauge encoder:   property set not supported");
+              this.LogDebug("Hauppauge encoder:   property set not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
             }
             finally
             {
