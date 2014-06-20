@@ -1293,11 +1293,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
         int toggleBit = (code & 0x800) >> 11;
         int systemAddress = (code & 0x7c0) >> 6;
         int rc5Code = code & 0x3f;
-        this.LogDebug("TechnoTrend: RC5 remote control key press, field bit = {0}, toggle bit = {1} system address = {2}, code = {3}", fieldBit, toggleBit, systemAddress, rc5Code);
+        this.LogDebug("TechnoTrend: RC-5 remote control key press, field bit = {0}, toggle bit = {1} system address = {2}, code = {3}", fieldBit, toggleBit, systemAddress, rc5Code);
       }
       else
       {
-        this.LogDebug("TechnoTrend: RC6 remote control key press, code = 0x{0:x8}", code);
+        int header = code >> 16;
+        int control = ((code >> 8) & 0xff);
+        int information = code & 0xff;
+        this.LogDebug("TechnoTrend: RC-6 remote control key press, header = {0}, control = {1}, information = {2}", header, control, information);
       }
     }
 
