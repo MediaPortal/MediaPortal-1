@@ -423,8 +423,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         if (analogVideoDecoder != null)
         {
           int hr = analogVideoDecoder.get_AvailableTVFormats(out _supportedVideoStandards);
-          HResult.ThrowException(hr, "Failed to get supported video standards.");
-          this.LogDebug("WDM analog capture: supported video standards = {0}", _supportedVideoStandards);
+          if (hr != (int)HResult.Severity.Success)
+          {
+            _supportedVideoStandards = AnalogVideoStandard.None;
+            this.LogWarn("WDM analog capture: failed to get supported video standards, hr = 0x{0:x}", hr);
+          }
+          else
+          {
+            this.LogDebug("WDM analog capture: supported video standards = {0}", _supportedVideoStandards);
+          }
           if (_setDefaultSettings)
           {
             SettingsManagement.SaveValue("tuner" + _tunerId + "SupportedVideoStandards", (int)_supportedVideoStandards);
