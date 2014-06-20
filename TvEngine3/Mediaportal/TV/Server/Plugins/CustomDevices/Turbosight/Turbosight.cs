@@ -138,7 +138,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
     /// Image:
     ///   v1 = http://www.tbsdtv.com/products/images/tbs6981/tbs6981_4.jpg
     ///   v2 = http://kubik-digital.com/wp-content/uploads/2013/10/41zlbmefDGL4.jpg
-    /// Testing: v1 (TBS5980 CI), v2 (TBS5980 CI)
+    /// Testing: v1 (TBS5980 CI), v2 (TBS5980 CI, TBS6991)
     /// </remarks>
     private enum TbsRemoteCodeBig : byte
     {
@@ -343,7 +343,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
 
     private static readonly int GENERAL_BUFFER_SIZE = Math.Max(TBS_ACCESS_PARAMS_SIZE, NBC_TUNING_PARAMS_SIZE);
 
-    private const byte MIN_BIG_REMOTE_CODE = 0x80;
+    private const byte MIN_BIG_REMOTE_CODE = 128;
     private const int REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME = 100;     // unit = ms
     private const int MMI_HANDLER_THREAD_WAIT_TIME = 2000;    // unit = ms
 
