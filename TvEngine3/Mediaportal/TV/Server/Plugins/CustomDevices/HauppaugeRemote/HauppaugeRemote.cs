@@ -366,6 +366,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeRemote
     {
       this.LogDebug("Hauppauge remote: starting remote control listener thread");
       Thread.BeginThreadAffinity();
+      string className = "HauppaugeRemoteListenerThreadWindowClass";
+      IntPtr processHandle = Process.GetCurrentProcess().Handle;
       try
       {
         IntPtr handle;
@@ -377,12 +379,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeRemote
           wndclass.lpfnWndProc = RemoteControlListenerWndProc;
           wndclass.cbClsExtra = 0;
           wndclass.cbWndExtra = 0;
-          wndclass.hInstance = Process.GetCurrentProcess().Handle;
+          wndclass.hInstance = processHandle;
           wndclass.hIcon = IntPtr.Zero;
           wndclass.hCursor = IntPtr.Zero;
           wndclass.hbrBackground = IntPtr.Zero;
           wndclass.lpszMenuName = null;
-          wndclass.lpszClassName = "HauppaugeRemoteListenerThreadWindowClass";
+          wndclass.lpszClassName = className;
 
           int atom = NativeMethods.RegisterClass(ref wndclass);
           if (atom == 0)
@@ -392,8 +394,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeRemote
           }
 
           // Create a tool (ie. not in taskbar or alt+tab list etc.) popup window instance with size 0x0.
-          handle = NativeMethods.CreateWindowEx(0x80, wndclass.lpszClassName, "", 0x80000000, 0, 0, 0, 0, IntPtr.Zero,
-                                                        IntPtr.Zero, wndclass.hInstance, IntPtr.Zero);
+          handle = NativeMethods.CreateWindowEx(0x80, className, string.Empty, 0x80000000, 0, 0, 0, 0, IntPtr.Zero,
+                                                        IntPtr.Zero, processHandle, IntPtr.Zero);
           if (handle.Equals(IntPtr.Zero))
           {
             this.LogError("Hauppauge remote: failed to create receive window, hr = 0x{0:x}", Marshal.GetLastWin32Error());
@@ -440,6 +442,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeRemote
               if (!IR_Close(handle.ToInt32(), 0))
               {
                 this.LogWarn("Hauppauge remote: failed to close interface");
+              }
+              if (!NativeMethods.UnregisterClass(className, processHandle))
+              {
+                this.LogWarn("Hauppauge remote: failed to unregister window class, hr = 0x{0:x}", Marshal.GetLastWin32Error());
               }
               return;
             }
@@ -589,6 +595,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeRemote
         return true;
       }
 
+      _restartIrExe = false;
       if (Process.GetProcessesByName(IR32_PROCESS_NAME).Length != 0)
       {
         // IR32 is running. We have to stop it to receive remote key presses.
@@ -673,6 +680,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeRemote
             {
               this.LogWarn("Hauppauge remote: {0} IR32 process(es) already running", processCount);
             }
+            _restartIrExe = false;
           }
           catch (Exception ex)
           {
