@@ -64,7 +64,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
       int GetDriverVersion(out uint versionMajor, out uint versionMinor, out uint revision, out uint build);
 
       [PreserveSig]
-      int GetGeneralInfo([MarshalAs(UnmanagedType.LPStr)] StringBuilder info, uint infoSize);
+      int GetGeneralInfo([MarshalAs(UnmanagedType.LPStr)] StringBuilder info, ref uint infoSize);
     }
 
     #region variables
@@ -108,15 +108,16 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
         this.LogWarn("Hauppauge ECP: failed to read driver version, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       }
 
-      StringBuilder generalInfo = new StringBuilder(4096);
-      hr = _interfaceEcp.GetGeneralInfo(generalInfo, 4096);
+      uint bufferSize = 4096;
+      StringBuilder generalInfo = new StringBuilder((int)bufferSize);
+      hr = _interfaceEcp.GetGeneralInfo(generalInfo, ref bufferSize);
       if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("  info         = {0}", generalInfo.ToString());
       }
       else
       {
-        this.LogWarn("Hauppauge ECP: failed to read general information, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogWarn("Hauppauge ECP: failed to read general information, hr = 0x{0:x} ({1}), required buffer size = {2}", hr, HResult.GetDXErrorString(hr), bufferSize);
       }
     }
 
