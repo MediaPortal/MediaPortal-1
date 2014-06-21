@@ -680,6 +680,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
             // but we don't want an explicit list of interfaces we care about.
             // Need to be smarter!
             if (i != typeof(ICustomDevice) &&
+              i != typeof (IEncoder) &&
               i != typeof(IRemoteControlListener) &&
               i != typeof(IDisposable) &&
               foundInterfaces.Contains(i.Name))
