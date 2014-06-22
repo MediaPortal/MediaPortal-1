@@ -51,7 +51,6 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp
         public const int MEDIASERVER_DEVICE_VERSION = 1;
         RtspServer _rtsp;
         static readonly Guid SERVER_ID = new Guid("{db015228-8813-11e3-a86e-d231feb1dc81}");
-        private static int _rtspStreamingPort = 554;
         static UPnPLightServer _server = null;
 
         #endregion

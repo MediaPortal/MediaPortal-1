@@ -20,8 +20,14 @@
 
 using System.Xml;
 using System.Globalization;
+using System.Collections.Generic;
 using UPnP.Infrastructure.Dv;
 using UPnP.Infrastructure.Dv.DeviceTree;
+using MediaPortal.Common.Utils;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVControl.Interfaces.Services;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
 
 namespace Mediaportal.TV.Server.TVLibrary.SatIp.Server
 {
@@ -41,8 +47,55 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Server
       if (pos == GenerationPosition.AfterDeviceList)
       {
         // TODO: make the "DVBT-2,DVBT2-2" dynamic
-        writer.WriteElementString("satip", "X_SATIPCAP", "urn:ses-com:satip", "DVBT-2");
+        writer.WriteElementString("satip", "X_SATIPCAP", "urn:ses-com:satip", getCapabilities());
       }
+    }
+
+    private static string getCapabilities()
+    {
+      string capabilities = string.Empty;
+      IList<Card> cards = new List<Card>();
+      int DVBS2 = 0;
+      int DVBT = 0;
+      int DVBC = 0;
+
+      cards = GlobalServiceProvider.Get<ICardService>().ListAllCards(CardIncludeRelationEnum.None);
+      foreach (Card card in cards)
+      {
+        CardType cardType = GlobalServiceProvider.Get<IControllerService>().Type(card.IdCard);
+        switch (cardType)
+        {
+          case CardType.DvbS:
+            ++DVBS2;
+            break;
+          case CardType.DvbT:
+            ++DVBT;
+            break;
+          case CardType.DvbC:
+            // currently the specification doesn't support DVB-C, so also increment DVB-T
+            ++DVBT;
+            break;
+        }
+      }
+
+      if (DVBS2 > 0)
+      {
+        capabilities += "DVBS2-" + DVBS2;
+      }
+      if (DVBT > 0)
+      {
+        if (capabilities != string.Empty)
+          capabilities += ",";
+        capabilities += "DVBT-" + DVBT;
+      }
+      if (DVBC > 0)
+      {
+        if (capabilities != string.Empty)
+          capabilities += ",";
+        capabilities += "DVBC-" + DVBC;
+      }
+
+      return capabilities;
     }
   }
 }

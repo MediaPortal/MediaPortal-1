@@ -61,7 +61,7 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
     private bool listen = true;
     private Object StartStreamLock = new Object();
 
-    private Dictionary<int, RtspClients> clients = new Dictionary<int, RtspClients>();
+    private Dictionary<string, RtspClients> clients = new Dictionary<string, RtspClients>();
     private Dictionary<int, RtspCards> cards = new Dictionary<int, RtspCards>();
 
 
@@ -326,7 +326,7 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
             int value;
             foreach (string pid in query.Get("delpids").Split(','))
             {
-              if (int.TryParse(pid, out value)) clients[int.Parse(requestHeader.sessionId)].delPid(value);
+              if (int.TryParse(pid, out value)) clients[requestHeader.sessionId].delPid(value);
             }
           }
 
@@ -336,64 +336,63 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
             int value;
             foreach (string pid in query.Get("addpids").Split(','))
             {
-              if (int.TryParse(pid, out value)) clients[int.Parse(requestHeader.sessionId)].addPid(value);
+              if (int.TryParse(pid, out value)) clients[requestHeader.sessionId].addPid(value);
             }
           }
 
           // sync Pids with filter
-          if (clients[int.Parse(requestHeader.sessionId)].isTunedToFrequency)
+          if (clients[requestHeader.sessionId].isTunedToFrequency)
           {
             this.LogDebug("SAT>IP: sync Pids with Filter for sessionID: {0}", requestHeader.sessionId);
-            syncPidsWithFilter(int.Parse(requestHeader.sessionId), cards[clients[int.Parse(requestHeader.sessionId)].cardId].devicePath);
+            syncPidsWithFilter(requestHeader.sessionId, cards[clients[requestHeader.sessionId].cardId].devicePath);
           }
 
-          parseQuery(int.Parse(requestHeader.sessionId), query);
+          parseQuery(requestHeader.sessionId, query);
           
-          // TODO: Add proper error handling if no tuning Detail is found
-          // TODO: check for already tuned cards to this frequency + modulation system (e.g DVB-C)
 
-          if (clients[int.Parse(requestHeader.sessionId)].tunedToFrequency != clients[int.Parse(requestHeader.sessionId)].freq)
+          if (clients[requestHeader.sessionId].tunedToFrequency != clients[requestHeader.sessionId].freq)
           {
-            this.LogDebug("SAT>IP: tuned Freq [{0}] != requested Freq [{1}] - sessionId {2}",clients[int.Parse(requestHeader.sessionId)].tunedToFrequency, clients[int.Parse(requestHeader.sessionId)].freq, requestHeader.sessionId);
+            this.LogDebug("SAT>IP: tuned Freq [{0}] != requested Freq [{1}] - sessionID {2}",clients[requestHeader.sessionId].tunedToFrequency, clients[requestHeader.sessionId].freq, requestHeader.sessionId);
             
             
             int cardKey;
-            if (cardAlreadyTunedToFreq(clients[int.Parse(requestHeader.sessionId)].msys, clients[int.Parse(requestHeader.sessionId)].freq, out cardKey))
+            if (cardAlreadyTunedToFreq(clients[requestHeader.sessionId].msys, clients[requestHeader.sessionId].freq, out cardKey))
             {
               // there is already a card tuned to the frequency so lets add us to this card.
-              this.LogDebug("SAT>IP: there is already a card tuned to the Freq={0} - sessionID: {1}", clients[int.Parse(requestHeader.sessionId)].freq, requestHeader.sessionId);
+              this.LogDebug("SAT>IP: there is already a card tuned to the Freq={0} - sessionID: {1}", clients[requestHeader.sessionId].freq, requestHeader.sessionId);
               cards[cardKey].AddSlave(int.Parse(requestHeader.sessionId));
-              clients[int.Parse(requestHeader.sessionId)].cardId = cardKey;
-              clients[int.Parse(requestHeader.sessionId)].slot = cards[cardKey].getSlot(int.Parse(requestHeader.sessionId));
+              clients[requestHeader.sessionId].cardId = cardKey;
+              clients[requestHeader.sessionId].slot = cards[cardKey].getSlot(int.Parse(requestHeader.sessionId));
             }
             else
             {
-              this.LogDebug("SAT>IP: there is no card already tuned to the Freq={0} - sessionID: {1}", clients[int.Parse(requestHeader.sessionId)].freq, requestHeader.sessionId);
+              this.LogDebug("SAT>IP: there is no card already tuned to the Freq={0} - sessionID: {1}", clients[requestHeader.sessionId].freq, requestHeader.sessionId);
 
               // remove user from current card
-              if (clients[int.Parse(requestHeader.sessionId)].isTunedToFrequency)
+              if (clients[requestHeader.sessionId].isTunedToFrequency)
               {
-                this.LogDebug("SAT>IP: remove user from card with id {0} - sessionId {1}", clients[int.Parse(requestHeader.sessionId)].cardId, requestHeader.sessionId);
-                cards[clients[int.Parse(requestHeader.sessionId)].cardId].removeUser(int.Parse(requestHeader.sessionId));
-                if (cards[clients[int.Parse(requestHeader.sessionId)].cardId].ownerId == -1)
+                this.LogDebug("SAT>IP: remove user from card with id {0} - sessionID {1}", clients[requestHeader.sessionId].cardId, requestHeader.sessionId);
+                cards[clients[requestHeader.sessionId].cardId].removeUser(int.Parse(requestHeader.sessionId));
+                if (cards[clients[requestHeader.sessionId].cardId].ownerId == -1)
                 {
-                  this.LogDebug("SAT>IP: no users on card => stop timeshifting on card with id {0} - sessionId {1}", clients[int.Parse(requestHeader.sessionId)].cardId, requestHeader.sessionId);
-                  cards[clients[int.Parse(requestHeader.sessionId)].cardId].card.StopTimeShifting();
+                  this.LogDebug("SAT>IP: no users on card => stop timeshifting on card with id {0} - sessionID {1}", clients[requestHeader.sessionId].cardId, requestHeader.sessionId);
+                  cards[clients[requestHeader.sessionId].cardId].card.StopTimeShifting();
                   // delete card from card array
-                  cards.Remove(clients[int.Parse(requestHeader.sessionId)].cardId);
+                  cards.Remove(clients[requestHeader.sessionId].cardId);
                 }
               }
 
 
-              TuningDetail _tuningDetail = ChannelManagement.GetTuningDetail(getChannelTypeAsInt(clients[int.Parse(requestHeader.sessionId)].msys), (clients[int.Parse(requestHeader.sessionId)].freq * 1000));
+              // TODO: Add proper error handling if no tuning Detail is found
+              TuningDetail _tuningDetail = ChannelManagement.GetTuningDetail(getChannelTypeAsInt(clients[requestHeader.sessionId].msys), (clients[requestHeader.sessionId].freq * 1000));
 
               if (_tuningDetail == null)
                 Log.Debug("SAT>IP: no such channel found!");
 
-              this.LogInfo("SAT>IP: creating User: \"SAT>IP - {0}\" for sessionId: {1}", clients[int.Parse(requestHeader.sessionId)].ip, requestHeader.sessionId);
-              IUser _user = UserFactory.CreateBasicUser("SAT>IP - " + clients[int.Parse(requestHeader.sessionId)].ip);
+              this.LogInfo("SAT>IP: creating User: \"SAT>IP - {0}\" for sessionId: {1}", clients[requestHeader.sessionId].ip, requestHeader.sessionId);
+              IUser _user = UserFactory.CreateBasicUser("SAT>IP - " + clients[requestHeader.sessionId].ip);
               IVirtualCard _card;
-              this.LogInfo("SAT>IP: Tuning to freq={0} for sessionId: {1}", clients[int.Parse(requestHeader.sessionId)].freq, requestHeader.sessionId);
+              this.LogInfo("SAT>IP: Tuning to freq={0} for sessionId: {1}", clients[requestHeader.sessionId].freq, requestHeader.sessionId);
 
               TvResult result = GlobalServiceProvider.Get<IControllerService>().StartTimeShifting(_user.Name, _tuningDetail.IdChannel, out _card, out _user);
 
@@ -411,27 +410,27 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
               card.user = _user;
               card.card = _card;
               card.tuningDetail = _tuningDetail;
-              card.freq = clients[int.Parse(requestHeader.sessionId)].freq;
-              card.msys = clients[int.Parse(requestHeader.sessionId)].msys;
+              card.freq = clients[requestHeader.sessionId].freq;
+              card.msys = clients[requestHeader.sessionId].msys;
               cards.Add(card.id, card);
-              clients[int.Parse(requestHeader.sessionId)].cardId = card.id;
-              clients[int.Parse(requestHeader.sessionId)].slot = card.getSlot(int.Parse(requestHeader.sessionId));
+              clients[requestHeader.sessionId].cardId = card.id;
+              clients[requestHeader.sessionId].slot = card.getSlot(int.Parse(requestHeader.sessionId));
 
               // TODO remove
-              clients[int.Parse(requestHeader.sessionId)].card = _card;
-              clients[int.Parse(requestHeader.sessionId)].user = _user;
-              clients[int.Parse(requestHeader.sessionId)].tuningDetail = _tuningDetail;
+              clients[requestHeader.sessionId].card = _card;
+              clients[requestHeader.sessionId].user = _user;
+              clients[requestHeader.sessionId].tuningDetail = _tuningDetail;
 
-              cards[clients[int.Parse(requestHeader.sessionId)].cardId].devicePath = GlobalServiceProvider.Get<IControllerService>().CardDevice(_card.Id); // device path
+              cards[clients[requestHeader.sessionId].cardId].devicePath = GlobalServiceProvider.Get<IControllerService>().CardDevice(_card.Id); // device path
             }
 
-            clients[int.Parse(requestHeader.sessionId)].isTunedToFrequency = true;
-            clients[int.Parse(requestHeader.sessionId)].tunedToFrequency = clients[int.Parse(requestHeader.sessionId)].freq;
+            clients[requestHeader.sessionId].isTunedToFrequency = true;
+            clients[requestHeader.sessionId].tunedToFrequency = clients[requestHeader.sessionId].freq;
 
             // send commands to the filter
-            FilterCommunication communication = new FilterCommunication(cards[clients[int.Parse(requestHeader.sessionId)].cardId].devicePath, clients[int.Parse(requestHeader.sessionId)].slot);
-            communication.addClientPort(clients[int.Parse(requestHeader.sessionId)].rtpClientPort);
-            communication.addClientIp(clients[int.Parse(requestHeader.sessionId)].ip);
+            FilterCommunication communication = new FilterCommunication(cards[clients[requestHeader.sessionId].cardId].devicePath, clients[requestHeader.sessionId].slot);
+            communication.addClientPort(clients[requestHeader.sessionId].rtpClientPort);
+            communication.addClientIp(clients[requestHeader.sessionId].ip);
             communication.requestNewSlot();
             communication.send();
           }
@@ -447,7 +446,7 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
           // RTP-Info: url=rtsp://192.168.178.44:554/?freq=530.000&msys=dvbc&sr=6900&mtype=256qam&pids=0,259,533,538,534,18,17,16 RTSP/1.0\r\n
           rtspDescribeRequest.AppendFormat("RTP-Info: url={0} RTSP/1.0\r\n", parts[1]);
           // session
-          rtspDescribeRequest.AppendFormat("Session: {0}\r\n", clients[int.Parse(requestHeader.sessionId)].sessionId);
+          rtspDescribeRequest.AppendFormat("Session: {0}\r\n", clients[requestHeader.sessionId].sessionId);
           //CSeq
           rtspDescribeRequest.AppendFormat("CSeq: {0}", requestHeader.CSeq);
           rtspDescribeRequest.Append("\r\n\r\n");
@@ -543,7 +542,7 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
           }
 
           // remove client
-          clients.Remove(int.Parse(requestHeader.sessionId));
+          clients.Remove(requestHeader.sessionId);
 
           // creating the response
 
@@ -683,7 +682,7 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
       return false;
     }
 
-    private void parseQuery(int sessionId, NameValueCollection query)
+    private void parseQuery(string sessionId, NameValueCollection query)
     {
       foreach (string key in query.Keys)
       {
@@ -720,7 +719,7 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
       }
     }
 
-    private void syncPidsWithFilter(int sessionId, string namedPipeName)
+    private void syncPidsWithFilter(string sessionId, string namedPipeName)
     {
       FilterCommunication communication = new FilterCommunication(namedPipeName, clients[sessionId].slot);
       communication.addSyncPids(clients[sessionId].pids);

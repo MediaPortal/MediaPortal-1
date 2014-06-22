@@ -57,7 +57,7 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
     private string _msys;
     private int _sr;
     private int _fec;
-    private int _sessionId;
+    private string _sessionId;
     private ArrayList _pids = new ArrayList();
     private bool _isTunedToFrequency = false;
     private int _tunedToFrequency;
@@ -78,7 +78,7 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
     /// <summary>
     /// Get the session id.
     /// </summary>
-    public int sessionId
+    public string sessionId
     {
       get
       {
@@ -425,7 +425,7 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
         Random rand = new Random();
         for (int ctr = 0; ctr <= 7; ctr++)
           sessionId += rand.Next(0,10).ToString();
-        _sessionId = int.Parse(sessionId);
+        _sessionId = sessionId;
       }
     }
 
