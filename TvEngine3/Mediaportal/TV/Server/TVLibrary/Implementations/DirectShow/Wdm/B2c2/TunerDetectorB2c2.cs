@@ -19,6 +19,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
   {
     private static readonly int DEVICE_INFO_SIZE = Marshal.SizeOf(typeof(DeviceInfo));                // 416
 
+    // key = device path
+    private IDictionary<uint, ITVCard> _knownTuners = new Dictionary<uint, ITVCard>();
+
     /// <summary>
     /// Get the detector's name.
     /// </summary>
@@ -38,6 +41,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     {
       this.LogDebug("B2C2 detector: detect tuners");
       List<ITVCard> tuners = new List<ITVCard>();
+      IDictionary<uint, ITVCard> knownTuners = new Dictionary<uint, ITVCard>();
 
       // Instanciate a data interface so we can check how many tuners are installed.
       IBaseFilter b2c2Source = null;
@@ -83,8 +87,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
             this.LogDebug("B2C2 detector: device count = {0}", deviceCount);
             for (int i = 0; i < deviceCount; i++)
             {
-              this.LogDebug("B2C2 detector: device {0}", i + 1);
               DeviceInfo d = (DeviceInfo)Marshal.PtrToStructure(structurePtr, typeof(DeviceInfo));
+
+              // Is this a new tuner?
+              ITVCard t;
+              if (_knownTuners.TryGetValue(d.DeviceId, out t))
+              {
+                tuners.Add(t);
+                knownTuners.Add(d.DeviceId, t);
+                continue;
+              }
+              t = null;
+
+              this.LogDebug("B2C2 detector: device {0}", i + 1);
               this.LogDebug("  device ID           = {0}", d.DeviceId);
               this.LogDebug("  MAC address         = {0}", BitConverter.ToString(d.MacAddress.Address).ToLowerInvariant());
               this.LogDebug("  tuner type          = {0}", d.TunerType);
@@ -99,21 +114,27 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
               switch (d.TunerType)
               {
                 case TunerType.Satellite:
-                  tuners.Add(new TunerB2c2Satellite(d));
+                  t = new TunerB2c2Satellite(d);
                   break;
                 case TunerType.Cable:
-                  tuners.Add(new TunerB2c2Cable(d));
+                  t = new TunerB2c2Cable(d);
                   break;
                 case TunerType.Terrestrial:
-                  tuners.Add(new TunerB2c2Terrestrial(d));
+                  t = new TunerB2c2Terrestrial(d);
                   break;
                 case TunerType.Atsc:
-                  tuners.Add(new TunerB2c2Atsc(d));
+                  t = new TunerB2c2Atsc(d);
                   break;
                 default:
                   // The tuner may not be redetected properly after standby in some cases.
                   this.LogWarn("B2C2 detector: unknown tuner type {0}, cannot use this tuner", d.TunerType);
                   break;
+              }
+
+              if (t != null)
+              {
+                tuners.Add(t);
+                knownTuners.Add(d.DeviceId, t);
               }
 
               structurePtr = IntPtr.Add(structurePtr, DEVICE_INFO_SIZE);
@@ -131,6 +152,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
         Release.ComObject("B2C2 source filter", ref b2c2Source);
       }
 
+      _knownTuners = knownTuners;
       return tuners;
     }
   }

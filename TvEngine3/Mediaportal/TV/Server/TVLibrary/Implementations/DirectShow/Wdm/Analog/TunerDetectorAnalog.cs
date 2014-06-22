@@ -32,6 +32,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
   /// </summary>
   internal class TunerDetectorAnalog : ITunerDetectorSystem
   {
+    #region variables
+
+    // key = device path
+    private IDictionary<string, ITVCard> _knownTuners = new Dictionary<string, ITVCard>();
+
+    #endregion
+
     /// <summary>
     /// Get the detector's name.
     /// </summary>
@@ -51,6 +58,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
     {
       this.LogDebug("WDM detector: detect tuners");
       List<ITVCard> tuners = new List<ITVCard>();
+      IDictionary<string, ITVCard> knownTuners = new Dictionary<string, ITVCard>();
       HashSet<string> crossbarProductIds = new HashSet<string>();
 
       DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSCrossbar);
@@ -64,9 +72,24 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
           continue;
         }
 
+        // Is this a new device?
+        ITVCard tuner;
+        if (_knownTuners.TryGetValue(devicePath, out tuner))
+        {
+          device.Dispose();
+          tuners.Add(tuner);
+          knownTuners.Add(devicePath, tuner);
+          if (tuner.ProductInstanceId != null)
+          {
+            crossbarProductIds.Add(tuner.ProductInstanceId);
+          }
+          continue;
+        }
+
         this.LogDebug("WDM detector: crossbar {0} {1}", name, devicePath);
-        ITVCard tuner = new TunerAnalog(device, FilterCategory.AMKSCrossbar);
+        tuner = new TunerAnalog(device, FilterCategory.AMKSCrossbar);
         tuners.Add(tuner);
+        knownTuners.Add(devicePath, tuner);
         if (tuner.ProductInstanceId != null)
         {
           crossbarProductIds.Add(tuner.ProductInstanceId);
@@ -84,21 +107,37 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
           continue;
         }
 
+        // Is this a new device?
+        ITVCard tuner;
+        if (_knownTuners.TryGetValue(devicePath, out tuner))
+        {
+          device.Dispose();
+          if (tuner != null)
+          {
+            tuners.Add(tuner);
+          }
+          knownTuners.Add(devicePath, tuner);
+          continue;
+        }
+
         // We don't want to add duplicate entries for multi-input capture
         // devices (already detected via crossbar).
         this.LogDebug("WDM detector: capture {0} {1}", name, devicePath);
-        ITVCard tuner = new TunerAnalog(device, FilterCategory.AMKSCapture);
+        tuner = new TunerAnalog(device, FilterCategory.AMKSCapture);
         if (tuner.ProductInstanceId != null && crossbarProductIds.Contains(tuner.ProductInstanceId))
         {
           // This source has a crossbar. Don't use it.
           this.LogDebug("  already detected crossbar", name, devicePath);
           tuner.Dispose();
+          knownTuners.Add(devicePath, null);
           continue;
         }
 
         tuners.Add(tuner);
+        knownTuners.Add(devicePath, tuner);
       }
 
+      _knownTuners = knownTuners;
       return tuners;
     }
   }

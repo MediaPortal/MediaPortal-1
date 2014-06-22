@@ -583,6 +583,119 @@ namespace DirectShowLib
 
     // *** START added. ***
 
+    #region cfgmgr32.dll
+
+    /// <summary>
+    /// The CM_Get_Device_ID function retrieves the device instance ID for a specified device instance on the local machine.
+    /// </summary>
+    /// <param name="dnDevInst">Caller-supplied device instance handle that is bound to the local machine.</param>
+    /// <param name="Buffer">Address of a buffer to receive a device instance ID string. The required buffer size can be obtained by calling CM_Get_Device_ID_Size, then incrementing the received value to allow room for the string's terminating NULL. </param>
+    /// <param name="BufferLen">Caller-supplied length, in characters, of the buffer specified by Buffer.</param>
+    /// <param name="ulFlags">Not used, must be zero.</param>
+    /// <returns>If the operation succeeds, the function returns CR_SUCCESS. Otherwise, it returns one of the CR_-prefixed error codes defined in Cfgmgr32.h.</returns>
+    [DllImport("cfgmgr32.dll", CharSet = CharSet.Unicode)]
+    public static extern uint CM_Get_Device_IDW(uint dnDevInst, StringBuilder Buffer, uint BufferLen, uint ulFlags);
+
+    /// <summary>
+    /// The CM_Get_Parent function obtains a device instance handle to the parent node of a specified device node (devnode) in the local machine's device tree.
+    /// </summary>
+    /// <param name="pdnDevInst">Caller-supplied pointer to the device instance handle to the parent node that this function retrieves. The retrieved handle is bound to the local machine.</param>
+    /// <param name="dnDevInst">Caller-supplied device instance handle that is bound to the local machine.</param>
+    /// <param name="ulFlags">Not used, must be zero.</param>
+    /// <returns>If the operation succeeds, the function returns CR_SUCCESS. Otherwise, it returns one of the CR_-prefixed error codes defined in Cfgmgr32.h.</returns>
+    [DllImport("cfgmgr32.dll")]
+    public static extern uint CM_Get_Parent(out uint pdnDevInst, uint dnDevInst, uint ulFlags);
+
+    #endregion
+
+    #region setupapi.dll
+
+    private const uint MAX_DEVICE_ID_LEN = 200;
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+    private struct SP_DEVINFO_DATA
+    {
+      public uint cbSize;
+      public Guid ClassGuid;
+      public uint DevInst;
+      public IntPtr Reserved;
+    }
+
+    [Flags]
+    public enum DiGetClassFlags : uint
+    {
+      /// <summary>
+      /// Return only the device that is associated with the system default device interface, if one is set, for the specified device interface classes.
+      /// </summary>
+      DIGCF_DEFAULT = 0x00000001,  // only valid with DIGCF_DEVICEINTERFACE
+      /// <summary>
+      /// Return only devices that are currently present in a system.
+      /// </summary>
+      DIGCF_PRESENT = 0x00000002,
+      /// <summary>
+      /// Return a list of installed devices for all device setup classes or all device interface classes.
+      /// </summary>
+      DIGCF_ALLCLASSES = 0x00000004,
+      /// <summary>
+      /// Return only devices that are a part of the current hardware profile.
+      /// </summary>
+      DIGCF_PROFILE = 0x00000008,
+      /// <summary>
+      /// Return devices that support device interfaces for the specified device interface classes. This flag must be set in the Flags parameter if the Enumerator parameter specifies a device instance ID.
+      /// </summary>
+      DIGCF_DEVICEINTERFACE = 0x00000010,
+    }
+
+    /// <summary>
+    /// The SetupDiDestroyDeviceInfoList function deletes a device information set and frees all associated memory.
+    /// </summary>
+    /// <param name="DeviceInfoSet">A handle to the device information set to delete.</param>
+    /// <returns>The function returns TRUE if it is successful. Otherwise, it returns FALSE and the logged error can be retrieved with a call to GetLastError.</returns>
+    [DllImport("setupapi.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool SetupDiDestroyDeviceInfoList(IntPtr DeviceInfoSet);
+
+    /// <summary>
+    /// The SetupDiEnumDeviceInfo function returns a SP_DEVINFO_DATA structure that specifies a device information element in a device information set.
+    /// </summary>
+    /// <param name="DeviceInfoSet">A handle to the device information set for which to return an SP_DEVINFO_DATA structure that represents a device information element.</param>
+    /// <param name="MemberIndex">A zero-based index of the device information element to retrieve.</param>
+    /// <param name="DeviceInfoData">A pointer to an SP_DEVINFO_DATA structure to receive information about an enumerated device information element. The caller must set DeviceInfoData.cbSize to sizeof(SP_DEVINFO_DATA).</param>
+    /// <returns>The function returns TRUE if it is successful. Otherwise, it returns FALSE and the logged error can be retrieved with a call to GetLastError.</returns>
+    [DllImport("setupapi.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool SetupDiEnumDeviceInfo(IntPtr DeviceInfoSet, uint MemberIndex, ref SP_DEVINFO_DATA DeviceInfoData);
+
+    /// <summary>
+    /// The SetupDiGetClassDevs function returns a handle to a device information set that contains requested device information elements for a local computer.
+    /// </summary>
+    /// <param name="ClassGuid">A pointer to the GUID for a device setup class or a device interface class. This pointer is optional and can be NULL. For more information about how to set ClassGuid, see the following Remarks section.</param>
+    /// <param name="Enumerator">A pointer to a NULL-terminated string that specifies:
+    /// - An identifier (ID) of a Plug and Play (PnP) enumerator. This ID can either be the value's globally unique identifier (GUID) or symbolic name. For example, "PCI" can be used to specify the PCI PnP value. Other examples of symbolic names for PnP values include "USB," "PCMCIA," and "SCSI".
+    /// - A PnP device instance ID. When specifying a PnP device instance ID, DIGCF_DEVICEINTERFACE must be set in the Flags parameter.
+    /// This pointer is optional and can be NULL. If an enumeration value is not used to select devices, set Enumerator to NULL.
+    /// For more information about how to set the Enumerator value, see the following Remarks section.</param>
+    /// <param name="hwndParent">A handle to the top-level window to be used for a user interface that is associated with installing a device instance in the device information set. This handle is optional and can be NULL.</param>
+    /// <param name="Flags">A variable of type DWORD that specifies control options that filter the device information elements that are added to the device information set. This parameter can be a bitwise OR of zero or more of the following flags. For more information about combining these flags, see the following Remarks section.</param>
+    /// <returns>If the operation succeeds, SetupDiGetClassDevs returns a handle to a device information set that contains all installed devices that matched the supplied parameters. If the operation fails, the function returns INVALID_HANDLE_VALUE. To get extended error information, call GetLastError.</returns>
+    [DllImport("setupapi.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+    private static extern IntPtr SetupDiGetClassDevsW(ref Guid ClassGuid, string Enumerator, IntPtr hwndParent, DiGetClassFlags Flags);
+
+    /// <summary>
+    /// The SetupDiGetDeviceInstanceId function retrieves the device instance ID that is associated with a device information element.
+    /// </summary>
+    /// <param name="DeviceInfoSet">A handle to the device information set that contains the device information element that represents the device for which to retrieve a device instance ID. </param>
+    /// <param name="DeviceInfoData">A pointer to an SP_DEVINFO_DATA structure that specifies the device information element in DeviceInfoSet.</param>
+    /// <param name="DeviceInstanceId">A pointer to the character buffer that will receive the NULL-terminated device instance ID for the specified device information element. For information about device instance IDs, see Device Identification Strings.</param>
+    /// <param name="DeviceInstanceIdSize">The size, in characters, of the DeviceInstanceId buffer.</param>
+    /// <param name="RequiredSize">A pointer to the variable that receives the number of characters required to store the device instance ID.</param>
+    /// <returns>The function returns TRUE if it is successful. Otherwise, it returns FALSE and the logged error can be retrieved by making a call to GetLastError.</returns>
+    [DllImport("setupapi.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool SetupDiGetDeviceInstanceIdW(IntPtr DeviceInfoSet, ref SP_DEVINFO_DATA DeviceInfoData, StringBuilder DeviceInstanceId, uint DeviceInstanceIdSize, out uint RequiredSize);
+
+    #endregion
+
     /// <summary>
     /// Get the product instance identifier.
     /// </summary>
@@ -600,6 +713,9 @@ namespace DirectShowLib
     /// @device:pnp:\\?\root#system#0000#{fd0a5af4-b41d-11d2-9c95-00c04f7971e0}\{03884cb6-e89a-4deb-b69e-8dc621686e6a}&global
     /// @device:sw:{71985F48-1CA1-11D3-9CC8-00C04F7971E0}\Silicondust HDHomeRun Tuner 1000101F-0
     /// @device:pnp:\\?\hdaudio#func_01&ven_10ec&dev_0882&subsys_1043e601&rev_1001#4&225f9914&0&0001#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\rearlineinwave3
+    /// 
+    /// For more information about [product] instance IDs:
+    /// http://msdn.microsoft.com/en-us/library/windows/hardware/ff547656%28v=vs.85%29.aspx
     /// </remarks>
     /// <param name="devicePath">The device path to analyse.</param>
     /// <returns>the product instance identifier if successful, otherwise <c>null</c></returns>
@@ -649,26 +765,125 @@ namespace DirectShowLib
           return null;
         }
 
-        // The third section is the product instance identifier. Note the first
-        // and second sections are usually identical for all components (digital
-        // and analog) of PnP USB and PCI hardware, but they are ***not***
-        // usually identical for hardware with stream class drivers.
-        // Hardware component identifiers that we can interpret contain 4
-        // sections separated by &. Again, all 4 parts are usually identical for
-        // PnP USB and PCI hardware components. For hardware with stream class
-        // drivers, the first three parts are identical and the last part is a
-        // unique component identifier.
+        #region explanation
+        // The first and second sections are identical for all components
+        // driven by the same driver. This is perfect for PnP USB and PCI
+        // hardware. Unfortunately hardware with stream class drivers have
+        // separate drivers for each component (crossbar, capture, tuner etc.).
+        // Therefore we can't use the first and second sections as part of the
+        // product instance ID.
+        //
+        // The third section is the instance ID. There is no specific
+        // documentation on the format of the instance ID. All that we know is:
+        // - it contains serial number or location information
+        // - guaranteed unique among devices of the same type in the same PC
+        // - bus-specific format
+        // - persistent across system restarts (but not BIOS or slot changes)
+        //
+        // We're advised not to assume anything about the format across
+        // different versions of Windows:
+        // http://support.microsoft.com/kb/311272
+        // ...but unfortunately we don't really have a choice if we want to
+        // handle stream class drivers.
+        //
+        // In practice instance IDs for PCI hardware contain 4 sections
+        // separated by &. USB seems to be the same unless a serial number is
+        // available, in which case the serial number is used.
+        //
+        // The first section seems to be related to "depth" in the bus
+        // connection hierarchy. Commonly 3 for hubs/controllers, 4 for main
+        // device, and 5 or greater for sub devices. USB often has multiple
+        // intermediate hubs/controllers with value >=4 => main device >= 5.
+        //
+        // The second and third sections' source and meaning are completely
+        // unknown.
+        //
+        // For PCI, the last section encodes device and function (plus some
+        // other unknown information).
+        //
+        // In order to resolve the stream driver issue we lookup the parent
+        // device (expected to be a PCI device - enables us to link to the
+        // other components), and use part of the instance ID.
+        #endregion
+
+        // Default result.
         string productInstanceIdentifier = sections[2];
+        bool isPci = sections[0].EndsWith(@"\pci");
+
+        if (!isPci && sections[0].EndsWith(@"\stream"))
+        {
+          // Convert the device path to a device ID. For example:
+          // @device:pnp:\\?\stream#hcw88bar.cfg92#5&35edf2e&7&0#{a799a801-a46d-11d0-a18c-00a02401dcd4}\global
+          // STREAM\HCW88BAR.CFG92\5&35EDF2E&7&0
+          string targetDeviceId = string.Format(@"STREAM\{0}\{1}", sections[1].ToUpperInvariant(), sections[2].ToUpperInvariant());
+
+          // Enumerate installed and present media devices with stream class drivers.
+          Guid classMedia = new Guid(0x4d36e96c, 0xe325, 0x11ce, 0xbf, 0xc1, 0x08, 0x00, 0x2b, 0xe1, 0x03, 0x18);
+          IntPtr devInfoSet = SetupDiGetClassDevsW(ref classMedia, "STREAM", IntPtr.Zero, DiGetClassFlags.DIGCF_PRESENT);
+          if (devInfoSet != IntPtr.Zero)
+          {
+            try
+            {
+              StringBuilder tempDeviceId = new StringBuilder((int)MAX_DEVICE_ID_LEN);
+              StringBuilder parentDeviceId = new StringBuilder((int)MAX_DEVICE_ID_LEN);
+              uint index = 0;
+              SP_DEVINFO_DATA devInfo = new SP_DEVINFO_DATA();
+              devInfo.cbSize = (uint)Marshal.SizeOf(typeof(SP_DEVINFO_DATA));
+              while (SetupDiEnumDeviceInfo(devInfoSet, index++, ref devInfo))
+              {
+                // Get the device ID for the media device.
+                uint requiredSize;
+                if (SetupDiGetDeviceInstanceIdW(devInfoSet, ref devInfo, tempDeviceId, MAX_DEVICE_ID_LEN, out requiredSize))
+                {
+                  // Is this the same device as represented by this DsDevice/moniker?
+                  if (string.Equals(tempDeviceId.ToString(), targetDeviceId, StringComparison.InvariantCultureIgnoreCase))
+                  {
+                    // Yes, same device. Does it have a parent device?
+                    uint parentDevInst;
+                    if (CM_Get_Parent(out parentDevInst, devInfo.DevInst, 0) == 0 && CM_Get_Device_IDW(parentDevInst, parentDeviceId, MAX_DEVICE_ID_LEN, 0) == 0)
+                    {
+                      // Yes. The parent device ID should look something like:
+                      // PCI\VEN_14F1&DEV_8800&SUBSYS_92020070&REV_05\4&CF81C54&0&10F0
+                      string[] parentSections = parentDeviceId.ToString().Split('\\');
+                      if (parentSections.Length == 3)
+                      {
+                        productInstanceIdentifier = parentSections[2].ToLowerInvariant();
+                      }
+                      isPci = parentSections[0].Equals("PCI");
+                    }
+                    break;
+                  }
+                }
+              }
+            }
+            finally
+            {
+              SetupDiDestroyDeviceInfoList(devInfoSet);
+            }
+          }
+        }
+
         sections = productInstanceIdentifier.Split('&');
         if (sections.Length == 1)
         {
+          // Serial number format - nothing further to do.
           return productInstanceIdentifier;
         }
+
         if (sections.Length != 4)
         {
           return null;
         }
-        return sections[0] + '&' + sections[1] + '&' + sections[2];
+        if (!isPci)
+        {
+          return sections[0] + '&' + sections[1] + '&' + sections[2];
+        }
+
+        // PCI - extract the device ID from the last section.
+        sections[3] = sections[3].Substring(0, 2);
+
+        byte deviceId = (byte)(Convert.ToByte(sections[3], 16) & 0xf8);
+        return sections[0] + '&' + sections[1] + '&' + sections[2] + '&' + string.Format("{0:x02}", deviceId);
       }
     }
 

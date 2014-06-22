@@ -34,6 +34,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
   /// </summary>
   internal class TunerDetectorStream : ITunerDetectorSystem
   {
+    #region variables
+
+    // key = name
+    private IDictionary<string, IList<ITVCard>> _knownTuners = new Dictionary<string, IList<ITVCard>>();
+
+    #endregion
+
     #region ITunerDetectorSystem members
 
     /// <summary>
@@ -55,11 +62,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
     {
       this.LogDebug("stream detector: detect tuners");
       List<ITVCard> tuners = new List<ITVCard>();
+      IDictionary<string, IList<ITVCard>> knownTuners = new Dictionary<string, IList<ITVCard>>();
 
       int streamTunerCount = SettingsManagement.GetValue("iptvCardCount", 1);
 
       // Elecard stream source filter.
       // TODO could we do this better/faster if we had access to the CLSID (FilterGraphTools.IsThisComObjectInstalled())?
+      string targetDeviceName = "Elecard NWSource-Plus";
       DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.LegacyAmFilterCategory);
       foreach (DsDevice device in devices)
       {
@@ -71,12 +80,31 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
             continue;
           }
 
-          if (name.Equals("Elecard NWSource-Plus"))
+          if (name.Equals(targetDeviceName))
           {
+            // Was the filter already installed? If so reuse the existing tuner
+            // instances.
+            IList<ITVCard> currentTuners;
+            IList<ITVCard> newTuners = new List<ITVCard>(streamTunerCount);
+            if (!_knownTuners.TryGetValue(targetDeviceName, out currentTuners))
+            {
+              currentTuners = null;
+            }
+
             for (int i = 1; i <= streamTunerCount; i++)
             {
-              tuners.Add(new TunerStreamElecard(i));
+              if (currentTuners != null && currentTuners.Count >= i)
+              {
+                newTuners.Add(currentTuners[i - 1]);
+              }
+              else
+              {
+                newTuners.Add(new TunerStreamElecard(i));
+              }
             }
+
+            tuners.AddRange(newTuners);
+            knownTuners.Add(targetDeviceName, newTuners);
           }
         }
         finally
@@ -88,12 +116,33 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
       // MediaPortal stream source filter.
       if (File.Exists(PathManager.BuildAssemblyRelativePath("MPIPTVSource.ax")))
       {
+        // Was the filter already installed? If so reuse the existing tuner
+        // instances.
+        targetDeviceName = "MediaPortal stream source";
+        IList<ITVCard> currentTuners;
+        IList<ITVCard> newTuners = new List<ITVCard>(streamTunerCount);
+        if (!_knownTuners.TryGetValue(targetDeviceName, out currentTuners))
+        {
+          currentTuners = null;
+        }
+
         for (int i = 1; i <= streamTunerCount; i++)
         {
-          tuners.Add(new TunerStream(i));
+          if (currentTuners != null && currentTuners.Count >= i)
+          {
+            newTuners.Add(currentTuners[i - 1]);
+          }
+          else
+          {
+            newTuners.Add(new TunerStream(i));
+          }
         }
+
+        tuners.AddRange(newTuners);
+        knownTuners.Add(targetDeviceName, newTuners);
       }
 
+      _knownTuners = knownTuners;
       return tuners;
     }
 

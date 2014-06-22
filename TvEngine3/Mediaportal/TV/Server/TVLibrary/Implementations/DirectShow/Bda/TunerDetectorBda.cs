@@ -47,6 +47,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     private IFilterGraph2 _graph = null;
     private DsROTEntry _rotEntry = null;
 
+    // key = device path
+    private IDictionary<string, ICollection<ITVCard>> _knownTuners = new Dictionary<string, ICollection<ITVCard>>();
+
     #endregion
 
     /// <summary>
@@ -72,6 +75,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// </summary>
     public void Dispose()
     {
+      _knownTuners.Clear();
       if (_rotEntry != null)
       {
         _rotEntry.Dispose();
@@ -113,6 +117,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     {
       this.LogDebug("BDA detector: detect tuners");
       List<ITVCard> tuners = new List<ITVCard>();
+      IDictionary<string, ICollection<ITVCard>> knownTuners = new Dictionary<string, ICollection<ITVCard>>();
 
       DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.BDASourceFiltersCategory);
       foreach (DsDevice device in devices)
@@ -124,6 +129,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
           device.Dispose();
           continue;
         }
+
+        // Is this a new device?
+        ICollection<ITVCard> deviceTuners;
+        if (_knownTuners.TryGetValue(devicePath, out deviceTuners))
+        {
+          device.Dispose();
+          tuners.AddRange(deviceTuners);
+          knownTuners.Add(devicePath, deviceTuners);
+          continue;
+        }
+        deviceTuners = new List<ITVCard>(4);
 
         this.LogDebug("BDA detector: tuner {0} {1}", name, devicePath);
         IBaseFilter tunerFilter;
@@ -179,25 +195,28 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
           {
             if (tunerFilter is IBDA_ConditionalAccess)
             {
-              tuners.Add(new TunerPbdaCableCard(device));
+              deviceTuners.Add(new TunerPbdaCableCard(device));
             }
             else
             {
-              tuners.Add(new TunerBdaAtsc(device));
+              deviceTuners.Add(new TunerBdaAtsc(device));
             }
           }
           if (isCable)
           {
-            tuners.Add(new TunerBdaCable(device));
+            deviceTuners.Add(new TunerBdaCable(device));
           }
           if (isSatellite)
           {
-            tuners.Add(new TunerBdaSatellite(device));
+            deviceTuners.Add(new TunerBdaSatellite(device));
           }
           if (isTerrestrial)
           {
-            tuners.Add(new TunerBdaTerrestrial(device));
+            deviceTuners.Add(new TunerBdaTerrestrial(device));
           }
+
+          tuners.AddRange(deviceTuners);
+          knownTuners.Add(devicePath, deviceTuners);
         }
         finally
         {
@@ -205,6 +224,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
           Release.ComObject("BDA detector source filter", ref tunerFilter);
         }
       }
+
+      _knownTuners = knownTuners;
       return tuners;
     }
 

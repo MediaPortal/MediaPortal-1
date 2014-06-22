@@ -112,6 +112,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
 
     #endregion
 
+    #region variables
+
+    // key = device path
+    private IDictionary<string, ICollection<ITVCard>> _knownTuners = new Dictionary<string, ICollection<ITVCard>>();
+
+    #endregion
+
     /// <summary>
     /// Get the detector's name.
     /// </summary>
@@ -131,6 +138,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
     {
       this.LogDebug("RTL283x detector: detect tuners");
       List<ITVCard> tuners = new List<ITVCard>();
+      IDictionary<string, ICollection<ITVCard>> knownTuners = new Dictionary<string, ICollection<ITVCard>>();
 
       DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.BDASourceFiltersCategory);
       foreach (DsDevice device in devices)
@@ -143,7 +151,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
           continue;
         }
 
-        // First check if we have an RTL283x based tuner.
+        // Is this a new device?
+        ICollection<ITVCard> deviceTuners;
+        if (_knownTuners.TryGetValue(devicePath, out deviceTuners))
+        {
+          device.Dispose();
+          tuners.AddRange(deviceTuners);
+          knownTuners.Add(devicePath, deviceTuners);
+          continue;
+        }
+        deviceTuners = new List<ITVCard>(4);
+
+        // Check if we have an RTL283x based tuner.
         this.LogDebug("RTL283x detector: check tuner {0} {1}", name, devicePath);
         Guid filterClsid = typeof(IBaseFilter).GUID;
         object obj = null;
@@ -200,15 +219,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
 
           if (supportedModes.HasFlag(Rtl283xBroadcastStandard.Fm))
           {
-            tuners.Add(new TunerRtl283xFm(device));
+            deviceTuners.Add(new TunerRtl283xFm(device));
           }
         }
         finally
         {
           Release.ComObject("RTL283x detection BDA source filter", ref obj);
+          tuners.AddRange(deviceTuners);
+          knownTuners.Add(devicePath, deviceTuners);
         }
       }
 
+      _knownTuners = knownTuners;
       return tuners;
     }
   }

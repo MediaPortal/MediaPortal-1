@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Management;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Xml;
 using System.Xml.XPath;
@@ -45,6 +46,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
   /// </summary>
   public class TunerDetector : IDisposable
   {
+    #region constants
+
+    private static readonly Regex REGEX_DRIVER_DATE = new Regex(@"^(\d{4})(\d{2})(\d{2})");
+
+    #endregion
+
     #region variables
 
     private bool _isStarted = false;
@@ -58,6 +65,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     // Used for detecting and communicating with devices that are directly
     // connected to the system.
     private ManagementEventWatcher _systemDeviceChangeEventWatcher = null;
+    private ManagementObjectSearcher _systemDeviceInfoSearcher = null;
+    private ManagementObjectCollection _systemDeviceDriverInfo = null;
+    private List<KeyValuePair<string, string>> _systemDeviceInterestingProperties = new List<KeyValuePair<string, string>>();
     private DateTime _previousSystemDeviceChange = DateTime.MinValue;
     private List<ITunerDetectorSystem> _systemDetectors = new List<ITunerDetectorSystem>();
 
@@ -96,7 +106,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       _upnpControlPoint = new UPnPControlPoint(_upnpAgent);
 
       // Setup system tuner detection.
-      _systemDeviceChangeEventWatcher = new ManagementEventWatcher();
+      _systemDeviceInterestingProperties.Add(new KeyValuePair<string, string>("DeviceName", "name    "));
+      _systemDeviceInterestingProperties.Add(new KeyValuePair<string, string>("DriverProviderName", "provider"));
+      _systemDeviceInterestingProperties.Add(new KeyValuePair<string, string>("DriverVersion", "version "));
+      _systemDeviceInterestingProperties.Add(new KeyValuePair<string, string>("DriverDate", "date    "));
+      _systemDeviceInterestingProperties.Add(new KeyValuePair<string, string>("Location", "location"));
+      _systemDeviceInterestingProperties.Add(new KeyValuePair<string, string>("PDO", "PDO     "));
+      _systemDeviceInfoSearcher = new ManagementObjectSearcher("SELECT * FROM Win32_PnPSignedDriver WHERE DeviceClass = 'MEDIA'");
+
       // EventType 2 and 3 are device arrival and removal. See:
       // http://msdn.microsoft.com/en-us/library/windows/desktop/aa394124%28v=vs.85%29.aspx
       // You'd think checking for arrival and removal would be enough, but in
@@ -105,6 +122,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       // triggered [for example] on disabling or enabling a device in device
       // manager, and replugging a tuner for which a driver is already
       // installed.
+      _systemDeviceChangeEventWatcher = new ManagementEventWatcher();
       _systemDeviceChangeEventWatcher.Query = new WqlEventQuery("SELECT * FROM Win32_DeviceChangeEvent");
       _systemDeviceChangeEventWatcher.EventArrived += OnSystemDeviceConnectedOrDisconnected;
 
@@ -246,6 +264,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         _systemDeviceChangeEventWatcher.Dispose();
         _systemDeviceChangeEventWatcher = null;
       }
+      if (_systemDeviceInfoSearcher != null)
+      {
+        _systemDeviceInfoSearcher.Dispose();
+        _systemDeviceInfoSearcher = null;
+      }
     }
 
     #endregion
@@ -289,6 +312,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       lock (_tuners)
       {
         this.LogDebug("detector: detecting system tuners...");
+        _systemDeviceDriverInfo = _systemDeviceInfoSearcher.Get();
 
         HashSet<string> currentSystemTuners = new HashSet<string>();
         foreach (ITunerDetectorSystem detector in _systemDetectors)
@@ -300,7 +324,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
             if (_tuners.ContainsKey(tuner.ExternalId))
             {
               // Not a new tuner.
-              tuner.Dispose();
               continue;
             }
             OnTunerDetected(tuner);
@@ -443,6 +466,52 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       this.LogInfo("    type        = {0}", tuner.TunerType);
       this.LogInfo("    product ID  = {0}", tuner.ProductInstanceId ?? "[null]");
       this.LogInfo("    tuner ID    = {0}", tuner.TunerInstanceId ?? "[null]");
+      string productName = string.Empty;
+      if (tuner.ProductInstanceId != null)
+      {
+        productName = string.Format("Product Instance {0}", tuner.ProductInstanceId);
+
+        List<ManagementObject> objects = new List<ManagementObject>();
+        foreach (ManagementObject o in _systemDeviceDriverInfo)
+        {
+          if (o.Properties["DeviceID"].Value.ToString().ToLowerInvariant().Contains(tuner.ProductInstanceId))
+          {
+            objects.Add(o);
+          }
+        }
+        if (objects.Count == 1)
+        {
+          this.LogInfo("    driver...");
+          ManagementObject o = objects[0];
+          foreach (KeyValuePair<string, string> p in _systemDeviceInterestingProperties)
+          {
+            object pVal = o.Properties[p.Key].Value;
+            if (pVal != null)
+            {
+              if (p.Key.Equals("DriverDate"))
+              {
+                Match m = REGEX_DRIVER_DATE.Match(pVal.ToString());
+                if (m.Success)
+                {
+                  this.LogInfo("      {0} = {1}-{2}-{3}", p.Value, m.Groups[1].Captures[0], m.Groups[2].Captures[0], m.Groups[3].Captures[0]);
+                }
+                else
+                {
+                  this.LogInfo("      {0} = {1}", p.Value, pVal.ToString());
+                }
+              }
+              else
+              {
+                this.LogInfo("      {0} = {1}", p.Value, pVal.ToString());
+              }
+              if (p.Key.Equals("DeviceName"))
+              {
+                productName = pVal.ToString();
+              }
+            }
+          }
+        }
+      }
       _tuners.Add(tuner.ExternalId, tuner);
 
       // Detect the naturally related tuners. These are tuners with the same product and tuner
@@ -502,7 +571,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           // then create a new group.
           if (group == null && !foundAnyRelatedTunerInAnyGroup)
           {
-            group = CreateNewGroupOnFirstDetection(tuner, relatedTuners);
+            group = CreateNewGroupOnFirstDetection(tuner, relatedTuners, productName);
           }
         }
       }
@@ -640,7 +709,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       return null;
     }
 
-    private TunerGroup CreateNewGroupOnFirstDetection(ITVCard tuner, HashSet<string> relatedTuners)
+    private TunerGroup CreateNewGroupOnFirstDetection(ITVCard tuner, HashSet<string> relatedTuners, string productName)
     {
       foreach (string relatedTunerExternalId in relatedTuners)
       {
@@ -651,7 +720,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       }
 
       CardGroup dbGroup = new CardGroup();
-      dbGroup.Name = string.Format("Product Instance {0} Tuner {1}", tuner.ProductInstanceId, tuner.TunerInstanceId);
+      dbGroup.Name = string.Format("{0} Tuner {1}", productName, tuner.TunerInstanceId);
       dbGroup = CardManagement.SaveCardGroup(dbGroup);
       TunerGroup group = new TunerGroup(dbGroup);
       group.ProductInstanceId = tuner.ProductInstanceId;
