@@ -99,7 +99,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       _systemDeviceChangeEventWatcher = new ManagementEventWatcher();
       // EventType 2 and 3 are device arrival and removal. See:
       // http://msdn.microsoft.com/en-us/library/windows/desktop/aa394124%28v=vs.85%29.aspx
-      _systemDeviceChangeEventWatcher.Query = new WqlEventQuery("SELECT * FROM Win32_DeviceChangeEvent WHERE EventType = 2 OR EventType = 3");
+      // You'd think checking for arrival and removal would be enough, but in
+      // practice it seems we need to be looking at configuration change events
+      // (EventType 1) more than anything else. Configuration changes are
+      // triggered [for example] on disabling or enabling a device in device
+      // manager, and replugging a tuner for which a driver is already
+      // installed.
+      _systemDeviceChangeEventWatcher.Query = new WqlEventQuery("SELECT * FROM Win32_DeviceChangeEvent");
       _systemDeviceChangeEventWatcher.EventArrived += OnSystemDeviceConnectedOrDisconnected;
 
       this.LogInfo("detector: loading detectors");
@@ -250,13 +256,26 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     {
       // Often several events will be triggered within a very short period of
       // time when a device is added/removed. We only want to check for new
-      // tuners once. Also, the first event may occur before the device is
-      // ready, so we apply the device detection delay here.
+      // tuners once per burst.
       if ((DateTime.Now - _previousSystemDeviceChange).TotalMilliseconds < 10000)
       {
         return;
       }
       _previousSystemDeviceChange = DateTime.Now;
+
+      // Do our processing in a different thread to ensure we don't cause
+      // problems like this:
+      // http://www.codeproject.com/Articles/35212/WM-DEVICECHANGE-problem
+      Thread t = new Thread(DoDelayedSystemTunerDetection);
+      t.Start();
+    }
+
+    private void DoDelayedSystemTunerDetection()
+    {
+      // Give the tuner time to load. Hopefully 10 seconds will be enough.
+      Thread.Sleep(10000);
+
+      // Configurable extra delay...
       int delayDetect = SettingsManagement.GetValue("delayCardDetect", 0);
       if (delayDetect >= 1)
       {
