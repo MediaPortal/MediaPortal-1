@@ -512,7 +512,7 @@ namespace MediaPortal.GUI.Pictures
       currentFolder = string.Empty;
       destinationFolder = string.Empty;
       thumbCreationPaths.Clear();
-      
+      PluginHelper.AddPluginToListOfNotifyPluginsFromResume(SerializeName);
       if (_enableVideoPlayback)
       {
         foreach (string ext in Util.Utils.VideoExtensions)
@@ -628,6 +628,17 @@ namespace MediaPortal.GUI.Pictures
 
       GUITextureManager.CleanupThumbs();
       // LoadSettings();
+
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
+      {
+        if (!xmlreader.GetValueAsBool("pictures", "rememberlastfolder", false)
+          && !PluginHelper.IsPluginOnListOfNotifyPluginsFromResume(SerializeName))
+        {
+          PluginHelper.AddPluginToListOfNotifyPluginsFromResume(SerializeName);
+          currentFolder = string.Empty;
+        }
+      }
+
       LoadFolderSettings(currentFolder);
       ShowThumbPanel();
       LoadDirectory(currentFolder);
@@ -1196,6 +1207,11 @@ namespace MediaPortal.GUI.Pictures
       return facadeLayout.Count;
     }
 
+    protected override string SerializeName
+    {
+      get { return "mypicture"; }
+    }
+
     protected override void UpdateButtonStates()
     {
       CurrentSortAsc = mapSettings.SortAscending;
@@ -1232,11 +1248,6 @@ namespace MediaPortal.GUI.Pictures
       CurrentLayout = (Layout)mapSettings.ViewAs;
       SwitchLayout();
       UpdateButtonStates();
-    }
-
-    public static void ClearFolderHistory()
-    {
-      MediaPortal.GUI.Pictures.GUIPictures.currentFolder = string.Empty;
     }
 
     /// <summary>

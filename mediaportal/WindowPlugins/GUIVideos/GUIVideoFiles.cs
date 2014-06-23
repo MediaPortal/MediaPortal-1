@@ -251,7 +251,7 @@ namespace MediaPortal.GUI.Video
       g_Player.PlayBackStarted += OnPlayBackStarted;
       g_Player.PlayBackChanged += OnPlayBackChanged;
       GUIWindowManager.Receivers += GUIWindowManager_OnNewMessage;
-
+      PluginHelper.AddPluginToListOfNotifyPluginsFromResume(SerializeName);
       LoadSettings();
     }
 
@@ -502,6 +502,16 @@ namespace MediaPortal.GUI.Video
       }
 
       _resetCount = 0;
+
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
+      {
+        if (!xmlreader.GetValueAsBool("movies", "rememberlastfolder", false) 
+          && !PluginHelper.IsPluginOnListOfNotifyPluginsFromResume(SerializeName))
+        {
+          PluginHelper.AddPluginToListOfNotifyPluginsFromResume(SerializeName);
+          _currentFolder = string.Empty;
+        }
+      }
 
       // Go to default share from main MP menu
       if (_currentFolder == string.Empty)
@@ -1689,11 +1699,6 @@ namespace MediaPortal.GUI.Video
     #endregion
 
     #region Public methods
-
-     public static void ClearFolderHistory()
-     {
-       MediaPortal.GUI.Video.GUIVideoFiles._currentFolder = string.Empty;
-     }
 
     /// <summary>
     /// Total video duration in seconds (single or multiple -> stacked file(s))

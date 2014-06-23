@@ -462,6 +462,7 @@
     <Compile Include="Player\TSHeader.cs" />
     <Compile Include="Player\TSReaderPlayer.cs" />
     <Compile Include="Player\Windows7Helper.cs" />
+    <Compile Include="PluginHelper.cs" />
     <Compile Include="RedEye\RedEye.cs">
       <SubType>Code</SubType>
     </Compile>

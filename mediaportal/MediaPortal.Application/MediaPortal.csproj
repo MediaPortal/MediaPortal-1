@@ -182,25 +182,9 @@
     <Optimize>false</Optimize>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\WindowPlugins\Common.GUIPlugins\Common.GUIPlugins.csproj">
-      <Project>{03FEC69F-6D10-46FB-A0CA-4D266E4A21E2}</Project>
-      <Name>Common.GUIPlugins</Name>
-    </ProjectReference>
     <ProjectReference Include="..\WindowPlugins\GUIHome\GUIHome.csproj">
       <Project>{B282C55B-A37B-4CEC-A4FC-00791069BF00}</Project>
       <Name>GUIHome</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\WindowPlugins\GUIMusic\GUIMusic.csproj">
-      <Project>{70F7CE2D-B69F-43D6-AB65-A42D3983E2BA}</Project>
-      <Name>GUIMusic</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\WindowPlugins\GUIPictures\GUIPictures.csproj">
-      <Project>{AA96B4C9-D471-4F47-B94F-1DF0697FBFDB}</Project>
-      <Name>GUIPictures</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\WindowPlugins\GUIVideos\GUIVideos.csproj">
-      <Project>{AF59C1DA-B02C-4E58-B6CA-3CF0DDD75C5D}</Project>
-      <Name>GUIVideos</Name>
     </ProjectReference>
     <Reference Include="Microsoft.DirectX, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
       <SpecificVersion>True</SpecificVersion>
