@@ -607,16 +607,24 @@ namespace MediaPortal.Dialogs
       }
       if (m_preselectDelete)
       {
-        FileAttributes attributes = File.GetAttributes(item.Path);
-        if ((attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+        bool readOnly;
+        if (Directory.Exists(item.Path))
+        {
+          readOnly = CheckDirectoryReadOnlyAttributes(item.Path);
+        }
+        else
+        {
+          FileAttributes attributes = File.GetAttributes(item.Path);
+          readOnly = ((attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly);
+        }
+        if (readOnly)
         {
           OnDeleteReadOnlyItem(item);
         }
         else
         {
           OnDeleteItem(item);
-        }
-        
+        }        
         return;
       }
 
@@ -667,8 +675,17 @@ namespace MediaPortal.Dialogs
       switch (dlg.SelectedId)
       {
         case 117: // delete
-          FileAttributes attributes = File.GetAttributes(item.Path);
-          if ((attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+          bool readOnly;
+          if (Directory.Exists(item.Path))
+          {
+            readOnly = CheckDirectoryReadOnlyAttributes(item.Path);
+          }
+          else
+          {
+            FileAttributes attributes = File.GetAttributes(item.Path);
+            readOnly = ((attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly);
+          }
+          if (readOnly)
           {
             OnDeleteReadOnlyItem(item);
           }
@@ -766,6 +783,46 @@ namespace MediaPortal.Dialogs
           }
           break;
       }
+    }
+
+    private void CleanDirectoryReadOnlyAttributes(string targetDirectory)
+    {
+      // Process the list of files found in the directory.
+      string[] fileEntries = Directory.GetFiles(targetDirectory);
+      foreach (string fileName in fileEntries)
+      {
+        File.SetAttributes(fileName, File.GetAttributes(fileName) & ~FileAttributes.ReadOnly);
+      }
+
+      // Recurse into subdirectories of this directory.
+      string[] subdirectoryEntries = Directory.GetDirectories(targetDirectory);
+      foreach (string subdirectory in subdirectoryEntries)
+      {
+        CleanDirectoryReadOnlyAttributes(subdirectory);
+      }
+    }
+
+    private bool CheckDirectoryReadOnlyAttributes(string targetDirectory)
+    {
+      // Process the list of files found in the directory.
+      string[] fileEntries = Directory.GetFiles(targetDirectory);
+      foreach (string fileName in fileEntries)
+      {
+        FileAttributes attributes = File.GetAttributes(fileName);
+        if ((attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+        {
+          return true;
+        }
+      }
+
+      // Recurse into subdirectories of this directory.
+      bool result = false;
+      string[] subdirectoryEntries = Directory.GetDirectories(targetDirectory);
+      foreach (string subdirectory in subdirectoryEntries)
+      {
+        result = result || CheckDirectoryReadOnlyAttributes(subdirectory);
+      }
+      return result;
     }
 
     private void FileItemDialog()
@@ -936,7 +993,7 @@ namespace MediaPortal.Dialogs
       }
       else
       {
-        dlgYesNo.SetHeading(503);
+        dlgYesNo.SetHeading(1989);
       }
       dlgYesNo.SetLine(1, 2004);
       dlgYesNo.SetLine(2, strFileName);
@@ -949,7 +1006,15 @@ namespace MediaPortal.Dialogs
       }
       m_bReload = true;
 
-      File.SetAttributes(item.Path, File.GetAttributes(item.Path) & ~FileAttributes.ReadOnly);
+      if (Directory.Exists(item.Path))
+      {
+        CleanDirectoryReadOnlyAttributes(item.Path);
+      }
+      else
+      {
+        File.SetAttributes(item.Path, File.GetAttributes(item.Path) & ~FileAttributes.ReadOnly);
+      }
+
       DoDeleteItem(item);
     }
 

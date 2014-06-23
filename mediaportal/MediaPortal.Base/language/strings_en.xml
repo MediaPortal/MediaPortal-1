@@ -1184,6 +1184,7 @@
     <String id="1977">File system</String>
     <String id="1978">Virtual Memory</String>
     <String id="1984">Refresh video thumb</String>
+    <String id="1989">There is read only file in the folder!</String>
     <String id="1990">Wake Up Server</String>
     <String id="1991">Please wait until the server is waking up</String>
     <String id="1992">The server is not available.</String>
