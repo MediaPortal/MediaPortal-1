@@ -19,7 +19,7 @@ namespace MediaPortal
     public static bool IsPluginOnListOfNotifyPluginsFromResume(string plugin)
     {
       return _notifyPluginsFromResume.Contains(plugin);
-    }: 
+    }
 
     public static void CleanListOfNotifyPluginsFromResume()
     {
