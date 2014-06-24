@@ -59,6 +59,7 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT* phr)
   m_dBias(1.0),
   m_dAdjustment(1.0),
   m_pVolumeHandler(NULL),
+  m_pPipeline(NULL),
   m_pWASAPIRenderer(NULL),
   m_pAC3Encoder(NULL),
   m_pInBitDepthAdapter(NULL),
@@ -161,13 +162,16 @@ CMPAudioRenderer::~CMPAudioRenderer()
     SAFE_RELEASE(m_pReferenceClock);
   }
 
-  HRESULT hr = m_pPipeline->Cleanup();
-  if (FAILED(hr))
-    Log("Pipeline cleanup failed with: (0x%08x)");
+  if (m_pPipeline)
+  {
+    HRESULT hr = m_pPipeline->Cleanup();
+    if (FAILED(hr))
+      Log("Pipeline cleanup failed with: (0x%08x)");
 
-  m_pPipeline->DisconnectAll();
-  if (FAILED(hr))
-    Log("Pipeline DisconnectAll failed with: (0x%08x)", hr);
+    m_pPipeline->DisconnectAll();
+    if (FAILED(hr))
+      Log("Pipeline DisconnectAll failed with: (0x%08x)", hr);
+  }
 
   SAFE_RELEASE(m_pSettings);
 
