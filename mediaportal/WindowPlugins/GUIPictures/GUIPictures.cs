@@ -38,6 +38,7 @@ using MediaPortal.Player;
 using MediaPortal.Services;
 using MediaPortal.Threading;
 using MediaPortal.Util;
+using MediaPortal.Profile;
 using Action = MediaPortal.GUI.Library.Action;
 using Layout = MediaPortal.GUI.Library.GUIFacadeControl.Layout;
 using ThreadPool = System.Threading.ThreadPool;
@@ -825,7 +826,14 @@ namespace MediaPortal.GUI.Pictures
           break;
 
         case GUIMessage.MessageType.GUI_MSG_ONRESUME:
-          currentFolder = string.Empty;
+          using (Settings xmlreader = new MPSettings())
+          {
+            if (xmlreader.GetValueAsBool("general", "showlastactivemodule", false))
+            {
+              currentFolder = string.Empty;
+            }
+          }
+
           Log.Debug("{0}:{1}", SerializeName, message.Message);
           break;
       }

@@ -4145,7 +4145,14 @@ namespace MediaPortal.GUI.Video
           break;
 
         case GUIMessage.MessageType.GUI_MSG_ONRESUME:
-          _currentFolder = string.Empty;
+          using (Settings xmlreader = new MPSettings())
+          {
+            if (xmlreader.GetValueAsBool("general", "showlastactivemodule", false))
+            {
+              _currentFolder = string.Empty;
+            }
+          }
+
           Log.Debug("{0}:{1}", SerializeName, message.Message);
           break;
       }

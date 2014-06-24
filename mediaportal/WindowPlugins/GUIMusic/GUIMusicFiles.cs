@@ -198,7 +198,14 @@ namespace MediaPortal.GUI.Music
           break;
 
         case GUIMessage.MessageType.GUI_MSG_ONRESUME:
-          currentFolder = string.Empty;
+          using (Settings xmlreader = new MPSettings())
+          {
+            if (xmlreader.GetValueAsBool("general", "showlastactivemodule", false))
+            {
+              currentFolder = string.Empty;
+            }
+          }
+
           Log.Debug("{0}:{1}", SerializeName, message.Message);
           break;
       }
