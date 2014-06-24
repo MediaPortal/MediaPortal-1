@@ -2413,7 +2413,8 @@ public class MediaPortalApp : D3D, IRender
         Log.Info("Main: OnResume - Switch to home screen");
         GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
       }
-      PluginHelper.CleanListOfNotifyPluginsFromResume();
+      GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ONRESUME, 0, 0, 0, 0, 0, null);
+      GUIGraphicsContext.SendMessage(message); 
       GUIWindowManager.ResetWindowsHistory();
     }
 

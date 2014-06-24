@@ -251,7 +251,6 @@ namespace MediaPortal.GUI.Video
       g_Player.PlayBackStarted += OnPlayBackStarted;
       g_Player.PlayBackChanged += OnPlayBackChanged;
       GUIWindowManager.Receivers += GUIWindowManager_OnNewMessage;
-      PluginHelper.AddPluginToListOfNotifyPluginsFromResume(SerializeName);
       LoadSettings();
     }
 
@@ -502,16 +501,6 @@ namespace MediaPortal.GUI.Video
       }
 
       _resetCount = 0;
-
-      using (Profile.Settings xmlreader = new Profile.MPSettings())
-      {
-        if (!xmlreader.GetValueAsBool("movies", "rememberlastfolder", false) 
-          && !PluginHelper.IsPluginOnListOfNotifyPluginsFromResume(SerializeName))
-        {
-          PluginHelper.AddPluginToListOfNotifyPluginsFromResume(SerializeName);
-          _currentFolder = string.Empty;
-        }
-      }
 
       // Go to default share from main MP menu
       if (_currentFolder == string.Empty)
@@ -4153,6 +4142,11 @@ namespace MediaPortal.GUI.Video
               LoadDirectory(_currentFolder);
             }
           }
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_ONRESUME:
+          _currentFolder = string.Empty;
+          Log.Debug("{0}:{1}", SerializeName, message.Message);
           break;
       }
     }

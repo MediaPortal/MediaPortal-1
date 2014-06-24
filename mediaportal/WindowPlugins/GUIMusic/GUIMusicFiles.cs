@@ -196,6 +196,11 @@ namespace MediaPortal.GUI.Music
             }
           }
           break;
+
+        case GUIMessage.MessageType.GUI_MSG_ONRESUME:
+          currentFolder = string.Empty;
+          Log.Debug("{0}:{1}", SerializeName, message.Message);
+          break;
       }
     }
 
@@ -327,7 +332,6 @@ namespace MediaPortal.GUI.Music
         MusicState.StartWindow = xmlreader.GetValueAsInt("music", "startWindow", GetID);
         MusicState.View = xmlreader.GetValueAsString("music", "startview", string.Empty);
       }
-      PluginHelper.AddPluginToListOfNotifyPluginsFromResume(SerializeName);
       GUIWindowManager.OnNewAction += new OnActionHandler(GUIWindowManager_OnNewAction);
       GUIWindowManager.Receivers += new SendMessageHandler(GUIWindowManager_OnNewMessage);
       LoadSettings();
@@ -383,16 +387,6 @@ namespace MediaPortal.GUI.Music
       {
         GUIWindowManager.ReplaceWindow((int)Window.WINDOW_MUSIC_GENRE);
         return;
-      }
-
-      using (Profile.Settings xmlreader = new Profile.MPSettings())
-      {
-        if (!xmlreader.GetValueAsBool("music", "rememberlastfolder", false)
-          && !PluginHelper.IsPluginOnListOfNotifyPluginsFromResume(SerializeName))
-        {
-          PluginHelper.AddPluginToListOfNotifyPluginsFromResume(SerializeName);
-          currentFolder = string.Empty;
-        }
       }
 
       LoadFolderSettings(currentFolder);
