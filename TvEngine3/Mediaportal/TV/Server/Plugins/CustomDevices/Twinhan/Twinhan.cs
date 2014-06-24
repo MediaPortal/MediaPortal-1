@@ -1453,10 +1453,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
         return false;
       }
 
-      this.LogInfo("Twinhan: extension supported");
-      _isTwinhan = true;
-      _tunerType = tunerType;
-
       FilterInfo tunerFilterInfo;
       hr = tunerFilter.QueryFilterInfo(out tunerFilterInfo);
       _tunerFilterName = tunerFilterInfo.achName;
@@ -1467,15 +1463,25 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
         this.LogError("Twinhan: failed to get the tuner filter name, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         _tunerFilterName = string.Empty;
       }
-      else
+      // Elgato EyeTV tuners expose the Twinhan property set but don't seem to
+      // work properly when it is used.
+      // http://forum.team-mediaportal.com/threads/tbs-5990-q-box-s2-hdtv-kein-signal.126540/
+      else if (_tunerFilterName.ToLowerInvariant().Contains("eyetv"))
       {
-        if (_tunerFilterName.ToLowerInvariant().Contains("terratec") || _tunerFilterName.ToLowerInvariant().Contains("cinergy"))
-        {
-          this.LogDebug("Twinhan: this tuner is using a TerraTec driver");
-          _isTerraTec = true;
-        }
+        this.LogDebug("Twinhan: detected Elgato driver, not supported");
+        return false;
       }
+
+      this.LogInfo("Twinhan: extension supported");
+      _isTwinhan = true;
+      _tunerType = tunerType;
       _generalBuffer = Marshal.AllocCoTaskMem(GENERAL_BUFFER_SIZE);
+
+      if (_tunerFilterName.ToLowerInvariant().Contains("terratec") || _tunerFilterName.ToLowerInvariant().Contains("cinergy"))
+      {
+        this.LogDebug("Twinhan: this tuner is using a TerraTec driver");
+        _isTerraTec = true;
+      }
 
       ReadDeviceInfo();
       if (_isPidFilterSupported)
