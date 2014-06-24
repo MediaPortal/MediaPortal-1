@@ -4147,7 +4147,7 @@ namespace MediaPortal.GUI.Video
         case GUIMessage.MessageType.GUI_MSG_ONRESUME:
           using (Settings xmlreader = new MPSettings())
           {
-            if (xmlreader.GetValueAsBool("general", "showlastactivemodule", false))
+            if (!xmlreader.GetValueAsBool("general", "showlastactivemodule", false))
             {
               _currentFolder = string.Empty;
             }

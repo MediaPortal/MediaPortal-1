@@ -200,7 +200,7 @@ namespace MediaPortal.GUI.Music
         case GUIMessage.MessageType.GUI_MSG_ONRESUME:
           using (Settings xmlreader = new MPSettings())
           {
-            if (xmlreader.GetValueAsBool("general", "showlastactivemodule", false))
+            if (!xmlreader.GetValueAsBool("general", "showlastactivemodule", false))
             {
               currentFolder = string.Empty;
             }
