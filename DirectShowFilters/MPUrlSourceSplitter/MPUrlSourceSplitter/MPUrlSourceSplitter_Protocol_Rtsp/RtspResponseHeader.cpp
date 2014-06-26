@@ -22,11 +22,10 @@
 
 #include "RtspResponseHeader.h"
 
-CRtspResponseHeader::CRtspResponseHeader(void)
-  : CHttpHeader()
+CRtspResponseHeader::CRtspResponseHeader(HRESULT *result)
+  : CHttpHeader(result)
 {
   this->responseHeaderType = RESPONSE_HEADER_TYPE_UNSPECIFIED;
-  this->flags = RTSP_RESPONSE_HEADER_FLAG_NONE;
 }
 
 CRtspResponseHeader::~CRtspResponseHeader(void)
@@ -45,25 +44,17 @@ const wchar_t *CRtspResponseHeader::GetResponseHeaderType(void)
 
 /* other methods */
 
-bool CRtspResponseHeader::IsSetFlags(unsigned int flags)
-{
-  return ((this->flags & flags) == flags);
-}
-
 bool CRtspResponseHeader::IsResponseHeaderType(const wchar_t *responseHeaderType)
 {
   return (CompareWithNullInvariant(this->responseHeaderType, responseHeaderType) == 0);
 }
 
-CRtspResponseHeader *CRtspResponseHeader::Clone(void)
-{
-  return (CRtspResponseHeader *)__super::Clone();
-}
+/* protected methods */
 
-bool CRtspResponseHeader::CloneInternal(CHttpHeader *clonedHeader)
+bool CRtspResponseHeader::CloneInternal(CHttpHeader *clone)
 {
-  bool result = __super::CloneInternal(clonedHeader);
-  CRtspResponseHeader *header = dynamic_cast<CRtspResponseHeader *>(clonedHeader);
+  bool result = __super::CloneInternal(clone);
+  CRtspResponseHeader *header = dynamic_cast<CRtspResponseHeader *>(clone);
   result &= (header != NULL);
 
   if (result)
@@ -76,7 +67,12 @@ bool CRtspResponseHeader::CloneInternal(CHttpHeader *clonedHeader)
   return result;
 }
 
-CHttpHeader *CRtspResponseHeader::GetNewHeader(void)
+CHttpHeader *CRtspResponseHeader::CreateHeader(void)
 {
-  return new CRtspResponseHeader();
+  HRESULT result = S_OK;
+  CRtspResponseHeader *header = new CRtspResponseHeader(&result);
+  CHECK_POINTER_HRESULT(result, header, result, E_OUTOFMEMORY);
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(header));
+  return header;
 }

@@ -22,8 +22,8 @@
 
 #include "RtspAcceptApplicationSdpRequestHeader.h"
 
-CRtspAcceptApplicationSdpRequestHeader::CRtspAcceptApplicationSdpRequestHeader(void)
-  : CRtspAcceptRequestHeader()
+CRtspAcceptApplicationSdpRequestHeader::CRtspAcceptApplicationSdpRequestHeader(HRESULT *result)
+  : CRtspAcceptRequestHeader(result)
 {
 }
 
@@ -44,17 +44,19 @@ bool CRtspAcceptApplicationSdpRequestHeader::SetValue(const wchar_t *value)
 
 /* other methods */
 
-CRtspAcceptApplicationSdpRequestHeader *CRtspAcceptApplicationSdpRequestHeader::Clone(void)
+/* protected methods */
+
+bool CRtspAcceptApplicationSdpRequestHeader::CloneInternal(CHttpHeader *clone)
 {
-  return (CRtspAcceptApplicationSdpRequestHeader *)__super::Clone();
+  return __super::CloneInternal(clone);
 }
 
-bool CRtspAcceptApplicationSdpRequestHeader::CloneInternal(CHttpHeader *clonedHeader)
+CHttpHeader *CRtspAcceptApplicationSdpRequestHeader::CreateHeader(void)
 {
-  return __super::CloneInternal(clonedHeader);
-}
+  HRESULT result = S_OK;
+  CRtspAcceptApplicationSdpRequestHeader *header = new CRtspAcceptApplicationSdpRequestHeader(&result);
+  CHECK_POINTER_HRESULT(result, header, result, E_OUTOFMEMORY);
 
-CHttpHeader *CRtspAcceptApplicationSdpRequestHeader::GetNewHeader(void)
-{
-  return new CRtspAcceptApplicationSdpRequestHeader();
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(header));
+  return header;
 }

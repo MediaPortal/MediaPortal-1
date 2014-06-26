@@ -22,8 +22,8 @@
 
 #include "RangeAttribute.h"
 
-CRangeAttribute::CRangeAttribute(void)
-  : CAttribute()
+CRangeAttribute::CRangeAttribute(HRESULT *result)
+  : CAttribute(result)
 {
   this->rangeSpecification = NULL;
 }

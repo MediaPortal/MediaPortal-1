@@ -22,8 +22,8 @@
 
 #include "BaseRtpPacketCollection.h"
 
-CBaseRtpPacketCollection::CBaseRtpPacketCollection(void)
-  : CCollection()
+CBaseRtpPacketCollection::CBaseRtpPacketCollection(HRESULT *result)
+  : CCollection(result)
 {
 }
 

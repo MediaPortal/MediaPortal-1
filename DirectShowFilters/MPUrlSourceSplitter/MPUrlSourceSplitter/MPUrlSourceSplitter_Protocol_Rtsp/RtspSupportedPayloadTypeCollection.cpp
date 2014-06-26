@@ -23,19 +23,19 @@
 #include "RtspSupportedPayloadTypeCollection.h"
 #include "StreamReceiveData.h"
 
-CRtspSupportedPayloadTypeCollection::CRtspSupportedPayloadTypeCollection(void)
-  : CCollection()
+CRtspSupportedPayloadTypeCollection::CRtspSupportedPayloadTypeCollection(HRESULT *result)
+  : CCollection(result)
 {
-  bool result = this->EnsureEnoughSpace(3);
-
-  if (result)
+  if ((result != NULL) && (SUCCEEDED(*result)))
   {
-    result &= this->AddPayloadType(33, L"MP2T", NULL, RTSP_PAYLOAD_TYPE_FLAG_CONTAINER);
-    result &= this->AddPayloadType(14, L"MPA", STREAM_INPUT_FORMAT_MP3, RTSP_PAYLOAD_TYPE_FLAG_PACKETS);
-    result &= this->AddPayloadType(32, L"MPV", STREAM_INPUT_FORMAT_MPEGVIDEO, RTSP_PAYLOAD_TYPE_FLAG_PACKETS);
+    CHECK_CONDITION_HRESULT(*result, this->EnsureEnoughSpace(3), *result, E_OUTOFMEMORY);
+
+    CHECK_CONDITION_HRESULT(*result, this->AddPayloadType(33, L"MP2T", NULL, RTSP_PAYLOAD_TYPE_FLAG_CONTAINER), *result, E_OUTOFMEMORY);
+    CHECK_CONDITION_HRESULT(*result, this->AddPayloadType(14, L"MPA", STREAM_INPUT_FORMAT_MP3, RTSP_PAYLOAD_TYPE_FLAG_PACKETS), *result, E_OUTOFMEMORY);
+    CHECK_CONDITION_HRESULT(*result, this->AddPayloadType(32, L"MPV", STREAM_INPUT_FORMAT_MPEGVIDEO, RTSP_PAYLOAD_TYPE_FLAG_PACKETS), *result, E_OUTOFMEMORY);
   }
 
-  if (!result)
+  if (FAILED(*result))
   {
     this->Clear();
   }
@@ -47,23 +47,26 @@ CRtspSupportedPayloadTypeCollection::~CRtspSupportedPayloadTypeCollection(void)
 
 CRtspPayloadType *CRtspSupportedPayloadTypeCollection::Clone(CRtspPayloadType *item)
 {
-  return item->Clone();
+  return (CRtspPayloadType *)item->Clone();
 }
 
-bool CRtspSupportedPayloadTypeCollection::AddPayloadType(unsigned int payloadType, const wchar_t *name, const wchar_t *streamInputFormat, unsigned int flags)
+bool CRtspSupportedPayloadTypeCollection::AddPayloadType(unsigned int payloadType, const wchar_t *name, const wchar_t *streamInputFormat, uint64_t flags)
 {
-  CRtspPayloadType *payload = new CRtspPayloadType();
-  bool result = (payload != NULL);
+  HRESULT result = S_OK;
+  CRtspPayloadType *payload = new CRtspPayloadType(&result);
+  CHECK_POINTER_HRESULT(result, payload, result, E_OUTOFMEMORY);
 
-  if (result)
+  if (SUCCEEDED(result))
   {
     payload->SetFlags(flags);
     payload->SetId(payloadType);
-    result &= payload->SetEncodingName(name);
-    result &= payload->SetStreamInputFormat(streamInputFormat);
+
+    CHECK_CONDITION_HRESULT(result, payload->SetEncodingName(name), result, E_OUTOFMEMORY);
+    CHECK_CONDITION_HRESULT(result, payload->SetStreamInputFormat(streamInputFormat), result, E_OUTOFMEMORY);
   }
 
-  CHECK_CONDITION_EXECUTE(result, result &= this->Add(payload));
-  CHECK_CONDITION_EXECUTE(!result, FREE_MEM_CLASS(payload));
-  return result;
+  CHECK_CONDITION_HRESULT(result, this->Add(payload), result, E_OUTOFMEMORY);
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(payload));
+
+  return SUCCEEDED(result);
 }

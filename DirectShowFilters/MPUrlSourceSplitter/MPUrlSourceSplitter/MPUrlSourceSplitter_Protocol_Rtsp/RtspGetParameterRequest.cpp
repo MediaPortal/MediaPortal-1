@@ -22,13 +22,13 @@
 
 #include "RtspGetParameterRequest.h"
 
-CRtspGetParameterRequest::CRtspGetParameterRequest(void)
-  : CRtspRequest()
+CRtspGetParameterRequest::CRtspGetParameterRequest(HRESULT *result)
+  : CRtspRequest(result)
 {
 }
 
-CRtspGetParameterRequest::CRtspGetParameterRequest(bool createDefaultHeaders)
-  : CRtspRequest(createDefaultHeaders)
+CRtspGetParameterRequest::CRtspGetParameterRequest(HRESULT *result, bool createDefaultHeaders)
+  : CRtspRequest(result, createDefaultHeaders)
 {
 }
 
@@ -48,17 +48,19 @@ const wchar_t *CRtspGetParameterRequest::GetMethod(void)
 
 /* other methods */
 
-CRtspGetParameterRequest *CRtspGetParameterRequest::Clone(void)
+/* protected methods */
+
+bool CRtspGetParameterRequest::CloneInternal(CRtspRequest *clone)
 {
-  return (CRtspGetParameterRequest *)__super::Clone();
+  return __super::CloneInternal(clone);
 }
 
-bool CRtspGetParameterRequest::CloneInternal(CRtspRequest *clonedRequest)
+CRtspRequest *CRtspGetParameterRequest::CreateRequest(void)
 {
-  return __super::CloneInternal(clonedRequest);
-}
+  HRESULT result = S_OK;
+  CRtspGetParameterRequest *request = new CRtspGetParameterRequest(&result, false);
+  CHECK_POINTER_HRESULT(result, request, result, E_OUTOFMEMORY);
 
-CRtspRequest *CRtspGetParameterRequest::GetNewRequest(void)
-{
-  return new CRtspGetParameterRequest(false);
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(request));
+  return request;
 }

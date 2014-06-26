@@ -22,8 +22,8 @@
 
 #include "RtspAcceptRequestHeader.h"
 
-CRtspAcceptRequestHeader::CRtspAcceptRequestHeader(void)
-  : CRtspRequestHeader()
+CRtspAcceptRequestHeader::CRtspAcceptRequestHeader(HRESULT *result)
+  : CRtspRequestHeader(result)
 {
 }
 
@@ -58,17 +58,19 @@ bool CRtspAcceptRequestHeader::SetAcceptValues(const wchar_t *acceptValues)
 
 /* other methods */
 
-CRtspAcceptRequestHeader *CRtspAcceptRequestHeader::Clone(void)
+/* protected methods */
+
+bool CRtspAcceptRequestHeader::CloneInternal(CHttpHeader *clone)
 {
-  return (CRtspAcceptRequestHeader *)__super::Clone();
+  return __super::CloneInternal(clone);
 }
 
-bool CRtspAcceptRequestHeader::CloneInternal(CHttpHeader *clonedHeader)
+CHttpHeader *CRtspAcceptRequestHeader::CreateHeader(void)
 {
-  return __super::CloneInternal(clonedHeader);
-}
+  HRESULT result = S_OK;
+  CRtspAcceptRequestHeader *header = new CRtspAcceptRequestHeader(&result);
+  CHECK_POINTER_HRESULT(result, header, result, E_OUTOFMEMORY);
 
-CHttpHeader *CRtspAcceptRequestHeader::GetNewHeader(void)
-{
-  return new CRtspAcceptRequestHeader();
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(header));
+  return header;
 }

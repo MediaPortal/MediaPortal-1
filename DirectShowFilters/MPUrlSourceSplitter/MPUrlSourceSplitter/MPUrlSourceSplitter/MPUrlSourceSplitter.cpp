@@ -1434,20 +1434,6 @@ HRESULT CMPUrlSourceSplitter::ProcessStreamPackage(CStreamPackage *streamPackage
   return result;
 }
 
-// IFilter
-
-unsigned int CMPUrlSourceSplitter::GetReceiveDataTimeout(void)
-{
-  unsigned int result = UINT_MAX;
-
-  if (this->parserHoster != NULL)
-  {
-    result = this->parserHoster->GetReceiveDataTimeout();
-  }
-
-  return result;
-}
-
 HRESULT CMPUrlSourceSplitter::QueryStreamProgress(CStreamProgress *streamProgress)
 {
   HRESULT result = E_NOTIMPL;
@@ -1977,8 +1963,7 @@ void CMPUrlSourceSplitter::FFmpegLogCallback(void *ptr, int log_level, const cha
     }
   }
 
-  //if ((loggerInstance != NULL) && (!isAvi) && ((!isMpegTs) || (isMpegTs && (log_level < AV_LOG_WARNING))))
-  if (loggerInstance != NULL)
+  if ((loggerInstance != NULL) && (!isAvi) && ((!isMpegTs) || (isMpegTs && (log_level < AV_LOG_WARNING))))
   {
     int warnReportMode = _CrtSetReportMode(_CRT_WARN, 0);
     int errorReportMode = _CrtSetReportMode(_CRT_ERROR, 0);
@@ -2491,28 +2476,37 @@ HRESULT CMPUrlSourceSplitter::CreateCreateAllDemuxersWorker(void)
   {
     CLockMutex lock(this->demuxersMutex, INFINITE);
 
-    unsigned int streamCount = this->parserHoster->GetStreamCount();
-    CHECK_CONDITION_HRESULT(result, streamCount != STREAM_COUNT_UNKNOWN, result, E_STREAM_COUNT_UNKNOWN);
+    CStreamInformationCollection *streams = new CStreamInformationCollection(&result);
+    CHECK_POINTER_HRESULT(result, streams, result, E_OUTOFMEMORY);
 
-    if (SUCCEEDED(result) && (this->demuxers->Count() != streamCount))
+    if (SUCCEEDED(result))
     {
-      this->demuxers->Clear();
+      result = this->parserHoster->GetStreamInformation(streams);
 
-      for (unsigned int i = 0; (SUCCEEDED(result) && (i < streamCount)); i++)
+      if (SUCCEEDED(result) && (this->demuxers->Count() != streams->Count()))
       {
-        CDemuxer *demuxer = new CDemuxer(&result, this->logger, this, this->configuration);
-        CHECK_POINTER_HRESULT(result, demuxer, result, E_OUTOFMEMORY);
+        this->demuxers->Clear();
 
-        if (SUCCEEDED(result))
+        for (unsigned int i = 0; (SUCCEEDED(result) && (i < streams->Count())); i++)
         {
-          demuxer->SetDemuxerId(i);
-          demuxer->SetRealDemuxingNeeded(this->IsSplitter() && (!this->IsDownloadingFile()));
-        }
+          CDemuxer *demuxer = new CDemuxer(&result, this->logger, this, this->configuration);
+          CHECK_POINTER_HRESULT(result, demuxer, result, E_OUTOFMEMORY);
 
-        CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->demuxers->Add(demuxer) ? result : E_OUTOFMEMORY);
-        CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(demuxer));
+          if (SUCCEEDED(result))
+          {
+            demuxer->SetDemuxerId(i);
+            demuxer->SetRealDemuxingNeeded(this->IsSplitter() && (!this->IsDownloadingFile()));
+
+            result = demuxer->SetStreamInformation(streams->GetItem(i));
+          }
+
+          CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->demuxers->Add(demuxer) ? result : E_OUTOFMEMORY);
+          CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(demuxer));
+        }
       }
     }
+
+    FREE_MEM_CLASS(streams);
   }
 
   if (SUCCEEDED(result))
@@ -2577,14 +2571,14 @@ void CMPUrlSourceSplitter::ClearSession(void)
 {
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_CLEAR_SESSION_NAME);
 
-  // stops receiving data
-  this->Stop();
-
   // stop creating demuxers
   this->DestroyCreateAllDemuxersWorker();
 
   // clear all demuxers
   this->demuxers->Clear();
+
+  // stops receiving data
+  this->Stop();
 
   // clear all parsers and protocols
   this->parserHoster->ClearSession();

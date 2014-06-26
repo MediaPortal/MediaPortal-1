@@ -23,13 +23,13 @@
 #include "RtspPlayRequest.h"
 #include "RtspNormalPlayTimeRangeRequestHeader.h"
 
-CRtspPlayRequest::CRtspPlayRequest(void)
-  : CRtspRequest()
+CRtspPlayRequest::CRtspPlayRequest(HRESULT *result)
+  : CRtspRequest(result)
 {
 }
 
-CRtspPlayRequest::CRtspPlayRequest(bool createDefaultHeaders)
-  : CRtspRequest(createDefaultHeaders)
+CRtspPlayRequest::CRtspPlayRequest(HRESULT *result, bool createDefaultHeaders)
+  : CRtspRequest(result, createDefaultHeaders)
 {
 }
 
@@ -48,9 +48,9 @@ const wchar_t *CRtspPlayRequest::GetMethod(void)
 
 bool CRtspPlayRequest::SetStartTime(uint64_t startTime)
 {
-  bool result = (this->requestHeaders != NULL);
+  HRESULT result = (this->requestHeaders != NULL) ? S_OK : E_NOT_VALID_STATE;
 
-  if (result)
+  if (SUCCEEDED(result))
   {
     unsigned int index = this->requestHeaders->GetRtspHeaderIndex(RTSP_RANGE_REQUEST_HEADER_NAME, false);
 
@@ -62,18 +62,18 @@ bool CRtspPlayRequest::SetStartTime(uint64_t startTime)
         // check for end time and if not specified than remove header
 
         CRtspNormalPlayTimeRangeRequestHeader *header = dynamic_cast<CRtspNormalPlayTimeRangeRequestHeader *>(this->requestHeaders->GetItem(index));
-        result &= (header != NULL);
+        CHECK_POINTER_HRESULT(result, header, result, E_FAIL);
 
-        if (result)
+        if (SUCCEEDED(result))
         {
-          if (header->IsSetFlag(NORMAL_PLAY_TIME_RANGE_REQUEST_HEADER_FLAG_END))
+          if (header->IsSetFlags(NORMAL_PLAY_TIME_RANGE_REQUEST_HEADER_FLAG_END))
           {
             header->SetStartTime(startTime);
             header->SetFlags(header->GetFlags() & (~NORMAL_PLAY_TIME_RANGE_REQUEST_HEADER_FLAG_START));
           }
           else
           {
-            result &= this->requestHeaders->Remove(index);
+            CHECK_CONDITION_HRESULT(result, this->requestHeaders->Remove(index), result, E_FAIL);
           }
         }
       }
@@ -81,24 +81,29 @@ bool CRtspPlayRequest::SetStartTime(uint64_t startTime)
     else if (startTime != TIME_UNSPECIFIED)
     {
       // create new normal play time request header
-      CRtspNormalPlayTimeRangeRequestHeader *header = new CRtspNormalPlayTimeRangeRequestHeader();
-      result &= (header != NULL);
+      CRtspNormalPlayTimeRangeRequestHeader *header = new CRtspNormalPlayTimeRangeRequestHeader(&result);
+      CHECK_POINTER_HRESULT(result, header, result, E_OUTOFMEMORY);
 
-      CHECK_CONDITION_EXECUTE(result, header->SetStartTime(startTime));
-      CHECK_CONDITION_EXECUTE(result, header->SetFlags(NORMAL_PLAY_TIME_RANGE_REQUEST_HEADER_FLAG_START));
-      CHECK_CONDITION_EXECUTE(result, result &= this->requestHeaders->Add(header));
-      CHECK_CONDITION_EXECUTE(!result, FREE_MEM_CLASS(header));
+      if (SUCCEEDED(result))
+      {
+        header->SetStartTime(startTime);
+        header->SetFlags(header->GetFlags() | NORMAL_PLAY_TIME_RANGE_REQUEST_HEADER_FLAG_START);
+      }
+
+      CHECK_CONDITION_HRESULT(result, this->requestHeaders->Add(header), result, E_OUTOFMEMORY);
+
+      CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(header));
     }
   }
 
-  return result;
+  return SUCCEEDED(result);
 }
 
 bool CRtspPlayRequest::SetEndTime(uint64_t endTime)
 {
-  bool result = (this->requestHeaders != NULL);
+  HRESULT result = (this->requestHeaders != NULL) ? S_OK : E_NOT_VALID_STATE;
 
-  if (result)
+  if (SUCCEEDED(result))
   {
     unsigned int index = this->requestHeaders->GetRtspHeaderIndex(RTSP_RANGE_REQUEST_HEADER_NAME, false);
 
@@ -110,18 +115,18 @@ bool CRtspPlayRequest::SetEndTime(uint64_t endTime)
         // check for start time and if not specified than remove header
 
         CRtspNormalPlayTimeRangeRequestHeader *header = dynamic_cast<CRtspNormalPlayTimeRangeRequestHeader *>(this->requestHeaders->GetItem(index));
-        result &= (header != NULL);
+        CHECK_POINTER_HRESULT(result, header, result, E_FAIL);
 
-        if (result)
+        if (SUCCEEDED(result))
         {
-          if (header->IsSetFlag(NORMAL_PLAY_TIME_RANGE_REQUEST_HEADER_FLAG_START))
+          if (header->IsSetFlags(NORMAL_PLAY_TIME_RANGE_REQUEST_HEADER_FLAG_START))
           {
             header->SetEndTime(endTime);
             header->SetFlags(header->GetFlags() & (~NORMAL_PLAY_TIME_RANGE_REQUEST_HEADER_FLAG_END));
           }
           else
           {
-            result &= this->requestHeaders->Remove(index);
+            CHECK_CONDITION_HRESULT(result, this->requestHeaders->Remove(index), result, E_OUTOFMEMORY);
           }
         }
       }
@@ -129,32 +134,38 @@ bool CRtspPlayRequest::SetEndTime(uint64_t endTime)
     else if (endTime != TIME_UNSPECIFIED)
     {
       // create new normal play time request header
-      CRtspNormalPlayTimeRangeRequestHeader *header = new CRtspNormalPlayTimeRangeRequestHeader();
-      result &= (header != NULL);
+      CRtspNormalPlayTimeRangeRequestHeader *header = new CRtspNormalPlayTimeRangeRequestHeader(&result);
+      CHECK_POINTER_HRESULT(result, header, result, E_OUTOFMEMORY);
 
-      CHECK_CONDITION_EXECUTE(result, header->SetEndTime(endTime));
-      CHECK_CONDITION_EXECUTE(result, header->SetFlags(NORMAL_PLAY_TIME_RANGE_REQUEST_HEADER_FLAG_END));
-      CHECK_CONDITION_EXECUTE(result, result &= this->requestHeaders->Add(header));
-      CHECK_CONDITION_EXECUTE(!result, FREE_MEM_CLASS(header));
+      if (SUCCEEDED(result))
+      {
+        header->SetEndTime(endTime);
+        header->SetFlags(header->GetFlags() | NORMAL_PLAY_TIME_RANGE_REQUEST_HEADER_FLAG_END);
+      }
+
+      CHECK_CONDITION_HRESULT(result, this->requestHeaders->Add(header), result, E_OUTOFMEMORY);
+      CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(header));
     }
   }
 
-  return result;
+  return SUCCEEDED(result);
 }
 
 /* other methods */
 
-CRtspPlayRequest *CRtspPlayRequest::Clone(void)
+/* protected methods */
+
+bool CRtspPlayRequest::CloneInternal(CRtspRequest *clone)
 {
-  return (CRtspPlayRequest *)__super::Clone();
+  return __super::CloneInternal(clone);
 }
 
-bool CRtspPlayRequest::CloneInternal(CRtspRequest *clonedRequest)
+CRtspRequest *CRtspPlayRequest::CreateRequest(void)
 {
-  return __super::CloneInternal(clonedRequest);
-}
+  HRESULT result = S_OK;
+  CRtspPlayRequest *request = new CRtspPlayRequest(&result, false);
+  CHECK_POINTER_HRESULT(result, request, result, E_OUTOFMEMORY);
 
-CRtspRequest *CRtspPlayRequest::GetNewRequest(void)
-{
-  return new CRtspPlayRequest(false);
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(request));
+  return request;
 }

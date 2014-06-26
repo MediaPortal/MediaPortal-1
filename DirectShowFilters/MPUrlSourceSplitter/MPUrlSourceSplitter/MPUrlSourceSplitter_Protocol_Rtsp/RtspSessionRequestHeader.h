@@ -27,10 +27,14 @@
 
 #define RTSP_SESSION_REQUEST_HEADER_NAME                              L"Session"
 
+#define RTSP_SESSION_REQUEST_HEADER_FLAG_NONE                         RTSP_REQUEST_HEADER_FLAG_NONE
+
+#define RTSP_SESSION_REQUEST_HEADER_FLAG_LAST                         (RTSP_REQUEST_HEADER_FLAG_LAST + 0)
+
 class CRtspSessionRequestHeader : public CRtspRequestHeader
 {
 public:
-  CRtspSessionRequestHeader(void);
+  CRtspSessionRequestHeader(HRESULT *result);
   virtual ~CRtspSessionRequestHeader(void);
 
   /* get methods */
@@ -66,22 +70,20 @@ public:
 
   /* other methods */
 
-  // deep clones of current instance
-  // @return : deep clone of current instance or NULL if error
-  virtual CRtspSessionRequestHeader *Clone(void);
-
 protected:
 
   wchar_t *sessionId;
 
+  /* methods */
+
   // deeply clones current instance to cloned header
-  // @param  clonedHeader : cloned header to hold clone of current instance
+  // @param  clone : cloned header to hold clone of current instance
   // @return : true if successful, false otherwise
-  virtual bool CloneInternal(CHttpHeader *clonedHeader);
+  virtual bool CloneInternal(CHttpHeader *clone);
 
   // returns new RTSP request header object to be used in cloning
   // @return : RTSP request header object or NULL if error
-  virtual CHttpHeader *GetNewHeader(void);
+  virtual CHttpHeader *CreateHeader(void);
 };
 
 #endif

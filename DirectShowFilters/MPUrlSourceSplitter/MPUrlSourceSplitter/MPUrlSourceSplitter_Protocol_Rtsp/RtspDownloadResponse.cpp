@@ -21,18 +21,25 @@
 #include "StdAfx.h"
 
 #include "RtspDownloadResponse.h"
+#include "ErrorCodes.h"
 
-CRtspDownloadResponse::CRtspDownloadResponse(void)
-  : CDownloadResponse()
+CRtspDownloadResponse::CRtspDownloadResponse(HRESULT *result)
+  : CDownloadResponse(result)
 {
   this->sessionDescriptionRaw = NULL;
   this->sessionDescription = NULL;
   this->contentBaseUrl = NULL;
   this->contentLocationUrl = NULL;
-  this->tracks = new CRtspTrackCollection();
+  this->tracks = NULL;
   this->rtspRequest = NULL;
   this->rtspResponse = NULL;
   this->sessionTimeout = UINT_MAX;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->tracks = new CRtspTrackCollection(result);
+    CHECK_POINTER_HRESULT(*result, this->tracks, *result, E_OUTOFMEMORY);
+  }
 }
 
 CRtspDownloadResponse::~CRtspDownloadResponse(void)
@@ -143,57 +150,51 @@ void CRtspDownloadResponse::ClearRtspRequestAndResponse(void)
 bool CRtspDownloadResponse::ParseRawSessionDescription(void)
 {
   FREE_MEM_CLASS(this->sessionDescription);
-  bool result = (this->sessionDescriptionRaw != NULL);
+  HRESULT result = (this->sessionDescriptionRaw != NULL) ? S_OK : E_NOT_VALID_STATE;
+
+  if (SUCCEEDED(result))
+  {
+    this->sessionDescription = new CSessionDescription(&result);
+    CHECK_POINTER_HRESULT(result, this->sessionDescription, result, E_OUTOFMEMORY);
+
+    CHECK_CONDITION_HRESULT(result, this->sessionDescription->Parse(this->sessionDescriptionRaw, wcslen(this->sessionDescriptionRaw)), result, E_RTSP_SESSION_DESCRIPTION_PARSE_ERROR);
+  }
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(this->sessionDescription));
+  return SUCCEEDED(result);
+}
+
+/* protected methods */
+
+CDownloadResponse *CRtspDownloadResponse::CreateDownloadResponse(void)
+{
+  HRESULT result = S_OK;
+  CRtspDownloadResponse *response = new CRtspDownloadResponse(&result);
+  CHECK_POINTER_HRESULT(result, response, result, E_OUTOFMEMORY);
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(response));
+  return response;
+}
+
+bool CRtspDownloadResponse::CloneInternal(CDownloadResponse *clone)
+{
+  bool result = __super::CloneInternal(clone);
 
   if (result)
   {
-    this->sessionDescription = new CSessionDescription();
-    result &= (this->sessionDescription != NULL);
+    CRtspDownloadResponse *response = dynamic_cast<CRtspDownloadResponse *>(clone);
 
-    if (result)
-    {
-      result &= this->sessionDescription->Parse(this->sessionDescriptionRaw, wcslen(this->sessionDescriptionRaw));
-    }
-  }
-
-  if (!result)
-  {
-    FREE_MEM_CLASS(this->sessionDescription);
-  }
-
-  return result;
-}
-
-CRtspDownloadResponse *CRtspDownloadResponse::Clone(void)
-{
-  CRtspDownloadResponse *result = new CRtspDownloadResponse();
-  if (result != NULL)
-  {
-    if (!this->CloneInternal(result))
-    {
-      FREE_MEM_CLASS(result);
-    }
-  }
-  return result;
-}
-
-bool CRtspDownloadResponse::CloneInternal(CRtspDownloadResponse *clonedRequest)
-{
-  bool result = __super::CloneInternal(clonedRequest);
-
-  if (result)
-  {
-    SET_STRING_RESULT_WITH_NULL(clonedRequest->sessionDescriptionRaw, this->sessionDescriptionRaw, result);
-    SET_STRING_RESULT_WITH_NULL(clonedRequest->contentBaseUrl, this->contentBaseUrl, result);
-    SET_STRING_RESULT_WITH_NULL(clonedRequest->contentLocationUrl, this->contentLocationUrl, result);
-    clonedRequest->sessionTimeout = this->sessionTimeout;
+    SET_STRING_RESULT_WITH_NULL(response->sessionDescriptionRaw, this->sessionDescriptionRaw, result);
+    SET_STRING_RESULT_WITH_NULL(response->contentBaseUrl, this->contentBaseUrl, result);
+    SET_STRING_RESULT_WITH_NULL(response->contentLocationUrl, this->contentLocationUrl, result);
+    response->sessionTimeout = this->sessionTimeout;
 
     if (this->sessionDescription != NULL)
     {
-      result &= clonedRequest->ParseRawSessionDescription();
+      result &= response->ParseRawSessionDescription();
     }
 
-    result &= clonedRequest->tracks->Append(this->tracks);
+    result &= response->tracks->Append(this->tracks);
   }
 
   return result;

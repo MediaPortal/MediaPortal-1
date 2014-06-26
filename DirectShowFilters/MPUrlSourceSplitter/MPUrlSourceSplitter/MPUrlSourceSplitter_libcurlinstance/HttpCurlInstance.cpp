@@ -21,6 +21,7 @@
 #include "StdAfx.h"
 
 #include "HttpCurlInstance.h"
+#include "ErrorCodes.h"
 
 CHttpCurlInstance::CHttpCurlInstance(HRESULT *result, CLogger *logger, HANDLE mutex, const wchar_t *protocolName, const wchar_t *instanceName)
   : CCurlInstance(result, logger, mutex, protocolName, instanceName)
@@ -45,163 +46,145 @@ CHttpCurlInstance::~CHttpCurlInstance(void)
   this->ClearHeaders();
 }
 
-bool CHttpCurlInstance::Initialize(CDownloadRequest *downloadRequest)
+HRESULT CHttpCurlInstance::Initialize(CDownloadRequest *downloadRequest)
 {
-  bool result = __super::Initialize(downloadRequest);
+  HRESULT result = __super::Initialize(downloadRequest);
   this->state = CURL_STATE_CREATED;
 
   this->httpDownloadRequest = dynamic_cast<CHttpDownloadRequest *>(this->downloadRequest);
   this->httpDownloadResponse = dynamic_cast<CHttpDownloadResponse *>(this->downloadResponse);
-  result &= (this->httpDownloadRequest != NULL) && (this->httpDownloadResponse != NULL);
+  CHECK_POINTER_HRESULT(result, this->httpDownloadRequest, result, E_NOT_VALID_STATE);
+  CHECK_POINTER_HRESULT(result, this->httpDownloadResponse, result, E_NOT_VALID_STATE);
 
-  if (result)
+  if (SUCCEEDED(result))
   {
-    CURLcode errorCode = CURLE_OK;
-    errorCode = curl_easy_setopt(this->curl, CURLOPT_FOLLOWLOCATION, 1L);
-    if (errorCode != CURLE_OK)
-    {
-      this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_INITIALIZE_NAME, L"error while setting follow location", errorCode);
-      result = false;
-    }
+    result = HRESULT_FROM_CURL_CODE(curl_easy_setopt(this->curl, CURLOPT_FOLLOWLOCATION, 1L));
+    CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while setting follow location: 0x%08X", this->protocolName, METHOD_INITIALIZE_NAME, result));
 
-    if (errorCode == CURLE_OK)
+    if (SUCCEEDED(result))
     {
       if (this->httpDownloadRequest->GetReferer() != NULL)
       {
         char *curlReferer = ConvertToMultiByte(this->httpDownloadRequest->GetReferer());
-        errorCode = curl_easy_setopt(this->curl, CURLOPT_REFERER, curlReferer);
-        if (errorCode != CURLE_OK)
-        {
-          this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_INITIALIZE_NAME, L"error while setting referer", errorCode);
-          result = false;
-        }
+        CHECK_POINTER_HRESULT(result, curlReferer, result, E_CONVERT_STRING_ERROR);
+
+        CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), HRESULT_FROM_CURL_CODE(curl_easy_setopt(this->curl, CURLOPT_REFERER, curlReferer)), result);
+
         FREE_MEM(curlReferer);
+        CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while setting referer: 0x%08X", this->protocolName, METHOD_INITIALIZE_NAME, result));
       }
     }
 
-    if (errorCode == CURLE_OK)
+    if (SUCCEEDED(result))
     {
       if (this->httpDownloadRequest->GetCookie() != NULL)
       {
         char *curlCookie = ConvertToMultiByte(this->httpDownloadRequest->GetCookie());
-        errorCode = curl_easy_setopt(this->curl, CURLOPT_COOKIE, curlCookie);
-        if (errorCode != CURLE_OK)
-        {
-          this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_INITIALIZE_NAME, L"error while setting cookie", errorCode);
-          result = false;
-        }
+        CHECK_POINTER_HRESULT(result, curlCookie, result, E_CONVERT_STRING_ERROR);
+
+        CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), HRESULT_FROM_CURL_CODE(curl_easy_setopt(this->curl, CURLOPT_COOKIE, curlCookie)), result);
+
         FREE_MEM(curlCookie);
+        CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while setting cookie: 0x%08X", this->protocolName, METHOD_INITIALIZE_NAME, result));
       }
       else if (this->cookies != NULL)
       {
         // set cookies in CURL instance to supplied cookies
-        for (curl_slist *item = this->cookies; (result & (item != NULL)); item = item->next)
+        for (curl_slist *item = this->cookies; (SUCCEEDED(result) & (item != NULL)); item = item->next)
         {
-          errorCode = curl_easy_setopt(this->curl, CURLOPT_COOKIELIST, item->data);
-          if (errorCode != CURLE_OK)
-          {
-            this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_INITIALIZE_NAME, L"error while setting cookies", errorCode);
-            result = false;
-          }
+          result = HRESULT_FROM_CURL_CODE(curl_easy_setopt(this->curl, CURLOPT_COOKIELIST, item->data));
         }
+
+        CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while setting cookies: 0x%08X", this->protocolName, METHOD_INITIALIZE_NAME, result));
       }
       else
       {
         // set default cookie, initializes cookie engine
-        errorCode = curl_easy_setopt(this->curl, CURLOPT_COOKIEFILE, "");
-        if (errorCode != CURLE_OK)
-        {
-          this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_INITIALIZE_NAME, L"error while setting default cookie", errorCode);
-          result = false;
-        }
+        result = HRESULT_FROM_CURL_CODE(curl_easy_setopt(this->curl, CURLOPT_COOKIEFILE, ""));
+
+        CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while setting default cookie: 0x%08X", this->protocolName, METHOD_INITIALIZE_NAME, result));
       }
     }
 
-    if (errorCode == CURLE_OK)
+    if (SUCCEEDED(result))
     {
       if (this->httpDownloadRequest->GetUserAgent() != NULL)
       {
         char *curlUserAgent = ConvertToMultiByte(this->httpDownloadRequest->GetUserAgent());
-        errorCode = curl_easy_setopt(this->curl, CURLOPT_USERAGENT, curlUserAgent);
-        if (errorCode != CURLE_OK)
-        {
-          this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_INITIALIZE_NAME, L"error while setting user agent", errorCode);
-          result = false;
-        }
+        CHECK_POINTER_HRESULT(result, curlUserAgent, result, E_CONVERT_STRING_ERROR);
+
+        CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), HRESULT_FROM_CURL_CODE(curl_easy_setopt(this->curl, CURLOPT_USERAGENT, curlUserAgent)), result);
+
         FREE_MEM(curlUserAgent);
+        CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while setting user agent: 0x%08X", this->protocolName, METHOD_INITIALIZE_NAME, result));
       }
     }
 
-    if (errorCode == CURLE_OK)
+    if (SUCCEEDED(result))
     {
       switch (this->httpDownloadRequest->GetHttpVersion())
       {
       case HTTP_VERSION_NONE:
         {
           long version = CURL_HTTP_VERSION_NONE;
-          errorCode = curl_easy_setopt(this->curl, CURLOPT_HTTP_VERSION , version);
+          result = HRESULT_FROM_CURL_CODE(curl_easy_setopt(this->curl, CURLOPT_HTTP_VERSION , version));
         }
         break;
       case HTTP_VERSION_FORCE_HTTP10:
         {
           long version = CURL_HTTP_VERSION_1_0;
-          errorCode = curl_easy_setopt(this->curl, CURLOPT_HTTP_VERSION , version);
+          result = HRESULT_FROM_CURL_CODE(curl_easy_setopt(this->curl, CURLOPT_HTTP_VERSION , version));
         }
         break;
       case HTTP_VERSION_FORCE_HTTP11:
         {
           long version = CURL_HTTP_VERSION_1_1;
-          errorCode = curl_easy_setopt(this->curl, CURLOPT_HTTP_VERSION , version);
+          result = HRESULT_FROM_CURL_CODE(curl_easy_setopt(this->curl, CURLOPT_HTTP_VERSION , version));
         }
         break;
       }
 
-      if (errorCode != CURLE_OK)
-      {
-        this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_INITIALIZE_NAME, L"error while setting HTTP version", errorCode);
-        result = false;
-      }
+      CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while setting HTTP version: 0x%08X", this->protocolName, METHOD_INITIALIZE_NAME, result));
     }
 
-    if (errorCode == CURLE_OK)
+    if (SUCCEEDED(result))
     {
-      errorCode = curl_easy_setopt(this->curl, CURLOPT_IGNORE_CONTENT_LENGTH, this->httpDownloadRequest->GetIgnoreContentLength() ? 1L : 0L);
-      if (errorCode != CURLE_OK)
-      {
-        this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_INITIALIZE_NAME, L"error while setting ignore content length", errorCode);
-        result = false;
-      }
+      result = HRESULT_FROM_CURL_CODE(curl_easy_setopt(this->curl, CURLOPT_IGNORE_CONTENT_LENGTH, this->httpDownloadRequest->GetIgnoreContentLength() ? 1L : 0L));
+
+      CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while setting ignore content length: 0x%08X", this->protocolName, METHOD_INITIALIZE_NAME, result));
     }
 
-    if (errorCode == CURLE_OK)
+    if (SUCCEEDED(result))
     {
       wchar_t *range = FormatString((this->httpDownloadRequest->GetEndPosition() <= this->httpDownloadRequest->GetStartPosition()) ? L"%llu-" : L"%llu-%llu", this->httpDownloadRequest->GetStartPosition(), this->httpDownloadRequest->GetEndPosition());
-      this->logger->Log(LOGGER_VERBOSE, L"%s: %s: requesting range: %s", this->protocolName, METHOD_INITIALIZE_NAME, range);
-      char *curlRange = ConvertToMultiByte(range);
-      errorCode = curl_easy_setopt(this->curl, CURLOPT_RANGE, curlRange);
-      if (errorCode != CURLE_OK)
+      CHECK_POINTER_HRESULT(result, range, result, E_OUTOFMEMORY);
+
+      if (SUCCEEDED(result))
       {
-        this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_INITIALIZE_NAME, L"error while setting range", errorCode);
-        result = false;
+        this->logger->Log(LOGGER_VERBOSE, L"%s: %s: requesting range: %s", this->protocolName, METHOD_INITIALIZE_NAME, range);
+
+        char *curlRange = ConvertToMultiByte(range);
+        CHECK_POINTER_HRESULT(result, curlRange, result, E_CONVERT_STRING_ERROR);
+
+        CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), HRESULT_FROM_CURL_CODE(curl_easy_setopt(this->curl, CURLOPT_RANGE, curlRange)), result);
+        FREE_MEM(curlRange);
       }
-      FREE_MEM(curlRange);
+
       FREE_MEM(range);
+      CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while setting range: 0x%08X", this->protocolName, METHOD_INITIALIZE_NAME, result));
     }
 
-    if (errorCode == CURLE_OK)
+    if (SUCCEEDED(result))
     {
       this->ClearHeaders();
-      for (unsigned int i = 0; i < this->httpDownloadRequest->GetHeaders()->Count(); i++)
+      for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->httpDownloadRequest->GetHeaders()->Count())); i++)
       {
-        this->AppendToHeaders(this->httpDownloadRequest->GetHeaders()->GetItem(i));
+        CHECK_CONDITION_HRESULT(result, this->AppendToHeaders(this->httpDownloadRequest->GetHeaders()->GetItem(i)), result, E_OUTOFMEMORY);
       }
 
-      errorCode = curl_easy_setopt(this->curl, CURLOPT_HTTPHEADER, this->httpHeaders);
-      if (errorCode != CURLE_OK)
-      {
-        this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_INITIALIZE_NAME, L"error while setting HTTP headers", errorCode);
-        result = false;
-      }
+      CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), HRESULT_FROM_CURL_CODE(curl_easy_setopt(this->curl, CURLOPT_HTTPHEADER, this->httpHeaders)), result);
+
+      CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while setting HTTP headers: 0x%08X", this->protocolName, METHOD_INITIALIZE_NAME, result));
     }
   }
 
@@ -348,7 +331,7 @@ CHttpDownloadResponse *CHttpCurlInstance::GetHttpDownloadResponse(void)
   return this->httpDownloadResponse;
 }
 
-CDownloadResponse *CHttpCurlInstance::GetNewDownloadResponse(void)
+CDownloadResponse *CHttpCurlInstance::CreateDownloadResponse(void)
 {
   HRESULT result = S_OK;
   CHttpDownloadResponse *response = new CHttpDownloadResponse(&result);

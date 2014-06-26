@@ -31,9 +31,10 @@
 
 #include <curl/curl.h>
 
-#define HRESULT_FROM_CURL_CODE(curlCode)                                      ((curlCode != 0) ? (HRESULT)((curlCode << 8) | 0x80000000) : 0)
-#define IS_CURL_ERROR(error)                                                  ((error & 0xFFFF00FF) == 0x80000000)
-#define CURL_CODE_FROM_HRESULT(error)                                         ((CURLcode)((error & 0x0000FF00) >> 8))
+FORCEINLINE HRESULT HRESULT_FROM_CURL_CODE(CURLcode curlCode) { return ((curlCode != 0) ? (HRESULT)((curlCode << 8) | 0x80000000) : 0); }
+FORCEINLINE HRESULT HRESULT_FROM_CURLM_CODE(CURLMcode curlmCode) { return ((curlmCode != 0) ? (HRESULT)((curlmCode << 8) | 0x80008000) : 0); }
+
+FORCEINLINE bool IS_CURL_ERROR(HRESULT error) { return ((error & 0xFFFF00FF) == 0x80000000); }
 
 #define CURL_INSTANCE_FLAG_NONE                                               FLAGS_NONE
 
@@ -122,54 +123,38 @@ public:
 
   /* other methods */
 
-  // report libcurl error into log file
-  // @param logLevel : the verbosity level of logged message
-  // @param protocolName : name of protocol calling ReportCurlErrorMessage()
-  // @param functionName : name of function calling ReportCurlErrorMessage()
-  // @param message : optional message to log (can be NULL)
-  // @param errorCode : the error code returned by libcurl
-  virtual void ReportCurlErrorMessage(unsigned int logLevel, const wchar_t *protocolName, const wchar_t *functionName, const wchar_t *message, CURLcode errorCode);
-
-  // report libcurl error into log file
-  // @param logLevel : the verbosity level of logged message
-  // @param protocolName : name of protocol calling ReportCurlErrorMessage()
-  // @param functionName : name of function calling ReportCurlErrorMessage()
-  // @param message : optional message to log (can be NULL)
-  // @param errorCode : the error code returned by libcurl (multi)
-  virtual void ReportCurlErrorMessage(unsigned int logLevel, const wchar_t *protocolName, const wchar_t *functionName, const wchar_t *message, CURLMcode errorCode);
-
   // initializes CURL instance
   // @param downloadRequest : download request
-  // @return : true if successful, false otherwise
-  virtual bool Initialize(CDownloadRequest *downloadRequest);
+  // @return : S_OK if successful, error code otherwise
+  virtual HRESULT Initialize(CDownloadRequest *downloadRequest);
 
   // starts receiving data
   // @return : true if successful, false otherwise
-  virtual bool StartReceivingData(void);
+  virtual HRESULT StartReceivingData(void);
 
   // stops receiving data
   // @return : true if successful, false otherwise
-  virtual bool StopReceivingData(void);
+  virtual HRESULT StopReceivingData(void);
 
   // sets string to CURL option
   // @param curl : curl handle to set CURL option
   // @param option : CURL option to set
   // @param string : the string to set to CURL option
   // @return : CURLE_OK if successful, error code otherwise
-  static CURLcode SetString(CURL *curl, CURLoption option, const wchar_t *string);
+  static HRESULT SetString(CURL *curl, CURLoption option, const wchar_t *string);
 
   // sends data through current CURL instance
   // @param data : data to send
   // @param length : the length of data to send
   // @param timeout : the timeout in us (microseconds) for sending data
   // @return : CURLE_OK is successful, error code otherwise
-  virtual CURLcode SendData(const unsigned char *data, unsigned int length, unsigned int timeout);
+  virtual HRESULT SendData(const unsigned char *data, unsigned int length, unsigned int timeout);
 
   // reads data through current CURL instance
   // @param data : data buffer to store read data
   // @param length : the length of data buffer
   // @return : the length of read data or error code (lower than zero) if error
-  virtual int ReadData(unsigned char *data, unsigned int length);
+  virtual HRESULT ReadData(unsigned char *data, unsigned int length);
 
   // tests if current instance is in readable (there are data to read) or writable (we can send data) state
   // @param read : true if testing for readable state, false otherwise
@@ -269,13 +254,13 @@ protected:
 
   // gets new instance of download response
   // @return : new download response or NULL if error
-  virtual CDownloadResponse *GetNewDownloadResponse(void);
+  virtual CDownloadResponse *CreateDownloadResponse(void);
 
   // sets string to CURL option
   // @param option : CURL option to set
   // @param string : the string to set to CURL option
   // @return : CURLE_OK if successful, error code otherwise
-  virtual CURLcode SetString(CURLoption option, const wchar_t *string);
+  virtual HRESULT SetString(CURLoption option, const wchar_t *string);
 
   // sets write callback for CURL
   // @param writeCallback : callback method for writing data received by CURL

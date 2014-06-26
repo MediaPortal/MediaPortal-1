@@ -23,6 +23,7 @@
 #ifndef __RTSP_TRACK_DEFINED
 #define __RTSP_TRACK_DEFINED
 
+#include "Flags.h"
 #include "SimpleServer.h"
 #include "RtspTransportResponseHeader.h"
 #include "IpAddress.h"
@@ -34,15 +35,18 @@
 // receiver report minimum time is 5000 ms
 #define RECEIVER_REPORT_MIN_TIME                                      5000
 
-#define RTSP_TRACK_FLAG_NONE                                          0x00000000
-#define RTSP_TRACK_FLAG_SENDER_SYNCHRONIZATION_SOURCE_IDENTIFIER_SET  0x00000001
-#define RTSP_TRACK_FLAG_END_OF_STREAM                                 0x00000002
+#define RTSP_TRACK_FLAG_NONE                                          FLAGS_NONE
 
-class CRtspTrack
+#define RTSP_TRACK_FLAG_SENDER_SYNCHRONIZATION_SOURCE_IDENTIFIER_SET  (1 << (FLAGS_LAST + 0))
+#define RTSP_TRACK_FLAG_END_OF_STREAM                                 (1 << (FLAGS_LAST + 1))
+
+#define RTSP_TRACK_FLAG_LAST                                          (FLAGS_LAST + 2)
+
+class CRtspTrack : public CFlags
 {
 public:
   // initializes a new instance of CRtspTrack class
-  CRtspTrack(void);
+  CRtspTrack(HRESULT *result);
   ~CRtspTrack(void);
 
   /* get methods */
@@ -197,14 +201,7 @@ public:
   // @return : true if end of stream is set, false otherwise
   bool IsEndOfStream(void);
 
-  // tests if specific combination of flags is set
-  // @return : true if specific combination of flags is set, false otherwise
-  bool IsSetFlags(unsigned int flags);
-
 protected:
-  // holds flags
-  unsigned int flags;
-
   // holds remote server data and control ports
   unsigned int serverDataPort;
   unsigned int serverControlPort;

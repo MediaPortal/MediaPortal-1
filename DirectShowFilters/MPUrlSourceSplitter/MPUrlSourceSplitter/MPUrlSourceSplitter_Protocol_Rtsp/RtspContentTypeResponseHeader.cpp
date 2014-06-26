@@ -22,8 +22,8 @@
 
 #include "RtspContentTypeResponseHeader.h"
 
-CRtspContentTypeResponseHeader::CRtspContentTypeResponseHeader(void)
-  : CRtspResponseHeader()
+CRtspContentTypeResponseHeader::CRtspContentTypeResponseHeader(HRESULT *result)
+  : CRtspResponseHeader(result)
 {
   this->contentType = NULL;
 }
@@ -43,30 +43,6 @@ const wchar_t *CRtspContentTypeResponseHeader::GetContentType(void)
 /* set methods */
 
 /* other methods */
-
-CRtspContentTypeResponseHeader *CRtspContentTypeResponseHeader::Clone(void)
-{
-  return (CRtspContentTypeResponseHeader *)__super::Clone();
-}
-
-bool CRtspContentTypeResponseHeader::CloneInternal(CHttpHeader *clonedHeader)
-{
-  bool result = __super::CloneInternal(clonedHeader);
-  CRtspContentTypeResponseHeader *header = dynamic_cast<CRtspContentTypeResponseHeader *>(clonedHeader);
-  result &= (header != NULL);
-
-  if (result)
-  {
-    SET_STRING_RESULT_WITH_NULL(header->contentType, this->contentType, result);
-  }
-
-  return result;
-}
-
-CHttpHeader *CRtspContentTypeResponseHeader::GetNewHeader(void)
-{
-  return new CRtspContentTypeResponseHeader();
-}
 
 bool CRtspContentTypeResponseHeader::Parse(const wchar_t *header, unsigned int length)
 {
@@ -90,4 +66,30 @@ bool CRtspContentTypeResponseHeader::Parse(const wchar_t *header, unsigned int l
   }
 
   return result;
+}
+
+/* protected methods */
+
+bool CRtspContentTypeResponseHeader::CloneInternal(CHttpHeader *clone)
+{
+  bool result = __super::CloneInternal(clone);
+  CRtspContentTypeResponseHeader *header = dynamic_cast<CRtspContentTypeResponseHeader *>(clone);
+  result &= (header != NULL);
+
+  if (result)
+  {
+    SET_STRING_RESULT_WITH_NULL(header->contentType, this->contentType, result);
+  }
+
+  return result;
+}
+
+CHttpHeader *CRtspContentTypeResponseHeader::CreateHeader(void)
+{
+  HRESULT result = S_OK;
+  CRtspContentTypeResponseHeader *header = new CRtspContentTypeResponseHeader(&result);
+  CHECK_POINTER_HRESULT(result, header, result, E_OUTOFMEMORY);
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(header));
+  return header;
 }

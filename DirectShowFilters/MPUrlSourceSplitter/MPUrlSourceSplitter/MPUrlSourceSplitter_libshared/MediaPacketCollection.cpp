@@ -99,14 +99,14 @@ bool CMediaPacketCollection::Add(CMediaPacket *item)
   return result;
 }
 
-unsigned int CMediaPacketCollection::GetMediaPacketIndexBetweenPositions(int64_t time)
+unsigned int CMediaPacketCollection::GetMediaPacketIndexBetweenPositions(int64_t position)
 {
   unsigned int index = UINT_MAX;
 
   unsigned int startIndex = 0;
   unsigned int endIndex = 0;
 
-  if (this->GetItemInsertPosition(time, &startIndex, &endIndex))
+  if (this->GetItemInsertPosition(position, &startIndex, &endIndex))
   {
     if (startIndex != UINT_MAX)
     {
@@ -115,7 +115,7 @@ unsigned int CMediaPacketCollection::GetMediaPacketIndexBetweenPositions(int64_t
       int64_t positionStart = mediaPacket->GetStart();
       int64_t positionEnd = mediaPacket->GetEnd();
 
-      if ((time >= positionStart) && (time <= positionEnd))
+      if ((position >= positionStart) && (position <= positionEnd))
       {
         // we found media packet
         index = startIndex;

@@ -22,8 +22,8 @@
 
 #include "RtspRangeRequestHeader.h"
 
-CRtspRangeRequestHeader::CRtspRangeRequestHeader(void)
-  : CRtspRequestHeader()
+CRtspRangeRequestHeader::CRtspRangeRequestHeader(HRESULT *result)
+  : CRtspRequestHeader(result)
 {
 }
 
@@ -59,17 +59,19 @@ bool CRtspRangeRequestHeader::SetValue(const wchar_t *value)
 
 /* other methods */
 
-CRtspRangeRequestHeader *CRtspRangeRequestHeader::Clone(void)
+/* protected methods */
+
+bool CRtspRangeRequestHeader::CloneInternal(CHttpHeader *clone)
 {
-  return (CRtspRangeRequestHeader *)__super::Clone();
+  return __super::CloneInternal(clone);
 }
 
-bool CRtspRangeRequestHeader::CloneInternal(CHttpHeader *clonedHeader)
+CHttpHeader *CRtspRangeRequestHeader::CreateHeader(void)
 {
-  return __super::CloneInternal(clonedHeader);
-}
+  HRESULT result = S_OK;
+  CRtspRangeRequestHeader *header = new CRtspRangeRequestHeader(&result);
+  CHECK_POINTER_HRESULT(result, header, result, E_OUTOFMEMORY);
 
-CHttpHeader *CRtspRangeRequestHeader::GetNewHeader(void)
-{
-  return new CRtspRangeRequestHeader();
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(header));
+  return header;
 }

@@ -27,12 +27,12 @@
 
 #define CREATE_SPECIFIC_RESPONSE_HEADER(responseHeaderType, buffer, length, continueParsing, result)                \
                                                                                                                     \
-if (continueParsing && (result == NULL))                                                                            \
+if (SUCCEEDED(continueParsing) && (result == NULL))                                                                 \
 {                                                                                                                   \
-  responseHeaderType *responseHeader = new responseHeaderType();                                                    \
-  continueParsing &= (responseHeader != NULL);                                                                      \
+  responseHeaderType *responseHeader = new responseHeaderType(&continueParsing);                                    \
+  CHECK_POINTER_HRESULT(continueParsing, responseHeader, continueParsing, E_OUTOFMEMORY);                           \
                                                                                                                     \
-  if (continueParsing)                                                                                              \
+  if (SUCCEEDED(continueParsing))                                                                                   \
   {                                                                                                                 \
     if (responseHeader->Parse(buffer, length))                                                                      \
     {                                                                                                               \

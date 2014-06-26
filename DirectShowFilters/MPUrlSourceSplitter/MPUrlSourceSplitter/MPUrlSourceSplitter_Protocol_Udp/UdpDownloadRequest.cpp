@@ -49,9 +49,9 @@ CDownloadRequest *CUdpDownloadRequest::CreateDownloadRequest(void)
   return request;
 }
 
-bool CUdpDownloadRequest::CloneInternal(CDownloadRequest *clonedRequest)
+bool CUdpDownloadRequest::CloneInternal(CDownloadRequest *clone)
 {
-  bool result = __super::CloneInternal(clonedRequest);
+  bool result = __super::CloneInternal(clone);
 
   if (result)
   {

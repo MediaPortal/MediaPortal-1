@@ -22,8 +22,8 @@
 
 #include "PayloadTypeCollection.h"
 
-CPayloadTypeCollection::CPayloadTypeCollection(void)
-  : CKeyedCollection()
+CPayloadTypeCollection::CPayloadTypeCollection(HRESULT *result)
+  : CKeyedCollection(result)
 {
 }
 
@@ -39,22 +39,23 @@ CPayloadTypeCollection::~CPayloadTypeCollection(void)
 
 bool CPayloadTypeCollection::AddPayloadType(unsigned int id, const wchar_t *encodingName, CPayloadType::MediaType mediaType, unsigned int clockRate, unsigned int channels)
 {
-  CPayloadType *payloadType = new CPayloadType();
-  bool result = (payloadType != NULL);
+  HRESULT result = S_OK;
+  CPayloadType *payloadType = new CPayloadType(&result);
+  CHECK_CONDITION_HRESULT(result, payloadType, result, E_OUTOFMEMORY);
 
-  if (result)
+  if (SUCCEEDED(result))
   {
     payloadType->SetId(id);
-    result &= payloadType->SetEncodingName(encodingName);
+    CHECK_CONDITION_HRESULT(result, payloadType->SetEncodingName(encodingName), result, E_OUTOFMEMORY);
     payloadType->SetMediaType(mediaType);
     payloadType->SetClockRate(clockRate);
     payloadType->SetChannels(channels);
 
-    CHECK_CONDITION_EXECUTE_RESULT(result, this->Add(payloadType), result);
+    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), this->Add(payloadType), result);
   }
 
-  CHECK_CONDITION_EXECUTE(!result, FREE_MEM_CLASS(payloadType));
-  return result;
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(payloadType));
+  return SUCCEEDED(result);
 }
 
 /* protected methods */

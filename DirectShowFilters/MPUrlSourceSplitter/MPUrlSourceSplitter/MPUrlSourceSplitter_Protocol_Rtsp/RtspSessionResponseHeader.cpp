@@ -23,8 +23,8 @@
 #include "RtspSessionResponseHeader.h"
 #include "conversions.h"
 
-CRtspSessionResponseHeader::CRtspSessionResponseHeader(void)
-  : CRtspResponseHeader()
+CRtspSessionResponseHeader::CRtspSessionResponseHeader(HRESULT *result)
+  : CRtspResponseHeader(result)
 {
   this->sessionId = NULL;
   this->timeout = RTSP_SESSION_RESPONSE_TIMEOUT_DEFAULT;
@@ -50,31 +50,6 @@ unsigned int CRtspSessionResponseHeader::GetTimeout(void)
 /* set methods */
 
 /* other methods */
-
-CRtspSessionResponseHeader *CRtspSessionResponseHeader::Clone(void)
-{
-  return (CRtspSessionResponseHeader *)__super::Clone();
-}
-
-bool CRtspSessionResponseHeader::CloneInternal(CHttpHeader *clonedHeader)
-{
-  bool result = __super::CloneInternal(clonedHeader);
-  CRtspSessionResponseHeader *header = dynamic_cast<CRtspSessionResponseHeader *>(clonedHeader);
-  result &= (header != NULL);
-
-  if (result)
-  {
-    header->timeout = this->timeout;
-    SET_STRING_AND_RESULT_WITH_NULL(header->sessionId, this->sessionId, result);
-  }
-
-  return result;
-}
-
-CHttpHeader *CRtspSessionResponseHeader::GetNewHeader(void)
-{
-  return new CRtspSessionResponseHeader();
-}
 
 bool CRtspSessionResponseHeader::Parse(const wchar_t *header, unsigned int length)
 {
@@ -140,4 +115,33 @@ bool CRtspSessionResponseHeader::Parse(const wchar_t *header, unsigned int lengt
 
   return result;
 }
+
+/* protected methods */
+
+bool CRtspSessionResponseHeader::CloneInternal(CHttpHeader *clone)
+{
+  bool result = __super::CloneInternal(clone);
+  CRtspSessionResponseHeader *header = dynamic_cast<CRtspSessionResponseHeader *>(clone);
+  result &= (header != NULL);
+
+  if (result)
+  {
+    header->timeout = this->timeout;
+    SET_STRING_AND_RESULT_WITH_NULL(header->sessionId, this->sessionId, result);
+  }
+
+  return result;
+}
+
+CHttpHeader *CRtspSessionResponseHeader::CreateHeader(void)
+{
+  HRESULT result = S_OK;
+  CRtspSessionResponseHeader *header = new CRtspSessionResponseHeader(&result);
+  CHECK_POINTER_HRESULT(result, header, result, E_OUTOFMEMORY);
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(header));
+  return header;
+}
+
+
 

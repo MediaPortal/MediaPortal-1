@@ -22,13 +22,13 @@
 
 #include "RtspOptionsRequest.h"
 
-CRtspOptionsRequest::CRtspOptionsRequest(void)
-  : CRtspRequest()
+CRtspOptionsRequest::CRtspOptionsRequest(HRESULT *result)
+  : CRtspRequest(result)
 {
 }
 
-CRtspOptionsRequest::CRtspOptionsRequest(bool createDefaultHeaders)
-  : CRtspRequest(createDefaultHeaders)
+CRtspOptionsRequest::CRtspOptionsRequest(HRESULT *result, bool createDefaultHeaders)
+  : CRtspRequest(result, createDefaultHeaders)
 {
 }
 
@@ -47,17 +47,19 @@ const wchar_t *CRtspOptionsRequest::GetMethod(void)
 
 /* other methods */
 
-CRtspOptionsRequest *CRtspOptionsRequest::Clone(void)
+/* protected methods */
+
+bool CRtspOptionsRequest::CloneInternal(CRtspRequest *clone)
 {
-  return (CRtspOptionsRequest *)__super::Clone();
+  return __super::CloneInternal(clone);
 }
 
-bool CRtspOptionsRequest::CloneInternal(CRtspRequest *clonedRequest)
+CRtspRequest *CRtspOptionsRequest::CreateRequest(void)
 {
-  return __super::CloneInternal(clonedRequest);
-}
+  HRESULT result = S_OK;
+  CRtspOptionsRequest *request = new CRtspOptionsRequest(&result, false);
+  CHECK_POINTER_HRESULT(result, request, result, E_OUTOFMEMORY);
 
-CRtspRequest *CRtspOptionsRequest::GetNewRequest(void)
-{
-  return new CRtspOptionsRequest(false);
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(request));
+  return request;
 }

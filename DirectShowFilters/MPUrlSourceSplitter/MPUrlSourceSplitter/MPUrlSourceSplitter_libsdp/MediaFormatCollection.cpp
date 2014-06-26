@@ -22,8 +22,8 @@
 
 #include "MediaFormatCollection.h"
 
-CMediaFormatCollection::CMediaFormatCollection(void)
-  : CCollection()
+CMediaFormatCollection::CMediaFormatCollection(HRESULT *result)
+  : CCollection(result)
 {
 }
 

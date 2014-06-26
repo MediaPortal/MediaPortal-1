@@ -23,10 +23,16 @@
 #include "RtspRtpInfoResponseHeader.h"
 #include "conversions.h"
 
-CRtspRtpInfoResponseHeader::CRtspRtpInfoResponseHeader(void)
-  : CRtspResponseHeader()
+CRtspRtpInfoResponseHeader::CRtspRtpInfoResponseHeader(HRESULT *result)
+  : CRtspResponseHeader(result)
 {
-  this->rtpInfoTracks = new CRtpInfoTrackCollection();
+  this->rtpInfoTracks = NULL;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->rtpInfoTracks = new CRtpInfoTrackCollection(result);
+    CHECK_POINTER_HRESULT(*result, this->rtpInfoTracks, *result, E_OUTOFMEMORY);
+  }
 }
 
 CRtspRtpInfoResponseHeader::~CRtspRtpInfoResponseHeader(void)
@@ -45,15 +51,54 @@ CRtpInfoTrackCollection *CRtspRtpInfoResponseHeader::GetRtpInfoTracks(void)
 
 /* other methods */
 
-CRtspRtpInfoResponseHeader *CRtspRtpInfoResponseHeader::Clone(void)
+bool CRtspRtpInfoResponseHeader::Parse(const wchar_t *header, unsigned int length)
 {
-  return (CRtspRtpInfoResponseHeader *)__super::Clone();
+  HRESULT result = __super::Parse(header, length) ? S_OK : E_FAIL;
+
+  if (SUCCEEDED(result))
+  {
+    CHECK_CONDITION_HRESULT(result, _wcsicmp(this->name, RTSP_RTP_INFO_RESPONSE_HEADER_TYPE) == 0, result, E_FAIL);
+
+    if (SUCCEEDED(result))
+    {
+      // find first separator
+
+      unsigned int position = 0;
+      unsigned int valueLength = this->GetValueLength();
+
+      while (SUCCEEDED(result) && (position < valueLength))
+      {
+        // try to find separator
+        int index = IndexOf(this->value + position, valueLength - position, RTSP_RTP_INFO_RESPONSE_HEADER_TRACK_SEPARATOR, RTSP_RTP_INFO_RESPONSE_HEADER_TRACK_SEPARATOR_LENGTH);
+        unsigned int tempLength = (index == (-1)) ? (valueLength - position) : (index);
+
+        CRtpInfoTrack *rtpInfoTrack = new CRtpInfoTrack(&result);
+        CHECK_POINTER_HRESULT(result, rtpInfoTrack, result, E_OUTOFMEMORY);
+
+        CHECK_CONDITION_HRESULT(result, rtpInfoTrack->Parse(this->value + position, tempLength), result, E_FAIL);
+
+        CHECK_CONDITION_HRESULT(result, this->rtpInfoTracks->Add(rtpInfoTrack), result, E_OUTOFMEMORY);
+        CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(rtpInfoTrack));
+
+        position += tempLength + RTSP_RTP_INFO_RESPONSE_HEADER_TRACK_SEPARATOR_LENGTH;
+      }
+    }
+  }
+
+  if (SUCCEEDED(result))
+  {
+    SET_STRING_HRESULT_WITH_NULL(this->responseHeaderType, RTSP_RTP_INFO_RESPONSE_HEADER_TYPE, result);
+  }
+
+  return SUCCEEDED(result);
 }
 
-bool CRtspRtpInfoResponseHeader::CloneInternal(CHttpHeader *clonedHeader)
+/* protected methods */
+
+bool CRtspRtpInfoResponseHeader::CloneInternal(CHttpHeader *clone)
 {
-  bool result = __super::CloneInternal(clonedHeader);
-  CRtspRtpInfoResponseHeader *header = dynamic_cast<CRtspRtpInfoResponseHeader *>(clonedHeader);
+  bool result = __super::CloneInternal(clone);
+  CRtspRtpInfoResponseHeader *header = dynamic_cast<CRtspRtpInfoResponseHeader *>(clone);
   result &= (header != NULL);
 
   if (result)
@@ -64,53 +109,13 @@ bool CRtspRtpInfoResponseHeader::CloneInternal(CHttpHeader *clonedHeader)
   return result;
 }
 
-CHttpHeader *CRtspRtpInfoResponseHeader::GetNewHeader(void)
+CHttpHeader *CRtspRtpInfoResponseHeader::CreateHeader(void)
 {
-  return new CRtspRtpInfoResponseHeader();
+  HRESULT result = S_OK;
+  CRtspRtpInfoResponseHeader *header = new CRtspRtpInfoResponseHeader(&result);
+  CHECK_POINTER_HRESULT(result, header, result, E_OUTOFMEMORY);
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(header));
+  return header;
 }
 
-bool CRtspRtpInfoResponseHeader::Parse(const wchar_t *header, unsigned int length)
-{
-  bool result = __super::Parse(header, length);
-
-  if (result)
-  {
-    result &= (_wcsicmp(this->name, RTSP_RTP_INFO_RESPONSE_HEADER_TYPE) == 0);
-
-    if (result)
-    {
-      // find first separator
-
-      unsigned int position = 0;
-      unsigned int valueLength = this->GetValueLength();
-
-      while (result && (position < valueLength))
-      {
-        // try to find separator
-        int index = IndexOf(this->value + position, valueLength - position, RTSP_RTP_INFO_RESPONSE_HEADER_TRACK_SEPARATOR, RTSP_RTP_INFO_RESPONSE_HEADER_TRACK_SEPARATOR_LENGTH);
-        unsigned int tempLength = (index == (-1)) ? (valueLength - position) : (index);
-
-        CRtpInfoTrack *rtpInfoTrack = new CRtpInfoTrack();
-        result &= (rtpInfoTrack != NULL);
-
-        if (result)
-        {
-          result &= rtpInfoTrack->Parse(this->value + position, tempLength);
-        }
-
-        CHECK_CONDITION_EXECUTE(result, result &= this->rtpInfoTracks->Add(rtpInfoTrack));
-        CHECK_CONDITION_EXECUTE(!result, FREE_MEM_CLASS(rtpInfoTrack));
-
-        position += tempLength + RTSP_RTP_INFO_RESPONSE_HEADER_TRACK_SEPARATOR_LENGTH;
-      }
-    }
-  }
-
-  if (result)
-  {
-    this->responseHeaderType = Duplicate(RTSP_RTP_INFO_RESPONSE_HEADER_TYPE);
-    result &= (this->responseHeaderType != NULL);
-  }
-
-  return result;
-}

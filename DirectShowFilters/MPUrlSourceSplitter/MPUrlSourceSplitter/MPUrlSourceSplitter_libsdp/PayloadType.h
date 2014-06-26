@@ -23,71 +23,76 @@
 #ifndef __PAYLOAD_TYPE_DEFINED
 #define __PAYLOAD_TYPE_DEFINED
 
+#include "Flags.h"
+
 #define PAYLOAD_TYPE_ID_DYNAMIC                                       UINT_MAX
 #define PAYLOAD_TYPE_CLOCK_RATE_VARIABLE                              UINT_MAX
 #define PAYLOAD_TYPE_CHANNELS_VARIABLE                                UINT_MAX
 
-class CPayloadType
+#define PAYLOAD_TYPE_FLAG_NONE                                        FLAGS_NONE
+
+#define PAYLOAD_TYPE_FLAG_LAST                                        (FLAGS_LAST + 0)
+
+class CPayloadType : public CFlags
 {
 public:
   enum MediaType { Audio, Video, Both, Unknown };
 
-  CPayloadType(void);
-  ~CPayloadType(void);
+  CPayloadType(HRESULT *result);
+  virtual ~CPayloadType(void);
 
   /* get methods */
 
   // gets payload type ID
   // @return : payload type ID or PAYLOAD_TYPE_ID_DYNAMIC if not specified
-  unsigned int GetId(void);
+  virtual unsigned int GetId(void);
 
   // gets encoding name of payload type
   // @return : encoding name or NULL if not specified
-  const wchar_t *GetEncodingName(void);
+  virtual const wchar_t *GetEncodingName(void);
 
   // gets media type of payload type
   // @return : media type (Unknown if not specified)
-  MediaType GetMediaType(void);
+  virtual MediaType GetMediaType(void);
 
   // gets clock rate in payload type
   // @return : clock rate or PAYLOAD_TYPE_CLOCK_RATE_VARIABLE if not specified
-  unsigned int GetClockRate(void);
+  virtual unsigned int GetClockRate(void);
 
   // gets channels in payload type
   // @return : channels or PAYLOAD_TYPE_CHANNELS_VARIABLE if not specified
-  unsigned int GetChannels(void);
+  virtual unsigned int GetChannels(void);
 
   /* set methods */
 
   // sets payload type ID
   // @param id : payload type ID or PAYLOAD_TYPE_ID_DYNAMIC if not specified
-  void SetId(unsigned int id);
+  virtual void SetId(unsigned int id);
 
   // sets encoding name of payload type
   // @param encodingName : encoding name or NULL if not specified
   // @return : true if successful, false otherwise
-  bool SetEncodingName(const wchar_t *encodingName);
+  virtual bool SetEncodingName(const wchar_t *encodingName);
 
   // sets media type of payload type
   // @param mediaType : media type (Unknown if not specified) to set
-  void SetMediaType(MediaType mediaType);
+  virtual void SetMediaType(MediaType mediaType);
 
   // sets clock rate in payload type
   // @param clockRate : clock rate or PAYLOAD_TYPE_CLOCK_RATE_VARIABLE if not specified
-  void SetClockRate(unsigned int clockRate);
+  virtual void SetClockRate(unsigned int clockRate);
 
   // sets channels in payload type
   // @param channels : channels or PAYLOAD_TYPE_CHANNELS_VARIABLE if not specified
-  void SetChannels(unsigned int channels);
+  virtual void SetChannels(unsigned int channels);
 
   /* other methods */
 
   // deep clone of current instance
   // @return : reference to clone of payload type or NULL if error
-  CPayloadType *Clone(void);
+  virtual CPayloadType *Clone(void);
 
 protected:
-
   // holds payload type ID
   unsigned int id;
 
@@ -105,10 +110,14 @@ protected:
 
   /* methods */
 
+  // creates payload type
+  // @return : payload type or NULL if error
+  virtual CPayloadType *CreatePayloadType(void);
+
   // deeply clones current instance to specified payload type
   // @param payloadType : the payload type to clone current instance
   // @result : true if successful, false otherwise
-  bool CloneInternal(CPayloadType *payloadType);
+  virtual bool CloneInternal(CPayloadType *payloadType);
 };
 
 #endif

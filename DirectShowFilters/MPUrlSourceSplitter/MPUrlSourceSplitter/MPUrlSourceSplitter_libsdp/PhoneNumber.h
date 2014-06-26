@@ -27,7 +27,7 @@ class CPhoneNumber
 {
 public:
   // initializes a new instance of CPhoneNumber class
-  CPhoneNumber(void);
+  CPhoneNumber(HRESULT *result);
   ~CPhoneNumber(void);
 
   /* get methods */

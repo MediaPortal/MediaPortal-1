@@ -22,7 +22,7 @@
 
 #include "EmailAddress.h"
 
-CEmailAddress::CEmailAddress(void)
+CEmailAddress::CEmailAddress(HRESULT *result)
 {
   this->emailAddress = NULL;
 }

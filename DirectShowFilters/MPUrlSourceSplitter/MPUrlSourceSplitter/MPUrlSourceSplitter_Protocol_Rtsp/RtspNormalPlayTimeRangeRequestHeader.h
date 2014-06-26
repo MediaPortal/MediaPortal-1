@@ -25,9 +25,12 @@
 
 #include "RtspRangeRequestHeader.h"
 
-#define NORMAL_PLAY_TIME_RANGE_REQUEST_HEADER_FLAG_NONE               0x00000000
-#define NORMAL_PLAY_TIME_RANGE_REQUEST_HEADER_FLAG_START              0x00000001
-#define NORMAL_PLAY_TIME_RANGE_REQUEST_HEADER_FLAG_END                0x00000002
+#define NORMAL_PLAY_TIME_RANGE_REQUEST_HEADER_FLAG_NONE               RTSP_REQUEST_HEADER_FLAG_NONE
+
+#define NORMAL_PLAY_TIME_RANGE_REQUEST_HEADER_FLAG_START              (1 << (RTSP_REQUEST_HEADER_FLAG_LAST + 0))
+#define NORMAL_PLAY_TIME_RANGE_REQUEST_HEADER_FLAG_END                (1 << (RTSP_REQUEST_HEADER_FLAG_LAST + 1))
+
+#define NORMAL_PLAY_TIME_RANGE_REQUEST_HEADER_FLAG_LAST               (RTSP_REQUEST_HEADER_FLAG_LAST + 2)
 
 #define TIME_UNSPECIFIED                                              UINT64_MAX
 
@@ -38,7 +41,7 @@
 class CRtspNormalPlayTimeRangeRequestHeader : public CRtspRangeRequestHeader
 {
 public:
-  CRtspNormalPlayTimeRangeRequestHeader(void);
+  CRtspNormalPlayTimeRangeRequestHeader(HRESULT *result);
   virtual ~CRtspNormalPlayTimeRangeRequestHeader(void);
 
   /* get methods */
@@ -55,10 +58,6 @@ public:
   // @return : end time in ms or TIME_UNSPECIFIED if not specified
   virtual uint64_t GetEndTime(void);
 
-  // gets flags
-  // @return : flags
-  virtual unsigned int GetFlags(void);
-
   /* set methods */
 
   // sets RTSP header value
@@ -74,10 +73,6 @@ public:
   // @param endTime : the end time in ms to set
   virtual void SetEndTime(uint64_t endTime);
 
-  // sets flags
-  // @param flags : the flags to set
-  virtual void SetFlags(unsigned int flags);
-
   /* other methods */
 
   // tests if for normal play time is set start time
@@ -88,30 +83,21 @@ public:
   // @return : true if set, false otherwise
   virtual bool IsSetEnd(void);
 
-  // tests if flag is set
-  // @param flag : the flag to test
-  // @return : true if flag is set, false otherwise
-  virtual bool IsSetFlag(unsigned int flag);
-
-  // deep clones of current instance
-  // @return : deep clone of current instance or NULL if error
-  virtual CRtspNormalPlayTimeRangeRequestHeader *Clone(void);
-
 protected:
-
-  unsigned int flags;
 
   uint64_t startTime;
   uint64_t endTime;
 
+  /* methods */
+
   // deeply clones current instance to cloned header
-  // @param  clonedHeader : cloned header to hold clone of current instance
+  // @param  clone : cloned header to hold clone of current instance
   // @return : true if successful, false otherwise
-  virtual bool CloneInternal(CHttpHeader *clonedHeader);
+  virtual bool CloneInternal(CHttpHeader *clone);
 
   // returns new RTSP request header object to be used in cloning
   // @return : RTSP request header object or NULL if error
-  virtual CHttpHeader *GetNewHeader(void);
+  virtual CHttpHeader *CreateHeader(void);
 };
 
 #endif

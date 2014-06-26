@@ -22,8 +22,8 @@
 
 #include "MediaDescriptionCollection.h"
 
-CMediaDescriptionCollection::CMediaDescriptionCollection(void)
-  : CCollection()
+CMediaDescriptionCollection::CMediaDescriptionCollection(HRESULT *result)
+  : CCollection(result)
 {
 }
 

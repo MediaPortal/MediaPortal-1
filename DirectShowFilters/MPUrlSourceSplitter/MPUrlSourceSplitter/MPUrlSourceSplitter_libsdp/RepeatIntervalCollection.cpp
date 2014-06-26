@@ -22,8 +22,8 @@
 
 #include "RepeatIntervalCollection.h"
 
-CRepeatIntervalCollection::CRepeatIntervalCollection(void)
-  : CCollection()
+CRepeatIntervalCollection::CRepeatIntervalCollection(HRESULT *result)
+  : CCollection(result)
 {
 }
 

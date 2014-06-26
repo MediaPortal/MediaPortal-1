@@ -27,7 +27,7 @@ class CSessionUri
 {
 public:
   // initializes a new instance of CSessionUri class
-  CSessionUri(void);
+  CSessionUri(HRESULT *result);
   ~CSessionUri(void);
 
   /* get methods */

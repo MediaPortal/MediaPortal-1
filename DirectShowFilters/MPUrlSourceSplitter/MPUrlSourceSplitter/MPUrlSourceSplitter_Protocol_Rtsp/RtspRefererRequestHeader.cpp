@@ -22,8 +22,8 @@
 
 #include "RtspRefererRequestHeader.h"
 
-CRtspRefererRequestHeader::CRtspRefererRequestHeader(void)
-  : CRtspRequestHeader()
+CRtspRefererRequestHeader::CRtspRefererRequestHeader(HRESULT *result)
+  : CRtspRequestHeader(result)
 {
 }
 
@@ -58,17 +58,19 @@ bool CRtspRefererRequestHeader::SetReferer(const wchar_t *referer)
 
 /* other methods */
 
-CRtspRefererRequestHeader *CRtspRefererRequestHeader::Clone(void)
+/* protected methods */
+
+bool CRtspRefererRequestHeader::CloneInternal(CHttpHeader *clone)
 {
-  return (CRtspRefererRequestHeader *)__super::Clone();
+  return __super::CloneInternal(clone);
 }
 
-bool CRtspRefererRequestHeader::CloneInternal(CHttpHeader *clonedHeader)
+CHttpHeader *CRtspRefererRequestHeader::CreateHeader(void)
 {
-  return __super::CloneInternal(clonedHeader);
-}
+  HRESULT result = S_OK;
+  CRtspRefererRequestHeader *header = new CRtspRefererRequestHeader(&result);
+  CHECK_POINTER_HRESULT(result, header, result, E_OUTOFMEMORY);
 
-CHttpHeader *CRtspRefererRequestHeader::GetNewHeader(void)
-{
-  return new CRtspRefererRequestHeader();
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(header));
+  return header;
 }

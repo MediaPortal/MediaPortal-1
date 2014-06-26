@@ -22,7 +22,7 @@
 
 #include "SessionUri.h"
 
-CSessionUri::CSessionUri(void)
+CSessionUri::CSessionUri(HRESULT *result)
 {
   this->sessionUri = NULL;
 }

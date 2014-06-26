@@ -25,15 +25,19 @@
 
 #include "SessionTag.h"
 
-#define TAG_ATTRIBUTE                                       L"a"
+#define TAG_ATTRIBUTE                                                 L"a"
 
-#define TAG_ATTRIBUTE_UNSPECIFIED                           L"au"
+#define TAG_ATTRIBUTE_UNSPECIFIED                                     L"au"
+
+#define ATTRIBUTE_FLAG_NONE                                           SESSION_TAG_FLAG_NONE
+
+#define ATTRIBUTE_FLAG_LAST                                           (SESSION_TAG_FLAG_LAST + 0)
 
 class CAttribute : public CSessionTag
 {
 public:
   // intializes a new instance of CAttribute class
-  CAttribute(void);
+  CAttribute(HRESULT *result);
   virtual  ~CAttribute(void);
 
   /* get methods */

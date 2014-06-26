@@ -22,10 +22,9 @@
 
 #include "RtspNormalPlayTimeRangeRequestHeader.h"
 
-CRtspNormalPlayTimeRangeRequestHeader::CRtspNormalPlayTimeRangeRequestHeader(void)
-  : CRtspRangeRequestHeader()
+CRtspNormalPlayTimeRangeRequestHeader::CRtspNormalPlayTimeRangeRequestHeader(HRESULT *result)
+  : CRtspRangeRequestHeader(result)
 {
-  this->flags = NORMAL_PLAY_TIME_RANGE_REQUEST_HEADER_FLAG_NONE;
   this->startTime = TIME_UNSPECIFIED;
   this->endTime = TIME_UNSPECIFIED;
 }
@@ -40,15 +39,15 @@ const wchar_t *CRtspNormalPlayTimeRangeRequestHeader::GetValue(void)
 {
   FREE_MEM(this->value);
 
-  if (this->IsSetFlag(NORMAL_PLAY_TIME_RANGE_REQUEST_HEADER_FLAG_START | NORMAL_PLAY_TIME_RANGE_REQUEST_HEADER_FLAG_END))
+  if (this->IsSetFlags(NORMAL_PLAY_TIME_RANGE_REQUEST_HEADER_FLAG_START | NORMAL_PLAY_TIME_RANGE_REQUEST_HEADER_FLAG_END))
   {
     this->value = FormatString(NORMAL_PLAY_TIME_START_END_VALUE_FORMAT, this->GetStartTime() / 1000, this->GetStartTime() % 1000, this->GetEndTime() / 1000, this->GetEndTime() % 1000);
   }
-  else if (this->IsSetFlag(NORMAL_PLAY_TIME_RANGE_REQUEST_HEADER_FLAG_START))
+  else if (this->IsSetFlags(NORMAL_PLAY_TIME_RANGE_REQUEST_HEADER_FLAG_START))
   {
     this->value = FormatString(NORMAL_PLAY_TIME_START_VALUE_FORMAT, this->GetStartTime() / 1000, this->GetStartTime() % 1000);
   }
-  else if (this->IsSetFlag(NORMAL_PLAY_TIME_RANGE_REQUEST_HEADER_FLAG_END))
+  else if (this->IsSetFlags(NORMAL_PLAY_TIME_RANGE_REQUEST_HEADER_FLAG_END))
   {
     this->value = FormatString(NORMAL_PLAY_TIME_END_VALUE_FORMAT, this->GetEndTime() / 1000, this->GetEndTime() % 1000);
   }
@@ -64,11 +63,6 @@ uint64_t CRtspNormalPlayTimeRangeRequestHeader::GetStartTime(void)
 uint64_t CRtspNormalPlayTimeRangeRequestHeader::GetEndTime(void)
 {
   return this->endTime;
-}
-
-unsigned int CRtspNormalPlayTimeRangeRequestHeader::GetFlags(void)
-{
-  return this->flags;
 }
 
 /* set methods */
@@ -89,42 +83,28 @@ void CRtspNormalPlayTimeRangeRequestHeader::SetEndTime(uint64_t endTime)
   this->endTime = endTime;
 }
 
-void CRtspNormalPlayTimeRangeRequestHeader::SetFlags(unsigned int flags)
-{
-  this->flags = flags;
-}
-
 /* other methods */
 
 bool CRtspNormalPlayTimeRangeRequestHeader::IsSetStart(void)
 {
-  return this->IsSetFlag(NORMAL_PLAY_TIME_RANGE_REQUEST_HEADER_FLAG_START);
+  return this->IsSetFlags(NORMAL_PLAY_TIME_RANGE_REQUEST_HEADER_FLAG_START);
 }
 
 bool CRtspNormalPlayTimeRangeRequestHeader::IsSetEnd(void)
 {
-  return this->IsSetFlag(NORMAL_PLAY_TIME_RANGE_REQUEST_HEADER_FLAG_END);
+  return this->IsSetFlags(NORMAL_PLAY_TIME_RANGE_REQUEST_HEADER_FLAG_END);
 }
 
-bool CRtspNormalPlayTimeRangeRequestHeader::IsSetFlag(unsigned int flag)
-{
-  return ((this->flags & flag) == flag);
-}
+/* protected methods */
 
-CRtspNormalPlayTimeRangeRequestHeader *CRtspNormalPlayTimeRangeRequestHeader::Clone(void)
+bool CRtspNormalPlayTimeRangeRequestHeader::CloneInternal(CHttpHeader *clone)
 {
-  return (CRtspNormalPlayTimeRangeRequestHeader *)__super::Clone();
-}
-
-bool CRtspNormalPlayTimeRangeRequestHeader::CloneInternal(CHttpHeader *clonedHeader)
-{
-  bool result = __super::CloneInternal(clonedHeader);
-  CRtspNormalPlayTimeRangeRequestHeader *header = dynamic_cast<CRtspNormalPlayTimeRangeRequestHeader *>(clonedHeader);
+  bool result = __super::CloneInternal(clone);
+  CRtspNormalPlayTimeRangeRequestHeader *header = dynamic_cast<CRtspNormalPlayTimeRangeRequestHeader *>(clone);
   result &= (header != NULL);
 
   if (result)
   {
-    header->flags = this->flags;
     header->startTime = this->startTime;
     header->endTime = this->endTime;
   }
@@ -132,7 +112,12 @@ bool CRtspNormalPlayTimeRangeRequestHeader::CloneInternal(CHttpHeader *clonedHea
   return result;
 }
 
-CHttpHeader *CRtspNormalPlayTimeRangeRequestHeader::GetNewHeader(void)
+CHttpHeader *CRtspNormalPlayTimeRangeRequestHeader::CreateHeader(void)
 {
-  return new CRtspNormalPlayTimeRangeRequestHeader();
+  HRESULT result = S_OK;
+  CRtspNormalPlayTimeRangeRequestHeader *header = new CRtspNormalPlayTimeRangeRequestHeader(&result);
+  CHECK_POINTER_HRESULT(result, header, result, E_OUTOFMEMORY);
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(header));
+  return header;
 }

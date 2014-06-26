@@ -22,8 +22,8 @@
 
 #include "Attribute.h"
 
-CAttribute::CAttribute(void)
-  : CSessionTag()
+CAttribute::CAttribute(HRESULT *result)
+  : CSessionTag(result)
 {
   this->attribute = NULL;
   this->value = NULL;

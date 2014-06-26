@@ -34,7 +34,7 @@ class CMediaFormat
 {
 public:
   // initializes a new instance of CMediaFormat class
-  CMediaFormat(void);
+  CMediaFormat(HRESULT *result);
   ~CMediaFormat(void);
 
   /* get methods */

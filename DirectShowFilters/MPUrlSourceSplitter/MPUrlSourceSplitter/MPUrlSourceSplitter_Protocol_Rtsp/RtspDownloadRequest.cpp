@@ -22,8 +22,8 @@
 
 #include "RtspDownloadRequest.h"
 
-CRtspDownloadRequest::CRtspDownloadRequest(void)
-  : CDownloadRequest()
+CRtspDownloadRequest::CRtspDownloadRequest(HRESULT *result)
+  : CDownloadRequest(result)
 {
   this->startTime = 0;
 }
@@ -48,26 +48,25 @@ void CRtspDownloadRequest::SetStartTime(uint64_t startTime)
 
 /* other methods */
 
-CRtspDownloadRequest *CRtspDownloadRequest::Clone(void)
+CDownloadRequest *CRtspDownloadRequest::CreateDownloadRequest(void)
 {
-  CRtspDownloadRequest *result = new CRtspDownloadRequest();
-  if (result != NULL)
-  {
-    if (!this->CloneInternal(result))
-    {
-      FREE_MEM_CLASS(result);
-    }
-  }
-  return result;
+  HRESULT result = S_OK;
+  CRtspDownloadRequest *request = new CRtspDownloadRequest(&result);
+  CHECK_POINTER_HRESULT(result, request, result, E_OUTOFMEMORY);
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(request));
+  return request;
 }
 
-bool CRtspDownloadRequest::CloneInternal(CRtspDownloadRequest *clonedRequest)
+bool CRtspDownloadRequest::CloneInternal(CDownloadRequest *clone)
 {
-  bool result = __super::CloneInternal(clonedRequest);
+  bool result = __super::CloneInternal(clone);
 
   if (result)
   {
-    clonedRequest->startTime = this->startTime;
+    CRtspDownloadRequest *request = dynamic_cast<CRtspDownloadRequest *>(clone);
+
+    request->startTime = this->startTime;
   }
 
   return result;

@@ -39,10 +39,13 @@
 
 #define RTSP_DESCRIBE_CONTENT_TYPE                                    L"application/sdp"
 
-#define RTSP_CURL_INSTANCE_FLAG_NONE                                  0x00000000
-#define RTSP_CURL_INSTANCE_FLAG_REQUEST_COMMAND_FINISHED              0x00000001
-#define RTSP_CURL_INSTANCE_FLAG_IGNORE_RTP_PAYLOAD_TYPE               0x00000002
-#define RTSP_CURL_INSTANCE_FLAG_METHOD_GET_PARAMETER_SUPPORTED        0x00000004
+#define RTSP_CURL_INSTANCE_FLAG_NONE                                  CURL_INSTANCE_FLAG_NONE
+
+#define RTSP_CURL_INSTANCE_FLAG_REQUEST_COMMAND_FINISHED              (1 << (CURL_INSTANCE_FLAG_LAST + 0))
+#define RTSP_CURL_INSTANCE_FLAG_IGNORE_RTP_PAYLOAD_TYPE               (1 << (CURL_INSTANCE_FLAG_LAST + 1))
+#define RTSP_CURL_INSTANCE_FLAG_METHOD_GET_PARAMETER_SUPPORTED        (1 << (CURL_INSTANCE_FLAG_LAST + 2))
+
+#define RTSP_CURL_INSTANCE_FLAG_LAST                                  (CURL_INSTANCE_FLAG_LAST + 3)
 
 #define RTSP_CURL_INSTANCE_COMMAND_NONE                               0x00000000
 #define RTSP_CURL_INSTANCE_COMMAND_OPTIONS                            0x00000001
@@ -53,8 +56,7 @@
 #define RTSP_CURL_INSTANCE_COMMAND_PLAY_RESPONSE_NOT_VALID            0x00000006
 #define RTSP_CURL_INSTANCE_COMMAND_TEARDOWN                           0x00000007
 
-class CRtspCurlInstance :
-  public CCurlInstance
+class CRtspCurlInstance : public CCurlInstance
 {
 public:
   // initializes a new instance of CRtspCurlInstance class
@@ -62,7 +64,7 @@ public:
   // @param mutex : mutex for locking access to receive data buffer
   // @param protocolName : the protocol name instantiating
   // @param instanceName : the name of CURL instance
-  CRtspCurlInstance(CLogger *logger, HANDLE mutex, const wchar_t *protocolName, const wchar_t *instanceName);
+  CRtspCurlInstance(HRESULT *result, CLogger *logger, HANDLE mutex, const wchar_t *protocolName, const wchar_t *instanceName);
 
   // destructor
   virtual ~CRtspCurlInstance(void);
@@ -126,25 +128,16 @@ public:
   // @return : true if ignore RTP payload type flag is set, false otherwise
   virtual bool IsIgnoreRtpPayloadTypeFlag(void);
 
-  // tests if specific combination of flags is set
-  // @param flags : the combination of flags to test
-  // @return : true if specific combination of flags is set, false otherwise
-  virtual bool IsSetFlags(unsigned int flags);
-
   // initializes CURL instance
   // @param downloadRequest : download request
   // @return : true if successful, false otherwise
-  virtual bool Initialize(CDownloadRequest *downloadRequest);
+  virtual HRESULT Initialize(CDownloadRequest *downloadRequest);
 
   // stops receiving data
   // @return : true if successful, false otherwise
-  virtual bool StopReceivingData(void);
+  virtual HRESULT StopReceivingData(void);
 
 protected:
-
-  // holds various flags
-  unsigned int flags;
-
   // holds RTSP download request
   // never created and never destroyed
   // initialized in constructor by deep cloning
@@ -178,14 +171,14 @@ protected:
 
   // gets new instance of download response
   // @return : new download response or NULL if error
-  virtual CDownloadResponse *GetNewDownloadResponse(void);
+  virtual CDownloadResponse *CreateDownloadResponse(void);
 
   // process received base RTP packets
   // @param track : RTSP track to process packets
   // @param clientPort : the client port of received packets
   // @param packets : packets to process
-  // @return : true if processed, false otherwise
-  virtual bool ProcessReceivedBaseRtpPackets(CRtspTrack *track, unsigned int clientPort, CBaseRtpPacketCollection *packets);
+  // @return : S_OK if processed, error code otherwise
+  virtual HRESULT ProcessReceivedBaseRtpPackets(CRtspTrack *track, unsigned int clientPort, CBaseRtpPacketCollection *packets);
 
   // Implementations should look for a base URL in the following order:
   // 1.     The RTSP Content-Base field
@@ -199,7 +192,7 @@ protected:
   // virtual CurlWorker() method is called from static CurlWorker() method
   virtual unsigned int CurlWorker(void);
 
-  CURLcode SendAndReceive(CRtspRequest *request, CURLcode errorCode, const wchar_t *rtspMethodName, const wchar_t *functionName);
+  HRESULT SendAndReceive(CRtspRequest *request, const wchar_t *rtspMethodName, const wchar_t *functionName);
 };
 
 #endif

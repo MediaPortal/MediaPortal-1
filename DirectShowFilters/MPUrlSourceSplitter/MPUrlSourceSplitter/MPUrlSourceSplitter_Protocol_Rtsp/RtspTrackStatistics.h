@@ -23,14 +23,19 @@
 #ifndef __RTSP_TRACK_STATISTICS_DEFINED
 #define __RTSP_TRACK_STATISTICS_DEFINED
 
-#define RTSP_TRACK_STATISTICS_FLAG_NONE                               0x00000000
-#define RTSP_TRACK_STATISTICS_FLAG_SET_SEQUENCE_NUMBER                0x00000001
+#include "Flags.h"
 
-class CRtspTrackStatistics
+#define RTSP_TRACK_STATISTICS_FLAG_NONE                               FLAGS_NONE
+
+#define RTSP_TRACK_STATISTICS_FLAG_SET_SEQUENCE_NUMBER                (1 << (FLAGS_LAST + 0))
+
+#define RTSP_TRACK_STATISTICS_FLAG_LAST                               (FLAGS_LAST + 1)
+
+class CRtspTrackStatistics : public CFlags
 {
 public:
   // initializes a new instance of CRtspTrackStatistics class
-  CRtspTrackStatistics(void);
+  CRtspTrackStatistics(HRESULT *result);
   virtual ~CRtspTrackStatistics(void);
 
   /* get methods */
@@ -99,14 +104,7 @@ public:
   // @return : true if first sequence number is set, false otherwise
   bool IsSetSequenceNumber(void);
 
-  // tests if specific combination of flags is set
-  // @param flags : the set of flags to test
-  // @return : true if set of flags is set, false otherwise
-  bool IsSetFlags(unsigned int flags);
-
 protected:
-
-  unsigned int flags;
 
   /* jitter */
   // jitter is calculated as integer approximation as described in RFC 3550, appendix A.8

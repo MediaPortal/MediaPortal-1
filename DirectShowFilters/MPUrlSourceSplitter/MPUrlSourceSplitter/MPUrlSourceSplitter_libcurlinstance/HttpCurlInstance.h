@@ -79,8 +79,8 @@ public:
 
   // initializes CURL instance
   // @param downloadRequest : download request
-  // @return : true if successful, false otherwise
-  virtual bool Initialize(CDownloadRequest *downloadRequest);
+  // @return : S_OK if successful, error code otherwise
+  virtual HRESULT Initialize(CDownloadRequest *downloadRequest);
 
 protected:
   // holds HTTP download request
@@ -95,6 +95,8 @@ protected:
 
   // holds cookies to initialize instance
   curl_slist *cookies;
+
+  /* methods */
 
   // called when CURL debug message arives
   // @param type : CURL message type
@@ -117,7 +119,7 @@ protected:
 
   // gets new instance of download response
   // @return : new download response or NULL if error
-  virtual CDownloadResponse *GetNewDownloadResponse(void);
+  virtual CDownloadResponse *CreateDownloadResponse(void);
 
   // destroys libcurl worker
   // @return : S_OK if successful

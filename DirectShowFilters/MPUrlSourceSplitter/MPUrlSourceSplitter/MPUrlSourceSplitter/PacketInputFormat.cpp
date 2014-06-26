@@ -21,6 +21,8 @@
 #include "StdAfx.h"
 
 #include "PacketInputFormat.h"
+#include "StreamPackageDataRequest.h"
+#include "StreamPackagePacketRequest.h"
 
 #define STREAM_READ_BUFFER_SIZE                                       32768
 
@@ -51,6 +53,7 @@ CPacketInputFormat::CPacketInputFormat(HRESULT *result, IPacketDemuxer *demuxer,
   this->streamFormatContext = NULL;
   this->streamIoContext = NULL;
   this->streamIoContextBufferPosition = 0;
+  this->resetPacketCounter = false;
 
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
@@ -140,6 +143,7 @@ int CPacketInputFormat::ReadHeader(AVFormatContext *formatContext)
     caller->streamFormatContext = NULL;
   }
 
+  caller->resetPacketCounter = (ret >= 0);
   return ret;
 }
 
@@ -149,7 +153,8 @@ int CPacketInputFormat::ReadPacket(AVFormatContext *formatContext, AVPacket *pac
   int ret = 0;
   CMediaPacket *mediaPacket = NULL;
 
-  ret = caller->demuxer->GetNextMediaPacket(&mediaPacket);
+  ret = caller->demuxer->GetNextMediaPacket(&mediaPacket, caller->resetPacketCounter ? STREAM_PACKAGE_PACKET_REQUEST_FLAG_RESET_PACKET_COUNTER : STREAM_PACKAGE_PACKET_REQUEST_FLAG_NONE);
+  caller->resetPacketCounter = false;
 
   switch (ret)
   {
@@ -175,6 +180,8 @@ int CPacketInputFormat::ReadPacket(AVFormatContext *formatContext, AVPacket *pac
     }
   }
 
+  FREE_MEM_CLASS(mediaPacket);
+
   return ret;
 }
 
@@ -189,7 +196,7 @@ int CPacketInputFormat::StreamRead(void *opaque, uint8_t *buf, int buf_size)
 {
   CPacketInputFormat *caller = static_cast<CPacketInputFormat *>(opaque);
 
-  int result = caller->demuxer->StreamRead(caller->streamIoContextBufferPosition, buf, buf_size);
+  int result = caller->demuxer->StreamReadPosition(caller->streamIoContextBufferPosition, buf, buf_size, STREAM_PACKAGE_DATA_REQUEST_FLAG_NONE);
 
   if (result > 0)
   {

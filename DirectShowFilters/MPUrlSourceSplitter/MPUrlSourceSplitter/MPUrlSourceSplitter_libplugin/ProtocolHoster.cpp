@@ -237,9 +237,9 @@ void CProtocolHoster::ReportStreamTime(uint64_t streamTime, uint64_t streamPosit
   }
 }
 
-unsigned int CProtocolHoster::GetStreamCount(void)
+HRESULT CProtocolHoster::GetStreamInformation(CStreamInformationCollection *streams)
 {
-  return (this->activeProtocol != NULL) ? this->activeProtocol->GetStreamCount() : STREAM_COUNT_UNKNOWN;
+  return (this->activeProtocol != NULL) ? this->activeProtocol->GetStreamInformation(streams) : E_NO_ACTIVE_PROTOCOL;
 }
 
 // ISeeking interface implementation

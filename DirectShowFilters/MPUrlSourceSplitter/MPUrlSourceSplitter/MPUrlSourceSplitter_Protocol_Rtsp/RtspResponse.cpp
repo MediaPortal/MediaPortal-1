@@ -26,16 +26,22 @@
 #include "RtspContentLengthResponseHeader.h"
 #include "RtspSessionResponseHeader.h"
 
-CRtspResponse::CRtspResponse(void)
+CRtspResponse::CRtspResponse(HRESULT *result)
 {
   this->version = NULL;
   this->sequenceNumber = RTSP_SEQUENCE_NUMBER_UNSPECIFIED;
-  this->responseHeaders = new CRtspResponseHeaderCollection();
+  this->responseHeaders = NULL;
   this->statusCode = RTSP_STATUS_CODE_UNSPECIFIED;
   this->statusReason = NULL;
   this->content = NULL;
   this->contentLength = 0;
   this->sessionId = NULL;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->responseHeaders = new CRtspResponseHeaderCollection(result);
+    CHECK_POINTER_HRESULT(*result, this->responseHeaders, *result, E_OUTOFMEMORY);
+  }
 }
 
 CRtspResponse::~CRtspResponse(void)
@@ -276,7 +282,7 @@ bool CRtspResponse::IsEmpty(void)
 
 CRtspResponse *CRtspResponse::Clone(void)
 {
-  CRtspResponse *result = this->GetNewResponse();
+  CRtspResponse *result = this->CreateResponse();
   if (result != NULL)
   {
     if (!this->CloneInternal(result))
@@ -287,34 +293,39 @@ CRtspResponse *CRtspResponse::Clone(void)
   return result;
 }
 
-bool CRtspResponse::CloneInternal(CRtspResponse *clonedResponse)
+bool CRtspResponse::CloneInternal(CRtspResponse *clone)
 {
   bool result = true;
 
-  SET_STRING_AND_RESULT_WITH_NULL(clonedResponse->version, this->version, result);
-  SET_STRING_AND_RESULT_WITH_NULL(clonedResponse->statusReason, this->statusReason, result);
-  SET_STRING_AND_RESULT_WITH_NULL(clonedResponse->sessionId, this->sessionId, result);
-  clonedResponse->sequenceNumber = this->sequenceNumber;
-  clonedResponse->statusCode = this->statusCode;
-  clonedResponse->contentLength = this->contentLength;
+  SET_STRING_AND_RESULT_WITH_NULL(clone->version, this->version, result);
+  SET_STRING_AND_RESULT_WITH_NULL(clone->statusReason, this->statusReason, result);
+  SET_STRING_AND_RESULT_WITH_NULL(clone->sessionId, this->sessionId, result);
+  clone->sequenceNumber = this->sequenceNumber;
+  clone->statusCode = this->statusCode;
+  clone->contentLength = this->contentLength;
 
   if (this->contentLength != 0)
   {
-    clonedResponse->content = ALLOC_MEM_SET(clonedResponse->content, unsigned char, this->contentLength, 0);
-    result = (clonedResponse->content != NULL);
+    clone->content = ALLOC_MEM_SET(clone->content, unsigned char, this->contentLength, 0);
+    result = (clone->content != NULL);
 
     if (result)
     {
-      memcpy(clonedResponse->content, this->content, this->contentLength);
+      memcpy(clone->content, this->content, this->contentLength);
     }
   }
 
-  result &= clonedResponse->responseHeaders->Append(this->responseHeaders);
+  result &= clone->responseHeaders->Append(this->responseHeaders);
 
   return result;
 }
 
-CRtspResponse *CRtspResponse::GetNewResponse(void)
+CRtspResponse *CRtspResponse::CreateResponse(void)
 {
-  return new CRtspResponse();
+  HRESULT result = S_OK;
+  CRtspResponse *response = new CRtspResponse(&result);
+  CHECK_POINTER_HRESULT(result, response, result, E_OUTOFMEMORY);
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(response));
+  return response;
 }

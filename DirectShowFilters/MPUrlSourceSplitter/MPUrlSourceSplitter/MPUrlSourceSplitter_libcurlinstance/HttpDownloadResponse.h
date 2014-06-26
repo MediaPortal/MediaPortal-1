@@ -77,9 +77,9 @@ protected:
   virtual CDownloadResponse *CreateDownloadResponse(void);
 
   // deeply clones current instance to cloned response
-  // @param  clonedResponse : cloned response to hold clone of current instance
+  // @param  clone : cloned response to hold clone of current instance
   // @return : true if successful, false otherwise
-  virtual bool CloneInternal(CDownloadResponse *clonedResponse);
+  virtual bool CloneInternal(CDownloadResponse *clone);
 };
 
 #endif

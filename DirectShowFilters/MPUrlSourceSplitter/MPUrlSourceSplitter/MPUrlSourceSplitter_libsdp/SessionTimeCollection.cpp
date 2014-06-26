@@ -22,8 +22,8 @@
 
 #include "SessionTimeCollection.h"
 
-CSessionTimeCollection::CSessionTimeCollection(void)
-  : CCollection()
+CSessionTimeCollection::CSessionTimeCollection(HRESULT *result)
+  : CCollection(result)
 {
 }
 

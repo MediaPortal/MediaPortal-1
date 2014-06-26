@@ -23,11 +23,17 @@
 #include "InterleavedDataPacket.h"
 #include "BaseRtpPacketFactory.h"
 
-CInterleavedDataPacket::CInterleavedDataPacket(void)
+CInterleavedDataPacket::CInterleavedDataPacket(HRESULT *result)
 {
   this->channelIdentifier = CHANNEL_IDENTIFIER_UNSPECIFED;
   this->packetSize = 0;
-  this->baseRtpPackets = new CBaseRtpPacketCollection();
+  this->baseRtpPackets = NULL;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->baseRtpPackets = new CBaseRtpPacketCollection(result);
+    CHECK_POINTER_HRESULT(*result, this->baseRtpPackets, *result, E_OUTOFMEMORY);
+  }
 }
 
 CInterleavedDataPacket::~CInterleavedDataPacket(void)

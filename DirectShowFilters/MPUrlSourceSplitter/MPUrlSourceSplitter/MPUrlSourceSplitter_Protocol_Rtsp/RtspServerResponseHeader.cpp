@@ -22,8 +22,8 @@
 
 #include "RtspServerResponseHeader.h"
 
-CRtspServerResponseHeader::CRtspServerResponseHeader(void)
-  : CRtspResponseHeader()
+CRtspServerResponseHeader::CRtspServerResponseHeader(HRESULT *result)
+  : CRtspResponseHeader(result)
 {
   this->server = NULL;
 }
@@ -43,30 +43,6 @@ const wchar_t *CRtspServerResponseHeader::GetServer(void)
 /* set methods */
 
 /* other methods */
-
-CRtspServerResponseHeader *CRtspServerResponseHeader::Clone(void)
-{
-  return (CRtspServerResponseHeader *)__super::Clone();
-}
-
-bool CRtspServerResponseHeader::CloneInternal(CHttpHeader *clonedHeader)
-{
-  bool result = __super::CloneInternal(clonedHeader);
-  CRtspServerResponseHeader *header = dynamic_cast<CRtspServerResponseHeader *>(clonedHeader);
-  result &= (header != NULL);
-
-  if (result)
-  {
-    SET_STRING_RESULT_WITH_NULL(header->server, this->server, result);
-  }
-
-  return result;
-}
-
-CHttpHeader *CRtspServerResponseHeader::GetNewHeader(void)
-{
-  return new CRtspServerResponseHeader();
-}
 
 bool CRtspServerResponseHeader::Parse(const wchar_t *header, unsigned int length)
 {
@@ -91,3 +67,30 @@ bool CRtspServerResponseHeader::Parse(const wchar_t *header, unsigned int length
 
   return result;
 }
+
+/* protected methods */
+
+bool CRtspServerResponseHeader::CloneInternal(CHttpHeader *clone)
+{
+  bool result = __super::CloneInternal(clone);
+  CRtspServerResponseHeader *header = dynamic_cast<CRtspServerResponseHeader *>(clone);
+  result &= (header != NULL);
+
+  if (result)
+  {
+    SET_STRING_RESULT_WITH_NULL(header->server, this->server, result);
+  }
+
+  return result;
+}
+
+CHttpHeader *CRtspServerResponseHeader::CreateHeader(void)
+{
+  HRESULT result = S_OK;
+  CRtspServerResponseHeader *header = new CRtspServerResponseHeader(&result);
+  CHECK_POINTER_HRESULT(result, header, result, E_OUTOFMEMORY);
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(header));
+  return header;
+}
+

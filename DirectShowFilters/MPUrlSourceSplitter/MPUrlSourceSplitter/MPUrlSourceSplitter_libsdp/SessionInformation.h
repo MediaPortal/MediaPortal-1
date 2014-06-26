@@ -31,7 +31,7 @@ class CSessionInformation : public CSessionTag
 {
 public:
   // initializes a new instance of CSessionInformation class
-  CSessionInformation(void);
+  CSessionInformation(HRESULT *result);
   ~CSessionInformation(void);
 
   /* get methods */

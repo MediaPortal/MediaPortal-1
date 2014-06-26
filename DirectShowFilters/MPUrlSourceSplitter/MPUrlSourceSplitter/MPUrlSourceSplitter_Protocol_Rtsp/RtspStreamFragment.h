@@ -27,15 +27,20 @@
 #include "RtpPacket.h"
 
 #define RTSP_STREAM_FRAGMENT_FLAG_NONE                                CACHE_FILE_ITEM_FLAG_NONE
-#define RTSP_STREAM_FRAGMENT_FLAG_DOWNLOADED                          (1 << (CACHE_FILE_ITEM_FLAG_LAST + 1))
-#define RTSP_STREAM_FRAGMENT_FLAG_SET_RTP_TIMESTAMP                   (1 << (CACHE_FILE_ITEM_FLAG_LAST + 2))
+
+#define RTSP_STREAM_FRAGMENT_FLAG_DOWNLOADED                          (1 << (CACHE_FILE_ITEM_FLAG_LAST + 0))
+#define RTSP_STREAM_FRAGMENT_FLAG_SET_RTP_TIMESTAMP                   (1 << (CACHE_FILE_ITEM_FLAG_LAST + 1))
+
+#define RTSP_STREAM_FRAGMENT_FLAG_LAST                                (CACHE_FILE_ITEM_FLAG_LAST + 2)
+
+#define RTSP_STREAM_FRAGMENT_START_POSITION_NOT_SET                   -1
 
 class CRtspStreamFragment : public CCacheFileItem
 {
 public:
   // initializes a new instance of CSegmentFragment class
-  CRtspStreamFragment(void);
-  CRtspStreamFragment(int64_t fragmentRtpTimestamp, bool setRtpTimestampFlag);
+  CRtspStreamFragment(HRESULT *result);
+  CRtspStreamFragment(HRESULT *result, int64_t fragmentRtpTimestamp, bool setRtpTimestampFlag);
 
   // destructor
   virtual ~CRtspStreamFragment(void);
@@ -45,6 +50,10 @@ public:
   // gets fragment RTP timestamp
   // @return : fragment RTP timestamp
   int64_t GetFragmentRtpTimestamp(void);
+
+  // gets fragment start position within stream
+  // @return : fragment start position within stream or RTSP_STREAM_FRAGMENT_START_POSITION_NOT_SET if not set
+  int64_t GetFragmentStartPosition(void);
 
   /* set methods */
 
@@ -61,6 +70,10 @@ public:
   // @param setRtpTimestampFlag : fragment has set RTP timestamp flag
   void SetFragmentRtpTimestamp(int64_t fragmentRtpTimestamp, bool setRtpTimestampFlag);
 
+  // sets fragment start position
+  // @param fragmentStartPosition : fragment start position to set
+  void SetFragmentStartPosition(int64_t fragmentStartPosition);
+
   /* other methods */
 
   // tests if fragment is downloaded
@@ -71,11 +84,18 @@ public:
   // @return : true if fragment has set RTP timestamp, false otherwise
   virtual bool IsSetFragmentRtpTimestamp(void);
 
+  // tests if fragment has set start position
+  // @return : true if fragment has set start position, false otherwise
+  virtual bool IsSetFragmentStartPosition(void);
+
 protected:
   /* timestamps are with sign, sometimes are timestamps negative */
 
-  // stores fragment RTP timestamp
+  // holds fragment RTP timestamp
   int64_t fragmentRtpTimestamp;
+
+  // holds fragment start position within stream
+  int64_t fragmentStartPosition;
 
   // gets new instance of RTSP stream fragment
   // @return : new RTSP stream fragment instance or NULL if error

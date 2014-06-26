@@ -31,7 +31,7 @@ class CBinaryAttribute : public CAttribute
 {
 public:
   // initialzes a new instance of CBinaryAttribute class
-  CBinaryAttribute(void);
+  CBinaryAttribute(HRESULT *result);
   ~CBinaryAttribute(void);
 
   /* get methods */

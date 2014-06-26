@@ -22,8 +22,8 @@
 
 #include "RtspStreamTrackCollection.h"
 
-CRtspStreamTrackCollection::CRtspStreamTrackCollection(void)
-  : CCollection()
+CRtspStreamTrackCollection::CRtspStreamTrackCollection(HRESULT *result)
+  : CCollection(result)
 {
 }
 

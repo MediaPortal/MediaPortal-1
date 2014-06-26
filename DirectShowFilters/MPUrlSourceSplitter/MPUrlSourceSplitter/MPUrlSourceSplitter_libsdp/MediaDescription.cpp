@@ -27,17 +27,25 @@
 #include "RtpMapAttribute.h"
 #include "KnownPayloadTypeCollection.h"
 
-CMediaDescription::CMediaDescription(void)
-  : CSessionTag()
+CMediaDescription::CMediaDescription(HRESULT *result)
+  : CSessionTag(result)
 {
   this->mediaType = NULL;
   this->numberOfPorts = MEDIA_DESCRIPTION_NUMBER_OF_PORTS_DEFAULT;
   this->port = MEDIA_DESCRIPTION_PORT_DEFAULT;
   this->transportProtocol = NULL;
-  this->flags = MEDIA_DESCRIPTION_FLAG_NONE;
-  this->attributes = new CAttributeCollection();
-  this->mediaFormats = new CMediaFormatCollection();
+  this->attributes = NULL;
+  this->mediaFormats = NULL;
   this->connectionData = NULL;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->attributes = new CAttributeCollection(result);
+    this->mediaFormats = new CMediaFormatCollection(result);
+
+    CHECK_POINTER_HRESULT(*result, this->attributes, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->mediaFormats, *result, E_OUTOFMEMORY);
+  }
 }
 
 CMediaDescription::~CMediaDescription(void)
@@ -92,27 +100,27 @@ CConnectionData *CMediaDescription::GetConnectionData(void)
 
 bool CMediaDescription::IsAudio(void)
 {
-  return ((this->flags & MEDIA_DESCRIPTION_FLAG_MEDIA_TYPE_AUDIO) != 0);
+  return this->IsSetFlags(MEDIA_DESCRIPTION_FLAG_MEDIA_TYPE_AUDIO);
 }
 
 bool CMediaDescription::IsVideo(void)
 {
-  return ((this->flags & MEDIA_DESCRIPTION_FLAG_MEDIA_TYPE_VIDEO) != 0);
+  return this->IsSetFlags(MEDIA_DESCRIPTION_FLAG_MEDIA_TYPE_VIDEO);
 }
 
 bool CMediaDescription::IsApplication(void)
 {
-  return ((this->flags & MEDIA_DESCRIPTION_FLAG_MEDIA_TYPE_APPLICATION) != 0);
+  return this->IsSetFlags(MEDIA_DESCRIPTION_FLAG_MEDIA_TYPE_APPLICATION);
 }
 
 bool CMediaDescription::IsData(void)
 {
-  return ((this->flags & MEDIA_DESCRIPTION_FLAG_MEDIA_TYPE_DATA) != 0);
+  return this->IsSetFlags(MEDIA_DESCRIPTION_FLAG_MEDIA_TYPE_DATA);
 }
 
 bool CMediaDescription::IsControl(void)
 {
-  return ((this->flags & MEDIA_DESCRIPTION_FLAG_MEDIA_TYPE_CONTROL) != 0);
+  return this->IsSetFlags(MEDIA_DESCRIPTION_FLAG_MEDIA_TYPE_CONTROL);
 }
 
 void CMediaDescription::Clear(void)
@@ -123,7 +131,6 @@ void CMediaDescription::Clear(void)
   FREE_MEM(this->transportProtocol);
   this->numberOfPorts = MEDIA_DESCRIPTION_NUMBER_OF_PORTS_DEFAULT;
   this->port = MEDIA_DESCRIPTION_PORT_DEFAULT;
-  this->flags = MEDIA_DESCRIPTION_FLAG_NONE;
 
   CHECK_CONDITION_NOT_NULL_EXECUTE(this->attributes, this->attributes->Clear());
   CHECK_CONDITION_NOT_NULL_EXECUTE(this->mediaFormats, this->mediaFormats->Clear());
@@ -210,8 +217,9 @@ unsigned int CMediaDescription::Parse(const wchar_t *buffer, unsigned int length
         position += index + 1;
       }
 
-      CMediaFormat *mediaFormat = new CMediaFormat();
-      result = (mediaFormat != NULL) ? result : 0;
+      HRESULT res = S_OK;
+      CMediaFormat *mediaFormat = new CMediaFormat(&res);
+      result = (SUCCEEDED(res) && (mediaFormat != NULL)) ? result : 0;
 
       if (result != 0)
       {
@@ -302,8 +310,9 @@ unsigned int CMediaDescription::Parse(const wchar_t *buffer, unsigned int length
         this->flags |= MEDIA_DESCRIPTION_FLAG_TRANSPORT_PROTOCOL_UDP;
       }
 
-      CKnownPayloadTypeCollection *knownPayloadTypes = new CKnownPayloadTypeCollection();
-      result = (knownPayloadTypes != NULL) ? result : 0;
+      HRESULT res = S_OK;
+      CKnownPayloadTypeCollection *knownPayloadTypes = new CKnownPayloadTypeCollection(&res);
+      result = (SUCCEEDED(res) && (knownPayloadTypes != NULL)) ? result : 0;
 
       CHECK_CONDITION_EXECUTE(result != 0, result = (knownPayloadTypes->Count() != 0) ? result : 0);
 
@@ -353,7 +362,7 @@ unsigned int CMediaDescription::Parse(const wchar_t *buffer, unsigned int length
                   result = mediaFormat->SetName(rtpMap->GetEncodingName()) ? result : 0;
                   mediaFormat->SetClockRate(rtpMap->GetClockRate());
 
-                  if ((this->flags & MEDIA_DESCRIPTION_FLAG_MEDIA_TYPE_AUDIO) != 0)
+                  if (this->IsAudio())
                   {
                     mediaFormat->SetChannels(GetValueUnsignedInt(rtpMap->GetEncodingParameters(), MEDIA_FORMAT_CHANNELS_UNSPECIFIED));
                   }

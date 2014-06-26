@@ -299,9 +299,9 @@ void CParserHoster::ReportStreamTime(uint64_t streamTime, uint64_t streamPositio
   }
 }
 
-unsigned int CParserHoster::GetStreamCount(void)
+HRESULT CParserHoster::GetStreamInformation(CStreamInformationCollection *streams)
 {
-  return (this->activeParser != NULL) ? this->activeParser->GetStreamCount() : STREAM_COUNT_UNKNOWN;
+  return (this->activeParser != NULL) ? this->activeParser->GetStreamInformation(streams) : E_NO_ACTIVE_PARSER;
 }
 
 // IDemuxerOwner interface

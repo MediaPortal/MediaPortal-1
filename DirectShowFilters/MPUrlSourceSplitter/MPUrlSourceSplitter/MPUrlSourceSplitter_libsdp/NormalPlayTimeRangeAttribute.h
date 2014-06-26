@@ -38,15 +38,18 @@
 #define NORMAL_PLAY_TIME_DECIMAL_SEPARATOR                            L"."
 #define NORMAL_PLAY_TIME_DECIMAL_SEPARATOR_LENGTH                     1
 
-#define NORMAL_PLAY_TIME_FLAG_RANGE_ATTRIBUTE_NONE                    0x00000000
-#define NORMAL_PLAY_TIME_FLAG_RANGE_ATTRIBUTE_START_TIME              0x00000001
-#define NORMAL_PLAY_TIME_FLAG_RANGE_ATTRIBUTE_END_TIME                0x00000002
+#define NORMAL_PLAY_TIME_RANGE_ATTRIBUTE_FLAG_NONE                    ATTRIBUTE_FLAG_NONE
+
+#define NORMAL_PLAY_TIME_RANGE_ATTRIBUTE_FLAG_START_TIME              (1 << (ATTRIBUTE_FLAG_LAST + 0))
+#define NORMAL_PLAY_TIME_RANGE_ATTRIBUTE_FLAG_END_TIME                (1 << (ATTRIBUTE_FLAG_LAST + 1))
+
+#define NORMAL_PLAY_TIME_RANGE_ATTRIBUTE_FLAG_LAST                                    (ATTRIBUTE_FLAG_LAST + 2)
 
 class CNormalPlayTimeRangeAttribute : public CRangeAttribute
 {
 public:
   // initializes a new instance of CNormalPlayTimeRangeAttribute class
-  CNormalPlayTimeRangeAttribute(void);
+  CNormalPlayTimeRangeAttribute(HRESULT *result);
   virtual ~CNormalPlayTimeRangeAttribute(void);
 
   /* get methods */
@@ -81,9 +84,6 @@ public:
   virtual void Clear(void);
 
 protected:
-
-  // holds various flags
-  unsigned int flags;
 
   // holds start time
   uint64_t startTime;

@@ -27,7 +27,7 @@ class CRepeatInterval
 {
 public:
   // initializes a new instance of CRepeatInterval class
-  CRepeatInterval(void);
+  CRepeatInterval(HRESULT *result);
   ~CRepeatInterval(void);
 
   /* get methods */

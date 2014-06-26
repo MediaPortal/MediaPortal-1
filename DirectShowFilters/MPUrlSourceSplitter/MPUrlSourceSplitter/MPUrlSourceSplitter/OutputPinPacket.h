@@ -35,7 +35,7 @@
 #define OUTPUT_PIN_PACKET_FLAG_PACKET_MOV_TEXT                        (1 << (CACHE_FILE_ITEM_FLAG_LAST + 5))
 #define OUTPUT_PIN_PACKET_FLAG_PACKET_FORCED_SUBTITLE                 (1 << (CACHE_FILE_ITEM_FLAG_LAST + 6))
 
-#define OUTPUT_PIN_PACKET_FLAG_LAST                                   (CACHE_FILE_ITEM_FLAG_NONE + 6)
+#define OUTPUT_PIN_PACKET_FLAG_LAST                                   (CACHE_FILE_ITEM_FLAG_LAST + 7)
 
 #define DEMUXER_ID_UNSPECIFIED                                        UINT_MAX
 #define STREAM_PID_UNSPECIFIED                                        UINT_MAX

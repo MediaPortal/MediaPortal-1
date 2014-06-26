@@ -22,10 +22,9 @@
 
 #include "ConnectionData.h"
 
-CConnectionData::CConnectionData(void)
-  : CSessionTag()
+CConnectionData::CConnectionData(HRESULT *result)
+  : CSessionTag(result)
 {
-  this->flags = CONNECTION_DATA_FLAG_NONE;
   this->addressType = NULL;
   this->connectionAddress = NULL;
   this->networkType = NULL;
@@ -61,12 +60,12 @@ const wchar_t *CConnectionData::GetConnectionAddress(void)
 
 bool CConnectionData::IsNetworkTypeInternet(void)
 {
-  return ((this->flags & CONNECTION_DATA_FLAG_NETWORK_TYPE_INTERNET) != 0);
+  return this->IsSetFlags(CONNECTION_DATA_FLAG_NETWORK_TYPE_INTERNET);
 }
 
 bool CConnectionData::IsAddressTypeIPV4(void)
 {
-  return ((this->flags & CONNECTION_DATA_FLAG_ADDRESS_TYPE_IPV4) != 0);
+  return this->IsSetFlags(CONNECTION_DATA_FLAG_ADDRESS_TYPE_IPV4);
 }
 
 void CConnectionData::Clear(void)

@@ -30,7 +30,7 @@ class CSessionTimeCollection : public CCollection<CSessionTime>
 {
 public:
   // initialize a new instance of CSessionTimeCollection class
-  CSessionTimeCollection(void);
+  CSessionTimeCollection(HRESULT *result);
   ~CSessionTimeCollection(void);
 
 protected:

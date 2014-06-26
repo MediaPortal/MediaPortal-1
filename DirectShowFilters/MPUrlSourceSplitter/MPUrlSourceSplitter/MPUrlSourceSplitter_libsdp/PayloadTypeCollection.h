@@ -29,7 +29,7 @@
 class CPayloadTypeCollection : public CKeyedCollection<CPayloadType, const wchar_t *>
 {
 public:
-  CPayloadTypeCollection(void);
+  CPayloadTypeCollection(HRESULT *result);
   virtual ~CPayloadTypeCollection(void);
 
   /* get methods */

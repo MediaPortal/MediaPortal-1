@@ -29,8 +29,6 @@
 #include "MediaPacketCollection.h"
 #include "CacheFile.h"
 
-#include <WinSock2.h>
-
 #define PROTOCOL_NAME                                                         L"HTTP"
 
 #define TOTAL_SUPPORTED_PROTOCOLS                                             1
@@ -53,7 +51,7 @@ public:
   CMPUrlSourceSplitter_Protocol_Http(HRESULT *result, CLogger *logger, CParameterCollection *configuration);
 
   // destructor
-  ~CMPUrlSourceSplitter_Protocol_Http(void);
+  virtual ~CMPUrlSourceSplitter_Protocol_Http(void);
 
   // IProtocol interface
 
@@ -106,10 +104,10 @@ public:
   // @return : stream duration in ms or DURATION_LIVE_STREAM in case of live stream or DURATION_UNSPECIFIED if duration is unknown
   int64_t GetDuration(void);
 
-  // gets stream count
+  // gets information about streams
   // receiving data is disabled until protocol reports valid stream count (at least one)
-  // @return : stream count or STREAM_COUNT_UNKNOWN if not known
-  unsigned int GetStreamCount(void);
+  // @return : S_OK if successful, E_STREAM_COUNT_UNKNOWN if stream count is unknown, error code otherwise
+  HRESULT GetStreamInformation(CStreamInformationCollection *streams);
 
   // ISeeking interface
 

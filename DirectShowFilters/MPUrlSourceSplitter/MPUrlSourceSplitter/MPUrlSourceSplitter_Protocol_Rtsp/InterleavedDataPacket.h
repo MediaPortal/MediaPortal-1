@@ -35,7 +35,7 @@ class CInterleavedDataPacket
 {
 public:
   // initializes a new instance of CInterleavedDataPacket class
-  CInterleavedDataPacket(void);
+  CInterleavedDataPacket(HRESULT *result);
   ~CInterleavedDataPacket(void);
 
   /* get methods */

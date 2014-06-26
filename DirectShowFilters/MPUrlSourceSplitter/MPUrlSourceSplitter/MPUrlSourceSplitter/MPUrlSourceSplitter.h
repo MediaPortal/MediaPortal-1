@@ -188,21 +188,10 @@ public:
   // @return : S_OK if successful, error code only in case when error is not related to processing request
   HRESULT ProcessStreamPackage(CStreamPackage *streamPackage);
 
-  // IFilter interface
-
-  // get timeout (in ms) for receiving data
-  // @return : timeout (in ms) for receiving data
-  unsigned int GetReceiveDataTimeout(void);
-
   // retrieves the progress of the stream reading operation
   // @param streamProgress : reference to instance of class that receives the stream progress
   // @return : S_OK if successful, VFW_S_ESTIMATED if returned values are estimates, E_INVALIDARG if stream ID is unknown, E_UNEXPECTED if unexpected error
   HRESULT QueryStreamProgress(CStreamProgress *streamProgress);
-  
-  // retrieves available lenght of stream
-  // @param available : reference to instance of class that receives the available length of stream, in bytes
-  // @return : S_OK if successful, other error codes if error
-  HRESULT QueryStreamAvailableLength(CStreamAvailableLength *availableLength);
 
   // ISeeking interface
 

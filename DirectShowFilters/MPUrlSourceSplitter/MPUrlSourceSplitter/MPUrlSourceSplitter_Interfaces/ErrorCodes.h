@@ -24,6 +24,7 @@
 #define __ERROR_CODES_DEFINED
 
 #include "WinError.h"
+#include "vfwmsgs.h"
 
 // each method should use HRESULT as valid error code
 // if not possible, common error codes are defined here
@@ -43,6 +44,7 @@
 #define E_NOT_FOUND_INTERFACE_NAME                                              -7
 #define E_STREAM_COUNT_UNKNOWN                                                  -8
 #define E_INVALID_STREAM_PACKAGE_REQUEST                                        -9
+#define E_INVALID_STREAM_ID                                                     -10
 
 // parser error codes
 
@@ -57,7 +59,6 @@
 #define E_CONNECTION_LOST_CANNOT_REOPEN                                         -32
 #define E_NO_MORE_DATA_AVAILABLE                                                -33
 #define E_PAUSE_SEEK_STOP_MODE_DISABLE_READING                                  -34
-#define E_CANNOT_START_RECEIVING_DATA                                           -35
 
 // seeking error codes
 
@@ -76,6 +77,36 @@
 // HTTP protocol error codes
 
 #define E_HTTP_CANNOT_SET_COOKIES                                               -100
-#define E_HTTP_CANNOT_INITIALIZE                                                -101
+
+// RTSP protocol error codes
+
+#define E_RTSP_NO_PUBLIC_OPTIONS_RESPONSE_HEADER                                -110
+#define E_RTSP_NOT_ALL_REQUIRED_METHODS                                         -111
+#define E_RTSP_DESCRIBE_CONTENT_LENGTH_ZERO                                     -112
+#define E_RTSP_DESCRIBE_CONTENT_TYPE_NOT_FOUND                                  -113
+#define E_RTSP_CONTENT_HEADER_TYPE_NOT_ALLOWED                                  -114
+#define E_RTSP_SESSION_DESCRIPTION_PARSE_ERROR                                  -115
+#define E_RTSP_NO_MEDIA_DESCRIPTIONS_IN_SESSION_DESCRIPTION                     -116
+#define E_RTSP_NO_TRANSPORT_HEADER                                              -117
+#define E_RTSP_NOT_TCP_TRANSPORT_HEADER                                         -118
+#define E_RTSP_SAME_CONNECTION_TRANSPORT_NOT_SUPPORTED                          -119
+#define E_RTSP_BAD_OR_NOT_IMPLEMENTED_TRANSPORT                                 -120
+#define E_RTSP_NO_TRACKS                                                        -121
+#define E_RTSP_NOT_UDP_TRANSPORT_HEADER                                         -122
+#define E_RTSP_CLIENT_PORTS_NOT_SAME_AS_REQUESTED                               -123
+#define E_RTSP_CANNOT_NEGOTIATE_ANY_TRANSPORT                                   -124
+#define E_RTSP_NOT_SPECIFIED_REQUEST_SEQUENCE_NUMBER                            -125
+#define E_RTSP_NO_RESPONSE_FOR_REQUEST                                          -126
+#define E_RTSP_BAD_SESSION_ID                                                   -127
+#define E_RTSP_NOT_SPECIFIED_RESPONSE_SEQUENCE_NUMBER                           -128
+#define E_RTSP_REQUEST_AND_RESPONSE_SEQUENCE_NUMBERS_NOT_EQUAL                  -129
+#define E_RTSP_STATUS_CODE_NOT_SUCCESS                                          -130
+#define E_RTSP_NO_DATA_OR_CONTROL_CLIENT_PORT                                   -131
+#define E_RTSP_NO_RTP_OR_RTCP_PACKET                                            -132
+#define E_RTSP_INVALID_PACKET_FOR_PORT                                          -133
+#define E_RTSP_NOT_INTERLEAVED_PACKET_NOT_VALID_RTSP_RESPONSE                   -134
+#define E_RTSP_NOT_SET_SENDER_SYNCHRONIZATION_SOURCE_IDENTIFIER                 -135
+#define E_RTSP_NO_ENDPOINT_FOUND                                                -136
+#define E_RTSP_SENT_DATA_LENGTH_NOT_SAME_AS_RTCP_PACKET_LENGTH                  -137
 
 #endif

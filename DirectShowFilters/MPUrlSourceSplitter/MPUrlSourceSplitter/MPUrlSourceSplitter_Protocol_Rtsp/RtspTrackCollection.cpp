@@ -23,8 +23,8 @@
 
 #include "RtspTrackCollection.h"
 
-CRtspTrackCollection::CRtspTrackCollection(void)
-  : CCollection()
+CRtspTrackCollection::CRtspTrackCollection(HRESULT *result)
+  : CCollection(result)
 {
 }
 

@@ -316,9 +316,9 @@ void CMPUrlSourceSplitter_Parser_F4M::ReportStreamTime(uint64_t streamTime, uint
   this->protocolHoster->ReportStreamTime(streamTime, streamPosition);
 }
 
-unsigned int CMPUrlSourceSplitter_Parser_F4M::GetStreamCount(void)
+HRESULT CMPUrlSourceSplitter_Parser_F4M::GetStreamInformation(CStreamInformationCollection *streams)
 {
-  return this->protocolHoster->GetStreamCount();
+  return this->protocolHoster->GetStreamInformation(streams);
 }
 
 // IProtocol interface

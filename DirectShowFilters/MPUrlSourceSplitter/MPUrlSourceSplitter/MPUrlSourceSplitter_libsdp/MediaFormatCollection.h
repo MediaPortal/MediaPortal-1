@@ -29,7 +29,7 @@
 class CMediaFormatCollection : public CCollection<CMediaFormat>
 {
 public:
-  CMediaFormatCollection(void);
+  CMediaFormatCollection(HRESULT *result);
   ~CMediaFormatCollection(void);
 
 protected:

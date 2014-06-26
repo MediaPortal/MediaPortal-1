@@ -29,7 +29,7 @@
 class CMediaDescriptionCollection : public CCollection<CMediaDescription>
 {
 public:
-  CMediaDescriptionCollection(void);
+  CMediaDescriptionCollection(HRESULT *result);
   ~CMediaDescriptionCollection(void);
 
 protected:

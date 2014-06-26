@@ -23,6 +23,7 @@
 #include "HttpHeader.h"
 
 CHttpHeader::CHttpHeader(HRESULT *result)
+  : CFlags()
 {
   this->name = NULL;
   this->value = NULL;
@@ -83,7 +84,7 @@ bool CHttpHeader::IsValid(void)
 
 CHttpHeader *CHttpHeader::Clone(void)
 {
-  CHttpHeader *result = this->GetNewHeader();
+  CHttpHeader *result = this->CreateHeader();
   if (result != NULL)
   {
     if (!this->CloneInternal(result))
@@ -94,16 +95,17 @@ CHttpHeader *CHttpHeader::Clone(void)
   return result;
 }
 
-bool CHttpHeader::CloneInternal(CHttpHeader *clonedHeader)
+bool CHttpHeader::CloneInternal(CHttpHeader *clone)
 {
   bool result = true;
 
-  clonedHeader->Clear();
-  clonedHeader->name = Duplicate(this->name);
-  clonedHeader->value = Duplicate(this->value);
+  clone->flags = this->flags;
+  clone->Clear();
+  clone->name = Duplicate(this->name);
+  clone->value = Duplicate(this->value);
 
-  result &= TEST_STRING_WITH_NULL(this->name, clonedHeader->name);
-  result &= TEST_STRING_WITH_NULL(this->value, clonedHeader->value);
+  result &= TEST_STRING_WITH_NULL(this->name, clone->name);
+  result &= TEST_STRING_WITH_NULL(this->value, clone->value);
 
   return result;
 }
@@ -149,7 +151,7 @@ bool CHttpHeader::Parse(const wchar_t *header, unsigned int length)
   return result;
 }
 
-CHttpHeader *CHttpHeader::GetNewHeader(void)
+CHttpHeader *CHttpHeader::CreateHeader(void)
 {
   HRESULT result = S_OK;
   CHttpHeader *header = new CHttpHeader(&result);

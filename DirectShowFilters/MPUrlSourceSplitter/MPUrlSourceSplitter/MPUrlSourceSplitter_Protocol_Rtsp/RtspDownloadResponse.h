@@ -31,10 +31,14 @@
 #include "RtspRequest.h"
 #include "RtspResponse.h"
 
+#define RTSP_DOWNLOAD_RESPONSE_FLAG_NONE                              DOWNLOAD_RESPONSE_FLAG_NONE
+
+#define RTSP_DOWNLOAD_RESPONSE_FLAG_LAST                              (DOWNLOAD_RESPONSE_FLAG_LAST + 0)
+
 class CRtspDownloadResponse : public CDownloadResponse
 {
 public:
-  CRtspDownloadResponse(void);
+  CRtspDownloadResponse(HRESULT *result);
   virtual ~CRtspDownloadResponse(void);
 
   /* get methods */
@@ -114,22 +118,12 @@ public:
   // @return : true if successful, false otherwise
   virtual bool ParseRawSessionDescription(void);
 
-  // deeply clones current instance
-  // @result : deep clone of current instance or NULL if error
-  virtual CRtspDownloadResponse *Clone(void);
-
 protected:
-
   // holds raw session description (unparsed)
   wchar_t *sessionDescriptionRaw;
 
   // holds session description received after DESCRIBE request
   CSessionDescription *sessionDescription;
-
-  // deeply clones current instance to cloned request
-  // @param  clonedRequest : cloned request to hold clone of current instance
-  // @return : true if successful, false otherwise
-  virtual bool CloneInternal(CRtspDownloadResponse *clonedRequest);
 
   // holds content base URL
   wchar_t *contentBaseUrl;
@@ -146,6 +140,17 @@ protected:
 
   // holds session timeout
   unsigned int sessionTimeout;
+
+  /* methods */
+
+  // creates download response
+  // @return : download response or NULL if error
+  virtual CDownloadResponse *CreateDownloadResponse(void);
+
+  // deeply clones current instance to cloned request
+  // @param  clone : cloned request to hold clone of current instance
+  // @return : true if successful, false otherwise
+  virtual bool CloneInternal(CDownloadResponse *clone);
 };
 
 #endif

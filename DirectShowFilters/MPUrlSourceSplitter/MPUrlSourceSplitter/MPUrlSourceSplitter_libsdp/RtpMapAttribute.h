@@ -33,7 +33,7 @@ class CRtpMapAttribute : public CAttribute
 {
 public:
   // initializes a new instance of CRtpMapAttribute class
-  CRtpMapAttribute(void);
+  CRtpMapAttribute(HRESULT *result);
   virtual ~CRtpMapAttribute(void);
 
   /* get methods */

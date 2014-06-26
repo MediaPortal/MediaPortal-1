@@ -29,7 +29,7 @@
 class CAttributeCollection : public CKeyedCollection<CAttribute, const wchar_t *>
 {
 public:
-  CAttributeCollection(void);
+  CAttributeCollection(HRESULT *result);
   ~CAttributeCollection(void);
 
 protected:

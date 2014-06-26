@@ -50,7 +50,7 @@ CSourceDescriptionItem *CSourceDescriptionItemFactory::CreateSourceDescriptionIt
   {
     *position = 0;
 
-    if (continueParsing)
+    if (SUCCEEDED(continueParsing))
     {
       CREATE_SPECIFIC_SOURCE_DESCRIPTION_ITEM(CCanonicalEndPointSourceDescriptionItem, buffer, length, continueParsing, result, (*position));
       CREATE_SPECIFIC_SOURCE_DESCRIPTION_ITEM(CUserNameSourceDescriptionItem, buffer, length, continueParsing, result, (*position));

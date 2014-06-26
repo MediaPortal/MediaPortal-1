@@ -22,13 +22,13 @@
 
 #include "RtspTeardownRequest.h"
 
-CRtspTeardownRequest::CRtspTeardownRequest(void)
-  : CRtspRequest()
+CRtspTeardownRequest::CRtspTeardownRequest(HRESULT *result)
+  : CRtspRequest(result)
 {
 }
 
-CRtspTeardownRequest::CRtspTeardownRequest(bool createDefaultHeaders)
-  : CRtspRequest(createDefaultHeaders)
+CRtspTeardownRequest::CRtspTeardownRequest(HRESULT *result, bool createDefaultHeaders)
+  : CRtspRequest(result, createDefaultHeaders)
 {
 }
 
@@ -47,17 +47,19 @@ const wchar_t *CRtspTeardownRequest::GetMethod(void)
 
 /* other methods */
 
-CRtspTeardownRequest *CRtspTeardownRequest::Clone(void)
+/* protected methods */
+
+bool CRtspTeardownRequest::CloneInternal(CRtspRequest *clone)
 {
-  return (CRtspTeardownRequest *)__super::Clone();
+  return __super::CloneInternal(clone);
 }
 
-bool CRtspTeardownRequest::CloneInternal(CRtspRequest *clonedRequest)
+CRtspRequest *CRtspTeardownRequest::CreateRequest(void)
 {
-  return __super::CloneInternal(clonedRequest);
-}
+  HRESULT result = S_OK;
+  CRtspTeardownRequest *request = new CRtspTeardownRequest(&result, false);
+  CHECK_POINTER_HRESULT(result, request, result, E_OUTOFMEMORY);
 
-CRtspRequest *CRtspTeardownRequest::GetNewRequest(void)
-{
-  return new CRtspTeardownRequest(false);
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(request));
+  return request;
 }

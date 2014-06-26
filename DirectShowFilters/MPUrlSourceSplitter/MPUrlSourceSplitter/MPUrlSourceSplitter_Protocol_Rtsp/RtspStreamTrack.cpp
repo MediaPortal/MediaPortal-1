@@ -22,9 +22,10 @@
 
 #include "RtspStreamTrack.h"
 
-CRtspStreamTrack::CRtspStreamTrack(void)
+CRtspStreamTrack::CRtspStreamTrack(HRESULT *result)
+  : CFlags()
 {
-  this->streamFragments = new CRtspStreamFragmentCollection();
+  this->streamFragments = NULL;
   this->lastCumulatedRtpTimestamp = 0;
   this->lastRtpPacketTimestamp = 0;
   this->firstRtpPacketTimestamp = 0;
@@ -32,14 +33,22 @@ CRtspStreamTrack::CRtspStreamTrack(void)
   this->streamFragmentProcessing = 0;
   this->streamFragmentToDownload = UINT_MAX;
   this->streamLength = 0;
-  this->bytePosition = 0;
-  this->flags = RTSP_STREAM_TRACK_FLAG_NONE;
   this->clockFrequency = 0;
   this->dshowTimeBaseNumerator = 0;
   this->dshowTimeBaseDenominator = 1;
   this->rtpTimestampCorrection = 0;
+  this->lastReceiveDataTime = 0;
 
-  this->cacheFile = new CCacheFile();
+  this->cacheFile = NULL;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->streamFragments = new CRtspStreamFragmentCollection(result);
+    this->cacheFile = new CCacheFile(result);
+
+    CHECK_POINTER_HRESULT(*result, this->streamFragments, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->cacheFile, *result, E_OUTOFMEMORY);
+  }
 }
 
 CRtspStreamTrack::~CRtspStreamTrack(void)
@@ -77,7 +86,20 @@ int64_t CRtspStreamTrack::GetStreamLength(void)
 
 int64_t CRtspStreamTrack::GetBytePosition(void)
 {
-  return this->bytePosition;
+  int64_t result = 0;
+
+  unsigned int first = this->GetStreamFragments()->GetStartSearchingIndex();
+  unsigned int count = this->GetStreamFragments()->GetSearchCount();
+
+  if (count != 0)
+  {
+    CRtspStreamFragment *firstFragment = this->GetStreamFragments()->GetItem(first);
+    CRtspStreamFragment *lastFragment = this->GetStreamFragments()->GetItem(first + count - 1);
+
+    result = (unsigned int)(lastFragment->GetFragmentStartPosition() + lastFragment->GetLength() - firstFragment->GetFragmentStartPosition());
+  }
+
+  return result;
 }
 
 unsigned int CRtspStreamTrack::GetFirstRtpPacketTimestamp(void)
@@ -85,7 +107,7 @@ unsigned int CRtspStreamTrack::GetFirstRtpPacketTimestamp(void)
   return this->firstRtpPacketTimestamp;
 }
 
-DWORD CRtspStreamTrack::GetFirstRtpPacketTicks(void)
+unsigned int CRtspStreamTrack::GetFirstRtpPacketTicks(void)
 {
   return this->firstRtpPacketTicks;
 }
@@ -140,6 +162,11 @@ CCacheFile *CRtspStreamTrack::GetCacheFile(void)
   return this->cacheFile;
 }
 
+unsigned int CRtspStreamTrack::GetLastReceiveDataTime(void)
+{
+  return this->lastReceiveDataTime;
+}
+
 /* set methods */
 
 void CRtspStreamTrack::SetStreamFragmentDownloading(unsigned int streamFragmentDownloading)
@@ -160,11 +187,6 @@ void CRtspStreamTrack::SetStreamFragmentToDownload(unsigned int streamFragmentTo
 void CRtspStreamTrack::SetStreamLength(int64_t streamLength)
 {
   this->streamLength = streamLength;
-}
-
-void CRtspStreamTrack::SetBytePosition(int64_t bytePosition)
-{
-  this->bytePosition = bytePosition;
 }
 
 void CRtspStreamTrack::SetStreamLengthFlag(bool setStreamLengthFlag)
@@ -191,7 +213,7 @@ void CRtspStreamTrack::SetReceivedAllDataFlag(bool receivedAllDataFlag)
   this->flags |= receivedAllDataFlag ? RTSP_STREAM_TRACK_FLAG_RECEIVED_ALL_DATA : RTSP_STREAM_TRACK_FLAG_NONE;
 }
 
-void CRtspStreamTrack::SetFirstRtpPacketTimestamp(unsigned int rtpPacketTimestamp, bool firstRtpPacketTimestampFlag, DWORD firstRtpPacketTicks)
+void CRtspStreamTrack::SetFirstRtpPacketTimestamp(unsigned int rtpPacketTimestamp, bool firstRtpPacketTimestampFlag, unsigned int firstRtpPacketTicks)
 {
   this->firstRtpPacketTimestamp = rtpPacketTimestamp;
   this->lastRtpPacketTimestamp = 0;
@@ -221,6 +243,11 @@ void CRtspStreamTrack::SetRtpTimestampCorrection(int64_t rtpTimestampCorrection)
   this->rtpTimestampCorrection = rtpTimestampCorrection;
 }
 
+void CRtspStreamTrack::SetLastReceiveDataTime(unsigned int lastReceiveDataTime)
+{
+  this->lastReceiveDataTime = lastReceiveDataTime;
+}
+
 /* other methods */
 
 bool CRtspStreamTrack::IsSetFirstRtpPacketTimestamp(void)
@@ -246,11 +273,6 @@ bool CRtspStreamTrack::IsSetSupressData(void)
 bool CRtspStreamTrack::IsReceivedAllData(void)
 {
   return this->IsSetFlags(RTSP_STREAM_TRACK_FLAG_RECEIVED_ALL_DATA);
-}
-
-bool CRtspStreamTrack::IsSetFlags(unsigned int flags)
-{
-  return ((this->flags & flags) == flags);
 }
 
 /* protected methods */

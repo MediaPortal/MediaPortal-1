@@ -22,8 +22,8 @@
 
 #include "RtspSequenceRequestHeader.h"
 
-CRtspSequenceRequestHeader::CRtspSequenceRequestHeader(void)
-  : CRtspRequestHeader()
+CRtspSequenceRequestHeader::CRtspSequenceRequestHeader(HRESULT *result)
+  : CRtspRequestHeader(result)
 {
   this->sequenceNumber = RTSP_SEQUENCE_NUMBER_UNSPECIFIED;
 }
@@ -62,15 +62,12 @@ void CRtspSequenceRequestHeader::SetSequenceNumber(unsigned int sequenceNumber)
 
 /* other methods */
 
-CRtspSequenceRequestHeader *CRtspSequenceRequestHeader::Clone(void)
-{
-  return (CRtspSequenceRequestHeader *)__super::Clone();
-}
+/* protected methods */
 
-bool CRtspSequenceRequestHeader::CloneInternal(CHttpHeader *clonedHeader)
+bool CRtspSequenceRequestHeader::CloneInternal(CHttpHeader *clone)
 {
-  bool result = __super::CloneInternal(clonedHeader);
-  CRtspSequenceRequestHeader *header = dynamic_cast<CRtspSequenceRequestHeader *>(clonedHeader);
+  bool result = __super::CloneInternal(clone);
+  CRtspSequenceRequestHeader *header = dynamic_cast<CRtspSequenceRequestHeader *>(clone);
   result &= (header != NULL);
 
   if (result)
@@ -81,7 +78,12 @@ bool CRtspSequenceRequestHeader::CloneInternal(CHttpHeader *clonedHeader)
   return result;
 }
 
-CHttpHeader *CRtspSequenceRequestHeader::GetNewHeader(void)
+CHttpHeader *CRtspSequenceRequestHeader::CreateHeader(void)
 {
-  return new CRtspSequenceRequestHeader();
+  HRESULT result = S_OK;
+  CRtspSequenceRequestHeader *header = new CRtspSequenceRequestHeader(&result);
+  CHECK_POINTER_HRESULT(result, header, result, E_OUTOFMEMORY);
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(header));
+  return header;
 }

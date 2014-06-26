@@ -22,8 +22,8 @@
 
 #include "RtspContentBaseResponseHeader.h"
 
-CRtspContentBaseResponseHeader::CRtspContentBaseResponseHeader(void)
-  : CRtspResponseHeader()
+CRtspContentBaseResponseHeader::CRtspContentBaseResponseHeader(HRESULT *result)
+  : CRtspResponseHeader(result)
 {
   this->uri = NULL;
 }
@@ -43,30 +43,6 @@ const wchar_t *CRtspContentBaseResponseHeader::GetUri(void)
 /* set methods */
 
 /* other methods */
-
-CRtspContentBaseResponseHeader *CRtspContentBaseResponseHeader::Clone(void)
-{
-  return (CRtspContentBaseResponseHeader *)__super::Clone();
-}
-
-bool CRtspContentBaseResponseHeader::CloneInternal(CHttpHeader *clonedHeader)
-{
-  bool result = __super::CloneInternal(clonedHeader);
-  CRtspContentBaseResponseHeader *header = dynamic_cast<CRtspContentBaseResponseHeader *>(clonedHeader);
-  result &= (header != NULL);
-
-  if (result)
-  {
-    SET_STRING_RESULT_WITH_NULL(header->uri, this->uri, result);
-  }
-
-  return result;
-}
-
-CHttpHeader *CRtspContentBaseResponseHeader::GetNewHeader(void)
-{
-  return new CRtspContentBaseResponseHeader();
-}
 
 bool CRtspContentBaseResponseHeader::Parse(const wchar_t *header, unsigned int length)
 {
@@ -90,4 +66,30 @@ bool CRtspContentBaseResponseHeader::Parse(const wchar_t *header, unsigned int l
   }
 
   return result;
+}
+
+/* protected methods */
+
+bool CRtspContentBaseResponseHeader::CloneInternal(CHttpHeader *clone)
+{
+  bool result = __super::CloneInternal(clone);
+  CRtspContentBaseResponseHeader *header = dynamic_cast<CRtspContentBaseResponseHeader *>(clone);
+  result &= (header != NULL);
+
+  if (result)
+  {
+    SET_STRING_RESULT_WITH_NULL(header->uri, this->uri, result);
+  }
+
+  return result;
+}
+
+CHttpHeader *CRtspContentBaseResponseHeader::CreateHeader(void)
+{
+  HRESULT result = S_OK;
+  CRtspContentBaseResponseHeader *header = new CRtspContentBaseResponseHeader(&result);
+  CHECK_POINTER_HRESULT(result, header, result, E_OUTOFMEMORY);
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(header));
+  return header;
 }

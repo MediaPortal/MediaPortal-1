@@ -22,8 +22,8 @@
 
 #include "BinaryAttribute.h"
 
-CBinaryAttribute::CBinaryAttribute(void)
-  : CAttribute()
+CBinaryAttribute::CBinaryAttribute(HRESULT *result)
+  : CAttribute(result)
 {
 }
 

@@ -32,7 +32,7 @@
 class CRtspSequenceResponseHeader : public CRtspResponseHeader
 {
 public:
-  CRtspSequenceResponseHeader(void);
+  CRtspSequenceResponseHeader(HRESULT *result);
   virtual ~CRtspSequenceResponseHeader(void);
 
   /* get methods */
@@ -45,10 +45,6 @@ public:
 
   /* other methods */
 
-  // deep clones of current instance
-  // @return : deep clone of current instance or NULL if error
-  virtual CRtspSequenceResponseHeader *Clone(void);
-
   // parses header and stores name and value to internal variables
   // @param header : header to parse
   // @param length : the length of header
@@ -60,13 +56,13 @@ protected:
   unsigned int sequenceNumber;
 
   // deeply clones current instance to cloned header
-  // @param  clonedHeader : cloned header to hold clone of current instance
+  // @param  clone : cloned header to hold clone of current instance
   // @return : true if successful, false otherwise
-  virtual bool CloneInternal(CHttpHeader *clonedHeader);
+  virtual bool CloneInternal(CHttpHeader *clone);
 
   // returns new header object to be used in cloning
   // @return : header object or NULL if error
-  virtual CHttpHeader *GetNewHeader(void);
+  virtual CHttpHeader *CreateHeader(void);
 };
 
 #endif

@@ -29,7 +29,7 @@
 class CRtpInfoTrackCollection : public CKeyedCollection<CRtpInfoTrack, const wchar_t *>
 {
 public:
-  CRtpInfoTrackCollection(void);
+  CRtpInfoTrackCollection(HRESULT *result);
   ~CRtpInfoTrackCollection(void);
 
   /* get methods */

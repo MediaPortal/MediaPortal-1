@@ -22,8 +22,8 @@
 
 #include "RtspPublicResponseHeader.h"
 
-CRtspPublicResponseHeader::CRtspPublicResponseHeader(void)
-  : CRtspResponseHeader()
+CRtspPublicResponseHeader::CRtspPublicResponseHeader(HRESULT *result)
+  : CRtspResponseHeader(result)
 {
 }
 
@@ -36,29 +36,6 @@ CRtspPublicResponseHeader::~CRtspPublicResponseHeader(void)
 /* set methods */
 
 /* other methods */
-
-CRtspPublicResponseHeader *CRtspPublicResponseHeader::Clone(void)
-{
-  return (CRtspPublicResponseHeader *)__super::Clone();
-}
-
-bool CRtspPublicResponseHeader::CloneInternal(CHttpHeader *clonedHeader)
-{
-  bool result = __super::CloneInternal(clonedHeader);
-  CRtspPublicResponseHeader *header = dynamic_cast<CRtspPublicResponseHeader *>(clonedHeader);
-  result &= (header != NULL);
-
-  if (result)
-  {
-  }
-
-  return result;
-}
-
-CHttpHeader *CRtspPublicResponseHeader::GetNewHeader(void)
-{
-  return new CRtspPublicResponseHeader();
-}
 
 bool CRtspPublicResponseHeader::Parse(const wchar_t *header, unsigned int length)
 {
@@ -191,3 +168,29 @@ bool CRtspPublicResponseHeader::IsDefinedTeardownMethod(void)
 {
   return this->IsSetFlags(RTSP_PUBLIC_RESPONSE_HEADER_FLAG_METHOD_TEARDOWN);
 }
+
+/* protected methods */
+
+bool CRtspPublicResponseHeader::CloneInternal(CHttpHeader *clone)
+{
+  bool result = __super::CloneInternal(clone);
+  CRtspPublicResponseHeader *header = dynamic_cast<CRtspPublicResponseHeader *>(clone);
+  result &= (header != NULL);
+
+  if (result)
+  {
+  }
+
+  return result;
+}
+
+CHttpHeader *CRtspPublicResponseHeader::CreateHeader(void)
+{
+  HRESULT result = S_OK;
+  CRtspPublicResponseHeader *header = new CRtspPublicResponseHeader(&result);
+  CHECK_POINTER_HRESULT(result, header, result, E_OUTOFMEMORY);
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(header));
+  return header;
+}
+

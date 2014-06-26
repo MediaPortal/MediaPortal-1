@@ -44,7 +44,7 @@ CBaseRtpPacket *CBaseRtpPacketFactory::CreateBaseRtpPacket(const unsigned char *
   CBaseRtpPacket *result = NULL;
   HRESULT continueParsing = ((buffer != NULL) && (length > 0) && (position != NULL)) ? S_OK : E_INVALIDARG;
 
-  if (continueParsing)
+  if (SUCCEEDED(continueParsing))
   {
     *position = 0;
 

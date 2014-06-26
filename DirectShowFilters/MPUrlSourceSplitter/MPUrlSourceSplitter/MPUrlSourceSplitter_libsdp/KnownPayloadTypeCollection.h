@@ -30,7 +30,7 @@
 class CKnownPayloadTypeCollection : public CPayloadTypeCollection
 {
 public:
-  CKnownPayloadTypeCollection(void);
+  CKnownPayloadTypeCollection(HRESULT *result);
   ~CKnownPayloadTypeCollection(void);
 
   /* get methods */

@@ -25,65 +25,54 @@
 
 #include "PayloadType.h"
 
-#define RTSP_PAYLOAD_TYPE_FLAG_NONE                                   0x00000000
+#define RTSP_PAYLOAD_TYPE_FLAG_NONE                                   PAYLOAD_TYPE_FLAG_NONE
+
 // specifies if payload type is container (e.g. avi, mkv, flv, ...)
-#define RTSP_PAYLOAD_TYPE_FLAG_CONTAINER                              0x00000001
+#define RTSP_PAYLOAD_TYPE_FLAG_CONTAINER                              (1 << (PAYLOAD_TYPE_FLAG_LAST + 0))
 // specifies if payload type is packetized stream
-#define RTSP_PAYLOAD_TYPE_FLAG_PACKETS                                0x00000002
+#define RTSP_PAYLOAD_TYPE_FLAG_PACKETS                                (1 << (PAYLOAD_TYPE_FLAG_LAST + 1))
+
+#define RTSP_PAYLOAD_TYPE_FLAG_LAST                                   (PAYLOAD_TYPE_FLAG_LAST + 2)
 
 class CRtspPayloadType : public CPayloadType
 {
 public:
-  CRtspPayloadType(void);
-  ~CRtspPayloadType(void);
+  CRtspPayloadType(HRESULT *result);
+  virtual ~CRtspPayloadType(void);
 
   /* get methods */
 
-  // gets combination of set flags
-  // @return : combination of set flags
-  unsigned int GetFlags(void);
-
   // gets payload stream input format
   // @return : payload stream input format or NULL if not specified
-  const wchar_t *GetStreamInputFormat(void);
+  virtual const wchar_t *GetStreamInputFormat(void);
 
   /* set methods */
-
-  // sets combination of flags
-  // @param flags : the combination of flags to set
-  void SetFlags(unsigned int flags);
 
   // sets payload type stream input format
   // @param streamInputFormat : the payload type stream input format to set
   // @return : true if successful, false otherwise
-  bool SetStreamInputFormat(const wchar_t *streamInputFormat);
+  virtual bool SetStreamInputFormat(const wchar_t *streamInputFormat);
 
   /* other methods */
-
-  // tests if specific combination of flags is set
-  // @param flags : the set of flags to test
-  // @return : true if set of flags is set, false otherwise
-  bool IsSetFlags(unsigned int flags);
-
-  // deep clones of current instance
-  // @return : deep clone of current instance or NULL if error
-  CRtspPayloadType *Clone(void);
 
   // copy values from specified payload type
   // @param payloadType : the payload type to copy values from
   // @return : true if successful, false otherwise
-  bool CopyFromPayloadType(CRtspPayloadType *payloadType);
+  virtual bool CopyFromPayloadType(CRtspPayloadType *payloadType);
 
 protected:
-  unsigned int flags;
   wchar_t *streamInputFormat;
 
   /* methods */
 
+  // creates payload type
+  // @return : payload type or NULL if error
+  virtual CPayloadType *CreatePayloadType(void);
+
   // deeply clones current instance to specified payload type
   // @param payloadType : the payload type to clone current instance
   // @result : true if successful, false otherwise
-  bool CloneInternal(CRtspPayloadType *payloadType);
+  virtual bool CloneInternal(CPayloadType *payloadType);
 };
 
 #endif

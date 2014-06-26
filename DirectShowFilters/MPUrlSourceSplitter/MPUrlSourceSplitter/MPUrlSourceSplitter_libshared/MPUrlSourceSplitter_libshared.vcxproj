@@ -109,10 +109,14 @@
     <ClInclude Include="StreamAvailableLength.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="StreamInformation.h" />
+    <ClInclude Include="StreamInformationCollection.h" />
     <ClInclude Include="StreamPackage.h" />
     <ClInclude Include="StreamPackageCollection.h" />
     <ClInclude Include="StreamPackageDataRequest.h" />
     <ClInclude Include="StreamPackageDataResponse.h" />
+    <ClInclude Include="StreamPackagePacketRequest.h" />
+    <ClInclude Include="StreamPackagePacketResponse.h" />
     <ClInclude Include="StreamPackageRequest.h" />
     <ClInclude Include="StreamPackageResponse.h" />
     <ClInclude Include="StreamProgress.h" />
@@ -151,10 +155,14 @@
       <FileType>CppCode</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="StreamInformation.cpp" />
+    <ClCompile Include="StreamInformationCollection.cpp" />
     <ClCompile Include="StreamPackage.cpp" />
     <ClCompile Include="StreamPackageCollection.cpp" />
     <ClCompile Include="StreamPackageDataRequest.cpp" />
     <ClCompile Include="StreamPackageDataResponse.cpp" />
+    <ClCompile Include="StreamPackagePacketRequest.cpp" />
+    <ClCompile Include="StreamPackagePacketResponse.cpp" />
     <ClCompile Include="StreamPackageRequest.cpp" />
     <ClCompile Include="StreamPackageResponse.cpp" />
     <ClCompile Include="StreamProgress.cpp" />

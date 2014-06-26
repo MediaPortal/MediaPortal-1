@@ -471,7 +471,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Udp::ReceiveData(CStreamPackage *streamPac
         {
           request->SetUrl(this->configuration->GetValue(PARAMETER_NAME_URL, true, NULL));
 
-          CHECK_CONDITION_HRESULT(result, this->mainCurlInstance->Initialize(request), result, E_HTTP_CANNOT_INITIALIZE);
+          result = this->mainCurlInstance->Initialize(request);
         }
         FREE_MEM_CLASS(request);
       }
@@ -483,7 +483,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Udp::ReceiveData(CStreamPackage *streamPac
         // all parameters set
         // start receiving data
 
-        CHECK_CONDITION_HRESULT(result, this->mainCurlInstance->StartReceivingData(), result, E_CANNOT_START_RECEIVING_DATA);
+        result = this->mainCurlInstance->StartReceivingData();
       }
 
       CHECK_CONDITION_EXECUTE(SUCCEEDED(result), this->connectionState = Opening);
@@ -770,6 +770,11 @@ HRESULT CMPUrlSourceSplitter_Protocol_Udp::QueryStreamProgress(CStreamProgress *
   {
     streamProgress->SetTotalLength(this->streamLength);
     streamProgress->SetCurrentLength(this->currentStreamPosition);
+
+    if (this->IsStreamLengthEstimated())
+    {
+      result = VFW_S_ESTIMATED;
+    }
   }
 
   return result;
@@ -802,10 +807,27 @@ int64_t CMPUrlSourceSplitter_Protocol_Udp::GetDuration(void)
   return this->IsLiveStream() ? DURATION_LIVE_STREAM : DURATION_UNSPECIFIED;
 }
 
-unsigned int CMPUrlSourceSplitter_Protocol_Udp::GetStreamCount(void)
+HRESULT CMPUrlSourceSplitter_Protocol_Udp::GetStreamInformation(CStreamInformationCollection *streams)
 {
-  // HTTP protocol has always one stream (container)
-  return 1;
+  // UDP protocol has always one stream (container)
+  HRESULT result = S_OK;
+  CHECK_POINTER_DEFAULT_HRESULT(result, streams);
+
+  if (SUCCEEDED(result))
+  {
+    CStreamInformation *streamInfo = new CStreamInformation(&result);
+    CHECK_POINTER_HRESULT(result, streamInfo, result, E_OUTOFMEMORY);
+
+    if (SUCCEEDED(result))
+    {
+      streamInfo->SetContainer(true);
+    }
+
+    CHECK_CONDITION_HRESULT(result, streams->Add(streamInfo), result, E_OUTOFMEMORY);
+    CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(streamInfo));
+  }
+
+  return result;
 }
 
 // ISeeking interface

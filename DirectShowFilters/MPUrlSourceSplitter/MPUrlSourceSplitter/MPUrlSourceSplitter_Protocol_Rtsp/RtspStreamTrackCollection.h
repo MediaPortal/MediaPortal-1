@@ -29,7 +29,7 @@
 class CRtspStreamTrackCollection : public CCollection<CRtspStreamTrack>
 {
 public:
-  CRtspStreamTrackCollection(void);
+  CRtspStreamTrackCollection(HRESULT *result);
   ~CRtspStreamTrackCollection(void);
 
 protected:

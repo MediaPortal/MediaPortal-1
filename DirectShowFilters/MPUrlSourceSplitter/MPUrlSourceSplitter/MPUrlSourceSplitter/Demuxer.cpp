@@ -30,6 +30,8 @@
 #include "StreamPackage.h"
 #include "StreamPackageDataRequest.h"
 #include "StreamPackageDataResponse.h"
+#include "StreamPackagePacketRequest.h"
+#include "StreamPackagePacketResponse.h"
 
 #include "moreuuids.h"
 
@@ -487,6 +489,24 @@ void CDemuxer::SetRealDemuxingNeeded(bool realDemuxingNeeded)
 {
   this->flags &= ~DEMUXER_FLAG_REAL_DEMUXING_NEEDED;
   this->flags |= (realDemuxingNeeded) ? DEMUXER_FLAG_REAL_DEMUXING_NEEDED : DEMUXER_FLAG_NONE;
+}
+
+HRESULT CDemuxer::SetStreamInformation(CStreamInformation *streamInformation)
+{
+  HRESULT result = S_OK;
+  CHECK_POINTER_DEFAULT_HRESULT(result, streamInformation);
+
+  if (SUCCEEDED(result))
+  {
+    this->flags &= ~(DEMUXER_FLAG_STREAM_IN_CONTAINER | DEMUXER_FLAG_STREAM_IN_PACKETS);
+
+    this->flags |= (streamInformation->IsContainer()) ? DEMUXER_FLAG_STREAM_IN_CONTAINER : DEMUXER_FLAG_NONE;
+    this->flags |= (streamInformation->IsPackets()) ? DEMUXER_FLAG_STREAM_IN_PACKETS : DEMUXER_FLAG_NONE;
+
+    SET_STRING_HRESULT_WITH_NULL(this->streamInputFormat, streamInformation->GetStreamInputFormat(), result);
+  }
+
+  return result;
 }
 
 /* other methods */
@@ -999,7 +1019,7 @@ HRESULT CDemuxer::SeekByTime(REFERENCE_TIME time, int flags)
 {
   this->logger->Log(LOGGER_INFO, METHOD_DEMUXER_START_FORMAT, MODULE_NAME, METHOD_SEEK_BY_TIME_NAME, this->demuxerId);
 
-  HRESULT result = E_NOTIMPL;
+  HRESULT result = S_OK;
 
   AVStream *st = NULL;
   AVIndexEntry *ie = NULL;  
@@ -2110,6 +2130,7 @@ HRESULT CDemuxer::DestroyCreateDemuxerWorker(void)
   this->logger->Log(LOGGER_INFO, METHOD_DEMUXER_START_FORMAT, MODULE_NAME, METHOD_DESTROY_CREATE_DEMUXER_WORKER_NAME, this->demuxerId);
 
   this->createDemuxerWorkerShouldExit = true;
+  this->filter->SetPauseSeekStopMode(PAUSE_SEEK_STOP_MODE_DISABLE_READING);
 
   // wait for the create demuxer worker thread to exit
   if (this->createDemuxerWorkerThread != NULL)
@@ -2131,7 +2152,7 @@ HRESULT CDemuxer::DestroyCreateDemuxerWorker(void)
   return result;
 }
 
-HRESULT CDemuxer::DemuxerReadPosition(int64_t position, uint8_t *buffer, int length, unsigned int flags)
+HRESULT CDemuxer::DemuxerReadPosition(int64_t position, uint8_t *buffer, int length, uint64_t flags)
 {
   HRESULT result = S_OK;
   CHECK_CONDITION(result, length >= 0, S_OK, E_INVALIDARG);
@@ -3130,39 +3151,57 @@ HRESULT CDemuxer::InitFormatContext(void)
   return result;
 }
 
-HRESULT CDemuxer::GetNextMediaPacket(CMediaPacket **mediaPacket)
+// IPacketDemuxer interface
+
+HRESULT CDemuxer::GetNextMediaPacket(CMediaPacket **mediaPacket, uint64_t flags)
 {
-  HRESULT result = S_FALSE;
+  HRESULT result = S_OK;
   CHECK_POINTER_DEFAULT_HRESULT(result, mediaPacket);
 
-  //if (SUCCEEDED(result))
-  //{
-  //  CLockMutex lock(this->mediaPacketMutex, 100);
+  if (SUCCEEDED(result))
+  {
+    CStreamPackage *package = new CStreamPackage(&result);
+    CHECK_POINTER_HRESULT(result, package, result, E_OUTOFMEMORY);
 
-  //  if (lock.IsLocked())
-  //  {
-  //    CMediaPacket *temp = this->mediaPacketCollection->GetItem(this->lastMediaPacket);
-  //    if (temp != NULL)
-  //    {
-  //      if (this->mediaPacketCollectionCacheFile->LoadItems(this->mediaPacketCollection, this->lastMediaPacket, true, true))
-  //      {
-  //        this->lastMediaPacket++;
-  //        result = S_OK;
-  //        (*mediaPacket) = temp;
-  //      }
-  //    }
-  //    else if ((temp == NULL) && (this->IsSetFlags(DEMUXER_FLAG_ALL_DATA_RECEIVED)))
-  //    {
-  //      // all data received, we don't have any other packet
-  //      result = AVERROR_EOF;
-  //    }
-  //  }
-  //}
+    unsigned int requestId = this->demuxerContextRequestId++;
+    if (SUCCEEDED(result))
+    {
+      CStreamPackagePacketRequest *request = new CStreamPackagePacketRequest(&result);
+      CHECK_POINTER_HRESULT(result, request, result, E_OUTOFMEMORY);
+
+      if (SUCCEEDED(result))
+      {
+        request->SetResetPacketCounter((flags & STREAM_PACKAGE_PACKET_REQUEST_FLAG_RESET_PACKET_COUNTER) == STREAM_PACKAGE_PACKET_REQUEST_FLAG_RESET_PACKET_COUNTER);
+        request->SetId(requestId);
+        request->SetStreamId(this->demuxerId);
+
+        package->SetRequest(request);
+      }
+
+      CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(request));
+    }
+
+    CHECK_HRESULT_EXECUTE(result, this->filter->ProcessStreamPackage(package));
+    CHECK_HRESULT_EXECUTE(result, package->GetError());
+
+    if (SUCCEEDED(result))
+    {
+      // successfully processed stream package request
+      CStreamPackagePacketResponse *response = dynamic_cast<CStreamPackagePacketResponse *>(package->GetResponse());
+
+      *mediaPacket = (CMediaPacket *)response->GetMediaPacket()->Clone();
+      CHECK_POINTER_HRESULT(result, (*mediaPacket), result, E_OUTOFMEMORY);
+    }
+
+    CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_WARNING, L"%s: %s: stream %u, request %u, error: 0x%08X", MODULE_NAME, METHOD_DEMUXER_READ_NAME, this->demuxerId, requestId, result));
+
+    FREE_MEM_CLASS(package);
+  }
 
   return result;
 }
 
-int CDemuxer::StreamRead(int64_t position, uint8_t *buffer, int length)
+int CDemuxer::StreamReadPosition(int64_t position, uint8_t *buffer, int length, uint64_t flags)
 {
-  return this->DemuxerReadPosition(position, buffer, length, STREAM_PACKAGE_DATA_REQUEST_FLAG_NONE);
+  return this->DemuxerReadPosition(position, buffer, length, flags);
 }

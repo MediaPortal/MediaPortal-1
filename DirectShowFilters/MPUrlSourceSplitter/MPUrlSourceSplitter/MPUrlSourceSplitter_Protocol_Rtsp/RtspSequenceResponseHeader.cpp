@@ -23,8 +23,8 @@
 #include "RtspSequenceResponseHeader.h"
 #include "conversions.h"
 
-CRtspSequenceResponseHeader::CRtspSequenceResponseHeader(void)
-  : CRtspResponseHeader()
+CRtspSequenceResponseHeader::CRtspSequenceResponseHeader(HRESULT *result)
+  : CRtspResponseHeader(result)
 {
   this->sequenceNumber = RTSP_SEQUENCE_NUMBER_UNSPECIFIED;
 }
@@ -43,30 +43,6 @@ unsigned int CRtspSequenceResponseHeader::GetSequenceNumber(void)
 /* set methods */
 
 /* other methods */
-
-CRtspSequenceResponseHeader *CRtspSequenceResponseHeader::Clone(void)
-{
-  return (CRtspSequenceResponseHeader *)__super::Clone();
-}
-
-bool CRtspSequenceResponseHeader::CloneInternal(CHttpHeader *clonedHeader)
-{
-  bool result = __super::CloneInternal(clonedHeader);
-  CRtspSequenceResponseHeader *header = dynamic_cast<CRtspSequenceResponseHeader *>(clonedHeader);
-  result &= (header != NULL);
-
-  if (result)
-  {
-    header->sequenceNumber = this->sequenceNumber;
-  }
-
-  return result;
-}
-
-CHttpHeader *CRtspSequenceResponseHeader::GetNewHeader(void)
-{
-  return new CRtspSequenceResponseHeader();
-}
 
 bool CRtspSequenceResponseHeader::Parse(const wchar_t *header, unsigned int length)
 {
@@ -91,3 +67,30 @@ bool CRtspSequenceResponseHeader::Parse(const wchar_t *header, unsigned int leng
 
   return result;
 }
+
+/* protected methods */
+
+bool CRtspSequenceResponseHeader::CloneInternal(CHttpHeader *clone)
+{
+  bool result = __super::CloneInternal(clone);
+  CRtspSequenceResponseHeader *header = dynamic_cast<CRtspSequenceResponseHeader *>(clone);
+  result &= (header != NULL);
+
+  if (result)
+  {
+    header->sequenceNumber = this->sequenceNumber;
+  }
+
+  return result;
+}
+
+CHttpHeader *CRtspSequenceResponseHeader::CreateHeader(void)
+{
+  HRESULT result = S_OK;
+  CRtspSequenceResponseHeader *header = new CRtspSequenceResponseHeader(&result);
+  CHECK_POINTER_HRESULT(result, header, result, E_OUTOFMEMORY);
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(header));
+  return header;
+}
+

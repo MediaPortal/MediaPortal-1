@@ -27,12 +27,12 @@
 
 #define CREATE_SPECIFIC_SESSION_TAG(sessionTag, tag, sessionTagType, buffer, length, continueParsing, result, position)       \
                                                                                                                     \
-if (continueParsing && (result == NULL) && (wcscmp(sessionTag->GetOriginalTag(), tag) == 0))                        \
+if (SUCCEEDED(continueParsing) && (result == NULL) && (wcscmp(sessionTag->GetOriginalTag(), tag) == 0))             \
 {                                                                                                                   \
-  sessionTagType *specificTag = new sessionTagType();                                                               \
-  continueParsing &= (specificTag != NULL);                                                                         \
+  sessionTagType *specificTag = new sessionTagType(&continueParsing);                                               \
+  CHECK_POINTER_HRESULT(continueParsing, specificTag, continueParsing, E_OUTOFMEMORY);                              \
                                                                                                                     \
-  if (continueParsing)                                                                                              \
+  if (SUCCEEDED(continueParsing))                                                                                   \
   {                                                                                                                 \
     unsigned int tempPosition = specificTag->Parse(buffer, length);                                                 \
                                                                                                                     \

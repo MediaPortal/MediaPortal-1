@@ -22,8 +22,8 @@
 
 #include "RtspRequestHeaderCollection.h"
 
-CRtspRequestHeaderCollection::CRtspRequestHeaderCollection(void)
-  : CKeyedCollection()
+CRtspRequestHeaderCollection::CRtspRequestHeaderCollection(HRESULT *result)
+  : CKeyedCollection(result)
 {
 }
 
@@ -61,5 +61,5 @@ const wchar_t *CRtspRequestHeaderCollection::GetKey(CRtspRequestHeader *item)
 
 CRtspRequestHeader *CRtspRequestHeaderCollection::Clone(CRtspRequestHeader *item)
 {
-  return item->Clone();
+  return (CRtspRequestHeader *)item->Clone();
 }

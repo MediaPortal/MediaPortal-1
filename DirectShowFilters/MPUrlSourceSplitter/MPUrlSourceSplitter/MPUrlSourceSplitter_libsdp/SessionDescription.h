@@ -40,7 +40,7 @@ class CSessionDescription
 {
 public:
   // initializes a new instance of CSessionDescription class
-  CSessionDescription(void);
+  CSessionDescription(HRESULT *result);
   ~CSessionDescription(void);
 
   /* get methods */

@@ -85,18 +85,18 @@ CDownloadResponse *CDownloadResponse::CreateDownloadResponse(void)
   return response;
 }
 
-bool CDownloadResponse::CloneInternal(CDownloadResponse *clonedResponse)
+bool CDownloadResponse::CloneInternal(CDownloadResponse *clone)
 {
-  bool result = (clonedResponse != NULL);
+  bool result = (clone != NULL);
 
   if (result)
   {
-    clonedResponse->flags = this->flags;
-    clonedResponse->resultError = this->resultError;
-    FREE_MEM_CLASS(clonedResponse->receivedData);
-    clonedResponse->receivedData = this->receivedData->Clone();
+    clone->flags = this->flags;
+    clone->resultError = this->resultError;
+    FREE_MEM_CLASS(clone->receivedData);
+    clone->receivedData = this->receivedData->Clone();
 
-    result &= (clonedResponse->receivedData != NULL);
+    result &= (clone->receivedData != NULL);
   }
 
   return result;

@@ -25,20 +25,23 @@
 
 #include "SessionTag.h"
 
-#define TAG_CONNECTION_DATA                                 L"c"
+#define TAG_CONNECTION_DATA                                           L"c"
 
-#define CONNECTION_DATA_NETWORK_TYPE_INTERNET               L"IN"
-#define CONNECTION_DATA_ADDRESS_TYPE_IPV4                   L"IP4"
+#define CONNECTION_DATA_NETWORK_TYPE_INTERNET                         L"IN"
+#define CONNECTION_DATA_ADDRESS_TYPE_IPV4                             L"IP4"
 
-#define CONNECTION_DATA_FLAG_NONE                           0
-#define CONNECTION_DATA_FLAG_NETWORK_TYPE_INTERNET          1
-#define CONNECTION_DATA_FLAG_ADDRESS_TYPE_IPV4              2
+#define CONNECTION_DATA_FLAG_NONE                                     SESSION_TAG_FLAG_NONE
+
+#define CONNECTION_DATA_FLAG_NETWORK_TYPE_INTERNET                    (1 << (SESSION_TAG_FLAG_LAST + 0))
+#define CONNECTION_DATA_FLAG_ADDRESS_TYPE_IPV4                        (1 << (SESSION_TAG_FLAG_LAST + 1))
+
+#define CONNECTION_DATA_FLAG_LAST                                     (SESSION_TAG_FLAG_LAST + 2)
 
 class CConnectionData : public CSessionTag
 {
 public:
   // initializes a new instance of CConnectionData class
-  CConnectionData(void);
+  CConnectionData(HRESULT *result);
   ~CConnectionData(void);
 
   /* get methods */
@@ -77,9 +80,6 @@ public:
   virtual void Clear(void);
 
 protected:
-
-  // holds various flags
-  unsigned int flags;
 
   // holds network type
   wchar_t *networkType;

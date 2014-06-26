@@ -27,21 +27,25 @@
 
 #define RTSP_TRANSPORT_RESPONSE_HEADER_TYPE                               L"Transport"
 
-#define RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_UNICAST                       (1 << (MAX_RTSP_RESPONSE_HEADER_FLAG + 0))
-#define RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_MULTICAST                     (1 << (MAX_RTSP_RESPONSE_HEADER_FLAG + 1))
-#define RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_INTERLEAVED                   (1 << (MAX_RTSP_RESPONSE_HEADER_FLAG + 2))
-#define RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_TRANSPORT_PROTOCOL_RTP        (1 << (MAX_RTSP_RESPONSE_HEADER_FLAG + 3))
-#define RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_PROFILE_AVP                   (1 << (MAX_RTSP_RESPONSE_HEADER_FLAG + 4))
-#define RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_LOWER_TRANSPORT_TCP           (1 << (MAX_RTSP_RESPONSE_HEADER_FLAG + 5))
-#define RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_LOWER_TRANSPORT_UDP           (1 << (MAX_RTSP_RESPONSE_HEADER_FLAG + 6))
-#define RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_APPEND                        (1 << (MAX_RTSP_RESPONSE_HEADER_FLAG + 7))
-#define RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_TIME_TO_LIVE                  (1 << (MAX_RTSP_RESPONSE_HEADER_FLAG + 8))
-#define RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_LAYERS                        (1 << (MAX_RTSP_RESPONSE_HEADER_FLAG + 9))
-#define RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_PORT                          (1 << (MAX_RTSP_RESPONSE_HEADER_FLAG + 10))
-#define RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_CLIENT_PORT                   (1 << (MAX_RTSP_RESPONSE_HEADER_FLAG + 11))
-#define RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_SERVER_PORT                   (1 << (MAX_RTSP_RESPONSE_HEADER_FLAG + 12))
-#define RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_SSRC                          (1 << (MAX_RTSP_RESPONSE_HEADER_FLAG + 13))
-#define RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_MODE                          (1 << (MAX_RTSP_RESPONSE_HEADER_FLAG + 14))
+#define RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_NONE                          RTSP_RESPONSE_HEADER_FLAG_NONE
+
+#define RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_UNICAST                       (1 << (RTSP_RESPONSE_HEADER_FLAG_LAST + 0))
+#define RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_MULTICAST                     (1 << (RTSP_RESPONSE_HEADER_FLAG_LAST + 1))
+#define RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_INTERLEAVED                   (1 << (RTSP_RESPONSE_HEADER_FLAG_LAST + 2))
+#define RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_TRANSPORT_PROTOCOL_RTP        (1 << (RTSP_RESPONSE_HEADER_FLAG_LAST + 3))
+#define RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_PROFILE_AVP                   (1 << (RTSP_RESPONSE_HEADER_FLAG_LAST + 4))
+#define RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_LOWER_TRANSPORT_TCP           (1 << (RTSP_RESPONSE_HEADER_FLAG_LAST + 5))
+#define RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_LOWER_TRANSPORT_UDP           (1 << (RTSP_RESPONSE_HEADER_FLAG_LAST + 6))
+#define RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_APPEND                        (1 << (RTSP_RESPONSE_HEADER_FLAG_LAST + 7))
+#define RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_TIME_TO_LIVE                  (1 << (RTSP_RESPONSE_HEADER_FLAG_LAST + 8))
+#define RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_LAYERS                        (1 << (RTSP_RESPONSE_HEADER_FLAG_LAST + 9))
+#define RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_PORT                          (1 << (RTSP_RESPONSE_HEADER_FLAG_LAST + 10))
+#define RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_CLIENT_PORT                   (1 << (RTSP_RESPONSE_HEADER_FLAG_LAST + 11))
+#define RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_SERVER_PORT                   (1 << (RTSP_RESPONSE_HEADER_FLAG_LAST + 12))
+#define RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_SSRC                          (1 << (RTSP_RESPONSE_HEADER_FLAG_LAST + 13))
+#define RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_MODE                          (1 << (RTSP_RESPONSE_HEADER_FLAG_LAST + 14))
+
+#define RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_LAST                          (RTSP_RESPONSE_HEADER_FLAG_LAST + 15)
 
 #define RTSP_TRANSPORT_RESPONSE_HEADER_PARAMETER_UNICAST                  L"unicast"
 #define RTSP_TRANSPORT_RESPONSE_HEADER_PARAMETER_MULTICAST                L"multicast"
@@ -91,7 +95,7 @@
 class CRtspTransportResponseHeader : public CRtspResponseHeader
 {
 public:
-  CRtspTransportResponseHeader(void);
+  CRtspTransportResponseHeader(HRESULT *result);
   virtual ~CRtspTransportResponseHeader(void);
 
   /* get methods */
@@ -224,10 +228,6 @@ public:
   // @return : true if synchronization source identifier is set, false otherwise
   virtual bool IsSynchronizationSourceIdentifier(void);
 
-  // deep clones of current instance
-  // @return : deep clone of current instance or NULL if error
-  virtual CRtspTransportResponseHeader *Clone(void);
-
   // parses header and stores name and value to internal variables
   // @param header : header to parse
   // @param length : the length of header
@@ -281,13 +281,13 @@ protected:
   unsigned int synchronizationSourceIdentifier;
 
   // deeply clones current instance to cloned header
-  // @param  clonedHeader : cloned header to hold clone of current instance
+  // @param  clone : cloned header to hold clone of current instance
   // @return : true if successful, false otherwise
-  virtual bool CloneInternal(CHttpHeader *clonedHeader);
+  virtual bool CloneInternal(CHttpHeader *clone);
 
   // returns new header object to be used in cloning
   // @return : header object or NULL if error
-  virtual CHttpHeader *GetNewHeader(void);
+  virtual CHttpHeader *CreateHeader(void);
 };
 
 #endif

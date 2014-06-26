@@ -22,8 +22,8 @@
 
 #include "RtpInfoTrackCollection.h"
 
-CRtpInfoTrackCollection::CRtpInfoTrackCollection(void)
-  : CKeyedCollection()
+CRtpInfoTrackCollection::CRtpInfoTrackCollection(HRESULT *result)
+  : CKeyedCollection(result)
 {
 }
 

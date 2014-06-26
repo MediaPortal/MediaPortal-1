@@ -27,13 +27,14 @@
 
 #define RESPONSE_HEADER_TYPE_UNSPECIFIED                              NULL
 
-#define RTSP_RESPONSE_HEADER_FLAG_NONE                                0x00000000
-#define MAX_RTSP_RESPONSE_HEADER_FLAG                                 0x00000000
+#define RTSP_RESPONSE_HEADER_FLAG_NONE                                HTTP_HEADER_FLAG_NONE
+
+#define RTSP_RESPONSE_HEADER_FLAG_LAST                                (HTTP_HEADER_FLAG_LAST + 0)
 
 class CRtspResponseHeader : public CHttpHeader
 {
 public:
-  CRtspResponseHeader(void);
+  CRtspResponseHeader(HRESULT *result);
   virtual ~CRtspResponseHeader(void);
 
   /* get methods */
@@ -46,35 +47,23 @@ public:
 
   /* other methods */
 
-  // tests if combination of flags is set
-  // @param flags : the combination of flags to test
-  // @return : true if combination of flags is set, false otherwise
-  virtual bool IsSetFlags(unsigned int flags);
-
   // tests if instance response header type is same as specified response header type
   // @param responseHeaderType : response header type to test
   // @return : true if same, false otherwise
   virtual bool IsResponseHeaderType(const wchar_t *responseHeaderType);
 
-  // deep clones of current instance
-  // @return : deep clone of current instance or NULL if error
-  virtual CRtspResponseHeader *Clone(void);
-
 protected:
-
-  // holds various flags
-  unsigned int flags;
 
   wchar_t *responseHeaderType;
 
   // deeply clones current instance to cloned header
-  // @param  clonedHeader : cloned header to hold clone of current instance
+  // @param  clone : cloned header to hold clone of current instance
   // @return : true if successful, false otherwise
-  virtual bool CloneInternal(CHttpHeader *clonedHeader);
+  virtual bool CloneInternal(CHttpHeader *clone);
 
   // returns new header object to be used in cloning
   // @return : header object or NULL if error
-  virtual CHttpHeader *GetNewHeader(void);
+  virtual CHttpHeader *CreateHeader(void);
 };
 
 #endif

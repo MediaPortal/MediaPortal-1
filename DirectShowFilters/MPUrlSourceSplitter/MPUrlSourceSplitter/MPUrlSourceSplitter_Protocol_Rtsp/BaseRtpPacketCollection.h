@@ -29,7 +29,7 @@
 class CBaseRtpPacketCollection : public CCollection<CBaseRtpPacket>
 {
 public:
-  CBaseRtpPacketCollection(void);
+  CBaseRtpPacketCollection(HRESULT *result);
   ~CBaseRtpPacketCollection(void);
 
 protected:

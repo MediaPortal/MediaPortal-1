@@ -22,8 +22,8 @@
 
 #include "SessionName.h"
 
-CSessionName::CSessionName(void)
-  : CSessionTag()
+CSessionName::CSessionName(HRESULT *result)
+  : CSessionTag(result)
 {
   this->sessionName = NULL;
 }

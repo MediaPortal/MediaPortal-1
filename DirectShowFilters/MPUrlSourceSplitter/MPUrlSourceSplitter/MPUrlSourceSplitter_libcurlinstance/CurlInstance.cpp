@@ -131,7 +131,7 @@ CDownloadResponse *CCurlInstance::GetDownloadResponse(void)
   return this->downloadResponse;
 }
 
-CDownloadResponse *CCurlInstance::GetNewDownloadResponse(void)
+CDownloadResponse *CCurlInstance::CreateDownloadResponse(void)
 {
   HRESULT result = S_OK;
   CDownloadResponse *response = new CDownloadResponse(&result);
@@ -201,168 +201,131 @@ void CCurlInstance::SetFinishTime(unsigned int finishTime)
 
 /* other methods */
 
-bool CCurlInstance::Initialize(CDownloadRequest *downloadRequest)
+HRESULT CCurlInstance::Initialize(CDownloadRequest *downloadRequest)
 {
-  bool result = (this->logger != NULL) && (this->protocolName != NULL) && (this->networkInterfaces != NULL);
-  result &= SUCCEEDED(this->DestroyCurlWorker());
+  HRESULT result = ((this->logger != NULL) && (this->protocolName != NULL) && (this->networkInterfaces != NULL)) ? S_OK : E_NOT_VALID_STATE;
+  CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), this->DestroyCurlWorker(), result);
 
-  if (result)
+  if (SUCCEEDED(result))
   {
     FREE_MEM_CLASS(this->downloadRequest);
     this->downloadRequest = downloadRequest->Clone();
-    result &= (this->downloadRequest != NULL) && (this->downloadRequest != NULL)  && (this->downloadRequest->GetUrl() != NULL) && (this->networkInterfaces->Count() != 0);
+
+    CHECK_CONDITION_HRESULT(result, (this->downloadRequest != NULL) && (this->downloadRequest != NULL)  && (this->downloadRequest->GetUrl() != NULL) && (this->networkInterfaces->Count() != 0), result, E_NOT_VALID_STATE);
   }
 
-  if (result)
+  if (SUCCEEDED(result))
   {
     if (this->multi_curl == NULL)
     {
       this->multi_curl = curl_multi_init();
     }
-    result = (this->multi_curl != NULL);
+
+    CHECK_POINTER_HRESULT(result, this->multi_curl, result, E_OUTOFMEMORY);
   }
 
-  if (result)
+  if (SUCCEEDED(result))
   {
     if (this->curl == NULL)
     {
       this->curl = curl_easy_init();
     }
-    result = (this->curl != NULL);
+
+    CHECK_POINTER_HRESULT(result, this->curl, result, E_OUTOFMEMORY);
   }
 
-  if (result)
+  if (SUCCEEDED(result))
   {
-    CURLcode errorCode = CURLE_OK;
     unsigned int currentTime = GetTickCount();
 
-    CHECK_CONDITION_EXECUTE(this->finishTime < currentTime, errorCode = CURLE_OPERATION_TIMEOUTED);
-    if (errorCode != CURLE_OK)
-    {
-      this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_INITIALIZE_NAME, L"finish time before current time", errorCode);
-      result = false;
-    }
+    CHECK_CONDITION_HRESULT(result, this->finishTime >= currentTime, result, VFW_E_TIMEOUT);
+    CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: finish time before current time, finish time: %u, current time: %u", this->protocolName, METHOD_INITIALIZE_NAME, this->finishTime, currentTime));
 
-    if (errorCode == CURLE_OK)
+    if (SUCCEEDED(result))
     {
       unsigned int dataTimeout = (this->finishTime == FINISH_TIME_NOT_SPECIFIED) ? this->receiveDataTimeout : (this->finishTime - GetTickCount());
 
-      if (dataTimeout != UINT_MAX)
-      {
-        errorCode = curl_easy_setopt(this->curl, CURLOPT_CONNECTTIMEOUT, (long)(dataTimeout / 1000));
-        if (errorCode != CURLE_OK)
-        {
-          this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_INITIALIZE_NAME, L"error while setting connection timeout", errorCode);
-          result = false;
-        }
-      }
+      CHECK_CONDITION_EXECUTE_RESULT(dataTimeout != UINT_MAX, HRESULT_FROM_CURL_CODE(curl_easy_setopt(this->curl, CURLOPT_CONNECTTIMEOUT, (long)(dataTimeout / 1000))), result);
+      CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while setting connection timeout: 0x%08X", this->protocolName, METHOD_INITIALIZE_NAME, result));
     }
 
-    if ((errorCode == CURLE_OK) && (this->networkInterfaceName != NULL))
+    if ((SUCCEEDED(result)) && (this->networkInterfaceName != NULL))
     {
       wchar_t *curlNic = FormatString(L"if!%s", this->networkInterfaceName);
-      char *curlInterface = ConvertToMultiByte(curlNic);
-      errorCode = curl_easy_setopt(this->curl, CURLOPT_INTERFACE, curlInterface);
-      if (errorCode != CURLE_OK)
+      CHECK_POINTER_HRESULT(result, curlNic, result, E_OUTOFMEMORY);
+
+      if (SUCCEEDED(result))
       {
-        this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_INITIALIZE_NAME, L"error while setting network interface", errorCode);
-        result = false;
+        char *curlInterface = ConvertToMultiByte(curlNic);
+        CHECK_POINTER_HRESULT(result, curlInterface, result, E_CONVERT_STRING_ERROR);
+
+        CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), HRESULT_FROM_CURL_CODE(curl_easy_setopt(this->curl, CURLOPT_INTERFACE, curlInterface)), result);
+        FREE_MEM(curlInterface);
       }
 
-      FREE_MEM(curlInterface);
       FREE_MEM(curlNic);
+      CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while setting network interface: 0x%08X", this->protocolName, METHOD_INITIALIZE_NAME, result));
     }
 
-    if (errorCode == CURLE_OK)
+    if (SUCCEEDED(result))
     {
       char *curlUrl = ConvertToMultiByte(this->downloadRequest->GetUrl());
-      errorCode = curl_easy_setopt(this->curl, CURLOPT_URL, curlUrl);
-      if (errorCode != CURLE_OK)
-      {
-        this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_INITIALIZE_NAME, L"error while setting url", errorCode);
-        result = false;
-      }
+      CHECK_POINTER_HRESULT(result, curlUrl, result, E_CONVERT_STRING_ERROR);
+
+      CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), HRESULT_FROM_CURL_CODE(curl_easy_setopt(this->curl, CURLOPT_URL, curlUrl)), result);
+
       FREE_MEM(curlUrl);
+      CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while setting url: 0x%08X", this->protocolName, METHOD_INITIALIZE_NAME, result));
     }
 
-    if (errorCode == CURLE_OK)
+    if (SUCCEEDED(result))
     {
-      errorCode = curl_easy_setopt(this->curl, CURLOPT_WRITEFUNCTION, this->writeCallback);
-      if (errorCode != CURLE_OK)
-      {
-        this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_INITIALIZE_NAME, L"error while setting write callback", errorCode);
-        result = false;
-      }
+      result = HRESULT_FROM_CURL_CODE(curl_easy_setopt(this->curl, CURLOPT_WRITEFUNCTION, this->writeCallback));
+
+      CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while setting write callback: 0x%08X", this->protocolName, METHOD_INITIALIZE_NAME, result));
     }
 
-    if (errorCode == CURLE_OK)
+    if (SUCCEEDED(result))
     {
-      errorCode = curl_easy_setopt(this->curl, CURLOPT_WRITEDATA, this->writeData);
-      if (errorCode != CURLE_OK)
-      {
-        this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_INITIALIZE_NAME, L"error while setting write callback data", errorCode);
-        result = false;
-      }
+      result = HRESULT_FROM_CURL_CODE(curl_easy_setopt(this->curl, CURLOPT_WRITEDATA, this->writeData));
+
+      CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while setting write callback data: 0x%08X", this->protocolName, METHOD_INITIALIZE_NAME, result));
     }
 
-    if (errorCode == CURLE_OK)
+    if (SUCCEEDED(result))
     {
-      errorCode = curl_easy_setopt(this->curl, CURLOPT_DEBUGFUNCTION, CCurlInstance::CurlDebugCallback);
-      if (errorCode != CURLE_OK)
-      {
-        this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_INITIALIZE_NAME, L"error while setting debug callback", errorCode);
-        result = false;
-      }
+      result = HRESULT_FROM_CURL_CODE(curl_easy_setopt(this->curl, CURLOPT_DEBUGFUNCTION, CCurlInstance::CurlDebugCallback));
+
+      CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while setting debug callback: 0x%08X", this->protocolName, METHOD_INITIALIZE_NAME, result));
     }
 
-    if (errorCode == CURLE_OK)
+    if (SUCCEEDED(result))
     {
-      errorCode = curl_easy_setopt(this->curl, CURLOPT_DEBUGDATA, this);
-      if (errorCode != CURLE_OK)
-      {
-        this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_INITIALIZE_NAME, L"error while setting debug callback data", errorCode);
-        result = false;
-      }
+      result = HRESULT_FROM_CURL_CODE(curl_easy_setopt(this->curl, CURLOPT_DEBUGDATA, this));
+
+      CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while setting debug callback data: 0x%08X", this->protocolName, METHOD_INITIALIZE_NAME, result));
     }
 
-    if (errorCode == CURLE_OK)
+    if (SUCCEEDED(result))
     {
-      errorCode = curl_easy_setopt(this->curl, CURLOPT_VERBOSE, 1L);
-      if (errorCode != CURLE_OK)
-      {
-        this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_INITIALIZE_NAME, L"error while setting verbose level", errorCode);
-        result = false;
-      }
+      result = HRESULT_FROM_CURL_CODE(curl_easy_setopt(this->curl, CURLOPT_VERBOSE, 1L));
+
+      CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while setting verbose level: 0x%08X", this->protocolName, METHOD_INITIALIZE_NAME, result));
     }
   }
 
-  if (result)
+  if (SUCCEEDED(result))
   {
     FREE_MEM_CLASS(this->downloadResponse);
-    this->downloadResponse = this->GetNewDownloadResponse();
-    result &= (this->downloadResponse != NULL) && (this->downloadResponse->GetReceivedData() != NULL);
-    if (result)
-    {
-      result = this->downloadResponse->GetReceivedData()->InitializeBuffer(MINIMUM_BUFFER_SIZE);
-    }
+    this->downloadResponse = this->CreateDownloadResponse();
+    CHECK_POINTER_HRESULT(result, this->downloadResponse, result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(result, this->downloadResponse->GetReceivedData(), result, E_OUTOFMEMORY);
+
+    CHECK_CONDITION_HRESULT(result, this->downloadResponse->GetReceivedData()->InitializeBuffer(MINIMUM_BUFFER_SIZE), result, E_OUTOFMEMORY);
   }
 
-  this->state = (result) ? CURL_STATE_INITIALIZED : CURL_STATE_CREATED;
+  this->state = SUCCEEDED(result) ? CURL_STATE_INITIALIZED : CURL_STATE_CREATED;
   return result;
-}
-
-void CCurlInstance::ReportCurlErrorMessage(unsigned int logLevel, const wchar_t *protocolName, const wchar_t *functionName, const wchar_t *message, CURLcode errorCode)
-{
-  wchar_t *error = ConvertToUnicodeA(curl_easy_strerror(errorCode));
-  this->logger->Log(logLevel, METHOD_CURL_ERROR_MESSAGE, protocolName, functionName, (message == NULL) ? L"libcurl error" : message, error);
-  FREE_MEM(error);
-}
-
-void CCurlInstance::ReportCurlErrorMessage(unsigned int logLevel, const wchar_t *protocolName, const wchar_t *functionName, const wchar_t *message, CURLMcode errorCode)
-{
-  wchar_t *error = ConvertToUnicodeA(curl_multi_strerror(errorCode));
-  this->logger->Log(logLevel, METHOD_CURL_ERROR_MESSAGE, protocolName, functionName, (message == NULL) ? L"libcurl (multi) error" : message, error);
-  FREE_MEM(error);
 }
 
 HRESULT CCurlInstance::CreateCurlWorker(void)
@@ -439,13 +402,15 @@ unsigned int CCurlInstance::CurlWorker(void)
   this->stopReceivingTicks = 0;
   this->totalReceivedBytes = 0;
 
-  CURLMcode multiErrorCode = curl_multi_add_handle(this->multi_curl, this->curl);
-  if (multiErrorCode == CURLM_OK)
+  HRESULT result = HRESULT_FROM_CURLM_CODE(curl_multi_add_handle(this->multi_curl, this->curl));
+  CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while adding curl handle: 0x%08X", this->protocolName, METHOD_CURL_WORKER_NAME, result));
+
+  if (SUCCEEDED(result))
   {
-    while ((!this->curlWorkerShouldExit) && (multiErrorCode == CURLM_OK))
+    while (SUCCEEDED(result) && (!this->curlWorkerShouldExit))
     {
       int runningHandles = 0;
-      multiErrorCode = curl_multi_perform(this->multi_curl, &runningHandles);
+      result = HRESULT_FROM_CURLM_CODE(curl_multi_perform(this->multi_curl, &runningHandles));
 
       if (runningHandles == 0)
       {
@@ -488,16 +453,10 @@ unsigned int CCurlInstance::CurlWorker(void)
       }
     }
 
-    if (multiErrorCode != CURLM_OK)
-    {
-      this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_CURL_WORKER_NAME, L"error while receiving data", multiErrorCode);
-    }
+    CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while receiving data: 0x%08X", this->protocolName, METHOD_CURL_WORKER_NAME, result));
 
-    multiErrorCode = curl_multi_remove_handle(this->multi_curl, this->curl);
-    if (multiErrorCode != CURLM_OK)
-    {
-      this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_CURL_WORKER_NAME, L"error while removing curl handle", multiErrorCode);
-    }
+    result = HRESULT_FROM_CURLM_CODE(curl_multi_remove_handle(this->multi_curl, this->curl));
+    CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while removing curl handle: 0x%08X", this->protocolName, METHOD_CURL_WORKER_NAME, result));
 
     if (this->stopReceivingTicks == 0)
     {
@@ -509,12 +468,8 @@ unsigned int CCurlInstance::CurlWorker(void)
 
     if (IS_CURL_ERROR(this->downloadResponse->GetResultError()) && (this->downloadResponse->GetResultError() != HRESULT_FROM_CURL_CODE(CURLE_WRITE_ERROR)))
     {
-      this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_CURL_WORKER_NAME, L"error while receiving data", CURL_CODE_FROM_HRESULT(this->downloadResponse->GetResultError()));
+      this->logger->Log(LOGGER_ERROR, L"%s: %s: error while receiving data: 0x%08X", this->protocolName, METHOD_CURL_WORKER_NAME, this->downloadResponse->GetResultError());
     }
-  }
-  else
-  {
-    this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_CURL_WORKER_NAME, L"error while adding curl handle", multiErrorCode);
   }
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, this->protocolName, METHOD_CURL_WORKER_NAME);
@@ -527,17 +482,17 @@ void CCurlInstance::SetWriteCallback(curl_write_callback writeCallback, void *wr
   this->writeData = writeData;
 }
 
-bool CCurlInstance::StartReceivingData(void)
+HRESULT CCurlInstance::StartReceivingData(void)
 {
   // set last receive time of any data to avoid timeout in CurlWorker()
   this->lastReceiveTime = GetTickCount();
 
-  return (this->CreateCurlWorker() == S_OK);
+  return this->CreateCurlWorker();
 }
 
-bool CCurlInstance::StopReceivingData(void)
+HRESULT CCurlInstance::StopReceivingData(void)
 {
-  return (this->DestroyCurlWorker() == S_OK);
+  return this->DestroyCurlWorker();
 }
 
 size_t CCurlInstance::CurlReceiveDataCallback(char *buffer, size_t size, size_t nmemb, void *userdata)
@@ -617,25 +572,19 @@ void CCurlInstance::CurlDebug(curl_infotype type, const wchar_t *data)
 {
 }
 
-CURLcode CCurlInstance::SetString(CURLoption option, const wchar_t *string)
+HRESULT CCurlInstance::SetString(CURLoption option, const wchar_t *string)
 {
   return CCurlInstance::SetString(this->curl, option, string);
 }
 
-CURLcode CCurlInstance::SetString(CURL *curl, CURLoption option, const wchar_t *string)
+HRESULT CCurlInstance::SetString(CURL *curl, CURLoption option, const wchar_t *string)
 {
-  CURLcode result = CURLE_OK;
-
   char *multiByteString = ConvertToMultiByteW(string);
-  result = ((string == NULL) || ((multiByteString != NULL) && (string != NULL))) ? result : CURLE_OUT_OF_MEMORY;
+  HRESULT result = ((string == NULL) || ((multiByteString != NULL) && (string != NULL))) ? S_OK : E_CONVERT_STRING_ERROR;
 
-  if (result == CURLE_OK)
-  {
-    result = curl_easy_setopt(curl, option, multiByteString);
-  }
+  CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), HRESULT_FROM_CURL_CODE(curl_easy_setopt(curl, option, multiByteString)), result);
 
   FREE_MEM(multiByteString);
-
   return result;
 }
 
@@ -731,43 +680,31 @@ HRESULT CCurlInstance::Select(bool read, bool write, unsigned int timeout)
   return result;
 }
 
-CURLcode CCurlInstance::SendData(const unsigned char *data, unsigned int length, unsigned int timeout)
+HRESULT CCurlInstance::SendData(const unsigned char *data, unsigned int length, unsigned int timeout)
 {
   unsigned int receivedData = 0;
-  CURLcode errorCode = curl_easy_send(this->curl, data, length, &receivedData);
+  HRESULT result = HRESULT_FROM_CURL_CODE(curl_easy_send(this->curl, data, length, &receivedData));
 
-  if (errorCode == CURLE_AGAIN)
-  {
-    errorCode = CURLE_OK;
-    
-    HRESULT result = this->Select(false, true, timeout);
-
-    if (FAILED(result))
-    {
-      this->logger->Log(LOGGER_ERROR, L"%s: %s: error while sending data: 0x%08X", protocolName, L"SendData()", result);
-      errorCode = CURLE_SEND_ERROR;
-    }
-
-    CHECK_CONDITION_EXECUTE(errorCode != CURLE_OK, this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, L"SendData()", L"error while sending data", errorCode));
-  }
-
-  return errorCode;
+  CHECK_CONDITION_EXECUTE_RESULT(result == HRESULT_FROM_CURL_CODE(CURLE_AGAIN), this->Select(false, true, timeout), result);
+  CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while sending data: 0x%08X", this->protocolName, L"SendData()", result));
+  return result;
 }
 
-int CCurlInstance::ReadData(unsigned char *data, unsigned int length)
+HRESULT CCurlInstance::ReadData(unsigned char *data, unsigned int length)
 {
-  int result = 0;
-  CHECK_CONDITION_EXECUTE(data == NULL, result = -CURLE_OUT_OF_MEMORY);
-  CHECK_CONDITION_EXECUTE(length == 0, result = -CURLE_OUT_OF_MEMORY);
+  HRESULT result = S_OK;
+  CHECK_POINTER_DEFAULT_HRESULT(result, data);
+  CHECK_CONDITION_HRESULT(result, length != 0, result, E_INVALIDARG);
 
-  if (result == 0)
+  if (SUCCEEDED(result))
   {
     unsigned int receivedData = 0;
-    CURLcode errorCode = curl_easy_recv(this->curl, data, length, &receivedData);
-    CHECK_CONDITION_EXECUTE(errorCode == CURLE_AGAIN, errorCode = CURLE_OK);
-    CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, this->totalReceivedBytes += receivedData);
+    result = HRESULT_FROM_CURL_CODE(curl_easy_recv(this->curl, data, length, &receivedData));
 
-    result = (errorCode == CURLE_OK) ? receivedData : (-errorCode);
+    CHECK_CONDITION_EXECUTE(result == HRESULT_FROM_CURL_CODE(CURLE_AGAIN), result = S_OK);
+    CHECK_CONDITION_EXECUTE(SUCCEEDED(result), this->totalReceivedBytes += receivedData);
+
+    CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = (HRESULT)receivedData);
   }
 
   return result;

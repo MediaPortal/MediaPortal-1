@@ -185,9 +185,9 @@ void CMPUrlSourceSplitter_Parser_Default::ReportStreamTime(uint64_t streamTime, 
   this->protocolHoster->ReportStreamTime(streamTime, streamPosition);
 }
 
-unsigned int CMPUrlSourceSplitter_Parser_Default::GetStreamCount(void)
+HRESULT CMPUrlSourceSplitter_Parser_Default::GetStreamInformation(CStreamInformationCollection *streams)
 {
-  return this->protocolHoster->GetStreamCount();
+  return this->protocolHoster->GetStreamInformation(streams);
 }
 
 // IProtocol interface

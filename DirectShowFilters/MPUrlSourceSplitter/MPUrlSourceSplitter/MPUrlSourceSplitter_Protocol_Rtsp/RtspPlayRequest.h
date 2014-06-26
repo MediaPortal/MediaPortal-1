@@ -30,7 +30,7 @@
 class CRtspPlayRequest : public CRtspRequest
 {
 public:
-  CRtspPlayRequest(void);
+  CRtspPlayRequest(HRESULT *result);
   virtual ~CRtspPlayRequest(void);
 
   /* get methods */
@@ -51,22 +51,20 @@ public:
 
   /* other methods */
 
-  // deep clones of current instance
-  // @return : deep clone of current instance or NULL if error
-  virtual CRtspPlayRequest *Clone(void);
-
 protected:
 
-  CRtspPlayRequest(bool createDefaultHeaders);
+  /* methods */
+
+  CRtspPlayRequest(HRESULT *result, bool createDefaultHeaders);
 
   // deeply clones current instance to cloned RTSP request
-  // @param  clonedRequest : cloned RTSP request to hold clone of current instance
+  // @param  clone : cloned RTSP request to hold clone of current instance
   // @return : true if successful, false otherwise
-  virtual bool CloneInternal(CRtspRequest *clonedRequest);
+  virtual bool CloneInternal(CRtspRequest *clone);
 
   // returns new RTSP request object to be used in cloning
   // @return : RTSP request object or NULL if error
-  virtual CRtspRequest *GetNewRequest(void);
+  virtual CRtspRequest *CreateRequest(void);
 };
 
 #endif

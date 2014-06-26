@@ -22,7 +22,8 @@
 
 #include "SessionTag.h"
 
-CSessionTag::CSessionTag(void)
+CSessionTag::CSessionTag(HRESULT *result)
+  : CFlags()
 {
   this->originalTag = NULL;
   this->instanceTag = NULL;
@@ -69,6 +70,8 @@ bool CSessionTag::IsInstanceTag(const wchar_t *tag)
 
 void CSessionTag::Clear(void)
 {
+  this->flags = SESSION_TAG_FLAG_NONE;
+
   FREE_MEM(this->originalTag);
   FREE_MEM(this->instanceTag);
   FREE_MEM(this->tagContent);

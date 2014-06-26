@@ -46,19 +46,16 @@ CRtspResponseHeaderFactory::~CRtspResponseHeaderFactory(void)
 CRtspResponseHeader *CRtspResponseHeaderFactory::CreateResponseHeader(const wchar_t *buffer, unsigned int length)
 {
   CRtspResponseHeader *result = NULL;
-  bool continueParsing = ((buffer != NULL) && (length > 0));
+  HRESULT continueParsing = ((buffer != NULL) && (length > 0)) ? S_OK : E_INVALIDARG;
 
-  if (continueParsing)
+  if (SUCCEEDED(continueParsing))
   {
-    CRtspResponseHeader *header = new CRtspResponseHeader();
-    continueParsing &= (header != NULL);
+    CRtspResponseHeader *header = new CRtspResponseHeader(&continueParsing);
+    CHECK_POINTER_HRESULT(continueParsing, header, continueParsing, E_OUTOFMEMORY);
 
-    if (continueParsing)
-    {
-      continueParsing &= header->Parse(buffer, length);
-    }
+    CHECK_CONDITION_HRESULT(continueParsing, header->Parse(buffer, length), continueParsing, E_FAIL);
 
-    if (continueParsing)
+    if (SUCCEEDED(continueParsing))
     {
       // insert most specific response headers on top
       CREATE_SPECIFIC_RESPONSE_HEADER(CRtspSequenceResponseHeader, buffer, length, continueParsing, result);
@@ -77,17 +74,12 @@ CRtspResponseHeader *CRtspResponseHeaderFactory::CreateResponseHeader(const wcha
 
     CHECK_CONDITION_NOT_NULL_EXECUTE(result, FREE_MEM_CLASS(header));
 
-    if (continueParsing && (result == NULL))
+    if (SUCCEEDED(continueParsing) && (result == NULL))
     {
       result = header;
     }
-
   }
 
-  if (!continueParsing)
-  {
-    FREE_MEM_CLASS(result);
-  }
-
+  CHECK_CONDITION_EXECUTE(FAILED(continueParsing), FREE_MEM_CLASS(result));
   return result;
 }

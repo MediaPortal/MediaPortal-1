@@ -24,10 +24,11 @@
 
 #include "conversions.h"
 
-CNormalPlayTimeRangeAttribute::CNormalPlayTimeRangeAttribute(void)
-  : CRangeAttribute()
+CNormalPlayTimeRangeAttribute::CNormalPlayTimeRangeAttribute(HRESULT *result)
+  : CRangeAttribute(result)
 {
-  this->flags = NORMAL_PLAY_TIME_FLAG_RANGE_ATTRIBUTE_NONE;
+  this->startTime = 0;
+  this->endTime = 0;
 }
 
 CNormalPlayTimeRangeAttribute::~CNormalPlayTimeRangeAttribute(void)
@@ -52,12 +53,12 @@ uint64_t CNormalPlayTimeRangeAttribute::GetEndTime(void)
 
 bool CNormalPlayTimeRangeAttribute::IsSetStartTime(void)
 {
-  return ((this->flags & NORMAL_PLAY_TIME_FLAG_RANGE_ATTRIBUTE_START_TIME) != 0);
+  return this->IsSetFlags(NORMAL_PLAY_TIME_RANGE_ATTRIBUTE_FLAG_START_TIME);
 }
 
 bool CNormalPlayTimeRangeAttribute::IsSetEndTime(void)
 {
-  return ((this->flags & NORMAL_PLAY_TIME_FLAG_RANGE_ATTRIBUTE_END_TIME) != 0);
+  return this->IsSetFlags(NORMAL_PLAY_TIME_RANGE_ATTRIBUTE_FLAG_END_TIME);
 }
 
 unsigned int CNormalPlayTimeRangeAttribute::Parse(const wchar_t *buffer, unsigned int length)
@@ -106,7 +107,7 @@ unsigned int CNormalPlayTimeRangeAttribute::Parse(const wchar_t *buffer, unsigne
             {
               // number without decimal part
               this->startTime = GetValueUnsignedInt64(startTimeString, 0) * 1000;
-              this->flags |= NORMAL_PLAY_TIME_FLAG_RANGE_ATTRIBUTE_START_TIME;
+              this->flags |= NORMAL_PLAY_TIME_RANGE_ATTRIBUTE_FLAG_START_TIME;
             }
             else
             {
@@ -117,7 +118,7 @@ unsigned int CNormalPlayTimeRangeAttribute::Parse(const wchar_t *buffer, unsigne
                 this->endTime /= 10;
               }
               this->endTime += GetValueUnsignedInt64(startTimeString, 0) * 1000;
-              this->flags |= NORMAL_PLAY_TIME_FLAG_RANGE_ATTRIBUTE_START_TIME;
+              this->flags |= NORMAL_PLAY_TIME_RANGE_ATTRIBUTE_FLAG_START_TIME;
             }
 
             if (endTimeStringLength != 0)
@@ -128,7 +129,7 @@ unsigned int CNormalPlayTimeRangeAttribute::Parse(const wchar_t *buffer, unsigne
               {
                 // number without decimal part
                 this->endTime = GetValueUnsignedInt64(endTimeString, 0) * 1000;
-                this->flags |= NORMAL_PLAY_TIME_FLAG_RANGE_ATTRIBUTE_END_TIME;
+                this->flags |= NORMAL_PLAY_TIME_RANGE_ATTRIBUTE_FLAG_END_TIME;
               }
               else
               {
@@ -139,7 +140,7 @@ unsigned int CNormalPlayTimeRangeAttribute::Parse(const wchar_t *buffer, unsigne
                   this->endTime /= 10;
                 }
                 this->endTime += GetValueUnsignedInt64(endTimeString, 0) * 1000;
-                this->flags |= NORMAL_PLAY_TIME_FLAG_RANGE_ATTRIBUTE_END_TIME;
+                this->flags |= NORMAL_PLAY_TIME_RANGE_ATTRIBUTE_FLAG_END_TIME;
               }
             }
           }
@@ -156,5 +157,8 @@ unsigned int CNormalPlayTimeRangeAttribute::Parse(const wchar_t *buffer, unsigne
 
 void CNormalPlayTimeRangeAttribute::Clear(void)
 {
-  this->flags = NORMAL_PLAY_TIME_FLAG_RANGE_ATTRIBUTE_NONE;
+  __super::Clear();
+
+  this->startTime = 0;
+  this->endTime = 0;
 }

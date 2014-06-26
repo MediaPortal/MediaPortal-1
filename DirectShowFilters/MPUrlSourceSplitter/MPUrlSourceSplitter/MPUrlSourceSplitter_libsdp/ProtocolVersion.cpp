@@ -23,8 +23,8 @@
 #include "ProtocolVersion.h"
 #include "conversions.h"
 
-CProtocolVersion::CProtocolVersion(void)
-  : CSessionTag()
+CProtocolVersion::CProtocolVersion(HRESULT *result)
+  : CSessionTag(result)
 {
   this->protocolVersion = PROTOCOL_VERSION_DEFAULT;
 }

@@ -27,22 +27,25 @@
 
 #define RTSP_TRANSPORT_REQUEST_HEADER_NAME                                L"Transport"
 
-#define RTSP_TRANSPORT_REQUEST_HEADER_FLAG_NONE                           0x00000000
-#define RTSP_TRANSPORT_REQUEST_HEADER_FLAG_UNICAST                        0x00000001
-#define RTSP_TRANSPORT_REQUEST_HEADER_FLAG_MULTICAST                      0x00000002
-#define RTSP_TRANSPORT_REQUEST_HEADER_FLAG_INTERLEAVED                    0x00000004
-#define RTSP_TRANSPORT_REQUEST_HEADER_FLAG_TRANSPORT_PROTOCOL_RTP         0x00000008
-#define RTSP_TRANSPORT_REQUEST_HEADER_FLAG_PROFILE_AVP                    0x00000010
-#define RTSP_TRANSPORT_REQUEST_HEADER_FLAG_LOWER_TRANSPORT_TCP            0x00000020
-#define RTSP_TRANSPORT_REQUEST_HEADER_FLAG_LOWER_TRANSPORT_UDP            0x00000040
-#define RTSP_TRANSPORT_REQUEST_HEADER_FLAG_APPEND                         0x00000080
-#define RTSP_TRANSPORT_REQUEST_HEADER_FLAG_TIME_TO_LIVE                   0x00000100
-#define RTSP_TRANSPORT_REQUEST_HEADER_FLAG_LAYERS                         0x00000200
-#define RTSP_TRANSPORT_REQUEST_HEADER_FLAG_PORT                           0x00000400
-#define RTSP_TRANSPORT_REQUEST_HEADER_FLAG_CLIENT_PORT                    0x00000800
-#define RTSP_TRANSPORT_REQUEST_HEADER_FLAG_SERVER_PORT                    0x00001000
-#define RTSP_TRANSPORT_REQUEST_HEADER_FLAG_SSRC                           0x00002000
-#define RTSP_TRANSPORT_REQUEST_HEADER_FLAG_MODE                           0x00004000
+#define RTSP_TRANSPORT_REQUEST_HEADER_FLAG_NONE                           RTSP_REQUEST_HEADER_FLAG_NONE
+
+#define RTSP_TRANSPORT_REQUEST_HEADER_FLAG_UNICAST                        (1 << (RTSP_REQUEST_HEADER_FLAG_LAST + 0))
+#define RTSP_TRANSPORT_REQUEST_HEADER_FLAG_MULTICAST                      (1 << (RTSP_REQUEST_HEADER_FLAG_LAST + 1))
+#define RTSP_TRANSPORT_REQUEST_HEADER_FLAG_INTERLEAVED                    (1 << (RTSP_REQUEST_HEADER_FLAG_LAST + 2))
+#define RTSP_TRANSPORT_REQUEST_HEADER_FLAG_TRANSPORT_PROTOCOL_RTP         (1 << (RTSP_REQUEST_HEADER_FLAG_LAST + 3))
+#define RTSP_TRANSPORT_REQUEST_HEADER_FLAG_PROFILE_AVP                    (1 << (RTSP_REQUEST_HEADER_FLAG_LAST + 4))
+#define RTSP_TRANSPORT_REQUEST_HEADER_FLAG_LOWER_TRANSPORT_TCP            (1 << (RTSP_REQUEST_HEADER_FLAG_LAST + 5))
+#define RTSP_TRANSPORT_REQUEST_HEADER_FLAG_LOWER_TRANSPORT_UDP            (1 << (RTSP_REQUEST_HEADER_FLAG_LAST + 6))
+#define RTSP_TRANSPORT_REQUEST_HEADER_FLAG_APPEND                         (1 << (RTSP_REQUEST_HEADER_FLAG_LAST + 7))
+#define RTSP_TRANSPORT_REQUEST_HEADER_FLAG_TIME_TO_LIVE                   (1 << (RTSP_REQUEST_HEADER_FLAG_LAST + 8))
+#define RTSP_TRANSPORT_REQUEST_HEADER_FLAG_LAYERS                         (1 << (RTSP_REQUEST_HEADER_FLAG_LAST + 9))
+#define RTSP_TRANSPORT_REQUEST_HEADER_FLAG_PORT                           (1 << (RTSP_REQUEST_HEADER_FLAG_LAST + 10))
+#define RTSP_TRANSPORT_REQUEST_HEADER_FLAG_CLIENT_PORT                    (1 << (RTSP_REQUEST_HEADER_FLAG_LAST + 11))
+#define RTSP_TRANSPORT_REQUEST_HEADER_FLAG_SERVER_PORT                    (1 << (RTSP_REQUEST_HEADER_FLAG_LAST + 12))
+#define RTSP_TRANSPORT_REQUEST_HEADER_FLAG_SSRC                           (1 << (RTSP_REQUEST_HEADER_FLAG_LAST + 13))
+#define RTSP_TRANSPORT_REQUEST_HEADER_FLAG_MODE                           (1 << (RTSP_REQUEST_HEADER_FLAG_LAST + 14))
+
+#define RTSP_TRANSPORT_REQUEST_HEADER_FLAG_LAST                           (RTSP_REQUEST_HEADER_FLAG_LAST + 15)
 
 #define RTSP_TRANSPORT_REQUEST_HEADER_PARAMETER_UNICAST                   L"unicast"
 #define RTSP_TRANSPORT_REQUEST_HEADER_PARAMETER_MULTICAST                 L"multicast"
@@ -90,7 +93,7 @@
 class CRtspTransportRequestHeader : public CRtspRequestHeader
 {
 public:
-  CRtspTransportRequestHeader(void);
+  CRtspTransportRequestHeader(HRESULT *result);
   virtual ~CRtspTransportRequestHeader(void);
 
   /* get methods */
@@ -166,10 +169,6 @@ public:
   // gets RTP synchronization source identifier
   // @return : RTP synchronization source identifier
   virtual unsigned int GetSynchronizationSourceIdentifier(void);
-
-  // gets all flags
-  // @return : flags
-  virtual unsigned int GetFlags(void);
 
   /* set methods */
 
@@ -252,10 +251,6 @@ public:
   // @param synchronizationSourceIdentifier : RTP synchronization source identifier to set
   virtual void SetSynchronizationSourceIdentifier(unsigned int synchronizationSourceIdentifier);
 
-  // sets flags for RTSP transport header request
-  // @param flags : the combination of FLAG_RTSP_TRANSPORT_REQUEST_HEADER flags to set
-  virtual void SetFlags(unsigned int flags);
-
   /* other methods */
 
   // tests if unicast is set
@@ -314,20 +309,7 @@ public:
   // @return : true if synchronization source identifier is set, false otherwise
   virtual bool IsSynchronizationSourceIdentifier(void);
 
-  // tests if flag is set
-  // @param flag : the flag to test
-  // @return : true if flag is set, false otherwise
-  virtual bool IsSetFlag(unsigned int flag);
-
-  // deep clones of current instance
-  // @return : deep clone of current instance or NULL if error
-  virtual CRtspTransportRequestHeader *Clone(void);
-
 protected:
-
-  // holds various flags
-  unsigned int flags;
-
   // holds transport protocol (it should be RTP)
   wchar_t *transportProtocol;
 
@@ -370,14 +352,16 @@ protected:
   // holds ssrc (synchronization source identifier)
   unsigned int synchronizationSourceIdentifier;
 
+  /* methods */
+
   // deeply clones current instance to cloned header
-  // @param  clonedHeader : cloned header to hold clone of current instance
+  // @param  clone : cloned header to hold clone of current instance
   // @return : true if successful, false otherwise
-  virtual bool CloneInternal(CHttpHeader *clonedHeader);
+  virtual bool CloneInternal(CHttpHeader *clone);
 
   // returns new RTSP request header object to be used in cloning
   // @return : RTSP request header object or NULL if error
-  virtual CHttpHeader *GetNewHeader(void);
+  virtual CHttpHeader *CreateHeader(void);
 };
 
 #endif

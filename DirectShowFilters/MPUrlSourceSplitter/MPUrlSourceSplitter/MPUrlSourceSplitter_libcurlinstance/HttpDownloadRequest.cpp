@@ -143,13 +143,13 @@ CDownloadRequest *CHttpDownloadRequest::CreateDownloadRequest(void)
   return request;
 }
 
-bool CHttpDownloadRequest::CloneInternal(CDownloadRequest *clonedRequest)
+bool CHttpDownloadRequest::CloneInternal(CDownloadRequest *clone)
 {
-  bool result = __super::CloneInternal(clonedRequest);
+  bool result = __super::CloneInternal(clone);
 
   if (result)
   {
-    CHttpDownloadRequest *request = dynamic_cast<CHttpDownloadRequest *>(clonedRequest);
+    CHttpDownloadRequest *request = dynamic_cast<CHttpDownloadRequest *>(clone);
 
     request->cookie = Duplicate(this->cookie);
     request->endPosition = this->endPosition;

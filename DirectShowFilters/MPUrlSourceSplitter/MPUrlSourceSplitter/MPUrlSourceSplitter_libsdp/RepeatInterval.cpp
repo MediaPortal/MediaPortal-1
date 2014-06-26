@@ -22,7 +22,7 @@
 
 #include "RepeatInterval.h"
 
-CRepeatInterval::CRepeatInterval(void)
+CRepeatInterval::CRepeatInterval(HRESULT *result)
 {
   this->activeDuration = 0;
   this->repeatInterval = 0;

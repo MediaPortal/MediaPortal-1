@@ -23,6 +23,8 @@
 #ifndef __SESSION_TAG_DEFINED
 #define __SESSION_TAG_DEFINED
 
+#include "Flags.h"
+
 #define ASSIGN_SESSION_TAG_BY_ORIGINAL_TAG(sessionTag, tagType, classTag, classTagType, assigned, result)       \
                                                                                                         \
 if ((result != 0) && (!assigned) && (sessionTag->IsOriginalTag(tagType)) && (classTag == NULL))         \
@@ -65,14 +67,18 @@ if ((result != 0) && (!assigned) && (sessionTag->IsInstanceTag(tagType)))       
   }                                                                                                     \
 }
 
-#define SESSION_TAG_SIZE                                    2         // minimum size for session tag (<tag>= )
-#define SESSION_TAG_SEPARATOR                               L'='
+#define SESSION_TAG_SIZE                                              2         // minimum size for session tag (<tag>= )
+#define SESSION_TAG_SEPARATOR                                         L'='
 
-class CSessionTag
+#define SESSION_TAG_FLAG_NONE                                         FLAGS_NONE
+
+#define SESSION_TAG_FLAG_LAST                                         (FLAGS_LAST + 0)
+
+class CSessionTag : public CFlags
 {
 public:
   // initialize a new instance of CSessionTag class
-  CSessionTag(void);
+  CSessionTag(HRESULT *result);
   virtual ~CSessionTag(void);
 
   /* get methods */

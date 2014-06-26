@@ -23,7 +23,7 @@
 #include "SessionDescription.h"
 #include "SessionTagFactory.h"
 
-CSessionDescription::CSessionDescription(void)
+CSessionDescription::CSessionDescription(HRESULT *result)
 {
   //this->bandwidth = NULL;
   this->connectionData = NULL;
@@ -36,8 +36,17 @@ CSessionDescription::CSessionDescription(void)
   //this->sessionTimes = NULL;
   //this->sessionUri = NULL;
 
-  this->mediaDescriptions = new CMediaDescriptionCollection();
-  this->attributes = new CAttributeCollection();
+  this->mediaDescriptions = NULL;
+  this->attributes = NULL;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->mediaDescriptions = new CMediaDescriptionCollection(result);
+    this->attributes = new CAttributeCollection(result);
+
+    CHECK_POINTER_HRESULT(*result, this->mediaDescriptions, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->attributes, *result, E_OUTOFMEMORY);
+  }
 }
 
 CSessionDescription::~CSessionDescription(void)

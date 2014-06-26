@@ -22,11 +22,9 @@
 
 #include "RtspTransportRequestHeader.h"
 
-CRtspTransportRequestHeader::CRtspTransportRequestHeader(void)
-  : CRtspRequestHeader()
+CRtspTransportRequestHeader::CRtspTransportRequestHeader(HRESULT *result)
+  : CRtspRequestHeader(result)
 {
-  this->flags = RTSP_TRANSPORT_REQUEST_HEADER_FLAG_NONE;
-
   this->destination = NULL;
   this->layers = 0;
   this->lowerTransport = NULL;
@@ -240,11 +238,6 @@ unsigned int CRtspTransportRequestHeader::GetSynchronizationSourceIdentifier(voi
   return this->synchronizationSourceIdentifier;
 }
 
-unsigned int CRtspTransportRequestHeader::GetFlags(void)
-{
-  return this->flags;
-}
-
 /* set methods */
 
 bool CRtspTransportRequestHeader::SetName(const wchar_t *name)
@@ -339,28 +332,88 @@ void CRtspTransportRequestHeader::SetSynchronizationSourceIdentifier(unsigned in
   this->synchronizationSourceIdentifier = synchronizationSourceIdentifier;
 }
 
-void CRtspTransportRequestHeader::SetFlags(unsigned int flags)
-{
-  this->flags = flags;
-}
-
 /* other methods */
 
-CRtspTransportRequestHeader *CRtspTransportRequestHeader::Clone(void)
+bool CRtspTransportRequestHeader::IsUnicast(void)
 {
-  return (CRtspTransportRequestHeader *)__super::Clone();
+  return this->IsSetFlags(RTSP_TRANSPORT_REQUEST_HEADER_FLAG_UNICAST);
 }
 
-bool CRtspTransportRequestHeader::CloneInternal(CHttpHeader *clonedHeader)
+bool CRtspTransportRequestHeader::IsMulticast(void)
 {
-  bool result = __super::CloneInternal(clonedHeader);
-  CRtspTransportRequestHeader *header = dynamic_cast<CRtspTransportRequestHeader *>(clonedHeader);
+  return this->IsSetFlags(RTSP_TRANSPORT_REQUEST_HEADER_FLAG_MULTICAST);
+}
+
+bool CRtspTransportRequestHeader::IsInterleaved(void)
+{
+  return this->IsSetFlags(RTSP_TRANSPORT_REQUEST_HEADER_FLAG_INTERLEAVED);
+}
+
+bool CRtspTransportRequestHeader::IsTransportProtocolRTP(void)
+{
+  return this->IsSetFlags(RTSP_TRANSPORT_REQUEST_HEADER_FLAG_TRANSPORT_PROTOCOL_RTP);
+}
+
+bool CRtspTransportRequestHeader::IsProfileAVP(void)
+{
+  return this->IsSetFlags(RTSP_TRANSPORT_REQUEST_HEADER_FLAG_PROFILE_AVP);
+}
+
+bool CRtspTransportRequestHeader::IsLowerTransportTCP(void)
+{
+  return this->IsSetFlags(RTSP_TRANSPORT_REQUEST_HEADER_FLAG_LOWER_TRANSPORT_TCP);
+}
+
+bool CRtspTransportRequestHeader::IsLowerTransportUDP(void)
+{
+  return this->IsSetFlags(RTSP_TRANSPORT_REQUEST_HEADER_FLAG_LOWER_TRANSPORT_UDP);
+}
+
+bool CRtspTransportRequestHeader::IsAppend(void)
+{
+  return this->IsSetFlags(RTSP_TRANSPORT_REQUEST_HEADER_FLAG_APPEND);
+}
+
+bool CRtspTransportRequestHeader::IsTimeToLive(void)
+{
+  return this->IsSetFlags(RTSP_TRANSPORT_REQUEST_HEADER_FLAG_TIME_TO_LIVE);
+}
+
+bool CRtspTransportRequestHeader::IsLayers(void)
+{
+  return this->IsSetFlags(RTSP_TRANSPORT_REQUEST_HEADER_FLAG_LAYERS);
+}
+
+bool CRtspTransportRequestHeader::IsPort(void)
+{
+  return this->IsSetFlags(RTSP_TRANSPORT_REQUEST_HEADER_FLAG_PORT);
+}
+
+bool CRtspTransportRequestHeader::IsClientPort(void)
+{
+  return this->IsSetFlags(RTSP_TRANSPORT_REQUEST_HEADER_FLAG_CLIENT_PORT);
+}
+
+bool CRtspTransportRequestHeader::IsServerPort(void)
+{
+  return this->IsSetFlags(RTSP_TRANSPORT_REQUEST_HEADER_FLAG_SERVER_PORT);
+}
+
+bool CRtspTransportRequestHeader::IsSynchronizationSourceIdentifier(void)
+{
+  return this->IsSetFlags(RTSP_TRANSPORT_REQUEST_HEADER_FLAG_SSRC);
+}
+
+/* protected methods */
+
+bool CRtspTransportRequestHeader::CloneInternal(CHttpHeader *clone)
+{
+  bool result = __super::CloneInternal(clone);
+  CRtspTransportRequestHeader *header = dynamic_cast<CRtspTransportRequestHeader *>(clone);
   result &= (header != NULL);
 
   if (result)
   {
-    header->flags = this->flags;
-
     SET_STRING_AND_RESULT_WITH_NULL(header->destination, this->destination, result);
     SET_STRING_AND_RESULT_WITH_NULL(header->lowerTransport, this->lowerTransport, result);
     SET_STRING_AND_RESULT_WITH_NULL(header->mode, this->mode, result);
@@ -383,82 +436,12 @@ bool CRtspTransportRequestHeader::CloneInternal(CHttpHeader *clonedHeader)
   return result;
 }
 
-CHttpHeader *CRtspTransportRequestHeader::GetNewHeader(void)
+CHttpHeader *CRtspTransportRequestHeader::CreateHeader(void)
 {
-  return new CRtspTransportRequestHeader();
-}
+  HRESULT result = S_OK;
+  CRtspTransportRequestHeader *header = new CRtspTransportRequestHeader(&result);
+  CHECK_POINTER_HRESULT(result, header, result, E_OUTOFMEMORY);
 
-bool CRtspTransportRequestHeader::IsSetFlag(unsigned int flag)
-{
-  return ((this->flags & flag) == flag);
-}
-
-bool CRtspTransportRequestHeader::IsUnicast(void)
-{
-  return this->IsSetFlag(RTSP_TRANSPORT_REQUEST_HEADER_FLAG_UNICAST);
-}
-
-bool CRtspTransportRequestHeader::IsMulticast(void)
-{
-  return this->IsSetFlag(RTSP_TRANSPORT_REQUEST_HEADER_FLAG_MULTICAST);
-}
-
-bool CRtspTransportRequestHeader::IsInterleaved(void)
-{
-  return this->IsSetFlag(RTSP_TRANSPORT_REQUEST_HEADER_FLAG_INTERLEAVED);
-}
-
-bool CRtspTransportRequestHeader::IsTransportProtocolRTP(void)
-{
-  return this->IsSetFlag(RTSP_TRANSPORT_REQUEST_HEADER_FLAG_TRANSPORT_PROTOCOL_RTP);
-}
-
-bool CRtspTransportRequestHeader::IsProfileAVP(void)
-{
-  return this->IsSetFlag(RTSP_TRANSPORT_REQUEST_HEADER_FLAG_PROFILE_AVP);
-}
-
-bool CRtspTransportRequestHeader::IsLowerTransportTCP(void)
-{
-  return this->IsSetFlag(RTSP_TRANSPORT_REQUEST_HEADER_FLAG_LOWER_TRANSPORT_TCP);
-}
-
-bool CRtspTransportRequestHeader::IsLowerTransportUDP(void)
-{
-  return this->IsSetFlag(RTSP_TRANSPORT_REQUEST_HEADER_FLAG_LOWER_TRANSPORT_UDP);
-}
-
-bool CRtspTransportRequestHeader::IsAppend(void)
-{
-  return this->IsSetFlag(RTSP_TRANSPORT_REQUEST_HEADER_FLAG_APPEND);
-}
-
-bool CRtspTransportRequestHeader::IsTimeToLive(void)
-{
-  return this->IsSetFlag(RTSP_TRANSPORT_REQUEST_HEADER_FLAG_TIME_TO_LIVE);
-}
-
-bool CRtspTransportRequestHeader::IsLayers(void)
-{
-  return this->IsSetFlag(RTSP_TRANSPORT_REQUEST_HEADER_FLAG_LAYERS);
-}
-
-bool CRtspTransportRequestHeader::IsPort(void)
-{
-  return this->IsSetFlag(RTSP_TRANSPORT_REQUEST_HEADER_FLAG_PORT);
-}
-
-bool CRtspTransportRequestHeader::IsClientPort(void)
-{
-  return this->IsSetFlag(RTSP_TRANSPORT_REQUEST_HEADER_FLAG_CLIENT_PORT);
-}
-
-bool CRtspTransportRequestHeader::IsServerPort(void)
-{
-  return this->IsSetFlag(RTSP_TRANSPORT_REQUEST_HEADER_FLAG_SERVER_PORT);
-}
-
-bool CRtspTransportRequestHeader::IsSynchronizationSourceIdentifier(void)
-{
-  return this->IsSetFlag(RTSP_TRANSPORT_REQUEST_HEADER_FLAG_SSRC);
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(header));
+  return header;
 }

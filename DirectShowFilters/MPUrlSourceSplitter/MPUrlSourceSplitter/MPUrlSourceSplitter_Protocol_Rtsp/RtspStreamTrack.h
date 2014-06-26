@@ -25,27 +25,29 @@
 
 #include "RtspStreamFragmentCollection.h"
 #include "CacheFile.h"
-
-#include <stdint.h>
+#include "Flags.h"
 
 // DirectShow times are in 100ns units
 #ifndef DSHOW_TIME_BASE
 #define DSHOW_TIME_BASE                                               10000000
 #endif
 
-#define RTSP_STREAM_TRACK_FLAG_NONE                                   0x00000000
-#define RTSP_STREAM_TRACK_FLAG_SET_FIRST_RTP_PACKET_TIMESTAMP         0x00000001
-#define RTSP_STREAM_TRACK_FLAG_SET_STREAM_LENGTH                      0x00000002
-#define RTSP_STREAM_TRACK_FLAG_END_OF_STREAM                          0x00000004
-#define RTSP_STREAM_TRACK_FLAG_SUPRESS_DATA                           0x00000008
-#define RTSP_STREAM_TRACK_FLAG_RECEIVED_ALL_DATA                      0x00000010
-#define RTSP_STREAM_TRACK_FLAG_SET_FIRST_RTP_PACKET_TICKS             0x00000020
+#define RTSP_STREAM_TRACK_FLAG_NONE                                   FLAGS_NONE
 
-class CRtspStreamTrack
+#define RTSP_STREAM_TRACK_FLAG_SET_FIRST_RTP_PACKET_TIMESTAMP         (1 << (FLAGS_LAST + 0))
+#define RTSP_STREAM_TRACK_FLAG_SET_STREAM_LENGTH                      (1 << (FLAGS_LAST + 1))
+#define RTSP_STREAM_TRACK_FLAG_END_OF_STREAM                          (1 << (FLAGS_LAST + 2))
+#define RTSP_STREAM_TRACK_FLAG_SUPRESS_DATA                           (1 << (FLAGS_LAST + 3))
+#define RTSP_STREAM_TRACK_FLAG_RECEIVED_ALL_DATA                      (1 << (FLAGS_LAST + 4))
+#define RTSP_STREAM_TRACK_FLAG_SET_FIRST_RTP_PACKET_TICKS             (1 << (FLAGS_LAST + 5))
+
+#define RTSP_STREAM_TRACK_FLAG_LAST                                   (FLAGS_LAST + 6)
+
+class CRtspStreamTrack : public CFlags
 {
 public:
   // initializes a new instance of CRtspStreamTrack class
-  CRtspStreamTrack(void);
+  CRtspStreamTrack(HRESULT *result);
   ~CRtspStreamTrack(void);
 
   /* get methods */
@@ -82,7 +84,7 @@ public:
 
   // gets first RTP packet ticks
   // @return : first RTP packet ticks
-  DWORD GetFirstRtpPacketTicks(void);
+  unsigned int GetFirstRtpPacketTicks(void);
 
   // gets RTP packet timestamp based on current RTP packet timestamp
   // @param currentRtpPacketTimestamp : current RTP packet timestamp to get RTP packet timestamp
@@ -107,6 +109,10 @@ public:
   // @return : cache file instance or NULL if error
   CCacheFile *GetCacheFile(void);
 
+  // gets last receive data time (in ms)
+  // @return : last receive data time (in ms)
+  unsigned int GetLastReceiveDataTime(void);
+
   /* set methods */
 
   // sets currently downloading fragment
@@ -125,10 +131,6 @@ public:
   // sets stream length in bytes
   // @param streamLength : the stream length in bytes to set
   void SetStreamLength(int64_t streamLength);
-
-  // sets byte position in buffer
-  // @param bytePosition : byte position in buffer to set
-  void SetBytePosition(int64_t bytePosition);
 
   // sets set stream length flag
   // @param setStreamLengthFlag : set stream length flag to set
@@ -150,7 +152,7 @@ public:
   // @param rtpPacketTimestamp : RTP packet timestamp to set as first RTP packet timestamp
   // @param firstRtpPacketTimestampFlag : the first RTP packet timestamp flag (true if first RTP packet timestamp is to be set, false otherwise)
   // @param firstRtpPacketTicks : the first RTP packet ticks (it is only set when firstRtpPacketTimestampFlag is true and ticks were not set earlier)
-  void SetFirstRtpPacketTimestamp(unsigned int rtpPacketTimestamp, bool firstRtpPacketTimestampFlag, DWORD firstRtpPacketTicks);
+  void SetFirstRtpPacketTimestamp(unsigned int rtpPacketTimestamp, bool firstRtpPacketTimestampFlag, unsigned int firstRtpPacketTicks);
 
   // sets clock frequency used to convert RTP timestamp to real time
   // it also sets numerator and denominator used to convert RTP timestamp to DSHOW_TIME_BASE units
@@ -160,6 +162,10 @@ public:
   // sets RTP timestamp correction
   // @param rtpTimestampCorrection : the RTP timestamp correction to set
   void SetRtpTimestampCorrection(int64_t rtpTimestampCorrection);
+
+  // sets last receive data time (in ms)
+  // @param lastReceiveDataTime : last receive data time (in ms) to set
+  void SetLastReceiveDataTime(unsigned int lastReceiveDataTime);
 
   /* other methods */
 
@@ -183,13 +189,7 @@ public:
   // @return : true if all data received flag is set, false otherwise
   bool IsReceivedAllData(void);
 
-  // tests if specific combination of flags is set
-  // @return : true if specific combination of flags is set, false otherwise
-  bool IsSetFlags(unsigned int flags);
-
 protected:
-  // holds various flags
-  unsigned int flags;
   // holds RTSP stream fragments
   CRtspStreamFragmentCollection *streamFragments;
   // holds RTP timestamp of first packet
@@ -202,7 +202,7 @@ protected:
   int64_t rtpTimestampCorrection;
 
   // holds ticks for only first RTP packet (if restarted download then firstRtpPacketTicks is not changed)
-  DWORD firstRtpPacketTicks;
+  unsigned int firstRtpPacketTicks;
 
   // holds which fragment is currently downloading (UINT_MAX means none)
   unsigned int streamFragmentDownloading;
@@ -214,13 +214,13 @@ protected:
 
   // the lenght of stream track
   int64_t streamLength;
-  // specifies position in buffer
-  // it is always reset on seek
-  int64_t bytePosition;
 
   // numerator and denominator to convert RTP timestamp to DSHOW_TIME_BASE units
   int64_t dshowTimeBaseNumerator;
   int64_t dshowTimeBaseDenominator;
+
+  // holds last receive data time
+  unsigned int lastReceiveDataTime;
 
   // clock frequency 
   unsigned int clockFrequency;

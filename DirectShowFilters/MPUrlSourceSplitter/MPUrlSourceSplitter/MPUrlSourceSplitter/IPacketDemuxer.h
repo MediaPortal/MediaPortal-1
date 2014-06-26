@@ -31,18 +31,20 @@ struct IPacketDemuxer
 {
   // gets next available media packet
   // @param mediaPacket : reference to variable to store to reference to media packet
+  // @param flags : the flags
   // @return : 
   // S_OK     = media packet returned
   // S_FALSE  = no media packet available
   // negative values are error
-  virtual HRESULT GetNextMediaPacket(CMediaPacket **mediaPacket) = 0;
+  virtual HRESULT GetNextMediaPacket(CMediaPacket **mediaPacket, uint64_t flags) = 0;
 
   // reads data from stream from specified position into buffer
   // @param position : the position in stream to start reading data
   // @param buffer : the buffer to store data
   // @param length : the size of requested data
+  // @param flags : the flags
   // @return : the length of read data, negative values are errors
-  virtual int StreamRead(int64_t position, uint8_t *buffer, int length) = 0;
+  virtual int StreamReadPosition(int64_t position, uint8_t *buffer, int length, uint64_t flags) = 0;
 };
 
 #endif

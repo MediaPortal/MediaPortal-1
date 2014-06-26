@@ -22,7 +22,7 @@
 
 #include "MediaFormat.h"
 
-CMediaFormat::CMediaFormat(void)
+CMediaFormat::CMediaFormat(HRESULT *result)
 {
   this->channels = MEDIA_FORMAT_CHANNELS_UNSPECIFIED;
   this->clockRate = MEDIA_FORMAT_CLOCK_RATE_UNSPECIFIED;

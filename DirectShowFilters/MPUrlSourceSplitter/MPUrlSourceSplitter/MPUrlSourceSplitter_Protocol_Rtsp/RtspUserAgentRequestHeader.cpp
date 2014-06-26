@@ -22,8 +22,8 @@
 
 #include "RtspUserAgentRequestHeader.h"
 
-CRtspUserAgentRequestHeader::CRtspUserAgentRequestHeader(void)
-  : CRtspRequestHeader()
+CRtspUserAgentRequestHeader::CRtspUserAgentRequestHeader(HRESULT *result)
+  : CRtspRequestHeader(result)
 {
 }
 
@@ -58,17 +58,19 @@ bool CRtspUserAgentRequestHeader::SetUserAgent(const wchar_t *userAgent)
 
 /* other methods */
 
-CRtspUserAgentRequestHeader *CRtspUserAgentRequestHeader::Clone(void)
+/* protected methods */
+
+bool CRtspUserAgentRequestHeader::CloneInternal(CHttpHeader *clone)
 {
-  return (CRtspUserAgentRequestHeader *)__super::Clone();
+  return __super::CloneInternal(clone);
 }
 
-bool CRtspUserAgentRequestHeader::CloneInternal(CHttpHeader *clonedHeader)
+CHttpHeader *CRtspUserAgentRequestHeader::CreateHeader(void)
 {
-  return __super::CloneInternal(clonedHeader);
-}
+  HRESULT result = S_OK;
+  CRtspUserAgentRequestHeader *header = new CRtspUserAgentRequestHeader(&result);
+  CHECK_POINTER_HRESULT(result, header, result, E_OUTOFMEMORY);
 
-CHttpHeader *CRtspUserAgentRequestHeader::GetNewHeader(void)
-{
-  return new CRtspUserAgentRequestHeader();
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(header));
+  return header;
 }

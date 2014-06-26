@@ -26,7 +26,7 @@
 #include "StreamPackageResponse.h"
 #include "LinearBuffer.h"
 
-#define STREAM_PACKAGE_DAT_RESPONSE_FLAG_NONE                         STREAM_PACKAGE_RESPONSE_FLAG_NONE
+#define STREAM_PACKAGE_DATA_RESPONSE_FLAG_NONE                        STREAM_PACKAGE_RESPONSE_FLAG_NONE
 
 #define STREAM_PACKAGE_DATA_RESPONSE_FLAG_LAST                        (STREAM_PACKAGE_RESPONSE_FLAG_LAST + 0)
 

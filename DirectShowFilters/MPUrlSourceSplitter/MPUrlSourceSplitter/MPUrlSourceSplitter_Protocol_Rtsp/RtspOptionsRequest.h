@@ -30,7 +30,7 @@
 class CRtspOptionsRequest : public CRtspRequest
 {
 public:
-  CRtspOptionsRequest(void);
+  CRtspOptionsRequest(HRESULT *result);
   virtual ~CRtspOptionsRequest(void);
 
   /* get methods */
@@ -43,22 +43,20 @@ public:
 
   /* other methods */
 
-  // deep clones of current instance
-  // @return : deep clone of current instance or NULL if error
-  virtual CRtspOptionsRequest *Clone(void);
-
 protected:
 
-  CRtspOptionsRequest(bool createDefaultHeaders);
+  /* methods */
+
+  CRtspOptionsRequest(HRESULT *result, bool createDefaultHeaders);
 
   // deeply clones current instance to cloned RTSP request
-  // @param  clonedRequest : cloned RTSP request to hold clone of current instance
+  // @param  clone : cloned RTSP request to hold clone of current instance
   // @return : true if successful, false otherwise
-  virtual bool CloneInternal(CRtspRequest *clonedRequest);
+  virtual bool CloneInternal(CRtspRequest *clone);
 
   // returns new RTSP request object to be used in cloning
   // @return : RTSP request object or NULL if error
-  virtual CRtspRequest *GetNewRequest(void);
+  virtual CRtspRequest *CreateRequest(void);
 };
 
 #endif

@@ -46,21 +46,21 @@ CSessionTagFactory::~CSessionTagFactory(void)
 CSessionTag *CSessionTagFactory::CreateSessionTag(const wchar_t *buffer, unsigned int length, unsigned int *position)
 {
   CSessionTag *result = NULL;
-  bool continueParsing = ((buffer != NULL) && (length > 0) && (position != NULL));
+  HRESULT continueParsing = ((buffer != NULL) && (length > 0) && (position != NULL)) ? S_OK : E_INVALIDARG;
 
-  if (continueParsing)
+  if (SUCCEEDED(continueParsing))
   {
     *position = 0;
-    CSessionTag *sessionTag = new CSessionTag();
-    continueParsing &= (sessionTag != NULL);
+    CSessionTag *sessionTag = new CSessionTag(&continueParsing);
+    CHECK_POINTER_HRESULT(continueParsing, sessionTag, continueParsing, E_OUTOFMEMORY);
 
-    if (continueParsing)
+    if (SUCCEEDED(continueParsing))
     {
       *position = sessionTag->Parse(buffer, length);
-      continueParsing &= (*position != 0);
+      CHECK_CONDITION_HRESULT(continueParsing, *position != 0, continueParsing, E_FAIL);
     }
 
-    if (continueParsing)
+    if (SUCCEEDED(continueParsing))
     {
       // insert most specific session tags on top
 
@@ -81,13 +81,13 @@ CSessionTag *CSessionTagFactory::CreateSessionTag(const wchar_t *buffer, unsigne
 
     CHECK_CONDITION_NOT_NULL_EXECUTE(result, FREE_MEM_CLASS(sessionTag));
 
-    if (continueParsing && (result == NULL))
+    if (SUCCEEDED(continueParsing) && (result == NULL))
     {
       result = sessionTag;
     }
   }
 
-  if (!continueParsing)
+  if (FAILED(continueParsing))
   {
     FREE_MEM_CLASS(result);
     *position = 0;

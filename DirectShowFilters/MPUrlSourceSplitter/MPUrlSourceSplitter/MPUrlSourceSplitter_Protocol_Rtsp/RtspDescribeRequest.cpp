@@ -23,32 +23,29 @@
 #include "RtspDescribeRequest.h"
 #include "RtspAcceptApplicationSdpRequestHeader.h"
 
-CRtspDescribeRequest::CRtspDescribeRequest(void)
-  : CRtspRequest()
+CRtspDescribeRequest::CRtspDescribeRequest(HRESULT *result)
+  : CRtspRequest(result)
 {
-  CRtspAcceptApplicationSdpRequestHeader *header = new CRtspAcceptApplicationSdpRequestHeader();
-  if (header != NULL)
+  if ((result != NULL) && (SUCCEEDED(*result)))
   {
-    if (!this->requestHeaders->Add(header))
-    {
-      FREE_MEM_CLASS(header);
-    }
+    CRtspAcceptApplicationSdpRequestHeader *header = new CRtspAcceptApplicationSdpRequestHeader(result);
+    CHECK_POINTER_HRESULT(*result, header, *result, E_OUTOFMEMORY);
+
+    CHECK_CONDITION_HRESULT(*result, this->requestHeaders->Add(header), *result, E_OUTOFMEMORY);
+    CHECK_CONDITION_EXECUTE(FAILED(*result), FREE_MEM_CLASS(header));
   }
 }
 
-CRtspDescribeRequest::CRtspDescribeRequest(bool createDefaultHeaders)
-  : CRtspRequest(createDefaultHeaders)
+CRtspDescribeRequest::CRtspDescribeRequest(HRESULT *result, bool createDefaultHeaders)
+  : CRtspRequest(result, createDefaultHeaders)
 {
-  if (createDefaultHeaders)
+  if (createDefaultHeaders && (result != NULL) && (SUCCEEDED(*result)))
   {
-    CRtspAcceptApplicationSdpRequestHeader *header = new CRtspAcceptApplicationSdpRequestHeader();
-    if (header != NULL)
-    {
-      if (!this->requestHeaders->Add(header))
-      {
-        FREE_MEM_CLASS(header);
-      }
-    }
+    CRtspAcceptApplicationSdpRequestHeader *header = new CRtspAcceptApplicationSdpRequestHeader(result);
+    CHECK_POINTER_HRESULT(*result, header, *result, E_OUTOFMEMORY);
+
+    CHECK_CONDITION_HRESULT(*result, this->requestHeaders->Add(header), *result, E_OUTOFMEMORY);
+    CHECK_CONDITION_EXECUTE(FAILED(*result), FREE_MEM_CLASS(header));
   }
 }
 
@@ -67,17 +64,19 @@ const wchar_t *CRtspDescribeRequest::GetMethod(void)
 
 /* other methods */
 
-CRtspDescribeRequest *CRtspDescribeRequest::Clone(void)
+/* protected methods */
+
+bool CRtspDescribeRequest::CloneInternal(CRtspRequest *clone)
 {
-  return (CRtspDescribeRequest *)__super::Clone();
+  return __super::CloneInternal(clone);
 }
 
-bool CRtspDescribeRequest::CloneInternal(CRtspRequest *clonedRequest)
+CRtspRequest *CRtspDescribeRequest::CreateRequest(void)
 {
-  return __super::CloneInternal(clonedRequest);
-}
+  HRESULT result = S_OK;
+  CRtspDescribeRequest *request = new CRtspDescribeRequest(&result, false);
+  CHECK_POINTER_HRESULT(result, request, result, E_OUTOFMEMORY);
 
-CRtspRequest *CRtspDescribeRequest::GetNewRequest(void)
-{
-  return new CRtspDescribeRequest(false);
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(request));
+  return request;
 }

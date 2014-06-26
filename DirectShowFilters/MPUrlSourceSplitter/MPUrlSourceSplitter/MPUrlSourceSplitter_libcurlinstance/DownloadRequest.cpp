@@ -73,15 +73,15 @@ CDownloadRequest *CDownloadRequest::CreateDownloadRequest(void)
   return request;
 }
 
-bool CDownloadRequest::CloneInternal(CDownloadRequest *clonedRequest)
+bool CDownloadRequest::CloneInternal(CDownloadRequest *clone)
 {
-  bool result = (clonedRequest != NULL);
+  bool result = (clone != NULL);
 
   if (result)
   {
-    clonedRequest->flags = this->flags;
-    clonedRequest->url = Duplicate(this->url);
-    result = TEST_STRING_WITH_NULL(clonedRequest->url, this->url);
+    clone->flags = this->flags;
+    clone->url = Duplicate(this->url);
+    result = TEST_STRING_WITH_NULL(clone->url, this->url);
   }
 
   return result;

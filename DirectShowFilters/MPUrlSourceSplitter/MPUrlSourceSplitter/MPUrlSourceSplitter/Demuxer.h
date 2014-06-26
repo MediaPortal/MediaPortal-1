@@ -32,6 +32,7 @@
 #include "CacheFile.h"
 #include "PacketInputFormat.h"
 #include "Flags.h"
+#include "StreamInformation.h"
 
 #define DEMUXER_FLAG_NONE                                             FLAGS_NONE
 
@@ -99,18 +100,20 @@ public:
 
   // gets next available media packet
   // @param mediaPacket : reference to variable to store to reference to media packet
+  // @param flags : the flags
   // @return : 
   // S_OK     = media packet returned
   // S_FALSE  = no media packet available
   // negative values are error
-  HRESULT GetNextMediaPacket(CMediaPacket **mediaPacket);
+  HRESULT GetNextMediaPacket(CMediaPacket **mediaPacket, uint64_t flags);
 
   // reads data from stream from specified position into buffer
   // @param position : the position in stream to start reading data
   // @param buffer : the buffer to store data
   // @param length : the size of requested data
+  // @param flags : the flags
   // @return : the length of read data, negative values are errors
-  int StreamRead(int64_t position, uint8_t *buffer, int length);
+  int StreamReadPosition(int64_t position, uint8_t *buffer, int length, uint64_t flags);
   
   /* get methods */
 
@@ -160,6 +163,11 @@ public:
   // sets real demuxing needed flag
   // @param realDemuxingNeeded : true if real demuxing is needed, false otherwise
   void SetRealDemuxingNeeded(bool realDemuxingNeeded);
+
+  // sets stream information to demuxer
+  // @param streamInformation : the stream information reported by parser or protocol
+  // @return : S_OK if successful, error code otherwise
+  HRESULT SetStreamInformation(CStreamInformation *streamInformation);
 
   /* other methods */
 
@@ -313,7 +321,7 @@ protected:
 
   static int DemuxerRead(void *opaque, uint8_t *buf, int buf_size);
   static int64_t DemuxerSeek(void *opaque, int64_t offset, int whence);
-  HRESULT DemuxerReadPosition(int64_t position, uint8_t *buffer, int length, unsigned int flags);
+  HRESULT DemuxerReadPosition(int64_t position, uint8_t *buffer, int length, uint64_t flags);
 
   /* demuxing worker */
 

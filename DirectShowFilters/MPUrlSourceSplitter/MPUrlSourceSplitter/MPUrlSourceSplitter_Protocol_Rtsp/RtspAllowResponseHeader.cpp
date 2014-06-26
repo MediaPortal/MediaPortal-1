@@ -22,8 +22,8 @@
 
 #include "RtspAllowResponseHeader.h"
 
-CRtspAllowResponseHeader::CRtspAllowResponseHeader(void)
-  : CRtspResponseHeader()
+CRtspAllowResponseHeader::CRtspAllowResponseHeader(HRESULT *result)
+  : CRtspResponseHeader(result)
 {
 }
 
@@ -36,29 +36,6 @@ CRtspAllowResponseHeader::~CRtspAllowResponseHeader(void)
 /* set methods */
 
 /* other methods */
-
-CRtspAllowResponseHeader *CRtspAllowResponseHeader::Clone(void)
-{
-  return (CRtspAllowResponseHeader *)__super::Clone();
-}
-
-bool CRtspAllowResponseHeader::CloneInternal(CHttpHeader *clonedHeader)
-{
-  bool result = __super::CloneInternal(clonedHeader);
-  CRtspAllowResponseHeader *header = dynamic_cast<CRtspAllowResponseHeader *>(clonedHeader);
-  result &= (header != NULL);
-
-  if (result)
-  {
-  }
-
-  return result;
-}
-
-CHttpHeader *CRtspAllowResponseHeader::GetNewHeader(void)
-{
-  return new CRtspAllowResponseHeader();
-}
 
 bool CRtspAllowResponseHeader::Parse(const wchar_t *header, unsigned int length)
 {
@@ -191,3 +168,29 @@ bool CRtspAllowResponseHeader::IsDefinedTeardownMethod(void)
 {
   return this->IsSetFlags(RTSP_ALLOW_RESPONSE_HEADER_FLAG_METHOD_TEARDOWN);
 }
+
+/* protected methods */
+
+bool CRtspAllowResponseHeader::CloneInternal(CHttpHeader *clone)
+{
+  bool result = __super::CloneInternal(clone);
+  CRtspAllowResponseHeader *header = dynamic_cast<CRtspAllowResponseHeader *>(clone);
+  result &= (header != NULL);
+
+  if (result)
+  {
+  }
+
+  return result;
+}
+
+CHttpHeader *CRtspAllowResponseHeader::CreateHeader(void)
+{
+  HRESULT result = S_OK;
+  CRtspAllowResponseHeader *header = new CRtspAllowResponseHeader(&result);
+  CHECK_POINTER_HRESULT(result, header, result, E_OUTOFMEMORY);
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(header));
+  return header;
+}
+

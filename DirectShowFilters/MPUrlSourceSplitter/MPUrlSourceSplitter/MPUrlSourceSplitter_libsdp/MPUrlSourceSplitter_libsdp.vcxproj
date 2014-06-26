@@ -51,7 +51,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libcollections;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_liblogger;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -66,7 +66,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libcollections;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_liblogger;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -78,11 +78,15 @@
   <ItemGroup>
     <ClInclude Include="Attribute.h" />
     <ClInclude Include="AttributeCollection.h" />
-    <ClInclude Include="Bandwidth.h" />
+    <ClInclude Include="Bandwidth.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="BinaryAttribute.h" />
     <ClInclude Include="ConnectionData.h" />
     <ClInclude Include="ControlAttribute.h" />
-    <ClInclude Include="EmailAddress.h" />
+    <ClInclude Include="EmailAddress.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="KnownPayloadTypeCollection.h" />
     <ClInclude Include="MediaDescription.h" />
     <ClInclude Include="MediaDescriptionCollection.h" />
@@ -92,7 +96,9 @@
     <ClInclude Include="Origin.h" />
     <ClInclude Include="PayloadType.h" />
     <ClInclude Include="PayloadTypeCollection.h" />
-    <ClInclude Include="PhoneNumber.h" />
+    <ClInclude Include="PhoneNumber.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="ProtocolVersion.h" />
     <ClInclude Include="RangeAttribute.h" />
     <ClInclude Include="RepeatInterval.h" />
@@ -104,20 +110,30 @@
     <ClInclude Include="SessionName.h" />
     <ClInclude Include="SessionTag.h" />
     <ClInclude Include="SessionTagFactory.h" />
-    <ClInclude Include="SessionTime.h" />
-    <ClInclude Include="SessionTimeCollection.h" />
+    <ClInclude Include="SessionTime.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="SessionTimeCollection.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="SessionUri.h" />
+    <ClInclude Include="SessionUri.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Attribute.cpp" />
     <ClCompile Include="AttributeCollection.cpp" />
-    <ClCompile Include="Bandwidth.cpp" />
+    <ClCompile Include="Bandwidth.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="BinaryAttribute.cpp" />
     <ClCompile Include="ConnectionData.cpp" />
     <ClCompile Include="ControlAttribute.cpp" />
-    <ClCompile Include="EmailAddress.cpp" />
+    <ClCompile Include="EmailAddress.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="KnownPayloadTypeCollection.cpp" />
     <ClCompile Include="MediaDescription.cpp" />
     <ClCompile Include="MediaDescriptionCollection.cpp" />
@@ -127,7 +143,9 @@
     <ClCompile Include="Origin.cpp" />
     <ClCompile Include="PayloadType.cpp" />
     <ClCompile Include="PayloadTypeCollection.cpp" />
-    <ClCompile Include="PhoneNumber.cpp" />
+    <ClCompile Include="PhoneNumber.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="ProtocolVersion.cpp" />
     <ClCompile Include="RangeAttribute.cpp" />
     <ClCompile Include="RepeatInterval.cpp" />
@@ -138,13 +156,19 @@
     <ClCompile Include="SessionName.cpp" />
     <ClCompile Include="SessionTag.cpp" />
     <ClCompile Include="SessionTagFactory.cpp" />
-    <ClCompile Include="SessionTime.cpp" />
-    <ClCompile Include="SessionTimeCollection.cpp" />
+    <ClCompile Include="SessionTime.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="SessionTimeCollection.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="SessionUri.cpp" />
+    <ClCompile Include="SessionUri.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

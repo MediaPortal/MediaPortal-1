@@ -22,8 +22,8 @@
 
 #include "RtspLocationResponseHeader.h"
 
-CRtspLocationResponseHeader::CRtspLocationResponseHeader(void)
-  : CRtspResponseHeader()
+CRtspLocationResponseHeader::CRtspLocationResponseHeader(HRESULT *result)
+  : CRtspResponseHeader(result)
 {
   this->uri = NULL;
 }
@@ -43,30 +43,6 @@ const wchar_t *CRtspLocationResponseHeader::GetUri(void)
 /* set methods */
 
 /* other methods */
-
-CRtspLocationResponseHeader *CRtspLocationResponseHeader::Clone(void)
-{
-  return (CRtspLocationResponseHeader *)__super::Clone();
-}
-
-bool CRtspLocationResponseHeader::CloneInternal(CHttpHeader *clonedHeader)
-{
-  bool result = __super::CloneInternal(clonedHeader);
-  CRtspLocationResponseHeader *header = dynamic_cast<CRtspLocationResponseHeader *>(clonedHeader);
-  result &= (header != NULL);
-
-  if (result)
-  {
-    SET_STRING_RESULT_WITH_NULL(header->uri, this->uri, result);
-  }
-
-  return result;
-}
-
-CHttpHeader *CRtspLocationResponseHeader::GetNewHeader(void)
-{
-  return new CRtspLocationResponseHeader();
-}
 
 bool CRtspLocationResponseHeader::Parse(const wchar_t *header, unsigned int length)
 {
@@ -90,4 +66,30 @@ bool CRtspLocationResponseHeader::Parse(const wchar_t *header, unsigned int leng
   }
 
   return result;
+}
+
+/*protected methods */
+
+bool CRtspLocationResponseHeader::CloneInternal(CHttpHeader *clone)
+{
+  bool result = __super::CloneInternal(clone);
+  CRtspLocationResponseHeader *header = dynamic_cast<CRtspLocationResponseHeader *>(clone);
+  result &= (header != NULL);
+
+  if (result)
+  {
+    SET_STRING_RESULT_WITH_NULL(header->uri, this->uri, result);
+  }
+
+  return result;
+}
+
+CHttpHeader *CRtspLocationResponseHeader::CreateHeader(void)
+{
+  HRESULT result = S_OK;
+  CRtspLocationResponseHeader *header = new CRtspLocationResponseHeader(&result);
+  CHECK_POINTER_HRESULT(result, header, result, E_OUTOFMEMORY);
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(header));
+  return header;
 }

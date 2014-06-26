@@ -22,11 +22,17 @@
 
 #include "SessionTime.h"
 
-CSessionTime::CSessionTime(void)
+CSessionTime::CSessionTime(HRESULT *result)
 {
   this->startTime = 0;
   this->stopTime = 0;
-  this->repeatIntervals = new CRepeatIntervalCollection();
+  this->repeatIntervals = NULL;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->repeatIntervals = new CRepeatIntervalCollection(result);
+    CHECK_POINTER_HRESULT(*result, this->repeatIntervals, *result, E_OUTOFMEMORY);
+  }
 }
 
 CSessionTime::~CSessionTime(void)

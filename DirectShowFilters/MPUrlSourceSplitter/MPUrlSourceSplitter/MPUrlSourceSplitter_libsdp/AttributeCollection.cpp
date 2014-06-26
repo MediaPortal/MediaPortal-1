@@ -22,8 +22,8 @@
 
 #include "AttributeCollection.h"
 
-CAttributeCollection::CAttributeCollection(void)
-  : CKeyedCollection()
+CAttributeCollection::CAttributeCollection(HRESULT *result)
+  : CKeyedCollection(result)
 {
 }
 

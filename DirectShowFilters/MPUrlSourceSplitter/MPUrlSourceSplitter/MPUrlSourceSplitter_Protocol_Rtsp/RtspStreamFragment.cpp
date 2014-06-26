@@ -22,17 +22,19 @@
 
 #include "RtspStreamFragment.h"
 
-CRtspStreamFragment::CRtspStreamFragment(void)
-  : CCacheFileItem()
+CRtspStreamFragment::CRtspStreamFragment(HRESULT *result)
+  : CCacheFileItem(result)
 {
   this->fragmentRtpTimestamp = 0;
+  this->fragmentStartPosition = RTSP_STREAM_FRAGMENT_START_POSITION_NOT_SET;
 }
 
-CRtspStreamFragment::CRtspStreamFragment(int64_t fragmentRtpTimestamp, bool setRtpTimestampFlag)
-  : CCacheFileItem()
+CRtspStreamFragment::CRtspStreamFragment(HRESULT *result, int64_t fragmentRtpTimestamp, bool setRtpTimestampFlag)
+  : CCacheFileItem(result)
 {
   this->flags = (setRtpTimestampFlag) ? RTSP_STREAM_FRAGMENT_FLAG_SET_RTP_TIMESTAMP : RTSP_STREAM_FRAGMENT_FLAG_NONE;
   this->fragmentRtpTimestamp = fragmentRtpTimestamp;
+  this->fragmentStartPosition = RTSP_STREAM_FRAGMENT_START_POSITION_NOT_SET;
 }
 
 CRtspStreamFragment::~CRtspStreamFragment(void)
@@ -44,6 +46,11 @@ CRtspStreamFragment::~CRtspStreamFragment(void)
 int64_t CRtspStreamFragment::GetFragmentRtpTimestamp(void)
 {
   return this->fragmentRtpTimestamp;
+}
+
+int64_t CRtspStreamFragment::GetFragmentStartPosition(void)
+{
+  return this->fragmentStartPosition;
 }
 
 /* set methods */
@@ -75,6 +82,11 @@ void CRtspStreamFragment::SetFragmentRtpTimestamp(int64_t fragmentRtpTimestamp, 
   this->flags |= setRtpTimestampFlag ? RTSP_STREAM_FRAGMENT_FLAG_SET_RTP_TIMESTAMP : RTSP_STREAM_FRAGMENT_FLAG_NONE;
 }
 
+void CRtspStreamFragment::SetFragmentStartPosition(int64_t fragmentStartPosition)
+{
+  this->fragmentStartPosition = fragmentStartPosition;
+}
+
 /* other methods */
 
 bool CRtspStreamFragment::IsDownloaded(void)
@@ -87,11 +99,21 @@ bool CRtspStreamFragment::IsSetFragmentRtpTimestamp(void)
   return this->IsSetFlags(RTSP_STREAM_FRAGMENT_FLAG_SET_RTP_TIMESTAMP);
 }
 
+bool CRtspStreamFragment::IsSetFragmentStartPosition(void)
+{
+  return (this->fragmentStartPosition != RTSP_STREAM_FRAGMENT_START_POSITION_NOT_SET);
+}
+
 /* protected methods */
 
 CCacheFileItem *CRtspStreamFragment::CreateItem(void)
 {
-  return new CRtspStreamFragment();
+  HRESULT result = S_OK;
+  CRtspStreamFragment *fragment = new CRtspStreamFragment(&result);
+  CHECK_POINTER_HRESULT(result, fragment, result, E_OUTOFMEMORY);
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(fragment));
+  return fragment;
 }
 
 bool CRtspStreamFragment::InternalClone(CCacheFileItem *item)
@@ -106,6 +128,7 @@ bool CRtspStreamFragment::InternalClone(CCacheFileItem *item)
     if (result)
     {
       fragment->fragmentRtpTimestamp = this->fragmentRtpTimestamp;
+      fragment->fragmentStartPosition = this->fragmentStartPosition;
     }
   }
 

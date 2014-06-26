@@ -120,10 +120,10 @@ public:
   // @param streamPosition : the actual stream position (related to stream time) to report to protocol
   virtual void ReportStreamTime(uint64_t streamTime, uint64_t streamPosition);
 
-  // gets stream count
+  // gets information about streams
   // receiving data is disabled until protocol reports valid stream count (at least one)
-  // @return : stream count or STREAM_COUNT_UNKNOWN if not known
-  virtual unsigned int GetStreamCount(void);
+  // @return : S_OK if successful, E_STREAM_COUNT_UNKNOWN if stream count is unknown, error code otherwise
+  virtual HRESULT GetStreamInformation(CStreamInformationCollection *streams);
 
   // IProtocol interface
 

@@ -29,6 +29,7 @@
 #include "BaseRtpPacketFactory.h"
 #include "LockMutex.h"
 #include "BufferHelper.h"
+#include "ErrorCodes.h"
 
 #include "UdpServer.h"
 #include "TcpServer.h"
@@ -65,8 +66,8 @@
 
 #define METHOD_PROCESS_RECEIVED_BASE_RTP_PACKETS_NAME                 L"ProcessReceivedBaseRtpPackets()"
 
-CRtspCurlInstance::CRtspCurlInstance(CLogger *logger, HANDLE mutex, const wchar_t *protocolName, const wchar_t *instanceName)
-  : CCurlInstance(logger, mutex, protocolName, instanceName)
+CRtspCurlInstance::CRtspCurlInstance(HRESULT *result, CLogger *logger, HANDLE mutex, const wchar_t *protocolName, const wchar_t *instanceName)
+  : CCurlInstance(result, logger, mutex, protocolName, instanceName)
 {
   this->rtspDownloadRequest = dynamic_cast<CRtspDownloadRequest *>(this->downloadRequest);
   this->rtspDownloadResponse = dynamic_cast<CRtspDownloadResponse *>(this->downloadResponse);
@@ -164,219 +165,212 @@ bool CRtspCurlInstance::IsIgnoreRtpPayloadTypeFlag(void)
   return this->IsSetFlags(RTSP_CURL_INSTANCE_FLAG_IGNORE_RTP_PAYLOAD_TYPE);
 }
 
-bool CRtspCurlInstance::IsSetFlags(unsigned int flags)
+HRESULT CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
 {
-  return ((this->flags & flags) == flags);
-}
-
-bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
-{
-  unsigned int endTicks = (this->finishTime == FINISH_TIME_NOT_SPECIFIED) ? (GetTickCount() + this->GetReceiveDataTimeout()) : this->finishTime;
-
-  bool result = __super::Initialize(downloadRequest);
+  HRESULT result = __super::Initialize(downloadRequest);
   this->state = CURL_STATE_CREATED;
+  unsigned int endTicks = (this->finishTime == FINISH_TIME_NOT_SPECIFIED) ? (GetTickCount() + this->GetReceiveDataTimeout()) : this->finishTime;
 
   this->lastSequenceNumber = 1;
   this->flags &= ~RTSP_CURL_INSTANCE_FLAG_REQUEST_COMMAND_FINISHED;
   this->rtspDownloadRequest = dynamic_cast<CRtspDownloadRequest  *>(this->downloadRequest);
   this->rtspDownloadResponse = dynamic_cast<CRtspDownloadResponse *>(this->downloadResponse);
-  result &= (this->rtspDownloadRequest != NULL) && (this->rtspDownloadResponse != NULL);
-  result &= (this->clientPortMin <= RTSP_CLIENT_PORT_MAX_DEFAULT);
-  result &= (this->clientPortMax <= RTSP_CLIENT_PORT_MAX_DEFAULT);
-  result &= (this->clientPortMin <= this->clientPortMax);
 
-  if (result)
-  {
-    result &= (this->rtspDownloadResponse->GetRtspTracks() != NULL);
-  }
+  CHECK_POINTER_HRESULT(result, this->rtspDownloadRequest, result, E_NOT_VALID_STATE);
+  CHECK_POINTER_HRESULT(result, this->rtspDownloadResponse, result, E_NOT_VALID_STATE);
+  CHECK_POINTER_HRESULT(result, this->rtspDownloadResponse->GetRtspTracks(), result, E_NOT_VALID_STATE);
 
-  if (result)
-  {
-    // check tranport prefereces
-    // they must have different values
+  CHECK_CONDITION_HRESULT(result, this->clientPortMin <= RTSP_CLIENT_PORT_MAX_DEFAULT, result, E_NOT_VALID_STATE);
+  CHECK_CONDITION_HRESULT(result, this->clientPortMax <= RTSP_CLIENT_PORT_MAX_DEFAULT, result, E_NOT_VALID_STATE);
+  CHECK_CONDITION_HRESULT(result, this->clientPortMin <= this->clientPortMax, result, E_NOT_VALID_STATE);
 
-    result &= (this->sameConnectionTcpPreference != this->multicastPreference);
-    result &= (this->sameConnectionTcpPreference != this->udpPreference);
-    result &= (this->multicastPreference != this->udpPreference);
-  }
+  // check tranport prefereces
+  // they must have different values
+  CHECK_CONDITION_HRESULT(result, this->sameConnectionTcpPreference != this->multicastPreference, result, E_NOT_VALID_STATE);
+  CHECK_CONDITION_HRESULT(result, this->sameConnectionTcpPreference != this->udpPreference, result, E_NOT_VALID_STATE);
+  CHECK_CONDITION_HRESULT(result, this->multicastPreference != this->udpPreference, result, E_NOT_VALID_STATE);
 
-  if (result)
+  if (SUCCEEDED(result))
   {
     this->rtspDownloadResponse->GetRtspTracks()->Clear();
 
     // create receiving data thread
     // this add current CURL handle to multi handle
     // we avoid problem closing opened socket and creating new one
-    result &= this->StartReceivingData();
+    result = this->StartReceivingData();
   }
 
-  if (result)
+  if (SUCCEEDED(result))
   {
-    CURLcode errorCode = CURLE_OK;
+    // we have own RTSP implementation, using CURL only to connect, send and receive data
 
-    if (errorCode == CURLE_OK)
+    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), HRESULT_FROM_CURL_CODE(curl_easy_setopt(this->curl, CURLOPT_CONNECT_ONLY, 1L)), result);
+    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), HRESULT_FROM_CURL_CODE(curl_easy_perform(this->curl)), result);
+
+    // if no error, we successfully connected to remote server
+
+    if (SUCCEEDED(result))
     {
-      // we have own RTSP implementation, using CURL only to connect, send and receive data
+      CRtspOptionsRequest *options = new CRtspOptionsRequest(&result);
+      CHECK_POINTER_HRESULT(result, options, result, E_OUTOFMEMORY);
 
-      CHECK_CONDITION_EXECUTE_RESULT(errorCode == CURLE_OK, curl_easy_setopt(this->curl, CURLOPT_CONNECT_ONLY, 1L), errorCode);
-      CHECK_CONDITION_EXECUTE_RESULT(errorCode == CURLE_OK, curl_easy_perform(this->curl), errorCode);
-
-      // if no error, we successfully connected to remote server
-
-      if (errorCode == CURLE_OK)
+      CHECK_CONDITION_HRESULT(result, options->SetUri(this->rtspDownloadRequest->GetUrl()), result, E_OUTOFMEMORY);
+      
+      if (SUCCEEDED(result))
       {
-        CRtspOptionsRequest *options = new CRtspOptionsRequest();
-        CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = (options != NULL) ? errorCode : CURLE_OUT_OF_MEMORY);
-        CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = (options->SetUri(this->rtspDownloadRequest->GetUrl())) ? errorCode : CURLE_OUT_OF_MEMORY);
-        CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, options->SetTimeout(endTicks - GetTickCount()));
-        CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, options->SetSequenceNumber(this->lastSequenceNumber++));
+        options->SetTimeout(endTicks - GetTickCount());
+        options->SetSequenceNumber(this->lastSequenceNumber++);
+        result = this->SendAndReceive(options, L"OPTIONS", METHOD_INITIALIZE_NAME);
+      }
 
-        CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = this->SendAndReceive(options, errorCode, L"OPTIONS", METHOD_INITIALIZE_NAME));
+      CRtspResponse *response = NULL;
+      if (SUCCEEDED(result))
+      {
+        // check OPTIONS required methods
+        // we need DESCRIBE, SETUP, PLAY and TEARDOWN methods
 
-        CRtspResponse *response = NULL;
-        if (errorCode == CURLE_OK)
         {
-          // check OPTIONS required methods
-          // we need DESCRIBE, SETUP, PLAY and TEARDOWN methods
-          
-          {
-            CLockMutex lock(this->mutex, INFINITE);
+          CLockMutex lock(this->mutex, INFINITE);
 
-            response = this->rtspDownloadResponse->GetRtspResponse()->Clone();
-            CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = (response != NULL) ? errorCode : CURLE_OUT_OF_MEMORY);
-          }
-
-          if (errorCode == CURLE_OK)
-          {
-            CRtspPublicResponseHeader *publicHeader = (CRtspPublicResponseHeader *)response->GetResponseHeaders()->GetRtspHeader(RTSP_PUBLIC_RESPONSE_HEADER_TYPE);
-            if (publicHeader == NULL)
-            {
-              this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, this->protocolName, METHOD_INITIALIZE_NAME, L"no PUBLIC RTSP OPTIONS response header");
-              errorCode = CURLE_FAILED_INIT;
-            }
-
-            if (errorCode == CURLE_OK)
-            {
-              if (!publicHeader->IsSetFlags(RTSP_PUBLIC_RESPONSE_HEADER_FLAG_METHOD_DESCRIBE | RTSP_PUBLIC_RESPONSE_HEADER_FLAG_METHOD_SETUP | RTSP_PUBLIC_RESPONSE_HEADER_FLAG_METHOD_PLAY | RTSP_PUBLIC_RESPONSE_HEADER_FLAG_METHOD_TEARDOWN))
-              {
-                this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, this->protocolName, METHOD_INITIALIZE_NAME, L"not all required methods (DESCRIBE, SETUP, PLAY and TEARDOWN) defined in PUBLIC RTSP OPTIONS response header");
-                errorCode = CURLE_FAILED_INIT;
-              }
-
-              // test for GET_PARAMETER method, we can use it to maintain connection
-              this->flags |= publicHeader->IsSetFlags(RTSP_PUBLIC_RESPONSE_HEADER_FLAG_METHOD_GET_PARAMETER) ? RTSP_CURL_INSTANCE_FLAG_METHOD_GET_PARAMETER_SUPPORTED : RTSP_CURL_INSTANCE_FLAG_NONE;
-            }
-          }
+          response = this->rtspDownloadResponse->GetRtspResponse()->Clone();
+          CHECK_POINTER_HRESULT(result, response, result, E_OUTOFMEMORY);
         }
 
-        FREE_MEM_CLASS(response);
-        FREE_MEM_CLASS(options);
-      }
-      CHECK_CONDITION_EXECUTE(errorCode != CURLE_OK, this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_INITIALIZE_NAME, L"error while sending RTSP OPTIONS", errorCode));
-    }
-    CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, this->lastCommand = RTSP_CURL_INSTANCE_COMMAND_OPTIONS);
+        if (SUCCEEDED(result))
+        {
+          CRtspPublicResponseHeader *publicHeader = (CRtspPublicResponseHeader *)response->GetResponseHeaders()->GetRtspHeader(RTSP_PUBLIC_RESPONSE_HEADER_TYPE);
+          if (publicHeader == NULL)
+          {
+            this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, this->protocolName, METHOD_INITIALIZE_NAME, L"no PUBLIC RTSP OPTIONS response header");
+            result = E_RTSP_NO_PUBLIC_OPTIONS_RESPONSE_HEADER;
+          }
 
-    if (errorCode == CURLE_OK)
+          if (SUCCEEDED(result))
+          {
+            if (!publicHeader->IsSetFlags(RTSP_PUBLIC_RESPONSE_HEADER_FLAG_METHOD_DESCRIBE | RTSP_PUBLIC_RESPONSE_HEADER_FLAG_METHOD_SETUP | RTSP_PUBLIC_RESPONSE_HEADER_FLAG_METHOD_PLAY | RTSP_PUBLIC_RESPONSE_HEADER_FLAG_METHOD_TEARDOWN))
+            {
+              this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, this->protocolName, METHOD_INITIALIZE_NAME, L"not all required methods (DESCRIBE, SETUP, PLAY and TEARDOWN) defined in PUBLIC RTSP OPTIONS response header");
+              result = E_RTSP_NOT_ALL_REQUIRED_METHODS;
+            }
+
+            // test for GET_PARAMETER method, we can use it to maintain connection
+            this->flags |= publicHeader->IsSetFlags(RTSP_PUBLIC_RESPONSE_HEADER_FLAG_METHOD_GET_PARAMETER) ? RTSP_CURL_INSTANCE_FLAG_METHOD_GET_PARAMETER_SUPPORTED : RTSP_CURL_INSTANCE_FLAG_NONE;
+          }
+        }
+      }
+
+      FREE_MEM_CLASS(response);
+      FREE_MEM_CLASS(options);
+
+      CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while sending RTSP OPTIONS: 0x%08X", this->protocolName, METHOD_INITIALIZE_NAME, result));
+    }
+    CHECK_CONDITION_EXECUTE(SUCCEEDED(result), this->lastCommand = RTSP_CURL_INSTANCE_COMMAND_OPTIONS);
+
+    if (SUCCEEDED(result))
     {
-      if (errorCode == CURLE_OK)
+      CRtspDescribeRequest *describe = new CRtspDescribeRequest(&result);
+      CHECK_POINTER_HRESULT(result, describe, result, E_OUTOFMEMORY);
+
+      CHECK_CONDITION_HRESULT(result, describe->SetUri(this->rtspDownloadRequest->GetUrl()), result, E_OUTOFMEMORY);
+
+      if (SUCCEEDED(result))
       {
-        CRtspDescribeRequest *describe = new CRtspDescribeRequest();
-        CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = (describe != NULL) ? errorCode : CURLE_OUT_OF_MEMORY);
-        CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = (describe->SetUri(this->rtspDownloadRequest->GetUrl())) ? errorCode : CURLE_OUT_OF_MEMORY);
-        CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, describe->SetTimeout(endTicks - GetTickCount()));
-        CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, describe->SetSequenceNumber(this->lastSequenceNumber++));
+        describe->SetTimeout(endTicks - GetTickCount());
+        describe->SetSequenceNumber(this->lastSequenceNumber++);
 
-        CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = this->SendAndReceive(describe, errorCode, L"DESCRIBE", METHOD_INITIALIZE_NAME));
-
-        CRtspResponse *response = NULL;
-        if (errorCode == CURLE_OK)
-        {
-          // check content length
-          {
-            CLockMutex lock(this->mutex, INFINITE);
-
-            response = this->rtspDownloadResponse->GetRtspResponse()->Clone();
-            CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = (response != NULL) ? errorCode : CURLE_OUT_OF_MEMORY);
-          }
-
-          if (errorCode == CURLE_OK)
-          {
-            if (response->GetContentLength() == 0)
-            {
-              this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, this->protocolName, METHOD_INITIALIZE_NAME, L"RTSP DESCRIBE response content length is zero");
-              errorCode = CURLE_FAILED_INIT;
-            }
-
-            // check content type
-            CRtspResponseHeader *contentTypeHeader = response->GetResponseHeaders()->GetRtspHeader(RTSP_CONTENT_TYPE_RESPONSE_HEADER_TYPE);
-            if (contentTypeHeader == NULL)
-            {
-              this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, this->protocolName, METHOD_INITIALIZE_NAME, L"RTSP DESCRIBE response content type not found");
-              errorCode = CURLE_FAILED_INIT;
-            }
-            else
-            {
-              if (wcscmp(RTSP_DESCRIBE_CONTENT_TYPE, contentTypeHeader->GetValue()) != 0)
-              {
-                this->logger->Log(LOGGER_ERROR, L"%s: %s: content type header '%s' not allowed, required: '%s'", this->protocolName, METHOD_INITIALIZE_NAME, contentTypeHeader->GetValue(), RTSP_DESCRIBE_CONTENT_TYPE);
-                errorCode = CURLE_FAILED_INIT;
-              }
-            }
-          }
-        }
-
-        if (errorCode == CURLE_OK)
-        {
-          // check DESCRIBE response, it have to be valid SDP
-
-          unsigned int bufferSize = response->GetContentLength() + 2; // one place for null character, one place for new line character
-          ALLOC_MEM_DEFINE_SET(buffer, char, bufferSize, 0);
-          errorCode = ((buffer != NULL) && (bufferSize > 2)) ? errorCode : CURLE_OUT_OF_MEMORY;
-
-          if (errorCode == CURLE_OK)
-          {
-            memcpy(buffer, response->GetContent(), bufferSize - 2);
-
-            // check if we have new line character as last character in response
-            // if not, then add new line character
-
-            if ((buffer[bufferSize - 3] != '\r') && (buffer[bufferSize - 3] != '\n'))
-            {
-              buffer[bufferSize - 2] = '\n';
-            }
-
-            // try to log response
-            wchar_t *responseW = ConvertToUnicodeA(buffer);
-            errorCode = (responseW != NULL) ? errorCode : CURLE_OUT_OF_MEMORY;
-
-            if (errorCode == CURLE_OK)
-            {
-              this->logger->Log(LOGGER_VERBOSE, L"%s: %s: RTSP DESCRIBE response: %s", this->protocolName, METHOD_INITIALIZE_NAME, responseW);
-
-              errorCode = this->rtspDownloadResponse->SetRawSessionDescription(responseW) ? errorCode : CURLE_FAILED_INIT;
-              errorCode = this->rtspDownloadResponse->ParseRawSessionDescription() ? errorCode : CURLE_FAILED_INIT;
-            }
-            FREE_MEM(responseW);
-          }
-          FREE_MEM(buffer);
-        }
-
-        if (errorCode == CURLE_OK)
-        {
-          // check content base or content location headers
-          CRtspContentBaseResponseHeader *contentBase = (CRtspContentBaseResponseHeader *)response->GetResponseHeaders()->GetRtspHeader(RTSP_CONTENT_BASE_RESPONSE_HEADER_TYPE);
-          CRtspContentLocationResponseHeader *contentLocation = (CRtspContentLocationResponseHeader *)response->GetResponseHeaders()->GetRtspHeader(RTSP_CONTENT_LOCATION_RESPONSE_HEADER_TYPE);
-
-          CHECK_CONDITION_NOT_NULL_EXECUTE(contentBase, this->rtspDownloadResponse->SetContentBaseUrl(contentBase->GetUri()));
-          CHECK_CONDITION_NOT_NULL_EXECUTE(contentLocation, this->rtspDownloadResponse->SetContentLocationUrl(contentLocation->GetUri()));
-        }
-
-        FREE_MEM_CLASS(response);
-        FREE_MEM_CLASS(describe);
+        result = this->SendAndReceive(describe, L"DESCRIBE", METHOD_INITIALIZE_NAME);
       }
-      CHECK_CONDITION_EXECUTE(errorCode != CURLE_OK, this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_INITIALIZE_NAME, L"error while sending RTSP DESCRIBE", errorCode));
+
+      CRtspResponse *response = NULL;
+      if (SUCCEEDED(result))
+      {
+        // check content length
+        {
+          CLockMutex lock(this->mutex, INFINITE);
+
+          response = this->rtspDownloadResponse->GetRtspResponse()->Clone();
+          CHECK_POINTER_HRESULT(result, response, result, E_OUTOFMEMORY);
+        }
+
+        if (SUCCEEDED(result))
+        {
+          if (response->GetContentLength() == 0)
+          {
+            this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, this->protocolName, METHOD_INITIALIZE_NAME, L"RTSP DESCRIBE response content length is zero");
+            result = E_RTSP_DESCRIBE_CONTENT_LENGTH_ZERO;
+          }
+
+          // check content type
+          CRtspResponseHeader *contentTypeHeader = response->GetResponseHeaders()->GetRtspHeader(RTSP_CONTENT_TYPE_RESPONSE_HEADER_TYPE);
+          if (contentTypeHeader == NULL)
+          {
+            this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, this->protocolName, METHOD_INITIALIZE_NAME, L"RTSP DESCRIBE response content type not found");
+            result = E_RTSP_DESCRIBE_CONTENT_TYPE_NOT_FOUND;
+          }
+          else
+          {
+            if (wcscmp(RTSP_DESCRIBE_CONTENT_TYPE, contentTypeHeader->GetValue()) != 0)
+            {
+              this->logger->Log(LOGGER_ERROR, L"%s: %s: content type header '%s' not allowed, required: '%s'", this->protocolName, METHOD_INITIALIZE_NAME, contentTypeHeader->GetValue(), RTSP_DESCRIBE_CONTENT_TYPE);
+              result = E_RTSP_CONTENT_HEADER_TYPE_NOT_ALLOWED;
+            }
+          }
+        }
+      }
+
+      if (SUCCEEDED(result))
+      {
+        // check DESCRIBE response, it have to be valid SDP
+
+        unsigned int bufferSize = response->GetContentLength() + 2; // one place for null character, one place for new line character
+        ALLOC_MEM_DEFINE_SET(buffer, char, bufferSize, 0);
+        CHECK_CONDITION_HRESULT(result, (buffer != NULL) && (bufferSize > 2), result, E_OUTOFMEMORY);
+
+        if (SUCCEEDED(result))
+        {
+          memcpy(buffer, response->GetContent(), bufferSize - 2);
+
+          // check if we have new line character as last character in response
+          // if not, then add new line character
+
+          if ((buffer[bufferSize - 3] != '\r') && (buffer[bufferSize - 3] != '\n'))
+          {
+            buffer[bufferSize - 2] = '\n';
+          }
+
+          // try to log response
+          wchar_t *responseW = ConvertToUnicodeA(buffer);
+          CHECK_POINTER_HRESULT(result, responseW, result, E_CONVERT_STRING_ERROR);
+
+          if (SUCCEEDED(result))
+          {
+            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: RTSP DESCRIBE response: %s", this->protocolName, METHOD_INITIALIZE_NAME, responseW);
+
+            CHECK_CONDITION_HRESULT(result, this->rtspDownloadResponse->SetRawSessionDescription(responseW), result, E_OUTOFMEMORY);
+            CHECK_CONDITION_HRESULT(result, this->rtspDownloadResponse->ParseRawSessionDescription(), result, E_RTSP_SESSION_DESCRIPTION_PARSE_ERROR);
+          }
+
+          FREE_MEM(responseW);
+        }
+        FREE_MEM(buffer);
+      }
+
+      if (SUCCEEDED(result))
+      {
+        // check content base or content location headers
+        CRtspContentBaseResponseHeader *contentBase = (CRtspContentBaseResponseHeader *)response->GetResponseHeaders()->GetRtspHeader(RTSP_CONTENT_BASE_RESPONSE_HEADER_TYPE);
+        CRtspContentLocationResponseHeader *contentLocation = (CRtspContentLocationResponseHeader *)response->GetResponseHeaders()->GetRtspHeader(RTSP_CONTENT_LOCATION_RESPONSE_HEADER_TYPE);
+
+        CHECK_CONDITION_NOT_NULL_EXECUTE(contentBase, this->rtspDownloadResponse->SetContentBaseUrl(contentBase->GetUri()));
+        CHECK_CONDITION_NOT_NULL_EXECUTE(contentLocation, this->rtspDownloadResponse->SetContentLocationUrl(contentLocation->GetUri()));
+      }
+
+      FREE_MEM_CLASS(response);
+      FREE_MEM_CLASS(describe);
+
+      CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while sending RTSP DESCRIBE: 0x%08X", this->protocolName, METHOD_INITIALIZE_NAME, result));
     }
-    CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, this->lastCommand = RTSP_CURL_INSTANCE_COMMAND_DESCRIBE);
+    CHECK_CONDITION_EXECUTE(SUCCEEDED(result), this->lastCommand = RTSP_CURL_INSTANCE_COMMAND_DESCRIBE);
 
     // clear buffer
     this->rtspDownloadResponse->GetReceivedData()->ClearBuffer();
@@ -389,12 +383,11 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
     transportPreference = min(transportPreference, this->udpPreference);
 
     bool negotiatedTransport = false;
-    CRtspSupportedPayloadTypeCollection *supportedPayloadTypes = new CRtspSupportedPayloadTypeCollection();
+    CRtspSupportedPayloadTypeCollection *supportedPayloadTypes = new CRtspSupportedPayloadTypeCollection(&result);
+    CHECK_POINTER_HRESULT(result, supportedPayloadTypes, result, E_OUTOFMEMORY);
 
-    while ((!negotiatedTransport) && (errorCode == CURLE_OK) && (endTicks > GetTickCount()))
+    while ((!negotiatedTransport) && SUCCEEDED(result) && (endTicks > GetTickCount()))
     {
-      CURLcode error = CURLE_OK;
-
       if (this->sameConnectionTcpPreference == transportPreference)
       {
         unsigned int interleavedChannel = 0;
@@ -402,9 +395,9 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
         this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, this->protocolName, METHOD_INITIALIZE_NAME, L"trying to negotiate TCP transport on same connection");
 
         // for each media description create and negotiate TCP transport
-        CURLcode error = (this->rtspDownloadResponse->GetSessionDescription()->GetMediaDescriptions()->Count() != 0) ? CURLE_OK : CURLE_FAILED_INIT;
+        HRESULT error = (this->rtspDownloadResponse->GetSessionDescription()->GetMediaDescriptions()->Count() != 0) ? S_OK : E_RTSP_NO_MEDIA_DESCRIPTIONS_IN_SESSION_DESCRIPTION;
 
-        for (unsigned int i = 0; ((error == CURLE_OK) && (i < this->rtspDownloadResponse->GetSessionDescription()->GetMediaDescriptions()->Count())); i++)
+        for (unsigned int i = 0; (SUCCEEDED(error) && (i < this->rtspDownloadResponse->GetSessionDescription()->GetMediaDescriptions()->Count())); i++)
         {
           CMediaDescription *mediaDescription = this->rtspDownloadResponse->GetSessionDescription()->GetMediaDescriptions()->GetItem(i);
           CRtspPayloadType *supportedPayloadType = NULL;
@@ -414,7 +407,7 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
             // there must be only one media format
             CMediaFormat *mediaFormat = mediaDescription->GetMediaFormats()->GetItem(0);
 
-            for (unsigned int j = 0; ((error == CURLE_OK) && (supportedPayloadType == NULL) && (j < supportedPayloadTypes->Count())); j++)
+            for (unsigned int j = 0; (SUCCEEDED(error) && (supportedPayloadType == NULL) && (j < supportedPayloadTypes->Count())); j++)
             {
               CRtspPayloadType *payloadType = supportedPayloadTypes->GetItem(j);
 
@@ -462,7 +455,7 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
               streamUrl = Duplicate(controlUrl);
             }
 
-            error = (streamUrl != NULL) ? error : CURLE_FAILED_INIT;
+            CHECK_POINTER_HRESULT(error, streamUrl, error, E_OUTOFMEMORY);
           }
           else
           {
@@ -481,22 +474,24 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
               streamUrl = FormatAbsoluteUrl(this->GetBaseUrl(), control->GetControlUrl());
             }
 
-            error = (streamUrl != NULL) ? error : CURLE_OUT_OF_MEMORY;
+            CHECK_POINTER_HRESULT(error, streamUrl, error, E_OUTOFMEMORY);
           }
 
-          if (error == CURLE_OK)
+          if (SUCCEEDED(error))
           {
-            CRtspSetupRequest *setup = new CRtspSetupRequest();
-            CHECK_CONDITION_EXECUTE(error == CURLE_OK, error = (setup != NULL) ? error : CURLE_OUT_OF_MEMORY);
-            CHECK_CONDITION_EXECUTE(error == CURLE_OK, error = (setup->GetTransportRequestHeader() != NULL) ? error : CURLE_OUT_OF_MEMORY);
-            CHECK_CONDITION_EXECUTE(error == CURLE_OK, error = (setup->SetUri(streamUrl)) ? error : CURLE_OUT_OF_MEMORY);
-            CHECK_CONDITION_EXECUTE(error == CURLE_OK, setup->SetTimeout(endTicks - GetTickCount()));
-            CHECK_CONDITION_EXECUTE(error == CURLE_OK, setup->SetSequenceNumber(this->lastSequenceNumber++));
-            CHECK_CONDITION_EXECUTE(error == CURLE_OK, error = setup->SetSessionId(this->sessionId) ? error : CURLE_OUT_OF_MEMORY);
+            CRtspSetupRequest *setup = new CRtspSetupRequest(&error);
+            CHECK_POINTER_HRESULT(error, setup, error, E_OUTOFMEMORY);
 
-            if (errorCode == CURLE_OK)
+            CHECK_POINTER_HRESULT(error, setup->GetTransportRequestHeader(), error, E_OUTOFMEMORY);
+            CHECK_CONDITION_HRESULT(error, setup->SetUri(streamUrl), error, E_OUTOFMEMORY);
+            CHECK_CONDITION_HRESULT(error, setup->SetSessionId(this->sessionId), error, E_OUTOFMEMORY);
+
+            if (SUCCEEDED(error))
             {
-              // setup transort header
+              setup->SetTimeout(endTicks - GetTickCount());
+              setup->SetSequenceNumber(this->lastSequenceNumber++);
+
+              // setup transport header
               CRtspTransportRequestHeader *header = setup->GetTransportRequestHeader();
 
               header->SetTransportProtocol(RTSP_TRANSPORT_REQUEST_HEADER_PROTOCOL_RTP);
@@ -505,9 +500,10 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
               header->SetMinInterleavedChannel(interleavedChannel);
               header->SetMaxInterleavedChannel(interleavedChannel + 1);
               header->SetFlags(RTSP_TRANSPORT_REQUEST_HEADER_FLAG_LOWER_TRANSPORT_TCP | RTSP_TRANSPORT_REQUEST_HEADER_FLAG_INTERLEAVED | RTSP_TRANSPORT_REQUEST_HEADER_FLAG_TRANSPORT_PROTOCOL_RTP | RTSP_TRANSPORT_REQUEST_HEADER_FLAG_PROFILE_AVP);
+
+              error = this->SendAndReceive(setup, L"SETUP", METHOD_INITIALIZE_NAME);
             }
 
-            CHECK_CONDITION_EXECUTE(error == CURLE_OK, error = this->SendAndReceive(setup, error, L"SETUP", METHOD_INITIALIZE_NAME));
             // if no error in SETUP request, we must call TEARDOWN to free resources
             {
               CLockMutex lock(this->mutex, INFINITE);
@@ -518,19 +514,19 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
 
             FREE_MEM_CLASS(setup);
 
-            CHECK_CONDITION_EXECUTE(error != CURLE_OK, this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_INITIALIZE_NAME, L"error while sending same connection TCP RTSP SETUP", error));
+            CHECK_CONDITION_EXECUTE(FAILED(error), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while sending same connection TCP RTSP SETUP: 0x%08X", this->protocolName, METHOD_INITIALIZE_NAME, error));
 
             CRtspResponse *response = NULL;
-            if (error == CURLE_OK)
+            if (SUCCEEDED(error))
             {
               {
                 CLockMutex lock(this->mutex, INFINITE);
 
                 response = this->rtspDownloadResponse->GetRtspResponse()->Clone();
-                CHECK_CONDITION_EXECUTE(error == CURLE_OK, error = (response != NULL) ? error : CURLE_OUT_OF_MEMORY);
+                CHECK_POINTER_HRESULT(error, response, error, E_OUTOFMEMORY);
               }
 
-              if (error == CURLE_OK)
+              if (SUCCEEDED(error))
               {
                 CRtspTransportResponseHeader *transport = (CRtspTransportResponseHeader *)response->GetResponseHeaders()->GetRtspHeader(RTSP_TRANSPORT_RESPONSE_HEADER_TYPE);
 
@@ -538,16 +534,16 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
                 {
                   // no transport header in RTSP response
                   this->logger->Log(LOGGER_ERROR, L"%s: %s: no transport header in response", this->protocolName, METHOD_INITIALIZE_NAME);
-                  error = CURLE_FAILED_INIT;
+                  error = E_RTSP_NO_TRANSPORT_HEADER;
                 }
 
-                if ((error == CURLE_OK) && (!transport->IsLowerTransportTCP()))
+                if (SUCCEEDED(error) && (!transport->IsLowerTransportTCP()))
                 {
                   this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, protocolName, METHOD_INITIALIZE_NAME, L"no TCP transport header");
-                  error = CURLE_FAILED_INIT;
+                  error = E_RTSP_NOT_TCP_TRANSPORT_HEADER;
                 }
 
-                if (error == CURLE_OK)
+                if (SUCCEEDED(error))
                 {
                   this->lastCommand = RTSP_CURL_INSTANCE_COMMAND_SETUP_RESPONSE_VALID;
 
@@ -557,7 +553,7 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
                     // only interleaved transport supported
 
                     this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, protocolName, METHOD_INITIALIZE_NAME, L"same connection transport not supported by server");
-                    error = CURLE_FAILED_INIT;
+                    error = E_RTSP_SAME_CONNECTION_TRANSPORT_NOT_SUPPORTED;
                   }
                   else if (transport->IsInterleaved() && (!transport->IsClientPort()) && (!transport->IsServerPort()))
                   {
@@ -567,27 +563,27 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
                   {
                     // bad or not implemented transport
                     this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, protocolName, METHOD_INITIALIZE_NAME, L"bad or not implemented transport");
-                    error = CURLE_FAILED_INIT;
+                    error = E_RTSP_BAD_OR_NOT_IMPLEMENTED_TRANSPORT;
                   }
                 }
 
-                if (error == CURLE_OK)
+                if (SUCCEEDED(error))
                 {
-                  CRtspTrack *track = new CRtspTrack();
-                  error = (track != NULL) ? error : CURLE_OUT_OF_MEMORY;
+                  CRtspTrack *track = new CRtspTrack(&error);
+                  CHECK_POINTER_HRESULT(error, track, error, E_OUTOFMEMORY);
 
-                  CHECK_CONDITION_EXECUTE(error == CURLE_OK, error = (track->SetTrackUrl(streamUrl)) ? error : CURLE_OUT_OF_MEMORY);
-                  CHECK_CONDITION_EXECUTE(error == CURLE_OK, error = (track->SetTransportResponseHeader(transport)) ? error : CURLE_OUT_OF_MEMORY);
+                  CHECK_CONDITION_HRESULT(error, track->SetTrackUrl(streamUrl), error, E_OUTOFMEMORY);
+                  CHECK_CONDITION_HRESULT(error, track->SetTransportResponseHeader(transport), error, E_OUTOFMEMORY);
 
-                  if (error == CURLE_OK)
+                  if (SUCCEEDED(error))
                   {
                     long serverPort = 0;
                     long clientPort = 0;
 
-                    CHECK_CONDITION_EXECUTE_RESULT(error == CURLE_OK, curl_easy_getinfo(this->curl, CURLINFO_PRIMARY_PORT, &serverPort), error);
-                    CHECK_CONDITION_EXECUTE_RESULT(error == CURLE_OK, curl_easy_getinfo(this->curl, CURLINFO_LOCAL_PORT, &clientPort), error);
+                    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(error), HRESULT_FROM_CURL_CODE(curl_easy_getinfo(this->curl, CURLINFO_PRIMARY_PORT, &serverPort)), error);
+                    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(error), HRESULT_FROM_CURL_CODE(curl_easy_getinfo(this->curl, CURLINFO_LOCAL_PORT, &clientPort)), error);
 
-                    if (error == CURLE_OK)
+                    if (SUCCEEDED(error))
                     {
                       track->SetClientDataPort(clientPort);
                       track->SetClientControlPort(clientPort);
@@ -604,7 +600,8 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
                       }
 
                       // set payload type for RTSP track
-                      error = track->GetPayloadType()->CopyFromPayloadType(supportedPayloadType) ? error : CURLE_OUT_OF_MEMORY;
+                      CHECK_CONDITION_HRESULT(error, track->GetPayloadType()->CopyFromPayloadType(supportedPayloadType), error, E_OUTOFMEMORY);
+
                       CHECK_CONDITION_EXECUTE(CompareWithNull(mediaDescription->GetMediaType(), MEDIA_DESCRIPTION_MEDIA_TYPE_AUDIO) == 0, track->GetPayloadType()->SetMediaType(CPayloadType::Audio));
                       CHECK_CONDITION_EXECUTE(CompareWithNull(mediaDescription->GetMediaType(), MEDIA_DESCRIPTION_MEDIA_TYPE_VIDEO) == 0, track->GetPayloadType()->SetMediaType(CPayloadType::Video));
                       CHECK_CONDITION_EXECUTE(mediaDescription->GetMediaFormats()->GetItem(0)->GetClockRate() != MEDIA_FORMAT_CLOCK_RATE_UNSPECIFIED, track->GetPayloadType()->SetClockRate(mediaDescription->GetMediaFormats()->GetItem(0)->GetClockRate()));
@@ -612,8 +609,8 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
                     }
                   }
 
-                  CHECK_CONDITION_EXECUTE(error == CURLE_OK, error = this->rtspDownloadResponse->GetRtspTracks()->Add(track) ? error : CURLE_OUT_OF_MEMORY);
-                  CHECK_CONDITION_EXECUTE(error != CURLE_OK, FREE_MEM_CLASS(track));
+                  CHECK_CONDITION_HRESULT(error, this->rtspDownloadResponse->GetRtspTracks()->Add(track), error, E_OUTOFMEMORY);
+                  CHECK_CONDITION_EXECUTE(FAILED(error), FREE_MEM_CLASS(track));
                 }
               }
             }
@@ -625,8 +622,8 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
           interleavedChannel += 2;
         }
 
-        CHECK_CONDITION_EXECUTE(error == CURLE_OK, error = (this->rtspDownloadResponse->GetRtspTracks()->Count() != 0) ? error : CURLE_FAILED_INIT);
-        CHECK_CONDITION_EXECUTE(error == CURLE_OK, negotiatedTransport = true);
+        CHECK_CONDITION_HRESULT(error, this->rtspDownloadResponse->GetRtspTracks()->Count() != 0, error, E_RTSP_NO_TRACKS);
+        CHECK_CONDITION_EXECUTE(SUCCEEDED(error), negotiatedTransport = true);
       }
       
       if (this->multicastPreference == transportPreference)
@@ -644,9 +641,9 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
 
         // for each media description create and negotiate UDP transport
         unsigned int clientPort = this->clientPortMin;
-        CURLcode error = (this->rtspDownloadResponse->GetSessionDescription()->GetMediaDescriptions()->Count() != 0) ? CURLE_OK : CURLE_FAILED_INIT;
+        HRESULT error = (this->rtspDownloadResponse->GetSessionDescription()->GetMediaDescriptions()->Count() != 0) ? S_OK : E_RTSP_NO_MEDIA_DESCRIPTIONS_IN_SESSION_DESCRIPTION;
 
-        for (unsigned int i = 0; ((error == CURLE_OK) && (i < this->rtspDownloadResponse->GetSessionDescription()->GetMediaDescriptions()->Count())); i++)
+        for (unsigned int i = 0; (SUCCEEDED(error) && (i < this->rtspDownloadResponse->GetSessionDescription()->GetMediaDescriptions()->Count())); i++)
         {
           CMediaDescription *mediaDescription = this->rtspDownloadResponse->GetSessionDescription()->GetMediaDescriptions()->GetItem(i);
           CRtspPayloadType *supportedPayloadType = NULL;
@@ -656,7 +653,7 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
             // there must be only one media format
             CMediaFormat *mediaFormat = mediaDescription->GetMediaFormats()->GetItem(0);
 
-            for (unsigned int j = 0; ((error == CURLE_OK) && (supportedPayloadType == NULL) && (j < supportedPayloadTypes->Count())); j++)
+            for (unsigned int j = 0; (SUCCEEDED(error) && (supportedPayloadType == NULL) && (j < supportedPayloadTypes->Count())); j++)
             {
               CRtspPayloadType *payloadType = supportedPayloadTypes->GetItem(j);
 
@@ -704,7 +701,7 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
               streamUrl = Duplicate(controlUrl);
             }
 
-            error = (streamUrl != NULL) ? error : CURLE_FAILED_INIT;
+            CHECK_POINTER_HRESULT(error, streamUrl, error, E_OUTOFMEMORY);
           }
           else
           {
@@ -723,39 +720,31 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
               streamUrl = FormatAbsoluteUrl(this->GetBaseUrl(), control->GetControlUrl());
             }
 
-            error = (streamUrl != NULL) ? error : CURLE_OUT_OF_MEMORY;
+            CHECK_POINTER_HRESULT(error, streamUrl, error, E_OUTOFMEMORY);
           }
 
-          if (error == CURLE_OK)
+          if (SUCCEEDED(error))
           {
             CSimpleServer *dataServer = NULL;
             CSimpleServer *controlServer = NULL;
 
             do
             {
-              error = CURLE_OK;
+              error = S_OK;
 
-              dataServer = new CUdpServer();
-              controlServer = new CUdpServer();
+              dataServer = new CUdpServer(&error);
+              controlServer = new CUdpServer(&error);
 
-              error = ((dataServer != NULL) && (controlServer != NULL)) ? error : CURLE_OUT_OF_MEMORY;
+              CHECK_POINTER_HRESULT(error, dataServer, error, E_OUTOFMEMORY);
+              CHECK_POINTER_HRESULT(error, controlServer, error, E_OUTOFMEMORY);
 
-              if (error == CURLE_OK)
-              {
-                if (error == CURLE_OK)
-                {
-                  error = SUCCEEDED(dataServer->Initialize(AF_UNSPEC, clientPort, this->networkInterfaces)) ? error : CURLE_FAILED_INIT;
-                  error = SUCCEEDED(controlServer->Initialize(AF_UNSPEC, clientPort + 1, this->networkInterfaces)) ? error : CURLE_FAILED_INIT;
-                }
-              }
+              CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(error), dataServer->Initialize(AF_UNSPEC, clientPort, this->networkInterfaces), error);
+              CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(error), controlServer->Initialize(AF_UNSPEC, clientPort + 1, this->networkInterfaces), error);
 
-              if (error == CURLE_OK)
-              {
-                error = SUCCEEDED(dataServer->StartListening()) ? error : CURLE_FAILED_INIT;
-                error = SUCCEEDED(controlServer->StartListening()) ? error : CURLE_FAILED_INIT;
-              }
+              CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(error), dataServer->StartListening(), error);
+              CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(error), controlServer->StartListening(), error);
 
-              if (error != CURLE_OK)
+              if (FAILED(error))
               {
                 FREE_MEM_CLASS(dataServer);
                 FREE_MEM_CLASS(controlServer);
@@ -763,23 +752,24 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
                 clientPort++;
               }
             }
-            while ((error != CURLE_OK) && (clientPort <= this->clientPortMax) && (endTicks > GetTickCount()));
+            while (FAILED(error) && (clientPort <= this->clientPortMax) && (endTicks > GetTickCount()));
+            CHECK_CONDITION_EXECUTE(SUCCEEDED(error) && (endTicks <= GetTickCount()), error = VFW_E_TIMEOUT);
 
-            CHECK_CONDITION_EXECUTE((error == CURLE_OK) && (endTicks <= GetTickCount()), error = CURLE_OPERATION_TIMEDOUT);
-
-            if (error == CURLE_OK)
+            if (SUCCEEDED(error))
             {
-              CRtspSetupRequest *setup = new CRtspSetupRequest();
-              CHECK_CONDITION_EXECUTE(error == CURLE_OK, error = (setup != NULL) ? error : CURLE_OUT_OF_MEMORY);
-              CHECK_CONDITION_EXECUTE(error == CURLE_OK, error = (setup->GetTransportRequestHeader() != NULL) ? error : CURLE_OUT_OF_MEMORY);
-              CHECK_CONDITION_EXECUTE(error == CURLE_OK, error = (setup->SetUri(streamUrl)) ? error : CURLE_OUT_OF_MEMORY);
-              CHECK_CONDITION_EXECUTE(error == CURLE_OK, setup->SetTimeout(endTicks - GetTickCount()));
-              CHECK_CONDITION_EXECUTE(error == CURLE_OK, setup->SetSequenceNumber(this->lastSequenceNumber++));
-              CHECK_CONDITION_EXECUTE(error == CURLE_OK, error = setup->SetSessionId(this->sessionId) ? error : CURLE_OUT_OF_MEMORY);
+              CRtspSetupRequest *setup = new CRtspSetupRequest(&error);
+              CHECK_POINTER_HRESULT(error, setup, error, E_OUTOFMEMORY);
 
-              if (error == CURLE_OK)
+              CHECK_POINTER_HRESULT(error, setup->GetTransportRequestHeader(), error, E_OUTOFMEMORY);
+              CHECK_CONDITION_HRESULT(error, setup->SetUri(streamUrl), error, E_OUTOFMEMORY);
+              CHECK_CONDITION_HRESULT(error, setup->SetSessionId(this->sessionId), error, E_OUTOFMEMORY);
+
+              if (SUCCEEDED(error))
               {
-                // setup transort header
+                setup->SetTimeout(endTicks - GetTickCount());
+                setup->SetSequenceNumber(this->lastSequenceNumber++);
+
+                // setup transport header
                 CRtspTransportRequestHeader *header = setup->GetTransportRequestHeader();
 
                 header->SetTransportProtocol(RTSP_TRANSPORT_REQUEST_HEADER_PROTOCOL_RTP);
@@ -787,9 +777,10 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
                 header->SetMinClientPort(clientPort);
                 header->SetMaxClientPort(clientPort + 1);
                 header->SetFlags(RTSP_TRANSPORT_REQUEST_HEADER_FLAG_UNICAST | RTSP_TRANSPORT_REQUEST_HEADER_FLAG_TRANSPORT_PROTOCOL_RTP | RTSP_TRANSPORT_REQUEST_HEADER_FLAG_PROFILE_AVP | RTSP_TRANSPORT_REQUEST_HEADER_FLAG_CLIENT_PORT);
+
+                error = this->SendAndReceive(setup, L"SETUP", METHOD_INITIALIZE_NAME);
               }
 
-              CHECK_CONDITION_EXECUTE(error == CURLE_OK, error = this->SendAndReceive(setup, error, L"SETUP", METHOD_INITIALIZE_NAME));
               // if no error in SETUP request, we must call TEARDOWN to free resources
               {
                 CLockMutex lock(this->mutex, INFINITE);
@@ -801,19 +792,19 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
               FREE_MEM_CLASS(setup);
             }
 
-            CHECK_CONDITION_EXECUTE(error != CURLE_OK, this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_INITIALIZE_NAME, (this->udpPreference == transportPreference) ? L"error while sending UDP RTSP SETUP" : L"error while sending TCP RTSP SETUP", error));
+            CHECK_CONDITION_EXECUTE(FAILED(error), this->logger->Log(LOGGER_ERROR, L"%s: %s: %s: 0x%08X", this->protocolName, METHOD_INITIALIZE_NAME, (this->udpPreference == transportPreference) ? L"error while sending UDP RTSP SETUP" : L"error while sending TCP RTSP SETUP", error));
 
             CRtspResponse *response = NULL;
-            if (error == CURLE_OK)
+            if (SUCCEEDED(error))
             {
               {
                 CLockMutex lock(this->mutex, INFINITE);
 
                 response = this->rtspDownloadResponse->GetRtspResponse()->Clone();
-                CHECK_CONDITION_EXECUTE(error == CURLE_OK, error = (response != NULL) ? error : CURLE_OUT_OF_MEMORY);
+                CHECK_POINTER_HRESULT(error, response, error, E_OUTOFMEMORY);
               }
 
-              if (error == CURLE_OK)
+              if (SUCCEEDED(error))
               {
                 CRtspTransportResponseHeader *transport = (CRtspTransportResponseHeader *)response->GetResponseHeaders()->GetRtspHeader(RTSP_TRANSPORT_RESPONSE_HEADER_TYPE);
 
@@ -821,26 +812,26 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
                 {
                   // no transport header in RTSP response
                   this->logger->Log(LOGGER_ERROR, L"%s: %s: no transport header in response", this->protocolName, METHOD_INITIALIZE_NAME);
-                  error = CURLE_FAILED_INIT;
+                  error = E_RTSP_NO_TRANSPORT_HEADER;
                 }
 
-                if ((error == CURLE_OK) && (!(transport->IsLowerTransportUDP() || (transport->GetLowerTransport() == NULL))))
+                if (SUCCEEDED(error) && (!(transport->IsLowerTransportUDP() || (transport->GetLowerTransport() == NULL))))
                 {
                   this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, protocolName, METHOD_INITIALIZE_NAME, L"no UDP transport header");
-                  error = CURLE_FAILED_INIT;
+                  error = E_RTSP_NOT_UDP_TRANSPORT_HEADER;
                 }
 
-                if (error == CURLE_OK)
+                if (SUCCEEDED(error))
                 {
                   this->lastCommand = RTSP_CURL_INSTANCE_COMMAND_SETUP_RESPONSE_VALID;
 
-                  CRtspTrack *track = new CRtspTrack();
-                  error = (track != NULL) ? error : CURLE_OUT_OF_MEMORY;
+                  CRtspTrack *track = new CRtspTrack(&error);
+                  CHECK_POINTER_HRESULT(error, track, error, E_OUTOFMEMORY);
 
-                  CHECK_CONDITION_EXECUTE(error == CURLE_OK, error = (track->SetTrackUrl(streamUrl)) ? error : CURLE_OUT_OF_MEMORY);
-                  CHECK_CONDITION_EXECUTE(error == CURLE_OK, error = (track->SetTransportResponseHeader(transport)) ? error : CURLE_OUT_OF_MEMORY);
+                  CHECK_CONDITION_HRESULT(error, track->SetTrackUrl(streamUrl), error, E_OUTOFMEMORY);
+                  CHECK_CONDITION_HRESULT(error, track->SetTransportResponseHeader(transport), error, E_OUTOFMEMORY);
 
-                  if (error == CURLE_OK)
+                  if (SUCCEEDED(error))
                   {
                     if ((!transport->IsInterleaved()) && transport->IsClientPort() && transport->IsServerPort())
                     {
@@ -868,7 +859,7 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
                       else
                       {
                         this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, protocolName, METHOD_INITIALIZE_NAME, L"client ports not same as requested");
-                        error = CURLE_FAILED_INIT;
+                        error = E_RTSP_CLIENT_PORTS_NOT_SAME_AS_REQUESTED;
                       }
                     }
                     else if (transport->IsInterleaved() && (!transport->IsClientPort()) && (!transport->IsServerPort()))
@@ -877,10 +868,10 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
                       long serverPort = 0;
                       long clientPort = 0;
 
-                      CHECK_CONDITION_EXECUTE_RESULT(error == CURLE_OK, curl_easy_getinfo(this->curl, CURLINFO_PRIMARY_PORT, &serverPort), error);
-                      CHECK_CONDITION_EXECUTE_RESULT(error == CURLE_OK, curl_easy_getinfo(this->curl, CURLINFO_LOCAL_PORT, &clientPort), error);
+                      CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(error), HRESULT_FROM_CURL_CODE(curl_easy_getinfo(this->curl, CURLINFO_PRIMARY_PORT, &serverPort)), error);
+                      CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(error), HRESULT_FROM_CURL_CODE(curl_easy_getinfo(this->curl, CURLINFO_LOCAL_PORT, &clientPort)), error);
 
-                      if (error == CURLE_OK)
+                      if (SUCCEEDED(error))
                       {
                         track->SetClientDataPort(clientPort);
                         track->SetClientControlPort(clientPort);
@@ -899,7 +890,7 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
                     {
                       // bad or not implemented transport
                       this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, protocolName, METHOD_INITIALIZE_NAME, L"bad or not implemented transport");
-                      error = CURLE_FAILED_INIT;
+                      error = E_RTSP_BAD_OR_NOT_IMPLEMENTED_TRANSPORT;
                     }
 
                     // in specifications is not mentioned, which clock frequency have to be used when multiple media formats in SDP are defined
@@ -909,22 +900,22 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
                     }
 
                     // set payload type for RTSP track
-                    error = track->GetPayloadType()->CopyFromPayloadType(supportedPayloadType) ? error : CURLE_OUT_OF_MEMORY;
+                    CHECK_CONDITION_HRESULT(error, track->GetPayloadType()->CopyFromPayloadType(supportedPayloadType), error, E_OUTOFMEMORY);
                     CHECK_CONDITION_EXECUTE(CompareWithNull(mediaDescription->GetMediaType(), MEDIA_DESCRIPTION_MEDIA_TYPE_AUDIO) == 0, track->GetPayloadType()->SetMediaType(CPayloadType::Audio));
                     CHECK_CONDITION_EXECUTE(CompareWithNull(mediaDescription->GetMediaType(), MEDIA_DESCRIPTION_MEDIA_TYPE_VIDEO) == 0, track->GetPayloadType()->SetMediaType(CPayloadType::Video));
                     CHECK_CONDITION_EXECUTE(mediaDescription->GetMediaFormats()->GetItem(0)->GetClockRate() != MEDIA_FORMAT_CLOCK_RATE_UNSPECIFIED, track->GetPayloadType()->SetClockRate(mediaDescription->GetMediaFormats()->GetItem(0)->GetClockRate()));
                     CHECK_CONDITION_EXECUTE(mediaDescription->GetMediaFormats()->GetItem(0)->GetChannels() != MEDIA_FORMAT_CHANNELS_UNSPECIFIED, track->GetPayloadType()->SetChannels(mediaDescription->GetMediaFormats()->GetItem(0)->GetChannels()));
                   }
 
-                  CHECK_CONDITION_EXECUTE(error == CURLE_OK, error = this->rtspDownloadResponse->GetRtspTracks()->Add(track) ? error : CURLE_OUT_OF_MEMORY);
-                  CHECK_CONDITION_EXECUTE(error != CURLE_OK, FREE_MEM_CLASS(track));
+                  CHECK_CONDITION_HRESULT(error, this->rtspDownloadResponse->GetRtspTracks()->Add(track), error, E_OUTOFMEMORY);
+                  CHECK_CONDITION_EXECUTE(FAILED(error), FREE_MEM_CLASS(track));
                 }
 
                 clientPort += 2;
               }
             }
 
-            if (error != CURLE_OK)
+            if (FAILED(error))
             {
               FREE_MEM_CLASS(dataServer);
               FREE_MEM_CLASS(controlServer);
@@ -936,11 +927,11 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
           FREE_MEM(streamUrl);
         }
 
-        CHECK_CONDITION_EXECUTE(error == CURLE_OK, error = (this->rtspDownloadResponse->GetRtspTracks()->Count() != 0) ? error : CURLE_FAILED_INIT);
-        CHECK_CONDITION_EXECUTE(error == CURLE_OK, negotiatedTransport = true);
+        CHECK_CONDITION_HRESULT(error, this->rtspDownloadResponse->GetRtspTracks()->Count() != 0, error, E_RTSP_NO_TRACKS);
+        CHECK_CONDITION_EXECUTE(SUCCEEDED(error), negotiatedTransport = true);
       }
 
-      if ((!negotiatedTransport) && (errorCode == CURLE_OK))
+      if ((!negotiatedTransport) && SUCCEEDED(result))
       {
         this->rtspDownloadResponse->GetRtspTracks()->Clear();
 
@@ -955,12 +946,9 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
 
         // if transport preference is UINT_MAX, then no other transport is available and no negotiated transport exists
         // in that case we are finished with error
-        errorCode = (transportPreference != UINT_MAX) ? errorCode : CURLE_FAILED_INIT;
+        CHECK_CONDITION_HRESULT(result, transportPreference != UINT_MAX, result, E_RTSP_CANNOT_NEGOTIATE_ANY_TRANSPORT);
 
-        if (errorCode != CURLE_OK)
-        {
-          this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, this->protocolName, METHOD_INITIALIZE_NAME, L"can't negotiate any transport");
-        }
+        CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, this->protocolName, METHOD_INITIALIZE_NAME, L"can't negotiate any transport"));
       }
 
       if ((!negotiatedTransport) && ((this->lastCommand == RTSP_CURL_INSTANCE_COMMAND_SETUP_RESPONSE_NOT_VALID) || (this->lastCommand == RTSP_CURL_INSTANCE_COMMAND_SETUP_RESPONSE_VALID)))
@@ -969,22 +957,27 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
         // we need to call TEARDOWN request to free resources and try something else
 
         // create and send TEARDOWN request for stream
-        errorCode = CURLE_OK;
+        result = S_OK;
 
-        CRtspTeardownRequest *teardown = new CRtspTeardownRequest();
-        CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = (teardown != NULL) ? errorCode : CURLE_OUT_OF_MEMORY);
-        CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = (teardown->SetUri(this->rtspDownloadRequest->GetUrl())) ? errorCode : CURLE_OUT_OF_MEMORY);
-        CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, teardown->SetTimeout(endTicks - GetTickCount()));
-        CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, teardown->SetSequenceNumber(this->lastSequenceNumber++));
-        CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = teardown->SetSessionId(this->sessionId) ? errorCode : CURLE_OUT_OF_MEMORY);
+        CRtspTeardownRequest *teardown = new CRtspTeardownRequest(&result);
+        CHECK_POINTER_HRESULT(result, teardown, result, E_OUTOFMEMORY);
 
-        if (errorCode == CURLE_OK)
+        CHECK_CONDITION_HRESULT(result, teardown->SetUri(this->rtspDownloadRequest->GetUrl()), result, E_OUTOFMEMORY);
+        CHECK_CONDITION_HRESULT(result, teardown->SetSessionId(this->sessionId), result, E_OUTOFMEMORY);
+
+        if (SUCCEEDED(result))
+        {
+          teardown->SetTimeout(endTicks - GetTickCount());
+          teardown->SetSequenceNumber(this->lastSequenceNumber++);
+        }
+
+        if (SUCCEEDED(result))
         {
           // backup session ID, in case of error we need to make TEARDOWN request later
           wchar_t *sessionId = Duplicate(this->sessionId);
-          errorCode = TEST_STRING_WITH_NULL(sessionId, this->sessionId) ? errorCode : CURLE_OUT_OF_MEMORY;
+          CHECK_CONDITION_HRESULT(result, TEST_STRING_WITH_NULL(sessionId, this->sessionId), result, E_OUTOFMEMORY);
 
-          CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = this->SendAndReceive(teardown, errorCode, L"TEARDOWN", METHOD_INITIALIZE_NAME));
+          CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->SendAndReceive(teardown, L"TEARDOWN", METHOD_INITIALIZE_NAME));
           FREE_MEM_CLASS(teardown);
 
           // session ID is no longer required
@@ -992,7 +985,7 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
           // clear it to avoid error in processing another request
           FREE_MEM(this->sessionId);
 
-          if (errorCode != CURLE_OK)
+          if (FAILED(result))
           {
             // error occured while sending and receiving TEARDOWN request, try it later, but we can't continue now
             this->sessionId = Duplicate(sessionId);
@@ -1007,25 +1000,30 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
       }
     }
     FREE_MEM_CLASS(supportedPayloadTypes);
-    CHECK_CONDITION_EXECUTE((errorCode == CURLE_OK) && (endTicks <= GetTickCount()), errorCode = CURLE_OPERATION_TIMEDOUT);
+    CHECK_CONDITION_EXECUTE(SUCCEEDED(result) && (endTicks <= GetTickCount()), result = VFW_E_TIMEOUT);
     
-    if (errorCode == CURLE_OK)
+    if (SUCCEEDED(result))
     {
-      errorCode = (this->rtspDownloadResponse->GetRtspTracks()->Count() != 0) ? errorCode : CURLE_FAILED_INIT;
-      CHECK_CONDITION_EXECUTE(errorCode != CURLE_OK, this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, this->protocolName, METHOD_INITIALIZE_NAME, L"no RTSP track to play"));
+      CHECK_CONDITION_HRESULT(result, this->rtspDownloadResponse->GetRtspTracks()->Count() != 0, result, E_RTSP_NO_TRACKS);
+      CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, this->protocolName, METHOD_INITIALIZE_NAME, L"no RTSP track to play"));
     }
 
-    if (errorCode == CURLE_OK)
+    if (SUCCEEDED(result))
     {
-      CRtspPlayRequest *play = new CRtspPlayRequest();
-      CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = (play != NULL) ? errorCode : CURLE_OUT_OF_MEMORY);
-      CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = (play->SetUri(this->rtspDownloadRequest->GetUrl())) ? errorCode : CURLE_OUT_OF_MEMORY);
-      CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, play->SetTimeout(endTicks - GetTickCount()));
-      CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, play->SetSequenceNumber(this->lastSequenceNumber++));
-      CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = play->SetSessionId(this->sessionId) ? errorCode : CURLE_OUT_OF_MEMORY);
-      CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = play->SetStartTime(this->rtspDownloadRequest->GetStartTime()) ? errorCode : CURLE_FAILED_INIT);
+      CRtspPlayRequest *play = new CRtspPlayRequest(&result);
+      CHECK_POINTER_HRESULT(result, play, result, E_OUTOFMEMORY);
 
-      CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = this->SendAndReceive(play, errorCode, L"PLAY", METHOD_INITIALIZE_NAME));
+      CHECK_CONDITION_HRESULT(result, play->SetUri(this->rtspDownloadRequest->GetUrl()), result, E_OUTOFMEMORY);
+      CHECK_CONDITION_HRESULT(result, play->SetSessionId(this->sessionId), result, E_OUTOFMEMORY);
+      CHECK_CONDITION_HRESULT(result, play->SetStartTime(this->rtspDownloadRequest->GetStartTime()), result, E_OUTOFMEMORY);
+
+      if (SUCCEEDED(result))
+      {
+        play->SetTimeout(endTicks - GetTickCount());
+        play->SetSequenceNumber(this->lastSequenceNumber++);
+
+        result = this->SendAndReceive(play, L"PLAY", METHOD_INITIALIZE_NAME);
+      }
 
       // if no error in PLAY request, we must call TEARDOWN to free resources
       {
@@ -1034,14 +1032,14 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
         // RTSP response can be NULL in case of error (e.g. timeout or wrong parameters)
         CHECK_CONDITION_EXECUTE((this->rtspDownloadResponse->GetRtspResponse() != NULL) && (this->rtspDownloadResponse->GetRtspResponse()->IsSuccess()), this->lastCommand = RTSP_CURL_INSTANCE_COMMAND_PLAY_RESPONSE_NOT_VALID);
 
-        if ((errorCode == CURLE_OK) && (this->lastCommand == RTSP_CURL_INSTANCE_COMMAND_PLAY_RESPONSE_NOT_VALID))
+        if (SUCCEEDED(result) && (this->lastCommand == RTSP_CURL_INSTANCE_COMMAND_PLAY_RESPONSE_NOT_VALID))
         {
           CRtspSessionResponseHeader *sessionHeader = (CRtspSessionResponseHeader *)this->rtspDownloadResponse->GetRtspResponse()->GetResponseHeaders()->GetRtspHeader(RTSP_SESSION_RESPONSE_HEADER_TYPE);
 
           this->rtspDownloadResponse->SetSessionTimeout(((sessionHeader != NULL) ? sessionHeader->GetTimeout() : RTSP_SESSION_RESPONSE_TIMEOUT_DEFAULT) * 1000);
         }
 
-        if ((errorCode == CURLE_OK) && (this->lastCommand == RTSP_CURL_INSTANCE_COMMAND_PLAY_RESPONSE_NOT_VALID))
+        if (SUCCEEDED(result) && (this->lastCommand == RTSP_CURL_INSTANCE_COMMAND_PLAY_RESPONSE_NOT_VALID))
         {
           this->lastCommand = RTSP_CURL_INSTANCE_COMMAND_PLAY_RESPONSE_VALID;
         }
@@ -1049,32 +1047,36 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
 
       FREE_MEM_CLASS(play);
       
-      CHECK_CONDITION_EXECUTE(errorCode != CURLE_OK, this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_INITIALIZE_NAME, L"error while sending RTSP PLAY", errorCode));
+      CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while sending RTSP PLAY: 0x%08X", this->protocolName, METHOD_INITIALIZE_NAME, result));
     }
-
-    result &= (errorCode == CURLE_OK);
   }
 
-  this->state = (result) ? CURL_STATE_INITIALIZED : CURL_STATE_CREATED;
+  this->state = SUCCEEDED(result) ? CURL_STATE_INITIALIZED : CURL_STATE_CREATED;
   return result;
 }
 
-bool CRtspCurlInstance::StopReceivingData(void)
+HRESULT CRtspCurlInstance::StopReceivingData(void)
 {
   if ((this->lastCommand == RTSP_CURL_INSTANCE_COMMAND_SETUP_RESPONSE_NOT_VALID) || (this->lastCommand == RTSP_CURL_INSTANCE_COMMAND_SETUP_RESPONSE_VALID) ||
     (this->lastCommand == RTSP_CURL_INSTANCE_COMMAND_PLAY_RESPONSE_NOT_VALID) || (this->lastCommand == RTSP_CURL_INSTANCE_COMMAND_PLAY_RESPONSE_VALID))
   {
     // create and send TEARDOWN request for stream
-    CURLcode errorCode = CURLE_OK;
+    HRESULT result = S_OK;
 
-    CRtspTeardownRequest *teardown = new CRtspTeardownRequest();
-    CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = (teardown != NULL) ? errorCode : CURLE_OUT_OF_MEMORY);
-    CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = (teardown->SetUri(this->rtspDownloadRequest->GetUrl())) ? errorCode : CURLE_OUT_OF_MEMORY);
-    CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, teardown->SetTimeout(this->GetReceiveDataTimeout()));
-    CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, teardown->SetSequenceNumber(this->lastSequenceNumber++));
-    CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = teardown->SetSessionId(this->sessionId) ? errorCode : CURLE_OUT_OF_MEMORY);
+    CRtspTeardownRequest *teardown = new CRtspTeardownRequest(&result);
+    CHECK_POINTER_HRESULT(result, teardown, result, E_OUTOFMEMORY);
 
-    CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = this->SendAndReceive(teardown, errorCode, L"TEARDOWN", L"StopReceivingData()"));
+    CHECK_CONDITION_HRESULT(result, teardown->SetUri(this->rtspDownloadRequest->GetUrl()), result, E_OUTOFMEMORY);
+    CHECK_CONDITION_HRESULT(result, teardown->SetSessionId(this->sessionId), result, E_OUTOFMEMORY);
+
+    if (SUCCEEDED(result))
+    {
+      teardown->SetTimeout(this->GetReceiveDataTimeout());
+      teardown->SetSequenceNumber(this->lastSequenceNumber++);
+
+      result = this->SendAndReceive(teardown, L"TEARDOWN", L"StopReceivingData()");
+    }
+
     FREE_MEM_CLASS(teardown);
 
     this->lastCommand = RTSP_CURL_INSTANCE_COMMAND_TEARDOWN;
@@ -1090,40 +1092,44 @@ bool CRtspCurlInstance::StopReceivingData(void)
 
 /* protected methods */
 
-CDownloadResponse *CRtspCurlInstance::GetNewDownloadResponse(void)
+CDownloadResponse *CRtspCurlInstance::CreateDownloadResponse(void)
 {
-  return new CRtspDownloadResponse();
+  HRESULT result = S_OK;
+  CRtspDownloadResponse *response = new CRtspDownloadResponse(&result);
+  CHECK_POINTER_HRESULT(result, response, result, E_OUTOFMEMORY);
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(response));
+  return response;
 }
 
-bool CRtspCurlInstance::ProcessReceivedBaseRtpPackets(CRtspTrack *track, unsigned int clientPort, CBaseRtpPacketCollection *packets)
+HRESULT CRtspCurlInstance::ProcessReceivedBaseRtpPackets(CRtspTrack *track, unsigned int clientPort, CBaseRtpPacketCollection *packets)
 {
   // only one thread can work with RTSP tracks and responses in one time
   CLockMutex lock(this->mutex, INFINITE);
 
-  bool result = ((track != NULL) && (packets != NULL) && (this->rtspDownloadResponse != NULL));
+  HRESULT result = (this->rtspDownloadResponse != NULL) ? S_OK : E_NOT_VALID_STATE;
+  CHECK_POINTER_DEFAULT_HRESULT(result, track);
+  CHECK_POINTER_DEFAULT_HRESULT(result, packets);
 
-  if (result)
-  {
-    result &= (packets->Count() != 0);
-    result &= (this->rtspDownloadResponse->GetRtspTracks()->Count() != 0);
-  }
+  CHECK_CONDITION_HRESULT(result, packets->Count() != 0, result, E_INVALIDARG);
+  CHECK_CONDITION_HRESULT(result, this->rtspDownloadResponse->GetRtspTracks()->Count() != 0, result, E_INVALIDARG);
 
-  if (result)
+  if (SUCCEEDED(result))
   {
     bool isDataPort = track->IsClientDataPort(clientPort);
     bool isControlPort = track->IsClientControlPort(clientPort);
 
-    result &= (isDataPort || isControlPort);
+    CHECK_CONDITION_HRESULT(result, isDataPort || isControlPort, result, E_RTSP_NO_DATA_OR_CONTROL_CLIENT_PORT);
 
-    for (unsigned int i = 0; (result && (i < packets->Count())); i++)
+    for (unsigned int i = 0; (SUCCEEDED(result) && (i < packets->Count())); i++)
     {
       CBaseRtpPacket *packet = packets->GetItem(i);
       CRtpPacket *rtpPacket = dynamic_cast<CRtpPacket *>(packet);
       CRtcpPacket *rtcpPacket = dynamic_cast<CRtcpPacket *>(packet);
 
-      result &= ((rtpPacket != NULL) || (rtcpPacket != NULL));
-      result &= ((isDataPort && (rtpPacket != NULL)) || (rtpPacket == NULL));
-      result &= ((isControlPort && (rtcpPacket != NULL)) || (rtcpPacket == NULL));
+      CHECK_CONDITION_HRESULT(result, (rtpPacket != NULL) || (rtcpPacket != NULL), result, E_RTSP_NO_RTP_OR_RTCP_PACKET);
+      CHECK_CONDITION_HRESULT(result, (isDataPort && (rtpPacket != NULL)) || (rtpPacket == NULL), result, E_RTSP_INVALID_PACKET_FOR_PORT);
+      CHECK_CONDITION_HRESULT(result, (isControlPort && (rtcpPacket != NULL)) || (rtcpPacket == NULL), result, E_RTSP_INVALID_PACKET_FOR_PORT);
 
       if (rtcpPacket != NULL)
       {
@@ -1165,10 +1171,10 @@ bool CRtspCurlInstance::ProcessReceivedBaseRtpPackets(CRtspTrack *track, unsigne
           // add RTP packet to track RTP packets
 
           CRtpPacket *clone = rtpPacket->Clone();
-          result &= (clone != NULL);
+          CHECK_POINTER_HRESULT(result, clone, result, E_OUTOFMEMORY);
 
-          CHECK_CONDITION_EXECUTE(result, result &= track->GetRtpPackets()->Add(clone));
-          CHECK_CONDITION_EXECUTE(!result, FREE_MEM_CLASS(clone));
+          CHECK_CONDITION_HRESULT(result, track->GetRtpPackets()->Add(clone), result, E_OUTOFMEMORY);
+          CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(clone));
         }
       }
     }
@@ -1211,15 +1217,14 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
   this->stopReceivingTicks = 0;
   this->totalReceivedBytes = 0;
 
-  CURLcode errorCode = CURLE_OK;
+  HRESULT result = S_OK;
   ALLOC_MEM_DEFINE_SET(buffer, unsigned char, BUFFER_LENGTH_DEFAULT, 0);
-  CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = (buffer != NULL) ? errorCode : CURLE_OUT_OF_MEMORY);
+  CHECK_POINTER_HRESULT(result, buffer, result, E_OUTOFMEMORY);
   int readData = 0;
 
   DWORD rtspRequestStartTicks = 0;
   DWORD rtspRequestEndTicks = 0;
-  CURLcode rtspRequestErrorCode = CURLE_AGAIN;
-  HRESULT rtspResponseParseResult = S_OK;
+  HRESULT rtspRequestResult = HRESULT_FROM_CURL_CODE(CURLE_AGAIN);
   bool externalRequest = false;
 
   // RTSP request and response
@@ -1237,46 +1242,55 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
 
       if (lock.IsLocked())
       {
-        if ((rtspRequest == NULL) && (this->rtspDownloadResponse->GetRtspRequest() != NULL) && (this->rtspDownloadResponse->GetRtspResponse() == NULL) && (this->rtspDownloadResponse->GetResultCode() == CURLE_AGAIN))
+        if ((rtspRequest == NULL) && (this->rtspDownloadResponse->GetRtspRequest() != NULL) && (this->rtspDownloadResponse->GetRtspResponse() == NULL) && (this->rtspDownloadResponse->GetResultError() == HRESULT_FROM_CURL_CODE(CURLE_AGAIN)))
         {
           // it is prepared new RTSP request
           // we must send it to remote server and create new response
 
           rtspRequest = this->rtspDownloadResponse->GetRtspRequest()->Clone();
-          CHECK_CONDITION_EXECUTE(rtspRequest == NULL, rtspRequestErrorCode = CURLE_OUT_OF_MEMORY);
+          CHECK_CONDITION_EXECUTE(rtspRequest == NULL, rtspRequestResult = E_OUTOFMEMORY);
 
           // RTSP request come from code out of this thread
           externalRequest = true;
         }
 
-        if ((rtspRequestErrorCode == CURLE_AGAIN) && (rtspRequest != NULL))
+        if ((rtspRequestResult == HRESULT_FROM_CURL_CODE(CURLE_AGAIN)) && (rtspRequest != NULL))
         {
-          rtspResponse = new CRtspResponse();
+          rtspRequestResult = S_OK;
+
+          rtspResponse = new CRtspResponse(&rtspRequestResult);
+          CHECK_POINTER_HRESULT(rtspRequestResult, rtspResponse, rtspRequestResult, E_OUTOFMEMORY);
+
+          CHECK_CONDITION_EXECUTE(FAILED(rtspRequestResult), FREE_MEM_CLASS(rtspResponse));
         
           rtspRequestStartTicks = GetTickCount();
           rtspRequestEndTicks = rtspRequestStartTicks + rtspRequest->GetTimeout();
 
-          CHECK_CONDITION_EXECUTE(rtspResponse == NULL, rtspRequestErrorCode = CURLE_OUT_OF_MEMORY);
-
-          if (rtspRequestErrorCode == CURLE_AGAIN)
+          if (SUCCEEDED(rtspRequestResult))
           {
             // everything is OK, we can continue
 
             const wchar_t *requestW = rtspRequest->GetRequest();
-            CHECK_CONDITION_EXECUTE(requestW != NULL, this->logger->Log(LOGGER_VERBOSE, L"%s: %s: RTSP request:\n%s", protocolName, METHOD_CURL_WORKER_NAME, requestW));
+            CHECK_POINTER_HRESULT(rtspRequestResult, requestW, rtspRequestResult, E_OUTOFMEMORY);
 
-            char *requestA = ConvertToMultiByte(requestW);
-            unsigned int requestLength = (requestA != NULL) ? strlen(requestA) : 0;
-            CHECK_CONDITION_EXECUTE(requestA == NULL, rtspRequestErrorCode = CURLE_OUT_OF_MEMORY);
-
-            if (rtspRequestErrorCode == CURLE_AGAIN)
+            if (SUCCEEDED(rtspRequestResult))
             {
-              // send data
-              unsigned int receivedData = 0;
-              CURLcode error = curl_easy_perform(this->curl);
-              CHECK_CONDITION_EXECUTE_RESULT(error == CURLE_OK, curl_easy_send(this->curl, requestA, requestLength, &receivedData), error);
+              this->logger->Log(LOGGER_VERBOSE, L"%s: %s: RTSP request:\n%s", protocolName, METHOD_CURL_WORKER_NAME, requestW);
+              char *requestA = ConvertToMultiByte(requestW);
+              CHECK_POINTER_HRESULT(rtspRequestResult, requestA, rtspRequestResult, E_CONVERT_STRING_ERROR);
 
-              rtspRequestErrorCode = (error == CURLE_OK) ? CURLE_AGAIN : error;
+              if (SUCCEEDED(rtspRequestResult))
+              {
+                // send data
+                unsigned int receivedData = 0;
+                unsigned int requestLength = strlen(requestA);
+
+                rtspRequestResult = HRESULT_FROM_CURL_CODE(curl_easy_perform(this->curl));
+                CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(rtspRequestResult), HRESULT_FROM_CURL_CODE(curl_easy_send(this->curl, requestA, requestLength, &receivedData)), rtspRequestResult);
+              }
+
+              CHECK_CONDITION_EXECUTE(SUCCEEDED(rtspRequestResult), rtspRequestResult = HRESULT_FROM_CURL_CODE(CURLE_AGAIN));
+
               FREE_MEM(requestA);
             }
           }
@@ -1284,11 +1298,8 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
       }
     }
 
-    if ((rtspRequestStartTicks != 0) && (rtspRequestEndTicks != 0) && (GetTickCount() > rtspRequestEndTicks))
-    {
-      // timeout occured
-      rtspRequestErrorCode = CURLE_OPERATION_TIMEDOUT;
-    }
+    // check if not timeout
+    CHECK_CONDITION_EXECUTE((rtspRequestStartTicks != 0) && (rtspRequestEndTicks != 0) && (GetTickCount() > rtspRequestEndTicks), rtspRequestResult = VFW_E_TIMEOUT);
 
     int readData = 0;
 
@@ -1299,24 +1310,24 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
       if (readData < 0)
       {
         // error occured
-        rtspRequestErrorCode = (CURLcode)(-readData);
+        rtspRequestResult = (HRESULT)readData;
       }
       else if (readData >= 0)
       {
         CLockMutex lock(this->mutex, INFINITE);
-        CURLcode error = CURLE_OK;
+        HRESULT receiveError = S_OK;
 
         if (readData > 0)
         {
-          error = (this->rtspDownloadResponse->GetReceivedData()->AddToBufferWithResize(buffer, readData, this->rtspDownloadResponse->GetReceivedData()->GetBufferSize() * 2) == readData) ? CURLE_OK : CURLE_OUT_OF_MEMORY;
-          CHECK_CONDITION_EXECUTE(error != CURLE_OK, this->rtspDownloadResponse->SetResultCode(error));
+          CHECK_CONDITION_HRESULT(receiveError, this->rtspDownloadResponse->GetReceivedData()->AddToBufferWithResize(buffer, readData, this->rtspDownloadResponse->GetReceivedData()->GetBufferSize() * 2) == readData, receiveError, E_OUTOFMEMORY);
+          CHECK_CONDITION_EXECUTE(FAILED(receiveError), this->rtspDownloadResponse->SetResultError(receiveError));
         }
 
         bool possibleInterleavedPacket = false;
 
         if ((rtspRequest != NULL) && (rtspResponse != NULL))
         {
-          if ((error == CURLE_OK) && (rtspRequestErrorCode == CURLE_AGAIN))
+          if (SUCCEEDED(receiveError) && (rtspRequestResult == HRESULT_FROM_CURL_CODE(CURLE_AGAIN)))
           {
             // we have pending RTSP request
             // response can be for that RTSP request or data can be interleaved packet
@@ -1326,14 +1337,10 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
             if (bufferSize > 0)
             {
               ALLOC_MEM_DEFINE_SET(temp, unsigned char, (bufferSize + 1), 0);
+              CHECK_POINTER_HRESULT(receiveError, temp, receiveError, E_OUTOFMEMORY);
+              CHECK_CONDITION_EXECUTE(FAILED(receiveError), rtspRequestResult = E_OUTOFMEMORY);
 
-              if (temp == NULL)
-              {
-                error = CURLE_OUT_OF_MEMORY;
-                rtspRequestErrorCode = error;
-              }
-
-              if (error == CURLE_OK)
+              if (SUCCEEDED(receiveError))
               {
                 this->rtspDownloadResponse->GetReceivedData()->CopyFromBuffer(temp, bufferSize);
                 HRESULT parseResult = rtspResponse->Parse(temp, bufferSize);
@@ -1353,7 +1360,7 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
                   }
                   FREE_MEM(responseA);
 
-                  rtspRequestErrorCode = CURLE_OK;
+                  rtspRequestResult = S_OK;
                   this->rtspDownloadResponse->GetReceivedData()->RemoveFromBufferAndMove(parseResult);
                 }
                 else if (parseResult == 0)
@@ -1376,31 +1383,31 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
                   }
                   FREE_MEM(responseW);
 
-                  rtspRequestErrorCode = CURLE_RECV_ERROR;
-                  rtspResponseParseResult = parseResult;
+                  rtspRequestResult = parseResult;
                 }
               }
+
               FREE_MEM(temp);
             }
           }
         }
 
-        if ((errorCode == CURLE_OK) && (possibleInterleavedPacket || ((rtspRequest == NULL) && (rtspResponse == NULL))))
+        if (SUCCEEDED(result) && (possibleInterleavedPacket || ((rtspRequest == NULL) && (rtspResponse == NULL))))
         {
-          CInterleavedDataPacket *packet = new CInterleavedDataPacket();
-          CHECK_CONDITION_EXECUTE(packet == NULL, errorCode = CURLE_OUT_OF_MEMORY);
+          CInterleavedDataPacket *packet = new CInterleavedDataPacket(&result);
+          CHECK_POINTER_HRESULT(result, packet, result, E_OUTOFMEMORY);
 
           unsigned int bufferLength = this->rtspDownloadResponse->GetReceivedData()->GetBufferOccupiedSpace();
           ALLOC_MEM_DEFINE_SET(temp, unsigned char, bufferLength, 0);
-          CHECK_CONDITION_EXECUTE(temp == NULL, errorCode = CURLE_OUT_OF_MEMORY);
+          CHECK_POINTER_HRESULT(result, temp, result, E_OUTOFMEMORY);
 
-          if (errorCode == CURLE_OK)
+          if (SUCCEEDED(result))
           {
             this->rtspDownloadResponse->GetReceivedData()->CopyFromBuffer(temp, bufferLength);
 
             unsigned int processed = 0;
 
-            while ((errorCode == CURLE_OK) && (processed < bufferLength))
+            while (SUCCEEDED(result) && (processed < bufferLength))
             {
               HRESULT parseResult = packet->Parse(temp + processed, bufferLength - processed);
 
@@ -1424,7 +1431,7 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
                 if (track != NULL)
                 {
                   // process received interleaved packet
-                  errorCode = this->ProcessReceivedBaseRtpPackets(track, track->GetClientControlPort(), packet->GetBaseRtpPackets()) ? errorCode : CURLE_RECV_ERROR;
+                  result = this->ProcessReceivedBaseRtpPackets(track, track->GetClientControlPort(), packet->GetBaseRtpPackets());
                 }
 
                 this->rtspDownloadResponse->GetReceivedData()->RemoveFromBufferAndMove(parseResult);
@@ -1437,7 +1444,7 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
 
                 // not interleaved packet and also not valid RTSP response
                 this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, protocolName, METHOD_CURL_WORKER_NAME, L"not interleaved packet and also not valid RTSP response");
-                errorCode = CURLE_RECV_ERROR;
+                result = E_RTSP_NOT_INTERLEAVED_PACKET_NOT_VALID_RTSP_RESPONSE;
               }
               else if ((parseResult == 0) && (processed != 0))
               {
@@ -1453,7 +1460,7 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
               {
                 // error
                 this->logger->Log(LOGGER_ERROR, L"%s: %s: error while parsing interleaved packet data: 0x%08X", protocolName, METHOD_CURL_WORKER_NAME, parseResult);
-                errorCode = CURLE_RECV_ERROR;
+                result = parseResult;
               }
             }
           }
@@ -1463,10 +1470,10 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
         }
       }
     }
-    while ((errorCode == CURLE_OK) && (readData > 0));
+    while (SUCCEEDED(result) && (readData > 0));
     // repeat until error or until we are receiving data
 
-    if (rtspRequestErrorCode != CURLE_AGAIN)
+    if (rtspRequestResult != HRESULT_FROM_CURL_CODE(CURLE_AGAIN))
     {
       // request finished (successfully or not, doesn't matter)
 
@@ -1481,44 +1488,47 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
           if (rtspResponse != NULL)
           {
             this->rtspDownloadResponse->SetRtspResponse(rtspResponse);
-            this->rtspDownloadResponse->SetResponseCode(SUCCEEDED(rtspResponseParseResult) ? rtspResponse->GetStatusCode() : rtspResponseParseResult);
           }
 
-          this->rtspDownloadResponse->SetResultCode(rtspRequestErrorCode);
+          this->rtspDownloadResponse->SetResultError(rtspRequestResult);
         }
       }
 
       externalRequest = false;
-      rtspResponseParseResult = S_OK;
       rtspRequestStartTicks = 0;
       rtspRequestEndTicks = 0;
-      rtspRequestErrorCode = CURLE_AGAIN;
+      rtspRequestResult = HRESULT_FROM_CURL_CODE(CURLE_AGAIN);
       FREE_MEM_CLASS(rtspRequest);
       FREE_MEM_CLASS(rtspResponse);
     }
 
-    if ((errorCode == CURLE_OK) && (this->IsSetFlags(RTSP_CURL_INSTANCE_FLAG_METHOD_GET_PARAMETER_SUPPORTED)) && (this->lastCommand == RTSP_CURL_INSTANCE_COMMAND_PLAY_RESPONSE_VALID) && (rtspRequest == NULL) && (GetTickCount() > nextMaintainConnectionRequest))
+    if (SUCCEEDED(result) && (this->IsSetFlags(RTSP_CURL_INSTANCE_FLAG_METHOD_GET_PARAMETER_SUPPORTED)) && (this->lastCommand == RTSP_CURL_INSTANCE_COMMAND_PLAY_RESPONSE_VALID) && (rtspRequest == NULL) && (GetTickCount() > nextMaintainConnectionRequest))
     {
       // create GET_PARAMETER request to maintain connection alive
-      CRtspGetParameterRequest *getParameter = new CRtspGetParameterRequest();
-      CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = (getParameter != NULL) ? errorCode : CURLE_OUT_OF_MEMORY);
-      CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = (getParameter->SetUri(this->rtspDownloadRequest->GetUrl())) ? errorCode : CURLE_OUT_OF_MEMORY);
-      CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, getParameter->SetTimeout(this->receiveDataTimeout));
-      CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, getParameter->SetSequenceNumber(this->lastSequenceNumber++));
-      CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = getParameter->SetSessionId(this->sessionId) ? errorCode : CURLE_OUT_OF_MEMORY);
+      CRtspGetParameterRequest *getParameter = new CRtspGetParameterRequest(&result);
+      CHECK_POINTER_HRESULT(result, getParameter, result, E_OUTOFMEMORY);
+
+      CHECK_CONDITION_HRESULT(result, getParameter->SetUri(this->rtspDownloadRequest->GetUrl()), result, E_OUTOFMEMORY);
+      CHECK_CONDITION_HRESULT(result, getParameter->SetSessionId(this->sessionId), result, E_OUTOFMEMORY);
+      
+      if (SUCCEEDED(result))
+      {
+        getParameter->SetTimeout(this->receiveDataTimeout);
+        getParameter->SetSequenceNumber(this->lastSequenceNumber++);
+      }
 
       nextMaintainConnectionRequest = GetTickCount() + this->rtspDownloadResponse->GetSessionTimeout() / 2;
       
-      CHECK_CONDITION_EXECUTE(errorCode != CURLE_OK, FREE_MEM_CLASS(getParameter));
+      CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(getParameter));
       rtspRequest = getParameter;
     }
 
-    if (errorCode == CURLE_OK)
+    if (SUCCEEDED(result))
     {
       // only one thread can work with RTSP tracks and responses in one time
       CLockMutex lock(this->mutex, INFINITE);
 
-      for (unsigned int i = 0; ((errorCode == CURLE_OK) && (i < this->rtspDownloadResponse->GetRtspTracks()->Count())); i++)
+      for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->rtspDownloadResponse->GetRtspTracks()->Count())); i++)
       {
         CRtspTrack *track = this->rtspDownloadResponse->GetRtspTracks()->GetItem(i);
 
@@ -1527,7 +1537,7 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
 
         if ((dataServer != NULL) && (controlServer != NULL))
         {
-          if (dataServer->IsServerType(SERVER_TYPE_UDP) && controlServer->IsServerType(SERVER_TYPE_UDP))
+          if (dataServer->IsSetFlags(UDP_SERVER_FLAG_SERVER) && controlServer->IsSetFlags(UDP_SERVER_FLAG_SERVER))
           {
             for (unsigned int k = 0; k < 2; k++)
             {
@@ -1536,7 +1546,7 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
               // check only data servers, check only in case of not consolidated servers (not consolidated servers have more contexts)
               if ((k == 0) && (dataServer->GetServers()->Count() != 1))
               {
-                for (unsigned int j = 0; ((errorCode == CURLE_OK) && (j < dataServer->GetServers()->Count())); j++)
+                for (unsigned int j = 0; (SUCCEEDED(result) && (j < dataServer->GetServers()->Count())); j++)
                 {
                   CUdpSocketContext *udpContext = (CUdpSocketContext *)(dataServer->GetServers()->GetItem(j));
                   unsigned int pendingIncomingDataLength = 0;
@@ -1567,13 +1577,12 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
                 }
               }
 
-              for (unsigned int j = 0; ((errorCode == CURLE_OK) && (j < server->GetServers()->Count())); j++)
+              for (unsigned int j = 0; (SUCCEEDED(result) && (j < server->GetServers()->Count())); j++)
               {
                 CUdpSocketContext *udpContext = (CUdpSocketContext *)(server->GetServers()->GetItem(j));
 
                 unsigned int pendingIncomingDataLength = 0;
                 unsigned int interleavedPacketLength = 0;
-                HRESULT result = S_OK;
 
                 do
                 {
@@ -1584,7 +1593,7 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
                     // allocate buffer and receive data
                     // increase pending incoming data by 4 (interleaved packet header)
                     interleavedPacketLength = pendingIncomingDataLength + 4;
-                    CHECK_CONDITION_EXECUTE(interleavedPacketLength > INTERLEAVED_MAX_PACKET_LENGTH, result = E_OUTOFMEMORY);
+                    CHECK_CONDITION_HRESULT(result, interleavedPacketLength <= INTERLEAVED_MAX_PACKET_LENGTH, result, E_OUTOFMEMORY);
 
                     if (SUCCEEDED(result))
                     {
@@ -1594,8 +1603,8 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
                       unsigned int receivedLength = 0;
                       CIpAddress *sender = NULL;
 
-                      CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = udpContext->Receive((char *)(buffer + 4), pendingIncomingDataLength, &receivedLength, &sender));
-                      CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = (pendingIncomingDataLength == receivedLength) ? result : E_NOT_VALID_STATE);
+                      CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), udpContext->Receive((char *)(buffer + 4), pendingIncomingDataLength, &receivedLength, &sender), result);
+                      CHECK_CONDITION_HRESULT(result, pendingIncomingDataLength == receivedLength, result, E_NOT_VALID_STATE);
                       CHECK_POINTER_HRESULT(result, sender, result, E_OUTOFMEMORY);
 
                       // for created server it can't be interleaved transport
@@ -1608,13 +1617,13 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
                         WBE16(buffer, 2, pendingIncomingDataLength);        // interleaved packet length (without header length)
                       }
 
-                      CInterleavedDataPacket *packet = new CInterleavedDataPacket();
+                      CInterleavedDataPacket *packet = new CInterleavedDataPacket(&result);
                       CHECK_POINTER_HRESULT(result, packet, result, E_OUTOFMEMORY);
 
                       if (SUCCEEDED(result))
                       {
-                        CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = packet->Parse(buffer, interleavedPacketLength) ? result : E_FAIL);
-                        CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->ProcessReceivedBaseRtpPackets(track, udpContext->GetIpAddress()->GetPort(), packet->GetBaseRtpPackets()) ? result : E_FAIL);
+                        CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), packet->Parse(buffer, interleavedPacketLength), result);
+                        CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), this->ProcessReceivedBaseRtpPackets(track, udpContext->GetIpAddress()->GetPort(), packet->GetBaseRtpPackets()), result);
 
                         if (FAILED(result))
                         {
@@ -1679,11 +1688,7 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
                 }
                 while (SUCCEEDED(result) && (pendingIncomingDataLength != 0));
 
-                if (FAILED(result))
-                {
-                  this->logger->Log(LOGGER_ERROR, L"%s: %s: error while receiving data: 0x%08X", this->protocolName, METHOD_CURL_WORKER_NAME, result);
-                  errorCode = CURLE_READ_ERROR;
-                }
+                CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while receiving data: 0x%08X", this->protocolName, METHOD_CURL_WORKER_NAME, result));
               }
             }
           }
@@ -1691,13 +1696,13 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
       }
     }
 
-    if (errorCode == CURLE_OK)
+    if (SUCCEEDED(result))
     {
       // only one thread can work with RTSP tracks and responses in one time
       CLockMutex lock(this->mutex, INFINITE);
 
       bool endOfStreamReached = (this->rtspDownloadResponse->GetRtspTracks()->Count() != 0);
-      for (unsigned int i = 0; ((errorCode == CURLE_OK) && (i < this->rtspDownloadResponse->GetRtspTracks()->Count())); i++)
+      for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->rtspDownloadResponse->GetRtspTracks()->Count())); i++)
       {
         CRtspTrack *track = this->rtspDownloadResponse->GetRtspTracks()->GetItem(i);
 
@@ -1720,25 +1725,25 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
         // there's no need to send receiver report if end of stream is reached
         if ((!track->IsEndOfStream()) && ((GetTickCount() - track->GetLastReceiverReportTime()) > track->GetReceiverReportInterval()))
         {
-          CReceiverReportRtcpPacket *receiverReport = new CReceiverReportRtcpPacket();
-          CSourceDescriptionRtcpPacket *sourceDescription = new CSourceDescriptionRtcpPacket();
+          CReceiverReportRtcpPacket *receiverReport = new CReceiverReportRtcpPacket(&result);
+          CSourceDescriptionRtcpPacket *sourceDescription = new CSourceDescriptionRtcpPacket(&result);
 
-          errorCode = (receiverReport != NULL) ? errorCode : CURLE_OUT_OF_MEMORY;
-          errorCode = (sourceDescription != NULL) ? errorCode : CURLE_OUT_OF_MEMORY;
+          CHECK_POINTER_HRESULT(result, receiverReport, result, E_OUTOFMEMORY);
+          CHECK_POINTER_HRESULT(result, sourceDescription, result, E_OUTOFMEMORY);
+
           // we must have sender SSRC to send report
-          errorCode = track->IsSetSenderSynchronizationSourceIdentifier() ? errorCode : CURLE_SEND_ERROR;
+          CHECK_CONDITION_HRESULT(result, track->IsSetSenderSynchronizationSourceIdentifier(), result, E_RTSP_NOT_SET_SENDER_SYNCHRONIZATION_SOURCE_IDENTIFIER);
+          CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while initializing receiver report and source description RTCP packets: 0x%08X", this->protocolName, METHOD_CURL_WORKER_NAME, result));
 
-          CHECK_CONDITION_EXECUTE(errorCode != CURLE_OK, this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_CURL_WORKER_NAME, L"error while initializing receiver report and source description RTCP packets", errorCode));
-
-          if (errorCode == CURLE_OK)
+          if (SUCCEEDED(result))
           {
             // fill receiver report RTCP packet with data
             receiverReport->SetSenderSynchronizationSourceIdentifier(track->GetSynchronizationSourceIdentifier());
 
             CReportBlock *reportBlock = new CReportBlock();
-            errorCode = (receiverReport != NULL) ? errorCode : CURLE_OUT_OF_MEMORY;
+            CHECK_POINTER_HRESULT(result, reportBlock, result, E_OUTOFMEMORY);
 
-            if (errorCode == CURLE_OK)
+            if (SUCCEEDED(result))
             {
               // set SSRC of server track
               reportBlock->SetSynchronizationSourceIdentifier(track->GetSenderSynchronizationSourceIdentifier());
@@ -1751,75 +1756,64 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
               reportBlock->SetLastSenderReport(track->GetStatistics()->GetLastSenderReportTimestamp());
               reportBlock->SetDelaySinceLastSenderReport(track->GetStatistics()->GetDelaySinceLastSenderReport(GetTickCount()));
 
-              errorCode = receiverReport->GetReportBlocks()->Add(reportBlock) ? errorCode : CURLE_OUT_OF_MEMORY;
+              CHECK_CONDITION_HRESULT(result, receiverReport->GetReportBlocks()->Add(reportBlock), result, E_OUTOFMEMORY);
             }
 
-            if (errorCode != CURLE_OK)
-            {
-              FREE_MEM_CLASS(reportBlock);
-              this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_CURL_WORKER_NAME, L"error while setting properties of receiver report RTCP packet", errorCode);
-            }
+            CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(reportBlock));
           }
 
-          if (errorCode == CURLE_OK)
+          if (SUCCEEDED(result))
           {
             // fill source description RTCP packet with data
-            CSourceDescriptionChunk *chunk = new CSourceDescriptionChunk();
-            errorCode = (chunk != NULL) ? errorCode : CURLE_OUT_OF_MEMORY;
+            CSourceDescriptionChunk *chunk = new CSourceDescriptionChunk(&result);
+            CHECK_POINTER_HRESULT(result, chunk, result, E_OUTOFMEMORY);
 
-            if (errorCode == CURLE_OK)
+            if (SUCCEEDED(result))
             {
               chunk->SetIdentifier(track->GetSynchronizationSourceIdentifier());
 
-              CCanonicalEndPointSourceDescriptionItem *endPoint = new CCanonicalEndPointSourceDescriptionItem();
-              errorCode = (chunk != NULL) ? errorCode : CURLE_OUT_OF_MEMORY;
+              CCanonicalEndPointSourceDescriptionItem *endPoint = new CCanonicalEndPointSourceDescriptionItem(&result);
+              CHECK_POINTER_HRESULT(result, endPoint, result, E_OUTOFMEMORY);
 
-              if (errorCode == CURLE_OK)
+              if (SUCCEEDED(result))
               {
                 ALLOC_MEM_DEFINE_SET(computerName, wchar_t, (MAX_COMPUTERNAME_LENGTH + 1), 0);
-                errorCode = (computerName != NULL) ? errorCode : CURLE_OUT_OF_MEMORY;
+                CHECK_POINTER_HRESULT(result, computerName, result, E_OUTOFMEMORY);
 
-                if (errorCode == CURLE_OK)
+                if (SUCCEEDED(result))
                 {
                   DWORD length = MAX_COMPUTERNAME_LENGTH + 1;
-                  errorCode = GetComputerName(computerName, &length) ? errorCode : CURLE_OUT_OF_MEMORY;
 
-                  if (errorCode == CURLE_OK)
-                  {
-                    errorCode = endPoint->SetEndPointName(computerName) ? errorCode : CURLE_OUT_OF_MEMORY;
-                    errorCode = chunk->GetItems()->Add(endPoint) ? errorCode : CURLE_OUT_OF_MEMORY;
-                  }
+                  CHECK_CONDITION_HRESULT(result, GetComputerName(computerName, &length), result, E_OUTOFMEMORY);
+                  CHECK_CONDITION_HRESULT(result, endPoint->SetEndPointName(computerName), result, E_OUTOFMEMORY);
                 }
+
                 FREE_MEM(computerName);
               }
 
-              CHECK_CONDITION_EXECUTE(errorCode != CURLE_OK, FREE_MEM_CLASS(endPoint));
-
-              errorCode = sourceDescription->GetChunks()->Add(chunk) ? errorCode : CURLE_OUT_OF_MEMORY;
+              CHECK_CONDITION_HRESULT(result, chunk->GetItems()->Add(endPoint), result, E_OUTOFMEMORY);
+              CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(endPoint));
             }
 
-            if (errorCode != CURLE_OK)
-            {
-              FREE_MEM_CLASS(chunk);
-              this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_CURL_WORKER_NAME, L"error while setting properties of source description RTCP packet", errorCode);
-            }
+            CHECK_CONDITION_HRESULT(result, sourceDescription->GetChunks()->Add(chunk), result, E_OUTOFMEMORY);
+            CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(chunk));
           }
 
-          if (errorCode == CURLE_OK)
+          if (SUCCEEDED(result))
           {
             unsigned int receiverReportSize = receiverReport->GetSize();
             unsigned int sourceDescriptionSize = sourceDescription->GetSize();
 
             // allocate four more bytes - in case that we need to create interlaved packet
             ALLOC_MEM_DEFINE_SET(reportBuffer, unsigned char, (receiverReportSize + sourceDescriptionSize + 4), 0);
-            errorCode = (reportBuffer != NULL) ? errorCode : CURLE_OUT_OF_MEMORY;
+            CHECK_POINTER_HRESULT(result, reportBuffer, result, E_OUTOFMEMORY);
 
-            CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = receiverReport->GetPacket(reportBuffer + 4, receiverReportSize) ? errorCode : CURLE_SEND_ERROR);
-            CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = sourceDescription->GetPacket(reportBuffer + 4 + receiverReportSize, sourceDescriptionSize) ? errorCode : CURLE_SEND_ERROR);
+            CHECK_CONDITION_HRESULT(result, receiverReport->GetPacket(reportBuffer + 4, receiverReportSize), result, E_OUTOFMEMORY);
+            CHECK_CONDITION_HRESULT(result, sourceDescription->GetPacket(reportBuffer + 4 + receiverReportSize, sourceDescriptionSize), result, E_OUTOFMEMORY);
 
-            CHECK_CONDITION_EXECUTE(errorCode != CURLE_OK, this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_CURL_WORKER_NAME, L"error while serializing receiver report and source description RTCP packets", errorCode));
+            CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while serializing receiver report and source description RTCP packets: 0x%08X", this->protocolName, METHOD_CURL_WORKER_NAME, result));
 
-            if (errorCode == CURLE_OK)
+            if (SUCCEEDED(result))
             {
               // send report buffer to remote server
               CSimpleServer *controlServer = track->GetControlServer(); 
@@ -1884,6 +1878,7 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
 
                           CIpAddress *ipAddress = udpDataServerContext->GetIpAddress()->Clone();
                           CHECK_CONDITION_EXECUTE(ipAddress == NULL, this->logger->Log(LOGGER_WARNING, METHOD_MESSAGE_FORMAT, this->protocolName, METHOD_CURL_WORKER_NAME, L"cannot get IP address from data server"));
+
                           if (ipAddress != NULL)
                           {
                             // set port to control port
@@ -1924,26 +1919,26 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
 
                               FREE_MEM_CLASS(lastSenderIpAddress);
                             }
-                          }
+                         }
 
                           FREE_MEM_CLASS(ipAddress);
                         }
                       }
                     }
 
-                    errorCode = (udpContext != NULL) ? errorCode : CURLE_SEND_ERROR;
-                    CHECK_CONDITION_EXECUTE(errorCode != CURLE_OK, this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, this->protocolName, METHOD_CURL_WORKER_NAME, L"no endpoint found"));
+                    CHECK_CONDITION_HRESULT(result, udpContext, result, E_RTSP_NO_ENDPOINT_FOUND);
+                    CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, this->protocolName, METHOD_CURL_WORKER_NAME, L"no endpoint found"));
 
-                    if (errorCode == CURLE_OK)
+                    if (SUCCEEDED(result))
                     {
                       // for sure, set server control port, some servers sent data/control packets on another ports as they negotiated
                       udpContext->GetLastSenderIpAddress()->SetPort(track->GetServerControlPort());
 
                       unsigned int sentLength = 0;
-                      errorCode = SUCCEEDED(udpContext->Send((const char *)(reportBuffer + 4), receiverReportSize + sourceDescriptionSize, &sentLength)) ? errorCode : CURLE_SEND_ERROR;
-                      errorCode = (sentLength == (receiverReportSize + sourceDescriptionSize)) ? errorCode : CURLE_SEND_ERROR;
+                      result = udpContext->Send((const char *)(reportBuffer + 4), receiverReportSize + sourceDescriptionSize, &sentLength);
+                      CHECK_CONDITION_HRESULT(result, sentLength == (receiverReportSize + sourceDescriptionSize), result, E_RTSP_SENT_DATA_LENGTH_NOT_SAME_AS_RTCP_PACKET_LENGTH);
 
-                      CHECK_CONDITION_EXECUTE(errorCode != CURLE_OK, this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_CURL_WORKER_NAME, L"error while sending RTCP packets", errorCode));
+                      CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while sending RTCP packets: 0x%08X", this->protocolName, METHOD_CURL_WORKER_NAME, result));
                     }
                   }
                 }
@@ -1958,8 +1953,8 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
                 reportBuffer[1] = track->GetTransportResponseHeader()->GetMaxInterleavedChannel();  // interleaved packet channnel (specified in transport header)
                 WBE16(reportBuffer, 2, (receiverReportSize + sourceDescriptionSize));               // interleaved packet length (without header length)
 
-                errorCode = this->SendData(reportBuffer, receiverReportSize + sourceDescriptionSize + 4, this->GetReceiveDataTimeout() * 1000);
-                CHECK_CONDITION_EXECUTE(errorCode != CURLE_OK, this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_CURL_WORKER_NAME, L"error while sending interleaved RTCP packets", errorCode));
+                result = this->SendData(reportBuffer, receiverReportSize + sourceDescriptionSize + 4, this->GetReceiveDataTimeout() * 1000);
+                CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while sending interleaved RTCP packets: 0x%08X", this->protocolName, METHOD_CURL_WORKER_NAME, result));
               }
 
               track->SetLastReceiverReportTime(GetTickCount());
@@ -1982,19 +1977,19 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
 
         CLockMutex lock(this->mutex, INFINITE);
 
-        this->rtspDownloadResponse->SetResultCode(errorCode);
+        this->rtspDownloadResponse->SetResultError(result);
         this->state = CURL_STATE_RECEIVED_ALL_DATA;
       }
     }
 
-    if ((errorCode != CURLE_OK) && (this->state != CURL_STATE_RECEIVED_ALL_DATA))
+    if (FAILED(result) && (this->state != CURL_STATE_RECEIVED_ALL_DATA))
     {
       // we have some error, we can't do more
       // report error code and wait for destroying CURL instance
 
       CLockMutex lock(this->mutex, INFINITE);
 
-      this->rtspDownloadResponse->SetResultCode(errorCode);
+      this->rtspDownloadResponse->SetResultError(result);
       this->state = CURL_STATE_RECEIVED_ALL_DATA;
     }
 
@@ -2003,8 +1998,8 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
 
   FREE_MEM(buffer);
 
-  CHECK_CONDITION_EXECUTE(errorCode != CURLE_OK, this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_CURL_WORKER_NAME, L"error while sending, receiving or processing data", errorCode));
-  this->rtspDownloadResponse->SetResultCode(errorCode);
+  CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while sending, receiving or processing data: 0x%08X", this->protocolName, METHOD_CURL_WORKER_NAME, result));
+  this->rtspDownloadResponse->SetResultError(result);
 
   {
     CLockMutex lock(this->mutex, INFINITE);
@@ -2040,39 +2035,37 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
   return S_OK;
 }
 
-CURLcode CRtspCurlInstance::SendAndReceive(CRtspRequest *request, CURLcode errorCode, const wchar_t *rtspMethodName, const wchar_t *functionName)
+HRESULT CRtspCurlInstance::SendAndReceive(CRtspRequest *request, const wchar_t *rtspMethodName, const wchar_t *functionName)
 {
-  if (errorCode == CURLE_OK)
+  HRESULT result = S_OK;
+
+  if (SUCCEEDED(result))
   {
     // check sequence number
     unsigned int requestSequenceNumber = request->GetSequenceNumber();
 
-    if ((errorCode == CURLE_OK) && (requestSequenceNumber == RTSP_SEQUENCE_NUMBER_UNSPECIFIED))
+    if (requestSequenceNumber == RTSP_SEQUENCE_NUMBER_UNSPECIFIED)
     {
       // bad sequence number
       this->logger->Log(LOGGER_ERROR, L"%s: %s: not specified request sequence number", this->protocolName, functionName);
-      errorCode = CURLE_RTSP_CSEQ_ERROR;
+      result = E_RTSP_NOT_SPECIFIED_REQUEST_SEQUENCE_NUMBER;
     }
   }
 
-  if (errorCode == CURLE_OK)
+  if (SUCCEEDED(result))
   {
-    if (errorCode == CURLE_OK)
+    // send RTSP request
     {
-      // send RTSP request
-      {
-        CLockMutex lock(this->mutex, INFINITE);
+      CLockMutex lock(this->mutex, INFINITE);
 
-        this->rtspDownloadResponse->ClearRtspRequestAndResponse();
-        this->rtspDownloadResponse->SetRtspRequest(request);
-        this->rtspDownloadResponse->SetResponseCode(RTSP_STATUS_CODE_UNSPECIFIED);
-        this->rtspDownloadResponse->SetResultCode(CURLE_AGAIN);
-      }
-      errorCode = CURLE_AGAIN;
+      this->rtspDownloadResponse->ClearRtspRequestAndResponse();
+      this->rtspDownloadResponse->SetRtspRequest(request);
+      this->rtspDownloadResponse->SetResultError(HRESULT_FROM_CURL_CODE(CURLE_AGAIN));
     }
+    result = HRESULT_FROM_CURL_CODE(CURLE_AGAIN);
 
     // wait for response
-    while (errorCode == CURLE_AGAIN)
+    while (result == HRESULT_FROM_CURL_CODE(CURLE_AGAIN))
     {
       // give chance other threads to do something useful
       Sleep(1);
@@ -2080,32 +2073,24 @@ CURLcode CRtspCurlInstance::SendAndReceive(CRtspRequest *request, CURLcode error
       {
         CLockMutex lock(this->mutex, INFINITE);
 
-        errorCode = this->rtspDownloadResponse->GetResultCode();
+        result = this->rtspDownloadResponse->GetResultError();
       }
     }
 
-    if (errorCode != CURLE_OK)
-    {
-      wchar_t *error = FormatString(L"error while sending RTSP %s", rtspMethodName);
-      if (error != NULL)
-      {
-        this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, functionName, error, errorCode);
-      }
-      this->logger->Log(LOGGER_ERROR, L"%s: %s: error while sending RTSP %s: 0x%08X", this->protocolName, functionName, rtspMethodName, this->rtspDownloadResponse->GetResponseCode());
-      FREE_MEM(error);
-    }
+    CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while sending RTSP %s: 0x%08X", this->protocolName, functionName, rtspMethodName, this->rtspDownloadResponse->GetResultError()));
 
+    if (SUCCEEDED(result))
     {
       CLockMutex lock(this->mutex, INFINITE);
 
-      if ((errorCode == CURLE_OK) && (this->rtspDownloadResponse->GetRtspResponse()->IsEmpty()))
+      if (this->rtspDownloadResponse->GetRtspResponse()->IsEmpty())
       {
         // this should not happen, we should always have response or error (maybe timeout which is also error)
         this->logger->Log(LOGGER_ERROR, L"%s: %s: no response for RTSP %s request", this->protocolName, functionName, rtspMethodName);
-        errorCode = CURLE_RECV_ERROR;
+        result = E_RTSP_NO_RESPONSE_FOR_REQUEST;
       }
 
-      if (errorCode == CURLE_OK)
+      if (SUCCEEDED(result))
       {
         // check existence of session ID or check session ID value (if exists)
 
@@ -2115,50 +2100,50 @@ CURLcode CRtspCurlInstance::SendAndReceive(CRtspRequest *request, CURLcode error
           if (this->rtspDownloadResponse->GetRtspResponse()->GetSessionId() != NULL)
           {
             // check session ID if same
-            errorCode = (CompareWithNull(this->sessionId, this->rtspDownloadResponse->GetRtspResponse()->GetSessionId()) == 0) ? errorCode : CURLE_RECV_ERROR;
+            CHECK_CONDITION_HRESULT(result, CompareWithNull(this->sessionId, this->rtspDownloadResponse->GetRtspResponse()->GetSessionId()) == 0, result, E_RTSP_BAD_SESSION_ID);
 
-            CHECK_CONDITION_EXECUTE(errorCode != CURLE_OK, this->logger->Log(LOGGER_ERROR, L"%s: %s: bad session ID for RTSP %s request", this->protocolName, functionName, rtspMethodName));
+            CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: bad session ID for RTSP %s request", this->protocolName, functionName, rtspMethodName));
           }
         }
         else if (this->rtspDownloadResponse->GetRtspResponse()->GetSessionId() != NULL)
         {
           // new session ID, our session ID is NULL
           this->sessionId = Duplicate(this->rtspDownloadResponse->GetRtspResponse()->GetSessionId());
-          errorCode = (this->sessionId != NULL) ? errorCode : CURLE_OUT_OF_MEMORY;
+          CHECK_POINTER_HRESULT(result, this->sessionId, result, E_OUTOFMEMORY);
 
-          CHECK_CONDITION_EXECUTE(errorCode != CURLE_OK, this->logger->Log(LOGGER_ERROR, L"%s: %s: cannot store session ID for RTSP %s request", this->protocolName, functionName, rtspMethodName));
+          CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: cannot store session ID for RTSP %s request", this->protocolName, functionName, rtspMethodName));
         }
       }
 
-      if (errorCode == CURLE_OK)
+      if (SUCCEEDED(result))
       {
         // check sequence number
         unsigned int requestSequenceNumber = request->GetSequenceNumber();
         unsigned int responseSequenceNumber = this->rtspDownloadResponse->GetRtspResponse()->GetSequenceNumber();
 
-        if ((errorCode == CURLE_OK) && (responseSequenceNumber == RTSP_SEQUENCE_NUMBER_UNSPECIFIED))
+        if (responseSequenceNumber == RTSP_SEQUENCE_NUMBER_UNSPECIFIED)
         {
           // bad sequence number
           this->logger->Log(LOGGER_ERROR, L"%s: %s: not specified response sequence number", this->protocolName, functionName);
-          errorCode = CURLE_RTSP_CSEQ_ERROR;
+          result = E_RTSP_NOT_SPECIFIED_RESPONSE_SEQUENCE_NUMBER;
         }
 
-        if ((errorCode == CURLE_OK) && (requestSequenceNumber != responseSequenceNumber))
+        if (SUCCEEDED(result) && (requestSequenceNumber != responseSequenceNumber))
         {
           // sequence numbers not equal
           this->logger->Log(LOGGER_ERROR, L"%s: %s: request (%u) and response (%u) sequence numbers not equal", this->protocolName, functionName, requestSequenceNumber, responseSequenceNumber);
-          errorCode = CURLE_RTSP_CSEQ_ERROR;
+          result = E_RTSP_REQUEST_AND_RESPONSE_SEQUENCE_NUMBERS_NOT_EQUAL;
         }
       }
 
-      if ((errorCode == CURLE_OK) && (!this->rtspDownloadResponse->GetRtspResponse()->IsSuccess()))
+      if (SUCCEEDED(result) && (!this->rtspDownloadResponse->GetRtspResponse()->IsSuccess()))
       {
         CRtspResponse *response = this->rtspDownloadResponse->GetRtspResponse();
         this->logger->Log(LOGGER_ERROR, L"%s: %s: RTSP %s response status code not success: %u (%s)", this->protocolName, functionName, rtspMethodName, response->GetStatusCode(), (response->GetStatusReason() != NULL) ? response->GetStatusReason() : L"");
-        errorCode = CURLE_RECV_ERROR;
+        result = E_RTSP_STATUS_CODE_NOT_SUCCESS;
       }
     }
   }
 
-  return errorCode;
+  return result;
 }

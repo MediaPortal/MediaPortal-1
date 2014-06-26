@@ -25,29 +25,29 @@
 
 #include "DownloadRequest.h"
 
+#define RTSP_DOWNLOAD_REQUEST_FLAG_NONE                               DOWNLOAD_REQUEST_FLAG_NONE
+
+#define RTSP_DOWNLOAD_REQUEST_FLAG_LAST                               (DOWNLOAD_REQUEST_FLAG_LAST + 0)
+
 class CRtspDownloadRequest : public CDownloadRequest
 {
 public:
-  CRtspDownloadRequest(void);
+  CRtspDownloadRequest(HRESULT *result);
   virtual ~CRtspDownloadRequest(void);
 
   /* get methods */
 
   // gets RTSP start time in ms
   // @return : RTSP start time in ms
-  uint64_t GetStartTime(void);
+  virtual uint64_t GetStartTime(void);
 
   /* set methods */
 
   // sets RTSP start time in ms
   // @param startTime : RTSP start time in ms to set
-  void SetStartTime(uint64_t startTime);
+  virtual void SetStartTime(uint64_t startTime);
 
   /* other methods */
-
-  // deeply clones current instance
-  // @result : deep clone of current instance or NULL if error
-  virtual CRtspDownloadRequest *Clone(void);
 
 protected:
 
@@ -56,10 +56,14 @@ protected:
   // holds start time
   uint64_t startTime;
 
+  // creates empty download request
+  // @return : download request or NULL if error
+  virtual CDownloadRequest *CreateDownloadRequest(void);
+
   // deeply clones current instance to cloned request
-  // @param  clonedRequest : cloned request to hold clone of current instance
+  // @param  clone : cloned request to hold clone of current instance
   // @return : true if successful, false otherwise
-  virtual bool CloneInternal(CRtspDownloadRequest *clonedRequest);
+  virtual bool CloneInternal(CDownloadRequest *clone);
 };
 
 #endif

@@ -27,7 +27,7 @@ class CEmailAddress
 {
 public:
   // initializes a new instance of CEmailAddress class
-  CEmailAddress(void);
+  CEmailAddress(HRESULT *result);
   ~CEmailAddress(void);
 
   /* get methods */

@@ -23,10 +23,10 @@
 #ifndef __ISIMPLE_PROTOCOL_DEFINED
 #define __ISIMPLE_PROTOCOL_DEFINED
 
+#include "ISeeking.h"
 #include "ParameterCollection.h"
 #include "StreamProgress.h"
-#include "StreamAvailableLength.h"
-#include "ISeeking.h"
+#include "StreamInformationCollection.h"
 
 #include <streams.h>
 
@@ -41,8 +41,6 @@
 #define DURATION_LIVE_STREAM                                                  -1
 
 #endif
-
-#define STREAM_COUNT_UNKNOWN                                                  0
 
 // defines interface for simple stream protocol
 struct ISimpleProtocol : virtual public ISeeking
@@ -79,10 +77,10 @@ public:
   // @param streamPosition : the actual stream position (related to stream time) to report to protocol
   virtual void ReportStreamTime(uint64_t streamTime, uint64_t streamPosition) = 0;
 
-  // gets stream count
+  // gets information about streams
   // receiving data is disabled until protocol reports valid stream count (at least one)
-  // @return : stream count or STREAM_COUNT_UNKNOWN if not known
-  virtual unsigned int GetStreamCount(void) = 0;
+  // @return : S_OK if successful, E_STREAM_COUNT_UNKNOWN if stream count is unknown, error code otherwise
+  virtual HRESULT GetStreamInformation(CStreamInformationCollection *streams) = 0;
 };
 
 #endif

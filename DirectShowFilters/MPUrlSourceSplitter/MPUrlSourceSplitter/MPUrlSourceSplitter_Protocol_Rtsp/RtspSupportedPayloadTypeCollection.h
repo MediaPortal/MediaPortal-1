@@ -29,7 +29,7 @@
 class CRtspSupportedPayloadTypeCollection : public CCollection<CRtspPayloadType>
 {
 public:
-  CRtspSupportedPayloadTypeCollection(void);
+  CRtspSupportedPayloadTypeCollection(HRESULT *result);
   ~CRtspSupportedPayloadTypeCollection(void);
 
 protected:
@@ -45,7 +45,7 @@ protected:
   // @param streamInputFormat : the payload type stream input format or NULL if not specified
   // @param flags : the combination of flags
   // @return : true if successful, false otherwise
-  bool AddPayloadType(unsigned int payloadType, const wchar_t *name, const wchar_t *streamInputFormat, unsigned int flags);
+  bool AddPayloadType(unsigned int payloadType, const wchar_t *name, const wchar_t *streamInputFormat, uint64_t flags);
 };
 
 #endif

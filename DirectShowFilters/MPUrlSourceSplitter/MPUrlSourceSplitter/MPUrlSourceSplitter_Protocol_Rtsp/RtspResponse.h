@@ -83,7 +83,7 @@
 class CRtspResponse
 {
 public:
-  CRtspResponse(void);
+  CRtspResponse(HRESULT *result);
   virtual ~CRtspResponse(void);
 
   /* get methods */
@@ -164,13 +164,13 @@ protected:
   CRtspResponseHeaderCollection *responseHeaders;
 
   // deeply clones current instance to cloned RTSP response
-  // @param  clonedResponse : cloned RTSP response to hold clone of current instance
+  // @param  clone : cloned RTSP response to hold clone of current instance
   // @return : true if successful, false otherwise
-  virtual bool CloneInternal(CRtspResponse *clonedResponse);
+  virtual bool CloneInternal(CRtspResponse *clone);
 
   // returns new RTSP response object to be used in cloning
   // @return : RTSP response object or NULL if error
-  virtual CRtspResponse *GetNewResponse(void);
+  virtual CRtspResponse *CreateResponse(void);
 };
 
 #endif

@@ -22,8 +22,8 @@
 
 #include "RtspResponseHeaderCollection.h"
 
-CRtspResponseHeaderCollection::CRtspResponseHeaderCollection(void)
-  : CKeyedCollection()
+CRtspResponseHeaderCollection::CRtspResponseHeaderCollection(HRESULT *result)
+  : CKeyedCollection(result)
 {
 }
 
@@ -74,5 +74,5 @@ const wchar_t *CRtspResponseHeaderCollection::GetKey(CRtspResponseHeader *item)
 
 CRtspResponseHeader *CRtspResponseHeaderCollection::Clone(CRtspResponseHeader *item)
 {
-  return item->Clone();
+  return (CRtspResponseHeader *)item->Clone();
 }

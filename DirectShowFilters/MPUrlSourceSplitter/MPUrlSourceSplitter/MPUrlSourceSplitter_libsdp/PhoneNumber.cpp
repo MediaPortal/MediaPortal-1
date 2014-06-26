@@ -22,7 +22,7 @@
 
 #include "PhoneNumber.h"
 
-CPhoneNumber::CPhoneNumber(void)
+CPhoneNumber::CPhoneNumber(HRESULT *result)
 {
   this->phoneNumber = NULL;
 }

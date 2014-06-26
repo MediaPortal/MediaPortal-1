@@ -31,7 +31,7 @@ class CSessionTime
 {
 public:
   // initializes a new instance of CSessionTime class
-  CSessionTime(void);
+  CSessionTime(HRESULT *result);
   ~CSessionTime(void);
 
   /* get methods */

@@ -23,10 +23,15 @@
 #ifndef __RTP_INFO_TRACK_DEFINED
 #define __RTP_INFO_TRACK_DEFINED
 
-#define RTP_INFO_TRACK_FLAG_NONE                                      0x00000000
-#define RTP_INFO_TRACK_FLAG_URL                                       0x00000001
-#define RTP_INFO_TRACK_FLAG_SEQUENCE_NUMBER                           0x00000002
-#define RTP_INFO_TRACK_FLAG_RTP_TIMESTAMP                             0x00000004
+#include "Flags.h"
+
+#define RTP_INFO_TRACK_FLAG_NONE                                      FLAGS_NONE
+
+#define RTP_INFO_TRACK_FLAG_URL                                       (1 << (FLAGS_LAST + 0))
+#define RTP_INFO_TRACK_FLAG_SEQUENCE_NUMBER                           (1 << (FLAGS_LAST + 1))
+#define RTP_INFO_TRACK_FLAG_RTP_TIMESTAMP                             (1 << (FLAGS_LAST + 2))
+
+#define RTP_INFO_TRACK_FLAG_LAST                                      (FLAGS_LAST + 3)
 
 #define RTP_INFO_PARAMETER_SEPARATOR                                  L";"
 #define RTP_INFO_PARAMETER_SEPARATOR_LENGTH                           1
@@ -42,10 +47,10 @@
 #define RTP_INFO_TRACK_PARAMETER_SEQUENCE_NUMBER_LENGTH               3
 #define RTP_INFO_TRACK_PARAMETER_RTP_TIMESTAMP_LENGTH                 7
 
-class CRtpInfoTrack
+class CRtpInfoTrack : public CFlags
 {
 public:
-  CRtpInfoTrack(void);
+  CRtpInfoTrack(HRESULT *result);
   ~CRtpInfoTrack(void);
 
   /* get methods */
@@ -77,11 +82,6 @@ public:
   // tests if RTP timestamp is set
   // @return : true if RTP timestamp is set, false otherwise
   bool IsRtpTimestamp(void);
-
-  // tests if combination of flags is set
-  // @param flags : the combination of flags to test
-  // @return : true if combination of flags is set, false otherwise
-  bool IsSetFlags(unsigned int flags);
 
   // deep clones of current instance
   // @return : deep clone of current instance or NULL if error

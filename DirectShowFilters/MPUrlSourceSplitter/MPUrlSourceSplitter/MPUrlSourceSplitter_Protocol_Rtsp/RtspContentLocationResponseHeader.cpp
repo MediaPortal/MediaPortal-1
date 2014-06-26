@@ -22,8 +22,8 @@
 
 #include "RtspContentLocationResponseHeader.h"
 
-CRtspContentLocationResponseHeader::CRtspContentLocationResponseHeader(void)
-  : CRtspResponseHeader()
+CRtspContentLocationResponseHeader::CRtspContentLocationResponseHeader(HRESULT *result)
+  : CRtspResponseHeader(result)
 {
   this->uri = NULL;
 }
@@ -43,30 +43,6 @@ const wchar_t *CRtspContentLocationResponseHeader::GetUri(void)
 /* set methods */
 
 /* other methods */
-
-CRtspContentLocationResponseHeader *CRtspContentLocationResponseHeader::Clone(void)
-{
-  return (CRtspContentLocationResponseHeader *)__super::Clone();
-}
-
-bool CRtspContentLocationResponseHeader::CloneInternal(CHttpHeader *clonedHeader)
-{
-  bool result = __super::CloneInternal(clonedHeader);
-  CRtspContentLocationResponseHeader *header = dynamic_cast<CRtspContentLocationResponseHeader *>(clonedHeader);
-  result &= (header != NULL);
-
-  if (result)
-  {
-    SET_STRING_RESULT_WITH_NULL(header->uri, this->uri, result);
-  }
-
-  return result;
-}
-
-CHttpHeader *CRtspContentLocationResponseHeader::GetNewHeader(void)
-{
-  return new CRtspContentLocationResponseHeader();
-}
 
 bool CRtspContentLocationResponseHeader::Parse(const wchar_t *header, unsigned int length)
 {
@@ -91,3 +67,30 @@ bool CRtspContentLocationResponseHeader::Parse(const wchar_t *header, unsigned i
 
   return result;
 }
+
+/* protected methods */
+
+bool CRtspContentLocationResponseHeader::CloneInternal(CHttpHeader *clone)
+{
+  bool result = __super::CloneInternal(clone);
+  CRtspContentLocationResponseHeader *header = dynamic_cast<CRtspContentLocationResponseHeader *>(clone);
+  result &= (header != NULL);
+
+  if (result)
+  {
+    SET_STRING_RESULT_WITH_NULL(header->uri, this->uri, result);
+  }
+
+  return result;
+}
+
+CHttpHeader *CRtspContentLocationResponseHeader::CreateHeader(void)
+{
+  HRESULT result = S_OK;
+  CRtspContentLocationResponseHeader *header = new CRtspContentLocationResponseHeader(&result);
+  CHECK_POINTER_HRESULT(result, header, result, E_OUTOFMEMORY);
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(header));
+  return header;
+}
+

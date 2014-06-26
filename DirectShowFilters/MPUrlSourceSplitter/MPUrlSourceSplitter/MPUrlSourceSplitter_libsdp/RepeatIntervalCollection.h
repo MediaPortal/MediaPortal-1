@@ -29,7 +29,7 @@
 class CRepeatIntervalCollection : public CCollection<CRepeatInterval>
 {
 public:
-  CRepeatIntervalCollection(void);
+  CRepeatIntervalCollection(HRESULT *result);
   ~CRepeatIntervalCollection(void);
 
 protected:

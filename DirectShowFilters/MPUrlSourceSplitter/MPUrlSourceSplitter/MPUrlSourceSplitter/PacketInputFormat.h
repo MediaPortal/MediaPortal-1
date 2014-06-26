@@ -28,6 +28,7 @@
 #define PACKET_INPUT_FORMAT_IDENTIFIER                                "packet"
 #define PACKET_INPUT_FORMAT_LONG_NAME                                 "Packet input"
 
+// we can't use CFlags class, because AVInputFormat has already flags member
 class CPacketInputFormat : public AVInputFormat
 {
 public:
@@ -49,6 +50,8 @@ protected:
   AVIOContext *streamIoContext;
 
   int64_t streamIoContextBufferPosition;
+
+  bool resetPacketCounter;
 
   /* static methods */
 

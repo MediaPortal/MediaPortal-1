@@ -23,9 +23,9 @@
 #include "RtpInfoTrack.h"
 #include "conversions.h"
 
-CRtpInfoTrack::CRtpInfoTrack(void)
+CRtpInfoTrack::CRtpInfoTrack(HRESULT *result)
+  : CFlags()
 {
-  this->flags = RTP_INFO_TRACK_FLAG_NONE;
   this->url = NULL;
   this->sequenceNumber = 0;
   this->rtpTimestamp = 0;
@@ -72,17 +72,13 @@ bool CRtpInfoTrack::IsRtpTimestamp(void)
   return this->IsSetFlags(RTP_INFO_TRACK_FLAG_RTP_TIMESTAMP);
 }
 
-bool CRtpInfoTrack::IsSetFlags(unsigned int flags)
-{
-  return ((this->flags & flags) == flags);
-}
-
 CRtpInfoTrack *CRtpInfoTrack::Clone(void)
 {
-  CRtpInfoTrack *rtpInfoTrack = new CRtpInfoTrack();
-  bool result = (rtpInfoTrack != NULL);
+  HRESULT result = S_OK;
+  CRtpInfoTrack *rtpInfoTrack = new CRtpInfoTrack(&result);
+  CHECK_POINTER_HRESULT(result, rtpInfoTrack, result, E_OUTOFMEMORY);
 
-  if (result)
+  if (SUCCEEDED(result))
   {
     rtpInfoTrack->flags = this->flags;
     rtpInfoTrack->sequenceNumber = this->sequenceNumber;
@@ -91,8 +87,7 @@ CRtpInfoTrack *CRtpInfoTrack::Clone(void)
     SET_STRING_AND_RESULT_WITH_NULL(rtpInfoTrack->url, this->url, result);
   }
 
-  CHECK_CONDITION_EXECUTE(!result, FREE_MEM_CLASS(rtpInfoTrack));
-
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(rtpInfoTrack));
   return rtpInfoTrack;
 }
 

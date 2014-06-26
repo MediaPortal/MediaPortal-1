@@ -22,8 +22,8 @@
 
 #include "RtspRequestHeader.h"
 
-CRtspRequestHeader::CRtspRequestHeader(void)
-  : CHttpHeader()
+CRtspRequestHeader::CRtspRequestHeader(HRESULT *result)
+  : CHttpHeader(result)
 {
   this->requestHeader = NULL;
 }
@@ -46,19 +46,21 @@ const wchar_t *CRtspRequestHeader::GetRequestHeader(void)
 
 /* other methods */
 
-CRtspRequestHeader *CRtspRequestHeader::Clone(void)
-{
-  return (CRtspRequestHeader *)__super::Clone();
-}
+/* protected methods */
 
-bool CRtspRequestHeader::CloneInternal(CHttpHeader *clonedHeader)
+bool CRtspRequestHeader::CloneInternal(CHttpHeader *clone)
 {
-  bool result = __super::CloneInternal(clonedHeader);
+  bool result = __super::CloneInternal(clone);
 
   return result;
 }
 
-CHttpHeader *CRtspRequestHeader::GetNewHeader(void)
+CHttpHeader *CRtspRequestHeader::CreateHeader(void)
 {
-  return new CRtspRequestHeader();
+  HRESULT result = S_OK;
+  CRtspRequestHeader *header = new CRtspRequestHeader(&result);
+  CHECK_POINTER_HRESULT(result, header, result, E_OUTOFMEMORY);
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(header));
+  return header;
 }

@@ -22,8 +22,8 @@
 
 #include "RtspSessionRequestHeader.h"
 
-CRtspSessionRequestHeader::CRtspSessionRequestHeader(void)
-  : CRtspRequestHeader()
+CRtspSessionRequestHeader::CRtspSessionRequestHeader(HRESULT *result)
+  : CRtspRequestHeader(result)
 {
   this->sessionId = NULL;
 }
@@ -71,15 +71,12 @@ bool CRtspSessionRequestHeader::SetSessionId(const wchar_t *sessionId)
 
 /* other methods */
 
-CRtspSessionRequestHeader *CRtspSessionRequestHeader::Clone(void)
-{
-  return (CRtspSessionRequestHeader *)__super::Clone();
-}
+/* protected methods */
 
-bool CRtspSessionRequestHeader::CloneInternal(CHttpHeader *clonedHeader)
+bool CRtspSessionRequestHeader::CloneInternal(CHttpHeader *clone)
 {
-  bool result = __super::CloneInternal(clonedHeader);
-  CRtspSessionRequestHeader *header = dynamic_cast<CRtspSessionRequestHeader *>(clonedHeader);
+  bool result = __super::CloneInternal(clone);
+  CRtspSessionRequestHeader *header = dynamic_cast<CRtspSessionRequestHeader *>(clone);
   result &= (header != NULL);
 
   if (result)
@@ -90,7 +87,12 @@ bool CRtspSessionRequestHeader::CloneInternal(CHttpHeader *clonedHeader)
   return result;
 }
 
-CHttpHeader *CRtspSessionRequestHeader::GetNewHeader(void)
+CHttpHeader *CRtspSessionRequestHeader::CreateHeader(void)
 {
-  return new CRtspSessionRequestHeader();
+  HRESULT result = S_OK;
+  CRtspSessionRequestHeader *header = new CRtspSessionRequestHeader(&result);
+  CHECK_POINTER_HRESULT(result, header, result, E_OUTOFMEMORY);
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(header));
+  return header;
 }

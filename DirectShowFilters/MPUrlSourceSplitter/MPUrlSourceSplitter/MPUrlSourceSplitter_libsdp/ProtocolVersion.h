@@ -33,7 +33,7 @@ class CProtocolVersion : public CSessionTag
 {
 public:
   // initializes a new instance of CProtocolVersion class
-  CProtocolVersion(void);
+  CProtocolVersion(HRESULT *result);
   virtual ~CProtocolVersion(void);
 
   /* get methods */

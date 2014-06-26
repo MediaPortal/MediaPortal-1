@@ -25,8 +25,8 @@
 #include "hex.h"
 #include "BufferHelper.h"
 
-CRtspTransportResponseHeader::CRtspTransportResponseHeader(void)
-  : CRtspResponseHeader()
+CRtspTransportResponseHeader::CRtspTransportResponseHeader(HRESULT *result)
+  : CRtspResponseHeader(result)
 {
   this->destination = NULL;
   this->source = NULL;
@@ -216,47 +216,6 @@ bool CRtspTransportResponseHeader::IsServerPort(void)
 bool CRtspTransportResponseHeader::IsSynchronizationSourceIdentifier(void)
 {
   return this->IsSetFlags(RTSP_TRANSPORT_RESPONSE_HEADER_FLAG_SSRC);
-}
-
-CRtspTransportResponseHeader *CRtspTransportResponseHeader::Clone(void)
-{
-  return (CRtspTransportResponseHeader *)__super::Clone();
-}
-
-bool CRtspTransportResponseHeader::CloneInternal(CHttpHeader *clonedHeader)
-{
-  bool result = __super::CloneInternal(clonedHeader);
-  CRtspTransportResponseHeader *header = dynamic_cast<CRtspTransportResponseHeader *>(clonedHeader);
-  result &= (header != NULL);
-
-  if (result)
-  {
-    SET_STRING_AND_RESULT_WITH_NULL(header->destination, this->destination, result);
-    SET_STRING_AND_RESULT_WITH_NULL(header->source, this->source, result);
-    SET_STRING_AND_RESULT_WITH_NULL(header->lowerTransport, this->lowerTransport, result);
-    SET_STRING_AND_RESULT_WITH_NULL(header->mode, this->mode, result);
-    SET_STRING_AND_RESULT_WITH_NULL(header->profile, this->profile, result);
-    SET_STRING_AND_RESULT_WITH_NULL(header->transportProtocol, this->transportProtocol, result);
-
-    header->layers = this->layers;
-    header->maxClientPort = this->maxClientPort;
-    header->maxInterleaved = this->maxInterleaved;
-    header->maxPort = this->maxPort;
-    header->maxServerPort = this->maxServerPort;
-    header->minClientPort = this->minClientPort;
-    header->minInterleaved = this->minInterleaved;
-    header->minPort = this->minPort;
-    header->minServerPort = this->minServerPort;
-    header->synchronizationSourceIdentifier = this->synchronizationSourceIdentifier;
-    header->timeToLive = this->timeToLive;
-  }
-
-  return result;
-}
-
-CHttpHeader *CRtspTransportResponseHeader::GetNewHeader(void)
-{
-  return new CRtspTransportResponseHeader();
 }
 
 bool CRtspTransportResponseHeader::Parse(const wchar_t *header, unsigned int length)
@@ -551,4 +510,47 @@ bool CRtspTransportResponseHeader::Parse(const wchar_t *header, unsigned int len
   }
 
   return result;
+}
+
+/* protected methods */
+
+bool CRtspTransportResponseHeader::CloneInternal(CHttpHeader *clone)
+{
+  bool result = __super::CloneInternal(clone);
+  CRtspTransportResponseHeader *header = dynamic_cast<CRtspTransportResponseHeader *>(clone);
+  result &= (header != NULL);
+
+  if (result)
+  {
+    SET_STRING_AND_RESULT_WITH_NULL(header->destination, this->destination, result);
+    SET_STRING_AND_RESULT_WITH_NULL(header->source, this->source, result);
+    SET_STRING_AND_RESULT_WITH_NULL(header->lowerTransport, this->lowerTransport, result);
+    SET_STRING_AND_RESULT_WITH_NULL(header->mode, this->mode, result);
+    SET_STRING_AND_RESULT_WITH_NULL(header->profile, this->profile, result);
+    SET_STRING_AND_RESULT_WITH_NULL(header->transportProtocol, this->transportProtocol, result);
+
+    header->layers = this->layers;
+    header->maxClientPort = this->maxClientPort;
+    header->maxInterleaved = this->maxInterleaved;
+    header->maxPort = this->maxPort;
+    header->maxServerPort = this->maxServerPort;
+    header->minClientPort = this->minClientPort;
+    header->minInterleaved = this->minInterleaved;
+    header->minPort = this->minPort;
+    header->minServerPort = this->minServerPort;
+    header->synchronizationSourceIdentifier = this->synchronizationSourceIdentifier;
+    header->timeToLive = this->timeToLive;
+  }
+
+  return result;
+}
+
+CHttpHeader *CRtspTransportResponseHeader::CreateHeader(void)
+{
+  HRESULT result = S_OK;
+  CRtspTransportResponseHeader *header = new CRtspTransportResponseHeader(&result);
+  CHECK_POINTER_HRESULT(result, header, result, E_OUTOFMEMORY);
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(header));
+  return header;
 }

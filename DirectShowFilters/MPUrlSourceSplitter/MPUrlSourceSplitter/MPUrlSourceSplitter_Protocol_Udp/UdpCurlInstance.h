@@ -63,7 +63,7 @@ public:
   // initializes CURL instance
   // @param downloadRequest : download request
   // @return : true if successful, false otherwise
-  virtual bool Initialize(CDownloadRequest *downloadRequest);
+  virtual HRESULT Initialize(CDownloadRequest *downloadRequest);
 
 protected:
   wchar_t *localAddress;
@@ -84,7 +84,7 @@ protected:
 
   // gets new instance of download response
   // @return : new download response or NULL if error
-  virtual CDownloadResponse *GetNewDownloadResponse(void);
+  virtual CDownloadResponse *CreateDownloadResponse(void);
 
   // virtual CurlWorker() method is called from static CurlWorker() method
   virtual unsigned int CurlWorker(void);

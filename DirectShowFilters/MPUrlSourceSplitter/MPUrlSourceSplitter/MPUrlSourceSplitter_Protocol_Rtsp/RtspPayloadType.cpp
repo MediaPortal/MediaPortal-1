@@ -22,10 +22,9 @@
 
 #include "RtspPayloadType.h"
 
-CRtspPayloadType::CRtspPayloadType(void)
-  : CPayloadType()
+CRtspPayloadType::CRtspPayloadType(HRESULT *result)
+  : CPayloadType(result)
 {
-  this->flags = RTSP_PAYLOAD_TYPE_FLAG_NONE;
   this->streamInputFormat = NULL;
 }
 
@@ -36,11 +35,6 @@ CRtspPayloadType::~CRtspPayloadType(void)
 
 /* get methods */
 
-unsigned int CRtspPayloadType::GetFlags(void)
-{
-  return this->flags;
-}
-
 const wchar_t *CRtspPayloadType::GetStreamInputFormat(void)
 {
   return this->streamInputFormat;
@@ -48,36 +42,12 @@ const wchar_t *CRtspPayloadType::GetStreamInputFormat(void)
 
 /* set methods */
 
-void CRtspPayloadType::SetFlags(unsigned int flags)
-{
-  this->flags = flags;
-}
-
 bool CRtspPayloadType::SetStreamInputFormat(const wchar_t *streamInputFormat)
 {
   SET_STRING_RETURN_WITH_NULL(this->streamInputFormat, streamInputFormat);
 }
 
 /* other methods */
-
-bool CRtspPayloadType::IsSetFlags(unsigned int flags)
-{
-  return ((this->flags & flags) == flags);
-}
-
-CRtspPayloadType *CRtspPayloadType::Clone(void)
-{
-  CRtspPayloadType *clone = new CRtspPayloadType();
-  bool result = (clone != NULL);
-
-  if (result)
-  {
-    result &= this->CloneInternal(clone);
-  }
-
-  CHECK_CONDITION_EXECUTE(!result, FREE_MEM_CLASS(clone));
-  return clone;
-}
 
 bool CRtspPayloadType::CopyFromPayloadType(CRtspPayloadType *payloadType)
 {
@@ -95,15 +65,25 @@ bool CRtspPayloadType::CopyFromPayloadType(CRtspPayloadType *payloadType)
 
 /* protected methods */
 
-bool CRtspPayloadType::CloneInternal(CRtspPayloadType *payloadType)
+CPayloadType *CRtspPayloadType::CreatePayloadType(void)
+{
+  HRESULT result = S_OK;
+  CRtspPayloadType *payloadType = new CRtspPayloadType(&result);
+  CHECK_POINTER_HRESULT(result, payloadType, result, E_OUTOFMEMORY);
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(payloadType));
+  return payloadType;
+}
+
+bool CRtspPayloadType::CloneInternal(CPayloadType *payloadType)
 {
   bool result = __super::CloneInternal(payloadType);
 
   if (result)
   {
-    payloadType->flags = this->flags;
+    CRtspPayloadType *rtspPayloadType = dynamic_cast<CRtspPayloadType *>(payloadType);
 
-    SET_STRING_AND_RESULT_WITH_NULL(payloadType->streamInputFormat, this->streamInputFormat, result);
+    SET_STRING_AND_RESULT_WITH_NULL(rtspPayloadType->streamInputFormat, this->streamInputFormat, result);
   }
 
   return result;

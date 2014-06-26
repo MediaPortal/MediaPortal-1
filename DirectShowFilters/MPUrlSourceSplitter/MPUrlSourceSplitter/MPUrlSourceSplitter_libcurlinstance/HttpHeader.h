@@ -23,7 +23,13 @@
 #ifndef __HTTP_HEADER_DEFINED
 #define __HTTP_HEADER_DEFINED
 
-class CHttpHeader
+#include "Flags.h"
+
+#define HTTP_HEADER_FLAG_NONE                                         FLAGS_NONE
+
+#define HTTP_HEADER_FLAG_LAST                                         (FLAGS_LAST + 0)
+
+class CHttpHeader : public CFlags
 {
 public:
   CHttpHeader(HRESULT *result);
@@ -90,13 +96,13 @@ protected:
   wchar_t *value;
 
   // deeply clones current instance to cloned header
-  // @param  clonedHeader : cloned header to hold clone of current instance
+  // @param  clone : cloned header to hold clone of current instance
   // @return : true if successful, false otherwise
-  virtual bool CloneInternal(CHttpHeader *clonedHeader);
+  virtual bool CloneInternal(CHttpHeader *clone);
 
   // returns new header object to be used in cloning
   // @return : header object or NULL if error
-  virtual CHttpHeader *GetNewHeader(void);
+  virtual CHttpHeader *CreateHeader(void);
 };
 
 #endif

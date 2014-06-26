@@ -29,7 +29,7 @@
 class CRtspRequestHeaderCollection : public CKeyedCollection<CRtspRequestHeader, const wchar_t *>
 {
 public:
-  CRtspRequestHeaderCollection(void);
+  CRtspRequestHeaderCollection(HRESULT *result);
   ~CRtspRequestHeaderCollection(void);
 
   /* get methods */

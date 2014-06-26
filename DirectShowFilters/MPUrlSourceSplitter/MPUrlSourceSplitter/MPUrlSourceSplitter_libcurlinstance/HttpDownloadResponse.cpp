@@ -84,13 +84,13 @@ CDownloadResponse *CHttpDownloadResponse::CreateDownloadResponse(void)
   return response;
 }
 
-bool CHttpDownloadResponse::CloneInternal(CDownloadResponse *clonedResponse)
+bool CHttpDownloadResponse::CloneInternal(CDownloadResponse *clone)
 {
-  bool result = __super::CloneInternal(clonedResponse);
+  bool result = __super::CloneInternal(clone);
 
   if (result)
   {
-    CHttpDownloadResponse *response = dynamic_cast<CHttpDownloadResponse *>(clonedResponse);
+    CHttpDownloadResponse *response = dynamic_cast<CHttpDownloadResponse *>(clone);
 
     response->responseCode = this->responseCode;
     response->headers->Clear();

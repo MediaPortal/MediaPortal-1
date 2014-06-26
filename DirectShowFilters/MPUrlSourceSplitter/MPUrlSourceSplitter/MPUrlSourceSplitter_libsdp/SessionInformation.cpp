@@ -22,7 +22,8 @@
 
 #include "SessionInformation.h"
 
-CSessionInformation::CSessionInformation(void)
+CSessionInformation::CSessionInformation(HRESULT *result)
+  : CSessionTag(result)
 {
   this->sessionInformation = NULL;
 }

@@ -33,7 +33,7 @@ class CRangeAttribute : public CAttribute
 {
 public:
   // initializes a new instance of CRangeAttribute class
-  CRangeAttribute(void);
+  CRangeAttribute(HRESULT *result);
   virtual ~CRangeAttribute(void);
 
   /* get methods */

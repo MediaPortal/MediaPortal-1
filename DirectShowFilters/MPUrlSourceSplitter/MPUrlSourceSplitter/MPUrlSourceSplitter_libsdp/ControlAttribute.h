@@ -29,8 +29,11 @@
 
 #define TAG_ATTRIBUTE_INSTANCE_CONTROL                      L"a_control"
 
-#define CONTROL_ATTRIBUTE_FLAG_NONE                         0x00000000
-#define CONTROL_ATTRIBUTE_FLAG_ASTERISK                     0x00000001
+#define CONTROL_ATTRIBUTE_FLAG_NONE                         ATTRIBUTE_FLAG_NONE
+
+#define CONTROL_ATTRIBUTE_FLAG_ASTERISK                     (1 << (ATTRIBUTE_FLAG_LAST + 0))
+
+#define CONTROL_ATTRIBUTE_FLAG_LAST                         (ATTRIBUTE_FLAG_LAST + 1)
 
 #define CONTROL_ATTRIBUTE_ASTERISK                          L"*"
 
@@ -38,7 +41,7 @@ class CControlAttribute : public CAttribute
 {
 public:
   // initializes a new instance of CControlAttribute class
-  CControlAttribute(void);
+  CControlAttribute(HRESULT *result);
   virtual ~CControlAttribute(void);
 
   /* get methods */
@@ -65,9 +68,6 @@ public:
   virtual void Clear(void);
 
 protected:
-
-  // holds various flags
-  unsigned int flags;
 
   // holds control URL
   wchar_t *controlUrl;

@@ -25,28 +25,31 @@
 
 #include "SessionTag.h"
 
-#define TAG_ORIGIN                                          L"o"
+#define TAG_ORIGIN                                                    L"o"
 
-#define ORIGIN_USER_NAME_NOT_SPECIFIED                      L"-"
+#define ORIGIN_USER_NAME_NOT_SPECIFIED                                L"-"
 
-#define ORIGIN_VERSION_DEFAULT                              0
+#define ORIGIN_VERSION_DEFAULT                                        0
 
-#define ORIGIN_NETWORK_TYPE_INTERNET                        L"IN"
+#define ORIGIN_NETWORK_TYPE_INTERNET                                  L"IN"
 
-#define ORIGIN_ADDRESS_TYPE_IPV4                            L"IP4"
-#define ORIGIN_ADDRESS_TYPE_IPV6                            L"IP6"
+#define ORIGIN_ADDRESS_TYPE_IPV4                                      L"IP4"
+#define ORIGIN_ADDRESS_TYPE_IPV6                                      L"IP6"
 
-#define ORIGIN_FLAG_NONE                                    0
-#define ORIGIN_FLAG_USER_NAME_NOT_SPECIFIED                 1
-#define ORIGIN_FLAG_NETWORK_TYPE_INTERNET                   2
-#define ORIGIN_FLAG_ADDRESS_TYPE_IPV4                       4
-#define ORIGIN_FLAG_ADDRESS_TYPE_IPV6                       8
+#define ORIGIN_FLAG_NONE                                              SESSION_TAG_FLAG_NONE
+
+#define ORIGIN_FLAG_USER_NAME_NOT_SPECIFIED                           (1 << (SESSION_TAG_FLAG_LAST + 0))
+#define ORIGIN_FLAG_NETWORK_TYPE_INTERNET                             (1 << (SESSION_TAG_FLAG_LAST + 1))
+#define ORIGIN_FLAG_ADDRESS_TYPE_IPV4                                 (1 << (SESSION_TAG_FLAG_LAST + 2))
+#define ORIGIN_FLAG_ADDRESS_TYPE_IPV6                                 (1 << (SESSION_TAG_FLAG_LAST + 3))
+
+#define ORIGIN_FLAG_LAST                                              (SESSION_TAG_FLAG_LAST + 4)
 
 class COrigin : public CSessionTag
 {
 public:
   // initializes a new instance of COrigin class
-  COrigin(void);
+  COrigin(HRESULT *result);
   virtual ~COrigin(void);
 
   /* get methods */
@@ -85,7 +88,6 @@ public:
   virtual void Clear(void);
 
 protected:
-
   // holds user name
   wchar_t *username;
 
@@ -103,9 +105,6 @@ protected:
 
   // holds address
   wchar_t *address;
-
-  // holds various flags
-  unsigned int flags;
 };
 
 #endif

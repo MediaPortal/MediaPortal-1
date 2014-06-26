@@ -23,8 +23,8 @@
 #include "RtpMapAttribute.h"
 #include "conversions.h"
 
-CRtpMapAttribute::CRtpMapAttribute(void)
-  : CAttribute()
+CRtpMapAttribute::CRtpMapAttribute(HRESULT *result)
+  : CAttribute(result)
 {
   this->payloadType = 0;
   this->clockRate = 0;

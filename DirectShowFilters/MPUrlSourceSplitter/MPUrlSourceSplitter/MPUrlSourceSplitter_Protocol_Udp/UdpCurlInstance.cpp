@@ -29,6 +29,7 @@
 #include "Dns.h"
 #include "IpAddress.h"
 #include "RtpPacket.h"
+#include "ErrorCodes.h"
 
 CUdpCurlInstance::CUdpCurlInstance(HRESULT *result, CLogger *logger, HANDLE mutex, const wchar_t *protocolName, const wchar_t *instanceName)
   : CCurlInstance(result, logger, mutex, protocolName, instanceName)
@@ -65,40 +66,40 @@ CUdpDownloadResponse *CUdpCurlInstance::GetUdpDownloadResponse(void)
 
 /* other methods */
 
-bool CUdpCurlInstance::Initialize(CDownloadRequest *downloadRequest)
+HRESULT CUdpCurlInstance::Initialize(CDownloadRequest *downloadRequest)
 {
-  unsigned int endTicks = (this->finishTime == FINISH_TIME_NOT_SPECIFIED) ? (GetTickCount() + this->GetReceiveDataTimeout()) : this->finishTime;
-
-  bool result = __super::Initialize(downloadRequest);
+  HRESULT result = __super::Initialize(downloadRequest);
   this->state = CURL_STATE_CREATED;
+  unsigned int endTicks = (this->finishTime == FINISH_TIME_NOT_SPECIFIED) ? (GetTickCount() + this->GetReceiveDataTimeout()) : this->finishTime;
 
   this->udpDownloadRequest = dynamic_cast<CUdpDownloadRequest  *>(this->downloadRequest);
   this->udpDownloadResponse = dynamic_cast<CUdpDownloadResponse *>(this->downloadResponse);
-  result &= (this->udpDownloadRequest != NULL) && (this->udpDownloadResponse != NULL);
+  CHECK_POINTER_HRESULT(result, this->udpDownloadRequest, result, E_NOT_VALID_STATE);
+  CHECK_POINTER_HRESULT(result, this->udpDownloadResponse, result, E_NOT_VALID_STATE);
 
-  if (result)
+  if (SUCCEEDED(result))
   {
     ALLOC_MEM_DEFINE_SET(urlComponents, URL_COMPONENTS, 1, 0);
-    result &= (urlComponents != NULL);
+    CHECK_POINTER_HRESULT(result, urlComponents, result, E_OUTOFMEMORY);
 
-    if (result)
+    if (SUCCEEDED(result))
     {
       ZeroURL(urlComponents);
       urlComponents->dwStructSize = sizeof(URL_COMPONENTS);
 
-      result &= (InternetCrackUrl(downloadRequest->GetUrl(), 0, 0, urlComponents) == TRUE);
+      CHECK_CONDITION_HRESULT(result, InternetCrackUrl(downloadRequest->GetUrl(), 0, 0, urlComponents) == TRUE, result, E_FAIL);
 
       if (SUCCEEDED(result))
       {
         this->localAddress = Substring(urlComponents->lpszHostName, 0, urlComponents->dwHostNameLength);
-        result &= (this->localAddress != NULL);
+        CHECK_POINTER_HRESULT(result, this->localAddress, result, E_OUTOFMEMORY);
 
         this->localPort = urlComponents->nPort;
 
         if (urlComponents->dwUserNameLength > 0)
         {
           this->sourceAddress = Substring(urlComponents->lpszUserName, 0, urlComponents->dwUserNameLength);
-          result &= (this->sourceAddress != NULL);
+          CHECK_POINTER_HRESULT(result, this->sourceAddress, result, E_OUTOFMEMORY);
         }
 
         if (urlComponents->dwPasswordLength > 0)
@@ -107,7 +108,7 @@ bool CUdpCurlInstance::Initialize(CDownloadRequest *downloadRequest)
           this->sourcePort = GetValueUnsignedInt(urlComponents->lpszPassword, PORT_UNSPECIFIED);
         }
 
-        if (result)
+        if (SUCCEEDED(result))
         {
           this->logger->Log(LOGGER_INFO, L"%s: %s: local address '%s', local port %u, source address '%s', source port %u", this->protocolName, METHOD_INITIALIZE_NAME,
             (this->localAddress == NULL) ? L"NULL" : this->localAddress,
@@ -121,13 +122,13 @@ bool CUdpCurlInstance::Initialize(CDownloadRequest *downloadRequest)
     FREE_MEM(urlComponents);
   }
 
-  this->state = (result) ? CURL_STATE_INITIALIZED : CURL_STATE_CREATED;
+  this->state = SUCCEEDED(result) ? CURL_STATE_INITIALIZED : CURL_STATE_CREATED;
   return result;
 }
 
 /* protected methods */
 
-CDownloadResponse *CUdpCurlInstance::GetNewDownloadResponse(void)
+CDownloadResponse *CUdpCurlInstance::CreateDownloadResponse(void)
 {
   HRESULT result = S_OK;
   CUdpDownloadResponse *response = new CUdpDownloadResponse(&result);

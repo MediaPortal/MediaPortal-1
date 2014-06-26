@@ -28,36 +28,38 @@
 #include "MediaFormatCollection.h"
 #include "ConnectionData.h"
 
-#define TAG_MEDIA_DESCRIPTION                               L"m"
+#define TAG_MEDIA_DESCRIPTION                                         L"m"
 
-#define MEDIA_DESCRIPTION_MEDIA_TYPE_AUDIO                  L"audio"
-#define MEDIA_DESCRIPTION_MEDIA_TYPE_VIDEO                  L"video"
-#define MEDIA_DESCRIPTION_MEDIA_TYPE_APPLICATION            L"application"
-#define MEDIA_DESCRIPTION_MEDIA_TYPE_DATA                   L"data"
-#define MEDIA_DESCRIPTION_MEDIA_TYPE_CONTROL                L"control"
+#define MEDIA_DESCRIPTION_MEDIA_TYPE_AUDIO                            L"audio"
+#define MEDIA_DESCRIPTION_MEDIA_TYPE_VIDEO                            L"video"
+#define MEDIA_DESCRIPTION_MEDIA_TYPE_APPLICATION                      L"application"
+#define MEDIA_DESCRIPTION_MEDIA_TYPE_DATA                             L"data"
+#define MEDIA_DESCRIPTION_MEDIA_TYPE_CONTROL                          L"control"
 
-#define MEDIA_DESCRIPTION_PORT_DEFAULT                      0
-#define MEDIA_DESCRIPTION_NUMBER_OF_PORTS_DEFAULT           1
+#define MEDIA_DESCRIPTION_PORT_DEFAULT                                0
+#define MEDIA_DESCRIPTION_NUMBER_OF_PORTS_DEFAULT                     1
 
-#define MEDIA_DESCRIPTION_TRANSPORT_PROTOCOL_RTP_AVP        L"RTP/AVP"
-#define MEDIA_DESCRIPTION_TRANSPORT_PROTOCOL_UDP            L"udp"
+#define MEDIA_DESCRIPTION_TRANSPORT_PROTOCOL_RTP_AVP                  L"RTP/AVP"
+#define MEDIA_DESCRIPTION_TRANSPORT_PROTOCOL_UDP                      L"udp"
 
-#define MEDIA_DESCRIPTION_FLAG_NONE                         0x00000000
+#define MEDIA_DESCRIPTION_FLAG_NONE                                   SESSION_TAG_FLAG_NONE
 
-#define MEDIA_DESCRIPTION_FLAG_MEDIA_TYPE_AUDIO             0x00000001
-#define MEDIA_DESCRIPTION_FLAG_MEDIA_TYPE_VIDEO             0x00000002
-#define MEDIA_DESCRIPTION_FLAG_MEDIA_TYPE_APPLICATION       0x00000004
-#define MEDIA_DESCRIPTION_FLAG_MEDIA_TYPE_DATA              0x00000008
-#define MEDIA_DESCRIPTION_FLAG_MEDIA_TYPE_CONTROL           0x00000010
+#define MEDIA_DESCRIPTION_FLAG_MEDIA_TYPE_AUDIO                       (1 << (SESSION_TAG_FLAG_LAST + 0))
+#define MEDIA_DESCRIPTION_FLAG_MEDIA_TYPE_VIDEO                       (1 << (SESSION_TAG_FLAG_LAST + 1))
+#define MEDIA_DESCRIPTION_FLAG_MEDIA_TYPE_APPLICATION                 (1 << (SESSION_TAG_FLAG_LAST + 2))
+#define MEDIA_DESCRIPTION_FLAG_MEDIA_TYPE_DATA                        (1 << (SESSION_TAG_FLAG_LAST + 3))
+#define MEDIA_DESCRIPTION_FLAG_MEDIA_TYPE_CONTROL                     (1 << (SESSION_TAG_FLAG_LAST + 4))
 
-#define MEDIA_DESCRIPTION_FLAG_TRANSPORT_PROTOCOL_RTP_AVP   0x00000020
-#define MEDIA_DESCRIPTION_FLAG_TRANSPORT_PROTOCOL_UDP       0x00000040
+#define MEDIA_DESCRIPTION_FLAG_TRANSPORT_PROTOCOL_RTP_AVP             (1 << (SESSION_TAG_FLAG_LAST + 5))
+#define MEDIA_DESCRIPTION_FLAG_TRANSPORT_PROTOCOL_UDP                 (1 << (SESSION_TAG_FLAG_LAST + 6))
+
+#define MEDIA_DESCRIPTION_FLAG_LAST                                   (SESSION_TAG_FLAG_LAST + 7)
 
 class CMediaDescription : public CSessionTag
 {
 public:
   // initializes a new instance of CMediaDescription class
-  CMediaDescription(void);
+  CMediaDescription(HRESULT *result);
   virtual ~CMediaDescription(void);
 
   /* get methods */
@@ -124,10 +126,6 @@ public:
   virtual void Clear(void);
 
 protected:
-
-  // holds various flags
-  unsigned int flags;
-
   // holds media type
   wchar_t *mediaType;
 

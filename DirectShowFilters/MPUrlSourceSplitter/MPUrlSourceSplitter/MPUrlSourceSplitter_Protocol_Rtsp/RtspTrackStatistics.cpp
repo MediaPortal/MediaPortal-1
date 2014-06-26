@@ -22,10 +22,9 @@
 
 #include "RtspTrackStatistics.h"
 
-CRtspTrackStatistics::CRtspTrackStatistics()
+CRtspTrackStatistics::CRtspTrackStatistics(HRESULT *result)
+  : CFlags()
 {
-  this->flags = RTSP_TRACK_STATISTICS_FLAG_NONE;
-
   this->jitter = 0;
   this->lastTime = 0;
   this->lastRtpPacketTimestamp = 0;
@@ -216,9 +215,4 @@ void CRtspTrackStatistics::AdjustLastSenderReportTimestamp(uint64_t ntpTimestamp
 bool CRtspTrackStatistics::IsSetSequenceNumber(void)
 {
   return this->IsSetFlags(RTSP_TRACK_STATISTICS_FLAG_SET_SEQUENCE_NUMBER);
-}
-
-bool CRtspTrackStatistics::IsSetFlags(unsigned int flags)
-{
-  return ((this->flags & flags) == flags);
 }
