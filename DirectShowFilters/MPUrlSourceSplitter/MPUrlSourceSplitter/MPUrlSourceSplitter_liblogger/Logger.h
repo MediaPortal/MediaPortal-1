@@ -86,6 +86,15 @@ public:
   // @return : static logger context
   CStaticLoggerContext *GetStaticLoggerContext(void);
 
+  // registers module with specified file name
+  // @param moduleFileName : the full path to module file to register
+  // @return : true if successful, false otherwise
+  bool RegisterModule(const wchar_t *moduleFileName);
+
+  // unregisters module with specified file name
+  // @param moduleFileName : the full path to module file to unregister
+  void UnregisterModule(const wchar_t *moduleFileName);
+
 protected:
   // mutex for accessing log file
   HANDLE mutex;

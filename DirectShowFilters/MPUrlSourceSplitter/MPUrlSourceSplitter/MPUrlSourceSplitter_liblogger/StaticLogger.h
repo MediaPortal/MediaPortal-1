@@ -24,6 +24,7 @@
 #define __STATIC_LOGGER_DEFINED
 
 #include "StaticLoggerContextCollection.h"
+#include "ParameterCollection.h"
 
 class CStaticLogger
 {
@@ -71,10 +72,27 @@ public:
   void Remove(void);
   void Flush(void);
 
+  // registers module with specified file name
+  // @param moduleFileName : the full path to module file to register
+  // @return : true if successful, false otherwise
+  bool RegisterModule(const wchar_t *moduleFileName);
+
+  // unregisters module with specified file name
+  // @param moduleFileName : the full path to module file to unregister
+  void UnregisterModule(const wchar_t *moduleFileName);
+
+  // tests if module with specified file name is registered
+  // @param moduleFileName : the full path to module file to test
+  // @return : true if module is registered, false otherwise
+  bool IsRegisteredModule(const wchar_t *moduleFileName);
+
 protected:
   CStaticLoggerContextCollection *loggerContexts;
   HANDLE mutex;
   unsigned int referencies;
+
+  // holds registered modules
+  CParameterCollection *registeredModules;
 
   /* logger worker thread */
 

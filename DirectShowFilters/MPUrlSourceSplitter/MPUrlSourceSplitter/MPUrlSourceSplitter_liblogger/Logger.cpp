@@ -204,3 +204,16 @@ CStaticLoggerContext *CLogger::GetStaticLoggerContext(void)
 {
   return this->staticLogger->GetLoggerContext(this);
 }
+
+bool CLogger::RegisterModule(const wchar_t *moduleFileName)
+{
+  return (this->staticLogger != NULL) ? this->staticLogger->RegisterModule(moduleFileName) : false;
+}
+
+void CLogger::UnregisterModule(const wchar_t *moduleFileName)
+{
+  if (this->staticLogger != NULL)
+  {
+    this->staticLogger->UnregisterModule(moduleFileName);
+  }
+}

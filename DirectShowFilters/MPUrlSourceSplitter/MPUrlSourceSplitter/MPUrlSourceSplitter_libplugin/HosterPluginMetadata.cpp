@@ -83,6 +83,8 @@ CHosterPluginMetadata::CHosterPluginMetadata(HRESULT *result, CLogger *logger, C
         *result = E_INVALID_PLUGIN;
       }
 
+      CHECK_CONDITION_HRESULT(*result, this->logger->RegisterModule(pluginLibraryFileName), *result, E_OUTOFMEMORY);
+
       if (SUCCEEDED(*result))
       {
         // create plugin

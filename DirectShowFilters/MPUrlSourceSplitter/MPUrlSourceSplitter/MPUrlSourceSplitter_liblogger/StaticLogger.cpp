@@ -34,14 +34,17 @@ CStaticLogger::CStaticLogger(HRESULT *result)
   this->referencies = 0;
   this->loggerContexts = NULL;
   this->mutex = NULL;
+  this->registeredModules = NULL;
 
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
     this->loggerContexts = new CStaticLoggerContextCollection(result);
     this->mutex = CreateMutex(NULL, FALSE, NULL);
+    this->registeredModules = new CParameterCollection(result);
 
     CHECK_POINTER_HRESULT(*result, this->loggerContexts, *result, E_OUTOFMEMORY);
     CHECK_POINTER_HRESULT(*result, this->mutex, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->registeredModules, *result, E_OUTOFMEMORY);
   }
 }
 
@@ -50,6 +53,7 @@ CStaticLogger::~CStaticLogger(void)
   this->DestroyLoggerWorker();
 
   FREE_MEM_CLASS(this->loggerContexts);
+  FREE_MEM_CLASS(this->registeredModules);
 
   if (this->mutex != NULL)
   {
@@ -145,6 +149,28 @@ void CStaticLogger::LogMessage(CStaticLoggerContext *context, unsigned int logLe
       context->GetMessages()->Add(L"", message);
     }
   }
+}
+
+bool CStaticLogger::RegisterModule(const wchar_t *moduleFileName)
+{
+  bool result = true;
+
+  if (!this->registeredModules->Contains(moduleFileName, false))
+  {
+    result &= this->registeredModules->Add(moduleFileName, L"");
+  }
+
+  return true;
+}
+
+void CStaticLogger::UnregisterModule(const wchar_t *moduleFileName)
+{
+  this->registeredModules->Remove(moduleFileName, false);
+}
+
+bool CStaticLogger::IsRegisteredModule(const wchar_t *moduleFileName)
+{
+  return this->registeredModules->Contains(moduleFileName, false);
 }
 
 /* protected methods */

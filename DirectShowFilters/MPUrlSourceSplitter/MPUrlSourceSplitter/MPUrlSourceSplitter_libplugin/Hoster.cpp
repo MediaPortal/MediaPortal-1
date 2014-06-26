@@ -111,75 +111,81 @@ HRESULT CHoster::LoadPlugins(void)
 
       ALLOC_MEM_DEFINE_SET(pluginPath, wchar_t, MAX_PATH, 0);
       ALLOC_MEM_DEFINE_SET(pluginSearchPattern, wchar_t, MAX_PATH, 0);
+      CHECK_POINTER_HRESULT(result, pluginPath, result, E_OUTOFMEMORY);
+      CHECK_POINTER_HRESULT(result, pluginSearchPattern, result, E_OUTOFMEMORY);
 
-      GetModuleFileName(GetModuleHandle(MODULE_FILE_NAME), pluginPath, MAX_PATH);
-      PathRemoveFileSpec(pluginPath);
+      CHECK_CONDITION_HRESULT(result, GetModuleFileName(GetModuleHandle(MODULE_FILE_NAME), pluginPath, MAX_PATH) != 0, result, E_CANNOT_GET_MODULE_FILE_NAME);
 
-      wcscat_s(pluginPath, MAX_PATH, L"\\");
-      wcscpy_s(pluginSearchPattern, MAX_PATH, pluginPath);
-      wcscat_s(pluginSearchPattern, MAX_PATH, this->hosterSearchPattern);
-
-      this->logger->Log(LOGGER_VERBOSE, L"%s: %s: search path: '%s', search pattern: '%s'", this->hosterName, METHOD_LOAD_PLUGINS_NAME, pluginPath, this->hosterSearchPattern);
-      // add plugins directory to search path
-      SetDllDirectory(pluginPath);
-
-      pluginFileHandle = FindFirstFile(pluginSearchPattern, &pluginFileInfo);
-      if (pluginFileHandle != INVALID_HANDLE_VALUE) 
+      if (SUCCEEDED(result))
       {
-        do
+        PathRemoveFileSpec(pluginPath);
+
+        wcscat_s(pluginPath, MAX_PATH, L"\\");
+        wcscpy_s(pluginSearchPattern, MAX_PATH, pluginPath);
+        wcscat_s(pluginSearchPattern, MAX_PATH, this->hosterSearchPattern);
+
+        this->logger->Log(LOGGER_VERBOSE, L"%s: %s: search path: '%s', search pattern: '%s'", this->hosterName, METHOD_LOAD_PLUGINS_NAME, pluginPath, this->hosterSearchPattern);
+        // add plugins directory to search path
+        SetDllDirectory(pluginPath);
+
+        pluginFileHandle = FindFirstFile(pluginSearchPattern, &pluginFileInfo);
+        if (pluginFileHandle != INVALID_HANDLE_VALUE) 
         {
-          ALLOC_MEM_DEFINE_SET(pluginLibraryFileName, wchar_t, MAX_PATH, 0);
-
-          wcscpy_s(pluginLibraryFileName, MAX_PATH, pluginPath);
-          wcscat_s(pluginLibraryFileName, MAX_PATH, pluginFileInfo.cFileName);
-
-          // load library
-          this->logger->Log(LOGGER_INFO, L"%s: %s: loading library: %s", this->hosterName, METHOD_LOAD_PLUGINS_NAME, pluginLibraryFileName);
-
-          CHosterPluginMetadata *hosterPluginMetadata = this->CreateHosterPluginMetadata(&result, this->logger, this->configuration, this->hosterName, pluginLibraryFileName);
-          CHECK_POINTER_HRESULT(result, hosterPluginMetadata, result, E_OUTOFMEMORY);
-
-          if (SUCCEEDED(result))
+          do
           {
-            // initialize plugin
-            CPluginConfiguration *pluginConfiguration = this->CreatePluginConfiguration(&result, this->configuration);
-            CHECK_POINTER_HRESULT(result, pluginConfiguration, result, E_OUTOFMEMORY);
+            ALLOC_MEM_DEFINE_SET(pluginLibraryFileName, wchar_t, MAX_PATH, 0);
 
-            CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), hosterPluginMetadata->GetPlugin()->Initialize(pluginConfiguration), result);
+            wcscpy_s(pluginLibraryFileName, MAX_PATH, pluginPath);
+            wcscat_s(pluginLibraryFileName, MAX_PATH, pluginFileInfo.cFileName);
 
-            FREE_MEM_CLASS(pluginConfiguration);
+            // load library
+            this->logger->Log(LOGGER_INFO, L"%s: %s: loading library: %s", this->hosterName, METHOD_LOAD_PLUGINS_NAME, pluginLibraryFileName);
 
-            CHECK_CONDITION_HRESULT(result, this->hosterPluginMetadataCollection->Add(hosterPluginMetadata), result, E_OUTOFMEMORY);
+            CHosterPluginMetadata *hosterPluginMetadata = this->CreateHosterPluginMetadata(&result, this->logger, this->configuration, this->hosterName, pluginLibraryFileName);
+            CHECK_POINTER_HRESULT(result, hosterPluginMetadata, result, E_OUTOFMEMORY);
 
             if (SUCCEEDED(result))
             {
-              wchar_t *guid = ConvertGuidToString(hosterPluginMetadata->GetPlugin()->GetInstanceId());
-              this->logger->Log(LOGGER_INFO, L"%s: %s: plugin '%s' successfully initialized, id: %s", this->hosterName, METHOD_LOAD_PLUGINS_NAME, hosterPluginMetadata->GetPlugin()->GetName(), guid);
-              FREE_MEM(guid);
+              // initialize plugin
+              CPluginConfiguration *pluginConfiguration = this->CreatePluginConfiguration(&result, this->configuration);
+              CHECK_POINTER_HRESULT(result, pluginConfiguration, result, E_OUTOFMEMORY);
+
+              CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), hosterPluginMetadata->GetPlugin()->Initialize(pluginConfiguration), result);
+
+              FREE_MEM_CLASS(pluginConfiguration);
+
+              CHECK_CONDITION_HRESULT(result, this->hosterPluginMetadataCollection->Add(hosterPluginMetadata), result, E_OUTOFMEMORY);
+
+              if (SUCCEEDED(result))
+              {
+                wchar_t *guid = ConvertGuidToString(hosterPluginMetadata->GetPlugin()->GetInstanceId());
+                this->logger->Log(LOGGER_INFO, L"%s: %s: plugin '%s' successfully initialized, id: %s", this->hosterName, METHOD_LOAD_PLUGINS_NAME, hosterPluginMetadata->GetPlugin()->GetName(), guid);
+                FREE_MEM(guid);
+              }
+              else
+              {
+                this->logger->Log(LOGGER_INFO, L"%s: %s: plugin '%s' not initialized, error: 0x%08X", this->hosterName, METHOD_LOAD_PLUGINS_NAME, hosterPluginMetadata->GetPlugin()->GetName(), result);
+                FREE_MEM_CLASS(hosterPluginMetadata);
+              }
             }
-            else
+
+            FREE_MEM(pluginLibraryFileName);
+
+            if (this->hosterPluginMetadataCollection->Count() == maxPlugins)
             {
-              this->logger->Log(LOGGER_INFO, L"%s: %s: plugin '%s' not initialized, error: 0x%08X", this->hosterName, METHOD_LOAD_PLUGINS_NAME, hosterPluginMetadata->GetPlugin()->GetName(), result);
-              FREE_MEM_CLASS(hosterPluginMetadata);
+              break;
             }
           }
+          while (FindNextFile(pluginFileHandle, &pluginFileInfo));
 
-          FREE_MEM(pluginLibraryFileName);
-
-          if (this->hosterPluginMetadataCollection->Count() == maxPlugins)
-          {
-            break;
-          }
+          FindClose(pluginFileHandle);
         }
-        while (FindNextFile(pluginFileHandle, &pluginFileInfo));
 
-        FindClose(pluginFileHandle);
+        this->logger->Log(LOGGER_INFO, L"%s: %s: found plugins: %u", this->hosterName, METHOD_LOAD_PLUGINS_NAME, this->hosterPluginMetadataCollection->Count());
+
+        FREE_MEM(pluginPath);
+        FREE_MEM(pluginSearchPattern);
       }
-
-      this->logger->Log(LOGGER_INFO, L"%s: %s: found plugins: %u", this->hosterName, METHOD_LOAD_PLUGINS_NAME, this->hosterPluginMetadataCollection->Count());
-
-      FREE_MEM(pluginPath);
-      FREE_MEM(pluginSearchPattern);
     }
   }
 

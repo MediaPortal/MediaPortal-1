@@ -45,6 +45,7 @@
 #define E_STREAM_COUNT_UNKNOWN                                                  -8
 #define E_INVALID_STREAM_PACKAGE_REQUEST                                        -9
 #define E_INVALID_STREAM_ID                                                     -10
+#define E_CANNOT_GET_MODULE_FILE_NAME                                           -11
 
 // parser error codes
 
