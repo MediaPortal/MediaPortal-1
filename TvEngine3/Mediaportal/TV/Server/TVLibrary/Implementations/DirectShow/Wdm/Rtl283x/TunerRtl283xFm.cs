@@ -657,18 +657,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       }
       foreach (RegistryView view in views)
       {
-        RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, view).CreateSubKey(@"SYSTEM\CurrentControlSet\Services\RTL2832UBDA");
-        try
+        using (RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, view).CreateSubKey(@"SYSTEM\CurrentControlSet\Services\RTL2832UBDA"))
         {
-          if (string.IsNullOrEmpty(originalListTunerName))
+          try
           {
-            originalListTunerName = (string)key.GetValue("FilterName1");
+            if (string.IsNullOrEmpty(originalListTunerName))
+            {
+              originalListTunerName = (string)key.GetValue("FilterName1");
+            }
+            key.SetValue("FilterName1", fakeUniqueTunerName);
           }
-          key.SetValue("FilterName1", fakeUniqueTunerName);
-        }
-        finally
-        {
-          key.Close();
+          finally
+          {
+            key.Close();
+          }
         }
       }
       try
@@ -690,14 +692,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       {
         foreach (RegistryView view in views)
         {
-          RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, view).CreateSubKey(@"SYSTEM\CurrentControlSet\Services\RTL2832UBDA");
-          try
+          using (RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, view).CreateSubKey(@"SYSTEM\CurrentControlSet\Services\RTL2832UBDA"))
           {
-            key.SetValue("FilterName1", originalListTunerName);
-          }
-          finally
-          {
-            key.Close();
+            try
+            {
+              key.SetValue("FilterName1", originalListTunerName);
+            }
+            finally
+            {
+              key.Close();
+            }
           }
         }
       }

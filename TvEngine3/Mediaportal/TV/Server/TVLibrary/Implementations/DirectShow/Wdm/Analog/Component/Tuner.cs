@@ -491,18 +491,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         {
           foreach (RegistryView view in FREQUENCY_OVERRIDE_REGISTRY_VIEWS)
           {
-            RegistryKey key = RegistryKey.OpenBaseKey(hive, view).CreateSubKey(location);
-            if (key != null)
+            using (RegistryKey key = RegistryKey.OpenBaseKey(hive, view).CreateSubKey(location))
             {
-              if (channel.Frequency <= 0)
+              if (key != null)
               {
-                key.DeleteValue(channel.ChannelNumber.ToString(), false);
+                if (channel.Frequency <= 0)
+                {
+                  key.DeleteValue(channel.ChannelNumber.ToString(), false);
+                }
+                else
+                {
+                  key.SetValue(channel.ChannelNumber.ToString(), (int)channel.Frequency, RegistryValueKind.DWord);
+                }
+                key.Close();
               }
-              else
-              {
-                key.SetValue(channel.ChannelNumber.ToString(), (int)channel.Frequency, RegistryValueKind.DWord);
-              }
-              key.Close();
             }
           }
         }
