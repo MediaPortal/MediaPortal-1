@@ -189,10 +189,8 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
       
       RtspRequestHeader requestHeader = new RtspRequestHeader(message);
       RtspRequestMethod _method;
-      Uri uri;
-      NameValueCollection query;
-      byte[] buffer;
-      StringBuilder rtspDescribeRequest = new StringBuilder();
+      
+      
 
       // Method: SETUP, Play...
       //C->S[0]SETUP[1]rtsp://example.com/media.mp4/streamid=0[2]RTSP/1.0
@@ -200,7 +198,7 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
 
       if (parts.Length < 2 || !Enum.TryParse<RtspRequestMethod>(parts[0], true, out _method))
       {
-        this.LogDebug("Message Invalid");
+        this.LogDebug("SAT>IP: Message Invalid");
         return;
       }
 
@@ -211,95 +209,10 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
           #region setup
           this.LogDebug("Case Setup");
 
-          RtspClients client = new RtspClients();
-          client.rtpClientPort = requestHeader.rtpPort;
-          client.rtcpClientPort = requestHeader.rtcpPort;
+          RTSP_setup(requestHeader, clientStream, parts);
 
-          // setting up the server ports
-          int rtpPort = findFreePort();
-          client.rtpServerPort = rtpPort;
-          client.rtcpServerPort = rtpPort+1;
-
-          // client IP
-          var pi = clientStream.GetType().GetProperty("Socket", BindingFlags.NonPublic | BindingFlags.Instance);
-          string socketIp = ((Socket)pi.GetValue(clientStream, null)).RemoteEndPoint.ToString();
-          client.ip = socketIp.Split(':')[0];
-
-          this.LogDebug("Client IP: " + client.ip);
-          this.LogDebug("Client Count: " + client.clientId.ToString() + " SessionID: " + client.sessionId.ToString());
-          this.LogDebug("rtpPort: " + requestHeader.rtpPort + " rtcpPort: " + requestHeader.rtcpPort);
-
-          uri = new Uri(parts[1]);
-          query = HttpUtility.ParseQueryString(uri.Query);
-              
-          //?src=1&fe=1&freq=12402&pol=v&msys=dvbs&sr=27500&fec=34&pids=0,16
-          /*foreach (string key in query.Keys)
-          {
-            int value;
-            
-            switch (key.ToLowerInvariant()) {
-              case "src":
-                if (int.TryParse(query.Get(key), out value)) client.src = value;
-                break;
-              case "freq":
-                int freq;
-                if (int.TryParse(query.Get(key), out freq)) client.freq = freq;
-                break;
-              case "sr":
-                if (int.TryParse(query.Get(key), out value)) client.sr = value;
-                break;
-              case "fec":
-                if (int.TryParse(query.Get(key), out value)) client.fec = value;
-                break;
-              case "msys":
-                client.msys = query.Get(key);
-                break;
-              case "pol":
-                client.pol = query.Get(key);
-                break;
-              case "pids":
-                foreach (string pid in query.Get(key).Split(','))
-                {
-                  if (int.TryParse(pid, out value)) client.addPid(value);
-                }
-                break;
-            }
-          }*/
-
-          clients.Add(client.sessionId, client);
-
-          parseQuery(client.sessionId, query);
-
-          // Response:
-          // RTSP/1.0 200 OK
-          // Session:379007aecd6c6;timeout=30
-          // com.ses.streamID:3
-          // Transport:RTP/AVP;unicast;destination=192.168.128.100;client_port=4222-4223
-          // CSeq:1
-
-          rtspDescribeRequest.Append("RTSP/1.0 200 OK\r\n");
-          // sessionID
-          rtspDescribeRequest.AppendFormat("Session: {0};timeout=60\r\n", client.sessionId);
-          // streamID
-          rtspDescribeRequest.AppendFormat("com.ses.streamID: {0}\r\n", client.clientId);
-          // Transport
-          // TODO add destination, remove source
-          rtspDescribeRequest.AppendFormat("Transport: RTP/AVP/UDP;unicast;client_port={0}-{1};source={2};server_port={3}-{4}\r\n", requestHeader.rtpPort, requestHeader.rtcpPort, serverIp, rtpPort, rtpPort+1);
-          //CSeq
-          rtspDescribeRequest.AppendFormat("CSeq: {0}", requestHeader.CSeq);
-          rtspDescribeRequest.Append("\r\n\r\n");
-
-          buffer = Encoding.UTF8.GetBytes(rtspDescribeRequest.ToString());
-          clientStream.Write(buffer, 0, buffer.Length);
-          clientStream.Flush();
-
-          
-          this.LogDebug("ANSWER:");
-          this.LogDebug("-----------");
-          this.LogDebug(rtspDescribeRequest.ToString());
-          this.LogDebug("-----------");
-          #endregion
           break;
+          #endregion setup
         case RtspRequestMethod.PLAY:
           #region play
           // Request
@@ -316,150 +229,7 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
           
           this.LogDebug("Case Play");
 
-          uri = new Uri(parts[1]);
-          query = HttpUtility.ParseQueryString(uri.Query);
-          //int streamID = int.Parse(query.Get("stream"));
-
-          if (query.Get("delpids") != null)
-          {
-            this.LogDebug("SAT>IP: Delete pids on sessionID: {0}", requestHeader.sessionId);
-            int value;
-            foreach (string pid in query.Get("delpids").Split(','))
-            {
-              if (int.TryParse(pid, out value)) clients[requestHeader.sessionId].delPid(value);
-            }
-          }
-
-          if (query.Get("addpids") != null)
-          {
-            this.LogDebug("SAT>IP: Add pids on sessionID: {0}", requestHeader.sessionId);
-            int value;
-            foreach (string pid in query.Get("addpids").Split(','))
-            {
-              if (int.TryParse(pid, out value)) clients[requestHeader.sessionId].addPid(value);
-            }
-          }
-
-          // sync Pids with filter
-          if (clients[requestHeader.sessionId].isTunedToFrequency)
-          {
-            this.LogDebug("SAT>IP: sync Pids with Filter for sessionID: {0}", requestHeader.sessionId);
-            syncPidsWithFilter(requestHeader.sessionId, cards[clients[requestHeader.sessionId].cardId].devicePath);
-          }
-
-          parseQuery(requestHeader.sessionId, query);
-          
-
-          if (clients[requestHeader.sessionId].tunedToFrequency != clients[requestHeader.sessionId].freq)
-          {
-            this.LogDebug("SAT>IP: tuned Freq [{0}] != requested Freq [{1}] - sessionID {2}",clients[requestHeader.sessionId].tunedToFrequency, clients[requestHeader.sessionId].freq, requestHeader.sessionId);
-            
-            
-            int cardKey;
-            if (cardAlreadyTunedToFreq(clients[requestHeader.sessionId].msys, clients[requestHeader.sessionId].freq, out cardKey))
-            {
-              // there is already a card tuned to the frequency so lets add us to this card.
-              this.LogDebug("SAT>IP: there is already a card tuned to the Freq={0} - sessionID: {1}", clients[requestHeader.sessionId].freq, requestHeader.sessionId);
-              cards[cardKey].AddSlave(int.Parse(requestHeader.sessionId));
-              clients[requestHeader.sessionId].cardId = cardKey;
-              clients[requestHeader.sessionId].slot = cards[cardKey].getSlot(int.Parse(requestHeader.sessionId));
-            }
-            else
-            {
-              this.LogDebug("SAT>IP: there is no card already tuned to the Freq={0} - sessionID: {1}", clients[requestHeader.sessionId].freq, requestHeader.sessionId);
-
-              // remove user from current card
-              if (clients[requestHeader.sessionId].isTunedToFrequency)
-              {
-                this.LogDebug("SAT>IP: remove user from card with id {0} - sessionID {1}", clients[requestHeader.sessionId].cardId, requestHeader.sessionId);
-                cards[clients[requestHeader.sessionId].cardId].removeUser(int.Parse(requestHeader.sessionId));
-                if (cards[clients[requestHeader.sessionId].cardId].ownerId == -1)
-                {
-                  this.LogDebug("SAT>IP: no users on card => stop timeshifting on card with id {0} - sessionID {1}", clients[requestHeader.sessionId].cardId, requestHeader.sessionId);
-                  cards[clients[requestHeader.sessionId].cardId].card.StopTimeShifting();
-                  // delete card from card array
-                  cards.Remove(clients[requestHeader.sessionId].cardId);
-                }
-              }
-
-
-              // TODO: Add proper error handling if no tuning Detail is found
-              TuningDetail _tuningDetail = ChannelManagement.GetTuningDetail(getChannelTypeAsInt(clients[requestHeader.sessionId].msys), (clients[requestHeader.sessionId].freq * 1000));
-
-              if (_tuningDetail == null)
-                Log.Debug("SAT>IP: no such channel found!");
-
-              this.LogInfo("SAT>IP: creating User: \"SAT>IP - {0}\" for sessionId: {1}", clients[requestHeader.sessionId].ip, requestHeader.sessionId);
-              IUser _user = UserFactory.CreateBasicUser("SAT>IP - " + clients[requestHeader.sessionId].ip);
-              IVirtualCard _card;
-              this.LogInfo("SAT>IP: Tuning to freq={0} for sessionId: {1}", clients[requestHeader.sessionId].freq, requestHeader.sessionId);
-
-              TvResult result = GlobalServiceProvider.Get<IControllerService>().StartTimeShifting(_user.Name, _tuningDetail.IdChannel, out _card, out _user);
-
-              if (result != TvResult.Succeeded)
-              {
-                this.LogError("SAT>IP: Tuning failed" + result);
-              }
-              else
-              {
-                this.LogInfo("SAT>IP: tunging success");
-              }
-
-              RtspCards card = new RtspCards();
-              card.ownerId = int.Parse(requestHeader.sessionId);
-              card.user = _user;
-              card.card = _card;
-              card.tuningDetail = _tuningDetail;
-              card.freq = clients[requestHeader.sessionId].freq;
-              card.msys = clients[requestHeader.sessionId].msys;
-              cards.Add(card.id, card);
-              clients[requestHeader.sessionId].cardId = card.id;
-              clients[requestHeader.sessionId].slot = card.getSlot(int.Parse(requestHeader.sessionId));
-
-              // TODO remove
-              clients[requestHeader.sessionId].card = _card;
-              clients[requestHeader.sessionId].user = _user;
-              clients[requestHeader.sessionId].tuningDetail = _tuningDetail;
-
-              cards[clients[requestHeader.sessionId].cardId].devicePath = GlobalServiceProvider.Get<IControllerService>().CardDevice(_card.Id); // device path
-            }
-
-            clients[requestHeader.sessionId].isTunedToFrequency = true;
-            clients[requestHeader.sessionId].tunedToFrequency = clients[requestHeader.sessionId].freq;
-
-            // send commands to the filter
-            FilterCommunication communication = new FilterCommunication(cards[clients[requestHeader.sessionId].cardId].devicePath, clients[requestHeader.sessionId].slot);
-            communication.addClientPort(clients[requestHeader.sessionId].rtpClientPort);
-            communication.addClientIp(clients[requestHeader.sessionId].ip);
-            communication.requestNewSlot();
-            communication.send();
-          }
-
-
-          
-
-
-          // creating the response
-
-          rtspDescribeRequest.Append("RTSP/1.0 200 OK\r\n");
-          // RTP-Info
-          // RTP-Info: url=rtsp://192.168.178.44:554/?freq=530.000&msys=dvbc&sr=6900&mtype=256qam&pids=0,259,533,538,534,18,17,16 RTSP/1.0\r\n
-          rtspDescribeRequest.AppendFormat("RTP-Info: url={0} RTSP/1.0\r\n", parts[1]);
-          // session
-          rtspDescribeRequest.AppendFormat("Session: {0}\r\n", clients[requestHeader.sessionId].sessionId);
-          //CSeq
-          rtspDescribeRequest.AppendFormat("CSeq: {0}", requestHeader.CSeq);
-          rtspDescribeRequest.Append("\r\n\r\n");
-
-          buffer = Encoding.UTF8.GetBytes(rtspDescribeRequest.ToString());
-          clientStream.Write(buffer, 0, buffer.Length);
-          clientStream.Flush();
-
-
-          this.LogDebug("ANSWER:");
-          this.LogDebug("-----------");
-          this.LogDebug(rtspDescribeRequest.ToString());
-          this.LogDebug("-----------");
+          RTSP_play(requestHeader, clientStream, parts);
 
           #endregion
           break;
@@ -467,124 +237,442 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
           #region describe
           this.LogDebug("Case Describe");
 
-          // session description protocol
-          StringBuilder rtspSDP = new StringBuilder();
-          rtspSDP.Append("v=0\r\n");
-          rtspSDP.AppendFormat("o=- 9876543210 1 IN IP4 {0}\r\n", serverIp);  // use any sessionID
-          rtspSDP.Append("s=MPEG TS\r\n");
-          rtspSDP.Append("t=0 0\r\n");
-          rtspSDP.Append("m=video 0 RTP/AVP 33\r\n");
-          rtspSDP.Append("c=IN IP4 0.0.0.0\r\n");
-          rtspSDP.AppendFormat("a=control:{0}\r\n", parts[1]);
+          RTSP_describe(requestHeader, clientStream, parts);
 
-          // Response
-          rtspDescribeRequest.Append("RTSP/1.0 200 OK\r\n");
-          //CSeq
-          rtspDescribeRequest.AppendFormat("CSeq: {0}\r\n", requestHeader.CSeq);
-          // Public
-          rtspDescribeRequest.Append("Content-Type: application/sdp\r\n");
-          rtspDescribeRequest.AppendFormat("Content-length: {0}", Encoding.UTF8.GetBytes(rtspSDP.ToString()).Length);
-          rtspDescribeRequest.Append("\r\n\r\n");
-          rtspDescribeRequest.Append(rtspSDP);
-          
-
-          buffer = Encoding.UTF8.GetBytes(rtspDescribeRequest.ToString());
-          clientStream.Write(buffer, 0, buffer.Length);
-          clientStream.Flush();
-
-          this.LogDebug("ANSWER:");
-          this.LogDebug("-----------");
-          this.LogDebug(rtspDescribeRequest.ToString());
-          this.LogDebug("-----------");
           #endregion
           break;
         case RtspRequestMethod.OPTIONS:
           #region options
           this.LogDebug("Case options");
 
-          rtspDescribeRequest.Append("RTSP/1.0 200 OK\r\n");
-          //CSeq
-          rtspDescribeRequest.AppendFormat("CSeq: {0}\r\n", requestHeader.CSeq);
-          // Public
-          rtspDescribeRequest.AppendFormat("Public: OPTIONS, DESCRIBE, SETUP, PLAY, TEARDOWN");
-          rtspDescribeRequest.Append("\r\n\r\n");
+          RTSP_options(requestHeader, clientStream);
 
-          buffer = Encoding.UTF8.GetBytes(rtspDescribeRequest.ToString());
-          clientStream.Write(buffer, 0, buffer.Length);
-          clientStream.Flush();
-
-          this.LogDebug("ANSWER:");
-          this.LogDebug("-----------");
-          this.LogDebug(rtspDescribeRequest.ToString());
-          this.LogDebug("-----------");
           #endregion
           break;
         case RtspRequestMethod.TEARDOWN:
           #region teardown
-          // stop timeshifting
-          // TODO what happens if more than one user is on this card? What happens if we are not the owner?
-          int cardsKey;
-          if (isSessionIdCardOwner(int.Parse(requestHeader.sessionId), out cardsKey))
-          {
-            if (cards[cardsKey].streams == 1)
-            {
-              cards[cardsKey].card.StopTimeShifting();
-              cards.Remove(cardsKey);
-            }
-            else
-            {
-              // TODO remove owner and set a new oner
-            }
-          }
-          else
-          {
-            // TODO remove from slave
-          }
+          this.LogDebug("Case teadown");
 
-          // remove client
-          clients.Remove(requestHeader.sessionId);
+          RTSP_teardown(requestHeader, clientStream);
 
-          // creating the response
-
-          rtspDescribeRequest.Append("RTSP/1.0 200 OK\r\n");
-          //CSeq
-          rtspDescribeRequest.AppendFormat("CSeq: {0}", requestHeader.CSeq);
-          rtspDescribeRequest.Append("\r\n\r\n");
-
-          buffer = Encoding.UTF8.GetBytes(rtspDescribeRequest.ToString());
-          clientStream.Write(buffer, 0, buffer.Length);
-          clientStream.Flush();
-
-          this.LogDebug("ANSWER:");
-          this.LogDebug("-----------");
-          this.LogDebug(rtspDescribeRequest.ToString());
-          this.LogDebug("-----------");
           #endregion
           break;
         default:
           #region bad request
           this.LogDebug("case: Bad Request");
 
-          // creating the response
-
-          rtspDescribeRequest.Append("RTSP/1.0 400 Bad Request\r\n");
-          //CSeq
-          rtspDescribeRequest.AppendFormat("CSeq: {0}", requestHeader.CSeq);
-          rtspDescribeRequest.Append("\r\n\r\n");
-
-          buffer = Encoding.UTF8.GetBytes(rtspDescribeRequest.ToString());
-          clientStream.Write(buffer, 0, buffer.Length);
-          clientStream.Flush();
-
-
-          this.LogDebug("ANSWER:");
-          this.LogDebug("-----------");
-          this.LogDebug(rtspDescribeRequest.ToString());
-          this.LogDebug("-----------");
+          RTSP_badRequest(requestHeader, clientStream);
+          
           #endregion
           break;
       }
     }
+
+    #region RTSP sections
+
+    private void RTSP_setup(RtspRequestHeader requestHeader, NetworkStream clientStream, string[] parts)
+    {
+      Uri uri;
+      NameValueCollection query;
+      StringBuilder rtspDescribeRequest = new StringBuilder();
+      byte[] buffer;
+      
+      RtspClients client = new RtspClients();
+      client.rtpClientPort = requestHeader.rtpPort;
+      client.rtcpClientPort = requestHeader.rtcpPort;
+
+      // setting up the server ports
+      int rtpPort = findFreePort();
+      client.rtpServerPort = rtpPort;
+      client.rtcpServerPort = rtpPort + 1;
+
+      // client IP
+      var pi = clientStream.GetType().GetProperty("Socket", BindingFlags.NonPublic | BindingFlags.Instance);
+      string socketIp = ((Socket)pi.GetValue(clientStream, null)).RemoteEndPoint.ToString();
+      client.ip = socketIp.Split(':')[0];
+
+      this.LogDebug("Client IP: " + client.ip);
+      this.LogDebug("Client Count: " + client.clientId.ToString() + " SessionID: " + client.sessionId.ToString());
+      this.LogDebug("rtpPort: " + requestHeader.rtpPort + " rtcpPort: " + requestHeader.rtcpPort);
+
+      uri = new Uri(parts[1]);
+      query = HttpUtility.ParseQueryString(uri.Query);
+
+      //?src=1&fe=1&freq=12402&pol=v&msys=dvbs&sr=27500&fec=34&pids=0,16
+      /*foreach (string key in query.Keys)
+      {
+        int value;
+            
+        switch (key.ToLowerInvariant()) {
+          case "src":
+            if (int.TryParse(query.Get(key), out value)) client.src = value;
+            break;
+          case "freq":
+            int freq;
+            if (int.TryParse(query.Get(key), out freq)) client.freq = freq;
+            break;
+          case "sr":
+            if (int.TryParse(query.Get(key), out value)) client.sr = value;
+            break;
+          case "fec":
+            if (int.TryParse(query.Get(key), out value)) client.fec = value;
+            break;
+          case "msys":
+            client.msys = query.Get(key);
+            break;
+          case "pol":
+            client.pol = query.Get(key);
+            break;
+          case "pids":
+            foreach (string pid in query.Get(key).Split(','))
+            {
+              if (int.TryParse(pid, out value)) client.addPid(value);
+            }
+            break;
+        }
+      }*/
+
+      clients.Add(client.sessionId, client);
+
+      parseQuery(client.sessionId, query);
+
+      // Response:
+      // RTSP/1.0 200 OK
+      // Session:379007aecd6c6;timeout=30
+      // com.ses.streamID:3
+      // Transport:RTP/AVP;unicast;destination=192.168.128.100;client_port=4222-4223
+      // CSeq:1
+
+      rtspDescribeRequest.Append("RTSP/1.0 200 OK\r\n");
+      // sessionID
+      rtspDescribeRequest.AppendFormat("Session: {0};timeout=60\r\n", client.sessionId);
+      // streamID
+      rtspDescribeRequest.AppendFormat("com.ses.streamID: {0}\r\n", client.clientId);
+      // Transport
+      // TODO add destination, remove source
+      rtspDescribeRequest.AppendFormat("Transport: RTP/AVP/UDP;unicast;client_port={0}-{1};source={2};server_port={3}-{4}\r\n", requestHeader.rtpPort, requestHeader.rtcpPort, serverIp, rtpPort, rtpPort + 1);
+      //CSeq
+      rtspDescribeRequest.AppendFormat("CSeq: {0}", requestHeader.CSeq);
+      rtspDescribeRequest.Append("\r\n\r\n");
+
+      buffer = Encoding.UTF8.GetBytes(rtspDescribeRequest.ToString());
+      clientStream.Write(buffer, 0, buffer.Length);
+      clientStream.Flush();
+
+
+      this.LogDebug("ANSWER:");
+      this.LogDebug("-----------");
+      this.LogDebug(rtspDescribeRequest.ToString());
+      this.LogDebug("-----------");
+    }
+
+    private void RTSP_play(RtspRequestHeader requestHeader, NetworkStream clientStream, string[] parts)
+    {
+      Uri uri;
+      NameValueCollection query;
+      StringBuilder rtspDescribeRequest = new StringBuilder();
+      byte[] buffer;
+      
+      uri = new Uri(parts[1]);
+      query = HttpUtility.ParseQueryString(uri.Query);
+      //int streamID = int.Parse(query.Get("stream"));
+
+      // check if the client was already setup
+      if (!clients.ContainsKey(requestHeader.sessionId))
+      {
+        RTSP_badRequest(requestHeader, clientStream);
+        return;
+      }
+
+      if (query.Get("delpids") != null)
+      {
+        this.LogDebug("SAT>IP: Delete pids on sessionID: {0}", requestHeader.sessionId);
+        int value;
+        foreach (string pid in query.Get("delpids").Split(','))
+        {
+          if (int.TryParse(pid, out value)) clients[requestHeader.sessionId].delPid(value);
+        }
+      }
+
+      if (query.Get("addpids") != null)
+      {
+        this.LogDebug("SAT>IP: Add pids on sessionID: {0}", requestHeader.sessionId);
+        int value;
+        foreach (string pid in query.Get("addpids").Split(','))
+        {
+          if (int.TryParse(pid, out value)) clients[requestHeader.sessionId].addPid(value);
+        }
+      }
+
+      // sync Pids with filter
+      if (clients[requestHeader.sessionId].isTunedToFrequency)
+      {
+        this.LogDebug("SAT>IP: sync Pids with Filter for sessionID: {0}", requestHeader.sessionId);
+        syncPidsWithFilter(requestHeader.sessionId, cards[clients[requestHeader.sessionId].cardId].devicePath);
+      }
+
+      parseQuery(requestHeader.sessionId, query);
+
+
+      if (clients[requestHeader.sessionId].tunedToFrequency != clients[requestHeader.sessionId].freq)
+      {
+        this.LogDebug("SAT>IP: tuned Freq [{0}] != requested Freq [{1}] - sessionID {2}", clients[requestHeader.sessionId].tunedToFrequency, clients[requestHeader.sessionId].freq, requestHeader.sessionId);
+
+
+        int cardKey;
+        if (cardAlreadyTunedToFreq(clients[requestHeader.sessionId].msys, clients[requestHeader.sessionId].freq, out cardKey))
+        {
+          // there is already a card tuned to the frequency so lets add us to this card.
+          this.LogDebug("SAT>IP: there is already a card tuned to the Freq={0} - sessionID: {1}", clients[requestHeader.sessionId].freq, requestHeader.sessionId);
+          cards[cardKey].AddSlave(int.Parse(requestHeader.sessionId));
+          clients[requestHeader.sessionId].cardId = cardKey;
+          clients[requestHeader.sessionId].slot = cards[cardKey].getSlot(int.Parse(requestHeader.sessionId));
+        }
+        else
+        {
+          this.LogDebug("SAT>IP: there is no card already tuned to the Freq={0} - sessionID: {1}", clients[requestHeader.sessionId].freq, requestHeader.sessionId);
+
+          // remove user from current card
+          if (clients[requestHeader.sessionId].isTunedToFrequency)
+          {
+            this.LogDebug("SAT>IP: remove user from card with id {0} - sessionID {1}", clients[requestHeader.sessionId].cardId, requestHeader.sessionId);
+            cards[clients[requestHeader.sessionId].cardId].removeUser(int.Parse(requestHeader.sessionId));
+            if (cards[clients[requestHeader.sessionId].cardId].ownerId == -1)
+            {
+              this.LogDebug("SAT>IP: no users on card => stop timeshifting on card with id {0} - sessionID {1}", clients[requestHeader.sessionId].cardId, requestHeader.sessionId);
+              cards[clients[requestHeader.sessionId].cardId].card.StopTimeShifting();
+              // delete card from card array
+              cards.Remove(clients[requestHeader.sessionId].cardId);
+            }
+          }
+
+
+          TuningDetail _tuningDetail = ChannelManagement.GetTuningDetail(getChannelTypeAsInt(clients[requestHeader.sessionId].msys), (clients[requestHeader.sessionId].freq * 1000));
+
+          if (_tuningDetail == null) {
+            Log.Debug("SAT>IP: no such channel found!");
+            RTSP_serviceUnavailable(requestHeader, clientStream);
+            return;
+          }
+
+          this.LogInfo("SAT>IP: creating User: \"SAT>IP - {0}\" for sessionId: {1}", clients[requestHeader.sessionId].ip, requestHeader.sessionId);
+          IUser _user = UserFactory.CreateBasicUser("SAT>IP - " + clients[requestHeader.sessionId].ip);
+          IVirtualCard _card;
+          this.LogInfo("SAT>IP: Tuning to freq={0} for sessionId: {1}", clients[requestHeader.sessionId].freq, requestHeader.sessionId);
+
+          TvResult result = GlobalServiceProvider.Get<IControllerService>().StartTimeShifting(_user.Name, _tuningDetail.IdChannel, out _card, out _user);
+
+          if (result != TvResult.Succeeded)
+          {
+            this.LogError("SAT>IP: Tuning failed" + result);
+          }
+          else
+          {
+            this.LogInfo("SAT>IP: tunging success");
+          }
+
+          RtspCards card = new RtspCards();
+          card.ownerId = int.Parse(requestHeader.sessionId);
+          card.user = _user;
+          card.card = _card;
+          card.tuningDetail = _tuningDetail;
+          card.freq = clients[requestHeader.sessionId].freq;
+          card.msys = clients[requestHeader.sessionId].msys;
+          cards.Add(card.id, card);
+          clients[requestHeader.sessionId].cardId = card.id;
+          clients[requestHeader.sessionId].slot = card.getSlot(int.Parse(requestHeader.sessionId));
+
+          // TODO remove
+          clients[requestHeader.sessionId].card = _card;
+          clients[requestHeader.sessionId].user = _user;
+          clients[requestHeader.sessionId].tuningDetail = _tuningDetail;
+
+          cards[clients[requestHeader.sessionId].cardId].devicePath = GlobalServiceProvider.Get<IControllerService>().CardDevice(_card.Id); // device path
+        }
+
+        clients[requestHeader.sessionId].isTunedToFrequency = true;
+        clients[requestHeader.sessionId].tunedToFrequency = clients[requestHeader.sessionId].freq;
+
+        // send commands to the filter
+        FilterCommunication communication = new FilterCommunication(cards[clients[requestHeader.sessionId].cardId].devicePath, clients[requestHeader.sessionId].slot);
+        communication.addClientPort(clients[requestHeader.sessionId].rtpClientPort);
+        communication.addClientIp(clients[requestHeader.sessionId].ip);
+        communication.requestNewSlot();
+        communication.send();
+      }
+
+
+
+
+
+      // creating the response
+
+      rtspDescribeRequest.Append("RTSP/1.0 200 OK\r\n");
+      // RTP-Info
+      // RTP-Info: url=rtsp://192.168.178.44:554/?freq=530.000&msys=dvbc&sr=6900&mtype=256qam&pids=0,259,533,538,534,18,17,16 RTSP/1.0\r\n
+      rtspDescribeRequest.AppendFormat("RTP-Info: url={0} RTSP/1.0\r\n", parts[1]);
+      // session
+      rtspDescribeRequest.AppendFormat("Session: {0}\r\n", clients[requestHeader.sessionId].sessionId);
+      //CSeq
+      rtspDescribeRequest.AppendFormat("CSeq: {0}", requestHeader.CSeq);
+      rtspDescribeRequest.Append("\r\n\r\n");
+
+      buffer = Encoding.UTF8.GetBytes(rtspDescribeRequest.ToString());
+      clientStream.Write(buffer, 0, buffer.Length);
+      clientStream.Flush();
+
+
+      this.LogDebug("ANSWER:");
+      this.LogDebug("-----------");
+      this.LogDebug(rtspDescribeRequest.ToString());
+      this.LogDebug("-----------");
+    }
+
+    private void RTSP_describe(RtspRequestHeader requestHeader, NetworkStream clientStream, string[] parts)
+    {
+      StringBuilder rtspDescribeRequest = new StringBuilder();
+      byte[] buffer;
+      
+      // session description protocol
+      StringBuilder rtspSDP = new StringBuilder();
+      rtspSDP.Append("v=0\r\n");
+      rtspSDP.AppendFormat("o=- 9876543210 1 IN IP4 {0}\r\n", serverIp);  // use any sessionID
+      rtspSDP.Append("s=MPEG TS\r\n");
+      rtspSDP.Append("t=0 0\r\n");
+      rtspSDP.Append("m=video 0 RTP/AVP 33\r\n");
+      rtspSDP.Append("c=IN IP4 0.0.0.0\r\n");
+      rtspSDP.AppendFormat("a=control:{0}\r\n", parts[1]);
+
+      // Response
+      rtspDescribeRequest.Append("RTSP/1.0 200 OK\r\n");
+      //CSeq
+      rtspDescribeRequest.AppendFormat("CSeq: {0}\r\n", requestHeader.CSeq);
+      // Public
+      rtspDescribeRequest.Append("Content-Type: application/sdp\r\n");
+      rtspDescribeRequest.AppendFormat("Content-length: {0}", Encoding.UTF8.GetBytes(rtspSDP.ToString()).Length);
+      rtspDescribeRequest.Append("\r\n\r\n");
+      rtspDescribeRequest.Append(rtspSDP);
+
+
+      buffer = Encoding.UTF8.GetBytes(rtspDescribeRequest.ToString());
+      clientStream.Write(buffer, 0, buffer.Length);
+      clientStream.Flush();
+
+      this.LogDebug("ANSWER:");
+      this.LogDebug("-----------");
+      this.LogDebug(rtspDescribeRequest.ToString());
+      this.LogDebug("-----------");
+    }
+
+    private void RTSP_options(RtspRequestHeader requestHeader, NetworkStream clientStream)
+    {
+      StringBuilder rtspDescribeRequest = new StringBuilder();
+      byte[] buffer;
+      
+      rtspDescribeRequest.Append("RTSP/1.0 200 OK\r\n");
+      //CSeq
+      rtspDescribeRequest.AppendFormat("CSeq: {0}\r\n", requestHeader.CSeq);
+      // Public
+      rtspDescribeRequest.AppendFormat("Public: OPTIONS, DESCRIBE, SETUP, PLAY, TEARDOWN");
+      rtspDescribeRequest.Append("\r\n\r\n");
+
+      buffer = Encoding.UTF8.GetBytes(rtspDescribeRequest.ToString());
+      clientStream.Write(buffer, 0, buffer.Length);
+      clientStream.Flush();
+
+      this.LogDebug("ANSWER:");
+      this.LogDebug("-----------");
+      this.LogDebug(rtspDescribeRequest.ToString());
+      this.LogDebug("-----------");
+    }
+
+    private void RTSP_teardown(RtspRequestHeader requestHeader, NetworkStream clientStream)
+    {
+      StringBuilder rtspDescribeRequest = new StringBuilder();
+      byte[] buffer;
+      
+      // stop timeshifting
+      this.LogDebug("SAT>IP: remove user from card with id {0} - sessionID {1}", clients[requestHeader.sessionId].cardId, requestHeader.sessionId);
+      cards[clients[requestHeader.sessionId].cardId].removeUser(int.Parse(requestHeader.sessionId));
+      if (cards[clients[requestHeader.sessionId].cardId].ownerId == -1)
+      {
+        this.LogDebug("SAT>IP: no users on card => stop timeshifting on card with id {0} - sessionID {1}", clients[requestHeader.sessionId].cardId, requestHeader.sessionId);
+        cards[clients[requestHeader.sessionId].cardId].card.StopTimeShifting();
+        // delete card from card array
+        cards.Remove(clients[requestHeader.sessionId].cardId);
+      }
+
+      // remove client
+      clients.Remove(requestHeader.sessionId);
+
+      // creating the response
+
+      rtspDescribeRequest.Append("RTSP/1.0 200 OK\r\n");
+      //CSeq
+      rtspDescribeRequest.AppendFormat("CSeq: {0}", requestHeader.CSeq);
+      rtspDescribeRequest.Append("\r\n\r\n");
+
+      buffer = Encoding.UTF8.GetBytes(rtspDescribeRequest.ToString());
+      clientStream.Write(buffer, 0, buffer.Length);
+      clientStream.Flush();
+
+      this.LogDebug("ANSWER:");
+      this.LogDebug("-----------");
+      this.LogDebug(rtspDescribeRequest.ToString());
+      this.LogDebug("-----------");
+    }
+
+    private void RTSP_badRequest(RtspRequestHeader requestHeader, NetworkStream clientStream)
+    {
+      StringBuilder rtspDescribeRequest = new StringBuilder();
+      byte[] buffer;
+      
+      // creating the response
+      
+      rtspDescribeRequest.Append("RTSP/1.0 400 Bad Request\r\n");
+      //CSeq
+      rtspDescribeRequest.AppendFormat("CSeq: {0}", requestHeader.CSeq);
+      rtspDescribeRequest.Append("\r\n\r\n");
+
+      buffer = Encoding.UTF8.GetBytes(rtspDescribeRequest.ToString());
+      clientStream.Write(buffer, 0, buffer.Length);
+      clientStream.Flush();
+
+
+      this.LogDebug("ANSWER:");
+      this.LogDebug("-----------");
+      this.LogDebug(rtspDescribeRequest.ToString());
+      this.LogDebug("-----------");
+    }
+
+    private void RTSP_serviceUnavailable(RtspRequestHeader requestHeader, NetworkStream clientStream)
+    {
+      StringBuilder rtspDescribeRequest = new StringBuilder();
+      byte[] buffer;
+
+      // remove client
+      clients.Remove(requestHeader.sessionId);
+
+      // creating the response
+
+      rtspDescribeRequest.Append("RTSP/1.0 503 Service Unavailable\r\n");
+      //CSeq
+      rtspDescribeRequest.AppendFormat("CSeq: {0}", requestHeader.CSeq);
+      rtspDescribeRequest.Append("\r\n\r\n");
+
+      buffer = Encoding.UTF8.GetBytes(rtspDescribeRequest.ToString());
+      clientStream.Write(buffer, 0, buffer.Length);
+      clientStream.Flush();
+
+
+      this.LogDebug("ANSWER:");
+      this.LogDebug("-----------");
+      this.LogDebug(rtspDescribeRequest.ToString());
+      this.LogDebug("-----------");
+    }
+
+    #endregion RTSP sections
+
 
     #region helper functions
 
@@ -726,42 +814,6 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
       communication.send();
     }
 
-    #endregion
-
-    #region threads
-
-    private Thread StartStreamThread(int id, string ipAdress, int port, string filename)
-    {
-      var t = new Thread(() => StartStream(id, ipAdress, port, filename));
-      t.Start(); 
-      return t;
-    }
-
-    private void StartStream(int id, string ipAdress, int port, string filename)
-    {
-      // TODO: Here we will start the timeshifting anf than call the named pipe of the filter
-        
-        /*RtpStreamer.RtpStreamer rtpStream = new RtpStreamer.RtpStreamer();
-
-      try
-      {
-        var t = new Thread(() => rtpStream.RtpStreamCreate(ipAdress, port, filename));
-        t.Start();
-
-        while (!rtpStreams[id].stopStream)  // keep the thread running
-        {
-          System.Threading.Thread.Sleep(500);
-        }
-        rtpStream.RtpStreamStop();  // End our EventLoop on the C++ side => ends the t thread started above
-      }
-      catch (Exception ex)
-      {
-        this.LogDebug("Exception in Thread! "+ ex.Message);
-      }
-
-      removeStream(id);
-      this.LogDebug("!!End Streaming Thread!!");*/
-    }
     #endregion
   }
 }
