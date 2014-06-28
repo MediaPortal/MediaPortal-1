@@ -76,7 +76,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SAT_IP
         {
             get
             {
-                return 100;
+                return 1; // we use one to be sure that we are at the end of the graph and therefore get a decrypted stream
             }
         }
 
