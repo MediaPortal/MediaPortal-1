@@ -686,7 +686,7 @@ unsigned int __stdcall namedPipeReadThread(/*HANDLE&*//*LPVOID hPipe_tmp*/void* 
 								LogDebug("Error: Could not extract Port for ClientPort from Pipe.");
 							}
 							parameters.SatIP->_streamHandler[slot]._clientPort = port;
-							LogDebug("Got CLIENTPORT with PID = %d", port);
+							LogDebug("Got CLIENTPORT with PORT = %d", port);
 							break;
 						}
 						case (SATIP_PROT_NEWSLOT) : {

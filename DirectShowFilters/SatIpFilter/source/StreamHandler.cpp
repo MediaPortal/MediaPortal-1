@@ -59,7 +59,7 @@ void CStreamHandler::write(unsigned char *dataPtr, int numBytes)
 	}
 
 	//LogDebug("Stream Running: %d, Stop: %d, _startStreaming: %d, _bytesWritten: %d", (_streamRunning ? 1 : 0), (_stop ? 1 : 0), (_startStreaming ? 1 : 0), _bytesWritten);
-	if (!_streamRunning && !_stop && _startStreaming && _streamConfigured && _bytesWritten > (TS_PACKET_LEN * 900)) {
+	if (!_streamRunning && !_stop && _startStreaming && _streamConfigured/* && _bytesWritten > (TS_PACKET_LEN * 900)*/) {
 		_streamRunning = true;
 		LogDebug("startStreaming");
 		_test2 = "test";
@@ -92,5 +92,6 @@ void CStreamHandler::stop()
 	}
 	_streamRunning = false;
 	_startStreaming = false;
+	_streamConfigured = false;
 	LogDebug("streamHandler: finished stop()");
 }
