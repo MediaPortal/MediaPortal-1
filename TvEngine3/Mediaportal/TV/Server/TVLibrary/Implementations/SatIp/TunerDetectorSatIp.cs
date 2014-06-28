@@ -30,6 +30,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using UPnP.Infrastructure.CP;
 using UPnP.Infrastructure.CP.Description;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using RtspClient = Mediaportal.TV.Server.TVLibrary.Implementations.Rtsp.RtspClient;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
@@ -65,6 +66,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
       {
         return tuners;
       }
+      // Is the SAT>IP server our own server?
+      if (descriptor.DeviceUDN == SettingsManagement.GetValue("SATIP_UDN", System.Guid.NewGuid().ToString("D")))
+      {
+        return tuners;
+      }
+      // Do we want to detect the MP SAT>IP server at all?
+      if (descriptor.FriendlyName.Contains("MediaPortal") && !SettingsManagement.GetValue("SATIP_detectMPServer", true))
+      {
+        return tuners;
+      }
+
       this.LogInfo("SAT>IP detector: tuner added");
 
       int satelliteFrontEndCount = 0;

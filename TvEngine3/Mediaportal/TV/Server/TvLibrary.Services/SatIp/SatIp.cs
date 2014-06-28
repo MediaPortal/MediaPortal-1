@@ -32,6 +32,7 @@ using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
 using Mediaportal.TV.Server.TVLibrary.SatIp.Server;
 using Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 
 namespace Mediaportal.TV.Server.TVLibrary.SatIp
 {
@@ -46,11 +47,11 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp
         public const string CONTENT_DIRECTORY_SERVICE_ID = "upnp-org:serviceId:ContentDirectory";
         public const string CONTENT_DIRECTORY_SERVICE_TYPE = "schemas-upnp-org:service:ContentDirectory";
         public const int CONTENT_DIRECTORY_SERVICE_TYPE_VERSION = 1;
-        public const string DEVICE_UUID = "db015228-8813-11e3-a86e-d231feb1dc81";
+        //public const string DEVICE_UUID = "db015228-8813-11e3-a86e-d231feb1dc81";
         public const string MEDIASERVER_DEVICE_TYPE = "urn:ses-com:device:SatIPServer";
         public const int MEDIASERVER_DEVICE_VERSION = 1;
         RtspServer _rtsp;
-        static readonly Guid SERVER_ID = new Guid("{db015228-8813-11e3-a86e-d231feb1dc81}");
+        //static readonly Guid SERVER_ID = new Guid(); // e.g. {db015228-8813-11e3-a86e-d231feb1dc81}
         static UPnPLightServer _server = null;
 
         #endregion
@@ -58,7 +59,7 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp
         public SatIpServer()
         {
             this.LogInfo("SAT>IP: Start Server");
-            _server = new UPnPLightServer(SERVER_ID.ToString("D")); // vorher B
+            _server = new UPnPLightServer(SettingsManagement.GetValue("SATIP_UDN", System.Guid.NewGuid().ToString("D"))); // vorher B
             _server.Start();
 
             _rtsp = new RtspServer();
