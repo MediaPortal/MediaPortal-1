@@ -67,7 +67,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
         return tuners;
       }
       // Is the SAT>IP server our own server?
-      if (descriptor.DeviceUDN == SettingsManagement.GetValue("SATIP_UDN", System.Guid.NewGuid().ToString("D")))
+      if (descriptor.DeviceUDN.Equals("uuid:"+SettingsManagement.GetValue("SATIP_UDN", System.Guid.NewGuid().ToString("D"))))
       {
         return tuners;
       }
