@@ -124,7 +124,19 @@ void ByteStreamMemoryBufferSource::doGetNextFrame() {
   }
 
   size_t readBytesAvailable = getReadSizeAvailable();
-  while (readBytesAvailable < fFrameSize) {
+  if (readBytesAvailable == 0) {
+	  LeaveCriticalSection(&csBufferInAccess);
+	  int count = 0;
+	  while (readBytesAvailable < fFrameSize && count < 900 && *stopAll == 0) {
+		  Sleep(1);
+		  readBytesAvailable = getReadSizeAvailable();
+		  ++count;
+	  }
+	  EnterCriticalSection(&csBufferInAccess);
+  }
+
+  // if we have to leave the while before we have something in the buffer write a null package to it to avoid an exception
+  if (readBytesAvailable == 0) {
 	  writeTsNullPackageToBuffer();
 	  readBytesAvailable = getReadSizeAvailable();
   }
@@ -133,7 +145,7 @@ void ByteStreamMemoryBufferSource::doGetNextFrame() {
   if (fFrameSize > readBytesAvailable)
   {
 	  fFrameSize = readBytesAvailable;
-	  LogDebugRtp2("fFrameSize > readBytesAvail");
+	  //LogDebugRtp2("fFrameSize > readBytesAvail");
   }
 
   // Simultaneously keep track of how many bytes we've read and our position in the outgoing buffer
