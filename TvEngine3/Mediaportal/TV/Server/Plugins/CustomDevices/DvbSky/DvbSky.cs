@@ -126,7 +126,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbSky
     private enum DvbSkyRemoteCodeTechnoTrend : byte
     {
       Power = 1,
-      ChannelPrevious,    // icon: two arrows in a circle
+      Recall,           // icon: two arrows in a circle
       One,
       Two,
       Three,
@@ -150,7 +150,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbSky
       Blue,
       Mute,
       Teletext,
-      Source, // 26       // text: TV/radio; icon: musical note
+      Source, // 26     // text: TV/radio; icon: musical note
 
       Epg = 34,
       ChannelUp,

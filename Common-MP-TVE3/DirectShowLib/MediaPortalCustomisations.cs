@@ -594,7 +594,7 @@ namespace DirectShowLib
     /// <param name="ulFlags">Not used, must be zero.</param>
     /// <returns>If the operation succeeds, the function returns CR_SUCCESS. Otherwise, it returns one of the CR_-prefixed error codes defined in Cfgmgr32.h.</returns>
     [DllImport("cfgmgr32.dll", CharSet = CharSet.Unicode)]
-    public static extern uint CM_Get_Device_IDW(uint dnDevInst, StringBuilder Buffer, uint BufferLen, uint ulFlags);
+    private static extern uint CM_Get_Device_IDW(uint dnDevInst, StringBuilder Buffer, uint BufferLen, uint ulFlags);
 
     /// <summary>
     /// The CM_Get_Parent function obtains a device instance handle to the parent node of a specified device node (devnode) in the local machine's device tree.
@@ -604,7 +604,7 @@ namespace DirectShowLib
     /// <param name="ulFlags">Not used, must be zero.</param>
     /// <returns>If the operation succeeds, the function returns CR_SUCCESS. Otherwise, it returns one of the CR_-prefixed error codes defined in Cfgmgr32.h.</returns>
     [DllImport("cfgmgr32.dll")]
-    public static extern uint CM_Get_Parent(out uint pdnDevInst, uint dnDevInst, uint ulFlags);
+    private static extern uint CM_Get_Parent(out uint pdnDevInst, uint dnDevInst, uint ulFlags);
 
     #endregion
 
@@ -622,7 +622,7 @@ namespace DirectShowLib
     }
 
     [Flags]
-    public enum DiGetClassFlags : uint
+    private enum DiGetClassFlags : uint
     {
       /// <summary>
       /// Return only the device that is associated with the system default device interface, if one is set, for the specified device interface classes.

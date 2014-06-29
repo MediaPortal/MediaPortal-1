@@ -252,30 +252,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       PortD
     }
 
-    private enum TwinhanIrStandard : uint
-    {
-      Rc5 = 0,
-      Nec
-    }
-
-    private enum TwinhanRemoteControlMapping : uint
-    {
-      DtvDvb = 0,
-      Cyberlink,
-      InterVideo,
-      Mce,
-      DtvDvbWmInput,
-      Custom,
-
-      DigitalNow = 0x10,
-
-      TerraTec110msRepeat = 0xfb,
-      TerraTec220msRepeat,
-      TerraTec110msSelectiveRepeat,   // selective = ch+/ch-/vol+/vol-/up/down/left/right
-      TerraTec220msSelectiveRepeat,
-      Disabled = 0xffff
-    }
-
     #endregion
 
     #region structs
@@ -607,15 +583,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       public uint AtscFrequencyShift;       // Mantis drivers support this.
     }
 
-    [StructLayout(LayoutKind.Sequential)]
-    private struct HidRemoteControlConfig   // RC_CONFIG
-    {
-      public TwinhanIrStandard IrStandard;
-      public uint IrSysCodeCheck1;
-      public uint IrSysCodeCheck2;
-      public TwinhanRemoteControlMapping Mapping;
-    }
-
     #endregion
 
     #region constants
@@ -640,7 +607,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
     private static readonly int APPLICATION_INFO_SIZE = Marshal.SizeOf(typeof(ApplicationInfo));  // 76
     private static readonly int TUNING_PARAMS_SIZE = Marshal.SizeOf(typeof(TuningParams));        // 16
     private static readonly int REGISTRY_PARAMS_SIZE = Marshal.SizeOf(typeof(RegistryParams));    // 44
-    private static readonly int HID_REMOTE_CONTROL_CONFIG_SIZE = Marshal.SizeOf(typeof(HidRemoteControlConfig));  // 16
 
     private static readonly int GENERAL_BUFFER_SIZE = new int[]
       {
@@ -713,7 +679,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
     private bool _isRemoteControlInterfaceOpen = false;
     private Thread _remoteControlListenerThread = null;
     private AutoResetEvent _remoteControlListenerThreadStopEvent = null;
-    private bool _isHidRemote = false;
 
     #endregion
 
@@ -1233,12 +1198,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
     #region remote control listener thread
 
     /// <summary>
-    /// Start a thread to listen for non-HID remote control commands.
+    /// Start a thread to listen for remote control commands.
     /// </summary>
-    private void StartNonHidRemoteControlListenerThread()
+    private void StartRemoteControlListenerThread()
     {
       // Don't start a thread if the interface has not been opened.
-      if (!_isRemoteControlInterfaceOpen || _isHidRemote)
+      if (!_isRemoteControlInterfaceOpen)
       {
         return;
       }
@@ -1246,14 +1211,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       // Kill the existing thread if it is in "zombie" state.
       if (_remoteControlListenerThread != null && !_remoteControlListenerThread.IsAlive)
       {
-        StopNonHidRemoteControlListenerThread();
+        StopRemoteControlListenerThread();
       }
       if (_remoteControlListenerThread == null)
       {
-        this.LogDebug("Twinhan: starting new non-HID remote control listener thread");
+        this.LogDebug("Twinhan: starting new remote control listener thread");
         _remoteControlListenerThreadStopEvent = new AutoResetEvent(false);
-        _remoteControlListenerThread = new Thread(new ThreadStart(NonHidRemoteControlListener));
-        _remoteControlListenerThread.Name = "Twinhan non-HID remote control listener";
+        _remoteControlListenerThread = new Thread(new ThreadStart(RemoteControlListener));
+        _remoteControlListenerThread.Name = "Twinhan remote control listener";
         _remoteControlListenerThread.IsBackground = true;
         _remoteControlListenerThread.Priority = ThreadPriority.Lowest;
         _remoteControlListenerThread.Start();
@@ -1261,15 +1226,15 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
     }
 
     /// <summary>
-    /// Stop the thread that listens for non-HID remote control commands.
+    /// Stop the thread that listens for remote control commands.
     /// </summary>
-    private void StopNonHidRemoteControlListenerThread()
+    private void StopRemoteControlListenerThread()
     {
       if (_remoteControlListenerThread != null)
       {
         if (!_remoteControlListenerThread.IsAlive)
         {
-          this.LogWarn("Twinhan: aborting old non-HID remote control listener thread");
+          this.LogWarn("Twinhan: aborting old remote control listener thread");
           _remoteControlListenerThread.Abort();
         }
         else
@@ -1277,7 +1242,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
           _remoteControlListenerThreadStopEvent.Set();
           if (!_remoteControlListenerThread.Join(REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME * 2))
           {
-            this.LogWarn("Twinhan: failed to join non-HID remote control listener thread, aborting thread");
+            this.LogWarn("Twinhan: failed to join remote control listener thread, aborting thread");
             _remoteControlListenerThread.Abort();
           }
         }
@@ -1293,9 +1258,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
     /// <summary>
     /// Thread function for receiving remote control commands.
     /// </summary>
-    private void NonHidRemoteControlListener()
+    private void RemoteControlListener()
     {
-      this.LogDebug("Twinhan: non-HID remote control listener thread start polling");
+      this.LogDebug("Twinhan: remote control listener thread start polling");
       int hr;
       int returnedByteCount;
       byte previousCode = 0;
@@ -1306,14 +1271,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
           hr = GetIoctl(TwinhanIoControlCode.GetRemoteControlValue, _remoteControlBuffer, 1, out returnedByteCount);
           if (hr != (int)HResult.Severity.Success)
           {
-            this.LogDebug("Twinhan: failed to read non-HID remote code, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+            this.LogDebug("Twinhan: failed to read remote code, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
           }
           else
           {
             byte remoteCode = Marshal.ReadByte(_remoteControlBuffer, 0);
             if (remoteCode != previousCode)
             {
-              this.LogDebug("Twinhan: non-HID remote control key press, code = {0}", remoteCode);
+              this.LogDebug("Twinhan: remote control key press, code = {0}", remoteCode);
             }
           }
         }
@@ -1323,10 +1288,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       }
       catch (Exception ex)
       {
-        this.LogError(ex, "Twinhan: non-HID remote control listener thread exception");
+        this.LogError(ex, "Twinhan: remote control listener thread exception");
         return;
       }
-      this.LogDebug("Twinhan: non-HID remote control listener thread stop polling");
+      this.LogDebug("Twinhan: remote control listener thread stop polling");
     }
 
     #endregion
@@ -1369,7 +1334,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
 
         // Fill the command buffer.
         Marshal.Copy(COMMAND_GUID.ToByteArray(), 0, commandBuffer, 16);
-        Marshal.WriteInt32(commandBuffer, 16, (int)NativeMethods.CtlCode((NativeMethods.FileDevice)0xaa00, (uint)controlCode, NativeMethods.Method.Buffered, NativeMethods.FileAccess.Any));
+        Marshal.WriteInt32(commandBuffer, 16, (int)NativeMethods.CTL_CODE((NativeMethods.FileDevice)0xaa00, (uint)controlCode, NativeMethods.Method.METHOD_BUFFERED, NativeMethods.FileAccess.FILE_ANY_ACCESS));
         Marshal.WriteInt32(commandBuffer, 20, inBuffer.ToInt32());
         Marshal.WriteInt32(commandBuffer, 24, inBufferSize);
         Marshal.WriteInt32(commandBuffer, 28, outBuffer.ToInt32());
@@ -2437,68 +2402,16 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
         return true;
       }
 
-      _isHidRemote = false;
-      _remoteControlBuffer = Marshal.AllocCoTaskMem(HID_REMOTE_CONTROL_CONFIG_SIZE);
-
-      // Some tuners like the TechniSat SkyStar HD2 have an HID input driver.
-      // The driver passes key presses straight to Windows. This command
-      // enables the HID input.
-      this.LogDebug("Twinhan: try enable HID remote control");
-      Marshal.WriteByte(_remoteControlBuffer, 0, 1);
-      int hr = SetIoctl(TwinhanIoControlCode.HidRemoteControlEnable, _remoteControlBuffer, 1);
-      if (hr == (int)HResult.Severity.Success)
-      {
-        // Log the configuration.
-        _isHidRemote = true;
-        this.LogDebug("Twinhan: HID configuration");
-        for (int i = 0; i < HID_REMOTE_CONTROL_CONFIG_SIZE; i++)
-        {
-          Marshal.WriteByte(_remoteControlBuffer, i, 0);
-        }
-        int returnedByteCount;
-        hr = GetIoctl(TwinhanIoControlCode.GetHidRemoteConfig, _remoteControlBuffer, HID_REMOTE_CONTROL_CONFIG_SIZE, out returnedByteCount);
-        // The Mantis driver does not return the number of bytes populated, so
-        // we can only check the HRESULT.
-        if (hr != (int)HResult.Severity.Success)  // || returnedByteCount != HID_REMOTE_CONTROL_CONFIG_SIZE)
-        {
-          this.LogWarn("Twinhan: failed to check HID config, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
-          return true;
-        }
-
-        HidRemoteControlConfig config = (HidRemoteControlConfig)Marshal.PtrToStructure(_remoteControlBuffer, typeof(HidRemoteControlConfig));
-        this.LogDebug("  IR standard         = {0}", config.IrStandard);
-        this.LogDebug("  IR sys code check 1 = 0x{0:x}", config.IrSysCodeCheck1);
-        this.LogDebug("  IR sys code check 2 = 0x{0:x}", config.IrSysCodeCheck2);
-        this.LogDebug("  mapping             = {0}", config.Mapping);
-
-        // Select the custom mapping.
-        if (config.Mapping == TwinhanRemoteControlMapping.Disabled)
-        {
-          this.LogDebug("Twinhan: selecting custom mapping");
-          config.Mapping = TwinhanRemoteControlMapping.Custom;
-          Marshal.StructureToPtr(config, _remoteControlBuffer, false);
-          hr = SetIoctl(TwinhanIoControlCode.SetHidRemoteConfig, _remoteControlBuffer, HID_REMOTE_CONTROL_CONFIG_SIZE);
-          if (hr != (int)HResult.Severity.Success)
-          {
-            this.LogWarn("Twinhan: failed to select custom HID mapping, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-          }
-        }
-
-        _isRemoteControlInterfaceOpen = true;
-        this.LogDebug("Twinhan: result = success");
-        return true;
-      }
-      this.LogWarn("Twinhan: failed to enable HID remote control, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-
-      // Try the other interface. I think this is for older/specific tuners only.
-      this.LogDebug("Twinhan: try enable non-HID remote control");
-      hr = SetIoctl(TwinhanIoControlCode.StartRemoteControl, IntPtr.Zero, 0);
+      // I think this interface is for older/specific tuners only. Most tuners
+      // have HID remote control support.
+      int hr = SetIoctl(TwinhanIoControlCode.StartRemoteControl, IntPtr.Zero, 0);
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogError("Twinhan: failed to start non-HID remote control, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("Twinhan: failed to start remote control, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
       }
-      StartNonHidRemoteControlListenerThread();
+      _remoteControlBuffer = Marshal.AllocCoTaskMem(1);
+      StartRemoteControlListenerThread();
       _isRemoteControlInterfaceOpen = true;
 
       this.LogDebug("Twinhan: result = success");
@@ -2516,28 +2429,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       bool success = true;
       if (_isRemoteControlInterfaceOpen)
       {
-        if (!_isHidRemote)
-        {
-          this.LogDebug("Twinhan: stop non-HID remote control");
-          StopNonHidRemoteControlListenerThread();
+        StopRemoteControlListenerThread();
 
-          int hr = SetIoctl(TwinhanIoControlCode.StopRemoteControl, IntPtr.Zero, 0);
-          if (hr != (int)HResult.Severity.Success)
-          {
-            this.LogWarn("Twinhan: failed to stop non-HID remote control, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-            success = false;
-          }
-        }
-        else
+        int hr = SetIoctl(TwinhanIoControlCode.StopRemoteControl, IntPtr.Zero, 0);
+        if (hr != (int)HResult.Severity.Success)
         {
-          this.LogDebug("Twinhan: disable HID remote control");
-          Marshal.WriteByte(_remoteControlBuffer, 0, 0);
-          int hr = SetIoctl(TwinhanIoControlCode.HidRemoteControlEnable, _remoteControlBuffer, 1);
-          if (hr != (int)HResult.Severity.Success)
-          {
-            this.LogWarn("Twinhan: failed to disable HID remote control, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-            success = false;
-          }
+          this.LogWarn("Twinhan: failed to stop remote control, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          success = false;
         }
       }
 
@@ -2552,7 +2450,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       {
         this.LogDebug("Twinhan: result = success");
       }
-      return true;
+      return success;
     }
 
     #endregion

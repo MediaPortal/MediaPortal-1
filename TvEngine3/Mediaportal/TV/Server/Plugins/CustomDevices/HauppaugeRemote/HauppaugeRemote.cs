@@ -289,9 +289,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeRemote
     private const string IR32_DLL_NAME = "irremote.DLL";
     private const string MINIMUM_COMPATIBLE_VERSION = "2.49.23332";
 
-    private const int WM_QUIT = 0x0012;
-    private const int WM_TIMER = 0x0113;
-
     #endregion
 
     #region variables
@@ -317,46 +314,48 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeRemote
     /// <returns>the IR32 installation path if successful, otherwise <c>null</c></returns>
     private string GetIr32InstallPath()
     {
-      RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Hauppauge WinTV Infrared Remote");
-      if (key == null)
+      using (RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Hauppauge WinTV Infrared Remote"))
       {
-        return null;
-      }
+        if (key == null)
+        {
+          return null;
+        }
 
-      try
-      {
-        object pathValue = key.GetValue("InstallLocation");
-        string path = null;
-        if (pathValue != null)
+        try
         {
-          path = pathValue.ToString();
-          if (path.EndsWith(@"\"))
+          object pathValue = key.GetValue("InstallLocation");
+          string path = null;
+          if (pathValue != null)
           {
-            path += @"\";
+            path = pathValue.ToString();
+            if (path.EndsWith(@"\"))
+            {
+              path += @"\";
+            }
+            return path;
           }
-          return path;
-        }
-        pathValue = key.GetValue("UninstallString");
-        if (pathValue == null)
-        {
+          pathValue = key.GetValue("UninstallString");
+          if (pathValue == null)
+          {
+            return null;
+          }
+          path = pathValue.ToString();
+          int index = path.ToLowerInvariant().IndexOf("unir32");
+          if (index < 0)
+          {
+            return null;
+          }
+          path = path.Substring(0, index);
+          if (File.Exists(path + IR32_EXE_NAME) && File.Exists(path + IR32_DLL_NAME))
+          {
+            return path;
+          }
           return null;
         }
-        path = pathValue.ToString();
-        int index = path.ToLowerInvariant().IndexOf("unir32");
-        if (index < 0)
+        finally
         {
-          return null;
+          key.Close();
         }
-        path = path.Substring(0, index);
-        if (File.Exists(path + IR32_EXE_NAME) && File.Exists(path + IR32_DLL_NAME))
-        {
-          return path;
-        }
-        return null;
-      }
-      finally
-      {
-        key.Close();
       }
     }
 
@@ -393,9 +392,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeRemote
             return;
           }
 
-          // Create a tool (ie. not in taskbar or alt+tab list etc.) popup window instance with size 0x0.
-          handle = NativeMethods.CreateWindowEx(0x80, className, string.Empty, 0x80000000, 0, 0, 0, 0, IntPtr.Zero,
-                                                        IntPtr.Zero, processHandle, IntPtr.Zero);
+          // Create a window that won't show in the taskbar or alt+tab list etc. with size 0x0.
+          handle = NativeMethods.CreateWindowEx(NativeMethods.WindowStyleEx.WS_EX_TOOLWINDOW,
+                                                className, string.Empty, NativeMethods.WindowStyle.WS_POPUP,
+                                                0, 0, 0, 0, IntPtr.Zero, IntPtr.Zero, processHandle, IntPtr.Zero);
           if (handle.Equals(IntPtr.Zero))
           {
             this.LogError("Hauppauge remote: failed to create receive window, hr = 0x{0:x}", Marshal.GetLastWin32Error());
@@ -443,7 +443,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeRemote
               {
                 this.LogWarn("Hauppauge remote: failed to close interface");
               }
-              if (!NativeMethods.UnregisterClass(className, processHandle))
+              if (!NativeMethods.DestroyWindow(handle))
+              {
+                this.LogWarn("Hauppauge remote: failed to destroy receive window, hr = 0x{0:x}", Marshal.GetLastWin32Error());
+              }
+              else if (!NativeMethods.UnregisterClass(className, processHandle))
               {
                 this.LogWarn("Hauppauge remote: failed to unregister window class, hr = 0x{0:x}", Marshal.GetLastWin32Error());
               }
@@ -472,9 +476,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeRemote
       }
     }
 
-    private IntPtr RemoteControlListenerWndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
+    private IntPtr RemoteControlListenerWndProc(IntPtr hWnd, NativeMethods.WindowsMessage msg, IntPtr wParam, IntPtr lParam)
     {
-      if (msg == WM_TIMER)  // key press event
+      if (msg == NativeMethods.WindowsMessage.WM_TIMER)  // key press event
       {
         HcwRemoteType remoteType = 0;
         int code = 0;
@@ -660,7 +664,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeRemote
       {
         if (_remoteControlListenerThread != null && _remoteControlListenerThreadId > 0)
         {
-          NativeMethods.PostThreadMessage(_remoteControlListenerThreadId, WM_QUIT, IntPtr.Zero, IntPtr.Zero);
+          NativeMethods.PostThreadMessage(_remoteControlListenerThreadId, NativeMethods.WindowsMessage.WM_QUIT, IntPtr.Zero, IntPtr.Zero);
           _remoteControlListenerThread.Join();
           _remoteControlListenerThreadId = 0;
           _remoteControlListenerThread = null;

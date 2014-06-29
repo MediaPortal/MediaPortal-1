@@ -403,7 +403,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       Nine,
       Power,
       Asterix,
-      ChannelPrevious,    // icon: circular arrow
+      Recall,             // icon: circular arrow
       SkipForward,
       Menu, // 270
       Epg,
