@@ -343,6 +343,7 @@ private:
   DWORD           m_MPmainThreadID;
   bool            m_isUNCfile;
   CCritSec        m_sectionSeeking;
-
+  
+  DWORD dwResolution;   //Timer resolution variable
 };
 

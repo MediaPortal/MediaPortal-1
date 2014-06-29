@@ -47,13 +47,18 @@
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
 
+//These are global variables, and can be shared between multiple TsReader instances !
 DWORD m_tGTStartTime = 0;
+long m_instanceCount = 0;
+CCritSec m_instanceLock;
+
 
 DEFINE_MP_DEBUG_SETTING(DoNotAllowSlowMotionDuringZapping)
 
 //-------------------- Async logging methods -------------------------------------------------
 
 
+//These are global variables, and can be shared between multiple TsReader instances !
 WORD logFileParsed = -1;
 WORD logFileDate = -1;
 
@@ -61,6 +66,7 @@ CTsReaderFilter* instanceID = 0;
 
 CCritSec m_qLock;
 CCritSec m_logFileLock;
+CCritSec m_logThreadLock;
 std::queue<std::string> m_logQueue;
 BOOL m_bLoggerRunning = false;
 HANDLE m_hLogger = NULL;
@@ -183,15 +189,21 @@ UINT CALLBACK LogThread(void* param)
 
 
 void StartLogger()
-{
-  UINT id;
-  m_hLogger = (HANDLE)_beginthreadex(NULL, 0, LogThread, 0, 0, &id);
-  SetThreadPriority(m_hLogger, THREAD_PRIORITY_BELOW_NORMAL);
+{ 
+  CAutoLock lock(&m_logThreadLock);
+  if (!m_hLogger)
+  {
+    m_bLoggerRunning = true;
+    UINT id;
+    m_hLogger = (HANDLE)_beginthreadex(NULL, 0, LogThread, 0, 0, &id);
+    SetThreadPriority(m_hLogger, THREAD_PRIORITY_BELOW_NORMAL);
+  }
 }
 
 
 void StopLogger()
 {
+  CAutoLock lock(&m_logThreadLock);
   if (m_hLogger)
   {
     m_bLoggerRunning = FALSE;
@@ -209,14 +221,15 @@ void StopLogger()
 void LogDebug(const char *fmt, ...) 
 {
   static CCritSec lock;
+  CAutoLock logLock(&lock);
+  
+  if (!m_hLogger) {
+    StartLogger();
+  }
+  
   va_list ap;
   va_start(ap,fmt);
 
-  CAutoLock logLock(&lock);
-  if (!m_hLogger) {
-    m_bLoggerRunning = true;
-    StartLogger();
-  }
   char buffer[1000]; 
   int tmp;
   va_start(ap,fmt);
@@ -226,10 +239,11 @@ void LogDebug(const char *fmt, ...)
   SYSTEMTIME systemTime;
   GetLocalTime(&systemTime);
   char msg[5000];
-  sprintf_s(msg, 5000,"[%04.4d-%02.2d-%02.2d %02.2d:%02.2d:%02.2d,%03.3d] [%8x] [%4x] - %s\n",
+  sprintf_s(msg, 5000,"[%04.4d-%02.2d-%02.2d %02.2d:%02.2d:%02.2d,%03.3d] [%8x-%d] [%4x] - %s\n",
     systemTime.wYear, systemTime.wMonth, systemTime.wDay,
     systemTime.wHour, systemTime.wMinute, systemTime.wSecond, systemTime.wMilliseconds,
     instanceID,
+    m_instanceCount,
     GetCurrentThreadId(),
     buffer);
   CAutoLock l(&m_qLock);
@@ -304,12 +318,27 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
   m_pCallback(NULL),
   m_pRequestAudioCallback(NULL)
 {
-  if (m_tGTStartTime == 0)
+  { // Scope for CAutoLock
+    CAutoLock lock(&m_instanceLock);  
+    if (m_instanceCount == 0)
+    {
+      //Initialise m_tGTStartTime for GET_TIME_NOW() macro.
+      //The macro is used to avoid having to handle timeGetTime()
+      //rollover issues in the body of the code
+      m_tGTStartTime = (timeGetTime() - 0x40000000); 
+    }
+  }
+
+  // Set timer resolution to 1 ms (if possible)
+  TIMECAPS tc; 
+  dwResolution = 0; 
+  if (timeGetDevCaps(&tc, sizeof(TIMECAPS)) == MMSYSERR_NOERROR)
   {
-    //Initialise m_tGTStartTime for GET_TIME_NOW() macro.
-    //The macro is used to avoid having to handle timeGetTime()
-    //rollover issues in the body of the code
-    m_tGTStartTime = (timeGetTime() - 0x40000000); 
+    dwResolution = min(max(tc.wPeriodMin, 1), tc.wPeriodMax);
+    if (dwResolution)
+    {
+      timeBeginPeriod(dwResolution);
+    }
   }
 
   instanceID = this;  
@@ -317,7 +346,7 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
   // use the following line if you are having trouble setting breakpoints
   // #pragma comment( lib, "strmbasd" )
 
-  LogDebug("------------- v%d.%d.%d.%d -------------", TSREADER_MAJOR_VERSION, TSREADER_MID_VERSION, TSREADER_VERSION, TSREADER_POINT_VERSION);
+  LogDebug("------------- v%d.%d.%d.%d ------------- instanceCount:%d", TSREADER_MAJOR_VERSION, TSREADER_MID_VERSION, TSREADER_VERSION, TSREADER_POINT_VERSION, m_instanceCount);
   
   m_fileReader=NULL;
   m_fileDuration=NULL;
@@ -492,12 +521,19 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
   
   LogDebug("CTsReaderFilter::Start duration thread");
   StartThread();
-  LogDebug("CTsReaderFilter::timeGetTime():0x%x, m_tGTStartTime:0x%x, GET_TIME_NOW:0x%x", timeGetTime(), m_tGTStartTime, GET_TIME_NOW() );
+  LogDebug("CTsReaderFilter::timeGetTime():0x%x, m_tGTStartTime:0x%x, GET_TIME_NOW:0x%x, timer res:%d ms", timeGetTime(), m_tGTStartTime, GET_TIME_NOW(), dwResolution);
 }
 
 CTsReaderFilter::~CTsReaderFilter()
 {
   LogDebug("CTsReaderFilter::dtor");
+
+  // Reset timer resolution (if we managed to set it originally)
+  if (dwResolution)
+  {
+    timeEndPeriod(dwResolution);
+  }
+
   //stop duration thread
   StopThread(5000);
   
