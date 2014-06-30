@@ -642,6 +642,8 @@ STDMETHODIMP CMPUrlSourceSplitter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TY
         // IPTV is always live stream, remove live stream flag and create new one
         this->configuration->Remove(PARAMETER_NAME_LIVE_STREAM, true);
         result = this->configuration->Add(PARAMETER_NAME_LIVE_STREAM, L"1") ? result : E_OUTOFMEMORY;
+
+        //this->configuration->Add(PARAMETER_NAME_DUMP_INPUT_RAW_DATA, L"1");
       }
 
       if (SUCCEEDED(result))
