@@ -1044,8 +1044,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     private bool _isTechnoTrend = false;
     private bool _isRemoteControlInterfaceOpen = false;
     private bool _isCaInterfaceOpen = false;
-    private bool _isCiSlotPresent = false;
     #pragma warning disable 0414
+    private bool _isCiSlotPresent = false;
     private bool _isCamPresent = false;
     #pragma warning restore 0414
     private bool _isCamReady = false;
@@ -2101,7 +2101,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
         }
 
         // Send the updated list to the CAM.
-        int i = 0;
         ushort[] programNumbers = new ushort[_descrambledPrograms.Count];
         _descrambledPrograms.CopyTo(programNumbers);
         this.LogDebug("TechnoTrend: program list = {0}", string.Join(", ", programNumbers));
