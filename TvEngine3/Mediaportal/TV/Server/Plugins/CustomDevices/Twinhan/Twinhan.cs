@@ -703,29 +703,21 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
         bufferSize = OLD_CI_STATE_INFO_SIZE;
       }
 
-      // Use local buffers here because this function is called from the MMI polling thread as well as
-      // indirectly from the main TV service thread.
-      IntPtr responseBuffer = Marshal.AllocCoTaskMem(bufferSize);
-      for (int i = 0; i < bufferSize; i++)
+      lock (_mmiLock)
       {
-        Marshal.WriteByte(responseBuffer, i, 0);
-      }
-      try
-      {
+        for (int i = 0; i < bufferSize; i++)
+        {
+          Marshal.WriteByte(_mmiBuffer, i, 0);
+        }
         int returnedByteCount;
-        int hr = GetIoctl(TwinhanIoControlCode.CiGetState, responseBuffer, bufferSize, out returnedByteCount);
+        int hr = GetIoctl(TwinhanIoControlCode.CiGetState, _mmiBuffer, bufferSize, out returnedByteCount);
         if (hr == (int)HResult.Severity.Success && (returnedByteCount == OLD_CI_STATE_INFO_SIZE || returnedByteCount == CI_STATE_INFO_SIZE))
         {
-          ciState = (TwinhanCiState)Marshal.ReadInt32(responseBuffer, 0);
-          mmiState = (TwinhanMmiState)Marshal.ReadInt32(responseBuffer, 4);
-          //Dump.DumpBinary(responseBuffer, returnedByteCount);
+          ciState = (TwinhanCiState)Marshal.ReadInt32(_mmiBuffer, 0);
+          mmiState = (TwinhanMmiState)Marshal.ReadInt32(_mmiBuffer, 4);
+          //Dump.DumpBinary(_mmiBuffer, returnedByteCount);
         }
         return hr;
-      }
-      finally
-      {
-        Marshal.FreeCoTaskMem(responseBuffer);
-        responseBuffer = IntPtr.Zero;
       }
     }
 
@@ -1984,24 +1976,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
         return false;
       }
 
-      TwinhanCiState ciState;
-      TwinhanMmiState mmiState;
-      int hr = GetCiStatus(out ciState, out mmiState);
-      if (hr != (int)HResult.Severity.Success)
-      {
-        this.LogError("Twinhan: failed to get CI status, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        return false;
-      }
-      this.LogDebug("Twinhan: CI state = {0}, MMI state = {1}", ciState, mmiState);
-      bool isCamReady = false;
-      if (ciState == TwinhanCiState.Cam1Okay_Old ||
-        ciState == TwinhanCiState.Cam2Okay_Old ||
-        ciState == TwinhanCiState.CamOkay)
-      {
-        isCamReady = true;
-      }
-      this.LogDebug("Twinhan: result = {0}", isCamReady);
-      return isCamReady;
+      // The CAM state is updated by the MMI handler thread.
+      this.LogDebug("Twinhan: result = {0}", _isCamReady);
+      return _isCamReady;
     }
 
     /// <summary>

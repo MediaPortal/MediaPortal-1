@@ -334,28 +334,21 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
     {
       ciState = NetUpCiState.Empty;
 
-      // Use a local buffer here because this function is called from the MMI
-      // polling thread as well as indirectly from the main TV service thread.
-      IntPtr buffer = Marshal.AllocCoTaskMem(CI_STATE_INFO_SIZE);
-      try
+      lock (_mmiLock)
       {
         for (int i = 0; i < CI_STATE_INFO_SIZE; i++)
         {
-          Marshal.WriteByte(buffer, i, 0);
+          Marshal.WriteByte(_mmiBuffer, i, 0);
         }
         int returnedByteCount;
-        int hr = GetIoctl(NetUpIoControl.CiStatus, buffer, CI_STATE_INFO_SIZE, out returnedByteCount);
+        int hr = GetIoctl(NetUpIoControl.CiStatus, _mmiBuffer, CI_STATE_INFO_SIZE, out returnedByteCount);
         if (hr == (int)HResult.Severity.Success && returnedByteCount == _ciStateInfoSize)
         {
           // Have to marshal manually due to mismatch between the NetUP and
           // DVBSky structures.
-          ciState = (NetUpCiState)Marshal.ReadInt32(buffer, 0);
+          ciState = (NetUpCiState)Marshal.ReadInt32(_mmiBuffer, 0);
         }
         return hr;
-      }
-      finally
-      {
-        Marshal.FreeCoTaskMem(buffer);
       }
     }
 
@@ -890,9 +883,18 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
         return true;
       }
 
-      _isCaInterfaceOpen = true;
       _mmiBuffer = Marshal.AllocCoTaskMem(MMI_BUFFER_SIZE);
-      _isCamPresent = IsConditionalAccessInterfaceReady();
+      _isCaInterfaceOpen = true;
+      NetUpCiState ciState;
+      int hr = GetCiStatus(out ciState);
+      if (hr != (int)HResult.Severity.Success)
+      {
+        this.LogError("NetUP: failed to get CI status, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      }
+      else
+      {
+        _isCamPresent = ciState.HasFlag(NetUpCiState.CamPresent);
+      }
       StartMmiHandlerThread();
 
       this.LogDebug("NetUP: result = success");
@@ -968,23 +970,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
         return false;
       }
 
-      NetUpCiState ciState;
-      int hr = GetCiStatus(out ciState);
-      if (hr != (int)HResult.Severity.Success)
-      {
-        this.LogError("NetUP: failed to get CI status, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        return false;
-      }
-      this.LogDebug("NetUP: state = {0}", ciState);
-
-      // We can only tell whether a CAM is present or not.
-      bool isCamPresent = false;
-      if (ciState != NetUpCiState.Empty)
-      {
-        isCamPresent = true;
-      }
-      this.LogDebug("NetUP: result = {0}", isCamPresent);
-      return isCamPresent;
+      // The CAM state is updated by the MMI handler thread. We can only
+      // determine whether a CAM is present or not.
+      this.LogDebug("NetUP: result = {0}", _isCamPresent);
+      return _isCamPresent;
     }
 
     /// <summary>

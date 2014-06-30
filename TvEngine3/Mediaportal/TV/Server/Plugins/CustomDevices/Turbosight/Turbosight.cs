@@ -1475,10 +1475,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
         return false;
       }
 
-      // We can only tell whether a CAM is present, not whether it is ready.
-      bool isCamPresent = _camAvailable(_ciHandle);
-      this.LogDebug("Turbosight: result = {0}", isCamPresent);
-      return isCamPresent;
+      // The CAM state is updated by the MMI handler thread. We can only
+      // determine whether a CAM is present or not.
+      this.LogDebug("Turbosight: result = {0}", _isCamPresent);
+      return _isCamPresent;
     }
 
     /// <summary>

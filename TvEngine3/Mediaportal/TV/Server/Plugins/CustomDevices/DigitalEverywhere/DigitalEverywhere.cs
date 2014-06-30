@@ -564,31 +564,24 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
     {
       ciState = DeCiState.Empty;
 
-      // Use a local buffer here because this function is called from the MMI
-      // polling thread as well as indirectly from the main TV service thread.
       int bufferSize = sizeof(DeCiState);   // 2 bytes
-      IntPtr responsebuffer = Marshal.AllocCoTaskMem(bufferSize);
       int hr = (int)HResult.Severity.Error;
-      try
+      lock (_mmiLock)
       {
         for (int i = 0; i < bufferSize; i++)
         {
-          Marshal.WriteByte(responsebuffer, i, 0);
+          Marshal.WriteByte(_mmiBuffer, i, 0);
         }
         int returnedByteCount;
         hr = _propertySet.Get(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.CiStatus,
-          responsebuffer, bufferSize,
-          responsebuffer, bufferSize,
+          _mmiBuffer, bufferSize,
+          _mmiBuffer, bufferSize,
           out returnedByteCount
         );
         if (hr == (int)HResult.Severity.Success && returnedByteCount == bufferSize)
         {
-          ciState = (DeCiState)Marshal.ReadInt16(responsebuffer, 0);
+          ciState = (DeCiState)Marshal.ReadInt16(_mmiBuffer, 0);
         }
-      }
-      finally
-      {
-        Marshal.FreeCoTaskMem(responsebuffer);
       }
       return hr;
     }
@@ -763,35 +756,38 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
     {
       this.LogDebug("Digital Everywhere: request application information");
       CaData data = new CaData(DeCiMessageTag.ApplicationInfo);
-      Marshal.StructureToPtr(data, _generalBuffer, false);
-      int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.MmiCamToHost,
-        _generalBuffer, CA_DATA_SIZE,
-        _generalBuffer, CA_DATA_SIZE
-      );
-      if (hr != (int)HResult.Severity.Success)
+      lock (_mmiLock)
       {
-        this.LogWarn("Digital Everywhere: failed to request application information, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        return;
-      }
+        Marshal.StructureToPtr(data, _mmiBuffer, false);
+        int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.MmiCamToHost,
+          _mmiBuffer, CA_DATA_SIZE,
+          _mmiBuffer, CA_DATA_SIZE
+        );
+        if (hr != (int)HResult.Severity.Success)
+        {
+          this.LogWarn("Digital Everywhere: failed to request application information, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          return;
+        }
 
-      this.LogDebug("Digital Everywhere: read application information");
-      for (int i = 0; i < CA_DATA_SIZE; i++)
-      {
-        Marshal.WriteByte(_generalBuffer, i, 0);
-      }
-      int returnedByteCount;
-      hr = _propertySet.Get(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.MmiCamToHost,
-        _generalBuffer, CA_DATA_SIZE,
-        _generalBuffer, CA_DATA_SIZE,
-        out returnedByteCount
-      );
-      if (hr != (int)HResult.Severity.Success || returnedByteCount != CA_DATA_SIZE)
-      {
-        this.LogWarn("Digital Everywhere: failed to read application information, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
-        return;
-      }
+        this.LogDebug("Digital Everywhere: read application information");
+        for (int i = 0; i < CA_DATA_SIZE; i++)
+        {
+          Marshal.WriteByte(_mmiBuffer, i, 0);
+        }
+        int returnedByteCount;
+        hr = _propertySet.Get(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.MmiCamToHost,
+          _mmiBuffer, CA_DATA_SIZE,
+          _mmiBuffer, CA_DATA_SIZE,
+          out returnedByteCount
+        );
+        if (hr != (int)HResult.Severity.Success || returnedByteCount != CA_DATA_SIZE)
+        {
+          this.LogWarn("Digital Everywhere: failed to read application information, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+          return;
+        }
 
-      data = (CaData)Marshal.PtrToStructure(_generalBuffer, typeof(CaData));
+        data = (CaData)Marshal.PtrToStructure(_mmiBuffer, typeof(CaData));
+      }
       this.LogDebug("  manufacturer = 0x{0:x2}{1:x2}", data.Data[0], data.Data[1]);
       this.LogDebug("  code         = 0x{0:x2}{1:x2}", data.Data[2], data.Data[3]);
       this.LogDebug("  menu title   = {0}", DvbTextConverter.Convert(data.Data, data.Data[4], 5));
@@ -901,6 +897,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
                 ciState.HasFlag(DeCiState.CamReady | DeCiState.ApplicationInfoAvailable))
               {
                 _isCamReady = true;
+                ReadApplicationInformation();
               }
               else
               {
@@ -933,16 +930,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
                 _mmiBuffer, CA_DATA_SIZE,
                 _mmiBuffer, CA_DATA_SIZE
               );
-            }
-            if (hr != (int)HResult.Severity.Success)
-            {
-              this.LogError("Digital Everywhere: MMI request failed, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-              continue;
-            }
+              if (hr != (int)HResult.Severity.Success)
+              {
+                this.LogError("Digital Everywhere: MMI request failed, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+                continue;
+              }
 
-            this.LogDebug("Digital Everywhere: retrieving data");
-            lock (_mmiLock)
-            {
+              this.LogDebug("Digital Everywhere: retrieving data");
               for (int i = 0; i < CA_DATA_SIZE; i++)
               {
                 Marshal.WriteByte(_mmiBuffer, i, 0);
@@ -1638,16 +1632,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
         return true;
       }
 
-      _isCaInterfaceOpen = true;
       _mmiBuffer = Marshal.AllocCoTaskMem(CA_DATA_SIZE);
       _pmtBuffer = Marshal.AllocCoTaskMem(CA_DATA_SIZE);
-      _isCamReady = IsConditionalAccessInterfaceReady();
-      _isCamPresent = _isCamReady;
-      if (_isCamReady)
-      {
-        ReadApplicationInformation();
-      }
-
+      _isCaInterfaceOpen = true;
       StartMmiHandlerThread();
 
       this.LogDebug("Digital Everywhere: result = success");
@@ -1740,23 +1727,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
         return false;
       }
 
-      DeCiState ciState;
-      int hr = GetCiStatus(out ciState);
-      if (hr != (int)HResult.Severity.Success)
-      {
-        this.LogError("Digital Everywhere: failed to get CI status, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        return false;
-      }
-
-      this.LogDebug("Digital Everywhere: CI state = {0}", ciState);
-      bool isCamReady = false;
-      if (ciState.HasFlag(DeCiState.CamPresent | DeCiState.CamIsDvb | DeCiState.CamReady | DeCiState.ApplicationInfoAvailable) &&
-        !ciState.HasFlag(DeCiState.CamError))
-      {
-        isCamReady = true;
-      }
-      this.LogDebug("Digital Everywhere: result = {0}", isCamReady);
-      return isCamReady;
+      // The CAM state is updated by the MMI handler thread.
+      this.LogDebug("Digital Everywhere: result = {0}", _isCamReady);
+      return _isCamReady;
     }
 
     /// <summary>
