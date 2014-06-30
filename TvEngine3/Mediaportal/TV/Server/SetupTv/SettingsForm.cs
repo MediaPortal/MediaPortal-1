@@ -532,11 +532,13 @@ namespace Mediaportal.TV.Server.SetupTV
         holderPanel.Controls.Clear();
         holderPanel.Controls.Add(section);
 
-        section.OnSectionActivated();
+        // Deactive the previous section before activating a new one. Some code
+        // (eg. CA menu handling) relies on the order.
         if (section != _previousSection && _previousSection != null)
         {
           _previousSection.OnSectionDeActivated();
         }
+        section.OnSectionActivated();
         _previousSection = section;
       }
       catch (Exception ex)

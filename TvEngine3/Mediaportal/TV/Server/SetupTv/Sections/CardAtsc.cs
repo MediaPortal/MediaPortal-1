@@ -36,6 +36,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
+using Mediaportal.TV.Server.SetupTV.Sections.CIMenu;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections
 {
@@ -58,6 +59,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private bool _isScanning;
     private bool _stopScanning;
     private FileFilters fileFilters;
+    private CI_Menu_Dialog ciMenuDialog;
 
     public CardAtsc()
       : this("ATSC") { }
@@ -70,6 +72,17 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       _cardId = cardId;
       InitializeComponent();
+      //insert complete ci menu dialog to tab
+      Card dbCard = ServiceAgents.Instance.CardServiceAgent.GetCard(_cardId, CardIncludeRelationEnum.None);
+      if (dbCard.UseConditionalAccess == true)
+      {
+        ciMenuDialog = new CI_Menu_Dialog(_cardId);
+        tabPageCaMenu.Controls.Add(ciMenuDialog);
+      }
+      else
+      {
+        tabPageCaMenu.Dispose();
+      }
       base.Text = name;
       Init();
     }
@@ -97,12 +110,22 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       base.OnSectionActivated();
       UpdateStatus();
       mpComboBoxTuningMode.SelectedItem = ServiceAgents.Instance.SettingServiceAgent.GetValue("atsc" + _cardId + "TuningMode", "ATSC Digital Terrestrial");
+
+      if (ciMenuDialog != null)
+      {
+        ciMenuDialog.OnSectionActivated();
+      }
     }
 
     public override void OnSectionDeActivated()
     {
       base.OnSectionDeActivated();
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("atsc" + _cardId + "TuningMode", (string)mpComboBoxTuningMode.SelectedItem);
+
+      if (ciMenuDialog != null)
+      {
+        ciMenuDialog.OnSectionDeActivated();
+      }
     }
 
     private void UpdateStatus()

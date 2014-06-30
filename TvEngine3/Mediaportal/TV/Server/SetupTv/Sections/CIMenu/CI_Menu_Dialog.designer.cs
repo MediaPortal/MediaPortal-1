@@ -30,7 +30,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.CIMenu
         /// </summary>
         private void InitializeComponent()
         {
-          this.btnOk = new MPButton();
+          this.btnOpenMenu = new MPButton();
           this.Title = new MPLabel();
           this.Subtitle = new MPLabel();
           this.BottomText = new MPLabel();
@@ -44,15 +44,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.CIMenu
           this.grpCIMenu.SuspendLayout();
           this.SuspendLayout();
           // 
-          // btnOk
+          // btnOpenMenu
           // 
-          this.btnOk.Location = new System.Drawing.Point(324, 17);
-          this.btnOk.Name = "btnOk";
-          this.btnOk.Size = new System.Drawing.Size(88, 23);
-          this.btnOk.TabIndex = 0;
-          this.btnOk.Text = "Open Menu";
-          this.btnOk.UseVisualStyleBackColor = true;
-          this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
+          this.btnOpenMenu.Location = new System.Drawing.Point(324, 17);
+          this.btnOpenMenu.Name = "btnOpenMenu";
+          this.btnOpenMenu.Size = new System.Drawing.Size(88, 23);
+          this.btnOpenMenu.TabIndex = 0;
+          this.btnOpenMenu.Text = "Open Menu";
+          this.btnOpenMenu.UseVisualStyleBackColor = true;
+          this.btnOpenMenu.Click += new System.EventHandler(this.btnOpenMenu_Click);
           // 
           // Title
           // 
@@ -147,9 +147,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.CIMenu
           this.lblComment.AutoSize = true;
           this.lblComment.Location = new System.Drawing.Point(3, 289);
           this.lblComment.Name = "lblComment";
-          this.lblComment.Size = new System.Drawing.Size(313, 13);
+          this.lblComment.Size = new System.Drawing.Size(309, 13);
           this.lblComment.TabIndex = 8;
-          this.lblComment.Text = "*) for a list of supported DVB cards refer to Team MediaPortal wiki";
+          this.lblComment.Text = "Refer to the Team MediaPortal wiki for a list of supported tuners.";
           // 
           // CI_Menu_Dialog
           // 
@@ -160,7 +160,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.CIMenu
           this.Controls.Add(this.Subtitle);
           this.Controls.Add(this.btnSendAnswer);
           this.Controls.Add(this.btnCloseMenu);
-          this.Controls.Add(this.btnOk);
+          this.Controls.Add(this.btnOpenMenu);
           this.Controls.Add(this.grpCIMenu);
           this.Name = "CI_Menu_Dialog";
           this.Size = new System.Drawing.Size(433, 329);
@@ -174,7 +174,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.CIMenu
 
         #endregion
 
-        private MPButton btnOk;
+        private MPButton btnOpenMenu;
         private MPLabel Title;
         private MPLabel Subtitle;
         private MPLabel BottomText;

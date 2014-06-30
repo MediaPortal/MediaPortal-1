@@ -69,7 +69,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.CIMenu
 
     public override void OnSectionActivated()
     {
-      
       // attach local eventhandler to server event
       ServiceAgents.Instance.EventServiceAgent.RegisterCiMenuCallbacks(_ciMenuEventHandler);      
     }
@@ -99,7 +98,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.CIMenu
         if (!ServiceAgents.Instance.ControllerServiceAgent.CiMenuSupported(cardNumber))
         {
           MessageBox.Show(
-            "The selected card doesn't support CI menu or CAM is not ready yet\r\n(Inititialization of CAM may require >10 seconds)");
+            "The selected tuner doesn't support CA menu access, or the CAM is not present, compatible or ready yet.\r\n(CA inititialisation may require more than 10 seconds.)");
           return false;
         }
         InitSuccess = true;
@@ -107,7 +106,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.CIMenu
       return InitSuccess;
     }
 
-    private void btnOk_Click(object sender, EventArgs e)
+    private void btnOpenMenu_Click(object sender, EventArgs e)
     {
       try
       {
@@ -132,7 +131,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.CIMenu
           ServiceAgents.Instance.ControllerServiceAgent.SelectMenu(cardNumber, 0); // back
           ciMenuState = CiMenuState.Closed;
         }
-        if (ciMenuState == CiMenuState.Request)
+        else if (ciMenuState == CiMenuState.Request)
         {
           ServiceAgents.Instance.ControllerServiceAgent.SendMenuAnswer(cardNumber, true, null);
           ciMenuState = CiMenuState.Ready;
@@ -153,7 +152,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.CIMenu
         {
           ServiceAgents.Instance.ControllerServiceAgent.SelectMenu(cardNumber, Convert.ToByte(Choices.SelectedIndex + 1));
         }
-        if (ciMenuState == CiMenuState.Request)
+        else if (ciMenuState == CiMenuState.Request)
         {
           ServiceAgents.Instance.ControllerServiceAgent.SendMenuAnswer(cardNumber, false, CiAnswer.Text);
           ciMenuState = CiMenuState.Ready;
@@ -178,7 +177,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.CIMenu
       {
           // choices available, so show them
         case CiMenuState.Ready:
-          //ciMenuState = CiMenuState.Opened;
           Title.Text = Menu.Title;
           Subtitle.Text = Menu.Subtitle;
           BottomText.Text = Menu.BottomText;
@@ -190,7 +188,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.CIMenu
           if (ciMenuChoices == 0)
           {
             ciMenuState = CiMenuState.NoChoices;
-            SetButtonState();
           }
           else
           {
@@ -212,12 +209,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.CIMenu
 
           // requests require users input so open keyboard
         case CiMenuState.Request:
-          ciMenuState = CiMenuState.Request;
           SetButtonState();
-          CiRequest.Text = String.Format("{0} ({1} Zeichen)", Menu.RequestText, Menu.AnswerLength);
+          CiRequest.Text = String.Format("{0} ({1} characters)", Menu.RequestText, Menu.AnswerLength);
           CiAnswer.MaxLength = (int)Menu.AnswerLength;
           CiAnswer.Text = "";
           CiAnswer.Focus();
+          break;
+
+        case CiMenuState.Close:
+          ciMenuState = CiMenuState.Closed;
           break;
       }
       SetButtonState();
@@ -225,14 +225,17 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.CIMenu
 
     private void SetButtonState()
     {
-      btnOk.Enabled = ciMenuState == CiMenuState.Closed;
+      btnOpenMenu.Enabled = ciMenuState == CiMenuState.Closed;
       btnCloseMenu.Enabled = (ciMenuState == CiMenuState.Ready || ciMenuState == CiMenuState.Request ||
                               ciMenuState == CiMenuState.NoChoices);
       btnSendAnswer.Enabled = (ciMenuState == CiMenuState.Ready || ciMenuState == CiMenuState.Request);
       grpCIMenu.Enabled = ciMenuState != CiMenuState.Closed;
       CiRequest.Visible = ciMenuState == CiMenuState.Request;
       CiAnswer.Visible = ciMenuState == CiMenuState.Request;
-      if (ciMenuState == CiMenuState.Closed) InitMenu();
+      if (ciMenuState == CiMenuState.Closed)
+      {
+        InitMenu();
+      }
     }
   }
 }
