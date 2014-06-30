@@ -2389,14 +2389,21 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
 
       if (_isRemoteControlInterfaceOpen)
       {
-        TtApiResult result = bdaapiCloseIR(_tunerHandle);
-        if (result != TtApiResult.Success)
+        if (_tunerHandle != null)
         {
-          this.LogError("TechnoTrend: failed to close remote control interface, result = {0}", result);
-          return false;
+          TtApiResult result = bdaapiCloseIR(_tunerHandle);
+          if (result != TtApiResult.Success)
+          {
+            this.LogError("TechnoTrend: failed to close remote control interface, result = {0}", result);
+            return false;
+          }
         }
-        _remoteControlKeyPressDelegate = null;
+        else
+        {
+          this.LogWarn("TechnoTrend: remote control interfaces is open but hardware handle is null");
+        }
       }
+      _remoteControlKeyPressDelegate = null;
 
       _isRemoteControlInterfaceOpen = false;
       this.LogDebug("TechnoTrend: result = success");

@@ -2403,16 +2403,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
     {
       this.LogDebug("Twinhan: close remote control interface");
 
-      bool success = true;
+      StopRemoteControlListenerThread();
       if (_isRemoteControlInterfaceOpen)
       {
-        StopRemoteControlListenerThread();
-
         int hr = SetIoctl(TwinhanIoControlCode.StopRemoteControl, IntPtr.Zero, 0);
         if (hr != (int)HResult.Severity.Success)
         {
           this.LogWarn("Twinhan: failed to stop remote control, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-          success = false;
         }
       }
 
@@ -2423,11 +2420,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       }
 
       _isRemoteControlInterfaceOpen = false;
-      if (success)
-      {
-        this.LogDebug("Twinhan: result = success");
-      }
-      return success;
+      this.LogDebug("Twinhan: result = success");
+      return true;
     }
 
     #endregion

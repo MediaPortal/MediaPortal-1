@@ -2312,20 +2312,25 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       this.LogDebug("Anysee: close remote control interface");
 
       StopRemoteControlListenerThread();
-      if (_isRemoteControlInterfaceOpen && _propertySet != null)
+      if (_isRemoteControlInterfaceOpen)
       {
-        IrData command = new IrData();
-        command.Enable = false;
-        Marshal.StructureToPtr(command, _remoteControlBuffer, false);
-        int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Ir,
-          _remoteControlBuffer, IR_DATA_SIZE,
-          _remoteControlBuffer, IR_DATA_SIZE
-        );
-
-        if (hr != (int)HResult.Severity.Success)
+        if (_propertySet != null)
         {
-          this.LogError("Anysee: failed to disable IR commands, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-          return false;
+          IrData command = new IrData();
+          command.Enable = false;
+          Marshal.StructureToPtr(command, _remoteControlBuffer, false);
+          int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Ir,
+            _remoteControlBuffer, IR_DATA_SIZE,
+            _remoteControlBuffer, IR_DATA_SIZE
+          );
+          if (hr != (int)HResult.Severity.Success)
+          {
+            this.LogWarn("Anysee: failed to disable IR commands, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          }
+        }
+        else
+        {
+          this.LogWarn("Anysee: remote control interface is open but property set is null");
         }
       }
 

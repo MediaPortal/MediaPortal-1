@@ -762,6 +762,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
         this.LogError("TeVii: failed to unset remote control event/delegate");
         return false;
       }
+      _remoteControlKeyPressDelegate = null;
 
       if (_restartTeViiRcExe)
       {
