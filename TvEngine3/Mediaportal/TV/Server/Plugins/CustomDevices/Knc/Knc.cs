@@ -1102,18 +1102,15 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
     {
       this.LogDebug("KNC: close conditional access interface");
 
-      bool success = true;
       if (_isCaInterfaceOpen)
       {
         if (!KNCBDA_CI_HW_Enable(_deviceIndex, false))
         {
           this.LogWarn("KNC: CI HW disable failed");
-          success = false;
         }
         if (!KNCBDA_CI_Disable(_deviceIndex))
         {
           this.LogWarn("KNC: CI disable failed");
-          success = false;
         }
       }
 
@@ -1121,20 +1118,15 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
       _isCamReady = false;
       _ciState = KncCiState.Releasing;
 
-      if (success)
+      if (_callBackBuffer != IntPtr.Zero)
       {
-        if (_callBackBuffer != IntPtr.Zero)
-        {
-          Marshal.FreeCoTaskMem(_callBackBuffer);
-          _callBackBuffer = IntPtr.Zero;
-        }
-        this.LogDebug("KNC: result = success");
-        _isCaInterfaceOpen = false;
-        return true;
+        Marshal.FreeCoTaskMem(_callBackBuffer);
+        _callBackBuffer = IntPtr.Zero;
       }
 
-      this.LogDebug("KNC: failed to close conditional access interface");
-      return false;
+      _isCaInterfaceOpen = false;
+      this.LogDebug("KNC: result = success");
+      return true;
     }
 
     /// <summary>

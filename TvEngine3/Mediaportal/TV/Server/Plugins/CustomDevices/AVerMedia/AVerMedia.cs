@@ -594,11 +594,21 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
         _ciInterface.CloseInterface();
         _ciInterface = null;
       }
+      else if (_isCaInterfaceOpen)
+      {
+        this.LogWarn("AVerMedia: conditional access interface is open but CI interface is null");
+      }
+
       if (_mmiInterface != null)
       {
         _mmiInterface.SetMessageCallBack(IntPtr.Zero);
         _mmiInterface = null;
       }
+      else if (_isCaInterfaceOpen)
+      {
+        this.LogWarn("AVerMedia: conditional access interface is open but MMI interface is null");
+      }
+
       Release.ComObject("AVerMedia CI API", ref _ciApi);
       _mmiInterface = null;
 

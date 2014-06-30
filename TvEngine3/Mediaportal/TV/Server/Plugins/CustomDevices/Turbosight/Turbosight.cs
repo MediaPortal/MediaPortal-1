@@ -1385,7 +1385,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
 
       // Attempt to initialise the interface.
       _ciHandle = _onStartCi(_tunerFilter, _tunerFilterName, _apiIndex);
-      if (_ciHandle == IntPtr.Zero || _ciHandle.ToInt64() == -1)
+      if (_ciHandle == IntPtr.Zero || _ciHandle.ToInt64() == -1 || _ciHandle.ToInt32() == -1)
       {
         this.LogWarn("Turbosight: interface handle is null");
         _isCiSlotPresent = false;
@@ -1415,10 +1415,17 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
 
       StopMmiHandlerThread();
 
-      if (_ciHandle != IntPtr.Zero)
+      if (_isCaInterfaceOpen)
       {
-        _onExitCi(_ciHandle);
-        _ciHandle = IntPtr.Zero;
+        if (_ciHandle != IntPtr.Zero)
+        {
+          _onExitCi(_ciHandle);
+          _ciHandle = IntPtr.Zero;
+        }
+        else
+        {
+          this.LogWarn("Turbosight: conditional access interfaces is open but handle is null");
+        }
       }
 
       if (_mmiMessageBuffer != IntPtr.Zero)

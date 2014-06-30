@@ -1962,9 +1962,16 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     {
       this.LogDebug("TechnoTrend: close conditional access interface");
 
-      if (_isCiSlotPresent && _tunerHandle != IntPtr.Zero)
+      if (_isCaInterfaceOpen)
       {
-        bdaapiCloseCI(_tunerHandle);
+        if (_tunerHandle != IntPtr.Zero)
+        {
+          bdaapiCloseCI(_tunerHandle);
+        }
+        else
+        {
+          this.LogWarn("TechnoTrend: conditional access interfaces is open but hardware handle is null");
+        }
       }
       _descrambledPrograms = null;
       _camInputRequestPrompt = string.Empty;
@@ -2410,13 +2417,17 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       {
         CloseRemoteControlInterface();
         CloseConditionalAccessInterface();
+        if (_tunerHandle != IntPtr.Zero)
+        {
+          bdaapiClose(_tunerHandle);
+          _tunerHandle = IntPtr.Zero;
+        }
       }
       if (_generalBuffer != IntPtr.Zero)
       {
         Marshal.FreeCoTaskMem(_generalBuffer);
         _generalBuffer = IntPtr.Zero;
       }
-      _tunerHandle = IntPtr.Zero;
       _isTechnoTrend = false;
     }
 

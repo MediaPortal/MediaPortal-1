@@ -1179,7 +1179,16 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
     public bool CloseConditionalAccessInterface()
     {
       this.LogDebug("MD plugin: close conditional access interface");
+
+      if (_slots != null)
+      {
+        foreach (DecodeSlot slot in _slots)
+        {
+          slot.CurrentChannel = null;
+        }
+      }
       _isCaInterfaceOpen = false;
+
       this.LogDebug("MD plugin: result = success");
       return true;
     }

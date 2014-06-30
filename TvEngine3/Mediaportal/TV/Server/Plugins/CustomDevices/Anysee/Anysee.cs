@@ -1849,12 +1849,19 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
     {
       this.LogDebug("Anysee: close conditional access interface");
 
-      bool result = true;
       if (_ciApi != null)
       {
-        result = _ciApi.CloseApi();
+        if (!_ciApi.CloseApi())
+        {
+          this.LogWarn("Anysee: close API failed");
+        }
         _ciApi = null;
       }
+      else if (_isCaInterfaceOpen)
+      {
+        this.LogWarn("Anysee: conditional interface is open but API is null");
+      }
+
       _isCiSlotPresent = false;
       _isCamPresent = false;
       _isCamReady = false;
@@ -1865,15 +1872,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
         _pmtBuffer = IntPtr.Zero;
       }
 
-      if (result)
-      {
-        this.LogDebug("Anysee: result = success");
-        _isCaInterfaceOpen = false;
-        return true;
-      }
-
-      this.LogError("Anysee: failed to close conditional access interface");
-      return false;
+      _isCaInterfaceOpen = false;
+      this.LogDebug("Anysee: result = success");
+      return true;
     }
 
     /// <summary>
