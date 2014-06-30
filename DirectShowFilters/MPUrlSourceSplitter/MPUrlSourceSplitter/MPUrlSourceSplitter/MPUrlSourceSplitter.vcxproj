@@ -55,13 +55,13 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\..\libcurl\include;..\..\libcurl\include\curl;..\..\ffmpeg;..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libflv;..\MPUrlSourceSplitter_libcachefile;..\MPUrlSourceSplitter_libplugin;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\..\libcurl\include;..\..\libcurl\include\curl;..\..\ffmpeg;..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libflv;..\MPUrlSourceSplitter_libcachefile;..\MPUrlSourceSplitter_libplugin;..\MPUrlSourceSplitter_libdumpfile;..\MPUrlSourceSplitter_libibmff;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)baseclasses\Debug;$(SolutionDir)bin_$(PlatformName)d\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>advapi32.lib;ole32.lib;winmm.lib;user32.lib;oleaut32.lib;Comctl32.lib;shell32.lib;version.lib;Shlwapi.lib;strmbasd.lib;avformat-mpurlsourcesplitter.lib;avutil-mpurlsourcesplitter.lib;avcodec-mpurlsourcesplitter.lib;MPUrlSourceSplitter_libcurl.lib;MPUrlSourceSplitter_libmemory.lib;MPUrlSourceSplitter_libstrings.lib;MPUrlSourceSplitter_liblogger.lib;MPUrlSourceSplitter_libshared.lib;MPUrlSourceSplitter_libcachefile.lib;MPUrlSourceSplitter_libflv.lib;MPUrlSourceSplitter_libplugin.lib;DbgHelp.lib;psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>advapi32.lib;ole32.lib;winmm.lib;user32.lib;oleaut32.lib;Comctl32.lib;shell32.lib;version.lib;Shlwapi.lib;strmbasd.lib;avformat-mpurlsourcesplitter.lib;avutil-mpurlsourcesplitter.lib;avcodec-mpurlsourcesplitter.lib;MPUrlSourceSplitter_libcurl.lib;MPUrlSourceSplitter_libmemory.lib;MPUrlSourceSplitter_libstrings.lib;MPUrlSourceSplitter_liblogger.lib;MPUrlSourceSplitter_libshared.lib;MPUrlSourceSplitter_libcachefile.lib;MPUrlSourceSplitter_libflv.lib;MPUrlSourceSplitter_libplugin.lib;MPUrlSourceSplitter_libdumpfile.lib;MPUrlSourceSplitter_libibmff.lib;DbgHelp.lib;psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>MPUrlSourceSplitter.def</ModuleDefinitionFile>
       <GenerateMapFile>false</GenerateMapFile>
     </Link>
@@ -114,7 +114,7 @@ echo #endif &gt;&gt; VersionInfo.h</Command>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\..\libcurl\include;..\..\libcurl\include\curl;..\..\ffmpeg;..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libflv;..\MPUrlSourceSplitter_libcachefile;..\MPUrlSourceSplitter_libplugin;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\..\libcurl\include;..\..\libcurl\include\curl;..\..\ffmpeg;..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libflv;..\MPUrlSourceSplitter_libcachefile;..\MPUrlSourceSplitter_libplugin;..\MPUrlSourceSplitter_libdumpfile;..\MPUrlSourceSplitter_libibmff;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -122,7 +122,7 @@ echo #endif &gt;&gt; VersionInfo.h</Command>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)baseclasses\Release;$(SolutionDir)bin_$(PlatformName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>advapi32.lib;ole32.lib;winmm.lib;user32.lib;oleaut32.lib;Comctl32.lib;shell32.lib;version.lib;Shlwapi.lib;strmbase.lib;avformat-mpurlsourcesplitter.lib;avutil-mpurlsourcesplitter.lib;avcodec-mpurlsourcesplitter.lib;MPUrlSourceSplitter_libcurl.lib;MPUrlSourceSplitter_libmemory.lib;MPUrlSourceSplitter_libstrings.lib;MPUrlSourceSplitter_liblogger.lib;MPUrlSourceSplitter_libshared.lib;MPUrlSourceSplitter_libcachefile.lib;MPUrlSourceSplitter_libflv.lib;MPUrlSourceSplitter_libplugin.lib;DbgHelp.lib;psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>advapi32.lib;ole32.lib;winmm.lib;user32.lib;oleaut32.lib;Comctl32.lib;shell32.lib;version.lib;Shlwapi.lib;strmbase.lib;avformat-mpurlsourcesplitter.lib;avutil-mpurlsourcesplitter.lib;avcodec-mpurlsourcesplitter.lib;MPUrlSourceSplitter_libcurl.lib;MPUrlSourceSplitter_libmemory.lib;MPUrlSourceSplitter_libstrings.lib;MPUrlSourceSplitter_liblogger.lib;MPUrlSourceSplitter_libshared.lib;MPUrlSourceSplitter_libcachefile.lib;MPUrlSourceSplitter_libflv.lib;MPUrlSourceSplitter_libplugin.lib;MPUrlSourceSplitter_libdumpfile.lib;MPUrlSourceSplitter_libibmff.lib;DbgHelp.lib;psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>MPUrlSourceSplitter.def</ModuleDefinitionFile>
     </Link>
     <PostBuildEvent>

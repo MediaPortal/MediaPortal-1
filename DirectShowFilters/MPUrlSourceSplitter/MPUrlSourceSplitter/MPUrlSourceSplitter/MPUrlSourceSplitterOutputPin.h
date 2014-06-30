@@ -28,6 +28,7 @@
 #include "OutputPinPacketCollection.h"
 #include "MediaTypeCollection.h"
 #include "CacheFile.h"
+#include "DumpFile.h"
 #include "Flags.h"
 
 #include <streams.h>
@@ -35,13 +36,10 @@
 #define OUTPUT_PIN_BUFFERS_RECOMMENDED                                32
 #define OUTPUT_PIN_BUFFERS_LENGTH_RECOMMENDED                         524288
 
-#define OUTPUT_PIN_DUMP_DATA_LENGTH                                   1048576
-#define OUTPUT_PIN_DUMP_METADATA_COUNT                                1024
-
 #define MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_NONE                   FLAGS_NONE
 
 #define MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_END_OF_STREAM          (1 << (FLAGS_LAST + 0))
-#define MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_DUMPING_DATA_AND_SIZES (1 << (FLAGS_LAST + 1))
+#define MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_DUMP_RAW_DATA          (1 << (FLAGS_LAST + 1))
 
 #define MP_URL_SOURCE_SPLITTER_OUTPUT_PIN_FLAG_LAST                   (FLAGS_LAST + 2)
 
@@ -60,12 +58,6 @@
 #define METHOD_PIN_START_FORMAT                                       L"%s: %s: pin '%s', Start"
 #define METHOD_PIN_END_FORMAT                                         L"%s: %s: pin '%s', End"
 #define METHOD_PIN_END_FAIL_RESULT_FORMAT                             L"%s: %s: pin '%s', End, Fail, result: 0x%08X"
-
-struct DumpMetadata
-{
-  unsigned int size;
-  SYSTEMTIME time;
-};
 
 class CMPUrlSourceSplitterOutputPin : public CBaseOutputPin, public CFlags, protected CAMThread
 {
@@ -239,28 +231,24 @@ protected:
 
   uint64_t outputPinDataLength;
 
-  /* variables for dumping data */
-
-  uint8_t *dumpData;
-  unsigned int dumpDataBufferOccupied;
-  unsigned int dumpDataBufferSize;
-
-  DumpMetadata *dumpMetadata;
-  unsigned int dumpMetadataBufferOccupied;
-  unsigned int dumpMetadataBufferCount;
-
-  unsigned int dumpDataCounter;
+  // holds dump file
+  CDumpFile *dumpFile;
 
   /* methods */
 
   virtual DWORD ThreadProc();
 
   // dumps outgoing data and its sizes to dump file
-  void DumpDataAndDumpDataSizes(void);
+  //void DumpDataAndDumpDataSizes(void);
+
+  // creates dump box for dump file
+  // @return : dump box or NULL if error
+  virtual CDumpBox *CreateDumpBox(void);
 
   // gets store file name
+  // @param extension : the extension of store file
   // @return : store file name or NULL if error
-  wchar_t *GetStoreFile(void);
+  wchar_t *GetStoreFile(const wchar_t *extension);
 };
 
 #endif
