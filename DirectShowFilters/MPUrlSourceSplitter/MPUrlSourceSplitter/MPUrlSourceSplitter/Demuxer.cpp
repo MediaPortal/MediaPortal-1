@@ -2283,9 +2283,9 @@ unsigned int WINAPI CDemuxer::DemuxingWorker(LPVOID lpParam)
       {
         result = caller->GetNextPacketInternal(packet);
 
-        if (result == E_NO_MORE_DATA_AVAILABLE)
+        if (FAILED(result) && (result != E_PAUSE_SEEK_STOP_MODE_DISABLE_READING))
         {
-          // special error code for end of stream
+          // any error code (except disabled reading) for end of stream
 
           packet->SetDemuxerId(caller->demuxerId);
           packet->SetEndOfStream(true);
@@ -2436,7 +2436,7 @@ HRESULT CDemuxer::GetNextPacketInternal(COutputPinPacket *packet)
     else if (ffmpegResult < 0)
     {
       // meh, fail
-      result = E_NO_MORE_DATA_AVAILABLE;
+      result = ffmpegResult;
     }
     else if ((ffmpegPacket.size <= 0) || (ffmpegPacket.stream_index < 0) || ((unsigned)ffmpegPacket.stream_index >= this->formatContext->nb_streams))
     {
