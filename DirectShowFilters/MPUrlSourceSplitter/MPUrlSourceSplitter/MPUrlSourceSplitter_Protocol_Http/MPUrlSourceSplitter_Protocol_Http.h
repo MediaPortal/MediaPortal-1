@@ -172,8 +172,9 @@ protected:
   /* methods */
 
   // gets store file name
+  // @param extension : the extension of store file
   // @return : store file name or NULL if error
-  wchar_t *GetStoreFile(void);
+  wchar_t *GetStoreFile(const wchar_t *extension);
 };
 
 #endif

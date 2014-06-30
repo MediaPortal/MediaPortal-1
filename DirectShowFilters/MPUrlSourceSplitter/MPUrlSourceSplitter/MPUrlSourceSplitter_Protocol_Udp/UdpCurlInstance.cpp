@@ -70,7 +70,6 @@ HRESULT CUdpCurlInstance::Initialize(CDownloadRequest *downloadRequest)
 {
   HRESULT result = __super::Initialize(downloadRequest);
   this->state = CURL_STATE_CREATED;
-  unsigned int endTicks = (this->finishTime == FINISH_TIME_NOT_SPECIFIED) ? (GetTickCount() + this->GetReceiveDataTimeout()) : this->finishTime;
 
   this->udpDownloadRequest = dynamic_cast<CUdpDownloadRequest  *>(this->downloadRequest);
   this->udpDownloadResponse = dynamic_cast<CUdpDownloadResponse *>(this->downloadResponse);
@@ -79,6 +78,8 @@ HRESULT CUdpCurlInstance::Initialize(CDownloadRequest *downloadRequest)
 
   if (SUCCEEDED(result))
   {
+    unsigned int endTicks = (this->downloadRequest->GetFinishTime() == FINISH_TIME_NOT_SPECIFIED) ? (GetTickCount() + this->downloadRequest->GetReceiveDataTimeout()) : this->downloadRequest->GetFinishTime();
+
     ALLOC_MEM_DEFINE_SET(urlComponents, URL_COMPONENTS, 1, 0);
     CHECK_POINTER_HRESULT(result, urlComponents, result, E_OUTOFMEMORY);
 
@@ -181,22 +182,22 @@ unsigned int CUdpCurlInstance::CurlWorker(void)
       server = localIpAddress->IsMulticast() ? new CMulticastUdpServer(&result) : new CUdpServer(&result);
       CHECK_POINTER_HRESULT(result, server, result, E_OUTOFMEMORY);
 
+      CNetworkInterfaceCollection *interfaces = new CNetworkInterfaceCollection(&result);
+      CHECK_POINTER_HRESULT(result, interfaces, result, E_OUTOFMEMORY);
+
+      CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), CNetworkInterface::GetAllNetworkInterfaces(interfaces, AF_UNSPEC), result);
+
       if (SUCCEEDED(result) && (localIpAddress->IsMulticast()))
       {
         CMulticastUdpServer *multicastServer = dynamic_cast<CMulticastUdpServer *>(server);
 
-        result = multicastServer->Initialize(AF_UNSPEC, localIpAddress, (this->sourceAddress != NULL) ? sourceIpAddresses->GetItem(0) : NULL, this->networkInterfaces);
+        result = multicastServer->Initialize(AF_UNSPEC, localIpAddress, (this->sourceAddress != NULL) ? sourceIpAddresses->GetItem(0) : NULL, interfaces);
       }
       else if (SUCCEEDED(result) && (!localIpAddress->IsMulticast()))
       {
         // if not multicast address, then binding to local address
         // we need to find correct network interface (with same IP address) and bind to it
 
-        CNetworkInterfaceCollection *interfaces = new CNetworkInterfaceCollection(&result);
-        CHECK_POINTER_HRESULT(result, interfaces, result, E_OUTOFMEMORY);
-
-        CHECK_CONDITION_HRESULT(result, interfaces->Append(this->networkInterfaces), result, E_OUTOFMEMORY);
-        
         if (SUCCEEDED(result))
         {
           unsigned int i = 0;
@@ -241,14 +242,13 @@ unsigned int CUdpCurlInstance::CurlWorker(void)
 
         CHECK_CONDITION_HRESULT(result, interfaces->Count() != 0, result, E_FAIL);
         CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), server->Initialize(AF_UNSPEC, this->localPort, interfaces), result);
-
-        FREE_MEM_CLASS(interfaces);
       }
       else
       {
         result = E_FAIL;
       }
 
+      FREE_MEM_CLASS(interfaces);
       CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), server->StartListening(), result);
 
       while (!this->curlWorkerShouldExit)
@@ -278,6 +278,17 @@ unsigned int CUdpCurlInstance::CurlWorker(void)
 
                 if (SUCCEEDED(res))
                 {
+                  CDumpBox *dumpBox = NULL;
+                  CHECK_CONDITION_NOT_NULL_EXECUTE(this->dumpFile->GetDumpFile(), dumpBox = this->CreateDumpBox());
+
+                  if (dumpBox != NULL)
+                  {
+                    dumpBox->SetTimeWithLocalTime();
+                    dumpBox->SetPayload(buffer, receivedLength);
+                  }
+
+                  CHECK_CONDITION_EXECUTE((dumpBox != NULL) && (!this->dumpFile->AddDumpBox(dumpBox)), FREE_MEM_CLASS(dumpBox));
+
                   if (this->IsSetFlags(UDP_CURL_INSTANCE_FLAG_TRANSPORT_RTP))
                   {
                     rtpPacket->Clear();

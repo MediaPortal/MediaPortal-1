@@ -193,6 +193,10 @@ protected:
   virtual unsigned int CurlWorker(void);
 
   HRESULT SendAndReceive(CRtspRequest *request, const wchar_t *rtspMethodName, const wchar_t *functionName);
+
+  // creates dump box for dump file
+  // @return : dump box or NULL if error
+  virtual CDumpBox *CreateDumpBox(void);
 };
 
 #endif

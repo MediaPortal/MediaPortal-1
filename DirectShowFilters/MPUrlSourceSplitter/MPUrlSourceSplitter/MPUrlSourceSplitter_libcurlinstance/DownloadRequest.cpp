@@ -26,11 +26,15 @@ CDownloadRequest::CDownloadRequest(HRESULT *result)
   : CFlags()
 {
   this->url = NULL;
+  this->receiveDataTimeout = UINT_MAX;
+  this->networkInterfaceName = NULL;
+  this->finishTime = FINISH_TIME_NOT_SPECIFIED;
 }
 
 CDownloadRequest::~CDownloadRequest(void)
 {
   FREE_MEM(this->url);
+  FREE_MEM(this->networkInterfaceName);
 }
 
 /* get methods */
@@ -40,11 +44,41 @@ const wchar_t *CDownloadRequest::GetUrl(void)
   return this->url;
 }
 
+unsigned int CDownloadRequest::GetReceiveDataTimeout(void)
+{
+  return this->receiveDataTimeout;
+}
+
+const wchar_t *CDownloadRequest::GetNetworkInterfaceName(void)
+{
+  return this->networkInterfaceName;
+}
+
+unsigned int CDownloadRequest::GetFinishTime(void)
+{
+  return this->finishTime;
+}
+
 /* set methods */
 
 bool CDownloadRequest::SetUrl(const wchar_t *url)
 {
   SET_STRING_RETURN_WITH_NULL(this->url, url);
+}
+
+void CDownloadRequest::SetReceivedDataTimeout(unsigned int timeout)
+{
+  this->receiveDataTimeout = timeout;
+}
+
+bool CDownloadRequest::SetNetworkInterfaceName(const wchar_t *networkInterfaceName)
+{
+  SET_STRING_RETURN_WITH_NULL(this->networkInterfaceName, networkInterfaceName);
+}
+
+void CDownloadRequest::SetFinishTime(unsigned int finishTime)
+{
+  this->finishTime = finishTime;
 }
 
 /* other methods*/
@@ -81,7 +115,11 @@ bool CDownloadRequest::CloneInternal(CDownloadRequest *clone)
   {
     clone->flags = this->flags;
     clone->url = Duplicate(this->url);
-    result = TEST_STRING_WITH_NULL(clone->url, this->url);
+    clone->finishTime = this->finishTime;
+    clone->receiveDataTimeout = this->receiveDataTimeout;
+
+    SET_STRING_AND_RESULT_WITH_NULL(clone->networkInterfaceName, this->networkInterfaceName, result);
+    SET_STRING_AND_RESULT_WITH_NULL(clone->url, this->url, result);
   }
 
   return result;

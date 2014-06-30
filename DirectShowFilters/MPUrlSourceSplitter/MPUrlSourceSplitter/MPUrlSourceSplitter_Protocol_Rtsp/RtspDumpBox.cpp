@@ -20,47 +20,26 @@
 
 #include "StdAfx.h"
 
-#include "BoxCollection.h"
+#include "RtspDumpBox.h"
 
-CBoxCollection::CBoxCollection(HRESULT *result)
-  : CKeyedCollection(result)
+CRtspDumpBox::CRtspDumpBox(HRESULT *result)
+  : CDumpBox(result)
 {
 }
 
-CBoxCollection::~CBoxCollection(void)
+CRtspDumpBox::~CRtspDumpBox(void)
 {
 }
 
-int CBoxCollection::CompareItemKeys(const wchar_t *firstKey, const wchar_t *secondKey, void *context)
-{
-  bool invariant = (*(bool *)context);
+/* get methods */
 
-  if (invariant)
-  {
-    return _wcsicmp(firstKey, secondKey);
-  }
-  else
-  {
-    return wcscmp(firstKey, secondKey);
-  }
-}
+/* set methods */
 
-const wchar_t *CBoxCollection::GetKey(CBox *item)
-{
-  return item->GetType();
-}
+/* other methods */
 
-CBox *CBoxCollection::Clone(CBox *item)
+/* protected methods */
+
+CBoxFactory *CRtspDumpBox::GetBoxFactory(void)
 {
   return NULL;
-}
-
-bool CBoxCollection::Contains(const wchar_t *type, bool invariant)
-{
-  return __super::Contains(type, (void *)&invariant);
-}
-
-CBox *CBoxCollection::GetBox(const wchar_t *type, bool invariant)
-{
-  return __super::GetItem(type, (void *)&invariant);
 }

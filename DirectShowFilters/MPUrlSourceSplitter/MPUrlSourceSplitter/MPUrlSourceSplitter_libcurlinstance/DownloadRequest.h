@@ -29,6 +29,8 @@
 
 #define DOWNLOAD_REQUEST_FLAG_LAST                                    (FLAGS_LAST + 0)
 
+#define FINISH_TIME_NOT_SPECIFIED                                     UINT_MAX
+
 class CDownloadRequest : public CFlags
 {
 public:
@@ -41,12 +43,37 @@ public:
   // @return : url to download
   virtual const wchar_t *GetUrl(void);
 
+  // gets receive data timeout
+  // @return : receive data timeout or UINT_MAX if not specified
+  virtual unsigned int GetReceiveDataTimeout(void);
+
+  // gets network interface name
+  // @return : network interface name or NULL if not specified
+  virtual const wchar_t *GetNetworkInterfaceName(void);
+
+  // gets finish time (methods like Initialize(), StartReceivingData() and StopReceivingData() must finish before this time)
+  // @return : the finish time or FINISH_TIME_NOT_SPECIFIED if not specified
+  virtual unsigned int GetFinishTime(void);
+
   /* set methods */
 
   // sets url to download
   // @param url : url to download
   // @return : true if successful, false otherwise
   virtual bool SetUrl(const wchar_t *url);
+
+  // sets receive data timeout
+  // @param timeout : receive data timeout (UINT_MAX if not specified)
+  virtual void SetReceivedDataTimeout(unsigned int timeout);
+
+  // sets network interface name
+  // @param networkInterfaceName : the network interface name to set
+  // @return : true if successful, false otherwise
+  virtual bool SetNetworkInterfaceName(const wchar_t *networkInterfaceName);
+
+  // set finish time (methods like Initialize(), StartReceivingData() and StopReceivingData() must finish before this time)
+  // @param finishTime : the finish time to set
+  virtual void SetFinishTime(unsigned int finishTime);
 
   /* other methods*/
 
@@ -57,6 +84,12 @@ public:
 protected:
   // holds url to download
   wchar_t *url;
+  // holds receive data timeout
+  unsigned int receiveDataTimeout;
+  // holds network interface name
+  wchar_t *networkInterfaceName;
+  // holds finish time (methods like Initialize(), StartReceivingData() and StopReceivingData() must finish before this time)
+  unsigned int finishTime;
 
   /* methods */
 

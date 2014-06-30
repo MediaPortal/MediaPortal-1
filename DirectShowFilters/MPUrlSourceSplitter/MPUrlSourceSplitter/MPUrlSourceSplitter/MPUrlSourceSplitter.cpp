@@ -724,6 +724,8 @@ STDMETHODIMP CMPUrlSourceSplitter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TY
         this->configuration->Clear();
         result = this->configuration->Add(PARAMETER_NAME_URL, url) ? result : E_OUTOFMEMORY;
       }
+
+      //this->configuration->Add(PARAMETER_NAME_DUMP_INPUT_RAW_DATA, L"1");
     }
 
     if (SUCCEEDED(result))

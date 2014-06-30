@@ -632,9 +632,14 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
           this->mainCurlInstance->SetRtspClientPortMin(this->configuration->GetValueUnsignedInt(PARAMETER_NAME_RTSP_CLIENT_PORT_MIN, true, RTSP_CLIENT_PORT_MIN_DEFAULT));
           this->mainCurlInstance->SetRtspClientPortMax(this->configuration->GetValueUnsignedInt(PARAMETER_NAME_RTSP_CLIENT_PORT_MAX, true, RTSP_CLIENT_PORT_MAX_DEFAULT));
 
-          this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
-          this->mainCurlInstance->SetNetworkInterfaceName(this->configuration->GetValue(PARAMETER_NAME_INTERFACE, true, NULL));
           this->mainCurlInstance->SetIgnoreRtpPayloadType(this->configuration->GetValueBool(PARAMETER_NAME_RTSP_IGNORE_RTP_PAYLOAD_TYPE, true, RTSP_IGNORE_RTP_PAYLOAD_TYPE_DEFAULT));
+
+          if (this->configuration->GetValueBool(PARAMETER_NAME_DUMP_INPUT_RAW_DATA, true, PARAMETER_NAME_DUMP_INPUT_RAW_DATA_DEFAULT))
+          {
+            wchar_t *storeFilePath = this->GetStoreFile(0, L"dump");
+            CHECK_CONDITION_NOT_NULL_EXECUTE(storeFilePath, this->mainCurlInstance->SetDumpFile(storeFilePath));
+            FREE_MEM(storeFilePath);
+          }
         }
 
         if (SUCCEEDED(result))
@@ -646,6 +651,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
           {
             request->SetStartTime(startTime);
             request->SetUrl(this->configuration->GetValue(PARAMETER_NAME_URL, true, NULL));
+            request->SetReceivedDataTimeout(this->receiveDataTimeout);
+            request->SetNetworkInterfaceName(this->configuration->GetValue(PARAMETER_NAME_INTERFACE, true, NULL));
 
             result = this->mainCurlInstance->Initialize(request);
           }
@@ -1111,7 +1118,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
 
           if (track->GetCacheFile()->GetCacheFile() == NULL)
           {
-            wchar_t *storeFilePath = this->GetStoreFile(i);
+            wchar_t *storeFilePath = this->GetStoreFile(i, L"temp");
             CHECK_CONDITION_NOT_NULL_EXECUTE(storeFilePath, track->GetCacheFile()->SetCacheFile(storeFilePath));
             FREE_MEM(storeFilePath);
           }
@@ -2146,7 +2153,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::Initialize(CPluginConfiguration *con
 
 /* protected methods */
 
-wchar_t *CMPUrlSourceSplitter_Protocol_Rtsp::GetStoreFile(unsigned int trackId)
+wchar_t *CMPUrlSourceSplitter_Protocol_Rtsp::GetStoreFile(unsigned int trackId, const wchar_t *extension)
 {
   wchar_t *result = NULL;
   const wchar_t *folder = this->configuration->GetValue(PARAMETER_NAME_CACHE_FOLDER, true, NULL);
@@ -2156,7 +2163,7 @@ wchar_t *CMPUrlSourceSplitter_Protocol_Rtsp::GetStoreFile(unsigned int trackId)
     wchar_t *guid = ConvertGuidToString(this->logger->GetLoggerInstanceId());
     if (guid != NULL)
     {
-      result = FormatString(L"%smpurlsourcesplitter_protocol_rtsp_%s_track_%02u.temp", folder, guid, trackId);
+      result = FormatString(L"%smpurlsourcesplitter_protocol_rtsp_%s_track_%02u.%s", folder, guid, trackId, extension);
     }
     FREE_MEM(guid);
   }

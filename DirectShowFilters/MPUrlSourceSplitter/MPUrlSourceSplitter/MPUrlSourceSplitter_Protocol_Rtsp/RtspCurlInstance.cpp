@@ -64,6 +64,10 @@
 
 #include "hex.h"
 
+#include "RtspDumpBox.h"
+#include "RtspMainBox.h"
+#include "RtspTrackBox.h"
+
 #define METHOD_PROCESS_RECEIVED_BASE_RTP_PACKETS_NAME                 L"ProcessReceivedBaseRtpPackets()"
 
 CRtspCurlInstance::CRtspCurlInstance(HRESULT *result, CLogger *logger, HANDLE mutex, const wchar_t *protocolName, const wchar_t *instanceName)
@@ -169,7 +173,6 @@ HRESULT CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
 {
   HRESULT result = __super::Initialize(downloadRequest);
   this->state = CURL_STATE_CREATED;
-  unsigned int endTicks = (this->finishTime == FINISH_TIME_NOT_SPECIFIED) ? (GetTickCount() + this->GetReceiveDataTimeout()) : this->finishTime;
 
   this->lastSequenceNumber = 1;
   this->flags &= ~RTSP_CURL_INSTANCE_FLAG_REQUEST_COMMAND_FINISHED;
@@ -202,6 +205,8 @@ HRESULT CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
 
   if (SUCCEEDED(result))
   {
+    unsigned int endTicks = (this->downloadRequest->GetFinishTime() == FINISH_TIME_NOT_SPECIFIED) ? (GetTickCount() + this->downloadRequest->GetReceiveDataTimeout()) : this->downloadRequest->GetFinishTime();
+
     // we have own RTSP implementation, using CURL only to connect, send and receive data
 
     CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), HRESULT_FROM_CURL_CODE(curl_easy_setopt(this->curl, CURLOPT_CONNECT_ONLY, 1L)), result);
@@ -738,11 +743,18 @@ HRESULT CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
               CHECK_POINTER_HRESULT(error, dataServer, error, E_OUTOFMEMORY);
               CHECK_POINTER_HRESULT(error, controlServer, error, E_OUTOFMEMORY);
 
-              CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(error), dataServer->Initialize(AF_UNSPEC, clientPort, this->networkInterfaces), error);
-              CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(error), controlServer->Initialize(AF_UNSPEC, clientPort + 1, this->networkInterfaces), error);
+              CNetworkInterfaceCollection *networkInterfaces = new CNetworkInterfaceCollection(&result);
+              CHECK_POINTER_HRESULT(result, networkInterfaces, result, E_OUTOFMEMORY);
+
+              CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), CNetworkInterface::GetAllNetworkInterfaces(networkInterfaces, AF_UNSPEC), result);
+
+              CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(error), dataServer->Initialize(AF_UNSPEC, clientPort, networkInterfaces), error);
+              CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(error), controlServer->Initialize(AF_UNSPEC, clientPort + 1, networkInterfaces), error);
 
               CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(error), dataServer->StartListening(), error);
               CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(error), controlServer->StartListening(), error);
+
+              FREE_MEM_CLASS(networkInterfaces);
 
               if (FAILED(error))
               {
@@ -1071,7 +1083,7 @@ HRESULT CRtspCurlInstance::StopReceivingData(void)
 
     if (SUCCEEDED(result))
     {
-      teardown->SetTimeout(this->GetReceiveDataTimeout());
+      teardown->SetTimeout(this->downloadRequest->GetReceiveDataTimeout());
       teardown->SetSequenceNumber(this->lastSequenceNumber++);
 
       result = this->SendAndReceive(teardown, L"TEARDOWN", L"StopReceivingData()");
@@ -1321,6 +1333,24 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
         {
           CHECK_CONDITION_HRESULT(receiveError, this->rtspDownloadResponse->GetReceivedData()->AddToBufferWithResize(buffer, readData, this->rtspDownloadResponse->GetReceivedData()->GetBufferSize() * 2) == readData, receiveError, E_OUTOFMEMORY);
           CHECK_CONDITION_EXECUTE(FAILED(receiveError), this->rtspDownloadResponse->SetResultError(receiveError));
+
+          CRtspDumpBox *dumpBox = NULL;
+          CHECK_CONDITION_NOT_NULL_EXECUTE(this->dumpFile->GetDumpFile(), dumpBox = (CRtspDumpBox *)this->CreateDumpBox());
+
+          if (dumpBox != NULL)
+          {
+            dumpBox->SetTimeWithLocalTime();
+            dumpBox->SetPayload(buffer, (unsigned int)readData);
+
+            CRtspMainBox *mainBox = new CRtspMainBox(&receiveError);
+            CHECK_POINTER_HRESULT(receiveError, mainBox, receiveError, E_OUTOFMEMORY);
+
+            CHECK_CONDITION_HRESULT(receiveError, dumpBox->GetBoxes()->Add(mainBox), receiveError, E_OUTOFMEMORY);
+
+            CHECK_CONDITION_EXECUTE(FAILED(receiveError), FREE_MEM_CLASS(mainBox));
+          }
+
+          CHECK_CONDITION_EXECUTE((dumpBox != NULL) && (!this->dumpFile->AddDumpBox(dumpBox)), FREE_MEM_CLASS(dumpBox));
         }
 
         bool possibleInterleavedPacket = false;
@@ -1513,7 +1543,7 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
       
       if (SUCCEEDED(result))
       {
-        getParameter->SetTimeout(this->receiveDataTimeout);
+        getParameter->SetTimeout(this->downloadRequest->GetReceiveDataTimeout());
         getParameter->SetSequenceNumber(this->lastSequenceNumber++);
       }
 
@@ -1606,6 +1636,29 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
                       CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), udpContext->Receive((char *)(buffer + 4), pendingIncomingDataLength, &receivedLength, &sender), result);
                       CHECK_CONDITION_HRESULT(result, pendingIncomingDataLength == receivedLength, result, E_NOT_VALID_STATE);
                       CHECK_POINTER_HRESULT(result, sender, result, E_OUTOFMEMORY);
+
+                      CRtspDumpBox *dumpBox = NULL;
+                      CHECK_CONDITION_NOT_NULL_EXECUTE(this->dumpFile->GetDumpFile(), dumpBox = (CRtspDumpBox *)this->CreateDumpBox());
+
+                      if (dumpBox != NULL)
+                      {
+                        dumpBox->SetTimeWithLocalTime();
+                        dumpBox->SetPayload(buffer + 4, receivedLength);
+
+                        CRtspTrackBox *trackBox = new CRtspTrackBox(&result);
+                        CHECK_POINTER_HRESULT(result, trackBox, result, E_OUTOFMEMORY);
+
+                        if (SUCCEEDED(result))
+                        {
+                          trackBox->SetTrackId(i);
+
+                          CHECK_CONDITION_HRESULT(result, dumpBox->GetBoxes()->Add(trackBox), result, E_OUTOFMEMORY);
+                        }
+
+                        CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(trackBox));
+                      }
+
+                      CHECK_CONDITION_EXECUTE((dumpBox != NULL) && (!this->dumpFile->AddDumpBox(dumpBox)), FREE_MEM_CLASS(dumpBox));
 
                       // for created server it can't be interleaved transport
                       // create interleaved packet, parse it and process base RTP packet collection
@@ -1953,7 +2006,7 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
                 reportBuffer[1] = track->GetTransportResponseHeader()->GetMaxInterleavedChannel();  // interleaved packet channnel (specified in transport header)
                 WBE16(reportBuffer, 2, (receiverReportSize + sourceDescriptionSize));               // interleaved packet length (without header length)
 
-                result = this->SendData(reportBuffer, receiverReportSize + sourceDescriptionSize + 4, this->GetReceiveDataTimeout() * 1000);
+                result = this->SendData(reportBuffer, receiverReportSize + sourceDescriptionSize + 4, this->downloadRequest->GetReceiveDataTimeout() * 1000);
                 CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while sending interleaved RTCP packets: 0x%08X", this->protocolName, METHOD_CURL_WORKER_NAME, result));
               }
 
@@ -2146,4 +2199,14 @@ HRESULT CRtspCurlInstance::SendAndReceive(CRtspRequest *request, const wchar_t *
   }
 
   return result;
+}
+
+CDumpBox *CRtspCurlInstance::CreateDumpBox(void)
+{
+  HRESULT result = S_OK;
+  CRtspDumpBox *box = new CRtspDumpBox(&result);
+  CHECK_POINTER_HRESULT(result, box, result, E_OUTOFMEMORY);
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(box));
+  return box;
 }

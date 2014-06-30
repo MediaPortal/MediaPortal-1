@@ -57,7 +57,7 @@
 #include "UuidBox.h"
 #include "TrackRunBox.h"
 
-CBoxFactory::CBoxFactory(void)
+CBoxFactory::CBoxFactory(HRESULT *result)
 {
 }
 
@@ -68,19 +68,17 @@ CBoxFactory::~CBoxFactory(void)
 CBox *CBoxFactory::CreateBox(const uint8_t *buffer, uint32_t length)
 {
   CBox *result = NULL;
-  bool continueParsing = ((buffer != NULL) && (length > 0));
+  HRESULT continueParsing = ((buffer != NULL) && (length > 0)) ? S_OK : E_INVALIDARG;
 
-  if (continueParsing)
+  if (SUCCEEDED(continueParsing))
   {
-    CBox *box = new CBox();
-    continueParsing &= (box != NULL);
+    CBox *box = new CBox(&continueParsing);
+    CHECK_POINTER_HRESULT(continueParsing, box, continueParsing, E_OUTOFMEMORY);
 
-    if (continueParsing)
+    CHECK_CONDITION_HRESULT(continueParsing, box->Parse(buffer, length), continueParsing, E_FAIL);
+    if (SUCCEEDED(continueParsing))
     {
-      continueParsing &= box->Parse(buffer, length);
-      if (continueParsing)
-      {
-        CREATE_SPECIFIC_BOX(box, FILE_TYPE_BOX_TYPE, CFileTypeBox, buffer, length, continueParsing, result);
+      /*CREATE_SPECIFIC_BOX(box, FILE_TYPE_BOX_TYPE, CFileTypeBox, buffer, length, continueParsing, result);
         CREATE_SPECIFIC_BOX(box, MOVIE_BOX_TYPE, CMovieBox, buffer, length, continueParsing, result);
         CREATE_SPECIFIC_BOX(box, MOVIE_HEADER_BOX_TYPE, CMovieHeaderBox, buffer, length, continueParsing, result);
         CREATE_SPECIFIC_BOX(box, MEDIA_DATA_BOX_TYPE, CMediaDataBox, buffer, length, continueParsing, result);
@@ -114,19 +112,15 @@ CBox *CBoxFactory::CreateBox(const uint8_t *buffer, uint32_t length)
         CREATE_SPECIFIC_BOX(box, TRACK_FRAGMENT_BOX_TYPE, CTrackFragmentBox, buffer, length, continueParsing, result);
         CREATE_SPECIFIC_BOX(box, TRACK_FRAGMENT_HEADER_BOX_TYPE, CTrackFragmentHeaderBox, buffer, length, continueParsing, result);
         CREATE_SPECIFIC_BOX(box, UUID_BOX_TYPE, CUuidBox, buffer, length, continueParsing, result);
-        CREATE_SPECIFIC_BOX(box, TRACK_RUN_BOX_TYPE, CTrackRunBox, buffer, length, continueParsing, result);
-      }
+        CREATE_SPECIFIC_BOX(box, TRACK_RUN_BOX_TYPE, CTrackRunBox, buffer, length, continueParsing, result);*/
     }
 
-    if (continueParsing && (result == NULL))
+    if (SUCCEEDED(continueParsing) && (result == NULL))
     {
       result = box;
     }
 
-    if (!continueParsing)
-    {
-      FREE_MEM_CLASS(box);
-    }
+    CHECK_CONDITION_EXECUTE(FAILED(continueParsing), FREE_MEM_CLASS(box));
   }
 
   return result;

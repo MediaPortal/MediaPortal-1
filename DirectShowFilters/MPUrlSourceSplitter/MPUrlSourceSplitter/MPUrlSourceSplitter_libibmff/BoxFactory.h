@@ -25,33 +25,24 @@
 
 #include "Box.h"
 
-#define CREATE_SPECIFIC_BOX(box, headerType, boxType, buffer, length, continueParsing, result)        \
-                                                                                                      \
-if (continueParsing && (result == NULL) && (wcscmp(box->GetType(), headerType) == 0))                 \
-{                                                                                                     \
-  boxType *specificBox = new boxType();                                                               \
-  continueParsing &= (specificBox != NULL);                                                           \
-                                                                                                      \
-  if (continueParsing)                                                                                \
-  {                                                                                                   \
-    continueParsing &= specificBox->Parse(buffer, length);                                            \
-    if (continueParsing)                                                                              \
-    {                                                                                                 \
-      result = specificBox;                                                                           \
-    }                                                                                                 \
-  }                                                                                                   \
-                                                                                                      \
-  if (!continueParsing)                                                                               \
-  {                                                                                                   \
-    FREE_MEM_CLASS(specificBox);                                                                      \
-  }                                                                                                   \
+#define CREATE_SPECIFIC_BOX(box, headerType, boxType, buffer, length, continueParsing, result)              \
+                                                                                                            \
+if (SUCCEEDED(continueParsing) && (result == NULL) && (wcscmp(box->GetType(), headerType) == 0))            \
+{                                                                                                           \
+  boxType *specificBox = new boxType(&continueParsing);                                                     \
+  CHECK_POINTER_HRESULT(continueParsing, specificBox, continueParsing, E_OUTOFMEMORY);                      \
+                                                                                                            \
+  CHECK_CONDITION_HRESULT(continueParsing, specificBox->Parse(buffer, length), continueParsing, E_FAIL);    \
+  CHECK_CONDITION_EXECUTE(SUCCEEDED(continueParsing), result = specificBox);                                \
+                                                                                                            \
+  CHECK_CONDITION_EXECUTE(FAILED(continueParsing), FREE_MEM_CLASS(specificBox));                            \
 }
 
 class CBoxFactory
 {
 public:
   // initializes a new instance of CBoxFactory class
-  CBoxFactory(void);
+  CBoxFactory(HRESULT *result);
 
   // destructor
   virtual ~CBoxFactory(void);

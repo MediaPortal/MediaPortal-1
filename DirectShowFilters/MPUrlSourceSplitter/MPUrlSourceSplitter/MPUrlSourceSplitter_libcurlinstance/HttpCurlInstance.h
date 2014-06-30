@@ -104,10 +104,11 @@ protected:
   virtual void CurlDebug(curl_infotype type, const wchar_t *data);
 
   // process received data
+  // @param dumpBox : the dump box for dump file (can be NULL if dumping is not required)
   // @param buffer : buffer with received data
   // @param length : the length of buffer
   // @return : the length of processed data (lower value than length means error)
-  virtual size_t CurlReceiveData(const unsigned char *buffer, size_t length);
+  virtual size_t CurlReceiveData(CDumpBox *dumpBox, const unsigned char *buffer, size_t length);
 
   // appends header to HTTP headers
   // @param header : HTTP header to append

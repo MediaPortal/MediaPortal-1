@@ -455,21 +455,24 @@ HRESULT CMPUrlSourceSplitter_Protocol_Udp::ReceiveData(CStreamPackage *streamPac
 
       if (SUCCEEDED(result))
       {
-        // set finish time, all methods must return before finish time
-        this->mainCurlInstance->SetFinishTime(finishTime);
+        if (this->configuration->GetValueBool(PARAMETER_NAME_DUMP_INPUT_RAW_DATA, true, PARAMETER_NAME_DUMP_INPUT_RAW_DATA_DEFAULT))
+        {
+          wchar_t *storeFilePath = this->GetStoreFile(L"dump");
+          CHECK_CONDITION_NOT_NULL_EXECUTE(storeFilePath, this->mainCurlInstance->SetDumpFile(storeFilePath));
+          FREE_MEM(storeFilePath);
+        }
 
-        this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
-        this->mainCurlInstance->SetNetworkInterfaceName(this->configuration->GetValue(PARAMETER_NAME_INTERFACE, true, NULL));
-      }
-
-      if (SUCCEEDED(result))
-      {
         CUdpDownloadRequest *request = new CUdpDownloadRequest(&result);
         CHECK_POINTER_HRESULT(result, request, result, E_OUTOFMEMORY);
 
         if (SUCCEEDED(result))
         {
           request->SetUrl(this->configuration->GetValue(PARAMETER_NAME_URL, true, NULL));
+
+          // set finish time, all methods must return before finish time
+          request->SetFinishTime(finishTime);
+          request->SetReceivedDataTimeout(this->receiveDataTimeout);
+          request->SetNetworkInterfaceName(this->configuration->GetValue(PARAMETER_NAME_INTERFACE, true, NULL));
 
           result = this->mainCurlInstance->Initialize(request);
         }
@@ -659,7 +662,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Udp::ReceiveData(CStreamPackage *streamPac
 
       if (this->cacheFile->GetCacheFile() == NULL)
       {
-        wchar_t *storeFilePath = this->GetStoreFile();
+        wchar_t *storeFilePath = this->GetStoreFile(L"temp");
         CHECK_CONDITION_NOT_NULL_EXECUTE(storeFilePath, this->cacheFile->SetCacheFile(storeFilePath));
         FREE_MEM(storeFilePath);
       }
@@ -893,7 +896,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Udp::Initialize(CPluginConfiguration *conf
   return result;
 }
 
-wchar_t *CMPUrlSourceSplitter_Protocol_Udp::GetStoreFile(void)
+wchar_t *CMPUrlSourceSplitter_Protocol_Udp::GetStoreFile(const wchar_t *extension)
 {
   wchar_t *result = NULL;
   const wchar_t *folder = this->configuration->GetValue(PARAMETER_NAME_CACHE_FOLDER, true, NULL);
@@ -903,7 +906,7 @@ wchar_t *CMPUrlSourceSplitter_Protocol_Udp::GetStoreFile(void)
     wchar_t *guid = ConvertGuidToString(this->logger->GetLoggerInstanceId());
     if (guid != NULL)
     {
-      result = FormatString(L"%smpurlsourcesplitter_protocol_udp_%s.temp", folder, guid);
+      result = FormatString(L"%smpurlsourcesplitter_protocol_udp_%s.%s", folder, guid, extension);
     }
     FREE_MEM(guid);
   }

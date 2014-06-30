@@ -29,7 +29,7 @@
 class CBoxCollection : public CKeyedCollection<CBox, const wchar_t *>
 {
 public:
-  CBoxCollection(void);
+  CBoxCollection(HRESULT *result);
   virtual ~CBoxCollection(void);
 
   // test if box with specified type exists in collection

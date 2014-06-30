@@ -491,15 +491,16 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CStreamPackage *streamPa
 
       if (SUCCEEDED(result))
       {
-        // set finish time, all methods must return before finish time
-        this->mainCurlInstance->SetFinishTime(finishTime);
-
-        this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
-        this->mainCurlInstance->SetNetworkInterfaceName(this->configuration->GetValue(PARAMETER_NAME_INTERFACE, true, NULL));
-
         if (this->currentCookies != NULL)
         {
           CHECK_CONDITION_HRESULT(result, this->mainCurlInstance->SetCurrentCookies(this->currentCookies), result, E_HTTP_CANNOT_SET_COOKIES);
+        }
+
+        if (this->configuration->GetValueBool(PARAMETER_NAME_DUMP_INPUT_RAW_DATA, true, PARAMETER_NAME_DUMP_INPUT_RAW_DATA_DEFAULT))
+        {
+          wchar_t *storeFilePath = this->GetStoreFile(L"dump");
+          CHECK_CONDITION_NOT_NULL_EXECUTE(storeFilePath, this->mainCurlInstance->SetDumpFile(storeFilePath));
+          FREE_MEM(storeFilePath);
         }
       }
 
@@ -518,6 +519,11 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CStreamPackage *streamPa
           request->SetUserAgent(this->configuration->GetValue(PARAMETER_NAME_HTTP_USER_AGENT, true, NULL));
           request->SetStartPosition(this->IsLiveStreamDetected() ? 0 : this->startStreamPosition);
           request->SetEndPosition(this->IsLiveStreamDetected() ? 0 : this->endStreamPosition);
+
+          // set finish time, all methods must return before finish time
+          request->SetFinishTime(finishTime);
+          request->SetReceivedDataTimeout(this->receiveDataTimeout);
+          request->SetNetworkInterfaceName(this->configuration->GetValue(PARAMETER_NAME_INTERFACE, true, NULL));
 
           this->currentStreamPosition = this->startStreamPosition;
 
@@ -776,7 +782,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CStreamPackage *streamPa
 
       if (this->cacheFile->GetCacheFile() == NULL)
       {
-        wchar_t *storeFilePath = this->GetStoreFile();
+        wchar_t *storeFilePath = this->GetStoreFile(L"temp");
         CHECK_CONDITION_NOT_NULL_EXECUTE(storeFilePath, this->cacheFile->SetCacheFile(storeFilePath));
         FREE_MEM(storeFilePath);
       }
@@ -1044,7 +1050,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::Initialize(CPluginConfiguration *con
 
 /* protected methods */
 
-wchar_t *CMPUrlSourceSplitter_Protocol_Http::GetStoreFile(void)
+wchar_t *CMPUrlSourceSplitter_Protocol_Http::GetStoreFile(const wchar_t *extension)
 {
   wchar_t *result = NULL;
   const wchar_t *folder = this->configuration->GetValue(PARAMETER_NAME_CACHE_FOLDER, true, NULL);
@@ -1054,7 +1060,7 @@ wchar_t *CMPUrlSourceSplitter_Protocol_Http::GetStoreFile(void)
     wchar_t *guid = ConvertGuidToString(this->logger->GetLoggerInstanceId());
     if (guid != NULL)
     {
-      result = FormatString(L"%smpurlsourcesplitter_protocol_http_%s.temp", folder, guid);
+      result = FormatString(L"%smpurlsourcesplitter_protocol_http_%s.%s", folder, guid, extension);
     }
     FREE_MEM(guid);
   }

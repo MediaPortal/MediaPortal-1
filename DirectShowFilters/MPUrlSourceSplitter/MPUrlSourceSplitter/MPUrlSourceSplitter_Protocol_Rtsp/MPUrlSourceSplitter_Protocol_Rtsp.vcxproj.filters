@@ -195,6 +195,15 @@
     <ClInclude Include="RtspSupportedPayloadTypeCollection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="RtspDumpBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspMainBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspTrackBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -354,6 +363,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RtspSupportedPayloadTypeCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspDumpBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspMainBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspTrackBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

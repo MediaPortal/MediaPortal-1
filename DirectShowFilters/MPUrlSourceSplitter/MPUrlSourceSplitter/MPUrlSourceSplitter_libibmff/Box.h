@@ -23,15 +23,29 @@
 #ifndef __BOX_DEFINED
 #define __BOX_DEFINED
 
+#include "Flags.h"
+
 #include <stdint.h>
 
 class CBoxCollection;
+class CBoxFactory;
 
-class CBox
+#define BOX_FLAG_NONE                                                 FLAGS_NONE
+
+// stores if data were successfully parsed
+#define BOX_FLAG_PARSED                                               (1 << (FLAGS_LAST + 0))
+// stores if box has extended header
+#define BOX_FLAG_HAS_EXTENDED_HEADER                                  (1 << (FLAGS_LAST + 1))
+// stores if box has unspecified size
+#define BOX_FLAG_UNSPECIFIED_SIZE                                     (1 << (FLAGS_LAST + 2))
+
+#define BOX_FLAG_LAST                                                 (FLAGS_LAST + 3)
+
+class CBox : public CFlags
 {
 public:
   // initializes a new instance of CBox class
-  CBox(void);
+  CBox(HRESULT *result);
 
   // destructor
   virtual ~CBox(void);
@@ -101,14 +115,8 @@ public:
 protected:
   // stores the length of box
   uint64_t length;
-  // stores if data were successfully parsed
-  bool parsed;
   // stores box type
   wchar_t *type;
-  // stores if box has extended header
-  bool hasExtendedHeader;
-  // stores if box has unspecified size
-  bool hasUnspecifiedSize;
 
   // stores additional boxes stored in this box
   CBoxCollection *boxes;
@@ -175,6 +183,10 @@ protected:
   // @param length : the length of buffer
   // @return : number of bytes stored into buffer, 0 is error only if there are boxes
   virtual uint32_t GetAdditionalBoxes(uint8_t *buffer, uint32_t length);
+
+  // gets box factory for creating additional boxes in current box
+  // @return : box factory or NULL if error
+  virtual CBoxFactory *GetBoxFactory(void);
 };
 
 #endif

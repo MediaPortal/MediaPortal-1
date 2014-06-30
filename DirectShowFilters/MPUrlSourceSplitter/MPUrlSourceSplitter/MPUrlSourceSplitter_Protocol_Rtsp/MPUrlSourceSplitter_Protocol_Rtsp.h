@@ -259,8 +259,9 @@ protected:
   // gets store file path based on configuration
   // creates folder structure if not created
   // @param trackId : the ID of track to get store file path
+  // @param extension : the extension of store file
   // @return : store file or NULL if error
-  wchar_t *GetStoreFile(unsigned int trackId);
+  wchar_t *GetStoreFile(unsigned int trackId, const wchar_t *extension);
 
   // recalculate stream fragments start positions based on previous stream fragments
   // @param streamFragments : the collection of stream fragments to recalculate

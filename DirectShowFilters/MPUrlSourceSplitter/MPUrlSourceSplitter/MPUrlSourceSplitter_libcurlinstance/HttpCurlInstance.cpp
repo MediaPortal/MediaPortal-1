@@ -192,9 +192,9 @@ HRESULT CHttpCurlInstance::Initialize(CDownloadRequest *downloadRequest)
   return result;
 }
 
-size_t CHttpCurlInstance::CurlReceiveData(const unsigned char *buffer, size_t length)
+size_t CHttpCurlInstance::CurlReceiveData(CDumpBox *dumpBox, const unsigned char *buffer, size_t length)
 {
-  size_t result = __super::CurlReceiveData(buffer, length);
+  size_t result = __super::CurlReceiveData(dumpBox, buffer, length);
   if (result == length)
   {
     long responseCode;
@@ -428,7 +428,7 @@ bool CHttpCurlInstance::SetCurrentCookies(CParameterCollection *cookies)
 HRESULT CHttpCurlInstance::DestroyCurlWorker(void)
 {
   long responseCode;
-  if (curl_easy_getinfo(this->curl, CURLINFO_RESPONSE_CODE, &responseCode) == CURLE_OK)
+  if ((this->httpDownloadResponse != NULL) && (curl_easy_getinfo(this->curl, CURLINFO_RESPONSE_CODE, &responseCode) == CURLE_OK))
   {
     this->httpDownloadResponse->SetResponseCode(responseCode);
   }

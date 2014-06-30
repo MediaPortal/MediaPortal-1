@@ -177,9 +177,6 @@ HRESULT CF4MBootstrapInfo::DownloadBootstrapInfo(CLogger *logger, const wchar_t 
 
       if (SUCCEEDED(result))
       {
-        curlInstance->SetFinishTime(finishTime);
-        curlInstance->SetNetworkInterfaceName(networkInterfaceName);
-
         CHttpDownloadRequest *request = new CHttpDownloadRequest(&result);
         CHECK_POINTER_HRESULT(result, request, result, E_OUTOFMEMORY);
 
@@ -194,6 +191,9 @@ HRESULT CF4MBootstrapInfo::DownloadBootstrapInfo(CLogger *logger, const wchar_t 
           request->SetReferer(referer);
           request->SetUserAgent(userAgent);
           request->SetCookie(cookie);
+          
+          request->SetFinishTime(finishTime);
+          request->SetNetworkInterfaceName(networkInterfaceName);
 
           result = (curlInstance->Initialize(request)) ? S_OK : E_FAIL;
         }

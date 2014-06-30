@@ -20,34 +20,33 @@
 
 #pragma once
 
-#ifndef __FULL_BOX_DEFINED
-#define __FULL_BOX_DEFINED
+#ifndef __DUMP_BOX_DEFINED
+#define __DUMP_BOX_DEFINED
 
-#include "box.h"
+#include "Box.h"
+#include "DumpBoxFactory.h"
 
-#define FULL_BOX_DATA_SIZE                                                    4
+#define DUMP_BOX_TYPE                                                 L"dump"
 
-#define FULL_BOX_HEADER_LENGTH                                                BOX_HEADER_LENGTH + FULL_BOX_DATA_SIZE
-#define FULL_BOX_HEADER_LENGTH_SIZE64                                         BOX_HEADER_LENGTH_SIZE64 + FULL_BOX_DATA_SIZE
+#define DUMP_BOX_FLAG_NONE                                            BOX_FLAG_NONE
 
-class CFullBox : public CBox
+#define DUMP_BOX_FLAG_LAST                                            (BOX_FLAG_LAST + 0)
+
+class CDumpBox : public CBox
 {
 public:
-  // initializes a new instance of CFullBox class
-  CFullBox(HRESULT *result);
-
-  // destructor
-  virtual ~CFullBox(void);
+  CDumpBox(HRESULT *result);
+  virtual ~CDumpBox(void);
 
   /* get methods */
 
-  // gets version of this format of the box
-  // @return : version of this format of the box
-  virtual uint8_t GetVersion(void);
+  // gets payload data of media data box
+  // @return : payload data or NULL if error
+  virtual const uint8_t *GetPayload(void);
 
-  // gets map of box flags (flags in box, they are differerent from flags from CBox class)
-  // @return : map of box flags
-  virtual uint32_t GetBoxFlags(void);
+  // gets payload size
+  // @return : payload size
+  virtual uint64_t GetPayloadSize(void);
 
   // gets whole box into buffer (buffer must be allocated before)
   // @param buffer : the buffer for box data
@@ -55,15 +54,24 @@ public:
   // @return : true if all data were successfully stored into buffer, false otherwise
   virtual bool GetBox(uint8_t *buffer, uint32_t length);
 
+  // gets time of creation of dump box
+  // @return : time of creation of dump box
+  virtual SYSTEMTIME GetTime(void);
+
   /* set methods */
 
-  // sets version of this format of the box
-  // @param version : version of this format of the box to set
-  virtual void SetVersion(uint8_t version);
+  // sets time of creation of dump box
+  // @param time : time of creation of dump box to set
+  virtual void SetTime(SYSTEMTIME time);
 
-  // sets map of box flags (flags in box, they are differerent from flags from CBox class)
-  // @param flags : map of box flags to set
-  virtual void SetBoxFlags(uint32_t flags);
+  // sets time of creation of dump box with local system time
+  virtual void SetTimeWithLocalTime(void);
+
+  // sets payload data of media data box
+  // @param buffer : buffer with payload data
+  // @param length : buffer size (payload data size)
+  // @return : true if successfull, false otherwise
+  virtual bool SetPayload(const uint8_t *buffer, uint32_t length);
 
   /* other methods */
 
@@ -79,16 +87,20 @@ public:
   virtual wchar_t *GetParsedHumanReadable(const wchar_t *indent);
 
 protected:
-  // stores version of this format of the box
-  uint8_t version;
-  // stores map of box flags (used only lower 24 bits)
-  uint32_t boxFlags;
+  // stores local system time of dump box
+  SYSTEMTIME time;
+  // stores playload
+  uint8_t *payload;
+  // stores payload size
+  uint32_t payloadSize;
+
+  /* methods */
 
   // gets whole box size
   // method is called to determine whole box size for storing box into buffer
   // @return : size of box 
   virtual uint64_t GetBoxSize(void);
-  
+
   // parses data in buffer
   // @param buffer : buffer with box data for parsing
   // @param length : the length of data in buffer
@@ -102,6 +114,10 @@ protected:
   // @param processAdditionalBoxes : specifies if additional boxes have to be processed (added to buffer)
   // @return : number of bytes stored into buffer, 0 if error
   virtual uint32_t GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes);
+
+  // gets box factory for creating additional boxes in current box
+  // @return : box factory or NULL if error
+  virtual CBoxFactory *GetBoxFactory(void);
 };
 
 #endif

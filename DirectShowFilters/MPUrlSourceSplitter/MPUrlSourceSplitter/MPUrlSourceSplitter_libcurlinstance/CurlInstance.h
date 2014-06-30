@@ -28,6 +28,7 @@
 #include "DownloadRequest.h"
 #include "DownloadResponse.h"
 #include "Flags.h"
+#include "DumpFile.h"
 
 #include <curl/curl.h>
 
@@ -58,10 +59,6 @@ FORCEINLINE bool IS_CURL_ERROR(HRESULT error) { return ((error & 0xFFFF00FF) == 
 
 #define MINIMUM_BUFFER_SIZE                                                   256 * 1024
 
-#define FINISH_TIME_NOT_SPECIFIED                                             UINT_MAX
-
-#include "NetworkInterfaceCollection.h"
-
 class CCurlInstance : public CFlags
 {
 public:
@@ -76,10 +73,6 @@ public:
   virtual ~CCurlInstance(void);
 
   /* get methods */
-
-  // gets receive data timeout
-  // @return : receive data timeout or UINT_MAX if not specified
-  virtual unsigned int GetReceiveDataTimeout(void);
 
   // gets CURL state
   // @return : one of CURL_STATE values
@@ -98,28 +91,16 @@ public:
   // @return : download respose
   virtual CDownloadResponse *GetDownloadResponse(void);
 
-  // gets network interface name
-  // @return : network interface name or NULL if not specified
-  virtual const wchar_t *GetNetworkInterfaceName(void);
-
-  // gets finish time (methods like Initialize(), StartReceivingData() and StopReceivingData() must finish before this time)
-  // @return : the finish time or FINISH_TIME_NOT_SPECIFIED if not specified
-  virtual unsigned int GetFinishTime(void);
+  // gets dump file name
+  // @return : dump file name or NULL if error or not set
+  virtual const wchar_t *GetDumpFile(void);
 
   /* set methods */
 
-  // sets receive data timeout
-  // @param timeout : receive data timeout (UINT_MAX if not specified)
-  virtual void SetReceivedDataTimeout(unsigned int timeout);
-
-  // sets network interface name
-  // @param networkInterfaceName : the network interface name to set
-  // @return : S_OK if successful, error code otherwise
-  virtual HRESULT SetNetworkInterfaceName(const wchar_t *networkInterfaceName);
-
-  // set finish time (methods like Initialize(), StartReceivingData() and StopReceivingData() must finish before this time)
-  // @param finishTime : the finish time to set
-  virtual void SetFinishTime(unsigned int finishTime);
+  // sets dump file name
+  // @param dumpFile : the dump file name
+  // @return : true if successful, false otherwise
+  virtual bool SetDumpFile(const wchar_t *dumpFile);
 
   /* other methods */
 
@@ -184,9 +165,6 @@ protected:
   // specifies if CURL worker should exit
   volatile bool curlWorkerShouldExit;
 
-  // holds receive data timeout
-  unsigned int receiveDataTimeout;
-
   // write callback for CURL
   curl_write_callback writeCallback;
 
@@ -206,13 +184,8 @@ protected:
   // holds last receive time of any data
   volatile DWORD lastReceiveTime;
 
-  // holds network interface name
-  wchar_t *networkInterfaceName;
-  // holds network interfaces (if specified network interface, than collection has only interfaces with specified network name)
-  CNetworkInterfaceCollection *networkInterfaces;
-
-  // holds finish time (methods like Initialize(), StartReceivingData() and StopReceivingData() must finish before this time)
-  unsigned int finishTime;
+  // holds dump file
+  CDumpFile *dumpFile;
 
   /* methods */
 
@@ -247,10 +220,11 @@ protected:
   virtual void CurlDebug(curl_infotype type, const wchar_t *data);
 
   // process received data
+  // @param dumpBox : the dump box for dump file (can be NULL if dumping is not required)
   // @param buffer : buffer with received data
   // @param length : the length of buffer
   // @return : the length of processed data (lower value than length means error)
-  virtual size_t CurlReceiveData(const unsigned char *buffer, size_t length);
+  virtual size_t CurlReceiveData(CDumpBox *dumpBox, const unsigned char *buffer, size_t length);
 
   // gets new instance of download response
   // @return : new download response or NULL if error
@@ -266,6 +240,10 @@ protected:
   // @param writeCallback : callback method for writing data received by CURL
   // @param writeData : user specified data supplied to write callback method
   void SetWriteCallback(curl_write_callback writeCallback, void *writeData);
+
+  // creates dump box for dump file
+  // @return : dump box or NULL if error
+  virtual CDumpBox *CreateDumpBox(void);
 };
 
 #endif

@@ -24,6 +24,7 @@
 #include "Logger.h"
 #include "LockMutex.h"
 #include "ErrorCodes.h"
+#include "NetworkInterfaceCollection.h"
 
 #include <process.h>
 
@@ -35,7 +36,6 @@ CCurlInstance::CCurlInstance(HRESULT *result, CLogger *logger, HANDLE mutex, con
   this->curl = NULL;
   this->multi_curl = NULL;
   this->hCurlWorkerThread = NULL;
-  this->receiveDataTimeout = UINT_MAX;
   this->writeCallback = NULL;
   this->writeData = NULL;
   this->state = CURL_STATE_CREATED;
@@ -45,11 +45,9 @@ CCurlInstance::CCurlInstance(HRESULT *result, CLogger *logger, HANDLE mutex, con
   this->totalReceivedBytes = 0;
   this->curlWorkerShouldExit = false;
   this->lastReceiveTime = 0;
-  this->networkInterfaceName = NULL;
-  this->networkInterfaces = NULL;
-  this->finishTime = FINISH_TIME_NOT_SPECIFIED;
   this->downloadRequest = NULL;
   this->downloadResponse = NULL;
+  this->dumpFile = NULL;
 
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
@@ -63,17 +61,14 @@ CCurlInstance::CCurlInstance(HRESULT *result, CLogger *logger, HANDLE mutex, con
       this->logger = logger;
       this->mutex = mutex;
       this->protocolName = FormatString(L"%s: instance '%s'", protocolName, instanceName);
-      this->networkInterfaces = new CNetworkInterfaceCollection(result);
+      this->dumpFile = new CDumpFile(result);
 
       CHECK_POINTER_HRESULT(*result, this->protocolName, *result, E_OUTOFMEMORY);
-      CHECK_POINTER_HRESULT(*result, this->networkInterfaces, *result, E_OUTOFMEMORY);
+      CHECK_POINTER_HRESULT(*result, this->dumpFile, *result, E_OUTOFMEMORY);
     }
 
     if (SUCCEEDED(*result))
     {
-      HRESULT res = this->SetNetworkInterfaceName(this->networkInterfaceName);    // this sets network interfaces
-      CHECK_CONDITION_HRESULT(*result, SUCCEEDED(res), *result, res);
-
       this->SetWriteCallback(CCurlInstance::CurlReceiveDataCallback, this);
     }
   }
@@ -95,19 +90,13 @@ CCurlInstance::~CCurlInstance(void)
     this->multi_curl = NULL;
   }
 
-  FREE_MEM(this->networkInterfaceName);
   FREE_MEM(this->protocolName);
   FREE_MEM_CLASS(this->downloadRequest);
   FREE_MEM_CLASS(this->downloadResponse);
-  FREE_MEM_CLASS(this->networkInterfaces);
+  FREE_MEM_CLASS(this->dumpFile);
 }
 
 /* get methods */
-
-unsigned int CCurlInstance::GetReceiveDataTimeout(void)
-{
-  return this->receiveDataTimeout;
-}
 
 unsigned int CCurlInstance::GetCurlState(void)
 {
@@ -141,69 +130,23 @@ CDownloadResponse *CCurlInstance::CreateDownloadResponse(void)
   return response;
 }
 
-const wchar_t *CCurlInstance::GetNetworkInterfaceName(void)
+const wchar_t *CCurlInstance::GetDumpFile(void)
 {
-  return this->networkInterfaceName;
-}
-
-unsigned int CCurlInstance::GetFinishTime(void)
-{
-  return this->finishTime;
+  return this->dumpFile->GetDumpFile();
 }
 
 /* set methods */
 
-void CCurlInstance::SetReceivedDataTimeout(unsigned int timeout)
+bool CCurlInstance::SetDumpFile(const wchar_t *dumpFile)
 {
-  this->receiveDataTimeout = timeout;
-}
-
-HRESULT CCurlInstance::SetNetworkInterfaceName(const wchar_t *networkInterfaceName)
-{
-  HRESULT result = (this->networkInterfaces != NULL) ? S_OK : E_NOT_VALID_STATE;
-
-  if (SUCCEEDED(result))
-  {
-    this->networkInterfaces->Clear();
-    SET_STRING_HRESULT_WITH_NULL(this->networkInterfaceName, networkInterfaceName, result);
-  }
-
-  CHECK_HRESULT_EXECUTE(result, CNetworkInterface::GetAllNetworkInterfaces(this->networkInterfaces, AF_UNSPEC));
-
-  if (SUCCEEDED(result) && (this->networkInterfaceName != NULL))
-  {
-    // in network interface collection have to stay only interfaces with specified network interface name
-    unsigned int i = 0;
-    while (i < this->networkInterfaces->Count())
-    {
-      CNetworkInterface *nic = this->networkInterfaces->GetItem(i);
-
-      if (CompareWithNull(nic->GetFriendlyName(), this->networkInterfaceName) == 0)
-      {
-        i++;
-      }
-      else
-      {
-        this->networkInterfaces->Remove(i);
-      }
-    }
-
-    CHECK_CONDITION_HRESULT(result, this->networkInterfaces->Count() != 0, result, E_NOT_FOUND_INTERFACE_NAME);
-  }
-
-  return result;
-}
-
-void CCurlInstance::SetFinishTime(unsigned int finishTime)
-{
-  this->finishTime = finishTime;
+  return this->dumpFile->SetDumpFile(dumpFile);
 }
 
 /* other methods */
 
 HRESULT CCurlInstance::Initialize(CDownloadRequest *downloadRequest)
 {
-  HRESULT result = ((this->logger != NULL) && (this->protocolName != NULL) && (this->networkInterfaces != NULL)) ? S_OK : E_NOT_VALID_STATE;
+  HRESULT result = ((this->logger != NULL) && (this->protocolName != NULL)) ? S_OK : E_NOT_VALID_STATE;
   CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), this->DestroyCurlWorker(), result);
 
   if (SUCCEEDED(result))
@@ -211,7 +154,7 @@ HRESULT CCurlInstance::Initialize(CDownloadRequest *downloadRequest)
     FREE_MEM_CLASS(this->downloadRequest);
     this->downloadRequest = downloadRequest->Clone();
 
-    CHECK_CONDITION_HRESULT(result, (this->downloadRequest != NULL) && (this->downloadRequest != NULL)  && (this->downloadRequest->GetUrl() != NULL) && (this->networkInterfaces->Count() != 0), result, E_NOT_VALID_STATE);
+    CHECK_CONDITION_HRESULT(result, (this->downloadRequest != NULL) && (this->downloadRequest != NULL)  && (this->downloadRequest->GetUrl() != NULL), result, E_NOT_VALID_STATE);
   }
 
   if (SUCCEEDED(result))
@@ -238,32 +181,62 @@ HRESULT CCurlInstance::Initialize(CDownloadRequest *downloadRequest)
   {
     unsigned int currentTime = GetTickCount();
 
-    CHECK_CONDITION_HRESULT(result, this->finishTime >= currentTime, result, VFW_E_TIMEOUT);
-    CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: finish time before current time, finish time: %u, current time: %u", this->protocolName, METHOD_INITIALIZE_NAME, this->finishTime, currentTime));
+    CHECK_CONDITION_HRESULT(result, this->downloadRequest->GetFinishTime() >= currentTime, result, VFW_E_TIMEOUT);
+    CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: finish time before current time, finish time: %u, current time: %u", this->protocolName, METHOD_INITIALIZE_NAME, this->downloadRequest->GetFinishTime(), currentTime));
 
     if (SUCCEEDED(result))
     {
-      unsigned int dataTimeout = (this->finishTime == FINISH_TIME_NOT_SPECIFIED) ? this->receiveDataTimeout : (this->finishTime - GetTickCount());
+      unsigned int dataTimeout = (this->downloadRequest->GetFinishTime() == FINISH_TIME_NOT_SPECIFIED) ? this->downloadRequest->GetReceiveDataTimeout() : (this->downloadRequest->GetFinishTime() - GetTickCount());
 
       CHECK_CONDITION_EXECUTE_RESULT(dataTimeout != UINT_MAX, HRESULT_FROM_CURL_CODE(curl_easy_setopt(this->curl, CURLOPT_CONNECTTIMEOUT, (long)(dataTimeout / 1000))), result);
       CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while setting connection timeout: 0x%08X", this->protocolName, METHOD_INITIALIZE_NAME, result));
     }
 
-    if ((SUCCEEDED(result)) && (this->networkInterfaceName != NULL))
+    if ((SUCCEEDED(result)) && (this->downloadRequest->GetNetworkInterfaceName() != NULL))
     {
-      wchar_t *curlNic = FormatString(L"if!%s", this->networkInterfaceName);
-      CHECK_POINTER_HRESULT(result, curlNic, result, E_OUTOFMEMORY);
+      CNetworkInterfaceCollection *networkInterfaces = new CNetworkInterfaceCollection(&result);
+      CHECK_POINTER_HRESULT(result, networkInterfaces, result, E_OUTOFMEMORY);
+
+      CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), CNetworkInterface::GetAllNetworkInterfaces(networkInterfaces, AF_UNSPEC), result);
+      CHECK_CONDITION_HRESULT(result, networkInterfaces->Count() != 0, result, E_NOT_VALID_STATE);
+
+      // in network interface collection have to stay only interfaces with specified network interface name
+      unsigned int i = 0;
+      while (SUCCEEDED(result) && (i < networkInterfaces->Count()))
+      {
+        CNetworkInterface *nic = networkInterfaces->GetItem(i);
+
+        if (CompareWithNull(nic->GetFriendlyName(), this->downloadRequest->GetNetworkInterfaceName()) == 0)
+        {
+          i++;
+        }
+        else
+        {
+          networkInterfaces->Remove(i);
+        }
+      }
+
+      CHECK_CONDITION_HRESULT(result, networkInterfaces->Count() != 0, result, E_NOT_FOUND_INTERFACE_NAME);
+
+      FREE_MEM_CLASS(networkInterfaces);
 
       if (SUCCEEDED(result))
       {
-        char *curlInterface = ConvertToMultiByte(curlNic);
-        CHECK_POINTER_HRESULT(result, curlInterface, result, E_CONVERT_STRING_ERROR);
+        wchar_t *curlNic = FormatString(L"if!%s", this->downloadRequest->GetNetworkInterfaceName());
+        CHECK_POINTER_HRESULT(result, curlNic, result, E_OUTOFMEMORY);
 
-        CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), HRESULT_FROM_CURL_CODE(curl_easy_setopt(this->curl, CURLOPT_INTERFACE, curlInterface)), result);
-        FREE_MEM(curlInterface);
+        if (SUCCEEDED(result))
+        {
+          char *curlInterface = ConvertToMultiByte(curlNic);
+          CHECK_POINTER_HRESULT(result, curlInterface, result, E_CONVERT_STRING_ERROR);
+
+          CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), HRESULT_FROM_CURL_CODE(curl_easy_setopt(this->curl, CURLOPT_INTERFACE, curlInterface)), result);
+          FREE_MEM(curlInterface);
+        }
+
+        FREE_MEM(curlNic);
       }
 
-      FREE_MEM(curlNic);
       CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while setting network interface: 0x%08X", this->protocolName, METHOD_INITIALIZE_NAME, result));
     }
 
@@ -434,7 +407,7 @@ unsigned int CCurlInstance::CurlWorker(void)
         // no running transfers, we can quit
         break;
       }
-      else if ((GetTickCount() - this->lastReceiveTime) > (this->GetReceiveDataTimeout()))
+      else if ((GetTickCount() - this->lastReceiveTime) > (this->downloadRequest->GetReceiveDataTimeout()))
       {
         // timeout occured
         this->downloadResponse->SetResultError(HRESULT_FROM_CURL_CODE(CURLE_OPERATION_TIMEOUTED));
@@ -502,16 +475,34 @@ size_t CCurlInstance::CurlReceiveDataCallback(char *buffer, size_t size, size_t 
   caller->state = CURL_STATE_RECEIVING_DATA;
   caller->lastReceiveTime = GetTickCount();
 
-  return (caller->curlWorkerShouldExit) ? 0 : caller->CurlReceiveData((unsigned char *)buffer, (size_t)(size * nmemb));
+  CDumpBox *dumpBox = NULL;
+  size_t result = 0;
+
+  if (!caller->curlWorkerShouldExit)
+  {
+    CHECK_CONDITION_NOT_NULL_EXECUTE(caller->dumpFile->GetDumpFile(), dumpBox = caller->CreateDumpBox());
+
+    result = caller->CurlReceiveData(dumpBox, (unsigned char *)buffer, (size_t)(size * nmemb));
+
+    CHECK_CONDITION_EXECUTE((dumpBox != NULL) && (!caller->dumpFile->AddDumpBox(dumpBox)), FREE_MEM_CLASS(dumpBox));
+  }
+
+  return result;
 }
 
-size_t CCurlInstance::CurlReceiveData(const unsigned char *buffer, size_t length)
+size_t CCurlInstance::CurlReceiveData(CDumpBox *dumpBox, const unsigned char *buffer, size_t length)
 {
   if (length != 0)
   {
     // lock access to receive data buffer
     // if mutex is NULL then access to received data buffer is not locked
     CLockMutex lock(this->mutex, INFINITE);
+
+    if (dumpBox != NULL)
+    {
+      dumpBox->SetTimeWithLocalTime();
+      dumpBox->SetPayload(buffer, length);
+    }
 
     this->totalReceivedBytes += length;
 
@@ -708,4 +699,14 @@ HRESULT CCurlInstance::ReadData(unsigned char *data, unsigned int length)
   }
 
   return result;
+}
+
+CDumpBox *CCurlInstance::CreateDumpBox(void)
+{
+  HRESULT result = S_OK;
+  CDumpBox *box = new CDumpBox(&result);
+  CHECK_POINTER_HRESULT(result, box, result, E_OUTOFMEMORY);
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(box));
+  return box;
 }

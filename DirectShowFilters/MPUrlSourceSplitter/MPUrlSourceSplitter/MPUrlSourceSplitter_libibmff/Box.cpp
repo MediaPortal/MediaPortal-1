@@ -24,14 +24,18 @@
 #include "BoxCollection.h"
 #include "BoxFactory.h"
 
-CBox::CBox(void)
+CBox::CBox(HRESULT *result)
+  : CFlags()
 {
   this->length = 0;
-  this->parsed = false;
   this->type = NULL;
-  this->hasExtendedHeader = false;
-  this->hasUnspecifiedSize = false;
-  this->boxes = new CBoxCollection();
+  this->boxes = NULL;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->boxes = new CBoxCollection(result);
+    CHECK_POINTER_HRESULT(*result, this->boxes, *result, E_OUTOFMEMORY);
+  }
 }
 
 CBox::~CBox(void)
@@ -73,7 +77,7 @@ bool CBox::IsBox(void)
 
 bool CBox::IsParsed(void)
 {
-  return this->parsed;
+  return this->IsSetFlags(BOX_FLAG_PARSED);
 }
 
 bool CBox::IsBigSize(void)
@@ -83,12 +87,12 @@ bool CBox::IsBigSize(void)
 
 bool CBox::IsSizeUnspecifed(void)
 {
-  return this->hasUnspecifiedSize;
+  return this->IsSetFlags(BOX_FLAG_UNSPECIFIED_SIZE);
 }
 
 bool CBox::HasExtendedHeader(void)
 {
-  return this->hasExtendedHeader;
+  return this->IsSetFlags(BOX_FLAG_HAS_EXTENDED_HEADER);
 }
 
 bool CBox::Parse(const uint8_t *buffer, uint32_t length)
@@ -247,6 +251,7 @@ wchar_t *CBox::GetParsedHumanReadable(const wchar_t *indent)
     }
 
     result = FormatString(
+      L"%sFlags: 0x%16u\n" \
       L"%sType: '%s'\n" \
       L"%sSize: %llu\n" \
       L"%sExtended header: %s\n" \
@@ -255,8 +260,9 @@ wchar_t *CBox::GetParsedHumanReadable(const wchar_t *indent)
       L"%s"
       , 
       
-      indent, this->type, 
-      indent, this->GetSize(), 
+      indent, this->GetFlags(),
+      indent, this->type,
+      indent, this->GetSize(),
       indent, this->HasExtendedHeader() ? L"true" : L"false",
       indent, this->IsSizeUnspecifed() ? L"true" : L"false",
       indent, (this->GetBoxes()->Count() == 0) ? L"" : L"\n",
@@ -283,49 +289,43 @@ bool CBox::ProcessAdditionalBoxes(const uint8_t *buffer, uint32_t length, uint32
     this->boxes->Clear();
   }
 
-  bool continueParsing = ((this->boxes != NULL) && (this->GetSize() <= (uint64_t)length));
+  HRESULT continueParsing = ((this->boxes != NULL) && (this->GetSize() <= (uint64_t)length)) ? S_OK : E_INVALIDARG;
 
-  if (continueParsing)
+  if (SUCCEEDED(continueParsing))
   {
     uint32_t processed = 0;
     uint32_t sizeToProcess = (uint32_t)this->GetSize() -  position;
-    CBoxFactory *factory = new CBoxFactory();
-    continueParsing &= (factory != NULL);
+    CBoxFactory *factory = this->GetBoxFactory();
+    CHECK_POINTER_HRESULT(continueParsing, factory, continueParsing, E_OUTOFMEMORY);
 
-    while (continueParsing && (processed < sizeToProcess))
+    while (SUCCEEDED(continueParsing) && (processed < sizeToProcess))
     {
       CBox *box = factory->CreateBox(buffer + position + processed, (uint32_t)(sizeToProcess - processed));
-      continueParsing &= (box != NULL);
+      CHECK_POINTER_HRESULT(continueParsing, box, continueParsing, E_OUTOFMEMORY);
 
-      if (continueParsing)
-      {
-        continueParsing &= this->boxes->Add(box);
-        processed += (uint32_t)box->GetSize();
-      }
+      CHECK_CONDITION_HRESULT(continueParsing, this->boxes->Add(box), continueParsing, E_OUTOFMEMORY);
+      processed += (uint32_t)box->GetSize();
 
-      if (!continueParsing)
-      {
-        FREE_MEM_CLASS(box);
-      }
+      CHECK_CONDITION_EXECUTE(FAILED(continueParsing), FREE_MEM_CLASS(box));
     }
 
     FREE_MEM_CLASS(factory);
   }
 
-  if ((this->boxes != NULL) && (!continueParsing))
+  if (FAILED(continueParsing) && (this->boxes != NULL))
   {
     this->boxes->Clear();
   }
 
-  return continueParsing;
+  return SUCCEEDED(continueParsing);
 }
 
 bool CBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
 {
   this->length = 0;
-  this->parsed = false;
+  this->flags &= ~(BOX_FLAG_HAS_EXTENDED_HEADER | BOX_FLAG_PARSED | BOX_FLAG_UNSPECIFIED_SIZE);
   FREE_MEM(this->type);
-  this->hasExtendedHeader = false;
+
   if (this->boxes != NULL)
   {
     this->boxes->Clear();
@@ -340,16 +340,16 @@ bool CBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool proc
       // the actual size is in the field largesize (after BOX_HEADER_LENGTH int(64))
       if (length >= BOX_HEADER_LENGTH_SIZE64)
       {
-        // enough data for reading int(64) size
+        // enough data for reading uint64_t size
         size = RBE64(buffer, BOX_HEADER_LENGTH);
-        this->hasExtendedHeader = true;
+        this->flags |= BOX_FLAG_HAS_EXTENDED_HEADER;
       }
     }
 
     // set length of box
     // if size == 0 then box is the last one in buffer and its content extends to the end of the file (buffer)
     this->length = (size == 0) ? length : size;
-    this->hasUnspecifiedSize = (size == 0);
+    this->flags |= (size == 0) ? BOX_FLAG_UNSPECIFIED_SIZE : BOX_FLAG_NONE;
 
     // read box type
     uint8_t *type = ALLOC_MEM_SET(type, uint8_t, 5, 0);
@@ -360,13 +360,10 @@ bool CBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool proc
     }
 
     this->type = ConvertToUnicodeA((char *)type);
-    if (this->type != NULL)
-    {
-      this->parsed = true;
-    }
+    this->flags |= (this->type != NULL) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
   }
 
-  return this->parsed;
+  return this->IsSetFlags(BOX_FLAG_PARSED);
 }
 
 uint32_t CBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)
@@ -421,6 +418,15 @@ uint32_t CBox::GetAdditionalBoxes(uint8_t *buffer, uint32_t length)
 void CBox::ResetSize(void)
 {
   this->length = 0;
-  this->hasExtendedHeader = false;
-  this->hasUnspecifiedSize = false;
+  this->flags &= ~(BOX_FLAG_HAS_EXTENDED_HEADER | BOX_FLAG_UNSPECIFIED_SIZE);
+}
+
+CBoxFactory *CBox::GetBoxFactory(void)
+{
+  HRESULT result = S_OK;
+  CBoxFactory *factory = new CBoxFactory(&result);
+  CHECK_POINTER_HRESULT(result, factory, result, E_OUTOFMEMORY);
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(factory));
+  return factory;
 }

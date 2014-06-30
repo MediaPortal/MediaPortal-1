@@ -23,11 +23,11 @@
 #include "FullBox.h"
 #include "BoxCollection.h"
 
-CFullBox::CFullBox(void)
-  : CBox()
+CFullBox::CFullBox(HRESULT *result)
+  : CBox(result)
 {
   this->version = 0;
-  this->flags = 0;
+  this->boxFlags = 0;
 }
 
 CFullBox::~CFullBox(void)
@@ -41,9 +41,9 @@ uint8_t CFullBox::GetVersion(void)
   return this->version;
 }
 
-uint32_t CFullBox::GetFlags(void)
+uint32_t CFullBox::GetBoxFlags(void)
 {
-  return this->flags;
+  return this->boxFlags;
 }
 
 bool CFullBox::GetBox(uint8_t *buffer, uint32_t length)
@@ -58,9 +58,9 @@ void CFullBox::SetVersion(uint8_t version)
   this->version = version;
 }
 
-void CFullBox::SetFlags(uint32_t flags)
+void CFullBox::SetBoxFlags(uint32_t flags)
 {
-  this->flags = flags;
+  this->boxFlags = flags;
 }
 
 /* other methods */
@@ -81,7 +81,7 @@ wchar_t *CFullBox::GetParsedHumanReadable(const wchar_t *indent)
     result = FormatString(
       L"%s\n" \
       L"%sVersion: %u\n" \
-      L"%sFlags: 0x%06X",
+      L"%sBox flags: 0x%06X",
       
       previousResult,
       indent, this->GetVersion(),
@@ -110,11 +110,9 @@ uint64_t CFullBox::GetBoxSize(void)
 bool CFullBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
 {
   this->version = 0;
-  this->flags = 0;
+  this->boxFlags = 0;
 
-  bool result = __super::ParseInternal(buffer, length, false);
-
-  if (result)
+  if (__super::ParseInternal(buffer, length, false))
   {
     // box is file type box, parse all values
     uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
@@ -123,7 +121,7 @@ bool CFullBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool 
     if (continueParsing)
     {
       RBE8INC(buffer, position, this->version);
-      RBE24INC(buffer, position, this->flags);
+      RBE24INC(buffer, position, this->boxFlags);
     }
 
     if (continueParsing && processAdditionalBoxes)
@@ -131,12 +129,11 @@ bool CFullBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool 
       this->ProcessAdditionalBoxes(buffer, length, position);
     }
 
-    this->parsed = continueParsing;
+    this->flags &= ~BOX_FLAG_PARSED;
+    this->flags |= continueParsing ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
   }
 
-  result = this->parsed;
-
-  return result;
+  return this->IsSetFlags(BOX_FLAG_PARSED);
 }
 
 uint32_t CFullBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)
@@ -146,7 +143,7 @@ uint32_t CFullBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool process
   if (result != 0)
   {
     WBE8INC(buffer, result, this->GetVersion());
-    WBE24INC(buffer, result, this->GetFlags());
+    WBE24INC(buffer, result, this->GetBoxFlags());
 
     if ((result != 0) && processAdditionalBoxes && (this->GetBoxes()->Count() != 0))
     {

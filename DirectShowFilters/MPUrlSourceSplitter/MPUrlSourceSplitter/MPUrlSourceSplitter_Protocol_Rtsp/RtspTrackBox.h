@@ -20,34 +20,30 @@
 
 #pragma once
 
-#ifndef __FULL_BOX_DEFINED
-#define __FULL_BOX_DEFINED
+#ifndef __RTSP_TRACK_BOX_DEFINED
+#define __RTSP_TRACK_BOX_DEFINED
 
-#include "box.h"
+#include "Box.h"
 
-#define FULL_BOX_DATA_SIZE                                                    4
+#define RTSP_TRACK_BOX_TYPE                                           L"rtst"
 
-#define FULL_BOX_HEADER_LENGTH                                                BOX_HEADER_LENGTH + FULL_BOX_DATA_SIZE
-#define FULL_BOX_HEADER_LENGTH_SIZE64                                         BOX_HEADER_LENGTH_SIZE64 + FULL_BOX_DATA_SIZE
+#define RTSP_TRACK_BOX_FLAG_NONE                                      BOX_FLAG_NONE
 
-class CFullBox : public CBox
+#define RTSP_TRACK_BOX_FLAG_LAST                                      (BOX_FLAG_LAST + 0)
+
+#define RTSP_TRACK_ID_UNDEFINED                                       UINT_MAX
+
+class CRtspTrackBox : public CBox
 {
 public:
-  // initializes a new instance of CFullBox class
-  CFullBox(HRESULT *result);
-
-  // destructor
-  virtual ~CFullBox(void);
+  CRtspTrackBox(HRESULT *result);
+  virtual ~CRtspTrackBox(void);
 
   /* get methods */
 
-  // gets version of this format of the box
-  // @return : version of this format of the box
-  virtual uint8_t GetVersion(void);
-
-  // gets map of box flags (flags in box, they are differerent from flags from CBox class)
-  // @return : map of box flags
-  virtual uint32_t GetBoxFlags(void);
+  // gets track ID
+  // @return : track ID
+  virtual uint32_t GetTrackId(void);
 
   // gets whole box into buffer (buffer must be allocated before)
   // @param buffer : the buffer for box data
@@ -57,13 +53,9 @@ public:
 
   /* set methods */
 
-  // sets version of this format of the box
-  // @param version : version of this format of the box to set
-  virtual void SetVersion(uint8_t version);
-
-  // sets map of box flags (flags in box, they are differerent from flags from CBox class)
-  // @param flags : map of box flags to set
-  virtual void SetBoxFlags(uint32_t flags);
+  // sets track ID
+  // @param trackId : track ID to set
+  virtual void SetTrackId(uint32_t trackId);
 
   /* other methods */
 
@@ -79,16 +71,16 @@ public:
   virtual wchar_t *GetParsedHumanReadable(const wchar_t *indent);
 
 protected:
-  // stores version of this format of the box
-  uint8_t version;
-  // stores map of box flags (used only lower 24 bits)
-  uint32_t boxFlags;
+  // holds track ID
+  uint32_t trackId;
+
+  /* methods */
 
   // gets whole box size
   // method is called to determine whole box size for storing box into buffer
   // @return : size of box 
   virtual uint64_t GetBoxSize(void);
-  
+
   // parses data in buffer
   // @param buffer : buffer with box data for parsing
   // @param length : the length of data in buffer
