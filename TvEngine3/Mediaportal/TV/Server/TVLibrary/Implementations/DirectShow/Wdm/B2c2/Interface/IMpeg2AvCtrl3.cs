@@ -31,7 +31,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
   /// <param name="info">The video stream information.</param>
   /// <returns>???</returns>
   [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-  internal delegate uint OnVideoInfo(ref VideoInfo info);
+  internal delegate uint OnVideoInfo([In] ref VideoInfo info);
 
   [Guid("3ca933bb-4378-4e03-8abd-02450169aa5e"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]

@@ -278,7 +278,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <param name="addressList">The list of addresses to register.</param>
     /// <returns>an HRESULT indicating whether the MAC addresses were successfully registered</returns>
     [PreserveSig]
-    int AddMulticastMacAddress(MacAddressList addressList);
+    int AddMulticastMacAddress([In] ref MacAddressList addressList);
 
     /// <summary>
     /// Get the list of multicast MAC addresses that are registered with the interface.
@@ -297,7 +297,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <param name="addressList">The list of addresses to deregister.</param>
     /// <returns>an HRESULT indicating whether the MAC addresses were successfully deregistered</returns>
     [PreserveSig]
-    int DeleteMulticastMacAddress(MacAddressList addressList);
+    int DeleteMulticastMacAddress([In] ref MacAddressList addressList);
 
     #endregion
 
@@ -309,7 +309,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <param name="address">The address to set.</param>
     /// <returns>an HRESULT indicating whether the address was successfully set</returns>
     [PreserveSig]
-    int SetUnicastMacAddress(MacAddress address);
+    int SetUnicastMacAddress([In] ref MacAddress address);
 
     /// <summary>
     /// Get the device's current unicast MAC address.

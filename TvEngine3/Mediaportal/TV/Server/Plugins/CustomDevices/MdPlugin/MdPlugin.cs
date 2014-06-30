@@ -62,7 +62,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
       /// Instruct the softCAM plugin filter to decode a different program using a Program82 structure.
       /// </summary>
       [PreserveSig]
-      int ChangeChannelTP82(ref Program82 program82);
+      int ChangeChannelTP82([In] ref Program82 program82);
 
       ///<summary>
       /// Set the plugin directory.
@@ -79,7 +79,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
       /// Instruct the softCAM plugin filter to decode a different program using Program82 and PidsToDecode structures.
       /// </summary>
       [PreserveSig]
-      int ChangeChannelTP82_Ex(ref Program82 program82, ref PidsToDecode pidsToDecode);
+      int ChangeChannelTP82_Ex([In] ref Program82 program82, [In] ref PidsToDecode pidsToDecode);
     }
 
     [Guid("D0EACAB1-3211-414B-B58B-E1157AC4D93A"),
