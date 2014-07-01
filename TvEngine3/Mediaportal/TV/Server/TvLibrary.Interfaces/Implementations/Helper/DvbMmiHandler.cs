@@ -39,23 +39,44 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
     /// </summary>
     /// <param name="mmi">The MMI data.</param>
     /// <param name="callBack">The call back delegate.</param>
-    public static void HandleMmiData(byte[] mmi, IConditionalAccessMenuCallBack callBack)
+    /// <param name="mmiLength">The MMI data length (optional).</param>
+    public static void HandleMmiData(byte[] mmi, IConditionalAccessMenuCallBack callBack, int mmiLength = -1)
     {
       Log.Debug("DVB MMI: handle MMI data");
-      if (mmi == null || mmi.Length < 4)
+      if (mmi == null)
       {
-        Log.Error("DVB MMI: data not supplied or too short");
+        Log.Error("DVB MMI: data not supplied");
+        return;
+      }
+      if (mmiLength < 0)
+      {
+        mmiLength = mmi.Length;
+      }
+      else if (mmiLength > mmi.Length)
+      {
+        Log.Warn("DVB MMI: specified data length {0} is greater than actual data length {1}, truncating", mmiLength, mmi.Length);
+        mmiLength = mmi.Length;
+      }
+      if (mmiLength < 5)  // Minimum 5 bytes (close immediate APDU).
+      {
+        Log.Error("DVB MMI: data too short, expected >= 5 but got {0}", mmiLength);
+        Dump.DumpBinary(mmi);
+        return;
       }
 
-      //Dump.DumpBinary(mmi, mmi.Length);
+      //Dump.DumpBinary(mmi, mmiLength);
 
-      // The first 3 bytes contains an MMI tag to tell us which APDUs we should expect to encounter.
+      // The first 3 bytes contain an MMI tag to tell us which APDUs we should expect to encounter.
       MmiTag tag = DvbMmiHandler.ReadMmiTag(mmi, 0);
       int countLengthBytes;
       int apduLength = ReadLength(mmi, 3, out countLengthBytes);
+      if (apduLength < 0)
+      {
+        return;
+      }
       Log.Debug("DVB MMI: data length = {0}, first APDU tag = {1}, length = {2}", mmi.Length, tag, apduLength);
       int offset = 3 + countLengthBytes;
-      if (apduLength < 0 || offset + apduLength != mmi.Length)
+      if (offset + apduLength != mmi.Length)
       {
         Log.Error("DVB MMI: APDU length is invalid, APDU length = {0}, offset = {1}, MMI data length = {2}", apduLength, offset, mmi.Length);
         Dump.DumpBinary(mmi);
@@ -89,9 +110,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
     {
       Log.Debug("DVB MMI: handle close");
 
-      if (offset >= apdu.Length)
+      if (offset >= apdu.Length || apduLength <= 0 || apduLength > 2)
       {
         Log.Error("DVB MMI: invalid close APDU, offset = {0}, APDU length = {1}", offset, apdu.Length);
+        Dump.DumpBinary(apdu);
         return;
       }
 
@@ -99,9 +121,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
       int delay = 0;
       if (command == MmiCloseType.Delayed)
       {
-        if (offset >= apdu.Length)
+        if (offset >= apdu.Length || apduLength != 2)
         {
           Log.Error("DVB MMI: invalid delayed close APDU, offset = {0}, APDU length = {1}", offset, apdu.Length);
+          Dump.DumpBinary(apdu);
           return;
         }
         delay = apdu[offset];
@@ -124,16 +147,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
     {
       Log.Debug("DVB MMI: handle enquiry");
 
-      if (offset + 4 >= apdu.Length)
+      if (offset + 1 >= apdu.Length || apduLength < 2)
       {
         Log.Error("DVB MMI: invalid enquiry APDU, offset = {0}, APDU length = {1}", offset, apdu.Length);
+        Dump.DumpBinary(apdu);
         return;
       }
 
       bool passwordMode = (apdu[offset++] & 0x01) != 0;
       byte expectedAnswerLength = apdu[offset++];
       // Note: there are 2 other bytes before text starts.
-      string prompt = DvbTextConverter.Convert(apdu, apdu.Length - offset - 2, offset + 2);
+      string prompt = DvbTextConverter.Convert(apdu, apduLength - 2, offset);
       Log.Debug("  prompt = {0}", prompt);
       Log.Debug("  length = {0}", expectedAnswerLength);
       Log.Debug("  blind  = {0}", passwordMode);
@@ -150,13 +174,22 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
 
     private static void HandleMenu(byte[] apdu, int offset, int apduLength, IConditionalAccessMenuCallBack callBack)
     {
-      Log.Debug("DVB MMI: handle menu");
+      Log.Debug("DVB MMI: handle menu or list");
 
+      if (offset >= apdu.Length || apduLength <= 0)
+      {
+        Log.Error("DVB MMI: invalid menu or list APDU, offset = {0}, APDU length = {1}", offset, apdu.Length);
+        Dump.DumpBinary(apdu);
+        return;
+      }
+
+      int endOfStrings = offset + apduLength;
       int stringCount = apdu[offset++];
-      List<string> strings = new List<string>();
+      int expectedStringCount = stringCount + 3;
+      List<string> strings = new List<string>(expectedStringCount);
 
       // Read the menu entries into the entries list.
-      while (stringCount > 0 && offset < apdu.Length)
+      while (offset < endOfStrings && (stringCount == 0xff || strings.Count < expectedStringCount))
       {
         if (apdu[offset] != 0x9f)
         {
@@ -168,16 +201,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
         string s = ReadText(apdu, offset, out bytesRead);
         if (s == null)
         {
-          Log.Error("DVB MMI: unexpected APDU format, null entry at offset {0}", offset);
-          Dump.DumpBinary(apdu);
           return;
         }
         strings.Add(s);
         offset += bytesRead;
       }
-      if (strings.Count < 3)
+      if (offset != endOfStrings)
       {
-        Log.Error("DVB MMI: unexpected MMI format, {0} string(s)", strings.Count);
+        Log.Error("DVB MMI: MMI menu or list corruption or parsing failure detected, offset = {0}, expected string count = {1}, end of strings = {2}", offset, stringCount, endOfStrings);
+        Dump.DumpBinary(apdu);
+        return;
+      }
+      if ((stringCount == 0xff && strings.Count < 3) || (stringCount != 0xff && strings.Count != expectedStringCount))
+      {
+        Log.Error("DVB MMI: unexpected MMI menu or list string count, offset = {0}, expected = {1}, actual = {2}", offset, expectedStringCount, strings.Count);
         Dump.DumpBinary(apdu);
         return;
       }
@@ -218,8 +255,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
     /// <returns>the tag</returns>
     public static MmiTag ReadMmiTag(byte[] sourceData, int offset)
     {
-      if (offset + 2 >= sourceData.Length)
+      if (sourceData == null)
       {
+        Log.Error("DVB MMI: failed to read tag, buffer not supplied");
+        return MmiTag.Unknown;
+      }
+      else if (offset + 2 >= sourceData.Length)
+      {
+        Log.Error("DVB MMI: failed to read tag, offset = {0}, buffer size = {1}", offset, sourceData.Length);
+        Dump.DumpBinary(sourceData);
         return MmiTag.Unknown;
       }
       return (MmiTag)((sourceData[offset] << 16) | (sourceData[offset + 1] << 8) | (sourceData[offset + 2]));
@@ -233,14 +277,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
     /// <param name="offset">The offset of the tag in outputData.</param>
     public static void WriteMmiTag(MmiTag tag, ref byte[] outputData, int offset)
     {
-      if (outputData == null || offset + 2 >= outputData.Length)
+      if (outputData == null)
       {
-        Log.Error("DVB MMI: failed to write tag");
+        Log.Error("DVB MMI: failed to write tag, buffer not supplied");
+        return;
+      }
+      else if (offset + 2 >= outputData.Length)
+      {
+        Log.Error("DVB MMI: failed to write tag, offset = {0}, buffer size = {1}", offset, outputData.Length);
         return;
       }
       outputData[offset++] = (byte)(((int)tag >> 16) & 0xff);
       outputData[offset++] = (byte)(((int)tag >> 8) & 0xff);
-      outputData[offset++] = (byte)((int)tag & 0xff);
+      outputData[offset] = (byte)((int)tag & 0xff);
     }
 
     /// <summary>
@@ -260,9 +309,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
     {
       bytesRead = -1;
 
-      if (sourceData == null || offset >= sourceData.Length)
+      if (sourceData == null)
       {
-        Log.Error("DVB MMI: failed to read length, offset {0} is out of range {1}", offset, sourceData.Length);
+        Log.Error("DVB MMI: failed to read length, buffer not supplied");
+      }
+      else if (offset >= sourceData.Length)
+      {
+        Log.Error("DVB MMI: failed to read length, offset {0}, buffer size = {1}", offset, sourceData.Length);
+        Dump.DumpBinary(sourceData);
         return -1;
       }
 
@@ -279,12 +333,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
       bytesRead = byte1 & 0x7f;
       if (bytesRead > 4)
       {
-        Log.Error("DVB MMI: length encoded in {0} bytes, can't be interpretted", bytesRead);
+        Log.Error("DVB MMI: failed to read length, offset = {0}, bytes used = {1}", offset, bytesRead);
+        Dump.DumpBinary(sourceData);
         return -1;
       }
-      if (offset + bytesRead >= sourceData.Length)
+      if (offset + bytesRead > sourceData.Length)
       {
-        Log.Error("DVB MMI: failed to read length, length byte count {0} is invalid", bytesRead);
+        Log.Error("DVB MMI: failed to read length, offset = {0}, bytes used = {1}, buffer size = {2}", offset, bytesRead, sourceData.Length);
+        Dump.DumpBinary(sourceData);
         return -1;
       }
 
@@ -318,16 +374,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
       if (length > 127)
       {
         int tempLength = length;
-        while (tempLength > 255)
+        while (tempLength > 0)
         {
           tempLength = tempLength >> 8;
           bytesWritten++;
         }
       }
 
-      if (outputData == null || offset + bytesWritten >= outputData.Length)
+      if (outputData == null)
       {
-        Log.Error("DVB MMI: failed to write length");
+        Log.Error("DVB MMI: failed to write length, buffer not supplied");
+      }
+      else if (offset + bytesWritten > outputData.Length)
+      {
+        Log.Error("DVB MMI: failed to write length, offset = {0}, bytes required = {1}, buffer size = {2}", offset, bytesWritten, outputData.Length);
         return;
       }
 
@@ -339,9 +399,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
       }
 
       // Multi-byte length.
-      outputData[offset] = (byte)(bytesWritten-- | 0x80);
+      outputData[offset] = (byte)(--bytesWritten | 0x80);
       while (bytesWritten > 0)
       {
+        // Length is MSB first; we start at the LSB (ie. writing backwards).
         outputData[offset + bytesWritten--] = (byte)(length & 0xff);
         length = length >> 8;
       }
@@ -361,7 +422,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
       MmiTag tag = ReadMmiTag(sourceData, offset);
       if (tag != MmiTag.TextMore && tag != MmiTag.TextLast)
       {
-        Log.Error("DVB MMI: invalid text tag {0}", tag);
+        if (tag != MmiTag.Unknown)
+        {
+          Log.Error("DVB MMI: invalid text tag {0} at offset {1}", tag, offset);
+          Dump.DumpBinary(sourceData);
+        }
         return null;
       }
 
@@ -439,19 +504,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
       {
         answer = string.Empty;
       }
-      char[] answerChars = answer.ToCharArray();
+      byte[] answerBytes = System.Text.ASCIIEncoding.ASCII.GetBytes(answer);
 
       // Encode the length into a temporary array so we know how many bytes are required for the APDU.
       byte[] length = new byte[5];  // max possible bytes for length field
       int lengthByteCount;
-      WriteLength(answerChars.Length + 1, ref length, 0, out lengthByteCount);  // + 1 for response type
+      WriteLength(answerBytes.Length + 1, ref length, 0, out lengthByteCount);  // + 1 for response type
 
       // Encode the APDU.
-      byte[] apdu = new byte[answerChars.Length + lengthByteCount + 4]; // + 4 = 3 for MMI tag, 1 for response type
+      byte[] apdu = new byte[answerBytes.Length + lengthByteCount + 4]; // + 4 = 3 for MMI tag, 1 for response type
       WriteMmiTag(MmiTag.Answer, ref apdu, 0);
       Buffer.BlockCopy(length, 0, apdu, 3, lengthByteCount);
       apdu[3 + lengthByteCount] = (byte)responseType;
-      Buffer.BlockCopy(answerChars, 0, apdu, 4 + lengthByteCount, answerChars.Length);
+      Buffer.BlockCopy(answerBytes, 0, apdu, 4 + lengthByteCount, answerBytes.Length);
       return apdu;
     }
 
