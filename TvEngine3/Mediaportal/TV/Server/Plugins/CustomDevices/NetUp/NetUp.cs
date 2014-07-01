@@ -194,7 +194,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
     private static readonly int MMI_BUFFER_SIZE = new int[] {
         APPLICATION_INFO_SIZE, CA_INFO_SIZE, CI_STATE_INFO_SIZE, MMI_ANSWER_SIZE, MMI_ENQUIRY_SIZE, MMI_MENU_SIZE,
     }.Max();
-    private const int MMI_HANDLER_THREAD_WAIT_TIME = 2000;    // unit = ms
+    private const int MMI_HANDLER_THREAD_WAIT_TIME = 500;     // unit = ms
 
     #endregion
 
@@ -214,7 +214,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
 
     private Guid _propertySetGuid = NETUP_BDA_EXTENSION_PROPERTY_SET;
     private IKsPropertySet _propertySet = null;
-    private int _operatingSystemPointerSize = 0;
 
     private Thread _mmiHandlerThread = null;
     private AutoResetEvent _mmiHandlerThreadStopEvent = null;
@@ -293,13 +292,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
     {
       this.LogDebug("NetUP: read conditional access information");
 
-      for (int i = 0; i < CA_INFO_SIZE; i++)
+      for (int i = 0; i < _caInfoSize; i++)
       {
         Marshal.WriteByte(_mmiBuffer, i, 0);
       }
 
       int returnedByteCount;
-      int hr = GetIoctl(NetUpIoControl.ConditionalAccessInfo, _mmiBuffer, CA_INFO_SIZE, out returnedByteCount);
+      int hr = GetIoctl(NetUpIoControl.ConditionalAccessInfo, _mmiBuffer, _caInfoSize, out returnedByteCount);
       if (hr == (int)HResult.Severity.Success && returnedByteCount == _caInfoSize)
       {
         // Have to marshal manually due to mismatch between the NetUP and
@@ -336,12 +335,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
 
       lock (_mmiLock)
       {
-        for (int i = 0; i < CI_STATE_INFO_SIZE; i++)
+        for (int i = 0; i < _ciStateInfoSize; i++)
         {
           Marshal.WriteByte(_mmiBuffer, i, 0);
         }
         int returnedByteCount;
-        int hr = GetIoctl(NetUpIoControl.CiStatus, _mmiBuffer, CI_STATE_INFO_SIZE, out returnedByteCount);
+        int hr = GetIoctl(NetUpIoControl.CiStatus, _mmiBuffer, _ciStateInfoSize, out returnedByteCount);
         if (hr == (int)HResult.Severity.Success && returnedByteCount == _ciStateInfoSize)
         {
           // Have to marshal manually due to mismatch between the NetUP and
@@ -375,30 +374,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
         return hr;
       }
 
-      // Originally NetUP's drivers required 32 bit pointers on 32 bit
-      // operating systems and 64 bit pointers on 64 bit operating systems.
-      // This was somewhat inconvenient as detecting whether you're running
-      // under WOW64 can be awkward. I contacted NetUP and asked whether it
-      // would be possible to expose a consistent interface. They kindly
-      // obliged and padded the command struct pointers in their driver for 32
-      // bit operating systems. At the same time they also changed all DWORDs
-      // in structs to DWORD64 (which was unnecessary).
-      // ...then I found out DVBSky use the same API but have modified it to
-      // use 32 bit pointers even under 64 bit operating systems. <DOH!!!>
-      // This class supports both variants of the API.
-      // mm1352000, 2013-07-20
-      if (_operatingSystemPointerSize == 0)
-      {
-        if (OSInfo.OSInfo.Is64BitOs() && _propertySetGuid == NETUP_BDA_EXTENSION_PROPERTY_SET)
-        {
-          _operatingSystemPointerSize = 8;
-        }
-        else
-        {
-          _operatingSystemPointerSize = 4;
-        }
-      }
-
       IntPtr instanceBuffer = Marshal.AllocCoTaskMem(INSTANCE_SIZE);
       IntPtr commandBuffer = Marshal.AllocCoTaskMem(COMMAND_SIZE);
       IntPtr returnedByteCountBuffer = Marshal.AllocCoTaskMem(sizeof(int));
@@ -412,7 +387,19 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
         }
         Marshal.WriteInt32(returnedByteCountBuffer, 0);
 
-        if (_operatingSystemPointerSize == 8)
+        // Originally NetUP's drivers required 32 bit pointers on 32 bit
+        // operating systems and 64 bit pointers on 64 bit operating systems.
+        // This was somewhat inconvenient as detecting whether you're running
+        // under WOW64 can be awkward. I contacted NetUP and asked whether it
+        // would be possible to expose a consistent interface. They kindly
+        // obliged and padded the command struct pointers in their driver for
+        // 32 bit operating systems. At the same time they also changed all
+        // DWORDs in structs to DWORD64 (which was unnecessary).
+        // ...then I found out DVBSky use the same API but have modified it to
+        // use 32 bit pointers even under 64 bit operating systems. <DOH!!!>
+        // This class supports both variants of the API.
+        // mm1352000, 2013-07-20
+        if (_propertySetGuid == NETUP_BDA_EXTENSION_PROPERTY_SET)
         {
           Marshal.WriteInt64(commandBuffer, 0, (long)controlCode);
           Marshal.WriteInt64(commandBuffer, 8, inBuffer.ToInt64());
@@ -583,13 +570,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
       MmiMenu mmi;
       lock (_mmiLock)
       {
-        for (int i = 0; i < MMI_MENU_SIZE; i++)
+        for (int i = 0; i < _mmiMenuSize; i++)
         {
           Marshal.WriteByte(_mmiBuffer, i, 0);
         }
 
         int returnedByteCount;
-        int hr = GetIoctl(NetUpIoControl.MmiGetMenu, _mmiBuffer, MMI_MENU_SIZE, out returnedByteCount);
+        int hr = GetIoctl(NetUpIoControl.MmiGetMenu, _mmiBuffer, _mmiMenuSize, out returnedByteCount);
         if (hr != (int)HResult.Severity.Success || returnedByteCount != _mmiMenuSize)
         {
           this.LogError("NetUP: failed to get menu detail, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
