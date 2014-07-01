@@ -130,6 +130,10 @@ public:
 
   /* set methods */
 
+  // sets timestamp
+  // @param timestamp : the timestamp to set
+  virtual void SetTimestamp(unsigned int timestamp);
+
   /* other methods */
 
   // tests if packet has extension header between standard header and payload data

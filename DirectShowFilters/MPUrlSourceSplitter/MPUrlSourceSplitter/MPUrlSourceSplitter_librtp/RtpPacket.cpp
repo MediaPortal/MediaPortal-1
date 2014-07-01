@@ -100,6 +100,11 @@ unsigned int CRtpPacket::GetPayloadSize(void)
 
 /* set methods */
 
+void CRtpPacket::SetTimestamp(unsigned int timestamp)
+{
+  this->timestamp = timestamp;
+}
+
 /* other methods */
 
 bool CRtpPacket::IsExtended(void)

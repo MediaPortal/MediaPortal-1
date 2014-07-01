@@ -52,6 +52,7 @@
 #include "RtspContentBaseResponseHeader.h"
 #include "RtspContentLocationResponseHeader.h"
 #include "RtspSessionResponseHeader.h"
+#include "RtspServerResponseHeader.h"
 
 #include "SenderReportRtcpPacket.h"
 #include "GoodbyeRtcpPacket.h"
@@ -175,7 +176,7 @@ HRESULT CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
   this->state = CURL_STATE_CREATED;
 
   this->lastSequenceNumber = 1;
-  this->flags &= ~RTSP_CURL_INSTANCE_FLAG_REQUEST_COMMAND_FINISHED;
+  this->flags &= ~(RTSP_CURL_INSTANCE_FLAG_REQUEST_COMMAND_FINISHED | RTSP_CURL_INSTANCE_FLAG_SERVER_FREEBOX);
   this->rtspDownloadRequest = dynamic_cast<CRtspDownloadRequest  *>(this->downloadRequest);
   this->rtspDownloadResponse = dynamic_cast<CRtspDownloadResponse *>(this->downloadResponse);
 
@@ -262,6 +263,17 @@ HRESULT CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
             this->flags |= publicHeader->IsSetFlags(RTSP_PUBLIC_RESPONSE_HEADER_FLAG_METHOD_GET_PARAMETER) ? RTSP_CURL_INSTANCE_FLAG_METHOD_GET_PARAMETER_SUPPORTED : RTSP_CURL_INSTANCE_FLAG_NONE;
           }
         }
+
+        if (SUCCEEDED(result))
+        {
+          CRtspServerResponseHeader *serverHeader = (CRtspServerResponseHeader *)response->GetResponseHeaders()->GetRtspHeader(RTSP_SERVER_RESPONSE_HEADER_TYPE);
+          if (serverHeader != NULL)
+          {
+            // check server RTSP response header for specific server
+
+            this->flags |= (IndexOf(serverHeader->GetValue(), SERVER_FREEBOX) != (-1)) ? RTSP_CURL_INSTANCE_FLAG_SERVER_FREEBOX : RTSP_CURL_INSTANCE_FLAG_NONE;
+          }
+        }
       }
 
       FREE_MEM_CLASS(response);
@@ -319,6 +331,17 @@ HRESULT CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
               this->logger->Log(LOGGER_ERROR, L"%s: %s: content type header '%s' not allowed, required: '%s'", this->protocolName, METHOD_INITIALIZE_NAME, contentTypeHeader->GetValue(), RTSP_DESCRIBE_CONTENT_TYPE);
               result = E_RTSP_CONTENT_HEADER_TYPE_NOT_ALLOWED;
             }
+          }
+        }
+
+        if (SUCCEEDED(result))
+        {
+          CRtspServerResponseHeader *serverHeader = (CRtspServerResponseHeader *)response->GetResponseHeaders()->GetRtspHeader(RTSP_SERVER_RESPONSE_HEADER_TYPE);
+          if (serverHeader != NULL)
+          {
+            // check server RTSP response header for specific server
+
+            this->flags |= (IndexOf(serverHeader->GetValue(), SERVER_FREEBOX) != (-1)) ? RTSP_CURL_INSTANCE_FLAG_SERVER_FREEBOX : RTSP_CURL_INSTANCE_FLAG_NONE;
           }
         }
       }
@@ -529,6 +552,17 @@ HRESULT CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
 
                 response = this->rtspDownloadResponse->GetRtspResponse()->Clone();
                 CHECK_POINTER_HRESULT(error, response, error, E_OUTOFMEMORY);
+              }
+
+              if (SUCCEEDED(error))
+              {
+                CRtspServerResponseHeader *serverHeader = (CRtspServerResponseHeader *)response->GetResponseHeaders()->GetRtspHeader(RTSP_SERVER_RESPONSE_HEADER_TYPE);
+                if (serverHeader != NULL)
+                {
+                  // check server RTSP response header for specific server
+
+                  this->flags |= (IndexOf(serverHeader->GetValue(), SERVER_FREEBOX) != (-1)) ? RTSP_CURL_INSTANCE_FLAG_SERVER_FREEBOX : RTSP_CURL_INSTANCE_FLAG_NONE;
+                }
               }
 
               if (SUCCEEDED(error))
@@ -818,6 +852,17 @@ HRESULT CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
 
               if (SUCCEEDED(error))
               {
+                CRtspServerResponseHeader *serverHeader = (CRtspServerResponseHeader *)response->GetResponseHeaders()->GetRtspHeader(RTSP_SERVER_RESPONSE_HEADER_TYPE);
+                if (serverHeader != NULL)
+                {
+                  // check server RTSP response header for specific server
+
+                  this->flags |= (IndexOf(serverHeader->GetValue(), SERVER_FREEBOX) != (-1)) ? RTSP_CURL_INSTANCE_FLAG_SERVER_FREEBOX : RTSP_CURL_INSTANCE_FLAG_NONE;
+                }
+              }
+
+              if (SUCCEEDED(error))
+              {
                 CRtspTransportResponseHeader *transport = (CRtspTransportResponseHeader *)response->GetResponseHeaders()->GetRtspHeader(RTSP_TRANSPORT_RESPONSE_HEADER_TYPE);
 
                 if (transport == NULL)
@@ -1046,6 +1091,17 @@ HRESULT CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
 
         if (SUCCEEDED(result) && (this->lastCommand == RTSP_CURL_INSTANCE_COMMAND_PLAY_RESPONSE_NOT_VALID))
         {
+          CRtspServerResponseHeader *serverHeader = (CRtspServerResponseHeader *)this->rtspDownloadResponse->GetRtspResponse()->GetResponseHeaders()->GetRtspHeader(RTSP_SERVER_RESPONSE_HEADER_TYPE);
+          if (serverHeader != NULL)
+          {
+            // check server RTSP response header for specific server
+
+            this->flags |= (IndexOf(serverHeader->GetValue(), SERVER_FREEBOX) != (-1)) ? RTSP_CURL_INSTANCE_FLAG_SERVER_FREEBOX : RTSP_CURL_INSTANCE_FLAG_NONE;
+          }
+        }
+
+        if (SUCCEEDED(result) && (this->lastCommand == RTSP_CURL_INSTANCE_COMMAND_PLAY_RESPONSE_NOT_VALID))
+        {
           CRtspSessionResponseHeader *sessionHeader = (CRtspSessionResponseHeader *)this->rtspDownloadResponse->GetRtspResponse()->GetResponseHeaders()->GetRtspHeader(RTSP_SESSION_RESPONSE_HEADER_TYPE);
 
           this->rtspDownloadResponse->SetSessionTimeout(((sessionHeader != NULL) ? sessionHeader->GetTimeout() : RTSP_SESSION_RESPONSE_TIMEOUT_DEFAULT) * 1000);
@@ -1184,6 +1240,14 @@ HRESULT CRtspCurlInstance::ProcessReceivedBaseRtpPackets(CRtspTrack *track, unsi
 
           CRtpPacket *clone = rtpPacket->Clone();
           CHECK_POINTER_HRESULT(result, clone, result, E_OUTOFMEMORY);
+
+          if (SUCCEEDED(result) && this->IsSetFlags(RTSP_CURL_INSTANCE_FLAG_SERVER_FREEBOX))
+          {
+            // Freebox RTSP server doesn't compute RTP packet timestamps
+            // before processing we must compute timestamp based on their receive time - we don't have anything better
+
+            clone->SetTimestamp(track->GetRtpPacketTimestamp(GetTickCount()));
+          }
 
           CHECK_CONDITION_HRESULT(result, track->GetRtpPackets()->Add(clone), result, E_OUTOFMEMORY);
           CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(clone));

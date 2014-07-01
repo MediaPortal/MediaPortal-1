@@ -41,6 +41,7 @@ CRtspTrack::CRtspTrack(HRESULT *result)
   this->statistics = NULL;
   this->senderSynchronizationSourceIdentifier = 0;
   this->synchronizationSourceIdentifier = 0;
+  this->startTime = 0;
 
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
@@ -151,6 +152,25 @@ CRtpPacketCollection *CRtspTrack::GetRtpPackets(void)
 CRtspPayloadType *CRtspTrack::GetPayloadType(void)
 {
   return this->payloadType;
+}
+
+unsigned int CRtspTrack::GetRtpPacketTimestamp(unsigned int currentTime)
+{
+  if (!this->IsSetFlags(RTSP_TRACK_FLAG_SET_START_TIME))
+  {
+    this->startTime = currentTime;
+    this->flags |= RTSP_TRACK_FLAG_SET_START_TIME;
+  }
+
+  // current time is always greater or equal to this->startTime
+  uint64_t timestamp = currentTime - this->startTime;
+  timestamp *= this->statistics->GetClockFrequency();
+  timestamp /= 1000;
+
+  // RTP timestamp can overlap through UINT_MAX
+  timestamp &= 0x00000000FFFFFFFF;
+
+  return (unsigned int)timestamp;
 }
 
 /* set methods */

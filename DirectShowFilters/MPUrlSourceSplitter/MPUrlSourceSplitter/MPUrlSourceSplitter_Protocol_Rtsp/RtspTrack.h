@@ -39,8 +39,9 @@
 
 #define RTSP_TRACK_FLAG_SENDER_SYNCHRONIZATION_SOURCE_IDENTIFIER_SET  (1 << (FLAGS_LAST + 0))
 #define RTSP_TRACK_FLAG_END_OF_STREAM                                 (1 << (FLAGS_LAST + 1))
+#define RTSP_TRACK_FLAG_SET_START_TIME                                (1 << (FLAGS_LAST + 2))
 
-#define RTSP_TRACK_FLAG_LAST                                          (FLAGS_LAST + 2)
+#define RTSP_TRACK_FLAG_LAST                                          (FLAGS_LAST + 3)
 
 class CRtspTrack : public CFlags
 {
@@ -112,6 +113,11 @@ public:
   // gets payload type from media description
   // @return : payload type
   CRtspPayloadType *GetPayloadType(void);
+
+  // gets RTP packet timestamp based on current time
+  // @param currentTime : the current time in ms (GetTickCount())
+  // @return : RTP packet timestamp based on current time
+  unsigned int GetRtpPacketTimestamp(unsigned int currentTime);
 
   /* set methods */
 
@@ -237,6 +243,9 @@ protected:
 
   // holds collection of received and unprocessed RTP packets
   CRtpPacketCollection *rtpPackets;
+
+  // holds start time in ms (usefull for computing RTP packet timestamps based on current time)
+  unsigned int startTime;
 };
 
 #endif

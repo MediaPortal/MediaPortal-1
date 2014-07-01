@@ -45,7 +45,10 @@
 #define RTSP_CURL_INSTANCE_FLAG_IGNORE_RTP_PAYLOAD_TYPE               (1 << (CURL_INSTANCE_FLAG_LAST + 1))
 #define RTSP_CURL_INSTANCE_FLAG_METHOD_GET_PARAMETER_SUPPORTED        (1 << (CURL_INSTANCE_FLAG_LAST + 2))
 
-#define RTSP_CURL_INSTANCE_FLAG_LAST                                  (CURL_INSTANCE_FLAG_LAST + 3)
+// special flag for Freebox RTSP server (fbxrtspd/1.2 Freebox RTSP server doesn't compute RTP packet timestamps)
+#define RTSP_CURL_INSTANCE_FLAG_SERVER_FREEBOX                        (1 << (CURL_INSTANCE_FLAG_LAST + 3))
+
+#define RTSP_CURL_INSTANCE_FLAG_LAST                                  (CURL_INSTANCE_FLAG_LAST + 4)
 
 #define RTSP_CURL_INSTANCE_COMMAND_NONE                               0x00000000
 #define RTSP_CURL_INSTANCE_COMMAND_OPTIONS                            0x00000001
@@ -55,6 +58,8 @@
 #define RTSP_CURL_INSTANCE_COMMAND_PLAY_RESPONSE_VALID                0x00000005
 #define RTSP_CURL_INSTANCE_COMMAND_PLAY_RESPONSE_NOT_VALID            0x00000006
 #define RTSP_CURL_INSTANCE_COMMAND_TEARDOWN                           0x00000007
+
+#define SERVER_FREEBOX                                                L"Freebox RTSP server"
 
 class CRtspCurlInstance : public CCurlInstance
 {
