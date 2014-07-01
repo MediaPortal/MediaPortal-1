@@ -39,7 +39,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
   /// <summary>
   /// A class for handling conditional access, DiSEqC and PID filtering for Digital Everywhere tuners.
   /// </summary>
-  public class DigitalEverywhere : BaseCustomDevice, IPowerDevice, IMpeg2PidFilter, ICustomTuner, IConditionalAccessProvider, IConditionalAccessMenuActions, IDiseqcDevice
+  public class DigitalEverywhere : BaseCustomDevice, IPowerDevice, IMpeg2PidFilter, ICustomTuner, IConditionalAccessProvider, IConditionalAccessMenuActions, IDiseqcDevice, IRemoteControlListener
   {
     #region enums
 
@@ -250,6 +250,64 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
       Satellite,
       Cable,
       Terrestrial
+    }
+
+    private enum DeRemoteCode
+    {
+      Power = 768,
+      Sleep,
+      StopEject,
+      Okay,
+      Right,
+      One,
+      Two,
+      Three,
+      Left,
+      Four,
+      Five,
+      Six,
+      Up, // 780
+      Seven,
+      Eight,
+      Nine,
+      Down,
+      OnScreenDisplay,
+      Zero,
+      AspectRatio16_9,    // text: 16:9
+      FullScreen,         // text: full
+      Mute,
+      Subtitles,  // 790
+      Record,
+      Teletext,
+      Audio,
+      Red,
+      SkipBack,
+      Rewind,
+      PlayPause,
+      SkipForward,
+      VolumeUp, // 799
+
+      ChannelUp = 832,
+      AspectRatio4_3,     // text: 4:3
+      Tv,
+      Dvd,
+      Vcr,
+      Aux,
+      Green,
+      Yellow,
+      Blue, // 840
+      ChannelList,
+      Ci,                 // (common interface)
+      VolumeDown,
+      ChannelDown,
+      Recall,             // text: last
+      Info,
+      FastForward,
+      List,
+      Favourites,
+      Menu,
+      Epg,
+      Exit  // 852
     }
 
     #endregion
@@ -519,6 +577,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
     private static readonly int CA_DATA_SIZE = Marshal.SizeOf(typeof(CaData));  // 1036
     private const int DRIVER_VERSION_INFO_SIZE = 32;
     private const int TEMPERATURE_INFO_SIZE = 4;
+    private const int REMOTE_CONTROL_DATA_SIZE = 2;
 
     private static readonly int GENERAL_BUFFER_SIZE = new int[]
       {
@@ -526,7 +585,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
         FIRMWARE_VERSION_INFO_SIZE, FRONT_END_STATUS_INFO_SIZE, LNB_COMMAND_SIZE, LNB_PARAM_INFO_SIZE,
         TEMPERATURE_INFO_SIZE
       }.Max();
-    private const int MMI_HANDLER_THREAD_WAIT_TIME = 500;     // unit = ms
+
+    private const int MMI_HANDLER_THREAD_WAIT_TIME = 500;                 // unit = ms
+    private const int REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME = 100;     // unit = ms
 
     #endregion
 
@@ -552,6 +613,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
     private object _mmiLock = new object();
     private IConditionalAccessMenuCallBack _caMenuCallBack = null;
     private object _caMenuCallBackLock = new object();
+
+    private bool _isRemoteControlInterfaceOpen = false;
+    private IntPtr _remoteControlBuffer = IntPtr.Zero;
+    private Thread _remoteControlListenerThread = null;
+    private AutoResetEvent _remoteControlListenerThreadStopEvent = null;
 
     #endregion
 
@@ -896,8 +962,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
               if (!ciState.HasFlag(DeCiState.CamError) &&
                 ciState.HasFlag(DeCiState.CamReady | DeCiState.ApplicationInfoAvailable))
               {
+                if (!_isCamReady)
+                {
+                  ReadApplicationInformation();
+                }
                 _isCamReady = true;
-                ReadApplicationInformation();
               }
               else
               {
@@ -956,11 +1025,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
               this.LogDebug("Digital Everywhere: handling data");
               data = (CaData)Marshal.PtrToStructure(_mmiBuffer, typeof(CaData));
             }
-            byte[] objectData = new byte[data.DataLength];
-            Array.Copy(data.Data, objectData, data.DataLength);
             lock (_caMenuCallBackLock)
             {
-              DvbMmiHandler.HandleMmiData(objectData, _caMenuCallBack);
+              DvbMmiHandler.HandleMmiData(data.Data, _caMenuCallBack, data.DataLength);
             }
           }
         }
@@ -974,6 +1041,114 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
         return;
       }
       this.LogDebug("Digital Everywhere: MMI handler thread stop polling");
+    }
+
+    #endregion
+
+    #region remote control listener thread
+
+    /// <summary>
+    /// Start a thread to listen for remote control commands.
+    /// </summary>
+    private void StartRemoteControlListenerThread()
+    {
+      // Don't start a thread if the interface has not been opened.
+      if (!_isRemoteControlInterfaceOpen)
+      {
+        return;
+      }
+
+      // Kill the existing thread if it is in "zombie" state.
+      if (_remoteControlListenerThread != null && !_remoteControlListenerThread.IsAlive)
+      {
+        StopRemoteControlListenerThread();
+      }
+      if (_remoteControlListenerThread == null)
+      {
+        this.LogDebug("Digital Everywhere: starting new remote control listener thread");
+        _remoteControlListenerThreadStopEvent = new AutoResetEvent(false);
+        _remoteControlListenerThread = new Thread(new ThreadStart(RemoteControlListener));
+        _remoteControlListenerThread.Name = "Digital Everywhere remote control listener";
+        _remoteControlListenerThread.IsBackground = true;
+        _remoteControlListenerThread.Priority = ThreadPriority.Lowest;
+        _remoteControlListenerThread.Start();
+      }
+    }
+
+    /// <summary>
+    /// Stop the thread that listens for remote control commands.
+    /// </summary>
+    private void StopRemoteControlListenerThread()
+    {
+      if (_remoteControlListenerThread != null)
+      {
+        if (!_remoteControlListenerThread.IsAlive)
+        {
+          this.LogWarn("Digital Everywhere: aborting old remote control listener thread");
+          _remoteControlListenerThread.Abort();
+        }
+        else
+        {
+          _remoteControlListenerThreadStopEvent.Set();
+          if (!_remoteControlListenerThread.Join(REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME * 2))
+          {
+            this.LogWarn("Digital Everywhere: failed to join remote control listener thread, aborting thread");
+            _remoteControlListenerThread.Abort();
+          }
+        }
+        _remoteControlListenerThread = null;
+        if (_remoteControlListenerThreadStopEvent != null)
+        {
+          _remoteControlListenerThreadStopEvent.Close();
+          _remoteControlListenerThreadStopEvent = null;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Thread function for receiving remote control commands.
+    /// </summary>
+    private void RemoteControlListener()
+    {
+      this.LogDebug("Digital Everywhere: remote control listener thread start polling");
+      int hr;
+      int returnedByteCount;
+      try
+      {
+        while (!_remoteControlListenerThreadStopEvent.WaitOne(REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME))
+        {
+          for (int i = 0; i < REMOTE_CONTROL_DATA_SIZE; i++)
+          {
+            Marshal.WriteByte(_remoteControlBuffer, i, 0);
+          }
+          hr = _propertySet.Get(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.RemoteControlRegister,
+            _remoteControlBuffer, REMOTE_CONTROL_DATA_SIZE,
+            _remoteControlBuffer, REMOTE_CONTROL_DATA_SIZE,
+            out returnedByteCount
+          );
+          if (hr != (int)HResult.Severity.Success || returnedByteCount != REMOTE_CONTROL_DATA_SIZE)
+          {
+            this.LogError("Digital Everywhere: failed to read remote control register, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+          }
+          else
+          {
+            short code = Marshal.ReadInt16(_remoteControlBuffer, 0);
+            if (code != 0)
+            {
+              this.LogDebug("Digital Everywhere: remote control key press, code = {0}", (DeRemoteCode)code);
+            }
+          }
+        }
+      }
+      catch (ThreadAbortException)
+      {
+      }
+      catch (Exception ex)
+      {
+        this.LogError(ex, "Digital Everywhere: remote control listener thread exception");
+        return;
+      }
+      this.LogDebug("Digital Everywhere: remote control listener thread stop polling");
     }
 
     #endregion
@@ -1999,6 +2174,82 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
       // Not supported.
       response = null;
       return false;
+    }
+
+    #endregion
+
+    #region IRemoteControlListener members
+
+    /// <summary>
+    /// Open the remote control interface and start listening for commands.
+    /// </summary>
+    /// <returns><c>true</c> if the interface is successfully opened, otherwise <c>false</c></returns>
+    public bool OpenRemoteControlInterface()
+    {
+      this.LogDebug("Digital Everywhere: open remote control interface");
+
+      if (!_isDigitalEverywhere)
+      {
+        this.LogWarn("Digital Everywhere: not initialised or interface not supported");
+        return false;
+      }
+      if (_isRemoteControlInterfaceOpen)
+      {
+        this.LogWarn("Digital Everywhere: conditional access interface is already open");
+        return true;
+      }
+
+      KSPropertySupport support;
+      int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.RemoteControlRegister, out support);
+      if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Get))
+      {
+        this.LogDebug("Digital Everywhere: property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        return false;
+      }
+
+      _remoteControlBuffer = Marshal.AllocCoTaskMem(REMOTE_CONTROL_DATA_SIZE);
+      _isRemoteControlInterfaceOpen = true;
+      StartRemoteControlListenerThread();
+
+      this.LogDebug("Digital Everywhere: result = success");
+      return true;
+    }
+
+    /// <summary>
+    /// Close the remote control interface and stop listening for commands.
+    /// </summary>
+    /// <returns><c>true</c> if the interface is successfully closed, otherwise <c>false</c></returns>
+    public bool CloseRemoteControlInterface()
+    {
+      this.LogDebug("Digital Everywhere: close remote control interface");
+
+      StopRemoteControlListenerThread();
+
+      if (_isRemoteControlInterfaceOpen)
+      {
+        if (_propertySet != null)
+        {
+          int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.RemoteControlCancel, IntPtr.Zero, 0, IntPtr.Zero, 0);
+          if (hr != (int)HResult.Severity.Success)
+          {
+            this.LogWarn("Digital Everywhere: failed to cancel remote control, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          }
+        }
+        else
+        {
+          this.LogWarn("Digital Everywhere: remote control interface is open but property set is null");
+        }
+      }
+
+      if (_remoteControlBuffer != IntPtr.Zero)
+      {
+        Marshal.FreeCoTaskMem(_remoteControlBuffer);
+        _remoteControlBuffer = IntPtr.Zero;
+      }
+
+      _isRemoteControlInterfaceOpen = false;
+      this.LogDebug("Digital Everywhere: result = success");
+      return true;
     }
 
     #endregion
