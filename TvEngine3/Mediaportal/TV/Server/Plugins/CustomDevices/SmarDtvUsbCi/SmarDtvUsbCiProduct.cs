@@ -28,9 +28,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
   /// <summary>
   /// This class is used to hold and provide the relevant details for products that this plugin supports.
   /// </summary>
-  public struct SmarDtvUsbCiProduct
+  internal class SmarDtvUsbCiProduct
   {
-    #region COM imports
+    #region COM interfaces
 
     // Each type definition is identical except for the GUID. It would be possible to eliminate these definitions
     // if property sets were used, however the properties are not documented and don't appear to be a one-to-one
@@ -43,17 +43,17 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
       /// <summary>
       /// Initialise the CI interface. The call back delegate parameters are all optional.
       /// </summary>
-      /// <param name="callBacks">A buffer containing a SmarDtvUsbCiCallBacks structure instance.</param>
+      /// <param name="callBack">A set of delegates for the driver to invoke when the CI state changes or MMI becomes available.</param>
       /// <returns>an HRESULT indicating whether the interface was successfully initialised</returns>
       [PreserveSig]
-      Int32 USB2CI_Init([In] IntPtr callBacks);
+      int USB2CI_Init([In] ref SmarDtvUsbCiCallBack callBack);
 
       /// <summary>
       /// Open an MMI session with the CAM.
       /// </summary>
       /// <returns>an HRESULT indicating whether a session was successfully opened</returns>
       [PreserveSig]
-      Int32 USB2CI_OpenMMI();
+      int USB2CI_OpenMMI();
 
       /// <summary>
       /// Send an APDU to the CAM. This function can be used communicate with the CAM
@@ -62,10 +62,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
       /// <remarks>
       /// It is not possible send CA PMT APDUs with this interface because the underlying session is an MMI session.
       /// </remarks>
+      /// <param name="apdu">The APDU.</param>
       /// <param name="apduLength">The length of the APDU in bytes.</param>
       /// <returns>an HRESULT indicating whether the APDU was successfully received by the CAM</returns>
       [PreserveSig]
-      Int32 USB2CI_APDUToCAM([In] Int32 apduLength, [In, MarshalAs(UnmanagedType.LPArray)] byte[] apdu);
+      int USB2CI_APDUToCAM(int apduLength, [MarshalAs(UnmanagedType.LPArray)] byte[] apdu);
 
       /// <summary>
       /// Send PMT data to the CAM to request a service be descrambled.
@@ -77,15 +78,15 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
       /// <param name="pmtLength">The length of the PMT in bytes.</param>
       /// <returns>an HRESULT indicating whether the PMT was successfully received by the CAM</returns>
       [PreserveSig]
-      Int32 USB2CI_GuiSendPMT([In, MarshalAs(UnmanagedType.LPArray)] byte[] pmt, [In] Int16 pmtLength);
+      int USB2CI_GuiSendPMT([MarshalAs(UnmanagedType.LPArray)] byte[] pmt, short pmtLength);
 
       /// <summary>
       /// Get version information about the interface, driver and device.
       /// </summary>
-      /// <param name="versionInfo">A buffer containing a VersionInfo structure instance.</param>
+      /// <param name="versionInfo">The version information.</param>
       /// <returns>an HRESULT indicating whether the version information was successfully retrieved</returns>
       [PreserveSig]
-      Int32 USB2CI_GetVersion([In] IntPtr versionInfo);
+      int USB2CI_GetVersion(out SmarDtvUsbCiVersionInfo versionInfo);
     }
 
     [Guid("dd5a9b44-348a-4607-bf72-cfd8239e4432"),
@@ -93,19 +94,19 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
     private interface IHauppaugeWinTvCi
     {
       [PreserveSig]
-      Int32 USB2CI_Init([In] IntPtr callBacks);
+      int USB2CI_Init([In] ref SmarDtvUsbCiCallBack callBack);
 
       [PreserveSig]
-      Int32 USB2CI_OpenMMI();
+      int USB2CI_OpenMMI();
 
       [PreserveSig]
-      Int32 USB2CI_APDUToCAM([In] Int32 apduLength, [In, MarshalAs(UnmanagedType.LPArray)] byte[] apdu);
+      int USB2CI_APDUToCAM(int apduLength, [MarshalAs(UnmanagedType.LPArray)] byte[] apdu);
 
       [PreserveSig]
-      Int32 USB2CI_GuiSendPMT([In, MarshalAs(UnmanagedType.LPArray)] byte[] pmt, [In] Int16 pmtLength);
+      int USB2CI_GuiSendPMT([MarshalAs(UnmanagedType.LPArray)] byte[] pmt, short pmtLength);
 
       [PreserveSig]
-      Int32 USB2CI_GetVersion([In] IntPtr version);
+      int USB2CI_GetVersion(out SmarDtvUsbCiVersionInfo versionInfo);
     }
 
     #endregion
@@ -143,7 +144,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
     /// <param name="bdaDeviceName">The name of the device registered by the product's BDA driver.</param>
     /// <param name="dbSettingName">The name of the TV Server database setting that holds the product tuner association.</param>
     /// <param name="comInterface">The COM interface used to interact with the CI.</param>
-    public SmarDtvUsbCiProduct(string name, string wdmDeviceName, string bdaDeviceName, string dbSettingName, Type comInterface)
+    private SmarDtvUsbCiProduct(string name, string wdmDeviceName, string bdaDeviceName, string dbSettingName, Type comInterface)
     {
       ProductName = name;
       WdmDeviceName = wdmDeviceName;

@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SmarDtvUsbCi.cs" />
+    <Compile Include="SmarDtvUsbCiCommon.cs" />
     <Compile Include="SmarDtvUsbCiConfig.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -89,6 +90,7 @@
       <DependentUpon>SmarDtvUsbCiConfig.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

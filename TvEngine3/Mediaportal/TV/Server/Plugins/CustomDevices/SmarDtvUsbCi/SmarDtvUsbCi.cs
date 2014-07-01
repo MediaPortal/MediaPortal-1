@@ -21,14 +21,11 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Globalization;
 using System.Runtime.InteropServices;
 using DirectShowLib;
 using Mediaportal.TV.Server.Plugins.Base.Interfaces;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
-using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
@@ -44,110 +41,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
   /// </summary>
   public class SmarDtvUsbCi : BaseCustomDevice, IDirectShowAddOnDevice, IConditionalAccessProvider, IConditionalAccessMenuActions, ITvServerPlugin
   {
-    #region enums
-
-    private enum SmarDtvCiState : int
-    {
-      Unplugged = 0,
-      Empty,
-      CamPresent
-    }
-
-    #endregion
-
-    #region call back definitions
-
-    /// <summary>
-    /// Called by the driver when the CI slot state changes.
-    /// </summary>
-    /// <param name="ciFilter">The CI filter.</param>
-    /// <param name="state">The new state of the slot.</param>
-    /// <returns>an HRESULT indicating whether the state change was successfully handled</returns>
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate int OnSmarDtvUsbCiState(IBaseFilter ciFilter, SmarDtvCiState state);
-
-    /// <summary>
-    /// Called by the driver when application information is received from a CAM.
-    /// </summary>
-    /// <param name="ciFilter">The CI filter.</param>
-    /// <param name="info">A buffer containing the application information.</param>
-    /// <returns>an HRESULT indicating whether the application information was successfully processed</returns>
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate int OnSmarDtvUsbCiApplicationInfo(IBaseFilter ciFilter, IntPtr info);
-
-    /// <summary>
-    /// Called by the driver when a CAM wants to close an MMI session.
-    /// </summary>
-    /// <param name="ciFilter">The CI filter.</param>
-    /// <returns>an HRESULT indicating whether the MMI session was successfully closed</returns>
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate int OnSmarDtvUsbCiCloseMmi(IBaseFilter ciFilter);
-
-    /// <summary>
-    /// Called by the driver when an application protocol data unit is received from a CAM.
-    /// </summary>
-    /// <param name="ciFilter">The CI filter.</param>
-    /// <param name="apduLength">The length of the APDU buffer in bytes.</param>
-    /// <param name="apdu">A buffer containing the APDU.</param>
-    /// <returns>an HRESULT indicating whether the APDU was successfully processed</returns>
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate int OnSmarDtvUsbCiApdu(IBaseFilter ciFilter, int apduLength, IntPtr apdu);
-
-    #endregion
-
-    #region structs
-
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    private struct SmarDtvUsbCiCallBack
-    {
-      public IntPtr Context;  // Optional context that the interface will pass back as a parameter when the delegates are executed.
-      public OnSmarDtvUsbCiState OnCiState;
-      public OnSmarDtvUsbCiApplicationInfo OnApplicationInfo;
-      public OnSmarDtvUsbCiCloseMmi OnCloseMmi;
-      public OnSmarDtvUsbCiApdu OnApdu;
-    }
-
-    #pragma warning disable 0649, 0169
-    // These structs are used - they are marshaled from the COM interface.
-
-    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
-    private struct VersionInfo
-    {
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 12)]
-      public string PluginVersion;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 12)]
-      public string BdaVersion;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 12)]
-      public string UsbVersion;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 8)]
-      public string FirmwareVersion;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 8)]
-      public string FpgaVersion;
-    }
-
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    private struct ApplicationInfo
-    {
-      public MmiApplicationType ApplicationType;
-      private byte Padding;
-      public ushort Manufacturer;
-      public ushort Code;
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 352)]
-      public byte[] MenuTitle;
-    }
-
-    #pragma warning restore 0649, 0169
-
-    #endregion
-
-    #region constants
-
-    //private static readonly int APPLICATION_INFO_SIZE = Marshal.SizeOf(typeof(ApplicationInfo));    // 358
-    private static readonly int VERSION_INFO_SIZE = Marshal.SizeOf(typeof(VersionInfo));            // 52
-    private static readonly int CI_CALLBACK_SIZE = Marshal.SizeOf(typeof(SmarDtvUsbCiCallBack));    // 20
-
-    #endregion
-
     #region variables
 
     // We use this hash to keep track of the devices that are in use. Each CI device can only be
@@ -161,7 +54,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
     private bool _isCamPresent = false;
     #pragma warning restore 0414
     private bool _isCamReady = false;
-    private SmarDtvCiState _ciState = SmarDtvCiState.Empty;
+    private SmarDtvUsbCiState _ciState = SmarDtvUsbCiState.Empty;
 
     private IBaseFilter _ciFilter = null;
     private Type _ciType = null;
@@ -172,19 +65,18 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
     private IConditionalAccessMenuCallBack _caMenuCallBack = null;
     private object _caMenuCallBackLock = new object();
     private SmarDtvUsbCiCallBack _ciCallBack;
-    private IntPtr _ciCallBackBuffer = IntPtr.Zero;
 
     #endregion
 
-    #region call back handlers
+    #region delegate implementations
 
     /// <summary>
-    /// Called by the driver when the CI slot state changes.
+    /// Invoked by the driver when the CI slot state changes.
     /// </summary>
     /// <param name="ciFilter">The CI filter.</param>
     /// <param name="state">The new state of the slot.</param>
     /// <returns>an HRESULT indicating whether the state change was successfully handled</returns>
-    private int OnCiState(IBaseFilter ciFilter, SmarDtvCiState state)
+    private int OnCiState(IBaseFilter ciFilter, SmarDtvUsbCiState state)
     {
       this.LogInfo("SmarDTV USB CI: CI state change call back");
       this.LogInfo("  old state  = {0}", _ciState);
@@ -192,11 +84,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
       _ciState = state;
 
       _isCamReady = false;
-      if (state == SmarDtvCiState.Empty)
+      if (state == SmarDtvUsbCiState.Empty)
       {
         _isCamPresent = false;
       }
-      else if (state == SmarDtvCiState.CamPresent)
+      else if (state == SmarDtvUsbCiState.CamPresent)
       {
         _isCamPresent = true;
       }
@@ -204,22 +96,20 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
     }
 
     /// <summary>
-    /// Called by the driver when application information is received from a CAM.
+    /// Invoked by the driver when application information is received from a CAM.
     /// </summary>
     /// <param name="ciFilter">The CI filter.</param>
-    /// <param name="info">A buffer containing the application information.</param>
+    /// <param name="info">The application information.</param>
     /// <returns>an HRESULT indicating whether the application information was successfully processed</returns>
-    private int OnApplicationInfo(IBaseFilter ciFilter, IntPtr info)
+    private int OnApplicationInfo(IBaseFilter ciFilter, ref SmarDtvUsbCiApplicationInfo info)
     {
       this.LogInfo("SmarDTV USB CI: application information call back");
-      //Dump.DumpBinary(info, APPLICATION_INFO_SIZE);
-      ApplicationInfo appInfo = (ApplicationInfo)Marshal.PtrToStructure(info, typeof(ApplicationInfo));
-      this.LogDebug("  type         = {0}", appInfo.ApplicationType);
+      this.LogDebug("  type         = {0}", info.ApplicationType);
       // Note: current drivers seem to have a bug that causes only the first byte in the manufacturer and code
       // fields to be available.
-      this.LogDebug("  manufacturer = 0x{0:x4}", appInfo.Manufacturer);
-      this.LogDebug("  code         = 0x{0:x4}", appInfo.Code);
-      this.LogDebug("  menu title   = {0}", DvbTextConverter.Convert(appInfo.MenuTitle));
+      this.LogDebug("  manufacturer = 0x{0:x4}", info.Manufacturer);
+      this.LogDebug("  code         = 0x{0:x4}", info.Code);
+      this.LogDebug("  menu title   = {0}", DvbTextConverter.Convert(info.MenuTitle, info.MenuTitleLength));
 
       // Receiving application information indicates that the CAM is ready for interaction.
       _isCamPresent = true;
@@ -228,7 +118,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
     }
 
     /// <summary>
-    /// Called by the driver when a CAM wants to close an MMI session.
+    /// Invoked by the driver when a CAM wants to close an MMI session.
     /// </summary>
     /// <param name="ciFilter">The CI filter.</param>
     /// <returns>an HRESULT indicating whether the MMI session was successfully closed</returns>
@@ -250,22 +140,18 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
     }
 
     /// <summary>
-    /// Called by the driver when an application protocol data unit is received from a CAM.
+    /// Invoked by the driver when an application protocol data unit is received from a CAM.
     /// </summary>
     /// <param name="ciFilter">The CI filter.</param>
     /// <param name="apduLength">The length of the APDU buffer in bytes.</param>
     /// <param name="apdu">A buffer containing the APDU.</param>
     /// <returns>an HRESULT indicating whether the APDU was successfully processed</returns>
-    private int OnApdu(IBaseFilter ciFilter, int apduLength, IntPtr apdu)
+    private int OnApdu(IBaseFilter ciFilter, int apduLength, byte[] apdu)
     {
       this.LogInfo("SmarDTV USB CI: APDU call back");
-
-      //Dump.DumpBinary(apdu, apduLength);
-      byte[] apduBytes = new byte[apduLength];
-      Marshal.Copy(apdu, apduBytes, 0, apduLength);
       lock (_caMenuCallBackLock)
       {
-        DvbMmiHandler.HandleMmiData(apduBytes, _caMenuCallBack);
+        DvbMmiHandler.HandleMmiData(apdu, _caMenuCallBack);
       }
       return 0;
     }
@@ -304,18 +190,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
       // products (we don't explicitly prevent this). The TV Server plugin allows each OEM CI product to be
       // linked to a single tuner. Here we need to know whether this tuner (ie. the one referred to by the
       // external identifier) is currently linked to any of the products.
-      Card tuner = CardManagement.GetCardByDevicePath(tunerExternalId, CardIncludeRelationEnum.None);
-      if (tuner == null)
-      {
-        this.LogError("SmarDTV USB CI: tuner external identifier {0} not found in database", tunerExternalId);
-        return false;
-      }
-
-      string tunerIdAsString = tuner.IdCard.ToString(CultureInfo.InvariantCulture);
       ReadOnlyCollection<SmarDtvUsbCiProduct> productList = SmarDtvUsbCiProduct.GetProductList();
       foreach (SmarDtvUsbCiProduct p in productList)
       {
-        if (!SettingsManagement.GetValue(p.DbSettingName, "-1").Equals(tunerIdAsString))
+        if (!SettingsManagement.GetValue(p.DbSettingName, string.Empty).Equals(tunerExternalId))
         {
           continue;
         }
@@ -568,37 +446,24 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
       _ciCallBack.OnApplicationInfo = new OnSmarDtvUsbCiApplicationInfo(OnApplicationInfo);
       _ciCallBack.OnCiState = new OnSmarDtvUsbCiState(OnCiState);
       _ciCallBack.OnCloseMmi = new OnSmarDtvUsbCiCloseMmi(OnCloseMmi);
-      _ciCallBackBuffer = Marshal.AllocCoTaskMem(CI_CALLBACK_SIZE);
-      Marshal.StructureToPtr(_ciCallBack, _ciCallBackBuffer, false);
-      int hr = (int)_ciType.GetMethod("USB2CI_Init").Invoke(_ciFilter, new object[] { _ciCallBackBuffer });
+      int hr = (int)_ciType.GetMethod("USB2CI_Init").Invoke(_ciFilter, new object[] { _ciCallBack });
       if (hr == (int)HResult.Severity.Success)
       {
-        IntPtr versionInfoBuffer = Marshal.AllocCoTaskMem(VERSION_INFO_SIZE);
-        try
+        SmarDtvUsbCiVersionInfo versionInfo = new SmarDtvUsbCiVersionInfo();
+        object[] parameters = new object[1] { versionInfo };
+        hr = (int)_ciType.GetMethod("USB2CI_GetVersion").Invoke(_ciFilter, parameters);
+        if (hr == (int)HResult.Severity.Success)
         {
-          for (byte i = 0; i < VERSION_INFO_SIZE; i++)
-          {
-            Marshal.WriteByte(versionInfoBuffer, i, 0);
-          }
-          hr = (int)_ciType.GetMethod("USB2CI_GetVersion").Invoke(_ciFilter, new object[] { versionInfoBuffer });
-          if (hr == (int)HResult.Severity.Success)
-          {
-            //Dump.DumpBinary(versionBuffer, VERSION_INFO_SIZE);
-            VersionInfo versionInfo = (VersionInfo)Marshal.PtrToStructure(versionInfoBuffer, typeof(VersionInfo));
-            this.LogDebug("  plugin version     = {0}", versionInfo.PluginVersion);
-            this.LogDebug("  BDA driver version = {0}", versionInfo.BdaVersion);
-            this.LogDebug("  USB driver version = {0}", versionInfo.UsbVersion);
-            this.LogDebug("  firmware version   = {0}", versionInfo.FirmwareVersion);
-            this.LogDebug("  FPGA version       = {0}", versionInfo.FpgaVersion);
-          }
-          else
-          {
-            this.LogWarn("SmarDTV USB CI: failed to retrieve version information, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-          }
+          versionInfo = (SmarDtvUsbCiVersionInfo)parameters[0];
+          this.LogDebug("  plugin version     = {0}", versionInfo.PluginVersion);
+          this.LogDebug("  BDA driver version = {0}", versionInfo.BdaVersion);
+          this.LogDebug("  USB driver version = {0}", versionInfo.UsbVersion);
+          this.LogDebug("  firmware version   = {0}", versionInfo.FirmwareVersion);
+          this.LogDebug("  FPGA version       = {0}", versionInfo.FpgaVersion);
         }
-        finally
+        else
         {
-          Marshal.FreeCoTaskMem(versionInfoBuffer);
+          this.LogWarn("SmarDTV USB CI: failed to retrieve version information, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         }
 
         this.LogDebug("SmarDTV USB CI: result = success");
@@ -618,17 +483,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
     {
       this.LogDebug("SmarDTV USB CI: close conditional access interface");
 
-      _isCamPresent = false;
-      _isCamReady = false;
-      if (_ciCallBackBuffer != IntPtr.Zero)
-      {
-        Marshal.Release(_ciCallBackBuffer);
-        _ciCallBackBuffer = IntPtr.Zero;
-      }
-
-      this.LogDebug("SmarDTV USB CI: result = success");
-      _isCaInterfaceOpen = false;
-      return true;
+      // I don't know of any way to safely shutdown the interface (stop call
+      // backs etc.) except to dispose the filter, which we can't do. It seems
+      // that you'll get a BSOD if you invoke USB2CI_Init() with null call back
+      // references or a null structure. So the best we can do is not close the
+      // interface and warn to the log.
+      this.LogWarn("SmarDTV USB CI: not possible to close conditional access interface without destroying graph");
+      return false;
     }
 
     /// <summary>
@@ -878,10 +739,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
     /// </summary>
     public override void Dispose()
     {
-      if (_isSmarDtvUsbCi)
-      {
-        CloseConditionalAccessInterface();
-      }
       if (_graph != null)
       {
         _graph.RemoveFilter(_ciFilter);

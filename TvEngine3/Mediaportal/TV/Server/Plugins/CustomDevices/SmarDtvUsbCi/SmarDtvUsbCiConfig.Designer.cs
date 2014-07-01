@@ -112,6 +112,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
         tunerSelectionCombo.Name = "tunerSelectionCombo" + i;
         tunerSelectionCombo.Size = new Size(340, 20);
         tunerSelectionCombo.TabIndex = (i * componentCount) + 5;
+        tunerSelectionCombo.DisplayMember = "Name";
         gb.Controls.Add(tunerSelectionCombo);
         _tunerSelections[i] = tunerSelectionCombo;
 
