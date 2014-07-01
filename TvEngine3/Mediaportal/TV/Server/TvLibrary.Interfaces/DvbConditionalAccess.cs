@@ -405,7 +405,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// </summary>
     Mpeg2Part7Audio = 0x0f,
     /// <summary>
-    /// MPEG ISO/IEC 14496-2 visual (MPEG 4)
+    /// MPEG ISO/IEC 14496-2 visual (MPEG 4 video)
     /// </summary>
     Mpeg4Part2Video = 0x10,
     /// <summary>
@@ -449,7 +449,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// </summary>
     Mpeg2Part11Ipmp = 0x1a,
     /// <summary>
-    /// MPEG AVC video stream as defined in ITU-T Rec. H.264 | ISO/IEC 14496-10 video
+    /// MPEG AVC video stream conforming to one or more profiles defined in Annex A of ITU-T Rec. H.264
     /// </summary>
     Mpeg4Part10Video = 0x1b,
     /// <summary>
@@ -477,17 +477,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// </summary>
     JpegVideo = 0x21,
     /// <summary>
-    /// MPEG ITU-T Rec. H.262 | ISO/IEC 13818-2 video with stereoscopic content coded using frame packing arrangement information
-    /// </summary>
-    Mpeg2Part2VideoStereoscopicFramePacked = 0x22,
-    /// <summary>
     /// MPEG ITU-T Rec. H.262 | ISO/IEC 13818-2 video with additional video stream for service-compatible stereoscopic services
     /// </summary>
-    Mpeg2Part2VideoStereoscopicAdditionalStream = 0x23,
+    Mpeg2Part2VideoStereoscopicAdditionalStream = 0x22,
     /// <summary>
     /// MPEG ITU-T Rec. H.264 | ISO/IEC 14496-10 video with additional video stream for service-compatible stereoscopic services
     /// </summary>
-    Mpeg4Part10VideoStereoscopicAdditionalStream = 0x24,
+    Mpeg4Part10VideoStereoscopicAdditionalStream = 0x23,
+    /// <summary>
+    /// MPEG ITU-T Rec. H.265 | ISO/IEC 23008-2 visual
+    /// </summary>
+    MpegHPart2 = 0x24,
 
     // 0x25 - 0x7e  ITU-T Rec. H.222.0 | ISO/IEC 13818-1 reserved
 

@@ -27,20 +27,20 @@ extern void LogDebug(const wchar_t* fmt, ...);
 //-----------------------------------------------------------------------------
 // UTILITY FUNCTIONS
 //-----------------------------------------------------------------------------
-bool IsVideoStream(byte logicalStreamType)
+bool IsVideoStream(byte streamType)
 {
-  if (logicalStreamType == STREAM_TYPE_VIDEO_MPEG1 ||
-    logicalStreamType == STREAM_TYPE_VIDEO_MPEG2 ||
-    logicalStreamType == STREAM_TYPE_VIDEO_MPEG2_STEREO_FP ||
-    logicalStreamType == STREAM_TYPE_VIDEO_MPEG2_STEREO ||
-    logicalStreamType == STREAM_TYPE_VIDEO_MPEG4_PART2 ||
-    logicalStreamType == STREAM_TYPE_VIDEO_MPEG4_PART10_ANNEXA ||
-    logicalStreamType == STREAM_TYPE_VIDEO_MPEG4_PART10_ANNEXG ||
-    logicalStreamType == STREAM_TYPE_VIDEO_MPEG4_PART10_ANNEXH ||
-    logicalStreamType == STREAM_TYPE_VIDEO_MPEG4_PART10_STEREO ||
-    logicalStreamType == STREAM_TYPE_VIDEO_AUX ||
-    logicalStreamType == STREAM_TYPE_VIDEO_JPEG ||
-    logicalStreamType == STREAM_TYPE_VIDEO_VC1)
+  if (streamType == STREAM_TYPE_VIDEO_MPEG1 ||
+    streamType == STREAM_TYPE_VIDEO_MPEG2 ||
+    streamType == STREAM_TYPE_VIDEO_MPEG2_VIEW ||
+    streamType == STREAM_TYPE_VIDEO_MPEG4_PART2 ||
+    streamType == STREAM_TYPE_VIDEO_MPEG4_PART10_ANNEXA ||
+    streamType == STREAM_TYPE_VIDEO_MPEG4_PART10_ANNEXG ||
+    streamType == STREAM_TYPE_VIDEO_MPEG4_PART10_ANNEXH ||
+    streamType == STREAM_TYPE_VIDEO_MPEG4_PART10_VIEW ||
+    streamType == STREAM_TYPE_VIDEO_MPEGH_PART2 ||
+    streamType == STREAM_TYPE_VIDEO_AUX ||
+    streamType == STREAM_TYPE_VIDEO_JPEG ||
+    streamType == STREAM_TYPE_VIDEO_VC1)
   {
     return true;
   }
@@ -180,19 +180,19 @@ const wchar_t* CPidTable::StreamFormatAsString(byte streamType)
     case STREAM_TYPE_VIDEO_MPEG4_PART10_ANNEXA:
       return L"H.264";
     case STREAM_TYPE_VIDEO_AUX:
-      return L"aux";
+      return L"ISO 23000-2";
     case STREAM_TYPE_VIDEO_MPEG4_PART10_ANNEXG:
-      return L"H.264 G";
+      return L"H.264-G SVC";
     case STREAM_TYPE_VIDEO_MPEG4_PART10_ANNEXH:
-      return L"H.264 H";
+      return L"H.264-H MVC";
     case STREAM_TYPE_VIDEO_JPEG:
       return L"JPEG";
-    case STREAM_TYPE_VIDEO_MPEG2_STEREO_FP:
-      return L"MPEG 2 frame-packed 3D";
-    case STREAM_TYPE_VIDEO_MPEG2_STEREO:
-      return L"MPEG 2 3D";
-    case STREAM_TYPE_VIDEO_MPEG4_PART10_STEREO:
-      return L"H.264 3D";
+    case STREAM_TYPE_VIDEO_MPEG2_VIEW:
+      return L"MPEG 2 view";
+    case STREAM_TYPE_VIDEO_MPEG4_PART10_VIEW:
+      return L"H.264 view";
+    case STREAM_TYPE_VIDEO_MPEGH_PART2:
+      return L"H.265";
     case STREAM_TYPE_VIDEO_VC1:
       return L"VC-1";
 

@@ -31,14 +31,14 @@
 #define STREAM_TYPE_VIDEO_MPEG1                 0x01
 #define STREAM_TYPE_VIDEO_MPEG2                 0x02
 #define STREAM_TYPE_VIDEO_MPEG4_PART2           0x10
-#define STREAM_TYPE_VIDEO_MPEG4_PART10_ANNEXA   0x1b
-#define STREAM_TYPE_VIDEO_AUX                   0x1e
-#define STREAM_TYPE_VIDEO_MPEG4_PART10_ANNEXG   0x1f
-#define STREAM_TYPE_VIDEO_MPEG4_PART10_ANNEXH   0x20
+#define STREAM_TYPE_VIDEO_MPEG4_PART10_ANNEXA   0x1b  // h.264/AVC
+#define STREAM_TYPE_VIDEO_AUX                   0x1e  // ISO/IEC 23002-3; compression specified by descriptor
+#define STREAM_TYPE_VIDEO_MPEG4_PART10_ANNEXG   0x1f  // SVC sub-bitstream
+#define STREAM_TYPE_VIDEO_MPEG4_PART10_ANNEXH   0x20  // MVC sub-bitstream
 #define STREAM_TYPE_VIDEO_JPEG                  0x21
-#define STREAM_TYPE_VIDEO_MPEG2_STEREO_FP       0x22  // frame-packed stereoscopic
-#define STREAM_TYPE_VIDEO_MPEG2_STEREO          0x23
-#define STREAM_TYPE_VIDEO_MPEG4_PART10_STEREO   0x24
+#define STREAM_TYPE_VIDEO_MPEG2_VIEW            0x22  // service-compatible 3DTV, MPEG 2 additional view
+#define STREAM_TYPE_VIDEO_MPEG4_PART10_VIEW     0x23  // service-compatible 3DTV, h.264/AVC additional view
+#define STREAM_TYPE_VIDEO_MPEGH_PART2           0x24  // h.265/HEVC
 #define STREAM_TYPE_VIDEO_VC1                   0xea  // this is the [SMPTE] standard stream type; DVB uses STREAM_TYPE_PES_PRIVATE_DATA with a registration descriptor
 
 #define STREAM_TYPE_AUDIO_MPEG1                 0x03
