@@ -469,11 +469,6 @@ Packet* CDeMultiplexer::GetVideo()
   }
   Packet * ret = m_playlistManager->GetNextVideoPacket();
 
-  if (ret && ret->bFakeData)
-  {
-    ReadFromFile();
-  }
-
   return ret;
 }
 
