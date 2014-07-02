@@ -1779,7 +1779,7 @@ DWORD CMPUrlSourceSplitter::ThreadProc()
         Sleep(1);
       }
 
-      if (this->CanReportStreamTime() && ((GetTickCount() - lastReportStreamTime) > 1000))
+      if (this->CanReportStreamTime() && (!this->IsDownloadingFile()) && ((GetTickCount() - lastReportStreamTime) > 1000))
       {
         // report stream time to demuxers, parsers and protocols
         lastReportStreamTime = GetTickCount();

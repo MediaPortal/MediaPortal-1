@@ -694,129 +694,127 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
             request->SetReceivedDataTimeout(this->receiveDataTimeout);
             request->SetNetworkInterfaceName(this->configuration->GetValue(PARAMETER_NAME_INTERFACE, true, NULL));
 
-            result = this->mainCurlInstance->Initialize(request);
-          }
-          FREE_MEM_CLASS(request);
-
-          CHECK_CONDITION_EXECUTE(FAILED(result), this->connectionState = InitializeFailed);
-
-          if (SUCCEEDED(result))
-          {
-            if (this->sessionDescription == NULL)
+            if (SUCCEEDED(this->mainCurlInstance->Initialize(request)))
             {
-              const wchar_t *rawSDP = this->mainCurlInstance->GetRtspDownloadResponse()->GetRawSessionDescription();
-              unsigned int rawSDPlength = wcslen(rawSDP);
-
-              this->sessionDescription = new CSessionDescription(&result);
-              CHECK_POINTER_HRESULT(result, this->sessionDescription, result, E_OUTOFMEMORY);
-              CHECK_CONDITION_HRESULT(result, this->sessionDescription->Parse(rawSDP, rawSDPlength), result, E_RTSP_SESSION_DESCRIPTION_PARSE_ERROR);
-            }
-
-            if (SUCCEEDED(result))
-            {
-              // check for normal play time range attribute in session description
-              // if normal play time range attribute has start and end time, then session is not live session
-
-              CNormalPlayTimeRangeAttribute *nptAttribute = NULL;
-              for (unsigned int i = 0; i < this->sessionDescription->GetAttributes()->Count(); i++)
+              if (this->sessionDescription == NULL)
               {
-                CAttribute *attribute = this->sessionDescription->GetAttributes()->GetItem(i);
+                const wchar_t *rawSDP = this->mainCurlInstance->GetRtspDownloadResponse()->GetRawSessionDescription();
+                unsigned int rawSDPlength = wcslen(rawSDP);
 
-                if (attribute->IsInstanceTag(TAG_ATTRIBUTE_INSTANCE_NORMAL_PLAY_TIME_RANGE))
-                {
-                  nptAttribute = dynamic_cast<CNormalPlayTimeRangeAttribute *>(attribute);
-                  break;
-                }
+                this->sessionDescription = new CSessionDescription(&result);
+                CHECK_POINTER_HRESULT(result, this->sessionDescription, result, E_OUTOFMEMORY);
+                CHECK_CONDITION_HRESULT(result, this->sessionDescription->Parse(rawSDP, rawSDPlength), result, E_RTSP_SESSION_DESCRIPTION_PARSE_ERROR);
               }
-
-              // RTSP is by default for live streams
-              this->flags |= PROTOCOL_PLUGIN_FLAG_LIVE_STREAM_DETECTED;
-
-              if (nptAttribute != NULL)
-              {
-                if (nptAttribute->IsSetStartTime() && nptAttribute->IsSetEndTime() && (nptAttribute->GetEndTime() >= nptAttribute->GetStartTime()))
-                {
-                  // not live stream
-                  this->flags &= ~PROTOCOL_PLUGIN_FLAG_LIVE_STREAM_DETECTED;
-                }
-              }
-
-              // if in configuration is specified live stream flag, then use it and ignore normal play time attribute
-              //this->liveStream = this->configurationParameters->GetValueBool(PARAMETER_NAME_LIVE_STREAM, true, this->liveStream);
-            }
-
-            // all parameters set
-            // start receiving data
-
-            CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), this->mainCurlInstance->StartReceivingData(), result);
-          }
-
-          CHECK_CONDITION_EXECUTE(SUCCEEDED(result), this->connectionState = Opening);
-        }
-
-        if (SUCCEEDED(result))
-        {
-          // create same count of RTSP stream tracks as RTSP tracks in CURL instance
-          CLockMutex(this->lockCurlMutex, INFINITE);
-
-          if (this->streamTracks->Count() != this->mainCurlInstance->GetRtspDownloadResponse()->GetRtspTracks()->Count())
-          {
-            this->streamTracks->Clear();
-
-            for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->mainCurlInstance->GetRtspDownloadResponse()->GetRtspTracks()->Count())); i++)
-            {
-              CRtspTrack *track = this->mainCurlInstance->GetRtspDownloadResponse()->GetRtspTracks()->GetItem(i);
-              CRtspStreamTrack *streamTrack = new CRtspStreamTrack(&result);
-              CHECK_POINTER_HRESULT(result, streamTrack, result, E_OUTOFMEMORY);
-
-              streamTrack->SetLastReceiveDataTime(GetTickCount());
-              streamTrack->SetClockFrequency(track->GetStatistics()->GetClockFrequency());
-              streamTrack->SetReceivedAllDataFlag(false);
-
-              CHECK_CONDITION_HRESULT(result, this->streamTracks->Add(streamTrack), result, E_OUTOFMEMORY);
-              CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(streamTrack));
-            }
-
-            // for each stream track add first stream fragment
-            for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->streamTracks->Count())); i++)
-            {
-              CRtspStreamTrack *track = this->streamTracks->GetItem(i);
-
-              CRtspStreamFragment *fragment = new CRtspStreamFragment(&result);
-              CHECK_POINTER_HRESULT(result, fragment, result, E_OUTOFMEMORY);
-
-              fragment->SetFragmentStartPosition(0);
-              CHECK_CONDITION_HRESULT(result, track->GetStreamFragments()->Insert(0, fragment), result, E_OUTOFMEMORY);
 
               if (SUCCEEDED(result))
               {
-                // set start searching index to current processing stream fragment
-                track->GetStreamFragments()->SetStartSearchingIndex(track->GetStreamFragmentProcessing());
-                // set count of fragments to search for specific position
-                unsigned int firstNotDownloadedFragmentIndex = track->GetStreamFragments()->GetFirstNotDownloadedStreamFragment(track->GetStreamFragmentProcessing());
-                track->GetStreamFragments()->SetSearchCount(((firstNotDownloadedFragmentIndex == UINT_MAX) ? track->GetStreamFragments()->Count() : firstNotDownloadedFragmentIndex) - track->GetStreamFragmentProcessing());
+                // check for normal play time range attribute in session description
+                // if normal play time range attribute has start and end time, then session is not live session
 
-                track->SetStreamFragmentToDownload(0);
+                CNormalPlayTimeRangeAttribute *nptAttribute = NULL;
+                for (unsigned int i = 0; i < this->sessionDescription->GetAttributes()->Count(); i++)
+                {
+                  CAttribute *attribute = this->sessionDescription->GetAttributes()->GetItem(i);
+
+                  if (attribute->IsInstanceTag(TAG_ATTRIBUTE_INSTANCE_NORMAL_PLAY_TIME_RANGE))
+                  {
+                    nptAttribute = dynamic_cast<CNormalPlayTimeRangeAttribute *>(attribute);
+                    break;
+                  }
+                }
+
+                // RTSP is by default for live streams
+                this->flags |= PROTOCOL_PLUGIN_FLAG_LIVE_STREAM_DETECTED;
+
+                if (nptAttribute != NULL)
+                {
+                  if (nptAttribute->IsSetStartTime() && nptAttribute->IsSetEndTime() && (nptAttribute->GetEndTime() >= nptAttribute->GetStartTime()))
+                  {
+                    // not live stream
+                    this->flags &= ~PROTOCOL_PLUGIN_FLAG_LIVE_STREAM_DETECTED;
+                  }
+                }
+
+                // if in configuration is specified live stream flag, then use it and ignore normal play time attribute
+                //this->liveStream = this->configurationParameters->GetValueBool(PARAMETER_NAME_LIVE_STREAM, true, this->liveStream);
               }
-              else
+
+              // all parameters set
+              // start receiving data
+
+              if (SUCCEEDED(this->mainCurlInstance->StartReceivingData()))
               {
-                FREE_MEM_CLASS(fragment);
+                this->connectionState = Opening;
+
+                // create same count of RTSP stream tracks as RTSP tracks in CURL instance
+                CLockMutex(this->lockCurlMutex, INFINITE);
+
+                if (this->streamTracks->Count() != this->mainCurlInstance->GetRtspDownloadResponse()->GetRtspTracks()->Count())
+                {
+                  this->streamTracks->Clear();
+
+                  for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->mainCurlInstance->GetRtspDownloadResponse()->GetRtspTracks()->Count())); i++)
+                  {
+                    CRtspTrack *track = this->mainCurlInstance->GetRtspDownloadResponse()->GetRtspTracks()->GetItem(i);
+                    CRtspStreamTrack *streamTrack = new CRtspStreamTrack(&result);
+                    CHECK_POINTER_HRESULT(result, streamTrack, result, E_OUTOFMEMORY);
+
+                    streamTrack->SetLastReceiveDataTime(GetTickCount());
+                    streamTrack->SetClockFrequency(track->GetStatistics()->GetClockFrequency());
+                    streamTrack->SetReceivedAllDataFlag(false);
+
+                    CHECK_CONDITION_HRESULT(result, this->streamTracks->Add(streamTrack), result, E_OUTOFMEMORY);
+                    CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(streamTrack));
+                  }
+
+                  // for each stream track add first stream fragment
+                  for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->streamTracks->Count())); i++)
+                  {
+                    CRtspStreamTrack *track = this->streamTracks->GetItem(i);
+
+                    CRtspStreamFragment *fragment = new CRtspStreamFragment(&result);
+                    CHECK_POINTER_HRESULT(result, fragment, result, E_OUTOFMEMORY);
+
+                    fragment->SetFragmentStartPosition(0);
+                    CHECK_CONDITION_HRESULT(result, track->GetStreamFragments()->Insert(0, fragment), result, E_OUTOFMEMORY);
+
+                    if (SUCCEEDED(result))
+                    {
+                      // set start searching index to current processing stream fragment
+                      track->GetStreamFragments()->SetStartSearchingIndex(track->GetStreamFragmentProcessing());
+                      // set count of fragments to search for specific position
+                      unsigned int firstNotDownloadedFragmentIndex = track->GetStreamFragments()->GetFirstNotDownloadedStreamFragment(track->GetStreamFragmentProcessing());
+                      track->GetStreamFragments()->SetSearchCount(((firstNotDownloadedFragmentIndex == UINT_MAX) ? track->GetStreamFragments()->Count() : firstNotDownloadedFragmentIndex) - track->GetStreamFragmentProcessing());
+
+                      track->SetStreamFragmentToDownload(0);
+                    }
+                    else
+                    {
+                      FREE_MEM_CLASS(fragment);
+                    }
+                  }
+                }
+
+                // set stream fragment downloading for each track (based on start time)
+                for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->streamTracks->Count())); i++)
+                {
+                  CRtspStreamTrack *track = this->streamTracks->GetItem(i);
+
+                  track->SetStreamFragmentDownloading(track->GetStreamFragmentToDownload());
+
+                  // we are downloading stream fragment, so reset scheduled download
+                  track->SetStreamFragmentToDownload(UINT_MAX);
+                }
+
+                CHECK_CONDITION_EXECUTE(SUCCEEDED(result), this->connectionState = Opened);
               }
             }
+            else
+            {
+              this->connectionState = InitializeFailed;
+            }
           }
-
-          // set stream fragment downloading for each track (based on start time)
-          for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->streamTracks->Count())); i++)
-          {
-            CRtspStreamTrack *track = this->streamTracks->GetItem(i);
-
-            track->SetStreamFragmentDownloading(track->GetStreamFragmentToDownload());
-
-            // we are downloading stream fragment, so reset scheduled download
-            track->SetStreamFragmentToDownload(UINT_MAX);
-          }
-
-          CHECK_CONDITION_EXECUTE(SUCCEEDED(result), this->connectionState = Opened);
+          FREE_MEM_CLASS(request);
         }
       }
     }

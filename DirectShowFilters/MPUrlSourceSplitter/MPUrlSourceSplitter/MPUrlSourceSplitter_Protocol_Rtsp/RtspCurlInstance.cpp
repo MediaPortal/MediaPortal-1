@@ -2200,7 +2200,7 @@ HRESULT CRtspCurlInstance::SendAndReceive(CRtspRequest *request, const wchar_t *
     {
       CLockMutex lock(this->mutex, INFINITE);
 
-      if (this->rtspDownloadResponse->GetRtspResponse()->IsEmpty())
+      if ((this->rtspDownloadResponse->GetRtspResponse() == NULL) || (this->rtspDownloadResponse->GetRtspResponse()->IsEmpty()))
       {
         // this should not happen, we should always have response or error (maybe timeout which is also error)
         this->logger->Log(LOGGER_ERROR, L"%s: %s: no response for RTSP %s request", this->protocolName, functionName, rtspMethodName);
