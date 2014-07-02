@@ -430,7 +430,47 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
             }
           }
 
-          CHECK_CONDITION_EXECUTE(receivedAllData, this->mainCurlInstance->StopReceivingData());
+          if (receivedAllData)
+          {
+            this->mainCurlInstance->StopReceivingData();
+
+            // check last fragment of each track
+            // if all are downloaded, then we reached end of stream - this doesn't mean that there is not gap
+            for (unsigned int i = 0; i < this->streamTracks->Count(); i++)
+            {
+              CRtspStreamTrack *track = this->streamTracks->GetItem(i);
+
+              if (track->GetStreamFragments()->Count() != 0)
+              {
+                CRtspStreamFragment *lastFragment = track->GetStreamFragments()->GetItem(track->GetStreamFragments()->Count() - 1);
+
+                receivedAllData &= lastFragment->IsDownloaded();
+              }
+            }
+
+            if (receivedAllData)
+            {
+              // set end of stream reached and also set stream total length
+              this->flags |= PROTOCOL_PLUGIN_FLAG_END_OF_STREAM_REACHED;
+
+              for (unsigned int i = 0; (i < this->streamTracks->Count()); i++)
+              {
+                CRtspStreamTrack *track = this->streamTracks->GetItem(i);
+
+                if (!track->IsSetStreamLength())
+                {
+                  track->SetStreamLength(track->GetBytePosition());
+                  this->logger->Log(LOGGER_VERBOSE, L"%s: %s: track %u, setting total length: %llu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, i, track->GetStreamLength());
+                  track->SetStreamLengthFlag(true);
+                }
+
+                if (!track->IsSetEndOfStream())
+                {
+                  track->SetEndOfStreamFlag(true);
+                }
+              }
+            }
+          }
         }
         else
         {
@@ -746,16 +786,16 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
               CHECK_POINTER_HRESULT(result, fragment, result, E_OUTOFMEMORY);
 
               fragment->SetFragmentStartPosition(0);
-              // set start searching index to current processing stream fragment
-              track->GetStreamFragments()->SetStartSearchingIndex(track->GetStreamFragmentProcessing());
-              // set count of fragments to search for specific position
-              unsigned int firstNotDownloadedFragmentIndex = track->GetStreamFragments()->GetFirstNotDownloadedStreamFragment(track->GetStreamFragmentProcessing());
-              track->GetStreamFragments()->SetSearchCount(((firstNotDownloadedFragmentIndex == UINT_MAX) ? track->GetStreamFragments()->Count() : firstNotDownloadedFragmentIndex) - track->GetStreamFragmentProcessing());
-
               CHECK_CONDITION_HRESULT(result, track->GetStreamFragments()->Insert(0, fragment), result, E_OUTOFMEMORY);
 
               if (SUCCEEDED(result))
               {
+                // set start searching index to current processing stream fragment
+                track->GetStreamFragments()->SetStartSearchingIndex(track->GetStreamFragmentProcessing());
+                // set count of fragments to search for specific position
+                unsigned int firstNotDownloadedFragmentIndex = track->GetStreamFragments()->GetFirstNotDownloadedStreamFragment(track->GetStreamFragmentProcessing());
+                track->GetStreamFragments()->SetSearchCount(((firstNotDownloadedFragmentIndex == UINT_MAX) ? track->GetStreamFragments()->Count() : firstNotDownloadedFragmentIndex) - track->GetStreamFragmentProcessing());
+
                 track->SetStreamFragmentToDownload(0);
               }
               else
@@ -938,7 +978,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
             {
               // we are receiving data, wait for all requested data
             }
-            else if (streamTrack->IsSetEndOfStream() && ((dataRequest->GetStart() + dataRequest->GetLength()) >= streamTrack->GetStreamLength()))
+            else if (this->IsEndOfStreamReached() && ((dataRequest->GetStart() + dataRequest->GetLength()) >= streamTrack->GetStreamLength()))
             {
               // we are not receiving more data, complete request
               this->logger->Log(LOGGER_VERBOSE, L"%s: %s: no more data available, request '%u', stream '%u', start '%lld', size '%u', stream length: '%lld'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, dataRequest->GetId(), dataRequest->GetStreamId(), dataRequest->GetStart(), dataRequest->GetLength(), streamTrack->GetStreamLength());

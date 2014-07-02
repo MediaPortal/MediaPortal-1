@@ -304,6 +304,8 @@ HRESULT CProtocolHoster::ProcessStreamPackage(CStreamPackage *streamPackage)
           {
             CStreamPackage *package = this->streamPackages->GetItem(i);
 
+            CHECK_CONDITION_EXECUTE(this->activeProtocol == NULL, package->SetCompleted(E_NO_ACTIVE_PROTOCOL));
+
             if ((package->GetState() == CStreamPackage::Completed) &&
               (package->GetRequest()->GetId() == streamPackage->GetRequest()->GetId()) &&
               (package->GetRequest()->GetStreamId() == streamPackage->GetRequest()->GetStreamId()))

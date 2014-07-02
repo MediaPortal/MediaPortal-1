@@ -186,7 +186,7 @@ bool CRtspStreamFragmentCollection::Insert(unsigned int position, CCacheFileItem
 
   if (result)
   {
-    if (position < this->startSearchingIndex)
+    if (position <= this->startSearchingIndex)
     {
       this->startSearchingIndex++;
     }
