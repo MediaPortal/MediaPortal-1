@@ -459,11 +459,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
     private struct DefaultMmiData
     {
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_STRING_LENGTH)]
       public byte[] Title;
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_STRING_LENGTH)]
       public byte[] SubTitle;
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_STRING_LENGTH)]
       public byte[] Footer;
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = DEFAULT_MAX_CAM_MENU_ENTRIES)]
       public DefaultMmiMenuEntry[] Entries;
@@ -476,11 +476,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       [MarshalAs(UnmanagedType.Bool)]
       public bool IsBlindAnswer;
       public int AnswerLength;      // enquiry: expected answer length, enquiry answer: actual answer length
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_STRING_LENGTH)]
       public byte[] Prompt;
 
       public int ChoiceIndex;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_STRING_LENGTH)]
       public string Answer;
 
       public int Type;              // 1, 2 (menu/list, select entry) or 3 (enquiry, enquiry answer)
@@ -498,11 +498,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
     private struct TerraTecMmiData
     {
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_STRING_LENGTH)]
       public byte[] Title;
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_STRING_LENGTH)]
       public byte[] SubTitle;
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_STRING_LENGTH)]
       public byte[] Footer;
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = TERRATEC_MAX_CAM_MENU_ENTRIES)]
       public TerraTecMmiMenuEntry[] Entries;
@@ -514,11 +514,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       [MarshalAs(UnmanagedType.Bool)]
       public bool IsBlindAnswer;
       public int AnswerLength;      // enquiry: expected answer length, enquiry answer: actual answer length
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_STRING_LENGTH)]
       public byte[] Prompt;
 
       public int ChoiceIndex;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_STRING_LENGTH)]
       public string Answer;
 
       public int Type;              // 1, 2 (menu/list, select entry) or 3 (enquiry, enquiry answer)
@@ -594,6 +594,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
 
     private const int INSTANCE_SIZE = 32;   // The size of a property instance (KSP_NODE) parameter.
     private const int COMMAND_SIZE = 40;
+    private const int MAX_STRING_LENGTH = 256;
 
     private static readonly int DEVICE_INFO_SIZE = Marshal.SizeOf(typeof(DeviceInfo));            // 240
     private static readonly int DRIVER_INFO_SIZE = Marshal.SizeOf(typeof(DriverInfo));            // 256
@@ -617,9 +618,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
     private const int MMI_HANDLER_THREAD_WAIT_TIME = 500;             // unit = ms
     private const int REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME = 100; // unit = ms
 
-    // TerraTec have entended the length and number of
-    // possible CAM menu entries in the MMI data struct
-    // returned by their drivers.
+    // TerraTec have entended the length and number of possible CAM menu
+    // entries in the MMI data struct returned by their drivers.
     private const int DEFAULT_MMI_DATA_SIZE = 1684;
     private const int DEFAULT_MAX_CAM_MENU_ENTRIES = 9;
 
