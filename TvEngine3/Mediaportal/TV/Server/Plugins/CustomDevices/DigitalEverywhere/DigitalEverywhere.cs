@@ -1587,7 +1587,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
     private int ConfigurePidFilter(bool enable)
     {
       ushort[] pids = new ushort[MAX_PID_FILTER_PID_COUNT];
-      _pidFilterPids.CopyTo(pids, 0, Math.Min(_pidFilterPids.Count, MAX_PID_FILTER_PID_COUNT));
+      byte actualPidCount = (byte)Math.Min(_pidFilterPids.Count, MAX_PID_FILTER_PID_COUNT);
+      _pidFilterPids.CopyTo(pids, 0, actualPidCount);
 
       BdaExtensionProperty property = BdaExtensionProperty.SelectPidsDvbS;
       int bufferSize = DVBS_PID_FILTER_PARAMS_SIZE;
@@ -1596,7 +1597,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
         DvbsPidFilterParams filter = new DvbsPidFilterParams();
         filter.CurrentTransponder = true;
         filter.FullTransponder = !enable;
-        filter.NumberOfValidPids = (byte)_pidFilterPids.Count;
+        filter.NumberOfValidPids = actualPidCount;
         filter.FilterPids = pids;
         Marshal.StructureToPtr(filter, _generalBuffer, false);
       }
@@ -1607,7 +1608,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
         DvbtPidFilterParams filter = new DvbtPidFilterParams();
         filter.CurrentTransponder = true;
         filter.FullTransponder = !enable;
-        filter.NumberOfValidPids = (byte)_pidFilterPids.Count;
+        filter.NumberOfValidPids = actualPidCount;
         filter.FilterPids = pids;
         Marshal.StructureToPtr(filter, _generalBuffer, false);
       }
