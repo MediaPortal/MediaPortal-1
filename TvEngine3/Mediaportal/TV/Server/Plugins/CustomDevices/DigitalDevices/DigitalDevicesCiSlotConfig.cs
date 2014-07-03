@@ -125,7 +125,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
     public static IDictionary<string, DigitalDevicesCiSlotConfig> ReadAllSettings()
     {
       ISettingService settingServiceAgent = ServiceAgents.Instance.SettingServiceAgent;
-      Dictionary<string, DigitalDevicesCiSlotConfig> settings = new Dictionary<string, DigitalDevicesCiSlotConfig>();
+      Dictionary<string, DigitalDevicesCiSlotConfig> settings = new Dictionary<string, DigitalDevicesCiSlotConfig>(4);
       byte i = 0;
       while (true)  // Loop until we don't find any more settings.
       {

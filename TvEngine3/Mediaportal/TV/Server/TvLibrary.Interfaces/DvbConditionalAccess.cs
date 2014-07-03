@@ -3181,7 +3181,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
 
       // Build a dictionary of PID info.
       uint providerId;
-      d._pids = new Dictionary<ushort, HashSet<uint>>(); // PID -> provider ID(s)
+      d._pids = new Dictionary<ushort, HashSet<uint>>(5); // PID -> provider ID(s)
       d._pids.Add(d._caPid, new HashSet<uint>());
 
       // Canal Plus

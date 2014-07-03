@@ -423,7 +423,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TwinhanHidRemote
       public bool IsTerraTec = false;
 
       // virtual key combination => scan code
-      public IDictionary<int, byte> CustomMapping = new Dictionary<int, byte>();
+      public IDictionary<int, byte> CustomMapping = new Dictionary<int, byte>(64);
 
       #endregion
 
@@ -838,7 +838,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TwinhanHidRemote
 
     #region mappings
 
-    private static readonly IDictionary<int, byte> MAPPING_DTV_DVB = new Dictionary<int, byte>()
+    private static readonly IDictionary<int, byte> MAPPING_DTV_DVB = new Dictionary<int, byte>(62)
     {
       { (int)UsageType.Keyboard | (int)NativeMethods.VirtualKey.VK_TAB,                                                             0x00 },
       { (int)UsageType.Keyboard | (int)NativeMethods.VirtualKey.VK_2,                                                               0x01 },
@@ -907,7 +907,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TwinhanHidRemote
       { (int)UsageType.Keyboard | (int)NativeMethods.VirtualKey.VK_B | (int)VirtualKeyModifier.Shift,                               0x5f }
     };
 
-    private static readonly IDictionary<int, byte> MAPPING_CYBERLINK = new Dictionary<int, byte>()
+    private static readonly IDictionary<int, byte> MAPPING_CYBERLINK = new Dictionary<int, byte>(51)
     {
       { (int)UsageType.Keyboard | (int)NativeMethods.VirtualKey.VK_TAB,               0x00 },
       { (int)UsageType.Keyboard | (int)NativeMethods.VirtualKey.VK_2,                 0x01 },
@@ -970,7 +970,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TwinhanHidRemote
       { (int)UsageType.Raw      | 0x5d,                                               0x5d }
     };
 
-    private static readonly IDictionary<int, byte> MAPPING_INTERVIDEO = new Dictionary<int, byte>()
+    private static readonly IDictionary<int, byte> MAPPING_INTERVIDEO = new Dictionary<int, byte>(30)
     {
       { (int)UsageType.Keyboard | (int)NativeMethods.VirtualKey.VK_TAB,               0x00 },
       { (int)UsageType.Keyboard | (int)NativeMethods.VirtualKey.VK_2,                 0x01 },
@@ -1017,7 +1017,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TwinhanHidRemote
       { (int)UsageType.Keyboard | (int)NativeMethods.VirtualKey.VK_5 | (int)(VirtualKeyModifier.Control | VirtualKeyModifier.Shift | VirtualKeyModifier.Alt),     0x5d }
     };
 
-    private static readonly IDictionary<int, byte> MAPPING_MCE = new Dictionary<int, byte>()
+    private static readonly IDictionary<int, byte> MAPPING_MCE = new Dictionary<int, byte>(44)
     {
       { (int)UsageType.Keyboard | (int)NativeMethods.VirtualKey.VK_2,                 0x01 },
       { (int)UsageType.Consumer | (int)HidConsumerUsage.ChannelDecrement,             0x02 },
@@ -1077,7 +1077,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TwinhanHidRemote
       { (int)UsageType.Raw      | 0x5d,                                               0x5d }
     };
 
-    private static readonly IDictionary<int, byte> MAPPING_DTV_DVB_WM_INPUT = new Dictionary<int, byte>()
+    private static readonly IDictionary<int, byte> MAPPING_DTV_DVB_WM_INPUT = new Dictionary<int, byte>(62)
     {
       { (int)UsageType.Ascii    | 0x3a,                                               0x00 },
       { (int)UsageType.Ascii    | 0x32,                                               0x01 },
@@ -1146,7 +1146,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TwinhanHidRemote
       { (int)UsageType.Raw      | 0x5f,                                               0x5f }
     };
 
-    private static readonly IDictionary<int, byte> MAPPING_DNTV = new Dictionary<int, byte>()
+    private static readonly IDictionary<int, byte> MAPPING_DNTV = new Dictionary<int, byte>(48)
     {
       { (int)UsageType.Keyboard | (int)NativeMethods.VirtualKey.VK_TAB,                                                             0x00 },
       { (int)UsageType.Keyboard | (int)NativeMethods.VirtualKey.VK_2,                                                               0x01 },
@@ -1250,8 +1250,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TwinhanHidRemote
 
     private void FindHids(out IDictionary<IntPtr, TwinhanHid> devices, out IDictionary<string, TwinhanHidDriver> drivers)
     {
-      devices = new Dictionary<IntPtr, TwinhanHid>();
-      drivers = new Dictionary<string, TwinhanHidDriver>();
+      devices = new Dictionary<IntPtr, TwinhanHid>(15);
+      drivers = new Dictionary<string, TwinhanHidDriver>(4);
 
       // Get the device list size.
       int hr;
@@ -1613,7 +1613,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TwinhanHidRemote
     private NativeMethods.RAWINPUTDEVICE[] GetRegistrations()
     {
       int count = 0;
-      Dictionary<ushort, HashSet<ushort>> usagePairs = new Dictionary<ushort, HashSet<ushort>>();
+      Dictionary<ushort, HashSet<ushort>> usagePairs = new Dictionary<ushort, HashSet<ushort>>(6);
       foreach (TwinhanHid d in _devices.Values)
       {
         if (d.UsagePage == 0)

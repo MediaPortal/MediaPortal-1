@@ -78,10 +78,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
       public DigitalDevicesCiSlot Slot = null;
 
       // Programs decrypted using MTD. Tuner device path => program number.
-      public IDictionary<string, uint> MtdPrograms = new Dictionary<string, uint>();
+      public IDictionary<string, uint> MtdPrograms = new Dictionary<string, uint>(4);
 
       // Programs decrypted using traditional CA PMT. Program number => PMT.
-      public IDictionary<uint, Pmt> McdPrograms = new Dictionary<uint, Pmt>();
+      public IDictionary<uint, Pmt> McdPrograms = new Dictionary<uint, Pmt>(4);
 
       #endregion
 
@@ -254,7 +254,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
 
     #region variables
 
-    private static IDictionary<string, SharedCiContext> _sharedCiContexts = new Dictionary<string, SharedCiContext>();  // One entry per CI/CAM attached to this PC. CI slot device path => context.
+    private static IDictionary<string, SharedCiContext> _sharedCiContexts = new Dictionary<string, SharedCiContext>(4); // One entry per CI/CAM attached to this PC. CI slot device path => context.
     private static object _sharedCiContextsLock = new object();
 
     private bool _isDigitalDevices = false;
@@ -699,7 +699,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
         }
 
         // This will be our list of CI contexts.
-        _privateCiContexts = new Dictionary<string, PrivateCiContext>();
+        _privateCiContexts = new Dictionary<string, PrivateCiContext>(4);
         _isCiSlotPresent = false;
         while (true)
         {

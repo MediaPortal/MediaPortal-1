@@ -292,7 +292,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
       this.LogDebug("MD plugin: registering ECM and EMM details");
 
       // Build a dictionary of CA system -> { ECM PID } -> { provider ID } from the PMT.
-      Dictionary<ushort, Dictionary<ushort, HashSet<uint>>> seenEcmPids = new Dictionary<ushort, Dictionary<ushort, HashSet<uint>>>();
+      Dictionary<ushort, Dictionary<ushort, HashSet<uint>>> seenEcmPids = new Dictionary<ushort, Dictionary<ushort, HashSet<uint>>>(10);
 
       // First get ECMs from the PMT program CA descriptors.
       this.LogDebug("MD plugin: reading PMT program CA descriptors...");
@@ -369,7 +369,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
       }
 
       // Build a dictionary of CA system -> { EMM PID } -> { provider ID } from the CAT.
-      Dictionary<ushort, Dictionary<ushort, HashSet<uint>>> seenEmmPids = new Dictionary<ushort, Dictionary<ushort, HashSet<uint>>>();
+      Dictionary<ushort, Dictionary<ushort, HashSet<uint>>> seenEmmPids = new Dictionary<ushort, Dictionary<ushort, HashSet<uint>>>(10);
       this.LogDebug("MD plugin: reading CAT CA descriptors...");
       descEn = cat.CaDescriptors.GetEnumerator();
       while (descEn.MoveNext())
