@@ -168,7 +168,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
         return _products;
       }
 
-      List<SmarDtvUsbCiProduct> products = new List<SmarDtvUsbCiProduct>();
+      List<SmarDtvUsbCiProduct> products = new List<SmarDtvUsbCiProduct>(2);
 
       // Hauppauge WinTV-CI
       // http://www.hauppauge.de/site/products/data_ci.html

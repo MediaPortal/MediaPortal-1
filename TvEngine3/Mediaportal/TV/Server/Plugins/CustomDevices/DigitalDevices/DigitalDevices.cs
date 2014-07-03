@@ -87,12 +87,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
 
       #region hardware/driver/API state
 
-      public bool IsCamReady = false;                       // True if the CAM root menu title can be successfully retrieved.
-      public string CamMenuTitle = string.Empty;            // The CAM's root menu title.
-      public IList<ushort> CamCasIds = new List<ushort>();  // The CA system IDs that the CAM claims to support.
+      public bool IsCamReady = false;                         // True if the CAM root menu title can be successfully retrieved.
+      public string CamMenuTitle = string.Empty;              // The CAM's root menu title.
+      public IList<ushort> CamCasIds = new List<ushort>(20);  // The CA system IDs that the CAM claims to support.
       public int CiBitRate = -1;
       public int CiMaxBitRate = -1;
-      public int CiTunerCount = 0;                          // The number of tuners linked to the CI slot.
+      public int CiTunerCount = 0;                            // The number of tuners linked to the CI slot.
 
       #endregion
 
@@ -131,7 +131,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
         isCamReady = (Slot.GetCamMenuTitle(out camMenuTitle) == (int)HResult.Severity.Success);
         if (!isCamReady)
         {
-          camCasIds = new List<ushort>();
+          camCasIds = new List<ushort>(0);
         }
         else
         {
@@ -1348,8 +1348,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
       // If there are multiple CAMs available then we present the user with a
       // "fake" menu that allows them to choose which CAM they are interested
       // in. The choices are the root menu names for each of the CAMs.
-      List<string> entries = new List<string>();
-      _rootMenuChoices = new List<string>();
+      List<string> entries = new List<string>(_privateCiContexts.Count);
+      _rootMenuChoices = new List<string>(_privateCiContexts.Count);
       string selectedCiSlotDevicePath = null;
       foreach (string ciSlotDevicePath in _privateCiContexts.Keys)
       {

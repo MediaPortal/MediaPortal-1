@@ -190,7 +190,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
     /// <returns>an HRESULT indicating whether the CA system IDs were successfully retrieved</returns>
     public int GetCamCaSystemIds(out IList<ushort> casIds)
     {
-      casIds = new List<ushort>();
+      casIds = new List<ushort>(20);
 
       lock (_lock)
       {
@@ -348,7 +348,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
     {
       id = 0;
       type = MenuType.Unknown;
-      strings = new List<string>();
+      strings = new List<string>(15);
       answerLength = 0;
 
       lock (_lock)

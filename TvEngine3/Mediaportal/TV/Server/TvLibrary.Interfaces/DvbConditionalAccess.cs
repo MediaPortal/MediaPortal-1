@@ -2047,8 +2047,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
         // Descriptors.
         int offset = 8;
         int endDescriptors = data.Length - 4;
-        cat._descriptors = new List<IDescriptor>();
-        cat._caDescriptors = new List<IDescriptor>();
+        cat._descriptors = new List<IDescriptor>(10);
+        cat._caDescriptors = new List<IDescriptor>(5);
         while (offset + 1 < endDescriptors)
         {
           IDescriptor d = Descriptor.Decode(data, offset);
@@ -2401,8 +2401,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
         bool isScteTs = false;
         int offset = 12;
         int endProgramDescriptors = offset + pmt._programInfoLength;
-        pmt._programDescriptors = new List<IDescriptor>();
-        pmt._programCaDescriptors = new List<IDescriptor>();
+        pmt._programDescriptors = new List<IDescriptor>(10);
+        pmt._programCaDescriptors = new List<IDescriptor>(5);
         while (offset + 1 < endProgramDescriptors)
         {
           IDescriptor d = Descriptor.Decode(data, offset);
@@ -2437,7 +2437,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
         // Elementary streams.
         bool isNotDc2Ts = false;
         bool foundDc2VideoStream = false;
-        pmt._elementaryStreams = new List<PmtElementaryStream>();
+        pmt._elementaryStreams = new List<PmtElementaryStream>(10);
         int endEsData = data.Length - 4;
         while (offset + 4 < endEsData)
         {
@@ -2487,8 +2487,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
             Log.Error("PMT: elementary stream info length for PID {0} is invalid, ES data end = {1}, ES descriptors end = {2}", es.Pid, endEsData, endEsDescriptors);
             throw new Exception();
           }
-          es.Descriptors = new List<IDescriptor>();
-          es.CaDescriptors = new List<IDescriptor>();
+          es.Descriptors = new List<IDescriptor>(15);
+          es.CaDescriptors = new List<IDescriptor>(5);
           while (offset + 1 < endEsDescriptors)
           {
             IDescriptor d = Descriptor.Decode(data, offset);

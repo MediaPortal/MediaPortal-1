@@ -58,7 +58,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
 
       // Now read the details for the currently available slots and merge settings from the DB
       // to fill the _ciSlots list.
-      _ciContexts = new List<CiContext>();
+      _ciContexts = new List<CiContext>(4);
       DsDevice[] captureDevices = DsDevice.GetDevicesOfCat(FilterCategory.BDAReceiverComponentsCategory);
       Guid filterClsid = typeof(IBaseFilter).GUID;
       foreach (DsDevice device in captureDevices)

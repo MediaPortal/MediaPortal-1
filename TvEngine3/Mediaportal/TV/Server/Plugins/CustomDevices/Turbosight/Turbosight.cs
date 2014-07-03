@@ -850,7 +850,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
       int expectedStringCount = entryCount + 3;   // + 3 for the title, sub-title and footer
 
       // Read all the strings into a list. Strings are NULL terminated.
-      List<string> strings = new List<string>();
+      List<string> strings = new List<string>(expectedStringCount);
       string s;
       int decodedByteCount;
       int totalDecodedByteCount = 1;
@@ -1394,7 +1394,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
 
       _mmiMessageBuffer = Marshal.AllocCoTaskMem(MMI_MESSAGE_BUFFER_SIZE);
       _mmiResponseBuffer = Marshal.AllocCoTaskMem(MMI_RESPONSE_BUFFER_SIZE);
-      _mmiMessageQueue = new List<MmiMessage>();
+      _mmiMessageQueue = new List<MmiMessage>(10);
       _isCamPresent = _camAvailable(_ciHandle);
       this.LogDebug("Turbosight: CAM available = {0}", _isCamPresent);
 

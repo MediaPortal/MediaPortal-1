@@ -24,7 +24,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.CiMenu
     private readonly string _bottomText;
     private int _numChoices;
     private CiMenuState _menuState;
-    private readonly List<CiMenuEntry> _ciMenuEntries = new List<CiMenuEntry>();
+    private readonly List<CiMenuEntry> _ciMenuEntries = new List<CiMenuEntry>(15);
 
     private int _answerLength;
     private string _requestText;

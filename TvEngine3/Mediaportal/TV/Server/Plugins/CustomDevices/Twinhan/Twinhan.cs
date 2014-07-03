@@ -364,7 +364,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       public string Title = string.Empty;
       public string SubTitle = string.Empty;
       public string Footer = string.Empty;
-      public List<string> Entries = new List<string>();
+      public List<string> Entries = new List<string>(15);
       public int EntryCount = 0;
       public bool IsEnquiry = false;
       public bool IsBlindAnswer = false;

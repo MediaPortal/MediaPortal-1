@@ -544,7 +544,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
     {
       // Build a list of the device paths of all KNC-compatible tuners installed in this system.
       DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.BDASourceFiltersCategory);
-      List<string> devicePaths = new List<string>();
+      List<string> devicePaths = new List<string>(5);
       foreach (DsDevice device in devices)
       {
         foreach (string validTunerName in VALID_TUNER_NAMES)

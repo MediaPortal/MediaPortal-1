@@ -82,8 +82,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
 
     private Uri _uriBase = null;
     private string _currentUri = null;
-    private IList<string> _currentMenuUris = new List<string>();
-    private Stack<string> _uriHistoryStack = new Stack<string>();
+    private IList<string> _currentMenuUris = new List<string>(10);
+    private Stack<string> _uriHistoryStack = new Stack<string>(10);
     private byte _dialogNumber = 0;
 
     #endregion
@@ -125,11 +125,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
       this.LogDebug("CableCARD MMI: enter menu, title = {0}, sub-title = {1}, footer = {2}", title, subTitle, footer);
       Reset();
 
-      IList<SmartCardApplication> applications = new List<SmartCardApplication>();
+      IList<SmartCardApplication> applications = null;
       try
       {
         // DRI specification, page 29-30 table 6.2-27.
         byte applicationCount = applicationList[0];
+        applications = new List<SmartCardApplication>(applicationCount);
         this.LogDebug("CableCARD MMI: application count = {0}", applicationCount);
         int offset = 1;
         for (byte i = 0; i < applicationCount; i++)
@@ -396,8 +397,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
       // Reformat from pure HTML into title and menu items. This is quite
       // hacky, but we have no way to render HTML in MediaPortal.
       this.LogDebug("CableCARD MMI: retrieved raw menu HTML\r\n{0}", content);
-      IList<string> entries = new List<string>();
-      IList<string> entryUris = new List<string>();
+      IList<string> entries = new List<string>(15);
+      IList<string> entryUris = new List<string>(15);
       try
       {
         content = Regex.Replace(content, "(<\\/b>|<center>)", string.Empty, RegexOptions.IgnoreCase);

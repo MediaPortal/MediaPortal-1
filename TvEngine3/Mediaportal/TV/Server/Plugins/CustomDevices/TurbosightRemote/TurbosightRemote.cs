@@ -250,8 +250,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TurbosightRemote
     private static object _instanceLock = new object();
 
     private bool _isTurbosightRemote = false;
-    private List<ReceiverConexant> _receiversConexant = new List<ReceiverConexant>();
-    private List<ReceiverNxp> _receiversNxp = new List<ReceiverNxp>();
+    private List<ReceiverConexant> _receiversConexant = new List<ReceiverConexant>(5);
+    private List<ReceiverNxp> _receiversNxp = new List<ReceiverNxp>(5);
     private IntPtr _commandBuffer = IntPtr.Zero;
     private IntPtr _codeBuffer = IntPtr.Zero;
 
@@ -377,7 +377,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TurbosightRemote
     private List<ReceiverConexant> FindConexantReceivers()
     {
       this.LogDebug("Turbosight remote: find Conexant receivers");
-      List<ReceiverConexant> receivers = new List<ReceiverConexant>();
+      List<ReceiverConexant> receivers = new List<ReceiverConexant>(5);
       int hr;
       bool isTbsIrFilter = false;
       Guid filterClsid = typeof(IBaseFilter).GUID;
@@ -451,7 +451,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TurbosightRemote
     private List<ReceiverNxp> FindNxpReceivers()
     {
       this.LogDebug("Turbosight remote: find NXP receivers");
-      List<ReceiverNxp> receivers = new List<ReceiverNxp>();
+      List<ReceiverNxp> receivers = new List<ReceiverNxp>(5);
       bool isTbsIrFilter = false;
       Guid filterClsid = typeof(IBaseFilter).GUID;
       DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.DeviceControlCategory);

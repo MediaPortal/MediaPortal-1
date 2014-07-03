@@ -1442,7 +1442,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
         }
 
         // Decode menu/list strings for call back.
-        List<string> strings = new List<string>();
+        List<string> strings = new List<string>(15);
         IntPtr stringPtr = stringBuffer;
         string s;
         int decodedByteCount;

@@ -92,20 +92,20 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftEncoder
     #region variables
 
     private bool _isMicrosoftEncoder = false;
-    private List<ICodecAPI> _interfacesCodecApi = new List<ICodecAPI>();
-    private List<IVideoEncoder> _interfacesVideoEncoder = new List<IVideoEncoder>();
+    private List<ICodecAPI> _interfacesCodecApi = new List<ICodecAPI>(4);
+    private List<IVideoEncoder> _interfacesVideoEncoder = new List<IVideoEncoder>(4);
     // Disable obsolete interface warning. Some implementations of
     // IEncoderAPI that we want to support do not implement ICodecAPI.
     #pragma warning disable 618
-    private List<IEncoderAPI> _interfacesEncoderApi = new List<IEncoderAPI>();
+    private List<IEncoderAPI> _interfacesEncoderApi = new List<IEncoderAPI>(4);
     #pragma warning restore 618
 
-    private List<IsParameterSupportedDelegate> _delegatesIsSupported = new List<IsParameterSupportedDelegate>();
-    private List<GetParameterRangeDelegate> _delegatesGetRange = new List<GetParameterRangeDelegate>();
-    private List<GetParameterValuesDelegate> _delegatesGetValues = new List<GetParameterValuesDelegate>();
-    private List<GetParameterDefaultValueDelegate> _delegatesGetDefaultValue = new List<GetParameterDefaultValueDelegate>();
-    private List<GetParameterValueDelegate> _delegatesGetValue = new List<GetParameterValueDelegate>();
-    private List<SetParameterValueDelegate> _delegatesSetValue = new List<SetParameterValueDelegate>();
+    private List<IsParameterSupportedDelegate> _delegatesIsSupported = new List<IsParameterSupportedDelegate>(4);
+    private List<GetParameterRangeDelegate> _delegatesGetRange = new List<GetParameterRangeDelegate>(4);
+    private List<GetParameterValuesDelegate> _delegatesGetValues = new List<GetParameterValuesDelegate>(4);
+    private List<GetParameterDefaultValueDelegate> _delegatesGetDefaultValue = new List<GetParameterDefaultValueDelegate>(4);
+    private List<GetParameterValueDelegate> _delegatesGetValue = new List<GetParameterValueDelegate>(4);
+    private List<SetParameterValueDelegate> _delegatesSetValue = new List<SetParameterValueDelegate>(4);
 
     #endregion
 

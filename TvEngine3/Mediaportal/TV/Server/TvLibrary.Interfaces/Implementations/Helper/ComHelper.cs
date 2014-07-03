@@ -65,7 +65,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
 
     private class LibrarySet
     {
-      private readonly List<IntPtr> _libraryHandles = new List<IntPtr>();
+      private readonly List<IntPtr> _libraryHandles = new List<IntPtr>(20);
       public void AddLibrary(IntPtr handle)
       {
         lock (_libraryHandles)
