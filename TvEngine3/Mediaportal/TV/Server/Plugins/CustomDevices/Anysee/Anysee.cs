@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -321,7 +322,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
 
     private enum AnyseeCamMenuKey   // CI_KEY_MAP
     {
-      // Numeric keys
+      // numeric keys
       Zero = 1,
       One,
       Two,
@@ -333,7 +334,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       Eight,
       Nine,
 
-      // Navigation keys
+      // navigation keys
       Menu = 20,
       Exit,
       Up,
@@ -621,7 +622,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       public AnyseeMmiMessageType Type;
       public int ExpectedAnswerLength;
 
-      public int KeyCount;
+      [MarshalAs(UnmanagedType.Bool)]
+      public bool IsBlind;
       // Encoded according to EN 300 468 Annex A.
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_API_STRING_LENGTH)]
       public byte[] RootMenuTitle;
@@ -1457,6 +1459,20 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       {
         _isCamPresent = true;
         _isCamReady = true;
+        if (state == AnyseeCiState.Clear)
+        {
+          lock (_caMenuCallBackLock)
+          {
+            if (_caMenuCallBack == null)
+            {
+              this.LogDebug("Anysee: menu call back not set");
+            }
+            else
+            {
+              _caMenuCallBack.OnCiCloseDisplay(0);
+            }
+          }
+        }
       }
       else
       {
@@ -1511,7 +1527,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
           string prompt = DvbTextConverter.Convert(Marshal.ReadIntPtr(menu.Strings, 0));
           this.LogDebug("  prompt    = {0}", prompt);
           this.LogDebug("  length    = {0}", message.ExpectedAnswerLength);
-          this.LogDebug("  key count = {0}", message.KeyCount);
+          this.LogDebug("  blind     = {0}", message.IsBlind);
           if (_caMenuCallBack != null)
           {
             _caMenuCallBack.OnCiRequest(false, (uint)message.ExpectedAnswerLength, prompt);
@@ -1813,6 +1829,15 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       if (!_isCiSlotPresent)
       {
         this.LogDebug("Anysee: CI slot not present");
+        return false;
+      }
+
+      // Check if CNO (Anysee CI and smartcard helper/monitor process) is
+      // running. We don't stop the process because CNO may be used for
+      // smartcard functions.
+      if (Process.GetProcessesByName("CNO").Length > 0)
+      {
+        this.LogError("Anysee: CNO is running so CI access and control won't be possible");
         return false;
       }
 
@@ -2127,6 +2152,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
         answer = string.Empty;
       }
       this.LogDebug("Anysee: answer enquiry, answer = {0}, cancel = {1}", answer, cancel);
+
+      if (cancel)
+      {
+        // We have no way to cancel other than to exit.
+        return SendKey(AnyseeCamMenuKey.Exit);
+      }
 
       for (int i = 0; i < answer.Length; i++)
       {
