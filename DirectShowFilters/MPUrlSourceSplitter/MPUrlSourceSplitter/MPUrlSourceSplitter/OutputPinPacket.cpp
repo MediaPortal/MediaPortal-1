@@ -30,6 +30,7 @@ COutputPinPacket::COutputPinPacket(HRESULT *result)
   this->mediaType = NULL;
   this->demuxerId = DEMUXER_ID_UNSPECIFIED;
   this->streamPid = STREAM_PID_UNSPECIFIED;
+  this->endOfStreamResult = S_OK;
 }
 
 COutputPinPacket::~COutputPinPacket(void)
@@ -65,6 +66,11 @@ unsigned int COutputPinPacket::GetStreamPid(void)
   return this->streamPid;
 }
 
+HRESULT COutputPinPacket::GetEndOfStreamResult(void)
+{
+  return this->endOfStreamResult;
+}
+
 /* set methods */
 
 void COutputPinPacket::SetDiscontinuity(bool discontinuity)
@@ -79,10 +85,11 @@ void COutputPinPacket::SetSyncPoint(bool syncPoint)
   this->flags |= (syncPoint) ? OUTPUT_PIN_PACKET_FLAG_SYNC_POINT : OUTPUT_PIN_PACKET_FLAG_NONE;
 }
 
-void COutputPinPacket::SetEndOfStream(bool endOfStream)
+void COutputPinPacket::SetEndOfStream(bool endOfStream, HRESULT endOfStreamResult)
 {
   this->flags &= ~OUTPUT_PIN_PACKET_FLAG_END_OF_STREAM;
   this->flags |= (endOfStream) ? OUTPUT_PIN_PACKET_FLAG_END_OF_STREAM : OUTPUT_PIN_PACKET_FLAG_NONE;
+  this->endOfStreamResult = endOfStreamResult;
 }
 
 void COutputPinPacket::SetStartTime(REFERENCE_TIME startTime)

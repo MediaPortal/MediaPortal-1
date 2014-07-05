@@ -38,6 +38,17 @@ public:
   CMPUrlSourceSplitterOutputDownloadPin(LPCWSTR pName, CBaseFilter *pFilter, CCritSec *pLock, HRESULT *phr, CLogger *logger, CParameterCollection *parameters, CMediaTypeCollection *mediaTypes, const wchar_t *downloadFileName);
   virtual ~CMPUrlSourceSplitterOutputDownloadPin(void);
 
+  // queues output pin packet
+  // @param packet : the packet to queue to output pin
+  // @param timeout : the timeout in ms to queue to output pin
+  // @return : S_OK if successful, VFW_E_TIMEOUT if timeout occured, error code otherwise
+  virtual HRESULT QueuePacket(COutputPinPacket *packet, DWORD timeout);
+
+  // queues end of stream
+  // @param endOfStreamResult : S_OK if normal end of stream, error code otherwise
+  // @return : S_OK if successful, VFW_E_TIMEOUT if timeout occured, error code otherwise
+  virtual HRESULT QueueEndOfStream(HRESULT endOfStreamResult);
+
   /* get methods */
 
   // gets download result

@@ -373,7 +373,7 @@ HRESULT CMPUrlSourceSplitterOutputPin::QueuePacket(COutputPinPacket *packet, DWO
   return result;
 }
 
-HRESULT CMPUrlSourceSplitterOutputPin::QueueEndOfStream()
+HRESULT CMPUrlSourceSplitterOutputPin::QueueEndOfStream(HRESULT endOfStreamResult)
 {
   HRESULT result = S_OK;
   this->logger->Log(LOGGER_INFO, METHOD_PIN_START_FORMAT, MODULE_NAME, METHOD_QUEUE_END_OF_STREAM_NAME, this->m_pName);
@@ -383,7 +383,7 @@ HRESULT CMPUrlSourceSplitterOutputPin::QueueEndOfStream()
 
   if (SUCCEEDED(result))
   {
-    endOfStream->SetEndOfStream(true);
+    endOfStream->SetEndOfStream(true, endOfStreamResult);
 
     result = this->QueuePacket(endOfStream, INFINITE);
   }

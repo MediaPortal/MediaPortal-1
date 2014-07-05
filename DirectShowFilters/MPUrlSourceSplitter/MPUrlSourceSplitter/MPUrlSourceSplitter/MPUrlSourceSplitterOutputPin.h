@@ -132,8 +132,9 @@ public:
   virtual HRESULT QueuePacket(COutputPinPacket *packet, DWORD timeout);
 
   // queues end of stream
+  // @param endOfStreamResult : S_OK if normal end of stream, error code otherwise
   // @return : S_OK if successful, VFW_E_TIMEOUT if timeout occured, error code otherwise
-  virtual HRESULT QueueEndOfStream(void);
+  virtual HRESULT QueueEndOfStream(HRESULT endOfStreamResult);
 
   // delivers a new-segment notification to the connected input pin
   // @param tStart : starting media position of the segment, in 100-nanosecond units

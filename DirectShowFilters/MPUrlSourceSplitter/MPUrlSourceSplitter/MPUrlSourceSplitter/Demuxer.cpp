@@ -421,6 +421,7 @@ HRESULT CDemuxer::GetOutputPinPacket(COutputPinPacket *packet)
       packet->SetEndTime(outputPacket->GetEndTime());
       packet->SetFlags(outputPacket->GetFlags());
       packet->SetMediaType(outputPacket->GetMediaType());
+      packet->SetEndOfStream(outputPacket->IsEndOfStream(), outputPacket->GetEndOfStreamResult());
       outputPacket->SetMediaType(NULL);
 
       if (SUCCEEDED(result))
@@ -2310,7 +2311,7 @@ unsigned int WINAPI CDemuxer::DemuxingWorker(LPVOID lpParam)
           // any error code (except disabled reading) for end of stream
 
           packet->SetDemuxerId(caller->demuxerId);
-          packet->SetEndOfStream(true);
+          packet->SetEndOfStream(true, (result == E_NO_MORE_DATA_AVAILABLE) ? S_OK : result);
           result = S_OK;
         }
       }
@@ -2323,6 +2324,7 @@ unsigned int WINAPI CDemuxer::DemuxingWorker(LPVOID lpParam)
         if (packet->IsEndOfStream())
         {
           bool queuedEndOfStream = false;
+          HRESULT endOfStreamResult = packet->GetEndOfStreamResult();
 
           for (unsigned int i = 0; (SUCCEEDED(result) && (i < CStream::Unknown)); i++)
           {
@@ -2338,7 +2340,7 @@ unsigned int WINAPI CDemuxer::DemuxingWorker(LPVOID lpParam)
               if (SUCCEEDED(result))
               {
                 endOfStreamPacket->SetDemuxerId(caller->demuxerId);
-                endOfStreamPacket->SetEndOfStream(true);
+                endOfStreamPacket->SetEndOfStream(true, packet->GetEndOfStreamResult());
                 endOfStreamPacket->SetStreamPid(stream->GetPid());
 
                 CHECK_CONDITION_HRESULT(result, caller->outputPacketCollection->Add(endOfStreamPacket), result, E_OUTOFMEMORY);
@@ -2361,7 +2363,7 @@ unsigned int WINAPI CDemuxer::DemuxingWorker(LPVOID lpParam)
           if (SUCCEEDED(result))
           {
             caller->flags |= DEMUXER_FLAG_END_OF_STREAM_OUTPUT_PACKET_QUEUED;
-            caller->logger->Log(LOGGER_INFO, L"%s: %s: stream %u, queued end of stream output packet", MODULE_NAME, METHOD_DEMUXING_WORKER_NAME, caller->demuxerId);
+            caller->logger->Log(LOGGER_INFO, L"%s: %s: stream %u, queued end of stream output packet, result: 0x%08X", MODULE_NAME, METHOD_DEMUXING_WORKER_NAME, caller->demuxerId, endOfStreamResult);
           }
         }
         else
@@ -2743,7 +2745,7 @@ HRESULT CDemuxer::GetNextPacketInternal(COutputPinPacket *packet)
         packet->SetStreamPid(0);
         packet->SetDemuxerId(this->demuxerId);
 
-        result = E_NO_MORE_DATA_AVAILABLE;
+        result = res;
       }
     }
 

@@ -65,6 +65,30 @@ CMPUrlSourceSplitterOutputDownloadPin::~CMPUrlSourceSplitterOutputDownloadPin(vo
   CHECK_CONDITION_NOT_NULL_EXECUTE(this->logger, this->logger->Log(LOGGER_INFO, METHOD_PIN_END_FORMAT, MODULE_NAME, METHOD_DESTRUCTOR_NAME, this->m_pName));
 }
 
+HRESULT CMPUrlSourceSplitterOutputDownloadPin::QueuePacket(COutputPinPacket *packet, DWORD timeout)
+{
+  HRESULT result = __super::QueuePacket(packet, timeout);
+
+  if (SUCCEEDED(result) && (packet->IsEndOfStream()) && (FAILED(packet->GetEndOfStreamResult())))
+  {
+    this->downloadResult = packet->GetEndOfStreamResult();
+  }
+
+  return result;
+}
+
+HRESULT CMPUrlSourceSplitterOutputDownloadPin::QueueEndOfStream(HRESULT endOfStreamResult)
+{
+  HRESULT result = __super::QueueEndOfStream(endOfStreamResult);
+
+  if (SUCCEEDED(result) && (FAILED(endOfStreamResult)))
+  {
+    this->downloadResult = endOfStreamResult;
+  }
+
+  return result;
+}
+
 /* get methods */
 
 HRESULT CMPUrlSourceSplitterOutputDownloadPin::GetDownloadResult(void)
@@ -79,7 +103,11 @@ HRESULT CMPUrlSourceSplitterOutputDownloadPin::GetDownloadResult(void)
 void CMPUrlSourceSplitterOutputDownloadPin::FinishDownload(HRESULT result)
 {
   this->flags |= MP_URL_SOURCE_SPLITTER_OUTPUT_DOWNLOAD_PIN_FLAG_DOWNLOAD_FINISHED;
-  this->downloadResult = result;
+
+  if (SUCCEEDED(this->downloadResult))
+  {
+    this->downloadResult = result;
+  }
 }
 
 bool CMPUrlSourceSplitterOutputDownloadPin::IsDownloadFinished(void)

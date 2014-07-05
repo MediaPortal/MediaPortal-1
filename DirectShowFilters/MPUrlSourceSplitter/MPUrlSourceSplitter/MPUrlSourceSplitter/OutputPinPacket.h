@@ -71,6 +71,10 @@ public:
   // @return : stream PID or STREAM_PID_UNSPECIFIED if not specified
   unsigned int GetStreamPid(void);
 
+  // gets end of stream result
+  // @return : S_OK if normal end of stream, error code otherwise
+  HRESULT GetEndOfStreamResult(void);
+
   /* set methods */
 
   // sets discontinuity flag
@@ -83,7 +87,7 @@ public:
 
   // sets end of stream
   // @param endOfStream : true if packet signalize end of stream, false otherwise
-  void SetEndOfStream(bool endOfStream);
+  void SetEndOfStream(bool endOfStream, HRESULT endOfStreamResult);
 
   // sets packet start time
   // @param startTime : packet start time to set
@@ -148,6 +152,9 @@ protected:
 
   // holds stream PID for splitter (it specifies to which output pin goes this packet)
   unsigned int streamPid;
+
+  // holds end of stream result (S_OK if normal end of stream, error code otherwise)
+  HRESULT endOfStreamResult;
 
   /* methods */
 
