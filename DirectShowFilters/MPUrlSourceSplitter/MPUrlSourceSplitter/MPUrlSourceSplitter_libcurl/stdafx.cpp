@@ -18,19 +18,7 @@
     along with MediaPortal 2.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#pragma once
+#include "stdafx.h"
 
-#ifndef __MP_URL_SOURCE_SPLITTER_PROTOCOL_UDP_PARAMETERS_DEFINED
-#define __MP_URL_SOURCE_SPLITTER_PROTOCOL_UDP_PARAMETERS_DEFINED
-
-#define PARAMETER_NAME_UDP_RECEIVE_DATA_TIMEOUT                       L"UdpReceiveDataTimeout"
-// specify check interval for incoming data
-#define PARAMETER_NAME_UDP_RECEIVE_DATA_CHECK_INTERVAL                L"UdpReceiveDataCheckInterval"
-
-// we should get data in two seconds
-#define UDP_RECEIVE_DATA_TIMEOUT_DEFAULT                              2000
-
-// we check if we are receiving data each 500 ms
-#define UDP_RECEIVE_DATA_CHECK_INTERVAL_DEFAULT                       500
-
-#endif
+// TODO: reference any additional headers you need in STDAFX.H
+// and not in this file

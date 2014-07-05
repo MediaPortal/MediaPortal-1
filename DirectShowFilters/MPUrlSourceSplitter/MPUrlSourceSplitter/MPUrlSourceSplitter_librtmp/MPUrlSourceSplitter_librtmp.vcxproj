@@ -10,31 +10,10 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="readme_before_update.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="amf.h" />
-    <ClInclude Include="bytes.h" />
-    <ClInclude Include="dh.h" />
-    <ClInclude Include="dhgroups.h" />
-    <ClInclude Include="handshake.h" />
-    <ClInclude Include="http.h" />
-    <ClInclude Include="log.h" />
-    <ClInclude Include="rtmp.h" />
-    <ClInclude Include="rtmp_sys.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="amf.c" />
-    <ClCompile Include="hashswf.c" />
-    <ClCompile Include="log.c" />
-    <ClCompile Include="parseurl.c" />
-    <ClCompile Include="rtmp.c" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{BDA0CC2F-E51F-4CD0-AE70-D6073C120026}</ProjectGuid>
+    <ProjectGuid>{15A75D38-C25B-4FFD-84F2-25414EFE4F65}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>librtmp</RootNamespace>
+    <RootNamespace>MPUrlSourceSplitter_librtmp</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -59,13 +38,10 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)bin_$(PlatformName)d\lib\</OutDir>
     <IntDir>$(SolutionDir)bin_$(PlatformName)d\$(ProjectName)\</IntDir>
-    <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)bin_$(PlatformName)\lib\</OutDir>
     <IntDir>$(SolutionDir)bin_$(PlatformName)\$(ProjectName)\</IntDir>
   </PropertyGroup>
@@ -75,21 +51,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;LIBRTMP_EXPORTS;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\OpenSSL\include;..\zlib</AdditionalIncludeDirectories>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <AdditionalIncludeDirectories>..\..\OpenSSL\include;..\MPUrlSourceSplitter_libzlib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>ws2_32.lib;zlib.lib;libeay32.lib;ssleay32.lib;Winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\zlib\bin\Debug;..\OpenSSL\bin\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
-    <Lib>
-      <AdditionalDependencies>
-      </AdditionalDependencies>
-      <AdditionalLibraryDirectories>
-      </AdditionalLibraryDirectories>
-    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -99,23 +66,42 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;LIBRTMP_EXPORTS;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\OpenSSL\include;..\zlib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\OpenSSL\include;..\MPUrlSourceSplitter_libzlib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>..\zlib\bin\Release;..\OpenSSL\bin\Release</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ws2_32.lib;zlib.lib;libeay32.lib;ssleay32.lib;Winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
-    <Lib>
-      <AdditionalDependencies>
-      </AdditionalDependencies>
-      <AdditionalLibraryDirectories>
-      </AdditionalLibraryDirectories>
-    </Lib>
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="amf.h" />
+    <ClInclude Include="bytes.h" />
+    <ClInclude Include="dh.h" />
+    <ClInclude Include="dhgroups.h" />
+    <ClInclude Include="handshake.h" />
+    <ClInclude Include="http.h" />
+    <ClInclude Include="log.h" />
+    <ClInclude Include="rtmp.h" />
+    <ClInclude Include="rtmp_sys.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="targetver.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="amf.c" />
+    <ClCompile Include="hashswf.c" />
+    <ClCompile Include="log.c" />
+    <ClCompile Include="parseurl.c" />
+    <ClCompile Include="rtmp.c" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="readme_before_update.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

@@ -644,6 +644,7 @@ STDMETHODIMP CMPUrlSourceSplitter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TY
         result = this->configuration->Add(PARAMETER_NAME_LIVE_STREAM, L"1") ? result : E_OUTOFMEMORY;
 
         //this->configuration->Add(PARAMETER_NAME_DUMP_INPUT_RAW_DATA, L"1");
+        //this->configuration->Add(PARAMETER_NAME_SLEEP_BEFORE_LOAD, L"200");
       }
 
       if (SUCCEEDED(result))
@@ -655,7 +656,7 @@ STDMETHODIMP CMPUrlSourceSplitter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TY
 
       FREE_MEM(url);
     }
-
+    
     // if in output pin collection isn't any pin, then add new output pin with MPEG2 TS media type
     // in another case filter assume that there is only one output pin with MPEG2 TS media type
     if (SUCCEEDED(result) && (this->outputPins->Count() == 0))
@@ -717,7 +718,7 @@ STDMETHODIMP CMPUrlSourceSplitter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TY
         {
           result = this->configuration->Add(PARAMETER_NAME_URL, url) ? result : E_OUTOFMEMORY;
         }
-
+        
         FREE_MEM_CLASS(suppliedParameters);
       }
       else
@@ -728,6 +729,10 @@ STDMETHODIMP CMPUrlSourceSplitter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TY
       }
 
       //this->configuration->Add(PARAMETER_NAME_DUMP_INPUT_RAW_DATA, L"1");
+      //this->configuration->Clear();
+      //this->configuration->Add(PARAMETER_NAME_URL, L"udp://@233.62.90.1:2314");
+      //this->configuration->Add(PARAMETER_NAME_LIVE_STREAM, L"1");
+      //this->configuration->Add(PARAMETER_NAME_SLEEP_BEFORE_LOAD, L"200");
     }
 
     if (SUCCEEDED(result))

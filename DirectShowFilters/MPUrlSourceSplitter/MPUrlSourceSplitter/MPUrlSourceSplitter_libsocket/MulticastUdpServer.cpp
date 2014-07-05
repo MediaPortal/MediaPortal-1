@@ -118,7 +118,8 @@ HRESULT CMulticastUdpServer::Initialize(int family, CIpAddress *multicastAddress
 
 HRESULT CMulticastUdpServer::StartListening(void)
 {
-  HRESULT result = __super::StartListening();
+  // we ignore base StartListening, we do whole procedure by its own
+  HRESULT result = S_OK;
   CHECK_POINTER_HRESULT(result, this->servers, result, E_POINTER);
 
   for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->servers->Count())); i++)

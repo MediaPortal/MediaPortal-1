@@ -117,4 +117,9 @@ bool CProtocolPlugin::IsEndOfStreamReached(void)
   return this->IsSetFlags(PROTOCOL_PLUGIN_FLAG_END_OF_STREAM_REACHED);
 }
 
+bool CProtocolPlugin::IsConnectionLostCannotReopen(void)
+{
+  return this->IsSetFlags(PROTOCOL_PLUGIN_FLAG_CONNECTION_LOST_CANNOT_REOPEN);
+}
+
 /* protected methods */

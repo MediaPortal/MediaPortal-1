@@ -27,7 +27,9 @@
 
 #define STREAM_PACKAGE_RESPONSE_FLAG_NONE                             FLAGS_NONE
 
-#define STREAM_PACKAGE_RESPONSE_FLAG_LAST                             (FLAGS_LAST + 0)
+#define STREAM_PACKAGE_RESPONSE_FLAG_DISCONTINUITY                    (1 << (FLAGS_LAST + 0))
+
+#define STREAM_PACKAGE_RESPONSE_FLAG_LAST                             (FLAGS_LAST + 1)
 
 class CStreamPackageResponse : public CFlags
 {
@@ -39,7 +41,15 @@ public:
 
   /* set methods */
 
+  // set discontinuity
+  // @param discontinuity : true if discontinuity after data, false otherwise
+  virtual void SetDiscontinuity(bool discontinuity);
+
   /* other methods */
+
+  // tests if discontinuity is set
+  // @return : true if discontinuity is set, false otherwise
+  virtual bool IsDiscontinuity(void);
 
   // deeply clones current instance of stream package response
   // @return : deep clone of current instance or NULL if error

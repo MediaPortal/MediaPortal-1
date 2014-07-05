@@ -88,8 +88,11 @@ HRESULT CProtocolHoster::ParseUrl(const CParameterCollection *parameters)
   if (SUCCEEDED(retval))
   {
     this->activeProtocol = NULL;
+    this->configuration->Clear();
 
-    for (unsigned int i = 0; i < this->hosterPluginMetadataCollection->Count(); i++)
+    CHECK_CONDITION_HRESULT(retval, this->configuration->Append((CParameterCollection *)parameters), retval, E_OUTOFMEMORY);
+
+    for (unsigned int i = 0; (SUCCEEDED(retval) && (i < this->hosterPluginMetadataCollection->Count())); i++)
     {
       CProtocolHosterPluginMetadata *metadata = (CProtocolHosterPluginMetadata *)this->hosterPluginMetadataCollection->GetItem(i);
       CProtocolPlugin *protocol = (CProtocolPlugin *)metadata->GetPlugin();
@@ -446,7 +449,10 @@ unsigned int WINAPI CProtocolHoster::ReceiveDataWorker(LPVOID lpParam)
 
   HRESULT result = S_OK;
   unsigned int maximumReopenTime = 0;
-  DWORD endTicks = GetTickCount();
+
+  unsigned int startTicks = GetTickCount();
+  unsigned endTicks = startTicks;
+
   CStreamPackage *tempStreamPackage = new CStreamPackage(&result);
   CHECK_POINTER_HRESULT(result, tempStreamPackage, result, E_OUTOFMEMORY);
 
@@ -457,7 +463,13 @@ unsigned int WINAPI CProtocolHoster::ReceiveDataWorker(LPVOID lpParam)
     if (maximumReopenTime == 0)
     {
       maximumReopenTime = caller->activeProtocol->GetReceiveDataTimeout();
-      endTicks = GetTickCount() + maximumReopenTime;
+
+      // some protocols may need some sleep before loading (e.g. multicast UDP protocol needs some time between unsubscribing and subscribing in multicast groups)
+      unsigned int waitTime = caller->configuration->GetValueUnsignedInt(PARAMETER_NAME_SLEEP_BEFORE_LOAD, true, PARAMETER_NAME_SLEEP_BEFORE_LOAD_DEFAULT);
+      unsigned int currentTime = GetTickCount();
+
+      startTicks = currentTime + waitTime;
+      endTicks = currentTime + waitTime + maximumReopenTime;
     }
 
     if (maximumReopenTime != 0)
@@ -484,21 +496,29 @@ unsigned int WINAPI CProtocolHoster::ReceiveDataWorker(LPVOID lpParam)
       if (SUCCEEDED(result))
       {
         unsigned int connectionState = caller->activeProtocol->GetConnectionState();
-
-        if ((connectionState == None) ||
-          (connectionState == InitializeFailed) ||
-          (connectionState == OpeningFailed))
+        
+        if ((!caller->activeProtocol->IsConnectionLostCannotReopen()) &&
+              ((connectionState == None) ||
+              (connectionState == InitializeFailed) ||
+              (connectionState == OpeningFailed)))
         {
           // problem with connection, try to (re)open
 
           if (openedConnection)
           {
             // we had opened connection, we lost it
-            // set timeout for reconnecting
-            endTicks = GetTickCount() + maximumReopenTime;
+
+            // some protocols may need some sleep before loading (e.g. multicast UDP protocol needs some time between unsubscribing and subscribing in multicast groups)
+            unsigned int waitTime = caller->configuration->GetValueUnsignedInt(PARAMETER_NAME_SLEEP_BEFORE_LOAD, true, PARAMETER_NAME_SLEEP_BEFORE_LOAD_DEFAULT);
+            unsigned int currentTime = GetTickCount();
+
+            // set new timeout for reconnecting
+            startTicks = currentTime + waitTime;
+            endTicks = currentTime + waitTime + maximumReopenTime;
           }
 
-          if (GetTickCount() < endTicks)
+          unsigned int currentTime = GetTickCount();
+          if ((currentTime >= startTicks) && (currentTime < endTicks))
           {
             CParameterCollection *parameters = new CParameterCollection(&result);
             wchar_t *finishTimeString = FormatString(L"%u", caller->startReceivingData ? caller->finishTime : endTicks);
@@ -515,19 +535,40 @@ unsigned int WINAPI CProtocolHoster::ReceiveDataWorker(LPVOID lpParam)
 
             CHECK_CONDITION_EXECUTE(openedConnection, caller->logger->Log(LOGGER_WARNING, L"%s: %s: connection closed, trying to open, maximum re-open time: %u (ms)", caller->hosterName, METHOD_RECEIVE_DATA_WORKER_NAME, maximumReopenTime));
           }
-          else
+          else if (currentTime >= endTicks)
           {
             caller->logger->Log(LOGGER_ERROR, L"%s: %s: maximum time of re-opening connection reached, maximum re-open time: %u (ms)", caller->hosterName, METHOD_RECEIVE_DATA_WORKER_NAME, maximumReopenTime);
-            result = E_CONNECTION_LOST_CANNOT_REOPEN;
+
+            // instead of error we stop receiving data in protocol
+            caller->activeProtocol->StopReceivingData();
+
+            if (caller->activeProtocol->IsLiveStreamSpecified())
+            {
+              // filter specified live stream
+              // it can be IPTV or splitter with live stream, in that case we rather try to open connection again
+
+              // some protocols may need some sleep before loading (e.g. multicast UDP protocol needs some time between unsubscribing and subscribing in multicast groups)
+              unsigned int waitTime = caller->configuration->GetValueUnsignedInt(PARAMETER_NAME_SLEEP_BEFORE_LOAD, true, PARAMETER_NAME_SLEEP_BEFORE_LOAD_DEFAULT);
+
+              // set new timeout for reconnecting
+              startTicks = currentTime + waitTime;
+              endTicks = currentTime + waitTime + maximumReopenTime;
+            }
+            else
+            {
+              // we also set end of stream, whole stream downloaded and also special flag that connection was lost
+              caller->activeProtocol->SetFlags(caller->activeProtocol->GetFlags() | PROTOCOL_PLUGIN_FLAG_CONNECTION_LOST_CANNOT_REOPEN | PROTOCOL_PLUGIN_FLAG_END_OF_STREAM_REACHED | PROTOCOL_PLUGIN_FLAG_WHOLE_STREAM_DOWNLOADED);
+            }
           }
 
           // we don't have opened connection
           openedConnection = false;
         }
-        else if ((connectionState == Initializing) ||
-                 (connectionState == Opening) ||
-                 (connectionState == Opened) ||
-                 (connectionState == Closing))
+        else if (caller->activeProtocol->IsConnectionLostCannotReopen() ||
+                  (connectionState == Initializing) ||
+                  (connectionState == Opening) ||
+                  (connectionState == Opened) ||
+                  (connectionState == Closing))
         {
           openedConnection |= (connectionState == Opened);
 

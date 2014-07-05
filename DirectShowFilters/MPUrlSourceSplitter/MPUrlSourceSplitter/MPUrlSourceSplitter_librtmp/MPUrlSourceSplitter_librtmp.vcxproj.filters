@@ -15,90 +15,61 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="zlib.def">
-      <Filter>Source Files</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="crc32.h">
+    <ClInclude Include="stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="deflate.h">
+    <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="gzguts.h">
+    <ClInclude Include="amf.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inffast.h">
+    <ClInclude Include="bytes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inffixed.h">
+    <ClInclude Include="dh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inflate.h">
+    <ClInclude Include="dhgroups.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inftrees.h">
+    <ClInclude Include="handshake.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="trees.h">
+    <ClInclude Include="http.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="zconf.h">
+    <ClInclude Include="log.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="zlib.h">
+    <ClInclude Include="rtmp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="zutil.h">
+    <ClInclude Include="rtmp_sys.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="adler32.c">
+    <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="compress.c">
+    <ClCompile Include="amf.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="crc32.c">
+    <ClCompile Include="hashswf.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="deflate.c">
+    <ClCompile Include="log.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="gzclose.c">
+    <ClCompile Include="parseurl.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="gzlib.c">
+    <ClCompile Include="rtmp.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="gzread.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="gzwrite.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="infback.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="inffast.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="inflate.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="inftrees.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="trees.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="uncompr.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="zutil.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="readme_before_update.txt" />
   </ItemGroup>
 </Project>

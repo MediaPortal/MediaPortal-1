@@ -46,6 +46,7 @@
 #define E_INVALID_STREAM_PACKAGE_REQUEST                                        -9
 #define E_INVALID_STREAM_ID                                                     -10
 #define E_CANNOT_GET_MODULE_FILE_NAME                                           -11
+#define E_CONNECTION_LOST_TRYING_REOPEN                                         -12
 
 // parser error codes
 
@@ -109,5 +110,9 @@
 #define E_RTSP_NOT_SET_SENDER_SYNCHRONIZATION_SOURCE_IDENTIFIER                 -135
 #define E_RTSP_NO_ENDPOINT_FOUND                                                -136
 #define E_RTSP_SENT_DATA_LENGTH_NOT_SAME_AS_RTCP_PACKET_LENGTH                  -137
+
+// UDP/RTP protocol error codes
+
+#define E_UDP_NO_DATA_RECEIVED                                                  -140
 
 #endif

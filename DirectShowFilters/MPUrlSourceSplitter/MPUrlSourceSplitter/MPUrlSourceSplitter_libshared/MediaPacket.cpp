@@ -106,7 +106,18 @@ void CMediaPacket::SetPresentationTimestampTicksPerSecond(unsigned int presentat
   this->presentationTimestampTicksPerSecond = presentationTimestampTicksPerSecond;
 }
 
+void CMediaPacket::SetDiscontinuity(bool discontinuity)
+{
+  this->flags &= ~MEDIA_PACKET_FLAG_DISCONTINUITY;
+  this->flags |= discontinuity ? MEDIA_PACKET_FLAG_DISCONTINUITY : MEDIA_PACKET_FLAG_NONE;
+}
+
 /* other methods */
+
+bool CMediaPacket::IsDiscontinuity(void)
+{
+  return this->IsSetFlags(MEDIA_PACKET_FLAG_DISCONTINUITY);
+}
 
 CMediaPacket *CMediaPacket::CreateMediaPacketBasedOnPacket(int64_t start, int64_t end)
 {

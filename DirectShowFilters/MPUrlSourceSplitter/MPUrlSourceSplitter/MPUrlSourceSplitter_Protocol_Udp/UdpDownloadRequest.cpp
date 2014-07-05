@@ -25,6 +25,7 @@
 CUdpDownloadRequest::CUdpDownloadRequest(HRESULT *result)
   : CDownloadRequest(result)
 {
+  this->checkInterval = 0;
 }
 
 CUdpDownloadRequest::~CUdpDownloadRequest(void)
@@ -33,7 +34,17 @@ CUdpDownloadRequest::~CUdpDownloadRequest(void)
 
 /* get methods */
 
+unsigned int CUdpDownloadRequest::GetCheckInterval(void)
+{
+  return this->checkInterval;
+}
+
 /* set methods */
+
+void CUdpDownloadRequest::SetCheckInterval(unsigned int checkInterval)
+{
+  this->checkInterval = checkInterval;
+}
 
 /* other methods */
 
@@ -55,6 +66,13 @@ bool CUdpDownloadRequest::CloneInternal(CDownloadRequest *clone)
 
   if (result)
   {
+    CUdpDownloadRequest *request = dynamic_cast<CUdpDownloadRequest *>(clone);
+    result &= (request != NULL);
+
+    if (result)
+    {
+      request->checkInterval = this->checkInterval;
+    }
   }
 
   return result;

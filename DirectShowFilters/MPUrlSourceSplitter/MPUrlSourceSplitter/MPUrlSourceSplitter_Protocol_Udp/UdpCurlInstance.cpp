@@ -78,8 +78,6 @@ HRESULT CUdpCurlInstance::Initialize(CDownloadRequest *downloadRequest)
 
   if (SUCCEEDED(result))
   {
-    unsigned int endTicks = (this->downloadRequest->GetFinishTime() == FINISH_TIME_NOT_SPECIFIED) ? (GetTickCount() + this->downloadRequest->GetReceiveDataTimeout()) : this->downloadRequest->GetFinishTime();
-
     ALLOC_MEM_DEFINE_SET(urlComponents, URL_COMPONENTS, 1, 0);
     CHECK_POINTER_HRESULT(result, urlComponents, result, E_OUTOFMEMORY);
 
@@ -187,6 +185,28 @@ unsigned int CUdpCurlInstance::CurlWorker(void)
 
       CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), CNetworkInterface::GetAllNetworkInterfaces(interfaces, AF_UNSPEC), result);
 
+      if (SUCCEEDED(result))
+      {
+        if (!IsNullOrEmpty(this->udpDownloadRequest->GetNetworkInterfaceName()))
+        {
+          // in request is set network interface name, leave only interface with specified name
+          unsigned int i = 0;
+          while (SUCCEEDED(result) && (i < interfaces->Count()))
+          {
+            CNetworkInterface *networkInterface = interfaces->GetItem(i);
+            
+            if (CompareWithNull(networkInterface->GetFriendlyName(), this->udpDownloadRequest->GetNetworkInterfaceName()) != 0)
+            {
+              interfaces->Remove(i);
+            }
+            else
+            {
+              i++;
+            }
+          }
+        }
+      }
+
       if (SUCCEEDED(result) && (localIpAddress->IsMulticast()))
       {
         CMulticastUdpServer *multicastServer = dynamic_cast<CMulticastUdpServer *>(server);
@@ -251,7 +271,9 @@ unsigned int CUdpCurlInstance::CurlWorker(void)
       FREE_MEM_CLASS(interfaces);
       CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), server->StartListening(), result);
 
-      while (!this->curlWorkerShouldExit)
+      unsigned int endTicks = (this->downloadRequest->GetFinishTime() == FINISH_TIME_NOT_SPECIFIED) ? (GetTickCount() + this->downloadRequest->GetReceiveDataTimeout()) : this->downloadRequest->GetFinishTime();
+
+      while (SUCCEEDED(result) && (!this->curlWorkerShouldExit))
       {
         if (SUCCEEDED(result))
         {
@@ -278,6 +300,9 @@ unsigned int CUdpCurlInstance::CurlWorker(void)
 
                 if (SUCCEEDED(res))
                 {
+                  this->totalReceivedBytes += receivedLength;
+                  this->lastReceiveTime = GetTickCount();
+
                   CDumpBox *dumpBox = NULL;
                   CHECK_CONDITION_NOT_NULL_EXECUTE(this->dumpFile->GetDumpFile(), dumpBox = this->CreateDumpBox());
 
@@ -328,6 +353,23 @@ unsigned int CUdpCurlInstance::CurlWorker(void)
               this->logger->Log(LOGGER_ERROR, L"%s: %s: error while receiving data: 0x%08X", this->protocolName, METHOD_CURL_WORKER_NAME, res);
               result = res;
             }
+          }
+        }
+
+        if (SUCCEEDED(result))
+        {
+          // check timeout if no data received until now
+          if ((this->totalReceivedBytes == 0) && (GetTickCount() > endTicks))
+          {
+            this->logger->Log(LOGGER_ERROR, L"%s: %s: no data received", this->protocolName, METHOD_CURL_WORKER_NAME);
+            result = E_UDP_NO_DATA_RECEIVED;
+          }
+
+          // check last received data time
+          if ((this->totalReceivedBytes != 0) && (GetTickCount() > (this->lastReceiveTime + this->udpDownloadRequest->GetCheckInterval())))
+          {
+            this->logger->Log(LOGGER_ERROR, L"%s: %s: no data received last %u ms", this->protocolName, METHOD_CURL_WORKER_NAME, this->udpDownloadRequest->GetCheckInterval());
+            result = E_UDP_NO_DATA_RECEIVED;
           }
         }
 

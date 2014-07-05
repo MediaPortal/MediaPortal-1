@@ -32,6 +32,12 @@
 #define DSHOW_TIME_BASE                                               10000000
 #endif
 
+#define MEDIA_PACKET_FLAG_NONE                                        CACHE_FILE_ITEM_FLAG_NONE
+
+#define MEDIA_PACKET_FLAG_DISCONTINUITY                               (1 << (CACHE_FILE_ITEM_FLAG_LAST + 0))
+
+#define MEDIA_PACKET_FLAG_LAST                                        (CACHE_FILE_ITEM_FLAG_LAST + 1)
+
 // CMediaPacket class is wrapper for IMediaSample interface
 // this class doesn't implement all methods of IMediaSample interface
 class CMediaPacket : public CCacheFileItem
@@ -80,7 +86,15 @@ public:
   // @param presentationTimestampTicksPerSecond : presentation timestamp ticks per second to set
   void SetPresentationTimestampTicksPerSecond(unsigned int presentationTimestampTicksPerSecond);
 
+  // set discontinuity
+  // @param discontinuity : true if discontinuity after data, false otherwise
+  void SetDiscontinuity(bool discontinuity);
+
   /* other methods */
+
+  // tests if discontinuity is set
+  // @return : true if discontinuity is set, false otherwise
+  bool IsDiscontinuity(void);
 
   // deeply clone current instance of media packet with specified position range to new media packet
   // @param start : start position of new media packet

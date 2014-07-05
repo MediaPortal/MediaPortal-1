@@ -35,7 +35,18 @@ CStreamPackageResponse::~CStreamPackageResponse(void)
 
 /* set methods */
 
+void CStreamPackageResponse::SetDiscontinuity(bool discontinuity)
+{
+  this->flags &= ~STREAM_PACKAGE_RESPONSE_FLAG_DISCONTINUITY;
+  this->flags |= discontinuity ? STREAM_PACKAGE_RESPONSE_FLAG_DISCONTINUITY : STREAM_PACKAGE_RESPONSE_FLAG_NONE;
+}
+
 /* other methods */
+
+bool CStreamPackageResponse::IsDiscontinuity(void)
+{
+  return this->IsSetFlags(STREAM_PACKAGE_RESPONSE_FLAG_DISCONTINUITY);
+}
 
 CStreamPackageResponse *CStreamPackageResponse::Clone(void)
 {

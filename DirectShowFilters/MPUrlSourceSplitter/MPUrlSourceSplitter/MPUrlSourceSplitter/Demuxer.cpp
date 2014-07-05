@@ -2184,6 +2184,17 @@ HRESULT CDemuxer::DemuxerReadPosition(int64_t position, uint8_t *buffer, int len
       CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(request));
     }
 
+    if (this->IsSetFlags(DEMUXER_FLAG_PENDING_DISCONTINUITY))
+    {
+      if (this->IsSetFlags(DEMUXER_FLAG_PENDING_DISCONTINUITY_WITH_REPORT))
+      {
+        this->logger->Log(LOGGER_VERBOSE, L"%s: %s: stream %u, request %u, start: %lld, length: %d, discontinuity reported", MODULE_NAME, METHOD_DEMUXER_READ_NAME, this->demuxerId, requestId, position, length);
+      }
+
+      this->flags &= ~(DEMUXER_FLAG_PENDING_DISCONTINUITY | DEMUXER_FLAG_PENDING_DISCONTINUITY_WITH_REPORT);
+      result = E_CONNECTION_LOST_TRYING_REOPEN;
+    }
+
     CHECK_HRESULT_EXECUTE(result, this->filter->ProcessStreamPackage(package));
     CHECK_HRESULT_EXECUTE(result, package->GetError());
 
@@ -2194,9 +2205,20 @@ HRESULT CDemuxer::DemuxerReadPosition(int64_t position, uint8_t *buffer, int len
 
       response->GetBuffer()->CopyFromBuffer(buffer, response->GetBuffer()->GetBufferOccupiedSpace());
       result = response->GetBuffer()->GetBufferOccupiedSpace();
+
+      if (response->IsDiscontinuity())
+      {
+        this->flags |= DEMUXER_FLAG_PENDING_DISCONTINUITY;
+
+        if (result != 0)
+        {
+          this->flags |= DEMUXER_FLAG_PENDING_DISCONTINUITY_WITH_REPORT;
+          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: stream %u, request %u, start: %lld, length: %d, pending discontinuity", MODULE_NAME, METHOD_DEMUXER_READ_NAME, this->demuxerId, requestId, position, length);
+        }
+      }
     }
 
-    CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_WARNING, L"%s: %s: stream %u, request %u, start: %lld, length: %d, error: 0x%08X", MODULE_NAME, METHOD_DEMUXER_READ_NAME, this->demuxerId, requestId, position, length, result));
+    CHECK_CONDITION_EXECUTE(FAILED(result) && (result != E_CONNECTION_LOST_TRYING_REOPEN), this->logger->Log(LOGGER_WARNING, L"%s: %s: stream %u, request %u, start: %lld, length: %d, error: 0x%08X", MODULE_NAME, METHOD_DEMUXER_READ_NAME, this->demuxerId, requestId, position, length, result));
 
     FREE_MEM_CLASS(package);
   }
@@ -2433,6 +2455,13 @@ HRESULT CDemuxer::GetNextPacketInternal(COutputPinPacket *packet)
       // end of file reached
       result = E_NO_MORE_DATA_AVAILABLE;
     }
+    else if (ffmpegResult == E_CONNECTION_LOST_TRYING_REOPEN)
+    {
+      ff_read_frame_flush(this->formatContext);
+
+      this->flags |= DEMUXER_FLAG_CONNECTION_LOST_TRYING_REOPEN;
+      result = S_FALSE;
+    }
     else if (ffmpegResult < 0)
     {
       // meh, fail
@@ -2585,16 +2614,19 @@ HRESULT CDemuxer::GetNextPacketInternal(COutputPinPacket *packet)
 
         packet->SetSyncPoint((ffmpegPacket.flags & AV_PKT_FLAG_KEY) != 0);
         //pPacket->bAppendable = 0; //!pPacket->bSyncPoint;
-        packet->SetDiscontinuity((ffmpegPacket.flags & AV_PKT_FLAG_CORRUPT) != 0);
+
+        packet->SetDiscontinuity(((ffmpegPacket.flags & AV_PKT_FLAG_CORRUPT) != 0) || this->IsSetFlags(DEMUXER_FLAG_CONNECTION_LOST_TRYING_REOPEN));
+        this->flags &= ~DEMUXER_FLAG_CONNECTION_LOST_TRYING_REOPEN;
+
         //#ifdef DEBUG
         //        if (pkt.flags & AV_PKT_FLAG_CORRUPT)
         //          DbgLog((LOG_TRACE, 10, L"::GetNextPacket() - Signaling Discontinuinty because of corrupt package"));
         //#endif
 
-        if (packet->GetStartTime() != AV_NOPTS_VALUE)
-        {
-          //m_rtCurrent = packet->GetStartTime();
-        }
+        //if (packet->GetStartTime() != AV_NOPTS_VALUE)
+        //{
+        //  //m_rtCurrent = packet->GetStartTime();
+        //}
       }
 
       // check if stream is building seeking index
@@ -2706,7 +2738,7 @@ HRESULT CDemuxer::GetNextPacketInternal(COutputPinPacket *packet)
           result = S_OK;
         }
       }
-      else if (res < 0)
+      else if ((res < 0) && (res != E_CONNECTION_LOST_TRYING_REOPEN))
       {
         packet->SetStreamPid(0);
         packet->SetDemuxerId(this->demuxerId);

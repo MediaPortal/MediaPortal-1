@@ -38,11 +38,22 @@ public:
 
   /* get methods */
 
+  // gets check interval for incoming data (in ms)
+  // @return : check interval for incoming data (in ms)
+  virtual unsigned int GetCheckInterval(void);
+
   /* set methods */
+
+  // sets receive data check interval (in ms)
+  // @param checkInterval : the check interval for received data (in ms)
+  virtual void SetCheckInterval(unsigned int checkInterval);
 
   /* other methods */
 
 protected:
+
+  // holds check interval for incoming data
+  unsigned int checkInterval;
 
   /* methods */
 

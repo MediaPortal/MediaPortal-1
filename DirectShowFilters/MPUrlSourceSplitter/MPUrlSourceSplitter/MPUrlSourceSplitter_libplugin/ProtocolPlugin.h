@@ -41,8 +41,9 @@
 #define PROTOCOL_PLUGIN_FLAG_STREAM_LENGTH_ESTIMATED                  (1 << (PLUGIN_FLAG_LAST + 3))
 #define PROTOCOL_PLUGIN_FLAG_WHOLE_STREAM_DOWNLOADED                  (1 << (PLUGIN_FLAG_LAST + 4))
 #define PROTOCOL_PLUGIN_FLAG_END_OF_STREAM_REACHED                    (1 << (PLUGIN_FLAG_LAST + 5))
+#define PROTOCOL_PLUGIN_FLAG_CONNECTION_LOST_CANNOT_REOPEN            (1 << (PLUGIN_FLAG_LAST + 6))
 
-#define PROTOCOL_PLUGIN_FLAG_LAST                                     (PLUGIN_FLAG_LAST + 5)
+#define PROTOCOL_PLUGIN_FLAG_LAST                                     (PLUGIN_FLAG_LAST + 6)
 
 class CProtocolPlugin : public CPlugin, public IProtocol
 {
@@ -103,6 +104,10 @@ public:
   // tests if end of stream is reached (but it can be with gaps)
   // @return : true if end of stream reached, false otherwise
   virtual bool IsEndOfStreamReached(void);
+
+  // tests if connection was lost and can't be opened again
+  // @return : true if connection was lost and can't be opened again, false otherwise
+  virtual bool IsConnectionLostCannotReopen(void);
 
 protected:
   // holds logger instance
