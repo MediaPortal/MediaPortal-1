@@ -243,8 +243,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       checkBoxCreateSignalGroup.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbs" + _cardNumber + "createsignalgroup", false));
       checkBoxEnableDVBS2.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbs" + _cardNumber + "enabledvbs2", false));
 
-      _enableEvents = true;
-      mpLNB1_CheckedChanged(null, null);
+      _enableEvents = true;      
 
       checkBoxAdvancedTuning.Checked = false;
       checkBoxAdvancedTuning.Enabled = true;
@@ -353,7 +352,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             MessageBox.Show(this, "Tuner is disabled. Please enable the tuner before scanning.");
             return;
           }
-          if (!ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(card.IdCard))
+          if (!ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(Card.IdCard))
           {
             MessageBox.Show(this, "Tuner is not found. Please make sure the tuner is present before scanning.");
             return;
@@ -438,15 +437,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
     }
 
-    private void Scan(Satellite tunerSatellite) //int lnb, LnbType lnbType, DiseqcPort diseqc, SatelliteContext context
+    private void Scan(TunerSatellite tunerSatellite) //int lnb, LnbType lnbType, DiseqcPort diseqc, SatelliteContext context
     {
       // all transponders to scan
       List<DVBSChannel> _channels = new List<DVBSChannel>();
 
       // get default sat position from DB
-
-      
-
       int position = -1;
       bool setting = ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbs" + _cardNumber + "motorEnabled", false);
       if (setting)
@@ -455,7 +451,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
 
       // what to scan
-      Satellite context = new Satellite(tunerSatellite.Satellite);      
+      Satellite context = tunerSatellite.Satellite;      
 
       switch (ActiveScanType)
       {
@@ -473,12 +469,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         case ScanTypes.NIT:
           _transponders.Clear();
           DVBSChannel tuneChannel = GetManualTuning();
-          tuneChannel.Diseqc = diseqc;
-          tuneChannel.LnbType = lnbType;
+          
+          
+
+          tuneChannel.Diseqc = (DiseqcPort)tunerSatellite.DiseqcSwitchSetting;
+          tuneChannel.LnbType = tunerSatellite.LnbType;
           tuneChannel.SatelliteIndex = position;
 
           listViewStatus.Items.Clear();
-          string line = String.Format("lnb:{0} {1}tp- {2} {3} {4}", lnb, 1, tuneChannel.Frequency,
+          string line = String.Format("lnb:{0} {1}tp- {2} {3} {4}", tunerSatellite.LnbType, 1, tuneChannel.Frequency,
                                       tuneChannel.Polarisation, tuneChannel.SymbolRate);
           ListViewItem item = listViewStatus.Items.Add(new ListViewItem(line));
           item.EnsureVisible();
@@ -540,10 +539,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
         scanIndex++;
 
-        tuneChannel.Diseqc = diseqc;
-        tuneChannel.LnbType = lnbType;
+        tuneChannel.Diseqc = (DiseqcPort)tunerSatellite.DiseqcSwitchSetting;
+        tuneChannel.LnbType = tunerSatellite.LnbType;
         tuneChannel.SatelliteIndex = position;
-        string line = String.Format("lnb:{0} {1}tp- {2} {3} {4}", lnb, 1 + index, tuneChannel.Frequency,
+        string line = String.Format("lnb:{0} {1}tp- {2} {3} {4}", tunerSatellite.LnbType, 1 + index, tuneChannel.Frequency,
                                     tuneChannel.Polarisation, tuneChannel.SymbolRate);
         ListViewItem item = listViewStatus.Items.Add(new ListViewItem(line));
         item.EnsureVisible();
@@ -562,13 +561,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         {
           if (ServiceAgents.Instance.ControllerServiceAgent.TunerLocked(_cardNumber) == false)
           {
-            line = String.Format("lnb:{0} {1}tp- {2} {3} {4}:No signal", lnb, scanIndex, tuneChannel.Frequency,
+            line = String.Format("lnb:{0} {1}tp- {2} {3} {4}:No signal", tunerSatellite.LnbType, scanIndex, tuneChannel.Frequency,
                                  tuneChannel.Polarisation, tuneChannel.SymbolRate);
             item.Text = line;
             item.ForeColor = Color.Red;
             continue;
           }
-          line = String.Format("lnb:{0} {1}tp- {2} {3} {4}:Nothing found", lnb, scanIndex, tuneChannel.Frequency,
+          line = String.Format("lnb:{0} {1}tp- {2} {3} {4}:Nothing found", tunerSatellite.LnbType, scanIndex, tuneChannel.Frequency,
                                tuneChannel.Polarisation, tuneChannel.SymbolRate);
           item.Text = line;
           item.ForeColor = Color.Red;
@@ -582,7 +581,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           Channel dbChannel;
           DVBSChannel channel = (DVBSChannel)channels[i];
           bool exists;
-          TuningDetail currentDetail;
+          TuningDetailDvbS2 currentDetail;
           ServiceDetail currentServiceDetail;
           //Check if we already have this tuningdetail. The user has the option to enable channel move detection...
           if (checkBoxEnableChannelMoveDetection.Checked)
@@ -593,7 +592,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             TuningDetailSearchEnum tuningDetailSearchEnum = TuningDetailSearchEnum.NetworkId;
             tuningDetailSearchEnum |= TuningDetailSearchEnum.ServiceId;
             currentServiceDetail = ServiceAgents.Instance.ChannelServiceAgent.GetServiceDetailCustom(channel, tuningDetailSearchEnum);
-            currentDetail = currentServiceDetail.TuningDetail;                             
+            currentDetail = (TuningDetailDvbS2)currentServiceDetail.TuningDetail;                             
           }
           else
           {
@@ -601,7 +600,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             //In those cases, ONID + TSID + SID is generally unique. The consequence of using the TSID to identify
             //a service is that channel movement tracking won't work (each transponder/mux should have its own TSID).            
             currentServiceDetail = ServiceAgents.Instance.ChannelServiceAgent.GetServiceDetail(channel);
-            currentDetail = currentServiceDetail.TuningDetail;
+            currentDetail = (TuningDetailDvbS2)currentServiceDetail.TuningDetail;
           }
 
           if (currentDetail == null)
@@ -635,7 +634,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             }
             if (checkBoxCreateGroupsSat.Checked)
             {
-              group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(context.Satellite.SatelliteName, MediaTypeEnum.TV);
+              group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(tunerSatellite.Satellite.Name, MediaTypeEnum.TV);
               MappingHelper.AddChannelToGroup(ref dbChannel, @group);
             }
             if (checkBoxCreateGroups.Checked)
@@ -655,7 +654,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             }
             if (checkBoxCreateGroupsSat.Checked)
             {
-              group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(context.Satellite.SatelliteName, MediaTypeEnum.Radio);
+              group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(tunerSatellite.Satellite.Name, MediaTypeEnum.Radio);
               MappingHelper.AddChannelToGroup(ref dbChannel, @group);
             }
             if (checkBoxCreateGroups.Checked)
@@ -673,8 +672,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           else
           {
             //update tuning details...
+
+            
+
             channel.SatelliteIndex = position; // context.Satellite.IdSatellite;
-            currentDetail.SatIndex = position; //context.Satellite.IdSatellite;
+            //tunerSatellite.DiseqcMotorPosition = position;            
             ServiceAgents.Instance.ChannelServiceAgent.UpdateTuningDetail(dbChannel.IdChannel, currentDetail.IdTuningDetail, channel, _cardNumber);
           }
           if (channel.MediaType == MediaTypeEnum.TV)
@@ -703,9 +705,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
               newChannels++;
             }
           }
-          MappingHelper.AddChannelToCard(dbChannel, card, false);
+          MappingHelper.AddChannelToCard(dbChannel, Card, false);
           line = String.Format("lnb:{0} {1}tp- {2} {3} {4}:New:{5} Updated:{6}",
-                               lnb, 1 + index, tuneChannel.Frequency, tuneChannel.Polarisation, tuneChannel.SymbolRate,
+                               tunerSatellite.LnbType, 1 + index, tuneChannel.Frequency, tuneChannel.Polarisation, tuneChannel.SymbolRate,
                                newChannels, updatedChannels);
           item.Text = line;
         }
@@ -788,7 +790,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void tabPage2_Click(object sender, EventArgs e) {}
 
-    private void button1_Click(object sender, EventArgs e)
+    private void btnDiseqCGoto_Click(object sender, EventArgs e)
     {
       if (_enableEvents == false)
         return;

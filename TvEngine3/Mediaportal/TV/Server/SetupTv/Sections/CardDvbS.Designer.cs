@@ -835,7 +835,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonGoto.TabIndex = 66;
       this.buttonGoto.Text = "Goto";
       this.buttonGoto.UseVisualStyleBackColor = true;
-      this.buttonGoto.Click += new System.EventHandler(this.button1_Click);
+      this.buttonGoto.Click += new System.EventHandler(this.btnDiseqCGoto_Click);
       // 
       // buttonStore
       // 
