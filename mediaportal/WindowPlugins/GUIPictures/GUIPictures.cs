@@ -1903,6 +1903,11 @@ namespace MediaPortal.GUI.Pictures
 
     private void OnShowPicture(string strFile)
     {
+      // Stop video playback before starting show picture to avoid MP freezing
+      if (g_Player.MediaInfo != null && g_Player.MediaInfo.hasVideo || g_Player.IsTV || g_Player.IsVideo)
+      {
+        g_Player.Stop();
+      }
       GUISlideShow SlideShow = (GUISlideShow)GUIWindowManager.GetWindow((int)Window.WINDOW_SLIDESHOW);
       if (SlideShow == null)
       {
@@ -1971,6 +1976,11 @@ namespace MediaPortal.GUI.Pictures
 
     private void OnSlideShowRecursive()
     {
+      // Stop video playback before starting show picture to avoid MP freezing
+      if (g_Player.MediaInfo != null && g_Player.MediaInfo.hasVideo || g_Player.IsTV || g_Player.IsVideo)
+      {
+        g_Player.Stop();
+      }
       GUISlideShow SlideShow = (GUISlideShow)GUIWindowManager.GetWindow((int)Window.WINDOW_SLIDESHOW);
       if (SlideShow == null)
       {
@@ -2006,6 +2016,11 @@ namespace MediaPortal.GUI.Pictures
 
     private void OnSlideShow (string strFile)
     {
+      // Stop video playback before starting show picture to avoid MP freezing
+      if (g_Player.MediaInfo != null && g_Player.MediaInfo.hasVideo || g_Player.IsTV || g_Player.IsVideo)
+      {
+        g_Player.Stop();
+      }
       GUISlideShow SlideShow = (GUISlideShow)GUIWindowManager.GetWindow((int)Window.WINDOW_SLIDESHOW);
       if (SlideShow == null)
       {
