@@ -504,6 +504,7 @@ void CSatIP::processPackages()
 			for (size_t i = 0; i < NUMBER_OF_STREAMING_SLOTS-1; ++i) {
 				_streamHandler[i].write(out, TS_PACKET_LEN);
 			}
+			//fwrite(out, 1, TS_PACKET_LEN, stream);
 			// the Stream must be configured before we write packages to the buffer
 			/*if (pidfilter->PidRequested(Pid) && streamConfigured && MPrtpStream != NULL) {
 				fwrite(out, 1, TS_PACKET_LEN, stream);

@@ -59,6 +59,12 @@ void PidFilter::Del(uint16_t pid) {
 	LeaveCriticalSection(&csPidsInAccess);
 }
 
+void PidFilter::Reset() {
+	EnterCriticalSection(&csPidsInAccess);
+	pids.clear();
+	LeaveCriticalSection(&csPidsInAccess);
+}
+
 void PidFilter::SyncPids(std::string newPids) {
 	EnterCriticalSection(&csPidsInAccess);
 	

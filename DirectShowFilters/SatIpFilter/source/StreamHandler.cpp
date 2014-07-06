@@ -47,6 +47,7 @@ void CStreamHandler::configure() {
 
 void CStreamHandler::setPmt(int pmt) {
 	LogDebug("Set PMT with pid=%d", pmt);
+	_pidfilter.Reset();
 	_pidfilter.Add(pmt);
 	_sectionDecoder->Reset();
 	_pmtParser->Reset();
@@ -77,7 +78,7 @@ void CStreamHandler::write(unsigned char *dataPtr, int numBytes)
 	}
 
 	//LogDebug("Stream Running: %d, Stop: %d, _startStreaming: %d, _bytesWritten: %d", (_streamRunning ? 1 : 0), (_stop ? 1 : 0), (_startStreaming ? 1 : 0), _bytesWritten);
-	if (!_streamRunning && !_stop && _startStreaming && _streamConfigured && (!_pmtSet || _bytesWritten > (TS_PACKET_LEN * 900))) {
+	if (!_streamRunning && !_stop && _startStreaming && _streamConfigured && (!_pmtSet || _bytesWritten > (TS_PACKET_LEN * 90))) {
 		_streamRunning = true;
 		LogDebug("startStreaming");
 		_test2 = "test";
@@ -116,8 +117,8 @@ void CStreamHandler::stop()
 }
 
 void CStreamHandler::OnPmtReceived(const CPidTable& pidTable) {
-	LogDebug("Got PMT with pid=%d", pidTable.PmtPid);
-	
+	LogDebug("Got PMT with pid=%hu", pidTable.PmtPid);
+
 	vector<VideoPid*>::const_iterator vPidIt = pidTable.VideoPids.begin();
 	while (vPidIt != pidTable.VideoPids.end())
 	{

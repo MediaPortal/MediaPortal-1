@@ -13,6 +13,7 @@ public:
 	~PidFilter();
 	void Add(uint16_t pid);
 	void Del(uint16_t pid);
+	void Reset();
 	void SyncPids(std::string newPids);
 	void SyncPids(std::vector<uint16_t> newPids);
 	bool PidRequested(uint16_t pid);
