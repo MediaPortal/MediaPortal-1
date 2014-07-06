@@ -67,7 +67,7 @@
       <InlineFunctionExpansion>Default</InlineFunctionExpansion>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;$(WINDOWS_SDK)Include\;$(DXSDK_DIR)Include;..\LiveMedia555\BasicUsageEnvironment/include;..\LiveMedia555\UsageEnvironment/include;..\LiveMedia555\liveMedia;..\LiveMedia555\liveMedia/include;..\LiveMedia555\groupsock/include;../LiveMedia555/MediaPortal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\shared\;$(WINDOWS_SDK)Include\;$(DXSDK_DIR)Include;..\LiveMedia555\BasicUsageEnvironment/include;..\LiveMedia555\UsageEnvironment/include;..\LiveMedia555\liveMedia;..\LiveMedia555\liveMedia/include;..\LiveMedia555\groupsock/include;../LiveMedia555/MediaPortal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUGT;WIN32;_WIN32;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>false</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -90,7 +90,7 @@
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>strmbase.lib;livemedia555.lib;winmm.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>DvbCoreUtils.lib;strmbase.lib;livemedia555.lib;winmm.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>bin\Release/SatIpFilter.ax</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>$(DSHOW_BASE)Release_MBCS; $(DXSDK_DIR)lib\x86;$(WINDOWS_SDK)\lib; ..\shared;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -160,6 +160,7 @@
   <ItemGroup>
     <ClCompile Include="source\PacketSync.cpp" />
     <ClCompile Include="source\PidFilter.cpp" />
+    <ClCompile Include="source\PmtParser.cpp" />
     <ClCompile Include="source\ringbuffer.cpp" />
     <ClCompile Include="source\SatIpFilter.cpp" />
     <ClCompile Include="source\Stdafx.cpp" />
@@ -167,10 +168,12 @@
     <ClCompile Include="source\TsInputPin.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\shared\SectionDecoder.h" />
     <ClInclude Include="source\config.h" />
     <ClInclude Include="source\PacketReceiver.h" />
     <ClInclude Include="source\PacketSync.h" />
     <ClInclude Include="source\PidFilter.h" />
+    <ClInclude Include="source\PmtParser.h" />
     <ClInclude Include="source\ringbuffer.h" />
     <ClInclude Include="source\RtpStreamInterface.h" />
     <ClInclude Include="source\SatIpFilter.h" />

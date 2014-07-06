@@ -46,7 +46,6 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Server
     {
       if (pos == GenerationPosition.AfterDeviceList)
       {
-        // TODO: make the "DVBT-2,DVBT2-2" dynamic
         writer.WriteElementString("satip", "X_SATIPCAP", "urn:ses-com:satip", getCapabilities());
       }
     }

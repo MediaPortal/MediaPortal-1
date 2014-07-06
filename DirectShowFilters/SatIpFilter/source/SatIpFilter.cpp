@@ -64,34 +64,62 @@ const AMOVIESETUP_FILTER SatIP =
 	CLSID_LegacyAmFilterCategory    // category
 };
 
-static char logbuffer[2000]; 
+static char logbuffer[2000];
+static wchar_t logbufferw[2000];
+static wchar_t logFile[MAX_PATH];
+static WORD logFileParsed = -1;
 
-void LogDebug(const char *fmt, ...) 
+void GetLogFile(wchar_t *pLog)
 {
+	SYSTEMTIME systemTime;
+	GetLocalTime(&systemTime);
+	if (logFileParsed != systemTime.wDay)
+	{
+		wchar_t folder[MAX_PATH];
+		::SHGetSpecialFolderPathW(NULL, folder, CSIDL_COMMON_APPDATA, FALSE);
+		swprintf_s(logFile, L"%s\\Team MediaPortal\\MediaPortal TV Server\\log\\SatIp_Filter.Log", folder, systemTime.wYear, systemTime.wMonth, systemTime.wDay);
+		logFileParsed = systemTime.wDay; // rec
+	}
+	wcscpy(pLog, &logFile[0]);
+}
+void LogDebug(const wchar_t *fmt, ...)
+{
+	//#ifdef DEBUG
 	va_list ap;
-	va_start(ap,fmt);
+	va_start(ap, fmt);
 
-	int tmp;
-	va_start(ap,fmt);
-	tmp=vsprintf(logbuffer, fmt, ap);
-	va_end(ap); 
+	va_start(ap, fmt);
+	vswprintf_s(logbufferw, fmt, ap);
+	va_end(ap);
 
-	TCHAR folder[MAX_PATH];
-	TCHAR fileName[MAX_PATH];
-	::SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
-	sprintf(fileName,"%s\\Team MediaPortal\\MediaPortal TV Server\\log\\SatIP.Log",folder);
-
-	FILE* fp = fopen(fileName,"a+");
-	if (fp!=NULL)
+	wchar_t fileName[MAX_PATH];
+	GetLogFile(fileName);
+	FILE* fp = _wfopen(fileName, L"a+, ccs=UTF-8");
+	if (fp != NULL)
 	{
 		SYSTEMTIME systemTime;
 		GetLocalTime(&systemTime);
-		fprintf(fp,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%02.2d %s\n",
+		fwprintf(fp, L"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%02.2d %s\n",
 			systemTime.wDay, systemTime.wMonth, systemTime.wYear,
-			systemTime.wHour,systemTime.wMinute,systemTime.wSecond,systemTime.wMilliseconds,
-			logbuffer);
+			systemTime.wHour, systemTime.wMinute, systemTime.wSecond, systemTime.wMilliseconds,
+			logbufferw);
 		fclose(fp);
+		//::OutputDebugStringW(logbufferw);::OutputDebugStringW(L"\n");
 	}
+	//#endif
+};
+
+void LogDebug(const char *fmt, ...)
+{
+	va_list ap;
+	va_start(ap, fmt);
+
+	va_start(ap, fmt);
+	vsprintf(logbuffer, fmt, ap);
+	va_end(ap);
+
+	MultiByteToWideChar(CP_ACP, 0, logbuffer, -1, logbufferw, sizeof(logbuffer) / sizeof(wchar_t));
+	LogDebug(L"%s", logbufferw);
 };
 
 //
@@ -706,6 +734,15 @@ unsigned int __stdcall namedPipeReadThread(/*HANDLE&*//*LPVOID hPipe_tmp*/void* 
 						case (SATIP_PROT_STOPSTREAM) : {
 							parameters.SatIP->_streamHandler[slot].stop();
 							LogDebug("Got STOPSTREAM");
+							break;
+						}
+						case (SATIP_PROT_PMT) : {
+							uint32_t pmt = 0;
+							if (!parameters.SatIP->getNextValue(pmt, position, read, buffer)) {
+								LogDebug("Error: Could not extract PMT from Pipe.");
+							}
+							parameters.SatIP->_streamHandler[slot].setPmt(pmt);
+							LogDebug("Got PMT with PID = %d", pmt);
 							break;
 						}
 						default:

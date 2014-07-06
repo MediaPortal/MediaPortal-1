@@ -59,7 +59,7 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
     private Thread listenThread;
     private string serverIp;
     private bool listen = true;
-    private Object StartStreamLock = new Object();
+    private Object tuningLock = new Object();
 
     private Dictionary<string, RtspClients> clients = new Dictionary<string, RtspClients>();
     private Dictionary<int, RtspCards> cards = new Dictionary<int, RtspCards>();
@@ -384,6 +384,93 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
         return;
       }
 
+      // rtsp or SAT>IP?
+
+      if (query.Get("channelId") != null && query.Get("pmtPid") != null)
+      {
+        // rtsp
+        if (!RTSP_play_rtsp(requestHeader, clientStream, query))
+        {
+          RTSP_serviceUnavailable(requestHeader, clientStream);
+          return;
+        }
+      }
+      else
+      {
+        // SAT>IP
+        if (!RTSP_play_satip(requestHeader, clientStream, query))
+        {
+          RTSP_serviceUnavailable(requestHeader, clientStream);
+          return;
+        }
+      }
+
+      
+      // creating the response
+
+      rtspDescribeRequest.Append("RTSP/1.0 200 OK\r\n");
+      // RTP-Info
+      // RTP-Info: url=rtsp://192.168.178.44:554/?freq=530.000&msys=dvbc&sr=6900&mtype=256qam&pids=0,259,533,538,534,18,17,16 RTSP/1.0\r\n
+      rtspDescribeRequest.AppendFormat("RTP-Info: url={0} RTSP/1.0\r\n", parts[1]);
+      // session
+      rtspDescribeRequest.AppendFormat("Session: {0}\r\n", clients[requestHeader.sessionId].sessionId);
+      //CSeq
+      rtspDescribeRequest.AppendFormat("CSeq: {0}", requestHeader.CSeq);
+      rtspDescribeRequest.Append("\r\n\r\n");
+
+      buffer = Encoding.UTF8.GetBytes(rtspDescribeRequest.ToString());
+      clientStream.Write(buffer, 0, buffer.Length);
+      clientStream.Flush();
+
+
+      this.LogDebug("ANSWER:");
+      this.LogDebug("-----------");
+      this.LogDebug(rtspDescribeRequest.ToString());
+      this.LogDebug("-----------");
+    }
+    
+    private bool RTSP_play_rtsp(RtspRequestHeader requestHeader, NetworkStream clientStream, NameValueCollection query)
+    {
+      if (query.Get("channelId") == null || query.Get("pmtPid") == null)
+      {
+        return false;
+      }
+
+      int channelId;
+      if (int.TryParse(query.Get("channelId"), out channelId))
+      {
+        this.LogDebug("SAT>IP: channelId {0} on sessionID: {1}", channelId, requestHeader.sessionId);
+      }
+
+      int pmtPid;
+      if (int.TryParse(query.Get("pmtPid"), out pmtPid))
+      {
+        this.LogDebug("SAT>IP: pmtPid {0} on sessionID: {1}", pmtPid, requestHeader.sessionId);
+      }
+
+      TuningDetail tuningDetail = ChannelManagement.GetChannel(channelId).TuningDetails[0];
+      clients[requestHeader.sessionId].freq = tuningDetail.Frequency / 1000;
+      clients[requestHeader.sessionId].msys = getChannelTypeAsString(tuningDetail.ChannelType);
+
+
+      if (!performTuning(requestHeader.sessionId, requestHeader, clientStream))
+      {
+        return false;
+      }
+
+      // send commands to the filter
+      FilterCommunication communication = new FilterCommunication(cards[clients[requestHeader.sessionId].cardId].devicePath, clients[requestHeader.sessionId].slot);
+      communication.addPmt(pmtPid);
+      communication.addClientPort(clients[requestHeader.sessionId].rtpClientPort);
+      communication.addClientIp(clients[requestHeader.sessionId].ip);
+      communication.requestNewSlot();
+      communication.send();
+
+      return true;
+    }
+    
+    private bool RTSP_play_satip(RtspRequestHeader requestHeader, NetworkStream clientStream, NameValueCollection query)
+    {
       if (query.Get("delpids") != null)
       {
         this.LogDebug("SAT>IP: Delete pids on sessionID: {0}", requestHeader.sessionId);
@@ -413,119 +500,19 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
 
       parseQuery(requestHeader.sessionId, query);
 
-
-      if (clients[requestHeader.sessionId].tunedToFrequency != clients[requestHeader.sessionId].freq)
+      if (!performTuning(requestHeader.sessionId, requestHeader, clientStream))
       {
-        this.LogDebug("SAT>IP: tuned Freq [{0}] != requested Freq [{1}] - sessionID {2}", clients[requestHeader.sessionId].tunedToFrequency, clients[requestHeader.sessionId].freq, requestHeader.sessionId);
-
-
-        int cardKey;
-        if (cardAlreadyTunedToFreq(clients[requestHeader.sessionId].msys, clients[requestHeader.sessionId].freq, out cardKey))
-        {
-          // there is already a card tuned to the frequency so lets add us to this card.
-          this.LogDebug("SAT>IP: there is already a card tuned to the Freq={0} - sessionID: {1}", clients[requestHeader.sessionId].freq, requestHeader.sessionId);
-          cards[cardKey].AddSlave(int.Parse(requestHeader.sessionId));
-          clients[requestHeader.sessionId].cardId = cardKey;
-          clients[requestHeader.sessionId].slot = cards[cardKey].getSlot(int.Parse(requestHeader.sessionId));
-        }
-        else
-        {
-          this.LogDebug("SAT>IP: there is no card already tuned to the Freq={0} - sessionID: {1}", clients[requestHeader.sessionId].freq, requestHeader.sessionId);
-
-          // remove user from current card
-          if (clients[requestHeader.sessionId].isTunedToFrequency)
-          {
-            this.LogDebug("SAT>IP: remove user from card with id {0} - sessionID {1}", clients[requestHeader.sessionId].cardId, requestHeader.sessionId);
-            cards[clients[requestHeader.sessionId].cardId].removeUser(int.Parse(requestHeader.sessionId));
-            if (cards[clients[requestHeader.sessionId].cardId].ownerId == -1)
-            {
-              this.LogDebug("SAT>IP: no users on card => stop timeshifting on card with id {0} - sessionID {1}", clients[requestHeader.sessionId].cardId, requestHeader.sessionId);
-              cards[clients[requestHeader.sessionId].cardId].card.StopTimeShifting();
-              // delete card from card array
-              cards.Remove(clients[requestHeader.sessionId].cardId);
-            }
-          }
-
-
-          TuningDetail _tuningDetail = ChannelManagement.GetTuningDetail(getChannelTypeAsInt(clients[requestHeader.sessionId].msys), (clients[requestHeader.sessionId].freq * 1000));
-
-          if (_tuningDetail == null) {
-            Log.Debug("SAT>IP: no such channel found!");
-            RTSP_serviceUnavailable(requestHeader, clientStream);
-            return;
-          }
-
-          this.LogInfo("SAT>IP: creating User: \"SAT>IP - {0}\" for sessionId: {1}", clients[requestHeader.sessionId].ip, requestHeader.sessionId);
-          IUser _user = UserFactory.CreateBasicUser("SAT>IP - " + clients[requestHeader.sessionId].ip);
-          IVirtualCard _card;
-          this.LogInfo("SAT>IP: Tuning to freq={0} for sessionId: {1}", clients[requestHeader.sessionId].freq, requestHeader.sessionId);
-
-          TvResult result = GlobalServiceProvider.Get<IControllerService>().StartTimeShifting(_user.Name, _tuningDetail.IdChannel, out _card, out _user);
-
-          if (result != TvResult.Succeeded)
-          {
-            this.LogError("SAT>IP: Tuning failed" + result);
-          }
-          else
-          {
-            this.LogInfo("SAT>IP: tunging success");
-          }
-
-          RtspCards card = new RtspCards();
-          card.ownerId = int.Parse(requestHeader.sessionId);
-          card.user = _user;
-          card.card = _card;
-          card.tuningDetail = _tuningDetail;
-          card.freq = clients[requestHeader.sessionId].freq;
-          card.msys = clients[requestHeader.sessionId].msys;
-          cards.Add(card.id, card);
-          clients[requestHeader.sessionId].cardId = card.id;
-          clients[requestHeader.sessionId].slot = card.getSlot(int.Parse(requestHeader.sessionId));
-
-          // TODO remove
-          clients[requestHeader.sessionId].card = _card;
-          clients[requestHeader.sessionId].user = _user;
-          clients[requestHeader.sessionId].tuningDetail = _tuningDetail;
-
-          cards[clients[requestHeader.sessionId].cardId].devicePath = GlobalServiceProvider.Get<IControllerService>().CardDevice(_card.Id); // device path
-        }
-
-        clients[requestHeader.sessionId].isTunedToFrequency = true;
-        clients[requestHeader.sessionId].tunedToFrequency = clients[requestHeader.sessionId].freq;
-
-        // send commands to the filter
-        FilterCommunication communication = new FilterCommunication(cards[clients[requestHeader.sessionId].cardId].devicePath, clients[requestHeader.sessionId].slot);
-        communication.addClientPort(clients[requestHeader.sessionId].rtpClientPort);
-        communication.addClientIp(clients[requestHeader.sessionId].ip);
-        communication.requestNewSlot();
-        communication.send();
+        return false;
       }
 
+      // send commands to the filter
+      FilterCommunication communication = new FilterCommunication(cards[clients[requestHeader.sessionId].cardId].devicePath, clients[requestHeader.sessionId].slot);
+      communication.addClientPort(clients[requestHeader.sessionId].rtpClientPort);
+      communication.addClientIp(clients[requestHeader.sessionId].ip);
+      communication.requestNewSlot();
+      communication.send();
 
-
-
-
-      // creating the response
-
-      rtspDescribeRequest.Append("RTSP/1.0 200 OK\r\n");
-      // RTP-Info
-      // RTP-Info: url=rtsp://192.168.178.44:554/?freq=530.000&msys=dvbc&sr=6900&mtype=256qam&pids=0,259,533,538,534,18,17,16 RTSP/1.0\r\n
-      rtspDescribeRequest.AppendFormat("RTP-Info: url={0} RTSP/1.0\r\n", parts[1]);
-      // session
-      rtspDescribeRequest.AppendFormat("Session: {0}\r\n", clients[requestHeader.sessionId].sessionId);
-      //CSeq
-      rtspDescribeRequest.AppendFormat("CSeq: {0}", requestHeader.CSeq);
-      rtspDescribeRequest.Append("\r\n\r\n");
-
-      buffer = Encoding.UTF8.GetBytes(rtspDescribeRequest.ToString());
-      clientStream.Write(buffer, 0, buffer.Length);
-      clientStream.Flush();
-
-
-      this.LogDebug("ANSWER:");
-      this.LogDebug("-----------");
-      this.LogDebug(rtspDescribeRequest.ToString());
-      this.LogDebug("-----------");
+      return true;
     }
 
     private void RTSP_describe(RtspRequestHeader requestHeader, NetworkStream clientStream, string[] parts)
@@ -585,25 +572,37 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
       this.LogDebug(rtspDescribeRequest.ToString());
       this.LogDebug("-----------");
     }
-
+    
     private void RTSP_teardown(RtspRequestHeader requestHeader, NetworkStream clientStream)
     {
       StringBuilder rtspDescribeRequest = new StringBuilder();
       byte[] buffer;
-      
-      // stop timeshifting
-      this.LogDebug("SAT>IP: remove user from card with id {0} - sessionID {1}", clients[requestHeader.sessionId].cardId, requestHeader.sessionId);
-      cards[clients[requestHeader.sessionId].cardId].removeUser(int.Parse(requestHeader.sessionId));
-      if (cards[clients[requestHeader.sessionId].cardId].ownerId == -1)
-      {
-        this.LogDebug("SAT>IP: no users on card => stop timeshifting on card with id {0} - sessionID {1}", clients[requestHeader.sessionId].cardId, requestHeader.sessionId);
-        cards[clients[requestHeader.sessionId].cardId].card.StopTimeShifting();
-        // delete card from card array
-        cards.Remove(clients[requestHeader.sessionId].cardId);
-      }
 
-      // remove client
-      clients.Remove(requestHeader.sessionId);
+      if (clients.ContainsKey(requestHeader.sessionId))
+      {
+        // TODO: send stop command to SAT>IP Filter
+        // Test: start timeshifting in setup Tv
+        //       connect to the same channel via vlc
+        //       stop VLC => Streaming should stop!
+        
+        // stop timeshifting
+        this.LogDebug("SAT>IP: remove user from card with id {0} - sessionID {1}", clients[requestHeader.sessionId].cardId, requestHeader.sessionId);
+        cards[clients[requestHeader.sessionId].cardId].removeUser(int.Parse(requestHeader.sessionId));
+        if (cards[clients[requestHeader.sessionId].cardId].ownerId == -1)
+        {
+          this.LogDebug("SAT>IP: no users on card => stop timeshifting on card with id {0} - sessionID {1}", clients[requestHeader.sessionId].cardId, requestHeader.sessionId);
+          IVirtualCard card = cards[clients[requestHeader.sessionId].cardId].card;
+          // delete card from card array
+          cards.Remove(clients[requestHeader.sessionId].cardId);
+          lock (tuningLock)
+          {
+            card.StopTimeShifting();
+          }
+        }
+
+        // remove client
+        clients.Remove(requestHeader.sessionId);
+      }
 
       // creating the response
 
@@ -621,7 +620,7 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
       this.LogDebug(rtspDescribeRequest.ToString());
       this.LogDebug("-----------");
     }
-
+    
     private void RTSP_badRequest(RtspRequestHeader requestHeader, NetworkStream clientStream)
     {
       StringBuilder rtspDescribeRequest = new StringBuilder();
@@ -673,7 +672,93 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
 
     #endregion RTSP sections
 
+    private bool performTuning(string sessionId, RtspRequestHeader requestHeader, NetworkStream clientStream, int channelId = -1, int pmtPid = -1)
+    {
+      if (clients[sessionId].tunedToFrequency != clients[sessionId].freq)
+      {
+        this.LogDebug("SAT>IP: tuned Freq [{0}] != requested Freq [{1}] - sessionID {2}", clients[sessionId].tunedToFrequency, clients[sessionId].freq, sessionId);
 
+
+        int cardKey;
+        if (cardAlreadyTunedToFreq(clients[sessionId].msys, clients[sessionId].freq, out cardKey))
+        {
+          // there is already a card tuned to the frequency so lets add us to this card.
+          this.LogDebug("SAT>IP: there is already a card tuned to the Freq={0} - sessionID: {1}", clients[sessionId].freq, sessionId);
+          cards[cardKey].AddSlave(int.Parse(sessionId));
+          clients[sessionId].cardId = cardKey;
+          clients[sessionId].slot = cards[cardKey].getSlot(int.Parse(sessionId));
+        }
+        else
+        {
+          this.LogDebug("SAT>IP: there is no card already tuned to the Freq={0} - sessionID: {1}", clients[sessionId].freq, sessionId);
+
+          // remove user from current card
+          if (clients[sessionId].isTunedToFrequency)
+          {
+            this.LogDebug("SAT>IP: remove user from card with id {0} - sessionID {1}", clients[sessionId].cardId, sessionId);
+            cards[clients[sessionId].cardId].removeUser(int.Parse(sessionId));
+            if (cards[clients[sessionId].cardId].ownerId == -1)
+            {
+              this.LogDebug("SAT>IP: no users on card => stop timeshifting on card with id {0} - sessionID {1}", clients[sessionId].cardId, sessionId);
+              cards[clients[sessionId].cardId].card.StopTimeShifting();
+              // delete card from card array
+              cards.Remove(clients[sessionId].cardId);
+            }
+          }
+
+
+          TuningDetail _tuningDetail = ChannelManagement.GetTuningDetail(getChannelTypeAsInt(clients[sessionId].msys), (clients[sessionId].freq * 1000));
+
+          if (_tuningDetail == null)
+          {
+            Log.Debug("SAT>IP: no such channel found!");
+            return false;
+          }
+
+          this.LogInfo("SAT>IP: creating User: \"SAT>IP - {0}\" for sessionId: {1}", clients[sessionId].ip, sessionId);
+          IUser _user = UserFactory.CreateBasicUser("SAT>IP - " + clients[sessionId].ip + " - " + sessionId);
+          IVirtualCard _card;
+          this.LogInfo("SAT>IP: Tuning to freq={0} for sessionId: {1}", clients[sessionId].freq, sessionId);
+          lock (tuningLock)
+          {
+            TvResult result = GlobalServiceProvider.Get<IControllerService>().StartTimeShifting(_user.Name, _tuningDetail.IdChannel, out _card, out _user);
+            if (result != TvResult.Succeeded)
+            {
+              this.LogError("SAT>IP: Tuning failed" + result);
+              return false;
+            }
+            else
+            {
+              this.LogInfo("SAT>IP: tunging success");
+            }
+          }
+
+          RtspCards card = new RtspCards();
+          card.ownerId = int.Parse(sessionId);
+          card.user = _user;
+          card.card = _card;
+          card.tuningDetail = _tuningDetail;
+          card.freq = clients[sessionId].freq;
+          card.msys = clients[sessionId].msys;
+          cards.Add(card.id, card);
+          clients[sessionId].cardId = card.id;
+          clients[sessionId].slot = card.getSlot(int.Parse(sessionId));
+
+          // TODO remove
+          clients[sessionId].card = _card;
+          clients[sessionId].user = _user;
+          clients[sessionId].tuningDetail = _tuningDetail;
+
+          cards[clients[sessionId].cardId].devicePath = GlobalServiceProvider.Get<IControllerService>().CardDevice(_card.Id); // device path
+        }
+
+        clients[sessionId].isTunedToFrequency = true;
+        clients[sessionId].tunedToFrequency = clients[sessionId].freq;
+      }
+
+      return true;
+    }
+    
     #region helper functions
 
     private int findFreePort()
@@ -742,10 +827,38 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
       return _channelType;
     }
 
+    private string getChannelTypeAsString(int channelType)
+    {
+      string _channelType;
+
+      if (channelType == 4)
+      {
+        _channelType = "DVBT";
+      }
+      else if (channelType == 3)
+      {
+        _channelType = "DVBS";
+      }
+      else if (channelType == 2)
+      {
+        _channelType = "DVBC";
+      }
+      /*else if (channel is DVBIPChannel)
+      {
+        channelType = 7;
+      }*/
+      else // must be ATSCChannel
+      {
+        _channelType = "ATSC";
+      }
+      return _channelType;
+    }
+
     private bool cardAlreadyTunedToFreq(string msys, int freq, out int cardKey)
     {
       foreach (KeyValuePair<int, RtspCards> card in cards) {
-        if (card.Value.freq == freq && card.Value.msys == msys && card.Value.getNumberOfFreeSlots() > 0) {
+        if (card.Value.freq == freq && string.Equals(card.Value.msys, msys, StringComparison.CurrentCultureIgnoreCase) && card.Value.getNumberOfFreeSlots() > 0)
+        {
           cardKey = card.Key;
           return true;
         }

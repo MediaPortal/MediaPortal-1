@@ -32,7 +32,6 @@ using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
 using Mediaportal.TV.Server.TVLibrary.SatIp.Server;
 using Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp;
-using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 
 namespace Mediaportal.TV.Server.TVLibrary.SatIp
 {
@@ -59,7 +58,7 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp
         public SatIpServer()
         {
             this.LogInfo("SAT>IP: Start Server");
-            _server = new UPnPLightServer(SettingsManagement.GetValue("SATIP_UDN", System.Guid.NewGuid().ToString("D"))); // vorher B
+            _server = new UPnPLightServer(); // vorher B
             _server.Start();
 
             _rtsp = new RtspServer();

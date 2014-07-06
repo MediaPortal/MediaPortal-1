@@ -24,8 +24,21 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Xml;
+using System.Net;
 using UPnP.Infrastructure.Dv;
 using UPnP.Infrastructure.Dv.DeviceTree;
+using HttpServer;
+using MediaPortal.Extensions.MediaServer.Objects.Basic;
+using Mediaportal.TV.Server.TVService.Interfaces.Services;
+using MediaPortal.Common.Utils;
+using Mediaportal.TV.Server.TVControl.Interfaces.Services;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using MediaPortal.Extensions.MediaServer.Objects.MediaLibrary;
+using MediaPortal.Extensions.MediaServer.Objects;
+//using MediaPortal.Extensions.MediaServer.ResourceAccess;
+using Mediaportal.TV.Server.TVLibrary.SatIp.Server.Objects.Container;
+
 
 namespace Mediaportal.TV.Server.TVLibrary.SatIp.Server
 {
@@ -36,20 +49,27 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Server
 
     public const string CONTENT_DIRECTORY_SERVICE_TYPE = "schemas-upnp-org:service:ContentDirectory";
     public const int CONTENT_DIRECTORY_SERVICE_TYPE_VERSION = 1;
-    public const string CONTENT_DIRECTORY_SERVICE_ID = "upnp-org:serviceId:ContentDirectory";
+    public const string CONTENT_DIRECTORY_SERVICE_ID = "ContentDirectory";
 
     public const string CONNECTION_MANAGER_SERVICE_TYPE = "schemas-upnp-org:service:ConnectionManager";
     public const int CONNECTION_MANAGER_SERVICE_TYPE_VERSION = 1;
-    public const string CONNECTION_MANAGER_SERVICE_ID = "upnp-org:serviceId:ConnectionManager";
+    public const string CONNECTION_MANAGER_SERVICE_ID = "ConnectionManager";
+
+    private HttpServer.HttpServer Server;
 
 
     public UPnPMediaServerDevice(string deviceUuid)
       : base(MEDIASERVER_DEVICE_TYPE, MEDIASERVER_DEVICE_VERSION, deviceUuid,
-             new LocalizedUPnPDeviceInformation())
+             new UPnPMediaServerDeviceInformation())
     {
       DescriptionGenerateHook += GenerateDescriptionFunc;
-      //AddService(new UPnPContentDirectoryServiceImpl());
-      //AddService(new UPnPConnectionManagerServiceImpl());
+      InitialiseContainerTree();
+      AddService(new UPnPContentDirectoryServiceImpl());
+      AddService(new UPnPConnectionManagerServiceImpl());
+      /*Server = new HttpServer.HttpServer();
+      Server.ServerName = "MP UPnP resource provider";
+      Server.Add(new DlnaResourceAccessModule());
+      Server.Start(IPAddress.Parse(MediaLibraryResource.GetLocalIp()), 456465);*/
     }
 
     private static void GenerateDescriptionFunc(XmlWriter writer, DvDevice device, GenerationPosition pos,
@@ -58,6 +78,31 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Server
       if (pos == GenerationPosition.AfterDeviceList)
       {
         writer.WriteElementString("dlna", "X_DLNADOC", "urn:schemas-dlna-org:device-1-0", "DMS-1.50");
+      }
+    }
+
+    public static BasicContainer RootContainer { get; private set; }
+
+    private static void InitialiseContainerTree()
+    {
+      RootContainer = new BasicContainer("0") { Title = "MediaPortal Media Library" };
+      var channelContainer = new BasicContainer("V") { Title = "Channels" };
+      RootContainer.Add(channelContainer);
+      IList<ChannelGroup> groups = GlobalServiceProvider.Get<IChannelGroupService>().ListAllChannelGroupsByMediaType(MediaTypeEnum.TV, ChannelGroupIncludeRelationEnum.None);
+
+      foreach (ChannelGroup group in groups)
+      {
+        var groupContainer = new BasicContainer("Group:" + group.IdGroup.ToString()) { Title = group.GroupName };
+        IList<Channel> channels = GlobalServiceProvider.Get<IChannelService>().GetAllChannelsByGroupIdAndMediaType(group.IdGroup, MediaTypeEnum.TV);
+        foreach (Channel channel in channels)
+        {
+          var resource = new MediaLibraryResource(channel.IdChannel);
+          resource.Initialise();
+          IList<IDirectoryResource> resources = new List<IDirectoryResource>();
+          resources.Add(resource);
+          groupContainer.Add(new BasicItem("Channel:" + channel.IdChannel.ToString()) { Title = channel.DisplayName, Resources = resources });
+        }
+        channelContainer.Add(groupContainer);
       }
     }
   }

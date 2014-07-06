@@ -12,27 +12,31 @@ CStreamHandler::CStreamHandler()
 	// configure streaming
 	_LoadMe = LoadLibrary("RtpStreamer.dll");
 	if (_LoadMe != 0)
-		LogDebug("LoadMe library loaded!\n");
+		LogDebug("RtpStreamer.dll library loaded!\n");
 	else
-		LogDebug("LoadMe library failed to load!\n");
+		LogDebug("RtpStreamer.dll library failed to load!\n");
 	_MPrtpStreamEntryPoint = (pvFunctv)GetProcAddress(_LoadMe, "CreateClassInstance");
 	if (!_MPrtpStreamEntryPoint) LogDebug("shit!!");
 	_MPrtpStream.reset((IMPrtpStream*)(_MPrtpStreamEntryPoint()));
 	_streamRunning = false;
 	_startStreaming = false;
+	_streamConfigured = false;
 	_stop = false;
+	_pmtSet = false;
 
 	_clientIp = "192.168.178.26";
 	_bytesWritten = 0;
-	// TODO remove this later if we can configure the stream
-	_streamConfigured = false;
+
+	_pmtParser = new CPmtParser();
+	_sectionDecoder = new CSectionDecoder();
 }
 
 // Destructor
 
 CStreamHandler::~CStreamHandler()
 {
-	
+	delete _sectionDecoder;
+	delete _pmtParser;
 }
 
 void CStreamHandler::configure() {
@@ -41,12 +45,26 @@ void CStreamHandler::configure() {
 	_stop = false;
 }
 
+void CStreamHandler::setPmt(int pmt) {
+	LogDebug("Set PMT with pid=%d", pmt);
+	_pidfilter.Add(pmt);
+	_sectionDecoder->Reset();
+	_pmtParser->Reset();
+	_pmtParser->SetCallBack(this);
+	_sectionDecoder->SetPid(pmt);
+	_sectionDecoder->SetCallBack(this);
+	_pmtSet = true;
+}
+
 void CStreamHandler::write(unsigned char *dataPtr, int numBytes)
 {
 	// Check if a multiple of 188 Bytes are Written
 	if (numBytes % TS_PACKET_LEN != 0) {
 		LogDebug("");
 	}
+
+	// section decoder
+	_sectionDecoder->OnTsPacket(dataPtr);
 
 	// PID filter
 	uint16_t pid = PidFilter::getPidFromPackage(dataPtr);
@@ -59,7 +77,7 @@ void CStreamHandler::write(unsigned char *dataPtr, int numBytes)
 	}
 
 	//LogDebug("Stream Running: %d, Stop: %d, _startStreaming: %d, _bytesWritten: %d", (_streamRunning ? 1 : 0), (_stop ? 1 : 0), (_startStreaming ? 1 : 0), _bytesWritten);
-	if (!_streamRunning && !_stop && _startStreaming && _streamConfigured/* && _bytesWritten > (TS_PACKET_LEN * 900)*/) {
+	if (!_streamRunning && !_stop && _startStreaming && _streamConfigured && (!_pmtSet || _bytesWritten > (TS_PACKET_LEN * 900))) {
 		_streamRunning = true;
 		LogDebug("startStreaming");
 		_test2 = "test";
@@ -93,5 +111,37 @@ void CStreamHandler::stop()
 	_streamRunning = false;
 	_startStreaming = false;
 	_streamConfigured = false;
+	_pmtSet = false;
 	LogDebug("streamHandler: finished stop()");
+}
+
+void CStreamHandler::OnPmtReceived(const CPidTable& pidTable) {
+	LogDebug("Got PMT with pid=%d", pidTable.PmtPid);
+	
+	vector<VideoPid*>::const_iterator vPidIt = pidTable.VideoPids.begin();
+	while (vPidIt != pidTable.VideoPids.end())
+	{
+		_pidfilter.Add((*vPidIt)->Pid);
+		LogDebug("Added video pid %d", (*vPidIt)->Pid);
+		vPidIt++;
+	}
+	vector<AudioPid*>::const_iterator aPidIt = pidTable.AudioPids.begin();
+	while (aPidIt != pidTable.AudioPids.end())
+	{
+		_pidfilter.Add((*aPidIt)->Pid);
+		LogDebug("Added audio pid %d", (*aPidIt)->Pid);
+		aPidIt++;
+	}
+
+	vector<SubtitlePid*>::const_iterator sPidIt = pidTable.SubtitlePids.begin();
+	while (sPidIt != pidTable.SubtitlePids.end())
+	{
+		_pidfilter.Add((*sPidIt)->Pid);
+		LogDebug("Added subtitle pid %d", (*sPidIt)->Pid);
+		sPidIt++;
+	}
+}
+
+void CStreamHandler::OnNewSection(int pid, int tableId, CSection& section) {
+	_pmtParser->OnNewSection(section);
 }

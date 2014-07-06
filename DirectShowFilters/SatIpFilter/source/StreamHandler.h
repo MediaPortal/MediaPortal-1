@@ -3,12 +3,15 @@
 #endif
 #include "PidFilter.h"
 #include "RtpStreamInterface.h"
+#include "SectionDecoder.h"
+#include "PmtParser.h"
 #include <thread>
 #include <string>
 #include <memory>
 #include <process.h>
+#include <sstream>
 
-class CStreamHandler
+class CStreamHandler : public IPmtCallBack2, public ISectionCallback
 {
 
 	typedef void*(*pvFunctv)();
@@ -22,6 +25,9 @@ public:
 	void start();
 	void stop();
 	void configure();
+	void OnPmtReceived(const CPidTable& pidInfo);
+	void OnNewSection(int pid, int tableId, CSection& section);
+	void setPmt(int pmt);
 
 	PidFilter	_pidfilter;
 	std::string _clientIp;
@@ -39,6 +45,9 @@ private:
 	char* _test2;
 	bool _startStreaming;
 	bool _stop;
+	bool _pmtSet;
 	std::thread _streamingThread;
+	CSectionDecoder* _sectionDecoder;
+	CPmtParser* _pmtParser;
 
 };

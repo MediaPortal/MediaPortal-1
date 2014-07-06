@@ -22,6 +22,7 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp
     public static readonly UInt32 SATIP_PROT_STARTSTREAM = 5;
     public static readonly UInt32 SATIP_PROT_STOPSTREAM = 6;
     public static readonly UInt32 SATIP_PROT_NEWSLOT = 7;
+    public static readonly UInt32 SATIP_PROT_PMT = 8;
     
     private Byte[] _Bytes = new Byte[0];
     private int _slot;
@@ -75,6 +76,13 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp
       {
         addToQueue(pid);
       }
+    }
+
+    public void addPmt(int pmt)
+    {
+      addToQueue(SATIP_PROT_PMT);
+      addToQueue(_slot);
+      addToQueue(pmt);
     }
 
     public void send()

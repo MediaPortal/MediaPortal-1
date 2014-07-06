@@ -19,6 +19,7 @@
 #endregion
 
 using UPnP.Infrastructure.Dv;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 
 namespace Mediaportal.TV.Server.TVLibrary.SatIp.Server
 {
@@ -29,9 +30,12 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Server
   {
     public const int SSDP_ADVERTISMENT_INTERVAL = 180;
 
-    public UPnPLightServer(string serverId)
+    public UPnPLightServer()
     {
-      AddRootDevice(new LightServerDevice(serverId));
+      // SAT>IP root device
+      AddRootDevice(new LightServerDevice(SettingsManagement.GetValue("SATIP_UDN", System.Guid.NewGuid().ToString("D"))));
+      // UPnP root device
+      AddRootDevice(new UPnPMediaServerDevice(SettingsManagement.GetValue("UPNP_UDN", System.Guid.NewGuid().ToString("D"))));
     }
 
     public void Start()

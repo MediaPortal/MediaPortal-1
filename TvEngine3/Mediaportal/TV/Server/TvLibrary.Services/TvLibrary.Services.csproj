@@ -46,6 +46,9 @@
     <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="HttpServer">
+      <HintPath>..\..\..\..\..\Packages\MediaPortal.HttpServer.1.0.0.0\lib\net40\HttpServer.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Management" />
@@ -113,11 +116,44 @@
     <Compile Include="SatIp\Rtsp\RtspRequestHeader.cs" />
     <Compile Include="SatIp\Rtsp\RtspServer.cs" />
     <Compile Include="SatIp\SatIp.cs" />
+    <Compile Include="SatIp\Server\DIDL\GenericDidlMessageBuilder.cs" />
+    <Compile Include="SatIp\Server\DIDL\ObjectRenderer.cs" />
+    <Compile Include="SatIp\Server\DIDL\PropertyFilter.cs" />
+    <Compile Include="SatIp\Server\DLNA\DlnaForthField.cs" />
+    <Compile Include="SatIp\Server\DLNA\DlnaProfiles.cs" />
+    <Compile Include="SatIp\Server\DLNA\DlnaProtocolInfo.cs" />
     <Compile Include="SatIp\Server\LightServerDevice.cs" />
     <Compile Include="SatIp\Server\LightServerDeviceInformation.cs" />
     <Compile Include="SatIp\Server\LocalizedUPnPDeviceInformation.cs" />
+    <Compile Include="SatIp\Server\Objects\Basic\BaseSomething.cs" />
+    <Compile Include="SatIp\Server\Objects\Basic\BasicContainer.cs" />
+    <Compile Include="SatIp\Server\Objects\Basic\BasicItem.cs" />
+    <Compile Include="SatIp\Server\Objects\Basic\BasicObject.cs" />
+    <Compile Include="SatIp\Server\Objects\Basic\Container.cs" />
+    <Compile Include="SatIp\Server\Objects\Basic\Resource.cs" />
+    <Compile Include="SatIp\Server\Objects\Container\ContainerStorageFolder.cs" />
+    <Compile Include="SatIp\Server\Objects\IDirectoryContainer.cs" />
+    <Compile Include="SatIp\Server\Objects\IDirectoryItem.cs" />
+    <Compile Include="SatIp\Server\Objects\IDirectoryObject.cs" />
+    <Compile Include="SatIp\Server\Objects\IDirectoryPerson.cs" />
+    <Compile Include="SatIp\Server\Objects\IDirectoryPlaylist.cs" />
+    <Compile Include="SatIp\Server\Objects\IDirectoryPlaylistItem.cs" />
+    <Compile Include="SatIp\Server\Objects\IDirectoryResource.cs" />
+    <Compile Include="SatIp\Server\Objects\IDirectorySearchCreateClass.cs" />
+    <Compile Include="SatIp\Server\Objects\IDirectoryStorageFolder.cs" />
+    <Compile Include="SatIp\Server\Objects\IDirectoryStorageSystem.cs" />
+    <Compile Include="SatIp\Server\Objects\IDirectoryStorageVolume.cs" />
+    <Compile Include="SatIp\Server\Objects\IDirectoryVideoBroadcast.cs" />
+    <Compile Include="SatIp\Server\Objects\IDirectoryVideoItem.cs" />
+    <Compile Include="SatIp\Server\Objects\MediaLibrary\MediaLibraryResource.cs" />
+    <Compile Include="SatIp\Server\Tree\Tree.cs" />
+    <Compile Include="SatIp\Server\Tree\TreeNode.cs" />
+    <Compile Include="SatIp\Server\Tree\TreeNodeList.cs" />
+    <Compile Include="SatIp\Server\UPnPConnectionManagerServiceImpl.cs" />
+    <Compile Include="SatIp\Server\UPnPContentDirectoryServiceImpl.cs" />
     <Compile Include="SatIp\Server\UPnPLightServer.cs" />
     <Compile Include="SatIp\Server\UPnPMediaServerDevice.cs" />
+    <Compile Include="SatIp\Server\UPnPMediaServerDeviceInformation.cs" />
     <Compile Include="Scheduler\CardDetail.cs" />
     <Compile Include="Scheduler\RecordingDetail.cs" />
     <Compile Include="Scheduler\Scheduler.cs" />
