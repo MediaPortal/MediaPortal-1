@@ -260,21 +260,21 @@ namespace MediaPortal.MusicPlayer.BASS
             Log.Info("BASS: Found a 3 channel file. Set upmixing with LFE, LR, RR set to silent");
             _mixingMatrix = CreateThreeDotZeroUpMixMatrix();
             outputChannels = _bassPlayer.DeviceChannels;   // WASAPI device should be initialised with all channels active
-            wasApiExclusiveSupported = true;
+            wasApiExclusiveSupported = false; // And indicate that we need a new mixer
           }
           else if (outputChannels == 4)  // a 4.0 file
           {
             Log.Info("BASS: Found a 4 channel file. Set upmixing with Center and LFE set to silent");
             _mixingMatrix = CreateFourDotZeroUpMixMatrix();
             outputChannels = _bassPlayer.DeviceChannels;   // WASAPI device should be initialised with all channels active
-            wasApiExclusiveSupported = true;
+            wasApiExclusiveSupported = false; // And indicate that we need a new mixer
           }
           else if (outputChannels == 5)  // a 5.0 file
           {
             Log.Info("BASS: Found a 5 channel file. Set upmixing with LFE set to silent");
             _mixingMatrix = CreateFiveDotZeroUpMixMatrix();
             outputChannels = _bassPlayer.DeviceChannels;   // WASAPI device should be initialised with all channels active
-            wasApiExclusiveSupported = true;
+            wasApiExclusiveSupported = false; // And indicate that we need a new mixer
           }
 
           // If Exclusive mode is used, check, if that would be supported, otherwise init in shared mode
@@ -866,6 +866,7 @@ namespace MediaPortal.MusicPlayer.BASS
           if (MusicStreamMessage != null)
           {
             MusicStreamMessage(musicstream, MusicStream.StreamAction.InternetStreamChanged);
+            return;
           }
         }
 

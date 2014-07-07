@@ -931,9 +931,7 @@ public class MediaPortalApp : D3D, IRender
               Log.Error("MediaPortal stopped due to an exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
               _mpCrashed = true;
             }
-            app.OnExit();
           }
-
         }
         catch (Exception ex)
         {
@@ -1956,7 +1954,7 @@ public class MediaPortalApp : D3D, IRender
     Rectangle newBounds = screen.Bounds;
     string adapterOrdinalScreenName = Manager.Adapters[GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal].Information.DeviceName;
 
-    if ((!Equals(screen, GUIGraphicsContext.currentScreen) || (!Equals(GetCleanDisplayName(GUIGraphicsContext.currentScreen), GetCleanDisplayName(screen)))) && !_firstLoadedScreen)
+    if ((!Equals(screen, GUIGraphicsContext.currentScreen) || (!Equals(GetCleanDisplayName(GUIGraphicsContext.currentScreen), GetCleanDisplayName(screen)))) && !_firstLoadedScreen && !_restoreLoadedScreen)
     {
       Log.Info("Main: Screen MP OnGetMinMaxInfo is displayed on changed from {0} to {1}", GetCleanDisplayName(GUIGraphicsContext.currentScreen), GetCleanDisplayName(screen));
       if (screen.Bounds != GUIGraphicsContext.currentScreen.Bounds)
@@ -1967,7 +1965,7 @@ public class MediaPortalApp : D3D, IRender
       _changeScreen = true;
     }
 
-    if (!Equals(currentBounds.Size, newBounds.Size) && !_firstLoadedScreen)
+    if (!Equals(currentBounds.Size, newBounds.Size) && !_firstLoadedScreen && !_restoreLoadedScreen)
     {
       // Check if start screen is equal to device screen and check if current screen bond differ from current detected screen bond then recreate swap chain.
       Log.Debug("Main: Screen MP OnGetMinMaxInfo Information.DeviceName Manager.Adapters                {0}", adapterOrdinalScreenName);
@@ -2032,6 +2030,7 @@ public class MediaPortalApp : D3D, IRender
           mmi.ptMaxSize.x, mmi.ptMaxSize.y, mmi.ptMaxPosition.x, mmi.ptMaxPosition.y, mmi.ptMinTrackSize.x, mmi.ptMinTrackSize.y, mmi.ptMaxTrackSize.x, mmi.ptMaxTrackSize.y);
     // needed to avoid cursor show when MP windows change (for ex when refesh rate is working)
     _moveMouseCursorPositionRefresh = D3D._lastCursorPosition;
+    _restoreLoadedScreen = false;
   }
 
 
@@ -2793,8 +2792,6 @@ public class MediaPortalApp : D3D, IRender
     {
       _redeyedevice.Close();
     }
-
-    GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
 
     g_Player.Stop();
     InputDevices.Stop();
