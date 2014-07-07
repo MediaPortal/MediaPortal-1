@@ -537,8 +537,8 @@ namespace MediaPortal.GUI.Music
             }
             else
             {
-              whereClause += String.Format(" ({0} like '{1}%' or '{2}%')", GetField(filter.Where),
-                                           selectedValue.PadRight(restrictionLength), selectedValue);
+              whereClause += String.Format(" {0} like '{1}%'", GetField(filter.Where),
+                                           selectedValue.PadRight(restrictionLength));
             }
           }
         }
@@ -552,8 +552,8 @@ namespace MediaPortal.GUI.Music
           }
           else
           {
-            whereClause += String.Format(" ({0} like '{1}%' or '{2}%')", GetField(filter.Where),
-                                         selectedValue.PadRight(restrictionLength), selectedValue);
+            whereClause += String.Format(" {0} like '{1}%'", GetField(filter.Where),
+                                         selectedValue.PadRight(restrictionLength));
           }
         }
       }
