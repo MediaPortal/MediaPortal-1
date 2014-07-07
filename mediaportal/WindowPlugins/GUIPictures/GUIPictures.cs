@@ -400,6 +400,10 @@ namespace MediaPortal.GUI.Pictures
     private static int _wolTimeout;
     private static int _wolResendTime;
     private static bool returnFromSlideshow = false;
+    private bool _ageConfirmed = false;
+    private ArrayList _protectedShares = new ArrayList();
+    private int _currentPin = 0;
+    private ArrayList _currentProtectedShare = new ArrayList();
 
     #endregion
 
@@ -611,6 +615,28 @@ namespace MediaPortal.GUI.Pictures
       }
     }
 
+    // Get all shares and pins for protected pictures folders
+    private void GetProtectedShares(ref ArrayList shares)
+    {
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
+      {
+        shares = new ArrayList();
+
+        for (int index = 0; index < 128; index++)
+        {
+          string sharePin = String.Format("pincode{0}", index);
+          string sharePath = String.Format("sharepath{0}", index);
+          string sharePinData = Util.Utils.DecryptPin(xmlreader.GetValueAsString("pictures", sharePin, ""));
+          string sharePathData = xmlreader.GetValueAsString("pictures", sharePath, "");
+
+          if (!string.IsNullOrEmpty(sharePinData))
+          {
+            shares.Add(sharePinData + "|" + sharePathData);
+          }
+        }
+      }
+    }
+
     protected override void OnPageLoad()
     {
       using (Profile.Settings xmlreader = new Profile.MPSettings())
@@ -628,6 +654,16 @@ namespace MediaPortal.GUI.Pictures
 
       GUITextureManager.CleanupThumbs();
       // LoadSettings();
+
+      if (!IsPictureWindow(PreviousWindowId))
+      {
+        _ageConfirmed = false;
+        _currentPin = 0;
+        _currentProtectedShare.Clear();
+        _protectedShares.Clear();
+        GetProtectedShares(ref _protectedShares);
+      }
+
       LoadFolderSettings(currentFolder);
       ShowThumbPanel();
       LoadDirectory(currentFolder);
@@ -1006,6 +1042,18 @@ namespace MediaPortal.GUI.Pictures
 
       #endregion
 
+      if (_protectedShares.Count > 0)
+      {
+        if (_ageConfirmed)
+        {
+          dlg.AddLocalizedString(1240); //Lock content
+        }
+        else
+        {
+          dlg.AddLocalizedString(1241); //Unlock content
+        }
+      }
+
       dlg.DoModal(GetID);
       if (dlg.SelectedId == -1)
       {
@@ -1052,6 +1100,12 @@ namespace MediaPortal.GUI.Pictures
             OnShowFileMenu();
           }
           break;
+
+        case 1240: // Protected content
+        case 1241: // Protected content
+          OnContentLock();
+          break;
+
         case 200046: // Generate Thumbnails
           if (item.IsFolder)
           {
@@ -1136,6 +1190,81 @@ namespace MediaPortal.GUI.Pictures
           LoadDirectory(string.Empty);
           break;
       }
+    }
+
+    // Show or hide protected content
+    private void OnContentLock()
+    {
+      if (!_ageConfirmed)
+      {
+        if (RequestPin())
+        {
+          _ageConfirmed = true;
+          LoadDirectory(currentFolder);
+        }
+        return;
+      }
+      _ageConfirmed = false;
+      LoadDirectory(currentFolder);
+    }
+
+    // Protected content PIN validation (any PIN from pics protected folders is valid)
+    private bool RequestPin()
+    {
+      bool retry = true;
+      bool sucess = false;
+      _currentProtectedShare.Clear();
+
+      while (retry)
+      {
+        GUIMessage msgGetPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_PASSWORD, 0, 0, 0, 0, 0, 0);
+        GUIWindowManager.SendMessage(msgGetPassword);
+        int iPincode = -1;
+
+        try
+        {
+          iPincode = Int32.Parse(msgGetPassword.Label);
+        }
+        catch (Exception) { }
+
+        foreach (string p in _protectedShares)
+        {
+          char[] splitter = { '|' };
+          string[] pin = p.Split(splitter);
+
+          if (iPincode != Convert.ToInt32(pin[0]))
+          {
+            _currentPin = iPincode;
+            continue;
+          }
+
+          if (iPincode == Convert.ToInt32(pin[0]))
+          {
+            _currentPin = iPincode;
+            _currentProtectedShare.Add(pin[1]);
+            sucess = true;
+          }
+        }
+
+        if (sucess)
+          return true;
+
+        GUIMessage msgWrongPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WRONG_PASSWORD, 0, 0, 0, 0, 0,
+                                                     0);
+        GUIWindowManager.SendMessage(msgWrongPassword);
+
+        if (!(bool)msgWrongPassword.Object)
+        {
+          retry = false;
+        }
+        else
+        {
+          retry = true;
+        }
+      }
+
+      _currentPin = 0;
+      return false;
     }
 
     protected virtual PictureSort.SortMethod CurrentSortMethod
@@ -2334,6 +2463,55 @@ namespace MediaPortal.GUI.Pictures
       GUIWaitCursor.Hide();
     }
 
+    // Check if item is pin protected and if it exists within unlocked shares
+    // Returns true if item is valid or if item is not within protected shares
+    private bool IsItemPinProtected(GUIListItem item, VirtualDirectory vDir)
+    {
+      string directory = Path.GetDirectoryName(item.Path); // item path
+
+      if (directory != null)
+      {
+        // Check if item belongs to protected shares
+        int pincode = 0;
+        bool folderPinProtected = vDir.IsProtectedShare(directory, out pincode);
+
+        bool success = false;
+
+        // User unlocked share/shares with PIN and item is within protected shares
+        if (folderPinProtected && _ageConfirmed)
+        {
+          // Iterate unlocked shares against current item path
+          foreach (string share in _currentProtectedShare)
+          {
+            if (!directory.ToUpperInvariant().Contains(share.ToUpperInvariant()))
+            {
+              continue;
+            }
+            success = true;
+            break;
+          }
+
+          // current item is not within unlocked shares, 
+          // don't show item and go to the next item
+          if (!success)
+          {
+            return false;
+          }
+          return true;
+        }
+
+        // Nothing unlocked and item belongs to protected shares,
+        // don't show item and go to the next item
+        if (folderPinProtected && !_ageConfirmed)
+        {
+          return false;
+        }
+      }
+
+      // Item is not inside protected shares, show it
+      return true;
+    }
+
     private void LoadDateView(string strNewDirectory)
     {
       try
@@ -2435,11 +2613,19 @@ namespace MediaPortal.GUI.Pictures
 
             List<string> pics = new List<string>();
             int Count = PictureDatabase.ListPicsByDate(year + "-" + month + "-" + day, ref pics);
+
+            VirtualDirectory vDir = new VirtualDirectory();
+            vDir.LoadSettings("pictures");
+
             foreach (string pic in pics)
             {
               item = new GUIListItem(Path.GetFileNameWithoutExtension(pic));
               item.Path = pic;
               item.IsFolder = false;
+
+              if (!IsItemPinProtected(item, vDir))
+                continue;
+                
               Util.Utils.SetDefaultIcons(item);
               item.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
               item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
@@ -2473,6 +2659,10 @@ namespace MediaPortal.GUI.Pictures
 
             List<string> pics = new List<string>();
             int Count = PictureDatabase.ListPicsByDate(year + "-" + month, ref pics);
+
+            VirtualDirectory vDir = new VirtualDirectory();
+            vDir.LoadSettings("pictures");
+
             foreach (string pic in pics)
             {
               try
@@ -2480,6 +2670,10 @@ namespace MediaPortal.GUI.Pictures
                 item = new GUIListItem(Path.GetFileNameWithoutExtension(pic));
                 item.Path = pic;
                 item.IsFolder = false;
+
+                if (!IsItemPinProtected(item, vDir))
+                  continue;
+               
                 Util.Utils.SetDefaultIcons(item);
                 item.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
                 item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
@@ -2814,6 +3008,21 @@ namespace MediaPortal.GUI.Pictures
     }
 
     #endregion
+
+    public static bool IsPictureWindow(int windowId)
+    {
+      if (windowId == (int)Window.WINDOW_PICTURES)
+      {
+        return true;
+      }
+
+      if (windowId == (int)Window.WINDOW_SLIDESHOW)
+      {
+        return true;
+      }
+
+      return false;
+    }
 
     #region callback events
 
