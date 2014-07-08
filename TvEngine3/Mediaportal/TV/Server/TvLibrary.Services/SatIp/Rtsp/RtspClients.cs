@@ -53,6 +53,7 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
     //?src=1&fe=1&freq=12402&pol=v&msys=dvbs&sr=27500&fec=34&pids=0,16
     private int _src;
     private int _freq;
+    private int _xpmt = -1;
     private string _pol;
     private string _msys;
     private int _sr;
@@ -233,6 +234,21 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
       set
       {
         _freq = value;
+      }
+    }
+
+    /// <summary>
+    /// Get/Set the xpmt parameter.
+    /// </summary>
+    public int xpmt
+    {
+      get
+      {
+        return _xpmt;
+      }
+      set
+      {
+        _xpmt = value;
       }
     }
 

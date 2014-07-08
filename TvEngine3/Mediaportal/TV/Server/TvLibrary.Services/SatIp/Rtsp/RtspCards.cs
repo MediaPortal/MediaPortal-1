@@ -42,6 +42,7 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
     /// <summary>
     /// Add the session id of a slave user who is not the owner of the card, but using this card to deliver its stream
     /// </summary>
+    /// <param name="sessionId">RTSP Session Id of the user</param>
     public void AddSlave(int sessionId)
     {
       lock (this)
@@ -52,8 +53,25 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
     }
 
     /// <summary>
+    /// Add the session Id of an user to the card and decide if it is the owner or not
+    /// </summary>
+    /// <param name="sessionId">RTSP Session Id of the user</param>
+    public void AddUser(int sessionId)
+    {
+      if (_owner == null || _owner == -1)
+      {
+        _owner = sessionId;
+      }
+      else
+      {
+        AddSlave(sessionId);
+      }
+    }
+
+    /// <summary>
     /// remove a user from the card
     /// </summary>
+    /// <param name="sessionId">RTSP Session Id of the user</param>
     public void removeUser(int sessionId)
     {
       lock (this)

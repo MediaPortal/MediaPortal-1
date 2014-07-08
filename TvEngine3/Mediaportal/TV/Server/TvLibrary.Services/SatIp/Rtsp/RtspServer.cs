@@ -453,7 +453,7 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
       clients[requestHeader.sessionId].msys = getChannelTypeAsString(tuningDetail.ChannelType);
 
 
-      if (!performTuning(requestHeader.sessionId, requestHeader, clientStream, channelId, pmtPid))
+      if (!performTuning(requestHeader.sessionId, requestHeader, clientStream, pmtPid, channelId))
       {
         return false;
       }
@@ -500,17 +500,24 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
 
       parseQuery(requestHeader.sessionId, query);
 
-      if (!performTuning(requestHeader.sessionId, requestHeader, clientStream))
+      if (!performTuning(requestHeader.sessionId, requestHeader, clientStream, clients[requestHeader.sessionId].xpmt))
       {
         return false;
       }
-
-      // send commands to the filter
-      FilterCommunication communication = new FilterCommunication(GlobalServiceProvider.Get<IControllerService>().CardDevice(clients[requestHeader.sessionId].card.Id), clients[requestHeader.sessionId].slot);
-      communication.addClientPort(clients[requestHeader.sessionId].rtpClientPort);
-      communication.addClientIp(clients[requestHeader.sessionId].ip);
-      communication.requestNewSlot();
-      communication.send();
+      else
+      {
+        // send commands to the filter
+        FilterCommunication communication = new FilterCommunication(GlobalServiceProvider.Get<IControllerService>().CardDevice(clients[requestHeader.sessionId].card.Id), clients[requestHeader.sessionId].slot);
+        communication.addClientPort(clients[requestHeader.sessionId].rtpClientPort);
+        communication.addClientIp(clients[requestHeader.sessionId].ip);
+        communication.requestNewSlot();
+        if (clients[requestHeader.sessionId].xpmt != -1)
+        {
+          communication.addPmt(clients[requestHeader.sessionId].xpmt);
+          clients[requestHeader.sessionId].xpmt = -1;
+        }
+        communication.send();
+      }
 
       return true;
     }
@@ -679,7 +686,7 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
 
     #endregion RTSP sections
 
-    private bool performTuning(string sessionId, RtspRequestHeader requestHeader, NetworkStream clientStream, int channelId = -1, int pmtPid = -1)
+    private bool performTuning(string sessionId, RtspRequestHeader requestHeader, NetworkStream clientStream, int pmtPid = -1, int channelId = -1)
     {
       if (clients[sessionId].tunedToFrequency != clients[sessionId].freq)
       {
@@ -721,8 +728,15 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
             }
           }
         }
+        else if (channelId == -1 && pmtPid != -1)
+        {
+          // this is for SAT>IP if we get a x_pmt parameter which is not in the spec but introduced by DD, so we adopt this
+          this.LogInfo("SAT>IP: We've got only the x_pmt paramneter with PMT pid={0} so use this for the TuningDetail selection, sessionId: {1}", pmtPid, sessionId);
+          _tuningDetail = ChannelManagement.GetTuningDetail(getChannelTypeAsInt(clients[sessionId].msys), (clients[sessionId].freq * 1000), pmtPid);
+        }
         else
         {
+          this.LogInfo("SAT>IP: We only have the system (DVB-C,...) and the frequency so make the best out of it, sessionId: {0}", sessionId);
           _tuningDetail = ChannelManagement.GetTuningDetail(getChannelTypeAsInt(clients[sessionId].msys), (clients[sessionId].freq * 1000));
         }
 
@@ -753,7 +767,7 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
         if (!cards.ContainsKey(_card.Id))
         {
           RtspCards card = new RtspCards();
-          card.ownerId = int.Parse(sessionId);
+          card.AddUser(int.Parse(sessionId));
           card.user = _user;
           card.card = _card;
           card.tuningDetail = _tuningDetail;
@@ -761,6 +775,10 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
           card.msys = clients[sessionId].msys;
           card.devicePath = GlobalServiceProvider.Get<IControllerService>().CardDevice(_card.Id); // device path
           cards.Add(_card.Id, card);
+        }
+        else
+        {
+          cards[_card.Id].AddUser(int.Parse(sessionId));
         }
         
         clients[sessionId].cardId = _card.Id;
@@ -934,6 +952,9 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Rtsp
             {
               if (int.TryParse(pid, out value)) clients[sessionId].addPid(value);
             }
+            break;
+          case "x_pmt":
+            if (int.TryParse(query.Get(key), out value)) clients[sessionId].xpmt = value;
             break;
         }
       }

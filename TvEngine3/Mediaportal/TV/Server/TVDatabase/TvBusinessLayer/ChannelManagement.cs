@@ -589,6 +589,16 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       }
     }
 
+    public static TuningDetail GetTuningDetail(int channelType, int frequency, int pmt)
+    {
+      using (IChannelRepository channelRepository = new ChannelRepository())
+      {
+        var query = channelRepository.GetQuery<TuningDetail>(t => t.ChannelType == channelType && t.Frequency == frequency && t.PmtPid == pmt);
+        query = channelRepository.IncludeAllRelations(query);
+        return query.FirstOrDefault();
+      }
+    }
+
     public static void AddTuningDetail(int idChannel, IChannel channel)
     {
       TuningDetail tuningDetail = new TuningDetail();
