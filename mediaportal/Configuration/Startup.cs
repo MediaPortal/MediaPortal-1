@@ -49,7 +49,6 @@ namespace MediaPortal.Configuration
     private StartupMode startupMode = StartupMode.Normal;
     private string sectionsConfiguration = string.Empty;
     private bool _avoidVersionChecking = false;
-    private bool _debugOptions = false;
     private bool _preventGUILaunch = false;
 
     private const string mpMutex = "{E0151CBA-7F81-41df-9849-F5298A779EB3}";
@@ -140,11 +139,6 @@ namespace MediaPortal.Configuration
             {
               _preventGUILaunch = true;
             }
-          }
-
-          if (trimmedArgument == "/debugoptions")
-          {
-            _debugOptions = true;
           }
 
           if (trimmedArgument.ToLowerInvariant() == "/avoidversioncheck")
@@ -238,7 +232,7 @@ namespace MediaPortal.Configuration
         {
           case StartupMode.Normal:
             Log.Info("Create new standard setup");
-            applicationForm = new SettingsForm(_debugOptions);
+            applicationForm = new SettingsForm();
             break;
         }
 

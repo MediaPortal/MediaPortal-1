@@ -135,7 +135,7 @@
     <Compile Include="Configuration\Config.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\DebugSettings.cs" />
+    <Compile Include="Configuration\AdvancedSettings.cs" />
     <Compile Include="Configuration\DirectXCheck.cs" />
     <Compile Include="Configuration\ISettingsPrefetchable.cs" />
     <Compile Include="Configuration\ISettingsProvider.cs" />

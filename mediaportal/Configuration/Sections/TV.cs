@@ -214,11 +214,11 @@ namespace MediaPortal.Configuration.Sections
         }
         xmlwriter.SetValue("tvservice", "preferredsublanguages", prefLangs);
 
-        //When TvServer is changed, if user changed mode (SingleSeat/MultiSeat), he needs to review the RTSP setting in DebugOptions section
-        if ((xmlwriter.GetValueAsBool("tvservice", "DebugOptions", false) || SettingsForm.debug_options) &&
-            (_SingleSeat != Network.IsSingleSeat()))
+        //When TvServer is changed, if user changed mode (SingleSeat/MultiSeat), he needs to review the RTSP setting in Advanced Options section
+        Log.Error("{0} {1}",_SingleSeat , Network.IsSingleSeat());
+        if (_SingleSeat != Network.IsSingleSeat())
         {
-          MessageBox.Show("Please review your RTSP settings in \"DebugOptions\" section", "Warning",
+          MessageBox.Show("Please review your RTSP settings in \"Advanced Options\" section", "Warning",
                           MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
         }
       }
