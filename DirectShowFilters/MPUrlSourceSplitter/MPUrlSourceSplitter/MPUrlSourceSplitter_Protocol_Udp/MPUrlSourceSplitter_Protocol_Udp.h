@@ -155,9 +155,6 @@ protected:
   // mutex for locking access to internal buffer of CURL instance
   HANDLE lockCurlMutex;
 
-  // holds receive data timeout
-  unsigned int receiveDataTimeout;
-
   // main instance of CURL
   CUdpCurlInstance *mainCurlInstance;
   // holds media packets with received data

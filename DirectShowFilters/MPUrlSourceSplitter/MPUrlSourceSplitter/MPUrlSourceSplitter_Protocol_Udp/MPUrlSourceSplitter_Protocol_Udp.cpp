@@ -66,7 +66,6 @@ CMPUrlSourceSplitter_Protocol_Udp::CMPUrlSourceSplitter_Protocol_Udp(HRESULT *re
   this->lockCurlMutex = NULL;
   this->lockMutex = NULL;
   this->mainCurlInstance = NULL;
-  this->receiveDataTimeout = UDP_RECEIVE_DATA_TIMEOUT_DEFAULT;
   this->streamLength = 0;
   this->connectionState = None;
   this->mediaPackets = NULL;
@@ -269,7 +268,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Udp::ReceiveData(CStreamPackage *streamPac
 
           if (SUCCEEDED(result) && (!this->IsSetStreamLength()))
           {
-            // probably live stream, content length is not specified
+            // UDP/RTP is always live stream, content length is not specified
             this->flags |= PROTOCOL_PLUGIN_FLAG_LIVE_STREAM_DETECTED;
 
             if (this->streamLength == 0)
@@ -327,7 +326,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Udp::ReceiveData(CStreamPackage *streamPac
 
           // set finish time, all methods must return before finish time
           request->SetFinishTime(finishTime);
-          request->SetReceivedDataTimeout(this->receiveDataTimeout);
+          request->SetReceivedDataTimeout(this->configuration->GetValueUnsignedInt(PARAMETER_NAME_UDP_OPEN_CONNECTION_TIMEOUT, true, UDP_OPEN_CONNECTION_TIMEOUT_DEFAULT));
           request->SetNetworkInterfaceName(this->configuration->GetValue(PARAMETER_NAME_INTERFACE, true, NULL));
           request->SetCheckInterval(this->configuration->GetValueUnsignedInt(PARAMETER_NAME_UDP_RECEIVE_DATA_CHECK_INTERVAL, true, UDP_RECEIVE_DATA_CHECK_INTERVAL_DEFAULT));
 
@@ -357,32 +356,11 @@ HRESULT CMPUrlSourceSplitter_Protocol_Udp::ReceiveData(CStreamPackage *streamPac
 
       if (SUCCEEDED(this->mainCurlInstance->GetUdpDownloadResponse()->GetResultError()))
       {
-        if (!this->IsLiveStreamDetected())
-        {
-          // check if all data removed from CURL instance
-          if (this->mainCurlInstance->GetUdpDownloadResponse()->GetReceivedData()->GetBufferOccupiedSpace() == 0)
-          {
-            // check if we are not missing any data
+        // UDP/RTP is always live stream
 
-            if (this->IsSetStreamLength() && (this->currentStreamPosition >= this->streamLength))
-            {
-              // stream length is set and our position is at least stream length, we reached end of stream
-              this->flags |= PROTOCOL_PLUGIN_FLAG_END_OF_STREAM_REACHED;
-            }
-
-            // we didn't find gap after beggining of media packets, we have whole stream
-
-            // whole stream downloaded
-            this->flags |= PROTOCOL_PLUGIN_FLAG_WHOLE_STREAM_DOWNLOADED | PROTOCOL_PLUGIN_FLAG_END_OF_STREAM_REACHED;
-            this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"all data received");
-          }
-        }
-        else
-        {
-          // whole stream downloaded
-          this->flags |= PROTOCOL_PLUGIN_FLAG_WHOLE_STREAM_DOWNLOADED | PROTOCOL_PLUGIN_FLAG_END_OF_STREAM_REACHED;
-          this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"live stream, all data received");
-        }
+        // whole stream downloaded
+        this->flags |= PROTOCOL_PLUGIN_FLAG_WHOLE_STREAM_DOWNLOADED | PROTOCOL_PLUGIN_FLAG_END_OF_STREAM_REACHED;
+        this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"live stream, all data received");
       }
       else
       {
@@ -398,6 +376,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Udp::ReceiveData(CStreamPackage *streamPac
             CMediaPacket *lastMediaPacket = this->mediaPackets->GetItem(this->mediaPackets->Count() - 1);
 
             lastMediaPacket->SetDiscontinuity(true);
+            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: discontinuity, start '%lld', size '%u', current stream position: '%lld'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, lastMediaPacket->GetStart(), lastMediaPacket->GetLength(), this->currentStreamPosition);
           }
         }
       }
@@ -497,7 +476,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_Udp::ReceiveData(CStreamPackage *streamPac
 
         if (mediaPacket->IsDiscontinuity())
         {
-          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: discontinuity, completing request, request '%u', start '%lld', size '%u', found: '%u'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, request->GetId(), request->GetStart(), request->GetLength(), foundDataLength);
+          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: discontinuity, completing request, request '%u', start '%lld', size '%u', found: '%u', current stream position: '%lld'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, request->GetId(), request->GetStart(), request->GetLength(), foundDataLength, this->currentStreamPosition);
+
           response->SetDiscontinuity(true);
         }
 
@@ -528,7 +508,11 @@ HRESULT CMPUrlSourceSplitter_Protocol_Udp::ReceiveData(CStreamPackage *streamPac
         }
         else
         {
-          if (this->IsConnectionLostCannotReopen())
+          if (response->IsDiscontinuity())
+          {
+            streamPackage->SetCompleted(S_OK);
+          }
+          else if (this->IsConnectionLostCannotReopen())
           {
             // connection is lost and we cannot reopen it
             this->logger->Log(LOGGER_VERBOSE, L"%s: %s: connection lost, no more data available, request '%u', start '%lld', size '%u', stream length: '%lld'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, request->GetId(), request->GetStart(), request->GetLength(), this->streamLength);
@@ -542,8 +526,11 @@ HRESULT CMPUrlSourceSplitter_Protocol_Udp::ReceiveData(CStreamPackage *streamPac
 
             streamPackage->SetCompleted((response->GetBuffer()->GetBufferOccupiedSpace() != 0) ? S_OK : E_NO_MORE_DATA_AVAILABLE);
           }
-          else if (this->connectionState != Opened)
+          else if (this->IsLiveStreamDetected() && (this->connectionState != Opened))
           {
+            // we have live stream, we are missing data and we have not opened connection
+            // we lost some data, report discontinuity
+
             response->SetDiscontinuity(true);
             streamPackage->SetCompleted(S_OK);
           }
@@ -551,7 +538,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Udp::ReceiveData(CStreamPackage *streamPac
 
         if (streamPackage->GetState() == CStreamPackage::Waiting)
         {
-
           // no seeking by position is available
           // check request against current stream position, if we can receive requested data
 
@@ -639,10 +625,20 @@ HRESULT CMPUrlSourceSplitter_Protocol_Udp::GetConnectionParameters(CParameterCol
 
 // ISimpleProtocol interface
 
-//unsigned int CMPUrlSourceSplitter_Protocol_Udp::GetReceiveDataTimeout(void)
-//{
-//  return this->receiveDataTimeout;
-//}
+unsigned int CMPUrlSourceSplitter_Protocol_Udp::GetOpenConnectionTimeout(void)
+{
+  return this->configuration->GetValueUnsignedInt(PARAMETER_NAME_UDP_OPEN_CONNECTION_TIMEOUT, true, UDP_OPEN_CONNECTION_TIMEOUT_DEFAULT);
+}
+
+unsigned int CMPUrlSourceSplitter_Protocol_Udp::GetOpenConnectionSleepTime(void)
+{
+  return this->configuration->GetValueUnsignedInt(PARAMETER_NAME_UDP_OPEN_CONNECTION_SLEEP_TIME, true, UDP_OPEN_CONNECTION_SLEEP_TIME_DEFAULT);
+}
+
+unsigned int CMPUrlSourceSplitter_Protocol_Udp::GetTotalReopenConnectionTimeout(void)
+{
+  return this->configuration->GetValueUnsignedInt(PARAMETER_NAME_UDP_TOTAL_REOPEN_CONNECTION_TIMEOUT, true, UDP_TOTAL_REOPEN_CONNECTION_TIMEOUT_DEFAULT);
+}
 
 HRESULT CMPUrlSourceSplitter_Protocol_Udp::StartReceivingData(CParameterCollection *parameters)
 {
@@ -708,7 +704,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Udp::ClearSession(void)
   HRESULT result = __super::ClearSession();
  
   this->streamLength = 0;
-  this->receiveDataTimeout = UDP_RECEIVE_DATA_TIMEOUT_DEFAULT;
   this->connectionState = None;
   this->cacheFile->Clear();
   this->mediaPackets->Clear();
@@ -802,9 +797,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Udp::Initialize(CPluginConfiguration *conf
     CHECK_CONDITION_HRESULT(result, this->configuration->Append(protocolConfiguration->GetConfiguration()), result, E_OUTOFMEMORY);
 
     this->configuration->LogCollection(this->logger, LOGGER_VERBOSE, PROTOCOL_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME);
-
-    this->receiveDataTimeout = this->configuration->GetValueLong(PARAMETER_NAME_UDP_RECEIVE_DATA_TIMEOUT, true, UDP_RECEIVE_DATA_TIMEOUT_DEFAULT);
-    this->receiveDataTimeout = (this->receiveDataTimeout < 0) ? UDP_RECEIVE_DATA_TIMEOUT_DEFAULT : this->receiveDataTimeout;
 
     this->flags |= this->configuration->GetValueBool(PARAMETER_NAME_LIVE_STREAM, true, PARAMETER_NAME_LIVE_STREAM_DEFAULT) ? PROTOCOL_PLUGIN_FLAG_LIVE_STREAM_SPECIFIED : PROTOCOL_PLUGIN_FLAG_NONE;
   }

@@ -566,7 +566,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CStreamPackage *streamPa
 
       if (SUCCEEDED(res))
       {
-        // set start time of processing request,
+        // set start time of processing request
         // set Waiting state
         // set response
 

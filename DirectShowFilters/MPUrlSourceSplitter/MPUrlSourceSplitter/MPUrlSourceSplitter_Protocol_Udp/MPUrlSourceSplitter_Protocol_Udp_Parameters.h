@@ -23,12 +23,17 @@
 #ifndef __MP_URL_SOURCE_SPLITTER_PROTOCOL_UDP_PARAMETERS_DEFINED
 #define __MP_URL_SOURCE_SPLITTER_PROTOCOL_UDP_PARAMETERS_DEFINED
 
-#define PARAMETER_NAME_UDP_RECEIVE_DATA_TIMEOUT                       L"UdpReceiveDataTimeout"
+#define PARAMETER_NAME_UDP_OPEN_CONNECTION_TIMEOUT                    L"UdpOpenConnectionTimeout"
+#define PARAMETER_NAME_UDP_OPEN_CONNECTION_SLEEP_TIME                 L"UdpOpenConnectionSleepTime"
+#define PARAMETER_NAME_UDP_TOTAL_REOPEN_CONNECTION_TIMEOUT            L"UdpTotalReopenConnectionTimeout"
+
 // specify check interval for incoming data
 #define PARAMETER_NAME_UDP_RECEIVE_DATA_CHECK_INTERVAL                L"UdpReceiveDataCheckInterval"
 
 // we should get data in two seconds
-#define UDP_RECEIVE_DATA_TIMEOUT_DEFAULT                              2000
+#define UDP_OPEN_CONNECTION_TIMEOUT_DEFAULT                           2000
+#define UDP_OPEN_CONNECTION_SLEEP_TIME_DEFAULT                        0
+#define UDP_TOTAL_REOPEN_CONNECTION_TIMEOUT_DEFAULT                   60000
 
 // we check if we are receiving data each 500 ms
 #define UDP_RECEIVE_DATA_CHECK_INTERVAL_DEFAULT                       500
