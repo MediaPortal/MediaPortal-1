@@ -137,9 +137,19 @@ HRESULT CProtocolHoster::GetConnectionParameters(CParameterCollection *parameter
 
 // ISimpleProtocol interface implementation
 
-unsigned int CProtocolHoster::GetReceiveDataTimeout(void)
+unsigned int CProtocolHoster::GetOpenConnectionTimeout(void)
 {
-  return (this->activeProtocol != NULL) ? this->activeProtocol->GetReceiveDataTimeout() : 0;
+  return (this->activeProtocol != NULL) ? this->activeProtocol->GetOpenConnectionTimeout() : 0;
+}
+
+unsigned int CProtocolHoster::GetOpenConnectionSleepTime(void)
+{
+  return (this->activeProtocol != NULL) ? this->activeProtocol->GetOpenConnectionSleepTime() : 0;
+}
+
+unsigned int CProtocolHoster::GetTotalReopenConnectionTimeout(void)
+{
+  return (this->activeProtocol != NULL) ? this->activeProtocol->GetTotalReopenConnectionTimeout() : 0;
 }
 
 HRESULT CProtocolHoster::StartReceivingData(CParameterCollection *parameters)
@@ -153,9 +163,8 @@ HRESULT CProtocolHoster::StartReceivingData(CParameterCollection *parameters)
 
   if (SUCCEEDED(result))
   {
-    // get receive data timeout for active protocol
-    timeout = this->activeProtocol->GetReceiveDataTimeout();
-    this->finishTime = GetTickCount() + timeout;
+    // get open connection data timeout for active protocol
+    this->finishTime = GetTickCount() + this->activeProtocol->GetOpenConnectionTimeout();
 
     // now we have active protocol with loaded url, but still not working
     // create thread for receiving data
@@ -448,10 +457,17 @@ unsigned int WINAPI CProtocolHoster::ReceiveDataWorker(LPVOID lpParam)
   bool openedConnection = false;
 
   HRESULT result = S_OK;
-  unsigned int maximumReopenTime = 0;
 
-  unsigned int startTicks = GetTickCount();
-  unsigned endTicks = startTicks;
+  unsigned int openConnectionTimeout = caller->activeProtocol->GetOpenConnectionTimeout();
+  unsigned int openConnectionSleepTime = caller->activeProtocol->GetOpenConnectionSleepTime();
+  unsigned int totalReopenConnectionTimeout = caller->activeProtocol->GetTotalReopenConnectionTimeout();
+
+  // start ticks and end ticks are only for one try to open connection
+  // total end ticks is absolutely last time for openning connection, otherwise PROTOCOL_PLUGIN_FLAG_CONNECTION_LOST_CANNOT_REOPEN will be set
+  unsigned int currentTime = GetTickCount();
+  unsigned int startTicks = currentTime + openConnectionSleepTime;
+  unsigned int endTicks = currentTime + openConnectionSleepTime + openConnectionTimeout;
+  unsigned int totalEndTicks = caller->startReceivingData ? endTicks : (caller->activeProtocol->IsLiveStreamSpecified() ? UINT_MAX : (startTicks + totalReopenConnectionTimeout));
 
   CStreamPackage *tempStreamPackage = new CStreamPackage(&result);
   CHECK_POINTER_HRESULT(result, tempStreamPackage, result, E_OUTOFMEMORY);
@@ -460,149 +476,152 @@ unsigned int WINAPI CProtocolHoster::ReceiveDataWorker(LPVOID lpParam)
   {
     Sleep(1);
 
-    if (maximumReopenTime == 0)
+    if (FAILED(result) || (caller->pauseSeekStopMode == PAUSE_SEEK_STOP_MODE_DISABLE_READING))
     {
-      maximumReopenTime = caller->activeProtocol->GetReceiveDataTimeout();
+      // we have error, for each stream package (if any) return error
 
-      // some protocols may need some sleep before loading (e.g. multicast UDP protocol needs some time between unsubscribing and subscribing in multicast groups)
-      unsigned int waitTime = caller->configuration->GetValueUnsignedInt(PARAMETER_NAME_SLEEP_BEFORE_LOAD, true, PARAMETER_NAME_SLEEP_BEFORE_LOAD_DEFAULT);
-      unsigned int currentTime = GetTickCount();
+      // don't wait too long
+      CLockMutex lock(caller->mutex, 20);
 
-      startTicks = currentTime + waitTime;
-      endTicks = currentTime + waitTime + maximumReopenTime;
+      if (lock.IsLocked())
+      {
+        for (unsigned int i = 0; i < caller->streamPackages->Count(); i++)
+        {
+          HRESULT res = S_OK;
+          CStreamPackage *package = caller->streamPackages->GetItem(i);
+
+          package->SetCompleted((caller->pauseSeekStopMode == PAUSE_SEEK_STOP_MODE_DISABLE_READING) ? E_PAUSE_SEEK_STOP_MODE_DISABLE_READING : result);
+        }
+      }
     }
 
-    if (maximumReopenTime != 0)
+    if (SUCCEEDED(result))
     {
-      if (FAILED(result) || (caller->pauseSeekStopMode == PAUSE_SEEK_STOP_MODE_DISABLE_READING))
+      unsigned int connectionState = caller->activeProtocol->GetConnectionState();
+      currentTime = GetTickCount();
+
+      if ((!caller->activeProtocol->IsConnectionLostCannotReopen()) &&
+            ((connectionState == None) ||
+            (connectionState == InitializeFailed) ||
+            (connectionState == OpeningFailed)))
       {
-        // we have error, for each stream package (if any) return error
+        // problem with connection, try to (re)open
+
+        if (openedConnection)
+        {
+          // we had opened connection, we lost it
+          // some protocols may need some sleep before loading (e.g. multicast UDP protocol needs some time between unsubscribing and subscribing in multicast groups)
+          // set new timeout for reconnecting
+
+          startTicks = currentTime + openConnectionSleepTime;
+          endTicks = currentTime + openConnectionSleepTime + openConnectionTimeout;
+          totalEndTicks = caller->startReceivingData ? endTicks : (caller->activeProtocol->IsLiveStreamSpecified() ? UINT_MAX : (startTicks + totalReopenConnectionTimeout));
+
+          caller->logger->Log(LOGGER_WARNING, L"%s: %s: connection closed, trying to open, current time: %u, re-open time: %u (%u ms), re-open timeout: %u (ms), maximum re-open time: %u (%u ms)", caller->hosterName, METHOD_RECEIVE_DATA_WORKER_NAME, currentTime, startTicks, startTicks - currentTime, openConnectionTimeout, totalEndTicks, totalEndTicks - currentTime);
+        }
+
+        if ((currentTime >= startTicks) && (currentTime < endTicks))
+        {
+          CParameterCollection *parameters = new CParameterCollection(&result);
+          wchar_t *finishTimeString = FormatString(L"%u", caller->startReceivingData ? caller->finishTime : endTicks);
+
+          if ((parameters != NULL) && (finishTimeString != NULL))
+          {
+            parameters->Add(PARAMETER_NAME_FINISH_TIME, finishTimeString);
+          }
+
+          result = caller->activeProtocol->StartReceivingData(parameters);
+
+          FREE_MEM(finishTimeString);
+          FREE_MEM_CLASS(parameters);
+
+          CHECK_CONDITION_EXECUTE(openedConnection, caller->logger->Log(LOGGER_WARNING, L"%s: %s: connection closed, trying to open, re-open timeout: %u (ms)", caller->hosterName, METHOD_RECEIVE_DATA_WORKER_NAME, openConnectionTimeout));
+        }
+        else if (currentTime >= totalEndTicks)
+        {
+          caller->logger->Log(LOGGER_ERROR, L"%s: %s: maximum time of re-opening connection reached, maximum re-open time: %u (ms)", caller->hosterName, METHOD_RECEIVE_DATA_WORKER_NAME, openConnectionTimeout);
+
+          // instead of error we stop receiving data in protocol
+          caller->activeProtocol->StopReceivingData();
+
+          if (caller->activeProtocol->IsLiveStreamSpecified())
+          {
+            // filter specified live stream
+            // it can be IPTV or splitter with live stream, in that case we rather try to open connection again
+
+            // some protocols may need some sleep before loading (e.g. multicast UDP protocol needs some time between unsubscribing and subscribing in multicast groups)
+            // set new timeout for reconnecting
+
+            startTicks = currentTime + openConnectionSleepTime;
+            endTicks = currentTime + openConnectionSleepTime + openConnectionTimeout;
+            // we don't have limit for reconnecting
+            totalEndTicks = UINT_MAX;
+
+            caller->logger->Log(LOGGER_WARNING, L"%s: %s: connection closed, trying to open, current time: %u, re-open time: %u (%u ms), re-open timeout: %u (ms), maximum re-open time: %u (%u ms)", caller->hosterName, METHOD_RECEIVE_DATA_WORKER_NAME, currentTime, startTicks, startTicks - currentTime, openConnectionTimeout, totalEndTicks, totalEndTicks - currentTime);
+          }
+          else
+          {
+            // we also set end of stream, whole stream downloaded and also special flag that connection was lost
+            caller->activeProtocol->SetFlags(caller->activeProtocol->GetFlags() | PROTOCOL_PLUGIN_FLAG_CONNECTION_LOST_CANNOT_REOPEN | PROTOCOL_PLUGIN_FLAG_END_OF_STREAM_REACHED | PROTOCOL_PLUGIN_FLAG_WHOLE_STREAM_DOWNLOADED);
+          }
+        }
+        else if (currentTime >= endTicks)
+        {
+          caller->logger->Log(LOGGER_ERROR, L"%s: %s: time of re-opening connection reached, re-open timeout: %u (ms)", caller->hosterName, METHOD_RECEIVE_DATA_WORKER_NAME, openConnectionTimeout);
+
+          // instead of error we stop receiving data in protocol
+          caller->activeProtocol->StopReceivingData();
+
+          // some protocols may need some sleep before loading (e.g. multicast UDP protocol needs some time between unsubscribing and subscribing in multicast groups)
+          // set new timeout for reconnecting
+
+          startTicks = currentTime + openConnectionSleepTime;
+          endTicks = currentTime + openConnectionSleepTime + openConnectionTimeout;
+
+          caller->logger->Log(LOGGER_WARNING, L"%s: %s: connection closed, trying to open, current time: %u, re-open time: %u (%u ms), re-open timeout: %u (ms), maximum re-open time: %u (%u ms)", caller->hosterName, METHOD_RECEIVE_DATA_WORKER_NAME, currentTime, startTicks, startTicks - currentTime, openConnectionTimeout, totalEndTicks, totalEndTicks - currentTime);
+        }
+
+        // we don't have opened connection
+        openedConnection = false;
+      }
+      else if (caller->activeProtocol->IsConnectionLostCannotReopen() ||
+                (connectionState == Initializing) ||
+                (connectionState == Opening) ||
+                (connectionState == Opened) ||
+                (connectionState == Closing))
+      {
+        openedConnection |= (connectionState == Opened);
+
+        // we have opened connection, we can process requests (if any)
+        // if no request available, we call ReceiveData() with temporary dummy request (we don't request any data)
 
         // don't wait too long
         CLockMutex lock(caller->mutex, 20);
 
         if (lock.IsLocked())
         {
-          for (unsigned int i = 0; i < caller->streamPackages->Count(); i++)
+          CStreamPackage *package = NULL;
+
+          if ((caller->pauseSeekStopMode != PAUSE_SEEK_STOP_MODE_DISABLE_READING) && (caller->streamPackages->Count() != 0))
           {
-            HRESULT res = S_OK;
-            CStreamPackage *package = caller->streamPackages->GetItem(i);
+            // we have opened connection, we can process requests (if any)
 
-            package->SetCompleted((caller->pauseSeekStopMode == PAUSE_SEEK_STOP_MODE_DISABLE_READING) ? E_PAUSE_SEEK_STOP_MODE_DISABLE_READING : result);
-          }
-        }
-      }
-
-      if (SUCCEEDED(result))
-      {
-        unsigned int connectionState = caller->activeProtocol->GetConnectionState();
-        
-        if ((!caller->activeProtocol->IsConnectionLostCannotReopen()) &&
-              ((connectionState == None) ||
-              (connectionState == InitializeFailed) ||
-              (connectionState == OpeningFailed)))
-        {
-          // problem with connection, try to (re)open
-
-          if (openedConnection)
-          {
-            // we had opened connection, we lost it
-
-            // some protocols may need some sleep before loading (e.g. multicast UDP protocol needs some time between unsubscribing and subscribing in multicast groups)
-            unsigned int waitTime = caller->configuration->GetValueUnsignedInt(PARAMETER_NAME_SLEEP_BEFORE_LOAD, true, PARAMETER_NAME_SLEEP_BEFORE_LOAD_DEFAULT);
-            unsigned int currentTime = GetTickCount();
-
-            // set new timeout for reconnecting
-            startTicks = currentTime + waitTime;
-            endTicks = currentTime + waitTime + maximumReopenTime;
-          }
-
-          unsigned int currentTime = GetTickCount();
-          if ((currentTime >= startTicks) && (currentTime < endTicks))
-          {
-            CParameterCollection *parameters = new CParameterCollection(&result);
-            wchar_t *finishTimeString = FormatString(L"%u", caller->startReceivingData ? caller->finishTime : endTicks);
-
-            if ((parameters != NULL) && (finishTimeString != NULL))
+            for (unsigned int i = 0; (SUCCEEDED(result) && (i < caller->streamPackages->Count())); i++)
             {
-              parameters->Add(PARAMETER_NAME_FINISH_TIME, finishTimeString);
-            }
-
-            result = caller->activeProtocol->StartReceivingData(parameters);
-
-            FREE_MEM(finishTimeString);
-            FREE_MEM_CLASS(parameters);
-
-            CHECK_CONDITION_EXECUTE(openedConnection, caller->logger->Log(LOGGER_WARNING, L"%s: %s: connection closed, trying to open, maximum re-open time: %u (ms)", caller->hosterName, METHOD_RECEIVE_DATA_WORKER_NAME, maximumReopenTime));
-          }
-          else if (currentTime >= endTicks)
-          {
-            caller->logger->Log(LOGGER_ERROR, L"%s: %s: maximum time of re-opening connection reached, maximum re-open time: %u (ms)", caller->hosterName, METHOD_RECEIVE_DATA_WORKER_NAME, maximumReopenTime);
-
-            // instead of error we stop receiving data in protocol
-            caller->activeProtocol->StopReceivingData();
-
-            if (caller->activeProtocol->IsLiveStreamSpecified())
-            {
-              // filter specified live stream
-              // it can be IPTV or splitter with live stream, in that case we rather try to open connection again
-
-              // some protocols may need some sleep before loading (e.g. multicast UDP protocol needs some time between unsubscribing and subscribing in multicast groups)
-              unsigned int waitTime = caller->configuration->GetValueUnsignedInt(PARAMETER_NAME_SLEEP_BEFORE_LOAD, true, PARAMETER_NAME_SLEEP_BEFORE_LOAD_DEFAULT);
-
-              // set new timeout for reconnecting
-              startTicks = currentTime + waitTime;
-              endTicks = currentTime + waitTime + maximumReopenTime;
-            }
-            else
-            {
-              // we also set end of stream, whole stream downloaded and also special flag that connection was lost
-              caller->activeProtocol->SetFlags(caller->activeProtocol->GetFlags() | PROTOCOL_PLUGIN_FLAG_CONNECTION_LOST_CANNOT_REOPEN | PROTOCOL_PLUGIN_FLAG_END_OF_STREAM_REACHED | PROTOCOL_PLUGIN_FLAG_WHOLE_STREAM_DOWNLOADED);
+              result = caller->activeProtocol->ReceiveData(caller->streamPackages->GetItem(i));
             }
           }
-
-          // we don't have opened connection
-          openedConnection = false;
-        }
-        else if (caller->activeProtocol->IsConnectionLostCannotReopen() ||
-                  (connectionState == Initializing) ||
-                  (connectionState == Opening) ||
-                  (connectionState == Opened) ||
-                  (connectionState == Closing))
-        {
-          openedConnection |= (connectionState == Opened);
-
-          // we have opened connection, we can process requests (if any)
-          // if no request available, we call ReceiveData() with temporary dummy request (we don't request any data)
-
-          // don't wait too long
-          CLockMutex lock(caller->mutex, 20);
-
-          if (lock.IsLocked())
+          else
           {
-            CStreamPackage *package = NULL;
+            tempStreamPackage->Clear();
 
-            if ((caller->pauseSeekStopMode != PAUSE_SEEK_STOP_MODE_DISABLE_READING) && (caller->streamPackages->Count() != 0))
-            {
-              // we have opened connection, we can process requests (if any)
+            // we don't have any request, we can process only dummy request
+            result = caller->activeProtocol->ReceiveData(tempStreamPackage);
+          }
 
-              for (unsigned int i = 0; (SUCCEEDED(result) && (i < caller->streamPackages->Count())); i++)
-              {
-                result = caller->activeProtocol->ReceiveData(caller->streamPackages->GetItem(i));
-              }
-            }
-            else
-            {
-              tempStreamPackage->Clear();
-
-              // we don't have any request, we can process only dummy request
-              result = caller->activeProtocol->ReceiveData(tempStreamPackage);
-            }
-
-            if (FAILED(result))
-            {
-              caller->logger->Log(LOGGER_ERROR, L"%s: %s: protocol returned error: 0x%08X", caller->hosterName, METHOD_RECEIVE_DATA_WORKER_NAME, result);
-            }
+          if (FAILED(result))
+          {
+            caller->logger->Log(LOGGER_ERROR, L"%s: %s: protocol returned error: 0x%08X", caller->hosterName, METHOD_RECEIVE_DATA_WORKER_NAME, result);
           }
         }
       }

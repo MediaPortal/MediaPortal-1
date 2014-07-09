@@ -186,9 +186,9 @@ HRESULT CCurlInstance::Initialize(CDownloadRequest *downloadRequest)
 
     if (SUCCEEDED(result))
     {
-      unsigned int dataTimeout = (this->downloadRequest->GetFinishTime() == FINISH_TIME_NOT_SPECIFIED) ? this->downloadRequest->GetReceiveDataTimeout() : (this->downloadRequest->GetFinishTime() - GetTickCount());
+      unsigned int dataTimeout = (this->downloadRequest->GetFinishTime() == FINISH_TIME_NOT_SPECIFIED) ? this->downloadRequest->GetReceiveDataTimeout() : (this->downloadRequest->GetFinishTime() - currentTime);
 
-      CHECK_CONDITION_EXECUTE_RESULT(dataTimeout != UINT_MAX, HRESULT_FROM_CURL_CODE(curl_easy_setopt(this->curl, CURLOPT_CONNECTTIMEOUT, (long)(dataTimeout / 1000))), result);
+      CHECK_CONDITION_EXECUTE_RESULT(dataTimeout != UINT_MAX, HRESULT_FROM_CURL_CODE(curl_easy_setopt(this->curl, CURLOPT_CONNECTTIMEOUT_MS, (long)dataTimeout)), result);
       CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while setting connection timeout: 0x%08X", this->protocolName, METHOD_INITIALIZE_NAME, result));
     }
 

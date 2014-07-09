@@ -63,6 +63,11 @@ const GUID GUID_MP_URL_SOURCE_SPLITTER    = { 0x59ED045A, 0xA938, 0x4A09, 0xA8, 
 // specifies that filter can report stream time to protocol
 #define MP_URL_SOURCE_SPLITTER_FLAG_REPORT_STREAM_TIME                (1 << (FLAGS_LAST + 8))
 
+#define MP_URL_SOURCE_SPLITTER_FLAG_REPORTED_PACKET_DISCONTINUITY     (1 << (FLAGS_LAST + 9))
+#define MP_URL_SOURCE_SPLITTER_FLAG_REPORTED_PACKET_DELAYING          (1 << (FLAGS_LAST + 10))
+#define MP_URL_SOURCE_SPLITTER_FLAG_CORRECTED_TIMESTAMP               (1 << (FLAGS_LAST + 11))
+#define MP_URL_SOURCE_SPLITTER_FLAG_ALL_PINS_END_OF_STREAM            (1 << (FLAGS_LAST + 12))
+
 class CMPUrlSourceSplitter 
   : public CBaseFilter
   , public CCritSec

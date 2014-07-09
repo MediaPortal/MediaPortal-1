@@ -1163,10 +1163,10 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::GetConnectionParameters(CParameterCo
 
 // ISimpleProtocol interface
 
-unsigned int CMPUrlSourceSplitter_Protocol_Rtsp::GetReceiveDataTimeout(void)
-{
-  return this->receiveDataTimeout;
-}
+//unsigned int CMPUrlSourceSplitter_Protocol_Rtsp::GetReceiveDataTimeout(void)
+//{
+//  return this->receiveDataTimeout;
+//}
 
 HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::StartReceivingData(CParameterCollection *parameters)
 {

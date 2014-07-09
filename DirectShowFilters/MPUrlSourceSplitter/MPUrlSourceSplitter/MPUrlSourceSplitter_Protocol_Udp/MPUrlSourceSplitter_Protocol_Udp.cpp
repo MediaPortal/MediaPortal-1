@@ -639,10 +639,10 @@ HRESULT CMPUrlSourceSplitter_Protocol_Udp::GetConnectionParameters(CParameterCol
 
 // ISimpleProtocol interface
 
-unsigned int CMPUrlSourceSplitter_Protocol_Udp::GetReceiveDataTimeout(void)
-{
-  return this->receiveDataTimeout;
-}
+//unsigned int CMPUrlSourceSplitter_Protocol_Udp::GetReceiveDataTimeout(void)
+//{
+//  return this->receiveDataTimeout;
+//}
 
 HRESULT CMPUrlSourceSplitter_Protocol_Udp::StartReceivingData(CParameterCollection *parameters)
 {

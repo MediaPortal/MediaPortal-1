@@ -69,9 +69,19 @@ public:
 
   // ISimpleProtocol interface implementation
 
-  // get timeout (in ms) for receiving data
-  // @return : timeout (in ms) for receiving data
-  unsigned int GetReceiveDataTimeout(void);
+  // gets timeout (in ms) for opening connection (first opening connection when specified new URL)
+  // @return : timeout (in ms) for opening connection
+  unsigned int GetOpenConnectionTimeout(void);
+
+  // gets sleep time (in ms) for opening connection
+  // some protocols may need some sleep before loading (e.g. multicast UDP protocol needs some time between unsubscribing and subscribing in multicast groups)
+  // @return : sleep time (in ms) for opening connection
+  unsigned int GetOpenConnectionSleepTime(void);
+
+  // gets total timeout (in ms) for re-opening connection (opening connection after lost connection)
+  // re-open connection total timeout should be much more greater (e.g. 3 - 5 times) in order to allow more opening requests
+  // @return : total timeout (in ms) for re-opening connection
+  unsigned int GetTotalReopenConnectionTimeout(void);
 
   // starts receiving data from specified url and configuration parameters
   // @param parameters : the url and parameters used for connection

@@ -82,9 +82,19 @@ void CParserHoster::SetPauseSeekStopMode(unsigned int pauseSeekStopMode)
 
 // ISimpleProtocol implementation
 
-unsigned int CParserHoster::GetReceiveDataTimeout(void)
+unsigned int CParserHoster::GetOpenConnectionTimeout(void)
 {
-  return (this->activeParser != NULL) ? this->activeParser->GetReceiveDataTimeout() : UINT_MAX;
+  return (this->activeParser != NULL) ? this->activeParser->GetOpenConnectionTimeout() : UINT_MAX;
+}
+
+unsigned int CParserHoster::GetOpenConnectionSleepTime(void)
+{
+  return (this->activeParser != NULL) ? this->activeParser->GetOpenConnectionSleepTime() : 0;
+}
+
+unsigned int CParserHoster::GetTotalReopenConnectionTimeout(void)
+{
+  return (this->activeParser != NULL) ? this->activeParser->GetTotalReopenConnectionTimeout() : UINT_MAX;
 }
 
 HRESULT CParserHoster::StartReceivingData(CParameterCollection *parameters)
@@ -136,7 +146,7 @@ HRESULT CParserHoster::StartReceivingData(CParameterCollection *parameters)
           // we are receiving data, we can try parsers
 
           bool pendingParser = true;
-          unsigned int endTicks = GetTickCount() + this->protocolHoster->GetReceiveDataTimeout();
+          unsigned int endTicks = GetTickCount() + this->protocolHoster->GetOpenConnectionSleepTime() + this->protocolHoster->GetOpenConnectionTimeout();
 
           while (SUCCEEDED(result) && pendingParser && (GetTickCount() < endTicks))
           {

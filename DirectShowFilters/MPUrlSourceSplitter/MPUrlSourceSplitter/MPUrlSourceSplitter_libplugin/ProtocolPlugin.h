@@ -43,7 +43,7 @@
 #define PROTOCOL_PLUGIN_FLAG_END_OF_STREAM_REACHED                    (1 << (PLUGIN_FLAG_LAST + 5))
 #define PROTOCOL_PLUGIN_FLAG_CONNECTION_LOST_CANNOT_REOPEN            (1 << (PLUGIN_FLAG_LAST + 6))
 
-#define PROTOCOL_PLUGIN_FLAG_LAST                                     (PLUGIN_FLAG_LAST + 6)
+#define PROTOCOL_PLUGIN_FLAG_LAST                                     (PLUGIN_FLAG_LAST + 7)
 
 class CProtocolPlugin : public CPlugin, public IProtocol
 {

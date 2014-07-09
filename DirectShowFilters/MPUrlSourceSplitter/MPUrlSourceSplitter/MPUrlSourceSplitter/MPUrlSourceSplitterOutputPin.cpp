@@ -27,6 +27,8 @@
 #include "OutputPinMediaSample.h"
 #include "StaticLogger.h"
 #include "Parameters.h"
+#include "OutputPinDumpBox.h"
+#include "OutputPinMetadataBox.h"
 
 #include <Shlwapi.h>
 
@@ -627,6 +629,9 @@ DWORD CMPUrlSourceSplitterOutputPin::ThreadProc()
                   CDumpBox *dumpBox = this->CreateDumpBox();
                   CHECK_CONDITION_HRESULT(result, dumpBox, result, E_OUTOFMEMORY);
 
+                  COutputPinDumpBox *outputPinDumpBox = dynamic_cast<COutputPinDumpBox *>(dumpBox);
+                  CHECK_CONDITION_HRESULT(result, outputPinDumpBox, result, E_OUTOFMEMORY);
+
                   if (SUCCEEDED(result))
                   {
                     BYTE *data = NULL;
@@ -636,12 +641,20 @@ DWORD CMPUrlSourceSplitterOutputPin::ThreadProc()
                     {
                       unsigned int dataLength = (unsigned int)max(0, sample->GetActualDataLength());
 
-                      dumpBox->SetTimeWithLocalTime();
-                      dumpBox->SetPayload(data, dataLength);
+                      outputPinDumpBox->SetTimeWithLocalTime();
+                      outputPinDumpBox->SetPayload(data, dataLength);
+                    }
+
+                    if (SUCCEEDED(result))
+                    {
+                      COutputPinMetadataBox *metadata = (COutputPinMetadataBox *)outputPinDumpBox->GetBoxes()->GetBox(OUTPUT_PIN_METADATA_BOX_TYPE, false);
+                      CHECK_CONDITION_HRESULT(result, metadata, result, E_OUTOFMEMORY);
+                      
+                      CHECK_CONDITION_HRESULT(result, metadata->SetMediaSample(sample), result, E_OUTOFMEMORY);
                     }
                   }
 
-                  CHECK_CONDITION_HRESULT(result, this->dumpFile->AddDumpBox(dumpBox), result, E_OUTOFMEMORY);
+                  CHECK_CONDITION_HRESULT(result, this->dumpFile->AddDumpBox(outputPinDumpBox), result, E_OUTOFMEMORY);
                   CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(dumpBox));
                 }
 
@@ -737,8 +750,17 @@ wchar_t *CMPUrlSourceSplitterOutputPin::GetStoreFile(const wchar_t *extension)
 CDumpBox *CMPUrlSourceSplitterOutputPin::CreateDumpBox(void)
 {
   HRESULT result = S_OK;
-  CDumpBox *box = new CDumpBox(&result);
+  COutputPinDumpBox *box = new COutputPinDumpBox(&result);
   CHECK_POINTER_HRESULT(result, box, result, E_OUTOFMEMORY);
+
+  if (SUCCEEDED(result))
+  {
+    COutputPinMetadataBox *metadata = new COutputPinMetadataBox(&result);
+    CHECK_POINTER_HRESULT(result, metadata, result, E_OUTOFMEMORY);
+
+    CHECK_CONDITION_HRESULT(result, box->GetBoxes()->Add(metadata), result, E_OUTOFMEMORY);
+    CHECK_CONDITION_EXECUTE(FAILED(metadata), FREE_MEM_CLASS(box));
+  }
 
   CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(box));
   return box;

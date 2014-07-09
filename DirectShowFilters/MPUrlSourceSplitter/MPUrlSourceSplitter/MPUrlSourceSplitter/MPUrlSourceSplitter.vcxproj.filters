@@ -105,6 +105,12 @@
     <ClInclude Include="SeekIndexEntryCollection.h">
       <Filter>Demuxers\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="OutputPinDumpBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OutputPinMetadataBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -184,6 +190,12 @@
     </ClCompile>
     <ClCompile Include="SeekIndexEntryCollection.cpp">
       <Filter>Demuxers\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OutputPinDumpBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OutputPinMetadataBox.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

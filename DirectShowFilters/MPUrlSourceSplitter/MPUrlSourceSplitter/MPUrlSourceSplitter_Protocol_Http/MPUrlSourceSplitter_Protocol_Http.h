@@ -40,8 +40,9 @@ wchar_t *SUPPORTED_PROTOCOLS[TOTAL_SUPPORTED_PROTOCOLS] =                     { 
 
 #define MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_RANGES_SUPPORTED            (1 << (PROTOCOL_PLUGIN_FLAG_LAST + 0))
 #define MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_SEEKING_SUPPORT_DETECTION   (1 << (PROTOCOL_PLUGIN_FLAG_LAST + 1))
+#define MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_REPORTED_STATUS_CODE        (1 << (PROTOCOL_PLUGIN_FLAG_LAST + 2))
 
-#define MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_LAST                        (PROTOCOL_PLUGIN_FLAG_LAST + 2)
+#define MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_LAST                        (PROTOCOL_PLUGIN_FLAG_LAST + 3)
 
 class CMPUrlSourceSplitter_Protocol_Http : public CProtocolPlugin
 {
@@ -78,9 +79,19 @@ public:
 
   // ISimpleProtocol interface
 
-  // get timeout (in ms) for receiving data
-  // @return : timeout (in ms) for receiving data
-  unsigned int GetReceiveDataTimeout(void);
+  // gets timeout (in ms) for opening connection
+  // @return : timeout (in ms) for opening connection
+  unsigned int GetOpenConnectionTimeout(void);
+
+  // gets sleep time (in ms) for opening connection
+  // some protocols may need some sleep before loading (e.g. multicast UDP protocol needs some time between unsubscribing and subscribing in multicast groups)
+  // @return : sleep time (in ms) for opening connection
+  unsigned int GetOpenConnectionSleepTime(void);
+
+  // gets total timeout (in ms) for re-opening connection (opening connection after lost connection)
+  // re-open connection total timeout should be much more greater (e.g. 3 - 5 times) in order to allow more opening requests
+  // @return : total timeout (in ms) for re-opening connection
+  unsigned int GetTotalReopenConnectionTimeout(void);
 
   // starts receiving data from specified url and configuration parameters
   // @param parameters : the url and parameters used for connection
@@ -146,9 +157,6 @@ protected:
   HANDLE lockMutex;
   // mutex for locking access to internal buffer of CURL instance
   HANDLE lockCurlMutex;
-
-  // holds receive data timeout
-  unsigned int receiveDataTimeout;
 
   // main instance of CURL
   CHttpCurlInstance *mainCurlInstance;

@@ -642,9 +642,6 @@ STDMETHODIMP CMPUrlSourceSplitter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TY
         // IPTV is always live stream, remove live stream flag and create new one
         this->configuration->Remove(PARAMETER_NAME_LIVE_STREAM, true);
         result = this->configuration->Add(PARAMETER_NAME_LIVE_STREAM, L"1") ? result : E_OUTOFMEMORY;
-
-        //this->configuration->Add(PARAMETER_NAME_DUMP_INPUT_RAW_DATA, L"1");
-        //this->configuration->Add(PARAMETER_NAME_SLEEP_BEFORE_LOAD, L"200");
       }
 
       if (SUCCEEDED(result))
@@ -727,12 +724,6 @@ STDMETHODIMP CMPUrlSourceSplitter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TY
         this->configuration->Clear();
         result = this->configuration->Add(PARAMETER_NAME_URL, url) ? result : E_OUTOFMEMORY;
       }
-
-      //this->configuration->Add(PARAMETER_NAME_DUMP_INPUT_RAW_DATA, L"1");
-      //this->configuration->Clear();
-      //this->configuration->Add(PARAMETER_NAME_URL, L"udp://@233.62.90.1:2314");
-      //this->configuration->Add(PARAMETER_NAME_LIVE_STREAM, L"1");
-      //this->configuration->Add(PARAMETER_NAME_SLEEP_BEFORE_LOAD, L"200");
     }
 
     if (SUCCEEDED(result))
@@ -1629,7 +1620,8 @@ DWORD CMPUrlSourceSplitter::ThreadProc()
       this->pauseSeekStopRequest = false;
     }
 
-    bool endOfStream = false;
+    this->flags &= ~(MP_URL_SOURCE_SPLITTER_FLAG_REPORTED_PACKET_DISCONTINUITY | MP_URL_SOURCE_SPLITTER_FLAG_REPORTED_PACKET_DELAYING | MP_URL_SOURCE_SPLITTER_FLAG_CORRECTED_TIMESTAMP | MP_URL_SOURCE_SPLITTER_FLAG_ALL_PINS_END_OF_STREAM);
+
     unsigned int lastReportStreamTime = 0;
     unsigned int lastDemuxerId = 0;
 
@@ -1639,7 +1631,7 @@ DWORD CMPUrlSourceSplitter::ThreadProc()
       {
         Sleep(1);
       }
-      else if (!endOfStream)
+      else if (!this->IsSetFlags(MP_URL_SOURCE_SPLITTER_FLAG_ALL_PINS_END_OF_STREAM))
       {
         HRESULT result = S_OK;
 
@@ -1700,14 +1692,58 @@ DWORD CMPUrlSourceSplitter::ThreadProc()
               }
             }
 
-            if (pin != NULL)
+            if ((pin != NULL) && (!this->IsSetFlags(MP_URL_SOURCE_SPLITTER_FLAG_CORRECTED_TIMESTAMP)))
             {
+              // timestamp correction is needed when seek happen
+              // from FFmpeg we get timestamp from beginning of stream, but filters need timestamps relative to seek point
+              // also in case of unsuccesful adding packet to output pin we must correct timestamps only once
+
+              this->flags |= MP_URL_SOURCE_SPLITTER_FLAG_CORRECTED_TIMESTAMP;
+
               if (packet->GetStartTime() != COutputPinPacket::INVALID_TIME)
               {
                 packet->SetStartTime(packet->GetStartTime() - this->demuxStart);
                 packet->SetEndTime(packet->GetEndTime() - this->demuxStart);
 
                 ASSERT(packet->GetStartTime() <= packet->GetEndTime());
+              }
+            }
+
+            if ((pin != NULL) && (packet->IsDiscontinuity()))
+            {
+              CHECK_CONDITION_EXECUTE(!this->IsSetFlags(MP_URL_SOURCE_SPLITTER_FLAG_REPORTED_PACKET_DISCONTINUITY), this->logger->Log(LOGGER_VERBOSE, L"%s: %s: discontinuity packet, demuxer: %u, stream ID: %u, start: %016lld, end: %016lld", MODULE_NAME, METHOD_THREAD_PROC_NAME, packet->GetDemuxerId(), packet->GetStreamPid(), packet->GetStartTime(), packet->GetEndTime()));
+              this->flags |= MP_URL_SOURCE_SPLITTER_FLAG_REPORTED_PACKET_DISCONTINUITY;
+
+              CStream *audioStream = this->demuxers->GetItem(packet->GetDemuxerId())->GetActiveStream(CStream::Audio);
+              if (audioStream != NULL)
+              {
+                if (packet->GetStreamPid() == audioStream->GetPid())
+                {
+                  // we have audio stream discontinuity
+                  // we must wait with output pin packet for right time (at max 10 ms before packet start time)
+
+                  CRefTime refTime;
+                  if (SUCCEEDED(this->StreamTime(refTime)))
+                  {
+                    // refTime is measured from demuxStart
+                    // packet start time is also measured from demuxStart
+
+                    if (refTime.Millisecs() > 0)
+                    {
+                      int64_t streamTime = (int64_t)(refTime.Millisecs() * (DSHOW_TIME_BASE / 1000));
+
+                      if (packet->GetStartTime() >= (streamTime + 100000))
+                      {
+                        CHECK_CONDITION_EXECUTE(!this->IsSetFlags(MP_URL_SOURCE_SPLITTER_FLAG_REPORTED_PACKET_DELAYING), this->logger->Log(LOGGER_WARNING, L"%s: %s: delaying packet, demuxer: %u, stream ID: %u, start: %016lld, end: %016lld, delay: %016lld, stream time: %lld, demux start: %lld", MODULE_NAME, METHOD_THREAD_PROC_NAME, packet->GetDemuxerId(), packet->GetStreamPid(), packet->GetStartTime(), packet->GetEndTime(), packet->GetStartTime() - (streamTime + 100000), streamTime, this->demuxStart));
+
+                        this->flags |= MP_URL_SOURCE_SPLITTER_FLAG_REPORTED_PACKET_DELAYING;
+                        result = E_FAIL;
+
+                        Sleep(1);
+                      }
+                    }
+                  }
+                }
               }
             }
           }
@@ -1727,6 +1763,8 @@ DWORD CMPUrlSourceSplitter::ThreadProc()
             {
               // packet was queued to output pin, doesn't need to hold it's reference
               packet = NULL;
+
+              this->flags &= ~(MP_URL_SOURCE_SPLITTER_FLAG_REPORTED_PACKET_DISCONTINUITY | MP_URL_SOURCE_SPLITTER_FLAG_REPORTED_PACKET_DELAYING | MP_URL_SOURCE_SPLITTER_FLAG_CORRECTED_TIMESTAMP);
             }
 
             if (FAILED(result))
@@ -1757,16 +1795,16 @@ DWORD CMPUrlSourceSplitter::ThreadProc()
           lastDemuxerId = (++lastDemuxerId) % this->demuxers->Count();
 
           // set end of stream flag, if all output pins have queued end of stream packets
-          endOfStream = (this->outputPins->Count() > 0);
+          this->flags |= (this->outputPins->Count() > 0) ? MP_URL_SOURCE_SPLITTER_FLAG_ALL_PINS_END_OF_STREAM : MP_URL_SOURCE_SPLITTER_FLAG_NONE;
 
           for (unsigned int i = 0; i < this->outputPins->Count(); i++)
           {
             CMPUrlSourceSplitterOutputPin *outputPin = this->outputPins->GetItem(i);
 
-            endOfStream &= outputPin->IsEndOfStream();
+            CHECK_CONDITION_EXECUTE(!outputPin->IsEndOfStream(), this->flags &= ~MP_URL_SOURCE_SPLITTER_FLAG_ALL_PINS_END_OF_STREAM);
           }
 
-          if (endOfStream)
+          if (this->IsSetFlags(MP_URL_SOURCE_SPLITTER_FLAG_ALL_PINS_END_OF_STREAM))
           {
             this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_THREAD_PROC_NAME, L"all output pins have end of stream");
           }
@@ -1801,7 +1839,7 @@ DWORD CMPUrlSourceSplitter::ThreadProc()
         }
       }
 
-      if (endOfStream && this->IsDownloadingFile())
+      if (this->IsSetFlags(MP_URL_SOURCE_SPLITTER_FLAG_ALL_PINS_END_OF_STREAM) && this->IsDownloadingFile())
       {
         // check if downloading isn't finished
         CMPUrlSourceSplitterOutputDownloadPin *outputPin = (CMPUrlSourceSplitterOutputDownloadPin *)this->outputPins->GetItem(0);

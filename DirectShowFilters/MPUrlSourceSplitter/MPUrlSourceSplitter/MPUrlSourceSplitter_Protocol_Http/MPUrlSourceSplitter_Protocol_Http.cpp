@@ -70,7 +70,6 @@ CMPUrlSourceSplitter_Protocol_Http::CMPUrlSourceSplitter_Protocol_Http(HRESULT *
   this->lockCurlMutex = NULL;
   this->lockMutex = NULL;
   this->mainCurlInstance = NULL;
-  this->receiveDataTimeout = HTTP_RECEIVE_DATA_TIMEOUT_DEFAULT;
   this->streamLength = 0;
   this->connectionState = None;
   this->mediaPackets = NULL;
@@ -240,7 +239,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CStreamPackage *streamPa
   {
     CLockMutex lock(this->lockMutex, INFINITE);
 
-    if (SUCCEEDED(result) && (this->mainCurlInstance != NULL) && (this->connectionState == Opened))
+    if (SUCCEEDED(result) && (this->mainCurlInstance != NULL) && ((this->connectionState == Opening) || (this->connectionState == Opened)))
     {
       {
         CLockMutex lockData(this->lockCurlMutex, INFINITE);
@@ -251,6 +250,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CStreamPackage *streamPa
         unsigned int bytesRead = this->mainCurlInstance->GetHttpDownloadResponse()->GetReceivedData()->GetBufferOccupiedSpace();
         if (bytesRead > 0)
         {
+          this->connectionState = Opened;
           this->lastReceiveDataTime = GetTickCount();
 
           CMediaPacket *mediaPacket = new CMediaPacket(&result);
@@ -312,7 +312,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CStreamPackage *streamPa
       }
     }
 
-    if (SUCCEEDED(result) && (this->mainCurlInstance != NULL) && (this->connectionState == Opening))
+    if (SUCCEEDED(result) && (!this->IsSetFlags(MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_REPORTED_STATUS_CODE)) && (this->mainCurlInstance != NULL) && ((this->connectionState == Opening) || (this->connectionState == Opened)))
     {
       // check HTTP response code
       long responseCode = this->mainCurlInstance->GetHttpDownloadResponse()->GetResponseCode();
@@ -325,11 +325,12 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CStreamPackage *streamPa
 
         if ((responseCode < 200) || (responseCode >= 400))
         {
-          FREE_MEM_CLASS(this->mainCurlInstance);
-          this->connectionState = None;
+          this->StopReceivingData();
         }
         else
         {
+          this->flags |= MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_REPORTED_STATUS_CODE;
+
           if (this->IsSetFlags(MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_SEEKING_SUPPORT_DETECTION))
           {
             this->flags |= (responseCode == 206) ? MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_RANGES_SUPPORTED : MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_NONE;
@@ -337,9 +338,83 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CStreamPackage *streamPa
           }
 
           this->flags |= (this->configuration->GetValueBool(PARAMETER_NAME_HTTP_SEEKING_SUPPORTED, true, HTTP_SEEKING_SUPPORTED_DEFAULT)) ? MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_RANGES_SUPPORTED : MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_NONE;
-
-          this->connectionState = Opened;
         }
+      }
+    }
+
+    if (SUCCEEDED(result) && (this->mainCurlInstance == NULL) && (!this->IsWholeStreamDownloaded()))
+    {
+      this->connectionState = Initializing;
+
+      unsigned int finishTime = UINT_MAX;
+      if (SUCCEEDED(result))
+      {
+        finishTime = this->configuration->GetValueUnsignedInt(PARAMETER_NAME_FINISH_TIME, true, UINT_MAX);
+        if (finishTime != UINT_MAX)
+        {
+          unsigned int currentTime = GetTickCount();
+          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: finish time specified, current time: %u, finish time: %u, diff: %u (ms)", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, currentTime, finishTime, finishTime - currentTime);
+          this->configuration->Remove(PARAMETER_NAME_FINISH_TIME, true);
+        }
+      }
+
+      this->mainCurlInstance = new CHttpCurlInstance(&result, this->logger, this->lockCurlMutex, PROTOCOL_IMPLEMENTATION_NAME, L"Main");
+      CHECK_POINTER_HRESULT(result, this->mainCurlInstance, result, E_OUTOFMEMORY);
+
+      if (SUCCEEDED(result))
+      {
+        if (this->currentCookies != NULL)
+        {
+          CHECK_CONDITION_HRESULT(result, this->mainCurlInstance->SetCurrentCookies(this->currentCookies), result, E_HTTP_CANNOT_SET_COOKIES);
+        }
+
+        if (this->configuration->GetValueBool(PARAMETER_NAME_DUMP_INPUT_RAW_DATA, true, PARAMETER_NAME_DUMP_INPUT_RAW_DATA_DEFAULT))
+        {
+          wchar_t *storeFilePath = this->GetStoreFile(L"dump");
+          CHECK_CONDITION_NOT_NULL_EXECUTE(storeFilePath, this->mainCurlInstance->SetDumpFile(storeFilePath));
+          FREE_MEM(storeFilePath);
+        }
+      }
+
+      if (SUCCEEDED(result))
+      {
+        CHttpDownloadRequest *request = new CHttpDownloadRequest(&result);
+        CHECK_POINTER_HRESULT(result, request, result, E_OUTOFMEMORY);
+
+        if (SUCCEEDED(result))
+        {
+          request->SetCookie(this->configuration->GetValue(PARAMETER_NAME_HTTP_COOKIE, true, NULL));
+          request->SetHttpVersion(this->configuration->GetValueLong(PARAMETER_NAME_HTTP_VERSION, true, HTTP_VERSION_DEFAULT));
+          request->SetIgnoreContentLength((this->configuration->GetValueLong(PARAMETER_NAME_HTTP_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
+          request->SetReferer(this->configuration->GetValue(PARAMETER_NAME_HTTP_REFERER, true, NULL));
+          request->SetUrl(this->configuration->GetValue(PARAMETER_NAME_URL, true, NULL));
+          request->SetUserAgent(this->configuration->GetValue(PARAMETER_NAME_HTTP_USER_AGENT, true, NULL));
+          request->SetStartPosition(this->IsLiveStreamDetected() ? 0 : this->startStreamPosition);
+          request->SetEndPosition(this->IsLiveStreamDetected() ? 0 : this->endStreamPosition);
+
+          // set finish time, all methods must return before finish time
+          request->SetFinishTime(finishTime);
+          request->SetReceivedDataTimeout(this->configuration->GetValueUnsignedInt(PARAMETER_NAME_HTTP_OPEN_CONNECTION_TIMEOUT, true, HTTP_OPEN_CONNECTION_TIMEOUT_DEFAULT));
+          request->SetNetworkInterfaceName(this->configuration->GetValue(PARAMETER_NAME_INTERFACE, true, NULL));
+
+          this->currentStreamPosition = this->startStreamPosition;
+
+          if (SUCCEEDED(this->mainCurlInstance->Initialize(request)))
+          {
+            // all parameters set
+            // start receiving data
+
+            if (SUCCEEDED(this->mainCurlInstance->StartReceivingData()))
+            {
+              this->connectionState = Opening;
+            }
+          }
+          else
+          {
+            this->connectionState = InitializeFailed;
+          }
+        }
+        FREE_MEM_CLASS(request);
       }
     }
 
@@ -400,23 +475,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CStreamPackage *streamPa
                   // whole stream downloaded
                   this->flags |= PROTOCOL_PLUGIN_FLAG_WHOLE_STREAM_DOWNLOADED | PROTOCOL_PLUGIN_FLAG_END_OF_STREAM_REACHED;
                   this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"no gap found, all data received");
-
-                  if (!this->IsSetStreamLength())
-                  {
-                    // get last media packet to get total length
-                    CMediaPacket *mediaPacket = (this->mediaPackets->Count() != 0) ? this->mediaPackets->GetItem(this->mediaPackets->Count() - 1) : NULL;
-
-                    this->streamLength = (mediaPacket != NULL) ? (mediaPacket->GetEnd() + 1) : 0;
-                    this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-
-                    this->flags |= PROTOCOL_PLUGIN_FLAG_SET_STREAM_LENGTH;
-                    this->flags &= ~PROTOCOL_PLUGIN_FLAG_STREAM_LENGTH_ESTIMATED;
-                  }
-
-                  // set current stream position to stream length to get correct result in QueryStreamProgress() method
-                  this->currentStreamPosition = this->streamLength;
-
-                  FREE_MEM_CLASS(this->mainCurlInstance);
                 }
               }
             }
@@ -440,109 +498,62 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CStreamPackage *streamPa
           // whole stream downloaded
           this->flags |= PROTOCOL_PLUGIN_FLAG_WHOLE_STREAM_DOWNLOADED | PROTOCOL_PLUGIN_FLAG_END_OF_STREAM_REACHED;
           this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"live stream, all data received");
-
-          if (!this->IsSetStreamLength())
-          {
-            // get last media packet to get total length
-            CMediaPacket *mediaPacket = (this->mediaPackets->Count() != 0) ? this->mediaPackets->GetItem(this->mediaPackets->Count() - 1) : NULL;
-
-            this->streamLength = (mediaPacket != NULL) ? (mediaPacket->GetEnd() + 1) : 0;
-            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-
-            this->flags |= PROTOCOL_PLUGIN_FLAG_SET_STREAM_LENGTH;
-            this->flags &= ~PROTOCOL_PLUGIN_FLAG_STREAM_LENGTH_ESTIMATED;
-          }
-
-          // set current stream position to stream length to get correct result in QueryStreamProgress() method
-          this->currentStreamPosition = this->streamLength;
-
-          FREE_MEM_CLASS(this->mainCurlInstance);
         }
       }
       else
       {
-        // error while receiving data, stops receiving data
-        // this clear CURL instance and buffer, it leads to GetConnectionState() to PROTOCOL_CONNECTION_STATE_NONE result and connection will be reopened by ProtocolHoster
-        this->StopReceivingData();
+        // check if all data removed from CURL instance
+        if (this->mainCurlInstance->GetHttpDownloadResponse()->GetReceivedData()->GetBufferOccupiedSpace() == 0)
+        {
+          if (this->IsLiveStreamDetected())
+          {
+            // error while receiving data, stops receiving data
+            // this clear CURL instance and buffer, it leads to GetConnectionState() to PROTOCOL_CONNECTION_STATE_NONE result and connection will be reopened by ProtocolHoster
+            this->StopReceivingData();
 
-        // re-open connection at last known position
-        this->startStreamPosition = this->currentStreamPosition;
+            // re-open connection at last known position
+            this->startStreamPosition = this->currentStreamPosition;
+
+            if (this->mediaPackets->Count() != 0)
+            {
+              CMediaPacket *lastMediaPacket = this->mediaPackets->GetItem(this->mediaPackets->Count() - 1);
+
+              lastMediaPacket->SetDiscontinuity(true);
+              this->logger->Log(LOGGER_VERBOSE, L"%s: %s: discontinuity, start '%lld', size '%u', current stream position: '%lld'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, lastMediaPacket->GetStart(), lastMediaPacket->GetLength(), this->currentStreamPosition);
+            }
+          }
+          else
+          {
+            // we don't need to set discontinuity flag, because we can re-open connection on lost postion
+
+            // error while receiving data, stops receiving data
+            // this clear CURL instance and buffer, it leads to GetConnectionState() to PROTOCOL_CONNECTION_STATE_NONE result and connection will be reopened by ProtocolHoster
+            this->StopReceivingData();
+
+            // re-open connection at last known position
+            this->startStreamPosition = this->currentStreamPosition;
+          }
+        }
       }
     }
 
-    if (SUCCEEDED(result) && (this->mainCurlInstance == NULL) && (!this->IsWholeStreamDownloaded()))
+    if ((!this->IsSetStreamLength()) && (this->IsWholeStreamDownloaded() || this->IsEndOfStreamReached() || this->IsConnectionLostCannotReopen()))
     {
-      this->connectionState = Initializing;
+      // reached end of stream, set stream length
 
-      unsigned int finishTime = UINT_MAX;
-      if (SUCCEEDED(result))
-      {
-        finishTime = this->configuration->GetValueUnsignedInt(PARAMETER_NAME_FINISH_TIME, true, UINT_MAX);
-        if (finishTime != UINT_MAX)
-        {
-          unsigned int currentTime = GetTickCount();
-          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: finish time specified, current time: %u, finish time: %u, diff: %u (ms)", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, currentTime, finishTime, finishTime - currentTime);
-          this->configuration->Remove(PARAMETER_NAME_FINISH_TIME, true);
-        }
-      }
+      // get last media packet to get total length
+      CMediaPacket *mediaPacket = (this->mediaPackets->Count() != 0) ? this->mediaPackets->GetItem(this->mediaPackets->Count() - 1) : NULL;
 
-      this->mainCurlInstance = new CHttpCurlInstance(&result, this->logger, this->lockCurlMutex, PROTOCOL_IMPLEMENTATION_NAME, L"Main");
-      CHECK_POINTER_HRESULT(result, this->mainCurlInstance, result, E_OUTOFMEMORY);
+      this->streamLength = (mediaPacket != NULL) ? (mediaPacket->GetEnd() + 1) : 0;
+      this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
 
-      if (SUCCEEDED(result))
-      {
-        if (this->currentCookies != NULL)
-        {
-          CHECK_CONDITION_HRESULT(result, this->mainCurlInstance->SetCurrentCookies(this->currentCookies), result, E_HTTP_CANNOT_SET_COOKIES);
-        }
+      this->flags |= PROTOCOL_PLUGIN_FLAG_SET_STREAM_LENGTH;
+      this->flags &= ~PROTOCOL_PLUGIN_FLAG_STREAM_LENGTH_ESTIMATED;
 
-        if (this->configuration->GetValueBool(PARAMETER_NAME_DUMP_INPUT_RAW_DATA, true, PARAMETER_NAME_DUMP_INPUT_RAW_DATA_DEFAULT))
-        {
-          wchar_t *storeFilePath = this->GetStoreFile(L"dump");
-          CHECK_CONDITION_NOT_NULL_EXECUTE(storeFilePath, this->mainCurlInstance->SetDumpFile(storeFilePath));
-          FREE_MEM(storeFilePath);
-        }
-      }
+      // set current stream position to stream length to get correct result in QueryStreamProgress() method
+      this->currentStreamPosition = this->streamLength;
 
-      if (SUCCEEDED(result))
-      {
-        CHttpDownloadRequest *request = new CHttpDownloadRequest(&result);
-        CHECK_POINTER_HRESULT(result, request, result, E_OUTOFMEMORY);
-
-        if (SUCCEEDED(result))
-        {
-          request->SetCookie(this->configuration->GetValue(PARAMETER_NAME_HTTP_COOKIE, true, NULL));
-          request->SetHttpVersion(this->configuration->GetValueLong(PARAMETER_NAME_HTTP_VERSION, true, HTTP_VERSION_DEFAULT));
-          request->SetIgnoreContentLength((this->configuration->GetValueLong(PARAMETER_NAME_HTTP_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
-          request->SetReferer(this->configuration->GetValue(PARAMETER_NAME_HTTP_REFERER, true, NULL));
-          request->SetUrl(this->configuration->GetValue(PARAMETER_NAME_URL, true, NULL));
-          request->SetUserAgent(this->configuration->GetValue(PARAMETER_NAME_HTTP_USER_AGENT, true, NULL));
-          request->SetStartPosition(this->IsLiveStreamDetected() ? 0 : this->startStreamPosition);
-          request->SetEndPosition(this->IsLiveStreamDetected() ? 0 : this->endStreamPosition);
-
-          // set finish time, all methods must return before finish time
-          request->SetFinishTime(finishTime);
-          request->SetReceivedDataTimeout(this->receiveDataTimeout);
-          request->SetNetworkInterfaceName(this->configuration->GetValue(PARAMETER_NAME_INTERFACE, true, NULL));
-
-          this->currentStreamPosition = this->startStreamPosition;
-
-          result = this->mainCurlInstance->Initialize(request);
-        }
-        FREE_MEM_CLASS(request);
-      }
-
-      CHECK_CONDITION_EXECUTE(FAILED(result), this->connectionState = InitializeFailed);
-
-      if (SUCCEEDED(result))
-      {
-        // all parameters set
-        // start receiving data
-
-        result = this->mainCurlInstance->StartReceivingData();
-      }
-
-      CHECK_CONDITION_EXECUTE(SUCCEEDED(result), this->connectionState = Opening);
+      FREE_MEM_CLASS(this->mainCurlInstance);
     }
 
     // process stream package (if valid)
@@ -618,7 +629,14 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CStreamPackage *streamPa
         // update length of data
         foundDataLength += copyDataLength;
 
-        if (foundDataLength < request->GetLength())
+        if (mediaPacket->IsDiscontinuity())
+        {
+          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: discontinuity, completing request, request '%u', start '%lld', size '%u', found: '%u', current stream position: '%lld'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, request->GetId(), request->GetStart(), request->GetLength(), foundDataLength, this->currentStreamPosition);
+
+          response->SetDiscontinuity(true);
+        }
+
+        if ((!mediaPacket->IsDiscontinuity()) && (foundDataLength < request->GetLength()))
         {
           // find another media packet after end of this media packet
           startPosition += copyDataLength;
@@ -645,27 +663,16 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CStreamPackage *streamPa
         }
         else
         {
-          unsigned int currentTime = GetTickCount();
-
-          if ((streamPackage->GetState() == CStreamPackage::Waiting) && ((currentTime - request->GetStartTime()) > this->GetReceiveDataTimeout()))
+          if (response->IsDiscontinuity())
           {
-            // request timeouted
-            // finish request with error to avoid freeze
-            this->logger->Log(LOGGER_ERROR, L"%s: %s: request '%u' timeout, current time: %u, request start time: %u, specified timeout: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, request->GetId(), currentTime, request->GetStartTime(), this->GetReceiveDataTimeout());
-
-            streamPackage->SetCompleted(VFW_E_TIMEOUT);
+            streamPackage->SetCompleted(S_OK);
           }
-          else if (this->IsLiveStream() && (!this->IsWholeStreamDownloaded()) && ((currentTime - this->lastReceiveDataTime) > this->GetReceiveDataTimeout()))
+          else if (this->IsConnectionLostCannotReopen())
           {
-            // we don't receive data from protocol at least for specified timeout or request timeouted
-            // finish request with error to avoid freeze
-            this->logger->Log(LOGGER_ERROR, L"%s: %s: request '%u' doesn't receive data for specified time, current time: %u, last received data time: %u, specified timeout: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, request->GetId(), currentTime, this->lastReceiveDataTime, this->GetReceiveDataTimeout());
+            // connection is lost and we cannot reopen it
+            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: connection lost, no more data available, request '%u', start '%lld', size '%u', stream length: '%lld'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, request->GetId(), request->GetStart(), request->GetLength(), this->streamLength);
 
-            streamPackage->SetCompleted(VFW_E_TIMEOUT);
-          }
-          else if ((!this->IsWholeStreamDownloaded()) && (!this->IsStreamLengthEstimated()) && ((request->GetStart() + request->GetLength()) < this->streamLength))
-          {
-            // we are receiving data, wait for all requested data
+            streamPackage->SetCompleted((response->GetBuffer()->GetBufferOccupiedSpace() != 0) ? S_OK : E_CONNECTION_LOST_CANNOT_REOPEN);
           }
           else if (this->IsEndOfStreamReached() && ((request->GetStart() + request->GetLength()) >= this->streamLength))
           {
@@ -673,6 +680,14 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CStreamPackage *streamPa
             this->logger->Log(LOGGER_VERBOSE, L"%s: %s: no more data available, request '%u', start '%lld', size '%u', stream length: '%lld'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, request->GetId(), request->GetStart(), request->GetLength(), this->streamLength);
 
             streamPackage->SetCompleted((response->GetBuffer()->GetBufferOccupiedSpace() != 0) ? S_OK : E_NO_MORE_DATA_AVAILABLE);
+          }
+          else if (this->IsLiveStreamDetected() && (this->connectionState != Opened))
+          {
+            // we have live stream, we are missing data and we have not opened connection
+            // we lost some data, report discontinuity
+
+            response->SetDiscontinuity(true);
+            streamPackage->SetCompleted(S_OK);
           }
         }
 
@@ -869,9 +884,19 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::GetConnectionParameters(CParameterCo
 
 // ISimpleProtocol interface
 
-unsigned int CMPUrlSourceSplitter_Protocol_Http::GetReceiveDataTimeout(void)
+unsigned int CMPUrlSourceSplitter_Protocol_Http::GetOpenConnectionTimeout(void)
 {
-  return this->receiveDataTimeout;
+  return this->configuration->GetValueUnsignedInt(PARAMETER_NAME_HTTP_OPEN_CONNECTION_TIMEOUT, true, HTTP_OPEN_CONNECTION_TIMEOUT_DEFAULT);
+}
+
+unsigned int CMPUrlSourceSplitter_Protocol_Http::GetOpenConnectionSleepTime(void)
+{
+  return this->configuration->GetValueUnsignedInt(PARAMETER_NAME_HTTP_OPEN_CONNECTION_SLEEP_TIME, true, HTTP_OPEN_CONNECTION_SLEEP_TIME_DEFAULT);
+}
+
+unsigned int CMPUrlSourceSplitter_Protocol_Http::GetTotalReopenConnectionTimeout(void)
+{
+  return this->configuration->GetValueUnsignedInt(PARAMETER_NAME_HTTP_TOTAL_REOPEN_CONNECTION_TIMEOUT, true, HTTP_TOTAL_REOPEN_CONNECTION_TIMEOUT_DEFAULT);
 }
 
 HRESULT CMPUrlSourceSplitter_Protocol_Http::StartReceivingData(CParameterCollection *parameters)
@@ -904,6 +929,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::StopReceivingData(void)
   FREE_MEM_CLASS(this->mainCurlInstance);
 
   this->connectionState = None;
+  this->flags &= ~MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_REPORTED_STATUS_CODE;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_STOP_RECEIVING_DATA_NAME);
   return S_OK;
@@ -938,7 +964,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ClearSession(void)
   HRESULT result = __super::ClearSession();
  
   this->streamLength = 0;
-  this->receiveDataTimeout = HTTP_RECEIVE_DATA_TIMEOUT_DEFAULT;
   this->connectionState = None;
   this->cacheFile->Clear();
   this->mediaPackets->Clear();
@@ -1036,9 +1061,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::Initialize(CPluginConfiguration *con
     CHECK_CONDITION_HRESULT(result, this->configuration->Append(protocolConfiguration->GetConfiguration()), result, E_OUTOFMEMORY);
 
     this->configuration->LogCollection(this->logger, LOGGER_VERBOSE, PROTOCOL_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME);
-
-    this->receiveDataTimeout = this->configuration->GetValueLong(PARAMETER_NAME_HTTP_RECEIVE_DATA_TIMEOUT, true, HTTP_RECEIVE_DATA_TIMEOUT_DEFAULT);
-    this->receiveDataTimeout = (this->receiveDataTimeout < 0) ? HTTP_RECEIVE_DATA_TIMEOUT_DEFAULT : this->receiveDataTimeout;
 
     this->flags |= this->configuration->GetValueBool(PARAMETER_NAME_LIVE_STREAM, true, PARAMETER_NAME_LIVE_STREAM_DEFAULT) ? PROTOCOL_PLUGIN_FLAG_LIVE_STREAM_SPECIFIED : PROTOCOL_PLUGIN_FLAG_NONE;
 

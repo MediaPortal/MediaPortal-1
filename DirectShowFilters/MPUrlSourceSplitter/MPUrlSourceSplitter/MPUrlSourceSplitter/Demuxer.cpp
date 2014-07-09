@@ -450,6 +450,30 @@ HRESULT CDemuxer::GetCreateDemuxerError(void)
   return this->createDemuxerError;
 }
 
+CStream *CDemuxer::GetActiveStream(CStream::StreamType streamType)
+{
+  CStream *result = NULL;
+  int activeStreamId = this->activeStream[streamType];
+
+  if (activeStreamId != ACTIVE_STREAM_NOT_SPECIFIED)
+  {
+    CStreamCollection *streams = this->streams[(CStream::StreamType)streamType];
+
+    for (unsigned int i = 0; i < streams->Count(); i++)
+    {
+      CStream *stream = streams->GetItem(i);
+
+      if (stream->GetPid() == activeStreamId)
+      {
+        result = stream;
+        break;
+      }
+    }
+  }
+
+  return result;
+}
+
 /* set methods */
 
 void CDemuxer::SetActiveStream(CStream::StreamType streamType, int activeStreamId)
@@ -1203,16 +1227,29 @@ HRESULT CDemuxer::SeekByTime(REFERENCE_TIME time, int flags)
             // read stream until we find requested time
             while ((!found) && SUCCEEDED(result))
             {
-              int read_status = 0;
+              int avResult = 0;
               do
               {
-                read_status = av_read_frame(this->formatContext, &avPacket);
-              } while (read_status == AVERROR(EAGAIN));
+                avResult = av_read_frame(this->formatContext, &avPacket);
 
-              if (read_status < 0)
+                // assume we are not eof
+                CHECK_CONDITION_EXECUTE(this->formatContext->pb != NULL, this->formatContext->pb->eof_reached = 0);
+
+                if (avResult == E_CONNECTION_LOST_TRYING_REOPEN)
+                {
+                  ff_read_frame_flush(this->formatContext);
+                }
+
+                if ((avResult == AVERROR(EAGAIN)) || (avResult == E_CONNECTION_LOST_TRYING_REOPEN))
+                {
+                  Sleep(1);
+                }
+              } while ((avResult == AVERROR(EAGAIN)) || (avResult == E_CONNECTION_LOST_TRYING_REOPEN));
+
+              if (avResult < 0)
               {
                 // error occured
-                result = (HRESULT)read_status;
+                result = (HRESULT)avResult;
                 this->logger->Log(LOGGER_VERBOSE, L"%s: %s: stream %u, av_read_frame() returned error: 0x%08X", MODULE_NAME, METHOD_SEEK_BY_TIME_NAME, this->demuxerId, result);
                 break;
               }
@@ -1669,13 +1706,26 @@ HRESULT CDemuxer::SeekByPosition(REFERENCE_TIME time, int flags)
 
                 while (SUCCEEDED(result))
                 {
-                  int read_status = 0;
+                  int avResult = 0;
                   do
                   {
-                    read_status = av_read_frame(this->formatContext, &avPacket);
-                  } while (read_status == AVERROR(EAGAIN));
+                    avResult = av_read_frame(this->formatContext, &avPacket);
 
-                  CHECK_CONDITION_EXECUTE(read_status < 0, result = (HRESULT)read_status);
+                    // assume we are not eof
+                    CHECK_CONDITION_EXECUTE(this->formatContext->pb != NULL, this->formatContext->pb->eof_reached = 0);
+
+                    if (avResult == E_CONNECTION_LOST_TRYING_REOPEN)
+                    {
+                      ff_read_frame_flush(this->formatContext);
+                    }
+
+                    if ((avResult == AVERROR(EAGAIN)) || (avResult == E_CONNECTION_LOST_TRYING_REOPEN))
+                    {
+                      Sleep(1);
+                    }
+                  } while ((avResult == AVERROR(EAGAIN)) || (avResult == E_CONNECTION_LOST_TRYING_REOPEN));
+
+                  CHECK_CONDITION_EXECUTE(avResult < 0, result = (HRESULT)avResult);
                   av_free_packet(&avPacket);
 
                   if ((streamId != avPacket.stream_index) || (avPacket.dts < 0))
@@ -1899,7 +1949,6 @@ HRESULT CDemuxer::SeekBySequenceReading(REFERENCE_TIME time, int flags)
   if (SUCCEEDED(result))
   {
     AVPacket avPacket;
-    int read_status = 0;
 
     // enable reading from seek method, do not allow (yet) to read from demuxing worker
     this->pauseSeekStopRequest = PAUSE_SEEK_STOP_MODE_DISABLE_DEMUXING;
@@ -1907,12 +1956,26 @@ HRESULT CDemuxer::SeekBySequenceReading(REFERENCE_TIME time, int flags)
 
     while (SUCCEEDED(result))
     {
+      int avResult = 0;
       do
       {
-        read_status = av_read_frame(this->formatContext, &avPacket);
-      } while (read_status == AVERROR(EAGAIN));
+        avResult = av_read_frame(this->formatContext, &avPacket);
 
-      CHECK_CONDITION_EXECUTE(read_status < 0, result = (HRESULT)read_status);
+        // assume we are not eof
+        CHECK_CONDITION_EXECUTE(this->formatContext->pb != NULL, this->formatContext->pb->eof_reached = 0);
+
+        if (avResult == E_CONNECTION_LOST_TRYING_REOPEN)
+        {
+          ff_read_frame_flush(this->formatContext);
+        }
+
+        if ((avResult == AVERROR(EAGAIN)) || (avResult == E_CONNECTION_LOST_TRYING_REOPEN))
+        {
+          Sleep(1);
+        }
+      } while ((avResult == AVERROR(EAGAIN)) || (avResult == E_CONNECTION_LOST_TRYING_REOPEN));
+
+      CHECK_CONDITION_EXECUTE(avResult < 0, result = (HRESULT)avResult);
       av_free_packet(&avPacket);
 
       if ((streamId != avPacket.stream_index) || (avPacket.dts < 0))
@@ -1985,12 +2048,26 @@ HRESULT CDemuxer::SeekBySequenceReading(REFERENCE_TIME time, int flags)
 
     while (SUCCEEDED(result))
     {
+      int avResult = 0;
       do
       {
-        read_status = av_read_frame(this->formatContext, &avPacket);
-      } while (read_status == AVERROR(EAGAIN));
+        avResult = av_read_frame(this->formatContext, &avPacket);
 
-      CHECK_CONDITION_EXECUTE(read_status < 0, result = (HRESULT)read_status);
+        // assume we are not eof
+        CHECK_CONDITION_EXECUTE(this->formatContext->pb != NULL, this->formatContext->pb->eof_reached = 0);
+
+        if (avResult == E_CONNECTION_LOST_TRYING_REOPEN)
+        {
+          ff_read_frame_flush(this->formatContext);
+        }
+
+        if ((avResult == AVERROR(EAGAIN)) || (avResult == E_CONNECTION_LOST_TRYING_REOPEN))
+        {
+          Sleep(1);
+        }
+      } while ((avResult == AVERROR(EAGAIN)) || (avResult == E_CONNECTION_LOST_TRYING_REOPEN));
+
+      CHECK_CONDITION_EXECUTE(avResult < 0, result = (HRESULT)avResult);
       av_free_packet(&avPacket);
 
       if ((streamId != avPacket.stream_index) || (avPacket.pts < 0))
@@ -2309,6 +2386,7 @@ unsigned int WINAPI CDemuxer::DemuxingWorker(LPVOID lpParam)
         if (FAILED(result) && (result != E_PAUSE_SEEK_STOP_MODE_DISABLE_READING))
         {
           // any error code (except disabled reading) for end of stream
+          caller->logger->Log(LOGGER_INFO, L"%s: %s: stream %u, end of stream, error: 0x%08X", MODULE_NAME, METHOD_DEMUXING_WORKER_NAME, caller->demuxerId, result);
 
           packet->SetDemuxerId(caller->demuxerId);
           packet->SetEndOfStream(true, (result == E_NO_MORE_DATA_AVAILABLE) ? S_OK : result);
@@ -2461,8 +2539,21 @@ HRESULT CDemuxer::GetNextPacketInternal(COutputPinPacket *packet)
     {
       ff_read_frame_flush(this->formatContext);
 
-      this->flags |= DEMUXER_FLAG_CONNECTION_LOST_TRYING_REOPEN;
       result = S_FALSE;
+
+      // set discontinuity for all streams, we have lost some data
+
+      for (unsigned int i = 0; i < CStream::Unknown; i++)
+      {
+        CStreamCollection *streams = this->GetStreams((CStream::StreamType)i);
+
+        for (unsigned int j = 0; j < streams->Count(); j++)
+        {
+          CStream *stream = streams->GetItem(j);
+
+          stream->SetDiscontinuity(true);
+        }
+      }
     }
     else if (ffmpegResult < 0)
     {
@@ -2478,6 +2569,24 @@ HRESULT CDemuxer::GetNextPacketInternal(COutputPinPacket *packet)
     {
       // set result to S_OK, S_FALSE means that no packet is available
       result = S_OK;
+
+      CStream *activeStream = NULL;
+      for (unsigned int i = 0; i < CStream::Unknown; i++)
+      {
+        CStreamCollection *streams = this->GetStreams((CStream::StreamType)i);
+
+        for (unsigned int j = 0; j < streams->Count(); j++)
+        {
+          CStream *stream = streams->GetItem(j);
+
+          if (ffmpegPacket.stream_index ==  stream->GetPid())
+          {
+            // we found active stream to FFmpeg packet stream index
+            activeStream = stream;
+            break;
+          }
+        }
+      }
 
       AVStream *stream = this->formatContext->streams[ffmpegPacket.stream_index];
 
@@ -2617,8 +2726,8 @@ HRESULT CDemuxer::GetNextPacketInternal(COutputPinPacket *packet)
         packet->SetSyncPoint((ffmpegPacket.flags & AV_PKT_FLAG_KEY) != 0);
         //pPacket->bAppendable = 0; //!pPacket->bSyncPoint;
 
-        packet->SetDiscontinuity(((ffmpegPacket.flags & AV_PKT_FLAG_CORRUPT) != 0) || this->IsSetFlags(DEMUXER_FLAG_CONNECTION_LOST_TRYING_REOPEN));
-        this->flags &= ~DEMUXER_FLAG_CONNECTION_LOST_TRYING_REOPEN;
+        packet->SetDiscontinuity(packet->IsDiscontinuity() || ((ffmpegPacket.flags & AV_PKT_FLAG_CORRUPT) != 0) || activeStream->IsDiscontinuity());
+        activeStream->SetDiscontinuity(false);
 
         //#ifdef DEBUG
         //        if (pkt.flags & AV_PKT_FLAG_CORRUPT)
@@ -2637,33 +2746,18 @@ HRESULT CDemuxer::GetNextPacketInternal(COutputPinPacket *packet)
         // stream doesn't create seek index
         // create our own seek index
 
-        for (unsigned int i = 0; i < CStream::Unknown; i++)
+        // 1 second minimum differrence between seek index entries
+        int64_t minDiff = ConvertRTToTimestamp(DSHOW_TIME_BASE, stream->time_base.num, stream->time_base.den, 0);
+
+        if ((activeStream->GetSeekIndexEntries()->Count() == 0) || 
+          (ffmpegPacket.pts > (minDiff + activeStream->GetSeekIndexEntries()->GetItem(activeStream->GetSeekIndexEntries()->Count() - 1)->GetTimestamp())))
         {
-          // stream groups are in order: video, audio, subtitle = in our preference
-          if (this->GetStreams((CStream::StreamType)i)->Count() > 0)
+          // update seeking index
+
+          result = activeStream->GetSeekIndexEntries()->AddSeekIndexEntry(ffmpegPacket.pos, ffmpegPacket.pts);
+          if (result == E_SEEK_INDEX_ENTRY_EXISTS)
           {
-            CStream *activeStream = this->GetStreams((CStream::StreamType)i)->GetItem((this->activeStream[(CStream::StreamType)i] == ACTIVE_STREAM_NOT_SPECIFIED) ? 0 : this->activeStream[(CStream::StreamType)i]);
-
-            if (ffmpegPacket.stream_index == activeStream->GetPid())
-            {
-              // we found active stream to FFmpeg packet stream index
-              
-              // 1 second minimum differrence between seek index entries
-              int64_t minDiff = ConvertRTToTimestamp(DSHOW_TIME_BASE, stream->time_base.num, stream->time_base.den, 0);
-
-              if ((activeStream->GetSeekIndexEntries()->Count() == 0) || 
-                (ffmpegPacket.pts > (minDiff + activeStream->GetSeekIndexEntries()->GetItem(activeStream->GetSeekIndexEntries()->Count() - 1)->GetTimestamp())))
-              {
-                // update seeking index
-
-                result = activeStream->GetSeekIndexEntries()->AddSeekIndexEntry(ffmpegPacket.pos, ffmpegPacket.pts);
-                if (result == E_SEEK_INDEX_ENTRY_EXISTS)
-                {
-                  result = S_OK;
-                }
-              }
-              break;
-            }
+            result = S_OK;
           }
         }
       }

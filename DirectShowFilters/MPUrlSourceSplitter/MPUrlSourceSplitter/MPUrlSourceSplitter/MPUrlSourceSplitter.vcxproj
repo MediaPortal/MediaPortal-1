@@ -183,7 +183,9 @@ echo #endif &gt;&gt; VersionInfo.h</Command>
     <ClInclude Include="MPUrlSourceSplitterOutputPinCollection.h" />
     <ClInclude Include="MPUrlSourceSplitterOutputSplitterPin.h" />
     <ClInclude Include="OutputPinAllocator.h" />
+    <ClInclude Include="OutputPinDumpBox.h" />
     <ClInclude Include="OutputPinMediaSample.h" />
+    <ClInclude Include="OutputPinMetadataBox.h" />
     <ClInclude Include="OutputPinPacket.h" />
     <ClInclude Include="OutputPinPacketCollection.h" />
     <ClInclude Include="PacketInputFormat.h" />
@@ -219,7 +221,9 @@ echo #endif &gt;&gt; VersionInfo.h</Command>
     <ClCompile Include="MPUrlSourceSplitterOutputPinCollection.cpp" />
     <ClCompile Include="MPUrlSourceSplitterOutputSplitterPin.cpp" />
     <ClCompile Include="OutputPinAllocator.cpp" />
+    <ClCompile Include="OutputPinDumpBox.cpp" />
     <ClCompile Include="OutputPinMediaSample.cpp" />
+    <ClCompile Include="OutputPinMetadataBox.cpp" />
     <ClCompile Include="OutputPinPacket.cpp" />
     <ClCompile Include="OutputPinPacketCollection.cpp" />
     <ClCompile Include="PacketInputFormat.cpp" />

@@ -151,9 +151,19 @@ HRESULT CMPUrlSourceSplitter_Parser_Default::ProcessStreamPackage(CStreamPackage
 
 // ISimpleProtocol interface
 
-unsigned int CMPUrlSourceSplitter_Parser_Default::GetReceiveDataTimeout(void)
+unsigned int CMPUrlSourceSplitter_Parser_Default::GetOpenConnectionTimeout(void)
 {
-  return this->protocolHoster->GetReceiveDataTimeout();
+  return this->protocolHoster->GetOpenConnectionTimeout();
+}
+
+unsigned int CMPUrlSourceSplitter_Parser_Default::GetOpenConnectionSleepTime(void)
+{
+  return this->protocolHoster->GetOpenConnectionSleepTime();
+}
+
+unsigned int CMPUrlSourceSplitter_Parser_Default::GetTotalReopenConnectionTimeout(void)
+{
+  return this->protocolHoster->GetTotalReopenConnectionTimeout();
 }
 
 HRESULT CMPUrlSourceSplitter_Parser_Default::StartReceivingData(CParameterCollection *parameters)

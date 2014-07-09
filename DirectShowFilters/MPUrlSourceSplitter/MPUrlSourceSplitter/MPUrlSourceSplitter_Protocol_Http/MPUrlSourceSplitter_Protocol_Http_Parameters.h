@@ -23,7 +23,10 @@
 #ifndef __MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_PARAMETERS_DEFINED
 #define __MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_PARAMETERS_DEFINED
 
-#define PARAMETER_NAME_HTTP_RECEIVE_DATA_TIMEOUT                  L"HttpReceiveDataTimeout"
+#define PARAMETER_NAME_HTTP_OPEN_CONNECTION_TIMEOUT               L"HttpOpenConnectionTimeout"
+#define PARAMETER_NAME_HTTP_OPEN_CONNECTION_SLEEP_TIME            L"HttpOpenConnectionSleepTime"
+#define PARAMETER_NAME_HTTP_TOTAL_REOPEN_CONNECTION_TIMEOUT       L"HttpTotalReopenConnectionTimeout"
+
 #define PARAMETER_NAME_HTTP_REFERER                               L"HttpReferer"
 #define PARAMETER_NAME_HTTP_USER_AGENT                            L"HttpUserAgent"
 #define PARAMETER_NAME_HTTP_COOKIE                                L"HttpCookie"
@@ -40,7 +43,10 @@
 #define PARAMETER_NAME_HTTP_SEEKING_SUPPORT_DETECTION             L"HttpSeekingSupportDetection"
 
 // we should get data in twenty seconds
-#define HTTP_RECEIVE_DATA_TIMEOUT_DEFAULT                         20000
+#define HTTP_OPEN_CONNECTION_TIMEOUT_DEFAULT                      20000
+#define HTTP_OPEN_CONNECTION_SLEEP_TIME_DEFAULT                   0
+#define HTTP_TOTAL_REOPEN_CONNECTION_TIMEOUT_DEFAULT              60000
+
 #define HTTP_SEEKING_SUPPORTED_DEFAULT                            false
 #define HTTP_SEEKING_SUPPORT_DETECTION_DEFAULT                    true
 

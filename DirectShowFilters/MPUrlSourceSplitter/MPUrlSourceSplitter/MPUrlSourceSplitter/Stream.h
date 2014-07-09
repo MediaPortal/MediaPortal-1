@@ -23,10 +23,17 @@
 #ifndef __STREAM_DEFINED
 #define __STREAM_DEFINED
 
+#include "Flags.h"
 #include "StreamInfo.h"
 #include "SeekIndexEntryCollection.h"
 
-class CStream
+#define STREAM_FLAG_NONE                                              FLAGS_NONE
+
+#define STREAM_FLAG_DISCONTINUITY                                     (1 << (FLAGS_LAST + 0))
+
+#define STREAM_FLAG_LAST                                              (FLAGS_LAST + 1)
+
+class CStream : public CFlags
 {
 public:
   enum StreamType { Video, Audio, Subpic, Unknown };
@@ -71,7 +78,15 @@ public:
   // @param streamType : stream type to set
   void SetStreamType(StreamType streamType);
 
+  // sets discontinuity flag
+  // @param discontinuity : true if discontinuity, false otherwise
+  void SetDiscontinuity(bool discontinuity);
+
   /* other methods */
+
+  // tests if discontinuity flag is set
+  // @return : true if discontinuity flag is set, false otherwise
+  bool IsDiscontinuity(void);
 
   // creates stream info
   // @return : S_OK if successful, error code otherwise

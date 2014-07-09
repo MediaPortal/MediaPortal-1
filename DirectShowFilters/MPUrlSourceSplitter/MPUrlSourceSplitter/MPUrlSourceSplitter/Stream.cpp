@@ -23,6 +23,7 @@
 #include "Stream.h"
 
 CStream::CStream(HRESULT *result)
+  : CFlags()
 {
   this->language = NULL;
   this->pid = 0;
@@ -88,7 +89,18 @@ void CStream::SetStreamType(StreamType streamType)
   this->streamType = streamType;
 }
 
+void CStream::SetDiscontinuity(bool discontinuity)
+{
+  this->flags &= ~STREAM_FLAG_DISCONTINUITY;
+  this->flags |= discontinuity ? STREAM_FLAG_DISCONTINUITY : STREAM_FLAG_NONE;
+}
+
 /* other methods */
+
+bool CStream::IsDiscontinuity(void)
+{
+  return this->IsSetFlags(STREAM_FLAG_DISCONTINUITY);
+}
 
 HRESULT CStream::CreateStreamInfo(void)
 {

@@ -63,9 +63,8 @@
 #define DEMUXER_FLAG_STREAM_IN_PACKETS                                (1 << (FLAGS_LAST + 15))
 // specifies that end of stream output packet is queued into output packet collection
 #define DEMUXER_FLAG_END_OF_STREAM_OUTPUT_PACKET_QUEUED               (1 << (FLAGS_LAST + 16))
-#define DEMUXER_FLAG_CONNECTION_LOST_TRYING_REOPEN                    (1 << (FLAGS_LAST + 17))
-#define DEMUXER_FLAG_PENDING_DISCONTINUITY                            (1 << (FLAGS_LAST + 18))
-#define DEMUXER_FLAG_PENDING_DISCONTINUITY_WITH_REPORT                (1 << (FLAGS_LAST + 19))
+#define DEMUXER_FLAG_PENDING_DISCONTINUITY                            (1 << (FLAGS_LAST + 17))
+#define DEMUXER_FLAG_PENDING_DISCONTINUITY_WITH_REPORT                (1 << (FLAGS_LAST + 18))
 
 #define NO_SUBTITLE_PID                                               DWORD_MAX
 #define FORCED_SUBTITLE_PID                                           (NO_SUBTITLE_PID - 1)
@@ -147,6 +146,11 @@ public:
   // gets create demuxer error (error which occurred while creating demuxer and demuxer worker stopped its work)
   // @return : create demuxer error code
   HRESULT GetCreateDemuxerError(void);
+
+  // gets active stream for specific stream type
+  // @param streamType : the type of stream to set active stream (Video, Audio, Subpic, Unknown)
+  // @return : the active stream or NULL if no stream is active for type of stream
+  CStream *GetActiveStream(CStream::StreamType streamType);
 
   /* set methods */
 
