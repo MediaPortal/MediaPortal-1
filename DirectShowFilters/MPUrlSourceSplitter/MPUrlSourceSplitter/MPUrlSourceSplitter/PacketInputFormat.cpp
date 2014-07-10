@@ -23,6 +23,7 @@
 #include "PacketInputFormat.h"
 #include "StreamPackageDataRequest.h"
 #include "StreamPackagePacketRequest.h"
+#include "ErrorCodes.h"
 
 #define STREAM_READ_BUFFER_SIZE                                       32768
 
@@ -53,7 +54,7 @@ CPacketInputFormat::CPacketInputFormat(HRESULT *result, IPacketDemuxer *demuxer,
   this->streamFormatContext = NULL;
   this->streamIoContext = NULL;
   this->streamIoContextBufferPosition = 0;
-  this->resetPacketCounter = false;
+  this->internalFlags = PACKET_INPUT_FORMAT_FLAG_NONE;
 
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
@@ -80,6 +81,11 @@ CPacketInputFormat::~CPacketInputFormat(void)
 /* set methods */
 
 /* other methods */
+
+bool CPacketInputFormat::IsSetFlags(uint64_t flags)
+{
+  return ((this->internalFlags & flags) == flags);
+}
 
 /* static methods */
 
@@ -143,7 +149,7 @@ int CPacketInputFormat::ReadHeader(AVFormatContext *formatContext)
     caller->streamFormatContext = NULL;
   }
 
-  caller->resetPacketCounter = (ret >= 0);
+  caller->internalFlags |= (ret >= 0) ? PACKET_INPUT_FORMAT_FLAG_RESET_PACKET_COUNTER : PACKET_INPUT_FORMAT_FLAG_NONE;
   return ret;
 }
 
@@ -153,14 +159,18 @@ int CPacketInputFormat::ReadPacket(AVFormatContext *formatContext, AVPacket *pac
   int ret = 0;
   CMediaPacket *mediaPacket = NULL;
 
-  ret = caller->demuxer->GetNextMediaPacket(&mediaPacket, caller->resetPacketCounter ? STREAM_PACKAGE_PACKET_REQUEST_FLAG_RESET_PACKET_COUNTER : STREAM_PACKAGE_PACKET_REQUEST_FLAG_NONE);
-  caller->resetPacketCounter = false;
+  ret = caller->demuxer->GetNextMediaPacket(&mediaPacket, caller->IsSetFlags(PACKET_INPUT_FORMAT_FLAG_RESET_PACKET_COUNTER) ? STREAM_PACKAGE_PACKET_REQUEST_FLAG_RESET_PACKET_COUNTER : STREAM_PACKAGE_PACKET_REQUEST_FLAG_NONE);
+  caller->internalFlags &= ~PACKET_INPUT_FORMAT_FLAG_RESET_PACKET_COUNTER;
 
   switch (ret)
   {
   case S_OK:
     break;
   case S_FALSE:
+    ret = AVERROR(EAGAIN);
+    break;
+  case E_CONNECTION_LOST_TRYING_REOPEN:
+    caller->internalFlags |= PACKET_INPUT_FORMAT_FLAG_DISCONTINUITY;
     ret = AVERROR(EAGAIN);
     break;
   default:
@@ -177,6 +187,9 @@ int CPacketInputFormat::ReadPacket(AVFormatContext *formatContext, AVPacket *pac
       mediaPacket->GetBuffer()->CopyFromBuffer(packet->data, mediaPacket->GetBuffer()->GetBufferOccupiedSpace());
 
       packet->pts = (mediaPacket->GetPresentationTimestamp() != MEDIA_PACKET_PRESENTATION_TIMESTAMP_UNDEFINED) ? mediaPacket->GetPresentationTimestampInDirectShowTimeUnits() : AV_NOPTS_VALUE;
+      packet->flags |= (mediaPacket->IsDiscontinuity() | caller->IsSetFlags(PACKET_INPUT_FORMAT_FLAG_DISCONTINUITY)) ? AV_PKT_FLAG_CORRUPT : 0;
+
+      caller->internalFlags &= ~PACKET_INPUT_FORMAT_FLAG_DISCONTINUITY;
     }
   }
 

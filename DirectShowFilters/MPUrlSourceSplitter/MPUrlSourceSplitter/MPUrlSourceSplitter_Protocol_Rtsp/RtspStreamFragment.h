@@ -30,8 +30,9 @@
 
 #define RTSP_STREAM_FRAGMENT_FLAG_DOWNLOADED                          (1 << (CACHE_FILE_ITEM_FLAG_LAST + 0))
 #define RTSP_STREAM_FRAGMENT_FLAG_SET_RTP_TIMESTAMP                   (1 << (CACHE_FILE_ITEM_FLAG_LAST + 1))
+#define RTSP_STREAM_FRAGMENT_FLAG_DISCONTINUITY                       (1 << (CACHE_FILE_ITEM_FLAG_LAST + 2))
 
-#define RTSP_STREAM_FRAGMENT_FLAG_LAST                                (CACHE_FILE_ITEM_FLAG_LAST + 2)
+#define RTSP_STREAM_FRAGMENT_FLAG_LAST                                (CACHE_FILE_ITEM_FLAG_LAST + 3)
 
 #define RTSP_STREAM_FRAGMENT_START_POSITION_NOT_SET                   -1
 
@@ -74,7 +75,15 @@ public:
   // @param fragmentStartPosition : fragment start position to set
   void SetFragmentStartPosition(int64_t fragmentStartPosition);
 
+  // set discontinuity
+  // @param discontinuity : true if discontinuity after data, false otherwise
+  void SetDiscontinuity(bool discontinuity);
+
   /* other methods */
+
+  // tests if discontinuity is set
+  // @return : true if discontinuity is set, false otherwise
+  bool IsDiscontinuity(void);
 
   // tests if fragment is downloaded
   // @return : true if downloaded, false otherwise

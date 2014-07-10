@@ -23,7 +23,10 @@
 #ifndef __MP_URL_SOURCE_SPLITTER_PROTOCOL_RTSP_PARAMETERS_DEFINED
 #define __MP_URL_SOURCE_SPLITTER_PROTOCOL_RTSP_PARAMETERS_DEFINED
 
-#define PARAMETER_NAME_RTSP_RECEIVE_DATA_TIMEOUT                      L"RtspReceiveDataTimeout"
+#define PARAMETER_NAME_RTSP_OPEN_CONNECTION_TIMEOUT                   L"RtspOpenConnectionTimeout"
+#define PARAMETER_NAME_RTSP_OPEN_CONNECTION_SLEEP_TIME                L"RtspOpenConnectionSleepTime"
+#define PARAMETER_NAME_RTSP_TOTAL_REOPEN_CONNECTION_TIMEOUT           L"RtspTotalReopenConnectionTimeout"
+
 #define PARAMETER_NAME_RTSP_MULTICAST_PREFERENCE                      L"RtspMulticastPreference"
 #define PARAMETER_NAME_RTSP_UDP_PREFERENCE                            L"RtspUdpPreference"
 #define PARAMETER_NAME_RTSP_SAME_CONNECTION_TCP_PREFERENCE            L"RtspSameConnectionTcpPreference"
@@ -32,7 +35,10 @@
 #define PARAMETER_NAME_RTSP_IGNORE_RTP_PAYLOAD_TYPE                   L"RtspIgnoreRtpPayloadType"
 
 // we should get data in twenty seconds
-#define RTSP_RECEIVE_DATA_TIMEOUT_DEFAULT                             20000
+#define RTSP_OPEN_CONNECTION_TIMEOUT_DEFAULT                          20000
+#define RTSP_OPEN_CONNECTION_SLEEP_TIME_DEFAULT                       0
+#define RTSP_TOTAL_REOPEN_CONNECTION_TIMEOUT_DEFAULT                  60000
+
 
 #define RTSP_MULTICAST_PREFERENCE_DEFAULT                             2
 #define RTSP_UDP_PREFERENCE_DEFAULT                                   1

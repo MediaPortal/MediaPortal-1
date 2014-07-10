@@ -37,7 +37,6 @@ public:
     Invalid,
     Created,
     Waiting,
-    WaitingIgnoreTimeout,
     Completed
   };
 
@@ -77,9 +76,6 @@ public:
 
   // sets stream package processing as waiting
   void SetWaiting(void);
-
-  // sets stream package processing as waiting with ignoring timeout
-  void SetWaitingIgnoreTimeout(void);
 
   /* other methods */
 

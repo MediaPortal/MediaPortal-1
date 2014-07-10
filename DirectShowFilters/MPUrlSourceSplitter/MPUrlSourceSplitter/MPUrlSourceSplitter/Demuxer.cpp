@@ -3309,6 +3309,17 @@ HRESULT CDemuxer::GetNextMediaPacket(CMediaPacket **mediaPacket, uint64_t flags)
       CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(request));
     }
 
+    if (this->IsSetFlags(DEMUXER_FLAG_PENDING_DISCONTINUITY))
+    {
+      if (this->IsSetFlags(DEMUXER_FLAG_PENDING_DISCONTINUITY_WITH_REPORT))
+      {
+        this->logger->Log(LOGGER_VERBOSE, L"%s: %s: stream %u, request %u, discontinuity reported", MODULE_NAME, METHOD_DEMUXER_READ_NAME, this->demuxerId, requestId);
+      }
+
+      this->flags &= ~(DEMUXER_FLAG_PENDING_DISCONTINUITY | DEMUXER_FLAG_PENDING_DISCONTINUITY_WITH_REPORT);
+      result = E_CONNECTION_LOST_TRYING_REOPEN;
+    }
+
     CHECK_HRESULT_EXECUTE(result, this->filter->ProcessStreamPackage(package));
     CHECK_HRESULT_EXECUTE(result, package->GetError());
 
@@ -3319,6 +3330,19 @@ HRESULT CDemuxer::GetNextMediaPacket(CMediaPacket **mediaPacket, uint64_t flags)
 
       *mediaPacket = (CMediaPacket *)response->GetMediaPacket()->Clone();
       CHECK_POINTER_HRESULT(result, (*mediaPacket), result, E_OUTOFMEMORY);
+
+      CHECK_CONDITION_EXECUTE(SUCCEEDED(result), (*mediaPacket)->SetDiscontinuity(response->IsDiscontinuity()));
+
+      if (response->IsDiscontinuity())
+      {
+        this->flags |= DEMUXER_FLAG_PENDING_DISCONTINUITY;
+
+        if (result != 0)
+        {
+          this->flags |= DEMUXER_FLAG_PENDING_DISCONTINUITY_WITH_REPORT;
+          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: stream %u, request %u, pending discontinuity", MODULE_NAME, METHOD_DEMUXER_READ_NAME, this->demuxerId, requestId);
+        }
+      }
     }
 
     CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_WARNING, L"%s: %s: stream %u, request %u, error: 0x%08X", MODULE_NAME, METHOD_DEMUXER_READ_NAME, this->demuxerId, requestId, result));

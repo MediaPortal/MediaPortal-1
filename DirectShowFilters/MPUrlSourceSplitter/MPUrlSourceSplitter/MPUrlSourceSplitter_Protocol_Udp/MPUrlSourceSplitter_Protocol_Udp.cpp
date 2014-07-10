@@ -434,7 +434,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Udp::ReceiveData(CStreamPackage *streamPac
       CHECK_CONDITION_EXECUTE(FAILED(res), streamPackage->SetCompleted(res));
     }
 
-    if ((streamPackage->GetState() == CStreamPackage::Waiting) || (streamPackage->GetState() == CStreamPackage::WaitingIgnoreTimeout))
+    if (streamPackage->GetState() == CStreamPackage::Waiting)
     {
       // in Waiting or WaitingIgnoreTimeout state can be request only if request and response are correctly set
       CStreamPackageDataRequest *request = dynamic_cast<CStreamPackageDataRequest *>(streamPackage->GetRequest());

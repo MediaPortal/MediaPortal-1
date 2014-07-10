@@ -84,11 +84,6 @@ void CStreamPackage::SetWaiting(void)
   CHECK_CONDITION_EXECUTE(this->state != Invalid, this->state = Waiting);
 }
 
-void CStreamPackage::SetWaitingIgnoreTimeout(void)
-{
-  CHECK_CONDITION_EXECUTE(this->state != Invalid, this->state = WaitingIgnoreTimeout);
-}
-
 /* other methods */
 
 void CStreamPackage::Clear(void)

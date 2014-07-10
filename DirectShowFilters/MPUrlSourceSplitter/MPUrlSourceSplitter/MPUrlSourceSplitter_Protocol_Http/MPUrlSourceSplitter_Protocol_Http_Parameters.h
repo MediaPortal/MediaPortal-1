@@ -23,31 +23,31 @@
 #ifndef __MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_PARAMETERS_DEFINED
 #define __MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_PARAMETERS_DEFINED
 
-#define PARAMETER_NAME_HTTP_OPEN_CONNECTION_TIMEOUT               L"HttpOpenConnectionTimeout"
-#define PARAMETER_NAME_HTTP_OPEN_CONNECTION_SLEEP_TIME            L"HttpOpenConnectionSleepTime"
-#define PARAMETER_NAME_HTTP_TOTAL_REOPEN_CONNECTION_TIMEOUT       L"HttpTotalReopenConnectionTimeout"
+#define PARAMETER_NAME_HTTP_OPEN_CONNECTION_TIMEOUT                   L"HttpOpenConnectionTimeout"
+#define PARAMETER_NAME_HTTP_OPEN_CONNECTION_SLEEP_TIME                L"HttpOpenConnectionSleepTime"
+#define PARAMETER_NAME_HTTP_TOTAL_REOPEN_CONNECTION_TIMEOUT           L"HttpTotalReopenConnectionTimeout"
 
-#define PARAMETER_NAME_HTTP_REFERER                               L"HttpReferer"
-#define PARAMETER_NAME_HTTP_USER_AGENT                            L"HttpUserAgent"
-#define PARAMETER_NAME_HTTP_COOKIE                                L"HttpCookie"
-#define PARAMETER_NAME_HTTP_VERSION                               L"HttpVersion"
-#define PARAMETER_NAME_HTTP_IGNORE_CONTENT_LENGTH                 L"HttpIgnoreContentLength"
+#define PARAMETER_NAME_HTTP_REFERER                                   L"HttpReferer"
+#define PARAMETER_NAME_HTTP_USER_AGENT                                L"HttpUserAgent"
+#define PARAMETER_NAME_HTTP_COOKIE                                    L"HttpCookie"
+#define PARAMETER_NAME_HTTP_VERSION                                   L"HttpVersion"
+#define PARAMETER_NAME_HTTP_IGNORE_CONTENT_LENGTH                     L"HttpIgnoreContentLength"
 
-#define PARAMETER_NAME_HTTP_COOKIES_COUNT                         L"HttpCookiesCount"
-#define HTTP_COOKIE_FORMAT_PARAMETER_NAME                         L"HttpCookie%08u"
+#define PARAMETER_NAME_HTTP_COOKIES_COUNT                             L"HttpCookiesCount"
+#define HTTP_COOKIE_FORMAT_PARAMETER_NAME                             L"HttpCookie%08u"
 
 // special parameter to force supported seeking by position even if server doesn't respond as expected
 // (HTTP 206 response code or Accept-Ranges HTTP response header)
-#define PARAMETER_NAME_HTTP_SEEKING_SUPPORTED                     L"HttpSeekingSupported"
+#define PARAMETER_NAME_HTTP_SEEKING_SUPPORTED                         L"HttpSeekingSupported"
 // special parameter for enabling (by default) or disabling detection of seeking support
-#define PARAMETER_NAME_HTTP_SEEKING_SUPPORT_DETECTION             L"HttpSeekingSupportDetection"
+#define PARAMETER_NAME_HTTP_SEEKING_SUPPORT_DETECTION                 L"HttpSeekingSupportDetection"
 
 // we should get data in twenty seconds
-#define HTTP_OPEN_CONNECTION_TIMEOUT_DEFAULT                      20000
-#define HTTP_OPEN_CONNECTION_SLEEP_TIME_DEFAULT                   0
-#define HTTP_TOTAL_REOPEN_CONNECTION_TIMEOUT_DEFAULT              60000
+#define HTTP_OPEN_CONNECTION_TIMEOUT_DEFAULT                          20000
+#define HTTP_OPEN_CONNECTION_SLEEP_TIME_DEFAULT                       0
+#define HTTP_TOTAL_REOPEN_CONNECTION_TIMEOUT_DEFAULT                  60000
 
-#define HTTP_SEEKING_SUPPORTED_DEFAULT                            false
-#define HTTP_SEEKING_SUPPORT_DETECTION_DEFAULT                    true
+#define HTTP_SEEKING_SUPPORTED_DEFAULT                                false
+#define HTTP_SEEKING_SUPPORT_DETECTION_DEFAULT                        true
 
 #endif

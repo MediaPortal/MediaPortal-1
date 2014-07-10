@@ -70,7 +70,6 @@ void DestroyPlugin(CPlugin *plugin)
 CMPUrlSourceSplitter_Protocol_Rtsp::CMPUrlSourceSplitter_Protocol_Rtsp(HRESULT *result, CLogger *logger, CParameterCollection *configuration)
   : CProtocolPlugin(result, logger, configuration)
 {
-  this->receiveDataTimeout = RTSP_RECEIVE_DATA_TIMEOUT_DEFAULT;
   this->lockMutex = NULL;
   this->lockCurlMutex = NULL;
   this->mainCurlInstance = NULL;
@@ -234,251 +233,522 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
   {
     CLockMutex lock(this->lockMutex, INFINITE);
 
-    if (SUCCEEDED(result) && (!this->IsWholeStreamDownloaded()))
+    if (SUCCEEDED(result) && (this->mainCurlInstance != NULL) && ((this->connectionState == Opening) || (this->connectionState == Opened)))
     {
-      if (SUCCEEDED(result) && (this->mainCurlInstance != NULL) && (this->connectionState == Opened))
+      CRtpPacketCollection *rtpPackets = new CRtpPacketCollection(&result);
+      CHECK_POINTER_HRESULT(result, rtpPackets, result, E_OUTOFMEMORY);
+
+      for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->mainCurlInstance->GetRtspDownloadResponse()->GetRtspTracks()->Count())); i++)
       {
-        if (SUCCEEDED(result))
+        CRtspTrack *track = this->mainCurlInstance->GetRtspDownloadResponse()->GetRtspTracks()->GetItem(i);
+        CRtspStreamTrack *streamTrack = this->streamTracks->GetItem(i);
+
         {
-          CRtpPacketCollection *rtpPackets = new CRtpPacketCollection(&result);
-          CHECK_POINTER_HRESULT(result, rtpPackets, result, E_OUTOFMEMORY);
+          // copy RTP packets to avoid blocking of RTSP download instance
+          CLockMutex lockData(this->lockCurlMutex, INFINITE);
 
-          for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->mainCurlInstance->GetRtspDownloadResponse()->GetRtspTracks()->Count())); i++)
+          rtpPackets->Append(track->GetRtpPackets());
+          track->GetRtpPackets()->Clear();
+        }
+
+        if (rtpPackets->Count() != 0)
+        {
+          this->connectionState = Opened;
+          streamTrack->SetLastReceiveDataTime(GetTickCount());
+
+          // split or add received RTP packets to stream fragments
+          CRtspStreamFragment *currentDownloadingFragment = streamTrack->GetStreamFragments()->GetItem(streamTrack->GetStreamFragmentDownloading());
+
+          for (unsigned int j = 0; (SUCCEEDED(result) && (currentDownloadingFragment != NULL) && (j < rtpPackets->Count())); j++)
           {
-            CRtspTrack *track = this->mainCurlInstance->GetRtspDownloadResponse()->GetRtspTracks()->GetItem(i);
-            CRtspStreamTrack *streamTrack = this->streamTracks->GetItem(i);
+            CRtpPacket *rtpPacket = rtpPackets->GetItem(j);
 
+            // set first RTP packet timestamp (if not already set)
+            // timestamp is needed to compute (almost - after seeking we only assume that timestamps are correct) correct timestamps of fragments
+            if (!streamTrack->IsSetFirstRtpPacketTimestamp())
             {
-              // copy RTP packets to avoid blocking of RTSP download instance
-              CLockMutex lockData(this->lockCurlMutex, INFINITE);
+              DWORD ticks = GetTickCount();
+              streamTrack->SetFirstRtpPacketTimestamp(rtpPacket->GetTimestamp(), true, ticks);
 
-              rtpPackets->Append(track->GetRtpPackets());
-              track->GetRtpPackets()->Clear();
+              // change current downloading fragment RTP timestamp to correct timestamp based on time from start of stream (first time set ticks to track)
+              if (this->IsLiveStream())
+              {
+                int64_t timestamp = ((int64_t)ticks - (int64_t)streamTrack->GetFirstRtpPacketTicks()) * streamTrack->GetClockFrequency() / 1000;
+
+                this->logger->Log(LOGGER_VERBOSE, L"%s: %s: track %u, fragment timestamp changing from %lld to %lld, ticks: %u, track ticks: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, i, currentDownloadingFragment->GetFragmentRtpTimestamp(), timestamp, ticks, streamTrack->GetFirstRtpPacketTicks());
+                currentDownloadingFragment->SetFragmentRtpTimestamp(timestamp, false);
+              }
+
+              // compute correction for actual stream track
+              int64_t correction = currentDownloadingFragment->GetFragmentRtpTimestamp() - (int64_t)rtpPacket->GetTimestamp();
+
+              this->logger->Log(LOGGER_VERBOSE, L"%s: %s: track %u, fragment timestamp: %lld, first RTP packet timestamp: %u, RTP: %u, ticks: %u, track ticks: %u, correction: %lld", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, i, currentDownloadingFragment->GetFragmentRtpTimestamp(), rtpPacket->GetTimestamp(), rtpPacket->GetSequenceNumber(), ticks, streamTrack->GetFirstRtpPacketTicks(), correction);
+              streamTrack->SetRtpTimestampCorrection(correction);
             }
 
-            if (rtpPackets->Count() != 0)
+            int64_t timestamp = streamTrack->GetRtpPacketTimestamp(rtpPacket->GetTimestamp(), true) + streamTrack->GetRtpTimestampCorrection();
+
+            if (!currentDownloadingFragment->IsSetFragmentRtpTimestamp())
             {
-              streamTrack->SetLastReceiveDataTime(GetTickCount());
+              currentDownloadingFragment->SetFragmentRtpTimestamp(timestamp);
+            }
 
-              // split or add received RTP packets to stream fragments
-              CRtspStreamFragment *currentDownloadingFragment = streamTrack->GetStreamFragments()->GetItem(streamTrack->GetStreamFragmentDownloading());
+            CRtspStreamFragment *nextFragment = streamTrack->GetStreamFragments()->GetItem(streamTrack->GetStreamFragmentDownloading() + 1);
 
-              for (unsigned int j = 0; (SUCCEEDED(result) && (currentDownloadingFragment != NULL) && (j < rtpPackets->Count())); j++)
+            // nextFragment can be NULL in case that we are on the end of collection
+
+            if (nextFragment != NULL)
+            {
+              if (timestamp >= nextFragment->GetFragmentRtpTimestamp())
               {
-                CRtpPacket *rtpPacket = rtpPackets->GetItem(j);
+                // our RTP packet timestamp is greater than or equal to next fragment timestamp
+                // this means that we are receiving data, which we already have - in case if next fragment is downloaded
 
-                // set first RTP packet timestamp (if not already set)
-                // timestamp is needed to compute (almost - after seeking we only assume that timestamps are correct) correct timestamps of fragments
-                if (!streamTrack->IsSetFirstRtpPacketTimestamp())
+                currentDownloadingFragment->SetDownloaded(true);
+
+                // recalculate start position of all downloaded stream fragments until first not downloaded stream fragment
+                this->RecalculateStreamFragmentStartPosition(streamTrack->GetStreamFragments(), streamTrack->GetStreamFragmentDownloading());
+
+                if (nextFragment->IsDownloaded())
                 {
-                  DWORD ticks = GetTickCount();
-                  streamTrack->SetFirstRtpPacketTimestamp(rtpPacket->GetTimestamp(), true, ticks);
+                  this->logger->Log(LOGGER_VERBOSE, L"%s: %s: track %u, found next RTSP stream fragment with lower timestamp as receiving stream fragment, stopping downloading fragment, current fragment timestamp: %lld, receiving fragment timestamp: %lld, next fragment timestamp: %lld", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, i, currentDownloadingFragment->GetFragmentRtpTimestamp(), timestamp, nextFragment->GetFragmentRtpTimestamp());
 
-                  // change current downloading fragment RTP timestamp to correct timestamp based on time from start of stream (first time set ticks to track)
-                  if (this->IsLiveStream())
-                  {
-                    int64_t timestamp = ((int64_t)ticks - (int64_t)streamTrack->GetFirstRtpPacketTicks()) * streamTrack->GetClockFrequency() / 1000;
+                  currentDownloadingFragment = NULL;
 
-                    this->logger->Log(LOGGER_VERBOSE, L"%s: %s: track %u, fragment timestamp changing from %lld to %lld, ticks: %u, track ticks: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, i, currentDownloadingFragment->GetFragmentRtpTimestamp(), timestamp, ticks, streamTrack->GetFirstRtpPacketTicks());
-                    currentDownloadingFragment->SetFragmentRtpTimestamp(timestamp, false);
-                  }
+                  // request to download first not downloaded stream fragment after current downloaded fragment
+                  streamTrack->SetStreamFragmentToDownload(streamTrack->GetStreamFragments()->GetFirstNotDownloadedStreamFragment(streamTrack->GetStreamFragmentDownloading()));
+                  streamTrack->SetStreamFragmentDownloading(UINT_MAX);
 
-                  // compute correction for actual stream track
-                  int64_t correction = currentDownloadingFragment->GetFragmentRtpTimestamp() - (int64_t)rtpPacket->GetTimestamp();
-
-                  this->logger->Log(LOGGER_VERBOSE, L"%s: %s: track %u, fragment timestamp: %lld, first RTP packet timestamp: %u, RTP: %u, ticks: %u, track ticks: %u, correction: %lld", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, i, currentDownloadingFragment->GetFragmentRtpTimestamp(), rtpPacket->GetTimestamp(), rtpPacket->GetSequenceNumber(), ticks, streamTrack->GetFirstRtpPacketTicks(), correction);
-                  streamTrack->SetRtpTimestampCorrection(correction);
+                  this->mainCurlInstance->StopReceivingData();
                 }
-
-                int64_t timestamp = streamTrack->GetRtpPacketTimestamp(rtpPacket->GetTimestamp(), true) + streamTrack->GetRtpTimestampCorrection();
-
-                if (!currentDownloadingFragment->IsSetFragmentRtpTimestamp())
+                else
                 {
-                  currentDownloadingFragment->SetFragmentRtpTimestamp(timestamp);
-                }
+                  this->logger->Log(LOGGER_VERBOSE, L"%s: %s: track %u, found next not downloaded RTSP stream fragment with lower timestamp as receiving stream fragment, continuing downloading fragment, current fragment timestamp: %lld, receiving fragment timestamp: %lld, next fragment timestamp: %lld", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, i, currentDownloadingFragment->GetFragmentRtpTimestamp(), timestamp, nextFragment->GetFragmentRtpTimestamp());
 
-                CRtspStreamFragment *nextFragment = streamTrack->GetStreamFragments()->GetItem(streamTrack->GetStreamFragmentDownloading() + 1);
-
-                // nextFragment can be NULL in case that we are on the end of collection
-
-                if (nextFragment != NULL)
-                {
-                  if (timestamp >= nextFragment->GetFragmentRtpTimestamp())
-                  {
-                    // our RTP packet timestamp is greater than or equal to next fragment timestamp
-                    // this means that we are receiving data, which we already have - in case if next fragment is downloaded
-
-                    currentDownloadingFragment->SetDownloaded(true);
-
-                    // recalculate start position of all downloaded stream fragments until first not downloaded stream fragment
-                    this->RecalculateStreamFragmentStartPosition(streamTrack->GetStreamFragments(), streamTrack->GetStreamFragmentDownloading());
-
-                    if (nextFragment->IsDownloaded())
-                    {
-                      this->logger->Log(LOGGER_VERBOSE, L"%s: %s: track %u, found next RTSP stream fragment with lower timestamp as receiving stream fragment, stopping downloading fragment, current fragment timestamp: %lld, receiving fragment timestamp: %lld, next fragment timestamp: %lld", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, i, currentDownloadingFragment->GetFragmentRtpTimestamp(), timestamp, nextFragment->GetFragmentRtpTimestamp());
-
-                      currentDownloadingFragment = NULL;
-                      streamTrack->SetStreamFragmentDownloading(UINT_MAX);
-                    }
-                    else
-                    {
-                      this->logger->Log(LOGGER_VERBOSE, L"%s: %s: track %u, found next not downloaded RTSP stream fragment with lower timestamp as receiving stream fragment, continuing downloading fragment, current fragment timestamp: %lld, receiving fragment timestamp: %lld, next fragment timestamp: %lld", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, i, currentDownloadingFragment->GetFragmentRtpTimestamp(), timestamp, nextFragment->GetFragmentRtpTimestamp());
-
-                      nextFragment->SetFragmentRtpTimestamp(timestamp);
-
-                      currentDownloadingFragment = nextFragment;
-                      streamTrack->SetStreamFragmentDownloading(streamTrack->GetStreamFragmentDownloading() + 1);
-                    }
-                  }
-                }
-
-                if ((currentDownloadingFragment != NULL) && (timestamp != currentDownloadingFragment->GetFragmentRtpTimestamp()))
-                {
-                  CRtspStreamFragment *nextFragment = new CRtspStreamFragment(&result, timestamp, true);
-                  CHECK_POINTER_HRESULT(result, nextFragment, result, E_OUTOFMEMORY);
-
-                  if (SUCCEEDED(result))
-                  {
-                    result = streamTrack->GetStreamFragments()->Insert(streamTrack->GetStreamFragmentDownloading() + 1, nextFragment) ? result : E_OUTOFMEMORY;
-                  }
-
-                  if (SUCCEEDED(result))
-                  {
-                    currentDownloadingFragment->SetDownloaded(true);
-
-                    // recalculate start position of all downloaded stream fragments until first not downloaded stream fragment
-                    this->RecalculateStreamFragmentStartPosition(streamTrack->GetStreamFragments(), streamTrack->GetStreamFragmentDownloading());
-
-                    streamTrack->SetStreamFragmentDownloading(streamTrack->GetStreamFragmentDownloading() + 1);
-                  }
-                  else
-                  {
-                    FREE_MEM_CLASS(nextFragment);
-                  }
+                  nextFragment->SetFragmentRtpTimestamp(timestamp);
 
                   currentDownloadingFragment = nextFragment;
-                }
-
-                // add RTP packet to current downloading stream fragment
-                if (SUCCEEDED(result) && (currentDownloadingFragment != NULL))
-                {
-                  result = (currentDownloadingFragment->GetBuffer()->AddToBufferWithResize(rtpPacket->GetPayload(), rtpPacket->GetPayloadSize(), currentDownloadingFragment->GetBuffer()->GetBufferSize() * 2) == rtpPacket->GetPayloadSize()) ? result : E_OUTOFMEMORY;
+                  streamTrack->SetStreamFragmentDownloading(streamTrack->GetStreamFragmentDownloading() + 1);
                 }
               }
             }
 
-            if (streamTrack->GetStreamFragmentDownloading() != UINT_MAX)
+            if ((currentDownloadingFragment != NULL) && (timestamp != currentDownloadingFragment->GetFragmentRtpTimestamp()))
             {
-              CLockMutex lockData(this->lockCurlMutex, INFINITE);
+              CRtspStreamFragment *nextFragment = new CRtspStreamFragment(&result, timestamp, true);
+              CHECK_POINTER_HRESULT(result, nextFragment, result, E_OUTOFMEMORY);
 
-              if (track->IsEndOfStream() && (track->GetRtpPackets()->Count() == 0))
+              if (SUCCEEDED(result))
               {
-                // mark currently downloading stream fragment as downloaded
-                CRtspStreamFragment *fragment = streamTrack->GetStreamFragments()->GetItem(streamTrack->GetStreamFragmentDownloading());
-                if (fragment != NULL)
-                {
-                  fragment->SetDownloaded(true);
-
-                  // recalculate start position of all downloaded stream fragments until first not downloaded stream fragment
-                  this->RecalculateStreamFragmentStartPosition(streamTrack->GetStreamFragments(), streamTrack->GetStreamFragmentDownloading());
-                }
-
-                streamTrack->SetStreamFragmentDownloading(UINT_MAX);
+                result = streamTrack->GetStreamFragments()->Insert(streamTrack->GetStreamFragmentDownloading() + 1, nextFragment) ? result : E_OUTOFMEMORY;
               }
+
+              if (SUCCEEDED(result))
+              {
+                currentDownloadingFragment->SetDownloaded(true);
+
+                // recalculate start position of all downloaded stream fragments until first not downloaded stream fragment
+                this->RecalculateStreamFragmentStartPosition(streamTrack->GetStreamFragments(), streamTrack->GetStreamFragmentDownloading());
+
+                streamTrack->SetStreamFragmentDownloading(streamTrack->GetStreamFragmentDownloading() + 1);
+              }
+              else
+              {
+                FREE_MEM_CLASS(nextFragment);
+              }
+
+              currentDownloadingFragment = nextFragment;
             }
 
-            rtpPackets->Clear();
+            // add RTP packet to current downloading stream fragment
+            if (SUCCEEDED(result) && (currentDownloadingFragment != NULL))
+            {
+              result = (currentDownloadingFragment->GetBuffer()->AddToBufferWithResize(rtpPacket->GetPayload(), rtpPacket->GetPayloadSize(), currentDownloadingFragment->GetBuffer()->GetBufferSize() * 2) == rtpPacket->GetPayloadSize()) ? result : E_OUTOFMEMORY;
+            }
+          }
+        }
+
+        if (streamTrack->GetStreamFragmentDownloading() != UINT_MAX)
+        {
+          CLockMutex lockData(this->lockCurlMutex, INFINITE);
+
+          if (track->IsEndOfStream() && (track->GetRtpPackets()->Count() == 0))
+          {
+            // mark currently downloading stream fragment as downloaded
+            CRtspStreamFragment *fragment = streamTrack->GetStreamFragments()->GetItem(streamTrack->GetStreamFragmentDownloading());
+            if (fragment != NULL)
+            {
+              fragment->SetDownloaded(true);
+
+              // recalculate start position of all downloaded stream fragments until first not downloaded stream fragment
+              this->RecalculateStreamFragmentStartPosition(streamTrack->GetStreamFragments(), streamTrack->GetStreamFragmentDownloading());
+            }
+
+            streamTrack->SetStreamFragmentDownloading(UINT_MAX);
+          }
+        }
+
+        rtpPackets->Clear();
+      }
+
+      FREE_MEM_CLASS(rtpPackets);
+    }
+
+    if (SUCCEEDED(result) && (this->mainCurlInstance == NULL) && (!this->IsWholeStreamDownloaded()))
+    {
+      this->connectionState = Initializing;
+
+      int64_t startTime = INT64_MAX;
+
+      // if seeking to empty place (no downloaded fragment before) then use fragment time
+      // if seeking to fill gap (one or more downloaded fragment(s) before) then use previous fragment time
+      // if seeking in live stream (e.g. lost connection) then use zero time
+
+      for (unsigned int i = 0; (SUCCEEDED(result) && (!this->IsLiveStream()) && (i < this->streamTracks->Count())); i++)
+      {
+        CRtspStreamTrack *track = this->streamTracks->GetItem(i);
+        unsigned int fragmentToDownload = track->GetStreamFragmentToDownload();
+
+        if (fragmentToDownload != UINT_MAX)
+        {
+          CRtspStreamFragment *firstFragment = track->GetStreamFragments()->GetItem(0);
+          CRtspStreamFragment *fragment = track->GetStreamFragments()->GetItem(fragmentToDownload);
+
+          int64_t fragmentRtpTimestamp = INT64_MAX;
+
+          if (fragmentToDownload > 0)
+          {
+            CRtspStreamFragment *previousFragment = track->GetStreamFragments()->GetItem(fragmentToDownload - 1);
+
+            if (previousFragment->IsDownloaded())
+            {
+              fragmentRtpTimestamp = min(previousFragment->GetFragmentRtpTimestamp(), fragmentRtpTimestamp);
+            }
           }
 
-          FREE_MEM_CLASS(rtpPackets);
+          fragmentRtpTimestamp = min(fragment->GetFragmentRtpTimestamp(), fragmentRtpTimestamp);
+          fragmentRtpTimestamp *= 1000;
+          fragmentRtpTimestamp /= track->GetClockFrequency();
+
+          startTime = min(startTime, fragmentRtpTimestamp);
         }
       }
 
-      bool allTracksSetFirstRtpPacketTimestamp = (this->streamTracks->Count() != 0);
+      startTime = (startTime != INT64_MAX) ? startTime: 0;
+
+      FREE_MEM_CLASS(this->mainCurlInstance);
+      FREE_MEM_CLASS(this->sessionDescription);
+
+      // new connection will be created with new RTP packet timestamps
+      // clear set RTP packet timestamp flags
+      for (unsigned int i = 0; i < this->streamTracks->Count(); i++)
+      {
+        CRtspStreamTrack *track = this->streamTracks->GetItem(i);
+
+        track->SetFirstRtpPacketTimestamp(UINT_MAX, false, 0);
+        track->SetReceivedAllDataFlag(false);
+
+        // clear all not downloaded stream fragments
+        // recalculate stream fragments timestams for not downloaded stream fragments
+        for (unsigned int j = 0; j < track->GetStreamFragments()->Count(); j++)
+        {
+          CRtspStreamFragment *fragment = track->GetStreamFragments()->GetItem(j);
+
+          if (!fragment->IsDownloaded())
+          {
+            fragment->GetBuffer()->ClearBuffer();
+
+            fragment->SetFragmentRtpTimestamp(fragment->GetFragmentRtpTimestamp(), false);
+          }
+        }
+      }
+
+      unsigned int finishTime = UINT_MAX;
+      if (SUCCEEDED(result))
+      {
+        finishTime = this->configuration->GetValueUnsignedInt(PARAMETER_NAME_FINISH_TIME, true, UINT_MAX);
+        if (finishTime != UINT_MAX)
+        {
+          unsigned int currentTime = GetTickCount();
+          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: finish time specified, current time: %u, finish time: %u, diff: %u (ms)", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, currentTime, finishTime, finishTime - currentTime);
+          this->configuration->Remove(PARAMETER_NAME_FINISH_TIME, true);
+        }
+      }
+
+      this->mainCurlInstance = new CRtspCurlInstance(&result, this->logger, this->lockCurlMutex, PROTOCOL_IMPLEMENTATION_NAME, L"Main");
+      CHECK_POINTER_HRESULT(result, this->mainCurlInstance, result, E_OUTOFMEMORY);
 
       if (SUCCEEDED(result))
       {
-        for (unsigned int i = 0; i < this->streamTracks->Count(); i++)
-        {
-          CRtspStreamTrack *track = this->streamTracks->GetItem(i);
+        // set connection priorities
+        this->mainCurlInstance->SetMulticastPreference(this->configuration->GetValueUnsignedInt(PARAMETER_NAME_RTSP_MULTICAST_PREFERENCE, true, RTSP_MULTICAST_PREFERENCE_DEFAULT));
+        this->mainCurlInstance->SetSameConnectionTcpPreference(this->configuration->GetValueUnsignedInt(PARAMETER_NAME_RTSP_SAME_CONNECTION_TCP_PREFERENCE, true, RTSP_SAME_CONNECTION_TCP_PREFERENCE_DEFAULT));
+        this->mainCurlInstance->SetUdpPreference(this->configuration->GetValueUnsignedInt(PARAMETER_NAME_RTSP_UDP_PREFERENCE, true, RTSP_UDP_PREFERENCE_DEFAULT));
 
-          allTracksSetFirstRtpPacketTimestamp &= track->IsSetFirstRtpPacketTimestamp();
+        // set ports
+        this->mainCurlInstance->SetRtspClientPortMin(this->configuration->GetValueUnsignedInt(PARAMETER_NAME_RTSP_CLIENT_PORT_MIN, true, RTSP_CLIENT_PORT_MIN_DEFAULT));
+        this->mainCurlInstance->SetRtspClientPortMax(this->configuration->GetValueUnsignedInt(PARAMETER_NAME_RTSP_CLIENT_PORT_MAX, true, RTSP_CLIENT_PORT_MAX_DEFAULT));
+
+        this->mainCurlInstance->SetIgnoreRtpPayloadType(this->configuration->GetValueBool(PARAMETER_NAME_RTSP_IGNORE_RTP_PAYLOAD_TYPE, true, RTSP_IGNORE_RTP_PAYLOAD_TYPE_DEFAULT));
+
+        if (this->configuration->GetValueBool(PARAMETER_NAME_DUMP_INPUT_RAW_DATA, true, PARAMETER_NAME_DUMP_INPUT_RAW_DATA_DEFAULT))
+        {
+          wchar_t *storeFilePath = this->GetStoreFile(0, L"dump");
+          CHECK_CONDITION_NOT_NULL_EXECUTE(storeFilePath, this->mainCurlInstance->SetDumpFile(storeFilePath));
+          FREE_MEM(storeFilePath);
         }
       }
 
-      if (SUCCEEDED(result) && (!this->IsWholeStreamDownloaded()) && (this->mainCurlInstance != NULL) && (this->mainCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
+      if (SUCCEEDED(result))
       {
-        // all data received, we're not receiving data
-        if (this->mainCurlInstance->GetDownloadResponse()->GetResultError() == CURLE_OK)
-        {
-          bool receivedAllData = true;
+        CRtspDownloadRequest *request = new CRtspDownloadRequest(&result);
+        CHECK_POINTER_HRESULT(result, request, result, E_OUTOFMEMORY);
 
+        if (SUCCEEDED(result))
+        {
+          request->SetStartTime(startTime);
+          request->SetUrl(this->configuration->GetValue(PARAMETER_NAME_URL, true, NULL));
+
+          // set finish time, all methods must return before finish time
+          request->SetFinishTime(finishTime);
+          request->SetReceivedDataTimeout(this->configuration->GetValueUnsignedInt(PARAMETER_NAME_RTSP_OPEN_CONNECTION_TIMEOUT, true, RTSP_OPEN_CONNECTION_TIMEOUT_DEFAULT));
+          request->SetNetworkInterfaceName(this->configuration->GetValue(PARAMETER_NAME_INTERFACE, true, NULL));
+
+          if (SUCCEEDED(this->mainCurlInstance->Initialize(request)))
+          {
+            if (this->sessionDescription == NULL)
+            {
+              const wchar_t *rawSDP = this->mainCurlInstance->GetRtspDownloadResponse()->GetRawSessionDescription();
+              unsigned int rawSDPlength = wcslen(rawSDP);
+
+              this->sessionDescription = new CSessionDescription(&result);
+              CHECK_POINTER_HRESULT(result, this->sessionDescription, result, E_OUTOFMEMORY);
+              CHECK_CONDITION_HRESULT(result, this->sessionDescription->Parse(rawSDP, rawSDPlength), result, E_RTSP_SESSION_DESCRIPTION_PARSE_ERROR);
+            }
+
+            if (SUCCEEDED(result))
+            {
+              // check for normal play time range attribute in session description
+              // if normal play time range attribute has start and end time, then session is not live session
+
+              CNormalPlayTimeRangeAttribute *nptAttribute = NULL;
+              for (unsigned int i = 0; i < this->sessionDescription->GetAttributes()->Count(); i++)
+              {
+                CAttribute *attribute = this->sessionDescription->GetAttributes()->GetItem(i);
+
+                if (attribute->IsInstanceTag(TAG_ATTRIBUTE_INSTANCE_NORMAL_PLAY_TIME_RANGE))
+                {
+                  nptAttribute = dynamic_cast<CNormalPlayTimeRangeAttribute *>(attribute);
+                  break;
+                }
+              }
+
+              // RTSP is by default for live streams
+              this->flags |= PROTOCOL_PLUGIN_FLAG_LIVE_STREAM_DETECTED;
+
+              if (nptAttribute != NULL)
+              {
+                if (nptAttribute->IsSetStartTime() && nptAttribute->IsSetEndTime() && (nptAttribute->GetEndTime() >= nptAttribute->GetStartTime()))
+                {
+                  // not live stream
+                  this->flags &= ~PROTOCOL_PLUGIN_FLAG_LIVE_STREAM_DETECTED;
+                }
+              }
+            }
+
+            // all parameters set
+            // start receiving data
+
+            if (SUCCEEDED(this->mainCurlInstance->StartReceivingData()))
+            {
+              this->connectionState = Opening;
+
+              // create same count of RTSP stream tracks as RTSP tracks in CURL instance
+              CLockMutex(this->lockCurlMutex, INFINITE);
+
+              if (this->streamTracks->Count() != this->mainCurlInstance->GetRtspDownloadResponse()->GetRtspTracks()->Count())
+              {
+                this->streamTracks->Clear();
+
+                for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->mainCurlInstance->GetRtspDownloadResponse()->GetRtspTracks()->Count())); i++)
+                {
+                  CRtspTrack *track = this->mainCurlInstance->GetRtspDownloadResponse()->GetRtspTracks()->GetItem(i);
+                  CRtspStreamTrack *streamTrack = new CRtspStreamTrack(&result);
+                  CHECK_POINTER_HRESULT(result, streamTrack, result, E_OUTOFMEMORY);
+
+                  streamTrack->SetLastReceiveDataTime(GetTickCount());
+                  streamTrack->SetClockFrequency(track->GetStatistics()->GetClockFrequency());
+                  streamTrack->SetReceivedAllDataFlag(false);
+
+                  CHECK_CONDITION_HRESULT(result, this->streamTracks->Add(streamTrack), result, E_OUTOFMEMORY);
+                  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(streamTrack));
+                }
+
+                // for each stream track add first stream fragment
+                for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->streamTracks->Count())); i++)
+                {
+                  CRtspStreamTrack *track = this->streamTracks->GetItem(i);
+
+                  CRtspStreamFragment *fragment = new CRtspStreamFragment(&result);
+                  CHECK_POINTER_HRESULT(result, fragment, result, E_OUTOFMEMORY);
+
+                  fragment->SetFragmentStartPosition(0);
+                  CHECK_CONDITION_HRESULT(result, track->GetStreamFragments()->Insert(0, fragment), result, E_OUTOFMEMORY);
+
+                  if (SUCCEEDED(result))
+                  {
+                    // set start searching index to current processing stream fragment
+                    track->GetStreamFragments()->SetStartSearchingIndex(track->GetStreamFragmentProcessing());
+                    // set count of fragments to search for specific position
+                    unsigned int firstNotDownloadedFragmentIndex = track->GetStreamFragments()->GetFirstNotDownloadedStreamFragment(track->GetStreamFragmentProcessing());
+                    track->GetStreamFragments()->SetSearchCount(((firstNotDownloadedFragmentIndex == UINT_MAX) ? track->GetStreamFragments()->Count() : firstNotDownloadedFragmentIndex) - track->GetStreamFragmentProcessing());
+
+                    track->SetStreamFragmentToDownload(0);
+                  }
+                  else
+                  {
+                    FREE_MEM_CLASS(fragment);
+                  }
+                }
+              }
+
+              // set stream fragment downloading for each track (based on start time)
+              for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->streamTracks->Count())); i++)
+              {
+                CRtspStreamTrack *track = this->streamTracks->GetItem(i);
+
+                track->SetStreamFragmentDownloading(track->GetStreamFragmentToDownload());
+
+                // we are downloading stream fragment, so reset scheduled download
+                track->SetStreamFragmentToDownload(UINT_MAX);
+              }
+            }
+          }
+          else
+          {
+            this->connectionState = InitializeFailed;
+          }
+        }
+        FREE_MEM_CLASS(request);
+      }
+    }
+
+    if (SUCCEEDED(result) && (!this->IsWholeStreamDownloaded()) && (this->mainCurlInstance != NULL) && (this->mainCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
+    {
+      // all data received, we're not receiving data
+      // check end of stream or error on RTSP connection
+
+      if (SUCCEEDED(this->mainCurlInstance->GetDownloadResponse()->GetResultError()))
+      {
+        if (!this->IsLiveStreamDetected())
+        {
+          // very rare, but possible
+          // check if we downloaded last stream fragment - then we set end of stream reached - it doesn't mean that we have all data (no gaps)
+
+          bool allEndOfStreamReached = true;
           for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->mainCurlInstance->GetRtspDownloadResponse()->GetRtspTracks()->Count())); i++)
           {
             CRtspTrack *track = this->mainCurlInstance->GetRtspDownloadResponse()->GetRtspTracks()->GetItem(i);
             CRtspStreamTrack *streamTrack = this->streamTracks->GetItem(i);
 
-            if ((track->GetRtpPackets()->Count() == 0) && (!streamTrack->IsReceivedAllData()))
+            if ((track->GetRtpPackets()->Count() == 0) && (!streamTrack->IsSetEndOfStream()) && (streamTrack->GetStreamFragments()->Count() != 0))
             {
-              // all data read from CURL instance for track i, received all data
-              this->logger->Log(LOGGER_INFO, L"%s: %s: track %u, all data received", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, i);
-              streamTrack->SetReceivedAllDataFlag(true);
-            }
-            else
-            {
-              receivedAllData = false;
+              // all data read from CURL instance for track i, not set end of stream, at least one stream fragment
+              CRtspStreamFragment *lastFragment = streamTrack->GetStreamFragments()->GetItem(streamTrack->GetStreamFragments()->Count() - 1);
+
+              allEndOfStreamReached &= lastFragment->IsDownloaded();
+              if (lastFragment->IsDownloaded())
+              {
+                this->logger->Log(LOGGER_INFO, L"%s: %s: track %u, end of stream reached", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, i);
+                streamTrack->SetEndOfStreamFlag(true);
+              }
             }
           }
 
-          if (receivedAllData)
+          CHECK_CONDITION_EXECUTE(allEndOfStreamReached, this->flags |= PROTOCOL_PLUGIN_FLAG_END_OF_STREAM_REACHED);
+
+          // check if there isn't some fragment to download
+          bool anyTrackDownloading = false;
+          bool startFragmentDownload = false;
+
+          for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->streamTracks->Count())); i++)
           {
-            this->mainCurlInstance->StopReceivingData();
+            CRtspStreamTrack *streamTrack = this->streamTracks->GetItem(i);
 
-            // check last fragment of each track
-            // if all are downloaded, then we reached end of stream - this doesn't mean that there is not gap
-            for (unsigned int i = 0; i < this->streamTracks->Count(); i++)
+            anyTrackDownloading |= (streamTrack->GetStreamFragmentDownloading() != UINT_MAX);
+
+            if (streamTrack->GetStreamFragmentDownloading() == UINT_MAX)
             {
-              CRtspStreamTrack *track = this->streamTracks->GetItem(i);
+              unsigned int fragmentToDownload = UINT_MAX;
 
-              if (track->GetStreamFragments()->Count() != 0)
-              {
-                CRtspStreamFragment *lastFragment = track->GetStreamFragments()->GetItem(track->GetStreamFragments()->Count() - 1);
+              // if not set fragment to download, then set fragment to download (get next not downloaded fragment after current processed fragment)
+              fragmentToDownload = (streamTrack->GetStreamFragmentToDownload() == UINT_MAX) ? streamTrack->GetStreamFragments()->GetFirstNotDownloadedStreamFragment(streamTrack->GetStreamFragmentProcessing()) : streamTrack->GetStreamFragmentToDownload();
+              // if not set fragment to download, then set fragment to download (get next not downloaded fragment from first fragment)
+              fragmentToDownload = (fragmentToDownload == UINT_MAX) ? streamTrack->GetStreamFragments()->GetFirstNotDownloadedStreamFragment(0) : fragmentToDownload;
+              // fragment to download still can be UINT_MAX = no fragment to download
 
-                receivedAllData &= lastFragment->IsDownloaded();
-              }
+              streamTrack->SetStreamFragmentToDownload(fragmentToDownload);
+              startFragmentDownload |= (fragmentToDownload != UINT_MAX);
             }
+          }
+          
+          if ((!anyTrackDownloading) && (startFragmentDownload))
+          {
+            // no track is downloading, but we need to download at least one stream fragment
 
-            if (receivedAllData)
-            {
-              // set end of stream reached and also set stream total length
-              this->flags |= PROTOCOL_PLUGIN_FLAG_END_OF_STREAM_REACHED;
-
-              for (unsigned int i = 0; (i < this->streamTracks->Count()); i++)
-              {
-                CRtspStreamTrack *track = this->streamTracks->GetItem(i);
-
-                if (!track->IsSetStreamLength())
-                {
-                  track->SetStreamLength(track->GetBytePosition());
-                  this->logger->Log(LOGGER_VERBOSE, L"%s: %s: track %u, setting total length: %llu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, i, track->GetStreamLength());
-                  track->SetStreamLengthFlag(true);
-                }
-
-                if (!track->IsSetEndOfStream())
-                {
-                  track->SetEndOfStreamFlag(true);
-                }
-              }
-            }
+            // this clear CURL instance and buffer, it leads to GetConnectionState() to PROTOCOL_CONNECTION_STATE_NONE result and connection will be reopened by ProtocolHoster,
+            // it also reset each stream track downloading fragment
+            this->StopReceivingData();
+          }
+          else if (!(anyTrackDownloading || startFragmentDownload))
+          {
+            // no track is downloading, no stream fragment to download, we have all data
+            this->flags |= PROTOCOL_PLUGIN_FLAG_WHOLE_STREAM_DOWNLOADED | PROTOCOL_PLUGIN_FLAG_END_OF_STREAM_REACHED;
           }
         }
         else
         {
-          // error occured while downloading
+          // more common case, whole stream downloaded
+          this->flags |= PROTOCOL_PLUGIN_FLAG_WHOLE_STREAM_DOWNLOADED | PROTOCOL_PLUGIN_FLAG_END_OF_STREAM_REACHED;
+          this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"live stream, all data received");
+        }
+      }
+      else
+      {
+        // error occured while receiving data
+
+        if (this->IsLiveStreamDetected())
+        {
+          // more common case
+
           // download stream fragment again or download scheduled stream fragment
+          for (unsigned int i = 0; i < this->streamTracks->Count(); i++)
+          {
+            CRtspStreamTrack *track = this->streamTracks->GetItem(i);
 
-          this->logger->Log(LOGGER_ERROR, L"%s: %s: error while receiving data: %d, restarting download", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->mainCurlInstance->GetDownloadResponse()->GetResultError());
+            CRtspStreamFragment *fragment = (track->GetStreamFragmentDownloading() > 0) ? track->GetStreamFragments()->GetItem(track->GetStreamFragmentDownloading() - 1) : NULL;
 
+            track->SetStreamFragmentToDownload(track->GetStreamFragmentDownloading());
+            track->SetStreamFragmentDownloading(UINT_MAX);
+
+            if (fragment != NULL)
+            {
+              // we report discontinuity (if possible)
+              fragment->SetDiscontinuity(true);
+              this->logger->Log(LOGGER_VERBOSE, L"%s: %s: discontinuity, RTP timestamp: %lld, position: %lld, size: %u, current track position: %lld", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, fragment->GetFragmentRtpTimestamp(), fragment->GetFragmentStartPosition(), fragment->GetLength(), track->GetBytePosition());
+            }
+          }
+
+          // error while receiving data, stops receiving data
+          // this clear CURL instance and buffer, it leads to GetConnectionState() to PROTOCOL_CONNECTION_STATE_NONE result and connection will be reopened by ProtocolHoster,
+          // it also reset each stream track downloading fragment
+          this->StopReceivingData();
+        }
+        else
+        {
+          // we don't need to set discontinuity flag, because we can re-open connection on lost postion
+
+          // download stream fragment again or download scheduled stream fragment
           for (unsigned int i = 0; i < this->streamTracks->Count(); i++)
           {
             CRtspStreamTrack *track = this->streamTracks->GetItem(i);
@@ -487,336 +757,66 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
             track->SetStreamFragmentDownloading(UINT_MAX);
           }
 
-          FREE_MEM_CLASS(this->mainCurlInstance);
+          // error while receiving data, stops receiving data
+          // this clear CURL instance and buffer, it leads to GetConnectionState() to PROTOCOL_CONNECTION_STATE_NONE result and connection will be reopened by ProtocolHoster,
+          // it also reset each stream track downloading fragment
+          this->StopReceivingData();
         }
       }
+    }
 
-      if (SUCCEEDED(result) && (!this->IsWholeStreamDownloaded()) && (this->streamTracks->Count() != 0))
-      {
-        bool allStreamFragmentsDownloaded = true;
-
-        for (unsigned int i = 0; i < this->streamTracks->Count(); i++)
-        {
-          CRtspStreamTrack *track = this->streamTracks->GetItem(i);
-
-          if ((track->GetStreamFragmentToDownload() != UINT_MAX) ||
-            (track->GetStreamFragmentDownloading() != UINT_MAX) ||
-            (track->GetStreamFragments()->GetFirstNotDownloadedStreamFragment(0) != UINT_MAX))
-          {
-            allStreamFragmentsDownloaded = false;
-            break;
-          }
-        }
-
-        if (allStreamFragmentsDownloaded)
-        {
-          // all fragments downloaded and processed
-          // whole stream downloaded
-          this->flags |= PROTOCOL_PLUGIN_FLAG_WHOLE_STREAM_DOWNLOADED | PROTOCOL_PLUGIN_FLAG_END_OF_STREAM_REACHED;        
-          this->flags &= ~PROTOCOL_PLUGIN_FLAG_STREAM_LENGTH_ESTIMATED;
-
-          this->mainCurlInstance->StopReceivingData();
-
-          for (unsigned int i = 0; (i < this->streamTracks->Count()); i++)
-          {
-            CRtspStreamTrack *track = this->streamTracks->GetItem(i);
-
-            // all stream fragments processed
-            // set stream length and report end of stream
-
-            if (!track->IsSetStreamLength())
-            {
-              track->SetStreamLength(track->GetBytePosition());
-              this->logger->Log(LOGGER_VERBOSE, L"%s: %s: track %u, setting total length: %llu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, i, track->GetStreamLength());
-              track->SetStreamLengthFlag(true);
-            }
-
-            if (!track->IsSetEndOfStream())
-            {
-              // notify filter the we reached end of stream
-              track->SetEndOfStreamFlag(true);
-            }
-          }
-        }
-        else
-        {
-          for (unsigned int i = 0; (i < this->streamTracks->Count()); i++)
-          {
-            CRtspStreamTrack *track = this->streamTracks->GetItem(i);
-
-            // adjust total length (if necessary)
-            if (!track->IsSetStreamLength())
-            {
-              if (track->GetStreamLength() == 0)
-              {
-                // stream length not set
-                // just make guess
-
-                track->SetStreamLength(int64_t(MINIMUM_RECEIVED_DATA_FOR_SPLITTER));
-                this->logger->Log(LOGGER_VERBOSE, L"%s: %s: track %u, setting quess total length: %llu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, i, track->GetStreamLength());
-              }
-              else if ((track->GetBytePosition() > (track->GetStreamLength() * 3 / 4)))
-              {
-                // it is time to adjust stream length, we are approaching to end but still we don't know total length
-                track->SetStreamLength(track->GetBytePosition() * 2);
-                this->logger->Log(LOGGER_VERBOSE, L"%s: %s: track %u, setting quess total length: %llu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, i, track->GetStreamLength());
-              }
-            }
-          }
-        }
-      }
-
-      // check if there isn't some fragment to download
-      bool anyTrackDownloading = false;
-      bool startFragmentDownload = false;
-
-      for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->streamTracks->Count())); i++)
+    if ((!this->IsSetStreamLength()) && (!(this->IsWholeStreamDownloaded() || this->IsEndOfStreamReached() || this->IsConnectionLostCannotReopen())))
+    {
+      for (unsigned int i = 0; (i < this->streamTracks->Count()); i++)
       {
         CRtspStreamTrack *track = this->streamTracks->GetItem(i);
 
-        anyTrackDownloading |= (track->GetStreamFragmentDownloading() != UINT_MAX);
-
-        if (track->GetStreamFragmentDownloading() == UINT_MAX)
+        // adjust total length (if necessary)
+        if (!track->IsSetStreamLength())
         {
-          unsigned int fragmentToDownload = UINT_MAX;
+          if (track->GetStreamLength() == 0)
+          {
+            // stream length not set
+            // just make guess
 
-          // if not set fragment to download, then set fragment to download (get next not downloaded fragment after current processed fragment)
-          fragmentToDownload = (track->GetStreamFragmentToDownload() == UINT_MAX) ? track->GetStreamFragments()->GetFirstNotDownloadedStreamFragment(track->GetStreamFragmentProcessing()) : track->GetStreamFragmentToDownload();
-          // if not set fragment to download, then set fragment to download (get next not downloaded fragment from first fragment)
-          fragmentToDownload = (fragmentToDownload == UINT_MAX) ? track->GetStreamFragments()->GetFirstNotDownloadedStreamFragment(0) : fragmentToDownload;
-          // fragment to download still can be UINT_MAX = no fragment to download
-
-          track->SetStreamFragmentToDownload(fragmentToDownload);
-          startFragmentDownload |= (fragmentToDownload != UINT_MAX);
+            track->SetStreamLength(int64_t(MINIMUM_RECEIVED_DATA_FOR_SPLITTER));
+            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: track %u, setting quess total length: %llu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, i, track->GetStreamLength());
+          }
+          else if ((track->GetBytePosition() > (track->GetStreamLength() * 3 / 4)))
+          {
+            // it is time to adjust stream length, we are approaching to end but still we don't know total length
+            track->SetStreamLength(track->GetBytePosition() * 2);
+            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: track %u, setting quess total length: %llu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, i, track->GetStreamLength());
+          }
         }
       }
+    }
 
-      if (SUCCEEDED(result) && ((this->mainCurlInstance == NULL) || ((startFragmentDownload) && (!anyTrackDownloading))))
+    if ((!this->IsSetStreamLength()) && (this->IsWholeStreamDownloaded() || this->IsEndOfStreamReached() || this->IsConnectionLostCannotReopen()))
+    {
+      // reached end of stream, set stream length
+
+      for (unsigned int i = 0; (i < this->streamTracks->Count()); i++)
       {
-        int64_t startTime = INT64_MAX;
+        CRtspStreamTrack *track = this->streamTracks->GetItem(i);
 
-        // if seeking to empty place (no downloaded fragment before) then use fragment time
-        // if seeking to fill gap (one or more downloaded fragment(s) before) then use previous fragment time
-        // if seeking in live stream (e.g. lost connection) then use zero time
-
-        for (unsigned int i = 0; (SUCCEEDED(result) && (!this->IsLiveStream()) && (i < this->streamTracks->Count())); i++)
+        if (!track->IsSetStreamLength())
         {
-          CRtspStreamTrack *track = this->streamTracks->GetItem(i);
-          unsigned int fragmentToDownload = track->GetStreamFragmentToDownload();
-
-          if (fragmentToDownload != UINT_MAX)
-          {
-            CRtspStreamFragment *firstFragment = track->GetStreamFragments()->GetItem(0);
-            CRtspStreamFragment *fragment = track->GetStreamFragments()->GetItem(fragmentToDownload);
-
-            int64_t fragmentRtpTimestamp = INT64_MAX;
-
-            if (fragmentToDownload > 0)
-            {
-              CRtspStreamFragment *previousFragment = track->GetStreamFragments()->GetItem(fragmentToDownload - 1);
-
-              if (previousFragment->IsDownloaded())
-              {
-                fragmentRtpTimestamp = min(previousFragment->GetFragmentRtpTimestamp(), fragmentRtpTimestamp);
-              }
-            }
-
-            fragmentRtpTimestamp = min(fragment->GetFragmentRtpTimestamp(), fragmentRtpTimestamp);
-            fragmentRtpTimestamp *= 1000;
-            fragmentRtpTimestamp /= track->GetClockFrequency();
-
-            startTime = min(startTime, fragmentRtpTimestamp);
-          }
+          track->SetStreamLength(track->GetBytePosition());
+          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: track %u, setting total length: %llu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, i, track->GetStreamLength());
+          track->SetStreamLengthFlag(true);
         }
 
-        startTime = (startTime != INT64_MAX) ? startTime: 0;
-
-        FREE_MEM_CLASS(this->mainCurlInstance);
-        FREE_MEM_CLASS(this->sessionDescription);
-
-        // new connection will be created with new RTP packet timestamps
-        // clear set RTP packet timestamp flags
-        for (unsigned int i = 0; i < this->streamTracks->Count(); i++)
+        if (!track->IsSetEndOfStream())
         {
-          CRtspStreamTrack *track = this->streamTracks->GetItem(i);
-
-          track->SetFirstRtpPacketTimestamp(UINT_MAX, false, 0);
-          track->SetReceivedAllDataFlag(false);
-
-          // clear all not downloaded stream fragments
-          // recalculate stream fragments timestams for not downloaded stream fragments
-          for (unsigned int j = 0; j < track->GetStreamFragments()->Count(); j++)
-          {
-            CRtspStreamFragment *fragment = track->GetStreamFragments()->GetItem(j);
-
-            if (!fragment->IsDownloaded())
-            {
-              fragment->GetBuffer()->ClearBuffer();
-
-              fragment->SetFragmentRtpTimestamp(fragment->GetFragmentRtpTimestamp(), false);
-            }
-          }
-        }
-
-        this->mainCurlInstance = new CRtspCurlInstance(&result, this->logger, this->lockCurlMutex, PROTOCOL_IMPLEMENTATION_NAME, L"Main");
-        CHECK_POINTER_HRESULT(result, this->mainCurlInstance, result, E_OUTOFMEMORY);
-
-        if (SUCCEEDED(result))
-        {
-          // set connection priorities
-          this->mainCurlInstance->SetMulticastPreference(this->configuration->GetValueUnsignedInt(PARAMETER_NAME_RTSP_MULTICAST_PREFERENCE, true, RTSP_MULTICAST_PREFERENCE_DEFAULT));
-          this->mainCurlInstance->SetSameConnectionTcpPreference(this->configuration->GetValueUnsignedInt(PARAMETER_NAME_RTSP_SAME_CONNECTION_TCP_PREFERENCE, true, RTSP_SAME_CONNECTION_TCP_PREFERENCE_DEFAULT));
-          this->mainCurlInstance->SetUdpPreference(this->configuration->GetValueUnsignedInt(PARAMETER_NAME_RTSP_UDP_PREFERENCE, true, RTSP_UDP_PREFERENCE_DEFAULT));
-
-          // set ports
-          this->mainCurlInstance->SetRtspClientPortMin(this->configuration->GetValueUnsignedInt(PARAMETER_NAME_RTSP_CLIENT_PORT_MIN, true, RTSP_CLIENT_PORT_MIN_DEFAULT));
-          this->mainCurlInstance->SetRtspClientPortMax(this->configuration->GetValueUnsignedInt(PARAMETER_NAME_RTSP_CLIENT_PORT_MAX, true, RTSP_CLIENT_PORT_MAX_DEFAULT));
-
-          this->mainCurlInstance->SetIgnoreRtpPayloadType(this->configuration->GetValueBool(PARAMETER_NAME_RTSP_IGNORE_RTP_PAYLOAD_TYPE, true, RTSP_IGNORE_RTP_PAYLOAD_TYPE_DEFAULT));
-
-          if (this->configuration->GetValueBool(PARAMETER_NAME_DUMP_INPUT_RAW_DATA, true, PARAMETER_NAME_DUMP_INPUT_RAW_DATA_DEFAULT))
-          {
-            wchar_t *storeFilePath = this->GetStoreFile(0, L"dump");
-            CHECK_CONDITION_NOT_NULL_EXECUTE(storeFilePath, this->mainCurlInstance->SetDumpFile(storeFilePath));
-            FREE_MEM(storeFilePath);
-          }
-        }
-
-        if (SUCCEEDED(result))
-        {
-          CRtspDownloadRequest *request = new CRtspDownloadRequest(&result);
-          CHECK_POINTER_HRESULT(result, request, result, E_OUTOFMEMORY);
-
-          if (SUCCEEDED(result))
-          {
-            request->SetStartTime(startTime);
-            request->SetUrl(this->configuration->GetValue(PARAMETER_NAME_URL, true, NULL));
-            request->SetReceivedDataTimeout(this->receiveDataTimeout);
-            request->SetNetworkInterfaceName(this->configuration->GetValue(PARAMETER_NAME_INTERFACE, true, NULL));
-
-            if (SUCCEEDED(this->mainCurlInstance->Initialize(request)))
-            {
-              if (this->sessionDescription == NULL)
-              {
-                const wchar_t *rawSDP = this->mainCurlInstance->GetRtspDownloadResponse()->GetRawSessionDescription();
-                unsigned int rawSDPlength = wcslen(rawSDP);
-
-                this->sessionDescription = new CSessionDescription(&result);
-                CHECK_POINTER_HRESULT(result, this->sessionDescription, result, E_OUTOFMEMORY);
-                CHECK_CONDITION_HRESULT(result, this->sessionDescription->Parse(rawSDP, rawSDPlength), result, E_RTSP_SESSION_DESCRIPTION_PARSE_ERROR);
-              }
-
-              if (SUCCEEDED(result))
-              {
-                // check for normal play time range attribute in session description
-                // if normal play time range attribute has start and end time, then session is not live session
-
-                CNormalPlayTimeRangeAttribute *nptAttribute = NULL;
-                for (unsigned int i = 0; i < this->sessionDescription->GetAttributes()->Count(); i++)
-                {
-                  CAttribute *attribute = this->sessionDescription->GetAttributes()->GetItem(i);
-
-                  if (attribute->IsInstanceTag(TAG_ATTRIBUTE_INSTANCE_NORMAL_PLAY_TIME_RANGE))
-                  {
-                    nptAttribute = dynamic_cast<CNormalPlayTimeRangeAttribute *>(attribute);
-                    break;
-                  }
-                }
-
-                // RTSP is by default for live streams
-                this->flags |= PROTOCOL_PLUGIN_FLAG_LIVE_STREAM_DETECTED;
-
-                if (nptAttribute != NULL)
-                {
-                  if (nptAttribute->IsSetStartTime() && nptAttribute->IsSetEndTime() && (nptAttribute->GetEndTime() >= nptAttribute->GetStartTime()))
-                  {
-                    // not live stream
-                    this->flags &= ~PROTOCOL_PLUGIN_FLAG_LIVE_STREAM_DETECTED;
-                  }
-                }
-
-                // if in configuration is specified live stream flag, then use it and ignore normal play time attribute
-                //this->liveStream = this->configurationParameters->GetValueBool(PARAMETER_NAME_LIVE_STREAM, true, this->liveStream);
-              }
-
-              // all parameters set
-              // start receiving data
-
-              if (SUCCEEDED(this->mainCurlInstance->StartReceivingData()))
-              {
-                this->connectionState = Opening;
-
-                // create same count of RTSP stream tracks as RTSP tracks in CURL instance
-                CLockMutex(this->lockCurlMutex, INFINITE);
-
-                if (this->streamTracks->Count() != this->mainCurlInstance->GetRtspDownloadResponse()->GetRtspTracks()->Count())
-                {
-                  this->streamTracks->Clear();
-
-                  for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->mainCurlInstance->GetRtspDownloadResponse()->GetRtspTracks()->Count())); i++)
-                  {
-                    CRtspTrack *track = this->mainCurlInstance->GetRtspDownloadResponse()->GetRtspTracks()->GetItem(i);
-                    CRtspStreamTrack *streamTrack = new CRtspStreamTrack(&result);
-                    CHECK_POINTER_HRESULT(result, streamTrack, result, E_OUTOFMEMORY);
-
-                    streamTrack->SetLastReceiveDataTime(GetTickCount());
-                    streamTrack->SetClockFrequency(track->GetStatistics()->GetClockFrequency());
-                    streamTrack->SetReceivedAllDataFlag(false);
-
-                    CHECK_CONDITION_HRESULT(result, this->streamTracks->Add(streamTrack), result, E_OUTOFMEMORY);
-                    CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(streamTrack));
-                  }
-
-                  // for each stream track add first stream fragment
-                  for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->streamTracks->Count())); i++)
-                  {
-                    CRtspStreamTrack *track = this->streamTracks->GetItem(i);
-
-                    CRtspStreamFragment *fragment = new CRtspStreamFragment(&result);
-                    CHECK_POINTER_HRESULT(result, fragment, result, E_OUTOFMEMORY);
-
-                    fragment->SetFragmentStartPosition(0);
-                    CHECK_CONDITION_HRESULT(result, track->GetStreamFragments()->Insert(0, fragment), result, E_OUTOFMEMORY);
-
-                    if (SUCCEEDED(result))
-                    {
-                      // set start searching index to current processing stream fragment
-                      track->GetStreamFragments()->SetStartSearchingIndex(track->GetStreamFragmentProcessing());
-                      // set count of fragments to search for specific position
-                      unsigned int firstNotDownloadedFragmentIndex = track->GetStreamFragments()->GetFirstNotDownloadedStreamFragment(track->GetStreamFragmentProcessing());
-                      track->GetStreamFragments()->SetSearchCount(((firstNotDownloadedFragmentIndex == UINT_MAX) ? track->GetStreamFragments()->Count() : firstNotDownloadedFragmentIndex) - track->GetStreamFragmentProcessing());
-
-                      track->SetStreamFragmentToDownload(0);
-                    }
-                    else
-                    {
-                      FREE_MEM_CLASS(fragment);
-                    }
-                  }
-                }
-
-                // set stream fragment downloading for each track (based on start time)
-                for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->streamTracks->Count())); i++)
-                {
-                  CRtspStreamTrack *track = this->streamTracks->GetItem(i);
-
-                  track->SetStreamFragmentDownloading(track->GetStreamFragmentToDownload());
-
-                  // we are downloading stream fragment, so reset scheduled download
-                  track->SetStreamFragmentToDownload(UINT_MAX);
-                }
-
-                CHECK_CONDITION_EXECUTE(SUCCEEDED(result), this->connectionState = Opened);
-              }
-            }
-            else
-            {
-              this->connectionState = InitializeFailed;
-            }
-          }
-          FREE_MEM_CLASS(request);
+          track->SetEndOfStreamFlag(true);
         }
       }
+
+      this->flags |= PROTOCOL_PLUGIN_FLAG_SET_STREAM_LENGTH;
+      this->flags &= ~PROTOCOL_PLUGIN_FLAG_STREAM_LENGTH_ESTIMATED;
+
+      FREE_MEM_CLASS(this->mainCurlInstance);
     }
 
     // process stream package (if valid)
@@ -872,7 +872,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
       CHECK_CONDITION_EXECUTE(FAILED(res), streamPackage->SetCompleted(res));
     }
 
-    if ((streamPackage->GetState() == CStreamPackage::Waiting) || (streamPackage->GetState() == CStreamPackage::WaitingIgnoreTimeout))
+    if (streamPackage->GetState() == CStreamPackage::Waiting)
     {
       // in Waiting or WaitingIgnoreTimeout state can be request only if request and response are correctly set
       CStreamPackageDataRequest *dataRequest = dynamic_cast<CStreamPackageDataRequest *>(streamPackage->GetRequest());
@@ -887,19 +887,19 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
         // clear response buffer
         dataResponse->GetBuffer()->ClearBuffer();
 
-        // first try to find starting media packet (packet which have first data)
-        unsigned int packetIndex = UINT_MAX;
+        // first try to find starting stream fragment (stream fragment which have first data)
+        unsigned int fragmentIndex = UINT_MAX;
         unsigned int foundDataLength = 0;
 
         int64_t startPosition = dataRequest->GetStart();
-        packetIndex = streamTrack->GetStreamFragments()->GetStreamFragmentIndexBetweenPositions(startPosition);
+        fragmentIndex = streamTrack->GetStreamFragments()->GetStreamFragmentIndexBetweenPositions(startPosition);
 
-        while (packetIndex != UINT_MAX)
+        while (fragmentIndex != UINT_MAX)
         {
-          streamTrack->SetStreamFragmentProcessing(packetIndex);
+          streamTrack->SetStreamFragmentProcessing(fragmentIndex);
 
           // get stream fragment
-          CRtspStreamFragment *streamFragment = streamTrack->GetStreamFragments()->GetItem(packetIndex);
+          CRtspStreamFragment *streamFragment = streamTrack->GetStreamFragments()->GetItem(fragmentIndex);
 
           int64_t streamFragmentRelativeStart = streamFragment->GetFragmentStartPosition() - streamTrack->GetStreamFragments()->GetItem(streamTrack->GetStreamFragments()->GetStartSearchingIndex())->GetFragmentStartPosition();
 
@@ -907,8 +907,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
           unsigned int copyDataStart = (startPosition > streamFragmentRelativeStart) ? (unsigned int)(startPosition - streamFragmentRelativeStart) : 0;
           unsigned int copyDataLength = min(streamFragment->GetLength() - copyDataStart, dataRequest->GetLength() - foundDataLength);
 
-          // copy data from media packet to response buffer
-          if (streamTrack->GetCacheFile()->LoadItems(streamTrack->GetStreamFragments(), packetIndex, true, false))
+          // copy data from stream fragment to response buffer
+          if (streamTrack->GetCacheFile()->LoadItems(streamTrack->GetStreamFragments(), fragmentIndex, true, false))
           {
             // memory is allocated while switching from Created to Waiting state, we can't have problem on next line
             dataResponse->GetBuffer()->AddToBufferWithResize(streamFragment->GetBuffer(), copyDataStart, copyDataLength);
@@ -922,16 +922,24 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
           // update length of data
           foundDataLength += copyDataLength;
 
-          if (foundDataLength < dataRequest->GetLength())
+          if (streamFragment->IsDiscontinuity())
+          {
+            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: discontinuity, completing request, request '%u', start '%lld', size '%u', found: '%u'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, dataRequest->GetId(), dataRequest->GetStart(), dataRequest->GetLength(), foundDataLength);
+
+            dataResponse->SetDiscontinuity(true);
+          }
+
+          if ((!streamFragment->IsDiscontinuity()) && (foundDataLength < dataRequest->GetLength()))
           {
             // find another stream fragment after end of this stream fragment
             startPosition += copyDataLength;
 
-            packetIndex = streamTrack->GetStreamFragments()->GetStreamFragmentIndexBetweenPositions(startPosition);
+            // find another stream fragment after end of this stream fragment
+            fragmentIndex = streamTrack->GetStreamFragments()->GetStreamFragmentIndexBetweenPositions(startPosition);
 
-            if (packetIndex != UINT_MAX)
+            if (fragmentIndex != UINT_MAX)
             {
-              streamTrack->SetStreamFragmentProcessing(packetIndex);
+              streamTrack->SetStreamFragmentProcessing(fragmentIndex);
             }
           }
           else
@@ -954,34 +962,31 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
           }
           else
           {
-            unsigned int currentTime = GetTickCount();
-
-            if ((streamPackage->GetState() == CStreamPackage::Waiting) && ((currentTime - dataRequest->GetStartTime()) > this->GetReceiveDataTimeout()))
+            if (dataResponse->IsDiscontinuity())
             {
-              // request timeouted
-              // finish request with error to avoid freeze
-              this->logger->Log(LOGGER_ERROR, L"%s: %s: request '%u', stream '%u', timeout, current time: %u, request start time: %u, specified timeout: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, dataRequest->GetId(), dataRequest->GetStreamId(), currentTime, dataRequest->GetStartTime(), this->GetReceiveDataTimeout());
-
-              streamPackage->SetCompleted(VFW_E_TIMEOUT);
+              streamPackage->SetCompleted(S_OK);
             }
-            else if (this->IsLiveStream() && (!this->IsWholeStreamDownloaded()) && ((currentTime - streamTrack->GetLastReceiveDataTime()) > this->GetReceiveDataTimeout()))
+            else if (this->IsConnectionLostCannotReopen())
             {
-              // we don't receive data from protocol at least for specified timeout or request timeouted
-              // finish request with error to avoid freeze
-              this->logger->Log(LOGGER_ERROR, L"%s: %s: request '%u', stream '%u', doesn't receive data for specified time, current time: %u, last received data time: %u, specified timeout: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, dataRequest->GetId(), dataRequest->GetStreamId(), currentTime, streamTrack->GetLastReceiveDataTime(), this->GetReceiveDataTimeout());
+              // connection is lost and we cannot reopen it
+              this->logger->Log(LOGGER_VERBOSE, L"%s: %s: connection lost, no more data available, request '%u', start '%lld', size '%u', stream length: '%lld'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, dataRequest->GetId(), dataRequest->GetStart(), dataRequest->GetLength(), streamTrack->GetStreamLength());
 
-              streamPackage->SetCompleted(VFW_E_TIMEOUT);
-            }
-            else if ((!this->IsWholeStreamDownloaded()) && streamTrack->IsSetStreamLength() && ((dataRequest->GetStart() + dataRequest->GetLength()) < streamTrack->GetStreamLength()))
-            {
-              // we are receiving data, wait for all requested data
+              streamPackage->SetCompleted((dataResponse->GetBuffer()->GetBufferOccupiedSpace() != 0) ? S_OK : E_CONNECTION_LOST_CANNOT_REOPEN);
             }
             else if (this->IsEndOfStreamReached() && ((dataRequest->GetStart() + dataRequest->GetLength()) >= streamTrack->GetStreamLength()))
             {
               // we are not receiving more data, complete request
-              this->logger->Log(LOGGER_VERBOSE, L"%s: %s: no more data available, request '%u', stream '%u', start '%lld', size '%u', stream length: '%lld'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, dataRequest->GetId(), dataRequest->GetStreamId(), dataRequest->GetStart(), dataRequest->GetLength(), streamTrack->GetStreamLength());
+              this->logger->Log(LOGGER_VERBOSE, L"%s: %s: no more data available, request '%u', start '%lld', size '%u', stream length: '%lld'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, dataRequest->GetId(), dataRequest->GetStart(), dataRequest->GetLength(), streamTrack->GetStreamLength());
 
               streamPackage->SetCompleted((dataResponse->GetBuffer()->GetBufferOccupiedSpace() != 0) ? S_OK : E_NO_MORE_DATA_AVAILABLE);
+            }
+            else if (this->IsLiveStreamDetected() && (this->connectionState != Opened))
+            {
+              // we have live stream, we are missing data and we have not opened connection
+              // we lost some data, report discontinuity
+
+              dataResponse->SetDiscontinuity(true);
+              streamPackage->SetCompleted(S_OK);
             }
           }
 
@@ -994,6 +999,15 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
 
             unsigned int fragmentIndex = streamTrack->GetStreamFragments()->GetStartSearchingIndex() + streamTrack->GetStreamFragments()->GetSearchCount();
             CRtspStreamFragment *fragment = streamTrack->GetStreamFragments()->GetItem(fragmentIndex);
+
+            if (fragment == NULL)
+            {
+              // bad, no such fragment exists, we don't have data
+
+              this->logger->Log(LOGGER_ERROR, L"%s: %s: request '%u', requesting data from '%lld' to '%lld', not found stream fragment", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, dataRequest->GetId(), dataRequest->GetStart(), dataRequest->GetStart() + dataRequest->GetLength());
+
+              streamPackage->SetCompleted(E_NO_MORE_DATA_AVAILABLE);
+            }
 
             if ((fragment != NULL) && (!fragment->IsDownloaded()) && (fragmentIndex != streamTrack->GetStreamFragmentDownloading()))
             {
@@ -1023,6 +1037,9 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
 
         if ((fragment != NULL) && fragment->IsDownloaded())
         {
+          // set discontinuity flag (if set on stream fragment)
+          packetResponse->SetDiscontinuity(fragment->IsDiscontinuity());
+
           // clone media packet from stream fragments
           if (streamTrack->GetCacheFile()->LoadItems(streamTrack->GetStreamFragments(), streamTrack->GetStreamFragmentProcessing(), true, false))
           {
@@ -1048,22 +1065,31 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
 
         if (streamPackage->GetState() == CStreamPackage::Waiting)
         {
-          unsigned int currentTime = GetTickCount();
-
-          if ((streamPackage->GetState() == CStreamPackage::Waiting) && ((currentTime - packetRequest->GetStartTime()) > this->GetReceiveDataTimeout()))
+          if (packetResponse->IsDiscontinuity())
           {
-            // request timeouted
-            // finish request with error to avoid freeze
-            this->logger->Log(LOGGER_ERROR, L"%s: %s: request '%u', stream '%u', timeout, current time: %u, request start time: %u, specified timeout: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, packetRequest->GetId(), packetRequest->GetStreamId(), currentTime, packetRequest->GetStartTime(), this->GetReceiveDataTimeout());
-
-            streamPackage->SetCompleted(VFW_E_TIMEOUT);
+            streamPackage->SetCompleted(S_OK);
           }
-          else if (streamTrack->IsSetEndOfStream() && (streamTrack->GetStreamFragmentProcessing() >= streamTrack->GetStreamFragments()->Count()))
+          else if (this->IsConnectionLostCannotReopen())
+          {
+            // connection is lost and we cannot reopen it
+            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: connection lost, no more data available, request '%u', stream '%u'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, packetRequest->GetId(), packetRequest->GetStreamId());
+
+            streamPackage->SetCompleted(E_CONNECTION_LOST_CANNOT_REOPEN);
+          }
+          else if (this->IsEndOfStreamReached() && (streamTrack->GetStreamFragmentProcessing() >= streamTrack->GetStreamFragments()->Count()))
           {
             // we are not receiving more data, complete request
             this->logger->Log(LOGGER_VERBOSE, L"%s: %s: no more data available, request '%u', stream '%u'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, packetRequest->GetId(), packetRequest->GetStreamId());
 
             streamPackage->SetCompleted(E_NO_MORE_DATA_AVAILABLE);
+          }
+          else if (this->IsLiveStreamDetected() && (this->connectionState != Opened))
+          {
+            // we have live stream, we are missing data and we have not opened connection
+            // we lost some data, report discontinuity
+
+            packetResponse->SetDiscontinuity(true);
+            streamPackage->SetCompleted(S_OK);
           }
         }
       }
@@ -1163,10 +1189,20 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::GetConnectionParameters(CParameterCo
 
 // ISimpleProtocol interface
 
-//unsigned int CMPUrlSourceSplitter_Protocol_Rtsp::GetReceiveDataTimeout(void)
-//{
-//  return this->receiveDataTimeout;
-//}
+unsigned int CMPUrlSourceSplitter_Protocol_Rtsp::GetOpenConnectionTimeout(void)
+{
+  return this->configuration->GetValueUnsignedInt(PARAMETER_NAME_RTSP_OPEN_CONNECTION_TIMEOUT, true, RTSP_OPEN_CONNECTION_TIMEOUT_DEFAULT);
+}
+
+unsigned int CMPUrlSourceSplitter_Protocol_Rtsp::GetOpenConnectionSleepTime(void)
+{
+  return this->configuration->GetValueUnsignedInt(PARAMETER_NAME_RTSP_OPEN_CONNECTION_SLEEP_TIME, true, RTSP_OPEN_CONNECTION_SLEEP_TIME_DEFAULT);
+}
+
+unsigned int CMPUrlSourceSplitter_Protocol_Rtsp::GetTotalReopenConnectionTimeout(void)
+{
+  return this->configuration->GetValueUnsignedInt(PARAMETER_NAME_RTSP_TOTAL_REOPEN_CONNECTION_TIMEOUT, true, RTSP_TOTAL_REOPEN_CONNECTION_TIMEOUT_DEFAULT);
+}
 
 HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::StartReceivingData(CParameterCollection *parameters)
 {
@@ -1240,7 +1276,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ClearSession(void)
 
   HRESULT result = __super::ClearSession();
  
-  this->receiveDataTimeout = RTSP_RECEIVE_DATA_TIMEOUT_DEFAULT;
   this->connectionState = None;
   this->streamTracks->Clear();
 
@@ -1371,7 +1406,7 @@ int64_t CMPUrlSourceSplitter_Protocol_Rtsp::SeekToTime(unsigned int streamId, in
   {
     // first seek is always on stream with ID zero
 
-    this->flags &= ~(PROTOCOL_PLUGIN_FLAG_END_OF_STREAM_REACHED | PROTOCOL_PLUGIN_FLAG_WHOLE_STREAM_DOWNLOADED);
+    this->flags &= ~(PROTOCOL_PLUGIN_FLAG_END_OF_STREAM_REACHED | PROTOCOL_PLUGIN_FLAG_WHOLE_STREAM_DOWNLOADED | PROTOCOL_PLUGIN_FLAG_SET_STREAM_LENGTH);
     this->flags |= PROTOCOL_PLUGIN_FLAG_STREAM_LENGTH_ESTIMATED;
 
     // in all tracks is set stream fragment to process
@@ -1478,9 +1513,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::Initialize(CPluginConfiguration *con
     CHECK_CONDITION_HRESULT(result, this->configuration->Append(protocolConfiguration->GetConfiguration()), result, E_OUTOFMEMORY);
 
     this->configuration->LogCollection(this->logger, LOGGER_VERBOSE, PROTOCOL_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME);
-
-    this->receiveDataTimeout = this->configuration->GetValueLong(PARAMETER_NAME_RTSP_RECEIVE_DATA_TIMEOUT, true, RTSP_RECEIVE_DATA_TIMEOUT_DEFAULT);
-    this->receiveDataTimeout = (this->receiveDataTimeout < 0) ? RTSP_RECEIVE_DATA_TIMEOUT_DEFAULT : this->receiveDataTimeout;
 
     this->flags |= this->configuration->GetValueBool(PARAMETER_NAME_LIVE_STREAM, true, PARAMETER_NAME_LIVE_STREAM_DEFAULT) ? PROTOCOL_PLUGIN_FLAG_LIVE_STREAM_SPECIFIED : PROTOCOL_PLUGIN_FLAG_NONE;
   }

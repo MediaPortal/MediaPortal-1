@@ -24,9 +24,15 @@
 #define __PACKET_INPUT_FORMAT_DEFINED
 
 #include "IPacketDemuxer.h"
+#include "Flags.h"
 
 #define PACKET_INPUT_FORMAT_IDENTIFIER                                "packet"
 #define PACKET_INPUT_FORMAT_LONG_NAME                                 "Packet input"
+
+#define PACKET_INPUT_FORMAT_FLAG_NONE                                 FLAGS_NONE
+
+#define PACKET_INPUT_FORMAT_FLAG_RESET_PACKET_COUNTER                 (1 << (FLAGS_LAST + 0))
+#define PACKET_INPUT_FORMAT_FLAG_DISCONTINUITY                        (1 << (FLAGS_LAST + 1))
 
 // we can't use CFlags class, because AVInputFormat has already flags member
 class CPacketInputFormat : public AVInputFormat
@@ -41,6 +47,11 @@ public:
 
   /* other methods */
 
+  // tests if specific combination of flags is set
+  // @param flags : the set of flags to test
+  // @return : true if set of flags is set, false otherwise
+  bool IsSetFlags(uint64_t flags);
+
 protected:
 
   IPacketDemuxer *demuxer;
@@ -51,7 +62,7 @@ protected:
 
   int64_t streamIoContextBufferPosition;
 
-  bool resetPacketCounter;
+  uint64_t internalFlags;
 
   /* static methods */
 

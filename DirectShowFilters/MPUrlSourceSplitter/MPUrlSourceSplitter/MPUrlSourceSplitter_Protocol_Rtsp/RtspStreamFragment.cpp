@@ -87,7 +87,18 @@ void CRtspStreamFragment::SetFragmentStartPosition(int64_t fragmentStartPosition
   this->fragmentStartPosition = fragmentStartPosition;
 }
 
+void CRtspStreamFragment::SetDiscontinuity(bool discontinuity)
+{
+  this->flags &= ~RTSP_STREAM_FRAGMENT_FLAG_DISCONTINUITY;
+  this->flags |= discontinuity ? RTSP_STREAM_FRAGMENT_FLAG_DISCONTINUITY : RTSP_STREAM_FRAGMENT_FLAG_NONE;
+}
+
 /* other methods */
+
+bool CRtspStreamFragment::IsDiscontinuity(void)
+{
+  return this->IsSetFlags(RTSP_STREAM_FRAGMENT_FLAG_DISCONTINUITY);
+}
 
 bool CRtspStreamFragment::IsDownloaded(void)
 {
