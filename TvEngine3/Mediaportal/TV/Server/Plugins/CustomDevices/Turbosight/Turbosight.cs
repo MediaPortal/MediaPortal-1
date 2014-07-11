@@ -1122,6 +1122,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
       if (_propertySet != null)
       {
         hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET_USB, (int)BdaExtensionPropertyUsb.TbsAccess, out support);
+        if (hr != (int)HResult.Severity.Success)
+        {
+          hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET_USB, (int)BdaExtensionPropertyUsb.CiAccess, out support);
+        }
         if (hr == (int)HResult.Severity.Success && support != 0)
         {
           // Okay, we've got a USB tuner here.
@@ -1141,6 +1145,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
         if (_propertySet != null)
         {
           hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.TbsAccess, out support);
+          if (hr != (int)HResult.Severity.Success)
+          {
+            hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.CiAccess, out support);
+          }
           if (hr == (int)HResult.Severity.Success && support != 0)
           {
             // Okay, we've got a PCIe or PCI tuner here.
