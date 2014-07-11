@@ -82,9 +82,18 @@ void CStreamHandler::write(unsigned char *dataPtr, int numBytes)
 		_streamRunning = true;
 		LogDebug("startStreaming");
 		_test2 = "test";
-		_streamingThread = std::thread(&IMPrtpStream::MPrtpStreamCreate, this->_MPrtpStream.get(), _clientIp.c_str(), _clientPort, _test2);
-		_streamingThread.detach(); // fire & forget, maybe not the best option so have a look here later: http://stackoverflow.com/questions/16296284/workaround-for-blocking-async
+		//_streamingThread = std::thread(&IMPrtpStream::MPrtpStreamCreate, this->_MPrtpStream.get(), _clientIp.c_str(), _clientPort, _test2);
+		//_streamingThread.detach(); // fire & forget, maybe not the best option so have a look here later: http://stackoverflow.com/questions/16296284/workaround-for-blocking-async
+		_streamingThread = (HANDLE)_beginthread(&CStreamHandler::CreateStream, 0, (void*)this);
+		LogDebug("startStreaming - Thread started");
 	}
+}
+
+void __cdecl CStreamHandler::CreateStream(void* arg)
+{
+	LogDebug("filter: Streaming thread CreateStream function");
+	CStreamHandler* filter = (CStreamHandler*)arg;
+	filter->_MPrtpStream->MPrtpStreamCreate(filter->_clientIp.c_str(), filter->_clientPort, filter->_test2);
 }
 
 void CStreamHandler::start()

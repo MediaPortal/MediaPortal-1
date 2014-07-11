@@ -5,7 +5,7 @@
 #include "RtpStreamInterface.h"
 #include "SectionDecoder.h"
 #include "PmtParser.h"
-#include <thread>
+//#include <thread>
 #include <string>
 #include <memory>
 #include <process.h>
@@ -34,6 +34,7 @@ public:
 	int _clientPort;
 
 private:
+	static void __cdecl CreateStream(void* arg);
 
 	HINSTANCE _LoadMe;
 	pvFunctv  _MPrtpStreamEntryPoint;
@@ -46,7 +47,8 @@ private:
 	bool _startStreaming;
 	bool _stop;
 	bool _pmtSet;
-	std::thread _streamingThread;
+	//std::thread _streamingThread;
+	HANDLE _streamingThread;
 	CSectionDecoder* _sectionDecoder;
 	CPmtParser* _pmtParser;
 

@@ -27,7 +27,7 @@
 //#include "PidFilter.h"
 //#include "RtpStreamInterface.h"
 #include "StreamHandler.h"
-#include <thread>
+//#include <thread>
 #include <process.h>
 #include <sstream>
 #include "config.h"
@@ -147,7 +147,7 @@ private:
 	//thread streamingThread;
 
 	char* test2;
-	thread streamingThread;
+//	thread streamingThread;
 	bool streamRunning;
 	bool streamConfigured;
 	int bytesWritten;

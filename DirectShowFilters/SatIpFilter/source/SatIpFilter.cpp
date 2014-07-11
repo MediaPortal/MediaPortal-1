@@ -702,7 +702,10 @@ unsigned int __stdcall namedPipeReadThread(/*HANDLE&*//*LPVOID hPipe_tmp*/void* 
 									if (i > 0) {
 										ipString.append(".");
 									}
-									ipString.append(std::to_string(ipv4));
+									stringstream ssipv4;
+									ssipv4 << ipv4;
+									//ipString.append(std::to_string(ipv4));
+									ipString.append(ssipv4.str());
 								}								
 							}
 							parameters.SatIP->_streamHandler[slot]._clientIp = ipString;
