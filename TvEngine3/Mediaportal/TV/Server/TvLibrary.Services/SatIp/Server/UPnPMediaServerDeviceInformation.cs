@@ -48,7 +48,7 @@ namespace Mediaportal.TV.Server.TVLibrary.SatIp.Server
 
     public string GetModelName(CultureInfo culture)
     {
-      return "Basic";
+      return "MediaPortal UPnP Server";
     }
 
     public string GetModelNumber(CultureInfo culture)
