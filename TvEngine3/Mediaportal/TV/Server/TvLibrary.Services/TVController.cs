@@ -108,7 +108,7 @@ namespace Mediaportal.TV.Server.TVLibrary
     /// <summary>
     /// Recording scheduler
     /// </summary>
-    private UPnPServer _satIPServer;
+    private UPnPServer _UPnPServer;
 
     /// <summary>
     /// RTSP Streaming Server
@@ -513,7 +513,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         _epgGrabber.Start();
         _scheduler = new Scheduler.Scheduler();
         _scheduler.Start();
-        _satIPServer = new UPnPServer();
+        _UPnPServer = new UPnPServer();
 
         StartHeartbeatManager();
         StartTvServerEventDispatcher();

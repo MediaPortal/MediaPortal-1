@@ -227,7 +227,7 @@ STDMETHODIMP CSatIPFilter::Run(REFERENCE_TIME tStart)
 		m_pSatIP->_stop = false;
 		//m_pSatIP->initialize();
 	// start every stream handler
-	for (size_t i = 0; i < NUMBER_OF_STREAMING_SLOTS - 1; ++i) {
+	for (size_t i = 0; i < NUMBER_OF_STREAMING_SLOTS; ++i) {
 		LogDebug("start slot: %d", i);
 		m_pSatIP->_streamHandler[i].start();
 	}
@@ -550,16 +550,10 @@ void CSatIP::Stop()
 	/*if (MPrtpStream != NULL)
 		MPrtpStream->RtpStop();*/
 	// stop every stream handler
-	for (size_t i = 0; i < NUMBER_OF_STREAMING_SLOTS - 1; ++i) {
+	for (size_t i = 0; i < NUMBER_OF_STREAMING_SLOTS; ++i) {
 		LogDebug("stop slot: %d", i);
 		_streamHandler[i].stop();
 	}
-	LogDebug("join streaming thread");
-	//TerminateThread(streamingThread.native_handle(), 0);
-	//CloseHandle(streamingThread.native_handle());
-	LogDebug("delete MPrtpStream");
-	//delete(MPrtpStream);
-	LogDebug("MPrtpStream deleted");
 }
 
 HANDLE CSatIP::createPipe(const char* pipeName) {
@@ -704,7 +698,6 @@ unsigned int __stdcall namedPipeReadThread(/*HANDLE&*//*LPVOID hPipe_tmp*/void* 
 									}
 									stringstream ssipv4;
 									ssipv4 << ipv4;
-									//ipString.append(std::to_string(ipv4));
 									ipString.append(ssipv4.str());
 								}								
 							}

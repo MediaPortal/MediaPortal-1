@@ -5,7 +5,6 @@
 #include "RtpStreamInterface.h"
 #include "SectionDecoder.h"
 #include "PmtParser.h"
-//#include <thread>
 #include <string>
 #include <memory>
 #include <process.h>
@@ -47,7 +46,6 @@ private:
 	bool _startStreaming;
 	bool _stop;
 	bool _pmtSet;
-	//std::thread _streamingThread;
 	HANDLE _streamingThread;
 	CSectionDecoder* _sectionDecoder;
 	CPmtParser* _pmtParser;

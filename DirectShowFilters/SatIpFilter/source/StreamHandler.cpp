@@ -12,11 +12,11 @@ CStreamHandler::CStreamHandler()
 	// configure streaming
 	_LoadMe = LoadLibrary("RtpStreamer.dll");
 	if (_LoadMe != 0)
-		LogDebug("RtpStreamer.dll library loaded!\n");
+		LogDebug("RtpStreamer.dll library loaded!");
 	else
-		LogDebug("RtpStreamer.dll library failed to load!\n");
+		LogDebug("RtpStreamer.dll library failed to load!");
 	_MPrtpStreamEntryPoint = (pvFunctv)GetProcAddress(_LoadMe, "CreateClassInstance");
-	if (!_MPrtpStreamEntryPoint) LogDebug("shit!!");
+	if (!_MPrtpStreamEntryPoint) LogDebug("Couldn't find entry point in RtpStreamer.dll!");
 	_MPrtpStream.reset((IMPrtpStream*)(_MPrtpStreamEntryPoint()));
 	_streamRunning = false;
 	_startStreaming = false;
@@ -80,18 +80,16 @@ void CStreamHandler::write(unsigned char *dataPtr, int numBytes)
 	//LogDebug("Stream Running: %d, Stop: %d, _startStreaming: %d, _bytesWritten: %d", (_streamRunning ? 1 : 0), (_stop ? 1 : 0), (_startStreaming ? 1 : 0), _bytesWritten);
 	if (!_streamRunning && !_stop && _startStreaming && _streamConfigured && (!_pmtSet || _bytesWritten > (TS_PACKET_LEN * 90))) {
 		_streamRunning = true;
-		LogDebug("startStreaming");
+		LogDebug("streamHandler: startStreaming");
 		_test2 = "test";
-		//_streamingThread = std::thread(&IMPrtpStream::MPrtpStreamCreate, this->_MPrtpStream.get(), _clientIp.c_str(), _clientPort, _test2);
-		//_streamingThread.detach(); // fire & forget, maybe not the best option so have a look here later: http://stackoverflow.com/questions/16296284/workaround-for-blocking-async
 		_streamingThread = (HANDLE)_beginthread(&CStreamHandler::CreateStream, 0, (void*)this);
-		LogDebug("startStreaming - Thread started");
+		LogDebug("streamHandler: streaming thread started");
 	}
 }
 
 void __cdecl CStreamHandler::CreateStream(void* arg)
 {
-	LogDebug("filter: Streaming thread CreateStream function");
+	LogDebug("streamHandler: Streaming thread CreateStream");
 	CStreamHandler* filter = (CStreamHandler*)arg;
 	filter->_MPrtpStream->MPrtpStreamCreate(filter->_clientIp.c_str(), filter->_clientPort, filter->_test2);
 }
@@ -112,10 +110,10 @@ void CStreamHandler::stop()
 	_stop = true;
 	if (_MPrtpStream.get() != nullptr) {
 		_MPrtpStream->RtpStop();
-		if (_streamRunning) {
-			//TerminateThread(_streamingThread.native_handle(), 0);
-			//CloseHandle(_streamingThread.native_handle());
-			//_streamingThread.join();
+		if (_streamingThread != INVALID_HANDLE_VALUE) {
+			WaitForSingleObject(_streamingThread, INFINITE);
+			_streamingThread = INVALID_HANDLE_VALUE;
+			LogDebug("streamHandler: streaming thread stopped");
 		}
 	}
 	_streamRunning = false;

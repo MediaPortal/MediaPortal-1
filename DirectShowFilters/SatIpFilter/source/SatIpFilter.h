@@ -24,10 +24,7 @@
 #include "PacketReceiver.h"
 #include "TsInputPin.h"
 #include "ringbuffer.h"
-//#include "PidFilter.h"
-//#include "RtpStreamInterface.h"
 #include "StreamHandler.h"
-//#include <thread>
 #include <process.h>
 #include <sstream>
 #include "config.h"
@@ -147,7 +144,6 @@ private:
 	//thread streamingThread;
 
 	char* test2;
-//	thread streamingThread;
 	bool streamRunning;
 	bool streamConfigured;
 	int bytesWritten;

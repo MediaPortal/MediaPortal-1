@@ -67,6 +67,7 @@ namespace Mediaportal.TV.Server.TVLibrary.UPnP
         public void stop()
         {
             _rtsp.stop();
+            _server.Stop();
         }
     }
 }

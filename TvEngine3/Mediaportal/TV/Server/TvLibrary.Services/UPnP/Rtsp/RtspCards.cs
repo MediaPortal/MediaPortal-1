@@ -19,7 +19,7 @@ namespace Mediaportal.TV.Server.TVLibrary.UPnP.Rtsp
     // 0 = slot unused; anything else = slot used
     private int[] slotMatrix = new int[8];
     private Int32 _id;
-    private int _owner;
+    private int _owner = -1;
     private ArrayList _slaves = new ArrayList();
     private static int _streamCount = 0;
     private int _freq;
@@ -58,7 +58,7 @@ namespace Mediaportal.TV.Server.TVLibrary.UPnP.Rtsp
     /// <param name="sessionId">RTSP Session Id of the user</param>
     public void AddUser(int sessionId)
     {
-      if (_owner == null || _owner == -1)
+      if (_owner == -1)
       {
         _owner = sessionId;
       }
