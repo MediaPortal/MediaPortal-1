@@ -506,10 +506,10 @@ namespace MediaPortal.GUI.Pictures
     public override void OnAdded()
     {
       base.OnAdded();
+      currentFolder = string.Empty;
       LoadSettings();
       _virtualDirectory.AddDrives();
       _virtualDirectory.SetExtensions(Util.Utils.PictureExtensions);
-      currentFolder = string.Empty;
       destinationFolder = string.Empty;
       thumbCreationPaths.Clear();
       
