@@ -244,7 +244,7 @@ namespace MediaPortal.GUI.Music
         MusicState.StartWindow = xmlreader.GetValueAsInt("music", "startWindow", GetID);
         MusicState.View = xmlreader.GetValueAsString("music", "startview", string.Empty);
         _useFileMenu = xmlreader.GetValueAsBool("filemenu", "enabled", true);
-        _fileMenuPinCode = Util.Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", string.Empty));
+        _fileMenuPinCode = Util.Utils.DecryptPassword(xmlreader.GetValueAsString("filemenu", "pincode", string.Empty));
         _wolTimeout = xmlreader.GetValueAsInt("WOL", "WolTimeout", 10);
         _wolResendTime = xmlreader.GetValueAsInt("WOL", "WolResendTime", 1);
         //string strDefault = xmlreader.GetValueAsString("music", "default", string.Empty);
@@ -281,7 +281,7 @@ namespace MediaPortal.GUI.Music
       {
         VirtualDirectory vDir = new VirtualDirectory();
         vDir.LoadSettings("music");
-        int pincode = 0;
+        string pincode = string.Empty;
         bool FolderPinProtected = vDir.IsProtectedShare(currentFolder, out pincode);
         if (FolderPinProtected)
         {
@@ -735,7 +735,7 @@ namespace MediaPortal.GUI.Music
           }
         }
 
-        int iPincodeCorrect;
+        string iPincodeCorrect;
         if (!_virtualDirectory.IsProtectedShare(item.Path, out iPincodeCorrect) && !item.IsRemote && _useFileMenu)
         {
           dlg.AddLocalizedString(500); // FileMenu
@@ -1132,7 +1132,7 @@ namespace MediaPortal.GUI.Music
       {
         return;
       }
-      int pin;
+      string pin;
       if (item.IsFolder && (_virtualDirectory.IsProtectedShare(item.Path, out pin)))
       {
         return;
@@ -2051,7 +2051,7 @@ namespace MediaPortal.GUI.Music
       
       if (_virtualDirectory.DefaultShare != null)
       {
-        int pincode;
+        string pincode;
         bool folderPinProtected = _virtualDirectory.IsProtectedShare(_virtualDirectory.DefaultShare.Path, out pincode);
         if (folderPinProtected)
         {

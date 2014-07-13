@@ -832,17 +832,12 @@ namespace MediaPortal.GUI.Music
           {
             if (song.FileName.Contains(share.Path)) // compare it with shares
             {
-              if (share.Pincode != -1) // does it have a pincode?
+              if (share.Pincode != string.Empty) // does it have a pincode?
               {
                 GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_PASSWORD, 0, 0, 0, 0, 0, 0);
                 GUIWindowManager.SendMessage(msg); // ask for the userinput
-                int iPincode = -1;
-                try
-                {
-                  iPincode = Int32.Parse(msg.Label);
-                }
-                catch (Exception) {}
-                if (iPincode != share.Pincode)
+
+                if (msg.Label != share.Pincode)
                 {
                   songs.Clear();
                 }

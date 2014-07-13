@@ -370,7 +370,7 @@ namespace MediaPortal.Dialogs
       }
 
       // Check protected share
-      int iPincodeCorrect;
+      string iPincodeCorrect;
       if (m_directory.IsProtectedShare(item.Path, out iPincodeCorrect))
       {
         ShowError(513, item.Path);
@@ -589,7 +589,7 @@ namespace MediaPortal.Dialogs
     public void ShowFileMenu(GUIListItem item)
     {
       m_bReload = false;
-      int iPincodeCorrect;
+      string iPincodeCorrect;
 
       if (item == null)
       {
