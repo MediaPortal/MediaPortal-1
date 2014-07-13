@@ -21,7 +21,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.InteropServices;
 using DirectShowLib;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVDatabase.Entities;
@@ -35,7 +34,6 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.NetworkProvider;
-using Mediaportal.TV.Server.TVLibrary.Implementations.Dvb;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
 {
@@ -259,7 +257,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
         // Some specific Microsoft network providers won't connect to the tuner
         // filter unless you set a tuning space first. This is not required for
         // the generic network provider, which returns HRESULT 0x80070057
-        // (E_INVALIDARG).
+        // (E_INVALIDARG) if you try put_TuningSpace().
         if (_networkProviderClsid == NetworkProviderClsid)
         {
           ITuner tuner = _filterNetworkProvider as ITuner;
@@ -273,8 +271,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       }
 
       AddMainComponentFilterToGraph();
-      hr = _captureGraphBuilder.RenderStream(null, null, _filterNetworkProvider, null, _filterMain);
-      HResult.ThrowException(hr, "Failed to render from the network provider into the tuner filter.");
+      FilterGraphTools.ConnectFilters(_graph, _filterNetworkProvider, 0, _filterMain, 0);
 
       IBaseFilter lastFilter = _filterMain;
       AddAndConnectCaptureFilterIntoGraph(ref lastFilter);
@@ -282,22 +279,25 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       // Check for and load extensions, adding any additional filters to the graph.
       LoadExtensions(_filterMain, ref lastFilter);
 
-      // If using a Microsoft network provider and configured to do so, add an infinite
-      // tee, MPEG 2 demultiplexer and transport information filter.
+      // If using a Microsoft network provider and configured to do so, add an
+      // infinite tee, MPEG 2 demultiplexer and transport information filter in
+      // addition to the required TS writer/analyser.
       if (_networkProviderClsid != typeof(MediaPortalNetworkProvider).GUID && _addCompatibilityFilters)
       {
+        this.LogDebug("BDA base: add compatibility filters");
         _filterInfiniteTee = (IBaseFilter)new InfTee();
-        FilterGraphTools.AddAndConnectFilterIntoGraph(_graph, _filterInfiniteTee, "Infinite Tee", lastFilter, _captureGraphBuilder);
-        lastFilter = _filterInfiniteTee;
+        FilterGraphTools.AddAndConnectFilterIntoGraph(_graph, _filterInfiniteTee, "Infinite Tee", lastFilter);
+        AddAndConnectTsWriterIntoGraph(_filterInfiniteTee);
         _filterMpeg2Demultiplexer = (IBaseFilter)new MPEG2Demultiplexer();
-        FilterGraphTools.AddAndConnectFilterIntoGraph(_graph, _filterMpeg2Demultiplexer, "MPEG 2 Demultiplexer", _filterInfiniteTee, _captureGraphBuilder);
+        FilterGraphTools.AddAndConnectFilterIntoGraph(_graph, _filterMpeg2Demultiplexer, "MPEG 2 Demultiplexer", _filterInfiniteTee, 1);
         AddAndConnectTransportInformationFilterIntoGraph();
       }
+      else
+      {
+        AddAndConnectTsWriterIntoGraph(lastFilter);
+      }
 
-      // Complete the graph.
-      AddAndConnectTsWriterIntoGraph(lastFilter);
       CompleteGraph();
-
       _signalStatisticsInterfaces = GetTunerSignalStatisticsInterfaces();
     }
 
@@ -428,122 +428,38 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     {
       this.LogDebug("BDA base: add capture filter");
 
-      bool isCaptureFilterRequired = false;
-      IPin pin = DsFindPin.ByDirection(_filterMain, PinDirection.Output, 0);
+      IPin tunerOutputPin = DsFindPin.ByDirection(_filterMain, PinDirection.Output, 0);
       try
       {
-        IKsPin ksPin = pin as IKsPin;
-        if (ksPin != null)
+        ICollection<RegPinMedium> mediums = FilterGraphTools.GetPinMediums(tunerOutputPin);
+        if (mediums == null || mediums.Count == 0)
         {
-          IntPtr ksMultiple = IntPtr.Zero;
-          int hr = ksPin.KsQueryMediums(out ksMultiple);
-          try
-          {
-            if (hr == (int)HResult.Severity.Success)
-            {
-              int mediumCount = Marshal.ReadInt32(ksMultiple, sizeof(int));
-              IntPtr mediumPtr = IntPtr.Add(ksMultiple, 8);
-              int regPinMediumSize = Marshal.SizeOf(typeof(RegPinMedium));
-              for (int i = 0; i < mediumCount; i++)
-              {
-                RegPinMedium rpm = (RegPinMedium)Marshal.PtrToStructure(mediumPtr, typeof(RegPinMedium));
-                if (rpm.clsMedium != Guid.Empty && rpm.clsMedium != MediaPortalGuid.KS_MEDIUM_SET_ID_STANDARD)
-                {
-                  this.LogDebug("BDA base: capture filter required");
-                  isCaptureFilterRequired = true;
-                  break;
-                }
-                mediumPtr = IntPtr.Add(mediumPtr, regPinMediumSize);
-              }
-            }
-          }
-          finally
-          {
-            if (ksMultiple != IntPtr.Zero)
-            {
-              Marshal.FreeCoTaskMem(ksMultiple);
-            }
-          }
+          this.LogDebug("BDA base: capture filter not required");
+          return;
         }
+        if (!FilterGraphTools.AddAndConnectHardwareFilterByCategoryAndMedium(_graph, tunerOutputPin, FilterCategory.BDAReceiverComponentsCategory, out _filterCapture, out _deviceCapture, _productInstanceId))
+        {
+          this.LogWarn("BDA base: failed to add and connect capture filter, assuming extension required to complete graph");
+          return;
+        }
+        lastFilter = _filterCapture;
+      }
+      catch (Exception ex)
+      {
+        throw new TvException("Failed to add and connect capture filter.", ex);
       }
       finally
       {
-        Release.ComObject("base BDA tuner output pin", ref pin);
-      }
-      if (!isCaptureFilterRequired)
-      {
-        this.LogDebug("BDA base: capture filter not required");
-        return;
-      }
-
-      bool matchProductInstanceId = true;
-      DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.BDAReceiverComponentsCategory);
-      try
-      {
-        while (true)
-        {
-          for (int i = 0; i < devices.Length; i++)
-          {
-            DsDevice device = devices[i];
-            if (!DevicesInUse.Instance.Add(device))
-            {
-              continue;
-            }
-            string devicePath = device.DevicePath;
-            string deviceName = device.Name;
-            if (devicePath.Contains("root#system#") ||
-              (matchProductInstanceId && _productInstanceId != null && !_productInstanceId.Equals(device.ProductInstanceIdentifier))
-            )
-            {
-              DevicesInUse.Instance.Remove(device);
-              continue;
-            }
-            this.LogDebug("BDA base: try {0} {1}", deviceName, devicePath);
-            try
-            {
-              // The filter needs a unique name.
-              if (deviceName.Equals(_deviceMain.Name))
-              {
-                deviceName += " Capture";
-              }
-              _filterCapture = FilterGraphTools.AddAndConnectFilterIntoGraph(_graph, device, _filterMain, _captureGraphBuilder, deviceName);
-              this.LogDebug("BDA base: connected!");
-              _deviceCapture = device;
-              lastFilter = _filterCapture;
-              return;
-            }
-            catch
-            {
-              DevicesInUse.Instance.Remove(device);
-            }
-          }
-          if (!matchProductInstanceId)
-          {
-            this.LogWarn("BDA base: failed to add and connect capture filter, assuming extension required to complete graph");
-            break;
-          }
-          matchProductInstanceId = false;
-          this.LogDebug("BDA base: allow non-matching capture components");
-        }
-      }
-      finally
-      {
-        foreach (DsDevice d in devices)
-        {
-          if (d != _deviceCapture)
-          {
-            d.Dispose();
-          }
-        }
+        Release.ComObject("base BDA tuner output pin", ref tunerOutputPin);
       }
     }
 
     /// <summary>
-    /// Add and connect a transport information filter into the graph.
+    /// Add and connect a BDA MPEG 2 transport information filter into the graph.
     /// </summary>
     private void AddAndConnectTransportInformationFilterIntoGraph()
     {
-      this.LogDebug("BDA base: add BDA MPEG 2 TIF filter");
+      this.LogDebug("BDA base: add BDA MPEG 2 transport information filter");
       DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.BDATransportInformationRenderersCategory);
       try
       {
@@ -554,9 +470,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
           {
             continue;
           }
-          _filterTransportInformation = FilterGraphTools.AddAndConnectFilterIntoGraph(_graph, device, _filterMpeg2Demultiplexer, _captureGraphBuilder);
+          _filterTransportInformation = FilterGraphTools.AddFilterFromDevice(_graph, device);
+          FilterGraphTools.ConnectFilters(_graph, _filterMpeg2Demultiplexer, 0, _filterTransportInformation, 0);
           return;
         }
+      }
+      catch (Exception ex)
+      {
+        this.LogWarn(ex, "BDA base: failed to add and connect BDA MPEG 2 transport information filter");
+        return;
       }
       finally
       {
@@ -587,7 +509,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       int hr = topology.GetNodeTypes(out nodeTypeCount, 32, nodeTypes);
       HResult.ThrowException(hr, "Failed to get topology node types.");
 
-      IList<IBDA_SignalStatistics> statistics = new List<IBDA_SignalStatistics>();
+      IList<IBDA_SignalStatistics> statistics = new List<IBDA_SignalStatistics>(2);
       int interfaceCount;
       Guid[] interfaces = new Guid[33];
       for (int i = 0; i < nodeTypeCount; ++i)

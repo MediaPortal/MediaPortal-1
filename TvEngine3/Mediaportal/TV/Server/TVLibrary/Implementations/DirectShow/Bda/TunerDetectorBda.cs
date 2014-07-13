@@ -333,23 +333,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       }
     }
 
-    private static bool ConnectFilter(IFilterGraph2 graph, IBaseFilter networkFilter, IBaseFilter tunerFilter)
+    private static bool ConnectFilter(IFilterGraph2 graph, IBaseFilter networkProviderFilter, IBaseFilter tunerFilter)
     {
-      IPin pinOut = DsFindPin.ByDirection(networkFilter, PinDirection.Output, 0);
-      IPin pinIn = DsFindPin.ByDirection(tunerFilter, PinDirection.Input, 0);
       try
       {
-        int hr = graph.ConnectDirect(pinOut, pinIn, null);
-        return (hr == (int)HResult.Severity.Success);
+        FilterGraphTools.ConnectFilters(graph, networkProviderFilter, 0, tunerFilter, 0);
+        return true;
       }
       catch
       {
         return false;
-      }
-      finally
-      {
-        Release.ComObject("tuner detector filter output pin", ref pinOut);
-        Release.ComObject("tuner detector filter input pin", ref pinIn);
       }
     }
 

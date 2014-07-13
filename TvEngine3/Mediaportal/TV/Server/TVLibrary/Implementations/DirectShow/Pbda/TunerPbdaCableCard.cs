@@ -105,8 +105,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
         throw new TvException("Failed to add PBDA PT filter, are you using Windows 7+?", ex);
       }
 
-      int hr = _captureGraphBuilder.RenderStream(null, null, lastFilter, null, _filterPbdaPt);
-      HResult.ThrowException(hr, "Failed to render into the PBDA PT filter.");
+      FilterGraphTools.ConnectFilters(_graph, lastFilter, 0, _filterPbdaPt, 0);
       lastFilter = _filterPbdaPt;
     }
 
@@ -119,8 +118,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
       base.PerformLoading();
 
       // Connect the tuner filter OOB info into TsWriter.
-      int hr = _captureGraphBuilder.RenderStream(null, null, _filterMain, null, _filterTsWriter);
-      HResult.ThrowException(hr, "Failed to render out-of-band connection from the tuner filter into the TS writer/analyser filter.");
+      this.LogDebug("PBDA CableCARD: connect out-of-band stream");
+      FilterGraphTools.ConnectFilters(_graph, _filterMain, 1, _filterTsWriter, 1);
 
       _caInterface = _filterMain as IBDA_ConditionalAccess;
       if (_caInterface == null)

@@ -32,7 +32,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
   /// <summary>
   /// A WDM analog DirectShow crossbar graph component.
   /// </summary>
-  internal class Crossbar : ComponentBase
+  internal class Crossbar
   {
     #region variables
 
@@ -589,7 +589,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         {
           graph.RemoveFilter(_filter);
         }
-        Release.ComObject("crossbar filter", ref _filter);
+        Release.ComObject("WDM analog crossbar filter", ref _filter);
 
         DevicesInUse.Instance.Remove(_device);
         // Do NOT Dispose() or set the crossbar device to NULL. We would be

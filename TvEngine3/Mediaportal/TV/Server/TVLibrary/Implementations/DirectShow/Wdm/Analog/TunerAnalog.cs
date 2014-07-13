@@ -243,7 +243,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
       {
         _capture = new Capture(_deviceMain);
       }
-      _capture.PerformLoading(_graph, _captureGraphBuilder, _productInstanceId, _crossbar);
+      _capture.PerformLoading(_graph, _productInstanceId, _crossbar);
 
       _encoder = new Encoder();
       _encoder.PerformLoading(_graph, _productInstanceId, _capture);

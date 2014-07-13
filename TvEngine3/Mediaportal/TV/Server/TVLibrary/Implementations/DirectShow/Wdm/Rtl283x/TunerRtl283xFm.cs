@@ -708,7 +708,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
 
       Capture capture = new Capture();
       capture.SetAudioCapture(_filterSource, null);
-      _encoder = new EncoderRtl283xFm();
+      _encoder = new Encoder();
       _encoder.PerformLoading(_graph, null, capture);
 
       // Check for and load extensions, adding any additional filters to the graph.

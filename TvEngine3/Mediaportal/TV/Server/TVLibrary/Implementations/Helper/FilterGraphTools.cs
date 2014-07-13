@@ -23,12 +23,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
-using System.Security.Permissions;
 using DirectShowLib;
+using Mediaportal.TV.Server.TvLibrary.Utils.Util;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using Mediaportal.TV.Server.TvLibrary.Utils.Util;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
 {
@@ -391,105 +390,450 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
     /// <param name="upstreamFilter">The upstream filter to connect the new filter to. This filter should already be present in the graph.</param>
     /// <param name="upstreamFilterOutputPinIndex">The zero based index of the upstream filter output pin to connect to the new filter.</param>
     /// <param name="newFilterInputPinIndex">The zero based index of the new filter input pin to connect to the upstream filter.</param>
-    public static void AddAndConnectFilterIntoGraph(IFilterGraph2 graph, IBaseFilter newFilter, string filterName, IBaseFilter upstreamFilter, int upstreamFilterOutputPinIndex, int newFilterInputPinIndex)
+    public static void AddAndConnectFilterIntoGraph(IFilterGraph2 graph, IBaseFilter newFilter, string filterName, IBaseFilter upstreamFilter, int upstreamFilterOutputPinIndex = 0, int newFilterInputPinIndex = 0)
     {
-      if (upstreamFilter == null || newFilter == null)
+      if (graph == null || upstreamFilter == null || newFilter == null)
       {
-        throw new TvException("Failed to add and connect filter, upstream or new filter are null.");
-      }
-      if (upstreamFilterOutputPinIndex < 0 || newFilterInputPinIndex < 0)
-      {
-        throw new TvException("Failed to add and connect filter, one or both pin indicies are invalid.");
+        throw new TvException("Failed to add and connect filter, graph, upstream filter or new filter are null.");
       }
 
       int hr = graph.AddFilter(newFilter, filterName);
       HResult.ThrowException(hr, "Failed to add the new filter to the graph.");
 
-      IPin upstreamOutputPin = DsFindPin.ByDirection(upstreamFilter, PinDirection.Output, upstreamFilterOutputPinIndex);
       try
       {
-        IPin newFilterInputPin = DsFindPin.ByDirection(newFilter, PinDirection.Input, newFilterInputPinIndex);
-        try
-        {
-          hr = graph.ConnectDirect(upstreamOutputPin, newFilterInputPin, null);
-          HResult.ThrowException(hr, "Failed to connect the new filter into the graph.");
-        }
-        finally
-        {
-          Release.ComObject("filter graph tools add-and-connect-filter-into-graph new filter input pin", ref newFilterInputPin);
-        }
+        ConnectFilters(graph, upstreamFilter, upstreamFilterOutputPinIndex, newFilter, newFilterInputPinIndex);
       }
       catch
       {
         graph.RemoveFilter(newFilter);
         throw;
+      }
+    }
+
+    /// <summary>
+    /// Get the mediums for a pin.
+    /// </summary>
+    /// <param name="pin">The pin.</param>
+    /// <returns>the pin's mediums (if any); <c>null</c> if the pin is not a KS pin</returns>
+    public static ICollection<RegPinMedium> GetPinMediums(IPin pin)
+    {
+      IKsPin ksPin = pin as IKsPin;
+      if (ksPin == null)
+      {
+        return new List<RegPinMedium>(0);
+      }
+
+      IntPtr ksMultiple = IntPtr.Zero;
+      int hr = ksPin.KsQueryMediums(out ksMultiple);
+      // Can return 1 (S_FALSE) for non-error scenarios.
+      if (hr < (int)HResult.Severity.Success)
+      {
+        HResult.ThrowException(hr, "Failed to query pin mediums.");
+      }
+      try
+      {
+        int mediumCount = Marshal.ReadInt32(ksMultiple, sizeof(int));
+        List<RegPinMedium> mediums = new List<RegPinMedium>(mediumCount);
+        IntPtr mediumPtr = IntPtr.Add(ksMultiple, 8);
+        int regPinMediumSize = Marshal.SizeOf(typeof(RegPinMedium));
+        for (int i = 0; i < mediumCount; i++)
+        {
+          RegPinMedium m = (RegPinMedium)Marshal.PtrToStructure(mediumPtr, typeof(RegPinMedium));
+          // Exclude invalid and non-meaningful mediums.
+          if (m.clsMedium != Guid.Empty && m.clsMedium != MediaPortalGuid.KS_MEDIUM_SET_ID_STANDARD)
+          {
+            mediums.Add(m);
+          }
+          mediumPtr = IntPtr.Add(mediumPtr, regPinMediumSize);
+        }
+        return mediums;
       }
       finally
       {
-        Release.ComObject("filter graph tools add-and-connect-filter-into-graph upstream filter output pin", ref upstreamOutputPin);
+        Marshal.FreeCoTaskMem(ksMultiple);
       }
     }
 
     /// <summary>
-    /// Add and connect a filter into a DirectShow graph.
+    /// Connect two filters in a DirectShow graph.
     /// </summary>
     /// <param name="graph">The graph.</param>
-    /// <param name="newFilter">The filter to add and connect.</param>
-    /// <param name="filterName">The name or label to use for the filter.</param>
-    /// <param name="upstreamFilter">The upstream filter to connect the new filter to. This filter should already be present in the graph.</param>
-    /// <param name="graphBuilder">The graph builder, used to render-connect the filters.</param>
-    public static void AddAndConnectFilterIntoGraph(IFilterGraph2 graph, IBaseFilter newFilter, string filterName, IBaseFilter upstreamFilter, ICaptureGraphBuilder2 graphBuilder)
+    /// <param name="upstreamFilter">The upstream filter.</param>
+    /// <param name="upstreamPinIndex">The pin index of the output pin on the upstream filter that should be connected.</param>
+    /// <param name="downstreamFilter">The downstream filter.</param>
+    /// <param name="downstreamPinIndex">The pin index of the input pin on the downstream filter that should be connected.</param>
+    public static void ConnectFilters(IFilterGraph2 graph, IBaseFilter upstreamFilter, int upstreamPinIndex, IBaseFilter downstreamFilter, int downstreamPinIndex)
     {
-      if (upstreamFilter == null || newFilter == null)
+      if (graph == null)
       {
-        throw new TvException("Failed to add and connect filter, upstream or new filter are null.");
+        throw new TvException("Failed to connect filters, graph is null.");
+      }
+      if (upstreamFilter == null)
+      {
+        throw new TvException("Failed to connect filters, upstream filter is null.");
+      }
+      if (downstreamFilter == null)
+      {
+        throw new TvException("Failed to connect filters, downstream filter is null.");
       }
 
-      int hr = graph.AddFilter(newFilter, filterName);
-      HResult.ThrowException(hr, "Failed to add the new filter to the graph.");
-
+      IPin upstreamPin = DsFindPin.ByDirection(upstreamFilter, PinDirection.Output, upstreamPinIndex);
+      if (upstreamPin == null)
+      {
+        throw new TvException("Failed to connect filters, upstream filter does not have {0} output pin(s).", upstreamPinIndex + 1);
+      }
       try
       {
-        hr = graphBuilder.RenderStream(null, null, upstreamFilter, null, newFilter);
-        HResult.ThrowException(hr, "Failed to render into the new filter.");
+        IPin downstreamPin = DsFindPin.ByDirection(downstreamFilter, PinDirection.Input, downstreamPinIndex);
+        if (downstreamPin == null)
+        {
+          throw new TvException("Failed to connect filters, downstream filter does not have {0} input pin(s).", downstreamPinIndex + 1);
+        }
+        try
+        {
+          int hr = graph.ConnectDirect(upstreamPin, downstreamPin, null);
+          HResult.ThrowException(hr, "Failed to connect filters, pins won't connect.");
+        }
+        finally
+        {
+          Release.ComObject("filter graph tools connect-filters downstream pin", ref downstreamPin);
+        }
       }
-      catch
+      finally
       {
-        graph.RemoveFilter(newFilter);
-        throw;
+        Release.ComObject("filter graph tools connect-filters upstream pin", ref upstreamPin);
       }
     }
 
     /// <summary>
-    /// Add and connect a filter into a DirectShow graph.
+    /// Attempt to find a medium on a hardware filter's input or output pins.
     /// </summary>
-    /// <param name="graph">The graph.</param>
-    /// <param name="device">A DsDevice instance that wraps an IMoniker instance. The filter to add and connect will be instantiated from the IMoniker.</param>
-    /// <param name="upstreamFilter">The upstream filter to connect the new filter to. This filter should already be present in the graph.</param>
-    /// <param name="graphBuilder">The graph builder, used to render-connect the filters.</param>
-    /// <param name="filterName">The name or label to use for the filter.</param>
-    /// <remarks>the filter that was instanciated, added to, and connected into the graph</remarks>
-    public static IBaseFilter AddAndConnectFilterIntoGraph(IFilterGraph2 graph, DsDevice device, IBaseFilter upstreamFilter, ICaptureGraphBuilder2 graphBuilder, string filterName = null)
+    /// <param name="device">The hardware device.</param>
+    /// <param name="mediums">The medium(s) to find. Any one of these is acceptable.</param>
+    /// <param name="direction">The direction of the pins to check.</param>
+    /// <param name="filter">The filter instance if the medium is found, otherwise <c>null</c>.</param>
+    /// <param name="pin">The pin instance on which the medium is found, or <c>null</c> if the medium is not found.</param>
+    /// <returns><c>true</c> if the medium is found, otherwise <c>false</c></returns>
+    public static bool FindMediumOnHardwareFilter(DsDevice device, ICollection<RegPinMedium> mediums, PinDirection direction, out IBaseFilter filter, out IPin pin)
     {
-      if (upstreamFilter == null || device == null || device.Mon == null)
+      filter = null;
+      pin = null;
+      if (device == null || mediums == null)
       {
-        throw new TvException("Failed to add and connect filter, upstream filter or moniker are null.");
+        throw new TvException("Failed to find medium on hardware filter, device or mediums are null.");
       }
 
-      IBaseFilter newFilter = AddFilterFromDevice(graph, device, filterName);
-
+      Guid filterIid = typeof(IBaseFilter).GUID;
+      object obj;
       try
       {
-        int hr = graphBuilder.RenderStream(null, null, upstreamFilter, null, newFilter);
-        HResult.ThrowException(hr, "Failed to render into the new filter.");
+        device.Mon.BindToObject(null, null, ref filterIid, out obj);
+      }
+      catch (Exception ex)
+      {
+        throw new TvException("Failed to find medium on hardware filter, can't instanciate filter from moniker.", ex);
+      }
+
+      filter = obj as IBaseFilter;
+      try
+      {
+        IEnumPins pinEnum;
+        int hr = filter.EnumPins(out pinEnum);
+        HResult.ThrowException(hr, "Failed to find medium on hardware filter, can't get filter pin enumerator.");
+
+        IPin[] pins = new IPin[2];
+        int pinCount;
+        while (pinEnum.Next(1, pins, out pinCount) == (int)HResult.Severity.Success && pinCount == 1)
+        {
+          IPin p = pins[0];
+          try
+          {
+            PinDirection d;
+            hr = p.QueryDirection(out d);
+            HResult.ThrowException(hr, "Failed to find medium on hardware filter, can't get pin direction.");
+
+            if (d != direction)
+            {
+              continue;
+            }
+
+            ICollection<RegPinMedium> tempMediums = GetPinMediums(p);
+            foreach (RegPinMedium m1 in mediums)
+            {
+              foreach (RegPinMedium m2 in tempMediums)
+              {
+                if (m1.clsMedium == m2.clsMedium && m1.dw1 == m2.dw1 && m1.dw2 == m2.dw2)
+                {
+                  pin = p;
+                  return true;
+                }
+              }
+            }
+          }
+          finally
+          {
+            if (pin == null)
+            {
+              Release.ComObject("filter graph tools find-medium-on-hardware-filter pin", ref p);
+            }
+          }
+        }
+
+        Release.ComObject("filter graph tools find-medium-on-hardware-filter filter", ref filter);
       }
       catch
       {
-        graph.RemoveFilter(newFilter);
-        Release.ComObject("filter graph tools add-and-connect-filter-into-graph new filter", ref newFilter);
+        Release.ComObject("filter graph tools find-medium-on-hardware-filter filter", ref filter);
         throw;
       }
-      return newFilter;
+      return false;
+    }
+
+    /// <summary>
+    /// Add and connect a filter for a hardware device from a given category to a DirectShow graph.
+    /// </summary>
+    /// <param name="graph">The graph.</param>
+    /// <param name="pinToConnect">The upstream or downstream filter pin that <paramref name="filter"/> must connect to.</param>
+    /// <param name="filterCategory">The category that the filter/device must be a member of.</param>
+    /// <param name="filter">The filter.</param>
+    /// <param name="device">The device.</param>
+    /// <param name="productInstanceId">A preferred device product instance identifier.</param>
+    /// <param name="pinToConnectDirection">The direction - input or output - of <paramref name="pinToConnect"/>.</param>
+    /// <param name="deviceBlacklist">A list of device names to ignore.</param>
+    /// <returns><c>true</c> if a filter is successfully added and connected to <paramref name="pinToConnect"/>, otherwise <c>false</c></returns>
+    public static bool AddAndConnectHardwareFilterByCategoryAndMedium(IFilterGraph2 graph, IPin pinToConnect, Guid filterCategory, out IBaseFilter filter, out DsDevice device, string productInstanceId = null, PinDirection pinToConnectDirection = PinDirection.Output, ICollection<string> deviceBlacklist = null)
+    {
+      filter = null;
+      device = null;
+
+      ICollection<RegPinMedium> mediums = GetPinMediums(pinToConnect);
+      if (mediums == null || mediums.Count == 0)
+      {
+        throw new TvException("Failed to find medium on pin.");
+      }
+
+      PinDirection connectDirection = PinDirection.Input;
+      if (pinToConnectDirection == PinDirection.Input)
+      {
+        connectDirection = PinDirection.Output;
+      }
+
+      DsDevice[] devices = DsDevice.GetDevicesOfCat(filterCategory);
+      Log.Debug("FGT: add and connect hardware filter by category and medium, category = {0}, product instance ID = {1}, device count = {2}", filterCategory, productInstanceId ?? "[null]", devices.Length);
+      try
+      {
+        if (!string.IsNullOrEmpty(productInstanceId))
+        {
+          Array.Sort(devices, delegate(DsDevice d1, DsDevice d2)
+          {
+            bool d1Result = productInstanceId.Equals(d1.ProductInstanceIdentifier);
+            bool d2Result = productInstanceId.Equals(d2.ProductInstanceIdentifier);
+            if (d1Result && !d2Result)
+            {
+              return -1;
+            }
+            if (!d1Result && d2Result)
+            {
+              return 1;
+            }
+            return 0;
+          });
+        }
+
+        for (int i = 0; i < devices.Length; i++)
+        {
+          DsDevice d = devices[i];
+          string devicePath = d.DevicePath;
+          string deviceName = d.Name;
+          Log.Debug("FGT:   try {0} {1} {2}", deviceName ?? "[null]", d.ProductInstanceIdentifier ?? "[null]", devicePath ?? "[null]");
+          if (devicePath == null || deviceName == null || devicePath.Contains("root#system#") ||
+            (productInstanceId != null && !productInstanceId.Equals(d.ProductInstanceIdentifier)) ||
+            (deviceBlacklist != null && deviceBlacklist.Contains(deviceName)) ||
+            !DevicesInUse.Instance.Add(d)
+          )
+          {
+            Log.Debug("FGT:     invalid, system, different product instance, blacklisted, or in use");
+            continue;
+          }
+
+          try
+          {
+            IPin pin2;
+            if (!FilterGraphTools.FindMediumOnHardwareFilter(d, mediums, connectDirection, out filter, out pin2))
+            {
+              Log.Debug("FGT:     medium not found");
+              continue;
+            }
+
+            try
+            {
+              int hr = graph.AddFilter(filter, deviceName);
+              if (hr != 0x4022d)  // VFW_S_DUPLICATE_NAME
+              {
+                HResult.ThrowException(hr, string.Format("Failed to add matching filter {0} {1} into the graph.", deviceName, devicePath));
+              }
+              if (pinToConnectDirection == PinDirection.Input)
+              {
+                hr = graph.ConnectDirect(pin2, pinToConnect, null);
+              }
+              else
+              {
+                hr = graph.ConnectDirect(pinToConnect, pin2, null);
+              }
+              HResult.ThrowException(hr, string.Format("Failed to connect matching filter {0} {1} into the graph.", deviceName, devicePath));
+            }
+            catch
+            {
+              Release.ComObject("filter graph tools add-and-connect-hardware-filter-by-category-and-medium filter", ref filter);
+              throw;
+            }
+            finally
+            {
+              Release.ComObject("filter graph tools add-and-connect-hardware-filter-by-category-and-medium pin", ref pin2);
+            }
+
+            Log.Debug("FGT:     connected!");
+            device = d;
+            return true;
+          }
+          finally
+          {
+            if (device == null)
+            {
+              DevicesInUse.Instance.Remove(d);
+            }
+          }
+        }
+      }
+      finally
+      {
+        foreach (DsDevice d in devices)
+        {
+          if (d != device)
+          {
+            d.Dispose();
+          }
+        }
+      }
+
+      return false;
+    }
+
+    /// <summary>
+    /// Connect a filter pin of known direction with any one of the pins on another filter.
+    /// </summary>
+    /// <param name="graph">The graph containing the two filters.</param>
+    /// <param name="pinToConnect">The upstream or downstream filter pin that <paramref name="filter"/> must connect to.</param>
+    /// <param name="pinToConnectDirection">The direction - input or output - of <paramref name="pinToConnect"/>.</param>
+    /// <param name="filter">The filter to connect to <paramref name="pinToConnect"/>.</param>
+    /// <returns><c>true</c> if <paramref name="filter"/> was successfully connected to <paramref name="pinToConnect"/>, otherwise <c>false</c></returns>
+    public static bool ConnectFilterWithPin(IFilterGraph2 graph, IPin pinToConnect, PinDirection pinToConnectDirection, IBaseFilter filter)
+    {
+      Log.Debug("FGT: connect filter with pin");
+      int hr = (int)HResult.Severity.Success;
+      int pinCount = 0;
+      int pinIndex = 0;
+
+      ICollection<RegPinMedium> mediumsPinToConnect = FilterGraphTools.GetPinMediums(pinToConnect);
+      if (mediumsPinToConnect != null && mediumsPinToConnect.Count > 0)
+      {
+        Log.Debug("FGT:   checking for medium");
+      }
+
+      IEnumPins pinEnum = null;
+      hr = filter.EnumPins(out pinEnum);
+      HResult.ThrowException(hr, "Failed to obtain pin enumerator for filter.");
+      try
+      {
+        IPin[] pinsTemp = new IPin[2];
+        while (pinEnum.Next(1, pinsTemp, out pinCount) == (int)HResult.Severity.Success && pinCount == 1)
+        {
+          IPin pinToTry = pinsTemp[0];
+          try
+          {
+            // We're not interested in pins unless they're the right direction.
+            PinDirection direction;
+            hr = pinToTry.QueryDirection(out direction);
+            HResult.ThrowException(hr, "Failed to query pin direction for filter pin.");
+            if (direction == pinToConnectDirection)
+            {
+              Log.Debug("FGT:   pin {0} is the wrong direction", pinIndex++);
+              continue;
+            }
+
+            // We can't use pins that are already connected.
+            IPin tempPin = null;
+            hr = pinToTry.ConnectedTo(out tempPin);
+            if (hr == (int)HResult.Severity.Success && tempPin != null)
+            {
+              Log.Debug("FGT:   pin {0} is already connected", pinIndex++);
+              Release.ComObject("filter graph tools connect-filter-with-pin filter connected pin", ref tempPin);
+              continue;
+            }
+
+            // Check for the required medium.
+            if (mediumsPinToConnect != null && mediumsPinToConnect.Count > 0)
+            {
+              bool foundMedium = false;
+              ICollection<RegPinMedium> mediumsPinToTry = FilterGraphTools.GetPinMediums(pinToTry);
+              if (mediumsPinToTry != null)
+              {
+                foreach (RegPinMedium m1 in mediumsPinToConnect)
+                {
+                  foreach (RegPinMedium m2 in mediumsPinToTry)
+                  {
+                    if (m1.clsMedium == m2.clsMedium && m1.dw1 == m2.dw1 && m1.dw2 == m2.dw2)
+                    {
+                      foundMedium = true;
+                      break;
+                    }
+                  }
+                  if (foundMedium)
+                  {
+                    break;
+                  }
+                }
+              }
+              if (!foundMedium)
+              {
+                Log.Debug("FGT:   pin {0} doesn't have the required medium", pinIndex++);
+                continue;
+              }
+            }
+
+            try
+            {
+              if (pinToConnectDirection == PinDirection.Input)
+              {
+                hr = graph.ConnectDirect(pinToTry, pinToConnect, null);
+              }
+              else
+              {
+                hr = graph.ConnectDirect(pinToConnect, pinToTry, null);
+              }
+              HResult.ThrowException(hr, "Failed to connect pins.");
+              Log.Debug("FGT:   pin {0} connected!", pinIndex);
+              return true;
+            }
+            catch
+            {
+              // Connection failed, move on to next upstream pin.
+            }
+            pinIndex++;
+          }
+          finally
+          {
+            Release.ComObject("filter graph tools connect-filter-with-pin filter pin", ref pinToTry);
+          }
+        }
+      }
+      finally
+      {
+        Release.ComObject("filter graph tools connect-filter-with-pin filter pin enumerator", ref pinEnum);
+      }
+
+      return false;
     }
   }
 

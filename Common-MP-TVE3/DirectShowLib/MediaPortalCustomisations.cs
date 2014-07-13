@@ -696,6 +696,11 @@ namespace DirectShowLib
 
     #endregion
 
+    private bool _readProductInstanceId = false;
+    private string _productInstanceId = null;
+    private bool _readTunerInstanceId = false;
+    private int _tunerInstanceId = -1;
+
     /// <summary>
     /// Get the product instance identifier.
     /// </summary>
@@ -723,6 +728,12 @@ namespace DirectShowLib
     {
       get
       {
+        if (_readProductInstanceId)
+        {
+          return _productInstanceId;
+        }
+        _readProductInstanceId = true;
+
         //---------------------------
         // Hardware-specific methods.
         //---------------------------
@@ -735,7 +746,8 @@ namespace DirectShowLib
             Match m = Regex.Match(name, @"\s+\(([^\s]+)\)\s+Tuner\s+\d+", RegexOptions.IgnoreCase);
             if (m.Success)
             {
-              return m.Groups[1].Captures[0].Value;
+              _productInstanceId = m.Groups[1].Captures[0].Value;
+              return _productInstanceId;
             }
           }
           else if (name.Contains("HDHomeRun") || name.StartsWith("Hauppauge OpenCable Receiver"))
@@ -744,7 +756,8 @@ namespace DirectShowLib
             Match m = Regex.Match(name, @"\s+([^\s]+)-\d$", RegexOptions.IgnoreCase);
             if (m.Success)
             {
-              return m.Groups[1].Captures[0].Value;
+              _productInstanceId = m.Groups[1].Captures[0].Value;
+              return _productInstanceId;
             }
           }
         }
@@ -867,23 +880,25 @@ namespace DirectShowLib
         if (sections.Length == 1)
         {
           // Serial number format - nothing further to do.
-          return productInstanceIdentifier;
+          _productInstanceId = productInstanceIdentifier;
+          return _productInstanceId;
         }
-
-        if (sections.Length != 4)
+        else if (sections.Length == 4)
         {
-          return null;
-        }
-        if (!isPci)
-        {
-          return sections[0] + '&' + sections[1] + '&' + sections[2];
-        }
+          if (!isPci)
+          {
+            _productInstanceId = sections[0] + '&' + sections[1] + '&' + sections[2];
+          }
+          else
+          {
+            // Extract the device ID from the last section.
+            sections[3] = sections[3].Substring(0, 2);
 
-        // PCI - extract the device ID from the last section.
-        sections[3] = sections[3].Substring(0, 2);
-
-        byte deviceId = (byte)(Convert.ToByte(sections[3], 16) & 0xf8);
-        return sections[0] + '&' + sections[1] + '&' + sections[2] + '&' + string.Format("{0:x02}", deviceId);
+            byte deviceId = (byte)(Convert.ToByte(sections[3], 16) & 0xf8);
+            _productInstanceId = sections[0] + '&' + sections[1] + '&' + sections[2] + '&' + string.Format("{0:x2}", deviceId);
+          }
+        }
+        return _productInstanceId;
       }
     }
 
@@ -894,6 +909,12 @@ namespace DirectShowLib
     {
       get
       {
+        if (_readTunerInstanceId)
+        {
+          return _tunerInstanceId;
+        }
+        _readTunerInstanceId = true;
+
         //---------------------------
         // Hardware-specific methods.
         //---------------------------
@@ -908,7 +929,8 @@ namespace DirectShowLib
             m = Regex.Match(name, @"\s+\([^\s]+\)\s+Tuner\s+(\d+)", RegexOptions.IgnoreCase);
             if (m.Success)
             {
-              return int.Parse(m.Groups[1].Captures[0].Value);
+              _tunerInstanceId = int.Parse(m.Groups[1].Captures[0].Value);
+              return _tunerInstanceId;
             }
           }
           // Silicondust HDHomeRun tuners (Hauppauge CableCARD tuners are clones)
@@ -918,7 +940,8 @@ namespace DirectShowLib
             m = Regex.Match(name, @"\s+[^\s]+-(\d)$", RegexOptions.IgnoreCase);
             if (m.Success)
             {
-              return int.Parse(m.Groups[1].Captures[0].Value);
+              _tunerInstanceId = int.Parse(m.Groups[1].Captures[0].Value);
+              return _tunerInstanceId;
             }
           }
         }
@@ -926,7 +949,7 @@ namespace DirectShowLib
         string devicePath = DevicePath;
         if (devicePath == null)
         {
-          return -1;
+          return _tunerInstanceId;
         }
 
         // Digital Devices tuners.
@@ -935,7 +958,8 @@ namespace DirectShowLib
         m = Regex.Match(devicePath, @"8b884e\d(\d)-fbca-11de-b16f-000000004d56", RegexOptions.IgnoreCase);
         if (m.Success)
         {
-          return int.Parse(m.Groups[1].Captures[0].Value);
+          _tunerInstanceId = int.Parse(m.Groups[1].Captures[0].Value);
+          return _tunerInstanceId;
         }
 
         //----------------
@@ -948,9 +972,9 @@ namespace DirectShowLib
         object id = GetPropBagValue("TunerInstanceID");
         if (id != null)
         {
-          return (int)id;
+          _tunerInstanceId = (int)id;
         }
-        return -1;
+        return _tunerInstanceId;
       }
     }
 

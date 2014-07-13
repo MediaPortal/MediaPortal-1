@@ -35,7 +35,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
   /// <summary>
   /// A WDM analog DirectShow capture graph component.
   /// </summary>
-  internal class Capture : ComponentBase
+  internal class Capture
   {
     #region structs
 
@@ -75,7 +75,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
 
     #region constants
 
-    private static IList<string> CAPTURE_DEVICE_BLACKLIST = new List<string>
+    private static ICollection<string> CAPTURE_DEVICE_BLACKLIST = new List<string>
     {
       // Don't use NVIDIA DualTV YUV Capture filters. They have video and audio
       // inputs but don't have an audio output. Prefer NVIDIA DualTV Capture.
@@ -219,10 +219,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     /// Load the component.
     /// </summary>
     /// <param name="graph">The tuner's DirectShow graph.</param>
-    /// <param name="captureGraphBuilder">The capture graph builder instance associated with the graph.</param>
     /// <param name="productInstanceId">A common identifier shared by the tuner's components.</param>
     /// <param name="crossbar">The crossbar component.</param>
-    public void PerformLoading(IFilterGraph2 graph, ICaptureGraphBuilder2 captureGraphBuilder, string productInstanceId, Crossbar crossbar)
+    public void PerformLoading(IFilterGraph2 graph, string productInstanceId, Crossbar crossbar)
     {
       if (_deviceMain != null)
       {
@@ -259,21 +258,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         int crossbarOutputPinIndexVideo = crossbar.PinIndexOutputVideo;
         if (crossbarOutputPinIndexVideo >= 0)
         {
-          this.LogDebug("WDM analog capture: add video capture filter");
+          this.LogDebug("WDM analog capture: add video capture");
           IPin crossbarOutputPinVideo = DsFindPin.ByDirection(crossbar.Filter, PinDirection.Output, crossbarOutputPinIndexVideo);
           try
           {
-            if (!AddAndConnectFilterFromCategory(graph, FilterCategory.AMKSCapture, crossbarOutputPinVideo, PinDirection.Output, productInstanceId, out _filterVideo, out _deviceVideo))
+            if (!FilterGraphTools.AddAndConnectHardwareFilterByCategoryAndMedium(graph, crossbarOutputPinVideo, FilterCategory.AMKSCapture, out _filterVideo, out _deviceVideo, productInstanceId, PinDirection.Output, CAPTURE_DEVICE_BLACKLIST) &&
+              !FilterGraphTools.AddAndConnectHardwareFilterByCategoryAndMedium(graph, crossbarOutputPinVideo, FilterCategory.VideoInputDevice, out _filterVideo, out _deviceVideo, productInstanceId, PinDirection.Output, CAPTURE_DEVICE_BLACKLIST))
             {
-              if (!AddAndConnectFilterFromCategory(graph, FilterCategory.VideoInputDevice, crossbarOutputPinVideo, PinDirection.Output, productInstanceId, out _filterVideo, out _deviceVideo))
-              {
-                throw new TvException("Failed to connect video capture filter.");
-              }
+              throw new TvException("Failed to connect video capture.");
             }
           }
           finally
           {
-            Release.ComObject("WDM analog crossbar video output pin", ref crossbarOutputPinVideo);
+            Release.ComObject("WDM analog capture crossbar video output pin", ref crossbarOutputPinVideo);
           }
         }
 
@@ -285,8 +282,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
           {
             if (_filterVideo != null)
             {
-              this.LogDebug("WDM analog capture: try to connect crossbar audio output to video capture filter");
-              if (ConnectFilterWithPin(graph, crossbarOutputPinAudio, PinDirection.Output, _filterVideo))
+              this.LogDebug("WDM analog capture: connect crossbar audio to video capture");
+              if (FilterGraphTools.ConnectFilterWithPin(graph, crossbarOutputPinAudio, PinDirection.Output, _filterVideo))
               {
                 _filterAudio = _filterVideo;
                 _deviceAudio = _deviceVideo;
@@ -294,29 +291,25 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
             }
             if (_filterAudio == null)
             {
-              this.LogDebug("WDM analog capture: add audio capture filter");
-              if (!AddAndConnectFilterFromCategory(graph, FilterCategory.AMKSCapture, crossbarOutputPinAudio, PinDirection.Output, productInstanceId, out _filterAudio, out _deviceAudio))
+              this.LogDebug("WDM analog capture: add audio capture");
+              if (!FilterGraphTools.AddAndConnectHardwareFilterByCategoryAndMedium(graph, crossbarOutputPinAudio, FilterCategory.AMKSCapture, out _filterAudio, out _deviceAudio, productInstanceId) &&
+                !FilterGraphTools.AddAndConnectHardwareFilterByCategoryAndMedium(graph, crossbarOutputPinAudio, FilterCategory.AudioInputDevice, out _filterAudio, out _deviceAudio, productInstanceId))
               {
-                if (!AddAndConnectFilterFromCategory(graph, FilterCategory.AudioInputDevice, crossbarOutputPinAudio, PinDirection.Output, productInstanceId, out _filterAudio, out _deviceAudio))
-                {
-                  throw new TvException("Failed to connect audio capture filter.");
-                }
+                throw new TvException("Failed to connect audio capture.");
               }
             }
           }
           finally
           {
-            Release.ComObject("WDM analog crossbar audio output pin", ref crossbarOutputPinAudio);
+            Release.ComObject("WDM analog capture crossbar audio output pin", ref crossbarOutputPinAudio);
           }
         }
       }
 
       CheckCapabilitiesAnalogVideoDecoder();
       CheckCapabilitiesVideoProcessingAmplifier();
-      CheckCapabilitiesStreamConfiguration(captureGraphBuilder);
       ConfigureAnalogVideoDecoder(_currentVideoStandard);
       ConfigureVideoProcessingAmplifier(_currentVideoProcAmpPropertyValues);
-      ConfigureStream(_currentFrameWidth, _currentFrameHeight, _currentFrameRate);
       _setDefaultSettings = false;
     }
 
@@ -344,23 +337,43 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
           IPin pin = pins[0];
           try
           {
-            bool isVideoPin = false;
-            if (IsVideoOrAudioPin(pin, out isVideoPin))
+            IEnumMediaTypes mediaTypeEnum;
+            hr = pin.EnumMediaTypes(out mediaTypeEnum);
+            HResult.ThrowException(hr, "Failed to obtain media type enumerator for pin.");
+            try
             {
-              if (isVideoPin)
+              // For each pin media type...
+              int mediaTypeCount;
+              AMMediaType[] mediaTypes = new AMMediaType[2];
+              while (mediaTypeEnum.Next(1, mediaTypes, out mediaTypeCount) == (int)HResult.Severity.Success && mediaTypeCount == 1)
               {
-                this.LogDebug("WDM analog capture: pin {0} is a video pin", pinIndex);
-                isVideoSource = true;
+                AMMediaType mediaType = mediaTypes[0];
+                try
+                {
+                  if (mediaType.majorType == MediaType.AnalogVideo || mediaType.majorType == MediaType.Video)
+                  {
+                    this.LogDebug("WDM analog capture: pin {0} is a video pin", pinIndex);
+                    isVideoSource = true;
+                  }
+                  else if (mediaType.majorType == MediaType.AnalogAudio || mediaType.majorType == MediaType.Audio)
+                  {
+                    this.LogDebug("WDM analog capture: pin {0} is an audio pin", pinIndex);
+                    isAudioSource = true;
+                  }
+                  if (isVideoSource && isAudioSource)
+                  {
+                    break;
+                  }
+                }
+                finally
+                {
+                  Release.AmMediaType(ref mediaType);
+                }
               }
-              else
-              {
-                this.LogDebug("WDM analog capture: pin {0} is an audio pin", pinIndex);
-                isAudioSource = true;
-              }
-              if (isVideoSource && isAudioSource)
-              {
-                break;
-              }
+            }
+            finally
+            {
+              Release.ComObject("WDM analog capture pin media type enumerator", ref mediaTypeEnum);
             }
           }
           finally
@@ -374,18 +387,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       {
         Release.ComObject("WDM analog capture filter video/audio pin enumerator", ref pinEnum);
       }
-    }
-
-    protected override bool ConnectFilterWithPin(IFilterGraph2 graph, IPin pinToConnect, PinDirection pinToConnectDirection, IBaseFilter filter)
-    {
-      this.LogDebug("WDM analog capture: connect filter with pin");
-      string filterName = FilterGraphTools.GetFilterName(filter);
-      if (CAPTURE_DEVICE_BLACKLIST.Contains(filterName))
-      {
-        this.LogDebug("WDM analog capture: filter \"{0}\" is blacklisted, ignoring", filterName);
-        return false;
-      }
-      return base.ConnectFilterWithPin(graph, pinToConnect, pinToConnectDirection, filter);
     }
 
     /// <summary>
@@ -408,6 +409,28 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     {
       _filterAudio = filter;
       _deviceAudio = device;
+    }
+
+    /// <summary>
+    /// Set the stream configuration interface.
+    /// </summary>
+    /// <remarks>
+    /// This function is used by the encoder component when it has found the
+    /// video output pin.
+    /// </remarks>
+    /// <param name="streamConfig">The stream configuration interface.</param>
+    public void SetStreamConfigInterface(IAMStreamConfig streamConfig)
+    {
+      _interfaceStreamConfiguration = streamConfig;
+      if (streamConfig != null)
+      {
+        this.LogDebug("WDM analog capture: found stream configuration interface");
+        ConfigureStream(_currentFrameWidth, _currentFrameHeight, _currentFrameRate);
+      }
+      else if (_filterVideo != null)
+      {
+        this.LogWarn("WDM analog capture: failed to find stream configuration interface");
+      }
     }
 
     #region check capabilities
@@ -485,32 +508,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         else
         {
           this.LogWarn("WDM analog capture: failed to find video processing amplifier interface on capture filter, not able to check video processing amplifier capabilities");
-        }
-      }
-    }
-
-    /// <summary>
-    /// Check the capabilites of the stream configuration interface.
-    /// </summary>
-    /// <param name="captureGraphBuilder">The capture graph builder instance associated with the tuner's graph.</param>
-    private void CheckCapabilitiesStreamConfiguration(ICaptureGraphBuilder2 captureGraphBuilder)
-    {
-      if (_filterVideo != null)
-      {
-        _interfaceStreamConfiguration = null;
-        object tempInterface;
-        int hr = captureGraphBuilder.FindInterface(PinCategory.Capture, null, _filterVideo, typeof(IAMStreamConfig).GUID, out tempInterface);
-        if (hr == (int)HResult.Severity.Success)
-        {
-          _interfaceStreamConfiguration = tempInterface as IAMStreamConfig;
-        }
-        if (_interfaceStreamConfiguration != null)
-        {
-          this.LogDebug("WDM analog capture: found stream configuration interface");
-        }
-        else
-        {
-          this.LogWarn("WDM analog capture: failed to find stream configuration interface in graph, hr = 0x{0:x}", hr);
         }
       }
     }
@@ -831,9 +828,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       _supportedVideoStandards = AnalogVideoStandard.None;
       _supportedVideoProcAmpProperties.Clear();
 
-      // The stream interface is expected to be found on an output pin.
-      // Therefore we should release the reference.
-      Release.ComObject("capture stream format interface", ref _interfaceStreamConfiguration);
+      // The stream interface is found on an output pin, so we must release
+      // the reference to avoid a leak.
+      Release.ComObject("WDM analog capture stream format interface", ref _interfaceStreamConfiguration);
 
       if (_filterVideo == null && _filterAudio == null)
       {
@@ -850,9 +847,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       }
       if (_filterAudio != null && _filterAudio != _filterVideo)
       {
-        Release.ComObject("capture audio filter", ref _filterAudio);
+        Release.ComObject("WDM analog capture audio filter", ref _filterAudio);
       }
-      Release.ComObject("capture video filter", ref _filterVideo);
+      Release.ComObject("WDM analog capture video filter", ref _filterVideo);
 
       if (_deviceMain != null)
       {

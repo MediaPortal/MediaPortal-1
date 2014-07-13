@@ -48,11 +48,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     protected IFilterGraph2 _graph = null;
 
     /// <summary>
-    /// The capture graph builder for the graph.
-    /// </summary>
-    protected ICaptureGraphBuilder2 _captureGraphBuilder = null;
-
-    /// <summary>
     /// The running object table entry for the graph.
     /// </summary>
     private DsROTEntry _runningObjectTableEntry = null;
@@ -160,9 +155,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     {
       this.LogDebug("DirectShow base: initialise graph");
       _graph = (IFilterGraph2)new FilterGraph();
-      _captureGraphBuilder = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
-      int hr = _captureGraphBuilder.SetFiltergraph(_graph);
-      HResult.ThrowException(hr, "Failed to set the capture graph builder's graph.");
       _runningObjectTableEntry = new DsROTEntry(_graph);
     }
 
@@ -256,7 +248,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     {
       this.LogDebug("DirectShow base: add TS writer/analyser filter");
       _filterTsWriter = ComHelper.LoadComObjectFromFile("TsWriter.ax", typeof(MediaPortalTsWriter).GUID, typeof(IBaseFilter).GUID, true) as IBaseFilter;
-      FilterGraphTools.AddAndConnectFilterIntoGraph(_graph, _filterTsWriter, "MediaPortal TS Analyser", upstreamFilter, _captureGraphBuilder);
+      FilterGraphTools.AddAndConnectFilterIntoGraph(_graph, _filterTsWriter, "MediaPortal TS Analyser", upstreamFilter);
     }
 
     /// <summary>
@@ -353,7 +345,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
         }
         Release.ComObject("DirectShow tuner graph", ref _graph);
       }
-      Release.ComObject("DirectShow tuner graph builder", ref _captureGraphBuilder);
       Release.ComObject("TS writer/analyser filter", ref _filterTsWriter);
     }
 
