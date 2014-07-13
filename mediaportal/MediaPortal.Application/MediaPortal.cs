@@ -2404,15 +2404,19 @@ public class MediaPortalApp : D3D, IRender
     {
       if (_startWithBasicHome && File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\basichome.xml")))
       {
-        Log.Info("Main: OnResume - Switch to basic home screen");
+        Log.Info("Main: OnResumeSuspend - Switch to basic home screen");
         GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SECOND_HOME);
       }
       else
       {
-        Log.Info("Main: OnResume - Switch to home screen");
+        Log.Info("Main: OnResumeSuspend - Switch to home screen");
         GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
       }
+      GUIWindowManager.ResetWindowsHistory();
     }
+
+    GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ONRESUME, 0, 0, 0, 0, 0, null);
+    GUIGraphicsContext.SendMessage(message); 
 
     RecoverDevice();
 
@@ -5108,4 +5112,5 @@ public class MediaPortalApp : D3D, IRender
   }
 
   #endregion
+
 }

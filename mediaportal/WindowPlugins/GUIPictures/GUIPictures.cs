@@ -38,6 +38,7 @@ using MediaPortal.Player;
 using MediaPortal.Services;
 using MediaPortal.Threading;
 using MediaPortal.Util;
+using MediaPortal.Profile;
 using Action = MediaPortal.GUI.Library.Action;
 using Layout = MediaPortal.GUI.Library.GUIFacadeControl.Layout;
 using ThreadPool = System.Threading.ThreadPool;
@@ -512,7 +513,6 @@ namespace MediaPortal.GUI.Pictures
       _virtualDirectory.SetExtensions(Util.Utils.PictureExtensions);
       destinationFolder = string.Empty;
       thumbCreationPaths.Clear();
-      
       if (_enableVideoPlayback)
       {
         foreach (string ext in Util.Utils.VideoExtensions)
@@ -628,6 +628,7 @@ namespace MediaPortal.GUI.Pictures
 
       GUITextureManager.CleanupThumbs();
       // LoadSettings();
+
       LoadFolderSettings(currentFolder);
       ShowThumbPanel();
       LoadDirectory(currentFolder);
@@ -822,6 +823,18 @@ namespace MediaPortal.GUI.Pictures
               OnSlideShowRecursive();
             }
           }
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_ONRESUME:
+          using (Settings xmlreader = new MPSettings())
+          {
+            if (!xmlreader.GetValueAsBool("general", "showlastactivemodule", false))
+            {
+              currentFolder = string.Empty;
+            }
+          }
+
+          Log.Debug("{0}:{1}", SerializeName, message.Message);
           break;
       }
     }
@@ -1194,6 +1207,11 @@ namespace MediaPortal.GUI.Pictures
     private int GetItemCount()
     {
       return facadeLayout.Count;
+    }
+
+    protected override string SerializeName
+    {
+      get { return "mypicture"; }
     }
 
     protected override void UpdateButtonStates()

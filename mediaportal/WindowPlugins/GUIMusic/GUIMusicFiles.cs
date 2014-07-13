@@ -198,6 +198,18 @@ namespace MediaPortal.GUI.Music
             }
           }
           break;
+
+        case GUIMessage.MessageType.GUI_MSG_ONRESUME:
+          using (Settings xmlreader = new MPSettings())
+          {
+            if (!xmlreader.GetValueAsBool("general", "showlastactivemodule", false))
+            {
+              currentFolder = string.Empty;
+            }
+          }
+
+          Log.Debug("{0}:{1}", SerializeName, message.Message);
+          break;
       }
     }
 
@@ -329,7 +341,6 @@ namespace MediaPortal.GUI.Music
         MusicState.StartWindow = xmlreader.GetValueAsInt("music", "startWindow", GetID);
         MusicState.View = xmlreader.GetValueAsString("music", "startview", string.Empty);
       }
-
       GUIWindowManager.OnNewAction += new OnActionHandler(GUIWindowManager_OnNewAction);
       GUIWindowManager.Receivers += new SendMessageHandler(GUIWindowManager_OnNewMessage);
       LoadSettings();

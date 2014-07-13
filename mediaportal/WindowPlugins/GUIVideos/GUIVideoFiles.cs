@@ -251,7 +251,6 @@ namespace MediaPortal.GUI.Video
       g_Player.PlayBackStarted += OnPlayBackStarted;
       g_Player.PlayBackChanged += OnPlayBackChanged;
       GUIWindowManager.Receivers += GUIWindowManager_OnNewMessage;
-
       LoadSettings();
     }
 
@@ -3027,7 +3026,7 @@ namespace MediaPortal.GUI.Video
             if (movieId < 0 || movieId != -1 && item.Duration == 0)
             {
               itemlist2.Add(item);
-          }
+            }
           }
 
           //Do NOT add OnItemSelected event handler here, because its still there...
@@ -4136,6 +4135,18 @@ namespace MediaPortal.GUI.Video
               LoadDirectory(_currentFolder);
             }
           }
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_ONRESUME:
+          using (Settings xmlreader = new MPSettings())
+          {
+            if (!xmlreader.GetValueAsBool("general", "showlastactivemodule", false))
+            {
+              _currentFolder = string.Empty;
+            }
+          }
+
+          Log.Debug("{0}:{1}", SerializeName, message.Message);
           break;
       }
     }
