@@ -1203,16 +1203,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
         return;
       }
 
-      if (ch.LnbType.SwitchFrequency > 0 && ch.Frequency > ch.LnbType.SwitchFrequency)
-      {
-        ch.LnbType.LowBandFrequency = ch.LnbType.HighBandFrequency;
-      }
-      else
-      {
-        ch.LnbType.HighBandFrequency = ch.LnbType.LowBandFrequency;
-      }
-      this.LogDebug("  LNB LOF        = {0}", ch.LnbType.LowBandFrequency);
-
       NbcTuningParams command = new NbcTuningParams();
       // Default: tuning with "auto" is slower, so avoid it if possible.
       command.DvbsStandard = TbsDvbsStandard.Auto;
