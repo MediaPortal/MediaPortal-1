@@ -403,7 +403,7 @@ namespace MediaPortal.GUI.Pictures
     private static bool returnFromSlideshow = false;
     private bool _ageConfirmed = false;
     private ArrayList _protectedShares = new ArrayList();
-    private int _currentPin = 0;
+    private string _currentPin = string.Empty;
     private ArrayList _currentProtectedShare = new ArrayList();
 
     #endregion
@@ -626,8 +626,8 @@ namespace MediaPortal.GUI.Pictures
         {
           string sharePin = String.Format("pincode{0}", index);
           string sharePath = String.Format("sharepath{0}", index);
-          string sharePinData = Util.Utils.DecryptPin(xmlreader.GetValueAsString("pictures", sharePin, ""));
-          string sharePathData = xmlreader.GetValueAsString("pictures", sharePath, "");
+          string sharePinData = Util.Utils.DecryptPassword(xmlreader.GetValueAsString("pictures", sharePin, string.Empty));
+          string sharePathData = xmlreader.GetValueAsString("pictures", sharePath, string.Empty);
 
           if (!string.IsNullOrEmpty(sharePinData))
           {
@@ -658,7 +658,7 @@ namespace MediaPortal.GUI.Pictures
       if (!IsPictureWindow(PreviousWindowId))
       {
         _ageConfirmed = false;
-        _currentPin = 0;
+        _currentPin = string.Empty;
         _currentProtectedShare.Clear();
         _protectedShares.Clear();
         GetProtectedShares(ref _protectedShares);
@@ -1231,26 +1231,22 @@ namespace MediaPortal.GUI.Pictures
       {
         GUIMessage msgGetPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_PASSWORD, 0, 0, 0, 0, 0, 0);
         GUIWindowManager.SendMessage(msgGetPassword);
-        int iPincode = -1;
+        string iPincode = string.Empty;
 
-        try
-        {
-          iPincode = Int32.Parse(msgGetPassword.Label);
-        }
-        catch (Exception) { }
+        iPincode = msgGetPassword.Label;
 
         foreach (string p in _protectedShares)
         {
           char[] splitter = { '|' };
           string[] pin = p.Split(splitter);
 
-          if (iPincode != Convert.ToInt32(pin[0]))
+          if (iPincode != pin[0])
           {
             _currentPin = iPincode;
             continue;
           }
 
-          if (iPincode == Convert.ToInt32(pin[0]))
+          if (iPincode == pin[0])
           {
             _currentPin = iPincode;
             _currentProtectedShare.Add(pin[1]);
@@ -1275,7 +1271,7 @@ namespace MediaPortal.GUI.Pictures
         }
       }
 
-      _currentPin = 0;
+      _currentPin = string.Empty;
       return false;
     }
 
@@ -2489,7 +2485,7 @@ namespace MediaPortal.GUI.Pictures
       if (directory != null)
       {
         // Check if item belongs to protected shares
-        int pincode = 0;
+        string pincode = string.Empty;
         bool folderPinProtected = vDir.IsProtectedShare(directory, out pincode);
 
         bool success = false;
