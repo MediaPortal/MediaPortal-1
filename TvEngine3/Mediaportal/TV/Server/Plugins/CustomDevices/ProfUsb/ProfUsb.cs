@@ -496,7 +496,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
         return;
       }
 
-      if (ch.Frequency > ch.LnbType.SwitchFrequency)
+      if (ch.LnbType.SwitchFrequency > 0 && ch.Frequency > ch.LnbType.SwitchFrequency)
       {
         ch.LnbType.LowBandFrequency = ch.LnbType.HighBandFrequency;
       }

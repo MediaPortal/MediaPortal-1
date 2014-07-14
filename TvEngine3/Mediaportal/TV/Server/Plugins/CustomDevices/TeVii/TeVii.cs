@@ -579,7 +579,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
       DVBSChannel ch = channel as DVBSChannel;
       bool toneOn = false;
       int lnbLof = ch.LnbType.LowBandFrequency;
-      if (ch.Frequency > ch.LnbType.SwitchFrequency)
+      if (ch.LnbType.SwitchFrequency > 0 && ch.Frequency > ch.LnbType.SwitchFrequency)
       {
         lnbLof = ch.LnbType.HighBandFrequency;
         toneOn = true;

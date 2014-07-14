@@ -48,6 +48,10 @@
       <Project>{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}</Project>
       <Name>DirectShowLib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\TVDatabase\Entities\Entities.csproj">
+      <Project>{4C2D9698-AF44-4157-99B6-48F5269F20CC}</Project>
+      <Name>Entities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj">
       <Project>{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}</Project>
       <Name>TvLibrary.Interfaces</Name>

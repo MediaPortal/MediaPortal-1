@@ -961,7 +961,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
       // hence, whether to turn the 22 kHz tone on or off) for some LNB settings. This could be to do with the use
       // of 18000000 kHz for the LNB switch frequency for single oscillator LNBs. The workaround is to set the two
       // LOFs to the single, correct LOF value when we want the 22 kHz tone to be turned off.
-      if (ch.Frequency <= ch.LnbType.SwitchFrequency)
+      if (ch.LnbType.SwitchFrequency == 0 || ch.Frequency <= ch.LnbType.SwitchFrequency)
       {
         // Note: this logic does handle bandstacked LNBs properly.
         ch.LnbType.HighBandFrequency = ch.LnbType.LowBandFrequency;

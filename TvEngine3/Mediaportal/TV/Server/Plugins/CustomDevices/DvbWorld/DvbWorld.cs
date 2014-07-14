@@ -590,7 +590,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbWorld
       }
       tuningParams.ToneBurst = DwToneBurst.Undefined;
 
-      if (dvbsChannel.Frequency >= dvbsChannel.LnbType.SwitchFrequency)
+      if (dvbsChannel.LnbType.SwitchFrequency > 0 && dvbsChannel.Frequency >= dvbsChannel.LnbType.SwitchFrequency)
       {
         tuningParams.LnbLof = (uint)dvbsChannel.LnbType.HighBandFrequency;
         tuningParams.Tone22kEnabled = true;
