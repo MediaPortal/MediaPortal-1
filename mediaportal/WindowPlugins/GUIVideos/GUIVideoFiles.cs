@@ -251,7 +251,6 @@ namespace MediaPortal.GUI.Video
       g_Player.PlayBackStarted += OnPlayBackStarted;
       g_Player.PlayBackChanged += OnPlayBackChanged;
       GUIWindowManager.Receivers += GUIWindowManager_OnNewMessage;
-
       LoadSettings();
     }
 
@@ -352,7 +351,7 @@ namespace MediaPortal.GUI.Video
         _markWatchedFiles = xmlreader.GetValueAsBool("movies", "markwatched", true);
         //_eachFolderIsMovie = xmlreader.GetValueAsBool("movies", "eachFolderIsMovie", false);
         _fileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
-        _fileMenuPinCode = Util.Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", string.Empty));
+        _fileMenuPinCode = Util.Utils.DecryptPassword(xmlreader.GetValueAsString("filemenu", "pincode", string.Empty));
         _howToPlayAll = xmlreader.GetValueAsInt("movies", "playallinfolder", 3);
         _watchedPercentage = xmlreader.GetValueAsInt("movies", "playedpercentagewatched", 95);
         _videoInfoInShare = xmlreader.GetValueAsBool("moviedatabase", "movieinfoshareview", false);
@@ -2312,7 +2311,7 @@ namespace MediaPortal.GUI.Video
           return;
         }
 
-        int iPincodeCorrect;
+        string iPincodeCorrect;
         if (_virtualDirectory.IsProtectedShare(strDir, out iPincodeCorrect))
         {
           #region Pin protected
@@ -2324,15 +2323,8 @@ namespace MediaPortal.GUI.Video
               //no, then ask user to enter the pincode
               GUIMessage msgGetPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_PASSWORD, 0, 0, 0, 0, 0, 0);
               GUIWindowManager.SendMessage(msgGetPassword);
-              int iPincode = -1;
 
-              try
-              {
-                iPincode = Int32.Parse(msgGetPassword.Label);
-              }
-              catch (Exception) { }
-
-              if (iPincode != iPincodeCorrect)
+              if (msgGetPassword.Label != iPincodeCorrect)
               {
                 GUIMessage msgWrongPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WRONG_PASSWORD, 0, 0, 0, 0, 0,
                                                              0);
@@ -2836,7 +2828,7 @@ namespace MediaPortal.GUI.Video
 
       if (_virtualDirectory.DefaultShare != null)
       {
-        int pincode;
+        string pincode;
         bool folderPinProtected = _virtualDirectory.IsProtectedShare(_virtualDirectory.DefaultShare.Path, out pincode);
 
         if (folderPinProtected)
@@ -3039,7 +3031,7 @@ namespace MediaPortal.GUI.Video
             if (movieId < 0 || movieId != -1 && item.Duration == 0)
             {
               itemlist2.Add(item);
-          }
+            }
           }
 
           //Do NOT add OnItemSelected event handler here, because its still there...
@@ -4149,6 +4141,18 @@ namespace MediaPortal.GUI.Video
             }
           }
           break;
+
+        case GUIMessage.MessageType.GUI_MSG_ONRESUME:
+          using (Settings xmlreader = new MPSettings())
+          {
+            if (!xmlreader.GetValueAsBool("general", "showlastactivemodule", false))
+            {
+              _currentFolder = string.Empty;
+            }
+          }
+
+          Log.Debug("{0}:{1}", SerializeName, message.Message);
+          break;
       }
     }
 
@@ -4330,7 +4334,7 @@ namespace MediaPortal.GUI.Video
 
     private static bool IsFolderPinProtected(string folder)
     {
-      int pinCode = 0;
+      string pinCode = string.Empty;
       return _virtualDirectory.IsProtectedShare(folder, out pinCode);
     }
 

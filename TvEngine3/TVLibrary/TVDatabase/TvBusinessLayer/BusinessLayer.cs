@@ -481,8 +481,8 @@ namespace TvDatabase
     {
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
       SqlStatement origStmt = sb.GetStatement(true);
-      string sql = "select c.* from channel c inner join groupmap gm on (c.idChannel = gm.idChannel and gm.idGroup =" +
-                   group.IdGroup + ") order by gm.SortOrder asc";
+      string sql = "SELECT c.* FROM Channel c INNER JOIN GroupMap gm ON (c.idChannel = gm.idChannel AND gm.idGroup =" +
+                   group.IdGroup + ") ORDER BY gm.SortOrder ASC";
       SqlStatement statement = new SqlStatement(StatementType.Select, origStmt.Command, sql,
                                                 typeof (Channel));
       return ObjectFactory.GetCollection<Channel>(statement.Execute());
@@ -2956,18 +2956,38 @@ namespace TvDatabase
         }
         List<Schedule> overlapping;
         List<Schedule> notViewable;
-        if (!AssignSchedulesToCard(newEpisode, cardSchedules, out overlapping, out notViewable))
+        if (!AssignSchedulesToCardConflict(newEpisode, cardSchedules, out overlapping, out notViewable))
         {
           Log.Info("GetConflictingSchedules: newEpisode can not be assigned to a card = " + newEpisode);
           conflictingSchedules.AddRange(overlapping);
           notViewableSchedules.AddRange(notViewable);
         }
       }
-      return;
     }
 
     private static bool AssignSchedulesToCard(Schedule schedule, List<Schedule>[] cardSchedules,
                                               out List<Schedule> overlappingSchedules, out List<Schedule> notViewabledSchedules)
+    {
+      overlappingSchedules = new List<Schedule>();
+      notViewabledSchedules = new List<Schedule>();
+      Log.Info("AssignSchedulesToCard: schedule = " + schedule);
+      IList<Card> cards = Card.ListAllEnabled();
+      int count = 0;
+      foreach (Card card in cards)
+      {
+        if (card.canViewTvChannel(schedule.IdChannel))
+        {
+          Log.Info("AssignSchedulesToCard: free on card {0}, ID = {1}", count, card.IdCard);
+          cardSchedules[count].Add(schedule);
+          break;
+        }
+        count++;
+      }
+      return true;
+    }
+
+    private static bool AssignSchedulesToCardConflict(Schedule schedule, List<Schedule>[] cardSchedules,
+                                          out List<Schedule> overlappingSchedules, out List<Schedule> notViewabledSchedules)
     {
       overlappingSchedules = new List<Schedule>();
       notViewabledSchedules = new List<Schedule>();
@@ -2993,17 +3013,14 @@ namespace TvDatabase
               if (!isSameTransponder)
               {
                 overlappingSchedules.Add(assignedSchedule);
-                Log.Info("AssignSchedulesToCard: overlapping with " + assignedSchedule + " on card {0}, ID = {1}", count,
-                         card.IdCard);
+                Log.Info("AssignSchedulesToCard: overlapping with " + assignedSchedule + " on card {0}, ID = {1}", count, card.IdCard);
                 free = false;
-                break;
               }
             }
           }
           if (free)
           {
             Log.Info("AssignSchedulesToCard: free on card {0}, ID = {1}", count, card.IdCard);
-            cardSchedules[count].Add(schedule);                                                
             assigned = true;
             break;
           }

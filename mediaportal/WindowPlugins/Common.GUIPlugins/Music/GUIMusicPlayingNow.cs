@@ -387,14 +387,6 @@ namespace MediaPortal.GUI.Music
               //  break;
           }
           break;
-
-        case Action.ActionType.ACTION_LASTFM_LOVE:
-          DoLastFMLove();
-          break;
-
-        case Action.ActionType.ACTION_LASTFM_BAN:
-          DoLastFMBan();
-          break;
       }
     }
 
@@ -511,18 +503,6 @@ namespace MediaPortal.GUI.Music
       BassMusicPlayer.Player.InternetStreamSongChanged -= OnInternetStreamSongChanged;
 
       base.OnPageDestroy(newWindowId);
-    }
-
-    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
-    {
-      if (control == btnLastFMLove)
-      {
-        DoLastFMLove();
-      }
-      if (control == btnLastFMBan)
-      {
-        DoLastFMBan();
-      }
     }
 
     protected override void OnShowContextMenu()
@@ -656,13 +636,6 @@ namespace MediaPortal.GUI.Music
             Log.Error("GUIMusicPlayingNow: error while adding album tracks for {0} - {1}", CurrentTrackTag.Album,
                       ex.Message);
           }
-          break;
-
-        case 34010: //love 
-          DoLastFMLove();
-          break;
-        case 34011: //ban
-          DoLastFMBan();
           break;
       }
     }
@@ -1216,51 +1189,6 @@ namespace MediaPortal.GUI.Music
           }
           break;
       }
-    }
-
-    private void DoLastFMLove()
-    {
-      string dlgText = GUILocalizeStrings.Get(34010) + " : " + CurrentTrackTag.Title;
-
-      try
-      {
-        LastFMLibrary.LoveTrack(CurrentTrackTag.Artist, CurrentTrackTag.Title);
-      }
-      catch (Exception ex)
-      {
-        Log.Error("Error in DoLastFMLove");
-        Log.Error(ex);
-        dlgText = GUILocalizeStrings.Get(1025) + "\n" + dlgText; // prepend "An Error has occurred"
-      }
-
-      var dlgNotifyLastFM = (GUIDialogNotifyLastFM)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_LASTFM);
-      dlgNotifyLastFM.SetHeading(GUILocalizeStrings.Get(34000)); // last.FM
-      dlgNotifyLastFM.SetText(dlgText);
-      dlgNotifyLastFM.TimeOut = 2;
-      dlgNotifyLastFM.DoModal(GetID);
-      
-    }
-
-    private void DoLastFMBan()
-    {
-      string dlgText = GUILocalizeStrings.Get(34011) + " : " + CurrentTrackTag.Title;
-
-      try
-      {
-        LastFMLibrary.BanTrack(CurrentTrackTag.Artist, CurrentTrackTag.Title);
-      }
-      catch (Exception ex)
-      {
-        Log.Error("Error in DoLastFMBan");
-        Log.Error(ex);
-        dlgText = GUILocalizeStrings.Get(1025) + "\n" + dlgText; // prepend "An Error has occurred"
-      }
-
-      var dlgNotifyLastFM = (GUIDialogNotifyLastFM)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_LASTFM);
-      dlgNotifyLastFM.SetHeading(GUILocalizeStrings.Get(34000)); // last.FM
-      dlgNotifyLastFM.SetText(dlgText);
-      dlgNotifyLastFM.TimeOut = 2;
-      dlgNotifyLastFM.DoModal(GetID);
     }
 
     private void UpdateSimilarTracks(string filename)

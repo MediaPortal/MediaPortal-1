@@ -101,7 +101,7 @@
     <String id="135">Genres</String>
     <String id="136">Afspeellijst</String>
     <String id="137">Zoeken</String>
-    <String id="138">SYSTEEMINFORMATIE</String>
+    <String id="138">SYSTEEM INFORMATIE</String>
     <String id="139">Temperaturen:</String>
     <String id="140">CPU:</String>
     <String id="141">GPU:</String>
@@ -135,7 +135,7 @@
     <String id="169">Resolutie:</String>
     <String id="170">Album:</String>
     <String id="171">Artiest:</String>
-    <String id="172">Releasedatum:</String>
+    <String id="172">Release datum:</String>
     <String id="173">Waardering:</String>
     <String id="174">Genre:</String>
     <String id="175">Stemmingen:</String>
@@ -995,7 +995,7 @@
     <String id="1196">Ondertiteling</String>
     <String id="1197">DXVA uitschakelen</String>
     <String id="1198">DVD Navigator</String>
-	<String id="1199">Gebruik interne Blu-ray speler</String>
+    <String id="1199">Gebruik interne Blu-ray speler</String>
     <String id="1200">Installatiewizard</String>
     <String id="1201">Video vanaf begin afspelen</String>
     <String id="1202">Auto</String>
@@ -1090,7 +1090,7 @@
     <String id="1317">Ophalen van interne scripts...</String>
     <String id="1318">Ondertitel opslaan</String>
     <String id="1319">Gewijzigd ondertitelbestand opslaan?</String>
-	<String id="1320">{0} als {1} &#10;</String>
+    <String id="1320">{0} als {1} </String>
     <String id="1321">Auto Decoder Selectie</String>
     <String id="1322">Forceer Source filter</String>
     <String id="1323">Video Codecs voor .TS files</String>
@@ -1183,7 +1183,12 @@
     <String id="1976">tpm</String>
     <String id="1977">Bestandssysteem</String>
     <String id="1978">Virtueel geheugen</String>
-	<String id="1984">Ververs video miniaturenmap</String>
+    <String id="1984">Ververs video miniaturenmap</String>
+    <String id="1990">Server ontwaken</String>
+    <String id="1991">Wacht tot de server weer aan staat</String>
+    <String id="1992">De server is niet beschikbaar</String>
+    <String id="1993">Controleer netwerk verbindingen of verhoog de time out waarden</String>
+    <String id="1994">Wacht tot de gedeelde folder online komt.</String>
     <String id="2005">Verwijderen</String>
     <String id="2006">Titel</String>
     <String id="2007">Aantal</String>
@@ -1830,6 +1835,7 @@
     <String id="34061">Invoeren gebruikersnaam...</String>
     <String id="34062">Invoeren artiest...</String>
     <String id="34063">Artiest is nog niet gekozen</String>
+    <String id="34064">Internet verbinding vereist\nFor Last.FM Radio </String>
     <String id="40001">Wachten op slaapstand</String>
     <String id="40002">MediaPortal heeft geen taken meer, maar is nog steeds bezig.</String>
     <String id="40003">Wanneer alle huidige taken gereed zijn zal MediaPortal naar de slaapstand gaan.</String>
@@ -2021,9 +2027,9 @@
     <String id="200004">Handmatig aangeleverde tvguide.xml</String>
     <String id="200005">Selecteer uw model afstandsbediening:</String>
     <String id="200006">Druk op VOLGENDE om verder te gaan met instellen:</String>
-    <String id="200007">&lt;Vorige</String>
+    <String id="200007">&lt; Vorige</String>
     <String id="200008">Instellen: de afstandsbediening</String>
-    <String id="200009">Volgende&gt;</String>
+    <String id="200009">Volgende &gt;</String>
     <String id="200010">MediaPortal verandert uw PC in een zeer geavanceerd multimedia center/HTPC.</String>
     <String id="200011">Met MediaPortal kunt u genieten van uw favoriete muziek, radio, het bekijken van digitale fotos,</String>
     <String id="200012">bekijk video's, DVDs, televisie en nog veel meer.</String>
@@ -2224,7 +2230,6 @@
     <String id="300120">Skin</String>
     <String id="300121">Op-scherm weergave</String>
     <String id="300122">Onthouden laatst geselecteerde items toestaan</String>
-    <String id="300123">Automatisch vergroten van venster naar skin afmetingen</String>
     <String id="300124">Bestandsextensies verbergen (.mp3, .avi...)</String>
     <String id="300125">Bestandscache inschakelen</String>
     <String id="300126">Skin geluidseffecten inschakelen</String>
@@ -2296,7 +2301,7 @@
     <String id="300192">Speel alles methode</String>
     <String id="300193">Scan filmmappen</String>
     <String id="300194">Scan opties</String>
-    <String id="300195">Automatch film</String>
+    <String id="300195">Automatisch film</String>
     <String id="300196">Gebruik fanart</String>
     <String id="300197">Download fanart voor bestandsweergave</String>
     <String id="300198">Gebruik mapnaam voor titel</String>
@@ -2329,9 +2334,10 @@
     <String id="300225">Gebruik "Sorteer titel"</String>
     <String id="300226">Gebruik alleen de interne nfo scraper</String>
     <String id="300227">Verwijder miniatuur afbeeldingen op zwartelijst</String>
-	<String id="300228">Vraag bevestiging als timeshifting gestopt word</String>
+    <String id="300228">Vraag bevestiging als timeshifting gestopt word</String>
     <String id="300229">Minimaliseren naar systeemvak als focus verloren is</String>
     <String id="300230">Stop afspelen als audio renderer verwijderd word</String>
     <String id="300231">Verminder beeldsnelheid indien niet in focus</String>
+    <String id="300232">Bestanden alleen updaten na {0}</String>
   </Section>
 </Language>

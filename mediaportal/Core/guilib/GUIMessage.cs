@@ -133,6 +133,7 @@ namespace MediaPortal.GUI.Library
       GUI_MSG_VIDEOINFO_REFRESH = 102,
       GUI_MSG_LAYOUT_CHANGED = 103,
       GUI_MSG_SORT_CHANGED = 104,
+      GUI_MSG_ONRESUME = 105,
       PS_ONSTANDBY = 9999
     } ;
 

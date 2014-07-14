@@ -2331,7 +2331,15 @@ namespace MediaPortal.Util
         {
           return false;
         }
+
         File.Delete(strFile);
+
+        if (File.Exists(strFile))
+        {
+          Log.Debug("Util: FileDelete {0} error. The file is in used.", strFile);
+          return false;
+        }
+
         Log.Debug("Util: FileDelete {0} successful.", strFile);
         return true;
       }
@@ -4726,6 +4734,30 @@ namespace MediaPortal.Util
       {
         Log.Error("Restarting - WaitForExit: {0}", ex.Message);
       }
+    }
+
+    public static string EncryptPassword(string code)
+    {
+      string result = string.Empty;
+      try
+      {
+        byte[] codeTextBytes = Encoding.UTF8.GetBytes(code);
+        result = Convert.ToBase64String(codeTextBytes);
+      }
+      catch { }
+      return result;
+    }
+
+    public static string DecryptPassword(string code)
+    {
+      string result = string.Empty;
+      try
+      {
+        byte[] codeTextBytes = Convert.FromBase64String(code);
+        result = Encoding.UTF8.GetString(codeTextBytes);
+      }
+      catch { }
+      return result;
     }
 
     public static string EncryptPin(string code)
