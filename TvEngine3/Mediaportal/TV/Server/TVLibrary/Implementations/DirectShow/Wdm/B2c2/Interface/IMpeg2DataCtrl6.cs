@@ -419,14 +419,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <summary>
     /// Get information about the B2C2 compatible devices installed in the system.
     /// </summary>
-    /// <param name="deviceInfo">A pointer to an array of device information.</param>
+    /// <param name="deviceInfo">An array of device information.</param>
     /// <param name="infoSize">As an input, the size (in bytes) of the device information array;
     ///   as an output, the number of bytes of the device information which were filled.</param>
     /// <param name="deviceCount">As an input, the size of the device information array; as an
     ///   output, the number of devices installed in the system.</param>
     /// <returns>an HRESULT indicating whether the device information was successfully retrieved</returns>
     [PreserveSig]
-    int GetDeviceList(IntPtr deviceInfo, ref int infoSize, ref int deviceCount);
+    int GetDeviceList([In, Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)] DeviceInfo[] deviceInfo, ref int infoSize, ref int deviceCount);
 
     /// <summary>
     /// Select (activate) a specific B2C2 device.

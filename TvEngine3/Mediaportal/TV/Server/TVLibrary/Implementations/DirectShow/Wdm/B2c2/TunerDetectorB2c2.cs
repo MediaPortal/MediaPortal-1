@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using DirectShowLib;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Enum;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Interface;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Struct;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Interface;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
 {
@@ -67,84 +67,70 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
         }
 
         // Get device details...
+        DeviceInfo[] info = new DeviceInfo[Constants.MAX_DEVICE_COUNT];
         int size = DEVICE_INFO_SIZE * Constants.MAX_DEVICE_COUNT;
         int deviceCount = Constants.MAX_DEVICE_COUNT;
-        IntPtr structurePtr = Marshal.AllocCoTaskMem(size);
-        try
+        int hr = dataInterface.GetDeviceList(info, ref size, ref deviceCount);
+        if (hr != (int)HResult.Severity.Success)
         {
-          for (int i = 0; i < size; i++)
-          {
-            Marshal.WriteByte(structurePtr, i, 0);
-          }
-          int hr = dataInterface.GetDeviceList(structurePtr, ref size, ref deviceCount);
-          if (hr != (int)HResult.Severity.Success)
-          {
-            this.LogError("B2C2 detector: failed to get device list, hr = 0x{0:x}", hr);
-          }
-          else
-          {
-            //Dump.DumpBinary(structurePtr, size);
-            this.LogDebug("B2C2 detector: device count = {0}", deviceCount);
-            for (int i = 0; i < deviceCount; i++)
-            {
-              DeviceInfo d = (DeviceInfo)Marshal.PtrToStructure(structurePtr, typeof(DeviceInfo));
-
-              // Is this a new tuner?
-              ITVCard t;
-              if (_knownTuners.TryGetValue(d.DeviceId, out t))
-              {
-                tuners.Add(t);
-                knownTuners.Add(d.DeviceId, t);
-                continue;
-              }
-              t = null;
-
-              this.LogDebug("B2C2 detector: device {0}", i + 1);
-              this.LogDebug("  device ID           = {0}", d.DeviceId);
-              this.LogDebug("  MAC address         = {0}", BitConverter.ToString(d.MacAddress.Address).ToLowerInvariant());
-              this.LogDebug("  tuner type          = {0}", d.TunerType);
-              this.LogDebug("  bus interface       = {0}", d.BusInterface);
-              this.LogDebug("  is in use?          = {0}", d.IsInUse);
-              this.LogDebug("  product ID          = {0}", d.ProductId);
-              this.LogDebug("  product name        = {0}", d.ProductName);
-              this.LogDebug("  product description = {0}", d.ProductDescription);
-              this.LogDebug("  product revision    = {0}", d.ProductRevision);
-              this.LogDebug("  product front end   = {0}", d.ProductFrontEnd);
-
-              switch (d.TunerType)
-              {
-                case TunerType.Satellite:
-                  t = new TunerB2c2Satellite(d);
-                  break;
-                case TunerType.Cable:
-                  t = new TunerB2c2Cable(d);
-                  break;
-                case TunerType.Terrestrial:
-                  t = new TunerB2c2Terrestrial(d);
-                  break;
-                case TunerType.Atsc:
-                  t = new TunerB2c2Atsc(d);
-                  break;
-                default:
-                  // The tuner may not be redetected properly after standby in some cases.
-                  this.LogWarn("B2C2 detector: unknown tuner type {0}, cannot use this tuner", d.TunerType);
-                  break;
-              }
-
-              if (t != null)
-              {
-                tuners.Add(t);
-                knownTuners.Add(d.DeviceId, t);
-              }
-
-              structurePtr = IntPtr.Add(structurePtr, DEVICE_INFO_SIZE);
-            }
-            this.LogDebug("B2C2 detector: result = success");
-          }
+          this.LogError("B2C2 detector: failed to get device list, hr = 0x{0:x}", hr);
         }
-        finally
+        else
         {
-          Marshal.FreeCoTaskMem(structurePtr);
+          this.LogDebug("B2C2 detector: device count = {0}", deviceCount);
+          for (int i = 0; i < deviceCount; i++)
+          {
+            DeviceInfo d = info[i];
+
+            // Is this a new tuner?
+            ITVCard t;
+            if (_knownTuners.TryGetValue(d.DeviceId, out t))
+            {
+              tuners.Add(t);
+              knownTuners.Add(d.DeviceId, t);
+              continue;
+            }
+            t = null;
+
+            this.LogDebug("B2C2 detector: device {0}", i + 1);
+            this.LogDebug("  device ID           = {0}", d.DeviceId);
+            this.LogDebug("  MAC address         = {0}", BitConverter.ToString(d.MacAddress.Address).ToLowerInvariant());
+            this.LogDebug("  tuner type          = {0}", d.TunerType);
+            this.LogDebug("  bus interface       = {0}", d.BusInterface);
+            this.LogDebug("  is in use?          = {0}", d.IsInUse);
+            this.LogDebug("  product ID          = {0}", d.ProductId);
+            this.LogDebug("  product name        = {0}", d.ProductName);
+            this.LogDebug("  product description = {0}", d.ProductDescription);
+            this.LogDebug("  product revision    = {0}", d.ProductRevision);
+            this.LogDebug("  product front end   = {0}", d.ProductFrontEnd);
+
+            switch (d.TunerType)
+            {
+              case TunerType.Satellite:
+                t = new TunerB2c2Satellite(d);
+                break;
+              case TunerType.Cable:
+                t = new TunerB2c2Cable(d);
+                break;
+              case TunerType.Terrestrial:
+                t = new TunerB2c2Terrestrial(d);
+                break;
+              case TunerType.Atsc:
+                t = new TunerB2c2Atsc(d);
+                break;
+              default:
+                // The tuner may not be redetected properly after standby in some cases.
+                this.LogWarn("B2C2 detector: unknown tuner type {0}, cannot use this tuner", d.TunerType);
+                break;
+            }
+
+            if (t != null)
+            {
+              tuners.Add(t);
+              knownTuners.Add(d.DeviceId, t);
+            }
+          }
+          this.LogDebug("B2C2 detector: result = success");
         }
       }
       finally
