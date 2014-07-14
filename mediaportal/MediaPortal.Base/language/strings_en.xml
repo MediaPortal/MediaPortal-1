@@ -1887,6 +1887,8 @@
     <String id="100510">Music/Now playing</String>
     <String id="100511">Music/Fullscreen</String>
     <String id="100512">LastFM Love/Ban</String>
+    <String id="100513">Enter the old PIN code</String>
+    <String id="100514">Enter the new PIN code</String>
     <String id="100600">TV/Guide</String>
     <String id="100601">TV/Scheduler</String>
     <String id="100602">TV/fullscreen</String>

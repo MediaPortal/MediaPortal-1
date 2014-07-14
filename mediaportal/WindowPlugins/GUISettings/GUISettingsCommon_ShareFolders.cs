@@ -950,15 +950,69 @@ namespace MediaPortal.GUI.Settings
 
     private void OnAddPin()
     {
-      GetStringFromKeyboard(ref _folderPin, 4);
-
-      int number;
-      if (!Int32.TryParse(_folderPin, out number))
+      if (_folderPin != string.Empty)
       {
-        _folderPin = string.Empty;
+        var dlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+        if (null == dlgOK)
+        {
+          return;
+        }
+        dlgOK.SetHeading("");
+        dlgOK.SetLine(1, 100513);
+        dlgOK.DoModal(GetID);
+
+        if (!RequestPin())
+        {
+          return;
+        }
       }
 
+      var dlgOK2 = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+      if (null == dlgOK2)
+      {
+        return;
+      }
+      dlgOK2.SetHeading("");
+      dlgOK2.SetLine(1, 100514);
+      dlgOK2.DoModal(GetID);
+
+      SetPin();
+
       OnAddEditFolder();
+    }
+
+    private void SetPin()
+    {
+      var msgGetPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_PASSWORD, 0, 0, 0, 0, 0, 0);
+      GUIWindowManager.SendMessage(msgGetPassword);
+
+      _folderPin = msgGetPassword.Label;
+    }
+
+    private bool RequestPin()
+    {
+      bool retry = true;
+
+      while (retry)
+      {
+        var msgGetPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_PASSWORD, 0, 0, 0, 0, 0, 0);
+        GUIWindowManager.SendMessage(msgGetPassword);
+
+        if (msgGetPassword.Label == _folderPin)
+        {
+          return true;
+        }
+
+        var msgWrongPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WRONG_PASSWORD, 0, 0, 0, 0, 0,
+                                                     0);
+        GUIWindowManager.SendMessage(msgWrongPassword);
+
+        if (!(bool)msgWrongPassword.Object)
+        {
+          retry = false;
+        }
+      }
+      return false;
     }
 
     private void OnThumb()
