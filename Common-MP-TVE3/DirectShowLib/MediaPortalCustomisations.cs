@@ -708,7 +708,7 @@ namespace DirectShowLib
     /// In most cases the product instance identifier is extracted from the device path (IMoniker
     /// display name).
     /// General device path elements:
-    /// @device:[type: cm|pnp|sw]:\\?\[connection: hdaudio|pci|root|stream|usb]#[product info: vendor, device, product, subsystem]#[product instance identifier]#[category GUID]\[component instance GUID/CLSID]
+    /// @device:[type: cm|dmo|pnp|sw]:\\?\[connection: dd_dvb|hdaudio|pci|root|stream|usb]#[product info: vendor, device, product, subsystem, revision]#[product instance identifier]#[category GUID]\[component instance GUID/CLSID]
     /// 
     /// Examples:
     /// @device:cm:{33D9A762-90C8-11D0-BD43-00A0C911CE86}\7162 BDA Audio Capture
@@ -718,6 +718,7 @@ namespace DirectShowLib
     /// @device:pnp:\\?\root#system#0000#{fd0a5af4-b41d-11d2-9c95-00c04f7971e0}\{03884cb6-e89a-4deb-b69e-8dc621686e6a}&global
     /// @device:sw:{71985F48-1CA1-11D3-9CC8-00C04F7971E0}\Silicondust HDHomeRun Tuner 1000101F-0
     /// @device:pnp:\\?\hdaudio#func_01&ven_10ec&dev_0882&subsys_1043e601&rev_1001#4&225f9914&0&0001#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\rearlineinwave3
+    /// @device:pnp:\\?\dd_dvb#ven_dd01&dev_0011&subsys_0040dd01&rev_00&tuner#5&71e513c&0&2#{71985f48-1ca1-11d3-9cc8-00c04f7971e0}\{8b884e32-fbca-11de-b16f-000000004d56}
     /// 
     /// For more information about [product] instance IDs:
     /// http://msdn.microsoft.com/en-us/library/windows/hardware/ff547656%28v=vs.85%29.aspx
@@ -737,13 +738,14 @@ namespace DirectShowLib
         //---------------------------
         // Hardware-specific methods.
         //---------------------------
+        Match m;
         string name = Name;
         if (name != null)
         {
           if (name.Contains("Ceton"))
           {
             // Example: Ceton InfiniTV PCIe (00-80-75-05) Tuner 1 (00-00-22-00-00-80-75-05)
-            Match m = Regex.Match(name, @"\s+\(([^\s]+)\)\s+Tuner\s+\d+", RegexOptions.IgnoreCase);
+            m = Regex.Match(name, @"\s+\(([^\s]+)\)\s+Tuner\s+\d+", RegexOptions.IgnoreCase);
             if (m.Success)
             {
               _productInstanceId = m.Groups[1].Captures[0].Value;
@@ -753,7 +755,7 @@ namespace DirectShowLib
           else if (name.Contains("HDHomeRun") || name.StartsWith("Hauppauge OpenCable Receiver"))
           {
             // Examples: HDHomeRun Prime Tuner 1316890F-1, Hauppauge OpenCable Receiver 201200AA-1
-            Match m = Regex.Match(name, @"\s+([^\s]+)-\d$", RegexOptions.IgnoreCase);
+            m = Regex.Match(name, @"\s+([^\s]+)-\d$", RegexOptions.IgnoreCase);
             if (m.Success)
             {
               _productInstanceId = m.Groups[1].Captures[0].Value;
@@ -780,9 +782,10 @@ namespace DirectShowLib
 
         #region explanation
         // The first and second sections are identical for all components
-        // driven by the same driver. This is perfect for PnP USB and PCI
+        // driven by the same driver. This is perfect for PnP USB and PCI class
         // hardware. Unfortunately hardware with stream class drivers have
-        // separate drivers for each component (crossbar, capture, tuner etc.).
+        // separate drivers for each component (tuner, crossbar, capture etc.);
+        // same applies for Digital Devices hardware (tuner, capture and CI).
         // Therefore we can't use the first and second sections as part of the
         // product instance ID.
         //
@@ -821,18 +824,27 @@ namespace DirectShowLib
 
         // Default result.
         string productInstanceIdentifier = sections[2];
-        bool isPci = sections[0].EndsWith(@"\pci");
 
-        if (!isPci && sections[0].EndsWith(@"\stream"))
+        string pnpConnection = sections[0];
+        bool isPci = false;
+        m = Regex.Match(pnpConnection, @"^\@device\:pnp\:\\\\\?\\([a-z_]+)$");
+        if (m.Success)
+        {
+          pnpConnection = m.Groups[1].Captures[0].Value;
+          isPci = pnpConnection.Equals("pci");
+        }
+        if (!isPci && (pnpConnection.Equals("stream") || pnpConnection.Equals("dd_dvb")))
         {
           // Convert the device path to a device ID. For example:
           // @device:pnp:\\?\stream#hcw88bar.cfg92#5&35edf2e&7&0#{a799a801-a46d-11d0-a18c-00a02401dcd4}\global
           // STREAM\HCW88BAR.CFG92\5&35EDF2E&7&0
-          string targetDeviceId = string.Format(@"STREAM\{0}\{1}", sections[1].ToUpperInvariant(), sections[2].ToUpperInvariant());
+          // @device:pnp:\\?\dd_dvb#ven_dd01&dev_0011&subsys_0040dd01&rev_00&tuner#5&71e513c&0&2#{71985f48-1ca1-11d3-9cc8-00c04f7971e0}\{8b884e32-fbca-11de-b16f-000000004d56}
+          // DD_DVB\VEN_DD01&DEV_0011&SUBSYS_0040DD01&REV_00&TUNER\5&71E513C&0&2
+          string targetDeviceId = string.Format(@"{0}\{1}\{2}", pnpConnection.ToUpperInvariant(), sections[1].ToUpperInvariant(), sections[2].ToUpperInvariant());
 
           // Enumerate installed and present media devices with stream class drivers.
           Guid classMedia = new Guid(0x4d36e96c, 0xe325, 0x11ce, 0xbf, 0xc1, 0x08, 0x00, 0x2b, 0xe1, 0x03, 0x18);
-          IntPtr devInfoSet = SetupDiGetClassDevsW(ref classMedia, "STREAM", IntPtr.Zero, DiGetClassFlags.DIGCF_PRESENT);
+          IntPtr devInfoSet = SetupDiGetClassDevsW(ref classMedia, pnpConnection.ToUpperInvariant(), IntPtr.Zero, DiGetClassFlags.DIGCF_PRESENT);
           if (devInfoSet != IntPtr.Zero)
           {
             try
@@ -877,9 +889,9 @@ namespace DirectShowLib
         }
 
         sections = productInstanceIdentifier.Split('&');
-        if (sections.Length == 1)
+        if (pnpConnection.Equals("usb") && sections.Length == 1)
         {
-          // Serial number format - nothing further to do.
+          // USB serial number format - nothing further to do.
           _productInstanceId = productInstanceIdentifier;
           return _productInstanceId;
         }
