@@ -1027,6 +1027,11 @@ namespace MediaPortal.GUI.Video
         case Action.ActionType.ACTION_CONTEXT_MENU:
           ShowContextMenu();
           break;
+
+        case Action.ActionType.ACTION_CREATE_BOOKMARK:
+          CreateBookmark();
+          break;
+
         case Action.ActionType.ACTION_PREV_BOOKMARK:
           {
             ArrayList bookmarks = new ArrayList();
@@ -1890,10 +1895,7 @@ namespace MediaPortal.GUI.Video
 
       if (dlg.SelectedLabel == 0)
       {
-        // get the current playing time position
-        double dCurTime = g_Player.CurrentPosition;
-        // add the current timestamp
-        VideoDatabase.AddBookMarkToMovie(g_Player.CurrentFile, (float)dCurTime);
+        CreateBookmark();
       }
       else if (dlg.SelectedLabel == 1)
       {
@@ -1909,6 +1911,14 @@ namespace MediaPortal.GUI.Video
         // set mplayers play position
         g_Player.SeekAbsolute(bookmarkList[selectedBookmarkIndex]);
       }
+    }
+
+    public void CreateBookmark()
+    {
+      // get the current playing time position
+      double dCurTime = g_Player.CurrentPosition;
+      // add the current timestamp
+      VideoDatabase.AddBookMarkToMovie(g_Player.CurrentFile, (float)dCurTime);
     }
 
     public bool ScreenStateChanged()

@@ -117,7 +117,6 @@
     <Channel id="eentertainment.com" siteId="225" />
     <Channel id="action@cmore.se" siteId="227" />
     <Channel id="fakta@tv4.se" siteId="230" />
-    <Channel id="di.tv" siteId="231" />
     <Channel id="silver.no" siteId="241" />
     <Channel id="kanal9.se" siteId="246" />
     <Channel id="axess.tv" siteId="247" />
@@ -184,10 +183,9 @@
     <Channel id="wildtv.ca" siteId="401" />
     <Channel id="wildhd@natgeotv.com" siteId="403" />
     <Channel id="kids@cmore.se" siteId="405" />
-    <Channel id="news@tv4.se" siteId="410" />
-    <Channel id="sportxtra@tv4.se" siteId="500" />
     <Channel id="hitshd@cmore.se" siteId="501" />
     <Channel id="firsthd@cmore.se" siteId="502" />
+    <Channel id="tv12@tv4.se" siteId="600" />
     <Channel id="tv2charlie@tv2.dk" siteId="906" />
     <Channel id="dk4.dk" siteId="908" />
     <!--<Channel id="nick.co.uk" siteId="909" /> Conflicting name -->

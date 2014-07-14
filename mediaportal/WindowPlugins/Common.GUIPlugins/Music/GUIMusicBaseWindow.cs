@@ -257,12 +257,12 @@ namespace MediaPortal.GUI.Music
           Share share = new Share();
           share.Name = xmlreader.GetValueAsString("music", strShareName, string.Empty);
           share.Path = xmlreader.GetValueAsString("music", strSharePath, string.Empty);
-          share.Pincode = xmlreader.GetValueAsInt("music", strPincode, -1);
+          share.Pincode = Util.Utils.DecryptPassword(xmlreader.GetValueAsString("music", strPincode, string.Empty));
 
           share.IsFtpShare = xmlreader.GetValueAsBool("music", shareType, false);
           share.FtpServer = xmlreader.GetValueAsString("music", shareServer, string.Empty);
           share.FtpLoginName = xmlreader.GetValueAsString("music", shareLogin, string.Empty);
-          share.FtpPassword = xmlreader.GetValueAsString("music", sharePwd, string.Empty);
+          share.FtpPassword = Util.Utils.DecryptPassword(xmlreader.GetValueAsString("music", sharePwd, string.Empty));
           share.FtpPort = xmlreader.GetValueAsInt("music", sharePort, 21);
           share.FtpFolder = xmlreader.GetValueAsString("music", remoteFolder, "/");
           share.DefaultLayout = (Layout)xmlreader.GetValueAsInt("music", shareViewPath, (int)Layout.List);
