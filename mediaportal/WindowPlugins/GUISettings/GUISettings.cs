@@ -70,7 +70,7 @@ namespace MediaPortal.GUI.Settings
     {
       using (Profile.Settings xmlreader = new MPSettings())
       {
-        _pin = Util.Utils.DecryptPin(xmlreader.GetValueAsString("mpsettings", "pin", string.Empty));
+        _pin = Util.Utils.DecryptPassword(xmlreader.GetValueAsString("mpsettings", "pin", string.Empty));
 
         if (_pin != string.Empty)
         {
@@ -84,7 +84,7 @@ namespace MediaPortal.GUI.Settings
     {
       using (Profile.Settings xmlwriter = new MPSettings())
       {
-        xmlwriter.SetValue("mpsettings", "pin", Util.Utils.EncryptPin(_pin));
+        xmlwriter.SetValue("mpsettings", "pin", Util.Utils.EncryptPassword(_pin));
       }
     }
 
@@ -106,8 +106,8 @@ namespace MediaPortal.GUI.Settings
         {
           GUIWindowManager.CloseCurrentWindow();
         }
-        }
       }
+    }
 
     protected override void OnPageDestroy(int newWindowId)
     {
@@ -146,9 +146,9 @@ namespace MediaPortal.GUI.Settings
         // User want's to lock settings with PIN
         if (_btnLocked.Selected)
         {
-          if (!SetPin())
+          SetPin();
+          if (_pin == string.Empty)
           {
-            // No PIN entered, reset control
             _btnLocked.Selected = false;
           }
         }
@@ -242,21 +242,12 @@ namespace MediaPortal.GUI.Settings
       set { _settingsChanged = value; }
     }
 
-    private bool SetPin()
+    private void SetPin()
     {
       var msgGetPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_PASSWORD, 0, 0, 0, 0, 0, 0);
       GUIWindowManager.SendMessage(msgGetPassword);
-        
-      try
-      {
-        int iPincode = Int32.Parse(msgGetPassword.Label);
-        _pin = iPincode.ToString(CultureInfo.InvariantCulture);
-        return true;
-      }
-      // ReSharper disable EmptyGeneralCatchClause
-      catch (Exception) {}
-      // ReSharper restore EmptyGeneralCatchClause
-      return false;
+
+      _pin = msgGetPassword.Label;
     }
 
     public static bool RequestPin()
@@ -268,16 +259,8 @@ namespace MediaPortal.GUI.Settings
       {
         var msgGetPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_PASSWORD, 0, 0, 0, 0, 0, 0);
         GUIWindowManager.SendMessage(msgGetPassword);
-        int iPincode = -1;
-        try
-        {
-          iPincode = Int32.Parse(msgGetPassword.Label);
-        }
-        // ReSharper disable EmptyGeneralCatchClause
-        catch (Exception) { }
-        // ReSharper restore EmptyGeneralCatchClause
 
-        if (iPincode == Convert.ToInt32(_pin))
+        if (msgGetPassword.Label == _pin)
         {
           sucess = true;
         }
@@ -303,7 +286,7 @@ namespace MediaPortal.GUI.Settings
     {
       using (Profile.Settings xmlreader = new MPSettings())
       {
-        _pin = Util.Utils.DecryptPin(xmlreader.GetValueAsString("mpsettings", "pin", string.Empty));
+        _pin = Util.Utils.DecryptPassword(xmlreader.GetValueAsString("mpsettings", "pin", string.Empty));
       }
 
       if (_pin == string.Empty)

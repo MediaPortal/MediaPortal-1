@@ -54,7 +54,7 @@ namespace MediaPortal.Visualization
 
     protected VisualizationInfo VizPluginInfo = null;
     protected static VisualizationWindow _VisualizationWindow;
-    protected static BassAudioEngine _Bass = null;
+    protected static BassAudioEngine _bass = null;
     protected bool _Initialized = false;
     protected bool _IsPreviewVisualization = false;
     protected BASSVIS_PARAM _visParam = null;
@@ -62,10 +62,10 @@ namespace MediaPortal.Visualization
 
     #region Properties
 
-    public static BassAudioEngine Bass
+    internal static BassAudioEngine Bass
     {
-      get { return _Bass; }
-      set { _Bass = value; }
+      get { return _bass; }
+      set { _bass = value; }
     }
 
     public static VisualizationWindow VisualizationWindow

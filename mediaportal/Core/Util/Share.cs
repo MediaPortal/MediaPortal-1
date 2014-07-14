@@ -47,7 +47,7 @@ namespace MediaPortal.Util
     private string m_strPath = string.Empty;
     private string m_strName = string.Empty;
     private bool m_bDefault = false;
-    private int m_iPincode = -1;
+    private string m_iPincode = string.Empty;
     private bool isRemote = false;
     private string remoteServer = string.Empty;
     private string remoteLogin = string.Empty;
@@ -85,8 +85,8 @@ namespace MediaPortal.Util
     /// </summary>
     /// <param name="strName">share name</param>
     /// <param name="strPath">share folder</param>
-    /// <param name="iPincode">pincode for folder (-1 = no pincode)</param>
-    public Share(string strName, string strPath, int iPincode)
+    /// <param name="iPincode">pincode for folder (string.empty = no pincode)</param>
+    public Share(string strName, string strPath, string iPincode)
     {
       if (strName == null || strPath == null)
         return;
@@ -99,9 +99,9 @@ namespace MediaPortal.Util
 
     /// <summary>
     /// property to get/set the pincode for the share
-    /// (-1 means no pincode)
+    /// (string.empty means no pincode)
     /// </summary>
-    public int Pincode
+    public string Pincode
     {
       get { return m_iPincode; }
       set { m_iPincode = value; }

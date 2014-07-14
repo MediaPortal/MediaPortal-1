@@ -252,11 +252,11 @@ namespace MediaPortal.Visualization
         if (MusicPlayer.BASS.Config.MusicPlayer == AudioPlayer.WasApi)
         {
           // Wasapi Device do nothing with stream also use BASS_WASAPI_GetData instead of BASS_ChannelGetData
-          int len = Un4seen.BassWasapi.BassWasapi.BASS_WASAPI_GetData(buf, buf.Length);
+          int len = Bass.GetDataFFT(buf, buf.Length);
         }
         else
         {
-          int len = Un4seen.Bass.Bass.BASS_ChannelGetData(stream, buf, buf.Length);
+          int len = Bass.GetChannelData(stream, buf, buf.Length);
         }
         int x = 0;
 
@@ -345,11 +345,11 @@ namespace MediaPortal.Visualization
         if (MusicPlayer.BASS.Config.MusicPlayer == AudioPlayer.WasApi)
         {
           // Wasapi Device do nothing with stream also use BASS_WASAPI_GetData instead of BASS_ChannelGetData
-          Un4seen.BassWasapi.BassWasapi.BASS_WASAPI_GetData(fft, (int)BASSData.BASS_DATA_FFT2048);
+          Bass.GetDataFFT(fft, (int)BASSData.BASS_DATA_FFT2048);
         }
         else
         {
-          Un4seen.Bass.Bass.BASS_ChannelGetData(stream, fft, (int)BASSData.BASS_DATA_FFT2048);
+          Bass.GetChannelData(stream, fft, (int)BASSData.BASS_DATA_FFT2048);
         }
       }
 

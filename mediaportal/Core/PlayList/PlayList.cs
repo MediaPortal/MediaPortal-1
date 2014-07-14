@@ -170,6 +170,29 @@ namespace MediaPortal.Playlists
       return -1;
     }
 
+    public int Remove(string fileName, bool finish)
+    {
+      if (fileName == null)
+      {
+        return -1;
+      }
+
+      for (int i = 0; i < _listPlayListItems.Count; ++i)
+      {
+        PlayListItem item = _listPlayListItems[i];
+        if (item.FileName == fileName)
+        {
+          _listPlayListItems.RemoveAt(i);
+          if (finish)
+          {
+            NotifyChange();
+          }
+          return i;
+        }
+      }
+      return -1;
+    }
+
     public void Clear()
     {
       if (_listPlayListItems == null || _listPlayListItems.Count < 1) return;

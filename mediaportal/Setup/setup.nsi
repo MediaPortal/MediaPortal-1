@@ -485,7 +485,6 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_MP}\WindowPlugins\GUIDisc\bin\${BUILD_TYPE}\GUIDisc.dll"
   File "${git_MP}\WindowPlugins\GUIDVD\bin\${BUILD_TYPE}\GUIDVD.dll"
   File "${git_MP}\WindowPlugins\GUIHome\bin\${BUILD_TYPE}\GUIHome.dll"
-  File "${git_MP}\WindowPlugins\GUILastFMRadio\bin\${BUILD_TYPE}\GUILastFMRadio.dll"
   File "${git_MP}\WindowPlugins\GUIMusic\bin\${BUILD_TYPE}\GUIMusic.dll"
   File "${git_MP}\WindowPlugins\GUISudoku\bin\${BUILD_TYPE}\GUISudoku.dll"
   File "${git_MP}\WindowPlugins\GUIPictures\bin\${BUILD_TYPE}\GUIPictures.dll"
@@ -824,6 +823,10 @@ Section -Post
   ; MP1-4315 Blow windowplugins dll to separate plugin dlls
   ${LOG_TEXT} "INFO" "Removing obsolete WindowPlugins.dll"
   Delete "$MPdir.Plugins\Windows\WindowPlugins.dll"
+  
+  ; MP1-4463 LastFM Radio plugin dll
+  ${LOG_TEXT} "INFO" "Removing obsolete GUILastFMRadio.dll"
+  Delete "$MPdir.Plugins\Windows\GUILastFMRadio.dll"
   
   ; removing old shortcut
   ${LOG_TEXT} "INFO" "Removing obsolete startmenu shortcuts"
