@@ -146,6 +146,8 @@ namespace MediaPortal.GUI.Video
           return VideoSort.SortMethod.Year;
         case "watched":
           return VideoSort.SortMethod.Watched;
+        case "name_with_duration":
+          return VideoSort.SortMethod.Name_With_Duration;
       }
       if (!string.IsNullOrEmpty(s))
       {
@@ -360,6 +362,9 @@ namespace MediaPortal.GUI.Video
         case VideoSort.SortMethod.Modified:
           strLine = GUILocalizeStrings.Get(1221);
           break;
+        case VideoSort.SortMethod.Name_With_Duration:
+          strLine = GUILocalizeStrings.Get(1999);
+          break;
       }
 
       if (btnSortBy != null)
@@ -371,7 +376,8 @@ namespace MediaPortal.GUI.Video
         facadeLayout.EnableScrollLabel = CurrentSortMethod == VideoSort.SortMethod.Label ||
                                          CurrentSortMethod == VideoSort.SortMethod.Year ||
                                          CurrentSortMethod == VideoSort.SortMethod.Name ||
-                                         CurrentSortMethod == VideoSort.SortMethod.NameAll
+                                         CurrentSortMethod == VideoSort.SortMethod.NameAll ||
+                                         CurrentSortMethod == VideoSort.SortMethod.Name_With_Duration
           ;
     }
 
@@ -498,7 +504,8 @@ namespace MediaPortal.GUI.Video
         if (movie != null && movie.ID > 0  && !isShareView && 
             (!item.IsFolder || CurrentSortMethod == VideoSort.SortMethod.NameAll ))
         {
-          if (CurrentSortMethod == VideoSort.SortMethod.Name || CurrentSortMethod == VideoSort.SortMethod.NameAll)
+          if (CurrentSortMethod == VideoSort.SortMethod.Name || CurrentSortMethod == VideoSort.SortMethod.NameAll
+             || CurrentSortMethod == VideoSort.SortMethod.Name_With_Duration)
           {
             if (item.IsFolder)
             {
@@ -582,6 +589,20 @@ namespace MediaPortal.GUI.Video
               item.Label2 = strSize1;
             }
           }
+          if (CurrentSortMethod == VideoSort.SortMethod.Name_With_Duration && !item.IsFolder && item.Label != "..")
+          {
+            int newMovieId = VideoDatabase.GetMovieId(item.Path);
+            item.Duration = VideoDatabase.GetMovieDuration(newMovieId);
+
+            if (item.Duration > 0)
+            {
+              item.Label2 = Util.Utils.SecondsToShortHMSString(item.Duration);
+            }
+            else
+            {
+              item.Label2 = string.Empty;
+            }
+          }
           else if (CurrentSortMethod == VideoSort.SortMethod.Created || CurrentSortMethod == VideoSort.SortMethod.Date || CurrentSortMethod == VideoSort.SortMethod.Modified)
           {
             item.Label2 = strDate;
@@ -628,28 +649,30 @@ namespace MediaPortal.GUI.Video
       maxCommonSortIndex++;
       dlg.AddLocalizedString(1309); // 1 nameall
       maxCommonSortIndex++;
-      dlg.AddLocalizedString(104); // 2 date created (date)
+      dlg.AddLocalizedString(1999); // 2 Name with Duration
       maxCommonSortIndex++;
-      dlg.AddLocalizedString(105); // 3 size
+      dlg.AddLocalizedString(104); // 3 date created (date)
       maxCommonSortIndex++;
-      dlg.AddLocalizedString(527); // 4 watched
+      dlg.AddLocalizedString(105); // 4 size
+      maxCommonSortIndex++;
+      dlg.AddLocalizedString(527); // 5 watched
       maxCommonSortIndex++;
       
       // Database sorts - group 2
       if (GUIWindowManager.ActiveWindow == (int)Window.WINDOW_VIDEO_TITLE)
       {
-        dlg.AddLocalizedString(366); // 5 year
+        dlg.AddLocalizedString(366); // 6 year
         dbSortCount++;
-        dlg.AddLocalizedString(367); // 6 rating
+        dlg.AddLocalizedString(367); // 7 rating
         dbSortCount++;
       }
 
       // Share sorts - group 3
       if (GUIWindowManager.ActiveWindow == (int)Window.WINDOW_VIDEOS)
       {
-        dlg.AddLocalizedString(430);  // 7 CD label
-        dlg.AddLocalizedString(1221); // 8 date modified
-        dlg.AddLocalizedString(1220); // 9 date created
+        dlg.AddLocalizedString(430);  // 8 CD label
+        dlg.AddLocalizedString(1221); // 9 date modified
+        dlg.AddLocalizedString(1220); // 10 date created
       }
       
       // set the focus to currently used sort method
@@ -707,6 +730,9 @@ namespace MediaPortal.GUI.Video
           break;
         case 527:
           CurrentSortMethod = VideoSort.SortMethod.Watched;
+          break;
+        case 1999:
+          CurrentSortMethod = VideoSort.SortMethod.Name_With_Duration;
           break;
         default:
           CurrentSortMethod = VideoSort.SortMethod.Name;

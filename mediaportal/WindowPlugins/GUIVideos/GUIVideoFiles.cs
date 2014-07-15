@@ -3302,7 +3302,7 @@ namespace MediaPortal.GUI.Video
       }
 
       // if have new item we close the previous thread and start a new one 
-      if (_addVideoFilesToDb && itemlist2.Count != 0)
+      if ((_addVideoFilesToDb || CurrentSortMethod == VideoSort.SortMethod.Name_With_Duration) && itemlist2.Count != 0)
       {
         try
         {
@@ -4039,6 +4039,7 @@ namespace MediaPortal.GUI.Video
     {
       ISelectDVDHandler sDvd = GUIVideoFiles.GetSelectDvdHandler();
       ISelectBDHandler sBd = GUIVideoFiles.GetSelectBDHandler();
+
       string strSize1 = string.Empty, strDate = string.Empty;
 
       if (item.FileInfo != null && !item.IsFolder)
@@ -4071,6 +4072,21 @@ namespace MediaPortal.GUI.Video
           item.Label2 = strSize1;
         }
 
+      }
+
+      if (CurrentSortMethod == VideoSort.SortMethod.Name_With_Duration && !item.IsFolder && item.Label != "..")
+      {
+        int newMovieId = VideoDatabase.GetMovieId(item.Path);
+        item.Duration = VideoDatabase.GetMovieDuration(newMovieId);
+
+        if (item.Duration > 0)
+        {
+          item.Label2 = Util.Utils.SecondsToShortHMSString(item.Duration);
+        }
+        else
+        {
+          item.Label2 = string.Empty;
+        }
       }
       else if (CurrentSortMethod == VideoSort.SortMethod.Created || CurrentSortMethod == VideoSort.SortMethod.Date || CurrentSortMethod == VideoSort.SortMethod.Modified)
       {
