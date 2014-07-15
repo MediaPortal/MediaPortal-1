@@ -3474,15 +3474,6 @@ namespace TvPlugin
             g_Player.SeekAbsolute(dTime);
           }
         }
-        try
-        {
-
-          TvTimeShiftPositionWatcher.SetNewChannel(channel.IdChannel);
-        }
-        catch
-        {
-          //ignore, error already logged
-        }
 
         _playbackStopped = false;
         _doingChannelChange = false;

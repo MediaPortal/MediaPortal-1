@@ -26,7 +26,6 @@ using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
-using MediaPortal.Util;
 
 #endregion
 
@@ -43,7 +42,6 @@ namespace MediaPortal.Configuration.Sections
                                               "Title", // Show episodeName
                                               "Number + Title" // Show number and title
                                             };
-    private bool _SingleSeat;
 
     #endregion
 
@@ -132,7 +130,6 @@ namespace MediaPortal.Configuration.Sections
 
       FillLists(mpListViewAvailAudioLang, mpListViewPreferredAudioLang, preferredAudioLanguages, languages);
       FillLists(mpListViewAvailSubLang, mpListViewPreferredSubLang, preferredSubLanguages, languages);
-      _SingleSeat = Network.IsSingleSeat();
     }
 
     private void FillLists(MPListView availList, MPListView preferredList, string preferredLanguages, Dictionary<String, String> languages)
@@ -213,14 +210,6 @@ namespace MediaPortal.Configuration.Sections
           prefLangs += (string)item.Name + ";";
         }
         xmlwriter.SetValue("tvservice", "preferredsublanguages", prefLangs);
-
-        //When TvServer is changed, if user changed mode (SingleSeat/MultiSeat), he needs to review the RTSP setting in DebugOptions section
-        if ((xmlwriter.GetValueAsBool("tvservice", "DebugOptions", false) || SettingsForm.debug_options) &&
-            (_SingleSeat != Network.IsSingleSeat()))
-        {
-          MessageBox.Show("Please review your RTSP settings in \"DebugOptions\" section", "Warning",
-                          MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-        }
       }
     }
 

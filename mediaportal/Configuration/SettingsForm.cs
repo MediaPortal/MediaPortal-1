@@ -49,7 +49,6 @@ namespace MediaPortal.Configuration
     #region ConfigPage struct
 
     public static bool audioplayer_mixing;
-    public static bool debug_options;
 
     public struct ConfigPage
     {
@@ -113,7 +112,6 @@ namespace MediaPortal.Configuration
     }
 
     private static bool advancedMode = false;
-    private bool _showDebugOptions;
 
     public static bool AdvancedMode
     {
@@ -134,21 +132,12 @@ namespace MediaPortal.Configuration
       get { return File.Exists(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll"); }
     }
 
-    public bool ShowDebugOptions
-    {
-      get { return _showDebugOptions; }
-    }
-
     #endregion
 
     #endregion
 
     public SettingsForm()
-      : this(false) {}
-
-    public SettingsForm(bool showDebugOptions)
     {
-      _showDebugOptions = showDebugOptions;
       OnStartup();
     }
 
@@ -423,11 +412,8 @@ namespace MediaPortal.Configuration
         AddSection(new ConfigPage(tvradio, new TVPostProcessing(), true));
         Log.Info("  add tv teletext section");
         AddSection(new ConfigPage(tvradio, new TVTeletext(), true));
-        if (ShowDebugOptions)
-        {
-          Log.Info("  add tv debug options section");
-          AddSection(new ConfigPage(tvradio, new TVDebugOptions(), true));
-        }
+        Log.Info("  add tv advanced options section");
+        AddSection(new ConfigPage(tvradio, new TVAdvancedOptions(), true));
       }
     }
 

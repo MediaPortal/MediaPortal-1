@@ -34,6 +34,7 @@ using System.Xml;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
+using MediaPortal.Util;
 
 #endregion
 
@@ -56,6 +57,7 @@ namespace MediaPortal.Configuration.Sections
     private string _settingsHostname;
 
     public int pluginVersion;
+    bool _SingleSeat;
 
     #endregion
 
@@ -96,7 +98,7 @@ namespace MediaPortal.Configuration.Sections
           mpTextBoxHostname.BackColor = Color.YellowGreen;
           Log.Debug("LoadSettings: take hostname from settings: \"{0}\"", mpTextBoxHostname.Text);
         }
-
+        _SingleSeat = Network.IsSingleSeat();
         mpCheckBoxIsWakeOnLanEnabled.Checked = xmlreader.GetValueAsBool("tvservice", "isWakeOnLanEnabled", false);
         mpNumericTextBoxWOLTimeOut.Text = xmlreader.GetValueAsString("tvservice", "WOLTimeOut", "10");
         mpCheckBoxIsAutoMacAddressEnabled.Checked = xmlreader.GetValueAsBool("tvservice", "isAutoMacAddressEnabled",
@@ -145,6 +147,14 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("tvservice", "WOLTimeOut", mpNumericTextBoxWOLTimeOut.Text);
         xmlwriter.SetValueAsBool("tvservice", "isAutoMacAddressEnabled", mpCheckBoxIsAutoMacAddressEnabled.Checked);
         xmlwriter.SetValue("tvservice", "macAddress", mpTextBoxMacAddress.Text);
+      }
+
+      //When TvServer is changed, if user changed mode (SingleSeat/MultiSeat), he needs to review the RTSP setting in Advanced Options section
+      Network.Reset();
+      if (_SingleSeat != Network.IsSingleSeat())
+      {
+        MessageBox.Show("Please review your RTSP settings in \"Advanced Options\" section", "Warning",
+                        MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
       }
     }
 
