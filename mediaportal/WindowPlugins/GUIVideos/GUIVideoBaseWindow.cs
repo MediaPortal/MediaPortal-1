@@ -483,6 +483,8 @@ namespace MediaPortal.GUI.Video
       facadeLayout.Sort(new VideoSort(CurrentSortMethod, CurrentSortAsc));
       UpdateButtonStates();
       SelectCurrentItem();
+      FolderSetting folderSetting = new FolderSetting();
+      folderSetting.UpdateFolders((int)CurrentSortMethod, CurrentSortAsc, -1);
     }
 
     #endregion

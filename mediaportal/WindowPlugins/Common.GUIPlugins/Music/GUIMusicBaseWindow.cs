@@ -1229,6 +1229,8 @@ namespace MediaPortal.GUI.Music
       {
         GUIControl.FocusControl(GetID, btnSortBy.GetID);
       }
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SORT_CHANGED, 0, 0, 0, 0, 0, 0);
+      GUIWindowManager.SendMessage(msg);
     }
 
     protected void OnShowSavedPlaylists(string _directory)

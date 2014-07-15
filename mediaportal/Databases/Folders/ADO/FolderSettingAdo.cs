@@ -22,6 +22,7 @@ using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.IO;
+using System.Collections;
 using System.Xml.Serialization;
 using MediaPortal.Configuration;
 using MediaPortal.Database;
@@ -213,6 +214,40 @@ namespace Databases.Folders.SqlServer
       {
         Log.Error(ex);
       }
+    }
+
+    public void GetPath(string strPath, ref ArrayList strPathList, string strKey)
+    {
+      /*try
+      {
+        if (strKey == string.Empty)
+        {
+          return;
+        }
+        if (strPath == string.Empty)
+        {
+          return;
+        }
+
+        string sql = string.Format(
+          "SELECT strPath from tblPath where strPath like '{0}%' and idPath in (SELECT idPath from tblSetting where tblSetting.idPath = tblPath.idPath and tblSetting.tagName = '{1}')"
+          , strPath, strKey);
+
+        SQLiteResultSet results = m_db.Execute(sql);
+
+        if (results.Rows.Count == 0)
+        {
+          return;
+        }
+        for (int iRow = 0; iRow < results.Rows.Count; iRow++)
+        {
+          strPathList.Add(DatabaseUtility.Get(results, iRow, "strPath"));
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Lolderdatabase.GetPath() exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+      }*/
     }
 
     public void GetFolderSetting(string path, string key, Type type, out object valueObject)
