@@ -42,6 +42,10 @@ CRtspTrack::CRtspTrack(HRESULT *result)
   this->senderSynchronizationSourceIdentifier = 0;
   this->synchronizationSourceIdentifier = 0;
   this->startTime = 0;
+  this->lastCumulatedRtpTimestamp = 0;
+  this->firstRtpPacketTimestamp = 0;
+  this->lastRtpPacketTimestamp = 0;
+  this->trackEndRtpTimestamp = 0;
 
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
@@ -173,6 +177,16 @@ unsigned int CRtspTrack::GetRtpPacketTimestamp(unsigned int currentTime)
   return (unsigned int)timestamp;
 }
 
+int64_t CRtspTrack::GetStreamRtpTimestamp(void)
+{
+  return (this->lastCumulatedRtpTimestamp - (int64_t)this->firstRtpPacketTimestamp);
+}
+
+int64_t CRtspTrack::GetTrackEndRtpTimestamp(void)
+{
+  return this->trackEndRtpTimestamp;
+}
+
 /* set methods */
 
 void CRtspTrack::SetServerDataPort(unsigned int serverDataPort)
@@ -251,6 +265,11 @@ void CRtspTrack::SetEndOfStream(bool endOfStream)
   this->flags |= (endOfStream) ? RTSP_TRACK_FLAG_END_OF_STREAM : RTSP_TRACK_FLAG_NONE;
 }
 
+void CRtspTrack::SetTrackEndRtpTimestamp(int64_t trackEndRtpTimestamp)
+{
+  this->trackEndRtpTimestamp = trackEndRtpTimestamp;
+}
+
 /* other methods */
 
 bool CRtspTrack::IsServerDataPort(unsigned int port)
@@ -281,4 +300,35 @@ bool CRtspTrack::IsSetSenderSynchronizationSourceIdentifier(void)
 bool CRtspTrack::IsEndOfStream(void)
 {
   return this->IsSetFlags(RTSP_TRACK_FLAG_END_OF_STREAM);
+}
+
+void CRtspTrack::UpdateRtpPacketTotalTimestamp(unsigned int currentRtpPacketTimestamp)
+{
+  if (!this->IsSetFlags(RTSP_TRACK_FLAG_SET_FIRST_RTP_PACKET_TIMESTAMP))
+  {
+    this->flags |= RTSP_TRACK_FLAG_SET_FIRST_RTP_PACKET_TIMESTAMP;
+    this->firstRtpPacketTimestamp = currentRtpPacketTimestamp;
+    this->lastRtpPacketTimestamp = currentRtpPacketTimestamp;
+    this->lastCumulatedRtpTimestamp = currentRtpPacketTimestamp;
+  }
+
+  int64_t difference = ((currentRtpPacketTimestamp < this->lastRtpPacketTimestamp) ? 0x0000000100000000 : 0);
+  difference += currentRtpPacketTimestamp;
+  difference -= this->lastRtpPacketTimestamp;
+
+  if (currentRtpPacketTimestamp < this->lastRtpPacketTimestamp)
+  {
+    // try to identify if overflow occured or RTP timestamp is only slightly decreased
+    uint64_t diff = this->lastRtpPacketTimestamp - currentRtpPacketTimestamp;
+
+    // on this place is difference always greater than or equal to zero, we can safely cast it to uint64_t
+    if (diff < (uint64_t)difference)
+    {
+      // RTP timestamp decrease is more probable than overflow
+      difference -= 0x0000000100000000;
+    }
+  }
+
+  this->lastCumulatedRtpTimestamp += difference;
+  this->lastRtpPacketTimestamp = currentRtpPacketTimestamp;
 }

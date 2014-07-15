@@ -112,7 +112,7 @@ unsigned int CRtspStreamTrack::GetFirstRtpPacketTicks(void)
   return this->firstRtpPacketTicks;
 }
 
-int64_t CRtspStreamTrack::GetRtpPacketTimestamp(unsigned int currentRtpPacketTimestamp, bool storeLastRtpPacketTimestamp)
+int64_t CRtspStreamTrack::GetRtpPacketTimestamp(unsigned int currentRtpPacketTimestamp)
 {
   int64_t difference = ((currentRtpPacketTimestamp < this->lastRtpPacketTimestamp) ? 0x0000000100000000 : 0);
   difference += currentRtpPacketTimestamp;
@@ -133,11 +133,8 @@ int64_t CRtspStreamTrack::GetRtpPacketTimestamp(unsigned int currentRtpPacketTim
 
   int64_t result = this->lastCumulatedRtpTimestamp + difference;
 
-  if (storeLastRtpPacketTimestamp)
-  {
-    this->lastCumulatedRtpTimestamp += difference;
-    this->lastRtpPacketTimestamp = currentRtpPacketTimestamp;
-  }
+  this->lastCumulatedRtpTimestamp += difference;
+  this->lastRtpPacketTimestamp = currentRtpPacketTimestamp;
 
   return result;
 }

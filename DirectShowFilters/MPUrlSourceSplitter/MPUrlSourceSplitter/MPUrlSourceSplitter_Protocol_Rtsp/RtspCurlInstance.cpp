@@ -53,6 +53,7 @@
 #include "RtspContentLocationResponseHeader.h"
 #include "RtspSessionResponseHeader.h"
 #include "RtspServerResponseHeader.h"
+#include "NormalPlayTimeRangeAttribute.h"
 
 #include "SenderReportRtcpPacket.h"
 #include "GoodbyeRtcpPacket.h"
@@ -381,6 +382,22 @@ HRESULT CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
           FREE_MEM(responseW);
         }
         FREE_MEM(buffer);
+      }
+
+      if (SUCCEEDED(result))
+      {
+        // check if server isn't Live555
+
+        for (unsigned int i = 0; i < this->rtspDownloadResponse->GetSessionDescription()->GetAttributes()->Count(); i++)
+        {
+          CAttribute *attribute = this->rtspDownloadResponse->GetSessionDescription()->GetAttributes()->GetItem(i);
+
+          if (IndexOf(attribute->GetValue(), SERVER_LIVE555) != (-1))
+          {
+            this->flags |= RTSP_CURL_INSTANCE_FLAG_SERVER_LIVE555;
+            break;
+          }
+        }
       }
 
       if (SUCCEEDED(result))
@@ -1058,11 +1075,48 @@ HRESULT CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
     }
     FREE_MEM_CLASS(supportedPayloadTypes);
     CHECK_CONDITION_EXECUTE(SUCCEEDED(result) && (endTicks <= GetTickCount()), result = VFW_E_TIMEOUT);
-    
+
     if (SUCCEEDED(result))
     {
       CHECK_CONDITION_HRESULT(result, this->rtspDownloadResponse->GetRtspTracks()->Count() != 0, result, E_RTSP_NO_TRACKS);
       CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, this->protocolName, METHOD_INITIALIZE_NAME, L"no RTSP track to play"));
+    }
+
+    if (SUCCEEDED(result))
+    {
+      // check for normal play time range attribute in session description
+      // if normal play time range attribute has start and end time, then session is not live session
+
+      CNormalPlayTimeRangeAttribute *nptAttribute = NULL;
+      for (unsigned int i = 0; i < this->rtspDownloadResponse->GetSessionDescription()->GetAttributes()->Count(); i++)
+      {
+        CAttribute *attribute = this->rtspDownloadResponse->GetSessionDescription()->GetAttributes()->GetItem(i);
+
+        if (attribute->IsInstanceTag(TAG_ATTRIBUTE_INSTANCE_NORMAL_PLAY_TIME_RANGE))
+        {
+          nptAttribute = dynamic_cast<CNormalPlayTimeRangeAttribute *>(attribute);
+          break;
+        }
+      }
+
+      // RTSP is by default for live streams
+      this->flags |= RTSP_CURL_INSTANCE_FLAG_LIVE_STREAM;
+
+      if (nptAttribute != NULL)
+      {
+        if (nptAttribute->IsSetStartTime() && nptAttribute->IsSetEndTime() && (nptAttribute->GetEndTime() >= nptAttribute->GetStartTime()))
+        {
+          // not live stream
+          this->flags &= ~RTSP_CURL_INSTANCE_FLAG_LIVE_STREAM;
+
+          for (unsigned int i = 0; i < this->rtspDownloadResponse->GetRtspTracks()->Count(); i++)
+          {
+            CRtspTrack *track = this->rtspDownloadResponse->GetRtspTracks()->GetItem(i);
+
+            track->SetTrackEndRtpTimestamp((int64_t)((nptAttribute->GetEndTime() - this->rtspDownloadRequest->GetStartTime()) * track->GetStatistics()->GetClockFrequency() / 1000));
+          }
+        }
+      }
     }
 
     if (SUCCEEDED(result))
@@ -1125,11 +1179,26 @@ HRESULT CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
 
 HRESULT CRtspCurlInstance::StopReceivingData(void)
 {
+  HRESULT result = S_FALSE;
+
+  while (result == S_FALSE)
+  {
+    result = this->StopReceivingDataAsync();
+
+    Sleep(1);
+  }
+
+  return result;
+}
+
+HRESULT CRtspCurlInstance::StopReceivingDataAsync(void)
+{
+  HRESULT result = S_OK;
+
   if ((this->lastCommand == RTSP_CURL_INSTANCE_COMMAND_SETUP_RESPONSE_NOT_VALID) || (this->lastCommand == RTSP_CURL_INSTANCE_COMMAND_SETUP_RESPONSE_VALID) ||
     (this->lastCommand == RTSP_CURL_INSTANCE_COMMAND_PLAY_RESPONSE_NOT_VALID) || (this->lastCommand == RTSP_CURL_INSTANCE_COMMAND_PLAY_RESPONSE_VALID))
   {
     // create and send TEARDOWN request for stream
-    HRESULT result = S_OK;
 
     CRtspTeardownRequest *teardown = new CRtspTeardownRequest(&result);
     CHECK_POINTER_HRESULT(result, teardown, result, E_OUTOFMEMORY);
@@ -1140,22 +1209,32 @@ HRESULT CRtspCurlInstance::StopReceivingData(void)
     if (SUCCEEDED(result))
     {
       teardown->SetTimeout(this->downloadRequest->GetReceiveDataTimeout());
-      teardown->SetSequenceNumber(this->lastSequenceNumber++);
+      teardown->SetSequenceNumber(this->lastSequenceNumber);
 
-      result = this->SendAndReceive(teardown, L"TEARDOWN", L"StopReceivingData()");
+      result = this->SendAndReceiveAsync(teardown, L"TEARDOWN", L"StopReceivingData()");
     }
 
     FREE_MEM_CLASS(teardown);
 
-    this->lastCommand = RTSP_CURL_INSTANCE_COMMAND_TEARDOWN;
+    // S_OK is successful, S_FALSE is pending, error code otherwise
+    if ((result == S_OK) || (IS_OUR_ERROR(result)))
+    {
+      this->lastSequenceNumber++;
+      this->lastCommand = RTSP_CURL_INSTANCE_COMMAND_TEARDOWN;
 
-    // session ID is no longer required
-    // some RTSP servers send us back session ID, which is no longer valid
-    // clear it to avoid error in processing another request
-    FREE_MEM(this->sessionId);
+      // session ID is no longer required
+      // some RTSP servers send us back session ID, which is no longer valid
+      // clear it to avoid error in processing another request
+      FREE_MEM(this->sessionId);
+
+      result = S_OK;
+    }
   }
 
-  return __super::StopReceivingData();
+  // CurlInstance::StopReceivingData returns always S_OK
+  CHECK_CONDITION_EXECUTE(result == S_OK, __super::StopReceivingData());
+
+  return result;
 }
 
 /* protected methods */
@@ -1216,7 +1295,7 @@ HRESULT CRtspCurlInstance::ProcessReceivedBaseRtpPackets(CRtspTrack *track, unsi
         {
           // we received good bye RTCP packet
           // stream is finished
-          
+
           this->logger->Log(LOGGER_INFO, L"%s: %s: received GOOD BYE RTCP packet, track '%s', reason: '%s'", this->protocolName, METHOD_PROCESS_RECEIVED_BASE_RTP_PACKETS_NAME, track->GetTrackUrl(), (goodBye->GetReason() == NULL) ? L"" : goodBye->GetReason());
           track->SetEndOfStream(true);
         }
@@ -1250,6 +1329,7 @@ HRESULT CRtspCurlInstance::ProcessReceivedBaseRtpPackets(CRtspTrack *track, unsi
           }
 
           CHECK_CONDITION_HRESULT(result, track->GetRtpPackets()->Add(clone), result, E_OUTOFMEMORY);
+          CHECK_CONDITION_EXECUTE(SUCCEEDED(result), track->UpdateRtpPacketTotalTimestamp(clone->GetTimestamp()));
           CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(clone));
         }
       }
@@ -1827,20 +1907,44 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
         if ((!track->IsEndOfStream()) && ((GetTickCount() - track->GetLastReceiverReportTime()) > track->GetReceiverReportInterval()))
         {
           if (track->GetStatistics()->IsSetSequenceNumber() && 
-            (track->GetStatistics()->GetLastReceivedPacketCount() == track->GetStatistics()->GetPreviousLastReceivedPacketCount()) &&
-            (track->GetStatistics()->GetLastReceivedPacketCount() != 0))
+              (track->GetStatistics()->GetLastReceivedPacketCount() == track->GetStatistics()->GetPreviousLastReceivedPacketCount()) &&
+              (track->GetStatistics()->GetLastReceivedPacketCount() != 0))
           {
-            // previous and last state are same, probably end of stream
-            track->SetEndOfStream(true);
 
-            this->logger->Log(LOGGER_INFO, L"%s: %s: track '%s', no data received between receiver reports", this->protocolName, METHOD_CURL_WORKER_NAME, track->GetTrackUrl());
+            if (!this->IsSetFlags(RTSP_CURL_INSTANCE_FLAG_LIVE_STREAM))
+            {
+              // compare stream RTP timestamp with calculated track end RTP timestamp
+              // if they are close, we can assume end of stream
+
+              if ((track->GetTrackEndRtpTimestamp() - track->GetStreamRtpTimestamp() - (int64_t)track->GetStatistics()->GetClockFrequency()) <= 0)
+              {
+                track->SetEndOfStream(true);
+
+                this->logger->Log(LOGGER_INFO, L"%s: %s: track '%s', no data received between receiver reports, end of stream, stream RTP timestamp: %lld, track end RTP timestamp: %lld, track clock frequency: %u", this->protocolName, METHOD_CURL_WORKER_NAME, track->GetTrackUrl(), track->GetStreamRtpTimestamp(), track->GetTrackEndRtpTimestamp(), track->GetStatistics()->GetClockFrequency());
+              }
+              else
+              {
+                track->SetEndOfStream(true);
+
+                this->logger->Log(LOGGER_ERROR, L"%s: %s: track '%s', no data received between receiver reports, stream RTP timestamp: %lld, track end RTP timestamp: %lld, track clock frequency: %u", this->protocolName, METHOD_CURL_WORKER_NAME, track->GetTrackUrl(), track->GetStreamRtpTimestamp(), track->GetTrackEndRtpTimestamp(), track->GetStatistics()->GetClockFrequency());
+                result = E_RTSP_NO_DATA_RECEIVED_BETWEEN_RECEIVER_REPORTS;
+              }
+            }
+            else
+            {
+              // previous and last state are same, probably lost connection
+              track->SetEndOfStream(true);
+
+              this->logger->Log(LOGGER_ERROR, L"%s: %s: track '%s', no data received between receiver reports", this->protocolName, METHOD_CURL_WORKER_NAME, track->GetTrackUrl());
+              result = E_RTSP_NO_DATA_RECEIVED_BETWEEN_RECEIVER_REPORTS;
+            }
           }
         }
 
         // check last receiver report time and interval
         // if needed, send receiver report for track and set last receiver report
         // there's no need to send receiver report if end of stream is reached
-        if ((!track->IsEndOfStream()) && ((GetTickCount() - track->GetLastReceiverReportTime()) > track->GetReceiverReportInterval()))
+        if (SUCCEEDED(result) && ((!track->IsEndOfStream()) && ((GetTickCount() - track->GetLastReceiverReportTime()) > track->GetReceiverReportInterval())))
         {
           CReceiverReportRtcpPacket *receiverReport = new CReceiverReportRtcpPacket(&result);
           CSourceDescriptionRtcpPacket *sourceDescription = new CSourceDescriptionRtcpPacket(&result);
@@ -2152,11 +2256,11 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
   return S_OK;
 }
 
-HRESULT CRtspCurlInstance::SendAndReceive(CRtspRequest *request, const wchar_t *rtspMethodName, const wchar_t *functionName)
+HRESULT CRtspCurlInstance::SendAndReceiveAsync(CRtspRequest *request, const wchar_t *rtspMethodName, const wchar_t *functionName)
 {
   HRESULT result = S_OK;
 
-  if (SUCCEEDED(result))
+  if (SUCCEEDED(result) && (!this->IsSetFlags(RTSP_CURL_INSTANCE_FLAG_PENDING_REQUEST_ASYNC)))
   {
     // check sequence number
     unsigned int requestSequenceNumber = request->GetSequenceNumber();
@@ -2169,7 +2273,7 @@ HRESULT CRtspCurlInstance::SendAndReceive(CRtspRequest *request, const wchar_t *
     }
   }
 
-  if (SUCCEEDED(result))
+  if (SUCCEEDED(result) && (!this->IsSetFlags(RTSP_CURL_INSTANCE_FLAG_PENDING_REQUEST_ASYNC)))
   {
     // send RTSP request
     {
@@ -2179,20 +2283,30 @@ HRESULT CRtspCurlInstance::SendAndReceive(CRtspRequest *request, const wchar_t *
       this->rtspDownloadResponse->SetRtspRequest(request);
       this->rtspDownloadResponse->SetResultError(HRESULT_FROM_CURL_CODE(CURLE_AGAIN));
     }
-    result = HRESULT_FROM_CURL_CODE(CURLE_AGAIN);
+    
+    this->flags |= RTSP_CURL_INSTANCE_FLAG_PENDING_REQUEST_ASYNC;
+  }
 
-    // wait for response
-    while (result == HRESULT_FROM_CURL_CODE(CURLE_AGAIN))
+  if (SUCCEEDED(result) && (this->IsSetFlags(RTSP_CURL_INSTANCE_FLAG_PENDING_REQUEST_ASYNC)))
+  {
+    // check response
     {
-      // give chance other threads to do something useful
-      Sleep(1);
+      // don't wait too long, we can check later
+      CLockMutex lock(this->mutex, 20);
 
+      result = S_FALSE;
+
+      if (lock.IsLocked())
       {
-        CLockMutex lock(this->mutex, INFINITE);
-
         result = this->rtspDownloadResponse->GetResultError();
       }
     }
+  }
+
+  if ((result != S_FALSE) && (result != HRESULT_FROM_CURL_CODE(CURLE_AGAIN)))
+  {
+    // process response
+    this->flags &= ~RTSP_CURL_INSTANCE_FLAG_PENDING_REQUEST_ASYNC;
 
     CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while sending RTSP %s: 0x%08X", this->protocolName, functionName, rtspMethodName, this->rtspDownloadResponse->GetResultError()));
 
@@ -2260,6 +2374,26 @@ HRESULT CRtspCurlInstance::SendAndReceive(CRtspRequest *request, const wchar_t *
         result = E_RTSP_STATUS_CODE_NOT_SUCCESS;
       }
     }
+  }
+  else
+  {
+    // request is still pending
+    result = S_FALSE;
+  }
+
+  return result;
+}
+
+HRESULT CRtspCurlInstance::SendAndReceive(CRtspRequest *request, const wchar_t *rtspMethodName, const wchar_t *functionName)
+{
+  HRESULT  result = S_FALSE;
+
+  while (result == S_FALSE)
+  {
+    result = this->SendAndReceiveAsync(request, rtspMethodName, functionName);
+
+    // give chance other threads to do something useful
+    Sleep(1);
   }
 
   return result;

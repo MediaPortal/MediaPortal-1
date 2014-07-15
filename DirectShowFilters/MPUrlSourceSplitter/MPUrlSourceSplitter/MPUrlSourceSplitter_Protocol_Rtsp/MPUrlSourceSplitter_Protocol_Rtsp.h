@@ -37,7 +37,13 @@ wchar_t *SUPPORTED_PROTOCOLS[TOTAL_SUPPORTED_PROTOCOLS] =                     { 
 
 #define MP_URL_SOURCE_SPLITTER_PROTOCOL_RTSP_FLAG_NONE                        PROTOCOL_PLUGIN_FLAG_NONE
 
-#define MP_URL_SOURCE_SPLITTER_PROTOCOL_RTSP_FLAG_LAST                        (PROTOCOL_PLUGIN_FLAG_LAST + 0)
+// only closes curl instance (stop recive data in curl instance), but stays in memory
+#define MP_URL_SOURCE_SPLITTER_PROTOCOL_RTSP_FLAG_CLOSE_CURL_INSTANCE         (1 << (PROTOCOL_PLUGIN_FLAG_LAST + 0))
+// stop receiving data flag cannot be set without close curl instance flag
+// specifies that after closing curl instance is called StopReceivingData() method
+#define MP_URL_SOURCE_SPLITTER_PROTOCOL_RTSP_FLAG_STOP_RECEIVING_DATA         (1 << (PROTOCOL_PLUGIN_FLAG_LAST + 1))
+
+#define MP_URL_SOURCE_SPLITTER_PROTOCOL_RTSP_FLAG_LAST                        (PROTOCOL_PLUGIN_FLAG_LAST + 2)
 
 
 class CMPUrlSourceSplitter_Protocol_Rtsp : public CProtocolPlugin
@@ -179,95 +185,6 @@ protected:
   // @param streamFragments : the collection of stream fragments to recalculate
   // @param startIndex : the index of first stream fragment to recalculate start position
   void RecalculateStreamFragmentStartPosition(CRtspStreamFragmentCollection *streamFragments, unsigned int startIndex);
-
-  /* old RTSP */
-
-  //CLogger *logger;
-
-  //// holds various parameters supplied by caller
-  //CParameterCollection *configurationParameters;
-
-  //// holds receive data timeout
-  //unsigned int receiveDataTimeout;
-
-  //// stream time
-  //int64_t streamTime;
-
-  //// mutex for locking access to file, buffer, ...
-  //HANDLE lockMutex;
-
-  //// mutex for locking access to internal buffer of CURL instance
-  //HANDLE lockCurlMutex;
-
-  //// main instance of CURL
-  //CRtspCurlInstance *mainCurlInstance;
-
-  //// internal variable for requests to interrupt transfers
-  //bool internalExitRequest;
-  //// specifies if whole stream is downloaded
-  //bool wholeStreamDownloaded;
-  //// specifies if working with live stream
-  //bool liveStream;
-
-  //// specifies if we are still connected
-  //bool isConnected;
-
-  //// holds RTSP stream tracks
-  //CRtspStreamTrackCollection *streamTracks;
-
-  //// holds last store time of storing stream fragments to file
-  //DWORD lastStoreTime;
-
-  //// holds SDP from CURL instance
-  //CSessionDescription *sessionDescription;
-
-  //// holds filter actual stream time (in ms)
-  //uint64_t reportedStreamTime;
-
-  //// gets store file path based on configuration
-  //// creates folder structure if not created
-  //// @param trackId : the ID of track to get store file path
-  //// @return : store file or NULL if error
-  //wchar_t *GetStoreFile(unsigned int trackId);
-
-  /* HTTP */
-
-
-  //// holds connection state
-  //ProtocolConnectionState connectionState;
-
-  //// mutex for locking access to file, buffer, ...
-  //HANDLE lockMutex;
-  //// mutex for locking access to internal buffer of CURL instance
-  //HANDLE lockCurlMutex;
-
-  //// holds receive data timeout
-  //unsigned int receiveDataTimeout;
-
-  //// main instance of CURL
-  //CHttpCurlInstance *mainCurlInstance;
-  //// holds current cookies of CURL instance
-  //CParameterCollection *currentCookies;
-  //// holds media packets with received data
-  //CMediaPacketCollection *mediaPackets;
-  //// holds cache file
-  //CCacheFile *cacheFile;
-  //// start, end and current stream position
-  //int64_t startStreamPosition;
-  //int64_t endStreamPosition;
-  //int64_t currentStreamPosition;
-  //// holds current stream length
-  //int64_t streamLength;
-  //// holds last store time to cache file
-  //unsigned int lastStoreTime;
-  //// holds last receive data time
-  //unsigned int lastReceiveDataTime;
-
-  ///* methods */
-
-  //// gets store file name
-  //// @return : store file name or NULL if error
-  //wchar_t *GetStoreFile(void);
 };
 
 #endif

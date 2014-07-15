@@ -360,13 +360,9 @@ CMPUrlSourceSplitter::~CMPUrlSourceSplitter()
   this->ClearSession();
 
   FREE_MEM_CLASS(this->outputPins);
-
-  if (this->parserHoster != NULL)
-  {
-    FREE_MEM_CLASS(this->parserHoster);
-  }
-
+  FREE_MEM_CLASS(this->parserHoster);
   FREE_MEM_CLASS(this->demuxers);
+
   if (this->demuxersMutex != NULL)
   {
     CloseHandle(this->demuxersMutex);
@@ -725,7 +721,7 @@ STDMETHODIMP CMPUrlSourceSplitter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TY
         result = this->configuration->Add(PARAMETER_NAME_URL, url) ? result : E_OUTOFMEMORY;
       }
     }
-
+    
     if (SUCCEEDED(result))
     {
       // loads protocol based on current configuration parameters

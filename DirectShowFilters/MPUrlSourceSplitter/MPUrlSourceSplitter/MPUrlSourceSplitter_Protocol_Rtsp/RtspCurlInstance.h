@@ -44,11 +44,16 @@
 #define RTSP_CURL_INSTANCE_FLAG_REQUEST_COMMAND_FINISHED              (1 << (CURL_INSTANCE_FLAG_LAST + 0))
 #define RTSP_CURL_INSTANCE_FLAG_IGNORE_RTP_PAYLOAD_TYPE               (1 << (CURL_INSTANCE_FLAG_LAST + 1))
 #define RTSP_CURL_INSTANCE_FLAG_METHOD_GET_PARAMETER_SUPPORTED        (1 << (CURL_INSTANCE_FLAG_LAST + 2))
+// RTSP is mostly live, but in rare cases not
+#define RTSP_CURL_INSTANCE_FLAG_LIVE_STREAM                           (1 << (CURL_INSTANCE_FLAG_LAST + 3))
 
+#define RTSP_CURL_INSTANCE_FLAG_SERVER_LIVE555                        (1 << (CURL_INSTANCE_FLAG_LAST + 4))
 // special flag for Freebox RTSP server (fbxrtspd/1.2 Freebox RTSP server doesn't compute RTP packet timestamps)
-#define RTSP_CURL_INSTANCE_FLAG_SERVER_FREEBOX                        (1 << (CURL_INSTANCE_FLAG_LAST + 3))
+#define RTSP_CURL_INSTANCE_FLAG_SERVER_FREEBOX                        (1 << (CURL_INSTANCE_FLAG_LAST + 5))
 
-#define RTSP_CURL_INSTANCE_FLAG_LAST                                  (CURL_INSTANCE_FLAG_LAST + 4)
+#define RTSP_CURL_INSTANCE_FLAG_PENDING_REQUEST_ASYNC                 (1 << (CURL_INSTANCE_FLAG_LAST + 6))
+
+#define RTSP_CURL_INSTANCE_FLAG_LAST                                  (CURL_INSTANCE_FLAG_LAST + 7)
 
 #define RTSP_CURL_INSTANCE_COMMAND_NONE                               0x00000000
 #define RTSP_CURL_INSTANCE_COMMAND_OPTIONS                            0x00000001
@@ -60,6 +65,7 @@
 #define RTSP_CURL_INSTANCE_COMMAND_TEARDOWN                           0x00000007
 
 #define SERVER_FREEBOX                                                L"Freebox RTSP server"
+#define SERVER_LIVE555                                                L"LIVE555 Streaming Media"
 
 class CRtspCurlInstance : public CCurlInstance
 {
@@ -142,6 +148,10 @@ public:
   // @return : true if successful, false otherwise
   virtual HRESULT StopReceivingData(void);
 
+  // stops receiving data asynchronously
+  // @return : S_OK if stopped, S_FALSE if pending, error code otherwise
+  virtual HRESULT StopReceivingDataAsync(void);
+
 protected:
   // holds RTSP download request
   // never created and never destroyed
@@ -197,6 +207,7 @@ protected:
   // virtual CurlWorker() method is called from static CurlWorker() method
   virtual unsigned int CurlWorker(void);
 
+  HRESULT SendAndReceiveAsync(CRtspRequest *request, const wchar_t *rtspMethodName, const wchar_t *functionName);
   HRESULT SendAndReceive(CRtspRequest *request, const wchar_t *rtspMethodName, const wchar_t *functionName);
 
   // creates dump box for dump file

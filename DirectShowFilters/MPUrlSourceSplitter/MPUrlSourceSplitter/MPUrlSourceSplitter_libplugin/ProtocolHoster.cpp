@@ -195,7 +195,6 @@ HRESULT CProtocolHoster::StopReceivingData(void)
   // stop receive data worker
   this->DestroyReceiveDataWorker();
 
-  this->streamPackages->Clear();
   this->pauseSeekStopMode = PAUSE_SEEK_STOP_MODE_NONE;
   this->finishTime = 0;
   this->startReceivingData = false;
@@ -338,7 +337,6 @@ HRESULT CProtocolHoster::ProcessStreamPackage(CStreamPackage *streamPackage)
               this->streamPackages->Remove(i);
               processed = true;
             }
-
           }
         }
       }
@@ -544,26 +542,8 @@ unsigned int WINAPI CProtocolHoster::ReceiveDataWorker(LPVOID lpParam)
           // instead of error we stop receiving data in protocol
           caller->activeProtocol->StopReceivingData();
 
-          if (caller->activeProtocol->IsLiveStreamSpecified())
-          {
-            // filter specified live stream
-            // it can be IPTV or splitter with live stream, in that case we rather try to open connection again
-
-            // some protocols may need some sleep before loading (e.g. multicast UDP protocol needs some time between unsubscribing and subscribing in multicast groups)
-            // set new timeout for reconnecting
-
-            startTicks = currentTime + openConnectionSleepTime;
-            endTicks = currentTime + openConnectionSleepTime + openConnectionTimeout;
-            // we don't have limit for reconnecting
-            totalEndTicks = UINT_MAX;
-
-            caller->logger->Log(LOGGER_WARNING, L"%s: %s: connection closed, trying to open, current time: %u, re-open time: %u (%u ms), re-open timeout: %u (ms), maximum re-open time: %u (%u ms)", caller->hosterName, METHOD_RECEIVE_DATA_WORKER_NAME, currentTime, startTicks, startTicks - currentTime, openConnectionTimeout, totalEndTicks, totalEndTicks - currentTime);
-          }
-          else
-          {
-            // we also set end of stream, whole stream downloaded and also special flag that connection was lost
-            caller->activeProtocol->SetFlags(caller->activeProtocol->GetFlags() | PROTOCOL_PLUGIN_FLAG_CONNECTION_LOST_CANNOT_REOPEN | PROTOCOL_PLUGIN_FLAG_END_OF_STREAM_REACHED | PROTOCOL_PLUGIN_FLAG_WHOLE_STREAM_DOWNLOADED);
-          }
+          // we also set end of stream, whole stream downloaded and also special flag that connection was lost
+          caller->activeProtocol->SetFlags(caller->activeProtocol->GetFlags() | PROTOCOL_PLUGIN_FLAG_CONNECTION_LOST_CANNOT_REOPEN | PROTOCOL_PLUGIN_FLAG_END_OF_STREAM_REACHED | PROTOCOL_PLUGIN_FLAG_WHOLE_STREAM_DOWNLOADED);
         }
         else if (currentTime >= endTicks)
         {
@@ -590,6 +570,32 @@ unsigned int WINAPI CProtocolHoster::ReceiveDataWorker(LPVOID lpParam)
                 (connectionState == Opened) ||
                 (connectionState == Closing))
       {
+        if ((openedConnection) && (connectionState == Closing))
+        {
+          // we had opened connection, we lost it - protocol is closing connection
+          // some protocols may need some sleep before loading (e.g. multicast UDP protocol needs some time between unsubscribing and subscribing in multicast groups)
+          // set new timeout for reconnecting
+
+          startTicks = currentTime + openConnectionSleepTime;
+          endTicks = currentTime + openConnectionSleepTime + openConnectionTimeout;
+          totalEndTicks = caller->startReceivingData ? endTicks : (caller->activeProtocol->IsLiveStreamSpecified() ? UINT_MAX : (startTicks + totalReopenConnectionTimeout));
+
+          caller->logger->Log(LOGGER_WARNING, L"%s: %s: connection opened, trying to close and open, current time: %u, re-open time: %u (%u ms), re-open timeout: %u (ms), maximum re-open time: %u (%u ms)", caller->hosterName, METHOD_RECEIVE_DATA_WORKER_NAME, currentTime, startTicks, startTicks - currentTime, openConnectionTimeout, totalEndTicks, totalEndTicks - currentTime);
+
+          openedConnection = false;
+        }
+
+        if ((currentTime >= totalEndTicks) && (connectionState == Closing))
+        {
+          caller->logger->Log(LOGGER_ERROR, L"%s: %s: maximum time of closing and opening connection reached", caller->hosterName, METHOD_RECEIVE_DATA_WORKER_NAME);
+
+          // instead of error we stop receiving data in protocol
+          caller->activeProtocol->StopReceivingData();
+
+          // we also set end of stream, whole stream downloaded and also special flag that connection was lost
+          caller->activeProtocol->SetFlags(caller->activeProtocol->GetFlags() | PROTOCOL_PLUGIN_FLAG_CONNECTION_LOST_CANNOT_REOPEN | PROTOCOL_PLUGIN_FLAG_END_OF_STREAM_REACHED | PROTOCOL_PLUGIN_FLAG_WHOLE_STREAM_DOWNLOADED);
+        }
+
         openedConnection |= (connectionState == Opened);
 
         // we have opened connection, we can process requests (if any)

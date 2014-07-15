@@ -40,8 +40,9 @@
 #define RTSP_TRACK_FLAG_SENDER_SYNCHRONIZATION_SOURCE_IDENTIFIER_SET  (1 << (FLAGS_LAST + 0))
 #define RTSP_TRACK_FLAG_END_OF_STREAM                                 (1 << (FLAGS_LAST + 1))
 #define RTSP_TRACK_FLAG_SET_START_TIME                                (1 << (FLAGS_LAST + 2))
+#define RTSP_TRACK_FLAG_SET_FIRST_RTP_PACKET_TIMESTAMP                (1 << (FLAGS_LAST + 3))
 
-#define RTSP_TRACK_FLAG_LAST                                          (FLAGS_LAST + 3)
+#define RTSP_TRACK_FLAG_LAST                                          (FLAGS_LAST + 4)
 
 class CRtspTrack : public CFlags
 {
@@ -119,6 +120,14 @@ public:
   // @return : RTP packet timestamp based on current time
   unsigned int GetRtpPacketTimestamp(unsigned int currentTime);
 
+  // gets stream RTP timestamp (last cumulative RTP timestamp - first RTP timestamp)
+  // @return : stream RTP timestamp
+  int64_t GetStreamRtpTimestamp(void);
+
+  // gets track end RTP timestamp
+  // @return : track end RTP timestamp
+  int64_t GetTrackEndRtpTimestamp(void);
+
   /* set methods */
 
   // sets server data port
@@ -177,6 +186,10 @@ public:
   // @param endOfStream : the end of stream flag to set
   void SetEndOfStream(bool endOfStream);
 
+  // sets track end RTP timestamp
+  // @param trackEndRtpTimestamp : track end RTP timestamp
+  void SetTrackEndRtpTimestamp(int64_t trackEndRtpTimestamp);
+
   /* other methods */
 
   // tests if specified port is server data port
@@ -206,6 +219,10 @@ public:
   // tests if end of stream is set
   // @return : true if end of stream is set, false otherwise
   bool IsEndOfStream(void);
+
+  // updates RTP packet timestamp based on current RTP packet timestamp
+  // @param currentRtpPacketTimestamp : current RTP packet timestamp to get RTP packet timestamp
+  void UpdateRtpPacketTotalTimestamp(unsigned int currentRtpPacketTimestamp);
 
 protected:
   // holds remote server data and control ports
@@ -246,6 +263,15 @@ protected:
 
   // holds start time in ms (usefull for computing RTP packet timestamps based on current time)
   unsigned int startTime;
+
+  // holds first RTP packet timestamp
+  unsigned int firstRtpPacketTimestamp;
+  // holds last RTP packet timestamp
+  unsigned int lastRtpPacketTimestamp;
+  // holds last cumulated RTP packet timestamp
+  int64_t lastCumulatedRtpTimestamp;
+  // holds calculated track end RTP timestamp (relative from start of stream)
+  int64_t trackEndRtpTimestamp;
 };
 
 #endif

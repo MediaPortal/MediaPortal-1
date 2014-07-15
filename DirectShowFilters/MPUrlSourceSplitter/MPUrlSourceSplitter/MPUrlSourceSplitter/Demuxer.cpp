@@ -2269,7 +2269,8 @@ HRESULT CDemuxer::DemuxerReadPosition(int64_t position, uint8_t *buffer, int len
         this->logger->Log(LOGGER_VERBOSE, L"%s: %s: stream %u, request %u, start: %lld, length: %d, discontinuity reported", MODULE_NAME, METHOD_DEMUXER_READ_NAME, this->demuxerId, requestId, position, length);
       }
 
-      this->flags &= ~(DEMUXER_FLAG_PENDING_DISCONTINUITY | DEMUXER_FLAG_PENDING_DISCONTINUITY_WITH_REPORT);
+      // do not report discontinuity again, until discontinuity is reset
+      this->flags &= ~DEMUXER_FLAG_PENDING_DISCONTINUITY_WITH_REPORT;
       result = E_CONNECTION_LOST_TRYING_REOPEN;
     }
 
@@ -2535,11 +2536,14 @@ HRESULT CDemuxer::GetNextPacketInternal(COutputPinPacket *packet)
       // end of file reached
       result = E_NO_MORE_DATA_AVAILABLE;
     }
-    else if (ffmpegResult == E_CONNECTION_LOST_TRYING_REOPEN)
+    else if ((ffmpegResult == E_CONNECTION_LOST_TRYING_REOPEN) || (this->IsSetFlags(DEMUXER_FLAG_PENDING_DISCONTINUITY)))
     {
+      // connection lost or pending discontinuity
+      // FFmpeg sometimes doesn't return error code, but send end of stream
       ff_read_frame_flush(this->formatContext);
 
       result = S_FALSE;
+      this->flags &= ~(DEMUXER_FLAG_PENDING_DISCONTINUITY | DEMUXER_FLAG_PENDING_DISCONTINUITY_WITH_REPORT);
 
       // set discontinuity for all streams, we have lost some data
 

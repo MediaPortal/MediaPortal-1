@@ -88,9 +88,8 @@ public:
 
   // gets RTP packet timestamp based on current RTP packet timestamp
   // @param currentRtpPacketTimestamp : current RTP packet timestamp to get RTP packet timestamp
-  // @param storeLastRtpPacketTimestamp : true if current RTP packet timestamp have to be stored as last RTP packet timestamp, false otherwise
   // @return : RTP packet timestamp
-  int64_t GetRtpPacketTimestamp(unsigned int currentRtpPacketTimestamp, bool storeLastRtpPacketTimestamp);
+  int64_t GetRtpPacketTimestamp(unsigned int currentRtpPacketTimestamp);
 
   // gets RTP packet timestamp in DSHOW_TIME_BASE units
   // @param rtpPacketTimestamp : the RTP packet timestamp to get in DSHOW_TIME_BASE units
