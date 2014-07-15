@@ -105,9 +105,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
               ciFilter = null;
             }
           }
-          catch (Exception)
-          {
-          }
           finally
           {
             Release.ComObject("Digital Devices config device object", ref obj);

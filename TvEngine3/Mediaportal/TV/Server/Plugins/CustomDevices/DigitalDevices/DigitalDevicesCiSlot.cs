@@ -134,6 +134,15 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
     {
       _propertySet = filter as IKsPropertySet;
       _control = filter as IKsControl;
+      _buffer = Marshal.AllocCoTaskMem(BUFFER_SIZE);
+    }
+
+    ~DigitalDevicesCiSlot()
+    {
+      if (_buffer != IntPtr.Zero)
+      {
+        Marshal.FreeCoTaskMem(_buffer);
+      }
     }
 
     /// <summary>
