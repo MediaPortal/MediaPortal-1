@@ -61,11 +61,14 @@ namespace MediaPortal.GUI.Pictures
         if (_isSlideShow && _showRecursive)
         {
           // Analyse for folder and add picture/video items to the list and then remove the folder item
-          while (IsPathDirectory(_slideList[_currentSlideIndex]))
+          if (_currentSlideIndex != -1 && _slideList.Count > 0)
           {
-            GUIpictures.AddDir(SlideShow, _slideList[_currentSlideIndex]);
-            _slideList.Remove(_slideList[_currentSlideIndex]);
-            _autoShuffleFolder = true;
+            while (IsPathDirectory(_slideList[_currentSlideIndex]))
+            {
+              GUIpictures.AddDir(SlideShow, _slideList[_currentSlideIndex]);
+              _slideList.Remove(_slideList[_currentSlideIndex]);
+              _autoShuffleFolder = true;
+            }
           }
         }
 
@@ -86,8 +89,25 @@ namespace MediaPortal.GUI.Pictures
         }
         else
         {
-          _currentSlide = _slideCache.GetCurrentSlide(_slideList[_currentSlideIndex]);
-          GUIPictures.fileNameCheck = _slideList[_currentSlideIndex];
+          try
+          {
+            if (_currentSlideIndex != -1 && _slideList.Count > 0)
+            {
+              int currentIndex = _currentSlideIndex;
+              _currentSlide = _slideCache.GetCurrentSlide(_slideList[currentIndex]);
+              GUIPictures.fileNameCheck = _slideList[currentIndex];
+            }
+            else
+            {
+              return _currentSlide;
+            }
+          }
+          catch (Exception)
+          {
+            Log.Debug("GUISlideShow: catch exception when LoadSlide on stop");
+            return _currentSlide;
+          }
+
         }
 
         GUIPropertyManager.SetProperty("#selecteditem", Util.Utils.GetFilename(GUIPictures.fileNameCheck));
@@ -173,12 +193,15 @@ namespace MediaPortal.GUI.Pictures
         Log.Error("GUISlideShow: Exception in LoadCurrentSlide() : {0}", ex);
         // If exception occurs, select first entry to avoid render loop
         _currentSlideIndex = 0;
-        while (IsPathDirectory(_slideList[_currentSlideIndex]))
+        if (_slideList.Count > 0)
         {
-          GUIpictures.AddDir(SlideShow, _slideList[_currentSlideIndex]);
-          _slideList.Remove(_slideList[_currentSlideIndex]);
+          while (IsPathDirectory(_slideList[_currentSlideIndex]))
+          {
+            GUIpictures.AddDir(SlideShow, _slideList[_currentSlideIndex]);
+            _slideList.Remove(_slideList[_currentSlideIndex]);
+          }
+          _currentSlide = _slideCache.GetCurrentSlide(_slideList[_currentSlideIndex]);
         }
-        _currentSlide = _slideCache.GetCurrentSlide(_slideList[_currentSlideIndex]);
       }
       return _currentSlide;
     }
