@@ -205,17 +205,21 @@ namespace MediaPortal.Player
 
         if (_videoResolution == "HD")
         {
-          if ((_width >= 7680 || _height >= 4320) && !_isInterlaced &&
-            (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\4320P.png")) ||
-            File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\resolution\4320P.png"))))
+          if ((_width >= 7680 || _height >= 4320) && !_isInterlaced)
           {
-            _videoResolution = "4320P";
+            if (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\4320P.png")) ||
+              File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\resolution\4320P.png")))
+            {
+              _videoResolution = "4320P";
+            }
           }
-          else if ((_width >= 3840 || _height >= 2160) && !_isInterlaced &&
-           (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\2160P.png")) ||
-           File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\resolution\2160P.png"))))
+          else if ((_width >= 3840 || _height >= 2160) && !_isInterlaced)
           {
-            _videoResolution = "2160P";
+            if (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\2160P.png")) ||
+             File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\resolution\2160P.png")))
+            {
+              _videoResolution = "2160P";
+            }
           }
           else if ((_width >= 1920 || _height >= 1080) && _isInterlaced)
           {
@@ -232,29 +236,37 @@ namespace MediaPortal.Player
         }
         else 
         {
-          if (_height >= 576 &&
-            (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\576.png")) ||
-            File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\resolution\576.png"))))
+          if (_height >= 576)
           {
-            _videoResolution = "576";
+            if (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\576.png")) ||
+              File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\resolution\576.png")))
+            {
+              _videoResolution = "576";
+            }
           }
-          else if (_height >= 480 &&
-            (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\480.png")) ||
-            File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\resolution\480.png"))))
+          else if (_height >= 480)
           {
-            _videoResolution = "480";
+            if (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\480.png")) ||
+              File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\resolution\480.png")))
+            {
+              _videoResolution = "480";
+            }
           }
-          else if (_height >= 360 &&
-            (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\360.png")) ||
-            File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\resolution\360.png"))))
+          else if (_height >= 360)
           {
-            _videoResolution = "360";
+            if (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\360.png")) ||
+              File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\resolution\360.png")))
+            {
+              _videoResolution = "360";
+            }
           }
-          else if (_height >= 240 &&
-            (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\240.png")) ||
-            File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\resolution\240.png"))))
+          else if (_height >= 240)
           {
-            _videoResolution = "240";
+            if (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\240.png")) ||
+              File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\resolution\240.png")))
+            {
+              _videoResolution = "240";
+            }
           }
         }
 
