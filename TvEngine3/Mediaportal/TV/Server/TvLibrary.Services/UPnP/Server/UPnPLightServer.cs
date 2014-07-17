@@ -21,7 +21,7 @@
 using UPnP.Infrastructure.Dv;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 
-namespace Mediaportal.TV.Server.TVLibrary.UPnP.Server
+namespace Mediaportal.TV.Server.TVLibrary.TVEUPnPServer.Server
 {
   /// <summary>
   /// Encapsulates the UPnP light device.

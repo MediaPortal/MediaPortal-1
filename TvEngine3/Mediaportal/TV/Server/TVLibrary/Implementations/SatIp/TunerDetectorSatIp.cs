@@ -40,6 +40,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
   /// </summary>
   internal class TunerDetectorSatIp : ITunerDetectorUpnp
   {
+    private string ignoreUUID = SettingsManagement.GetValue("SATIP_UDN", System.Guid.NewGuid().ToString("D"));
+    private bool detectMPserver = SettingsManagement.GetValue("SATIP_detectMPServer", true);
+    
     /// <summary>
     /// Get the detector's name.
     /// </summary>
@@ -67,12 +70,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
         return tuners;
       }
       // Is the SAT>IP server our own server?
-      if (descriptor.DeviceUDN.Equals("uuid:"+SettingsManagement.GetValue("SATIP_UDN", System.Guid.NewGuid().ToString("D"))))
+      if (descriptor.DeviceUDN.Equals("uuid:" + ignoreUUID))
       {
         return tuners;
       }
       // Do we want to detect the MP SAT>IP server at all?
-      if (descriptor.FriendlyName.Contains("MediaPortal") && !SettingsManagement.GetValue("SATIP_detectMPServer", true))
+      if (descriptor.FriendlyName.Contains("MediaPortal") && !detectMPserver)
       {
         return tuners;
       }

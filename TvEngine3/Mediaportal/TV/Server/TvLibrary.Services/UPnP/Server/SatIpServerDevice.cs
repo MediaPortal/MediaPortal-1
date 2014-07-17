@@ -29,7 +29,7 @@ using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 
-namespace Mediaportal.TV.Server.TVLibrary.UPnP.Server
+namespace Mediaportal.TV.Server.TVLibrary.TVEUPnPServer.Server
 {
   public class SatIpServerDevice : DvDevice
   {

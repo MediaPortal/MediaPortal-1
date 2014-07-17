@@ -32,7 +32,7 @@ using UPnP.Infrastructure.Common;
 using UPnP.Infrastructure.Dv;
 using UPnP.Infrastructure.Dv.DeviceTree;
 
-namespace Mediaportal.TV.Server.TVLibrary.UPnP.Server
+namespace Mediaportal.TV.Server.TVLibrary.TVEUPnPServer.Server
 {
   public class UPnPConnectionManagerServiceImpl : DvService
   {

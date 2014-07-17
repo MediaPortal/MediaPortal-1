@@ -30,7 +30,7 @@ using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVService.Interfaces;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
 
-namespace Mediaportal.TV.Server.TVLibrary.UPnP.Rtsp
+namespace Mediaportal.TV.Server.TVLibrary.TVEUPnPServer.Rtsp
 {
   class RtspClients
   {

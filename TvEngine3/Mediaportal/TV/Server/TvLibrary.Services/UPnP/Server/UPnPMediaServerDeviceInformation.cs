@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using UPnP.Infrastructure.Dv.DeviceTree;
 
-namespace Mediaportal.TV.Server.TVLibrary.UPnP.Server
+namespace Mediaportal.TV.Server.TVLibrary.TVEUPnPServer.Server
 {
   public class UPnPMediaServerDeviceInformation : ILocalizedDeviceInformation
   {

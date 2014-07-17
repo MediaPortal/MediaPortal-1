@@ -63,7 +63,7 @@ using Mediaportal.TV.Server.TVService.Interfaces.Services;
 using MediaPortal.Common.Utils;
 using MediaPortal.Common.Utils.ExtensionMethods;
 using RecordingManagement = Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.RecordingManagement;
-using Mediaportal.TV.Server.TVLibrary.UPnP;
+using Mediaportal.TV.Server.TVLibrary.TVEUPnPServer;
 
 #endregion
 
@@ -108,7 +108,7 @@ namespace Mediaportal.TV.Server.TVLibrary
     /// <summary>
     /// Recording scheduler
     /// </summary>
-    private UPnPServer _UPnPServer;
+    private MPUPnPServer _UPnPServer;
 
     /// <summary>
     /// RTSP Streaming Server
@@ -513,7 +513,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         _epgGrabber.Start();
         _scheduler = new Scheduler.Scheduler();
         _scheduler.Start();
-        _UPnPServer = new UPnPServer();
+        _UPnPServer = new MPUPnPServer();
 
         StartHeartbeatManager();
         StartTvServerEventDispatcher();

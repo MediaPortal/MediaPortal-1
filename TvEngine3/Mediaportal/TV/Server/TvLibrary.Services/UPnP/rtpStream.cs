@@ -26,7 +26,7 @@ using System.Threading;
 using System.Runtime.InteropServices;
 using System.Reflection;
 
-namespace Mediaportal.TV.Server.TVLibrary.UPnP
+namespace Mediaportal.TV.Server.TVLibrary.TVEUPnPServer
 {
   class rtpStream
   {

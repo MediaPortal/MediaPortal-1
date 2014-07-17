@@ -46,7 +46,7 @@ using UPnP.Infrastructure.Dv;
 using UPnP.Infrastructure.Dv.DeviceTree;
 using UPnP.Infrastructure;
 
-namespace Mediaportal.TV.Server.TVLibrary.UPnP.Server
+namespace Mediaportal.TV.Server.TVLibrary.TVEUPnPServer.Server
 {
   public class UPnPContentDirectoryServiceImpl : DvService
   {

@@ -22,6 +22,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Net;
+using System.Threading;
+using System.Diagnostics;
 
 using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
@@ -30,12 +33,14 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVService.Interfaces;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
-using Mediaportal.TV.Server.TVLibrary.UPnP.Server;
-using Mediaportal.TV.Server.TVLibrary.UPnP.Rtsp;
+using Mediaportal.TV.Server.TVLibrary.TVEUPnPServer.Server;
+using Mediaportal.TV.Server.TVLibrary.TVEUPnPServer.Rtsp;
+using MediaPortal.TV.Server.TVLibrary.UPnP.MediaServer.ResourceAccess;
+using HttpServer;
 
-namespace Mediaportal.TV.Server.TVLibrary.UPnP
+namespace Mediaportal.TV.Server.TVLibrary.TVEUPnPServer
 {
-    class UPnPServer : System.Object
+    class MPUPnPServer : System.Object
     {
 
         #region variables
@@ -46,28 +51,48 @@ namespace Mediaportal.TV.Server.TVLibrary.UPnP
         public const string CONTENT_DIRECTORY_SERVICE_ID = "upnp-org:serviceId:ContentDirectory";
         public const string CONTENT_DIRECTORY_SERVICE_TYPE = "schemas-upnp-org:service:ContentDirectory";
         public const int CONTENT_DIRECTORY_SERVICE_TYPE_VERSION = 1;
-        //public const string DEVICE_UUID = "db015228-8813-11e3-a86e-d231feb1dc81";
         public const string MEDIASERVER_DEVICE_TYPE = "urn:ses-com:device:SatIPServer";
         public const int MEDIASERVER_DEVICE_VERSION = 1;
+        public const int RESOURCE_SERVER_PORT = 2014; // if 0 the system will choose a port automatically
+
         RtspServer _rtsp;
-        //static readonly Guid SERVER_ID = new Guid(); // e.g. {db015228-8813-11e3-a86e-d231feb1dc81}
         static UPnPLightServer _server = null;
+        static HttpServer.HttpServer _resourceServer = null;
+        private Thread UPnPLightServerThread;
 
         #endregion
 
-        public UPnPServer()
+        public MPUPnPServer()
         {
             this.LogInfo("SAT>IP: Start Server");
-            _server = new UPnPLightServer(); // vorher B
-            _server.Start();
-
+            // starting all the UPnP stuff needs quite some time (~19s!!), so do it in it's own thread
+            UPnPLightServerThread = new Thread(UPnPLightServerStartThread);
+            UPnPLightServerThread.Start();
+            
             _rtsp = new RtspServer();
+
+            _resourceServer = new HttpServer.HttpServer();
+            _resourceServer.ServerName = "MP UPnP resource provider";
+            _resourceServer.Add(new UPnPStaticResourceAccessModule());
+            _resourceServer.Start(IPAddress.Parse(UPnPResourceAccessUtils.LocalIPAddress()), RESOURCE_SERVER_PORT);
         }
+
+        private void UPnPLightServerStartThread()
+        {
+          Stopwatch stopwatch = new Stopwatch();
+          stopwatch.Start();
+          _server = new UPnPLightServer();
+          _server.Start();
+          stopwatch.Stop();
+          this.LogDebug("Starting the UPnP server needed {0} [{1} ms]", stopwatch.Elapsed, stopwatch.ElapsedMilliseconds);
+        }
+
 
         public void stop()
         {
             _rtsp.stop();
             _server.Stop();
+            _resourceServer.Stop();
         }
     }
 }

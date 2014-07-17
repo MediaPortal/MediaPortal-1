@@ -9,7 +9,7 @@ using Mediaportal.TV.Server.TVService.Interfaces;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace Mediaportal.TV.Server.TVLibrary.UPnP.Rtsp
+namespace Mediaportal.TV.Server.TVLibrary.TVEUPnPServer.Rtsp
 {
   class RtspCards
   {

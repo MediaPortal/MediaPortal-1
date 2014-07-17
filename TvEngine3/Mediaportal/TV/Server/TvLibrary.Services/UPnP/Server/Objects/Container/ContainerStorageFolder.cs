@@ -7,7 +7,7 @@ using MediaPortal.TV.Server.TVLibrary.UPnP.MediaServer.Tree;
 using MediaPortal.TV.Server.TVLibrary.UPnP.MediaServer.Objects;
 using MediaPortal.TV.Server.TVLibrary.UPnP.MediaServer.Objects.Basic;
 
-namespace Mediaportal.TV.Server.TVLibrary.UPnP.Server.Objects.Container
+namespace Mediaportal.TV.Server.TVLibrary.TVEUPnPServer.Server.Objects.Container
 {
   class ContainerStorageFolder : BasicItem, IDirectoryContainer
   {

@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace Mediaportal.TV.Server.TVLibrary.UPnP
+namespace Mediaportal.TV.Server.TVLibrary.TVEUPnPServer
 {
   class FilterCommunication
   {

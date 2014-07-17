@@ -21,8 +21,9 @@
 using System.Collections.Generic;
 using System.Globalization;
 using UPnP.Infrastructure.Dv.DeviceTree;
+using MediaPortal.TV.Server.TVLibrary.UPnP.MediaServer.ResourceAccess;
 
-namespace Mediaportal.TV.Server.TVLibrary.UPnP.Server
+namespace Mediaportal.TV.Server.TVLibrary.TVEUPnPServer.Server
 {
   public class SatIpServerDeviceInformation : ILocalizedDeviceInformation
   {

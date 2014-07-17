@@ -115,6 +115,9 @@
     <Compile Include="UPnP\Rtsp\RtspClients.cs" />
     <Compile Include="UPnP\Rtsp\RtspRequestHeader.cs" />
     <Compile Include="UPnP\Rtsp\RtspServer.cs" />
+    <Compile Include="UPnP\Server\Objects\MediaLibrary\MediaLibraryVideoBroadcastItem.cs" />
+    <Compile Include="UPnP\Server\ResourceAccess\UPnPStaticResourceAccessModule.cs" />
+    <Compile Include="UPnP\Server\ResourceAccess\UPnPResourceAccessUtils.cs" />
     <Compile Include="UPnP\UPnPServer.cs" />
     <Compile Include="UPnP\Server\DIDL\GenericDidlMessageBuilder.cs" />
     <Compile Include="UPnP\Server\DIDL\ObjectRenderer.cs" />

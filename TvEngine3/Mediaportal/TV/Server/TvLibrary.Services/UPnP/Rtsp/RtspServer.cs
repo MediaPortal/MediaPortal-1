@@ -51,7 +51,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 
 //using RtpStreamer;
 
-namespace Mediaportal.TV.Server.TVLibrary.UPnP.Rtsp
+namespace Mediaportal.TV.Server.TVLibrary.TVEUPnPServer.Rtsp
 {
   public class RtspServer
   {
