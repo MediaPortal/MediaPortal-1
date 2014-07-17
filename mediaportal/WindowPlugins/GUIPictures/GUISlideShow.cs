@@ -75,7 +75,7 @@ namespace MediaPortal.GUI.Pictures
         // Item list has changed, if we use autoshuffle then do a new shuffle and check if new selected entry is a folder
         if (_autoShuffleFolder && _autoShuffle)
         {
-          Shuffle(true, false);
+          Shuffle(_showRecursive, false);
           // Analyse for folder and add picture/video items to the list and then remove the folder item
           // like shuffle is done, continue slideshow on first entry
           _currentSlideIndex = 0;
@@ -1447,6 +1447,11 @@ namespace MediaPortal.GUI.Pictures
           ShowPreviousWindow();
           return;
         }
+      }
+      else if ((_currentSlideIndex >= _slideList.Count - 1) && _autoShuffle)
+      {
+        // Autoshuffle when reach the end of the slide list
+        Shuffle(false, false);
       }
 
       // Reset slide time
