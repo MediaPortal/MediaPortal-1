@@ -201,7 +201,14 @@ namespace MediaPortal.Player
         _scanType = _mI.Get(StreamKind.Video, 0, "ScanType").ToLowerInvariant();
         _isInterlaced = _scanType.Contains("interlaced");
 
-        _videoResolution = _height < 720 ? "SD" : "HD";
+        if (_width >= 1280 || _height >= 720)
+        {
+          _videoResolution = "HD";
+        }
+        else
+        {
+          _videoResolution = "SD";
+        }
 
         if (_videoResolution == "HD")
         {
