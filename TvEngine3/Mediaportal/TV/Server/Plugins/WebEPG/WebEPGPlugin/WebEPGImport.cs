@@ -40,6 +40,7 @@ using WebEPG.Utils;
 namespace Mediaportal.TV.Server.Plugins.WebEPGImport
 {
   [Interceptor("PluginExceptionInterceptor")]
+  [ComponentProxyBehavior(AdditionalInterfaces = new[] { typeof(ITvServerPluginStartedAll) })]
   public class WebEPGImport : ITvServerPlugin, ITvServerPluginStartedAll, IWakeupHandler 
   {
 

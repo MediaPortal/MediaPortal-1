@@ -35,6 +35,7 @@ using Microsoft.Win32;
 namespace Mediaportal.TV.Server.Plugins.TvMovie
 {
   [Interceptor("PluginExceptionInterceptor")]
+  [ComponentProxyBehavior(AdditionalInterfaces = new[] { typeof(ITvServerPluginStartedAll) })]
   public class TvMovie : ITvServerPlugin, ITvServerPluginStartedAll
   {
     #region Members

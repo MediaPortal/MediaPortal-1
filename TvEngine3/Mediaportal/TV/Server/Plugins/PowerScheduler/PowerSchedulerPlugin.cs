@@ -34,6 +34,7 @@ using PowerScheduler.Setup;
 namespace Mediaportal.TV.Server.Plugins.PowerScheduler
 {
   [Interceptor("PluginExceptionInterceptor")]
+  [ComponentProxyBehavior(AdditionalInterfaces = new[] { typeof(ITvServerPluginCommunciation) })]
   public class PowerSchedulerPlugin : ITvServerPlugin, ITvServerPluginCommunciation
   {
     #region Variables

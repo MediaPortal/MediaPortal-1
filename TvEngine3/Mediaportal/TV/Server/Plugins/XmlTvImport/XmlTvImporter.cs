@@ -40,6 +40,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 namespace Mediaportal.TV.Server.Plugins.XmlTvImport
 {
   [Interceptor("PluginExceptionInterceptor")]
+  [ComponentProxyBehavior(AdditionalInterfaces = new [] { typeof(ITvServerPluginStartedAll), typeof(ITvServerPluginCommunciation) })]
   public class XmlTvImporter : ITvServerPlugin, ITvServerPluginStartedAll, ITvServerPluginCommunciation
   {
 
