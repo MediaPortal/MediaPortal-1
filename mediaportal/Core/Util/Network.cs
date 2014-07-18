@@ -63,6 +63,11 @@ namespace MediaPortal.Util
           break;
         }
       }
-    }   
+    }
+
+    public static void Reset()
+    {
+      _isSingleSeat = null;
+    }
   }
 }
