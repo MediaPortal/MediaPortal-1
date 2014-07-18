@@ -5,6 +5,7 @@
  *                | (__| |_| |  _ <| |___
  *                 \___|\___/|_| \_\_____|
  *
+ * Copyright (C) 2012 - 2014, Daniel Stenberg, <daniel@haxx.se>, et al.
  * Copyright (C) 2010, Howard Chu, <hyc@highlandsun.com>
  *
  * This software is licensed as described in the file COPYING, which
@@ -31,7 +32,6 @@
 #include "warnless.h"
 #include <curl/curl.h>
 #include <librtmp/rtmp.h>
-#include <librtmp/log.h>
 
 #define _MPRINTF_REPLACE /* use our functions only */
 #include <curl/mprintf.h>
@@ -190,13 +190,6 @@ static CURLcode rtmp_setup(struct connectdata *conn)
     return CURLE_OUT_OF_MEMORY;
 
   RTMP_Init(r);
-
-  if (conn->data->set.frtmp_log_func != NULL)
-  {
-    RTMP_LogSetCallback(r, conn->data->set.frtmp_log_func);
-  }
-  r->m_logUserData = conn->data->set.curl_rtmp_log_user_data;
-
   RTMP_SetBufferMS(r, DEF_BUFTIME);
   if(!RTMP_SetupURL(r, conn->data->change.url)) {
     RTMP_Free(r);
@@ -208,7 +201,6 @@ static CURLcode rtmp_setup(struct connectdata *conn)
 
 static CURLcode rtmp_connect(struct connectdata *conn, bool *done)
 {
-  int on = 1;
   RTMP *r = conn->proto.generic;
   SET_RCVTIMEO(tv,10);
 
@@ -226,25 +218,8 @@ static CURLcode rtmp_connect(struct connectdata *conn, bool *done)
     r->Link.lFlags |= RTMP_LF_BUFX;
 
   curlx_nonblock(r->m_sb.sb_socket, FALSE);
-
-  if (conn->data->set.connecttimeout != 0)
-  {
-    // connect timeout set
-    // timeout is divided by three to make at least two connection attempts
-    tv = max((int)conn->data->set.connecttimeout / 3, 1000);
-  }
-
-  RTMP_Log(r, RTMP_LOGDEBUG, "socket timeout: %d (ms)", tv);
-
-  if (setsockopt(r->m_sb.sb_socket, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv, sizeof(tv)) == SOCKET_ERROR)
-  {
-    RTMP_Log(r, RTMP_LOGWARNING, "error while setting timeout on socket: %d", WSAGetLastError());
-  }
-
-  if (setsockopt(r->m_sb.sb_socket, IPPROTO_TCP, TCP_NODELAY, (char *) &on, sizeof(on)) == SOCKET_ERROR)
-  {
-    RTMP_Log(r, RTMP_LOGWARNING, "error while setting TCP no delay on socket: %d", WSAGetLastError());
-  }
+  setsockopt(r->m_sb.sb_socket, SOL_SOCKET, SO_RCVTIMEO,
+             (char *)&tv, sizeof(tv));
 
   if(!RTMP_Connect1(r, NULL))
     return CURLE_FAILED_INIT;
@@ -266,7 +241,7 @@ static CURLcode rtmp_do(struct connectdata *conn, bool *done)
     return CURLE_FAILED_INIT;
 
   if(conn->data->set.upload) {
-    Curl_pgrsSetUploadSize(conn->data, conn->data->set.infilesize);
+    Curl_pgrsSetUploadSize(conn->data, conn->data->state.infilesize);
     Curl_setup_transfer(conn, -1, -1, FALSE, NULL, FIRSTSOCKET, NULL);
   }
   else
@@ -333,4 +308,133 @@ static ssize_t rtmp_send(struct connectdata *conn, int sockindex,
 
   return num;
 }
+#else
+
+#include "urldata.h"
+#include "nonblock.h" /* for curlx_nonblock */
+#include "progress.h" /* for Curl_pgrsSetUploadSize */
+#include "transfer.h"
+#include "warnless.h"
+#include <curl/curl.h>
+
+const struct Curl_handler Curl_handler_rtmp = {
+  "RTMP",                               /* scheme */
+  ZERO_NULL,                           /* setup_connection */
+  ZERO_NULL,                              /* do_it */
+  ZERO_NULL,                            /* done */
+  ZERO_NULL,                            /* do_more */
+  ZERO_NULL,                         /* connect_it */
+  ZERO_NULL,                            /* connecting */
+  ZERO_NULL,                            /* doing */
+  ZERO_NULL,                            /* proto_getsock */
+  ZERO_NULL,                            /* doing_getsock */
+  ZERO_NULL,                            /* domore_getsock */
+  ZERO_NULL,                            /* perform_getsock */
+  ZERO_NULL,                      /* disconnect */
+  ZERO_NULL,                            /* readwrite */
+  PORT_RTMP,                            /* defport */
+  CURLPROTO_RTMP,                       /* protocol */
+  PROTOPT_NONE                          /* flags*/
+};
+
+const struct Curl_handler Curl_handler_rtmpt = {
+  "RTMPT",                              /* scheme */
+  ZERO_NULL,                           /* setup_connection */
+  ZERO_NULL,                              /* do_it */
+  ZERO_NULL,                            /* done */
+  ZERO_NULL,                            /* do_more */
+  ZERO_NULL,                         /* connect_it */
+  ZERO_NULL,                            /* connecting */
+  ZERO_NULL,                            /* doing */
+  ZERO_NULL,                            /* proto_getsock */
+  ZERO_NULL,                            /* doing_getsock */
+  ZERO_NULL,                            /* domore_getsock */
+  ZERO_NULL,                            /* perform_getsock */
+  ZERO_NULL,                      /* disconnect */
+  ZERO_NULL,                            /* readwrite */
+  PORT_RTMPT,                           /* defport */
+  CURLPROTO_RTMPT,                      /* protocol */
+  PROTOPT_NONE                          /* flags*/
+};
+
+const struct Curl_handler Curl_handler_rtmpe = {
+  "RTMPE",                              /* scheme */
+  ZERO_NULL,                           /* setup_connection */
+  ZERO_NULL,                              /* do_it */
+  ZERO_NULL,                            /* done */
+  ZERO_NULL,                            /* do_more */
+  ZERO_NULL,                         /* connect_it */
+  ZERO_NULL,                            /* connecting */
+  ZERO_NULL,                            /* doing */
+  ZERO_NULL,                            /* proto_getsock */
+  ZERO_NULL,                            /* doing_getsock */
+  ZERO_NULL,                            /* domore_getsock */
+  ZERO_NULL,                            /* perform_getsock */
+  ZERO_NULL,                      /* disconnect */
+  ZERO_NULL,                            /* readwrite */
+  PORT_RTMP,                            /* defport */
+  CURLPROTO_RTMPE,                      /* protocol */
+  PROTOPT_NONE                          /* flags*/
+};
+
+const struct Curl_handler Curl_handler_rtmpte = {
+  "RTMPTE",                             /* scheme */
+  ZERO_NULL,                           /* setup_connection */
+  ZERO_NULL,                              /* do_it */
+  ZERO_NULL,                            /* done */
+  ZERO_NULL,                            /* do_more */
+  ZERO_NULL,                         /* connect_it */
+  ZERO_NULL,                            /* connecting */
+  ZERO_NULL,                            /* doing */
+  ZERO_NULL,                            /* proto_getsock */
+  ZERO_NULL,                            /* doing_getsock */
+  ZERO_NULL,                            /* domore_getsock */
+  ZERO_NULL,                            /* perform_getsock */
+  ZERO_NULL,                      /* disconnect */
+  ZERO_NULL,                            /* readwrite */
+  PORT_RTMPT,                           /* defport */
+  CURLPROTO_RTMPTE,                     /* protocol */
+  PROTOPT_NONE                          /* flags*/
+};
+
+const struct Curl_handler Curl_handler_rtmps = {
+  "RTMPS",                              /* scheme */
+  ZERO_NULL,                           /* setup_connection */
+  ZERO_NULL,                              /* do_it */
+  ZERO_NULL,                            /* done */
+  ZERO_NULL,                            /* do_more */
+  ZERO_NULL,                         /* connect_it */
+  ZERO_NULL,                            /* connecting */
+  ZERO_NULL,                            /* doing */
+  ZERO_NULL,                            /* proto_getsock */
+  ZERO_NULL,                            /* doing_getsock */
+  ZERO_NULL,                            /* domore_getsock */
+  ZERO_NULL,                            /* perform_getsock */
+  ZERO_NULL,                      /* disconnect */
+  ZERO_NULL,                            /* readwrite */
+  PORT_RTMPS,                           /* defport */
+  CURLPROTO_RTMPS,                      /* protocol */
+  PROTOPT_NONE                          /* flags*/
+};
+
+const struct Curl_handler Curl_handler_rtmpts = {
+  "RTMPTS",                             /* scheme */
+  ZERO_NULL,                           /* setup_connection */
+  ZERO_NULL,                              /* do_it */
+  ZERO_NULL,                            /* done */
+  ZERO_NULL,                            /* do_more */
+  ZERO_NULL,                         /* connect_it */
+  ZERO_NULL,                            /* connecting */
+  ZERO_NULL,                            /* doing */
+  ZERO_NULL,                            /* proto_getsock */
+  ZERO_NULL,                            /* doing_getsock */
+  ZERO_NULL,                            /* domore_getsock */
+  ZERO_NULL,                            /* perform_getsock */
+  ZERO_NULL,                      /* disconnect */
+  ZERO_NULL,                            /* readwrite */
+  PORT_RTMPS,                           /* defport */
+  CURLPROTO_RTMPTS,                     /* protocol */
+  PROTOPT_NONE                          /* flags*/
+};
+
 #endif  /* USE_LIBRTMP */

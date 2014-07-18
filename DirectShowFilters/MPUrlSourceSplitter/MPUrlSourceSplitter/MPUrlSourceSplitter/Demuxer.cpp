@@ -2730,8 +2730,15 @@ HRESULT CDemuxer::GetNextPacketInternal(COutputPinPacket *packet)
         packet->SetSyncPoint((ffmpegPacket.flags & AV_PKT_FLAG_KEY) != 0);
         //pPacket->bAppendable = 0; //!pPacket->bSyncPoint;
 
-        packet->SetDiscontinuity(packet->IsDiscontinuity() || ((ffmpegPacket.flags & AV_PKT_FLAG_CORRUPT) != 0) || activeStream->IsDiscontinuity());
-        activeStream->SetDiscontinuity(false);
+        if (activeStream != NULL)
+        {
+          packet->SetDiscontinuity(packet->IsDiscontinuity() || ((ffmpegPacket.flags & AV_PKT_FLAG_CORRUPT) != 0) || activeStream->IsDiscontinuity());
+          activeStream->SetDiscontinuity(false);
+        }
+        else
+        {
+          packet->SetDiscontinuity(packet->IsDiscontinuity() || ((ffmpegPacket.flags & AV_PKT_FLAG_CORRUPT) != 0));
+        }
 
         //#ifdef DEBUG
         //        if (pkt.flags & AV_PKT_FLAG_CORRUPT)
@@ -2745,7 +2752,7 @@ HRESULT CDemuxer::GetNextPacketInternal(COutputPinPacket *packet)
       }
 
       // check if stream is building seeking index
-      if (SUCCEEDED(result) && (ffmpegPacket.pts != AV_NOPTS_VALUE) && (ffmpegPacket.pos >= 0) && (stream->nb_index_entries == 0))
+      if (SUCCEEDED(result) && (activeStream != NULL) && (ffmpegPacket.pts != AV_NOPTS_VALUE) && (ffmpegPacket.pos >= 0) && (stream->nb_index_entries == 0))
       {
         // stream doesn't create seek index
         // create our own seek index

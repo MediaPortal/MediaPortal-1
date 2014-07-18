@@ -5,8 +5,8 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 2010, DirecTV
- * contact: Eric Hu <ehu@directv.com>
+ * Copyright (C) 2010, DirecTV, Contact: Eric Hu, <ehu@directv.com>.
+ * Copyright (C) 2010 - 2014, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -23,7 +23,7 @@
 
 /*
  * Source file for all axTLS-specific code for the TLS/SSL layer. No code
- * but sslgen.c should ever call or use these functions.
+ * but vtls.c should ever call or use these functions.
  */
 
 #include "curl_setup.h"
@@ -34,7 +34,7 @@
 
 #include "sendf.h"
 #include "inet_pton.h"
-#include "sslgen.h"
+#include "vtls.h"
 #include "parsedate.h"
 #include "connect.h" /* for the connect timeout */
 #include "select.h"
@@ -164,7 +164,8 @@ static CURLcode connect_prep(struct connectdata *conn, int sockindex)
   case CURL_SSLVERSION_TLSv1:
     break;
   default:
-    failf(data, "axTLS only supports TLSv1");
+    failf(data, "axTLS only supports TLS 1.0 and 1.1, "
+          "and it cannot be specified which one to use");
     return CURLE_SSL_CONNECT_ERROR;
   }
 
@@ -389,7 +390,7 @@ static CURLcode connect_finish(struct connectdata *conn, int sockindex)
 /*
  * Use axTLS's non-blocking connection feature to open an SSL connection.
  * This is called after a TCP connection is already established.
-*/
+ */
 CURLcode Curl_axtls_connect_nonblocking(
     struct connectdata *conn,
     int sockindex,
@@ -397,6 +398,7 @@ CURLcode Curl_axtls_connect_nonblocking(
 {
   CURLcode conn_step;
   int ssl_fcn_return;
+  int i;
 
  *done = FALSE;
   /* connectdata is calloc'd and connecting_state is only changed in this
@@ -413,14 +415,17 @@ CURLcode Curl_axtls_connect_nonblocking(
   if(conn->ssl[sockindex].connecting_state == ssl_connect_2) {
     /* Check to make sure handshake was ok. */
     if(ssl_handshake_status(conn->ssl[sockindex].ssl) != SSL_OK) {
-      ssl_fcn_return = ssl_read(conn->ssl[sockindex].ssl, NULL);
-      if(ssl_fcn_return < 0) {
-        Curl_axtls_close(conn, sockindex);
-        ssl_display_error(ssl_fcn_return); /* goes to stdout. */
-        return map_error_to_curl(ssl_fcn_return);
-      }
-      else {
-        return CURLE_OK; /* Return control to caller for retries */
+      /* Loop to perform more work in between sleeps. This is work around the
+         fact that axtls does not expose any knowledge about when work needs
+         to be performed. This can save ~25% of time on SSL handshakes. */
+      for(i=0; i<5; i++) {
+        ssl_fcn_return = ssl_read(conn->ssl[sockindex].ssl, NULL);
+        if(ssl_fcn_return < 0) {
+          Curl_axtls_close(conn, sockindex);
+          ssl_display_error(ssl_fcn_return); /* goes to stdout. */
+          return map_error_to_curl(ssl_fcn_return);
+        }
+        return CURLE_OK;
       }
     }
     infof (conn->data, "handshake completed successfully\n");
@@ -476,6 +481,7 @@ Curl_axtls_connect(struct connectdata *conn,
       return map_error_to_curl(ssl_fcn_return);
     }
     usleep(10000);
+    /* TODO: check for timeout as this could hang indefinitely otherwise */
   }
   infof (conn->data, "handshake completed successfully\n");
 
@@ -521,10 +527,10 @@ void Curl_axtls_close(struct connectdata *conn, int sockindex)
 
   infof(conn->data, "  Curl_axtls_close\n");
 
-    /* line from ssluse.c: (void)SSL_shutdown(connssl->ssl);
+    /* line from openssl.c: (void)SSL_shutdown(connssl->ssl);
        axTLS compat layer does nothing for SSL_shutdown */
 
-    /* The following line is from ssluse.c.  There seems to be no axTLS
+    /* The following line is from openssl.c.  There seems to be no axTLS
        equivalent.  ssl_free and ssl_ctx_free close things.
        SSL_set_connect_state(connssl->handle); */
 
@@ -537,7 +543,7 @@ void Curl_axtls_close(struct connectdata *conn, int sockindex)
  */
 int Curl_axtls_shutdown(struct connectdata *conn, int sockindex)
 {
-  /* Outline taken from ssluse.c since functions are in axTLS compat layer.
+  /* Outline taken from openssl.c since functions are in axTLS compat layer.
      axTLS's error set is much smaller, so a lot of error-handling was removed.
    */
   int retval = 0;
@@ -621,7 +627,7 @@ static ssize_t axtls_recv(struct connectdata *conn, /* connection data */
     }
     else {
       failf(conn->data, "axTLS recv error (%d)", ret);
-      *err = map_error_to_curl(ret);
+      *err = map_error_to_curl((int) ret);
       ret = -1;
     }
   }
@@ -637,7 +643,7 @@ static ssize_t axtls_recv(struct connectdata *conn, /* connection data */
  */
 int Curl_axtls_check_cxn(struct connectdata *conn)
 {
-  /* ssluse.c line: rc = SSL_peek(conn->ssl[FIRSTSOCKET].ssl, (void*)&buf, 1);
+  /* openssl.c line: rc = SSL_peek(conn->ssl[FIRSTSOCKET].ssl, (void*)&buf, 1);
      axTLS compat layer always returns the last argument, so connection is
      always alive? */
 
@@ -649,7 +655,7 @@ void Curl_axtls_session_free(void *ptr)
 {
   (void)ptr;
   /* free the ID */
-  /* both ssluse.c and gtls.c do something here, but axTLS's OpenSSL
+  /* both openssl.c and gtls.c do something here, but axTLS's OpenSSL
      compatibility layer does nothing, so we do nothing too. */
 }
 

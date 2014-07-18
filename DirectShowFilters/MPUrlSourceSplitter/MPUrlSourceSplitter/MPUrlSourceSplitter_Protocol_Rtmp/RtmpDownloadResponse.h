@@ -25,28 +25,47 @@
 
 #include "DownloadResponse.h"
 
+#define RTMP_DOWNLOAD_RESPONSE_FLAG_NONE                              DOWNLOAD_RESPONSE_FLAG_NONE
+
+#define RTMP_DOWNLOAD_RESPONSE_FLAG_LAST                              (DOWNLOAD_RESPONSE_FLAG_LAST + 0)
+
+#define RTMP_DURATION_UNSPECIFIED                                     UINT64_MAX
+
 class CRtmpDownloadResponse : public CDownloadResponse
 {
 public:
-  CRtmpDownloadResponse(void);
+  CRtmpDownloadResponse(HRESULT *result);
   virtual ~CRtmpDownloadResponse(void);
 
   /* get methods */
 
+  // gets duration in ms of RTMP stream
+  // @return : duration in ms of RTMP stream or RTMP_DURATION_UNSPECIFIED if duration of stream unspecified
+  uint64_t GetDuration(void);
+
   /* set methods */
+
+  // sets duration in ms of RTMP stream
+  // @param duration : the duration in ms of RTMP stream
+  void SetDuration(uint64_t duration);
 
   /* other methods */
 
-  // deeply clones current instance
-  // @result : deep clone of current instance or NULL if error
-  virtual CRtmpDownloadResponse *Clone(void);
-
 protected:
 
+  // holds duration in ms of RTMP steam, RTMP_DURATION_UNSPECIFIED if not specified
+  uint64_t duration;
+
+  /* methods */
+
+  // creates download response
+  // @return : download response or NULL if error
+  virtual CDownloadResponse *CreateDownloadResponse(void);
+
   // deeply clones current instance to cloned request
-  // @param  clonedRequest : cloned request to hold clone of current instance
+  // @param  clone : cloned request to hold clone of current instance
   // @return : true if successful, false otherwise
-  virtual bool CloneInternal(CRtmpDownloadResponse *clonedRequest);
+  virtual bool CloneInternal(CDownloadResponse *clone);
 };
 
 #endif

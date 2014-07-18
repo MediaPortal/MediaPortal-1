@@ -106,6 +106,8 @@ protected:
   // holds fragment start position within stream
   int64_t fragmentStartPosition;
 
+  /* methods */
+
   // gets new instance of RTSP stream fragment
   // @return : new RTSP stream fragment instance or NULL if error
   virtual CCacheFileItem *CreateItem(void);

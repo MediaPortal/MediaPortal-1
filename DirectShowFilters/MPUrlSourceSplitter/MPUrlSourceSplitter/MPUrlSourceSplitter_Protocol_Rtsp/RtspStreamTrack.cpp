@@ -198,12 +198,6 @@ void CRtspStreamTrack::SetEndOfStreamFlag(bool endOfStreamFlag)
   this->flags |= endOfStreamFlag ? RTSP_STREAM_TRACK_FLAG_END_OF_STREAM : RTSP_STREAM_TRACK_FLAG_NONE;
 }
 
-void CRtspStreamTrack::SetSupressDataFlag(bool supressDataFlag)
-{
-  this->flags &= ~RTSP_STREAM_TRACK_FLAG_SUPRESS_DATA;
-  this->flags |= supressDataFlag ? RTSP_STREAM_TRACK_FLAG_SUPRESS_DATA : RTSP_STREAM_TRACK_FLAG_NONE;
-}
-
 void CRtspStreamTrack::SetReceivedAllDataFlag(bool receivedAllDataFlag)
 {
   this->flags &= ~RTSP_STREAM_TRACK_FLAG_RECEIVED_ALL_DATA;
@@ -260,11 +254,6 @@ bool CRtspStreamTrack::IsSetStreamLength(void)
 bool CRtspStreamTrack::IsSetEndOfStream(void)
 {
   return this->IsSetFlags(RTSP_STREAM_TRACK_FLAG_END_OF_STREAM);
-}
-
-bool CRtspStreamTrack::IsSetSupressData(void)
-{
-  return this->IsSetFlags(RTSP_STREAM_TRACK_FLAG_SUPRESS_DATA);
 }
 
 bool CRtspStreamTrack::IsReceivedAllData(void)

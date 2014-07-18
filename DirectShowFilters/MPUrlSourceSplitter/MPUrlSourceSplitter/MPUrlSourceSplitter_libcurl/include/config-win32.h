@@ -7,7 +7,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2011, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2014, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -391,21 +391,6 @@
 #endif
 
 /* ---------------------------------------------------------------- */
-/*                          STRUCT RELATED                          */
-/* ---------------------------------------------------------------- */
-
-/* Define if you have struct sockaddr_storage. */
-#if !defined(__SALFORDC__) && !defined(__BORLANDC__)
-#define HAVE_STRUCT_SOCKADDR_STORAGE 1
-#endif
-
-/* Define if you have struct timeval. */
-#define HAVE_STRUCT_TIMEVAL 1
-
-/* Define if struct sockaddr_in6 has the sin6_scope_id member. */
-#define HAVE_SOCKADDR_IN6_SIN6_SCOPE_ID 1
-
-/* ---------------------------------------------------------------- */
 /*               BSD-style lwIP TCP/IP stack SPECIFIC               */
 /* ---------------------------------------------------------------- */
 
@@ -480,7 +465,8 @@
 #endif
 
 /* Define if the compiler supports the 'long long' data type. */
-#if defined(__MINGW32__) || defined(__WATCOMC__)
+#if defined(__MINGW32__) || defined(__WATCOMC__) || \
+    (defined(_MSC_VER) && (_MSC_VER >= 1310))
 #define HAVE_LONGLONG 1
 #endif
 
@@ -570,6 +556,25 @@
 #  ifndef __POCC__OLDNAMES
 #    error Compatibility names /Go compiler option is required
 #  endif
+#endif
+
+/* ---------------------------------------------------------------- */
+/*                          STRUCT RELATED                          */
+/* ---------------------------------------------------------------- */
+
+/* Define if you have struct sockaddr_storage. */
+#if !defined(__SALFORDC__) && !defined(__BORLANDC__)
+#define HAVE_STRUCT_SOCKADDR_STORAGE 1
+#endif
+
+/* Define if you have struct timeval. */
+#define HAVE_STRUCT_TIMEVAL 1
+
+/* Define if struct sockaddr_in6 has the sin6_scope_id member. */
+#define HAVE_SOCKADDR_IN6_SIN6_SCOPE_ID 1
+
+#if HAVE_WINSOCK2_H && defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0600)
+#define HAVE_STRUCT_POLLFD 1
 #endif
 
 /* ---------------------------------------------------------------- */

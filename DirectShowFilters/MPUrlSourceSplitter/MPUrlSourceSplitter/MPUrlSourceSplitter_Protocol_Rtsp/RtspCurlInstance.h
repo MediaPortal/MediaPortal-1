@@ -28,7 +28,6 @@
 #include "RtspDownloadRequest.h"
 #include "RtspDownloadResponse.h"
 #include "BaseRtpPacketCollection.h"
-#include "StreamReceiveData.h"
 
 // connection parameters
 

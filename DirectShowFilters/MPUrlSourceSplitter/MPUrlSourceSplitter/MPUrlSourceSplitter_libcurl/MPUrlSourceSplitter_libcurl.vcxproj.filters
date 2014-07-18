@@ -15,12 +15,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stdafx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
+    <None Include="readme_before_update.txt" />
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="include\amigaos.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -28,9 +25,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\asyn.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\axtls.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\bundles.h">
@@ -84,9 +78,6 @@
     <ClInclude Include="include\curl_base64.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\curl_darwinssl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\curl_fnmatch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -129,22 +120,19 @@
     <ClInclude Include="include\curl_ntlm_wb.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\curl_rand.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\curl_rtmp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\curl_sasl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\curl_sec.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="include\curl_setup.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\curl_setup_once.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\curl_schannel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\curl_sspi.h">
@@ -156,10 +144,10 @@
     <ClInclude Include="include\curlx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\cyassl.h">
+    <ClInclude Include="include\dict.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\dict.h">
+    <ClInclude Include="include\dotdot.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\easyif.h">
@@ -189,9 +177,6 @@
     <ClInclude Include="include\gopher.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\gtls.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\hash.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -216,6 +201,9 @@
     <ClInclude Include="include\http_proxy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\http2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="include\if2ip.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -226,9 +214,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\inet_pton.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\krb4.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\llist.h">
@@ -252,9 +237,6 @@
     <ClInclude Include="include\nonblock.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\nssg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\parsedate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -264,19 +246,10 @@
     <ClInclude Include="include\pipeline.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\polarssl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\polarssl_threadlock.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\pop3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\progress.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\qssl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\rawstr.h">
@@ -300,6 +273,9 @@
     <ClInclude Include="include\share.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\sigpipe.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="include\slist.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -319,12 +295,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\ssh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\sslgen.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ssluse.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\strdup.h">
@@ -366,6 +336,9 @@
     <ClInclude Include="include\wildcard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\x509asn1.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="include\curl\curl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -393,11 +366,44 @@
     <ClInclude Include="include\curl\typecheck-gcc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\vtls\axtls.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\vtls\curl_darwinssl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\vtls\curl_schannel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\vtls\cyassl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\vtls\gskit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\vtls\gtls.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\vtls\nssg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\vtls\openssl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\vtls\polarssl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\vtls\polarssl_threadlock.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\vtls\qssl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\vtls\vtls.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\amigaos.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -405,9 +411,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\asyn-thread.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\axtls.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\base64.c">
@@ -429,9 +432,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\curl_addrinfo.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\curl_darwinssl.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\curl_fnmatch.c">
@@ -461,16 +461,13 @@
     <ClCompile Include="src\curl_ntlm_wb.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\curl_rand.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\curl_rtmp.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\curl_sasl.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\curl_schannel.c">
+    <ClCompile Include="src\curl_sasl_sspi.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\curl_sspi.c">
@@ -479,10 +476,10 @@
     <ClCompile Include="src\curl_threads.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\cyassl.c">
+    <ClCompile Include="src\dict.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\dict.c">
+    <ClCompile Include="src\dotdot.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\easy.c">
@@ -513,9 +510,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\gopher.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\gtls.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\hash.c">
@@ -560,6 +554,9 @@
     <ClCompile Include="src\http_proxy.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\http2.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="src\idn_win32.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -573,9 +570,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\inet_pton.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\krb4.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\krb5.c">
@@ -611,9 +605,6 @@
     <ClCompile Include="src\nonblock.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\nss.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\nwlib.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -632,19 +623,10 @@
     <ClCompile Include="src\pipeline.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\polarssl.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\polarssl_threadlock.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\pop3.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\progress.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\qssl.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\rawstr.c">
@@ -689,12 +671,6 @@
     <ClCompile Include="src\ssh.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\sslgen.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ssluse.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\strdup.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -734,8 +710,44 @@
     <ClCompile Include="src\wildcard.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="readme_before_update.txt" />
+    <ClCompile Include="src\x509asn1.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\vtls\axtls.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\vtls\curl_darwinssl.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\vtls\curl_schannel.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\vtls\cyassl.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\vtls\gskit.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\vtls\gtls.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\vtls\nss.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\vtls\openssl.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\vtls\polarssl.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\vtls\polarssl_threadlock.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\vtls\qssl.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\vtls\vtls.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2012, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2014, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -27,21 +27,13 @@
 #include "urldata.h"
 #include "sendf.h"
 #include "connect.h"
-#include "sslgen.h"
+#include "vtls/vtls.h"
 #include "ssh.h"
 #include "multiif.h"
 #include "non-ascii.h"
 
 #define _MPRINTF_REPLACE /* use the internal *printf() functions */
 #include <curl/mprintf.h>
-
-/* the krb4 functions only exists for FTP and if krb4 or gssapi is defined */
-#if !defined(CURL_DISABLE_FTP) && (defined(HAVE_KRB4) || defined(HAVE_GSSAPI))
-#include "krb4.h"
-#else
-#define Curl_sec_send(a,b,c,d) -1
-#define Curl_sec_read(a,b,c,d) -1
-#endif
 
 #include "curl_memory.h"
 #include "strerror.h"
@@ -430,7 +422,7 @@ CURLcode Curl_client_write(struct connectdata *conn,
   }
 
   if(type & CLIENTWRITE_BODY) {
-    if((conn->handler->protocol&CURLPROTO_FTP) &&
+    if((conn->handler->protocol&PROTO_FAMILY_FTP) &&
        conn->proto.ftpc.transfertype == 'A') {
       /* convert from the network encoding */
       CURLcode rc = Curl_convert_from_network(data, ptr, len);
@@ -452,10 +444,18 @@ CURLcode Curl_client_write(struct connectdata *conn,
       wrote = len;
     }
 
-    if(CURL_WRITEFUNC_PAUSE == wrote)
-      return pausewrite(data, type, ptr, len);
-
-    if(wrote != len) {
+    if(CURL_WRITEFUNC_PAUSE == wrote) {
+      if(conn->handler->flags & PROTOPT_NONETWORK) {
+        /* Protocols that work without network cannot be paused. This is
+           actually only FILE:// just now, and it can't pause since the
+           transfer isn't done using the "normal" procedure. */
+        failf(data, "Write callback asked for PAUSE when not supported!");
+        return CURLE_WRITE_ERROR;
+      }
+      else
+        return pausewrite(data, type, ptr, len);
+    }
+    else if(wrote != len) {
       failf(data, "Failed writing body (%zu != %zu)", wrote, len);
       return CURLE_WRITE_ERROR;
     }

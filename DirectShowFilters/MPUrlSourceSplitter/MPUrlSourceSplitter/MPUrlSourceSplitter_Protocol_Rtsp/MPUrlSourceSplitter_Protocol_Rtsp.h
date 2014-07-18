@@ -37,7 +37,7 @@ wchar_t *SUPPORTED_PROTOCOLS[TOTAL_SUPPORTED_PROTOCOLS] =                     { 
 
 #define MP_URL_SOURCE_SPLITTER_PROTOCOL_RTSP_FLAG_NONE                        PROTOCOL_PLUGIN_FLAG_NONE
 
-// only closes curl instance (stop recive data in curl instance), but stays in memory
+// only closes curl instance (stop receive data in curl instance), but stays in memory
 #define MP_URL_SOURCE_SPLITTER_PROTOCOL_RTSP_FLAG_CLOSE_CURL_INSTANCE         (1 << (PROTOCOL_PLUGIN_FLAG_LAST + 0))
 // stop receiving data flag cannot be set without close curl instance flag
 // specifies that after closing curl instance is called StopReceivingData() method

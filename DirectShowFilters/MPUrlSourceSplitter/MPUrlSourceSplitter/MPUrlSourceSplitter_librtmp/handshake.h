@@ -755,7 +755,8 @@ HandShake(RTMP * r, int FP9HandShake)
     }
 
   /* generate random data */
-#ifdef _DEBUG
+//#ifdef _DEBUG
+#ifdef __DEBUG
   memset(clientsig+8, 0, RTMP_SIG_SIZE-8);
 #else
   ip = (int32_t *)(clientsig+8);
@@ -909,7 +910,8 @@ HandShake(RTMP * r, int FP9HandShake)
 
 
       reply = client2;
-#ifdef _DEBUG
+//#ifdef _DEBUG
+#ifdef __DEBUG
       memset(reply, 0xff, RTMP_SIG_SIZE);
 #else
       ip = (int32_t *)reply;
@@ -1143,7 +1145,8 @@ SHandShake(RTMP * r)
     }
 
   /* generate random data */
-#ifdef _DEBUG
+//#ifdef _DEBUG
+#ifdef __DEBUG
   memset(serversig+8, 0, RTMP_SIG_SIZE-8);
 #else
   ip = (int32_t *)(serversig+8);

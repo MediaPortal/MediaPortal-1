@@ -116,11 +116,6 @@ int CFlvPacket::ParsePacket(const unsigned char *buffer, unsigned int length)
     }
   }
 
-  if (result != FLV_PARSE_RESULT_OK)
-  {
-    this->Clear();
-  }
-
   return result;
 }
 

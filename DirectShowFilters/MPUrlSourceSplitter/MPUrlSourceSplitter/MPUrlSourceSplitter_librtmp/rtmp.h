@@ -277,6 +277,7 @@ extern "C"
 
     void *m_logUserData;
     RTMP_LogCallback *m_logCallback;
+    RTMP_DumpRawCallback *m_dumpRawDataCallback;
 
   } RTMP;
 

@@ -22,9 +22,10 @@
 
 #include "RtmpDownloadResponse.h"
 
-CRtmpDownloadResponse::CRtmpDownloadResponse(void)
-  : CDownloadResponse()
+CRtmpDownloadResponse::CRtmpDownloadResponse(HRESULT *result)
+  : CDownloadResponse(result)
 {
+  this->duration = RTMP_DURATION_UNSPECIFIED;
 }
 
 CRtmpDownloadResponse::~CRtmpDownloadResponse(void)
@@ -33,30 +34,42 @@ CRtmpDownloadResponse::~CRtmpDownloadResponse(void)
 
 /* get methods */
 
+uint64_t CRtmpDownloadResponse::GetDuration(void)
+{
+  return this->duration;
+}
+
 /* set methods */
+
+void CRtmpDownloadResponse::SetDuration(uint64_t duration)
+{
+  this->duration = duration;
+}
 
 /* other methods */
 
-// deeply clones current instance
-// @result : deep clone of current instance or NULL if error
-CRtmpDownloadResponse *CRtmpDownloadResponse::Clone(void)
+/* protected methods */
+
+CDownloadResponse *CRtmpDownloadResponse::CreateDownloadResponse(void)
 {
-  CRtmpDownloadResponse *result = new CRtmpDownloadResponse();
-  if (result != NULL)
-  {
-    if (!this->CloneInternal(result))
-    {
-      FREE_MEM_CLASS(result);
-    }
-  }
-  return result;
+  HRESULT result = S_OK;
+  CRtmpDownloadResponse *response = new CRtmpDownloadResponse(&result);
+  CHECK_POINTER_HRESULT(result, response, result, E_OUTOFMEMORY);
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(response));
+  return response;
 }
 
-bool CRtmpDownloadResponse::CloneInternal(CRtmpDownloadResponse *clonedRequest)
+bool CRtmpDownloadResponse::CloneInternal(CDownloadResponse *clone)
 {
-  bool result = __super::CloneInternal(clonedRequest);
+  bool result = __super::CloneInternal(clone);
+
   if (result)
   {
+    CRtmpDownloadResponse *response = dynamic_cast<CRtmpDownloadResponse *>(clone);
+
+    response->duration = this->duration;
   }
+
   return result;
 }

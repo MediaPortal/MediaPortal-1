@@ -47,6 +47,7 @@ typedef enum
 //extern RTMP_LogLevel RTMP_debuglevel;
 
 typedef void (RTMP_LogCallback)(struct RTMP *r, int level, const char *fmt, va_list);
+typedef void (RTMP_DumpRawCallback)(struct RTMP *r, char *buffer, int length);
 void RTMP_LogSetCallback(struct RTMP *r, RTMP_LogCallback *cb);
 //void RTMP_LogSetOutput(FILE *file);
 //void RTMP_LogPrintf(const char *format, ...);

@@ -25,10 +25,14 @@
 
 #include "DownloadRequest.h"
 
+#define RTMP_DOWNLOAD_REQUEST_FLAG_NONE                               DOWNLOAD_REQUEST_FLAG_NONE
+
+#define RTMP_DOWNLOAD_REQUEST_FLAG_LAST                               (DOWNLOAD_REQUEST_FLAG_LAST + 0)
+
 class CRtmpDownloadRequest : public CDownloadRequest
 {
 public:
-  CRtmpDownloadRequest(void);
+  CRtmpDownloadRequest(HRESULT *result);
   virtual ~CRtmpDownloadRequest(void);
 
   /* get methods */
@@ -75,10 +79,6 @@ public:
 
   /* other methods */
 
-  // deeply clones current instance
-  // @result : deep clone of current instance or NULL if error
-  virtual CRtmpDownloadRequest *Clone(void);
-
 protected:
 
   // RTMP protocol specific variables
@@ -111,7 +111,7 @@ protected:
 
   // timeout the session after num of milliseconds without receiving any data from the server
   // if not set (UINT_MAX) then default value of 120 seconds is used
-  unsigned int rtmpReceiveDataTimeout;
+  //unsigned int rtmpReceiveDataTimeout;
 
   // if not NULL than overrides the playpath parsed from the RTMP URL
   wchar_t *rtmpPlayPath;
@@ -159,10 +159,16 @@ protected:
   // the default value is RTMP_SWF_VERIFY_DEFAULT
   bool rtmpSwfVerify;
 
+  /* methods */
+
+  // creates empty download request
+  // @return : download request or NULL if error
+  virtual CDownloadRequest *CreateDownloadRequest(void);
+
   // deeply clones current instance to cloned request
-  // @param  clonedRequest : cloned request to hold clone of current instance
+  // @param  clone : cloned request to hold clone of current instance
   // @return : true if successful, false otherwise
-  virtual bool CloneInternal(CRtmpDownloadRequest *clonedRequest);
+  virtual bool CloneInternal(CDownloadRequest *clone);
 };
 
 #endif

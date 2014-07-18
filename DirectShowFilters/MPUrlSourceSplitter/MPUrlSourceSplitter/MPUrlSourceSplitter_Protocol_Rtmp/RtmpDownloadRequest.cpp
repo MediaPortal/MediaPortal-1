@@ -23,8 +23,8 @@
 #include "RtmpDownloadRequest.h"
 #include "RtmpCurlInstance.h"
 
-CRtmpDownloadRequest::CRtmpDownloadRequest(void)
-  : CDownloadRequest()
+CRtmpDownloadRequest::CRtmpDownloadRequest(HRESULT *result)
+  : CDownloadRequest(result)
 {
   this->rtmpApp = RTMP_APP_DEFAULT;
   this->rtmpArbitraryData = RTMP_ARBITRARY_DATA_DEFAULT;
@@ -36,7 +36,7 @@ CRtmpDownloadRequest::CRtmpDownloadRequest(void)
   this->rtmpPageUrl = RTMP_PAGE_URL_DEFAULT;
   this->rtmpPlaylist = RTMP_PLAYLIST_DEFAULT;
   this->rtmpPlayPath = RTMP_PLAY_PATH_DEFAULT;
-  this->rtmpReceiveDataTimeout = RTMP_RECEIVE_DATA_TIMEOUT_DEFAULT;
+  //this->rtmpReceiveDataTimeout = RTMP_OPEN_CONNECTION_TIMEOUT_DEFAULT;
   this->rtmpStart = RTMP_START_DEFAULT;
   this->rtmpStop = RTMP_STOP_DEFAULT;
   this->rtmpSubscribe = RTMP_SUBSCRIBE_DEFAULT;
@@ -248,66 +248,46 @@ void CRtmpDownloadRequest::SetRtmpSwfVerify(bool rtmpSwfVerify)
 
 /* other methods */
 
-CRtmpDownloadRequest *CRtmpDownloadRequest::Clone(void)
+/* protected methods */
+
+CDownloadRequest *CRtmpDownloadRequest::CreateDownloadRequest(void)
 {
-  CRtmpDownloadRequest *result = new CRtmpDownloadRequest();
-  if (result != NULL)
-  {
-    if (!this->CloneInternal(result))
-    {
-      FREE_MEM_CLASS(result);
-    }
-  }
-  return result;
+  HRESULT result = S_OK;
+  CRtmpDownloadRequest *request = new CRtmpDownloadRequest(&result);
+  CHECK_POINTER_HRESULT(result, request, result, E_OUTOFMEMORY);
+
+  CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(request));
+  return request;
 }
 
-bool CRtmpDownloadRequest::CloneInternal(CRtmpDownloadRequest *clonedRequest)
+bool CRtmpDownloadRequest::CloneInternal(CDownloadRequest *clone)
 {
-  bool result = __super::CloneInternal(clonedRequest);
+  bool result = __super::CloneInternal(clone);
+
   if (result)
   {
-    FREE_MEM(clonedRequest->rtmpApp);
-    FREE_MEM(clonedRequest->rtmpArbitraryData);
-    FREE_MEM(clonedRequest->rtmpFlashVersion);
-    FREE_MEM(clonedRequest->rtmpAuth);
-    FREE_MEM(clonedRequest->rtmpJtv);
-    FREE_MEM(clonedRequest->rtmpPageUrl);
-    FREE_MEM(clonedRequest->rtmpPlayPath);
-    FREE_MEM(clonedRequest->rtmpSubscribe);
-    FREE_MEM(clonedRequest->rtmpSwfUrl);
-    FREE_MEM(clonedRequest->rtmpTcUrl);
-    FREE_MEM(clonedRequest->rtmpToken);
+    CRtmpDownloadRequest *request = dynamic_cast<CRtmpDownloadRequest *>(clone);
 
-    clonedRequest->rtmpApp = Duplicate(this->rtmpApp);
-    clonedRequest->rtmpArbitraryData = Duplicate(this->rtmpArbitraryData);
-    clonedRequest->rtmpBuffer = this->rtmpBuffer;
-    clonedRequest->rtmpFlashVersion = Duplicate(this->rtmpFlashVersion);
-    clonedRequest->rtmpAuth = Duplicate(this->rtmpAuth);
-    clonedRequest->rtmpJtv = Duplicate(this->rtmpJtv);
-    clonedRequest->rtmpLive = this->rtmpLive;
-    clonedRequest->rtmpPageUrl = Duplicate(this->rtmpPageUrl);
-    clonedRequest->rtmpPlaylist = this->rtmpPlaylist;
-    clonedRequest->rtmpPlayPath = Duplicate(this->rtmpPlayPath);
-    clonedRequest->rtmpReceiveDataTimeout = this->rtmpReceiveDataTimeout;
-    clonedRequest->rtmpStart = this->rtmpStart;
-    clonedRequest->rtmpStop = this->rtmpStop;
-    clonedRequest->rtmpSubscribe = Duplicate(this->rtmpSubscribe);
-    clonedRequest->rtmpSwfUrl = Duplicate(this->rtmpSwfUrl);
-    clonedRequest->rtmpSwfVerify = this->rtmpSwfVerify;
-    clonedRequest->rtmpTcUrl = Duplicate(this->rtmpTcUrl);
-    clonedRequest->rtmpToken = Duplicate(this->rtmpToken);
+    request->rtmpBuffer = this->rtmpBuffer;
+    request->rtmpLive = this->rtmpLive;
+    request->rtmpPlaylist = this->rtmpPlaylist;
+    //request->rtmpReceiveDataTimeout = this->rtmpReceiveDataTimeout;
+    request->rtmpStart = this->rtmpStart;
+    request->rtmpStop = this->rtmpStop;
+    request->rtmpSwfVerify = this->rtmpSwfVerify;
 
-    result &= TEST_STRING_WITH_NULL(clonedRequest->rtmpApp, this->rtmpApp);
-    result &= TEST_STRING_WITH_NULL(clonedRequest->rtmpArbitraryData, this->rtmpArbitraryData);
-    result &= TEST_STRING_WITH_NULL(clonedRequest->rtmpFlashVersion, this->rtmpFlashVersion);
-    result &= TEST_STRING_WITH_NULL(clonedRequest->rtmpAuth, this->rtmpAuth);
-    result &= TEST_STRING_WITH_NULL(clonedRequest->rtmpJtv, this->rtmpJtv);
-    result &= TEST_STRING_WITH_NULL(clonedRequest->rtmpPageUrl, this->rtmpPageUrl);
-    result &= TEST_STRING_WITH_NULL(clonedRequest->rtmpPlayPath, this->rtmpPlayPath);
-    result &= TEST_STRING_WITH_NULL(clonedRequest->rtmpSubscribe, this->rtmpSubscribe);
-    result &= TEST_STRING_WITH_NULL(clonedRequest->rtmpSwfUrl, this->rtmpSwfUrl);
-    result &= TEST_STRING_WITH_NULL(clonedRequest->rtmpTcUrl, this->rtmpTcUrl);
-    result &= TEST_STRING_WITH_NULL(clonedRequest->rtmpToken, this->rtmpToken);
+    SET_STRING_AND_RESULT_WITH_NULL(request->rtmpApp, this->rtmpApp, result);
+    SET_STRING_AND_RESULT_WITH_NULL(request->rtmpArbitraryData, this->rtmpArbitraryData, result);
+    SET_STRING_AND_RESULT_WITH_NULL(request->rtmpFlashVersion, this->rtmpFlashVersion, result);
+    SET_STRING_AND_RESULT_WITH_NULL(request->rtmpAuth, this->rtmpAuth, result);
+    SET_STRING_AND_RESULT_WITH_NULL(request->rtmpJtv, this->rtmpJtv, result);
+    SET_STRING_AND_RESULT_WITH_NULL(request->rtmpPageUrl, this->rtmpPageUrl, result);
+    SET_STRING_AND_RESULT_WITH_NULL(request->rtmpPlayPath, this->rtmpPlayPath, result);
+    SET_STRING_AND_RESULT_WITH_NULL(request->rtmpSubscribe, this->rtmpSubscribe, result);
+    SET_STRING_AND_RESULT_WITH_NULL(request->rtmpSwfUrl, this->rtmpSwfUrl, result);
+    SET_STRING_AND_RESULT_WITH_NULL(request->rtmpTcUrl, this->rtmpTcUrl, result);
+    SET_STRING_AND_RESULT_WITH_NULL(request->rtmpToken, this->rtmpToken, result);
   }
+
   return result;
 }

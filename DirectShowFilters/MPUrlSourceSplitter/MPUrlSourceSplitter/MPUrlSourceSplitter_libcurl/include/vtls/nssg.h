@@ -7,7 +7,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2012, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2013, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -25,7 +25,7 @@
 
 #ifdef USE_NSS
 /*
- * This header should only be needed to get included by sslgen.c and nss.c
+ * This header should only be needed to get included by vtls.c and nss.c
  */
 
 #include "urldata.h"
@@ -60,10 +60,15 @@ void Curl_nss_md5sum(unsigned char *tmp, /* input */
                      unsigned char *md5sum, /* output */
                      size_t md5len);
 
+/* this backend provides these functions: */
+#define have_curlssl_random 1
+#define have_curlssl_md5sum 1
+
 /* API setup for NSS */
 #define curlssl_init Curl_nss_init
 #define curlssl_cleanup Curl_nss_cleanup
 #define curlssl_connect Curl_nss_connect
+#define curlssl_connect_nonblocking Curl_nss_connect_nonblocking
 
 /* NSS has its own session ID cache */
 #define curlssl_session_free(x) Curl_nop_stmt

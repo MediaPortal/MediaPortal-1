@@ -267,7 +267,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
             // timestamp is needed to compute (almost - after seeking we only assume that timestamps are correct) correct timestamps of fragments
             if (!streamTrack->IsSetFirstRtpPacketTimestamp())
             {
-              DWORD ticks = GetTickCount();
+              unsigned int ticks = GetTickCount();
               streamTrack->SetFirstRtpPacketTimestamp(rtpPacket->GetTimestamp(), true, ticks);
 
               // change current downloading fragment RTP timestamp to correct timestamp based on time from start of stream (first time set ticks to track)
@@ -393,7 +393,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
 
         if (fragmentToDownload != UINT_MAX)
         {
-          CRtspStreamFragment *firstFragment = track->GetStreamFragments()->GetItem(0);
           CRtspStreamFragment *fragment = track->GetStreamFragments()->GetItem(fragmentToDownload);
 
           int64_t fragmentRtpTimestamp = INT64_MAX;
@@ -779,7 +778,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
             // stream length not set
             // just make guess
 
-            track->SetStreamLength(int64_t(MINIMUM_RECEIVED_DATA_FOR_SPLITTER));
+            track->SetStreamLength((int64_t)MINIMUM_RECEIVED_DATA_FOR_SPLITTER);
             this->logger->Log(LOGGER_VERBOSE, L"%s: %s: track %u, setting quess total length: %llu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, i, track->GetStreamLength());
           }
           else if ((track->GetBytePosition() > (track->GetStreamLength() * 3 / 4)))
@@ -926,8 +925,9 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
 
           // get stream fragment
           CRtspStreamFragment *streamFragment = streamTrack->GetStreamFragments()->GetItem(fragmentIndex);
+          CRtspStreamFragment *startSearchingStreamFragment = streamTrack->GetStreamFragments()->GetItem(streamTrack->GetStreamFragments()->GetStartSearchingIndex());
 
-          int64_t streamFragmentRelativeStart = streamFragment->GetFragmentStartPosition() - streamTrack->GetStreamFragments()->GetItem(streamTrack->GetStreamFragments()->GetStartSearchingIndex())->GetFragmentStartPosition();
+          int64_t streamFragmentRelativeStart = streamFragment->GetFragmentStartPosition() - startSearchingStreamFragment->GetFragmentStartPosition();
 
           // set copy data start and copy data length
           unsigned int copyDataStart = (startPosition > streamFragmentRelativeStart) ? (unsigned int)(startPosition - streamFragmentRelativeStart) : 0;
@@ -948,14 +948,14 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
           // update length of data
           foundDataLength += copyDataLength;
 
-          if (streamFragment->IsDiscontinuity())
+          if ((streamFragment->IsDiscontinuity()) && ((dataRequest->GetStart() + dataRequest->GetLength()) >= (streamFragmentRelativeStart + streamFragment->GetLength())))
           {
-            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: discontinuity, completing request, request '%u', start '%lld', size '%u', found: '%u'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, dataRequest->GetId(), dataRequest->GetStart(), dataRequest->GetLength(), foundDataLength);
+            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: discontinuity, completing request, request '%u', start '%lld', size '%u', found: '%u', fragment start: %lld, fragment length: %u, start searching fragment start: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, dataRequest->GetId(), dataRequest->GetStart(), dataRequest->GetLength(), foundDataLength, streamFragment->GetFragmentStartPosition(), streamFragment->GetLength(), startSearchingStreamFragment->GetFragmentStartPosition());
 
             dataResponse->SetDiscontinuity(true);
+            break;
           }
-
-          if ((!streamFragment->IsDiscontinuity()) && (foundDataLength < dataRequest->GetLength()))
+          else if (foundDataLength < dataRequest->GetLength())
           {
             // find another stream fragment after end of this stream fragment
             startPosition += copyDataLength;
@@ -1492,6 +1492,8 @@ int64_t CMPUrlSourceSplitter_Protocol_Rtsp::SeekToTime(unsigned int streamId, in
           // force to download missing fragment
           track->SetStreamFragmentToDownload(track->GetStreamFragmentProcessing());
         }
+
+        CHECK_CONDITION_NOT_NULL_EXECUTE(previousFragment, previousFragment->SetDiscontinuity(true));
       }
 
       // set start searching index to current processing stream fragment
@@ -1511,8 +1513,6 @@ int64_t CMPUrlSourceSplitter_Protocol_Rtsp::SeekToTime(unsigned int streamId, in
         track->SetEndOfStreamFlag(false);
         track->GetStreamFragments()->SetSearchCount(firstNotDownloadedFragmentIndex - track->GetStreamFragmentProcessing());
       }
-
-      CHECK_CONDITION_NOT_NULL_EXECUTE(previousFragment, previousFragment->SetDiscontinuity(true));
     }
 
     CHECK_CONDITION_EXECUTE(!downloadedFragment, this->flags |= MP_URL_SOURCE_SPLITTER_PROTOCOL_RTSP_FLAG_CLOSE_CURL_INSTANCE | MP_URL_SOURCE_SPLITTER_PROTOCOL_RTSP_FLAG_STOP_RECEIVING_DATA);

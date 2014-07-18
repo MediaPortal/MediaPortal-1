@@ -53,7 +53,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;BUILDING_LIBCURL;CURL_DISABLE_TFTP;CURL_DISABLE_FTP;CURL_DISABLE_LDAP;CURL_DISABLE_TELNET;CURL_DISABLE_DICT;CURL_DISABLE_FILE;CURL_DISABLE_POP3;CURL_DISABLE_IMAP;CURL_DISABLE_SMTP;CURL_DISABLE_RTMP;CURL_DISABLE_GOPHER;USE_IPV6;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\include;.\include\curl;.\include\vtls;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FunctionLevelLinking>false</FunctionLevelLinking>
     </ClCompile>
     <Link>
@@ -76,7 +76,7 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)d\$(Ta
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;BUILDING_LIBCURL;CURL_DISABLE_TFTP;CURL_DISABLE_FTP;CURL_DISABLE_LDAP;CURL_DISABLE_TELNET;CURL_DISABLE_DICT;CURL_DISABLE_FILE;CURL_DISABLE_POP3;CURL_DISABLE_IMAP;CURL_DISABLE_SMTP;CURL_DISABLE_RTMP;CURL_DISABLE_GOPHER;USE_IPV6;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\include;.\include\curl;.\include\vtls;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -93,10 +93,12 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="readme_before_update.txt" />
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="include\amigaos.h" />
     <ClInclude Include="include\arpa_telnet.h" />
     <ClInclude Include="include\asyn.h" />
-    <ClInclude Include="include\axtls.h" />
     <ClInclude Include="include\bundles.h" />
     <ClInclude Include="include\config-amigaos.h" />
     <ClInclude Include="include\config-dos.h" />
@@ -124,7 +126,6 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     <ClInclude Include="include\curl\typecheck-gcc.h" />
     <ClInclude Include="include\curl_addrinfo.h" />
     <ClInclude Include="include\curl_base64.h" />
-    <ClInclude Include="include\curl_darwinssl.h" />
     <ClInclude Include="include\curl_fnmatch.h" />
     <ClInclude Include="include\curl_gethostname.h" />
     <ClInclude Include="include\curl_gssapi.h" />
@@ -139,16 +140,15 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     <ClInclude Include="include\curl_ntlm_core.h" />
     <ClInclude Include="include\curl_ntlm_msgs.h" />
     <ClInclude Include="include\curl_ntlm_wb.h" />
-    <ClInclude Include="include\curl_rand.h" />
     <ClInclude Include="include\curl_rtmp.h" />
     <ClInclude Include="include\curl_sasl.h" />
-    <ClInclude Include="include\curl_schannel.h" />
+    <ClInclude Include="include\curl_sec.h" />
     <ClInclude Include="include\curl_setup.h" />
     <ClInclude Include="include\curl_setup_once.h" />
     <ClInclude Include="include\curl_sspi.h" />
     <ClInclude Include="include\curl_threads.h" />
-    <ClInclude Include="include\cyassl.h" />
     <ClInclude Include="include\dict.h" />
+    <ClInclude Include="include\dotdot.h" />
     <ClInclude Include="include\easyif.h" />
     <ClInclude Include="include\escape.h" />
     <ClInclude Include="include\file.h" />
@@ -158,11 +158,11 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     <ClInclude Include="include\ftplistparser.h" />
     <ClInclude Include="include\getinfo.h" />
     <ClInclude Include="include\gopher.h" />
-    <ClInclude Include="include\gtls.h" />
     <ClInclude Include="include\hash.h" />
     <ClInclude Include="include\hostcheck.h" />
     <ClInclude Include="include\hostip.h" />
     <ClInclude Include="include\http.h" />
+    <ClInclude Include="include\http2.h" />
     <ClInclude Include="include\http_chunks.h" />
     <ClInclude Include="include\http_digest.h" />
     <ClInclude Include="include\http_negotiate.h" />
@@ -171,7 +171,6 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     <ClInclude Include="include\imap.h" />
     <ClInclude Include="include\inet_ntop.h" />
     <ClInclude Include="include\inet_pton.h" />
-    <ClInclude Include="include\krb4.h" />
     <ClInclude Include="include\llist.h" />
     <ClInclude Include="include\memdebug.h" />
     <ClInclude Include="include\multihandle.h" />
@@ -179,15 +178,11 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     <ClInclude Include="include\netrc.h" />
     <ClInclude Include="include\non-ascii.h" />
     <ClInclude Include="include\nonblock.h" />
-    <ClInclude Include="include\nssg.h" />
     <ClInclude Include="include\parsedate.h" />
     <ClInclude Include="include\pingpong.h" />
     <ClInclude Include="include\pipeline.h" />
-    <ClInclude Include="include\polarssl.h" />
-    <ClInclude Include="include\polarssl_threadlock.h" />
     <ClInclude Include="include\pop3.h" />
     <ClInclude Include="include\progress.h" />
-    <ClInclude Include="include\qssl.h" />
     <ClInclude Include="include\rawstr.h" />
     <ClInclude Include="include\rtsp.h" />
     <ClInclude Include="include\select.h" />
@@ -195,6 +190,7 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     <ClInclude Include="include\setup-os400.h" />
     <ClInclude Include="include\setup-vms.h" />
     <ClInclude Include="include\share.h" />
+    <ClInclude Include="include\sigpipe.h" />
     <ClInclude Include="include\slist.h" />
     <ClInclude Include="include\smtp.h" />
     <ClInclude Include="include\sockaddr.h" />
@@ -202,8 +198,6 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     <ClInclude Include="include\speedcheck.h" />
     <ClInclude Include="include\splay.h" />
     <ClInclude Include="include\ssh.h" />
-    <ClInclude Include="include\sslgen.h" />
-    <ClInclude Include="include\ssluse.h" />
     <ClInclude Include="include\strdup.h" />
     <ClInclude Include="include\strequal.h" />
     <ClInclude Include="include\strerror.h" />
@@ -215,16 +209,26 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     <ClInclude Include="include\transfer.h" />
     <ClInclude Include="include\url.h" />
     <ClInclude Include="include\urldata.h" />
+    <ClInclude Include="include\vtls\axtls.h" />
+    <ClInclude Include="include\vtls\curl_darwinssl.h" />
+    <ClInclude Include="include\vtls\curl_schannel.h" />
+    <ClInclude Include="include\vtls\cyassl.h" />
+    <ClInclude Include="include\vtls\gskit.h" />
+    <ClInclude Include="include\vtls\gtls.h" />
+    <ClInclude Include="include\vtls\nssg.h" />
+    <ClInclude Include="include\vtls\openssl.h" />
+    <ClInclude Include="include\vtls\polarssl.h" />
+    <ClInclude Include="include\vtls\polarssl_threadlock.h" />
+    <ClInclude Include="include\vtls\qssl.h" />
+    <ClInclude Include="include\vtls\vtls.h" />
     <ClInclude Include="include\warnless.h" />
     <ClInclude Include="include\wildcard.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="targetver.h" />
+    <ClInclude Include="include\x509asn1.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\amigaos.c" />
     <ClCompile Include="src\asyn-ares.c" />
     <ClCompile Include="src\asyn-thread.c" />
-    <ClCompile Include="src\axtls.c" />
     <ClCompile Include="src\base64.c" />
     <ClCompile Include="src\bundles.c" />
     <ClCompile Include="src\conncache.c" />
@@ -232,7 +236,6 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     <ClCompile Include="src\content_encoding.c" />
     <ClCompile Include="src\cookie.c" />
     <ClCompile Include="src\curl_addrinfo.c" />
-    <ClCompile Include="src\curl_darwinssl.c" />
     <ClCompile Include="src\curl_fnmatch.c" />
     <ClCompile Include="src\curl_gethostname.c" />
     <ClCompile Include="src\curl_gssapi.c" />
@@ -242,14 +245,13 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     <ClCompile Include="src\curl_ntlm_core.c" />
     <ClCompile Include="src\curl_ntlm_msgs.c" />
     <ClCompile Include="src\curl_ntlm_wb.c" />
-    <ClCompile Include="src\curl_rand.c" />
     <ClCompile Include="src\curl_rtmp.c" />
     <ClCompile Include="src\curl_sasl.c" />
-    <ClCompile Include="src\curl_schannel.c" />
+    <ClCompile Include="src\curl_sasl_sspi.c" />
     <ClCompile Include="src\curl_sspi.c" />
     <ClCompile Include="src\curl_threads.c" />
-    <ClCompile Include="src\cyassl.c" />
     <ClCompile Include="src\dict.c" />
+    <ClCompile Include="src\dotdot.c" />
     <ClCompile Include="src\easy.c" />
     <ClCompile Include="src\escape.c" />
     <ClCompile Include="src\file.c" />
@@ -260,7 +262,6 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     <ClCompile Include="src\getenv.c" />
     <ClCompile Include="src\getinfo.c" />
     <ClCompile Include="src\gopher.c" />
-    <ClCompile Include="src\gtls.c" />
     <ClCompile Include="src\hash.c" />
     <ClCompile Include="src\hmac.c" />
     <ClCompile Include="src\hostasyn.c" />
@@ -270,6 +271,7 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     <ClCompile Include="src\hostip6.c" />
     <ClCompile Include="src\hostsyn.c" />
     <ClCompile Include="src\http.c" />
+    <ClCompile Include="src\http2.c" />
     <ClCompile Include="src\http_chunks.c" />
     <ClCompile Include="src\http_digest.c" />
     <ClCompile Include="src\http_negotiate.c" />
@@ -280,7 +282,6 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     <ClCompile Include="src\imap.c" />
     <ClCompile Include="src\inet_ntop.c" />
     <ClCompile Include="src\inet_pton.c" />
-    <ClCompile Include="src\krb4.c" />
     <ClCompile Include="src\krb5.c" />
     <ClCompile Include="src\ldap.c" />
     <ClCompile Include="src\llist.c" />
@@ -292,18 +293,14 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     <ClCompile Include="src\netrc.c" />
     <ClCompile Include="src\non-ascii.c" />
     <ClCompile Include="src\nonblock.c" />
-    <ClCompile Include="src\nss.c" />
     <ClCompile Include="src\nwlib.c" />
     <ClCompile Include="src\nwos.c" />
     <ClCompile Include="src\openldap.c" />
     <ClCompile Include="src\parsedate.c" />
     <ClCompile Include="src\pingpong.c" />
     <ClCompile Include="src\pipeline.c" />
-    <ClCompile Include="src\polarssl.c" />
-    <ClCompile Include="src\polarssl_threadlock.c" />
     <ClCompile Include="src\pop3.c" />
     <ClCompile Include="src\progress.c" />
-    <ClCompile Include="src\qssl.c" />
     <ClCompile Include="src\rawstr.c" />
     <ClCompile Include="src\rtsp.c" />
     <ClCompile Include="src\security.c" />
@@ -318,8 +315,6 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     <ClCompile Include="src\speedcheck.c" />
     <ClCompile Include="src\splay.c" />
     <ClCompile Include="src\ssh.c" />
-    <ClCompile Include="src\sslgen.c" />
-    <ClCompile Include="src\ssluse.c" />
     <ClCompile Include="src\strdup.c" />
     <ClCompile Include="src\strequal.c" />
     <ClCompile Include="src\strerror.c" />
@@ -331,15 +326,21 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     <ClCompile Include="src\transfer.c" />
     <ClCompile Include="src\url.c" />
     <ClCompile Include="src\version.c" />
+    <ClCompile Include="src\vtls\axtls.c" />
+    <ClCompile Include="src\vtls\curl_darwinssl.c" />
+    <ClCompile Include="src\vtls\curl_schannel.c" />
+    <ClCompile Include="src\vtls\cyassl.c" />
+    <ClCompile Include="src\vtls\gskit.c" />
+    <ClCompile Include="src\vtls\gtls.c" />
+    <ClCompile Include="src\vtls\nss.c" />
+    <ClCompile Include="src\vtls\openssl.c" />
+    <ClCompile Include="src\vtls\polarssl.c" />
+    <ClCompile Include="src\vtls\polarssl_threadlock.c" />
+    <ClCompile Include="src\vtls\qssl.c" />
+    <ClCompile Include="src\vtls\vtls.c" />
     <ClCompile Include="src\warnless.c" />
     <ClCompile Include="src\wildcard.c" />
-    <ClCompile Include="stdafx.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="readme_before_update.txt" />
+    <ClCompile Include="src\x509asn1.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

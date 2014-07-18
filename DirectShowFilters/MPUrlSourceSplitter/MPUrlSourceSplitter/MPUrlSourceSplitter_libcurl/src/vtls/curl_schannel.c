@@ -5,9 +5,9 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 2012 - 2013, Marc Hoersken, <info@marc-hoersken.de>
+ * Copyright (C) 2012 - 2014, Marc Hoersken, <info@marc-hoersken.de>
  * Copyright (C) 2012, Mark Salisbury, <mark.salisbury@hp.com>
- * Copyright (C) 2012 - 2013, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 2012 - 2014, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -24,7 +24,7 @@
 
 /*
  * Source file for all SChannel-specific code for the TLS/SSL layer. No code
- * but sslgen.c should ever call or use these functions.
+ * but vtls.c should ever call or use these functions.
  *
  */
 
@@ -61,7 +61,7 @@
 
 #include "curl_sspi.h"
 #include "curl_schannel.h"
-#include "sslgen.h"
+#include "vtls.h"
 #include "sendf.h"
 #include "connect.h" /* for the connect timeout */
 #include "strerror.h"
@@ -156,17 +156,6 @@ schannel_connect_step1(struct connectdata *conn, int sockindex)
       infof(data, "schannel: disable server certificate revocation checks\n");
     }
 
-    if(Curl_inet_pton(AF_INET, conn->host.name, &addr)
-#ifdef ENABLE_IPV6
-       || Curl_inet_pton(AF_INET6, conn->host.name, &addr6)
-#endif
-      ) {
-      schannel_cred.dwFlags |= SCH_CRED_NO_SERVERNAME_CHECK;
-      infof(data, "schannel: using IP address, SNI is being disabled by "
-                  "disabling the servername check against the "
-                  "subject names in server certificates.\n");
-    }
-
     if(!data->set.ssl.verifyhost) {
       schannel_cred.dwFlags |= SCH_CRED_NO_SERVERNAME_CHECK;
       infof(data, "schannel: verifyhost setting prevents Schannel from "
@@ -180,16 +169,32 @@ schannel_connect_step1(struct connectdata *conn, int sockindex)
                                               SP_PROT_TLS1_1_CLIENT |
                                               SP_PROT_TLS1_2_CLIENT;
         break;
+      case CURL_SSLVERSION_TLSv1_0:
+        schannel_cred.grbitEnabledProtocols = SP_PROT_TLS1_0_CLIENT;
+        break;
+      case CURL_SSLVERSION_TLSv1_1:
+        schannel_cred.grbitEnabledProtocols = SP_PROT_TLS1_1_CLIENT;
+        break;
+      case CURL_SSLVERSION_TLSv1_2:
+        schannel_cred.grbitEnabledProtocols = SP_PROT_TLS1_2_CLIENT;
+        break;
       case CURL_SSLVERSION_SSLv3:
         schannel_cred.grbitEnabledProtocols = SP_PROT_SSL3_CLIENT;
         break;
       case CURL_SSLVERSION_SSLv2:
         schannel_cred.grbitEnabledProtocols = SP_PROT_SSL2_CLIENT;
         break;
+      default:
+        schannel_cred.grbitEnabledProtocols = SP_PROT_TLS1_0_CLIENT |
+                                              SP_PROT_TLS1_1_CLIENT |
+                                              SP_PROT_TLS1_2_CLIENT |
+                                              SP_PROT_SSL3_CLIENT;
+        break;
     }
 
     /* allocate memory for the re-usable credential handle */
-    connssl->cred = malloc(sizeof(struct curl_schannel_cred));
+    connssl->cred = (struct curl_schannel_cred *)
+                     malloc(sizeof(struct curl_schannel_cred));
     if(!connssl->cred) {
       failf(data, "schannel: unable to allocate memory");
       return CURLE_OUT_OF_MEMORY;
@@ -213,6 +218,15 @@ schannel_connect_step1(struct connectdata *conn, int sockindex)
     }
   }
 
+  /* Warn if SNI is disabled due to use of an IP address */
+  if(Curl_inet_pton(AF_INET, conn->host.name, &addr)
+#ifdef ENABLE_IPV6
+     || Curl_inet_pton(AF_INET6, conn->host.name, &addr6)
+#endif
+    ) {
+    infof(data, "schannel: using IP address, SNI is not supported by OS.\n");
+  }
+
   /* setup output buffer */
   InitSecBuffer(&outbuf, SECBUFFER_EMPTY, NULL, 0);
   InitSecBufferDesc(&outbuf_desc, &outbuf, 1);
@@ -223,7 +237,8 @@ schannel_connect_step1(struct connectdata *conn, int sockindex)
                        ISC_REQ_STREAM;
 
   /* allocate memory for the security context handle */
-  connssl->ctxt = malloc(sizeof(struct curl_schannel_ctxt));
+  connssl->ctxt = (struct curl_schannel_ctxt *)
+                   malloc(sizeof(struct curl_schannel_ctxt));
   if(!connssl->ctxt) {
     failf(data, "schannel: unable to allocate memory");
     return CURLE_OUT_OF_MEMORY;
@@ -296,6 +311,9 @@ schannel_connect_step2(struct connectdata *conn, int sockindex)
 
   infof(data, "schannel: SSL/TLS connection with %s port %hu (step 2/3)\n",
         conn->host.name, conn->remote_port);
+
+  if(!connssl->cred || !connssl->ctxt)
+    return CURLE_SSL_CONNECT_ERROR;
 
   /* buffer to store previously received and encrypted data */
   if(connssl->encdata_buffer == NULL) {
@@ -494,6 +512,9 @@ schannel_connect_step3(struct connectdata *conn, int sockindex)
 
   infof(data, "schannel: SSL/TLS connection with %s port %hu (step 3/3)\n",
         conn->host.name, conn->remote_port);
+
+  if(!connssl->cred)
+    return CURLE_SSL_CONNECT_ERROR;
 
   /* check if the required context attributes are met */
   if(connssl->ret_flags != connssl->req_flags) {
@@ -744,7 +765,7 @@ schannel_send(struct connectdata *conn, int sockindex,
 
       this_write = 0;
 
-      timeleft = Curl_timeleft(conn->data, NULL, TRUE);
+      timeleft = Curl_timeleft(conn->data, NULL, FALSE);
       if(timeleft < 0) {
         /* we already got the timeout */
         failf(conn->data, "schannel: timed out sending data "

@@ -1,5 +1,5 @@
-#ifndef HEADER_CURL_SSLGEN_H
-#define HEADER_CURL_SSLGEN_H
+#ifndef HEADER_CURL_VTLS_H
+#define HEADER_CURL_VTLS_H
 /***************************************************************************
  *                                  _   _ ____  _
  *  Project                     ___| | | |  _ \| |
@@ -7,7 +7,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2012, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2013, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -27,11 +27,17 @@
 #define MD5_DIGEST_LENGTH 16 /* fixed size */
 #endif
 
+/* see http://tools.ietf.org/html/draft-ietf-tls-applayerprotoneg-04 */
+#define ALPN_HTTP_1_1_LENGTH 8
+#define ALPN_HTTP_1_1 "http/1.1"
+
 bool Curl_ssl_config_matches(struct ssl_config_data* data,
                              struct ssl_config_data* needle);
 bool Curl_clone_ssl_config(struct ssl_config_data* source,
                            struct ssl_config_data* dest);
 void Curl_free_ssl_config(struct ssl_config_data* sslc);
+
+unsigned int Curl_rand(struct SessionHandle *);
 
 #ifdef USE_SSL
 int Curl_ssl_init(void);
@@ -56,7 +62,16 @@ size_t Curl_ssl_version(char *buffer, size_t size);
 bool Curl_ssl_data_pending(const struct connectdata *conn,
                            int connindex);
 int Curl_ssl_check_cxn(struct connectdata *conn);
+
+/* Certificate information list handling. */
+
 void Curl_ssl_free_certinfo(struct SessionHandle *data);
+int Curl_ssl_init_certinfo(struct SessionHandle * data, int num);
+CURLcode Curl_ssl_push_certinfo_len(struct SessionHandle * data, int certnum,
+                                    const char * label, const char * value,
+                                    size_t valuelen);
+CURLcode Curl_ssl_push_certinfo(struct SessionHandle * data, int certnum,
+                                const char * label, const char * value);
 
 /* Functions to be used by SSL library adaptation functions */
 
@@ -83,6 +98,13 @@ void Curl_ssl_md5sum(unsigned char *tmp, /* input */
 
 #define SSL_SHUTDOWN_TIMEOUT 10000 /* ms */
 
+#ifdef have_curlssl_random
+#define HAVE_CURL_SSL_RANDOM
+#endif
+#ifdef have_curlssl_md5sum
+#define HAVE_CURL_SSL_MD5SUM
+#endif
+
 #else
 /* When SSL support is not present, just define away these function calls */
 #define Curl_ssl_init() 1
@@ -105,4 +127,4 @@ void Curl_ssl_md5sum(unsigned char *tmp, /* input */
 #define Curl_ssl_kill_session(x) Curl_nop_stmt
 #endif
 
-#endif /* HEADER_CURL_SSLGEN_H */
+#endif /* HEADER_CURL_VTLS_H */

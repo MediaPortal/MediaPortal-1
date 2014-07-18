@@ -28,82 +28,89 @@
 #define RTMP_STREAM_FRAGMENT_FLAG_NONE                                CACHE_FILE_ITEM_FLAG_NONE
 
 #define RTMP_STREAM_FRAGMENT_FLAG_DOWNLOADED                          (1 << (CACHE_FILE_ITEM_FLAG_LAST + 0))
-#define RTMP_STREAM_FRAGMENT_FLAG_SEEKED                              (1 << (CACHE_FILE_ITEM_FLAG_LAST + 1))
-#define RTMP_STREAM_FRAGMENT_FLAG_HAS_INCORRECT_TIMESTAMPS            (1 << (CACHE_FILE_ITEM_FLAG_LAST + 2))
-#define RTMP_STREAM_FRAGMENT_FLAG_SET_START_TIMESTAMP                 (1 << (CACHE_FILE_ITEM_FLAG_LAST + 3))
+#define RTMP_STREAM_FRAGMENT_FLAG_SET_TIMESTAMP                       (1 << (CACHE_FILE_ITEM_FLAG_LAST + 1))
+#define RTMP_STREAM_FRAGMENT_FLAG_DISCONTINUITY                       (1 << (CACHE_FILE_ITEM_FLAG_LAST + 2))
+#define RTMP_STREAM_FRAGMENT_FLAG_CONTAINS_HEADER_OR_META_PACKET      (1 << (CACHE_FILE_ITEM_FLAG_LAST + 3))
+
+#define RTMP_STREAM_FRAGMENT_FLAG_LAST                                (CACHE_FILE_ITEM_FLAG_LAST + 4)
+
+#define RTMP_STREAM_FRAGMENT_START_POSITION_NOT_SET                   -1
 
 class CRtmpStreamFragment : public CCacheFileItem
 {
 public:
-  // creates new instance of CRtmpStreamFragment class with specified key frame timestamp
-  CRtmpStreamFragment(void);
+  // creates new instance of CRtmpStreamFragment class
+  CRtmpStreamFragment(HRESULT *result);
+  CRtmpStreamFragment(HRESULT *result, int64_t fragmentStartTimestamp, bool setStartTimestampFlag);
+
   virtual ~CRtmpStreamFragment(void);
 
   /* get methods */
 
-  // gets fragment start timestamp in ms
-  // @return : fragment start timestamp in ms
-  uint64_t GetFragmentStartTimestamp(void);
+  // gets fragment start timestamp
+  // @return : fragment start timestamp
+  int64_t GetFragmentStartTimestamp(void);
 
-  // gets fragment end timestamp in ms
-  // @return : fragment end timestamp in ms
-  uint64_t GetFragmentEndTimestamp(void);
-
-  // gets packet correction (positive or negative)
-  // @return : packet correction
-  int GetPacketCorrection(void);
+  // gets fragment start position within stream
+  // @return : fragment start position within stream or RTMP_STREAM_FRAGMENT_START_POSITION_NOT_SET if not set
+  int64_t GetFragmentStartPosition(void);
 
   /* set methods */
 
-  // sets fragment start timestamp
-  // @param fragmentStartTimestamp : fragment start timestamp in ms to set
-  // @param setStartTimestamp : specifies if start timestamp is set by received data
-  void SetFragmentStartTimestamp(uint64_t fragmentStartTimestamp, bool setStartTimestamp);
-
-  // sets fragment end timestamp
-  // @param fragmentEndTimestamp : fragment end timestamp in ms to set
-  void SetFragmentEndTimestamp(uint64_t fragmentEndTimestamp);
-
-  // sets if fragment is downloaded
-  // @param downloaded : true if fragment is downloaded
+  // sets if segment and fragment is downloaded
+  // @param downloaded : true if segment and fragment is downloaded
   void SetDownloaded(bool downloaded);
 
-  // sets if fragment is first fragment after seek (it can be incomplete)
-  // @param seeked : true if fragment is first after seek, false otherwise
-  void SetSeeked(bool seeked);
+  // sets fragment start timestamp
+  // @param fragmentStartTimestamp : the fragment start timestamp to set
+  void SetFragmentStartTimestamp(int64_t fragmentStartTimestamp);
 
-  // sets if fragment has incorrect timestamps (it happen after seeking)
-  // @param hasIncorrectTimestamps : true if fragment has incorect timestamps, false otherwise
-  void SetIncorrectTimestamps(bool hasIncorrectTimestamps);
+  // sets fragment start timestamp with specified flag
+  // @param fragmentStartTimestamp : the fragment start timestamp to set
+  // @param setStartTimestampFlag : fragment has set start timestamp flag
+  void SetFragmentStartTimestamp(int64_t fragmentStartTimestamp, bool setStartTimestampFlag);
 
-  // sets packet correction (positive or negative)
-  // @param packetCorrection : packet correction
-  void SetPacketCorrection(int packetCorrection);
+  // sets fragment start position
+  // @param fragmentStartPosition : fragment start position to set
+  void SetFragmentStartPosition(int64_t fragmentStartPosition);
+
+  // sets discontinuity
+  // @param discontinuity : true if discontinuity after data, false otherwise
+  void SetDiscontinuity(bool discontinuity);
+
+  // sets if fragment contains header or meta packet
+  // @param containsHeaderOrMetaPacket : true if fragment contains header or meta packet, false otherwise
+  void SetContainsHeaderOrMetaPacket(bool containsHeaderOrMetaPacket);
 
   /* other methods */
 
-  // tests if segment and fragment is downloaded
+  // tests if discontinuity is set
+  // @return : true if discontinuity is set, false otherwise
+  bool IsDiscontinuity(void);
+
+  // tests if fragment is downloaded
   // @return : true if downloaded, false otherwise
   bool IsDownloaded(void);
 
-  // tests if start timestamp was set by received data
-  bool IsStartTimestampSet(void);
+  // tests if fragment has set start timestamp
+  // @return : true if fragment has set start timestamp, false otherwise
+  bool IsSetFragmentStartTimestamp(void);
 
-  // tests if fragment is first fragment after seek (it can be incomplete)
-  // @return : true if fragment is first after seek, false otherwise
-  bool IsSeeked(void);
+  // tests if fragment has set start position
+  // @return : true if fragment has set start position, false otherwise
+  bool IsSetFragmentStartPosition(void);
 
-  // tests if fragment has incorrect timestamps (it happen after seeking)
-  // @return : true if fragment has incorect timestamps, false otherwise
-  bool HasIncorrectTimestamps(void);
+  // tests if fragment contains header or meta packet
+  // @return : true if fragment contains header or meta packet, false otherwise
+  bool ContainsHeaderOrMetaPacket(void);
 
 private:
-  // stores fragment start timestamp
-  uint64_t fragmentStartTimestamp;
-  // stores fragment end timestamp
-  uint64_t fragmentEndTimestamp;
-  // holds packet correction
-  int packetCorrection;
+
+  // holds fragment start timestamp
+  int64_t fragmentStartTimestamp;
+
+  // holds fragment start position within stream
+  int64_t fragmentStartPosition;
 
   /* methods */
 

@@ -33,6 +33,7 @@
 #include "pingpong.h"
 #include "multiif.h"
 #include "non-ascii.h"
+#include "vtls/vtls.h"
 
 #define _MPRINTF_REPLACE /* use our functions only */
 #include <curl/mprintf.h>
@@ -105,6 +106,9 @@ CURLcode Curl_pp_statemach(struct pingpong *pp, bool block)
   if(Curl_pp_moredata(pp))
     /* We are receiving and there is data in the cache so just read it */
     rc = 1;
+  else if(!pp->sendleft && Curl_ssl_data_pending(conn, FIRSTSOCKET))
+    /* We are receiving and there is data ready in the SSL library */
+    rc = 1;
   else
     rc = Curl_socket_ready(pp->sendleft?CURL_SOCKET_BAD:sock, /* reading */
                            pp->sendleft?sock:CURL_SOCKET_BAD, /* writing */
@@ -165,7 +169,7 @@ CURLcode Curl_pp_vsendf(struct pingpong *pp,
   struct connectdata *conn = pp->conn;
   struct SessionHandle *data = conn->data;
 
-#if defined(HAVE_KRB4) || defined(HAVE_GSSAPI)
+#ifdef HAVE_GSSAPI
   enum protection_level data_sec = conn->data_prot;
 #endif
 
@@ -194,12 +198,12 @@ CURLcode Curl_pp_vsendf(struct pingpong *pp,
     return error;
   }
 
-#if defined(HAVE_KRB4) || defined(HAVE_GSSAPI)
+#ifdef HAVE_GSSAPI
   conn->data_prot = PROT_CMD;
 #endif
   error = Curl_write(conn, conn->sock[FIRSTSOCKET], s, write_len,
                      &bytes_written);
-#if defined(HAVE_KRB4) || defined(HAVE_GSSAPI)
+#ifdef HAVE_GSSAPI
   DEBUGASSERT(data_sec > PROT_NONE && data_sec < PROT_LAST);
   conn->data_prot = data_sec;
 #endif
@@ -302,14 +306,14 @@ CURLcode Curl_pp_readresp(curl_socket_t sockfd,
     }
     else {
       int res;
-#if defined(HAVE_KRB4) || defined(HAVE_GSSAPI)
+#ifdef HAVE_GSSAPI
       enum protection_level prot = conn->data_prot;
       conn->data_prot = PROT_CLEAR;
 #endif
       DEBUGASSERT((ptr+BUFSIZE-pp->nread_resp) <= (buf+BUFSIZE+1));
       res = Curl_read(conn, sockfd, ptr, BUFSIZE-pp->nread_resp,
                       &gotbytes);
-#if defined(HAVE_KRB4) || defined(HAVE_GSSAPI)
+#ifdef HAVE_GSSAPI
       DEBUGASSERT(prot  > PROT_NONE && prot < PROT_LAST);
       conn->data_prot = prot;
 #endif
@@ -352,7 +356,7 @@ CURLcode Curl_pp_readresp(curl_socket_t sockfd,
              the line isn't really terminated until the LF comes */
 
           /* output debug output if that is requested */
-#if defined(HAVE_KRB4) || defined(HAVE_GSSAPI)
+#ifdef HAVE_GSSAPI
           if(!conn->sec_complete)
 #endif
             if(data->set.verbose)
@@ -371,13 +375,10 @@ CURLcode Curl_pp_readresp(curl_socket_t sockfd,
 
           if(pp->endofresp(conn, pp->linestart_resp, perline, code)) {
             /* This is the end of the last line, copy the last line to the
-               start of the buffer and zero terminate, for old times sake (and
-               krb4)! */
-            char *meow;
-            int n;
-            for(meow=pp->linestart_resp, n=0; meow<ptr; meow++, n++)
-              buf[n] = *meow;
-            *meow=0; /* zero terminate */
+               start of the buffer and zero terminate, for old times sake */
+            size_t n = ptr - pp->linestart_resp;
+            memmove(buf, pp->linestart_resp, n);
+            buf[n]=0; /* zero terminate */
             keepon=FALSE;
             pp->linestart_resp = ptr+1; /* advance pointer */
             i++; /* skip this before getting out */

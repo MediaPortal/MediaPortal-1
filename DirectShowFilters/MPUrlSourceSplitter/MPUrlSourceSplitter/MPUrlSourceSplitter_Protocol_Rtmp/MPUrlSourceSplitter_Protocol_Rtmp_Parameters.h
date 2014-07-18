@@ -32,22 +32,22 @@
 // Overrides the app in the RTMP URL.
 // Sometimes the librtmp URL parser cannot determine the app name automatically,
 // so it must be given explicitly using this option. 
-#define PARAMETER_NAME_RTMP_APP                                                L"RtmpApp"
+#define PARAMETER_NAME_RTMP_APP                                               L"RtmpApp"
 
 // URL of the target stream. Defaults to rtmp[t][e|s]://host[:port]/app. 
-#define PARAMETER_NAME_RTMP_TC_URL                                             L"RtmpTcUrl"
+#define PARAMETER_NAME_RTMP_TC_URL                                            L"RtmpTcUrl"
 
 // URL of the web page in which the media was embedded. By default no value will be sent. 
-#define PARAMETER_NAME_RTMP_PAGE_URL                                           L"RtmpPageUrl"
+#define PARAMETER_NAME_RTMP_PAGE_URL                                          L"RtmpPageUrl"
 
 // URL of the SWF player for the media. By default no value will be sent.
-#define PARAMETER_NAME_RTMP_SWF_URL                                            L"RtmpSwfUrl"
+#define PARAMETER_NAME_RTMP_SWF_URL                                           L"RtmpSwfUrl"
 
 // Version of the Flash plugin used to run the SWF player. The default is "WIN 10,0,32,18".
-#define PARAMETER_NAME_RTMP_FLASHVER                                           L"RtmpFlashVer"
+#define PARAMETER_NAME_RTMP_FLASHVER                                          L"RtmpFlashVer"
 
 // Authentication string to be appended to the connect string
-#define PARAMETER_NAME_RTMP_AUTH                                               L"RtmpAuth"
+#define PARAMETER_NAME_RTMP_AUTH                                              L"RtmpAuth"
 
 // Append arbitrary AMF data to the Connect message.
 // The type must be B for Boolean, N for number, S for string, O for object, or Z for null.
@@ -56,7 +56,7 @@
 // Data items in subobjects may be named, by prefixing the type with 'N' and specifying the name before the value,
 // e.g. NB:myFlag:1. This option may be used multiple times to construct arbitrary AMF sequences. E.g.
 // conn=B:1 conn=S:authMe conn=O:1 conn=NN:code:1.23 conn=NS:flag:ok conn=O:0
-#define PARAMETER_NAME_RTMP_ARBITRARY_DATA                                     L"RtmpArbitraryData"
+#define PARAMETER_NAME_RTMP_ARBITRARY_DATA                                    L"RtmpArbitraryData"
 
 /* SESSION PARAMETERS */
 
@@ -65,35 +65,35 @@
 // Overrides the playpath parsed from the RTMP URL.
 // Sometimes the rtmpdump URL parser cannot determine the correct playpath automatically,
 // so it must be given explicitly using this option.
-#define PARAMETER_NAME_RTMP_PLAY_PATH                                          L"RtmpPlayPath"
+#define PARAMETER_NAME_RTMP_PLAY_PATH                                         L"RtmpPlayPath"
 
 // If the value is 1 or TRUE, issue a set_playlist command before sending the play command.
 // The playlist will just contain the current playpath.
 // If the value is 0 or FALSE, the set_playlist command will not be sent.
 // The default is FALSE. 
-#define PARAMETER_NAME_RTMP_PLAYLIST                                           L"RtmpPlaylist"
+#define PARAMETER_NAME_RTMP_PLAYLIST                                          L"RtmpPlaylist"
 
 // Specify that the media is a live stream. No resuming or seeking in live streams is possible.
-#define PARAMETER_NAME_RTMP_LIVE                                               L"RtmpLive"
+#define PARAMETER_NAME_RTMP_LIVE                                              L"RtmpLive"
 
 // Name of live stream to subscribe to. Defaults to playpath.
-#define PARAMETER_NAME_RTMP_SUBSCRIBE                                          L"RtmpSubscribe"
+#define PARAMETER_NAME_RTMP_SUBSCRIBE                                         L"RtmpSubscribe"
 
 // Set buffer time to num milliseconds.
-#define PARAMETER_NAME_RTMP_BUFFER                                             L"RtmpBuffer"
+#define PARAMETER_NAME_RTMP_BUFFER                                            L"RtmpBuffer"
 
 // Timeout the session after num seconds without receiving any data from the server.
-#define PARAMETER_NAME_RTMP_RECEIVE_DATA_TIMEOUT                               L"RtmpReceiveDataTimeout"
+//#define PARAMETER_NAME_RTMP_RECEIVE_DATA_TIMEOUT                            L"RtmpReceiveDataTimeout"
 
 /* SECURITY PARAMETERS */
 
 // These options handle additional authentication requests from the server.
 
 // Key for SecureToken response, used if the server requires SecureToken authentication.
-#define PARAMETER_NAME_RTMP_TOKEN                                              L"RtmpToken"
+#define PARAMETER_NAME_RTMP_TOKEN                                             L"RtmpToken"
 
 // JSON token used by legacy Justin.tv servers. Invokes NetStream.Authenticate.UsherToken
-#define PARAMETER_NAME_RTMP_JTV                                                L"RtmpJtv"
+#define PARAMETER_NAME_RTMP_JTV                                               L"RtmpJtv"
 
 // If the value is 1 or TRUE, the SWF player is retrieved from the specified swfUrl for performing SWF Verification.
 // The SWF hash and size (used in the verification step) are computed automatically.
@@ -102,10 +102,11 @@
 // The .swfinfo file records the SWF URL, the time it was fetched,
 // the modification timestamp of the SWF file, its size, and its hash.
 // By default, the cached info will be used for 30 days before re-checking. 
-#define PARAMETER_NAME_RTMP_SWF_VERIFY                                         L"RtmpSwfVerify"
+#define PARAMETER_NAME_RTMP_SWF_VERIFY                                        L"RtmpSwfVerify"
 
-// we should get data in twenty seconds
-#define RTMP_RECEIVE_DATA_TIMEOUT_DEFAULT                                     20000
+#define PARAMETER_NAME_RTMP_OPEN_CONNECTION_TIMEOUT                           L"RtmpOpenConnectionTimeout"
+#define PARAMETER_NAME_RTMP_OPEN_CONNECTION_SLEEP_TIME                        L"RtmpOpenConnectionSleepTime"
+#define PARAMETER_NAME_RTMP_TOTAL_REOPEN_CONNECTION_TIMEOUT                   L"RtmpTotalReopenConnectionTimeout"
 
 // define default values for RTMP protocol
 
@@ -126,5 +127,10 @@
 #define RTMP_TOKEN_DEFAULT                                                    NULL
 #define RTMP_JTV_DEFAULT                                                      NULL
 #define RTMP_SWF_VERIFY_DEFAULT                                               false
+
+// we should get data in twenty seconds
+#define RTMP_OPEN_CONNECTION_TIMEOUT_DEFAULT                                  20000
+#define RTMP_OPEN_CONNECTION_SLEEP_TIME_DEFAULT                               0
+#define RTMP_TOTAL_REOPEN_CONNECTION_TIMEOUT_DEFAULT                          60000
 
 #endif

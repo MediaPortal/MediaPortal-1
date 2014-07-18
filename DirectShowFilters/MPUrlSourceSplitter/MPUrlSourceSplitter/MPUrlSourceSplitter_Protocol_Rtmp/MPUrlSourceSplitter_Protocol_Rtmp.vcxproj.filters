@@ -47,6 +47,9 @@
     <ClInclude Include="RtmpStreamFragmentCollection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="RtmpDumpBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -71,6 +74,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RtmpStreamFragmentCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtmpDumpBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

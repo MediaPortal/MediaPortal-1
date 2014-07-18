@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2012, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2013, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -22,7 +22,7 @@
 
 /*
  * Source file for all CyaSSL-specific code for the TLS/SSL layer. No code
- * but sslgen.c should ever call or use these functions.
+ * but vtls.c should ever call or use these functions.
  *
  */
 
@@ -38,7 +38,7 @@
 #include "sendf.h"
 #include "inet_pton.h"
 #include "cyassl.h"
-#include "sslgen.h"
+#include "vtls.h"
 #include "parsedate.h"
 #include "connect.h" /* for the connect timeout */
 #include "select.h"
@@ -47,11 +47,16 @@
 #define _MPRINTF_REPLACE /* use our functions only */
 #include <curl/mprintf.h>
 #include "curl_memory.h"
+
+#include <cyassl/ssl.h>
+#ifdef HAVE_CYASSL_ERROR_SSL_H
+#include <cyassl/error-ssl.h>
+#else
+#include <cyassl/error.h>
+#endif
+
 /* The last #include file should be: */
 #include "memdebug.h"
-#include <cyassl/ssl.h>
-#include <cyassl/error.h>
-
 
 static Curl_recv cyassl_recv;
 static Curl_send cyassl_send;
@@ -98,7 +103,18 @@ cyassl_connect_step1(struct connectdata *conn,
     req_method = SSLv23_client_method();
     break;
   case CURL_SSLVERSION_TLSv1:
+    infof(data, "CyaSSL cannot be configured to use TLS 1.0-1.2, "
+          "TLS 1.0 is used exclusively\n");
     req_method = TLSv1_client_method();
+    break;
+  case CURL_SSLVERSION_TLSv1_0:
+    req_method = TLSv1_client_method();
+    break;
+  case CURL_SSLVERSION_TLSv1_1:
+    req_method = TLSv1_1_client_method();
+    break;
+  case CURL_SSLVERSION_TLSv1_2:
+    req_method = TLSv1_2_client_method();
     break;
   case CURL_SSLVERSION_SSLv3:
     req_method = SSLv3_client_method();

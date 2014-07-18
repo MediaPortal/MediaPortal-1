@@ -48,6 +48,8 @@ void CRtspDownloadRequest::SetStartTime(uint64_t startTime)
 
 /* other methods */
 
+/* protected methods */
+
 CDownloadRequest *CRtspDownloadRequest::CreateDownloadRequest(void)
 {
   HRESULT result = S_OK;

@@ -2,210 +2,7 @@
 The purpose of this document is to remark all changes made in libcurl by any developer. These same changes
 (or at least their meaning) must be made in next releases of libcurl.
  
-Changes in libcurl 7.31.0:
-
-File: \include\curl\curl.h
-Comment: define RTMP callback function
-Code:
-
-#ifdef USE_LIBRTMP
-
-typedef void (*curl_rtmp_log_callback) (struct RTMP *r, int level, const char *fmt, va_list);
-
-#endif
-
---------------------------------------------
-Comment: in CURLoption enum define RTMP callback function and RTMP user data for curl_easy_setopt() method
-Code:
-
-/* callback log function for RTMP protocol */
-CINIT(RTMP_LOG_CALLBACK, FUNCTIONPOINT, 219),
-
-/* user data (reference) for RTMP log function */
-CINIT(RTMP_LOG_USERDATA, OBJECTPOINT, 220),
-
---------------------------------------------
-Comment: in CURLINFO enum add RTMP total duration and RTMP current time for curl_easy_getinfo() method
-Code:
-
-CURLINFO_RTMP_TOTAL_DURATION    = CURLINFO_DOUBLE + 43,
-CURLINFO_RTMP_CURRENT_TIME      = CURLINFO_DOUBLE + 44,
-
-CURLINFO_LASTONE          = 45
-
---------------------------------------------
-File: \include\urldata.h
-Comment: in struct UserDefined add RTMP callack, user data, total duration and current time
-Code:
-
-#ifdef USE_LIBRTMP
-  curl_rtmp_log_callback frtmp_log_func;   /* function that write RTMP protocol log data  */
-  void *curl_rtmp_log_user_data; /* user data for RTMP log callback */
-  double rtmp_total_duration;   /* total duration of stream */
-  double rtmp_current_time;   /* current stream time */
-#endif
-
---------------------------------------------
-File: \src\curl_rtmp.c
-Comment: include log.h from librtmp
-
-#include <librtmp/log.h>
-
---------------------------------------------
-Comment: in rtmp_setup() method add after line 'RTMP_Init(r);'
-Code:
-
-if (conn->data->set.frtmp_log_func != NULL)
-{
-  RTMP_LogSetCallback(r, conn->data->set.frtmp_log_func);
-}
-r->m_logUserData = conn->data->set.curl_rtmp_log_user_data;
-
---------------------------------------------
-Comment: in rtmp_connect() method add at the beginning
-Code:
-
-int on = 1;
-
---------------------------------------------
-Comment: in rtmp_connect() method replace after 'curlx_nonblock(r->m_sb.sb_socket, FALSE);' and before 'if(!RTMP_Connect1(r, NULL))'
-Code:
-
-if (conn->data->set.connecttimeout != 0)
-{
-  // connect timeout set
-  // timeout is divided by three to make at least two connection attempts
-  tv = max((int)conn->data->set.connecttimeout / 3, 1000);
-}
-
-RTMP_Log(r, RTMP_LOGDEBUG, "socket timeout: %d (ms)", tv);
-
-if (setsockopt(r->m_sb.sb_socket, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv, sizeof(tv)) == SOCKET_ERROR)
-{
-  RTMP_Log(r, RTMP_LOGWARNING, "error while setting timeout on socket: %d", WSAGetLastError());
-}
-
-if (setsockopt(r->m_sb.sb_socket, IPPROTO_TCP, TCP_NODELAY, (char *) &on, sizeof(on)) == SOCKET_ERROR)
-{
-  RTMP_Log(r, RTMP_LOGWARNING, "error while setting TCP no delay on socket: %d", WSAGetLastError());
-}
-
---------------------------------------------
-File: \src\getinfo.c
-Comment: in getinfo_double() method add before 'default' statement in 'switch(info)' switch
-Code:
-
-#ifdef USE_LIBRTMP
-  case CURLINFO_RTMP_TOTAL_DURATION:
-    *param_doublep = data->set.rtmp_total_duration;
-    break;
-  case CURLINFO_RTMP_CURRENT_TIME:
-    *param_doublep = data->set.rtmp_current_time;
-    break;
-#endif
-
---------------------------------------------
-File: \src\transfer.c
-Comment: include rtmp.h
-Code:
-
-#ifdef USE_LIBRTMP
-#include <librtmp/rtmp.h>
-#endif
-
---------------------------------------------
-Comment: in Curl_readwrite() method add at the beginning
-Code:
-
-#ifdef USE_LIBRTMP
-  bool rtmpProtocolActive = false;
-  bool rtmpProtocolFinished = false;
-#endif
-
---------------------------------------------
-Comment: in Curl_readwrite() method replace
-Code to replace:
-
-  if((k->keepon & KEEP_RECV) &&
-     ((select_res & CURL_CSELECT_IN) || conn->bits.stream_was_rewound
-     )) {
-
-         result = readwrite_data(data, conn, k, &didwhat, done);
-
-         if(result || *done)
-           return result;
-  }
-
-Code: 
-
-#ifdef USE_LIBRTMP
-  rtmpProtocolActive = (conn->handler->protocol & (CURLPROTO_RTMP | CURLPROTO_RTMPE | CURLPROTO_RTMPS | CURLPROTO_RTMPT | CURLPROTO_RTMPTE | CURLPROTO_RTMPTS));
-
-  if (rtmpProtocolActive)
-  {
-    // check if RTMP protocol has finished transmission
-    RTMP *r = (RTMP *)conn->proto.generic;
-    if ((r->m_read.status == RTMP_READ_COMPLETE))
-    {
-      // RTMP protocol finished transmission
-      rtmpProtocolFinished = true;
-    }
-  }
-
-#endif
-
-  if((k->keepon & KEEP_RECV) &&
-     ((select_res & CURL_CSELECT_IN) || conn->bits.stream_was_rewound
-#ifdef USE_LIBRTMP
-     // in case of RTMP protocol read always data independently of socket state
-     // in another case can be some data unprocessed and we will be waiting for no reason
-     || rtmpProtocolActive
-#endif
-     )) {
-#ifdef USE_LIBRTMP
-       if ((rtmpProtocolActive && (!rtmpProtocolFinished)) || (!rtmpProtocolActive))
-       {
-#endif
-         result = readwrite_data(data, conn, k, &didwhat, done);
-
-#ifdef USE_LIBRTMP
-         if (rtmpProtocolActive)
-         {
-           RTMP *r = (RTMP *)conn->proto.generic;
-           if ((r->m_read.status == RTMP_READ_COMPLETE))
-           {
-             // set done flag
-             *done = TRUE;
-           }
-         }
-#endif
-
-         if(result || *done)
-           return result;
-#ifdef USE_LIBRTMP
-       }
-#endif
-  }
-
---------------------------------------------
-File: \src\url.c
-Comment: in Curl_setopt() method add before 'default' statement in 'switch(option)' switch
-Code:
-
-#ifdef USE_LIBRTMP
-  case CURLOPT_RTMP_LOG_CALLBACK:
-    /*
-     * Set RTMP protocol log callback
-     */
-    data->set.frtmp_log_func = va_arg(param, curl_rtmp_log_callback);
-    break;
-  case CURLOPT_RTMP_LOG_USERDATA:
-    /*
-    * Set RTMP protocol log callback user data
-    */
-    data->set.curl_rtmp_log_user_data = va_arg(param, void *);
-    break;
-#endif
+Changes in libcurl 7.37.0:
 
 --------------------------------------------
 File: \src\http.c
@@ -428,3 +225,165 @@ if2ip_result_t Curl_if2ip(int af, unsigned int remote_scope,
   FREE_MEM(networkInterface);
   return result;
 }
+
+--------------------------------------------
+File: \src\curl_rtmp.c
+Comment: before #endif of #ifdef USE_LIBRTMP insert
+Code:
+
+#else
+
+#include "urldata.h"
+#include "nonblock.h" /* for curlx_nonblock */
+#include "progress.h" /* for Curl_pgrsSetUploadSize */
+#include "transfer.h"
+#include "warnless.h"
+#include <curl/curl.h>
+
+const struct Curl_handler Curl_handler_rtmp = {
+  "RTMP",                               /* scheme */
+  ZERO_NULL,                           /* setup_connection */
+  ZERO_NULL,                              /* do_it */
+  ZERO_NULL,                            /* done */
+  ZERO_NULL,                            /* do_more */
+  ZERO_NULL,                         /* connect_it */
+  ZERO_NULL,                            /* connecting */
+  ZERO_NULL,                            /* doing */
+  ZERO_NULL,                            /* proto_getsock */
+  ZERO_NULL,                            /* doing_getsock */
+  ZERO_NULL,                            /* domore_getsock */
+  ZERO_NULL,                            /* perform_getsock */
+  ZERO_NULL,                      /* disconnect */
+  ZERO_NULL,                            /* readwrite */
+  PORT_RTMP,                            /* defport */
+  CURLPROTO_RTMP,                       /* protocol */
+  PROTOPT_NONE                          /* flags*/
+};
+
+const struct Curl_handler Curl_handler_rtmpt = {
+  "RTMPT",                              /* scheme */
+  ZERO_NULL,                           /* setup_connection */
+  ZERO_NULL,                              /* do_it */
+  ZERO_NULL,                            /* done */
+  ZERO_NULL,                            /* do_more */
+  ZERO_NULL,                         /* connect_it */
+  ZERO_NULL,                            /* connecting */
+  ZERO_NULL,                            /* doing */
+  ZERO_NULL,                            /* proto_getsock */
+  ZERO_NULL,                            /* doing_getsock */
+  ZERO_NULL,                            /* domore_getsock */
+  ZERO_NULL,                            /* perform_getsock */
+  ZERO_NULL,                      /* disconnect */
+  ZERO_NULL,                            /* readwrite */
+  PORT_RTMPT,                           /* defport */
+  CURLPROTO_RTMPT,                      /* protocol */
+  PROTOPT_NONE                          /* flags*/
+};
+
+const struct Curl_handler Curl_handler_rtmpe = {
+  "RTMPE",                              /* scheme */
+  ZERO_NULL,                           /* setup_connection */
+  ZERO_NULL,                              /* do_it */
+  ZERO_NULL,                            /* done */
+  ZERO_NULL,                            /* do_more */
+  ZERO_NULL,                         /* connect_it */
+  ZERO_NULL,                            /* connecting */
+  ZERO_NULL,                            /* doing */
+  ZERO_NULL,                            /* proto_getsock */
+  ZERO_NULL,                            /* doing_getsock */
+  ZERO_NULL,                            /* domore_getsock */
+  ZERO_NULL,                            /* perform_getsock */
+  ZERO_NULL,                      /* disconnect */
+  ZERO_NULL,                            /* readwrite */
+  PORT_RTMP,                            /* defport */
+  CURLPROTO_RTMPE,                      /* protocol */
+  PROTOPT_NONE                          /* flags*/
+};
+
+const struct Curl_handler Curl_handler_rtmpte = {
+  "RTMPTE",                             /* scheme */
+  ZERO_NULL,                           /* setup_connection */
+  ZERO_NULL,                              /* do_it */
+  ZERO_NULL,                            /* done */
+  ZERO_NULL,                            /* do_more */
+  ZERO_NULL,                         /* connect_it */
+  ZERO_NULL,                            /* connecting */
+  ZERO_NULL,                            /* doing */
+  ZERO_NULL,                            /* proto_getsock */
+  ZERO_NULL,                            /* doing_getsock */
+  ZERO_NULL,                            /* domore_getsock */
+  ZERO_NULL,                            /* perform_getsock */
+  ZERO_NULL,                      /* disconnect */
+  ZERO_NULL,                            /* readwrite */
+  PORT_RTMPT,                           /* defport */
+  CURLPROTO_RTMPTE,                     /* protocol */
+  PROTOPT_NONE                          /* flags*/
+};
+
+const struct Curl_handler Curl_handler_rtmps = {
+  "RTMPS",                              /* scheme */
+  ZERO_NULL,                           /* setup_connection */
+  ZERO_NULL,                              /* do_it */
+  ZERO_NULL,                            /* done */
+  ZERO_NULL,                            /* do_more */
+  ZERO_NULL,                         /* connect_it */
+  ZERO_NULL,                            /* connecting */
+  ZERO_NULL,                            /* doing */
+  ZERO_NULL,                            /* proto_getsock */
+  ZERO_NULL,                            /* doing_getsock */
+  ZERO_NULL,                            /* domore_getsock */
+  ZERO_NULL,                            /* perform_getsock */
+  ZERO_NULL,                      /* disconnect */
+  ZERO_NULL,                            /* readwrite */
+  PORT_RTMPS,                           /* defport */
+  CURLPROTO_RTMPS,                      /* protocol */
+  PROTOPT_NONE                          /* flags*/
+};
+
+const struct Curl_handler Curl_handler_rtmpts = {
+  "RTMPTS",                             /* scheme */
+  ZERO_NULL,                           /* setup_connection */
+  ZERO_NULL,                              /* do_it */
+  ZERO_NULL,                            /* done */
+  ZERO_NULL,                            /* do_more */
+  ZERO_NULL,                         /* connect_it */
+  ZERO_NULL,                            /* connecting */
+  ZERO_NULL,                            /* doing */
+  ZERO_NULL,                            /* proto_getsock */
+  ZERO_NULL,                            /* doing_getsock */
+  ZERO_NULL,                            /* domore_getsock */
+  ZERO_NULL,                            /* perform_getsock */
+  ZERO_NULL,                      /* disconnect */
+  ZERO_NULL,                            /* readwrite */
+  PORT_RTMPS,                           /* defport */
+  CURLPROTO_RTMPTS,                     /* protocol */
+  PROTOPT_NONE                          /* flags*/
+};
+
+--------------------------------------------
+File: \src\curl_rtmp.h
+Comment: comment conditional compilation #ifdef USE_LIBRTMP and #endif
+Code:
+
+//#ifdef USE_LIBRTMP
+extern const struct Curl_handler Curl_handler_rtmp;
+extern const struct Curl_handler Curl_handler_rtmpt;
+extern const struct Curl_handler Curl_handler_rtmpe;
+extern const struct Curl_handler Curl_handler_rtmpte;
+extern const struct Curl_handler Curl_handler_rtmps;
+extern const struct Curl_handler Curl_handler_rtmpts;
+//#endif
+
+--------------------------------------------
+File: \src\url.c
+Comment: comment conditional compilation #ifdef USE_LIBRTMP and #endif
+Code:
+
+//#ifdef USE_LIBRTMP
+  &Curl_handler_rtmp,
+  &Curl_handler_rtmpt,
+  &Curl_handler_rtmpe,
+  &Curl_handler_rtmpte,
+  &Curl_handler_rtmps,
+  &Curl_handler_rtmpts,
+//#endif

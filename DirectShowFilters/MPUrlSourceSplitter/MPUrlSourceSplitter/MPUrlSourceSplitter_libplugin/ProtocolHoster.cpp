@@ -498,10 +498,12 @@ unsigned int WINAPI CProtocolHoster::ReceiveDataWorker(LPVOID lpParam)
       unsigned int connectionState = caller->activeProtocol->GetConnectionState();
       currentTime = GetTickCount();
 
-      if ((!caller->activeProtocol->IsConnectionLostCannotReopen()) &&
-            ((connectionState == None) ||
-            (connectionState == InitializeFailed) ||
-            (connectionState == OpeningFailed)))
+      if ((connectionState == InitializeFailed) || (connectionState == OpeningFailed))
+      {
+        // initialization or opening failed, stop receiving data and in next run try to open connection
+        caller->activeProtocol->StopReceivingData();
+      }
+      else if ((!caller->activeProtocol->IsConnectionLostCannotReopen()) && (!caller->activeProtocol->IsWholeStreamDownloaded()) && (connectionState == None))
       {
         // problem with connection, try to (re)open
 
@@ -570,7 +572,7 @@ unsigned int WINAPI CProtocolHoster::ReceiveDataWorker(LPVOID lpParam)
                 (connectionState == Opened) ||
                 (connectionState == Closing))
       {
-        if ((openedConnection) && (connectionState == Closing))
+        if ((!caller->activeProtocol->IsWholeStreamDownloaded()) && (openedConnection) && (connectionState == Closing))
         {
           // we had opened connection, we lost it - protocol is closing connection
           // some protocols may need some sleep before loading (e.g. multicast UDP protocol needs some time between unsubscribing and subscribing in multicast groups)
@@ -585,7 +587,7 @@ unsigned int WINAPI CProtocolHoster::ReceiveDataWorker(LPVOID lpParam)
           openedConnection = false;
         }
 
-        if ((currentTime >= totalEndTicks) && (connectionState == Closing))
+        if ((!caller->activeProtocol->IsWholeStreamDownloaded()) && (currentTime >= totalEndTicks) && (connectionState == Closing))
         {
           caller->logger->Log(LOGGER_ERROR, L"%s: %s: maximum time of closing and opening connection reached", caller->hosterName, METHOD_RECEIVE_DATA_WORKER_NAME);
 

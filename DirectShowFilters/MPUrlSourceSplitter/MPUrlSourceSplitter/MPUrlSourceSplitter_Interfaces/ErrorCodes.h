@@ -116,4 +116,11 @@
 
 #define E_UDP_NO_DATA_RECEIVED                                                  -140
 
+// RTMP protocol error codes
+
+#define E_RTMP_BAD_URL_FORMAT                                                   -150
+#define E_RTMP_CONNECT_FAILED                                                   -151
+#define E_RTMP_CONNECT_STREAM_FAILED                                            -152
+#define E_RTMP_GENERAL_READ_ERROR                                               -153
+
 #endif

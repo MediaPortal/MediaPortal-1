@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2012, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2014, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -22,7 +22,7 @@
 
 /*
  * Source file for all GnuTLS-specific code for the TLS/SSL layer. No code
- * but sslgen.c should ever call or use these functions.
+ * but vtls.c should ever call or use these functions.
  *
  * Note: don't use the GnuTLS' *_t variable type names in this source code,
  * since they were not present in 1.0.X.
@@ -46,7 +46,7 @@
 #include "sendf.h"
 #include "inet_pton.h"
 #include "gtls.h"
-#include "sslgen.h"
+#include "vtls.h"
 #include "parsedate.h"
 #include "connect.h" /* for the connect timeout */
 #include "select.h"
@@ -88,6 +88,15 @@ static bool gtls_inited = FALSE;
 #  endif
 #  if (GNUTLS_VERSION_NUMBER >= 0x020c03)
 #    define GNUTLS_MAPS_WINSOCK_ERRORS 1
+#  endif
+
+#  ifdef USE_NGHTTP2
+#    undef HAS_ALPN
+#    if (GNUTLS_VERSION_NUMBER >= 0x030200)
+#      define HAS_ALPN
+#    else
+#      error http2 builds require GnuTLS >= 3.2.0 for ALPN support
+#    endif
 #  endif
 #endif
 
@@ -350,9 +359,6 @@ static CURLcode
 gtls_connect_step1(struct connectdata *conn,
                    int sockindex)
 {
-#ifndef USE_GNUTLS_PRIORITY_SET_DIRECT
-  static const int cert_type_priority[] = { GNUTLS_CRT_X509, 0 };
-#endif
   struct SessionHandle *data = conn->data;
   gnutls_session session;
   int rc;
@@ -363,6 +369,23 @@ gtls_connect_step1(struct connectdata *conn,
   struct in6_addr addr;
 #else
   struct in_addr addr;
+#endif
+#ifndef USE_GNUTLS_PRIORITY_SET_DIRECT
+  static int cipher_priority[] = { GNUTLS_CIPHER_AES_128_GCM,
+    GNUTLS_CIPHER_AES_256_GCM, GNUTLS_CIPHER_AES_128_CBC,
+    GNUTLS_CIPHER_AES_256_CBC, GNUTLS_CIPHER_CAMELLIA_128_CBC,
+    GNUTLS_CIPHER_CAMELLIA_256_CBC, GNUTLS_CIPHER_3DES_CBC,
+  };
+  static const int cert_type_priority[] = { GNUTLS_CRT_X509, 0 };
+  static int protocol_priority[] = { 0, 0, 0, 0 };
+#else
+#define GNUTLS_CIPHERS "NORMAL:-ARCFOUR-128:-CTYPE-ALL:+CTYPE-X509"
+  const char* prioritylist;
+  const char *err;
+#endif
+#ifdef HAS_ALPN
+  int protocols_size = 2;
+  gnutls_datum_t protocols[2];
 #endif
 
   if(conn->ssl[sockindex].state == ssl_connection_complete)
@@ -471,33 +494,103 @@ gtls_connect_step1(struct connectdata *conn,
   if(rc != GNUTLS_E_SUCCESS)
     return CURLE_SSL_CONNECT_ERROR;
 
-  if(data->set.ssl.version == CURL_SSLVERSION_SSLv3) {
 #ifndef USE_GNUTLS_PRIORITY_SET_DIRECT
-    static const int protocol_priority[] = { GNUTLS_SSL3, 0 };
-    rc = gnutls_protocol_set_priority(session, protocol_priority);
-#else
-    const char *err;
-    /* the combination of the cipher ARCFOUR with SSL 3.0 and TLS 1.0 is not
-       vulnerable to attacks such as the BEAST, why this code now explicitly
-       asks for that
-    */
-    rc = gnutls_priority_set_direct(session,
-                                    "NORMAL:-VERS-TLS-ALL:+VERS-SSL3.0:"
-                                    "-CIPHER-ALL:+ARCFOUR-128",
-                                    &err);
-#endif
-    if(rc != GNUTLS_E_SUCCESS)
-      return CURLE_SSL_CONNECT_ERROR;
-  }
+  rc = gnutls_cipher_set_priority(session, cipher_priority);
+  if(rc != GNUTLS_E_SUCCESS)
+    return CURLE_SSL_CONNECT_ERROR;
 
-#ifndef USE_GNUTLS_PRIORITY_SET_DIRECT
   /* Sets the priority on the certificate types supported by gnutls. Priority
-     is higher for types specified before others. After specifying the types
-     you want, you must append a 0. */
+   is higher for types specified before others. After specifying the types
+   you want, you must append a 0. */
   rc = gnutls_certificate_type_set_priority(session, cert_type_priority);
   if(rc != GNUTLS_E_SUCCESS)
     return CURLE_SSL_CONNECT_ERROR;
+
+  if(data->set.ssl.cipher_list != NULL) {
+    failf(data, "can't pass a custom cipher list to older GnuTLS"
+          " versions");
+    return CURLE_SSL_CONNECT_ERROR;
+  }
+
+  switch (data->set.ssl.version) {
+    case CURL_SSLVERSION_SSLv3:
+      protocol_priority[0] = GNUTLS_SSL3;
+      break;
+    case CURL_SSLVERSION_DEFAULT:
+    case CURL_SSLVERSION_TLSv1:
+      protocol_priority[0] = GNUTLS_TLS1_0;
+      protocol_priority[1] = GNUTLS_TLS1_1;
+      protocol_priority[2] = GNUTLS_TLS1_2;
+      break;
+    case CURL_SSLVERSION_TLSv1_0:
+      protocol_priority[0] = GNUTLS_TLS1_0;
+      break;
+    case CURL_SSLVERSION_TLSv1_1:
+      protocol_priority[0] = GNUTLS_TLS1_1;
+      break;
+    case CURL_SSLVERSION_TLSv1_2:
+      protocol_priority[0] = GNUTLS_TLS1_2;
+    break;
+      case CURL_SSLVERSION_SSLv2:
+    default:
+      failf(data, "GnuTLS does not support SSLv2");
+      return CURLE_SSL_CONNECT_ERROR;
+      break;
+  }
+  rc = gnutls_protocol_set_priority(session, protocol_priority);
+#else
+  switch (data->set.ssl.version) {
+    case CURL_SSLVERSION_SSLv3:
+      prioritylist = GNUTLS_CIPHERS ":-VERS-TLS-ALL:+VERS-SSL3.0";
+      sni = false;
+      break;
+    case CURL_SSLVERSION_DEFAULT:
+    case CURL_SSLVERSION_TLSv1:
+      prioritylist = GNUTLS_CIPHERS ":-VERS-SSL3.0";
+      break;
+    case CURL_SSLVERSION_TLSv1_0:
+      prioritylist = GNUTLS_CIPHERS ":-VERS-SSL3.0:-VERS-TLS-ALL:"
+                     "+VERS-TLS1.0";
+      break;
+    case CURL_SSLVERSION_TLSv1_1:
+      prioritylist = GNUTLS_CIPHERS ":-VERS-SSL3.0:-VERS-TLS-ALL:"
+                     "+VERS-TLS1.1";
+      break;
+    case CURL_SSLVERSION_TLSv1_2:
+      prioritylist = GNUTLS_CIPHERS ":-VERS-SSL3.0:-VERS-TLS-ALL:"
+                     "+VERS-TLS1.2";
+      break;
+    case CURL_SSLVERSION_SSLv2:
+    default:
+      failf(data, "GnuTLS does not support SSLv2");
+      return CURLE_SSL_CONNECT_ERROR;
+      break;
+  }
+  rc = gnutls_priority_set_direct(session, prioritylist, &err);
 #endif
+
+#ifdef HAS_ALPN
+  if(data->set.httpversion == CURL_HTTP_VERSION_2_0) {
+    if(data->set.ssl_enable_alpn) {
+      protocols[0].data = NGHTTP2_PROTO_VERSION_ID;
+      protocols[0].size = NGHTTP2_PROTO_VERSION_ID_LEN;
+      protocols[1].data = ALPN_HTTP_1_1;
+      protocols[1].size = ALPN_HTTP_1_1_LENGTH;
+      gnutls_alpn_set_protocols(session, protocols, protocols_size, 0);
+      infof(data, "ALPN, offering %s, %s\n", NGHTTP2_PROTO_VERSION_ID,
+            ALPN_HTTP_1_1);
+    }
+    else {
+      infof(data, "SSL, can't negotiate HTTP/2.0 without ALPN\n");
+    }
+  }
+#endif
+
+  if(rc != GNUTLS_E_SUCCESS) {
+    failf(data, "Did you pass a valid GnuTLS cipher list?");
+    return CURLE_SSL_CONNECT_ERROR;
+  }
+
 
   if(data->set.str[STRING_CERT]) {
     if(gnutls_certificate_set_x509_key_file(
@@ -573,6 +666,9 @@ gtls_connect_step3(struct connectdata *conn,
   int rc;
   int incache;
   void *ssl_sessionid;
+#ifdef HAS_ALPN
+  gnutls_datum_t proto;
+#endif
   CURLcode result = CURLE_OK;
 
   /* This function will return the peer's raw certificate (chain) as sent by
@@ -633,17 +729,16 @@ gtls_connect_step3(struct connectdata *conn,
     else
       infof(data, "\t server certificate verification OK\n");
   }
-  else {
+  else
     infof(data, "\t server certificate verification SKIPPED\n");
-    goto after_server_cert_verification;
-  }
 
   /* initialize an X.509 certificate structure. */
   gnutls_x509_crt_init(&x509_cert);
 
-  /* convert the given DER or PEM encoded Certificate to the native
-     gnutls_x509_crt_t format */
-  gnutls_x509_crt_import(x509_cert, chainp, GNUTLS_X509_FMT_DER);
+  if(chainp)
+    /* convert the given DER or PEM encoded Certificate to the native
+       gnutls_x509_crt_t format */
+    gnutls_x509_crt_import(x509_cert, chainp, GNUTLS_X509_FMT_DER);
 
   if(data->set.ssl.issuercert) {
     gnutls_x509_crt_init(&x509_issuer);
@@ -766,8 +861,6 @@ gtls_connect_step3(struct connectdata *conn,
 
   gnutls_x509_crt_deinit(x509_cert);
 
-after_server_cert_verification:
-
   /* compression algorithm (if any) */
   ptr = gnutls_compression_get_name(gnutls_compression_get(session));
   /* the *_get_name() says "NULL" if GNUTLS_COMP_NULL is returned */
@@ -780,6 +873,29 @@ after_server_cert_verification:
   /* the MAC algorithms name. ie SHA1 */
   ptr = gnutls_mac_get_name(gnutls_mac_get(session));
   infof(data, "\t MAC: %s\n", ptr);
+
+#ifdef HAS_ALPN
+  if(data->set.ssl_enable_alpn) {
+    rc = gnutls_alpn_get_selected_protocol(session, &proto);
+    if(rc == 0) {
+      infof(data, "ALPN, server accepted to use %.*s\n", proto.size,
+          proto.data);
+
+      if(proto.size == NGHTTP2_PROTO_VERSION_ID_LEN &&
+        memcmp(NGHTTP2_PROTO_VERSION_ID, proto.data,
+        NGHTTP2_PROTO_VERSION_ID_LEN) == 0) {
+        conn->negnpn = NPN_HTTP2;
+      }
+      else if(proto.size == ALPN_HTTP_1_1_LENGTH && memcmp(ALPN_HTTP_1_1,
+          proto.data, ALPN_HTTP_1_1_LENGTH) == 0) {
+        conn->negnpn = NPN_HTTP1_1;
+      }
+    }
+    else {
+      infof(data, "ALPN, server did not agree to a protocol\n");
+    }
+  }
+#endif
 
   conn->ssl[sockindex].state = ssl_connection_complete;
   conn->recv[sockindex] = gtls_recv;
@@ -1105,8 +1221,8 @@ void Curl_gtls_md5sum(unsigned char *tmp, /* input */
 #if defined(USE_GNUTLS_NETTLE)
   struct md5_ctx MD5pw;
   md5_init(&MD5pw);
-  md5_update(&MD5pw, tmplen, tmp);
-  md5_digest(&MD5pw, md5len, md5sum);
+  md5_update(&MD5pw, (unsigned int)tmplen, tmp);
+  md5_digest(&MD5pw, (unsigned int)md5len, md5sum);
 #elif defined(USE_GNUTLS)
   gcry_md_hd_t MD5pw;
   gcry_md_open(&MD5pw, GCRY_MD_MD5, 0);

@@ -43,6 +43,8 @@ typedef enum {
   POP3_AUTH_DIGESTMD5_RESP,
   POP3_AUTH_NTLM,
   POP3_AUTH_NTLM_TYPE2MSG,
+  POP3_AUTH_XOAUTH2,
+  POP3_AUTH_CANCEL,
   POP3_AUTH_FINAL,
   POP3_APOP,
   POP3_USER,
@@ -91,7 +93,7 @@ extern const struct Curl_handler Curl_handler_pop3s;
 
 /* Authentication type values */
 #define POP3_TYPE_NONE      0
-#define POP3_TYPE_ANY       ~0
+#define POP3_TYPE_ANY       ~0U
 
 /* This is the 5-bytes End-Of-Body marker for POP3 */
 #define POP3_EOB "\x0d\x0a\x2e\x0d\x0a"

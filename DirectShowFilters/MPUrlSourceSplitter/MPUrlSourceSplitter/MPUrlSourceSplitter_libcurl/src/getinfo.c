@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2012, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2014, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -28,7 +28,7 @@
 #include "getinfo.h"
 
 #include "curl_memory.h"
-#include "sslgen.h"
+#include "vtls/vtls.h"
 #include "connect.h" /* Curl_getconnectinfo() */
 #include "progress.h"
 
@@ -53,9 +53,9 @@ CURLcode Curl_initinfo(struct SessionHandle *data)
   pro->t_redirect = 0;
 
   info->httpcode = 0;
-  info->httpversion=0;
-  info->filetime=-1; /* -1 is an illegal time and thus means unknown */
-  info->timecond=0;
+  info->httpversion = 0;
+  info->filetime = -1; /* -1 is an illegal time and thus means unknown */
+  info->timecond = FALSE;
 
   if(info->contenttype)
     free(info->contenttype);
@@ -186,7 +186,7 @@ static CURLcode getinfo_long(struct SessionHandle *data, CURLINFO info,
     break;
   case CURLINFO_CONDITION_UNMET:
     /* return if the condition prevented the document to get transferred */
-    *param_longp = data->info.timecond;
+    *param_longp = data->info.timecond ? 1L : 0L;
     break;
   case CURLINFO_RTSP_CLIENT_CSEQ:
     *param_longp = data->state.rtsp_next_client_CSeq;
@@ -249,14 +249,7 @@ static CURLcode getinfo_double(struct SessionHandle *data, CURLINFO info,
   case CURLINFO_REDIRECT_TIME:
     *param_doublep =  data->progress.t_redirect;
     break;
-#ifdef USE_LIBRTMP
-  case CURLINFO_RTMP_TOTAL_DURATION:
-    *param_doublep = data->set.rtmp_total_duration;
-    break;
-  case CURLINFO_RTMP_CURRENT_TIME:
-    *param_doublep = data->set.rtmp_current_time;
-    break;
-#endif
+
   default:
     return CURLE_BAD_FUNCTION_ARGUMENT;
   }
@@ -284,7 +277,56 @@ static CURLcode getinfo_slist(struct SessionHandle *data, CURLINFO info,
     ptr.to_certinfo = &data->info.certs;
     *param_slistp = ptr.to_slist;
     break;
+  case CURLINFO_TLS_SESSION:
+    {
+      struct curl_tlssessioninfo **tsip = (struct curl_tlssessioninfo **)
+                                          param_slistp;
+      struct curl_tlssessioninfo *tsi = &data->tsi;
+      struct connectdata *conn = data->easy_conn;
+      unsigned int sockindex = 0;
 
+      *tsip = tsi;
+      tsi->backend = CURLSSLBACKEND_NONE;
+      tsi->internals = NULL;
+
+      if(!conn)
+        break;
+
+      /* Find the active ("in use") SSL connection, if any */
+      while((sockindex < sizeof(conn->ssl) / sizeof(conn->ssl[0])) &&
+            (!conn->ssl[sockindex].use))
+        sockindex++;
+
+      if(sockindex == sizeof(conn->ssl) / sizeof(conn->ssl[0]))
+        break; /* no SSL session found */
+
+      /* Return the TLS session information from the relevant backend */
+#ifdef USE_SSLEAY
+      tsi->backend = CURLSSLBACKEND_OPENSSL;
+      tsi->internals = conn->ssl[sockindex].ctx;
+#endif
+#ifdef USE_GNUTLS
+      tsi->backend = CURLSSLBACKEND_GNUTLS;
+      tsi->internals = conn->ssl[sockindex].session;
+#endif
+#ifdef USE_NSS
+      tsi->backend = CURLSSLBACKEND_NSS;
+      tsi->internals = conn->ssl[sockindex].handle;
+#endif
+#ifdef USE_QSOSSL
+      tsi->backend = CURLSSLBACKEND_QSOSSL;
+      tsi->internals = conn->ssl[sockindex].handle;
+#endif
+#ifdef USE_GSKIT
+      tsi->backend = CURLSSLBACKEND_GSKIT;
+      tsi->internals = conn->ssl[sockindex].handle;
+#endif
+      /* NOTE: For other SSL backends, it is not immediately clear what data
+         to return from 'struct ssl_connect_data'; thus, for now we keep the
+         backend as CURLSSLBACKEND_NONE in those cases, which should be
+         interpreted as "not supported" */
+    }
+    break;
   default:
     return CURLE_BAD_FUNCTION_ARGUMENT;
   }

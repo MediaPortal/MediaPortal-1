@@ -133,7 +133,8 @@ static int clk_tck;
 uint32_t
 RTMP_GetTime()
 {
-#ifdef _DEBUG
+//#ifdef _DEBUG
+#ifdef __DEBUG
   return 0;
 #elif defined(_WIN32)
   return timeGetTime();
@@ -3132,7 +3133,8 @@ HandShake(RTMP *r, int FP9HandShake)
 
   memset(&clientsig[4], 0, 4);
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
+#ifdef 0
   for (i = 8; i < RTMP_SIG_SIZE; i++)
     clientsig[i] = 0xff;
 #else
@@ -3204,7 +3206,8 @@ SHandShake(RTMP *r)
   memcpy(serversig, &uptime, 4);
 
   memset(&serversig[4], 0, 4);
-#ifdef _DEBUG
+//#ifdef _DEBUG
+#ifdef 0
   for (i = 8; i < RTMP_SIG_SIZE; i++)
     serversig[i] = 0xff;
 #else
@@ -3594,6 +3597,11 @@ RTMPSockBuf_Fill(RTMP *r, RTMPSockBuf *sb)
 	}
       if (nBytes != -1)
 	{
+    if (r->m_dumpRawDataCallback != NULL)
+    {
+      r->m_dumpRawDataCallback(r, sb->sb_start + sb->sb_size, nBytes);
+    }
+
 	  sb->sb_size += nBytes;
 	}
       else
@@ -4223,7 +4231,8 @@ Read_1_Packet(RTMP *r, char *buf, unsigned int buflen)
 
 		  if (prevTagSize != (dataSize + 11))
 		    {
-#ifdef _DEBUG
+//#ifdef _DEBUG
+#ifdef __DEBUG
 		      RTMP_Log(r, RTMP_LOGWARNING,
 			  "Tag and data size are not consitent, writing tag size according to dataSize+11: %d",
 			  dataSize + 11);
