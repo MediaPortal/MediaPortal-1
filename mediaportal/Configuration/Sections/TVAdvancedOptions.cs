@@ -46,6 +46,8 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.Button buttonTimeshiftingPath;
     private System.Windows.Forms.Button buttonRecordingPath;
     private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
+    private MPLabel mpLabelWarning;
+    private MPLabel mpLabelNote;
     public int pluginVersion;
 
 
@@ -80,6 +82,8 @@ namespace MediaPortal.Configuration.Sections
       this.radioButton1 = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.mpMainToolTip = new MediaPortal.UserInterface.Controls.MPToolTip();
       this.mpRtspPathsGroupBox = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.mpLabelNote = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpLabelWarning = new MediaPortal.UserInterface.Controls.MPLabel();
       this.buttonTimeshiftingPath = new System.Windows.Forms.Button();
       this.buttonRecordingPath = new System.Windows.Forms.Button();
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -102,7 +106,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxSettings.Location = new System.Drawing.Point(0, 0);
       this.groupBoxSettings.Name = "groupBoxSettings";
-      this.groupBoxSettings.Size = new System.Drawing.Size(472, 158);
+      this.groupBoxSettings.Size = new System.Drawing.Size(472, 130);
       this.groupBoxSettings.TabIndex = 0;
       this.groupBoxSettings.TabStop = false;
       this.groupBoxSettings.Text = "Settings";
@@ -111,7 +115,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.mpDoNotAllowSlowMotionDuringZappingCheckBox.AutoSize = true;
       this.mpDoNotAllowSlowMotionDuringZappingCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpDoNotAllowSlowMotionDuringZappingCheckBox.Location = new System.Drawing.Point(9, 80);
+      this.mpDoNotAllowSlowMotionDuringZappingCheckBox.Location = new System.Drawing.Point(9, 71);
       this.mpDoNotAllowSlowMotionDuringZappingCheckBox.Name = "mpDoNotAllowSlowMotionDuringZappingCheckBox";
       this.mpDoNotAllowSlowMotionDuringZappingCheckBox.Size = new System.Drawing.Size(336, 17);
       this.mpDoNotAllowSlowMotionDuringZappingCheckBox.TabIndex = 4;
@@ -124,7 +128,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.mpUseRtspCheckBox.AutoSize = true;
       this.mpUseRtspCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpUseRtspCheckBox.Location = new System.Drawing.Point(9, 116);
+      this.mpUseRtspCheckBox.Location = new System.Drawing.Point(9, 97);
       this.mpUseRtspCheckBox.Name = "mpUseRtspCheckBox";
       this.mpUseRtspCheckBox.Size = new System.Drawing.Size(144, 17);
       this.mpUseRtspCheckBox.TabIndex = 1;
@@ -137,9 +141,9 @@ namespace MediaPortal.Configuration.Sections
       this.mpWarningLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
       this.mpWarningLabel.ForeColor = System.Drawing.Color.Red;
-      this.mpWarningLabel.Location = new System.Drawing.Point(6, 16);
+      this.mpWarningLabel.Location = new System.Drawing.Point(6, 18);
       this.mpWarningLabel.Name = "mpWarningLabel";
-      this.mpWarningLabel.Size = new System.Drawing.Size(460, 51);
+      this.mpWarningLabel.Size = new System.Drawing.Size(460, 52);
       this.mpWarningLabel.TabIndex = 0;
       this.mpWarningLabel.Text = resources.GetString("mpWarningLabel.Text");
       // 
@@ -157,6 +161,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.mpRtspPathsGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpRtspPathsGroupBox.Controls.Add(this.mpLabelNote);
+      this.mpRtspPathsGroupBox.Controls.Add(this.mpLabelWarning);
       this.mpRtspPathsGroupBox.Controls.Add(this.buttonTimeshiftingPath);
       this.mpRtspPathsGroupBox.Controls.Add(this.buttonRecordingPath);
       this.mpRtspPathsGroupBox.Controls.Add(this.mpLabel1);
@@ -165,16 +171,36 @@ namespace MediaPortal.Configuration.Sections
       this.mpRtspPathsGroupBox.Controls.Add(this.textBoxTimeshifting);
       this.mpRtspPathsGroupBox.Controls.Add(this.textBoxRecording);
       this.mpRtspPathsGroupBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpRtspPathsGroupBox.Location = new System.Drawing.Point(0, 164);
+      this.mpRtspPathsGroupBox.Location = new System.Drawing.Point(0, 133);
       this.mpRtspPathsGroupBox.Name = "mpRtspPathsGroupBox";
-      this.mpRtspPathsGroupBox.Size = new System.Drawing.Size(472, 231);
+      this.mpRtspPathsGroupBox.Size = new System.Drawing.Size(472, 275);
       this.mpRtspPathsGroupBox.TabIndex = 1;
       this.mpRtspPathsGroupBox.TabStop = false;
       this.mpRtspPathsGroupBox.Text = "Additional UNC settings";
       // 
+      // mpLabelNote
+      // 
+      this.mpLabelNote.AutoSize = true;
+      this.mpLabelNote.ForeColor = System.Drawing.Color.Red;
+      this.mpLabelNote.Location = new System.Drawing.Point(6, 24);
+      this.mpLabelNote.Name = "mpLabelNote";
+      this.mpLabelNote.Size = new System.Drawing.Size(33, 13);
+      this.mpLabelNote.TabIndex = 8;
+      this.mpLabelNote.Text = "Note:";
+      // 
+      // mpLabelWarning
+      // 
+      this.mpLabelWarning.ForeColor = System.Drawing.Color.Black;
+      this.mpLabelWarning.Location = new System.Drawing.Point(41, 24);
+      this.mpLabelWarning.Name = "mpLabelWarning";
+      this.mpLabelWarning.Size = new System.Drawing.Size(425, 32);
+      this.mpLabelWarning.TabIndex = 7;
+      this.mpLabelWarning.Text = "When using UNC paths, all tuners must use the same Timeshifting path and the same" +
+    " Recording path! ";
+      // 
       // buttonTimeshiftingPath
       // 
-      this.buttonTimeshiftingPath.Location = new System.Drawing.Point(408, 98);
+      this.buttonTimeshiftingPath.Location = new System.Drawing.Point(408, 139);
       this.buttonTimeshiftingPath.Name = "buttonTimeshiftingPath";
       this.buttonTimeshiftingPath.Size = new System.Drawing.Size(58, 20);
       this.buttonTimeshiftingPath.TabIndex = 6;
@@ -184,7 +210,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // buttonRecordingPath
       // 
-      this.buttonRecordingPath.Location = new System.Drawing.Point(408, 49);
+      this.buttonRecordingPath.Location = new System.Drawing.Point(408, 90);
       this.buttonRecordingPath.Name = "buttonRecordingPath";
       this.buttonRecordingPath.Size = new System.Drawing.Size(58, 20);
       this.buttonRecordingPath.TabIndex = 5;
@@ -195,7 +221,7 @@ namespace MediaPortal.Configuration.Sections
       // mpLabel1
       // 
       this.mpLabel1.AutoSize = true;
-      this.mpLabel1.Location = new System.Drawing.Point(30, 124);
+      this.mpLabel1.Location = new System.Drawing.Point(30, 165);
       this.mpLabel1.Name = "mpLabel1";
       this.mpLabel1.Size = new System.Drawing.Size(392, 104);
       this.mpLabel1.TabIndex = 4;
@@ -204,7 +230,7 @@ namespace MediaPortal.Configuration.Sections
       // mpLabelRecording
       // 
       this.mpLabelRecording.AutoSize = true;
-      this.mpLabelRecording.Location = new System.Drawing.Point(6, 32);
+      this.mpLabelRecording.Location = new System.Drawing.Point(6, 73);
       this.mpLabelRecording.Name = "mpLabelRecording";
       this.mpLabelRecording.Size = new System.Drawing.Size(83, 13);
       this.mpLabelRecording.TabIndex = 3;
@@ -213,7 +239,7 @@ namespace MediaPortal.Configuration.Sections
       // mpLabelTimeshifting
       // 
       this.mpLabelTimeshifting.AutoSize = true;
-      this.mpLabelTimeshifting.Location = new System.Drawing.Point(6, 80);
+      this.mpLabelTimeshifting.Location = new System.Drawing.Point(6, 121);
       this.mpLabelTimeshifting.Name = "mpLabelTimeshifting";
       this.mpLabelTimeshifting.Size = new System.Drawing.Size(90, 13);
       this.mpLabelTimeshifting.TabIndex = 2;
@@ -221,14 +247,14 @@ namespace MediaPortal.Configuration.Sections
       // 
       // textBoxTimeshifting
       // 
-      this.textBoxTimeshifting.Location = new System.Drawing.Point(9, 98);
+      this.textBoxTimeshifting.Location = new System.Drawing.Point(9, 139);
       this.textBoxTimeshifting.Name = "textBoxTimeshifting";
       this.textBoxTimeshifting.Size = new System.Drawing.Size(398, 20);
       this.textBoxTimeshifting.TabIndex = 1;
       // 
       // textBoxRecording
       // 
-      this.textBoxRecording.Location = new System.Drawing.Point(9, 50);
+      this.textBoxRecording.Location = new System.Drawing.Point(9, 91);
       this.textBoxRecording.Name = "textBoxRecording";
       this.textBoxRecording.Size = new System.Drawing.Size(398, 20);
       this.textBoxRecording.TabIndex = 0;
