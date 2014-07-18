@@ -88,6 +88,18 @@ public:
   // destructor
   virtual ~CRtmpCurlInstance(void);
 
+  /* get methods */
+
+  // gets RTMP download request
+  // @return : RTMP download request
+  CRtmpDownloadRequest *GetRtmpDownloadRequest(void);
+
+  // gets RTMP download response
+  // @return : RTMP download response
+  CRtmpDownloadResponse *GetRtmpDownloadResponse(void);
+
+  /* set methods */
+
   /* other methods */
 
   // initializes CURL instance

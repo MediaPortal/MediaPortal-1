@@ -44,6 +44,22 @@ CRtmpCurlInstance::~CRtmpCurlInstance(void)
   FREE_MEM(this->librtmpUrl);
 }
 
+/* get methods */
+
+CRtmpDownloadRequest *CRtmpCurlInstance::GetRtmpDownloadRequest(void)
+{
+  return this->rtmpDownloadRequest;
+}
+
+CRtmpDownloadResponse *CRtmpCurlInstance::GetRtmpDownloadResponse(void)
+{
+  return this->rtmpDownloadResponse;
+}
+
+/* set methods */
+
+/* other methods */
+
 HRESULT CRtmpCurlInstance::Initialize(CDownloadRequest *downloadRequest)
 {
   HRESULT result = __super::Initialize(downloadRequest);

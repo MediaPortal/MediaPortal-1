@@ -762,19 +762,42 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(CStreamPackage *streamPa
     if ((!this->IsSetStreamLength()) && (!(this->IsWholeStreamDownloaded() || this->IsEndOfStreamReached() || this->IsConnectionLostCannotReopen())))
     {
       // adjust total length (if necessary)
-      if (this->streamLength == 0)
+
+      uint64_t duration = RTMP_DURATION_UNSPECIFIED;
+      if ((this->mainCurlInstance != NULL) && (this->mainCurlInstance->GetRtmpDownloadResponse()->GetDuration() != RTMP_DURATION_UNSPECIFIED))
+      {
+        duration = (this->mainCurlInstance->GetRtmpDownloadResponse()->GetDuration() != 0) ? this->mainCurlInstance->GetRtmpDownloadResponse()->GetDuration() : RTMP_DURATION_UNSPECIFIED;
+      }
+
+      if ((duration != RTMP_DURATION_UNSPECIFIED) && (this->streamFragments->GetSearchCount() != 0))
+      {
+        CRtmpStreamFragment *fragment = this->streamFragments->GetItem(this->streamFragments->GetStartSearchingIndex() + this->streamFragments->GetSearchCount() - 1);
+
+        if (fragment->GetFragmentStartTimestamp() != 0)
+        {
+          // specified duration in RTMP connect response
+          int64_t tempStreamLength = this->GetBytePosition() * (int64_t)duration / fragment->GetFragmentStartTimestamp();
+
+          if ((this->streamLength == 0) || (tempStreamLength < (this->streamLength * 4 / 5)) || (tempStreamLength > this->streamLength))
+          {
+            this->streamLength = tempStreamLength;
+            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length (by time): %lld", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
+          }
+        }
+      }
+      else if (this->streamLength == 0)
       {
         // stream length not set
         // just make guess
 
         this->streamLength = MINIMUM_RECEIVED_DATA_FOR_SPLITTER;
-        this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length: %llu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
+        this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length: %lld", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
       }
       else if ((this->GetBytePosition() > (this->streamLength * 3 / 4)))
       {
         // it is time to adjust stream length, we are approaching to end but still we don't know total length
         this->streamLength = this->GetBytePosition() * 2;
-        this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length: %llu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
+        this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length: %lld", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
       }
     }
 
@@ -1198,7 +1221,13 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ClearSession(void)
 
 int64_t CMPUrlSourceSplitter_Protocol_Rtmp::GetDuration(void)
 {
-  return this->IsLiveStream() ? DURATION_LIVE_STREAM : DURATION_UNSPECIFIED;
+  uint64_t duration = RTMP_DURATION_UNSPECIFIED;
+  if ((this->mainCurlInstance != NULL) && (this->mainCurlInstance->GetRtmpDownloadResponse()->GetDuration() != RTMP_DURATION_UNSPECIFIED))
+  {
+    duration = (this->mainCurlInstance->GetRtmpDownloadResponse()->GetDuration() != 0) ? this->mainCurlInstance->GetRtmpDownloadResponse()->GetDuration() : RTMP_DURATION_UNSPECIFIED;
+  }
+
+  return this->IsLiveStream() ? DURATION_LIVE_STREAM : ((duration != RTMP_DURATION_UNSPECIFIED) ? (int64_t)duration : DURATION_UNSPECIFIED);
 }
 
 HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::GetStreamInformation(CStreamInformationCollection *streams)
