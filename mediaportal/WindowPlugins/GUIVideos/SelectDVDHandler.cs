@@ -427,7 +427,7 @@ namespace MediaPortal.GUI.Video
 
     private bool IsFolderPinProtected(string folder)
     {
-      int pinCode = 0;
+      string pinCode = string.Empty;
       return VirtualDirectories.Instance.Movies.IsProtectedShare(folder, out pinCode);
     }
 
