@@ -181,19 +181,20 @@ namespace MediaPortal.Configuration.Sections
       // mpLabelNote
       // 
       this.mpLabelNote.AutoSize = true;
+      this.mpLabelNote.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.mpLabelNote.ForeColor = System.Drawing.Color.Red;
       this.mpLabelNote.Location = new System.Drawing.Point(6, 24);
       this.mpLabelNote.Name = "mpLabelNote";
-      this.mpLabelNote.Size = new System.Drawing.Size(33, 13);
+      this.mpLabelNote.Size = new System.Drawing.Size(45, 13);
       this.mpLabelNote.TabIndex = 8;
-      this.mpLabelNote.Text = "Note:";
+      this.mpLabelNote.Text = "NOTE:";
       // 
       // mpLabelWarning
       // 
       this.mpLabelWarning.ForeColor = System.Drawing.Color.Black;
-      this.mpLabelWarning.Location = new System.Drawing.Point(41, 24);
+      this.mpLabelWarning.Location = new System.Drawing.Point(54, 24);
       this.mpLabelWarning.Name = "mpLabelWarning";
-      this.mpLabelWarning.Size = new System.Drawing.Size(425, 32);
+      this.mpLabelWarning.Size = new System.Drawing.Size(409, 32);
       this.mpLabelWarning.TabIndex = 7;
       this.mpLabelWarning.Text = "When using UNC paths, all tuners must use the same Timeshifting path and the same" +
     " Recording path! ";

@@ -125,11 +125,11 @@
   </data>
   <data name="mpLabel1.Text" xml:space="preserve">
     <value>NOTE:
-If you leave those fields blank then the default folders are used.
+If you leave these fields blank then the default folders are used.
 
 Example:
 
-Local Tv-Server Path                 --&gt;             Default UNC path
+Local TV-Server path                 --&gt;             Default UNC path
 "D:\TVE\TimeShift"                                   "\\servername\D\TVE\TimeShift"
 "C:\Videos\Recording"                              "\\servername\C\Videos\Recording"  </value>
   </data>
