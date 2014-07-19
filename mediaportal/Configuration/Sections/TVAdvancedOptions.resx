@@ -120,9 +120,6 @@
   <metadata name="mpMainToolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <data name="mpWarningLabel.Text" xml:space="preserve">
-    <value>This section provides special advanced option settings. Some of these settings are experimental. Do not alter any of the settings below unless you know what you are doing. Please refer to the Wiki for more information.</value>
-  </data>
   <data name="mpLabel1.Text" xml:space="preserve">
     <value>NOTE:
 If you leave these fields blank then the default folders are used.
