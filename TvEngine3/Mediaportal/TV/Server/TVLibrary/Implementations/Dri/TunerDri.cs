@@ -61,14 +61,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     private EventSubscriptionFailedDlgt _eventSubscriptionDelegate = null;
 
     // services
-    private ServiceTuner _serviceTuner = null;        // [physical] tuning, scanning
-    private ServiceFdc _serviceFdc = null;            // forward data channel, carries SI and EPG
-    private ServiceAux _serviceAux = null;            // auxiliary analog inputs
-    private ServiceEncoder _serviceEncoder = null;    // encoder for auxiliary inputs *and* tuner
-    private ServiceCas _serviceCas = null;            // conditional access
-    private ServiceMux _serviceMux = null;            // PID filtering
-    private ServiceSecurity _serviceSecurity = null;  // DRM system
-    private ServiceDiag _serviceDiag = null;          // name/value pair info
+    private ServiceTuner _serviceTuner = null;                // [physical] tuning, scanning
+    private ServiceFdc _serviceFdc = null;                    // forward data channel, carries SI and EPG
+    private ServiceAux _serviceAux = null;                    // auxiliary analog inputs
+    private ServiceEncoder _serviceEncoder = null;            // encoder for auxiliary inputs *and* tuner
+    private ServiceCas _serviceCas = null;                    // conditional access
+    private ServiceMux _serviceMux = null;                    // PID filtering
+    private ServiceSecurity _serviceSecurity = null;          // DRM system
+    private ServiceDiag _serviceDiag = null;                  // name/value pair info
+    private ServiceUserActivity _serviceUserActivity = null;  // activity notification
     private ServiceAvTransport _serviceAvTransport = null;
     private ServiceConnectionManager _serviceConnectionManager = null;
 
@@ -262,6 +263,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       _serviceMux = new ServiceMux(_deviceConnection.Device);
       _serviceSecurity = new ServiceSecurity(_deviceConnection.Device);
       _serviceDiag = new ServiceDiag(_deviceConnection.Device);
+      _serviceUserActivity = new ServiceUserActivity(_deviceConnection.Device);
       _serviceAvTransport = new ServiceAvTransport(_deviceConnection.Device);
       _serviceConnectionManager = new ServiceConnectionManager(_deviceConnection.Device);
 
@@ -333,6 +335,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       {
         _serviceDiag.Dispose();
         _serviceDiag = null;
+      }
+      if (_serviceUserActivity != null)
+      {
+        _serviceUserActivity.Dispose();
+        _serviceUserActivity = null;
       }
       if (_serviceAvTransport != null)
       {

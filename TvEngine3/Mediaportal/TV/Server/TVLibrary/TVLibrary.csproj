@@ -120,6 +120,8 @@
     <Compile Include="Implementations\DirectShow\Wdm\B2c2\Struct\DeviceInfo.cs" />
     <Compile Include="Implementations\DirectShow\Wdm\B2c2\Struct\MacAddress.cs" />
     <Compile Include="Implementations\DirectShow\Wdm\B2c2\TunerDetectorB2c2.cs" />
+    <Compile Include="Implementations\Dri\Enum\UserActivityUseReason.cs" />
+    <Compile Include="Implementations\Dri\Service\ServiceUserActivity.cs" />
     <Compile Include="Implementations\Dri\TunerDetectorDri.cs" />
     <Compile Include="Implementations\Dri\TunerDri.cs" />
     <Compile Include="Implementations\DirectShow\Pbda\TunerPbdaCableCard.cs" />

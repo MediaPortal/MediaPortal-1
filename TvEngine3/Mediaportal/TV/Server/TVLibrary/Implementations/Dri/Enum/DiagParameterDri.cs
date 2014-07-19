@@ -28,6 +28,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Enum
     private static readonly IDictionary<string, DiagParameterDri> _values = new Dictionary<string, DiagParameterDri>();
 
     /// <summary>
+    /// Name of the DRIT manufacturer.
+    /// </summary>
+    public static readonly DiagParameterDri HostManufacturer = new DiagParameterDri("Host Manufacturer");
+    /// <summary>
     /// Serial Number of the DRIT.
     /// </summary>
     public static readonly DiagParameterDri HostSerialNumber = new DiagParameterDri("Host Serial Number");
