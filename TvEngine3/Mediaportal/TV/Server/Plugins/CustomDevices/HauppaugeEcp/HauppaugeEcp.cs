@@ -159,16 +159,17 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
     {
       this.LogDebug("Hauppauge ECP: initialising");
 
-      IBaseFilter mainFilter = context as IBaseFilter;
-      if (mainFilter == null)
-      {
-        this.LogDebug("Hauppauge ECP: main filter is null");
-        return false;
-      }
       if (_isHauppaugeEcp)
       {
         this.LogWarn("Hauppauge ECP: extension already initialised");
         return true;
+      }
+
+      IBaseFilter mainFilter = context as IBaseFilter;
+      if (mainFilter == null)
+      {
+        this.LogDebug("Hauppauge ECP: context is not a filter");
+        return false;
       }
 
       try

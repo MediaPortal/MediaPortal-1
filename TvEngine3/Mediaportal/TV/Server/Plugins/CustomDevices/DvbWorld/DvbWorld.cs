@@ -451,7 +451,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbWorld
       IKsObject ksObject = context as IKsObject;
       if (ksObject == null)
       {
-        this.LogDebug("DVB World: tuner filter is not a KS object");
+        this.LogDebug("DVB World: context is not a KS object");
         return false;
       }
 

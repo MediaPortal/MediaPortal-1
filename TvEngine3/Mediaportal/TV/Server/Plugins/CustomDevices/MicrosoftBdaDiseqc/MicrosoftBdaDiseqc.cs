@@ -113,7 +113,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBdaDiseqc
       _deviceControl = context as IBDA_DeviceControl;
       if (_deviceControl == null)
       {
-        this.LogDebug("Microsoft BDA DiSEqC: device control interface not supported");
+        this.LogDebug("Microsoft BDA DiSEqC: context is not a device control");
         return false;
       }
 
@@ -134,7 +134,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBdaDiseqc
       _propertySet = pin as IKsPropertySet;
       if (_propertySet == null)
       {
-        this.LogDebug("Microsoft BDA DiSEqC: input pin is not a property set");
+        this.LogDebug("Microsoft BDA DiSEqC: pin is not a property set");
         Release.ComObject("Microsoft BDA DiSEqC filter input pin", ref pin);
         return false;
       }

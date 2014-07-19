@@ -98,7 +98,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftOldDiseqc
       _deviceControl = context as IBDA_DeviceControl;
       if (_deviceControl == null)
       {
-        this.LogDebug("Microsoft old DiSEqC: device control interface not supported");
+        this.LogDebug("Microsoft old DiSEqC: context is not a device control");
         return false;
       }
 
@@ -108,7 +108,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftOldDiseqc
       IBDA_Topology topology = context as IBDA_Topology;
       if (topology == null)
       {
-        this.LogDebug("Microsoft old DiSEqC: topology interface not supported");
+        this.LogDebug("Microsoft old DiSEqC: context is not a topology");
         return false;
       }
 
@@ -117,7 +117,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftOldDiseqc
       int hr = topology.GetNodeTypes(out nodeTypeCount, 32, nodeTypes);
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogDebug("Microsoft old DiSEqC: failed to get node types");
+        this.LogError("Microsoft old DiSEqC: failed to get topology node types, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
       }
 
@@ -137,7 +137,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftOldDiseqc
             object controlNode;
             hr = topology.GetControlNode(0, 1, nodeTypes[i], out controlNode);
             _interface = controlNode as IBDA_FrequencyFilter;
-            if (_interface != null)
+            if (hr == (int)HResult.Severity.Success && _interface != null)
             {
               this.LogInfo("Microsoft old DiSEqC: extension supported");
               _isMicrosoftOldDiseqc = true;

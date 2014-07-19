@@ -187,16 +187,17 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftEncoder
     {
       this.LogDebug("Microsoft encoder: initialising");
 
-      IBaseFilter mainFilter = context as IBaseFilter;
-      if (mainFilter == null)
-      {
-        this.LogDebug("Microsoft encoder: main filter is null");
-        return false;
-      }
       if (_isMicrosoftEncoder)
       {
         this.LogWarn("Microsoft encoder: extension already initialised");
         return true;
+      }
+
+      IBaseFilter mainFilter = context as IBaseFilter;
+      if (mainFilter == null)
+      {
+        this.LogDebug("Microsoft encoder: context is not a filter");
+        return false;
       }
 
       // We need a reference to the graph.

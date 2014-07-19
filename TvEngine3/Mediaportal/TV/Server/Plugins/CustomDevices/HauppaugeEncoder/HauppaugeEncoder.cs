@@ -356,16 +356,17 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEncoder
     {
       this.LogDebug("Hauppauge encoder: initialising");
 
-      IBaseFilter mainFilter = context as IBaseFilter;
-      if (mainFilter == null)
-      {
-        this.LogDebug("Hauppauge encoder: main filter is null");
-        return false;
-      }
       if (_isHauppaugeEncoder)
       {
         this.LogWarn("Hauppauge encoder: extension already initialised");
         return true;
+      }
+
+      IBaseFilter mainFilter = context as IBaseFilter;
+      if (mainFilter == null)
+      {
+        this.LogDebug("Hauppauge encoder: context is not a filter");
+        return false;
       }
 
       // We need a reference to the graph.
