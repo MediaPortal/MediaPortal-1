@@ -401,6 +401,7 @@ namespace MediaPortal.GUI.Pictures
     private static int _wolTimeout;
     private static int _wolResendTime;
     private static bool returnFromSlideshow = false;
+    private bool _autoShuffle = false;
     private bool _ageConfirmed = false;
     private ArrayList _protectedShares = new ArrayList();
     private string _currentPin = string.Empty;
@@ -433,6 +434,7 @@ namespace MediaPortal.GUI.Pictures
         _wolTimeout = xmlreader.GetValueAsInt("WOL", "WolTimeout", 10);
         _wolResendTime = xmlreader.GetValueAsInt("WOL", "WolResendTime", 1);
         _virtualDirectory = VirtualDirectories.Instance.Pictures;
+        _autoShuffle = xmlreader.GetValueAsBool("pictures", "autoShuffle", false);
         
         if (currentFolder == string.Empty)
         {
@@ -2147,6 +2149,10 @@ namespace MediaPortal.GUI.Pictures
         foreach (string pic in pics)
         {
           SlideShow.Add(pic);
+        }
+        if (_autoShuffle)
+        {
+          SlideShow.Shuffle(false, false);
         }
       }
       if (SlideShow.Count > 0 || SlideShow._slideFolder.Count > 0 && SlideShow._slideList.Count > 0)
