@@ -313,7 +313,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBda
     /// </summary>
     public override void Dispose()
     {
-      Release.ComObject("Hauppauge property set", ref _propertySet);
+      Release.ComObject("Hauppauge BDA property set", ref _propertySet);
       if (_instanceBuffer != IntPtr.Zero)
       {
         Marshal.FreeCoTaskMem(_instanceBuffer);
