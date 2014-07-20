@@ -171,6 +171,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Thumbnailer", "Thumbnailer\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwinhanHidRemote", "Plugins\CustomDevices\TwinhanHidRemote\TwinhanHidRemote.csproj", "{5F0CCB67-954A-4C2D-B1A5-E4DF5E020DB4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kworld", "Plugins\CustomDevices\Kworld\Kworld.csproj", "{2FAE68CE-7B11-46EF-AB0A-91908653C948}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -887,6 +889,16 @@ Global
 		{5F0CCB67-954A-4C2D-B1A5-E4DF5E020DB4}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{5F0CCB67-954A-4C2D-B1A5-E4DF5E020DB4}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{5F0CCB67-954A-4C2D-B1A5-E4DF5E020DB4}.Release|x86.ActiveCfg = Release|Any CPU
+		{2FAE68CE-7B11-46EF-AB0A-91908653C948}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2FAE68CE-7B11-46EF-AB0A-91908653C948}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2FAE68CE-7B11-46EF-AB0A-91908653C948}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{2FAE68CE-7B11-46EF-AB0A-91908653C948}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{2FAE68CE-7B11-46EF-AB0A-91908653C948}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2FAE68CE-7B11-46EF-AB0A-91908653C948}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2FAE68CE-7B11-46EF-AB0A-91908653C948}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2FAE68CE-7B11-46EF-AB0A-91908653C948}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{2FAE68CE-7B11-46EF-AB0A-91908653C948}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{2FAE68CE-7B11-46EF-AB0A-91908653C948}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -965,6 +977,7 @@ Global
 		{E0A9028F-2ECF-4740-AD9B-337B8460E283} = {5538D6F9-21DD-4B49-8E06-8E06AF7ACD73}
 		{57849E43-E04F-4831-B046-EE7472AAFEB3} = {5538D6F9-21DD-4B49-8E06-8E06AF7ACD73}
 		{5F0CCB67-954A-4C2D-B1A5-E4DF5E020DB4} = {5538D6F9-21DD-4B49-8E06-8E06AF7ACD73}
+		{2FAE68CE-7B11-46EF-AB0A-91908653C948} = {5538D6F9-21DD-4B49-8E06-8E06AF7ACD73}
 		{3AA18B4C-A3B5-49A9-A9B6-623A4722E21C} = {63DA3CDA-ED1F-4469-B050-DFBDC3330518}
 	EndGlobalSection
 EndGlobal
