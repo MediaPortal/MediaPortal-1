@@ -2314,7 +2314,7 @@ namespace MediaPortal.GUI.Video
         {
           string sharePin = String.Format("pincode{0}", index);
           string sharePath = String.Format("sharepath{0}", index);
-          string sharePinData = Util.Utils.DecryptPin(xmlreader.GetValueAsString("movies", sharePin, ""));
+          string sharePinData = Util.Utils.DecryptPassword(xmlreader.GetValueAsString("movies", sharePin, ""));
           string sharePathData = xmlreader.GetValueAsString("movies", sharePath, "");
 
           if (!string.IsNullOrEmpty(sharePinData))
@@ -2414,7 +2414,7 @@ namespace MediaPortal.GUI.Video
         //vDir.LoadSettings("movies");
 
         // Check if item belongs to protected shares
-        int pincode = 0;
+        string pincode = string.Empty;
         bool folderPinProtected = vDir.IsProtectedShare(directory, out pincode);
 
         bool success = false;
@@ -2491,7 +2491,7 @@ namespace MediaPortal.GUI.Video
 
           VirtualDirectory vDir = new VirtualDirectory();
           vDir.LoadSettings("movies");
-          int pincode = 0;
+          string pincode = string.Empty;
           bool folderPinProtected = vDir.IsProtectedShare(directory, out pincode);
           
           // No PIN entered, remove all protected conetnt
@@ -2578,7 +2578,7 @@ namespace MediaPortal.GUI.Video
 
           VirtualDirectory vDir = new VirtualDirectory();
           vDir.LoadSettings("movies");
-          int pincode = 0;
+          string pincode = string.Empty;
           bool folderPinProtected = vDir.IsProtectedShare(directory, out pincode);
 
           // No PIN entered, remove all protected conetnt

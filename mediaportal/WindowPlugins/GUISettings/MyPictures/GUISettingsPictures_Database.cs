@@ -455,8 +455,8 @@ namespace MediaPortal.GUI.Settings
 
               if (!_noLargeThumbnails && !File.Exists(thumbnailImageL))
               {
-                if (Util.Picture.CreateThumbnail(item.Path, thumbnailImageL, (int)Thumbs.ThumbResolution,
-                                                 (int)Thumbs.ThumbResolution, iRotate, Thumbs.SpeedThumbsLarge,
+                if (Util.Picture.CreateThumbnail(item.Path, thumbnailImageL, (int)Thumbs.ThumbLargeResolution,
+                                                 (int)Thumbs.ThumbLargeResolution, iRotate, Thumbs.SpeedThumbsLarge,
                                                  true, false))
                 {
                   Log.Debug("GUIPictures Setting : Creation of missing large thumb successful for {0}", item.Path);

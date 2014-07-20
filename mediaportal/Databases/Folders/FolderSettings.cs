@@ -21,6 +21,7 @@
 using System;
 using System.IO;
 using System.Threading;
+using System.Collections;
 using Databases.Folders;
 
 namespace MediaPortal.Database
@@ -63,6 +64,11 @@ namespace MediaPortal.Database
       }
 
       return (count < 10);
+    }
+
+    public static void GetPath(string strPath, ref ArrayList strPathList, string strKey)
+    {
+      _database.GetPath(strPath, ref strPathList, strKey);
     }
 
     public static void DeleteFolderSetting(string path, string Key)

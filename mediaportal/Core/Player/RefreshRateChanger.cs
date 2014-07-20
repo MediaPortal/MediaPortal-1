@@ -320,28 +320,41 @@ namespace MediaPortal.Player
 
     public static void KillFormThread()
     {
-      var suicideForm = new SuicideForm();
-      suicideForm.Show();
-      suicideForm.Focus();
+      try
+      {
+        var suicideForm = new SuicideForm();
+        suicideForm.Show();
+        suicideForm.Focus();
+      }
+      catch (Exception ex)
+      {
+        Log.Error("CycleRefresh: KillFormThread exception {0}", ex);
+      }
     }
 
 
     public static void FixDwm()
     {
-      try
+      if (!OSInfo.OSInfo.Win8OrLater())
       {
-        int dwmEnabled = 0;
-        DwmIsCompositionEnabled(ref dwmEnabled);
-
-        if (dwmEnabled > 0)
+        try
         {
-          Log.Debug("CycleRefresh: DWM Detected, performing shenanigans");
-          ThreadStart starter = KillFormThread;
-          var killFormThread = new Thread(starter) {IsBackground = true};
-          killFormThread.Start();
+          int dwmEnabled = 0;
+          DwmIsCompositionEnabled(ref dwmEnabled);
+
+          if (dwmEnabled > 0)
+          {
+            Log.Debug("CycleRefresh: DWM Detected, performing shenanigans");
+            ThreadStart starter = KillFormThread;
+            var killFormThread = new Thread(starter) {IsBackground = true};
+            killFormThread.Start();
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Error("CycleRefresh: FixDwm exception {0}", ex);
         }
       }
-      catch {}
     }
   }
 

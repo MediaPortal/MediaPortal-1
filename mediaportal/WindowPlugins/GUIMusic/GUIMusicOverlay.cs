@@ -420,6 +420,10 @@ namespace MediaPortal.GUI.Music
         if (tag != null)
         {
           tag.Artist = Util.Utils.FormatMultiItemMusicStringTrim(tag.Artist, _stripArtistPrefixes);
+          if (item != null)
+          {
+            item.MusicTag = tag;
+          }
         }
       }
 

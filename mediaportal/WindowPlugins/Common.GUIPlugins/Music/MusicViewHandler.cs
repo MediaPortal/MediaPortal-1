@@ -479,6 +479,9 @@ namespace MediaPortal.GUI.Music
 
         restrictionLength += Convert.ToInt16(filter.Restriction);
 
+        string selectedValue = filter.SelectedValue;
+        DatabaseUtility.RemoveInvalidChars(ref selectedValue);
+
         // muliple value fields are stored in one database field in tracks
         // table but on different rows in other tables
         if (IsMultipleValueField(GetField(filter.Where)))
@@ -523,7 +526,7 @@ namespace MediaPortal.GUI.Music
             else
             {
               whereClause += String.Format(" ({0} like '| {1}%' or '| {2}%')", GetField(filter.Where),
-                                           filter.SelectedValue.PadRight(restrictionLength), filter.SelectedValue);
+                                           selectedValue.PadRight(restrictionLength), selectedValue);
             }
           }
           else
@@ -535,7 +538,7 @@ namespace MediaPortal.GUI.Music
             else
             {
               whereClause += String.Format(" ({0} like '{1}%' or '{2}%')", GetField(filter.Where),
-                                           filter.SelectedValue.PadRight(restrictionLength), filter.SelectedValue);
+                                           selectedValue.PadRight(restrictionLength), selectedValue);
             }
           }
         }
@@ -550,7 +553,7 @@ namespace MediaPortal.GUI.Music
           else
           {
             whereClause += String.Format(" ({0} like '{1}%' or '{2}%')", GetField(filter.Where),
-                                         filter.SelectedValue.PadRight(restrictionLength), filter.SelectedValue);
+                                         selectedValue.PadRight(restrictionLength), selectedValue);
           }
         }
       }

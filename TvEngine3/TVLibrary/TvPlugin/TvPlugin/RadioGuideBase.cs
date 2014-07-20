@@ -82,6 +82,8 @@ namespace TvPlugin
     private int _backupCursorY = 0;
     private int _backupChannelOffset = 0;
 
+    private int _backupSingleViewCursorX = 0;
+
     private DateTime _keyPressedTimer = DateTime.Now;
     private string _lineInput = String.Empty;
 
@@ -247,7 +249,7 @@ namespace TvPlugin
         case Action.ActionType.ACTION_PREVIOUS_MENU:
           if (_singleChannelView)
           {
-            GUIWindowManager.ActivateWindow((int)Window.WINDOW_RADIO_GUIDE);
+            OnSwitchMode(true);
             return;
           }
           GUIWindowManager.ShowPreviousWindow();
@@ -350,7 +352,8 @@ namespace TvPlugin
             {
               if (_cursorY == 0)
               {
-                OnSwitchMode();
+                _backupSingleViewCursorX = _cursorX;
+                OnSwitchMode(false);
                 return;
               }
               else
@@ -646,17 +649,20 @@ namespace TvPlugin
 
           case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
             {
-              base.OnMessage(message);
-              SaveSettings();
-              if (_recordingList != null && TVHome.Connected)
+              if (!_singleChannelView)
               {
-                _recordingList.Clear();
-              }
+                base.OnMessage(message);
+                SaveSettings();
+                if (_recordingList != null && TVHome.Connected)
+                {
+                  _recordingList.Clear();
+                }
 
-              _controls = new Dictionary<int, GUIButton3PartControl>();
-              _channelList = null;
-              _recordingList = null;
-              _currentProgram = null;
+                _controls = new Dictionary<int, GUIButton3PartControl>();
+                _channelList = null;
+                _recordingList = null;
+                _currentProgram = null;
+              }
 
               return true;
             }
@@ -893,7 +899,8 @@ namespace TvPlugin
             }
             else if (_cursorY == 0)
             {
-              OnSwitchMode();
+              _backupSingleViewCursorX = _cursorX;
+              OnSwitchMode(false);
             }
             break;
         }
@@ -3189,7 +3196,8 @@ namespace TvPlugin
 
 
           case 939: // switch mode
-            OnSwitchMode();
+            _backupSingleViewCursorX = _cursorX;
+            OnSwitchMode(false);
             break;
           case 629: //stop recording
             Schedule schedule = Schedule.FindNoEPGSchedule(_currentProgram.ReferencedChannel());
@@ -3214,7 +3222,7 @@ namespace TvPlugin
       }
     }
 
-    private void OnSwitchMode()
+    private void OnSwitchMode(bool returnPreviousMenu)
     {
       UnFocus();
       _singleChannelView = !_singleChannelView;
@@ -3226,6 +3234,13 @@ namespace TvPlugin
 
         _programOffset = _cursorY = _cursorX = 0;
         _recalculateProgramOffset = true;
+      }
+      else if (returnPreviousMenu)
+      {
+        //focus current channel
+        _cursorY = 0;
+        _cursorX = _backupSingleViewCursorX;
+        ChannelOffset = _backupChannelOffset;
       }
       else
       {

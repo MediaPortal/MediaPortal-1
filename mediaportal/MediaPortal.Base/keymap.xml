@@ -447,7 +447,6 @@
       <description>Toggle the OSD</description>
     </action>
     <action>
-
       <id>58</id>
       <key>0</key>
       <sound />
@@ -542,6 +541,12 @@
       <key>V</key>
       <sound />
       <description>Next Video Stream</description>
+    </action>
+    <action>
+      <id>142</id>
+      <key>C</key>
+      <sound />
+      <description>Create Bookmark</description>
     </action>
   </window>
   <window>

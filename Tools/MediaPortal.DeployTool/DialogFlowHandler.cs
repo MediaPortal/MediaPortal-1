@@ -40,7 +40,8 @@ namespace MediaPortal.DeployTool
     MPSettings,
     TvServerSettings,
     Installation,
-    Finished
+    Finished,
+    MysqlUpgrade
   }
 
   public sealed class DialogFlowHandler
@@ -150,6 +151,9 @@ namespace MediaPortal.DeployTool
             break;
           case DialogType.ExtensionChoice:
             dlg = new ExtensionChoice();
+            break;
+          case DialogType.MysqlUpgrade:
+            dlg = new MySQLChoice();
             break;
         }
         if (dlg != null)

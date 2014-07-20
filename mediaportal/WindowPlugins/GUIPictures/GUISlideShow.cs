@@ -61,18 +61,21 @@ namespace MediaPortal.GUI.Pictures
         if (_isSlideShow && _showRecursive)
         {
           // Analyse for folder and add picture/video items to the list and then remove the folder item
-          while (IsPathDirectory(_slideList[_currentSlideIndex]))
+          if (_currentSlideIndex != -1 && _slideList.Count > 0)
           {
-            GUIpictures.AddDir(SlideShow, _slideList[_currentSlideIndex]);
-            _slideList.Remove(_slideList[_currentSlideIndex]);
-            _autoShuffleFolder = true;
+            while (IsPathDirectory(_slideList[_currentSlideIndex]))
+            {
+              GUIpictures.AddDir(SlideShow, _slideList[_currentSlideIndex]);
+              _slideList.Remove(_slideList[_currentSlideIndex]);
+              _autoShuffleFolder = true;
+            }
           }
         }
 
         // Item list has changed, if we use autoshuffle then do a new shuffle and check if new selected entry is a folder
         if (_autoShuffleFolder && _autoShuffle)
         {
-          Shuffle(true, false);
+          Shuffle(_showRecursive, false);
           // Analyse for folder and add picture/video items to the list and then remove the folder item
           // like shuffle is done, continue slideshow on first entry
           _currentSlideIndex = 0;
@@ -86,8 +89,25 @@ namespace MediaPortal.GUI.Pictures
         }
         else
         {
-          _currentSlide = _slideCache.GetCurrentSlide(_slideList[_currentSlideIndex]);
-          GUIPictures.fileNameCheck = _slideList[_currentSlideIndex];
+          try
+          {
+            if (_currentSlideIndex != -1 && _slideList.Count > 0)
+            {
+              int currentIndex = _currentSlideIndex;
+              _currentSlide = _slideCache.GetCurrentSlide(_slideList[currentIndex]);
+              GUIPictures.fileNameCheck = _slideList[currentIndex];
+            }
+            else
+            {
+              return _currentSlide;
+            }
+          }
+          catch (Exception)
+          {
+            Log.Debug("GUISlideShow: catch exception when LoadSlide on stop");
+            return _currentSlide;
+          }
+
         }
 
         GUIPropertyManager.SetProperty("#selecteditem", Util.Utils.GetFilename(GUIPictures.fileNameCheck));
@@ -143,9 +163,12 @@ namespace MediaPortal.GUI.Pictures
           }
           g_Player.ShowFullScreenWindow();
 
-          if (_isSlideShow)
+          if ((_currentSlideIndex + 1 < _slideList.Count))
           {
-            GUIPictureSlideShow._slideDirection = 1;
+            if (Util.Utils.IsVideo(_slideList[_currentSlideIndex + 1]) || _isSlideShow)
+            {
+              GUIPictureSlideShow._slideDirection = 1;
+            }
           }
 
           _loadVideoPlayback = false;
@@ -170,12 +193,15 @@ namespace MediaPortal.GUI.Pictures
         Log.Error("GUISlideShow: Exception in LoadCurrentSlide() : {0}", ex);
         // If exception occurs, select first entry to avoid render loop
         _currentSlideIndex = 0;
-        while (IsPathDirectory(_slideList[_currentSlideIndex]))
+        if (_slideList.Count > 0)
         {
-          GUIpictures.AddDir(SlideShow, _slideList[_currentSlideIndex]);
-          _slideList.Remove(_slideList[_currentSlideIndex]);
+          while (IsPathDirectory(_slideList[_currentSlideIndex]))
+          {
+            GUIpictures.AddDir(SlideShow, _slideList[_currentSlideIndex]);
+            _slideList.Remove(_slideList[_currentSlideIndex]);
+          }
+          _currentSlide = _slideCache.GetCurrentSlide(_slideList[_currentSlideIndex]);
         }
-        _currentSlide = _slideCache.GetCurrentSlide(_slideList[_currentSlideIndex]);
       }
       return _currentSlide;
     }
@@ -425,6 +451,8 @@ namespace MediaPortal.GUI.Pictures
     public bool _showRecursive = false;
     public bool _enableResumeMusic = true;
 
+    protected delegate void PlaybackChangedDelegate(g_Player.MediaType type, string filename);
+
     #endregion
 
     #region GUIWindow overrides
@@ -437,7 +465,7 @@ namespace MediaPortal.GUI.Pictures
 
     public override bool Init()
     {
-      g_Player.PlayBackStarted += OnPlayBackStarted;
+      g_Player.PlayBackStarted += new g_Player.StartedHandler(OnPlayBackStarted);
       return Load(GUIGraphicsContext.GetThemedSkinFile(@"\slideshow.xml"));
     }
 
@@ -576,6 +604,16 @@ namespace MediaPortal.GUI.Pictures
           {
             GUIPictureSlideShow._slideDirection = -1;
           }
+          else if (_currentSlideIndex > 0)
+          {
+            if (_currentSlideIndex - 1 < _slideList.Count)
+            {
+              if (Util.Utils.IsVideo(_slideList[_currentSlideIndex - 1]))
+              {
+                GUIPictureSlideShow._slideDirection = -1;
+              }
+            }
+          }
           else
           {
             GUIPictureSlideShow._slideDirection = 0;
@@ -607,6 +645,16 @@ namespace MediaPortal.GUI.Pictures
           else if (_isSlideShow)
           {
             GUIPictureSlideShow._slideDirection = 1;
+          }
+          else if (_currentSlideIndex > 0)
+          {
+            if (_currentSlideIndex + 1 < _slideList.Count)
+            {
+              if (Util.Utils.IsVideo(_slideList[_currentSlideIndex + 1]))
+              {
+                GUIPictureSlideShow._slideDirection = 1;
+              }
+            }
           }
           else
           {
@@ -930,15 +978,16 @@ namespace MediaPortal.GUI.Pictures
                   if (_autoRepeat)
                   {
                     _currentSlideIndex = 0;
-                    if (_autoShuffle && (_isSlideShow || _showRecursive))
+                    if (_autoShuffle)
                     {
-                      Shuffle(false, _autoRepeat);
+                      Shuffle(_showRecursive, _autoRepeat);
                     }
                   }
                   else
                   {
                     _currentSlideIndex--;
                     // How to exit back to GUIPictures?
+                    GUIPictureSlideShow.SlideDirection = 0;
                     ShowPreviousWindow();
                   }
                 }
@@ -1221,6 +1270,10 @@ namespace MediaPortal.GUI.Pictures
     public void Select(string strFile)
     {
       LoadSettings();
+      if (_autoShuffle)
+      {
+        Shuffle(_showRecursive, _autoRepeat);
+      }
       for (int i = 0; i < _slideList.Count; ++i)
       {
         string strSlide = _slideList[i];
@@ -1303,17 +1356,6 @@ namespace MediaPortal.GUI.Pictures
       StartBackgroundMusic(path);
       GUIPictureSlideShow._slideDirection = 1;
       _isSlideShow = true;
-      if (_autoShuffle)
-      {
-        if (_showRecursive)
-        {
-          Shuffle(true, false);
-        }
-        else
-        {
-          Shuffle(false, false);
-        }
-      }
     }
 
 
@@ -1405,6 +1447,11 @@ namespace MediaPortal.GUI.Pictures
           ShowPreviousWindow();
           return;
         }
+      }
+      else if ((_currentSlideIndex >= _slideList.Count - 1) && _autoShuffle)
+      {
+        // Autoshuffle when reach the end of the slide list
+        Shuffle(false, false);
       }
 
       // Reset slide time
@@ -2923,85 +2970,7 @@ namespace MediaPortal.GUI.Pictures
       GUIWindowManager.ShowPreviousWindow();
     }
 
-    private void ShowSong(string filename)
-    {
-      GUIDialogNotify dlg = (GUIDialogNotify) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_NOTIFY);
-      if (dlg == null)
-      {
-        return;
-      }
-
-      //get albumart
-      string albumart = g_Player.CurrentFile;
-      int e = albumart.LastIndexOf(@"\") + 1;
-      albumart = albumart.Remove(e);
-      if (_slideList[_currentSlideIndex].Contains(albumart))
-      {
-        albumart = string.Empty;
-      }
-      else
-      {
-        albumart = Util.Utils.GetFolderThumbForDir(albumart);
-        if (!Util.Utils.FileExistsInCache(albumart))
-        {
-          albumart = string.Empty;
-        }
-      }
-      // get Song-info
-
-      // hwahrmann 2006-11-22 Using the Tagreader caused a COM exception in Win Media SDK, when reading WMA files
-      // Accessing the Music Database instead of using the Tagreader.
-      //MediaPortal.TagReader.MusicTag tag = MediaPortal.TagReader.TagReader.ReadTag(g_Player.CurrentFile);
-      Song song = new Song();
-      MusicTag currentSong = new MusicTag();
-
-      // If we don't have a tag in the db, we use the filename without the extension as song.title
-      if (!mDB.GetSongByFileName(g_Player.CurrentFile, ref song))
-      {
-        try
-        {
-          // try Tagreader method to parse information
-          var pl = PlayListPlayer.SingletonPlayer.GetPlaylist(PlayListPlayer.SingletonPlayer.CurrentPlaylistType);
-          var plI = pl.First(plItem => plItem.FileName == filename);
-          if (plI != null || plI.MusicTag != null)
-          {
-            currentSong = (MusicTag)plI.MusicTag;
-          }
-        }
-        catch (Exception)
-        {
-          // Catch the COM execption but continue code with Music Database instead.
-        }
-      }
-
-      // Show Dialog
-      dlg.Reset();
-      dlg.Dispose();
-      dlg.SetImage(albumart);
-      dlg.SetHeading(4540);
-      if (currentSong == null || string.IsNullOrEmpty(currentSong.Title) ||
-          (string.IsNullOrEmpty(currentSong.Artist) && string.IsNullOrEmpty(currentSong.AlbumArtist)))
-      {
-        song.Title = Path.GetFileNameWithoutExtension(g_Player.CurrentFile);
-        dlg.SetText(song.Title + "\n" + song.Artist + "\n" + song.Album);
-      }
-      else
-      {
-        dlg.SetText(currentSong.Title + "\n" + currentSong.Artist + "\n" + currentSong.Album);
-      }
-      dlg.TimeOut = 5;
-      dlg.DoModal(GUIWindowManager.ActiveWindow);
-    }
-
-    #region g_player events
-
-    /// <summary>
-    /// Handle event fired by MP player.  Something has started playing so check if it is music then
-    /// show song track on MyPictures Plugin or slideshow
-    /// </summary>
-    /// <param name="type">MediaType of item that has started</param>
-    /// <param name="filename">filename of item that has started</param>
-    private void OnPlayBackStarted(g_Player.MediaType type, string filename)
+    private void ShowSong(g_Player.MediaType type, string filename)
     {
       try
       {
@@ -3009,7 +2978,7 @@ namespace MediaPortal.GUI.Pictures
         string activeWindowName;
         GUIWindow.Window activeWindow;
         activeWindowName = GUIWindowManager.ActiveWindow.ToString(CultureInfo.InvariantCulture);
-        activeWindow = (GUIWindow.Window)Enum.Parse(typeof(GUIWindow.Window), activeWindowName);
+        activeWindow = (GUIWindow.Window) Enum.Parse(typeof (GUIWindow.Window), activeWindowName);
         if (activeWindow == GUIWindow.Window.WINDOW_SLIDESHOW || activeWindow == GUIWindow.Window.WINDOW_PICTURES)
           if (g_Player.IsMusic)
           {
@@ -3019,7 +2988,75 @@ namespace MediaPortal.GUI.Pictures
             }
             if (!resumeSong)
             {
-              ShowSong(filename);
+              GUIDialogNotify dlg = (GUIDialogNotify) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_NOTIFY);
+              if (dlg == null)
+              {
+                return;
+              }
+
+              //get albumart
+              string albumart = g_Player.CurrentFile;
+              int e = albumart.LastIndexOf(@"\") + 1;
+              if (!String.IsNullOrEmpty(albumart))
+              {
+                albumart = albumart.Remove(e);
+              }
+              if (_slideList.Count > 0 && _slideList[_currentSlideIndex].Contains(albumart))
+              {
+                albumart = string.Empty;
+              }
+              else
+              {
+                albumart = Util.Utils.GetFolderThumbForDir(albumart);
+                if (!Util.Utils.FileExistsInCache(albumart))
+                {
+                  albumart = string.Empty;
+                }
+              }
+              // get Song-info
+
+              // hwahrmann 2006-11-22 Using the Tagreader caused a COM exception in Win Media SDK, when reading WMA files
+              // Accessing the Music Database instead of using the Tagreader.
+              //MediaPortal.TagReader.MusicTag tag = MediaPortal.TagReader.TagReader.ReadTag(g_Player.CurrentFile);
+              Song song = new Song();
+              MusicTag currentSong = new MusicTag();
+
+              // If we don't have a tag in the db, we use the filename without the extension as song.title
+              if (!mDB.GetSongByFileName(g_Player.CurrentFile, ref song))
+              {
+                try
+                {
+                  // try Tagreader method to parse information
+                  var pl = PlayListPlayer.SingletonPlayer.GetPlaylist(PlayListPlayer.SingletonPlayer.CurrentPlaylistType);
+                  var plI = pl.First(plItem => plItem.FileName == filename);
+                  if (plI != null || plI.MusicTag != null)
+                  {
+                    currentSong = (MusicTag) plI.MusicTag;
+                  }
+                }
+                catch (Exception)
+                {
+                  // Catch the COM execption but continue code with Music Database instead.
+                }
+              }
+
+              // Show Dialog
+              dlg.Reset();
+              dlg.Dispose();
+              dlg.SetImage(albumart);
+              dlg.SetHeading(4540);
+              if (currentSong == null || string.IsNullOrEmpty(currentSong.Title) ||
+                  (string.IsNullOrEmpty(currentSong.Artist) && string.IsNullOrEmpty(currentSong.AlbumArtist)))
+              {
+                song.Title = Path.GetFileNameWithoutExtension(g_Player.CurrentFile);
+                dlg.SetText(song.Title + "\n" + song.Artist + "\n" + song.Album);
+              }
+              else
+              {
+                dlg.SetText(currentSong.Title + "\n" + currentSong.Artist + "\n" + currentSong.Album);
+              }
+              dlg.TimeOut = 5;
+              dlg.DoModal(GUIWindowManager.ActiveWindow);
             }
             resumeSong = false;
           }
@@ -3030,7 +3067,11 @@ namespace MediaPortal.GUI.Pictures
       }
     }
 
-    #endregion
+    private void OnPlayBackStarted(g_Player.MediaType type, string filename)
+    {
+      GUIGraphicsContext.form.BeginInvoke(new PlaybackChangedDelegate(ShowSong),
+                                     new object[] { g_Player.MediaType.Music, g_Player.CurrentFile });
+    }
 
     #endregion
   }
