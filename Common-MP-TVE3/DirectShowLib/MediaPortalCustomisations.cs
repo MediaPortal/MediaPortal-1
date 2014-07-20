@@ -1598,6 +1598,7 @@ namespace DirectShowLib
     );
   }
 
+  [StructLayout(LayoutKind.Sequential, Pack = 1)]
   public struct KsProperty
   {
     public Guid Set;
@@ -1630,6 +1631,7 @@ namespace DirectShowLib
     Topology = 0x10000000
   }
 
+  [StructLayout(LayoutKind.Sequential, Pack = 1)]
   public struct KsMethod
   {
     public Guid Set;
@@ -1658,6 +1660,7 @@ namespace DirectShowLib
     Topology = 0x10000000
   }
 
+  [StructLayout(LayoutKind.Sequential, Pack = 1)]
   public struct KsEvent
   {
     public Guid Set;
