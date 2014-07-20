@@ -77,28 +77,28 @@ namespace Mediaportal.TV.Server.TVLibrary.TVEUPnPServer.Server
         writer.WriteElementString("width", "120");
         writer.WriteElementString("heigh", "120");
         writer.WriteElementString("depth", "32");
-        writer.WriteElementString("url", UPnPResourceAccessUtils.GetStatucResourceUrlFromRelative("icons/icon_120.png"));
+        writer.WriteElementString("url", UPnPResourceAccessUtils.GetStaticResourceUrlFromRelative("icons/icon_120.png"));
         writer.WriteEndElement();
         writer.WriteStartElement("icon");
         writer.WriteElementString("mimetype", "image/png");
         writer.WriteElementString("width", "48");
         writer.WriteElementString("heigh", "48");
         writer.WriteElementString("depth", "32");
-        writer.WriteElementString("url", UPnPResourceAccessUtils.GetStatucResourceUrlFromRelative("icons/icon_48.png"));
+        writer.WriteElementString("url", UPnPResourceAccessUtils.GetStaticResourceUrlFromRelative("icons/icon_48.png"));
         writer.WriteEndElement();
         writer.WriteStartElement("icon");
         writer.WriteElementString("mimetype", "image/jped");
         writer.WriteElementString("width", "120");
         writer.WriteElementString("heigh", "120");
         writer.WriteElementString("depth", "24");
-        writer.WriteElementString("url", UPnPResourceAccessUtils.GetStatucResourceUrlFromRelative("icons/icon_120.jpg"));
+        writer.WriteElementString("url", UPnPResourceAccessUtils.GetStaticResourceUrlFromRelative("icons/icon_120.jpg"));
         writer.WriteEndElement();
         writer.WriteStartElement("icon");
         writer.WriteElementString("mimetype", "image/jpeg");
         writer.WriteElementString("width", "48");
         writer.WriteElementString("heigh", "48");
         writer.WriteElementString("depth", "24");
-        writer.WriteElementString("url", UPnPResourceAccessUtils.GetStatucResourceUrlFromRelative("icons/icon_48.jpg"));
+        writer.WriteElementString("url", UPnPResourceAccessUtils.GetStaticResourceUrlFromRelative("icons/icon_48.jpg"));
         writer.WriteEndElement();
         writer.WriteEndElement();
       }
@@ -113,28 +113,41 @@ namespace Mediaportal.TV.Server.TVLibrary.TVEUPnPServer.Server
       // LiveTv
       var channelContainer = new BasicContainer("ROOT:Channels") { Title = "Channels" };
       RootContainer.Add(channelContainer);
+      // Recordings
+      var recordingsContainer = new BasicContainer("ROOT:RECORDINGS") { Title = "Recordings" };
+      RootContainer.Add(recordingsContainer);
       // EPG
       var epgContainer = new BasicContainer("ROOT:EPG") { Title = "EPG" };
       RootContainer.Add(epgContainer);
 
+      // LiveTv
       IList<ChannelGroup> groups = GlobalServiceProvider.Get<IChannelGroupService>().ListAllChannelGroupsByMediaType(MediaTypeEnum.TV, ChannelGroupIncludeRelationEnum.None);
-
       foreach (ChannelGroup group in groups)
       {
         var groupContainer = new BasicContainer("Group:" + group.IdGroup.ToString()) { Title = group.GroupName };
         IList<Channel> channels = GlobalServiceProvider.Get<IChannelService>().GetAllChannelsByGroupIdAndMediaType(group.IdGroup, MediaTypeEnum.TV);
         foreach (Channel channel in channels)
         {
-          var resource = new MediaLibraryResource(channel.IdChannel);
+          var resource = new MediaLibraryResourceChannel(channel.IdChannel);
           resource.Initialise();
           IList<IDirectoryResource> resources = new List<IDirectoryResource>();
           resources.Add(resource);
-          groupContainer.Add(new MediaLibraryVideoBroadcastItem("Channel:" + channel.IdChannel.ToString()) { Title = channel.DisplayName, ChannelNr = channel.ChannelNumber, Icon = UPnPResourceAccessUtils.GetStatucResourceUrlFromRelative(string.Format("channelLogos/{0}.png", channel.DisplayName)), Resources = resources });
+          groupContainer.Add(new MediaLibraryVideoBroadcastItem("Channel:" + channel.IdChannel.ToString()) { Title = channel.DisplayName, ChannelNr = channel.ChannelNumber, Icon = UPnPResourceAccessUtils.GetStaticResourceUrlFromRelative(string.Format("channelLogos/{0}.png", channel.DisplayName)), Resources = resources });
         }
         channelContainer.Add(groupContainer);
       }
 
-      
+      // Recordings
+      IList<Recording> recordings = GlobalServiceProvider.Get<IRecordingService>().ListAllRecordingsByMediaType(MediaTypeEnum.TV);
+      foreach (Recording recording in recordings)
+      {
+        var resource = new MediaLibraryResourceRecording(recording.IdRecording);
+        resource.Initialise();
+        IList<IDirectoryResource> resources = new List<IDirectoryResource>();
+        resources.Add(resource);
+        recordingsContainer.Add(new MediaLibraryVideoBroadcastItem("Recording:" + recording.IdRecording.ToString()) { Title = recording.Title, Icon = UPnPResourceAccessUtils.GetStaticResourceUrlFromRelative(string.Format("channelLogos/{0}.png", recording.Channel.DisplayName)), Resources = resources });
+      }
+    
       //GlobalServiceProvider.Get<IProgramService>().GetProgramsByChannelAndStartEndTimes
     }
   }

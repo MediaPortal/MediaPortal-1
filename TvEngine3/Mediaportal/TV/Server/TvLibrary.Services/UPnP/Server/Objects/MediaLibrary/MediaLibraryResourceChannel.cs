@@ -38,11 +38,11 @@ using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 
 namespace MediaPortal.TV.Server.TVLibrary.UPnP.MediaServer.Objects.MediaLibrary
 {
-  public class MediaLibraryResource : IDirectoryResource
+  public class MediaLibraryResourceChannel : IDirectoryResource
   {
     private int Item { get; set; }
 
-    public MediaLibraryResource(int item)
+    public MediaLibraryResourceChannel(int item)
     {
       Item = item;
     }
@@ -63,13 +63,12 @@ namespace MediaPortal.TV.Server.TVLibrary.UPnP.MediaServer.Objects.MediaLibrary
 
     public static string GetBaseResourceURL()
     {
-      //var rs = ServiceRegistration.Get<IResourceServer>();
-      return "rtsp://" + GetLocalIp() + ":" + 554/*rs.PortIPv4*/;
+      return "rtsp://" + GetLocalIp() + ":" + 554;
     }
 
     public void Initialise()
     {
-      var url = GetBaseResourceURL() + getChannelUrl() /*+ DlnaResourceAccessUtils.GetResourceUrl(Item.MediaItemId)*/;
+      var url = GetBaseResourceURL() + getChannelUrl();
 
       ProtocolInfo = new DlnaProtocolInfo
       {

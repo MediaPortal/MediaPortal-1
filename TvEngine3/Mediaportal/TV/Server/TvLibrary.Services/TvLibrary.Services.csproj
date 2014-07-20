@@ -115,7 +115,9 @@
     <Compile Include="UPnP\Rtsp\RtspClients.cs" />
     <Compile Include="UPnP\Rtsp\RtspRequestHeader.cs" />
     <Compile Include="UPnP\Rtsp\RtspServer.cs" />
+    <Compile Include="UPnP\Server\Objects\MediaLibrary\MediaLibraryResourceRecording.cs" />
     <Compile Include="UPnP\Server\Objects\MediaLibrary\MediaLibraryVideoBroadcastItem.cs" />
+    <Compile Include="UPnP\Server\ResourceAccess\UPnPRecordingResourceAccessModule.cs" />
     <Compile Include="UPnP\Server\ResourceAccess\UPnPStaticResourceAccessModule.cs" />
     <Compile Include="UPnP\Server\ResourceAccess\UPnPResourceAccessUtils.cs" />
     <Compile Include="UPnP\UPnPServer.cs" />
@@ -148,7 +150,7 @@
     <Compile Include="UPnP\Server\Objects\IDirectoryStorageVolume.cs" />
     <Compile Include="UPnP\Server\Objects\IDirectoryVideoBroadcast.cs" />
     <Compile Include="UPnP\Server\Objects\IDirectoryVideoItem.cs" />
-    <Compile Include="UPnP\Server\Objects\MediaLibrary\MediaLibraryResource.cs" />
+    <Compile Include="UPnP\Server\Objects\MediaLibrary\MediaLibraryResourceChannel.cs" />
     <Compile Include="UPnP\Server\Tree\Tree.cs" />
     <Compile Include="UPnP\Server\Tree\TreeNode.cs" />
     <Compile Include="UPnP\Server\Tree\TreeNodeList.cs" />

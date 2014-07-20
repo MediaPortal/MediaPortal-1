@@ -103,7 +103,7 @@ namespace MediaPortal.TV.Server.TVLibrary.UPnP.MediaServer.ResourceAccess
       }
       catch (Exception e)
       {
-        this.LogDebug("ResourceAccessModule: Received illegal Range header", e);
+        this.LogDebug("UPnPStaticResourceAccessModule: Received illegal Range header", e);
         // As specified in RFC2616, section 14.35.1, ignore invalid range header
       }
       return result;
@@ -115,12 +115,12 @@ namespace MediaPortal.TV.Server.TVLibrary.UPnP.MediaServer.ResourceAccess
       List<string> uriPath = uri.GetComponents(UriComponents.Path, UriFormat.Unescaped).Split('/').ToList<string>();
 
       // Check the request path to see if it's for us.
-      if (!uri.AbsolutePath.StartsWith("/"+UPnPResourceAccessUtils.RESOURCE_ACCESS_PATH))
+      if (!uri.AbsolutePath.StartsWith("/"+UPnPResourceAccessUtils.RESOURCE_STATIC_ACCESS_PATH))
         return false;
 
       try
       {
-        this.LogDebug("DlnaResourceAccessModule: Attempting to load resource");
+        this.LogDebug("UPnPStaticResourceAccessModule: Attempting to load resource");
         foreach (string tmp in uriPath)
         {
           Log.Debug(tmp);
@@ -128,7 +128,7 @@ namespace MediaPortal.TV.Server.TVLibrary.UPnP.MediaServer.ResourceAccess
 
 
         // create the file path: %ProgramData\Team MediaPortal\MediaPortal TV Server\ResourceServer\[requested folder structure]\[file]
-        String filePath = String.Format(@"{0}\{1}\{2}", PathManager.GetDataPath, UPnPResourceAccessUtils.RESOURCE_DIRECTORY, string.Join("\\", uriPath.GetRange(1, uriPath.Count - 1)));
+        String filePath = String.Format(@"{0}\{1}\{2}", PathManager.GetDataPath, UPnPResourceAccessUtils.RESOURCE_STATIC_DIRECTORY, string.Join("\\", uriPath.GetRange(1, uriPath.Count - 1)));
         if (!File.Exists(filePath))
           throw new BadRequestException(string.Format("Media item with path '{0}' not found.", filePath));
         this.LogDebug("Media item with path '{0}'.", filePath);
@@ -136,7 +136,92 @@ namespace MediaPortal.TV.Server.TVLibrary.UPnP.MediaServer.ResourceAccess
         FileStream fs = File.OpenRead(filePath);
         SendWholeFile(response, fs, false);
 
-        
+        // Attempt to grab the media item from the database.
+        /*var item = MediaLibraryHelper.GetMediaItem(mediaItemGuid);
+        if (item == null)
+          throw new BadRequestException(string.Format("Media item '{0}' not found.", mediaItemGuid));
+
+        if (request.QueryString.Contains("aspect") && request.QueryString["aspect"].Value == "THUMBNAILSMALL")
+        {
+          var thumb = item.Aspects[ThumbnailSmallAspect.ASPECT_ID].GetAttributeValue(ThumbnailSmallAspect.ATTR_THUMBNAIL);
+          response.ContentType = "image/jpeg";
+          MemoryStream ms = new MemoryStream((byte[])thumb);
+          SendWholeFile(response, ms, false);
+        }
+        else
+        {
+          // Grab the mimetype from the media item and set the Content Type header.
+          var mimeType = item.Aspects[DlnaItemAspect.ASPECT_ID].GetAttributeValue(DlnaItemAspect.ATTR_MIME_TYPE);
+          if (mimeType == null)
+            throw new InternalServerException("Media item has bad mime type, re-import media item");
+          response.ContentType = mimeType.ToString();
+
+          // Grab the resource path for the media item.
+          var resourcePathStr =
+            item.Aspects[ProviderResourceAspect.ASPECT_ID].GetAttributeValue(
+              ProviderResourceAspect.ATTR_RESOURCE_ACCESSOR_PATH);
+          var resourcePath = ResourcePath.Deserialize(resourcePathStr.ToString());
+
+          var ra = GetResourceAccessor(resourcePath);
+          IFileSystemResourceAccessor fsra = ra as IFileSystemResourceAccessor;
+          using (var resourceStream = fsra.OpenRead())
+          {
+            // HTTP/1.1 RFC2616 section 14.25 'If-Modified-Since'
+            if (!string.IsNullOrEmpty(request.Headers["If-Modified-Since"]))
+            {
+              DateTime lastRequest = DateTime.Parse(request.Headers["If-Modified-Since"]);
+              if (lastRequest.CompareTo(fsra.LastChanged) <= 0)
+                response.Status = HttpStatusCode.NotModified;
+            }
+
+            // HTTP/1.1 RFC2616 section 14.29 'Last-Modified'
+            response.AddHeader("Last-Modified", fsra.LastChanged.ToUniversalTime().ToString("r"));
+
+            // DLNA Requirement: [7.4.26.1-6]
+            // Since the DLNA spec allows contentFeatures.dlna.org with any request, we'll put it in.
+            if (!string.IsNullOrEmpty(request.Headers["getcontentFeatures.dlna.org"]))
+            {
+              if (request.Headers["getcontentFeatures.dlna.org"] != "1")
+              {
+                // DLNA Requirement [7.4.26.5]
+                throw new BadRequestException("Illegal value for getcontentFeatures.dlna.org");
+              }
+            }
+            var dlnaString = DlnaProtocolInfoFactory.GetProfileInfo(item).ToString();
+            response.AddHeader("contentFeatures.dlna.org", dlnaString);
+
+            Log.Debug("DlnaResourceAccessModule: returning contentFeatures {0}", dlnaString);
+
+            // DLNA Requirement: [7.4.55-57]
+            // TODO: Bad implementation of requirement
+            if (!string.IsNullOrEmpty(request.Headers["transferMode.dlna.org"]))
+            {
+              string transferMode = request.Headers["transferMode.dlna.org"];
+              Log.Debug("Requested transfer of type " + transferMode);
+              if (transferMode == "Streaming")
+              {
+                response.AddHeader("transferMode.dlna.org", "Streaming");
+              }
+              if (transferMode == "Interactive")
+              {
+                response.AddHeader("transferMode.dlna.org", "Interactive");
+              }
+              if (transferMode == "Background")
+              {
+                response.AddHeader("transferMode.dlna.org", "Background");
+              }
+            }
+
+            string byteRangesSpecifier = request.Headers["Range"];
+            IList<Range> ranges = ParseRanges(byteRangesSpecifier, resourceStream.Length);
+            bool onlyHeaders = request.Method == Method.Header || response.Status == HttpStatusCode.NotModified;
+            if (ranges != null && ranges.Count == 1)
+              // We only support one range
+              SendRange(response, resourceStream, ranges[0], onlyHeaders);
+            else
+              SendWholeFile(response, resourceStream, onlyHeaders);
+          }
+        }*/
       }
       catch (FileNotFoundException ex)
       {

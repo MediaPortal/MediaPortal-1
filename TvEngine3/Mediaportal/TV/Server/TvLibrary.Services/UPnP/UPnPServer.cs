@@ -74,6 +74,7 @@ namespace Mediaportal.TV.Server.TVLibrary.TVEUPnPServer
             _resourceServer = new HttpServer.HttpServer();
             _resourceServer.ServerName = "MP UPnP resource provider";
             _resourceServer.Add(new UPnPStaticResourceAccessModule());
+            _resourceServer.Add(new UPnPRecordingResourceAccessModule());
             _resourceServer.Start(IPAddress.Parse(UPnPResourceAccessUtils.LocalIPAddress()), RESOURCE_SERVER_PORT);
         }
 

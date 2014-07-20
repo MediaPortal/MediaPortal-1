@@ -38,31 +38,36 @@ namespace MediaPortal.TV.Server.TVLibrary.UPnP.MediaServer.ResourceAccess
   public static class UPnPResourceAccessUtils
   {
     /// <summary>
-    /// Base HTTP path for resource access, e.g. "GetUPnPStaticResource".
+    /// Base HTTP path for statuc resource access, e.g. "GetUPnPStaticResource".
     /// </summary>
-    public const string RESOURCE_ACCESS_PATH = "GetUPnPStaticResource";
+    public const string RESOURCE_STATIC_ACCESS_PATH = "GetUPnPStaticResource";
+    /// <summary>
+    /// Base HTTP path for statuc resource access, e.g. "GetUPnPStaticResource".
+    /// </summary>
+    public const string RESOURCE_RECORDING_ACCESS_PATH = "GetUPnPRecordingResource";
+
     /// <summary>
     /// The physical root folder for all static resources in the TVE Programdata folder
     /// </summary>
-    public const string RESOURCE_DIRECTORY = "ResourceServer";
+    public const string RESOURCE_STATIC_DIRECTORY = "ResourceServer";
 
-    public const string SYNTAX = RESOURCE_ACCESS_PATH + "/[PHYSICAL_PATH]";
+    public const string SYNTAX = RESOURCE_STATIC_ACCESS_PATH + "/[PHYSICAL_PATH]";
 
     /// <summary>
     /// Creates a resource URI from the physical relative path of the resource
     /// </summary>
     /// <param name="relativePath">The relative path starting from the [RESOURCE_DIRECTORY] directory within the TVE program data folder e.g. "icon/icon.png"</param>
     /// <returns>Returns URI in ther format: "http://[IP]:[PORT]/[RESOURCE_ACCESS_PATH]/[relativePath]</returns>
-    public static string GetStatucResourceUrlFromRelative(string relativePath)
+    public static string GetStaticResourceUrlFromRelative(string relativePath)
     {
-      return Uri.EscapeUriString(String.Format("http://{0}:{1}/{2}/{3}", LocalIPAddress(), MPUPnPServer.RESOURCE_SERVER_PORT, RESOURCE_ACCESS_PATH, relativePath));
+      return Uri.EscapeUriString(String.Format("http://{0}:{1}/{2}/{3}", LocalIPAddress(), MPUPnPServer.RESOURCE_SERVER_PORT, RESOURCE_STATIC_ACCESS_PATH, relativePath));
     }
 
     public static bool ParseMediaItem(Uri resourceUri, out Guid mediaItemGuid)
     {
       try
       {
-        var r = Regex.Match(resourceUri.PathAndQuery, RESOURCE_ACCESS_PATH + @"\/([\w-]*)\/?");
+        var r = Regex.Match(resourceUri.PathAndQuery, RESOURCE_STATIC_ACCESS_PATH + @"\/([\w-]*)\/?");
         var mediaItem = r.Groups[1].Value;
         mediaItemGuid = new Guid(mediaItem);
       }
