@@ -101,17 +101,21 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
 
       private void PingCompletedCallback(object sender, PingCompletedEventArgs e)
       {
-        if (e.Cancelled)
+        try
         {
-          this.LogDebug("PS: PingCompletedCallback, Ping canceled.");
-          return;
-        }
+          if (e.Cancelled)
+          {
+            this.LogDebug("PS: PingCompletedCallback, Ping canceled.");
+            return;
+          }
 
-        if (e.Reply.Status == IPStatus.Success)
-        {
-          _isActiveHost = true;
-          this.LogDebug("PS: PingMonitor found an active host {0}", e.Reply.Address);
+          if (e.Reply.Status == IPStatus.Success)
+          {
+            _isActiveHost = true;
+            this.LogDebug("PS: PingMonitor found an active host {0}", e.Reply.Address);
+          }
         }
+        catch (Exception) { }
       }
 
       public void UserShutdownNow() { }
