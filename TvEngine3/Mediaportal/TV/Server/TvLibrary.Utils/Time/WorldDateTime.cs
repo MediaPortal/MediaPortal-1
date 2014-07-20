@@ -375,7 +375,13 @@ namespace Mediaportal.TV.Server.TvLibrary.Utils.Time
       return dt;
     }
 
+    [Obsolete("Fix typo and call ToUniversalTime")]
     public DateTime ToUniveralTime()
+    {
+      return ToUniversalTime();
+    }
+
+    public DateTime ToUniversalTime()
     {
       DateTime dt = DateTime;
       if (_timeZone != null)
