@@ -350,7 +350,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void linkLabelWiki_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
     {
-      ProcessStartInfo sInfo = new ProcessStartInfo("http://wiki.team-mediaportal.com/1_MEDIAPORTAL_1/141_Configuration/TV-Server_Configuration");
+      ProcessStartInfo sInfo = new ProcessStartInfo("http://wiki.team-mediaportal.com/1_MEDIAPORTAL_1/141_Configuration/MediaPortal_Configuration/22_TV");
       Process.Start(sInfo);
     }
   }
