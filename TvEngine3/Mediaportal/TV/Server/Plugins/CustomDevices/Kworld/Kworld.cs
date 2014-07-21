@@ -214,6 +214,21 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Kworld
             this.LogDebug("KWorld: found video input device");
             this.LogDebug("KWorld:   name                = {0}", d.Name);
             this.LogDebug("KWorld:   device path         = {0}", d.DevicePath);
+
+            // We have to be careful to restrict to hardware that we know is
+            // compatible. The code used in this extension is somewhat generic
+            // in that it probably applies to a range of hardware using
+            // Conexant CX2388x chips. However the purpose of the register we
+            // manipulate varies from design to design. Enabling the extension
+            // for incompatible hardware could result in unpredictable results
+            // including hardware damage.
+            //
+            // The regex only checks for the KWorld VS-DVB-S 100/IS.
+            // - The 88\d{2} part is because the driver is a stream class
+            //   driver and the ID for the video capture component is not
+            //   known.
+            // - The [236] part is because it seems there are 3 hardware
+            //   revisions.
             Match m = Regex.Match(d.DevicePath, @"ven_14f1&dev_88\d{2}&subsys_08b[236]17de", RegexOptions.IgnoreCase);
             if (!m.Success)
             {
