@@ -52,6 +52,37 @@ namespace MediaPortal.Util
       return _isSingleSeat.GetValueOrDefault(false);
     }
 
+    public static bool IsSingleSeat(string serverName)
+    {
+      if (!_isSingleSeat.HasValue)
+      {
+        if (Utils.UsingTvServer)
+        {
+          if (serverName.Equals(Environment.MachineName.ToLowerInvariant(), StringComparison.InvariantCultureIgnoreCase))
+          {
+            Log.Debug("Common.IsSingleSeat: HostName = {0} / Environment.MachineName = {1}",
+                      serverName, Environment.MachineName);
+            _isSingleSeat = true;
+          }
+          else
+          {
+            Log.Debug("Common.IsSingleSeat: checking if '{0}' is singleseat...", serverName);
+            string hostName = Dns.GetHostName();
+            var hosts = new[] { "localhost", "127.0.0.1", hostName };
+
+            IsHostNameSingleSeat(serverName, hosts);
+
+            if (!_isSingleSeat.GetValueOrDefault(false))
+            {
+              IPHostEntry hostEntry = Dns.GetHostEntry(hostName);
+              IsHostNameSingleSeat(serverName, hostEntry.AddressList.Select(ipAddress => ipAddress.ToString()).ToList());
+            }
+          }
+        }
+      }
+      return _isSingleSeat.GetValueOrDefault(false);
+    }
+
     private static void IsHostNameSingleSeat(string serverName, IEnumerable<string> hosts)
     {
       foreach (string name in hosts)

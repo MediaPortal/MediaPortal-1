@@ -19,11 +19,12 @@
 #endregion
 
 using System.ComponentModel;
+using System.Collections.Generic;
 using System.Diagnostics;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
 using MediaPortal.Util;
-
+using MediaPortal.GUI.Library;
 
 #pragma warning disable 108
 
@@ -37,7 +38,7 @@ namespace MediaPortal.Configuration.Sections
     private MPLabel mpWarningLabel;
     private MPCheckBox mpDoNotAllowSlowMotionDuringZappingCheckBox;
     private MPToolTip mpMainToolTip;
-    private bool singleSeat;
+    private static bool singleSeat;
     private MPGroupBox mpRtspPathsGroupBox;
     private MPLabel mpLabel1;
     private MPLabel mpLabelRecording;
@@ -51,6 +52,7 @@ namespace MediaPortal.Configuration.Sections
     private MPLabel mpLabelNote;
     private System.Windows.Forms.LinkLabel linkLabelWiki;
     public int pluginVersion;
+    private string hostname;
 
 
     public TVAdvancedOptions()
@@ -65,6 +67,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void OnSectionActivated()
     {
+      CheckAndResetSettings();
       base.OnSectionActivated();
     }
 
@@ -298,10 +301,37 @@ namespace MediaPortal.Configuration.Sections
 
     #endregion
 
+    public void CheckAndResetSettings()
+    {
+      if (hostname != TVRadio.TextBoxHostname)
+      {
+        Log.Debug("TVAdvancedOptions: TV Server hostname is changed from \"{0}\" to \"{1}\".", hostname, TVRadio.TextBoxHostname);
+        Network.Reset();
+        singleSeat = Network.IsSingleSeat(TVRadio.TextBoxHostname);
+        mpUseRtspCheckBox.Checked = false;
+        mpUseRtspCheckBox.Text = singleSeat ? "Single seat setup: force RTSP usage." : "Multi seat setup: use UNC paths.";
+        hostname = TVRadio.TextBoxHostname;
+      }
+    }
+
     public override void LoadSettings()
     {
-      singleSeat = Network.IsSingleSeat();
+      string serverName;
+      using (Settings reader = new MPSettings())
+      {
+        serverName = reader.GetValueAsString("tvservice", "hostname", string.Empty);
+      }
+      if (serverName != string.Empty)
+      {
+        singleSeat = Network.IsSingleSeat();
+      }
+      else
+      {
+        singleSeat = true;
+      }
       
+      hostname = serverName;
+
       bool rtsp;
       using (Settings xmlreader = new MPSettings())
       {
@@ -318,6 +348,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
+      CheckAndResetSettings();
       bool rtsp = singleSeat ? mpUseRtspCheckBox.Checked : !mpUseRtspCheckBox.Checked;
 
       using (Settings xmlwriter = new MPSettings())
@@ -327,7 +358,6 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("tvservice", "timeshiftingpath", textBoxTimeshifting.Text);
         xmlwriter.SetValueAsBool("tvservice", "AdvancedOptions", true);
       }
-
       DebugSettings.DoNotAllowSlowMotionDuringZapping = mpDoNotAllowSlowMotionDuringZappingCheckBox.Checked;
     }
 

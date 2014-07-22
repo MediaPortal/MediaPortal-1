@@ -56,8 +56,9 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private string _settingsHostname;
 
+    private static string _textBoxHostname;
+
     public int pluginVersion;
-    bool _SingleSeat;
 
     #endregion
 
@@ -107,7 +108,6 @@ namespace MediaPortal.Configuration.Sections
 
         mpCheckBoxIsWakeOnLanEnabled_CheckedChanged(null, null);
       }
-      _SingleSeat = Network.IsSingleSeat();
     }
 
     public override void SaveSettings()
@@ -149,19 +149,16 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("tvservice", "isAutoMacAddressEnabled", mpCheckBoxIsAutoMacAddressEnabled.Checked);
         xmlwriter.SetValue("tvservice", "macAddress", mpTextBoxMacAddress.Text);
       }
-      
-      //When TvServer is changed, if user changed mode (SingleSeat/MultiSeat), he needs to review the RTSP setting in Advanced Options section
-      Network.Reset();
-      if (_SingleSeat != Network.IsSingleSeat())
-      {
-        MessageBox.Show("Please review your RTSP/UNC settings in \"Advanced Options\" section", "Warning",
-                        MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-      }
     }
 
     public static string Hostname
     {
       get { return _verifiedHostname; }
+    }
+
+    public static string TextBoxHostname
+    {
+      get { return _textBoxHostname; }
     }
 
     #endregion
@@ -714,6 +711,7 @@ namespace MediaPortal.Configuration.Sections
     {
       mpTextBoxHostname.BackColor = mpTextBoxMacAddress.BackColor;
       _verifiedHostname = string.Empty;
+      _textBoxHostname = mpTextBoxHostname.Text;
     }
 
     private void mpComboBoxHostname_DropDown(object sender, EventArgs e)
