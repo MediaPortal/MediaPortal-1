@@ -330,7 +330,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     /// </summary>
     public override void PerformLoading()
     {
-      _extensions.Add(this);
       LoadExtensions(_serverDescriptor);
       _streamTuner.PerformLoading();
       _epgGrabber = _streamTuner.EpgGrabberInterface;

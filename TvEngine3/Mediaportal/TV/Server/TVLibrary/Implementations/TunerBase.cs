@@ -663,6 +663,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       TunerExtensionLoader tunerExtensionLoader = new TunerExtensionLoader();
       IEnumerable<ICustomDevice> extensions = tunerExtensionLoader.Load();
 
+      ICustomDevice x = this as ICustomDevice;
+      if (x != null)
+      {
+        this.LogDebug("tuner base: add self as extension");
+        List<ICustomDevice> temp = new List<ICustomDevice>();
+        temp.Add(x);
+        temp.AddRange(extensions);
+        extensions = temp;
+      }
+
       this.LogDebug("tuner base: checking for supported extensions");
       HashSet<string> foundInterfaces = new HashSet<string>();
       foreach (ICustomDevice extension in extensions)

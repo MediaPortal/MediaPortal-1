@@ -186,9 +186,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       IBaseFilter lastFilter = _filterInfiniteTee;
       LoadExtensions(_deviceInfo, ref lastFilter);
 
-      // This class implements the extension interface and should be treated as the main extension.
-      _extensions.Add(this);
-
       // Complete the graph.
       AddAndConnectTsWriterIntoGraph(lastFilter);
       CompleteGraph();
