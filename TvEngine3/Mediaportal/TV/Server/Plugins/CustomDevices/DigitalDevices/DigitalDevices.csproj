@@ -36,19 +36,24 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Service\DigitalDevicesConfigService.cs" />
     <Compile Include="DigitalDevices.cs" />
     <Compile Include="DigitalDevicesCiSlotConfig.cs" />
     <Compile Include="DigitalDevicesCiSlot.cs" />
-    <Compile Include="DigitalDevicesConfig.cs">
+    <Compile Include="Config\DigitalDevicesConfig.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="DigitalDevicesConfig.Designer.cs">
+    <Compile Include="Config\DigitalDevicesConfig.Designer.cs">
       <DependentUpon>DigitalDevicesConfig.cs</DependentUpon>
     </Compile>
+    <Compile Include="DigitalDevicesHardware.cs" />
+    <Compile Include="Service\IDigitalDevicesConfigService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -86,7 +91,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="DigitalDevicesConfig.resx">
+    <EmbeddedResource Include="Config\DigitalDevicesConfig.resx">
       <DependentUpon>DigitalDevicesConfig.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>

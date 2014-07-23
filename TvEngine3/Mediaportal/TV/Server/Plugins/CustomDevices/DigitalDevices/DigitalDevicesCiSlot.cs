@@ -87,11 +87,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
     private static readonly Guid COMMON_INTERFACE_PROPERTY_SET = new Guid(0x0aa8a501, 0xa240, 0x11de, 0xb1, 0x30, 0x00, 0x00, 0x00, 0x00, 0x4d, 0x56);
     private static readonly Guid CAM_CONTROL_METHOD_SET = new Guid(0x0aa8a511, 0xa240, 0x11de, 0xb1, 0x30, 0x00, 0x00, 0x00, 0x00, 0x4d, 0x56);
 
-    /// <summary>
-    /// An <see cref="IMoniker"/> display name section that is common to all Digital Devices KS components.
-    /// </summary>
-    public static readonly string COMMON_DEVICE_PATH_SECTION = "fbca-11de-b16f-000000004d56";
-
     private const int BUFFER_SIZE = 2048;       // This is arbitrary - an estimate of the buffer size needed to hold the largest menu or answer. Note must be greater than Pmt.MAX_SIZE.
     private const int MENU_TITLE_LENGTH = 256;
     private const int MAX_CA_SYSTEM_COUNT = 64;
@@ -103,35 +98,15 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
 
     private IntPtr _buffer = IntPtr.Zero;
     private object _lock = new object();
+    private int _index = -1;
     private IKsPropertySet _propertySet = null;
     private IKsControl _control = null;
 
     #endregion
 
-    /// <summary>
-    /// Check if a device is a Digital Devices common interface device.
-    /// </summary>
-    /// <param name="device">The device to check.</param>
-    /// <returns><c>true</c> if the device is a Digital Device common interface device, otherwise <c>false</c></returns>
-    public static bool IsDigitalDevicesCiDevice(DsDevice device)
+    public DigitalDevicesCiSlot(int index, IBaseFilter filter)
     {
-      if (device != null && device.Name != null)
-      {
-        string devicePath = device.DevicePath;
-        if (devicePath != null)
-        {
-          devicePath = devicePath.ToLowerInvariant();
-          if (devicePath.Contains(COMMON_DEVICE_PATH_SECTION) && device.Name.ToLowerInvariant().Contains("common interface"))
-          {
-            return true;
-          }
-        }
-      }
-      return false;
-    }
-
-    public DigitalDevicesCiSlot(IBaseFilter filter)
-    {
+      _index = index;
       _propertySet = filter as IKsPropertySet;
       _control = filter as IKsControl;
       _buffer = Marshal.AllocCoTaskMem(BUFFER_SIZE);
@@ -142,6 +117,21 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
       if (_buffer != IntPtr.Zero)
       {
         Marshal.FreeCoTaskMem(_buffer);
+      }
+    }
+
+    /// <summary>
+    /// Get the CI slot's index.
+    /// </summary>
+    /// <remarks>
+    /// The index is zero-based. Expected to be 0..3. The index is unique per
+    /// base device (Cine, Octopus CI, bridge).
+    /// </remarks>
+    public int Index
+    {
+      get
+      {
+        return _index;
       }
     }
 
@@ -410,17 +400,20 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
           {
             this.LogError("Digital Devices: actual menu entry count {0} does not match expected entry count {1}", strings.Count, stringCount);
             Dump.DumpBinary(_buffer, returnedByteCount);
-            return 1;   // fail
+            return (int)HResult.Severity.Error;
           }
         }
         else if (menuType == 3 || menuType == 4)
         {
           type = MenuType.Enquiry;
           answerLength = Marshal.ReadInt32(_buffer, 8);
-          int byteCount = Marshal.ReadInt32(_buffer, 12);
+          int byteCount = Marshal.ReadInt32(_buffer, 12); // number of bytes in the prompt string, including NULL termination
           strings.Add(DvbTextConverter.Convert(IntPtr.Add(_buffer, 16)));
         }
-        else
+        // We seem to get a type 0 menu for each actual list/menu. That might
+        // be because the interface expects each list/menu has to be handled
+        // (closed?) individually. We ignore the type 0 menus.
+        else if (menuType != 0)
         {
           this.LogWarn("Digital Devices: menu type {0} not supported", menuType);
           Dump.DumpBinary(_buffer, returnedByteCount);

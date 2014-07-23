@@ -25,6 +25,9 @@ using System.Threading;
 using DirectShowLib;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.Plugins.Base.Interfaces;
+using Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices.Config;
+using Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices.Service;
+using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
@@ -33,14 +36,13 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
-using Mediaportal.TV.Server.SetupControls;
 
 namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
 {
   /// <summary>
   /// A class for handling conditional access and DiSEqC for Digital Devices tuners (and clones from Mystique).
   /// </summary>
-  public class DigitalDevices : BaseCustomDevice, IDirectShowAddOnDevice, IConditionalAccessProvider, IConditionalAccessMenuActions, IDiseqcDevice, ITvServerPlugin
+  public class DigitalDevices : BaseCustomDevice, IDirectShowAddOnDevice, IConditionalAccessProvider, IConditionalAccessMenuActions, IDiseqcDevice, ITvServerPlugin, ITvServerPluginCommunciation
   {
     #region enums
 
@@ -58,7 +60,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
       #region information
 
       public string DevicePath;
-      public string DeviceName;
 
       #endregion
 
@@ -68,14 +69,16 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
       // CAM.
       public int CamMenuId = -1;
 
-      // The device path of the tuner that "owns" this CI. The owner is the
+      // The external ID of the tuner that "owns" this CI. The owner is the
       // tuner that most recently interacted with the CI - either through
       // loading, or sending decrypt or enter menu requests. We send messages
       // from the CAM to the owner. In the case where the CI is linked to
       // multiple tuners, this avoids CAM and user confusion.
-      public string Owner = null;
+      private string _ownerExternalId = null;
+      private int _ownerIndex = -1;
+      private int _previousOwnerIndex = -1;
 
-      public DigitalDevicesCiSlot Slot = null;
+      private DigitalDevicesCiSlot _slot = null;
 
       // Programs decrypted using MTD. Tuner device path => program number.
       public IDictionary<string, uint> MtdPrograms = new Dictionary<string, uint>(4);
@@ -98,22 +101,85 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
 
       #region configuration
 
-      // A decrypt limit for the CAM (as opposed to the tuner).
-      public int DecryptLimit = 0;
-
-      // A list of service providers. The CAM is able to decrypt channels from
-      // any/all of these providers.
-      public HashSet<string> Providers = new HashSet<string>();
-
-      private DigitalDevicesCiSlotConfig Config = null;
+      private DigitalDevicesCiSlotConfig _config = null;
 
       #endregion
 
       public SharedCiContext(string devicePath, string deviceName)
       {
         DevicePath = devicePath;
-        DeviceName = deviceName;
-        Config = new DigitalDevicesCiSlotConfig(devicePath, deviceName);
+        _config = new DigitalDevicesCiSlotConfig(devicePath, deviceName);
+      }
+
+      public string OwnerExternalId
+      {
+        get
+        {
+          return _ownerExternalId;
+        }
+      }
+
+      public int OwnerIndex
+      {
+        get
+        {
+          return _ownerIndex;
+        }
+      }
+
+      public DigitalDevicesCiSlot Slot
+      {
+        get
+        {
+          return _slot;
+        }
+      }
+
+      public int DecryptLimit
+      {
+        get
+        {
+          return _config.DecryptLimit;
+        }
+      }
+
+      public HashSet<string> Providers
+      {
+        get
+        {
+          return _config.Providers;
+        }
+      }
+
+      public void SetOwner(string externalId, int index, DigitalDevicesCiSlot slot, bool expectedAlreadyOwner = false)
+      {
+        if (string.IsNullOrEmpty(externalId))
+        {
+          this.LogDebug("Digital Devices: tuner {0} releasing ownership of CI {1}", _ownerIndex, _slot.Index);
+        }
+        else if (string.IsNullOrEmpty(_ownerExternalId))
+        {
+          this.LogDebug("Digital Devices: tuner {0} taking ownership of unmanaged CI {1}", index, slot.Index);
+        }
+        else if (!string.Equals(_ownerExternalId, externalId))
+        {
+          if (expectedAlreadyOwner)
+          {
+            this.LogWarn("Digital Devices: tuner {0} reclaiming ownership of CI {1} currently owned by tuner {2}", index, slot.Index, _ownerIndex);
+          }
+          else
+          {
+            this.LogDebug("Digital Devices: tuner {0} taking ownership of CI {1} currently owned by tuner {2}", index, slot.Index, _ownerIndex);
+          }
+        }
+
+        if (index >= 0)
+        {
+          _previousOwnerIndex = _ownerIndex;
+        }
+        _ownerExternalId = externalId;
+        _ownerIndex = index;
+        _slot = slot;
       }
 
       public bool UpdateStateInfo()
@@ -161,7 +227,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
         }
 
         if (isCamReady != IsCamReady ||
-          camMenuTitle != CamMenuTitle ||
+          !string.Equals(camMenuTitle, CamMenuTitle) ||
           camCasIds.Count != CamCasIds.Count ||
           ciBitRate != CiBitRate ||
           ciMaxBitRate != CiMaxBitRate ||
@@ -193,30 +259,29 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
       public bool UpdateConfig()
       {
         bool isChanged = false;
-        int decryptLimit = Config.DecryptLimit;
-        HashSet<string> providers = new HashSet<string>(Config.Providers);
+        int decryptLimit = _config.DecryptLimit;
+        HashSet<string> providers = new HashSet<string>(_config.Providers);
 
         if (SettingsManagement.GetValue("pluginDigital Devices", false))
         {
-          Config.LoadSettings();
+          _config.LoadSettings();
         }
         else
         {
-          Config.DecryptLimit = 0;
-          Config.Providers.Clear();
+          _config.ResetSettings();
         }
 
-        if (decryptLimit != Config.DecryptLimit)
+        if (decryptLimit != _config.DecryptLimit)
         {
           isChanged = true;
         }
-        if (providers.Count != Config.Providers.Count)
+        if (providers.Count != _config.Providers.Count)
         {
           isChanged = true;
         }
         else
         {
-          foreach (string provider in Config.Providers)
+          foreach (string provider in _config.Providers)
           {
             if (!providers.Contains(provider))
             {
@@ -235,11 +300,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
       public IBaseFilter Filter;
       public DigitalDevicesCiSlot Slot;
 
-      public PrivateCiContext(DsDevice device, IBaseFilter filter)
+      public PrivateCiContext(DsDevice device, IBaseFilter filter, int index)
       {
         Device = device;
         Filter = filter;
-        Slot = new DigitalDevicesCiSlot(filter);
+        Slot = new DigitalDevicesCiSlot(index, filter);
       }
     }
 
@@ -259,7 +324,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
 
     private bool _isDigitalDevices = false;
     private bool _isCaInterfaceOpen = false;
-    private string _tunerDevicePath = string.Empty;
+    private int _tunerIndex = -1;
+    private string _tunerExternalId = string.Empty;
     private bool _isCiSlotPresent = false;
 
     // For CI/CAM interaction.
@@ -267,6 +333,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
     private HashSet<string> _ciSlotsWithChangedServices = null;
     private IFilterGraph2 _graph = null;
     private string _menuContext = null;                                       // The device path of the CI slot which most recently sent or received a menu/message.
+    private int _menuSlotIndex = -1;                                          // The CI slot index corresponding with _menuContext.
     private IList<string> _rootMenuChoices = null;                            // The device paths of each of the CI slots which have an entry in the root menu.
 
     private Thread _mmiHandlerThread = null;
@@ -303,7 +370,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
       IKsPropertySet ps = pin as IKsPropertySet;
       if (ps == null)
       {
-        this.LogDebug("Digital Devices: input pin is not a property set");
+        this.LogDebug("Digital Devices: pin is not a property set");
         Release.ComObject("Digital Devices DiSEqC filter input pin", ref pin);
         return null;
       }
@@ -402,21 +469,19 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
           {
             foreach (SharedCiContext sharedContext in _sharedCiContexts.Values)
             {
-              if (string.IsNullOrEmpty(sharedContext.Owner))
+              if (string.IsNullOrEmpty(sharedContext.OwnerExternalId))
               {
                 PrivateCiContext privateContext;
                 if (_privateCiContexts.TryGetValue(sharedContext.DevicePath, out privateContext))
                 {
-                  this.LogDebug("Digital Devices: tuner {0} taking ownership of unmanaged CI {1}", _tunerDevicePath, sharedContext.DevicePath);
-                  sharedContext.Owner = _tunerDevicePath;
-                  sharedContext.Slot = privateContext.Slot;
+                  sharedContext.SetOwner(_tunerExternalId, _tunerIndex, privateContext.Slot);
                 }
                 else
                 {
                   continue;
                 }
               }
-              else if (!sharedContext.Owner.Equals(_tunerDevicePath))
+              else if (!sharedContext.OwnerExternalId.Equals(_tunerExternalId))
               {
                 continue;
               }
@@ -424,7 +489,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
               if (sharedContext.UpdateConfig())
               {
                 // Config has changed.
-                this.LogInfo("Digital Devices: slot {0} config change", sharedContext.DevicePath);
+                this.LogInfo("Digital Devices: slot {0} config change", sharedContext.Slot.Index);
                 this.LogDebug("  decrypt limit   = {0}", sharedContext.DecryptLimit);
                 this.LogDebug("  providers       = {0}", string.Join(", ", sharedContext.Providers));
               }
@@ -432,7 +497,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
               if (sharedContext.UpdateStateInfo())
               {
                 // State has changed.
-                this.LogInfo("Digital Devices: slot {0} state change", sharedContext.DevicePath);
+                this.LogInfo("Digital Devices: slot {0} state change", sharedContext.Slot.Index);
                 this.LogInfo("  is CAM ready    = {0}", sharedContext.IsCamReady);
                 if (sharedContext.IsCamReady)
                 {
@@ -443,8 +508,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
                     this.LogDebug("    {0, -13} = 0x{1:x4}", i + 1, sharedContext.CamCasIds[i]);
                   }
                 }
-                this.LogDebug("  CI bit rate     = {0}", sharedContext.CiBitRate);
-                this.LogDebug("  CI max bit rate = {0}", sharedContext.CiMaxBitRate);
+                this.LogDebug("  CI bit rate     = {0} b/s", sharedContext.CiBitRate);
+                this.LogDebug("  CI max bit rate = {0} b/s", sharedContext.CiMaxBitRate);
                 this.LogDebug("  CI tuner count  = {0}", sharedContext.CiTunerCount);
               }
 
@@ -468,6 +533,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
                   continue;
                 }
                 _menuContext = sharedContext.DevicePath;
+                _menuSlotIndex = sharedContext.Slot.Index;
+                if (sharedContext.CamMenuId == -1)
+                {
+                  // The first menu is provided to enable us sync with the driver's current ID.
+                  sharedContext.CamMenuId = id;
+                  continue;
+                }
                 sharedContext.CamMenuId = id;
                 if (type == DigitalDevicesCiSlot.MenuType.Unknown)
                 {
@@ -475,7 +547,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
                   continue;
                 }
 
-                this.LogInfo("Digital Devices: slot {0} received new menu", sharedContext.DevicePath);
+                this.LogInfo("Digital Devices: slot {0} received new menu", sharedContext.Slot.Index);
                 this.LogDebug("  id        = {0}", id);
                 this.LogDebug("  type      = {0}", type);
 
@@ -501,10 +573,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
                     for (int i = 3; i < strings.Count; i++)
                     {
                       string entry = strings[i];
-                      this.LogDebug("    {0, -7} = {1}", i + 1, entry);
+                      this.LogDebug("    {0, -7} = {1}", i - 2, entry);
                       if (_caMenuCallBack != null)
                       {
-                        _caMenuCallBack.OnCiMenuChoice(i, entry);
+                        _caMenuCallBack.OnCiMenuChoice(i - 3, entry);
                       }
                     }
                   }
@@ -519,14 +591,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
                   }
                 }
               }
-              else
+              else if (hr != unchecked((int)0x8007001f))
               {
                 // Attempting to check for a menu when the menu has not previously been
                 // opened seems to fail (HRESULT 0x8007001f). Don't flood the logs...
-                if (_menuContext != null)
-                {
-                  this.LogError("Digital Devices: failed to read MMI, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-                }
+                this.LogError("Digital Devices: failed to read MMI, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
               }
             }
           }
@@ -591,15 +660,15 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
         this.LogDebug("Digital Devices: tuner external identifier is not set");
         return false;
       }
-      if (!tunerExternalId.ToLowerInvariant().Contains(DigitalDevicesCiSlot.COMMON_DEVICE_PATH_SECTION))
+      if (!DigitalDevicesHardware.IsDevice(tunerExternalId, out _tunerIndex))
       {
-        this.LogDebug("Digital Devices: external identifier does not contain the Digital Devices common section");
+        this.LogDebug("Digital Devices: incompatible tuner");
         return false;
       }
 
       this.LogInfo("Digital Devices: extension supported");
       _isDigitalDevices = true;
-      _tunerDevicePath = tunerExternalId;
+      _tunerExternalId = tunerExternalId;
 
       // Check if DiSEqC is supported (only relevant for satellite tuners).
       if (tunerType == CardType.DvbS)
@@ -669,116 +738,112 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
         return true;
       }
 
-      // We need a demux filter to test whether we can add any further CI filters
-      // to the graph.
+      // This will be our list of CI contexts.
+      _privateCiContexts = new Dictionary<string, PrivateCiContext>(4);
+      _isCiSlotPresent = false;
       _graph = graph;
-      IPin demuxInputPin = null;
-      IBaseFilter tmpDemux = (IBaseFilter)new MPEG2Demultiplexer();
-      try
+      Guid filterIid = typeof(IBaseFilter).GUID;
+      while (true)
       {
-        int hr = _graph.AddFilter(tmpDemux, "Temp MPEG2 Demultiplexer");
-        if (hr != (int)HResult.Severity.Success)
-        {
-          this.LogError("Digital Devices: failed to add test demux to graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-          return false;
-        }
-        demuxInputPin = DsFindPin.ByDirection(tmpDemux, PinDirection.Input, 0);
-        if (demuxInputPin == null)
-        {
-          this.LogError("Digital Devices: failed to add filter(s) to graph, failed to find the demux input pin");
-          return false;
-        }
-
-        // We start our work with the last filter in the graph, which we expect to be
-        // either a tuner or capture filter. We need the output pin...
+        // Stage 1: if the last output pin doesn't have any mediums then no [further] CI slots
+        // are configured for this tuner.
         IPin lastFilterOutputPin = DsFindPin.ByDirection(lastFilter, PinDirection.Output, 0);
         if (lastFilterOutputPin == null)
         {
           this.LogError("Digital Devices: failed to add filter(s) to graph, upstream filter doesn't have an output pin");
           return false;
         }
-
-        // This will be our list of CI contexts.
-        _privateCiContexts = new Dictionary<string, PrivateCiContext>(4);
-        _isCiSlotPresent = false;
-        while (true)
+        try
         {
-          // Stage 1: if connection to a demux is possible then no [further] CI slots are configured
-          // for this tuner. This test removes a 30 to 45 second delay when the graphbuilder tries
-          // to render [capture]->[CI]->[demux].
-          if (_graph.ConnectDirect(lastFilterOutputPin, demuxInputPin, null) == 0)
+          ICollection<RegPinMedium> mediums = GetPinMediums(lastFilterOutputPin);
+          if (mediums.Count == 0)
           {
             this.LogDebug("Digital Devices: no [more] CI filters available or configured for this tuner");
-            lastFilterOutputPin.Disconnect();
             break;
           }
 
           // Stage 2: see if there are any more CI filters that we can add to the graph. We re-loop
-          // over all capture devices because the CI filters have to be connected in a specific order
-          // which is not guaranteed to be the same as the capture device array order.
+          // over all capture devices because the CI filters have to be connected in a specific
+          // order which is not guaranteed to be the same as the capture device array order.
           bool addedFilter = false;
           DsDevice[] captureDevices = DsDevice.GetDevicesOfCat(FilterCategory.BDAReceiverComponentsCategory);
           foreach (DsDevice captureDevice in captureDevices)
           {
             // We're looking for a Digital Devices common interface device.
-            if (!DigitalDevicesCiSlot.IsDigitalDevicesCiDevice(captureDevice))
+            int ciIndex;
+            if (!DigitalDevicesHardware.IsCiDevice(captureDevice, out ciIndex))
             {
               captureDevice.Dispose();
               continue;
             }
 
-            // Stage 3: okay, we've got a CI filter device. Let's try and connect it into the graph.
-            this.LogDebug("Digital Devices: adding filter for device {0} {1}", captureDevice.Name, captureDevice.DevicePath);
-            IBaseFilter tmpCiFilter = null;
-            hr = _graph.AddSourceFilterForMoniker(captureDevice.Mon, null, captureDevice.Name, out tmpCiFilter);
-            if (hr != (int)HResult.Severity.Success || tmpCiFilter == null)
-            {
-              this.LogError("Digital Devices: failed to add the filter to the graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-              captureDevice.Dispose();
-              continue;
-            }
-
-            // Now we've got a filter in the graph. Ensure that the filter has input and output pins (really
-            // just a formality) and check if it can be connected to our upstream filter.
-            IPin tmpFilterInputPin = DsFindPin.ByDirection(tmpCiFilter, PinDirection.Input, 0);
-            IPin tmpFilterOutputPin = DsFindPin.ByDirection(tmpCiFilter, PinDirection.Output, 0);
-            hr = (int)HResult.Severity.Error;
+            // Stage 3: okay, we've got a CI device. Create the filter.
+            object obj;
             try
             {
-              if (tmpFilterInputPin == null || tmpFilterOutputPin == null)
+              captureDevice.Mon.BindToObject(null, null, ref filterIid, out obj);
+            }
+            catch (Exception ex)
+            {
+              this.LogError(ex, "Digital Devices: failed to instanciate filter for device {0} {1}", captureDevice.Name, captureDevice.DevicePath);
+              captureDevice.Dispose();
+              continue;
+            }
+
+            // Stage 4: will this filter connect?
+            int hr = (int)HResult.Severity.Error;
+            IBaseFilter tmpCiFilter = obj as IBaseFilter;
+            IPin tmpFilterInputPin = DsFindPin.ByDirection(tmpCiFilter, PinDirection.Input, 0);
+            try
+            {
+              ICollection<RegPinMedium> tmpMediums = GetPinMediums(tmpFilterInputPin);
+              foreach (RegPinMedium m1 in mediums)
               {
-                this.LogDebug("Digital Devices: the filter doesn't have required pin(s)");
-                continue;
-              }
-              hr = _graph.ConnectDirect(lastFilterOutputPin, tmpFilterInputPin, null);
-              if (hr != (int)HResult.Severity.Success)
-              {
-                this.LogDebug("Digital Devices: failed to connect the filter into the graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-                continue;
+                foreach (RegPinMedium m2 in tmpMediums)
+                {
+                  if (m1.clsMedium == m2.clsMedium && m1.dw1 == m2.dw1 && m1.dw2 == m2.dw2)
+                  {
+                    // Stage 5: yes! Add and connect the filter.
+                    hr = _graph.AddFilter(tmpCiFilter, captureDevice.Name);
+                    if (hr != (int)HResult.Severity.Success)
+                    {
+                      this.LogError("Digital Devices: failed to add the filter for {0} {1} to the graph, hr = 0x{2:x} ({3})", captureDevice.Name, captureDevice.DevicePath, hr, HResult.GetDXErrorString(hr));
+                      break;
+                    }
+                    hr = _graph.ConnectDirect(lastFilterOutputPin, tmpFilterInputPin, null);
+                    if (hr != (int)HResult.Severity.Success)
+                    {
+                      this.LogError("Digital Devices: failed to connect the matching filter for {0} {1} into the graph, hr = 0x{2:x} ({3})", captureDevice.Name, captureDevice.DevicePath, hr, HResult.GetDXErrorString(hr));
+                      _graph.RemoveFilter(tmpCiFilter);
+                    }
+                    break;
+                  }
+                }
+                if (hr == (int)HResult.Severity.Success)
+                {
+                  break;
+                }
               }
             }
             finally
             {
               Release.ComObject("Digital Devices CI filter input pin", ref tmpFilterInputPin);
-              if (hr != (int)HResult.Severity.Success)
-              {
-                Release.ComObject("Digital Devices CI filter output pin", ref tmpFilterOutputPin);
-                _graph.RemoveFilter(tmpCiFilter);
-                Release.ComObject("Digital Devices CI filter", ref tmpCiFilter);
-                captureDevice.Dispose();
-              }
+            }
+            if (hr != (int)HResult.Severity.Success)
+            {
+              Release.ComObject("Digital Devices CI filter", ref tmpCiFilter);
+              captureDevice.Dispose();
+              continue;
             }
 
-            Release.ComObject("Digital Devices upstream filter output pin", ref lastFilterOutputPin);
-            lastFilterOutputPin = tmpFilterOutputPin;
-
             // Excellent - CI filter successfully added!
-            PrivateCiContext context = new PrivateCiContext(captureDevice, tmpCiFilter);
+            this.LogDebug("Digital Devices:   added CI {0}, name = {1}, device path = {2}", ciIndex, captureDevice.Name, captureDevice.DevicePath);
+            PrivateCiContext context = new PrivateCiContext(captureDevice, tmpCiFilter, ciIndex);
             _privateCiContexts.Add(captureDevice.DevicePath, context);
-
             lastFilter = tmpCiFilter;
             addedFilter = true;
             _isCiSlotPresent = true;
+            break;
           }
 
           // Insurance: we don't want to get stuck in an endless loop.
@@ -788,19 +853,58 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
             break;
           }
         }
+        finally
+        {
+          Release.ComObject("Digital Devices upstream filter output pin", ref lastFilterOutputPin);
+        }
+      }
 
-        this.LogInfo("Digital Devices: total of {0} CI filter(s) in the graph", _privateCiContexts.Count);
-        Release.ComObject("Digital Devices last filter output pin", ref lastFilterOutputPin);
+      this.LogInfo("Digital Devices: total of {0} CI filter(s) in the graph", _privateCiContexts.Count);
+      return _isCiSlotPresent;
+    }
+
+    /// <summary>
+    /// Get the mediums for a pin.
+    /// </summary>
+    /// <param name="pin">The pin.</param>
+    /// <returns>the pin's mediums (if any); <c>null</c> if the pin is not a KS pin</returns>
+    private static ICollection<RegPinMedium> GetPinMediums(IPin pin)
+    {
+      IKsPin ksPin = pin as IKsPin;
+      if (ksPin == null)
+      {
+        return new List<RegPinMedium>(0);
+      }
+
+      IntPtr ksMultiple = IntPtr.Zero;
+      int hr = ksPin.KsQueryMediums(out ksMultiple);
+      // Can return 1 (S_FALSE) for non-error scenarios.
+      if (hr < (int)HResult.Severity.Success)
+      {
+        HResult.ThrowException(hr, "Failed to query pin mediums.");
+      }
+      try
+      {
+        int mediumCount = Marshal.ReadInt32(ksMultiple, sizeof(int));
+        List<RegPinMedium> mediums = new List<RegPinMedium>(mediumCount);
+        IntPtr mediumPtr = IntPtr.Add(ksMultiple, 8);
+        int regPinMediumSize = Marshal.SizeOf(typeof(RegPinMedium));
+        for (int i = 0; i < mediumCount; i++)
+        {
+          RegPinMedium m = (RegPinMedium)Marshal.PtrToStructure(mediumPtr, typeof(RegPinMedium));
+          // Exclude invalid and non-meaningful mediums.
+          if (m.clsMedium != Guid.Empty && m.clsMedium != MediaPortalGuid.KS_MEDIUM_SET_ID_STANDARD)
+          {
+            mediums.Add(m);
+          }
+          mediumPtr = IntPtr.Add(mediumPtr, regPinMediumSize);
+        }
+        return mediums;
       }
       finally
       {
-        // Clean up the demuxer. Anything else is handled in Dispose().
-        Release.ComObject("Digital Devices demultiplexer input pin", ref demuxInputPin);
-        _graph.RemoveFilter(tmpDemux);
-        Release.ComObject("Digital Devices demultiplexer", ref tmpDemux);
+        Marshal.FreeCoTaskMem(ksMultiple);
       }
-
-      return _isCiSlotPresent;
     }
 
     #endregion
@@ -871,6 +975,32 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
 
     #endregion
 
+    #region ITvServerPluginCommunication members
+
+    /// <summary>
+    /// Supply a service class implementation for client-server plugin communication.
+    /// </summary>
+    public object GetServiceInstance
+    {
+      get
+      {
+        return new DigitalDevicesConfigService();
+      }
+    }
+
+    /// <summary>
+    /// Supply a service class interface for client-server plugin communication.
+    /// </summary>
+    public Type GetServiceInterfaceForContractType
+    {
+      get
+      {
+        return typeof(IDigitalDevicesConfigService);
+      }
+    }
+
+    #endregion
+
     #region IConditionalAccessProvider members
 
     /// <summary>
@@ -902,27 +1032,26 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
       {
         foreach (PrivateCiContext privateContext in _privateCiContexts.Values)
         {
+          int ciIndex = privateContext.Slot.Index;
           string ciDevicePath = privateContext.Device.DevicePath;
           bool isFirstLoad = true;
           SharedCiContext sharedContext;
           if (_sharedCiContexts.TryGetValue(ciDevicePath, out sharedContext))
           {
-            if (!string.IsNullOrEmpty(sharedContext.Owner))
+            if (!string.IsNullOrEmpty(sharedContext.OwnerExternalId))
             {
-              this.LogDebug("Digital Devices: tuner {0} already owns CI {1}", sharedContext.Owner, ciDevicePath);
+              this.LogDebug("Digital Devices: tuner {0} already owns CI {1}", sharedContext.OwnerIndex, ciIndex);
               continue;
             }
-            this.LogDebug("Digital Devices: tuner {0} taking ownership of unmanaged CI {1}", _tunerDevicePath, ciDevicePath);
             isFirstLoad = false;
           }
           else
           {
-            this.LogDebug("Digital Devices: tuner {0} loading new CI {1}", _tunerDevicePath, ciDevicePath);
+            this.LogDebug("Digital Devices: tuner {0} loading new CI {1}", _tunerIndex, ciIndex);
             sharedContext = new SharedCiContext(ciDevicePath, privateContext.Device.Name);
             _sharedCiContexts.Add(ciDevicePath, sharedContext);
           }
-          sharedContext.Owner = _tunerDevicePath;
-          sharedContext.Slot = privateContext.Slot;
+          sharedContext.SetOwner(_tunerExternalId, _tunerIndex, privateContext.Slot);
           bool isChanged = sharedContext.UpdateStateInfo();
           isChanged |= sharedContext.UpdateConfig();
 
@@ -945,8 +1074,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
               sharedContext.McdPrograms.Clear();
               sharedContext.MtdPrograms.Clear();
             }
-            this.LogDebug("  CI bit rate     = {0}", sharedContext.CiBitRate);
-            this.LogDebug("  CI max bit rate = {0}", sharedContext.CiMaxBitRate);
+            this.LogDebug("  CI bit rate     = {0} b/s", sharedContext.CiBitRate);
+            this.LogDebug("  CI max bit rate = {0} b/s", sharedContext.CiMaxBitRate);
             this.LogDebug("  CI tuner count  = {0}", sharedContext.CiTunerCount);
           }
         }
@@ -975,9 +1104,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
         foreach (string ciDevicePath in _privateCiContexts.Keys)
         {
           SharedCiContext sharedContext = _sharedCiContexts[ciDevicePath];
-          sharedContext.Owner = null;
-          sharedContext.Slot = null;
-          sharedContext.MtdPrograms.Remove(_tunerDevicePath);
+          if (_tunerExternalId.Equals(sharedContext.OwnerExternalId))
+          {
+            sharedContext.SetOwner(null, -1, null, true);
+          }
+          sharedContext.MtdPrograms.Remove(_tunerExternalId);
           if (sharedContext.CiTunerCount == 1)
           {
             sharedContext.McdPrograms.Clear();
@@ -1021,13 +1152,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
 
       // Reset the slot selection for menu browsing.
       _menuContext = null;
+      _menuSlotIndex = -1;
 
       // We reset all the CI filters in the graph. Note this may stop
       // decryption or streaming of channels that other tuners are receiving.
       // We trust that this is necessary.
       foreach (PrivateCiContext context in _privateCiContexts.Values)
       {
-        this.LogDebug("Digital Devices: reset slot {0}", context.Device.DevicePath);
+        this.LogDebug("Digital Devices: reset slot {0}", context.Slot.Index);
         int hr = context.Slot.ResetCam();
         if (hr == (int)HResult.Severity.Success)
         {
@@ -1035,7 +1167,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
         }
         else
         {
-          this.LogError("Digital Devices: failed to reset CI slot {0}, hr = 0x{1:x} ({2})", context.Device.DevicePath, hr, HResult.GetDXErrorString(hr));
+          this.LogError("Digital Devices: failed to reset CI slot {0}, hr = 0x{1:x} ({2})", context.Slot.Index, hr, HResult.GetDXErrorString(hr));
           success = false;
         }
       }
@@ -1121,9 +1253,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
             SharedCiContext sharedContext = _sharedCiContexts[ciDevicePath];
             // MTD.
             uint currentMtdProgramNumber;
-            if (sharedContext.MtdPrograms.TryGetValue(_tunerDevicePath, out currentMtdProgramNumber) && currentMtdProgramNumber == mtdProgramNumber)
+            if (sharedContext.MtdPrograms.TryGetValue(_tunerExternalId, out currentMtdProgramNumber) && currentMtdProgramNumber == mtdProgramNumber)
             {
-              sharedContext.MtdPrograms.Remove(_tunerDevicePath);
+              sharedContext.MtdPrograms.Remove(_tunerExternalId);
             }
 
             // MCD
@@ -1159,7 +1291,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
         foreach (string ciDevicePath in _privateCiContexts.Keys)
         {
           SharedCiContext sharedContext = _sharedCiContexts[ciDevicePath];
-          this.LogDebug("  {0} {1}...", sharedContext.CamMenuTitle, sharedContext.DevicePath);
+          this.LogDebug("  slot {0}, {1}...", sharedContext.Slot.Index, sharedContext.CamMenuTitle);
 
           // Is the CAM able to decrypt the channel?
           if (!sharedContext.IsCamReady)
@@ -1190,7 +1322,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
             else
             {
               uint currentMtdProgramNumber;
-              if (sharedContext.MtdPrograms.TryGetValue(_tunerDevicePath, out currentMtdProgramNumber) && currentMtdProgramNumber == mtdProgramNumber)
+              if (sharedContext.MtdPrograms.TryGetValue(_tunerExternalId, out currentMtdProgramNumber) && currentMtdProgramNumber == mtdProgramNumber)
               {
                 this.LogDebug("    provider supported, found program in MTD list");
                 selectedCiSlot = sharedContext;
@@ -1207,7 +1339,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
           }
           else
           {
-            if (sharedContext.MtdPrograms.ContainsKey(_tunerDevicePath))
+            if (sharedContext.MtdPrograms.ContainsKey(_tunerExternalId))
             {
               this.LogDebug("    provider supported, MTD already active");
               continue;
@@ -1240,11 +1372,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
 
         // If we don't own the CI and this is the last command we expect to
         // send, take ownership. We should handle decrypt failure messages.
-        if (!_tunerDevicePath.Equals(selectedCiSlot.Owner) && (selectedCiSlot.CiTunerCount != 1 || (listAction != CaPmtListManagementAction.First || listAction != CaPmtListManagementAction.More)))
+        if (!_tunerExternalId.Equals(selectedCiSlot.OwnerExternalId) && (selectedCiSlot.CiTunerCount != 1 || (listAction != CaPmtListManagementAction.First || listAction != CaPmtListManagementAction.More)))
         {
-          this.LogDebug("Digital Devices: tuner {0} taking ownership of CI {1}", _tunerDevicePath, selectedCiSlot.DevicePath);
-          selectedCiSlot.Owner = _tunerDevicePath;
-          selectedCiSlot.Slot = _privateCiContexts[selectedCiSlot.DevicePath].Slot;
+          selectedCiSlot.SetOwner(_tunerExternalId, _tunerIndex, _privateCiContexts[selectedCiSlot.DevicePath].Slot);
         }
 
         // MTD or MCD?
@@ -1266,7 +1396,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
             foreach (string ciSlotDevicePath in _ciSlotsWithChangedServices)
             {
               SharedCiContext sharedContext = _sharedCiContexts[ciSlotDevicePath];
-              this.LogDebug("  {0} {1}...", sharedContext.CamMenuTitle, sharedContext.DevicePath);
+              this.LogDebug("  slot {0}, {1}...", sharedContext.Slot.Index, sharedContext.CamMenuTitle);
               int i = 1;
               foreach (Pmt ciPmt in sharedContext.McdPrograms.Values)
               {
@@ -1298,7 +1428,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
         else
         {
           this.LogDebug("Digital Devices: sending MTD decrypt request");
-          selectedCiSlot.MtdPrograms[_tunerDevicePath] = mtdProgramNumber;
+          selectedCiSlot.MtdPrograms[_tunerExternalId] = mtdProgramNumber;
           hr = selectedCiSlot.Slot.DecryptService(mtdProgramNumber);
         }
       }
@@ -1387,7 +1517,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
           this.LogDebug("  {0} = {1}", i, entry);
         }
       }
-      _menuContext = null;  // Reset the menu context. The user will choose the CAM they want to interact with.
+
+      // Reset the menu context. The user will choose the CAM they want to interact with.
+      _menuContext = null;
+      _menuSlotIndex = -1;
+
       this.LogDebug("Digital Devices: result = success");
       return true;
     }
@@ -1399,7 +1533,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
     /// <returns><c>true</c> if the request is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
     private bool EnterMenu(string ciSlotDevicePath)
     {
-      this.LogDebug("Digital Devices: slot {0} enter menu", ciSlotDevicePath);
+      DigitalDevicesCiSlot privateSlot = _privateCiContexts[ciSlotDevicePath].Slot;
+      this.LogDebug("Digital Devices: slot {0} enter menu", privateSlot.Index);
 
       if (!_isCaInterfaceOpen)
       {
@@ -1415,20 +1550,15 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
           this.LogError("Digital Devices: failed to enter menu, no slot for context {0}", ciSlotDevicePath);
           return false;
         }
-        if (!_tunerDevicePath.Equals(context.Owner))
-        {
-          this.LogDebug("Digital Devices: tuner {0} taking ownership of CI {1}", _tunerDevicePath, context.DevicePath);
-          context.Owner = _tunerDevicePath;
-          context.Slot = _privateCiContexts[ciSlotDevicePath].Slot;
-        }
+        context.SetOwner(_tunerExternalId, _tunerIndex, privateSlot);
         int hr = context.Slot.EnterCamMenu();
         if (hr == (int)HResult.Severity.Success)
         {
           this.LogDebug("Digital Devices: result = success");
           // Future menu interactions will be passed to this CI slot/CAM.
           _menuContext = ciSlotDevicePath;
-          // Reset the menu depth tracker.
-          context.CamMenuId = 0;
+          _menuSlotIndex = context.Slot.Index;
+          DigitalDevicesHardware.IsDevice(ciSlotDevicePath, out _menuSlotIndex);
           return true;
         }
 
@@ -1443,7 +1573,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
     /// <returns><c>true</c> if the request is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
     public bool CloseMenu()
     {
-      this.LogDebug("Digital Devices: slot {0} close menu", _menuContext);
+      this.LogDebug("Digital Devices: slot {0} close menu", _menuSlotIndex);
 
       if (!_isCaInterfaceOpen)
       {
@@ -1460,10 +1590,15 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
           this.LogError("Digital Devices: failed to close menu, no slot for context {0}", _menuContext);
           return false;
         }
-        // We're closing the menu. No need to force ownership.
-        if (!string.IsNullOrEmpty(context.Owner) && !_tunerDevicePath.Equals(context.Owner))
+        // We're closing the menu. No need to force ownership unless the CI is
+        // not owned (in which case the slot would be null).
+        if (string.IsNullOrEmpty(context.OwnerExternalId))
         {
-          this.LogWarn("Digital Devices: non-owning tuner {0} closing menu for CI {1} owned by tuner {2}", _tunerDevicePath, _menuContext, context.Owner);
+          context.SetOwner(_tunerExternalId, _tunerIndex, _privateCiContexts[_menuContext].Slot);
+        }
+        else if (!_tunerExternalId.Equals(context.OwnerExternalId))
+        {
+          this.LogWarn("Digital Devices: non-owning tuner {0} closing menu for CI {1} owned by tuner {2}", _tunerIndex, context.Slot.Index, context.OwnerIndex);
         }
         int hr = context.Slot.CloseCamMenu();
         if (hr == (int)HResult.Severity.Success)
@@ -1484,7 +1619,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
     /// <returns><c>true</c> if the selection is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
     public bool SelectMenuEntry(byte choice)
     {
-      this.LogDebug("Digital Devices: slot {0} select menu entry, choice = {1}", _menuContext, choice);
+      this.LogDebug("Digital Devices: slot {0} select menu entry, choice = {1}", _menuSlotIndex, choice);
 
       if (!_isCaInterfaceOpen)
       {
@@ -1524,6 +1659,22 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
         }
       }
 
+      // The DD API doesn't pass back close requests from the CAM, so always
+      // assume a selection closes the menu. If the CAM responds with a new
+      // menu we can always reopen it.
+      lock (_caMenuCallBackLock)
+      {
+        this.LogDebug("Digital Devices: close menu on selection");
+        if (_caMenuCallBack != null)
+        {
+          _caMenuCallBack.OnCiCloseDisplay(0);
+        }
+        else
+        {
+          this.LogDebug("Digital Devices: menu call back not set");
+        }
+      }
+
       lock (_sharedCiContextsLock)
       {
         SharedCiContext context;
@@ -1532,12 +1683,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
           this.LogError("Digital Devices: failed to select menu entry, no slot for context {0}", _menuContext);
           return false;
         }
-        if (!string.IsNullOrEmpty(context.Owner) && !_tunerDevicePath.Equals(context.Owner))
-        {
-          this.LogWarn("Digital Devices: tuner {0} reclaiming ownership of CI {1} currently owned by tuner {2}", _tunerDevicePath, _menuContext, context.Owner);
-        }
-        context.Owner = _tunerDevicePath;
-        context.Slot = _privateCiContexts[_menuContext].Slot;
+        context.SetOwner(_tunerExternalId, _tunerIndex, _privateCiContexts[_menuContext].Slot, true);
         int hr = context.Slot.SelectCamMenuEntry(context.CamMenuId, choice);
         if (hr == (int)HResult.Severity.Success)
         {
@@ -1562,7 +1708,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
       {
         answer = string.Empty;
       }
-      this.LogDebug("Digital Devices: slot {0} answer enquiry, answer = {1}, cancel = {2}", _menuContext, answer, cancel);
+      this.LogDebug("Digital Devices: slot {0} answer enquiry, answer = {1}, cancel = {2}", _menuSlotIndex, answer, cancel);
 
       if (!_isCaInterfaceOpen)
       {
@@ -1579,12 +1725,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
           this.LogError("Digital Devices: failed to answer enquiry, no slot for context {0}", _menuContext);
           return false;
         }
-        if (!string.IsNullOrEmpty(context.Owner) && !_tunerDevicePath.Equals(context.Owner))
-        {
-          this.LogWarn("Digital Devices: tuner {0} reclaiming ownership of CI {1} currently owned by tuner {2}", _tunerDevicePath, _menuContext, context.Owner);
-        }
-        context.Owner = _tunerDevicePath;
-        context.Slot = _privateCiContexts[_menuContext].Slot;
+        context.SetOwner(_tunerExternalId, _tunerIndex, _privateCiContexts[_menuContext].Slot, true);
         int hr = context.Slot.AnswerCamMenuEnquiry(context.CamMenuId, answer);
         if (hr == (int)HResult.Severity.Success)
         {

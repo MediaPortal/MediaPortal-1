@@ -19,24 +19,28 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
-using Mediaportal.TV.Server.TVControl.ServiceAgents;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 
 namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
 {
   /// <summary>
   /// Configuration properties for a Digital Devices CI slot.
   /// </summary>
+  [DataContract]
   internal class DigitalDevicesCiSlotConfig
   {
     /// <summary>
     /// The device path of the CI slot device.
     /// </summary>
+    [DataMember]
     public string DevicePath;
 
     /// <summary>
     /// The name of the CI slot device.
     /// </summary>
+    [DataMember]
     public string DeviceName;
 
     /// <summary>
@@ -45,6 +49,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
     /// <remarks>
     /// If set to zero, the limit is considered not known or disabled.
     /// </remarks>
+    [DataMember]
     public int DecryptLimit;
 
     /// <summary>
@@ -54,6 +59,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
     /// The slot/CAM is able to decrypt any service supplied by any one of these providers. If the
     /// set is empty, the slot/CAM is considered to be able to decrypt any service.
     /// </remarks>
+    [DataMember]
     public HashSet<string> Providers;
 
     /// <summary>
@@ -65,7 +71,15 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
     {
       DevicePath = devicePath;
       DeviceName = deviceName;
-      DecryptLimit = 0;
+      ResetSettings();
+    }
+
+    /// <summary>
+    /// Set the CI slot settings to default values.
+    /// </summary>
+    public void ResetSettings()
+    {
+      DecryptLimit = 1;
       Providers = new HashSet<string>();
     }
 
@@ -80,16 +94,16 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
       byte i = 0;
       while (true)  // Loop until we don't find any more settings.
       {
-        string devicePath = ServiceAgents.Instance.SettingServiceAgent.GetValue("digitalDevicesCiDevicePath" + i, string.Empty);
+        string devicePath = SettingsManagement.GetValue("digitalDevicesCiDevicePath" + i, string.Empty);
         if (string.IsNullOrEmpty(devicePath))
         {
           break;
         }
         if (devicePath.Equals(DevicePath))
         {
-          DeviceName = ServiceAgents.Instance.SettingServiceAgent.GetValue("digitalDevicesCiDeviceName" + i, DeviceName);
-          DecryptLimit = ServiceAgents.Instance.SettingServiceAgent.GetValue("digitalDevicesCiDecryptLimit" + i, 0);
-          string providers = ServiceAgents.Instance.SettingServiceAgent.GetValue("digitalDevicesCiProviderList" + i, string.Empty);
+          DeviceName = SettingsManagement.GetValue("digitalDevicesCiDeviceName" + i, DeviceName);
+          DecryptLimit = SettingsManagement.GetValue("digitalDevicesCiDecryptLimit" + i, 1);
+          string providers = SettingsManagement.GetValue("digitalDevicesCiProviderList" + i, string.Empty);
           Providers = new HashSet<string>(providers.Split('|'));
           break;
         }
@@ -105,13 +119,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
       byte i = 0;
       while (true)  // Loop until we find existing settings or a free space to store new settings.
       {
-        string devicePath = ServiceAgents.Instance.SettingServiceAgent.GetValue("digitalDevicesCiDevicePath" + i, DevicePath);
-        if (devicePath.Equals(DevicePath))
+        string devicePath = SettingsManagement.GetValue("digitalDevicesCiDevicePath" + i, DevicePath);
+        if (string.IsNullOrEmpty(devicePath) || devicePath.Equals(DevicePath))
         {
-          ServiceAgents.Instance.SettingServiceAgent.SaveValue("digitalDevicesCiDevicePath" + i, DevicePath);
-          ServiceAgents.Instance.SettingServiceAgent.SaveValue("digitalDevicesCiDeviceName" + i, DeviceName);
-          ServiceAgents.Instance.SettingServiceAgent.SaveValue("digitalDevicesCiDecryptLimit" + i, DecryptLimit);
-          ServiceAgents.Instance.SettingServiceAgent.SaveValue("digitalDevicesCiProviderList" + i, string.Join("|", Providers));
+          SettingsManagement.SaveValue("digitalDevicesCiDevicePath" + i, DevicePath);
+          SettingsManagement.SaveValue("digitalDevicesCiDeviceName" + i, DeviceName);
+          SettingsManagement.SaveValue("digitalDevicesCiDecryptLimit" + i, DecryptLimit);
+          SettingsManagement.SaveValue("digitalDevicesCiProviderList" + i, string.Join("|", Providers));
           break;
         }
         i++;
@@ -119,32 +133,33 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
     }
 
     /// <summary>
-    /// Get a list containing the current settings for each of the known Digital Devices CI slots.
+    /// Get the the current settings for each of the known Digital Devices CI slots.
     /// </summary>
-    /// <returns>the CI slot configuration list</returns>
-    public static IDictionary<string, DigitalDevicesCiSlotConfig> ReadAllSettings()
+    /// <returns>the collection of CI slot configurations</returns>
+    public static ICollection<DigitalDevicesCiSlotConfig> ReadAllSettings()
     {
-      ISettingService settingServiceAgent = ServiceAgents.Instance.SettingServiceAgent;
-      Dictionary<string, DigitalDevicesCiSlotConfig> settings = new Dictionary<string, DigitalDevicesCiSlotConfig>(4);
+      HashSet<string> seenDevicePaths = new HashSet<string>();
+      ICollection<DigitalDevicesCiSlotConfig> settings = new List<DigitalDevicesCiSlotConfig>(4);
       byte i = 0;
       while (true)  // Loop until we don't find any more settings.
       {
-        string devicePath = settingServiceAgent.GetValue("digitalDevicesCiDevicePath" + i, string.Empty);
+        string devicePath = SettingsManagement.GetValue("digitalDevicesCiDevicePath" + i, string.Empty);
         if (string.IsNullOrEmpty(devicePath))
         {
           break;
         }
 
         DigitalDevicesCiSlotConfig slot = new DigitalDevicesCiSlotConfig(devicePath, string.Empty);
-        slot.DeviceName = settingServiceAgent.GetValue("digitalDevicesCiDeviceName" + i, string.Empty);
-        slot.DecryptLimit = settingServiceAgent.GetValue("digitalDevicesCiDecryptLimit" + i, 0);
-        string providers = settingServiceAgent.GetValue("digitalDevicesCiProviderList" + i, string.Empty);
+        slot.DeviceName = SettingsManagement.GetValue("digitalDevicesCiDeviceName" + i, string.Empty);
+        slot.DecryptLimit = SettingsManagement.GetValue("digitalDevicesCiDecryptLimit" + i, 1);
+        string providers = SettingsManagement.GetValue("digitalDevicesCiProviderList" + i, string.Empty);
         slot.Providers = new HashSet<string>(providers.Split('|'));
 
         // Use the first settings found. Settings found later could be invalid left-overs.
-        if (!settings.ContainsKey(devicePath))
+        if (!seenDevicePaths.Contains(devicePath))
         {
-          settings.Add(devicePath, slot);
+          seenDevicePaths.Add(devicePath);
+          settings.Add(slot);
         }
         i++;
       }
