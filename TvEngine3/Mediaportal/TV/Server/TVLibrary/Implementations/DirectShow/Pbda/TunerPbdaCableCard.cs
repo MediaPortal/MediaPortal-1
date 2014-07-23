@@ -179,6 +179,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
 
       if (!_channelScanner.IsScanning)
       {
+        // Note: SDV not explicitly supported.
         hr = _caInterface.TuneByChannel((short)atscChannel.MajorChannel);
         HResult.ThrowException(hr, "Failed to tune channel.");
       }

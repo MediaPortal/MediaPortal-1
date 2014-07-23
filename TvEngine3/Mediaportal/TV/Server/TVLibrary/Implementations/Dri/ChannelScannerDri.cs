@@ -20,20 +20,20 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Net;
 using System.Threading;
+using System.Xml;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Atsc;
-using Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Service;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Scte.Parser;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using UPnP.Infrastructure.Common;
-using UPnP.Infrastructure.CP.DeviceTree;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
 {
@@ -54,6 +54,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       public int Frequency;   // unit = kHz
     }
 
+    public delegate void RequestFdcTablesDelegate(List<byte> tableIds);
+
     #region constants
 
     private const int TABLE_REREQUEST_TIMEOUT = 30000;  // unit = ms
@@ -63,7 +65,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     #region variables
 
     private ITVCard _tuner = null;
-    private ServiceFdc _fdcService = null;
+    private string _tunerIpAddress = null;
+    private RequestFdcTablesDelegate _requestFdcTables = null;
     private IChannelScannerHelper _scanHelper = null;
     private bool _isScanning = false;
     private int _scanTimeOut = 20000;   // milliseconds
@@ -85,31 +88,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
 
     #endregion
 
-    public ChannelScannerDri(ITVCard tuner, ServiceFdc fdcService)
+    public ChannelScannerDri(ITVCard tuner, string tunerIpAddress, RequestFdcTablesDelegate requestFdcTables)
     {
       _tuner = tuner;
-      _fdcService = fdcService;
+      _tunerIpAddress = tunerIpAddress;
+      _requestFdcTables = requestFdcTables;
       _scanHelper = new ChannelScannerHelperAtsc();
     }
 
     #region delegates
 
-    private void OnEventSubscriptionFailed(CpService service, UPnPError error)
+    public void OnTableSection(byte[] section)
     {
-      this.LogWarn("DRI scan: failed to subscribe to FDC service, scanning is expected to fail");
-    }
-
-    private void OnTableSection(CpStateVariable stateVariable, object newValue)
-    {
-      byte[] section = null;
       try
       {
-        if (!stateVariable.Name.Equals("TableSection"))
-        {
-          return;
-        }
-        section = (byte[])newValue;
-        if (section == null || section.Length < 3)
+        if (!_isScanning || section == null || section.Length < 3)
         {
           return;
         }
@@ -396,7 +389,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       {
         _isScanning = true;
         _tuner.Tune(0, channel);
-        _fdcService.SubscribeStateVariables(OnTableSection, OnEventSubscriptionFailed);
 
         // Configure the MGT parser. We don't use MGT info right now but we
         // want to know if it exists and what it contains. Currently I have not
@@ -417,7 +409,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
         bool completedStage = false;
         while (availableTimeMilliseconds > 0)
         {
-          _fdcService.RequestTables(new List<byte> { 0xc2, 0xc7 });
+          _requestFdcTables(new List<byte> { 0xc2, 0xc7 });
           int waitTime = Math.Min(TABLE_REREQUEST_TIMEOUT, availableTimeMilliseconds);
           if (_event.WaitOne(waitTime))
           {
@@ -444,7 +436,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
         completedStage = false;
         while (availableTimeMilliseconds > 0)
         {
-          _fdcService.RequestTables(new List<byte> { 0xc4, 0xc7, 0xc8, 0xc9 });
+          _requestFdcTables(new List<byte> { 0xc4, 0xc7, 0xc8, 0xc9 });
           int waitTime = Math.Min(TABLE_REREQUEST_TIMEOUT, availableTimeMilliseconds);
           if (_event.WaitOne(waitTime))
           {
@@ -468,7 +460,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
         completedStage = false;
         while (availableTimeMilliseconds > 0)
         {
-          _fdcService.RequestTables(new List<byte> { 0xc3, 0xc7 });
+          _requestFdcTables(new List<byte> { 0xc3, 0xc7 });
           int waitTime = Math.Min(TABLE_REREQUEST_TIMEOUT, availableTimeMilliseconds);
           if (_event.WaitOne(waitTime))
           {
@@ -484,17 +476,77 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
         {
           this.LogWarn("DRI scan: failed to complete NTT scan stage, consider increasing SDT/VCT timeout");
         }
-        if (_sourcesWithoutNames.Count > 0)
-        {
-          this.LogWarn("DRI scan: have {0} source(s) with missing names", _sourcesWithoutNames.Count);
-        }
+        this.LogInfo("DRI scan: scanned channel count = {0}, without names = {1}", _channels.Count, _sourcesWithoutNames.Count);
 
+        // Get the SiliconDust proprietary channel list.
+        // We use this for two purposes:
+        // 1. Filtering out inaccessible channels.
+        // 2. Adding channels delivered using switched digital video (SDV).
+        //
+        // We can determine whether a given channel is accessible or not by
+        // trying to tune it directly... but this is incredibly time consuming
+        // and error prone for hundreds of channels. Therefore we use the
+        // proprietary list instead.
+        //
+        // Channels delivered via SDV are not meant to be included in the
+        // CableCARD's channel list. Sometimes they are, but apparently that
+        // is a mistake which we can't rely on. The only certain way to get a
+        // complete channel list when SDV is active is to request it from the
+        // tuning adaptor/resolver. Only the tuner can communicate directly
+        // with the TA/TR, and we have no way to ask the tuner to ask the TA/TR
+        // to give us the information. Therefore we have to use the proprietary
+        // list.
+        IDictionary<int, string> subscribedAccessible;
+        IDictionary<int, string> notSubscribed;
+        IDictionary<int, string> notAccessible;
+        GetSiliconDustChannelList(out subscribedAccessible, out notSubscribed, out notAccessible);
+
+        // Build/filter the final channel list.
         List<IChannel> channels = new List<IChannel>();
         foreach (ATSCChannel atscChannel in _channels.Values)
         {
-          IChannel c = atscChannel as IChannel;
-          _scanHelper.UpdateChannel(ref c);
-          channels.Add(c);
+          // If the SiliconDust list is available, filter to subscribed and
+          // accessible channels only.
+          if (subscribedAccessible.Count == 0 || subscribedAccessible.Remove(atscChannel.LogicalChannelNumber))
+          {
+            IChannel c = atscChannel as IChannel;
+            _scanHelper.UpdateChannel(ref c);
+            channels.Add(c);
+          }
+          else if (!notSubscribed.Remove(atscChannel.LogicalChannelNumber) && !notAccessible.Remove(atscChannel.LogicalChannelNumber))
+          {
+            this.LogWarn("DRI scan: unknown channel accessibility, channel number = {0}, name = {1}", atscChannel.LogicalChannelNumber, atscChannel.Name ?? "[unknown]");
+            IChannel c = atscChannel as IChannel;
+            _scanHelper.UpdateChannel(ref c);
+            channels.Add(c);
+          }
+        }
+
+        // Any channels remaining in the SiliconDust subscribed and accessible
+        // list are switched digital video channels that weren't in the
+        // CableCARD's channel list. Add them...
+        if (subscribedAccessible.Count > 0)
+        {
+          this.LogInfo("DRI scan: SDV channel count = {0}", subscribedAccessible.Count);
+          foreach (KeyValuePair<int, string> pair in subscribedAccessible)
+          {
+            ATSCChannel c = new ATSCChannel();
+            c.Name = pair.Value;
+            c.LogicalChannelNumber = pair.Key;
+            c.Provider = "Cable";
+            c.MajorChannel = pair.Key;
+            c.MinorChannel = 0;
+            c.MediaType = MediaTypeEnum.TV;
+            c.FreeToAir = false;
+            c.Frequency = 0;
+            c.PhysicalChannel = 0;
+            c.ModulationType = ModulationType.ModNotDefined;
+            c.NetworkId = 0;    // ideally we should have this in order to update channel details correctly
+            c.TransportId = 0;  // doesn't matter
+            c.ServiceId = 1;    // must be non-zero in order to tune successfully with a Ceton tuner
+            c.PmtPid = 0;       // must be zero so we lookup the correct PMT PID when tuning
+            channels.Add(c);
+          }
         }
         return channels;
       }
@@ -502,13 +554,140 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       {
         _event.Close();
         _isScanning = false;
-        _fdcService.UnsubscribeStateVariables();
       }
     }
 
     public List<IChannel> ScanNIT(IChannel channel)
     {
       throw new NotImplementedException("DRI scan: NIT scanning not implemented");
+    }
+
+    private void GetSiliconDustChannelList(out IDictionary<int, string> subscribedAccessible, out IDictionary<int, string> notSubscribed, out IDictionary<int, string> notAccessible)
+    {
+      subscribedAccessible = new Dictionary<int, string>();
+      notSubscribed = new SortedDictionary<int, string>();
+      notAccessible = new Dictionary<int, string>();
+
+      if (GetSiliconDustChannelList(new Uri(new Uri(_tunerIpAddress), "lineup.xml"), out subscribedAccessible, out notAccessible))
+      {
+        this.LogInfo("DRI scan: subscribed channel count = {0}, inaccessible = {1}", subscribedAccessible.Count + notAccessible.Count, notAccessible.Count);
+        IDictionary<int, string> allAccessibleIncludingNotSubscribed;
+        if (GetSiliconDustChannelList(new Uri(new Uri(_tunerIpAddress), "lineup.xml?show=all"), out allAccessibleIncludingNotSubscribed, out notAccessible))
+        {
+          this.LogInfo("DRI scan: total channel count = {0}, inaccessible = {1}", allAccessibleIncludingNotSubscribed.Count + notAccessible.Count, notAccessible.Count);
+          foreach (KeyValuePair<int, string> channel in notAccessible)
+          {
+            this.LogDebug("  {0:-4} = {1}", channel.Key, channel.Value);
+          }
+
+          HashSet<int> temp = new HashSet<int>(allAccessibleIncludingNotSubscribed.Keys);
+          temp.ExceptWith(subscribedAccessible.Keys);
+          this.LogInfo("DRI scan: not subscribed channel count = {0}", temp.Count);
+          foreach (int i in temp)
+          {
+            string name = allAccessibleIncludingNotSubscribed[i];
+            notSubscribed.Add(i, name);
+            this.LogDebug("  {0:-4} = {1}", i, name);
+          }
+        }
+      }
+    }
+
+    private bool GetSiliconDustChannelList(Uri uri, out IDictionary<int, string> channelsAccessible, out IDictionary<int, string> channelsInaccessible)
+    {
+      channelsAccessible = new SortedDictionary<int, string>();
+      channelsInaccessible = new SortedDictionary<int, string>();
+
+      // Request.
+      HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+      request.Timeout = 5000;
+      HttpWebResponse response = null;
+      try
+      {
+        response = (HttpWebResponse)request.GetResponse();
+      }
+      catch (Exception ex)
+      {
+        this.LogError(ex, "DRI scan: failed to get XML lineup from tuner, URI = ", uri);
+        request.Abort();
+        return false;
+      }
+
+      // Response.
+      string content = string.Empty;
+      try
+      {
+        using (Stream responseStream = response.GetResponseStream())
+        {
+          using (TextReader textReader = new StreamReader(responseStream, System.Text.Encoding.UTF8))
+          {
+            using (XmlReader xmlReader = XmlReader.Create(textReader))
+            {
+              int number = 0;
+              string name = string.Empty;
+              bool isCopyFreely = true;
+              while (!xmlReader.EOF)
+              {
+                if (xmlReader.NodeType == XmlNodeType.EndElement && xmlReader.Name.Equals("Program"))
+                {
+                  if (number != 0)
+                  {
+                    if (!isCopyFreely)
+                    {
+                      channelsInaccessible.Add(number, name);
+                    }
+                    else
+                    {
+                      channelsAccessible.Add(number, name);
+                    }
+                  }
+                  number = 0;
+                  name = string.Empty;
+                  isCopyFreely = true;
+                }
+                else if (xmlReader.NodeType == XmlNodeType.Element)
+                {
+                  if (xmlReader.Name.Equals("GuideNumber"))
+                  {
+                    number = xmlReader.ReadElementContentAsInt();
+                  }
+                  else if (xmlReader.Name.Equals("GuideName"))
+                  {
+                    name = xmlReader.ReadElementContentAsString();
+                  }
+                  else if ((xmlReader.Name.Equals("DRM") && xmlReader.ReadElementContentAsInt() == 1) ||      // new format
+                    xmlReader.Name.Equals("Tags") && xmlReader.ReadElementContentAsString().Contains("drm"))  // old format
+                  {
+                    isCopyFreely = false;
+                  }
+                  else
+                  {
+                    xmlReader.Read();
+                  }
+                  continue;
+                }
+                xmlReader.Read();
+              }
+              xmlReader.Close();
+            }
+            textReader.Close();
+          }
+          responseStream.Close();
+        }
+        return true;
+      }
+      catch (Exception ex)
+      {
+        this.LogError(ex, "DRI scan: failed to handle XML lineup response from tuner, URI = {0}", uri);
+        return false;
+      }
+      finally
+      {
+        if (response != null)
+        {
+          response.Close();
+        }
+      }
     }
   }
 }

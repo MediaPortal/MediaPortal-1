@@ -25,6 +25,7 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Text.RegularExpressions;
 using DirectShowLib.BDA;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Service;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Rtsp;
@@ -102,6 +103,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     private int _currentFrequency = -1;
     private readonly bool _isCetonDevice = false;
     private bool _canPause = false;
+    private int _programNumberTimeOut = 2000;   // unit = ms
 
     /// <summary>
     /// Internal stream tuner, used to receive the RTP stream. This allows us
@@ -172,6 +174,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     public override void ReloadConfiguration()
     {
       base.ReloadConfiguration();
+
+      // Use the "tune" time out as a limit on the program number query time.
+      _programNumberTimeOut = SettingsManagement.GetValue("timeoutTune", 10) * 1000;
+
       _streamTuner.ReloadConfiguration();
     }
 
@@ -271,6 +277,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       _stateVariableDelegate = new StateVariableChangedDlgt(OnStateVariableChanged);
       _eventSubscriptionDelegate = new EventSubscriptionFailedDlgt(OnEventSubscriptionFailed);
       _serviceTuner.SubscribeStateVariables(_stateVariableDelegate, _eventSubscriptionDelegate);
+      _serviceFdc.SubscribeStateVariables(_stateVariableDelegate, _eventSubscriptionDelegate);
       _serviceAux.SubscribeStateVariables(_stateVariableDelegate, _eventSubscriptionDelegate);
       _serviceEncoder.SubscribeStateVariables(_stateVariableDelegate, _eventSubscriptionDelegate);
       _serviceCas.SubscribeStateVariables(_stateVariableDelegate, _eventSubscriptionDelegate);
@@ -286,7 +293,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       LoadExtensions(_descriptor);
 
       _streamTuner.PerformLoading();
-      _channelScanner = new ChannelScannerDri(this, _serviceFdc);
+      _channelScanner = new ChannelScannerDri(this, _serverIpAddress, _serviceFdc.RequestTables);
     }
 
     /// <summary>
@@ -505,32 +512,68 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       if (!atscChannel.FreeToAir)
       {
         _currentFrequency = -1;
-        if (atscChannel.MajorChannel > 0)
+        try
         {
-          this.LogDebug("DRI CableCARD: tuning by channel number");
-          _serviceCas.SetChannel((uint)atscChannel.MajorChannel, 0, CasCaptureMode.Live, out isSignalLocked);
-        }
-        else if (atscChannel.NetworkId > 0)
-        {
-          this.LogDebug("DRI CableCARD: tuning by source ID");
-          try
+          if (atscChannel.MajorChannel > 0)
           {
+            this.LogDebug("DRI CableCARD: tuning by channel number");
+            _serviceCas.SetChannel((uint)atscChannel.MajorChannel, 0, CasCaptureMode.Live, out isSignalLocked);
+          }
+          else if (atscChannel.NetworkId > 0)
+          {
+            this.LogDebug("DRI CableCARD: tuning by source ID");
             _serviceCas.SetChannel(0, (uint)atscChannel.NetworkId, CasCaptureMode.Live, out isSignalLocked);
           }
-          catch (UPnPException ex)
+          else
           {
-            UPnPRemoteException rex = ex.InnerException as UPnPRemoteException;
-            if (rex != null && rex.Error.ErrorDescription.Equals("Tuner In Use"))
+            throw new TvException("Not able to tune encrypted channel without both channel number and source ID.");
+          }
+
+          // When switched digital video (SDV) is active - ie. the tuner uses a
+          // tuning adaptor/resolver to ask the cable system which frequency
+          // and program number to tune - we have to ask the tuner what the
+          // correct program number is.
+          // Note that SiliconDust and Hauppauge tuners actually deliver a TS
+          // with a single program. For them it would be enough to set the
+          // program number to 0. However Ceton tuners deliver the PAT and PMT
+          // for all the programs in the full transport stream, only excluding
+          // extra video and audio streams. Therefore we have to do this...
+          if (atscChannel.ServiceId != 0)
+          {
+            DateTime now = DateTime.Now;
+            int originalProgramNumber = atscChannel.ServiceId;
+            while ((DateTime.Now - now).TotalMilliseconds < _programNumberTimeOut)
             {
-              this.LogInfo("DRI CableCARD: some other application or device is currently using the tuner");
-              _gotTunerControl = false;
+              try
+              {
+                atscChannel.ServiceId = (int)_serviceMux.QueryStateVariable("ProgramNumber");
+                if (atscChannel.ServiceId != 0)
+                {
+                  if (atscChannel.ServiceId != originalProgramNumber)
+                  {
+                    this.LogDebug("DRI CableCARD: actual program number is {0}", atscChannel.ServiceId);
+                  }
+                  break;
+                }
+                System.Threading.Thread.Sleep(20);
+              }
+              catch (Exception ex)
+              {
+                this.LogError(ex, "DRI CableCARD: failed to get actual program number");
+                break;
+              }
             }
-            throw;
           }
         }
-        else
+        catch (UPnPException ex)
         {
-          throw new TvException("Not able to tune encrypted channel without both channel number and source ID.");
+          UPnPRemoteException rex = ex.InnerException as UPnPRemoteException;
+          if (rex != null && rex.Error.ErrorDescription.Equals("Tuner In Use"))
+          {
+            this.LogInfo("DRI CableCARD: some other application or device is currently using the tuner");
+            _gotTunerControl = false;
+          }
+          throw;
         }
       }
       // clear QAM or ATSC tuning
@@ -845,6 +888,27 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
           if (_channelScanner == null || !_channelScanner.IsScanning)
           {
             _isSignalLocked = (bool)newValue;
+          }
+        }
+        else if (stateVariable.Name.Equals("TableSection"))
+        {
+          byte[] section = (byte[])newValue;
+          if (section != null && section.Length > 3)
+          {
+            byte tableId = section[2];
+            if (tableId == 0xc2 || tableId == 0xc3 || tableId == 0xc4 || tableId == 0xc8 || tableId == 0xc9)
+            {
+              ChannelScannerDri scanner = _channelScanner as ChannelScannerDri;
+              if (scanner != null)
+              {
+                scanner.OnTableSection(section);
+              }
+            }
+            else if ((tableId != 0xc5 || section.Length != 16) && tableId != 0xfd) // not a standard system time or stuffing table
+            {
+              this.LogDebug("DRI CableCARD: unhandled table section, table ID = {0}", tableId);
+              Dump.DumpBinary(section);
+            }
           }
         }
         else if (stateVariable.Name.Equals("CardStatus"))

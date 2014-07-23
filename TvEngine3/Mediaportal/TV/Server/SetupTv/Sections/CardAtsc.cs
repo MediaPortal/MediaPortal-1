@@ -287,7 +287,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             //ID is unique (by definition it has to be), but for clear QAM cable and ATSC over-the-air
             //it seems source ID isn't even always unique within a transport stream.
             TuningDetail currentDetail = null;
-            if ((string)mpComboBoxTuningMode.SelectedItem == "Digital Cable")
+            if ((string)mpComboBoxTuningMode.SelectedItem == "Digital Cable" && channel.NetworkId != 0)
             {
               //CableCARD, support channel movement detection by source ID.
               currentDetail = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailCustom(channel, TuningDetailSearchEnum.NetworkId);
