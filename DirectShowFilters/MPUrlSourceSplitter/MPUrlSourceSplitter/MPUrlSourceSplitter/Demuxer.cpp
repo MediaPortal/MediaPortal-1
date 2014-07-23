@@ -69,6 +69,7 @@
 #define METHOD_DEMUXING_WORKER_NAME                                         L"DemuxingWorker()"
 
 #define METHOD_LOAD_MEDIA_PACKET_FOR_PROCESSING_NAME                        L"LoadMediaPacketForProcessing()"
+#define METHOD_GET_NEXT_PACKET_INTERNAL_NAME                                L"GetNextPacketInternal()"
 
 #define DEMUXER_READ_BUFFER_SIZE								                            32768
 
@@ -265,7 +266,6 @@ CDemuxer::CDemuxer(HRESULT *result, CLogger *logger, IDemuxerOwner *filter, CPar
   this->demuxerContext = NULL;
   this->createDemuxerWorkerShouldExit = false;
   this->createDemuxerWorkerThread = NULL;
-  this->pauseSeekStopRequest = PAUSE_SEEK_STOP_MODE_NONE;
   this->demuxerId = 0;
   this->configuration = NULL;
   this->outputPacketCollection = NULL;
@@ -506,8 +506,9 @@ void CDemuxer::SetDemuxerId(unsigned int demuxerId)
 
 void CDemuxer::SetPauseSeekStopRequest(bool pauseSeekStopRequest)
 {
-  this->pauseSeekStopRequest = pauseSeekStopRequest ? PAUSE_SEEK_STOP_MODE_DISABLE_READING : PAUSE_SEEK_STOP_MODE_NONE;
-  this->filter->SetPauseSeekStopMode(this->pauseSeekStopRequest);
+  this->flags &= ~(DEMUXER_FLAG_DISABLE_DEMUXING | DEMUXER_FLAG_DISABLE_READING);
+  this->flags |= pauseSeekStopRequest ? DEMUXER_FLAG_DISABLE_READING : DEMUXER_FLAG_NONE;
+  this->filter->SetPauseSeekStopMode(pauseSeekStopRequest ? PAUSE_SEEK_STOP_MODE_DISABLE_READING : PAUSE_SEEK_STOP_MODE_NONE);
 }
 
 void CDemuxer::SetRealDemuxingNeeded(bool realDemuxingNeeded)
@@ -1087,65 +1088,65 @@ HRESULT CDemuxer::SeekByTime(REFERENCE_TIME time, int flags)
   {
     this->logger->Log(LOGGER_VERBOSE, L"%s: %s: stream %u, time: %lld, seek_pts: %lld", MODULE_NAME, METHOD_SEEK_BY_TIME_NAME, this->demuxerId, time, seek_pts);
 
+    // enable reading from seek method, do not allow (yet) to read from demuxing worker
+    this->filter->SetPauseSeekStopMode(PAUSE_SEEK_STOP_MODE_DISABLE_DEMUXING);
+    this->flags |= DEMUXER_FLAG_DISABLE_DEMUXING_WITH_RETURN_TO_DEMUXING_WORKER;
+    this->flags &= ~DEMUXER_FLAG_DISABLE_READING;
+    // wait until DemuxingWorker() confirm
+    while (!this->IsSetFlags(DEMUXER_FLAG_DISABLE_DEMUXING))
+    {
+      Sleep(1);
+    }
+
     st = this->formatContext->streams[streamId];
 
     bool found = false;
-    int index = -1;
-
     ff_read_frame_flush(this->formatContext);
-    index = av_index_search_timestamp(st, seek_pts, flags);
 
-    if (!found) 
+    st->nb_index_entries = 0;
+    st->nb_frames = 0;
+
+    // seek to time
+    int64_t seekedTime = this->filter->SeekToTime(this->demuxerId, time / (DSHOW_TIME_BASE / 1000)); // (1000 / DSHOW_TIME_BASE)
+
+    if (seekedTime >= 0)
     {
-      st->nb_index_entries = 0;
-      st->nb_frames = 0;
-      
-      // seek to time
-      int64_t seekedTime = this->filter->SeekToTime(this->demuxerId, time / (DSHOW_TIME_BASE / 1000)); // (1000 / DSHOW_TIME_BASE)
+      // lock access to output packets
+      CLockMutex outputPacketLock(this->outputPacketMutex, INFINITE);
 
-      if (seekedTime >= 0)
-      {
-        // lock access to output packets
-        CLockMutex outputPacketLock(this->outputPacketMutex, INFINITE);
+      // clear output packets
+      this->outputPacketCollection->Clear();
 
-        // clear output packets
-        this->outputPacketCollection->Clear();
-
-        // set buffer position to zero
-        this->demuxerContextBufferPosition = 0;
-        this->flags &= ~DEMUXER_FLAG_END_OF_STREAM_OUTPUT_PACKET_QUEUED;
-
-        // enable reading from seek method, do not allow (yet) to read from demuxing worker
-        this->pauseSeekStopRequest = PAUSE_SEEK_STOP_MODE_DISABLE_DEMUXING;
-        this->filter->SetPauseSeekStopMode(this->pauseSeekStopRequest);
-      }
-      else
-      {
-        result = (HRESULT)seekedTime;
-      }
-
-      // now we are ready to receive data
-
-      if (SUCCEEDED(result) && (this->IsAsf()))
-      {
-        found = true;
-        asf_reset_header2(this->formatContext);
-      }
-
-      if (SUCCEEDED(result) && (this->IsMp4()))
-      {
-        this->logger->Log(LOGGER_VERBOSE, L"%s: %s: stream %u, seeking by internal MP4 format time seeking method", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, this->demuxerId);
-        ff_read_frame_flush(this->formatContext);
-
-        result = (HRESULT)this->formatContext->iformat->read_seek(this->formatContext, streamId, seek_pts, flags);
-        this->logger->Log(LOGGER_VERBOSE, L"%s: %s: stream %u, seeking by internal format time seeking method result: 0x%08X", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, this->demuxerId, result);
-
-        // if ret is not 0, then error and seek failed
-        found = (result == S_OK);
-      }
-
-      CHECK_CONDITION_EXECUTE(SUCCEEDED(result), this->logger->Log(LOGGER_VERBOSE, L"%s: %s: stream %u, seeked to time: %lld", MODULE_NAME, METHOD_SEEK_BY_TIME_NAME, this->demuxerId, seekedTime));
+      // set buffer position to zero
+      this->demuxerContextBufferPosition = 0;
+      this->flags &= ~DEMUXER_FLAG_END_OF_STREAM_OUTPUT_PACKET_QUEUED;
     }
+    else
+    {
+      result = (HRESULT)seekedTime;
+    }
+
+    // now we are ready to receive data
+
+    if (SUCCEEDED(result) && (this->IsAsf()))
+    {
+      found = true;
+      asf_reset_header2(this->formatContext);
+    }
+
+    if (SUCCEEDED(result) && (this->IsMp4()))
+    {
+      this->logger->Log(LOGGER_VERBOSE, L"%s: %s: stream %u, seeking by internal MP4 format time seeking method", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, this->demuxerId);
+      ff_read_frame_flush(this->formatContext);
+
+      result = (HRESULT)this->formatContext->iformat->read_seek(this->formatContext, streamId, seek_pts, flags);
+      this->logger->Log(LOGGER_VERBOSE, L"%s: %s: stream %u, seeking by internal format time seeking method result: 0x%08X", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, this->demuxerId, result);
+
+      // if ret is not 0, then error and seek failed
+      found = (result == S_OK);
+    }
+
+    CHECK_CONDITION_EXECUTE(SUCCEEDED(result), this->logger->Log(LOGGER_VERBOSE, L"%s: %s: stream %u, seeked to time: %lld", MODULE_NAME, METHOD_SEEK_BY_TIME_NAME, this->demuxerId, seekedTime));
 
     ff_read_frame_flush(this->formatContext);
 
@@ -1153,7 +1154,7 @@ HRESULT CDemuxer::SeekByTime(REFERENCE_TIME time, int flags)
     {
       st = this->formatContext->streams[streamId];
       ff_read_frame_flush(this->formatContext);
-      index = av_index_search_timestamp(st, seek_pts, flags);
+      int index = av_index_search_timestamp(st, seek_pts, flags);
 
       this->logger->Log(LOGGER_VERBOSE, L"%s: %s: stream %u, index: %d", MODULE_NAME, METHOD_SEEK_BY_TIME_NAME, this->demuxerId, index);
 
@@ -1275,7 +1276,7 @@ HRESULT CDemuxer::SeekByTime(REFERENCE_TIME time, int flags)
     {
       ff_read_frame_flush(this->formatContext);
       this->logger->Log(LOGGER_VERBOSE, L"%s: %s: stream %u, searching keyframe with timestamp: %lld, stream index: %d", MODULE_NAME, METHOD_SEEK_BY_TIME_NAME, this->demuxerId, seek_pts, streamId);
-      index = av_index_search_timestamp(st, seek_pts, flags);
+      int index = av_index_search_timestamp(st, seek_pts, flags);
 
       if (index < 0)
       {
@@ -1506,8 +1507,14 @@ HRESULT CDemuxer::SeekByPosition(REFERENCE_TIME time, int flags)
   bool found = false;
 
   // enable reading from seek method, do not allow (yet) to read from demuxing worker
-  this->pauseSeekStopRequest = PAUSE_SEEK_STOP_MODE_DISABLE_DEMUXING;
-  this->filter->SetPauseSeekStopMode(this->pauseSeekStopRequest);
+  this->filter->SetPauseSeekStopMode(PAUSE_SEEK_STOP_MODE_DISABLE_DEMUXING);
+  this->flags |= DEMUXER_FLAG_DISABLE_DEMUXING_WITH_RETURN_TO_DEMUXING_WORKER;
+  this->flags &= ~DEMUXER_FLAG_DISABLE_READING;
+  // wait until DemuxingWorker() confirm
+  while (!this->IsSetFlags(DEMUXER_FLAG_DISABLE_DEMUXING))
+  {
+    Sleep(1);
+  }
 
   // if it isn't FLV video, try to seek by internal FFmpeg time seeking method
   if (SUCCEEDED(result) && (!this->IsFlv()) && (!this->IsMpegTs()))
@@ -1529,10 +1536,8 @@ HRESULT CDemuxer::SeekByPosition(REFERENCE_TIME time, int flags)
   {
     AVStream *st = this->formatContext->streams[streamId];
 
-    int index = -1;
-
     ff_read_frame_flush(this->formatContext);
-    index = av_index_search_timestamp(st, seek_pts, flags);
+    int index = av_index_search_timestamp(st, seek_pts, flags);
 
     this->logger->Log(LOGGER_VERBOSE, L"%s: %s: stream %u, index: %d", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, this->demuxerId, index);
 
@@ -1951,8 +1956,15 @@ HRESULT CDemuxer::SeekBySequenceReading(REFERENCE_TIME time, int flags)
     AVPacket avPacket;
 
     // enable reading from seek method, do not allow (yet) to read from demuxing worker
-    this->pauseSeekStopRequest = PAUSE_SEEK_STOP_MODE_DISABLE_DEMUXING;
-    this->filter->SetPauseSeekStopMode(this->pauseSeekStopRequest);
+    // we must read after last demuxed packet
+    this->filter->SetPauseSeekStopMode(PAUSE_SEEK_STOP_MODE_DISABLE_DEMUXING);
+    this->flags |= DEMUXER_FLAG_DISABLE_DEMUXING_WITH_SAFE_RETURN_TO_DEMUXING_WORKER;
+    this->flags &= ~DEMUXER_FLAG_DISABLE_READING;
+    // wait until DemuxingWorker() confirm
+    while (!this->IsSetFlags(DEMUXER_FLAG_DISABLE_DEMUXING))
+    {
+      Sleep(1);
+    }
 
     while (SUCCEEDED(result))
     {
@@ -2238,69 +2250,95 @@ HRESULT CDemuxer::DemuxerReadPosition(int64_t position, uint8_t *buffer, int len
 
   if (SUCCEEDED(result) && (length > 0))
   {
-    CStreamPackage *package = new CStreamPackage(&result);
-    CHECK_POINTER_HRESULT(result, package, result, E_OUTOFMEMORY);
-    
-    unsigned int requestId = this->demuxerContextRequestId++;
-    if (SUCCEEDED(result))
+    bool repeatRequest = true;
+    while (SUCCEEDED(result) && repeatRequest)
     {
-      CStreamPackageDataRequest *request = new CStreamPackageDataRequest(&result);
-      CHECK_POINTER_HRESULT(result, request, result, E_OUTOFMEMORY);
+      CStreamPackage *package = new CStreamPackage(&result);
+      CHECK_POINTER_HRESULT(result, package, result, E_OUTOFMEMORY);
 
+      unsigned int requestId = this->demuxerContextRequestId++;
       if (SUCCEEDED(result))
       {
-        request->SetAnyDataLength((flags & STREAM_PACKAGE_DATA_REQUEST_FLAG_ANY_DATA_LENGTH) == STREAM_PACKAGE_DATA_REQUEST_FLAG_ANY_DATA_LENGTH);
-        request->SetAnyNonZeroDataLength((flags & STREAM_PACKAGE_DATA_REQUEST_FLAG_ANY_NONZERO_DATA_LENGTH) == STREAM_PACKAGE_DATA_REQUEST_FLAG_ANY_NONZERO_DATA_LENGTH);
-        request->SetId(requestId);
-        request->SetStreamId(this->demuxerId);
-        request->SetStart(position);
-        request->SetLength((unsigned int)length);
-        
-        package->SetRequest(request);
-      }
-      
-      CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(request));
-    }
+        CStreamPackageDataRequest *request = new CStreamPackageDataRequest(&result);
+        CHECK_POINTER_HRESULT(result, request, result, E_OUTOFMEMORY);
 
-    if (this->IsSetFlags(DEMUXER_FLAG_PENDING_DISCONTINUITY))
-    {
-      if (this->IsSetFlags(DEMUXER_FLAG_PENDING_DISCONTINUITY_WITH_REPORT))
-      {
-        this->logger->Log(LOGGER_VERBOSE, L"%s: %s: stream %u, request %u, start: %lld, length: %d, discontinuity reported", MODULE_NAME, METHOD_DEMUXER_READ_NAME, this->demuxerId, requestId, position, length);
-      }
-
-      // do not report discontinuity again, until discontinuity is reset
-      this->flags &= ~DEMUXER_FLAG_PENDING_DISCONTINUITY_WITH_REPORT;
-      result = E_CONNECTION_LOST_TRYING_REOPEN;
-    }
-
-    CHECK_HRESULT_EXECUTE(result, this->filter->ProcessStreamPackage(package));
-    CHECK_HRESULT_EXECUTE(result, package->GetError());
-
-    if (SUCCEEDED(result))
-    {
-      // successfully processed stream package request
-      CStreamPackageDataResponse *response = dynamic_cast<CStreamPackageDataResponse *>(package->GetResponse());
-
-      response->GetBuffer()->CopyFromBuffer(buffer, response->GetBuffer()->GetBufferOccupiedSpace());
-      result = response->GetBuffer()->GetBufferOccupiedSpace();
-
-      if (response->IsDiscontinuity())
-      {
-        this->flags |= DEMUXER_FLAG_PENDING_DISCONTINUITY;
-
-        if (result != 0)
+        if (SUCCEEDED(result))
         {
-          this->flags |= DEMUXER_FLAG_PENDING_DISCONTINUITY_WITH_REPORT;
-          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: stream %u, request %u, start: %lld, length: %d, pending discontinuity", MODULE_NAME, METHOD_DEMUXER_READ_NAME, this->demuxerId, requestId, position, length);
+          request->SetAnyDataLength((flags & STREAM_PACKAGE_DATA_REQUEST_FLAG_ANY_DATA_LENGTH) == STREAM_PACKAGE_DATA_REQUEST_FLAG_ANY_DATA_LENGTH);
+          request->SetAnyNonZeroDataLength((flags & STREAM_PACKAGE_DATA_REQUEST_FLAG_ANY_NONZERO_DATA_LENGTH) == STREAM_PACKAGE_DATA_REQUEST_FLAG_ANY_NONZERO_DATA_LENGTH);
+          request->SetId(requestId);
+          request->SetStreamId(this->demuxerId);
+          request->SetStart(position);
+          request->SetLength((unsigned int)length);
+
+          package->SetRequest(request);
+        }
+
+        CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(request));
+      }
+
+      if (this->IsSetFlags(DEMUXER_FLAG_PENDING_DISCONTINUITY))
+      {
+        if (this->IsSetFlags(DEMUXER_FLAG_PENDING_DISCONTINUITY_WITH_REPORT))
+        {
+          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: stream %u, request %u, start: %lld, length: %d, discontinuity reported", MODULE_NAME, METHOD_DEMUXER_READ_NAME, this->demuxerId, requestId, position, length);
+        }
+
+        // do not report discontinuity again, until discontinuity is reset
+        this->flags &= ~DEMUXER_FLAG_PENDING_DISCONTINUITY_WITH_REPORT;
+        result = E_CONNECTION_LOST_TRYING_REOPEN;
+      }
+
+      CHECK_HRESULT_EXECUTE(result, this->filter->ProcessStreamPackage(package));
+      CHECK_HRESULT_EXECUTE(result, package->GetError());
+
+      if (result == E_PAUSE_SEEK_STOP_MODE_DISABLE_READING)
+      {
+        // it was disabled reading from protocol (by some reason)
+        // send new request after some time
+
+        result = S_OK;
+
+        if (this->IsSetFlags(DEMUXER_FLAG_DISABLE_DEMUXING_WITH_RETURN_TO_DEMUXING_WORKER))
+        {
+          // we are requested to immediately return to demuxing worker
+          result = E_PAUSE_SEEK_STOP_MODE_DISABLE_READING;
         }
       }
+      else if (SUCCEEDED(result))
+      {
+        repeatRequest = false;
+
+        // successfully processed stream package request
+        CStreamPackageDataResponse *response = dynamic_cast<CStreamPackageDataResponse *>(package->GetResponse());
+
+        response->GetBuffer()->CopyFromBuffer(buffer, response->GetBuffer()->GetBufferOccupiedSpace());
+        result = response->GetBuffer()->GetBufferOccupiedSpace();
+
+        if (response->IsDiscontinuity())
+        {
+          this->flags |= DEMUXER_FLAG_PENDING_DISCONTINUITY;
+
+          if (result != 0)
+          {
+            this->flags |= DEMUXER_FLAG_PENDING_DISCONTINUITY_WITH_REPORT;
+            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: stream %u, request %u, start: %lld, length: %d, pending discontinuity", MODULE_NAME, METHOD_DEMUXER_READ_NAME, this->demuxerId, requestId, position, length);
+          }
+        }
+      }
+      else
+      {
+        repeatRequest = false;
+
+        // error occured, log and return
+        CHECK_CONDITION_EXECUTE(result != E_CONNECTION_LOST_TRYING_REOPEN, this->logger->Log(LOGGER_WARNING, L"%s: %s: stream %u, request %u, start: %lld, length: %d, error: 0x%08X", MODULE_NAME, METHOD_DEMUXER_READ_NAME, this->demuxerId, requestId, position, length, result));
+      }
+
+      FREE_MEM_CLASS(package);
+      CHECK_CONDITION_EXECUTE(SUCCEEDED(result) && repeatRequest, Sleep(1));
     }
-
-    CHECK_CONDITION_EXECUTE(FAILED(result) && (result != E_CONNECTION_LOST_TRYING_REOPEN), this->logger->Log(LOGGER_WARNING, L"%s: %s: stream %u, request %u, start: %lld, length: %d, error: 0x%08X", MODULE_NAME, METHOD_DEMUXER_READ_NAME, this->demuxerId, requestId, position, length, result));
-
-    FREE_MEM_CLASS(package);
   }
+
   return result;
 }
 
@@ -2373,7 +2411,17 @@ unsigned int WINAPI CDemuxer::DemuxingWorker(LPVOID lpParam)
 
   while (!caller->demuxingWorkerShouldExit)
   {
-    if ((caller->pauseSeekStopRequest == PAUSE_SEEK_STOP_MODE_NONE) && (!caller->IsEndOfStreamOutputPacketQueued()))
+    if (caller->IsSetFlags(DEMUXER_FLAG_DISABLE_DEMUXING_WITH_RETURN_TO_DEMUXING_WORKER) || caller->IsSetFlags(DEMUXER_FLAG_DISABLE_DEMUXING_WITH_SAFE_RETURN_TO_DEMUXING_WORKER))
+    {
+      caller->flags |= DEMUXER_FLAG_DISABLE_DEMUXING;
+      caller->flags &= ~(DEMUXER_FLAG_DISABLE_DEMUXING_WITH_RETURN_TO_DEMUXING_WORKER | DEMUXER_FLAG_DISABLE_DEMUXING_WITH_SAFE_RETURN_TO_DEMUXING_WORKER);
+
+      caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: stream %u, disabled demuxing", MODULE_NAME, METHOD_DEMUXING_WORKER_NAME, caller->demuxerId);
+    }
+
+    if ((!caller->IsSetFlags(DEMUXER_FLAG_DISABLE_DEMUXING)) && 
+        (!caller->IsSetFlags(DEMUXER_FLAG_DISABLE_READING)) && 
+        (!caller->IsEndOfStreamOutputPacketQueued()))
     {
       // S_FALSE means no packet
       HRESULT result = S_FALSE;
@@ -2490,11 +2538,20 @@ HRESULT CDemuxer::DestroyDemuxingWorker(void)
   HRESULT result = S_OK;
   this->logger->Log(LOGGER_INFO, METHOD_DEMUXER_START_FORMAT, MODULE_NAME, METHOD_DESTROY_DEMUXING_WORKER_NAME, this->demuxerId);
 
-  this->demuxingWorkerShouldExit = true;
-
   // wait for the receive data worker thread to exit      
   if (this->demuxingWorkerThread != NULL)
   {
+    this->filter->SetPauseSeekStopMode(PAUSE_SEEK_STOP_MODE_DISABLE_READING);
+    this->flags |= DEMUXER_FLAG_DISABLE_DEMUXING_WITH_RETURN_TO_DEMUXING_WORKER;
+    this->flags &= ~DEMUXER_FLAG_DISABLE_READING;
+    // wait until DemuxingWorker() confirm
+    while (!this->IsSetFlags(DEMUXER_FLAG_DISABLE_DEMUXING))
+    {
+      Sleep(1);
+    }
+
+    this->demuxingWorkerShouldExit = true;
+
     if (WaitForSingleObject(this->demuxingWorkerThread, INFINITE) == WAIT_TIMEOUT)
     {
       // thread didn't exit, kill it now
@@ -2538,6 +2595,8 @@ HRESULT CDemuxer::GetNextPacketInternal(COutputPinPacket *packet)
     }
     else if ((ffmpegResult == E_CONNECTION_LOST_TRYING_REOPEN) || (this->IsSetFlags(DEMUXER_FLAG_PENDING_DISCONTINUITY)))
     {
+      this->logger->Log(LOGGER_VERBOSE, L"%s: %s: stream %u, discontinuity received or connection lost", MODULE_NAME, METHOD_GET_NEXT_PACKET_INTERNAL_NAME, this->demuxerId);
+
       // connection lost or pending discontinuity
       // FFmpeg sometimes doesn't return error code, but send end of stream
       ff_read_frame_flush(this->formatContext);
@@ -2732,11 +2791,21 @@ HRESULT CDemuxer::GetNextPacketInternal(COutputPinPacket *packet)
 
         if (activeStream != NULL)
         {
+          if (packet->IsDiscontinuity() || ((ffmpegPacket.flags & AV_PKT_FLAG_CORRUPT) != 0) || activeStream->IsDiscontinuity())
+          {
+            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: demuxer: %u, stream: %d, discontinuity, packet discontinuity: %u, FFmpeg packet corrupt: %u, stream discontinuity: %u", MODULE_NAME, METHOD_GET_NEXT_PACKET_INTERNAL_NAME, this->demuxerId, packet->GetStreamPid(), packet->IsDiscontinuity() ? 1 : 0, ((ffmpegPacket.flags & AV_PKT_FLAG_CORRUPT) != 0) ? 1 : 0, activeStream->IsDiscontinuity() ? 1 : 0);
+          }
+
           packet->SetDiscontinuity(packet->IsDiscontinuity() || ((ffmpegPacket.flags & AV_PKT_FLAG_CORRUPT) != 0) || activeStream->IsDiscontinuity());
           activeStream->SetDiscontinuity(false);
         }
         else
         {
+          if (packet->IsDiscontinuity() || ((ffmpegPacket.flags & AV_PKT_FLAG_CORRUPT) != 0))
+          {
+            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: demuxer: %u, stream: %d, discontinuity, packet discontinuity: %u, FFmpeg packet corrupt: %u", MODULE_NAME, METHOD_GET_NEXT_PACKET_INTERNAL_NAME, this->demuxerId, packet->GetStreamPid(), packet->IsDiscontinuity() ? 1 : 0, ((ffmpegPacket.flags & AV_PKT_FLAG_CORRUPT) != 0) ? 1 : 0);
+          }
+
           packet->SetDiscontinuity(packet->IsDiscontinuity() || ((ffmpegPacket.flags & AV_PKT_FLAG_CORRUPT) != 0));
         }
 

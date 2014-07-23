@@ -78,10 +78,11 @@ CMPUrlSourceSplitter_Protocol_Rtmp::CMPUrlSourceSplitter_Protocol_Rtmp(HRESULT *
   this->streamFragmentDownloading = UINT_MAX;
   this->streamFragmentProcessing = 0;
   this->streamFragmentToDownload = UINT_MAX;
-  this->timestampCorrection = 0;
   this->lastFlvPacketTimestamp = 0;
   this->lastCumulatedFlvTimestamp = 0;
   this->headerAndMetaPacketSize = 0;
+  this->videoTimestampCorrection = 0;
+  this->audioTimestampCorrection = 0;
 
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
@@ -354,13 +355,28 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(CStreamPackage *streamPa
                   //this->logger->Log(LOGGER_VERBOSE, L"%s: %s: track %u, fragment timestamp changing from %lld to %lld, ticks: %u, track ticks: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, i, currentDownloadingFragment->GetFragmentRtpTimestamp(), timestamp, ticks, streamTrack->GetFirstRtpPacketTicks());
                   //currentDownloadingFragment->SetFragmentRtpTimestamp(timestamp, false);
                 }
-
-                // compute correction for actual stream
-                this->timestampCorrection = currentDownloadingFragment->GetFragmentStartTimestamp() - (int64_t)flvPacket->GetTimestamp();
-                this->logger->Log(LOGGER_VERBOSE, L"%s: %s: fragment timestamp: %lld, first FLV packet timestamp: %u, ticks: %u, correction: %lld", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, currentDownloadingFragment->GetFragmentStartTimestamp(), flvPacket->GetTimestamp(), ticks, this->timestampCorrection);
               }
 
-              int64_t timestamp = this->GetFlvPacketTimestamp(flvPacket->GetTimestamp()) + this->timestampCorrection;
+              if ((flvPacket->GetType() == FLV_PACKET_VIDEO) && (!this->IsSetFlags(MP_URL_SOURCE_SPLITTER_PROTOCOL_RTMP_FLAG_SET_VIDEO_CORRECTION)))
+              {
+                // fragment start timestamp should not be greater than UINT_MAX (UINT_MAX  in ms is approx. 49.7 days)
+                this->videoTimestampCorrection = (unsigned int)currentDownloadingFragment->GetFragmentStartTimestamp() - flvPacket->GetTimestamp();
+
+                this->logger->Log(LOGGER_VERBOSE, L"%s: %s: fragment timestamp: %lld, first FLV video packet timestamp: %u, correction: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, currentDownloadingFragment->GetFragmentStartTimestamp(), flvPacket->GetTimestamp(), this->videoTimestampCorrection);
+                this->flags |= MP_URL_SOURCE_SPLITTER_PROTOCOL_RTMP_FLAG_SET_VIDEO_CORRECTION;
+              }
+
+              if ((flvPacket->GetType() == FLV_PACKET_AUDIO) && (!this->IsSetFlags(MP_URL_SOURCE_SPLITTER_PROTOCOL_RTMP_FLAG_SET_AUDIO_CORRECTION)))
+              {
+                this->audioTimestampCorrection = (unsigned int)currentDownloadingFragment->GetFragmentStartTimestamp() - (int64_t)flvPacket->GetTimestamp();
+
+                this->logger->Log(LOGGER_VERBOSE, L"%s: %s: fragment timestamp: %lld, first FLV audio packet timestamp: %u, correction: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, currentDownloadingFragment->GetFragmentStartTimestamp(), flvPacket->GetTimestamp(), this->audioTimestampCorrection);
+                this->flags |= MP_URL_SOURCE_SPLITTER_PROTOCOL_RTMP_FLAG_SET_AUDIO_CORRECTION;
+              }
+
+              flvPacket->SetTimestamp(flvPacket->GetTimestamp() + ((flvPacket->GetType() == FLV_PACKET_VIDEO) ? this->videoTimestampCorrection : this->audioTimestampCorrection));
+
+              int64_t timestamp = this->GetFlvPacketTimestamp(flvPacket->GetTimestamp());
 
               if (!currentDownloadingFragment->IsSetFragmentStartTimestamp())
               {
@@ -507,10 +523,11 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(CStreamPackage *streamPa
 
       // new connection will be created with new timestamps
       // clear set timestamp flag
-
-      this->flags &= ~MP_URL_SOURCE_SPLITTER_PROTOCOL_RTMP_FLAG_SET_FIRST_TIMESTAMP;
+      this->flags &= ~(MP_URL_SOURCE_SPLITTER_PROTOCOL_RTMP_FLAG_SET_FIRST_TIMESTAMP | MP_URL_SOURCE_SPLITTER_PROTOCOL_RTMP_FLAG_SET_VIDEO_CORRECTION | MP_URL_SOURCE_SPLITTER_PROTOCOL_RTMP_FLAG_SET_AUDIO_CORRECTION);
       this->lastFlvPacketTimestamp = 0;
       this->lastCumulatedFlvTimestamp = 0;
+      this->videoTimestampCorrection = 0;
+      this->audioTimestampCorrection = 0;
 
       // clear all not downloaded stream fragments
       // recalculate stream fragments timestams for not downloaded stream fragments
@@ -762,30 +779,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(CStreamPackage *streamPa
     if ((!this->IsSetStreamLength()) && (!(this->IsWholeStreamDownloaded() || this->IsEndOfStreamReached() || this->IsConnectionLostCannotReopen())))
     {
       // adjust total length (if necessary)
-
-      uint64_t duration = RTMP_DURATION_UNSPECIFIED;
-      if ((this->mainCurlInstance != NULL) && (this->mainCurlInstance->GetRtmpDownloadResponse()->GetDuration() != RTMP_DURATION_UNSPECIFIED))
-      {
-        duration = (this->mainCurlInstance->GetRtmpDownloadResponse()->GetDuration() != 0) ? this->mainCurlInstance->GetRtmpDownloadResponse()->GetDuration() : RTMP_DURATION_UNSPECIFIED;
-      }
-
-      if ((duration != RTMP_DURATION_UNSPECIFIED) && (this->streamFragments->GetSearchCount() != 0))
-      {
-        CRtmpStreamFragment *fragment = this->streamFragments->GetItem(this->streamFragments->GetStartSearchingIndex() + this->streamFragments->GetSearchCount() - 1);
-
-        if (fragment->GetFragmentStartTimestamp() != 0)
-        {
-          // specified duration in RTMP connect response
-          int64_t tempStreamLength = this->GetBytePosition() * (int64_t)duration / fragment->GetFragmentStartTimestamp();
-
-          if ((this->streamLength == 0) || (tempStreamLength < (this->streamLength * 4 / 5)) || (tempStreamLength > this->streamLength))
-          {
-            this->streamLength = tempStreamLength;
-            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length (by time): %lld", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-          }
-        }
-      }
-      else if (this->streamLength == 0)
+      if (this->streamLength == 0)
       {
         // stream length not set
         // just make guess
@@ -1210,10 +1204,11 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ClearSession(void)
   this->streamFragmentDownloading = UINT_MAX;
   this->streamFragmentProcessing = 0;
   this->streamFragmentToDownload = UINT_MAX;
-  this->timestampCorrection = 0;
   this->lastFlvPacketTimestamp = 0;
   this->lastCumulatedFlvTimestamp = 0;
   this->headerAndMetaPacketSize = 0;
+  this->videoTimestampCorrection = 0;
+  this->audioTimestampCorrection = 0;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
   return result;
@@ -1312,11 +1307,6 @@ int64_t CMPUrlSourceSplitter_Protocol_Rtmp::SeekToTime(unsigned int streamId, in
 
     if (!processingFragment->IsDownloaded())
     {
-      this->flags &= ~MP_URL_SOURCE_SPLITTER_PROTOCOL_RTMP_FLAG_SET_FIRST_TIMESTAMP;
-      this->timestampCorrection = 0;
-      this->lastFlvPacketTimestamp = 0;
-      this->lastCumulatedFlvTimestamp = 0;
-
       // stream fragment is not downloaded, it is gap
       // split stream fragment
 
@@ -1429,15 +1419,19 @@ int64_t CMPUrlSourceSplitter_Protocol_Rtmp::GetBytePosition(void)
 {
   int64_t result = 0;
 
-  unsigned int first = this->streamFragments->GetStartSearchingIndex();
-  unsigned int count = this->streamFragments->GetSearchCount();
-
-  if (count != 0)
   {
-    CRtmpStreamFragment *firstFragment = this->streamFragments->GetItem(first);
-    CRtmpStreamFragment *lastFragment = this->streamFragments->GetItem(first + count - 1);
+    CLockMutex lock(this->lockMutex, INFINITE);
 
-    result = (unsigned int)(lastFragment->GetFragmentStartPosition() + lastFragment->GetLength() - firstFragment->GetFragmentStartPosition());
+    unsigned int first = this->streamFragments->GetStartSearchingIndex();
+    unsigned int count = this->streamFragments->GetSearchCount();
+
+    if (count != 0)
+    {
+      CRtmpStreamFragment *firstFragment = this->streamFragments->GetItem(first);
+      CRtmpStreamFragment *lastFragment = this->streamFragments->GetItem(first + count - 1);
+
+      result = (unsigned int)(lastFragment->GetFragmentStartPosition() + lastFragment->GetLength() - firstFragment->GetFragmentStartPosition());
+    }
   }
 
   return result;

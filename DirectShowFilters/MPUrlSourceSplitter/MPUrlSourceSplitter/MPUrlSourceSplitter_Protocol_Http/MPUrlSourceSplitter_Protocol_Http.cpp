@@ -312,36 +312,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CStreamPackage *streamPa
       }
     }
 
-    if (SUCCEEDED(result) && (!this->IsSetFlags(MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_REPORTED_STATUS_CODE)) && (this->mainCurlInstance != NULL) && ((this->connectionState == Opening) || (this->connectionState == Opened)))
-    {
-      // check HTTP response code
-      long responseCode = this->mainCurlInstance->GetHttpDownloadResponse()->GetResponseCode();
-
-      if (responseCode != 0)
-      {
-        // response code 200 - 299 = OK
-        // response code 300 - 399 = redirect (OK)
-        this->logger->Log(LOGGER_VERBOSE, L"%s: %s: HTTP status code: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, responseCode);
-
-        if ((responseCode < 200) || (responseCode >= 400))
-        {
-          this->StopReceivingData();
-        }
-        else
-        {
-          this->flags |= MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_REPORTED_STATUS_CODE;
-
-          if (this->IsSetFlags(MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_SEEKING_SUPPORT_DETECTION))
-          {
-            this->flags |= (responseCode == 206) ? MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_RANGES_SUPPORTED : MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_NONE;
-            this->flags |= (this->mainCurlInstance->GetHttpDownloadResponse()->GetRangesSupported()) ? MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_RANGES_SUPPORTED : MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_NONE;
-          }
-
-          this->flags |= (this->configuration->GetValueBool(PARAMETER_NAME_HTTP_SEEKING_SUPPORTED, true, HTTP_SEEKING_SUPPORTED_DEFAULT)) ? MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_RANGES_SUPPORTED : MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_NONE;
-        }
-      }
-    }
-
     if (SUCCEEDED(result) && (this->mainCurlInstance == NULL) && (!this->IsWholeStreamDownloaded()))
     {
       this->connectionState = Initializing;
@@ -415,6 +385,39 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CStreamPackage *streamPa
           }
         }
         FREE_MEM_CLASS(request);
+      }
+    }
+
+    if (SUCCEEDED(result) && (!this->IsSetFlags(MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_REPORTED_STATUS_CODE)) && (this->mainCurlInstance != NULL) && ((this->connectionState == Opening) || (this->connectionState == Opened)))
+    {
+      // check HTTP response code
+      long responseCode = this->mainCurlInstance->GetHttpDownloadResponse()->GetResponseCode();
+
+      if (responseCode != 0)
+      {
+        // response code 200 - 299 = OK
+        // response code 300 - 399 = redirect (OK)
+        this->logger->Log(LOGGER_VERBOSE, L"%s: %s: HTTP status code: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, responseCode);
+
+        if ((responseCode < 200) || (responseCode >= 400))
+        {
+          this->StopReceivingData();
+
+          // re-open connection at last known position
+          this->startStreamPosition = this->currentStreamPosition;
+        }
+        else
+        {
+          this->flags |= MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_REPORTED_STATUS_CODE;
+
+          if (this->IsSetFlags(MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_SEEKING_SUPPORT_DETECTION))
+          {
+            this->flags |= (responseCode == 206) ? MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_RANGES_SUPPORTED : MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_NONE;
+            this->flags |= (this->mainCurlInstance->GetHttpDownloadResponse()->GetRangesSupported()) ? MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_RANGES_SUPPORTED : MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_NONE;
+          }
+
+          this->flags |= (this->configuration->GetValueBool(PARAMETER_NAME_HTTP_SEEKING_SUPPORTED, true, HTTP_SEEKING_SUPPORTED_DEFAULT)) ? MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_RANGES_SUPPORTED : MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_NONE;
+        }
       }
     }
 
@@ -741,7 +744,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CStreamPackage *streamPa
                   requestEnd = requestStart;
                 }
 
-                if (this->startStreamPosition != requestStart)
+                if (this->currentStreamPosition != requestStart)
                 {
                   // in other case we are trying to open connection with specified stream start position
 

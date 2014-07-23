@@ -66,6 +66,20 @@
 #define DEMUXER_FLAG_PENDING_DISCONTINUITY                            (1 << (FLAGS_LAST + 17))
 #define DEMUXER_FLAG_PENDING_DISCONTINUITY_WITH_REPORT                (1 << (FLAGS_LAST + 18))
 
+// disable demuxing, but it's not guaranteed that we are in DemuxingWorker() method
+// e.g. we can be in DemuxerReadPosition() until is demuxing allowed or is requested to return to demuxing worker
+#define DEMUXER_FLAG_DISABLE_DEMUXING                                 (1 << (FLAGS_LAST + 19))
+// disable demuxing, it's guaranteed that we are in DemuxingWorker(), in that case can be FFmpeg confused
+// demuxing worker notifies that thread is in DemuxingWorker() method with clearing DEMUXER_FLAG_DISABLE_DEMUXING_WITH_RETURN_TO_DEMUXING_WORKER
+// flag and setting DEMUXER_FLAG_DISABLE_DEMUXING flag
+#define DEMUXER_FLAG_DISABLE_DEMUXING_WITH_RETURN_TO_DEMUXING_WORKER  (1 << (FLAGS_LAST + 20))
+// disable demuxing, it's guaranteed that we are in DemuxingWorker(), but we safely return (we read data if they were requested)
+// demuxing worker notifies that thread is in DemuxingWorker() method with clearing DEMUXER_FLAG_DISABLE_DEMUXING_WITH_SAFE_RETURN_TO_DEMUXING_WORKER
+// flag and setting DEMUXER_FLAG_DISABLE_DEMUXING flag
+#define DEMUXER_FLAG_DISABLE_DEMUXING_WITH_SAFE_RETURN_TO_DEMUXING_WORKER  (1 << (FLAGS_LAST + 21))
+// disable any reading (in seek or demuxing methods)
+#define DEMUXER_FLAG_DISABLE_READING                                  (1 << (FLAGS_LAST + 22))
+
 #define NO_SUBTITLE_PID                                               DWORD_MAX
 #define FORCED_SUBTITLE_PID                                           (NO_SUBTITLE_PID - 1)
 #define FORCED_SUB_STRING                                             L"Forced Subtitles (auto)"
@@ -268,10 +282,6 @@ protected:
 
   /*FlvTimestamp *flvTimestamps;
   bool dontChangeTimestamps;*/
-
-  // holds if filter want to call CAMThread::CallWorker() with CMD_PAUSE, CMD_SEEK, CMD_STOP values
-  // in that case demuxer do not demux input stream
-  unsigned int pauseSeekStopRequest;
 
   // holds demuxing worker handle
   HANDLE demuxingWorkerThread;

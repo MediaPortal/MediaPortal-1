@@ -48,7 +48,10 @@ wchar_t *SUPPORTED_PROTOCOLS[TOTAL_SUPPORTED_PROTOCOLS] =                     { 
 #define MP_URL_SOURCE_SPLITTER_PROTOCOL_RTMP_FLAG_SET_FIRST_TIMESTAMP         (1 << (PROTOCOL_PLUGIN_FLAG_LAST + 2))
 #define MP_URL_SOURCE_SPLITTER_PROTOCOL_RTMP_FLAG_SKIP_HEADER_AND_META        (1 << (PROTOCOL_PLUGIN_FLAG_LAST + 3))
 
-#define MP_URL_SOURCE_SPLITTER_PROTOCOL_RTMP_FLAG_LAST                        (PROTOCOL_PLUGIN_FLAG_LAST + 4)
+#define MP_URL_SOURCE_SPLITTER_PROTOCOL_RTMP_FLAG_SET_VIDEO_CORRECTION        (1 << (PROTOCOL_PLUGIN_FLAG_LAST + 4))
+#define MP_URL_SOURCE_SPLITTER_PROTOCOL_RTMP_FLAG_SET_AUDIO_CORRECTION        (1 << (PROTOCOL_PLUGIN_FLAG_LAST + 5))
+
+#define MP_URL_SOURCE_SPLITTER_PROTOCOL_RTMP_FLAG_LAST                        (PROTOCOL_PLUGIN_FLAG_LAST + 6)
 
 class CMPUrlSourceSplitter_Protocol_Rtmp : public CProtocolPlugin
 {
@@ -186,10 +189,11 @@ protected:
   // the lenght of stream
   int64_t streamLength;
 
-  // holds timestamp of first packet
-  //unsigned int firstTimestamp;
-  // holds timestamp correction (calculated after seek)
-  int64_t timestampCorrection;
+  // holds video timestamp correction (calculated after seek)
+  unsigned int videoTimestampCorrection;
+  // holds audio timestamp correction (calculated after seek)
+  unsigned int audioTimestampCorrection;
+
   // holds last FLV packet timestamp
   unsigned int lastFlvPacketTimestamp;
   // holds last cumulated FLV packet timestamp
