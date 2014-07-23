@@ -248,11 +248,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           else
           {
             tuneChannel.PhysicalChannel = 0;
+            tuneChannel.Frequency = 0;
             tuneChannel.ModulationType = ModulationType.Mod256Qam;
             line = "out-of-band service information";
             this.LogInfo("ATSC: scanning digital cable, {0}", line);
           }
-          line += "... ";
+          line += "...";
           ListViewItem item = listViewStatus.Items.Add(new ListViewItem(line));
           item.EnsureVisible();
           if (index == minchan)

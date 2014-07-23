@@ -99,6 +99,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       }
     }
 
+    /// <summary>
+    /// Get the modes supported by the tuner.
+    /// </summary>
+    public AMTunerModeType SupportedTuningModes
+    {
+      get
+      {
+        return _supportedTuningModes;
+      }
+    }
+
     #endregion
 
     #region constructor

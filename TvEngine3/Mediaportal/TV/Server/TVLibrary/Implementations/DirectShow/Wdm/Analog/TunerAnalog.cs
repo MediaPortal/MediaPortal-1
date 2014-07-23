@@ -50,6 +50,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
     private Capture _capture = null;
     private Encoder _encoder = null;
 
+    private bool _hasTuner = false;
+    private AMTunerModeType _tunerSupportedModes = AMTunerModeType.Default;
+
     private AnalogChannel _externalTunerChannel = null;
     private string _externalTunerCommand = string.Empty;
     private string _externalTunerCommandArguments = string.Empty;
@@ -79,10 +82,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
           crossbar.PerformLoading(graph);
           if (crossbar.PinIndexInputTunerVideo >= 0 || crossbar.PinIndexInputTunerAudio >= 0)
           {
+            _hasTuner = true;
             Tuner tuner = new Tuner();
             try
             {
               tuner.PerformLoading(graph, _productInstanceId, crossbar);
+              _tunerSupportedModes = tuner.SupportedTuningModes;
               SetProductAndTunerInstanceIds(tuner.Device);
             }
             finally
@@ -236,6 +241,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
         {
           _tuner = new Tuner();
           _tuner.PerformLoading(_graph, _productInstanceId, _crossbar);
+          _tunerSupportedModes = _tuner.SupportedTuningModes;
         }
         _capture = new Capture();
       }
@@ -308,7 +314,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
     /// <returns><c>true</c> if the tuner can tune to the channel, otherwise <c>false</c></returns>
     public override bool CanTune(IChannel channel)
     {
-      return channel is AnalogChannel;
+      AnalogChannel analogChannel = channel as AnalogChannel;
+      if (analogChannel == null ||
+        (!_hasTuner && (analogChannel.VideoSource == CaptureSourceVideo.Tuner || analogChannel.AudioSource == CaptureSourceAudio.Tuner)) ||
+        (_hasTuner && analogChannel.MediaType == MediaTypeEnum.TV && !_tunerSupportedModes.HasFlag(AMTunerModeType.TV)) ||
+        (_hasTuner && analogChannel.MediaType == MediaTypeEnum.Radio && !_tunerSupportedModes.HasFlag(AMTunerModeType.FMRadio) && !_tunerSupportedModes.HasFlag(AMTunerModeType.AMRadio))
+      )
+      {
+        return false;
+      }
+      return true;
     }
 
     /// <summary>

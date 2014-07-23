@@ -265,7 +265,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// <returns><c>true</c> if the tuner can tune to the channel, otherwise <c>false</c></returns>
     public override bool CanTune(IChannel channel)
     {
-      return channel is ATSCChannel;
+      ATSCChannel atscChannel = channel as ATSCChannel;
+      // Channels delivered using switched digital video are not supported.
+      if (atscChannel == null || (atscChannel.PhysicalChannel <= 0 && atscChannel.Frequency <= 0))
+      {
+        return false;
+      }
+      return true;
     }
 
     #endregion

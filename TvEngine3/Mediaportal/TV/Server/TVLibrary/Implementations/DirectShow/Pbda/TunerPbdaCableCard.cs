@@ -193,13 +193,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
     public override bool CanTune(IChannel channel)
     {
       ATSCChannel atscChannel = channel as ATSCChannel;
-      if (atscChannel == null)
+      // Tuning without a CableCARD (clear QAM) is currently not supported.
+      // Major channel holds the virtual channel number that we use for tuning.
+      if (atscChannel == null || atscChannel.MajorChannel <= 0 || atscChannel.MinorChannel >= 0)
       {
         return false;
       }
-      // Tuning without a CableCARD (clear QAM) is currently not supported.
-      // Major channel holds the virtual channel number that we use for tuning.
-      return atscChannel.MajorChannel > 0;
+      return true;
     }
 
     #endregion
