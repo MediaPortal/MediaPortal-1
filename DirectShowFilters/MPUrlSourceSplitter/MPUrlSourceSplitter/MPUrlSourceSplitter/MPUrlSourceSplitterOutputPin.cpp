@@ -741,7 +741,12 @@ wchar_t *CMPUrlSourceSplitterOutputPin::GetStoreFile(const wchar_t *extension)
 
   if (folder != NULL)
   {
-    result = FormatString(L"%smpurlsourcesplitter_output_pin_%02u_%02u.%s", folder, this->GetDemuxerId(), this->GetStreamPid(), extension);
+    wchar_t *guid = ConvertGuidToString(this->logger->GetLoggerInstanceId());
+    if (guid != NULL)
+    {
+      result = FormatString(L"%smpurlsourcesplitter_output_pin_%s_%02u_%02u.%s", folder, guid, this->GetDemuxerId(), this->GetStreamPid(), extension);
+    }
+    FREE_MEM(guid);
   }
 
   return result;
