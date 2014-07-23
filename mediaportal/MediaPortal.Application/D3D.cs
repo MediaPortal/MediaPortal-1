@@ -2407,8 +2407,6 @@ namespace MediaPortal
         _isClosing = true;
         GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
         g_Player.Stop();
-
-        OnExit();
       }
       base.OnFormClosing(formClosingEventArgs);
     }
