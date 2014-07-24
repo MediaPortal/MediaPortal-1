@@ -285,7 +285,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        Log.Error("IMDBSIlentFetcher error: {0}", ex.Message);
+        Log.Error("IMDBSilentFetcher error: {0}", ex.Message);
         return false;
       }
       return true;
@@ -778,7 +778,7 @@ namespace MediaPortal.Video.Database
                   return;
                 }
 
-                // check for tt in files content (firts match success will break loop))
+                // check for tt in files content (first match success will break loop))
                 string txt = string.Empty;
 
                 using (StreamReader reader = new StreamReader(file))
@@ -802,7 +802,7 @@ namespace MediaPortal.Video.Database
                                path + @"\" + Util.Utils.GetFilename(filename,true) + @"-IMDB.txt",
                                path + @"\" + Util.Utils.GetFilename(filename,true) + @"-IMDB.nfo",
                                path + @"\" + Util.Utils.GetFilename(filename,true) + @".nfo",
-                               path + @"\" + Util.Utils.GetFilename(filename,true) + @".txt",
+                               path + @"\" + Util.Utils.GetFilename(filename,true) + @".txt"
                              };
 
           foreach (string file in txtFile)

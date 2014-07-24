@@ -245,6 +245,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="SelectDVDHandler.cs" />
+    <Compile Include="VideosFileWatcher\DelayedVideosFileSystemWatcher.cs" />
+    <Compile Include="VideosFileWatcher\VideosShareWatcherEvent.cs" />
+    <Compile Include="VideosFileWatcher\VideosShareWatcherHelper.cs" />
     <Compile Include="VideoSort.cs" />
     <Compile Include="VideoState.cs" />
     <Compile Include="VideoViewHandler.cs" />

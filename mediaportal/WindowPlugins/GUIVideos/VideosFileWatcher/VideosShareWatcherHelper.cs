@@ -50,7 +50,7 @@ namespace MediaPortal.GUI.Video
 
     private ArrayList _notReadyFiles = new ArrayList(); // locked (not available files will be placed here until unlock)
     private Timer _scanMoviesTimer= null;
-    private int _scanMoviesTimerInterval = 5 * (60 * 1000); // 5 min
+    private int _scanMoviesTimerInterval = 3 * (60 * 1000); // 5 min
     private bool _useOnlyNfoScraper;
 
     #endregion
