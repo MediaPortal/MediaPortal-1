@@ -103,17 +103,21 @@ namespace TvEngine.PowerScheduler.Handlers
 
       private void PingCompletedCallback(object sender, PingCompletedEventArgs e)
       {
-        if (e.Cancelled)
+        try
         {
-          Log.Debug("PS: PingCompletedCallback, Ping canceled.");
-          return;
-        }
+          if (e.Cancelled)
+          {
+            Log.Debug("PS: PingCompletedCallback, Ping canceled.");
+            return;
+          }
 
-        if (e.Reply.Status == IPStatus.Success)
-        {
-          _isActiveHost = true;
-          Log.Debug("PS: PingMonitor found an active host {0}", e.Reply.Address);
+          if (e.Reply.Status == IPStatus.Success)
+          {
+            _isActiveHost = true;
+            Log.Debug("PS: PingMonitor found an active host {0}", e.Reply.Address);
+          }
         }
+        catch (Exception) { }
       }
 
       public void UserShutdownNow() { }
