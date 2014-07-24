@@ -508,6 +508,19 @@ namespace MediaPortal.GUI.Video
         {
           _cachedItems.Clear();
         }
+        else
+        {
+          for (int i = 0; i < _cachedItems.Keys.Count; i++)
+          {
+            string protectedFolder = _cachedItems.Keys.ElementAt(i);
+
+            if (IsFolderPinProtected(protectedFolder))
+            {
+              _cachedItems.Remove(protectedFolder);
+              i--;
+            }
+          }
+        }
       }
 
       SaveFolderSettings(_currentFolder);
@@ -2990,6 +3003,14 @@ namespace MediaPortal.GUI.Video
       else
       {
         _currentFolder = newFolderName;
+      }
+
+      // PIN check - if folder is protected and contains items in cache, PIN is validated
+      if (_cachedItems != null && _cachedItems.ContainsKey(_currentFolder) && _cachedItems[_currentFolder].Count <= 1 &&
+          IsFolderPinProtected(_currentFolder))
+      {
+        _cachedItems.Remove(_currentFolder);
+        useCache = false;
       }
 
       IMDBMovie.ResetMovieProperties(); // Clear skin properties values
