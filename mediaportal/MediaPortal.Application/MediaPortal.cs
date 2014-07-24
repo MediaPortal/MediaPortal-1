@@ -83,6 +83,7 @@ public class MediaPortalApp : D3D, IRender
   private readonly bool         _useIdlePluginScreen;
   private bool                  _idlePluginActive = false;
   private bool                  _changeScreen;
+  private bool                  _changeScreenDisplayChange;
   private readonly bool         _useIdleblankScreen;
   private int                   _idlePluginWindowId;
   private readonly bool         _showLastActiveModule;
@@ -1630,6 +1631,7 @@ public class MediaPortalApp : D3D, IRender
     {
       case PBT_APMSUSPEND:
         Log.Info("Main: Suspending operation");
+        PrepareSuspend();
         PluginManager.WndProc(ref msg);
         OnSuspend();
         break;
@@ -1885,12 +1887,12 @@ public class MediaPortalApp : D3D, IRender
         Log.Debug("Main: Screen MP OnDisplayChange start screen                                           {0}", GetCleanDisplayName(GUIGraphicsContext.currentStartScreen));
         Log.Debug("Main: Screen MP OnDisplayChange change current screen {0} with current detected screen {1}", GetCleanDisplayName(GUIGraphicsContext.currentScreen), GetCleanDisplayName(screen));
         GUIGraphicsContext.currentScreen = screen;
-        Log.Debug("Main: Screen MP OnDisplayChange set current screen bounds {0} to Bounds {1}",
-          GUIGraphicsContext.currentScreen.Bounds, Bounds);
+        Log.Debug("Main: Screen MP OnDisplayChange set current detected screen bounds : {0} to previous bounds values : {1}", GUIGraphicsContext.currentScreen.Bounds, Bounds);
         Bounds = screen.Bounds;
         Log.Debug("Main: Screen MP OnDisplayChange recreate swap chain");
+        NeedRecreateSwapChain = true;
         RecreateSwapChain();
-        _changeScreen = true;
+        _changeScreenDisplayChange = true;
       }
       // Restore original Start Screen in case of change from RDP Session
       if (!Equals(screen, GUIGraphicsContext.currentStartScreen))
@@ -1908,6 +1910,7 @@ public class MediaPortalApp : D3D, IRender
             break;
           }
           GUIGraphicsContext.currentScreen = screen;
+          Log.Debug("Main: Screen MP OnDisplayChange restore screen");
         }
       }
     }
@@ -1953,7 +1956,7 @@ public class MediaPortalApp : D3D, IRender
     Rectangle newBounds = screen.Bounds;
     string adapterOrdinalScreenName = Manager.Adapters[GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal].Information.DeviceName;
 
-    if ((!Equals(screen, GUIGraphicsContext.currentScreen) || (!Equals(GetCleanDisplayName(GUIGraphicsContext.currentScreen), GetCleanDisplayName(screen)))) && !_firstLoadedScreen)
+    if ((!Equals(screen, GUIGraphicsContext.currentScreen) || (!Equals(GetCleanDisplayName(GUIGraphicsContext.currentScreen), GetCleanDisplayName(screen)))) && !_firstLoadedScreen && !_restoreLoadedScreen)
     {
       Log.Info("Main: Screen MP OnGetMinMaxInfo is displayed on changed from {0} to {1}", GetCleanDisplayName(GUIGraphicsContext.currentScreen), GetCleanDisplayName(screen));
       if (screen.Bounds != GUIGraphicsContext.currentScreen.Bounds)
@@ -1964,7 +1967,7 @@ public class MediaPortalApp : D3D, IRender
       _changeScreen = true;
     }
 
-    if (!Equals(currentBounds.Size, newBounds.Size) && !_firstLoadedScreen)
+    if (!Equals(currentBounds.Size, newBounds.Size) && !_firstLoadedScreen && !_restoreLoadedScreen)
     {
       // Check if start screen is equal to device screen and check if current screen bond differ from current detected screen bond then recreate swap chain.
       Log.Debug("Main: Screen MP OnGetMinMaxInfo Information.DeviceName Manager.Adapters                {0}", adapterOrdinalScreenName);
@@ -1976,6 +1979,7 @@ public class MediaPortalApp : D3D, IRender
       Log.Debug("Main: Screen MP OnGetMinMaxInfo set current screen bounds {0} to Bounds {1}", GUIGraphicsContext.currentScreen.Bounds, Bounds);
       Bounds = screen.Bounds;
       Log.Debug("Main: Screen MP OnGetMinMaxInfo recreate swap chain");
+      NeedRecreateSwapChain = true;
       RecreateSwapChain();
       _changeScreen = true;
 
@@ -1985,11 +1989,12 @@ public class MediaPortalApp : D3D, IRender
       }
     }
 
-    if (_changeScreen)
+    if (_changeScreen || _changeScreenDisplayChange)
     {
       Log.Debug("Main: Screen MP OnGetMinMaxInfo (changeScreen) change current screen {0} with current detected screen {1}", GetCleanDisplayName(GUIGraphicsContext.currentScreen), GetCleanDisplayName(screen));
       GUIGraphicsContext.currentScreen = screen;
       _changeScreen = false;
+      _changeScreenDisplayChange = false;
     }
 
     // calculate form dimension limits based on primary screen.
@@ -2009,10 +2014,10 @@ public class MediaPortalApp : D3D, IRender
     }
     else
     {
-      mmi.ptMaxSize.x      = Screen.PrimaryScreen.Bounds.Width;
-      mmi.ptMaxSize.y      = Screen.PrimaryScreen.Bounds.Height;
-      mmi.ptMaxPosition.x  = Screen.PrimaryScreen.Bounds.X;
-      mmi.ptMaxPosition.y  = Screen.PrimaryScreen.Bounds.Y;
+      mmi.ptMaxSize.x = screen.Bounds.Width;
+      mmi.ptMaxSize.y = screen.Bounds.Height;
+      mmi.ptMaxPosition.x = screen.Bounds.X;
+      mmi.ptMaxPosition.y = screen.Bounds.Y;
       mmi.ptMinTrackSize.x = GUIGraphicsContext.currentScreen.Bounds.Width;
       mmi.ptMinTrackSize.y = GUIGraphicsContext.currentScreen.Bounds.Height;
       mmi.ptMaxTrackSize.x = GUIGraphicsContext.currentScreen.Bounds.Width;
@@ -2027,6 +2032,7 @@ public class MediaPortalApp : D3D, IRender
           mmi.ptMaxSize.x, mmi.ptMaxSize.y, mmi.ptMaxPosition.x, mmi.ptMaxPosition.y, mmi.ptMinTrackSize.x, mmi.ptMinTrackSize.y, mmi.ptMaxTrackSize.x, mmi.ptMaxTrackSize.y);
     // needed to avoid cursor show when MP windows change (for ex when refesh rate is working)
     _moveMouseCursorPositionRefresh = D3D._lastCursorPosition;
+    _restoreLoadedScreen = false;
   }
 
 
@@ -2307,13 +2313,20 @@ public class MediaPortalApp : D3D, IRender
   }
 
   /// <summary>
+  /// Prepare application for suspend, this is done before power events get passed to plugins
+  /// </summary>
+  private void PrepareSuspend()
+  {
+    // Make sure that plugins cannot open dialog when system is entering standby
+    _ignoreContextMenuAction = true;
+    GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
+  }
+
+  /// <summary>
   /// 
-  /// </summary>  
+  /// </summary>
   private void OnSuspend()
   {
-    _ignoreContextMenuAction = true;
-    GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING; // this will close all open dialogs      
-
     // stop playback
     Log.Debug("Main: OnSuspend - stopping playback");
     if (GUIGraphicsContext.IsPlaying)
@@ -2322,6 +2335,8 @@ public class MediaPortalApp : D3D, IRender
       g_Player.Stop();
       while (GUIGraphicsContext.IsPlaying)
       {
+        // This could lead into OS putting system into sleep before MP completes OnSuspend().
+        // OS gives only 2 seconds time to application to react power events (>= Vista)
         Thread.Sleep(100);
       }
     }
@@ -2386,6 +2401,25 @@ public class MediaPortalApp : D3D, IRender
       Log.Debug("Main: OnResumeSuspend - set GUIGraphicsContext.State.LOST");
       GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
     }
+
+    if (!_showLastActiveModule && !Utils.IsGUISettingsWindow(GUIWindowManager.GetPreviousActiveWindow()))
+    {
+      if (_startWithBasicHome && File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\basichome.xml")))
+      {
+        Log.Info("Main: OnResumeSuspend - Switch to basic home screen");
+        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SECOND_HOME);
+      }
+      else
+      {
+        Log.Info("Main: OnResumeSuspend - Switch to home screen");
+        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
+      }
+      GUIWindowManager.ResetWindowsHistory();
+    }
+
+    GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ONRESUME, 0, 0, 0, 0, 0, null);
+    GUIGraphicsContext.SendMessage(message); 
+
     RecoverDevice();
 
     if (GUIGraphicsContext.IsDirectX9ExUsed())
@@ -2723,7 +2757,7 @@ public class MediaPortalApp : D3D, IRender
         var virtualDir = new VirtualDirectory();
         virtualDir.LoadSettings(section);
 
-        int pincode;
+        string pincode;
         bool lastFolderPinProtected = virtualDir.IsProtectedShare(lastFolder, out pincode);
         if (rememberLastFolder && lastFolderPinProtected)
         {
@@ -2771,14 +2805,15 @@ public class MediaPortalApp : D3D, IRender
     InputDevices.Stop();
     AutoPlay.StopListening();
     PluginManager.Stop();
+    GUIWindowManager.Clear();
     GUIWaitCursor.Dispose();
-    GUIFontManager.ReleaseUnmanagedResources();
     GUIFontManager.Dispose();
     GUITextureManager.Dispose();
-    GUIWindowManager.Clear();
     GUILocalizeStrings.Dispose();
     TexturePacker.Cleanup();
     VolumeHandler.Dispose();
+
+    GUIFontManager.SetDeviceNull();
 
     if (_isWinScreenSaverInUse)
     {
@@ -3055,49 +3090,49 @@ public class MediaPortalApp : D3D, IRender
           {
             // 3D output either SBS or TAB
 
-            Surface old = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
             Surface backbuffer = GUIGraphicsContext.DX9Device.GetBackBuffer(0, 0, BackBufferType.Mono);
 
             // create texture/surface for preparation for 3D output if they don't exist
 
-            if (GUIGraphicsContext.Auto3DTexture == null)
-              GUIGraphicsContext.Auto3DTexture = new Texture(GUIGraphicsContext.DX9Device,
+            Texture auto3DTexture = new Texture(GUIGraphicsContext.DX9Device,
                                                              backbuffer.Description.Width,
                                                              backbuffer.Description.Height, 0, Usage.RenderTarget,
                                                              backbuffer.Description.Format, Pool.Default);
 
-            if (GUIGraphicsContext.Auto3DSurface == null)
-              GUIGraphicsContext.Auto3DSurface = GUIGraphicsContext.Auto3DTexture.GetSurfaceLevel(0);
+            Surface auto3DSurface = auto3DTexture.GetSurfaceLevel(0);
 
             if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySide)
             {
               // left half (or right if switched)
 
               PlaneScene.RenderFor3DMode(GUIGraphicsContext.Switch3DSides ? GUIGraphicsContext.eRender3DModeHalf.SBSRight : GUIGraphicsContext.eRender3DModeHalf.SBSLeft,
-                              timePassed, backbuffer, GUIGraphicsContext.Auto3DSurface,
+                              timePassed, backbuffer, auto3DSurface,
                               new Rectangle(0, 0, backbuffer.Description.Width / 2, backbuffer.Description.Height));
 
               // right half (or right if switched)
 
               PlaneScene.RenderFor3DMode(GUIGraphicsContext.Switch3DSides ? GUIGraphicsContext.eRender3DModeHalf.SBSLeft : GUIGraphicsContext.eRender3DModeHalf.SBSRight,
-                              timePassed, backbuffer, GUIGraphicsContext.Auto3DSurface,
+                              timePassed, backbuffer, auto3DSurface,
                               new Rectangle(backbuffer.Description.Width / 2, 0, backbuffer.Description.Width / 2, backbuffer.Description.Height));
             }
             else
             {
               // upper half (or lower if switched)
               PlaneScene.RenderFor3DMode(GUIGraphicsContext.Switch3DSides ? GUIGraphicsContext.eRender3DModeHalf.TABBottom : GUIGraphicsContext.eRender3DModeHalf.TABTop, 
-                              timePassed, backbuffer, GUIGraphicsContext.Auto3DSurface,
+                              timePassed, backbuffer, auto3DSurface,
                               new Rectangle(0, 0, backbuffer.Description.Width, backbuffer.Description.Height/2));
 
               // lower half (or upper if switched)
               PlaneScene.RenderFor3DMode(GUIGraphicsContext.Switch3DSides ? GUIGraphicsContext.eRender3DModeHalf.TABTop : GUIGraphicsContext.eRender3DModeHalf.TABBottom, 
-                              timePassed, backbuffer, GUIGraphicsContext.Auto3DSurface,
+                              timePassed, backbuffer, auto3DSurface,
                               new Rectangle(0, backbuffer.Description.Height/2, backbuffer.Description.Width, backbuffer.Description.Height/2));
             }
 
             GUIGraphicsContext.DX9Device.Present();
             backbuffer.Dispose();
+
+            auto3DSurface.Dispose();
+            auto3DTexture.Dispose();
           }
         }
       }
@@ -3552,12 +3587,6 @@ public class MediaPortalApp : D3D, IRender
           }
           var homeMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0, (int)newHome, 0, null);
           GUIWindowManager.SendThreadMessage(homeMsg);
-          // Stop Video for MyPictures when going to home
-          if (g_Player.IsPicture)
-          {
-            GUISlideShow._slideDirection = 0;
-            g_Player.Stop();
-          }
           break;
 
         case Action.ActionType.ACTION_MPRESTORE:
@@ -3814,10 +3843,6 @@ public class MediaPortalApp : D3D, IRender
             if (!g_Player.IsTV || !GUIGraphicsContext.IsFullScreenVideo)
             {
               Log.Info("Main: Stopping media");
-              if (g_Player.IsPicture)
-              {
-                GUISlideShow._slideDirection = 0;
-              }
               g_Player.Stop();
             }
             break;
@@ -5091,4 +5116,5 @@ public class MediaPortalApp : D3D, IRender
   }
 
   #endregion
+
 }

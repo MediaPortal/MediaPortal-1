@@ -119,7 +119,8 @@ namespace MediaPortal
     protected bool                 MinimizeOnFocusLoss;      // minimize to tray when focus in full screen mode is lost?
     protected bool                 ShuttingDown;             // set to true if MP is shutting down
     protected bool                 AutoHideMouse;            // Should the mouse cursor be hidden automatically?
-    protected bool                 AppActive;                // set to true while MP is active     
+    protected bool                 AppActive;                // set to true while MP is active
+    protected bool                 NeedRecreateSwapChain;    // set to true if recreate swap chain is needed
     protected bool                 MouseCursor;              // holds the current mouse cursor state
     protected bool                 Windowed;                 // are we in windowed mode?
     protected bool                 AutoHideTaskbar;          // Should the Task Bar be hidden?
@@ -193,6 +194,8 @@ namespace MediaPortal
     internal static Point              _moveMouseCursorPosition;
     internal static Point              _moveMouseCursorPositionRefresh;
     protected static bool              _firstLoadedScreen;        //
+    protected static bool              _restoreLoadedScreen;      // Restoring correct screen when multi screen in use
+    protected static Screen            _screenFocus;              // Screen Focus when minimize / restore to systray
 
     #endregion
 
@@ -560,7 +563,7 @@ namespace MediaPortal
     /// </summary>
     internal void RecreateSwapChain()
     {
-      if (AppActive)
+      if (AppActive || NeedRecreateSwapChain)
       {
         Log.Debug("Main: RecreateSwapChain()");
 
@@ -628,6 +631,7 @@ namespace MediaPortal
 
         // continue rendering
         AppActive = true;
+        NeedRecreateSwapChain = false;
       }
     }
 
@@ -715,6 +719,7 @@ namespace MediaPortal
         TopMost = true; // important
         TopMost = false; // important
         Focus();
+        _firstTimeActivated = false;
       }
     }
 
@@ -856,6 +861,11 @@ namespace MediaPortal
         {
           _notifyIcon.Visible = false;
         }
+
+        // Restore previous saved screen
+        GUIGraphicsContext.currentScreen = _screenFocus;
+        _restoreLoadedScreen = true;
+
         WindowState = FormWindowState.Normal;
         Activate();
 
@@ -930,8 +940,10 @@ namespace MediaPortal
         {
           _notifyIcon.Visible = true;
         }
+
+        _screenFocus = Screen.FromControl(this);
         WindowState = FormWindowState.Minimized;
- 
+
         // pause player and mute audio
         if (g_Player.IsVideo || g_Player.IsTV || g_Player.IsDVD || g_Player.IsDVDMenu)
         {

@@ -38,6 +38,36 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public class DXNative
   {
+    // Synchronize access to methods known to cause AccessViolationException 
+    // on native side when called simultaneously from multiple threads
+    private static readonly object _lock = new object();
+
+    public static void FontEngineRemoveTextureSync(int textureNo)
+    {
+      lock (_lock)
+      {
+        FontEngineRemoveTexture(textureNo);
+      }
+    }
+
+    public static unsafe int FontEngineAddTextureSync(int hasCode, bool useAlphaBlend, void* fontTexture)
+    {
+      lock (_lock)
+      {
+        return FontEngineAddTexture(hasCode, useAlphaBlend, fontTexture);
+      }
+    }
+
+    public static void FontEngineDrawTextureSync(int textureNo, float x, float y, float nw, float nh,
+                                             float uoff, float voff, float umax, float vmax, uint color,
+                                             float[,] matrix)
+    {
+      lock (_lock)
+      {
+        FontEngineDrawTexture(textureNo, x, y, nw, nh, uoff, voff, umax, vmax, color, matrix);
+      }
+    }
+
     [DllImport("fontEngine.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     public static extern unsafe void FontEngineInitialize(int iScreenWidth, int iScreenHeight, int poolFormat);
 
@@ -54,15 +84,15 @@ namespace MediaPortal.GUI.Library
     public static extern unsafe void FontEngineSetTexture(void* texture);
 
     [DllImport("fontEngine.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    public static extern unsafe void FontEngineRemoveTexture(int textureNo);
+    private static extern unsafe int FontEngineAddTexture(int hasCode, bool useAlphaBlend, void* fontTexture);
 
     [DllImport("fontEngine.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    public static extern unsafe int FontEngineAddTexture(int hasCode, bool useAlphaBlend, void* fontTexture);
+    private static extern unsafe void FontEngineRemoveTexture(int textureNo);
 
     [DllImport("fontEngine.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    public static extern unsafe void FontEngineDrawTexture(int textureNo, float x, float y, float nw, float nh,
-                                                           float uoff, float voff, float umax, float vmax, uint color,
-                                                           float[,] matrix);
+    private static extern unsafe void FontEngineDrawTexture(int textureNo, float x, float y, float nw, float nh,
+                                                            float uoff, float voff, float umax, float vmax, uint color,
+                                                            float[,] matrix);
 
     [DllImport("fontEngine.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     public static extern unsafe void FontEngineDrawMaskedTexture(int textureNo1, float x, float y, float nw, float nh,

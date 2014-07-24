@@ -53,7 +53,7 @@ namespace MediaPortal.Configuration.Sections
     {
       using (Settings xmlreader = new MPSettings())
       {
-        loglevel = xmlreader.GetValueAsString("general", "loglevel", "3"); // set loglevel to 2:info 3:debug
+        loglevel = xmlreader.GetValueAsString("general", "loglevel", "2"); // set loglevel to 2:info 3:debug
         cbDebug.SelectedIndex = Convert.ToInt16(loglevel);
 
         string prio = xmlreader.GetValueAsString("general", "ThreadPriority", "Normal");

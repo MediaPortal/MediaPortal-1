@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using Un4seen.Bass;
@@ -15,6 +16,13 @@ namespace MediaPortal.MusicPlayer.BASS
   /// </summary>
   public class MixerStream : IDisposable
   {
+    #region Delegates
+
+    public delegate void MusicStreamMessageHandler(object sender, MusicStream.StreamAction action);
+    public event MusicStreamMessageHandler MusicStreamMessage;
+
+    #endregion
+
     #region Variables
 
     private BassAudioEngine _bassPlayer;
@@ -246,6 +254,29 @@ namespace MediaPortal.MusicPlayer.BASS
             wasApiExclusiveSupported = false; // And indicate that we need a new mixer
           }
 
+          // Handle the special cases of 3.0, 4.0 and 5.0 files being played on a 5.1 or 6.1 device
+          if (outputChannels == 3)  // a 3.0 file
+          {
+            Log.Info("BASS: Found a 3 channel file. Set upmixing with LFE, LR, RR set to silent");
+            _mixingMatrix = CreateThreeDotZeroUpMixMatrix();
+            outputChannels = _bassPlayer.DeviceChannels;   // WASAPI device should be initialised with all channels active
+            wasApiExclusiveSupported = false; // And indicate that we need a new mixer
+          }
+          else if (outputChannels == 4)  // a 4.0 file
+          {
+            Log.Info("BASS: Found a 4 channel file. Set upmixing with Center and LFE set to silent");
+            _mixingMatrix = CreateFourDotZeroUpMixMatrix();
+            outputChannels = _bassPlayer.DeviceChannels;   // WASAPI device should be initialised with all channels active
+            wasApiExclusiveSupported = false; // And indicate that we need a new mixer
+          }
+          else if (outputChannels == 5)  // a 5.0 file
+          {
+            Log.Info("BASS: Found a 5 channel file. Set upmixing with LFE set to silent");
+            _mixingMatrix = CreateFiveDotZeroUpMixMatrix();
+            outputChannels = _bassPlayer.DeviceChannels;   // WASAPI device should be initialised with all channels active
+            wasApiExclusiveSupported = false; // And indicate that we need a new mixer
+          }
+
           // If Exclusive mode is used, check, if that would be supported, otherwise init in shared mode
           if (Config.WasApiExclusiveMode)
           {
@@ -458,8 +489,12 @@ namespace MediaPortal.MusicPlayer.BASS
           return CreateMonoUpMixMatrix();
         case 2:
           return CreateStereoUpMixMatrix();
+        case 3:
+          return CreateThreeDotZeroUpMixMatrix(); // Special case to handle a 3.0 Music File
         case 4:
           return CreateQuadraphonicUpMixMatrix();
+        case 5:
+          return CreateFiveDotZeroUpMixMatrix(); // Special case to handle a 5.0 Music File
         case 6:
           return CreateFiveDotOneUpMixMatrix();
         default:
@@ -608,6 +643,78 @@ namespace MediaPortal.MusicPlayer.BASS
       return mixMatrix;
     }
 
+    private float[,] CreateThreeDotZeroUpMixMatrix()
+    {
+      float[,] mixMatrix = null;
+
+      // Handle the Special playback case of a 5.0 music file
+      switch (_bassPlayer.DeviceChannels)
+      {
+        case 6:
+          mixMatrix = new float[6, 3] {
+          	{1,0,0}, // left front out = left front in
+	          {0,1,0}, // right front out = right front in
+	          {0,0,1}, // centre out = centre in
+	          {0,0,0}, // LFE out = silent
+	          {0,0,0}, // left rear out = silent
+	          {0,0,0}  // right rear out = silent
+           };
+          Log.Info("BASS: Upmix 3.0-> 5.1 with LFE, LR and RR silent");
+          break;
+
+        case 7:
+          mixMatrix = new float[8, 3] {
+          	{1,0,0}, // left front out = left front in
+	          {0,1,0}, // right front out = right front in
+	          {0,0,1}, // centre out = centre in
+	          {0,0,0}, // LFE out = silent
+	          {0,0,0}, // left rear out = silent
+	          {0,0,0}, // right rear out = silent
+            {0,0,0}, // left back out = silent
+            {0,0,0}  // right back out = silent
+           };
+          Log.Info("BASS: Upmix 3.0-> 7.1 with LFE, LR, RR, LB and RB silent");
+          break;
+      }
+      return mixMatrix;
+    }
+
+    private float[,] CreateFourDotZeroUpMixMatrix()
+    {
+      float[,] mixMatrix = null;
+
+      // Handle the Special playback case of a 5.0 music file
+      switch (_bassPlayer.DeviceChannels)
+      {
+        case 6:
+          mixMatrix = new float[6, 4] {
+          	{1,0,0,0}, // left front out = left front in
+	          {0,1,0,0}, // right front out = right front in
+	          {0,0,0,0}, // centre out = silent
+	          {0,0,0,0}, // LFE out = silent
+	          {0,0,1,0}, // left rear out = left rear in
+	          {0,0,0,1}  // right rear out = right rear in
+           };
+          Log.Info("BASS: Upmix 4.0-> 5.1 with Center and LFE silent");
+          break;
+
+        case 7:
+          mixMatrix = new float[8, 4] {
+          	{1,0,0,0}, // left front out = left front in
+	          {0,1,0,0}, // right front out = right front in
+	          {0,0,0,0}, // centre out = silent
+	          {0,0,0,0}, // LFE out = silent
+	          {0,0,1,0}, // left rear out = left rear in
+	          {0,0,0,1}, // right rear out = right rear in
+            {0,0,0,0}, // left back out = silent
+            {0,0,0,0}  // right back out = silent
+           };
+          Log.Info("BASS: Upmix 4.0-> 7.1 with Center, LFE, LB and RB silent");
+          break;
+      }
+      return mixMatrix;
+    }
+
     private float[,] CreateQuadraphonicUpMixMatrix()
     {
       float[,] mixMatrix = null;
@@ -658,6 +765,42 @@ namespace MediaPortal.MusicPlayer.BASS
           mixMatrix[6, 2] = 1;
           mixMatrix[7, 3] = 1;
           Log.Info("BASS: Using Quadro -> 7.1 mixing matrix");
+          break;
+      }
+      return mixMatrix;
+    }
+
+    private float[,] CreateFiveDotZeroUpMixMatrix()
+    {
+      float[,] mixMatrix = null;
+
+      // Handle the Special playback case of a 5.0 music file
+      switch (_bassPlayer.DeviceChannels)
+      {
+        case 6:
+           mixMatrix = new float[6, 5] {
+          	{1,0,0,0,0}, // left front out = left front in
+	          {0,1,0,0,0}, // right front out = right front in
+	          {0,0,1,0,0}, // centre out = centre in
+	          {0,0,0,0,0}, // LFE out = silent
+	          {0,0,0,1,0}, // left rear out = left rear in
+	          {0,0,0,0,1}  // right rear out = right rear in
+           }; 
+          Log.Info("BASS: Upmix 5.0-> 5.1 with LFE silent");
+          break;
+
+        case 7:
+          mixMatrix = new float[8, 5] {
+          	{1,0,0,0,0}, // left front out = left front in
+	          {0,1,0,0,0}, // right front out = right front in
+	          {0,0,1,0,0}, // centre out = centre in
+	          {0,0,0,0,0}, // LFE out = silent
+	          {0,0,0,1,0}, // left rear out = left rear in
+	          {0,0,0,0,1}, // right rear out = right rear in
+            {0,0,0,0,0}, // left back out = silent
+            {0,0,0,0,0}  // right back out = silent
+           };
+          Log.Info("BASS: Upmix 5.0-> 7.1 with LFE, LB and RB silent");
           break;
       }
       return mixMatrix;
@@ -720,7 +863,11 @@ namespace MediaPortal.MusicPlayer.BASS
         }
         else if (MusicStream._fileType.FileMainType == FileMainType.WebStream)
         {
-          _bassPlayer.OnMusicStreamMessage(musicstream, MusicStream.StreamAction.InternetStreamChanged);
+          if (MusicStreamMessage != null)
+          {
+            MusicStreamMessage(musicstream, MusicStream.StreamAction.InternetStreamChanged);
+            return;
+          }
         }
 
         bool newMixerNeeded = false;
@@ -745,12 +892,22 @@ namespace MediaPortal.MusicPlayer.BASS
           BassMix.BASS_Mixer_ChannelRemove(musicstream.BassStream);
 
           // invoke a thread because we need a new mixer
-          Log.Debug("BASS: Next song needs a new mixer. Invoke a thread.");
-          new Thread(() => _bassPlayer.OnMusicStreamMessage(musicstream, MusicStream.StreamAction.Crossfading)) { Name = "BASS" }.Start();
+          Log.Debug("BASS: Next song needs a new mixer.");
+          
+          new Thread(() =>
+            {
+              if (MusicStreamMessage != null)
+              {
+                MusicStreamMessage(musicstream, MusicStream.StreamAction.Crossfading);
+              }
+            }) { Name = "BASS" }.Start();
         }
         else
         {
-          _bassPlayer.OnMusicStreamMessage(musicstream, MusicStream.StreamAction.Crossfading);
+          if (MusicStreamMessage != null)
+          {
+            MusicStreamMessage(musicstream, MusicStream.StreamAction.Crossfading);
+          }
         }
       }
       catch (AccessViolationException)
@@ -758,7 +915,6 @@ namespace MediaPortal.MusicPlayer.BASS
         Log.Error("BASS: Caught AccessViolationException in Playback End Proc");
       }
     }
-
 
     #endregion
 

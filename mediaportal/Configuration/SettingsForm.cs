@@ -204,9 +204,6 @@ namespace MediaPortal.Configuration
       AddTabPictures();
       AddTabRemote();
       AddTabFilters();
-      //Mantis 3772 - Weather.com API is not free any more
-      //temporarily disable plugin
-      //AddTabWeather();
       AddTabPlugins();
       AddTabThirdPartyChecks();
 
@@ -249,19 +246,6 @@ namespace MediaPortal.Configuration
       {
         splashScreen.SetInformation("Finished plugin loading...");
       }
-    }
-
-    private void AddTabWeather()
-    {
-      //add weather section
-      if (splashScreen != null)
-      {
-        splashScreen.SetInformation("Adding weather section...");
-      }
-
-      Log.Info("add weather section");
-      Weather weather = new Weather();
-      AddSection(new ConfigPage(null, weather, false));
     }
 
     private void AddTabFilters()
@@ -439,6 +423,9 @@ namespace MediaPortal.Configuration
         AddSection(new ConfigPage(tvradio, new TVPostProcessing(), true));
         Log.Info("  add tv teletext section");
         AddSection(new ConfigPage(tvradio, new TVTeletext(), true));
+        Log.Info("  add tv advanced options section");
+        AddSection(new ConfigPage(tvradio, new TVAdvancedOptions(), true));
+
         if (ShowDebugOptions)
         {
           Log.Info("  add tv debug options section");

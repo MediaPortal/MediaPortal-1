@@ -9,7 +9,7 @@
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
 
-#define MAX_MEMORY_BUFFER_SIZE (1024L*1024L*32L)
+#define MAX_MEMORY_BUFFER_SIZE (1024L*1024L*128L)
 #define OVERFLOW_BUFFER_SIZE (MAX_MEMORY_BUFFER_SIZE - (1024L*1024L*4L))
 
 extern void LogDebug(const char *fmt, ...) ;
@@ -123,11 +123,12 @@ HRESULT CMemoryBuffer::PutBuffer(BYTE *pbData, long lDataLength)
     if (m_BytesInBuffer > MAX_MEMORY_BUFFER_SIZE)
     {
   	  //Log("add..%d/%d",lDataLength,m_BytesInBuffer);
+  		LogDebug("memorybuffer:put full buffer (%d)",m_BytesInBuffer);
+  		
   	  //Overflow - discard a reasonable chunk of the current buffer
       while (m_BytesInBuffer > OVERFLOW_BUFFER_SIZE)
       {
         sleep=true;
-  		  LogDebug("memorybuffer:put full buffer (%d)",m_BytesInBuffer);
   	    CAutoLock ClearLock(&m_ClearLock);
     	  BUFFERITEM *itemc = m_Array.back();		
         int copyLength=itemc->nDataLength - itemc->nOffset;  

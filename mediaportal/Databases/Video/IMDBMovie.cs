@@ -33,7 +33,7 @@ using System.IO;
 
 namespace MediaPortal.Video.Database
 {
-  internal class MatroskaTagInfo
+  public class MatroskaTagInfo
   {
     public string Title;
     public string Description;
@@ -44,7 +44,7 @@ namespace MediaPortal.Video.Database
     public DateTime EndTime;
   }
 
-  internal class MatroskaTagHandler
+  public class MatroskaTagHandler
   {
     #region Private members
 
@@ -765,7 +765,7 @@ namespace MediaPortal.Video.Database
     private void SetMovieIDProperty(string file, bool isFolder)
     {
       VirtualDirectory vDir = new VirtualDirectory();
-      int pin = 0;
+      string pin = string.Empty;
       vDir.LoadSettings("movies");
 
       if (isFolder && !vDir.IsProtectedShare(file, out pin))
@@ -909,7 +909,7 @@ namespace MediaPortal.Video.Database
           int rndMovieId = -1;
 
           VirtualDirectory vDir = new VirtualDirectory();
-          int pin = 0;
+          string pin = string.Empty;
           vDir.LoadSettings("movies");
 
           if (!vDir.IsProtectedShare(path, out pin))

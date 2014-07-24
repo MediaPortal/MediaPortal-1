@@ -20,6 +20,7 @@
 
 using System;
 using System.IO;
+using System.Collections;
 using System.Xml.Serialization;
 using MediaPortal.Configuration;
 using MediaPortal.Database;
@@ -149,6 +150,40 @@ namespace Databases.Folders
         Log.Error(ex);
       }
       return -1;
+    }
+
+    public void GetPath(string strPath, ref ArrayList strPathList, string strKey)
+    {
+      try
+      {
+        if (m_db == null)
+        {
+          return;
+        }
+        if (strKey == string.Empty)
+        {
+          return;
+        }
+
+        string sql = string.Format(
+          "SELECT strPath from tblPath where strPath like '{0}%' and idPath in (SELECT idPath from tblSetting where tblSetting.idPath = tblPath.idPath and tblSetting.tagName = '{1}')"
+          , strPath, strKey);
+
+        SQLiteResultSet results = m_db.Execute(sql);
+
+        if (results.Rows.Count == 0)
+        {
+          return;
+        }
+        for (int iRow = 0; iRow < results.Rows.Count; iRow++)
+        {
+          strPathList.Add(DatabaseUtility.Get(results, iRow, "strPath"));
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Lolderdatabase.GetPath() exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+      }
     }
 
     public void DeleteFolderSetting(string strPath, string Key)

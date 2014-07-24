@@ -58,6 +58,8 @@ namespace TvEngine.PowerScheduler.Interfaces
     private int _checkInterval;
     private int _allowedStart;
     private int _allowedStop;
+    private int _allowedStartOnWeekend;
+    private int _allowedStopOnWeekend;
     private bool _reinitializeController;
     private ShutdownMode _shutdownMode;
 
@@ -89,6 +91,8 @@ namespace TvEngine.PowerScheduler.Interfaces
       _settings = s._settings;
       _allowedStart = s.AllowedSleepStartTime;
       _allowedStop = s.AllowedSleepStopTime;
+      _allowedStartOnWeekend = s.AllowedSleepStartTimeOnWeekend;
+      _allowedStopOnWeekend = s.AllowedSleepStopTimeOnWeekend;
       _reinitializeController = s.ReinitializeController;
     }
 
@@ -288,6 +292,24 @@ namespace TvEngine.PowerScheduler.Interfaces
     {
       get { return _allowedStop; }
       set { _allowedStop = value; }
+    }
+
+    /// <summary>
+    /// Controls the minimum start hour of suspends. 
+    /// </summary>
+    public int AllowedSleepStartTimeOnWeekend
+    {
+      get { return _allowedStartOnWeekend; }
+      set { _allowedStartOnWeekend = value; }
+    }
+
+    /// <summary>
+    /// Controls the maximum start hour for a suspend.
+    /// </summary>
+    public int AllowedSleepStopTimeOnWeekend
+    {
+      get { return _allowedStopOnWeekend; }
+      set { _allowedStopOnWeekend = value; }
     }
 
     /// <summary>

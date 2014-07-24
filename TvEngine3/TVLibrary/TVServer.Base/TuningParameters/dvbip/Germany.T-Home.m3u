@@ -125,3 +125,16 @@ rtp://@239.35.20.47:10000
 rtp://@239.35.20.59:10000
 #EXTINF:0,Deutsche Welle
 rtp://@239.35.20.44:10000
+#EXTINF:0,HR HD
+rtp://@239.35.10.60:10000
+#EXTINF:0,MDR HD
+rtp://@239.35.10.61:10000
+#EXTINF:0,rbb Berlin HD
+rtp://@239.35.10.62:10000
+#EXTINF:0,Einsfestival HD
+rtp://@239.35.10.58:10000
+#EXTINF:0,tagesschau24 HD
+rtp://@239.35.10.63:10000
+#EXTINF:0,EinsPlus HD
+rtp://@239.35.10.59:10000
+

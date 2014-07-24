@@ -292,15 +292,22 @@ namespace MediaPortal.Visualization
 
         if (soniqueVisPaths != null && soniqueVisPaths[0] != "")
         {
-          BassVis.BASSVIS_Init(BASSVISKind.BASSVISKIND_SONIQUE, GUIGraphicsContext.form.Handle);
           _visParam = new BASSVIS_PARAM(BASSVISKind.BASSVISKIND_SONIQUE);
           for (int i = 0; i < soniqueVisPaths.Length; i++)
           {
             string filePath = soniqueVisPaths[i];
             string name = Path.GetFileNameWithoutExtension(filePath);
-            BASSVIS_EXEC visExec = new BASSVIS_EXEC(filePath);
-            visExec.SON_Flags = BASSVISFlags.BASSVIS_NOINIT; // don't execute the plugin yet
-            visExec.SON_ConfigFile = Path.Combine(Path.GetDirectoryName(filePath), "vis.ini");
+            _visParam.VisHandle = BassVis.BASSVIS_GetModuleHandle(BASSVISKind.BASSVISKIND_SONIQUE, filePath);
+
+            string pluginname = BassVis.BASSVIS_GetPluginName(_visParam);
+            if (pluginname != null)
+            {
+              name = pluginname;
+            }
+
+            VisualizationInfo vizInfo = new VisualizationInfo(VisualizationInfo.PluginType.Sonique, filePath, name,
+                                                              string.Empty, null);
+            _VisualizationPluginsInfo.Add(vizInfo);
 
             if (_visParam.VisHandle != 0)
             {
@@ -316,20 +323,7 @@ namespace MediaPortal.Visualization
                 _visParam.VisHandle = 0;
               }
             }
-
-            BassVis.BASSVIS_ExecutePlugin(visExec, _visParam);
-
-            string pluginname = BassVis.BASSVIS_GetPluginName(_visParam);
-            if (pluginname != null)
-            {
-              name = pluginname;
-            }
-
-            VisualizationInfo vizInfo = new VisualizationInfo(VisualizationInfo.PluginType.Sonique, filePath, name,
-                                                              string.Empty, null);
-            _VisualizationPluginsInfo.Add(vizInfo);
           }
-          BassVis.BASSVIS_Quit(_visParam);
         }
 
         if (winampVisPaths != null && winampVisPaths[0] != "")
@@ -379,7 +373,6 @@ namespace MediaPortal.Visualization
                                                               string.Empty, null);
             _VisualizationPluginsInfo.Add(vizInfo);
           }
-          BassVis.BASSVIS_Quit(_visParam);
         }
       }
       catch (Exception ex)

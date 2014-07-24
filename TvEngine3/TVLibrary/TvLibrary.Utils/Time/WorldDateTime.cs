@@ -379,7 +379,13 @@ namespace MediaPortal.Utils.Time
       return dt;
     }
 
+    [Obsolete("Fix typo and call ToUniversalTime")]
     public DateTime ToUniveralTime()
+    {
+      return ToUniversalTime();
+    }
+
+    public DateTime ToUniversalTime()
     {
       DateTime dt = this.DateTime;
       if (_timeZone != null)

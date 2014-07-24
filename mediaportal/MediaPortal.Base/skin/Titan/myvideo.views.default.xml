@@ -246,9 +246,9 @@
 		<description>Movie Title value</description>
 		<type>fadelabel</type>
 		<id>1</id>
-		<posX>1040</posX>
+		<posX>118</posX>
 		<posY>332</posY>
-		<width>700</width>
+		<width>555</width>
 		<label>#selecteditem</label>
 		<font>fontB16</font>
     <textcolor>FF00b7ff</textcolor>
@@ -264,7 +264,7 @@
 		<description>Release Date Label</description>
 		<type>label</type>
 		<id>0</id>
-		<posX>1038</posX>
+		<posX>118</posX>
 		<posY>445</posY>
 		<label>#(string.rtrim(L(172),' :'))</label>
 		<visible>[facadeview.smallicons | facadeview.largeicons] + Control.IsVisible(50) + string.equals(#hideinfo, False)</visible>
@@ -272,11 +272,11 @@
 		<animation effect="fade" time="250">WindowClose</animation>
 	</control>
 
-	<control Style="InfoValueWide">
+	<control Style="InfoValueSmall">
 		<description>Release Date Value</description>
 		<type>label</type>
 		<id>0</id>
-		<posX>1270</posX>
+		<posX>350</posX>
 		<posY>445</posY>
 		<label>#year</label>
 		<visible>[facadeview.smallicons | facadeview.largeicons] + Control.IsVisible(50) + string.equals(#hideinfo, False)</visible>
@@ -288,7 +288,7 @@
 		<description>Runtime Label</description>
 		<type>label</type>
 		<id>0</id>
-		<posX>1038</posX>
+		<posX>118</posX>
 		<posY>481</posY>
 		<label>#(string.rtrim(L(299),' :'))</label>
 		<visible>[facadeview.smallicons | facadeview.largeicons] + Control.IsVisible(50) + string.equals(#hideinfo, False)</visible>
@@ -296,11 +296,11 @@
 		<animation effect="fade" time="250">WindowClose</animation>
   </control>
 	
-	<control Style="InfoValueWide">
+	<control Style="InfoValueSmall">
 		<description>Runtime Value</description>
 		<type>label</type>
 		<id>0</id>
-		<posX>1270</posX>
+		<posX>350</posX>
 		<posY>481</posY>
 		<label>#runtime</label>
 		<visible>[facadeview.smallicons | facadeview.largeicons] + Control.IsVisible(50) + string.equals(#hideinfo, False)</visible>
@@ -312,7 +312,7 @@
 		<description>Genre Label</description>
 		<type>label</type>
 		<id>0</id>
-		<posX>1038</posX>
+		<posX>118</posX>
 		<posY>516</posY>
 		<label>135</label>
 		<visible>[facadeview.smallicons | facadeview.largeicons] + Control.IsVisible(50) + string.equals(#hideinfo, False)</visible>
@@ -320,11 +320,11 @@
 		<animation effect="fade" time="250">WindowClose</animation>
   </control>
 	
-	<control Style="InfoValueWide">
+	<control Style="InfoValueSmall">
 		<description>Genre Value</description>
 		<type>fadelabel</type>
 		<id>0</id>
-		<posX>1270</posX>
+		<posX>350</posX>
 		<posY>516</posY>
 		<label>#genre</label>
 		<visible>[facadeview.smallicons | facadeview.largeicons] + Control.IsVisible(50) + string.equals(#hideinfo, False)</visible>
@@ -336,7 +336,7 @@
 		<description>Director Label</description>
 		<type>label</type>
 		<id>0</id>
-		<posX>1038</posX>
+		<posX>118</posX>
 		<posY>554</posY>
 		<label>#(string.rtrim(L(199),' :'))</label>
 		<visible>[facadeview.smallicons | facadeview.largeicons] + Control.IsVisible(50) + string.equals(#hideinfo, False)</visible>
@@ -344,11 +344,11 @@
 		<animation effect="fade" time="250">WindowClose</animation>
   </control>
 	
-	<control Style="InfoValueWide">
+	<control Style="InfoValueSmall">
 		<description>Director Value</description>
 		<type>fadelabel</type>
 		<id>0</id>
-		<posX>1270</posX>
+		<posX>350</posX>
 		<posY>554</posY>
 		<label>#director</label>
 		<visible>[facadeview.smallicons | facadeview.largeicons] + Control.IsVisible(50) + string.equals(#hideinfo, False)</visible>
@@ -360,10 +360,10 @@
 		<description>Summary (list)</description>
 		<type>textboxscrollup</type>
 		<id>1025</id>
-		<posX>1040</posX>
+		<posX>118</posX>
 		<posY>635</posY>
-		<width>790</width>
-		<height>225</height>
+		<width>555</width>
+		<height>205</height>
 		<label>#plot</label>
 		<seperator>---------------------------------------------------------------------------------------------------------</seperator>
 		<onleft>1026</onleft>
@@ -380,7 +380,7 @@
 		<description>frame</description>
 		<type>image</type>
 		<id>0</id>
-		<posX>1041</posX>
+		<posX>119</posX>
 		<posY>876</posY>
 		<width>550</width>
 		<height>73</height>
@@ -394,11 +394,11 @@
   	<description>Unwatched Icon</description>
     <type>image</type>
     <id>0</id>
-    <posX>1754</posX>
-    <posY>320</posY>
-    <width>92</width>
-    <height>92</height>
-    <texture>unwatched_flag_big.png</texture>
+    <posX>512</posX>
+    <posY>390</posY>
+    <width>51</width>
+    <height>51</height>
+    <texture>unwatched_flag.png</texture>
     <visible>[facadeview.smallicons | facadeview.largeicons] + Control.IsVisible(50) + string.equals(#iswatched,no) + string.equals(#hideinfo, False)</visible>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
@@ -407,7 +407,7 @@
 	<control>
 		<type>imagelist</type>
 		<id>101</id>
-		<posX>1035</posX>
+		<posX>113</posX>
 		<posY>399</posY>
 		<width>315</width>
 		<height>29</height>
@@ -430,8 +430,8 @@
 		<description>Rating Value</description>
 		<type>label</type>
 		<id>0</id>
-		<posX>1368</posX>
-		<posY>394</posY>
+		<posX>446</posX>
+		<posY>398</posY>
 		<label>#rating</label>
 		<font>fontB12</font>
 		<textcolor>FF00b7ff</textcolor>

@@ -1252,7 +1252,6 @@ namespace MediaPortal.GUI.Library
               GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID,
                                               (int)action.wID, 0, null);
               GUIGraphicsContext.SendMessage(msg);
-              _searchString = "";
               _refresh = true;
             }
             else

@@ -320,28 +320,41 @@ namespace MediaPortal.Player
 
     public static void KillFormThread()
     {
-      var suicideForm = new SuicideForm();
-      suicideForm.Show();
-      suicideForm.Focus();
+      try
+      {
+        var suicideForm = new SuicideForm();
+        suicideForm.Show();
+        suicideForm.Focus();
+      }
+      catch (Exception ex)
+      {
+        Log.Error("CycleRefresh: KillFormThread exception {0}", ex);
+      }
     }
 
 
     public static void FixDwm()
     {
-      try
+      if (!OSInfo.OSInfo.Win8OrLater())
       {
-        int dwmEnabled = 0;
-        DwmIsCompositionEnabled(ref dwmEnabled);
-
-        if (dwmEnabled > 0)
+        try
         {
-          Log.Debug("CycleRefresh: DWM Detected, performing shenanigans");
-          ThreadStart starter = KillFormThread;
-          var killFormThread = new Thread(starter) {IsBackground = true};
-          killFormThread.Start();
+          int dwmEnabled = 0;
+          DwmIsCompositionEnabled(ref dwmEnabled);
+
+          if (dwmEnabled > 0)
+          {
+            Log.Debug("CycleRefresh: DWM Detected, performing shenanigans");
+            ThreadStart starter = KillFormThread;
+            var killFormThread = new Thread(starter) {IsBackground = true};
+            killFormThread.Start();
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Error("CycleRefresh: FixDwm exception {0}", ex);
         }
       }
-      catch {}
     }
   }
 
@@ -736,12 +749,12 @@ namespace MediaPortal.Player
           Log.Info("RefreshRateChanger.SetRefreshRateBasedOnFPS: using internal win32 method for changing refreshrate. current is {0}hz, desired is {1}", currentRR, newRR);
           Log.Info("RefreshRateChanger AdapterOrdinal value is {0}", (uint)GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal);
           Win32.CycleRefreshRate((uint)GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal, newRR);
-          NotifyRefreshRateChanged(newRRDescription, (strFile.Length > 0));
+          NotifyRefreshRateChanged(newRRDescription, false);
         }
         else if (RunExternalJob(newExtCmd, strFile, type, deviceReset) && newRR != currentRR)
         {
           Win32.FixDwm();
-          NotifyRefreshRateChanged(newRRDescription, (strFile.Length > 0));
+          NotifyRefreshRateChanged(newRRDescription, false);
         }
 
         if (GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.IsEvr)

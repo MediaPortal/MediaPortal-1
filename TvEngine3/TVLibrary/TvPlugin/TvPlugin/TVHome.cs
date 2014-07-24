@@ -849,6 +849,8 @@ namespace TvPlugin
         newSchedule.Persist();
         server.OnNewSchedule();
       }
+      GUIMessage msgManualRecord = new GUIMessage(GUIMessage.MessageType.GUI_MSG_MANUAL_RECORDING_STARTED, 0, 0, 0, 0, 0, null);
+      GUIWindowManager.SendMessage(msgManualRecord);
     }
 
     public static bool UseRTSP()
@@ -2014,25 +2016,27 @@ namespace TvPlugin
             pDlgOK.Reset();
             pDlgOK.SetHeading(605); //my tv
             pDlgOK.AddLocalizedString(875); //current program
-            pDlgOK.AddLocalizedString(876); //till manual stop
+
+            bool doesManuelScheduleAlreadyExist = DoesManualScheduleAlreadyExist(channel);
+            if (!doesManuelScheduleAlreadyExist)
+            {
+              pDlgOK.AddLocalizedString(876); //till manual stop
+            }
             pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
             switch (pDlgOK.SelectedId)
             {
               case 875:
                 //record current program                  
                 TVProgramInfo.CreateProgram(prog, (int)ScheduleRecordingType.Once, dialogId);
+                GUIMessage msgManualRecord = new GUIMessage(GUIMessage.MessageType.GUI_MSG_MANUAL_RECORDING_STARTED, 0, 0, 0, 0, 0, null);
+                GUIWindowManager.SendMessage(msgManualRecord);
                 return true;
 
               case 876:
                 //manual
-                bool doesManuelScheduleAlreadyExist = DoesManualScheduleAlreadyExist(channel);
-                if (!doesManuelScheduleAlreadyExist)
-                {
-                  StartRecordingSchedule(channel, true);
-                  return true;
-                }
-                break;
-            }
+                StartRecordingSchedule(channel, true);
+                return true;
+             }
           }
         }
         else
@@ -2062,7 +2066,7 @@ namespace TvPlugin
 
         if (s != null && idChannel > 0)
         {
-          TVUtil.DeleteRecAndSchedWithPrompt(s, idChannel);
+          TVUtil.StopRecAndSchedWithPrompt(s, idChannel);
         }
       }
       return false;
