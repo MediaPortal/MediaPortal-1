@@ -182,14 +182,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
 
       for (int i = 1; i <= satelliteFrontEndCount; i++)
       {
-        tuners.Add(new TunerSatIpSatellite(descriptor, i, new TunerStream("MediaPortal SAT>IP Stream Source", i)));
+        tuners.Add(new TunerSatIpSatellite(descriptor, i, new TunerStream(string.Format("MediaPortal SAT>IP {0} DVB-S/S2 Stream Source", descriptor.DeviceUUID), i)));
       }
       for (int i = satelliteFrontEndCount + 1; i <= satelliteFrontEndCount + terrestrialFrontEndCount; i++)
       {
         // Currently the Digital Devices Octopus Net is the only SAT>IP product
         // to support DVB-T/T2. The DVB-T tuners also support DVB-C.
-        tuners.Add(new TunerSatIpTerrestrial(descriptor, i, new TunerStream("MediaPortal SAT>IP Stream Source", i)));
-        tuners.Add(new TunerSatIpCable(descriptor, i, new TunerStream("MediaPortal SAT>IP Stream Source", i)));
+        tuners.Add(new TunerSatIpTerrestrial(descriptor, i, new TunerStream(string.Format("MediaPortal SAT>IP {0} DVB-T/T2 Stream Source", descriptor.DeviceUUID), i)));
+        tuners.Add(new TunerSatIpCable(descriptor, i, new TunerStream(string.Format("MediaPortal SAT>IP {0} DVB-C/C2 Stream Source", descriptor.DeviceUUID), i)));
       }
       return tuners;
     }

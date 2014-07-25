@@ -63,7 +63,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
         {
           if (serviceUrn.Equals("urn:schemas-opencable-com:service:Tuner:1"))
           {
-            tuners.Add(new TunerDri(descriptor.FindDevice(childDeviceEn.Current.UUID), controlPoint, new TunerStream("MediaPortal DRI Stream Source", 1)));
+            string uuid = childDeviceEn.Current.UUID;
+            tuners.Add(new TunerDri(descriptor.FindDevice(uuid), controlPoint, new TunerStream(string.Format("MediaPortal DRI {0} Stream Source", uuid), 1)));
             break;
           }
         }
