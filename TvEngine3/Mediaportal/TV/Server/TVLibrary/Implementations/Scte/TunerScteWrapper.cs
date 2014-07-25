@@ -98,7 +98,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte
     {
       ATSCChannel atscChannel = channel as ATSCChannel;
       if (atscChannel != null && atscChannel.Frequency > 0 &&
-        (atscChannel.ModulationType == ModulationType.Mod640Qam || atscChannel.ModulationType == ModulationType.Mod256Qam))
+        (atscChannel.ModulationType == ModulationType.Mod64Qam || atscChannel.ModulationType == ModulationType.Mod256Qam))
       {
         return true;
       }
