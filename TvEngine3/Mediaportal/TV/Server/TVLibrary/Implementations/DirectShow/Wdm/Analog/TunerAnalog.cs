@@ -86,7 +86,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
             Tuner tuner = new Tuner();
             try
             {
-              tuner.PerformLoading(graph, _productInstanceId, crossbar);
+              tuner.PerformLoading(graph, ProductInstanceId, crossbar);
               _tunerSupportedModes = tuner.SupportedTuningModes;
               SetProductAndTunerInstanceIds(tuner.Device);
             }
@@ -123,13 +123,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
 
       this.LogDebug("WDM analog: reload configuration");
       _externalTunerChannel = new AnalogChannel();
-      _externalTunerChannel.TunerSource = (TunerInputType)SettingsManagement.GetValue("tuner" + _tunerId + "ExternalTunerTunerSource", (int)TunerInputType.Cable);
-      int countryId = SettingsManagement.GetValue("tuner" + _tunerId + "ExternalTunerCountry", 1);
+      _externalTunerChannel.TunerSource = (TunerInputType)SettingsManagement.GetValue("tuner" + TunerId + "ExternalTunerTunerSource", (int)TunerInputType.Cable);
+      int countryId = SettingsManagement.GetValue("tuner" + TunerId + "ExternalTunerCountry", 1);
       CountryCollection countries = new CountryCollection();
       _externalTunerChannel.Country = countries.GetTunerCountryFromID(countryId);
-      _externalTunerChannel.ChannelNumber = SettingsManagement.GetValue("tuner" + _tunerId + "ExternalTunerSourceChannelNumber", 6);
-      _externalTunerChannel.VideoSource = (CaptureSourceVideo)SettingsManagement.GetValue("tuner" + _tunerId + "ExternalTunerSourceVideo", (int)CaptureSourceVideo.Composite1);
-      _externalTunerChannel.AudioSource = (CaptureSourceAudio)SettingsManagement.GetValue("tuner" + _tunerId + "ExternalTunerSourceAudio", (int)CaptureSourceAudio.Line1);
+      _externalTunerChannel.ChannelNumber = SettingsManagement.GetValue("tuner" + TunerId + "ExternalTunerSourceChannelNumber", 6);
+      _externalTunerChannel.VideoSource = (CaptureSourceVideo)SettingsManagement.GetValue("tuner" + TunerId + "ExternalTunerSourceVideo", (int)CaptureSourceVideo.Composite1);
+      _externalTunerChannel.AudioSource = (CaptureSourceAudio)SettingsManagement.GetValue("tuner" + TunerId + "ExternalTunerSourceAudio", (int)CaptureSourceAudio.Line1);
       _externalTunerChannel.MediaType = MediaTypeEnum.TV;
       if (_externalTunerChannel.VideoSource == CaptureSourceVideo.None)
       {
@@ -141,40 +141,43 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
       _externalTunerChannel.FreeToAir = true;
       this.LogDebug("WDM analog: external tuner source, {0}", _externalTunerChannel.ToString());
 
-      _externalTunerCommand = SettingsManagement.GetValue("tuner" + _tunerId + "ExternalTunerCommand", string.Empty);
-      _externalTunerCommandArguments = SettingsManagement.GetValue("tuner" + _tunerId + "ExternalTunerCommandArguments", string.Empty);
+      _externalTunerCommand = SettingsManagement.GetValue("tuner" + TunerId + "ExternalTunerCommand", string.Empty);
+      _externalTunerCommandArguments = SettingsManagement.GetValue("tuner" + TunerId + "ExternalTunerCommandArguments", string.Empty);
       this.LogDebug("WDM analog: external tuner command, {0} {1}", _externalTunerCommand, _externalTunerCommandArguments);
 
       if (_capture != null)
       {
-        _capture.ReloadConfiguration(_tunerId);
+        _capture.ReloadConfiguration(TunerId);
       }
       if (_encoder != null)
       {
-        _encoder.ReloadConfiguration(_tunerId);
+        _encoder.ReloadConfiguration(TunerId);
       }
     }
 
     /// <summary>
-    /// Actually update tuner signal status statistics.
+    /// Get the tuner's signal status.
     /// </summary>
-    /// <param name="onlyUpdateLock"><c>True</c> to only update lock status.</param>
-    public override void PerformSignalStatusUpdate(bool onlyUpdateLock)
+    /// <param name="onlyGetLock"><c>True</c> to only get lock status.</param>
+    /// <param name="isLocked"><c>True</c> if the tuner has locked onto signal.</param>
+    /// <param name="isPresent"><c>True</c> if the tuner has detected signal.</param>
+    /// <param name="strength">An indication of signal strength. Range: 0 to 100.</param>
+    /// <param name="quality">An indication of signal quality. Range: 0 to 100.</param>
+    public override void GetSignalStatus(bool onlyGetLock, out bool isLocked, out bool isPresent, out int strength, out int quality)
     {
       if (_tuner == null)
       {
         // Capture sources don't have a tuner.
-        _isSignalPresent = true;
-        _isSignalLocked = true;
-        _signalLevel = 100;
-        _signalQuality = 100;
+        isLocked = true;
+        isPresent = true;
+        strength = 100;
+        quality = 100;
         return;
       }
-      bool isSignalLocked = false;
-      _tuner.UpdateSignalStatus(out isSignalLocked, out _signalLevel);
-      _isSignalLocked = isSignalLocked;
-      _isSignalPresent = isSignalLocked;
-      _signalQuality = _signalLevel;
+
+      _tuner.GetSignalStatus(out isLocked, out strength);
+      isPresent = isLocked;
+      quality = strength;
     }
 
     /// <summary>
@@ -191,11 +194,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
         {
           if (channel.VideoSource != CaptureSourceVideo.None)
           {
-            channel.Name = string.Format("Tuner {0} {1} Video Source", _tunerId, channel.VideoSource.GetDescription());
+            channel.Name = string.Format("Tuner {0} {1} Video Source", TunerId, channel.VideoSource.GetDescription());
           }
           else
           {
-            channel.Name = string.Format("Tuner {0} {1} Audio Source", _tunerId, channel.AudioSource.GetDescription());
+            channel.Name = string.Format("Tuner {0} {1} Audio Source", TunerId, channel.AudioSource.GetDescription());
           }
           channel.ChannelNumber = 10000;
           channels.Add(channel);
@@ -209,13 +212,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
         if (_capture.VideoFilter != null)
         {
           channel.MediaType = MediaTypeEnum.TV;
-          channel.Name = "Tuner " + _tunerId + " Video Capture";
+          channel.Name = "Tuner " + TunerId + " Video Capture";
           channel.VideoSource = CaptureSourceVideo.Composite1;  // Anything other than "none" and "tuner" is okay.
         }
         else
         {
           channel.MediaType = MediaTypeEnum.Radio;
-          channel.Name = "Tuner " + _tunerId + " Audio Capture";
+          channel.Name = "Tuner " + TunerId + " Audio Capture";
           channel.VideoSource = CaptureSourceVideo.None;
         }
         return new List<IChannel>() { channel };
@@ -240,7 +243,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
         if (_crossbar.PinIndexInputTunerVideo >= 0 || _crossbar.PinIndexInputTunerAudio >= 0)
         {
           _tuner = new Tuner();
-          _tuner.PerformLoading(_graph, _productInstanceId, _crossbar);
+          _tuner.PerformLoading(_graph, ProductInstanceId, _crossbar);
           _tunerSupportedModes = _tuner.SupportedTuningModes;
         }
         _capture = new Capture();
@@ -249,10 +252,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
       {
         _capture = new Capture(_deviceMain);
       }
-      _capture.PerformLoading(_graph, _productInstanceId, _crossbar);
+      _capture.PerformLoading(_graph, ProductInstanceId, _crossbar);
 
       _encoder = new Encoder();
-      _encoder.PerformLoading(_graph, _productInstanceId, _capture);
+      _encoder.PerformLoading(_graph, ProductInstanceId, _capture);
 
       // Check for and load extensions, adding any additional filters to the graph.
       IBaseFilter lastFilter = _encoder.TsMultiplexerFilter;

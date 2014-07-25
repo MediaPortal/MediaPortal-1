@@ -95,10 +95,34 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// </summary>
     private ITuningSpace _tuningSpace = null;
 
+    #region signal status
+
     /// <summary>
     /// Tuner and demodulator signal statistic interfaces.
     /// </summary>
     private IList<IBDA_SignalStatistics> _signalStatisticsInterfaces = new List<IBDA_SignalStatistics>();
+
+    /// <summary>
+    /// The minimum signal strength reading reported by the tuner.
+    /// </summary>
+    private int _signalStrengthMin = 0;
+
+    /// <summary>
+    /// The maximum signal strength reading reported by the tuner.
+    /// </summary>
+    private int _signalStrengthMax = 100;
+
+    /// <summary>
+    /// The minimum signal quality reading reported by the tuner.
+    /// </summary>
+    private int _signalQualityMin = 0;
+
+    /// <summary>
+    /// The maximum signal quality reading reported by the tuner.
+    /// </summary>
+    private int _signalQualityMax = 100;
+
+    #endregion
 
     #endregion
 
@@ -128,7 +152,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
 
       this.LogDebug("BDA base: reload configuration");
       bool save = false;
-      Card tuner = CardManagement.GetCard(_tunerId, CardIncludeRelationEnum.None);
+      Card tuner = CardManagement.GetCard(TunerId, CardIncludeRelationEnum.None);
       _networkProviderClsid = NetworkProviderClsid; // specific network provider
       if (tuner.NetProvider == (int)DbNetworkProvider.MediaPortal)
       {
@@ -437,7 +461,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
           this.LogDebug("BDA base: capture filter not required");
           return;
         }
-        if (!FilterGraphTools.AddAndConnectHardwareFilterByCategoryAndMedium(_graph, tunerOutputPin, FilterCategory.BDAReceiverComponentsCategory, out _filterCapture, out _deviceCapture, _productInstanceId))
+        if (!FilterGraphTools.AddAndConnectHardwareFilterByCategoryAndMedium(_graph, tunerOutputPin, FilterCategory.BDAReceiverComponentsCategory, out _filterCapture, out _deviceCapture, ProductInstanceId))
         {
           this.LogWarn("BDA base: failed to add and connect capture filter, assuming extension required to complete graph");
           return;
@@ -581,111 +605,130 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
 
     #endregion
 
-    #region signal quality, level etc
+    #region signal status
 
     /// <summary>
-    /// Actually update tuner signal status statistics.
+    /// Get the tuner's signal status.
     /// </summary>
-    /// <param name="onlyUpdateLock"><c>True</c> to only update lock status.</param>
-    public override void PerformSignalStatusUpdate(bool onlyUpdateLock)
+    /// <param name="onlyGetLock"><c>True</c> to only get lock status.</param>
+    /// <param name="isLocked"><c>True</c> if the tuner has locked onto signal.</param>
+    /// <param name="isPresent"><c>True</c> if the tuner has detected signal.</param>
+    /// <param name="strength">An indication of signal strength. Range: 0 to 100.</param>
+    /// <param name="quality">An indication of signal quality. Range: 0 to 100.</param>
+    public override void GetSignalStatus(bool onlyGetLock, out bool isLocked, out bool isPresent, out int strength, out int quality)
     {
+      isLocked = false;
+      isPresent = false;
+      strength = 0;
+      quality = 0;
       if (_signalStatisticsInterfaces == null || _signalStatisticsInterfaces.Count == 0)
       {
-        _isSignalPresent = false;
-        _isSignalLocked = false;
-        _signalLevel = 0;
-        _signalQuality = 0;
         return;
       }
 
-      bool finalIsPresent = false;
-      bool finalIsLocked = false;
-      int finalStrength = 0;
+      bool tempIsLocked = false;
+      bool tempIsPresent = false;
+      int tempStrength = 0;
+      int tempQuality = 0;
       int strengthCount = 0;
-      int finalQuality = 0;
       int qualityCount = 0;
+      int hr = (int)HResult.Severity.Success;
       for (int i = 0; i < _signalStatisticsInterfaces.Count; i++)
       {
-        int hr = (int)HResult.Severity.Success;
         IBDA_SignalStatistics statisticsInterface = _signalStatisticsInterfaces[i];
         try
         {
-          bool isLocked = false;
-          hr = statisticsInterface.get_SignalLocked(out isLocked);
+          hr = statisticsInterface.get_SignalLocked(out tempIsLocked);
           if (hr == (int)HResult.Severity.Success)
           {
-            finalIsLocked |= isLocked;
+            isLocked |= tempIsLocked;
           }
           else
           {
-            this.LogWarn("BDA base: failed to update signal lock with interface {0}, hr = 0x{1:x}", i, hr);
+            this.LogWarn("BDA base: failed to get signal lock from interface {0}, hr = 0x{1:x}", i, hr);
           }
-          if (onlyUpdateLock)
+          if (onlyGetLock)
           {
             continue;
           }
 
-          bool isPresent = false;
-          hr = statisticsInterface.get_SignalPresent(out isPresent);
+          hr = statisticsInterface.get_SignalPresent(out tempIsPresent);
           if (hr == (int)HResult.Severity.Success)
           {
-            finalIsPresent |= isPresent;
+            isPresent |= tempIsPresent;
           }
           else
           {
-            this.LogWarn("BDA base: failed to update signal present with interface {0}, hr = 0x{1:x}", i, hr);
+            this.LogWarn("BDA base: failed to get signal present from interface {0}, hr = 0x{1:x}", i, hr);
           }
 
-          int quality = 0;
-          hr = statisticsInterface.get_SignalQuality(out quality);
+          hr = statisticsInterface.get_SignalStrength(out tempStrength);
           if (hr == (int)HResult.Severity.Success)
           {
-            if (quality != 0)
+            if (tempStrength != 0)
             {
-              finalQuality += quality;
-              qualityCount++;
-            }
-          }
-          else
-          {
-            this.LogWarn("BDA base: failed to update signal quality with interface {0}, hr = 0x{1:x}", i, hr);
-          }
-
-          int strength = 0;
-          hr = statisticsInterface.get_SignalStrength(out strength);
-          if (hr == (int)HResult.Severity.Success)
-          {
-            if (strength != 0)
-            {
-              finalStrength += strength;
+              strength += tempStrength;
               strengthCount++;
             }
           }
           else
           {
-            this.LogWarn("BDA base: failed to update signal strength with interface {0}, hr = 0x{1:x}", i, hr);
+            this.LogWarn("BDA base: failed to get signal strength from interface {0}, hr = 0x{1:x}", i, hr);
+          }
+
+          hr = statisticsInterface.get_SignalQuality(out tempQuality);
+          if (hr == (int)HResult.Severity.Success)
+          {
+            if (tempQuality != 0)
+            {
+              quality += tempQuality;
+              qualityCount++;
+            }
+          }
+          else
+          {
+            this.LogWarn("BDA base: failed to get signal quality from interface {0}, hr = 0x{1:x}", i, hr);
           }
         }
         catch (Exception ex)
         {
-          this.LogWarn(ex, "BDA base: exception updating signal status with interface {0}", i);
+          this.LogWarn(ex, "BDA base: exception getting signal statistics from interface {0}", i);
         }
       }
 
-      _isSignalLocked = finalIsLocked;
-      if (!onlyUpdateLock)
+      if (!onlyGetLock)
       {
-        _isSignalPresent = finalIsPresent;
-        _signalLevel = finalStrength;
         if (strengthCount > 1)
         {
-          _signalLevel /= strengthCount;
+          strength /= strengthCount;
         }
-        _signalQuality = finalQuality;
+        if (strength < _signalStrengthMin)
+        {
+          this.LogDebug("BDA base: adjusting minimum signal strength, current = {0}, new = {1}", _signalStrengthMin, strength);
+          _signalStrengthMin = strength;
+        }
+        else if (strength > _signalStrengthMax)
+        {
+          this.LogDebug("BDA base: adjusting maximum signal strength, current = {0}, new = {1}", _signalStrengthMax, strength);
+          _signalStrengthMax = strength;
+        }
+        strength = (strength - _signalStrengthMin) * 100 / (_signalStrengthMax - _signalStrengthMin);
+
         if (qualityCount > 1)
         {
-          _signalQuality /= qualityCount;
+          quality /= qualityCount;
         }
+        if (quality < _signalQualityMin)
+        {
+          this.LogDebug("BDA base: adjusting minimum signal quality, current = {0}, new = {1}", _signalStrengthMin, quality);
+          _signalQualityMin = quality;
+        }
+        else if (quality > _signalStrengthMax)
+        {
+          this.LogDebug("BDA base: adjusting maximum signal quality, current = {0}, new = {1}", _signalStrengthMax, quality);
+          _signalQualityMax = quality;
+        }
+        quality = (quality - _signalQualityMin) * 100 / (_signalQualityMax - _signalQualityMin);
       }
     }
 

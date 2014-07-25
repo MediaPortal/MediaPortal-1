@@ -100,6 +100,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     private IConditionalAccessMenuCallBack _caMenuCallBack = null;
     private CableCardMmiHandler _caMenuHandler = null;
 
+    private volatile bool _isSignalLocked = false;
     private int _currentFrequency = -1;
     private readonly bool _isCetonDevice = false;
     private bool _canPause = false;
@@ -471,7 +472,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       }
 
       // Is a CableCARD required?
-      bool isSignalLocked = false;
+      bool isSignalLocked;
       if (!atscChannel.FreeToAir || (_channelScanner.IsScanning && atscChannel.PhysicalChannel == 0))
       {
         if (_cardStatus != CasCardStatus.Inserted)
@@ -491,7 +492,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
           IList<ushort> pids;
           _serviceFdc.GetFdcStatus(out bitrate, out isSignalLocked, out frequency, out spectrumInversion, out pids);
           _isSignalLocked = isSignalLocked;
-          if (!isSignalLocked)
+          if (isSignalLocked)
           {
             throw new TvExceptionNoSignal("Out-of-band tuner not locked.");
           }
@@ -771,18 +772,26 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     #region signal
 
     /// <summary>
-    /// Actually update tuner signal status statistics.
+    /// Get the tuner's signal status.
     /// </summary>
-    /// <param name="onlyUpdateLock"><c>True</c> to only update lock status.</param>
-    public override void PerformSignalStatusUpdate(bool onlyUpdateLock)
+    /// <param name="onlyGetLock"><c>True</c> to only get lock status.</param>
+    /// <param name="isLocked"><c>True</c> if the tuner has locked onto signal.</param>
+    /// <param name="isPresent"><c>True</c> if the tuner has detected signal.</param>
+    /// <param name="strength">An indication of signal strength. Range: 0 to 100.</param>
+    /// <param name="quality">An indication of signal quality. Range: 0 to 100.</param>
+    public override void GetSignalStatus(bool onlyGetLock, out bool isLocked, out bool isPresent, out int strength, out int quality)
     {
-      if (onlyUpdateLock)
+      isLocked = false;
+      isPresent = false;
+      strength = 0;
+      quality = 0;
+      if (onlyGetLock)
       {
         // When we're asked to only update locked status it means the tuner is
         // trying to lock in on signal. When scanning with the out-of-band
         // tuner, we already checked lock during tuning. In all other cases the
-        // signal locked indicator is evented so should be updated
-        // automatically. No need to do anything.
+        // signal locked indicator is evented so should be current and usable.
+        isLocked = _isSignalLocked;
         return;
       }
 
@@ -801,14 +810,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
             }
 
             uint bitrate = 0;
-            bool isCarrierLocked = false;
             bool spectrumInversion = false;
             IList<ushort> pids;
-            _serviceFdc.GetFdcStatus(out bitrate, out isCarrierLocked, out frequency, out spectrumInversion, out pids);
-            _isSignalLocked = isCarrierLocked;
-            _isSignalPresent = _isSignalLocked;
-            _signalLevel = 0;
-            _signalQuality = 0;
+            _serviceFdc.GetFdcStatus(out bitrate, out isLocked, out frequency, out spectrumInversion, out pids);
+            isPresent = _isSignalLocked;
 
             if (_isCetonDevice)
             {
@@ -819,23 +824,46 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
               Match m = REGEX_SIGNAL_INFO.Match(value);
               if (m.Success)
               {
-                _signalLevel = (int)(double.Parse(value) * 2) + 50;
+                strength = (int)(double.Parse(value) * 2) + 50;
+                if (strength < 0)
+                {
+                  strength = 0;
+                }
+                else if (strength > 100)
+                {
+                  strength = 100;
+                }
               }
               else
               {
                 this.LogWarn("DRI CableCARD: failed to interpret out-of-band signal level {0}", value);
+                strength = 0;
               }
               // Example: "31.9 dB". Use value as-is.
               _serviceDiag.GetParameter(DiagParameterCeton.OobSnr, out value, out isVolatile);
               m = REGEX_SIGNAL_INFO.Match(value);
               if (m.Success)
               {
-                _signalQuality = (int)double.Parse(value);
+                quality = (int)double.Parse(value);
+                if (quality < 0)
+                {
+                  quality = 0;
+                }
+                else if (quality > 100)
+                {
+                  quality = 100;
+                }
               }
               else
               {
                 this.LogWarn("DRI CableCARD: failed to interpret out-of-band signal-to-noise ratio {0}", value);
+                quality = 0;
               }
+            }
+            else if (isLocked)
+            {
+              strength = 100;
+              quality = 100;
             }
             return;
           }
@@ -848,12 +876,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
         }
 
         TunerModulation modulation = TunerModulation.All;
-        bool isSignalLocked;
         uint snr;
-        _serviceTuner.GetTunerParameters(out _isSignalPresent, out frequency, out modulation, out isSignalLocked, out _signalLevel, out snr);
-        _isSignalLocked = isSignalLocked;
-        _signalLevel = (_signalLevel * 2) + 50;
-        _signalQuality = (int)snr;
+        _serviceTuner.GetTunerParameters(out isPresent, out frequency, out modulation, out isLocked, out strength, out snr);
+        _isSignalLocked = isLocked;
+        strength = (strength * 2) + 50;
+        quality = (int)snr;
         if (_currentFrequency == -1)
         {
           this.LogDebug("DRI CableCARD: current tuning details, frequency = {0} kHz, modulation = {1}", frequency, modulation);
@@ -883,7 +910,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
         {
           if (!(bool)newValue)
           {
-            this.LogInfo("DRI CableCARD: tuner {0} {1} update, not locked", _tunerId, stateVariable.Name);
+            this.LogInfo("DRI CableCARD: tuner {0} {1} update, not locked", TunerId, stateVariable.Name);
           }
           if (_channelScanner == null || !_channelScanner.IsScanning)
           {
@@ -917,14 +944,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
           _cardStatus = (CasCardStatus)(string)newValue;
           if (oldStatus != _cardStatus)
           {
-            this.LogInfo("DRI CableCARD: tuner {0} CableCARD status update, old status = {1}, new status = {2}", _tunerId, oldStatus, _cardStatus);
+            this.LogInfo("DRI CableCARD: tuner {0} CableCARD status update, old status = {1}, new status = {2}", TunerId, oldStatus, _cardStatus);
           }
         }
         else if (stateVariable.Name.Equals("CardMessage"))
         {
           if (!string.IsNullOrEmpty(newValue.ToString()))
           {
-            this.LogInfo("DRI CableCARD: tuner {0} received message from the CableCARD, current status = {1}, message = {2}", _tunerId, _cardStatus, newValue);
+            this.LogInfo("DRI CableCARD: tuner {0} received message from the CableCARD, current status = {1}, message = {2}", TunerId, _cardStatus, newValue);
           }
         }
         else if (stateVariable.Name.Equals("MMIMessage"))
@@ -940,7 +967,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
           _descramblingStatus = (CasDescramblingStatus)(string)newValue;
           if (oldStatus != _descramblingStatus)
           {
-            this.LogInfo("DRI CableCARD: tuner {0} descrambling status update, old status = {1}, new status = {2}", _tunerId, oldStatus, _descramblingStatus);
+            this.LogInfo("DRI CableCARD: tuner {0} descrambling status update, old status = {1}, new status = {2}", TunerId, oldStatus, _descramblingStatus);
           }
         }
         else if (stateVariable.Name.Equals("DrmPairingStatus"))
@@ -949,18 +976,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
           _pairingStatus = (SecurityPairingStatus)(string)newValue;
           if (oldStatus != _pairingStatus)
           {
-            this.LogInfo("DRI CableCARD: tuner {0} pairing status update, old status = {1}, new status = {2}", _tunerId, oldStatus, _pairingStatus);
+            this.LogInfo("DRI CableCARD: tuner {0} pairing status update, old status = {1}, new status = {2}", TunerId, oldStatus, _pairingStatus);
           }
         }
         else
         {
           string unqualifiedServiceName = stateVariable.ParentService.ServiceId.Substring(stateVariable.ParentService.ServiceId.LastIndexOf(":") + 1);
-          this.LogDebug("DRI CableCARD: tuner {0} state variable {1} for service {2} changed to {3}", _tunerId, stateVariable.Name, unqualifiedServiceName, newValue ?? "[null]");
+          this.LogDebug("DRI CableCARD: tuner {0} state variable {1} for service {2} changed to {3}", TunerId, stateVariable.Name, unqualifiedServiceName, newValue ?? "[null]");
         }
       }
       catch (Exception ex)
       {
-        this.LogError(ex, "DRI CableCARD: tuner {0} failed to handle state variable change", _tunerId);
+        this.LogError(ex, "DRI CableCARD: tuner {0} failed to handle state variable change", TunerId);
       }
     }
 
@@ -972,7 +999,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     private void OnEventSubscriptionFailed(CpService service, UPnPError error)
     {
       string unqualifiedServiceName = service.ServiceId.Substring(service.ServiceId.LastIndexOf(":") + 1);
-      this.LogError("DRI CableCARD: tuner {0} failed to subscribe to state variable events for service {1}, code = {2}, description = {3}", _tunerId, unqualifiedServiceName, error.ErrorCode, error.ErrorDescription);
+      this.LogError("DRI CableCARD: tuner {0} failed to subscribe to state variable events for service {1}, code = {2}, description = {3}", TunerId, unqualifiedServiceName, error.ErrorCode, error.ErrorDescription);
     }
 
     /// <summary>

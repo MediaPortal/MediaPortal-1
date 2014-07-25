@@ -123,17 +123,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     }
 
     /// <summary>
-    /// Actually update tuner signal status statistics.
+    /// Get the tuner's signal status.
     /// </summary>
-    /// <param name="onlyUpdateLock"><c>True</c> to only update lock status.</param>
-    public override void PerformSignalStatusUpdate(bool onlyUpdateLock)
+    /// <param name="onlyGetLock"><c>True</c> to only get lock status.</param>
+    /// <param name="isLocked"><c>True</c> if the tuner has locked onto signal.</param>
+    /// <param name="isPresent"><c>True</c> if the tuner has detected signal.</param>
+    /// <param name="strength">An indication of signal strength. Range: 0 to 100.</param>
+    /// <param name="quality">An indication of signal quality. Range: 0 to 100.</param>
+    public override void GetSignalStatus(bool onlyGetLock, out bool isLocked, out bool isPresent, out int strength, out int quality)
     {
+      isLocked = false;
+      isPresent = false;
+      strength = 0;
+      quality = 0;
       if (_interfaceTuner == null)
       {
-        _isSignalLocked = false;
-        _isSignalPresent = false;
-        _signalLevel = 0;
-        _signalQuality = 0;
         return;
       }
 
@@ -145,12 +149,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
           this.LogError("B2C2 base: failed to select device to update signal status, hr = 0x{0:x}", hr);
           return;
         }
-        _isSignalLocked = (_interfaceTuner.CheckLock() == 0);
-        _isSignalPresent = _isSignalLocked;
-        if (!onlyUpdateLock)
+        isLocked = (_interfaceTuner.CheckLock() == 0);
+        isPresent = isLocked;
+        if (!onlyGetLock)
         {
-          _interfaceTuner.GetSignalStrength(out _signalLevel);
-          _interfaceTuner.GetSignalQuality(out _signalQuality);
+          _interfaceTuner.GetSignalStrength(out strength);
+          _interfaceTuner.GetSignalQuality(out quality);
         }
       }
     }

@@ -413,14 +413,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     }
 
     /// <summary>
-    /// Actually update tuner signal status statistics.
+    /// Get the tuner's signal status.
     /// </summary>
-    /// <param name="onlyUpdateLock"><c>True</c> to only update lock status.</param>
-    public override void PerformSignalStatusUpdate(bool onlyUpdateLock)
+    /// <param name="onlyGetLock"><c>True</c> to only get lock status.</param>
+    /// <param name="isLocked"><c>True</c> if the tuner has locked onto signal.</param>
+    /// <param name="isPresent"><c>True</c> if the tuner has detected signal.</param>
+    /// <param name="strength">An indication of signal strength. Range: 0 to 100.</param>
+    /// <param name="quality">An indication of signal quality. Range: 0 to 100.</param>
+    public override void GetSignalStatus(bool onlyGetLock, out bool isLocked, out bool isPresent, out int strength, out int quality)
     {
-      bool isSignalLocked = false;
-      int signalLevel = 0;
-      int signalQuality = 0;
+      isLocked = false;
+      isPresent = false;
+      strength = 0;
+      quality = 0;
 
       try
       {
@@ -439,9 +444,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
         Match m = REGEX_DESCRIBE_RESPONSE_SIGNAL_INFO.Match(response.Body);
         if (m.Success)
         {
-          isSignalLocked = m.Groups[2].Captures[0].Value.Equals("1");
-          signalLevel = int.Parse(m.Groups[1].Captures[0].Value) * 100 / 255;    // level: 0..255 => 0..100
-          signalQuality = int.Parse(m.Groups[3].Captures[0].Value) * 100 / 15;   // quality: 0..15 => 0..100
+          isLocked = m.Groups[2].Captures[0].Value.Equals("1");
+          isPresent = isLocked;
+          strength = int.Parse(m.Groups[1].Captures[0].Value) * 100 / 255;    // strength: 0..255 => 0..100
+          quality = int.Parse(m.Groups[3].Captures[0].Value) * 100 / 15;      // quality: 0..15 => 0..100
           return;
         }
 
@@ -450,13 +456,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
       catch (Exception ex)
       {
         this.LogError(ex, "SAT>IP base: exception updating signal status");
-      }
-      finally
-      {
-        _isSignalPresent = isSignalLocked;
-        _isSignalLocked = isSignalLocked;
-        _signalLevel = signalLevel;
-        _signalQuality = signalQuality;
       }
     }
 
@@ -475,7 +474,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
         this.LogDebug("SAT>IP base: starting new keep-alive thread");
         _keepAliveThreadStopEvent = new AutoResetEvent(false);
         _keepAliveThread = new Thread(new ThreadStart(KeepAlive));
-        _keepAliveThread.Name = string.Format("SAT>IP tuner {0} keep alive", _tunerId);
+        _keepAliveThread.Name = string.Format("SAT>IP tuner {0} keep alive", TunerId);
         _keepAliveThread.IsBackground = true;
         _keepAliveThread.Priority = ThreadPriority.Lowest;
         _keepAliveThread.Start();

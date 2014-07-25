@@ -80,9 +80,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     private AnalogChannel _currentChannel = null;
 
     /// <summary>
-    /// The maximum signal level that we expect the tuner to report.
+    /// The maximum signal strength reading that we expect the tuner to report.
     /// </summary>
-    private int _maxSignalLevel = 1;
+    private int _maxSignalStrength = 1;
 
     #endregion
 
@@ -322,14 +322,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     }
 
     /// <summary>
-    /// Update tuner signal status measurements.
+    /// Get the tuner's signal status.
     /// </summary>
-    /// <param name="isSignalLocked">A flag indicating whether the tuner is locked on signal.</param>
-    /// <param name="signalLevel">The tuner input signal level.</param>
-    public void UpdateSignalStatus(out bool isSignalLocked, out int signalLevel)
+    /// <param name="isLocked"><c>True</c> if the tuner has locked onto signal.</param>
+    /// <param name="strength">An indication of signal strength. Range: 0 to 100.</param>
+    public void GetSignalStatus(out bool isLocked, out int strength)
     {
-      isSignalLocked = false;
-      signalLevel = 0;
+      isLocked = false;
+      strength = 0;
       IAMTVTuner tuner = _filterTuner as IAMTVTuner;
       if (tuner == null)
       {
@@ -348,32 +348,32 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         // and SAA716x PCI-e bridge chipsets such as the Hauppauge HVR2200)
         // report values outside the documented range when they are locked.
         // This seems to be an attempt to give a better indication of signal
-        // strength/quality/level. We try to show that extra information.
-        isSignalLocked = (signalStrength != AMTunerSignalStrength.NoSignal);
+        // strength/quality. We try to show that extra information.
+        isLocked = (signalStrength != AMTunerSignalStrength.NoSignal);
 
-        signalLevel = (int)signalStrength;
-        if (signalLevel > _maxSignalLevel)
+        strength = (int)signalStrength;
+        if (strength > _maxSignalStrength)
         {
-          this.LogDebug("WDM analog tuner: adjusting signal range, current limit = {0}, new maximum = {1}", _maxSignalLevel, signalLevel);
-          if (signalLevel <= 5)
+          this.LogDebug("WDM analog tuner: adjusting maximum signal strength, current = {0}, new = {1}", _maxSignalStrength, strength);
+          if (strength <= 5)
           {
-            _maxSignalLevel = 5;
+            _maxSignalStrength = 5;
           }
-          else if (signalLevel <= 10)
+          else if (strength <= 10)
           {
-            _maxSignalLevel = 10;
+            _maxSignalStrength = 10;
           }
-          else if (signalLevel <= 100)
+          else if (strength <= 100)
           {
-            _maxSignalLevel = 100;
+            _maxSignalStrength = 100;
           }
           else
           {
-            _maxSignalLevel = signalLevel;
+            _maxSignalStrength = strength;
           }
         }
 
-        signalLevel = signalLevel * 100 / _maxSignalLevel;
+        strength = strength * 100 / _maxSignalStrength;
       }
     }
 

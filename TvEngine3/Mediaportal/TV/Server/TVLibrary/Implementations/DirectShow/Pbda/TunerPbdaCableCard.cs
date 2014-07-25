@@ -369,41 +369,61 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
     #endregion
 
     /// <summary>
-    /// Actually update tuner signal status statistics.
+    /// Get the tuner's signal status.
     /// </summary>
-    /// <param name="onlyUpdateLock"><c>True</c> to only update lock status.</param>
-    public override void PerformSignalStatusUpdate(bool onlyUpdateLock)
+    /// <param name="onlyGetLock"><c>True</c> to only get lock status.</param>
+    /// <param name="isLocked"><c>True</c> if the tuner has locked onto signal.</param>
+    /// <param name="isPresent"><c>True</c> if the tuner has detected signal.</param>
+    /// <param name="strength">An indication of signal strength. Range: 0 to 100.</param>
+    /// <param name="quality">An indication of signal quality. Range: 0 to 100.</param>
+    public override void GetSignalStatus(bool onlyGetLock, out bool isLocked, out bool isPresent, out int strength, out int quality)
     {
       if (_channelScanner != null && _channelScanner.IsScanning)
       {
-        // When scanning we need the OOB tuner to be locked. We already updated
-        // the lock status when tuning, so only update again when monitoring.
-        if (!onlyUpdateLock)
+        isLocked = false;
+        try
         {
-          if (_caInterface == null)
+          // When scanning we need the OOB tuner to be locked. We already
+          // updated the lock status when tuning, so only update again when
+          // monitoring.
+          if (onlyGetLock)
           {
-            return;
+            isLocked = true;
           }
-          SmartCardStatusType status;
-          SmartCardAssociationType association;
-          string error;
-          bool isSignalLocked;
-          int hr = _caInterface.get_SmartCardStatus(out status, out association, out error, out isSignalLocked);
-          if (hr != (int)HResult.Severity.Success)
+          else
           {
-            this.LogWarn("PBDA CableCARD: potential error updating signal status, hr = 0x{0:x}", hr);
-            return;
+            if (_caInterface != null)
+            {
+              SmartCardStatusType status;
+              SmartCardAssociationType association;
+              string error;
+              int hr = _caInterface.get_SmartCardStatus(out status, out association, out error, out isLocked);
+              if (hr != (int)HResult.Severity.Success)
+              {
+                this.LogWarn("PBDA CableCARD: potential error updating signal status, hr = 0x{0:x}", hr);
+              }
+            }
           }
-          _isSignalLocked = isSignalLocked;
+          return;
         }
-        // We can only get lock status for the OOB tuner.
-        _isSignalPresent = _isSignalLocked;
-        _signalLevel = 0;
-        _signalQuality = 0;
-        return;
+        finally
+        {
+          // We can only get lock status for the OOB tuner.
+          isPresent = isLocked;
+          if (isLocked)
+          {
+            strength = 100;
+            quality = 100;
+          }
+          else
+          {
+            strength = 0;
+            quality = 0;
+          }
+        }
       }
 
-      base.PerformSignalStatusUpdate(onlyUpdateLock);
+      base.GetSignalStatus(onlyGetLock, out isLocked, out isPresent, out strength, out quality);
     }
   }
 }

@@ -60,7 +60,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
     {
       Load,
       Tune,
-      UpdateSignalStatus,
+      GetSignalStatus,
       SetGraphState,
       Unload,
       TsWriterSubChannelMethod,
@@ -311,7 +311,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
 
       if (_encoder != null)
       {
-        _encoder.ReloadConfiguration(_tunerId);
+        _encoder.ReloadConfiguration(TunerId);
       }
     }
 
@@ -326,38 +326,38 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
     }
 
     /// <summary>
-    /// Actually update tuner signal status statistics.
+    /// Get the tuner's signal status.
     /// </summary>
-    /// <param name="onlyUpdateLock"><c>True</c> to only update lock status.</param>
-    private void InternalPerformSignalStatusUpdate(bool onlyUpdateLock)
+    /// <param name="onlyGetLock"><c>True</c> to only get lock status.</param>
+    /// <param name="isLocked"><c>True</c> if the tuner has locked onto signal.</param>
+    /// <param name="isPresent"><c>True</c> if the tuner has detected signal.</param>
+    /// <param name="strength">An indication of signal strength. Range: 0 to 100.</param>
+    /// <param name="quality">An indication of signal quality. Range: 0 to 100.</param>
+    private void InternalGetSignalStatus(bool onlyGetLock, out bool isLocked, out bool isPresent, out int strength, out int quality)
     {
+      isLocked = false;
+      isPresent = false;
+      strength = 0;
+      quality = 0;
       if (_fmSource == null)
       {
-        _isSignalPresent = false;
-        _isSignalLocked = false;
-        _signalLevel = 0;
-        _signalQuality = 0;
         return;
       }
 
-      bool isSignalLocked;
-      if (_fmSource.GetSignalLock(out isSignalLocked) == Rtl283xFmResult.Fail)
+      if (_fmSource.GetSignalLock(out isLocked) == Rtl283xFmResult.Fail)
       {
         this.LogWarn("RTL283x FM: failed to update signal lock status");
-        isSignalLocked = false;
       }
-      _isSignalLocked = isSignalLocked;
-      if (onlyUpdateLock)
+      if (onlyGetLock)
       {
         return;
       }
-      _isSignalPresent = _isSignalLocked;
-      if (_fmSource.GetSignalQuality(out _signalQuality) == Rtl283xFmResult.Fail)
+      isPresent = isLocked;
+      if (_fmSource.GetSignalQuality(out quality) == Rtl283xFmResult.Fail)
       {
         this.LogWarn("RTL283x FM: failed to update signal quality");
-        _signalQuality = 0;
       }
-      _signalLevel = _signalQuality;
+      strength = quality;
     }
 
     #region graph thread
@@ -473,8 +473,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
                   case GraphJobType.Tune:
                     InternalPerformTuning(job.Parameters[0] as IChannel);
                     break;
-                  case GraphJobType.UpdateSignalStatus:
-                    InternalPerformSignalStatusUpdate((bool)job.Parameters[0]);
+                  case GraphJobType.GetSignalStatus:
+                    bool isLocked;
+                    bool isPresent;
+                    int strength;
+                    int quality;
+                    InternalGetSignalStatus((bool)job.Parameters[0], out isLocked, out isPresent, out strength, out quality);
+                    job.Parameters[1] = isLocked;
+                    job.Parameters[2] = isPresent;
+                    job.Parameters[3] = strength;
+                    job.Parameters[4] = quality;
                     break;
                   case GraphJobType.SetGraphState:
                     InternalSetTunerState((TunerState)job.Parameters[0]);
@@ -555,19 +563,27 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
     }
 
     /// <summary>
-    /// Actually update tuner signal status statistics.
+    /// Get the tuner's signal status.
     /// </summary>
-    /// <param name="onlyUpdateLock"><c>True</c> to only update lock status.</param>
-    public override void PerformSignalStatusUpdate(bool onlyUpdateLock)
+    /// <param name="onlyGetLock"><c>True</c> to only get lock status.</param>
+    /// <param name="isLocked"><c>True</c> if the tuner has locked onto signal.</param>
+    /// <param name="isPresent"><c>True</c> if the tuner has detected signal.</param>
+    /// <param name="strength">An indication of signal strength. Range: 0 to 100.</param>
+    /// <param name="quality">An indication of signal quality. Range: 0 to 100.</param>
+    public override void GetSignalStatus(bool onlyGetLock, out bool isLocked, out bool isPresent, out int strength, out int quality)
     {
       if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
       {
-        InternalPerformSignalStatusUpdate(onlyUpdateLock);
+        InternalGetSignalStatus(onlyGetLock, out isLocked, out isPresent, out strength, out quality);
       }
       else
       {
-        object[] p = new object[1] { onlyUpdateLock };
-        InvokeGraphJob(GraphJobType.UpdateSignalStatus, ref p);
+        object[] p = new object[5] { onlyGetLock, false, false, 0, 0 };
+        InvokeGraphJob(GraphJobType.GetSignalStatus, ref p);
+        isLocked = (bool)p[1];
+        isPresent = (bool)p[2];
+        strength = (int)p[3];
+        quality = (int)p[4];
       }
     }
 
@@ -649,7 +665,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       // simultaneously.
       string originalListTunerName = null;
       string originalTunerName = _mainTunerDevice.Name;
-      string fakeUniqueTunerName = "MediaPortal FM Tuner " + _tunerId;
+      string fakeUniqueTunerName = "MediaPortal FM Tuner " + TunerId;
       List<RegistryView> views = new List<RegistryView>() { RegistryView.Default };
       if (OSInfo.OSInfo.Is64BitOs() && IntPtr.Size != 8)
       {

@@ -24,6 +24,7 @@ using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.ChannelLinkage;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
@@ -31,7 +32,6 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
-using Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations
 {
@@ -68,7 +68,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// Fire the new sub-channel observer event.
     /// </summary>
     /// <param name="subChannelId">The ID of the new sub-channel.</param>
-    protected void FireNewSubChannelEvent(int subChannelId)
+    private void FireNewSubChannelEvent(int subChannelId)
     {
       if (_newSubChannelEventDelegate != null)
       {
@@ -128,29 +128,38 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     private object _context;
 
-    /// <summary>
-    /// Indicates, if the tuner is locked
-    /// </summary>
-    protected volatile bool _isSignalLocked;
+    #region identification
 
     /// <summary>
-    /// Value of the signal level
+    /// The tuner's unique identifier.
     /// </summary>
-    protected int _signalLevel;
-
-    /// <summary>
-    /// Value of the signal quality
-    /// </summary>
-    protected int _signalQuality;
+    /// <remarks>
+    /// This is the identifier for the database record which holds the tuner's
+    /// settings.
+    /// </remarks>
+    private int _tunerId;
 
     /// <summary>
     /// The tuner's unique external identifier.
     /// </summary>
     /// <remarks>
-    /// The source of this identifier varies from class to class. DirectShow
-    /// tuners may use the IMoniker display name (AKA device path).
+    /// The source of this identifier varies from implementation to
+    /// implementation. For example, implementations based on DirectShow
+    /// may use the IMoniker display name (AKA device path).
     /// </remarks>
     private string _externalId;
+
+    /// <summary>
+    /// A shared identifier for all tuner instances derived from a
+    /// [multi-tuner] product.
+    /// </summary>
+    protected string _productInstanceId = null;
+
+    /// <summary>
+    /// A shared identifier for all tuner instances derived from a single
+    /// physical tuner.
+    /// </summary>
+    protected string _tunerInstanceId = null;
 
     /// <summary>
     /// The tuner's name.
@@ -162,20 +171,36 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     private CardType _tunerType = CardType.Unknown;
 
-    /// <summary>
-    /// Date and time of the last signal update
-    /// </summary>
-    private DateTime _lastSignalUpdate = DateTime.MinValue;
+    #endregion
+
+    #region signal status
 
     /// <summary>
-    /// Indicates, if the signal is present
+    /// Indicates if the tuner is locked onto signal.
     /// </summary>
-    protected bool _isSignalPresent;
+    private volatile bool _isSignalLocked;
 
     /// <summary>
-    /// The tuner's unique identifier.
+    /// Indicates if the tuner has detected signal.
     /// </summary>
-    protected int _tunerId;
+    private bool _isSignalPresent;
+
+    /// <summary>
+    /// The signal strength. Range: 0 to 100.
+    /// </summary>
+    private int _signalStrength;
+
+    /// <summary>
+    /// The signal quality. Range: 0 to 100.
+    /// </summary>
+    private int _signalQuality;
+
+    /// <summary>
+    /// Date and time of the last signal status update.
+    /// </summary>
+    private DateTime _lastSignalStatusUpdate = DateTime.MinValue;
+
+    #endregion
 
     /// <summary>
     /// The action that will be taken when the tuner is no longer being actively used.
@@ -281,16 +306,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// are a good example.
     /// </remarks>
     protected bool _supportsSubChannels = true;
-
-    /// <summary>
-    /// A shared identifier for all tuner instances derived from a [multi-tuner] product.
-    /// </summary>
-    protected string _productInstanceId = null;
-
-    /// <summary>
-    /// A shared identifier for all tuner instances derived from a single physical tuner.
-    /// </summary>
-    protected string _tunerInstanceId = null;
 
     /// <summary>
     /// The tuner group that this tuner is a member of, if any.
@@ -611,7 +626,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       get
       {
         UpdateSignalStatus();
-        return _signalLevel;
+        return _signalStrength;
       }
     }
 
@@ -625,7 +640,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </remarks>
     public void ResetSignalUpdate()
     {
-      _lastSignalUpdate = DateTime.MinValue;
+      _lastSignalStatusUpdate = DateTime.MinValue;
     }
 
     /// <summary>
@@ -730,7 +745,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// We separate this from the loading because some extensions (for example, the NetUP extension)
     /// can't be opened until the graph has finished being built.
     /// </remarks>
-    protected void OpenExtensions()
+    private void OpenExtensions()
     {
       this.LogDebug("tuner base: open tuner extensions");
 
@@ -758,7 +773,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           if (diseqcDevice != null)
           {
             this.LogDebug("tuner base: found DiSEqC control interface \"{0}\"", extension.Name);
-            _diseqcController = new DiseqcController(_tunerId, diseqcDevice);
+            _diseqcController = new DiseqcController(TunerId, diseqcDevice);
           }
         }
         if (_encoderController == null)
@@ -807,7 +822,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         this.LogDebug("tuner base: unload tuners in group");
         foreach (ITVCard tuner in _group.Tuners)
         {
-          if (tuner.TunerId != _tunerId)
+          if (tuner.TunerId != TunerId)
           {
             TunerBase tunerBase = tuner as TunerBase;
             if (tunerBase != null)
@@ -938,26 +953,24 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     private void LockInOnSignal()
     {
       this.LogDebug("tuner base: lock in on signal");
-      _isSignalLocked = false;
       DateTime timeStart = DateTime.Now;
       TimeSpan ts = timeStart - timeStart;
-      while (!_isSignalLocked && ts.TotalMilliseconds < _timeOutWaitForSignal)
+      bool isLocked;
+      while (ts.TotalMilliseconds < _timeOutWaitForSignal)
       {
         ThrowExceptionIfTuneCancelled();
-        PerformSignalStatusUpdate(true);
-        if (!_isSignalLocked)
+        GetSignalStatus(true, out isLocked, out _isSignalPresent, out _signalStrength, out _signalQuality);
+        _isSignalLocked = isLocked;
+        if (isLocked)
         {
-          ts = DateTime.Now - timeStart;
-          System.Threading.Thread.Sleep(20);
+          this.LogDebug("tuner base: locked");
+          return;
         }
+        ts = DateTime.Now - timeStart;
+        System.Threading.Thread.Sleep(20);
       }
 
-      if (!_isSignalLocked)
-      {
-        throw new TvExceptionNoSignal("Failed to lock signal.");
-      }
-
-      this.LogDebug("tuner base: locked");
+      throw new TvExceptionNoSignal("Failed to lock signal.");
     }
 
     /// <summary>
@@ -1038,39 +1051,24 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     private void UpdateSignalStatus()
     {
-      TimeSpan ts = DateTime.Now - _lastSignalUpdate;
+      TimeSpan ts = DateTime.Now - _lastSignalStatusUpdate;
       if (ts.TotalMilliseconds < 5000)
       {
         return;
       }
       if (_currentTuningDetail == null || _state != TunerState.Started)
       {
-        _isSignalPresent = false;
         _isSignalLocked = false;
-        _signalLevel = 0;
+        _isSignalPresent = false;
+        _signalStrength = 0;
         _signalQuality = 0;
       }
       else
       {
-        PerformSignalStatusUpdate(false);
-        _lastSignalUpdate = DateTime.Now;
-
-        if (_signalLevel < 0)
-        {
-          _signalLevel = 0;
-        }
-        else if (_signalLevel > 100)
-        {
-          _signalLevel = 100;
-        }
-        if (_signalQuality < 0)
-        {
-          _signalQuality = 0;
-        }
-        else if (_signalQuality > 100)
-        {
-          _signalQuality = 100;
-        }
+        bool isLocked;
+        GetSignalStatus(false, out isLocked, out _isSignalPresent, out _signalStrength, out _signalQuality);
+        _isSignalLocked = isLocked;
+        _lastSignalStatusUpdate = DateTime.Now;
       }
     }
 
@@ -1355,6 +1353,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
           // Apply tuning parameters.
           ThrowExceptionIfTuneCancelled();
+          _isSignalLocked = false;
           if (_useCustomTuning)
           {
             foreach (ICustomDevice extension in _extensions)
@@ -1376,6 +1375,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           {
             PerformTuning(tuneChannel);
           }
+          ResetSignalUpdate();
           ThrowExceptionIfTuneCancelled();
 
           // Plugin OnAfterTune().
@@ -1386,7 +1386,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         }
 
         // Sub-channel OnAfterTune().
-        _lastSignalUpdate = DateTime.MinValue;
         subChannel.OnAfterTune();
 
         _currentTuningDetail = channel;
@@ -1491,10 +1490,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     public abstract void PerformUnloading();
 
     /// <summary>
-    /// Actually update tuner signal status statistics.
+    /// Get the tuner's signal status.
     /// </summary>
-    /// <param name="onlyUpdateLock"><c>True</c> to only update lock status.</param>
-    public abstract void PerformSignalStatusUpdate(bool onlyUpdateLock);
+    /// <remarks>
+    /// The <paramref name="onlyGetLock"/> parameter exists as a speed
+    /// optimisation. Getting strength and quality readings can be slow.
+    /// </remarks>
+    /// <param name="onlyGetLock"><c>True</c> to only get lock status.</param>
+    /// <param name="isLocked"><c>True</c> if the tuner has locked onto signal.</param>
+    /// <param name="isPresent"><c>True</c> if the tuner has detected signal.</param>
+    /// <param name="strength">An indication of signal strength. Range: 0 to 100.</param>
+    /// <param name="quality">An indication of signal quality. Range: 0 to 100.</param>
+    public abstract void GetSignalStatus(bool onlyGetLock, out bool isLocked, out bool isPresent, out int strength, out int quality);
 
     #endregion
 
@@ -1790,7 +1797,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <param name="subChannelId">The ID of the sub-channel causing this update.</param>
     /// <param name="updateAction"><c>Add</c> if the sub-channel is being tuned, <c>update</c> if the PMT for the
     ///   sub-channel has changed, or <c>last</c> if the sub-channel is being disposed.</param>
-    protected void UpdateDecryptList(int subChannelId, CaPmtListManagementAction updateAction)
+    private void UpdateDecryptList(int subChannelId, CaPmtListManagementAction updateAction)
     {
       if (!_useConditionalAccessInterface)
       {

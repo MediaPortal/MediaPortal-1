@@ -191,15 +191,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
     #endregion
 
     /// <summary>
-    /// Actually update tuner signal status statistics.
+    /// Get the tuner's signal status.
     /// </summary>
-    /// <param name="onlyUpdateLock"><c>True</c> to only update lock status.</param>
-    public override void PerformSignalStatusUpdate(bool onlyUpdateLock)
+    /// <param name="onlyGetLock"><c>True</c> to only get lock status.</param>
+    /// <param name="isLocked"><c>True</c> if the tuner has locked onto signal.</param>
+    /// <param name="isPresent"><c>True</c> if the tuner has detected signal.</param>
+    /// <param name="strength">An indication of signal strength. Range: 0 to 100.</param>
+    /// <param name="quality">An indication of signal quality. Range: 0 to 100.</param>
+    public override void GetSignalStatus(bool onlyGetLock, out bool isLocked, out bool isPresent, out int strength, out int quality)
     {
-      _isSignalPresent = true;
-      _isSignalLocked = true;
-      _signalLevel = 100;
-      _signalQuality = 100;
+      isLocked = true;
+      isPresent = true;
+      strength = 100;
+      quality = 100;
     }
   }
 }

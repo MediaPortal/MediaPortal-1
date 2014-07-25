@@ -84,10 +84,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     void PerformUnloading();
 
     /// <summary>
-    /// Actually update tuner signal status statistics.
+    /// Get the tuner's signal status.
     /// </summary>
-    /// <param name="onlyUpdateLock"><c>True</c> to only update lock status.</param>
-    void PerformSignalStatusUpdate(bool onlyUpdateLock);
+    /// <remarks>
+    /// The <paramref name="onlyGetLock"/> parameter exists as a speed
+    /// optimisation. Getting strength and quality readings can be slow.
+    /// </remarks>
+    /// <param name="onlyGetLock"><c>True</c> to only get lock status.</param>
+    /// <param name="isLocked"><c>True</c> if the tuner has locked onto signal.</param>
+    /// <param name="isPresent"><c>True</c> if the tuner has detected signal.</param>
+    /// <param name="strength">An indication of signal strength. Range: 0 to 100.</param>
+    /// <param name="quality">An indication of signal quality. Range: 0 to 100.</param>
+    void GetSignalStatus(bool onlyGetLock, out bool isLocked, out bool isPresent, out int strength, out int quality);
 
     /// <summary>
     /// Allocate a new sub-channel instance.
