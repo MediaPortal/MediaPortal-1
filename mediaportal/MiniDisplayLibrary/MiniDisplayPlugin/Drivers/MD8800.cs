@@ -156,11 +156,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             Log.Info("iMONLCDg.UpdateIcons(): Checking TV Card status: IsAnyCardRecording = {0}, IsViewing = {1}",
                      new object[]
                        {
-                         MiniDisplayHelper.IsCaptureCardRecording().ToString(),
-                         MiniDisplayHelper.IsCaptureCardViewing().ToString()
+                         MiniDisplayHelper.MPStatus.Media_IsRecording.ToString(),
+                         MiniDisplayHelper.MPStatus.Media_IsTV.ToString()
                        });
           }
-          if (MiniDisplayHelper.IsCaptureCardRecording())
+          if (MiniDisplayHelper.MPStatus.Media_IsRecording)
           {
             iconBitmap |= 0x100;
             if (this.DoDebug)
@@ -168,7 +168,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               Log.Info("iMONLCDg.UpdateIcons(): Setting RECORDING icon");
             }
           }
-          else if (MiniDisplayHelper.IsCaptureCardViewing())
+          else if (MiniDisplayHelper.MPStatus.Media_IsTV)
           {
             iconBitmap |= 0x20;
             if (this.DoDebug)
@@ -225,7 +225,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               Log.Info("iMONLCDg.UpdateIcons(): Setting PAUSED icon");
             }
           }
-          if (!this.MPStatus.MediaPlayer_Playing & !MiniDisplayHelper.IsCaptureCardViewing())
+          if (!this.MPStatus.MediaPlayer_Playing & !MiniDisplayHelper.MPStatus.Media_IsTV)
           {
             iconBitmap |= 0x400;
           }
@@ -565,7 +565,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     private void ShowVolumeLevel()
     {
       this.volLevel = 0;
-      if (this.MPStatus.MediaPlayer_Playing || MiniDisplayHelper.IsCaptureCardViewing())
+      if (this.MPStatus.MediaPlayer_Playing || MiniDisplayHelper.MPStatus.Media_IsTV)
       {
         try
         {
