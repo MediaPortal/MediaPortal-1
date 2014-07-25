@@ -21,6 +21,7 @@
 using System;
 using System.Collections;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Timers;
 using MediaPortal.GUI.Library;
@@ -562,7 +563,8 @@ namespace MediaPortal.GUI.Video
             foreach (string directory in refreshDir)
             {
               // Update MyVideos shares cache
-              if (GUIVideoFiles.CachedItems != null && GUIVideoFiles.CachedItems.ContainsKey(directory))
+              if (GUIVideoFiles.CachedItems != null && GUIVideoFiles.CachedItems.ContainsKey(directory) ||
+                  GUIVideoFiles.CachedItems != null && GUIVideoFiles.CachedItems.Count == 0 && GUIVideoFiles.GetCurrentFolder == directory)
               {
                 GUIVideoFiles.CachedItems.Remove(directory);
                 Log.Debug("VideosShareWatcher: {0} removed from video cache", directory);
