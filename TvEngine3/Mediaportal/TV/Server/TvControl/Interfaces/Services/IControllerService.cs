@@ -64,14 +64,6 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     ///<value>Number which indicates the cards installed</value>
     int Cards { [OperationContract] get; }
 
-    /// <summary>
-    /// Initialized Conditional Access handler
-    /// </summary>
-    /// <param name="cardId">id of the card.</param>
-    /// <returns>true if successful</returns>
-    [OperationContract]
-    bool InitConditionalAccess(int cardId);
-
 
 
     /// <summary>

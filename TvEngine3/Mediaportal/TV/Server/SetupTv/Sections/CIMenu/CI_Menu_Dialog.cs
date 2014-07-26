@@ -38,7 +38,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.CIMenu
     private CiMenuState ciMenuState = CiMenuState.Closed;
     private int ciMenuChoices = 0;
     private int cardNumber = 0;
-    private bool InitSuccess = false;
 
     /// <summary>
     /// CTOR
@@ -55,8 +54,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.CIMenu
     public CI_Menu_Dialog()
     {
       InitializeComponent();
-
-      InitSuccess = false;
 
       _ciMenuEventHandler = new CiMenuEventHandler();
       _ciMenuEventHandler.SetCaller(this);
@@ -85,32 +82,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.CIMenu
       Choices.Items.Clear();
     }
 
-    /// <summary>
-    /// Checks if CA is ready, tries to init it if not
-    /// </summary>
-    /// <returns>true if ready</returns>
-    private bool IsCAReady()
-    {
-      if (InitSuccess) return true;
-      // call only once
-      if (ServiceAgents.Instance.ControllerServiceAgent.InitConditionalAccess(cardNumber))
-      {
-        if (!ServiceAgents.Instance.ControllerServiceAgent.CiMenuSupported(cardNumber))
-        {
-          MessageBox.Show(
-            "The selected tuner doesn't support CA menu access, or the CAM is not present, compatible or ready yet.\r\n(CA inititialisation may require more than 10 seconds.)");
-          return false;
-        }
-        InitSuccess = true;
-      }
-      return InitSuccess;
-    }
-
     private void btnOpenMenu_Click(object sender, EventArgs e)
     {
       try
       {
-        if (IsCAReady())
+        if (!ServiceAgents.Instance.ControllerServiceAgent.CiMenuSupported(cardNumber))
+        {
+          MessageBox.Show("This tuner doesn't support CA menu access, or the CAM is not present, compatible or ready yet.\r\n(CAM inititialisation may require up to 30 seconds.)");
+        }
+        else
         {
           ServiceAgents.Instance.ControllerServiceAgent.SetCiMenuHandler(cardNumber, null);
           ServiceAgents.Instance.ControllerServiceAgent.EnterCiMenu(cardNumber);
@@ -118,7 +98,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.CIMenu
       }
       catch (Exception ex)
       {
-        this.LogError(ex);
+        MessageBox.Show("Failed to open the menu. Please check the log files for errors and report this problem.");
+        this.LogError(ex, "Failed to open CA menu for tuner {0}.", cardNumber);
       }
     }
 

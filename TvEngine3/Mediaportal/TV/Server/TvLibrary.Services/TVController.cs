@@ -116,33 +116,6 @@ namespace Mediaportal.TV.Server.TVLibrary
     /// </summary>
     private int _maxFreeCardsToTry;
 
-    /// <summary>
-    /// Initialized Conditional Access handler
-    /// </summary>
-    /// <param name="cardId">id of the card.</param>
-    /// <returns>true if successful</returns>
-    public bool InitConditionalAccess(int cardId)
-    {
-      bool initConditionalAccess = false;
-      try
-      {
-        if (ValidateTvControllerParams(cardId, false))
-        {
-          ITVCard card = _cards[cardId].Card;
-          initConditionalAccess = card.IsConditionalAccessSupported;
-        }
-        else
-        {          
-          this.LogDebug("InitConditionalAccess: ValidateTvControllerParams failed");         
-        }                
-      }
-      catch (Exception e)
-      {
-        HandleControllerException(e);
-      }
-      return initConditionalAccess;
-    }
-
     private Dictionary<int, ITvCardHandler> _cards = new Dictionary<int, ITvCardHandler>();
 
     /// 
@@ -1196,25 +1169,6 @@ namespace Mediaportal.TV.Server.TVLibrary
       Schedule schedule = ScheduleManagement.GetSchedule(scheduleId);
       return _scheduler.IsTimeToRecord(schedule, time);
     }
-
-
-    /// <summary>
-    /// Does the card support conditional access?
-    /// </summary>
-    /// <param name="cardId">The ID of the card to check.</param>
-    /// <return><c>true</c> if the card supports conditional access, otherwise <c>false</c></return>
-    public bool IsConditionalAccessSupported(int cardId)
-    {
-      if (ValidateTvControllerParams(cardId))
-      {
-        return _cards[cardId].IsConditionalAccessSupported;
-      }
-      else
-      {
-        return false;
-      }
-    }
-    
 
     /// <summary>
     /// Determines if any card is currently busy recording

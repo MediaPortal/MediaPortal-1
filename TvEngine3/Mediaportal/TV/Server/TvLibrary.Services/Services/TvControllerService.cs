@@ -65,16 +65,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
     }
 
     /// <summary>
-    /// Initialized Conditional Access handler
-    /// </summary>
-    /// <param name="cardId">id of the card.</param>
-    /// <returns>true if successful</returns>
-    public bool InitConditionalAccess(int cardId)
-    {
-      return Service.InitConditionalAccess(cardId);
-    }
-
-    /// <summary>
     /// Gets the type of card (analog,dvbc,dvbs,dvbt,atsc)
     /// </summary>
     /// <param name="cardId">id of the card.</param>
