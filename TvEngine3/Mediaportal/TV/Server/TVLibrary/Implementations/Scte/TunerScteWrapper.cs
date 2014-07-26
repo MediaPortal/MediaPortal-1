@@ -1,9 +1,11 @@
 ﻿
+using System.Collections.Generic;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Atsc;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte
 {
@@ -56,11 +58,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte
   /// </remarks>
   internal class TunerScteWrapper : TunerBase
   {
+    #region variables
+
     /// <summary>
     /// Internal DVB-C tuner. This allows us to decouple this wrapper from the
     /// underlying implementation.
     /// </summary>
     private ITunerInternal _dvbcTuner = null;
+
+    /// <summary>
+    /// The tuner's channel scanning interface.
+    /// </summary>
+    private IChannelScannerInternal _channelScanner = null;
+
+    #endregion
 
     /// <summary>
     /// Initialise a new instance of the <see cref="TunerScteWrapper"/> class.
@@ -114,12 +125,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte
     {
       _dvbcTuner.PerformLoading();
 
-      _channelScanner = _dvbcTuner.ChannelScanningInterface;
-      IChannelScannerInternal scanner = _channelScanner as IChannelScannerInternal;
-      if (scanner != null)
+      _channelScanner = _dvbcTuner.InternalChannelScanningInterface;
+      if (_channelScanner != null)
       {
-        scanner.Tuner = this;
-        scanner.Helper = new ChannelScannerHelperAtsc();
+        _channelScanner.Tuner = this;
+        _channelScanner.Helper = new ChannelScannerHelperAtsc();
       }
     }
 
@@ -128,6 +138,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte
     /// </summary>
     public override void PerformUnloading()
     {
+      _channelScanner = null;
       _dvbcTuner.PerformUnloading();
     }
 
@@ -193,6 +204,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte
     {
       _dvbcTuner.SetTunerState(state);
       _state = state;
+    }
+
+    /// <summary>
+    /// Get the tuner's channel scanning interface.
+    /// </summary>
+    public override IChannelScannerInternal InternalChannelScanningInterface
+    {
+      get
+      {
+        return _channelScanner;
+      }
     }
 
     #endregion

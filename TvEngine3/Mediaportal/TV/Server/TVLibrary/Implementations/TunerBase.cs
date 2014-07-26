@@ -313,16 +313,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     private ITunerGroup _group = null;
 
     /// <summary>
-    /// The tuner's channel scanning interface.
-    /// </summary>
-    protected IChannelScanner _channelScanner = null;
-
-    /// <summary>
-    /// The tuner's EPG grabber interface.
-    /// </summary>
-    protected IEpgGrabber _epgGrabber = null;
-
-    /// <summary>
     /// The tuner's DiSEqC control interface.
     /// </summary>
     private IDiseqcController _diseqcController = null;
@@ -521,6 +511,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         {
           return null;
         }
+        if (_state == TunerState.NotLoaded)
+        {
+          Load();
+        }
+
         // Return the first extension that implements CA menu access.
         foreach (ICustomDevice extension in _extensions)
         {
@@ -590,6 +585,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     {
       get
       {
+        if (_state == TunerState.NotLoaded)
+        {
+          Load();
+        }
         return _diseqcController;
       }
     }
@@ -939,8 +938,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         this.LogWarn(ex, "tuner base: failed to completely unload the tuner");
       }
 
-      _epgGrabber = null;
-      _channelScanner = null;
       _diseqcController = null;
       _encoderController = null;
 
@@ -1010,9 +1007,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         subChannel.ReloadConfiguration();
       }
 
-      if (_epgGrabber != null)
+      if (InternalEpgGrabberInterface != null)
       {
-        _epgGrabber.ReloadConfiguration();
+        InternalEpgGrabberInterface.ReloadConfiguration();
       }
       if (_diseqcController != null)
       {
@@ -1027,7 +1024,22 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     {
       get
       {
-        return _epgGrabber;
+        if (_state == TunerState.NotLoaded)
+        {
+          Load();
+        }
+        return InternalEpgGrabberInterface;
+      }
+    }
+
+    /// <summary>
+    /// Get the tuner's electronic programme guide data grabbing interface.
+    /// </summary>
+    public virtual IEpgGrabber InternalEpgGrabberInterface
+    {
+      get
+      {
+        return null;
       }
     }
 
@@ -1042,8 +1054,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         {
           Load();
         }
-        return _channelScanner;
+        return InternalChannelScanningInterface;
       }
+    }
+
+    /// <summary>
+    /// Get the tuner's channel scanning interface.
+    /// </summary>
+    public abstract IChannelScannerInternal InternalChannelScanningInterface
+    {
+      get;
     }
 
     /// <summary>
@@ -1084,13 +1104,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       TunerAction action = TunerAction.Stop;
       try
       {
-        if (_epgGrabber != null && _epgGrabber.IsEpgGrabbing)
+        if (InternalEpgGrabberInterface != null && InternalEpgGrabberInterface.IsEpgGrabbing)
         {
-          _epgGrabber.AbortGrabbing();
+          InternalEpgGrabberInterface.AbortGrabbing();
         }
-        if (_channelScanner != null && _channelScanner.IsScanning)
+        if (InternalChannelScanningInterface != null && InternalChannelScanningInterface.IsScanning)
         {
-          _channelScanner.AbortScanning();
+          InternalChannelScanningInterface.AbortScanning();
         }
         FreeAllSubChannels();
 
@@ -1301,9 +1321,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           tuned = true;
           // Stop the EPG grabber. We're going to move to a different channel. Any EPG data that
           // has been grabbed but not stored is thrown away.
-          if (_epgGrabber != null && _epgGrabber.IsEpgGrabbing)
+          if (InternalEpgGrabberInterface != null && InternalEpgGrabberInterface.IsEpgGrabbing)
           {
-            _epgGrabber.AbortGrabbing();
+            InternalEpgGrabberInterface.AbortGrabbing();
           }
 
           // When we call ICustomDevice.OnBeforeTune(), the ICustomDevice may modify the tuning parameters.

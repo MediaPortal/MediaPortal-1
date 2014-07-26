@@ -113,6 +113,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     /// </summary>
     private ITunerInternal _streamTuner = null;
 
+    /// <summary>
+    /// The tuner's channel scanning interface.
+    /// </summary>
+    private IChannelScannerInternal _channelScanner = null;
+
     #endregion
 
     /// <summary>
@@ -247,7 +252,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
 
     #endregion
 
-    #region graph building
+    #region ITunerInternal members
 
     /// <summary>
     /// Actually load the tuner.
@@ -304,6 +309,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     {
       this.LogDebug("DRI CableCARD: perform unloading");
 
+      _channelScanner = null;
       if (_serviceTuner != null)
       {
         _serviceTuner.Dispose();
@@ -394,7 +400,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       }
 
       ATSCChannel atscChannel = _currentTuningDetail as ATSCChannel;
-      if (_channelScanner != null && _channelScanner.IsScanning && atscChannel != null && atscChannel.PhysicalChannel == 0)
+      if (InternalChannelScanningInterface != null && InternalChannelScanningInterface.IsScanning && atscChannel != null && atscChannel.PhysicalChannel == 0)
       {
         // Scanning with a CableCARD doesn't require streaming. The channel
         // info is evented via the forward data channel service.
@@ -430,6 +436,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       // an inconsistent state, but there isn't too much we can do about that.
       _state = state;
       _streamTuner.SetTunerState(state);
+    }
+
+    /// <summary>
+    /// Get the tuner's channel scanning interface.
+    /// </summary>
+    public override IChannelScannerInternal InternalChannelScanningInterface
+    {
+      get
+      {
+        return _channelScanner;
+      }
     }
 
     /// <summary>
@@ -473,7 +490,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
 
       // Is a CableCARD required?
       bool isSignalLocked;
-      if (!atscChannel.FreeToAir || (_channelScanner.IsScanning && atscChannel.PhysicalChannel == 0))
+      if (!atscChannel.FreeToAir || (InternalChannelScanningInterface.IsScanning && atscChannel.PhysicalChannel == 0))
       {
         if (_cardStatus != CasCardStatus.Inserted)
         {
@@ -483,7 +500,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
         // We only need the OOB tuner when scanning with the CableCARD. We
         // don't even have to start a stream so we don't interrupt other
         // applications. Just check that the OOB tuner is locked.
-        if (_channelScanner.IsScanning)
+        if (InternalChannelScanningInterface.IsScanning)
         {
           this.LogDebug("DRI CableCARD: check out-of-band tuner lock");
           uint bitrate = 0;
@@ -798,7 +815,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       try
       {
         uint frequency = 0;
-        if (_channelScanner != null && _channelScanner.IsScanning)
+        if (InternalChannelScanningInterface != null && InternalChannelScanningInterface.IsScanning)
         {
           ATSCChannel atscChannel = _currentTuningDetail as ATSCChannel;
           if (atscChannel != null && atscChannel.PhysicalChannel == 0)
@@ -912,7 +929,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
           {
             this.LogInfo("DRI CableCARD: tuner {0} {1} update, not locked", TunerId, stateVariable.Name);
           }
-          if (_channelScanner == null || !_channelScanner.IsScanning)
+          if (InternalChannelScanningInterface == null || !InternalChannelScanningInterface.IsScanning)
           {
             _isSignalLocked = (bool)newValue;
           }
@@ -925,7 +942,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
             byte tableId = section[2];
             if (tableId == 0xc2 || tableId == 0xc3 || tableId == 0xc4 || tableId == 0xc8 || tableId == 0xc9)
             {
-              ChannelScannerDri scanner = _channelScanner as ChannelScannerDri;
+              ChannelScannerDri scanner = InternalChannelScanningInterface as ChannelScannerDri;
               if (scanner != null)
               {
                 scanner.OnTableSection(section);

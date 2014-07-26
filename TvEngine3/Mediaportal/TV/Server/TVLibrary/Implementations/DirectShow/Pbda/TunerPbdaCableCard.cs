@@ -167,7 +167,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
       bool isOutOfBandTunerLocked = false;
       int hr = _caInterface.get_SmartCardStatus(out status, out association, out error, out isOutOfBandTunerLocked);
       HResult.ThrowException(hr, "Failed to read smart card status.");
-      if (status != SmartCardStatusType.CardInserted || (_channelScanner.IsScanning && !isOutOfBandTunerLocked) || !string.IsNullOrEmpty(error))
+      if (status != SmartCardStatusType.CardInserted || (ChannelScanningInterface.IsScanning && !isOutOfBandTunerLocked) || !string.IsNullOrEmpty(error))
       {
         this.LogError("PBDA CableCARD: smart card status");
         this.LogError("  status      = {0}", status);
@@ -177,7 +177,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
         throw new TvExceptionNoSignal();
       }
 
-      if (!_channelScanner.IsScanning)
+      if (!ChannelScanningInterface.IsScanning)
       {
         // Note: SDV not explicitly supported.
         hr = _caInterface.TuneByChannel((short)atscChannel.MajorChannel);
@@ -378,7 +378,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
     /// <param name="quality">An indication of signal quality. Range: 0 to 100.</param>
     public override void GetSignalStatus(bool onlyGetLock, out bool isLocked, out bool isPresent, out int strength, out int quality)
     {
-      if (_channelScanner != null && _channelScanner.IsScanning)
+      if (ChannelScanningInterface != null && ChannelScanningInterface.IsScanning)
       {
         isLocked = false;
         try

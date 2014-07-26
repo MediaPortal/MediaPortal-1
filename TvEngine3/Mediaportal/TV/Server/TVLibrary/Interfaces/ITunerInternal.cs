@@ -19,7 +19,9 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces
 {
@@ -41,22 +43,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     ITunerGroup Group
     {
       set;
-    }
-
-    /// <summary>
-    /// Get the tuner's electronic programme guide data grabbing interface.
-    /// </summary>
-    IEpgGrabber EpgGrabberInterface
-    {
-      get;
-    }
-
-    /// <summary>
-    /// Get the tuner's channel scanning interface.
-    /// </summary>
-    IChannelScanner ChannelScanningInterface
-    {
-      get;
     }
 
     #endregion
@@ -115,5 +101,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// </summary>
     /// <param name="state">The state to apply to the tuner.</param>
     void SetTunerState(TunerState state);
+
+    /// <summary>
+    /// Get the tuner's channel scanning interface.
+    /// </summary>
+    IChannelScannerInternal InternalChannelScanningInterface
+    {
+      get;
+    }
+
+    /// <summary>
+    /// Get the tuner's electronic programme guide data grabbing interface.
+    /// </summary>
+    IEpgGrabber InternalEpgGrabberInterface
+    {
+      get;
+    }
   }
 }

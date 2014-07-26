@@ -112,6 +112,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     /// </summary>
     private ITunerInternal _streamTuner = null;
 
+    /// <summary>
+    /// The tuner's channel scanning interface.
+    /// </summary>
+    private IChannelScannerInternal _channelScanner = null;
+
     #endregion
 
     #region constructor
@@ -143,16 +148,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
 
     #endregion
 
-    /// <summary>
-    /// Reload the tuner's configuration.
-    /// </summary>
-    public override void ReloadConfiguration()
-    {
-      base.ReloadConfiguration();
-      _streamTuner.ReloadConfiguration();
-    }
-
-    #region tuning & scanning
+    #region tuning
 
     /// <summary>
     /// Actually tune to a channel.
@@ -311,7 +307,93 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
 
     #endregion
 
-    #region sub-channel management
+    #region keep-alive thread
+
+    private void StartKeepAliveThread()
+    {
+      // Kill the existing thread if it is in "zombie" state.
+      if (_keepAliveThread != null && !_keepAliveThread.IsAlive)
+      {
+        StopKeepAliveThread();
+      }
+
+      if (_keepAliveThread == null)
+      {
+        this.LogDebug("SAT>IP base: starting new keep-alive thread");
+        _keepAliveThreadStopEvent = new AutoResetEvent(false);
+        _keepAliveThread = new Thread(new ThreadStart(KeepAlive));
+        _keepAliveThread.Name = string.Format("SAT>IP tuner {0} keep alive", TunerId);
+        _keepAliveThread.IsBackground = true;
+        _keepAliveThread.Priority = ThreadPriority.Lowest;
+        _keepAliveThread.Start();
+      }
+    }
+
+    private void StopKeepAliveThread()
+    {
+      if (_keepAliveThread != null)
+      {
+        if (!_keepAliveThread.IsAlive)
+        {
+          this.LogWarn("SAT>IP base: aborting old keep-alive thread");
+          _keepAliveThread.Abort();
+        }
+        else
+        {
+          _keepAliveThreadStopEvent.Set();
+          if (!_keepAliveThread.Join(_rtspSessionTimeout * 2))
+          {
+            this.LogWarn("SAT>IP base: failed to join keep-alive thread, aborting thread");
+            _keepAliveThread.Abort();
+          }
+        }
+        _keepAliveThread = null;
+        if (_keepAliveThreadStopEvent != null)
+        {
+          _keepAliveThreadStopEvent.Close();
+          _keepAliveThreadStopEvent = null;
+        }
+      }
+    }
+
+    private void KeepAlive()
+    {
+      try
+      {
+        while (!_keepAliveThreadStopEvent.WaitOne((_rtspSessionTimeout - 5) * 1000))  // -5 seconds to avoid timeout
+        {
+          RtspRequest request = new RtspRequest(RtspMethod.Options, string.Format("rtsp://{0}/", _serverIpAddress));
+          request.Headers.Add("Session", _rtspSessionId);
+          RtspResponse response;
+          if (_rtspClient.SendRequest(request, out response) != RtspStatusCode.Ok)
+          {
+            this.LogWarn("SAT>IP base: keep-alive request/response failed, non-OK RTSP OPTIONS status code {0} {1}", response.StatusCode, response.ReasonPhrase);
+          }
+        }
+      }
+      catch (ThreadAbortException)
+      {
+      }
+      catch (Exception ex)
+      {
+        this.LogError(ex, "SAT>IP base: keep-alive thread exception");
+        return;
+      }
+      this.LogDebug("SAT>IP base: keep-alive thread stopping");
+    }
+
+    #endregion
+
+    #region ITunerInternal members
+
+    /// <summary>
+    /// Reload the tuner's configuration.
+    /// </summary>
+    public override void ReloadConfiguration()
+    {
+      base.ReloadConfiguration();
+      _streamTuner.ReloadConfiguration();
+    }
 
     /// <summary>
     /// Allocate a new sub-channel instance.
@@ -323,8 +405,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
       return _streamTuner.CreateNewSubChannel(id);
     }
 
-    #endregion
-
     /// <summary>
     /// Actually load the tuner.
     /// </summary>
@@ -332,13 +412,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     {
       LoadExtensions(_serverDescriptor);
       _streamTuner.PerformLoading();
-      _epgGrabber = _streamTuner.EpgGrabberInterface;
-      _channelScanner = _streamTuner.ChannelScanningInterface;
-      IChannelScannerInternal scanner = _channelScanner as IChannelScannerInternal;
-      if (scanner != null)
+      _channelScanner = _streamTuner.InternalChannelScanningInterface;
+      if (_channelScanner != null)
       {
-        scanner.Tuner = this;
-        scanner.Helper = new ChannelScannerHelperDvb();
+        _channelScanner.Tuner = this;
+        _channelScanner.Helper = new ChannelScannerHelperDvb();
       }
     }
 
@@ -347,6 +425,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     /// </summary>
     public override void PerformUnloading()
     {
+      _channelScanner = null;
       if (_streamTuner != null)
       {
         _streamTuner.PerformUnloading();
@@ -459,79 +538,26 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
       }
     }
 
-    #region keep-alive thread
-
-    private void StartKeepAliveThread()
+    /// <summary>
+    /// Get the tuner's channel scanning interface.
+    /// </summary>
+    public override IChannelScannerInternal InternalChannelScanningInterface
     {
-      // Kill the existing thread if it is in "zombie" state.
-      if (_keepAliveThread != null && !_keepAliveThread.IsAlive)
+      get
       {
-        StopKeepAliveThread();
-      }
-
-      if (_keepAliveThread == null)
-      {
-        this.LogDebug("SAT>IP base: starting new keep-alive thread");
-        _keepAliveThreadStopEvent = new AutoResetEvent(false);
-        _keepAliveThread = new Thread(new ThreadStart(KeepAlive));
-        _keepAliveThread.Name = string.Format("SAT>IP tuner {0} keep alive", TunerId);
-        _keepAliveThread.IsBackground = true;
-        _keepAliveThread.Priority = ThreadPriority.Lowest;
-        _keepAliveThread.Start();
+        return _channelScanner;
       }
     }
 
-    private void StopKeepAliveThread()
+    /// <summary>
+    /// Get the tuner's electronic programme guide data grabbing interface.
+    /// </summary>
+    public override IEpgGrabber InternalEpgGrabberInterface
     {
-      if (_keepAliveThread != null)
+      get
       {
-        if (!_keepAliveThread.IsAlive)
-        {
-          this.LogWarn("SAT>IP base: aborting old keep-alive thread");
-          _keepAliveThread.Abort();
-        }
-        else
-        {
-          _keepAliveThreadStopEvent.Set();
-          if (!_keepAliveThread.Join(_rtspSessionTimeout * 2))
-          {
-            this.LogWarn("SAT>IP base: failed to join keep-alive thread, aborting thread");
-            _keepAliveThread.Abort();
-          }
-        }
-        _keepAliveThread = null;
-        if (_keepAliveThreadStopEvent != null)
-        {
-          _keepAliveThreadStopEvent.Close();
-          _keepAliveThreadStopEvent = null;
-        }
+        return _streamTuner.InternalEpgGrabberInterface;
       }
-    }
-
-    private void KeepAlive()
-    {
-      try
-      {
-        while (!_keepAliveThreadStopEvent.WaitOne((_rtspSessionTimeout - 5) * 1000))  // -5 seconds to avoid timeout
-        {
-          RtspRequest request = new RtspRequest(RtspMethod.Options, string.Format("rtsp://{0}/", _serverIpAddress));
-          request.Headers.Add("Session", _rtspSessionId);
-          RtspResponse response;
-          if (_rtspClient.SendRequest(request, out response) != RtspStatusCode.Ok)
-          {
-            this.LogWarn("SAT>IP base: keep-alive request/response failed, non-OK RTSP OPTIONS status code {0} {1}", response.StatusCode, response.ReasonPhrase);
-          }
-        }
-      }
-      catch (ThreadAbortException)
-      {
-      }
-      catch (Exception ex)
-      {
-        this.LogError(ex, "SAT>IP base: keep-alive thread exception");
-        return;
-      }
-      this.LogDebug("SAT>IP base: keep-alive thread stopping");
     }
 
     #endregion

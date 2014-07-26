@@ -67,6 +67,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     /// </summary>
     protected IBaseFilter _filterTsWriter = null;
 
+    /// <summary>
+    /// The tuner's channel scanning interface.
+    /// </summary>
+    protected IChannelScannerInternal _channelScanner = null;
+
+    /// <summary>
+    /// The tuner's EPG grabber interface.
+    /// </summary>
+    protected IEpgGrabber _epgGrabber = null;
+
     #endregion
 
     #region constructors
@@ -129,6 +139,28 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       if (SettingsManagement.GetValue("tsWriterDumpInputs", false))
       {
         this.LogDebug("DirectShow base: enable TsWriter input dumping");
+      }
+    }
+
+    /// <summary>
+    /// Get the tuner's channel scanning interface.
+    /// </summary>
+    public override IChannelScannerInternal InternalChannelScanningInterface
+    {
+      get
+      {
+        return _channelScanner;
+      }
+    }
+
+    /// <summary>
+    /// Get the tuner's electronic programme guide data grabbing interface.
+    /// </summary>
+    public override IEpgGrabber InternalEpgGrabberInterface
+    {
+      get
+      {
+        return _epgGrabber;
       }
     }
 
@@ -345,6 +377,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
         }
         Release.ComObject("DirectShow tuner graph", ref _graph);
       }
+      _epgGrabber = null;
+      _channelScanner = null;
       Release.ComObject("TS writer/analyser filter", ref _filterTsWriter);
     }
 
