@@ -60,7 +60,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
 
     #endregion
 
-    #region tuning & scanning
+    #region tuning
 
     /// <summary>
     /// Actually tune to a channel.

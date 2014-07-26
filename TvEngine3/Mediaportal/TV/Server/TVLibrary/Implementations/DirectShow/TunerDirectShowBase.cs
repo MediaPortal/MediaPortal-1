@@ -123,62 +123,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       }
     }
 
-    /// <summary>
-    /// Reload the tuner's configuration.
-    /// </summary>
-    public override void ReloadConfiguration()
-    {
-      base.ReloadConfiguration();
-
-      this.LogDebug("DirectShow base: reload configuration");
-      // TODO apply these settings to TsWriter here
-      if (SettingsManagement.GetValue("tsWriterDisableCrcCheck", false))
-      {
-        this.LogDebug("DirectShow base: disable TsWriter CRC checking");
-      }
-      if (SettingsManagement.GetValue("tsWriterDumpInputs", false))
-      {
-        this.LogDebug("DirectShow base: enable TsWriter input dumping");
-      }
-    }
-
-    /// <summary>
-    /// Get the tuner's channel scanning interface.
-    /// </summary>
-    public override IChannelScannerInternal InternalChannelScanningInterface
-    {
-      get
-      {
-        return _channelScanner;
-      }
-    }
-
-    /// <summary>
-    /// Get the tuner's electronic programme guide data grabbing interface.
-    /// </summary>
-    public override IEpgGrabber InternalEpgGrabberInterface
-    {
-      get
-      {
-        return _epgGrabber;
-      }
-    }
-
-    #region sub-channel management
-
-    /// <summary>
-    /// Allocate a new sub-channel instance.
-    /// </summary>
-    /// <param name="id">The identifier for the sub-channel.</param>
-    /// <returns>the new sub-channel instance</returns>
-    public override ITvSubChannel CreateNewSubChannel(int id)
-    {
-      return new SubChannelMpeg2Ts(id, _filterTsWriter as ITsFilter);
-    }
-
-    #endregion
-
-    #region graph building & control
+    #region graph building
 
     /// <summary>
     /// Create and initialise the DirectShow graph.
@@ -284,45 +229,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     }
 
     /// <summary>
-    /// Set the state of the tuner.
-    /// </summary>
-    /// <param name="state">The state to apply to the tuner.</param>
-    public override void SetTunerState(TunerState state)
-    {
-      this.LogDebug("DirectShow base: set tuner state, current state = {0}, requested state = {1}", _state, state);
-
-      if (state == _state)
-      {
-        this.LogDebug("DirectShow base: tuner already in required state");
-        return;
-      }
-      if (_graph == null)
-      {
-        throw new TvException("DirectShow graph is null, can't set tuner state.");
-      }
-
-      int hr = (int)HResult.Severity.Success;
-      if (state == TunerState.Stopped)
-      {
-        hr = (_graph as IMediaControl).Stop();
-      }
-      else if (state == TunerState.Paused)
-      {
-        hr = (_graph as IMediaControl).Pause();
-      }
-      else if (state == TunerState.Started)
-      {
-        hr = (_graph as IMediaControl).Run();
-      }
-      else
-      {
-        hr = (int)HResult.Severity.Error;
-      }
-      HResult.ThrowException(hr, string.Format("Failed to change tuner state from {0} to {1}.", _state, state));
-      _state = state;
-    }
-
-    /// <summary>
     /// Remove and release DirectShow main component and graph components.
     /// </summary>
     protected void CleanUpGraph()
@@ -381,6 +287,116 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       _channelScanner = null;
       Release.ComObject("TS writer/analyser filter", ref _filterTsWriter);
     }
+
+    #endregion
+
+    #region ITunerInternal members
+
+    #region configuration
+
+    /// <summary>
+    /// Reload the tuner's configuration.
+    /// </summary>
+    public override void ReloadConfiguration()
+    {
+      base.ReloadConfiguration();
+
+      this.LogDebug("DirectShow base: reload configuration");
+      // TODO apply these settings to TsWriter here
+      if (SettingsManagement.GetValue("tsWriterDisableCrcCheck", false))
+      {
+        this.LogDebug("DirectShow base: disable TsWriter CRC checking");
+      }
+      if (SettingsManagement.GetValue("tsWriterDumpInputs", false))
+      {
+        this.LogDebug("DirectShow base: enable TsWriter input dumping");
+      }
+    }
+
+    #endregion
+
+    #region state control
+
+    /// <summary>
+    /// Set the state of the tuner.
+    /// </summary>
+    /// <param name="state">The state to apply to the tuner.</param>
+    public override void SetTunerState(TunerState state)
+    {
+      this.LogDebug("DirectShow base: set tuner state, current state = {0}, requested state = {1}", _state, state);
+
+      if (state == _state)
+      {
+        this.LogDebug("DirectShow base: tuner already in required state");
+        return;
+      }
+      if (_graph == null)
+      {
+        throw new TvException("DirectShow graph is null, can't set tuner state.");
+      }
+
+      int hr = (int)HResult.Severity.Success;
+      if (state == TunerState.Stopped)
+      {
+        hr = (_graph as IMediaControl).Stop();
+      }
+      else if (state == TunerState.Paused)
+      {
+        hr = (_graph as IMediaControl).Pause();
+      }
+      else if (state == TunerState.Started)
+      {
+        hr = (_graph as IMediaControl).Run();
+      }
+      else
+      {
+        hr = (int)HResult.Severity.Error;
+      }
+      HResult.ThrowException(hr, string.Format("Failed to change tuner state from {0} to {1}.", _state, state));
+      _state = state;
+    }
+
+    #endregion
+
+    #region tuning
+
+    /// <summary>
+    /// Allocate a new sub-channel instance.
+    /// </summary>
+    /// <param name="id">The identifier for the sub-channel.</param>
+    /// <returns>the new sub-channel instance</returns>
+    public override ITvSubChannel CreateNewSubChannel(int id)
+    {
+      return new SubChannelMpeg2Ts(id, _filterTsWriter as ITsFilter);
+    }
+
+    #endregion
+
+    #region interfaces
+
+    /// <summary>
+    /// Get the tuner's channel scanning interface.
+    /// </summary>
+    public override IChannelScannerInternal InternalChannelScanningInterface
+    {
+      get
+      {
+        return _channelScanner;
+      }
+    }
+
+    /// <summary>
+    /// Get the tuner's electronic programme guide data grabbing interface.
+    /// </summary>
+    public override IEpgGrabber InternalEpgGrabberInterface
+    {
+      get
+      {
+        return _epgGrabber;
+      }
+    }
+
+    #endregion
 
     #endregion
 

@@ -91,6 +91,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte
       _dvbcTuner = dvbcTuner;
     }
 
+    #region ITunerInternal members
+
+    #region configuration
+
     /// <summary>
     /// Reload the tuner's configuration.
     /// </summary>
@@ -100,23 +104,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte
       _dvbcTuner.ReloadConfiguration();
     }
 
-    /// <summary>
-    /// Check if the tuner can tune to a given channel.
-    /// </summary>
-    /// <param name="channel">The channel to check.</param>
-    /// <returns><c>true</c> if the tuner can tune to the channel, otherwise <c>false</c></returns>
-    public override bool CanTune(IChannel channel)
-    {
-      ATSCChannel atscChannel = channel as ATSCChannel;
-      if (atscChannel != null && atscChannel.Frequency > 0 &&
-        (atscChannel.ModulationType == ModulationType.Mod64Qam || atscChannel.ModulationType == ModulationType.Mod256Qam))
-      {
-        return true;
-      }
-      return false;
-    }
+    #endregion
 
-    #region ITunerInternal members
+    #region state control
 
     /// <summary>
     /// Actually load the tuner.
@@ -134,6 +124,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte
     }
 
     /// <summary>
+    /// Set the state of the tuner.
+    /// </summary>
+    /// <param name="state">The state to apply to the tuner.</param>
+    public override void SetTunerState(TunerState state)
+    {
+      _dvbcTuner.SetTunerState(state);
+      _state = state;
+    }
+
+    /// <summary>
     /// Actually unload the tuner.
     /// </summary>
     public override void PerformUnloading()
@@ -142,27 +142,24 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte
       _dvbcTuner.PerformUnloading();
     }
 
-    /// <summary>
-    /// Get the tuner's signal status.
-    /// </summary>
-    /// <param name="onlyGetLock"><c>True</c> to only get lock status.</param>
-    /// <param name="isLocked"><c>True</c> if the tuner has locked onto signal.</param>
-    /// <param name="isPresent"><c>True</c> if the tuner has detected signal.</param>
-    /// <param name="strength">An indication of signal strength. Range: 0 to 100.</param>
-    /// <param name="quality">An indication of signal quality. Range: 0 to 100.</param>
-    public override void GetSignalStatus(bool onlyGetLock, out bool isLocked, out bool isPresent, out int strength, out int quality)
-    {
-      _dvbcTuner.GetSignalStatus(onlyGetLock, out isLocked, out isPresent, out strength, out quality);
-    }
+    #endregion
+
+    #region tuning
 
     /// <summary>
-    /// Allocate a new sub-channel instance.
+    /// Check if the tuner can tune to a given channel.
     /// </summary>
-    /// <param name="id">The identifier for the sub-channel.</param>
-    /// <returns>the new sub-channel instance</returns>
-    public override ITvSubChannel CreateNewSubChannel(int id)
+    /// <param name="channel">The channel to check.</param>
+    /// <returns><c>true</c> if the tuner can tune to the channel, otherwise <c>false</c></returns>
+    public override bool CanTune(IChannel channel)
     {
-      return _dvbcTuner.CreateNewSubChannel(id);
+      ATSCChannel atscChannel = channel as ATSCChannel;
+      if (atscChannel != null && atscChannel.Frequency > 0 &&
+        (atscChannel.ModulationType == ModulationType.Mod64Qam || atscChannel.ModulationType == ModulationType.Mod256Qam))
+      {
+        return true;
+      }
+      return false;
     }
 
     /// <summary>
@@ -197,14 +194,35 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte
     }
 
     /// <summary>
-    /// Set the state of the tuner.
+    /// Allocate a new sub-channel instance.
     /// </summary>
-    /// <param name="state">The state to apply to the tuner.</param>
-    public override void SetTunerState(TunerState state)
+    /// <param name="id">The identifier for the sub-channel.</param>
+    /// <returns>the new sub-channel instance</returns>
+    public override ITvSubChannel CreateNewSubChannel(int id)
     {
-      _dvbcTuner.SetTunerState(state);
-      _state = state;
+      return _dvbcTuner.CreateNewSubChannel(id);
     }
+
+    #endregion
+
+    #region signal
+
+    /// <summary>
+    /// Get the tuner's signal status.
+    /// </summary>
+    /// <param name="onlyGetLock"><c>True</c> to only get lock status.</param>
+    /// <param name="isLocked"><c>True</c> if the tuner has locked onto signal.</param>
+    /// <param name="isPresent"><c>True</c> if the tuner has detected signal.</param>
+    /// <param name="strength">An indication of signal strength. Range: 0 to 100.</param>
+    /// <param name="quality">An indication of signal quality. Range: 0 to 100.</param>
+    public override void GetSignalStatus(bool onlyGetLock, out bool isLocked, out bool isPresent, out int strength, out int quality)
+    {
+      _dvbcTuner.GetSignalStatus(onlyGetLock, out isLocked, out isPresent, out strength, out quality);
+    }
+
+    #endregion
+
+    #region interfaces
 
     /// <summary>
     /// Get the tuner's channel scanning interface.
@@ -216,6 +234,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte
         return _channelScanner;
       }
     }
+
+    #endregion
 
     #endregion
 

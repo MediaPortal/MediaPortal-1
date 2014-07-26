@@ -386,6 +386,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
 
     #region ITunerInternal members
 
+    #region configuration
+
     /// <summary>
     /// Reload the tuner's configuration.
     /// </summary>
@@ -395,15 +397,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
       _streamTuner.ReloadConfiguration();
     }
 
-    /// <summary>
-    /// Allocate a new sub-channel instance.
-    /// </summary>
-    /// <param name="id">The identifier for the sub-channel.</param>
-    /// <returns>the new sub-channel instance</returns>
-    public override ITvSubChannel CreateNewSubChannel(int id)
-    {
-      return _streamTuner.CreateNewSubChannel(id);
-    }
+    #endregion
+
+    #region state control
 
     /// <summary>
     /// Actually load the tuner.
@@ -417,18 +413,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
       {
         _channelScanner.Tuner = this;
         _channelScanner.Helper = new ChannelScannerHelperDvb();
-      }
-    }
-
-    /// <summary>
-    /// Actually unload the tuner.
-    /// </summary>
-    public override void PerformUnloading()
-    {
-      _channelScanner = null;
-      if (_streamTuner != null)
-      {
-        _streamTuner.PerformUnloading();
       }
     }
 
@@ -492,6 +476,36 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     }
 
     /// <summary>
+    /// Actually unload the tuner.
+    /// </summary>
+    public override void PerformUnloading()
+    {
+      _channelScanner = null;
+      if (_streamTuner != null)
+      {
+        _streamTuner.PerformUnloading();
+      }
+    }
+
+    #endregion
+
+    #region tuning
+
+    /// <summary>
+    /// Allocate a new sub-channel instance.
+    /// </summary>
+    /// <param name="id">The identifier for the sub-channel.</param>
+    /// <returns>the new sub-channel instance</returns>
+    public override ITvSubChannel CreateNewSubChannel(int id)
+    {
+      return _streamTuner.CreateNewSubChannel(id);
+    }
+
+    #endregion
+
+    #region signal
+
+    /// <summary>
     /// Get the tuner's signal status.
     /// </summary>
     /// <param name="onlyGetLock"><c>True</c> to only get lock status.</param>
@@ -538,6 +552,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
       }
     }
 
+    #endregion
+
+    #region interfaces
+
     /// <summary>
     /// Get the tuner's channel scanning interface.
     /// </summary>
@@ -559,6 +577,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
         return _streamTuner.InternalEpgGrabberInterface;
       }
     }
+
+    #endregion
 
     #endregion
 

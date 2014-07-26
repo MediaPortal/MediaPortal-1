@@ -123,113 +123,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     }
 
     /// <summary>
-    /// Get the tuner's signal status.
-    /// </summary>
-    /// <param name="onlyGetLock"><c>True</c> to only get lock status.</param>
-    /// <param name="isLocked"><c>True</c> if the tuner has locked onto signal.</param>
-    /// <param name="isPresent"><c>True</c> if the tuner has detected signal.</param>
-    /// <param name="strength">An indication of signal strength. Range: 0 to 100.</param>
-    /// <param name="quality">An indication of signal quality. Range: 0 to 100.</param>
-    public override void GetSignalStatus(bool onlyGetLock, out bool isLocked, out bool isPresent, out int strength, out int quality)
-    {
-      isLocked = false;
-      isPresent = false;
-      strength = 0;
-      quality = 0;
-      if (_interfaceTuner == null)
-      {
-        return;
-      }
-
-      lock (_tunerAccessLock)
-      {
-        int hr = _interfaceData.SelectDevice(_deviceInfo.DeviceId);
-        if (hr != (int)HResult.Severity.Success)
-        {
-          this.LogError("B2C2 base: failed to select device to update signal status, hr = 0x{0:x}", hr);
-          return;
-        }
-        isLocked = (_interfaceTuner.CheckLock() == 0);
-        isPresent = isLocked;
-        if (!onlyGetLock)
-        {
-          _interfaceTuner.GetSignalStrength(out strength);
-          _interfaceTuner.GetSignalQuality(out quality);
-        }
-      }
-    }
-
-    #region graph building
-
-    /// <summary>
-    /// Actually load the tuner.
-    /// </summary>
-    public override void PerformLoading()
-    {
-      this.LogDebug("B2C2 base: perform loading");
-      InitialiseGraph();
-
-      // Create, add and initialise the B2C2 source filter.
-      _filterB2c2Adapter = FilterGraphTools.AddFilterFromRegisteredClsid(_graph, Constants.B2C2_ADAPTER_CLSID, "B2C2 Source");
-      _interfaceData = _filterB2c2Adapter as IMpeg2DataCtrl6;
-      _interfaceTuner = _filterB2c2Adapter as IMpeg2TunerCtrl4;
-      if (_interfaceTuner == null || _interfaceData == null)
-      {
-        throw new TvException("Failed to find interfaces on source filter.");
-      }
-      int hr = _interfaceTuner.Initialize();
-      HResult.ThrowException(hr, "Failed to initialise tuner interface.");
-
-      // The source filter has multiple output pins, and connecting to the right one is critical.
-      // Extensions can't handle this automatically, so we add an extra infinite tee in between the
-      // source filter and any extension filters.
-      _filterInfiniteTee = (IBaseFilter)new InfTee();
-      FilterGraphTools.AddAndConnectFilterIntoGraph(_graph, _filterInfiniteTee, "Infinite Tee", _filterB2c2Adapter, 2, 0);
-
-      // Load and open extensions.
-      IBaseFilter lastFilter = _filterInfiniteTee;
-      LoadExtensions(_deviceInfo, ref lastFilter);
-
-      // Complete the graph.
-      AddAndConnectTsWriterIntoGraph(lastFilter);
-      CompleteGraph();
-
-      ReadTunerInfo();
-      ReadPidFilterInfo();
-      if (_pidFilterPids.Contains((int)B2c2PidFilterMode.AllExcludingNull) || _pidFilterPids.Contains((int)B2c2PidFilterMode.AllIncludingNull))
-      {
-        _isPidFilterDisabled = false;   // make sure the next call actually disables the filter
-        DisableFilter();
-      }
-      else
-      {
-        _isPidFilterDisabled = true;
-      }
-    }
-
-    /// <summary>
-    /// Actually unload the tuner.
-    /// </summary>
-    public override void PerformUnloading()
-    {
-      this.LogDebug("B2C2 base: perform unloading");
-      _interfaceData = null;
-      _interfaceTuner = null;
-
-      if (_graph != null)
-      {
-        _graph.RemoveFilter(_filterInfiniteTee);
-        _graph.RemoveFilter(_filterB2c2Adapter);
-      }
-      Release.ComObject("B2C2 infinite tee", ref _filterInfiniteTee);
-      Release.ComObject("B2C2 source filter", ref _filterB2c2Adapter);
-
-      CleanUpGraph();
-    }
-
-    #endregion
-
-    /// <summary>
     /// Attempt to read the tuner information.
     /// </summary>
     private void ReadTunerInfo()
@@ -435,6 +328,113 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
         return;
       }
       this.LogDebug("B2C2 base: remote control listener thread stop polling");
+    }
+
+    #endregion
+
+    #region ITunerInternal members
+
+    /// <summary>
+    /// Actually load the tuner.
+    /// </summary>
+    public override void PerformLoading()
+    {
+      this.LogDebug("B2C2 base: perform loading");
+      InitialiseGraph();
+
+      // Create, add and initialise the B2C2 source filter.
+      _filterB2c2Adapter = FilterGraphTools.AddFilterFromRegisteredClsid(_graph, Constants.B2C2_ADAPTER_CLSID, "B2C2 Source");
+      _interfaceData = _filterB2c2Adapter as IMpeg2DataCtrl6;
+      _interfaceTuner = _filterB2c2Adapter as IMpeg2TunerCtrl4;
+      if (_interfaceTuner == null || _interfaceData == null)
+      {
+        throw new TvException("Failed to find interfaces on source filter.");
+      }
+      int hr = _interfaceTuner.Initialize();
+      HResult.ThrowException(hr, "Failed to initialise tuner interface.");
+
+      // The source filter has multiple output pins, and connecting to the right one is critical.
+      // Extensions can't handle this automatically, so we add an extra infinite tee in between the
+      // source filter and any extension filters.
+      _filterInfiniteTee = (IBaseFilter)new InfTee();
+      FilterGraphTools.AddAndConnectFilterIntoGraph(_graph, _filterInfiniteTee, "Infinite Tee", _filterB2c2Adapter, 2, 0);
+
+      // Load and open extensions.
+      IBaseFilter lastFilter = _filterInfiniteTee;
+      LoadExtensions(_deviceInfo, ref lastFilter);
+
+      // Complete the graph.
+      AddAndConnectTsWriterIntoGraph(lastFilter);
+      CompleteGraph();
+
+      ReadTunerInfo();
+      ReadPidFilterInfo();
+      if (_pidFilterPids.Contains((int)B2c2PidFilterMode.AllExcludingNull) || _pidFilterPids.Contains((int)B2c2PidFilterMode.AllIncludingNull))
+      {
+        _isPidFilterDisabled = false;   // make sure the next call actually disables the filter
+        DisableFilter();
+      }
+      else
+      {
+        _isPidFilterDisabled = true;
+      }
+    }
+
+    /// <summary>
+    /// Actually unload the tuner.
+    /// </summary>
+    public override void PerformUnloading()
+    {
+      this.LogDebug("B2C2 base: perform unloading");
+      _interfaceData = null;
+      _interfaceTuner = null;
+
+      if (_graph != null)
+      {
+        _graph.RemoveFilter(_filterInfiniteTee);
+        _graph.RemoveFilter(_filterB2c2Adapter);
+      }
+      Release.ComObject("B2C2 infinite tee", ref _filterInfiniteTee);
+      Release.ComObject("B2C2 source filter", ref _filterB2c2Adapter);
+
+      CleanUpGraph();
+    }
+
+    /// <summary>
+    /// Get the tuner's signal status.
+    /// </summary>
+    /// <param name="onlyGetLock"><c>True</c> to only get lock status.</param>
+    /// <param name="isLocked"><c>True</c> if the tuner has locked onto signal.</param>
+    /// <param name="isPresent"><c>True</c> if the tuner has detected signal.</param>
+    /// <param name="strength">An indication of signal strength. Range: 0 to 100.</param>
+    /// <param name="quality">An indication of signal quality. Range: 0 to 100.</param>
+    public override void GetSignalStatus(bool onlyGetLock, out bool isLocked, out bool isPresent, out int strength, out int quality)
+    {
+      isLocked = false;
+      isPresent = false;
+      strength = 0;
+      quality = 0;
+      if (_interfaceTuner == null)
+      {
+        return;
+      }
+
+      lock (_tunerAccessLock)
+      {
+        int hr = _interfaceData.SelectDevice(_deviceInfo.DeviceId);
+        if (hr != (int)HResult.Severity.Success)
+        {
+          this.LogError("B2C2 base: failed to select device to update signal status, hr = 0x{0:x}", hr);
+          return;
+        }
+        isLocked = (_interfaceTuner.CheckLock() == 0);
+        isPresent = isLocked;
+        if (!onlyGetLock)
+        {
+          _interfaceTuner.GetSignalStrength(out strength);
+          _interfaceTuner.GetSignalQuality(out quality);
+        }
+      }
     }
 
     #endregion

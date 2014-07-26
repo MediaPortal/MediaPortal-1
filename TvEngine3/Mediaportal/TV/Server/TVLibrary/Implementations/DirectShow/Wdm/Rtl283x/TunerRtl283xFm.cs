@@ -302,64 +302,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       SetProductAndTunerInstanceIds(_mainTunerDevice);
     }
 
-    /// <summary>
-    /// Reload the tuner's configuration.
-    /// </summary>
-    public override void ReloadConfiguration()
-    {
-      base.ReloadConfiguration();
-
-      if (_encoder != null)
-      {
-        _encoder.ReloadConfiguration(TunerId);
-      }
-    }
-
-    /// <summary>
-    /// Allocate a new sub-channel instance.
-    /// </summary>
-    /// <param name="id">The identifier for the sub-channel.</param>
-    /// <returns>the new sub-channel instance</returns>
-    public override ITvSubChannel CreateNewSubChannel(int id)
-    {
-      return new SubChannelMpeg2Ts(id, _staTsWriter);
-    }
-
-    /// <summary>
-    /// Get the tuner's signal status.
-    /// </summary>
-    /// <param name="onlyGetLock"><c>True</c> to only get lock status.</param>
-    /// <param name="isLocked"><c>True</c> if the tuner has locked onto signal.</param>
-    /// <param name="isPresent"><c>True</c> if the tuner has detected signal.</param>
-    /// <param name="strength">An indication of signal strength. Range: 0 to 100.</param>
-    /// <param name="quality">An indication of signal quality. Range: 0 to 100.</param>
-    private void InternalGetSignalStatus(bool onlyGetLock, out bool isLocked, out bool isPresent, out int strength, out int quality)
-    {
-      isLocked = false;
-      isPresent = false;
-      strength = 0;
-      quality = 0;
-      if (_fmSource == null)
-      {
-        return;
-      }
-
-      if (_fmSource.GetSignalLock(out isLocked) == Rtl283xFmResult.Fail)
-      {
-        this.LogWarn("RTL283x FM: failed to update signal lock status");
-      }
-      if (onlyGetLock)
-      {
-        return;
-      }
-      isPresent = isLocked;
-      if (_fmSource.GetSignalQuality(out quality) == Rtl283xFmResult.Fail)
-      {
-        this.LogWarn("RTL283x FM: failed to update signal quality");
-      }
-      strength = quality;
-    }
-
     #region graph thread
 
     /// <summary>
@@ -527,98 +469,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
 
     #endregion
 
-    #region job wrappers
-
-    /// <summary>
-    /// Actually load the tuner.
-    /// </summary>
-    public override void PerformLoading()
-    {
-      if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
-      {
-        InternalPerformLoading();
-      }
-      else
-      {
-        object[] p = null;
-        InvokeGraphJob(GraphJobType.Load, ref p);
-      }
-    }
-
-    /// <summary>
-    /// Actually tune to a channel.
-    /// </summary>
-    /// <param name="channel">The channel to tune to.</param>
-    public override void PerformTuning(IChannel channel)
-    {
-      if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
-      {
-        InternalPerformTuning(channel);
-      }
-      else
-      {
-        object[] p = new object[1] { channel };
-        InvokeGraphJob(GraphJobType.Tune, ref p);
-      }
-    }
-
-    /// <summary>
-    /// Get the tuner's signal status.
-    /// </summary>
-    /// <param name="onlyGetLock"><c>True</c> to only get lock status.</param>
-    /// <param name="isLocked"><c>True</c> if the tuner has locked onto signal.</param>
-    /// <param name="isPresent"><c>True</c> if the tuner has detected signal.</param>
-    /// <param name="strength">An indication of signal strength. Range: 0 to 100.</param>
-    /// <param name="quality">An indication of signal quality. Range: 0 to 100.</param>
-    public override void GetSignalStatus(bool onlyGetLock, out bool isLocked, out bool isPresent, out int strength, out int quality)
-    {
-      if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
-      {
-        InternalGetSignalStatus(onlyGetLock, out isLocked, out isPresent, out strength, out quality);
-      }
-      else
-      {
-        object[] p = new object[5] { onlyGetLock, false, false, 0, 0 };
-        InvokeGraphJob(GraphJobType.GetSignalStatus, ref p);
-        isLocked = (bool)p[1];
-        isPresent = (bool)p[2];
-        strength = (int)p[3];
-        quality = (int)p[4];
-      }
-    }
-
-    /// <summary>
-    /// Set the state of the tuner.
-    /// </summary>
-    /// <param name="state">The state to apply to the tuner.</param>
-    public override void SetTunerState(TunerState state)
-    {
-      if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
-      {
-        InternalSetTunerState(state);
-      }
-      else
-      {
-        object[] p = new object[1] { state };
-        InvokeGraphJob(GraphJobType.SetGraphState, ref p);
-      }
-    }
-
-    /// <summary>
-    /// Actually unload the tuner.
-    /// </summary>
-    public override void PerformUnloading()
-    {
-      if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
-      {
-        InternalPerformUnloading();
-      }
-      else
-      {
-        object[] p = null;
-        InvokeGraphJob(GraphJobType.Unload, ref p);
-      }
-    }
+    #region TsWriter wrapping
 
     private int InvokeTsWriterSubChannelJob(string methodName, ref object[] parameters)
     {
@@ -638,9 +489,52 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       return (int)InvokeGraphJob(GraphJobType.TsWriterScanMethod, ref parameters, methodName);
     }
 
+    private int InternalInvokeTsWriterMethod(Type type, string methodName, ref object[] parameters)
+    {
+      return (int)(type.GetMethod(methodName).Invoke(_filterTsWriter, parameters));
+    }
+
     #endregion
 
-    #region graph building
+    #region ITunerInternal members
+
+    // Any method that interacts with the tuner or graph has normal and
+    // internal/wrapped implementations.
+
+    #region configuration
+
+    /// <summary>
+    /// Reload the tuner's configuration.
+    /// </summary>
+    public override void ReloadConfiguration()
+    {
+      base.ReloadConfiguration();
+
+      if (_encoder != null)
+      {
+        _encoder.ReloadConfiguration(TunerId);
+      }
+    }
+
+    #endregion
+
+    #region state control
+
+    /// <summary>
+    /// Actually load the tuner.
+    /// </summary>
+    public override void PerformLoading()
+    {
+      if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
+      {
+        InternalPerformLoading();
+      }
+      else
+      {
+        object[] p = null;
+        InvokeGraphJob(GraphJobType.Load, ref p);
+      }
+    }
 
     /// <summary>
     /// Actually load the tuner.
@@ -743,6 +637,48 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
     }
 
     /// <summary>
+    /// Set the state of the tuner.
+    /// </summary>
+    /// <param name="state">The state to apply to the tuner.</param>
+    public override void SetTunerState(TunerState state)
+    {
+      if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
+      {
+        InternalSetTunerState(state);
+      }
+      else
+      {
+        object[] p = new object[1] { state };
+        InvokeGraphJob(GraphJobType.SetGraphState, ref p);
+      }
+    }
+
+    /// <summary>
+    /// Set the state of the tuner.
+    /// </summary>
+    /// <param name="state">The state to apply to the tuner.</param>
+    private void InternalSetTunerState(TunerState state)
+    {
+      base.SetTunerState(state);
+    }
+
+    /// <summary>
+    /// Actually unload the tuner.
+    /// </summary>
+    public override void PerformUnloading()
+    {
+      if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
+      {
+        InternalPerformUnloading();
+      }
+      else
+      {
+        object[] p = null;
+        InvokeGraphJob(GraphJobType.Unload, ref p);
+      }
+    }
+
+    /// <summary>
     /// Actually unload the tuner.
     /// </summary>
     private void InternalPerformUnloading()
@@ -784,23 +720,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       CleanUpGraph();
     }
 
-    /// <summary>
-    /// Set the state of the tuner.
-    /// </summary>
-    /// <param name="state">The state to apply to the tuner.</param>
-    private void InternalSetTunerState(TunerState state)
-    {
-      base.SetTunerState(state);
-    }
-
-    private int InternalInvokeTsWriterMethod(Type type, string methodName, ref object[] parameters)
-    {
-      return (int)(type.GetMethod(methodName).Invoke(_filterTsWriter, parameters));
-    }
-
     #endregion
 
-    #region tuning & scanning
+    #region tuning
 
     /// <summary>
     /// Check if the tuner can tune to a specific channel.
@@ -810,6 +732,23 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
     public override bool CanTune(IChannel channel)
     {
       return channel is AnalogChannel && channel.MediaType == MediaTypeEnum.Radio;
+    }
+
+    /// <summary>
+    /// Actually tune to a channel.
+    /// </summary>
+    /// <param name="channel">The channel to tune to.</param>
+    public override void PerformTuning(IChannel channel)
+    {
+      if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
+      {
+        InternalPerformTuning(channel);
+      }
+      else
+      {
+        object[] p = new object[1] { channel };
+        InvokeGraphJob(GraphJobType.Tune, ref p);
+      }
     }
 
     /// <summary>
@@ -830,6 +769,82 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       }
       _encoder.PerformTuning(analogChannel);
     }
+
+    /// <summary>
+    /// Allocate a new sub-channel instance.
+    /// </summary>
+    /// <param name="id">The identifier for the sub-channel.</param>
+    /// <returns>the new sub-channel instance</returns>
+    public override ITvSubChannel CreateNewSubChannel(int id)
+    {
+      return new SubChannelMpeg2Ts(id, _staTsWriter);
+    }
+
+    #endregion
+
+    #region signal
+
+    /// <summary>
+    /// Get the tuner's signal status.
+    /// </summary>
+    /// <param name="onlyGetLock"><c>True</c> to only get lock status.</param>
+    /// <param name="isLocked"><c>True</c> if the tuner has locked onto signal.</param>
+    /// <param name="isPresent"><c>True</c> if the tuner has detected signal.</param>
+    /// <param name="strength">An indication of signal strength. Range: 0 to 100.</param>
+    /// <param name="quality">An indication of signal quality. Range: 0 to 100.</param>
+    public override void GetSignalStatus(bool onlyGetLock, out bool isLocked, out bool isPresent, out int strength, out int quality)
+    {
+      if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
+      {
+        InternalGetSignalStatus(onlyGetLock, out isLocked, out isPresent, out strength, out quality);
+      }
+      else
+      {
+        object[] p = new object[5] { onlyGetLock, false, false, 0, 0 };
+        InvokeGraphJob(GraphJobType.GetSignalStatus, ref p);
+        isLocked = (bool)p[1];
+        isPresent = (bool)p[2];
+        strength = (int)p[3];
+        quality = (int)p[4];
+      }
+    }
+
+    /// <summary>
+    /// Get the tuner's signal status.
+    /// </summary>
+    /// <param name="onlyGetLock"><c>True</c> to only get lock status.</param>
+    /// <param name="isLocked"><c>True</c> if the tuner has locked onto signal.</param>
+    /// <param name="isPresent"><c>True</c> if the tuner has detected signal.</param>
+    /// <param name="strength">An indication of signal strength. Range: 0 to 100.</param>
+    /// <param name="quality">An indication of signal quality. Range: 0 to 100.</param>
+    private void InternalGetSignalStatus(bool onlyGetLock, out bool isLocked, out bool isPresent, out int strength, out int quality)
+    {
+      isLocked = false;
+      isPresent = false;
+      strength = 0;
+      quality = 0;
+      if (_fmSource == null)
+      {
+        return;
+      }
+
+      if (_fmSource.GetSignalLock(out isLocked) == Rtl283xFmResult.Fail)
+      {
+        this.LogWarn("RTL283x FM: failed to update signal lock status");
+      }
+      if (onlyGetLock)
+      {
+        return;
+      }
+      isPresent = isLocked;
+      if (_fmSource.GetSignalQuality(out quality) == Rtl283xFmResult.Fail)
+      {
+        this.LogWarn("RTL283x FM: failed to update signal quality");
+      }
+      strength = quality;
+    }
+
+    #endregion
 
     #endregion
 

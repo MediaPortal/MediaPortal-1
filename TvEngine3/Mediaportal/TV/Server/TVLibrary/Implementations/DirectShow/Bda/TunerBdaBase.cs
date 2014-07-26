@@ -143,50 +143,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
 
     #endregion
 
-    /// <summary>
-    /// Reload the tuner's configuration.
-    /// </summary>
-    public override void ReloadConfiguration()
-    {
-      base.ReloadConfiguration();
-
-      this.LogDebug("BDA base: reload configuration");
-      bool save = false;
-      Card tuner = CardManagement.GetCard(TunerId, CardIncludeRelationEnum.None);
-      _networkProviderClsid = NetworkProviderClsid; // specific network provider
-      if (tuner.NetProvider == (int)DbNetworkProvider.MediaPortal)
-      {
-        if (!File.Exists(PathManager.BuildAssemblyRelativePath("NetworkProvider.ax")))
-        {
-          this.LogWarn("BDA base: MediaPortal network provider is not available, try Microsoft generic network provider");
-          tuner.NetProvider = (int)DbNetworkProvider.Generic;
-          save = true;
-        }
-        else
-        {
-          _networkProviderClsid = typeof(MediaPortalNetworkProvider).GUID;
-        }
-      }
-      if (tuner.NetProvider == (int)DbNetworkProvider.Generic)
-      {
-        if (!FilterGraphTools.IsThisComObjectInstalled(typeof(NetworkProvider).GUID))
-        {
-          this.LogWarn("BDA base: MediaPortal network provider is not available, try Microsoft specific network provider");
-          tuner.NetProvider = (int)DbNetworkProvider.Specific;
-          save = true;
-        }
-        else
-        {
-          _networkProviderClsid = typeof(NetworkProvider).GUID;
-        }
-      }
-      if (save)
-      {
-        CardManagement.SaveCard(tuner);
-      }
-    }
-
-    #region tuning & scanning
+    #region tuning
 
     /// <summary>
     /// Tune to a specific channel.
@@ -202,41 +159,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
         _filterTransportInformation.Stop();
       }
       return subChannel;
-    }
-
-    /// <summary>
-    /// Actually tune to a channel.
-    /// </summary>
-    /// <param name="channel">The channel to tune to.</param>
-    public override void PerformTuning(IChannel channel)
-    {
-      int hr = (int)HResult.Severity.Success;
-      if (_networkProviderClsid == typeof(MediaPortalNetworkProvider).GUID)
-      {
-        this.LogDebug("BDA base: perform tuning, MediaPortal network provider tuning");
-        IDvbNetworkProvider networkProviderInterface = _filterNetworkProvider as IDvbNetworkProvider;
-        if (networkProviderInterface == null)
-        {
-          throw new TvException("Failed to find MediaPortal network provider interface on network provider.");
-        }
-        hr = PerformMediaPortalNetworkProviderTuning(networkProviderInterface, channel);
-      }
-      else
-      {
-        this.LogDebug("BDA base: perform tuning, standard BDA tuning");
-        ITuneRequest tuneRequest = AssembleTuneRequest(_tuningSpace, channel);
-        this.LogDebug("BDA base: apply tuning parameters");
-        hr = (_filterNetworkProvider as ITuner).put_TuneRequest(tuneRequest);
-        this.LogDebug("BDA base: parameters applied, hr = 0x{0:x}", hr);
-        Release.ComObject("base BDA tuner tune request", ref tuneRequest);
-      }
-
-      // TerraTec tuners return a positive HRESULT value when already tuned with the required
-      // parameters. See mantis 3469 for more details.
-      if (hr < (int)HResult.Severity.Success)
-      {
-        HResult.ThrowException(hr, "Failed to tune channel.");
-      }
     }
 
     /// <summary>
@@ -258,72 +180,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     #endregion
 
     #region graph building
-
-    /// <summary>
-    /// Actually load the tuner.
-    /// </summary>
-    public override void PerformLoading()
-    {
-      this.LogDebug("BDA base: perform loading");
-      InitialiseGraph();
-      AddNetworkProviderFilterToGraph();
-
-      int hr = (int)HResult.Severity.Success;
-      if (_networkProviderClsid != typeof(MediaPortalNetworkProvider).GUID)
-      {
-        // Initialise the tuning space for Microsoft network providers.
-        _tuningSpace = GetTuningSpace();
-        if (_tuningSpace == null)
-        {
-          _tuningSpace = CreateTuningSpace();
-        }
-
-        // Some specific Microsoft network providers won't connect to the tuner
-        // filter unless you set a tuning space first. This is not required for
-        // the generic network provider, which returns HRESULT 0x80070057
-        // (E_INVALIDARG) if you try put_TuningSpace().
-        if (_networkProviderClsid == NetworkProviderClsid)
-        {
-          ITuner tuner = _filterNetworkProvider as ITuner;
-          if (tuner == null)
-          {
-            throw new TvException("Failed to find tuner interface on network provider.");
-          }
-          hr = tuner.put_TuningSpace(_tuningSpace);
-          HResult.ThrowException(hr, "Failed to apply tuning space on tuner.");
-        }
-      }
-
-      AddMainComponentFilterToGraph();
-      FilterGraphTools.ConnectFilters(_graph, _filterNetworkProvider, 0, _filterMain, 0);
-
-      IBaseFilter lastFilter = _filterMain;
-      AddAndConnectCaptureFilterIntoGraph(ref lastFilter);
-
-      // Check for and load extensions, adding any additional filters to the graph.
-      LoadExtensions(_filterMain, ref lastFilter);
-
-      // If using a Microsoft network provider and configured to do so, add an
-      // infinite tee, MPEG 2 demultiplexer and transport information filter in
-      // addition to the required TS writer/analyser.
-      if (_networkProviderClsid != typeof(MediaPortalNetworkProvider).GUID && _addCompatibilityFilters)
-      {
-        this.LogDebug("BDA base: add compatibility filters");
-        _filterInfiniteTee = (IBaseFilter)new InfTee();
-        FilterGraphTools.AddAndConnectFilterIntoGraph(_graph, _filterInfiniteTee, "Infinite Tee", lastFilter);
-        AddAndConnectTsWriterIntoGraph(_filterInfiniteTee);
-        _filterMpeg2Demultiplexer = (IBaseFilter)new MPEG2Demultiplexer();
-        FilterGraphTools.AddAndConnectFilterIntoGraph(_graph, _filterMpeg2Demultiplexer, "MPEG 2 Demultiplexer", _filterInfiniteTee, 1);
-        AddAndConnectTransportInformationFilterIntoGraph();
-      }
-      else
-      {
-        AddAndConnectTsWriterIntoGraph(lastFilter);
-      }
-
-      CompleteGraph();
-      _signalStatisticsInterfaces = GetTunerSignalStatisticsInterfaces();
-    }
 
     /// <summary>
     /// Add the appropriate BDA network provider filter to the graph.
@@ -559,6 +415,125 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       return statistics;
     }
 
+    #endregion
+
+    #region ITunerInternal members
+
+    #region configuration
+
+    /// <summary>
+    /// Reload the tuner's configuration.
+    /// </summary>
+    public override void ReloadConfiguration()
+    {
+      base.ReloadConfiguration();
+
+      this.LogDebug("BDA base: reload configuration");
+      bool save = false;
+      Card tuner = CardManagement.GetCard(TunerId, CardIncludeRelationEnum.None);
+      _networkProviderClsid = NetworkProviderClsid; // specific network provider
+      if (tuner.NetProvider == (int)DbNetworkProvider.MediaPortal)
+      {
+        if (!File.Exists(PathManager.BuildAssemblyRelativePath("NetworkProvider.ax")))
+        {
+          this.LogWarn("BDA base: MediaPortal network provider is not available, try Microsoft generic network provider");
+          tuner.NetProvider = (int)DbNetworkProvider.Generic;
+          save = true;
+        }
+        else
+        {
+          _networkProviderClsid = typeof(MediaPortalNetworkProvider).GUID;
+        }
+      }
+      if (tuner.NetProvider == (int)DbNetworkProvider.Generic)
+      {
+        if (!FilterGraphTools.IsThisComObjectInstalled(typeof(NetworkProvider).GUID))
+        {
+          this.LogWarn("BDA base: MediaPortal network provider is not available, try Microsoft specific network provider");
+          tuner.NetProvider = (int)DbNetworkProvider.Specific;
+          save = true;
+        }
+        else
+        {
+          _networkProviderClsid = typeof(NetworkProvider).GUID;
+        }
+      }
+      if (save)
+      {
+        CardManagement.SaveCard(tuner);
+      }
+    }
+
+    #endregion
+
+    #region state control
+
+    /// <summary>
+    /// Actually load the tuner.
+    /// </summary>
+    public override void PerformLoading()
+    {
+      this.LogDebug("BDA base: perform loading");
+      InitialiseGraph();
+      AddNetworkProviderFilterToGraph();
+
+      int hr = (int)HResult.Severity.Success;
+      if (_networkProviderClsid != typeof(MediaPortalNetworkProvider).GUID)
+      {
+        // Initialise the tuning space for Microsoft network providers.
+        _tuningSpace = GetTuningSpace();
+        if (_tuningSpace == null)
+        {
+          _tuningSpace = CreateTuningSpace();
+        }
+
+        // Some specific Microsoft network providers won't connect to the tuner
+        // filter unless you set a tuning space first. This is not required for
+        // the generic network provider, which returns HRESULT 0x80070057
+        // (E_INVALIDARG) if you try put_TuningSpace().
+        if (_networkProviderClsid == NetworkProviderClsid)
+        {
+          ITuner tuner = _filterNetworkProvider as ITuner;
+          if (tuner == null)
+          {
+            throw new TvException("Failed to find tuner interface on network provider.");
+          }
+          hr = tuner.put_TuningSpace(_tuningSpace);
+          HResult.ThrowException(hr, "Failed to apply tuning space on tuner.");
+        }
+      }
+
+      AddMainComponentFilterToGraph();
+      FilterGraphTools.ConnectFilters(_graph, _filterNetworkProvider, 0, _filterMain, 0);
+
+      IBaseFilter lastFilter = _filterMain;
+      AddAndConnectCaptureFilterIntoGraph(ref lastFilter);
+
+      // Check for and load extensions, adding any additional filters to the graph.
+      LoadExtensions(_filterMain, ref lastFilter);
+
+      // If using a Microsoft network provider and configured to do so, add an
+      // infinite tee, MPEG 2 demultiplexer and transport information filter in
+      // addition to the required TS writer/analyser.
+      if (_networkProviderClsid != typeof(MediaPortalNetworkProvider).GUID && _addCompatibilityFilters)
+      {
+        this.LogDebug("BDA base: add compatibility filters");
+        _filterInfiniteTee = (IBaseFilter)new InfTee();
+        FilterGraphTools.AddAndConnectFilterIntoGraph(_graph, _filterInfiniteTee, "Infinite Tee", lastFilter);
+        AddAndConnectTsWriterIntoGraph(_filterInfiniteTee);
+        _filterMpeg2Demultiplexer = (IBaseFilter)new MPEG2Demultiplexer();
+        FilterGraphTools.AddAndConnectFilterIntoGraph(_graph, _filterMpeg2Demultiplexer, "MPEG 2 Demultiplexer", _filterInfiniteTee, 1);
+        AddAndConnectTransportInformationFilterIntoGraph();
+      }
+      else
+      {
+        AddAndConnectTsWriterIntoGraph(lastFilter);
+      }
+
+      CompleteGraph();
+      _signalStatisticsInterfaces = GetTunerSignalStatisticsInterfaces();
+    }
+
     /// <summary>
     /// Actually unload the tuner.
     /// </summary>
@@ -605,7 +580,46 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
 
     #endregion
 
-    #region signal status
+    #region tuning
+
+    /// <summary>
+    /// Actually tune to a channel.
+    /// </summary>
+    /// <param name="channel">The channel to tune to.</param>
+    public override void PerformTuning(IChannel channel)
+    {
+      int hr = (int)HResult.Severity.Success;
+      if (_networkProviderClsid == typeof(MediaPortalNetworkProvider).GUID)
+      {
+        this.LogDebug("BDA base: perform tuning, MediaPortal network provider tuning");
+        IDvbNetworkProvider networkProviderInterface = _filterNetworkProvider as IDvbNetworkProvider;
+        if (networkProviderInterface == null)
+        {
+          throw new TvException("Failed to find MediaPortal network provider interface on network provider.");
+        }
+        hr = PerformMediaPortalNetworkProviderTuning(networkProviderInterface, channel);
+      }
+      else
+      {
+        this.LogDebug("BDA base: perform tuning, standard BDA tuning");
+        ITuneRequest tuneRequest = AssembleTuneRequest(_tuningSpace, channel);
+        this.LogDebug("BDA base: apply tuning parameters");
+        hr = (_filterNetworkProvider as ITuner).put_TuneRequest(tuneRequest);
+        this.LogDebug("BDA base: parameters applied, hr = 0x{0:x}", hr);
+        Release.ComObject("base BDA tuner tune request", ref tuneRequest);
+      }
+
+      // TerraTec tuners return a positive HRESULT value when already tuned with the required
+      // parameters. See mantis 3469 for more details.
+      if (hr < (int)HResult.Severity.Success)
+      {
+        HResult.ThrowException(hr, "Failed to tune channel.");
+      }
+    }
+
+    #endregion
+
+    #region signal
 
     /// <summary>
     /// Get the tuner's signal status.
@@ -731,6 +745,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
         quality = (quality - _signalQualityMin) * 100 / (_signalQualityMax - _signalQualityMin);
       }
     }
+
+    #endregion
 
     #endregion
 

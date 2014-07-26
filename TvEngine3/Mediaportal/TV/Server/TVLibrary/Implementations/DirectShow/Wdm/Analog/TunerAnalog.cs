@@ -115,72 +115,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
     #endregion
 
     /// <summary>
-    /// Reload the tuner's configuration.
-    /// </summary>
-    public override void ReloadConfiguration()
-    {
-      base.ReloadConfiguration();
-
-      this.LogDebug("WDM analog: reload configuration");
-      _externalTunerChannel = new AnalogChannel();
-      _externalTunerChannel.TunerSource = (TunerInputType)SettingsManagement.GetValue("tuner" + TunerId + "ExternalTunerTunerSource", (int)TunerInputType.Cable);
-      int countryId = SettingsManagement.GetValue("tuner" + TunerId + "ExternalTunerCountry", 1);
-      CountryCollection countries = new CountryCollection();
-      _externalTunerChannel.Country = countries.GetTunerCountryFromID(countryId);
-      _externalTunerChannel.ChannelNumber = SettingsManagement.GetValue("tuner" + TunerId + "ExternalTunerSourceChannelNumber", 6);
-      _externalTunerChannel.VideoSource = (CaptureSourceVideo)SettingsManagement.GetValue("tuner" + TunerId + "ExternalTunerSourceVideo", (int)CaptureSourceVideo.Composite1);
-      _externalTunerChannel.AudioSource = (CaptureSourceAudio)SettingsManagement.GetValue("tuner" + TunerId + "ExternalTunerSourceAudio", (int)CaptureSourceAudio.Line1);
-      _externalTunerChannel.MediaType = MediaTypeEnum.TV;
-      if (_externalTunerChannel.VideoSource == CaptureSourceVideo.None)
-      {
-        _externalTunerChannel.MediaType = MediaTypeEnum.Radio;
-      }
-      _externalTunerChannel.Name = "External Tuner Input";
-      _externalTunerChannel.IsVcrSignal = true;
-      _externalTunerChannel.Frequency = 0;
-      _externalTunerChannel.FreeToAir = true;
-      this.LogDebug("WDM analog: external tuner source, {0}", _externalTunerChannel.ToString());
-
-      _externalTunerCommand = SettingsManagement.GetValue("tuner" + TunerId + "ExternalTunerCommand", string.Empty);
-      _externalTunerCommandArguments = SettingsManagement.GetValue("tuner" + TunerId + "ExternalTunerCommandArguments", string.Empty);
-      this.LogDebug("WDM analog: external tuner command, {0} {1}", _externalTunerCommand, _externalTunerCommandArguments);
-
-      if (_capture != null)
-      {
-        _capture.ReloadConfiguration(TunerId);
-      }
-      if (_encoder != null)
-      {
-        _encoder.ReloadConfiguration(TunerId);
-      }
-    }
-
-    /// <summary>
-    /// Get the tuner's signal status.
-    /// </summary>
-    /// <param name="onlyGetLock"><c>True</c> to only get lock status.</param>
-    /// <param name="isLocked"><c>True</c> if the tuner has locked onto signal.</param>
-    /// <param name="isPresent"><c>True</c> if the tuner has detected signal.</param>
-    /// <param name="strength">An indication of signal strength. Range: 0 to 100.</param>
-    /// <param name="quality">An indication of signal quality. Range: 0 to 100.</param>
-    public override void GetSignalStatus(bool onlyGetLock, out bool isLocked, out bool isPresent, out int strength, out int quality)
-    {
-      if (_tuner == null)
-      {
-        // Capture sources don't have a tuner.
-        isLocked = true;
-        isPresent = true;
-        strength = 100;
-        quality = 100;
-        return;
-      }
-
-      _tuner.GetSignalStatus(out isLocked, out strength);
-      isPresent = isLocked;
-      quality = strength;
-    }
-
-    /// <summary>
     /// Get a list of channels representing the external non-tuner sources available from this tuner.
     /// </summary>
     /// <returns>a list of channels, one channel per source</returns>
@@ -225,7 +159,54 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
       }
     }
 
-    #region graph building
+    #region ITunerInternal members
+
+    #region configuration
+
+    /// <summary>
+    /// Reload the tuner's configuration.
+    /// </summary>
+    public override void ReloadConfiguration()
+    {
+      base.ReloadConfiguration();
+
+      this.LogDebug("WDM analog: reload configuration");
+      _externalTunerChannel = new AnalogChannel();
+      _externalTunerChannel.TunerSource = (TunerInputType)SettingsManagement.GetValue("tuner" + TunerId + "ExternalTunerTunerSource", (int)TunerInputType.Cable);
+      int countryId = SettingsManagement.GetValue("tuner" + TunerId + "ExternalTunerCountry", 1);
+      CountryCollection countries = new CountryCollection();
+      _externalTunerChannel.Country = countries.GetTunerCountryFromID(countryId);
+      _externalTunerChannel.ChannelNumber = SettingsManagement.GetValue("tuner" + TunerId + "ExternalTunerSourceChannelNumber", 6);
+      _externalTunerChannel.VideoSource = (CaptureSourceVideo)SettingsManagement.GetValue("tuner" + TunerId + "ExternalTunerSourceVideo", (int)CaptureSourceVideo.Composite1);
+      _externalTunerChannel.AudioSource = (CaptureSourceAudio)SettingsManagement.GetValue("tuner" + TunerId + "ExternalTunerSourceAudio", (int)CaptureSourceAudio.Line1);
+      _externalTunerChannel.MediaType = MediaTypeEnum.TV;
+      if (_externalTunerChannel.VideoSource == CaptureSourceVideo.None)
+      {
+        _externalTunerChannel.MediaType = MediaTypeEnum.Radio;
+      }
+      _externalTunerChannel.Name = "External Tuner Input";
+      _externalTunerChannel.IsVcrSignal = true;
+      _externalTunerChannel.Frequency = 0;
+      _externalTunerChannel.FreeToAir = true;
+      this.LogDebug("WDM analog: external tuner source, {0}", _externalTunerChannel.ToString());
+
+      _externalTunerCommand = SettingsManagement.GetValue("tuner" + TunerId + "ExternalTunerCommand", string.Empty);
+      _externalTunerCommandArguments = SettingsManagement.GetValue("tuner" + TunerId + "ExternalTunerCommandArguments", string.Empty);
+      this.LogDebug("WDM analog: external tuner command, {0} {1}", _externalTunerCommand, _externalTunerCommandArguments);
+
+      if (_capture != null)
+      {
+        _capture.ReloadConfiguration(TunerId);
+      }
+      if (_encoder != null)
+      {
+        _encoder.ReloadConfiguration(TunerId);
+      }
+    }
+
+    #endregion
+
+    #region state control
 
     /// <summary>
     /// Actually load the tuner.
@@ -308,7 +289,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
 
     #endregion
 
-    #region tuning & scanning
+    #region tuning
 
     /// <summary>
     /// Check if the tuner can tune to a specific channel.
@@ -391,6 +372,37 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
       _capture.PerformTuning(tuneChannel);
       _encoder.PerformTuning(tuneChannel);
     }
+
+    #endregion
+
+    #region signal
+
+    /// <summary>
+    /// Get the tuner's signal status.
+    /// </summary>
+    /// <param name="onlyGetLock"><c>True</c> to only get lock status.</param>
+    /// <param name="isLocked"><c>True</c> if the tuner has locked onto signal.</param>
+    /// <param name="isPresent"><c>True</c> if the tuner has detected signal.</param>
+    /// <param name="strength">An indication of signal strength. Range: 0 to 100.</param>
+    /// <param name="quality">An indication of signal quality. Range: 0 to 100.</param>
+    public override void GetSignalStatus(bool onlyGetLock, out bool isLocked, out bool isPresent, out int strength, out int quality)
+    {
+      if (_tuner == null)
+      {
+        // Capture sources don't have a tuner.
+        isLocked = true;
+        isPresent = true;
+        strength = 100;
+        quality = 100;
+        return;
+      }
+
+      _tuner.GetSignalStatus(out isLocked, out strength);
+      isPresent = isLocked;
+      quality = strength;
+    }
+
+    #endregion
 
     #endregion
   }

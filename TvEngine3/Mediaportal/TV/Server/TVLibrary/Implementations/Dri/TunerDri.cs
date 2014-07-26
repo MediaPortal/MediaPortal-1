@@ -174,19 +174,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       }
     }
 
-    /// <summary>
-    /// Reload the tuner's configuration.
-    /// </summary>
-    public override void ReloadConfiguration()
-    {
-      base.ReloadConfiguration();
-
-      // Use the "tune" time out as a limit on the program number query time.
-      _programNumberTimeOut = SettingsManagement.GetValue("timeoutTune", 10) * 1000;
-
-      _streamTuner.ReloadConfiguration();
-    }
-
     private void ReadDeviceInfo()
     {
       try
@@ -238,21 +225,320 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       }
     }
 
-    #region sub-channel management
+    /// <summary>
+    /// Stop the tuner.
+    /// </summary>
+    public override void Stop()
+    {
+      // CableCARD tuners don't forget the tuned channel after they're stopped,
+      // and they reject tune requests for the current channel.
+      IChannel savedTuningDetail = _currentTuningDetail;
+      base.Stop();
+      _currentTuningDetail = savedTuningDetail;
+    }
+
+    private bool IsTunerInUse()
+    {
+      if (_gotTunerControl)
+      {
+        return false;
+      }
+      AvTransportStatus transportStatus = AvTransportStatus.Ok;
+      string speed = string.Empty;
+      _serviceAvTransport.GetTransportInfo((uint)_avTransportId, out _transportState, out transportStatus, out speed);
+      if (transportStatus != AvTransportStatus.Ok)
+      {
+        this.LogWarn("DRI CableCARD: unexpected transport status {0}", transportStatus);
+      }
+      if (_transportState == AvTransportState.Stopped)
+      {
+        return false;
+      }
+      return true;
+    }
+
+    #region RTSP
+
+    private void StartStreaming()
+    {
+      if (!string.IsNullOrEmpty(_rtspSessionId))
+      {
+        return;
+      }
+      this.LogDebug("DRI CableCARD: start streaming");
+      Uri uri = new Uri(_rtspUri);
+      if (uri.IsDefaultPort)
+      {
+        _rtspClient = new Rtsp.RtspClient(uri.Host);
+      }
+      else
+      {
+        _rtspClient = new Rtsp.RtspClient(uri.Host, uri.Port);
+      }
+
+      // Find a free port for receiving the RTP stream.
+      int rtpClientPort = 0;
+      TcpConnectionInformation[] activeTcpConnections = IPGlobalProperties.GetIPGlobalProperties().GetActiveTcpConnections();
+      HashSet<int> usedPorts = new HashSet<int>();
+      foreach (TcpConnectionInformation connection in activeTcpConnections)
+      {
+        if (connection.LocalEndPoint.Address == _localIpAddress)
+        {
+          usedPorts.Add(connection.LocalEndPoint.Port);
+        }
+        if (connection.RemoteEndPoint.Address == _localIpAddress)
+        {
+          usedPorts.Add(connection.RemoteEndPoint.Port);
+        }
+      }
+      for (int port = 40000; port <= 65534; port += 2)
+      {
+        // We need two adjacent ports. One for RTP; one for RTCP. By
+        // convention, the RTP port is even.
+        if (!usedPorts.Contains(port) && !usedPorts.Contains(port + 1))
+        {
+          rtpClientPort = port;
+          break;
+        }
+      }
+      this.LogDebug("DRI CableCARD: send RTSP SETUP, RTP client port = {0}", rtpClientPort);
+      RtspRequest request = new RtspRequest(RtspMethod.Setup, _rtspUri);
+      request.Headers.Add("Transport", string.Format("RTP/AVP;unicast;client_port={0}-{1}", rtpClientPort, rtpClientPort + 1));
+      Rtsp.RtspResponse response;
+      _rtspClient.SendRequest(request, out response);
+      if (_rtspClient.SendRequest(request, out response) != RtspStatusCode.Ok)
+      {
+        throw new TvException("Failed to start streaming, non-OK RTSP SETUP status code {0} {1}", response.StatusCode, response.ReasonPhrase);
+      }
+
+      if (!response.Headers.TryGetValue("Session", out _rtspSessionId))
+      {
+        throw new TvException("Failed to start streaming, not able to find session header in RTSP SETUP response");
+      }
+
+      bool foundRtpTransport = false;
+      string rtpServerPort = null;
+      string transportHeader;
+      if (!response.Headers.TryGetValue("Transport", out transportHeader))
+      {
+        throw new TvException("Failed to start streaming, not able to find transport header in RTSP SETUP response");
+      }
+      string[] transports = transportHeader.Split(',');
+      foreach (string transport in transports)
+      {
+        if (transport.Trim().StartsWith("RTP/AVP"))
+        {
+          foundRtpTransport = true;
+          string[] sections = transport.Split(';');
+          foreach (string section in sections)
+          {
+            string[] parts = section.Split('=');
+            if (parts[0].Equals("server_port"))
+            {
+              string[] ports = parts[1].Split('-');
+              rtpServerPort = ports[0];
+            }
+            else if (parts[0].Equals("client_port"))
+            {
+              string[] ports = parts[1].Split('-');
+              if (!ports[0].Equals(rtpClientPort))
+              {
+                this.LogWarn("DRI CableCARD: server specified RTP client port {0} instead of {1}", ports[0], rtpClientPort);
+              }
+              rtpClientPort = int.Parse(ports[0]);
+            }
+          }
+        }
+      }
+      if (!foundRtpTransport)
+      {
+        throw new TvException("Failed to start streaming, not able to find RTP transport details in RTSP SETUP response transport header");
+      }
+      DVBIPChannel streamChannel = new DVBIPChannel();
+      if (string.IsNullOrEmpty(rtpServerPort) || rtpServerPort.Equals("0"))
+      {
+        streamChannel.Url = string.Format("rtp://{0}@{1}:{2}", _serverIpAddress, _localIpAddress, rtpClientPort);
+      }
+      else
+      {
+        streamChannel.Url = string.Format("rtp://{0}:{1}@{2}:{3}", _serverIpAddress, rtpServerPort, _localIpAddress, rtpClientPort);
+      }
+      this.LogDebug("DRI CableCARD: RTSP SETUP response okay, session ID = {0}, RTP URL = {1}", _rtspSessionId, streamChannel.Url);
+
+      this.LogDebug("DRI CableCARD: send RTSP PLAY");
+      request = new RtspRequest(RtspMethod.Play, _rtspUri);
+      request.Headers.Add("Session", _rtspSessionId);
+      if (_rtspClient.SendRequest(request, out response) != RtspStatusCode.Ok)
+      {
+        throw new TvException("Failed to start streaming, non-OK RTSP PLAY status code {0} {1}", response.StatusCode, response.ReasonPhrase);
+      }
+      this.LogDebug("DRI CableCARD: RTSP PLAY response okay");
+
+      _streamTuner.PerformTuning(streamChannel);
+    }
+
+    private void StopStreaming()
+    {
+      if (_rtspClient == null || string.IsNullOrEmpty(_rtspSessionId))
+      {
+        return;
+      }
+      this.LogDebug("DRI CableCARD: stop streaming");
+      RtspRequest request = new RtspRequest(RtspMethod.Teardown, _rtspUri);
+      request.Headers.Add("Session", _rtspSessionId);
+      RtspResponse response;
+      if (_rtspClient.SendRequest(request, out response) != RtspStatusCode.Ok)
+      {
+        throw new TvException("Failed to stop streaming, non-OK RTSP TEARDOWN status code {0} {1}.", response.StatusCode, response.ReasonPhrase);
+      }
+      _rtspSessionId = string.Empty;
+    }
+
+    #endregion
+
+    #region UPnP
 
     /// <summary>
-    /// Allocate a new sub-channel instance.
+    /// Handle UPnP evented state variable changes.
     /// </summary>
-    /// <param name="id">The identifier for the sub-channel.</param>
-    /// <returns>the new sub-channel instance</returns>
-    public override ITvSubChannel CreateNewSubChannel(int id)
+    /// <param name="stateVariable">The state variable that has changed.</param>
+    /// <param name="newValue">The new value of the state variable.</param>
+    private void OnStateVariableChanged(CpStateVariable stateVariable, object newValue)
     {
-      return _streamTuner.CreateNewSubChannel(id);
+      try
+      {
+        if (stateVariable.Name.Equals("PCRLock") || stateVariable.Name.Equals("Lock"))
+        {
+          if (!(bool)newValue)
+          {
+            this.LogInfo("DRI CableCARD: tuner {0} {1} update, not locked", TunerId, stateVariable.Name);
+          }
+          if (InternalChannelScanningInterface == null || !InternalChannelScanningInterface.IsScanning)
+          {
+            _isSignalLocked = (bool)newValue;
+          }
+        }
+        else if (stateVariable.Name.Equals("TableSection"))
+        {
+          byte[] section = (byte[])newValue;
+          if (section != null && section.Length > 3)
+          {
+            byte tableId = section[2];
+            if (tableId == 0xc2 || tableId == 0xc3 || tableId == 0xc4 || tableId == 0xc8 || tableId == 0xc9)
+            {
+              ChannelScannerDri scanner = InternalChannelScanningInterface as ChannelScannerDri;
+              if (scanner != null)
+              {
+                scanner.OnTableSection(section);
+              }
+            }
+            else if ((tableId != 0xc5 || section.Length != 16) && tableId != 0xfd) // not a standard system time or stuffing table
+            {
+              this.LogDebug("DRI CableCARD: unhandled table section, table ID = {0}", tableId);
+              Dump.DumpBinary(section);
+            }
+          }
+        }
+        else if (stateVariable.Name.Equals("CardStatus"))
+        {
+          CasCardStatus oldStatus = _cardStatus;
+          _cardStatus = (CasCardStatus)(string)newValue;
+          if (oldStatus != _cardStatus)
+          {
+            this.LogInfo("DRI CableCARD: tuner {0} CableCARD status update, old status = {1}, new status = {2}", TunerId, oldStatus, _cardStatus);
+          }
+        }
+        else if (stateVariable.Name.Equals("CardMessage"))
+        {
+          if (!string.IsNullOrEmpty(newValue.ToString()))
+          {
+            this.LogInfo("DRI CableCARD: tuner {0} received message from the CableCARD, current status = {1}, message = {2}", TunerId, _cardStatus, newValue);
+          }
+        }
+        else if (stateVariable.Name.Equals("MMIMessage"))
+        {
+          lock (_caMenuCallBackLock)
+          {
+            _caMenuHandler.HandleDialog((byte[])newValue, _caMenuCallBack);
+          }
+        }
+        else if (stateVariable.Name.Equals("DescramblingStatus"))
+        {
+          CasDescramblingStatus oldStatus = _descramblingStatus;
+          _descramblingStatus = (CasDescramblingStatus)(string)newValue;
+          if (oldStatus != _descramblingStatus)
+          {
+            this.LogInfo("DRI CableCARD: tuner {0} descrambling status update, old status = {1}, new status = {2}", TunerId, oldStatus, _descramblingStatus);
+          }
+        }
+        else if (stateVariable.Name.Equals("DrmPairingStatus"))
+        {
+          SecurityPairingStatus oldStatus = _pairingStatus;
+          _pairingStatus = (SecurityPairingStatus)(string)newValue;
+          if (oldStatus != _pairingStatus)
+          {
+            this.LogInfo("DRI CableCARD: tuner {0} pairing status update, old status = {1}, new status = {2}", TunerId, oldStatus, _pairingStatus);
+          }
+        }
+        else
+        {
+          string unqualifiedServiceName = stateVariable.ParentService.ServiceId.Substring(stateVariable.ParentService.ServiceId.LastIndexOf(":") + 1);
+          this.LogDebug("DRI CableCARD: tuner {0} state variable {1} for service {2} changed to {3}", TunerId, stateVariable.Name, unqualifiedServiceName, newValue ?? "[null]");
+        }
+      }
+      catch (Exception ex)
+      {
+        this.LogError(ex, "DRI CableCARD: tuner {0} failed to handle state variable change", TunerId);
+      }
+    }
+
+    /// <summary>
+    /// Handle UPnP state variable event subscription failure notifications.
+    /// </summary>
+    /// <param name="service">The service that the subscription relates to.</param>
+    /// <param name="error">Failure details.</param>
+    private void OnEventSubscriptionFailed(CpService service, UPnPError error)
+    {
+      string unqualifiedServiceName = service.ServiceId.Substring(service.ServiceId.LastIndexOf(":") + 1);
+      this.LogError("DRI CableCARD: tuner {0} failed to subscribe to state variable events for service {1}, code = {2}, description = {3}", TunerId, unqualifiedServiceName, error.ErrorCode, error.ErrorDescription);
+    }
+
+    /// <summary>
+    /// Resolve a DRI-specific data type.
+    /// </summary>
+    /// <param name="dataTypeName">The fully qualified name of the data type.</param>
+    /// <param name="dataType">The data type.</param>
+    /// <returns><c>true</c> if the data type has been resolved, otherwise <c>false</c></returns>
+    public static bool ResolveDataType(string dataTypeName, out UPnPExtendedDataType dataType)
+    {
+      // All the DRI variable types are standard, so we don't expect to be asked to resolve any data types.
+      Log.Error("DRI: resolve data type not supported, type name = {0}", dataTypeName);
+      dataType = null;
+      return true;
     }
 
     #endregion
 
     #region ITunerInternal members
+
+    #region configuration
+
+    /// <summary>
+    /// Reload the tuner's configuration.
+    /// </summary>
+    public override void ReloadConfiguration()
+    {
+      base.ReloadConfiguration();
+
+      // Use the "tune" time out as a limit on the program number query time.
+      _programNumberTimeOut = SettingsManagement.GetValue("timeoutTune", 10) * 1000;
+
+      _streamTuner.ReloadConfiguration();
+    }
+
+    #endregion
+
+    #region state control
 
     /// <summary>
     /// Actually load the tuner.
@@ -300,6 +586,59 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
 
       _streamTuner.PerformLoading();
       _channelScanner = new ChannelScannerDri(this, _serverIpAddress, _serviceFdc.RequestTables);
+    }
+
+    /// <summary>
+    /// Set the state of the tuner.
+    /// </summary>
+    /// <param name="state">The state to apply to the tuner.</param>
+    public override void SetTunerState(TunerState state)
+    {
+      this.LogDebug("DRI CableCARD: set tuner state, current state = {0}, requested state = {1}", _state, state);
+
+      if (state == _state)
+      {
+        this.LogDebug("DRI CableCARD: tuner already in required state");
+        return;
+      }
+
+      ATSCChannel atscChannel = _currentTuningDetail as ATSCChannel;
+      if (InternalChannelScanningInterface != null && InternalChannelScanningInterface.IsScanning && atscChannel != null && atscChannel.PhysicalChannel == 0)
+      {
+        // Scanning with a CableCARD doesn't require streaming. The channel
+        // info is evented via the forward data channel service.
+        return;
+      }
+
+      if (_serviceAvTransport != null && _gotTunerControl)
+      {
+        if (state == TunerState.Stopped || state == TunerState.Paused)
+        {
+          if (state == TunerState.Stopped)
+          {
+            _serviceAvTransport.Stop((uint)_avTransportId);
+            _transportState = AvTransportState.Stopped;
+            _gotTunerControl = false;
+          }
+          else
+          {
+            _serviceAvTransport.Pause((uint)_avTransportId);
+            _transportState = AvTransportState.PausedPlayback;
+          }
+          StopStreaming();
+        }
+        else if (state == TunerState.Started)
+        {
+          _serviceAvTransport.Play((uint)_avTransportId, "1");
+          _transportState = AvTransportState.Playing;
+          StartStreaming();
+        }
+      }
+
+      // Attempt to set the stream tuner state. This might fail and leave us in
+      // an inconsistent state, but there isn't too much we can do about that.
+      _state = state;
+      _streamTuner.SetTunerState(state);
     }
 
     /// <summary>
@@ -383,82 +722,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       }
 
       _streamTuner.PerformUnloading();
-    }
-
-    /// <summary>
-    /// Set the state of the tuner.
-    /// </summary>
-    /// <param name="state">The state to apply to the tuner.</param>
-    public override void SetTunerState(TunerState state)
-    {
-      this.LogDebug("DRI CableCARD: set tuner state, current state = {0}, requested state = {1}", _state, state);
-
-      if (state == _state)
-      {
-        this.LogDebug("DRI CableCARD: tuner already in required state");
-        return;
-      }
-
-      ATSCChannel atscChannel = _currentTuningDetail as ATSCChannel;
-      if (InternalChannelScanningInterface != null && InternalChannelScanningInterface.IsScanning && atscChannel != null && atscChannel.PhysicalChannel == 0)
-      {
-        // Scanning with a CableCARD doesn't require streaming. The channel
-        // info is evented via the forward data channel service.
-        return;
-      }
-
-      if (_serviceAvTransport != null && _gotTunerControl)
-      {
-        if (state == TunerState.Stopped || state == TunerState.Paused)
-        {
-          if (state == TunerState.Stopped)
-          {
-            _serviceAvTransport.Stop((uint)_avTransportId);
-            _transportState = AvTransportState.Stopped;
-            _gotTunerControl = false;
-          }
-          else
-          {
-            _serviceAvTransport.Pause((uint)_avTransportId);
-            _transportState = AvTransportState.PausedPlayback;
-          }
-          StopStreaming();
-        }
-        else if (state == TunerState.Started)
-        {
-          _serviceAvTransport.Play((uint)_avTransportId, "1");
-          _transportState = AvTransportState.Playing;
-          StartStreaming();
-        }
-      }
-
-      // Attempt to set the stream tuner state. This might fail and leave us in
-      // an inconsistent state, but there isn't too much we can do about that.
-      _state = state;
-      _streamTuner.SetTunerState(state);
-    }
-
-    /// <summary>
-    /// Get the tuner's channel scanning interface.
-    /// </summary>
-    public override IChannelScannerInternal InternalChannelScanningInterface
-    {
-      get
-      {
-        return _channelScanner;
-      }
-    }
-
-    /// <summary>
-    /// Stop the tuner.
-    /// </summary>
-    public override void Stop()
-    {
-      // CableCARD tuners don't forget the tuned channel after they're stopped,
-      // and they reject tune requests for the current channel.
-      IChannel savedTuningDetail = _currentTuningDetail;
-      base.Stop();
-      _currentTuningDetail = savedTuningDetail;
     }
 
     #endregion
@@ -629,159 +892,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       _isSignalLocked = isSignalLocked;
     }
 
-    private void StartStreaming()
+    /// <summary>
+    /// Allocate a new sub-channel instance.
+    /// </summary>
+    /// <param name="id">The identifier for the sub-channel.</param>
+    /// <returns>the new sub-channel instance</returns>
+    public override ITvSubChannel CreateNewSubChannel(int id)
     {
-      if (!string.IsNullOrEmpty(_rtspSessionId))
-      {
-        return;
-      }
-      this.LogDebug("DRI CableCARD: start streaming");
-      Uri uri = new Uri(_rtspUri);
-      if (uri.IsDefaultPort)
-      {
-        _rtspClient = new Rtsp.RtspClient(uri.Host);
-      }
-      else
-      {
-        _rtspClient = new Rtsp.RtspClient(uri.Host, uri.Port);
-      }
-
-      // Find a free port for receiving the RTP stream.
-      int rtpClientPort = 0;
-      TcpConnectionInformation[] activeTcpConnections = IPGlobalProperties.GetIPGlobalProperties().GetActiveTcpConnections();
-      HashSet<int> usedPorts = new HashSet<int>();
-      foreach (TcpConnectionInformation connection in activeTcpConnections)
-      {
-        if (connection.LocalEndPoint.Address == _localIpAddress)
-        {
-          usedPorts.Add(connection.LocalEndPoint.Port);
-        }
-        if (connection.RemoteEndPoint.Address == _localIpAddress)
-        {
-          usedPorts.Add(connection.RemoteEndPoint.Port);
-        }
-      }
-      for (int port = 40000; port <= 65534; port += 2)
-      {
-        // We need two adjacent ports. One for RTP; one for RTCP. By
-        // convention, the RTP port is even.
-        if (!usedPorts.Contains(port) && !usedPorts.Contains(port + 1))
-        {
-          rtpClientPort = port;
-          break;
-        }
-      }
-      this.LogDebug("DRI CableCARD: send RTSP SETUP, RTP client port = {0}", rtpClientPort);
-      RtspRequest request = new RtspRequest(RtspMethod.Setup, _rtspUri);
-      request.Headers.Add("Transport", string.Format("RTP/AVP;unicast;client_port={0}-{1}", rtpClientPort, rtpClientPort + 1));
-      Rtsp.RtspResponse response;
-      _rtspClient.SendRequest(request, out response);
-      if (_rtspClient.SendRequest(request, out response) != RtspStatusCode.Ok)
-      {
-        throw new TvException("Failed to start streaming, non-OK RTSP SETUP status code {0} {1}", response.StatusCode, response.ReasonPhrase);
-      }
-
-      if (!response.Headers.TryGetValue("Session", out _rtspSessionId))
-      {
-        throw new TvException("Failed to start streaming, not able to find session header in RTSP SETUP response");
-      }
-
-      bool foundRtpTransport = false;
-      string rtpServerPort = null;
-      string transportHeader;
-      if (!response.Headers.TryGetValue("Transport", out transportHeader))
-      {
-        throw new TvException("Failed to start streaming, not able to find transport header in RTSP SETUP response");
-      }
-      string[] transports = transportHeader.Split(',');
-      foreach (string transport in transports)
-      {
-        if (transport.Trim().StartsWith("RTP/AVP"))
-        {
-          foundRtpTransport = true;
-          string[] sections = transport.Split(';');
-          foreach (string section in sections)
-          {
-            string[] parts = section.Split('=');
-            if (parts[0].Equals("server_port"))
-            {
-              string[] ports = parts[1].Split('-');
-              rtpServerPort = ports[0];
-            }
-            else if (parts[0].Equals("client_port"))
-            {
-              string[] ports = parts[1].Split('-');
-              if (!ports[0].Equals(rtpClientPort))
-              {
-                this.LogWarn("DRI CableCARD: server specified RTP client port {0} instead of {1}", ports[0], rtpClientPort);
-              }
-              rtpClientPort = int.Parse(ports[0]);
-            }
-          }
-        }
-      }
-      if (!foundRtpTransport)
-      {
-        throw new TvException("Failed to start streaming, not able to find RTP transport details in RTSP SETUP response transport header");
-      }
-      DVBIPChannel streamChannel = new DVBIPChannel();
-      if (string.IsNullOrEmpty(rtpServerPort) || rtpServerPort.Equals("0"))
-      {
-        streamChannel.Url = string.Format("rtp://{0}@{1}:{2}", _serverIpAddress, _localIpAddress, rtpClientPort);
-      }
-      else
-      {
-        streamChannel.Url = string.Format("rtp://{0}:{1}@{2}:{3}", _serverIpAddress, rtpServerPort, _localIpAddress, rtpClientPort);
-      }
-      this.LogDebug("DRI CableCARD: RTSP SETUP response okay, session ID = {0}, RTP URL = {1}", _rtspSessionId, streamChannel.Url);
-
-      this.LogDebug("DRI CableCARD: send RTSP PLAY");
-      request = new RtspRequest(RtspMethod.Play, _rtspUri);
-      request.Headers.Add("Session", _rtspSessionId);
-      if (_rtspClient.SendRequest(request, out response) != RtspStatusCode.Ok)
-      {
-        throw new TvException("Failed to start streaming, non-OK RTSP PLAY status code {0} {1}", response.StatusCode, response.ReasonPhrase);
-      }
-      this.LogDebug("DRI CableCARD: RTSP PLAY response okay");
-
-      _streamTuner.PerformTuning(streamChannel);
-    }
-
-    private void StopStreaming()
-    {
-      if (_rtspClient == null || string.IsNullOrEmpty(_rtspSessionId))
-      {
-        return;
-      }
-      this.LogDebug("DRI CableCARD: stop streaming");
-      RtspRequest request = new RtspRequest(RtspMethod.Teardown, _rtspUri);
-      request.Headers.Add("Session", _rtspSessionId);
-      RtspResponse response;
-      if (_rtspClient.SendRequest(request, out response) != RtspStatusCode.Ok)
-      {
-        throw new TvException("Failed to stop streaming, non-OK RTSP TEARDOWN status code {0} {1}.", response.StatusCode, response.ReasonPhrase);
-      }
-      _rtspSessionId = string.Empty;
-    }
-
-    private bool IsTunerInUse()
-    {
-      if (_gotTunerControl)
-      {
-        return false;
-      }
-      AvTransportStatus transportStatus = AvTransportStatus.Ok;
-      string speed = string.Empty;
-      _serviceAvTransport.GetTransportInfo((uint)_avTransportId, out _transportState, out transportStatus, out speed);
-      if (transportStatus != AvTransportStatus.Ok)
-      {
-        this.LogWarn("DRI CableCARD: unexpected transport status {0}", transportStatus);
-      }
-      if (_transportState == AvTransportState.Stopped)
-      {
-        return false;
-      }
-      return true;
+      return _streamTuner.CreateNewSubChannel(id);
     }
 
     #endregion
@@ -912,126 +1030,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
 
     #endregion
 
-    #region UPnP
+    #region interfaces
 
     /// <summary>
-    /// Handle UPnP evented state variable changes.
+    /// Get the tuner's channel scanning interface.
     /// </summary>
-    /// <param name="stateVariable">The state variable that has changed.</param>
-    /// <param name="newValue">The new value of the state variable.</param>
-    private void OnStateVariableChanged(CpStateVariable stateVariable, object newValue)
+    public override IChannelScannerInternal InternalChannelScanningInterface
     {
-      try
+      get
       {
-        if (stateVariable.Name.Equals("PCRLock") || stateVariable.Name.Equals("Lock"))
-        {
-          if (!(bool)newValue)
-          {
-            this.LogInfo("DRI CableCARD: tuner {0} {1} update, not locked", TunerId, stateVariable.Name);
-          }
-          if (InternalChannelScanningInterface == null || !InternalChannelScanningInterface.IsScanning)
-          {
-            _isSignalLocked = (bool)newValue;
-          }
-        }
-        else if (stateVariable.Name.Equals("TableSection"))
-        {
-          byte[] section = (byte[])newValue;
-          if (section != null && section.Length > 3)
-          {
-            byte tableId = section[2];
-            if (tableId == 0xc2 || tableId == 0xc3 || tableId == 0xc4 || tableId == 0xc8 || tableId == 0xc9)
-            {
-              ChannelScannerDri scanner = InternalChannelScanningInterface as ChannelScannerDri;
-              if (scanner != null)
-              {
-                scanner.OnTableSection(section);
-              }
-            }
-            else if ((tableId != 0xc5 || section.Length != 16) && tableId != 0xfd) // not a standard system time or stuffing table
-            {
-              this.LogDebug("DRI CableCARD: unhandled table section, table ID = {0}", tableId);
-              Dump.DumpBinary(section);
-            }
-          }
-        }
-        else if (stateVariable.Name.Equals("CardStatus"))
-        {
-          CasCardStatus oldStatus = _cardStatus;
-          _cardStatus = (CasCardStatus)(string)newValue;
-          if (oldStatus != _cardStatus)
-          {
-            this.LogInfo("DRI CableCARD: tuner {0} CableCARD status update, old status = {1}, new status = {2}", TunerId, oldStatus, _cardStatus);
-          }
-        }
-        else if (stateVariable.Name.Equals("CardMessage"))
-        {
-          if (!string.IsNullOrEmpty(newValue.ToString()))
-          {
-            this.LogInfo("DRI CableCARD: tuner {0} received message from the CableCARD, current status = {1}, message = {2}", TunerId, _cardStatus, newValue);
-          }
-        }
-        else if (stateVariable.Name.Equals("MMIMessage"))
-        {
-          lock (_caMenuCallBackLock)
-          {
-            _caMenuHandler.HandleDialog((byte[])newValue, _caMenuCallBack);
-          }
-        }
-        else if (stateVariable.Name.Equals("DescramblingStatus"))
-        {
-          CasDescramblingStatus oldStatus = _descramblingStatus;
-          _descramblingStatus = (CasDescramblingStatus)(string)newValue;
-          if (oldStatus != _descramblingStatus)
-          {
-            this.LogInfo("DRI CableCARD: tuner {0} descrambling status update, old status = {1}, new status = {2}", TunerId, oldStatus, _descramblingStatus);
-          }
-        }
-        else if (stateVariable.Name.Equals("DrmPairingStatus"))
-        {
-          SecurityPairingStatus oldStatus = _pairingStatus;
-          _pairingStatus = (SecurityPairingStatus)(string)newValue;
-          if (oldStatus != _pairingStatus)
-          {
-            this.LogInfo("DRI CableCARD: tuner {0} pairing status update, old status = {1}, new status = {2}", TunerId, oldStatus, _pairingStatus);
-          }
-        }
-        else
-        {
-          string unqualifiedServiceName = stateVariable.ParentService.ServiceId.Substring(stateVariable.ParentService.ServiceId.LastIndexOf(":") + 1);
-          this.LogDebug("DRI CableCARD: tuner {0} state variable {1} for service {2} changed to {3}", TunerId, stateVariable.Name, unqualifiedServiceName, newValue ?? "[null]");
-        }
-      }
-      catch (Exception ex)
-      {
-        this.LogError(ex, "DRI CableCARD: tuner {0} failed to handle state variable change", TunerId);
+        return _channelScanner;
       }
     }
 
-    /// <summary>
-    /// Handle UPnP state variable event subscription failure notifications.
-    /// </summary>
-    /// <param name="service">The service that the subscription relates to.</param>
-    /// <param name="error">Failure details.</param>
-    private void OnEventSubscriptionFailed(CpService service, UPnPError error)
-    {
-      string unqualifiedServiceName = service.ServiceId.Substring(service.ServiceId.LastIndexOf(":") + 1);
-      this.LogError("DRI CableCARD: tuner {0} failed to subscribe to state variable events for service {1}, code = {2}, description = {3}", TunerId, unqualifiedServiceName, error.ErrorCode, error.ErrorDescription);
-    }
-
-    /// <summary>
-    /// Resolve a DRI-specific data type.
-    /// </summary>
-    /// <param name="dataTypeName">The fully qualified name of the data type.</param>
-    /// <param name="dataType">The data type.</param>
-    /// <returns><c>true</c> if the data type has been resolved, otherwise <c>false</c></returns>
-    public static bool ResolveDataType(string dataTypeName, out UPnPExtendedDataType dataType)
-    {
-      // All the DRI variable types are standard, so we don't expect to be asked to resolve any data types.
-      Log.Error("DRI: resolve data type not supported, type name = {0}", dataTypeName);
-      dataType = null;
-      return true;
-    }
+    #endregion
 
     #endregion
 

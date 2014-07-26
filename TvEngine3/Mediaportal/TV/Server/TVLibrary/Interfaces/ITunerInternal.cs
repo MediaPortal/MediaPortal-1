@@ -47,10 +47,36 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
 
     #endregion
 
+    #region configuration
+
     /// <summary>
     /// Reload the tuner's configuration.
     /// </summary>
     void ReloadConfiguration();
+
+    #endregion
+
+    #region state control
+
+    /// <summary>
+    /// Actually load the tuner.
+    /// </summary>
+    void PerformLoading();
+
+    /// <summary>
+    /// Set the state of the tuner.
+    /// </summary>
+    /// <param name="state">The state to apply to the tuner.</param>
+    void SetTunerState(TunerState state);
+
+    /// <summary>
+    /// Actually unload the tuner.
+    /// </summary>
+    void PerformUnloading();
+
+    #endregion
+
+    #region tuning
 
     /// <summary>
     /// Check if the tuner can tune to a specific channel.
@@ -60,14 +86,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     bool CanTune(IChannel channel);
 
     /// <summary>
-    /// Actually load the tuner.
+    /// Actually tune to a channel.
     /// </summary>
-    void PerformLoading();
+    /// <param name="channel">The channel to tune to.</param>
+    void PerformTuning(IChannel channel);
 
     /// <summary>
-    /// Actually unload the tuner.
+    /// Allocate a new sub-channel instance.
     /// </summary>
-    void PerformUnloading();
+    /// <param name="id">The identifier for the sub-channel.</param>
+    /// <returns>the new sub-channel instance</returns>
+    ITvSubChannel CreateNewSubChannel(int id);
+
+    #endregion
+
+    #region signal
 
     /// <summary>
     /// Get the tuner's signal status.
@@ -83,24 +116,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// <param name="quality">An indication of signal quality. Range: 0 to 100.</param>
     void GetSignalStatus(bool onlyGetLock, out bool isLocked, out bool isPresent, out int strength, out int quality);
 
-    /// <summary>
-    /// Allocate a new sub-channel instance.
-    /// </summary>
-    /// <param name="id">The identifier for the sub-channel.</param>
-    /// <returns>the new sub-channel instance</returns>
-    ITvSubChannel CreateNewSubChannel(int id);
+    #endregion
 
-    /// <summary>
-    /// Actually tune to a channel.
-    /// </summary>
-    /// <param name="channel">The channel to tune to.</param>
-    void PerformTuning(IChannel channel);
-
-    /// <summary>
-    /// Set the state of the tuner.
-    /// </summary>
-    /// <param name="state">The state to apply to the tuner.</param>
-    void SetTunerState(TunerState state);
+    #region interfaces
 
     /// <summary>
     /// Get the tuner's channel scanning interface.
@@ -117,5 +135,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     {
       get;
     }
+
+    #endregion
   }
 }

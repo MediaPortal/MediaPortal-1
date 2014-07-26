@@ -114,7 +114,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
 
     #endregion
 
-    #region graph building
+    #region ITunerInternal members
+
+    #region state control
 
     /// <summary>
     /// Actually load the tuner.
@@ -161,7 +163,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
 
     #endregion
 
-    #region tuning & scanning
+    #region tuning
+
+    /// <summary>
+    /// Check if the tuner can tune to a specific channel.
+    /// </summary>
+    /// <param name="channel">The channel to check.</param>
+    /// <returns><c>true</c> if the tuner can tune to the channel, otherwise <c>false</c></returns>
+    public override bool CanTune(IChannel channel)
+    {
+      return channel is DVBIPChannel;
+    }
 
     /// <summary>
     /// Actually tune to a channel.
@@ -178,17 +190,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
       HResult.ThrowException(hr, "Failed to tune channel.");
     }
 
-    /// <summary>
-    /// Check if the tuner can tune to a specific channel.
-    /// </summary>
-    /// <param name="channel">The channel to check.</param>
-    /// <returns><c>true</c> if the tuner can tune to the channel, otherwise <c>false</c></returns>
-    public override bool CanTune(IChannel channel)
-    {
-      return channel is DVBIPChannel;
-    }
-
     #endregion
+
+    #region signal
 
     /// <summary>
     /// Get the tuner's signal status.
@@ -205,5 +209,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
       strength = 100;
       quality = 100;
     }
+
+    #endregion
+
+    #endregion
   }
 }
