@@ -44,7 +44,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     {
     }
 
-    #region tuning & scanning
+    #region tuning
 
     /// <summary>
     /// Check if the tuner can tune to a specific channel.
@@ -118,10 +118,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       // ATSC/SCTE EPG grabbing currently not supported.
       _epgGrabber = null;
 
-      IChannelScannerInternal scanner = _channelScanner as IChannelScannerInternal;
-      if (scanner != null)
+      if (_channelScanner != null)
       {
-        scanner.Helper = new ChannelScannerHelperAtsc();
+        _channelScanner.Helper = new ChannelScannerHelperAtsc();
       }
     }
 

@@ -150,16 +150,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       // ATSC/SCTE EPG grabbing currently not supported.
       _epgGrabber = null;
 
-      IChannelScannerInternal scanner = _channelScanner as IChannelScannerInternal;
-      if (scanner != null)
+      if (_channelScanner != null)
       {
-        scanner.Helper = new ChannelScannerHelperAtsc();
+        _channelScanner.Helper = new ChannelScannerHelperAtsc();
       }
     }
 
     #endregion
 
-    #region tuning & scanning
+    #region tuning
 
     /// <summary>
     /// Assemble a BDA tune request for a given channel.
