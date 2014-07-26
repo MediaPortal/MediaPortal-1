@@ -275,7 +275,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// The tuner's current tuning parameter values or null if the tuner is not tuned.
     /// </summary>
-    protected IChannel _currentTuningDetail = null;
+    private IChannel _currentTuningDetail = null;
 
     /// <summary>
     /// Enable or disable the use of extensions for tuning.
@@ -295,7 +295,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// The current state of the tuner.
     /// </summary>
-    protected TunerState _state = TunerState.NotLoaded;
+    private TunerState _state = TunerState.NotLoaded;
 
     /// <summary>
     /// Does the tuner support receiving more than one service simultaneously?
@@ -1098,7 +1098,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <remarks>
     /// The actual result of this function depends on tuner configuration.
     /// </remarks>
-    public virtual void Stop()
+    public void Stop()
     {
       this.LogDebug("tuner base: stop, idle mode = {0}", _idleMode);
       TunerAction action = TunerAction.Stop;
@@ -1230,7 +1230,25 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// Set the state of the tuner.
     /// </summary>
     /// <param name="state">The state to apply to the tuner.</param>
-    public abstract void SetTunerState(TunerState state);
+    private void SetTunerState(TunerState state)
+    {
+      this.LogDebug("tuner base: set tuner state, current state = {0}, requested state = {1}", _state, state);
+
+      if (state == _state)
+      {
+        this.LogDebug("tuner base: tuner already in required state");
+        return;
+      }
+
+      PerformSetTunerState(state);
+      _state = state;
+    }
+
+    /// <summary>
+    /// Actually set the state of the tuner.
+    /// </summary>
+    /// <param name="state">The state to apply to the tuner.</param>
+    public abstract void PerformSetTunerState(TunerState state);
 
     #endregion
 
@@ -1691,7 +1709,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// (for example, DVB-S vs. DVB-S2) would usually result in different behaviour. Note that it is usually
     /// not ideal to have to manually enable or disable a PID filter as it can affect tuning reliability.
     /// </remarks>
-    protected PidFilterMode _pidFilterMode = PidFilterMode.Auto;
+    private PidFilterMode _pidFilterMode = PidFilterMode.Auto;
     private HashSet<ushort> _previousPids = new HashSet<ushort>();
 
     /// <summary>

@@ -64,10 +64,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     void PerformLoading();
 
     /// <summary>
-    /// Set the state of the tuner.
+    /// Actually set the state of the tuner.
     /// </summary>
     /// <param name="state">The state to apply to the tuner.</param>
-    void SetTunerState(TunerState state);
+    void PerformSetTunerState(TunerState state);
 
     /// <summary>
     /// Actually unload the tuner.

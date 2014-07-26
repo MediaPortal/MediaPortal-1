@@ -417,18 +417,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     }
 
     /// <summary>
-    /// Set the state of the tuner.
+    /// Actually set the state of the tuner.
     /// </summary>
     /// <param name="state">The state to apply to the tuner.</param>
-    public override void SetTunerState(TunerState state)
+    public override void PerformSetTunerState(TunerState state)
     {
-      this.LogDebug("SAT>IP base: set tuner state, current state = {0}, requested state = {1}", _state, state);
-
-      if (state == _state)
-      {
-        this.LogDebug("SAT>IP base: tuner already in required state");
-        return;
-      }
+      this.LogDebug("SAT>IP base: perform set tuner state");
 
       RtspRequest request = null;
       RtspResponse response = null;
@@ -469,10 +463,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
         }
       }
 
-      // Attempt to set the stream tuner state. This might fail and leave us in
-      // an inconsistent state, but there isn't too much we can do about that.
-      _state = state;
-      _streamTuner.SetTunerState(state);
+      _streamTuner.PerformSetTunerState(state);
     }
 
     /// <summary>

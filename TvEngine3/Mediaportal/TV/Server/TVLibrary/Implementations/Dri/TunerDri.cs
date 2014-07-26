@@ -118,6 +118,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     /// </summary>
     private IChannelScannerInternal _channelScanner = null;
 
+    /// <summary>
+    /// The tuner's current tuning parameter values.
+    /// </summary>
+    private ATSCChannel _currentTuningDetail = null;
+
     #endregion
 
     /// <summary>
@@ -225,17 +230,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       }
     }
 
-    /// <summary>
-    /// Stop the tuner.
-    /// </summary>
-    public override void Stop()
-    {
-      // CableCARD tuners don't forget the tuned channel after they're stopped,
-      // and they reject tune requests for the current channel.
-      IChannel savedTuningDetail = _currentTuningDetail;
-      base.Stop();
-      _currentTuningDetail = savedTuningDetail;
-    }
+    #region tuning
 
     private bool IsTunerInUse()
     {
@@ -256,6 +251,108 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       }
       return true;
     }
+
+    private void TuneCableCard(ATSCChannel atscChannel, out bool isSignalLocked)
+    {
+      _currentFrequency = -1;
+      try
+      {
+        if (atscChannel.MajorChannel > 0)
+        {
+          this.LogDebug("DRI CableCARD: tuning by channel number");
+          _serviceCas.SetChannel((uint)atscChannel.MajorChannel, 0, CasCaptureMode.Live, out isSignalLocked);
+        }
+        else if (atscChannel.NetworkId > 0)
+        {
+          this.LogDebug("DRI CableCARD: tuning by source ID");
+          _serviceCas.SetChannel(0, (uint)atscChannel.NetworkId, CasCaptureMode.Live, out isSignalLocked);
+        }
+        else
+        {
+          throw new TvException("Not able to tune encrypted channel without both channel number and source ID.");
+        }
+
+        // When switched digital video (SDV) is active - ie. the tuner uses a
+        // tuning adaptor/resolver to ask the cable system which frequency
+        // and program number to tune - we have to ask the tuner what the
+        // correct program number is.
+        // Note that SiliconDust and Hauppauge tuners actually deliver a TS
+        // with a single program. For them it would be enough to set the
+        // program number to 0. However Ceton tuners deliver the PAT and PMT
+        // for all the programs in the full transport stream, only excluding
+        // extra video and audio streams. Therefore we have to do this...
+        if (atscChannel.ServiceId != 0)
+        {
+          DateTime now = DateTime.Now;
+          int originalProgramNumber = atscChannel.ServiceId;
+          while ((DateTime.Now - now).TotalMilliseconds < _programNumberTimeOut)
+          {
+            try
+            {
+              atscChannel.ServiceId = (int)_serviceMux.QueryStateVariable("ProgramNumber");
+              if (atscChannel.ServiceId != 0)
+              {
+                if (atscChannel.ServiceId != originalProgramNumber)
+                {
+                  this.LogDebug("DRI CableCARD: actual program number is {0}", atscChannel.ServiceId);
+                }
+                break;
+              }
+              System.Threading.Thread.Sleep(20);
+            }
+            catch (Exception ex)
+            {
+              this.LogError(ex, "DRI CableCARD: failed to get actual program number");
+              break;
+            }
+          }
+        }
+      }
+      catch (UPnPException ex)
+      {
+        UPnPRemoteException rex = ex.InnerException as UPnPRemoteException;
+        if (rex != null && rex.Error.ErrorDescription.Equals("Tuner In Use"))
+        {
+          this.LogInfo("DRI CableCARD: some other application or device is currently using the tuner");
+          _gotTunerControl = false;
+        }
+        throw;
+      }
+    }
+
+    private void TuneAtscOrClearQam(ATSCChannel atscChannel, out bool isSignalLocked)
+    {
+      if (atscChannel.Frequency <= 0)
+      {
+        throw new TvException("Not able to tune non-encrypted channel without frequency.");
+      }
+      this.LogDebug("DRI CableCARD: tuning by frequency");
+      IList<TunerModulation> moduations = new List<TunerModulation>();
+      if (atscChannel.ModulationType == ModulationType.Mod256Qam)
+      {
+        moduations.Add(TunerModulation.Qam256);
+      }
+      else if (atscChannel.ModulationType == ModulationType.Mod64Qam)
+      {
+        moduations.Add(TunerModulation.Qam64);
+      }
+      else if (atscChannel.ModulationType == ModulationType.Mod8Vsb)
+      {
+        moduations.Add(TunerModulation.Vsb8);
+      }
+      else
+      {
+        this.LogWarn("DRI CableCARD: unsupported modulation {0}, allowing tuner to use any supported modulation", atscChannel.ModulationType);
+        moduations.Add(TunerModulation.All);
+      }
+
+      _currentFrequency = -1;
+      uint currentFrequency;
+      TunerModulation currentModulation;
+      _serviceTuner.SetTunerParameters((uint)atscChannel.Frequency, moduations, out currentFrequency, out currentModulation, out isSignalLocked);
+    }
+
+    #endregion
 
     #region RTSP
 
@@ -589,18 +686,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     }
 
     /// <summary>
-    /// Set the state of the tuner.
+    /// Actually set the state of the tuner.
     /// </summary>
     /// <param name="state">The state to apply to the tuner.</param>
-    public override void SetTunerState(TunerState state)
+    public override void PerformSetTunerState(TunerState state)
     {
-      this.LogDebug("DRI CableCARD: set tuner state, current state = {0}, requested state = {1}", _state, state);
-
-      if (state == _state)
-      {
-        this.LogDebug("DRI CableCARD: tuner already in required state");
-        return;
-      }
+      this.LogDebug("DRI CableCARD: perform set tuner state");
 
       ATSCChannel atscChannel = _currentTuningDetail as ATSCChannel;
       if (InternalChannelScanningInterface != null && InternalChannelScanningInterface.IsScanning && atscChannel != null && atscChannel.PhysicalChannel == 0)
@@ -635,10 +726,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
         }
       }
 
-      // Attempt to set the stream tuner state. This might fail and leave us in
-      // an inconsistent state, but there isn't too much we can do about that.
-      _state = state;
-      _streamTuner.SetTunerState(state);
+      _streamTuner.PerformSetTunerState(state);
     }
 
     /// <summary>
@@ -789,106 +877,23 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       }
       _gotTunerControl = true;
 
-      // CableCARD tuning
+      // CableCARD tuners don't forget the tuned channel after they're stopped,
+      // and they reject tune requests for the current channel.
+      if (_currentTuningDetail != null && _currentTuningDetail.IsDifferentTransponder(atscChannel))
+      {
+        this.LogDebug("DRI CableCARD: already tuned");
+        return;
+      }
+
       if (!atscChannel.FreeToAir)
       {
-        _currentFrequency = -1;
-        try
-        {
-          if (atscChannel.MajorChannel > 0)
-          {
-            this.LogDebug("DRI CableCARD: tuning by channel number");
-            _serviceCas.SetChannel((uint)atscChannel.MajorChannel, 0, CasCaptureMode.Live, out isSignalLocked);
-          }
-          else if (atscChannel.NetworkId > 0)
-          {
-            this.LogDebug("DRI CableCARD: tuning by source ID");
-            _serviceCas.SetChannel(0, (uint)atscChannel.NetworkId, CasCaptureMode.Live, out isSignalLocked);
-          }
-          else
-          {
-            throw new TvException("Not able to tune encrypted channel without both channel number and source ID.");
-          }
-
-          // When switched digital video (SDV) is active - ie. the tuner uses a
-          // tuning adaptor/resolver to ask the cable system which frequency
-          // and program number to tune - we have to ask the tuner what the
-          // correct program number is.
-          // Note that SiliconDust and Hauppauge tuners actually deliver a TS
-          // with a single program. For them it would be enough to set the
-          // program number to 0. However Ceton tuners deliver the PAT and PMT
-          // for all the programs in the full transport stream, only excluding
-          // extra video and audio streams. Therefore we have to do this...
-          if (atscChannel.ServiceId != 0)
-          {
-            DateTime now = DateTime.Now;
-            int originalProgramNumber = atscChannel.ServiceId;
-            while ((DateTime.Now - now).TotalMilliseconds < _programNumberTimeOut)
-            {
-              try
-              {
-                atscChannel.ServiceId = (int)_serviceMux.QueryStateVariable("ProgramNumber");
-                if (atscChannel.ServiceId != 0)
-                {
-                  if (atscChannel.ServiceId != originalProgramNumber)
-                  {
-                    this.LogDebug("DRI CableCARD: actual program number is {0}", atscChannel.ServiceId);
-                  }
-                  break;
-                }
-                System.Threading.Thread.Sleep(20);
-              }
-              catch (Exception ex)
-              {
-                this.LogError(ex, "DRI CableCARD: failed to get actual program number");
-                break;
-              }
-            }
-          }
-        }
-        catch (UPnPException ex)
-        {
-          UPnPRemoteException rex = ex.InnerException as UPnPRemoteException;
-          if (rex != null && rex.Error.ErrorDescription.Equals("Tuner In Use"))
-          {
-            this.LogInfo("DRI CableCARD: some other application or device is currently using the tuner");
-            _gotTunerControl = false;
-          }
-          throw;
-        }
+        TuneCableCard(atscChannel, out isSignalLocked);
       }
-      // clear QAM or ATSC tuning
       else
       {
-        if (atscChannel.Frequency <= 0)
-        {
-          throw new TvException("Not able to tune non-encrypted channel without frequency.");
-        }
-        this.LogDebug("DRI CableCARD: tuning by frequency");
-        IList<TunerModulation> moduations = new List<TunerModulation>();
-        if (atscChannel.ModulationType == ModulationType.Mod256Qam)
-        {
-          moduations.Add(TunerModulation.Qam256);
-        }
-        else if (atscChannel.ModulationType == ModulationType.Mod64Qam)
-        {
-          moduations.Add(TunerModulation.Qam64);
-        }
-        else if (atscChannel.ModulationType == ModulationType.Mod8Vsb)
-        {
-          moduations.Add(TunerModulation.Vsb8);
-        }
-        else
-        {
-          this.LogWarn("DRI CableCARD: unsupported modulation {0}, allowing tuner to use any supported modulation", atscChannel.ModulationType);
-          moduations.Add(TunerModulation.All);
-        }
-
-        _currentFrequency = -1;
-        uint currentFrequency;
-        TunerModulation currentModulation;
-        _serviceTuner.SetTunerParameters((uint)atscChannel.Frequency, moduations, out currentFrequency, out currentModulation, out isSignalLocked);
+        TuneAtscOrClearQam(atscChannel, out isSignalLocked);
       }
+      _currentTuningDetail = atscChannel;
       _isSignalLocked = isSignalLocked;
     }
 

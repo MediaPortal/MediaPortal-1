@@ -318,18 +318,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     #region state control
 
     /// <summary>
-    /// Set the state of the tuner.
+    /// Actually set the state of the tuner.
     /// </summary>
     /// <param name="state">The state to apply to the tuner.</param>
-    public override void SetTunerState(TunerState state)
+    public override void PerformSetTunerState(TunerState state)
     {
-      this.LogDebug("DirectShow base: set tuner state, current state = {0}, requested state = {1}", _state, state);
+      this.LogDebug("DirectShow base: perform set tuner state");
 
-      if (state == _state)
-      {
-        this.LogDebug("DirectShow base: tuner already in required state");
-        return;
-      }
       if (_graph == null)
       {
         throw new TvException("DirectShow graph is null, can't set tuner state.");
@@ -352,8 +347,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       {
         hr = (int)HResult.Severity.Error;
       }
-      HResult.ThrowException(hr, string.Format("Failed to change tuner state from {0} to {1}.", _state, state));
-      _state = state;
+      HResult.ThrowException(hr, string.Format("Failed to change tuner state to {0}.", state));
     }
 
     #endregion

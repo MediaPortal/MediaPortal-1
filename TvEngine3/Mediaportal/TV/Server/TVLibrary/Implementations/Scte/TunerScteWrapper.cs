@@ -124,13 +124,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte
     }
 
     /// <summary>
-    /// Set the state of the tuner.
+    /// Actually set the state of the tuner.
     /// </summary>
     /// <param name="state">The state to apply to the tuner.</param>
-    public override void SetTunerState(TunerState state)
+    public override void PerformSetTunerState(TunerState state)
     {
-      _dvbcTuner.SetTunerState(state);
-      _state = state;
+      _dvbcTuner.PerformSetTunerState(state);
     }
 
     /// <summary>

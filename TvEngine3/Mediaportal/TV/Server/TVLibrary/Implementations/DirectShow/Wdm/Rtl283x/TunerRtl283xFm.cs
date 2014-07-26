@@ -427,7 +427,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
                     job.Parameters[4] = quality;
                     break;
                   case GraphJobType.SetGraphState:
-                    InternalSetTunerState((TunerState)job.Parameters[0]);
+                    InternalPerformSetTunerState((TunerState)job.Parameters[0]);
                     break;
                   case GraphJobType.Unload:
                     InternalPerformUnloading();
@@ -637,14 +637,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
     }
 
     /// <summary>
-    /// Set the state of the tuner.
+    /// Actually set the state of the tuner.
     /// </summary>
     /// <param name="state">The state to apply to the tuner.</param>
-    public override void SetTunerState(TunerState state)
+    public override void PerformSetTunerState(TunerState state)
     {
       if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
       {
-        InternalSetTunerState(state);
+        InternalPerformSetTunerState(state);
       }
       else
       {
@@ -654,12 +654,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
     }
 
     /// <summary>
-    /// Set the state of the tuner.
+    /// Actually set the state of the tuner.
     /// </summary>
     /// <param name="state">The state to apply to the tuner.</param>
-    private void InternalSetTunerState(TunerState state)
+    private void InternalPerformSetTunerState(TunerState state)
     {
-      base.SetTunerState(state);
+      base.PerformSetTunerState(state);
     }
 
     /// <summary>
