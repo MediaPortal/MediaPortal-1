@@ -28,67 +28,14 @@
     /// </summary>
     private void InitializeComponent()
     {
-      this.chkTitan = new System.Windows.Forms.CheckBox();
-      this.gtpTitan = new System.Windows.Forms.GroupBox();
-      this.linkTitan = new System.Windows.Forms.LinkLabel();
-      this.lblTitan = new System.Windows.Forms.Label();
       this.grpLAV = new System.Windows.Forms.GroupBox();
       this.linkLAV = new System.Windows.Forms.LinkLabel();
       this.lblLAV = new System.Windows.Forms.Label();
       this.chkLAV = new System.Windows.Forms.CheckBox();
       this.linkExtensions = new System.Windows.Forms.LinkLabel();
       this.lblRecommended = new System.Windows.Forms.Label();
-      this.gtpTitan.SuspendLayout();
       this.grpLAV.SuspendLayout();
       this.SuspendLayout();
-      // 
-      // chkTitan
-      // 
-      this.chkTitan.AutoSize = true;
-      this.chkTitan.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.chkTitan.ForeColor = System.Drawing.Color.White;
-      this.chkTitan.Location = new System.Drawing.Point(15, 19);
-      this.chkTitan.Name = "chkTitan";
-      this.chkTitan.Size = new System.Drawing.Size(98, 17);
-      this.chkTitan.TabIndex = 9;
-      this.chkTitan.Text = "Titan Extended";
-      this.chkTitan.UseVisualStyleBackColor = true;
-      // 
-      // gtpTitan
-      // 
-      this.gtpTitan.Controls.Add(this.linkTitan);
-      this.gtpTitan.Controls.Add(this.lblTitan);
-      this.gtpTitan.Controls.Add(this.chkTitan);
-      this.gtpTitan.Location = new System.Drawing.Point(53, 149);
-      this.gtpTitan.Name = "gtpTitan";
-      this.gtpTitan.Size = new System.Drawing.Size(513, 70);
-      this.gtpTitan.TabIndex = 11;
-      this.gtpTitan.TabStop = false;
-      // Enable or Disable Titan Extended related by displaying or not the groupbox.
-      this.gtpTitan.Visible = true;
-      this.chkTitan.Checked = this.gtpTitan.Visible;
-      // 
-      // linkTitan
-      // 
-      this.linkTitan.AutoSize = true;
-      this.linkTitan.LinkColor = System.Drawing.Color.White;
-      this.linkTitan.Location = new System.Drawing.Point(437, 50);
-      this.linkTitan.Name = "linkTitan";
-      this.linkTitan.Size = new System.Drawing.Size(52, 13);
-      this.linkTitan.TabIndex = 11;
-      this.linkTitan.TabStop = true;
-      this.linkTitan.Text = "More Info";
-      this.linkTitan.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkTitan_LinkClicked);
-      // 
-      // lblTitan
-      // 
-      this.lblTitan.AutoSize = true;
-      this.lblTitan.ForeColor = System.Drawing.Color.White;
-      this.lblTitan.Location = new System.Drawing.Point(36, 39);
-      this.lblTitan.Name = "lblTitan";
-      this.lblTitan.Size = new System.Drawing.Size(305, 13);
-      this.lblTitan.TabIndex = 10;
-      this.lblTitan.Text = "Install extension that adds support for popular third party plugins";
       // 
       // grpLAV
       // 
@@ -165,15 +112,11 @@
       this.Controls.Add(this.lblRecommended);
       this.Controls.Add(this.linkExtensions);
       this.Controls.Add(this.grpLAV);
-      this.Controls.Add(this.gtpTitan);
       this.Name = "ExtensionChoice";
       this.Controls.SetChildIndex(this.labelSectionHeader, 0);
-      this.Controls.SetChildIndex(this.gtpTitan, 0);
       this.Controls.SetChildIndex(this.grpLAV, 0);
       this.Controls.SetChildIndex(this.linkExtensions, 0);
       this.Controls.SetChildIndex(this.lblRecommended, 0);
-      this.gtpTitan.ResumeLayout(false);
-      this.gtpTitan.PerformLayout();
       this.grpLAV.ResumeLayout(false);
       this.grpLAV.PerformLayout();
       this.ResumeLayout(false);
@@ -183,13 +126,9 @@
 
     #endregion
 
-    private System.Windows.Forms.CheckBox chkTitan;
-    private System.Windows.Forms.GroupBox gtpTitan;
     private System.Windows.Forms.GroupBox grpLAV;
     private System.Windows.Forms.CheckBox chkLAV;
-    private System.Windows.Forms.Label lblTitan;
     private System.Windows.Forms.Label lblLAV;
-    private System.Windows.Forms.LinkLabel linkTitan;
     private System.Windows.Forms.LinkLabel linkLAV;
     private System.Windows.Forms.LinkLabel linkExtensions;
     private System.Windows.Forms.Label lblRecommended;

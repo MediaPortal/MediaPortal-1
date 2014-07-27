@@ -22,6 +22,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using DShowNET.Helper;
 using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
@@ -860,6 +861,9 @@ namespace MediaPortal.GUI.Music
         itemsToAdd.Add(pItem);
       }
 
+      // Get current Filter used
+      var currentFilter = (FilterDefinition)handler.View.Filters[handler.CurrentLevel];
+
       for (int i = 0; i < songs.Count; ++i)
       {
         Song song = songs[i];
@@ -874,7 +878,17 @@ namespace MediaPortal.GUI.Music
         {
           item.IsFolder = true;
           item.Label = MusicViewHandler.GetFieldValue(song, handler.CurrentLevelWhere);
-          SetSortLabel(ref item, CurrentSortMethod, handler.CurrentLevelWhere);
+
+          // If we are grouping on a specific value, we have in the Duration field the number of items
+          // Use this in the sort field
+          if (currentFilter.SqlOperator == "group")
+          {
+            item.Label2 = tag.Duration.ToString();
+          }
+          else
+          {
+            SetSortLabel(ref item, CurrentSortMethod, handler.CurrentLevelWhere);  
+          }
         }
         else
         {
