@@ -1642,38 +1642,7 @@ namespace MediaPortal.GUI.Video
           CreateFolderThumb(item, true);
           break;
         case 1264: // Get media info (refresh mediainfo and duration)
-          if (item != null)
-          {
-            string file = item.Path;
-            SelectDVDHandler sdh = new SelectDVDHandler();
-            SelectBDHandler bdh = new SelectBDHandler();
-
-            if (sdh.IsDvdDirectory(item.Path))
-            {
-              if (File.Exists(item.Path + @"\VIDEO_TS\VIDEO_TS.IFO"))
-              {
-                file = file + @"\VIDEO_TS\VIDEO_TS.IFO";
-              }
-            }
-
-            if (bdh.IsBDDirectory(item.Path))
-            {
-              if (File.Exists(item.Path + @"\BDMV\INDEX.BDMV"))
-              {
-                file = file + @"\BDMV\INDEX.BDMV";
-              }
-            }
-
-            ArrayList files = new ArrayList();
-            files = AddFileToDatabase(file);
-            MovieDuration(files, true);
-            int movieId = VideoDatabase.GetMovieId(file);
-            IMDBMovie mInfo = new IMDBMovie();
-            mInfo.SetMediaInfoProperties(file, true);
-            mInfo.SetDurationProperty(movieId);
-            IMDBMovie.SetMovieData(item);
-            SelectCurrentItem();
-          }
+          RefreshMediaInfo(item);
           break;
       }
     }
@@ -2851,6 +2820,42 @@ namespace MediaPortal.GUI.Video
 
     #region Private methods
 
+    private void RefreshMediaInfo(GUIListItem item)
+    {
+      if (item != null)
+      {
+        string file = item.Path;
+        SelectDVDHandler sdh = new SelectDVDHandler();
+        SelectBDHandler bdh = new SelectBDHandler();
+
+        if (sdh.IsDvdDirectory(item.Path))
+        {
+          if (File.Exists(item.Path + @"\VIDEO_TS\VIDEO_TS.IFO"))
+          {
+            file = file + @"\VIDEO_TS\VIDEO_TS.IFO";
+          }
+        }
+
+        if (bdh.IsBDDirectory(item.Path))
+        {
+          if (File.Exists(item.Path + @"\BDMV\INDEX.BDMV"))
+          {
+            file = file + @"\BDMV\INDEX.BDMV";
+          }
+        }
+
+        ArrayList files = new ArrayList();
+        files = AddFileToDatabase(file);
+        MovieDuration(files, true);
+        int movieId = VideoDatabase.GetMovieId(file);
+        IMDBMovie mInfo = new IMDBMovie();
+        mInfo.SetMediaInfoProperties(file, true);
+        mInfo.SetDurationProperty(movieId);
+        IMDBMovie.SetMovieData(item);
+        SelectCurrentItem();
+      }
+    }
+
     private static bool WakeUpSrv(string newFolderName)
     {
       if (!Util.Utils.IsUNCNetwork(newFolderName))
@@ -3339,7 +3344,8 @@ namespace MediaPortal.GUI.Video
     // main thread. It adds all file to database and refresh the ListLayout on the screen.
     private void GetMediaInfoThread(object i)
     {
-      List<GUIListItem> itemlist = (List<GUIListItem>) i;
+      List<GUIListItem> itemlist = (List<GUIListItem>)i;
+
       Log.Debug("GetMediaInfoThread: current folder: {0}, itemlist count: {1}", _currentFolder, itemlist.Count);
 
       foreach (GUIListItem item in itemlist)
@@ -3352,8 +3358,9 @@ namespace MediaPortal.GUI.Video
         try
         {
           Log.Debug("GetMediaInfoThread: Work on {0}", item.Path);
-          AddFileToDatabase(item.Path);
-             
+
+          RefreshMediaInfo(item);
+
           int newMovieId = VideoDatabase.GetMovieId(item.Path);
           item.Duration = VideoDatabase.GetMovieDuration(newMovieId);
           if (item.Duration > 0)
@@ -3376,7 +3383,6 @@ namespace MediaPortal.GUI.Video
         Thread.Sleep(100);
       }
       Log.Debug("GetMediaInfoThread: Finished.");
-      return;
     }
 
     private void LoadFolderSettings(string folderName)
