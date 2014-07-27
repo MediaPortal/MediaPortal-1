@@ -150,4 +150,5 @@
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6875</SymbolRate>
   </DVBCTuning>
+
 </ArrayOfDVBCTuning>
