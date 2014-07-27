@@ -215,7 +215,7 @@ namespace MediaPortal.Visualization
         // So this is the folder where all the MP Plugins are stored as well
         skinFolderPath = Path.Combine(Application.StartupPath, @"plugins");
         string[] winampVisPaths = BassVis.BASSVIS_FindPlugins(BASSVISKind.BASSVISKIND_WINAMP, skinFolderPath, true);
-        
+
         string[] wmpFilelist = BassVis.BASSVIS_FindPlugins(BASSVISKind.BASSVISKIND_WMP, string.Empty, false);
 
         if (wmpFilelist != null)
@@ -223,25 +223,28 @@ namespace MediaPortal.Visualization
           _visParam = new BASSVIS_PARAM(BASSVISKind.BASSVISKIND_WMP);
           foreach (string name in wmpFilelist)
           {
-            List<string> presets = new List<string>();
-            // Get presets count
-            int NumPresets = BassVis.BASSVIS_GetModulePresetCount(_visParam, name);
-            string pluginname = BassVis.BASSVIS_GetPluginName(_visParam);
-
-            if (NumPresets > 0)
+            if (!string.IsNullOrEmpty(name))
             {
-              for (int i = 0; i <= (NumPresets - 1); i++)
-              {
-                presets.Add(BassVis.BASSVIS_GetModulePresetName(_visParam, i, name));
-              }
-            }
+              List<string> presets = new List<string>();
+              // Get presets count
+              int NumPresets = BassVis.BASSVIS_GetModulePresetCount(_visParam, name);
+              string pluginname = BassVis.BASSVIS_GetPluginName(_visParam);
 
-            VisualizationInfo vizInfo = new VisualizationInfo(VisualizationInfo.PluginType.WMP, string.Empty, name,
-                                                              presets);
-            _VisualizationPluginsInfo.Add(vizInfo);
+              if (NumPresets > 0)
+              {
+                for (int i = 0; i <= (NumPresets - 1); i++)
+                {
+                  presets.Add(BassVis.BASSVIS_GetModulePresetName(_visParam, i, name));
+                }
+              }
+
+              VisualizationInfo vizInfo = new VisualizationInfo(VisualizationInfo.PluginType.WMP, string.Empty, name,
+                                                                presets);
+              _VisualizationPluginsInfo.Add(vizInfo);
+            }
           }
         }
-       
+
         if (soniqueVisPaths != null && soniqueVisPaths[0] != "")
         {
           _visParam = new BASSVIS_PARAM(BASSVISKind.BASSVISKIND_SONIQUE);
@@ -309,7 +312,7 @@ namespace MediaPortal.Visualization
 
         if (bassboxVisPaths != null && bassboxVisPaths[0] != "")
         {
-          // use only Filename BassBox can have Presetnames double           
+          // use only Filename BassBox can have Presetnames double
           for (int i = 0; i < bassboxVisPaths.Length; i++)
           {
             string filePath = bassboxVisPaths[i];
@@ -571,7 +574,7 @@ namespace MediaPortal.Visualization
     {
       Viz.Config();
     }
-  
+
     private int GetCurrentVizIndex()
     {
       int i = -1;
@@ -592,12 +595,11 @@ namespace MediaPortal.Visualization
 
       if (i > -1 && i < _VisualizationPluginsInfo.Count - 1)
       {
-
         _VisualizationPluginsInfo[i + 1].PlgIndex = i + 1;
         if (CreateVisualization(_VisualizationPluginsInfo[i + 1]))
         {
           VizRenderWindow.Run = true;
-          VisualizationInfo currentVis = _VisualizationPluginsInfo[i + 1];          
+          VisualizationInfo currentVis = _VisualizationPluginsInfo[i + 1];
           SaveCurrentViz(currentVis);
         }
       }
@@ -629,7 +631,16 @@ namespace MediaPortal.Visualization
         // if first plugin entry reached then use last entry in the list 
         CurrentViz = _VisualizationPluginsInfo[_VisualizationPluginsInfo.Count - 1].Name;
         OldVizType = VisualizationInfo.PluginType.None;
-        GetPrevVis();
+        // Don't load "None" plugins for WMP to avoid crash
+        if (i == 1 && _VisualizationPluginsInfo[i - 1].Name.ToLowerInvariant() == "none" &&
+            i == _VisualizationPluginsInfo.Count - 1)
+        {
+          GetNextVis();
+        }
+        else
+        {
+          GetPrevVis();
+        }
       }
     }
 
