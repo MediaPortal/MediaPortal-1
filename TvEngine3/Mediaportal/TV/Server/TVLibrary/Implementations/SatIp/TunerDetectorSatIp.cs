@@ -67,8 +67,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
       }
       this.LogInfo("SAT>IP detector: tuner added");
 
-      int satelliteFrontEndCount = 0;
-      int terrestrialFrontEndCount = 0;
+      int feCountC = 0;
+      int feCountC2 = 0;
+      int feCountS2 = 0;
+      int feCountT = 0;
+      int feCountT2 = 0;
       string remoteHost = new Uri(descriptor.RootDescriptor.SSDPRootEntry.PreferredLink.DescriptionLocation).Host;
 
       // SAT>IP servers may have more than one tuner, but their descriptors
@@ -89,17 +92,27 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
           if (m.Success)
           {
             string msys = m.Groups[1].Captures[0].Value;
-            if (msys.Equals("DVBS2"))
+            int count = int.Parse(m.Groups[2].Captures[0].Value);
+            switch (msys)
             {
-              satelliteFrontEndCount += int.Parse(m.Groups[2].Captures[0].Value);
-            }
-            else if (msys.Equals("DVBT") || msys.Equals("DVBT2"))
-            {
-              terrestrialFrontEndCount += int.Parse(m.Groups[2].Captures[0].Value);
-            }
-            else
-            {
-              this.LogWarn("SAT>IP detector: unsupported msys {0} found in X_SATIPCAP {1}, section {2}", msys, it.Current.Value, section);
+              case "DVBC":
+                feCountC += count;
+                break;
+              case "DVBC2":
+                feCountC2 += count;
+                break;
+              case "DVBS2":
+                feCountS2 += count;
+                break;
+              case "DVBT":
+                feCountT += count;
+                break;
+              case "DVBT2":
+                feCountT2 += count;
+                break;
+              default:
+                this.LogWarn("SAT>IP detector: unsupported msys {0} found in X_SATIPCAP {1}, section {2}", msys, it.Current.Value, section);
+                break;
             }
           }
           else
@@ -136,18 +149,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
               try
               {
                 string[] frontEndCounts = frontEndInfo.Split(',');
+                feCountS2 = int.Parse(frontEndCounts[0]);
                 if (frontEndCounts.Length >= 2)
                 {
-                  satelliteFrontEndCount = int.Parse(frontEndCounts[0]);
-                  terrestrialFrontEndCount = int.Parse(frontEndCounts[1]);
+                  // Assume all DVB-X frontends also support DVB-X2. The user
+                  // can correct this with configuration.
+                  feCountT2 = int.Parse(frontEndCounts[1]);
                   if (frontEndCounts.Length > 2)
                   {
-                    this.LogWarn("SAT>IP detector: RTSP DESCRIBE response contains more than 2 front end counts, not supported");
+                    feCountC2 = int.Parse(frontEndCounts[2]);
+                    if (frontEndCounts.Length > 3)
+                    {
+                      this.LogWarn("SAT>IP detector: RTSP DESCRIBE response contains more than 3 front end counts, not supported");
+                    }
                   }
-                }
-                else
-                {
-                  satelliteFrontEndCount = int.Parse(frontEndCounts[0]);
                 }
               }
               catch (Exception ex)
@@ -171,26 +186,55 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
         }
       }
 
-      if (satelliteFrontEndCount == 0 && terrestrialFrontEndCount == 0)
+      if (feCountC == 0 && feCountC2 == 0 && feCountS2 == 0 && feCountT == 0 && feCountT2 == 0)
       {
-        this.LogWarn("SAT>IP detector: failed to gather front end information, assuming 2 satellite front ends");
-        satelliteFrontEndCount = 2;
+        this.LogWarn("SAT>IP detector: failed to gather front end information, assuming 2 DVB-S/S2 front ends");
+        feCountS2 = 2;
       }
 
-      this.LogInfo("  sat FE count  = {0}", satelliteFrontEndCount);
-      this.LogInfo("  terr FE count = {0}", terrestrialFrontEndCount);
+      this.LogInfo("  C/C2 = {0}/{1}", feCountC, feCountC2);
+      this.LogInfo("  S2   = {0}", feCountS2);
+      this.LogInfo("  T/T2 = {0}/{1}", feCountT, feCountT2);
 
-      for (int i = 1; i <= satelliteFrontEndCount; i++)
+      int i = 1;
+      int j = 0;
+      for (; i <= feCountC; i++)
+      {
+        tuners.Add(new TunerSatIpCable(descriptor, i, new TunerStream(string.Format("MediaPortal SAT>IP {0} DVB-C Stream Source", descriptor.DeviceUUID), i)));
+      }
+      j += feCountC;
+      for (; i <= feCountC2 + j; i++)
+      {
+        tuners.Add(new TunerSatIpCable(descriptor, i, new TunerStream(string.Format("MediaPortal SAT>IP {0} DVB-C/C2 Stream Source", descriptor.DeviceUUID), i)));
+      }
+      j += feCountC2;
+
+      // Currently the Digital Devices Octopus Net is the only SAT>IP product
+      // to support DVB-T/T2. The DVB-T/T2 tuners also support DVB-C/C2. In
+      // general we'll assume that if the DVB-C/C2 and DVB-T/T2 counts are
+      // equal the tuners are hybrid.
+      if (feCountC + feCountC2 > 0 && (feCountC + feCountC2) == (feCountT + feCountT2))
+      {
+        i = 1;
+        j = 0;
+      }
+
+      for (; i <= feCountT + j; i++)
+      {
+        tuners.Add(new TunerSatIpTerrestrial(descriptor, i, new TunerStream(string.Format("MediaPortal SAT>IP {0} DVB-T Stream Source", descriptor.DeviceUUID), i)));
+      }
+      j += feCountT;
+      for (; i <= feCountT2 + j; i++)
+      {
+        tuners.Add(new TunerSatIpTerrestrial(descriptor, i, new TunerStream(string.Format("MediaPortal SAT>IP {0} DVB-T/T2 Stream Source", descriptor.DeviceUUID), i)));
+      }
+      j += feCountT2;
+
+      for (; i <= feCountS2 + j; i++)
       {
         tuners.Add(new TunerSatIpSatellite(descriptor, i, new TunerStream(string.Format("MediaPortal SAT>IP {0} DVB-S/S2 Stream Source", descriptor.DeviceUUID), i)));
       }
-      for (int i = satelliteFrontEndCount + 1; i <= satelliteFrontEndCount + terrestrialFrontEndCount; i++)
-      {
-        // Currently the Digital Devices Octopus Net is the only SAT>IP product
-        // to support DVB-T/T2. The DVB-T tuners also support DVB-C.
-        tuners.Add(new TunerSatIpTerrestrial(descriptor, i, new TunerStream(string.Format("MediaPortal SAT>IP {0} DVB-T/T2 Stream Source", descriptor.DeviceUUID), i)));
-        tuners.Add(new TunerSatIpCable(descriptor, i, new TunerStream(string.Format("MediaPortal SAT>IP {0} DVB-C/C2 Stream Source", descriptor.DeviceUUID), i)));
-      }
+
       return tuners;
     }
   }
