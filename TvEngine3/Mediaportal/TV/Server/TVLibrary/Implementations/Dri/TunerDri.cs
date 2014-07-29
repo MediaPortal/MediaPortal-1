@@ -376,24 +376,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
 
       // Find a free port for receiving the RTP stream.
       int rtpClientPort = 0;
-      TcpConnectionInformation[] activeTcpConnections = IPGlobalProperties.GetIPGlobalProperties().GetActiveTcpConnections();
       HashSet<int> usedPorts = new HashSet<int>();
-      foreach (TcpConnectionInformation connection in activeTcpConnections)
+      IPEndPoint[] activeUdpListeners = IPGlobalProperties.GetIPGlobalProperties().GetActiveUdpListeners();
+      foreach (IPEndPoint listener in activeUdpListeners)
       {
-        if (connection.LocalEndPoint.Address == _localIpAddress)
+        if (listener.Address.Equals(_localIpAddress))   // Careful! The == operator is not overloaded.
         {
-          usedPorts.Add(connection.LocalEndPoint.Port);
-        }
-        if (connection.RemoteEndPoint.Address == _localIpAddress)
-        {
-          usedPorts.Add(connection.RemoteEndPoint.Port);
+          usedPorts.Add(listener.Port);
         }
       }
-      for (int port = 40000; port <= 65534; port += 2)
+      for (int port = 40000; port <= 65534; port += 2)  // By convention the port should be even.
       {
-        // We need two adjacent ports. One for RTP; one for RTCP. By
-        // convention, the RTP port is even.
-        if (!usedPorts.Contains(port) && !usedPorts.Contains(port + 1))
+        if (!usedPorts.Contains(port))
         {
           rtpClientPort = port;
           break;

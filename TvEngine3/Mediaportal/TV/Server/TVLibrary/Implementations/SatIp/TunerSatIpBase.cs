@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.NetworkInformation;
+using System.Net.Sockets;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Dvb;
@@ -29,6 +30,7 @@ using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Rtsp;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
@@ -47,6 +49,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     private static readonly Regex REGEX_DESCRIBE_RESPONSE_SIGNAL_INFO = new Regex(@";tuner=\d+,(\d+),(\d+),(\d+),", RegexOptions.Singleline | RegexOptions.IgnoreCase);
     private static readonly Regex REGEX_RTSP_SESSION_HEADER = new Regex(@"\s*([^\s;]+)(;timeout=(\d+))?");
     private const int DEFAULT_RTSP_SESSION_TIMEOUT = 60;    // unit = s
+    private const int RTCP_REPORT_WAIT_TIMEOUT = 400;       // unit = ms; specification says the server should deliver 5 reports per second
 
     #endregion
 
@@ -92,19 +95,45 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
 
     /// <summary>
     /// A thread, used to periodically send RTSP OPTIONS to tell the SAT>IP
-    /// server not to stop the stream.
+    /// server not to stop streaming.
     /// </summary>
-    private Thread _keepAliveThread = null;
+    private Thread _streamingKeepAliveThread = null;
 
     /// <summary>
-    /// An event, used to stop the stream keep-alive thread.
+    /// An event, used to stop the streaming keep-alive thread.
     /// </summary>
-    private AutoResetEvent _keepAliveThreadStopEvent = null;
+    private AutoResetEvent _streamingKeepAliveThreadStopEvent = null;
+
+    /// <summary>
+    /// A thread, used to listen for RTCP reports containing signal status
+    /// updates.
+    /// </summary>
+    private Thread _rtcpListenerThread = null;
+
+    /// <summary>
+    /// An event, used to stop the RTCP listener thread.
+    /// </summary>
+    private AutoResetEvent _rtcpListenerThreadStopEvent = null;
+
+    /// <summary>
+    /// The port on which the RTCP listener thread listens.
+    /// </summary>
+    private int _rtcpClientPort = -1;
+
+    /// <summary>
+    /// The port that the RTCP listener thread listens to.
+    /// </summary>
+    private int _rtcpServerPort = -1;
 
     // PID filter control variables
     private bool _isPidFilterDisabled = false;
     private HashSet<ushort> _pidFilterPidsToRemove = new HashSet<ushort>();
     private HashSet<ushort> _pidFilterPidsToAdd = new HashSet<ushort>();
+
+    // signal status
+    private volatile bool _isSignalLocked = false;
+    private int _signalStrength = 0;
+    private int _signalQuality = 0;
 
     /// <summary>
     /// Internal stream tuner, used to receive the RTP stream. This allows us
@@ -180,28 +209,25 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
       }
 
       // First tune = RTSP SETUP.
-      // Find a free port for receiving the RTP stream.
+      // Find free ports for receiving the RTP and RTCP streams.
       int rtpClientPort = 0;
-      TcpConnectionInformation[] activeTcpConnections = IPGlobalProperties.GetIPGlobalProperties().GetActiveTcpConnections();
       HashSet<int> usedPorts = new HashSet<int>();
-      foreach (TcpConnectionInformation connection in activeTcpConnections)
+      IPEndPoint[] activeUdpListeners = IPGlobalProperties.GetIPGlobalProperties().GetActiveUdpListeners();
+      foreach (IPEndPoint listener in activeUdpListeners)
       {
-        if (connection.LocalEndPoint.Address == _localIpAddress)
+        if (listener.Address.Equals(_localIpAddress))   // Careful! The == operator is not overloaded.
         {
-          usedPorts.Add(connection.LocalEndPoint.Port);
-        }
-        if (connection.RemoteEndPoint.Address == _localIpAddress)
-        {
-          usedPorts.Add(connection.RemoteEndPoint.Port);
+          usedPorts.Add(listener.Port);
         }
       }
       for (int port = 40000; port <= 65534; port += 2)
       {
-        // We need two adjacent ports. One for RTP; one for RTCP. By
+        // We need two adjacent UDP ports. One for RTP; one for RTCP. By
         // convention, the RTP port is even.
         if (!usedPorts.Contains(port) && !usedPorts.Contains(port + 1))
         {
           rtpClientPort = port;
+          _rtcpClientPort = port + 1;
           break;
         }
       }
@@ -267,6 +293,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
             {
               string[] ports = parts[1].Split('-');
               rtpServerPort = ports[0];
+              _rtcpServerPort = int.Parse(ports[1]);
             }
             else if (parts[0].Equals("client_port"))
             {
@@ -275,7 +302,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
               {
                 this.LogWarn("SAT>IP base: server specified RTP client port {0} instead of {1}", ports[0], rtpClientPort);
               }
+              if (!ports[1].Equals(_rtcpClientPort.ToString()))
+              {
+                this.LogWarn("SAT>IP base: server specified RTCP client port {0} instead of {1}", ports[1], _rtcpClientPort);
+              }
               rtpClientPort = int.Parse(ports[0]);
+              _rtcpClientPort = int.Parse(ports[1]);
             }
           }
         }
@@ -299,6 +331,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
       this.LogDebug("  timeout    = {0}", _rtspSessionTimeout);
       this.LogDebug("  stream ID  = {0}", _satIpStreamId);
       this.LogDebug("  RTP URL    = {0}", rtpUrl);
+      this.LogDebug("  RTCP ports = {0}/{1}", _rtcpClientPort, _rtcpServerPort);
 
       // Configure the stream source filter to receive the RTP stream.
       this.LogDebug("SAT>IP base: configure stream source filter");
@@ -322,67 +355,67 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
 
     #endregion
 
-    #region keep-alive thread
+    #region streaming keep-alive thread
 
-    private void StartKeepAliveThread()
+    private void StartStreamingKeepAliveThread()
     {
       // Kill the existing thread if it is in "zombie" state.
-      if (_keepAliveThread != null && !_keepAliveThread.IsAlive)
+      if (_streamingKeepAliveThread != null && !_streamingKeepAliveThread.IsAlive)
       {
-        StopKeepAliveThread();
+        StopStreamingKeepAliveThread();
       }
 
-      if (_keepAliveThread == null)
+      if (_streamingKeepAliveThread == null)
       {
-        this.LogDebug("SAT>IP base: starting new keep-alive thread");
-        _keepAliveThreadStopEvent = new AutoResetEvent(false);
-        _keepAliveThread = new Thread(new ThreadStart(KeepAlive));
-        _keepAliveThread.Name = string.Format("SAT>IP tuner {0} keep alive", TunerId);
-        _keepAliveThread.IsBackground = true;
-        _keepAliveThread.Priority = ThreadPriority.Lowest;
-        _keepAliveThread.Start();
+        this.LogDebug("SAT>IP base: starting new streaming keep-alive thread");
+        _streamingKeepAliveThreadStopEvent = new AutoResetEvent(false);
+        _streamingKeepAliveThread = new Thread(new ThreadStart(StreamingKeepAlive));
+        _streamingKeepAliveThread.Name = string.Format("SAT>IP tuner {0} streaming keep-alive", TunerId);
+        _streamingKeepAliveThread.IsBackground = true;
+        _streamingKeepAliveThread.Priority = ThreadPriority.Lowest;
+        _streamingKeepAliveThread.Start();
       }
     }
 
-    private void StopKeepAliveThread()
+    private void StopStreamingKeepAliveThread()
     {
-      if (_keepAliveThread != null)
+      if (_streamingKeepAliveThread != null)
       {
-        if (!_keepAliveThread.IsAlive)
+        if (!_streamingKeepAliveThread.IsAlive)
         {
-          this.LogWarn("SAT>IP base: aborting old keep-alive thread");
-          _keepAliveThread.Abort();
+          this.LogWarn("SAT>IP base: aborting old streaming keep-alive thread");
+          _streamingKeepAliveThread.Abort();
         }
         else
         {
-          _keepAliveThreadStopEvent.Set();
-          if (!_keepAliveThread.Join(_rtspSessionTimeout * 2))
+          _streamingKeepAliveThreadStopEvent.Set();
+          if (!_streamingKeepAliveThread.Join(_rtspSessionTimeout * 2))
           {
-            this.LogWarn("SAT>IP base: failed to join keep-alive thread, aborting thread");
-            _keepAliveThread.Abort();
+            this.LogWarn("SAT>IP base: failed to join streaming keep-alive thread, aborting thread");
+            _streamingKeepAliveThread.Abort();
           }
         }
-        _keepAliveThread = null;
-        if (_keepAliveThreadStopEvent != null)
+        _streamingKeepAliveThread = null;
+        if (_streamingKeepAliveThreadStopEvent != null)
         {
-          _keepAliveThreadStopEvent.Close();
-          _keepAliveThreadStopEvent = null;
+          _streamingKeepAliveThreadStopEvent.Close();
+          _streamingKeepAliveThreadStopEvent = null;
         }
       }
     }
 
-    private void KeepAlive()
+    private void StreamingKeepAlive()
     {
       try
       {
-        while (!_keepAliveThreadStopEvent.WaitOne((_rtspSessionTimeout - 5) * 1000))  // -5 seconds to avoid timeout
+        while (!_streamingKeepAliveThreadStopEvent.WaitOne((_rtspSessionTimeout - 5) * 1000))  // -5 seconds to avoid timeout
         {
           RtspRequest request = new RtspRequest(RtspMethod.Options, string.Format("rtsp://{0}/", _serverIpAddress));
           request.Headers.Add("Session", _rtspSessionId);
           RtspResponse response;
           if (_rtspClient.SendRequest(request, out response) != RtspStatusCode.Ok)
           {
-            this.LogWarn("SAT>IP base: keep-alive request/response failed, non-OK RTSP OPTIONS status code {0} {1}", response.StatusCode, response.ReasonPhrase);
+            this.LogWarn("SAT>IP base: streaming keep-alive request/response failed, non-OK RTSP OPTIONS status code {0} {1}", response.StatusCode, response.ReasonPhrase);
           }
         }
       }
@@ -391,10 +424,163 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
       }
       catch (Exception ex)
       {
-        this.LogError(ex, "SAT>IP base: keep-alive thread exception");
+        this.LogError(ex, "SAT>IP base: streaming keep-alive thread exception");
         return;
       }
-      this.LogDebug("SAT>IP base: keep-alive thread stopping");
+      this.LogDebug("SAT>IP base: streaming keep-alive thread stopping");
+    }
+
+    #endregion
+
+    #region RTCP listener thread
+
+    private void StartRtcpListenerThread()
+    {
+      // Kill the existing thread if it is in "zombie" state.
+      if (_rtcpListenerThread != null && !_rtcpListenerThread.IsAlive)
+      {
+        StopRtcpListenerThread();
+      }
+
+      if (_rtcpListenerThread == null)
+      {
+        this.LogDebug("SAT>IP base: starting new RTCP listener thread");
+        _rtcpListenerThreadStopEvent = new AutoResetEvent(false);
+        _rtcpListenerThread = new Thread(new ThreadStart(RtcpListener));
+        _rtcpListenerThread.Name = string.Format("SAT>IP tuner {0} RTCP listener", TunerId);
+        _rtcpListenerThread.IsBackground = true;
+        _rtcpListenerThread.Priority = ThreadPriority.Lowest;
+        _rtcpListenerThread.Start();
+      }
+    }
+
+    private void StopRtcpListenerThread()
+    {
+      if (_rtcpListenerThread != null)
+      {
+        if (!_rtcpListenerThread.IsAlive)
+        {
+          this.LogWarn("SAT>IP base: aborting old RTCP listener thread");
+          _rtcpListenerThread.Abort();
+        }
+        else
+        {
+          _rtcpListenerThreadStopEvent.Set();
+          if (!_rtcpListenerThread.Join(RTCP_REPORT_WAIT_TIMEOUT * 2))
+          {
+            this.LogWarn("SAT>IP base: failed to join RTCP listener thread, aborting thread");
+            _rtcpListenerThread.Abort();
+          }
+        }
+        _rtcpListenerThread = null;
+        if (_rtcpListenerThreadStopEvent != null)
+        {
+          _rtcpListenerThreadStopEvent.Close();
+          _rtcpListenerThreadStopEvent = null;
+        }
+      }
+    }
+
+    private void RtcpListener()
+    {
+      try
+      {
+        bool receivedGoodBye = false;
+        UdpClient udpClient = new UdpClient(new IPEndPoint(_localIpAddress, _rtcpClientPort));
+        try
+        {
+          udpClient.Client.ReceiveTimeout = RTCP_REPORT_WAIT_TIMEOUT;
+          IPEndPoint serverEndPoint = new IPEndPoint(IPAddress.Parse(_serverIpAddress), _rtcpServerPort);
+          while (!receivedGoodBye && !_rtcpListenerThreadStopEvent.WaitOne(1))
+          {
+            byte[] packets = udpClient.Receive(ref serverEndPoint);
+            if (packets == null)
+            {
+              continue;
+            }
+
+            int offset = 0;
+            while (offset + 8 <= packets.Length)
+            {
+              // Refer to RFC 3550.
+              // https://www.ietf.org/rfc/rfc3550.txt
+              byte packetType = packets[offset + 1];
+              int packetByteCount = ((packets[offset + 2] << 8) + packets[offset + 3] + 1) * 4;
+              if (offset + packetByteCount > packets.Length)
+              {
+                this.LogWarn("SAT>IP base: received incomplete RTCP packet, offset = {0}", offset);
+                Dump.DumpBinary(packets);
+                break;
+              }
+
+              if (packetType == 203)  // goodbye
+              {
+                receivedGoodBye = true;
+                break;
+              }
+              else if (packetType == 204) // application-defined
+              {
+                int offsetStartOfPacket = offset;
+                offset += 8;  // skip to the start of the name SSRC/CSRC
+                if (offset + 4 > packets.Length)
+                {
+                  this.LogWarn("SAT>IP base: received RTCP application-defined packet too short to contain name, offset = {0}", offsetStartOfPacket);
+                  Dump.DumpBinary(packets);
+                  break;
+                }
+                string name = System.Text.Encoding.ASCII.GetString(packets, offset, 4);
+                offset += 4;
+                if (!name.Equals("SES1"))
+                {
+                  // Not SAT>IP data. Odd but okay.
+                  offset = offsetStartOfPacket + packetByteCount;
+                  continue;
+                }
+                if (offset + 4 > packets.Length)
+                {
+                  this.LogWarn("SAT>IP base: received SAT>IP RTCP packet too short to contain string length, offset = {0}", offsetStartOfPacket);
+                  Dump.DumpBinary(packets);
+                  break;
+                }
+                int stringByteCount = (packets[offset + 2] << 8) + packets[offset + 3];
+                offset += 4;
+                if (offset + stringByteCount > packets.Length)
+                {
+                  this.LogWarn("SAT>IP base: received SAT>IP RTCP packet too short to contain string, offset = {0}", offsetStartOfPacket);
+                  Dump.DumpBinary(packets);
+                  break;
+                }
+                string description = System.Text.Encoding.UTF8.GetString(packets, offset, stringByteCount);
+                Match m = REGEX_DESCRIBE_RESPONSE_SIGNAL_INFO.Match(description);
+                if (m.Success)
+                {
+                  _isSignalLocked = m.Groups[2].Captures[0].Value.Equals("1");
+                  _signalStrength = int.Parse(m.Groups[1].Captures[0].Value) * 100 / 255;   // strength: 0..255 => 0..100
+                  _signalQuality = int.Parse(m.Groups[3].Captures[0].Value) * 100 / 15;     // quality: 0..15 => 0..100
+                }
+                offset = offsetStartOfPacket + packetByteCount;
+              }
+              else
+              {
+                offset += packetByteCount;
+              }
+            }
+          }
+        }
+        finally
+        {
+          udpClient.Close();
+        }
+      }
+      catch (ThreadAbortException)
+      {
+      }
+      catch (Exception ex)
+      {
+        this.LogError(ex, "SAT>IP base: RTCP listener thread exception");
+        return;
+      }
+      this.LogDebug("SAT>IP base: RTCP listener thread stopping");
     }
 
     #endregion
@@ -471,11 +657,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
           {
             throw new TvException("Failed to start tuner, non-OK RTSP PLAY status code {0} {1}", response.StatusCode, response.ReasonPhrase);
           }
-          StartKeepAliveThread();
+          StartStreamingKeepAliveThread();
+          StartRtcpListenerThread();
         }
         else if (state == TunerState.Stopped)
         {
-          StopKeepAliveThread();
+          StopStreamingKeepAliveThread();
+          StopRtcpListenerThread();
 
           request = new RtspRequest(RtspMethod.Teardown, string.Format("rtsp://{0}/stream={1}", _serverIpAddress, _satIpStreamId));
           request.Headers.Add("Session", _rtspSessionId);
@@ -545,41 +733,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     /// <param name="quality">An indication of signal quality. Range: 0 to 100.</param>
     public override void GetSignalStatus(bool onlyGetLock, out bool isLocked, out bool isPresent, out int strength, out int quality)
     {
-      isLocked = false;
-      isPresent = false;
-      strength = 0;
-      quality = 0;
-
-      try
-      {
-        RtspRequest request = new RtspRequest(RtspMethod.Describe, string.Format("rtsp://{0}/stream={1}", _serverIpAddress, _satIpStreamId));
-        request.Headers.Add("Accept", "application/sdp");
-        request.Headers.Add("Session", _rtspSessionId);
-        RtspResponse response = null;
-        if (_rtspClient.SendRequest(request, out response) != RtspStatusCode.Ok)
-        {
-          this.LogError("SAT>IP base: failed to get signal status, non-OK RTSP DESCRIBE status code {0} {1}", response.StatusCode, response.ReasonPhrase);
-          return;
-        }
-
-        // Find the first stream information. We assume that all signal statistics apply equally as
-        // we're only meant to be using one front end.
-        Match m = REGEX_DESCRIBE_RESPONSE_SIGNAL_INFO.Match(response.Body);
-        if (m.Success)
-        {
-          isLocked = m.Groups[2].Captures[0].Value.Equals("1");
-          isPresent = isLocked;
-          strength = int.Parse(m.Groups[1].Captures[0].Value) * 100 / 255;    // strength: 0..255 => 0..100
-          quality = int.Parse(m.Groups[3].Captures[0].Value) * 100 / 15;      // quality: 0..15 => 0..100
-          return;
-        }
-
-        this.LogError("SAT>IP base: failed to find signal status information in RTSP DESCRIBE response");
-      }
-      catch (Exception ex)
-      {
-        this.LogError(ex, "SAT>IP base: exception updating signal status");
-      }
+      isLocked = _isSignalLocked;
+      isPresent = _isSignalLocked;
+      strength = _signalStrength;
+      quality = _signalQuality;
     }
 
     #endregion
