@@ -112,7 +112,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       _systemDeviceInterestingProperties.Add(new KeyValuePair<string, string>("DriverDate", "date    "));
       _systemDeviceInterestingProperties.Add(new KeyValuePair<string, string>("Location", "location"));
       _systemDeviceInterestingProperties.Add(new KeyValuePair<string, string>("PDO", "PDO     "));
-      _systemDeviceInfoSearcher = new ManagementObjectSearcher("SELECT * FROM Win32_PnPSignedDriver WHERE DeviceClass = 'MEDIA'");
+      string[] queryProperties = new string[_systemDeviceInterestingProperties.Count];
+      int i = 0;
+      foreach (KeyValuePair<string, string> p in _systemDeviceInterestingProperties)
+      {
+        queryProperties[i++] = p.Key;
+      }
+      _systemDeviceInfoSearcher = new ManagementObjectSearcher(string.Format("SELECT DeviceID, {0} FROM Win32_PnPSignedDriver WHERE DeviceClass = 'MEDIA'", string.Join(", ", queryProperties)));
 
       // EventType 2 and 3 are device arrival and removal. See:
       // http://msdn.microsoft.com/en-us/library/windows/desktop/aa394124%28v=vs.85%29.aspx
