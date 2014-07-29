@@ -131,11 +131,12 @@ namespace PowerScheduler.Setup
       this.tabPageClient = new System.Windows.Forms.TabPage();
       this.groupBoxClient = new System.Windows.Forms.GroupBox();
       this.tabPagePingMonitor = new System.Windows.Forms.TabPage();
+      this.groupBoxPingMonitor = new System.Windows.Forms.GroupBox();
       this.buttonDelete = new System.Windows.Forms.Button();
       this.buttonAdd = new System.Windows.Forms.Button();
       this.listBoxHosts = new System.Windows.Forms.ListBox();
       this.textBoxEditHost = new System.Windows.Forms.TextBox();
-      this.checkBoxPingMonitorEnable = new System.Windows.Forms.CheckBox();
+      this.checkBoxPingMonitorEnabled = new System.Windows.Forms.CheckBox();
       this.checkBoxPingMonitorAwayMode = new System.Windows.Forms.CheckBox();
       this.tabPageLegacy = new System.Windows.Forms.TabPage();
       this.groupBoxLegacy = new System.Windows.Forms.GroupBox();
@@ -188,6 +189,7 @@ namespace PowerScheduler.Setup
       this.tabPageClient.SuspendLayout();
       this.groupBoxClient.SuspendLayout();
       this.tabPagePingMonitor.SuspendLayout();
+      this.groupBoxPingMonitor.SuspendLayout();
       this.tabPageLegacy.SuspendLayout();
       this.groupBoxLegacy.SuspendLayout();
       this.flowLayoutPanel1.SuspendLayout();
@@ -1406,12 +1408,7 @@ namespace PowerScheduler.Setup
       // 
       // tabPagePingMonitor
       // 
-      this.tabPagePingMonitor.Controls.Add(this.buttonDelete);
-      this.tabPagePingMonitor.Controls.Add(this.buttonAdd);
-      this.tabPagePingMonitor.Controls.Add(this.listBoxHosts);
-      this.tabPagePingMonitor.Controls.Add(this.textBoxEditHost);
-      this.tabPagePingMonitor.Controls.Add(this.checkBoxPingMonitorEnable);
-      this.tabPagePingMonitor.Controls.Add(this.checkBoxPingMonitorAwayMode);
+      this.tabPagePingMonitor.Controls.Add(this.groupBoxPingMonitor);
       this.tabPagePingMonitor.Location = new System.Drawing.Point(4, 22);
       this.tabPagePingMonitor.Name = "tabPagePingMonitor";
       this.tabPagePingMonitor.Padding = new System.Windows.Forms.Padding(3);
@@ -1420,9 +1417,26 @@ namespace PowerScheduler.Setup
       this.tabPagePingMonitor.Text = "Ping Monitor";
       this.tabPagePingMonitor.UseVisualStyleBackColor = true;
       // 
+      // groupBoxPingMonitor
+      // 
+      this.groupBoxPingMonitor.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxPingMonitor.Controls.Add(this.buttonDelete);
+      this.groupBoxPingMonitor.Controls.Add(this.buttonAdd);
+      this.groupBoxPingMonitor.Controls.Add(this.listBoxHosts);
+      this.groupBoxPingMonitor.Controls.Add(this.textBoxEditHost);
+      this.groupBoxPingMonitor.Controls.Add(this.checkBoxPingMonitorEnabled);
+      this.groupBoxPingMonitor.Controls.Add(this.checkBoxPingMonitorAwayMode);
+      this.groupBoxPingMonitor.Location = new System.Drawing.Point(6, 7);
+      this.groupBoxPingMonitor.Name = "groupBoxPingMonitor";
+      this.groupBoxPingMonitor.Size = new System.Drawing.Size(464, 250);
+      this.groupBoxPingMonitor.TabIndex = 6;
+      this.groupBoxPingMonitor.TabStop = false;
+      this.groupBoxPingMonitor.Text = "Active hosts which should prevent standby";
+      // 
       // buttonDelete
       // 
-      this.buttonDelete.Location = new System.Drawing.Point(178, 124);
+      this.buttonDelete.Location = new System.Drawing.Point(153, 116);
       this.buttonDelete.Name = "buttonDelete";
       this.buttonDelete.Size = new System.Drawing.Size(75, 23);
       this.buttonDelete.TabIndex = 5;
@@ -1432,7 +1446,7 @@ namespace PowerScheduler.Setup
       // 
       // buttonAdd
       // 
-      this.buttonAdd.Location = new System.Drawing.Point(178, 84);
+      this.buttonAdd.Location = new System.Drawing.Point(153, 80);
       this.buttonAdd.Name = "buttonAdd";
       this.buttonAdd.Size = new System.Drawing.Size(75, 23);
       this.buttonAdd.TabIndex = 4;
@@ -1443,39 +1457,38 @@ namespace PowerScheduler.Setup
       // listBoxHosts
       // 
       this.listBoxHosts.FormattingEnabled = true;
-      this.listBoxHosts.Location = new System.Drawing.Point(37, 124);
+      this.listBoxHosts.Location = new System.Drawing.Point(12, 116);
       this.listBoxHosts.Name = "listBoxHosts";
       this.listBoxHosts.Size = new System.Drawing.Size(120, 108);
       this.listBoxHosts.TabIndex = 3;
       // 
       // textBoxEditHost
       // 
-      this.textBoxEditHost.Location = new System.Drawing.Point(37, 88);
+      this.textBoxEditHost.Location = new System.Drawing.Point(12, 80);
       this.textBoxEditHost.Name = "textBoxEditHost";
       this.textBoxEditHost.Size = new System.Drawing.Size(120, 20);
       this.textBoxEditHost.TabIndex = 2;
       // 
       // checkBoxPingMonitorEnable
       // 
-      this.checkBoxPingMonitorEnable.AutoSize = true;
-      this.checkBoxPingMonitorEnable.Location = new System.Drawing.Point(20, 29);
-      this.checkBoxPingMonitorEnable.Name = "checkBoxPingMonitorEnable";
-      this.checkBoxPingMonitorEnable.Size = new System.Drawing.Size(306, 17);
-      this.checkBoxPingMonitorEnable.TabIndex = 1;
-      this.checkBoxPingMonitorEnable.Text = "Do not put the computer to sleep while any hosts are active";
-      this.checkBoxPingMonitorEnable.UseVisualStyleBackColor = true;
-      this.checkBoxPingMonitorEnable.CheckedChanged += new System.EventHandler(this.checkBoxPingMonitorEnable_CheckedChanged);
+      this.checkBoxPingMonitorEnabled.AutoSize = true;
+      this.checkBoxPingMonitorEnabled.Location = new System.Drawing.Point(12, 22);
+      this.checkBoxPingMonitorEnabled.Name = "checkBoxPingMonitorEnable";
+      this.checkBoxPingMonitorEnabled.Size = new System.Drawing.Size(306, 17);
+      this.checkBoxPingMonitorEnabled.TabIndex = 1;
+      this.checkBoxPingMonitorEnabled.Text = "Do not put the computer to sleep while any hosts are active";
+      this.checkBoxPingMonitorEnabled.UseVisualStyleBackColor = true;
+      this.checkBoxPingMonitorEnabled.CheckedChanged += new System.EventHandler(this.checkBoxPingMonitorEnable_CheckedChanged);
       // 
       // checkBoxPingMonitorAwayMode
       // 
       this.checkBoxPingMonitorAwayMode.AutoSize = true;
-      this.checkBoxPingMonitorAwayMode.Location = new System.Drawing.Point(37, 53);
+      this.checkBoxPingMonitorAwayMode.Location = new System.Drawing.Point(34, 47);
       this.checkBoxPingMonitorAwayMode.Name = "checkBoxPingMonitorAwayMode";
       this.checkBoxPingMonitorAwayMode.Size = new System.Drawing.Size(344, 17);
       this.checkBoxPingMonitorAwayMode.TabIndex = 0;
       this.checkBoxPingMonitorAwayMode.Text = "Enter away mode when the user wants to put the computer to sleep";
       this.checkBoxPingMonitorAwayMode.UseVisualStyleBackColor = true;
-      this.checkBoxPingMonitorAwayMode.CheckedChanged += new System.EventHandler(this.checkBoxPingMonitorAwayMode_CheckedChanged);
       // 
       // tabPageLegacy
       // 
@@ -1814,7 +1827,8 @@ namespace PowerScheduler.Setup
       this.groupBoxClient.ResumeLayout(false);
       this.groupBoxClient.PerformLayout();
       this.tabPagePingMonitor.ResumeLayout(false);
-      this.tabPagePingMonitor.PerformLayout();
+      this.groupBoxPingMonitor.ResumeLayout(false);
+      this.groupBoxPingMonitor.PerformLayout();
       this.tabPageLegacy.ResumeLayout(false);
       this.groupBoxLegacy.ResumeLayout(false);
       this.groupBoxLegacy.PerformLayout();
@@ -1956,12 +1970,13 @@ namespace PowerScheduler.Setup
     private System.Windows.Forms.NumericUpDown numericUpDownStandbyHoursOnWeekendTo;
     private System.Windows.Forms.Label label9;
     private System.Windows.Forms.TabPage tabPagePingMonitor;
-    private System.Windows.Forms.CheckBox checkBoxPingMonitorAwayMode;
+    private System.Windows.Forms.GroupBox groupBoxPingMonitor;
     private System.Windows.Forms.Button buttonDelete;
     private System.Windows.Forms.Button buttonAdd;
     private System.Windows.Forms.ListBox listBoxHosts;
     private System.Windows.Forms.TextBox textBoxEditHost;
-    private System.Windows.Forms.CheckBox checkBoxPingMonitorEnable;
+    private System.Windows.Forms.CheckBox checkBoxPingMonitorEnabled;
+    private System.Windows.Forms.CheckBox checkBoxPingMonitorAwayMode;
 
   }
 }

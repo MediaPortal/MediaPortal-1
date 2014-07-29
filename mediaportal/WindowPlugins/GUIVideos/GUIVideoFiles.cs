@@ -3020,6 +3020,42 @@ namespace MediaPortal.GUI.Video
 
     #region Private methods
 
+    private void RefreshMediaInfo(GUIListItem item)
+    {
+      if (item != null)
+      {
+        string file = item.Path;
+        SelectDVDHandler sdh = new SelectDVDHandler();
+        SelectBDHandler bdh = new SelectBDHandler();
+
+        if (sdh.IsDvdDirectory(item.Path))
+        {
+          if (File.Exists(item.Path + @"\VIDEO_TS\VIDEO_TS.IFO"))
+          {
+            file = file + @"\VIDEO_TS\VIDEO_TS.IFO";
+          }
+        }
+
+        if (bdh.IsBDDirectory(item.Path))
+        {
+          if (File.Exists(item.Path + @"\BDMV\INDEX.BDMV"))
+          {
+            file = file + @"\BDMV\INDEX.BDMV";
+          }
+        }
+
+        ArrayList files = new ArrayList();
+        files = AddFileToDatabase(file);
+        MovieDuration(files, true);
+        int movieId = VideoDatabase.GetMovieId(file);
+        IMDBMovie mInfo = new IMDBMovie();
+        mInfo.SetMediaInfoProperties(file, true);
+        mInfo.SetDurationProperty(movieId);
+        IMDBMovie.SetMovieData(item);
+        SelectCurrentItem();
+      }
+    }
+
     private static bool WakeUpSrv(string newFolderName)
     {
       if (!Util.Utils.IsUNCNetwork(newFolderName))

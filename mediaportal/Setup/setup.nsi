@@ -735,8 +735,8 @@ SectionEnd
   Delete "$MPdir.Plugins\Process\PowerSchedulerClientPlugin.dll"
 !macroend
 
-Section "-MediaPortal Extension Installer" SecMpeInstaller
-  ${LOG_TEXT} "INFO" "MediaPortal Extension Installer..."
+Section "-MediaPortal Extension Manager" SecMpeInstaller
+  ${LOG_TEXT} "INFO" "MediaPortal Extension Manager..."
 
   ; install files
   SetOutPath "$MPdir.Base"
@@ -744,12 +744,17 @@ Section "-MediaPortal Extension Installer" SecMpeInstaller
   File "${git_MP}\MPE\MpeInstaller\bin\${BUILD_TYPE}\MpeInstaller.exe"
   File "${git_MP}\MPE\MpeMaker\bin\${BUILD_TYPE}\MpeMaker.exe"
 
+  ; remove shortcuts on upgrade (MP1-4540 / MP1-4544)
+  Delete "$DESKTOP\MediaPortal Extension Installer.lnk"
+  Delete "${STARTMENU_GROUP}\MediaPortal Extension Installer.lnk"
+  Delete "${STARTMENU_GROUP}\MediaPortal Debug-Mode.lnk"
+  
   ; create startmenu shortcuts
   ${If} $noDesktopSC != 1
-    CreateShortCut "$DESKTOP\MediaPortal Extension Installer.lnk" "$MPdir.Base\MpeInstaller.exe"  ""  "$MPdir.Base\MpeInstaller.exe"  0 "" "" "MediaPortal Extension Installer"
+    CreateShortCut "$DESKTOP\MediaPortal Extension Manager.lnk" "$MPdir.Base\MpeInstaller.exe"  ""  "$MPdir.Base\MpeInstaller.exe"  0 "" "" "MediaPortal Extension Manager"
   ${EndIf}
   CreateDirectory "${STARTMENU_GROUP}"
-  CreateShortCut "${STARTMENU_GROUP}\MediaPortal Extension Installer.lnk" "$MPdir.Base\MpeInstaller.exe"  ""  "$MPdir.Base\MpeInstaller.exe"  0 "" "" "MediaPortal Extension Installer"
+  CreateShortCut "${STARTMENU_GROUP}\MediaPortal Extension Manager.lnk" "$MPdir.Base\MpeInstaller.exe"  ""  "$MPdir.Base\MpeInstaller.exe"  0 "" "" "MediaPortal Extension Manager"
   CreateShortCut "${STARTMENU_GROUP}\MediaPortal Extension Maker.lnk"     "$MPdir.Base\MpeMaker.exe"      ""  "$MPdir.Base\MpeMaker.exe"      0 "" "" "MediaPortal Extension Maker"
 
   ; associate file extensions
@@ -759,7 +764,7 @@ Section "-MediaPortal Extension Installer" SecMpeInstaller
   ${RefreshShellIcons}
 SectionEnd
 !macro Remove_${SecMpeInstaller}
-  ${LOG_TEXT} "INFO" "Uninstalling MediaPortal Extension Installer..."
+  ${LOG_TEXT} "INFO" "Uninstalling MediaPortal Extension Manager..."
 
   ; remove files
   Delete "$MPdir.Base\MpeCore.dll"
@@ -768,7 +773,9 @@ SectionEnd
 
   ; remove startmenu shortcuts
   Delete "$DESKTOP\MediaPortal Extension Installer.lnk"
+  Delete "$DESKTOP\MediaPortal Extension Manager.lnk"
   Delete "${STARTMENU_GROUP}\MediaPortal Extension Installer.lnk"
+  Delete "${STARTMENU_GROUP}\MediaPortal Extension Manager.lnk"
   Delete "${STARTMENU_GROUP}\MediaPortal Extension Maker.lnk"
 
   ; unassociate file extensions
@@ -844,7 +851,7 @@ Section -Post
       CreateDirectory "${STARTMENU_GROUP}"
       CreateShortCut "${STARTMENU_GROUP}\MediaPortal.lnk"                            "$MPdir.Base\MediaPortal.exe"   ""      "$MPdir.Base\MediaPortal.exe"   0 "" "" "MediaPortal"
       CreateShortCut "${STARTMENU_GROUP}\MediaPortal Configuration.lnk"              "$MPdir.Base\Configuration.exe" ""      "$MPdir.Base\Configuration.exe" 0 "" "" "MediaPortal Configuration"
-      CreateShortCut "${STARTMENU_GROUP}\MediaPortal Debug-Mode.lnk"                 "$MPdir.Base\WatchDog.exe"      ""      "$MPdir.Base\WatchDog.exe"   0 "" "" "MediaPortal Debug-Mode"
+      CreateShortCut "${STARTMENU_GROUP}\MediaPortal WatchDog.lnk"                   "$MPdir.Base\WatchDog.exe"      ""      "$MPdir.Base\WatchDog.exe"      0 "" "" "MediaPortal WatchDog"
       CreateShortCut "${STARTMENU_GROUP}\uninstall MediaPortal.lnk"                  "$MPdir.Base\uninstall-mp.exe"
       CreateShortCut "${STARTMENU_GROUP}\User Files.lnk"                             "$MPdir.Config"                 ""      "$MPdir.Config"                 0 "" "" "Browse you config files, databases, thumbs, logs, ..."
 
@@ -903,6 +910,7 @@ Section Uninstall
   Delete "${STARTMENU_GROUP}\MediaPortal.lnk"
   Delete "${STARTMENU_GROUP}\MediaPortal Configuration.lnk"
   Delete "${STARTMENU_GROUP}\MediaPortal Debug-Mode.lnk"
+  Delete "${STARTMENU_GROUP}\MediaPortal WatchDog.lnk"
   Delete "${STARTMENU_GROUP}\MediaPortal Log-Files.lnk"
   Delete "${STARTMENU_GROUP}\MediaPortal TestTool.lnk"
   Delete "${STARTMENU_GROUP}\MediaPortal Logs Collector.lnk"
