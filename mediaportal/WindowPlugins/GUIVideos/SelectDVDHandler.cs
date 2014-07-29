@@ -317,6 +317,21 @@ namespace MediaPortal.GUI.Video
             pItem.AlbumInfoTag = movie;
           }
 
+          if (!string.IsNullOrEmpty(movie.VideoFileName) && !pItem.IsFolder)
+          {
+            int m_id = VideoDatabase.GetMovieId(movie.VideoFileName);
+
+            if (m_id < 1 || m_id >= 0 && movie.Duration <= 0)
+            {
+              GUIVideoFiles.AddFileToDatabase(pItem.Path);
+              IMDBMovie.SetMovieData(pItem);
+              movie = pItem.AlbumInfoTag as IMDBMovie;
+            }
+
+            pItem.Duration = movie.Duration;
+            pItem.Label2 = Util.Utils.SecondsToHMSString(pItem.Duration);
+          }
+
           // Check for everymovieinitsownfolder only once for all items (defined share is the same for all)
           if (!dedicatedMovieFolderChecked && !string.IsNullOrEmpty(pItem.Path))
           {

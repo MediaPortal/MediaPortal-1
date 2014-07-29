@@ -28,7 +28,6 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Timers;
-using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
 using CSScriptLibrary;
@@ -37,7 +36,6 @@ using MediaPortal.Configuration;
 using MediaPortal.Database;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
-using MediaPortal.GUI.View;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.Services;
@@ -123,9 +121,6 @@ namespace MediaPortal.GUI.Video
     
     #region variables
 
-    public static int _getMediaInfoThreadNumber = 0;
-    public static Thread _getMediaInfoThread;
-    private static bool _getMediaInfoThreadAbort = false;
     private static bool _askBeforePlayingDVDImage;
     private static VirtualDirectory _virtualDirectory;
     private static string _currentFolder = string.Empty;
@@ -143,12 +138,11 @@ namespace MediaPortal.GUI.Video
     private static bool _fileMenuEnabled;
     private string _fileMenuPinCode = string.Empty;
 
-    private bool _addVideoFilesToDb; // add automatically video files to database for show video duration in list view
     private bool _scanning;
     private int _scanningFileNumber = 1;
     private int _scanningFileTotal = 1;
     private bool _isFuzzyMatching;
-    private bool _scanSkipExisting;
+    //private bool _scanSkipExisting;
     private bool _getActors = true;
     private bool _markWatchedFiles = true;
     private ArrayList _conflictFiles = new ArrayList();
@@ -180,7 +174,7 @@ namespace MediaPortal.GUI.Video
     private Thread _setThumbs;
     private List<GUIListItem> _threadGUIItems = new List<GUIListItem>();
     private ISelectDVDHandler _threadISelectDVDHandler;
-    private bool _setThumbsThreadAborted;
+    //private bool _setThumbsThreadAborted;
     
     // grabber index holds information/urls of available grabbers to download
     private static string _grabberIndexFile = Config.GetFile(Config.Dir.Config, "MovieInfoGrabber.xml");
@@ -191,7 +185,7 @@ namespace MediaPortal.GUI.Video
     private string _selectedFilename = string.Empty;
 
     //Internal BDInternalMenu
-    private static bool _BDInternalMenu = true;
+    //private static bool _BDInternalMenu = true;
     private static bool _BDDetect = false;
 
     private bool _useOnlyNfoScraper = false;
@@ -344,9 +338,8 @@ namespace MediaPortal.GUI.Video
           VideoState.View = "369";
         }
 
-        _addVideoFilesToDb = xmlreader.GetValueAsBool("gui", "addVideoFilesToDb", false);
         _isFuzzyMatching = xmlreader.GetValueAsBool("movies", "fuzzyMatching", false);
-        _scanSkipExisting = xmlreader.GetValueAsBool("moviedatabase", "scanskipexisting", false);
+        //_scanSkipExisting = xmlreader.GetValueAsBool("moviedatabase", "scanskipexisting", false);
         _getActors = xmlreader.GetValueAsBool("moviedatabase", "getactors", true);
         _markWatchedFiles = xmlreader.GetValueAsBool("movies", "markwatched", true);
         //_eachFolderIsMovie = xmlreader.GetValueAsBool("movies", "eachFolderIsMovie", false);
@@ -355,7 +348,7 @@ namespace MediaPortal.GUI.Video
         _howToPlayAll = xmlreader.GetValueAsInt("movies", "playallinfolder", 3);
         _watchedPercentage = xmlreader.GetValueAsInt("movies", "playedpercentagewatched", 95);
         _videoInfoInShare = xmlreader.GetValueAsBool("moviedatabase", "movieinfoshareview", false);
-        _BDInternalMenu = xmlreader.GetValueAsBool("bdplayer", "useInternalBDPlayer", true);
+        //_BDInternalMenu = xmlreader.GetValueAsBool("bdplayer", "useInternalBDPlayer", true);
 
         _virtualDirectory = VirtualDirectories.Instance.Movies;
 		    // External player
@@ -3293,77 +3286,7 @@ namespace MediaPortal.GUI.Video
       //  SetImdbThumbs(itemlist, selectDvdHandler);
       //}
 
-      // if have new item we close the previous thread and start a new one 
-      if ((_addVideoFilesToDb || CurrentSortMethod == VideoSort.SortMethod.Name_With_Duration) && itemlist2.Count != 0)
-      {
-        try
-        {
-          if (_getMediaInfoThread.IsAlive)
-          {
-            // dont want to abort, rather send a signal and wait to finish, it is a clean exit
-            Log.Debug("GetMediaInfoThread: send an exit signal to the last thread and waiting for exit.");
-            _getMediaInfoThreadAbort = true;
-            _getMediaInfoThread.Join();
-            Log.Debug("GetMediaInfoThread: after join.");
-          }
-        }
-        catch (Exception) { }
-
-        _getMediaInfoThreadAbort = false;
-
-        // The last _getMediaInfoThread is closed we can start a new one
-        _getMediaInfoThreadNumber++;
-        _getMediaInfoThread = new Thread(GetMediaInfoThread);
-        _getMediaInfoThread.Priority = ThreadPriority.Lowest;
-        _getMediaInfoThread.IsBackground = true;
-        _getMediaInfoThread.Name = "GetMediaInfoThread " + _getMediaInfoThreadNumber;
-        _getMediaInfoThread.Start(itemlist2);
-      }
-
       GUIWaitCursor.Hide();
-    }
-
-    // main thread. It adds all file to database and refresh the ListLayout on the screen.
-    private void GetMediaInfoThread(object i)
-    {
-      List<GUIListItem> itemlist = (List<GUIListItem>) i;
-      Log.Debug("GetMediaInfoThread: current folder: {0}, itemlist count: {1}", _currentFolder, itemlist.Count);
-
-      foreach (GUIListItem item in itemlist)
-      {
-        if (_getMediaInfoThreadAbort)
-        {
-          Log.Debug("GetMediaInfoThread: finished with _getMediaInfoThreadAbort signal.");
-          return;
-        }
-        try
-        {
-          Log.Debug("GetMediaInfoThread: Work on {0}", item.Path);
-          AddFileToDatabase(item.Path);
-             
-          int newMovieId = VideoDatabase.GetMovieId(item.Path);
-          item.Duration = VideoDatabase.GetMovieDuration(newMovieId);
-          if (item.Duration > 0)
-          {
-            for (int n = facadeLayout.ListLayout.ListItems.Count - 1; n > 0; n--)
-            {
-              if (facadeLayout.ListLayout.ListItems[n].Label == item.Label)
-              {
-                SetLabel(item);
-                facadeLayout.ListLayout.ListItems[n].Label2 = item.Label2;
-                break;
-              }
-            }
-          }
-        }
-        catch (ThreadAbortException)
-        {
-          Log.Debug("GetMediaInfoThread: ThreadAbortException");
-        }
-        Thread.Sleep(100);
-      }
-      Log.Debug("GetMediaInfoThread: Finished.");
-      return;
     }
 
     private void LoadFolderSettings(string folderName)
@@ -4659,7 +4582,7 @@ namespace MediaPortal.GUI.Video
           _setThumbs = null;
         }
 
-        _setThumbsThreadAborted = false;
+        //_setThumbsThreadAborted = false;
 
         _threadGUIItems.Clear();
         _threadGUIItems.AddRange(itemlist);
@@ -4699,7 +4622,7 @@ namespace MediaPortal.GUI.Video
       catch (ThreadAbortException)
       {
         Log.Info("GUIVideoFiles: Thread SetIMDBThumbs aborted.");
-        _setThumbsThreadAborted = true;
+        //_setThumbsThreadAborted = true;
       }
     }
 
