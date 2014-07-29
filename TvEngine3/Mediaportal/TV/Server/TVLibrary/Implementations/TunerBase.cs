@@ -23,7 +23,6 @@ using System.Collections.Generic;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
-using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.ChannelLinkage;
@@ -126,7 +125,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// Context reference
     /// </summary>
-    private object _context;
+    private object _context = null;
 
     #region identification
 
@@ -137,7 +136,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// This is the identifier for the database record which holds the tuner's
     /// settings.
     /// </remarks>
-    private int _tunerId;
+    private int _tunerId = -1;
 
     /// <summary>
     /// The tuner's unique external identifier.
@@ -147,7 +146,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// implementation. For example, implementations based on DirectShow
     /// may use the IMoniker display name (AKA device path).
     /// </remarks>
-    private string _externalId;
+    private readonly string _externalId = string.Empty;
 
     /// <summary>
     /// A shared identifier for all tuner instances derived from a
@@ -164,12 +163,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// The tuner's name.
     /// </summary>
-    private string _name;
+    private string _name = string.Empty;
 
     /// <summary>
     /// The tuner type (eg. DVB-S, DVB-T... etc.).
     /// </summary>
-    private CardType _tunerType = CardType.Unknown;
+    private readonly CardType _tunerType = CardType.Unknown;
 
     #endregion
 
@@ -178,22 +177,22 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// Indicates if the tuner is locked onto signal.
     /// </summary>
-    private volatile bool _isSignalLocked;
+    private volatile bool _isSignalLocked = false;
 
     /// <summary>
     /// Indicates if the tuner has detected signal.
     /// </summary>
-    private bool _isSignalPresent;
+    private bool _isSignalPresent = false;
 
     /// <summary>
     /// The signal strength. Range: 0 to 100.
     /// </summary>
-    private int _signalStrength;
+    private int _signalStrength = 0;
 
     /// <summary>
     /// The signal quality. Range: 0 to 100.
     /// </summary>
-    private int _signalQuality;
+    private int _signalQuality = 0;
 
     /// <summary>
     /// Date and time of the last signal status update.
@@ -211,7 +210,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// A list containing the extension interfaces supported by this tuner. The list is ordered by
     /// descending extension priority.
     /// </summary>
-    protected List<ICustomDevice> _extensions = new List<ICustomDevice>();
+    private IList<ICustomDevice> _extensions = new List<ICustomDevice>();
 
     /// <summary>
     /// A list containing the conditional access provider extensions supported by this tuner. The
@@ -667,77 +666,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     #endregion
 
     /// <summary>
-    /// Load the <see cref="T:TvLibrary.Interfaces.ICustomDevice">extensions</see> for this tuner.
-    /// </summary>
-    /// <param name="context">Any context required to initialise supported extensions.</param>
-    protected void LoadExtensions(object context)
-    {
-      this.LogDebug("tuner base: load tuner extensions");
-
-      TunerExtensionLoader tunerExtensionLoader = new TunerExtensionLoader();
-      IEnumerable<ICustomDevice> extensions = tunerExtensionLoader.Load();
-
-      ICustomDevice x = this as ICustomDevice;
-      if (x != null)
-      {
-        this.LogDebug("tuner base: add self as extension");
-        List<ICustomDevice> temp = new List<ICustomDevice>();
-        temp.Add(x);
-        temp.AddRange(extensions);
-        extensions = temp;
-      }
-
-      this.LogDebug("tuner base: checking for supported extensions");
-      HashSet<string> foundInterfaces = new HashSet<string>();
-      foreach (ICustomDevice extension in extensions)
-      {
-        // We only support one implementation of each interface, unless the
-        // extension is a DirectShow add-on.
-        Type[] interfaces = new Type[0];
-        if (!(extension is IDirectShowAddOnDevice))
-        {
-          bool foundInterface = false;
-          interfaces = extension.GetType().GetInterfaces();
-          foreach (Type i in interfaces)
-          {
-            // TODO this could pick up interfaces that we don't care about...
-            // but we don't want an explicit list of interfaces we care about.
-            // Need to be smarter!
-            if (i != typeof(ICustomDevice) &&
-              i != typeof (IEncoder) &&
-              i != typeof(IRemoteControlListener) &&
-              i != typeof(IDisposable) &&
-              foundInterfaces.Contains(i.Name))
-            {
-              this.LogDebug("tuner base: extension \"{0}\" supports already found interface {1}, won't use", extension.Name, i.Name);
-              foundInterface = true;
-              break;
-            }
-          }
-          if (foundInterface)
-          {
-            continue;
-          }
-        }
-
-        this.LogDebug("tuner base: try extension \"{0}\"", extension.Name);
-        if (!extension.Initialise(ExternalId, _tunerType, context))
-        {
-          extension.Dispose();
-          continue;
-        }
-
-        _extensions.Add(extension);
-        foreach (Type i in interfaces)
-        {
-          foundInterfaces.Add(i.Name);
-        }
-      }
-
-      this.LogDebug("tuner base: {0} extension(s) supported", _extensions.Count);
-    }
-
-    /// <summary>
     /// Open any <see cref="T:TvLibrary.Interfaces.ICustomDevice"/> extensions loaded for this tuner.
     /// </summary>
     /// <remarks>
@@ -836,16 +764,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       try
       {
         ReloadConfiguration();
-        PerformLoading();
+        _extensions = PerformLoading();
 
         _state = TunerState.Stopped;
 
-        // Open any plugins that were detected during loading. This is separated from loading because some
-        // plugins can't be opened until the tuner has fully loaded.
+        // Open any extensions that were detected during loading. This is
+        // separated from loading because some extensions can't be opened until
+        // the tuner has fully loaded.
         OpenExtensions();
 
-        // Plugins can request to pause or start the tuner - other actions don't make sense here. The started
-        // state is considered more compatible than the paused state, so start takes precedence.
+        // Extensions can request to pause or start the tuner - other actions
+        // don't make sense here. The started state is considered more
+        // compatible than the paused state, so start takes precedence.
         TunerAction actualAction = TunerAction.Default;
         foreach (ICustomDevice extension in _extensions)
         {
@@ -855,22 +785,22 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           {
             if (actualAction == TunerAction.Default)
             {
-              this.LogDebug("tuner base: plugin \"{0}\" will cause tuner pause", extension.Name);
+              this.LogDebug("tuner base: extension \"{0}\" will cause tuner pause", extension.Name);
               actualAction = TunerAction.Pause;
             }
             else
             {
-              this.LogDebug("tuner base: plugin \"{0}\" wants to pause the tuner, overriden", extension.Name);
+              this.LogDebug("tuner base: extension \"{0}\" wants to pause the tuner, overriden", extension.Name);
             }
           }
           else if (action == TunerAction.Start)
           {
-            this.LogDebug("tuner base: plugin \"{0}\" will cause tuner start", extension.Name);
+            this.LogDebug("tuner base: extension \"{0}\" will cause tuner start", extension.Name);
             actualAction = action;
           }
           else if (action != TunerAction.Default)
           {
-            this.LogDebug("tuner base: plugin \"{0}\" wants unsupported action {1}", extension.Name, action);
+            this.LogDebug("tuner base: extension \"{0}\" wants unsupported action {1}", extension.Name, action);
           }
         }
 
@@ -1127,19 +1057,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
             break;
         }
 
-        // Plugins may want to prevent or direct actions to ensure compatibility and smooth tuner operation.
-        TunerAction pluginAction = action;
+        // Extensions may want to prevent or direct actions to ensure
+        // compatibility and smooth tuner operation.
+        TunerAction extensionAction = action;
         foreach (ICustomDevice extension in _extensions)
         {
-          extension.OnStop(this, ref pluginAction);
-          if (pluginAction > action)
+          extension.OnStop(this, ref extensionAction);
+          if (extensionAction > action)
           {
-            this.LogDebug("tuner base: plugin \"{0}\" overrides action {1} with {2}", extension.Name, action, pluginAction);
-            action = pluginAction;
+            this.LogDebug("tuner base: extension \"{0}\" overrides action {1} with {2}", extension.Name, action, extensionAction);
+            action = extensionAction;
           }
-          else if (action != pluginAction)
+          else if (action != extensionAction)
           {
-            this.LogDebug("tuner base: plugin \"{0}\" wants to perform action {1}, overriden", extension.Name, pluginAction);
+            this.LogWarn("tuner base: extension \"{0}\" wants to perform action {1}, overriden", extension.Name, extensionAction);
           }
         }
 
@@ -1319,8 +1250,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         else
         {
           description = "using existing sub-channel";
-          // If reusing a sub-channel and our multi-channel decrypt mode is "changes", tell the plugin to stop
-          // decrypting the previous service before we lose access to the PMT and CAT.
+          // If reusing a sub-channel and our multi-channel decrypt mode is
+          // "changes", tell the extension to stop decrypting the previous
+          // service before we lose access to the PMT and CAT.
           if (_multiChannelDecryptMode == MultiChannelDecryptMode.Changes)
           {
             UpdateDecryptList(subChannelId, CaPmtListManagementAction.Last);
@@ -1349,23 +1281,23 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           // will sometimes returns true when it shouldn't. See mantis 0002979.
           IChannel tuneChannel = channel.GetTuningChannel();
 
-          // Plugin OnBeforeTune().
+          // Extension OnBeforeTune().
           TunerAction action = TunerAction.Default;
           foreach (ICustomDevice extension in _extensions)
           {
-            TunerAction pluginAction;
-            extension.OnBeforeTune(this, _currentTuningDetail, ref tuneChannel, out pluginAction);
-            if (pluginAction != TunerAction.Unload && pluginAction != TunerAction.Default)
+            TunerAction extensionAction;
+            extension.OnBeforeTune(this, _currentTuningDetail, ref tuneChannel, out extensionAction);
+            if (extensionAction != TunerAction.Unload && extensionAction != TunerAction.Default)
             {
               // Valid action requested...
-              if (pluginAction > action)
+              if (extensionAction > action)
               {
-                this.LogDebug("tuner base: plugin \"{0}\" overrides action {1} with {2}", extension.Name, action, pluginAction);
-                action = pluginAction;
+                this.LogDebug("tuner base: extension \"{0}\" overrides action {1} with {2}", extension.Name, action, extensionAction);
+                action = extensionAction;
               }
-              else if (pluginAction != action)
+              else if (extensionAction != action)
               {
-                this.LogDebug("tuner base: plugin \"{0}\" wants to perform action {1}, overriden", extension.Name, pluginAction);
+                this.LogWarn("tuner base: extension \"{0}\" wants to perform action {1}, overriden", extension.Name, extensionAction);
               }
             }
 
@@ -1406,6 +1338,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
                   this.LogWarn("tuner base: custom tuning failed, falling back to default tuning");
                   PerformTuning(tuneChannel);
                 }
+                break;
               }
             }
           }
@@ -1416,7 +1349,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           ResetSignalUpdate();
           ThrowExceptionIfTuneCancelled();
 
-          // Plugin OnAfterTune().
+          // Extension OnAfterTune().
           foreach (ICustomDevice extension in _extensions)
           {
             extension.OnAfterTune(this, channel);
@@ -1433,7 +1366,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         PerformTunerAction(TunerAction.Start);
         ThrowExceptionIfTuneCancelled();
 
-        // Plugin OnStarted().
+        // Extension OnStarted().
         foreach (ICustomDevice extension in _extensions)
         {
           extension.OnStarted(this, channel);
@@ -1520,7 +1453,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// Actually load the tuner.
     /// </summary>
-    public abstract void PerformLoading();
+    /// <returns>the set of extensions loaded for the tuner, in priority order</returns>
+    public abstract IList<ICustomDevice> PerformLoading();
 
     /// <summary>
     /// Actually unload the tuner.

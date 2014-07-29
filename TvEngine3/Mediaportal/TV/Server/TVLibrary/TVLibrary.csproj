@@ -202,6 +202,7 @@
     <Compile Include="Implementations\DirectShow\Bda\TunerBdaBase.cs" />
     <Compile Include="Implementations\Helper\EncodersInUse.cs" />
     <Compile Include="Implementations\Helper\FilterGraphTools.cs" />
+    <Compile Include="Implementations\TunerExtensionWrapper.cs" />
     <Compile Include="Implementations\TunerGroup.cs" />
     <Compile Include="Implementations\TunerBase.cs" />
     <Compile Include="Implementations\Upnp\Enum\AvTransportState.cs" />
@@ -237,6 +238,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Streaming\RtspStream.cs" />
     <Compile Include="Streaming\RtspStreaming.cs" />
+    <Compile Include="Implementations\TunerInternalWrapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\Common-MP-TVE3\Common.Utils\Common.Utils.csproj">

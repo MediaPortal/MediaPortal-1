@@ -88,7 +88,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte
         throw new TvException("Internal tuner implementation is not usable.");
       }
 
-      _dvbcTuner = dvbcTuner;
+      _dvbcTuner = new TunerInternalWrapper(dvbcTuner);
     }
 
     #region ITunerInternal members
@@ -111,9 +111,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte
     /// <summary>
     /// Actually load the tuner.
     /// </summary>
-    public override void PerformLoading()
+    /// <returns>the set of extensions loaded for the tuner, in priority order</returns>
+    public override IList<ICustomDevice> PerformLoading()
     {
-      _dvbcTuner.PerformLoading();
+      IList<ICustomDevice> extensions = _dvbcTuner.PerformLoading();
 
       _channelScanner = _dvbcTuner.InternalChannelScanningInterface;
       if (_channelScanner != null)
@@ -121,6 +122,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte
         _channelScanner.Tuner = this;
         _channelScanner.Helper = new ChannelScannerHelperAtsc();
       }
+      return extensions;
     }
 
     /// <summary>

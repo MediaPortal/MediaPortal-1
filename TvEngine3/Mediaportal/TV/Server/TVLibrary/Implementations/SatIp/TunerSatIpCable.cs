@@ -105,7 +105,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
         this.LogWarn("SAT>IP cable: unsupported modulation type {0}, assuming 256 QAM", cableChannel.ModulationType);
       }
 
-      PerformTuning(string.Format("msys=dvbc&freq={0}&mtype={1}&sr={2}", cableChannel.Frequency / 1000, modulation, cableChannel.SymbolRate));
+      PerformTuning(cableChannel, string.Format("msys=dvbc&freq={0}&mtype={1}&sr={2}", cableChannel.Frequency / 1000, modulation, cableChannel.SymbolRate));
     }
 
     /// <summary>

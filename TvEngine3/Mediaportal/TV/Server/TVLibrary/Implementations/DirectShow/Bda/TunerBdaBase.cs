@@ -34,6 +34,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.NetworkProvider;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
 {
@@ -471,7 +472,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// <summary>
     /// Actually load the tuner.
     /// </summary>
-    public override void PerformLoading()
+    /// <returns>the set of extensions loaded for the tuner, in priority order</returns>
+    public override IList<ICustomDevice> PerformLoading()
     {
       this.LogDebug("BDA base: perform loading");
       InitialiseGraph();
@@ -510,7 +512,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       AddAndConnectCaptureFilterIntoGraph(ref lastFilter);
 
       // Check for and load extensions, adding any additional filters to the graph.
-      LoadExtensions(_filterMain, ref lastFilter);
+      IList<ICustomDevice> extensions = LoadExtensions(_filterMain, ref lastFilter);
 
       // If using a Microsoft network provider and configured to do so, add an
       // infinite tee, MPEG 2 demultiplexer and transport information filter in
@@ -532,6 +534,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
 
       CompleteGraph();
       _signalStatisticsInterfaces = GetTunerSignalStatisticsInterfaces();
+      return extensions;
     }
 
     /// <summary>

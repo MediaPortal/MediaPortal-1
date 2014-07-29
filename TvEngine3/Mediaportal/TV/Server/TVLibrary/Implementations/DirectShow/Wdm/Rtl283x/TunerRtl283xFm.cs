@@ -32,6 +32,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 using Microsoft.Win32;
 using Encoder = Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.Component.Encoder;
 
@@ -410,7 +411,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
                 switch (job.JobType)
                 {
                   case GraphJobType.Load:
-                    InternalPerformLoading();
+                    job.ReturnValue = InternalPerformLoading();
                     break;
                   case GraphJobType.Tune:
                     InternalPerformTuning(job.Parameters[0] as IChannel);
@@ -523,23 +524,25 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
     /// <summary>
     /// Actually load the tuner.
     /// </summary>
-    public override void PerformLoading()
+    /// <returns>the set of extensions loaded for the tuner, in priority order</returns>
+    public override IList<ICustomDevice> PerformLoading()
     {
       if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
       {
-        InternalPerformLoading();
+        return InternalPerformLoading();
       }
       else
       {
         object[] p = null;
-        InvokeGraphJob(GraphJobType.Load, ref p);
+        return (IList<ICustomDevice>)InvokeGraphJob(GraphJobType.Load, ref p);
       }
     }
 
     /// <summary>
     /// Actually load the tuner.
     /// </summary>
-    private void InternalPerformLoading()
+    /// <returns>the set of extensions loaded for the tuner, in priority order</returns>
+    private IList<ICustomDevice> InternalPerformLoading()
     {
       this.LogDebug("RTL283x FM: perform loading");
 
@@ -623,7 +626,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
 
       // Check for and load extensions, adding any additional filters to the graph.
       IBaseFilter lastFilter = _encoder.TsMultiplexerFilter;
-      LoadExtensions(_filterSource, ref lastFilter);
+      IList<ICustomDevice> extensions = LoadExtensions(_filterSource, ref lastFilter);
       AddAndConnectTsWriterIntoGraph(lastFilter);
       CompleteGraph();
 
@@ -634,6 +637,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       _epgGrabber = null;
 
       _channelScanner = new ChannelScannerDirectShowAnalog(this, _staTsWriter);
+      return extensions;
     }
 
     /// <summary>

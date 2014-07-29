@@ -25,6 +25,7 @@ using System.Net.NetworkInformation;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Dvb;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Rtsp;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
@@ -139,7 +140,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
       }
 
       _serverDescriptor = serverDescriptor;
-      _streamTuner = streamTuner;
+      _streamTuner = new TunerInternalWrapper(streamTuner);
       _localIpAddress = serverDescriptor.RootDescriptor.SSDPRootEntry.PreferredLink.Endpoint.EndPointIPAddress;
       _serverIpAddress = new Uri(serverDescriptor.RootDescriptor.SSDPRootEntry.PreferredLink.DescriptionLocation).Host;
       _productInstanceId = serverDescriptor.DeviceUUID;
@@ -153,8 +154,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     /// <summary>
     /// Actually tune to a channel.
     /// </summary>
+    /// <param name="channel">The channel to tune to.</param>
     /// <param name="parameters">A URI section specifying the tuning parameters.</param>
-    protected void PerformTuning(string parameters)
+    protected void PerformTuning(DVBBaseChannel channel, string parameters)
     {
       this.LogDebug("SAT>IP base: perform tuning");
 
@@ -302,6 +304,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
       this.LogDebug("SAT>IP base: configure stream source filter");
       DVBIPChannel streamChannel = new DVBIPChannel();
       streamChannel.Url = rtpUrl;
+
+      // Copy the other channel parameters from the original channel.
+      streamChannel.FreeToAir = channel.FreeToAir;
+      streamChannel.Frequency = channel.Frequency;
+      streamChannel.LogicalChannelNumber = channel.LogicalChannelNumber;
+      streamChannel.MediaType = channel.MediaType;
+      streamChannel.Name = channel.Name;
+      streamChannel.NetworkId = channel.NetworkId;
+      streamChannel.PmtPid = channel.PmtPid;
+      streamChannel.Provider = channel.Provider;
+      streamChannel.ServiceId = channel.ServiceId;
+      streamChannel.TransportId = channel.TransportId;
+
       _streamTuner.PerformTuning(streamChannel);
     }
 
@@ -404,16 +419,28 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     /// <summary>
     /// Actually load the tuner.
     /// </summary>
-    public override void PerformLoading()
+    /// <returns>the set of extensions loaded for the tuner, in priority order</returns>
+    public override IList<ICustomDevice> PerformLoading()
     {
-      LoadExtensions(_serverDescriptor);
-      _streamTuner.PerformLoading();
+      TunerExtensionLoader loader = new TunerExtensionLoader();
+      IList<ICustomDevice> extensions = loader.Load(this, _serverDescriptor);
+
+      // Add the stream tuner extensions to our extensions, but don't re-sort
+      // by priority afterwards. This ensures that our extensions are always
+      // given first consideration.
+      IList<ICustomDevice> streamTunerExtensions = _streamTuner.PerformLoading();
+      foreach (ICustomDevice e in streamTunerExtensions)
+      {
+        extensions.Add(e);
+      }
+
       _channelScanner = _streamTuner.InternalChannelScanningInterface;
       if (_channelScanner != null)
       {
         _channelScanner.Tuner = this;
         _channelScanner.Helper = new ChannelScannerHelperDvb();
       }
+      return extensions;
     }
 
     /// <summary>
@@ -463,7 +490,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
         }
       }
 
-      _streamTuner.PerformSetTunerState(state);
+      try
+      {
+        _streamTuner.PerformSetTunerState(state);
+      }
+      catch
+      {
+        // It isn't possible to start the stream tuner if there is no stream.
+        // No signal => no stream.
+        if (state != TunerState.Started)
+        {
+          throw;
+        }
+      }
     }
 
     /// <summary>

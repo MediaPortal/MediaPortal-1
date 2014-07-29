@@ -337,7 +337,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     /// <summary>
     /// Actually load the tuner.
     /// </summary>
-    public override void PerformLoading()
+    /// <returns>the set of extensions loaded for the tuner, in priority order</returns>
+    public override IList<ICustomDevice> PerformLoading()
     {
       this.LogDebug("B2C2 base: perform loading");
       InitialiseGraph();
@@ -361,7 +362,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
 
       // Load and open extensions.
       IBaseFilter lastFilter = _filterInfiniteTee;
-      LoadExtensions(_deviceInfo, ref lastFilter);
+      IList<ICustomDevice> extensions = LoadExtensions(_deviceInfo, ref lastFilter);
 
       // Complete the graph.
       AddAndConnectTsWriterIntoGraph(lastFilter);
@@ -378,6 +379,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       {
         _isPidFilterDisabled = true;
       }
+      return extensions;
     }
 
     /// <summary>

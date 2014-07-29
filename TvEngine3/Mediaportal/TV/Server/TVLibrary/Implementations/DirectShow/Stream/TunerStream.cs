@@ -19,14 +19,15 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using DirectShowLib;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
 {
@@ -121,7 +122,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
     /// <summary>
     /// Actually load the tuner.
     /// </summary>
-    public override void PerformLoading()
+    /// <returns>the set of extensions loaded for the tuner, in priority order</returns>
+    public override IList<ICustomDevice> PerformLoading()
     {
       this.LogDebug("DirectShow stream: perform loading");
       InitialiseGraph();
@@ -138,11 +140,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
 
       // Check for and load extensions, adding any additional filters to the graph.
       IBaseFilter lastFilter = _filterStreamSource;
-      LoadExtensions(_filterStreamSource, ref lastFilter);
+      IList<ICustomDevice> extensions = LoadExtensions(_filterStreamSource, ref lastFilter);
 
       // Complete the graph.
       AddAndConnectTsWriterIntoGraph(lastFilter);
       CompleteGraph();
+      return extensions;
     }
 
     /// <summary>

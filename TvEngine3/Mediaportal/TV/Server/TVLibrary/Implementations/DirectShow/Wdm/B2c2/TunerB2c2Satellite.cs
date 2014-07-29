@@ -18,7 +18,7 @@
 
 #endregion
 
-using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Enum;
@@ -67,10 +67,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     /// <summary>
     /// Actually load the tuner.
     /// </summary>
-    public override void PerformLoading()
+    /// <returns>the set of extensions loaded for the tuner, in priority order</returns>
+    public override IList<ICustomDevice> PerformLoading()
     {
-      base.PerformLoading();
+      IList<ICustomDevice> extensions = base.PerformLoading();
       _isRawDiseqcSupported = _capabilities.AcquisitionCapabilities.HasFlag(AcquisitionCapability.RawDiseqc);
+      return extensions;
     }
 
     #region tuning

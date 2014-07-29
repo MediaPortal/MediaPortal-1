@@ -61,7 +61,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// <summary>
     /// Actually load the tuner.
     /// </summary>
-    void PerformLoading();
+    /// <returns>the set of extensions loaded for the tuner, in priority order</returns>
+    IList<ICustomDevice> PerformLoading();
 
     /// <summary>
     /// Actually set the state of the tuner.

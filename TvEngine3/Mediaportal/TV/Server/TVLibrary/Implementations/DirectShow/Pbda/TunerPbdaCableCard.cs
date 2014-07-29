@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using DirectShowLib;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda;
@@ -114,10 +115,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
     /// <summary>
     /// Actually load the tuner.
     /// </summary>
-    public override void PerformLoading()
+    /// <returns>the set of extensions loaded for the tuner, in priority order</returns>
+    public override IList<ICustomDevice> PerformLoading()
     {
       this.LogDebug("PBDA CableCARD: perform loading");
-      base.PerformLoading();
+      IList<ICustomDevice> extensions = base.PerformLoading();
 
       // Connect the tuner filter OOB info into TsWriter.
       this.LogDebug("PBDA CableCARD: connect out-of-band stream");
@@ -128,6 +130,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
       {
         throw new TvException("Failed to find BDA conditional access interface on tuner filter.");
       }
+      return extensions;
     }
 
     /// <summary>

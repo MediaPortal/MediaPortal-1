@@ -28,6 +28,7 @@ using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Service;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Rtsp;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Upnp.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Upnp.Service;
@@ -143,7 +144,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
 
       _descriptor = descriptor;
       _controlPoint = controlPoint;
-      _streamTuner = streamTuner;
+      _streamTuner = new TunerInternalWrapper(streamTuner);
       _isCetonDevice = descriptor.FriendlyName.Contains("Ceton");
       _caMenuHandler = new CableCardMmiHandler(EnterMenu, CloseDialog);
 
@@ -471,6 +472,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       }
       this.LogDebug("DRI CableCARD: RTSP PLAY response okay");
 
+      // Copy the other channel parameters from the original channel.
+      streamChannel.FreeToAir = _currentTuningDetail.FreeToAir;
+      streamChannel.Frequency = _currentTuningDetail.Frequency;
+      streamChannel.LogicalChannelNumber = _currentTuningDetail.LogicalChannelNumber;
+      streamChannel.MediaType = _currentTuningDetail.MediaType;
+      streamChannel.Name = _currentTuningDetail.Name;
+      streamChannel.NetworkId = _currentTuningDetail.NetworkId;
+      streamChannel.PmtPid = _currentTuningDetail.PmtPid;
+      streamChannel.Provider = _currentTuningDetail.Provider;
+      streamChannel.ServiceId = _currentTuningDetail.ServiceId;
+      streamChannel.TransportId = _currentTuningDetail.TransportId;
+
       _streamTuner.PerformTuning(streamChannel);
     }
 
@@ -640,7 +653,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     /// <summary>
     /// Actually load the tuner.
     /// </summary>
-    public override void PerformLoading()
+    /// <returns>the set of extensions loaded for the tuner, in priority order</returns>
+    public override IList<ICustomDevice> PerformLoading()
     {
       this.LogDebug("DRI CableCARD: perform loading");
 
@@ -679,10 +693,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       this.LogDebug("DRI CableCARD: PrepareForConnection, connection ID = {0}, AV transport ID = {1}", _connectionId, _avTransportId);
 
       ReadDeviceInfo();
-      LoadExtensions(_descriptor);
+      TunerExtensionLoader loader = new TunerExtensionLoader();
+      IList<ICustomDevice> extensions = loader.Load(this, _descriptor);
 
-      _streamTuner.PerformLoading();
+      // Add the stream tuner extensions to our extensions, but don't re-sort
+      // by priority afterwards. This ensures that our extensions are always
+      // given first consideration.
+      IList<ICustomDevice> streamTunerExtensions = _streamTuner.PerformLoading();
+      foreach (ICustomDevice e in streamTunerExtensions)
+      {
+        extensions.Add(e);
+      }
+
       _channelScanner = new ChannelScannerDri(this, _serverIpAddress, _serviceFdc.RequestTables);
+      return extensions;
     }
 
     /// <summary>
@@ -726,7 +750,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
         }
       }
 
-      _streamTuner.PerformSetTunerState(state);
+      try
+      {
+        _streamTuner.PerformSetTunerState(state);
+      }
+      catch
+      {
+        // It isn't possible to start the stream tuner if there is no stream.
+        // No signal => no stream.
+        if (state != TunerState.Started)
+        {
+          throw;
+        }
+      }
     }
 
     /// <summary>

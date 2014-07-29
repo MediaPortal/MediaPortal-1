@@ -145,24 +145,26 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     /// </remarks>
     /// <param name="context">Any context required to initialise supported extensions.</param>
     /// <param name="lastFilter">The source filter (usually either a tuner or capture/receiver
-    ///   filter) to connect the [first] device filter to.</param>
-    protected void LoadExtensions(object context, ref IBaseFilter lastFilter)
+    ///   filter) to connect the [first] extension filter to.</param>
+    /// <returns>the set of extensions loaded for the tuner, in priority order</returns>
+    protected IList<ICustomDevice> LoadExtensions(object context, ref IBaseFilter lastFilter)
     {
       this.LogDebug("DirectShow base: load tuner extensions");
-      base.LoadExtensions(context);
+      TunerExtensionLoader loader = new TunerExtensionLoader();
+      IList<ICustomDevice> extensions = loader.Load(this, context);
 
       if (lastFilter != null)
       {
         List<IDirectShowAddOnDevice> addOnsToDispose = new List<IDirectShowAddOnDevice>();
-        foreach (ICustomDevice extension in _extensions)
+        foreach (ICustomDevice e in extensions)
         {
-          IDirectShowAddOnDevice addOn = extension as IDirectShowAddOnDevice;
+          IDirectShowAddOnDevice addOn = e as IDirectShowAddOnDevice;
           if (addOn != null)
           {
-            this.LogDebug("DirectShow base: add-on \"{0}\" found", extension.Name);
+            this.LogDebug("DirectShow base: add-on \"{0}\" found", e.Name);
             if (!addOn.AddToGraph(_graph, ref lastFilter))
             {
-              this.LogDebug("DirectShow base: failed to add filter(s) to graph");
+              this.LogDebug("DirectShow base: failed to add to graph");
               addOnsToDispose.Add(addOn);
               continue;
             }
@@ -171,9 +173,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
         foreach (IDirectShowAddOnDevice addOn in addOnsToDispose)
         {
           addOn.Dispose();
-          _extensions.Remove(addOn);
+          extensions.Remove(addOn);
         }
       }
+      return extensions;
     }
 
     /// <summary>

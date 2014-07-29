@@ -31,6 +31,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Countries;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 using MediaPortal.Common.Utils.ExtensionMethods;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
@@ -211,7 +212,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
     /// <summary>
     /// Actually load the tuner.
     /// </summary>
-    public override void PerformLoading()
+    /// <returns>the set of extensions loaded for the tuner, in priority order</returns>
+    public override IList<ICustomDevice> PerformLoading()
     {
       this.LogDebug("WDM analog: perform loading");
 
@@ -239,14 +241,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
       _encoder.PerformLoading(_graph, ProductInstanceId, _capture);
 
       // Check for and load extensions, adding any additional filters to the graph.
+      IList<ICustomDevice> extensions;
       IBaseFilter lastFilter = _encoder.TsMultiplexerFilter;
       if (_mainDeviceCategory == FilterCategory.AMKSCrossbar)
       {
-        LoadExtensions(_crossbar.Filter, ref lastFilter);
+        extensions = LoadExtensions(_crossbar.Filter, ref lastFilter);
       }
       else
       {
-        LoadExtensions(_capture.VideoFilter ?? _capture.AudioFilter, ref lastFilter);
+        extensions = LoadExtensions(_capture.VideoFilter ?? _capture.AudioFilter, ref lastFilter);
       }
       AddAndConnectTsWriterIntoGraph(lastFilter);
       CompleteGraph();
@@ -255,6 +258,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
       _epgGrabber = null;
 
       _channelScanner = new ChannelScannerDirectShowAnalog(this, _filterTsWriter as ITsChannelScan);
+      return extensions;
     }
 
     /// <summary>

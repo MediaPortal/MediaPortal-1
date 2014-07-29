@@ -146,7 +146,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
       // DVB-S2 or DVB-S?
       if (satelliteChannel.ModulationType == ModulationType.ModNotSet)
       {
-        PerformTuning(parameters);
+        PerformTuning(satelliteChannel, parameters);
         return;
       }
 
@@ -196,7 +196,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
         this.LogWarn("SAT>IP satellite: unsupported roll-off {0}, assuming 0.35", satelliteChannel.RollOff);
       }
 
-      PerformTuning(parameters + string.Format("2&mtype={0}&plts={1}&ro={2}", modulation, pilots, rollOff));
+      PerformTuning(satelliteChannel, parameters + string.Format("2&mtype={0}&plts={1}&ro={2}", modulation, pilots, rollOff));
     }
 
     /// <summary>
