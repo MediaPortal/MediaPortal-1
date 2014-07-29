@@ -20,6 +20,8 @@
 
 using System.Collections.Generic;
 using System.Globalization;
+using System.Net;
+using MediaPortal.TV.Server.TVLibrary.UPnP.MediaServer.ResourceAccess;
 using UPnP.Infrastructure.Dv.DeviceTree;
 
 namespace Mediaportal.TV.Server.TVLibrary.TVEUPnPServer.Server
@@ -73,7 +75,69 @@ namespace Mediaportal.TV.Server.TVLibrary.TVEUPnPServer.Server
 
     public ICollection<IconDescriptor> GetIcons(CultureInfo culture)
     {
-      return null;
+      List<IconDescriptor> icons = new List<IconDescriptor>();
+      IconDescriptor icon1 = new IconDescriptor
+      {
+        MimeType = "image/png",
+        Height = 120,
+        Width = 120,
+        ColorDepth = 32,
+        GetIconURLDelegate = BuildIconUrl120Png
+      };
+      IconDescriptor icon2 = new IconDescriptor
+      {
+        MimeType = "image/png",
+        Height = 48,
+        Width = 48,
+        ColorDepth = 32,
+        GetIconURLDelegate = BuildIconUrl48Png
+      };
+      IconDescriptor icon3 = new IconDescriptor
+      {
+        MimeType = "image/jpeg",
+        Width = 120,
+        Height = 120,
+        ColorDepth = 24,
+        GetIconURLDelegate = BuildIconUrl120Jpeg
+      };
+      IconDescriptor icon4 = new IconDescriptor
+      {
+        MimeType = "image/jpeg",
+        Height = 48,
+        Width = 48,
+        ColorDepth = 24,
+        GetIconURLDelegate = BuildIconUrl48Jpeg
+      };
+      icons.Add(icon1);
+      icons.Add(icon2);
+      icons.Add(icon3);
+      icons.Add(icon4);
+      return icons;
     }
+
+    #region IconDelegates
+
+    private string BuildIconUrl120Png(IPAddress endpointipaddress, CultureInfo culture)
+    {
+      return string.Format("{0}/icons/icon_120.png",
+        UPnPResourceAccessUtils.GetStaticBaseResourceUrlFromEndpoint(/*endpointipaddress*/));
+    }
+    private string BuildIconUrl48Png(IPAddress endpointipaddress, CultureInfo culture)
+    {
+      return string.Format("{0}/icons/icon_48.png",
+        UPnPResourceAccessUtils.GetStaticBaseResourceUrlFromEndpoint(/*endpointipaddress*/));
+    }
+    private string BuildIconUrl120Jpeg(IPAddress endpointipaddress, CultureInfo culture)
+    {
+      return string.Format("{0}/icons/icon_120.jpg",
+        UPnPResourceAccessUtils.GetStaticBaseResourceUrlFromEndpoint(/*endpointipaddress*/));
+    }
+    private string BuildIconUrl48Jpeg(IPAddress endpointipaddress, CultureInfo culture)
+    {
+      return string.Format("{0}/icons/icon_48.jpg",
+        UPnPResourceAccessUtils.GetStaticBaseResourceUrlFromEndpoint(/*endpointipaddress*/));
+    }
+
+    #endregion IconDelegates
   }
 }

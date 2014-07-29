@@ -18,25 +18,14 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Net;
 using System.Threading;
 using System.Diagnostics;
 
-using Mediaportal.TV.Server.TVControl;
-using Mediaportal.TV.Server.TVControl.ServiceAgents;
-using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using Mediaportal.TV.Server.TVService.Interfaces;
-using Mediaportal.TV.Server.TVService.Interfaces.Enums;
-using Mediaportal.TV.Server.TVService.Interfaces.Services;
 using Mediaportal.TV.Server.TVLibrary.TVEUPnPServer.Server;
 using Mediaportal.TV.Server.TVLibrary.TVEUPnPServer.Rtsp;
 using MediaPortal.TV.Server.TVLibrary.UPnP.MediaServer.ResourceAccess;
-using HttpServer;
 
 namespace Mediaportal.TV.Server.TVLibrary.TVEUPnPServer
 {
@@ -75,7 +64,7 @@ namespace Mediaportal.TV.Server.TVLibrary.TVEUPnPServer
             _resourceServer.ServerName = "MP UPnP resource provider";
             _resourceServer.Add(new UPnPStaticResourceAccessModule());
             _resourceServer.Add(new UPnPRecordingResourceAccessModule());
-            _resourceServer.Start(IPAddress.Parse(UPnPResourceAccessUtils.LocalIPAddress()), RESOURCE_SERVER_PORT);
+            _resourceServer.Start(IPAddress.Any, RESOURCE_SERVER_PORT); // IPAddress.Parse(UPnPResourceAccessUtils.LocalIPAddress())
         }
 
         private void UPnPLightServerStartThread()
@@ -91,7 +80,7 @@ namespace Mediaportal.TV.Server.TVLibrary.TVEUPnPServer
 
         public void stop()
         {
-            _rtsp.stop();
+            _rtsp.Stop();
             _server.Stop();
             _resourceServer.Stop();
         }

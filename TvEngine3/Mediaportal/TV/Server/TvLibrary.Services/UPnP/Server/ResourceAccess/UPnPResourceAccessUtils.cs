@@ -23,13 +23,9 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Net;
 using System.Net.Sockets;
-using MediaPortal.Common;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.TVEUPnPServer;
 
@@ -63,48 +59,53 @@ namespace MediaPortal.TV.Server.TVLibrary.UPnP.MediaServer.ResourceAccess
       return Uri.EscapeUriString(String.Format("http://{0}:{1}/{2}/{3}", LocalIPAddress(), MPUPnPServer.RESOURCE_SERVER_PORT, RESOURCE_STATIC_ACCESS_PATH, relativePath));
     }
 
-    public static bool ParseMediaItem(Uri resourceUri, out Guid mediaItemGuid)
+    /// <summary>
+    /// Creates a base resource URI
+    /// </summary>
+    /// <returns></returns>
+    public static string GetStaticBaseResourceUrlFromEndpoint()
     {
-      try
-      {
-        var r = Regex.Match(resourceUri.PathAndQuery, RESOURCE_STATIC_ACCESS_PATH + @"\/([\w-]*)\/?");
-        var mediaItem = r.Groups[1].Value;
-        mediaItemGuid = new Guid(mediaItem);
-      }
-      catch (Exception e)
-      {
-        Log.Warn("ParseMediaItem: Failed with input url {0}", e, resourceUri.OriginalString);
-        mediaItemGuid = Guid.Empty;
-        return false;
-      }
+      return GetStaticBaseResourceUrlFromEndpoint(IPAddress.Parse(UPnPResourceAccessUtils.LocalIPAddress()));
+    }
 
-      return true;
+    /// <summary>
+    /// Creates a base resource URI for a given endpointadress
+    /// </summary>
+    /// <param name="endpointadress">Endpointadress</param>
+    /// <returns></returns>
+    public static string GetStaticBaseResourceUrlFromEndpoint(IPAddress endpointadress)
+    {
+      return Uri.EscapeUriString(String.Format("http://{0}:{1}/{2}", endpointadress, MPUPnPServer.RESOURCE_SERVER_PORT, RESOURCE_STATIC_ACCESS_PATH));
     }
 
     public static string GetMimeFromRegistry(string Filename)
     {
       string mime = "application/octetstream";
-      string ext = System.IO.Path.GetExtension(Filename).ToLower();
-      Microsoft.Win32.RegistryKey rk = Microsoft.Win32.Registry.ClassesRoot.OpenSubKey(ext);
-      if (rk != null && rk.GetValue("Content Type") != null)
-        mime = rk.GetValue("Content Type").ToString();
+      var extension = System.IO.Path.GetExtension(Filename);
+      if (extension != null)
+      {
+        string ext = extension.ToLower();
+        Microsoft.Win32.RegistryKey rk = Microsoft.Win32.Registry.ClassesRoot.OpenSubKey(ext);
+        if (rk != null && rk.GetValue("Content Type") != null)
+          mime = rk.GetValue("Content Type").ToString();
+      }
       return mime;
     }
 
     public static string LocalIPAddress()
     {
       IPHostEntry host;
-      string localIP = "";
+      string localIp = "";
       host = Dns.GetHostEntry(Dns.GetHostName());
       foreach (IPAddress ip in host.AddressList)
       {
         if (ip.AddressFamily == AddressFamily.InterNetwork)
         {
-          localIP = ip.ToString();
+          localIp = ip.ToString();
           break;
         }
       }
-      return localIP;
+      return localIp;
     }
   }
 }

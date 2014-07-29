@@ -71,36 +71,6 @@ namespace Mediaportal.TV.Server.TVLibrary.TVEUPnPServer.Server
       if (pos == GenerationPosition.AfterDeviceList)
       {
         writer.WriteElementString("dlna", "X_DLNADOC", "urn:schemas-dlna-org:device-1-0", "DMS-1.50");
-        writer.WriteStartElement("iconList");
-        writer.WriteStartElement("icon");
-        writer.WriteElementString("mimetype", "image/png");
-        writer.WriteElementString("width", "120");
-        writer.WriteElementString("heigh", "120");
-        writer.WriteElementString("depth", "32");
-        writer.WriteElementString("url", UPnPResourceAccessUtils.GetStaticResourceUrlFromRelative("icons/icon_120.png"));
-        writer.WriteEndElement();
-        writer.WriteStartElement("icon");
-        writer.WriteElementString("mimetype", "image/png");
-        writer.WriteElementString("width", "48");
-        writer.WriteElementString("heigh", "48");
-        writer.WriteElementString("depth", "32");
-        writer.WriteElementString("url", UPnPResourceAccessUtils.GetStaticResourceUrlFromRelative("icons/icon_48.png"));
-        writer.WriteEndElement();
-        writer.WriteStartElement("icon");
-        writer.WriteElementString("mimetype", "image/jped");
-        writer.WriteElementString("width", "120");
-        writer.WriteElementString("heigh", "120");
-        writer.WriteElementString("depth", "24");
-        writer.WriteElementString("url", UPnPResourceAccessUtils.GetStaticResourceUrlFromRelative("icons/icon_120.jpg"));
-        writer.WriteEndElement();
-        writer.WriteStartElement("icon");
-        writer.WriteElementString("mimetype", "image/jpeg");
-        writer.WriteElementString("width", "48");
-        writer.WriteElementString("heigh", "48");
-        writer.WriteElementString("depth", "24");
-        writer.WriteElementString("url", UPnPResourceAccessUtils.GetStaticResourceUrlFromRelative("icons/icon_48.jpg"));
-        writer.WriteEndElement();
-        writer.WriteEndElement();
       }
     }
 

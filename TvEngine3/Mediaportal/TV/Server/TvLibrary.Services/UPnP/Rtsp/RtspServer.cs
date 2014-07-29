@@ -21,24 +21,17 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Linq;
 using System.Text;
 
 using System.Net.Sockets;
 using System.Net;
 using System.Threading;
-using System.Text.RegularExpressions;
 using System.Web;
-using System.Runtime.InteropServices;
 using System.Reflection;
 using System.Net.NetworkInformation;
-using System.Globalization;
-using System.IO;
-using System.IO.Pipes;
 
 using Mediaportal.TV.Server.TVControl;
 using MediaPortal.Common.Utils;
-using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVService.Interfaces;
@@ -47,7 +40,6 @@ using Mediaportal.TV.Server.TVService.Interfaces.Services;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 
 //using RtpStreamer;
 
@@ -100,12 +92,12 @@ namespace Mediaportal.TV.Server.TVLibrary.TVEUPnPServer.Rtsp
 
     ~RtspServer()
     {
-      stop();
+      Stop();
     }
 
     #endregion
 
-    public void stop()
+    public void Stop()
     {
       listen = false;
       tcpListener.Stop();
@@ -174,13 +166,13 @@ namespace Mediaportal.TV.Server.TVLibrary.TVEUPnPServer.Rtsp
         //message has successfully been received => process it
         ASCIIEncoding encoder = new ASCIIEncoding();
         //this.LogDebug(encoder.GetString(message, 0, bytesRead));
-        processMessage(encoder.GetString(message, 0, bytesRead), clientStream);
+        ProcessMessage(encoder.GetString(message, 0, bytesRead), clientStream);
       }
 
       tcpClient.Close();
     }
 
-    private void processMessage(string message, NetworkStream clientStream)
+    private void ProcessMessage(string message, NetworkStream clientStream)
     {
       this.LogDebug("REQUEST:");
       this.LogDebug("-----------");
@@ -334,7 +326,7 @@ namespace Mediaportal.TV.Server.TVLibrary.TVEUPnPServer.Rtsp
 
       clients.Add(client.sessionId, client);
 
-      parseQuery(client.sessionId, query);
+      ParseQuery(client.sessionId, query);
 
       // Response:
       // RTSP/1.0 200 OK
@@ -453,7 +445,7 @@ namespace Mediaportal.TV.Server.TVLibrary.TVEUPnPServer.Rtsp
       clients[requestHeader.sessionId].msys = getChannelTypeAsString(tuningDetail.ChannelType);
 
 
-      if (!performTuning(requestHeader.sessionId, requestHeader, clientStream, pmtPid, channelId))
+      if (!PerformTuning(requestHeader.sessionId, requestHeader, clientStream, pmtPid, channelId))
       {
         return false;
       }
@@ -495,12 +487,12 @@ namespace Mediaportal.TV.Server.TVLibrary.TVEUPnPServer.Rtsp
       if (clients[requestHeader.sessionId].isTunedToFrequency)
       {
         this.LogDebug("SAT>IP: sync Pids with Filter for sessionID: {0}", requestHeader.sessionId);
-        syncPidsWithFilter(requestHeader.sessionId, GlobalServiceProvider.Get<IControllerService>().CardDevice(clients[requestHeader.sessionId].card.Id));
+        SyncPidsWithFilter(requestHeader.sessionId, GlobalServiceProvider.Get<IControllerService>().CardDevice(clients[requestHeader.sessionId].card.Id));
       }
 
-      parseQuery(requestHeader.sessionId, query);
+      ParseQuery(requestHeader.sessionId, query);
 
-      if (!performTuning(requestHeader.sessionId, requestHeader, clientStream, clients[requestHeader.sessionId].xpmt))
+      if (!PerformTuning(requestHeader.sessionId, requestHeader, clientStream, clients[requestHeader.sessionId].xpmt))
       {
         return false;
       }
@@ -686,7 +678,7 @@ namespace Mediaportal.TV.Server.TVLibrary.TVEUPnPServer.Rtsp
 
     #endregion RTSP sections
 
-    private bool performTuning(string sessionId, RtspRequestHeader requestHeader, NetworkStream clientStream, int pmtPid = -1, int channelId = -1)
+    private bool PerformTuning(string sessionId, RtspRequestHeader requestHeader, NetworkStream clientStream, int pmtPid = -1, int channelId = -1)
     {
       if (clients[sessionId].tunedToFrequency != clients[sessionId].freq)
       {
@@ -824,17 +816,17 @@ namespace Mediaportal.TV.Server.TVLibrary.TVEUPnPServer.Rtsp
     private string LocalIPAddress()
     {
       IPHostEntry host;
-      string localIP = "";
+      string localIp = "";
       host = Dns.GetHostEntry(Dns.GetHostName());
       foreach (IPAddress ip in host.AddressList)
       {
         if (ip.AddressFamily == AddressFamily.InterNetwork)
         {
-          localIP = ip.ToString();
+          localIp = ip.ToString();
           break;
         }
       }
-      return localIP;
+      return localIp;
     }
 
     private int getChannelTypeAsInt(string channelType)
@@ -891,7 +883,7 @@ namespace Mediaportal.TV.Server.TVLibrary.TVEUPnPServer.Rtsp
       return _channelType;
     }
 
-    private bool cardAlreadyTunedToFreq(string msys, int freq, out int cardKey)
+    private bool CardAlreadyTunedToFreq(string msys, int freq, out int cardKey)
     {
       foreach (KeyValuePair<int, RtspCards> card in cards) {
         if (card.Value.freq == freq && string.Equals(card.Value.msys, msys, StringComparison.CurrentCultureIgnoreCase) && card.Value.getNumberOfFreeSlots() > 0)
@@ -905,7 +897,7 @@ namespace Mediaportal.TV.Server.TVLibrary.TVEUPnPServer.Rtsp
       return false;
     }
 
-    private bool isSessionIdCardOwner(int sessionId, out int cardKey)
+    private bool IsSessionIdCardOwner(int sessionId, out int cardKey)
     {
       foreach (KeyValuePair<int, RtspCards> card in cards)
       {
@@ -920,7 +912,7 @@ namespace Mediaportal.TV.Server.TVLibrary.TVEUPnPServer.Rtsp
       return false;
     }
 
-    private void parseQuery(string sessionId, NameValueCollection query)
+    private void ParseQuery(string sessionId, NameValueCollection query)
     {
       foreach (string key in query.Keys)
       {
@@ -960,7 +952,7 @@ namespace Mediaportal.TV.Server.TVLibrary.TVEUPnPServer.Rtsp
       }
     }
 
-    private void syncPidsWithFilter(string sessionId, string namedPipeName)
+    private void SyncPidsWithFilter(string sessionId, string namedPipeName)
     {
       FilterCommunication communication = new FilterCommunication(namedPipeName, clients[sessionId].slot);
       communication.addSyncPids(clients[sessionId].pids);
