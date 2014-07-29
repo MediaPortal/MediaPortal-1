@@ -112,10 +112,10 @@
 		<description>Start Time Info</description>
 		<type>label</type>
 		<id>997</id>
-    <posX>484</posX>
+    <posX>564</posX>
     <posY>899</posY>
     <label>#currentplaytime</label>
-    <align>left</align>
+    <align>right</align>
     <font>font11</font>
     <textcolor>ff00b7ff</textcolor>
 		<visible>window.isosdvisible</visible>
@@ -125,10 +125,10 @@
 		<description>End Time Info</description>
 		<type>label</type>
 		<id>998</id>
-    <posX>1435</posX>
+    <posX>1350</posX>
     <posY>899</posY>
     <label>#currentremaining</label>
-    <align>right</align>
+    <align>left</align>
     <font>font11</font>
     <textcolor>ff00b7ff</textcolor>
 		<visible>window.isosdvisible</visible>
