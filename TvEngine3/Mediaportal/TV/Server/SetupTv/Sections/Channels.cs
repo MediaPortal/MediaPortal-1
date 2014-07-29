@@ -250,7 +250,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         return;
       }
 
-      NotifyForm dlg = new NotifyForm("Clearing all tv channels...", "This can take some time\n\nPlease be patient...");
+      NotifyForm dlg = new NotifyForm("Clearing all channels...", "This can take some time.\n\nPlease be patient...");
       dlg.Show(this);
       dlg.WaitForDisplay();
       ChannelIncludeRelationEnum include = ChannelIncludeRelationEnum.TuningDetails;
@@ -288,8 +288,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             return;
           }
         }
-        NotifyForm dlg = new NotifyForm("Deleting selected tv channels...",
-                                        "This can take some time\n\nPlease be patient...");
+        NotifyForm dlg = new NotifyForm("Deleting selected channels...",
+                                        "This can take some time.\n\nPlease be patient...");
         dlg.Show(this);
         dlg.WaitForDisplay();
 
@@ -504,8 +504,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void mpButtonUncheckEncrypted_Click(object sender, EventArgs e)
     {
-      NotifyForm dlg = new NotifyForm("Unchecking all scrambled tv channels...",
-                                      "This can take some time\n\nPlease be patient...");
+      NotifyForm dlg = new NotifyForm("Unchecking all scrambled channels...",
+                                      "This can take some time.\n\nPlease be patient...");
       dlg.Show(this);
       dlg.WaitForDisplay();
       foreach (ListViewItem item in mpListView1.Items)
@@ -530,8 +530,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void mpButtonDeleteEncrypted_Click(object sender, EventArgs e)
     {
-      NotifyForm dlg = new NotifyForm("Deleting all scrambled tv channels...",
-                                      "This can take some time\n\nPlease be patient...");
+      NotifyForm dlg = new NotifyForm("Deleting all scrambled channels...",
+                                      "This can take some time.\n\nPlease be patient...");
       dlg.Show(this);
       dlg.WaitForDisplay();
       List<ListViewItem> itemsToRemove = new List<ListViewItem>();
@@ -590,7 +590,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       _abortScanning = false;
       _isScanning = true;
-      NotifyForm dlg = new NotifyForm("Testing all checked tv channels...", "Please be patient...");
+      NotifyForm dlg = new NotifyForm("Testing all checked channels...", "Please be patient...");
       dlg.Show(this);
       dlg.WaitForDisplay();
 
@@ -606,7 +606,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         }
         Channel _channel = (Channel)item.Tag; // get channel
         dlg.SetMessage(
-          string.Format("Please be patient...\n\nTesting channel {0} ( {1} of {2} )",
+          string.Format("Please be patient...\n\nTesting channel {0} ({1} of {2})",
                         _channel.DisplayName, item.Index + 1, mpListView1.Items.Count));
         Application.DoEvents();
         IVirtualCard _card;
