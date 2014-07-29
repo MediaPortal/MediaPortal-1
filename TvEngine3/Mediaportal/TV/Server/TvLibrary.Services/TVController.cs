@@ -977,7 +977,7 @@ namespace Mediaportal.TV.Server.TVLibrary
     /// <returns>signal quality (0-100)</returns>
     public int SignalQuality(int cardId)
     {
-      int signalQuality = -1;
+      int signalQuality = 0;
       try
       {
         if (ValidateTvControllerParams(cardId))
@@ -999,7 +999,7 @@ namespace Mediaportal.TV.Server.TVLibrary
     /// <returns>signal level (0-100)</returns>
     public int SignalLevel(int cardId)
     {
-      int signalLevel = -1;
+      int signalLevel = 0;
       try
       {
         if (ValidateTvControllerParams(cardId))
