@@ -194,7 +194,9 @@ void CNitParser::OnNewSection(CSection& sections)
   {
     int section_syntax_indicator = section[1] & 0x80;
     int section_length = ((section[1] & 0xf) << 8) + section[2];
-    if (section_length > 1021 || section_length < 13)
+    // Don't check the section length upper bound. Some providers ignore the
+    // specification and use the top two bits which should be set to zero.
+    if (section_length < 13)
     {
       LogDebug("%s: invalid section length = %d", m_sName, section_length);
       return;
