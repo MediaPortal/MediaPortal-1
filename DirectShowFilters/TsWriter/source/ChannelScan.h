@@ -79,21 +79,21 @@ DECLARE_INTERFACE_(ITsChannelScan, IUnknown)
                                int* previousTransportStreamId,
                                int* previousServiceId,
                                int* networkIdCount,
-                               byte** networkIds,
+                               unsigned short** networkIds,
                                int* bouquetIdCount,
-                               byte** bouquetIds,
+                               unsigned short** bouquetIds,
                                int* languageCount,
-                               byte** languages,
+                               unsigned long** languages,
                                int* availableInCellCount,
-                               byte** availableInCells,
+                               unsigned long** availableInCells,
                                int* unavailableInCellCount,
-                               byte** unavailableInCells,
+                               unsigned long** unavailableInCells,
                                int* targetRegionCount,
-                               byte** targetRegions,
+                               __int64** targetRegions,
                                int* availableInCountryCount,
-                               byte** availableInCountries,
+                               unsigned long** availableInCountries,
                                int* unavailableInCountryCount,
-                               byte** unavailableInCountries)PURE;
+                               unsigned long** unavailableInCountries)PURE;
 
   // NIT scanning
   STDMETHOD(ScanNetwork)(THIS_)PURE;
@@ -153,21 +153,21 @@ class CChannelScan : public CUnknown, public ITsChannelScan, IPatCallBack, IPmtC
                                   int* previousTransportStreamId,
                                   int* previousServiceId,
                                   int* networkIdCount,
-                                  byte** networkIds,
+                                  unsigned short** networkIds,
                                   int* bouquetIdCount,
-                                  byte** bouquetIds,
+                                  unsigned short** bouquetIds,
                                   int* languageCount,
-                                  byte** languages,
+                                  unsigned long** languages,
                                   int* availableInCellCount,
-                                  byte** availableInCells,
+                                  unsigned long** availableInCells,
                                   int* unavailableInCellCount,
-                                  byte** unavailableInCells,
+                                  unsigned long** unavailableInCells,
                                   int* targetRegionCount,
-                                  byte** targetRegions,
+                                  __int64** targetRegions,
                                   int* availableInCountryCount,
-                                  byte** availableInCountries,
+                                  unsigned long** availableInCountries,
                                   int* unavailableInCountryCount,
-                                  byte** unavailableInCountries);
+                                  unsigned long** unavailableInCountries);
 
 
     STDMETHODIMP ScanNetwork();

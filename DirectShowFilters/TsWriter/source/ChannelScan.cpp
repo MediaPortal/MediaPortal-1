@@ -169,21 +169,21 @@ STDMETHODIMP CChannelScan::GetServiceDetail(int index,
                                             int* previousTransportStreamId,
                                             int* previousServiceId,
                                             int* networkIdCount,
-                                            byte** networkIds,
+                                            unsigned short** networkIds,
                                             int* bouquetIdCount,
-                                            byte** bouquetIds,
+                                            unsigned short** bouquetIds,
                                             int* languageCount,
-                                            byte** languages,
+                                            unsigned long** languages,
                                             int* availableInCellCount,
-                                            byte** availableInCells,
+                                            unsigned long** availableInCells,
                                             int* unavailableInCellCount,
-                                            byte** unavailableInCells,
+                                            unsigned long** unavailableInCells,
                                             int* targetRegionCount,
-                                            byte** targetRegions,
+                                            __int64** targetRegions,
                                             int* availableInCountryCount,
-                                            byte** availableInCountries,
+                                            unsigned long** availableInCountries,
                                             int* unavailableInCountryCount,
-                                            byte** unavailableInCountries)
+                                            unsigned long** unavailableInCountries)
 {
   CEnterCriticalSection enter(m_section);
   try
@@ -314,46 +314,45 @@ STDMETHODIMP CChannelScan::GetServiceDetail(int index,
       langIt2++;
     }
 
-    // Pass vectors. Vector elements are guaranteed to be stored in contiguous memory.
-    *networkIdCount = (info->NetworkIds).size();
+    *networkIdCount = min((long)(info->NetworkIds).size(), *networkIdCount);
     if (*networkIdCount != 0)
     {
-      *networkIds = (byte*)&(info->NetworkIds)[0];
+      copy(info->NetworkIds.begin(), info->NetworkIds.begin() + *networkIdCount, *networkIds);
     }
-    *bouquetIdCount = (info->BouquetIds).size();
+    *bouquetIdCount = min((long)(info->BouquetIds).size(), *bouquetIdCount);
     if (*bouquetIdCount != 0)
     {
-      *bouquetIds = (byte*)&(info->BouquetIds)[0];
+      copy(info->BouquetIds.begin(), info->BouquetIds.begin() + *bouquetIdCount, *bouquetIds);
     }
-    *languageCount = (info->Languages).size();
-    if (*languageCount)
+    *languageCount = min((long)(info->Languages).size(), *languageCount);
+    if (*languageCount != 0)
     {
-      *languages = (byte*)&(info->Languages)[0];
+      copy(info->Languages.begin(), info->Languages.begin() + *languageCount, *languages);
     }
-    *availableInCellCount = (info->AvailableInCells).size();
+    *availableInCellCount = min((long)(info->AvailableInCells).size(), *availableInCellCount);
     if (*availableInCellCount != 0)
     {
-      *availableInCells = (byte*)&(info->AvailableInCells)[0];
+      copy(info->AvailableInCells.begin(), info->AvailableInCells.begin() + *availableInCellCount, *availableInCells);
     }
-    *unavailableInCellCount = (info->UnavailableInCells).size();
+    *unavailableInCellCount = min((long)(info->UnavailableInCells).size(), *unavailableInCellCount);
     if (*unavailableInCellCount != 0)
     {
-      *unavailableInCells = (byte*)&(info->UnavailableInCells)[0];
+      copy(info->UnavailableInCells.begin(), info->UnavailableInCells.begin() + *unavailableInCellCount, *unavailableInCells);
     }
-    *targetRegionCount = (info->TargetRegions).size();
+    *targetRegionCount = min((long)(info->TargetRegions).size(), *targetRegionCount);
     if (*targetRegionCount != 0)
     {
-      *targetRegions = (byte*)&(info->TargetRegions)[0];
+      copy(info->TargetRegions.begin(), info->TargetRegions.begin() + *targetRegionCount, *targetRegions);
     }
-    *availableInCountryCount = (info->AvailableInCountries).size();
+    *availableInCountryCount = min((long)(info->AvailableInCountries).size(), *availableInCountryCount);
     if (*availableInCountryCount != 0)
     {
-      *availableInCountries = (byte*)&(info->AvailableInCountries)[0];
+      copy(info->AvailableInCountries.begin(), info->AvailableInCountries.begin() + *availableInCountryCount, *availableInCountries);
     }
-    *unavailableInCountryCount = (info->UnavailableInCountries).size();
+    *unavailableInCountryCount = min((long)(info->UnavailableInCountries).size(), *unavailableInCountryCount);
     if (*unavailableInCountryCount != 0)
     {
-      *unavailableInCountries = (byte*)&(info->UnavailableInCountries)[0];
+      copy(info->UnavailableInCountries.begin(), info->UnavailableInCountries.begin() + *unavailableInCountryCount, *unavailableInCountries);
     }
 
     LogDebug("%4d) %-25s provider = %-15s, ONID = 0x%-4x, TSID = 0x%-4x, SID = 0x%-4x, PMT PID = 0x%-4x, LCN = %-7s",

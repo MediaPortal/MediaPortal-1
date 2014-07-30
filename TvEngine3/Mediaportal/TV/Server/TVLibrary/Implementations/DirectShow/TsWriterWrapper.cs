@@ -364,22 +364,22 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
                         out int previousOriginalNetworkId,
                         out int previousTransportStreamId,
                         out int previousServiceId,
-                        out int networkIdCount,
-                        out ushort[] networkIds,
-                        out int bouquetIdCount,
-                        out ushort[] bouquetIds,
-                        out int languageCount,
-                        out Iso639Code[] languages,
-                        out int availableInCellCount,
-                        out uint[] availableInCells,
-                        out int unavailableInCellCount,
-                        out uint[] unavailableInCells,
-                        out int targetRegionCount,
-                        out long[] targetRegions,
-                        out int availableInCountryCount,
-                        out Iso639Code[] availableInCountries,
-                        out int unavailableInCountryCount,
-                        out Iso639Code[] unavailableInCountries)
+                        ref int networkIdCount,
+                        ref ushort[] networkIds,
+                        ref int bouquetIdCount,
+                        ref ushort[] bouquetIds,
+                        ref int languageCount,
+                        ref Iso639Code[] languages,
+                        ref int availableInCellCount,
+                        ref uint[] availableInCells,
+                        ref int unavailableInCellCount,
+                        ref uint[] unavailableInCells,
+                        ref int targetRegionCount,
+                        ref long[] targetRegions,
+                        ref int availableInCountryCount,
+                        ref Iso639Code[] availableInCountries,
+                        ref int unavailableInCountryCount,
+                        ref Iso639Code[] unavailableInCountries)
     {
       originalNetworkId = 0;
       transportStreamId = 0;
@@ -397,22 +397,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       previousOriginalNetworkId = 0;
       previousTransportStreamId = 0;
       previousServiceId = 0;
-      networkIdCount = 0;
-      networkIds = new ushort[0];
-      bouquetIdCount = 0;
-      bouquetIds = new ushort[0];
-      languageCount = 0;
-      languages = new Iso639Code[0];
-      availableInCellCount = 0;
-      availableInCells = new uint[0];
-      unavailableInCellCount = 0;
-      unavailableInCells = new uint[0];
-      targetRegionCount = 0;
-      targetRegions = new long[0];
-      availableInCountryCount = 0;
-      availableInCountries = new Iso639Code[0];
-      unavailableInCountryCount = 0;
-      unavailableInCountries = new Iso639Code[0];
       object[] parameters = new object[33] { index, originalNetworkId, transportStreamId,
                                               serviceId, serviceName, providerName,
                                               logicalChannelNumber, serviceType, videoStreamCount,

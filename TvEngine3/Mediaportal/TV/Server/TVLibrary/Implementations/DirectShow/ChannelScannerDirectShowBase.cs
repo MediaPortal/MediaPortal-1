@@ -212,33 +212,33 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
             int previousOriginalNetworkId;
             int previousTransportStreamId;
             int previousServiceId;
-            int networkIdCount;
-            ushort[] networkIds;
-            int bouquetIdCount;
-            ushort[] bouquetIds;
-            int languageCount;
-            Iso639Code[] languages;
-            int availableInCellCount;
-            uint[] availableInCells;
-            int unavailableInCellCount;
-            uint[] unavailableInCells;
-            int targetRegionCount;
-            long[] targetRegionIds;
-            int availableInCountryCount;
-            Iso639Code[] availableInCountries;
-            int unavailableInCountryCount;
-            Iso639Code[] unavailableInCountries;
+            int networkIdCount = 10;
+            ushort[] networkIds = new ushort[10];
+            int bouquetIdCount = 20;
+            ushort[] bouquetIds = new ushort[20];
+            int languageCount = 10;
+            Iso639Code[] languages = new Iso639Code[10];
+            int availableInCellCount = 30;
+            uint[] availableInCells = new uint[30];
+            int unavailableInCellCount = 30;
+            uint[] unavailableInCells = new uint[30];
+            int targetRegionCount = 30;
+            long[] targetRegionIds = new long[30];
+            int availableInCountryCount = 10;
+            Iso639Code[] availableInCountries = new Iso639Code[10];
+            int unavailableInCountryCount = 10;
+            Iso639Code[] unavailableInCountries = new Iso639Code[10];
             _analyser.GetServiceDetail(i,
                           out originalNetworkId, out transportStreamId, out serviceId,
                           out serviceNamePtr, out providerNamePtr, out logicalChannelNumberPtr,
                           out serviceType, out videoStreamCount, out audioStreamCount, out isHighDefinition, out isEncrypted, out isRunning, out pmtPid,
                           out previousOriginalNetworkId, out previousTransportStreamId, out previousServiceId,
-                          out networkIdCount, out networkIds,
-                          out bouquetIdCount, out bouquetIds,
-                          out languageCount, out languages,
-                          out availableInCellCount, out availableInCells, out unavailableInCellCount, out unavailableInCells,
-                          out targetRegionCount, out targetRegionIds,
-                          out availableInCountryCount, out availableInCountries, out unavailableInCountryCount, out unavailableInCountries);
+                          ref networkIdCount, ref networkIds,
+                          ref bouquetIdCount, ref bouquetIds,
+                          ref languageCount, ref languages,
+                          ref availableInCellCount, ref availableInCells, ref unavailableInCellCount, ref unavailableInCells,
+                          ref targetRegionCount, ref targetRegionIds,
+                          ref availableInCountryCount, ref availableInCountries, ref unavailableInCountryCount, ref unavailableInCountries);
 
             string serviceName = DvbTextConverter.Convert(serviceNamePtr).Trim();
             string providerName = DvbTextConverter.Convert(providerNamePtr);
@@ -589,33 +589,33 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
             int previousOriginalNetworkId;
             int previousTransportStreamId;
             int previousServiceId;
-            int networkIdCount;
-            ushort[] networkIds;
-            int bouquetIdCount;
-            ushort[] bouquetIds;
-            int languageCount;
-            Iso639Code[] languages;
-            int availableInCellCount;
-            uint[] availableInCells;
-            int unavailableInCellCount;
-            uint[] unavailableInCells;
-            int targetRegionCount;
-            long[] targetRegionIds;
-            int availableInCountryCount;
-            Iso639Code[] availableInCountries;
-            int unavailableInCountryCount;
-            Iso639Code[] unavailableInCountries;
+            int networkIdCount = 10;
+            ushort[] networkIds = new ushort[10];
+            int bouquetIdCount = 20;
+            ushort[] bouquetIds = new ushort[20];
+            int languageCount = 10;
+            Iso639Code[] languages = new Iso639Code[10];
+            int availableInCellCount = 30;
+            uint[] availableInCells = new uint[30];
+            int unavailableInCellCount = 30;
+            uint[] unavailableInCells = new uint[30];
+            int targetRegionCount = 30;
+            long[] targetRegionIds = new long[30];
+            int availableInCountryCount = 10;
+            Iso639Code[] availableInCountries = new Iso639Code[10];
+            int unavailableInCountryCount = 10;
+            Iso639Code[] unavailableInCountries = new Iso639Code[10];
             _analyser.GetServiceDetail(i,
                           out originalNetworkId, out transportStreamId, out serviceId,
                           out serviceNamePtr, out providerNamePtr, out logicalChannelNumberPtr,
                           out serviceType, out videoStreamCount, out audioStreamCount, out isHighDefinition, out isEncrypted, out isRunning, out pmtPid,
                           out previousOriginalNetworkId, out previousTransportStreamId, out previousServiceId,
-                          out networkIdCount, out networkIds,
-                          out bouquetIdCount, out bouquetIds,
-                          out languageCount, out languages,
-                          out availableInCellCount, out availableInCells, out unavailableInCellCount, out unavailableInCells,
-                          out targetRegionCount, out targetRegionIds,
-                          out availableInCountryCount, out availableInCountries, out unavailableInCountryCount, out unavailableInCountries);
+                          ref networkIdCount, ref networkIds,
+                          ref bouquetIdCount, ref bouquetIds,
+                          ref languageCount, ref languages,
+                          ref availableInCellCount, ref availableInCells, ref unavailableInCellCount, ref unavailableInCells,
+                          ref targetRegionCount, ref targetRegionIds,
+                          ref availableInCountryCount, ref availableInCountries, ref unavailableInCountryCount, ref unavailableInCountries);
 
             string serviceName = DvbTextConverter.Convert(serviceNamePtr);
             string providerName = DvbTextConverter.Convert(providerNamePtr);
