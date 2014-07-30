@@ -40,24 +40,25 @@ namespace Mediaportal.TV.Server.TVService
     }
 
     /// <summary>
-    /// Set Service options like "Interact with Desktop" for TVService. Since "InteractDesktop" is readonly it cannot be set with WMI directly.
+    /// Set service options.
     /// </summary>
     private static void SetRegistryOptions()
     {
       try
       {
-        using (
-          RegistryKey tveKey = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Services\TVService", true))
+        // Allow the service to interact with the desktop. "InteractDesktop" is
+        // read-only so it cannot be set directly with WMI.
+        using (RegistryKey tveKey = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Services\TVService", true))
         {
-          if (tveKey != null)
+          if (tveKey != null && tveKey.GetValue("Type") != null)
           {
-            // enable "Interact with desktop support
-            if (tveKey.GetValue("Type") != null)
-              tveKey.SetValue("Type", ((int)tveKey.GetValue("Type") | 256));
+            tveKey.SetValue("Type", ((int)tveKey.GetValue("Type") | 256));
           }
         }
       }
-      catch (Exception) {}
+      catch
+      {
+      }
     }
   }
 }
