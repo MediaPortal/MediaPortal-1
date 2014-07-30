@@ -62,10 +62,10 @@
 class BasePid
 {
   public:
-    BasePid()
+    BasePid(unsigned short pid, byte streamType)
     {
-      Pid = -1;
-      StreamType = STREAM_TYPE_UNKNOWN;
+      Pid = pid;
+      StreamType = streamType;
       LogicalStreamType = STREAM_TYPE_UNKNOWN;
       DescriptorsLength = 0;
       Descriptors = NULL;
@@ -102,7 +102,7 @@ class BasePid
 class VideoPid : public BasePid
 {
   public:
-    VideoPid() : BasePid()
+    VideoPid(unsigned short pid, byte streamType) : BasePid(pid, streamType)
     {
     }
 
@@ -115,7 +115,7 @@ class VideoPid : public BasePid
 class AudioPid : public BasePid
 {
   public:
-    AudioPid() : BasePid()
+    AudioPid(unsigned short pid, byte streamType) : BasePid(pid, streamType)
     {
       Lang[0] = 'U';
       Lang[1] = 'N';
@@ -141,7 +141,7 @@ class AudioPid : public BasePid
 class SubtitlePid : public BasePid
 {
   public:
-    SubtitlePid() : BasePid()
+    SubtitlePid(unsigned short pid, byte streamType) : BasePid(pid, streamType)
     {
       Lang[0] = 'U';
       Lang[1] = 'N';
@@ -193,7 +193,7 @@ class TeletextServiceInfo
 class TeletextPid : public BasePid
 {
   public:
-    TeletextPid() : BasePid()
+    TeletextPid(unsigned short pid, byte streamType) : BasePid(pid, streamType)
     {
     }
 

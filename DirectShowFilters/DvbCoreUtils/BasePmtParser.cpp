@@ -189,7 +189,7 @@ bool CBasePmtParser::DecodePmtSection(CSection& section)
       BasePid* basePid = NULL;
       if (IsVideoStream(streamType) || (streamType == STREAM_TYPE_VIDEO_MPEG2_DCII && !isNotDc2Ts))
       {
-        VideoPid* pid = new VideoPid();
+        VideoPid* pid = new VideoPid(elementaryPid, streamType);
         if (pid == NULL)
         {
           LogDebug(L"PMT: failed to allocate video PID");
@@ -212,7 +212,7 @@ bool CBasePmtParser::DecodePmtSection(CSection& section)
       }
       else if (IsAudioStream(streamType))
       {          
-        AudioPid* pid = new AudioPid();
+        AudioPid* pid = new AudioPid(elementaryPid, streamType);
         if (pid == NULL)
         {
           LogDebug(L"PMT: failed to allocate audio PID");
@@ -246,12 +246,12 @@ bool CBasePmtParser::DecodePmtSection(CSection& section)
       }
 
       char lang[7];
+      ZeroMemory(lang, sizeof(lang));
       int startOfEsInfo = pointer;
       while (pointer + 1 < endOfEsInfo)
       {
         int tag = data[pointer++];
         int length = data[pointer++];
-        ZeroMemory(lang, sizeof(lang));
         int endOfDescriptor = pointer + length;
         //LogDebug(L"PMT: descriptor, tag = 0x%x, length = %d, pointer = %d, end of descriptor = %d", tag, length, pointer, endOfDescriptor);
         if (endOfDescriptor > endOfEsInfo)
@@ -269,7 +269,7 @@ bool CBasePmtParser::DecodePmtSection(CSection& section)
             data[pointer + 3] == '1')
           {
             // This is a VC-1 video stream in a DVB TS.
-            VideoPid* pid = new VideoPid();
+            VideoPid* pid = new VideoPid(elementaryPid, streamType);
             if (pid == NULL)
             {
               LogDebug(L"PMT: failed to allocate video PID");
@@ -287,7 +287,7 @@ bool CBasePmtParser::DecodePmtSection(CSection& section)
           (tag == DESCRIPTOR_DVB_EXTENSION && length >= 1 && data[pointer] == DESCRIPTOR_DVB_X_DTS_HD) ||
           (tag == DESCRIPTOR_SCTE_DTS_HD && isScteTs))
         {
-          AudioPid* pid = new AudioPid();
+          AudioPid* pid = new AudioPid(elementaryPid, streamType);
           if (pid == NULL)
           {
             LogDebug(L"PMT: failed to allocate audio PID");
@@ -366,7 +366,7 @@ bool CBasePmtParser::DecodePmtSection(CSection& section)
         }
         else if (tag == DESCRIPTOR_DVB_TELETEXT)
         {
-          TeletextPid* pid = new TeletextPid();
+          TeletextPid* pid = new TeletextPid(elementaryPid, streamType);
           if (pid == NULL)
           {
             LogDebug(L"PMT: failed to allocate teletext PID");
@@ -404,7 +404,7 @@ bool CBasePmtParser::DecodePmtSection(CSection& section)
           (streamType == STREAM_TYPE_PES_PRIVATE_DATA && tag == DESCRIPTOR_DVB_SUBTITLING) ||
           streamType == STREAM_TYPE_TEXT_MPEG4)
         {
-          SubtitlePid* pid = new SubtitlePid();
+          SubtitlePid* pid = new SubtitlePid(elementaryPid, streamType);
           if (pid == NULL)
           {
             LogDebug(L"PMT: failed to allocate subtitle PID");
@@ -434,21 +434,16 @@ bool CBasePmtParser::DecodePmtSection(CSection& section)
       }
 
       // Common code for all PIDs.
-      if (basePid != NULL)
+      if (basePid != NULL && esInfoLength > 0)
       {
-        basePid->Pid = elementaryPid;
-        basePid->StreamType = streamType;
         basePid->DescriptorsLength = esInfoLength;
-        if (esInfoLength != 0)
+        basePid->Descriptors = new byte[esInfoLength];
+        if (basePid->Descriptors == NULL)
         {
-          basePid->Descriptors = new byte[esInfoLength];
-          if (basePid->Descriptors == NULL)
-          {
-            LogDebug(L"PMT: failed to allocate %d bytes for elementary stream descriptors", esInfoLength);
-            return false;
-          }
-          memcpy(basePid->Descriptors, &data[startOfEsInfo], esInfoLength);
+          LogDebug(L"PMT: failed to allocate %d bytes for elementary stream descriptors", esInfoLength);
+          return false;
         }
+        memcpy(basePid->Descriptors, &data[startOfEsInfo], esInfoLength);
       }
     }
     if (pointer != endOfSection)
