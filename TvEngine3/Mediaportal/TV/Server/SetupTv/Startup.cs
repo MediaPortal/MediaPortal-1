@@ -239,10 +239,6 @@ namespace Mediaportal.TV.Server.SetupTV
       }
       */
 
-      // Mantis #0002138: impossible to configure TVGroups             
-      ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
-      ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.RadioGroupNames.AllChannels, MediaTypeEnum.Radio);
-
       // Avoid the visual part of SetupTv if in DeployMode
       if (_startupMode == StartupMode.DeployMode)
       {

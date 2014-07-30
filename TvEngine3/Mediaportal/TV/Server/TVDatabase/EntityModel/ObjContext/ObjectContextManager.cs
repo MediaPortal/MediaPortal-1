@@ -6,6 +6,8 @@ using System.Data.Metadata.Edm;
 using System.Data.Objects;
 using System.Reflection;
 using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
@@ -157,6 +159,9 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
 
     public static void SetupStaticValues(Model ctx)
     {
+      ctx.ChannelGroups.AddObject(new ChannelGroup { GroupName = TvConstants.TvGroupNames.AllChannels, SortOrder = 9999, MediaType = (int)MediaTypeEnum.TV });
+      ctx.ChannelGroups.AddObject(new ChannelGroup { GroupName = TvConstants.RadioGroupNames.AllChannels, SortOrder = 9999, MediaType = (int)MediaTypeEnum.Radio });
+
       ctx.LnbTypes.AddObject(new LnbType { IdLnbType = 1, Name = "Universal", LowBandFrequency = 9750000, HighBandFrequency = 10600000, SwitchFrequency = 11700000, IsBandStacked = false, IsToroidal = false });
       ctx.LnbTypes.AddObject(new LnbType { IdLnbType = 2, Name = "C-Band", LowBandFrequency = 5150000, HighBandFrequency = 5650000, SwitchFrequency = 18000000, IsBandStacked = false, IsToroidal = false });
       ctx.LnbTypes.AddObject(new LnbType { IdLnbType = 3, Name = "10700 MHz", LowBandFrequency = 10700000, HighBandFrequency = 11200000, SwitchFrequency = 18000000, IsBandStacked = false, IsToroidal = false });
