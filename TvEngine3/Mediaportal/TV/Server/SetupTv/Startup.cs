@@ -47,9 +47,6 @@ namespace Mediaportal.TV.Server.SetupTV
   /// </summary>
   public class Startup
   {
-
-    private const string TypeValidHostnameForTvServerOrExitApplication = "Type valid hostname for tv server (or exit application):";
-    private const string TvserviceNotFoundMaybeYouLackUserRightsToAccessControlRemoteWindowsService = "TvService not found (maybe you lack user rights to access/control remote windows service).";
     private static StartupMode _startupMode = StartupMode.Normal;
     private static bool _debugOptions;
     private static readonly ServerMonitor _serverMonitor = new ServerMonitor();
@@ -106,10 +103,10 @@ namespace Mediaportal.TV.Server.SetupTV
       if (System.IO.File.Exists("c:\\debug_setuptv.txt"))
       {
         System.Diagnostics.Debugger.Launch();
-      }      
+      }
 
       Thread.CurrentThread.Name = "SetupTv";
-      Application.SetCompatibleTextRenderingDefault(false);      
+      Application.SetCompatibleTextRenderingDefault(false);
 
       if (ConfigurationManager.AppSettings.Count > 0)
       {
@@ -118,23 +115,18 @@ namespace Mediaportal.TV.Server.SetupTV
         {
           ServiceAgents.Instance.Hostname = appSetting;
         }
-      }      
+      }
       
-      bool tvserviceInstalled = WaitAndQueryForTvserviceUntilFound();      
-
+      bool tvserviceInstalled = WaitAndQueryForTvServiceUntilFound();
       if (tvserviceInstalled)
       {
         Log.Info("---- check if tvservice is running ----");
         if (!ServiceHelper.IsRestrictedMode && !ServiceHelper.IsRunning)
         {
           Log.Info("---- tvservice is not running ----");
-          if (_startupMode != StartupMode.DeployMode)
+          if (_startupMode != StartupMode.DeployMode && PromptStartTvService() != DialogResult.Yes)
           {
-            DialogResult result = ShowStartTvServiceDialog();
-            if (result != DialogResult.Yes)
-            {
-              Environment.Exit(0);
-            }
+            Environment.Exit(0);
           }
           Log.Info("---- start tvservice----");
           ServiceHelper.Start();
@@ -210,11 +202,11 @@ namespace Mediaportal.TV.Server.SetupTV
       Log.Info("---- SetupTv v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.GetOSDisplayVersion());
 
       //Check for unsupported operating systems
-      OSPrerequisites.OSPrerequisites.OsCheck(true);      
+      OSPrerequisites.OSPrerequisites.OsCheck(true);
 
       Application.ThreadException += Application_ThreadException;
 
-       
+
 
       /*this.LogInfo("---- check if database needs to be updated/created ----");
       int currentSchemaVersion = dlg.GetCurrentShemaVersion(startupMode);
@@ -245,7 +237,7 @@ namespace Mediaportal.TV.Server.SetupTV
         MessageBox.Show("Failed to upgrade the database.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         return;
       }
-      */                 
+      */
 
       // Mantis #0002138: impossible to configure TVGroups             
       ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
@@ -272,17 +264,17 @@ namespace Mediaportal.TV.Server.SetupTV
       _serverMonitor.Stop();
     }
 
-    private static DialogResult ShowStartTvServiceDialog()
+    private static DialogResult PromptStartTvService()
     {
-      DialogResult result = MessageBox.Show("The Tv service is not running.\rStart it now?",
-                                            "Mediaportal TV service", MessageBoxButtons.YesNo);
+      DialogResult result = MessageBox.Show("The TV service is not running.\rStart it now?",
+                                            "MediaPortal TV Service", MessageBoxButtons.YesNo);
       return result;
     }
 
-    private static bool WaitAndQueryForTvserviceUntilFound()
+    private static bool WaitAndQueryForTvServiceUntilFound()
     {
-      bool tvserviceInstalled = false;
-      while (!tvserviceInstalled)
+      bool tvServiceInstalled = false;
+      while (!tvServiceInstalled)
       {
         //maybe tvservice is started as a console app or as MP2TV server ?
         try
@@ -295,8 +287,8 @@ namespace Mediaportal.TV.Server.SetupTV
         {
         }
         
-        tvserviceInstalled = ServiceHelper.IsInstalled(ServiceHelper.SERVICENAME_TVSERVICE, ServiceAgents.Instance.Hostname);
-        if (!tvserviceInstalled)
+        tvServiceInstalled = ServiceHelper.IsInstalled(ServiceHelper.SERVICENAME_TVSERVICE, ServiceAgents.Instance.Hostname);
+        if (!tvServiceInstalled)
         {
           if (ServiceHelper.IsRestrictedMode)
           {
@@ -304,53 +296,42 @@ namespace Mediaportal.TV.Server.SetupTV
           }
           if (!String.IsNullOrEmpty(ServiceAgents.Instance.Hostname))
           {
-            string newHostName;
-            bool inputNewHost = ConnectionLostPrompt(TypeValidHostnameForTvServerOrExitApplication,
-                                                     TvserviceNotFoundMaybeYouLackUserRightsToAccessControlRemoteWindowsService,
-                                                     out newHostName);
-
-            if (inputNewHost)
-            {
-              UpdateTvServerConfiguration(newHostName);
-            }
-            else
+            string hostName;
+            if (PromptHostName(out hostName) != DialogResult.OK)
             {
               Environment.Exit(0);
             }
+            UpdateTvServerConfiguration(hostName);
           }
         }
       }
 
-      int cards = -1;
-      while (cards == -1)
+      int cardCount = -1;
+      while (cardCount == -1)
       {
         try
         {
-          cards = ServiceAgents.Instance.ControllerServiceAgent.Cards;
+          cardCount = ServiceAgents.Instance.ControllerServiceAgent.Cards;
         }
         catch (Exception)
         {
-          if (tvserviceInstalled)
+          if (tvServiceInstalled)
           {
             Log.Info("---- restart tvservice----");
-            DialogResult result = ShowStartTvServiceDialog();
-            if (result == DialogResult.Yes)
+            if (PromptStartTvService() != DialogResult.Yes)
             {
-              try
-              {
-                ServiceHelper.Restart();
-                ServiceHelper.WaitInitialized();                         
-              }
-              catch (Exception ex)
-              {
-                Log.Error("SetupTV: failed to start tvservice : {0}", ex);
-              }              
-            }
-            else
-            {
-              MessageBox.Show("Chose not to start tvservice..exiting application");
               Environment.Exit(0);
-            }                        
+            }
+
+            try
+            {
+              ServiceHelper.Restart();
+              ServiceHelper.WaitInitialized();
+            }
+            catch (Exception ex)
+            {
+              Log.Error("SetupTV: failed to start tvservice : {0}", ex);
+            }
           }
           else
           {
@@ -358,25 +339,18 @@ namespace Mediaportal.TV.Server.SetupTV
           }
         }
       }
-      return tvserviceInstalled;
+      return tvServiceInstalled;
     }
 
     private static void HandleRestrictiveMode()
     {
-      Log.Info(
-        "---- unable to restart tvservice, possible multiseat setup with no access to remote windows service ----");
-      string newHostName;
-      bool inputNewHost = ConnectionLostPrompt(TypeValidHostnameForTvServerOrExitApplication,
-                                               TvserviceNotFoundMaybeYouLackUserRightsToAccessControlRemoteWindowsService,
-                                               out newHostName);
-      if (inputNewHost)
-      {
-        UpdateTvServerConfiguration(newHostName);
-      }
-      else
+      Log.Info("---- unable to restart tvservice, possible multiseat setup with no access to remote windows service ----");
+      string hostName;
+      if (PromptHostName(out hostName) != DialogResult.OK)
       {
         Environment.Exit(0);
       }
+      UpdateTvServerConfiguration(hostName);
     }
 
     private static void UpdateTvServerConfiguration(string newHostName)
@@ -393,16 +367,19 @@ namespace Mediaportal.TV.Server.SetupTV
     {
       if (!ServiceHelper.IgnoreDisconnections)
       {
-        WaitAndQueryForTvserviceUntilFound();       
-      }      
+        WaitAndQueryForTvServiceUntilFound();
+      }
     }
 
-    private static bool ConnectionLostPrompt(string prompt, string title, out string newHostName)
-    {      
-      InputBoxResult result = InputBox.Show(prompt, title, ConfigurationManager.AppSettings["tvserver"]);
-      newHostName = result.Text;
-      bool connectionLostPrompt = (result.ReturnCode == DialogResult.OK);
-      return connectionLostPrompt;
+    private static DialogResult PromptHostName(out string hostName)
+    {
+      InputBoxResult result = InputBox.Show(
+        "The TV service could not be found.\n\n" +
+        "Please confirm the name of the computer on which the TV service is running.\n\n" +
+        "If the TV service is installed on a different computer, check your network connectivity and security.",
+        "MediaPortal TV Service", ConfigurationManager.AppSettings["tvserver"]);
+      hostName = result.Text;
+      return result.ReturnCode;
     }
 
     static void _serverMonitor_OnServerConnected()

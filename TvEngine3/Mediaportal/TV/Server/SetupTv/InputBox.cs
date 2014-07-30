@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using Mediaportal.TV.Server.SetupControls;
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
 
 namespace Mediaportal.TV.Server.SetupTV
 {
@@ -50,11 +52,11 @@ namespace Mediaportal.TV.Server.SetupTV
     private static void InitializeComponent()
     {
       // Create a new instance of the form.
-      frmInputDialog = new Form();
-      lblPrompt = new Label();
-      btnOK = new Button();
-      btnCancel = new Button();
-      txtInput = new TextBox();
+      frmInputDialog = new MPForm();
+      lblPrompt = new MPLabel();
+      btnOK = new MPButton();
+      btnCancel = new MPButton();
+      txtInput = new MPTextBox();
       frmInputDialog.SuspendLayout();
       // 
       // lblPrompt
@@ -70,7 +72,6 @@ namespace Mediaportal.TV.Server.SetupTV
       // btnOK
       // 
       btnOK.DialogResult = DialogResult.OK;
-      btnOK.FlatStyle = FlatStyle.Popup;
       btnOK.Location = new Point(326, 8);
       btnOK.Name = "btnOK";
       btnOK.Size = new Size(64, 24);
@@ -81,7 +82,6 @@ namespace Mediaportal.TV.Server.SetupTV
       // btnCancel
       // 
       btnCancel.DialogResult = DialogResult.Cancel;
-      btnCancel.FlatStyle = FlatStyle.Popup;
       btnCancel.Location = new Point(326, 40);
       btnCancel.Name = "btnCancel";
       btnCancel.Size = new Size(64, 24);
