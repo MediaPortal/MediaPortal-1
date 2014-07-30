@@ -135,7 +135,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             0,
             0});
       this.PortNoNumericUpDown.Minimum = new decimal(new int[] {
-            554,
+            1,
             0,
             0,
             0});
