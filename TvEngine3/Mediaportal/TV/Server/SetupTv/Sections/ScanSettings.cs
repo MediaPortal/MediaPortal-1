@@ -162,12 +162,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       foreach (DisplaySoftwareEncoder encoder in _bindingVideoEncoders)
       {
-          encoder.Persist();
+        encoder.Persist();
       }
 
       foreach (DisplaySoftwareEncoder encoder in _bindingAudioEncoders)
       {
-          encoder.Persist();
+        encoder.Persist();
       }
     }
 
