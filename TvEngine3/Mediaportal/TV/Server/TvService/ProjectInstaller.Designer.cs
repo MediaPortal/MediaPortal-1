@@ -39,8 +39,8 @@ namespace Mediaportal.TV.Server.TVService
       // 
       // serviceInstaller1
       // 
-      this.serviceInstaller1.Description = "Mediaportal Tv Service. Handles all tv related tasks.";
-      this.serviceInstaller1.DisplayName = "TVService";
+      this.serviceInstaller1.Description = "Provides MediaPortal's TV and radio functions.";
+      this.serviceInstaller1.DisplayName = "MediaPortal TV Service";
       this.serviceInstaller1.ServiceName = "TVService";
       this.serviceInstaller1.ServicesDependedOn = new string[] {
         "RpcLocator"}; // Remote Procedure Call (RPC) Locator
