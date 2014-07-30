@@ -146,28 +146,35 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       numericUpDownReuseLimit.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("softwareEncoderReuseLimit", 0);
     }
 
-    public override void OnSectionDeActivated()
+    public override void SaveSettings()
     {
-      base.OnSectionDeActivated();
+      base.SaveSettings();
+      
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeoutTune", (int)numericUpDownTune.Value);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeoutPAT", (int) numericUpDownPAT.Value);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeoutCAT", (int) numericUpDownCAT.Value);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeoutPMT", (int) numericUpDownPMT.Value);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeoutSDT", (int) numericUpDownSDT.Value);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeoutPAT", (int)numericUpDownPAT.Value);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeoutCAT", (int)numericUpDownCAT.Value);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeoutPMT", (int)numericUpDownPMT.Value);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeoutSDT", (int)numericUpDownSDT.Value);
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("linkageScannerEnabled", checkBoxEnableLinkageScanner.Checked);
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("processPriority", mpComboBoxPrio.SelectedIndex);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("delayCardDetect", (int) delayDetectUpDown.Value);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("softwareEncoderReuseLimit", (int) numericUpDownReuseLimit.Value);      
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("delayCardDetect", (int)delayDetectUpDown.Value);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("softwareEncoderReuseLimit", (int)numericUpDownReuseLimit.Value);
 
       foreach (DisplaySoftwareEncoder encoder in _bindingVideoEncoders)
       {
-        encoder.Persist();
+          encoder.Persist();
       }
 
       foreach (DisplaySoftwareEncoder encoder in _bindingAudioEncoders)
       {
-        encoder.Persist();
+          encoder.Persist();
       }
+    }
+
+    public override void OnSectionDeActivated()
+    {
+      base.OnSectionDeActivated();
+      SaveSettings();
     }
 
     private void mpComboBoxPrio_SelectedIndexChanged(object sender, EventArgs e)
