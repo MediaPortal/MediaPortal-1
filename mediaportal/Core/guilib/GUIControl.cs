@@ -118,6 +118,8 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("dimColor")] protected int _dimColor = 0x60ffffff;
     [XMLSkinElement("layoutDetail")] protected ILayoutDetail _layoutDetail;
     [XMLSkinElement("onfocus")] protected string _onfocus = "";
+    [XMLSkinElement("oninfo")] protected string _oninfo = "";
+    [XMLSkinElement("onESC")] protected string _onESC = "";
 
     protected int _parentControlId = 0;
     protected bool _isSelected = false;
@@ -377,6 +379,22 @@ namespace MediaPortal.GUI.Library
 
             break;
           }
+      }
+      if (action.wID == Action.ActionType.ACTION_CONTEXT_MENU)
+      {
+        // If this button has a info setting then execute the setting.
+        if (_oninfo.Length != 0)
+        {
+          GUIPropertyManager.Parse(_oninfo, GUIExpressionManager.ExpressionOptions.EVALUATE_ALWAYS);
+        }
+      }
+      if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
+      {
+        // If this button has a ESC setting then execute the setting.
+        if (_onESC.Length != 0)
+        {
+          GUIPropertyManager.Parse(_onESC, GUIExpressionManager.ExpressionOptions.EVALUATE_ALWAYS);
+        }
       }
     }
 
@@ -1514,6 +1532,18 @@ namespace MediaPortal.GUI.Library
     public bool IsAnimating
     {
       get { return _isAnimating; }
+    }
+
+    public virtual string OnInfo
+    {
+      get { return _oninfo; }
+      set { _oninfo = value; }
+    }
+
+    public virtual string OnESC
+    {
+      get { return _onESC; }
+      set { _onESC = value; }
     }
 
     public virtual int DimColor

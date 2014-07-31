@@ -4798,6 +4798,9 @@ public class MediaPortalApp : D3D, IRender
       dateString = Utils.ReplaceTag(dateString, "<Year>", cur.Year.ToString(CultureInfo.InvariantCulture), "unknown");
       dateString = Utils.ReplaceTag(dateString, "<YY>", (cur.Year - 2000).ToString("00"), "unknown");
       GUIPropertyManager.SetProperty("#date", dateString);
+
+      GUIPropertyManager.SetProperty("#date.local", cur.ToString("d")); // format usable for parsing in string expressions
+
       return dateString;
     }
     return string.Empty;

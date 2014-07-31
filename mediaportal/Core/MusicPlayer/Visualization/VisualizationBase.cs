@@ -20,11 +20,9 @@
 
 using System;
 using System.Drawing;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using MediaPortal.GUI.Library;
 using MediaPortal.MusicPlayer.BASS;
-using MediaPortal.Player;
 using BassVis_Api;
 
 namespace MediaPortal.Visualization
@@ -105,25 +103,25 @@ namespace MediaPortal.Visualization
       VizPluginInfo = vizPluginInfo;
       VisualizationWindow = vizCtrl;
 
-      // Init BAssVis
-      IntPtr hInstance = Marshal.GetHINSTANCE(Assembly.GetExecutingAssembly().GetModules()[0]);
+      // Init of BassVis should only used if the BASSVISKind changed remove also here
       switch (VizPluginInfo.VisualizationType)
       {
         case VisualizationInfo.PluginType.Sonique:
-          BassVis.BASSVIS_Init(BASSVISKind.BASSVISKIND_SONIQUE, GUIGraphicsContext.form.Handle);
           _visParam = new BASSVIS_PARAM(BASSVISKind.BASSVISKIND_SONIQUE);
           break;
 
         case VisualizationInfo.PluginType.Winamp:
-          BassVis.BASSVIS_Init(BASSVISKind.BASSVISKIND_WINAMP, GUIGraphicsContext.form.Handle);
           _visParam = new BASSVIS_PARAM(BASSVISKind.BASSVISKIND_WINAMP);
           break;
 
         case VisualizationInfo.PluginType.Bassbox:
-          BassVis.BASSVIS_Init(BASSVISKind.BASSVISKIND_BASSBOX, GUIGraphicsContext.form.Handle);
           _visParam = new BASSVIS_PARAM(BASSVISKind.BASSVISKIND_BASSBOX);
           break;
-      }
+
+        case VisualizationInfo.PluginType.WMP:
+          _visParam = new BASSVIS_PARAM(BASSVISKind.BASSVISKIND_WMP);
+          break;
+      } 
     }
 
     #region IDisposable Members
@@ -141,11 +139,6 @@ namespace MediaPortal.Visualization
     }
 
     #region IVisualization Members
-
-    public virtual bool IsEngineInstalled()
-    {
-      return false;
-    }
 
     public virtual bool IsWinampVis()
     {
