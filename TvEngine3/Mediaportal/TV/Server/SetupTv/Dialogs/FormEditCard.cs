@@ -51,15 +51,15 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
     private void FormEditCard_Load(object sender, EventArgs e)
     {
-      mpTextBoxDeviceName.Text = _card.Name;
+      mpTextBoxTunerName.Text = _card.Name;
 
       // Analog tuners and capture devices don't have many of these settings.
-      bool isAnalogDevice = _cardType == CardType.Analog;
-      checkBoxAllowEpgGrab.Enabled = !isAnalogDevice;
-      checkBoxConditionalAccessEnabled.Enabled = !isAnalogDevice;
-      numericUpDownDecryptLimit.Enabled = !isAnalogDevice;
-      mpComboBoxMultiChannelDecryptMode.Enabled = !isAnalogDevice;
-      mpComboBoxCamType.Enabled = !isAnalogDevice;
+      bool isAnalogTuner = _cardType == CardType.Analog;
+      checkBoxAllowEpgGrab.Enabled = !isAnalogTuner;
+      checkBoxConditionalAccessEnabled.Enabled = !isAnalogTuner;
+      numericUpDownDecryptLimit.Enabled = !isAnalogTuner;
+      mpComboBoxMultiChannelDecryptMode.Enabled = !isAnalogTuner;
+      mpComboBoxCamType.Enabled = !isAnalogTuner;
       if (_cardType == CardType.DvbS)
       {
         checkBoxAlwaysSendDiseqcCommands.Enabled = true;
@@ -70,8 +70,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         checkBoxAlwaysSendDiseqcCommands.Enabled = false;
         numericUpDownDiseqcCommandRepeatCount.Enabled = false;
       }
-      mpComboBoxPidFilterMode.Enabled = !isAnalogDevice;
-      if (isAnalogDevice)
+      mpComboBoxPidFilterMode.Enabled = !isAnalogTuner;
+      if (isAnalogTuner)
       {
         checkBoxAllowEpgGrab.Checked = false;
         checkBoxConditionalAccessEnabled.Checked = false;
@@ -93,7 +93,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       mpComboBoxIdleMode.SelectedItem = ((IdleMode)_card.IdleMode).ToString();
       setConditionalAccessFieldVisibility();
 
-      // Devices can't be preloaded if they're part of a hybrid group.
+      // Tuners can't be preloaded if they're part of a hybrid group.
       IList<CardGroupMap> groupList = _card.CardGroupMaps;
       if (groupList.Count != 0)
       {
@@ -104,7 +104,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
       checkBoxUseCustomTuning.Checked = _card.UseCustomTuning;
 
-      if (isAnalogDevice || _cardType == CardType.DvbIP || _card.DevicePath.StartsWith("uuid"))
+      if (isAnalogTuner || _cardType == CardType.DvbIP || _card.DevicePath.StartsWith("uuid"))
       {
         comboBoxNetworkProvider.Enabled = false;
       }
@@ -134,13 +134,13 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
     private void mpButtonSave_Click(object sender, EventArgs e)
     {
-      if (mpTextBoxDeviceName.Text.Trim().Length == 0)
+      if (mpTextBoxTunerName.Text.Trim().Length == 0)
       {
         MessageBox.Show("Please enter a name for the tuner.");
         return;
       }
 
-      _card.Name = mpTextBoxDeviceName.Text;
+      _card.Name = mpTextBoxTunerName.Text;
       _card.GrabEPG = checkBoxAllowEpgGrab.Checked;
       _card.UseConditionalAccess = checkBoxConditionalAccessEnabled.Checked;
       _card.DecryptLimit = (int)numericUpDownDecryptLimit.Value;
@@ -148,7 +148,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       _card.DiseqcCommandRepeatCount = (int)numericUpDownDiseqcCommandRepeatCount.Value;
       _card.IdleMode = (int)Enum.Parse(typeof(IdleMode), (String)mpComboBoxIdleMode.SelectedItem);
 
-      // Careful here! The selected items will be null for certain device types.
+      // Careful here! The selected items will be null for certain tuner types.
       if (_cardType != CardType.Analog)
       {
         _card.MultiChannelDecryptMode = (int)Enum.Parse(typeof(MultiChannelDecryptMode), (String)mpComboBoxMultiChannelDecryptMode.SelectedItem);
@@ -172,7 +172,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
     private void setConditionalAccessFieldVisibility()
     {
-      label1.Visible = checkBoxConditionalAccessEnabled.Checked;
       label3.Visible = checkBoxConditionalAccessEnabled.Checked;
       numericUpDownDecryptLimit.Visible = checkBoxConditionalAccessEnabled.Checked;
       label4.Visible = checkBoxConditionalAccessEnabled.Checked;
