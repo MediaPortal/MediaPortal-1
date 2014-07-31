@@ -39,12 +39,62 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
   {
     #region constants
 
-    private static readonly HashSet<string> CYBERLINK_MULTIPLEXERS = new HashSet<string>
+    private static readonly IEnumerable<Guid> CYBERLINK_MULTIPLEXERS = new List<Guid>
     {
-      @"@device:sw:{083863f1-70de-11d0-bd40-00a0c911ce86}\{370e9701-9dc5-42c8-be29-4e75f0629eed}",  // Power Cinema muxer
-      @"@device:sw:{083863f1-70de-11d0-bd40-00a0c911ce86}\{6770e328-9b73-40c5-91e6-e2f321aede57}",  // "Cyberlink MPEG Muxer"
-      @"@device:sw:{083863f1-70de-11d0-bd40-00a0c911ce86}\{7f2bbeaf-e11c-4d39-90e8-938fb5a86045}"   // Power Director muxer
-      //@"@device:sw:{083863f1-70de-11d0-bd40-00a0c911ce86}\{bc650178-0de4-47df-af50-bbd9c7aef5a9}"
+      // name = CyberLink MPEG Muxer
+      // package = PowerCinema, Lenovo ShuttleCenter
+      // file name = MDMpgMux.ax
+      new Guid(0x370e9701, 0x9dc5, 0x42c8, 0xbe, 0x29, 0x4e, 0x75, 0xf0, 0x62, 0x9e, 0xed),
+
+      // name = CyberLink MPEG Muxer
+      // package = AzureWave/Twinhan DigitalTV
+      // file name = THMpgMux.ax
+      new Guid(0x6770e328, 0x9b73, 0x40c5, 0x91, 0xe6, 0xe2, 0xf3, 0x21, 0xae, 0xde, 0x57),
+
+      // name = CyberLink MPEG Muxer
+      // package = KWorld HyperMedia
+      // file name = MpgMux.ax
+      new Guid(0x4df35815, 0x79c5, 0x44c8, 0x87, 0x53, 0x84, 0x7d, 0x5c, 0x9c, 0x3c, 0xf5),
+
+      // name = PDR MPEG Muxer
+      // package = PowerDirector
+      // file name = PDMpgMux.ax
+      new Guid(0x7f2bbeaf, 0xe11c, 0x4d39, 0x90, 0xe8, 0x93, 0x8f, 0xb5, 0xa8, 0x60, 0x45),
+
+      // name = CyberLink MPEG Muxer
+      // package = PowerEncoder
+      // file name = PEMpgMux.ax
+      new Guid(0xffbc4098, 0xfef1, 0x4207, 0x82, 0x2e, 0x57, 0x4d, 0xd3, 0x11, 0x93, 0xee),
+
+      // name = PP MPEG Muxer
+      // package = PowerProducer
+      // file name = MpgMux.ax
+      new Guid(0x6708234e, 0xddfe, 0x4b29, 0xa5, 0x9e, 0xe5, 0x5a, 0x3f, 0xe5, 0x2b, 0x69),
+
+      // name = CyberLink MPEG Muxer
+      // package = Medion???
+      // file name = MpgMux.ax
+      new Guid(0xbc650178, 0x0de4, 0x47df, 0xaf, 0x50, 0xbb, 0xd9, 0xc7, 0xae, 0xf5, 0xa9),
+
+      // name = CyberLink MPEG Muxer
+      // package = Power2Go
+      // file name = P2GMpgMux.ax
+      new Guid(0xcf6ed441, 0xfc79, 0x4f1a, 0x9d, 0x91, 0x4a, 0xe0, 0x1c, 0x57, 0x0b, 0x81),
+
+      // name = CyberLink MPEG Muxer
+      // package = PowerVCR II
+      // file name = MpgMux.ax
+      new Guid(0x4b5c6bc0, 0xd60e, 0x11d2, 0x8f, 0x3f, 0x00, 0x80, 0xc8, 0x4e, 0x98, 0x06),
+
+      // name = CyberLink MPEG Muxer
+      // package = Lenovo ShuttleCenter, ATI Catalyst Media Center
+      // file name = PCMDV_MpgMux.ax
+      new Guid(0x8ef09e72, 0xb16d, 0x4f80, 0x95, 0x43, 0xa0, 0x00, 0x2f, 0x64, 0x5d, 0x95),
+
+      // name = CyberLink MPEG Muxer
+      // package = Dell Media Experience
+      // file name = PDMpgMux.ax
+      new Guid(0x2ff4bfb8, 0x7d35, 0x44cf, 0xaa, 0x67, 0xc5, 0x96, 0x61, 0xdf, 0x89, 0x29)
     };
 
     private static IList<AMMediaType> MEDIA_TYPES_CAPTURE = new List<AMMediaType>();
@@ -391,17 +441,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         AddAndConnectMultiplexer(graph, capturePin, videoPin, audioPin, productInstanceId, out _filterMultiplexer, out _deviceMultiplexer);
         if (_filterMultiplexer == null && _deviceCompressorAudio != null && _deviceCompressorAudio.Name.ToLowerInvariant().Contains("cyberlink"))
         {
-          // Add and connect a Cyberlink multiplexer. This is required if a
-          // Cyberlink audio encoder is used. If the muxer isn't in the
+          // Add and connect a CyberLink multiplexer. This is required if a
+          // CyberLink audio encoder is used. If the muxer isn't in the
           // graph, the audio encoder causes an access violation exception
           // when you attempt to start the graph. My guess is that the
           // encoder interacts with the muxer. I tried to mimic interfaces
           // requested via QueryInterface() with our TS multiplexer but
           // ultimately I never managed to make the encoder work without
-          // the Cyberlink multiplexer.
-          if (!AddAndConnectCyberlinkMultiplexer(graph, videoPin, audioPin, out _filterMultiplexer))
+          // the CyberLink multiplexer.
+          if (!AddAndConnectCyberLinkMultiplexer(graph, videoPin, audioPin, out _filterMultiplexer))
           {
-            throw new TvException("Failed to add and connect Cyberlink multiplexer.");
+            throw new TvException("Failed to add and connect CyberLink multiplexer.");
           }
         }
 
@@ -915,63 +965,40 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       }
     }
 
-    private bool AddAndConnectCyberlinkMultiplexer(IFilterGraph2 graph, IPin videoPin, IPin audioPin, out IBaseFilter filter)
+    private bool AddAndConnectCyberLinkMultiplexer(IFilterGraph2 graph, IPin videoPin, IPin audioPin, out IBaseFilter filter)
     {
-      this.LogInfo("WDM analog encoder: add and connect Cyberlink multiplexer");
+      this.LogInfo("WDM analog encoder: add and connect CyberLink multiplexer");
       filter = null;
-      DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.LegacyAmFilterCategory);
-      try
+      foreach (Guid clsid in CYBERLINK_MULTIPLEXERS)
       {
-        for (int i = 0; i < devices.Length; i++)
+        try
         {
-          DsDevice d = devices[i];
-          if (d == null || d.Name == null || d.DevicePath == null || d.Mon == null)
-          {
-            continue;
-          }
-          string deviceName = d.Name;
-          string devicePath = d.DevicePath.ToLowerInvariant();
-          if (!CYBERLINK_MULTIPLEXERS.Contains(devicePath))
-          {
-            continue;
-          }
-
-          try
-          {
-            this.LogDebug("WDM analog encoder:   try {0} {1}", deviceName, devicePath);
-            filter = FilterGraphTools.AddFilterFromDevice(graph, d);
-          }
-          catch (Exception ex)
-          {
-            this.LogError(ex, "WDM analog encoder: failed to add Cyberlink multiplexer {0} {1}", deviceName, devicePath);
-            continue;
-          }
-          try
-          {
-            if (videoPin != null && !FilterGraphTools.ConnectFilterWithPin(graph, videoPin, PinDirection.Output, filter))
-            {
-              throw new TvException("Failed to connect video to Cyberlink multiplexer.");
-            }
-            if (audioPin != null && !FilterGraphTools.ConnectFilterWithPin(graph, audioPin, PinDirection.Output, filter))
-            {
-              throw new TvException("Failed to connect audio to Cyberlink multiplexer.");
-            }
-            this.LogDebug("WDM analog encoder:     connected!");
-            return true;
-          }
-          catch (Exception ex)
-          {
-            this.LogError(ex, "WDM analog encoder: failed to connect Cyberlink multiplexer {0} {1}", deviceName, devicePath);
-            graph.RemoveFilter(filter);
-            Release.ComObject("WDM analog encoder Cyberlink multiplexer filter candidate", ref filter);
-          }
+          this.LogDebug("WDM analog encoder:   try {0}", clsid);
+          filter = FilterGraphTools.AddFilterFromRegisteredClsid(graph, clsid, "CyberLink MPEG Muxer");
         }
-      }
-      finally
-      {
-        foreach (DsDevice d in devices)
+        catch
         {
-          d.Dispose();
+          // Failed to add or not installed.
+          continue;
+        }
+        try
+        {
+          if (videoPin != null && !FilterGraphTools.ConnectFilterWithPin(graph, videoPin, PinDirection.Output, filter))
+          {
+            throw new TvException("Failed to connect video to CyberLink multiplexer.");
+          }
+          if (audioPin != null && !FilterGraphTools.ConnectFilterWithPin(graph, audioPin, PinDirection.Output, filter))
+          {
+            throw new TvException("Failed to connect audio to CyberLink multiplexer.");
+          }
+          this.LogDebug("WDM analog encoder:     connected!");
+          return true;
+        }
+        catch (Exception ex)
+        {
+          this.LogError(ex, "WDM analog encoder: failed to connect CyberLink multiplexer {0}", clsid);
+          graph.RemoveFilter(filter);
+          Release.ComObject("WDM analog encoder CyberLink multiplexer filter candidate", ref filter);
         }
       }
       return false;
