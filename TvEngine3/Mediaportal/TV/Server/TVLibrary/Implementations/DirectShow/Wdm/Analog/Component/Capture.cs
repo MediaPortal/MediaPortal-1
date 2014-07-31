@@ -131,16 +131,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     #region configuration
 
     /// <summary>
-    /// Determine and store default setting values.
-    /// </summary>
-    private bool _setDefaultSettings = false;
-
-    /// <summary>
-    /// The identifier of the tuner which this component is associated with.
-    /// </summary>
-    private int _tunerId = -1;
-
-    /// <summary>
     /// The configured video standard.
     /// </summary>
     private AnalogVideoStandard _currentVideoStandard = AnalogVideoStandard.PAL_B;
@@ -310,7 +300,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       CheckCapabilitiesVideoProcessingAmplifier();
       ConfigureAnalogVideoDecoder(_currentVideoStandard);
       ConfigureVideoProcessingAmplifier(_currentVideoProcAmpPropertyValues);
-      _setDefaultSettings = false;
     }
 
     /// <summary>
@@ -455,10 +444,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
           {
             this.LogDebug("WDM analog capture: supported video standards = {0}", _supportedVideoStandards);
           }
-          if (_setDefaultSettings)
-          {
-            SettingsManagement.SaveValue("tuner" + _tunerId + "SupportedVideoStandards", (int)_supportedVideoStandards);
-          }
         }
         else
         {
@@ -491,13 +476,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
               this.LogDebug("WDM analog capture: processing amplifier property {0} is supported, min = {1}, max = {2}, step = {3}, default = {4}, flags = {5}", property, valueMinimum, valueMaximum, steppingDelta, valueDefault, flags);
               VideoProcAmpPropertyDetail propertyLimits = new VideoProcAmpPropertyDetail(valueMinimum, valueMaximum, steppingDelta, valueDefault, flags);
               _supportedVideoProcAmpProperties.Add(property, propertyLimits);
-              if (_setDefaultSettings)
-              {
-                // The value is stored as a percentage.
-                double propertyValuePercentage = valueDefault * 100 / (valueMaximum - valueMinimum);
-                SettingsManagement.SaveValue("tuner" + _tunerId + "VideoProcAmpProperty" + property + "Value", propertyValuePercentage);
-                SettingsManagement.SaveValue("tuner" + _tunerId + "VideoProcAmpProperty" + property + "DefaultValue", propertyValuePercentage);
-              }
             }
             else
             {
@@ -523,14 +501,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     public void ReloadConfiguration(int tunerId)
     {
       this.LogDebug("WDM analog capture: reload configuration");
-      _tunerId = tunerId;
 
       // Do we have existing settings? If not, try to set sensible defaults.
       int settingCheck = SettingsManagement.GetValue("tuner" + tunerId + "VideoStandard", -1);
       if (settingCheck == -1)   // first load
       {
         this.LogDebug("WDM analog capture: first load, setting defaults");
-        _setDefaultSettings = true;
         CountryCollection collection = new CountryCollection();
         string countryName = System.Globalization.RegionInfo.CurrentRegion.EnglishName;
         Country country = collection.GetTunerCountry(countryName);
@@ -560,6 +536,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         SettingsManagement.SaveValue("tuner" + tunerId + "FrameWidth", _currentFrameWidth);
         SettingsManagement.SaveValue("tuner" + tunerId + "FrameHeight", _currentFrameHeight);
         SettingsManagement.SaveValue("tuner" + tunerId + "FrameRate", _currentFrameRate);
+
+        SettingsManagement.SaveValue("tuner" + tunerId + "SupportedVideoStandards", (int)_supportedVideoStandards);
+
+        foreach (KeyValuePair<VideoProcAmpProperty, VideoProcAmpPropertyDetail> p in _supportedVideoProcAmpProperties)
+        {
+          // The value is stored as a percentage.
+          double propertyValuePercentage = p.Value.ValueDefault * 100 / (p.Value.ValueMaximum - p.Value.ValueMinimum);
+          SettingsManagement.SaveValue("tuner" + tunerId + "VideoProcAmpProperty" + p.Key + "Value", propertyValuePercentage);
+          SettingsManagement.SaveValue("tuner" + tunerId + "VideoProcAmpProperty" + p.Key + "DefaultValue", propertyValuePercentage);
+        }
       }
 
       AnalogVideoStandard newVideoStandard = (AnalogVideoStandard)SettingsManagement.GetValue("tuner" + tunerId + "VideoStandard", (int)_currentVideoStandard);

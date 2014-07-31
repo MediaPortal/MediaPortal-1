@@ -378,7 +378,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.label31.Name = "label31";
       this.label31.Size = new System.Drawing.Size(432, 13);
       this.label31.TabIndex = 8;
-      this.label31.Text = "Note: A restart of TvServer might be needed when changing these settings";
+      this.label31.Text = "Note: you might need to restart the TV service for changes to be applied.";
       // 
       // groupBox3
       // 

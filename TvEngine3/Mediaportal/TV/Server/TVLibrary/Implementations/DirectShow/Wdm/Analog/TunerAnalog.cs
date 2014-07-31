@@ -236,9 +236,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
         _capture = new Capture(_deviceMain);
       }
       _capture.PerformLoading(_graph, ProductInstanceId, _crossbar);
+      _capture.ReloadConfiguration(TunerId);
 
       _encoder = new Encoder();
       _encoder.PerformLoading(_graph, ProductInstanceId, _capture);
+      _encoder.ReloadConfiguration(TunerId);
 
       // Check for and load extensions, adding any additional filters to the graph.
       IList<ICustomDevice> extensions;

@@ -38,6 +38,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
+using MediaPortal.Common.Utils.ExtensionMethods;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections
 {
@@ -169,17 +170,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (availableVideoStandard != AnalogVideoStandard.None)
       {
         videoStandardComboBox.Enabled = true;
-        foreach (AnalogVideoStandard standard in Enum.GetValues(typeof(AnalogVideoStandard)))
-        {
-          if (availableVideoStandard.HasFlag(standard))
-          {
-            videoStandardComboBox.Items.Add(standard);
-          }
-        }
+        videoStandardComboBox.Items.AddRange(typeof(AnalogVideoStandard).GetDescriptions((int)availableVideoStandard, true));
         AnalogVideoStandard currentStandard = (AnalogVideoStandard)ServiceAgents.Instance.SettingServiceAgent.GetValue("tuner" + _cardId + "VideoStandard", (int)AnalogVideoStandard.None);
         if (currentStandard != AnalogVideoStandard.None)
         {
-          videoStandardComboBox.SelectedItem = currentStandard;
+          videoStandardComboBox.SelectedItem = currentStandard.GetDescription();
         }
       }
       else
@@ -361,30 +356,22 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         }
       }
 
-      if (videoStandardComboBox.Enabled)
+      if (videoStandardComboBox.Enabled && videoStandardComboBox.SelectedIndex != -1)
       {
-        if (videoStandardComboBox.SelectedIndex != -1)
-        {
-          ServiceAgents.Instance.SettingServiceAgent.SaveValue("tuner" + _cardId + "VideoStandard", (int)(AnalogVideoStandard)videoStandardComboBox.SelectedItem);
-        }
+        Enum e = typeof(AnalogVideoStandard).GetEnumFromDescription((string)videoStandardComboBox.SelectedItem);
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue("tuner" + _cardId + "VideoStandard", Convert.ToInt32(e));
       }
-      if (frameRateComboBox.Enabled)
+      if (frameRateComboBox.Enabled && frameRateComboBox.SelectedIndex != -1)
       {
-        if (frameRateComboBox.SelectedIndex != -1)
-        {
-          string item = frameRateComboBox.SelectedItem.ToString();
-          string frameRate = item.Substring(0, item.IndexOf(" fps"));
-          ServiceAgents.Instance.SettingServiceAgent.SaveValue("tuner" + _cardId + "FrameRate", Double.Parse(frameRate, CultureInfo.GetCultureInfo("en-GB").NumberFormat));
-        }
+        string item = frameRateComboBox.SelectedItem.ToString();
+        string frameRate = item.Substring(0, item.IndexOf(" fps"));
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue("tuner" + _cardId + "FrameRate", Double.Parse(frameRate, CultureInfo.GetCultureInfo("en-GB").NumberFormat));
       }
-      if (resolutionComboBox.Enabled)
+      if (resolutionComboBox.Enabled && resolutionComboBox.SelectedIndex != -1)
       {
-        if (resolutionComboBox.SelectedIndex != -1)
-        {
-          string item = resolutionComboBox.SelectedItem.ToString();
-          ServiceAgents.Instance.SettingServiceAgent.SaveValue("tuner" + _cardId + "FrameWidth", Int32.Parse(item.Substring(0, 3)));
-          ServiceAgents.Instance.SettingServiceAgent.SaveValue("tuner" + _cardId + "FrameHeight", Int32.Parse(item.Substring(4, 3)));
-        }
+        string item = resolutionComboBox.SelectedItem.ToString();
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue("tuner" + _cardId + "FrameWidth", Int32.Parse(item.Substring(0, 3)));
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue("tuner" + _cardId + "FrameHeight", Int32.Parse(item.Substring(4, 3)));
       }
     }
 
