@@ -263,7 +263,7 @@ namespace Mediaportal.TV.Server.SetupTV
     private static DialogResult PromptStartTvService()
     {
       DialogResult result = MessageBox.Show("The TV service is not running.\rStart it now?",
-                                            "MediaPortal TV Service", MessageBoxButtons.YesNo);
+                                            "MediaPortal TV Server", MessageBoxButtons.YesNo);
       return result;
     }
 
@@ -373,7 +373,7 @@ namespace Mediaportal.TV.Server.SetupTV
         "The TV service could not be found.\n\n" +
         "Please confirm the name of the computer on which the TV service is running.\n\n" +
         "If the TV service is installed on a different computer, check your network connectivity and security.",
-        "MediaPortal TV Service", ConfigurationManager.AppSettings["tvserver"]);
+        "MediaPortal TV Server", ConfigurationManager.AppSettings["tvserver"]);
       hostName = result.Text;
       return result.ReturnCode;
     }
