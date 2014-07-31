@@ -30,26 +30,27 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      this.checkBoxCreateGroups = new MPCheckBox();
+      this.checkBoxCreateGroups = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
       this.listViewStatus = new System.Windows.Forms.ListView();
       this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.progressBarQuality = new System.Windows.Forms.ProgressBar();
       this.progressBarLevel = new System.Windows.Forms.ProgressBar();
-      this.label2 = new MPLabel();
-      this.label1 = new MPLabel();
+      this.label2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.progressBar1 = new System.Windows.Forms.ProgressBar();
-      this.mpButtonScanTv = new MPButton();
-      this.mpLabel1 = new MPLabel();
-      this.mpComboBoxService = new MPComboBox();
-      this.checkBoxEnableChannelMoveDetection = new MPCheckBox();
+      this.mpButtonScanTv = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.mpLabel1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpComboBoxService = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
+      this.checkBoxEnableChannelMoveDetection = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
       this.SuspendLayout();
       // 
       // checkBoxCreateGroups
       // 
       this.checkBoxCreateGroups.AutoSize = true;
+      this.checkBoxCreateGroups.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxCreateGroups.Location = new System.Drawing.Point(24, 52);
       this.checkBoxCreateGroups.Name = "checkBoxCreateGroups";
-      this.checkBoxCreateGroups.Size = new System.Drawing.Size(175, 17);
+      this.checkBoxCreateGroups.Size = new System.Drawing.Size(173, 17);
       this.checkBoxCreateGroups.TabIndex = 8;
       this.checkBoxCreateGroups.Text = "Create groups for each provider";
       this.checkBoxCreateGroups.UseVisualStyleBackColor = true;
@@ -63,7 +64,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             this.columnHeader1});
       this.listViewStatus.Location = new System.Drawing.Point(23, 225);
       this.listViewStatus.Name = "listViewStatus";
-      this.listViewStatus.Size = new System.Drawing.Size(427, 122);
+      this.listViewStatus.Size = new System.Drawing.Size(439, 122);
       this.listViewStatus.TabIndex = 7;
       this.listViewStatus.UseCompatibleStateImageBehavior = false;
       this.listViewStatus.View = System.Windows.Forms.View.Details;
@@ -79,7 +80,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.progressBarQuality.Location = new System.Drawing.Point(111, 145);
       this.progressBarQuality.Name = "progressBarQuality";
-      this.progressBarQuality.Size = new System.Drawing.Size(338, 10);
+      this.progressBarQuality.Size = new System.Drawing.Size(350, 10);
       this.progressBarQuality.TabIndex = 5;
       // 
       // progressBarLevel
@@ -88,7 +89,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.progressBarLevel.Location = new System.Drawing.Point(111, 122);
       this.progressBarLevel.Name = "progressBarLevel";
-      this.progressBarLevel.Size = new System.Drawing.Size(338, 10);
+      this.progressBarLevel.Size = new System.Drawing.Size(350, 10);
       this.progressBarLevel.TabIndex = 3;
       // 
       // label2
@@ -115,7 +116,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.progressBar1.Location = new System.Drawing.Point(24, 195);
       this.progressBar1.Name = "progressBar1";
-      this.progressBar1.Size = new System.Drawing.Size(425, 10);
+      this.progressBar1.Size = new System.Drawing.Size(437, 10);
       this.progressBar1.TabIndex = 6;
       // 
       // mpButtonScanTv
@@ -149,9 +150,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // checkBoxEnableChannelMoveDetection
       // 
       this.checkBoxEnableChannelMoveDetection.AutoSize = true;
+      this.checkBoxEnableChannelMoveDetection.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxEnableChannelMoveDetection.Location = new System.Drawing.Point(24, 75);
       this.checkBoxEnableChannelMoveDetection.Name = "checkBoxEnableChannelMoveDetection";
-      this.checkBoxEnableChannelMoveDetection.Size = new System.Drawing.Size(199, 17);
+      this.checkBoxEnableChannelMoveDetection.Size = new System.Drawing.Size(197, 17);
       this.checkBoxEnableChannelMoveDetection.TabIndex = 9;
       this.checkBoxEnableChannelMoveDetection.Text = "Enable channel movement detection";
       this.checkBoxEnableChannelMoveDetection.UseVisualStyleBackColor = true;
@@ -172,7 +174,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.Controls.Add(this.mpLabel1);
       this.Controls.Add(this.mpComboBoxService);
       this.Name = "CardDvbIP";
-      this.Size = new System.Drawing.Size(468, 420);
+      this.Size = new System.Drawing.Size(480, 420);
       this.Load += new System.EventHandler(this.CardDvbIP_Load);
       this.ResumeLayout(false);
       this.PerformLayout();

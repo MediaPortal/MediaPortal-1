@@ -32,7 +32,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
     {
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
-      this.mpLabelAdditionalNotes = new MPLabel();
+      this.mpLabelAdditionalNotes = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.checkSendSelect = new System.Windows.Forms.CheckBox();
       this.checkBoxExtLog = new System.Windows.Forms.CheckBox();
       this.comboBoxBlaster2 = new System.Windows.Forms.ComboBox();
@@ -51,10 +51,10 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
       // 
       this.tabControl1.AccessibleRole = System.Windows.Forms.AccessibleRole.HelpBalloon;
       this.tabControl1.Controls.Add(this.tabPage1);
-      this.tabControl1.Location = new System.Drawing.Point(3, 3);
+      this.tabControl1.Location = new System.Drawing.Point(0, 0);
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.SelectedIndex = 0;
-      this.tabControl1.Size = new System.Drawing.Size(476, 308);
+      this.tabControl1.Size = new System.Drawing.Size(480, 420);
       this.tabControl1.TabIndex = 8;
       // 
       // tabPage1
@@ -73,7 +73,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
       this.tabPage1.Location = new System.Drawing.Point(4, 22);
       this.tabPage1.Name = "tabPage1";
       this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage1.Size = new System.Drawing.Size(468, 282);
+      this.tabPage1.Size = new System.Drawing.Size(472, 394);
       this.tabPage1.TabIndex = 0;
       this.tabPage1.Text = "General Setup";
       this.tabPage1.UseVisualStyleBackColor = true;
@@ -191,7 +191,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
       // 
       this.Controls.Add(this.tabControl1);
       this.Name = "BlasterSetup";
-      this.Size = new System.Drawing.Size(483, 316);
+      this.Size = new System.Drawing.Size(480, 420);
       this.tabControl1.ResumeLayout(false);
       this.tabPage1.ResumeLayout(false);
       this.tabPage1.PerformLayout();

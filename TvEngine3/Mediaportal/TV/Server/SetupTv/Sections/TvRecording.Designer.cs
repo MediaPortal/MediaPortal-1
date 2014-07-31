@@ -150,10 +150,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabControl1.Controls.Add(this.tpThumbnails);
       this.tabControl1.Controls.Add(this.tpRecording);
       this.tabControl1.Controls.Add(this.tpRecordImport);
-      this.tabControl1.Location = new System.Drawing.Point(3, 3);
+      this.tabControl1.Location = new System.Drawing.Point(0, 0);
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.SelectedIndex = 0;
-      this.tabControl1.Size = new System.Drawing.Size(471, 527);
+      this.tabControl1.Size = new System.Drawing.Size(480, 420);
       this.tabControl1.TabIndex = 0;
       this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
       // 
@@ -163,7 +163,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tpSettings.Location = new System.Drawing.Point(4, 22);
       this.tpSettings.Name = "tpSettings";
       this.tpSettings.Padding = new System.Windows.Forms.Padding(3);
-      this.tpSettings.Size = new System.Drawing.Size(463, 501);
+      this.tpSettings.Size = new System.Drawing.Size(472, 394);
       this.tpSettings.TabIndex = 0;
       this.tpSettings.Text = "General";
       this.tpSettings.UseVisualStyleBackColor = true;
@@ -179,7 +179,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox1.Location = new System.Drawing.Point(6, 3);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(451, 363);
+      this.groupBox1.Size = new System.Drawing.Size(460, 363);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       // 
@@ -193,7 +193,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxRecording.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxRecording.Location = new System.Drawing.Point(15, 19);
       this.groupBoxRecording.Name = "groupBoxRecording";
-      this.groupBoxRecording.Size = new System.Drawing.Size(418, 62);
+      this.groupBoxRecording.Size = new System.Drawing.Size(427, 62);
       this.groupBoxRecording.TabIndex = 18;
       this.groupBoxRecording.TabStop = false;
       this.groupBoxRecording.Text = "Recording";
@@ -236,7 +236,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxScheduler.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxScheduler.Location = new System.Drawing.Point(15, 180);
       this.groupBoxScheduler.Name = "groupBoxScheduler";
-      this.groupBoxScheduler.Size = new System.Drawing.Size(418, 142);
+      this.groupBoxScheduler.Size = new System.Drawing.Size(427, 142);
       this.groupBoxScheduler.TabIndex = 14;
       this.groupBoxScheduler.TabStop = false;
       this.groupBoxScheduler.Text = "Scheduler";
@@ -318,7 +318,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxGap.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxGap.Location = new System.Drawing.Point(15, 87);
       this.groupBoxGap.Name = "groupBoxGap";
-      this.groupBoxGap.Size = new System.Drawing.Size(418, 84);
+      this.groupBoxGap.Size = new System.Drawing.Size(427, 84);
       this.groupBoxGap.TabIndex = 13;
       this.groupBoxGap.TabStop = false;
       this.groupBoxGap.Text = "Pre- and post recording";
@@ -1154,7 +1154,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.tabControl1);
       this.Name = "TvRecording";
-      this.Size = new System.Drawing.Size(474, 530);
+      this.Size = new System.Drawing.Size(480, 420);
       this.tabControl1.ResumeLayout(false);
       this.tpSettings.ResumeLayout(false);
       this.groupBox1.ResumeLayout(false);

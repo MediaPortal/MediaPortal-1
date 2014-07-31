@@ -39,7 +39,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.clmnVersion = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
-      this.mpLabelChannelCount = new MPLabel();
+      this.mpLabelChannelCount = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.SuspendLayout();
@@ -65,7 +65,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.listView1.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
       this.listView1.Location = new System.Drawing.Point(0, 0);
       this.listView1.Name = "listView1";
-      this.listView1.Size = new System.Drawing.Size(476, 428);
+      this.listView1.Size = new System.Drawing.Size(472, 394);
       this.listView1.TabIndex = 0;
       this.listView1.UseCompatibleStateImageBehavior = false;
       this.listView1.View = System.Windows.Forms.View.Details;
@@ -98,7 +98,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabControl1.Location = new System.Drawing.Point(0, 0);
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.SelectedIndex = 0;
-      this.tabControl1.Size = new System.Drawing.Size(484, 454);
+      this.tabControl1.Size = new System.Drawing.Size(480, 420);
       this.tabControl1.TabIndex = 10;
       // 
       // tabPage1
@@ -108,7 +108,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabPage1.Location = new System.Drawing.Point(4, 22);
       this.tabPage1.Name = "tabPage1";
       this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage1.Size = new System.Drawing.Size(476, 428);
+      this.tabPage1.Size = new System.Drawing.Size(472, 394);
       this.tabPage1.TabIndex = 0;
       this.tabPage1.Text = "Plugins";
       this.tabPage1.UseVisualStyleBackColor = true;
@@ -127,7 +127,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.tabControl1);
       this.Name = "Plugins";
-      this.Size = new System.Drawing.Size(484, 454);
+      this.Size = new System.Drawing.Size(480, 420);
       this.tabControl1.ResumeLayout(false);
       this.tabPage1.ResumeLayout(false);
       this.tabPage1.PerformLayout();

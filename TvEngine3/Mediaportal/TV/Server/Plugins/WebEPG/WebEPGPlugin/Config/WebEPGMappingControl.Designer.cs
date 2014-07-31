@@ -32,28 +32,28 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
     private void InitializeComponent()
     {
       this.components = new System.ComponentModel.Container();
-      this.gbChannels = new MPGroupBox();
+      this.gbChannels = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
       this.bAutoMap = new System.Windows.Forms.Button();
-      this.bImport = new MPButton();
+      this.bImport = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.lvMapping = new System.Windows.Forms.ListView();
       this.bClearMapping = new System.Windows.Forms.Button();
-      this.lCount = new MPLabel();
-      this.tbCount = new MPTextBox();
-      this.bRemove = new MPButton();
+      this.lCount = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.tbCount = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
+      this.bRemove = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.label1 = new System.Windows.Forms.Label();
       this.GroupComboBox = new System.Windows.Forms.ComboBox();
-      this.gbChannelDetails = new MPGroupBox();
+      this.gbChannelDetails = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
       this.tcMappingDetails = new System.Windows.Forms.TabControl();
       this.tpSingle = new System.Windows.Forms.TabPage();
-      this.gbGrabber = new MPGroupBox();
-      this.tbGrabDays = new MPTextBox();
-      this.lGuideDays = new MPLabel();
-      this.bGrabber = new MPButton();
-      this.Grabber = new MPLabel();
-      this.tbGrabSite = new MPTextBox();
-      this.bChannelID = new MPButton();
-      this.l_cID = new MPLabel();
-      this.tbChannelName = new MPTextBox();
+      this.gbGrabber = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.tbGrabDays = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
+      this.lGuideDays = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.bGrabber = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.Grabber = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.tbGrabSite = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
+      this.bChannelID = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.l_cID = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.tbChannelName = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
       this.tpMultiple = new System.Windows.Forms.TabPage();
       this.bMergedEdit = new System.Windows.Forms.Button();
       this.bMergedRemove = new System.Windows.Forms.Button();
@@ -92,7 +92,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.gbChannels.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.gbChannels.Location = new System.Drawing.Point(3, 3);
       this.gbChannels.Name = "gbChannels";
-      this.gbChannels.Size = new System.Drawing.Size(443, 241);
+      this.gbChannels.Size = new System.Drawing.Size(474, 232);
       this.gbChannels.TabIndex = 22;
       this.gbChannels.TabStop = false;
       this.gbChannels.Text = "Channel Mapping";
@@ -100,7 +100,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       // bAutoMap
       // 
       this.bAutoMap.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.bAutoMap.Location = new System.Drawing.Point(365, 17);
+      this.bAutoMap.Location = new System.Drawing.Point(396, 17);
       this.bAutoMap.Name = "bAutoMap";
       this.bAutoMap.Size = new System.Drawing.Size(72, 23);
       this.bAutoMap.TabIndex = 23;
@@ -111,7 +111,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       // bImport
       // 
       this.bImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.bImport.Location = new System.Drawing.Point(287, 17);
+      this.bImport.Location = new System.Drawing.Point(318, 17);
       this.bImport.Name = "bImport";
       this.bImport.Size = new System.Drawing.Size(72, 23);
       this.bImport.TabIndex = 11;
@@ -128,17 +128,17 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.lvMapping.HideSelection = false;
       this.lvMapping.Location = new System.Drawing.Point(6, 45);
       this.lvMapping.Name = "lvMapping";
-      this.lvMapping.Size = new System.Drawing.Size(431, 160);
+      this.lvMapping.Size = new System.Drawing.Size(462, 151);
       this.lvMapping.TabIndex = 17;
       this.lvMapping.UseCompatibleStateImageBehavior = false;
       this.lvMapping.View = System.Windows.Forms.View.Details;
-      this.lvMapping.SelectedIndexChanged += new System.EventHandler(this.lvMapping_SelectedIndexChanged);
       this.lvMapping.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.lvMapping_ColumnClick);
+      this.lvMapping.SelectedIndexChanged += new System.EventHandler(this.lvMapping_SelectedIndexChanged);
       // 
       // bClearMapping
       // 
       this.bClearMapping.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.bClearMapping.Location = new System.Drawing.Point(260, 211);
+      this.bClearMapping.Location = new System.Drawing.Point(291, 202);
       this.bClearMapping.Name = "bClearMapping";
       this.bClearMapping.Size = new System.Drawing.Size(90, 24);
       this.bClearMapping.TabIndex = 20;
@@ -149,7 +149,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       // lCount
       // 
       this.lCount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.lCount.Location = new System.Drawing.Point(67, 217);
+      this.lCount.Location = new System.Drawing.Point(67, 208);
       this.lCount.Name = "lCount";
       this.lCount.Size = new System.Drawing.Size(80, 16);
       this.lCount.TabIndex = 1;
@@ -158,7 +158,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       // tbCount
       // 
       this.tbCount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.tbCount.Location = new System.Drawing.Point(6, 214);
+      this.tbCount.Location = new System.Drawing.Point(6, 205);
       this.tbCount.Name = "tbCount";
       this.tbCount.ReadOnly = true;
       this.tbCount.Size = new System.Drawing.Size(55, 20);
@@ -167,7 +167,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       // bRemove
       // 
       this.bRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.bRemove.Location = new System.Drawing.Point(356, 211);
+      this.bRemove.Location = new System.Drawing.Point(387, 202);
       this.bRemove.Name = "bRemove";
       this.bRemove.Size = new System.Drawing.Size(81, 24);
       this.bRemove.TabIndex = 17;
@@ -192,7 +192,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.GroupComboBox.FormattingEnabled = true;
       this.GroupComboBox.Location = new System.Drawing.Point(48, 19);
       this.GroupComboBox.Name = "GroupComboBox";
-      this.GroupComboBox.Size = new System.Drawing.Size(233, 21);
+      this.GroupComboBox.Size = new System.Drawing.Size(264, 21);
       this.GroupComboBox.TabIndex = 21;
       // 
       // gbChannelDetails
@@ -201,9 +201,9 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.gbChannelDetails.Controls.Add(this.tcMappingDetails);
       this.gbChannelDetails.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.gbChannelDetails.Location = new System.Drawing.Point(3, 250);
+      this.gbChannelDetails.Location = new System.Drawing.Point(3, 241);
       this.gbChannelDetails.Name = "gbChannelDetails";
-      this.gbChannelDetails.Size = new System.Drawing.Size(443, 176);
+      this.gbChannelDetails.Size = new System.Drawing.Size(474, 176);
       this.gbChannelDetails.TabIndex = 23;
       this.gbChannelDetails.TabStop = false;
       this.gbChannelDetails.Text = "Mapping Details";
@@ -218,7 +218,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.tcMappingDetails.Location = new System.Drawing.Point(6, 19);
       this.tcMappingDetails.Name = "tcMappingDetails";
       this.tcMappingDetails.SelectedIndex = 0;
-      this.tcMappingDetails.Size = new System.Drawing.Size(431, 151);
+      this.tcMappingDetails.Size = new System.Drawing.Size(462, 151);
       this.tcMappingDetails.TabIndex = 16;
       this.tcMappingDetails.Selecting += new System.Windows.Forms.TabControlCancelEventHandler(this.tcMappingDetails_Selecting);
       // 
@@ -231,7 +231,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.tpSingle.Location = new System.Drawing.Point(4, 22);
       this.tpSingle.Name = "tpSingle";
       this.tpSingle.Padding = new System.Windows.Forms.Padding(3);
-      this.tpSingle.Size = new System.Drawing.Size(423, 125);
+      this.tpSingle.Size = new System.Drawing.Size(454, 125);
       this.tpSingle.TabIndex = 0;
       this.tpSingle.Text = "Single";
       this.tpSingle.UseVisualStyleBackColor = true;
@@ -248,7 +248,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.gbGrabber.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.gbGrabber.Location = new System.Drawing.Point(3, 38);
       this.gbGrabber.Name = "gbGrabber";
-      this.gbGrabber.Size = new System.Drawing.Size(417, 81);
+      this.gbGrabber.Size = new System.Drawing.Size(448, 81);
       this.gbGrabber.TabIndex = 15;
       this.gbGrabber.TabStop = false;
       this.gbGrabber.Text = "Grabber Details";
@@ -272,7 +272,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       // bGrabber
       // 
       this.bGrabber.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.bGrabber.Location = new System.Drawing.Point(381, 17);
+      this.bGrabber.Location = new System.Drawing.Point(412, 17);
       this.bGrabber.Name = "bGrabber";
       this.bGrabber.Size = new System.Drawing.Size(30, 20);
       this.bGrabber.TabIndex = 6;
@@ -295,13 +295,13 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.tbGrabSite.Location = new System.Drawing.Point(79, 18);
       this.tbGrabSite.Name = "tbGrabSite";
       this.tbGrabSite.ReadOnly = true;
-      this.tbGrabSite.Size = new System.Drawing.Size(296, 20);
+      this.tbGrabSite.Size = new System.Drawing.Size(327, 20);
       this.tbGrabSite.TabIndex = 0;
       // 
       // bChannelID
       // 
       this.bChannelID.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.bChannelID.Location = new System.Drawing.Point(384, 12);
+      this.bChannelID.Location = new System.Drawing.Point(415, 12);
       this.bChannelID.Name = "bChannelID";
       this.bChannelID.Size = new System.Drawing.Size(30, 20);
       this.bChannelID.TabIndex = 9;
@@ -324,7 +324,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.tbChannelName.Location = new System.Drawing.Point(82, 12);
       this.tbChannelName.Name = "tbChannelName";
       this.tbChannelName.ReadOnly = true;
-      this.tbChannelName.Size = new System.Drawing.Size(296, 20);
+      this.tbChannelName.Size = new System.Drawing.Size(327, 20);
       this.tbChannelName.TabIndex = 7;
       // 
       // tpMultiple
@@ -396,9 +396,9 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.dgvMerged.Size = new System.Drawing.Size(416, 113);
       this.dgvMerged.TabIndex = 5;
       this.dgvMerged.VirtualMode = true;
-      this.dgvMerged.RowValidating += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dgvMerged_RowValidating);
-      this.dgvMerged.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvMerged_CellEndEdit);
       this.dgvMerged.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvMerged_CellContentClick);
+      this.dgvMerged.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvMerged_CellEndEdit);
+      this.dgvMerged.RowValidating += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dgvMerged_RowValidating);
       // 
       // idColumn
       // 
@@ -444,7 +444,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       // 
       // bsMergedChannel
       // 
-      this.bsMergedChannel.DataSource = typeof(MergedChannel);
+      this.bsMergedChannel.DataSource = typeof(WebEPG.config.WebEPG.MergedChannel);
       // 
       // WebEPGMappingControl
       // 
@@ -454,7 +454,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.Controls.Add(this.gbChannels);
       this.Controls.Add(this.gbChannelDetails);
       this.Name = "WebEPGMappingControl";
-      this.Size = new System.Drawing.Size(449, 429);
+      this.Size = new System.Drawing.Size(480, 420);
       this.Load += new System.EventHandler(this.WebEPGMappingControl_Load);
       this.gbChannels.ResumeLayout(false);
       this.gbChannels.PerformLayout();

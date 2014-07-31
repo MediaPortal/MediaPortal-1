@@ -33,25 +33,25 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      this.groupBoxInfo = new MPGroupBox();
-      this.labelInfo2 = new MPLabel();
-      this.labelInfo1 = new MPLabel();
-      this.groupBoxContact = new MPGroupBox();
+      this.groupBoxInfo = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.labelInfo2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelInfo1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.groupBoxContact = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
       this.linkLabelSourceforge = new System.Windows.Forms.LinkLabel();
-      this.labelSourceForge = new MPLabel();
+      this.labelSourceForge = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.linkLabelOnlineDocumentation = new System.Windows.Forms.LinkLabel();
-      this.labelOnlineDocumentation = new MPLabel();
-      this.labelIrcChannelData = new MPLabel();
-      this.labelIrcChannel = new MPLabel();
+      this.labelOnlineDocumentation = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelIrcChannelData = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelIrcChannel = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.linkLabelForums = new System.Windows.Forms.LinkLabel();
-      this.labelForums = new MPLabel();
+      this.labelForums = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.linkLabelHomepage = new System.Windows.Forms.LinkLabel();
-      this.labelHomepage = new MPLabel();
-      this.labelMePo = new MPLabel();
-      this.mpGroupBoxAbout = new MPGroupBox();
-      this.labelVersion3 = new MPLabel();
-      this.labelVersion2 = new MPLabel();
-      this.labelVersion1 = new MPLabel();
+      this.labelHomepage = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelMePo = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpGroupBoxAbout = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.labelVersion3 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelVersion2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelVersion1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.paypalPictureBox = new System.Windows.Forms.PictureBox();
       this.groupBoxInfo.SuspendLayout();
       this.groupBoxContact.SuspendLayout();
@@ -68,7 +68,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxInfo.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxInfo.Location = new System.Drawing.Point(0, 0);
       this.groupBoxInfo.Name = "groupBoxInfo";
-      this.groupBoxInfo.Size = new System.Drawing.Size(472, 104);
+      this.groupBoxInfo.Size = new System.Drawing.Size(480, 104);
       this.groupBoxInfo.TabIndex = 0;
       this.groupBoxInfo.TabStop = false;
       // 
@@ -78,7 +78,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.labelInfo2.Location = new System.Drawing.Point(16, 56);
       this.labelInfo2.Name = "labelInfo2";
-      this.labelInfo2.Size = new System.Drawing.Size(440, 30);
+      this.labelInfo2.Size = new System.Drawing.Size(448, 30);
       this.labelInfo2.TabIndex = 1;
       this.labelInfo2.Text = "Clients like MediaPortal can use the TV-Server to watch Live-TV/recordings/EPG ov" +
           "er the network.";
@@ -89,7 +89,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.labelInfo1.Location = new System.Drawing.Point(16, 24);
       this.labelInfo1.Name = "labelInfo1";
-      this.labelInfo1.Size = new System.Drawing.Size(440, 32);
+      this.labelInfo1.Size = new System.Drawing.Size(448, 32);
       this.labelInfo1.TabIndex = 0;
       this.labelInfo1.Text = "The TV-Server is an application which allows you to set up a central server with " +
           "multiple TV cards.";
@@ -111,7 +111,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxContact.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxContact.Location = new System.Drawing.Point(211, 112);
       this.groupBoxContact.Name = "groupBoxContact";
-      this.groupBoxContact.Size = new System.Drawing.Size(261, 232);
+      this.groupBoxContact.Size = new System.Drawing.Size(269, 232);
       this.groupBoxContact.TabIndex = 1;
       this.groupBoxContact.TabStop = false;
       this.groupBoxContact.Text = "Contact";
@@ -232,7 +232,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpGroupBoxAbout.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBoxAbout.Location = new System.Drawing.Point(213, 355);
       this.mpGroupBoxAbout.Name = "mpGroupBoxAbout";
-      this.mpGroupBoxAbout.Size = new System.Drawing.Size(258, 52);
+      this.mpGroupBoxAbout.Size = new System.Drawing.Size(266, 52);
       this.mpGroupBoxAbout.TabIndex = 10;
       this.mpGroupBoxAbout.TabStop = false;
       this.mpGroupBoxAbout.Text = "About";
@@ -243,7 +243,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.labelVersion3.ForeColor = System.Drawing.Color.Red;
       this.labelVersion3.Location = new System.Drawing.Point(122, 20);
       this.labelVersion3.Name = "labelVersion3";
-      this.labelVersion3.Size = new System.Drawing.Size(115, 13);
+      this.labelVersion3.Size = new System.Drawing.Size(164, 13);
       this.labelVersion3.TabIndex = 2;
       this.labelVersion3.Text = "(Snapshot-Build for testing only!!!)";
       // 
@@ -285,7 +285,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.Controls.Add(this.groupBoxInfo);
       this.Controls.Add(this.labelMePo);
       this.Name = "Project";
-      this.Size = new System.Drawing.Size(472, 408);
+      this.Size = new System.Drawing.Size(480, 420);
       this.groupBoxInfo.ResumeLayout(false);
       this.groupBoxContact.ResumeLayout(false);
       this.groupBoxContact.PerformLayout();

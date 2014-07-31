@@ -30,37 +30,37 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      this.groupBox9 = new MPGroupBox();
-      this.label31 = new MPLabel();
-      this.edTitleTemplate = new MPTextBox();
-      this.label27 = new MPLabel();
-      this.label28 = new MPLabel();
-      this.label38 = new MPLabel();
-      this.edDescriptionTemplate = new MPTextBox();
-      this.label30 = new MPLabel();
-      this.edTitleTest = new MPTextBox();
-      this.label29 = new MPLabel();
-      this.edDescriptionTest = new MPTextBox();
-      this.btnTest = new MPButton();
-      this.groupBox2 = new MPGroupBox();
+      this.groupBox9 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.label31 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.edTitleTemplate = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
+      this.label27 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label28 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label38 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.edDescriptionTemplate = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
+      this.label30 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.edTitleTest = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
+      this.label29 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.edDescriptionTest = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
+      this.btnTest = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.groupBox2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
       this.numericUpDownEpgRefresh = new System.Windows.Forms.NumericUpDown();
       this.numericUpDownEpgTimeOut = new System.Windows.Forms.NumericUpDown();
-      this.checkBoxEnableEPGWhileIdle = new MPCheckBox();
-      this.label15 = new MPLabel();
-      this.label14 = new MPLabel();
-      this.label8 = new MPLabel();
-      this.label7 = new MPLabel();
-      this.groupBox5 = new MPGroupBox();
+      this.checkBoxEnableEPGWhileIdle = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.label15 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label14 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label8 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label7 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.groupBox5 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
       this.numericUpDownTSEpgTimeout = new System.Windows.Forms.NumericUpDown();
-      this.checkBoxEnableEpgWhileTimeshifting = new MPCheckBox();
-      this.label22 = new MPLabel();
-      this.label23 = new MPLabel();
-      this.groupBox7 = new MPGroupBox();
-      this.checkboxSameTransponder = new MPCheckBox();
-      this.label1 = new MPLabel();
-      this.checkBoxEnableCRCCheck = new MPCheckBox();
-      this.checkBoxAlwaysUpdate = new MPCheckBox();
-      this.checkBoxAlwaysFillHoles = new MPCheckBox();
+      this.checkBoxEnableEpgWhileTimeshifting = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.label22 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label23 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.groupBox7 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.checkboxSameTransponder = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.label1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.checkBoxEnableCRCCheck = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.checkBoxAlwaysUpdate = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.checkBoxAlwaysFillHoles = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
       this.tabPage1 = new System.Windows.Forms.TabPage();
       this.tabControlEpg = new System.Windows.Forms.TabControl();
       this.groupBox9.SuspendLayout();
@@ -89,9 +89,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBox9.Controls.Add(this.label29);
       this.groupBox9.Controls.Add(this.edDescriptionTest);
       this.groupBox9.Controls.Add(this.btnTest);
+      this.groupBox9.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox9.Location = new System.Drawing.Point(3, 200);
       this.groupBox9.Name = "groupBox9";
-      this.groupBox9.Size = new System.Drawing.Size(457, 192);
+      this.groupBox9.Size = new System.Drawing.Size(463, 192);
       this.groupBox9.TabIndex = 41;
       this.groupBox9.TabStop = false;
       this.groupBox9.Text = "Display options";
@@ -100,7 +101,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       this.label31.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.label31.Location = new System.Drawing.Point(326, 80);
+      this.label31.Location = new System.Drawing.Point(332, 80);
       this.label31.Name = "label31";
       this.label31.Size = new System.Drawing.Size(125, 106);
       this.label31.TabIndex = 37;
@@ -113,7 +114,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.edTitleTemplate.Location = new System.Drawing.Point(75, 19);
       this.edTitleTemplate.Name = "edTitleTemplate";
-      this.edTitleTemplate.Size = new System.Drawing.Size(245, 20);
+      this.edTitleTemplate.Size = new System.Drawing.Size(251, 20);
       this.edTitleTemplate.TabIndex = 20;
       // 
       // label27
@@ -138,7 +139,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       this.label38.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.label38.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.label38.Location = new System.Drawing.Point(326, 16);
+      this.label38.Location = new System.Drawing.Point(332, 16);
       this.label38.Name = "label38";
       this.label38.Size = new System.Drawing.Size(125, 61);
       this.label38.TabIndex = 35;
@@ -150,7 +151,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.edDescriptionTemplate.Location = new System.Drawing.Point(75, 45);
       this.edDescriptionTemplate.Name = "edDescriptionTemplate";
-      this.edDescriptionTemplate.Size = new System.Drawing.Size(245, 20);
+      this.edDescriptionTemplate.Size = new System.Drawing.Size(251, 20);
       this.edDescriptionTemplate.TabIndex = 22;
       // 
       // label30
@@ -169,7 +170,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.edTitleTest.Location = new System.Drawing.Point(75, 100);
       this.edTitleTest.Name = "edTitleTest";
       this.edTitleTest.ReadOnly = true;
-      this.edTitleTest.Size = new System.Drawing.Size(245, 20);
+      this.edTitleTest.Size = new System.Drawing.Size(251, 20);
       this.edTitleTest.TabIndex = 24;
       // 
       // label29
@@ -190,13 +191,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.edDescriptionTest.Multiline = true;
       this.edDescriptionTest.Name = "edDescriptionTest";
       this.edDescriptionTest.ReadOnly = true;
-      this.edDescriptionTest.Size = new System.Drawing.Size(245, 58);
+      this.edDescriptionTest.Size = new System.Drawing.Size(251, 58);
       this.edDescriptionTest.TabIndex = 26;
       // 
       // btnTest
       // 
       this.btnTest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnTest.Location = new System.Drawing.Point(245, 71);
+      this.btnTest.Location = new System.Drawing.Point(251, 71);
       this.btnTest.Name = "btnTest";
       this.btnTest.Size = new System.Drawing.Size(75, 23);
       this.btnTest.TabIndex = 27;
@@ -215,9 +216,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBox2.Controls.Add(this.label14);
       this.groupBox2.Controls.Add(this.label8);
       this.groupBox2.Controls.Add(this.label7);
+      this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox2.Location = new System.Drawing.Point(235, 96);
       this.groupBox2.Name = "groupBox2";
-      this.groupBox2.Size = new System.Drawing.Size(225, 98);
+      this.groupBox2.Size = new System.Drawing.Size(231, 98);
       this.groupBox2.TabIndex = 40;
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "EPG grabbing while idle";
@@ -311,6 +313,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBox5.Controls.Add(this.checkBoxEnableEpgWhileTimeshifting);
       this.groupBox5.Controls.Add(this.label22);
       this.groupBox5.Controls.Add(this.label23);
+      this.groupBox5.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox5.Location = new System.Drawing.Point(3, 96);
       this.groupBox5.Name = "groupBox5";
       this.groupBox5.Size = new System.Drawing.Size(226, 98);
@@ -377,24 +380,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBox7.Controls.Add(this.checkBoxEnableCRCCheck);
       this.groupBox7.Controls.Add(this.checkBoxAlwaysUpdate);
       this.groupBox7.Controls.Add(this.checkBoxAlwaysFillHoles);
+      this.groupBox7.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox7.Location = new System.Drawing.Point(3, 3);
       this.groupBox7.Name = "groupBox7";
-      this.groupBox7.Size = new System.Drawing.Size(457, 90);
+      this.groupBox7.Size = new System.Drawing.Size(463, 90);
       this.groupBox7.TabIndex = 38;
       this.groupBox7.TabStop = false;
       this.groupBox7.Text = "General";
       // 
-      // checkBoxEnableCRCCheck
-      // 
-      this.checkBoxEnableCRCCheck.AutoSize = true;
-      this.checkBoxEnableCRCCheck.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxEnableCRCCheck.Location = new System.Drawing.Point(11, 42);
-      this.checkBoxEnableCRCCheck.Name = "checkBoxEnableCRCCheck";
-      this.checkBoxEnableCRCCheck.Size = new System.Drawing.Size(115, 17);
-      this.checkBoxEnableCRCCheck.TabIndex = 12;
-      this.checkBoxEnableCRCCheck.Text = "Enable CRC check";
-      this.checkBoxEnableCRCCheck.UseVisualStyleBackColor = true;
-      //
       // checkboxSameTransponder
       // 
       this.checkboxSameTransponder.AutoSize = true;
@@ -416,6 +409,17 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.label1.TabIndex = 13;
       this.label1.Text = "(This will increase stability of EPG grabbing.If your provider doesn\'t \r\nbroadcas" +
           "t CRC checksums, you have to disable it)";
+      // 
+      // checkBoxEnableCRCCheck
+      // 
+      this.checkBoxEnableCRCCheck.AutoSize = true;
+      this.checkBoxEnableCRCCheck.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxEnableCRCCheck.Location = new System.Drawing.Point(11, 42);
+      this.checkBoxEnableCRCCheck.Name = "checkBoxEnableCRCCheck";
+      this.checkBoxEnableCRCCheck.Size = new System.Drawing.Size(115, 17);
+      this.checkBoxEnableCRCCheck.TabIndex = 12;
+      this.checkBoxEnableCRCCheck.Text = "Enable CRC check";
+      this.checkBoxEnableCRCCheck.UseVisualStyleBackColor = true;
       // 
       // checkBoxAlwaysUpdate
       // 
@@ -448,7 +452,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabPage1.Location = new System.Drawing.Point(4, 22);
       this.tabPage1.Name = "tabPage1";
       this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage1.Size = new System.Drawing.Size(466, 410);
+      this.tabPage1.Size = new System.Drawing.Size(472, 394);
       this.tabPage1.TabIndex = 0;
       this.tabPage1.Text = "DVB EPG";
       this.tabPage1.UseVisualStyleBackColor = true;
@@ -462,7 +466,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabControlEpg.Location = new System.Drawing.Point(0, 0);
       this.tabControlEpg.Name = "tabControlEpg";
       this.tabControlEpg.SelectedIndex = 0;
-      this.tabControlEpg.Size = new System.Drawing.Size(474, 436);
+      this.tabControlEpg.Size = new System.Drawing.Size(480, 420);
       this.tabControlEpg.TabIndex = 1;
       // 
       // Epg
@@ -471,7 +475,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.tabControlEpg);
       this.Name = "Epg";
-      this.Size = new System.Drawing.Size(474, 439);
+      this.Size = new System.Drawing.Size(480, 420);
       this.groupBox9.ResumeLayout(false);
       this.groupBox9.PerformLayout();
       this.groupBox2.ResumeLayout(false);

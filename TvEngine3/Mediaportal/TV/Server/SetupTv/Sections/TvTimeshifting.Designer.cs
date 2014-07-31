@@ -184,10 +184,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControl1.Controls.Add(this.tpTimeshifing);
       this.tabControl1.Controls.Add(this.tpTimeshifingFolders);
-      this.tabControl1.Location = new System.Drawing.Point(3, 3);
+      this.tabControl1.Location = new System.Drawing.Point(0, 0);
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.SelectedIndex = 0;
-      this.tabControl1.Size = new System.Drawing.Size(465, 400);
+      this.tabControl1.Size = new System.Drawing.Size(480, 420);
       this.tabControl1.TabIndex = 0;
       this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
       // 
@@ -198,7 +198,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tpTimeshifing.Location = new System.Drawing.Point(4, 22);
       this.tpTimeshifing.Name = "tpTimeshifing";
       this.tpTimeshifing.Padding = new System.Windows.Forms.Padding(3);
-      this.tpTimeshifing.Size = new System.Drawing.Size(457, 374);
+      this.tpTimeshifing.Size = new System.Drawing.Size(472, 394);
       this.tpTimeshifing.TabIndex = 4;
       this.tpTimeshifing.Text = "General";
       this.tpTimeshifing.UseVisualStyleBackColor = true;
@@ -1491,7 +1491,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.tabControl1);
       this.Name = "TvTimeshifting";
-      this.Size = new System.Drawing.Size(474, 412);
+      this.Size = new System.Drawing.Size(480, 420);
       this.tabControl1.ResumeLayout(false);
       this.tpTimeshifing.ResumeLayout(false);
       this.grpBoxTimeshiftingInfo.ResumeLayout(false);

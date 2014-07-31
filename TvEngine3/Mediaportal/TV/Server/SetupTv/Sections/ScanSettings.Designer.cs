@@ -111,7 +111,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabControl1.Location = new System.Drawing.Point(0, 0);
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.SelectedIndex = 0;
-      this.tabControl1.Size = new System.Drawing.Size(484, 454);
+      this.tabControl1.Size = new System.Drawing.Size(480, 420);
       this.tabControl1.TabIndex = 15;
       // 
       // tabPageApplication
@@ -121,7 +121,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabPageApplication.Location = new System.Drawing.Point(4, 22);
       this.tabPageApplication.Name = "tabPageApplication";
       this.tabPageApplication.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPageApplication.Size = new System.Drawing.Size(476, 428);
+      this.tabPageApplication.Size = new System.Drawing.Size(472, 394);
       this.tabPageApplication.TabIndex = 1;
       this.tabPageApplication.Text = "Application";
       this.tabPageApplication.UseVisualStyleBackColor = true;
@@ -135,7 +135,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBox8.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox8.Location = new System.Drawing.Point(6, 6);
       this.groupBox8.Name = "groupBox8";
-      this.groupBox8.Size = new System.Drawing.Size(464, 50);
+      this.groupBox8.Size = new System.Drawing.Size(460, 50);
       this.groupBox8.TabIndex = 81;
       this.groupBox8.TabStop = false;
       this.groupBox8.Text = "TVService";
@@ -169,7 +169,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBox6.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox6.Location = new System.Drawing.Point(6, 62);
       this.groupBox6.Name = "groupBox6";
-      this.groupBox6.Size = new System.Drawing.Size(464, 107);
+      this.groupBox6.Size = new System.Drawing.Size(460, 107);
       this.groupBox6.TabIndex = 80;
       this.groupBox6.TabStop = false;
       this.groupBox6.Text = "Delay for TV card detection";
@@ -180,7 +180,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.label45.Location = new System.Drawing.Point(6, 27);
       this.label45.Name = "label45";
-      this.label45.Size = new System.Drawing.Size(452, 35);
+      this.label45.Size = new System.Drawing.Size(448, 35);
       this.label45.TabIndex = 80;
       this.label45.Text = "Some cards (e.g. Hauppauge Nova-T 500) take a long time to initialize after stand" +
           "by. Therefore use this option below to force a delay should it be required.";
@@ -679,7 +679,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.tabControl1);
       this.Name = "ScanSettings";
-      this.Size = new System.Drawing.Size(484, 454);
+      this.Size = new System.Drawing.Size(480, 420);
       this.tabControl1.ResumeLayout(false);
       this.tabPageApplication.ResumeLayout(false);
       this.groupBox8.ResumeLayout(false);

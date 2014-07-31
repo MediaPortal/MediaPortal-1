@@ -99,7 +99,7 @@
       this.Controls.Add(this.groupBox2);
       this.Controls.Add(this.groupBox1);
       this.Name = "CMSetup";
-      this.Size = new System.Drawing.Size(460, 380);
+      this.Size = new System.Drawing.Size(480, 420);
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
       this.groupBox2.ResumeLayout(false);

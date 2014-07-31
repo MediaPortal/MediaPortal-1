@@ -30,47 +30,47 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      this.mpComboBoxCountry = new MPComboBox();
-      this.mpLabel1 = new MPLabel();
-      this.mpLabel2 = new MPLabel();
-      this.mpComboBoxSource = new MPComboBox();
-      this.mpButtonScanTv = new MPButton();
-      this.mpButtonScanRadio = new MPButton();
-      this.mpListView1 = new MPListView();
+      this.mpComboBoxCountry = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
+      this.mpLabel1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpLabel2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpComboBoxSource = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
+      this.mpButtonScanTv = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.mpButtonScanRadio = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.mpListView1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
       this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.progressBar1 = new System.Windows.Forms.ProgressBar();
-      this.mpLabel4 = new MPLabel();
-      this.mpComboBoxSensitivity = new MPComboBox();
-      this.checkBoxNoMerge = new MPCheckBox();
-      this.mpTabControl1 = new MPTabControl();
+      this.mpLabel4 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpComboBoxSensitivity = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
+      this.checkBoxNoMerge = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.mpTabControl1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
-      this.checkBoxCreateSignalGroup = new MPCheckBox();
-      this.mpGrpScanProgress = new MPGroupBox();
-      this.label1 = new MPLabel();
+      this.checkBoxCreateSignalGroup = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.mpGrpScanProgress = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.label1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.progressBarQuality = new System.Windows.Forms.ProgressBar();
       this.progressBarLevel = new System.Windows.Forms.ProgressBar();
-      this.label2 = new MPLabel();
+      this.label2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.tabPage3 = new System.Windows.Forms.TabPage();
-      this.label31 = new MPLabel();
-      this.groupBox3 = new MPGroupBox();
-      this.videoStandardComboBox = new MPComboBox();
-      this.mpLabel3 = new MPLabel();
-      this.groupBox2 = new MPGroupBox();
-      this.frameRateComboBox = new MPComboBox();
-      this.label3 = new MPLabel();
-      this.resolutionComboBox = new MPComboBox();
-      this.label4 = new MPLabel();
+      this.label31 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.groupBox3 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.videoStandardComboBox = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
+      this.mpLabel3 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.groupBox2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.frameRateComboBox = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
+      this.label3 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.resolutionComboBox = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
+      this.label4 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.tabPage4 = new System.Windows.Forms.TabPage();
-      this.defaultValuesButton = new MPButton();
-      this.backlightCompensationValue = new MPLabel();
-      this.whiteBalanceValue = new MPLabel();
-      this.colorEnableValue = new MPLabel();
-      this.gammaValue = new MPLabel();
-      this.sharpnessValue = new MPLabel();
-      this.saturationValue = new MPLabel();
-      this.hueValue = new MPLabel();
-      this.contrastValue = new MPLabel();
-      this.brightnessValue = new MPLabel();
+      this.defaultValuesButton = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.backlightCompensationValue = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.whiteBalanceValue = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.colorEnableValue = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.gammaValue = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.sharpnessValue = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.saturationValue = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.hueValue = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.contrastValue = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.brightnessValue = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.backlightCompensationScrollbar = new System.Windows.Forms.HScrollBar();
       this.whiteBalanceScrollbar = new System.Windows.Forms.HScrollBar();
       this.colorEnableScrollbar = new System.Windows.Forms.HScrollBar();
@@ -80,45 +80,45 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.hueScrollbar = new System.Windows.Forms.HScrollBar();
       this.contrastScrollbar = new System.Windows.Forms.HScrollBar();
       this.brightnessScrollbar = new System.Windows.Forms.HScrollBar();
-      this.label13 = new MPLabel();
-      this.label12 = new MPLabel();
-      this.label11 = new MPLabel();
-      this.label10 = new MPLabel();
-      this.label9 = new MPLabel();
-      this.label8 = new MPLabel();
-      this.label7 = new MPLabel();
-      this.label6 = new MPLabel();
-      this.label5 = new MPLabel();
+      this.label13 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label12 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label11 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label10 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label9 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label8 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label7 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label6 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label5 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.tabPage2 = new System.Windows.Forms.TabPage();
-      this.customSettingsGroup = new MPGroupBox();
+      this.customSettingsGroup = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
       this.customValuePeak = new System.Windows.Forms.NumericUpDown();
       this.customValue = new System.Windows.Forms.NumericUpDown();
-      this.mpLabel22 = new MPLabel();
-      this.mpLabel21 = new MPLabel();
-      this.mpLabel20 = new MPLabel();
-      this.mpLabel19 = new MPLabel();
-      this.bitRateModeGroup = new MPGroupBox();
-      this.mpLabel8 = new MPLabel();
-      this.mpLabel7 = new MPLabel();
-      this.mpLabel6 = new MPLabel();
-      this.vbrPeakPlayback = new MPRadioButton();
-      this.vbrPlayback = new MPRadioButton();
-      this.cbrPlayback = new MPRadioButton();
-      this.checkButton = new MPButton();
-      this.mpLabel5 = new MPLabel();
-      this.defaultPlayback = new MPRadioButton();
-      this.portablePlayback = new MPRadioButton();
-      this.lowPlayback = new MPRadioButton();
-      this.mediumPlayback = new MPRadioButton();
-      this.highPlayback = new MPRadioButton();
-      this.customPlayback = new MPRadioButton();
-      this.mpLabel13 = new MPLabel();
-      this.mpLabel14 = new MPLabel();
-      this.mpLabel15 = new MPLabel();
-      this.mpLabel16 = new MPLabel();
-      this.mpLabel17 = new MPLabel();
-      this.mpLabel18 = new MPLabel();
-      this.bitRate = new MPGroupBox();
+      this.mpLabel22 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpLabel21 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpLabel20 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpLabel19 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.bitRateModeGroup = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.mpLabel8 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpLabel7 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpLabel6 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.vbrPeakPlayback = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPRadioButton();
+      this.vbrPlayback = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPRadioButton();
+      this.cbrPlayback = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPRadioButton();
+      this.checkButton = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.mpLabel5 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.bitRate = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.mpLabel18 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpLabel17 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpLabel16 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpLabel15 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpLabel14 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpLabel13 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.customPlayback = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPRadioButton();
+      this.highPlayback = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPRadioButton();
+      this.mediumPlayback = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPRadioButton();
+      this.lowPlayback = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPRadioButton();
+      this.portablePlayback = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPRadioButton();
+      this.defaultPlayback = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPRadioButton();
       this.mpTabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.mpGrpScanProgress.SuspendLayout();
@@ -173,7 +173,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // mpButtonScanTv
       // 
       this.mpButtonScanTv.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpButtonScanTv.Location = new System.Drawing.Point(317, 15);
+      this.mpButtonScanTv.Location = new System.Drawing.Point(323, 15);
       this.mpButtonScanTv.Name = "mpButtonScanTv";
       this.mpButtonScanTv.Size = new System.Drawing.Size(131, 23);
       this.mpButtonScanTv.TabIndex = 10;
@@ -184,7 +184,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // mpButtonScanRadio
       // 
       this.mpButtonScanRadio.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpButtonScanRadio.Location = new System.Drawing.Point(317, 44);
+      this.mpButtonScanRadio.Location = new System.Drawing.Point(323, 44);
       this.mpButtonScanRadio.Name = "mpButtonScanRadio";
       this.mpButtonScanRadio.Size = new System.Drawing.Size(131, 23);
       this.mpButtonScanRadio.TabIndex = 11;
@@ -204,7 +204,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpListView1.IsChannelListView = false;
       this.mpListView1.Location = new System.Drawing.Point(11, 85);
       this.mpListView1.Name = "mpListView1";
-      this.mpListView1.Size = new System.Drawing.Size(439, 141);
+      this.mpListView1.Size = new System.Drawing.Size(445, 147);
       this.mpListView1.TabIndex = 18;
       this.mpListView1.UseCompatibleStateImageBehavior = false;
       this.mpListView1.View = System.Windows.Forms.View.Details;
@@ -220,7 +220,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.progressBar1.Location = new System.Drawing.Point(11, 68);
       this.progressBar1.Name = "progressBar1";
-      this.progressBar1.Size = new System.Drawing.Size(437, 10);
+      this.progressBar1.Size = new System.Drawing.Size(443, 10);
       this.progressBar1.TabIndex = 17;
       // 
       // mpLabel4
@@ -248,9 +248,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // checkBoxNoMerge
       // 
       this.checkBoxNoMerge.AutoSize = true;
+      this.checkBoxNoMerge.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxNoMerge.Location = new System.Drawing.Point(17, 123);
       this.checkBoxNoMerge.Name = "checkBoxNoMerge";
-      this.checkBoxNoMerge.Size = new System.Drawing.Size(208, 17);
+      this.checkBoxNoMerge.Size = new System.Drawing.Size(206, 17);
       this.checkBoxNoMerge.TabIndex = 9;
       this.checkBoxNoMerge.Text = "Don\'t merge channels with same name";
       this.checkBoxNoMerge.UseVisualStyleBackColor = true;
@@ -266,10 +267,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpTabControl1.Controls.Add(this.tabPage3);
       this.mpTabControl1.Controls.Add(this.tabPage4);
       this.mpTabControl1.Controls.Add(this.tabPage2);
-      this.mpTabControl1.Location = new System.Drawing.Point(3, 3);
+      this.mpTabControl1.Location = new System.Drawing.Point(0, 0);
       this.mpTabControl1.Name = "mpTabControl1";
       this.mpTabControl1.SelectedIndex = 0;
-      this.mpTabControl1.Size = new System.Drawing.Size(474, 414);
+      this.mpTabControl1.Size = new System.Drawing.Size(480, 420);
       this.mpTabControl1.TabIndex = 16;
       // 
       // tabPage1
@@ -289,16 +290,17 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabPage1.Location = new System.Drawing.Point(4, 22);
       this.tabPage1.Name = "tabPage1";
       this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage1.Size = new System.Drawing.Size(466, 388);
+      this.tabPage1.Size = new System.Drawing.Size(472, 394);
       this.tabPage1.TabIndex = 0;
       this.tabPage1.Text = "Scanning";
       // 
       // checkBoxCreateSignalGroup
       // 
       this.checkBoxCreateSignalGroup.AutoSize = true;
+      this.checkBoxCreateSignalGroup.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxCreateSignalGroup.Location = new System.Drawing.Point(17, 106);
       this.checkBoxCreateSignalGroup.Name = "checkBoxCreateSignalGroup";
-      this.checkBoxCreateSignalGroup.Size = new System.Drawing.Size(133, 17);
+      this.checkBoxCreateSignalGroup.Size = new System.Drawing.Size(131, 17);
       this.checkBoxCreateSignalGroup.TabIndex = 8;
       this.checkBoxCreateSignalGroup.Text = "Create \"Analog\" group";
       this.checkBoxCreateSignalGroup.UseVisualStyleBackColor = true;
@@ -317,7 +319,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpGrpScanProgress.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGrpScanProgress.Location = new System.Drawing.Point(6, 146);
       this.mpGrpScanProgress.Name = "mpGrpScanProgress";
-      this.mpGrpScanProgress.Size = new System.Drawing.Size(454, 239);
+      this.mpGrpScanProgress.Size = new System.Drawing.Size(460, 245);
       this.mpGrpScanProgress.TabIndex = 34;
       this.mpGrpScanProgress.TabStop = false;
       this.mpGrpScanProgress.Text = "Scan progress";
@@ -337,7 +339,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.progressBarQuality.Location = new System.Drawing.Point(101, 51);
       this.progressBarQuality.Name = "progressBarQuality";
-      this.progressBarQuality.Size = new System.Drawing.Size(347, 10);
+      this.progressBarQuality.Size = new System.Drawing.Size(353, 10);
       this.progressBarQuality.TabIndex = 16;
       // 
       // progressBarLevel
@@ -346,7 +348,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.progressBarLevel.Location = new System.Drawing.Point(101, 28);
       this.progressBarLevel.Name = "progressBarLevel";
-      this.progressBarLevel.Size = new System.Drawing.Size(347, 10);
+      this.progressBarLevel.Size = new System.Drawing.Size(353, 10);
       this.progressBarLevel.TabIndex = 14;
       // 
       // label2
@@ -376,7 +378,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.label31.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.label31.Location = new System.Drawing.Point(17, 334);
       this.label31.Name = "label31";
-      this.label31.Size = new System.Drawing.Size(432, 13);
+      this.label31.Size = new System.Drawing.Size(423, 13);
       this.label31.TabIndex = 8;
       this.label31.Text = "Note: you might need to restart the TV service for changes to be applied.";
       // 
@@ -384,6 +386,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       this.groupBox3.Controls.Add(this.videoStandardComboBox);
       this.groupBox3.Controls.Add(this.mpLabel3);
+      this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox3.Location = new System.Drawing.Point(8, 91);
       this.groupBox3.Name = "groupBox3";
       this.groupBox3.Size = new System.Drawing.Size(447, 57);
@@ -415,6 +418,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBox2.Controls.Add(this.label3);
       this.groupBox2.Controls.Add(this.resolutionComboBox);
       this.groupBox2.Controls.Add(this.label4);
+      this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox2.Location = new System.Drawing.Point(8, 176);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(447, 81);
@@ -958,138 +962,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpLabel5.Text = "Check for quality control support and for encoder changes:\r\n(configuration only a" +
           "vailable after check to avoid \r\nnon working scenario)";
       // 
-      // defaultPlayback
-      // 
-      this.defaultPlayback.AutoSize = true;
-      this.defaultPlayback.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.defaultPlayback.Location = new System.Drawing.Point(6, 21);
-      this.defaultPlayback.Name = "defaultPlayback";
-      this.defaultPlayback.Size = new System.Drawing.Size(13, 12);
-      this.defaultPlayback.TabIndex = 16;
-      this.defaultPlayback.TabStop = true;
-      this.defaultPlayback.UseVisualStyleBackColor = true;
-      // 
-      // portablePlayback
-      // 
-      this.portablePlayback.AutoSize = true;
-      this.portablePlayback.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.portablePlayback.Location = new System.Drawing.Point(6, 69);
-      this.portablePlayback.Name = "portablePlayback";
-      this.portablePlayback.Size = new System.Drawing.Size(13, 12);
-      this.portablePlayback.TabIndex = 18;
-      this.portablePlayback.TabStop = true;
-      this.portablePlayback.UseVisualStyleBackColor = true;
-      // 
-      // lowPlayback
-      // 
-      this.lowPlayback.AutoSize = true;
-      this.lowPlayback.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.lowPlayback.Location = new System.Drawing.Point(6, 93);
-      this.lowPlayback.Name = "lowPlayback";
-      this.lowPlayback.Size = new System.Drawing.Size(13, 12);
-      this.lowPlayback.TabIndex = 19;
-      this.lowPlayback.TabStop = true;
-      this.lowPlayback.UseVisualStyleBackColor = true;
-      // 
-      // mediumPlayback
-      // 
-      this.mediumPlayback.AutoSize = true;
-      this.mediumPlayback.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mediumPlayback.Location = new System.Drawing.Point(6, 117);
-      this.mediumPlayback.Name = "mediumPlayback";
-      this.mediumPlayback.Size = new System.Drawing.Size(13, 12);
-      this.mediumPlayback.TabIndex = 20;
-      this.mediumPlayback.TabStop = true;
-      this.mediumPlayback.UseVisualStyleBackColor = true;
-      // 
-      // highPlayback
-      // 
-      this.highPlayback.AutoSize = true;
-      this.highPlayback.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.highPlayback.Location = new System.Drawing.Point(6, 141);
-      this.highPlayback.Name = "highPlayback";
-      this.highPlayback.Size = new System.Drawing.Size(13, 12);
-      this.highPlayback.TabIndex = 21;
-      this.highPlayback.TabStop = true;
-      this.highPlayback.UseVisualStyleBackColor = true;
-      // 
-      // customPlayback
-      // 
-      this.customPlayback.AutoSize = true;
-      this.customPlayback.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.customPlayback.Location = new System.Drawing.Point(6, 45);
-      this.customPlayback.Name = "customPlayback";
-      this.customPlayback.Size = new System.Drawing.Size(13, 12);
-      this.customPlayback.TabIndex = 17;
-      this.customPlayback.TabStop = true;
-      this.customPlayback.UseVisualStyleBackColor = true;
-      // 
-      // mpLabel13
-      // 
-      this.mpLabel13.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpLabel13.Location = new System.Drawing.Point(28, 16);
-      this.mpLabel13.Name = "mpLabel13";
-      this.mpLabel13.Size = new System.Drawing.Size(143, 23);
-      this.mpLabel13.TabIndex = 22;
-      this.mpLabel13.Text = "Default";
-      this.mpLabel13.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // mpLabel14
-      // 
-      this.mpLabel14.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpLabel14.Location = new System.Drawing.Point(28, 40);
-      this.mpLabel14.Name = "mpLabel14";
-      this.mpLabel14.Size = new System.Drawing.Size(143, 23);
-      this.mpLabel14.TabIndex = 23;
-      this.mpLabel14.Text = "Custom";
-      this.mpLabel14.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // mpLabel15
-      // 
-      this.mpLabel15.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpLabel15.Location = new System.Drawing.Point(28, 64);
-      this.mpLabel15.Name = "mpLabel15";
-      this.mpLabel15.Size = new System.Drawing.Size(143, 23);
-      this.mpLabel15.TabIndex = 24;
-      this.mpLabel15.Text = "Portable";
-      this.mpLabel15.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // mpLabel16
-      // 
-      this.mpLabel16.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpLabel16.Location = new System.Drawing.Point(28, 88);
-      this.mpLabel16.Name = "mpLabel16";
-      this.mpLabel16.Size = new System.Drawing.Size(143, 23);
-      this.mpLabel16.TabIndex = 25;
-      this.mpLabel16.Text = "Low";
-      this.mpLabel16.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // mpLabel17
-      // 
-      this.mpLabel17.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpLabel17.Location = new System.Drawing.Point(28, 112);
-      this.mpLabel17.Name = "mpLabel17";
-      this.mpLabel17.Size = new System.Drawing.Size(143, 23);
-      this.mpLabel17.TabIndex = 26;
-      this.mpLabel17.Text = "Medium";
-      this.mpLabel17.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // mpLabel18
-      // 
-      this.mpLabel18.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpLabel18.Location = new System.Drawing.Point(28, 136);
-      this.mpLabel18.Name = "mpLabel18";
-      this.mpLabel18.Size = new System.Drawing.Size(143, 23);
-      this.mpLabel18.TabIndex = 27;
-      this.mpLabel18.Text = "High";
-      this.mpLabel18.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
       // bitRate
       // 
       this.bitRate.Controls.Add(this.mpLabel18);
@@ -1112,6 +984,138 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.bitRate.TabIndex = 14;
       this.bitRate.TabStop = false;
       this.bitRate.Text = "Bit Rate Profile";
+      // 
+      // mpLabel18
+      // 
+      this.mpLabel18.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpLabel18.Location = new System.Drawing.Point(28, 136);
+      this.mpLabel18.Name = "mpLabel18";
+      this.mpLabel18.Size = new System.Drawing.Size(143, 23);
+      this.mpLabel18.TabIndex = 27;
+      this.mpLabel18.Text = "High";
+      this.mpLabel18.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      // 
+      // mpLabel17
+      // 
+      this.mpLabel17.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpLabel17.Location = new System.Drawing.Point(28, 112);
+      this.mpLabel17.Name = "mpLabel17";
+      this.mpLabel17.Size = new System.Drawing.Size(143, 23);
+      this.mpLabel17.TabIndex = 26;
+      this.mpLabel17.Text = "Medium";
+      this.mpLabel17.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      // 
+      // mpLabel16
+      // 
+      this.mpLabel16.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpLabel16.Location = new System.Drawing.Point(28, 88);
+      this.mpLabel16.Name = "mpLabel16";
+      this.mpLabel16.Size = new System.Drawing.Size(143, 23);
+      this.mpLabel16.TabIndex = 25;
+      this.mpLabel16.Text = "Low";
+      this.mpLabel16.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      // 
+      // mpLabel15
+      // 
+      this.mpLabel15.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpLabel15.Location = new System.Drawing.Point(28, 64);
+      this.mpLabel15.Name = "mpLabel15";
+      this.mpLabel15.Size = new System.Drawing.Size(143, 23);
+      this.mpLabel15.TabIndex = 24;
+      this.mpLabel15.Text = "Portable";
+      this.mpLabel15.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      // 
+      // mpLabel14
+      // 
+      this.mpLabel14.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpLabel14.Location = new System.Drawing.Point(28, 40);
+      this.mpLabel14.Name = "mpLabel14";
+      this.mpLabel14.Size = new System.Drawing.Size(143, 23);
+      this.mpLabel14.TabIndex = 23;
+      this.mpLabel14.Text = "Custom";
+      this.mpLabel14.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      // 
+      // mpLabel13
+      // 
+      this.mpLabel13.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpLabel13.Location = new System.Drawing.Point(28, 16);
+      this.mpLabel13.Name = "mpLabel13";
+      this.mpLabel13.Size = new System.Drawing.Size(143, 23);
+      this.mpLabel13.TabIndex = 22;
+      this.mpLabel13.Text = "Default";
+      this.mpLabel13.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      // 
+      // customPlayback
+      // 
+      this.customPlayback.AutoSize = true;
+      this.customPlayback.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.customPlayback.Location = new System.Drawing.Point(6, 45);
+      this.customPlayback.Name = "customPlayback";
+      this.customPlayback.Size = new System.Drawing.Size(13, 12);
+      this.customPlayback.TabIndex = 17;
+      this.customPlayback.TabStop = true;
+      this.customPlayback.UseVisualStyleBackColor = true;
+      // 
+      // highPlayback
+      // 
+      this.highPlayback.AutoSize = true;
+      this.highPlayback.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.highPlayback.Location = new System.Drawing.Point(6, 141);
+      this.highPlayback.Name = "highPlayback";
+      this.highPlayback.Size = new System.Drawing.Size(13, 12);
+      this.highPlayback.TabIndex = 21;
+      this.highPlayback.TabStop = true;
+      this.highPlayback.UseVisualStyleBackColor = true;
+      // 
+      // mediumPlayback
+      // 
+      this.mediumPlayback.AutoSize = true;
+      this.mediumPlayback.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mediumPlayback.Location = new System.Drawing.Point(6, 117);
+      this.mediumPlayback.Name = "mediumPlayback";
+      this.mediumPlayback.Size = new System.Drawing.Size(13, 12);
+      this.mediumPlayback.TabIndex = 20;
+      this.mediumPlayback.TabStop = true;
+      this.mediumPlayback.UseVisualStyleBackColor = true;
+      // 
+      // lowPlayback
+      // 
+      this.lowPlayback.AutoSize = true;
+      this.lowPlayback.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.lowPlayback.Location = new System.Drawing.Point(6, 93);
+      this.lowPlayback.Name = "lowPlayback";
+      this.lowPlayback.Size = new System.Drawing.Size(13, 12);
+      this.lowPlayback.TabIndex = 19;
+      this.lowPlayback.TabStop = true;
+      this.lowPlayback.UseVisualStyleBackColor = true;
+      // 
+      // portablePlayback
+      // 
+      this.portablePlayback.AutoSize = true;
+      this.portablePlayback.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.portablePlayback.Location = new System.Drawing.Point(6, 69);
+      this.portablePlayback.Name = "portablePlayback";
+      this.portablePlayback.Size = new System.Drawing.Size(13, 12);
+      this.portablePlayback.TabIndex = 18;
+      this.portablePlayback.TabStop = true;
+      this.portablePlayback.UseVisualStyleBackColor = true;
+      // 
+      // defaultPlayback
+      // 
+      this.defaultPlayback.AutoSize = true;
+      this.defaultPlayback.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.defaultPlayback.Location = new System.Drawing.Point(6, 21);
+      this.defaultPlayback.Name = "defaultPlayback";
+      this.defaultPlayback.Size = new System.Drawing.Size(13, 12);
+      this.defaultPlayback.TabIndex = 16;
+      this.defaultPlayback.TabStop = true;
+      this.defaultPlayback.UseVisualStyleBackColor = true;
       // 
       // CardAnalog
       // 

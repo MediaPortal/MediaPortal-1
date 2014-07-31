@@ -30,20 +30,20 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      this.mpGroupBoxMCS = new MPGroupBox();
-      this.mpButtonMCS = new MPButton();
-      this.mpLabelStatusMCS = new MPLabel();
-      this.mpLabelStatus1 = new MPLabel();
-      this.mpGroupBox2 = new MPGroupBox();
+      this.mpGroupBoxMCS = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.mpButtonMCS = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.mpLabelStatusMCS = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpLabelStatus1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpGroupBox2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
       this.linkLabelDVBHotfix = new System.Windows.Forms.LinkLabel();
-      this.mpLabelStatusDVBHotfix = new MPLabel();
-      this.mpLabelStatus2 = new MPLabel();
-      this.mpGroupBoxStreamingPort = new MPGroupBox();
+      this.mpLabelStatusDVBHotfix = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpLabelStatus2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpGroupBoxStreamingPort = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.mpLabelWindowsMediaSharingServiceStatus = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpLabelStatus4 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.linkLabelStreamingPort = new System.Windows.Forms.LinkLabel();
-      this.mpLabelStatusStreamingPort = new MPLabel();
-      this.mpLabelStatus3 = new MPLabel();
-      this.mpLabelStatus4 = new MPLabel();
-      this.mpLabelWindowsMediaSharingServiceStatus = new MPLabel();
+      this.mpLabelStatusStreamingPort = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpLabelStatus3 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.mpGroupBoxMCS.SuspendLayout();
       this.mpGroupBox2.SuspendLayout();
       this.mpGroupBoxStreamingPort.SuspendLayout();
@@ -149,6 +149,24 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpGroupBoxStreamingPort.TabStop = false;
       this.mpGroupBoxStreamingPort.Text = "Streaming port";
       // 
+      // mpLabelWindowsMediaSharingServiceStatus
+      // 
+      this.mpLabelWindowsMediaSharingServiceStatus.AutoSize = true;
+      this.mpLabelWindowsMediaSharingServiceStatus.Location = new System.Drawing.Point(284, 71);
+      this.mpLabelWindowsMediaSharingServiceStatus.Name = "mpLabelWindowsMediaSharingServiceStatus";
+      this.mpLabelWindowsMediaSharingServiceStatus.Size = new System.Drawing.Size(42, 13);
+      this.mpLabelWindowsMediaSharingServiceStatus.TabIndex = 6;
+      this.mpLabelWindowsMediaSharingServiceStatus.Text = "running";
+      // 
+      // mpLabelStatus4
+      // 
+      this.mpLabelStatus4.AutoSize = true;
+      this.mpLabelStatus4.Location = new System.Drawing.Point(73, 71);
+      this.mpLabelStatus4.Name = "mpLabelStatus4";
+      this.mpLabelStatus4.Size = new System.Drawing.Size(203, 13);
+      this.mpLabelStatus4.TabIndex = 5;
+      this.mpLabelStatus4.Text = "Windows Media Network Sharing startup:";
+      // 
       // linkLabelStreamingPort
       // 
       this.linkLabelStreamingPort.AutoSize = true;
@@ -179,24 +197,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpLabelStatus3.TabIndex = 2;
       this.mpLabelStatus3.Text = "Status:";
       // 
-      // mpLabelStatus4
-      // 
-      this.mpLabelStatus4.AutoSize = true;
-      this.mpLabelStatus4.Location = new System.Drawing.Point(73, 71);
-      this.mpLabelStatus4.Name = "mpLabelStatus4";
-      this.mpLabelStatus4.Size = new System.Drawing.Size(203, 13);
-      this.mpLabelStatus4.TabIndex = 5;
-      this.mpLabelStatus4.Text = "Windows Media Network Sharing startup:";
-      // 
-      // mpLabelWindowsMediaSharingServiceStatus
-      // 
-      this.mpLabelWindowsMediaSharingServiceStatus.AutoSize = true;
-      this.mpLabelWindowsMediaSharingServiceStatus.Location = new System.Drawing.Point(284, 71);
-      this.mpLabelWindowsMediaSharingServiceStatus.Name = "mpLabelWindowsMediaSharingServiceStatus";
-      this.mpLabelWindowsMediaSharingServiceStatus.Size = new System.Drawing.Size(42, 13);
-      this.mpLabelWindowsMediaSharingServiceStatus.TabIndex = 6;
-      this.mpLabelWindowsMediaSharingServiceStatus.Text = "running";
-      // 
       // ThirdPartyChecks
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -205,7 +205,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.Controls.Add(this.mpGroupBox2);
       this.Controls.Add(this.mpGroupBoxMCS);
       this.Name = "ThirdPartyChecks";
-      this.Size = new System.Drawing.Size(472, 408);
+      this.Size = new System.Drawing.Size(480, 420);
       this.mpGroupBoxMCS.ResumeLayout(false);
       this.mpGroupBoxMCS.PerformLayout();
       this.mpGroupBox2.ResumeLayout(false);

@@ -462,11 +462,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         comboBoxChannels.SelectedIndex = 0;
     }
 
-    private void mpButton1_Click(object sender, EventArgs e)
-    {
-
-    }
-
     private void tabControl1_Selected(object sender, TabControlEventArgs e)
     {
       contextMenuStrip1.Items[0].Visible = (e.TabPageIndex == 0);

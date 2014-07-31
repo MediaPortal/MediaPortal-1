@@ -41,11 +41,11 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.checkBoxDeleteBeforeImport = new System.Windows.Forms.CheckBox();
       this.buttonBrowse = new System.Windows.Forms.Button();
       this.textBoxFolder = new System.Windows.Forms.TextBox();
-      this.DestinationComboBox = new MPComboBox();
-      this.mpLabel1 = new MPLabel();
+      this.DestinationComboBox = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
+      this.mpLabel1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.nMaxGrab = new System.Windows.Forms.NumericUpDown();
-      this.lGrabDay = new MPLabel();
-      this.bSave = new MPButton();
+      this.lGrabDay = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.bSave = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.tabMain = new System.Windows.Forms.TabControl();
       this.tabGeneral = new System.Windows.Forms.TabPage();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -59,9 +59,9 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.label11 = new System.Windows.Forms.Label();
       this.label12 = new System.Windows.Forms.Label();
       this.tabTVMappings = new System.Windows.Forms.TabPage();
-      this.TvMappings = new WebEPGMappingControl();
+      this.TvMappings = new Mediaportal.TV.Server.Plugins.WebEPGImport.Config.WebEPGMappingControl();
       this.tabRadioMappings = new System.Windows.Forms.TabPage();
-      this.RadioMappings = new WebEPGMappingControl();
+      this.RadioMappings = new Mediaportal.TV.Server.Plugins.WebEPGImport.Config.WebEPGMappingControl();
       this.tabSchedule = new System.Windows.Forms.TabPage();
       this.groupBox3 = new System.Windows.Forms.GroupBox();
       this.mpLabel2 = new System.Windows.Forms.Label();
@@ -93,7 +93,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       // 
       // bsMergedChannel
       // 
-      this.bsMergedChannel.DataSource = typeof(MergedChannel);
+      this.bsMergedChannel.DataSource = typeof(WebEPG.config.WebEPG.MergedChannel);
       // 
       // gbMapping
       // 
@@ -104,7 +104,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.gbMapping.Controls.Add(this.bAutoMap);
       this.gbMapping.Location = new System.Drawing.Point(3, 133);
       this.gbMapping.Name = "gbMapping";
-      this.gbMapping.Size = new System.Drawing.Size(443, 58);
+      this.gbMapping.Size = new System.Drawing.Size(466, 58);
       this.gbMapping.TabIndex = 25;
       this.gbMapping.TabStop = false;
       this.gbMapping.Text = "Auto Mapping";
@@ -126,14 +126,14 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.cbCountry.FormattingEnabled = true;
       this.cbCountry.Location = new System.Drawing.Point(84, 23);
       this.cbCountry.Name = "cbCountry";
-      this.cbCountry.Size = new System.Drawing.Size(275, 21);
+      this.cbCountry.Size = new System.Drawing.Size(298, 21);
       this.cbCountry.Sorted = true;
       this.cbCountry.TabIndex = 21;
       // 
       // bAutoMap
       // 
       this.bAutoMap.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.bAutoMap.Location = new System.Drawing.Point(366, 21);
+      this.bAutoMap.Location = new System.Drawing.Point(389, 21);
       this.bAutoMap.Name = "bAutoMap";
       this.bAutoMap.Size = new System.Drawing.Size(72, 23);
       this.bAutoMap.TabIndex = 19;
@@ -154,7 +154,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.gbGlobal.Controls.Add(this.lGrabDay);
       this.gbGlobal.Location = new System.Drawing.Point(3, 0);
       this.gbGlobal.Name = "gbGlobal";
-      this.gbGlobal.Size = new System.Drawing.Size(443, 127);
+      this.gbGlobal.Size = new System.Drawing.Size(466, 127);
       this.gbGlobal.TabIndex = 22;
       this.gbGlobal.TabStop = false;
       this.gbGlobal.Text = "Global Settings";
@@ -172,7 +172,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       // buttonBrowse
       // 
       this.buttonBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonBrowse.Location = new System.Drawing.Point(414, 74);
+      this.buttonBrowse.Location = new System.Drawing.Point(437, 74);
       this.buttonBrowse.Name = "buttonBrowse";
       this.buttonBrowse.Size = new System.Drawing.Size(23, 23);
       this.buttonBrowse.TabIndex = 23;
@@ -186,7 +186,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxFolder.Location = new System.Drawing.Point(106, 76);
       this.textBoxFolder.Name = "textBoxFolder";
-      this.textBoxFolder.Size = new System.Drawing.Size(302, 20);
+      this.textBoxFolder.Size = new System.Drawing.Size(325, 20);
       this.textBoxFolder.TabIndex = 22;
       // 
       // DestinationComboBox
@@ -201,7 +201,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
             "tvguide.xml in the following folder:"});
       this.DestinationComboBox.Location = new System.Drawing.Point(106, 49);
       this.DestinationComboBox.Name = "DestinationComboBox";
-      this.DestinationComboBox.Size = new System.Drawing.Size(331, 21);
+      this.DestinationComboBox.Size = new System.Drawing.Size(354, 21);
       this.DestinationComboBox.TabIndex = 15;
       this.DestinationComboBox.SelectedIndexChanged += new System.EventHandler(this.DestinationComboBox_SelectedIndexChanged);
       // 
@@ -247,7 +247,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       // bSave
       // 
       this.bSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.bSave.Location = new System.Drawing.Point(371, 399);
+      this.bSave.Location = new System.Drawing.Point(394, 364);
       this.bSave.Name = "bSave";
       this.bSave.Size = new System.Drawing.Size(72, 24);
       this.bSave.TabIndex = 23;
@@ -265,7 +265,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.tabMain.Location = new System.Drawing.Point(0, 0);
       this.tabMain.Name = "tabMain";
       this.tabMain.SelectedIndex = 0;
-      this.tabMain.Size = new System.Drawing.Size(457, 455);
+      this.tabMain.Size = new System.Drawing.Size(480, 420);
       this.tabMain.TabIndex = 26;
       // 
       // tabGeneral
@@ -277,7 +277,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.tabGeneral.Location = new System.Drawing.Point(4, 22);
       this.tabGeneral.Name = "tabGeneral";
       this.tabGeneral.Padding = new System.Windows.Forms.Padding(3);
-      this.tabGeneral.Size = new System.Drawing.Size(449, 429);
+      this.tabGeneral.Size = new System.Drawing.Size(472, 394);
       this.tabGeneral.TabIndex = 1;
       this.tabGeneral.Text = "General";
       this.tabGeneral.UseVisualStyleBackColor = true;
@@ -297,7 +297,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.groupBox1.Controls.Add(this.label12);
       this.groupBox1.Location = new System.Drawing.Point(3, 197);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(443, 119);
+      this.groupBox1.Size = new System.Drawing.Size(466, 119);
       this.groupBox1.TabIndex = 31;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Grabber status report:";
@@ -313,7 +313,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       // buttonManualImport
       // 
       this.buttonManualImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonManualImport.Location = new System.Drawing.Point(365, 23);
+      this.buttonManualImport.Location = new System.Drawing.Point(388, 23);
       this.buttonManualImport.Name = "buttonManualImport";
       this.buttonManualImport.Size = new System.Drawing.Size(72, 23);
       this.buttonManualImport.TabIndex = 26;
@@ -402,15 +402,15 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.TvMappings.Name = "TvMappings";
       this.TvMappings.Size = new System.Drawing.Size(449, 429);
       this.TvMappings.TabIndex = 0;
-      this.TvMappings.AutoMapChannels += new System.EventHandler(this.Mappings_AutoMapChannels);
       this.TvMappings.SelectGrabberClick += new System.EventHandler(this.Mappings_SelectGrabberClick);
+      this.TvMappings.AutoMapChannels += new System.EventHandler(this.Mappings_AutoMapChannels);
       // 
       // tabRadioMappings
       // 
       this.tabRadioMappings.Controls.Add(this.RadioMappings);
       this.tabRadioMappings.Location = new System.Drawing.Point(4, 22);
       this.tabRadioMappings.Name = "tabRadioMappings";
-      this.tabRadioMappings.Size = new System.Drawing.Size(449, 429);
+      this.tabRadioMappings.Size = new System.Drawing.Size(472, 394);
       this.tabRadioMappings.TabIndex = 3;
       this.tabRadioMappings.Text = "Radio Mappings";
       this.tabRadioMappings.UseVisualStyleBackColor = true;
@@ -424,10 +424,10 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.RadioMappings.IsTvMapping = false;
       this.RadioMappings.Location = new System.Drawing.Point(0, 0);
       this.RadioMappings.Name = "RadioMappings";
-      this.RadioMappings.Size = new System.Drawing.Size(449, 429);
+      this.RadioMappings.Size = new System.Drawing.Size(472, 394);
       this.RadioMappings.TabIndex = 0;
-      this.RadioMappings.AutoMapChannels += new System.EventHandler(this.Mappings_AutoMapChannels);
       this.RadioMappings.SelectGrabberClick += new System.EventHandler(this.Mappings_SelectGrabberClick);
+      this.RadioMappings.AutoMapChannels += new System.EventHandler(this.Mappings_AutoMapChannels);
       // 
       // tabSchedule
       // 
@@ -582,7 +582,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.tabMain);
       this.Name = "WebEPGSetup";
-      this.Size = new System.Drawing.Size(457, 455);
+      this.Size = new System.Drawing.Size(480, 420);
       ((System.ComponentModel.ISupportInitialize)(this.bsMergedChannel)).EndInit();
       this.gbMapping.ResumeLayout(false);
       this.gbMapping.PerformLayout();

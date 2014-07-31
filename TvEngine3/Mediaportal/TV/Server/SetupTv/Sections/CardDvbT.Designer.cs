@@ -76,10 +76,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControl1.Controls.Add(this.tabPageScan);
       this.tabControl1.Controls.Add(this.tabPageCIMenu);
-      this.tabControl1.Location = new System.Drawing.Point(4, 4);
+      this.tabControl1.Location = new System.Drawing.Point(0, 0);
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.SelectedIndex = 0;
-      this.tabControl1.Size = new System.Drawing.Size(558, 433);
+      this.tabControl1.Size = new System.Drawing.Size(480, 420);
       this.tabControl1.TabIndex = 0;
       // 
       // tabPageScan
@@ -99,7 +99,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabPageScan.Location = new System.Drawing.Point(4, 22);
       this.tabPageScan.Name = "tabPageScan";
       this.tabPageScan.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPageScan.Size = new System.Drawing.Size(550, 407);
+      this.tabPageScan.Size = new System.Drawing.Size(472, 394);
       this.tabPageScan.TabIndex = 0;
       this.tabPageScan.Text = "Scanning";
       // 
@@ -152,7 +152,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpGrpAdvancedTuning.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGrpAdvancedTuning.Location = new System.Drawing.Point(2, 257);
       this.mpGrpAdvancedTuning.Name = "mpGrpAdvancedTuning";
-      this.mpGrpAdvancedTuning.Size = new System.Drawing.Size(542, 123);
+      this.mpGrpAdvancedTuning.Size = new System.Drawing.Size(464, 110);
       this.mpGrpAdvancedTuning.TabIndex = 8;
       this.mpGrpAdvancedTuning.TabStop = false;
       this.mpGrpAdvancedTuning.Text = "Advanced tuning options";
@@ -275,7 +275,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpGrpScanProgress.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGrpScanProgress.Location = new System.Drawing.Point(2, 131);
       this.mpGrpScanProgress.Name = "mpGrpScanProgress";
-      this.mpGrpScanProgress.Size = new System.Drawing.Size(545, 270);
+      this.mpGrpScanProgress.Size = new System.Drawing.Size(467, 257);
       this.mpGrpScanProgress.TabIndex = 19;
       this.mpGrpScanProgress.TabStop = false;
       this.mpGrpScanProgress.Text = "Scan progress";
@@ -296,7 +296,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.progressBar1.Location = new System.Drawing.Point(12, 93);
       this.progressBar1.Name = "progressBar1";
-      this.progressBar1.Size = new System.Drawing.Size(530, 10);
+      this.progressBar1.Size = new System.Drawing.Size(452, 10);
       this.progressBar1.TabIndex = 25;
       // 
       // label1
@@ -323,7 +323,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.progressBarLevel.Location = new System.Drawing.Point(98, 46);
       this.progressBarLevel.Name = "progressBarLevel";
-      this.progressBarLevel.Size = new System.Drawing.Size(444, 10);
+      this.progressBarLevel.Size = new System.Drawing.Size(366, 10);
       this.progressBarLevel.TabIndex = 22;
       // 
       // progressBarQuality
@@ -332,7 +332,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.progressBarQuality.Location = new System.Drawing.Point(98, 69);
       this.progressBarQuality.Name = "progressBarQuality";
-      this.progressBarQuality.Size = new System.Drawing.Size(444, 10);
+      this.progressBarQuality.Size = new System.Drawing.Size(366, 10);
       this.progressBarQuality.TabIndex = 24;
       // 
       // listViewStatus
@@ -344,7 +344,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             this.columnHeader1});
       this.listViewStatus.Location = new System.Drawing.Point(1, 109);
       this.listViewStatus.Name = "listViewStatus";
-      this.listViewStatus.Size = new System.Drawing.Size(541, 155);
+      this.listViewStatus.Size = new System.Drawing.Size(463, 142);
       this.listViewStatus.TabIndex = 26;
       this.listViewStatus.UseCompatibleStateImageBehavior = false;
       this.listViewStatus.View = System.Windows.Forms.View.Details;
@@ -417,7 +417,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabPageCIMenu.Location = new System.Drawing.Point(4, 22);
       this.tabPageCIMenu.Name = "tabPageCIMenu";
       this.tabPageCIMenu.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPageCIMenu.Size = new System.Drawing.Size(550, 407);
+      this.tabPageCIMenu.Size = new System.Drawing.Size(466, 388);
       this.tabPageCIMenu.TabIndex = 1;
       this.tabPageCIMenu.Text = "CI Menu";
       // 
@@ -427,7 +427,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.tabControl1);
       this.Name = "CardDvbT";
-      this.Size = new System.Drawing.Size(565, 441);
+      this.Size = new System.Drawing.Size(480, 420);
       this.tabControl1.ResumeLayout(false);
       this.tabPageScan.ResumeLayout(false);
       this.tabPageScan.PerformLayout();

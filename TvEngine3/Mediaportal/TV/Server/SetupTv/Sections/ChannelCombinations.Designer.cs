@@ -38,17 +38,17 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage2 = new System.Windows.Forms.TabPage();
       this.pictureBox1 = new System.Windows.Forms.PictureBox();
-      this.btnCombine = new MPButton();
-      this.mpLabel3 = new MPLabel();
-      this.mpListViewMapped = new MPListView();
-      this.columnHeader8 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
+      this.btnCombine = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.mpLabel3 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpListViewMapped = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
+      this.columnHeader8 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-      this.mpLabel2 = new MPLabel();
-      this.mpListViewChannels = new MPListView();
-      this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
-      this.mpComboBoxCard = new MPComboBox();
-      this.mpLabel1 = new MPLabel();
+      this.mpLabel2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpListViewChannels = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
+      this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.mpComboBoxCard = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
+      this.mpLabel1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.contextMenuStrip1.SuspendLayout();
       this.tabControl1.SuspendLayout();
       this.tabPage2.SuspendLayout();
@@ -78,10 +78,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControl1.Controls.Add(this.tabPage2);
-      this.tabControl1.Location = new System.Drawing.Point(3, 3);
+      this.tabControl1.Location = new System.Drawing.Point(0, 0);
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.SelectedIndex = 0;
-      this.tabControl1.Size = new System.Drawing.Size(476, 391);
+      this.tabControl1.Size = new System.Drawing.Size(480, 420);
       this.tabControl1.TabIndex = 8;
       // 
       // tabPage2
@@ -97,7 +97,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabPage2.Location = new System.Drawing.Point(4, 22);
       this.tabPage2.Name = "tabPage2";
       this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage2.Size = new System.Drawing.Size(468, 365);
+      this.tabPage2.Size = new System.Drawing.Size(472, 394);
       this.tabPage2.TabIndex = 1;
       this.tabPage2.Text = "Combinations";
       this.tabPage2.UseVisualStyleBackColor = true;
@@ -115,7 +115,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // btnCombine
       // 
       this.btnCombine.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnCombine.Location = new System.Drawing.Point(383, 336);
+      this.btnCombine.Location = new System.Drawing.Point(387, 365);
       this.btnCombine.Name = "btnCombine";
       this.btnCombine.Size = new System.Drawing.Size(75, 23);
       this.btnCombine.TabIndex = 3;
@@ -146,7 +146,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpListViewMapped.LargeImageList = this.imageList1;
       this.mpListViewMapped.Location = new System.Drawing.Point(243, 67);
       this.mpListViewMapped.Name = "mpListViewMapped";
-      this.mpListViewMapped.Size = new System.Drawing.Size(215, 265);
+      this.mpListViewMapped.Size = new System.Drawing.Size(219, 294);
       this.mpListViewMapped.SmallImageList = this.imageList1;
       this.mpListViewMapped.TabIndex = 2;
       this.mpListViewMapped.UseCompatibleStateImageBehavior = false;
@@ -196,13 +196,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpListViewChannels.Location = new System.Drawing.Point(12, 67);
       this.mpListViewChannels.MultiSelect = false;
       this.mpListViewChannels.Name = "mpListViewChannels";
-      this.mpListViewChannels.Size = new System.Drawing.Size(193, 265);
+      this.mpListViewChannels.Size = new System.Drawing.Size(193, 294);
       this.mpListViewChannels.SmallImageList = this.imageList1;
       this.mpListViewChannels.TabIndex = 1;
       this.mpListViewChannels.UseCompatibleStateImageBehavior = false;
       this.mpListViewChannels.View = System.Windows.Forms.View.Details;
-      this.mpListViewChannels.SelectedIndexChanged += new System.EventHandler(this.mpListViewChannels_SelectedIndexChanged);
       this.mpListViewChannels.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.mpListViewChannels_ColumnClick);
+      this.mpListViewChannels.SelectedIndexChanged += new System.EventHandler(this.mpListViewChannels_SelectedIndexChanged);
       // 
       // columnHeader6
       // 
@@ -217,7 +217,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpComboBoxCard.FormattingEnabled = true;
       this.mpComboBoxCard.Location = new System.Drawing.Point(86, 9);
       this.mpComboBoxCard.Name = "mpComboBoxCard";
-      this.mpComboBoxCard.Size = new System.Drawing.Size(376, 21);
+      this.mpComboBoxCard.Size = new System.Drawing.Size(380, 21);
       this.mpComboBoxCard.TabIndex = 0;
       this.mpComboBoxCard.SelectedIndexChanged += new System.EventHandler(this.mpComboBoxCard_SelectedIndexChanged);
       // 
@@ -236,7 +236,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.tabControl1);
       this.Name = "ChannelCombinations";
-      this.Size = new System.Drawing.Size(479, 394);
+      this.Size = new System.Drawing.Size(480, 420);
       this.Load += new System.EventHandler(this.TvCombinations_Load);
       this.contextMenuStrip1.ResumeLayout(false);
       this.tabControl1.ResumeLayout(false);

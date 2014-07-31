@@ -34,26 +34,26 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TestService));
       this.progressBarQuality = new System.Windows.Forms.ProgressBar();
       this.progressBarLevel = new System.Windows.Forms.ProgressBar();
-      this.label2 = new MPLabel();
-      this.label1 = new MPLabel();
-      this.mpLabel3 = new MPLabel();
-      this.mpLabelTunerLocked = new MPLabel();
-      this.mpLabelChannel = new MPLabel();
-      this.label12 = new MPLabel();
-      this.mpGroupBox1 = new MPGroupBox();
-      this.label3 = new MPLabel();
-      this.txtDisc = new MPNumericTextBox();
-      this.txtBytes = new MPNumericTextBox();
-      this.label4 = new MPLabel();
-      this.mpLabelSignalQuality = new MPLabel();
-      this.mpLabelSignalLevel = new MPLabel();
-      this.mpLabelRecording = new MPLabel();
-      this.mpLabelTimeShift = new MPLabel();
-      this.mpLabel1 = new MPLabel();
-      this.mpButtonTimeShift = new MPButton();
-      this.mpButtonRec = new MPButton();
+      this.label2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpLabel3 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpLabelTunerLocked = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpLabelChannel = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label12 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpGroupBox1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.label3 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.txtDisc = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericTextBox();
+      this.txtBytes = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericTextBox();
+      this.label4 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpLabelSignalQuality = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpLabelSignalLevel = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpLabelRecording = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpLabelTimeShift = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpLabel1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpButtonTimeShift = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.mpButtonRec = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.timer1 = new System.Windows.Forms.Timer(this.components);
-      this.mpListView1 = new MPListView();
+      this.mpListView1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
       this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -63,23 +63,23 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.cardName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.subchannels = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.owner = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.buttonRestart = new MPButton();
-      this.mpButtonReGrabEpg = new MPButton();
+      this.buttonRestart = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.mpButtonReGrabEpg = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       this.mpComboBoxChannels = new Mediaportal.TV.Server.SetupControls.ComboBoxEx();
       this.comboBoxGroups = new Mediaportal.TV.Server.SetupControls.ComboBoxEx();
-      this.mpLabel2 = new MPLabel();
-      this.mpButtonPark = new MPButton();
-      this.txtUsername = new MPTextBox();
-      this.label27 = new MPLabel();
-      this.mpCheckBoxAdvMode = new MPCheckBox();
-      this.mpButtonUnPark = new MPButton();
-      this.mpButtonAdvStartTimeshift = new MPButton();
-      this.mpButtonAdvStopTimeshift = new MPButton();
-      this.txtPrio = new MPTextBox();
-      this.label5 = new MPLabel();
-      this.txtDuration = new MPTextBox();
-      this.label6 = new MPLabel();
+      this.mpLabel2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpButtonPark = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.txtUsername = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
+      this.label27 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpCheckBoxAdvMode = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.mpButtonUnPark = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.mpButtonAdvStartTimeshift = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.mpButtonAdvStopTimeshift = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.txtPrio = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
+      this.label5 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.txtDuration = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
+      this.label6 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.mpGroupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -153,8 +153,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // mpGroupBox1
       // 
-      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox1.Controls.Add(this.label3);
       this.mpGroupBox1.Controls.Add(this.txtDisc);
       this.mpGroupBox1.Controls.Add(this.txtBytes);
@@ -174,7 +174,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox1.Location = new System.Drawing.Point(12, 12);
       this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new System.Drawing.Size(446, 177);
+      this.mpGroupBox1.Size = new System.Drawing.Size(456, 177);
       this.mpGroupBox1.TabIndex = 53;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Status:";
@@ -293,9 +293,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       this.mpListView1.AllowDrop = true;
       this.mpListView1.AllowRowReorder = true;
-      this.mpListView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpListView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpListView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2,
@@ -312,7 +312,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpListView1.Location = new System.Drawing.Point(12, 284);
       this.mpListView1.MultiSelect = false;
       this.mpListView1.Name = "mpListView1";
-      this.mpListView1.Size = new System.Drawing.Size(446, 134);
+      this.mpListView1.Size = new System.Drawing.Size(456, 104);
       this.mpListView1.TabIndex = 58;
       this.mpListView1.UseCompatibleStateImageBehavior = false;
       this.mpListView1.View = System.Windows.Forms.View.Details;
@@ -362,7 +362,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // buttonRestart
       // 
       this.buttonRestart.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.buttonRestart.Location = new System.Drawing.Point(241, 424);
+      this.buttonRestart.Location = new System.Drawing.Point(241, 394);
       this.buttonRestart.Name = "buttonRestart";
       this.buttonRestart.Size = new System.Drawing.Size(95, 23);
       this.buttonRestart.TabIndex = 59;
@@ -373,7 +373,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // mpButtonReGrabEpg
       // 
       this.mpButtonReGrabEpg.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpButtonReGrabEpg.Location = new System.Drawing.Point(343, 424);
+      this.mpButtonReGrabEpg.Location = new System.Drawing.Point(353, 394);
       this.mpButtonReGrabEpg.Name = "mpButtonReGrabEpg";
       this.mpButtonReGrabEpg.Size = new System.Drawing.Size(115, 23);
       this.mpButtonReGrabEpg.TabIndex = 60;
@@ -553,7 +553,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.Controls.Add(this.mpComboBoxChannels);
       this.Controls.Add(this.mpGroupBox1);
       this.Name = "TestService";
-      this.Size = new System.Drawing.Size(470, 450);
+      this.Size = new System.Drawing.Size(480, 420);
       this.mpGroupBox1.ResumeLayout(false);
       this.mpGroupBox1.PerformLayout();
       this.ResumeLayout(false);

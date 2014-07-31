@@ -41,7 +41,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
       this.tabControlTemplates = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
-      this.mpButton1 = new MPButton();
       this.listView1 = new System.Windows.Forms.ListView();
       this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -51,14 +50,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.PreRecord = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.PostRecord = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.EpisodesToKeep = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.mpButtonDel = new MPButton();
-      this.mpLabelChannelCount = new MPLabel();
+      this.mpButtonDel = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.mpLabelChannelCount = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.Programs = new System.Windows.Forms.TabPage();
-      this.mpLabel2 = new MPLabel();
-      this.comboBoxGroups = new SetupControls.ComboBoxEx();
-      this.comboBoxChannels = new MPComboBox();
-      this.mpLabel1 = new MPLabel();
-      this.label25 = new MPLabel();
+      this.mpLabel2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.comboBoxGroups = new Mediaportal.TV.Server.SetupControls.ComboBoxEx();
+      this.comboBoxChannels = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
+      this.mpLabel1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label25 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
       this.listView2 = new System.Windows.Forms.ListView();
       this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -76,7 +75,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.columnHeader18 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.columnHeader19 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.Templates = new System.Windows.Forms.TabPage();
-      this.mpButtonAddNewTemplate = new MPButton();
+      this.mpButtonAddNewTemplate = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.listViewTemplates = new System.Windows.Forms.ListView();
       this.columnHeader20 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.columnHeader21 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -114,30 +113,26 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.deleteToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
       this.deleteToolStripMenuItem.Text = "Delete";
       this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
-
-      
       // 
       // addScheduleToolStripMenuItem
       // 
-      this.addScheduleByTemplateToolStripMenuItem.Name = "addScheduleByTemplateToolStripMenuItem";
-      this.addScheduleByTemplateToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
-      this.addScheduleByTemplateToolStripMenuItem.Text = "Add schedule by template:";      
-
-      // 
-      // addScheduleToolStripMenuItem
-      // 
-      this.addScheduleToolStripMenuItem.Name = "addSCheduleToolStripMenuItem";
+      this.addScheduleToolStripMenuItem.Name = "addScheduleToolStripMenuItem";
       this.addScheduleToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
       this.addScheduleToolStripMenuItem.Text = "Add schedule";
       this.addScheduleToolStripMenuItem.Click += new System.EventHandler(this.addScheduleToolStripMenuItem_Click);
-
+      // 
+      // addScheduleByTemplateToolStripMenuItem
+      // 
+      this.addScheduleByTemplateToolStripMenuItem.Name = "addScheduleByTemplateToolStripMenuItem";
+      this.addScheduleByTemplateToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+      this.addScheduleByTemplateToolStripMenuItem.Text = "Add schedule by template:";
       // 
       // editScheduleTemplateToolStripMenuItem
       // 
       this.editScheduleTemplateToolStripMenuItem.Name = "editScheduleTemplateToolStripMenuItem";
       this.editScheduleTemplateToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
       this.editScheduleTemplateToolStripMenuItem.Text = "Edit template";
-      this.editScheduleTemplateToolStripMenuItem.Click += new System.EventHandler(editScheduleTemplateToolStripMenuItem_Click);
+      this.editScheduleTemplateToolStripMenuItem.Click += new System.EventHandler(this.editScheduleTemplateToolStripMenuItem_Click);
       // 
       // toolStripMenuItem1
       // 
@@ -152,37 +147,25 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabControlTemplates.Controls.Add(this.tabPage1);
       this.tabControlTemplates.Controls.Add(this.Programs);
       this.tabControlTemplates.Controls.Add(this.Templates);
-      this.tabControlTemplates.Location = new System.Drawing.Point(3, 3);
+      this.tabControlTemplates.Location = new System.Drawing.Point(0, 0);
       this.tabControlTemplates.Name = "tabControlTemplates";
       this.tabControlTemplates.SelectedIndex = 0;
-      this.tabControlTemplates.Size = new System.Drawing.Size(881, 414);
+      this.tabControlTemplates.Size = new System.Drawing.Size(480, 420);
       this.tabControlTemplates.TabIndex = 9;
       this.tabControlTemplates.Selected += new System.Windows.Forms.TabControlEventHandler(this.tabControl1_Selected);
       // 
       // tabPage1
       // 
-      this.tabPage1.Controls.Add(this.mpButton1);
       this.tabPage1.Controls.Add(this.listView1);
       this.tabPage1.Controls.Add(this.mpButtonDel);
       this.tabPage1.Controls.Add(this.mpLabelChannelCount);
       this.tabPage1.Location = new System.Drawing.Point(4, 22);
       this.tabPage1.Name = "tabPage1";
       this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage1.Size = new System.Drawing.Size(873, 388);
+      this.tabPage1.Size = new System.Drawing.Size(472, 394);
       this.tabPage1.TabIndex = 0;
       this.tabPage1.Text = "Schedules";
       this.tabPage1.UseVisualStyleBackColor = true;
-      // 
-      // mpButton1
-      // 
-      this.mpButton1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.mpButton1.Location = new System.Drawing.Point(116, 359);
-      this.mpButton1.Name = "mpButton1";
-      this.mpButton1.Size = new System.Drawing.Size(55, 23);
-      this.mpButton1.TabIndex = 4;
-      this.mpButton1.Text = "test";
-      this.mpButton1.UseVisualStyleBackColor = true;
-      this.mpButton1.Click += new System.EventHandler(this.mpButton1_Click);
       // 
       // listView1
       // 
@@ -203,7 +186,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.listView1.LargeImageList = this.imageList1;
       this.listView1.Location = new System.Drawing.Point(9, 11);
       this.listView1.Name = "listView1";
-      this.listView1.Size = new System.Drawing.Size(858, 348);
+      this.listView1.Size = new System.Drawing.Size(457, 354);
       this.listView1.SmallImageList = this.imageList1;
       this.listView1.TabIndex = 3;
       this.listView1.UseCompatibleStateImageBehavior = false;
@@ -245,7 +228,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // mpButtonDel
       // 
       this.mpButtonDel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.mpButtonDel.Location = new System.Drawing.Point(9, 365);
+      this.mpButtonDel.Location = new System.Drawing.Point(9, 368);
       this.mpButtonDel.Name = "mpButtonDel";
       this.mpButtonDel.Size = new System.Drawing.Size(55, 23);
       this.mpButtonDel.TabIndex = 1;
@@ -273,7 +256,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.Programs.Location = new System.Drawing.Point(4, 22);
       this.Programs.Name = "Programs";
       this.Programs.Padding = new System.Windows.Forms.Padding(3);
-      this.Programs.Size = new System.Drawing.Size(873, 388);
+      this.Programs.Size = new System.Drawing.Size(472, 394);
       this.Programs.TabIndex = 1;
       this.Programs.Text = "Programs";
       this.Programs.UseVisualStyleBackColor = true;
@@ -281,7 +264,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // mpLabel2
       // 
       this.mpLabel2.AutoSize = true;
-      this.mpLabel2.Location = new System.Drawing.Point(316, 9);
+      this.mpLabel2.Location = new System.Drawing.Point(65, 35);
       this.mpLabel2.Name = "mpLabel2";
       this.mpLabel2.Size = new System.Drawing.Size(39, 13);
       this.mpLabel2.TabIndex = 63;
@@ -293,9 +276,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.comboBoxGroups.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxGroups.FormattingEnabled = true;
       this.comboBoxGroups.ImageList = this.imageList1;
-      this.comboBoxGroups.Location = new System.Drawing.Point(366, 6);
+      this.comboBoxGroups.Location = new System.Drawing.Point(110, 32);
       this.comboBoxGroups.Name = "comboBoxGroups";
-      this.comboBoxGroups.Size = new System.Drawing.Size(151, 21);
+      this.comboBoxGroups.Size = new System.Drawing.Size(200, 21);
       this.comboBoxGroups.TabIndex = 62;
       this.comboBoxGroups.SelectedIndexChanged += new System.EventHandler(this.comboBoxGroups_SelectedIndexChanged);
       // 
@@ -357,9 +340,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.listView2.ContextMenuStrip = this.contextMenuStrip1;
       this.listView2.FullRowSelect = true;
       this.listView2.LargeImageList = this.imageList1;
-      this.listView2.Location = new System.Drawing.Point(8, 51);
+      this.listView2.Location = new System.Drawing.Point(8, 59);
       this.listView2.Name = "listView2";
-      this.listView2.Size = new System.Drawing.Size(844, 317);
+      this.listView2.Size = new System.Drawing.Size(443, 315);
       this.listView2.SmallImageList = this.imageList1;
       this.listView2.TabIndex = 4;
       this.listView2.UseCompatibleStateImageBehavior = false;
@@ -428,7 +411,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.Templates.Location = new System.Drawing.Point(4, 22);
       this.Templates.Name = "Templates";
       this.Templates.Padding = new System.Windows.Forms.Padding(3);
-      this.Templates.Size = new System.Drawing.Size(873, 388);
+      this.Templates.Size = new System.Drawing.Size(472, 394);
       this.Templates.TabIndex = 2;
       this.Templates.Text = "Templates";
       this.Templates.UseVisualStyleBackColor = true;
@@ -436,7 +419,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // mpButtonAddNewTemplate
       // 
       this.mpButtonAddNewTemplate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.mpButtonAddNewTemplate.Location = new System.Drawing.Point(6, 359);
+      this.mpButtonAddNewTemplate.Location = new System.Drawing.Point(6, 365);
       this.mpButtonAddNewTemplate.Name = "mpButtonAddNewTemplate";
       this.mpButtonAddNewTemplate.Size = new System.Drawing.Size(113, 23);
       this.mpButtonAddNewTemplate.TabIndex = 6;
@@ -461,7 +444,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.listViewTemplates.LargeImageList = this.imageList1;
       this.listViewTemplates.Location = new System.Drawing.Point(6, 6);
       this.listViewTemplates.Name = "listViewTemplates";
-      this.listViewTemplates.Size = new System.Drawing.Size(844, 347);
+      this.listViewTemplates.Size = new System.Drawing.Size(443, 353);
       this.listViewTemplates.SmallImageList = this.imageList1;
       this.listViewTemplates.TabIndex = 5;
       this.listViewTemplates.UseCompatibleStateImageBehavior = false;
@@ -493,7 +476,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.tabControlTemplates);
       this.Name = "TvSchedules";
-      this.Size = new System.Drawing.Size(887, 419);
+      this.Size = new System.Drawing.Size(480, 420);
       this.contextMenuStrip1.ResumeLayout(false);
       this.tabControlTemplates.ResumeLayout(false);
       this.tabPage1.ResumeLayout(false);
@@ -551,7 +534,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private MPLabel mpLabel1;
     private SetupControls.ComboBoxEx comboBoxGroups;
     private MPLabel mpLabel2;
-    private MPButton mpButton1;
     private System.Windows.Forms.TabPage Templates;
     private MPButton mpButtonAddNewTemplate;
     private System.Windows.Forms.ListView listViewTemplates;

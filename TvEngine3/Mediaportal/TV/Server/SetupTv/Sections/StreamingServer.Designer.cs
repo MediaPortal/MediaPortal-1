@@ -36,24 +36,24 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
-      this.SettingsGroupBox = new MPGroupBox();
-      this.ApplyButton = new MPButton();
+      this.SettingsGroupBox = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.ApplyButton = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.PortNoNumericUpDown = new System.Windows.Forms.NumericUpDown();
-      this.mpLabel2 = new MPLabel();
-      this.IpAddressComboBox = new MPComboBox();
-      this.mpLabel1 = new MPLabel();
-      this.mpLabelChannelCount = new MPLabel();
-      this.ClientsGroupBox = new MPGroupBox();
+      this.mpLabel2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.IpAddressComboBox = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
+      this.mpLabel1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpLabelChannelCount = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.ClientsGroupBox = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
       this.listView1 = new System.Windows.Forms.ListView();
-      this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
       this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
-      this.mpButtonKick = new MPButton();
+      this.mpButtonKick = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.SettingsGroupBox.SuspendLayout();
@@ -79,10 +79,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControl1.Controls.Add(this.tabPage1);
-      this.tabControl1.Location = new System.Drawing.Point(3, 3);
+      this.tabControl1.Location = new System.Drawing.Point(0, 0);
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.SelectedIndex = 0;
-      this.tabControl1.Size = new System.Drawing.Size(476, 414);
+      this.tabControl1.Size = new System.Drawing.Size(480, 420);
       this.tabControl1.TabIndex = 10;
       // 
       // tabPage1
@@ -93,7 +93,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabPage1.Location = new System.Drawing.Point(4, 22);
       this.tabPage1.Name = "tabPage1";
       this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage1.Size = new System.Drawing.Size(468, 388);
+      this.tabPage1.Size = new System.Drawing.Size(472, 394);
       this.tabPage1.TabIndex = 0;
       this.tabPage1.Text = "Streaming server";
       this.tabPage1.UseVisualStyleBackColor = true;
@@ -110,7 +110,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.SettingsGroupBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.SettingsGroupBox.Location = new System.Drawing.Point(6, 6);
       this.SettingsGroupBox.Name = "SettingsGroupBox";
-      this.SettingsGroupBox.Size = new System.Drawing.Size(456, 108);
+      this.SettingsGroupBox.Size = new System.Drawing.Size(460, 108);
       this.SettingsGroupBox.TabIndex = 5;
       this.SettingsGroupBox.TabStop = false;
       this.SettingsGroupBox.Text = "Settings";
@@ -118,7 +118,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // ApplyButton
       // 
       this.ApplyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.ApplyButton.Location = new System.Drawing.Point(369, 74);
+      this.ApplyButton.Location = new System.Drawing.Point(373, 74);
       this.ApplyButton.Name = "ApplyButton";
       this.ApplyButton.Size = new System.Drawing.Size(81, 22);
       this.ApplyButton.TabIndex = 10;
@@ -165,7 +165,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.IpAddressComboBox.FormattingEnabled = true;
       this.IpAddressComboBox.Location = new System.Drawing.Point(6, 32);
       this.IpAddressComboBox.Name = "IpAddressComboBox";
-      this.IpAddressComboBox.Size = new System.Drawing.Size(330, 21);
+      this.IpAddressComboBox.Size = new System.Drawing.Size(334, 21);
       this.IpAddressComboBox.TabIndex = 6;
       // 
       // mpLabel1
@@ -195,7 +195,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.ClientsGroupBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.ClientsGroupBox.Location = new System.Drawing.Point(6, 120);
       this.ClientsGroupBox.Name = "ClientsGroupBox";
-      this.ClientsGroupBox.Size = new System.Drawing.Size(456, 265);
+      this.ClientsGroupBox.Size = new System.Drawing.Size(460, 271);
       this.ClientsGroupBox.TabIndex = 6;
       this.ClientsGroupBox.TabStop = false;
       this.ClientsGroupBox.Text = "Clients";
@@ -215,7 +215,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.listView1.FullRowSelect = true;
       this.listView1.Location = new System.Drawing.Point(6, 19);
       this.listView1.Name = "listView1";
-      this.listView1.Size = new System.Drawing.Size(444, 214);
+      this.listView1.Size = new System.Drawing.Size(448, 220);
       this.listView1.SmallImageList = this.imageList1;
       this.listView1.TabIndex = 3;
       this.listView1.UseCompatibleStateImageBehavior = false;
@@ -269,7 +269,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // mpButtonKick
       // 
       this.mpButtonKick.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.mpButtonKick.Location = new System.Drawing.Point(6, 239);
+      this.mpButtonKick.Location = new System.Drawing.Point(6, 245);
       this.mpButtonKick.Name = "mpButtonKick";
       this.mpButtonKick.Size = new System.Drawing.Size(55, 23);
       this.mpButtonKick.TabIndex = 4;
@@ -283,7 +283,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.tabControl1);
       this.Name = "StreamingServer";
-      this.Size = new System.Drawing.Size(482, 419);
+      this.Size = new System.Drawing.Size(480, 420);
       this.tabControl1.ResumeLayout(false);
       this.tabPage1.ResumeLayout(false);
       this.tabPage1.PerformLayout();

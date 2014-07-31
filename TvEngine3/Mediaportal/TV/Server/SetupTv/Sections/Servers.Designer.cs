@@ -32,14 +32,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       this.components = new System.ComponentModel.Container();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Servers));
-      this.mpListView1 = new MPListView();
-      this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
+      this.mpListView1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
+      this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
       this.chooseIPForStreamingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-      this.buttonChooseIp = new MPButton();
+      this.buttonChooseIp = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
       this.contextMenuStrip1.SuspendLayout();
@@ -66,7 +66,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpListView1.Location = new System.Drawing.Point(0, 0);
       this.mpListView1.MultiSelect = false;
       this.mpListView1.Name = "mpListView1";
-      this.mpListView1.Size = new System.Drawing.Size(452, 203);
+      this.mpListView1.Size = new System.Drawing.Size(466, 391);
       this.mpListView1.SmallImageList = this.imageList1;
       this.mpListView1.TabIndex = 0;
       this.mpListView1.UseCompatibleStateImageBehavior = false;
@@ -107,13 +107,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
       this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
       this.imageList1.Images.SetKeyName(0, "computer.gif");
-
       // 
       // buttonChooseIp
       // 
       this.buttonChooseIp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.buttonChooseIp.Enabled = false;
-      this.buttonChooseIp.Location = new System.Drawing.Point(6, 178);
+      this.buttonChooseIp.Location = new System.Drawing.Point(6, 366);
       this.buttonChooseIp.Name = "buttonChooseIp";
       this.buttonChooseIp.Size = new System.Drawing.Size(155, 23);
       this.buttonChooseIp.TabIndex = 1;
@@ -128,10 +127,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControl1.Controls.Add(this.tabPage1);
-      this.tabControl1.Location = new System.Drawing.Point(3, 3);
+      this.tabControl1.Location = new System.Drawing.Point(0, 0);
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.SelectedIndex = 0;
-      this.tabControl1.Size = new System.Drawing.Size(466, 232);
+      this.tabControl1.Size = new System.Drawing.Size(480, 420);
       this.tabControl1.TabIndex = 10;
       // 
       // tabPage1
@@ -141,7 +140,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabPage1.Location = new System.Drawing.Point(4, 22);
       this.tabPage1.Name = "tabPage1";
       this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage1.Size = new System.Drawing.Size(458, 206);
+      this.tabPage1.Size = new System.Drawing.Size(472, 394);
       this.tabPage1.TabIndex = 0;
       this.tabPage1.Text = "Servers";
       this.tabPage1.UseVisualStyleBackColor = true;
@@ -152,7 +151,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.tabControl1);
       this.Name = "Servers";
-      this.Size = new System.Drawing.Size(469, 240);
+      this.Size = new System.Drawing.Size(480, 420);
       this.Load += new System.EventHandler(this.Servers_Load);
       this.contextMenuStrip1.ResumeLayout(false);
       this.tabControl1.ResumeLayout(false);

@@ -32,21 +32,21 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.components = new System.ComponentModel.Container();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EpgGenreMap));
       this.tabPage1 = new System.Windows.Forms.TabPage();
-      this.mpButtonGenreIsMovie = new MPButton();
-      this.mpButtonEnableGenre = new MPButton();
-      this.label26 = new MPLabel();
-      this.listViewGuideGenres = new MPListView();
+      this.mpButtonGenreIsMovie = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.mpButtonEnableGenre = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.label26 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.listViewGuideGenres = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
       this.colGuideGenreName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.colIsMovie = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.colEnabled = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.buttonMapGenres = new MPButton();
-      this.buttonUnmapGenres = new MPButton();
-      this.listViewProgramGenres = new MPListView();
+      this.buttonMapGenres = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.buttonUnmapGenres = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.listViewProgramGenres = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
       this.columnHeader12 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.listViewMappedGenres = new MPListView();
+      this.listViewMappedGenres = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
       this.columnHeader13 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-      this.mpLabelChannelCount = new MPLabel();
+      this.mpLabelChannelCount = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1.SuspendLayout();
       this.tabControl1.SuspendLayout();
@@ -66,7 +66,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabPage1.Location = new System.Drawing.Point(4, 22);
       this.tabPage1.Name = "tabPage1";
       this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage1.Size = new System.Drawing.Size(477, 405);
+      this.tabPage1.Size = new System.Drawing.Size(472, 394);
       this.tabPage1.TabIndex = 0;
       this.tabPage1.Text = "EPG Genre Map";
       this.tabPage1.UseVisualStyleBackColor = true;
@@ -74,7 +74,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // mpButtonGenreIsMovie
       // 
       this.mpButtonGenreIsMovie.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpButtonGenreIsMovie.Location = new System.Drawing.Point(364, 125);
+      this.mpButtonGenreIsMovie.Location = new System.Drawing.Point(359, 125);
       this.mpButtonGenreIsMovie.MinimumSize = new System.Drawing.Size(36, 22);
       this.mpButtonGenreIsMovie.Name = "mpButtonGenreIsMovie";
       this.mpButtonGenreIsMovie.Size = new System.Drawing.Size(100, 23);
@@ -86,7 +86,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // mpButtonEnableGenre
       // 
       this.mpButtonEnableGenre.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpButtonEnableGenre.Location = new System.Drawing.Point(364, 154);
+      this.mpButtonEnableGenre.Location = new System.Drawing.Point(359, 154);
       this.mpButtonEnableGenre.Name = "mpButtonEnableGenre";
       this.mpButtonEnableGenre.Size = new System.Drawing.Size(100, 23);
       this.mpButtonEnableGenre.TabIndex = 89;
@@ -101,7 +101,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.label26.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.label26.Location = new System.Drawing.Point(10, 10);
       this.label26.Name = "label26";
-      this.label26.Size = new System.Drawing.Size(457, 79);
+      this.label26.Size = new System.Drawing.Size(452, 79);
       this.label26.TabIndex = 88;
       this.label26.Text = resources.GetString("label26.Text");
       // 
@@ -123,7 +123,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.listViewGuideGenres.MultiSelect = false;
       this.listViewGuideGenres.Name = "listViewGuideGenres";
       this.listViewGuideGenres.OwnerDraw = true;
-      this.listViewGuideGenres.Size = new System.Drawing.Size(350, 130);
+      this.listViewGuideGenres.Size = new System.Drawing.Size(345, 119);
       this.listViewGuideGenres.TabIndex = 20;
       this.listViewGuideGenres.UseCompatibleStateImageBehavior = false;
       this.listViewGuideGenres.View = System.Windows.Forms.View.Details;
@@ -150,7 +150,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // buttonMapGenres
       // 
       this.buttonMapGenres.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.buttonMapGenres.Location = new System.Drawing.Point(220, 295);
+      this.buttonMapGenres.Location = new System.Drawing.Point(220, 284);
       this.buttonMapGenres.Name = "buttonMapGenres";
       this.buttonMapGenres.Size = new System.Drawing.Size(36, 23);
       this.buttonMapGenres.TabIndex = 18;
@@ -161,7 +161,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // buttonUnmapGenres
       // 
       this.buttonUnmapGenres.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.buttonUnmapGenres.Location = new System.Drawing.Point(220, 335);
+      this.buttonUnmapGenres.Location = new System.Drawing.Point(220, 324);
       this.buttonUnmapGenres.Name = "buttonUnmapGenres";
       this.buttonUnmapGenres.Size = new System.Drawing.Size(36, 23);
       this.buttonUnmapGenres.TabIndex = 17;
@@ -180,9 +180,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.listViewProgramGenres.FullRowSelect = true;
       this.listViewProgramGenres.HideSelection = false;
       this.listViewProgramGenres.IsChannelListView = false;
-      this.listViewProgramGenres.Location = new System.Drawing.Point(277, 244);
+      this.listViewProgramGenres.Location = new System.Drawing.Point(277, 233);
       this.listViewProgramGenres.Name = "listViewProgramGenres";
-      this.listViewProgramGenres.Size = new System.Drawing.Size(190, 150);
+      this.listViewProgramGenres.Size = new System.Drawing.Size(185, 150);
       this.listViewProgramGenres.TabIndex = 19;
       this.listViewProgramGenres.UseCompatibleStateImageBehavior = false;
       this.listViewProgramGenres.View = System.Windows.Forms.View.Details;
@@ -204,7 +204,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.listViewMappedGenres.HideSelection = false;
       this.listViewMappedGenres.IsChannelListView = false;
       this.listViewMappedGenres.LargeImageList = this.imageList1;
-      this.listViewMappedGenres.Location = new System.Drawing.Point(10, 244);
+      this.listViewMappedGenres.Location = new System.Drawing.Point(10, 233);
       this.listViewMappedGenres.Name = "listViewMappedGenres";
       this.listViewMappedGenres.Size = new System.Drawing.Size(190, 150);
       this.listViewMappedGenres.SmallImageList = this.imageList1;
@@ -241,10 +241,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControl1.Controls.Add(this.tabPage1);
-      this.tabControl1.Location = new System.Drawing.Point(3, 3);
+      this.tabControl1.Location = new System.Drawing.Point(0, 0);
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.SelectedIndex = 0;
-      this.tabControl1.Size = new System.Drawing.Size(485, 431);
+      this.tabControl1.Size = new System.Drawing.Size(480, 420);
       this.tabControl1.TabIndex = 11;
       // 
       // EpgGenreMap
@@ -253,7 +253,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.tabControl1);
       this.Name = "EpgGenreMap";
-      this.Size = new System.Drawing.Size(491, 437);
+      this.Size = new System.Drawing.Size(480, 420);
       this.tabPage1.ResumeLayout(false);
       this.tabPage1.PerformLayout();
       this.tabControl1.ResumeLayout(false);

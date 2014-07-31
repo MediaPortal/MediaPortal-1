@@ -32,36 +32,36 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPageScan = new System.Windows.Forms.TabPage();
-      this.checkBoxEnableChannelMoveDetection = new MPCheckBox();
-      this.checkBoxAdvancedTuning = new MPCheckBox();
-      this.mpGrpAdvancedTuning = new MPGroupBox();
-      this.mpLabel2 = new MPLabel();
-      this.groupBox2 = new MPGroupBox();
+      this.checkBoxEnableChannelMoveDetection = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.checkBoxAdvancedTuning = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.mpGrpAdvancedTuning = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.mpLabel2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.groupBox2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
       this.scanNIT = new System.Windows.Forms.RadioButton();
       this.scanSingleTransponder = new System.Windows.Forms.RadioButton();
       this.scanPredefProvider = new System.Windows.Forms.RadioButton();
-      this.mpLabel5 = new MPLabel();
-      this.textBoxFreq = new MPTextBox();
-      this.Modulation = new MPLabel();
-      this.mpComboBoxMod = new MPComboBox();
-      this.textBoxSymbolRate = new MPTextBox();
-      this.mpLabel4 = new MPLabel();
-      this.mpGrpScanProgress = new MPGroupBox();
-      this.mpLabel3 = new MPLabel();
+      this.mpLabel5 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.textBoxFreq = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
+      this.Modulation = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpComboBoxMod = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
+      this.textBoxSymbolRate = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
+      this.mpLabel4 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpGrpScanProgress = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.mpLabel3 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.progressBar1 = new System.Windows.Forms.ProgressBar();
-      this.label1 = new MPLabel();
-      this.label2 = new MPLabel();
+      this.label1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.label2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.progressBarLevel = new System.Windows.Forms.ProgressBar();
       this.progressBarQuality = new System.Windows.Forms.ProgressBar();
       this.listViewStatus = new System.Windows.Forms.ListView();
       this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.checkBoxCreateSignalGroup = new MPCheckBox();
-      this.checkBoxCreateGroups = new MPCheckBox();
-      this.mpButtonScanTv = new MPButton();
-      this.mpLabel6 = new MPLabel();
-      this.mpLabel1 = new MPLabel();
-      this.mpComboBoxRegion = new MPComboBox();
-      this.mpComboBoxCountry = new MPComboBox();
+      this.checkBoxCreateSignalGroup = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.checkBoxCreateGroups = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.mpButtonScanTv = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.mpLabel6 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpLabel1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpComboBoxRegion = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
+      this.mpComboBoxCountry = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
       this.tabPageCIMenu = new System.Windows.Forms.TabPage();
       this.tabControl1.SuspendLayout();
       this.tabPageScan.SuspendLayout();
@@ -77,10 +77,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControl1.Controls.Add(this.tabPageScan);
       this.tabControl1.Controls.Add(this.tabPageCIMenu);
-      this.tabControl1.Location = new System.Drawing.Point(4, 4);
+      this.tabControl1.Location = new System.Drawing.Point(0, 0);
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.SelectedIndex = 0;
-      this.tabControl1.Size = new System.Drawing.Size(558, 433);
+      this.tabControl1.Size = new System.Drawing.Size(480, 420);
       this.tabControl1.TabIndex = 0;
       // 
       // tabPageScan
@@ -100,16 +100,17 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabPageScan.Location = new System.Drawing.Point(4, 22);
       this.tabPageScan.Name = "tabPageScan";
       this.tabPageScan.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPageScan.Size = new System.Drawing.Size(550, 407);
+      this.tabPageScan.Size = new System.Drawing.Size(472, 394);
       this.tabPageScan.TabIndex = 0;
       this.tabPageScan.Text = "Scanning";
       // 
       // checkBoxEnableChannelMoveDetection
       // 
       this.checkBoxEnableChannelMoveDetection.AutoSize = true;
+      this.checkBoxEnableChannelMoveDetection.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxEnableChannelMoveDetection.Location = new System.Drawing.Point(13, 85);
       this.checkBoxEnableChannelMoveDetection.Name = "checkBoxEnableChannelMoveDetection";
-      this.checkBoxEnableChannelMoveDetection.Size = new System.Drawing.Size(199, 17);
+      this.checkBoxEnableChannelMoveDetection.Size = new System.Drawing.Size(197, 17);
       this.checkBoxEnableChannelMoveDetection.TabIndex = 6;
       this.checkBoxEnableChannelMoveDetection.Text = "Enable channel movement detection";
       this.checkBoxEnableChannelMoveDetection.UseVisualStyleBackColor = true;
@@ -117,9 +118,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // checkBoxAdvancedTuning
       // 
       this.checkBoxAdvancedTuning.AutoSize = true;
+      this.checkBoxAdvancedTuning.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxAdvancedTuning.Location = new System.Drawing.Point(13, 108);
       this.checkBoxAdvancedTuning.Name = "checkBoxAdvancedTuning";
-      this.checkBoxAdvancedTuning.Size = new System.Drawing.Size(165, 17);
+      this.checkBoxAdvancedTuning.Size = new System.Drawing.Size(163, 17);
       this.checkBoxAdvancedTuning.TabIndex = 7;
       this.checkBoxAdvancedTuning.Text = "Use advanced tuning options";
       this.checkBoxAdvancedTuning.UseVisualStyleBackColor = true;
@@ -141,7 +143,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpGrpAdvancedTuning.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGrpAdvancedTuning.Location = new System.Drawing.Point(2, 257);
       this.mpGrpAdvancedTuning.Name = "mpGrpAdvancedTuning";
-      this.mpGrpAdvancedTuning.Size = new System.Drawing.Size(542, 123);
+      this.mpGrpAdvancedTuning.Size = new System.Drawing.Size(464, 110);
       this.mpGrpAdvancedTuning.TabIndex = 8;
       this.mpGrpAdvancedTuning.TabStop = false;
       this.mpGrpAdvancedTuning.Text = "Advanced tuning options";
@@ -161,6 +163,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBox2.Controls.Add(this.scanNIT);
       this.groupBox2.Controls.Add(this.scanSingleTransponder);
       this.groupBox2.Controls.Add(this.scanPredefProvider);
+      this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox2.Location = new System.Drawing.Point(267, 16);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(174, 89);
@@ -308,7 +311,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpGrpScanProgress.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGrpScanProgress.Location = new System.Drawing.Point(2, 131);
       this.mpGrpScanProgress.Name = "mpGrpScanProgress";
-      this.mpGrpScanProgress.Size = new System.Drawing.Size(545, 270);
+      this.mpGrpScanProgress.Size = new System.Drawing.Size(467, 257);
       this.mpGrpScanProgress.TabIndex = 20;
       this.mpGrpScanProgress.TabStop = false;
       this.mpGrpScanProgress.Text = "Scan progress";
@@ -329,7 +332,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.progressBar1.Location = new System.Drawing.Point(12, 93);
       this.progressBar1.Name = "progressBar1";
-      this.progressBar1.Size = new System.Drawing.Size(530, 10);
+      this.progressBar1.Size = new System.Drawing.Size(452, 10);
       this.progressBar1.TabIndex = 26;
       // 
       // label1
@@ -356,7 +359,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.progressBarLevel.Location = new System.Drawing.Point(98, 46);
       this.progressBarLevel.Name = "progressBarLevel";
-      this.progressBarLevel.Size = new System.Drawing.Size(444, 10);
+      this.progressBarLevel.Size = new System.Drawing.Size(366, 10);
       this.progressBarLevel.TabIndex = 23;
       // 
       // progressBarQuality
@@ -365,7 +368,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.progressBarQuality.Location = new System.Drawing.Point(98, 69);
       this.progressBarQuality.Name = "progressBarQuality";
-      this.progressBarQuality.Size = new System.Drawing.Size(444, 10);
+      this.progressBarQuality.Size = new System.Drawing.Size(366, 10);
       this.progressBarQuality.TabIndex = 25;
       // 
       // listViewStatus
@@ -377,7 +380,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             this.columnHeader1});
       this.listViewStatus.Location = new System.Drawing.Point(1, 109);
       this.listViewStatus.Name = "listViewStatus";
-      this.listViewStatus.Size = new System.Drawing.Size(541, 155);
+      this.listViewStatus.Size = new System.Drawing.Size(463, 142);
       this.listViewStatus.TabIndex = 27;
       this.listViewStatus.UseCompatibleStateImageBehavior = false;
       this.listViewStatus.View = System.Windows.Forms.View.Details;
@@ -390,9 +393,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // checkBoxCreateSignalGroup
       // 
       this.checkBoxCreateSignalGroup.AutoSize = true;
+      this.checkBoxCreateSignalGroup.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxCreateSignalGroup.Location = new System.Drawing.Point(194, 62);
       this.checkBoxCreateSignalGroup.Name = "checkBoxCreateSignalGroup";
-      this.checkBoxCreateSignalGroup.Size = new System.Drawing.Size(159, 17);
+      this.checkBoxCreateSignalGroup.Size = new System.Drawing.Size(157, 17);
       this.checkBoxCreateSignalGroup.TabIndex = 5;
       this.checkBoxCreateSignalGroup.Text = "Create \"Digital Cable\" group";
       this.checkBoxCreateSignalGroup.UseVisualStyleBackColor = true;
@@ -400,9 +404,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // checkBoxCreateGroups
       // 
       this.checkBoxCreateGroups.AutoSize = true;
+      this.checkBoxCreateGroups.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxCreateGroups.Location = new System.Drawing.Point(13, 62);
       this.checkBoxCreateGroups.Name = "checkBoxCreateGroups";
-      this.checkBoxCreateGroups.Size = new System.Drawing.Size(175, 17);
+      this.checkBoxCreateGroups.Size = new System.Drawing.Size(173, 17);
       this.checkBoxCreateGroups.TabIndex = 4;
       this.checkBoxCreateGroups.Text = "Create groups for each provider";
       this.checkBoxCreateGroups.UseVisualStyleBackColor = true;
@@ -469,7 +474,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.tabControl1);
       this.Name = "CardDvbC";
-      this.Size = new System.Drawing.Size(565, 441);
+      this.Size = new System.Drawing.Size(480, 420);
       this.tabControl1.ResumeLayout(false);
       this.tabPageScan.ResumeLayout(false);
       this.tabPageScan.PerformLayout();

@@ -237,7 +237,7 @@ namespace Mediaportal.TV.Server.Plugins.ComSkipLauncher
           this.labelAboutComskip.Text = resources.GetString("labelAboutComskip.Text");
           this.labelAboutComskip.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
           // 
-          // PluginSetup
+          // ComSkipSetup
           // 
           this.Controls.Add(this.labelAboutComskip);
           this.Controls.Add(this.labelComSkip);
@@ -245,8 +245,8 @@ namespace Mediaportal.TV.Server.Plugins.ComSkipLauncher
           this.Controls.Add(this.groupBoxWhen);
           this.Controls.Add(this.groupBoxWhat);
           this.Controls.Add(this.groupBoxTest);
-          this.Name = "PluginSetup";
-          this.Size = new System.Drawing.Size(362, 354);
+          this.Name = "ComSkipSetup";
+          this.Size = new System.Drawing.Size(480, 420);
           this.groupBoxTest.ResumeLayout(false);
           this.groupBoxTest.PerformLayout();
           this.groupBoxWhen.ResumeLayout(false);

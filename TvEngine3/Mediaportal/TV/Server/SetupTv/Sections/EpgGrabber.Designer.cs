@@ -34,10 +34,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.linkLabelLanguageNone = new System.Windows.Forms.LinkLabel();
-      this.mpListView2 = new MPListView();
-      this.mpLabel1 = new MPLabel();
+      this.mpListView2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
+      this.mpLabel1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.mpListView1 = new MPListView();
+      this.mpListView1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
       this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       this.tabPage1 = new System.Windows.Forms.TabPage();
@@ -46,9 +46,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.linkLabelGroupedVisible = new System.Windows.Forms.LinkLabel();
       this.linkLabelAllGrouped = new System.Windows.Forms.LinkLabel();
       this.linkLabelAll = new System.Windows.Forms.LinkLabel();
-      this.mpCheckBoxStoreOnlySelected = new MPCheckBox();
-      this.mpLabel2 = new MPLabel();
-      this.mpLabelChannelCount = new MPLabel();
+      this.mpCheckBoxStoreOnlySelected = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.mpLabel2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpLabelChannelCount = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1.SuspendLayout();
       this.tabControl1.SuspendLayout();
@@ -68,7 +68,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       this.linkLabelLanguageNone.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.linkLabelLanguageNone.AutoSize = true;
-      this.linkLabelLanguageNone.Location = new System.Drawing.Point(280, 376);
+      this.linkLabelLanguageNone.Location = new System.Drawing.Point(280, 365);
       this.linkLabelLanguageNone.Name = "linkLabelLanguageNone";
       this.linkLabelLanguageNone.Size = new System.Drawing.Size(33, 13);
       this.linkLabelLanguageNone.TabIndex = 24;
@@ -81,8 +81,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpListView2.AllowDrop = true;
       this.mpListView2.AllowRowReorder = true;
       this.mpListView2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpListView2.CheckBoxes = true;
       this.mpListView2.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader2,
@@ -90,7 +90,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpListView2.IsChannelListView = false;
       this.mpListView2.Location = new System.Drawing.Point(254, 51);
       this.mpListView2.Name = "mpListView2";
-      this.mpListView2.Size = new System.Drawing.Size(217, 312);
+      this.mpListView2.Size = new System.Drawing.Size(212, 301);
       this.mpListView2.TabIndex = 11;
       this.mpListView2.UseCompatibleStateImageBehavior = false;
       this.mpListView2.View = System.Windows.Forms.View.Details;
@@ -115,7 +115,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpListView1.AllowDrop = true;
       this.mpListView1.AllowRowReorder = true;
       this.mpListView1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)));
+                  | System.Windows.Forms.AnchorStyles.Left)));
       this.mpListView1.CheckBoxes = true;
       this.mpListView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
@@ -125,7 +125,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpListView1.LargeImageList = this.imageList1;
       this.mpListView1.Location = new System.Drawing.Point(10, 51);
       this.mpListView1.Name = "mpListView1";
-      this.mpListView1.Size = new System.Drawing.Size(214, 312);
+      this.mpListView1.Size = new System.Drawing.Size(214, 301);
       this.mpListView1.SmallImageList = this.imageList1;
       this.mpListView1.TabIndex = 9;
       this.mpListView1.UseCompatibleStateImageBehavior = false;
@@ -166,7 +166,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabPage1.Location = new System.Drawing.Point(4, 22);
       this.tabPage1.Name = "tabPage1";
       this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage1.Size = new System.Drawing.Size(477, 405);
+      this.tabPage1.Size = new System.Drawing.Size(472, 394);
       this.tabPage1.TabIndex = 0;
       this.tabPage1.UseVisualStyleBackColor = true;
       // 
@@ -174,7 +174,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       this.linkLabelLanguageAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.linkLabelLanguageAll.AutoSize = true;
-      this.linkLabelLanguageAll.Location = new System.Drawing.Point(256, 376);
+      this.linkLabelLanguageAll.Location = new System.Drawing.Point(256, 365);
       this.linkLabelLanguageAll.Name = "linkLabelLanguageAll";
       this.linkLabelLanguageAll.Size = new System.Drawing.Size(18, 13);
       this.linkLabelLanguageAll.TabIndex = 23;
@@ -186,7 +186,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       this.linkLabelNone.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.linkLabelNone.AutoSize = true;
-      this.linkLabelNone.Location = new System.Drawing.Point(192, 376);
+      this.linkLabelNone.Location = new System.Drawing.Point(192, 365);
       this.linkLabelNone.Name = "linkLabelNone";
       this.linkLabelNone.Size = new System.Drawing.Size(33, 13);
       this.linkLabelNone.TabIndex = 22;
@@ -198,7 +198,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       this.linkLabelGroupedVisible.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.linkLabelGroupedVisible.AutoSize = true;
-      this.linkLabelGroupedVisible.Location = new System.Drawing.Point(96, 376);
+      this.linkLabelGroupedVisible.Location = new System.Drawing.Point(96, 365);
       this.linkLabelGroupedVisible.Name = "linkLabelGroupedVisible";
       this.linkLabelGroupedVisible.Size = new System.Drawing.Size(90, 13);
       this.linkLabelGroupedVisible.TabIndex = 21;
@@ -210,7 +210,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       this.linkLabelAllGrouped.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.linkLabelAllGrouped.AutoSize = true;
-      this.linkLabelAllGrouped.Location = new System.Drawing.Point(32, 376);
+      this.linkLabelAllGrouped.Location = new System.Drawing.Point(32, 365);
       this.linkLabelAllGrouped.Name = "linkLabelAllGrouped";
       this.linkLabelAllGrouped.Size = new System.Drawing.Size(62, 13);
       this.linkLabelAllGrouped.TabIndex = 20;
@@ -222,7 +222,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       this.linkLabelAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.linkLabelAll.AutoSize = true;
-      this.linkLabelAll.Location = new System.Drawing.Point(8, 376);
+      this.linkLabelAll.Location = new System.Drawing.Point(8, 365);
       this.linkLabelAll.Name = "linkLabelAll";
       this.linkLabelAll.Size = new System.Drawing.Size(18, 13);
       this.linkLabelAll.TabIndex = 19;
@@ -261,13 +261,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // tabControl1
       // 
       this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControl1.Controls.Add(this.tabPage1);
-      this.tabControl1.Location = new System.Drawing.Point(3, 3);
+      this.tabControl1.Location = new System.Drawing.Point(0, 0);
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.SelectedIndex = 0;
-      this.tabControl1.Size = new System.Drawing.Size(485, 431);
+      this.tabControl1.Size = new System.Drawing.Size(480, 420);
       this.tabControl1.TabIndex = 12;
       // 
       // EpgGrabber
@@ -276,11 +276,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.tabControl1);
       this.Name = "EpgGrabber";
-      this.Size = new System.Drawing.Size(491, 437);
+      this.Size = new System.Drawing.Size(480, 420);
       this.tabPage1.ResumeLayout(false);
       this.tabPage1.PerformLayout();
       this.tabControl1.ResumeLayout(false);
       this.ResumeLayout(false);
+
     }
 
     #endregion

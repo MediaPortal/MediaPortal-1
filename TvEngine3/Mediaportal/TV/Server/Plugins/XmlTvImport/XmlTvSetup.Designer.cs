@@ -134,7 +134,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       this.tabControl1.Location = new System.Drawing.Point(0, 0);
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.SelectedIndex = 0;
-      this.tabControl1.Size = new System.Drawing.Size(483, 450);
+      this.tabControl1.Size = new System.Drawing.Size(480, 420);
       this.tabControl1.TabIndex = 0;
       this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
       // 
@@ -145,7 +145,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       this.tabSettings.Location = new System.Drawing.Point(4, 22);
       this.tabSettings.Name = "tabSettings";
       this.tabSettings.Padding = new System.Windows.Forms.Padding(3);
-      this.tabSettings.Size = new System.Drawing.Size(475, 424);
+      this.tabSettings.Size = new System.Drawing.Size(472, 394);
       this.tabSettings.TabIndex = 0;
       this.tabSettings.Text = "General";
       this.tabSettings.UseVisualStyleBackColor = true;
@@ -421,7 +421,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       this.tabMappings.Location = new System.Drawing.Point(4, 22);
       this.tabMappings.Name = "tabMappings";
       this.tabMappings.Padding = new System.Windows.Forms.Padding(3);
-      this.tabMappings.Size = new System.Drawing.Size(475, 424);
+      this.tabMappings.Size = new System.Drawing.Size(472, 394);
       this.tabMappings.TabIndex = 1;
       this.tabMappings.Text = "Mappings";
       this.tabMappings.UseVisualStyleBackColor = true;
@@ -436,7 +436,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
       this.panel2.Location = new System.Drawing.Point(3, 3);
       this.panel2.Name = "panel2";
-      this.panel2.Size = new System.Drawing.Size(469, 418);
+      this.panel2.Size = new System.Drawing.Size(466, 388);
       this.panel2.TabIndex = 0;
       // 
       // groupBox2
@@ -454,7 +454,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       this.groupBox2.Controls.Add(this.label19);
       this.groupBox2.Controls.Add(this.buttonSave);
       this.groupBox2.Controls.Add(this.buttonRefresh);
-      this.groupBox2.Location = new System.Drawing.Point(6, 3);
+      this.groupBox2.Location = new System.Drawing.Point(3, 3);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(454, 85);
       this.groupBox2.TabIndex = 5;
@@ -594,7 +594,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
       dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
       this.dataGridChannelMappings.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
-      this.dataGridChannelMappings.Size = new System.Drawing.Size(454, 317);
+      this.dataGridChannelMappings.Size = new System.Drawing.Size(451, 287);
       this.dataGridChannelMappings.TabIndex = 2;
       // 
       // Id
@@ -650,7 +650,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       this.tabRemote.Location = new System.Drawing.Point(4, 22);
       this.tabRemote.Name = "tabRemote";
       this.tabRemote.Padding = new System.Windows.Forms.Padding(3);
-      this.tabRemote.Size = new System.Drawing.Size(475, 424);
+      this.tabRemote.Size = new System.Drawing.Size(472, 394);
       this.tabRemote.TabIndex = 2;
       this.tabRemote.Text = "Remote";
       this.tabRemote.UseVisualStyleBackColor = true;
@@ -918,7 +918,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.tabControl1);
       this.Name = "XmlTvSetup";
-      this.Size = new System.Drawing.Size(483, 450);
+      this.Size = new System.Drawing.Size(480, 420);
       this.tabControl1.ResumeLayout(false);
       this.tabSettings.ResumeLayout(false);
       this.tabSettings.PerformLayout();

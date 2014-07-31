@@ -39,24 +39,30 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
       this.deleteCardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.deleteEntireHybridCardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.label3 = new MPLabel();
-      this.mpCheckBox1 = new MPCheckBox();
+      this.label3 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpCheckBox1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
       this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.columnHeader8 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.groupBox4 = new MPGroupBox();
-      this.label8 = new MPLabel();
-      this.mpCheckBox2 = new MPCheckBox();
-      this.label9 = new MPLabel();
-      this.mpCheckBox3 = new MPCheckBox();
+      this.groupBox4 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.label8 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpCheckBox2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.label9 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.mpCheckBox3 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
       this.tabPage2 = new System.Windows.Forms.TabPage();
       this.treeView1 = new System.Windows.Forms.TreeView();
       this.tabPage1 = new System.Windows.Forms.TabPage();
-      this.buttonDown = new MPButton();
-      this.buttonUp = new MPButton();
-      this.buttonEdit = new MPButton();
-      this.mpListView1 = new MPListView();
+      this.label7 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.grpIPTV = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.label26 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.iptvUpDown = new System.Windows.Forms.NumericUpDown();
+      this.label25 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.linkLabelHybridCard = new System.Windows.Forms.LinkLabel();
+      this.labelHybridCard = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelCardPriority = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.buttonRemove = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.mpListView1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
       this.colEnabled = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.colPriority = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.colType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -67,15 +73,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.colInit = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.colGrabEpg = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.colDevicePath = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.buttonRemove = new MPButton();
-      this.labelCardPriority = new MPLabel();
-      this.labelHybridCard = new MPLabel();
-      this.linkLabelHybridCard = new System.Windows.Forms.LinkLabel();
-      this.grpIPTV = new MPGroupBox();
-      this.label25 = new MPLabel();
-      this.iptvUpDown = new System.Windows.Forms.NumericUpDown();
-      this.label26 = new MPLabel();
-      this.label7 = new MPLabel();
+      this.buttonEdit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.buttonUp = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.buttonDown = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.contextMenuStrip2.SuspendLayout();
       this.contextMenuStrip1.SuspendLayout();
@@ -176,6 +176,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // groupBox4
       // 
+      this.groupBox4.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox4.Location = new System.Drawing.Point(0, 0);
       this.groupBox4.Name = "groupBox4";
       this.groupBox4.Size = new System.Drawing.Size(200, 100);
@@ -264,47 +265,117 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabPage1.Location = new System.Drawing.Point(4, 22);
       this.tabPage1.Name = "tabPage1";
       this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage1.Size = new System.Drawing.Size(460, 384);
+      this.tabPage1.Size = new System.Drawing.Size(472, 394);
       this.tabPage1.TabIndex = 0;
       this.tabPage1.Text = "Cards";
       this.tabPage1.UseVisualStyleBackColor = true;
       // 
-      // buttonDown
+      // label7
       // 
-      this.buttonDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.buttonDown.Location = new System.Drawing.Point(87, 349);
-      this.buttonDown.Name = "buttonDown";
-      this.buttonDown.Size = new System.Drawing.Size(75, 23);
-      this.buttonDown.TabIndex = 1;
-      this.buttonDown.Text = "Down";
-      this.buttonDown.UseVisualStyleBackColor = true;
-      this.buttonDown.Click += new System.EventHandler(this.buttonDown_Click);
+      this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.label7.AutoSize = true;
+      this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+      this.label7.Location = new System.Drawing.Point(3, 338);
+      this.label7.Name = "label7";
+      this.label7.Size = new System.Drawing.Size(276, 13);
+      this.label7.TabIndex = 84;
+      this.label7.Text = "Note3: Changes will trigger a TV-Server restart.";
       // 
-      // buttonUp
+      // grpIPTV
       // 
-      this.buttonUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.buttonUp.Location = new System.Drawing.Point(6, 349);
-      this.buttonUp.Name = "buttonUp";
-      this.buttonUp.Size = new System.Drawing.Size(75, 23);
-      this.buttonUp.TabIndex = 2;
-      this.buttonUp.Text = "Up";
-      this.buttonUp.UseVisualStyleBackColor = true;
-      this.buttonUp.Click += new System.EventHandler(this.buttonUp_Click);
+      this.grpIPTV.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.grpIPTV.Controls.Add(this.label26);
+      this.grpIPTV.Controls.Add(this.iptvUpDown);
+      this.grpIPTV.Controls.Add(this.label25);
+      this.grpIPTV.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.grpIPTV.Location = new System.Drawing.Point(6, 6);
+      this.grpIPTV.Name = "grpIPTV";
+      this.grpIPTV.Size = new System.Drawing.Size(449, 73);
+      this.grpIPTV.TabIndex = 83;
+      this.grpIPTV.TabStop = false;
+      this.grpIPTV.Text = "DVB-IP (IPTV) Cards";
       // 
-      // buttonEdit
+      // label26
       // 
-      this.buttonEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonEdit.Enabled = false;
-      this.buttonEdit.Location = new System.Drawing.Point(290, 349);
-      this.buttonEdit.Name = "buttonEdit";
-      this.buttonEdit.Size = new System.Drawing.Size(75, 23);
-      this.buttonEdit.TabIndex = 2;
-      this.buttonEdit.Text = "Edit";
-      this.buttonEdit.UseVisualStyleBackColor = true;
-      this.buttonEdit.Click += new System.EventHandler(this.buttonEdit_Click);
+      this.label26.Location = new System.Drawing.Point(6, 16);
+      this.label26.Name = "label26";
+      this.label26.Size = new System.Drawing.Size(425, 28);
+      this.label26.TabIndex = 2;
+      this.label26.Text = "If you have enough bandwidth you can enable multiple IPTV cards so that you can w" +
+          "atch and record multiple channels simultaneously.";
+      // 
+      // iptvUpDown
+      // 
+      this.iptvUpDown.Location = new System.Drawing.Point(124, 47);
+      this.iptvUpDown.Name = "iptvUpDown";
+      this.iptvUpDown.Size = new System.Drawing.Size(47, 20);
+      this.iptvUpDown.TabIndex = 1;
+      this.iptvUpDown.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+      this.iptvUpDown.ValueChanged += new System.EventHandler(this.iptvUpDown_ValueChanged);
+      // 
+      // label25
+      // 
+      this.label25.AutoSize = true;
+      this.label25.Location = new System.Drawing.Point(6, 49);
+      this.label25.Name = "label25";
+      this.label25.Size = new System.Drawing.Size(112, 13);
+      this.label25.TabIndex = 0;
+      this.label25.Text = "Number of IPTV cards";
+      // 
+      // linkLabelHybridCard
+      // 
+      this.linkLabelHybridCard.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.linkLabelHybridCard.AutoSize = true;
+      this.linkLabelHybridCard.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+      this.linkLabelHybridCard.Location = new System.Drawing.Point(254, 324);
+      this.linkLabelHybridCard.Name = "linkLabelHybridCard";
+      this.linkLabelHybridCard.Size = new System.Drawing.Size(65, 13);
+      this.linkLabelHybridCard.TabIndex = 6;
+      this.linkLabelHybridCard.TabStop = true;
+      this.linkLabelHybridCard.Text = "in the wiki";
+      this.linkLabelHybridCard.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelHybridCard_LinkClicked);
+      // 
+      // labelHybridCard
+      // 
+      this.labelHybridCard.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.labelHybridCard.AutoSize = true;
+      this.labelHybridCard.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+      this.labelHybridCard.Location = new System.Drawing.Point(3, 324);
+      this.labelHybridCard.Name = "labelHybridCard";
+      this.labelHybridCard.Size = new System.Drawing.Size(252, 13);
+      this.labelHybridCard.TabIndex = 5;
+      this.labelHybridCard.Text = "Note2: Configure hybrid cards as described";
+      // 
+      // labelCardPriority
+      // 
+      this.labelCardPriority.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.labelCardPriority.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.labelCardPriority.Location = new System.Drawing.Point(3, 310);
+      this.labelCardPriority.Name = "labelCardPriority";
+      this.labelCardPriority.Size = new System.Drawing.Size(256, 13);
+      this.labelCardPriority.TabIndex = 4;
+      this.labelCardPriority.Text = "Note1: Priority 1 means lowest priority";
+      // 
+      // buttonRemove
+      // 
+      this.buttonRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonRemove.Enabled = false;
+      this.buttonRemove.Location = new System.Drawing.Point(383, 359);
+      this.buttonRemove.Name = "buttonRemove";
+      this.buttonRemove.Size = new System.Drawing.Size(75, 23);
+      this.buttonRemove.TabIndex = 3;
+      this.buttonRemove.Text = "Remove";
+      this.buttonRemove.UseVisualStyleBackColor = true;
+      this.buttonRemove.Click += new System.EventHandler(this.buttonRemove_Click);
       // 
       // mpListView1
       // 
+      this.mpListView1.AllowDrop = true;
       this.mpListView1.AllowRowReorder = false;
       this.mpListView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
@@ -329,7 +400,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpListView1.LargeImageList = this.imageList1;
       this.mpListView1.Location = new System.Drawing.Point(6, 85);
       this.mpListView1.Name = "mpListView1";
-      this.mpListView1.Size = new System.Drawing.Size(440, 211);
+      this.mpListView1.Size = new System.Drawing.Size(452, 221);
       this.mpListView1.SmallImageList = this.imageList1;
       this.mpListView1.TabIndex = 0;
       this.mpListView1.UseCompatibleStateImageBehavior = false;
@@ -383,107 +454,39 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       this.colDevicePath.Text = "Device Path";
       // 
-      // buttonRemove
+      // buttonEdit
       // 
-      this.buttonRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonRemove.Enabled = false;
-      this.buttonRemove.Location = new System.Drawing.Point(371, 349);
-      this.buttonRemove.Name = "buttonRemove";
-      this.buttonRemove.Size = new System.Drawing.Size(75, 23);
-      this.buttonRemove.TabIndex = 3;
-      this.buttonRemove.Text = "Remove";
-      this.buttonRemove.UseVisualStyleBackColor = true;
-      this.buttonRemove.Click += new System.EventHandler(this.buttonRemove_Click);
+      this.buttonEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonEdit.Enabled = false;
+      this.buttonEdit.Location = new System.Drawing.Point(302, 359);
+      this.buttonEdit.Name = "buttonEdit";
+      this.buttonEdit.Size = new System.Drawing.Size(75, 23);
+      this.buttonEdit.TabIndex = 2;
+      this.buttonEdit.Text = "Edit";
+      this.buttonEdit.UseVisualStyleBackColor = true;
+      this.buttonEdit.Click += new System.EventHandler(this.buttonEdit_Click);
       // 
-      // labelCardPriority
+      // buttonUp
       // 
-      this.labelCardPriority.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.labelCardPriority.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.labelCardPriority.Location = new System.Drawing.Point(3, 300);
-      this.labelCardPriority.Name = "labelCardPriority";
-      this.labelCardPriority.Size = new System.Drawing.Size(256, 13);
-      this.labelCardPriority.TabIndex = 4;
-      this.labelCardPriority.Text = "Note1: Priority 1 means lowest priority";
+      this.buttonUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.buttonUp.Location = new System.Drawing.Point(6, 359);
+      this.buttonUp.Name = "buttonUp";
+      this.buttonUp.Size = new System.Drawing.Size(75, 23);
+      this.buttonUp.TabIndex = 2;
+      this.buttonUp.Text = "Up";
+      this.buttonUp.UseVisualStyleBackColor = true;
+      this.buttonUp.Click += new System.EventHandler(this.buttonUp_Click);
       // 
-      // labelHybridCard
+      // buttonDown
       // 
-      this.labelHybridCard.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.labelHybridCard.AutoSize = true;
-      this.labelHybridCard.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
-      this.labelHybridCard.Location = new System.Drawing.Point(3, 314);
-      this.labelHybridCard.Name = "labelHybridCard";
-      this.labelHybridCard.Size = new System.Drawing.Size(252, 13);
-      this.labelHybridCard.TabIndex = 5;
-      this.labelHybridCard.Text = "Note2: Configure hybrid cards as described";
-      // 
-      // linkLabelHybridCard
-      // 
-      this.linkLabelHybridCard.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.linkLabelHybridCard.AutoSize = true;
-      this.linkLabelHybridCard.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
-      this.linkLabelHybridCard.Location = new System.Drawing.Point(254, 314);
-      this.linkLabelHybridCard.Name = "linkLabelHybridCard";
-      this.linkLabelHybridCard.Size = new System.Drawing.Size(65, 13);
-      this.linkLabelHybridCard.TabIndex = 6;
-      this.linkLabelHybridCard.TabStop = true;
-      this.linkLabelHybridCard.Text = "in the wiki";
-      this.linkLabelHybridCard.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelHybridCard_LinkClicked);
-      // 
-      // grpIPTV
-      // 
-      this.grpIPTV.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.grpIPTV.Controls.Add(this.label26);
-      this.grpIPTV.Controls.Add(this.iptvUpDown);
-      this.grpIPTV.Controls.Add(this.label25);
-      this.grpIPTV.Location = new System.Drawing.Point(6, 6);
-      this.grpIPTV.Name = "grpIPTV";
-      this.grpIPTV.Size = new System.Drawing.Size(437, 73);
-      this.grpIPTV.TabIndex = 83;
-      this.grpIPTV.TabStop = false;
-      this.grpIPTV.Text = "DVB-IP (IPTV) Cards";
-      // 
-      // label25
-      // 
-      this.label25.AutoSize = true;
-      this.label25.Location = new System.Drawing.Point(6, 49);
-      this.label25.Name = "label25";
-      this.label25.Size = new System.Drawing.Size(112, 13);
-      this.label25.TabIndex = 0;
-      this.label25.Text = "Number of IPTV cards";
-      // 
-      // iptvUpDown
-      // 
-      this.iptvUpDown.Location = new System.Drawing.Point(124, 47);
-      this.iptvUpDown.Name = "iptvUpDown";
-      this.iptvUpDown.Size = new System.Drawing.Size(47, 20);
-      this.iptvUpDown.TabIndex = 1;
-      this.iptvUpDown.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-      this.iptvUpDown.ValueChanged += new System.EventHandler(this.iptvUpDown_ValueChanged);
-      // 
-      // label26
-      // 
-      this.label26.Location = new System.Drawing.Point(6, 16);
-      this.label26.Name = "label26";
-      this.label26.Size = new System.Drawing.Size(425, 28);
-      this.label26.TabIndex = 2;
-      this.label26.Text = "If you have enough bandwidth you can enable multiple IPTV cards so that you can w" +
-          "atch and record multiple channels simultaneously.";
-      // 
-      // label7
-      // 
-      this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.label7.AutoSize = true;
-      this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
-      this.label7.Location = new System.Drawing.Point(3, 328);
-      this.label7.Name = "label7";
-      this.label7.Size = new System.Drawing.Size(276, 13);
-      this.label7.TabIndex = 84;
-      this.label7.Text = "Note3: Changes will trigger a TV-Server restart.";
+      this.buttonDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.buttonDown.Location = new System.Drawing.Point(87, 359);
+      this.buttonDown.Name = "buttonDown";
+      this.buttonDown.Size = new System.Drawing.Size(75, 23);
+      this.buttonDown.TabIndex = 1;
+      this.buttonDown.Text = "Down";
+      this.buttonDown.UseVisualStyleBackColor = true;
+      this.buttonDown.Click += new System.EventHandler(this.buttonDown_Click);
       // 
       // tabControl1
       // 
@@ -493,10 +496,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControl1.Controls.Add(this.tabPage1);
       this.tabControl1.Controls.Add(this.tabPage2);
-      this.tabControl1.Location = new System.Drawing.Point(3, 3);
+      this.tabControl1.Location = new System.Drawing.Point(0, 0);
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.SelectedIndex = 0;
-      this.tabControl1.Size = new System.Drawing.Size(468, 410);
+      this.tabControl1.Size = new System.Drawing.Size(480, 420);
       this.tabControl1.TabIndex = 3;
       this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
       // 
@@ -506,7 +509,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.tabControl1);
       this.Name = "TvCards";
-      this.Size = new System.Drawing.Size(474, 416);
+      this.Size = new System.Drawing.Size(480, 420);
       this.contextMenuStrip2.ResumeLayout(false);
       this.contextMenuStrip1.ResumeLayout(false);
       this.tabPage2.ResumeLayout(false);
