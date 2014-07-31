@@ -190,6 +190,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       this.mpComboBoxTuningMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboBoxTuningMode.FormattingEnabled = true;
+      this.mpComboBoxTuningMode.Items.AddRange(new object[] {
+            "ATSC Digital Terrestrial",
+            "Clear QAM Cable",
+            "Digital Cable"});
       this.mpComboBoxTuningMode.Location = new System.Drawing.Point(176, 15);
       this.mpComboBoxTuningMode.Name = "mpComboBoxTuningMode";
       this.mpComboBoxTuningMode.Size = new System.Drawing.Size(347, 21);
