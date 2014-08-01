@@ -1,6 +1,7 @@
 REM %1 = Solution Directory
-REM %2 = $(OutDir) bin/Debug bin/Release
-REM %3 = $(TargetDir)
+REM %2 = $(PlatformName) (eg. x86)
+REM %3 = $(ConfigurationName) (eg. Release, Debug)
+REM %4 = $(TargetDir)
 
 REM Identify configuration path for <=XP or >=Vista
 if exist %ProgramData%\nul (
@@ -9,95 +10,110 @@ if exist %ProgramData%\nul (
 	set ConfigPath="%AllUsersProfile%\Application Data"
 )
 
-xcopy "%1..\ExternalBinaries\*.*"  /s /i /y
 
-xcopy "%1Plugins\ComSkipLauncher\%2Mediaportal.TV.Server.Plugins.ComSkipLauncher.*" "%3Plugins\" /C/Y/S/D
-xcopy "%1Plugins\ConflictsManager\%2Mediaportal.TV.Server.Plugins.ConflictsManager.*" "%3Plugins\" /C/Y/S/D
-rem xcopy "%1Plugins\PluginBase\%2Mediaportal.TV.Server.Plugins.Base.*" "%3"Plugins\ /C/Y/S/D
-xcopy "%1Plugins\PowerScheduler\%2Mediaportal.TV.Server.Plugins.PowerScheduler.dll" "%3Plugins\" /C/Y/S/D
-xcopy "%1Plugins\PowerScheduler\%2Mediaportal.TV.Server.Plugins.PowerScheduler.pdb" "%3Plugins\" /C/Y/S/D
-rem xcopy "%1Plugins\PowerScheduler\%2Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.dll" "%3\Plugins\" /C/Y/S/D
-rem xcopy "%1Plugins\PowerScheduler\%2Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.pdb" "%3\Plugins\" /C/Y/S/D
-xcopy "%1Plugins\ServerBlaster\ServerBlaster\%2Mediaportal.TV.Server.Plugins.ServerBlaster.*" "%3Plugins\" /C/Y/S/D
-xcopy "%1Plugins\ServerBlaster\ServerBlaster.Learn\%2Mediaportal.TV.Server.Plugins.ServerBlaster.Learn.*" "%3Plugins\" /C/Y/S/D
-rem xcopy "%1Plugins\TvMovie\%2Mediaportal.TV.Server.Plugins.TvMovie.*" "%3Plugins\" /C/Y/S/D
-xcopy "%1Plugins\WebEPG\WebEPG\%2Mediaportal.TV.Server.Plugins.WebEPG.*" "%3Plugins\" /C/Y/S/D
-xcopy "%1Plugins\WebEPG\WebEPGPlugin\%2Mediaportal.TV.Server.Plugins.WebEPGImport.*" "%3Plugins\" /C/Y/S/D
-xcopy "%1Plugins\XmlTvImport\%2Mediaportal.TV.Server.Plugins.XmlTvImport.*" "%3"Plugins\ /C/Y/S/D
-xcopy "%1Plugins\XmlTvImport\%2Ionic.Zip.Reduced.dll" "%3"Plugins\ /C/Y/S/D
+rem --- external binaries ---
+xcopy "%1..\ExternalBinaries\*" "%4" /Y/D
 
-xcopy "%1\SetupControls\%2Mediaportal.TV.Server.SetupControls.*" "%3" /C/Y/S/D
-xcopy "%1..\..\..\..\Common-MP-TVE3\PowerScheduler.Interfaces\%2Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces" "%3" /C/Y/S/D
-xcopy "%1RuleBasedScheduler\%2Mediaportal.TV.Server.RuleBasedScheduler.*" "%3" /C/Y/S/D
 
-xcopy "%1Plugins\CustomDevices\Anysee\%2Mediaportal.TV.Server.Plugins.TunerExtension.Anysee.*" "%3Plugins\CustomDevices\" /C/Y/S/D
-xcopy "%1Plugins\CustomDevices\AVerMedia\%2Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia.*" "%3Plugins\CustomDevices\" /C/Y/S/D
-xcopy "%1Plugins\CustomDevices\Compro\%2Mediaportal.TV.Server.Plugins.TunerExtension.Compro.*" "%3Plugins\CustomDevices\" /C/Y/S/D
-xcopy "%1Plugins\CustomDevices\Conexant\%2Mediaportal.TV.Server.Plugins.TunerExtension.*" "%3Plugins\CustomDevices\" /C/Y/S/D
-xcopy "%1Plugins\CustomDevices\DigitalDevices\%2Mediaportal.TV.Server.Plugins.TunerExtension.*" "%3Plugins\CustomDevices\" /C/Y/S/D
-xcopy "%1Plugins\CustomDevices\DigitalEverywhere\%2Mediaportal.TV.Server.Plugins.TunerExtension.*" "%3Plugins\CustomDevices\" /C/Y/S/D
-xcopy "%1Plugins\CustomDevices\DvbSky\%2Mediaportal.TV.Server.Plugins.TunerExtension.*" "%3Plugins\CustomDevices\" /C/Y/S/D
-xcopy "%1Plugins\CustomDevices\DvbWorld\%2Mediaportal.TV.Server.Plugins.TunerExtension.*" "%3Plugins\CustomDevices\" /C/Y/S/D
-xcopy "%1Plugins\CustomDevices\Geniatech\%2Mediaportal.TV.Server.Plugins.TunerExtension.*" "%3Plugins\CustomDevices\" /C/Y/S/D
-xcopy "%1Plugins\CustomDevices\Genpix\%2Mediaportal.TV.Server.Plugins.TunerExtension.*" "%3Plugins\CustomDevices\" /C/Y/S/D
-xcopy "%1Plugins\CustomDevices\GenpixOpenSource\%2Mediaportal.TV.Server.Plugins.TunerExtension.*" "%3Plugins\CustomDevices\" /C/Y/S/D
-xcopy "%1Plugins\CustomDevices\HauppaugeBda\%2Mediaportal.TV.Server.Plugins.TunerExtension.*" "%3Plugins\CustomDevices\" /C/Y/S/D
-xcopy "%1Plugins\CustomDevices\HauppaugeEcp\%2Mediaportal.TV.Server.Plugins.TunerExtension.*" "%3Plugins\CustomDevices\" /C/Y/S/D
-xcopy "%1Plugins\CustomDevices\HauppaugeEncoder\%2Mediaportal.TV.Server.Plugins.TunerExtension.*" "%3Plugins\CustomDevices\" /C/Y/S/D
-xcopy "%1Plugins\CustomDevices\HauppaugeRemote\%2Mediaportal.TV.Server.Plugins.TunerExtension.*" "%3Plugins\CustomDevices\" /C/Y/S/D
-xcopy "%1Plugins\CustomDevices\Knc\%2Mediaportal.TV.Server.Plugins.TunerExtension.*" "%3Plugins\CustomDevices\" /C/Y/S/D
-xcopy "%1Plugins\CustomDevices\MdPlugin\%2Mediaportal.TV.Server.Plugins.TunerExtension.*" "%3Plugins\CustomDevices\" /C/Y/S/D
-xcopy "%1Plugins\CustomDevices\MicrosoftAtscQam\%2Mediaportal.TV.Server.Plugins.TunerExtension.*" "%3Plugins\CustomDevices\" /C/Y/S/D
-xcopy "%1Plugins\CustomDevices\MicrosoftBdaDiseqc\%2Mediaportal.TV.Server.Plugins.TunerExtension.*" "%3Plugins\CustomDevices\" /C/Y/S/D
-xcopy "%1Plugins\CustomDevices\MicrosoftEncoder\%2Mediaportal.TV.Server.Plugins.TunerExtension.*" "%3Plugins\CustomDevices\" /C/Y/S/D
-xcopy "%1Plugins\CustomDevices\MicrosoftOldDiseqc\%2Mediaportal.TV.Server.Plugins.TunerExtension.*" "%3Plugins\CustomDevices\" /C/Y/S/D
-xcopy "%1Plugins\CustomDevices\MicrosoftPidFilter\%2Mediaportal.TV.Server.Plugins.TunerExtension.*" "%3Plugins\CustomDevices\" /C/Y/S/D
-xcopy "%1Plugins\CustomDevices\NetUp\%2Mediaportal.TV.Server.Plugins.TunerExtension.*" "%3Plugins\CustomDevices\" /C/Y/S/D
-xcopy "%1Plugins\CustomDevices\Omicom\%2Mediaportal.TV.Server.Plugins.TunerExtension.*" "%3Plugins\CustomDevices\" /C/Y/S/D
-xcopy "%1Plugins\CustomDevices\Prof\%2Mediaportal.TV.Server.Plugins.TunerExtension.*" "%3Plugins\CustomDevices\" /C/Y/S/D
-xcopy "%1Plugins\CustomDevices\ProfUsb\%2Mediaportal.TV.Server.Plugins.TunerExtension.*" "%3Plugins\CustomDevices\" /C/Y/S/D
-xcopy "%1Plugins\CustomDevices\Realtek\%2Mediaportal.TV.Server.Plugins.TunerExtension.*" "%3Plugins\CustomDevices\" /C/Y/S/D
-xcopy "%1Plugins\CustomDevices\SmarDtvUsbCi\%2Mediaportal.TV.Server.Plugins.TunerExtension.*" "%3Plugins\CustomDevices\" /C/Y/S/D
-xcopy "%1Plugins\CustomDevices\TechnoTrend\%2Mediaportal.TV.Server.Plugins.TunerExtension.*" "%3Plugins\CustomDevices\" /C/Y/S/D
-xcopy "%1Plugins\CustomDevices\TeVii\%2Mediaportal.TV.Server.Plugins.TunerExtension.*" "%3Plugins\CustomDevices\" /C/Y/S/D
-xcopy "%1Plugins\CustomDevices\Turbosight\%2Mediaportal.TV.Server.Plugins.TunerExtension.*" "%3Plugins\CustomDevices\" /C/Y/S/D
-xcopy "%1Plugins\CustomDevices\TurbosightRemote\%2Mediaportal.TV.Server.Plugins.TunerExtension.*" "%3Plugins\CustomDevices\" /C/Y/S/D
-xcopy "%1Plugins\CustomDevices\Twinhan\%2Mediaportal.TV.Server.Plugins.TunerExtension.*" "%3Plugins\CustomDevices\" /C/Y/S/D
-xcopy "%1Plugins\CustomDevices\ViXS\%2Mediaportal.TV.Server.Plugins.TunerExtension.*" "%3Plugins\CustomDevices\" /C/Y/S/D
+rem --- integration ---
+xcopy "%1TvLibrary.Integration.MP1\bin\%3\Mediaportal.TV.Server.TVLibrary.Integration*" "%4" /Y/D
+xcopy "%1TvLibrary.Integration.MP1\bin\%3\Castle.Facilities.*" "%4" /Y/D
+xcopy "%1TvLibrary.Integration.MP1\bin\%3\Castle.Services.*" "%4" /Y/D
 
-xcopy "%1Plugins\CustomDevices\Anysee\%2CIAPI.*" "%3Plugins\CustomDevices\Resources\" /C/Y/S/D
-xcopy "%1Plugins\CustomDevices\HauppaugeEcp\%2HauppaugeEcp.*" "%3Plugins\CustomDevices\Resources\" /C/Y/S/D
-xcopy "%1Plugins\CustomDevices\Knc\%2KNCBDACTRL.*" "%3Plugins\CustomDevices\Resources\" /C/Y/S/D
-xcopy "%1Plugins\CustomDevices\TechnoTrend\%2ttBdaDrvApi_Dll.*" "%3Plugins\CustomDevices\Resources\" /C/Y/S/D
-xcopy "%1Plugins\CustomDevices\TeVii\%2TeVii.*" "%3Plugins\CustomDevices\Resources\" /C/Y/S/D
-xcopy "%1Plugins\CustomDevices\Turbosight\%2TbsCIapi.*" "%3Plugins\CustomDevices\Resources\" /C/Y/S/D
 
-xcopy "%1TvLibrary.IntegrationProvider.Interfaces\%2*.dll" "%3" /C/Y/S/D
-xcopy "%1TvLibrary.IntegrationProvider.Interfaces\%2*.pdb" "%3" /C/Y/S/D
-xcopy "%1TvLibrary.Integration.MP1\%2*.dll" "%3" /C/Y/S/D
-xcopy "%1TvLibrary.Integration.MP1\%2*.pdb" "%3" /C/Y/S/D
-xcopy "%1TvLibrary.Integration.MP1\%2*.dll" "%1..\..\..\..\mediaportal\MediaPortal.Application\%2" /C/Y/S/D
-xcopy "%1TvLibrary.Integration.MP1\%2*.pdb" "%1..\..\..\..\mediaportal\MediaPortal.Application\%2" /C/Y/S/D
+rem --- plugins ---
+xcopy "%1Plugins\ComSkipLauncher\bin\%3\Mediaportal.TV.Server.Plugins.ComSkipLauncher.*" "%4Plugins\" /Y/D
+xcopy "%1Plugins\ConflictsManager\bin\%3\Mediaportal.TV.Server.Plugins.ConflictsManager.*" "%4Plugins\" /Y/D
+rem xcopy "%1Plugins\PluginBase\bin\%3\Mediaportal.TV.Server.Plugins.Base.*" "%4"Plugins\ /Y/D
+xcopy "%1Plugins\PowerScheduler\bin\%3\Mediaportal.TV.Server.Plugins.PowerScheduler.dll" "%4Plugins\" /Y/D
+xcopy "%1Plugins\PowerScheduler\bin\%3\Mediaportal.TV.Server.Plugins.PowerScheduler.pdb" "%4Plugins\" /Y/D
+rem xcopy "%1Plugins\PowerScheduler\bin\%3\Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.dll" "%4\Plugins\" /Y/D
+rem xcopy "%1Plugins\PowerScheduler\bin\%3\Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.pdb" "%4\Plugins\" /Y/D
+xcopy "%1Plugins\ServerBlaster\ServerBlaster\bin\%3\Mediaportal.TV.Server.Plugins.ServerBlaster.*" "%4Plugins\" /Y/D
+xcopy "%1Plugins\ServerBlaster\ServerBlaster.Learn\bin\%3\Mediaportal.TV.Server.Plugins.ServerBlaster.Learn.*" "%4Plugins\" /Y/D
+rem xcopy "%1Plugins\TvMovie\bin\%3\Mediaportal.TV.Server.Plugins.TvMovie.*" "%4Plugins\" /Y/D
+xcopy "%1Plugins\WebEPG\WebEPG\bin\%3\Mediaportal.TV.Server.Plugins.WebEPG.*" "%4Plugins\" /Y/D
+xcopy "%1Plugins\WebEPG\WebEPGPlugin\bin\%3\Mediaportal.TV.Server.Plugins.WebEPGImport.*" "%4Plugins\" /Y/D
+xcopy "%1Plugins\XmlTvImport\bin\%3\Mediaportal.TV.Server.Plugins.XmlTvImport.*" "%4"Plugins\ /Y/D
+xcopy "%1Plugins\XmlTvImport\bin\%3\Ionic.Zip.Reduced.dll" "%4"Plugins\ /Y/D
 
-xcopy "%1..\..\..\..\DirectShowFilters\DXErr9\bin\Release\dxerr9*.dll" . /Y /D
-xcopy "%1..\..\..\..\DirectShowFilters\MPIPTVSource\bin\Release\MPIPTV_FILE*.dll" . /Y /D
-xcopy "%1..\..\..\..\DirectShowFilters\MPIPTVSource\bin\Release\MPIPTV_HTTP*.dll" . /Y /D
-xcopy "%1..\..\..\..\DirectShowFilters\MPIPTVSource\bin\Release\MPIPTV_RTP*.dll" . /Y /D
-xcopy "%1..\..\..\..\DirectShowFilters\MPIPTVSource\bin\Release\MPIPTV_RTSP*.dll" . /Y /D
-xcopy "%1..\..\..\..\DirectShowFilters\MPIPTVSource\bin\Release\MPIPTV_UDP*.dll" . /Y /D
-xcopy "%1..\..\..\..\DirectShowFilters\MPIPTVSource\bin\Release\MPIPTVSource*.ax" . /Y /D
-xcopy "%1..\..\..\..\DirectShowFilters\StreamingServer\bin\Release\StreamingServer*.dll" . /Y /D
-xcopy "%1..\..\..\..\DirectShowFilters\TsMuxer\bin\Release\TsMuxer*.ax" . /Y /D
-xcopy "%1..\..\..\..\DirectShowFilters\TsWriter\bin\Release\TsWriter*.ax" . /Y /D
 
-REM SetupTV
-xcopy "%1TvLibrary.Integration.MP1\%2Mediaportal.TV.Server.TVLibrary.Integration.MP1*.pdb" "%1SetupTv\%2Integration\" /C/Y/S
-xcopy "%1TvLibrary.Integration.MP1\%2Mediaportal.TV.Server.TVLibrary.Integration.MP1*.dll" "%1SetupTv\%2Integration\" /C/Y/S
+rem --- tuner extensions ---
+xcopy "%1Plugins\CustomDevices\Anysee\bin\%3\Mediaportal.TV.Server.Plugins.TunerExtension.Anysee.*" "%4Plugins\CustomDevices\" /Y/D
+xcopy "%1Plugins\CustomDevices\AutumnWave\bin\%3\Mediaportal.TV.Server.Plugins.TunerExtension.AutumnWave.*" "%4Plugins\CustomDevices\" /Y/D
+xcopy "%1Plugins\CustomDevices\AVerMedia\bin\%3\Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia.*" "%4Plugins\CustomDevices\" /Y/D
+xcopy "%1Plugins\CustomDevices\Compro\bin\%3\Mediaportal.TV.Server.Plugins.TunerExtension.Compro.*" "%4Plugins\CustomDevices\" /Y/D
+xcopy "%1Plugins\CustomDevices\Conexant\bin\%3\Mediaportal.TV.Server.Plugins.TunerExtension.Conexant.*" "%4Plugins\CustomDevices\" /Y/D
+xcopy "%1Plugins\CustomDevices\DigitalDevices\bin\%3\Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices.*" "%4Plugins\CustomDevices\" /Y/D
+xcopy "%1Plugins\CustomDevices\DigitalEverywhere\bin\%3\Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere.*" "%4Plugins\CustomDevices\" /Y/D
+xcopy "%1Plugins\CustomDevices\DvbSky\bin\%3\Mediaportal.TV.Server.Plugins.TunerExtension.DvbSky.*" "%4Plugins\CustomDevices\" /Y/D
+xcopy "%1Plugins\CustomDevices\DvbWorld\bin\%3\Mediaportal.TV.Server.Plugins.TunerExtension.DvbWorld.*" "%4Plugins\CustomDevices\" /Y/D
+xcopy "%1Plugins\CustomDevices\Geniatech\bin\%3\Mediaportal.TV.Server.Plugins.TunerExtension.Geniatech.*" "%4Plugins\CustomDevices\" /Y/D
+xcopy "%1Plugins\CustomDevices\Genpix\bin\%3\Mediaportal.TV.Server.Plugins.TunerExtension.Genpix.*" "%4Plugins\CustomDevices\" /Y/D
+xcopy "%1Plugins\CustomDevices\GenpixOpenSource\bin\%3\Mediaportal.TV.Server.Plugins.TunerExtension.GenpixOpenSource.*" "%4Plugins\CustomDevices\" /Y/D
+xcopy "%1Plugins\CustomDevices\HauppaugeBda\bin\%3\Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBda.*" "%4Plugins\CustomDevices\" /Y/D
+xcopy "%1Plugins\CustomDevices\HauppaugeEcp\bin\%3\Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp.*" "%4Plugins\CustomDevices\" /Y/D
+xcopy "%1Plugins\CustomDevices\HauppaugeEncoder\bin\%3\Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEncoder.*" "%4Plugins\CustomDevices\" /Y/D
+xcopy "%1Plugins\CustomDevices\HauppaugeRemote\bin\%3\Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeRemote.*" "%4Plugins\CustomDevices\" /Y/D
+xcopy "%1Plugins\CustomDevices\Knc\bin\%3\Mediaportal.TV.Server.Plugins.TunerExtension.Knc.*" "%4Plugins\CustomDevices\" /Y/D
+xcopy "%1Plugins\CustomDevices\Kworld\bin\%3\Mediaportal.TV.Server.Plugins.TunerExtension.Kworld.*" "%4Plugins\CustomDevices\" /Y/D
+xcopy "%1Plugins\CustomDevices\MdPlugin\bin\%3\Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin.*" "%4Plugins\CustomDevices\" /Y/D
+xcopy "%1Plugins\CustomDevices\MicrosoftAtscQam\bin\%3\Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftAtscQam.*" "%4Plugins\CustomDevices\" /Y/D
+xcopy "%1Plugins\CustomDevices\MicrosoftBdaDiseqc\bin\%3\Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBdaDiseqc.*" "%4Plugins\CustomDevices\" /Y/D
+xcopy "%1Plugins\CustomDevices\MicrosoftEncoder\bin\%3\Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftEncoder.*" "%4Plugins\CustomDevices\" /Y/D
+xcopy "%1Plugins\CustomDevices\MicrosoftOldDiseqc\bin\%3\Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftOldDiseqc.*" "%4Plugins\CustomDevices\" /Y/D
+xcopy "%1Plugins\CustomDevices\MicrosoftPidFilter\bin\%3\Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftPidFilter.*" "%4Plugins\CustomDevices\" /Y/D
+xcopy "%1Plugins\CustomDevices\NetUp\bin\%3\Mediaportal.TV.Server.Plugins.TunerExtension.NetUp.*" "%4Plugins\CustomDevices\" /Y/D
+xcopy "%1Plugins\CustomDevices\Omicom\bin\%3\Mediaportal.TV.Server.Plugins.TunerExtension.Omicom.*" "%4Plugins\CustomDevices\" /Y/D
+xcopy "%1Plugins\CustomDevices\Prof\bin\%3\Mediaportal.TV.Server.Plugins.TunerExtension.Prof.*" "%4Plugins\CustomDevices\" /Y/D
+xcopy "%1Plugins\CustomDevices\ProfUsb\bin\%3\Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb.*" "%4Plugins\CustomDevices\" /Y/D
+xcopy "%1Plugins\CustomDevices\Realtek\bin\%3\Mediaportal.TV.Server.Plugins.TunerExtension.Realtek.*" "%4Plugins\CustomDevices\" /Y/D
+xcopy "%1Plugins\CustomDevices\SmarDtvUsbCi\bin\%3\Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi.*" "%4Plugins\CustomDevices\" /Y/D
+xcopy "%1Plugins\CustomDevices\TechnoTrend\bin\%3\Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend.*" "%4Plugins\CustomDevices\" /Y/D
+xcopy "%1Plugins\CustomDevices\TeVii\bin\%3\Mediaportal.TV.Server.Plugins.TunerExtension.TeVii.*" "%4Plugins\CustomDevices\" /Y/D
+xcopy "%1Plugins\CustomDevices\Turbosight\bin\%3\Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight.*" "%4Plugins\CustomDevices\" /Y/D
+xcopy "%1Plugins\CustomDevices\TurbosightRemote\bin\%3\Mediaportal.TV.Server.Plugins.TunerExtension.TurbosightRemote.*" "%4Plugins\CustomDevices\" /Y/D
+xcopy "%1Plugins\CustomDevices\Twinhan\bin\%3\Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan.*" "%4Plugins\CustomDevices\" /Y/D
+xcopy "%1Plugins\CustomDevices\TwinhanHidRemote\bin\%3\Mediaportal.TV.Server.Plugins.TunerExtension.TwinhanHidRemote.*" "%4Plugins\CustomDevices\" /Y/D
+xcopy "%1Plugins\CustomDevices\ViXS\bin\%3\Mediaportal.TV.Server.Plugins.TunerExtension.ViXS.*" "%4Plugins\CustomDevices\" /Y/D
 
-REM TuningParameters
-xcopy %1TVServer.Base\TuningParameters\*.* %ConfigPath%\"Team MediaPortal\\MediaPortal TV Server\TuningParameters\" /E /Y /D /Q
 
-xcopy %1TVServer.Base\WebEPG\*.* %ConfigPath%\"Team MediaPortal\\MediaPortal TV Server\WebEPG\" /E /Y /D /Q
-xcopy %1TVServer.Base\xmltv\*.* %ConfigPath%\"Team MediaPortal\\MediaPortal TV Server\xmltv\" /E /Y /D /Q
-xcopy "%1..\..\..\..\DirectShowFilters\MPIPTVSource\MPIPTVSource\MPIPTVSource*.ini" %ConfigPath%\"Team MediaPortal\\MediaPortal TV Server\" /E /Y /D /Q
+rem --- tuner extension resources ---
+xcopy "%1Plugins\CustomDevices\Anysee\bin\%3\CIAPI.*" "%4Plugins\CustomDevices\Resources\" /Y/D
+xcopy "%1Plugins\CustomDevices\HauppaugeEcp\bin\%3\HauppaugeEcp.*" "%4Plugins\CustomDevices\Resources\" /Y/D
+xcopy "%1Plugins\CustomDevices\Knc\bin\%3\KNCBDACTRL.*" "%4Plugins\CustomDevices\Resources\" /Y/D
+xcopy "%1Plugins\CustomDevices\TechnoTrend\bin\%3\ttBdaDrvApi_Dll.*" "%4Plugins\CustomDevices\Resources\" /Y/D
+xcopy "%1Plugins\CustomDevices\TeVii\bin\%3\TeVii.*" "%4Plugins\CustomDevices\Resources\" /Y/D
+xcopy "%1Plugins\CustomDevices\Turbosight\bin\%3\TbsCIapi.*" "%4Plugins\CustomDevices\Resources\" /Y/D
+xcopy "%1Plugins\CustomDevices\TurbosightRemote\bin\%3\TbsNxpIrRcReceiver.*" "%4Plugins\CustomDevices\Resources\" /Y/D
 
+
+rem --- unmanaged dependencies ---
+xcopy "%1..\..\..\..\DirectShowFilters\DXErr9\bin\%3\*.dll" "%4" /Y/D
+xcopy "%1..\..\..\..\DirectShowFilters\DXErr9\bin\%3\*.pdb" "%4" /Y/D
+xcopy "%1..\..\..\..\DirectShowFilters\MPIPTVSource\bin\%3\*.ax" "%4" /Y/D
+xcopy "%1..\..\..\..\DirectShowFilters\MPIPTVSource\bin\%3\*.dll" "%4" /Y/D
+xcopy "%1..\..\..\..\DirectShowFilters\MPIPTVSource\bin\%3\*.pdb" "%4" /Y/D
+xcopy "%1..\..\..\..\DirectShowFilters\StreamingServer\bin\%3\*.dll" "%4" /Y/D
+xcopy "%1..\..\..\..\DirectShowFilters\StreamingServer\bin\%3\*.pdb" "%4" /Y/D
+xcopy "%1..\..\..\..\DirectShowFilters\TsMuxer\bin\%3\*.ax" "%4" /Y/D
+xcopy "%1..\..\..\..\DirectShowFilters\TsMuxer\bin\%3\*.pdb" "%4" /Y/D
+xcopy "%1..\..\..\..\DirectShowFilters\TsWriter\bin\%3\*.ax" "%4" /Y/D
+xcopy "%1..\..\..\..\DirectShowFilters\TsWriter\bin\%3\*.pdb" "%4" /Y/D
+
+
+rem --- other ---
+xcopy "%1\SetupControls\bin\%3\Mediaportal.TV.Server.SetupControls.*" "%4" /Y/D
+xcopy "%1..\..\..\..\Common-MP-TVE3\PowerScheduler.Interfaces\bin\%3\Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.*" "%4" /Y/D
+xcopy "%1RuleBasedScheduler\bin\%3\Mediaportal.TV.Server.RuleBasedScheduler.*" "%4" /Y/D
+
+
+rem why are these needed?
+rem xcopy "%1TvLibrary.Integration.MP1\bin\%3\*.dll" "%1..\..\..\..\mediaportal\MediaPortal.Application\bin\%3\" /Y/D
+rem xcopy "%1TvLibrary.Integration.MP1\bin\%3\*.pdb" "%1..\..\..\..\mediaportal\MediaPortal.Application\bin\%3\" /Y/D
+
+
+rem should we really replace installed files?
+rem xcopy %1TVServer.Base\WebEPG\*.* %ConfigPath%\"Team MediaPortal\\MediaPortal TV Server\WebEPG\" /E /Y /D /Q
+rem xcopy %1TVServer.Base\xmltv\*.* %ConfigPath%\"Team MediaPortal\\MediaPortal TV Server\xmltv\" /E /Y /D /Q
+rem xcopy "%1..\..\..\..\DirectShowFilters\MPIPTVSource\MPIPTVSource\MPIPTVSource*.ini" %ConfigPath%\"Team MediaPortal\\MediaPortal TV Server\" /E /Y /D /Q
