@@ -32,6 +32,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
   /// </summary>
   internal class TunerDetectorAnalog : ITunerDetectorSystem
   {
+    #region constants
+
+    private static readonly HashSet<string> CAPTURE_DEVICE_BLACKLIST = new HashSet<string>
+    {
+      // Hauppauge WinTV CI and TerraTec Cinergy CI USB
+      // Attempting to load these as capture sources causes a BSOD.
+      "WinTVCIUSBBDA Source",
+      "WinTVCIUSB",
+      "Cinergy CI USB Capture",
+      "US2CIBDA"
+    };
+
+    #endregion
+
     #region variables
 
     // key = device path
@@ -101,7 +115,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
       {
         string name = device.Name;
         string devicePath = device.DevicePath;
-        if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(devicePath))
+        if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(devicePath) || CAPTURE_DEVICE_BLACKLIST.Contains(name))
         {
           device.Dispose();
           continue;
