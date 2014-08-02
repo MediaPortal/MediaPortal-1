@@ -15,7 +15,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
   public abstract class TimeShifterBase
   {
     protected ITvCardHandler _cardHandler;
-    protected bool _timeshiftingEpgGrabberEnabled;
+    protected bool _timeshiftingEpgGrabberEnabled = false;
     private TimeShiftingEpgGrabber _timeShiftingEpgGrabber = null;
     private readonly int _waitForTimeshifting = 15;
     protected readonly ManualResetEvent _eventAudio = new ManualResetEvent(false); // gets signaled when audio PID is seen
@@ -24,12 +24,12 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     protected readonly ManualResetEvent _eventTimeshift = new ManualResetEvent(true);
     protected ITvSubChannel _subchannel; // the active sub channel to record        
 
-    protected TimeShifterBase()
+    protected TimeShifterBase(ITvCardHandler cardHandler)
     {
+      _cardHandler = cardHandler;
       _eventAudio.Reset();
       _eventVideo.Reset();
 
-      
       _waitForTimeshifting = SettingsManagement.GetValue("timeshiftWaitForTimeshifting", 15);
 
       if (_cardHandler != null)
@@ -38,6 +38,8 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         {
           _cardHandler.Tuner.OnAfterCancelTuneEvent += new OnAfterCancelTuneDelegate(Tuner_OnAfterCancelTuneEvent);
         }
+
+        _timeshiftingEpgGrabberEnabled = SettingsManagement.GetValue("timeshiftingEpgGrabberEnabled", false);
         _timeShiftingEpgGrabber = new TimeShiftingEpgGrabber(_cardHandler.Card);
       }
     }

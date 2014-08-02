@@ -40,6 +40,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     /// </summary>
     /// <param name="cardHandler">The card handler.</param>
     public Recorder(ITvCardHandler cardHandler)
+      : base(cardHandler)
     {
       string recordingFolder = cardHandler.DataBaseCard.RecordingFolder;
 
@@ -62,9 +63,6 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
           Directory.CreateDirectory(recordingFolder); //if it fails, then nothing works reliably.
         }
       }
-
-      _cardHandler = cardHandler;
-      _timeshiftingEpgGrabberEnabled = SettingsManagement.GetValue("timeshiftingEpgGrabberEnabled", false);
     }
 
     private static string SetDefaultRecordingFolder(ITvCardHandler cardHandler)

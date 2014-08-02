@@ -44,6 +44,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     /// </summary>
     /// <param name="cardHandler">The card handler.</param>
     public TimeShifter(ITvCardHandler cardHandler)
+      : base(cardHandler)
     {
       string timeshiftingFolder = cardHandler.DataBaseCard.TimeshiftingFolder;
 
@@ -66,12 +67,8 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         }
       }
 
-      _cardHandler = cardHandler;
-
       _linkageScannerEnabled = SettingsManagement.GetValue("linkageScannerEnabled", false);
-
       _linkageGrabber = new ChannelLinkageGrabber(cardHandler.Card);
-      _timeshiftingEpgGrabberEnabled = SettingsManagement.GetValue("timeshiftingEpgGrabberEnabled", false);
 
       _timeAudioEvent = DateTime.MinValue;
       _timeVideoEvent = DateTime.MinValue;
