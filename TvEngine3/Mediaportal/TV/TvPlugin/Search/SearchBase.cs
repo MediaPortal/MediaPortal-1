@@ -852,7 +852,7 @@ namespace Mediaportal.TV.TvPlugin.Search
         case SearchMode.Description:
           {
             IEnumerable<Program> titles = new List<Program>();
-            if (filterLetter == "#")
+            if (filterLetter == "0")
             {
               if (filterShow == string.Empty)
               {
@@ -1108,7 +1108,7 @@ namespace Mediaportal.TV.TvPlugin.Search
         case SearchMode.Genre:
           if (currentLevel == 0)
           {
-            filterLetter = "#";
+            filterLetter = "0";
             filterShow = string.Empty;
             filterEpisode = string.Empty;
             currentGenre = item.Label;

@@ -104,6 +104,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
     protected string _currentTitle = String.Empty;
     protected int _cursorX;
     protected int _cursorY;
+    protected int _backupSingleViewCursorX = 0;
     protected bool _needUpdate;
     protected int _numberOfBlocks = 4;
     protected bool _showChannelLogos;
@@ -853,7 +854,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
       }
     }
 
-    protected void OnSwitchMode()
+    protected void OnSwitchMode(bool returnPreviousMenu)
     {
       UnFocus();
       _singleChannelView = !_singleChannelView;
@@ -864,6 +865,13 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
         _programOffset = _cursorY = _cursorX = 0;
         _recalculateProgramOffset = true;
+      }
+      else if (returnPreviousMenu)
+      {
+        //focus current channel
+        _cursorY = 0;
+        _cursorX = _backupSingleViewCursorX;
+        ChannelOffset = _backupChannelOffset;
       }
       else
       {
@@ -4129,16 +4137,20 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
           case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
             {
-              base.OnMessage(message);
-              SaveSettings();
-              if (_recordingList != null && TVHome.Connected)
+              if (!_singleChannelView)
               {
-                _recordingList.Clear();
+                base.OnMessage(message);
+                SaveSettings();
+                if (_recordingList != null && TVHome.Connected)
+                {
+                  _recordingList.Clear();
+                }
+
+                _controls = new Dictionary<int, GUIButton3PartControl>();
+                _channelList = null;
+                _recordingList = null;
+                _currentProgram = null;
               }
-              _controls = new Dictionary<int, GUIButton3PartControl>();
-              _channelList = null;
-              _recordingList = null;
-              _currentProgram = null;
               return true;
             }
 
@@ -4353,7 +4365,8 @@ namespace Mediaportal.TV.TvPlugin.EPG
             }
             else if (_cursorY == 0)
             {
-              OnSwitchMode();
+              _backupSingleViewCursorX = _cursorX;
+              OnSwitchMode(false);
             }
             break;
         }
@@ -4372,7 +4385,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
         case Action.ActionType.ACTION_PREVIOUS_MENU:
           if (_singleChannelView)
           {
-            GUIWindowManager.ActivateWindow(GetID);
+            OnSwitchMode(true);
             return;
           }
           GUIWindowManager.ShowPreviousWindow();
@@ -4475,7 +4488,8 @@ namespace Mediaportal.TV.TvPlugin.EPG
             {
               if (_cursorY == 0)
               {
-                OnSwitchMode();
+                _backupSingleViewCursorX = _cursorX;
+                OnSwitchMode(false);
                 return;
               }
               ShowContextMenu();

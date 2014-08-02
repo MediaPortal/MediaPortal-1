@@ -9,77 +9,83 @@
             <type>group</type>
             <animation effect="fade" time="250">WindowOpen</animation>
 			<animation effect="zoom" delay="100" tween="elastic" easing="out" start="95,95" end="100,100" center="683,384" time="550">WindowOpen</animation>
+
+			<control>
+				<id>0</id>
+				<type>image</type>
+				<posX>441</posX>
+				<posY>296</posY>
+				<width>1040</width>
+				<height>679</height>
+				<texture>context_background.png</texture>
+			</control>
 			
-        <control>
-            <id>0</id>
-            <type>image</type>
-            <posX>409</posX>
-            <posY>164</posY>
-            <width>548</width>
-            <height>440</height>
-            <texture>context_background.png</texture>
-        </control>
+			<control>
+				<id>4</id>
+				<description>Heading text label</description>
+				<type>label</type>
+				<posX>560</posX>
+				<posY>375</posY>
+				<width>900</width>
+				<font>Segoe Light18</font>
+				<textcolor>ff85cffe</textcolor>
+			</control>
 		
-        <control>
-            <id>4</id>
-            <description>Heading text label</description>
-            <type>label</type>
-            <posX>469</posX>
-            <posY>212</posY>
-			<width>426</width>
-            <font>Segoe Light18</font>
-            <textcolor>ff85cffe</textcolor>
-            <label>-</label>
-        </control>
+			<control>
+				<id>5</id>
+				<description>Subtitle text label</description>
+				<type>label</type>
+				<posX>560</posX>
+				<posY>410</posY>
+				<width>900</width>
+				<font>TitanLight22</font>
+				<textcolor>ff393939</textcolor>
+			</control>
+			
+			<control>
+				<id>6</id>
+				<description>bottom text label</description>
+				<type>label</type>
+				<posX>560</posX>
+				<posY>838</posY>
+				<width>740</width>
+				<font>font12</font>
+			</control>
 		
-        <control>
-            <id>5</id>
-            <description>Subtitle text label</description>
-            <type>label</type>
-            <posX>469</posX>
-            <posY>249</posY>
-            <width>426</width>
-            <font>font12</font>
-            <label/>
-        </control>
-		
-        <control>
-            <id>6</id>
-            <description>bottom text label</description>
-            <type>label</type>
-            <posX>469</posX>
-            <posY>536</posY>
-            <width>426</width>
-            <font>font12</font>
-            <label/>
-        </control>
-		
-	        <control>
-                <id>3</id>
-                <description>options listcontrol</description>
-                <type>listcontrol</type>
-                <onleft>3</onleft>
-                <onright>3</onright>
-                <posX>409</posX>
-                <posY>277</posY>
-                <width>548</width>
-                <height>300</height>
-                <textXOff2>460</textXOff2>
-                <textYOff2>10</textYOff2>
-                <spinPosX>902</spinPosX>
-                <spinPosY>535</spinPosY>
-                <textXOff>48</textXOff>
-                <textYOff>8</textYOff>
-                <textureFocus>context_item_selected.png</textureFocus>
-                <textureNoFocus>context_item.png</textureNoFocus>
-                <textureHeight>49</textureHeight>
-                <spaceBetweenItems>1</spaceBetweenItems>
+		    <control>
+				<id>3</id>
+				<description>options listcontrol</description>
+				<type>listcontrol</type>
+				<onleft>3</onleft>
+				<onright>3</onright>
+				<posX>515</posX>
+				<posY>475</posY>
+				<width>890</width>
+				<height>450</height>
+				<textXOff2>875</textXOff2>
+				<textYOff2>16</textYOff2>
+				<spinPosX>1350</spinPosX>
+				<spinPosY>840</spinPosY>
+				<spinColor>FFFFFFFF</spinColor>-->
+				<textXOff>35</textXOff>
+				<textYOff>16</textYOff>
+				<font>TitanLight12</font>
+				<font2>TitanLight12</font2>
+				<textcolor>FFFFFFFF</textcolor>
+				<textcolor2>FFFFFFFF</textcolor2>
+				<textcolorNoFocus>FF393939</textcolorNoFocus>
+				<textcolorNoFocus2>FF393939</textcolorNoFocus2>
+				<selectedColor>FF000000</selectedColor>                
+				<textureFocus>context_item_selected.png</textureFocus>
+				<textureNoFocus>-</textureNoFocus>
+				<textureHeight>69</textureHeight>
+				<spaceBetweenItems>1</spaceBetweenItems>
 				<PinIconWidth>15</PinIconWidth>
 				<PinIconHeight>15</PinIconHeight>
-                <PinIconXOff>39</PinIconXOff>
-                <PinIconYOff>15</PinIconYOff>
-            </control>
-			
+				<PinIconXOff>39</PinIconXOff>
+				<PinIconYOff>15</PinIconYOff>
+				<unfocusedAlpha>255</unfocusedAlpha>
+			</control>	
         </control>
     </controls>
 </window>

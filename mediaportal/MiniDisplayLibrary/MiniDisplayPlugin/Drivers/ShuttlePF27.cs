@@ -32,7 +32,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
   /// Shuttle PF27 VFD driver
   /// </summary>
   /// <author>pridehaveit</author>
-  public class ShuttlePF27 : BaseDisplay, IDisplay
+  public class ShuttlePF27 : BaseDisplay
   {
     #region Fields
 
@@ -76,7 +76,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     /// On clean up the clock is activated so the time is shown
     /// when MediaPortal is closed or put to standby.
     /// </summary>
-    public void CleanUp()
+    public override void CleanUp()
     {
       SetClock();
     }
@@ -84,7 +84,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     /// <summary>
     /// Shows the advanced configuration screen.
     /// </summary>
-    public void Configure()
+    public override void Configure()
     {
       MessageBox.Show("No advanced configuration", "Information",
                       MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -93,26 +93,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     /// <summary>
     /// Description of this display driver.
     /// </summary>
-    public string Description
+    public override string Description
     {
       get { return "Shuttle PF27 VFD driver for Shuttle SG33G5M Barebones"; }
     }
 
-    public void Dispose()
-    {
-      try
-      {
-        vfd.Shutdown();
-      }
-      catch (Exception ex)
-      {
-        Log.Error(ex);
-      }
-    }
+    public override void DrawImage(Bitmap bitmap) { }
 
-    public void DrawImage(Bitmap bitmap) {}
-
-    public string ErrorMessage
+    public override string ErrorMessage
     {
       get { return errorMessage; }
     }
@@ -120,12 +108,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     /// <summary>
     /// Clears screen.
     /// </summary>
-    public void Initialize()
+    public override void Initialize()
     {
       ClearScreen();
     }
 
-    public bool IsDisabled
+    public override bool IsDisabled
     {
       get { return isDisabled; }
     }
@@ -133,12 +121,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     /// <summary>
     /// Short name of this display driver.
     /// </summary>
-    public string Name
+    public override string Name
     {
       get { return "Shuttle PF27"; }
     }
 
-    public void SetCustomCharacters(int[][] customCharacters) {}
+    public override void SetCustomCharacters(int[][] customCharacters) { }
 
     /// <summary>
     /// Displays the message on the indicated line.
@@ -148,7 +136,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     /// </summary>
     /// <param name="line">The line to display the message on</param>
     /// <param name="message">The message to display</param>
-    public void SetLine(int line, string message)
+    public override void SetLine(int line, string message)
     {
       if (line >= Lines)
       {
@@ -271,13 +259,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     /// <param name="_contrast">Contrast on?</param>
     /// <param name="_contrastLevel">Contrast level</param>
     /// <param name="_blankOnExit">Blank on exit?</param>
-    public void Setup(string _port, int _lines, int _cols, int _delay, int _linesG, int _colsG, int _delayG,
+    public override void Setup(string _port, int _lines, int _cols, int _delay, int _linesG, int _colsG, int _delayG,
                       bool _backLight, int _backLightLevel, bool _contrast, int _contrastLevel, bool _blankOnExit) {}
 
     /// <summary>
     /// Shuttle PF27 display does not support graphics.
     /// </summary>
-    public bool SupportsGraphics
+    public override bool SupportsGraphics
     {
       get { return false; }
     }
@@ -285,7 +273,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     /// <summary>
     /// Shuttle PF27 display only support text.
     /// </summary>
-    public bool SupportsText
+    public override bool SupportsText
     {
       get { return true; }
     }
@@ -293,6 +281,18 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     #endregion
 
     #region IDisposable Members
+
+    public override void Dispose()
+    {
+        try
+        {
+            vfd.Shutdown();
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex);
+        }
+    }
 
     #endregion
 

@@ -377,47 +377,13 @@ namespace Mediaportal.TV.TvPlugin.Recorded
       base.OnPageLoad();
       InitViewSelections();
 
-      // launch DeleteInvalidRecordings async for instant start of GUI screen - refresh GUI later, if recordings have been deleted
-      bool recordingsDeleted = false;
-      Object loadFacadeLock = new Object();
-
-      new Thread(delegate()
+      if (btnCompress != null)
       {
-        {
-          try
-          {
-            recordingsDeleted = DeleteInvalidRecordings();
-          }
-          catch (Exception ex)
-          {
-            Log.Debug("DeleteInvalidRecordings - error: " + ex.Message);
-          }
-        }
-        GUIWindowManager.SendThreadCallbackAndWait((p1, p2, data) =>
-        {
-          {
-            if (recordingsDeleted)
-            {
-              Log.Debug("RecordedBase: recordings were deleted -> now update GUI");
-              lock (loadFacadeLock)
-              {
-                UpdateGUI();
-              }
-            }
-            else
-            {
-              Log.Debug("RecordedBase: no recordings were deleted -> skip GUI update");
-            }
-          }
-          return 0;
-        }, 0, 0, null);
-      }) { Name = "DeleteInvalidRecordings", IsBackground = true, Priority = ThreadPriority.BelowNormal }.Start();
+        btnCompress.Visible = false;
+      }
 
       LoadSettings();
-      lock (loadFacadeLock)
-      {
-        LoadDirectory();
-      }
+      LoadDirectory();
 
       while (_selectedItem >= GetItemCount() && _selectedItem > 0)
       {

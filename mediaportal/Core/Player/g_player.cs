@@ -1512,17 +1512,6 @@ namespace MediaPortal.Player
               bool bInternal = xmlreader.GetValueAsBool("movieplayer", "internal", true);
               bool bInternalDVD = xmlreader.GetValueAsBool("dvdplayer", "internal", true);
 
-              // check if we are running from Images / Discs
-              string pathRoot = Path.GetPathRoot(strFile);
-              if (Util.Utils.getDriveType(pathRoot) == 5 && !bInternalDVD)
-              {
-                bInternalDVD = false;
-              }
-              else
-              {
-                bInternalDVD = true;
-              }
-
               // External player extension filter
               _externalPlayerExtensions = xmlreader.GetValueAsString("movieplayer", "extensions", "");
               if (!bInternal && !string.IsNullOrEmpty(_externalPlayerExtensions) &&

@@ -278,17 +278,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public static void LoadWindowPlugins()
     {
-      using (Settings xmlreader = new MPSettings())
-      {
-        if (xmlreader.GetValueAsBool("general", "threadedstartup", false))
-        {
-          LoadWindowPluginsThreaded();
-        }
-        else
-        {
-          LoadWindowPluginsNonThreaded();
-        }
-      }
+      LoadWindowPluginsNonThreaded();
     }
 
     /// <summary>
@@ -312,15 +302,6 @@ namespace MediaPortal.GUI.Library
       // ReSharper disable EmptyGeneralCatchClause
       catch (Exception) { }
       // ReSharper restore EmptyGeneralCatchClause
-
-      // need to load windowPlugins.dll first
-      string windowPluginsDLL = Config.GetFile(Config.Dir.Plugins, @"windows\WindowPlugins.dll");
-      DateTime startTimeNonThreaded = DateTime.Now;
-      Log.Debug("PluginManager: Begin loading '\\windows\\WindowPlugins.dll' (non threaded)");
-      LoadWindowPlugin(windowPluginsDLL);
-      DateTime endTimeNonThreaded = DateTime.Now;
-      TimeSpan runningTimeNonThreaded = endTimeNonThreaded - startTimeNonThreaded;
-      Log.Debug("PluginManager: End loading '\\windows\\WindowPlugins.dll' ({0} ms running time)", runningTimeNonThreaded.TotalMilliseconds);
 
       string[] strFiles = MediaPortal.Util.Utils.GetFiles(Config.GetSubFolder(Config.Dir.Plugins, "windows"), "dll");
 

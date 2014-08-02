@@ -305,6 +305,31 @@ namespace Mediaportal.TV.TvPlugin.Helper
                 string parentFolderName = dirInfo.Name;
                 fileName = TVHome.RecordingPath() + "\\" + parentFolderName + "\\" + fileName;
               }
+
+              fileExists = File.Exists(fileName);
+
+              //check with foldername from set UNC Path
+              if (!fileExists)
+              {
+                //Get last foldername of RecordingPath
+                string parentFolderNameRecording =
+                  Path.GetFileName(TVHome.RecordingPath().TrimEnd(Path.DirectorySeparatorChar));
+                parentFolderNameRecording = @"\" + parentFolderNameRecording.Replace(@"\", "\"\"") + @"\";
+                //Replace "\" with "" and add a "\" at the beginning and end (good for searching the path in the recording filename)
+
+                //Search the last folder of the set recording path in var rec.FileName 
+                int iPos = rec.FileName.IndexOf(parentFolderNameRecording);
+                if (iPos != -1)
+                {
+                  //We have found the last Folder of the set recording path in var rec.FileName 
+
+                  //Cut the first string (ussaly the TV Server Local Path) and remove the last Recording Folder from string
+                  fileName = rec.FileName.Substring(iPos).Replace(parentFolderNameRecording, "");
+
+                  //Add the recording path
+                  fileName = TVHome.RecordingPath() + "\\" + fileName;
+                }
+              }
             }
             else
             {
@@ -338,7 +363,7 @@ namespace Mediaportal.TV.TvPlugin.Helper
       string chapters = useRTSP ? ServiceAgents.Instance.ControllerServiceAgent.GetRecordingChapters(rec.IdRecording) : null;
 
       Log.Info("PlayRecording:{0} - using rtsp mode:{1}", fileName, useRTSP);
-      if (g_Player.Play(fileName, mediaType, chapters, false))
+      if (g_Player.Play(fileName, mediaType, chapters, false)) // Force to use TsReader if true it will use Movie Codec and Splitter
       {
         if (Utils.IsVideo(fileName) && !g_Player.IsRadio)
         {

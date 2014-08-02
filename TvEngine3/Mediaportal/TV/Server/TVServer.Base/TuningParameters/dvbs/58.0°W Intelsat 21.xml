@@ -172,6 +172,15 @@
     <Rolloff>NotSet</Rolloff>
   </Transponder>
   <Transponder>
+    <CarrierFrequency>4137000</CarrierFrequency>
+    <Polarisation>LinearH</Polarisation>
+    <SymbolRate>2020</SymbolRate>
+    <Modulation>ModNotSet</Modulation>
+    <InnerFecRate>Rate5_6</InnerFecRate>
+    <Pilot>NotSet</Pilot>
+    <Rolloff>NotSet</Rolloff>
+  </Transponder>
+  <Transponder>
     <CarrierFrequency>4144000</CarrierFrequency>
     <Polarisation>LinearV</Polarisation>
     <SymbolRate>2205</SymbolRate>

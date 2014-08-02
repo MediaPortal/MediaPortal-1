@@ -136,7 +136,7 @@
     <Rolloff>NotSet</Rolloff>
   </Transponder>
   <Transponder>
-    <CarrierFrequency>10972000</CarrierFrequency>
+    <CarrierFrequency>10973000</CarrierFrequency>
     <Polarisation>LinearV</Polarisation>
     <SymbolRate>3330</SymbolRate>
     <Modulation>ModNotSet</Modulation>
@@ -172,15 +172,6 @@
     <Rolloff>NotSet</Rolloff>
   </Transponder>
   <Transponder>
-    <CarrierFrequency>11107000</CarrierFrequency>
-    <Polarisation>LinearV</Polarisation>
-    <SymbolRate>3255</SymbolRate>
-    <Modulation>ModNotSet</Modulation>
-    <InnerFecRate>Rate3_4</InnerFecRate>
-    <Pilot>NotSet</Pilot>
-    <Rolloff>NotSet</Rolloff>
-  </Transponder>
-  <Transponder>
     <CarrierFrequency>11110000</CarrierFrequency>
     <Polarisation>LinearV</Polarisation>
     <SymbolRate>1765</SymbolRate>
@@ -208,7 +199,7 @@
     <Rolloff>NotSet</Rolloff>
   </Transponder>
   <Transponder>
-    <CarrierFrequency>11463000</CarrierFrequency>
+    <CarrierFrequency>11464000</CarrierFrequency>
     <Polarisation>LinearV</Polarisation>
     <SymbolRate>1000</SymbolRate>
     <Modulation>ModNotSet</Modulation>
@@ -262,15 +253,6 @@
     <Rolloff>NotSet</Rolloff>
   </Transponder>
   <Transponder>
-    <CarrierFrequency>3699000</CarrierFrequency>
-    <Polarisation>CircularR</Polarisation>
-    <SymbolRate>1666</SymbolRate>
-    <Modulation>ModQpsk</Modulation>
-    <InnerFecRate>Rate5_6</InnerFecRate>
-    <Pilot>Off</Pilot>
-    <Rolloff>ThirtyFive</Rolloff>
-  </Transponder>
-  <Transponder>
     <CarrierFrequency>3744000</CarrierFrequency>
     <Polarisation>CircularR</Polarisation>
     <SymbolRate>18315</SymbolRate>
@@ -301,15 +283,6 @@
     <CarrierFrequency>4168000</CarrierFrequency>
     <Polarisation>CircularR</Polarisation>
     <SymbolRate>14240</SymbolRate>
-    <Modulation>Mod8Psk</Modulation>
-    <InnerFecRate>Rate3_4</InnerFecRate>
-    <Pilot>On</Pilot>
-    <Rolloff>ThirtyFive</Rolloff>
-  </Transponder>
-  <Transponder>
-    <CarrierFrequency>10982000</CarrierFrequency>
-    <Polarisation>LinearV</Polarisation>
-    <SymbolRate>3170</SymbolRate>
     <Modulation>Mod8Psk</Modulation>
     <InnerFecRate>Rate3_4</InnerFecRate>
     <Pilot>On</Pilot>

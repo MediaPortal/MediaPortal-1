@@ -232,7 +232,9 @@ namespace Mediaportal.TV.Server.SetupTV
       }
 
       this.LogInfo("---- upgrade database schema ----");
-      if (!dlg.UpgradeDBSchema(currentSchemaVersion))
+      // Get MySQL server version
+      string currentServerVersion = dlg.GetCurrentServerVersion(startupMode);
+      if (!dlg.UpgradeDBSchema(currentSchemaVersion, currentServerVersion))
       {
         MessageBox.Show("Failed to upgrade the database.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         return;

@@ -311,7 +311,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         }
         IList<Schedule> overlapping;
         List<Schedule> notViewable;
-        if (!AssignSchedulesToCard(newEpisode, cardSchedules, out overlapping, out notViewable))
+        if (!AssignSchedulesToCardConflict(newEpisode, cardSchedules, out overlapping, out notViewable))
         {
           Log.Info("GetConflictingSchedules: newEpisode can not be assigned to a card = " + newEpisode);
           conflicts.AddRange(overlapping);
@@ -322,6 +322,26 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     }
 
     private static bool AssignSchedulesToCard(Schedule schedule, List<Schedule>[] cardSchedules, out IList<Schedule> overlappingSchedules, out List<Schedule> notViewabledSchedules)
+    {
+      overlappingSchedules = new List<Schedule>();
+      notViewabledSchedules = new List<Schedule>();
+      Log.Info("AssignSchedulesToCard: schedule = " + schedule);
+      IEnumerable<Card> cards = CardManagement.ListAllCards(CardIncludeRelationEnum.None); //SEB
+      int count = 0;
+      foreach (Card card in cards)
+      {
+        if (card.Enabled && CardManagement.CanViewTvChannel(card, schedule.IdChannel))
+        {
+          Log.Info("AssignSchedulesToCard: free on card {0}, ID = {1}", count, card.IdCard);
+          cardSchedules[count].Add(schedule);
+          break;
+        }
+        count++;
+      }
+      return true;
+    }
+
+    private static bool AssignSchedulesToCardConflict(Schedule schedule, List<Schedule>[] cardSchedules, out IList<Schedule> overlappingSchedules, out List<Schedule> notViewabledSchedules)
     {
       overlappingSchedules = new List<Schedule>();
       notViewabledSchedules = new List<Schedule>();

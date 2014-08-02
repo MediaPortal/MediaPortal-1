@@ -666,6 +666,23 @@ namespace TvControl
     }
 
     /// <summary>
+    /// Returns a list of radio channel group names.
+    /// </summary>
+    /// <returns></returns>
+    public List<string> GetRadioChannelGroupNames()
+    {
+      try
+      {
+        return RemoteControl.Instance.GetRadioChannelGroupNames();
+      }
+      catch (Exception e)
+      {
+        HandleFailure("GetRadioChannelGroupNames", e);
+      }
+      return new List<string>();
+    }
+
+    /// <summary>
     /// Sets the TV server hostname directly.  Used in the MP configuration tool.
     /// </summary>
     /// <param name="hostname">The master TV server hostname</param>

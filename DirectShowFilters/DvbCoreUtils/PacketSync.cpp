@@ -18,7 +18,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-#include <Windows.h>
+#include <windows.h>
 #include "..\shared\PacketSync.h"
 
 
@@ -193,7 +193,7 @@ void CPacketSync::OnRawData2(byte* pData, int nDataLen)
         {
           memcpy(&m_tempBuffer[m_tempBufferPos], pData, syncOffset);
         }
-        OnTsPacket(&m_tempBuffer[tempBuffOffset]);
+        OnTsPacket(&m_tempBuffer[tempBuffOffset], syncOffset, nDataLen);
         goodPacket = true;
         m_bInSync = true;
         break;
@@ -208,7 +208,7 @@ void CPacketSync::OnRawData2(byte* pData, int nDataLen)
         }
         m_tempBuffer[tempBuffOffset] = TS_PACKET_SYNC;
         pData[syncOffset] = TS_PACKET_SYNC;
-        OnTsPacket(&m_tempBuffer[tempBuffOffset]);
+        OnTsPacket(&m_tempBuffer[tempBuffOffset], syncOffset, nDataLen);
         goodPacket = true;
         m_bInSync = false;
         break;
@@ -256,7 +256,7 @@ void CPacketSync::OnRawData2(byte* pData, int nDataLen)
     if ((pData[syncOffset] == TS_PACKET_SYNC) &&
         (pData[syncOffset + TS_PACKET_LEN]==TS_PACKET_SYNC))
     {
-      OnTsPacket( &pData[syncOffset] );
+      OnTsPacket( &pData[syncOffset], syncOffset, nDataLen );
       syncOffset += TS_PACKET_LEN;
       goodPacket = true;
       m_bInSync = true;
@@ -267,7 +267,7 @@ void CPacketSync::OnRawData2(byte* pData, int nDataLen)
     {
       pData[syncOffset] = TS_PACKET_SYNC;
       pData[syncOffset + TS_PACKET_LEN] = TS_PACKET_SYNC;
-      OnTsPacket( &pData[syncOffset] );
+      OnTsPacket( &pData[syncOffset], syncOffset, nDataLen );
       syncOffset += TS_PACKET_LEN;
       goodPacket = true;
       m_bInSync = false;
@@ -288,5 +288,9 @@ void CPacketSync::OnRawData2(byte* pData, int nDataLen)
 }
 
 void CPacketSync::OnTsPacket(byte* tsPacket)
+{
+}
+
+void CPacketSync::OnTsPacket(byte* tsPacket, int bufferOffset, int bufferLength)
 {
 }

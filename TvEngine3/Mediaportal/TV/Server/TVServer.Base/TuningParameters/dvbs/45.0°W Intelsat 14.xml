@@ -208,6 +208,15 @@
     <Rolloff>ThirtyFive</Rolloff>
   </Transponder>
   <Transponder>
+    <CarrierFrequency>4186000</CarrierFrequency>
+    <Polarisation>LinearH</Polarisation>
+    <SymbolRate>4960</SymbolRate>
+    <Modulation>ModQpsk</Modulation>
+    <InnerFecRate>Rate3_5</InnerFecRate>
+    <Pilot>Off</Pilot>
+    <Rolloff>ThirtyFive</Rolloff>
+  </Transponder>
+  <Transponder>
     <CarrierFrequency>11487000</CarrierFrequency>
     <Polarisation>LinearV</Polarisation>
     <SymbolRate>1237</SymbolRate>

@@ -559,7 +559,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
         // Then check if standby is allowed at this moment
         this.LogDebug("PS: Check if standby is allowed at this moment");
         int Current24hHour = Convert.ToInt32(DateTime.Now.ToString("HH"));
-        if ( // Stop time one day after start time (23:00 -> 07:00)
+        if ((( // Stop time one day after start time (23:00 -> 07:00)
           ((_settings.AllowedSleepStartTime > _settings.AllowedSleepStopTime)
            && (Current24hHour < _settings.AllowedSleepStartTime)
            && (Current24hHour >= _settings.AllowedSleepStopTime))
@@ -570,7 +570,20 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
           // 2 possibilities for the same day: before or after the timespan
            ((Current24hHour < _settings.AllowedSleepStartTime) ||
             (Current24hHour >= _settings.AllowedSleepStopTime))
-          ))
+          )) && ((int)DateTime.Now.DayOfWeek > 0) && (int)DateTime.Now.DayOfWeek < 6)
+        ||
+        (( // Stop Time one day after start Time (23:00 -> 07:00)
+          ((_settings.AllowedSleepStartTimeOnWeekend > _settings.AllowedSleepStopTimeOnWeekend)
+           && (Current24hHour < _settings.AllowedSleepStartTimeOnWeekend)
+           && (Current24hHour >= _settings.AllowedSleepStopTimeOnWeekend))
+          ||
+          // Start Time and stop Time on the same day (01:00 -> 17:00)
+          ((_settings.AllowedSleepStartTimeOnWeekend < _settings.AllowedSleepStopTimeOnWeekend)
+           &&
+          // 2 possibilities for the same day: before or after the Timespan
+           ((Current24hHour < _settings.AllowedSleepStartTimeOnWeekend) ||
+            (Current24hHour >= _settings.AllowedSleepStopTimeOnWeekend))
+          )) && (((int)DateTime.Now.DayOfWeek == 0) || (int)DateTime.Now.DayOfWeek == 6)))
         {
           this.LogDebug("PS: Standby is not allowed at this hour: StandbyPrevented");
           _currentStandbyHandler = "NOT-ALLOWED-TIME";
@@ -1127,6 +1140,24 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
       {
         _settings.AllowedSleepStopTime = intSetting;
         this.LogDebug("PS: Standby allowed until {0} o' clock", _settings.AllowedSleepStopTime);
+        changed = true;
+      }
+
+      // Check allowed start time on weekend
+      intSetting = SettingsManagement.GetValue("PowerSchedulerStandbyHoursOnWeekendFrom", 0);
+      if (_settings.AllowedSleepStartTimeOnWeekend != intSetting)
+      {
+        _settings.AllowedSleepStartTimeOnWeekend = intSetting;
+        this.LogDebug("PS: Standby allowed from {0} o' clock on weekend", _settings.AllowedSleepStartTimeOnWeekend);
+        changed = true;
+      }
+
+      // Check allowed stop time on weekend
+      intSetting = SettingsManagement.GetValue("PowerSchedulerStandbyHoursOnWeekendTo", 24);
+      if (_settings.AllowedSleepStopTimeOnWeekend != intSetting)
+      {
+        _settings.AllowedSleepStopTimeOnWeekend = intSetting;
+        this.LogDebug("PS: Standby allowed until {0} o' clock on weekend", _settings.AllowedSleepStopTimeOnWeekend);
         changed = true;
       }
 

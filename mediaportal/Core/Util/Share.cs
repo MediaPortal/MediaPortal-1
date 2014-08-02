@@ -57,6 +57,7 @@ namespace MediaPortal.Util
     private bool runtimeAdded;
     public Layout DefaultLayout = Layout.List;
     private bool shareWakeOnLan = false;
+    private bool donotFolderJpgIfPin = true;
 
     /// <summary>
     /// empty constructor
@@ -150,6 +151,15 @@ namespace MediaPortal.Util
     {
       get { return shareWakeOnLan; }
       set { shareWakeOnLan = value; }
+    }
+
+    /// <summary>
+    /// Property to get/set DonotFolderJpgIfPin for server
+    /// </summary>
+    public bool DonotFolderJpgIfPin
+    {
+      get { return donotFolderJpgIfPin; }
+      set { donotFolderJpgIfPin = value; }
     }
 
     /// <summary>

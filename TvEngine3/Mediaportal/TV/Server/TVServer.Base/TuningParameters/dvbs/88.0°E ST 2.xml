@@ -109,7 +109,7 @@
     <Rolloff>ThirtyFive</Rolloff>
   </Transponder>
   <Transponder>
-    <CarrierFrequency>11008000</CarrierFrequency>
+    <CarrierFrequency>10978000</CarrierFrequency>
     <Polarisation>LinearH</Polarisation>
     <SymbolRate>1000</SymbolRate>
     <Modulation>Mod8Psk</Modulation>

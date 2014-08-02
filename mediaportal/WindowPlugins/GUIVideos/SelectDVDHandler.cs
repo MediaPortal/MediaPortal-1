@@ -263,13 +263,6 @@ namespace MediaPortal.GUI.Video
               continue;
             }
 
-            if (isFolderPinProtected)
-            {
-              // hide maybe rated content
-              Util.Utils.SetDefaultIcons(pItem);
-              continue;
-            }
-
             // If this is enabled you'll see the thumb of the first movie in that dir - but if you put serveral movies into that dir you'll be irritated...          
             if (!pItem.IsRemote && isDedicatedMovieFolder)
             {

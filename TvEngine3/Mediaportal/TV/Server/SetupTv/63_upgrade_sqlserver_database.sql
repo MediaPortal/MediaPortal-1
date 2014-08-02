@@ -1,0 +1,25 @@
+﻿USE %TvLibrary%
+GO
+
+ALTER TABLE Card ADD idleMode INT NOT NULL DEFAULT 1
+ALTER TABLE Card ADD multiChannelDecryptMode INT NOT NULL DEFAULT 0
+ALTER TABLE Card ADD alwaysSendDiseqcCommands BIT NOT NULL DEFAULT 0
+ALTER TABLE Card ADD diseqcCommandRepeatCount INT NOT NULL DEFAULT 0
+ALTER TABLE Card ADD pidFilterMode INT NOT NULL DEFAULT 2
+ALTER TABLE Card ADD useCustomTuning BIT NOT NULL DEFAULT 0
+ALTER TABLE Card ADD useConditionalAccess BIT NOT NULL DEFAULT 0
+GO
+
+UPDATE Card SET idleMode = stopgraph
+UPDATE Card SET useConditionalAccess = CAM
+GO
+
+ALTER TABLE Card DROP COLUMN recordingFormat
+ALTER TABLE Card DROP CONSTRAINT DF_Card_stopgraph
+ALTER TABLE Card DROP COLUMN stopgraph
+ALTER TABLE Card DROP CONSTRAINT DF_Card_CAM
+ALTER TABLE Card DROP COLUMN CAM
+GO
+
+UPDATE Version SET versionNumber = 63
+GO

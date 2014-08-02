@@ -540,4 +540,13 @@ Please proceed with it before continuing with MediaPortal installation.</value>
   <data name="Reinstall" xml:space="preserve">
     <value>Reinstall current installation to {0}</value>
   </data>
+  <data name="MySQLChoice_Information" xml:space="preserve">
+    <value>Check above value if you want to upgrade your current MySQL 5.1 to 5.6 (old db will not be lost)</value>
+  </data>
+  <data name="MySQLChoice_MoreInfo" xml:space="preserve">
+    <value>More Info</value>
+  </data>
+  <data name="MySQLChoice_Title" xml:space="preserve">
+    <value>MySQL Upgrade 5.1 to 5.6</value>
+  </data>
 </root>

@@ -343,8 +343,8 @@ namespace MediaPortal.Picture.Database
 
         if (_useExif)
         {
-          iRotation = Util.Picture.GetRotateByExif(strPic);
-          Log.Debug("PictureDatabaseSqlLite: GetRotateByExif = {0} for {1}", iRotation, strPic);
+          iRotation = Util.Picture.GetRotateByExif(strPicture);
+          Log.Debug("PictureDatabaseSqlLite: GetRotateByExif = {0} for {1}", iRotation, strPicture);
         }
 
         AddPicture(strPicture, iRotation);

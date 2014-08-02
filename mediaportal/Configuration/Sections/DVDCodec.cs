@@ -95,6 +95,10 @@ namespace MediaPortal.Configuration.Sections
         {
           availableVideoFilters.Remove("Nero Mpeg2 Encoder");
         }
+        while (availableVideoFilters.Contains("Core CC Parser"))
+        {
+          availableVideoFilters.Remove("Core CC Parser");
+        }
         availableVideoFilters.Sort();
         ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
         //Remove Muxer's from Audio decoder list to avoid confusion.

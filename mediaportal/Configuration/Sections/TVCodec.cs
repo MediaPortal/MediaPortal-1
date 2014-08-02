@@ -76,6 +76,10 @@ namespace MediaPortal.Configuration.Sections
         {
           availableVideoFilters.Remove("Nero Mpeg2 Encoder");
         }
+        while (availableVideoFilters.Contains("Core CC Parser"))
+        {
+          availableVideoFilters.Remove("Core CC Parser");
+        }
         availableVideoFilters.Sort();
         ArrayList availableH264VideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.H264);
         availableH264VideoFilters.Sort();

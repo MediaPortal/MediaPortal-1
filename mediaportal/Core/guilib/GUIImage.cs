@@ -26,7 +26,6 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using MediaPortal.ExtensionMethods;
 using MediaPortal.guilib;
-using MediaPortal.Util;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 
