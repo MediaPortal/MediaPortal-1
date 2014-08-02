@@ -870,18 +870,19 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
         return true;
       }
 
+      // If the CI state can't be retrieved successfully then there is no CI slot.
       _mmiBuffer = Marshal.AllocCoTaskMem(MMI_BUFFER_SIZE);
-      _isCaInterfaceOpen = true;
       NetUpCiState ciState;
       int hr = GetCiStatus(out ciState);
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogError("NetUP: failed to get CI status, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogDebug("NetUP: CI slot not detected, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        Marshal.FreeCoTaskMem(_mmiBuffer);
+        return false;
       }
-      else
-      {
-        _isCamPresent = ciState.HasFlag(NetUpCiState.CamPresent);
-      }
+
+      _isCaInterfaceOpen = true;
+      _isCamPresent = ciState.HasFlag(NetUpCiState.CamPresent);
       StartMmiHandlerThread();
 
       this.LogDebug("NetUP: result = success");

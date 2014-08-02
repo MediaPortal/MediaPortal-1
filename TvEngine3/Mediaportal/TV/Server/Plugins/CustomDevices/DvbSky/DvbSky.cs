@@ -447,14 +447,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbSky
       _propertySet = DsFindPin.ByDirection(tunerFilter, PinDirection.Input, 0) as IKsPropertySet;
       ReadMacAddresses();
 
+      // This should succeed even if the product does not have a CI.
       _netUpInterface = new NetUp.NetUp(BDA_EXTENSION_PROPERTY_SET_CA);
-      if (_netUpInterface.Initialise(tunerExternalId, tunerType, context))
+      if (!_netUpInterface.Initialise(tunerExternalId, tunerType, context))
       {
-        this.LogDebug("DVBSky: conditional access interface supported");
-      }
-      else
-      {
-        this.LogDebug("DVBSky: conditional access interface not supported");
+        this.LogWarn("DVBSky: failed to initialise base NetUP interface");
         _netUpInterface.Dispose();
         _netUpInterface = null;
       }
