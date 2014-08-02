@@ -155,7 +155,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpLabel2.Name = "mpLabel2";
       this.mpLabel2.Size = new System.Drawing.Size(307, 13);
       this.mpLabel2.TabIndex = 8;
-      this.mpLabel2.Text = "Port for RTSP streaming (valid range: 554 - 65535, default 554):";
+      this.mpLabel2.Text = "Port for RTSP streaming (valid range: 1 - 65535, default 554):";
       // 
       // IpAddressComboBox
       // 
