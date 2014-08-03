@@ -112,17 +112,28 @@ namespace TvPlugin
       OSD_VIDEOPOS_LABEL = 750
     } ;
 
-    [SkinControl(10)] protected GUIImage imgTvChannelLogo = null;
-    [SkinControl(31)] protected GUIButtonControl btnChannelUp = null;
-    [SkinControl(32)] protected GUIButtonControl btnChannelDown = null;
-    [SkinControl(33)] protected GUIButtonControl btnPreviousProgram = null;
-    [SkinControl(34)] protected GUIButtonControl btnNextProgram = null;
-    [SkinControl(35)] protected GUILabelControl lblCurrentChannel = null;
-    [SkinControl(36)] protected GUITextControl tbOnTvNow = null;
-    [SkinControl(37)] protected GUITextControl tbOnTvNext = null;
-    [SkinControl(38)] protected GUITextScrollUpControl tbProgramDescription = null;
-    [SkinControl(39)] protected GUIImage imgRecIcon = null;
-    [SkinControl(100)] protected GUILabelControl lblCurrentTime = null;
+    [SkinControl(10)]
+    protected GUIImage imgTvChannelLogo = null;
+    [SkinControl(31)]
+    protected GUIButtonControl btnChannelUp = null;
+    [SkinControl(32)]
+    protected GUIButtonControl btnChannelDown = null;
+    [SkinControl(33)]
+    protected GUIButtonControl btnPreviousProgram = null;
+    [SkinControl(34)]
+    protected GUIButtonControl btnNextProgram = null;
+    [SkinControl(35)]
+    protected GUILabelControl lblCurrentChannel = null;
+    [SkinControl(36)]
+    protected GUITextControl tbOnTvNow = null;
+    [SkinControl(37)]
+    protected GUITextControl tbOnTvNext = null;
+    [SkinControl(38)]
+    protected GUITextScrollUpControl tbProgramDescription = null;
+    [SkinControl(39)]
+    protected GUIImage imgRecIcon = null;
+    [SkinControl(100)]
+    protected GUILabelControl lblCurrentTime = null;
 
     private bool isSubMenuVisible = false;
     private int m_iActiveMenu = 0;
@@ -427,11 +438,11 @@ namespace TvPlugin
           {
             // following line should stay. Problems with OSD not
             // appearing are already fixed elsewhere
-            SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
+            SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
             sb.AddConstraint(Operator.Equals, "istv", 1);
             sb.AddOrderByField(true, "sortOrder");
             SqlStatement stmt = sb.GetStatement(true);
-            listTvChannels = ObjectFactory.GetCollection(typeof (Channel), stmt.Execute());
+            listTvChannels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
             GUIPropertyManager.SetProperty("#currentmodule", GetModuleName());
             previousProgram = null;
             AllocResources();
@@ -527,7 +538,7 @@ namespace TvPlugin
             }
 
             if (iControl >= (int)Controls.OSD_VOLUMESLIDER)
-              // one of the settings (sub menu) controls is sending us a message
+            // one of the settings (sub menu) controls is sending us a message
             {
               Handle_ControlSetting(iControl, message.Param1);
             }
@@ -806,7 +817,7 @@ namespace TvPlugin
                   pControl.FloatInterval = 1;
                 }
                 else
-                { 
+                {
                   GUIPropertyManager.SetProperty("#TvOSD.AudioVideoDelayPossible", "false");
                   pControl.FloatValue = 0;
                   m_audioDelay = 0;
@@ -1285,12 +1296,12 @@ namespace TvPlugin
             if (null != pControl && g_Player.HasPostprocessing)
             {
               if (pControl.FloatValue < m_audioDelay)
-              { 
-                  PostProcessingEngine.GetInstance().AudioDelayMinus();
+              {
+                PostProcessingEngine.GetInstance().AudioDelayMinus();
               }
               else if (pControl.FloatValue > m_audioDelay)
-              { 
-                  PostProcessingEngine.GetInstance().AudioDelayPlus();
+              {
+                PostProcessingEngine.GetInstance().AudioDelayPlus();
               }
               m_audioDelay = (int)pControl.FloatValue;
             }
@@ -1305,7 +1316,7 @@ namespace TvPlugin
       GUIListControl pControl = (GUIListControl)GetControl((int)Controls.OSD_AUDIOSTREAM_LIST);
       if (null != pControl)
       {
-          pControl.SetPageControlVisible(false);
+        pControl.SetPageControlVisible(false);
       }
 
       // empty the list ready for population
@@ -1655,7 +1666,7 @@ namespace TvPlugin
 
       if (imgTvChannelLogo != null)
       {
-        if (!string.IsNullOrEmpty(strLogo))                      
+        if (!string.IsNullOrEmpty(strLogo))
         {
           imgTvChannelLogo.SetFileName(strLogo);
           m_bNeedRefresh = true;

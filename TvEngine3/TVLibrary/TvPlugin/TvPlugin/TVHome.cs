@@ -94,8 +94,8 @@ namespace TvPlugin
       CardChange = 2,
       SeekToEnd = 4,
       SeekToEndAfterPlayback = 8
-    }    
-    
+    }
+
     private Channel _resumeChannel = null;
     private Thread heartBeatTransmitterThread = null;
     private static DateTime _updateProgressTimer = DateTime.MinValue;
@@ -753,8 +753,8 @@ namespace TvPlugin
 
     private static void ForceUpdates()
     {
-      _updateTimer = DateTime.Now.AddMilliseconds(-1 * (PROCESS_UPDATE_INTERVAL+1));
-      _updateProgressTimer = DateTime.Now.AddMilliseconds(-1 * (PROGRESS_PERCENTAGE_UPDATE_INTERVAL+1));
+      _updateTimer = DateTime.Now.AddMilliseconds(-1 * (PROCESS_UPDATE_INTERVAL + 1));
+      _updateProgressTimer = DateTime.Now.AddMilliseconds(-1 * (PROGRESS_PERCENTAGE_UPDATE_INTERVAL + 1));
     }
 
     public override void Process()
@@ -797,7 +797,7 @@ namespace TvPlugin
         _updateTimer = DateTime.Now;
       }
     }
-    
+
 
     public override bool IsTv
     {
@@ -845,7 +845,7 @@ namespace TvPlugin
         Schedule newSchedule = new Schedule(channel.IdChannel, channel.CurrentProgram.Title,
                                             channel.CurrentProgram.StartTime, channel.CurrentProgram.EndTime);
         newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
-        newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);        
+        newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
         newSchedule.Persist();
         server.OnNewSchedule();
       }
@@ -1388,7 +1388,7 @@ namespace TvPlugin
       {
         _recoverTV = false;
         GUIMessage initMsg = null;
-        initMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, (int) Window.WINDOW_TV_OVERLAY, 0, 0, 0, 0,
+        initMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, (int)Window.WINDOW_TV_OVERLAY, 0, 0, 0, 0,
                                  null);
         GUIWindowManager.SendThreadMessage(initMsg);
       }
@@ -2036,7 +2036,7 @@ namespace TvPlugin
                 //manual
                 StartRecordingSchedule(channel, true);
                 return true;
-             }
+            }
           }
         }
         else
@@ -2401,7 +2401,7 @@ namespace TvPlugin
         {
           return;
         }
-        
+
         //set audio video related media info properties.
         int currAudio = g_Player.CurrentAudioStream;
         if (currAudio > -1)
@@ -2555,7 +2555,7 @@ namespace TvPlugin
         {
           GUIPropertyManager.SetProperty("#TV.View.channel", ch.DisplayName);
           SetTvThumbProperty(ch);
-        }            
+        }
       }
       else
       {
@@ -3251,7 +3251,7 @@ namespace TvPlugin
 
       //if a channel is untunable, then there is no reason to carry on or even stop playback.   
       var userCopy = Card.User.Clone() as IUser;
-      if (userCopy != null) 
+      if (userCopy != null)
       {
         userCopy.Name = Dns.GetHostName();
         ChannelState CurrentChanState = TvServer.GetChannelState(channel.IdChannel, userCopy);
@@ -3260,7 +3260,7 @@ namespace TvPlugin
           ChannelTuneFailedNotifyUser(TvResult.AllCardsBusy, false, channel);
           return false;
         }
-      }      
+      }
 
       //BAV: fixing mantis bug 1263: TV starts with no video if Radio is previously ON & channel selected from TV guide
       if ((!channel.IsRadio && g_Player.IsRadio) || (channel.IsRadio && !g_Player.IsRadio))
@@ -3500,7 +3500,7 @@ namespace TvPlugin
       }
       finally
       {
-        StopRenderBlackImage();        
+        StopRenderBlackImage();
         _userChannelChanged = false;
         FireOnChannelChangedEvent();
         Navigator.UpdateCurrentChannel();
@@ -3513,11 +3513,11 @@ namespace TvPlugin
       {
         OnChannelChanged();
       }
-    }    
+    }
 
     public static void ViewChannel(Channel channel)
     {
-      ViewChannelAndCheck(channel);      
+      ViewChannelAndCheck(channel);
       UpdateProgressPercentageBar();
       return;
     }
