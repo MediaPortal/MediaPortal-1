@@ -679,7 +679,7 @@ namespace Mediaportal.TV.Server.SetupTV
     {
       try
       {
-        if (!ServiceHelper.IsStopped)
+        if (!ServiceHelper.IsStopped || ServiceHelper.IsRestrictedMode)
         {
           applyButton_Click(sender, e);
 
