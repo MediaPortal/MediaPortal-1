@@ -24,6 +24,8 @@
 #include "..\..\shared\DvbUtil.h"
 #include "..\..\shared\Pcr.h"
 #include "..\..\shared\TsHeader.h"
+#include "..\..\shared\FilterSettingsmanager.h"
+#include "..\..\shared\FilterSettingsmanager.cpp"
 #include "Hamming.h"
 #include "Version.h"
 
@@ -269,10 +271,9 @@ extern bool IsAudioStream(byte streamType);
 CTsMuxer::CTsMuxer(LPUNKNOWN unk, HRESULT* hr)
   : CUnknown(NAME("TS Muxer"), unk)
 {
-  wchar_t temp[MAX_PATH];
-  ::SHGetSpecialFolderPathW(NULL, temp, CSIDL_COMMON_APPDATA, FALSE);
-  swprintf_s(g_logFilePath, L"%s\\Team MediaPortal\\MediaPortal TV Server\\log", temp);
-
+	// set default log path
+	swprintf_s(g_logFilePath, FilterSettingsmanager_getLogPath());
+	
   LogDebug(L"--------------- v%d.%d.%d.0 ---------------", TSMUXER_MAJOR_VERSION, TSMUXER_MID_VERSION, TSMUXER_VERSION);
   LogDebug(L"initial version");
   LogDebug(L"muxer: constructor");
