@@ -71,8 +71,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices.Config
 
       // Get the details for all slots that we've ever seen connected to the system.
       IDigitalDevicesConfigService service = ServiceAgents.Instance.PluginService<IDigitalDevicesConfigService>();
-      _ciContexts = new List<CiContext>(4);
       ICollection<DigitalDevicesCiSlotConfig> settings = service.GetAllSlotConfiguration();
+      _ciContexts = new List<CiContext>(settings.Count);
       foreach (DigitalDevicesCiSlotConfig config in settings)
       {
         CiContext context = new CiContext();
@@ -95,7 +95,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices.Config
         c.Dispose();
       }
       Controls.Clear();
-      ResumeLayout(false);
 
       int groupHeight = 73;
       int groupPadding = 10;
@@ -200,6 +199,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices.Config
         Controls.Add(noSlotsLabel);
       }
 
+      ResumeLayout(false);
       this.LogDebug("Digital Devices config: updated user interface, slot count = {0}", _ciContexts.Count);
     }
 

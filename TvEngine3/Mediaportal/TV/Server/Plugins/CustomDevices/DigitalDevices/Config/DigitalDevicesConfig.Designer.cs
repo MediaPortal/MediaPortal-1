@@ -18,9 +18,6 @@
 
 #endregion
 
-using System.Drawing;
-using System.Windows.Forms;
-
 namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices.Config
 {
   partial class DigitalDevicesConfig
@@ -43,20 +40,23 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices.Config
       base.Dispose(disposing);
     }
 
-    /// <summary> 
-    /// The user interface for this plugin is custom-designed so that the number and contents of fields
-    /// can be adjusted automatically based on the number of Digital Devices CI slots detected in the
-    /// host system. Nothing will show in the designer.
+    #region Windows Form Designer generated code
+
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent()
     {
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DigitalDevicesConfig));
       this.SuspendLayout();
-      this.AutoScaleDimensions = new SizeF(6F, 13F);
-      this.AutoScaleMode = AutoScaleMode.Font;
+      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Name = "DigitalDevicesConfig";
-      this.Size = new System.Drawing.Size(460, 380);
+      this.Size = new System.Drawing.Size(480, 420);
       this.ResumeLayout(false);
     }
+
+    #endregion
   }
 }
