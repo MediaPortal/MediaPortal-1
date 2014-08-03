@@ -427,6 +427,9 @@ public class MediaPortalApp : D3D, IRender
   [DllImport("user32.dll", SetLastError = true)]
   private static extern bool SetProcessDPIAware();
 
+  [DllImport("user32.dll", SetLastError = true)]
+  static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+
   #endregion
 
   #region main()
@@ -1627,171 +1630,176 @@ public class MediaPortalApp : D3D, IRender
   /// <param name="msg"></param>
   private void OnPowerBroadcast(ref Message msg)
   {
-    Log.Debug("Main: WM_POWERBROADCAST ({0})", Enum.GetName(typeof(PBT_EVENT), msg.WParam.ToInt32()));
-
-    switch (msg.WParam.ToInt32())
+    try
     {
-      // The computer is about to enter a suspended state
-      case (int)PBT_EVENT.PBT_APMSUSPEND:
-        // Reset timer and resume states
-        if (_delayTimer != null)
-        {
-          _delayTimer.Stop();
-          _delayTimer.Elapsed -= SendResumeDelayedMsg;
-          _delayTimer = null;
-        }
-        _resumedAutomatic = false;
-        _userActivity = false;
+      Log.Debug("Main: WM_POWERBROADCAST ({0})", Enum.GetName(typeof(PBT_EVENT), msg.WParam.ToInt32()));
 
-        // Suspend operation
-        Log.Info("Main: Suspending operation");
-        PrepareSuspend();
-        PluginManager.WndProc(ref msg);
-        OnSuspend();
-        break;
-
-      // Pseudo message for delayed resume
-      case (int)PBT_EVENT.PBT_APMRESUMEDELAYED:
-        // Resume automatic operation
-        Log.Info("Main: Resuming automatic operation after delay");
-        OnResumeAutomatic();
-        msg.WParam = new IntPtr((int)PBT_EVENT.PBT_APMRESUMEAUTOMATIC);
-        PluginManager.WndProc(ref msg);
-        _resumedAutomatic = true;
-
-        // If there was a PBT_APMRESUMESUSPEND message, resume operation of user interface
-        if (_userActivity)
-        {
-          Log.Info("Main: Resuming operation of user interface after delay");
-          OnResumeSuspend();
-          msg.WParam = new IntPtr((int)PBT_EVENT.PBT_APMRESUMESUSPEND);
-          PluginManager.WndProc(ref msg);
-        }
-        break;
-
-      // The computer has woken up automatically to handle an event
-      case (int)PBT_EVENT.PBT_APMRESUMEAUTOMATIC:
-        // Delay resuming if configured
-        using (Settings xmlreader = new MPSettings())
-        {
-          int waitOnResume = xmlreader.GetValueAsBool("general", "delay resume", false) ? xmlreader.GetValueAsInt("general", "delay", 0) : 0;
-          if (waitOnResume > 0)
+      switch (msg.WParam.ToInt32())
+      {
+        // The computer is about to enter a suspended state
+        case (int)PBT_EVENT.PBT_APMSUSPEND:
+          // Reset timer and resume states
+          if (_delayTimer != null)
           {
-            // Schedule PBT_APMRESUMEDELAYED message
-            Log.Info("Main: Delay resuming operation for {0} secs", waitOnResume);
-            _delayTimer = new System.Timers.Timer(waitOnResume * 1000);
-            _delayTimer.AutoReset = false;
-            _delayTimer.Elapsed += new ElapsedEventHandler(SendResumeDelayedMsg);
-            _delayTimer.Enabled = true;
+            _delayTimer.Stop();
+            _delayTimer.Elapsed -= SendResumeDelayedMsg;
+            _delayTimer = null;
+          }
+          _resumedAutomatic = false;
+          _userActivity = false;
+
+          // Suspend operation
+          Log.Info("Main: Suspending operation");
+          PrepareSuspend();
+          PluginManager.WndProc(ref msg);
+          OnSuspend();
+          break;
+
+        // Pseudo message for delayed resume
+        case (int)PBT_EVENT.PBT_APMRESUMEDELAYED:
+          // Resume automatic operation
+          Log.Info("Main: Resuming automatic operation after delay");
+          OnResumeAutomatic();
+          msg.WParam = new IntPtr((int)PBT_EVENT.PBT_APMRESUMEAUTOMATIC);
+          PluginManager.WndProc(ref msg);
+          _resumedAutomatic = true;
+
+          // If there was a PBT_APMRESUMESUSPEND message, resume operation of user interface
+          if (_userActivity)
+          {
+            // Resume operation of user interface
+            Log.Info("Main: Resuming operation of user interface after delay");
+            OnResumeSuspend();
+            msg.WParam = new IntPtr((int)PBT_EVENT.PBT_APMRESUMESUSPEND);
+            PluginManager.WndProc(ref msg);
+          }
+          break;
+
+        // The computer has woken up automatically to handle an event
+        case (int)PBT_EVENT.PBT_APMRESUMEAUTOMATIC:
+          // Delay resuming if configured
+          using (Settings xmlreader = new MPSettings())
+          {
+            int waitOnResume = xmlreader.GetValueAsBool("general", "delay resume", false) ? xmlreader.GetValueAsInt("general", "delay", 0) : 0;
+            if (waitOnResume > 0)
+            {
+              // Schedule PBT_APMRESUMEDELAYED message
+              Log.Info("Main: Delay resuming operation for {0} secs", waitOnResume);
+              _delayTimer = new System.Timers.Timer(waitOnResume * 1000);
+              _delayTimer.AutoReset = false;
+              _delayTimer.Elapsed += new ElapsedEventHandler(SendResumeDelayedMsg);
+              _delayTimer.Enabled = true;
+              return;
+            }
+          }
+
+          // Resume automatic operation
+          Log.Info("Main: Resuming automatic operation");
+          OnResumeAutomatic();
+          PluginManager.WndProc(ref msg);
+          _resumedAutomatic = true;
+
+          // If there was a PBT_APMRESUMESUSPEND message, resume operation of user interface
+          if (_userActivity)
+          {
+            Log.Info("Main: Resuming operation of user interface");
+            OnResumeSuspend();
+            msg.WParam = new IntPtr((int)PBT_EVENT.PBT_APMRESUMESUSPEND);
+            PluginManager.WndProc(ref msg);
+          }
+          break;
+
+        // only for Windows XP
+        case (int)PBT_EVENT.PBT_APMRESUMECRITICAL:
+          Log.Info("Main: Resuming operation after a forced suspend");
+          OnResumeAutomatic();
+          _resumedAutomatic = true;
+          OnResumeSuspend();
+          PluginManager.WndProc(ref msg);
+          break;
+
+        // The system has resumed operation on a user activity
+        case (int)PBT_EVENT.PBT_APMRESUMESUSPEND:
+          _userActivity = true;
+
+          // If automatic resume is not processed yet, wait for ResumeAutomatic / ResumeDelayed message
+          if (!_resumedAutomatic)
+          {
+            Log.Debug("Main: Wait for ResumeAutomatic / ResumeDelayed message");
             return;
           }
-        }
 
-        // Resume automatic operation
-        Log.Info("Main: Resuming automatic operation");
-        OnResumeAutomatic();
-        PluginManager.WndProc(ref msg);
-        _resumedAutomatic = true;
-
-        // If there was a PBT_APMRESUMESUSPEND message, resume operation of user interface
-        if (_userActivity)
-        {
+          // Resume operation of user interface
           Log.Info("Main: Resuming operation of user interface");
           OnResumeSuspend();
-          msg.WParam = new IntPtr((int)PBT_EVENT.PBT_APMRESUMESUSPEND);
           PluginManager.WndProc(ref msg);
-        }
-        break;
+          break;
 
-      // only for Windows XP
-      case (int)PBT_EVENT.PBT_APMRESUMECRITICAL:
-        Log.Info("Main: Resuming operation after a forced suspend");
-        OnResumeAutomatic();
-        _resumedAutomatic = true;
-        OnResumeSuspend();
-        PluginManager.WndProc(ref msg);
-        break;
+        // A change in the power status of the computer is detected
+        case (int)PBT_EVENT.PBT_POWERSETTINGCHANGE:
+          var ps = (POWERBROADCAST_SETTING)Marshal.PtrToStructure(msg.LParam, typeof(POWERBROADCAST_SETTING));
 
-      // The system has resumed operation on a user activity
-      case (int)PBT_EVENT.PBT_APMRESUMESUSPEND:
-        _userActivity = true;
-
-        // If automatic resume is not processed yet, wait for ResumeAutomatic / ResumeDelayed message
-        if (!_resumedAutomatic)
-        {
-          Log.Debug("Main: Wait for ResumeAutomatic / ResumeDelayed message");
-          return;
-        }
-
-        // Resume operation of user interface
-        Log.Info("Main: Resuming operation of user interface");
-        OnResumeSuspend();
-        PluginManager.WndProc(ref msg);
-        break;
-
-      // A change in the power status of the computer is detected
-      case (int)PBT_EVENT.PBT_POWERSETTINGCHANGE:
-        var ps = (POWERBROADCAST_SETTING)Marshal.PtrToStructure(msg.LParam, typeof(POWERBROADCAST_SETTING));
-
-        if (ps.PowerSetting == GUID_SYSTEM_AWAYMODE && ps.DataLength == Marshal.SizeOf(typeof(Int32)))
-        {
-          switch (ps.Data)
+          if (ps.PowerSetting == GUID_SYSTEM_AWAYMODE && ps.DataLength == Marshal.SizeOf(typeof(Int32)))
           {
-            case 0:
-              Log.Info("Main: The computer is exiting away mode");
-              IsInAwayMode = false;
-              break;
-            case 1:
-              Log.Info("Main: The computer is entering away mode");
-              IsInAwayMode = true;
-              break;
+            switch (ps.Data)
+            {
+              case 0:
+                Log.Info("Main: The computer is exiting away mode");
+                IsInAwayMode = false;
+                break;
+              case 1:
+                Log.Info("Main: The computer is entering away mode");
+                IsInAwayMode = true;
+                break;
+            }
           }
-        }
-        // GUID_SESSION_DISPLAY_STATUS is only provided on Win8 and above
-        else if ((ps.PowerSetting == GUID_MONITOR_POWER_ON || ps.PowerSetting == GUID_SESSION_DISPLAY_STATUS) && ps.DataLength == Marshal.SizeOf(typeof(Int32)))
-        {
-          switch (ps.Data)
+          // GUID_SESSION_DISPLAY_STATUS is only provided on Win8 and above
+          else if ((ps.PowerSetting == GUID_MONITOR_POWER_ON || ps.PowerSetting == GUID_SESSION_DISPLAY_STATUS) && ps.DataLength == Marshal.SizeOf(typeof(Int32)))
           {
-            case 0:
-              Log.Info("Main: The display is off");
-              IsDisplayTurnedOn = false;
-              break;
-            case 1:
-              Log.Info("Main: The display is on");
-              IsDisplayTurnedOn = true;
-              ShowMouseCursor(false);
-              break;
-            case 2:
-              Log.Info("Main: The display is dimmed");
-              IsDisplayTurnedOn = true;
-              break;
+            switch (ps.Data)
+            {
+              case 0:
+                Log.Info("Main: The display is off");
+                IsDisplayTurnedOn = false;
+                break;
+              case 1:
+                Log.Info("Main: The display is on");
+                IsDisplayTurnedOn = true;
+                ShowMouseCursor(false);
+                break;
+              case 2:
+                Log.Info("Main: The display is dimmed");
+                IsDisplayTurnedOn = true;
+                break;
+            }
           }
-        }
-        // GUIT_SESSION_USER_PRESENCE is only provide on Win8 and above
-        else if (ps.PowerSetting == GUID_SESSION_USER_PRESENCE && ps.DataLength == Marshal.SizeOf(typeof(Int32)))
-        {
-          switch (ps.Data)
+          // GUIT_SESSION_USER_PRESENCE is only provide on Win8 and above
+          else if (ps.PowerSetting == GUID_SESSION_USER_PRESENCE && ps.DataLength == Marshal.SizeOf(typeof(Int32)))
           {
-            case 0:
-              Log.Info("Main: User is providing input to the session");
-              IsUserPresent = true;
-              ShowMouseCursor(false);
-              break;
-            case 2:
-              Log.Info("Main: The user activity timeout has elapsed with no interaction from the user");
-              IsUserPresent = false;
-              break;
+            switch (ps.Data)
+            {
+              case 0:
+                Log.Info("Main: User is providing input to the session");
+                IsUserPresent = true;
+                ShowMouseCursor(false);
+                break;
+              case 2:
+                Log.Info("Main: The user activity timeout has elapsed with no interaction from the user");
+                IsUserPresent = false;
+                break;
+            }
           }
-        }
 
-        PluginManager.WndProc(ref msg);
-        break;
+          PluginManager.WndProc(ref msg);
+          break;
+      }
+      msg.Result = (IntPtr)1;
     }
-    msg.Result = (IntPtr)1;
+    catch (System.Exception ex)
+    {
+      Log.Error("Main: Exception catch on OnPowerBroadcast : {0}", ex);
+    }
   }
-
-  [DllImport("user32.dll", SetLastError = true)]
-  static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
 
   private void SendResumeDelayedMsg(object sender, ElapsedEventArgs e)
   {
@@ -1806,7 +1814,10 @@ public class MediaPortalApp : D3D, IRender
     // Send PBT_APMRESUMEDELAYED message
     Log.Debug("Main: Send ResumeDelayed message");
     IntPtr hWnd = Form.ActiveForm.Handle;
-    PostMessage(hWnd, WM_POWERBROADCAST, new IntPtr((int)PBT_EVENT.PBT_APMRESUMEDELAYED), IntPtr.Zero);
+    if (hWnd != IntPtr.Zero)
+    {
+      PostMessage(hWnd, WM_POWERBROADCAST, new IntPtr((int)PBT_EVENT.PBT_APMRESUMEDELAYED), IntPtr.Zero);
+    }
   }
 
   /// <summary>
@@ -1900,6 +1911,8 @@ public class MediaPortalApp : D3D, IRender
           {
             case DBT_DEVICEREMOVECOMPLETE:
               Log.Info("Main: Audio Renderer {0} removed", deviceName);
+              try
+              {
               if (_stopOnLostAudioRenderer)
               {
                 g_Player.Stop();
@@ -1908,8 +1921,6 @@ public class MediaPortalApp : D3D, IRender
                   Thread.Sleep(100);
                 }
               }
-              try
-              {
                 VolumeHandler.Dispose();
                 #pragma warning disable 168
                 VolumeHandler vh = VolumeHandler.Instance;
@@ -1917,12 +1928,14 @@ public class MediaPortalApp : D3D, IRender
               }
               catch (Exception exception)
               {
-                Log.Warn("Main: Could not initialize volume handler: ", exception.Message);
+                Log.Warn("Main: Exception on removal Audio Renderer {0} exception: {1} ",deviceName, exception.Message);
               }
               break;
 
             case DBT_DEVICEARRIVAL:
               Log.Info("Main: Audio Renderer {0} connected", deviceName);
+              try
+              {
               if (_stopOnLostAudioRenderer)
               {
                 g_Player.Stop();
@@ -1931,8 +1944,6 @@ public class MediaPortalApp : D3D, IRender
                   Thread.Sleep(100);
                 }
               }
-              try
-              {
                 VolumeHandler.Dispose();
                 #pragma warning disable 168
                 VolumeHandler vh = VolumeHandler.Instance;
@@ -1940,7 +1951,7 @@ public class MediaPortalApp : D3D, IRender
               }
               catch (Exception exception)
               {
-                Log.Warn("Main: Could not initialize volume handler: ", exception.Message);
+                Log.Warn("Main: Exception on arrival Audio Renderer {0} exception: {1} ", deviceName, exception.Message);
               }
               break;
           }
@@ -3425,11 +3436,11 @@ public class MediaPortalApp : D3D, IRender
     {
       return;
     }
-    
-    #if !DEBUG
+
+#if !DEBUG
     try
     {
-    #endif
+#endif
       if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
       {
         Log.Info("Main: Stopping FrameMove");
@@ -3492,7 +3503,7 @@ public class MediaPortalApp : D3D, IRender
               // As long as we're e.g. listening to music on "Playing Now" screen
               // we might not want to slow things down here.
               // This feature is mainly intended to save energy on idle 24/7 rigs.
-              if (GUIWindowManager.ActiveWindow != (int) GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW)
+              if (GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW)
               {
                 if (!GUIGraphicsContext.SaveRenderCycles)
                 {
@@ -3505,13 +3516,13 @@ public class MediaPortalApp : D3D, IRender
         }
       }
 
-    #if !DEBUG
+#if !DEBUG
     }
     catch (Exception ex)
     {
       Log.Error(ex);
     }
-    #endif
+#endif
   }
 
   #endregion
@@ -4071,9 +4082,9 @@ public class MediaPortalApp : D3D, IRender
     {
       Log.Error(ex);
       Log.Error("Exception: {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
-      #if !DEBUG
+#if !DEBUG
       throw new Exception("exception occurred", ex);
-      #endif
+#endif
     }
   }
 
