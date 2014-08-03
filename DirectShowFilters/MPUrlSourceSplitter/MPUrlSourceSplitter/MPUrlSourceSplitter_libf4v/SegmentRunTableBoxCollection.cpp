@@ -22,8 +22,8 @@
 
 #include "SegmentRunTableBoxCollection.h"
 
-CSegmentRunTableBoxCollection::CSegmentRunTableBoxCollection(void)
-  : CCollection()
+CSegmentRunTableBoxCollection::CSegmentRunTableBoxCollection(HRESULT *result)
+  : CCollection(result)
 {
 }
 

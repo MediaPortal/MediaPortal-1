@@ -22,8 +22,8 @@
 
 #include "FragmentRunTableBoxCollection.h"
 
-CFragmentRunTableBoxCollection::CFragmentRunTableBoxCollection(void)
-  : CCollection()
+CFragmentRunTableBoxCollection::CFragmentRunTableBoxCollection(HRESULT *result)
+  : CCollection(result)
 {
 }
 

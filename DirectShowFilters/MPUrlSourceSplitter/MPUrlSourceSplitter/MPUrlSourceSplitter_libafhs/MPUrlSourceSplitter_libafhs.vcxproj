@@ -51,7 +51,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libcollections;..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libcurlinstance;..\..\libcurl\include;..\..\libcurl\include\curl;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libcurlinstance;..\MPUrlSourceSplitter_libcurl\include;..\MPUrlSourceSplitter_libcurl\include\curl;..\MPUrlSourceSplitter_libcachefile;..\MPUrlSourceSplitter_libplugin;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -66,7 +66,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libcollections;..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libcurlinstance;..\..\libcurl\include;..\..\libcurl\include\curl;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libcurlinstance;..\MPUrlSourceSplitter_libcurl\include;..\MPUrlSourceSplitter_libcurl\include\curl;..\MPUrlSourceSplitter_libcachefile;..\MPUrlSourceSplitter_libplugin;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -76,18 +76,38 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="AfhsDecryptionContext.h" />
-    <ClInclude Include="IAfhsDecryptionPlugin.h" />
-    <ClInclude Include="IAfhsSimpleDecryptionPlugin.h" />
-    <ClInclude Include="SegmentFragment.h" />
-    <ClInclude Include="SegmentFragmentCollection.h" />
+    <ClInclude Include="AfhsDecryptionContext.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="AfhsDecryptionHoster.h" />
+    <ClInclude Include="AfhsDecryptionHosterPluginMetadata.h" />
+    <ClInclude Include="AfhsDecryptionPlugin.h" />
+    <ClInclude Include="AfhsDecryptionPluginConfiguration.h" />
+    <ClInclude Include="IAfhsDecryptionPlugin.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="IAfhsSimpleDecryptionPlugin.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="AfhsSegmentFragment.h" />
+    <ClInclude Include="AfhsSegmentFragmentCollection.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AfhsDecryptionContext.cpp" />
-    <ClCompile Include="SegmentFragment.cpp" />
-    <ClCompile Include="SegmentFragmentCollection.cpp" />
+    <ClCompile Include="AfhsDecryptionContext.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="AfhsDecryptionHoster.cpp" />
+    <ClCompile Include="AfhsDecryptionHosterPluginMetadata.cpp" />
+    <ClCompile Include="AfhsDecryptionPlugin.cpp" />
+    <ClCompile Include="AfhsSegmentFragment.cpp" />
+    <ClCompile Include="AfhsSegmentFragmentCollection.cpp" />
+    <ClCompile Include="AfhsDecryptionPluginConfiguration.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

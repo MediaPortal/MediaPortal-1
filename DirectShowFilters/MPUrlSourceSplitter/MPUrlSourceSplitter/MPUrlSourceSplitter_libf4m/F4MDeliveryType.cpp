@@ -58,3 +58,8 @@ bool CF4MDeliveryType::IsProgressive(void)
 {
   return (this->GetDeliveryType() == NULL) ? false : (wcscmp(this->GetDeliveryType(), F4M_ELEMENT_DELIVERYTYPE_VALUE_PROGRESSIVEW) == 0);
 }
+
+void CF4MDeliveryType::Clear(void)
+{
+  FREE_MEM(this->deliveryType);
+}

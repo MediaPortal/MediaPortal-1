@@ -22,9 +22,14 @@
 
 #include "BootstrapInfoQualityEntry.h"
 
-CBootstrapInfoQualityEntry::CBootstrapInfoQualityEntry(const wchar_t *qualityEntry)
+CBootstrapInfoQualityEntry::CBootstrapInfoQualityEntry(HRESULT *result, const wchar_t *qualityEntry)
 {
-  this->qualityEntry = Duplicate(qualityEntry);
+  this->qualityEntry = NULL;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    SET_STRING_HRESULT_WITH_NULL(this->qualityEntry, qualityEntry, (*result));
+  }
 }
 
 CBootstrapInfoQualityEntry::~CBootstrapInfoQualityEntry(void)

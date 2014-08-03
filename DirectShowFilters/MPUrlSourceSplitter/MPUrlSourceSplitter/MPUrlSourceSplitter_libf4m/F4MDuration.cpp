@@ -44,3 +44,10 @@ void CF4MDuration::SetDuration(uint64_t duration)
 {
   this->duration = duration;
 }
+
+/* other methods */
+
+void CF4MDuration::Clear(void)
+{
+  this->duration = F4M_DURATION_NOT_SPECIFIED;
+}

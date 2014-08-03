@@ -170,9 +170,12 @@ HRESULT CF4MBootstrapInfo::DownloadBootstrapInfo(CLogger *logger, const wchar_t 
     wchar_t *bootstrapInfoUrl = FormatAbsoluteUrl(this->baseUrl, this->url);
     CHECK_POINTER_HRESULT(result, bootstrapInfoUrl, result, E_OUTOFMEMORY);
 
+    HANDLE curlMutex = CreateMutex(NULL, FALSE, NULL);
+    CHECK_POINTER_HRESULT(result, curlMutex, result, E_OUTOFMEMORY);
+
     if (SUCCEEDED(result))
     {
-      CHttpCurlInstance *curlInstance = new CHttpCurlInstance(&result, logger, NULL, protocolName, L"CF4MBootstrapInfo");
+      CHttpCurlInstance *curlInstance = new CHttpCurlInstance(&result, logger, curlMutex, protocolName, L"CF4MBootstrapInfo");
       CHECK_POINTER_HRESULT(result, curlInstance, result, E_OUTOFMEMORY);
 
       if (SUCCEEDED(result))
@@ -195,7 +198,7 @@ HRESULT CF4MBootstrapInfo::DownloadBootstrapInfo(CLogger *logger, const wchar_t 
           request->SetFinishTime(finishTime);
           request->SetNetworkInterfaceName(networkInterfaceName);
 
-          result = (curlInstance->Initialize(request)) ? S_OK : E_FAIL;
+          result = curlInstance->Initialize(request);
         }
         FREE_MEM_CLASS(request);
       }
@@ -205,7 +208,7 @@ HRESULT CF4MBootstrapInfo::DownloadBootstrapInfo(CLogger *logger, const wchar_t 
         // all parameters set
         // start receiving data
 
-        result = (curlInstance->StartReceivingData()) ? S_OK : E_FAIL;
+        result = curlInstance->StartReceivingData();
       }
 
       if (SUCCEEDED(result))
@@ -301,8 +304,23 @@ HRESULT CF4MBootstrapInfo::DownloadBootstrapInfo(CLogger *logger, const wchar_t 
       FREE_MEM_CLASS(curlInstance);
     }
 
+    CHECK_CONDITION_NOT_NULL_EXECUTE(curlMutex, CloseHandle(curlMutex));
     FREE_MEM(bootstrapInfoUrl);
   }
 
   return result;
+}
+
+void CF4MBootstrapInfo::Clear(void)
+{
+  this->decodedLength = UINT_MAX;
+  this->decodeResult = E_NOT_VALID_STATE;
+
+  FREE_MEM(this->id);
+  FREE_MEM(this->profile);
+  FREE_MEM(this->url);
+  FREE_MEM(this->value);
+
+  FREE_MEM(this->decodedValue);
+  FREE_MEM(this->baseUrl);
 }

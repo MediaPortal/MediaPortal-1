@@ -40,7 +40,7 @@ public:
 
   // gets parser result about current stream
   // @return : one of ParserResult values
-  virtual ParserResult GetParserResult(void);
+  virtual HRESULT GetParserResult(void);
 
   // gets parser score if parser result is Known
   // @return : parser score (parser with highest score is set as active parser)
@@ -97,9 +97,19 @@ public:
 
   // ISimpleProtocol interface
 
-  // get timeout (in ms) for receiving data
-  // @return : timeout (in ms) for receiving data
-  virtual unsigned int GetReceiveDataTimeout(void);
+  // gets timeout (in ms) for opening connection
+  // @return : timeout (in ms) for opening connection
+  virtual unsigned int GetOpenConnectionTimeout(void);
+
+  // gets sleep time (in ms) for opening connection
+  // some protocols may need some sleep before loading (e.g. multicast UDP protocol needs some time between unsubscribing and subscribing in multicast groups)
+  // @return : sleep time (in ms) for opening connection
+  virtual unsigned int GetOpenConnectionSleepTime(void);
+
+  // gets total timeout (in ms) for re-opening connection (opening connection after lost connection)
+  // re-open connection total timeout should be much more greater (e.g. 3 - 5 times) in order to allow more opening requests
+  // @return : total timeout (in ms) for re-opening connection
+  virtual unsigned int GetTotalReopenConnectionTimeout(void);
 
   // starts receiving data from specified url and configuration parameters
   // @param parameters : the url and parameters used for connection

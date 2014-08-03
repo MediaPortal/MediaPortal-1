@@ -29,7 +29,7 @@
 class CBootstrapInfoServerEntryCollection : public CKeyedCollection<CBootstrapInfoServerEntry, const wchar_t *>
 {
 public:
-  CBootstrapInfoServerEntryCollection(void);
+  CBootstrapInfoServerEntryCollection(HRESULT *result);
   ~CBootstrapInfoServerEntryCollection(void);
 
 protected:

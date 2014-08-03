@@ -96,7 +96,7 @@ void CStreamPackage::Clear(void)
 
 bool CStreamPackage::IsError(void)
 {
-  return SUCCEEDED(this->GetError());
+  return FAILED(this->GetError());
 }
 
 CStreamPackage *CStreamPackage::Clone(void)

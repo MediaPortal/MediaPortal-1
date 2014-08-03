@@ -34,19 +34,16 @@
 
 #define PARSER_PLUGIN_FLAG_LAST                                       (PLUGIN_FLAG_LAST + 0)
 
+#define PARSER_RESULT_PENDING                                         1
+#define PARSER_RESULT_NOT_KNOWN                                       2
+#define PARSER_RESULT_KNOWN                                           S_OK
+#define PARSER_RESULT_DRM_PROTECTED                                   E_DRM_PROTECTED
+
 class CParserPlugin : public CPlugin, virtual public IDemuxerOwner, virtual public IProtocol
 {
 public:
   CParserPlugin(HRESULT *result, CLogger *logger, CParameterCollection *configuration);
   virtual ~CParserPlugin(void);
-
-  enum ParserResult
-  {
-    Pending,
-    NotKnown,
-    Known,
-    DrmProtected
-  };
 
   enum Action
   {
@@ -90,10 +87,10 @@ public:
   /* get methods */
 
   // gets parser result about current stream
-  // @return : one of ParserResult values
-  virtual ParserResult GetParserResult(void);
+  // @return : one of PARSER_RESULT values
+  virtual HRESULT GetParserResult(void);
 
-  // gets parser score if parser result is Known
+  // gets parser score if parser result is PARSER_RESULT_KNOWN
   // @return : parser score (parser with highest score is set as active parser)
   virtual unsigned int GetParserScore(void) = 0;
 
@@ -118,7 +115,7 @@ protected:
   // holds protocol hoster - only reference, do not cleanup !
   CProtocolHoster *protocolHoster;
   // holds parser result
-  ParserResult parserResult;
+  HRESULT parserResult;
   // holds connection parameters
   CParameterCollection *connectionParameters;
 

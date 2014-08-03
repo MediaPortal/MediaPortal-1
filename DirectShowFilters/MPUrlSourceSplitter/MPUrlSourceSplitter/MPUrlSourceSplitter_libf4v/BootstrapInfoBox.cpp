@@ -22,8 +22,8 @@
 
 #include "BootstrapInfoBox.h"
 
-CBootstrapInfoBox::CBootstrapInfoBox(void)
-  : CFullBox()
+CBootstrapInfoBox::CBootstrapInfoBox(HRESULT *result)
+  : CFullBox(result)
 {
   this->bootstrapInfoVersion = 0;
   this->profile = 0;
@@ -33,12 +33,25 @@ CBootstrapInfoBox::CBootstrapInfoBox(void)
   this->currentMediaTime = 0;
   this->smpteTimeCodeOffset;
   this->movieIdentifier = NULL;
-  this->serverEntryTable = new CBootstrapInfoServerEntryCollection();
-  this->qualityEntryTable = new CBootstrapInfoQualityEntryCollection();
+  this->serverEntryTable = NULL;
+  this->qualityEntryTable = NULL;
   this->drmData = NULL;
   this->metaData = NULL;
-  this->segmentRunTable = new CSegmentRunTableBoxCollection();
-  this->fragmentRunTable = new CFragmentRunTableBoxCollection();
+  this->segmentRunTable = NULL;
+  this->fragmentRunTable = NULL;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->serverEntryTable = new CBootstrapInfoServerEntryCollection(result);
+    this->qualityEntryTable = new CBootstrapInfoQualityEntryCollection(result);
+    this->segmentRunTable = new CSegmentRunTableBoxCollection(result);
+    this->fragmentRunTable = new CFragmentRunTableBoxCollection(result);
+
+    CHECK_POINTER_HRESULT(*result, this->serverEntryTable, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->qualityEntryTable, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->segmentRunTable, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->fragmentRunTable, *result, E_OUTOFMEMORY);
+  }
 }
 
 CBootstrapInfoBox::~CBootstrapInfoBox(void)
@@ -289,23 +302,21 @@ bool CBootstrapInfoBox::ParseInternal(const unsigned char *buffer, uint32_t leng
   bool result = (this->serverEntryTable != NULL) && (this->qualityEntryTable != NULL) && (this->segmentRunTable != NULL) && (this->fragmentRunTable != NULL);
   // in bad case we don't have tables, but still it can be valid box
   result &= __super::ParseInternal(buffer, length, false);
+  this->flags &= ~BOX_FLAG_PARSED;
 
   if (result)
   {
-    if (wcscmp(this->type, BOOTSTRAP_INFO_BOX_TYPE) != 0)
-    {
-      // incorect box type
-      this->parsed = false;
-    }
-    else
+    this->flags |= (wcscmp(this->type, BOOTSTRAP_INFO_BOX_TYPE) == 0) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
+
+    if (this->IsSetFlags(BOX_FLAG_PARSED))
     {
       // box is bootstrap info box, parse all values
       uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
 
       // until smpteTimeCodeOffset end is 29 bytes
-      bool continueParsing = ((position + 29) <= length);
+      HRESULT continueParsing = ((position + 29) <= length) ? S_OK : E_NOT_VALID_STATE;
       
-      if (continueParsing)
+      if (SUCCEEDED(continueParsing))
       {
         position += 4;
 
@@ -321,201 +332,143 @@ bool CBootstrapInfoBox::ParseInternal(const unsigned char *buffer, uint32_t leng
         RBE64INC(buffer, position, this->smpteTimeCodeOffset);
       }
 
-      if (continueParsing)
+      if (SUCCEEDED(continueParsing))
       {
         uint32_t positionAfter = position;
-        continueParsing &= SUCCEEDED(this->GetString(buffer, length, position, &this->movieIdentifier, &positionAfter));
+        continueParsing = this->GetString(buffer, length, position, &this->movieIdentifier, &positionAfter);
 
-        if (continueParsing)
-        {
-          position = positionAfter;
-        }
+        CHECK_CONDITION_EXECUTE(SUCCEEDED(continueParsing), position = positionAfter);
       }
 
-      continueParsing &= (position < length);
-      if (continueParsing)
+      CHECK_CONDITION_HRESULT(continueParsing, position < length, continueParsing, E_NOT_VALID_STATE);
+      if (SUCCEEDED(continueParsing))
       {
         // server entry count and server entry table
         RBE8INC_DEFINE(buffer, position, serverEntryCount , uint8_t);
-        continueParsing &= (position < length);
+        CHECK_CONDITION_HRESULT(continueParsing, position < length, continueParsing, E_NOT_VALID_STATE);
 
-        for(uint8_t i = 0; continueParsing && (i < serverEntryCount); i++)
+        for(uint8_t i = 0; (SUCCEEDED(continueParsing) && (i < serverEntryCount)); i++)
         {
           uint32_t positionAfter = position;
           wchar_t *serverEntry = NULL;
-          continueParsing &= SUCCEEDED(this->GetString(buffer, length, position, &serverEntry, &positionAfter));
+          continueParsing = this->GetString(buffer, length, position, &serverEntry, &positionAfter);
 
-          if (continueParsing)
+          if (SUCCEEDED(continueParsing))
           {
             position = positionAfter;
 
             // create server entry item in server entry table
-            CBootstrapInfoServerEntry *bootstrapInfoServerEntry = new CBootstrapInfoServerEntry(serverEntry);
-            continueParsing &= (bootstrapInfoServerEntry != NULL);
+            CBootstrapInfoServerEntry *bootstrapInfoServerEntry = new CBootstrapInfoServerEntry(&continueParsing, serverEntry);
+            CHECK_POINTER_HRESULT(continueParsing, bootstrapInfoServerEntry, continueParsing, E_OUTOFMEMORY);
 
-            if (continueParsing)
-            {
-              continueParsing &= this->serverEntryTable->Add(bootstrapInfoServerEntry);
-            }
-
-            if ((!continueParsing) && (bootstrapInfoServerEntry != NULL))
-            {
-              // cleanup
-              FREE_MEM_CLASS(bootstrapInfoServerEntry);
-            }
+            CHECK_CONDITION_HRESULT(continueParsing, this->serverEntryTable->Add(bootstrapInfoServerEntry), continueParsing, E_OUTOFMEMORY);
+            CHECK_CONDITION_EXECUTE(FAILED(continueParsing), FREE_MEM_CLASS(bootstrapInfoServerEntry));
           }
 
           FREE_MEM(serverEntry);
 
-          continueParsing &= (position < length);
+          CHECK_CONDITION_HRESULT(continueParsing, position < length, continueParsing, E_NOT_VALID_STATE);
         }
       }
 
-      continueParsing &= (position < length);
-      if (continueParsing)
+      CHECK_CONDITION_HRESULT(continueParsing, position < length, continueParsing, E_NOT_VALID_STATE);
+      if (SUCCEEDED(continueParsing))
       {
         // quality entry count and quality entry table
         RBE8INC_DEFINE(buffer, position, qualityEntryCount, uint8_t);
-        continueParsing &= (position < length);
+        CHECK_CONDITION_HRESULT(continueParsing, position < length, continueParsing, E_NOT_VALID_STATE);
 
-        for(uint8_t i = 0; continueParsing && (i < qualityEntryCount); i++)
+        for(uint8_t i = 0; (SUCCEEDED(continueParsing) && (i < qualityEntryCount)); i++)
         {
           uint32_t positionAfter = position;
           wchar_t *qualityEntry = NULL;
-          continueParsing &= SUCCEEDED(this->GetString(buffer, length, position, &qualityEntry, &positionAfter));
+          continueParsing = this->GetString(buffer, length, position, &qualityEntry, &positionAfter);
 
-          if (continueParsing)
+          if (SUCCEEDED(continueParsing))
           {
             position = positionAfter;
 
             // create quality entry item in quality entry table
-            CBootstrapInfoQualityEntry *bootstrapInfoQualityEntry = new CBootstrapInfoQualityEntry(qualityEntry);
-            continueParsing &= (bootstrapInfoQualityEntry != NULL);
+            CBootstrapInfoQualityEntry *bootstrapInfoQualityEntry = new CBootstrapInfoQualityEntry(&continueParsing, qualityEntry);
+            CHECK_POINTER_HRESULT(continueParsing, bootstrapInfoQualityEntry, continueParsing, E_OUTOFMEMORY);
 
-            if (continueParsing)
-            {
-              continueParsing &= this->qualityEntryTable->Add(bootstrapInfoQualityEntry);
-            }
-
-            if ((!continueParsing) && (bootstrapInfoQualityEntry != NULL))
-            {
-              // cleanup
-              FREE_MEM_CLASS(bootstrapInfoQualityEntry);
-            }
+            CHECK_CONDITION_HRESULT(continueParsing, this->qualityEntryTable->Add(bootstrapInfoQualityEntry), continueParsing, E_OUTOFMEMORY);
+            CHECK_CONDITION_EXECUTE(FAILED(continueParsing), FREE_MEM_CLASS(bootstrapInfoQualityEntry));
           }
 
           FREE_MEM(qualityEntry);
 
-          continueParsing &= (position < length);
+          CHECK_CONDITION_HRESULT(continueParsing, position < length, continueParsing, E_NOT_VALID_STATE);
         }
       }
 
-      continueParsing &= (position < length);
-      if (continueParsing)
+      CHECK_CONDITION_HRESULT(continueParsing, position < length, continueParsing, E_NOT_VALID_STATE);
+      if (SUCCEEDED(continueParsing))
       {
         // read DRM data string
         uint32_t positionAfter = position;
-        continueParsing &= SUCCEEDED(this->GetString(buffer, length, position, &this->drmData, &positionAfter));
+        continueParsing = this->GetString(buffer, length, position, &this->drmData, &positionAfter);
 
-        if (continueParsing)
-        {
-          position = positionAfter;
-        }
+        CHECK_CONDITION_EXECUTE(SUCCEEDED(continueParsing), position = positionAfter);
       }
 
-      continueParsing &= (position < length);
-      if (continueParsing)
+      CHECK_CONDITION_HRESULT(continueParsing, position < length, continueParsing, E_NOT_VALID_STATE);
+      if (SUCCEEDED(continueParsing))
       {
         // read metadata string
         uint32_t positionAfter = position;
-        continueParsing &= SUCCEEDED(this->GetString(buffer, length, position, &this->metaData, &positionAfter));
+        continueParsing = this->GetString(buffer, length, position, &this->metaData, &positionAfter);
 
-        if (continueParsing)
-        {
-          position = positionAfter;
-        }
+        CHECK_CONDITION_EXECUTE(SUCCEEDED(continueParsing), position = positionAfter);
       }
 
-      continueParsing &= (position < length);
-      if (continueParsing)
+      CHECK_CONDITION_HRESULT(continueParsing, position < length, continueParsing, E_NOT_VALID_STATE);
+      if (SUCCEEDED(continueParsing))
       {
         // read segment run table count and segment run table
         RBE8INC_DEFINE(buffer, position, segmentRunTableCount, uint8_t);
-        continueParsing &= (position < length);
+        CHECK_CONDITION_HRESULT(continueParsing, position < length, continueParsing, E_NOT_VALID_STATE);
 
-        for (uint8_t i = 0; continueParsing && (i < segmentRunTableCount); i++)
+        for (uint8_t i = 0; (SUCCEEDED(continueParsing) && (i < segmentRunTableCount)); i++)
         {
-          CSegmentRunTableBox *segmentRunTableBox = new CSegmentRunTableBox();
-          continueParsing &= (segmentRunTableBox != NULL);
+          CSegmentRunTableBox *segmentRunTableBox = new CSegmentRunTableBox(&continueParsing);
+          CHECK_POINTER_HRESULT(continueParsing, segmentRunTableBox, continueParsing, E_OUTOFMEMORY);
 
-          if (continueParsing)
-          {
-            continueParsing &= segmentRunTableBox->Parse(buffer + position, length - position);
-
-            if (continueParsing)
-            {
-              continueParsing &= this->segmentRunTable->Add(segmentRunTableBox);
-
-              if (continueParsing)
-              {
-                position += (uint32_t)segmentRunTableBox->GetSize();
-              }
-            }
-          }
-
-          if ((!continueParsing) && (segmentRunTableBox != NULL))
-          {
-            // cleanup
-            FREE_MEM_CLASS(segmentRunTableBox);
-          }
+          CHECK_CONDITION_HRESULT(continueParsing, segmentRunTableBox->Parse(buffer + position, length - position), continueParsing, E_NOT_VALID_STATE);
+          CHECK_CONDITION_HRESULT(continueParsing, this->segmentRunTable->Add(segmentRunTableBox), continueParsing, E_OUTOFMEMORY);
+          CHECK_CONDITION_EXECUTE(SUCCEEDED(continueParsing), position += (uint32_t)segmentRunTableBox->GetSize());
+          CHECK_CONDITION_EXECUTE(FAILED(continueParsing), FREE_MEM_CLASS(segmentRunTableBox));
         }
       }
 
-      continueParsing &= (position < length);
-      if (continueParsing)
+      CHECK_CONDITION_HRESULT(continueParsing, position < length, continueParsing, E_NOT_VALID_STATE);
+      if (SUCCEEDED(continueParsing))
       {
         // read fragment run table count and fragment run table
         RBE8INC_DEFINE(buffer, position, fragmentRunTableCount, uint8_t);
-        continueParsing &= (position < length);
+        CHECK_CONDITION_HRESULT(continueParsing, position < length, continueParsing, E_NOT_VALID_STATE);
 
-        for (uint8_t i = 0; continueParsing && (i < fragmentRunTableCount); i++)
+        for (uint8_t i = 0; (SUCCEEDED(continueParsing) && (i < fragmentRunTableCount)); i++)
         {
-          CFragmentRunTableBox *fragmentRunTableBox = new CFragmentRunTableBox();
-          continueParsing &= (fragmentRunTableBox != NULL);
+          CFragmentRunTableBox *fragmentRunTableBox = new CFragmentRunTableBox(&continueParsing);
+          CHECK_POINTER_HRESULT(continueParsing, fragmentRunTableBox, continueParsing, E_OUTOFMEMORY);
 
-          if (continueParsing)
-          {
-            continueParsing &= fragmentRunTableBox->Parse(buffer + position, length - position);
-
-            if (continueParsing)
-            {
-              continueParsing &= this->fragmentRunTable->Add(fragmentRunTableBox);
-
-              if (continueParsing)
-              {
-                position += (uint32_t)fragmentRunTableBox->GetSize();
-              }
-            }
-          }
-
-          if ((!continueParsing) && (fragmentRunTableBox != NULL))
-          {
-            // cleanup
-            FREE_MEM_CLASS(fragmentRunTableBox);
-          }
+          CHECK_CONDITION_HRESULT(continueParsing, fragmentRunTableBox->Parse(buffer + position, length - position), continueParsing, E_NOT_VALID_STATE);
+          CHECK_CONDITION_HRESULT(continueParsing, this->fragmentRunTable->Add(fragmentRunTableBox), continueParsing, E_OUTOFMEMORY);
+          CHECK_CONDITION_EXECUTE(SUCCEEDED(continueParsing), position += (uint32_t)fragmentRunTableBox->GetSize());
+          CHECK_CONDITION_EXECUTE(FAILED(continueParsing), FREE_MEM_CLASS(fragmentRunTableBox));
         }
       }
 
-      if (continueParsing && processAdditionalBoxes)
+      if (SUCCEEDED(continueParsing) && processAdditionalBoxes)
       {
         this->ProcessAdditionalBoxes(buffer, length, position);
       }
-      
-      this->parsed = continueParsing;
+
+      this->flags &= ~BOX_FLAG_PARSED;
+      this->flags |= SUCCEEDED(continueParsing) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
     }
   }
 
-  result = this->parsed;
-
-  return result;
+  return this->IsSetFlags(BOX_FLAG_PARSED);
 }

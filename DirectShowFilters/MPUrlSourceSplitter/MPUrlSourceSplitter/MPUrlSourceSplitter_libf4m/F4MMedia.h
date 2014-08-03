@@ -126,6 +126,11 @@ public:
   // @return : true if successful, false otherwise
   bool SetUrl(const wchar_t *url);
 
+  /* other methods */
+
+  // clears current instance to default state
+  void Clear(void);
+
 private:
   // store media bitrate
   unsigned int bitrate;

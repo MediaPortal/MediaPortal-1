@@ -53,6 +53,7 @@
 #define E_PARSER_STILL_PENDING                                                  -20
 #define E_NO_PARSER_LOADED                                                      -21
 #define E_NO_ACTIVE_PARSER                                                      -22
+#define E_DRM_PROTECTED                                                         -23
 
 // protocol error codes
 
@@ -75,6 +76,17 @@
 #define E_POSITION_LIMIT_OVER_MAXIMUM_POSITION                                  -48
 #define E_MINIMUM_TIMESTAMP_GREATER_THAN_MAXIMUM_TIMESTAMP                      -49
 #define E_SEEK_INDEX_ENTRY_EXISTS                                               -50
+
+// F4M parser error codes
+
+#define E_F4M_BASE_URL_NULL_OR_EMPTY                                            -60
+#define E_F4M_NO_BOOTSTRAP_INFO_PROFILE                                         -61
+#define E_F4M_NO_PIECE_OF_MEDIA                                                 -62
+#define E_F4M_NO_MEDIA_URL                                                      -63
+#define E_F4M_NO_BOOTSTRAP_INFO                                                 -64
+#define E_F4M_NO_BOOTSTRAP_INFO_VALUE                                           -65
+#define E_F4M_CANNOT_PARSE_BOOTSTRAP_INFO_BOX                                   -66
+#define E_F4M_ONLY_HTTP_PROTOCOL_SUPPORTED_IN_BASE_URL                          -67
 
 // HTTP protocol error codes
 
@@ -122,5 +134,17 @@
 #define E_RTMP_CONNECT_FAILED                                                   -151
 #define E_RTMP_CONNECT_STREAM_FAILED                                            -152
 #define E_RTMP_GENERAL_READ_ERROR                                               -153
+
+// AFHS protocol error codes
+#define E_AFHS_NO_DECRYPTOR_LOADED                                              -160
+#define E_AFHS_CANNOT_PARSE_BOOTSTRAP_INFO_BOX                                  -161
+#define E_AFHS_CANNOT_GET_SEGMENT_FRAGMENTS_FROM_BOOTSTRAP_INFO_BOX             -162
+#define E_AFHS_NOT_FOUND_SEGMENT_FRAGMENT_IN_LIVE_STREAM                        -163
+#define E_AFHS_CANNOT_DECODE_METADATA                                           -164
+#define E_AFHS_CANNOT_CREATE_METADATA_FLV_PACKET                                -165
+#define E_AFHS_CANNOT_PARSE_BOX                                                 -166
+#define E_AFHS_CANNOT_PARSE_MEDIA_DATA_BOX                                      -167
+#define E_AFHS_BOX_SIZE_ZERO                                                    -168
+#define E_AFHS_DECRYPTED_DATA_SIZE_ZERO                                         -169
 
 #endif

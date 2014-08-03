@@ -36,7 +36,7 @@ public:
 
   // gets parser result about current stream
   // @return : one of ParserResult values
-  virtual CParserPlugin::ParserResult GetParserResult(void);
+  virtual HRESULT GetParserResult(void);
 
   // gets parser score if parser result is Known
   // @return : parser score (parser with highest score is set as active parser)
@@ -56,7 +56,7 @@ public:
 
 protected:
   // holds parser result
-  CParserPlugin::ParserResult parserResult;
+  HRESULT parserResult;
 
   /* methods */
 };

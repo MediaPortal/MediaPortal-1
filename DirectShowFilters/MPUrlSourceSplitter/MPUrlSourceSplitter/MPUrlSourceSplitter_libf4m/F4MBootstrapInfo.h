@@ -122,6 +122,9 @@ public:
   // @return : S_OK if successfully downloaded, error code otherwise
   HRESULT DownloadBootstrapInfo(CLogger *logger, const wchar_t *protocolName, unsigned int finishTime, const wchar_t *referer, const wchar_t *userAgent, const wchar_t *cookie, CParameterCollection *cookies, const wchar_t *networkInterfaceName);
 
+  // clears current instance to default state
+  void Clear(void);
+
 private:
   // stores bootstrap info ID
   wchar_t *id;

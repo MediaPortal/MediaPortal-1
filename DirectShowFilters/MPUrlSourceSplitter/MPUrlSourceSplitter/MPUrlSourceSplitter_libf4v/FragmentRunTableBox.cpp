@@ -22,12 +22,21 @@
 
 #include "FragmentRunTableBox.h"
 
-CFragmentRunTableBox::CFragmentRunTableBox(void)
-  : CFullBox()
+CFragmentRunTableBox::CFragmentRunTableBox(HRESULT *result)
+  : CFullBox(result)
 {
   this->timeScale = 0;
-  this->qualitySegmentUrlModifiers = new CQualitySegmentUrlModifierCollection();
-  this->fragmentRunEntryTable = new CFragmentRunEntryCollection();
+  this->qualitySegmentUrlModifiers = NULL;
+  this->fragmentRunEntryTable = NULL;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->qualitySegmentUrlModifiers = new CQualitySegmentUrlModifierCollection(result);
+    this->fragmentRunEntryTable = new CFragmentRunEntryCollection(result);
+
+    CHECK_POINTER_HRESULT(*result, this->qualitySegmentUrlModifiers, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->fragmentRunEntryTable, *result, E_OUTOFMEMORY);
+  }
 }
 
 CFragmentRunTableBox::~CFragmentRunTableBox(void)
@@ -132,123 +141,102 @@ bool CFragmentRunTableBox::ParseInternal(const unsigned char *buffer, uint32_t l
   bool result = (this->qualitySegmentUrlModifiers != NULL) && (this->fragmentRunEntryTable != NULL);
   // in bad case we don't have tables, but still it can be valid box
   result &= __super::ParseInternal(buffer, length, false);
+  this->flags &= ~BOX_FLAG_PARSED;
 
   if (result)
   {
-    if (wcscmp(this->type, FRAGMENT_RUN_TABLE_BOX_TYPE) != 0)
-    {
-      // incorect box type
-      this->parsed = false;
-      result = false;
-    }
-    else
+    this->flags |= (wcscmp(this->type, FRAGMENT_RUN_TABLE_BOX_TYPE) == 0) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
+
+    if (this->IsSetFlags(BOX_FLAG_PARSED))
     {
       // box is bootstrap info box, parse all values
       uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
 
       // until time scale end is 8 bytes
-      bool continueParsing = ((position + 8) <= length);
+      HRESULT continueParsing = ((position + 8) <= length) ? S_OK : E_NOT_VALID_STATE;
       
-      if (continueParsing)
+      if (SUCCEEDED(continueParsing))
       {
         position += 4;
 
         this->timeScale = RBE32INC(buffer, position, this->timeScale);
       }
 
-      continueParsing &= (position < length);
-      if (continueParsing)
+      CHECK_CONDITION_HRESULT(continueParsing, position < length, continueParsing, E_NOT_VALID_STATE);
+      if (SUCCEEDED(continueParsing))
       {
         // quality entry count and quality segment url modifiers
         RBE8INC_DEFINE(buffer, position, qualityEntryCount, uint32_t);
-        continueParsing &= (position < length);
+        CHECK_CONDITION_HRESULT(continueParsing, position < length, continueParsing, E_NOT_VALID_STATE);
 
-        for(uint32_t  i = 0; continueParsing && (i < qualityEntryCount); i++)
+        for(uint32_t i = 0; (SUCCEEDED(continueParsing) && (i < qualityEntryCount)); i++)
         {
           uint32_t  positionAfter = position;
           wchar_t *qualitySegmentUrlModifier = NULL;
-          continueParsing &= SUCCEEDED(this->GetString(buffer, length, position, &qualitySegmentUrlModifier, &positionAfter));
+          continueParsing = this->GetString(buffer, length, position, &qualitySegmentUrlModifier, &positionAfter);
 
-          if (continueParsing)
+          if (SUCCEEDED(continueParsing))
           {
             position = positionAfter;
 
             // create quality segment url modifier item in quality segment url modifier collection
-            CQualitySegmentUrlModifier *qualitySegmentUrlModifierEntry = new CQualitySegmentUrlModifier(qualitySegmentUrlModifier);
-            continueParsing &= (qualitySegmentUrlModifierEntry != NULL);
+            CQualitySegmentUrlModifier *qualitySegmentUrlModifierEntry = new CQualitySegmentUrlModifier(&continueParsing, qualitySegmentUrlModifier);
+            CHECK_POINTER_HRESULT(continueParsing, qualitySegmentUrlModifierEntry, continueParsing, E_OUTOFMEMORY);
 
-            if (continueParsing)
-            {
-              continueParsing &= this->qualitySegmentUrlModifiers->Add(qualitySegmentUrlModifierEntry);
-            }
-
-            if (!continueParsing)
-            {
-              FREE_MEM_CLASS(qualitySegmentUrlModifierEntry);
-            }
+            CHECK_CONDITION_HRESULT(continueParsing, this->qualitySegmentUrlModifiers->Add(qualitySegmentUrlModifierEntry), continueParsing, E_OUTOFMEMORY);
+            CHECK_CONDITION_EXECUTE(FAILED(continueParsing), FREE_MEM_CLASS(qualitySegmentUrlModifierEntry));
           }
 
           FREE_MEM(qualitySegmentUrlModifier);
 
-          continueParsing &= (position < length);
+          CHECK_CONDITION_HRESULT(continueParsing, position < length, continueParsing, E_NOT_VALID_STATE);
         }
       }
 
-      continueParsing &= ((position + 4) < length);
-      if (continueParsing)
+      CHECK_CONDITION_HRESULT(continueParsing, (position + 4) < length, continueParsing, E_NOT_VALID_STATE);
+      if (SUCCEEDED(continueParsing))
       {
         // fragment run entry count and fragment run entry table
-        RBE32INC_DEFINE(buffer, position, fragmentRunEntryCount, uint32_t );
+        RBE32INC_DEFINE(buffer, position, fragmentRunEntryCount, uint32_t);
 
-        for(uint32_t  i = 0; continueParsing && (i < fragmentRunEntryCount); i++)
+        for(uint32_t  i = 0; (SUCCEEDED(continueParsing) && (i < fragmentRunEntryCount)); i++)
         {
           // minimum fragment size is 16 bytes
           // but fragment can be last in buffer
-          continueParsing &= ((position + 15 ) < length);
+          CHECK_CONDITION_HRESULT(continueParsing, (position + 15) < length, continueParsing, E_NOT_VALID_STATE);
 
-          if (continueParsing)
+          if (SUCCEEDED(continueParsing))
           {
-            RBE32INC_DEFINE(buffer, position, firstFragment, uint32_t );
+            RBE32INC_DEFINE(buffer, position, firstFragment, uint32_t);
             RBE64INC_DEFINE(buffer, position, firstFragmentTimestamp, uint64_t);
-            RBE32INC_DEFINE(buffer, position, fragmentDuration, uint32_t );
+            RBE32INC_DEFINE(buffer, position, fragmentDuration, uint32_t);
 
             uint32_t discontinuityIndicator = DISCONTINUITY_INDICATOR_NOT_AVAILABLE;
             if (fragmentDuration == 0)
             {
-              continueParsing &= (position < length);
+              CHECK_CONDITION_HRESULT(continueParsing, position < length, continueParsing, E_NOT_VALID_STATE);
 
-              if (continueParsing)
-              {
-                RBE8INC(buffer, position, discontinuityIndicator);
-              }
+              CHECK_CONDITION_EXECUTE(SUCCEEDED(continueParsing), RBE8INC(buffer, position, discontinuityIndicator));
             }
 
-            CFragmentRunEntry *fragment = new CFragmentRunEntry(firstFragment, firstFragmentTimestamp, fragmentDuration, discontinuityIndicator);
-            continueParsing &= (fragment != NULL);
-
-            if (continueParsing)
-            {
-              continueParsing &= this->fragmentRunEntryTable->Add(fragment);
-            }
-
-            if (!continueParsing)
-            {
-              FREE_MEM_CLASS(fragment);
-            }
+            CFragmentRunEntry *fragment = new CFragmentRunEntry(&continueParsing, firstFragment, firstFragmentTimestamp, fragmentDuration, discontinuityIndicator);
+            CHECK_POINTER_HRESULT(continueParsing, fragment, continueParsing, E_OUTOFMEMORY);
+            
+            CHECK_CONDITION_HRESULT(continueParsing, this->fragmentRunEntryTable->Add(fragment), continueParsing, E_OUTOFMEMORY);
+            CHECK_CONDITION_EXECUTE(FAILED(continueParsing), FREE_MEM_CLASS(fragment));
           }
         }
       }
 
-      if (continueParsing && processAdditionalBoxes)
+      if (SUCCEEDED(continueParsing) && processAdditionalBoxes)
       {
         this->ProcessAdditionalBoxes(buffer, length, position);
       }
 
-      this->parsed = continueParsing;
+      this->flags &= ~BOX_FLAG_PARSED;
+      this->flags |= SUCCEEDED(continueParsing) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
     }
   }
 
-  result = this->parsed;
-
-  return result;
+  return this->IsSetFlags(BOX_FLAG_PARSED);
 }

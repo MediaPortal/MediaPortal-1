@@ -35,7 +35,7 @@ class CSegmentRunTableBox :
 {
 public:
   // initializes a new instance of CSegmentRunTableBox class
-  CSegmentRunTableBox(void);
+  CSegmentRunTableBox(HRESULT *result);
 
   // destructor
   virtual ~CSegmentRunTableBox(void);

@@ -22,7 +22,7 @@
 
 #include "SegmentRunEntry.h"
 
-CSegmentRunEntry::CSegmentRunEntry(uint32_t firstSegment, uint32_t fragmentsPerSegment)
+CSegmentRunEntry::CSegmentRunEntry(HRESULT *result, uint32_t firstSegment, uint32_t fragmentsPerSegment)
 {
   this->firstSegment = firstSegment;
   this->fragmentsPerSegment = fragmentsPerSegment;

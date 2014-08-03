@@ -313,3 +313,14 @@ bool CF4MManifest::Parse(const char *buffer)
 
   return SUCCEEDED(result);
 }
+
+void CF4MManifest::Clear(void)
+{
+  this->isXml = false;
+  this->parseError = XML_NO_ERROR;
+  this->bootstrapInfoCollection->Clear();
+  this->mediaCollection->Clear();
+  this->deliveryType->Clear();
+  this->baseUrl->Clear();
+  this->duration->Clear();
+}

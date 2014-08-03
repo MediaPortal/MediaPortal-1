@@ -22,9 +22,14 @@
 
 #include "QualitySegmentUrlModifier.h"
 
-CQualitySegmentUrlModifier::CQualitySegmentUrlModifier(const wchar_t *qualitySegmentUrlModifier)
+CQualitySegmentUrlModifier::CQualitySegmentUrlModifier(HRESULT *result, const wchar_t *qualitySegmentUrlModifier)
 {
-  this->qualitySegmentUrlModifier = Duplicate(qualitySegmentUrlModifier);
+  this->qualitySegmentUrlModifier = NULL;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    SET_STRING_HRESULT_WITH_NULL(this->qualitySegmentUrlModifier, qualitySegmentUrlModifier, (*result));
+  }
 }
 
 CQualitySegmentUrlModifier::~CQualitySegmentUrlModifier(void)

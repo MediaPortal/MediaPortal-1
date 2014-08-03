@@ -47,6 +47,9 @@ public:
 
   /* other methods */
 
+  // clears current instance to default state
+  void Clear(void);
+
 private:
   // stores base URL for all relative (HTTP-based) URLs in the manifest
   wchar_t *baseUrl;

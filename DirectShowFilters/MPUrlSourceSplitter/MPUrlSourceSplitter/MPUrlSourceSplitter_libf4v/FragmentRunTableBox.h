@@ -35,7 +35,7 @@ class CFragmentRunTableBox :
 {
 public:
   // initializes a new instance of CFragmentRunTableBox class
-  CFragmentRunTableBox(void);
+  CFragmentRunTableBox(HRESULT *result);
 
   // destructor
   virtual ~CFragmentRunTableBox(void);

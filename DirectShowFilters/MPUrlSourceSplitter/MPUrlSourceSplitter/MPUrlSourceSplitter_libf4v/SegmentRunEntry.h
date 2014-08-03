@@ -29,7 +29,7 @@ class CSegmentRunEntry
 {
 public:
   // initializes a new instance of CSegmentRunEntry class
-  CSegmentRunEntry(uint32_t firstSegment, uint32_t fragmentsPerSegment);
+  CSegmentRunEntry(HRESULT *result, uint32_t firstSegment, uint32_t fragmentsPerSegment);
 
   ~CSegmentRunEntry(void);
 

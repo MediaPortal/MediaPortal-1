@@ -378,6 +378,10 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CStreamPackage *streamPa
             {
               this->connectionState = Opening;
             }
+            else
+            {
+              this->connectionState = OpeningFailed;
+            }
           }
           else
           {

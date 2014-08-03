@@ -29,7 +29,7 @@
 class CFragmentRunEntryCollection : public CCollection<CFragmentRunEntry>
 {
 public:
-  CFragmentRunEntryCollection(void);
+  CFragmentRunEntryCollection(HRESULT *result);
   ~CFragmentRunEntryCollection(void);
 
 protected:

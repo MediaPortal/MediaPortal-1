@@ -33,7 +33,7 @@
 CParserHosterPluginMetadata::CParserHosterPluginMetadata(HRESULT *result, CLogger *logger, CParameterCollection *configuration, const wchar_t *hosterName, const wchar_t *pluginLibraryFileName)
   : CHosterPluginMetadata(result, logger, configuration, hosterName, pluginLibraryFileName)
 {
-  this->parserResult = CParserPlugin::Pending;
+  this->parserResult = PARSER_RESULT_PENDING;
 }
 
 CParserHosterPluginMetadata::~CParserHosterPluginMetadata(void)
@@ -42,13 +42,13 @@ CParserHosterPluginMetadata::~CParserHosterPluginMetadata(void)
 
 /* get methods */
 
-CParserPlugin::ParserResult CParserHosterPluginMetadata::GetParserResult(void)
+HRESULT CParserHosterPluginMetadata::GetParserResult(void)
 {
-  if (this->parserResult == CParserPlugin::Pending)
+  if (this->parserResult == PARSER_RESULT_PENDING)
   {
     CParserPlugin *parser = dynamic_cast<CParserPlugin *>(this->plugin);
 
-    this->parserResult = (parser != NULL) ? parser->GetParserResult() : CParserPlugin::Pending;
+    this->parserResult = (parser != NULL) ? parser->GetParserResult() : PARSER_RESULT_PENDING;
   }
 
   return this->parserResult;
@@ -67,14 +67,14 @@ unsigned int CParserHosterPluginMetadata::GetParserScore(void)
 
 HRESULT CParserHosterPluginMetadata::ClearSession(void)
 {
-  this->parserResult = CParserPlugin::Pending;
+  this->parserResult = PARSER_RESULT_PENDING;
 
   return S_OK;
 }
 
 bool CParserHosterPluginMetadata::IsParserStillPending(void)
 {
-  return (this->parserResult == CParserPlugin::Pending);
+  return (this->parserResult == PARSER_RESULT_PENDING);
 }
 
 /* protected methods */

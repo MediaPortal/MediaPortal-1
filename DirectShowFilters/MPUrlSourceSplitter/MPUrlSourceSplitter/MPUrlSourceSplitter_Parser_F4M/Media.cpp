@@ -45,21 +45,16 @@ CMedia::CMedia(HRESULT *result,
 
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
-    this->url = Duplicate(url);
-    this->drmAdditionalHeaderId = Duplicate(drmAdditionalHeaderId);
     this->bootstrapInfoId = Duplicate((bootstrapInfoId == NULL) ? L"" : bootstrapInfoId);
-    this->dvrInfoId = Duplicate(dvrInfoId);
-    this->groupspec = Duplicate(groupspec);
-    this->multicastStreamName = Duplicate(multicastStreamName);
-    this->metadata = Duplicate(metadata);
 
-    CHECK_POINTER_HRESULT(*result, this->url, *result, E_OUTOFMEMORY);
-    CHECK_POINTER_HRESULT(*result, this->drmAdditionalHeaderId, *result, E_OUTOFMEMORY);
+    SET_STRING_HRESULT_WITH_NULL(this->url, url, (*result));
+    SET_STRING_HRESULT_WITH_NULL(this->drmAdditionalHeaderId, drmAdditionalHeaderId, (*result));
+    SET_STRING_HRESULT_WITH_NULL(this->dvrInfoId, dvrInfoId, (*result));
+    SET_STRING_HRESULT_WITH_NULL(this->groupspec, groupspec, (*result));
+    SET_STRING_HRESULT_WITH_NULL(this->multicastStreamName, multicastStreamName, (*result));
+    SET_STRING_HRESULT_WITH_NULL(this->metadata, metadata, (*result));
+
     CHECK_POINTER_HRESULT(*result, this->bootstrapInfoId, *result, E_OUTOFMEMORY);
-    CHECK_POINTER_HRESULT(*result, this->dvrInfoId, *result, E_OUTOFMEMORY);
-    CHECK_POINTER_HRESULT(*result, this->groupspec, *result, E_OUTOFMEMORY);
-    CHECK_POINTER_HRESULT(*result, this->multicastStreamName, *result, E_OUTOFMEMORY);
-    CHECK_POINTER_HRESULT(*result, this->metadata, *result, E_OUTOFMEMORY);
   }
 }
 

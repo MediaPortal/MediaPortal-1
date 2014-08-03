@@ -22,8 +22,8 @@
 
 #include "QualitySegmentUrlModifierCollection.h"
 
-CQualitySegmentUrlModifierCollection::CQualitySegmentUrlModifierCollection(void)
-  : CKeyedCollection()
+CQualitySegmentUrlModifierCollection::CQualitySegmentUrlModifierCollection(HRESULT *result)
+  : CKeyedCollection(result)
 {
 }
 

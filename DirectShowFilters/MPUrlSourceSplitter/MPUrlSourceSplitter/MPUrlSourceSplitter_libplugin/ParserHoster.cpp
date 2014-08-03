@@ -159,24 +159,25 @@ HRESULT CParserHoster::StartReceivingData(CParameterCollection *parameters)
 
               if (metadata->IsParserStillPending())
               {
-                CParserPlugin::ParserResult parserResult = metadata->GetParserResult();
+                HRESULT parserResult = metadata->GetParserResult();
 
                 switch(parserResult)
                 {
-                case CParserPlugin::Pending:
+                case PARSER_RESULT_PENDING:
                   pendingParser = true;
                   break;
-                case CParserPlugin::NotKnown:
+                case PARSER_RESULT_NOT_KNOWN:
                   this->logger->Log(LOGGER_INFO, L"%s: %s: parser '%s' doesn't recognize stream", MODULE_PARSER_HOSTER_NAME, METHOD_START_RECEIVING_DATA_NAME, metadata->GetPlugin()->GetName());
                   break;
-                case CParserPlugin::Known:
+                case PARSER_RESULT_KNOWN:
                   this->logger->Log(LOGGER_INFO, L"%s: %s: parser '%s' recognizes stream, score: %u", MODULE_PARSER_HOSTER_NAME, METHOD_START_RECEIVING_DATA_NAME, metadata->GetPlugin()->GetName(), metadata->GetParserScore());
                   break;
-                case CParserPlugin::DrmProtected:
+                case PARSER_RESULT_DRM_PROTECTED:
                   this->logger->Log(LOGGER_INFO, L"%s: %s: parser '%s' recognizes pattern, DRM protected", MODULE_PARSER_HOSTER_NAME, METHOD_START_RECEIVING_DATA_NAME, metadata->GetPlugin()->GetName());
                   break;
                 default:
-                  this->logger->Log(LOGGER_WARNING, L"%s: %s: parser '%s' returns unknown result", MODULE_PARSER_HOSTER_NAME, METHOD_START_RECEIVING_DATA_NAME, metadata->GetPlugin()->GetName());
+                  this->logger->Log(LOGGER_WARNING, L"%s: %s: parser '%s' returns error: 0x%08X", MODULE_PARSER_HOSTER_NAME, METHOD_START_RECEIVING_DATA_NAME, metadata->GetPlugin()->GetName(), parserResult);
+                  result = parserResult;
                   break;
                 }
               }
@@ -217,7 +218,7 @@ HRESULT CParserHoster::StartReceivingData(CParameterCollection *parameters)
             {
               CParserHosterPluginMetadata *metadata = (CParserHosterPluginMetadata *)this->hosterPluginMetadataCollection->GetItem(i);
 
-              if ((metadata->GetParserResult() == CParserPlugin::Known) && (metadata->GetParserScore() > highestScore))
+              if ((metadata->GetParserResult() == PARSER_RESULT_KNOWN) && (metadata->GetParserScore() > highestScore))
               {
                 highestScore = metadata->GetParserScore();
                 highestScoreParser = dynamic_cast<CParserPlugin *>(metadata->GetPlugin());

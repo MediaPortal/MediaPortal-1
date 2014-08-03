@@ -27,13 +27,25 @@
     <ClInclude Include="IAfhsSimpleDecryptionPlugin.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SegmentFragment.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SegmentFragmentCollection.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="AfhsDecryptionContext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AfhsSegmentFragment.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AfhsSegmentFragmentCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AfhsDecryptionPlugin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AfhsDecryptionPluginConfiguration.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AfhsDecryptionHoster.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AfhsDecryptionHosterPluginMetadata.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -41,13 +53,25 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SegmentFragment.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SegmentFragmentCollection.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="AfhsDecryptionContext.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AfhsSegmentFragment.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AfhsSegmentFragmentCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AfhsDecryptionPlugin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AfhsDecryptionPluginConfiguration.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AfhsDecryptionHoster.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AfhsDecryptionHosterPluginMetadata.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

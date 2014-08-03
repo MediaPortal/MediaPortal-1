@@ -29,7 +29,7 @@
 class CBootstrapInfoQualityEntryCollection : public CKeyedCollection<CBootstrapInfoQualityEntry, const wchar_t *>
 {
 public:
-  CBootstrapInfoQualityEntryCollection(void);
+  CBootstrapInfoQualityEntryCollection(HRESULT *result);
   ~CBootstrapInfoQualityEntryCollection(void);
 
 protected:

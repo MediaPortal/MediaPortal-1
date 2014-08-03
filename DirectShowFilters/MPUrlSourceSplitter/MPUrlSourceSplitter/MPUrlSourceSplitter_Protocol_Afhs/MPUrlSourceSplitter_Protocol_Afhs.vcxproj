@@ -53,14 +53,14 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;MPURLSOURCESPLITTER_PROTOCOL_AFHS_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\..\libcurl\include;..\..\libcurl\include\curl;..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libcollections;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_libf4v;..\MPUrlSourceSplitter_libflv;..\MPUrlSourceSplitter_libcurlinstance;..\MPUrlSourceSplitter_libibmff;..\MPUrlSourceSplitter_libf4m;..\MPUrlSourceSplitter_libafhs;..\MPUrlSourceSplitter_libsocket;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\MPUrlSourceSplitter_libcurl\include;..\MPUrlSourceSplitter_libcurl\include\curl;..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_libf4v;..\MPUrlSourceSplitter_libflv;..\MPUrlSourceSplitter_libcurlinstance;..\MPUrlSourceSplitter_libibmff;..\MPUrlSourceSplitter_libf4m;..\MPUrlSourceSplitter_libafhs;..\MPUrlSourceSplitter_libsocket;..\MPUrlSourceSplitter_libplugin;..\MPUrlSourceSplitter_libcachefile;..\MPUrlSourceSplitter_libdumpfile;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ModuleDefinitionFile>mpurlsourcesplitter_protocol_Afhs.def</ModuleDefinitionFile>
       <AdditionalLibraryDirectories>$(SolutionDir)bin_$(PlatformName)d\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>wininet.lib;urlmon.lib;Ws2_32.lib;Shlwapi.lib;MPUrlSourceSplitter_libcurl.lib;MPUrlSourceSplitter_libmemory.lib;MPUrlSourceSplitter_libstrings.lib;MPUrlSourceSplitter_libcollections.lib;MPUrlSourceSplitter_liblogger.lib;MPUrlSourceSplitter_libshared.lib;MPUrlSourceSplitter_libibmff.lib;MPUrlSourceSplitter_libf4m.lib;MPUrlSourceSplitter_libf4v.lib;MPUrlSourceSplitter_libflv.lib;MPUrlSourceSplitter_libcurlinstance.lib;MPUrlSourceSplitter_libtinyxml2.lib;MPUrlSourceSplitter_libafhs.lib;MPUrlSourceSplitter_libsocket.lib;Iphlpapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wininet.lib;urlmon.lib;Ws2_32.lib;Shlwapi.lib;MPUrlSourceSplitter_libcurl.lib;MPUrlSourceSplitter_libmemory.lib;MPUrlSourceSplitter_libstrings.lib;MPUrlSourceSplitter_liblogger.lib;MPUrlSourceSplitter_libshared.lib;MPUrlSourceSplitter_libibmff.lib;MPUrlSourceSplitter_libf4m.lib;MPUrlSourceSplitter_libf4v.lib;MPUrlSourceSplitter_libflv.lib;MPUrlSourceSplitter_libcurlinstance.lib;MPUrlSourceSplitter_libtinyxml2.lib;MPUrlSourceSplitter_libafhs.lib;MPUrlSourceSplitter_libsocket.lib;MPUrlSourceSplitter_libplugin.lib;MPUrlSourceSplitter_libcachefile.lib;MPUrlSourceSplitter_libdumpfile.lib;Iphlpapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>echo /* &gt; VersionInfo.h
@@ -111,7 +111,7 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)d\$(Ta
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;MPURLSOURCESPLITTER_PROTOCOL_AFHS_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\..\libcurl\include;..\..\libcurl\include\curl;..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libcollections;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_libf4v;..\MPUrlSourceSplitter_libflv;..\MPUrlSourceSplitter_libcurlinstance;..\MPUrlSourceSplitter_libibmff;..\MPUrlSourceSplitter_libf4m;..\MPUrlSourceSplitter_libafhs;..\MPUrlSourceSplitter_libsocket;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\MPUrlSourceSplitter_libcurl\include;..\MPUrlSourceSplitter_libcurl\include\curl;..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_libf4v;..\MPUrlSourceSplitter_libflv;..\MPUrlSourceSplitter_libcurlinstance;..\MPUrlSourceSplitter_libibmff;..\MPUrlSourceSplitter_libf4m;..\MPUrlSourceSplitter_libafhs;..\MPUrlSourceSplitter_libsocket;..\MPUrlSourceSplitter_libplugin;..\MPUrlSourceSplitter_libcachefile;..\MPUrlSourceSplitter_libdumpfile;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -119,7 +119,7 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)d\$(Ta
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)bin_$(PlatformName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>wininet.lib;urlmon.lib;Ws2_32.lib;Shlwapi.lib;MPUrlSourceSplitter_libcurl.lib;MPUrlSourceSplitter_libmemory.lib;MPUrlSourceSplitter_libstrings.lib;MPUrlSourceSplitter_libcollections.lib;MPUrlSourceSplitter_liblogger.lib;MPUrlSourceSplitter_libshared.lib;MPUrlSourceSplitter_libibmff.lib;MPUrlSourceSplitter_libf4m.lib;MPUrlSourceSplitter_libf4v.lib;MPUrlSourceSplitter_libflv.lib;MPUrlSourceSplitter_libcurlinstance.lib;MPUrlSourceSplitter_libtinyxml2.lib;MPUrlSourceSplitter_libafhs.lib;MPUrlSourceSplitter_libsocket.lib;Iphlpapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wininet.lib;urlmon.lib;Ws2_32.lib;Shlwapi.lib;MPUrlSourceSplitter_libcurl.lib;MPUrlSourceSplitter_libmemory.lib;MPUrlSourceSplitter_libstrings.lib;MPUrlSourceSplitter_liblogger.lib;MPUrlSourceSplitter_libshared.lib;MPUrlSourceSplitter_libibmff.lib;MPUrlSourceSplitter_libf4m.lib;MPUrlSourceSplitter_libf4v.lib;MPUrlSourceSplitter_libflv.lib;MPUrlSourceSplitter_libcurlinstance.lib;MPUrlSourceSplitter_libtinyxml2.lib;MPUrlSourceSplitter_libafhs.lib;MPUrlSourceSplitter_libsocket.lib;MPUrlSourceSplitter_libplugin.lib;MPUrlSourceSplitter_libcachefile.lib;MPUrlSourceSplitter_libdumpfile.lib;Iphlpapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>mpurlsourcesplitter_protocol_Afhs.def</ModuleDefinitionFile>
     </Link>
     <PreBuildEvent>
@@ -167,14 +167,18 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     <None Include="mpurlsourcesplitter_protocol_Afhs.def" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AfhsDecryptionHoster.h" />
+    <ClInclude Include="AfhsCurlInstance.h" />
+    <ClInclude Include="AfhsDownloadRequest.h" />
+    <ClInclude Include="AfhsDownloadResponse.h" />
     <ClInclude Include="MPUrlSourceSplitter_Protocol_Afhs.h" />
     <ClInclude Include="MPUrlSourceSplitter_Protocol_Afhs_Parameters.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AfhsDecryptionHoster.cpp" />
+    <ClCompile Include="AfhsCurlInstance.cpp" />
+    <ClCompile Include="AfhsDownloadRequest.cpp" />
+    <ClCompile Include="AfhsDownloadResponse.cpp" />
     <ClCompile Include="dllmain.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

@@ -28,7 +28,7 @@ class CBootstrapInfoServerEntry
 public:
   // initializes a new instance of CBootstrapInfoServerEntry class
   // @param serverEntry : the server entry
-  CBootstrapInfoServerEntry(const wchar_t *serverEntry);
+  CBootstrapInfoServerEntry(HRESULT *result, const wchar_t *serverEntry);
 
   // destructor
   ~CBootstrapInfoServerEntry(void);

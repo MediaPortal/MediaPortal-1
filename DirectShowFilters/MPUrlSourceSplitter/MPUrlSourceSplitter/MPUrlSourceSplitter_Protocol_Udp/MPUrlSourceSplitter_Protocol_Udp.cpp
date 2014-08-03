@@ -339,6 +339,10 @@ HRESULT CMPUrlSourceSplitter_Protocol_Udp::ReceiveData(CStreamPackage *streamPac
             {
               this->connectionState = Opening;
             }
+            else
+            {
+              this->connectionState = OpeningFailed;
+            }
           }
           else
           {

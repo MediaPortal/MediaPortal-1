@@ -60,7 +60,7 @@ CMPUrlSourceSplitter_Parser_Default::CMPUrlSourceSplitter_Parser_Default(HRESULT
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
     this->logger->Log(LOGGER_INFO, METHOD_CONSTRUCTOR_START_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME, this);
-    this->parserResult = Known;
+    this->parserResult = PARSER_RESULT_KNOWN;
 
     wchar_t *version = GetVersionInfo(COMMIT_INFO_MP_URL_SOURCE_SPLITTER_PARSER_DEFAULT, DATE_INFO_MP_URL_SOURCE_SPLITTER_PARSER_DEFAULT);
     if (version != NULL)
@@ -185,7 +185,7 @@ HRESULT CMPUrlSourceSplitter_Parser_Default::ClearSession(void)
 {
   HRESULT result = __super::ClearSession();
 
-  this->parserResult = Known;
+  this->parserResult = PARSER_RESULT_KNOWN;
 
   return result;
 }

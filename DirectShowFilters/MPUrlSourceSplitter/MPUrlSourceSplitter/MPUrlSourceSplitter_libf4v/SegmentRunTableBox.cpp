@@ -22,11 +22,20 @@
 
 #include "SegmentRunTableBox.h"
 
-CSegmentRunTableBox::CSegmentRunTableBox(void)
-  :CFullBox()
+CSegmentRunTableBox::CSegmentRunTableBox(HRESULT *result)
+  :CFullBox(result)
 {
-  this->segmentRunEntryTable = new CSegmentRunEntryCollection();
-  this->qualitySegmentUrlModifiers = new CQualitySegmentUrlModifierCollection();
+  this->segmentRunEntryTable = NULL;
+  this->qualitySegmentUrlModifiers = NULL;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->segmentRunEntryTable = new CSegmentRunEntryCollection(result);
+    this->qualitySegmentUrlModifiers = new CQualitySegmentUrlModifierCollection(result);
+
+    CHECK_POINTER_HRESULT(*result, this->segmentRunEntryTable, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->qualitySegmentUrlModifiers, *result, E_OUTOFMEMORY);
+  }
 }
 
 CSegmentRunTableBox::~CSegmentRunTableBox(void)
@@ -133,104 +142,86 @@ bool CSegmentRunTableBox::ParseInternal(const unsigned char *buffer, uint32_t le
   bool result = (this->segmentRunEntryTable != NULL) && (this->qualitySegmentUrlModifiers != NULL);
   // in bad case we don't have tables, but still it can be valid box
   result &= __super::ParseInternal(buffer, length, false);
+  this->flags &= ~BOX_FLAG_PARSED;
 
   if (result)
   {
-    if (wcscmp(this->type, SEGMENT_RUN_TABLE_BOX_TYPE) != 0)
-    {
-      // incorect box type
-      this->parsed = false;
-      result = false;
-    }
-    else
+    this->flags |= (wcscmp(this->type, SEGMENT_RUN_TABLE_BOX_TYPE) == 0) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
+
+    if (this->IsSetFlags(BOX_FLAG_PARSED))
     {
       // box is bootstrap info box, parse all values
       uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
 
       // until version and flags end is 4 bytes
       position += 4;
-      bool continueParsing = (position < length);
+      HRESULT continueParsing = (position < length) ? S_OK : E_NOT_VALID_STATE;
       
-      if (continueParsing)
+      if (SUCCEEDED(continueParsing))
       {
         // quality entry count and quality segment url modifiers
         RBE8INC_DEFINE(buffer, position, qualityEntryCount, uint32_t);
-        continueParsing &= (position < length);
+        CHECK_CONDITION_HRESULT(continueParsing, position < length, continueParsing, E_NOT_VALID_STATE);
 
-        for(uint32_t i = 0; continueParsing && (i < qualityEntryCount); i++)
+        for(uint32_t i = 0; (SUCCEEDED(continueParsing) && (i < qualityEntryCount)); i++)
         {
           uint32_t positionAfter = position;
           wchar_t *qualitySegmentUrlModifier = NULL;
-          continueParsing &= SUCCEEDED(this->GetString(buffer, length, position, &qualitySegmentUrlModifier, &positionAfter));
+          continueParsing = this->GetString(buffer, length, position, &qualitySegmentUrlModifier, &positionAfter);
 
-          if (continueParsing)
+          if (SUCCEEDED(continueParsing))
           {
             position = positionAfter;
 
             // create quality segment url modifier item in quality segment url modifier collection
-            CQualitySegmentUrlModifier *qualitySegmentUrlModifierEntry = new CQualitySegmentUrlModifier(qualitySegmentUrlModifier);
-            continueParsing &= (qualitySegmentUrlModifierEntry != NULL);
+            CQualitySegmentUrlModifier *qualitySegmentUrlModifierEntry = new CQualitySegmentUrlModifier(&continueParsing, qualitySegmentUrlModifier);
+            CHECK_POINTER_HRESULT(continueParsing, qualitySegmentUrlModifierEntry, continueParsing, E_OUTOFMEMORY);
 
-            if (continueParsing)
-            {
-              continueParsing &= this->qualitySegmentUrlModifiers->Add(qualitySegmentUrlModifierEntry);
-            }
-
-            if (!continueParsing)
-            {
-              FREE_MEM_CLASS(qualitySegmentUrlModifierEntry);
-            }
+            CHECK_CONDITION_HRESULT(continueParsing, this->qualitySegmentUrlModifiers->Add(qualitySegmentUrlModifierEntry), continueParsing, E_OUTOFMEMORY);
+            CHECK_CONDITION_EXECUTE(FAILED(continueParsing), FREE_MEM_CLASS(qualitySegmentUrlModifierEntry));
           }
 
           FREE_MEM(qualitySegmentUrlModifier);
 
-          continueParsing &= (position < length);
+          CHECK_CONDITION_HRESULT(continueParsing, position < length, continueParsing, E_NOT_VALID_STATE);
         }
       }
 
-      continueParsing &= ((position + 4) < length);
-      if (continueParsing)
+      CHECK_CONDITION_HRESULT(continueParsing, (position + 4) < length, continueParsing, E_NOT_VALID_STATE);
+      if (SUCCEEDED(continueParsing))
       {
         // segment run entry count and segment run entry table
         RBE32INC_DEFINE(buffer, position, segmentRunEntryCount, uint32_t);
 
-        for(uint32_t i = 0; continueParsing && (i < segmentRunEntryCount); i++)
+        for(uint32_t i = 0; (SUCCEEDED(continueParsing) && (i < segmentRunEntryCount)); i++)
         {
           // need to read 8 bytes
           // but this segment can be last in buffer
-          continueParsing &= ((position + 7 ) < length);
+          CHECK_CONDITION_HRESULT(continueParsing, (position + 7) < length, continueParsing, E_NOT_VALID_STATE);
 
-          if (continueParsing)
+          if (SUCCEEDED(continueParsing))
           {
             RBE32INC_DEFINE(buffer, position, firstSegment, uint32_t);
             RBE32INC_DEFINE(buffer, position, fragmentsPerSegment, uint32_t);
 
-            CSegmentRunEntry *segment = new CSegmentRunEntry(firstSegment, fragmentsPerSegment);
-            continueParsing &= (segment != NULL);
+            CSegmentRunEntry *segment = new CSegmentRunEntry(&continueParsing, firstSegment, fragmentsPerSegment);
+            CHECK_POINTER_HRESULT(continueParsing, segment, continueParsing, E_OUTOFMEMORY);
 
-            if (continueParsing)
-            {
-              continueParsing &= this->segmentRunEntryTable->Add(segment);
-            }
-
-            if (!continueParsing)
-            {
-              FREE_MEM_CLASS(segment);
-            }
+            CHECK_CONDITION_HRESULT(continueParsing, this->segmentRunEntryTable->Add(segment), continueParsing, E_OUTOFMEMORY);
+            CHECK_CONDITION_EXECUTE(FAILED(continueParsing), FREE_MEM_CLASS(segment));
           }
         }
       }
 
-      if (continueParsing && processAdditionalBoxes)
+      if (SUCCEEDED(continueParsing) && processAdditionalBoxes)
       {
         this->ProcessAdditionalBoxes(buffer, length, position);
       }
 
-      this->parsed = continueParsing;
+      this->flags &= ~BOX_FLAG_PARSED;
+      this->flags |= SUCCEEDED(continueParsing) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
     }
   }
 
-  result = this->parsed;
-
-  return result;
+  return this->IsSetFlags(BOX_FLAG_PARSED);
 }

@@ -45,3 +45,10 @@ bool CF4MBaseUrl::SetBaseUrl(const wchar_t *baseUrl)
 {
   SET_STRING_RETURN_WITH_NULL(this->baseUrl, baseUrl);
 }
+
+/* other methods */
+
+void CF4MBaseUrl::Clear(void)
+{
+  FREE_MEM(this->baseUrl);
+}

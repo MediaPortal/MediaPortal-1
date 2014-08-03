@@ -22,7 +22,7 @@
 
 #include "FragmentRunEntry.h"
 
-CFragmentRunEntry::CFragmentRunEntry(uint32_t firstFragment, uint64_t firstFragmentTimestamp, uint32_t fragmentDuration, uint32_t discontinuityIndicator)
+CFragmentRunEntry::CFragmentRunEntry(HRESULT *result, uint32_t firstFragment, uint64_t firstFragmentTimestamp, uint32_t fragmentDuration, uint32_t discontinuityIndicator)
 {
   this->firstFragment = firstFragment;
   this->firstFragmentTimestamp = firstFragmentTimestamp;

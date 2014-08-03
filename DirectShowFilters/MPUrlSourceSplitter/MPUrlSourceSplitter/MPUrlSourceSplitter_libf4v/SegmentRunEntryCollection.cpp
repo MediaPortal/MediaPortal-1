@@ -22,8 +22,8 @@
 
 #include "SegmentRunEntryCollection.h"
 
-CSegmentRunEntryCollection::CSegmentRunEntryCollection(void)
-  : CCollection()
+CSegmentRunEntryCollection::CSegmentRunEntryCollection(HRESULT *result)
+  : CCollection(result)
 {
 }
 

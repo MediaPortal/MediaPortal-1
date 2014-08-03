@@ -67,6 +67,24 @@ bool CParameterCollection::Update(const wchar_t *name, bool invariant, CParamete
   return __super::Update(name, (void *)&invariant, parameter);
 }
 
+bool CParameterCollection::Update(const wchar_t *name, bool invariant, const wchar_t *value)
+{
+  unsigned int index = this->GetItemIndex(name, (void *)&invariant);
+  bool result = true;
+
+  if (index != UINT_MAX)
+  {
+    result = __super::Remove(index);
+  }
+  
+  if (result)
+  {
+    result = this->Add(name, value);
+  }
+
+  return result;
+}
+
 const wchar_t *CParameterCollection::GetKey(CParameter *item)
 {
   return item->GetName();

@@ -23,33 +23,33 @@
 #ifndef __AFHS_DECRYPTION_PLUGIN_DEFINED
 #define __AFHS_DECRYPTION_PLUGIN_DEFINED
 
-#include "IAfhsSimpleDecryptionPlugin.h"
-
-#define METHOD_SUPPORTED_NAME                                                 L"Supported()"
-
-enum DecryptionResult
-{
-  DecryptionResult_Unspecified,
-  DecryptionResult_NotKnown,
-  DecryptionResult_Pending,
-  DecryptionResult_Known,
-  DecryptionResult_Error
-};
-
-struct AfhsDecryptionPluginConfiguration : public PluginConfiguration
-{
-};
-
-// defines interface for AFHS decryption plugin implementation
-// each AFHS decryption plugin implementation will be in separate library and MUST implement this interface
-struct IAfhsDecryptionPlugin : public IAfhsSimpleDecryptionPlugin
-{
-  // check if decryption plugin supports decrypting segments and fragments
-  // @param context : decryption context of AFHS protocol
-  // @result : one of DecryptionResult values
-  virtual DecryptionResult Supported(CAfhsDecryptionContext *context) = 0;
-};
-
-typedef IAfhsDecryptionPlugin* PIAfhsDecryptionPlugin;
+//#include "IAfhsSimpleDecryptionPlugin.h"
+//
+//#define METHOD_SUPPORTED_NAME                                                 L"Supported()"
+//
+//enum DecryptionResult
+//{
+//  DecryptionResult_Unspecified,
+//  DecryptionResult_NotKnown,
+//  DecryptionResult_Pending,
+//  DecryptionResult_Known,
+//  DecryptionResult_Error
+//};
+//
+//struct AfhsDecryptionPluginConfiguration : public PluginConfiguration
+//{
+//};
+//
+//// defines interface for AFHS decryption plugin implementation
+//// each AFHS decryption plugin implementation will be in separate library and MUST implement this interface
+//struct IAfhsDecryptionPlugin : public IAfhsSimpleDecryptionPlugin
+//{
+//  // check if decryption plugin supports decrypting segments and fragments
+//  // @param context : decryption context of AFHS protocol
+//  // @result : one of DecryptionResult values
+//  virtual DecryptionResult Supported(CAfhsDecryptionContext *context) = 0;
+//};
+//
+//typedef IAfhsDecryptionPlugin* PIAfhsDecryptionPlugin;
 
 #endif

@@ -22,8 +22,8 @@
 
 #include "BootstrapInfoServerEntryCollection.h"
 
-CBootstrapInfoServerEntryCollection::CBootstrapInfoServerEntryCollection(void)
-  : CKeyedCollection()
+CBootstrapInfoServerEntryCollection::CBootstrapInfoServerEntryCollection(HRESULT *result)
+  : CKeyedCollection(result)
 {
 }
 

@@ -46,8 +46,6 @@
 #define PROTOCOL_IMPLEMENTATION_NAME                                          L"MPUrlSourceSplitter_Protocol_Rtmp"
 #endif
 
-#define METHOD_FILL_BUFFER_FOR_PROCESSING_NAME                                L"FillBufferForProcessing()"
-
 CPlugin *CreatePlugin(HRESULT *result, CLogger *logger, CParameterCollection *configuration)
 {
   return new CMPUrlSourceSplitter_Protocol_Rtmp(result, logger, configuration);
@@ -640,6 +638,10 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(CStreamPackage *streamPa
               this->streamFragmentDownloading = this->streamFragmentToDownload;
               this->streamFragmentToDownload = UINT_MAX;
             }
+            else
+            {
+              this->connectionState = OpeningFailed;
+            }
           }
           else
           {
@@ -824,7 +826,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(CStreamPackage *streamPa
       if ((res == S_OK) && (this->IsSetFlags(MP_URL_SOURCE_SPLITTER_PROTOCOL_RTMP_FLAG_STOP_RECEIVING_DATA)))
       {
         // this clear CURL instance and buffer, it leads to GetConnectionState() to PROTOCOL_CONNECTION_STATE_NONE result and connection will be reopened by ProtocolHoster,
-        // it also reset each stream track downloading fragment
         this->StopReceivingData();
       }
 

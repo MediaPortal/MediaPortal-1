@@ -22,8 +22,8 @@
 
 #include "FragmentRunEntryCollection.h"
 
-CFragmentRunEntryCollection::CFragmentRunEntryCollection(void)
-  : CCollection()
+CFragmentRunEntryCollection::CFragmentRunEntryCollection(HRESULT *result)
+  : CCollection(result)
 {
 }
 

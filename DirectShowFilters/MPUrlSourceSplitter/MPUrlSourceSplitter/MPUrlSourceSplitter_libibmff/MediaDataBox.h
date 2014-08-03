@@ -25,14 +25,18 @@
 
 #include "box.h"
 
-#define MEDIA_DATA_BOX_TYPE                                                   L"mdat"
+#define MEDIA_DATA_BOX_TYPE                                           L"mdat"
+
+#define MEDIA_DATA_BOX_FLAG_NONE                                      BOX_FLAG_NONE
+
+#define MEDIA_DATA_BOX_FLAG_LAST                                      (BOX_FLAG_LAST + 3)
 
 class CMediaDataBox :
   public CBox
 {
 public:
   // initializes a new instance of CMediaDataBox class
-  CMediaDataBox(void);
+  CMediaDataBox(HRESULT *result);
 
   // destructor
   virtual ~CMediaDataBox(void);

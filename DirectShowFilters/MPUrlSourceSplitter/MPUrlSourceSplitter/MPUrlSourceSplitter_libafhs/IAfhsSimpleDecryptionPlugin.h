@@ -23,26 +23,26 @@
 #ifndef __AFHS_SIMPLE_DECRYPTION_PLUGIN_DEFINED
 #define __AFHS_SIMPLE_DECRYPTION_PLUGIN_DEFINED
 
-#include "IPlugin.h"
-#include "AfhsDecryptionContext.h"
-
-#define METHOD_CLEAR_SESSION_NAME                                             L"ClearSession()"
-#define METHOD_PROCESS_SEGMENTS_AND_FRAGMENTS_NAME                            L"ProcessSegmentsAndFragments()"
-
-// defines interface for AFHS simple decryption plugin implementation
-struct IAfhsSimpleDecryptionPlugin : public IPlugin
-{
-  // clears decryption plugin session
-  // @return : S_OK if successfull
-  virtual HRESULT ClearSession(void) = 0;
-
-  // process segments and fragments
-  // @param context : decryption context of AFHS protocol
-  // @result : S_OK if successful, S_FALSE means that next call of ProcessSegmentsAndFragments() method should be
-  // after finished downloading of next segment and fragment, error code otherwise
-  virtual HRESULT ProcessSegmentsAndFragments(CAfhsDecryptionContext *context) = 0;
-};
-
-typedef IAfhsSimpleDecryptionPlugin* PIAfhsSimpleDecryptionPlugin;
+//#include "IPlugin.h"
+//#include "AfhsDecryptionContext.h"
+//
+//#define METHOD_CLEAR_SESSION_NAME                                             L"ClearSession()"
+//#define METHOD_PROCESS_SEGMENTS_AND_FRAGMENTS_NAME                            L"ProcessSegmentsAndFragments()"
+//
+//// defines interface for AFHS simple decryption plugin implementation
+//struct IAfhsSimpleDecryptionPlugin : public IPlugin
+//{
+//  // clears decryption plugin session
+//  // @return : S_OK if successfull
+//  virtual HRESULT ClearSession(void) = 0;
+//
+//  // process segments and fragments
+//  // @param context : decryption context of AFHS protocol
+//  // @result : S_OK if successful, S_FALSE means that next call of ProcessSegmentsAndFragments() method should be
+//  // after finished downloading of next segment and fragment, error code otherwise
+//  virtual HRESULT ProcessSegmentsAndFragments(CAfhsDecryptionContext *context) = 0;
+//};
+//
+//typedef IAfhsSimpleDecryptionPlugin* PIAfhsSimpleDecryptionPlugin;
 
 #endif

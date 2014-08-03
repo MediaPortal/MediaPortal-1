@@ -29,7 +29,7 @@
 class CSegmentRunEntryCollection : public CCollection<CSegmentRunEntry>
 {
 public:
-  CSegmentRunEntryCollection(void);
+  CSegmentRunEntryCollection(HRESULT *result);
   ~CSegmentRunEntryCollection(void);
 
 protected:

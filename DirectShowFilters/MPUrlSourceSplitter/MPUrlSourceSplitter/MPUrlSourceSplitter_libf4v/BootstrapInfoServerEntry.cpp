@@ -22,9 +22,14 @@
 
 #include "BootstrapInfoServerEntry.h"
 
-CBootstrapInfoServerEntry::CBootstrapInfoServerEntry(const wchar_t *serverEntry)
+CBootstrapInfoServerEntry::CBootstrapInfoServerEntry(HRESULT *result, const wchar_t *serverEntry)
 {
-  this->serverEntry = Duplicate(serverEntry);
+  this->serverEntry = NULL;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    SET_STRING_HRESULT_WITH_NULL(this->serverEntry, serverEntry, (*result));
+  }
 }
 
 CBootstrapInfoServerEntry::~CBootstrapInfoServerEntry(void)

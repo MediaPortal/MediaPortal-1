@@ -50,6 +50,9 @@ public:
 
   /* other methods */
 
+  // clears current instance to default state
+  void Clear(void);
+
 protected:
 
   // holds duration of media (in ms)

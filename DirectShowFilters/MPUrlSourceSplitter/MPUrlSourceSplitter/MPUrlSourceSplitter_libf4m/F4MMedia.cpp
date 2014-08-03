@@ -152,3 +152,20 @@ bool CF4MMedia::SetUrl(const wchar_t *url)
 {
   SET_STRING_RETURN_WITH_NULL(this->url, url);
 }
+
+/* other methods */
+
+void CF4MMedia::Clear(void)
+{
+  this->bitrate = UINT_MAX;
+  this->width = UINT_MAX;
+  this->height = UINT_MAX;
+
+  FREE_MEM(this->bootstrapInfoId);
+  FREE_MEM(this->drmAdditionalHeaderId);
+  FREE_MEM(this->dvrInfoId);
+  FREE_MEM(this->groupSpecifier);
+  FREE_MEM(this->metadata);
+  FREE_MEM(this->multicastStreamName);
+  FREE_MEM(this->url);
+}

@@ -29,7 +29,7 @@
 class CQualitySegmentUrlModifierCollection : public CKeyedCollection<CQualitySegmentUrlModifier, const wchar_t *>
 {
 public:
-  CQualitySegmentUrlModifierCollection(void);
+  CQualitySegmentUrlModifierCollection(HRESULT *result);
   ~CQualitySegmentUrlModifierCollection(void);
 
   // test if quality segment url modifier exists in collection

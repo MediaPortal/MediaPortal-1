@@ -29,7 +29,7 @@
 class CFragmentRunTableBoxCollection : public CCollection<CFragmentRunTableBox>
 {
 public:
-  CFragmentRunTableBoxCollection(void);
+  CFragmentRunTableBoxCollection(HRESULT *result);
   ~CFragmentRunTableBoxCollection(void);
 
 protected:

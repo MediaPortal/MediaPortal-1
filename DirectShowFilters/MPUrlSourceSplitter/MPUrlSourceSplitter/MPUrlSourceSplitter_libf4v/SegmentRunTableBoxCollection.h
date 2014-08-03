@@ -29,7 +29,7 @@
 class CSegmentRunTableBoxCollection : public CCollection<CSegmentRunTableBox>
 {
 public:
-  CSegmentRunTableBoxCollection(void);
+  CSegmentRunTableBoxCollection(HRESULT *result);
   ~CSegmentRunTableBoxCollection(void);
 
 protected:

@@ -23,12 +23,18 @@
 #include "MediaDataBox.h"
 #include "BoxCollection.h"
 
-CMediaDataBox::CMediaDataBox(void)
-  : CBox()
+CMediaDataBox::CMediaDataBox(HRESULT *result)
+  : CBox(result)
 {
   this->payload = NULL;
   this->payloadSize = 0;
-  this->type = Duplicate(MEDIA_DATA_BOX_TYPE);
+  this->type = NULL;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->type = Duplicate(MEDIA_DATA_BOX_TYPE);
+    CHECK_POINTER_HRESULT(*result, this->type, *result, E_OUTOFMEMORY);
+  }
 }
 
 CMediaDataBox::~CMediaDataBox(void)
@@ -124,40 +130,39 @@ bool CMediaDataBox::ParseInternal(const unsigned char *buffer, uint32_t length, 
   FREE_MEM(this->payload);
   this->payloadSize = 0;
 
-  bool result = __super::ParseInternal(buffer, length, false);
-
-  if (result)
+  if (__super::ParseInternal(buffer, length, false))
   {
-    if (wcscmp(this->type, MEDIA_DATA_BOX_TYPE) != 0)
-    {
-      // incorect box type
-      this->parsed = false;
-    }
-    else
-    {
-      // box is bootstrap info box, parse all values
-      uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
-      this->payloadSize = this->GetSize() - position;
-      bool continueParsing = ((position + this->payloadSize) <= length);
+    this->flags &= ~BOX_FLAG_PARSED;
+    this->flags |= (wcscmp(this->type, MEDIA_DATA_BOX_TYPE) == 0) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
 
-      if (continueParsing)
+    if (this->IsSetFlags(BOX_FLAG_PARSED))
+    {
+      // box is media data box, parse all values
+      uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
+
+      this->payloadSize = this->GetSize() - position;
+      HRESULT continueParsing = ((position + this->payloadSize) <= length) ? S_OK : E_NOT_VALID_STATE;
+
+      if (SUCCEEDED(continueParsing))
       {
         this->payload = ALLOC_MEM_SET(this->payload, uint8_t, (uint32_t)this->payloadSize, 0);
-        continueParsing &= (this->payload != NULL);
+        CHECK_POINTER_HRESULT(continueParsing, this->payload, continueParsing, E_OUTOFMEMORY);
 
-        if (continueParsing)
-        {
-          memcpy(this->payload, buffer + position, (uint32_t)this->payloadSize);
-        }
+        CHECK_CONDITION_EXECUTE(SUCCEEDED(continueParsing), memcpy(this->payload, buffer + position, (uint32_t)this->payloadSize));
+
       }
-      
-      this->parsed = continueParsing;
+
+      if (SUCCEEDED(continueParsing) && processAdditionalBoxes)
+      {
+        this->ProcessAdditionalBoxes(buffer, length, position);
+      }
+
+      this->flags &= ~BOX_FLAG_PARSED;
+      this->flags |= SUCCEEDED(continueParsing) ? BOX_FLAG_PARSED : BOX_FLAG_NONE;
     }
   }
 
-  result = this->parsed;
-
-  return result;
+  return this->IsSetFlags(BOX_FLAG_PARSED);
 }
 
 uint32_t CMediaDataBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)

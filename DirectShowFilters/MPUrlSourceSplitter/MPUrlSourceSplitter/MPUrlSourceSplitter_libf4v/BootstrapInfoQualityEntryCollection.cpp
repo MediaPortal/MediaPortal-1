@@ -22,8 +22,8 @@
 
 #include "BootstrapInfoQualityEntryCollection.h"
 
-CBootstrapInfoQualityEntryCollection::CBootstrapInfoQualityEntryCollection(void)
-  : CKeyedCollection()
+CBootstrapInfoQualityEntryCollection::CBootstrapInfoQualityEntryCollection(HRESULT *result)
+  : CKeyedCollection(result)
 {
 }
 

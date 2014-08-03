@@ -604,6 +604,10 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
                 track->SetStreamFragmentToDownload(UINT_MAX);
               }
             }
+            else
+            {
+              this->connectionState = OpeningFailed;
+            }
           }
           else
           {

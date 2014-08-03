@@ -57,6 +57,14 @@ public:
   // @return : true if successful, false otherwise
   virtual bool Update(const wchar_t *name, bool invariant, CParameter *parameter);
 
+  // updates value of parameter in collection
+  // if parameter doesn't exist, then is added to collection
+  // @param name : the name of parameter to update (add)
+  // @param invariant : specifies if parameter name shoud be find with invariant casing
+  // @param value : the new value of parameter
+  // @return : true if successful, false otherwise
+  virtual bool Update(const wchar_t *name, bool invariant, const wchar_t *value);
+
   // get the parameter from collection with specified index
   // @param index : the index of parameter to find
   // @return : the reference to parameter or NULL if not find

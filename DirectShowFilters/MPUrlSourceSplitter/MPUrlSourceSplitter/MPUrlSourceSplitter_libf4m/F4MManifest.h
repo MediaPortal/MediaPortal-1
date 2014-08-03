@@ -77,6 +77,9 @@ public:
   // @return : true if parsed, false otherwise
   bool Parse(const char *buffer);
 
+  // clears current instance to default state
+  void Clear(void);
+
 private:
   // stores if data are in XML format
   bool isXml;

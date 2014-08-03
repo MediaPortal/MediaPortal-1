@@ -55,6 +55,9 @@ public:
   // @return : true if delivery type is progressive, false otherwise
   bool IsProgressive(void);
 
+  // clears current instance to default state
+  void Clear(void);
+
 private:
   // stores delivery type
   wchar_t *deliveryType;

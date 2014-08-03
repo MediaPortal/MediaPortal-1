@@ -40,7 +40,7 @@ class CBootstrapInfoBox :
 {
 public:
   // initializes a new instance of CBootstrapInfoBox class
-  CBootstrapInfoBox(void);
+  CBootstrapInfoBox(HRESULT *result);
 
   // destructor
   virtual ~CBootstrapInfoBox(void);

@@ -36,7 +36,7 @@ class CFragmentRunEntry
 {
 public:
   // initializes a new instance of CFragmentRunEntry class
-  CFragmentRunEntry(uint32_t firstFragment, uint64_t firstFragmentTimestamp, uint32_t fragmentDuration, uint32_t discontinuityIndicator);
+  CFragmentRunEntry(HRESULT *result, uint32_t firstFragment, uint64_t firstFragmentTimestamp, uint32_t fragmentDuration, uint32_t discontinuityIndicator);
   ~CFragmentRunEntry(void);
 
   // gets first fragment

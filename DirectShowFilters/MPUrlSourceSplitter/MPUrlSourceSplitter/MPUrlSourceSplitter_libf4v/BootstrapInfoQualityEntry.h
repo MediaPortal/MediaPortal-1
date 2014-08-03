@@ -28,7 +28,7 @@ class CBootstrapInfoQualityEntry
 public:
   // initializes a new instance of CBootstrapInfoQualityEntry class
   // @param qualityEntry : the quality entry
-  CBootstrapInfoQualityEntry(const wchar_t *qualityEntry);
+  CBootstrapInfoQualityEntry(HRESULT *result, const wchar_t *qualityEntry);
 
   // destructor
   ~CBootstrapInfoQualityEntry(void);

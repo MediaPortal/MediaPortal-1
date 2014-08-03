@@ -28,7 +28,7 @@ class CQualitySegmentUrlModifier
 public:
   // initializes a new instance of CQualitySegmentUrlModifier class
   // @param qualitySegmentUrlModifier : the quality segment url modifier
-  CQualitySegmentUrlModifier(const wchar_t *qualitySegmentUrlModifier);
+  CQualitySegmentUrlModifier(HRESULT *result, const wchar_t *qualitySegmentUrlModifier);
 
   // destructor
   ~CQualitySegmentUrlModifier(void);
