@@ -154,53 +154,53 @@ namespace MediaPortal.Util
 
     private static string[] _artistNamePrefixes;
     protected static string _artistPrefixes;
-    
+
     private static bool m_bHideExtensions = false;
     private static bool enableGuiSounds;
 
-    private static char[] crypt = new char[10] {'G', 'D', 'J', 'S', 'I', 'B', 'T', 'P', 'W', 'Q'};
+    private static char[] crypt = new char[10] { 'G', 'D', 'J', 'S', 'I', 'B', 'T', 'P', 'W', 'Q' };
 
 
     // singleton. Dont allow any instance of this class
-    private Utils() {}
+    private Utils() { }
 
     public static string AudioExtensionsDefault =
         ".asx,.dts," +
-        // Playlists
+      // Playlists
         ".m3u,.pls,.b4s,.wpl,.cue," +
-        // Bass Standard
+      // Bass Standard
         ".mod,.mo3,.s3m,.xm,.it,.mtm,.umx,.mdz,.s3z,.itz,.xmz," +
         ".mp3,.ogg,.wav,.mp2,.mp1,.aiff,.m2a,.mpa,.m1a,.swa,.aif,.mp3pro," +
-        // BassCD
+      // BassCD
         ".cda," +
-        // BassAac
+      // BassAac
         ".aac,.mp4,.m4a,.m4b,.m4p," +
-        // BassAc3
+      // BassAc3
         ".ac3," +
-        // BassAlac
-        //".m4a,.aac,.mp4," +
-        // BassApe
+      // BassAlac
+      //".m4a,.aac,.mp4," +
+      // BassApe
         ".ape,.apl," +
-        // BassFlac
+      // BassFlac
         ".flac," +
-        // BassMidi
+      // BassMidi
         ".midi,.mid,.rmi,.kar," +
-        // BassMpc
+      // BassMpc
         ".mpc,.mpp,.mp+," +
-        // BassOfr
+      // BassOfr
         ".ofr,.ofs," +
-        // BassOpus
+      // BassOpus
         ".opus," +
-        // BassSpx
+      // BassSpx
         ".spx," +
-        // BassTta
+      // BassTta
         ".tta," +
-        // BassWma
-        // .wmv,
+      // BassWma
+      // .wmv,
         ".wma," +
-        // BassWv
+      // BassWv
         ".wv";
-    
+
     public static string VideoExtensionsDefault =
       ".avi,.bdmv,.mpg,.mpeg,.mp4,.divx,.ogm,.mkv,.wmv,.qt,.rm,.mov,.mts,.m2ts,.sbe,.dvr-ms,.ts,.dat,.ifo,.flv,.m4v,.3gp,.wtv,.ogv";
 
@@ -217,21 +217,21 @@ namespace MediaPortal.Util
         _artistPrefixes = xmlreader.GetValueAsString("musicfiles", "artistprefixes", "The, Les, Die");
 
         string strTmp = xmlreader.GetValueAsString("music", "extensions", AudioExtensionsDefault);
-        Tokens tok = new Tokens(strTmp, new[] {','});
+        Tokens tok = new Tokens(strTmp, new[] { ',' });
         foreach (string extension in tok)
         {
           m_AudioExtensions.Add(extension.ToLowerInvariant().Trim());
         }
 
         strTmp = xmlreader.GetValueAsString("movies", "extensions", VideoExtensionsDefault);
-        tok = new Tokens(strTmp, new[] {','});
+        tok = new Tokens(strTmp, new[] { ',' });
         foreach (string extension in tok)
         {
           m_VideoExtensions.Add(extension.ToLowerInvariant().Trim());
         }
 
         strTmp = xmlreader.GetValueAsString("pictures", "extensions", PictureExtensionsDefault);
-        tok = new Tokens(strTmp, new[] {','});
+        tok = new Tokens(strTmp, new[] { ',' });
         foreach (string extension in tok)
         {
           m_PictureExtensions.Add(extension.ToLowerInvariant().Trim());
@@ -240,7 +240,7 @@ namespace MediaPortal.Util
         if (xmlreader.GetValueAsBool("daemon", "enabled", false))
         {
           strTmp = xmlreader.GetValueAsString("daemon", "extensions", ImageExtensionsDefault);
-          tok = new Tokens(strTmp, new[] {','});
+          tok = new Tokens(strTmp, new[] { ',' });
           foreach (string extension in tok)
           {
             m_ImageExtensions.Add(extension.ToLowerInvariant().Trim());
@@ -352,14 +352,14 @@ namespace MediaPortal.Util
         if (Convert.ToUInt32(mo["DriveType"]) == 4)
           return Convert.ToString(mo["ProviderName"]);
       }
-      catch (Exception) {}
+      catch (Exception) { }
       return sFilePath;
     }
 
     public static string GetServerNameFromUNCPath(string sFilePath)
     {
       Uri uri = new Uri(sFilePath);
-      
+
       if (!uri.IsUnc)
         return string.Empty;
 
@@ -385,7 +385,7 @@ namespace MediaPortal.Util
       return diskSize;
     }
 
-    private static char[] sizes = new char[] {'K', 'M', 'G', 'T'};
+    private static char[] sizes = new char[] { 'K', 'M', 'G', 'T' };
     // converts bytes to bytes / 1024^n
     private static Func<long, int, double> sizeConverter = (size, expo) => size / Math.Pow(1024, expo);
 
@@ -478,7 +478,7 @@ namespace MediaPortal.Util
           return true;
         return m_VideoExtensions.Contains(extensionFile, StringComparer.InvariantCultureIgnoreCase);
       }
-      catch (Exception) {}
+      catch (Exception) { }
       return false;
     }
 
@@ -528,7 +528,7 @@ namespace MediaPortal.Util
         if (IsPlayListExtension(extensionFile)) return false;
         return m_AudioExtensions.Contains(extensionFile);
       }
-      catch (Exception) {}
+      catch (Exception) { }
       return false;
     }
 
@@ -542,7 +542,7 @@ namespace MediaPortal.Util
         string extensionFile = Path.GetExtension(strPath).ToLowerInvariant();
         return m_PictureExtensions.Contains(extensionFile);
       }
-      catch (Exception) {}
+      catch (Exception) { }
       return false;
     }
 
@@ -564,7 +564,7 @@ namespace MediaPortal.Util
         string extensionFile = Path.GetExtension(strPath).ToLowerInvariant();
         return IsPlayListExtension(extensionFile);
       }
-      catch (Exception) {}
+      catch (Exception) { }
       return false;
     }
 
@@ -577,7 +577,7 @@ namespace MediaPortal.Util
         string extensionFile = Path.GetExtension(strPath).ToLowerInvariant();
         if (extensionFile == ".exe") return true;
       }
-      catch (Exception) {}
+      catch (Exception) { }
       return false;
     }
 
@@ -590,7 +590,7 @@ namespace MediaPortal.Util
         string extensionFile = Path.GetExtension(strPath).ToLowerInvariant();
         if (extensionFile == ".lnk") return true;
       }
-      catch (Exception) {}
+      catch (Exception) { }
       return false;
     }
 
@@ -598,15 +598,15 @@ namespace MediaPortal.Util
     {
       if (!Util.Utils.IsUNCNetwork(folderName))
         return true;
-      
+
       string serverName = string.Empty;
-      
+
       try
       {
         serverName = Util.Utils.GetServerNameFromUNCPath(folderName);
       }
       catch { }
-      
+
       if (!string.IsNullOrEmpty(serverName))
       {
         WakeOnLanManager wakeOnLanManager = new WakeOnLanManager();
@@ -968,7 +968,7 @@ namespace MediaPortal.Util
         //
         bool createVideoThumbs;
         bool getItemThumb = true;
-          
+
         using (Settings xmlreader = new MPSettings())
         {
           createVideoThumbs = xmlreader.GetValueAsBool("thumbnails", "videoondemand", true);
@@ -1136,7 +1136,7 @@ namespace MediaPortal.Util
           // Get item dir
           string itemDir = string.Empty;
           itemDir = (GetParentDirectory(directory));
-          
+
           // Check if share dir correspond to item dir
           if (AreEqual(shareDir, itemDir))
           {
@@ -1195,8 +1195,8 @@ namespace MediaPortal.Util
           }
           if (thumb != null)
           {
-            if (Picture.CreateThumbnail(thumb, strThumb, (int) Thumbs.ThumbLargeResolution,
-                                        (int) Thumbs.ThumbLargeResolution, 0, false))
+            if (Picture.CreateThumbnail(thumb, strThumb, (int)Thumbs.ThumbLargeResolution,
+                                        (int)Thumbs.ThumbLargeResolution, 0, false))
             {
               if (Picture.CreateThumbnail(thumb, strThumbLarge, (int)Thumbs.ThumbLargeResolution,
                                         (int)Thumbs.ThumbLargeResolution, 0, false))
@@ -1415,7 +1415,7 @@ namespace MediaPortal.Util
         }
         return String.Format("{0} {1}-{2}", day, dt.Day, dt.Month);
       }
-      catch (Exception) {}
+      catch (Exception) { }
       return string.Empty;
     }
 
@@ -1503,7 +1503,7 @@ namespace MediaPortal.Util
         RegistryKey regKey = Registry.CurrentUser.OpenSubKey(string.Format(@"Network\{0}", strPath.Substring(0, 1)));
         return (regKey != null);
       }
-      catch (Exception) {}
+      catch (Exception) { }
       return false;
     }
 
@@ -1855,7 +1855,7 @@ namespace MediaPortal.Util
           }
         }
       }
-      catch (Exception) {}
+      catch (Exception) { }
 
       // No matches were found, so no stacking
       return false;
@@ -1945,7 +1945,7 @@ namespace MediaPortal.Util
         string strRet = Path.GetFullPath(String.Format("{0}{1}.jpg", Config.GetFolder(Config.Dir.Thumbs), dwcrc));
         return strRet;
       }
-      catch (Exception) {}
+      catch (Exception) { }
       return "000";
     }
 
@@ -2010,7 +2010,7 @@ namespace MediaPortal.Util
           CloseHandle(fHandle);
         }
       }
-      catch (Exception) {}
+      catch (Exception) { }
 
       return result;
     }
@@ -2019,7 +2019,7 @@ namespace MediaPortal.Util
     {
       EjectCDROM(string.Empty);
     }
-    
+
     public static void CloseCDROM(string driveLetter)
     {
       mciSendString(string.Format("set CDAudio!{0} door closed", driveLetter), null, 127, IntPtr.Zero);
@@ -2249,7 +2249,7 @@ namespace MediaPortal.Util
               {
                 process.Kill();
               }
-              catch (Exception) {}
+              catch (Exception) { }
             }
 
             mpRunning = CheckForRunningProcess(aProcessName, false);
@@ -2384,7 +2384,7 @@ namespace MediaPortal.Util
               // %filename% argument handling
               else if (strParams.IndexOf("%filename%") >= 0)
                 strParams = strParams.Replace("%filename%", "\"" + strFile + "\"");
-              
+
               Process movieplayer = new Process();
               string strWorkingDir = Path.GetFullPath(strPath);
               string strFileName = Path.GetFileName(strPath);
@@ -2458,7 +2458,7 @@ namespace MediaPortal.Util
         DateTime dt = new DateTime(year, month, day, hour, minute, 0, 0);
         return dt;
       }
-      catch (Exception) {}
+      catch (Exception) { }
       return DateTime.Now;
     }
 
@@ -2481,7 +2481,7 @@ namespace MediaPortal.Util
         lRet = lRet * 100L + iSec;
         return lRet;
       }
-      catch (Exception) {}
+      catch (Exception) { }
       return 0;
     }
 
@@ -2584,7 +2584,7 @@ namespace MediaPortal.Util
         Directory.Delete(aDirectory, aRecursive);
         return true;
       }
-      catch (Exception) {}
+      catch (Exception) { }
       return false;
     }
 
@@ -2681,7 +2681,7 @@ namespace MediaPortal.Util
       string file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.InternetCache), url);
       FileDelete(file);
       DownLoadImage(strURL, file);
-      
+
       if (File.Exists(file))
       {
         try
@@ -2710,7 +2710,7 @@ namespace MediaPortal.Util
           // wr.Proxy = WebProxy.GetDefaultProxy();
           wr.Proxy.Credentials = CredentialCache.DefaultCredentials;
         }
-        catch (Exception) {}
+        catch (Exception) { }
         HttpWebResponse ws = (HttpWebResponse)wr.GetResponse();
         try
         {
@@ -2811,7 +2811,7 @@ namespace MediaPortal.Util
         else
           return Path.GetFileName(strPath);
       }
-      catch (Exception) {}
+      catch (Exception) { }
       return strPath;
     }
 
@@ -3132,7 +3132,7 @@ namespace MediaPortal.Util
                 break;
               }
             }
-            catch (Exception) {}
+            catch (Exception) { }
           }
           if (FileExistsInCache(strRemoteFolderThumb))
           {
@@ -4368,10 +4368,10 @@ namespace MediaPortal.Util
                 thumbnailWidth = width;
                 break;
               case 2:
-                thumbnailWidth = width/2;
+                thumbnailWidth = width / 2;
                 break;
               case 3:
-                thumbnailWidth = width/3;
+                thumbnailWidth = width / 3;
                 break;
             }
             switch (PreviewRows)
@@ -4380,10 +4380,10 @@ namespace MediaPortal.Util
                 thumbnailHeight = height;
                 break;
               case 2:
-                thumbnailHeight = height/2;
+                thumbnailHeight = height / 2;
                 break;
               case 3:
-                thumbnailHeight = height/3;
+                thumbnailHeight = height / 3;
                 break;
             }
 
@@ -4404,66 +4404,66 @@ namespace MediaPortal.Util
                 {
                   if (PreviewColumns == 1 && PreviewRows == 1)
                   {
-                    AddPicture(g, (string) aPictureList[0], 0, 0, w, h);
+                    AddPicture(g, (string)aPictureList[0], 0, 0, w, h);
                   }
                   if (PreviewColumns == 1 && PreviewRows == 2)
                   {
-                    AddPicture(g, (string) aPictureList[0], 0, 0, w, h);
-                    AddPicture(g, (string) aPictureList[1], 0, h, w, h);
+                    AddPicture(g, (string)aPictureList[0], 0, 0, w, h);
+                    AddPicture(g, (string)aPictureList[1], 0, h, w, h);
                   }
                   if (PreviewColumns == 2 && PreviewRows == 1)
                   {
-                    AddPicture(g, (string) aPictureList[0], 0, 0, w, h);
-                    AddPicture(g, (string) aPictureList[1], w, 0, w, h);
+                    AddPicture(g, (string)aPictureList[0], 0, 0, w, h);
+                    AddPicture(g, (string)aPictureList[1], w, 0, w, h);
                   }
                   if (PreviewColumns == 2 && PreviewRows == 2)
                   {
-                    AddPicture(g, (string) aPictureList[0], 0, 0, w, h);
-                    AddPicture(g, (string) aPictureList[1], w, 0, w, h);
-                    AddPicture(g, (string) aPictureList[2], 0, h, w, h);
-                    AddPicture(g, (string) aPictureList[3], w, h, w, h);
+                    AddPicture(g, (string)aPictureList[0], 0, 0, w, h);
+                    AddPicture(g, (string)aPictureList[1], w, 0, w, h);
+                    AddPicture(g, (string)aPictureList[2], 0, h, w, h);
+                    AddPicture(g, (string)aPictureList[3], w, h, w, h);
                   }
                   if (PreviewColumns == 1 && PreviewRows == 3)
                   {
-                    AddPicture(g, (string) aPictureList[0], 0, 0, w, h);
-                    AddPicture(g, (string) aPictureList[1], 0, h, w, h);
-                    AddPicture(g, (string) aPictureList[2], 0, 2*h, w, h);
+                    AddPicture(g, (string)aPictureList[0], 0, 0, w, h);
+                    AddPicture(g, (string)aPictureList[1], 0, h, w, h);
+                    AddPicture(g, (string)aPictureList[2], 0, 2 * h, w, h);
                   }
                   if (PreviewColumns == 2 && PreviewRows == 3)
                   {
-                    AddPicture(g, (string) aPictureList[0], 0, 0, w, h);
-                    AddPicture(g, (string) aPictureList[1], w, 0, w, h);
-                    AddPicture(g, (string) aPictureList[2], 0, h, w, h);
-                    AddPicture(g, (string) aPictureList[3], w, h, w, h);
-                    AddPicture(g, (string) aPictureList[4], 0, 2*h, w, h);
-                    AddPicture(g, (string) aPictureList[5], w, 2*h, w, h);
+                    AddPicture(g, (string)aPictureList[0], 0, 0, w, h);
+                    AddPicture(g, (string)aPictureList[1], w, 0, w, h);
+                    AddPicture(g, (string)aPictureList[2], 0, h, w, h);
+                    AddPicture(g, (string)aPictureList[3], w, h, w, h);
+                    AddPicture(g, (string)aPictureList[4], 0, 2 * h, w, h);
+                    AddPicture(g, (string)aPictureList[5], w, 2 * h, w, h);
                   }
                   if (PreviewColumns == 3 && PreviewRows == 3)
                   {
-                    AddPicture(g, (string) aPictureList[0], 0, 0, w, h);
-                    AddPicture(g, (string) aPictureList[1], w, 0, w, h);
-                    AddPicture(g, (string) aPictureList[2], 2*w, 0, w, h);
-                    AddPicture(g, (string) aPictureList[3], 0, h, w, h);
-                    AddPicture(g, (string) aPictureList[4], w, h, w, h);
-                    AddPicture(g, (string) aPictureList[5], 2*w, h, w, h);
-                    AddPicture(g, (string) aPictureList[6], 0, 2*h, w, h);
-                    AddPicture(g, (string) aPictureList[7], w, 2*h, w, h);
-                    AddPicture(g, (string) aPictureList[8], 2*w, 2*h, w, h);
+                    AddPicture(g, (string)aPictureList[0], 0, 0, w, h);
+                    AddPicture(g, (string)aPictureList[1], w, 0, w, h);
+                    AddPicture(g, (string)aPictureList[2], 2 * w, 0, w, h);
+                    AddPicture(g, (string)aPictureList[3], 0, h, w, h);
+                    AddPicture(g, (string)aPictureList[4], w, h, w, h);
+                    AddPicture(g, (string)aPictureList[5], 2 * w, h, w, h);
+                    AddPicture(g, (string)aPictureList[6], 0, 2 * h, w, h);
+                    AddPicture(g, (string)aPictureList[7], w, 2 * h, w, h);
+                    AddPicture(g, (string)aPictureList[8], 2 * w, 2 * h, w, h);
                   }
                   if (PreviewColumns == 3 && PreviewRows == 1)
                   {
-                    AddPicture(g, (string) aPictureList[0], 0, 0, w, h);
-                    AddPicture(g, (string) aPictureList[1], w, 0, w, h);
-                    AddPicture(g, (string) aPictureList[2], 2*w, 0, w, h);
+                    AddPicture(g, (string)aPictureList[0], 0, 0, w, h);
+                    AddPicture(g, (string)aPictureList[1], w, 0, w, h);
+                    AddPicture(g, (string)aPictureList[2], 2 * w, 0, w, h);
                   }
                   if (PreviewColumns == 3 && PreviewRows == 2)
                   {
-                    AddPicture(g, (string) aPictureList[0], 0, 0, w, h);
-                    AddPicture(g, (string) aPictureList[1], w, 0, w, h);
-                    AddPicture(g, (string) aPictureList[2], 2*w, 0, w, h);
-                    AddPicture(g, (string) aPictureList[3], 0, h, w, h);
-                    AddPicture(g, (string) aPictureList[4], w, h, w, h);
-                    AddPicture(g, (string) aPictureList[5], 2*w, h, w, h);
+                    AddPicture(g, (string)aPictureList[0], 0, 0, w, h);
+                    AddPicture(g, (string)aPictureList[1], w, 0, w, h);
+                    AddPicture(g, (string)aPictureList[2], 2 * w, 0, w, h);
+                    AddPicture(g, (string)aPictureList[3], 0, h, w, h);
+                    AddPicture(g, (string)aPictureList[4], w, h, w, h);
+                    AddPicture(g, (string)aPictureList[5], 2 * w, h, w, h);
                   }
                 }
                 catch (Exception ex)
@@ -4478,8 +4478,8 @@ namespace MediaPortal.Util
                 bmp.Save(tmpFile, Thumbs.ThumbCodecInfo, Thumbs.ThumbEncoderParams);
                 Log.Debug("CreateTileThumb: Saving thumb!");
 
-                Picture.CreateThumbnail(tmpFile, aThumbPath, (int) Thumbs.ThumbLargeResolution,
-                                        (int) Thumbs.ThumbLargeResolution, 0, false);
+                Picture.CreateThumbnail(tmpFile, aThumbPath, (int)Thumbs.ThumbLargeResolution,
+                                        (int)Thumbs.ThumbLargeResolution, 0, false);
                 FileDelete(tmpFile);
 
                 if (defaultBackgroundResized != null)
@@ -4651,7 +4651,7 @@ namespace MediaPortal.Util
           {
             File.Delete(strFile);
           }
-          catch (Exception) {}
+          catch (Exception) { }
         }
         if (recursive)
         {
@@ -4662,12 +4662,12 @@ namespace MediaPortal.Util
             {
               DeleteFiles(subDir, strPattern, true);
               Directory.Delete(subDir);
-      }
-      catch (Exception) {}
-    }
+            }
+            catch (Exception) { }
+          }
         }
       }
-      catch (Exception) {}
+      catch (Exception) { }
     }
 
     public static bool UsingTvServer
@@ -4705,7 +4705,7 @@ namespace MediaPortal.Util
         sec = Int32.Parse(parts[5]);
         return new DateTime(year, month, day, hour, min, sec, 0);
       }
-      catch (Exception) {}
+      catch (Exception) { }
       return DateTime.Now;
     }
 
@@ -4814,11 +4814,11 @@ namespace MediaPortal.Util
             {
               File.Delete(fileName);
             }
-            catch (Exception) {}
+            catch (Exception) { }
           }
         }
       }
-      catch (Exception) {}
+      catch (Exception) { }
 
       // clean the TempSBE\ folder
       try
@@ -4833,11 +4833,11 @@ namespace MediaPortal.Util
             {
               File.Delete(fileName);
             }
-            catch (Exception) {}
+            catch (Exception) { }
           }
         }
       }
-      catch (Exception) {}
+      catch (Exception) { }
 
       // delete *.tv
       try
@@ -4852,11 +4852,11 @@ namespace MediaPortal.Util
             {
               File.Delete(fileName);
             }
-            catch (Exception) {}
+            catch (Exception) { }
           }
         }
       }
-      catch (Exception) {}
+      catch (Exception) { }
     }
 
     //void DeleteOldTimeShiftFiles(string path)
@@ -4904,10 +4904,10 @@ namespace MediaPortal.Util
               }
             }
           }
-          catch (Exception) {}
+          catch (Exception) { }
         }
       }
-      catch (Exception) {}
+      catch (Exception) { }
     }
 
     /// <summary>
@@ -4989,7 +4989,7 @@ namespace MediaPortal.Util
         {
           result += crypt[(int)c - 48];
         }
-        catch {}
+        catch { }
       return result;
     }
 
@@ -5004,7 +5004,7 @@ namespace MediaPortal.Util
             if (crypt[i] == c)
               result += (i).ToString();
         }
-        catch {}
+        catch { }
       }
       return result;
     }
@@ -5350,7 +5350,7 @@ namespace MediaPortal.Util
     public static List<string> GetAvailableUsbHardDisks()
     {
       List<string> disks = new List<string>();
-      
+
       try
       {
         // browse all USB WMI physical disks
@@ -5436,10 +5436,10 @@ namespace MediaPortal.Util
       string tree = "";
       int i = basename.Length;
 
-      while ((i-=step)>=0 && depth-->0)
+      while ((i -= step) >= 0 && depth-- > 0)
       {
         tree += basename.Substring(i, step) + @"\";
-  }
+      }
       return tree;
     }
 
@@ -5452,13 +5452,13 @@ namespace MediaPortal.Util
       if (!Directory.Exists(rootPath))
         return false;
 
-      while(!string.IsNullOrEmpty(path) && path != rootPath && !Directory.Exists(path))
+      while (!string.IsNullOrEmpty(path) && path != rootPath && !Directory.Exists(path))
       {
         paths.Push(path);
         path = Path.GetDirectoryName(path);
       }
 
-      while(paths.Count>0)
+      while (paths.Count > 0)
       {
         Directory.CreateDirectory(paths.Pop());
       }
@@ -5470,7 +5470,7 @@ namespace MediaPortal.Util
     {
       file = EncryptLine(file);
       // TODO: define dept/step in constants or make it configurable
-      var path = Path.Combine(basePath, GetTreePath(file,  1, 2));
+      var path = Path.Combine(basePath, GetTreePath(file, 1, 2));
       CreatePath(path);
       return Path.Combine(path, string.Format(formatString, file));
     }
@@ -5562,7 +5562,7 @@ namespace MediaPortal.Util
         .ToArray();
     }
   }
-  
+
   public class StringLogicalComparer : IComparer, IComparer<string>
   {
     public static int Compare(string x, string y)
@@ -5580,7 +5580,7 @@ namespace MediaPortal.Util
 
     private static int CompareObjects(object x, object y)
     {
-      return StrCmpLogicalW((string) x, (string) y);
+      return StrCmpLogicalW((string)x, (string)y);
     }
 
     int IComparer<string>.Compare(string x, string y)
