@@ -34,6 +34,25 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
     CamPresent
   }
 
+  /// <summary>
+  /// The possible driver/filter install states.
+  /// </summary>
+  internal enum SmarDtvUsbCiDriverInstallState
+  {
+    /// <summary>
+    /// The driver is not installed.
+    /// </summary>
+    NotInstalled,
+    /// <summary>
+    /// The WDM driver is installed.
+    /// </summary>
+    WdmDriver,
+    /// <summary>
+    /// The BDA driver is installed.
+    /// </summary>
+    BdaDriver
+  }
+
   #endregion
 
   #region delegate definitions

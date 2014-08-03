@@ -19,14 +19,14 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Runtime.InteropServices;
 using DirectShowLib;
 using Mediaportal.TV.Server.Plugins.Base.Interfaces;
+using Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi.Config;
+using Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi.Product;
+using Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi.Service;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
-using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
@@ -39,14 +39,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
   /// A class for handling conditional access with the Hauppauge WinTV-CI and TerraTec USB CI. Both
   /// devices are based on an OEM design by SmarDTV.
   /// </summary>
-  public class SmarDtvUsbCi : BaseCustomDevice, IDirectShowAddOnDevice, IConditionalAccessProvider, IConditionalAccessMenuActions, ITvServerPlugin
+  public class SmarDtvUsbCi : BaseCustomDevice, IDirectShowAddOnDevice, IConditionalAccessProvider, IConditionalAccessMenuActions, ITvServerPlugin, ITvServerPluginCommunciation
   {
     #region variables
-
-    // We use this hash to keep track of the devices that are in use. Each CI device can only be
-    // used with one tuner at any given time, and only one CI device of each brand may be connected
-    // to a single system.
-    private static HashSet<string> _devicesInUse = new HashSet<string>();
 
     private bool _isSmarDtvUsbCi = false;
     private bool _isCaInterfaceOpen = false;
@@ -56,10 +51,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
     private bool _isCamReady = false;
     private SmarDtvUsbCiState _ciState = SmarDtvUsbCiState.Empty;
 
+    private ISmarDtvUsbCiProduct _product = null;
     private IBaseFilter _ciFilter = null;
-    private Type _ciType = null;
-    private DsDevice _ciDevice = null;
     private IFilterGraph2 _graph = null;
+    private bool _isFilterInGraph = false;
 
     // Call backs
     private IConditionalAccessMenuCallBack _caMenuCallBack = null;
@@ -185,57 +180,45 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
         return false;
       }
 
-      // A machine may only have one instance of each OEM product installed - this is a driver limitation. It
-      // is unknown whether a single machine may have multiple instances by connecting instances of different
-      // products (we don't explicitly prevent this). The TV Server plugin allows each OEM CI product to be
-      // linked to a single tuner. Here we need to know whether this tuner (ie. the one referred to by the
+      // A machine may only have one instance of each OEM product installed
+      // - this is a driver limitation. It is unknown whether a single machine
+      // may have multiple instances by connecting instances of different
+      // products (we don't explicitly prevent this). The TV Server plugin
+      // allows each OEM CI product to be linked to a single tuner. Here we
+      // need to know whether this tuner (ie. the one referred to by the
       // external identifier) is currently linked to any of the products.
-      ReadOnlyCollection<SmarDtvUsbCiProduct> productList = SmarDtvUsbCiProduct.GetProductList();
-      foreach (SmarDtvUsbCiProduct p in productList)
+      ReadOnlyCollection<ISmarDtvUsbCiProduct> productList = SmarDtvUsbCiProductBase.GetProductList();
+      foreach (ISmarDtvUsbCiProduct p in productList)
       {
-        if (!SettingsManagement.GetValue(p.DbSettingName, string.Empty).Equals(tunerExternalId))
+        this.LogDebug("SmarDTV USB CI: {0}...", p.Name);
+        if (!tunerExternalId.Equals(p.LinkedTuner))
         {
+          this.LogDebug("SmarDTV USB CI:   not linked");
+          continue;
+        }
+        if (p.IsInUse)
+        {
+          this.LogDebug("SmarDTV USB CI:   already in use");
+          continue;
+        }
+        SmarDtvUsbCiDriverInstallState installState = p.InstallState;
+        if (installState != SmarDtvUsbCiDriverInstallState.BdaDriver)
+        {
+          this.LogDebug("SmarDTV USB CI:   not usable, install state = {0}", installState);
+          continue;
+        }
+        _ciFilter = p.Initialise();
+        if (_ciFilter == null)
+        {
+          this.LogError("SmarDTV USB CI: failed to initialise product {0}", p.Name);
           continue;
         }
 
-        this.LogDebug("SmarDTV USB CI: this is the preferred tuner for CI product \"{0}\"", p.ProductName);
-        lock (_devicesInUse)
-        {
-          // Check if the CI device is actually installed in this system.
-          DsDevice[] captureDevices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSCapture);
-          try
-          {
-            foreach (DsDevice captureDevice in captureDevices)
-            {
-              if (captureDevice.Name != null && captureDevice.Name.Equals(p.BdaDeviceName))
-              {
-                this.LogDebug("SmarDTV USB CI: found corresponding CI device");
-                if (_devicesInUse.Contains(captureDevice.DevicePath))
-                {
-                  this.LogDebug("SmarDTV USB CI: the CI device is already in use");
-                  continue;
-                }
-                this.LogInfo("SmarDTV USB CI: extension supported");
-                _isSmarDtvUsbCi = true;
-                _ciType = p.ComInterface;
-                _ciDevice = captureDevice;
-                _devicesInUse.Add(_ciDevice.DevicePath);
-                return true;
-              }
-            }
-          }
-          finally
-          {
-            foreach (DsDevice d in captureDevices)
-            {
-              if (d != _ciDevice)
-              {
-                d.Dispose();
-              }
-            }
-          }
-        }
-        this.LogDebug("SmarDTV USB CI: CI device not found");
+        this.LogInfo("SmarDTV USB CI: extension supported");
+        _isSmarDtvUsbCi = true;
+        _product = p;
+        _isFilterInGraph = false;
+        return true;
       }
 
       this.LogDebug("SmarDTV USB CI: tuner not linked to any CI products or otherwise not supported");
@@ -258,7 +241,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
     {
       this.LogDebug("SmarDTV USB CI: add to graph");
 
-      if (!_isSmarDtvUsbCi || _ciDevice == null)
+      if (!_isSmarDtvUsbCi)
       {
         this.LogWarn("SmarDTV USB CI: not initialised or interface not supported");
         return false;
@@ -273,7 +256,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
         this.LogError("SmarDTV USB CI: failed to add the filter to the graph, last filter is null");
         return false;
       }
-      if (_ciFilter != null)
+      if (_isFilterInGraph)
       {
         this.LogWarn("SmarDTV USB CI: filter already in graph");
         return true;
@@ -284,12 +267,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
       try
       {
         // Add the CI filter to the graph.
-        int hr = _graph.AddSourceFilterForMoniker(_ciDevice.Mon, null, _ciDevice.Name, out _ciFilter);
+        int hr = _graph.AddFilter(_ciFilter, _product.Name);
         if (hr != (int)HResult.Severity.Success)
         {
           this.LogError("SmarDTV USB CI: failed to add the filter to the graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
           return false;
         }
+        _isFilterInGraph = true;
 
         // Connect the filter into the graph.
         IPin tmpOutputPin = DsFindPin.ByDirection(lastFilter, PinDirection.Output, 0);
@@ -310,7 +294,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
         }
         if (hr != (int)HResult.Severity.Success)
         {
-          this.LogError("SmarDTV USB CI: failed to connect the CI filter into the graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          this.LogError("SmarDTV USB CI: failed to connect the filter into the graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
           return false;
         }
 
@@ -318,12 +302,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
       }
       finally
       {
-        if (!success)
+        if (!success && _isFilterInGraph)
         {
-          // We're not too worried about cleanup here as Dispose() will be called shortly. We just want to make
-          // sure that we don't leave the CI filter in the graph if it can't be used.
+          _isFilterInGraph = false;
           _graph.RemoveFilter(_ciFilter);
-          Release.ComObject("SmarDTV CI filter", ref _ciFilter);
         }
       }
 
@@ -413,6 +395,32 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
 
     #endregion
 
+    #region ITvServerPluginCommunication members
+
+    /// <summary>
+    /// Supply a service class implementation for client-server plugin communication.
+    /// </summary>
+    public object GetServiceInstance
+    {
+      get
+      {
+        return new SmarDtvUsbCiConfigService();
+      }
+    }
+
+    /// <summary>
+    /// Supply a service class interface for client-server plugin communication.
+    /// </summary>
+    public Type GetServiceInterfaceForContractType
+    {
+      get
+      {
+        return typeof(ISmarDtvUsbCiConfigService);
+      }
+    }
+
+    #endregion
+
     #region IConditionalAccessProvider members
 
     /// <summary>
@@ -429,7 +437,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
         this.LogWarn("SmarDTV USB CI: not initialised or interface not supported");
         return false;
       }
-      if (_ciFilter == null)
+      if (!_isFilterInGraph)
       {
         this.LogDebug("SmarDTV USB CI: filter not added to the BDA filter graph");
         return false;
@@ -446,33 +454,31 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
       _ciCallBack.OnApplicationInfo = new OnSmarDtvUsbCiApplicationInfo(OnApplicationInfo);
       _ciCallBack.OnCiState = new OnSmarDtvUsbCiState(OnCiState);
       _ciCallBack.OnCloseMmi = new OnSmarDtvUsbCiCloseMmi(OnCloseMmi);
-      int hr = (int)_ciType.GetMethod("USB2CI_Init").Invoke(_ciFilter, new object[] { _ciCallBack });
-      if (hr == (int)HResult.Severity.Success)
+      int hr = _product.OpenInterface(ref _ciCallBack);
+      if (hr != (int)HResult.Severity.Success)
       {
-        SmarDtvUsbCiVersionInfo versionInfo = new SmarDtvUsbCiVersionInfo();
-        object[] parameters = new object[1] { versionInfo };
-        hr = (int)_ciType.GetMethod("USB2CI_GetVersion").Invoke(_ciFilter, parameters);
-        if (hr == (int)HResult.Severity.Success)
-        {
-          versionInfo = (SmarDtvUsbCiVersionInfo)parameters[0];
-          this.LogDebug("  plugin version     = {0}", versionInfo.PluginVersion);
-          this.LogDebug("  BDA driver version = {0}", versionInfo.BdaVersion);
-          this.LogDebug("  USB driver version = {0}", versionInfo.UsbVersion);
-          this.LogDebug("  firmware version   = {0}", versionInfo.FirmwareVersion);
-          this.LogDebug("  FPGA version       = {0}", versionInfo.FpgaVersion);
-        }
-        else
-        {
-          this.LogWarn("SmarDTV USB CI: failed to retrieve version information, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        }
-
-        this.LogDebug("SmarDTV USB CI: result = success");
-        _isCaInterfaceOpen = true;
-        return true;
+        this.LogError("SmarDTV USB CI: failed to open conditional access interface, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        return false;
       }
 
-      this.LogError("SmarDTV USB CI: failed to open conditional access interface, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-      return false;
+      SmarDtvUsbCiVersionInfo versionInfo = new SmarDtvUsbCiVersionInfo();
+      hr = _product.GetVersionInfo(out versionInfo);
+      if (hr == (int)HResult.Severity.Success)
+      {
+        this.LogDebug("  plugin version     = {0}", versionInfo.PluginVersion);
+        this.LogDebug("  BDA driver version = {0}", versionInfo.BdaVersion);
+        this.LogDebug("  USB driver version = {0}", versionInfo.UsbVersion);
+        this.LogDebug("  firmware version   = {0}", versionInfo.FirmwareVersion);
+        this.LogDebug("  FPGA version       = {0}", versionInfo.FpgaVersion);
+      }
+      else
+      {
+        this.LogWarn("SmarDTV USB CI: failed to retrieve version information, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      }
+
+      this.LogDebug("SmarDTV USB CI: result = success");
+      _isCaInterfaceOpen = true;
+      return true;
     }
 
     /// <summary>
@@ -568,7 +574,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
       ReadOnlyCollection<byte> rawPmt = pmt.GetRawPmt();
       byte[] rawPmtCopy = new byte[rawPmt.Count];
       rawPmt.CopyTo(rawPmtCopy, 0);
-      int hr = (int)_ciType.GetMethod("USB2CI_GuiSendPMT").Invoke(_ciFilter, new object[] { rawPmtCopy, (short)rawPmt.Count });
+      int hr = _product.SendPmt(rawPmtCopy, (short)rawPmt.Count);
       if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("SmarDTV USB CI: result = success");
@@ -614,7 +620,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
         return false;
       }
 
-      int hr = (int)_ciType.GetMethod("USB2CI_OpenMMI").Invoke(_ciFilter, null);
+      int hr = _product.OpenMmiSession();
       if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("SmarDTV USB CI: result = success");
@@ -645,7 +651,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
       }
 
       byte[] apdu = DvbMmiHandler.CreateMmiClose(0);
-      int hr = (int)_ciType.GetMethod("USB2CI_APDUToCAM").Invoke(_ciFilter, new object[] { apdu.Length, apdu });
+      int hr = _product.SendMmiApdu(apdu.Length, apdu);
       if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("SmarDTV USB CI: result = success");
@@ -677,7 +683,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
       }
 
       byte[] apdu = DvbMmiHandler.CreateMmiMenuAnswer(choice);
-      int hr = (int)_ciType.GetMethod("USB2CI_APDUToCAM").Invoke(_ciFilter, new object[] { apdu.Length, apdu });
+      int hr = _product.SendMmiApdu(apdu.Length, apdu);
       if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("SmarDTV USB CI: result = success");
@@ -719,7 +725,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
         responseType = MmiResponseType.Cancel;
       }
       byte[] apdu = DvbMmiHandler.CreateMmiEnquiryAnswer(responseType, answer);
-      int hr = (int)_ciType.GetMethod("USB2CI_APDUToCAM").Invoke(_ciFilter, new object[] { apdu.Length, apdu });
+      int hr = _product.SendMmiApdu(apdu.Length, apdu);
       if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("SmarDTV USB CI: result = success");
@@ -739,21 +745,22 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
     /// </summary>
     public override void Dispose()
     {
-      if (_graph != null)
+      if (_product != null)
       {
-        _graph.RemoveFilter(_ciFilter);
-        Release.ComObject("SmarDTV CI graph", ref _graph);
-      }
-      Release.ComObject("SmarDTV CI filter", ref _ciFilter);
-
-      if (_ciDevice != null)
-      {
-        lock (_devicesInUse)
+        if (_graph != null)
         {
-          _devicesInUse.Remove(_ciDevice.DevicePath);
+          if (_isFilterInGraph)
+          {
+            _isFilterInGraph = false;
+            _graph.RemoveFilter(_ciFilter);
+          }
+          Release.ComObject("SmarDTV CI graph", ref _graph);
         }
-        _ciDevice.Dispose();
-        _ciDevice = null;
+        if (_ciFilter != null)
+        {
+          _product.Deinitialise();
+          _ciFilter = null;
+        }
       }
 
       _isSmarDtvUsbCi = false;
