@@ -20,6 +20,7 @@
 
 using System;
 using System.Runtime.Serialization;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
 {
@@ -76,6 +77,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
     public override int GetHashCode()
     {
       return base.GetHashCode() ^ _url.GetHashCode();
+    }
+
+    /// <summary>
+    /// Checks if the given channel and this instance are on the different transponder
+    /// </summary>
+    /// <param name="channel">Channel to check</param>
+    /// <returns>true, if the channels are on the same transponder</returns>
+    public override bool IsDifferentTransponder(IChannel channel)
+    {
+      DVBIPChannel dvbipChannel = channel as DVBIPChannel;
+      if (dvbipChannel == null)
+      {
+        return true;
+      }
+      return !string.Equals(dvbipChannel.Url, Url);
     }
   }
 }
