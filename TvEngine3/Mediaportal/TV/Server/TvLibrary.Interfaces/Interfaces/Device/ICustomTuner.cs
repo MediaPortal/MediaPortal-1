@@ -23,8 +23,8 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension
 {
   /// <summary>
-  /// An interface for devices that have drivers which expose a non-BDA tuning interface, or that require
-  /// unusual BDA tuning procedures.
+  /// An interface for tuners that expose a proprietary tuning interface or require unusual
+  /// deviations from the standard tuning procedures supported by the TV library.
   /// </summary>
   public interface ICustomTuner : ICustomDevice
   {

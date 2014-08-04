@@ -23,7 +23,7 @@ using System;
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension
 {
   /// <summary>
-  /// An interface for tuners that have the capability to control aspects of the video and/or audio
+  /// An interface for tuners that have the ability to control aspects of the video and/or audio
   /// stream format/encoding.
   /// </summary>
   public interface IEncoder : ICustomDevice

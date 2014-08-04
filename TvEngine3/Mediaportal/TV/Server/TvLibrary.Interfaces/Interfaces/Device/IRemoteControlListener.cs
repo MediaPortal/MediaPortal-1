@@ -21,9 +21,9 @@
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension
 {
   /// <summary>
-  /// An interface for conditional access providers that implement menu access.
+  /// An interface for tuners that have a remote control input.
   /// </summary>
-  public interface IRemoteControlListener
+  public interface IRemoteControlListener : ICustomDevice
   {
     /// <summary>
     /// Open the remote control interface and start listening for commands.

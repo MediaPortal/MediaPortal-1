@@ -40,7 +40,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension
     /// 
     /// BDA:
     /// [network provider]->[tuner]->[capture]->[...additional filter(s)...]->[infinite tee]->[MPEG 2 demultiplexer]->[transport information filter]
-    ///                                                                     ->[transport stream writer]
+    ///                                                                                     ->[transport stream writer]
     ///
     /// WDM:
     /// [tuner]------------->[crossbar]->[capture]->[encoder]->[multiplexer]->[...additional filter(s)...]->[transport stream writer]
