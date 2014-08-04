@@ -86,14 +86,7 @@ namespace Mediaportal.TV.TvPlugin
       {
         _groups.Clear();
         Task taskGetAllChannels = Task.Factory.StartNew(GetAllChannels);
-        Task taskGetOrCreateGroup = Task.Factory.StartNew(delegate
-        {
-          ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
-          ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.RadioGroupNames.AllChannels, MediaTypeEnum.Radio);
-        });
-        
         Task taskGetAllGroups = Task.Factory.StartNew(GetAllGroups);
-        taskGetOrCreateGroup.WaitAndHandleExceptions();
         taskGetAllChannels.WaitAndHandleExceptions();
         taskGetAllGroups.WaitAndHandleExceptions();
 
