@@ -24,7 +24,6 @@
 #include "..\..\shared\DvbUtil.h"
 #include "..\..\shared\Pcr.h"
 #include "..\..\shared\TsHeader.h"
-#include "..\..\shared\FilterSettingsmanager.h"
 #include "..\..\shared\FilterSettingsmanager.cpp"
 #include "Hamming.h"
 #include "Version.h"
@@ -272,7 +271,7 @@ CTsMuxer::CTsMuxer(LPUNKNOWN unk, HRESULT* hr)
   : CUnknown(NAME("TS Muxer"), unk)
 {
 	// set default log path
-	swprintf_s(g_logFilePath, FilterSettingsmanager_getLogPath());
+	swprintf_s(g_logFilePath, CFilterSettingsManager::GetLogPath());
 	
   LogDebug(L"--------------- v%d.%d.%d.0 ---------------", TSMUXER_MAJOR_VERSION, TSMUXER_MID_VERSION, TSMUXER_VERSION);
   LogDebug(L"initial version");

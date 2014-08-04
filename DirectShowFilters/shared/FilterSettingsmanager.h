@@ -28,6 +28,15 @@ EXTERN_C IMAGE_DOS_HEADER __ImageBase;
 
 #define FILTERSETTINGSMANAGER_INI_FILE_NAME L"filterConfig.ini"
 
-static wchar_t* FilterSettingsmanager_getLogPath();
-static wchar_t* FilterSettingsmanager_getDllSearchPath();
-static wchar_t* FilterSettingsmanager_getConfigPath();
+class CFilterSettingsManager
+{
+	public:
+		static wchar_t* GetLogPath();
+		static wchar_t* GetDllSearchPath();
+		static wchar_t* GetConfigPath();
+	private:
+		static wchar_t logPath[MAX_PATH];
+
+		static bool StringReplace(std::wstring& str, const std::wstring& from, const std::wstring& to);
+		static wchar_t* CFilterSettingsManager::GetProgramDataFolderPath();
+};

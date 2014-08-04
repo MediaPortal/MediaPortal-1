@@ -21,11 +21,13 @@
 
 #include "FilterSettingsmanager.h"
 
-wchar_t FilterSettingsmanager_logPath[MAX_PATH] = { 0 };
+wchar_t CFilterSettingsManager::logPath[MAX_PATH] = { 0 };
 
-static wchar_t* FilterSettingsmanager_getLogPath() {
+wchar_t* CFilterSettingsManager::GetLogPath()
+{
 	// don't read the ini file everytime
-	if (!FilterSettingsmanager_logPath || !wcscmp(FilterSettingsmanager_logPath, L"")) {
+	if (!logPath || !wcscmp(logPath, L""))
+	{
 		wchar_t DllPath[MAX_PATH] = { 0 };
 		wchar_t iniPath[MAX_PATH] = { 0 };
 
@@ -35,22 +37,45 @@ static wchar_t* FilterSettingsmanager_getLogPath() {
 		DllBasePath = DllBasePath.substr(0, DllBasePath.find_last_of(L"\\/"));
 
 		swprintf_s(iniPath, L"%s\\%s", DllBasePath.c_str(), FILTERSETTINGSMANAGER_INI_FILE_NAME);
-		GetPrivateProfileString(L"FilterSettings", L"logPath", 0, FilterSettingsmanager_logPath, MAX_PATH, iniPath);
+		GetPrivateProfileString(L"FilterSettings", L"logPath", 0, logPath, MAX_PATH, iniPath);
+
+		// replace special folders
+		wstring logPathString(logPath);
+		StringReplace(logPathString, L"%ProgramData%", GetProgramDataFolderPath());
+		swprintf_s(logPath, logPathString.c_str());
+
 
 		// set default path if not defined inside the ini file
-		if (!FilterSettingsmanager_logPath || !wcscmp(FilterSettingsmanager_logPath, L"")) {
-			wchar_t temp[MAX_PATH];
-			::SHGetSpecialFolderPathW(NULL, temp, CSIDL_COMMON_APPDATA, FALSE);
-			swprintf_s(FilterSettingsmanager_logPath, L"%s\\Team MediaPortal\\MediaPortal TV Server\\log", temp);
+		if (!logPath || !wcscmp(logPath, L""))
+		{
+			swprintf_s(logPath, L"%s\\Team MediaPortal\\MediaPortal TV Server\\log", GetProgramDataFolderPath());
 		}
 	}
-	return FilterSettingsmanager_logPath;
+	return logPath;
 };
 
-static wchar_t* FilterSettingsmanager_getDllSearchPath() {
-	
+wchar_t* CFilterSettingsManager::GetDllSearchPath()
+{
+	return 0;
 };
 	
-static wchar_t* FilterSettingsmanager_getConfigPath() {
+wchar_t* CFilterSettingsManager::GetConfigPath()
+{
+	return 0;
+};
 
-};
+bool CFilterSettingsManager::StringReplace(std::wstring& str, const std::wstring& from, const std::wstring& to)
+{
+	size_t start_pos = str.find(from);
+	if (start_pos == std::wstring::npos)
+		return false;
+	str.replace(start_pos, from.length(), to);
+	return true;
+}
+
+wchar_t* CFilterSettingsManager::GetProgramDataFolderPath()
+{
+	static wchar_t temp[MAX_PATH];
+	::SHGetSpecialFolderPathW(NULL, temp, CSIDL_COMMON_APPDATA, FALSE);
+	return temp;
+}
