@@ -303,7 +303,13 @@ namespace Mediaportal.TV.TvPlugin.Radio
       {
         ChannelGroupIncludeRelationEnum include = ChannelGroupIncludeRelationEnum.GroupMaps;
         include |= ChannelGroupIncludeRelationEnum.GroupMapsChannel;
-        AllRadioGroups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllCustomChannelGroups(include, MediaTypeEnum.Radio).ToList();        
+        AllRadioGroups =
+          ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(MediaTypeEnum.Radio, include).OrderBy(g => g.GroupName).ToList();
+        if (_hideAllChannelsGroup && AllRadioGroups.Count > 1)
+        {
+          ChannelGroup group = AllRadioGroups.First<ChannelGroup>(g => g.GroupName.Equals(TvConstants.RadioGroupNames.AllChannels));
+          AllRadioGroups.Remove(group);
+        }
       }
     }
 
@@ -399,15 +405,8 @@ namespace Mediaportal.TV.TvPlugin.Radio
       int totalItems = 0;
       if (_currentFolder == null || _currentFolder == "..")
       {
-        IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(MediaTypeEnum.Radio).ToList();
-        foreach (ChannelGroup group in groups)
+        foreach (ChannelGroup group in AllRadioGroups)
         {
-          if (_hideAllChannelsGroup && group.GroupName.Equals(TvConstants.RadioGroupNames.AllChannels) &&
-              groups.Count > 1)
-          {
-            continue;
-          }
-
           if (group.GroupName == _rootGroup)
           {
             continue;

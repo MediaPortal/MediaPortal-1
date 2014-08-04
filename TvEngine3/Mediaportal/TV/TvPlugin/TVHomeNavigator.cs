@@ -125,16 +125,12 @@ namespace Mediaportal.TV.TvPlugin
         ChannelGroupIncludeRelationEnum include = ChannelGroupIncludeRelationEnum.GroupMaps;
         include |= ChannelGroupIncludeRelationEnum.GroupMapsChannel;
 
-        if (hideAllChannelsGroup)
+        _groups =
+          ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(MediaTypeEnum.TV, include).OrderBy(g => g.GroupName).ToList();
+        if (hideAllChannelsGroup && _groups.Count > 1)
         {
-          _groups =
-            ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllCustomChannelGroups(include, MediaTypeEnum.TV).OrderBy(g => g.GroupName).
-              ToList();
-        }
-        else
-        {
-          _groups =
-            ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(MediaTypeEnum.TV, include).OrderBy(g => g.GroupName).ToList();
+          ChannelGroup group = _groups.First<ChannelGroup>(g => g.GroupName.Equals(TvConstants.TvGroupNames.AllChannels));
+          _groups.Remove(group);
         }
         this.LogInfo("loaded {0} tv groups", _groups.Count);
       }

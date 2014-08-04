@@ -10,40 +10,29 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
   {    
     public IList<ChannelGroup> ListAllChannelGroups()
     {
-      var listAllChannelGroups = ChannelGroupManagement.ListAllChannelGroups();
-      return listAllChannelGroups;
+      return ChannelGroupManagement.ListAllChannelGroups();
     }
 
     public IList<ChannelGroup> ListAllChannelGroups(ChannelGroupIncludeRelationEnum includeRelations)
     {
-      var listAllChannelGroups = ChannelGroupManagement.ListAllChannelGroups(includeRelations);
-      return listAllChannelGroups;
-    }
-
-    public IList<ChannelGroup> ListAllChannelGroupsByMediaType(MediaTypeEnum mediaTypeEnum, ChannelGroupIncludeRelationEnum includeRelations)
-    {
-      var listAllChannelGroupsByMediaType = ChannelGroupManagement.ListAllChannelGroupsByMediaType(mediaTypeEnum, includeRelations);
-      return listAllChannelGroupsByMediaType;
-    }
-
-    public IList<ChannelGroup> ListAllCustomChannelGroups(ChannelGroupIncludeRelationEnum includeRelations, MediaTypeEnum mediaType)
-    {
-      var listAllCustomChannelGroups = ChannelGroupManagement.ListAllCustomChannelGroups(includeRelations);
-      return listAllCustomChannelGroups;
+      return ChannelGroupManagement.ListAllChannelGroups(includeRelations);
     }
 
     public IList<ChannelGroup> ListAllChannelGroupsByMediaType(MediaTypeEnum mediaType)
     {
-      var listAllChannelGroupsByMediaType = ChannelGroupManagement.ListAllChannelGroupsByMediaType(mediaType);
-      return listAllChannelGroupsByMediaType;
+      return ChannelGroupManagement.ListAllChannelGroupsByMediaType(mediaType);
+    }
+
+    public IList<ChannelGroup> ListAllChannelGroupsByMediaType(MediaTypeEnum mediaTypeEnum, ChannelGroupIncludeRelationEnum includeRelations)
+    {
+      return ChannelGroupManagement.ListAllChannelGroupsByMediaType(mediaTypeEnum, includeRelations);
     }
 
     public ChannelGroup GetChannelGroupByNameAndMediaType(string groupName, MediaTypeEnum mediaType)
     {
-      var channelGroupByNameAndMediaType = ChannelGroupManagement.GetChannelGroupByNameAndMediaType(groupName, mediaType);
-      return channelGroupByNameAndMediaType;
+      return ChannelGroupManagement.GetChannelGroupByNameAndMediaType(groupName, mediaType);
     }
-       
+
     public void DeleteChannelGroupMap(int idMap)
     {
       ChannelGroupManagement.DeleteChannelGroupMap(idMap);
@@ -66,8 +55,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
 
     public ChannelGroup GetOrCreateGroup(string groupName, MediaTypeEnum mediaType)
     {
-      var orCreateGroup = ChannelGroupManagement.GetOrCreateGroup(groupName, mediaType);
-      return orCreateGroup;
+      return ChannelGroupManagement.GetOrCreateGroup(groupName, mediaType);
     }
   }
 }
