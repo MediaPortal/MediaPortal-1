@@ -50,7 +50,6 @@
 
 class CParameterCollection;
 class CStaticLogger;
-class CStaticLoggerContext;
 
 class CLogger
 {
@@ -67,24 +66,22 @@ public:
 
   ~CLogger(void);
 
-  // log message to log file
-  // @param logLevel : the log level of message
-  // @param format : the formating string
-  void Log(unsigned int logLevel, const wchar_t *format, ...);
-
-  void SetParameters(CParameterCollection *configuration);
+  /* get methods */
 
   // gets logger instance ID
   // @return : logger instance ID
   GUID GetLoggerInstanceId(void);
 
-  // gets logger mutex
-  // @return : logger mutex
-  HANDLE GetMutex(void);
+  /* set methods */
 
-  // gets static logger context
-  // @return : static logger context
-  CStaticLoggerContext *GetStaticLoggerContext(void);
+  void SetParameters(CParameterCollection *configuration);
+
+  /* other methods */
+
+  // log message to log file
+  // @param logLevel : the log level of message
+  // @param format : the formating string
+  void Log(unsigned int logLevel, const wchar_t *format, ...);
 
   // registers module with specified file name
   // @param moduleFileName : the full path to module file to register
@@ -95,15 +92,21 @@ public:
   // @param moduleFileName : the full path to module file to unregister
   void UnregisterModule(const wchar_t *moduleFileName);
 
+  // reset logger to default state
+  // this method should be used only from filter
+  void Clear(void);
+
 protected:
-  // mutex for accessing log file
-  HANDLE mutex;
   // the logger identifier
   GUID loggerInstance;
   // allowed verbosity (messages with higher verbosity are not logged)
   unsigned int allowedLogVerbosity;
+  // holds logger context handle
+  unsigned int context;
   // holds instance of static logger
   CStaticLogger *staticLogger;
+
+  /* methods */
 
   // get human-readable value of log level
   // @param level : the level of message

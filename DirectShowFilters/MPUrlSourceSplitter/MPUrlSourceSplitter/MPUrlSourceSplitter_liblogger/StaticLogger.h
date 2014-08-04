@@ -23,8 +23,11 @@
 #ifndef __STATIC_LOGGER_DEFINED
 #define __STATIC_LOGGER_DEFINED
 
-#include "StaticLoggerContextCollection.h"
+#include "LoggerFileCollection.h"
+#include "LoggerContextCollection.h"
 #include "ParameterCollection.h"
+
+#define LOGGER_CONTEXT_INVALID_HANDLE                                 UINT_MAX
 
 class CStaticLogger
 {
@@ -34,42 +37,29 @@ public:
 
   /* get methods */
 
-  // gets static logger context collection
-  // @return : static logger context collection
-  CStaticLoggerContextCollection *GetLoggerContexts(void);
+  // gets logger context collection
+  // @return : logger context collection
+  CLoggerContextCollection *GetLoggerContexts(void);
 
-  // gets static logger context for specified logger
-  // @return : static logger context or NULL if not found
-  CStaticLoggerContext *GetLoggerContext(CLogger *logger);
+  // gets logger context handle for specified parameters
+  // @param guid : the logger GUID
+  // @param maxLogSize : the logger max log size
+  // @param allowedLogVerbosity : the logger allowed log verbosity
+  // @param logFile : the logger log file
+  // @return : logger context handle or LOGGER_CONTEXT_INVALID_HANDLE if none
+  unsigned int GetLoggerContext(GUID guid, unsigned int maxLogSize, unsigned int allowedLogVerbosity, const wchar_t *logFile);
 
   /* set methods */
 
   /* other methods */
 
-  // initializes static logger with new logger instance
-  // new static logger configuration is created in case that global mutex name is not known
-  // @param maxLogSize : maximum log file size
-  // @param allowedLogVerbosity : allowed log verbosity
-  // @param logFile : log file name with full path
-  // @param logBackupFile : backup log file name with full path
-  // @param globalMutexName : global mutex name
-  // @return : mutex to logger instance or NULL if error
-  HANDLE Initialize(DWORD maxLogSize, unsigned int allowedLogVerbosity, const wchar_t *logFile, const wchar_t *logBackupFile, const wchar_t *globalMutexName);
-
-  // logs message to log file
-  // @param logger : the logger
-  // @param logLevel : the level of message
-  // @param message : the message to log to file
-  void LogMessage(CLogger *logger, unsigned int logLevel, const wchar_t *message);
-
   // logs message to specified logger context
   // @param context : the context to log message
   // @param logLevel : the level of message
   // @param message : the message to log to file
-  void LogMessage(CStaticLoggerContext *context, unsigned int logLevel, const wchar_t *message);
+  void LogMessage(unsigned int context, unsigned int logLevel, const wchar_t *message);
 
-  void Add(void);
-  void Remove(void);
+  // flushes all logger contexts to their logger files
   void Flush(void);
 
   // registers module with specified file name
@@ -86,10 +76,28 @@ public:
   // @return : true if module is registered, false otherwise
   bool IsRegisteredModule(const wchar_t *moduleFileName);
 
+  // adds reference to logger context
+  // @param context : the logger context handle to add reference
+  // @return : true if successful, false otherwise
+  bool AddLoggerContextReference(unsigned int context);
+
+  // removes reference to logger context
+  // @param context : the logger context handle to remove reference
+  // @return : true if successful, false otherwise
+  bool RemoveLoggerContextReference(unsigned int context);
+
+  // removes reference to logger file for specified context
+  // @param context : the logger context handle to remove logger file reference
+  // @return : true if successful, false otherwise
+  bool RemoveLoggerFileReference(unsigned int context);
+
 protected:
-  CStaticLoggerContextCollection *loggerContexts;
+  // holds logger contexts
+  CLoggerContextCollection *loggerContexts;
+  // holds logger files
+  CLoggerFileCollection *loggerFiles;
+
   HANDLE mutex;
-  unsigned int referencies;
 
   // holds registered modules
   CParameterCollection *registeredModules;
@@ -113,6 +121,10 @@ protected:
   // destroys logger worker
   // @return : S_OK if successful
   HRESULT DestroyLoggerWorker(void);
+
+  // flushes specified logger context to its logger file
+  // @param contextHandle : the logger context handle to flush
+  HRESULT FlushContext(unsigned int contextHandle);
 };
 
 #endif

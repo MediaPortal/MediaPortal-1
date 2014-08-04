@@ -350,8 +350,9 @@ protected:
   void SetPauseSeekStopRequest(bool pauseSeekStopRequest);
 
   // clears current session, initializes filter to state after creating instance
+  // @param withLogger : true if reset logger, false otherwise
   // @return : S_OK if successfull
-  void ClearSession(void);
+  void ClearSession(bool withLogger);
 };
 
 #endif

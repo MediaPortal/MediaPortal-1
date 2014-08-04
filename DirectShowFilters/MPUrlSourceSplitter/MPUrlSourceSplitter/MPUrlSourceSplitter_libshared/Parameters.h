@@ -32,8 +32,6 @@
 #define PARAMETER_NAME_DUMP_INPUT_RAW_DATA                                    L"DumpInputRawData"
 #define PARAMETER_NAME_DUMP_OUTPUT_PIN_RAW_DATA                               L"DumpOutputPinRawData"
 
-#define PARAMETER_NAME_LOG_GLOBAL_MUTEX_NAME                                  L"LogGlobalMutexName"
-#define PARAMETER_NAME_LOG_BACKUP_FILE_NAME                                   L"LogBackupFileName"
 #define PARAMETER_NAME_LOG_FILE_NAME                                          L"LogFileName"
 #define PARAMETER_NAME_LOG_MAX_SIZE                                           L"LogMaxSize"
 #define PARAMETER_NAME_LOG_VERBOSITY                                          L"LogVerbosity"

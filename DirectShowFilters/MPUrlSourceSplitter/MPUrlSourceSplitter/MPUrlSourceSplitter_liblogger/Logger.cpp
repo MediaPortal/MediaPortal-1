@@ -31,9 +31,9 @@
 CLogger::CLogger(HRESULT *result, CStaticLogger *staticLogger, CParameterCollection *configuration)
 {
   this->staticLogger = NULL;
-  this->mutex = NULL;
   this->allowedLogVerbosity = LOGGER_NONE;
   this->loggerInstance = GUID_NULL;
+  this->context = LOGGER_CONTEXT_INVALID_HANDLE;
 
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
@@ -44,10 +44,11 @@ CLogger::CLogger(HRESULT *result, CStaticLogger *staticLogger, CParameterCollect
     {
       this->staticLogger = staticLogger;
 
-      this->SetParameters(configuration);
       CoCreateGuid(&this->loggerInstance);
+      this->SetParameters(configuration);
 
-      this->staticLogger->Add();
+      CHECK_CONDITION_HRESULT(*result, this->context != LOGGER_CONTEXT_INVALID_HANDLE, *result, E_OUTOFMEMORY);
+      CHECK_CONDITION_HRESULT(*result, this->staticLogger->AddLoggerContextReference(this->context), *result, E_NOT_VALID_STATE);
     }
   }
 }
@@ -55,57 +56,60 @@ CLogger::CLogger(HRESULT *result, CStaticLogger *staticLogger, CParameterCollect
 CLogger::CLogger(HRESULT *result, CLogger *logger)
 {
   this->staticLogger = NULL;
-  this->mutex = NULL;
   this->allowedLogVerbosity = LOGGER_NONE;
   this->loggerInstance = GUID_NULL;
+  this->context = LOGGER_CONTEXT_INVALID_HANDLE;
   
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
     CHECK_POINTER_DEFAULT_HRESULT(*result, logger);
+    CHECK_CONDITION_HRESULT(*result, logger->context != LOGGER_CONTEXT_INVALID_HANDLE, *result, E_NOT_VALID_STATE);
 
     if (SUCCEEDED(*result))
     {
       this->staticLogger = logger->staticLogger;
-      this->mutex = logger->mutex;
       this->allowedLogVerbosity = logger->allowedLogVerbosity;
+      this->context = logger->context;
 
       CoCreateGuid(&this->loggerInstance);
-      this->staticLogger->Add();
+      CHECK_CONDITION_HRESULT(*result, this->staticLogger->AddLoggerContextReference(this->context), *result, E_NOT_VALID_STATE);
     }
   }
 }
 
 CLogger::~CLogger(void)
 {
-  CHECK_CONDITION_NOT_NULL_EXECUTE(this->staticLogger, this->staticLogger->Remove());
+  CHECK_CONDITION_EXECUTE(this->context != LOGGER_CONTEXT_INVALID_HANDLE, this->staticLogger->RemoveLoggerContextReference(this->context));
 }
+
+/* get methods */
+
+GUID CLogger::GetLoggerInstanceId(void)
+{
+  return this->loggerInstance;
+}
+
+/* set methods */
 
 void CLogger::SetParameters(CParameterCollection *configuration)
 {
   if (configuration != NULL)
   {
-    if (this->mutex == NULL)
-    {
-      // set maximum log size
-      DWORD maxLogSize = configuration->GetValueLong(PARAMETER_NAME_LOG_MAX_SIZE, true, LOG_MAX_SIZE_DEFAULT);
-      this->allowedLogVerbosity = configuration->GetValueLong(PARAMETER_NAME_LOG_VERBOSITY, true, LOG_VERBOSITY_DEFAULT);
+    // set maximum log size
+    unsigned int maxLogSize = configuration->GetValueUnsignedInt(PARAMETER_NAME_LOG_MAX_SIZE, true, LOG_MAX_SIZE_DEFAULT);
+    this->allowedLogVerbosity = configuration->GetValueLong(PARAMETER_NAME_LOG_VERBOSITY, true, LOG_VERBOSITY_DEFAULT);
 
-      // check value
-      maxLogSize = (maxLogSize <= 0) ? LOG_MAX_SIZE_DEFAULT : maxLogSize;
-      this->allowedLogVerbosity = (this->allowedLogVerbosity < 0) ? LOG_VERBOSITY_DEFAULT : this->allowedLogVerbosity;
+    // check value
+    maxLogSize = (maxLogSize <= 0) ? LOG_MAX_SIZE_DEFAULT : maxLogSize;
+    this->allowedLogVerbosity = (this->allowedLogVerbosity < 0) ? LOG_VERBOSITY_DEFAULT : this->allowedLogVerbosity;
 
-      const wchar_t *logFile = configuration->GetValue(PARAMETER_NAME_LOG_FILE_NAME, true, NULL);
-      const wchar_t *logBackupFile = configuration->GetValue(PARAMETER_NAME_LOG_BACKUP_FILE_NAME, true, NULL);
-      const wchar_t *logGlobalMutexName = configuration->GetValue(PARAMETER_NAME_LOG_GLOBAL_MUTEX_NAME, true, NULL);
+    const wchar_t *logFile = configuration->GetValue(PARAMETER_NAME_LOG_FILE_NAME, true, NULL);
 
-      assert(logFile != NULL);
-      assert(logBackupFile != NULL);
-      assert(logGlobalMutexName != NULL);
-
-      this->mutex = this->staticLogger->Initialize(maxLogSize, this->allowedLogVerbosity, logFile, logBackupFile, logGlobalMutexName);
-    }
+    this->context = this->staticLogger->GetLoggerContext(this->loggerInstance, maxLogSize, this->allowedLogVerbosity, logFile);
   }
 }
+
+/* other methods */
 
 void CLogger::Log(unsigned int level, const wchar_t *format, ...)
 {
@@ -116,6 +120,26 @@ void CLogger::Log(unsigned int level, const wchar_t *format, ...)
 
   va_end(vl);
 }
+
+bool CLogger::RegisterModule(const wchar_t *moduleFileName)
+{
+  return (this->staticLogger != NULL) ? this->staticLogger->RegisterModule(moduleFileName) : false;
+}
+
+void CLogger::UnregisterModule(const wchar_t *moduleFileName)
+{
+  if (this->staticLogger != NULL)
+  {
+    this->staticLogger->UnregisterModule(moduleFileName);
+  }
+}
+
+void CLogger::Clear(void)
+{
+  CHECK_CONDITION_EXECUTE(this->context != LOGGER_CONTEXT_INVALID_HANDLE, this->staticLogger->RemoveLoggerFileReference(this->context));
+}
+
+/* protected methods */
 
 const wchar_t *CLogger::GetLogLevel(unsigned int level)
 {
@@ -133,31 +157,6 @@ const wchar_t *CLogger::GetLogLevel(unsigned int level)
     return L"[Verbose]";
   default:
     return L"         ";
-  }
-}
-
-void CLogger::Log(unsigned int level, const wchar_t *format, va_list vl)
-{
-  if (level <= this->allowedLogVerbosity)
-  {
-    wchar_t *logRow = this->GetLogMessage(level, format, vl);
-
-    if (logRow != NULL)
-    {
-      this->LogMessage(level, logRow);
-      FREE_MEM(logRow);      
-    }
-  }
-}
-
-void CLogger::LogMessage(unsigned int logLevel, const wchar_t *message)
-{
-  if (logLevel <= this->allowedLogVerbosity)
-  {
-    if ((message != NULL) && (this->mutex != NULL))
-    {
-      this->staticLogger->LogMessage(this, logLevel, message);
-    }
   }
 }
 
@@ -190,30 +189,24 @@ wchar_t *CLogger::GetLogMessage(unsigned int level, const wchar_t *format, va_li
   return logRow;
 }
 
-GUID CLogger::GetLoggerInstanceId(void)
+void CLogger::LogMessage(unsigned int logLevel, const wchar_t *message)
 {
-  return this->loggerInstance;
-}
-
-HANDLE CLogger::GetMutex(void)
-{
-  return this->mutex;
-}
-
-CStaticLoggerContext *CLogger::GetStaticLoggerContext(void)
-{
-  return this->staticLogger->GetLoggerContext(this);
-}
-
-bool CLogger::RegisterModule(const wchar_t *moduleFileName)
-{
-  return (this->staticLogger != NULL) ? this->staticLogger->RegisterModule(moduleFileName) : false;
-}
-
-void CLogger::UnregisterModule(const wchar_t *moduleFileName)
-{
-  if (this->staticLogger != NULL)
+  if ((logLevel <= this->allowedLogVerbosity) && (message != NULL) && (this->context != NULL))
   {
-    this->staticLogger->UnregisterModule(moduleFileName);
+    this->staticLogger->LogMessage(this->context, logLevel, message);
+  }
+}
+
+void CLogger::Log(unsigned int level, const wchar_t *format, va_list vl)
+{
+  if (level <= this->allowedLogVerbosity)
+  {
+    wchar_t *logRow = this->GetLogMessage(level, format, vl);
+
+    if (logRow != NULL)
+    {
+      this->LogMessage(level, logRow);
+      FREE_MEM(logRow);      
+    }
   }
 }

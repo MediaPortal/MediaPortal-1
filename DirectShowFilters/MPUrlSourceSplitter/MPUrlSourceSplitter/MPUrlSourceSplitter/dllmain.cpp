@@ -354,52 +354,55 @@ LONG WINAPI ExceptionHandler(struct _EXCEPTION_POINTERS *exceptionInfo)
 
               for (unsigned int i = 0; i < staticLogger->GetLoggerContexts()->Count(); i++)
               {
-                CStaticLoggerContext *context = staticLogger->GetLoggerContexts()->GetItem(i);
+                CLoggerContext *context = staticLogger->GetLoggerContexts()->GetItem(i);
 
-                wchar_t *contextLogFile = Duplicate(context->GetLogFile());
-                PathRemoveFileSpec(contextLogFile);
-
-                // files with 'dmp' extension are known for Visual Studio
-
-                wchar_t *dumpFileName = FormatString(L"%s\\MPUrlSourceSplitter-%04.4d-%02.2d-%02.2d-%02.2d-%02.2d-%02.2d-%03.3d.dmp", contextLogFile,
-                  currentLocalTime.wYear, currentLocalTime.wMonth, currentLocalTime.wDay,
-                  currentLocalTime.wHour, currentLocalTime.wMinute, currentLocalTime.wSecond, currentLocalTime.wMilliseconds);
-
-                HANDLE dumpFile = CreateFile(dumpFileName, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_WRITE | FILE_SHARE_READ, 0, CREATE_ALWAYS, 0, 0);
-
-                if (dumpFile != INVALID_HANDLE_VALUE)
+                if (context->GetLoggerFile() != NULL)
                 {
-                  minidumpException.ThreadId = GetCurrentThreadId();
-                  minidumpException.ExceptionPointers = exceptionInfo;
-                  minidumpException.ClientPointers = TRUE;
+                  wchar_t *contextLogFile = Duplicate(context->GetLoggerFile()->GetLogFile());
+                  PathRemoveFileSpec(contextLogFile);
 
-                  MINIDUMP_TYPE miniDumpType = (MINIDUMP_TYPE)
-                    (MiniDumpWithFullMemory | MiniDumpWithDataSegs | MiniDumpIgnoreInaccessibleMemory); 
+                  // files with 'dmp' extension are known for Visual Studio
 
-                  if (MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), dumpFile, miniDumpType, &minidumpException, NULL, NULL) == TRUE)
+                  wchar_t *dumpFileName = FormatString(L"%s\\MPUrlSourceSplitter-%04.4d-%02.2d-%02.2d-%02.2d-%02.2d-%02.2d-%03.3d.dmp", contextLogFile,
+                    currentLocalTime.wYear, currentLocalTime.wMonth, currentLocalTime.wDay,
+                    currentLocalTime.wHour, currentLocalTime.wMinute, currentLocalTime.wSecond, currentLocalTime.wMilliseconds);
+
+                  HANDLE dumpFile = CreateFile(dumpFileName, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_WRITE | FILE_SHARE_READ, 0, CREATE_ALWAYS, 0, 0);
+
+                  if (dumpFile != INVALID_HANDLE_VALUE)
                   {
-                    wchar_t *guid = ConvertGuidToString(GUID_NULL);
+                    minidumpException.ThreadId = GetCurrentThreadId();
+                    minidumpException.ExceptionPointers = exceptionInfo;
+                    minidumpException.ClientPointers = TRUE;
 
-                    wchar_t *message = FormatString(L"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%03.3d [%4x] [%s] %s %s\r\n",
-                      currentLocalTime.wDay, currentLocalTime.wMonth, currentLocalTime.wYear,
-                      currentLocalTime.wHour, currentLocalTime.wMinute, currentLocalTime.wSecond,
-                      currentLocalTime.wMilliseconds,
-                      GetCurrentThreadId(),
-                      guid,
-                      L"[Error]  ",
-                      dumpFileName);
+                    MINIDUMP_TYPE miniDumpType = (MINIDUMP_TYPE)
+                      (MiniDumpWithFullMemory | MiniDumpWithDataSegs | MiniDumpIgnoreInaccessibleMemory); 
 
-                    staticLogger->LogMessage(context, LOGGER_ERROR, message);
+                    if (MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), dumpFile, miniDumpType, &minidumpException, NULL, NULL) == TRUE)
+                    {
+                      wchar_t *guid = ConvertGuidToString(GUID_NULL);
 
-                    FREE_MEM(guid);
-                    FREE_MEM(message);
+                      wchar_t *message = FormatString(L"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%03.3d [%4x] [%s] %s %s\r\n",
+                        currentLocalTime.wDay, currentLocalTime.wMonth, currentLocalTime.wYear,
+                        currentLocalTime.wHour, currentLocalTime.wMinute, currentLocalTime.wSecond,
+                        currentLocalTime.wMilliseconds,
+                        GetCurrentThreadId(),
+                        guid,
+                        L"[Error]  ",
+                        dumpFileName);
+
+                      staticLogger->LogMessage(i, LOGGER_ERROR, message);
+
+                      FREE_MEM(guid);
+                      FREE_MEM(message);
+                    }
+
+                    CloseHandle(dumpFile);
                   }
 
-                  CloseHandle(dumpFile);
+                  FREE_MEM(dumpFileName);
+                  FREE_MEM(contextLogFile);
                 }
-
-                FREE_MEM(dumpFileName);
-                FREE_MEM(contextLogFile);
               }
             }
           }

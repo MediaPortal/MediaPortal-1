@@ -60,7 +60,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ModuleDefinitionFile>mpurlsourcesplitter_protocol_Udp.def</ModuleDefinitionFile>
       <AdditionalLibraryDirectories>$(SolutionDir)bin_$(PlatformName)d\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>wininet.lib;urlmon.lib;Ws2_32.lib;iphlpapi.lib;MPUrlSourceSplitter_libcurl.lib;MPUrlSourceSplitter_libmemory.lib;MPUrlSourceSplitter_libstrings.lib;MPUrlSourceSplitter_liblogger.lib;MPUrlSourceSplitter_libshared.lib;MPUrlSourceSplitter_libcurlinstance.lib;MPUrlSourceSplitter_libsocket.lib;MPUrlSourceSplitter_librtp.lib;MPUrlSourceSplitter_libcachefile.lib;MPUrlSourceSplitter_libplugin.lib;MPUrlSourceSplitter_libdumpfile.lib;MPUrlSourceSplitter_libibmff.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wininet.lib;urlmon.lib;Ws2_32.lib;iphlpapi.lib;MPUrlSourceSplitter_libcurl.lib;MPUrlSourceSplitter_libmemory.lib;MPUrlSourceSplitter_libstrings.lib;MPUrlSourceSplitter_liblogger.lib;MPUrlSourceSplitter_libshared.lib;MPUrlSourceSplitter_libcurlinstance.lib;MPUrlSourceSplitter_libsocket.lib;MPUrlSourceSplitter_librtp.lib;MPUrlSourceSplitter_libcachefile.lib;MPUrlSourceSplitter_libplugin.lib;MPUrlSourceSplitter_libdumpfile.lib;MPUrlSourceSplitter_libibmff.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>echo /* &gt; VersionInfo.h
@@ -120,7 +120,7 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)d\$(Ta
       <OptimizeReferences>true</OptimizeReferences>
       <ModuleDefinitionFile>mpurlsourcesplitter_protocol_Udp.def</ModuleDefinitionFile>
       <AdditionalLibraryDirectories>$(SolutionDir)bin_$(PlatformName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>wininet.lib;urlmon.lib;Ws2_32.lib;iphlpapi.lib;MPUrlSourceSplitter_libcurl.lib;MPUrlSourceSplitter_libmemory.lib;MPUrlSourceSplitter_libstrings.lib;MPUrlSourceSplitter_liblogger.lib;MPUrlSourceSplitter_libshared.lib;MPUrlSourceSplitter_libcurlinstance.lib;MPUrlSourceSplitter_libsocket.lib;MPUrlSourceSplitter_librtp.lib;MPUrlSourceSplitter_libcachefile.lib;MPUrlSourceSplitter_libplugin.lib;MPUrlSourceSplitter_libdumpfile.lib;MPUrlSourceSplitter_libibmff.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wininet.lib;urlmon.lib;Ws2_32.lib;iphlpapi.lib;MPUrlSourceSplitter_libcurl.lib;MPUrlSourceSplitter_libmemory.lib;MPUrlSourceSplitter_libstrings.lib;MPUrlSourceSplitter_liblogger.lib;MPUrlSourceSplitter_libshared.lib;MPUrlSourceSplitter_libcurlinstance.lib;MPUrlSourceSplitter_libsocket.lib;MPUrlSourceSplitter_librtp.lib;MPUrlSourceSplitter_libcachefile.lib;MPUrlSourceSplitter_libplugin.lib;MPUrlSourceSplitter_libdumpfile.lib;MPUrlSourceSplitter_libibmff.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>echo /* &gt; VersionInfo.h

@@ -795,7 +795,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Udp::Initialize(CPluginConfiguration *conf
 
   if (SUCCEEDED(result))
   {
-    this->logger->SetParameters(protocolConfiguration->GetConfiguration());
     this->configuration->Clear();
 
     CHECK_CONDITION_HRESULT(result, this->configuration->Append(protocolConfiguration->GetConfiguration()), result, E_OUTOFMEMORY);

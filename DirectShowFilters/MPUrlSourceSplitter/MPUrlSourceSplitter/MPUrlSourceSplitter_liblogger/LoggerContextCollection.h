@@ -20,24 +20,24 @@
 
 #pragma once
 
-#ifndef __STATIC_LOGGER_CONTEXT_COLLECTION_DEFINED
-#define __STATIC_LOGGER_CONTEXT_COLLECTION_DEFINED
+#ifndef __LOGGER_CONTEXT_COLLECTION_DEFINED
+#define __LOGGER_CONTEXT_COLLECTION_DEFINED
 
 #include "Collection.h"
-#include "StaticLoggerContext.h"
+#include "LoggerContext.h"
 
-class CStaticLoggerContextCollection : public CCollection<CStaticLoggerContext>
+class CLoggerContextCollection : public CCollection<CLoggerContext>
 {
 public:
-  CStaticLoggerContextCollection(HRESULT *result);
-  ~CStaticLoggerContextCollection(void);
+  CLoggerContextCollection(HRESULT *result);
+  ~CLoggerContextCollection(void);
 
 protected:
 
   // clones specified item
   // @param item : the item to clone
   // @return : deep clone of item or NULL if not implemented
-  CStaticLoggerContext *Clone(CStaticLoggerContext *item);
+  CLoggerContext *Clone(CLoggerContext *item);
 };
 
 #endif

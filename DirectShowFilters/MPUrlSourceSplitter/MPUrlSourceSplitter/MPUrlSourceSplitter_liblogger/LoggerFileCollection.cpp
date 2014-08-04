@@ -20,18 +20,18 @@
 
 #include "StdAfx.h"
 
-#include "StaticLoggerContextCollection.h"
+#include "LoggerFileCollection.h"
 
-CStaticLoggerContextCollection::CStaticLoggerContextCollection(HRESULT *result)
+CLoggerFileCollection::CLoggerFileCollection(HRESULT *result)
   : CCollection(result)
 {
 }
 
-CStaticLoggerContextCollection::~CStaticLoggerContextCollection(void)
+CLoggerFileCollection::~CLoggerFileCollection(void)
 {
 }
 
-CStaticLoggerContext *CStaticLoggerContextCollection::Clone(CStaticLoggerContext *item)
+CLoggerFile *CLoggerFileCollection::Clone(CLoggerFile *item)
 {
   return NULL;
 }

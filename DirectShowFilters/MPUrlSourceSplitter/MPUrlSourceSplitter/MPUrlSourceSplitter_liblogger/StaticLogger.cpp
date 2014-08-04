@@ -31,28 +31,33 @@ CStaticLogger::CStaticLogger(HRESULT *result)
 {
   this->loggerWorkerThread = NULL;
   this->loggerWorkerShouldExit = false;
-  this->referencies = 0;
   this->loggerContexts = NULL;
   this->mutex = NULL;
   this->registeredModules = NULL;
+  this->loggerFiles = NULL;
 
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
-    this->loggerContexts = new CStaticLoggerContextCollection(result);
+    this->loggerContexts = new CLoggerContextCollection(result);
+    this->loggerFiles = new CLoggerFileCollection(result);
     this->mutex = CreateMutex(NULL, FALSE, NULL);
     this->registeredModules = new CParameterCollection(result);
 
     CHECK_POINTER_HRESULT(*result, this->loggerContexts, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->loggerFiles, *result, E_OUTOFMEMORY);
     CHECK_POINTER_HRESULT(*result, this->mutex, *result, E_OUTOFMEMORY);
     CHECK_POINTER_HRESULT(*result, this->registeredModules, *result, E_OUTOFMEMORY);
+    CHECK_CONDITION_EXECUTE(SUCCEEDED(*result), *result = this->CreateLoggerWorker());
   }
 }
 
 CStaticLogger::~CStaticLogger(void)
 {
   this->DestroyLoggerWorker();
+  this->Flush();
 
   FREE_MEM_CLASS(this->loggerContexts);
+  FREE_MEM_CLASS(this->loggerFiles);
   FREE_MEM_CLASS(this->registeredModules);
 
   if (this->mutex != NULL)
@@ -64,89 +69,121 @@ CStaticLogger::~CStaticLogger(void)
 
 /* get methods */
 
-CStaticLoggerContextCollection *CStaticLogger::GetLoggerContexts(void)
+CLoggerContextCollection *CStaticLogger::GetLoggerContexts(void)
 {
   return this->loggerContexts;
 }
 
-CStaticLoggerContext *CStaticLogger::GetLoggerContext(CLogger *logger)
+unsigned int CStaticLogger::GetLoggerContext(GUID guid, unsigned int maxLogSize, unsigned int allowedLogVerbosity, const wchar_t *logFile)
 {
-  CStaticLoggerContext *context = NULL;
+  // we must be sure, that Flush() isn't working
+  CLockMutex lock(this->mutex, INFINITE);
+  HRESULT result = S_OK;
+  CLoggerContext *context = NULL;
+  CLoggerContext *firstFreeContext = NULL;
+  unsigned int contextHandle = LOGGER_CONTEXT_INVALID_HANDLE;
+  unsigned int firstFreeContextHandle = LOGGER_CONTEXT_INVALID_HANDLE;
 
-  if (logger != NULL)
+  for (unsigned int i = 0; i < this->loggerContexts->Count(); i++)
   {
-    for (unsigned int i = 0; i < this->loggerContexts->Count(); i++)
-    {
-      CStaticLoggerContext *temp = this->loggerContexts->GetItem(i);
+    CLoggerContext *temp = this->loggerContexts->GetItem(i);
 
-      if (temp->GetMutex() == logger->GetMutex())
-      {
-        context = temp;
-        break;
-      }
+    if ((firstFreeContext == NULL) && (temp->IsFree()))
+    {
+      firstFreeContext = temp;
+      firstFreeContextHandle = i;
+    }
+
+    if (temp->GetLoggerGUID() == guid)
+    {
+      context = temp;
+      contextHandle = i;
+      break;
     }
   }
 
-  return context;
+  if ((context == NULL) && (firstFreeContext != NULL))
+  {
+    context = firstFreeContext;
+    contextHandle = firstFreeContextHandle;
+
+    context->SetLoggerGUID(guid);
+  }
+
+  if (context == NULL)
+  {
+    // context is NULL for new instance of filter's logger
+    
+    context = new CLoggerContext(&result, guid);
+    CHECK_POINTER_HRESULT(result, context, result, E_OUTOFMEMORY);
+
+    CHECK_CONDITION_HRESULT(result, this->loggerContexts->Add(context), result, E_OUTOFMEMORY);
+    CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(context));
+    CHECK_CONDITION_EXECUTE(SUCCEEDED(result), contextHandle = this->loggerContexts->Count() - 1);
+  }
+
+  CHECK_CONDITION_NOT_NULL_EXECUTE(context, context->SetAllowedLogVerbosity(allowedLogVerbosity));
+
+  if (SUCCEEDED(result))
+  {
+    if ((context != NULL) && (context->GetLoggerFile() != NULL) && (logFile == NULL))
+    {
+      context->RemoveLoggerFileReference();
+    }
+    else if ((context != NULL) && (context->GetLoggerFile() == NULL) && (logFile != NULL))
+    {
+      // find or create logger file for logger context
+      CLoggerFile *loggerFile = NULL;
+
+      for (unsigned int i = 0; i < this->loggerFiles->Count(); i++)
+      {
+        CLoggerFile *temp = this->loggerFiles->GetItem(i);
+
+        if (wcsicmp(temp->GetLogFile(), logFile) == 0)
+        {
+          loggerFile = temp;
+          break;
+        }
+      }
+
+      if (loggerFile == NULL)
+      {
+        loggerFile = new CLoggerFile(&result, logFile, maxLogSize);
+        CHECK_POINTER_HRESULT(result, loggerFile, result, E_OUTOFMEMORY);
+
+        CHECK_CONDITION_HRESULT(result, this->loggerFiles->Add(loggerFile), result, E_OUTOFMEMORY);
+        CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(loggerFile));
+      }
+
+      CHECK_CONDITION_NOT_NULL_EXECUTE(loggerFile, context->AddLoggerFileReference(loggerFile));
+    }
+
+    if (FAILED(result))
+    {
+      // context is already created
+      context->Clear();
+      contextHandle = LOGGER_CONTEXT_INVALID_HANDLE;
+    }
+  }
+
+  return contextHandle;
 }
 
 /* set methods */
 
 /* other methods */
 
-HANDLE CStaticLogger::Initialize(DWORD maxLogSize, unsigned int allowedLogVerbosity, const wchar_t *logFile, const wchar_t *logBackupFile, const wchar_t *globalMutexName)
+void CStaticLogger::LogMessage(unsigned int context, unsigned int logLevel, const wchar_t *message)
 {
-  bool res = (this->loggerContexts != NULL)  && (logFile != NULL) && (logBackupFile != NULL) && (globalMutexName != NULL);
-  HANDLE result = NULL;
+  CLoggerContext *cnt = this->loggerContexts->GetItem(context);
 
-  CStaticLoggerContext *foundContext = NULL;
-  for (unsigned int i = 0; (res && (i < this->loggerContexts->Count())); i++)
+  if (cnt != NULL)
   {
-    CStaticLoggerContext *context = this->loggerContexts->GetItem(i);
-
-    if (wcscmp(context->GetGlobalMutexName(), globalMutexName) == 0)
+    if (cnt->IsAllowedLogVerbosity(logLevel))
     {
-      foundContext = context;
-      break;
-    }
-  }
+      CLockMutex lock(cnt->GetMutex(), INFINITE);
 
-  if (res)
-  {
-    if (foundContext == NULL)
-    {
-      // create new static logger context and add it to collection
-      foundContext = new CStaticLoggerContext();
-      res &= (foundContext != NULL);
-
-      CHECK_CONDITION_EXECUTE(res, res &= foundContext->Initialize(maxLogSize, allowedLogVerbosity, logFile, logBackupFile, globalMutexName));
-      CHECK_CONDITION_EXECUTE(res, res &= this->loggerContexts->Add(foundContext));
-      CHECK_CONDITION_EXECUTE(!res, FREE_MEM_CLASS(foundContext));
-    }
-    
-    if (foundContext != NULL)
-    {
-      result = foundContext->GetMutex();
-    }
-  }
-
-  return result;
-}
-
-void CStaticLogger::LogMessage(CLogger *logger, unsigned int logLevel, const wchar_t *message)
-{
-  this->LogMessage(this->GetLoggerContext(logger), logLevel, message);
-}
-
-void CStaticLogger::LogMessage(CStaticLoggerContext *context, unsigned int logLevel, const wchar_t *message)
-{
-  if (context != NULL)
-  {
-    if (logLevel <= context->GetAllowedLogVerbosity())
-    {
-      CLockMutex lock(context->GetMutex(), INFINITE);
-
-      context->GetMessages()->Add(L"", message);
+      cnt->GetMessages()->Add(L"", message);
     }
   }
 }
@@ -171,6 +208,49 @@ void CStaticLogger::UnregisterModule(const wchar_t *moduleFileName)
 bool CStaticLogger::IsRegisteredModule(const wchar_t *moduleFileName)
 {
   return this->registeredModules->Contains(moduleFileName, false);
+}
+
+bool CStaticLogger::AddLoggerContextReference(unsigned int context)
+{
+  CLoggerContext *cnt = this->loggerContexts->GetItem(context);
+
+  if (cnt != NULL)
+  {
+    cnt->AddReference();
+    return true;
+  }
+
+  return false;
+}
+
+bool CStaticLogger::RemoveLoggerContextReference(unsigned int context)
+{
+  CLoggerContext *cnt = this->loggerContexts->GetItem(context);
+
+  if ((cnt != NULL) && (!cnt->IsFree()))
+  {
+    if (cnt->RemoveReference() == 0)
+    {
+      this->FlushContext(context);
+      cnt->Clear();
+    }
+    return true;
+  }
+
+  return false;
+}
+
+bool CStaticLogger::RemoveLoggerFileReference(unsigned int context)
+{
+  CLoggerContext *cnt = this->loggerContexts->GetItem(context);
+
+  if ((cnt != NULL) && (!cnt->IsFree()))
+  {
+    cnt->RemoveLoggerFileReference();
+    return true;
+  }
+
+  return false;
 }
 
 /* protected methods */
@@ -251,32 +331,6 @@ HRESULT CStaticLogger::DestroyLoggerWorker(void)
   return result;
 }
 
-void CStaticLogger::Add(void)
-{
-  CLockMutex lock(this->mutex, INFINITE);
-
-  if (this->loggerWorkerThread == NULL)
-  {
-    this->CreateLoggerWorker();
-  }
-
-  this->referencies++;
-}
-
-void CStaticLogger::Remove(void)
-{
-  CLockMutex lock(this->mutex, INFINITE);
-
-  this->referencies--;
-
-  // the last reference is for FFmpeg logger
-  if (this->referencies <= 1)
-  {
-    this->DestroyLoggerWorker();
-    this->Flush();
-  }
-}
-
 void CStaticLogger::Flush(void)
 {
   assert(this->mutex != NULL);
@@ -288,13 +342,26 @@ void CStaticLogger::Flush(void)
 
   HRESULT result = S_OK;
   unsigned int contextCount = this->loggerContexts->Count();
-  CParameterCollection *temporaryMessages = new CParameterCollection(&result);
-  CHECK_POINTER_HRESULT(result, temporaryMessages, result, E_OUTOFMEMORY);
 
   for (unsigned int i = 0; (SUCCEEDED(result) && (i < contextCount)); i++)
   {
-    CStaticLoggerContext *context = this->loggerContexts->GetItem(i);
+    result = this->FlushContext(i);
+  }
+}
 
+HRESULT CStaticLogger::FlushContext(unsigned int contextHandle)
+{
+  CLockMutex lock(this->mutex, INFINITE);
+
+  HRESULT result = S_OK;
+  CParameterCollection *temporaryMessages = new CParameterCollection(&result);
+  CLoggerContext *context = this->loggerContexts->GetItem(contextHandle);
+
+  CHECK_POINTER_HRESULT(result, temporaryMessages, result, E_OUTOFMEMORY);
+  CHECK_POINTER_HRESULT(result, context, result, E_INVALIDARG);
+
+  if (SUCCEEDED(result) && (context->GetLoggerFile() != NULL))
+  {
     // in rare circumstances can be called Flush() method with LogMessage() method simultaneously
     // in case that there is no space in internal memory for new message, then internal memory must be resized
     // in rare case we can get another pointer to internal memory, which can lead to crash
@@ -312,9 +379,9 @@ void CStaticLogger::Flush(void)
 
     if (messagesCount > 0)
     {
-      if (context->GetLogFile() != NULL)
+      if (context->GetLoggerFile()->GetLogFile() != NULL)
       {
-        HANDLE hLogFile = CreateFile(context->GetLogFile(), GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_FLAG_WRITE_THROUGH, NULL);
+        HANDLE hLogFile = CreateFile(context->GetLoggerFile()->GetLogFile(), GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_FLAG_WRITE_THROUGH, NULL);
         if (hLogFile != INVALID_HANDLE_VALUE)
         {
           // move to end of log file
@@ -330,7 +397,7 @@ void CStaticLogger::Flush(void)
 
           SetFilePointerEx(hLogFile, distanceToMove, NULL, FILE_END);
 
-          unsigned int bufferSize = context->GetMaxLogSize();
+          unsigned int bufferSize = context->GetLoggerFile()->GetMaxLogSize();
           unsigned int bufferOccupied = 0;
 
           ALLOC_MEM_DEFINE_SET(buffer, unsigned char, bufferSize, 0);
@@ -340,8 +407,8 @@ void CStaticLogger::Flush(void)
             {
               const wchar_t *message = temporaryMessages->GetItem(j)->GetValue();
               unsigned int messageSize = wcslen(message) * sizeof(wchar_t);
-              
-              if (((size.LowPart + bufferOccupied + messageSize) > bufferSize) && (context->GetLogBackupFile() != NULL))
+
+              if (((size.LowPart + bufferOccupied + messageSize) > bufferSize) && (context->GetLoggerFile()->GetLogBackupFile() != NULL))
               {
                 // write data to log file
                 DWORD written = 0;
@@ -355,10 +422,10 @@ void CStaticLogger::Flush(void)
                 memset(buffer, 0, bufferSize);
 
                 // log file exceedes maximum log size
-                DeleteFile(context->GetLogBackupFile());
-                MoveFile(context->GetLogFile(), context->GetLogBackupFile());
+                DeleteFile(context->GetLoggerFile()->GetLogBackupFile());
+                MoveFile(context->GetLoggerFile()->GetLogFile(), context->GetLoggerFile()->GetLogBackupFile());
 
-                hLogFile = CreateFile(context->GetLogFile(), GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_FLAG_WRITE_THROUGH, NULL);
+                hLogFile = CreateFile(context->GetLoggerFile()->GetLogFile(), GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_FLAG_WRITE_THROUGH, NULL);
                 if (hLogFile == INVALID_HANDLE_VALUE)
                 {
                   messagesCount = j;
@@ -393,4 +460,5 @@ void CStaticLogger::Flush(void)
   }
 
   FREE_MEM_CLASS(temporaryMessages);
+  return result;
 }

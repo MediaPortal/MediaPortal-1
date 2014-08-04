@@ -69,7 +69,6 @@ HRESULT CAfhsDecryptionPlugin::Initialize(CPluginConfiguration *configuration)
 
   if (SUCCEEDED(result))
   {
-    this->logger->SetParameters(decryptionConfiguration->GetConfiguration());
     this->configuration->Clear();
 
     CHECK_CONDITION_HRESULT(result, this->configuration->Append(decryptionConfiguration->GetConfiguration()), result, E_OUTOFMEMORY);

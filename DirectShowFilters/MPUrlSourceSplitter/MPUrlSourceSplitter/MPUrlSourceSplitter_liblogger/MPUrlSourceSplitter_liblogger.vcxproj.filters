@@ -27,10 +27,16 @@
     <ClInclude Include="StaticLogger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="StaticLoggerContext.h">
+    <ClInclude Include="LoggerFile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="StaticLoggerContextCollection.h">
+    <ClInclude Include="LoggerFileCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LoggerContext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LoggerContextCollection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -44,10 +50,16 @@
     <ClCompile Include="StaticLogger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="StaticLoggerContext.cpp">
+    <ClCompile Include="LoggerFile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="StaticLoggerContextCollection.cpp">
+    <ClCompile Include="LoggerFileCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LoggerContext.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LoggerContextCollection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

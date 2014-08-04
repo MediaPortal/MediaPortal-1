@@ -189,38 +189,6 @@ CMPUrlSourceSplitter::CMPUrlSourceSplitter(LPCSTR pName, LPUNKNOWN pUnk, const I
 
   if (SUCCEEDED(*phr))
   {
-    if (IsEqualGUID(GUID_MP_IPTV_SOURCE, clsid))
-    {
-      wchar_t *logFile = GetTvServerFilePath(MP_IPTV_SOURCE_LOG_FILE);
-      wchar_t *logBackupFile = GetTvServerFilePath(MP_IPTV_SOURCE_LOG_BACKUP_FILE);
-
-      CHECK_CONDITION_EXECUTE(!loggerParameters->Add(PARAMETER_NAME_LOG_FILE_NAME, logFile), *phr = E_OUTOFMEMORY);
-      CHECK_CONDITION_EXECUTE(!loggerParameters->Add(PARAMETER_NAME_LOG_BACKUP_FILE_NAME, logBackupFile), *phr = E_OUTOFMEMORY);
-      CHECK_CONDITION_EXECUTE(!loggerParameters->Add(PARAMETER_NAME_LOG_GLOBAL_MUTEX_NAME, MP_IPTV_SOURCE_GLOBAL_MUTEX_NAME), *phr = E_OUTOFMEMORY);
-
-      FREE_MEM(logFile);
-      FREE_MEM(logBackupFile);
-    }
-    else if (IsEqualGUID(GUID_MP_URL_SOURCE_SPLITTER, clsid))
-    {
-      wchar_t *logFile = GetMediaPortalFilePath(MP_URL_SOURCE_SPLITTER_LOG_FILE);
-      wchar_t *logBackupFile = GetMediaPortalFilePath(MP_URL_SOURCE_SPLITTER_LOG_BACKUP_FILE);
-
-      CHECK_CONDITION_EXECUTE(!loggerParameters->Add(PARAMETER_NAME_LOG_FILE_NAME, logFile), *phr = E_OUTOFMEMORY);
-      CHECK_CONDITION_EXECUTE(!loggerParameters->Add(PARAMETER_NAME_LOG_BACKUP_FILE_NAME, logBackupFile), *phr = E_OUTOFMEMORY);
-      CHECK_CONDITION_EXECUTE(!loggerParameters->Add(PARAMETER_NAME_LOG_GLOBAL_MUTEX_NAME, MP_URL_SOURCE_SPLITTER_GLOBAL_MUTEX_NAME), *phr = E_OUTOFMEMORY);
-
-      FREE_MEM(logFile);
-      FREE_MEM(logBackupFile);
-    }
-    else
-    {
-      *phr = E_INVALIDARG;
-    }
-  }
-
-  if (SUCCEEDED(*phr))
-  {
     this->logger = new CLogger(phr, staticLogger, loggerParameters);
     CHECK_POINTER_HRESULT(*phr, this->logger, *phr, E_OUTOFMEMORY);
   }
@@ -357,7 +325,8 @@ CMPUrlSourceSplitter::~CMPUrlSourceSplitter()
 {
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_DESTRUCTOR_NAME);
 
-  this->ClearSession();
+  // reset all internal properties to default values
+  this->ClearSession(false);
 
   FREE_MEM_CLASS(this->outputPins);
   FREE_MEM_CLASS(this->parserHoster);
@@ -590,6 +559,9 @@ STDMETHODIMP CMPUrlSourceSplitter::Run(REFERENCE_TIME tStart)
 
 STDMETHODIMP CMPUrlSourceSplitter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE * pmt)
 {
+  // reset all internal properties to default values
+  this->ClearSession(true);
+
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_LOAD_NAME);
   HRESULT result = E_NOT_VALID_STATE;
 
@@ -602,9 +574,6 @@ STDMETHODIMP CMPUrlSourceSplitter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TY
     if (_wcsnicmp(pszFileName, L"udp://@0.0.0.0:1234", 19) != 0)
     {
       CHECK_POINTER_DEFAULT_HRESULT(result, this->parserHoster);
-
-      // reset all internal properties to default values
-      this->ClearSession();
 
       wchar_t *url = ConvertToUnicodeW(pszFileName);
       CHECK_POINTER_HRESULT(result, url, result, E_CONVERT_STRING_ERROR);
@@ -691,9 +660,6 @@ STDMETHODIMP CMPUrlSourceSplitter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TY
     result = S_OK;
     CHECK_POINTER_DEFAULT_HRESULT(result, pszFileName);
     CHECK_POINTER_DEFAULT_HRESULT(result, this->parserHoster);
-
-    // reset all internal properties to default values
-    this->ClearSession();
 
     wchar_t *url = ConvertToUnicodeW(pszFileName);
     CHECK_POINTER_HRESULT(result, url, result, E_CONVERT_STRING_ERROR);
@@ -1262,7 +1228,7 @@ STDMETHODIMP CMPUrlSourceSplitter::QueryProgress(LONGLONG *pllTotal, LONGLONG *p
 
 STDMETHODIMP CMPUrlSourceSplitter::AbortOperation(void)
 {
-  this->ClearSession();
+  this->ClearSession(false);
 
   return S_OK;
 }
@@ -1296,6 +1262,10 @@ STDMETHODIMP CMPUrlSourceSplitter::Download(LPCOLESTR uri, LPCOLESTR fileName)
 STDMETHODIMP CMPUrlSourceSplitter::DownloadAsync(LPCOLESTR uri, LPCOLESTR fileName, IDownloadCallback *downloadCallback)
 {
   HRESULT result = S_OK;
+
+  // reset all internal properties to default values
+  this->ClearSession(true);
+
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_DOWNLOAD_ASYNC_NAME);
 
   CHECK_POINTER_DEFAULT_HRESULT(result, uri);
@@ -1305,8 +1275,6 @@ STDMETHODIMP CMPUrlSourceSplitter::DownloadAsync(LPCOLESTR uri, LPCOLESTR fileNa
 
   if (SUCCEEDED(result))
   {
-    this->ClearSession();
-
     this->asyncDownloadResult = S_OK;
     this->flags &= ~MP_URL_SOURCE_SPLITTER_FLAG_ASYNC_DOWNLOAD_FINISHED;
     this->asyncDownloadCallback = downloadCallback;
@@ -2065,6 +2033,16 @@ STDMETHODIMP CMPUrlSourceSplitter::Load()
 
   if (SUCCEEDED(result))
   {
+    // check log file parameter, if not set, add default
+    if (!this->configuration->Contains(PARAMETER_NAME_LOG_FILE_NAME, true))
+    {
+      wchar_t *logFile = this->IsIptv() ? GetTvServerFilePath(MP_IPTV_SOURCE_LOG_FILE) : GetMediaPortalFilePath(MP_URL_SOURCE_SPLITTER_LOG_FILE);
+      CHECK_POINTER_HRESULT(result, logFile, result, E_OUTOFMEMORY);
+
+      CHECK_CONDITION_HRESULT(result, this->configuration->Add(PARAMETER_NAME_LOG_FILE_NAME, logFile), result, E_OUTOFMEMORY);
+      FREE_MEM(logFile);
+    }
+
     // set logger parameters
     this->logger->SetParameters(this->configuration);
   }
@@ -2610,7 +2588,7 @@ void CMPUrlSourceSplitter::SetPauseSeekStopRequest(bool pauseSeekStopRequest)
   }
 }
 
-void CMPUrlSourceSplitter::ClearSession(void)
+void CMPUrlSourceSplitter::ClearSession(bool withLogger)
 {
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_CLEAR_SESSION_NAME);
 
@@ -2656,4 +2634,6 @@ void CMPUrlSourceSplitter::ClearSession(void)
   this->demuxNewStart = 0;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_CLEAR_SESSION_NAME);
+
+  CHECK_CONDITION_EXECUTE(withLogger, this->logger->Clear());
 }

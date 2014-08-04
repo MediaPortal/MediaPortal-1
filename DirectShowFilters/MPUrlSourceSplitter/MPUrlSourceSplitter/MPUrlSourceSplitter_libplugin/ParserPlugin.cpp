@@ -71,7 +71,6 @@ HRESULT CParserPlugin::Initialize(CPluginConfiguration *configuration)
   if (SUCCEEDED(result))
   {
     this->protocolHoster = parserConfiguration->GetProtocolHoster();
-    this->logger->SetParameters(parserConfiguration->GetConfiguration());
     this->configuration->Clear();
 
     CHECK_CONDITION_HRESULT(result, this->configuration->Append(parserConfiguration->GetConfiguration()), result, E_OUTOFMEMORY);
