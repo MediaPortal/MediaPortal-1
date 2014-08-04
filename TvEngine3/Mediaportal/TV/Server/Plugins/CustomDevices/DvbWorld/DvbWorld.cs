@@ -190,7 +190,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbWorld
       int hr = GetIoctl(BDA_EXTENSION_PROPERTY_SET_TUNER_INFO, _generalBuffer, TUNER_INFO_SIZE);
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogWarn("DVB World: failed to read tuner information, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogWarn("DVB World: failed to read tuner information, hr = 0x{0:x}", hr);
       }
       else
       {
@@ -209,7 +209,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbWorld
       hr = GetIoctl(BDA_EXTENSION_PROPERTY_SET_HARDWARE_INFO, _generalBuffer, HARDWARE_INFO_SIZE);
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogWarn("DVB World: failed to read hardware information, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogWarn("DVB World: failed to read hardware information, hr = 0x{0:x}", hr);
       }
       else
       {
@@ -226,7 +226,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbWorld
       hr = GetIoctl(BDA_EXTENSION_PROPERTY_SET_MAC_ADDRESS, _generalBuffer, MAC_ADDRESS_LENGTH);
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogWarn("DVB World: failed to read MAC address, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogWarn("DVB World: failed to read MAC address, hr = 0x{0:x}", hr);
       }
       else
       {
@@ -390,7 +390,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbWorld
           hr = GetIoctl(BDA_EXTENSION_PROPERTY_SET_HID, _remoteControlBuffer, HID_CODE_LENGTH);
           if (hr != (int)HResult.Severity.Success)
           {
-            this.LogError("DVB World: failed to read HID code, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+            this.LogError("DVB World: failed to read HID code, hr = 0x{0:x}", hr);
           }
           else
           {
@@ -470,7 +470,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbWorld
       int hr = GetIoctl(BDA_EXTENSION_PROPERTY_SET_TUNER_INFO, _generalBuffer, TUNER_INFO_SIZE);
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogDebug("DVB World: property set not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogDebug("DVB World: property set not supported, hr = 0x{0:x}", hr);
         return false;
       }
 
@@ -611,7 +611,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbWorld
         return true;
       }
 
-      this.LogError("DVB World: failed to tune, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("DVB World: failed to tune, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -655,7 +655,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbWorld
         return true;
       }
 
-      this.LogError("DVB World: failed to set tone state, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("DVB World: failed to set tone state, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -700,7 +700,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbWorld
         return true;
       }
 
-      this.LogError("DVB World: failed to send DiSEqC command, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("DVB World: failed to send DiSEqC command, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -743,7 +743,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbWorld
       int hr = GetIoctl(BDA_EXTENSION_PROPERTY_SET_HID, _remoteControlBuffer, HID_CODE_LENGTH);
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogDebug("DVB World: property set not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogDebug("DVB World: property set not supported, hr = 0x{0:x}", hr);
         return false;
       }
 

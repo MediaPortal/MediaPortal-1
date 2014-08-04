@@ -248,7 +248,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
       );
       if (hr != (int)HResult.Severity.Success || returnedByteCount != DEVICE_ID_LENGTH)
       {
-        this.LogWarn("Prof USB: failed to read device ID, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+        this.LogWarn("Prof USB: failed to read device ID, hr = 0x{0:x}, byte count = {1}", hr, returnedByteCount);
       }
       else
       {
@@ -269,7 +269,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
       );
       if (hr != (int)HResult.Severity.Success || returnedByteCount != MAC_ADDRESS_LENGTH)
       {
-        this.LogWarn("Prof USB: failed to read MAC address, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+        this.LogWarn("Prof USB: failed to read MAC address, hr = 0x{0:x}, byte count = {1}", hr, returnedByteCount);
       }
       else
       {
@@ -283,7 +283,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
       hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Tuner, out support);
       if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Set))
       {
-        this.LogDebug("  tuning      = not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogDebug("  tuning      = not supported, hr = 0x{0:x}", hr);
       }
       else
       {
@@ -371,7 +371,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
           );
           if (hr != (int)HResult.Severity.Success || returnedByteCount != BDA_EXTENSION_PARAMS_SIZE)
           {
-            this.LogError("Prof USB: failed to read remote code, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+            this.LogError("Prof USB: failed to read remote code, hr = 0x{0:x}, byte count = {1}", hr, returnedByteCount);
           }
           else
           {
@@ -458,7 +458,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
       int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Motor, out support);
       if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Set))
       {
-        this.LogDebug("Prof USB: property set not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogDebug("Prof USB: property set not supported, hr = 0x{0:x}", hr);
         return false;
       }
 
@@ -532,7 +532,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
       int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.LnbPower, out support);
       if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Set))
       {
-        this.LogDebug("Prof USB: property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogDebug("Prof USB: property not supported, hr = 0x{0:x}", hr);
         return false;
       }
 
@@ -559,7 +559,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
         return true;
       }
 
-      this.LogError("Prof USB: failed to set power state, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Prof USB: failed to set power state, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -656,7 +656,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
         return true;
       }
 
-      this.LogError("Prof USB: failed to tune, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Prof USB: failed to tune, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -685,7 +685,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
                                   out support);
       if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Set))
       {
-        this.LogDebug("Prof USB: property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogDebug("Prof USB: property not supported, hr = 0x{0:x}", hr);
         return false;
       }
 
@@ -718,7 +718,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
         return true;
       }
 
-      this.LogError("Prof USB: failed to set tone state, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Prof USB: failed to set tone state, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -764,7 +764,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
         return true;
       }
 
-      this.LogError("Prof USB: failed to send DiSEqC command, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Prof USB: failed to send DiSEqC command, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -808,7 +808,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
       int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Ir, out support);
       if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Get))
       {
-        this.LogDebug("Prof USB: property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogDebug("Prof USB: property not supported, hr = 0x{0:x}", hr);
         return false;
       }
 

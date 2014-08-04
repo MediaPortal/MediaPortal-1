@@ -133,7 +133,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.GenpixOpenSource
       int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Diseqc, out support);
       if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Set))
       {
-        this.LogDebug("Genpix open source: property set not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogDebug("Genpix open source: property set not supported, hr = 0x{0:x}", hr);
         return false;
       }
 
@@ -199,7 +199,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.GenpixOpenSource
         return true;
       }
 
-      this.LogError("Genpix open source: failed to set tone state, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Genpix open source: failed to set tone state, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -244,7 +244,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.GenpixOpenSource
         return true;
       }
 
-      this.LogError("Genpix open source: failed to send DiSEqC command, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Genpix open source: failed to send DiSEqC command, hr = 0x{0:x}", hr);
       return false;
     }
 

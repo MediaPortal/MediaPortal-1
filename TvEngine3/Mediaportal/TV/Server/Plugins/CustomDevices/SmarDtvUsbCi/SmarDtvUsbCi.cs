@@ -270,7 +270,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
         int hr = _graph.AddFilter(_ciFilter, _product.Name);
         if (hr != (int)HResult.Severity.Success)
         {
-          this.LogError("SmarDTV USB CI: failed to add the filter to the graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          this.LogError("SmarDTV USB CI: failed to add the filter to the graph, hr = 0x{0:x}", hr);
           return false;
         }
         _isFilterInGraph = true;
@@ -294,7 +294,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
         }
         if (hr != (int)HResult.Severity.Success)
         {
-          this.LogError("SmarDTV USB CI: failed to connect the filter into the graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          this.LogError("SmarDTV USB CI: failed to connect the filter into the graph, hr = 0x{0:x}", hr);
           return false;
         }
 
@@ -457,7 +457,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
       int hr = _product.OpenInterface(ref _ciCallBack);
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogError("SmarDTV USB CI: failed to open conditional access interface, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("SmarDTV USB CI: failed to open conditional access interface, hr = 0x{0:x}", hr);
         return false;
       }
 
@@ -473,7 +473,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
       }
       else
       {
-        this.LogWarn("SmarDTV USB CI: failed to retrieve version information, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogWarn("SmarDTV USB CI: failed to retrieve version information, hr = 0x{0:x}", hr);
       }
 
       this.LogDebug("SmarDTV USB CI: result = success");
@@ -581,7 +581,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
         return true;
       }
 
-      this.LogError("SmarDTV USB CI: failed to send conditional access command, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("SmarDTV USB CI: failed to send conditional access command, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -627,7 +627,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
         return true;
       }
 
-      this.LogError("SmarDTV USB CI: failed to open menu, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("SmarDTV USB CI: failed to open menu, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -658,7 +658,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
         return true;
       }
 
-      this.LogError("SmarDTV USB CI: failed to close menu, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("SmarDTV USB CI: failed to close menu, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -690,7 +690,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
         return true;
       }
 
-      this.LogError("SmarDTV USB CI: failed to select menu entry, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("SmarDTV USB CI: failed to select menu entry, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -732,7 +732,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
         return true;
       }
 
-      this.LogError("SmarDTV USB CI: failed to answer enquiry, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("SmarDTV USB CI: failed to answer enquiry, hr = 0x{0:x}", hr);
       return false;
     }
 

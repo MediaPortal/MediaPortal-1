@@ -1021,7 +1021,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
           }
           else
           {
-            this.LogError("Anysee: failed to open CI API, hr = 0x{0:x} ({1})", result, HResult.GetDXErrorString(result));
+            this.LogError("Anysee: failed to open CI API, hr = 0x{0:x}", result);
           }
         }
 
@@ -1119,7 +1119,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
           return true;
         }
 
-        this.LogError("Anysee: failed to execute CI control command {0}, hr = 0x{1:x} ({2})", command, hr, HResult.GetDXErrorString(hr));
+        this.LogError("Anysee: failed to execute CI control command {0}, hr = 0x{1:x}", command, hr);
         return false;
       }
     }
@@ -1232,7 +1232,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       );
       if (hr != (int)HResult.Severity.Success || returnedByteCount != NIM_CONFIG_SIZE)
       {
-        this.LogWarn("Anysee: failed to read NIM configuration, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+        this.LogWarn("Anysee: failed to read NIM configuration, hr = 0x{0:x}, byte count = {1}", hr, returnedByteCount);
       }
 
       // Most of the info here is not very relevant.
@@ -1269,7 +1269,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       );
       if (hr != (int)HResult.Severity.Success || returnedByteCount != DRIVER_VERSION_SIZE)
       {
-        this.LogWarn("Anysee: failed to read driver version, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+        this.LogWarn("Anysee: failed to read driver version, hr = 0x{0:x}, byte count = {1}", hr, returnedByteCount);
         return;
       }
 
@@ -1297,7 +1297,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       );
       if (hr != (int)HResult.Severity.Success || returnedByteCount != PLATFORM_INFO_SIZE)
       {
-        this.LogWarn("Anysee: failed to read platform information, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+        this.LogWarn("Anysee: failed to read platform information, hr = 0x{0:x}, byte count = {1}", hr, returnedByteCount);
         return;
       }
 
@@ -1336,7 +1336,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       );
       if (hr != (int)HResult.Severity.Success || returnedByteCount != BOARD_INFO_SIZE)
       {
-        this.LogWarn("Anysee: failed to read board information, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+        this.LogWarn("Anysee: failed to read board information, hr = 0x{0:x}, byte count = {1}", hr, returnedByteCount);
         return;
       }
 
@@ -1368,7 +1368,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       );
       if (hr != (int)HResult.Severity.Success || returnedByteCount != CAPABILITIES_SIZE)
       {
-        this.LogWarn("Anysee: failed to read capabilities, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+        this.LogWarn("Anysee: failed to read capabilities, hr = 0x{0:x}, byte count = {1}", hr, returnedByteCount);
         return;
       }
 
@@ -1668,7 +1668,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
           );
           if (hr != (int)HResult.Severity.Success || returnedByteCount != IR_DATA_SIZE)
           {
-            this.LogError("Anysee: failed to read IR data, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+            this.LogError("Anysee: failed to read IR data, hr = 0x{0:x}, byte count = {1}", hr, returnedByteCount);
           }
           else
           {
@@ -1742,7 +1742,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       Release.ComObject("Anysee tuner filter output pin", ref tunerOutputPin);
       if (hr != (int)HResult.Severity.Success || captureInputPin == null)
       {
-        this.LogDebug("Anysee: failed to get the capture filter input pin, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogDebug("Anysee: failed to get the capture filter input pin, hr = 0x{0:x}", hr);
         return false;
       }
 
@@ -1751,7 +1751,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       Release.ComObject("Anysee capture filter input pin", ref captureInputPin);
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogError("Anysee: failed to get the capture filter input pin info, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("Anysee: failed to get the capture filter input pin info, hr = 0x{0:x}", hr);
         return false;
       }
 
@@ -1768,7 +1768,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Ir, out support);
       if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Get))
       {
-        this.LogDebug("Anysee: property set not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogDebug("Anysee: property set not supported, hr = 0x{0:x}", hr);
         Release.PinInfo(ref captureInfo);
         _propertySet = null;
         return false;
@@ -2225,7 +2225,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
         return true;
       }
 
-      this.LogError("Anysee: failed to set tone state, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Anysee: failed to set tone state, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -2273,7 +2273,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
         return true;
       }
 
-      this.LogError("Anysee: failed to send DiSEqC command, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Anysee: failed to send DiSEqC command, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -2323,7 +2323,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       );
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogError("Anysee: failed to enable IR commands, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("Anysee: failed to enable IR commands, hr = 0x{0:x}", hr);
         return false;
       }
 
@@ -2356,7 +2356,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
           );
           if (hr != (int)HResult.Severity.Success)
           {
-            this.LogWarn("Anysee: failed to disable IR commands, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+            this.LogWarn("Anysee: failed to disable IR commands, hr = 0x{0:x}", hr);
           }
         }
         else

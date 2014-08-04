@@ -204,26 +204,26 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
           hr = Slot.GetCamCaSystemIds(out camCasIds);
           if (hr != (int)HResult.Severity.Success)
           {
-            this.LogWarn("Digital Devices: failed to read CAM CA system IDs, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+            this.LogWarn("Digital Devices: failed to read CAM CA system IDs, hr = 0x{0:x}", hr);
           }
         }
 
         hr = Slot.GetCiBitRate(out ciBitRate);
         if (hr != (int)HResult.Severity.Success)
         {
-          this.LogWarn("Digital Devices: failed to read CI bit rate, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          this.LogWarn("Digital Devices: failed to read CI bit rate, hr = 0x{0:x}", hr);
         }
 
         hr = Slot.GetCiMaxBitRate(out ciMaxBitRate);
         if (hr != (int)HResult.Severity.Success)
         {
-          this.LogWarn("Digital Devices: failed to read maximum CI bit rate, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          this.LogWarn("Digital Devices: failed to read maximum CI bit rate, hr = 0x{0:x}", hr);
         }
 
         hr = Slot.GetCiTunerCount(out ciTunerCount);
         if (hr != (int)HResult.Severity.Success)
         {
-          this.LogWarn("Digital Devices: failed to read CI tuner count, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          this.LogWarn("Digital Devices: failed to read CI tuner count, hr = 0x{0:x}", hr);
         }
 
         if (isCamReady != IsCamReady ||
@@ -379,7 +379,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
       int hr = ps.QuerySupported(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.Send, out support);
       if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Set))
       {
-        this.LogDebug("Digital Devices: property set not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogDebug("Digital Devices: property set not supported, hr = 0x{0:x}", hr);
         Release.ComObject("Digital Devices DiSEqC property set", ref ps);
         pin = null;
         return null;
@@ -595,7 +595,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
               {
                 // Attempting to check for a menu when the menu has not previously been
                 // opened seems to fail (HRESULT 0x8007001f). Don't flood the logs...
-                this.LogError("Digital Devices: failed to read MMI, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+                this.LogError("Digital Devices: failed to read MMI, hr = 0x{0:x}", hr);
               }
             }
           }
@@ -807,13 +807,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
                     hr = _graph.AddFilter(tmpCiFilter, captureDevice.Name);
                     if (hr != (int)HResult.Severity.Success)
                     {
-                      this.LogError("Digital Devices: failed to add the filter for {0} {1} to the graph, hr = 0x{2:x} ({3})", captureDevice.Name, captureDevice.DevicePath, hr, HResult.GetDXErrorString(hr));
+                      this.LogError("Digital Devices: failed to add the filter for {0} {1} to the graph, hr = 0x{2:x}", captureDevice.Name, captureDevice.DevicePath, hr);
                       break;
                     }
                     hr = _graph.ConnectDirect(lastFilterOutputPin, tmpFilterInputPin, null);
                     if (hr != (int)HResult.Severity.Success)
                     {
-                      this.LogError("Digital Devices: failed to connect the matching filter for {0} {1} into the graph, hr = 0x{2:x} ({3})", captureDevice.Name, captureDevice.DevicePath, hr, HResult.GetDXErrorString(hr));
+                      this.LogError("Digital Devices: failed to connect the matching filter for {0} {1} into the graph, hr = 0x{2:x}", captureDevice.Name, captureDevice.DevicePath, hr);
                       _graph.RemoveFilter(tmpCiFilter);
                     }
                     break;
@@ -1167,7 +1167,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
         }
         else
         {
-          this.LogError("Digital Devices: failed to reset CI slot {0}, hr = 0x{1:x} ({2})", context.Slot.Index, hr, HResult.GetDXErrorString(hr));
+          this.LogError("Digital Devices: failed to reset CI slot {0}, hr = 0x{1:x}", context.Slot.Index, hr);
           success = false;
         }
       }
@@ -1439,7 +1439,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
         return true;
       }
 
-      this.LogError("Digital Devices: failed to send conditional access command, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Digital Devices: failed to send conditional access command, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -1562,7 +1562,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
           return true;
         }
 
-        this.LogError("Digital Devices: failed to enter menu, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("Digital Devices: failed to enter menu, hr = 0x{0:x}", hr);
         return false;
       }
     }
@@ -1607,7 +1607,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
           return true;
         }
 
-        this.LogError("Digital Devices: failed to close menu, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("Digital Devices: failed to close menu, hr = 0x{0:x}", hr);
         return false;
       }
     }
@@ -1691,7 +1691,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
           return true;
         }
 
-        this.LogError("Digital Devices: failed to select menu entry, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("Digital Devices: failed to select menu entry, hr = 0x{0:x}", hr);
         return false;
       }
     }
@@ -1732,7 +1732,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
           this.LogDebug("Digital Devices: result = success");
           return true;
         }
-        this.LogError("Digital Devices: failed to answer enquiry, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("Digital Devices: failed to answer enquiry, hr = 0x{0:x}", hr);
         return false;
       }
     }
@@ -1795,7 +1795,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
       int hr = _deviceControl.StartChanges();
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogError("Digital Devices: failed to start device control changes, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("Digital Devices: failed to start device control changes, hr = 0x{0:x}", hr);
         success = false;
       }
 
@@ -1804,7 +1804,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
       hr = _propertySet.Set(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.Enable, _instanceBuffer, INSTANCE_SIZE, _diseqcBuffer, sizeof(int));
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogError("Digital Devices: failed to enable DiSEqC commands, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("Digital Devices: failed to enable DiSEqC commands, hr = 0x{0:x}", hr);
         success = false;
       }
 
@@ -1818,7 +1818,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
       hr = _propertySet.Set(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.Send, _instanceBuffer, INSTANCE_SIZE, _diseqcBuffer, BDA_DISEQC_MESSAGE_SIZE);
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogError("Digital Devices: failed to send DiSEqC command, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("Digital Devices: failed to send DiSEqC command, hr = 0x{0:x}", hr);
         success = false;
       }
 
@@ -1826,13 +1826,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
       hr = _deviceControl.CheckChanges();
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogError("Digital Devices: failed to check device control changes, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("Digital Devices: failed to check device control changes, hr = 0x{0:x}", hr);
         success = false;
       }
       hr = _deviceControl.CommitChanges();
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogError("Digital Devices: failed to commit device control changes, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("Digital Devices: failed to commit device control changes, hr = 0x{0:x}", hr);
         success = false;
       }
 
@@ -1878,7 +1878,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
         return true;
       }
 
-      this.LogError("Digital Devices: failed to read DiSEqC response, response length = {0}, hr = 0x{1:x} ({2})", returnedByteCount, hr, HResult.GetDXErrorString(hr));
+      this.LogError("Digital Devices: failed to read DiSEqC response, response length = {0}, hr = 0x{1:x}", returnedByteCount, hr);
       return false;
     }
 

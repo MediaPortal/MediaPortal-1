@@ -89,8 +89,6 @@ xcopy "%1Plugins\CustomDevices\TurbosightRemote\bin\%3\TbsNxpIrRcReceiver.*" "%4
 
 
 rem --- unmanaged dependencies ---
-xcopy "%1..\..\..\..\DirectShowFilters\DXErr9\bin\%3\*.dll" "%4" /Y/D
-xcopy "%1..\..\..\..\DirectShowFilters\DXErr9\bin\%3\*.pdb" "%4" /Y/D
 xcopy "%1..\..\..\..\DirectShowFilters\MPIPTVSource\bin\%3\*.ax" "%4" /Y/D
 xcopy "%1..\..\..\..\DirectShowFilters\MPIPTVSource\bin\%3\*.dll" "%4" /Y/D
 xcopy "%1..\..\..\..\DirectShowFilters\MPIPTVSource\bin\%3\*.pdb" "%4" /Y/D

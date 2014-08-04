@@ -110,7 +110,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Compro
       );
       if (hr != (int)HResult.Severity.Success || returnedByteCount != MAC_ADDRESS_LENGTH)
       {
-        this.LogWarn("Compro: failed to read MAC address, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+        this.LogWarn("Compro: failed to read MAC address, hr = 0x{0:x}, byte count = {1}", hr, returnedByteCount);
       }
       else
       {
@@ -152,7 +152,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Compro
       int hr = _propertySet.QuerySupported(BDA_EXTENSION_DISEQC_PROPERTY_SET, (int)BdaExtensionDiseqcProperty.DiseqcRaw, out support);
       if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Get))
       {
-        this.LogDebug("Compro: property set not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogDebug("Compro: property set not supported, hr = 0x{0:x}", hr);
         return false;
       }
 
@@ -187,7 +187,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Compro
       int hr = _propertySet.QuerySupported(BDA_EXTENSION_DISEQC_PROPERTY_SET, (int)BdaExtensionDiseqcProperty.TonePower, out support);
       if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Set))
       {
-        this.LogDebug("Compro: property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogDebug("Compro: property not supported, hr = 0x{0:x}", hr);
         return false;
       }
 
@@ -210,7 +210,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Compro
         return true;
       }
 
-      this.LogError("Compro: failed to set power state, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Compro: failed to set power state, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -244,7 +244,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Compro
                                     out support);
         if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Set))
         {
-          this.LogDebug("Compro: DiSEqC basic property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          this.LogDebug("Compro: DiSEqC basic property not supported, hr = 0x{0:x}", hr);
         }
         else
         {
@@ -263,7 +263,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Compro
           );
           if (hr != (int)HResult.Severity.Success)
           {
-            this.LogError("Compro: failed to set tone state, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+            this.LogError("Compro: failed to set tone state, hr = 0x{0:x}", hr);
             success = false;
           }
         }
@@ -273,7 +273,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Compro
                                   out support);
       if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Set))
       {
-        this.LogDebug("Compro: tone/power property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogDebug("Compro: tone/power property not supported, hr = 0x{0:x}", hr);
       }
       else
       {
@@ -291,7 +291,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Compro
         );
         if (hr != (int)HResult.Severity.Success)
         {
-          this.LogError("Compro: failed to set 22 kHz state, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          this.LogError("Compro: failed to set 22 kHz state, hr = 0x{0:x}", hr);
           success = false;
         }
       }
@@ -346,7 +346,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Compro
         return true;
       }
 
-      this.LogError("Compro: failed to send DiSEqC command, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Compro: failed to send DiSEqC command, hr = 0x{0:x}", hr);
       return false;
     }
 

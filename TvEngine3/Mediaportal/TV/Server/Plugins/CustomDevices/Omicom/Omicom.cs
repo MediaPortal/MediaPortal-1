@@ -109,7 +109,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Omicom
       int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.DiseqcWrite, out support);
       if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Set))
       {
-        this.LogDebug("Omicom: property set not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogDebug("Omicom: property set not supported, hr = 0x{0:x}", hr);
         return false;
       }
 
@@ -187,7 +187,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Omicom
         return true;
       }
 
-      this.LogError("Omicom: failed to set tone state, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Omicom: failed to set tone state, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -235,7 +235,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Omicom
         return true;
       }
 
-      this.LogError("Omicom: failed to send DiSEqC command, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Omicom: failed to send DiSEqC command, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -268,7 +268,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Omicom
       );
       if (hr != (int)HResult.Severity.Success || returnedByteCount != DISEQC_MESSAGE_SIZE)
       {
-        this.LogError("Omicom: failed to read DiSEqC response, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+        this.LogError("Omicom: failed to read DiSEqC response, hr = 0x{0:x}, byte count = {1}", hr, returnedByteCount);
         return false;
       }
 

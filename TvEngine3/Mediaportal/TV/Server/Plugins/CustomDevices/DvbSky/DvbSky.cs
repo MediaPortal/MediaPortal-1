@@ -214,7 +214,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbSky
           int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET_GENERAL, (int)BdaExtensionProperty.MacAddressTuner1, out support);
           if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Get))
           {
-            this.LogWarn("DVBSky: {0} property not supported, hr = 0x{1:x} ({2})", propertyNames[i], hr, HResult.GetDXErrorString(hr));
+            this.LogWarn("DVBSky: {0} property not supported, hr = 0x{1:x}", propertyNames[i], hr);
           }
           else
           {
@@ -226,7 +226,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbSky
             hr = _propertySet.Get(BDA_EXTENSION_PROPERTY_SET_GENERAL, (int)properties[i], _instanceBuffer, INSTANCE_SIZE, dataBuffer, MAC_ADDRESS_LENGTH, out returnedByteCount);
             if (hr != (int)HResult.Severity.Success || returnedByteCount != MAC_ADDRESS_LENGTH)
             {
-              this.LogWarn("DVBSky: failed to read {0}, hr = 0x{1:x} ({2}), byte count = {3}", propertyNames[i], hr, HResult.GetDXErrorString(hr), returnedByteCount);
+              this.LogWarn("DVBSky: failed to read {0}, hr = 0x{1:x}, byte count = {2}", propertyNames[i], hr, returnedByteCount);
             }
             else
             {
@@ -341,7 +341,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbSky
           );
           if (hr != (int)HResult.Severity.Success || returnedByteCount != REMOTE_CONTROL_DATA_SIZE)
           {
-            this.LogError("DVBSky: failed to read remote code, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+            this.LogError("DVBSky: failed to read remote code, hr = 0x{0:x}, byte count = {1}", hr, returnedByteCount);
           }
           else
           {
@@ -686,7 +686,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbSky
       int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET_GENERAL, (int)BdaExtensionProperty.RemoteCode, out support);
       if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Get))
       {
-        this.LogDebug("DVBSky: property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogDebug("DVBSky: property not supported, hr = 0x{0:x}", hr);
         return false;
       }
 

@@ -257,7 +257,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// Gets the severity level.
     /// </summary>
     /// <value>The severity level.</value>
-    public Severity severityLevel
+    public Severity SeverityLevel
     {
       get { return _severity; }
     }
@@ -269,15 +269,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     public int Code
     {
       get { return _code; }
-    }
-
-    /// <summary>
-    /// Gets the DX error string.
-    /// </summary>
-    /// <value>The DX error string.</value>
-    private string DXErrorString
-    {
-      get { return GetDXErrorString((int)_hresult); }
     }
 
     /// <summary>
@@ -316,15 +307,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     }
 
     /// <summary>
-    /// Static method which gets the DX error string.
-    /// </summary>
-    /// <param name="hresult">The hresult.</param>
-    /// <returns>the DX error string</returns>
-    [DllImport("Dxerr9.dll", EntryPoint = "GetDXErrorString", ExactSpelling = false,
-      CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public static extern string GetDXErrorString(int hresult);
-
-    /// <summary>
     /// Returns a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
     /// </summary>
     /// <returns>
@@ -349,8 +331,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     {
       return _hresult == 0
                ? String.Format("No DX Error")
-               : String.Format("DX Error: {0} - Error: {1}, Description:{2}", ToString(), DXErrorString,
-                               DXErrorDescription);
+               : String.Format("DX Error: {0} - Description:{1}", ToString(), DXErrorDescription);
     }
 
     /// <summary>
@@ -463,26 +444,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
         return;
       }
 
-      string errorString = GetDXErrorString(hr);
       string errorDescription = DsError.GetErrorText(hr);
-
-      // If a string is returned, build a COM error from it.
-      if (errorString != null)
+      if (description != null)
       {
-        errorString = string.Format("0x{0:x} ({1})", hr, errorString);
-        if (errorDescription != null)
-        {
-          errorString += " - " + errorDescription;
-        }
-        if (description != null)
-        {
-          errorString += ". " + description;
-        }
-        throw new TvException(errorString);
-      }
-      else if (description != null)
-      {
-        throw new TvException("0x{0:x} - {1}", hr, errorString);
+        throw new TvException("0x{0:x} - {1}", hr, errorDescription);
       }
       else
       {

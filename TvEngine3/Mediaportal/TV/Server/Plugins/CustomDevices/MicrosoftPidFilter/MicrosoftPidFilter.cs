@@ -190,7 +190,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftPidFilter
         int hr = _interface.UnmapPID(pidArray.Length, pidArray);
         if (hr != (int)HResult.Severity.Success)
         {
-          this.LogError("Microsoft PID filter: failed to unmap current PID(s), hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          this.LogError("Microsoft PID filter: failed to unmap current PID(s), hr = 0x{0:x}", hr);
           return false;
         }
         _pidsToRemove.Clear();
@@ -207,7 +207,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftPidFilter
         int hr = _interface.MapPID(pidArray.Length, pidArray, MediaSampleContent.ElementaryStream);
         if (hr != (int)HResult.Severity.Success)
         {
-          this.LogError("Microsoft PID filter: failed to map new PID(s), hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          this.LogError("Microsoft PID filter: failed to map new PID(s), hr = 0x{0:x}", hr);
           return false;
         }
         _pidsToAdd.Clear();

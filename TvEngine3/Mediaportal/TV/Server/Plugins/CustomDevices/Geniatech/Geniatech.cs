@@ -154,7 +154,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Geniatech
       int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.NbcParams, out support);
       if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Set))
       {
-        this.LogDebug("Geniatech: NBC parameter property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogDebug("Geniatech: NBC parameter property not supported, hr = 0x{0:x}", hr);
         return false;
       }
 
@@ -238,7 +238,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Geniatech
       );
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogError("Geniatech: failed to set pilot and roll-off, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("Geniatech: failed to set pilot and roll-off, hr = 0x{0:x}", hr);
       }
     }
 
@@ -267,7 +267,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Geniatech
       int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.LnbPower, out support);
       if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Set))
       {
-        this.LogDebug("Geniatech: LNB power property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogDebug("Geniatech: LNB power property not supported, hr = 0x{0:x}", hr);
         return false;
       }
 
@@ -289,7 +289,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Geniatech
         return true;
       }
 
-      this.LogError("Geniatech: failed to set power state, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Geniatech: failed to set power state, hr = 0x{0:x}", hr);
       return false;
     }
 

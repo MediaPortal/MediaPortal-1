@@ -82,7 +82,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBda
       int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Pilot, out support);
       if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Set))
       {
-        this.LogDebug("Hauppauge BDA: pilot property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogDebug("Hauppauge BDA: pilot property not supported, hr = 0x{0:x}", hr);
         return true;  // This is not an error.
       }
 
@@ -97,7 +97,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBda
         return true;
       }
 
-      this.LogError("Hauppauge BDA: failed to set pilot, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Hauppauge BDA: failed to set pilot, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -114,7 +114,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBda
       int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Pilot, out support);
       if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Set))
       {
-        this.LogDebug("Hauppauge BDA: roll-off property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogDebug("Hauppauge BDA: roll-off property not supported, hr = 0x{0:x}", hr);
         return true;  // This is not an error.
       }
 
@@ -129,7 +129,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBda
         return true;
       }
 
-      this.LogError("Hauppauge BDA: failed to set roll-off, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Hauppauge BDA: failed to set roll-off, hr = 0x{0:x}", hr);
       return false;
     }
 

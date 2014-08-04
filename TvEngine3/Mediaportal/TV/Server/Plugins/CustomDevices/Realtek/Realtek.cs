@@ -161,7 +161,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Realtek
           );
           if (hr != (int)HResult.Severity.Success || returnedByteCount != 4)
           {
-            this.LogError("Realtek: failed to read remote code, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+            this.LogError("Realtek: failed to read remote code, hr = 0x{0:x}, byte count = {1}", hr, returnedByteCount);
           }
           else
           {
@@ -219,7 +219,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Realtek
       int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.IrCode, out support);
       if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Get))
       {
-        this.LogDebug("Realtek: property set not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogDebug("Realtek: property set not supported, hr = 0x{0:x}", hr);
         return false;
       }
 
@@ -282,7 +282,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Realtek
         return true;
       }
 
-      this.LogError("Realtek: failed to disable PID filter, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Realtek: failed to disable PID filter, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -344,7 +344,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Realtek
         );
         if (hr != (int)HResult.Severity.Success)
         {
-          this.LogError("Realtek: failed to enable PID filter, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          this.LogError("Realtek: failed to enable PID filter, hr = 0x{0:x}", hr);
           return false;
         }
 
@@ -365,7 +365,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Realtek
         }
         if (hr != (int)HResult.Severity.Success)
         {
-          this.LogError("Realtek: failed to disable current PID(s), hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          this.LogError("Realtek: failed to disable current PID(s), hr = 0x{0:x}", hr);
           return false;
         }
         _pidFilterPids.ExceptWith(_pidFilterPidsToRemove);
@@ -385,7 +385,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Realtek
         }
         if (hr != (int)HResult.Severity.Success)
         {
-          this.LogError("Realtek: failed to enable new PID(s), hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          this.LogError("Realtek: failed to enable new PID(s), hr = 0x{0:x}", hr);
           return false;
         }
         _pidFilterPids.UnionWith(_pidFilterPidsToAdd);

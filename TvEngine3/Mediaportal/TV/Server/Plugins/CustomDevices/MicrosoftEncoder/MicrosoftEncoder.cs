@@ -205,7 +205,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftEncoder
       int hr = mainFilter.QueryFilterInfo(out filterInfo);
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogError("Microsoft encoder: failed to get filter info, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("Microsoft encoder: failed to get filter info, hr = 0x{0:x}", hr);
         return false;
       }
       IFilterGraph2 graph = filterInfo.pGraph as IFilterGraph2;
@@ -222,7 +222,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftEncoder
         hr = graph.EnumFilters(out enumFilters);
         if (hr != (int)HResult.Severity.Success)
         {
-          this.LogError("Microsoft encoder: failed to get graph filter enumerator, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          this.LogError("Microsoft encoder: failed to get graph filter enumerator, hr = 0x{0:x}", hr);
           return false;
         }
 
@@ -390,7 +390,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftEncoder
           }
           else
           {
-            this.LogError("Microsoft encoder: failed to get parameter range for interface {0}, hr = 0x{1:x} ({2})", i, hr, HResult.GetDXErrorString(hr));
+            this.LogError("Microsoft encoder: failed to get parameter range for interface {0}, hr = 0x{1:x}", i, hr);
           }
         }
       }
@@ -436,7 +436,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftEncoder
           }
           else
           {
-            this.LogError("Microsoft encoder: failed to get parameter values for interface {0}, hr = 0x{1:x} ({2})", i, hr, HResult.GetDXErrorString(hr));
+            this.LogError("Microsoft encoder: failed to get parameter values for interface {0}, hr = 0x{1:x}", i, hr);
           }
         }
       }
@@ -479,7 +479,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftEncoder
           }
           else
           {
-            this.LogError("Microsoft encoder: failed to get parameter default value for interface {0}, hr = 0x{1:x} ({2})", i, hr, HResult.GetDXErrorString(hr));
+            this.LogError("Microsoft encoder: failed to get parameter default value for interface {0}, hr = 0x{1:x}", i, hr);
           }
         }
       }
@@ -522,7 +522,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftEncoder
           }
           else
           {
-            this.LogError("Microsoft encoder: failed to get parameter value for interface {0}, hr = 0x{1:x} ({2})", i, hr, HResult.GetDXErrorString(hr));
+            this.LogError("Microsoft encoder: failed to get parameter value for interface {0}, hr = 0x{1:x}", i, hr);
           }
         }
       }
@@ -564,7 +564,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftEncoder
           }
           else
           {
-            this.LogError("Microsoft encoder: failed to set parameter value for interface {0}, hr = 0x{1:x} ({2})", i, hr, HResult.GetDXErrorString(hr));
+            this.LogError("Microsoft encoder: failed to set parameter value for interface {0}, hr = 0x{1:x}", i, hr);
           }
         }
       }

@@ -1010,7 +1010,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
           );
           if (hr != (int)HResult.Severity.Success || returnedByteCount != USB_IR_COMMAND_SIZE)
           {
-            this.LogError("Turbosight: failed to read remote code, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+            this.LogError("Turbosight: failed to read remote code, hr = 0x{0:x}, byte count = {1}", hr, returnedByteCount);
           }
           else
           {
@@ -1106,7 +1106,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
       Release.FilterInfo(ref tunerFilterInfo);
       if (hr != (int)HResult.Severity.Success || _tunerFilterName == null)
       {
-        this.LogError("Turbosight: failed to get the tuner filter name, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("Turbosight: failed to get the tuner filter name, hr = 0x{0:x}", hr);
         return false;
       }
       if (!_tunerFilterName.StartsWith("TBS") && !_tunerFilterName.StartsWith("QBOX"))
@@ -1264,7 +1264,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
       int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.NbcParams, out support);
       if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Set))
       {
-        this.LogDebug("Turbosight: NBC tuning parameter property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogDebug("Turbosight: NBC tuning parameter property not supported, hr = 0x{0:x}", hr);
         return;
       }
 
@@ -1281,7 +1281,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
       }
       else
       {
-        this.LogError("Turbosight: failed to set NBC tuning parameters, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("Turbosight: failed to set NBC tuning parameters, hr = 0x{0:x}", hr);
       }
     }
 
@@ -1342,7 +1342,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
         return true;
       }
 
-      this.LogError("Turbosight: failed to set power state, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Turbosight: failed to set power state, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -1762,7 +1762,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
         }
         else
         {
-          this.LogError("Turbosight: failed to send tone burst command, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          this.LogError("Turbosight: failed to send tone burst command, hr = 0x{0:x}", hr);
           success = false;
         }
       }
@@ -1787,7 +1787,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
       }
       else
       {
-        this.LogError("Turbosight: failed to set 22 kHz tone state, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("Turbosight: failed to set 22 kHz tone state, hr = 0x{0:x}", hr);
         success = false;
       }
 
@@ -1838,7 +1838,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
         return true;
       }
 
-      this.LogError("Turbosight: failed to send DiSEqC command, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Turbosight: failed to send DiSEqC command, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -1874,7 +1874,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
       );
       if (hr != (int)HResult.Severity.Success || returnedByteCount != TBS_ACCESS_PARAMS_SIZE)
       {
-        this.LogError("Turbosight: failed to read DiSEqC response, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+        this.LogError("Turbosight: failed to read DiSEqC response, hr = 0x{0:x}, byte count = {1}", hr, returnedByteCount);
         return false;
       }
 
@@ -1920,7 +1920,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
       if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Get))
       {
         // PCI and PCIe tuners based on Conexant or NXP chipsets won't support this property set.
-        this.LogDebug("Turbosight: property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogDebug("Turbosight: property not supported, hr = 0x{0:x}", hr);
         return false;
       }
 

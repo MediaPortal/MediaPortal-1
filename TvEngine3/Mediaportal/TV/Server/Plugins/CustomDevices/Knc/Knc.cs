@@ -849,7 +849,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
       int hr = tunerFilter.QueryFilterInfo(out tunerInfo);
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogError("KNC: failed to get the tuner filter name, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("KNC: failed to get the tuner filter name, hr = 0x{0:x}", hr);
         return false;
       }
       foreach (string validTunerName in VALID_TUNER_NAMES)
@@ -891,7 +891,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
           Release.ComObject("KNC tuner filter output pin", ref tunerOutputPin);
           if (hr != (int)HResult.Severity.Success || captureInputPin == null)
           {
-            this.LogError("KNC: failed to get the capture filter input pin, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+            this.LogError("KNC: failed to get the capture filter input pin, hr = 0x{0:x}", hr);
             break;
           }
 
@@ -900,7 +900,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
           Release.ComObject("KNC capture filter input pin", ref captureInputPin);
           if (hr != (int)HResult.Severity.Success || captureInfo.filter == null)
           {
-            this.LogError("KNC: failed to get the capture filter, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+            this.LogError("KNC: failed to get the capture filter, hr = 0x{0:x}", hr);
           }
           else
           {

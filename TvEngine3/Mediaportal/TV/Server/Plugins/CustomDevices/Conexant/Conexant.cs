@@ -182,7 +182,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Conexant
       int hr = _propertySet.QuerySupported(_propertySetGuid, (int)BdaExtensionProperty.DiseqcMessage, out support);
       if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Set))
       {
-        this.LogDebug("Conexant: property set not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogDebug("Conexant: property set not supported, hr = 0x{0:x}", hr);
         return false;
       }
 
@@ -253,7 +253,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Conexant
         return true;
       }
 
-      this.LogError("Conexant: failed to set tone state, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Conexant: failed to set tone state, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -318,7 +318,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Conexant
         return true;
       }
 
-      this.LogError("Conexant: failed to send DiSEqC command, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Conexant: failed to send DiSEqC command, hr = 0x{0:x}", hr);
       return false;
     }
 

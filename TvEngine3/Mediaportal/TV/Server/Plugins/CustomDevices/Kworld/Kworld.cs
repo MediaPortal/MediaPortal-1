@@ -313,7 +313,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Kworld
       int hr = Ioctl(BdaExtensionProperty.RegisterAccess, KsPropertyFlag.Set, (int)RegisterAccessOperation.SetAddress, REGISTER_ADDRESS_MO_GP0_IO, 0, out data);
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogError("KWorld: failed to set register address to read current config, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("KWorld: failed to set register address to read current config, hr = 0x{0:x}", hr);
         return false;
       }
 
@@ -321,13 +321,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Kworld
       hr = Ioctl(BdaExtensionProperty.RegisterAccess, KsPropertyFlag.Set, (int)RegisterAccessOperation.Read, 0, 0, out data);
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogError("KWorld: failed to set-read current config to register, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("KWorld: failed to set-read current config to register, hr = 0x{0:x}", hr);
         return false;
       }
       hr = Ioctl(BdaExtensionProperty.RegisterAccess, KsPropertyFlag.Get, (int)RegisterAccessOperation.Read, 0, 0, out data);
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogError("KWorld: failed to get-read current config from register, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("KWorld: failed to get-read current config from register, hr = 0x{0:x}", hr);
         return false;
       }
 
@@ -347,7 +347,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Kworld
       hr = Ioctl(BdaExtensionProperty.RegisterAccess, KsPropertyFlag.Set, (int)RegisterAccessOperation.Write, REGISTER_ADDRESS_MO_GP0_IO, value, out data);
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogError("KWorld: failed to write new config to register, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("KWorld: failed to write new config to register, hr = 0x{0:x}", hr);
         return false;
       }
 
@@ -355,13 +355,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Kworld
       hr = Ioctl(BdaExtensionProperty.I2cAccess, KsPropertyFlag.Set, (int)I2cAccessOperation.InitHwMode, 0, COMMAND_I2C_RESET, out data);
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogError("KWorld: failed to reset I2C after config update, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("KWorld: failed to reset I2C after config update, hr = 0x{0:x}", hr);
         return false;
       }
       hr = Ioctl(BdaExtensionProperty.I2cAccess, KsPropertyFlag.Set, (int)I2cAccessOperation.IsInitOkay, 0, COMMAND_I2C_RESET, out data);
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogError("KWorld: failed to reinitialise hardware after config update and I2C reset, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("KWorld: failed to reinitialise hardware after config update and I2C reset, hr = 0x{0:x}", hr);
         return false;
       }
 

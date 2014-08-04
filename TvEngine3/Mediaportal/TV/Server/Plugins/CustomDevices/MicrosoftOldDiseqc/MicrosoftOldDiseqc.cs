@@ -117,7 +117,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftOldDiseqc
       int hr = topology.GetNodeTypes(out nodeTypeCount, 32, nodeTypes);
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogError("Microsoft old DiSEqC: failed to get topology node types, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("Microsoft old DiSEqC: failed to get topology node types, hr = 0x{0:x}", hr);
         return false;
       }
 
@@ -222,7 +222,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftOldDiseqc
       int hr = _deviceControl.StartChanges();
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogError("Microsoft old DiSEqC: failed to start device control changes, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("Microsoft old DiSEqC: failed to start device control changes, hr = 0x{0:x}", hr);
         success = false;
       }
       if (success)
@@ -237,7 +237,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftOldDiseqc
         hr = _interface.put_Range(portNumber);
         if (hr != (int)HResult.Severity.Success)
         {
-          this.LogError("Microsoft old DiSEqC: failed to put range, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          this.LogError("Microsoft old DiSEqC: failed to put range, hr = 0x{0:x}", hr);
           success = false;
         }
       }
@@ -248,7 +248,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftOldDiseqc
         hr = _deviceControl.CheckChanges();
         if (hr != (int)HResult.Severity.Success)
         {
-          this.LogError("Microsoft old DiSEqC: failed to check device control changes, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          this.LogError("Microsoft old DiSEqC: failed to check device control changes, hr = 0x{0:x}", hr);
           success = false;
         }
       }
@@ -257,7 +257,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftOldDiseqc
         hr = _deviceControl.CommitChanges();
         if (hr != (int)HResult.Severity.Success)
         {
-          this.LogError("Microsoft old DiSEqC: failed to commit device control changes, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          this.LogError("Microsoft old DiSEqC: failed to commit device control changes, hr = 0x{0:x}", hr);
           success = false;
         }
       }

@@ -348,7 +348,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TurbosightRemote
             );
             if (hr != (int)HResult.Severity.Success || returnedByteCount != IR_DATA_SIZE)
             {
-              this.LogError("Turbosight remote: failed to read Conexant remote code, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+              this.LogError("Turbosight remote: failed to read Conexant remote code, hr = 0x{0:x}, byte count = {1}", hr, returnedByteCount);
             }
             else
             {
@@ -417,7 +417,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TurbosightRemote
             hr = propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Command, out support);
             if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Set))
             {
-              this.LogDebug("Turbosight remote:     property set not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+              this.LogDebug("Turbosight remote:     property set not supported, hr = 0x{0:x}", hr);
               continue;
             }
 
@@ -667,7 +667,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TurbosightRemote
           hr = r.PropertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Command, _commandBuffer, 1, _commandBuffer, 1);
           if (hr != (int)HResult.Severity.Success)
           {
-            this.LogWarn("Turbosight remote: failed to start Conexant receiver {0} {1} {2}, hr = 0x{3:x} ({4})", i, r.Name, r.DevicePath, hr, HResult.GetDXErrorString(hr));
+            this.LogWarn("Turbosight remote: failed to start Conexant receiver {0} {1} {2}, hr = 0x{3:x}", i, r.Name, r.DevicePath, hr);
           }
           i++;
         }
@@ -695,7 +695,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TurbosightRemote
           hr = receiver.Initialise(r.Control, TbsNxpRcProtocol.Nec32, this, r.Context);
           if (hr != (int)HResult.Severity.Success)
           {
-            this.LogWarn("Turbosight remote: failed to start NXP receiver {0} {1} {2}, hr = 0x{3:x} ({4})", i, r.Name, r.DevicePath, hr, HResult.GetDXErrorString(hr));
+            this.LogWarn("Turbosight remote: failed to start NXP receiver {0} {1} {2}, hr = 0x{3:x}", i, r.Name, r.DevicePath, hr);
           }
           else
           {
@@ -732,7 +732,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TurbosightRemote
             hr = r.PropertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Command, _commandBuffer, 1, _commandBuffer, 1);
             if (hr != (int)HResult.Severity.Success)
             {
-              this.LogWarn("Turbosight remote: failed to stop Conexant receiver {0} {1} {2}, hr = 0x{3:x} ({4})", i, r.Name, r.DevicePath, hr, HResult.GetDXErrorString(hr));
+              this.LogWarn("Turbosight remote: failed to stop Conexant receiver {0} {1} {2}, hr = 0x{3:x}", i, r.Name, r.DevicePath, hr);
             }
             i++;
           }

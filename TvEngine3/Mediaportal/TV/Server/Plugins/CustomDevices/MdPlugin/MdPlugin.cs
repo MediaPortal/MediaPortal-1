@@ -878,7 +878,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
       Release.FilterInfo(ref tunerFilterInfo);
       if (hr != (int)HResult.Severity.Success || _configurationFolderPrefix == null)
       {
-        this.LogError("MD plugin: failed to get the tuner filter name, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("MD plugin: failed to get the tuner filter name, hr = 0x{0:x}", hr);
         return false;
       }
 
@@ -1056,7 +1056,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
       int hr = _graph.AddFilter(_infTee, "MD Plugin Infinite Tee");
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogError("MD plugin: failed to add the infinite tee to the graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("MD plugin: failed to add the infinite tee to the graph, hr = 0x{0:x}", hr);
         return false;
       }
       IPin outputPin = DsFindPin.ByDirection(lastFilter, PinDirection.Output, 0);
@@ -1066,7 +1066,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
       Release.ComObject("MD plugin infinite tee input pin", ref inputPin);
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogError("MD plugin: failed to connect the infinite tee into the graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("MD plugin: failed to connect the infinite tee into the graph, hr = 0x{0:x}", hr);
         return false;
       }
       lastFilter = _infTee;
@@ -1083,7 +1083,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
         hr = _graph.AddFilter(slot.Filter, "MDAPI Filter " + i);
         if (hr != (int)HResult.Severity.Success)
         {
-          this.LogError("MD plugin: failed to add MD plugin filter {0} to the graph, hr = 0x{1:x} ({2})", i + 1, hr, HResult.GetDXErrorString(hr));
+          this.LogError("MD plugin: failed to add MD plugin filter {0} to the graph, hr = 0x{1:x}", i + 1, hr);
           return false;
         }
 
@@ -1095,7 +1095,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
         Release.ComObject("MD plugin MDAPI filter input pin", ref inputPin);
         if (hr != (int)HResult.Severity.Success)
         {
-          this.LogError("MD plugin: failed to connect MD plugin filter {0} into the graph, hr = 0x{1:x} ({2})", i + 1, hr, HResult.GetDXErrorString(hr));
+          this.LogError("MD plugin: failed to connect MD plugin filter {0} into the graph, hr = 0x{1:x}", i + 1, hr);
           return false;
         }
         lastFilter = slot.Filter;

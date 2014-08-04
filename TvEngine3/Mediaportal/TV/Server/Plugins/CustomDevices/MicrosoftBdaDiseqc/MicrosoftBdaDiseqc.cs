@@ -147,7 +147,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBdaDiseqc
       int hr = _propertySet.QuerySupported(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.LnbSource, out support);
       if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Set))
       {
-        this.LogDebug("Microsoft BDA DiSEqC: property set not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogDebug("Microsoft BDA DiSEqC: property set not supported, hr = 0x{0:x}", hr);
         Release.ComObject("Microsoft BDA DiSEqC property set", ref _propertySet);
         pin = null;
         return false;
@@ -292,7 +292,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBdaDiseqc
       int hr = _deviceControl.StartChanges();
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogError("Microsoft BDA DiSEqC: failed to start device control changes, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("Microsoft BDA DiSEqC: failed to start device control changes, hr = 0x{0:x}", hr);
         success = false;
       }
 
@@ -303,7 +303,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBdaDiseqc
         hr = _propertySet.Set(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.Enable, _instanceBuffer, INSTANCE_SIZE, _paramBuffer, sizeof(int));
         if (hr != (int)HResult.Severity.Success)
         {
-          this.LogError("Microsoft BDA DiSEqC: failed to enable DiSEqC commands, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          this.LogError("Microsoft BDA DiSEqC: failed to enable DiSEqC commands, hr = 0x{0:x}", hr);
           success = false;
         }
       }
@@ -316,7 +316,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBdaDiseqc
         hr = _propertySet.Set(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.Repeats, _instanceBuffer, INSTANCE_SIZE, _paramBuffer, sizeof(int));
         if (hr != (int)HResult.Severity.Success)
         {
-          this.LogError("Microsoft BDA DiSEqC: failed to disable DiSEqC command repeats, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          this.LogError("Microsoft BDA DiSEqC: failed to disable DiSEqC command repeats, hr = 0x{0:x}", hr);
           success = false;
         }
       }
@@ -329,7 +329,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBdaDiseqc
         hr = _propertySet.Set(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.UseToneBurst, _instanceBuffer, INSTANCE_SIZE, _paramBuffer, sizeof(int));
         if (hr != (int)HResult.Severity.Success)
         {
-          this.LogError("Microsoft BDA DiSEqC: failed to disable tone burst commands, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          this.LogError("Microsoft BDA DiSEqC: failed to disable tone burst commands, hr = 0x{0:x}", hr);
           success = false;
         }
       }
@@ -343,7 +343,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBdaDiseqc
           hr = _propertySet.Set(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.LnbSource, _instanceBuffer, INSTANCE_SIZE, _paramBuffer, sizeof(int));
           if (hr != (int)HResult.Severity.Success)
           {
-            this.LogError("Microsoft BDA DiSEqC: failed to set LNB source, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+            this.LogError("Microsoft BDA DiSEqC: failed to set LNB source, hr = 0x{0:x}", hr);
             success = false;
           }
         }
@@ -359,7 +359,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBdaDiseqc
           hr = _propertySet.Set(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.Send, _instanceBuffer, INSTANCE_SIZE, _paramBuffer, BDA_DISEQC_MESSAGE_SIZE);
           if (hr != (int)HResult.Severity.Success)
           {
-            this.LogError("Microsoft BDA DiSEqC: failed to send DiSEqC command, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+            this.LogError("Microsoft BDA DiSEqC: failed to send DiSEqC command, hr = 0x{0:x}", hr);
             success = false;
           }
         }
@@ -371,7 +371,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBdaDiseqc
         hr = _deviceControl.CheckChanges();
         if (hr != (int)HResult.Severity.Success)
         {
-          this.LogError("Microsoft BDA DiSEqC: failed to check device control changes, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          this.LogError("Microsoft BDA DiSEqC: failed to check device control changes, hr = 0x{0:x}", hr);
           success = false;
         }
       }
@@ -380,7 +380,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBdaDiseqc
         hr = _deviceControl.CommitChanges();
         if (hr != (int)HResult.Severity.Success)
         {
-          this.LogError("Microsoft BDA DiSEqC: failed to commit device control changes, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          this.LogError("Microsoft BDA DiSEqC: failed to commit device control changes, hr = 0x{0:x}", hr);
           success = false;
         }
       }
@@ -427,7 +427,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBdaDiseqc
         return true;
       }
 
-      this.LogError("Microsoft BDA DiSEqC: failed to read DiSEqC response, response length = {0}, hr = 0x{1:x} ({2})", returnedByteCount, hr, HResult.GetDXErrorString(hr));
+      this.LogError("Microsoft BDA DiSEqC: failed to read DiSEqC response, response length = {0}, hr = 0x{1:x}", returnedByteCount, hr);
       return false;
     }
 

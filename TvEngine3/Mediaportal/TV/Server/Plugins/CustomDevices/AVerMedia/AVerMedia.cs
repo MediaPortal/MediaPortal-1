@@ -576,7 +576,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
         return true;
       }
 
-      this.LogError("AVerMedia: failed to open conditional access interface, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("AVerMedia: failed to open conditional access interface, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -746,7 +746,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
         this.LogDebug("AVerMedia: result = success");
         return true;
       }
-      this.LogError("AVerMedia: failed to send conditional access command, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("AVerMedia: failed to send conditional access command, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -792,7 +792,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
         return true;
       }
 
-      this.LogError("AVerMedia: failed to enter menu, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("AVerMedia: failed to enter menu, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -822,7 +822,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
         return true;
       }
 
-      this.LogError("AVerMedia: failed to close menu, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("AVerMedia: failed to close menu, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -853,7 +853,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
         return true;
       }
 
-      this.LogError("AVerMedia: failed to select menu entry, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("AVerMedia: failed to select menu entry, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -899,7 +899,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
         return true;
       }
 
-      this.LogError("AVerMedia: failed to answer enquiry, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("AVerMedia: failed to answer enquiry, hr = 0x{0:x}", hr);
       return false;
     }
 

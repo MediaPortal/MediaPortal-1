@@ -195,7 +195,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AutumnWave
       int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Mode, out support);
       if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Set))
       {
-        this.LogDebug("AutumnWave: property set not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogDebug("AutumnWave: property set not supported, hr = 0x{0:x}", hr);
         return false;
       }
 
@@ -210,7 +210,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AutumnWave
       }
       else
       {
-        this.LogWarn("AutumnWave: failed to read tuner ID, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+        this.LogWarn("AutumnWave: failed to read tuner ID, hr = 0x{0:x}, byte count = {1}", hr, returnedByteCount);
       }
       return true;
     }
@@ -273,7 +273,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AutumnWave
       int hr = tuner.put_Mode(AMTunerModeType.DTV);
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogError("AutumnWave: failed to set tuner mode, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("AutumnWave: failed to set tuner mode, hr = 0x{0:x}", hr);
         return false;
       }
 
@@ -284,7 +284,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AutumnWave
         hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.SsInversion, _buffer, BUFFER_SIZE, _buffer, BUFFER_SIZE);
         if (hr != (int)HResult.Severity.Success)
         {
-          this.LogError("AutumnWave: failed to set inversion mode, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          this.LogError("AutumnWave: failed to set inversion mode, hr = 0x{0:x}", hr);
           return false;
         }
       }
@@ -293,7 +293,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AutumnWave
       hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Mode, _buffer, BUFFER_SIZE, _buffer, BUFFER_SIZE);
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogError("AutumnWave: failed to set modulation, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("AutumnWave: failed to set modulation, hr = 0x{0:x}", hr);
         return false;
       }
 
@@ -301,7 +301,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AutumnWave
       hr = tuner.AutoTune(atscChannel.PhysicalChannel, out foundSignal);
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogError("AutumnWave: failed to set physical channel, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("AutumnWave: failed to set physical channel, hr = 0x{0:x}", hr);
         return false;
       }
 
@@ -312,7 +312,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AutumnWave
         hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.SsInversion, _buffer, BUFFER_SIZE, _buffer, BUFFER_SIZE);
         if (hr != (int)HResult.Severity.Success)
         {
-          this.LogError("AutumnWave: failed to set inversion mode, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          this.LogError("AutumnWave: failed to set inversion mode, hr = 0x{0:x}", hr);
           return false;
         }
 
@@ -320,7 +320,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AutumnWave
         hr = tuner.SignalPresent(out strength);
         if (hr != (int)HResult.Severity.Success)
         {
-          this.LogError("AutumnWave: failed to check signal status, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          this.LogError("AutumnWave: failed to check signal status, hr = 0x{0:x}", hr);
           return false;
         }
         foundSignal = (int)strength;

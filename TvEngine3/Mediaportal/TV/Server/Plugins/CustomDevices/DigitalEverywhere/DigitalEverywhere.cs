@@ -686,7 +686,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
         return true;
       }
 
-      this.LogError("Digital Everywhere: failed to send to CAM, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Digital Everywhere: failed to send to CAM, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -710,7 +710,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
       );
       if (hr != (int)HResult.Severity.Success || returnedByteCount != DRIVER_VERSION_INFO_SIZE)
       {
-        this.LogWarn("Digital Everywhere: failed to read driver version, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+        this.LogWarn("Digital Everywhere: failed to read driver version, hr = 0x{0:x}, byte count = {1}", hr, returnedByteCount);
         return;
       }
 
@@ -736,7 +736,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
       );
       if (hr != (int)HResult.Severity.Success || returnedByteCount != FIRMWARE_VERSION_INFO_SIZE)
       {
-        this.LogWarn("Digital Everywhere: failed to read firmware version, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+        this.LogWarn("Digital Everywhere: failed to read firmware version, hr = 0x{0:x}, byte count = {1}", hr, returnedByteCount);
         return;
       }
 
@@ -765,7 +765,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
       );
       if (hr != (int)HResult.Severity.Success || returnedByteCount != TEMPERATURE_INFO_SIZE)
       {
-        this.LogWarn("Digital Everywhere: failed to read temperature, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+        this.LogWarn("Digital Everywhere: failed to read temperature, hr = 0x{0:x}, byte count = {1}", hr, returnedByteCount);
         return;
       }
 
@@ -795,7 +795,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
       );
       if (hr != (int)HResult.Severity.Success || returnedByteCount != FRONT_END_STATUS_INFO_SIZE)
       {
-        this.LogWarn("Digital Everywhere: failed to read front end status information, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+        this.LogWarn("Digital Everywhere: failed to read front end status information, hr = 0x{0:x}, byte count = {1}", hr, returnedByteCount);
         return;
       }
 
@@ -831,7 +831,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
         );
         if (hr != (int)HResult.Severity.Success)
         {
-          this.LogWarn("Digital Everywhere: failed to request application information, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          this.LogWarn("Digital Everywhere: failed to request application information, hr = 0x{0:x}", hr);
           return;
         }
 
@@ -848,7 +848,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
         );
         if (hr != (int)HResult.Severity.Success || returnedByteCount != CA_DATA_SIZE)
         {
-          this.LogWarn("Digital Everywhere: failed to read application information, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+          this.LogWarn("Digital Everywhere: failed to read application information, hr = 0x{0:x}, byte count = {1}", hr, returnedByteCount);
           return;
         }
 
@@ -944,7 +944,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
           int hr = GetCiStatus(out ciState);
           if (hr != (int)HResult.Severity.Success)
           {
-            this.LogError("Digital Everywhere: failed to get CI status, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+            this.LogError("Digital Everywhere: failed to get CI status, hr = 0x{0:x}", hr);
             continue;
           }
 
@@ -1001,7 +1001,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
               );
               if (hr != (int)HResult.Severity.Success)
               {
-                this.LogError("Digital Everywhere: MMI request failed, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+                this.LogError("Digital Everywhere: MMI request failed, hr = 0x{0:x}", hr);
                 continue;
               }
 
@@ -1018,7 +1018,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
               );
               if (hr != (int)HResult.Severity.Success || returnedByteCount != CA_DATA_SIZE)
               {
-                this.LogError("Digital Everywhere: failed to retrieve MMI data, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+                this.LogError("Digital Everywhere: failed to retrieve MMI data, hr = 0x{0:x}, byte count = {1}", hr, returnedByteCount);
                 continue;
               }
 
@@ -1128,7 +1128,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
           );
           if (hr != (int)HResult.Severity.Success || returnedByteCount != REMOTE_CONTROL_DATA_SIZE)
           {
-            this.LogError("Digital Everywhere: failed to read remote control register, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+            this.LogError("Digital Everywhere: failed to read remote control register, hr = 0x{0:x}, byte count = {1}", hr, returnedByteCount);
           }
           else
           {
@@ -1198,7 +1198,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
       );
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogDebug("Digital Everywhere: property set not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogDebug("Digital Everywhere: property set not supported, hr = 0x{0:x}", hr);
         return false;
       }
 
@@ -1332,7 +1332,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
       int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.LnbPower, out support);
       if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Set))
       {
-        this.LogDebug("Digital Everywhere: property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogDebug("Digital Everywhere: property not supported, hr = 0x{0:x}", hr);
         return false;
       }
 
@@ -1354,7 +1354,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
         return true;
       }
 
-      this.LogError("Digital Everywhere: failed to set power state, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Digital Everywhere: failed to set power state, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -1528,7 +1528,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
         return true;
       }
 
-      this.LogError("Digital Everywhere: failed to diable PID filter, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Digital Everywhere: failed to diable PID filter, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -1580,7 +1580,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
         return true;
       }
 
-      this.LogError("Digital Everywhere: failed to apply PID filter, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Digital Everywhere: failed to apply PID filter, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -1686,7 +1686,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
         );
         if (hr != (int)HResult.Severity.Success)
         {
-          this.LogError("Digital Everywhere: failed to apply LNB settings, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          this.LogError("Digital Everywhere: failed to apply LNB settings, hr = 0x{0:x}", hr);
         }
 
         DvbsMultiplexParams tuneRequest = new DvbsMultiplexParams();
@@ -1780,7 +1780,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
         return true;
       }
 
-      this.LogError("Digital Everywhere: failed to tune, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Digital Everywhere: failed to tune, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -1883,7 +1883,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
       }
       else
       {
-        this.LogError("Digital Everywhere: failed to reset conditional access interface, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("Digital Everywhere: failed to reset conditional access interface, hr = 0x{0:x}", hr);
         success = false;
       }
       return success && OpenConditionalAccessInterface();
@@ -1968,7 +1968,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
 
       // Failure indicates a Firewire communication problem.
       // Success does *not* indicate that the service will be descrambled.
-      this.LogError("Digital Everywhere: failed to send conditional access command, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Digital Everywhere: failed to send conditional access command, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -2108,7 +2108,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
         return true;
       }
 
-      this.LogError("Digital Everywhere: failed to set tone state, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Digital Everywhere: failed to set tone state, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -2160,7 +2160,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
         return true;
       }
 
-      this.LogError("Digital Everywhere: failed to send DiSEqC command, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Digital Everywhere: failed to send DiSEqC command, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -2204,7 +2204,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
       int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.RemoteControlRegister, out support);
       if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Get))
       {
-        this.LogDebug("Digital Everywhere: property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogDebug("Digital Everywhere: property not supported, hr = 0x{0:x}", hr);
         return false;
       }
 
@@ -2233,7 +2233,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
           int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.RemoteControlCancel, IntPtr.Zero, 0, IntPtr.Zero, 0);
           if (hr != (int)HResult.Severity.Success)
           {
-            this.LogWarn("Digital Everywhere: failed to cancel remote control, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+            this.LogWarn("Digital Everywhere: failed to cancel remote control, hr = 0x{0:x}", hr);
           }
         }
         else

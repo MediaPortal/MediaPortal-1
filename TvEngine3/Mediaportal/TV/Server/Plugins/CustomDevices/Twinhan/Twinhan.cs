@@ -737,7 +737,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       int hr = GetIoctl(TwinhanIoControlCode.GetDeviceInfo, _generalBuffer, DEVICE_INFO_SIZE, out returnedByteCount);
       if (hr != (int)HResult.Severity.Success || returnedByteCount != DEVICE_INFO_SIZE)
       {
-        this.LogWarn("Twinhan: failed to read device information, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+        this.LogWarn("Twinhan: failed to read device information, hr = 0x{0:x}, byte count = {1}", hr, returnedByteCount);
         return;
       }
 
@@ -781,7 +781,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       int hr = GetIoctl(TwinhanIoControlCode.GetPidFilterInfo, _generalBuffer, PID_FILTER_PARAMS_SIZE, out returnedByteCount);
       if (hr != (int)HResult.Severity.Success || returnedByteCount != PID_FILTER_PARAMS_SIZE)
       {
-        this.LogWarn("Twinhan: failed to read PID filter information, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+        this.LogWarn("Twinhan: failed to read PID filter information, hr = 0x{0:x}, byte count = {1}", hr, returnedByteCount);
         return;
       }
 
@@ -807,7 +807,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       int hr = GetIoctl(TwinhanIoControlCode.GetDriverInfo, _generalBuffer, DRIVER_INFO_SIZE, out returnedByteCount);
       if (hr != (int)HResult.Severity.Success || returnedByteCount != DRIVER_INFO_SIZE)
       {
-        this.LogWarn("Twinhan: failed to read driver information, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+        this.LogWarn("Twinhan: failed to read driver information, hr = 0x{0:x}, byte count = {1}", hr, returnedByteCount);
         return;
       }
 
@@ -859,7 +859,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       else
       {
         // The Mantis driver doesn't seem to support get, but it supports set - strange!
-        this.LogWarn("Twinhan: failed to read registry parameters, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+        this.LogWarn("Twinhan: failed to read registry parameters, hr = 0x{0:x}, byte count = {1}", hr, returnedByteCount);
       }
 
       if (registryParams.EnableOffFrequencyScan || !registryParams.EnableRelockMonitor || registryParams.AtscFrequencyShift != 1750)
@@ -878,7 +878,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
         hr = SetIoctl(TwinhanIoControlCode.SetRegistryParams, _generalBuffer, REGISTRY_PARAMS_SIZE);
         if (hr != (int)HResult.Severity.Success)
         {
-          this.LogWarn("Twinhan: failed to update registry parameters, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          this.LogWarn("Twinhan: failed to update registry parameters, hr = 0x{0:x}", hr);
           return;
         }
 
@@ -972,7 +972,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
           int hr = GetCiStatus(out ciState, out mmiState);
           if (hr != (int)HResult.Severity.Success)
           {
-            this.LogError("Twinhan: failed to get CI status, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+            this.LogError("Twinhan: failed to get CI status, hr = 0x{0:x}", hr);
             continue;
           }
 
@@ -1150,7 +1150,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
         return true;
       }
 
-      this.LogError("Twinhan: failed to send MMI message, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Twinhan: failed to send MMI message, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -1181,7 +1181,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
         }
       }
 
-      this.LogError("Twinhan: failed to read MMI response, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Twinhan: failed to read MMI response, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -1263,7 +1263,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
           hr = GetIoctl(TwinhanIoControlCode.GetRemoteControlValue, _remoteControlBuffer, 1, out returnedByteCount);
           if (hr != (int)HResult.Severity.Success)
           {
-            this.LogDebug("Twinhan: failed to read remote code, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+            this.LogDebug("Twinhan: failed to read remote code, hr = 0x{0:x}", hr);
           }
           else
           {
@@ -1406,7 +1406,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       int hr = SetIoctl(TwinhanIoControlCode.CheckInterface, IntPtr.Zero, 0);
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogDebug("Twinhan: property set not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogDebug("Twinhan: property set not supported, hr = 0x{0:x}", hr);
         return false;
       }
 
@@ -1417,7 +1417,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
 
       if (hr != (int)HResult.Severity.Success || _tunerFilterName == null)
       {
-        this.LogError("Twinhan: failed to get the tuner filter name, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("Twinhan: failed to get the tuner filter name, hr = 0x{0:x}", hr);
         _tunerFilterName = string.Empty;
       }
       // Elgato EyeTV tuners expose the Twinhan property set but don't seem to
@@ -1603,7 +1603,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
         return true;
       }
 
-      this.LogError("Twinhan: failed to set power state, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Twinhan: failed to set power state, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -1709,7 +1709,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
         return true;
       }
 
-      this.LogError("Twinhan: failed to tune, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Twinhan: failed to tune, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -1758,7 +1758,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
         return true;
       }
 
-      this.LogError("Twinhan: failed to disable PID filter, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Twinhan: failed to disable PID filter, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -1823,7 +1823,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
         return true;
       }
 
-      this.LogError("Twinhan: failed to apply PID filter, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Twinhan: failed to apply PID filter, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -1877,7 +1877,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       int hr = GetCiStatus(out ciState, out mmiState);
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogError("Twinhan: failed to get CI status, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("Twinhan: failed to get CI status, hr = 0x{0:x}", hr);
       }
       else
       {
@@ -1953,7 +1953,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       int hr = SetIoctl(TwinhanIoControlCode.ResetDevice, IntPtr.Zero, 0);
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogError("Twinhan: failed to reset device, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("Twinhan: failed to reset device, hr = 0x{0:x}", hr);
         resetTuner = true;
         return true;
       }
@@ -2028,7 +2028,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
           return true;
         }
 
-        this.LogError("Twinhan: failed to send PMT to CAM, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("Twinhan: failed to send PMT to CAM, hr = 0x{0:x}", hr);
         return false;
       }
       finally
@@ -2087,7 +2087,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
         hr = GetIoctl(TwinhanIoControlCode.CiGetApplicationInfo, _mmiBuffer, APPLICATION_INFO_SIZE, out returnedByteCount);
         if (hr != (int)HResult.Severity.Success || returnedByteCount != APPLICATION_INFO_SIZE)
         {
-          this.LogError("Twinhan: failed to read application information, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+          this.LogError("Twinhan: failed to read application information, hr = 0x{0:x}, byte count = {1}", hr, returnedByteCount);
           return false;
         }
 
@@ -2105,7 +2105,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
         return true;
       }
 
-      this.LogError("Twinhan: failed to enter menu, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Twinhan: failed to enter menu, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -2140,7 +2140,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
         return true;
       }
 
-      this.LogError("Twinhan: failed to close menu, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Twinhan: failed to close menu, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -2243,7 +2243,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
         return true;
       }
 
-      this.LogError("Twinhan: failed to set tone state, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Twinhan: failed to set tone state, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -2313,7 +2313,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
         return true;
       }
 
-      this.LogWarn("Twinhan: failed to send DiSEqC command, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogWarn("Twinhan: failed to send DiSEqC command, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -2352,7 +2352,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
         return true;
       }
 
-      this.LogError("Twinhan: failed to read DiSEqC response, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+      this.LogError("Twinhan: failed to read DiSEqC response, hr = 0x{0:x}, byte count = {1}", hr, returnedByteCount);
       return false;
     }
 
@@ -2384,7 +2384,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       int hr = SetIoctl(TwinhanIoControlCode.StartRemoteControl, IntPtr.Zero, 0);
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogError("Twinhan: failed to start remote control, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("Twinhan: failed to start remote control, hr = 0x{0:x}", hr);
         return false;
       }
       _remoteControlBuffer = Marshal.AllocCoTaskMem(1);
@@ -2409,7 +2409,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
         int hr = SetIoctl(TwinhanIoControlCode.StopRemoteControl, IntPtr.Zero, 0);
         if (hr != (int)HResult.Severity.Success)
         {
-          this.LogWarn("Twinhan: failed to stop remote control, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          this.LogWarn("Twinhan: failed to stop remote control, hr = 0x{0:x}", hr);
         }
       }
 

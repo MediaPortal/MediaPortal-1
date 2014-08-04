@@ -278,7 +278,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
       }
       else
       {
-        this.LogWarn("NetUP: failed to read application information, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+        this.LogWarn("NetUP: failed to read application information, hr = 0x{0:x}, byte count = {1}", hr, returnedByteCount);
       }
 
       return hr;
@@ -318,7 +318,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
       }
       else
       {
-        this.LogWarn("NetUP: failed to read conditional access information, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+        this.LogWarn("NetUP: failed to read conditional access information, hr = 0x{0:x}, byte count = {1}", hr, returnedByteCount);
       }
 
       return hr;
@@ -523,7 +523,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
           int hr = GetCiStatus(out ciState);
           if (hr != (int)HResult.Severity.Success)
           {
-            this.LogError("NetUP: failed to get CI status, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+            this.LogError("NetUP: failed to get CI status, hr = 0x{0:x}", hr);
             continue;
           }
 
@@ -579,7 +579,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
         int hr = GetIoctl(NetUpIoControl.MmiGetMenu, _mmiBuffer, _mmiMenuSize, out returnedByteCount);
         if (hr != (int)HResult.Severity.Success || returnedByteCount != _mmiMenuSize)
         {
-          this.LogError("NetUP: failed to get menu detail, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+          this.LogError("NetUP: failed to get menu detail, hr = 0x{0:x}, byte count = {1}", hr, returnedByteCount);
           return hr;
         }
         mmi = (MmiMenu)Marshal.PtrToStructure(_mmiBuffer, typeof(MmiMenu));
@@ -639,7 +639,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
         int hr = GetIoctl(NetUpIoControl.MmiGetEnquiry, _mmiBuffer, MMI_ENQUIRY_SIZE, out returnedByteCount);
         if (hr != (int)HResult.Severity.Success || returnedByteCount != MMI_ENQUIRY_SIZE)
         {
-          this.LogError("NetUP: failed to get enquiry detail, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+          this.LogError("NetUP: failed to get enquiry detail, hr = 0x{0:x}, byte count = {1}", hr, returnedByteCount);
           return hr;
         }
 
@@ -746,7 +746,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
         hr = tunerFilter.QueryFilterInfo(out filterInfo);
         if (hr != (int)HResult.Severity.Success)
         {
-          this.LogError("NetUP: failed to get filter info, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          this.LogError("NetUP: failed to get filter info, hr = 0x{0:x}", hr);
           return false;
         }
         IFilterGraph2 graph = filterInfo.pGraph as IFilterGraph2;
@@ -764,7 +764,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
           hr = graph.AddFilter(infTee, "Temp Infinite Tee");
           if (hr != (int)HResult.Severity.Success)
           {
-            this.LogError("NetUP: failed to add infinite tee to graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+            this.LogError("NetUP: failed to add infinite tee to graph, hr = 0x{0:x}", hr);
             return false;
           }
 
@@ -772,13 +772,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
           infTeeInputPin = DsFindPin.ByDirection(infTee, PinDirection.Input, 0);
           if (infTeeInputPin == null)
           {
-            this.LogError("NetUP: failed to find the infinite tee input pin, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+            this.LogError("NetUP: failed to find the infinite tee input pin, hr = 0x{0:x}", hr);
             return false;
           }
           hr = graph.ConnectDirect(pin, infTeeInputPin, null);
           if (hr != (int)HResult.Severity.Success)
           {
-            this.LogError("NetUP: failed to connect infinite tee, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+            this.LogError("NetUP: failed to connect infinite tee, hr = 0x{0:x}", hr);
             return false;
           }
 
@@ -823,7 +823,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
         int hr = propertySet.QuerySupported(_propertySetGuid, 0, out support);
         if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Set))
         {
-          this.LogDebug("NetUP: property set not supported on {0} pin, hr = 0x{1:x} ({2})", pinLogName, hr, HResult.GetDXErrorString(hr));
+          this.LogDebug("NetUP: property set not supported on {0} pin, hr = 0x{1:x}", pinLogName, hr);
           propertySet = null;
         }
       }
@@ -876,7 +876,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
       int hr = GetCiStatus(out ciState);
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogDebug("NetUP: CI slot not detected, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogDebug("NetUP: CI slot not detected, hr = 0x{0:x}", hr);
         Marshal.FreeCoTaskMem(_mmiBuffer);
         return false;
       }
@@ -937,7 +937,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
       }
       else
       {
-        this.LogError("NetUP: failed to reset conditional access interface, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("NetUP: failed to reset conditional access interface, hr = 0x{0:x}", hr);
         success = false;
       }
 
@@ -1022,7 +1022,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
         return true;
       }
 
-      this.LogError("NetUP: failed to send conditional access command, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("NetUP: failed to send conditional access command, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -1077,7 +1077,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
         return true;
       }
 
-      this.LogError("NetUP: failed to enter menu, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("NetUP: failed to enter menu, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -1112,7 +1112,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
         return true;
       }
 
-      this.LogError("NetUP: failed to close menu, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("NetUP: failed to close menu, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -1149,7 +1149,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
         return true;
       }
 
-      this.LogError("NetUP: failed to select menu entry, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("NetUP: failed to select menu entry, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -1209,7 +1209,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
         return true;
       }
 
-      this.LogError("NetUP: failed to answer enquiry, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("NetUP: failed to answer enquiry, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -1269,7 +1269,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
         return true;
       }
 
-      this.LogError("NetUP: failed to send DiSEqC command, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("NetUP: failed to send DiSEqC command, hr = 0x{0:x}", hr);
       return false;
     }
 

@@ -83,7 +83,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftAtscQam
       int hr = ps.QuerySupported(_propertySetGuid, (int)BdaDemodulatorProperty.ModulationType, out support);
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogDebug("Microsoft ATSC QAM: {0} does not support property set, hr = 0x{1:x} ({2})", objType, hr, HResult.GetDXErrorString(hr));
+        this.LogDebug("Microsoft ATSC QAM: {0} does not support property set, hr = 0x{1:x}", objType, hr);
         return null;
       }
       return ps;
@@ -223,7 +223,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftAtscQam
       int hr = _propertySet.Set(_propertySetGuid, (int)BdaDemodulatorProperty.ModulationType, _instanceBuffer, INSTANCE_SIZE, _paramBuffer, sizeof(int));
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogError("Microsoft ATSC QAM: failed to set modulation, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("Microsoft ATSC QAM: failed to set modulation, hr = 0x{0:x}", hr);
       }
       else
       {
