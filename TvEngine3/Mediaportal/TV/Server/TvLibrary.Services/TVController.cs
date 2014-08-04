@@ -5161,19 +5161,7 @@ namespace Mediaportal.TV.Server.TVLibrary
             int subChannels = GetSubChannels(card.IdCard);
             if (users.Count == 0)
             {
-              var cardPresentation = new CardPresentation(cardType, card.IdCard, card.Name) { SubChannels = subChannels, SubChannelsCountOk = (subChannels == 0), Idle = true, State = "Idle" };
-
-              bool isScanning = IsScanning(card.IdCard);
-              if (isScanning)
-              {
-                cardPresentation.State = "Scanning";
-                cardPresentation.UserName = "n/a";
-                cardPresentation.ChannelName = "n/a";
-                cardPresentation.IsScrambled = "n/a";
-                cardPresentation.IsOwner = "no";
-              }
-
-              cardPresentations.Add(cardPresentation);
+              cardPresentations.Add(new CardPresentation(cardType, card.IdCard, card.Name) { SubChannels = subChannels, SubChannelsCountOk = (subChannels == 0), Idle = true, State = "Idle" });
             }
             else
             {
