@@ -67,6 +67,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
     /// </summary>
     protected Guid _sourceFilterClsid = Guid.Empty;
 
+    /// <summary>
+    /// The tuner's current state.
+    /// </summary>
+    private TunerState _state = TunerState.NotLoaded;
+
     #endregion
 
     #region constructor
@@ -115,6 +120,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
 
     #endregion
 
+    private IBaseFilter AddSourceFilter()
+    {
+      if (_sourceFilterClsid == typeof(MediaPortalStreamSource).GUID)
+      {
+        return FilterGraphTools.AddFilterFromFile(_graph, "MPIPTVSource.ax", _sourceFilterClsid, Name);
+      }
+      return FilterGraphTools.AddFilterFromRegisteredClsid(_graph, _sourceFilterClsid, Name);
+    }
+
     #region ITunerInternal members
 
     #region state control
@@ -129,14 +143,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
       InitialiseGraph();
 
       // Start with the source filter.
-      if (_sourceFilterClsid == typeof(MediaPortalStreamSource).GUID)
-      {
-        _filterStreamSource = FilterGraphTools.AddFilterFromFile(_graph, "MPIPTVSource.ax", _sourceFilterClsid, Name);
-      }
-      else
-      {
-        _filterStreamSource = FilterGraphTools.AddFilterFromRegisteredClsid(_graph, _sourceFilterClsid, Name);
-      }
+      _filterStreamSource = AddSourceFilter();
 
       // Check for and load extensions, adding any additional filters to the graph.
       IBaseFilter lastFilter = _filterStreamSource;
@@ -146,6 +153,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
       AddAndConnectTsWriterIntoGraph(lastFilter);
       CompleteGraph();
       return extensions;
+    }
+
+    /// <summary>
+    /// Actually set the state of the tuner.
+    /// </summary>
+    /// <param name="state">The state to apply to the tuner.</param>
+    public override void PerformSetTunerState(TunerState state)
+    {
+      base.PerformSetTunerState(state);
+      _state = state;
     }
 
     /// <summary>
@@ -184,13 +201,52 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
     /// <param name="channel">The channel to tune to.</param>
     public override void PerformTuning(IChannel channel)
     {
+      this.LogDebug("DirectShow stream: perform tuning");
       DVBIPChannel streamChannel = channel as DVBIPChannel;
       if (streamChannel == null)
       {
         throw new TvException("Received request to tune incompatible channel.");
       }
+
+      bool restart = false;
+      if (_state == TunerState.Started)
+      {
+        // We have to replace the source filter. This is a workaround for the
+        // filter's inability to change URLs.
+        this.LogDebug("DirectShow stream: replacing source filter");
+        restart = true;
+        base.PerformSetTunerState(TunerState.Stopped);
+        IPin pinOutput = DsFindPin.ByDirection(_filterStreamSource, PinDirection.Output, 0);
+        try
+        {
+          IPin pinDownstream;
+          HResult.ThrowException(pinOutput.ConnectedTo(out pinDownstream), "Failed to get stream source filter downstream pin.");
+          try
+          {
+            _graph.RemoveFilter(_filterStreamSource);
+            _filterStreamSource = AddSourceFilter();
+            Release.ComObject("DirectShow stream source output pin", ref pinOutput);
+            pinOutput = DsFindPin.ByDirection(_filterStreamSource, PinDirection.Output, 0);
+            HResult.ThrowException(_graph.ConnectDirect(pinOutput, pinDownstream, null), "Failed to connect new stream source filter.");
+          }
+          finally
+          {
+            Release.ComObject("DirectShow stream source downstream pin", ref pinDownstream);
+          }
+        }
+        finally
+        {
+          Release.ComObject("DirectShow stream source output pin", ref pinOutput);
+        }
+      }
+
       int hr = (_filterStreamSource as IFileSourceFilter).Load(streamChannel.Url, _sourceMediaType);
       HResult.ThrowException(hr, "Failed to tune channel.");
+
+      if (restart)
+      {
+        base.PerformSetTunerState(TunerState.Started);
+      }
     }
 
     #endregion
