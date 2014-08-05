@@ -542,7 +542,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         foreach (KeyValuePair<VideoProcAmpProperty, VideoProcAmpPropertyDetail> p in _supportedVideoProcAmpProperties)
         {
           // The value is stored as a percentage.
-          double propertyValuePercentage = p.Value.ValueDefault * 100 / (p.Value.ValueMaximum - p.Value.ValueMinimum);
+          double propertyValuePercentage = (p.Value.ValueDefault - p.Value.ValueMinimum) * 100 / (p.Value.ValueMaximum - p.Value.ValueMinimum);
           SettingsManagement.SaveValue("tuner" + tunerId + "VideoProcAmpProperty" + p.Key + "Value", propertyValuePercentage);
           SettingsManagement.SaveValue("tuner" + tunerId + "VideoProcAmpProperty" + p.Key + "DefaultValue", propertyValuePercentage);
         }
@@ -640,11 +640,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         VideoProcAmpPropertyDetail propertyLimits;
         if (_supportedVideoProcAmpProperties.TryGetValue(property, out propertyLimits))
         {
-          // The value is stored as a percentage. Convert it back to an absolute
-          // value in the permitted range and quantise to the step size for the
-          // property.
+          // The value is stored as a percentage. Convert it back to an
+          // absolute value in the permitted range and quantise to the step
+          // size for the property.
           double propertyValuePercentage = propertySettings[property];
           int propertyValueAbsolute = (int)Math.Round(propertyLimits.ValueMinimum + ((propertyValuePercentage * (propertyLimits.ValueMaximum - propertyLimits.ValueMinimum)) / 100), 0, MidpointRounding.AwayFromZero);
+
+          // If the percentage doesn't work out to an exact permitted value
+          // (ie. it is between steps), round to the closest step.
           int stepOffset = propertyValueAbsolute % propertyLimits.SteppingDelta;
           if (stepOffset > 0)
           {
