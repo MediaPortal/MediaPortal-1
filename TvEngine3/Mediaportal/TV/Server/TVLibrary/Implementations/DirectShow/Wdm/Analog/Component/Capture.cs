@@ -133,7 +133,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     /// <summary>
     /// The configured video standard.
     /// </summary>
-    private AnalogVideoStandard _currentVideoStandard = AnalogVideoStandard.PAL_B;
+    private AnalogVideoStandard _currentVideoStandard = AnalogVideoStandard.None;
 
     /// <summary>
     /// The configured video processing amplifier property settings.
@@ -143,17 +143,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     /// <summary>
     /// The configured frame width measured in pixels.
     /// </summary>
-    private int _currentFrameWidth = 720;
+    private int _currentFrameWidth = -1;
 
     /// <summary>
     /// The configured frame height measured in pixels.
     /// </summary>
-    private int _currentFrameHeight = 576;
+    private int _currentFrameHeight = -1;
 
     /// <summary>
     /// The configured frame rate measured in frames per second.
     /// </summary>
-    private double _currentFrameRate = 25.0;
+    private double _currentFrameRate = -1;
 
     #endregion
 
@@ -298,8 +298,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
 
       CheckCapabilitiesAnalogVideoDecoder();
       CheckCapabilitiesVideoProcessingAmplifier();
-      ConfigureAnalogVideoDecoder(_currentVideoStandard);
-      ConfigureVideoProcessingAmplifier(_currentVideoProcAmpPropertyValues);
     }
 
     /// <summary>
@@ -503,6 +501,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       this.LogDebug("WDM analog capture: reload configuration");
 
       // Do we have existing settings? If not, try to set sensible defaults.
+      AnalogVideoStandard newVideoStandard;
+      int newFrameWidth;
+      int newFrameHeight;
+      double newFrameRate;
       int settingCheck = SettingsManagement.GetValue("tuner" + tunerId + "VideoStandard", -1);
       if (settingCheck == -1)   // first load
       {
@@ -513,29 +515,29 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         if (country == null)
         {
           this.LogWarn("WDM analog capture: failed to get country details for country {0}, using PAL/SECAM defaults", countryName ?? "[null]");
-          _currentVideoStandard = AnalogVideoStandard.PAL_B;
+          newVideoStandard = AnalogVideoStandard.PAL_B;
         }
         else
         {
           this.LogDebug("WDM analog capture: recognised country {0}, using {1} defaults", countryName, country.VideoStandard);
-          _currentVideoStandard = country.VideoStandard;
+          newVideoStandard = country.VideoStandard;
         }
-        SettingsManagement.SaveValue("tuner" + tunerId + "VideoStandard", (int)_currentVideoStandard);
+        SettingsManagement.SaveValue("tuner" + tunerId + "VideoStandard", (int)newVideoStandard);
 
-        _currentFrameWidth = 720;
+        newFrameWidth = 720;
         if (_currentVideoStandard == AnalogVideoStandard.NTSC_M || _currentVideoStandard == AnalogVideoStandard.NTSC_M_J || _currentVideoStandard == AnalogVideoStandard.NTSC_433 || _currentVideoStandard == AnalogVideoStandard.PAL_M)
         {
-          _currentFrameHeight = 480;
-          _currentFrameRate = 29.97;
+          newFrameHeight = 480;
+          newFrameRate = 29.97;
         }
         else
         {
-          _currentFrameHeight = 576;
-          _currentFrameRate = 25;
+          newFrameHeight = 576;
+          newFrameRate = 25;
         }
-        SettingsManagement.SaveValue("tuner" + tunerId + "FrameWidth", _currentFrameWidth);
-        SettingsManagement.SaveValue("tuner" + tunerId + "FrameHeight", _currentFrameHeight);
-        SettingsManagement.SaveValue("tuner" + tunerId + "FrameRate", _currentFrameRate);
+        SettingsManagement.SaveValue("tuner" + tunerId + "FrameWidth", newFrameWidth);
+        SettingsManagement.SaveValue("tuner" + tunerId + "FrameHeight", newFrameHeight);
+        SettingsManagement.SaveValue("tuner" + tunerId + "FrameRate", newFrameRate);
 
         SettingsManagement.SaveValue("tuner" + tunerId + "SupportedVideoStandards", (int)_supportedVideoStandards);
 
@@ -547,15 +549,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
           SettingsManagement.SaveValue("tuner" + tunerId + "VideoProcAmpProperty" + p.Key + "DefaultValue", propertyValuePercentage);
         }
       }
+      else
+      {
+        newVideoStandard = (AnalogVideoStandard)SettingsManagement.GetValue("tuner" + tunerId + "VideoStandard", (int)_currentVideoStandard);
+        newFrameWidth = SettingsManagement.GetValue("tuner" + tunerId + "FrameWidth", _currentFrameWidth);
+        newFrameHeight = SettingsManagement.GetValue("tuner" + tunerId + "FrameHeight", _currentFrameHeight);
+        newFrameRate = SettingsManagement.GetValue("tuner" + tunerId + "FrameRate", _currentFrameRate);
+      }
 
-      AnalogVideoStandard newVideoStandard = (AnalogVideoStandard)SettingsManagement.GetValue("tuner" + tunerId + "VideoStandard", (int)_currentVideoStandard);
       if (newVideoStandard != _currentVideoStandard)
       {
         ConfigureAnalogVideoDecoder(newVideoStandard);
       }
 
       Dictionary<VideoProcAmpProperty, double> newVideoProcAmpSettings = new Dictionary<VideoProcAmpProperty, double>();
-      foreach (VideoProcAmpProperty property in Enum.GetValues(typeof(VideoProcAmpProperty)))
+      foreach (VideoProcAmpProperty property in _supportedVideoProcAmpProperties.Keys)
       {
         double currentPropertyValuePercentage = -1;
         if (!_currentVideoProcAmpPropertyValues.TryGetValue(property, out currentPropertyValuePercentage))
@@ -571,9 +579,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       }
       ConfigureVideoProcessingAmplifier(newVideoProcAmpSettings);
 
-      int newFrameWidth = SettingsManagement.GetValue("tuner" + tunerId + "FrameWidth", _currentFrameWidth);
-      int newFrameHeight = SettingsManagement.GetValue("tuner" + tunerId + "FrameHeight", _currentFrameHeight);
-      double newFrameRate = SettingsManagement.GetValue("tuner" + tunerId + "FrameRate", _currentFrameRate);
       if (newFrameWidth != _currentFrameWidth || newFrameHeight != _currentFrameHeight || newFrameRate != _currentFrameRate)
       {
         ConfigureStream(newFrameWidth, newFrameHeight, newFrameRate);
