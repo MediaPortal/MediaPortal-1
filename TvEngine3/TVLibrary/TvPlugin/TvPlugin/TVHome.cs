@@ -2570,8 +2570,7 @@ namespace TvPlugin
         GUIPropertyManager.SetProperty("#TV.View.subtitle", current.EpisodeName);
         GUIPropertyManager.SetProperty("#TV.View.episode", current.EpisodeNumber);
         GUIPropertyManager.SetProperty("#TV.View.genre", current.Genre);
-        GUIPropertyManager.SetProperty("#TV.View.remaining",
-                                       Utils.SecondsToHMSString(current.EndTime - current.StartTime));
+        GUIPropertyManager.SetProperty("#TV.View.remaining",Utils.SecondsToHMSString(current.CalculateTimeRemaining()));
         SetTvThumbProperty(ch);
 
         TimeSpan ts = current.EndTime - current.StartTime;
