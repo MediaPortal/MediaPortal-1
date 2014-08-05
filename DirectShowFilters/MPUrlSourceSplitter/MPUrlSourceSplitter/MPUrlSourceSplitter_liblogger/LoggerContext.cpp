@@ -124,7 +124,7 @@ bool CLoggerContext::IsAllowedLogVerbosity(unsigned int logVerbosity)
 
 bool CLoggerContext::IsFree(void)
 {
-  return (this->loggerGUID == GUID_NULL);
+  return (IsEqualGUID(this->loggerGUID, GUID_NULL) != 0);
 }
 
 unsigned int CLoggerContext::AddReference(void)
