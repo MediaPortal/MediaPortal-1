@@ -139,7 +139,7 @@ unsigned int CStaticLogger::GetLoggerContext(GUID guid, unsigned int maxLogSize,
       {
         CLoggerFile *temp = this->loggerFiles->GetItem(i);
 
-        if (wcsicmp(temp->GetLogFile(), logFile) == 0)
+        if (_wcsicmp(temp->GetLogFile(), logFile) == 0)
         {
           loggerFile = temp;
           break;
