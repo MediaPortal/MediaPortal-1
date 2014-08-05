@@ -191,7 +191,7 @@ wchar_t *CLogger::GetLogMessage(unsigned int level, const wchar_t *format, va_li
 
 void CLogger::LogMessage(unsigned int logLevel, const wchar_t *message)
 {
-  if ((logLevel <= this->allowedLogVerbosity) && (message != NULL) && (this->context != NULL))
+  if ((logLevel <= this->allowedLogVerbosity) && (message != NULL) && (this->context != LOGGER_CONTEXT_INVALID_HANDLE))
   {
     this->staticLogger->LogMessage(this->context, logLevel, message);
   }
