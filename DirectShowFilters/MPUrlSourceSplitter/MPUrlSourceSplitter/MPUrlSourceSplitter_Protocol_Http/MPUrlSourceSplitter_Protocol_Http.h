@@ -31,8 +31,8 @@
 
 #define PROTOCOL_NAME                                                         L"HTTP"
 
-#define TOTAL_SUPPORTED_PROTOCOLS                                             1
-wchar_t *SUPPORTED_PROTOCOLS[TOTAL_SUPPORTED_PROTOCOLS] =                     { L"HTTP" };
+#define TOTAL_SUPPORTED_PROTOCOLS                                             2
+wchar_t *SUPPORTED_PROTOCOLS[TOTAL_SUPPORTED_PROTOCOLS] =                     { L"HTTP", L"HTTPS" };
 
 #define MINIMUM_RECEIVED_DATA_FOR_SPLITTER                                    1 * 1024 * 1024
 
