@@ -134,12 +134,18 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       foreach (ChannelGroup group in groups)
       {
-        ToolStripMenuItem item = new ToolStripMenuItem(group.GroupName);
+        // It makes no sense to be able to add a channel to the "all channels"
+        // groups, because they already contain all channels by definition.
+        if ((_mediaType == MediaTypeEnum.TV && group.GroupName != TvConstants.TvGroupNames.AllChannels) ||
+          (_mediaType == MediaTypeEnum.Radio && group.GroupName != TvConstants.RadioGroupNames.AllChannels))
+        {
+          ToolStripMenuItem item = new ToolStripMenuItem(group.GroupName);
 
-        item.Tag = group;
-        item.Click += OnAddToFavoritesMenuItem_Click;
+          item.Tag = group;
+          item.Click += OnAddToFavoritesMenuItem_Click;
 
-        addToFavoritesToolStripMenuItem.DropDownItems.Add(item);
+          addToFavoritesToolStripMenuItem.DropDownItems.Add(item);
+        }
       }
 
       ToolStripMenuItem itemNew = new ToolStripMenuItem("New...");
