@@ -328,25 +328,23 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeRemote
           if (pathValue != null)
           {
             path = pathValue.ToString();
-            if (path.EndsWith(@"\"))
+          }
+          else
+          {
+            pathValue = key.GetValue("UninstallString");
+            if (pathValue == null)
             {
-              path += @"\";
+              return null;
             }
-            return path;
+            path = pathValue.ToString();
+            int index = path.ToLowerInvariant().IndexOf("unir32");
+            if (index < 0)
+            {
+              return null;
+            }
+            path = path.Substring(0, index);
           }
-          pathValue = key.GetValue("UninstallString");
-          if (pathValue == null)
-          {
-            return null;
-          }
-          path = pathValue.ToString();
-          int index = path.ToLowerInvariant().IndexOf("unir32");
-          if (index < 0)
-          {
-            return null;
-          }
-          path = path.Substring(0, index);
-          if (File.Exists(path + IR32_EXE_NAME) && File.Exists(path + IR32_DLL_NAME))
+          if (File.Exists(Path.Combine(path, IR32_EXE_NAME)) && File.Exists(Path.Combine(path, IR32_DLL_NAME)))
           {
             return path;
           }
@@ -365,107 +363,52 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeRemote
     {
       this.LogDebug("Hauppauge remote: starting remote control listener thread");
       Thread.BeginThreadAffinity();
-      string className = "HauppaugeRemoteListenerThreadWindowClass";
-      IntPtr processHandle = Process.GetCurrentProcess().Handle;
       try
       {
-        IntPtr handle;
+        IntPtr processHandle = Process.GetCurrentProcess().Handle;
+        string className = "HauppaugeRemoteListenerThreadWindowClass";
+        IntPtr windowHandle = IntPtr.Zero;
+        bool registered = false;
         try
-        {
-          // We need a window handle to receive messages from the driver.
-          NativeMethods.WNDCLASS wndclass;
-          wndclass.style = 0;
-          wndclass.lpfnWndProc = RemoteControlListenerWndProc;
-          wndclass.cbClsExtra = 0;
-          wndclass.cbWndExtra = 0;
-          wndclass.hInstance = processHandle;
-          wndclass.hIcon = IntPtr.Zero;
-          wndclass.hCursor = IntPtr.Zero;
-          wndclass.hbrBackground = IntPtr.Zero;
-          wndclass.lpszMenuName = null;
-          wndclass.lpszClassName = className;
-
-          int atom = NativeMethods.RegisterClass(ref wndclass);
-          if (atom == 0)
-          {
-            this.LogError("Hauppauge remote: failed to register window class, hr = 0x{0:x}", Marshal.GetLastWin32Error());
-            return;
-          }
-
-          // Create a window that won't show in the taskbar or alt+tab list etc. with size 0x0.
-          handle = NativeMethods.CreateWindowEx(NativeMethods.WindowStyleEx.WS_EX_TOOLWINDOW,
-                                                className, string.Empty, NativeMethods.WindowStyle.WS_POPUP,
-                                                0, 0, 0, 0, IntPtr.Zero, IntPtr.Zero, processHandle, IntPtr.Zero);
-          if (handle.Equals(IntPtr.Zero))
-          {
-            this.LogError("Hauppauge remote: failed to create receive window, hr = 0x{0:x}", Marshal.GetLastWin32Error());
-            return;
-          }
-
-          // We must add the IR32 directory to our path, otherwise any calls to
-          // functions imported from irremote.dll will fail. This also must be
-          // done in the thread from which the functions are invoked.
-          if (!NativeMethods.SetDllDirectory(_ir32Path))
-          {
-            this.LogError("Hauppauge remote: failed to add Hauppauge IR32 directory {0} to path", _ir32Path);
-            return;
-          }
-
-          // Now register the window to start receiving key press events.
-          if (!IR_Open(handle.ToInt32(), 0, false, 0))
-          {
-            this.LogError("Hauppauge remote: failed to open interface, is other software active?");
-            return;
-          }
-
-          this.LogDebug("Hauppauge remote: remote control listener thread is running");
-          _remoteControlListenerThreadId = NativeMethods.GetCurrentThreadId();
-          _isRemoteControlInterfaceOpen = true;
-        }
-        finally
-        {
-          ((ManualResetEvent)eventParam).Set();
-        }
-
-        // This thread needs a message loop to pump messages to our window
-        // procedure.
-        while (true)
         {
           try
           {
-            // This call will block until a message is received. It returns
-            // false (0) if the message is WM_QUIT.
-            NativeMethods.MSG msg = new NativeMethods.MSG();
-            int result = NativeMethods.GetMessage(ref msg, IntPtr.Zero, 0, 0);
-            if (result == 0)
+            // We need a window handle to receive messages from the driver.
+            windowHandle = CreateWindow(processHandle, className);
+            if (windowHandle == IntPtr.Zero)
             {
-              if (!IR_Close(handle.ToInt32(), 0))
-              {
-                this.LogWarn("Hauppauge remote: failed to close interface");
-              }
-              if (!NativeMethods.DestroyWindow(handle))
-              {
-                this.LogWarn("Hauppauge remote: failed to destroy receive window, hr = 0x{0:x}", Marshal.GetLastWin32Error());
-              }
-              else if (!NativeMethods.UnregisterClass(className, processHandle))
-              {
-                this.LogWarn("Hauppauge remote: failed to unregister window class, hr = 0x{0:x}", Marshal.GetLastWin32Error());
-              }
               return;
             }
-            else if (result == -1)
+
+            // Now register the window to start receiving key press events.
+            registered = RegisterWindow(windowHandle);
+            if (!registered)
             {
-              this.LogError("Hauppauge remote: failed to get window message, hr = 0x{0:x}", Marshal.GetLastWin32Error());
+              return;
             }
-            else
-            {
-              NativeMethods.TranslateMessage(ref msg);
-              NativeMethods.DispatchMessage(ref msg);
-            }
+
+            this.LogDebug("Hauppauge remote: remote control listener thread is running");
+            _remoteControlListenerThreadId = NativeMethods.GetCurrentThreadId();
+            _isRemoteControlInterfaceOpen = true;
           }
-          catch (Exception ex)
+          finally
           {
-            this.LogError(ex, "Hauppauge remote: remote control listener thread exception");
+            ((ManualResetEvent)eventParam).Set();
+          }
+
+          // This call will block and pump messages to our window procedure
+          // until we're asked to stop.
+          WindowMessagePump();
+        }
+        finally
+        {
+          if (windowHandle != IntPtr.Zero)
+          {
+            if (registered)
+            {
+              UnregisterWindow(windowHandle);
+            }
+            CleanUpWindow(processHandle, className, windowHandle);
           }
         }
       }
@@ -473,6 +416,130 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeRemote
       {
         Thread.EndThreadAffinity();
         this.LogDebug("Hauppauge remote: stopping remote control listener thread");
+      }
+    }
+
+    private IntPtr CreateWindow(IntPtr processHandle, string className)
+    {
+      IntPtr windowHandle = IntPtr.Zero;
+
+      NativeMethods.WNDCLASS wndclass;
+      wndclass.style = 0;
+      wndclass.lpfnWndProc = RemoteControlListenerWndProc;
+      wndclass.cbClsExtra = 0;
+      wndclass.cbWndExtra = 0;
+      wndclass.hInstance = processHandle;
+      wndclass.hIcon = IntPtr.Zero;
+      wndclass.hCursor = IntPtr.Zero;
+      wndclass.hbrBackground = IntPtr.Zero;
+      wndclass.lpszMenuName = null;
+      wndclass.lpszClassName = className;
+
+      int atom = NativeMethods.RegisterClass(ref wndclass);
+      if (atom == 0)
+      {
+        this.LogError("Hauppauge remote: failed to register window class, hr = 0x{0:x}", Marshal.GetLastWin32Error());
+        return windowHandle;
+      }
+
+      // Create a window that won't show in the taskbar or alt+tab list etc. with size 0x0.
+      windowHandle = NativeMethods.CreateWindowEx(NativeMethods.WindowStyleEx.WS_EX_TOOLWINDOW,
+                                            className, string.Empty, NativeMethods.WindowStyle.WS_POPUP,
+                                            0, 0, 0, 0, IntPtr.Zero, IntPtr.Zero, processHandle, IntPtr.Zero);
+      if (windowHandle == IntPtr.Zero)
+      {
+        this.LogError("Hauppauge remote: failed to create receive window, hr = 0x{0:x}", Marshal.GetLastWin32Error());
+        if (!NativeMethods.UnregisterClass(className, processHandle))
+        {
+          this.LogWarn("Hauppauge remote: failed to unregister listener window class, hr = 0x{0:x}", Marshal.GetLastWin32Error());
+        }
+      }
+      return windowHandle;
+    }
+
+    private bool RegisterWindow(IntPtr windowHandle)
+    {
+      // We must add the IR32 directory to our path, otherwise any calls to
+      // functions imported from irremote.dll will fail. This also must be
+      // done in the thread from which the functions are invoked.
+      if (!NativeMethods.SetDllDirectory(_ir32Path))
+      {
+        this.LogError("Hauppauge remote: failed to add Hauppauge IR32 directory {0} to path", _ir32Path);
+        return false;
+      }
+
+      // Now register the window to start receiving key press events.
+      try
+      {
+        if (IR_Open(windowHandle.ToInt32(), 0, false, 0))
+        {
+          return true;
+        }
+        this.LogError("Hauppauge remote: failed to open interface, is other software active?");
+      }
+      catch (Exception ex)
+      {
+        this.LogError(ex, "Hauppauge remote: failed to open interface, is other software active?");
+      }
+      return false;
+    }
+
+    private void UnregisterWindow(IntPtr windowHandle)
+    {
+      try
+      {
+        if (IR_Close(windowHandle.ToInt32(), 0))
+        {
+          return;
+        }
+        this.LogWarn("Hauppauge remote: failed to close interface");
+      }
+      catch (Exception ex)
+      {
+        this.LogWarn(ex, "Hauppauge remote: failed to close interface");
+      }
+    }
+
+    private void CleanUpWindow(IntPtr processHandle, string className, IntPtr windowHandle)
+    {
+      if (!NativeMethods.DestroyWindow(windowHandle))
+      {
+        this.LogWarn("Hauppauge remote: failed to destroy receive window, hr = 0x{0:x}", Marshal.GetLastWin32Error());
+      }
+      if (!NativeMethods.UnregisterClass(className, processHandle))
+      {
+        this.LogWarn("Hauppauge remote: failed to unregister listener window class, hr = 0x{0:x}", Marshal.GetLastWin32Error());
+      }
+    }
+
+    private void WindowMessagePump()
+    {
+      while (true)
+      {
+        NativeMethods.MSG msg = new NativeMethods.MSG();
+        try
+        {
+          // This call will block until a message is received. It returns
+          // false (0) if the message is WM_QUIT.
+          int result = NativeMethods.GetMessage(ref msg, IntPtr.Zero, 0, 0);
+          if (result == 0)
+          {
+            return;
+          }
+          else if (result == -1)
+          {
+            this.LogError("Hauppauge remote: failed to get window message, hr = 0x{0:x}", Marshal.GetLastWin32Error());
+          }
+          else
+          {
+            NativeMethods.TranslateMessage(ref msg);
+            NativeMethods.DispatchMessage(ref msg);
+          }
+        }
+        catch (Exception ex)
+        {
+          this.LogError(ex, "Hauppauge remote: remote control listener thread exception");
+        }
       }
     }
 
@@ -611,7 +678,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeRemote
         while ((Process.GetProcessesByName(IR32_PROCESS_NAME).Length != 0) && (i < processCount))
         {
           i++;
-          Process.Start(irExePath, "/QUIT");    // upper case important
+          try
+          {
+            Process.Start(irExePath, "/QUIT");    // upper case important
+          }
+          catch (Exception ex)
+          {
+            this.LogWarn(ex, "Hauppauge remote: failed to stop IR32, is the install path {0} correct?", irExePath);
+          }
           Thread.Sleep(400);
         }
         processCount = Process.GetProcessesByName(IR32_PROCESS_NAME).Length;
