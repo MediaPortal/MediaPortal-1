@@ -8,5 +8,6 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces
   {
     IQueryable<Card> IncludeAllRelations(IQueryable<Card> query);
     IQueryable<Card> IncludeAllRelations(IQueryable<Card> query, CardIncludeRelationEnum includeRelations);
+    IQueryable<CardGroup> IncludeAllRelations(IQueryable<CardGroup> query);
   }
 }

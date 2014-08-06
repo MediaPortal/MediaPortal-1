@@ -31,7 +31,6 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
           Include(c => c.CardGroupMaps).
           Include(c => c.DisEqcMotors);
       return includeRelations;
-
     }
 
     public IQueryable<Card> IncludeAllRelations(IQueryable<Card> query, CardIncludeRelationEnum includeRelations)
@@ -58,6 +57,14 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
         query = query.Include(c => c.DisEqcMotors);
       }
       return query;
+    }
+
+    public IQueryable<CardGroup> IncludeAllRelations(IQueryable<CardGroup> query)
+    {
+      IQueryable<CardGroup> includeRelations =
+        query.
+          Include(cg => cg.CardGroupMaps.Select(m => m.Card));
+      return includeRelations;
     }
   }
 }
