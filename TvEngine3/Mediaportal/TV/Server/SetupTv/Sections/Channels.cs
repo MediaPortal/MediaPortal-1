@@ -106,13 +106,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         TabPage page = new TabPage(group.GroupName);
         page.SuspendLayout();
 
-        ChannelsInGroupControl channelsInRadioGroupControl = new ChannelsInGroupControl(_mediaType);        
-        channelsInRadioGroupControl.Location = new System.Drawing.Point(9, 9);
-        channelsInRadioGroupControl.Anchor = ((AnchorStyles.Top | AnchorStyles.Bottom)
+        ChannelsInGroupControl channelsInGroupControl = new ChannelsInGroupControl(_mediaType);
+        channelsInGroupControl.Location = new System.Drawing.Point(9, 9);
+        channelsInGroupControl.Anchor = ((AnchorStyles.Top | AnchorStyles.Bottom)
                                               | AnchorStyles.Left)
                                              | AnchorStyles.Right;
 
-        page.Controls.Add(channelsInRadioGroupControl);
+        page.Controls.Add(channelsInGroupControl);
 
         page.Tag = group;
         page.Location = new System.Drawing.Point(4, 22);
@@ -604,8 +604,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         return;
       }
 
-      var group = new ChannelGroup { GroupName = dlg.GroupName, SortOrder = 9999, MediaType = (int)_mediaType};
-
+      var group = new ChannelGroup { GroupName = dlg.GroupName, SortOrder = 9999, MediaType = (int)_mediaType };
       group = ServiceAgents.Instance.ChannelGroupServiceAgent.SaveGroup(group);
       group.AcceptChanges();
 
@@ -675,10 +674,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
 
       bool isGroupEmpty = (group.GroupMaps.Count <= 0);
-
-      ServiceAgents.Instance.ChannelGroupServiceAgent.DeleteChannelGroup(group.IdGroup);      
-            
-
+      ServiceAgents.Instance.ChannelGroupServiceAgent.DeleteChannelGroup(group.IdGroup);
       if (!isGroupEmpty)
       {
         RefreshAll();
