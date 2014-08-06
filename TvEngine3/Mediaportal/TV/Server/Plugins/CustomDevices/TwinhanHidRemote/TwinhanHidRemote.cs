@@ -1254,14 +1254,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TwinhanHidRemote
       drivers = new Dictionary<string, TwinhanHidDriver>(4);
 
       // Get the device list size.
-      int hr;
       uint deviceCount = 0;
       uint listDeviceSize = (uint)Marshal.SizeOf(typeof(NativeMethods.RAWINPUTDEVICELIST));
       int result = NativeMethods.GetRawInputDeviceList(null, ref deviceCount, listDeviceSize);
       if (result != 0)
       {
-        hr = Marshal.GetLastWin32Error();
-        this.LogError("Twinhan HID remote: failed to get raw input device list size, result = {0}, hr = 0x{1:x}", result, hr);
+        this.LogError("Twinhan HID remote: failed to get raw input device list size, result = {0}, hr = 0x{1:x}", result, Marshal.GetLastWin32Error());
         return;
       }
       this.LogDebug("Twinhan HID remote: raw input device count = {0}", deviceCount);
@@ -1275,8 +1273,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TwinhanHidRemote
         result = NativeMethods.GetRawInputDeviceList(deviceList, ref deviceCount, listDeviceSize);
         if (result == -1)
         {
-          hr = Marshal.GetLastWin32Error();
-          this.LogError("Twinhan HID remote: failed to get raw input device list, result = {0}, hr = 0x{1:x}", result, hr);
+          this.LogError("Twinhan HID remote: failed to get raw input device list, result = {0}, hr = 0x{1:x}", result, Marshal.GetLastWin32Error());
           return;
         }
 
@@ -1334,8 +1331,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TwinhanHidRemote
           result = NativeMethods.GetRawInputDeviceInfoW(d.hDevice, NativeMethods.RawInputInfoCommand.RIDI_DEVICEINFO, deviceInfo, ref deviceInfoSize);
           if (result <= 0)
           {
-            hr = Marshal.GetLastWin32Error();
-            this.LogWarn("Twinhan HID remote: failed to get raw input device info, result = {0}, hr = 0x{1:x}, required size = {2}", result, hr, deviceInfoSize);
+            this.LogWarn("Twinhan HID remote: failed to get raw input device info, result = {0}, hr = 0x{1:x}, required size = {2}", result, Marshal.GetLastWin32Error(), deviceInfoSize);
             continue;
           }
 
@@ -1405,13 +1401,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TwinhanHidRemote
 
     private string ReadRawDeviceName(IntPtr device)
     {
-      int hr;
       uint deviceNameSize = 256;
       int result = NativeMethods.GetRawInputDeviceInfoW(device, NativeMethods.RawInputInfoCommand.RIDI_DEVICENAME, IntPtr.Zero, ref deviceNameSize);
       if (result != 0)
       {
-        hr = Marshal.GetLastWin32Error();
-        this.LogError("Twinhan HID remote: failed to get raw input device name size, result = {0}, hr = 0x{1:x}", result, hr);
+        this.LogError("Twinhan HID remote: failed to get raw input device name size, result = {0}, hr = 0x{1:x}", result, Marshal.GetLastWin32Error());
         return string.Empty;
       }
 
@@ -1424,8 +1418,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TwinhanHidRemote
           return Marshal.PtrToStringUni(deviceName, result - 1); // -1 for NULL termination
         }
 
-        hr = Marshal.GetLastWin32Error();
-        this.LogError("Twinhan HID remote: failed to get raw input device name, result = {0}, hr = 0x{1:x}", result, hr);
+        this.LogError("Twinhan HID remote: failed to get raw input device name, result = {0}, hr = 0x{1:x}", result, Marshal.GetLastWin32Error());
         return string.Empty;
       }
       finally
@@ -1436,13 +1429,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TwinhanHidRemote
 
     private IntPtr GetPreParsedData(IntPtr device)
     {
-      int hr;
       uint ppDataSize = 256;
       int result = NativeMethods.GetRawInputDeviceInfoW(device, NativeMethods.RawInputInfoCommand.RIDI_PREPARSEDDATA, IntPtr.Zero, ref ppDataSize);
       if (result != 0)
       {
-        hr = Marshal.GetLastWin32Error();
-        this.LogError("Twinhan HID remote: failed to get raw input pre-parsed data size, result = {0}, hr = 0x{1:x}", result, hr);
+        this.LogError("Twinhan HID remote: failed to get raw input pre-parsed data size, result = {0}, hr = 0x{1:x}", result, Marshal.GetLastWin32Error());
         return IntPtr.Zero;
       }
 
@@ -1450,8 +1441,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TwinhanHidRemote
       result = NativeMethods.GetRawInputDeviceInfoW(device, NativeMethods.RawInputInfoCommand.RIDI_PREPARSEDDATA, ppData, ref ppDataSize);
       if (result <= 0)
       {
-        hr = Marshal.GetLastWin32Error();
-        this.LogError("Twinhan HID remote: failed to get raw input pre-parsed data, result = {0}, hr = 0x{1:x}", result, hr);
+        this.LogError("Twinhan HID remote: failed to get raw input pre-parsed data, result = {0}, hr = 0x{1:x}", result, Marshal.GetLastWin32Error());
         return IntPtr.Zero;
       }
       return ppData;
@@ -1657,117 +1647,52 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TwinhanHidRemote
     {
       this.LogDebug("Twinhan HID remote: starting remote control listener thread");
       Thread.BeginThreadAffinity();
-      string className = "TwinhanHidRemoteListenerThreadWindowClass";
-      IntPtr processHandle = Process.GetCurrentProcess().Handle;
-      int hr;
       try
       {
-        NativeMethods.RAWINPUTDEVICE[] registrations = GetRegistrations();
-        IntPtr handle;
+        IntPtr processHandle = Process.GetCurrentProcess().Handle;
+        string className = "TwinhanHidRemoteListenerThreadWindowClass";
+        IntPtr windowHandle = IntPtr.Zero;
+        NativeMethods.RAWINPUTDEVICE[] registrations = null;
         try
         {
-          // We need a window handle to receive messages from the driver.
-          NativeMethods.WNDCLASS wndclass;
-          wndclass.style = 0;
-          wndclass.lpfnWndProc = RemoteControlListenerWndProc;
-          wndclass.cbClsExtra = 0;
-          wndclass.cbWndExtra = 0;
-          wndclass.hInstance = processHandle;
-          wndclass.hIcon = IntPtr.Zero;
-          wndclass.hCursor = IntPtr.Zero;
-          wndclass.hbrBackground = IntPtr.Zero;
-          wndclass.lpszMenuName = null;
-          wndclass.lpszClassName = className;
-
-          int atom = NativeMethods.RegisterClass(ref wndclass);
-          if (atom == 0)
+          try
           {
-            hr = Marshal.GetLastWin32Error();
-            this.LogError("Twinhan HID remote: failed to register window class, hr = 0x{0:x}", hr);
-            return;
+            // We need a window handle to receive messages from the driver.
+            windowHandle = CreateWindow(processHandle, className);
+            if (windowHandle == IntPtr.Zero)
+            {
+              return;
+            }
+
+            // Now register the window to start receiving key press events.
+            registrations = RegisterWindow(windowHandle);
+            if (registrations == null)
+            {
+              return;
+            }
+
+            this.LogDebug("Twinhan HID remote: remote control listener thread is running");
+            _remoteControlListenerThreadId = NativeMethods.GetCurrentThreadId();
+            _isRemoteControlInterfaceOpen = true;
+          }
+          finally
+          {
+            ((ManualResetEvent)eventParam).Set();
           }
 
-          // Create a window that won't show in the taskbar or alt+tab list etc. with size 0x0.
-          handle = NativeMethods.CreateWindowEx(NativeMethods.WindowStyleEx.WS_EX_TOOLWINDOW,
-                                                className, string.Empty, NativeMethods.WindowStyle.WS_POPUP,
-                                                0, 0, 0, 0, IntPtr.Zero, IntPtr.Zero, processHandle, IntPtr.Zero);
-          if (handle.Equals(IntPtr.Zero))
-          {
-            hr = Marshal.GetLastWin32Error();
-            this.LogError("Twinhan HID remote: failed to create receive window, hr = 0x{0:x}", hr);
-            return;
-          }
-
-          // Now register the window to start receiving key press events.
-          for (int i = 0; i < registrations.Length; i++)
-          {
-            registrations[i].hwndTarget = handle;
-          }
-          if (!NativeMethods.RegisterRawInputDevices(registrations, (uint)registrations.Length, (uint)Marshal.SizeOf(typeof(NativeMethods.RAWINPUTDEVICE))))
-          {
-            hr = Marshal.GetLastWin32Error();
-            this.LogError("Twinhan HID remote: failed to register for keypress events, hr = 0x{0:x}", hr);
-            return;
-          }
-
-          this.LogDebug("Twinhan HID remote: remote control listener thread is running");
-          _remoteControlListenerThreadId = NativeMethods.GetCurrentThreadId();
-          _isRemoteControlInterfaceOpen = true;
+          // This call will block and pump messages to our window procedure
+          // until we're asked to stop.
+          WindowMessagePump();
         }
         finally
         {
-          ((ManualResetEvent)eventParam).Set();
-        }
-
-        // This thread needs a message loop to pump messages to our window
-        // procedure.
-        while (true)
-        {
-          NativeMethods.MSG msg = new NativeMethods.MSG();
-          try
+          if (windowHandle != IntPtr.Zero)
           {
-            // This call will block until a message is received. It returns
-            // false (0) if the message is WM_QUIT.
-            int result = NativeMethods.GetMessage(ref msg, IntPtr.Zero, 0, 0);
-            if (result == 0)
+            if (registrations != null)
             {
-              // Unregister.
-              for (int i = 0; i < registrations.Length; i++)
-              {
-                registrations[i].dwFlags = NativeMethods.RawInputDeviceFlag.RIDEV_REMOVE;
-                registrations[i].hwndTarget = IntPtr.Zero;
-              }
-              if (!NativeMethods.RegisterRawInputDevices(registrations, (uint)registrations.Length, (uint)Marshal.SizeOf(typeof(NativeMethods.RAWINPUTDEVICE))))
-              {
-                hr = Marshal.GetLastWin32Error();
-                this.LogWarn("Twinhan HID remote: failed to unregister for keypress events, hr = 0x{0:x}", hr);
-              }
-              if (!NativeMethods.DestroyWindow(handle))
-              {
-                hr = Marshal.GetLastWin32Error();
-                this.LogWarn("Twinhan HID remote: failed to destroy receive window, hr = 0x{0:x}", hr);
-              }
-              else if (!NativeMethods.UnregisterClass(className, processHandle))
-              {
-                hr = Marshal.GetLastWin32Error();
-                this.LogWarn("Twinhan HID remote: failed to unregister listener window class, hr = 0x{0:x}", hr);
-              }
-              return;
+              UnregisterWindow(windowHandle, registrations);
             }
-            else if (result == -1)
-            {
-              hr = Marshal.GetLastWin32Error();
-              this.LogError("Twinhan HID remote: failed to get window message, hr = 0x{0:x}", hr);
-            }
-            else
-            {
-              NativeMethods.TranslateMessage(ref msg);
-              NativeMethods.DispatchMessage(ref msg);
-            }
-          }
-          catch (Exception ex)
-          {
-            this.LogError(ex, "Twinhan HID remote: remote control listener thread exception");
+            CleanUpWindow(processHandle, className, windowHandle);
           }
         }
       }
@@ -1778,6 +1703,115 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TwinhanHidRemote
       }
     }
 
+    private IntPtr CreateWindow(IntPtr processHandle, string className)
+    {
+      IntPtr windowHandle = IntPtr.Zero;
+
+      NativeMethods.WNDCLASS wndclass;
+      wndclass.style = 0;
+      wndclass.lpfnWndProc = RemoteControlListenerWndProc;
+      wndclass.cbClsExtra = 0;
+      wndclass.cbWndExtra = 0;
+      wndclass.hInstance = processHandle;
+      wndclass.hIcon = IntPtr.Zero;
+      wndclass.hCursor = IntPtr.Zero;
+      wndclass.hbrBackground = IntPtr.Zero;
+      wndclass.lpszMenuName = null;
+      wndclass.lpszClassName = className;
+
+      int atom = NativeMethods.RegisterClass(ref wndclass);
+      if (atom == 0)
+      {
+        this.LogError("Twinhan HID remote: failed to register window class, hr = 0x{0:x}", Marshal.GetLastWin32Error());
+        return windowHandle;
+      }
+
+      // Create a window that won't show in the taskbar or alt+tab list etc. with size 0x0.
+      windowHandle = NativeMethods.CreateWindowEx(NativeMethods.WindowStyleEx.WS_EX_TOOLWINDOW,
+                                            className, string.Empty, NativeMethods.WindowStyle.WS_POPUP,
+                                            0, 0, 0, 0, IntPtr.Zero, IntPtr.Zero, processHandle, IntPtr.Zero);
+      if (windowHandle == IntPtr.Zero)
+      {
+        this.LogError("Twinhan HID remote: failed to create receive window, hr = 0x{0:x}", Marshal.GetLastWin32Error());
+        if (!NativeMethods.UnregisterClass(className, processHandle))
+        {
+          this.LogWarn("Twinhan HID remote: failed to unregister listener window class, hr = 0x{0:x}", Marshal.GetLastWin32Error());
+        }
+      }
+      return windowHandle;
+    }
+
+    private NativeMethods.RAWINPUTDEVICE[] RegisterWindow(IntPtr windowHandle)
+    {
+      NativeMethods.RAWINPUTDEVICE[] registrations = GetRegistrations();
+      for (int i = 0; i < registrations.Length; i++)
+      {
+        registrations[i].hwndTarget = windowHandle;
+      }
+      if (!NativeMethods.RegisterRawInputDevices(registrations, (uint)registrations.Length, (uint)Marshal.SizeOf(typeof(NativeMethods.RAWINPUTDEVICE))))
+      {
+        this.LogError("Twinhan HID remote: failed to register for keypress events, hr = 0x{0:x}", Marshal.GetLastWin32Error());
+        return null;
+      }
+      return registrations;
+    }
+
+    private void UnregisterWindow(IntPtr windowHandle, NativeMethods.RAWINPUTDEVICE[] registrations)
+    {
+      for (int i = 0; i < registrations.Length; i++)
+      {
+        registrations[i].dwFlags = NativeMethods.RawInputDeviceFlag.RIDEV_REMOVE;
+        registrations[i].hwndTarget = IntPtr.Zero;
+      }
+      if (!NativeMethods.RegisterRawInputDevices(registrations, (uint)registrations.Length, (uint)Marshal.SizeOf(typeof(NativeMethods.RAWINPUTDEVICE))))
+      {
+        this.LogWarn("Twinhan HID remote: failed to unregister for keypress events, hr = 0x{0:x}", Marshal.GetLastWin32Error());
+      }
+    }
+
+    private void CleanUpWindow(IntPtr processHandle, string className, IntPtr windowHandle)
+    {
+      if (!NativeMethods.DestroyWindow(windowHandle))
+      {
+        this.LogWarn("Twinhan HID remote: failed to destroy receive window, hr = 0x{0:x}", Marshal.GetLastWin32Error());
+      }
+      if (!NativeMethods.UnregisterClass(className, processHandle))
+      {
+        this.LogWarn("Twinhan HID remote: failed to unregister listener window class, hr = 0x{0:x}", Marshal.GetLastWin32Error());
+      }
+    }
+
+    private void WindowMessagePump()
+    {
+      while (true)
+      {
+        NativeMethods.MSG msg = new NativeMethods.MSG();
+        try
+        {
+          // This call will block until a message is received. It returns
+          // false (0) if the message is WM_QUIT.
+          int result = NativeMethods.GetMessage(ref msg, IntPtr.Zero, 0, 0);
+          if (result == 0)
+          {
+            return;
+          }
+          else if (result == -1)
+          {
+            this.LogError("Twinhan HID remote: failed to get window message, hr = 0x{0:x}", Marshal.GetLastWin32Error());
+          }
+          else
+          {
+            NativeMethods.TranslateMessage(ref msg);
+            NativeMethods.DispatchMessage(ref msg);
+          }
+        }
+        catch (Exception ex)
+        {
+          this.LogError(ex, "Twinhan HID remote: remote control listener thread exception");
+        }
+      }
+    }
+
     private IntPtr RemoteControlListenerWndProc(IntPtr hWnd, NativeMethods.WindowsMessage msg, IntPtr wParam, IntPtr lParam)
     {
       if (msg != NativeMethods.WindowsMessage.WM_INPUT || lParam == null || lParam == IntPtr.Zero)   // usable key press event
@@ -1785,14 +1819,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TwinhanHidRemote
         return NativeMethods.DefWindowProc(hWnd, msg, wParam, lParam);
       }
 
-      int hr;
       uint dataSize = 0;
       uint headerSize = (uint)Marshal.SizeOf(typeof(NativeMethods.RAWINPUTHEADER));
       int result = NativeMethods.GetRawInputData(lParam, NativeMethods.RawInputDataCommand.RID_INPUT, IntPtr.Zero, ref dataSize, headerSize);
       if (result != 0)
       {
-        hr = Marshal.GetLastWin32Error();
-        this.LogError("Twinhan HID remote: failed to get raw input data size, result = {0}, hr = 0x{1:x}", result, hr);
+        this.LogError("Twinhan HID remote: failed to get raw input data size, result = {0}, hr = 0x{1:x}", result, Marshal.GetLastWin32Error());
         return NativeMethods.DefWindowProc(hWnd, msg, wParam, lParam);
       }
 
@@ -1802,8 +1834,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TwinhanHidRemote
         result = NativeMethods.GetRawInputData(lParam, NativeMethods.RawInputDataCommand.RID_INPUT, dataPtr, ref dataSize, headerSize);
         if (result <= 0)
         {
-          hr = Marshal.GetLastWin32Error();
-          this.LogError("Twinhan HID remote: failed to get raw input data, result = {0}, hr = 0x{1:x}, required size = {2}", result, hr, dataSize);
+          this.LogError("Twinhan HID remote: failed to get raw input data, result = {0}, hr = 0x{1:x}, required size = {2}", result, Marshal.GetLastWin32Error(), dataSize);
           return NativeMethods.DefWindowProc(hWnd, msg, wParam, lParam);
         }
 
