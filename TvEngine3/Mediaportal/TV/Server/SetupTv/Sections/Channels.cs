@@ -823,23 +823,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         return;
       }
 
-      bool isFixedGroupName = (
-                                group.GroupName == TvConstants.TvGroupNames.AllChannels ||
-                                group.GroupName == TvConstants.TvGroupNames.Analog ||
-                                group.GroupName == TvConstants.TvGroupNames.DVBC ||
-                                group.GroupName == TvConstants.TvGroupNames.DVBS ||
-                                group.GroupName == TvConstants.TvGroupNames.DVBT
-                              );
-
-      bool isGlobalChannelsGroup = (
-                                     group.GroupName == TvConstants.TvGroupNames.AllChannels
-                                   );
-
       renameGroupToolStripMenuItem.Tag = tabControl1.TabPages[targetIndex];
       deleteGroupToolStripMenuItem.Tag = renameGroupToolStripMenuItem.Tag;
 
-      renameGroupToolStripMenuItem.Enabled = !isFixedGroupName;
-      deleteGroupToolStripMenuItem.Enabled = !isGlobalChannelsGroup;
+      bool isFixedNameNotDeletable = (
+        (_mediaType == MediaTypeEnum.TV && TvConstants.TvGroupNames.AllChannels.Equals(group.GroupName)) ||
+        (_mediaType == MediaTypeEnum.Radio && TvConstants.RadioGroupNames.AllChannels.Equals(group.GroupName))
+      );
+      renameGroupToolStripMenuItem.Enabled = !isFixedNameNotDeletable;
+      deleteGroupToolStripMenuItem.Enabled = !isFixedNameNotDeletable;
 
       pt = tabControl1.PointToScreen(pt);
 
