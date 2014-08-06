@@ -599,7 +599,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         AnalogChannel analogChannel = channel as AnalogChannel;
         if (analogChannel != null)
         {
-          dbChannel.SortOrder = analogChannel.ChannelNumber;
           dbChannel.ChannelNumber = analogChannel.ChannelNumber;
         }
       }

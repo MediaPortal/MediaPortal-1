@@ -781,7 +781,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
           var tvGuidChannel = new GuideChannel
           {
             Channel = ChannelFactory.CreateChannel(MediaTypeEnum.TV, 0, DateTime.MinValue, false,
-                                  DateTime.MinValue, 0, true, "", GUILocalizeStrings.Get(10000))
+                                  DateTime.MinValue, true, "", GUILocalizeStrings.Get(10000))
           };
           for (int i = 0; i < 10; ++i)
           {

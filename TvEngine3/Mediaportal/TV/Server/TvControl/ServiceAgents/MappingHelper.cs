@@ -27,7 +27,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
                          //ChannelGroup = group,
                          IdChannel = channel.IdChannel,
                          IdGroup = @group.IdGroup,                         
-                         SortOrder = channel.SortOrder
+                         SortOrder = 10000
                        };
       channel.GroupMaps.Add(groupMap);
     }

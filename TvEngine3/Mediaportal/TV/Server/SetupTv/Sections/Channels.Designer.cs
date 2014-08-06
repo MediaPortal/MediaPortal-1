@@ -50,8 +50,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.txtFilterString = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
       this.label2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.mpGroupBox1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
-      this.mpButtonDown = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
-      this.mpButtonUp = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.mpButtonTestAvailable = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.mpButtonAdd = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.mpButtonEdit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
@@ -108,7 +106,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpListView1.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.mpListView1_AfterLabelEdit);
       this.mpListView1.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.mpListView1_ColumnClick);
       this.mpListView1.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.mpListView1_ItemChecked);
-      this.mpListView1.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.mpListView1_ItemDrag);
       this.mpListView1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.mpListView1_MouseDoubleClick);
       // 
       // hdrhekje
@@ -248,8 +245,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // mpGroupBox1
       // 
       this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.mpGroupBox1.Controls.Add(this.mpButtonDown);
-      this.mpGroupBox1.Controls.Add(this.mpButtonUp);
       this.mpGroupBox1.Controls.Add(this.mpButtonTestAvailable);
       this.mpGroupBox1.Controls.Add(this.mpButtonAdd);
       this.mpGroupBox1.Controls.Add(this.mpButtonEdit);
@@ -259,30 +254,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox1.Location = new System.Drawing.Point(9, 290);
       this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new System.Drawing.Size(234, 97);
+      this.mpGroupBox1.Size = new System.Drawing.Size(199, 97);
       this.mpGroupBox1.TabIndex = 25;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Channels";
-      // 
-      // mpButtonDown
-      // 
-      this.mpButtonDown.Image = global::Mediaportal.TV.Server.SetupTV.Properties.Resources.icon_down;
-      this.mpButtonDown.Location = new System.Drawing.Point(197, 42);
-      this.mpButtonDown.Name = "mpButtonDown";
-      this.mpButtonDown.Size = new System.Drawing.Size(30, 23);
-      this.mpButtonDown.TabIndex = 25;
-      this.mpButtonDown.UseVisualStyleBackColor = true;
-      this.mpButtonDown.Click += new System.EventHandler(this.mpButtonDown_Click);
-      // 
-      // mpButtonUp
-      // 
-      this.mpButtonUp.Image = global::Mediaportal.TV.Server.SetupTV.Properties.Resources.icon_up;
-      this.mpButtonUp.Location = new System.Drawing.Point(197, 16);
-      this.mpButtonUp.Name = "mpButtonUp";
-      this.mpButtonUp.Size = new System.Drawing.Size(30, 23);
-      this.mpButtonUp.TabIndex = 24;
-      this.mpButtonUp.UseVisualStyleBackColor = true;
-      this.mpButtonUp.Click += new System.EventHandler(this.mpButtonUp_Click);
       // 
       // mpButtonTestAvailable
       // 
@@ -351,7 +326,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpGroupBox3.Controls.Add(this.mpButtonDeleteEncrypted);
       this.mpGroupBox3.Controls.Add(this.mpButtonUncheckEncrypted);
       this.mpGroupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox3.Location = new System.Drawing.Point(249, 341);
+      this.mpGroupBox3.Location = new System.Drawing.Point(214, 341);
       this.mpGroupBox3.Name = "mpGroupBox3";
       this.mpGroupBox3.Size = new System.Drawing.Size(202, 46);
       this.mpGroupBox3.TabIndex = 24;
@@ -385,7 +360,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpGroupBox2.Controls.Add(this.mpButtonAddGroup);
       this.mpGroupBox2.Controls.Add(this.mpButtonRenameGroup);
       this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox2.Location = new System.Drawing.Point(249, 290);
+      this.mpGroupBox2.Location = new System.Drawing.Point(214, 290);
       this.mpGroupBox2.Name = "mpGroupBox2";
       this.mpGroupBox2.Size = new System.Drawing.Size(202, 46);
       this.mpGroupBox2.TabIndex = 23;
@@ -504,9 +479,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 	private MPButton mpButtonTestAvailable;
 	private MPButton mpButtonDelGroup;
 	private MPButton mpButtonAddGroup;
-	private MPButton mpButtonRenameGroup;
-	private MPButton mpButtonUp;
-  private MPButton mpButtonDown;
+  private MPButton mpButtonRenameGroup;
 	private MPLabel label2;
   private System.Windows.Forms.ColumnHeader hdrGroup;
   private System.Windows.Forms.ContextMenuStrip groupTabContextMenuStrip;

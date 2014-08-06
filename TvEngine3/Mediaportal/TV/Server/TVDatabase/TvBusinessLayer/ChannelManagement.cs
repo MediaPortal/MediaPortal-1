@@ -81,7 +81,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IChannelRepository channelRepository = new ChannelRepository())
       {
-        IQueryable<Channel> query = channelRepository.GetAll<Channel>().OrderBy(c => c.SortOrder);
+        IQueryable<Channel> query = channelRepository.GetAll<Channel>().OrderBy(c => c.DisplayName);
         query = channelRepository.IncludeAllRelations(query);
         IList<Channel> channels = channelRepository.LoadNavigationProperties(query);
         return channels;
@@ -92,7 +92,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IChannelRepository channelRepository = new ChannelRepository())
       {
-        IQueryable<Channel> query = channelRepository.GetQuery<Channel>(c => c.VisibleInGuide && c.MediaType == (int)mediaType).OrderBy(c => c.SortOrder).OrderBy(c => c.DisplayName);
+        IQueryable<Channel> query = channelRepository.GetQuery<Channel>(c => c.VisibleInGuide && c.MediaType == (int)mediaType).OrderBy(c => c.DisplayName);
         query = channelRepository.IncludeAllRelations(query);
         IList<Channel> channels = channelRepository.LoadNavigationProperties(query);
         return channels;
@@ -128,10 +128,9 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IChannelRepository channelRepository = new ChannelRepository())
       {
-        IQueryable<Channel> query = channelRepository.GetQuery<Channel>(c => c.MediaType == (int)mediaType).OrderBy(c => c.SortOrder);
+        IQueryable<Channel> query = channelRepository.GetQuery<Channel>(c => c.MediaType == (int)mediaType).OrderBy(c => c.DisplayName);
         query = channelRepository.IncludeAllRelations(query);
-        IList<Channel> channels = channelRepository.LoadNavigationProperties(query);
-        return channels;
+        return channelRepository.LoadNavigationProperties(query);
       }
     }
 
@@ -141,8 +140,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       {
         IQueryable<Channel> query = channelRepository.GetQuery<Channel>(c => c.DisplayName == channelName);
         query = channelRepository.IncludeAllRelations(query);
-        IList<Channel> channels = channelRepository.LoadNavigationProperties(query);
-        return channels;
+        return channelRepository.LoadNavigationProperties(query);
       }
     }
 
@@ -905,7 +903,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IChannelRepository channelRepository = new ChannelRepository())
       {
-        IQueryable<Channel> query = channelRepository.GetQuery<Channel>(c => c.MediaType == (int)mediaType).OrderBy(c => c.SortOrder);
+        IQueryable<Channel> query = channelRepository.GetQuery<Channel>(c => c.MediaType == (int)mediaType).OrderBy(c => c.DisplayName);
         query = channelRepository.IncludeAllRelations(query, includeRelations);
 
         IList<Channel> channels = channelRepository.LoadNavigationProperties(query, includeRelations);
@@ -918,7 +916,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IChannelRepository channelRepository = new ChannelRepository())
       {
-        IQueryable<Channel> query = channelRepository.GetAll<Channel>().OrderBy(c => c.SortOrder);
+        IQueryable<Channel> query = channelRepository.GetAll<Channel>().OrderBy(c => c.DisplayName);
         query = channelRepository.IncludeAllRelations(query, includeRelations);
         IList<Channel> channels = channelRepository.LoadNavigationProperties(query, includeRelations);
         // Log.Debug("ListAllChannels(ChannelIncludeRelationEnum) SQL = {0}", query.ToTraceString());
@@ -959,7 +957,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       using (IChannelRepository channelRepository = new ChannelRepository())
       {
         var query = channelRepository.GetAll<Channel>().Where(c => (c.MediaType == (int)MediaTypeEnum.TV || c.MediaType == (int)MediaTypeEnum.Radio) 
-          && c.GrabEpg && !c.TuningDetails.Any(t => t.ChannelType == 0 || t.ChannelType == 5)).OrderBy(c => c.SortOrder);
+          && c.GrabEpg).OrderBy(c => c.DisplayName);
         return channelRepository.IncludeAllRelations(query, includeRelations).ToList();
       }
     }

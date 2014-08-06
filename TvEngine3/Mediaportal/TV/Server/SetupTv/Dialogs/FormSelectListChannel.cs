@@ -77,9 +77,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         }
         else
         {
-          channels =
-            ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByMediaType(MediaTypeEnum.TV).OrderBy(c => c.SortOrder).
-              OrderBy(c => c.DisplayName).ToList();
+          channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByMediaType(MediaTypeEnum.TV);
         }                
 
         foreach (Channel t in channels)

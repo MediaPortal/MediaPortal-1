@@ -11,7 +11,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities.Factories
     }
       
     public static Channel CreateChannel (MediaTypeEnum mediaType, int timesWatched, DateTime totalTimeWatched, bool grabEpg,
-                   DateTime lastGrabTime, int sortOrder, bool visibleInGuide, string externalId,
+                   DateTime lastGrabTime, bool visibleInGuide, string externalId,
                    string displayName)
     {
       var channel = new Channel
@@ -21,7 +21,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities.Factories
                             TotalTimeWatched = totalTimeWatched,
                             GrabEpg = grabEpg,
                             LastGrabTime = lastGrabTime,
-                            SortOrder = sortOrder,
+                            SortOrder = 10000,
                             VisibleInGuide = visibleInGuide,
                             ExternalId = externalId,
                             DisplayName = displayName

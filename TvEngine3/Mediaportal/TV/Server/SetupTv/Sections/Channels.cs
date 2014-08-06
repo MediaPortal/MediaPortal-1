@@ -42,8 +42,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private MediaTypeEnum _mediaType = MediaTypeEnum.TV;
     private bool _ignoreItemCheckedEvent = false;
 
-    private readonly MPListViewStringColumnSorter lvwColumnSorter;
-    private readonly MPListViewStringColumnSorter lvwColumnSorter2;
+    private readonly MPListViewStringColumnSorter _lvwColumnSorter;
     private ChannelListViewHandler _lvChannelHandler;
 
     private bool _suppressRefresh = false;
@@ -60,12 +59,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       _mediaType = mediaType;
       InitializeComponent();
-      lvwColumnSorter = new MPListViewStringColumnSorter();
-      lvwColumnSorter.Order = SortOrder.None;
-      lvwColumnSorter2 = new MPListViewStringColumnSorter();
-      lvwColumnSorter2.Order = SortOrder.Descending;
-      lvwColumnSorter2.OrderType = MPListViewStringColumnSorter.OrderTypes.AsValue;
-      mpListView1.ListViewItemSorter = lvwColumnSorter;
+      _lvwColumnSorter = new MPListViewStringColumnSorter();
+      _lvwColumnSorter.Order = SortOrder.Ascending;
+      mpListView1.ListViewItemSorter = _lvwColumnSorter;
     }
 
     public MediaTypeEnum MediaType
@@ -317,7 +313,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         }
 
         dlg.Close();
-        ReOrder();
         mpListView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
       }
       finally
@@ -325,32 +320,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         mpListView1.EndUpdate();
         RefreshAll();
       }
-    }
-
-    private void ReOrder()
-    {
-      _ignoreItemCheckedEvent = true;
-      try
-      {
-        IList<Channel> channels = new List<Channel>();
-        for (int i = 0; i < mpListView1.Items.Count; ++i)
-        {
-          Channel channel = (Channel)mpListView1.Items[i].Tag;
-          if (channel.SortOrder != i)
-          {
-            channel.SortOrder = i;
-            channel.UnloadAllUnchangedRelationsForEntity();
-            channels.Add(channel);
-            channel.AcceptChanges();
-            mpListView1.Items[i].Tag = channel;
-          }
-        }
-        ServiceAgents.Instance.ChannelServiceAgent.SaveChannels(channels);
-      }
-      finally
-      {
-        _ignoreItemCheckedEvent = false;        
-      }      
     }
 
     private void ReOrderGroups()
@@ -409,7 +378,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           mpListView1.Items[indexes[0]].Text = channel.DisplayName;
           mpListView1.Items[indexes[0]].SubItems[5].Text = channel.TuningDetails.Count.ToString();
           mpListView1.Sort();
-          ReOrder();
           txtFilterString_TextChanged(null, null);
         }
         finally
@@ -423,23 +391,22 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void mpListView1_ColumnClick(object sender, ColumnClickEventArgs e)
     {
-      if (e.Column == lvwColumnSorter.SortColumn)
+      if (e.Column == _lvwColumnSorter.SortColumn)
       {
         // Reverse the current sort direction for this column.
-        lvwColumnSorter.Order = lvwColumnSorter.Order == SortOrder.Ascending
+        _lvwColumnSorter.Order = _lvwColumnSorter.Order == SortOrder.Ascending
                                   ? SortOrder.Descending
                                   : SortOrder.Ascending;
       }
       else
       {
         // Set the column number that is to be sorted; default to ascending.
-        lvwColumnSorter.SortColumn = e.Column;
-        lvwColumnSorter.Order = SortOrder.Ascending;
+        _lvwColumnSorter.SortColumn = e.Column;
+        _lvwColumnSorter.Order = SortOrder.Ascending;
       }
 
       // Perform the sort with these new sort options.
       mpListView1.Sort();
-      ReOrder();
     }
 
     private void mpButtonPreview_Click(object sender, EventArgs e)
@@ -451,14 +418,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       FormPreview previewWindow = new FormPreview();
       previewWindow.Channel = channel;
       previewWindow.ShowDialog(this);
-    }
-
-    private void mpListView1_ItemDrag(object sender, ItemDragEventArgs e)
-    {
-      if (e.Item is ListViewItem)
-      {
-        ReOrder();
-      }
     }
 
     private void mpListView1_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -492,7 +451,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         {
           mpListView1.Items.Add(_lvChannelHandler.CreateListViewItemForChannel(dlg.Channel, cards));
           mpListView1.Sort();
-          ReOrder();
         }
         finally
         {
@@ -556,7 +514,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       foreach (ListViewItem item in itemsToRemove)
         mpListView1.Items.Remove(item);
       dlg.Close();
-      ReOrder();
       ServiceAgents.Instance.ControllerServiceAgent.OnNewSchedule();
       mpListView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
     }
@@ -631,60 +588,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       dlg.Close();
       _isScanning = false;
       _abortScanning = false;
-    }
-
-    private void mpButtonUp_Click(object sender, EventArgs e)
-    {
-      mpListView1.BeginUpdate();
-      try
-      {
-        ListView.SelectedIndexCollection indexes = mpListView1.SelectedIndices;
-        if (indexes.Count == 0)
-          return;
-        for (int i = 0; i < indexes.Count; ++i)
-        {
-          int index = indexes[i];
-          if (index > 0)
-          {
-            ListViewItem item = mpListView1.Items[index];
-            mpListView1.Items.RemoveAt(index);
-            mpListView1.Items.Insert(index - 1, item);
-          }
-        }
-        ReOrder();
-      }
-      finally
-      {
-        mpListView1.EndUpdate();
-      }
-    }
-
-    private void mpButtonDown_Click(object sender, EventArgs e)
-    {
-      mpListView1.BeginUpdate();
-      try
-      {
-        ListView.SelectedIndexCollection indexes = mpListView1.SelectedIndices;
-        if (indexes.Count == 0)
-          return;
-        if (mpListView1.Items.Count < 2)
-          return;
-        for (int i = indexes.Count - 1; i >= 0; i--)
-        {
-          int index = indexes[i];
-          ListViewItem item = mpListView1.Items[index];
-          mpListView1.Items.RemoveAt(index);
-          if (index + 1 < mpListView1.Items.Count)
-            mpListView1.Items.Insert(index + 1, item);
-          else
-            mpListView1.Items.Add(item);
-        }
-        ReOrder();
-      }
-      finally
-      {
-        mpListView1.EndUpdate();
-      }
     }
 
     private void mpButtonAddGroup_Click(object sender, EventArgs e)

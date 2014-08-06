@@ -33,8 +33,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 
     public IQueryable<Channel> GetAllChannelsByGroupId(int groupId)
     {
-      IOrderedQueryable<Channel> channels = GetQuery<Channel>().Where(c => c.VisibleInGuide && c.GroupMaps.Count > 0 && c.GroupMaps.Any(gm => gm.ChannelGroup.IdGroup == groupId)).OrderBy(c => c.SortOrder);
-      return channels;
+      return GetQuery<Channel>().Where(c => c.VisibleInGuide && c.GroupMaps.Count > 0 && c.GroupMaps.Any(gm => gm.ChannelGroup.IdGroup == groupId)).OrderBy(c => c.GroupMaps.First(gm => gm.ChannelGroup.IdGroup == groupId).SortOrder);
     }
 
     public IQueryable<TuningDetail> IncludeAllRelations(IQueryable<TuningDetail> query)

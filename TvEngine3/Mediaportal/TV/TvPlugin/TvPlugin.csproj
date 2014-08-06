@@ -121,7 +121,6 @@
     <Compile Include="Teletext\TeletextPageRenderer.cs" />
     <Compile Include="Teletext\TvFullscreenTeletext.cs" />
     <Compile Include="Teletext\TvTeletextBase.cs" />
-    <Compile Include="TvChannelSettings.cs" />
     <Compile Include="TVConflictDialog.cs" />
     <Compile Include="TVConflicts.cs" />
     <Compile Include="TvCropManager.cs" />
