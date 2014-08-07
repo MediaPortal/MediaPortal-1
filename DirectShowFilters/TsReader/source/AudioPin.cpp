@@ -464,6 +464,10 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           m_pTsReaderFilter->GetMediaPosition(&RefClock) ;
           clock = (double)(RefClock-m_rtStart.m_time)/10000000.0 ;
           fTime = ((double)cRefTime.m_time/10000000.0) - clock ;
+          
+          //Add compensation time for external downstream audio delay
+          //to stop samples becoming 'late'
+          fTime += ((double)m_pTsReaderFilter->m_regExternalDelayComp/10000000.0);
 
           //Discard late samples at start of play,
           //and samples outside a sensible timing window during play 

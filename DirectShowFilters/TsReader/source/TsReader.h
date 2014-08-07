@@ -44,6 +44,7 @@
 #define FS_ADDON_LIM (1000*10000) //1 second in hns units (must not be zero)
 #define INITIAL_BUFF_DELAY 0      // ms units
 #define AUDIO_DELAY (0*10000)     //hns units - audio timestamp offset (delays audio relative to video)
+#define EXT_COMP_DELAY (0*10000)     //hns units - compensation for external (downstream) audio delays
 #define AV_READY_DELAY 200     // ms units - delay before asserting VFW_S_CANT_CUE
 #define PRESENT_DELAY (200*10000) // hns units - timestamp compensation offset
 #define AUDIO_READY_POINT (0.2f + ((float)PRESENT_DELAY/10000000.0f))    // in seconds
@@ -279,6 +280,7 @@ public:
   bool            m_bEnableBufferLogging;
   bool            m_bSubPinConnectAlways;
   REFERENCE_TIME  m_regAudioDelay;
+  REFERENCE_TIME  m_regExternalDelayComp;
 
   CLSID           GetCLSIDFromPin(IPin* pPin);
   HRESULT         GetSubInfoFromPin(IPin* pPin);

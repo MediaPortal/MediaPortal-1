@@ -377,6 +377,7 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
   m_bEnableBufferLogging = false;
   m_bSubPinConnectAlways = false;
   m_regAudioDelay = AUDIO_DELAY; 
+  m_regExternalDelayComp = EXT_COMP_DELAY; 
   if (ERROR_SUCCESS==RegCreateKeyEx(HKEY_CURRENT_USER, _T("Software\\Team MediaPortal\\TsReader"), 0, NULL, 
                                     REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &key, NULL))
   {
@@ -385,7 +386,7 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
     ReadRegistryKeyDword(key, disableVidSizeRebuildMPEG2, keyValue);
     if (keyValue)
     {
-      LogDebug("----- DisableVidSizeRebuildMPEG2 -----");
+      LogDebug("--- DisableVidSizeRebuildMPEG2 = yes");
       m_bDisableVidSizeRebuildMPEG2 = true;
     }
 
@@ -394,7 +395,7 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
     ReadRegistryKeyDword(key, disableVidSizeRebuildH264, keyValue);
     if (keyValue)
     {
-      LogDebug("----- DisableVidSizeRebuildH264 -----");
+      LogDebug("--- DisableVidSizeRebuildH264 = yes");
       m_bDisableVidSizeRebuildH264 = true;
     }
 
@@ -403,7 +404,7 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
     ReadRegistryKeyDword(key, disableAddPMT, keyValue);
     if (keyValue)
     {
-      LogDebug("----- DisableAddPMT -----");
+      LogDebug("--- DisableAddPMT = yes");
       m_bDisableAddPMT = true;
     }
 
@@ -412,7 +413,7 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
     ReadRegistryKeyDword(key, forceFFDShowSyncFix_RRK, keyValue);
     if (keyValue)
     {
-      LogDebug("----- ForceFFDShowSyncFix -----");
+      LogDebug("--- ForceFFDShowSyncFix = yes");
       m_bForceFFDShowSyncFix = true;
     }
     
@@ -421,7 +422,7 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
     ReadRegistryKeyDword(key, useFPSfromDTSPTS_RRK, keyValue);
     if (keyValue)
     {
-      LogDebug("----- UseFPSfromDTSPTS -----");
+      LogDebug("--- UseFPSfromDTSPTS = yes");
       m_bUseFPSfromDTSPTS = true;
     }
     else
@@ -448,7 +449,7 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
     ReadRegistryKeyDword(key, enableBufferLogging, keyValue);
     if (keyValue)
     {
-      LogDebug("----- EnableBufferLogging -----");
+      LogDebug("--- EnableBufferLogging = yes");
       m_bEnableBufferLogging = true;
     }
 
@@ -457,7 +458,7 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
     ReadRegistryKeyDword(key, subConnectAlways, keyValue);
     if (keyValue)
     {
-      LogDebug("----- SubPinConnectAlways -----");
+      LogDebug("--- SubPinConnectAlways = yes");
       m_bSubPinConnectAlways = true;
     }
 
@@ -475,20 +476,35 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
       LogDebug("--- Audio delay = %d ms (default value, allowed range is %d - %d)", (m_regAudioDelay/10000), 0, 500);
     }
 
+    keyValue = (DWORD)(m_regExternalDelayComp/10000);
+    LPCTSTR regExternalDelayComp_RRK = _T("ExternalDelayCompInMilliSeconds");
+    ReadRegistryKeyDword(key, regExternalDelayComp_RRK, keyValue);
+    if ((keyValue >= 0) && (keyValue <= 1000))
+    {
+      m_regExternalDelayComp = (REFERENCE_TIME)(keyValue*10000);
+      LogDebug("--- External delay compensation = %d ms", (m_regExternalDelayComp/10000));
+    }
+    else
+    {
+      m_regExternalDelayComp = EXT_COMP_DELAY;
+      LogDebug("--- External delay compensation = %d ms (default value, allowed range is %d - %d)", (m_regExternalDelayComp/10000), 0, 1000);
+    }
+
     RegCloseKey(key);
   }
+
   
   // Set default filtering mode (normal), if not overriden externally (see ITSReader::SetRelaxedMode)
   m_demultiplexer.m_DisableDiscontinuitiesFiltering = false;
   
   if(!DoNotAllowSlowMotionDuringZapping())
   {
-    LogDebug("Slow motion video allowed during zapping");
+    LogDebug("--- Slow motion video allowed during zapping = yes");
     m_EnableSlowMotionOnZapping = true;
   }
   else
   {
-    LogDebug("No slow motion video allowed during zapping");
+    LogDebug("--- Slow motion video allowed during zapping = no");
     m_EnableSlowMotionOnZapping = false;
   }
   
