@@ -62,16 +62,22 @@ namespace MediaPortal.GUI.Pictures
       private bool _recreateWithoutCheck = false;
       private Work work;
 
-      public MissingThumbCacher(string Filepath, bool CreateLargeThumbs, bool ReCreateThumbs)
+      public MissingThumbCacher(string Filepath, bool CreateLargeThumbs, bool ReCreateThumbs, bool Thread)
       {
         _filepath = Filepath;
         _createLarge = CreateLargeThumbs;
         _recreateWithoutCheck = ReCreateThumbs;
-        //_hideFileExtensions = HideExtensions;
 
-        work = new Work(new DoWorkHandler(this.PerformRequest));
-        work.ThreadPriority = ThreadPriority.Lowest;
-        GlobalServiceProvider.Get<IThreadPool>().Add(work, QueuePriority.Low);
+        if (Thread)
+        {
+          work = new Work(new DoWorkHandler(this.PerformRequest));
+          work.ThreadPriority = ThreadPriority.Lowest;
+          GlobalServiceProvider.Get<IThreadPool>().Add(work, QueuePriority.Low);
+        }
+        else
+        {
+          PerformRequest();
+        }
       }
 
       /// <summary>
@@ -96,6 +102,17 @@ namespace MediaPortal.GUI.Pictures
 
           foreach (GUIListItem item in itemlist)
           {
+            if (ThumbnailsThreadAbort)
+            {
+              return;
+            }
+
+            while (g_Player.Playing || g_Player.Starting)
+            {
+              Thread.Sleep(5000);
+              Log.Debug("RefreshThumbnailsThread: g_Player is Playing, waiting for the end.");
+            }
+
             if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
             {
               return;
@@ -136,34 +153,34 @@ namespace MediaPortal.GUI.Pictures
                     {
                       Thread.Sleep(5);
 
-                      if (autocreateLargeThumbs && !File.Exists(thumbnailImageL))
+                      if (autocreateLargeThumbs && (!File.Exists(thumbnailImageL) || recreateThumbs))
                       {
-                        thumbRet = Util.Picture.CreateThumbnail(item.Path, thumbnailImageL,
+                        thumbRet = Util.Picture.ReCreateThumbnail(item.Path, thumbnailImageL,
                                                                 (int) Thumbs.ThumbLargeResolution,
                                                                 (int) Thumbs.ThumbLargeResolution, iRotate,
                                                                 Thumbs.SpeedThumbsLarge,
-                                                                true, false);
+                                                                true, false, recreateThumbs);
                       }
-                      if (!File.Exists(thumbnailImage))
+                      if (!File.Exists(thumbnailImage) || recreateThumbs)
                       {
-                        thumbRet = Util.Picture.CreateThumbnail(item.Path, thumbnailImage, (int) Thumbs.ThumbResolution,
+                        thumbRet = Util.Picture.ReCreateThumbnail(item.Path, thumbnailImage, (int) Thumbs.ThumbResolution,
                                                                 (int) Thumbs.ThumbResolution, iRotate,
                                                                 Thumbs.SpeedThumbsSmall,
-                                                                false, false);
+                                                                false, false, recreateThumbs);
                       }
                     }
 
-                    if (thumbRet && autocreateLargeThumbs)
+                    if (thumbRet && (autocreateLargeThumbs || recreateThumbs))
                     {
                       item.ThumbnailImage = thumbnailImageL;
                       item.IconImage = thumbnailImage;
-                      Log.Debug("GUIPictures: Creation of missing large thumb successful for {0}", item.Path);
+                      Log.Debug("GUIPictures: Creation of large thumb successful for {0}", item.Path);
                     }
-                    else if (thumbRet)
+                    else if (thumbRet || recreateThumbs)
                     {
                       item.ThumbnailImage = thumbnailImage;
                       item.IconImage = thumbnailImage;
-                      Log.Debug("GUIPictures: Creation of missing thumb successful for {0}", item.Path);
+                      Log.Debug("GUIPictures: Creation of thumb successful for {0}", item.Path);
                     }
                   }
                 }
@@ -406,6 +423,9 @@ namespace MediaPortal.GUI.Pictures
     private ArrayList _protectedShares = new ArrayList();
     private string _currentPin = string.Empty;
     private ArrayList _currentProtectedShare = new ArrayList();
+    private Thread _refreshThumbnailsThread;
+    private GUIDialogProgress _progressDialogForRefreshThumbnails;
+    private static bool _refreshThumbnailsThreadAbort = false;
 
     #endregion
 
@@ -1020,8 +1040,15 @@ namespace MediaPortal.GUI.Pictures
       }
       else
       {
-        //dlg.AddLocalizedString(200046); //Generate Thumbnails
-        //dlg.AddLocalizedString(200047); //Recursive Generate Thumbnails
+        if (_refreshThumbnailsThread != null && _refreshThumbnailsThread.IsAlive)
+        {
+          dlg.AddLocalizedString(190000); //Abort thumbnail creation thread
+        }
+        else
+        {
+          dlg.AddLocalizedString(200047); //Recreate thumbnails (incl. subfolders)
+          dlg.AddLocalizedString(190001); //Create missing thumbnails (incl. subfolders)
+        }
         dlg.AddLocalizedString(200048); //Regenerate Thumbnails
       }
 
@@ -1125,22 +1152,28 @@ namespace MediaPortal.GUI.Pictures
           OnContentLock();
           break;
 
-        case 200046: // Generate Thumbnails
-          if (item.IsFolder)
+        case 190000: // Abort thumbnail creation thread
+          if (_refreshThumbnailsThread != null && _refreshThumbnailsThread.IsAlive)
           {
-            OnCreateAllThumbs(item.Path, false, false);
+            _refreshThumbnailsThreadAbort = true;
           }
           break;
-        case 200047: // Revursive Generate Thumbnails
+        case 190001: // Create missing thumbnails (incl. subfolders)
           if (item.IsFolder)
           {
-            OnCreateAllThumbs(item.Path, false, true);
+            OnCreateAllThumbs(item, false, true);
+          }
+          break;
+        case 200047: // Recreate all thumbnails (incl. subfolders)
+          if (item.IsFolder)
+          {
+            OnCreateAllThumbs(item, true, true);
           }
           break;
         case 200048: // Regenerate Thumbnails
           if (item.IsFolder)
           {
-            OnCreateAllThumbs(item.Path, true, true);
+            OnCreateAllThumbs(item, true, false);
           }
           break;
         case 831:
@@ -2212,12 +2245,99 @@ namespace MediaPortal.GUI.Pictures
       }
     }
 
-    private void CreateAllThumbs(string strDir, bool Regenerate, bool Recursive)
+    private void UpdateThumbnailsInFolder(GUIListItem item, bool Regenerate)
     {
-      // int Count = 0;
+      List<GUIListItem> itemlist = new List<GUIListItem>();
+
+      ListFilesForUpdateThumbnails(item, ref itemlist);
+      Log.Debug("UpdateThumbnailsInFolder: Folder count {0}, regenerate all thumbs {1}", itemlist.Count, Regenerate);
+
+      _progressDialogForRefreshThumbnails =
+       (GUIDialogProgress)GUIWindowManager.GetWindow(101); //(int)Window.WINDOW_DIALOG_PROGRESS
+      _progressDialogForRefreshThumbnails.Reset();
+      _progressDialogForRefreshThumbnails.SetHeading(GUILocalizeStrings.Get(200047));
+      _progressDialogForRefreshThumbnails.ShowProgressBar(true);
+      _progressDialogForRefreshThumbnails.SetLine(1, itemlist[0].Path.Replace("\\", "/"));
+      _progressDialogForRefreshThumbnails.SetLine(2, string.Empty);
+      _progressDialogForRefreshThumbnails.SetLine(3, "Folder count: " + itemlist.Count + "/0");
+      _progressDialogForRefreshThumbnails.StartModal(GUIWindowManager.ActiveWindow);
+
+
+      if (_refreshThumbnailsThread != null && _refreshThumbnailsThread.IsAlive)
+      {
+        _refreshThumbnailsThread.Abort();
+      }
+
+      _refreshThumbnailsThreadAbort = false;
+      _refreshThumbnailsThread = new Thread(() => RefreshThumbnailsThread(itemlist, Regenerate));
+      _refreshThumbnailsThread.Priority = ThreadPriority.Lowest;
+      _refreshThumbnailsThread.IsBackground = true;
+      _refreshThumbnailsThread.Name = "RefreshThumbnailsThread";
+      _refreshThumbnailsThread.Start();
+    }
+
+    private void RefreshThumbnailsThread(List<GUIListItem> itemlist, bool Regenerate)
+    {
+      try
+      {
+        for (int i = 0; i < itemlist.Count; i++)
+        {
+          if (_refreshThumbnailsThreadAbort)
+          {
+            Log.Info("RefreshThumbnailsThread: Aborted by the user.");
+            return;
+          }
+          int perc = (i * 100) / itemlist.Count;
+          _progressDialogForRefreshThumbnails.SetPercentage(perc);
+          _progressDialogForRefreshThumbnails.SetLine(1, itemlist[i].Path.Replace("\\", "/"));
+          _progressDialogForRefreshThumbnails.SetLine(3, "Folder count: " + itemlist.Count + "/" + i);
+          _progressDialogForRefreshThumbnails.Progress();
+
+          Thread.Sleep(50);
+
+          MissingThumbCacher ManualThumbBuilder = new MissingThumbCacher(itemlist[i].Path, _autocreateLargeThumbs, Regenerate, false);
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("RefreshThumbnailsThread: {0}", ex);
+      }
+      finally
+      {
+        _progressDialogForRefreshThumbnails.Close();
+      }
+      Log.Info("RefreshThumbnailsThread: Finished.");
+    }
+
+    private void ListFilesForUpdateThumbnails(GUIListItem item, ref List<GUIListItem> Itemist)
+    {
+      if (item != null)
+      {
+        Itemist.Add(item);
+
+        VirtualDirectory virtualDirectory = new VirtualDirectory();
+        virtualDirectory.SetExtensions(Util.Utils.VideoExtensions);
+        List<GUIListItem> inertItemlist = virtualDirectory.GetDirectoryUnProtectedExt(item.Path, true);
+        foreach (GUIListItem subItem in inertItemlist)
+        {
+          if (subItem.IsFolder && subItem.Label != "..")
+          {
+            ListFilesForUpdateThumbnails(subItem, ref Itemist);
+          }
+        }
+      }
+    }
+
+    private void CreateAllThumbs(GUIListItem item, bool Regenerate, bool Recursive)
+    {
       if (disp == Display.Files)
       {
-        MissingThumbCacher ManualThumbBuilder = new MissingThumbCacher(strDir, _autocreateLargeThumbs, Regenerate);
+        if (Recursive)
+        {
+          UpdateThumbnailsInFolder(item, Regenerate);
+          return;
+        }
+        MissingThumbCacher ManualThumbBuilder = new MissingThumbCacher(item.Path, _autocreateLargeThumbs, Regenerate, true);
       }
       else if (disp == Display.Date)
       {
@@ -2225,9 +2345,9 @@ namespace MediaPortal.GUI.Pictures
       }
     }
 
-    private void OnCreateAllThumbs(string strDir, bool Regenerate, bool Recursive)
+    private void OnCreateAllThumbs(GUIListItem item, bool Regenerate, bool Recursive)
     {
-      CreateAllThumbs(strDir, Regenerate, Recursive);
+      CreateAllThumbs(item, Regenerate, Recursive);
 
       GUITextureManager.CleanupThumbs();
       GUIWaitCursor.Hide();
@@ -2455,7 +2575,7 @@ namespace MediaPortal.GUI.Pictures
       {
         itemlist = _virtualDirectory.GetDirectoryExt(currentFolder);
         Filter(ref itemlist);
-        MissingThumbCacher ThumbWorker = new MissingThumbCacher(currentFolder, _autocreateLargeThumbs, false);
+        MissingThumbCacher ThumbWorker = new MissingThumbCacher(currentFolder, _autocreateLargeThumbs, false, true);
         // int itemIndex = 0;
         CountOfNonImageItems = 0;
         foreach (GUIListItem item in itemlist)
@@ -3049,6 +3169,11 @@ namespace MediaPortal.GUI.Pictures
     }
 
     #endregion
+
+    public static bool ThumbnailsThreadAbort
+    {
+      get { return _refreshThumbnailsThreadAbort; }
+    }
 
     public static bool IsPictureWindow(int windowId)
     {

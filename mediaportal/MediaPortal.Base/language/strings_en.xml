@@ -2032,6 +2032,8 @@
     <String id="109005">MiniDisplay - Setup - Keypad</String>
     <String id="109006">MiniDisplay - Setup - Remote Control</String>
     <String id="102019">TV notification</String>
+    <String id="190000">Abort thumbnail creation thread</String>
+    <String id="190001">Create missing thumbnails (incl. subfolders)</String>
     <String id="200000">Please select your EPG grabber. Note if your country is</String>
     <String id="200001">not listed then you will need to supply the EPG manually</String>
     <String id="200002">You can now map the EPG channels to your TV channels</String>
@@ -2080,7 +2082,7 @@
     <String id="200044">Invalid recordings</String>
     <String id="200045">Watched and Invalid Recordings</String>
     <String id="200046">Create thumbnails (this directory)</String>
-    <String id="200047">Create thumbnails (incl. subfolders)</String>
+    <String id="200047">Recreate all thumbnails (incl. subfolders)</String>
     <String id="200048">Re-create all thumbnails</String>
     <String id="200049">Only watched recording for this show</String>
     <String id="200050">This will delete your recordings from hard drive</String>
