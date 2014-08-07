@@ -64,7 +64,6 @@ namespace TvEngine.PowerScheduler.Handlers
 
             if (_isActiveHost)
             {
-              _isActiveHost = false;
               return _useAwayMode ? StandbyMode.AwayModeRequested : StandbyMode.StandbyPrevented;
             }
             else
@@ -77,14 +76,18 @@ namespace TvEngine.PowerScheduler.Handlers
           if (_enabled && !_pingRun)
           {
             string hosts = _tvbLayer.GetSetting("PowerSchedulerPingMonitorHosts", "").Value;
+            bool lastActiveHostState = _isActiveHost;
 
             if (string.IsNullOrEmpty(hosts))
             {
               Log.Debug("PS: PingMonitor: No Hosts in List");
+              _isActiveHost = false;
             }
             else
             {
               _pingRun = true;
+              _isActiveHost = false;
+
               foreach (string hostName in hosts.Split(";".ToCharArray()))
               {
                 try
@@ -96,7 +99,13 @@ namespace TvEngine.PowerScheduler.Handlers
                 catch (Exception) {}
               }
             }
+
+            if (lastActiveHostState)
+            {
+              return _useAwayMode ? StandbyMode.AwayModeRequested : StandbyMode.StandbyPrevented;
+            }
           }
+
           return StandbyMode.StandbyAllowed;
         }
       }
