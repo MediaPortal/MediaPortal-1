@@ -52,6 +52,7 @@ namespace MediaPortal.Music.Database
     private static DateTime _lastImport;
     private static DateTime _currentDate = DateTime.Now;
     private static int _dateAddedValue;
+    private bool _dbHealt = false;
 
     #endregion
 
@@ -225,6 +226,8 @@ namespace MediaPortal.Music.Database
 
         // Get the DB handle or create it if necessary
         MusicDbClient = DbConnection;
+
+        _dbHealt = DatabaseUtility.IntegrityCheck(MusicDbClient);
       }
 
       catch (Exception ex)
@@ -384,6 +387,14 @@ namespace MediaPortal.Music.Database
     }
 
     #endregion
+
+    public bool DbHealt
+    {
+      get
+      {
+        return _dbHealt;
+      }
+    }
 
     #region Transactions
 

@@ -2032,6 +2032,8 @@
     <String id="109005">MiniDisplay - Setup - Keypad</String>
     <String id="109006">MiniDisplay - Setup - Remote Control</String>
     <String id="102019">TV notification</String>
+    <String id="190010">Your {0} database is corrupt.</String>
+    <String id="190011">Folder</String>
     <String id="200000">Please select your EPG grabber. Note if your country is</String>
     <String id="200001">not listed then you will need to supply the EPG manually</String>
     <String id="200002">You can now map the EPG channels to your TV channels</String>

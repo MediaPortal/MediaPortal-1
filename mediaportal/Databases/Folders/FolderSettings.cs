@@ -100,5 +100,13 @@ namespace MediaPortal.Database
         return "";
       }
     }
+
+    public static bool DbHealt
+    {
+      get
+      {
+        return _database.DbHealt;
+      }
+    }
   }
 }

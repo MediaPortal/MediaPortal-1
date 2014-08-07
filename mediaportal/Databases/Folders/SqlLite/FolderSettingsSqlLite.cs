@@ -36,6 +36,7 @@ namespace Databases.Folders
   public class FolderSettingsSqlLite : IFolderSettings, IDisposable
   {
     public SQLiteClient m_db = null;
+    private bool _dbHealt = false;
 
     public FolderSettingsSqlLite()
     {
@@ -44,6 +45,8 @@ namespace Databases.Folders
         // Open database
         Log.Info("open folderdatabase");
         m_db = new SQLiteClient(Config.GetFile(Config.Dir.Database, "FolderDatabase3.db3"));
+
+        _dbHealt = DatabaseUtility.IntegrityCheck(m_db);
 
         DatabaseUtility.SetPragmas(m_db);
         DatabaseUtility.AddTable(m_db, "tblPath", "CREATE TABLE tblPath ( idPath integer primary key, strPath text)");
@@ -370,6 +373,14 @@ namespace Databases.Folders
       catch (Exception ex)
       {
         Log.Error(ex);
+      }
+    }
+
+    public bool DbHealt
+    {
+      get
+      {
+        return _dbHealt;
       }
     }
 

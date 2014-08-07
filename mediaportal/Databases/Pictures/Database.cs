@@ -101,6 +101,14 @@ namespace MediaPortal.Picture.Database
       return _database.CountPicsByDate(Date);
     }
 
+    public static bool DbHealt
+    {
+      get
+      {
+        return _database.DbHealt;
+      }
+    }
+
     public static string DatabaseName
     {
       get

@@ -471,6 +471,23 @@ namespace MediaPortal.GUI.Video
     {
       base.OnPageLoad();
 
+      if (!VideoDatabase.DbHealt)
+      {
+        GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+        pDlgOK.SetHeading(315);
+        pDlgOK.SetLine(1, string.Empty);
+        pDlgOK.SetLine(2, GUILocalizeStrings.Get(190010, new object[] { GUILocalizeStrings.Get(3) }));
+        pDlgOK.DoModal(GUIWindowManager.ActiveWindow); ;
+      }
+      if (!FolderSettings.DbHealt)
+      {
+        GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+        pDlgOK.SetHeading(315);
+        pDlgOK.SetLine(1, string.Empty);
+        pDlgOK.SetLine(2, GUILocalizeStrings.Get(190010, new object[] { GUILocalizeStrings.Get(190011) }));
+        pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
+      }
+
       base.LoadSettings();
       
       // This can't be in LoadSettings beacuse settings are loaded on MP start and it will disable SortTitle setting always
