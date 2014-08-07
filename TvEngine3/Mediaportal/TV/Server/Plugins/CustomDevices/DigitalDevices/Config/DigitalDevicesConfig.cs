@@ -212,8 +212,17 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices.Config
         ICollection<DigitalDevicesCiSlotConfig> settings = new List<DigitalDevicesCiSlotConfig>();
         foreach (CiContext context in _ciContexts)
         {
-          context.Config.DecryptLimit = (int)context.DecryptLimitControl.Value;
-          context.Config.Providers = new HashSet<string>(Regex.Split(context.ProviderListControl.Text.Trim(), @"\s*,\s*"));
+          if (context.Config.DecryptLimit != context.DecryptLimitControl.Value)
+          {
+            this.LogInfo("Digital Devices config: decrypt limit for slot {0} changed from {1} to {2}", context.Config.DeviceName, context.Config.DecryptLimit, context.DecryptLimitControl.Value);
+            context.Config.DecryptLimit = (int)context.DecryptLimitControl.Value;
+          }
+          HashSet<string> providers = new HashSet<string>(Regex.Split(context.ProviderListControl.Text.Trim(), @"\s*,\s*"));
+          if (context.Config.Providers.SetEquals(providers))
+          {
+            this.LogInfo("Digital Devices config: providers for slot {0} changed from [{1}] to [{2}]", context.Config.DeviceName, string.Join(", ", context.Config.Providers), string.Join(", ", providers));
+            context.Config.Providers = providers;
+          }
 
           context.Debug();
           settings.Add(context.Config);
@@ -227,14 +236,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices.Config
 
     public override void OnSectionActivated()
     {
-      this.LogDebug("Digital Devices config: activated");
+      this.LogDebug("Digital Devices config: activating");
       UpdateUserInterface();
       base.OnSectionActivated();
     }
 
     public override void OnSectionDeActivated()
     {
-      this.LogDebug("Digital Devices config: deactivated");
+      this.LogDebug("Digital Devices config: deactivating");
       SaveSettings();
       base.OnSectionDeActivated();
     }

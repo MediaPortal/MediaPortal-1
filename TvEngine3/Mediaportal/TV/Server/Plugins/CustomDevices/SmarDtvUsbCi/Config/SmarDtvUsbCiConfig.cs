@@ -118,7 +118,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi.Config
         ProductContext context = _productContexts[i];
 
         // Groupbox wrapper for each CI product.
-        GroupBox gb = new GroupBox();
+        MPGroupBox gb = new MPGroupBox();
         gb.SuspendLayout();
         gb.Location = new Point(3, 3 + (i * (groupHeight + groupPadding)));
         gb.Name = "groupBox" + i;
@@ -236,14 +236,16 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi.Config
       this.LogDebug("SmarDTV USB CI config: saving settings");
       foreach (ProductContext context in _productContexts)
       {
+        string linkedTuner = string.Empty;
         Card selectedTuner = (Card)context.TunerSelectionControl.SelectedItem;
         if (context.TunerSelectionControl.Enabled && selectedTuner != null)
         {
-          context.LinkedTunerExternalId = selectedTuner.DevicePath;
+          linkedTuner = selectedTuner.DevicePath;
         }
-        else
+        if (string.Equals(linkedTuner, context.LinkedTunerExternalId))
         {
-          context.LinkedTunerExternalId = string.Empty;
+          this.LogInfo("SmarDTV USB CI config: linked tuner for product {0} changed from {1} to {2}", context.Name, context.LinkedTunerExternalId, linkedTuner);
+          context.LinkedTunerExternalId = linkedTuner;
         }
         context.Debug();
         ServiceAgents.Instance.PluginService<ISmarDtvUsbCiConfigService>().LinkTunerToProduct(context.Name, context.LinkedTunerExternalId);
@@ -254,14 +256,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi.Config
 
     public override void OnSectionActivated()
     {
-      this.LogDebug("SmarDTV USB CI config: activated");
+      this.LogDebug("SmarDTV USB CI config: activating");
       UpdateUserInterface();
       base.OnSectionActivated();
     }
 
     public override void OnSectionDeActivated()
     {
-      this.LogDebug("SmarDTV USB CI config: deactivated");
+      this.LogDebug("SmarDTV USB CI config: deactivating");
       SaveSettings();
       base.OnSectionDeActivated();
     }
