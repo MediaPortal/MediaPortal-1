@@ -123,6 +123,8 @@ namespace MediaPortal.GUI.Video
     public static int _getMediaInfoThreadNumber = 0;
     public static Thread _getMediaInfoThread;
     private static bool _getMediaInfoThreadAbort = false;
+    private Thread _refreshMediaInfoThread;
+    private static bool _refreshMediaInfoThreadAbort = false;
     private static bool _askBeforePlayingDVDImage;
     private static VirtualDirectory _virtualDirectory;
     private static string _currentFolder = string.Empty;
@@ -200,6 +202,7 @@ namespace MediaPortal.GUI.Video
     private static DateTime _prevWolTime;
     private static int _wolTimeout;
     private static int _wolResendTime;
+    private GUIDialogProgress _progressDialogForUpdateMediaInfo;
 
     #endregion
 
@@ -1348,6 +1351,14 @@ namespace MediaPortal.GUI.Video
       if (item.IsFolder && item.Label != "..")
       {
         dlg.AddLocalizedString(1995); // Create 4x4 folder.jpg
+        if (_refreshMediaInfoThread != null && _refreshMediaInfoThread.IsAlive)
+        {
+          dlg.AddLocalizedString(2161); // Abort Update MediaInfo thread in the folder
+        }
+        else
+        {
+          dlg.AddLocalizedString(2160); // Update MediaInfo in the folder
+        }
       }
 
       dlg.DoModal(GetID);
@@ -1643,6 +1654,17 @@ namespace MediaPortal.GUI.Video
           break;
         case 1264: // Get media info (refresh mediainfo and duration)
           RefreshMediaInfo(item);
+          break;
+
+        case 2160: // Update mediainfo in all files in the folder
+          UpdateMediaInfoInFolder(item);
+          break;
+
+        case 2161: // Abort update mediainfo thread in all files in the folder
+          if (_refreshMediaInfoThread.IsAlive)
+          {
+            _refreshMediaInfoThreadAbort = true;
+          }
           break;
       }
     }
@@ -2822,6 +2844,11 @@ namespace MediaPortal.GUI.Video
 
     private void RefreshMediaInfo(GUIListItem item)
     {
+      if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
+      {
+        return;
+      }
+      
       if (item != null)
       {
         string file = item.Path;
@@ -3383,6 +3410,101 @@ namespace MediaPortal.GUI.Video
         Thread.Sleep(100);
       }
       Log.Debug("GetMediaInfoThread: Finished.");
+    }
+
+    private void UpdateMediaInfoInFolder(GUIListItem item)
+    {
+      List<GUIListItem> itemlist = new List<GUIListItem>();
+
+      ListFilesForUpdateMediaInfo(item, ref itemlist);
+      Log.Debug("UpdateMediaInfoInFolder: File count {0}", itemlist.Count);
+
+      _progressDialogForUpdateMediaInfo =
+       (GUIDialogProgress)GUIWindowManager.GetWindow(101); //(int)Window.WINDOW_DIALOG_PROGRESS
+      _progressDialogForUpdateMediaInfo.Reset();
+      _progressDialogForUpdateMediaInfo.SetHeading(GUILocalizeStrings.Get(2160));
+      _progressDialogForUpdateMediaInfo.ShowProgressBar(true);
+      _progressDialogForUpdateMediaInfo.SetLine(1, item.Path.Replace("\\", "/"));
+      _progressDialogForUpdateMediaInfo.SetLine(2, string.Empty);
+      _progressDialogForUpdateMediaInfo.SetLine(3, "Movie count: " + itemlist.Count + "/0");
+      _progressDialogForUpdateMediaInfo.StartModal(GUIWindowManager.ActiveWindow);
+
+      if (_refreshMediaInfoThread != null && _refreshMediaInfoThread.IsAlive)
+      {
+        _refreshMediaInfoThread.Abort();
+      }
+
+      _refreshMediaInfoThreadAbort = false;
+      _refreshMediaInfoThread = new Thread(RefreshMediaInfoThread);
+      _refreshMediaInfoThread.Priority = ThreadPriority.Lowest;
+      _refreshMediaInfoThread.IsBackground = true;
+      _refreshMediaInfoThread.Name = "RefreshMediaInfoThread";
+      _refreshMediaInfoThread.Start(itemlist);
+    }
+
+    private void RefreshMediaInfoThread(object o)
+    {
+      List<GUIListItem> itemlist = (List<GUIListItem>)o;
+      try
+      {
+        for (int i = 0; i < itemlist.Count; i++)
+        {
+          if (_refreshMediaInfoThreadAbort)
+          {
+            Log.Info("RefreshMediaInfoThread: Aborted by the user.");
+            return;
+          }
+
+          int perc = (i * 100) / itemlist.Count;
+          _progressDialogForUpdateMediaInfo.SetPercentage(perc);
+          _progressDialogForUpdateMediaInfo.SetLine(1, itemlist[i].Path.Replace("\\", "/"));
+          _progressDialogForUpdateMediaInfo.SetLine(3, "Movie count: " + itemlist.Count + "/" + i);
+          _progressDialogForUpdateMediaInfo.Progress();
+
+          RefreshMediaInfo(itemlist[i]);
+          Thread.Sleep(100);
+
+          while (g_Player.Playing || g_Player.Starting)
+          {
+            Thread.Sleep(5000);
+            Log.Debug("RefreshMediaInfoThread: g_Player is Playing, waiting for the end.");
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("RefreshMediaInfoThread: {0}", ex);
+      }
+      finally
+      {
+        _progressDialogForUpdateMediaInfo.Close();
+      }
+      Log.Info("RefreshMediaInfoThread: Finished.");
+    }
+
+    private void ListFilesForUpdateMediaInfo(GUIListItem item, ref List<GUIListItem> itemlist)
+    {
+      if (item != null)
+      {
+        // Process the list of files found in the directory.
+        VirtualDirectory virtualDirectory = new VirtualDirectory();
+        virtualDirectory.SetExtensions(Util.Utils.VideoExtensions);
+        List<GUIListItem> inertItemlist = virtualDirectory.GetDirectoryUnProtectedExt(item.Path, true);
+        foreach (GUIListItem subItem in inertItemlist)
+        {
+          if (!subItem.IsFolder)
+          {
+            itemlist.Add(subItem);
+          }
+          else
+          {
+            if (subItem.Label != "..")
+            {
+              ListFilesForUpdateMediaInfo(subItem, ref itemlist);
+            }
+          }
+        }
+      }
     }
 
     private void LoadFolderSettings(string folderName)
