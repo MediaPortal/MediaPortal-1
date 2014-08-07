@@ -97,6 +97,7 @@ copy /Y "$(TargetPath)" "$(SolutionDir)\MPIPTVSource\bin\Release\$(TargetFileNam
   <ItemGroup>
     <ClInclude Include="Collection.h" />
     <ClInclude Include="Crc32.h" />
+    <ClInclude Include="FilterSettingsManager.h" />
     <ClInclude Include="IMPIPTVConnectInfo.h" />
     <ClInclude Include="LinearBuffer.h" />
     <ClInclude Include="Logger.h" />
@@ -127,6 +128,7 @@ copy /Y "$(TargetPath)" "$(SolutionDir)\MPIPTVSource\bin\Release\$(TargetFileNam
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="FilterSettingsManager.cpp" />
     <ClCompile Include="LinearBuffer.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="Memory.cpp" />

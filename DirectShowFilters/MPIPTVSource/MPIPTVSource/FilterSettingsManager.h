@@ -29,22 +29,22 @@
 
 EXTERN_C IMAGE_DOS_HEADER __ImageBase;
 
-#define FILTERSETTINGSMANAGER_INI_FILE_NAME L"filterConfig.ini"
+#define FILTERSETTINGSMANAGER_INI_FILE_NAME "filterConfig.ini"
 
 class CFilterSettingsManager
 {
 	public:
-		static wchar_t* GetLogPath();
-		static wchar_t* GetDllSearchPath();
-		static wchar_t* GetConfigPath();
+		static TCHAR* GetLogPath();
+		static TCHAR* GetDllSearchPath();
+		static TCHAR* GetConfigPath();
 	private:
-		static wchar_t logPath[MAX_PATH];
-		static wchar_t dllSearchPath[MAX_PATH];
-		static wchar_t configPath[MAX_PATH];
+		static TCHAR logPath[MAX_PATH];
+		static TCHAR dllSearchPath[MAX_PATH];
+		static TCHAR configPath[MAX_PATH];
 
-		static bool StringReplace(std::wstring& str, const std::wstring& from, const std::wstring& to);
-		static void ReplaceSpecialFolders(std::wstring& str);
-		static wchar_t* GetProgramDataFolderPath();
-		static wchar_t* GetFilterLocation();
-		static wchar_t* GetIniFilePath();
+		static bool StringReplace(std::string& str, const std::string& from, const std::string& to);
+		static void ReplaceSpecialFolders(std::string& str);
+		static TCHAR* GetProgramDataFolderPath();
+		static TCHAR* GetFilterLocation();
+		static TCHAR* GetIniFilePath();
 };

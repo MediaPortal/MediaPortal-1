@@ -30,8 +30,10 @@
 #include "TsWriter.h"
 #include "..\..\shared\tsheader.h"
 #include "..\..\shared\DebugSettings.h"
+#include "..\..\shared\FilterSettingsmanager.cpp"
 
 static wchar_t logFile[MAX_PATH];
+static wchar_t logFilePath[MAX_PATH];
 static WORD logFileParsed = -1;
 
 void GetLogFile(wchar_t *pLog)
@@ -40,9 +42,7 @@ void GetLogFile(wchar_t *pLog)
   GetLocalTime(&systemTime);
   if(logFileParsed != systemTime.wDay)
   {
-    wchar_t folder[MAX_PATH];
-    ::SHGetSpecialFolderPathW(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
-    swprintf_s(logFile,L"%s\\Team MediaPortal\\MediaPortal TV Server\\log\\TsWriter-%04.4d-%02.2d-%02.2d.Log",folder, systemTime.wYear, systemTime.wMonth, systemTime.wDay);
+		swprintf_s(logFile, L"%s\\TsWriter-%04.4d-%02.2d-%02.2d.Log", logFilePath, systemTime.wYear, systemTime.wMonth, systemTime.wDay);
     logFileParsed=systemTime.wDay; // rec
   }
   wcscpy(pLog, &logFile[0]);
@@ -359,7 +359,10 @@ void CMpTsFilterPin::AssignRawPaketWriter(FileWriter *rawPaketWriter)
 CMpTs::CMpTs(LPUNKNOWN pUnk, HRESULT *phr) 
 :CUnknown(NAME("CMpTs"), pUnk),m_pFilter(NULL),m_pPin(NULL)
 {
-  m_id=0;
+	// set default log path
+	swprintf_s(logFilePath, CFilterSettingsManager::GetLogPath());
+	
+	m_id=0;
 
   LogDebug("CMpTs::ctor()");
   LogDebug("--------------- BUG-3782 fix v2 -------------------");
