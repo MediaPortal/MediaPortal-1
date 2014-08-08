@@ -19,7 +19,7 @@
 #endregion
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace Mediaportal.TV.Server.SetupControls
@@ -27,15 +27,7 @@ namespace Mediaportal.TV.Server.SetupControls
   public partial class SettingsForm : MPForm
   {
     protected SectionSettings _previousSection;
-    protected static Hashtable settingSections = new Hashtable();
-
-    /// <summary>
-    /// Hashtable where we store each added tree node/section for faster access
-    /// </summary>
-    public static Hashtable SettingSections
-    {
-      get { return settingSections; }
-    }
+    protected static IDictionary<string, SectionTreeNode> _sections = new Dictionary<string, SectionTreeNode>(100);
 
     public SettingsForm(bool isRestrictedMode)
     {
@@ -51,34 +43,19 @@ namespace Mediaportal.TV.Server.SetupControls
 
     public virtual void AddChildSection(SectionSettings parentSection, SectionSettings section)
     {
-      //
-      // Make sure this section doesn't already exist
-      //
-
-      //
-      // Add section to tree
-      //
-      SectionTreeNode treeNode = new SectionTreeNode(section);
-
+      SectionTreeNode node = new SectionTreeNode(section);
       if (parentSection == null)
       {
-        //
-        // Add to the root
-        //
-        sectionTree.Nodes.Add(treeNode);
+        // Add to the root.
+        sectionTree.Nodes.Add(node);
       }
       else
       {
-        //
-        // Add to the parent node
-        //
-        SectionTreeNode parentTreeNode = (SectionTreeNode)settingSections[parentSection.Text];
-        parentTreeNode.Nodes.Add(treeNode);
+        // Add to the parent node.
+        _sections[parentSection.Text].Nodes.Add(node);
       }
 
-      settingSections.Add(section.Text, treeNode);
-
-      //treeNode.EnsureVisible();
+      _sections.Add(section.Text, node);
     }
 
     public virtual void sectionTree_BeforeSelect(object sender, TreeViewCancelEventArgs e)
@@ -140,13 +117,13 @@ namespace Mediaportal.TV.Server.SetupControls
    
     private void btnRestrictedMode_Click(object sender, EventArgs e)
     {
-      MessageBox.Show("In order for SetupTV to interact with the TV Service when running SetupTV in a multiseat environment a few things are required...\n\n" +
+      MessageBox.Show("There are a few requirements that must be met in order for SetupTV to interact with the TV service when running in a multi-seat environment.\n\n" +
         "Interacting with a remote windows service in a workgroup environment (not joined in a domain)\n" +
         "requires that the user is logged on the machine hosting the TV service using an administrative user account that has a password.\n" +
-        "Create an administrator user account on the TV Service host and make sure you match both the username and password.\n\n" +
+        "Create an administrator user account on the TV service host and make sure you match both the username and password.\n\n" +
         "If these prerequisite cannot be met then the SetupTV application will run in a so called restricted mode.\n" +
-        "In this mode you will be unable to restart/stop the tvservice."
-        , "What is restricted mode ?", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        "In this mode you will be unable to restart/stop the TV service."
+        , "What is restricted mode?", MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
   }
 }

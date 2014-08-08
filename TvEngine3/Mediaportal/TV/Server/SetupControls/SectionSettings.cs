@@ -37,9 +37,9 @@ namespace Mediaportal.TV.Server.SetupControls
       InitializeComponent();
     }
 
-    public SectionSettings(string text)
+    public SectionSettings(string name)
     {
-      Init(text);
+      Init(name);
     }
 
     public SectionSettings(string name, ServerConfigurationChangedEventHandler handler)
@@ -86,45 +86,6 @@ namespace Mediaportal.TV.Server.SetupControls
     {
       return null;
     }
-
-    public static SectionSettings GetSection(string name)
-    {
-      SectionSettings sectionSettings = null;
-      SectionTreeNode sectionTreeNode = SettingsForm.SettingSections[name] as SectionTreeNode;
-
-      if (sectionTreeNode != null)
-      {
-        sectionSettings = sectionTreeNode.Section;
-      }
-      else
-      {
-        //
-        // Failed to locate the specified section, loop through and try to match
-        // a section against the type name instead, as this is the way the wizard names
-        // its sections.
-        //
-        IDictionaryEnumerator enumerator = SettingsForm.SettingSections.GetEnumerator();
-
-        while (enumerator.MoveNext())
-        {
-          SectionTreeNode treeNode = enumerator.Value as SectionTreeNode;
-
-          if (treeNode != null)
-          {
-            Type sectionType = treeNode.Section.GetType();
-
-            if (sectionType.Name.Equals(name))
-            {
-              sectionSettings = treeNode.Section;
-              break;
-            }
-          }
-        }
-      }
-
-      return sectionSettings;
-    }
-
 
     public virtual void OnSectionActivated() {}
 

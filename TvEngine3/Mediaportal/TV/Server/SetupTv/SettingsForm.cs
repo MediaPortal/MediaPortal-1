@@ -33,6 +33,7 @@ using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils.ExtensionMethods;
 
 namespace Mediaportal.TV.Server.SetupTV
 {
@@ -41,17 +42,14 @@ namespace Mediaportal.TV.Server.SetupTV
   /// </summary>
   public class SetupTvSettingsForm : SettingsForm
   {
-
     private readonly PluginLoaderSetupTv _pluginLoader = new PluginLoaderSetupTv();
     private Sections.Plugins pluginsRoot;
-    private Servers servers;
-    private TvCards cardPage;
+    private TvCards _sectionTuners;
     private bool showAdvancedSettings;
 
     public SetupTvSettingsForm()
       : this(false)
     {
-      
     }
 
     public SetupTvSettingsForm(bool ShowAdvancedSettings)
@@ -80,29 +78,25 @@ namespace Mediaportal.TV.Server.SetupTV
       //
       // Build options tree
       //    
-
+      IList<Card> cards = null;
       try
       {
-        ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
+        cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
       }
       catch (Exception ex)
       {
-        MessageBox.Show("Failed to open WCF connection to server");
-        this.LogError("Unable to get list of servers");
-        this.LogError(ex);
+        MessageBox.Show(this, "Failed to connect to TV Server.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        this.LogError(ex, "Failed to connect to TV Server.");
+        Application.Exit();
       }
 
       Project project = new Project();
       AddSection(project);
       
-      servers = new Servers();
-      AddSection(servers);
-
-      IList<Card> cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
-      
       bool connected = false;
       while (!connected)
       {
+        // TODO legacy code, remove when all references have been removed
         RemoteControl.HostName = ServiceAgents.Instance.SettingServiceAgent.GetValue("hostname", "localhost");
 
         if (cards.Count > 0)
@@ -150,8 +144,10 @@ namespace Mediaportal.TV.Server.SetupTV
             }
           }
         }
-        
-        AddServerTvCards(RemoteControl.HostName, false);
+
+        _sectionTuners = new TvCards(OnServerConfigurationChanged);
+        AddSection(_sectionTuners);
+        AddServerTvCards(false);
 
         Channels channels = new Channels("TV Channels", MediaTypeEnum.TV);            
         AddSection(channels);
@@ -163,11 +159,11 @@ namespace Mediaportal.TV.Server.SetupTV
         AddChildSection(radioChannels, new ChannelCombinations("Radio Combinations", MediaTypeEnum.Radio));
         AddChildSection(radioChannels, new ChannelMapping("Radio Mapping", MediaTypeEnum.Radio));
 
-        Epg EpgSection = new Epg();
-        AddSection(EpgSection);
-        AddChildSection(EpgSection, new EpgGrabber("TV Epg grabber", "epgLanguages", "epgStoreOnlySelected", MediaTypeEnum.TV));
-        AddChildSection(EpgSection, new EpgGrabber("Radio Epg grabber", "radioLanguages", "epgRadioStoreOnlySelected", MediaTypeEnum.Radio));
-        AddChildSection(EpgSection, new EpgGenreMap());
+        Epg dvbEpg = new Epg();
+        AddSection(dvbEpg);
+        AddChildSection(dvbEpg, new EpgGrabber("TV EPG Grabber", "epgLanguages", "epgStoreOnlySelected", MediaTypeEnum.TV));
+        AddChildSection(dvbEpg, new EpgGrabber("Radio EPG Grabber", "radioLanguages", "epgRadioStoreOnlySelected", MediaTypeEnum.Radio));
+        AddChildSection(dvbEpg, new EpgGenreMap());
 
         AddSection(new ScanSettings());
         AddSection(new TvRecording());
@@ -211,69 +207,44 @@ namespace Mediaportal.TV.Server.SetupTV
       BringToFront();
     }
 
-    private void AddServerTvCards(string hostName,  bool reloaded)
+    private void AddServerTvCards(bool reloaded)
     {
-      //foreach (TVDatabase.Gentle.Server server in dbsServers)
+      IList<Card> cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
+      foreach (Card dbsCard in cards)
       {
-        bool isLocal = (hostName.ToLowerInvariant() == Dns.GetHostName().ToLowerInvariant() ||
-                        hostName.ToLowerInvariant() == Dns.GetHostName().ToLowerInvariant() + "."
-                        +
-                        System.Net.NetworkInformation.IPGlobalProperties.GetIPGlobalProperties().DomainName.
-                          ToLowerInvariant());
-        cardPage = new TvCards(hostName, OnTvCardsChanged);
-        AddChildSection(servers, cardPage, 0);
-        IList<Card> cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
-        foreach (Card dbsCard in cards)
+        if (dbsCard.Enabled && ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(dbsCard.IdCard))
         {
-          if (dbsCard.Enabled && ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(dbsCard.IdCard))
+          CardType type = ServiceAgents.Instance.ControllerServiceAgent.Type(dbsCard.IdCard);
+          string cardName = string.Format("{0} {1} {2}", dbsCard.IdCard, type.GetDescription(), dbsCard.Name);
+          switch (type)
           {
-            CardType type = ServiceAgents.Instance.ControllerServiceAgent.Type(dbsCard.IdCard);
-            int cardId = dbsCard.IdCard;
-            string cardName = dbsCard.Name;
-            switch (type)
-            {
-              case CardType.Analog:
-                cardName = String.Format("{0} Analog {1}", cardId, cardName);
-                AddChildSection(cardPage, new CardAnalog(cardName, dbsCard.IdCard), 1);
-                break;
-              case CardType.DvbT:
-                cardName = String.Format("{0} DVB-T {1}", cardId, cardName);
-                AddChildSection(cardPage, new CardDvbT(cardName, dbsCard.IdCard), 1);
-                break;
-              case CardType.DvbC:
-                cardName = String.Format("{0} DVB-C {1}", cardId, cardName);
-                AddChildSection(cardPage, new CardDvbC(cardName, dbsCard.IdCard), 1);
-                break;
-              case CardType.DvbS:
-                cardName = String.Format("{0} DVB-S {1}", cardId, cardName);
-                AddChildSection(cardPage, new CardDvbS(cardName, dbsCard.IdCard), 1);
-                break;
-              case CardType.Atsc:
-                cardName = String.Format("{0} ATSC {1}", cardId, cardName);
-                AddChildSection(cardPage, new CardAtsc(cardName, dbsCard.IdCard), 1);
-                break;
-              case CardType.DvbIP:
-                cardName = String.Format("{0} DVB-IP {1}", cardId, cardName);
-                AddChildSection(cardPage, new CardDvbIP(cardName, dbsCard.IdCard), 1);
-                break;
-              case CardType.Unknown:
-                cardName = String.Format("{0} Unknown {1}", cardId, cardName);
-                AddChildSection(cardPage, new CardAnalog(cardName, dbsCard.IdCard), 1);
-                break;
-            }
+            case CardType.Analog:
+              AddChildSection(_sectionTuners, new CardAnalog(cardName, dbsCard.IdCard), 1);
+              break;
+            case CardType.DvbT:
+              AddChildSection(_sectionTuners, new CardDvbT(cardName, dbsCard.IdCard), 1);
+              break;
+            case CardType.DvbC:
+              AddChildSection(_sectionTuners, new CardDvbC(cardName, dbsCard.IdCard), 1);
+              break;
+            case CardType.DvbS:
+              AddChildSection(_sectionTuners, new CardDvbS(cardName, dbsCard.IdCard), 1);
+              break;
+            case CardType.Atsc:
+              AddChildSection(_sectionTuners, new CardAtsc(cardName, dbsCard.IdCard), 1);
+              break;
+            case CardType.DvbIP:
+              AddChildSection(_sectionTuners, new CardDvbIP(cardName, dbsCard.IdCard), 1);
+              break;
           }
         }
-        if (isLocal)
+      }
+      if (reloaded)
+      {
+        SectionTreeNode activeNode = _sections[_sectionTuners.Text];
+        if (activeNode != null)
         {
-          Utils.CheckForDvbHotfix();
-        }
-        if (reloaded)
-        {
-          SectionTreeNode activeNode = (SectionTreeNode)settingSections[hostName];
-          if (activeNode != null)
-          {
-            activeNode.Expand();
-          }
+          activeNode.Expand();
         }
       }
     }
@@ -281,7 +252,7 @@ namespace Mediaportal.TV.Server.SetupTV
     /// <summary>
     /// called when tvcards were changed (add, remove, enable, disable)
     /// </summary>
-    public void OnTvCardsChanged(object sender, bool reloadConfigController, HashSet<int> reloadConfigTuners)
+    public void OnServerConfigurationChanged(object sender, bool reloadConfigController, HashSet<int> reloadConfigTuners)
     {
       if (reloadConfigController)
       {
@@ -301,11 +272,11 @@ namespace Mediaportal.TV.Server.SetupTV
 
             ServiceAgents.Instance.ControllerServiceAgent.Restart();
 
-            // remove all tv servers / cards, add current ones back later
-            RemoveAllChildSections((SectionTreeNode)settingSections[servers.Text]);
+            // remove all cards, add current ones back later
+            RemoveAllChildSections(_sections[_sectionTuners.Text]);
 
-            // re-add tvservers and cards to tree          
-            AddServerTvCards(ServiceAgents.Instance.SettingServiceAgent.GetValue("hostname", "localhost"), true);
+            // re-add cards to tree          
+            AddServerTvCards(true);
           }
           finally
           {
@@ -335,7 +306,7 @@ namespace Mediaportal.TV.Server.SetupTV
           RemoveAllChildSections(childNode);
 
           //Remove the section from the hashtable in case we add it again
-          settingSections.Remove(childNode.Text);
+          _sections.Remove(childNode.Text);
         }
         // first remove all children and sections, then nodes themself (otherwise collection changes during iterate)
         foreach (SectionTreeNode childNode in parentTreeNode.Nodes)
@@ -353,14 +324,14 @@ namespace Mediaportal.TV.Server.SetupTV
       // Remove section from tree
       if (parentSection != null)
       {
-        SectionTreeNode parentTreeNode = (SectionTreeNode)settingSections[parentSection.Text];
+        SectionTreeNode parentTreeNode = (SectionTreeNode)_sections[parentSection.Text];
         foreach (SectionTreeNode childNode in parentTreeNode.Nodes)
         {
           // recursive delete all children
           RemoveAllChildSections(childNode);
 
           //Remove the section from the hashtable in case we add it again
-          settingSections.Remove(childNode.Text);
+          _sections.Remove(childNode.Text);
           parentTreeNode.Nodes.Remove(childNode);
         }
       }
@@ -371,14 +342,14 @@ namespace Mediaportal.TV.Server.SetupTV
       // Remove section from tree
       if (parentSection != null)
       {
-        SectionTreeNode parentTreeNode = (SectionTreeNode)settingSections[parentSection.Text];
+        SectionTreeNode parentTreeNode = (SectionTreeNode)_sections[parentSection.Text];
 
         for (int i = 0; i < parentTreeNode.GetNodeCount(true); i++)
         {
           if (parentTreeNode.Nodes[i].Name == section.Text)
           {
             //Remove the section from the hashtable in case we add it again
-            settingSections.Remove(section.Text);
+            _sections.Remove(section.Text);
             parentTreeNode.Nodes.Remove(parentTreeNode.Nodes[i]);
           }
         }
@@ -416,14 +387,14 @@ namespace Mediaportal.TV.Server.SetupTV
         //
         // Add to the parent node
         //
-        SectionTreeNode parentTreeNode = (SectionTreeNode)settingSections[parentSection.Text];
+        SectionTreeNode parentTreeNode = (SectionTreeNode)_sections[parentSection.Text];
 
         treeNode.ImageIndex = imageIndex;
         treeNode.SelectedImageIndex = imageIndex;
         parentTreeNode.Nodes.Add(treeNode);
       }
 
-      settingSections.Add(section.Text, treeNode);
+      _sections.Add(section.Text, treeNode);
 
       //treeNode.EnsureVisible();
     }
@@ -491,12 +462,12 @@ namespace Mediaportal.TV.Server.SetupTV
         //
         // Add to the parent node
         //
-        SectionTreeNode parentTreeNode = (SectionTreeNode)settingSections[parentSection.Text];
+        SectionTreeNode parentTreeNode = (SectionTreeNode)_sections[parentSection.Text];
         treeNode.Name = section.Text;
         parentTreeNode.Nodes.Add(treeNode);
       }
 
-      settingSections.Add(section.Text, treeNode);
+      _sections.Add(section.Text, treeNode);
 
       //treeNode.EnsureVisible();
     }
@@ -585,7 +556,7 @@ namespace Mediaportal.TV.Server.SetupTV
     public SectionTreeNode GetChildNode(SectionSettings parentSection, SectionSettings section)
     {
       SectionTreeNode treeNode = new SectionTreeNode(section);
-      SectionTreeNode parentTreeNode = (SectionTreeNode)settingSections[parentSection.Text];
+      SectionTreeNode parentTreeNode = (SectionTreeNode)_sections[parentSection.Text];
 
       for (int i = 0; i < parentTreeNode.GetNodeCount(true); i++)
       {

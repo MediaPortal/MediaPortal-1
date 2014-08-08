@@ -42,13 +42,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private HashSet<int> _changedTuners = new HashSet<int>();
     private int _originalStreamTunerCount = -1;
 
-    public TvCards()
-      : this("Tuners", null)
-    {
-    }
-
-    public TvCards(string name, ServerConfigurationChangedEventHandler handler)
-      : base(name, handler)
+    public TvCards(ServerConfigurationChangedEventHandler handler)
+      : base("Tuners", handler)
     {
       InitializeComponent();
     }
