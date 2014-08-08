@@ -105,7 +105,6 @@
     <Compile Include="UserInterfaceControls\DataGridBooleanNoNull.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="UserInterfaceControls\EventArgs.cs" />
     <Compile Include="UserInterfaceControls\ImageTextComparer.cs" />
     <Compile Include="UserInterfaceControls\ListViewItemComparer.cs" />
     <Compile Include="UserInterfaceControls\MPBeveledLine.cs">
@@ -155,12 +154,6 @@
     <Compile Include="UserInterfaceControls\MPToolTip.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="UserInterfaceControls\MWCommon.cs" />
-    <Compile Include="UserInterfaceControls\MWEnums.cs" />
-    <Compile Include="UserInterfaceControls\MWTreeNodeWrapper.cs" />
-    <Compile Include="UserInterfaceControls\MWTreeView.cs">
-      <SubType>Component</SubType>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="FormTuningDetailCommon.resx">
@@ -198,10 +191,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UserInterfaceControls\MPNumericTextBox.resx">
       <DependentUpon>MPNumericTextBox.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UserInterfaceControls\MWTreeView.resx">
-      <DependentUpon>MWTreeView.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
