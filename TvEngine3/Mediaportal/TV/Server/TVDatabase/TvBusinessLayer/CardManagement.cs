@@ -101,7 +101,9 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (ICardRepository cardRepository = new CardRepository(true))
       {
-        cardRepository.Delete<Card>(p => p.IdCard == idCard);
+        cardRepository.Delete<CardGroupMap>(m => m.IdCard == idCard);
+        cardRepository.Delete<ChannelMap>(m => m.IdCard == idCard);
+        cardRepository.Delete<Card>(c => c.IdCard == idCard);
         cardRepository.UnitOfWork.SaveChanges();
       }
     }
@@ -133,7 +135,8 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (ICardRepository cardRepository = new CardRepository(true))
       {
-        cardRepository.Delete<CardGroup>(p => p.IdCardGroup == idCardGroup);
+        cardRepository.Delete<CardGroupMap>(m => m.IdCardGroup == idCardGroup);
+        cardRepository.Delete<CardGroup>(g => g.IdCardGroup == idCardGroup);
         cardRepository.UnitOfWork.SaveChanges();
       }
     }
@@ -146,7 +149,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (ICardRepository cardRepository = new CardRepository())
       {
-        return cardRepository.GetQuery<SoftwareEncoder>(s=>s.Type == 0).OrderBy(s=>s.Priority).ToList();                
+        return cardRepository.GetQuery<SoftwareEncoder>(e => e.Type == 0).OrderBy(e => e.Priority).ToList();                
       }
     }
 
@@ -154,7 +157,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (ICardRepository cardRepository = new CardRepository())
       {
-        return cardRepository.GetQuery<SoftwareEncoder>(s => s.Type == 1).OrderBy(s => s.Priority).ToList();
+        return cardRepository.GetQuery<SoftwareEncoder>(e => e.Type == 1).OrderBy(e => e.Priority).ToList();
       }
     }
 

@@ -156,6 +156,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       }
     }
 
+    #region detector control
+
     /// <summary>
     /// Start tuner detection.
     /// </summary>
@@ -195,6 +197,217 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     }
 
     /// <summary>
+    /// Reload the detector's configuration.
+    /// </summary>
+    public void ReloadConfiguration()
+    {
+      this.LogDebug("detector: reload configuration");
+
+      // Order of operations is important.
+      lock (_tuners)
+      {
+        // 1. Force-detect tuner changes.
+        DetectSystemTuners();
+
+        // 2. Remove old groups.
+        HashSet<int> currentGroupIds = new HashSet<int>(_configuredTunerGroups.Keys);
+        HashSet<int> unchangedGroupIds = new HashSet<int>();
+        List<CardGroup> newGroups = new List<CardGroup>();
+        IList<CardGroup> dbGroups = CardManagement.ListAllCardGroups();
+        foreach (CardGroup dbGroup in dbGroups)
+        {
+          unchangedGroupIds.Add(dbGroup.IdCardGroup);
+          if (!_configuredTunerGroups.ContainsKey(dbGroup.IdCardGroup))
+          {
+            newGroups.Add(dbGroup);
+          }
+        }
+        currentGroupIds.ExceptWith(unchangedGroupIds);
+        foreach (int groupId in currentGroupIds)
+        {
+          TunerGroup group;
+          if (_configuredTunerGroups.TryGetValue(groupId, out group))
+          {
+            this.LogInfo("detector: removing tuner group, name = {0}, product instance ID = {1}, tuner instance ID = {2}...", group.Name, group.ProductInstanceId ?? "[null]", group.TunerInstanceId ?? "[null]");
+            foreach (ITVCard tuner in group.Tuners)
+            {
+              this.LogInfo("  tuner, name = {0}, product instance ID = {1}, tuner instance ID = {2}", tuner.Name, tuner.ProductInstanceId ?? "[null]", tuner.TunerInstanceId ?? "[null]");
+              ITunerInternal internalTuner = tuner as ITunerInternal;
+              if (internalTuner != null)
+              {
+                internalTuner.Group = null;
+              }
+            }
+            _configuredTunerGroups.Remove(groupId);
+          }
+        }
+
+        // 3. Update groups that we already knew about but have changed.
+        HashSet<int> changedGroupIds = new HashSet<int>();
+        Dictionary<string, int> newGroupMembers = new Dictionary<string, int>();
+        foreach (CardGroup dbGroup in dbGroups)
+        {
+          TunerGroup group;
+          if (_configuredTunerGroups.TryGetValue(dbGroup.IdCardGroup, out group))
+          {
+            // Collect the external IDs for current members.
+            HashSet<string> currentGroupMembers = new HashSet<string>();
+            foreach (ITVCard tuner in group.Tuners)
+            {
+              currentGroupMembers.Add(tuner.ExternalId);
+            }
+
+            // Record new and unchanged members.
+            HashSet<string> unchangedGroupMembers = new HashSet<string>();
+            IList<CardGroupMap> groupMaps = dbGroup.CardGroupMaps;
+            foreach (CardGroupMap map in groupMaps)
+            {
+              string externalId = map.Card.DevicePath;
+              ITVCard tuner;
+              if (_tuners.TryGetValue(externalId, out tuner))
+              {
+                if (currentGroupMembers.Contains(externalId))
+                {
+                  unchangedGroupMembers.Add(externalId);
+                }
+                else
+                {
+                  changedGroupIds.Add(dbGroup.IdCardGroup);
+                  newGroupMembers.Add(externalId, dbGroup.IdCardGroup);
+                }
+              }
+            }
+
+            // 3a. Remove old members.
+            currentGroupMembers.ExceptWith(unchangedGroupMembers);
+            foreach (string externalId in currentGroupMembers)
+            {
+              ITVCard tuner;
+              if (_tuners.TryGetValue(externalId, out tuner))
+              {
+                this.LogInfo("detector: removing tuner from group...");
+                this.LogInfo("  group, name = {0}, product instance ID = {1}, tuner instance ID = {2}", group.Name, group.ProductInstanceId ?? "[null]", group.TunerInstanceId ?? "[null]");
+                this.LogInfo("  tuner, name = {0}, product instance ID = {1}, tuner instance ID = {2}", tuner.Name, tuner.ProductInstanceId ?? "[null]", tuner.TunerInstanceId ?? "[null]");
+                changedGroupIds.Add(dbGroup.IdCardGroup);
+                group.Remove(tuner);
+                ITunerInternal internalTuner = tuner as ITunerInternal;
+                if (internalTuner != null)
+                {
+                  internalTuner.Group = null;
+                }
+              }
+            }
+          }
+        }
+
+        // 3b. Add new members.
+        foreach (KeyValuePair<string, int> newGroupMember in newGroupMembers)
+        {
+          TunerGroup group;
+          ITVCard tuner;
+          if (_tuners.TryGetValue(newGroupMember.Key, out tuner) && _configuredTunerGroups.TryGetValue(newGroupMember.Value, out group))
+          {
+            this.LogInfo("detector: adding tuner to group...");
+            this.LogInfo("  group, name = {0}, product instance ID = {1}, tuner instance ID = {2}", group.Name, group.ProductInstanceId ?? "[null]", group.TunerInstanceId ?? "[null]");
+            this.LogInfo("  tuner, name = {0}, product instance ID = {1}, tuner instance ID = {2}", tuner.Name, tuner.ProductInstanceId ?? "[null]", tuner.TunerInstanceId ?? "[null]");
+            group.Add(tuner);
+            ITunerInternal internalTuner = tuner as ITunerInternal;
+            if (internalTuner != null)
+            {
+              internalTuner.Group = group;
+            }
+          }
+        }
+
+        // 3c. Update the group details.
+        foreach (int groupId in changedGroupIds)
+        {
+          TunerGroup group;
+          if (_configuredTunerGroups.TryGetValue(groupId, out group))
+          {
+            bool isFirst = true;
+            string commonProductInstanceId = null;
+            string commonTunerInstanceId = null;
+            foreach (ITVCard tuner in group.Tuners)
+            {
+              if (isFirst)
+              {
+                isFirst = false;
+                if (tuner.ProductInstanceId == null || tuner.TunerInstanceId == null)
+                {
+                  break;
+                }
+                commonProductInstanceId = tuner.ProductInstanceId;
+                commonTunerInstanceId = tuner.TunerInstanceId;
+              }
+              if (!string.Equals(commonProductInstanceId, tuner.ProductInstanceId) || !string.Equals(commonTunerInstanceId, tuner.TunerInstanceId))
+              {
+                commonProductInstanceId = null;
+                commonTunerInstanceId = null;
+                break;
+              }
+            }
+            if (!string.Equals(commonProductInstanceId, group.ProductInstanceId) || !string.Equals(commonTunerInstanceId, group.TunerInstanceId))
+            {
+              this.LogInfo("detector: updating identifiers for tuner group {0}...", group.Name);
+              this.LogInfo("  previous, product instance ID = {0}, tuner instance ID = {1}", group.ProductInstanceId ?? "[null]", group.TunerInstanceId ?? "[null]");
+              this.LogInfo("  new, product instance ID = {0}, tuner instance ID = {1}", commonProductInstanceId ?? "[null]", commonTunerInstanceId ?? "[null]");
+              group.ProductInstanceId = commonProductInstanceId;
+              group.TunerInstanceId = commonTunerInstanceId;
+            }
+          }
+        }
+
+        // 4. Construct new groups for the groups we didn't already know about.
+        foreach (CardGroup dbGroup in newGroups)
+        {
+          TunerGroup group = new TunerGroup(dbGroup);
+          IList<CardGroupMap> groupMaps = dbGroup.CardGroupMaps;
+          bool isFirst = true;
+          string commonProductInstanceId = null;
+          string commonTunerInstanceId = null;
+          foreach (CardGroupMap map in groupMaps)
+          {
+            ITVCard tuner;
+            if (_tuners.TryGetValue(map.Card.DevicePath, out tuner))
+            {
+              if (isFirst)
+              {
+                isFirst = false;
+                if (tuner.ProductInstanceId != null && tuner.TunerInstanceId != null)
+                {
+                  commonProductInstanceId = tuner.ProductInstanceId;
+                  commonTunerInstanceId = tuner.TunerInstanceId;
+                }
+              }
+              else if (!string.Equals(commonProductInstanceId, tuner.ProductInstanceId) || !string.Equals(commonTunerInstanceId, tuner.TunerInstanceId))
+              {
+                commonProductInstanceId = null;
+                commonTunerInstanceId = null;
+              }
+              group.Add(tuner);
+              ITunerInternal internalTuner = tuner as ITunerInternal;
+              if (internalTuner != null)
+              {
+                internalTuner.Group = group;
+              }
+            }
+          }
+
+          if (group.Tuners.Count > 0)
+          {
+            this.LogInfo("detector: adding tuner group, name = {0}, product instance ID = {1}, tuner instance ID = {2}...", group.Name, group.ProductInstanceId ?? "[null]", group.TunerInstanceId ?? "[null]");
+            foreach (ITVCard tuner in group.Tuners)
+            {
+              this.LogInfo("  tuner, name = {0}, product instance ID = {1}, tuner instance ID = {2}", tuner.Name, tuner.ProductInstanceId ?? "[null]", tuner.TunerInstanceId ?? "[null]");
+            }
+            _configuredTunerGroups.Add(dbGroup.IdCardGroup, group);
+          }
+        }
+      }
+    }
+
+    /// <summary>
     /// Reset and restart tuner detection.
     /// </summary>
     public void Reset()
@@ -227,6 +440,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       _upnpControlPoint.Close();
       _systemDeviceChangeEventWatcher.Stop();
     }
+
+    #endregion
 
     #region IDisposable member
 
@@ -525,12 +740,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       HashSet<string> relatedTuners = FindRelatedTuners(tuner);
 
       // Find or create a group for the tuner if appropriate.
+      bool isNewTuner = false;
       TunerGroup group = null;
       Card tunerDbSettings = CardManagement.GetCardByDevicePath(tuner.ExternalId, CardIncludeRelationEnum.None);
       if (tunerDbSettings == null)
       {
         // First ever detection. Create the tuner settings.
         this.LogInfo("    new tuner...");
+        isNewTuner = true;
         _firstDetectionTuners.Add(tuner.ExternalId);
         tunerDbSettings = new Card
         {
@@ -553,9 +770,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           IdleMode = (int)IdleMode.Stop
         };
         tunerDbSettings = CardManagement.SaveCard(tunerDbSettings);
-        // Configuration loading is necessary before group detection.
-        tuner.ReloadConfiguration();
+      }
+      else
+      {
+        this.LogInfo("    existing tuner...");
+      }
 
+      // Configuration loading is necessary before group detection. This also
+      // triggers preloading.
+      tuner.ReloadConfiguration();
+
+      if (isNewTuner)
+      {
         // If we have product/tuner instance information and detected the tuner is a member of a
         // natural group...
         if (tuner.ProductInstanceId != null && tuner.TunerInstanceId != null && relatedTuners != null && relatedTuners.Count > 1)
@@ -585,7 +811,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       {
         // This tuner has been detected previously. Check if it is a member of an existing tuner
         // group.
-        this.LogInfo("    existing tuner...");
         group = AddExistingTunerToConfiguredGroup(tuner);
       }
 
@@ -593,12 +818,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       if (internalTuner != null)
       {
         internalTuner.Group = group;
-      }
-
-      if (!_firstDetectionTuners.Contains(tuner.ExternalId))
-      {
-        // Load configuration for existing tuners. This triggers preloading.
-        tuner.ReloadConfiguration();
       }
 
       _eventListener.OnTunerAdded(tuner);
@@ -654,7 +873,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       // IDs may be set when they shouldn't be.
       foreach (TunerGroup group in _configuredTunerGroups.Values)
       {
-        if (group.ProductInstanceId == tuner.ProductInstanceId && group.TunerInstanceId == tuner.TunerInstanceId)
+        if (string.Equals(group.ProductInstanceId, tuner.ProductInstanceId) && string.Equals(group.TunerInstanceId, tuner.TunerInstanceId))
         {
           this.LogInfo("    detected existing tuner group with matching information, name = {0}...", group.Name);
           group.Add(tuner);
@@ -750,7 +969,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       IList<CardGroup> dbGroups = CardManagement.ListAllCardGroups();
       foreach (CardGroup dbGroup in dbGroups)
       {
-        TrackableCollection<CardGroupMap> groupMaps = dbGroup.CardGroupMaps;
+        IList<CardGroupMap> groupMaps = dbGroup.CardGroupMaps;
         foreach (CardGroupMap map in groupMaps)
         {
           // Does the tuner belong to this group?
@@ -761,8 +980,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
             if (!_configuredTunerGroups.TryGetValue(dbGroup.IdCardGroup, out group))
             {
               group = new TunerGroup(dbGroup);
-              group.ProductInstanceId = tuner.ProductInstanceId;
-              group.TunerInstanceId = tuner.TunerInstanceId;
+              if (tuner.ProductInstanceId != null && tuner.TunerInstanceId != null)
+              {
+                group.ProductInstanceId = tuner.ProductInstanceId;
+                group.TunerInstanceId = tuner.TunerInstanceId;
+              }
               _configuredTunerGroups.Add(group.TunerGroupId, group);
               this.LogInfo("    detected existing tuner group, name = {0}, product instance ID = {1}, tuner instance ID = {2}...", group.Name, group.ProductInstanceId ?? "[null]", group.TunerInstanceId ?? "[null]");
             }
@@ -771,9 +993,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
               this.LogInfo("    detected existing tuner group, name = {0}, product instance ID = {1}, tuner instance ID = {2}...", group.Name, group.ProductInstanceId ?? "[null]", group.TunerInstanceId ?? "[null]");
               // Does the product/tuner instance info indicate that this is a natural group?
               if (group.ProductInstanceId != null && group.TunerInstanceId != null &&
-                tuner.ProductInstanceId != null && tuner.TunerInstanceId != null &&
-                (group.ProductInstanceId != tuner.ProductInstanceId || group.TunerInstanceId != tuner.TunerInstanceId))
+                (!string.Equals(group.ProductInstanceId, tuner.ProductInstanceId) || !string.Equals(group.TunerInstanceId, tuner.TunerInstanceId)))
               {
+                this.LogInfo("      group is no longer natural");
                 group.ProductInstanceId = null;
                 group.TunerInstanceId = null;
               }

@@ -20,12 +20,17 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Xml;
 
 namespace Mediaportal.TV.Server.SetupControls
 {
+  public delegate void ServerConfigurationChangedEventHandler(object sender, bool reloadConfigController, HashSet<int> reloadConfigTuners);
+
   public partial class SectionSettings : System.Windows.Forms.UserControl
   {
+    private event ServerConfigurationChangedEventHandler _onServerConfigurationChanged;
+
     public SectionSettings()
     {
       Init();
@@ -37,6 +42,15 @@ namespace Mediaportal.TV.Server.SetupControls
       Init(text);
     }
 
+    public SectionSettings(string name, ServerConfigurationChangedEventHandler handler)
+    {
+      Init(name);
+      if (handler != null)
+      {
+        _onServerConfigurationChanged += handler;
+      }
+    }
+
     private void Init()
     {
       AutoScroll = true;
@@ -46,6 +60,14 @@ namespace Mediaportal.TV.Server.SetupControls
     {
       Init();
       Text = text;
+    }
+
+    protected virtual void OnServerConfigurationChanged(object sender, bool reloadConfigController, HashSet<int> reloadConfigTuners)
+    {
+      if (_onServerConfigurationChanged != null)
+      {
+        _onServerConfigurationChanged(sender, reloadConfigController, reloadConfigTuners);
+      }
     }
 
     public virtual void SaveSettings() {}

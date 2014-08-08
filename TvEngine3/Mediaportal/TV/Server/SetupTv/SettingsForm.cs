@@ -220,8 +220,7 @@ namespace Mediaportal.TV.Server.SetupTV
                         +
                         System.Net.NetworkInformation.IPGlobalProperties.GetIPGlobalProperties().DomainName.
                           ToLowerInvariant());
-        cardPage = new TvCards(hostName);
-        cardPage.TvCardsChanged += OnTvCardsChanged;
+        cardPage = new TvCards(hostName, OnTvCardsChanged);
         AddChildSection(servers, cardPage, 0);
         IList<Card> cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
         foreach (Card dbsCard in cards)
@@ -282,41 +281,46 @@ namespace Mediaportal.TV.Server.SetupTV
     /// <summary>
     /// called when tvcards were changed (add, remove, enable, disable)
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    public void OnTvCardsChanged(object sender, EventArgs e)
+    public void OnTvCardsChanged(object sender, bool reloadConfigController, HashSet<int> reloadConfigTuners)
     {
-      bool isAnyUserTS;
-      bool isRec;
-      bool isUserTS;
-      bool isRecOrTS = ServiceAgents.Instance.ControllerServiceAgent.IsAnyCardRecordingOrTimeshifting(new User().Name, out isUserTS, out isAnyUserTS,
-                                                                               out isRec);
-
-      if (!isAnyUserTS && !isRec && !isRecOrTS && !isUserTS)
+      if (reloadConfigController)
       {
-        NotifyForm dlgNotify = new NotifyForm("Restart TvService...", "This can take some time\n\nPlease be patient...");
-        try
+        bool isUserTimeShifting;
+        bool isAnyUserTimeShifting;
+        bool isAnyUserRecording;
+        bool isAnyTunerTimeShiftingOrRecording = ServiceAgents.Instance.ControllerServiceAgent.IsAnyCardRecordingOrTimeshifting(
+                                                  new User().Name, out isUserTimeShifting, out isAnyUserTimeShifting, out isAnyUserRecording);
+        if (!isAnyTunerTimeShiftingOrRecording && !isAnyUserTimeShifting && !isAnyUserRecording && !isUserTimeShifting)
         {
-          dlgNotify.Show();
-          dlgNotify.WaitForDisplay();
+          Log.Info("base: reloading controller configuration");
+          NotifyForm dlgNotify = new NotifyForm("Restarting TV service...", "This can take some time.\n\nPlease be patient...");
+          try
+          {
+            dlgNotify.Show();
+            dlgNotify.WaitForDisplay();
 
-          ServiceAgents.Instance.ControllerServiceAgent.Restart();
+            ServiceAgents.Instance.ControllerServiceAgent.Restart();
 
-          // remove all tv servers / cards, add current ones back later
-          RemoveAllChildSections((SectionTreeNode)settingSections[servers.Text]);
+            // remove all tv servers / cards, add current ones back later
+            RemoveAllChildSections((SectionTreeNode)settingSections[servers.Text]);
 
-          // re-add tvservers and cards to tree          
-          AddServerTvCards(ServiceAgents.Instance.SettingServiceAgent.GetValue("hostname", "localhost"), true);
+            // re-add tvservers and cards to tree          
+            AddServerTvCards(ServiceAgents.Instance.SettingServiceAgent.GetValue("hostname", "localhost"), true);
+          }
+          finally
+          {
+            dlgNotify.Close();
+          }
         }
-        finally
+        else
         {
-          dlgNotify.Close();
+          MessageBox.Show(this, "TV Server is currently timeshifting and/or recording. Please restart the TV service manually to apply your changes.");
         }
       }
-      else
+      else if (reloadConfigTuners != null && reloadConfigTuners.Count > 0)
       {
-        MessageBox.Show(this,
-                        "In order to apply new settings - please restart tvservice manually when done timeshifting / recording.");
+        Log.Info("base: reloading configuration for tuners {0}", string.Join(", ", reloadConfigTuners));
+        ServiceAgents.Instance.ControllerServiceAgent.ReloadCardConfiguration(reloadConfigTuners);
       }
     }
 

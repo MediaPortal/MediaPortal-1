@@ -73,7 +73,7 @@
     <Compile Include="DBaseContext\DbContextBuilder.cs" />
     <Compile Include="DBaseContext\DbContextInitializer.cs" />
     <Compile Include="DBaseContext\DbContextManager.cs" />
-    <Compile Include="Interfaces\ICardRepository.cs" />
+    <Compile Include="Interfaces\IChannelGroupRepository.cs" />
     <Compile Include="Interfaces\IProgramCategoryRepository.cs" />
     <Compile Include="Interfaces\IRecordingRepository.cs" />
     <Compile Include="Interfaces\IScheduleRepository.cs" />
@@ -89,7 +89,7 @@
     <Compile Include="ObjContext\ObjectContextManager.cs" />
     <Compile Include="ObjContext\SimpleObjectContextStorage.cs" />
     <Compile Include="Repositories\ChannelGroupRepository.cs" />
-    <Compile Include="Interfaces\IChannelGroupRepository.cs" />
+    <Compile Include="Interfaces\ICardRepository.cs" />
     <Compile Include="Interfaces\IChannelRepository.cs" />
     <Compile Include="Interfaces\IProgramRepository.cs" />
     <Compile Include="Interfaces\ISettingsRepository.cs" />

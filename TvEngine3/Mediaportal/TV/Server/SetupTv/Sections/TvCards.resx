@@ -117,9 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="contextMenuStrip2.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>267, 17</value>
-  </metadata>
   <metadata name="imageList1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
@@ -129,35 +126,40 @@
         LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAACZTeXN0
         ZW0uV2luZG93cy5Gb3Jtcy5JbWFnZUxpc3RTdHJlYW1lcgEAAAAERGF0YQcCAgAAAAkDAAAADwMAAAAe
         BgAAAk1TRnQBSQFMAwEBAAE0AQABNAEAARABAAEQAQAE/wEhAQAI/wFCAU0BNgcAATYDAAEoAwABQAMA
-        ARADAAEBAQABIAYAARAuAAGBAh8B/wGBAh8B/wGBAh8B/wGBAh8B/wGBAh8B/wGBAh8B/+gAAVICmQH/
-        AR8CzAH/AR8CzAH/AR8CzAH/AR8CzAH/AR8CUgH/zAABmQIfAf8BmQIfAf8BmQIfAf8BmQIfAf8BmQIf
-        Af8BmQIfAf8BmQIfAf8BUgLMAf8BHwP/AR8D/wEfA/8BHwP/AR8CUgH/AZkCHwH/AZkCHwH/xAADgQH/
+        ARADAAEBAQABIAYAARAuAAGBAikB/wGBAikB/wGBAikB/wGBAikB/wGBAikB/wGBAikB/+gAAVwCmQH/
+        ASkCzAH/ASkCzAH/ASkCzAH/ASkCzAH/ASkCXAH/zAABmQIpAf8BmQIpAf8BmQIpAf8BmQIpAf8BmQIp
+        Af8BmQIpAf8BmQIpAf8BXALMAf8BKQP/ASkD/wEpA/8BKQP/ASkCXAH/AZkCKQH/AZkCKQH/xAADgQH/
         A4EB/wOBAf8DgQH/A4EB/wOBAf8DgQH/A4YB/wGBApkB/wGBApkB/wGBApkB/wGBApkB/wOBAf8DgQH/
-        AzUB/8QAA4YB/wEfAYEBHwH/AR8BgQEfAf8BgQIfAf8BHwGBAR8B/wJSAR8B/wEfAYEBHwH/AYEBUgEf
-        Af8BHwGBAR8B/wEfAlIB/wEfAYEBHwH/AR8BgQFSAf8BHwJSAf8BHwGBAR8B/wMfAf/EAAOGAf8BHwGB
-        AR8B/wGBAh8B/wNhAf8BUgGBAR8B/wN0Af8BHwFSAR8B/wGBAVIBHwH/AR8BgQEfAf8BHwFSAR8B/wEf
-        AVIBHwH/AR8BUgEfAf8BHwFSAR8B/wEfAYEBHwH/Ax8B/wFSAh8B/8AAA4YB/wEfAYEBHwH/A90B/wGZ
-        Ah8B/wFSAZkBUgH/AcwCHwH/AR8BUgEfAf8BgQFSAR8B/wEfAYEBHwH/AZkCUgH/A1IB/wGZAVIBHwH/
-        A4EB/wEfAYEBHwH/Ax8B/wMfAf/AAAOGAf8BHwGBAR8B/wEfAVIBHwH/AR8BUgEfAf8BHwGBAR8B/wEf
-        AVIBHwH/AR8BgQEfAf8BmQFSAR8B/wGBAVIBHwH/AVIBgQEfAf8BUgGZAR8B/wGBAVIBHwH/AVIBgQEf
-        Af8BHwGBAR8B/wMfAf8DHwH/wAADhgH/Ah8BzAH/AcwCHwH/A4EB/wFSAYEBHwH/A4EB/wEfAVIBHwH/
-        AYEBUgEfAf8BHwGBAR8B/wEfAYEBHwH/AR8BgQEfAf8BHwGBAR8B/wEfAYEBHwH/AVIBgQEfAf8DHwH/
-        Ax8B/8AAA4YB/wEfAYEBHwH/AZkBzAGZAf8BgQFSAR8B/wFSAZkBUgH/AZkBUgEfAf8BHwFSAR8B/wGZ
-        AVIBHwH/AVIBgQEfAf8BHwGBAR8B/wNIAf8DUgH/AR8BgQEfAf8BgQFSAR8B/wMfAf8DHwH/wAADhgH/
-        AR8BUgHMAf8BHwFSAR8B/wEfAVIBHwH/AR8BgQEfAf8BHwFSAR8B/wEfAVIBHwH/AZkBUgEfAf8BgQFS
-        AR8B/wEfAYEBHwH/AZkCgQH/A4YB/wEfAYEBHwH/AVIBgQEfAf8DHwH/Ax8B/8AAA4YB/wEfAYEBHwH/
-        AcwCUgH/A34B/wFSAYEBHwH/AZkCgQH/AR8BUgEfAf8BgQFSAR8B/wGBAVIBHwH/AR8BgQEfAf8BzAKB
-        Af8BmQKBAf8BHwGBAR8B/wGBAVIBHwH/Ax8B/wM1Af/AAAOGAf8BHwFSAZkB/wGBAZkBUgH/AVIBgQEf
-        Af8BHwGBAR8B/wGZAVIBHwH/AR8BgQEfAf8BgQFSAR8B/wGBAVIBHwH/AR8BgQEfAf8BmQJSAf8BUgGB
-        AR8B/wEfAYEBHwH/AYEBUgEfAf8DHwH/AZkCHwH/wAADhgH/AVIBgQEfAf8BUgGBAR8B/wFSAYEBHwH/
-        AVIBgQEfAf8BmQFSAR8B/wFSAYEBHwH/AZkBUgEfAf8CgQEfAf8BUgGZAR8B/wGZAYEBHwH/AVIBgQEf
-        Af8BUgGBAR8B/wFSAYEBHwH/Ax8B/8QAA4YB/wGZAlIB/wGZAlIB/wGZAlIB/wGZAlIB/wGZAlIB/wGZ
-        AlIB/wGZAlIB/wGZAlIB/wGZAlIB/wGZAlIB/wGZAlIB/wGZAlIB/wGZAlIB/wM1Af//AMUAAUIBTQE+
+        Az8B/8QAA4YB/wEpAYEBKQH/ASkBgQEpAf8BgQIpAf8BKQGBASkB/wJcASkB/wEpAYEBKQH/AYEBXAEp
+        Af8BKQGBASkB/wEpAlwB/wEpAYEBKQH/ASkBgQFcAf8BKQJcAf8BKQGBASkB/wMpAf/EAAOGAf8BKQGB
+        ASkB/wGBAikB/wNrAf8BXAGBASkB/wN+Af8BKQFcASkB/wGBAVwBKQH/ASkBgQEpAf8BKQFcASkB/wEp
+        AVwBKQH/ASkBXAEpAf8BKQFcASkB/wEpAYEBKQH/AykB/wFcAikB/8AAA4YB/wEpAYEBKQH/A90B/wGZ
+        AikB/wFcAZkBXAH/AcwCKQH/ASkBXAEpAf8BgQFcASkB/wEpAYEBKQH/AZkCXAH/A1wB/wGZAVwBKQH/
+        A4EB/wEpAYEBKQH/AykB/wMpAf/AAAOGAf8BKQGBASkB/wEpAVwBKQH/ASkBXAEpAf8BKQGBASkB/wEp
+        AVwBKQH/ASkBgQEpAf8BmQFcASkB/wGBAVwBKQH/AVwBgQEpAf8BXAGZASkB/wGBAVwBKQH/AVwBgQEp
+        Af8BKQGBASkB/wMpAf8DKQH/wAADhgH/AikBzAH/AcwCKQH/A4EB/wFcAYEBKQH/A4EB/wEpAVwBKQH/
+        AYEBXAEpAf8BKQGBASkB/wEpAYEBKQH/ASkBgQEpAf8BKQGBASkB/wEpAYEBKQH/AVwBgQEpAf8DKQH/
+        AykB/8AAA4YB/wEpAYEBKQH/AZkBzAGZAf8BgQFcASkB/wFcAZkBXAH/AZkBXAEpAf8BKQFcASkB/wGZ
+        AVwBKQH/AVwBgQEpAf8BKQGBASkB/wNSAf8DXAH/ASkBgQEpAf8BgQFcASkB/wMpAf8DKQH/wAADhgH/
+        ASkBXAHMAf8BKQFcASkB/wEpAVwBKQH/ASkBgQEpAf8BKQFcASkB/wEpAVwBKQH/AZkBXAEpAf8BgQFc
+        ASkB/wEpAYEBKQH/AZkCgQH/A4YB/wEpAYEBKQH/AVwBgQEpAf8DKQH/AykB/8AAA4YB/wEpAYEBKQH/
+        AcwCXAH/A4EB/wFcAYEBKQH/AZkCgQH/ASkBXAEpAf8BgQFcASkB/wGBAVwBKQH/ASkBgQEpAf8BzAKB
+        Af8BmQKBAf8BKQGBASkB/wGBAVwBKQH/AykB/wM/Af/AAAOGAf8BKQFcAZkB/wGBAZkBXAH/AVwBgQEp
+        Af8BKQGBASkB/wGZAVwBKQH/ASkBgQEpAf8BgQFcASkB/wGBAVwBKQH/ASkBgQEpAf8BmQJcAf8BXAGB
+        ASkB/wEpAYEBKQH/AYEBXAEpAf8DKQH/AZkCKQH/wAADhgH/AVwBgQEpAf8BXAGBASkB/wFcAYEBKQH/
+        AVwBgQEpAf8BmQFcASkB/wFcAYEBKQH/AZkBXAEpAf8CgQEpAf8BXAGZASkB/wGZAYEBKQH/AVwBgQEp
+        Af8BXAGBASkB/wFcAYEBKQH/AykB/8QAA4YB/wGZAlwB/wGZAlwB/wGZAlwB/wGZAlwB/wGZAlwB/wGZ
+        AlwB/wGZAlwB/wGZAlwB/wGZAlwB/wGZAlwB/wGZAlwB/wGZAlwB/wGZAlwB/wM/Af//AMUAAUIBTQE+
         BwABPgMAASgDAAFAAwABEAMAAQEBAAEBBQABgBcAA/8BAAH+AQcGAAH+AQcHAAEBBwABAQcAAQFHAAEB
         BwABAQYAAv8GAAs=
 </value>
   </data>
-  <metadata name="contextMenuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>122, 17</value>
-  </metadata>
+  <data name="labelTunerGroupExplanation.Text" xml:space="preserve">
+    <value>TV Server usually detects and groups related tuners automatically. If automatic detection fails, use this section to create, update or delete groups as necessary.
+When configured correctly there should be one group for each multi-mode tuner. A card may have more than one multi-mode tuner, so you may need to create more than one group for some cards.
+
+Examples of multi-mode tuners:
+- DVB-C and DVB-T/T2 ("combo")
+- DVB-T and analog ("hybrid")</value>
+  </data>
 </root>

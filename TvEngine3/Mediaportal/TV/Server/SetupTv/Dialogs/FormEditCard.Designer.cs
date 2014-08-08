@@ -29,35 +29,35 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     /// </summary>
     private void InitializeComponent()
     {
-      this.label3 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.label4 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.mpButtonSave = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.labelDecryptLimit1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelDecryptLimit2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.buttonSave = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.numericUpDownDecryptLimit = new System.Windows.Forms.NumericUpDown();
-      this.mpButtonCancel = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.buttonCancel = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.groupBoxConditionalAccessSettings = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
-      this.mpLabel3 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.mpComboBoxMultiChannelDecryptMode = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
-      this.label5 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.mpComboBoxCamType = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
+      this.labelMultiChannelDecryptMode = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.comboBoxMultiChannelDecryptMode = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
+      this.labelCamType = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.comboBoxCamType = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
       this.checkBoxConditionalAccessEnabled = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
-      this.checkBoxAllowEpgGrab = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
-      this.checkBoxPreloadCard = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.checkBoxEpgGrabEnabled = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.checkBoxPreloadTuner = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
       this.groupBoxAdvancedSettings = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
       this.checkBoxUseCustomTuning = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
-      this.mpLabel6 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.mpLabel5 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelNetworkProvider = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelPidFilterMode = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.comboBoxNetworkProvider = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
-      this.mpComboBoxPidFilterMode = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
-      this.mpLabel1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.mpComboBoxIdleMode = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
-      this.mpLabel4 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.mpTextBoxTunerName = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
-      this.mpLabel2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.comboBoxPidFilterMode = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
+      this.labelReadDocumentation = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.comboBoxIdleMode = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
+      this.labelIdleMode = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.textBoxTunerName = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
+      this.labelTunerName = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.groupBoxGeneralSettings = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
       this.groupBoxDiseqcSettings = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
-      this.mpLabel7 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelDiseqcRepeatCount2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.numericUpDownDiseqcCommandRepeatCount = new System.Windows.Forms.NumericUpDown();
-      this.mpLabel8 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelDiseqcRepeatCount1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.checkBoxAlwaysSendDiseqcCommands = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDecryptLimit)).BeginInit();
       this.groupBoxConditionalAccessSettings.SuspendLayout();
@@ -67,42 +67,42 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDiseqcCommandRepeatCount)).BeginInit();
       this.SuspendLayout();
       // 
-      // label3
+      // labelDecryptLimit1
       // 
-      this.label3.AutoSize = true;
-      this.label3.Location = new System.Drawing.Point(14, 43);
-      this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(113, 13);
-      this.label3.TabIndex = 8;
-      this.label3.Text = "This tuner can decrypt";
+      this.labelDecryptLimit1.AutoSize = true;
+      this.labelDecryptLimit1.Location = new System.Drawing.Point(13, 43);
+      this.labelDecryptLimit1.Name = "labelDecryptLimit1";
+      this.labelDecryptLimit1.Size = new System.Drawing.Size(113, 13);
+      this.labelDecryptLimit1.TabIndex = 1;
+      this.labelDecryptLimit1.Text = "This tuner can decrypt";
       // 
-      // label4
+      // labelDecryptLimit2
       // 
-      this.label4.AutoSize = true;
-      this.label4.Location = new System.Drawing.Point(169, 43);
-      this.label4.Name = "label4";
-      this.label4.Size = new System.Drawing.Size(130, 13);
-      this.label4.TabIndex = 10;
-      this.label4.Text = "channel(s) simultaneously.";
+      this.labelDecryptLimit2.AutoSize = true;
+      this.labelDecryptLimit2.Location = new System.Drawing.Point(169, 43);
+      this.labelDecryptLimit2.Name = "labelDecryptLimit2";
+      this.labelDecryptLimit2.Size = new System.Drawing.Size(130, 13);
+      this.labelDecryptLimit2.TabIndex = 3;
+      this.labelDecryptLimit2.Text = "channel(s) simultaneously.";
       // 
-      // mpButtonSave
+      // buttonSave
       // 
-      this.mpButtonSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpButtonSave.DialogResult = System.Windows.Forms.DialogResult.OK;
-      this.mpButtonSave.Location = new System.Drawing.Point(249, 493);
-      this.mpButtonSave.Name = "mpButtonSave";
-      this.mpButtonSave.Size = new System.Drawing.Size(75, 23);
-      this.mpButtonSave.TabIndex = 30;
-      this.mpButtonSave.Text = "Save";
-      this.mpButtonSave.UseVisualStyleBackColor = true;
-      this.mpButtonSave.Click += new System.EventHandler(this.mpButtonSave_Click);
+      this.buttonSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonSave.DialogResult = System.Windows.Forms.DialogResult.OK;
+      this.buttonSave.Location = new System.Drawing.Point(249, 493);
+      this.buttonSave.Name = "buttonSave";
+      this.buttonSave.Size = new System.Drawing.Size(75, 23);
+      this.buttonSave.TabIndex = 4;
+      this.buttonSave.Text = "Save";
+      this.buttonSave.UseVisualStyleBackColor = true;
+      this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
       // 
       // numericUpDownDecryptLimit
       // 
       this.numericUpDownDecryptLimit.Location = new System.Drawing.Point(130, 41);
       this.numericUpDownDecryptLimit.Name = "numericUpDownDecryptLimit";
       this.numericUpDownDecryptLimit.Size = new System.Drawing.Size(38, 20);
-      this.numericUpDownDecryptLimit.TabIndex = 9;
+      this.numericUpDownDecryptLimit.TabIndex = 2;
       this.numericUpDownDecryptLimit.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownDecryptLimit.Value = new decimal(new int[] {
             1,
@@ -110,132 +110,124 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
             0,
             0});
       // 
-      // mpButtonCancel
+      // buttonCancel
       // 
-      this.mpButtonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpButtonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.mpButtonCancel.Location = new System.Drawing.Point(330, 493);
-      this.mpButtonCancel.Name = "mpButtonCancel";
-      this.mpButtonCancel.Size = new System.Drawing.Size(75, 23);
-      this.mpButtonCancel.TabIndex = 31;
-      this.mpButtonCancel.Text = "Cancel";
-      this.mpButtonCancel.UseVisualStyleBackColor = true;
-      this.mpButtonCancel.Click += new System.EventHandler(this.mpButtonCancel_Click);
+      this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+      this.buttonCancel.Location = new System.Drawing.Point(330, 493);
+      this.buttonCancel.Name = "buttonCancel";
+      this.buttonCancel.Size = new System.Drawing.Size(75, 23);
+      this.buttonCancel.TabIndex = 5;
+      this.buttonCancel.Text = "Cancel";
+      this.buttonCancel.UseVisualStyleBackColor = true;
+      this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
       // 
       // groupBoxConditionalAccessSettings
       // 
-      this.groupBoxConditionalAccessSettings.Controls.Add(this.mpLabel3);
-      this.groupBoxConditionalAccessSettings.Controls.Add(this.mpComboBoxMultiChannelDecryptMode);
-      this.groupBoxConditionalAccessSettings.Controls.Add(this.label5);
-      this.groupBoxConditionalAccessSettings.Controls.Add(this.mpComboBoxCamType);
+      this.groupBoxConditionalAccessSettings.Controls.Add(this.labelMultiChannelDecryptMode);
+      this.groupBoxConditionalAccessSettings.Controls.Add(this.comboBoxMultiChannelDecryptMode);
+      this.groupBoxConditionalAccessSettings.Controls.Add(this.labelCamType);
+      this.groupBoxConditionalAccessSettings.Controls.Add(this.comboBoxCamType);
       this.groupBoxConditionalAccessSettings.Controls.Add(this.checkBoxConditionalAccessEnabled);
-      this.groupBoxConditionalAccessSettings.Controls.Add(this.label3);
-      this.groupBoxConditionalAccessSettings.Controls.Add(this.label4);
+      this.groupBoxConditionalAccessSettings.Controls.Add(this.labelDecryptLimit1);
+      this.groupBoxConditionalAccessSettings.Controls.Add(this.labelDecryptLimit2);
       this.groupBoxConditionalAccessSettings.Controls.Add(this.numericUpDownDecryptLimit);
       this.groupBoxConditionalAccessSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxConditionalAccessSettings.Location = new System.Drawing.Point(22, 90);
+      this.groupBoxConditionalAccessSettings.Location = new System.Drawing.Point(22, 113);
       this.groupBoxConditionalAccessSettings.Name = "groupBoxConditionalAccessSettings";
       this.groupBoxConditionalAccessSettings.Size = new System.Drawing.Size(383, 133);
-      this.groupBoxConditionalAccessSettings.TabIndex = 5;
+      this.groupBoxConditionalAccessSettings.TabIndex = 1;
       this.groupBoxConditionalAccessSettings.TabStop = false;
       this.groupBoxConditionalAccessSettings.Text = "Conditional Access";
       // 
-      // mpLabel3
+      // labelMultiChannelDecryptMode
       // 
-      this.mpLabel3.AutoSize = true;
-      this.mpLabel3.Location = new System.Drawing.Point(15, 70);
-      this.mpLabel3.Name = "mpLabel3";
-      this.mpLabel3.Size = new System.Drawing.Size(140, 13);
-      this.mpLabel3.TabIndex = 11;
-      this.mpLabel3.Text = "Multi-channel decrypt mode:";
+      this.labelMultiChannelDecryptMode.AutoSize = true;
+      this.labelMultiChannelDecryptMode.Location = new System.Drawing.Point(13, 71);
+      this.labelMultiChannelDecryptMode.Name = "labelMultiChannelDecryptMode";
+      this.labelMultiChannelDecryptMode.Size = new System.Drawing.Size(140, 13);
+      this.labelMultiChannelDecryptMode.TabIndex = 4;
+      this.labelMultiChannelDecryptMode.Text = "Multi-channel decrypt mode:";
       // 
-      // mpComboBoxMultiChannelDecryptMode
+      // comboBoxMultiChannelDecryptMode
       // 
-      this.mpComboBoxMultiChannelDecryptMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.mpComboBoxMultiChannelDecryptMode.FormattingEnabled = true;
-      this.mpComboBoxMultiChannelDecryptMode.Items.AddRange(new object[] {
-            "Disabled",
-            "List",
-            "Changes"});
-      this.mpComboBoxMultiChannelDecryptMode.Location = new System.Drawing.Point(159, 68);
-      this.mpComboBoxMultiChannelDecryptMode.Name = "mpComboBoxMultiChannelDecryptMode";
-      this.mpComboBoxMultiChannelDecryptMode.Size = new System.Drawing.Size(103, 21);
-      this.mpComboBoxMultiChannelDecryptMode.TabIndex = 12;
+      this.comboBoxMultiChannelDecryptMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxMultiChannelDecryptMode.FormattingEnabled = true;
+      this.comboBoxMultiChannelDecryptMode.Location = new System.Drawing.Point(159, 68);
+      this.comboBoxMultiChannelDecryptMode.Name = "comboBoxMultiChannelDecryptMode";
+      this.comboBoxMultiChannelDecryptMode.Size = new System.Drawing.Size(103, 21);
+      this.comboBoxMultiChannelDecryptMode.TabIndex = 5;
       // 
-      // label5
+      // labelCamType
       // 
-      this.label5.AutoSize = true;
-      this.label5.Location = new System.Drawing.Point(15, 98);
-      this.label5.Name = "label5";
-      this.label5.Size = new System.Drawing.Size(64, 13);
-      this.label5.TabIndex = 13;
-      this.label5.Text = "CAM model:";
+      this.labelCamType.AutoSize = true;
+      this.labelCamType.Location = new System.Drawing.Point(13, 98);
+      this.labelCamType.Name = "labelCamType";
+      this.labelCamType.Size = new System.Drawing.Size(56, 13);
+      this.labelCamType.TabIndex = 6;
+      this.labelCamType.Text = "CAM type:";
       // 
-      // mpComboBoxCamType
+      // comboBoxCamType
       // 
-      this.mpComboBoxCamType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.mpComboBoxCamType.FormattingEnabled = true;
-      this.mpComboBoxCamType.Items.AddRange(new object[] {
-            "Default",
-            "Astoncrypt2"});
-      this.mpComboBoxCamType.Location = new System.Drawing.Point(159, 95);
-      this.mpComboBoxCamType.Name = "mpComboBoxCamType";
-      this.mpComboBoxCamType.Size = new System.Drawing.Size(103, 21);
-      this.mpComboBoxCamType.TabIndex = 14;
+      this.comboBoxCamType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxCamType.FormattingEnabled = true;
+      this.comboBoxCamType.Location = new System.Drawing.Point(159, 95);
+      this.comboBoxCamType.Name = "comboBoxCamType";
+      this.comboBoxCamType.Size = new System.Drawing.Size(103, 21);
+      this.comboBoxCamType.TabIndex = 7;
       // 
       // checkBoxConditionalAccessEnabled
       // 
       this.checkBoxConditionalAccessEnabled.AutoSize = true;
       this.checkBoxConditionalAccessEnabled.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxConditionalAccessEnabled.Location = new System.Drawing.Point(17, 19);
+      this.checkBoxConditionalAccessEnabled.Location = new System.Drawing.Point(16, 19);
       this.checkBoxConditionalAccessEnabled.Name = "checkBoxConditionalAccessEnabled";
       this.checkBoxConditionalAccessEnabled.RightToLeft = System.Windows.Forms.RightToLeft.No;
       this.checkBoxConditionalAccessEnabled.Size = new System.Drawing.Size(179, 17);
-      this.checkBoxConditionalAccessEnabled.TabIndex = 6;
+      this.checkBoxConditionalAccessEnabled.TabIndex = 0;
       this.checkBoxConditionalAccessEnabled.Text = "This tuner can decrypt channels.";
       this.checkBoxConditionalAccessEnabled.UseVisualStyleBackColor = true;
-      this.checkBoxConditionalAccessEnabled.CheckedChanged += new System.EventHandler(this.checkBoxCAMenabled_CheckedChanged);
+      this.checkBoxConditionalAccessEnabled.CheckedChanged += new System.EventHandler(this.checkBoxConditionalAccessEnabled_CheckedChanged);
       // 
-      // checkBoxAllowEpgGrab
+      // checkBoxEpgGrabEnabled
       // 
-      this.checkBoxAllowEpgGrab.AutoSize = true;
-      this.checkBoxAllowEpgGrab.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxAllowEpgGrab.Location = new System.Drawing.Point(17, 45);
-      this.checkBoxAllowEpgGrab.Name = "checkBoxAllowEpgGrab";
-      this.checkBoxAllowEpgGrab.RightToLeft = System.Windows.Forms.RightToLeft.No;
-      this.checkBoxAllowEpgGrab.Size = new System.Drawing.Size(212, 17);
-      this.checkBoxAllowEpgGrab.TabIndex = 4;
-      this.checkBoxAllowEpgGrab.Text = "Allow this tuner to be used to grab EPG.";
-      this.checkBoxAllowEpgGrab.UseVisualStyleBackColor = true;
+      this.checkBoxEpgGrabEnabled.AutoSize = true;
+      this.checkBoxEpgGrabEnabled.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxEpgGrabEnabled.Location = new System.Drawing.Point(16, 45);
+      this.checkBoxEpgGrabEnabled.Name = "checkBoxEpgGrabEnabled";
+      this.checkBoxEpgGrabEnabled.RightToLeft = System.Windows.Forms.RightToLeft.No;
+      this.checkBoxEpgGrabEnabled.Size = new System.Drawing.Size(271, 17);
+      this.checkBoxEpgGrabEnabled.TabIndex = 2;
+      this.checkBoxEpgGrabEnabled.Text = "Use this tuner to grab electronic program guide data.";
+      this.checkBoxEpgGrabEnabled.UseVisualStyleBackColor = true;
       // 
-      // checkBoxPreloadCard
+      // checkBoxPreloadTuner
       // 
-      this.checkBoxPreloadCard.AutoSize = true;
-      this.checkBoxPreloadCard.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxPreloadCard.Location = new System.Drawing.Point(17, 121);
-      this.checkBoxPreloadCard.Name = "checkBoxPreloadCard";
-      this.checkBoxPreloadCard.RightToLeft = System.Windows.Forms.RightToLeft.No;
-      this.checkBoxPreloadCard.Size = new System.Drawing.Size(178, 17);
-      this.checkBoxPreloadCard.TabIndex = 28;
-      this.checkBoxPreloadCard.Text = "Allow this tuner to be pre-loaded.";
-      this.checkBoxPreloadCard.UseVisualStyleBackColor = true;
+      this.checkBoxPreloadTuner.AutoSize = true;
+      this.checkBoxPreloadTuner.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxPreloadTuner.Location = new System.Drawing.Point(16, 68);
+      this.checkBoxPreloadTuner.Name = "checkBoxPreloadTuner";
+      this.checkBoxPreloadTuner.RightToLeft = System.Windows.Forms.RightToLeft.No;
+      this.checkBoxPreloadTuner.Size = new System.Drawing.Size(214, 17);
+      this.checkBoxPreloadTuner.TabIndex = 3;
+      this.checkBoxPreloadTuner.Text = "Load this tuner as soon as it is detected.";
+      this.checkBoxPreloadTuner.UseVisualStyleBackColor = true;
       // 
       // groupBoxAdvancedSettings
       // 
       this.groupBoxAdvancedSettings.Controls.Add(this.checkBoxUseCustomTuning);
-      this.groupBoxAdvancedSettings.Controls.Add(this.mpLabel6);
-      this.groupBoxAdvancedSettings.Controls.Add(this.mpLabel5);
-      this.groupBoxAdvancedSettings.Controls.Add(this.checkBoxPreloadCard);
+      this.groupBoxAdvancedSettings.Controls.Add(this.labelNetworkProvider);
+      this.groupBoxAdvancedSettings.Controls.Add(this.labelPidFilterMode);
       this.groupBoxAdvancedSettings.Controls.Add(this.comboBoxNetworkProvider);
-      this.groupBoxAdvancedSettings.Controls.Add(this.mpComboBoxPidFilterMode);
-      this.groupBoxAdvancedSettings.Controls.Add(this.mpLabel1);
-      this.groupBoxAdvancedSettings.Controls.Add(this.mpComboBoxIdleMode);
-      this.groupBoxAdvancedSettings.Controls.Add(this.mpLabel4);
+      this.groupBoxAdvancedSettings.Controls.Add(this.comboBoxPidFilterMode);
+      this.groupBoxAdvancedSettings.Controls.Add(this.labelReadDocumentation);
+      this.groupBoxAdvancedSettings.Controls.Add(this.comboBoxIdleMode);
+      this.groupBoxAdvancedSettings.Controls.Add(this.labelIdleMode);
       this.groupBoxAdvancedSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxAdvancedSettings.Location = new System.Drawing.Point(22, 308);
+      this.groupBoxAdvancedSettings.Location = new System.Drawing.Point(22, 331);
       this.groupBoxAdvancedSettings.Name = "groupBoxAdvancedSettings";
-      this.groupBoxAdvancedSettings.Size = new System.Drawing.Size(383, 174);
-      this.groupBoxAdvancedSettings.TabIndex = 20;
+      this.groupBoxAdvancedSettings.Size = new System.Drawing.Size(383, 148);
+      this.groupBoxAdvancedSettings.TabIndex = 3;
       this.groupBoxAdvancedSettings.TabStop = false;
       this.groupBoxAdvancedSettings.Text = "Advanced";
       // 
@@ -243,31 +235,31 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       this.checkBoxUseCustomTuning.AutoSize = true;
       this.checkBoxUseCustomTuning.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxUseCustomTuning.Location = new System.Drawing.Point(17, 144);
+      this.checkBoxUseCustomTuning.Location = new System.Drawing.Point(16, 121);
       this.checkBoxUseCustomTuning.Name = "checkBoxUseCustomTuning";
       this.checkBoxUseCustomTuning.RightToLeft = System.Windows.Forms.RightToLeft.No;
       this.checkBoxUseCustomTuning.Size = new System.Drawing.Size(199, 17);
-      this.checkBoxUseCustomTuning.TabIndex = 29;
+      this.checkBoxUseCustomTuning.TabIndex = 7;
       this.checkBoxUseCustomTuning.Text = "Use direct/custom tuning if available.";
       this.checkBoxUseCustomTuning.UseVisualStyleBackColor = true;
       // 
-      // mpLabel6
+      // labelNetworkProvider
       // 
-      this.mpLabel6.AutoSize = true;
-      this.mpLabel6.Location = new System.Drawing.Point(14, 70);
-      this.mpLabel6.Name = "mpLabel6";
-      this.mpLabel6.Size = new System.Drawing.Size(91, 13);
-      this.mpLabel6.TabIndex = 24;
-      this.mpLabel6.Text = "Network provider:";
+      this.labelNetworkProvider.AutoSize = true;
+      this.labelNetworkProvider.Location = new System.Drawing.Point(13, 70);
+      this.labelNetworkProvider.Name = "labelNetworkProvider";
+      this.labelNetworkProvider.Size = new System.Drawing.Size(91, 13);
+      this.labelNetworkProvider.TabIndex = 3;
+      this.labelNetworkProvider.Text = "Network provider:";
       // 
-      // mpLabel5
+      // labelPidFilterMode
       // 
-      this.mpLabel5.AutoSize = true;
-      this.mpLabel5.Location = new System.Drawing.Point(14, 97);
-      this.mpLabel5.Name = "mpLabel5";
-      this.mpLabel5.Size = new System.Drawing.Size(79, 13);
-      this.mpLabel5.TabIndex = 26;
-      this.mpLabel5.Text = "PID filter mode:";
+      this.labelPidFilterMode.AutoSize = true;
+      this.labelPidFilterMode.Location = new System.Drawing.Point(13, 97);
+      this.labelPidFilterMode.Name = "labelPidFilterMode";
+      this.labelPidFilterMode.Size = new System.Drawing.Size(79, 13);
+      this.labelPidFilterMode.TabIndex = 5;
+      this.labelPidFilterMode.Text = "PID filter mode:";
       // 
       // comboBoxNetworkProvider
       // 
@@ -276,104 +268,96 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.comboBoxNetworkProvider.Location = new System.Drawing.Point(158, 67);
       this.comboBoxNetworkProvider.Name = "comboBoxNetworkProvider";
       this.comboBoxNetworkProvider.Size = new System.Drawing.Size(103, 21);
-      this.comboBoxNetworkProvider.TabIndex = 25;
+      this.comboBoxNetworkProvider.TabIndex = 4;
       // 
-      // mpComboBoxPidFilterMode
+      // comboBoxPidFilterMode
       // 
-      this.mpComboBoxPidFilterMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.mpComboBoxPidFilterMode.FormattingEnabled = true;
-      this.mpComboBoxPidFilterMode.Items.AddRange(new object[] {
-            "Disabled",
-            "Enabled",
-            "Auto"});
-      this.mpComboBoxPidFilterMode.Location = new System.Drawing.Point(158, 94);
-      this.mpComboBoxPidFilterMode.Name = "mpComboBoxPidFilterMode";
-      this.mpComboBoxPidFilterMode.Size = new System.Drawing.Size(103, 21);
-      this.mpComboBoxPidFilterMode.TabIndex = 27;
+      this.comboBoxPidFilterMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxPidFilterMode.FormattingEnabled = true;
+      this.comboBoxPidFilterMode.Location = new System.Drawing.Point(158, 94);
+      this.comboBoxPidFilterMode.Name = "comboBoxPidFilterMode";
+      this.comboBoxPidFilterMode.Size = new System.Drawing.Size(103, 21);
+      this.comboBoxPidFilterMode.TabIndex = 6;
       // 
-      // mpLabel1
+      // labelReadDocumentation
       // 
-      this.mpLabel1.AutoSize = true;
-      this.mpLabel1.Location = new System.Drawing.Point(14, 16);
-      this.mpLabel1.Name = "mpLabel1";
-      this.mpLabel1.Size = new System.Drawing.Size(355, 13);
-      this.mpLabel1.TabIndex = 21;
-      this.mpLabel1.Text = "Please read the documentation in our wiki before changing these settings.";
+      this.labelReadDocumentation.AutoSize = true;
+      this.labelReadDocumentation.Location = new System.Drawing.Point(6, 16);
+      this.labelReadDocumentation.Name = "labelReadDocumentation";
+      this.labelReadDocumentation.Size = new System.Drawing.Size(355, 13);
+      this.labelReadDocumentation.TabIndex = 0;
+      this.labelReadDocumentation.Text = "Please read the documentation in our wiki before changing these settings.";
       // 
-      // mpComboBoxIdleMode
+      // comboBoxIdleMode
       // 
-      this.mpComboBoxIdleMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.mpComboBoxIdleMode.FormattingEnabled = true;
-      this.mpComboBoxIdleMode.Items.AddRange(new object[] {
-            "Pause",
-            "Stop",
-            "Unload",
-            "AlwaysOn"});
-      this.mpComboBoxIdleMode.Location = new System.Drawing.Point(158, 40);
-      this.mpComboBoxIdleMode.Name = "mpComboBoxIdleMode";
-      this.mpComboBoxIdleMode.Size = new System.Drawing.Size(103, 21);
-      this.mpComboBoxIdleMode.TabIndex = 23;
+      this.comboBoxIdleMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxIdleMode.FormattingEnabled = true;
+      this.comboBoxIdleMode.Location = new System.Drawing.Point(158, 40);
+      this.comboBoxIdleMode.Name = "comboBoxIdleMode";
+      this.comboBoxIdleMode.Size = new System.Drawing.Size(103, 21);
+      this.comboBoxIdleMode.TabIndex = 2;
       // 
-      // mpLabel4
+      // labelIdleMode
       // 
-      this.mpLabel4.AutoSize = true;
-      this.mpLabel4.Location = new System.Drawing.Point(14, 43);
-      this.mpLabel4.Name = "mpLabel4";
-      this.mpLabel4.Size = new System.Drawing.Size(56, 13);
-      this.mpLabel4.TabIndex = 22;
-      this.mpLabel4.Text = "Idle mode:";
+      this.labelIdleMode.AutoSize = true;
+      this.labelIdleMode.Location = new System.Drawing.Point(13, 43);
+      this.labelIdleMode.Name = "labelIdleMode";
+      this.labelIdleMode.Size = new System.Drawing.Size(56, 13);
+      this.labelIdleMode.TabIndex = 1;
+      this.labelIdleMode.Text = "Idle mode:";
       // 
-      // mpTextBoxDeviceName
+      // textBoxTunerName
       // 
-      this.mpTextBoxTunerName.Location = new System.Drawing.Point(96, 19);
-      this.mpTextBoxTunerName.Name = "mpTextBoxDeviceName";
-      this.mpTextBoxTunerName.Size = new System.Drawing.Size(272, 20);
-      this.mpTextBoxTunerName.TabIndex = 3;
+      this.textBoxTunerName.Location = new System.Drawing.Point(96, 19);
+      this.textBoxTunerName.Name = "textBoxTunerName";
+      this.textBoxTunerName.Size = new System.Drawing.Size(272, 20);
+      this.textBoxTunerName.TabIndex = 1;
       // 
-      // mpLabel2
+      // labelTunerName
       // 
-      this.mpLabel2.AutoSize = true;
-      this.mpLabel2.Location = new System.Drawing.Point(15, 22);
-      this.mpLabel2.Name = "mpLabel2";
-      this.mpLabel2.Size = new System.Drawing.Size(69, 13);
-      this.mpLabel2.TabIndex = 2;
-      this.mpLabel2.Text = "Tuner Name:";
+      this.labelTunerName.AutoSize = true;
+      this.labelTunerName.Location = new System.Drawing.Point(13, 22);
+      this.labelTunerName.Name = "labelTunerName";
+      this.labelTunerName.Size = new System.Drawing.Size(67, 13);
+      this.labelTunerName.TabIndex = 0;
+      this.labelTunerName.Text = "Tuner name:";
       // 
       // groupBoxGeneralSettings
       // 
-      this.groupBoxGeneralSettings.Controls.Add(this.mpLabel2);
-      this.groupBoxGeneralSettings.Controls.Add(this.checkBoxAllowEpgGrab);
-      this.groupBoxGeneralSettings.Controls.Add(this.mpTextBoxTunerName);
+      this.groupBoxGeneralSettings.Controls.Add(this.labelTunerName);
+      this.groupBoxGeneralSettings.Controls.Add(this.checkBoxEpgGrabEnabled);
+      this.groupBoxGeneralSettings.Controls.Add(this.textBoxTunerName);
+      this.groupBoxGeneralSettings.Controls.Add(this.checkBoxPreloadTuner);
       this.groupBoxGeneralSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxGeneralSettings.Location = new System.Drawing.Point(22, 12);
       this.groupBoxGeneralSettings.Name = "groupBoxGeneralSettings";
-      this.groupBoxGeneralSettings.Size = new System.Drawing.Size(383, 72);
-      this.groupBoxGeneralSettings.TabIndex = 1;
+      this.groupBoxGeneralSettings.Size = new System.Drawing.Size(383, 95);
+      this.groupBoxGeneralSettings.TabIndex = 0;
       this.groupBoxGeneralSettings.TabStop = false;
       this.groupBoxGeneralSettings.Text = "General";
       // 
       // groupBoxDiseqcSettings
       // 
-      this.groupBoxDiseqcSettings.Controls.Add(this.mpLabel7);
+      this.groupBoxDiseqcSettings.Controls.Add(this.labelDiseqcRepeatCount2);
       this.groupBoxDiseqcSettings.Controls.Add(this.numericUpDownDiseqcCommandRepeatCount);
-      this.groupBoxDiseqcSettings.Controls.Add(this.mpLabel8);
+      this.groupBoxDiseqcSettings.Controls.Add(this.labelDiseqcRepeatCount1);
       this.groupBoxDiseqcSettings.Controls.Add(this.checkBoxAlwaysSendDiseqcCommands);
       this.groupBoxDiseqcSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxDiseqcSettings.Location = new System.Drawing.Point(22, 231);
+      this.groupBoxDiseqcSettings.Location = new System.Drawing.Point(22, 254);
       this.groupBoxDiseqcSettings.Name = "groupBoxDiseqcSettings";
       this.groupBoxDiseqcSettings.Size = new System.Drawing.Size(383, 68);
-      this.groupBoxDiseqcSettings.TabIndex = 15;
+      this.groupBoxDiseqcSettings.TabIndex = 2;
       this.groupBoxDiseqcSettings.TabStop = false;
       this.groupBoxDiseqcSettings.Text = "DiSEqC";
       // 
-      // mpLabel7
+      // labelDiseqcRepeatCount2
       // 
-      this.mpLabel7.AutoSize = true;
-      this.mpLabel7.Location = new System.Drawing.Point(158, 44);
-      this.mpLabel7.Name = "mpLabel7";
-      this.mpLabel7.Size = new System.Drawing.Size(40, 13);
-      this.mpLabel7.TabIndex = 19;
-      this.mpLabel7.Text = "time(s).";
+      this.labelDiseqcRepeatCount2.AutoSize = true;
+      this.labelDiseqcRepeatCount2.Location = new System.Drawing.Point(158, 44);
+      this.labelDiseqcRepeatCount2.Name = "labelDiseqcRepeatCount2";
+      this.labelDiseqcRepeatCount2.Size = new System.Drawing.Size(40, 13);
+      this.labelDiseqcRepeatCount2.TabIndex = 3;
+      this.labelDiseqcRepeatCount2.Text = "time(s).";
       // 
       // numericUpDownDiseqcCommandRepeatCount
       // 
@@ -385,17 +369,17 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
             0});
       this.numericUpDownDiseqcCommandRepeatCount.Name = "numericUpDownDiseqcCommandRepeatCount";
       this.numericUpDownDiseqcCommandRepeatCount.Size = new System.Drawing.Size(38, 20);
-      this.numericUpDownDiseqcCommandRepeatCount.TabIndex = 18;
+      this.numericUpDownDiseqcCommandRepeatCount.TabIndex = 2;
       this.numericUpDownDiseqcCommandRepeatCount.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       // 
-      // mpLabel8
+      // labelDiseqcRepeatCount1
       // 
-      this.mpLabel8.AutoSize = true;
-      this.mpLabel8.Location = new System.Drawing.Point(13, 44);
-      this.mpLabel8.Name = "mpLabel8";
-      this.mpLabel8.Size = new System.Drawing.Size(102, 13);
-      this.mpLabel8.TabIndex = 17;
-      this.mpLabel8.Text = "Repeat command(s)";
+      this.labelDiseqcRepeatCount1.AutoSize = true;
+      this.labelDiseqcRepeatCount1.Location = new System.Drawing.Point(13, 44);
+      this.labelDiseqcRepeatCount1.Name = "labelDiseqcRepeatCount1";
+      this.labelDiseqcRepeatCount1.Size = new System.Drawing.Size(102, 13);
+      this.labelDiseqcRepeatCount1.TabIndex = 1;
+      this.labelDiseqcRepeatCount1.Text = "Repeat command(s)";
       // 
       // checkBoxAlwaysSendDiseqcCommands
       // 
@@ -404,24 +388,24 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.checkBoxAlwaysSendDiseqcCommands.Location = new System.Drawing.Point(16, 19);
       this.checkBoxAlwaysSendDiseqcCommands.Name = "checkBoxAlwaysSendDiseqcCommands";
       this.checkBoxAlwaysSendDiseqcCommands.RightToLeft = System.Windows.Forms.RightToLeft.No;
-      this.checkBoxAlwaysSendDiseqcCommands.Size = new System.Drawing.Size(140, 17);
-      this.checkBoxAlwaysSendDiseqcCommands.TabIndex = 16;
-      this.checkBoxAlwaysSendDiseqcCommands.Text = "Always send commands.";
+      this.checkBoxAlwaysSendDiseqcCommands.Size = new System.Drawing.Size(218, 17);
+      this.checkBoxAlwaysSendDiseqcCommands.TabIndex = 0;
+      this.checkBoxAlwaysSendDiseqcCommands.Text = "Send command(s) on every tune attempt.";
       this.checkBoxAlwaysSendDiseqcCommands.UseVisualStyleBackColor = true;
       // 
       // FormEditCard
       // 
-      this.AcceptButton = this.mpButtonSave;
+      this.AcceptButton = this.buttonSave;
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.CancelButton = this.mpButtonCancel;
+      this.CancelButton = this.buttonCancel;
       this.ClientSize = new System.Drawing.Size(429, 528);
       this.Controls.Add(this.groupBoxDiseqcSettings);
       this.Controls.Add(this.groupBoxAdvancedSettings);
       this.Controls.Add(this.groupBoxGeneralSettings);
       this.Controls.Add(this.groupBoxConditionalAccessSettings);
-      this.Controls.Add(this.mpButtonCancel);
-      this.Controls.Add(this.mpButtonSave);
+      this.Controls.Add(this.buttonCancel);
+      this.Controls.Add(this.buttonSave);
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
       this.Name = "FormEditCard";
       this.ShowIcon = false;
@@ -445,35 +429,35 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
     #endregion
 
-    private MPLabel label3;
-    private MPLabel label4;
-    private MPButton mpButtonSave;
+    private MPLabel labelDecryptLimit1;
+    private MPLabel labelDecryptLimit2;
+    private MPButton buttonSave;
     private System.Windows.Forms.NumericUpDown numericUpDownDecryptLimit;
-    private MPButton mpButtonCancel;
+    private MPButton buttonCancel;
     private MPGroupBox groupBoxConditionalAccessSettings;
-    private MPCheckBox checkBoxAllowEpgGrab;
-    private MPCheckBox checkBoxPreloadCard;
+    private MPCheckBox checkBoxEpgGrabEnabled;
+    private MPCheckBox checkBoxPreloadTuner;
     private MPGroupBox groupBoxAdvancedSettings;
     private MPCheckBox checkBoxConditionalAccessEnabled;
-    private MPLabel label5;
-    private MPComboBox mpComboBoxCamType;
+    private MPLabel labelCamType;
+    private MPComboBox comboBoxCamType;
     private MPComboBox comboBoxNetworkProvider;
-    private MPLabel mpLabel3;
-    private MPComboBox mpComboBoxMultiChannelDecryptMode;
-    private MPTextBox mpTextBoxTunerName;
-    private MPLabel mpLabel2;
-    private MPLabel mpLabel6;
-    private MPLabel mpLabel5;
-    private MPComboBox mpComboBoxPidFilterMode;
-    private MPLabel mpLabel1;
-    private MPComboBox mpComboBoxIdleMode;
-    private MPLabel mpLabel4;
+    private MPLabel labelMultiChannelDecryptMode;
+    private MPComboBox comboBoxMultiChannelDecryptMode;
+    private MPTextBox textBoxTunerName;
+    private MPLabel labelTunerName;
+    private MPLabel labelNetworkProvider;
+    private MPLabel labelPidFilterMode;
+    private MPComboBox comboBoxPidFilterMode;
+    private MPLabel labelReadDocumentation;
+    private MPComboBox comboBoxIdleMode;
+    private MPLabel labelIdleMode;
     private MPGroupBox groupBoxGeneralSettings;
     private MPCheckBox checkBoxUseCustomTuning;
     private MPGroupBox groupBoxDiseqcSettings;
-    private MPLabel mpLabel7;
+    private MPLabel labelDiseqcRepeatCount2;
     private System.Windows.Forms.NumericUpDown numericUpDownDiseqcCommandRepeatCount;
-    private MPLabel mpLabel8;
+    private MPLabel labelDiseqcRepeatCount1;
     private MPCheckBox checkBoxAlwaysSendDiseqcCommands;
   }
 }

@@ -112,6 +112,20 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     string CardDevice(int cardId);
 
     /// <summary>
+    /// Reloads the configuration for the given card
+    /// </summary>
+    /// <param name="cardId">Unique id of the card</param>
+    [OperationContract]
+    void ReloadCardConfiguration(int cardId);
+
+    /// <summary>
+    /// Reloads the configuration for the given cards
+    /// </summary>
+    /// <param name="cardIds">Unique ids of the cards</param>
+    [OperationContract(Name = "ReloadCardConfigurationMultiple")]
+    void ReloadCardConfiguration(IEnumerable<int> cardIds);
+
+    /// <summary>
     /// Returns if the tuner is locked onto a signal or not
     /// </summary>
     /// <param name="cardId">id of the card.</param>
@@ -694,7 +708,6 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     [OperationContract(Name = "ScanByUser")]
     TvResult Scan(string userName, int idCard, out IUser user, IChannel channel, int idChannel);
 
-
     /// <summary>
     /// Tunes the the specified card to the channel.
     /// </summary>
@@ -706,7 +719,6 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// <returns>true if succeeded</returns>
     [OperationContract]
     TvResult Tune(string userName, int idCard, out IUser user, IChannel channel, int idChannel);
-
 
     /// <summary>
     /// Gets the users for card.
@@ -726,9 +738,6 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// </returns>
     [OperationContract]
     bool IsOwner(int cardId, string userName);
-
-
-
 
     #endregion
 
@@ -765,13 +774,6 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// <returns>true/false</returns>
     [OperationContract]
     bool SupportsBitRate(int cardId);
-
-    /// <summary>
-    /// Reloads the configuration for the given card
-    /// </summary>
-    /// <param name="cardId">Unique id of the card</param>
-    [OperationContract]
-    void ReloadCardConfiguration(int cardId);
 
     /// <summary>
     /// Gets the current quality type
@@ -860,8 +862,6 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// <returns></returns>
     [OperationContract]
     bool SetCiMenuHandler(int cardId, IConditionalAccessMenuCallBack callbackHandler);
-
-    
 
     #endregion
 

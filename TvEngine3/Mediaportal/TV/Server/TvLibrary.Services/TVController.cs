@@ -797,31 +797,23 @@ namespace Mediaportal.TV.Server.TVLibrary
     /// <summary>
     /// Method to remove a non-present card from the local card collection
     /// </summary>
-    /// <returns>true if card is present otherwise false</returns>		
+    /// <returns>true if card is present otherwise false</returns>
     public void CardRemove(int cardId)
     {
       try
       {
         if (ValidateTvControllerParams(cardId))
         {
-          string devicePath = _cards[cardId].Card.ExternalId;
-          if (devicePath.Length > 0)
-          {
-            // RemoveUser database instance
-            TVDatabase.TVBusinessLayer.CardManagement.DeleteCard(cardId);
-            // RemoveUser it from the card collection
-            _cards.Remove(cardId);
-          }
+          ITvCardHandler handler = _cards[cardId];
+          _cards.Remove(cardId);
+          handler.Dispose();
         }
-        else
-        {
-          TVDatabase.TVBusinessLayer.CardManagement.DeleteCard(cardId);          
-        }
+        TVDatabase.TVBusinessLayer.CardManagement.DeleteCard(cardId);
       }
       catch (Exception e)
       {
         HandleControllerException(e);
-      }      
+      }
     }
 
     /// <summary>
@@ -4198,16 +4190,59 @@ namespace Mediaportal.TV.Server.TVLibrary
     {
       try
       {
-        if (ValidateTvControllerParams(cardId))
-        {
-          _cards[cardId].Card.ReloadConfiguration(); 
-        }        
+        this.LogInfo("Controller: reload tuner configuration, ID = {0}", cardId);
+        ReloadTunerConfiguration(cardId);
+        _tunerDetector.ReloadConfiguration();
       }
       catch (Exception e)
       {
         HandleControllerException(e);
       }
-      
+    }
+
+    private void ReloadTunerConfiguration(int tunerId)
+    {
+      ITvCardHandler handler;
+      if (_cards.TryGetValue(tunerId, out handler))
+      {
+        ITVCard tuner = handler.Card;
+        Card dbSettings = TVDatabase.TVBusinessLayer.CardManagement.GetCardByDevicePath(tuner.ExternalId);
+        if (dbSettings == null)
+        {
+          OnTunerRemoved(tuner);
+        }
+        else
+        {
+          _cards.Remove(tunerId);
+          tuner.ReloadConfiguration();
+          OnTunerAdded(tuner);
+        }
+      }
+    }
+
+    /// <summary>
+    /// Reloads the configuration for the given cards
+    /// </summary>
+    /// <param name="cardIds">Unique ids of the cards</param>
+    public void ReloadCardConfiguration(IEnumerable<int> cardIds)
+    {
+      try
+      {
+        if (cardIds == null)
+        {
+          return;
+        }
+        this.LogInfo("Controller: reload tuner configuration, IDs = [{0}]", string.Join(", ", cardIds));
+        foreach (int cardId in cardIds)
+        {
+          ReloadTunerConfiguration(cardId);
+        }
+        _tunerDetector.ReloadConfiguration();
+      }
+      catch (Exception e)
+      {
+        HandleControllerException(e);
+      }
     }
 
     /// <summary>

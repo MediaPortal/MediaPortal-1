@@ -122,6 +122,24 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
     }
 
     /// <summary>
+    /// Reloads the configuration for the given card
+    /// </summary>
+    /// <param name="cardId">Unique id of the card</param>
+    public void ReloadCardConfiguration(int cardId)
+    {
+      Service.ReloadCardConfiguration(cardId);
+    }
+
+    /// <summary>
+    /// Reloads the configuration for the given cards
+    /// </summary>
+    /// <param name="cardIds">Unique ids of the cards</param>
+    public void ReloadCardConfiguration(IEnumerable<int> cardIds)
+    {
+      Service.ReloadCardConfiguration(cardIds);
+    }
+
+    /// <summary>
     /// Returns if the tuner is locked onto a signal or not
     /// </summary>
     /// <param name="cardId">id of the card.</param>
@@ -880,15 +898,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
     public bool SupportsBitRate(int cardId)
     {
       return Service.SupportsBitRate(cardId);
-    }
-
-    /// <summary>
-    /// Reloads the configuration for the given card
-    /// </summary>
-    /// <param name="cardId">Unique id of the card</param>
-    public void ReloadCardConfiguration(int cardId)
-    {
-      Service.ReloadCardConfiguration(cardId);
     }
 
     /// <summary>

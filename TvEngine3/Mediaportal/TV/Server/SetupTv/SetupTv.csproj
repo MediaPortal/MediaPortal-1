@@ -135,17 +135,17 @@
     <Compile Include="Dialogs\FormSelectListChannel.Designer.cs">
       <DependentUpon>FormSelectListChannel.cs</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\GroupNameForm.cs">
+    <Compile Include="Dialogs\FormEnterText.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Dialogs\GroupNameForm.designer.cs">
-      <DependentUpon>GroupNameForm.cs</DependentUpon>
+    <Compile Include="Dialogs\FormEnterText.designer.cs">
+      <DependentUpon>FormEnterText.cs</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\GroupSelectionForm.cs">
+    <Compile Include="Dialogs\FormSelectItem.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Dialogs\GroupSelectionForm.designer.cs">
-      <DependentUpon>GroupSelectionForm.cs</DependentUpon>
+    <Compile Include="Dialogs\FormSelectItem.designer.cs">
+      <DependentUpon>FormSelectItem.cs</DependentUpon>
     </Compile>
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="HelpSystem.cs" />
@@ -500,12 +500,12 @@
       <SubType>Designer</SubType>
       <DependentUpon>FormSelectListChannel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Dialogs\GroupNameForm.resx">
-      <DependentUpon>GroupNameForm.cs</DependentUpon>
+    <EmbeddedResource Include="Dialogs\FormEnterText.resx">
+      <DependentUpon>FormEnterText.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Dialogs\GroupSelectionForm.resx">
-      <DependentUpon>GroupSelectionForm.cs</DependentUpon>
+    <EmbeddedResource Include="Dialogs\FormSelectItem.resx">
+      <DependentUpon>FormSelectItem.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="NotifyForm.resx">
@@ -563,8 +563,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="62_upgrade_mysql_database.sql" />
-    <EmbeddedResource Include="62_upgrade_sqlserver_database.sql" />
     <Content Include="images\animation.SatDish.gif" />
     <Content Include="images\icon.card.gif" />
     <Content Include="images\icon.computer.gif" />

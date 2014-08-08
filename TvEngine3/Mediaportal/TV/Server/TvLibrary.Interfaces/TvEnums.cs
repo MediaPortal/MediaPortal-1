@@ -35,22 +35,27 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// <summary>
     /// DVB-S or DVB-S2 tuner. ISDB-S may also be supported.
     /// </summary>
+    [Description("DVB-S/S2")]
     DvbS,
     /// <summary>
     /// DVB-T or DVB-T2 tuner. ISDB-T may also be supported.
     /// </summary>
+    [Description("DVB-T/T2")]
     DvbT,
     /// <summary>
     /// DVB-C tuner.
     /// </summary>
+    [Description("DVB-C")]
     DvbC,
     /// <summary>
     /// ATSC and/or SCTE (ITU-T annex B) North American cable tuner.
     /// </summary>
+    [Description("ATSC")]
     Atsc,
     /// <summary>
     /// DVB-IP tuner.
     /// </summary>
+    [Description("Stream")]
     DvbIP,
     /// <summary>
     /// Unknown device.
