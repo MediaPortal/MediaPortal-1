@@ -33,8 +33,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     /// </summary>
     private void InitializeComponent()
     {
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Project));
       this.groupBoxInfo = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
-      this.labelInfo2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.labelInfo1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.groupBoxContact = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
       this.linkLabelSourceforge = new System.Windows.Forms.LinkLabel();
@@ -63,7 +63,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       this.groupBoxInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBoxInfo.Controls.Add(this.labelInfo2);
       this.groupBoxInfo.Controls.Add(this.labelInfo1);
       this.groupBoxInfo.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxInfo.Location = new System.Drawing.Point(0, 0);
@@ -72,27 +71,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxInfo.TabIndex = 0;
       this.groupBoxInfo.TabStop = false;
       // 
-      // labelInfo2
-      // 
-      this.labelInfo2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.labelInfo2.Location = new System.Drawing.Point(16, 56);
-      this.labelInfo2.Name = "labelInfo2";
-      this.labelInfo2.Size = new System.Drawing.Size(448, 30);
-      this.labelInfo2.TabIndex = 1;
-      this.labelInfo2.Text = "Clients like MediaPortal can use the TV-Server to watch Live-TV/recordings/EPG ov" +
-          "er the network.";
-      // 
       // labelInfo1
       // 
       this.labelInfo1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.labelInfo1.Location = new System.Drawing.Point(16, 24);
       this.labelInfo1.Name = "labelInfo1";
-      this.labelInfo1.Size = new System.Drawing.Size(448, 32);
+      this.labelInfo1.Size = new System.Drawing.Size(448, 63);
       this.labelInfo1.TabIndex = 0;
-      this.labelInfo1.Text = "The TV-Server is an application which allows you to set up a central server with " +
-          "multiple TV cards.";
+      this.labelInfo1.Text = resources.GetString("labelInfo1.Text");
       // 
       // groupBoxContact
       // 
@@ -312,7 +299,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private System.Windows.Forms.LinkLabel linkLabelOnlineDocumentation;
     private MPLabel labelSourceForge;
     private System.Windows.Forms.LinkLabel linkLabelSourceforge;
-    private MPLabel labelInfo2;
     private MPLabel labelMePo;
     private MPGroupBox mpGroupBoxAbout;
     private MPLabel labelVersion3;
