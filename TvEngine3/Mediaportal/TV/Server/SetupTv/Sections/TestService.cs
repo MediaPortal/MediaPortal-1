@@ -597,7 +597,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           {
             if (subchannel.IdChannel == channelId)
             {
-              var vcard = new VirtualCard(user1, RemoteControl.HostName);
+              var vcard = new VirtualCard(user1);
               if (vcard.IsTimeShifting)
               {
                 vcard.RecordingFolder = card.RecordingFolder;
@@ -630,7 +630,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           {
             if (subchannel.IdChannel == channelId)
             {
-              var vcard = new VirtualCard(user, RemoteControl.HostName);
+              var vcard = new VirtualCard(user);
               if (vcard.IsRecording)
               {
                 vcard.RecordingFolder = card.RecordingFolder;

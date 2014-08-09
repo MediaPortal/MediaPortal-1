@@ -25,12 +25,6 @@ namespace Mediaportal.TV.Server.TVService.Interfaces
     [DataMember]
     int Id { get; }
 
-    /// <summary>
-    /// gets the ip adress of the tvservice
-    /// </summary>
-    [DataMember]
-    string RemoteServer { get; set; }
-
     ///<summary>
     /// Gets/Set the recording format
     ///</summary>

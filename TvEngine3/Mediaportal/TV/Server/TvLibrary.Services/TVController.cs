@@ -4595,8 +4595,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         card = new VirtualCard(user)
         {
           RecordingFolder = _cards[user.CardId].DataBaseCard.RecordingFolder,
-          TimeshiftFolder = _cards[user.CardId].DataBaseCard.TimeshiftingFolder,
-          RemoteServer = Dns.GetHostName()
+          TimeshiftFolder = _cards[user.CardId].DataBaseCard.TimeshiftingFolder
         }; 
       }      
       return card;

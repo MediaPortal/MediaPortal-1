@@ -140,7 +140,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
         }
         try
         {
-          RemoteControl.HostName = SettingsManagement.GetSetting("hostname").Value;
           if (!ServiceManager.Instance.InternalControllerService.IsCardPresent(card.IdCard))
           {
             continue;
@@ -148,7 +147,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
         }
         catch (Exception e)
         {
-          this.LogError("card: unable to start job for card {0} at:{0}", e.Message, card.Name, RemoteControl.HostName);
+          this.LogError(e, "card: unable to start job for card {0}", card.Name);
         }
 
         var epgCard = new EpgCard(card);

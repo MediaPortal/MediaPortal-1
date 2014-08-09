@@ -45,14 +45,10 @@ namespace Mediaportal.TV.Server.TVControl
   [DataContract]
   public class VirtualCard : IVirtualCard
   {
-
     #region variables
 
     [DataMember]
     private int _nrOfOtherUsersTimeshiftingOnCard = 0;
-
-    [DataMember]
-    private string _server;
 
     [DataMember]
     private string _recordingFolder;
@@ -116,12 +112,10 @@ namespace Mediaportal.TV.Server.TVControl
     /// Initializes a new instance of the <see cref="VirtualCard"/> class.
     /// </summary>
     /// <param name="user">The user.</param>
-    /// <param name="server">The server.</param>
     /// <param name="recordingFormat">The recording format.</param>
-    public VirtualCard(User user, string server, int recordingFormat)
+    public VirtualCard(User user, int recordingFormat)
     {      
       _user = user;
-      _server = server;
 
       InitStaticProperties();
 
@@ -135,11 +129,9 @@ namespace Mediaportal.TV.Server.TVControl
     /// Initializes a new instance of the <see cref="VirtualCard"/> class.
     /// </summary>
     /// <param name="user">The user.</param>
-    /// <param name="server">The server.</param>
-    public VirtualCard(IUser user, string server)
+    public VirtualCard(IUser user)
     {
       _user = user;
-      _server = server;
       _recordingFolder = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\recordings",
                                        Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
 
@@ -189,21 +181,6 @@ namespace Mediaportal.TV.Server.TVControl
       }                        
     }
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="VirtualCard"/> class.
-    /// </summary>
-    /// <param name="user">The user.</param>
-    public VirtualCard(IUser user)
-    {
-      _user = user;
-      _server = Dns.GetHostName();
-
-      InitStaticProperties();
-
-      _recordingFolder = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\recordings",
-                                       Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
-    }
-
     #endregion
     
     #region properties
@@ -230,15 +207,6 @@ namespace Mediaportal.TV.Server.TVControl
     public int Id
     {
       get { return _user.CardId; }
-    }
-
-    /// <summary>
-    /// gets the ip adress of the tvservice
-    /// </summary>
-    public string RemoteServer
-    {
-      get { return _server; }
-      set { _server = value; }
     }
 
     ///<summary>
@@ -591,7 +559,6 @@ namespace Mediaportal.TV.Server.TVControl
           {
             return -1;
           }
-          RemoteControl.HostName = _server;
           return GlobalServiceProvider.Get<IControllerService>().GetRecordingSchedule(User.CardId, User.Name);
         }
         catch (Exception)
@@ -617,7 +584,6 @@ namespace Mediaportal.TV.Server.TVControl
           {
             return false;
           }
-          RemoteControl.HostName = _server;
           return GlobalServiceProvider.Get<IControllerService>().TunerLocked(User.CardId);
         }
         catch (Exception)
@@ -642,7 +608,6 @@ namespace Mediaportal.TV.Server.TVControl
       {
         if (User.CardId > 0)
         {
-          RemoteControl.HostName = _server;
           GlobalServiceProvider.Get<IControllerService>().GetStreamQualityCounters(User.Name, out totalTSpackets, out discontinuityCounter);
         }
       }
@@ -668,7 +633,6 @@ namespace Mediaportal.TV.Server.TVControl
           {
             return 0;
           }
-          RemoteControl.HostName = _server;
           return GlobalServiceProvider.Get<IControllerService>().SignalLevel(User.CardId);
         }
         catch (Exception)
@@ -694,7 +658,6 @@ namespace Mediaportal.TV.Server.TVControl
           {
             return 0;
           }
-          RemoteControl.HostName = _server;
           return GlobalServiceProvider.Get<IControllerService>().SignalQuality(User.CardId);
         }
         catch (Exception)
@@ -784,7 +747,6 @@ namespace Mediaportal.TV.Server.TVControl
         {
           return;
         }
-        RemoteControl.HostName = _server;
         IUser userResult;
         GlobalServiceProvider.Get<IControllerService>().StopTimeShifting(_user.Name, out userResult);
 
@@ -817,7 +779,6 @@ namespace Mediaportal.TV.Server.TVControl
         {
           return;
         }
-        RemoteControl.HostName = _server;
         IUser userResult;
         GlobalServiceProvider.Get<IControllerService>().StopRecording(_user.Name, _user.CardId, out userResult);
         if (userResult != null)
@@ -844,7 +805,6 @@ namespace Mediaportal.TV.Server.TVControl
         {
           return TvResult.UnknownError;
         }
-        RemoteControl.HostName = _server;
         IUser userResult;
         TvResult startRecording = GlobalServiceProvider.Get<IControllerService>().StartRecording(_user.Name, _user.CardId, out userResult, ref fileName);
 
@@ -878,7 +838,6 @@ namespace Mediaportal.TV.Server.TVControl
         {
           return false;
         }
-        RemoteControl.HostName = _server;
         return GlobalServiceProvider.Get<IControllerService>().IsOwner(User.CardId, User.Name);
       }
       catch (Exception)
@@ -901,7 +860,6 @@ namespace Mediaportal.TV.Server.TVControl
         {
           return false;
         }
-        RemoteControl.HostName = _server;
         return GlobalServiceProvider.Get<IControllerService>().SupportsQualityControl(User.CardId);
       }
       catch (Exception)
@@ -923,7 +881,6 @@ namespace Mediaportal.TV.Server.TVControl
         {
           return false;
         }
-        RemoteControl.HostName = _server;
         return GlobalServiceProvider.Get<IControllerService>().SupportsBitRate(User.CardId);
       }
       catch (Exception)
@@ -945,7 +902,6 @@ namespace Mediaportal.TV.Server.TVControl
         {
           return false;
         }
-        RemoteControl.HostName = _server;
         return GlobalServiceProvider.Get<IControllerService>().SupportsBitRateModes(User.CardId);
       }
       catch (Exception)
@@ -967,7 +923,6 @@ namespace Mediaportal.TV.Server.TVControl
         {
           return false;
         }
-        RemoteControl.HostName = _server;
         return GlobalServiceProvider.Get<IControllerService>().SupportsPeakBitRateMode(User.CardId);
       }
       catch (Exception)
@@ -990,7 +945,6 @@ namespace Mediaportal.TV.Server.TVControl
           {
             return QualityType.Default;
           }
-          RemoteControl.HostName = _server;
           return GlobalServiceProvider.Get<IControllerService>().GetQualityType(User.CardId);
         }
         catch (Exception)
@@ -1007,7 +961,6 @@ namespace Mediaportal.TV.Server.TVControl
           {
             return;
           }
-          RemoteControl.HostName = _server;
           GlobalServiceProvider.Get<IControllerService>().SetQualityType(User.CardId, value);
         }
         catch (Exception)
@@ -1030,7 +983,6 @@ namespace Mediaportal.TV.Server.TVControl
           {
             return VIDEOENCODER_BITRATE_MODE.Undefined;
           }
-          RemoteControl.HostName = _server;
           return GlobalServiceProvider.Get<IControllerService>().GetBitRateMode(User.CardId);
         }
         catch (Exception)
@@ -1047,7 +999,6 @@ namespace Mediaportal.TV.Server.TVControl
           {
             return;
           }
-          RemoteControl.HostName = _server;
           GlobalServiceProvider.Get<IControllerService>().SetBitRateMode(User.CardId, value);
         }
         catch (Exception)
