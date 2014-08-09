@@ -119,10 +119,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       base.OnSectionDeActivated();
       timer1.Enabled = false;
-      if (RemoteControl.IsConnected)
-      {
-        ServiceAgents.Instance.ControllerServiceAgent.EpgGrabberEnabled = false;
-      }
+      ServiceAgents.Instance.ControllerServiceAgent.EpgGrabberEnabled = false;
     }
 
     /// <summary>

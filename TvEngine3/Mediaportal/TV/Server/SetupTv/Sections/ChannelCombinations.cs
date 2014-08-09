@@ -84,13 +84,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       set { _mediaTypeEnum = value; }
     }
 
-    public override void OnSectionDeActivated()
-    {
-      //DatabaseManager.Instance.SaveChanges();
-      ServiceAgents.Instance.ControllerServiceAgent.OnNewSchedule();
-      base.OnSectionDeActivated();
-    }
-
     public override void OnSectionActivated()
     {
       cards = new Dictionary<int, CardType>();

@@ -167,48 +167,11 @@ namespace Mediaportal.TV.Server.SetupTV
           sc.WaitForStatus(ServiceControllerStatus.Running, new TimeSpan(0, 0, 0, 0, millisecondsTimeout));
           return (sc.Status == ServiceControllerStatus.Running);
         }
-        /*
-        EventWaitHandle initialized = EventWaitHandle.OpenExisting(RemoteControl.InitializedEventName,
-                                                                    EventWaitHandleRights.Synchronize);
-        return initialized.WaitOne(millisecondsTimeout);*/
       }
-      catch (Exception ex) // either we have no right, or the event does not exist
+      catch (Exception ex)
       {
-        Log.Error(ex, "Failed to wait for {0}", RemoteControl.InitializedEventName);        
+        Log.Error(ex, "Failed to wait for TV service to start.");
       }
-
-      /*
-      // Fall back: try to call a method on the server (for earlier versions of TvService)
-      DateTime expires = millisecondsTimeout == -1
-                           ? DateTime.MaxValue
-                           : DateTime.Now.AddMilliseconds(millisecondsTimeout);
-
-      // Note if millisecondsTimeout = 0, we never enter the loop and always return false
-      // There is no way to determine if TvService is initialized without waiting
-      while (DateTime.Now < expires)
-      {
-        try
-        {
-          int cards = ServiceAgents.Instance.ControllerServiceAgent.Cards;
-          return true;
-        }
-        catch (System.Runtime.Remoting.RemotingException)
-        {
-          this.LogInfo("ServiceHelper: Waiting for tvserver to initialize. (remoting not initialized)");
-        }
-        catch (System.Net.Sockets.SocketException)
-        {
-          this.LogInfo("ServiceHelper: Waiting for tvserver to initialize. (socket not initialized)");
-        }
-        catch (Exception ex)
-        {
-          this.LogError(
-            "ServiceHelper: Could not check whether the tvservice is running. Please check your network as well. \nError: {0}",
-            ex.ToString());
-          break;
-        }
-        Thread.Sleep(250);
-      }*/
       return false;
     }
 

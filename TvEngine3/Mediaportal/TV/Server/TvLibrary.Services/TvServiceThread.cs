@@ -19,7 +19,11 @@ namespace Mediaportal.TV.Server.TVLibrary
 {
   public class TvServiceThread : IPowerEventHandler
   {
+    #region constants
 
+    private const string INITIALISED_EVENT_NAME = @"Global\MPTVServiceInitializedEvent";
+
+    #endregion
 
     #region variables
 
@@ -52,7 +56,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       AddPowerEventHandler(OnPowerEventHandler);
       try
       {
-        this.LogDebug("Setting up EventWaitHandle with name: {0}", RemoteControl.InitializedEventName);
+        this.LogDebug("Setting up EventWaitHandle with name: {0}", INITIALISED_EVENT_NAME);
 
         EventWaitHandleAccessRule rule =
           new EventWaitHandleAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null),
@@ -60,11 +64,11 @@ namespace Mediaportal.TV.Server.TVLibrary
         EventWaitHandleSecurity sec = new EventWaitHandleSecurity();
         sec.AddAccessRule(rule);
         bool eventCreated;
-        _initializedEvent = new EventWaitHandle(false, EventResetMode.ManualReset, RemoteControl.InitializedEventName,
+        _initializedEvent = new EventWaitHandle(false, EventResetMode.ManualReset, INITIALISED_EVENT_NAME,
                                                 out eventCreated, sec);
         if (!eventCreated)
         {
-          this.LogInfo("{0} was not created", RemoteControl.InitializedEventName);
+          this.LogInfo("{0} was not created", INITIALISED_EVENT_NAME);
         }
       }
       catch (Exception ex)

@@ -468,11 +468,7 @@ namespace Mediaportal.TV.Server.SetupTV
     {
       try
       {
-        if (RemoteControl.IsConnected)
-        {
-          ServiceAgents.Instance.ControllerServiceAgent.EpgGrabberEnabled = true;
-          ServiceAgents.Instance.ControllerServiceAgent.OnNewSchedule();
-        }
+        ServiceAgents.Instance.ControllerServiceAgent.EpgGrabberEnabled = true;
       }
       catch (Exception) {}
     }
