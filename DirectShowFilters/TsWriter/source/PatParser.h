@@ -51,6 +51,7 @@ class CPatParser : public CSectionDecoder
     void SetCallBack(IPatCallBack* callBack);
     void OnNewSection(CSection& sections);
     bool IsReady();
+    int GetTransportStreamId();
     int GetProgramCount();
     int GetProgram(int idx, int* programNumber, int* pmtPid);
     int GetPmtPid(int programNumber, int* pmtPid);
@@ -63,5 +64,6 @@ class CPatParser : public CSectionDecoder
     vector<int> m_unseenSections;
     bool m_isReady;
     bool m_wasReset;
+    int m_transportStreamId;
     map<int, ProgramDetail*> m_programs;
 };

@@ -700,6 +700,7 @@ void CChannelScan::OnPatReceived(int serviceId, int pmtPid)
     if (it == m_mServices.end())
     {
       CChannelInfo* info = new CChannelInfo();
+      info->TransportStreamId = m_patParser.GetTransportStreamId();
       info->ServiceId = serviceId;
       info->PmtPid = pmtPid;
       m_mServices[serviceId] = info;

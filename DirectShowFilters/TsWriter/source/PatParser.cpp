@@ -80,6 +80,11 @@ int CPatParser::GetProgramCount()
   return (int)m_programs.size();
 }
 
+int CPatParser::GetTransportStreamId()
+{
+  return m_transportStreamId;
+}
+
 int CPatParser::GetProgram(int idx, int* programNumber, int* pmtPid)
 {
   if (idx < 0)
@@ -150,7 +155,8 @@ void CPatParser::OnNewSection(CSection& sections)
 
     if (versionNumber > m_currentVersionNumber || (versionNumber == MAX_TABLE_VERSION_NUMBER && versionNumber < m_currentVersionNumber))
     {
-      LogDebug("PAT: new table version, version = %d, section number = %d, last section number = %d", versionNumber, sectionNumber, lastSectionNumber);
+      LogDebug("PAT: new table version, transport stream ID = %d, version = %d, section number = %d, last section number = %d", transportStreamId, versionNumber, sectionNumber, lastSectionNumber);
+      m_transportStreamId = transportStreamId;
       m_isReady = false;
       if (m_currentVersionNumber != -1)
       {
