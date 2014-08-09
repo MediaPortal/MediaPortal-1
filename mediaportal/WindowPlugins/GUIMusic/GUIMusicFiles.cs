@@ -389,7 +389,7 @@ namespace MediaPortal.GUI.Music
 
       musicDB = MusicDatabase.Instance;
 
-      if (!musicDB.DbHealt)
+      if (!musicDB.DbHealth)
       {
         GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
         pDlgOK.SetHeading(315);
@@ -397,7 +397,7 @@ namespace MediaPortal.GUI.Music
         pDlgOK.SetLine(2, GUILocalizeStrings.Get(190010, new object[] { GUILocalizeStrings.Get(2) }));
         pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
       }
-      if (!FolderSettings.DbHealt)
+      if (!FolderSettings.DbHealth)
       {
         GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
         pDlgOK.SetHeading(315);

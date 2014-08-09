@@ -648,7 +648,7 @@ namespace MediaPortal.GUI.Pictures
       }
       base.OnPageLoad();
 
-      if (!PictureDatabase.DbHealt)
+      if (!PictureDatabase.DbHealth)
       {
         GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
         pDlgOK.SetHeading(315);
@@ -656,7 +656,7 @@ namespace MediaPortal.GUI.Pictures
         pDlgOK.SetLine(2, GUILocalizeStrings.Get(190010, new object[] { GUILocalizeStrings.Get(1) }));
         pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
       }
-      if (!FolderSettings.DbHealt)
+      if (!FolderSettings.DbHealth)
       {
         GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
         pDlgOK.SetHeading(315);

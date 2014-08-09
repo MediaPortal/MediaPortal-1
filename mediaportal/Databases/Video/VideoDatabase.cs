@@ -760,11 +760,11 @@ namespace MediaPortal.Video.Database
       _database.RevertFlushTransactionsToDisk();
     }
 
-    public static bool DbHealt
+    public static bool DbHealth
     {
       get
       {
-        return _database.DbHealt;
+        return _database.DbHealth;
       }
     }
   }

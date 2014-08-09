@@ -37,6 +37,6 @@ namespace MediaPortal.Picture.Database
     int ListPicsByDate(string Date, ref List<string> Pics);
     int CountPicsByDate(string Date);
     string DatabaseName { get; }
-    bool DbHealt { get; }
+    bool DbHealth { get; }
   }
 }

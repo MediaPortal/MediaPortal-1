@@ -471,7 +471,7 @@ namespace MediaPortal.GUI.Video
     {
       base.OnPageLoad();
 
-      if (!VideoDatabase.DbHealt)
+      if (!VideoDatabase.DbHealth)
       {
         GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
         pDlgOK.SetHeading(315);
@@ -479,7 +479,7 @@ namespace MediaPortal.GUI.Video
         pDlgOK.SetLine(2, GUILocalizeStrings.Get(190010, new object[] { GUILocalizeStrings.Get(3) }));
         pDlgOK.DoModal(GUIWindowManager.ActiveWindow); ;
       }
-      if (!FolderSettings.DbHealt)
+      if (!FolderSettings.DbHealth)
       {
         GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
         pDlgOK.SetHeading(315);
