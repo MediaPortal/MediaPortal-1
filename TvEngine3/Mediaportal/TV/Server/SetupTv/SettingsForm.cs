@@ -78,132 +78,68 @@ namespace Mediaportal.TV.Server.SetupTV
       //
       // Build options tree
       //    
-      IList<Card> cards = null;
-      try
-      {
-        cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
-      }
-      catch (Exception ex)
-      {
-        MessageBox.Show(this, "Failed to connect to TV Server.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-        this.LogError(ex, "Failed to connect to TV Server.");
-        Application.Exit();
-      }
-
       Project project = new Project();
       AddSection(project);
       
-      bool connected = false;
-      while (!connected)
+      _sectionTuners = new TvCards(OnServerConfigurationChanged);
+      AddSection(_sectionTuners);
+      AddServerTvCards(false);
+
+      Channels channels = new Channels("TV Channels", MediaTypeEnum.TV);            
+      AddSection(channels);
+      AddChildSection(channels, new ChannelCombinations("TV Combinations", MediaTypeEnum.TV));
+      AddChildSection(channels, new ChannelMapping("TV Mapping", MediaTypeEnum.TV));
+
+      Channels radioChannels = new Channels("Radio Channels", MediaTypeEnum.Radio);        
+      AddSection(radioChannels);
+      AddChildSection(radioChannels, new ChannelCombinations("Radio Combinations", MediaTypeEnum.Radio));
+      AddChildSection(radioChannels, new ChannelMapping("Radio Mapping", MediaTypeEnum.Radio));
+
+      Epg dvbEpg = new Epg();
+      AddSection(dvbEpg);
+      AddChildSection(dvbEpg, new EpgGrabber("TV EPG Grabber", "epgLanguages", "epgStoreOnlySelected", MediaTypeEnum.TV));
+      AddChildSection(dvbEpg, new EpgGrabber("Radio EPG Grabber", "radioLanguages", "epgRadioStoreOnlySelected", MediaTypeEnum.Radio));
+      AddChildSection(dvbEpg, new EpgGenreMap());
+
+      AddSection(new ScanSettings());
+      AddSection(new TvRecording());
+      AddSection(new TvTimeshifting());
+      AddSection(new TvSchedules());
+      AddSection(new StreamingServer());
+      AddSection(new UserPriorities());
+
+      AddSection(new TestService("Manual Control"));
+      AddSection(new TestChannels("Test Channels"));
+
+      _pluginLoader.Load();
+      pluginsRoot = new Sections.Plugins("Plugins", _pluginLoader);
+      AddSection(pluginsRoot);
+
+      pluginsRoot.ChangedActivePlugins += SectChanged;
+
+      foreach (ITvServerPlugin plugin in _pluginLoader.Plugins)
       {
-        // TODO legacy code, remove when all references have been removed
-        RemoteControl.HostName = ServiceAgents.Instance.SettingServiceAgent.GetValue("hostname", "localhost");
-
-        if (cards.Count > 0)
+        SectionSettings settings = plugin.Setup;
+        if (settings != null)
         {
-          try
+          bool isActive = ServiceAgents.Instance.SettingServiceAgent.GetValue(String.Format("plugin{0}", plugin.Name), false);
+          settings.Text = plugin.Name;
+          if (isActive)
           {
-            Card c = cards.First();
-            ServiceAgents.Instance.ControllerServiceAgent.Type(c.IdCard);
-            connected = true;
-          }
-          catch (Exception ex)
-          {
-            string localHostname = Dns.GetHostName();
-            if (localHostname != RemoteControl.HostName)
-            {
-              DialogResult dlg = MessageBox.Show(String.Format("Unable to connect to <{0}>.\n" +
-                                                                "Do you want to try the current computer name ({1}) instead?",
-                                                                RemoteControl.HostName, localHostname),
-                                                  "Wrong config detected",
-                                                  MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
-              if (dlg == DialogResult.Yes)
-              {
-                this.LogInfo("Controller: server {0} changed to {1}", RemoteControl.HostName, localHostname);                      
-                ServiceAgents.Instance.SettingServiceAgent.SaveValue("hostname", localHostname);
-                if (!ServiceHelper.IsRestrictedMode)
-                {
-                  ServiceHelper.Restart();
-                  ServiceHelper.WaitInitialized(); 
-                }                
-              }
-              else
-              {
-                MessageBox.Show("Setup will now close");
-                Environment.Exit(-1);
-              }
-            }
-            else
-            {
-              this.LogError("Cannot connect to server {0}", RemoteControl.HostName);
-              this.LogError(ex);
-              DialogResult dlg = MessageBox.Show("Unable to connect to <" + RemoteControl.HostName + ">.\n" +
-                                                  "Please check the TV Server logs for details.\n\n" +
-                                                  "Setup will now close.");
-              Environment.Exit(-1);
-            }
+            AddChildSection(pluginsRoot, settings);
           }
         }
-
-        _sectionTuners = new TvCards(OnServerConfigurationChanged);
-        AddSection(_sectionTuners);
-        AddServerTvCards(false);
-
-        Channels channels = new Channels("TV Channels", MediaTypeEnum.TV);            
-        AddSection(channels);
-        AddChildSection(channels, new ChannelCombinations("TV Combinations", MediaTypeEnum.TV));
-        AddChildSection(channels, new ChannelMapping("TV Mapping", MediaTypeEnum.TV));
-
-        Channels radioChannels = new Channels("Radio Channels", MediaTypeEnum.Radio);        
-        AddSection(radioChannels);
-        AddChildSection(radioChannels, new ChannelCombinations("Radio Combinations", MediaTypeEnum.Radio));
-        AddChildSection(radioChannels, new ChannelMapping("Radio Mapping", MediaTypeEnum.Radio));
-
-        Epg dvbEpg = new Epg();
-        AddSection(dvbEpg);
-        AddChildSection(dvbEpg, new EpgGrabber("TV EPG Grabber", "epgLanguages", "epgStoreOnlySelected", MediaTypeEnum.TV));
-        AddChildSection(dvbEpg, new EpgGrabber("Radio EPG Grabber", "radioLanguages", "epgRadioStoreOnlySelected", MediaTypeEnum.Radio));
-        AddChildSection(dvbEpg, new EpgGenreMap());
-
-        AddSection(new ScanSettings());
-        AddSection(new TvRecording());
-        AddSection(new TvTimeshifting());
-        AddSection(new TvSchedules());
-        AddSection(new StreamingServer());
-        AddSection(new UserPriorities());
-
-        AddSection(new TestService("Manual Control"));
-        AddSection(new TestChannels("Test Channels"));
-
-        _pluginLoader.Load();
-        pluginsRoot = new Sections.Plugins("Plugins", _pluginLoader);
-        AddSection(pluginsRoot);
-
-        pluginsRoot.ChangedActivePlugins += SectChanged;
-
-        foreach (ITvServerPlugin plugin in _pluginLoader.Plugins)
-        {
-          SectionSettings settings = plugin.Setup;
-          if (settings != null)
-          {
-            bool isActive = ServiceAgents.Instance.SettingServiceAgent.GetValue(String.Format("plugin{0}", plugin.Name), false);
-            settings.Text = plugin.Name;
-            if (isActive)
-            {
-              AddChildSection(pluginsRoot, settings);
-            }
-          }
-        }
-        if (showAdvancedSettings)
-        {
-          AddSection(new DebugOptions());
-        }
-        //AddSection(new ImportExport());
-        AddSection(new ThirdPartyChecks());
-
-        sectionTree.SelectedNode = sectionTree.Nodes[0];
-        // make sure window is in front of mediaportal
       }
+      if (showAdvancedSettings)
+      {
+        AddSection(new DebugOptions());
+      }
+      //AddSection(new ImportExport());
+      AddSection(new ThirdPartyChecks());
+
+      sectionTree.SelectedNode = sectionTree.Nodes[0];
+
+      // make sure window is in front of mediaportal
       BringToFront();
     }
 

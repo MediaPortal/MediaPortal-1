@@ -144,9 +144,6 @@
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="HelpSystem.cs" />
     <Compile Include="InputBox.cs" />
-    <Compile Include="..\..\..\..\..\Common-MP-TVE3\Common.Utils\OsInfo\OSPrerequisites.cs">
-      <Link>Core\OSPrerequisites.cs</Link>
-    </Compile>
     <Compile Include="Sections\EpgGenreMap.cs">
       <SubType>UserControl</SubType>
     </Compile>

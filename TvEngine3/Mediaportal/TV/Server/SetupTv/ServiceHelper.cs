@@ -34,8 +34,7 @@ namespace Mediaportal.TV.Server.SetupTV
   /// </summary>
   public static class ServiceHelper
   {
-
-    public const string SERVICENAME_TVSERVICE = @"TvService";
+    public const string SERVICE_NAME_TV_SERVICE = @"TvService";
     private static bool _isRestrictedMode;
     private static bool _ignoreDisconnections;
 
@@ -121,7 +120,7 @@ namespace Mediaportal.TV.Server.SetupTV
       {
         try
         {
-          using (ServiceController sc = new ServiceController("TvService", Singleton<ServiceAgents>.Instance.Hostname))
+          using (ServiceController sc = new ServiceController(SERVICE_NAME_TV_SERVICE, Singleton<ServiceAgents>.Instance.Hostname))
           {
             return sc.Status == ServiceControllerStatus.Running;
           }
@@ -163,7 +162,7 @@ namespace Mediaportal.TV.Server.SetupTV
     {
       try
       {
-        using (ServiceController sc = new ServiceController("TvService", Singleton<ServiceAgents>.Instance.Hostname))
+        using (ServiceController sc = new ServiceController(SERVICE_NAME_TV_SERVICE, Singleton<ServiceAgents>.Instance.Hostname))
         {
           sc.WaitForStatus(ServiceControllerStatus.Running, new TimeSpan(0, 0, 0, 0, millisecondsTimeout));
           return (sc.Status == ServiceControllerStatus.Running);
@@ -222,7 +221,7 @@ namespace Mediaportal.TV.Server.SetupTV
       {
         try
         {
-          using (ServiceController sc = new ServiceController("TvService", Singleton<ServiceAgents>.Instance.Hostname))
+          using (ServiceController sc = new ServiceController(SERVICE_NAME_TV_SERVICE, Singleton<ServiceAgents>.Instance.Hostname))
           {
             return sc.Status == ServiceControllerStatus.Stopped; // should we consider Stopping as stopped?
           }
@@ -250,7 +249,7 @@ namespace Mediaportal.TV.Server.SetupTV
     {
       try
       {
-        using (ServiceController sc = new ServiceController("TvService", Singleton<ServiceAgents>.Instance.Hostname))
+        using (ServiceController sc = new ServiceController(SERVICE_NAME_TV_SERVICE, Singleton<ServiceAgents>.Instance.Hostname))
         {
           switch (sc.Status)
           {
@@ -282,7 +281,7 @@ namespace Mediaportal.TV.Server.SetupTV
     /// <returns></returns>
     public static bool Start()
     {
-      return Start("TvService");
+      return Start(SERVICE_NAME_TV_SERVICE);
     }
 
     public static bool Start(string aServiceName)
@@ -321,7 +320,7 @@ namespace Mediaportal.TV.Server.SetupTV
     /// <returns>Always true</returns>
     public static bool Restart()
     {
-      if (!IsInstalled(SERVICENAME_TVSERVICE, Singleton<ServiceAgents>.Instance.Hostname))
+      if (!IsInstalled(SERVICE_NAME_TV_SERVICE, Singleton<ServiceAgents>.Instance.Hostname))
       {
         return false;
       }
