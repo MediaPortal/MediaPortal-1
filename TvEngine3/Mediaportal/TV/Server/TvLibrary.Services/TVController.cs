@@ -4210,12 +4210,34 @@ namespace Mediaportal.TV.Server.TVLibrary
         if (dbSettings == null)
         {
           OnTunerRemoved(tuner);
+          return;
         }
-        else
+
+        try
         {
-          _cards.Remove(tunerId);
           tuner.ReloadConfiguration();
-          OnTunerAdded(tuner);
+          if (!string.Equals(dbSettings.TimeshiftingFolder, handler.DataBaseCard.TimeshiftingFolder))
+          {
+            this.LogInfo("Controller: timeshifting folder for tuner {0} changed from \"{1}\" to \"{2}\"", tunerId, handler.DataBaseCard.TimeshiftingFolder, dbSettings.TimeshiftingFolder);
+            if (!Directory.Exists(dbSettings.TimeshiftingFolder))
+            {
+              this.LogInfo("Controller: creating timeshifting folder");
+              Directory.CreateDirectory(dbSettings.TimeshiftingFolder);
+            }
+          }
+          if (!string.Equals(dbSettings.RecordingFolder, handler.DataBaseCard.RecordingFolder))
+          {
+            this.LogInfo("Controller: recording folder for tuner {0} changed from \"{1}\" to \"{2}\"", tunerId, handler.DataBaseCard.RecordingFolder, dbSettings.RecordingFolder);
+            if (!Directory.Exists(dbSettings.RecordingFolder))
+            {
+              this.LogInfo("Controller: creating recording folder");
+              Directory.CreateDirectory(dbSettings.RecordingFolder);
+            }
+          }
+        }
+        finally
+        {
+          handler.DataBaseCard = dbSettings;
         }
       }
     }
