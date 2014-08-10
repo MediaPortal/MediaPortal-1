@@ -20,13 +20,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils.ExtensionMethods;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
 {
@@ -36,8 +36,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
   /// </summary>
   internal class ChannelListViewHandler
   {
-
-
     private const int MS_SLEEP_BEFORE_FILTERING = 150;
 
     internal ListView _listView = null; //the listview control that displays the items
@@ -197,90 +195,33 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
     /// <returns>Listview item representing the channel</returns>
     internal ListViewItem CreateListViewItemForChannel(Channel ch, Dictionary<int, CardType> cards)
     {
-      if (_listViewCache.ContainsKey(ch.IdChannel)) return _listViewCache[ch.IdChannel];
+      if (_listViewCache.ContainsKey(ch.IdChannel))
+      {
+        return _listViewCache[ch.IdChannel];
+      }
 
-      bool analog = false;
-      bool dvbc = false;
-      bool dvbt = false;
-      bool dvbs = false;
-      bool atsc = false;
-      bool dvbip = false;
-      bool webstream = false;
-      bool notmapped = true;
-      if (ch.IsWebstream())
-      {
-        webstream = true;
-        notmapped = false;
-      }
-      if (notmapped)
-      {
-        IList<ChannelMap> maps = ch.ChannelMaps;
-        foreach (ChannelMap map in maps)
-        {
-          if (cards.ContainsKey(map.IdCard))
-          {
-            CardType type = cards[map.IdCard];
-            switch (type)
-            {
-              case CardType.Analog:
-                analog = true;
-                notmapped = false;
-                break;
-              case CardType.DvbC:
-                dvbc = true;
-                notmapped = false;
-                break;
-              case CardType.DvbT:
-                dvbt = true;
-                notmapped = false;
-                break;
-              case CardType.DvbS:
-                dvbs = true;
-                notmapped = false;
-                break;
-              case CardType.Atsc:
-                atsc = true;
-                notmapped = false;
-                break;
-              case CardType.DvbIP:
-                dvbip = true;
-                notmapped = false;
-                break;
-            }
-          }
-        }
-      }
       ListViewItem item = new ListViewItem(ch.DisplayName);
       item.Checked = ch.VisibleInGuide;
       item.Tag = ch;
 
-      IList<string> groups = new List<string>();
+      IList<string> groupNames = new List<string>();
       foreach (var gm in ch.GroupMaps)
       {
-        groups.Add((gm.ChannelGroup.GroupName));
-      }
-
-      
-      List<string> groupNames = new List<string>();
-      foreach (string groupName in groups)
-      {
-        if (groupName != TvConstants.TvGroupNames.AllChannels &&
-            groupName != TvConstants.RadioGroupNames.AllChannels)
+        string groupName = gm.ChannelGroup.GroupName;
+        if ((_type == MediaTypeEnum.TV && !string.Equals(groupName, TvConstants.TvGroupNames.AllChannels)) ||
+          (_type == MediaTypeEnum.Radio && !string.Equals(groupName, TvConstants.RadioGroupNames.AllChannels)))
         {
-//Don't add "All Channels"
-          groupNames.Add(groupName);
+          groupNames.Add((gm.ChannelGroup.GroupName));
         }
       }
-      string group = String.Join(", ", groupNames.ToArray());
-      item.SubItems.Add(group);
+      item.SubItems.Add(string.Join(", ", groupNames));
 
-      List<string> providers = new List<string>();
-      IList<TuningDetail> tuningDetails = ch.TuningDetails;
+      HashSet<string> providers = new HashSet<string>();
       bool hasFta = false;
       bool hasScrambled = false;
-      foreach (TuningDetail detail in tuningDetails)
+      foreach (TuningDetail detail in ch.TuningDetails)
       {
-        if (!providers.Contains(detail.Provider) && !String.IsNullOrEmpty(detail.Provider))
+        if (!string.IsNullOrEmpty(detail.Provider))
         {
           providers.Add(detail.Provider);
         }
@@ -288,14 +229,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
         {
           hasFta = true;
         }
-        if (!detail.FreeToAir)
+        else
         {
           hasScrambled = true;
         }
       }
 
-      string provider = String.Join(", ", providers.ToArray());
-      item.SubItems.Add(provider);
+      item.SubItems.Add(string.Join(", ", providers));
 
       int imageIndex = 0;
       if (_type == MediaTypeEnum.TV)
@@ -330,57 +270,29 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
       }
       item.ImageIndex = imageIndex;
 
-      StringBuilder builder = new StringBuilder();
-
-      if (notmapped)
+      HashSet<CardType> mappedTunerTypes = new HashSet<CardType>();
+      IList<string> mappedTunerTypeNames = new List<string>();
+      foreach (ChannelMap map in ch.ChannelMaps)
       {
-        builder.Append("Channel not mapped to a card");
+        CardType tunerType;
+        if (cards.TryGetValue(map.IdCard, out tunerType))
+        {
+          if (mappedTunerTypes.Add(tunerType))
+          {
+            mappedTunerTypeNames.Add(tunerType.GetDescription());
+          }
+        }
+      }
+      if (mappedTunerTypes.Count == 0)
+      {
+        item.SubItems.Add("(not mapped)");
       }
       else
       {
-        if (analog)
-        {
-          builder.Append("Analog");
-        }
-        if (dvbc)
-        {
-          if (builder.Length > 0)
-            builder.Append(",");
-          builder.Append("DVB-C");
-        }
-        if (dvbt)
-        {
-          if (builder.Length > 0)
-            builder.Append(",");
-          builder.Append("DVB-T");
-        }
-        if (dvbs)
-        {
-          if (builder.Length > 0)
-            builder.Append(",");
-          builder.Append("DVB-S");
-        }
-        if (atsc)
-        {
-          if (builder.Length > 0)
-            builder.Append(",");
-          builder.Append("ATSC");
-        }
-        if (dvbip)
-        {
-          if (builder.Length > 0) builder.Append(",");
-          builder.Append("DVB-IP");
-        }
-        if (webstream)
-        {
-          if (builder.Length > 0)
-            builder.Append(",");
-          builder.Append("Webstream");
-        }
+        item.SubItems.Add(string.Join(", ", mappedTunerTypeNames));
       }
 
-      item.SubItems.Add(builder.ToString());
-      item.SubItems.Add(tuningDetails.Count.ToString());
+      item.SubItems.Add(ch.TuningDetails.Count.ToString());
 
       _listViewCache.Add(ch.IdChannel, item);
 
