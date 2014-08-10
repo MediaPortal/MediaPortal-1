@@ -163,37 +163,42 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     public void Start()
     {
-      if (_isStarted)
+      lock (_tuners)
       {
-        return;
-      }
-      this.LogInfo("detector: starting tuner detection");
-      // Start detecting tuners connected directly to the system.
-      DetectSystemTuners();
+        if (_isStarted)
+        {
+          return;
+        }
+        this.LogInfo("detector: starting tuner detection");
+        // Start detecting tuners connected directly to the system.
+        DetectSystemTuners();
 
-      try
-      {
-        _systemDeviceChangeEventWatcher.Start();
-      }
-      catch
-      {
-        // Fails on Windows Media Center 2005 (ManagementException "unsupported", despite MS documentation).
-        this.LogWarn("detector: failed to start device change event watcher, you'll have to restart the TV Engine to detect new tuners");
-      }
+        try
+        {
+          _systemDeviceChangeEventWatcher.Start();
+        }
+        catch
+        {
+          // Fails on Windows Media Center 2005 (ManagementException "unsupported", despite MS documentation).
+          this.LogWarn("detector: failed to start device change event watcher, you'll have to restart the TV Engine to detect new tuners");
+        }
 
-      // Start detecting UPnP tuners.
-      // IMPORTANT: this parameter must be set to allow devices with many sub-devices
-      // and/or services to be detected. The timer interval specifies how long the
-      // SSDP controller has from first detection of the root device SSDP packet
-      // until descriptions for all devices and services have been requested, received
-      // and processed. DRI tuners normally take about 5 seconds.
-      SSDPClientController.EXPIRATION_TIMER_INTERVAL = 60000;
-      // IMPORTANT: you should start the control point before the network tracker.
-      _upnpControlPoint.Start();
-      _upnpAgent.Start();
-      _upnpAgent.SharedControlPointData.SSDPController.SearchDeviceByDeviceTypeVersion("schemas-opencable-com:service:Tuner", "1", null);
-      _upnpAgent.SharedControlPointData.SSDPController.SearchDeviceByDeviceTypeVersion("urn:ses-com:device:SatIPServer", "1", null);
-      _isStarted = true;
+        // Start detecting UPnP tuners.
+        // IMPORTANT: this parameter must be set to allow devices with many
+        // sub-devices and/or services to be detected. The timer interval
+        // specifies how long the SSDP controller has from first detection
+        // of the root device SSDP packet until descriptions for all devices
+        // and services have been requested, received and processed. DRI
+        // tuners normally take about 5 seconds.
+        SSDPClientController.EXPIRATION_TIMER_INTERVAL = 60000;
+        // IMPORTANT: you should start the control point before the network
+        // tracker.
+        _upnpControlPoint.Start();
+        _upnpAgent.Start();
+        _upnpAgent.SharedControlPointData.SSDPController.SearchDeviceByDeviceTypeVersion("schemas-opencable-com:service:Tuner", "1", null);
+        _upnpAgent.SharedControlPointData.SSDPController.SearchDeviceByDeviceTypeVersion("urn:ses-com:device:SatIPServer", "1", null);
+        _isStarted = true;
+      }
     }
 
     /// <summary>
@@ -201,11 +206,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     public void ReloadConfiguration()
     {
-      this.LogDebug("detector: reload configuration");
-
-      // Order of operations is important.
       lock (_tuners)
       {
+        if (!_isStarted)
+        {
+          return;
+        }
+        this.LogDebug("detector: reload configuration");
+
+        // Order of operations is important.
+
         // 1. Force-detect tuner changes.
         DetectSystemTuners();
 
@@ -412,18 +422,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     public void Reset()
     {
-      Stop();
-      _firstDetectionTuners.Clear();
-      _knownUpnpRootDevices.Clear();
-      _knownSystemTuners.Clear();
-      _upnpDeviceTuners.Clear();
+      lock (_tuners)
+      {
+        Stop();
+        _firstDetectionTuners.Clear();
+        _knownUpnpRootDevices.Clear();
+        _knownSystemTuners.Clear();
+        _upnpDeviceTuners.Clear();
 
-      // TODO should these be disposed?
-      _tuners.Clear();
+        // TODO should these be disposed?
+        _tuners.Clear();
 
-      _naturalTunerGroups.Clear();
-      _configuredTunerGroups.Clear();
-      Start();
+        _naturalTunerGroups.Clear();
+        _configuredTunerGroups.Clear();
+        Start();
+      }
     }
 
     /// <summary>
@@ -431,14 +444,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     public void Stop()
     {
-      if (!_isStarted)
+      lock (_tuners)
       {
-        return;
+        if (!_isStarted)
+        {
+          return;
+        }
+        this.LogInfo("detector: stopping tuner detection...");
+        _upnpAgent.Close();
+        _upnpControlPoint.Close();
+        _systemDeviceChangeEventWatcher.Stop();
+        _isStarted = false;
       }
-      this.LogInfo("detector: stopping tuner detection...");
-      _upnpAgent.Close();
-      _upnpControlPoint.Close();
-      _systemDeviceChangeEventWatcher.Stop();
     }
 
     #endregion
@@ -532,6 +549,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     {
       lock (_tuners)
       {
+        if (!_isStarted)
+        {
+          return;
+        }
         this.LogDebug("detector: detecting system tuners...");
         _systemDeviceDriverInfo = _systemDeviceInfoSearcher.Get();
 
@@ -578,6 +599,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       }
       lock (_tuners)
       {
+        if (!_isStarted)
+        {
+          return;
+        }
         if (!_knownUpnpRootDevices.Add(rootDescriptor.SSDPRootEntry.RootDeviceUUID))
         {
           this.LogWarn("detector: re-detecting known root device {0}", rootDescriptor.SSDPRootEntry.RootDeviceUUID);
