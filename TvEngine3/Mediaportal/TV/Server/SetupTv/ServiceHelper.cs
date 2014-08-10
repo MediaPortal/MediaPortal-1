@@ -74,17 +74,10 @@ namespace Mediaportal.TV.Server.SetupTV
     {
       try
       {
-        Log.Error("serviceToFind ={0}, hostname={1}", serviceToFind, hostname);
-
         ServiceController[] services = ServiceController.GetServices(hostname);
-
-        Log.Error("services count = {0}", services.Length);
-        
-
         foreach (ServiceController service in services)
         {
-          Log.Error("services name= {0}", service.ServiceName);
-          if (String.Compare(service.ServiceName, serviceToFind, true) == 0)
+          if (string.Compare(service.ServiceName, serviceToFind, true) == 0)
           {
             return true;
           }
@@ -93,10 +86,7 @@ namespace Mediaportal.TV.Server.SetupTV
       }
       catch (Exception ex)
       {
-        //_isRestrictedMode = !Network.IsSingleSeat();
-
-        Log.Error(
-          "ServiceHelper: Check hostname the tvservice is running failed. Try another hostname. {0}", ex);
+        Log.Error(ex, "ServiceHelper: Check hostname the tvservice is running failed. Try another hostname.");
         return false;
       }
     }
@@ -170,7 +160,7 @@ namespace Mediaportal.TV.Server.SetupTV
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "Failed to wait for TV service to start.");
+        Log.Error(ex, "ServiceHelper: Failed to wait for TV service to start.");
       }
       return false;
     }
