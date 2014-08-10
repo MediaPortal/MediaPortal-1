@@ -101,7 +101,7 @@ DWORD GetStringCount(const TCHAR *string, DWORD length)
 CParameterCollection *GetConfiguration(CLogger *logger, const TCHAR *moduleName, const TCHAR *functionName, const TCHAR *section)
 {
   CParameterCollection *collection = new CParameterCollection();
-	TCHAR *configurationFile = FormatString("%s\\%s", CFilterSettingsManager::GetConfigPath(), _T("MPIPTVSource.ini"));
+  TCHAR *configurationFile = FormatString("%s\\%s", CFilterSettingsManager::GetConfigPath(), _T("MPIPTVSource.ini"));
   if (configurationFile != NULL)
   {
     if (logger != NULL)

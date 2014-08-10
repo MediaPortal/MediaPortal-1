@@ -270,9 +270,9 @@ extern bool IsAudioStream(byte streamType);
 CTsMuxer::CTsMuxer(LPUNKNOWN unk, HRESULT* hr)
   : CUnknown(NAME("TS Muxer"), unk)
 {
-	// set default log path
-	swprintf_s(g_logFilePath, CFilterSettingsManager::GetLogPath());
-	
+  // set default log path
+  swprintf_s(g_logFilePath, CFilterSettingsManager::GetLogPath());
+  
   LogDebug(L"--------------- v%d.%d.%d.0 ---------------", TSMUXER_MAJOR_VERSION, TSMUXER_MID_VERSION, TSMUXER_VERSION);
   LogDebug(L"initial version");
   LogDebug(L"muxer: constructor");
@@ -1330,7 +1330,7 @@ HRESULT CTsMuxer::ReadProgramMapTable(PBYTE data, long dataLength, TransportStre
 {
   CSection section;
   section.Reset();
-	memcpy(section.Data, data, dataLength);
+  memcpy(section.Data, data, dataLength);
   section.BufferPos = dataLength;
   section.DecodeHeader();
   if (section.section_length > 180)

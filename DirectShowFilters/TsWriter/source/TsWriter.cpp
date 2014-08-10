@@ -42,7 +42,7 @@ void GetLogFile(wchar_t *pLog)
   GetLocalTime(&systemTime);
   if(logFileParsed != systemTime.wDay)
   {
-		swprintf_s(logFile, L"%s\\TsWriter-%04.4d-%02.2d-%02.2d.Log", logFilePath, systemTime.wYear, systemTime.wMonth, systemTime.wDay);
+    swprintf_s(logFile, L"%s\\TsWriter-%04.4d-%02.2d-%02.2d.Log", logFilePath, systemTime.wYear, systemTime.wMonth, systemTime.wDay);
     logFileParsed=systemTime.wDay; // rec
   }
   wcscpy(pLog, &logFile[0]);
@@ -359,10 +359,10 @@ void CMpTsFilterPin::AssignRawPaketWriter(FileWriter *rawPaketWriter)
 CMpTs::CMpTs(LPUNKNOWN pUnk, HRESULT *phr) 
 :CUnknown(NAME("CMpTs"), pUnk),m_pFilter(NULL),m_pPin(NULL)
 {
-	// set default log path
-	swprintf_s(logFilePath, CFilterSettingsManager::GetLogPath());
-	
-	m_id=0;
+  // set default log path
+  swprintf_s(logFilePath, CFilterSettingsManager::GetLogPath());
+  
+  m_id=0;
 
   LogDebug("CMpTs::ctor()");
   LogDebug("--------------- BUG-3782 fix v2 -------------------");

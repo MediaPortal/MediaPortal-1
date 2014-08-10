@@ -154,7 +154,7 @@ void CMPIPTVSourceStream::LoadPlugins()
     ALLOC_MEM_DEFINE_SET(strDllPath, TCHAR, _MAX_PATH, 0);
     ALLOC_MEM_DEFINE_SET(strDllSearch, TCHAR, _MAX_PATH, 0);
 
-		_tcscat_s(strDllPath, _MAX_PATH, CFilterSettingsManager::GetDllSearchPath());
+    _tcscat_s(strDllPath, _MAX_PATH, CFilterSettingsManager::GetDllSearchPath());
 
     _tcscat_s(strDllPath, _MAX_PATH, _T("\\"));
     _tcscpy_s(strDllSearch, _MAX_PATH, strDllPath);

@@ -33,18 +33,18 @@ EXTERN_C IMAGE_DOS_HEADER __ImageBase;
 
 class CFilterSettingsManager
 {
-	public:
-		static TCHAR* GetLogPath();
-		static TCHAR* GetDllSearchPath();
-		static TCHAR* GetConfigPath();
-	private:
-		static TCHAR logPath[MAX_PATH];
-		static TCHAR dllSearchPath[MAX_PATH];
-		static TCHAR configPath[MAX_PATH];
+  public:
+    static TCHAR* GetLogPath();
+    static TCHAR* GetDllSearchPath();
+    static TCHAR* GetConfigPath();
+  private:
+    static TCHAR logPath[MAX_PATH];
+    static TCHAR dllSearchPath[MAX_PATH];
+    static TCHAR configPath[MAX_PATH];
 
-		static bool StringReplace(std::string& str, const std::string& from, const std::string& to);
-		static void ReplaceSpecialFolders(std::string& str);
-		static TCHAR* GetProgramDataFolderPath();
-		static TCHAR* GetFilterLocation();
-		static TCHAR* GetIniFilePath();
+    static bool StringReplace(std::string& str, const std::string& from, const std::string& to);
+    static void ReplaceSpecialFolders(std::string& str);
+    static TCHAR* GetProgramDataFolderPath();
+    static TCHAR* GetFilterLocation();
+    static TCHAR* GetIniFilePath();
 };

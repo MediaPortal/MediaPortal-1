@@ -29,114 +29,114 @@ TCHAR CFilterSettingsManager::configPath[MAX_PATH] = { 0 };
 
 TCHAR* CFilterSettingsManager::GetLogPath()
 {
-	// don't read the ini file everytime
-	if (!logPath || !strcmp(logPath, ""))
-	{
+  // don't read the ini file everytime
+  if (!logPath || !strcmp(logPath, ""))
+  {
 
-		GetPrivateProfileString("FilterSettings", "logPath", 0, logPath, MAX_PATH, GetIniFilePath());
+    GetPrivateProfileString("FilterSettings", "logPath", 0, logPath, MAX_PATH, GetIniFilePath());
 
-		// replace special folders
-		string logPathString(logPath);
-		ReplaceSpecialFolders(logPathString);
-		sprintf_s(logPath, logPathString.c_str());
+    // replace special folders
+    string logPathString(logPath);
+    ReplaceSpecialFolders(logPathString);
+    sprintf_s(logPath, logPathString.c_str());
 
 
-		// set default path if not defined inside the ini file
-		if (!logPath || !strcmp(logPath, ""))
-		{
-			sprintf_s(logPath, "%s\\Team MediaPortal\\MediaPortal TV Server\\log", GetProgramDataFolderPath());
-		}
-	}
-	return logPath;
+    // set default path if not defined inside the ini file
+    if (!logPath || !strcmp(logPath, ""))
+    {
+      sprintf_s(logPath, "%s\\Team MediaPortal\\MediaPortal TV Server\\log", GetProgramDataFolderPath());
+    }
+  }
+  return logPath;
 };
 
 TCHAR* CFilterSettingsManager::GetDllSearchPath()
 {
-	// don't read the ini file everytime
-	if (!dllSearchPath || !strcmp(dllSearchPath, ""))
-	{
-		GetPrivateProfileString("FilterSettings", "dllSearchPath", 0, dllSearchPath, MAX_PATH, GetIniFilePath());
+  // don't read the ini file everytime
+  if (!dllSearchPath || !strcmp(dllSearchPath, ""))
+  {
+    GetPrivateProfileString("FilterSettings", "dllSearchPath", 0, dllSearchPath, MAX_PATH, GetIniFilePath());
 
-		// replace special folders
-		string dllSearchPathString(dllSearchPath);
-		ReplaceSpecialFolders(dllSearchPathString);
-		sprintf_s(dllSearchPath, dllSearchPathString.c_str());
+    // replace special folders
+    string dllSearchPathString(dllSearchPath);
+    ReplaceSpecialFolders(dllSearchPathString);
+    sprintf_s(dllSearchPath, dllSearchPathString.c_str());
 
 
-		// set default path if not defined inside the ini file
-		if (!dllSearchPath || !strcmp(dllSearchPath, ""))
-		{
-			GetModuleFileName(NULL, dllSearchPath, _MAX_PATH);
-			PathRemoveFileSpec(dllSearchPath);
-		}
-	}
-	return dllSearchPath;
+    // set default path if not defined inside the ini file
+    if (!dllSearchPath || !strcmp(dllSearchPath, ""))
+    {
+      GetModuleFileName(NULL, dllSearchPath, _MAX_PATH);
+      PathRemoveFileSpec(dllSearchPath);
+    }
+  }
+  return dllSearchPath;
 };
-	
+  
 TCHAR* CFilterSettingsManager::GetConfigPath()
 {
-	// don't read the ini file everytime
-	if (!configPath || !strcmp(configPath, ""))
-	{
-		GetPrivateProfileString("FilterSettings", "configPath", 0, configPath, MAX_PATH, GetIniFilePath());
+  // don't read the ini file everytime
+  if (!configPath || !strcmp(configPath, ""))
+  {
+    GetPrivateProfileString("FilterSettings", "configPath", 0, configPath, MAX_PATH, GetIniFilePath());
 
-		// replace special folders
-		string configPathString(configPath);
-		ReplaceSpecialFolders(configPathString);
-		sprintf_s(configPath, configPathString.c_str());
+    // replace special folders
+    string configPathString(configPath);
+    ReplaceSpecialFolders(configPathString);
+    sprintf_s(configPath, configPathString.c_str());
 
 
-		// set default path if not defined inside the ini file
-		if (!configPath || !strcmp(configPath, ""))
-		{
-			sprintf_s(configPath, "%s\\Team MediaPortal\\MediaPortal TV Server", GetProgramDataFolderPath());
-		}
-	}
-	return configPath;
+    // set default path if not defined inside the ini file
+    if (!configPath || !strcmp(configPath, ""))
+    {
+      sprintf_s(configPath, "%s\\Team MediaPortal\\MediaPortal TV Server", GetProgramDataFolderPath());
+    }
+  }
+  return configPath;
 };
 
 bool CFilterSettingsManager::StringReplace(std::string& str, const std::string& from, const std::string& to)
 {
-	size_t start_pos = str.find(from);
-	if (start_pos == std::string::npos)
-		return false;
-	str.replace(start_pos, from.length(), to);
-	return true;
+  size_t start_pos = str.find(from);
+  if (start_pos == std::string::npos)
+    return false;
+  str.replace(start_pos, from.length(), to);
+  return true;
 }
 
 void CFilterSettingsManager::ReplaceSpecialFolders(std::string& path)
 {
-	StringReplace(path, "%ProgramData%", GetProgramDataFolderPath());
-	StringReplace(path, "%FilterLocation%", GetFilterLocation());
+  StringReplace(path, "%ProgramData%", GetProgramDataFolderPath());
+  StringReplace(path, "%FilterLocation%", GetFilterLocation());
 }
 
 TCHAR* CFilterSettingsManager::GetProgramDataFolderPath()
 {
-	static TCHAR temp[MAX_PATH];
-	::SHGetSpecialFolderPath(NULL, temp, CSIDL_COMMON_APPDATA, FALSE);
-	return temp;
+  static TCHAR temp[MAX_PATH];
+  ::SHGetSpecialFolderPath(NULL, temp, CSIDL_COMMON_APPDATA, FALSE);
+  return temp;
 }
 
 TCHAR* CFilterSettingsManager::GetFilterLocation()
 {
-	TCHAR DllPath[MAX_PATH] = { 0 };
-	static TCHAR returnValue[MAX_PATH] = { 0 };
+  TCHAR DllPath[MAX_PATH] = { 0 };
+  static TCHAR returnValue[MAX_PATH] = { 0 };
 
-	// get dll path and remove the dll name from the path
-	GetModuleFileName((HINSTANCE)&__ImageBase, DllPath, _countof(DllPath));
-	string DllBasePath(DllPath);
-	DllBasePath = DllBasePath.substr(0, DllBasePath.find_last_of("\\/"));
+  // get dll path and remove the dll name from the path
+  GetModuleFileName((HINSTANCE)&__ImageBase, DllPath, _countof(DllPath));
+  string DllBasePath(DllPath);
+  DllBasePath = DllBasePath.substr(0, DllBasePath.find_last_of("\\/"));
 
-	sprintf_s(returnValue, DllBasePath.c_str());
+  sprintf_s(returnValue, DllBasePath.c_str());
 
-	return returnValue;
+  return returnValue;
 }
 
 TCHAR* CFilterSettingsManager::GetIniFilePath()
 {
-	static TCHAR iniPath[MAX_PATH] = { 0 };
+  static TCHAR iniPath[MAX_PATH] = { 0 };
 
-	sprintf_s(iniPath, "%s\\%s", GetFilterLocation(), FILTERSETTINGSMANAGER_INI_FILE_NAME);
+  sprintf_s(iniPath, "%s\\%s", GetFilterLocation(), FILTERSETTINGSMANAGER_INI_FILE_NAME);
 
-	return iniPath;
+  return iniPath;
 }
