@@ -9,15 +9,5 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
     {
       return DisplayName;
     }
-
-    public bool IsWebstream()
-    {
-      IList<TuningDetail> details = TuningDetails;
-      if (details == null)
-      {
-        return false;
-      }
-      return details.Any(detail => detail.ChannelType == 5);
-    }
   }
 }

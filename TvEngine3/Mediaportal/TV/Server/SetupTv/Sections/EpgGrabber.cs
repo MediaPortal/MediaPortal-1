@@ -27,6 +27,7 @@ using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using MediaPortal.Common.Utils.ExtensionMethods;
 using MediaPortal.Common.Utils.Localisation;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections
@@ -122,17 +123,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
         foreach (Channel ch in channels)
         {
-          bool analog = false;
-          bool dvbc = false;
-          bool dvbt = false;
-          bool dvbs = false;
-          bool atsc = false;
-          bool dvbip = false;
           bool hasFta = false;
           bool hasScrambled = false;
-          if (ch.IsWebstream())
-            continue;
-
           IList<TuningDetail> tuningDetails = ch.TuningDetails;
           foreach (TuningDetail detail in tuningDetails)
           {
@@ -140,7 +132,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             {
               hasFta = true;
             }
-            if (!detail.FreeToAir)
+            else
             {
               hasScrambled = true;
             }
@@ -170,70 +162,28 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           }
 
           ListViewItem item = mpListView1.Items.Add(ch.DisplayName, imageName);
+          HashSet<CardType> mappedTunerTypes = new HashSet<CardType>();
+          IList<string> mappedTunerTypeNames = new List<string>();
           foreach (ChannelMap map in ch.ChannelMaps)
           {
-            if (cards.ContainsKey(map.IdCard))
+            CardType tunerType;
+            if (cards.TryGetValue(map.IdCard, out tunerType))
             {
-              CardType type = cards[map.IdCard];
-              switch (type)
+              if (mappedTunerTypes.Add(tunerType))
               {
-                case CardType.Analog:
-                  analog = true;
-                  break;
-                case CardType.DvbC:
-                  dvbc = true;
-                  break;
-                case CardType.DvbT:
-                  dvbt = true;
-                  break;
-                case CardType.DvbS:
-                  dvbs = true;
-                  break;
-                case CardType.Atsc:
-                  atsc = true;
-                  break;
-                case CardType.DvbIP:
-                  dvbip = true;
-                  break;
+                mappedTunerTypeNames.Add(tunerType.GetDescription());
               }
             }
           }
-          string line = "";
-          if (analog)
+          if (mappedTunerTypes.Count == 0)
           {
-            line += "Analog";
+            item.SubItems.Add("(not mapped)");
           }
-          if (dvbc)
+          else
           {
-            if (line != "")
-              line += ",";
-            line += "DVB-C";
+            item.SubItems.Add(string.Join(", ", mappedTunerTypeNames));
           }
-          if (dvbt)
-          {
-            if (line != "")
-              line += ",";
-            line += "DVB-T";
-          }
-          if (dvbs)
-          {
-            if (line != "")
-              line += ",";
-            line += "DVB-S";
-          }
-          if (atsc)
-          {
-            if (line != "")
-              line += ",";
-            line += "ATSC";
-          }
-          if (dvbip)
-          {
-            if (line != "")
-              line += ",";
-            line += "DVB-IP";
-          }
-          item.SubItems.Add(line);
+
           item.Checked = ch.GrabEpg;
           item.Tag = ch;
         }
