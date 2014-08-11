@@ -41,14 +41,14 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
 {
   public partial class XmlTvSetup : SectionSettings
   {
-
-
     private const string _shortTimePattern24Hrs = "HH:mm";
     private const string _shortTimePattern12Hrs = "hh:mm";
 
     private readonly IChannelGroupService _channelGroupServiceAgent = ServiceAgents.Instance.ChannelGroupServiceAgent;
     private readonly ISettingService _settingServiceAgent = ServiceAgents.Instance.SettingServiceAgent;
     private readonly IChannelService _channelServiceAgent = ServiceAgents.Instance.ChannelServiceAgent;
+
+    private IList<ChannelGroup> _channelGroups = null;
 
     public XmlTvSetup()
       : this("XmlTv")
@@ -146,26 +146,9 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       }
 
       dateTimePickerScheduler.Value = dt;
+      checkBoxLoadRadio_CheckedChanged(null, null);
 
       UpdateLastTransferUiDetails();
-
-      // load all distinct groups
-      try
-      {
-        comboBoxGroup.Items.Clear();
-        comboBoxGroup.Items.Add(new CBChannelGroup("", -1));
-        comboBoxGroup.Tag = "";
-
-        IEnumerable<ChannelGroup> channelGroups = _channelGroupServiceAgent.ListAllChannelGroups();
-        foreach (ChannelGroup cg in channelGroups)
-        {
-          comboBoxGroup.Items.Add(new CBChannelGroup(cg.GroupName, cg.IdGroup));
-        }
-      }
-      catch (Exception e)
-      {
-        this.LogError("Failed to load groups {0}", e.Message);
-      }
     }
 
     private void buttonBrowse_Click(object sender, EventArgs e)
@@ -224,17 +207,21 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
         CBChannelGroup chGroup = (CBChannelGroup)comboBoxGroup.SelectedItem;
 
         IList<Channel> channels;
-
-        bool loadRadio = checkBoxLoadRadio.Checked;               
-        if (loadRadio)
+        if (chGroup == null || chGroup.idGroup == -1)
         {
-          channels = _channelServiceAgent.GetAllChannelsByGroupId(chGroup.idGroup).ToList();
+          if (checkBoxLoadRadio.Checked)
+          {
+            channels = _channelServiceAgent.ListAllVisibleChannelsByMediaType(MediaTypeEnum.Radio, ChannelIncludeRelationEnum.None);
+          }
+          else
+          {
+            channels = _channelServiceAgent.ListAllVisibleChannelsByMediaType(MediaTypeEnum.TV, ChannelIncludeRelationEnum.None);
+          }
         }
         else
         {
-          channels = _channelServiceAgent.GetAllChannelsByGroupIdAndMediaType(chGroup.idGroup, MediaTypeEnum.TV).ToList();          
-        }        
-
+          channels = _channelServiceAgent.ListAllVisibleChannelsByGroupId(chGroup.idGroup, ChannelIncludeRelationEnum.None);
+        }
         progressBar1.Minimum = 0;
         progressBar1.Maximum = channels.Count;
         progressBar1.Value = 0;
@@ -270,6 +257,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
           channelCell.Value = ch.DisplayName;
           idCell.Value = ch.IdChannel;
           showInGuideCell.Value = ch.VisibleInGuide;
+          gridRow.Tag = ch;
 
           DataGridViewComboBoxCell guideChannelComboBox = (DataGridViewComboBoxCell)gridRow.Cells["guideChannel"];
 
@@ -644,10 +632,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
     {
       try
       {
-        // loading all Channels is much faster then loading them one by one
-        // for each mapping
-        IEnumerable<Channel> allChanels = _channelServiceAgent.ListAllChannels();
-        Dictionary<int, Channel> dAllChannels = allChanels.ToDictionary(ch => ch.IdChannel);
+        IList<Channel> channels = new List<Channel>(dataGridChannelMappings.Rows.Count);
 
         progressBar1.Value = 0;
         progressBar1.Minimum = 0;
@@ -668,12 +653,12 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
             externalId = guideChannelAndexternalId.Substring(startIdx, guideChannelAndexternalId.Length - startIdx - 1);
           }
 
-          Channel channel = dAllChannels[id];
+          Channel channel = row.Tag as Channel;
           channel.ExternalId = externalId == null ? "" : externalId;
-          //channel.Persist();
+          channels.Add(channel);
           progressBar1.Value++;
         }
-        _channelServiceAgent.SaveChannels(dAllChannels.Values.ToList());
+        _channelServiceAgent.SaveChannels(channels);
 
         textBoxAction.Text = "Mappings saved";
       }
@@ -799,6 +784,32 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
     {
       radioDownloadOnSchedule.Enabled = chkScheduler.Checked;
       radioDownloadOnWakeUp.Enabled = chkScheduler.Checked;
+    }
+
+    private void checkBoxLoadRadio_CheckedChanged(object sender, EventArgs e)
+    {
+      // load all distinct groups
+      try
+      {
+        comboBoxGroup.Items.Clear();
+        comboBoxGroup.Items.Add(new CBChannelGroup("", -1));
+        comboBoxGroup.Tag = "";
+
+        MediaTypeEnum mediaType = MediaTypeEnum.TV;
+        if (checkBoxLoadRadio.Checked)
+        {
+          mediaType = MediaTypeEnum.Radio;
+        }
+        _channelGroups = _channelGroupServiceAgent.ListAllChannelGroupsByMediaType(mediaType, ChannelGroupIncludeRelationEnum.None);
+        foreach (ChannelGroup cg in _channelGroups)
+        {
+          comboBoxGroup.Items.Add(new CBChannelGroup(cg.GroupName, cg.IdGroup));
+        }
+      }
+      catch (Exception ex)
+      {
+        this.LogError(ex, "Failed to load groups");
+      }
     }
   }
 }

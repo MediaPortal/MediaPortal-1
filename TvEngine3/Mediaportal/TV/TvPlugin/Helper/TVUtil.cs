@@ -83,7 +83,7 @@ namespace Mediaportal.TV.TvPlugin.Helper
 
     public IList<Schedule> GetRecordingTimes(ScheduleBLL rec)
     {
-      IList<Program> programs = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsForSchedule(rec.Entity).ToList();
+      IList<Program> programs = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsForSchedule(rec.Entity);
       IList<Schedule> recordings = AddProgramsToSchedulesList(rec, programs);
       return recordings;
     }

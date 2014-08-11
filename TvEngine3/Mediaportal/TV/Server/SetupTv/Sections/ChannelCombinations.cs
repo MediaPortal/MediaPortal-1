@@ -163,7 +163,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         Card card = ((CardInfo)mpComboBoxCard.SelectedItem).Card;
         ListViewItem selectedItem = mpListViewChannels.Items[mpListViewChannels.SelectedIndices[0]];
         Channel selectedChannel = (Channel)selectedItem.Tag;
-        IList<Channel> allChannels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels();
+        IList<Channel> allChannels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByMediaType(_mediaTypeEnum);
         List<ListViewItem> items = new List<ListViewItem>();
         NotifyForm dlg = new NotifyForm("Searching for Similar Channels...",
                                         "This can take some time\n\nPlease be patient...");
@@ -171,9 +171,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         dlg.WaitForDisplay();
         foreach (Channel channel in allChannels)
         {
-          if (channel.MediaType != (decimal)_mediaTypeEnum)
-            continue;
-
           IList<ChannelMap> list = channel.ChannelMaps;
           bool isMapped = list.Any(map => map.IdCard == card.IdCard);
           if (isMapped)

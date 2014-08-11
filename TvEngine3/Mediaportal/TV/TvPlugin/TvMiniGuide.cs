@@ -71,9 +71,9 @@ namespace Mediaportal.TV.TvPlugin
     private int _parentWindowID = 0;
     private GUIWindow _parentWindow = null;
     */
-    private Dictionary<int, List<Channel>> _tvGroupChannelListCache = null;
+    private Dictionary<int, IList<Channel>> _tvGroupChannelListCache = null;
 
-    private List<ChannelGroup> _channelGroupList = null;
+    private IList<ChannelGroup> _channelGroupList = null;
     private Channel _selectedChannel;
     private bool _zap = true;
     private Stopwatch benchClock = null;
@@ -203,7 +203,7 @@ namespace Mediaportal.TV.TvPlugin
                 {
                   if ((TVHome.Navigator.Channel.Entity.IdChannel != SelectedChannel.IdChannel) || g_Player.IsTVRecording)
                   {
-                    List<Server.TVDatabase.Entities.Channel> tvChannelList = GetChannelListByGroup();
+                    IList<Server.TVDatabase.Entities.Channel> tvChannelList = GetChannelListByGroup();
                     if (tvChannelList != null)
                     {
                       changeChannel = tvChannelList[lstChannels.SelectedListItemIndex] as Server.TVDatabase.Entities.Channel;
@@ -369,16 +369,16 @@ namespace Mediaportal.TV.TvPlugin
       this.LogDebug("TvMiniGuide: FillGroupList finished after {0} ms", benchClock.ElapsedMilliseconds.ToString());
     }
 
-    private List<Server.TVDatabase.Entities.Channel> GetChannelListByGroup()
+    private IList<Server.TVDatabase.Entities.Channel> GetChannelListByGroup()
     {
       int idGroup = TVHome.Navigator.CurrentGroup.IdGroup;
 
       if (_tvGroupChannelListCache == null)
       {
-        _tvGroupChannelListCache = new Dictionary<int, List<Server.TVDatabase.Entities.Channel>>();
+        _tvGroupChannelListCache = new Dictionary<int, IList<Server.TVDatabase.Entities.Channel>>();
       }
 
-      List<Server.TVDatabase.Entities.Channel> channels = null;
+      IList<Server.TVDatabase.Entities.Channel> channels = null;
       if (_tvGroupChannelListCache.TryGetValue(idGroup, out channels))  //already in cache ? then return it.      
       {
         this.LogDebug("TvMiniGuide: GetChannelListByGroup returning cached version of channels.");
@@ -386,9 +386,8 @@ namespace Mediaportal.TV.TvPlugin
       }
       else //not in cache, fetch it and update cache, then return.
       {
-        List<Server.TVDatabase.Entities.Channel> tvChannelList =
-          ServiceAgents.Instance.ChannelServiceAgent.GetAllChannelsByGroupIdAndMediaType(
-            TVHome.Navigator.CurrentGroup.IdGroup, MediaTypeEnum.TV, ChannelIncludeRelationEnum.TuningDetails).ToList();
+        IList<Server.TVDatabase.Entities.Channel> tvChannelList =
+          ServiceAgents.Instance.ChannelServiceAgent.ListAllVisibleChannelsByGroupId(TVHome.Navigator.CurrentGroup.IdGroup, ChannelIncludeRelationEnum.TuningDetails);
 
         if (tvChannelList != null)
         {

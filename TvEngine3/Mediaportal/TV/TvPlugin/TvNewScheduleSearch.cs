@@ -240,13 +240,13 @@ namespace Mediaportal.TV.TvPlugin
             listPrograms = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByTitleAndCategoryAndMediaType(_searchKeyword, "",
                                                                                       MediaTypeEnum.TV,
                                                                                       stringComparisonCategory,
-                                                                                      StringComparisonEnum.StartsWith).ToList();
+                                                                                      StringComparisonEnum.StartsWith);
           break;
         case SearchType.KeyWord:
-          listPrograms = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByDescription("%" + _searchKeyword, stringComparison).ToList();
+          listPrograms = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByDescription("%" + _searchKeyword, stringComparison);
           break;
         case SearchType.Title:
-          listPrograms = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByTitle(_searchKeyword, stringComparison).ToList();
+          listPrograms = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByTitle(_searchKeyword, stringComparison);
           break;
       }
       if (listPrograms == null)

@@ -346,7 +346,7 @@ namespace Mediaportal.TV.TvPlugin
     {
       recordingSchedule = null;
 
-      IList<Schedule> schedules = ServiceAgents.Instance.ScheduleServiceAgent.ListAllSchedules().ToList();
+      IList<Schedule> schedules = ServiceAgents.Instance.ScheduleServiceAgent.ListAllSchedules();
       foreach (Schedule sched in schedules)
       {
         ScheduleBLL schedule = new ScheduleBLL (sched);
@@ -496,19 +496,19 @@ namespace Mediaportal.TV.TvPlugin
         switch (scheduletype)
         {
           case (int)ScheduleRecordingType.Weekly:
-            actualUpcomingEps = ServiceAgents.Instance.ProgramServiceAgent.RetrieveWeekly(initialProgram.StartTime, initialProgram.EndTime, initialProgram.IdChannel).ToList();
+            actualUpcomingEps = ServiceAgents.Instance.ProgramServiceAgent.RetrieveWeekly(initialProgram.StartTime, initialProgram.EndTime, initialProgram.IdChannel);
             break;
 
           case (int)ScheduleRecordingType.Weekends:
-            actualUpcomingEps = ServiceAgents.Instance.ProgramServiceAgent.RetrieveWeekends(initialProgram.StartTime, initialProgram.EndTime, initialProgram.IdChannel).ToList();
+            actualUpcomingEps = ServiceAgents.Instance.ProgramServiceAgent.RetrieveWeekends(initialProgram.StartTime, initialProgram.EndTime, initialProgram.IdChannel);
             break;
 
           case (int)ScheduleRecordingType.WorkingDays:
-            actualUpcomingEps = ServiceAgents.Instance.ProgramServiceAgent.RetrieveWorkingDays(initialProgram.StartTime, initialProgram.EndTime, initialProgram.IdChannel).ToList();
+            actualUpcomingEps = ServiceAgents.Instance.ProgramServiceAgent.RetrieveWorkingDays(initialProgram.StartTime, initialProgram.EndTime, initialProgram.IdChannel);
             break;
 
           case (int)ScheduleRecordingType.Daily:
-            actualUpcomingEps = ServiceAgents.Instance.ProgramServiceAgent.RetrieveDaily(initialProgram.StartTime, initialProgram.EndTime, initialProgram.IdChannel).ToList();
+            actualUpcomingEps = ServiceAgents.Instance.ProgramServiceAgent.RetrieveDaily(initialProgram.StartTime, initialProgram.EndTime, initialProgram.IdChannel);
           break;
         }
        
@@ -649,7 +649,7 @@ namespace Mediaportal.TV.TvPlugin
 
     private void CheckRecordingStatus()
     {
-      IList<Schedule> schedules = ServiceAgents.Instance.ScheduleServiceAgent.ListAllSchedules().ToList();
+      IList<Schedule> schedules = ServiceAgents.Instance.ScheduleServiceAgent.ListAllSchedules();
       bool isRecording = false;
       bool isSeries = false;
 
@@ -1182,7 +1182,7 @@ namespace Mediaportal.TV.TvPlugin
 
       // check if this program is conflicting with any other already scheduled recording or not viewable cause isn't assigned to a card
       List<Schedule> notViewables;
-      IList<Schedule> conflicts = ServiceAgents.Instance.ScheduleServiceAgent.GetConflictingSchedules(schedule.Entity, out notViewables).ToList();
+      IList<Schedule> conflicts = ServiceAgents.Instance.ScheduleServiceAgent.GetConflictingSchedules(schedule.Entity, out notViewables);
 
       Log.Debug("TVProgramInfo.CreateProgram - conflicts.Count = {0} - notViewable.Count = {1}", conflicts.Count, notViewables.Count);
 
@@ -1450,7 +1450,7 @@ namespace Mediaportal.TV.TvPlugin
           //ifso ask the user if he wants to record the 2nd part also
           DateTime dtStart = CurrentProgram.EndTime.AddMinutes(1);
           DateTime dtEnd = dtStart.AddHours(3);
-          IList<Program> programs = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByChannelAndStartEndTimes(CurrentProgram.IdChannel, dtStart, dtEnd).ToList();
+          IList<Program> programs = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByChannelAndStartEndTimes(CurrentProgram.IdChannel, dtStart, dtEnd);
           if (programs.Count >= 2)
           {
             Program next = programs[0];

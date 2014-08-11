@@ -269,23 +269,16 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         _firstFail = 0;
         UpdateCounters();
 
-        IEnumerable<Channel> channels = new List<Channel>();
         ComboBoxExItem idItem = (ComboBoxExItem)comboBoxGroups.Items[comboBoxGroups.SelectedIndex];
-
-        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetChannelGroup(idItem.Id);
-        IList<GroupMap> maps = group.GroupMaps;
-
-        List<Channel> channelsO = null;
-        Thread channelTestThread = new Thread(new ParameterizedThreadStart(delegate { ChannelTestThread(channelsO); }));
+        List<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByGroupId(idItem.Id, ChannelIncludeRelationEnum.None).ToList();
+        Thread channelTestThread = new Thread(new ParameterizedThreadStart(delegate { ChannelTestThread(channels); }));
         channelTestThread.Name = "Channel Test Thread";
         channelTestThread.IsBackground = true;
         channelTestThread.Priority = ThreadPriority.Lowest;
-        channelsO = channels as List<Channel>;
-        channelsO.AddRange(maps.Select(map => map.Channel).Where(ch => ch.MediaType == (int)MediaTypeEnum.TV));
         _usersShareChannels = chkShareChannels.Checked;
         _tunedelay = txtTuneDelay.Value;
         _concurrentTunes = txtConcurrentTunes.Value;
-        channelTestThread.Start(channelsO);
+        channelTestThread.Start(channels);
       }
     }
 

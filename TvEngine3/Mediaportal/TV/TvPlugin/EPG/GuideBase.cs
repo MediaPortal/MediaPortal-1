@@ -719,7 +719,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
     {
       if (refresh)
       {
-        _recordingList = ServiceAgents.Instance.ScheduleServiceAgent.ListAllSchedules().ToList();
+        _recordingList = ServiceAgents.Instance.ScheduleServiceAgent.ListAllSchedules();
         return;
       }
     }
@@ -747,30 +747,25 @@ namespace Mediaportal.TV.TvPlugin.EPG
       {
         try
         {
-          bool hasSelectedGroup = HasSelectedGroup();
-          if (hasSelectedGroup)
+          if (HasSelectedGroup())
           {
             IList<Channel> channels = GetGuideChannelsForGroup();
             foreach (Channel chan in channels)
             {
               var tvGuidChannel = new GuideChannel { Channel = chan };
-
-              if (tvGuidChannel.Channel.VisibleInGuide && IsChannelTypeCorrect(tvGuidChannel.Channel))
+              if (_showChannelNumber)
               {
-                if (_showChannelNumber)
+                if (_byIndex)
                 {
-                  if (_byIndex)
-                  {
-                    tvGuidChannel.ChannelNum = _channelList.Count + 1;
-                  }
-                  else
-                  {
-                    tvGuidChannel.ChannelNum = chan.ChannelNumber;
-                  }
+                  tvGuidChannel.ChannelNum = _channelList.Count + 1;
                 }
-                tvGuidChannel.StrLogo = GetChannelLogo(tvGuidChannel.Channel.DisplayName);
-                _channelList.Add(tvGuidChannel);
+                else
+                {
+                  tvGuidChannel.ChannelNum = chan.ChannelNumber;
+                }
               }
+              tvGuidChannel.StrLogo = GetChannelLogo(tvGuidChannel.Channel.DisplayName);
+              _channelList.Add(tvGuidChannel);
             }
           }
         }
@@ -1390,7 +1385,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
         DateTime dtStart = DateTime.Now;
         dtStart = dtStart.AddDays(-1);
         DateTime dtEnd = dtStart.AddDays(30);
-        _programs = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByChannelAndStartEndTimes(channel.IdChannel, dtStart, dtEnd).ToList();
+        _programs = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByChannelAndStartEndTimes(channel.IdChannel, dtStart, dtEnd);
 
         _totalProgramCount = _programs.Count;
         if (_totalProgramCount == 0)
@@ -2930,7 +2925,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
         // Load the genre map.
         if (_mpGenres == null)
         {
-          _mpGenres =  ServiceAgents.Instance.ProgramCategoryServiceAgent.ListAllTvGuideCategories().ToList();
+          _mpGenres = ServiceAgents.Instance.ProgramCategoryServiceAgent.ListAllTvGuideCategories().ToList();
         }
       }
 
@@ -4683,7 +4678,6 @@ namespace Mediaportal.TV.TvPlugin.EPG
     protected abstract string SettingsGuideSection { get; }
     protected abstract string SettingsSection { get; }
     protected abstract bool HasSelectedGroup();
-    protected abstract bool IsChannelTypeCorrect(Channel channel);
     protected abstract IList<Channel> GetGuideChannelsForGroup();
     protected abstract void OnRecord();
     protected abstract bool OnSelectItem(bool isItemSelected);

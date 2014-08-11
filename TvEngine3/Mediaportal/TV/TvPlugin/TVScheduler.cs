@@ -517,7 +517,7 @@ namespace Mediaportal.TV.TvPlugin
 
     private void LoadDirectory()
     {
-      IList<Conflict> conflictsList = ServiceAgents.Instance.ConflictServiceAgent.ListAllConflicts().ToList();
+      IList<Conflict> conflictsList = ServiceAgents.Instance.ConflictServiceAgent.ListAllConflicts();
       btnConflicts.Visible = conflictsList.Count > 0;
       GUIControl.ClearControl(GetID, listSchedules.GetID);
       IList<ScheduleBLL> schedulesList = new List<ScheduleBLL>();
@@ -934,7 +934,7 @@ namespace Mediaportal.TV.TvPlugin
         case 981: //Cancel this show
           {
             // get the program that this episode is for
-            IList<Program> progs = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByChannelAndStartEndTimes(rec.Entity.IdChannel, rec.Entity.StartTime, rec.Entity.EndTime).ToList();
+            IList<Program> progs = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByChannelAndStartEndTimes(rec.Entity.IdChannel, rec.Entity.StartTime, rec.Entity.EndTime);
             // pick up the schedule that is actually used for recording
             // see TVUtil.GetRecordingTimes where schedules are all spawend as one off types
             // and this is what rec is (ie. it does not actually exist in the database)
@@ -1090,7 +1090,7 @@ namespace Mediaportal.TV.TvPlugin
     private void OnCleanup()
     {
       int iCleaned = 0;
-      IList<Schedule> itemlist = ServiceAgents.Instance.ScheduleServiceAgent.ListAllSchedules().ToList();
+      IList<Schedule> itemlist = ServiceAgents.Instance.ScheduleServiceAgent.ListAllSchedules();
       foreach (Schedule rec in itemlist)
       {
         ScheduleBLL scheduleBll = new ScheduleBLL(rec);

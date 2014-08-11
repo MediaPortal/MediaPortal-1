@@ -2122,7 +2122,7 @@ namespace Mediaportal.TV.TvPlugin
       dlg.SetHeading(200052); // Active Recordings      
 
       IList<Recording> activeRecordings =
-        ServiceAgents.Instance.RecordingServiceAgent.ListAllActiveRecordingsByMediaType(MediaTypeEnum.TV).ToList();
+        ServiceAgents.Instance.RecordingServiceAgent.ListAllActiveRecordingsByMediaType(MediaTypeEnum.TV);
 
       if (activeRecordings != null && activeRecordings.Count > 0)
       {

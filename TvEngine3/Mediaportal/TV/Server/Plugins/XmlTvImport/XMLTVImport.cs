@@ -131,7 +131,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       try
       {
         // format = 5.2/10
-        // check if the epgRating is within a xml tag			
+        // check if the epgRating is within a xml tag
         epgRating = epgRating.Trim();
         if (string.IsNullOrEmpty(epgRating))
           return Rating;
@@ -196,9 +196,9 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       var dChannelPrograms = new Dictionary<int, ChannelPrograms>();
       try
       {
-        //layer.RemoveOldPrograms();        
-        ProgramManagement.DeleteOldPrograms();        
-        this.LogDebug("xmltv import {0}", fileName);        
+        //layer.RemoveOldPrograms();
+        ProgramManagement.DeleteOldPrograms();
+        this.LogDebug("xmltv import {0}", fileName);
         //
         // Make sure the file exists before we try to do any processing
         //
@@ -212,7 +212,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
           if (showProgress && ShowProgress != null) ShowProgress(_status);
 
           var guideChannels = new Dictionary<int, Channel>();
-          IList<Channel> allChannels = ChannelManagement.ListAllChannels().ToList();
+          IList<Channel> allChannels = ChannelManagement.ListAllChannels(ChannelIncludeRelationEnum.None);
 
           int iChannel = 0;
 
@@ -317,7 +317,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
 
           #endregion
 
-          allChannels = ChannelManagement.GetAllChannelsWithExternalId().ToList();          
+          allChannels = ChannelManagement.GetAllChannelsWithExternalId();
           if (allChannels.Count == 0)
           {
             _isImporting = false;

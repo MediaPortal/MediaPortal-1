@@ -784,17 +784,12 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
     protected override IList<Channel> GetGuideChannelsForGroup()
     {      
-      return ServiceAgents.Instance.ChannelServiceAgent.GetAllChannelsByGroupIdAndMediaType(Radio.Radio.SelectedGroup.IdGroup, MediaTypeEnum.Radio).ToList();
+      return ServiceAgents.Instance.ChannelServiceAgent.ListAllVisibleChannelsByGroupId(Radio.Radio.SelectedGroup.IdGroup, ChannelIncludeRelationEnum.None);
     }
 
     protected override bool HasSelectedGroup()
     {
       return (Radio.Radio.SelectedGroup != null);
-    }
-
-    protected override bool IsChannelTypeCorrect(Channel channel)
-    {
-      return (channel.MediaType == (int)MediaTypeEnum.Radio);
     }
 
     #endregion

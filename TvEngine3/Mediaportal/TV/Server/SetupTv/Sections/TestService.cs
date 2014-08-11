@@ -646,7 +646,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       mpComboBoxChannels.Items.Clear();
       if (idItem.Id == -1)
       {        
-        IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels();
+        IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels(ChannelIncludeRelationEnum.TuningDetails);
         foreach (Channel ch in channels)
         {
           if (ch.MediaType != (decimal) MediaTypeEnum.TV) continue;

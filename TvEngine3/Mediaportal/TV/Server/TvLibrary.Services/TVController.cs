@@ -121,7 +121,7 @@ namespace Mediaportal.TV.Server.TVLibrary
     /// 
     // contains a cached copy of all the channels in the user defined groups (excl. the all channels group)
     // used to speedup "mini EPG" channel state creation.
-    private List<Channel> _tvChannelListGroups;
+    private IList<Channel> _tvChannelListGroups;
 
    
 
@@ -4398,17 +4398,23 @@ namespace Mediaportal.TV.Server.TVLibrary
 
           if (_tvChannelListGroups == null)
           {
-            _tvChannelListGroups =
-              ChannelManagement.GetAllChannelsByGroupIdAndMediaType(group.IdGroup, MediaTypeEnum.TV).ToList();
+            _tvChannelListGroups = ChannelManagement.ListAllChannelsByGroupId(group.IdGroup, ChannelIncludeRelationEnum.None);
           }
           else
           {
-            IList<Channel> tvChannelList = ChannelManagement.GetAllChannelsByGroupIdAndMediaType(group.IdGroup,
-                                                                                                 MediaTypeEnum.TV);
+            IList<Channel> tvChannelList = ChannelManagement.ListAllChannelsByGroupId(group.IdGroup, ChannelIncludeRelationEnum.None);
             foreach (Channel ch in tvChannelList)
             {
-              bool exists = _tvChannelListGroups.Exists(c => c.IdChannel == ch.IdChannel);
-              if (!exists)
+              bool found = false;
+              foreach (Channel c in _tvChannelListGroups)
+              {
+                if (c.IdChannel == ch.IdChannel)
+                {
+                  found = true;
+                  break;
+                }
+              }
+              if (!found)
               {
                 _tvChannelListGroups.Add(ch);
               }

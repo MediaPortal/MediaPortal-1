@@ -579,16 +579,9 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
     }
     
-
-    protected override bool IsChannelTypeCorrect(Channel channel)
-    {
-      return (channel.MediaType == (int)MediaTypeEnum.TV);
-    }
-
     protected override IList<Channel> GetGuideChannelsForGroup()
     {
-      return
-        ServiceAgents.Instance.ChannelServiceAgent.GetAllChannelsByGroupIdAndMediaType(TVHome.Navigator.CurrentGroup.IdGroup, MediaTypeEnum.TV).ToList();
+      return ServiceAgents.Instance.ChannelServiceAgent.ListAllVisibleChannelsByGroupId(TVHome.Navigator.CurrentGroup.IdGroup, ChannelIncludeRelationEnum.None);
     }
 
     protected override bool HasSelectedGroup()
@@ -736,7 +729,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
       if (IMDBFetcher.GetInfoFromIMDB(this, ref movieDetails, false, false))
       {
         IList<Program> progs = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByChannelAndStartEndTimes(_currentProgram.Entity.IdChannel,
-          _currentProgram.Entity.StartTime, _currentProgram.Entity.EndTime).ToList();
+          _currentProgram.Entity.StartTime, _currentProgram.Entity.EndTime);
 
         if (progs != null && progs.Count > 0)
         {

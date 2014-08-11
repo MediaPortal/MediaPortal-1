@@ -469,6 +469,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       this.checkBoxLoadRadio.TabIndex = 14;
       this.checkBoxLoadRadio.Text = "Load radio channels";
       this.checkBoxLoadRadio.UseVisualStyleBackColor = true;
+      this.checkBoxLoadRadio.CheckedChanged += new System.EventHandler(this.checkBoxLoadRadio_CheckedChanged);
       // 
       // label2
       // 

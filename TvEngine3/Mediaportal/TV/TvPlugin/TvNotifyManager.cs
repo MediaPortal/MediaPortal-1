@@ -122,12 +122,12 @@ namespace Mediaportal.TV.TvPlugin
       {
         string textPrg;
         IList<Program> prgs = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByTitleAndTimesInterval(stoppedRec.Title, stoppedRec.StartTime,
-                                                                      stoppedRec.EndTime).ToList();        
+                                                                      stoppedRec.EndTime);
         Program prg = null;
         if (prgs != null && prgs.Count > 0)
         {
           prg = prgs[0];
-          }
+        }
         if (prg != null)
         {
           textPrg = String.Format("{0} {1}-{2}",

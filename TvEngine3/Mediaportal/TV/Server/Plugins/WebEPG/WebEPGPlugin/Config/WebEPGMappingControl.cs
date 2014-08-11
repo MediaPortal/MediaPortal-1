@@ -114,26 +114,23 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
         GroupComboBox.Items.Clear();
         GroupComboBox.Items.Add(new CBChannelGroup("", -1));
         GroupComboBox.Tag = "";
+        IList<ChannelGroup> channelGroups;
         if (IsTvMapping)
         {
-          IList<ChannelGroup> channelGroups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups();
-          foreach (ChannelGroup cg in channelGroups)
-          {
-            GroupComboBox.Items.Add(new CBChannelGroup(cg.GroupName, cg.IdGroup));
-          }
+          channelGroups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(MediaTypeEnum.TV, ChannelGroupIncludeRelationEnum.None);
         }
         else
         {
-          IList<ChannelGroup> channelGroups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(MediaTypeEnum.Radio);
-          foreach (ChannelGroup cg in channelGroups)
-          {
-            GroupComboBox.Items.Add(new CBChannelGroup(cg.GroupName, cg.IdGroup));
-          }
+          channelGroups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(MediaTypeEnum.Radio, ChannelGroupIncludeRelationEnum.None);
+        }
+        foreach (ChannelGroup cg in channelGroups)
+        {
+          GroupComboBox.Items.Add(new CBChannelGroup(cg.GroupName, cg.IdGroup));
         }
       }
       catch (Exception e)
       {
-        this.LogError("Failed to load groups {0}", e.Message);
+        this.LogError(e, "Failed to load groups");
       }
     }
 
@@ -239,11 +236,11 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       }
       if (chGroup != null && chGroup.idGroup != -1)
       {
-        channels = ServiceAgents.Instance.ChannelServiceAgent.GetAllChannelsByGroupIdAndMediaType(chGroup.idGroup, mediaType);          
+        channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllVisibleChannelsByGroupId(chGroup.idGroup, ChannelIncludeRelationEnum.None);
       }
       else
       {
-        channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByMediaType(mediaType);
+        channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllVisibleChannelsByMediaType(mediaType, ChannelIncludeRelationEnum.None);
       }
 
       foreach (Channel chan in channels)

@@ -89,7 +89,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi.Config
       );
 
       this.LogDebug("SmarDTV USB CI config: assemble compatible tuner list");
-      IList<Card> allTuners = ServiceAgents.Instance.CardServiceAgent.ListAllCards();
+      IList<Card> allTuners = ServiceAgents.Instance.CardServiceAgent.ListAllCards(TVDatabase.Entities.Enums.CardIncludeRelationEnum.None);
       IList<Card> compatibleTuners = new List<Card>(allTuners.Count);
       foreach (Card tuner in allTuners)
       {

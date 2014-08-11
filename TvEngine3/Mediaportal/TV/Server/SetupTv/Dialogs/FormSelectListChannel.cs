@@ -73,12 +73,12 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         
         if (checkBoxGuideChannels.Checked)
         {
-          channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllVisibleChannelsByMediaType(MediaTypeEnum.TV);
+          channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllVisibleChannelsByMediaType(MediaTypeEnum.TV, ChannelIncludeRelationEnum.None);
         }
         else
         {
-          channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByMediaType(MediaTypeEnum.TV);
-        }                
+          channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByMediaType(MediaTypeEnum.TV, ChannelIncludeRelationEnum.None);
+        }
 
         foreach (Channel t in channels)
         {

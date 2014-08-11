@@ -1470,7 +1470,7 @@ namespace Mediaportal.TV.TvPlugin.Search
 
     private static Dictionary<int, Channel> GetChannelMap()
     {
-      IEnumerable<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels();
+      IEnumerable<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels(ChannelIncludeRelationEnum.None);
       return channels.ToDictionary(channel => channel.IdChannel);
     }
 

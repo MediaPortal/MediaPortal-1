@@ -48,7 +48,7 @@ namespace Mediaportal.TV.TvPlugin
   {
     #region Private members
 
-    private List<ChannelGroup> _groups = new List<ChannelGroup>();
+    private IList<ChannelGroup> _groups = new List<ChannelGroup>();
     // Contains all channel groups (including an "all _channels" group)
 
     private int m_currentgroup = 0;
@@ -126,7 +126,7 @@ namespace Mediaportal.TV.TvPlugin
         include |= ChannelGroupIncludeRelationEnum.GroupMapsChannel;
 
         _groups =
-          ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(MediaTypeEnum.TV, include).OrderBy(g => g.GroupName).ToList();
+          ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(MediaTypeEnum.TV, include);
         if (hideAllChannelsGroup && _groups.Count > 1)
         {
           ChannelGroup group = _groups.First<ChannelGroup>(g => g.GroupName.Equals(TvConstants.TvGroupNames.AllChannels));
@@ -197,7 +197,7 @@ namespace Mediaportal.TV.TvPlugin
     /// <summary>
     /// Gets the list of tv channel groups.
     /// </summary>
-    public List<ChannelGroup> Groups
+    public IList<ChannelGroup> Groups
     {
       get { return _groups; }
     }
