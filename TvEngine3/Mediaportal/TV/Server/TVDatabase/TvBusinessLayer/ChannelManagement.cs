@@ -62,9 +62,9 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IChannelRepository channelRepository = new ChannelRepository())
       {
-        IQueryable<Channel> query = channelRepository.GetQuery<Channel>().Where(c => c.GroupMaps.Count > 0 && c.GroupMaps.Any(gm => gm.ChannelGroup.IdGroup == idGroup)).OrderBy(c => c.GroupMaps.First(gm => gm.ChannelGroup.IdGroup == idGroup).SortOrder);
+        IQueryable<Channel> query = channelRepository.GetQuery<Channel>().Where(c => c.GroupMaps.Count > 0 && c.GroupMaps.Any(gm => gm.ChannelGroup.IdGroup == idGroup));
         query = channelRepository.IncludeAllRelations(query);
-        return channelRepository.LoadNavigationProperties(query);
+        return channelRepository.LoadNavigationProperties(query).OrderBy(c => c.GroupMaps.FirstOrDefault(gm => gm.ChannelGroup.IdGroup == idGroup).SortOrder).ToList();
       }
     }
 
@@ -72,9 +72,10 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IChannelRepository channelRepository = new ChannelRepository())
       {
-        IQueryable<Channel> query = channelRepository.GetQuery<Channel>().Where(c => c.GroupMaps.Count > 0 && c.GroupMaps.Any(gm => gm.ChannelGroup.IdGroup == idGroup)).OrderBy(c => c.GroupMaps.First(gm => gm.ChannelGroup.IdGroup == idGroup).SortOrder);
+        includeRelations |= ChannelIncludeRelationEnum.GroupMaps;
+        IQueryable<Channel> query = channelRepository.GetQuery<Channel>().Where(c => c.GroupMaps.Count > 0 && c.GroupMaps.Any(gm => gm.ChannelGroup.IdGroup == idGroup));
         query = channelRepository.IncludeAllRelations(query, includeRelations);
-        return channelRepository.LoadNavigationProperties(query);
+        return channelRepository.LoadNavigationProperties(query).OrderBy(c => c.GroupMaps.FirstOrDefault(gm => gm.ChannelGroup.IdGroup == idGroup).SortOrder).ToList();
       }
     }
 
@@ -82,9 +83,9 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IChannelRepository channelRepository = new ChannelRepository())
       {
-        IQueryable<Channel> query = channelRepository.GetQuery<Channel>().Where(c => c.VisibleInGuide && c.GroupMaps.Count > 0 && c.GroupMaps.Any(gm => gm.ChannelGroup.IdGroup == idGroup)).OrderBy(c => c.GroupMaps.First(gm => gm.ChannelGroup.IdGroup == idGroup).SortOrder);
+        IQueryable<Channel> query = channelRepository.GetQuery<Channel>().Where(c => c.VisibleInGuide && c.GroupMaps.Count > 0 && c.GroupMaps.Any(gm => gm.IdGroup == idGroup));
         query = channelRepository.IncludeAllRelations(query);
-        return channelRepository.LoadNavigationProperties(query);
+        return channelRepository.LoadNavigationProperties(query).OrderBy(c => c.GroupMaps.FirstOrDefault(gm => gm.ChannelGroup.IdGroup == idGroup).SortOrder).ToList();
       }
     }
 
@@ -92,9 +93,10 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IChannelRepository channelRepository = new ChannelRepository())
       {
-        IQueryable<Channel> query = channelRepository.GetQuery<Channel>().Where(c => c.VisibleInGuide && c.GroupMaps.Count > 0 && c.GroupMaps.Any(gm => gm.ChannelGroup.IdGroup == idGroup)).OrderBy(c => c.GroupMaps.First(gm => gm.ChannelGroup.IdGroup == idGroup).SortOrder);
+        includeRelations |= ChannelIncludeRelationEnum.GroupMaps;
+        IQueryable<Channel> query = channelRepository.GetQuery<Channel>().Where(c => c.VisibleInGuide && c.GroupMaps.Count > 0 && c.GroupMaps.Any(gm => gm.ChannelGroup.IdGroup == idGroup));
         query = channelRepository.IncludeAllRelations(query, includeRelations);
-        return channelRepository.LoadNavigationProperties(query);
+        return channelRepository.LoadNavigationProperties(query).OrderBy(c => c.GroupMaps.FirstOrDefault(gm => gm.ChannelGroup.IdGroup == idGroup).SortOrder).ToList();
       }
     }
 
