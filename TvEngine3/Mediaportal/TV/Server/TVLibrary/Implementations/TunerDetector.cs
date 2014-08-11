@@ -169,10 +169,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         {
           return;
         }
+        _isStarted = true;
+
         this.LogInfo("detector: starting tuner detection");
+
         // Start detecting tuners connected directly to the system.
         DetectSystemTuners();
-
         try
         {
           _systemDeviceChangeEventWatcher.Start();
@@ -197,7 +199,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         _upnpAgent.Start();
         _upnpAgent.SharedControlPointData.SSDPController.SearchDeviceByDeviceTypeVersion("schemas-opencable-com:service:Tuner", "1", null);
         _upnpAgent.SharedControlPointData.SSDPController.SearchDeviceByDeviceTypeVersion("urn:ses-com:device:SatIPServer", "1", null);
-        _isStarted = true;
       }
     }
 
