@@ -10,22 +10,57 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
   public class ChannelServiceAgent : ServiceAgent<IChannelService>, IChannelService
   {
     public ChannelServiceAgent(string hostname) : base(hostname)
-    {      
-    }
-
-    public IList<Channel> GetAllChannelsByGroupIdAndMediaType(int groupId, MediaTypeEnum mediatype)
     {
-      return _channel.GetAllChannelsByGroupIdAndMediaType(groupId, mediatype);
-    }
-
-    public IList<Channel> GetAllChannelsByGroupId(int groupId)
-    {
-      return _channel.GetAllChannelsByGroupId(groupId);
     }
 
     public IList<Channel> ListAllChannels()
     {
       return _channel.ListAllChannels();
+    }
+
+    public IList<Channel> ListAllChannels(ChannelIncludeRelationEnum includeRelations)
+    {
+      return _channel.ListAllChannels(includeRelations);
+    }
+
+    public IList<Channel> ListAllChannelsByGroupId(int groupId)
+    {
+      return _channel.ListAllChannelsByGroupId(groupId);
+    }
+
+    public IList<Channel> ListAllChannelsByGroupId(int groupId, ChannelIncludeRelationEnum includeRelations)
+    {
+      return _channel.ListAllChannelsByGroupId(groupId, includeRelations);
+    }
+
+    public IList<Channel> ListAllVisibleChannelsByGroupId(int groupId)
+    {
+      return _channel.ListAllVisibleChannelsByGroupId(groupId);
+    }
+
+    public IList<Channel> ListAllVisibleChannelsByGroupId(int groupId, ChannelIncludeRelationEnum includeRelations)
+    {
+      return _channel.ListAllVisibleChannelsByGroupId(groupId, includeRelations);
+    }
+
+    public IList<Channel> ListAllChannelsByMediaType(MediaTypeEnum mediaType)
+    {
+      return _channel.ListAllChannelsByMediaType(mediaType);
+    }
+
+    public IList<Channel> ListAllChannelsByMediaType(MediaTypeEnum mediaType, ChannelIncludeRelationEnum includeRelations)
+    {
+      return _channel.ListAllChannelsByMediaType(mediaType, includeRelations);
+    }
+
+    public IList<Channel> ListAllVisibleChannelsByMediaType(MediaTypeEnum mediaType)
+    {
+      return _channel.ListAllVisibleChannelsByMediaType(mediaType);
+    }
+
+    public IList<Channel> ListAllVisibleChannelsByMediaType(MediaTypeEnum mediaType, ChannelIncludeRelationEnum includeRelations)
+    {
+      return _channel.ListAllVisibleChannelsByMediaType(mediaType, includeRelations);
     }
 
     public IList<Channel> SaveChannels(IEnumerable<Channel> channels)
@@ -44,11 +79,6 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
         groupMap.UnloadAllUnchangedRelationsForEntity();
       }*/
       return _channel.SaveChannelGroupMaps(groupMaps);
-    }
-
-    public IList<Channel> ListAllChannelsByMediaType(MediaTypeEnum mediaType)
-    {
-      return _channel.ListAllChannelsByMediaType(mediaType);
     }
 
     public IList<Channel> GetChannelsByName(string channelName)
@@ -76,11 +106,6 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
     {
       tuningDetail.UnloadAllUnchangedRelationsForEntity();
       return _channel.SaveTuningDetail(tuningDetail);
-    }
-
-    public IList<Channel> ListAllVisibleChannelsByMediaType(MediaTypeEnum mediaType)
-    {
-      return _channel.ListAllVisibleChannelsByMediaType(mediaType);
     }
 
     public TuningDetail GetTuningDetail(DVBBaseChannel dvbChannel)
@@ -138,21 +163,6 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
     {
       map.UnloadAllUnchangedRelationsForEntity();
       return _channel.SaveChannelMap(map);
-    }
-
-    public IList<Channel> ListAllChannels(ChannelIncludeRelationEnum includeRelations)
-    {
-      return _channel.ListAllChannels(includeRelations);
-    }
-
-    public IList<Channel> ListAllChannelsByMediaType(MediaTypeEnum mediaType, ChannelIncludeRelationEnum includeRelations)
-    {
-      return _channel.ListAllChannelsByMediaType(mediaType, includeRelations);
-    }
-
-    public IList<Channel> GetAllChannelsByGroupIdAndMediaType(int idGroup, MediaTypeEnum mediaTypeEnum, ChannelIncludeRelationEnum include)
-    {
-      return _channel.GetAllChannelsByGroupIdAndMediaType(idGroup, mediaTypeEnum, include);
     }
   }
 }

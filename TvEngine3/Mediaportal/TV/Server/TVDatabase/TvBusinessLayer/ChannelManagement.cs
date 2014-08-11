@@ -13,7 +13,6 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Countries;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 {
@@ -39,52 +38,83 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     public static event OnDeleteChannelMapDelegate OnDeleteChannelMapEvent;
     */
 
-    public static IList<Channel> GetAllChannelsByGroupId(int idGroup)
-    {
-      try
-      {
-        using (IChannelRepository channelRepository = new ChannelRepository())
-        {
-          IQueryable<Channel> query = channelRepository.GetAllChannelsByGroupId(idGroup);
-          query = channelRepository.IncludeAllRelations(query);
-          IList<Channel> channels = channelRepository.LoadNavigationProperties(query);
-          return channels;
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("ChannelManagement.GetAllChannelsByGroupIdAndMediaType ex={0}", ex);
-        throw;
-      }
-    }
-
-    public static IList<Channel> GetAllChannelsByGroupIdAndMediaType(int idGroup, MediaTypeEnum mediaType)
-    {
-      try
-      {
-        using (IChannelRepository channelRepository = new ChannelRepository())
-        {
-          var query = channelRepository.GetAllChannelsByGroupIdAndMediaType(idGroup, mediaType);
-          query = channelRepository.IncludeAllRelations(query);
-          IList<Channel> channels = channelRepository.LoadNavigationProperties(query);
-          return channels;
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("ChannelManagement.GetAllChannelsByGroupIdAndMediaType ex={0}", ex);
-        throw;
-      }
-    }
-
     public static IList<Channel> ListAllChannels()
     {
       using (IChannelRepository channelRepository = new ChannelRepository())
       {
         IQueryable<Channel> query = channelRepository.GetAll<Channel>().OrderBy(c => c.DisplayName);
         query = channelRepository.IncludeAllRelations(query);
-        IList<Channel> channels = channelRepository.LoadNavigationProperties(query);
-        return channels;
+        return channelRepository.LoadNavigationProperties(query);
+      }
+    }
+
+    public static IList<Channel> ListAllChannels(ChannelIncludeRelationEnum includeRelations)
+    {
+      using (IChannelRepository channelRepository = new ChannelRepository())
+      {
+        IQueryable<Channel> query = channelRepository.GetAll<Channel>().OrderBy(c => c.DisplayName);
+        query = channelRepository.IncludeAllRelations(query, includeRelations);
+        return channelRepository.LoadNavigationProperties(query, includeRelations);
+      }
+    }
+
+    public static IList<Channel> ListAllChannelsByGroupId(int idGroup)
+    {
+      using (IChannelRepository channelRepository = new ChannelRepository())
+      {
+        IQueryable<Channel> query = channelRepository.GetQuery<Channel>().Where(c => c.GroupMaps.Count > 0 && c.GroupMaps.Any(gm => gm.ChannelGroup.IdGroup == idGroup)).OrderBy(c => c.GroupMaps.First(gm => gm.ChannelGroup.IdGroup == idGroup).SortOrder);
+        query = channelRepository.IncludeAllRelations(query);
+        return channelRepository.LoadNavigationProperties(query);
+      }
+    }
+
+    public static IList<Channel> ListAllChannelsByGroupId(int idGroup, ChannelIncludeRelationEnum includeRelations)
+    {
+      using (IChannelRepository channelRepository = new ChannelRepository())
+      {
+        IQueryable<Channel> query = channelRepository.GetQuery<Channel>().Where(c => c.GroupMaps.Count > 0 && c.GroupMaps.Any(gm => gm.ChannelGroup.IdGroup == idGroup)).OrderBy(c => c.GroupMaps.First(gm => gm.ChannelGroup.IdGroup == idGroup).SortOrder);
+        query = channelRepository.IncludeAllRelations(query, includeRelations);
+        return channelRepository.LoadNavigationProperties(query);
+      }
+    }
+
+    public static IList<Channel> ListAllVisibleChannelsByGroupId(int idGroup)
+    {
+      using (IChannelRepository channelRepository = new ChannelRepository())
+      {
+        IQueryable<Channel> query = channelRepository.GetQuery<Channel>().Where(c => c.VisibleInGuide && c.GroupMaps.Count > 0 && c.GroupMaps.Any(gm => gm.ChannelGroup.IdGroup == idGroup)).OrderBy(c => c.GroupMaps.First(gm => gm.ChannelGroup.IdGroup == idGroup).SortOrder);
+        query = channelRepository.IncludeAllRelations(query);
+        return channelRepository.LoadNavigationProperties(query);
+      }
+    }
+
+    public static IList<Channel> ListAllVisibleChannelsByGroupId(int idGroup, ChannelIncludeRelationEnum includeRelations)
+    {
+      using (IChannelRepository channelRepository = new ChannelRepository())
+      {
+        IQueryable<Channel> query = channelRepository.GetQuery<Channel>().Where(c => c.VisibleInGuide && c.GroupMaps.Count > 0 && c.GroupMaps.Any(gm => gm.ChannelGroup.IdGroup == idGroup)).OrderBy(c => c.GroupMaps.First(gm => gm.ChannelGroup.IdGroup == idGroup).SortOrder);
+        query = channelRepository.IncludeAllRelations(query, includeRelations);
+        return channelRepository.LoadNavigationProperties(query);
+      }
+    }
+
+    public static IList<Channel> ListAllChannelsByMediaType(MediaTypeEnum mediaType)
+    {
+      using (IChannelRepository channelRepository = new ChannelRepository())
+      {
+        IQueryable<Channel> query = channelRepository.GetQuery<Channel>(c => c.MediaType == (int)mediaType).OrderBy(c => c.DisplayName);
+        query = channelRepository.IncludeAllRelations(query);
+        return channelRepository.LoadNavigationProperties(query);
+      }
+    }
+
+    public static IList<Channel> ListAllChannelsByMediaType(MediaTypeEnum mediaType, ChannelIncludeRelationEnum includeRelations)
+    {
+      using (IChannelRepository channelRepository = new ChannelRepository())
+      {
+        IQueryable<Channel> query = channelRepository.GetQuery<Channel>(c => c.MediaType == (int)mediaType).OrderBy(c => c.DisplayName);
+        query = channelRepository.IncludeAllRelations(query, includeRelations);
+        return channelRepository.LoadNavigationProperties(query, includeRelations);
       }
     }
 
@@ -94,8 +124,17 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       {
         IQueryable<Channel> query = channelRepository.GetQuery<Channel>(c => c.VisibleInGuide && c.MediaType == (int)mediaType).OrderBy(c => c.DisplayName);
         query = channelRepository.IncludeAllRelations(query);
-        IList<Channel> channels = channelRepository.LoadNavigationProperties(query);
-        return channels;
+        return channelRepository.LoadNavigationProperties(query);
+      }
+    }
+
+    public static IList<Channel> ListAllVisibleChannelsByMediaType(MediaTypeEnum mediaType, ChannelIncludeRelationEnum includeRelations)
+    {
+      using (IChannelRepository channelRepository = new ChannelRepository())
+      {
+        IQueryable<Channel> query = channelRepository.GetQuery<Channel>(c => c.VisibleInGuide && c.MediaType == (int)mediaType).OrderBy(c => c.DisplayName);
+        query = channelRepository.IncludeAllRelations(query, includeRelations);
+        return channelRepository.LoadNavigationProperties(query);
       }
     }
 
@@ -107,8 +146,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
           channelRepository.GetQuery<Channel>(c => c.ExternalId != null && c.ExternalId != "").OrderBy(
             c => c.ExternalId);
         query = channelRepository.IncludeAllRelations(query);
-        IList<Channel> channels = channelRepository.LoadNavigationProperties(query);
-        return channels;
+        return channelRepository.LoadNavigationProperties(query);
       }
     }
 
@@ -121,16 +159,6 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         channelRepository.UnitOfWork.SaveChanges();
         channelRepository.ObjectContext.AcceptAllChanges();
         return channels.ToList();
-      }
-    }
-
-    public static IList<Channel> ListAllChannelsByMediaType(MediaTypeEnum mediaType)
-    {
-      using (IChannelRepository channelRepository = new ChannelRepository())
-      {
-        IQueryable<Channel> query = channelRepository.GetQuery<Channel>(c => c.MediaType == (int)mediaType).OrderBy(c => c.DisplayName);
-        query = channelRepository.IncludeAllRelations(query);
-        return channelRepository.LoadNavigationProperties(query);
       }
     }
 
@@ -257,19 +285,17 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
     public static bool IsChannelMappedToCard(int idChannel, int idCard, bool forEpg)
     {
-      bool isChannelMappedToCard;
       using (IChannelRepository channelRepository = new ChannelRepository())
       {
         if (forEpg)
         {
-          isChannelMappedToCard = channelRepository.Count<ChannelMap>(c => c.IdCard == idCard && c.IdChannel == idChannel && c.EpgOnly) > 0;
+          return channelRepository.Count<ChannelMap>(c => c.IdCard == idCard && c.IdChannel == idChannel && c.EpgOnly) > 0;
         }
         else
         {
-          isChannelMappedToCard = channelRepository.Count<ChannelMap>(c => c.IdCard == idCard && c.IdChannel == idChannel) > 0;
+          return channelRepository.Count<ChannelMap>(c => c.IdCard == idCard && c.IdChannel == idChannel) > 0;
         }
       }
-      return isChannelMappedToCard;
     }
 
     public static TuningDetail GetTuningDetail(DVBBaseChannel dvbChannel)
@@ -316,8 +342,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
     public static int GetChannelType(DVBBaseChannel channel)
     {
-      int channelType;
-
+      int channelType = -1;
       if (channel is DVBTChannel)
       {
         channelType = 4;
@@ -334,7 +359,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       {
         channelType = 7;
       }
-      else // must be ATSCChannel
+      else if (channel is ATSCChannel)
       {
         channelType = 1;
       }
@@ -896,50 +921,6 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         Channel channel = channelRepository.IncludeAllRelations(query).FirstOrDefault();
         channel = channelRepository.LoadNavigationProperties(channel);
         return channel;
-      }
-    }
-
-    public static IList<Channel> ListAllChannelsByMediaType(MediaTypeEnum mediaType, ChannelIncludeRelationEnum includeRelations)
-    {
-      using (IChannelRepository channelRepository = new ChannelRepository())
-      {
-        IQueryable<Channel> query = channelRepository.GetQuery<Channel>(c => c.MediaType == (int)mediaType).OrderBy(c => c.DisplayName);
-        query = channelRepository.IncludeAllRelations(query, includeRelations);
-
-        IList<Channel> channels = channelRepository.LoadNavigationProperties(query, includeRelations);
-        // Log.Debug("ListAllChannelsByMediaType(MediaTypeEnum mediaType, ChannelIncludeRelationEnum includeRelations) SQL = {0}", query.ToTraceString());
-        return channels;
-      }
-    }
-
-    public static IList<Channel> ListAllChannels(ChannelIncludeRelationEnum includeRelations)
-    {
-      using (IChannelRepository channelRepository = new ChannelRepository())
-      {
-        IQueryable<Channel> query = channelRepository.GetAll<Channel>().OrderBy(c => c.DisplayName);
-        query = channelRepository.IncludeAllRelations(query, includeRelations);
-        IList<Channel> channels = channelRepository.LoadNavigationProperties(query, includeRelations);
-        // Log.Debug("ListAllChannels(ChannelIncludeRelationEnum) SQL = {0}", query.ToTraceString());
-        return channels;
-      }
-    }
-
-    public static IList<Channel> GetAllChannelsByGroupIdAndMediaType(int idGroup, MediaTypeEnum mediaType, ChannelIncludeRelationEnum includeRelations)
-    {
-      try
-      {
-        using (IChannelRepository channelRepository = new ChannelRepository())
-        {
-          IQueryable<Channel> query = channelRepository.GetAllChannelsByGroupIdAndMediaType(idGroup, mediaType);
-          query = channelRepository.IncludeAllRelations(query, includeRelations);
-          IList<Channel> channels = channelRepository.LoadNavigationProperties(query, includeRelations);
-          return channels;
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("ChannelManagement.GetAllChannelsByGroupIdAndMediaType ex={0}", ex);
-        throw;
       }
     }
 

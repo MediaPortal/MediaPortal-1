@@ -25,17 +25,6 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     {
     }
 
-    public IQueryable<Channel> GetAllChannelsByGroupIdAndMediaType(int groupId, MediaTypeEnum mediaType)
-    {
-      IQueryable<Channel> channels = GetQuery<GroupMap>().Where(gm => gm.IdGroup == groupId && gm.Channel.VisibleInGuide && gm.Channel.MediaType == (int)mediaType).OrderBy(gm => gm.SortOrder).Select(gm => gm.Channel);
-      return channels;
-    }
-
-    public IQueryable<Channel> GetAllChannelsByGroupId(int groupId)
-    {
-      return GetQuery<Channel>().Where(c => c.VisibleInGuide && c.GroupMaps.Count > 0 && c.GroupMaps.Any(gm => gm.ChannelGroup.IdGroup == groupId)).OrderBy(c => c.GroupMaps.First(gm => gm.ChannelGroup.IdGroup == groupId).SortOrder);
-    }
-
     public IQueryable<TuningDetail> IncludeAllRelations(IQueryable<TuningDetail> query)
     {
       IQueryable<TuningDetail> includeRelations = query.Include(c => c.Channel).Include(c => c.Channel.GroupMaps);
