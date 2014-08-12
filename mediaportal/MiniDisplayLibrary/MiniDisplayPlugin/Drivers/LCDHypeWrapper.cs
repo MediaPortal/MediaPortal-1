@@ -1023,7 +1023,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public override void SetLine(int line, string message)
+    public override void SetLine(int line, string message, ContentAlignment aAlignment)
     {
       this.UpdateAdvancedSettings();
       if (this.DoDebug)

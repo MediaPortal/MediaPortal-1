@@ -182,7 +182,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     public override void SetCustomCharacters(int[][] customCharacters) { }
 
-    public override void SetLine(int line, string message) { }
+    public override void SetLine(int line, string message, ContentAlignment aAlignment) { }
 
     public override void Setup(string _port, int _lines, int _cols, int _delay, int _linesG, int _colsG, int _delayG,
                       bool _backLight, int _backLightLevel, bool _contrast, int _contrastLevel, bool _blankOnExit)
